@@ -70,7 +70,7 @@ const Landing = (props)=> {
 					<div className="row">
 						<div className="col-12">
 							<h2>High quality, transparent publishing</h2>
-							<div className="subtitle">Research, draft, review, and publish with your community, all in one place. Launching in beta on October 15.</div>
+							<div className="subtitle">Research, draft, review, and publish with your community, all in one place.<br />PubPub launches in beta on October 15.</div>
 							<div className="action">
 									<a className="pt-button pt-intent-primary pt-large" target="_blank" href="http://eepurl.com/dyRqBr">Signup for updates</a>
 							</div>

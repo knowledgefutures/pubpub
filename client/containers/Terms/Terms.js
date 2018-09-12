@@ -70,7 +70,7 @@ const Terms = function(props) {
 								<h1>Idemnification</h1>
 								<p>You hereby indemnify, defend, and hold harmless MIT and its affiliates, employees, faculty members, fellows, students, members of their governing boards and agents (collectively, the “Indemnified Parties”) from and against any and all liability and costs, including, without limitation, reasonable attorneys’ fees, incurred by the Indemnified Parties in connection with any claim arising out of (1) your posting of User-Generated Content; (2) any breach by you or any user of your account of this TOS or the foregoing representations, warranties and covenants; or (3) your or any user of your account’s violation of applicable law. You shall cooperate as reasonably required in the defense of any such claim. MIT reserves the right, at its own expense, to assume the exclusive defense and control of any matter subject to indemnification by you.</p>
 								<h1>Contacting this Website</h1>
-								<p>If you have any questions about this TOS or Privacy Policy, the practices of the Site, or your dealings with this Site, you can contact the Editor at pubpub@media.mit.edu .</p>
+								<p>If you have any questions about this TOS or Privacy Policy, the practices of the Site, or your dealings with this Site, you can contact the Editor at team@pubpub.org .</p>
 								<h1>Effective Date of Agreement</h1>
 								<p>This TOS is in effect as of the August 31, 2016.</p>
 							</div>

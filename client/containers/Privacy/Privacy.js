@@ -64,7 +64,7 @@ const Privacy = function(props) {
 								<p>We have in place physical, electronic and managerial procedures to protect the information we collect online.  However, as effective as these measures are, no security system is impenetrable.  We cannot completely guarantee the security of our database, nor can we guarantee that the information you supply will not be intercepted while being transmitted to us over the Internet.</p>
 								<h1>Notification of Changes in the Privacy Policy</h1>
 								<p>We will review our security measures and Privacy Policy on a periodic basis, and we may modify our policies as appropriate.  We may also change or update our Privacy Policy if we add new services or features. If any changes are made, we will make appropriate amendments to this policy and post them at the Site. By accessing the Site after modifications to this Privacy Policy have been posted, you agree to be bound by the modified terms. We encourage you to review our Privacy Policy on a regular basis.</p>
-								<p>If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, you can contact pubpub@media.mit.edu</p>
+								<p>If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, you can contact team@pubpub.org .</p>
 								<h1>Effective Date</h1>
 								<p>This Privacy Policy is in effect as of as of the August 31, 2016.</p>
 							</div>

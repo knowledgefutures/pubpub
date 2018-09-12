@@ -85,7 +85,7 @@ const Landing = (props)=> {
 						</div>
 
 						<div className="col-12">
-							<h2>Explore Active Communities</h2>
+							<h2>Explore active communities</h2>
 							<div className="subtitle">Journals, book publishers, conferences, and research groups use PubPub to make their work more accessible, interactive, and transparent.</div>
 						</div>
 

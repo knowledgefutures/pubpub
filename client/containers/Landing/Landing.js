@@ -18,7 +18,7 @@ const Landing = (props)=> {
 	const landingData = props.landingData;
 	const features = [
 		{
-			title: 'Collaborative Editing',
+			title: 'Collaborative Real-Time Editing',
 			description: 'Edit documents in real-time with your team. Or, open your document to the public for large-scale collaboration.',
 			icon: 'edit',
 		},
@@ -28,25 +28,35 @@ const Landing = (props)=> {
 			icon: 'media',
 		},
 		{
-			title: 'Continuous, Structured Review',
-			description: 'Invite reviewers before or after publication. Reviews can be made open to the public, or kept private.',
+			title: 'Flexible, Structured Review',
+			description: 'Implement double-blind review, no review, or anything in between.',
 			icon: 'endorsed',
 		},
 		{
-			title: 'Empowered Communities',
-			description: 'Tools to help communities organize, publish, and disseminate their research. Keep your community small and close-knit, or open submissions to the public.',
-			icon: 'globe',
+			title: 'Import And Export',
+			description: 'Import and export from Microsoft Word, LaTex, ePub, PDF, XML, HTML, and more.',
+			icon: 'import',
 		},
 		{
-			title: 'Dedicated to Longevity',
-			description: 'We\'re focused on long-term stable solutions for authors, reviewers, and publishers. We care about business models that are good for research, rather than good for advertisers.',
-			icon: 'time',
+			title: 'Community Discussions and Annotations',
+			description: 'Invite the public to comment, limit feedback to selected experts, or keep your community private and close-knit.',
+			icon: 'chat',
 		},
 		{
-			title: 'Open Source',
-			description: 'We operate in the open and all code is available. Add a new feature yourself, or fork the codebase entirely and host the platform independently.',
-			icon: 'code',
+			title: 'Modern, Customizable Layouts',
+			description: 'Publish your work on a fast-loading, mobile-friendly, customizable website.',
+			icon: 'page-layout',
 		},
+		{
+			title: 'LaTex Equation Support',
+			description: 'Write complex functions directly in the editor, in real-time.',
+			icon: 'variable',
+		},
+		{
+			title: 'Cite And Be Cited',
+			description: 'Easily create DOIs for you work, add citations by DOI, and allow others to cite excerpts and discussions.',
+			icon: 'citation',
+		}
 	];
 	return (
 		<div id="landing-container">
@@ -59,12 +69,11 @@ const Landing = (props)=> {
 				<div className="container narrow">
 					<div className="row">
 						<div className="col-12">
-							<h1>Collaborative Community Publishing</h1>
-							<div className="subtitle">Build empowered communities of researchers to publish, review, organize, and progress towards discovery.</div>
+							<h2>High quality, transparent publishing</h2>
+							<div className="subtitle">Research, draft, review, and publish with your community, all in one place. Launching in beta on October 15.</div>
 							<div className="action">
-								<a className="pt-button pt-intent-primary pt-large" href="/signup">Join to Collaborate</a>
+									<a className="pt-button pt-intent-primary pt-large" target="_blank" href="http://eepurl.com/dyRqBr">Signup for updates</a>
 							</div>
-
 							<div className="image-wrapper pt-elevation-3">
 								<img src={getResizedUrl('https://assets.pubpub.org/_site/landing-responsive-framed.png', null, '800x0')} alt="PubPub Community" />
 								{/*
@@ -77,6 +86,7 @@ const Landing = (props)=> {
 
 						<div className="col-12">
 							<h2>Explore Active Communities</h2>
+							<div className="subtitle">Journals, book publishers, conferences, and research groups use PubPub to make their work more accessible, interactive, and transparent.</div>
 						</div>
 
 						{landingData.activeCommunities.map((item)=> {
@@ -100,26 +110,31 @@ const Landing = (props)=> {
 						<div className="col-12 explore-all-button">
 							<a href="/explore" className="pt-button pt-intent-primary pt-large">Explore All Communities</a>
 							<div className="create-new-message">
-								To create your own collaborative publishing community, please contact <a href="mailto:pubpub@media.mit.edu">pubpub@media.mit.edu</a>
+								Interested in creating your own community? Please contact <a href="mailto:team@pubpub.org">team@pubpub.org</a>.
 							</div>
 						</div>
 
 						<div className="col-12">
-							<h2>Empowered Publishing</h2>
-							<div className="subtitle">Take control of your research and how it's communicated. PubPub lets you publish with and for your community.</div>
+							<h2>Rich features for community publishing</h2>
+							<div className="subtitle">Take control of your research. PubPub allows you to publish complex documents with and for your community.</div>
 						</div>
-
-						{features.map((item)=> {
-							return (
-								<div className="col-6" key={`feature-${item.icon}`}>
-									<LandingFeature
-										title={item.title}
-										icon={item.icon}
-										description={item.description}
-									/>
-								</div>
-							);
-						})}
+						<div className="row flex">
+							{features.map((item)=> {
+								return (
+									<div className="col-6" key={`feature-${item.icon}`}>
+										<LandingFeature
+											title={item.title}
+											icon={item.icon}
+											description={item.description}
+										/>
+									</div>
+								);
+							})}
+						</div>
+						<div className="col-12">
+							<h2>Free, open access, and open-source</h2>
+							<div className="subtitle">Part of MIT’s <a href="https://mitpress.mit.edu/kfg" target="_blank">Knowledge Futures Group</a>, we are committed to providing PubPub for free forever, releasing <a href="https://github.com/pubpub" target="_blank">open-source code</a>, and operating under non-profit, researcher-friendly business models. We sustain PubPub with donations and by charging for advanced setup and features, not by charging for access to knowledge or running ads.</div>
+						</div>
 					</div>
 				</div>
 			</PageWrapper>
@@ -131,4 +146,3 @@ Landing.propTypes = propTypes;
 export default Landing;
 
 hydrateWrapper(Landing);
-

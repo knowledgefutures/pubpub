@@ -334,7 +334,6 @@ class DiscussionList extends Component {
 				{!this.state.isArchivedMode && !activeThreads.length &&
 					<NonIdealState
 						title={filtersActive ? 'No Discussions Match Filter' : 'No Discussions Yet'}
-						description={filtersActive ? '' : 'Click \'New Discussion\' to start the conversation!'}
 						visual="pt-icon-widget"
 					/>
 				}

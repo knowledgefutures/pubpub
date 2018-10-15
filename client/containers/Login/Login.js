@@ -69,7 +69,9 @@ class Login extends Component {
 						<div className="row">
 							<div className="col-12 pt-elevation">
 								<h1>Login</h1>
-								<p>Login to <b>{this.props.communityData.title}</b> using your <a href="https://www.pubpub.org">PubPub</a> account.</p>
+								{!this.props.locationData.isBasePubPub &&
+									<p>Login to <b>{this.props.communityData.title}</b> using your <a href="https://www.pubpub.org">PubPub</a> account.</p>
+								}
 								<form onSubmit={this.onLoginSubmit}>
 									<InputField
 										label="Email"

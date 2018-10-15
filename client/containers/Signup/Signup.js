@@ -62,7 +62,9 @@ class Signup extends Component {
 								{!this.state.isSuccessful &&
 									<div>
 										<h1>Signup</h1>
-										<p>Signup to create a <a href="https://www.pubpub.org">PubPub</a> account which will work on <b>{this.props.communityData.title}</b> and many more communities.</p>
+										{!this.props.locationData.isBasePubPub &&
+											<p>Signup to create a <a href="https://www.pubpub.org">PubPub</a> account which will work on <b>{this.props.communityData.title}</b> and many more communities.</p>
+										}
 										<form onSubmit={this.onSignupSubmit}>
 											<InputField
 												label="Email"

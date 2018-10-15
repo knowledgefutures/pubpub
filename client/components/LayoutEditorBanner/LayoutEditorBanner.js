@@ -229,18 +229,6 @@ class LayoutEditorBanner extends Component {
 					}
 					{this.props.content.showButton &&
 						<div className="pt-form-group">
-							<label htmlFor={`section-default-tags-${this.props.layoutIndex}`}>
-								Default Tags
-							</label>
-							<input
-								id={`section-default-tags-${this.props.layoutIndex}`}
-								type="text"
-								className="pt-input"
-							/>
-						</div>
-					}
-					{this.props.content.showButton &&
-						<div className="pt-form-group">
 							<label htmlFor={`section-tag-${this.props.layoutIndex}`}>Default Pub Tags</label>
 							<div className="pt-button-group pt-select">
 								<TagMultiSelect

@@ -123,7 +123,7 @@ class Header extends Component {
 									}
 									{/* Search button */}
 									{/* <a href="/search" role="button" tabIndex="0" className="pt-button pt-large pt-minimal pt-icon-search" /> */}
-										<a className="pt-button pt-large pt-minimal">Search</a>
+									{/* <a className="pt-button pt-large pt-minimal">Search</a> */}
 
 									{/* Dashboard panel button */}
 									{!isBasePubPub && loggedIn && (!communityData.hideCreatePubButton || isAdmin) &&

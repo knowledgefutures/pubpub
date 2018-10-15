@@ -53,7 +53,7 @@ class Signup extends Component {
 					loginData={this.props.loginData}
 					communityData={this.props.communityData}
 					locationData={this.props.locationData}
-					hideNav={this.props.locationData.isBasePubPub}
+					hideNav={true}
 					hideFooter={true}
 				>
 					<div className="container small">

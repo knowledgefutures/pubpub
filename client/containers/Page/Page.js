@@ -75,7 +75,7 @@ class Page extends Component {
 			return prev;
 		}, false);
 		const pubRenderLists = generateRenderLists(layout, this.props.pageData.pubs);
-		const isNewHomepage = this.props.loginData.isAdmin && !this.props.pageData.layout && !this.props.pageData.slug;
+		const isNewHomepage = this.props.loginData.isAdmin && !this.props.pageData.layout && !this.props.pageData.slug && !this.props.pageData.pubs.length;
 		return (
 			<div id="page-container">
 				<PageWrapper

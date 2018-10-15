@@ -62,7 +62,7 @@ export const hydrateWrapper = (Component)=> {
 			if (initialData.loginData.id) {
 				customEventData.userId = initialData.loginData.id;
 			}
-			client.extendEvent({ pubpub: customEventData });
+			client.extendEvents({ pubpub: customEventData });
 			client.initAutoTracking({
 				recordClicks: false,
 			});

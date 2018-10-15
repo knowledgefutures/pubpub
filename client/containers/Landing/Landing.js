@@ -146,7 +146,7 @@ class Landing extends React.Component {
 										<a href="/signup" className="pt-button pt-intent-primary pt-large">Join PubPub</a>
 										<a href="/community/create" className="pt-button pt-large">Create your Community</a>
 									</div>
-									<img src="/static/hero.png" alt="" className="hero" />
+									<img src="/static/landing/hero.png" alt="" className="hero" />
 								</div>
 							</div>
 						</div>
@@ -173,7 +173,10 @@ class Landing extends React.Component {
 													<a href="/community/create" className="pt-button pt-intent-primary pt-large">Create your Journal</a>
 												</div>
 											</div>
-											<div className="image pt-elevation-3"><img src="/static/jods.png" /></div>
+											<div className="image">
+												<img src="/static/landing/journals.png" />
+												<p className="credit"><a href="https://jods.mitpress.mit.edu" target="_blank">Journal of Design and Science</a> / <a href="http://stanford-jblp.pubpub.org" target="_blank">Stanford Journal of Blockchain Law & Policy</a></p>
+											</div>
 										</div>
 
 										{/* Books */}
@@ -185,7 +188,10 @@ class Landing extends React.Component {
 													<a href="/community/create" className="pt-button pt-intent-primary pt-large">Create your Book</a>
 												</div>
 											</div>
-											<div className="image pt-elevation-3"><img src="/static/jods.png" /></div>
+											<div className="image">
+												<a href="https://frankenbook.org" target="_blank"><img className="pt-elevation-2" src="/static/landing/frankenbook.png" /></a>
+												<p className="credit"><a href="https://frankenbook.org" target="_blank">Frankenbook</a></p>
+											</div>
 										</div>
 
 										{/* Research Labs */}
@@ -197,7 +203,10 @@ class Landing extends React.Component {
 													<a href="/community/create" className="pt-button pt-intent-primary pt-large">Create your Lab Site</a>
 												</div>
 											</div>
-											<div className="image pt-elevation-3"><img src="/static/jods.png" /></div>
+											<div className="image">
+												<img src="/static/landing/labs.png" />
+												<p className="credit"><a href="https://responsivescience.org" target="_blank">Responsive Science</a> / <a href="http://viral.pubpub.org" target="_blank">Viral Communications</a></p>
+											</div>
 										</div>
 
 										{/* Conferences */}
@@ -209,7 +218,10 @@ class Landing extends React.Component {
 													<a href="/community/create" className="pt-button pt-intent-primary pt-large">Create your Conference</a>
 												</div>
 											</div>
-											<div className="image pt-elevation-3"><img src="/static/jods.png" /></div>
+											<div className="image">
+												<a href="https://millie.pubpub.org" target="_blank"><img className="pt-elevation-2" src="/static/landing/millie.png" /></a>
+												<p className="credit"><a href="https://millie.pubpub.org" target="_blank">Celebrating Millie</a></p>
+											</div>
 										</div>
 										{/*<div className="type-block centered">
 											<div className="content">

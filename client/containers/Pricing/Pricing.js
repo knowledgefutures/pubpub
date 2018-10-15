@@ -52,7 +52,7 @@ const Pricing = (props)=> {
 										<li>Multi-community management</li>
 										<li>Free archive mode for inactive communities</li>
 									</ul>
-									<a href="mailto: team@pubpub.org?subject=PubPub Professional Waiting List" target="_blank" rel="noopener noreferrer" className="pt-button pt-large pt-intent-primary">Join Waiting List</a>
+									<a href="https://mailchi.mp/pubpub/pro" target="_blank" rel="noopener noreferrer" className="pt-button pt-large pt-intent-primary">Join Waiting List</a>
 								</div>
 								<div className="option pt-card pt-elevation-1">
 									<h2>Full Service</h2>
@@ -62,7 +62,7 @@ const Pricing = (props)=> {
 										<li>Dedicated, hands-on support for setting up your community</li>
 										<li>Production, editorial, marketing, and community management support</li>
 									</ul>
-									<a href="mailto: team@pubpub.org?subject=Full Service Inquiry" target="_blank" rel="noopener noreferrer" className="pt-button pt-large pt-intent-primary">Get In Touch</a>
+									<a href="mailto:team@pubpub.org?subject=Full%20Service%20Inquiry" target="_blank" rel="noopener noreferrer" className="pt-button pt-large pt-intent-primary">Get In Touch</a>
 								</div>
 							</div>
 						</div>

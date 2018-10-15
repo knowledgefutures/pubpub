@@ -63,7 +63,7 @@ class Signup extends Component {
 									<div>
 										<h1>Signup</h1>
 										{!this.props.locationData.isBasePubPub &&
-											<p>Signup to create a <a href="https://www.pubpub.org">PubPub</a> account which will work on <b>{this.props.communityData.title}</b> and many more communities.</p>
+											<p>Signup to create a <a href="https://www.pubpub.org">PubPub</a> account, which will work on <b>{this.props.communityData.title}</b> and all other PubPub communities.</p>
 										}
 										<form onSubmit={this.onSignupSubmit}>
 											<InputField

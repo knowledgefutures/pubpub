@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
+import Icon from 'components/Icon/Icon';
 
 const propTypes = {
 	value: PropTypes.string,
@@ -19,19 +20,19 @@ const PubOptionsDropdownPrivacy = function(props) {
 		private: {
 			value: 'private',
 			title: 'Private',
-			icon: 'pt-icon-lock2',
+			icon: 'lock2',
 			onClick: ()=>{ props.onChange('private'); },
 		},
 		publicView: {
 			value: props.isDraft ? 'publicView' : 'public',
 			title: props.isDraft ? 'Public View' : 'Public',
-			icon: props.isDraft ? 'pt-icon-eye-open' : 'pt-icon-globe',
+			icon: props.isDraft ? 'eye-open' : 'globe',
 			onClick: ()=>{ props.onChange(props.isDraft ? 'publicView' : 'public'); },
 		},
 		publicEdit: {
 			value: 'publicEdit',
 			title: 'Public Edit',
-			icon: 'pt-icon-edit2',
+			icon: 'edit2',
 			onClick: ()=>{ props.onChange('publicEdit'); },
 		},
 	};
@@ -50,10 +51,11 @@ const PubOptionsDropdownPrivacy = function(props) {
 						return (
 							<li key={`${item.value}-option-${keySuffix}`}>
 								<button
-									className={`pt-menu-item pt-popover-dismiss ${item.icon}`}
+									className="pt-menu-item pt-popover-dismiss"
 									onClick={item.onClick}
 									type="button"
 								>
+									<Icon icon={item.icon} />
 									<div className="title">{item.title}</div>
 								</button>
 							</li>

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
+import { Popover, PopoverInteractionKind, Position, Button } from '@blueprintjs/core';
+import Icon from 'components/Icon/Icon';
 
 require('./dropdownButton.scss');
 
@@ -43,16 +44,24 @@ const DropdownButton = function(props) {
 			usePortal={props.usePortal}
 		>
 			{props.icon && !props.label
-				? <button disabled={props.isDisabled} type="button" className={`dropdown-button pt-button ${props.icon} ${props.isSmall ? 'pt-small' : ''} ${props.isMinimal ? 'pt-minimal' : ''}`} />
-				: (
-					<button disabled={props.isDisabled} type="button" className={`dropdown-button pt-button ${props.isSmall ? 'pt-small' : ''} ${props.isMinimal ? 'pt-minimal' : ''}`}>
-						{props.icon &&
-							<span className={`pt-icon-standard ${props.icon}`} />
-						}
-						{props.label.trim()}
-						<span className="pt-icon-standard pt-icon-caret-down pt-align-right" />
-					</button>
-				)
+				? <Button
+					disabled={props.isDisabled}
+					className={`dropdown-button ${props.isSmall ? 'pt-small' : ''} ${props.isMinimal ? 'pt-minimal' : ''}`}
+					icon={<Icon icon={props.icon} />}
+				/>
+				: <Button
+					disabled={props.isDisabled}
+					className={`dropdown-button ${props.isSmall ? 'pt-small' : ''} ${props.isMinimal ? 'pt-minimal' : ''}`}
+					text={
+						<span>
+							{props.icon &&
+								<Icon icon={props.icon} />
+							}
+							{props.label.trim()}
+							<span className="pt-icon-standard pt-icon-caret-down pt-align-right" />
+						</span>
+					}
+				/>
 			}
 		</Popover>
 	);

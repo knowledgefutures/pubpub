@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Icon from 'components/Icon/Icon';
 
 require('./dropdownRichItem.scss');
 
@@ -22,7 +23,7 @@ const DropdownRichItem = function(props) {
 	return (
 		<div className={`dropdown-rich-item-component ${props.hideBottomBorder ? 'no-border' : ''} pt-menu-item pt-popover-dismiss`} onClick={props.onClick}>
 			{props.icon &&
-				<span className={`pt-icon-standard ${props.icon}`} />
+				<Icon icon={props.icon} />
 			}
 
 			<div className="title">{props.title}</div>

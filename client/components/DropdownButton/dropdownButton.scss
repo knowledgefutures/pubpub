@@ -1,4 +1,8 @@
 .dropdown-button {
+	svg.pt-icon {
+		vertical-align: top;
+		margin-right: 3px;
+	}
 	&:disabled {
 		span {
 			pointer-events: none;

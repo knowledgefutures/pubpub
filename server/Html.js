@@ -8,7 +8,7 @@ try {
 	// No Manifest file. Must be dev mode.
 }
 
-const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
+// const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 
 const propTypes = {
 	children: PropTypes.node.isRequired,
@@ -27,7 +27,7 @@ const Html = (props) => {
 		/* Note that fonts will still be sourced from static.pubpub */
 		/* so if viewing those needs to be tested, the webpack config */
 		/* needs to change. */
-		if (!isPubPubProduction) {
+		if (!props.initialData.locationData.isPubPubProduction) {
 			manifestUrl = manifestUrl.replace('https://static.pubpub.org', '');
 		}
 

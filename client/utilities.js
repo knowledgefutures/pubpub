@@ -4,7 +4,7 @@ import { hydrate } from 'react-dom';
 import { FocusStyleManager } from '@blueprintjs/core';
 import KeenTracking from 'keen-tracking';
 
-const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
+// const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 
 export const hydrateWrapper = (Component)=> {
 	if (typeof window !== 'undefined' && window.location.origin !== 'http://localhost:9001') {
@@ -27,7 +27,7 @@ export const hydrateWrapper = (Component)=> {
 			Raven.setUserContext({ username: initialData.loginData.slug });
 
 			/* Keen Code */
-			const keenEnvironment = isPubPubProduction
+			const keenEnvironment = initialData.locationData.isPubPubProduction
 				? {
 					projectId: '5b57a01ac9e77c0001eef181',
 					writeKey: 'BA7C339A2A000ADC20572BBE37F49872DD8AB8EECBAF03E23AB8EDEF47E56FE9D1A54F63A7FC9548B06D7FF9AA057141E029369E637317B1E276CCE8206745A8D96CAFFFF2D6C4DB15E9E2D5C410426821E8379D0760A482ECF37C2F3868881C',

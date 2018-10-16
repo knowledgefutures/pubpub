@@ -45,6 +45,7 @@ app.post('/api/versions', (req, res)=> {
 			pubId: req.body.pubId,
 			content: req.body.content,
 			viewHash: generateHash(8),
+			isPublic: req.body.isPublic || false,
 		});
 	})
 	.then(()=> {

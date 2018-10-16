@@ -10,6 +10,7 @@ import amqplib from 'amqplib';
 import { remove as removeDiacritics } from 'diacritics';
 import { Community, Collection, User, Pub, Version, PubAttribution, Tag, Page } from './models';
 
+const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 const doiSubmissionUrl = process.env.DOI_SUBMISSION_URL;
 const doiLoginId = process.env.DOI_LOGIN_ID;
 const doiLoginPassword = process.env.DOI_LOGIN_PASSWORD;
@@ -62,7 +63,7 @@ export const getInitialData = (req)=> {
 			? `?${queryString.stringify(req.query)}`
 			: '',
 		isBasePubPub: hostname === 'www.pubpub.org',
-
+		isPubPubProduction: isPubPubProduction,
 	};
 
 	/* If basePubPub - return fixed data */

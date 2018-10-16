@@ -19,7 +19,33 @@
 			cursor: pointer;
 		}	
 	}
+	.link {
+		text-decoration: underline;
+		cursor: pointer;
+	}
 	.pt-callout {
 		margin: 1em 0em;
-	}	
+	}
+	.options-wrapper {
+		display: flex;
+		margin: 4em 0em;
+		.option {
+			flex-grow: 1;
+			flex-shrink: 1;
+			text-align: center;
+			width: 50%;
+			&:first-of-type {
+				border-right: 1px solid #CCC;
+			}
+			h2 {
+				font-size: 28px;
+				font-weight: 600;
+			}
+			p {
+				max-width: 80%;
+				margin: 0 auto;
+				height: 6em;
+			}
+		}
+	}
 }

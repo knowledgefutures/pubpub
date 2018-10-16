@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
-import PubCollabDropdownPrivacy from 'components/PubCollabDropdownPrivacy/PubCollabDropdownPrivacy';
+// import PubOptionsSharingDropdownPrivacy from 'components/PubOptionsSharingDropdownPrivacy/PubOptionsSharingDropdownPrivacy';
 import { apiFetch } from 'utilities';
 import { getCollabJSONs } from '@pubpub/editor';
 
@@ -12,7 +12,7 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
 	setOptionsMode: PropTypes.func.isRequired,
-	setPubData: PropTypes.func.isRequired,
+	// setPubData: PropTypes.func.isRequired,
 	editorView: PropTypes.object.isRequired,
 };
 
@@ -20,40 +20,19 @@ class PubOptionsSaveVersion extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			collaborationMode: props.pubData.collaborationMode,
-			isLoading: false,
+			// isPublic: false,
+			isLoadingPublic: false,
+			isLoadingPrivate: false,
 		};
-		this.handleCollaborationModeChange = this.handleCollaborationModeChange.bind(this);
+		// this.handleIsPublicChange = this.handleIsPublicChange.bind(this);
 		this.handlePublish = this.handlePublish.bind(this);
 	}
 
-	handleCollaborationModeChange(value) {
-		this.setState({ collaborationMode: value });
-		const newValues = {
-			collaborationMode: value,
-		};
-
-		return apiFetch('/api/pubs', {
-			method: 'PUT',
-			body: JSON.stringify({
-				...newValues,
-				pubId: this.props.pubData.id,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			this.props.setPubData({
-				...this.props.pubData,
-				...newValues
-			});
-		})
-		.catch((err)=> {
-			console.error('Error Saving: ', err);
+	handlePublish(isPublic) {
+		this.setState({
+			isLoadingPublic: isPublic,
+			isLoadingPrivate: !isPublic,
 		});
-	}
-
-	handlePublish() {
-		this.setState({ isLoading: true });
 		const sectionsData = this.props.pubData.sectionsData;
 		const editorRefs = sectionsData.map((item)=> {
 			return `${this.props.pubData.editorKey}/${item.id}`;
@@ -76,6 +55,7 @@ class PubOptionsSaveVersion extends Component {
 					pubId: this.props.pubData.id,
 					communityId: this.props.communityData.id,
 					content: newContent,
+					isPublic: isPublic,
 					// submitHash: submitHash,
 				})
 			});
@@ -85,7 +65,10 @@ class PubOptionsSaveVersion extends Component {
 		})
 		.catch((err)=> {
 			console.error('Error Publishing', err);
-			this.setState({ isLoading: false });
+			this.setState({
+				isLoadingPublic: false,
+				isLoadingPrivate: false,
+			});
 		});
 	}
 
@@ -97,15 +80,53 @@ class PubOptionsSaveVersion extends Component {
 
 		if (!this.props.editorView) { return null; }
 
+		// const currentPrivacy = this.state.isPublic ? 'publicView' : 'private';
 		return (
 			<div className="pub-options-save-version-component">
 				<h1>Save Version</h1>
-				<div>This will create a snapshot of the current working draft.</div>
+				<p>Saving a version <b>creates a time-stamped snapshot</b> of the working draft at it's current state.</p>
+				<p>The <b>working draft autosaves</b> - you do not need to create a new saved version just to save your working draft.</p>
+				<p>You can change the privacy of any saved version in the <span className="link" tabIndex={-1} role="button" onClick={()=> { this.props.setOptionsMode('sharing'); }}>Sharing panel</span>.</p>
 
-				<h6>Publication URL</h6>
-				<div className="input">https://{window.location.hostname}/pub/{this.props.pubData.slug}</div>
-				<div className="details">Use the <span tabIndex={-1} role="button" onClick={()=> { this.props.setOptionsMode('details'); }}>details panel</span> to change this URL.</div>
+				<div className="options-wrapper">
+					<div className="option">
+						<h2>Snapshot</h2>
+						<p>Save a private version. The saved version will be visible to pub managers and chosen users.</p>
+						<Button
+							onClick={()=> {
+								this.handlePublish(false);
+							}}
+							className="pt-intent-primary pt-large"
+							text="Save Private Version"
+							disabled={this.state.isLoadingPublic}
+							loading={this.state.isLoadingPrivate}
+						/>
+					</div>
+					<div className="option">
+						<h2>Publish</h2>
+						<p>Publish by saving a public version. The saved version will be visible to all.</p>
+						<Button
+							onClick={()=> {
+								this.handlePublish(true);
+							}}
+							className="pt-intent-primary pt-large"
+							text="Save Public Version"
+							disabled={this.state.isLoadingPrivate}
+							loading={this.state.isLoadingPublic}
+						/>
+					</div>
+				</div>
 
+				{/*<h6>Privacy</h6>
+				<PubOptionsSharingDropdownPrivacy
+					value={currentPrivacy}
+					isDraft={false}
+					onChange={(newValue)=> {
+						this.setState({
+							isPublic: newValue === 'public'
+						});
+					}}
+				/>*/}
 				{/* <div className="wrapper">
 					<h6>Working Draft Privacy</h6>
 					<PubCollabDropdownPrivacy
@@ -121,14 +142,17 @@ class PubOptionsSaveVersion extends Component {
 						<div>Anyone with the link will be able to view the published snapshot, but it will not show up in search results, rss feds, or search engines.</div>
 					</div>
 				*/}
-				<div className="button-wrapper">
+				{/*<div className="button-wrapper">
 					<Button
-						onClick={this.handlePublish}
+						onClick={()this.handlePublish}
 						className="pt-intent-primary"
-						text="Save Version"
+						text={this.state.isPublic
+							? 'Publish (Save Public Version)'
+							: 'Save Private Version'
+						}
 						loading={this.state.isLoading}
 					/>
-				</div>
+				</div>*/}
 
 			</div>
 		);

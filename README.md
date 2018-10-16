@@ -1,4 +1,4 @@
-# PubPub v4
+# PubPub
 
 Collaborative Community Publishing
 

@@ -189,7 +189,7 @@ class Landing extends React.Component {
 												</div>
 											</div>
 											<div className="image">
-												<a href="https://frankenbook.org" target="_blank"><img className="pt-elevation-2" src="/static/landing/frankenbook.png" /></a>
+												<a href="https://www.frankenbook.org" target="_blank"><img className="pt-elevation-2" src="/static/landing/frankenbook.png" /></a>
 												<p className="credit"><a href="https://frankenbook.org" target="_blank">Frankenbook</a></p>
 											</div>
 										</div>

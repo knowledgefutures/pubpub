@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ComposableMap, ZoomableGroup, Geographies, Geography } from 'react-simple-maps';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
+import { Spinner } from '@blueprintjs/core';
 import KeenAnalysis from 'keen-analysis';
-// Use Recharts
 
 require('./pubOptionsAnalytics.scss');
 
@@ -152,6 +152,11 @@ class PubOptionsAnalytics extends Component {
 				}
 
 				<h2>Visits</h2>
+				{!this.state.visitsData &&
+					<div className="spinner-wrapper">
+						<Spinner />
+					</div>
+				}
 				{this.state.visitsData &&
 					<ResponsiveContainer width="100%" height={150}>
 						<AreaChart
@@ -188,6 +193,11 @@ class PubOptionsAnalytics extends Component {
 				}
 
 				<h2>Visit Locations</h2>
+				{(!this.state.mapData || !this.state.countryData) &&
+					<div className="spinner-wrapper">
+						<Spinner />
+					</div>
+				}
 				{this.state.mapData && this.state.countryData &&
 					<ComposableMap
 						projectionConfig={{

@@ -321,7 +321,19 @@
 /***** Mobile *****/
 @media only screen and (max-width: 720px) {
 	#landing-container {
+		.buttons {
+			> a.pt-button {
+				margin: .25em;
+			}
+		}
 		#jumbotron {
+			.content {
+				.landing-header {
+					width: 100%;
+					display: block;
+					text-align: center;
+				}
+			}
 			img.hero {
 				width: 100%;
 			}
@@ -349,8 +361,18 @@
 					width: 100%;
 				}
 			}
+
 			#opensource {
 				.col-12 {
+					margin: 0.5rem 2%;
+					.content {
+						p {
+							padding: 2em;
+						}
+						.pubpub-links {
+							padding: 1em;
+						}
+					}
 					.header {
 						h2 {
 							text-align: center;

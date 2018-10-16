@@ -139,13 +139,14 @@ class Page extends Component {
 								<span>Welcome to your new Community!</span>
 								<span role="img" aria-label="Party-popper">🎉</span>
 							</h2>
-							<p>Get started by clicking the 'Manage' button in the top-right corner. There, you can:</p>
+							<p>To get started, click the 'Manage' button in the top-right corner. Here are the basic concepts:</p>
 							<ul>
-								<li>Create new <b>Pages</b> (<a href="dashboard/page">New Page tab</a>).</li>
-								<li>Add new Community <b>Admins</b> (<a href="dashboard/team">Team tab</a>).</li>
-								<li>Customize your <b>Site</b> - colors, images, access, etc (<a href="dashboard/details">Details tab</a>).</li>
-								<li>Customize the <b>layout</b> of individual Pages (<a href="dashboard/pages/">Home Page customization tab</a>).</li>
-								<li>Create <b>Tags</b> to organize the content in your community (<a href="dashboard/tags">Tags tab</a>).</li>
+								<li><b>Pubs</b> are the main type of document to use for your articles, books, and manuscripts (<a href="dashboard">Pubs tab</a>).</li>
+								<li><b>Pages</b> are for publishing static content (like an about page) and displaying your Pubs (<a href="dashboard/page">Page tab</a>).</li>
+								<li><b>Tags</b> are for organizing your Pubs onto Pages (<a href="dashboard/tags">Tags tab</a>).</li>
+								<li>You can customize the <b>layout</b> of individual Pages, including what Pubs/Tags to show (<a href="dashboard/pages/">Home Page customization tab</a>).</li>
+								<li>You can add additional Community <b>Admins</b>, who can manage everything about your community (<a href="dashboard/team">Team tab</a>).</li>
+								<li>Your <b>Site</b> can be customized with your own colors, images, permissions, etc. (<a href="dashboard/details">Details tab</a>).</li>
 							</ul>
 							<p>Or - begin by creating a <b>New Pub</b> using the button in the top-right corner.</p>
 						</div>

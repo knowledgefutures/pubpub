@@ -20,13 +20,13 @@ export const hydrateWrapper = (Component)=> {
 		}
 
 		const initialData = JSON.parse(document.getElementById('initial-data').getAttribute('data-json'));
-		// const isDev = window.location.origin.indexOf('localhost:') > -1;
-		const isDev = false;
+		isPubPubProduction = initialData.locationData.isPubPubProduction;
+		
+		const isDev = window.location.origin.indexOf('localhost:') > -1;
 		if (!isDev) {
 			Raven.config('https://b4764efd07c240488d390c8343193208@sentry.io/197897').install();
 			Raven.setUserContext({ username: initialData.loginData.slug });
 
-			isPubPubProduction = initialData.locationData.isPubPubProduction;
 			/* Keen Code */
 			const keenEnvironment = isPubPubProduction
 				? {

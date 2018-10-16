@@ -8,8 +8,6 @@ try {
 	// No Manifest file. Must be dev mode.
 }
 
-// const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
-
 const propTypes = {
 	children: PropTypes.node.isRequired,
 	chunkName: PropTypes.string.isRequired,

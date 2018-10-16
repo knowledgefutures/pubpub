@@ -506,7 +506,7 @@ class PubOptionsSharing extends Component {
 														onSelect={(user)=> {
 															return this.handleVersionPermissionAdd({
 																userId: user.id,
-																versionId: null,
+																versionId: isDraft ? null : version.id,
 															});
 														}}
 														allowCustomUser={false} // Eventually use this for emails

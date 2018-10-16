@@ -610,6 +610,7 @@ class Pub extends Component {
 										setDiscussionChannel={this.setDiscussionChannel}
 									/>
 									<PubSideDiscussions
+										key={activeDiscussionChannel ? activeDiscussionChannel.id : 'public-channel'}
 										threads={threads}
 										pubData={pubData}
 										locationData={this.state.locationData}

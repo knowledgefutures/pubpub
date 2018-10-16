@@ -205,7 +205,7 @@ class Landing extends React.Component {
 											</div>
 											<div className="image">
 												<img src="/static/landing/labs.png" />
-												<p className="credit"><a href="https://responsivescience.org" target="_blank">Responsive Science</a> / <a href="http://viral.pubpub.org" target="_blank">Viral Communications</a></p>
+												<p className="credit"><a href="https://www.responsivescience.org" target="_blank">Responsive Science</a> / <a href="http://viral.pubpub.org" target="_blank">Viral Communications</a></p>
 											</div>
 										</div>
 

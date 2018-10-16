@@ -92,7 +92,7 @@ class CollectionAutocomplete extends Component {
 						placeholder: this.props.placeholder,
 					}}
 					inputValueRenderer={(item) => { return item.title; }}
-					itemRenderer={({ item={}, handleClick, isActive })=> {
+					itemRenderer={(item = {}, { handleClick, isActive })=> {
 						return (
 							<li key={item.id || 'empty-user-create'}>
 								<a role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'pt-menu-item pt-active' : 'pt-menu-item'}>

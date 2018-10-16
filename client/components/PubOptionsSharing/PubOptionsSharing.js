@@ -526,11 +526,11 @@ class PubOptionsSharing extends Component {
 
 										<div>Sharing Links</div>
 										{isDraft && [
-											<div><a href={`${window.location.origin}/pub/${pubData.slug}/draft?access=${pubData.draftViewHash}`}>Anyone with this link can view (Click to copy)</a></div>,
-											<div><a href={`${window.location.origin}/pub/${pubData.slug}/draft?access=${pubData.draftEditHash}`}>Anyone with this link can edit (Click to copy)</a></div>
+											<div><a href={`${window.location.origin}/pub/${pubData.slug}/draft?access=${pubData.draftViewHash}`}>Anyone with this link can view</a></div>,
+											<div><a href={`${window.location.origin}/pub/${pubData.slug}/draft?access=${pubData.draftEditHash}`}>Anyone with this link can edit</a></div>
 										]}
 										{!isDraft &&
-											<a href={`${window.location.origin}/pub/${pubData.slug}?version=${version.id}&access=${version.viewHash}`}>Anyone with this link can view (Click to copy)</a>
+											<a href={`${window.location.origin}/pub/${pubData.slug}?version=${version.id}&access=${version.viewHash}`}>Anyone with this link can view</a>
 										}
 									</div>
 								}

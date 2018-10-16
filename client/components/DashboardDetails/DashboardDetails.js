@@ -236,6 +236,7 @@ class DashboardDetails extends Component {
 						width={150}
 						onNewImage={this.handleSmallHeaderLogoChange}
 						useAccentBackground={true}
+						canClear={true}
 					/>
 					<ImageUpload
 						htmlFor="large-header-logo-upload"
@@ -255,6 +256,7 @@ class DashboardDetails extends Component {
 						width={150}
 						onNewImage={this.handleLargeHeaderLogoChange}
 						useAccentBackground={true}
+						canClear={true}
 					/>
 					<ImageUpload
 						htmlFor="large-header-background-upload"

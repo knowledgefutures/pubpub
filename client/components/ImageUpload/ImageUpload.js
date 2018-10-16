@@ -152,7 +152,11 @@ class ImageUpload extends Component {
 							/>
 						}
 						{!this.state.uploading && this.state.imageBlob && this.props.canClear &&
-							<button className="pt-button pt-minimal pt-icon-trash pt-intent-danger" onClick={this.clearImage} />
+							<AnchorButton
+								className="pt-minimal pt-intent-danger"
+								icon="trash"
+								onClick={this.clearImage}
+							/>
 						}
 					</div>
 					<input

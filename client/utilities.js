@@ -27,7 +27,6 @@ export const hydrateWrapper = (Component)=> {
 			Raven.setUserContext({ username: initialData.loginData.slug });
 
 			isPubPubProduction = initialData.locationData.isPubPubProduction;
-			console.log(isPubPubProduction);
 			/* Keen Code */
 			const keenEnvironment = isPubPubProduction
 				? {

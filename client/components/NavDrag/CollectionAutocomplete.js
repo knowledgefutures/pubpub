@@ -19,7 +19,7 @@ const propTypes = {
 const defaultProps = {
 	usedItems: [],
 	onSelect: ()=>{},
-	placeholder: 'Create Dropdown or Add Collection or Page...',
+	placeholder: 'Create Dropdown or Add Page...',
 	allowCustom: false,
 };
 

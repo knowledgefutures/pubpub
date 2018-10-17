@@ -221,8 +221,8 @@ const Discussion = sequelize.define('Discussion', {
 	attachments: { type: Sequelize.JSONB },
 	suggestions: { type: Sequelize.JSONB },
 	highlights: { type: Sequelize.JSONB },
-	submitHash: { type: Sequelize.TEXT },
-	submitApprovedAt: { type: Sequelize.DATE },
+	submitHash: { type: Sequelize.TEXT }, // Deprecated since v5
+	submitApprovedAt: { type: Sequelize.DATE }, // Deprecated since v5
 	isArchived: { type: Sequelize.BOOLEAN },
 	// isPublic: { type: Sequelize.BOOLEAN }, /* TODO: this field is deprecated once discussionChannels exist. Need to migrate isPublic=false to new channel */
 	labels: { type: Sequelize.JSONB },

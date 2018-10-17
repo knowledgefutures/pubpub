@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import CollectionAutocomplete from './CollectionAutocomplete';
 import Icon from 'components/Icon/Icon';
+import CollectionAutocomplete from './CollectionAutocomplete';
 
 require('./navDrag.scss');
 
@@ -78,6 +78,7 @@ class NavDrag extends Component {
 
 		return result;
 	}
+
 	addItem(newItem, dropdownId) {
 		if (!dropdownId) {
 			return this.setState({
@@ -99,6 +100,7 @@ class NavDrag extends Component {
 			...this.cleanOutputNav(newItems)
 		]);
 	}
+
 	removeItem(itemId, dropdownId) {
 		const newItems = !dropdownId
 			? this.state.nav.filter((item)=> {

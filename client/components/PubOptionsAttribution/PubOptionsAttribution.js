@@ -5,7 +5,6 @@ import { MultiSelect } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 import Avatar from 'components/Avatar/Avatar';
 import UserAutocomplete from 'components/UserAutocomplete/UserAutocomplete';
-import PubSideCollaborators from 'components/PubSideCollaborators/PubSideCollaborators';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { apiFetch } from 'utilities';
 
@@ -120,13 +119,15 @@ class PubOptionsAttribution extends Component {
 	}
 
 	handleAttributionAdd(user) {
-		const calculatedOrder = this.state.pubData.attributions.sort((foo, bar)=> {
-			if (foo.order < bar.order) { return -1; }
-			if (foo.order > bar.order) { return 1; }
-			if (foo.createdAt < bar.createdAt) { return 1; }
-			if (foo.createdAt > bar.createdAt) { return -1; }
-			return 0;
-		})[0].order / 2;
+		const calculatedOrder = !this.state.pubData.attributions.length
+			? 0.5
+			: this.state.pubData.attributions.sort((foo, bar)=> {
+				if (foo.order < bar.order) { return -1; }
+				if (foo.order > bar.order) { return 1; }
+				if (foo.createdAt < bar.createdAt) { return 1; }
+				if (foo.createdAt > bar.createdAt) { return -1; }
+				return 0;
+			})[0].order / 2;
 
 		return apiFetch('/api/pubAttributions', {
 			method: 'POST',

@@ -141,12 +141,12 @@ class Page extends Component {
 							</h2>
 							<p>To get started, click the 'Manage' button in the top-right corner. Here are the basic concepts:</p>
 							<ul>
-								<li><b>Pubs</b> are the main type of document to use for your articles, books, and manuscripts (<a href="dashboard">Pubs tab</a>).</li>
-								<li><b>Pages</b> are for publishing static content (like an about page) and displaying your Pubs (<a href="dashboard/page">Page tab</a>).</li>
-								<li><b>Tags</b> are for organizing your Pubs onto Pages (<a href="dashboard/tags">Tags tab</a>).</li>
-								<li>You can customize the <b>layout</b> of individual Pages, including what Pubs/Tags to show (<a href="dashboard/pages/">Home Page customization tab</a>).</li>
-								<li>You can add additional Community <b>Admins</b>, who can manage everything about your community (<a href="dashboard/team">Team tab</a>).</li>
-								<li>Your <b>Site</b> can be customized with your own colors, images, permissions, etc. (<a href="dashboard/details">Details tab</a>).</li>
+								<li><b>Pubs</b> are the main type of document to use for your articles, books, and manuscripts (<a href="/dashboard/pubs">Pubs tab</a>).</li>
+								<li><b>Pages</b> are for static content (like an about page) and displaying your Pubs (<a href="/dashboard/page">Page tab</a>).</li>
+								<li><b>Tags</b> are for organizing your Pubs onto Pages (<a href="/dashboard/tags">Tags tab</a>).</li>
+								<li>You can customize the <b>layout</b> of individual Pages, including what Pubs/Tags to show (<a href="/dashboard/pages/">Home Page customization tab</a>).</li>
+								<li>You can add additional Community <b>Admins</b>, who can manage everything about your community (<a href="/dashboard/team">Team tab</a>).</li>
+								<li>Your <b>Site</b> can be customized with your own colors, images, permissions, etc. (<a href="/dashboard/details">Details tab</a>).</li>
 							</ul>
 							<p>Or - begin by creating a <b>New Pub</b> using the button in the top-right corner.</p>
 						</div>

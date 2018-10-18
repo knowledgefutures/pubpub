@@ -94,9 +94,9 @@ class CommunityCreate extends Component {
 							<div className="col-12">
 								{!this.props.loginData.id &&
 									<NonIdealState
-										title="Must be logged in to create a Community"
+										title="To create your community, create an account or login."
 										visual="error"
-										action={<a href="/login?redirect=/community/create" className="pt-button">Login</a>}
+										action={<a href="/login?redirect=/community/create" className="pt-button">Login or Signup</a>}
 									/>
 								}
 								{this.props.loginData.id &&

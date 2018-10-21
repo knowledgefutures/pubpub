@@ -1,8 +1,9 @@
 .dashboard-pubs-component {
 	.pub-wrapper {
-			margin-bottom: 0.75em;
-			padding-bottom: 0.75em;
-			border-bottom: 1px solid #DDD;
+		margin-bottom: 0.75em;
+		padding-bottom: 0.75em;
+		border-bottom: 1px solid #DDD;
+		min-height: 45px;
 		.header {
 			display: flex;	
 		}

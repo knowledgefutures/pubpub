@@ -91,9 +91,9 @@ app.use('/robots.txt', express.static('static/robots.txt'));
 /* -------------------- */
 app.use((req, res, next)=> {
 	if (req.headers.communityhostname) { req.headers.host = req.headers.communityhostname; }
-	// if (req.hostname.indexOf('localhost') > -1) { req.headers.host = 'frankdev.pubpub.org'; }
+	if (req.hostname.indexOf('localhost') > -1) { req.headers.host = 'frankdev.pubpub.org'; }
 	// if (req.hostname.indexOf('localhost') > -1) { req.headers.host = 'www.pubpub.org'; }
-	if (req.hostname.indexOf('localhost') > -1) { req.headers.host = 'hello-new-thing2.pubpub.org'; }
+	// if (req.hostname.indexOf('localhost') > -1) { req.headers.host = 'hello-new-thing2.pubpub.org'; }
 	if (req.hostname.indexOf('dev-pubpub.pubpub.org') > -1) { req.headers.host = 'www.pubpub.org'; }
 	if (req.hostname.indexOf('dev.pubpub.org') > -1) { req.headers.host = 'frankdev.pubpub.org'; }
 	if (req.hostname.indexOf('v4.pubpub.org') > -1) { req.headers.host = 'www.pubpub.org'; }

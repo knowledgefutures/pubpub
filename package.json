@@ -26,7 +26,7 @@
   "dependencies": {
     "@blueprintjs/core": "^2.3.1",
     "@blueprintjs/select": "^2.0.1",
-    "@pubpub/editor": "^5.0.0",
+    "@pubpub/editor": "^5.0.2",
     "@storybook/addon-options": "^4.0.0-alpha.14",
     "@storybook/react": "^4.0.0-alpha.14",
     "amqplib": "^0.5.2",

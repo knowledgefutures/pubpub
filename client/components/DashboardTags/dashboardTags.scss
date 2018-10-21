@@ -40,16 +40,6 @@
 				height: 18px !important;
 				line-height: 18px !important;
 			}
-			.pt-editable-text-content {
-				padding-right: 2em;
-				&:after {
-					font-family: 'pubpub-icons' !important;
-					content: "\E904";
-					padding-left: 0.5em;
-					opacity: 0.75;
-					position: absolute;
-				}
-			}
 		}
 		.pt-checkbox {
 			margin: 0px 2em 0px;

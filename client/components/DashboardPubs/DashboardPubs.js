@@ -61,6 +61,9 @@ class DashboardPubs extends Component {
 					if (foo.title > bar.title) { return 1; }
 					return 0;
 				}).map((pub)=> {
+					const authors = pub.attributions.filter((attribution)=> {
+						return attribution.isAuthor;
+					});
 					return (
 						<div key={`pub-${pub.id}`} className="pub-wrapper">
 							<div className="header">
@@ -83,10 +86,10 @@ class DashboardPubs extends Component {
 								}
 							</div>
 							<div className="authors">
-								<span>by </span>
-								{pub.attributions.filter((attribution)=> {
-									return attribution.isAuthor;
-								}).sort((foo, bar)=> {
+								{!!authors.length &&
+									<span>by </span>
+								}
+								{authors.sort((foo, bar)=> {
 									if (foo.order < bar.order) { return -1; }
 									if (foo.order > bar.order) { return 1; }
 									if (foo.createdAt < bar.createdAt) { return 1; }
@@ -116,5 +119,4 @@ class DashboardPubs extends Component {
 }
 
 DashboardPubs.propTypes = propTypes;
-// DashboardPubs.defaultProps = defaultProps;
 export default DashboardPubs;

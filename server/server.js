@@ -62,12 +62,13 @@ app.use(session({
 /* If on *.pubpub.org domain, set cookie to be accessible across */
 /* all subdomains to maintain login. Especially important when */
 /* creating communities. */
-app.use((req, res, next)=> {
-	req.session.cookie.domain = req.hostname.indexOf('.pubpub.org') > -1
-		? '.pubpub.org'
-		: undefined;
-	next();
-});
+// TODO: This isn't ready yet. Weird cross domain cookies are being stored.
+// app.use((req, res, next)=> {
+// 	req.session.cookie.domain = req.hostname.indexOf('.pubpub.org') > -1
+// 		? '.pubpub.org'
+// 		: undefined;
+// 	next();
+// });
 
 /* ------------------- */
 /* Configure app login */

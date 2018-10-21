@@ -128,7 +128,7 @@ class DashboardPage extends Component {
 		return (
 			<div className="dashboard-page-component">
 				<div className="content-buttons">
-					<a href={`/dashboard/${pageData.slug}`} className="pt-button">Cancel</a>
+					<a href={`/dashboard/pages/${pageData.slug}`} className="pt-button">Cancel</a>
 					<Button
 						type="button"
 						className="pt-intent-primary"

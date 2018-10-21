@@ -59,16 +59,16 @@ app.use(session({
 	},
 }));
 
-/* If on *.pubpub.org domain, set cookie to be accessible across */
-/* all subdomains to maintain login. Especially important when */
-/* creating communities. */
-// TODO: This isn't ready yet. Weird cross domain cookies are being stored.
-// app.use((req, res, next)=> {
-// 	req.session.cookie.domain = req.hostname.indexOf('.pubpub.org') > -1
-// 		? '.pubpub.org'
-// 		: undefined;
-// 	next();
-// });
+app.use((req, res, next)=> {
+	/* If on *.pubpub.org domain, set cookie to be accessible across */
+	/* all subdomains to maintain login. Especially important when */
+	/* creating communities. */
+	const hostname = req.headers.communityhostname || req.hostname;
+	if (hostname.indexOf('.pubpub.org') > -1) {
+		req.session.cookie.domain = '.pubpub.org';
+	}
+	next();
+});
 
 /* ------------------- */
 /* Configure app login */

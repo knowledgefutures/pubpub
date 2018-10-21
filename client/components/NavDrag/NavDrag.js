@@ -80,20 +80,18 @@ class NavDrag extends Component {
 	}
 
 	addItem(newItem, dropdownId) {
-		if (!dropdownId) {
-			return this.setState({
-				nav: [newItem, ...this.state.nav]
-			});
-		}
-		const newItems = this.state.nav.map((item)=> {
-			if (item.id === dropdownId) {
-				return {
-					...item,
-					children: [newItem, ...item.children]
-				};
-			}
-			return item;
-		});
+		const newItems = dropdownId
+			? this.state.nav.map((item)=> {
+				if (item.id === dropdownId) {
+					return {
+						...item,
+						children: [newItem, ...item.children]
+					};
+				}
+				return item;
+			})
+			: [newItem, ...this.state.nav];
+
 		this.setState({ nav: newItems });
 		return this.props.onChange([
 			this.props.initialNav[0].id,

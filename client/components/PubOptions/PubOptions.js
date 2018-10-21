@@ -57,6 +57,11 @@ const PubOptions = (props)=> {
 			return item !== 'sections';
 		});
 	}
+	if (!props.loginData.isAdmin) {
+		adminModes = adminModes.filter((item)=> {
+			return item !== 'tags';
+		});
+	}
 
 	const modes = [
 		'attribution',

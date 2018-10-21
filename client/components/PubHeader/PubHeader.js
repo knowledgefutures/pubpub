@@ -217,11 +217,13 @@ class PubHeader extends Component {
 									<Popover
 										content={
 											<div className="pt-menu">
-												<li>
-													<a className={`pt-menu-item ${pubData.isDraft ? 'pt-active' : ''}`} tabIndex="0" href={`/pub/${pubData.slug}/draft`}>
-														Working Draft
-													</a>
-												</li>
+												{(pubData.isDraftViewer || pubData.isDraftEditor || pubData.isManager) &&
+													<li>
+														<a className={`pt-menu-item ${pubData.isDraft ? 'pt-active' : ''}`} tabIndex="0" href={`/pub/${pubData.slug}/draft`}>
+															Working Draft
+														</a>
+													</li>
+												}
 												{sortedVersionsList.map((version)=> {
 													return (
 														<li key={version.id}>

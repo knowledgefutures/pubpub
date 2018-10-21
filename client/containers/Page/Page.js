@@ -56,12 +56,7 @@ class Page extends Component {
 			if (curr.slug === slug) { return curr.title; }
 			return prev;
 		}, undefined);
-		// if (!title) { return <NoMatch />; }
 		if (!title) { return <h1>Nothing</h1>; }
-		const numPublished = pageData.pubs.reduce((prev, curr)=> {
-			if (curr.firstPublishedAt) { return prev + 1; }
-			return prev;
-		}, 0);
 		const publicDrafts = pageData.pubs.filter((item)=> {
 			return !item.firstPublishedAt;
 		}).sort((foo, bar)=> {
@@ -75,7 +70,6 @@ class Page extends Component {
 			return prev;
 		}, false);
 		const pubRenderLists = generateRenderLists(layout, this.props.pageData.pubs);
-		const isNewHomepage = this.props.loginData.isAdmin && !this.props.pageData.layout && !this.props.pageData.slug && !this.props.pageData.pubs.length;
 		return (
 			<div id="page-container">
 				<PageWrapper
@@ -132,32 +126,7 @@ class Page extends Component {
 							</div>
 						</div>
 					*/}
-					{isNewHomepage &&
-						<div className="welcome-message">
-							<h2>
-								<span role="img" aria-label="Party-popper">🎉</span>
-								<span>Welcome to your new Community!</span>
-								<span role="img" aria-label="Party-popper">🎉</span>
-							</h2>
-							<p>To get started, click the 'Manage' button in the top-right corner. Here are the basic concepts:</p>
-							<ul>
-								<li><b>Pubs</b> are the main type of document to use for your articles, books, and manuscripts (<a href="/dashboard/pubs">Pubs tab</a>).</li>
-								<li><b>Pages</b> are for static content (like an about page) and displaying your Pubs (<a href="/dashboard/page">Page tab</a>).</li>
-								<li><b>Tags</b> are for organizing your Pubs onto Pages (<a href="/dashboard/tags">Tags tab</a>).</li>
-								<li>You can customize the <b>layout</b> of individual Pages, including what Pubs/Tags to show (<a href="/dashboard/pages/">Home Page customization tab</a>).</li>
-								<li>You can add additional Community <b>Admins</b>, who can manage everything about your community (<a href="/dashboard/team">Team tab</a>).</li>
-								<li>Your <b>Site</b> can be customized with your own colors, images, permissions, etc. (<a href="/dashboard/details">Details tab</a>).</li>
-							</ul>
-							<p>Or - begin by creating a <b>New Pub</b> using the button in the top-right corner.</p>
-						</div>
-					}
-					{layout.filter((item)=> {
-						// TODO - this filter is a bit broken.
-						if (pageData.id && !numPublished && item.type === 'pubs') {
-							return false;
-						}
-						return true;
-					}).map((item, index)=> {
+					{layout.map((item, index)=> {
 						const validType = ['pubs', 'text', 'html', 'banner'].indexOf(item.type) > -1;
 						if (!validType) { return null; }
 						return (
@@ -204,7 +173,7 @@ class Page extends Component {
 						);
 					})}
 
-					{!isNewHomepage && !publicDrafts.length && !!pageData.id && !numPublished && !pageData.isPage && !hasTextLayoutComponent &&
+					{!publicDrafts.length && !!pageData.id && !pageData.isPage && !hasTextLayoutComponent &&
 						<NonIdealState
 							title="Empty Collection"
 							description="This collection has no Pubs."

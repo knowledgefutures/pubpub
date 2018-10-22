@@ -59,7 +59,7 @@ const NavBar = function(props) {
 											preventOverflow: { enabled: false },
 											hide: { enabled: false },
 										}}
-										interactionKind={PopoverInteractionKind.HOVER}
+										interactionKind={PopoverInteractionKind.CLICK}
 										key={`dropdown-${item.title}`}
 									>
 										<a className="dropdown">

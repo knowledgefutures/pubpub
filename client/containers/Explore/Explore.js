@@ -24,7 +24,7 @@ const Explore = (props)=> {
 				locationData={props.locationData}
 				hideNav={true}
 			>
-				<div className="container narrow">
+				<div className="container">
 					<div className="row">
 						<div className="col-12">
 							<h1>Explore PubPub Communities</h1>
@@ -42,7 +42,7 @@ const Explore = (props)=> {
 							return 0;
 						}).map((item)=> {
 							return (
-								<div className="col-4" key={`active-${item.id}`}>
+								<div className="col-3" key={`active-${item.id}`}>
 									<CommunityPreview
 										subdomain={item.subdomain}
 										domain={item.domain}

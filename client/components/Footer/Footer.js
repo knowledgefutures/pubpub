@@ -12,7 +12,7 @@ const propTypes = {
 const Footer = function(props) {
 	const links = props.isBasePubPub
 		? [
-			{ id: 1, title: 'pubpub@media.mit.edu', url: 'mailto:pubpub@media.mit.edu' },
+			{ id: 1, title: 'team@pubpub.org', url: 'mailto:team@pubpub.org' },
 			{ id: 2, title: 'Code', url: 'https://github.com/pubpub' },
 			{ id: 3, title: 'About', url: '/about' },
 			{ id: 4, title: 'Terms', url: '/tos' },

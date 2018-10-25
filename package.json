@@ -2,7 +2,7 @@
   "name": "pubpub",
   "version": "5.0.0",
   "description": "Collaborative Community Publishing",
-  "author": "PubPub Team <pubpub@media.mit.edu>",
+  "author": "PubPub Team <team@pubpub.org>",
   "license": "GPL-2.0+",
   "repository": {
     "type": "git",

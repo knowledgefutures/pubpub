@@ -29,6 +29,7 @@
     "@pubpub/editor": "^5.0.2",
     "@storybook/addon-options": "^4.0.0-alpha.14",
     "@storybook/react": "^4.0.0-alpha.14",
+    "algoliasearch": "^3.30.0",
     "amqplib": "^0.5.2",
     "aws-sdk": "^2.278.1",
     "babel-core": "^6.13.2",

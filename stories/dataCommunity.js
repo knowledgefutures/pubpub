@@ -1516,7 +1516,7 @@ export default {
                                     },
                                     "content": [
                                         {
-                                            "text": "If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, you can contact Pubpub@media.mit.edu.",
+                                            "text": "If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, you can contact team@pubpub.org.",
                                             "type": "text",
                                             "currIndex": 0
                                         }
@@ -5440,7 +5440,7 @@ export default {
                                     },
                                     "content": [
                                         {
-                                            "text": "If you have any questions about this TOS or Privacy Policy, the practices of the Site, or your dealings with this Site, you can contact Pubpub@media.mit.edu.",
+                                            "text": "If you have any questions about this TOS or Privacy Policy, the practices of the Site, or your dealings with this Site, you can contact team@pubpub.org.",
                                             "type": "text"
                                         }
                                     ]

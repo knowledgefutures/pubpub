@@ -65,7 +65,7 @@ app.get('/rss.xml', (req, res)=> {
 			feed_url: `${communityUrl}/rss.xml`,
 			site_url: communityUrl,
 			image_url: communityData.favicon,
-			webMaster: 'pubpub@media.mit.edu',
+			webMaster: 'team@pubpub.org',
 			language: 'en',
 			pubDate: new Date(),
 			ttl: '60',

@@ -282,16 +282,18 @@ class PubHeader extends Component {
 										{/* <span className="pt-icon-standard pt-icon-chat" /> */}
 										{numDiscussions} Discussion{numDiscussions === 1 ? '' : 's'} (#{activeDiscussionChannel.title})
 									</a>
-									<a
-										// href={`/pub/${pubData.slug}/collaborators`}
-										onClick={(evt)=> {
-											evt.preventDefault();
-											this.props.setOptionsMode('attribution');
-										}}
-									>
-										{/* <span className="pt-icon-standard pt-icon-team" /> */}
-										{numAttributions} Contributor{numAttributions === 1 ? '' : 's'}
-									</a>
+									{!!numAttributions &&
+										<a
+											// href={`/pub/${pubData.slug}/collaborators`}
+											onClick={(evt)=> {
+												evt.preventDefault();
+												this.props.setOptionsMode('attribution');
+											}}
+										>
+											{/* <span className="pt-icon-standard pt-icon-team" /> */}
+											{numAttributions} Contributor{numAttributions === 1 ? '' : 's'}
+										</a>
+									}
 								</div>
 							</div>
 						</div>

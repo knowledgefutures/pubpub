@@ -118,6 +118,17 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 		}).filter((item)=> {
 			return !item.tag || item.tag.isPublic || communityAdminData;
 		}),
+		discussionChannels: pub.discussionChannels.filter((channel)=> {
+			const isPrivate = channel.permissions === 'private';
+			const isParticipant = channel.participants.reduce((prev, curr)=> {
+				if (curr.userId === loginData.id) { return true; }
+				return prev;
+			}, false);
+			const permissionAsAdmin = channel.isCommunityAdminModerated && loginData.isAdmin;
+
+			if (!isPrivate || isParticipant || permissionAsAdmin) { return true; }
+			return false;
+		}),
 		isManager: isManager,
 		isDraftEditor: isDraftEditor,
 		isDraftViewer: isDraftViewer,

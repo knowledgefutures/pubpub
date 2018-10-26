@@ -18,11 +18,21 @@
 				margin-left: 1em;
 				white-space: nowrap;
 			}
+			.static {
+				text-transform: capitalize;
+			}
 		}
 	}
 	.cards-wrapper {
 		display: flex;
 		flex-wrap: wrap;
+	}
+	.access-preview {
+		display: flex;
+		align-items: center;
+		& > * {
+			margin-right: 1px;
+		}
 	}
 	.pt-checkbox {
 		margin-bottom: 0px;

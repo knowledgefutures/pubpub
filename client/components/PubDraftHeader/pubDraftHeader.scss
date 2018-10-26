@@ -19,6 +19,9 @@
 			.left-section {
 				flex-grow: 1;
 				flex-shrink: 1;
+				.pt-callout {
+					display: inline;
+				}
 			}
 			.right-section {
 

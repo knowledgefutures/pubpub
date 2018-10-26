@@ -252,6 +252,9 @@ class PubDraftHeader extends Component {
 				icon: <Icon icon="video" />
 			},
 		];
+
+		const viewOnly = !pubData.isDraftEditor && !pubData.isManager;
+
 		return (
 			<div className="pub-draft-header-component" ref={this.headerRef}>
 				<div className={`wrapper ${this.state.isFixed ? 'fixed' : ''}`}>
@@ -272,67 +275,76 @@ class PubDraftHeader extends Component {
 								}
 							</div>
 							<div className="col-12">
-								<div className="left-section">
-									{formattingItems.map((item)=> {
-										const menuItem = menuItemsObject[item.key] || {};
-										return (
-											<Button
-												key={item.key}
-												className="pt-minimal menu-button"
-												icon={item.icon}
-												active={menuItem.isActive}
-												onClick={menuItem.run}
-												onMouseDown={(evt)=> {
-													evt.preventDefault();
-												}}
-											/>
-										);
-									})}
-									<DropdownButton
-										label="Insert"
-										isSmall={true}
-										isMinimal={true}
-										isOpen={this.state.insertFunction ? true : undefined}
-										key={this.state.randKey}
-									>
-										{insertItems.map((item)=> {
-											const uploadTypes = {
-												image: 'image/png, image/jpeg, image/gif',
-												video: 'video/mp4, video/webm',
-												file: '*',
-											};
+								{viewOnly &&
+									<div className="left-section">
+										<div className="pt-callout pt-intent-warning">
+											<b>Read Only</b> You have view permissions to the working draft but cannot edit it.
+										</div>
+									</div>
+								}
+								{!viewOnly &&
+									<div className="left-section">
+										{formattingItems.map((item)=> {
+											const menuItem = menuItemsObject[item.key] || {};
 											return (
-												<label
-													className={`pt-menu-item insert-menu-item ${this.state.insertFunction ? '' : ' pt-popover-dismiss'}`}
+												<Button
 													key={item.key}
-													onClick={()=> {
-														this.handleInsertFunction(item);
+													className="pt-minimal menu-button"
+													icon={item.icon}
+													active={menuItem.isActive}
+													onClick={menuItem.run}
+													onMouseDown={(evt)=> {
+														evt.preventDefault();
 													}}
-													id={`label-${item.key}`}
-													htmlFor={item.key}
-												>
-													{item.icon}
-													<span>{item.title}</span>
-													{!!this.state.insertLoading && item.key === this.state.insertKey &&
-														<span className="pt-menu-item-label">
-															<Spinner small={true} />
-														</span>
-													}
-													{Object.keys(uploadTypes).indexOf(item.key) > -1 &&
-														<input
-															type="file"
-															id={item.key}
-															name={item.key}
-															style={{ display: 'none' }}
-															onChange={this.handleFileSelect}
-															accept={uploadTypes[item.key]}
-														/>
-													}
-												</label>
+												/>
 											);
 										})}
-									</DropdownButton>
-								</div>
+										<DropdownButton
+											label="Insert"
+											isSmall={true}
+											isMinimal={true}
+											isOpen={this.state.insertFunction ? true : undefined}
+											key={this.state.randKey}
+										>
+											{insertItems.map((item)=> {
+												const uploadTypes = {
+													image: 'image/png, image/jpeg, image/gif',
+													video: 'video/mp4, video/webm',
+													file: '*',
+												};
+												return (
+													<label
+														className={`pt-menu-item insert-menu-item ${this.state.insertFunction ? '' : ' pt-popover-dismiss'}`}
+														key={item.key}
+														onClick={()=> {
+															this.handleInsertFunction(item);
+														}}
+														id={`label-${item.key}`}
+														htmlFor={item.key}
+													>
+														{item.icon}
+														<span>{item.title}</span>
+														{!!this.state.insertLoading && item.key === this.state.insertKey &&
+															<span className="pt-menu-item-label">
+																<Spinner small={true} />
+															</span>
+														}
+														{Object.keys(uploadTypes).indexOf(item.key) > -1 &&
+															<input
+																type="file"
+																id={item.key}
+																name={item.key}
+																style={{ display: 'none' }}
+																onChange={this.handleFileSelect}
+																accept={uploadTypes[item.key]}
+															/>
+														}
+													</label>
+												);
+											})}
+										</DropdownButton>
+									</div>
+								}
 								<div className="right-section">
 									{Object.keys(uniqueActiveCollaborators).map((key)=> {
 										return uniqueActiveCollaborators[key];

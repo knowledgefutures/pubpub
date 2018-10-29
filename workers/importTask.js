@@ -31,9 +31,7 @@ const processFootnotes = (inputHtml)=> {
 		htmlObject(elem).contents().find('a.footnote-back').remove();
 		footnoteContents.push(htmlObject(elem).contents().html());
 	});
-	console.log(footnoteContents);
 	htmlObject('a.footnote-ref').each((index, elem)=> {
-		console.log(footnoteContents[index]);
 		htmlObject(elem).replaceWith(`<footnote data-value="${footnoteContents[index]}"></footnote>`);
 	});
 	htmlObject('section.footnotes').remove();

@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 import fs from 'fs';
 import request from 'request';
 import Promise from 'bluebird';
 import nodePandoc from 'node-pandoc';
 import tmp from 'tmp-promise';
 import AWS from 'aws-sdk';
+import cheerio from 'cheerio';
 import { generateHash } from '../server/utilities';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
@@ -20,6 +22,23 @@ tmp.setGracefulCleanup();
 const dataDir = process.env.NODE_ENV === 'production'
 	? '--data-dir=/app/.apt/usr/share/pandoc/data '
 	: '';
+
+
+const processFootnotes = (inputHtml)=> {
+	const htmlObject = cheerio.load(inputHtml);
+	const footnoteContents = [];
+	htmlObject('section.footnotes').find('li').each((index, elem)=> {
+		htmlObject(elem).contents().find('a.footnote-back').remove();
+		footnoteContents.push(htmlObject(elem).contents().html());
+	});
+	console.log(footnoteContents);
+	htmlObject('a.footnote-ref').each((index, elem)=> {
+		console.log(footnoteContents[index]);
+		htmlObject(elem).replaceWith(`<footnote data-value="${footnoteContents[index]}"></footnote>`);
+	});
+	htmlObject('section.footnotes').remove();
+	return htmlObject('body').html();
+};
 
 export default (sourceUrl)=> {
 	console.log('Got an import task for ', sourceUrl);
@@ -136,7 +155,12 @@ export default (sourceUrl)=> {
 		if (convertedHtml === true) { return { html: 'Error parsing file' }; }
 
 		/* Remove images from wrapped p-tags */
-		const cleanedConvertedHtml = convertedHtml.replace(/<p>\s*(<a .*>)?\s*(<img .* \/>)\s*(<\/a>)?\s*<\/p>/gi, '$1$2$3');
+		let cleanedConvertedHtml = convertedHtml.replace(/<p>\s*(<a .*>)?\s*(<img .* \/>)\s*(<\/a>)?\s*<\/p>/gi, '$1$2$3');
+		cleanedConvertedHtml = processFootnotes(cleanedConvertedHtml);
+
+		// TODO:
+		// footnotes
+		// citations
 
 		return { html: cleanedConvertedHtml };
 	});

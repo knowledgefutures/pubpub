@@ -1,4 +1,5 @@
-/* eslint-disable global-require no-console */
+/* eslint-disable global-require */
+/* eslint-disable no-console */
 import amqplib from 'amqplib';
 import exportTask from './exportTask';
 import importTask from './importTask';
@@ -82,13 +83,13 @@ amqplib.connect(process.env.CLOUDAMQP_URL).then((conn)=> {
 .catch(console.warn);
 
 
-// importTask('http://b5510955.ngrok.io/test2.docx')
+// importTask('http://fb6b5070.ngrok.io/test2.docx')
 // .then((result)=> {
-// 	console.log(result);
+// 	console.log(result.html);
 // })
 // .catch((err)=> {
 // 	console.error(err);
-// })
+// });
 // .finally(()=> {
 // 	process.exit();
 // });

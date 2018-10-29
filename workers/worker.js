@@ -1,4 +1,5 @@
-/* eslint-disable global-require no-console */
+/* eslint-disable global-require */
+/* eslint-disable no-console */
 import amqplib from 'amqplib';
 import exportTask from './exportTask';
 import importTask from './importTask';
@@ -80,6 +81,18 @@ amqplib.connect(process.env.CLOUDAMQP_URL).then((conn)=> {
 	});
 })
 .catch(console.warn);
+
+
+// importTask('http://fb6b5070.ngrok.io/test2.docx')
+// .then((result)=> {
+// 	console.log(result.html);
+// })
+// .catch((err)=> {
+// 	console.error(err);
+// });
+// .finally(()=> {
+// 	process.exit();
+// });
 
 
 // exportTask('3ecac2f5-8065-4bde-aa0e-c1ab222fd673', '427a3c55-993a-4083-918c-85c682bedccf', null, 'pdf')

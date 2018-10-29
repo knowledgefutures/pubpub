@@ -65,6 +65,7 @@ const Pricing = (props)=> {
 									<a href="mailto:team@pubpub.org?subject=Full%20Service%20Inquiry" target="_blank" rel="noopener noreferrer" className="pt-button pt-large pt-intent-primary">Get In Touch</a>
 								</div>
 							</div>
+							<p>Interested in an institutional or enterprise license for your organization? <a href="mailto:team@pubpub.org?subject=Institutional%20License">Get in touch</a>.</p>
 						</div>
 					</div>
 				</div>

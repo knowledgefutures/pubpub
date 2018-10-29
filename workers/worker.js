@@ -83,15 +83,12 @@ amqplib.connect(process.env.CLOUDAMQP_URL).then((conn)=> {
 .catch(console.warn);
 
 
-// importTask('http://fb6b5070.ngrok.io/test2.docx')
+// importTask('http://fb6b5070.ngrok.io/test.docx')
 // .then((result)=> {
 // 	console.log(result.html);
 // })
 // .catch((err)=> {
 // 	console.error(err);
-// });
-// .finally(()=> {
-// 	process.exit();
 // });
 
 

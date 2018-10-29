@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import fs from 'fs';
-import request from 'request';
+// import request from 'request';
 import Promise from 'bluebird';
 import nodePandoc from 'node-pandoc';
 import tmp from 'tmp-promise';
@@ -55,21 +55,12 @@ export default (sourceUrl)=> {
 	return tmp.file({ postfix: `.${extension}` })
 	.then((tmpFile)=> {
 		const streamToTmpFile = new Promise((resolve, reject)=> {
-			request.head(sourceUrl, (err)=> {
-				if (err) { reject(err); }
-
-				const stream = request(sourceUrl);
-				const writeStream = fs.createWriteStream(tmpFile.path)
-				.on('error', (writeErr)=> {
-					reject(writeErr);
-					stream.read();
-				});
-
-				stream.pipe(writeStream)
-				.on('close', ()=> {
-					resolve(tmpFile.path);
-				});
-			});
+			const writeStream = fs.createWriteStream(tmpFile.path);
+			s3bucket.getObject({ Key: sourceUrl.replace('https://assets.pubpub.org/', '') })
+			.createReadStream()
+			.on('end', () => { return resolve(tmpFile.path); })
+			.on('error', (error) => { return reject(error); })
+			.pipe(writeStream);
 		});
 		const tmpDir = tmp.dir().then((dir)=> {
 			return dir.path;

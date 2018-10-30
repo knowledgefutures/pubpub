@@ -24,18 +24,28 @@ const dataDir = process.env.NODE_ENV === 'production'
 	: '';
 
 
+const processImages = (inputHtml)=> {
+	/* Images are blocks and cannot be nested inside <p> or other tags. */
+	/* This moves the image to just before it's containing paragraph. */
+	const htmlContext = cheerio.load(inputHtml);
+	htmlContext('img').each((index, elem)=> {
+		return htmlContext(elem).parent().before(elem);
+	});
+	return htmlContext('body').html();
+};
+
 const processFootnotes = (inputHtml)=> {
-	const htmlObject = cheerio.load(inputHtml);
+	const htmlContext = cheerio.load(inputHtml);
 	const footnoteContents = [];
-	htmlObject('section.footnotes').find('li').each((index, elem)=> {
-		htmlObject(elem).contents().find('a.footnote-back').remove();
-		footnoteContents.push(htmlObject(elem).contents().html());
+	htmlContext('section.footnotes').find('li').each((index, elem)=> {
+		htmlContext(elem).contents().find('a.footnote-back').remove();
+		footnoteContents.push(htmlContext(elem).contents().html());
 	});
-	htmlObject('a.footnote-ref').each((index, elem)=> {
-		htmlObject(elem).replaceWith(`<footnote data-value="${footnoteContents[index]}"></footnote>`);
+	htmlContext('a.footnote-ref').each((index, elem)=> {
+		htmlContext(elem).replaceWith(`<footnote data-value="${footnoteContents[index]}"></footnote>`);
 	});
-	htmlObject('section.footnotes').remove();
-	return htmlObject('body').html();
+	htmlContext('section.footnotes').remove();
+	return htmlContext('body').html();
 };
 
 export default (sourceUrl)=> {
@@ -70,7 +80,10 @@ export default (sourceUrl)=> {
 	})
 	.then(([tmpFile, tmpDir])=> {
 		console.log('About to start pandoc');
-		const args = `${dataDir}-f ${extensionTypes[extension].format} -t html --extract-media=${tmpDir}`;
+		const extractMedia = extension === 'html'
+			? ''
+			: ` --extract-media=${tmpDir}`;
+		const args = `${dataDir}-f ${extensionTypes[extension].format} -t html${extractMedia}`;
 		return new Promise((resolve, reject)=> {
 			nodePandoc(tmpFile, args, (err, result)=> {
 				console.warn(err);
@@ -144,7 +157,8 @@ export default (sourceUrl)=> {
 		if (convertedHtml === true) { return { html: 'Error parsing file' }; }
 
 		/* Remove images from wrapped p-tags */
-		let cleanedConvertedHtml = convertedHtml.replace(/<p>\s*(<a .*>)?\s*(<img .* \/>)\s*(<\/a>)?\s*<\/p>/gi, '$1$2$3');
+		let cleanedConvertedHtml = processImages(convertedHtml);
+		// convertedHtml.replace(/<p>\s*(<a .*>)?\s*(<img .* \/>)\s*(<\/a>)?\s*<\/p>/gi, '$1$2$3');
 		cleanedConvertedHtml = processFootnotes(cleanedConvertedHtml);
 
 		// TODO:

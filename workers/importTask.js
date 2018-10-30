@@ -158,12 +158,7 @@ export default (sourceUrl)=> {
 
 		/* Remove images from wrapped p-tags */
 		let cleanedConvertedHtml = processImages(convertedHtml);
-		// convertedHtml.replace(/<p>\s*(<a .*>)?\s*(<img .* \/>)\s*(<\/a>)?\s*<\/p>/gi, '$1$2$3');
 		cleanedConvertedHtml = processFootnotes(cleanedConvertedHtml);
-
-		// TODO:
-		// footnotes
-		// citations
 
 		return { html: cleanedConvertedHtml };
 	});

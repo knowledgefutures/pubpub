@@ -244,7 +244,8 @@ class PubSideDiscussions extends Component {
 							key={`thread-${thread[0].id}`}
 							ref={threadRef}
 							style={{
-								display: isVisible ? 'block' : 'none',
+								opacity: isVisible ? 1 : 0,
+								pointerEvents: isVisible ? 'auto' : 'none',
 								position: 'absolute',
 								...threadPositionData.highlightCoords,
 								top: top,

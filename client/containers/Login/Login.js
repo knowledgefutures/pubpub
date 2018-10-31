@@ -20,27 +20,35 @@ class Login extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			email: '',
-			password: '',
 			loginLoading: false,
 			loginError: undefined,
 			logoutLoading: false,
 		};
+		/* We use refs rather than state to manage email */
+		/* and password form values because browser autocomplete */
+		/* does not play nicely with onChange events as of Oct 31, 2018 */
+		this.emailRef = React.createRef();
+		this.passwordRef = React.createRef();
 		this.onLoginSubmit = this.onLoginSubmit.bind(this);
 		this.onLogoutSubmit = this.onLogoutSubmit.bind(this);
-		this.onEmailChange = this.onEmailChange.bind(this);
-		this.onPasswordChange = this.onPasswordChange.bind(this);
 	}
 
 	onLoginSubmit(evt) {
 		evt.preventDefault();
+		if (!this.emailRef.current
+			|| !this.emailRef.current.value
+			|| !this.passwordRef.current
+			|| !this.passwordRef.current.value
+		) {
+			return this.setState({ loginLoading: false, loginError: 'Invalid Email or Password' });
+		}
 
 		this.setState({ loginLoading: true, loginError: undefined });
 		return apiFetch('/api/login', {
 			method: 'POST',
 			body: JSON.stringify({
-				email: this.state.email.toLowerCase(),
-				password: SHA3(this.state.password).toString(encHex),
+				email: this.emailRef.current.value.toLowerCase(),
+				password: SHA3(this.passwordRef.current.value).toString(encHex),
 			})
 		})
 		.then(()=> {
@@ -55,14 +63,6 @@ class Login extends Component {
 		this.setState({ logoutLoading: true });
 		apiFetch('/api/logout')
 		.then(()=> { window.location.href = '/'; });
-	}
-
-	onEmailChange(evt) {
-		this.setState({ email: evt.target.value });
-	}
-
-	onPasswordChange(evt) {
-		this.setState({ password: evt.target.value });
 	}
 
 	render() {
@@ -88,17 +88,15 @@ class Login extends Component {
 											<InputField
 												label="Email"
 												placeholder="example@email.com"
-												value={this.state.email}
-												onChange={this.onEmailChange}
 												autocomplete="username"
+												inputRef={this.emailRef}
 											/>
 											<InputField
 												label="Password"
 												type="password"
-												value={this.state.password}
-												onChange={this.onPasswordChange}
 												autocomplete="current-password"
 												helperText={<a href="/password-reset">Forgot Password</a>}
+												inputRef={this.passwordRef}
 											/>
 											<InputField error={this.state.loginError}>
 												<Button
@@ -107,7 +105,6 @@ class Login extends Component {
 													className="pt-button pt-intent-primary"
 													onClick={this.onLoginSubmit}
 													text="Login"
-													disabled={!this.state.email || !this.state.password}
 													loading={this.state.loginLoading}
 												/>
 											</InputField>

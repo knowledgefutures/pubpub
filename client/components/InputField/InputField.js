@@ -15,6 +15,7 @@ const propTypes = {
 	type: PropTypes.string,
 	autocomplete: PropTypes.string,
 	wrapperClassName: PropTypes.string,
+	inputRef: PropTypes.object,
 	onChange: PropTypes.func,
 	children: PropTypes.node,
 };
@@ -31,6 +32,7 @@ const defaultProps = {
 	type: 'text',
 	autocomplete: undefined,
 	wrapperClassName: '',
+	inputRef: undefined,
 	onChange: undefined,
 	children: undefined,
 };
@@ -58,6 +60,7 @@ const InputField = function(props) {
 							type={props.type}
 							autoComplete={props.autocomplete}
 							dir="auto"
+							ref={props.inputRef}
 						/>
 					}
 					{!props.children && props.isTextarea &&
@@ -70,6 +73,7 @@ const InputField = function(props) {
 							onChange={props.onChange}
 							type={props.type}
 							dir="auto"
+							ref={props.inputRef}
 						/>
 					}
 					<div className="pt-form-helper-text">{props.error || props.helperText}</div>

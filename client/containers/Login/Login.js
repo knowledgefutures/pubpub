@@ -24,6 +24,7 @@ class Login extends Component {
 			password: '',
 			loginLoading: false,
 			loginError: undefined,
+			logoutLoading: false,
 		};
 		this.onLoginSubmit = this.onLoginSubmit.bind(this);
 		this.onLogoutSubmit = this.onLogoutSubmit.bind(this);
@@ -51,6 +52,7 @@ class Login extends Component {
 	}
 
 	onLogoutSubmit() {
+		this.setState({ logoutLoading: true });
 		apiFetch('/api/logout')
 		.then(()=> { window.location.href = '/'; });
 	}
@@ -135,6 +137,7 @@ class Login extends Component {
 													className="pt-large"
 													text="Logout"
 													onClick={this.onLogoutSubmit}
+													loading={this.state.logoutLoading}
 												/>
 											</div>
 										}

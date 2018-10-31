@@ -40,7 +40,7 @@ const Explore = (props)=> {
 							return 0;
 						}).map((item)=> {
 							return (
-								<div className="col-3" key={`active-${item.id}`}>
+								<div className="col-4" key={`active-${item.id}`}>
 									<CommunityPreview
 										subdomain={item.subdomain}
 										domain={item.domain}
@@ -50,8 +50,6 @@ const Explore = (props)=> {
 										largeHeaderLogo={item.largeHeaderLogo}
 										accentColor={item.accentColor}
 										accentTextColor={item.accentTextColor}
-										numPubs={item.numPubs}
-										numDiscussions={item.numDiscussions}
 									/>
 								</div>
 							);

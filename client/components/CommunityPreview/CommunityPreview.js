@@ -25,8 +25,6 @@ const defaultProps = {
 	largeHeaderBackground: undefined,
 	accentColor: '#000',
 	accentTextColor: '#FFF',
-	numPubs: undefined,
-	numDiscussions: undefined,
 };
 
 const CommunityPreview = function(props) {
@@ -54,26 +52,10 @@ const CommunityPreview = function(props) {
 		backgroundImage: props.largeHeaderBackground ? `url("${resizedHeaderBackground}")` : '',
 	};
 	const communityUrl = props.domain ? `https://${props.domain}` : `https://${props.subdomain}.pubpub.org`;
-
-	let statsHtml = '';
-	if(typeof(props.numPubs) != 'undefined' || typeof(props.numDiscussions) != 'undefined') {
-		statsHtml = (
-			<div className="stats">
-							<div className="stat">
-								<Icon icon="document" /> {props.numPubs}
-							</div>
-							<div className="stat">
-								<Icon icon="chat" /> {props.numDiscussions}
-							</div>
-						</div>
-		);
-	}
-
 	return (
 		<a className="community-preview-component" href={communityUrl} style={backgroundStyle}>
 			{logoHtml}
 			<div className="description">{props.description}</div>
-			{statsHtml}
 		</a>
 	);
 };

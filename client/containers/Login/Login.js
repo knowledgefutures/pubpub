@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
-import { Button } from '@blueprintjs/core';
+import { AnchorButton, Button, NonIdealState } from '@blueprintjs/core';
+import Avatar from 'components/Avatar/Avatar';
 import InputField from 'components/InputField/InputField';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import { apiFetch, hydrateWrapper } from 'utilities';
@@ -25,9 +26,11 @@ class Login extends Component {
 			loginError: undefined,
 		};
 		this.onLoginSubmit = this.onLoginSubmit.bind(this);
+		this.onLogoutSubmit = this.onLogoutSubmit.bind(this);
 		this.onEmailChange = this.onEmailChange.bind(this);
 		this.onPasswordChange = this.onPasswordChange.bind(this);
 	}
+
 	onLoginSubmit(evt) {
 		evt.preventDefault();
 
@@ -42,9 +45,14 @@ class Login extends Component {
 		.then(()=> {
 			window.location.href = this.props.locationData.query.redirect || '/';
 		})
-		.catch((err)=> {
+		.catch(()=> {
 			this.setState({ loginLoading: false, loginError: 'Invalid Email or Password' });
 		});
+	}
+
+	onLogoutSubmit() {
+		apiFetch('/api/logout')
+		.then(()=> { window.location.href = '/'; });
 	}
 
 	onEmailChange(evt) {
@@ -68,40 +76,70 @@ class Login extends Component {
 					<div className="container small">
 						<div className="row">
 							<div className="col-12 pt-elevation">
-								<h1>Login</h1>
-								{!this.props.locationData.isBasePubPub &&
-									<p>Login to <b>{this.props.communityData.title}</b> using your <a href="https://www.pubpub.org">PubPub</a> account.</p>
-								}
-								<form onSubmit={this.onLoginSubmit}>
-									<InputField
-										label="Email"
-										placeholder="example@email.com"
-										value={this.state.email}
-										onChange={this.onEmailChange}
-										autocomplete="username"
-									/>
-									<InputField
-										label="Password"
-										type="password"
-										value={this.state.password}
-										onChange={this.onPasswordChange}
-										autocomplete="current-password"
-										helperText={<a href="/password-reset">Forgot Password</a>}
-									/>
-									<InputField error={this.state.loginError}>
-										<Button
-											name="login"
-											type="submit"
-											className="pt-button pt-intent-primary"
-											onClick={this.onLoginSubmit}
-											text="Login"
-											disabled={!this.state.email || !this.state.password}
-											loading={this.state.loginLoading}
-										/>
-									</InputField>
-								</form>
+								{!this.props.loginData.id &&
+									<div>
+										<h1>Login</h1>
+										{!this.props.locationData.isBasePubPub &&
+											<p>Login to <b>{this.props.communityData.title}</b> using your <a href="https://www.pubpub.org">PubPub</a> account.</p>
+										}
+										<form onSubmit={this.onLoginSubmit}>
+											<InputField
+												label="Email"
+												placeholder="example@email.com"
+												value={this.state.email}
+												onChange={this.onEmailChange}
+												autocomplete="username"
+											/>
+											<InputField
+												label="Password"
+												type="password"
+												value={this.state.password}
+												onChange={this.onPasswordChange}
+												autocomplete="current-password"
+												helperText={<a href="/password-reset">Forgot Password</a>}
+											/>
+											<InputField error={this.state.loginError}>
+												<Button
+													name="login"
+													type="submit"
+													className="pt-button pt-intent-primary"
+													onClick={this.onLoginSubmit}
+													text="Login"
+													disabled={!this.state.email || !this.state.password}
+													loading={this.state.loginLoading}
+												/>
+											</InputField>
+										</form>
 
-								<a href="/signup" className="switch-message">Don't have a PubPub account? Click to Signup</a>
+										<a href="/signup" className="switch-message">Don't have a PubPub account? Click to Signup</a>
+									</div>
+								}
+								{this.props.loginData.id &&
+									<NonIdealState
+										visual={
+											<Avatar
+												userInitials={this.props.loginData.initials}
+												userAvatar={this.props.loginData.avatar}
+												width={100}
+											/>
+										}
+										title="Already Logged In"
+										action={
+											<div>
+												<AnchorButton
+													className="pt-large"
+													text="View Profile"
+													href={`/user/${this.props.loginData.slug}`}
+												/>
+												<Button
+													className="pt-large"
+													text="Logout"
+													onClick={this.onLogoutSubmit}
+												/>
+											</div>
+										}
+									/>
+								}
 							</div>
 						</div>
 					</div>

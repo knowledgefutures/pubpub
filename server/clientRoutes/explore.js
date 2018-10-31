@@ -16,7 +16,7 @@ app.get('/explore', (req, res, next)=> {
 		],
 		where: {
 			createdAt: {
-				[sequelize.Op.lt]: new Date(new Date().setDate(new Date().getDate()-30))
+				[sequelize.Op.lt]: req.query.show === 'all' ? new Date() : new Date(new Date().setDate(new Date().getDate()-30))
 			}
 		}
 	});

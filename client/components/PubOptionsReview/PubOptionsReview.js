@@ -339,7 +339,7 @@ class PubOptionsReview extends Component {
 							</div>
 							{reviewItem.versionId &&
 								<div className="pt-callout">
-									Submitted Version {dateFormat(version.createdAt, 'mmm dd, yyyy · h:MMTT')}
+									Submitted <a href={`/pub/${pubData.slug}?version=${version.id}`}>Version {dateFormat(version.createdAt, 'mmm dd, yyyy · h:MMTT')}</a>
 								</div>
 							}
 							{reviewItem.content &&

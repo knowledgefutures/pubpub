@@ -35,8 +35,10 @@ const Explore = (props)=> {
 						{exploreData.activeCommunities.filter((item)=> {
 							return item;
 						}).sort((foo, bar)=> {
-							if (foo.title < bar.title) { return -1; }
-							if (foo.title > bar.title) { return 1; }
+							let fooDate = new Date(foo.updatedAt);
+							let barDate = new Date(bar.updatedAt);
+							if (fooDate < barDate) { return 1; }
+							if (fooDate > barDate) { return -1; }
 							return 0;
 						}).map((item)=> {
 							return (

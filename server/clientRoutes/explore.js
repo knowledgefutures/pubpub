@@ -12,15 +12,13 @@ app.get('/explore', (req, res, next)=> {
 	const getActiveCommunities = Community.findAll({
 		attributes: [
 			'id', 'subdomain', 'domain', 'title', 'description', 'largeHeaderBackground',
-			'largeHeaderLogo', 'accentColor', 'accentTextColor',
-			[sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('pubs.id'))), 'numPubs'],
-			[sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('discussions.id'))), 'numDiscussions'],
+			'largeHeaderLogo', 'accentColor', 'accentTextColor', 'createdAt', 'updatedAt'
 		],
-		group: ['Community.id'],
-		include: [
-			{ model: Pub, as: 'pubs', attributes: [] },
-			{ model: Discussion, as: 'discussions', attributes: [] }
-		],
+		where: {
+			createdAt: {
+				[sequelize.Op.lt]: req.query.show === 'all' ? new Date() : new Date(new Date().setDate(new Date().getDate()-30))
+			}
+		}
 	});
 
 	return Promise.all([getInitialData(req), getActiveCommunities])

@@ -14,6 +14,8 @@ const operatorsAliases = {
 	$in: Sequelize.Op.in,
 	$not: Sequelize.Op.not,
 	$ne: Sequelize.Op.ne,
+	$lt: Sequelize.Op.lt,
+	$gt: Sequelize.Op.gt,
 };
 const useSSL = process.env.DATABASE_URL.indexOf('localhost:') === -1;
 const sequelize = new Sequelize(process.env.DATABASE_URL, {

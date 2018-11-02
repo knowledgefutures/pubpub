@@ -13,9 +13,7 @@ const propTypes = {
 	largeHeaderLogo: PropTypes.string,
 	largeHeaderBackground: PropTypes.string,
 	accentColor: PropTypes.string,
-	accentTextColor: PropTypes.string,
-	numPubs: PropTypes.string,
-	numDiscussions: PropTypes.string,
+	accentTextColor: PropTypes.string
 };
 
 const defaultProps = {
@@ -27,34 +25,29 @@ const defaultProps = {
 	largeHeaderBackground: undefined,
 	accentColor: '#000',
 	accentTextColor: '#FFF',
-	numPubs: undefined,
-	numDiscussions: undefined,
 };
 
 const CommunityPreview = function(props) {
 	const resizedHeaderLogo = getResizedUrl(props.largeHeaderLogo, 'fit-in', '600x0');
 	const resizedHeaderBackground = getResizedUrl(props.largeHeaderBackground, 'fit-in', '800x0');
+	const logoStyle = { color: props.accentTextColor };
 	const backgroundStyle = {
 		backgroundColor: props.accentColor,
 		color: props.accentTextColor,
 		backgroundImage: props.largeHeaderBackground ? `url("${resizedHeaderBackground}")` : '',
 	};
 	const communityUrl = props.domain ? `https://${props.domain}` : `https://${props.subdomain}.pubpub.org`;
-
 	return (
 		<a className="community-preview-component" href={communityUrl} style={backgroundStyle}>
 			<div className="logo-wrapper">
-				<img className="logo" src={resizedHeaderLogo} alt={props.title} />
+				{props.largeHeaderLogo &&
+					<img className="logo" src={resizedHeaderLogo} alt={props.title} />
+				}
+				{!props.largeHeaderLogo &&
+					<h3 style={logoStyle}>{props.title}</h3>
+				}
 			</div>
 			<div className="description">{props.description}</div>
-			<div className="stats">
-				<div className="stat">
-					<Icon icon="document" /> {props.numPubs}
-				</div>
-				<div className="stat">
-					<Icon icon="chat" /> {props.numDiscussions}
-				</div>
-			</div>
 		</a>
 	);
 };

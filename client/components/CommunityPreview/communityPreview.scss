@@ -5,23 +5,24 @@
 	background-color: #F0F0F0;
 	padding: 1em;
 	// border: 1px solid #E5E5E5;
-	// border-radius: 2px;
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0), 0 1px 1px rgba(16, 22, 26, 0.2);
 	display: block;
 	text-decoration: none;
-	height: 300px;
+	height: 200px;
 	display: flex;
 	flex-direction: column;
 	&:hover {
 		text-decoration: none;
-		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 1px 1px rgba(16, 22, 26, 0.2), 0 2px 6px rgba(16, 22, 26, 0.2);
+		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 4px 8px rgba(16, 22, 26, 0.2), 0 18px 46px 6px rgba(16, 22, 26, 0.2);
 	}
 	.logo-wrapper {
-		flex-grow: 1;
-		flex-shrink: 1;
+		margin: auto auto;
+		text-align: center;
 	}
 	.logo {
 		max-width: 100%;
-		max-height: 150px;
+		max-height: 55px;
 	}
 	.stat {
 		display: inline-block;
@@ -40,6 +41,7 @@
 			height: 1.5em;
 			width: calc(95% - 2em);
 			margin: 0px 1em 1em;
+			overflow: hidden;
 		}
 	}
 

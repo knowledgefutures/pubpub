@@ -33,16 +33,14 @@ const Explore = (props)=> {
 
 
 						{exploreData.activeCommunities.filter((item)=> {
-							/* TODO: This is temporary while we prep frankenbook */
-							if (item.subdomain === 'frankenbook2') { return false; }
-							return item.numDiscussions;
+							return item;
 						}).sort((foo, bar)=> {
-							if (foo.title < bar.title) { return -1; }
-							if (foo.title > bar.title) { return 1; }
+							if (foo.updatedAt < bar.updatedAt) { return 1; }
+							if (foo.updatedAt > bar.updatedAt) { return -1; }
 							return 0;
 						}).map((item)=> {
 							return (
-								<div className="col-3" key={`active-${item.id}`}>
+								<div className="col-4" key={`active-${item.id}`}>
 									<CommunityPreview
 										subdomain={item.subdomain}
 										domain={item.domain}
@@ -52,8 +50,6 @@ const Explore = (props)=> {
 										largeHeaderLogo={item.largeHeaderLogo}
 										accentColor={item.accentColor}
 										accentTextColor={item.accentTextColor}
-										numPubs={item.numPubs}
-										numDiscussions={item.numDiscussions}
 									/>
 								</div>
 							);

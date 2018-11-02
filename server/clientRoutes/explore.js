@@ -3,7 +3,7 @@ import React from 'react';
 import Explore from 'containers/Explore/Explore';
 import Html from '../Html';
 import app from '../server';
-import { Community, Pub, Discussion, sequelize } from '../models';
+import { Community } from '../models';
 import { hostIsValid, renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utilities';
 
 app.get('/explore', (req, res, next)=> {
@@ -12,15 +12,15 @@ app.get('/explore', (req, res, next)=> {
 	const getActiveCommunities = Community.findAll({
 		attributes: [
 			'id', 'subdomain', 'domain', 'title', 'description', 'largeHeaderBackground',
-			'largeHeaderLogo', 'accentColor', 'accentTextColor',
-			[sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('pubs.id'))), 'numPubs'],
-			[sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('discussions.id'))), 'numDiscussions'],
+			'largeHeaderLogo', 'accentColor', 'accentTextColor', 'createdAt', 'updatedAt'
 		],
-		group: ['Community.id'],
-		include: [
-			{ model: Pub, as: 'pubs', attributes: [] },
-			{ model: Discussion, as: 'discussions', attributes: [] }
-		],
+		where: {
+			createdAt: {
+				$lt: req.query.show === 'all'
+					? new Date()
+					: new Date(new Date().setDate(new Date().getDate() - 30))
+			}
+		}
 	});
 
 	return Promise.all([getInitialData(req), getActiveCommunities])

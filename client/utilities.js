@@ -88,9 +88,7 @@ export const apiFetch = function(path, opts) {
 export const getFirebaseConfig = function() {
 	// TODO: Remove this once we don't need dev.pubpub.org to point to v4-dev firebase
 	if (typeof window === 'undefined'
-		|| window.location.origin.indexOf('dev.pubpub.org') > -1
-		|| window.location.origin.indexOf('testing.pubpub.org') > -1
-		|| window.location.origin.indexOf('localhost:') > -1
+		|| window.location.origin.indexOf('pubpub-v4-dev.herokuapp.com') > -1
 	) {
 		return {
 			apiKey: 'AIzaSyBNlAp1EW5zhiPS8HWwXwZ8WMs-EdkMmKI',

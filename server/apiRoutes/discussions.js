@@ -87,7 +87,7 @@ app.put('/api/discussions', (req, res)=> {
 
 	// Find if community admins are allowed to manage pubs
 	const findPub = Pub.findOne({
-		where: { id: req.body.pubId, adminPermissions: 'manage' },
+		where: { id: req.body.pubId, isCommunityAdminManaged: true },
 		raw: true,
 	});
 

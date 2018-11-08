@@ -20,6 +20,7 @@ require('./reviews.js');
 require('./rss.js');
 require('./search');
 require('./signup');
+require('./subscribe');
 require('./tags');
 require('./uploadPolicy.js');
 require('./users');

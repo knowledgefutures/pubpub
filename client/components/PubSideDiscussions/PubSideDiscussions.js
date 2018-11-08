@@ -38,6 +38,7 @@ class PubSideDiscussions extends Component {
 			activeHighlightId: undefined,
 			threadPositionData: {},
 			newThreadTopPos: undefined,
+			newIsLoading: false,
 		};
 		this.wrapperRef = React.createRef();
 		this.threadRefs = {};
@@ -203,13 +204,20 @@ class PubSideDiscussions extends Component {
 						className="new-discussions"
 					>
 						<DiscussionInput
-							handleSubmit={this.props.onPostDiscussion}
+							handleSubmit={(data)=> {
+								this.setState({ newIsLoading: true });
+								this.props.onPostDiscussion(data)
+								.then(()=> {
+									this.setState({ newIsLoading: false });
+								});
+							}}
 							// submitIsLoading={this.state.isLoadingReply}
 							getHighlightContent={this.props.getHighlightContent}
 							inputKey="side-new-thread"
 							showTitle={false}
 							activeDiscussionChannel={this.props.activeDiscussionChannel}
 							initialContent={this.props.initialContent}
+							submitIsLoading={this.state.newIsLoading}
 							isNew={true}
 							leftButtons={
 								<Button

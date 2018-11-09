@@ -1,24 +1,39 @@
 .footer-component {
+	padding: 2.5em 0;
+	.right {
+		text-align: right;
+	}
+	img.logo {
+		max-width: 100px;
+		height: auto;
+	}
 	margin-top: 2em;
 	ul {
-		text-align: right;
 		list-style: none;
 		margin: 0px;
-		padding: 2.5em 0px;
+		padding: 0px;
 		width: 100%;
 		white-space: nowrap;
+		&.social-list {
+			margin: 1em 0;
+			li {
+				display: inline-block;
+				margin-right: 0.75em;
+			}
+		}
 	}
 	li {
 		text-decoration: inherit;
-		padding: 0em 0em 0em 2em;
-		display: inline-block;
+		display: block;
+		h4 {
+			color: #fff;
+		}
 	}
 	a {
 		color: inherit;
 		user-select: none;
 	}
 	&.base-pubpub {
-		
 		ul {
 			border-top: 1px solid #CCC;
 			padding: 1em 0em;
@@ -40,5 +55,5 @@
 @media print {
 	.footer-component {
 		display: none;
-	}	
+	}
 }

@@ -43,12 +43,29 @@
 
 @media only screen and (max-width: 720px) {  /* Used to be 45em */
 	.footer-component {
+		.row {
+			display: flex;
+			flex-direction: column;
+			> :nth-child(1) {
+				order: 2;
+				padding-top: 2em;
+				border-top: 1px solid;
+			}
+			> :nth-child(2) {order: 3}
+			> :nth-child(3) {order: 4}
+			> :nth-child(4) {order: 1}
+		}
+		text-align: center;
 		ul {
 			text-align: center;
 		}
 		li {
 			padding: 1em 0em;
 			display: block;
+		}
+		img.logo {
+			max-width: 100px;
+			height: auto;
 		}
 	}
 }

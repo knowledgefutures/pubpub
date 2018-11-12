@@ -16,13 +16,6 @@ const LayoutHtml = function(props) {
 		<div className="layout-html-component">
 			<div className="block-content">
 				<div className="container">
-					{/* props.content.title &&
-						<div className="row">
-							<div className="col-12">
-								<h2 className="block-title">{props.content.title}</h2>
-							</div>
-						</div>
-					*/}
 					<div className="row">
 						<div className="col-12">
 							<div dangerouslySetInnerHTML={{ __html: props.content.html }} />

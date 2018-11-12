@@ -5,60 +5,11 @@
 			margin: 0 auto;
 		}
 	}
-	// .create-pub-wrapper {
-	// 	// float: right;
-	// 	// text-align: right;
-	// 	// margin-bottom: 2em;
-	// 	.col-12 {
-	// 		margin-top: 0em;
-	// 		margin-bottom: 0em;
-	// 		min-height: 0px;
-	// 		position: relative;
-	// 	}
-	// 	.pt-button {
-	// 		position: absolute;
-	// 		top: 2.5em;
-	// 		right: 0;
-	// 		white-space: nowrap;
-	// 	}
-	// 	// .instructions-link {
-	// 	// 	display: block;
-	// 	// 	opacity: 0.85;
-	// 	// 	padding-top: 0.25em;
-	// 	// }
-	// }
-	
+
 	.pub-preview-component {
 		margin-bottom: 2em;
 	}
-	// .pt-non-ideal-state {
-	// 	padding: 8em 0em 16em;
-	// }
-	// .welcome-message {
-	// 	margin: 0 auto;
-	// 	max-width: 800px;
-	// 	padding: 4em 1em;
-	// 	font-size: 18px;
-	// 	h2 {
-	// 		font-size: 2em;
-	// 		font-weight: 800;
-	// 		text-align: center;
-	// 		margin-bottom: 1em;
-	// 		line-height: 1;
-	// 		display: flex;
-	// 		span:nth-of-type(2) {
-	// 			padding: 0em 0.5em;
-	// 			flex-grow: 1;
-	// 			flex-shrink: 1;
-	// 		}
-	// 	}
-	// 	li {
-	// 		margin: 1em 0em;
-	// 	}
-	// 	a {
-	// 		text-decoration: underline;
-	// 	}
-	// }
+
 	.block-content {
 		margin-top: 2em;
 		h1 {
@@ -75,10 +26,7 @@
 			line-height: 1em;
 		}
 	}
-	// .description {
-	// 	max-width: 800px;
-	// 	line-height: 1.4;
-	// }
+
 	.layout-text-component, .layout-html-component {
 		a {
 			text-decoration: underline;
@@ -88,19 +36,4 @@
 		    line-height: 1.6
 		}
 	}
-	// .layout-drafts {
-	// 	margin: 2em 0em;
-	// 	.drafts-header {
-	// 		opacity: 0.85;
-	// 		border-top: 1px solid #EEE;
-	// 		border-bottom: 1px solid #EEE;
-	// 		text-align: center;
-	// 		padding: 2em 0em;
-	// 		background-color: #F9F9F9;
-	// 	}
-	// 	// .pub-preview {
-	// 	// 	margin-bottom: 2em;
-	// 	// 	min-height: auto;
-	// 	// }
-	// }
 }

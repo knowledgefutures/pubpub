@@ -16,20 +16,11 @@ const LayoutText = function(props) {
 	if (!props.content.text) { return null; }
 	const wrapperStyle = {
 		textAlign: props.content.align || 'left',
-		// maxWidth: props.content.width === 'narrow' ? '800px' : 'none',
-		// margin: props.content.align === 'center' && props.content.width === 'narrow' ? '0 auto' : '0',
 	};
 	return (
 		<div className="layout-text-component">
 			<div className="block-content">
 				<div className="container">
-					{/* props.content.title &&
-						<div className="row">
-							<div className="col-12">
-								<h2 className="block-title">{props.content.title}</h2>
-							</div>
-						</div>
-					*/}
 					<div className="row">
 						<div className="col-12">
 							<div style={wrapperStyle}>

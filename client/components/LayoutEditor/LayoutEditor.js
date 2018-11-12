@@ -42,13 +42,10 @@ class LayoutEditor extends Component {
 				tagIds: [],
 			},
 			text: {
-				title: '',
 				align: 'left',
-				width: 'wide',
 				text: undefined,
 			},
 			html: {
-				title: '',
 				html: '',
 			},
 			banner: {

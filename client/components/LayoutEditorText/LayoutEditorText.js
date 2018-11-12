@@ -8,7 +8,7 @@ require('./layoutEditorText.scss');
 
 const propTypes = {
 	onChange: PropTypes.func.isRequired,
-	onRemove: PropTypes.func.isRequired,
+	// onRemove: PropTypes.func.isRequired,
 	layoutIndex: PropTypes.number.isRequired,
 	content: PropTypes.object.isRequired,
 	/* Expected content */
@@ -23,7 +23,7 @@ class LayoutEditorText extends Component {
 			key: `text-block-${props.layoutIndex}`,
 			initialContent: this.props.content.text || undefined,
 		};
-		this.handleRemove = this.handleRemove.bind(this);
+		// this.handleRemove = this.handleRemove.bind(this);
 		this.setAlignLeft = this.setAlignLeft.bind(this);
 		this.setAlignCenter = this.setAlignCenter.bind(this);
 		// this.setWidthNarrow = this.setWidthNarrow.bind(this);
@@ -68,9 +68,9 @@ class LayoutEditorText extends Component {
 		});
 	}
 
-	handleRemove() {
-		this.props.onRemove(this.props.layoutIndex);
-	}
+	// handleRemove() {
+	// 	this.props.onRemove(this.props.layoutIndex);
+	// }
 
 	// changeTitle(evt) {
 	// 	this.props.onChange(this.props.layoutIndex, {

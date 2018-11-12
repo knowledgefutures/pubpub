@@ -29,16 +29,11 @@
 	}
 	.block-content {
 		padding: 1em 0em;
-		h2.block-title {
-			margin: 0px;
-			font-size: 28px;
-			font-weight: 800;
-		}
-		.layout-editor-text {
-			a {
-				text-decoration: underline;
-			}
-		}
+		// h2.block-title {
+		// 	margin: 0px;
+		// 	font-size: 28px;
+		// 	font-weight: 800;
+		// }
 		textarea {
 			width: 100%;
 			resize: vertical;
@@ -48,5 +43,22 @@
 			padding: 0.5em;
 		}
 	}
+	.layout-editor-text-component, .layout-editor-html-component {
+		h1 {
+			font-size: 32px;
+			font-weight: 800;
+		}
+		h2 {
+			font-size: 28px;
+			font-weight: 800;
+		}
+		h1, h2, h3, h4, h5, h6 {
+			clear: both;
+		}
+		a {
+			text-decoration: underline;
+		}
+	}
+	
 }
 

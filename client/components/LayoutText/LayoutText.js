@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import Editor from '@pubpub/editor';
 import { getResizedUrl } from 'utilities';
 
-require('./layoutText.scss');
-
 const propTypes = {
 	content: PropTypes.object.isRequired,
 	/* Expected content */

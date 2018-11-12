@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import PubPreview from 'components/PubPreview/PubPreview';
 
-require('./layoutPubs.scss');
-
 const propTypes = {
 	layoutIndex: PropTypes.number.isRequired,
 	content: PropTypes.object.isRequired,

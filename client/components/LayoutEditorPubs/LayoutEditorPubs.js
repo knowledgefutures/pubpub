@@ -137,10 +137,10 @@ class LayoutEditorPubs extends Component {
 			<div className="layout-editor-pubs-component">
 				<div className="block-header">
 					<div className="pt-form-group">
-						<label htmlFor={`section-title-${this.props.layoutIndex}`}>Pubs Section Title</label>
+						<label htmlFor={`section-title-${this.props.layoutIndex}`}>Title</label>
 						<input id={`section-title-${this.props.layoutIndex}`} type="text" className="pt-input" value={this.props.content.title} onChange={this.changeTitle} />
 					</div>
-					<div className="spacer" />
+					{/* <div className="spacer" /> */}
 					<div className="pt-form-group">
 						<label htmlFor={`section-tag-${this.props.layoutIndex}`}>Use Tag</label>
 						<div className="pt-button-group pt-select">

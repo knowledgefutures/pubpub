@@ -58,6 +58,7 @@ class LayoutBanner extends Component {
 			minHeight: '200px',
 			display: 'flex',
 			alignItems: 'center',
+			maxWidth: 'none',
 		};
 		return (
 			<div className="layout-banner-component">

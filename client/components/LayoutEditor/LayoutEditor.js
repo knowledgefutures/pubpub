@@ -5,8 +5,6 @@ import LayoutEditorPubs from 'components/LayoutEditorPubs/LayoutEditorPubs';
 import LayoutEditorText from 'components/LayoutEditorText/LayoutEditorText';
 import LayoutEditorHtml from 'components/LayoutEditorHtml/LayoutEditorHtml';
 import LayoutEditorBanner from 'components/LayoutEditorBanner/LayoutEditorBanner';
-// import LayoutEditorCreatePub from 'components/LayoutEditorCreatePub/LayoutEditorCreatePub';
-// import LayoutEditorDrafts from 'components/LayoutEditorDrafts/LayoutEditorDrafts';
 import { Button } from '@blueprintjs/core';
 import { generateHash, generateRenderLists } from 'utilities';
 
@@ -63,15 +61,6 @@ class LayoutEditor extends Component {
 				buttonText: '',
 				defaultTagIds: [],
 			},
-			// createPub: {
-			// 	text: '',
-			// 	align: 'left',
-			// 	size: 'standard',
-			// 	defaultTags: [],
-			// },
-			// drafts: {
-			// 	title: 'Open Drafts'
-			// },
 		};
 		newLayout.splice(index, 0, {
 			id: generateHash(8),
@@ -207,15 +196,6 @@ class LayoutEditor extends Component {
 										communityData={this.props.communityData}
 									/>
 								}
-								{/* item.type === 'createPub' &&
-									<LayoutEditorCreatePub
-										key={`item-${item.id}`}
-										onChange={this.handleChange}
-										onRemove={this.handleRemove}
-										layoutIndex={index}
-										content={item.content}
-									/>
-								*/}
 							</div>
 							<LayoutEditorInsert
 								key={`insert-${item.id}`}

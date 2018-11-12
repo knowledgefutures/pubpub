@@ -11,7 +11,7 @@ const emailHash = (email) => {
 	return md5(email.toLowerCase);
 };
 
-export const subscribeUser = (email, list) => {
+export const subscribeUser = (email, list, tags) => {
 	const subHash = emailHash(email);
 	const options = {
 		method: 'PUT',
@@ -22,7 +22,8 @@ export const subscribeUser = (email, list) => {
 		uri: `${base}/${list}/members/${subHash}`,
 		body: {
 			email_address: email,
-			status_if_new: 'pending'
+			status_if_new: 'pending',
+			tags: tags
 		},
 		json: true
 	};

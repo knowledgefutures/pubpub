@@ -62,7 +62,7 @@ app.put('/api/pages', (req, res)=> {
 	// Filter to only allow certain fields to be updated
 	const updatedPage = {};
 	Object.keys(req.body).forEach((key)=> {
-		if (['title', 'slug', 'description', 'isPublic', 'layout'].indexOf(key) > -1) {
+		if (['title', 'slug', 'description', 'isPublic', 'layout', 'avatar', 'isNarrowWidth'].indexOf(key) > -1) {
 			updatedPage[key] = req.body[key] && req.body[key].trim
 				? req.body[key].trim()
 				: req.body[key];

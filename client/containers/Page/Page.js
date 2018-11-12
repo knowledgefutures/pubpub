@@ -30,7 +30,7 @@ class Page extends Component {
 		const layout = pageData.layout || getDefaultLayout();
 		const pubRenderLists = generateRenderLists(layout, this.props.pageData.pubs);
 		return (
-			<div id="page-container">
+			<div id="page-container" className={pageData.isNarrowWidth ? 'narrow' : ''}>
 				<PageWrapper
 					loginData={this.props.loginData}
 					communityData={this.props.communityData}

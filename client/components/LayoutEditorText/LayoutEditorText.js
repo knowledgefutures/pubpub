@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Editor, { getJSON } from '@pubpub/editor';
-import { s3Upload, getResizedUrl } from 'utilities';
+import { getResizedUrl } from 'utilities';
 
 require('./layoutEditorText.scss');
 
@@ -28,6 +28,7 @@ class LayoutEditorText extends Component {
 		this.setWidthWide = this.setWidthWide.bind(this);
 		this.setText = this.setText.bind(this);
 		this.changeTitle = this.changeTitle.bind(this);
+		this.textChangesMade = false;
 	}
 
 	setAlignLeft() {
@@ -133,7 +134,14 @@ class LayoutEditorText extends Component {
 										placeholder="Enter text..."
 										initialContent={this.state.initialContent}
 										onChange={(editorChangeObject)=> {
-											this.setText(getJSON(editorChangeObject.view));
+											if (editorChangeObject.view.state.history$.prevTime) {
+												/* history$.prevTime will be 0 if the transaction */
+												/* does not generate an undo item in the history */
+												this.textChangesMade = true;
+											}
+											if (this.textChangesMade) {
+												this.setText(getJSON(editorChangeObject.view));
+											}
 										}}
 									/>
 								</div>

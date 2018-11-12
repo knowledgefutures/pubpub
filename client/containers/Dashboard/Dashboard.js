@@ -107,6 +107,7 @@ class Dashboard extends Component {
 											return (
 												<DashboardPage
 													communityData={communityData}
+													locationData={this.props.locationData}
 													pageData={pageData}
 													setCommunityData={this.setCommunityData}
 													setPageData={this.setPageData}

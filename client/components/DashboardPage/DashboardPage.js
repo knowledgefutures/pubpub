@@ -1,7 +1,9 @@
+/* eslint-disable no-param-reassign */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
+import ImageUpload from 'components/ImageUpload/ImageUpload';
 import LayoutEditor from 'components/LayoutEditor/LayoutEditor';
 import { getDefaultLayout, apiFetch } from 'utilities';
 
@@ -9,6 +11,7 @@ require('./dashboardPage.scss');
 
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
+	locationData: PropTypes.object.isRequired,
 	pageData: PropTypes.object.isRequired,
 	setCommunityData: PropTypes.func.isRequired,
 	setPageData: PropTypes.func.isRequired,
@@ -22,6 +25,8 @@ class DashboardPage extends Component {
 			title: props.pageData.title,
 			description: props.pageData.description || '',
 			slug: props.pageData.slug,
+			avatar: props.pageData.avatar,
+			isNarrowWidth: props.pageData.isNarrowWidth,
 			isPublic: props.pageData.isPublic,
 			layout: props.pageData.layout || getDefaultLayout(),
 			isLoading: false,
@@ -32,11 +37,23 @@ class DashboardPage extends Component {
 		this.setTitle = this.setTitle.bind(this);
 		this.setDescription = this.setDescription.bind(this);
 		this.setSlug = this.setSlug.bind(this);
+		this.setAvatar = this.setAvatar.bind(this);
+		this.setNarrow = this.setNarrow.bind(this);
+		this.setWide = this.setWide.bind(this);
 		this.setPublic = this.setPublic.bind(this);
 		this.setPrivate = this.setPrivate.bind(this);
 		this.setLayout = this.setLayout.bind(this);
+		this.handleWindowBeforeUnload = this.handleWindowBeforeUnload.bind(this);
 		this.handleSaveChanges = this.handleSaveChanges.bind(this);
 		this.handleDelete = this.handleDelete.bind(this);
+	}
+
+	componentDidMount() {
+		window.addEventListener('beforeunload', this.handleWindowBeforeUnload);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('beforeunload', this.handleWindowBeforeUnload);
 	}
 
 	setTitle(evt) {
@@ -51,6 +68,18 @@ class DashboardPage extends Component {
 		this.setState({ hasChanged: true, slug: evt.target.value.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase() });
 	}
 
+	setAvatar(value) {
+		this.setState({ hasChanged: true, avatar: value });
+	}
+
+	setNarrow() {
+		this.setState({ hasChanged: true, isNarrowWidth: true });
+	}
+
+	setWide() {
+		this.setState({ hasChanged: true, isNarrowWidth: false });
+	}
+
 	setPublic() {
 		this.setState({ hasChanged: true, isPublic: true });
 	}
@@ -63,13 +92,23 @@ class DashboardPage extends Component {
 		this.setState({ hasChanged: true, layout: newLayout });
 	}
 
+	handleWindowBeforeUnload(evt) {
+		if (this.state.hasChanged) {
+			evt.preventDefault();
+			evt.returnValue = '';
+		}
+	}
+
 	handleSaveChanges() {
 		const pageObject = {
 			title: this.state.title,
 			slug: this.state.slug,
 			description: this.state.description,
+			avatar: this.state.avatar,
+			isNarrowWidth: this.state.isNarrowWidth,
 			isPublic: this.state.isPublic,
 			layout: this.state.layout,
+
 		};
 		this.setState({ isLoading: true, error: undefined });
 		return apiFetch('/api/pages', {
@@ -81,7 +120,7 @@ class DashboardPage extends Component {
 			})
 		})
 		.then(()=> {
-			this.setState({ isLoading: false, error: undefined });
+			this.setState({ isLoading: false, error: undefined, hasChanged: false });
 			this.props.setCommunityData({
 				...this.props.communityData,
 				pages: this.props.communityData.pages.map((page)=> {
@@ -123,12 +162,13 @@ class DashboardPage extends Component {
 
 	render() {
 		const pageData = this.props.pageData;
-		// const pubs = data.pubs || [];
 
 		return (
 			<div className="dashboard-page-component">
 				<div className="content-buttons">
-					<a href={`/dashboard/pages/${pageData.slug}`} className="pt-button">Cancel</a>
+					{this.state.hasChanged &&
+						<a href={`/dashboard/pages/${pageData.slug}`} className="pt-button">Cancel</a>
+					}
 					<Button
 						type="button"
 						className="pt-intent-primary"
@@ -164,21 +204,44 @@ class DashboardPage extends Component {
 							label="Description"
 							placeholder="Enter description"
 							isTextarea={true}
-							helperText="Used for search results. Max 180 characters."
+							helperText="Used for search results and social media cards. Max 180 characters."
 							value={this.state.description}
 							onChange={this.setDescription}
 							error={undefined}
+						/>
+						<ImageUpload
+							label="Preview Image"
+							defaultImage={this.state.avatar}
+							onNewImage={this.setAvatar}
+							canClear={true}
+							helperText="Used in social media cards"
 						/>
 						{pageData.slug &&
 							<InputField
 								label="Link"
 								placeholder="Enter link"
 								isRequired={true}
+								helperText={`Page URL will be https://${this.props.locationData.hostname}/${this.state.slug}`}
 								value={this.state.slug}
 								onChange={this.setSlug}
 								error={undefined}
 							/>
 						}
+
+						<InputField label="Width">
+							<div className="pt-button-group">
+								<Button
+									className={this.state.isNarrowWidth ? '' : 'pt-active'}
+									onClick={this.setWide}
+									text="Wide"
+								/>
+								<Button
+									className={this.state.isNarrowWidth ? 'pt-active' : ''}
+									onClick={this.setNarrow}
+									text="Narrow"
+								/>
+							</div>
+						</InputField>
 
 						{pageData.slug &&
 							<InputField label="Privacy">

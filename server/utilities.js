@@ -8,7 +8,7 @@ import builder from 'xmlbuilder';
 import request from 'request-promise';
 import amqplib from 'amqplib';
 import { remove as removeDiacritics } from 'diacritics';
-import { Community, Collection, User, Pub, Version, PubAttribution, Tag, Page } from './models';
+import { Community, User, Pub, Version, PubAttribution, Tag, Page } from './models';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 const doiSubmissionUrl = process.env.DOI_SUBMISSION_URL;
@@ -137,7 +137,7 @@ export const getInitialData = (req)=> {
 
 		const availablePages = {};
 		communityData.pages = communityData.pages.filter((item)=> {
-			if (!loginData.isAdmin && !item.isPublic) {
+			if (!loginData.isAdmin && !item.isPublic && locationData.query.access !== item.viewHash) {
 				return false;
 			}
 

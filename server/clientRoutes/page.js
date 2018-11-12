@@ -40,6 +40,8 @@ app.get(['/', '/:slug'], (req, res, next)=> {
 					initialData: initialData,
 					title: pageTitle,
 					description: pageData.description,
+					image: pageData.avatar,
+					unlisted: !pageData.isPublic
 				})}
 			>
 				<PageContainer {...newInitialData} />

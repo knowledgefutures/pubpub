@@ -361,6 +361,12 @@ new Promise((resolve)=> {
 // .then(()=> {
 // 	return sequelize.queryInterface.addColumn('Communities', 'defaultPubTags', { type: Sequelize.JSONB });
 // })
+// .then(()=> {
+// 	return Promise.all([
+// 		sequelize.queryInterface.addColumn('Pages', 'avatar', { type: Sequelize.TEXT }),
+// 		sequelize.queryInterface.addColumn('Pages', 'isNarrowWidth', { type: Sequelize.BOOLEAN }),
+// 	]);
+// })
 .catch((err)=> {
 	console.log('Error with Migration', err);
 })

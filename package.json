@@ -97,6 +97,7 @@
     "react": "^16.4.1",
     "react-avatar-editor": "^11.0.4",
     "react-beautiful-dnd": "^8.0.2",
+    "react-color": "^2.14.1",
     "react-dom": "^16.4.1",
     "react-portal": "^4.1.5",
     "react-simple-maps": "^0.12.1",

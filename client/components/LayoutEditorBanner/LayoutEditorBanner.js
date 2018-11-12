@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Checkbox, Button } from '@blueprintjs/core';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
+import ColorInput from 'components/ColorInput/ColorInput';
 import { getResizedUrl } from 'utilities';
 
 require('./layoutEditorBanner.scss');
@@ -47,10 +48,10 @@ class LayoutEditorBanner extends Component {
 		});
 	}
 
-	setBackgroundColor(evt) {
+	setBackgroundColor(colorObject) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			backgroundColor: evt.target.value,
+			backgroundColor: colorObject.hex,
 		});
 	}
 
@@ -132,10 +133,8 @@ class LayoutEditorBanner extends Component {
 						<label htmlFor={`section-title-${this.props.layoutIndex}`}>
 							Background Color
 						</label>
-						<input
-							id={`section-title-${this.props.layoutIndex}`}
-							type="text"
-							className="pt-input"
+
+						<ColorInput
 							value={this.props.content.backgroundColor}
 							onChange={this.setBackgroundColor}
 						/>
@@ -202,6 +201,7 @@ class LayoutEditorBanner extends Component {
 							</button>
 						</div>
 					</div>
+					<div className="line-break" />
 					<div className="pt-form-group">
 						<label htmlFor={`section-title-${this.props.layoutIndex}`}>
 							Create Pub Button

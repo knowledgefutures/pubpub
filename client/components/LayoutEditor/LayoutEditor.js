@@ -49,9 +49,9 @@ class LayoutEditor extends Component {
 				html: '',
 			},
 			banner: {
-				text: '',
-				align: 'left',
-				backgroundColor: '',
+				text: 'Hello',
+				align: 'center',
+				backgroundColor: '#3275d8',
 				backgroundImage: '',
 				backgroundSize: 'full',
 				showButton: false,

@@ -19,20 +19,25 @@
 		display: flex;
 		align-items: flex-end;
 		justify-content: space-between;
-		padding: 1em;
+		padding: 1em 0em;
 		flex-wrap: wrap;
 		background-color: #F0F0F0;
 		border-bottom: 1px solid #CCC;
-		.spacer {
-			flex-shrink: 1;
-			flex-grow: 1;
-		}
+		// .spacer {
+		// 	flex-shrink: 1;
+		// 	flex-grow: 1;
+		// }
 		.pt-form-group {
-			margin-bottom: 0px;
+			// margin-bottom: 0px;
+			margin: 0em 1em;
 		}
-		.pt-form-group:not(:last-child) {
-			padding-right: 1em;
+		.line-break {
+			width: 100%;
+			margin-bottom: 1em;
 		}
+		// .pt-form-group:not(:last-child) {
+		// 	padding-right: 1em;
+		// }
 	}
 	.block-content {
 		padding: 1em 0em;

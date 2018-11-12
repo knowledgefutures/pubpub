@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Editor, { getJSON } from '@pubpub/editor';
+import { Button } from '@blueprintjs/core';
 import { getResizedUrl } from 'utilities';
 
 require('./layoutEditorText.scss');
@@ -11,7 +12,8 @@ const propTypes = {
 	layoutIndex: PropTypes.number.isRequired,
 	content: PropTypes.object.isRequired,
 	/* Expected content */
-	/* title, align, width, text */
+	/* deprecated: title, align, width, text */
+	/* align, text */
 };
 
 class LayoutEditorText extends Component {
@@ -24,10 +26,10 @@ class LayoutEditorText extends Component {
 		this.handleRemove = this.handleRemove.bind(this);
 		this.setAlignLeft = this.setAlignLeft.bind(this);
 		this.setAlignCenter = this.setAlignCenter.bind(this);
-		this.setWidthNarrow = this.setWidthNarrow.bind(this);
-		this.setWidthWide = this.setWidthWide.bind(this);
+		// this.setWidthNarrow = this.setWidthNarrow.bind(this);
+		// this.setWidthWide = this.setWidthWide.bind(this);
 		this.setText = this.setText.bind(this);
-		this.changeTitle = this.changeTitle.bind(this);
+		// this.changeTitle = this.changeTitle.bind(this);
 		this.textChangesMade = false;
 	}
 
@@ -45,19 +47,19 @@ class LayoutEditorText extends Component {
 		});
 	}
 
-	setWidthNarrow() {
-		this.props.onChange(this.props.layoutIndex, {
-			...this.props.content,
-			width: 'narrow'
-		});
-	}
+	// setWidthNarrow() {
+	// 	this.props.onChange(this.props.layoutIndex, {
+	// 		...this.props.content,
+	// 		width: 'narrow'
+	// 	});
+	// }
 
-	setWidthWide() {
-		this.props.onChange(this.props.layoutIndex, {
-			...this.props.content,
-			width: 'wide'
-		});
-	}
+	// setWidthWide() {
+	// 	this.props.onChange(this.props.layoutIndex, {
+	// 		...this.props.content,
+	// 		width: 'wide'
+	// 	});
+	// }
 
 	setText(textJSON) {
 		this.props.onChange(this.props.layoutIndex, {
@@ -70,34 +72,44 @@ class LayoutEditorText extends Component {
 		this.props.onRemove(this.props.layoutIndex);
 	}
 
-	changeTitle(evt) {
-		this.props.onChange(this.props.layoutIndex, {
-			...this.props.content,
-			title: evt.target.value,
-		});
-	}
+	// changeTitle(evt) {
+	// 	this.props.onChange(this.props.layoutIndex, {
+	// 		...this.props.content,
+	// 		title: evt.target.value,
+	// 	});
+	// }
 
 	render() {
 		const wrapperStyle = {
 			textAlign: this.props.content.align || 'left',
-			maxWidth: this.props.content.width === 'narrow' ? '800px' : 'none',
-			margin: this.props.content.align === 'center' && this.props.content.width === 'narrow' ? '0 auto' : '0',
+			// maxWidth: this.props.content.width === 'narrow' ? '800px' : 'none',
+			// margin: this.props.content.align === 'center' && this.props.content.width === 'narrow' ? '0 auto' : '0',
 		};
 		return (
 			<div className="layout-editor-text-component">
 				<div className="block-header">
-					<div className="pt-form-group">
+					{/* <div className="pt-form-group">
 						<label htmlFor={`section-title-${this.props.layoutIndex}`}>Text Section Title</label>
 						<input id={`section-title-${this.props.layoutIndex}`} type="text" className="pt-input" value={this.props.content.title} onChange={this.changeTitle} />
 					</div>
 					<div className="spacer" />
+					*/}
 					<div className="pt-form-group">
-						<label htmlFor={`section-size-${this.props.layoutIndex}`}>Align</label>
+						<label>Text Align</label>
 						<div className="pt-button-group">
-							<button className={`pt-button ${this.props.content.align === 'left' ? 'pt-active' : ''}`} onClick={this.setAlignLeft}>Left</button>
-							<button className={`pt-button ${this.props.content.align === 'center' ? 'pt-active' : ''}`} onClick={this.setAlignCenter}>Center</button>
+							<Button
+								className={`${this.props.content.align === 'left' ? 'pt-active' : ''}`}
+								onClick={this.setAlignLeft}
+								text="Left"
+							/>
+							<Button
+								className={`${this.props.content.align === 'center' ? 'pt-active' : ''}`}
+								onClick={this.setAlignCenter}
+								text="center"
+							/>
 						</div>
 					</div>
+					{/*
 					<div className="pt-form-group">
 						<label htmlFor={`section-limit-${this.props.layoutIndex}`}>Width</label>
 						<div className="pt-button-group">
@@ -110,17 +122,18 @@ class LayoutEditorText extends Component {
 							<button className="pt-button pt-icon-trash" onClick={this.handleRemove} />
 						</div>
 					</div>
+					*/}
 				</div>
 
 				<div className="block-content">
 					<div className="container">
-						{this.props.content.title &&
+						{/* this.props.content.title &&
 							<div className="row">
 								<div className="col-12">
 									<h2 className="block-title">{this.props.content.title}</h2>
 								</div>
 							</div>
-						}
+						*/}
 
 						<div className="row">
 							<div className="col-12">

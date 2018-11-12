@@ -7,6 +7,7 @@ import LayoutEditorHtml from 'components/LayoutEditorHtml/LayoutEditorHtml';
 import LayoutEditorBanner from 'components/LayoutEditorBanner/LayoutEditorBanner';
 // import LayoutEditorCreatePub from 'components/LayoutEditorCreatePub/LayoutEditorCreatePub';
 // import LayoutEditorDrafts from 'components/LayoutEditorDrafts/LayoutEditorDrafts';
+import { Button } from '@blueprintjs/core';
 import { generateHash, generateRenderLists } from 'utilities';
 
 require('./layoutEditor.scss');
@@ -28,6 +29,8 @@ class LayoutEditor extends Component {
 		this.handleInsert = this.handleInsert.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleRemove = this.handleRemove.bind(this);
+		this.handleMoveUp = this.handleMoveUp.bind(this);
+		this.handleMoveDown = this.handleMoveDown.bind(this);
 	}
 
 	handleInsert(index, type) {
@@ -101,6 +104,32 @@ class LayoutEditor extends Component {
 		this.props.onChange(newLayout);
 	}
 
+	handleMoveUp(index) {
+		const newLayout = [...this.state.layout];
+		newLayout[index - 1] = newLayout[index];
+		newLayout[index] = this.state.layout[index - 1];
+
+		const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
+		this.setState({
+			layout: newLayout,
+			pubRenderLists: newPubRenderList,
+		});
+		this.props.onChange(newLayout);
+	}
+
+	handleMoveDown(index) {
+		const newLayout = [...this.state.layout];
+		newLayout[index + 1] = newLayout[index];
+		newLayout[index] = this.state.layout[index + 1];
+
+		const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
+		this.setState({
+			layout: newLayout,
+			pubRenderLists: newPubRenderList,
+		});
+		this.props.onChange(newLayout);
+	}
+
 	render() {
 		return (
 			<div className="layout-editor-component">
@@ -112,7 +141,31 @@ class LayoutEditor extends Component {
 					const validType = ['pubs', 'text', 'html', 'banner'].indexOf(item.type) > -1;
 					if (!validType) { return null; }
 					return (
-						<div>
+						<div key={item.id}>
+							<div className="block-actions pt-button-group pt-minimal pt-small">
+								<Button
+									text="Move up"
+									icon="caret-up"
+									disabled={index === 0}
+									onClick={()=> {
+										this.handleMoveUp(index);
+									}}
+								/>
+								<Button
+									text="Move down"
+									icon="caret-down"
+									disabled={index === this.state.layout.length - 1}
+									onClick={()=> {
+										this.handleMoveDown(index);
+									}}
+								/>
+								<Button
+									text="Remove"
+									onClick={()=> {
+										this.handleRemove(index);
+									}}
+								/>
+							</div>
 							<div key={`block-${item.id}`} className="component-wrapper">
 								{item.type === 'pubs' &&
 									<LayoutEditorPubs

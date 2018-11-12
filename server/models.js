@@ -173,22 +173,8 @@ const Pub = sequelize.define('Pub', {
 	},
 	avatar: { type: Sequelize.TEXT },
 	useHeaderImage: { type: Sequelize.BOOLEAN },
-	// isPublished: { type: Sequelize.BOOLEAN, defaultValue: false },
-	/* isPublished can be removed from databases once we verify publishedAt is succesful */
-	// publishedAt: { type: Sequelize.DATE },
 	firstPublishedAt: { type: Sequelize.DATE },
 	lastPublishedAt: { type: Sequelize.DATE },
-	// collaborationMode: { // TODO: DELETE
-	// 	// Used to note the mode of the workingDraft
-	// 	type: Sequelize.ENUM,
-	// 	values: ['private', 'publicView', 'publicEdit'],
-	// 	defaultValue: 'private',
-	// },
-	// adminPermissions: { // TODO: DELETE
-	// 	type: Sequelize.ENUM,
-	// 	values: ['manage', 'edit', 'view', 'none'], // Must be same as permissions on Collaborator
-	// 	defaultValue: 'none',
-	// },
 	draftEditHash: { type: Sequelize.STRING }, // TODO: This is used for draft
 	draftViewHash: { type: Sequelize.STRING }, // TODO: This is used for draft
 	doi: { type: Sequelize.TEXT },
@@ -206,6 +192,7 @@ const Pub = sequelize.define('Pub', {
 		defaultValue: 'private',
 	},
 	review: { type: Sequelize.JSONB },
+
 	/* Set by Associations */
 	communityId: { type: Sequelize.UUID, allowNull: false },
 }, {
@@ -226,8 +213,8 @@ const Discussion = sequelize.define('Discussion', {
 	submitHash: { type: Sequelize.TEXT }, // Deprecated since v5
 	submitApprovedAt: { type: Sequelize.DATE }, // Deprecated since v5
 	isArchived: { type: Sequelize.BOOLEAN },
-	// isPublic: { type: Sequelize.BOOLEAN }, /* TODO: this field is deprecated once discussionChannels exist. Need to migrate isPublic=false to new channel */
 	labels: { type: Sequelize.JSONB },
+
 	/* Set by Associations */
 	userId: { type: Sequelize.UUID, allowNull: false },
 	pubId: { type: Sequelize.UUID, allowNull: false },
@@ -245,84 +232,32 @@ const Version = sequelize.define('Version', {
 	id: id,
 	description: { type: Sequelize.TEXT },
 	content: { type: Sequelize.JSONB },
-	// collaborativeRef: { type: Sequelize.TEXT }, // TODO: not clear what this is used for.
 	isPublic: { type: Sequelize.BOOLEAN }, // New
 	isCommunityAdminShared: { type: Sequelize.BOOLEAN }, // New
 	viewHash: { type: Sequelize.STRING }, // New
+
 	/* Set by Associations */
 	pubId: { type: Sequelize.UUID, allowNull: false },
 });
 
-// const Collection = sequelize.define('Collection', {
-// 	id: id,
-// 	title: { type: Sequelize.TEXT, allowNull: false },
-// 	description: { type: Sequelize.TEXT },
-// 	slug: { type: Sequelize.TEXT, allowNull: false },
-// 	isPage: { type: Sequelize.BOOLEAN, allowNull: false },
-// 	isPublic: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false, },
-// 	isOpenSubmissions: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false, },
-// 	isOpenPublish: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false, },
-// 	layout: { type: Sequelize.JSONB },
-// 	createPubHash: { type: Sequelize.TEXT },
-// 	createPubMessage: { type: Sequelize.JSONB },
-// 	/* Set by Associations */
-// 	communityId: { type: Sequelize.UUID, allowNull: false },
-// });
-
 const Page = sequelize.define('Page', {
 	id: id,
 	title: { type: Sequelize.TEXT, allowNull: false },
-	description: { type: Sequelize.TEXT },
 	slug: { type: Sequelize.TEXT, allowNull: false },
-
-	// isPage: { type: Sequelize.BOOLEAN, allowNull: false },
+	description: { type: Sequelize.TEXT },
+	avatar: { type: Sequelize.TEXT },
 	isPublic: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false, },
+	isNarrowWidth: { type: Sequelize.BOOLEAN },
 	viewHash: { type: Sequelize.TEXT },
-	// isOpenSubmissions: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false, },
-	// isOpenPublish: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false, },
 	layout: { type: Sequelize.JSONB },
-	// createPubHash: { type: Sequelize.TEXT },
-	// createPubMessage: { type: Sequelize.JSONB },
+
 	/* Set by Associations */
 	communityId: { type: Sequelize.UUID, allowNull: false },
 });
 
-// const CollectionPub = sequelize.define('CollectionPub', {
-// 	id: id,
-// 	/* Set by Associations */
-// 	collectionId: { type: Sequelize.UUID, allowNull: false },
-// 	pubId: { type: Sequelize.UUID, allowNull: false },
-// }, {
-// 	indexes: [
-// 		{ fields: ['collectionId'], method: 'BTREE' },
-// 		{ fields: ['pubId'], method: 'BTREE' },
-// 	]
-// });
-
-// const Collaborator = sequelize.define('Collaborator', { // TODO: Delete this table
-// 	id: id,
-// 	name: { type: Sequelize.TEXT },
-// 	order: { type: Sequelize.DOUBLE },
-// 	permissions: {
-// 		// In this new version, we use this both to denote manager,
-// 		// and draft permissions. If set to manage, can't be added to draft, as they already have
-// 		// access through management.
-// 		type: Sequelize.ENUM,
-// 		values: ['manage', 'edit', 'view', 'none'], // Must be same as adminPermissions on Pub
-// 		defaultValue: 'none',
-// 	},
-// 	title: { type: Sequelize.TEXT }, // This could allow users to override their default title per-pub. I don't think I'll enable it yet - but it's good to have in place.
-// 	isAuthor: { type: Sequelize.BOOLEAN },
-// 	isContributor: { type: Sequelize.BOOLEAN },
-// 	roles: { type: Sequelize.JSONB },
-// 	versionAccessList: { type: Sequelize.JSONB },
-// 	/* Set by Associations */
-// 	userId: { type: Sequelize.UUID },
-// 	pubId: { type: Sequelize.UUID, allowNull: false },
-// });
-
 const CommunityAdmin = sequelize.define('CommunityAdmin', {
 	id: id,
+
 	/* Set by Associations */
 	userId: { type: Sequelize.UUID, allowNull: false },
 	communityId: { type: Sequelize.UUID, allowNull: false },
@@ -339,6 +274,7 @@ const WorkerTask = sequelize.define('WorkerTask', {
 
 const PubManager = sequelize.define('PubManager', {
 	id: id,
+
 	/* Set by Associations */
 	userId: { type: Sequelize.UUID, allowNull: false },
 	pubId: { type: Sequelize.UUID, allowNull: false },
@@ -351,6 +287,7 @@ const VersionPermission = sequelize.define('VersionPermission', {
 		values: ['view', 'edit'],
 		defaultValue: 'view',
 	},
+
 	/* Set by Associations */
 	userId: { type: Sequelize.UUID, allowNull: false },
 	pubId: { type: Sequelize.UUID, allowNull: false },
@@ -365,6 +302,7 @@ const PubAttribution = sequelize.define('PubAttribution', {
 	order: { type: Sequelize.DOUBLE },
 	isAuthor: { type: Sequelize.BOOLEAN },
 	roles: { type: Sequelize.JSONB },
+
 	/* Set by Associations */
 	userId: { type: Sequelize.UUID },
 	pubId: { type: Sequelize.UUID, allowNull: false },
@@ -375,6 +313,7 @@ const Tag = sequelize.define('Tag', {
 	title: { type: Sequelize.TEXT },
 	isRestricted: { type: Sequelize.BOOLEAN }, /* Restricted tags can only be set by Community Admins */
 	isPublic: { type: Sequelize.BOOLEAN }, /* Only visible to community admins */
+
 	/* Set by Associations */
 	pageId: { type: Sequelize.UUID }, /* Used to link a tag to a specific page */
 	communityId: { type: Sequelize.UUID, allowNull: false },
@@ -382,7 +321,7 @@ const Tag = sequelize.define('Tag', {
 
 const PubTag = sequelize.define('PubTag', {
 	id: id,
-	// Will we want order here?
+
 	/* Set by Associations */
 	pubId: { type: Sequelize.UUID },
 	tagId: { type: Sequelize.UUID },
@@ -399,6 +338,7 @@ const DiscussionChannel = sequelize.define('DiscussionChannel', {
 	isCommunityAdminModerated: { type: Sequelize.BOOLEAN },
 	viewHash: { type: Sequelize.STRING },
 	writeHash: { type: Sequelize.STRING },
+
 	/* Set by Associations */
 	pubId: { type: Sequelize.UUID, allowNull: false },
 	communityId: { type: Sequelize.UUID, allowNull: false },
@@ -490,9 +430,6 @@ Community.hasMany(Page, { onDelete: 'CASCADE', as: 'pages', foreignKey: 'communi
 const db = {
 	Community: Community,
 	CommunityAdmin: CommunityAdmin,
-	// Collection: Collection,
-	// CollectionPub: CollectionPub,
-	// Collaborator: Collaborator,
 	Discussion: Discussion,
 	Pub: Pub,
 	Signup: Signup,

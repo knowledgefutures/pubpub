@@ -17,21 +17,24 @@ class Footer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			email: ''
+			email: '',
+			isLoadingSubscribe: false,
+			isSubscribed: false
 		};
 		this.handleEmailChange = this.handleEmailChange.bind(this);
 		this.handleEmailSubmit = this.handleEmailSubmit.bind(this);
 		this.links = props.isBasePubPub
 
 			? [
-				{ id: 1, title: 'Pricing', url: '/pricing' },
-				{ id: 2, title: 'Terms', url: '/tos' },
+				{ id: 1, title: 'Create your community', url: '/create/community' },
+				{ id: 2, title: 'Login', url: '/login' },
+				{ id: 3, title: 'Signup', url: '/signup' },
+				{ id: 4, title: 'Terms', url: '/tos' }
 				// { id: 6, title: 'Help', url: 'https://meta.pubpub.org/help' },
 
 			]
 			: [
 				{ id: 1, title: 'Dashboard', url: '/dashboard', adminOnly: true },
-				...props.socialItems,
 				{ id: 2, title: 'RSS', url: '/rss.xml' },
 				{ id: 3, title: 'Terms', url: '/tos' },
 				// { id: 6, title: 'Help', url: 'https://meta.pubpub.org/help' },
@@ -48,23 +51,33 @@ class Footer extends Component {
 
 	handleEmailSubmit(evt) {
 		evt.preventDefault();
+		this.setState({
+			isLoadingSubscribe: true
+		});
 		return apiFetch('/api/subscribe', {
 			method: 'POST',
 			body: JSON.stringify({
 				email: this.state.email
 			})
 		})
-		.then((result)=> {
-			console.log(result);
+		.then(()=> {
+			this.setState({
+				isLoadingSubscribe: false,
+				email: '',
+				isSubscribed: true
+			});
 		})
 		.catch((err)=> {
 			console.error(err);
+			this.setState({
+				isLoadingSubscribe: false,
+			});
 		});
 	}
 
 	render() {
-		const arrowButton = (
-			<Button icon="arrow-right" onClick={this.handleEmailSubmit} minimal={true} />
+		const subscribeButton = (
+			<Button icon={!this.state.isSubscribed ? 'arrow-right' : 'tick'} onClick={this.handleEmailSubmit} minimal={true} loading={this.state.isLoadingSubscribe} />
 		);
 		return (
 			<div className={`footer-component ${this.wrapperClasses}`}>
@@ -83,7 +96,8 @@ class Footer extends Component {
 									placeholder="Your Email"
 									value={this.state.email}
 									onChange={this.handleEmailChange}
-									rightElement={arrowButton}
+									rightElement={subscribeButton}
+									disabled={this.state.isSubscribed}
 								/>
 							</form>
 						</div>

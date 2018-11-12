@@ -194,7 +194,7 @@ class LayoutEditorPubs extends Component {
 						{this.props.content.title &&
 							<div className="row">
 								<div className="col-12">
-									<h2 className="block-title">{this.props.content.title}</h2>
+									<h1>{this.props.content.title}</h1>
 								</div>
 							</div>
 						}

@@ -13,7 +13,6 @@
 		align-items: flex-end;
 		padding: 1em;
 		flex-wrap: wrap;
-		// margin: 1em 0em;
 		background-color: #F0F0F0;
 		border-bottom: 1px solid #CCC;
 		.spacer {
@@ -29,21 +28,6 @@
 	}
 	.block-content {
 		padding: 1em 0em;
-		// h2.block-title {
-		// 	margin: 0px;
-		// 	font-size: 28px;
-		// 	font-weight: 800;
-		// }
-		textarea {
-			width: 100%;
-			resize: vertical;
-			min-height: 150px;
-			font-family: 'Courier', monospace;
-			white-space: nowrap;
-			padding: 0.5em;
-		}
-	}
-	.layout-editor-text-component, .layout-editor-html-component {
 		h1 {
 			font-size: 32px;
 			font-weight: 800;
@@ -54,9 +38,25 @@
 		}
 		h1, h2, h3, h4, h5, h6 {
 			clear: both;
+			margin-bottom: 0.5em;
+			line-height: 1em;
 		}
+		textarea {
+			width: 100%;
+			resize: vertical;
+			min-height: 150px;
+			font-family: 'Courier', monospace;
+			white-space: nowrap;
+			padding: 0.5em;
+		}
+	}
+	.layout-editor-text-component, .layout-editor-html-component {
 		a {
 			text-decoration: underline;
+		}
+		p, li {
+			font-size: 18px;
+		    line-height: 1.6
 		}
 	}
 	

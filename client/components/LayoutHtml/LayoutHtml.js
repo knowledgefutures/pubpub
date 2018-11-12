@@ -6,22 +6,23 @@ require('./layoutHtml.scss');
 const propTypes = {
 	content: PropTypes.object.isRequired,
 	/* Expected content */
-	/* title, html */
+	/* deprecated: title, html */
+	/* html */
 };
 
 const LayoutHtml = function(props) {
-	if (!props.content.html && !props.content.title) { return null; }
+	if (!props.content.html) { return null; }
 	return (
 		<div className="layout-html-component">
 			<div className="block-content">
 				<div className="container">
-					{props.content.title &&
+					{/* props.content.title &&
 						<div className="row">
 							<div className="col-12">
 								<h2 className="block-title">{props.content.title}</h2>
 							</div>
 						</div>
-					}
+					*/}
 					<div className="row">
 						<div className="col-12">
 							<div dangerouslySetInnerHTML={{ __html: props.content.html }} />

@@ -59,18 +59,7 @@
 	// 		text-decoration: underline;
 	// 	}
 	// }
-	// .block-content {
-	// 	h2.block-title {
-	// 		margin: 0px;
-	// 		font-size: 28px;
-	// 		font-weight: 800;
-	// 	}
-	// }
-	// .description {
-	// 	max-width: 800px;
-	// 	line-height: 1.4;
-	// }
-	.layout-text-component, .layout-html-component {
+	.block-content {
 		h1 {
 			font-size: 32px;
 			font-weight: 800;
@@ -81,9 +70,21 @@
 		}
 		h1, h2, h3, h4, h5, h6 {
 			clear: both;
+			margin-bottom: 0.5em;
+			line-height: 1em;
 		}
+	}
+	// .description {
+	// 	max-width: 800px;
+	// 	line-height: 1.4;
+	// }
+	.layout-text-component, .layout-html-component {
 		a {
 			text-decoration: underline;
+		}
+		p, li {
+			font-size: 18px;
+		    line-height: 1.6
 		}
 	}
 	// .layout-drafts {

@@ -4,8 +4,6 @@ import Editor, { getJSON } from '@pubpub/editor';
 import { Button } from '@blueprintjs/core';
 import { getResizedUrl } from 'utilities';
 
-require('./layoutEditorText.scss');
-
 const propTypes = {
 	onChange: PropTypes.func.isRequired,
 	// onRemove: PropTypes.func.isRequired,

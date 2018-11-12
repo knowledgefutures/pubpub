@@ -39,7 +39,7 @@ const LayoutPubs = function(props) {
 					{props.content.title &&
 						<div className="row">
 							<div className="col-12">
-								<h2 className="block-title">{props.content.title}</h2>
+								<h1>{props.content.title}</h1>
 							</div>
 						</div>
 					}

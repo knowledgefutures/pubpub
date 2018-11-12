@@ -128,29 +128,33 @@ class LayoutEditor extends Component {
 					if (!validType) { return null; }
 					return (
 						<div key={item.id}>
-							<div className="block-actions pt-button-group pt-minimal pt-small">
-								<Button
-									text="Move up"
-									icon="caret-up"
-									disabled={index === 0}
-									onClick={()=> {
-										this.handleMoveUp(index);
-									}}
-								/>
-								<Button
-									text="Move down"
-									icon="caret-down"
-									disabled={index === this.state.layout.length - 1}
-									onClick={()=> {
-										this.handleMoveDown(index);
-									}}
-								/>
-								<Button
-									text="Remove"
-									onClick={()=> {
-										this.handleRemove(index);
-									}}
-								/>
+							<div className="block-title">
+								<div className="text">{item.type === 'html' ? 'HTML' : item.type} Block</div>
+
+								<div className="pt-button-group pt-minimal pt-small">
+									<Button
+										text="Move Up"
+										icon="caret-up"
+										disabled={index === 0}
+										onClick={()=> {
+											this.handleMoveUp(index);
+										}}
+									/>
+									<Button
+										text="Move Down"
+										icon="caret-down"
+										disabled={index === this.state.layout.length - 1}
+										onClick={()=> {
+											this.handleMoveDown(index);
+										}}
+									/>
+									<Button
+										text="Remove"
+										onClick={()=> {
+											this.handleRemove(index);
+										}}
+									/>
+								</div>
 							</div>
 							<div key={`block-${item.id}`} className="component-wrapper">
 								{item.type === 'pubs' &&

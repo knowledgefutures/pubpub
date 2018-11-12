@@ -1,8 +1,15 @@
 .layout-editor-component {	
-	.block-actions {
-		justify-content: flex-end;
+	.block-title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 		width: 100%;
 		margin-top: 2em;
+		.text {
+			text-transform: capitalize;
+			font-weight: 800;
+			font-size: 14px;
+		}
 	}
 	.component-wrapper {
 		margin-bottom: 2em;

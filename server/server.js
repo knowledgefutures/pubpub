@@ -107,6 +107,7 @@ app.use((req, res, next)=> {
 	if (req.hostname.indexOf('dev-pubpub.pubpub.org') > -1) { req.headers.host = 'www.pubpub.org'; }
 	if (req.hostname.indexOf('dev.pubpub.org') > -1) { req.headers.host = 'dev.pubpub.org'; }
 	if (req.hostname.indexOf('pubpub-v4-dev.herokuapp.com') > -1) { req.headers.host = 'frankdev.pubpub.org'; }
+	if (req.hostname.indexOf('v4-testing.pubpub.org') > -1) { req.headers.host = 'testing.pubpub.org'; }
 	next();
 });
 

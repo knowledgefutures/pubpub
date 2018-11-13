@@ -116,8 +116,6 @@ class ImageUpload extends Component {
 		const buttonStyle = {
 			width: `${this.props.width}px`,
 			height: `${this.props.height}px`,
-			lineHeight: `${this.props.height}px`,
-			// backgroundImage: !this.state.uploading && this.state.imageBlob ?  : null,
 		};
 		const imageStyle = {
 			...buttonStyle,
@@ -134,9 +132,10 @@ class ImageUpload extends Component {
 
 					{(this.state.uploading || !this.state.imageBlob) &&
 						<AnchorButton
-							className="pt-button pt-minimal pt-icon-media"
+							className="upload-button pt-minimal"
 							style={buttonStyle}
 							loading={this.state.uploading}
+							icon="media"
 						/>
 					}
 

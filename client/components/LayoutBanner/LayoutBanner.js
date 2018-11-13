@@ -63,8 +63,14 @@ class LayoutBanner extends Component {
 		return (
 			<div className="layout-banner-component">
 				<div className="block-content" style={this.props.content.backgroundSize === 'full' ? backgroundStyle : undefined}>
+					{this.props.content.backgroundImage && this.props.content.backgroundSize === 'full' &&
+						<div className="dim" />
+					}
 					<div className="container">
 						<div className="row" style={this.props.content.backgroundSize === 'standard' ? backgroundStyle : undefined}>
+							{this.props.content.backgroundImage && this.props.content.backgroundSize === 'standard' &&
+								<div className="dim" />
+							}
 							<div className="col-12" style={textStyle}>
 								{this.props.content.text &&
 									<h2>

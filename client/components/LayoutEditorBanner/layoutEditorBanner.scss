@@ -1,20 +1,40 @@
 .layout-editor-banner-component {
+	.image-upload-component {
+		.image-wrapper {
+			margin-top: 0px;
+		}
+		.upload-button {
+			background-color: #d9d9d9;
+			margin-top: 0px;
+		}
+		.image-options {
+			width: 60px;
+			margin: 0px;
+			.pt-button {
+				display: inline-block;
+			}
+		}
+	}
 	.block-content {
 		background-size: cover;
 		background-repeat: no-repeat;
 		background-position: center center;
 		padding: 0em !important;
+		position: relative;
 		.row {
 			background-size: cover;
 			background-repeat: no-repeat;
 			background-position: center center;
+			position: relative;
+		}
+		.col-12 {
+			position: relative;
 		}
 		h2 {
 			margin-bottom: 0em;
 			color: inherit;
 			font-size: inherit;
 			line-height: inherit;
-			text-shadow: 0 0 2px #000;
 		}
 		h2 + .pt-button {
 			margin-top: 1em;
@@ -22,6 +42,14 @@
 		.pt-button {
 			padding: 10px 40px;
 			line-height: 30px;
+		}
+		.dim {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			background-color: rgba(0, 0, 0, 0.5);
 		}
 	}
 }

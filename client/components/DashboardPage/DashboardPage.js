@@ -210,6 +210,7 @@ class DashboardPage extends Component {
 							error={undefined}
 						/>
 						<ImageUpload
+							htmlFor="dashboard-page-avatar"
 							label="Preview Image"
 							defaultImage={this.state.avatar}
 							onNewImage={this.setAvatar}

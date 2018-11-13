@@ -17,7 +17,7 @@
 	}
 	.block-header {
 		display: flex;
-		align-items: flex-end;
+		// align-items: flex-end;
 		justify-content: space-between;
 		padding: 1em 0em;
 		flex-wrap: wrap;
@@ -27,7 +27,7 @@
 		// 	flex-shrink: 1;
 		// 	flex-grow: 1;
 		// }
-		.pt-form-group {
+		.input-field-component, .image-upload-component {
 			// margin-bottom: 0px;
 			margin: 0em 1em;
 		}

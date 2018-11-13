@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Checkbox, Button } from '@blueprintjs/core';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
+import InputField from 'components/InputField/InputField';
+import ImageUpload from 'components/ImageUpload/ImageUpload';
 import ColorInput from 'components/ColorInput/ColorInput';
 import { getResizedUrl } from 'utilities';
 
@@ -55,10 +57,11 @@ class LayoutEditorBanner extends Component {
 		});
 	}
 
-	setBackgroundImage(evt) {
+	setBackgroundImage(value) {
+		console.log(value);
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			backgroundImage: evt.target.value,
+			backgroundImage: value,
 		});
 	}
 
@@ -95,19 +98,21 @@ class LayoutEditorBanner extends Component {
 	}
 
 	render() {
-		const backgroundImageCss = this.props.content.backgroundImage
-			? `url("${getResizedUrl(this.props.content.backgroundImage, 'fit-in', '1500x600')}")`
-			: undefined;
-
 		const textStyle = {
 			textAlign: this.props.content.align || 'left',
 			color: 'white',
 			fontSize: '40px',
 			lineHeight: '1em',
 		};
+
 		const backgroundStyle = {
 			backgroundColor: this.props.content.backgroundColor,
-			backgroundImage: backgroundImageCss,
+			backgroundImage: this.props.content.backgroundImage
+				? `url("${getResizedUrl(this.props.content.backgroundImage, 'fit-in', '1500x600')}")`
+				: undefined,
+			textShadow: this.props.content.backgroundImage
+				? '0 0 2px #000'
+				: '',
 			minHeight: '200px',
 			display: 'flex',
 			alignItems: 'center',
@@ -116,120 +121,83 @@ class LayoutEditorBanner extends Component {
 		return (
 			<div className="layout-editor-banner-component">
 				<div className="block-header">
-					<div className="pt-form-group">
-						<label htmlFor={`section-title-${this.props.layoutIndex}`}>
-							Text
-						</label>
-						<input
-							id={`section-title-${this.props.layoutIndex}`}
-							type="text"
-							className="pt-input"
-							value={this.props.content.text}
-							onChange={this.setText}
-						/>
-					</div>
-					<div className="spacer" />
-					<div className="pt-form-group">
-						<label htmlFor={`section-title-${this.props.layoutIndex}`}>
-							Background Color
-						</label>
-
+					<InputField
+						label="Text"
+						value={this.props.content.text}
+						onChange={this.setText}
+					/>
+					<InputField label="Color">
 						<ColorInput
 							value={this.props.content.backgroundColor}
 							onChange={this.setBackgroundColor}
 						/>
-					</div>
-					<div className="pt-form-group">
-						<label htmlFor={`section-title-${this.props.layoutIndex}`}>
-							Background Image
-						</label>
-						<input
-							id={`section-title-${this.props.layoutIndex}`}
-							type="text"
-							className="pt-input"
-							value={this.props.content.backgroundImage}
-							onChange={this.setBackgroundImage}
-						/>
-					</div>
-					<div className="pt-form-group">
-						<label htmlFor={`section-size-${this.props.layoutIndex}`}>
-							Align
-						</label>
+					</InputField>
+					<InputField label="Align">
 						<div className="pt-button-group">
-							<button
-								type="button"
-								className={`pt-button ${this.props.content.align === 'left' ? 'pt-active' : ''}`}
+							<Button
+								className={`${this.props.content.align === 'left' ? 'pt-active' : ''}`}
 								onClick={()=> {
 									this.setAlign('left');
 								}}
-							>
-								Left
-							</button>
-							<button
-								type="button"
-								className={`pt-button ${this.props.content.align === 'center' ? 'pt-active' : ''}`}
+								text="Left"
+							/>
+							<Button
+								className={`${this.props.content.align === 'center' ? 'pt-active' : ''}`}
 								onClick={()=> {
 									this.setAlign('center');
 								}}
-							>
-								Center
-							</button>
+								text="Center"
+							/>
 						</div>
-					</div>
-					<div className="pt-form-group">
-						<label htmlFor={`section-limit-${this.props.layoutIndex}`}>
-							Background Size
-						</label>
+					</InputField>
+					<InputField label="Size">
 						<div className="pt-button-group">
-							<button
-								type="button"
-								className={`pt-button ${this.props.content.backgroundSize === 'full' ? 'pt-active' : ''}`}
+							<Button
+								className={`${this.props.content.backgroundSize === 'full' ? 'pt-active' : ''}`}
 								onClick={()=> {
 									this.setBackgroundSize('full');
 								}}
-							>
-								Full
-							</button>
-							<button
-								type="button"
-								className={`pt-button ${this.props.content.backgroundSize === 'standard' ? 'pt-active' : ''}`}
+								text="Full"
+							/>
+							<Button
+								className={`${this.props.content.backgroundSize === 'standard' ? 'pt-active' : ''}`}
 								onClick={()=> {
 									this.setBackgroundSize('standard');
 								}}
-							>
-								Standard
-							</button>
+								text="Standard"
+							/>
 						</div>
-					</div>
+					</InputField>
+					<ImageUpload
+						label="Image"
+						htmlFor={`section-title-${this.props.layoutIndex}`}
+						defaultImage={this.props.content.backgroundImage}
+						onNewImage={this.setBackgroundImage}
+						canClear={true}
+						width={50}
+						height={35}
+					/>
+
 					<div className="line-break" />
-					<div className="pt-form-group">
-						<label htmlFor={`section-title-${this.props.layoutIndex}`}>
-							Create Pub Button
-						</label>
+
+					<InputField label="Create Pub Button">
 						<Checkbox
 							checked={this.props.content.showButton}
 							onChange={this.setShowButton}
 						>
 							Show Button
 						</Checkbox>
-					</div>
+					</InputField>
+
 					{this.props.content.showButton &&
-						<div className="pt-form-group">
-							<label htmlFor={`section-title-${this.props.layoutIndex}`}>
-								Button Text
-							</label>
-							<input
-								id={`section-title-${this.props.layoutIndex}`}
-								type="text"
-								className="pt-input"
-								value={this.props.content.buttonText}
-								onChange={this.setButtonText}
-							/>
-						</div>
+						<InputField
+							label="Button Text"
+							value={this.props.content.buttonText}
+							onChange={this.setButtonText}
+						/>
 					}
 					{this.props.content.showButton &&
-						<div className="pt-form-group">
-							<label htmlFor={`section-tag-${this.props.layoutIndex}`}>Default Pub Tags</label>
+						<InputField label="Default Pub Tags">
 							<div className="pt-button-group pt-select">
 								<TagMultiSelect
 									allTags={this.props.communityData.tags}
@@ -249,22 +217,19 @@ class LayoutEditorBanner extends Component {
 									placeholder="Default Pub Tags..."
 								/>
 							</div>
-						</div>
+						</InputField>
 					}
-					<div className="pt-form-group">
-						<div className="pt-button-group">
-							<button
-								type="button"
-								className="pt-button pt-icon-trash"
-								onClick={this.handleRemove}
-							/>
-						</div>
-					</div>
 				</div>
 
 				<div className="block-content" style={this.props.content.backgroundSize === 'full' ? backgroundStyle : undefined}>
+					{this.props.content.backgroundImage && this.props.content.backgroundSize === 'full' &&
+						<div className="dim" />
+					}
 					<div className="container">
 						<div className="row" style={this.props.content.backgroundSize === 'standard' ? backgroundStyle : undefined}>
+							{this.props.content.backgroundImage && this.props.content.backgroundSize === 'standard' &&
+								<div className="dim" />
+							}
 							<div className="col-12" style={textStyle}>
 								{this.props.content.text &&
 									<h2>

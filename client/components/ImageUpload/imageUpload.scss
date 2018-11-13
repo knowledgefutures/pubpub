@@ -1,15 +1,15 @@
 .image-upload-component {
 	margin-bottom: 15px;
-	.pt-button.pt-icon-media, .pt-button.pt-icon-media.pt-disabled, .image-wrapper {
-		display: inline-block;
+	.upload-button, .upload-button.pt-disabled, .image-wrapper {
+		display: inline-flex;
 		margin-top: 0.5em;
-		&:before {
-			font-size: 30px;
-			line-height: inherit;
+		svg {
+			height: 30px;
+			width: 30px;
 			opacity: 0.75;
 		}
 	}
-	.pt-button.pt-icon-media, .pt-button.pt-icon-media.pt-disabled{
+	.upload-button, .upload-button.pt-disabled {
 		background-color: #F0F0F0;
 	}
 	.image-wrapper {

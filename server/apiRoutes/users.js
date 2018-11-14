@@ -55,7 +55,7 @@ app.post('/api/users', (req, res)=> {
 	})
 	.then(()=> {
 		if (req.body.subscribed) {
-			subscribeUser(req.body.email, '2847d5271c', ['User']).then((result) => { console.log(result); });
+			subscribeUser(req.body.email, '2847d5271c', ['Users']);
 		}
 		return Signup.update({ completed: true }, {
 			where: { email: email, hash: req.body.hash, completed: false },

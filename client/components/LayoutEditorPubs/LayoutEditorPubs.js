@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import PubPreview from 'components/PubPreview/PubPreview';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
+import InputField from 'components/InputField/InputField';
 // import { Position } from '@blueprintjs/core';
 // import { MultiSelect } from '@blueprintjs/select';
 // import fuzzysearch from 'fuzzysearch';
@@ -136,13 +137,13 @@ class LayoutEditorPubs extends Component {
 		return (
 			<div className="layout-editor-pubs-component">
 				<div className="block-header">
-					<div className="pt-form-group">
-						<label htmlFor={`section-title-${this.props.layoutIndex}`}>Title</label>
-						<input id={`section-title-${this.props.layoutIndex}`} type="text" className="pt-input" value={this.props.content.title} onChange={this.changeTitle} />
-					</div>
-					{/* <div className="spacer" /> */}
-					<div className="pt-form-group">
-						<label htmlFor={`section-tag-${this.props.layoutIndex}`}>Use Tag</label>
+					<InputField
+						label="Title"
+						value={this.props.content.title}
+						onChange={this.changeTitle}
+					/>
+					
+					<InputField label="Use Tag">
 						<div className="pt-button-group pt-select">
 							<TagMultiSelect
 								allTags={this.props.communityData.tags}
@@ -162,17 +163,15 @@ class LayoutEditorPubs extends Component {
 								placeholder="Add tags..."
 							/>
 						</div>
-					</div>
-					<div className="pt-form-group">
-						<label htmlFor={`section-size-${this.props.layoutIndex}`}>Preview Type</label>
+					</InputField>
+					<InputField label="Use Tag">
 						<div className="pt-button-group">
 							<button className={`pt-button ${pubPreviewType === 'large' ? 'pt-active' : ''}`} onClick={this.setLarge}>Large</button>
 							<button className={`pt-button ${pubPreviewType === 'medium' ? 'pt-active' : ''}`} onClick={this.setMedium}>Medium</button>
 							<button className={`pt-button ${pubPreviewType === 'small' ? 'pt-active' : ''}`} onClick={this.setSmall}>Small</button>
 						</div>
-					</div>
-					<div className="pt-form-group">
-						<label htmlFor={`section-limit-${this.props.layoutIndex}`}>Limit</label>
+					</InputField>
+					<InputField label="Limit">
 						<div className="pt-button-group pt-select">
 							<select value={this.props.content.limit} onChange={this.setLimit}>
 								<option value={0}>Show All pubs</option>
@@ -181,12 +180,7 @@ class LayoutEditorPubs extends Component {
 								})}
 							</select>
 						</div>
-					</div>
-					<div className="pt-form-group">
-						<div className="pt-button-group">
-							<button className="pt-button pt-icon-trash" onClick={this.handleRemove} />
-						</div>
-					</div>
+					</InputField>
 				</div>
 
 				<div className="block-content">

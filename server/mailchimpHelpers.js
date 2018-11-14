@@ -8,7 +8,7 @@ const key = process.env.MAILCHIMP_API_KEY;
 const base = 'https://us2.api.mailchimp.com/3.0/lists';
 
 const emailHash = (email) => {
-	return md5(email.toLowerCase);
+	return md5(email.toLowerCase()).toString();
 };
 
 export const subscribeUser = (email, list, tags) => {

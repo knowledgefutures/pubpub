@@ -90,7 +90,7 @@ class Footer extends Component {
 								<li><a href="mailto:team@pubpub.org?subject=Contact"><Icon icon="envelope" /></a></li>
 								<li><a href="https://github.com/pubpub"><Icon icon="github" /></a></li>
 							</ul>
-							<p><strong>Feature & community updates</strong></p>
+							<p><strong>Feature & community newsletter</strong></p>
 							<form onSubmit={this.handleEmailSubmit}>
 								<InputGroup
 									placeholder="Your Email"

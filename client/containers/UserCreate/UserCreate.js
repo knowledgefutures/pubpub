@@ -212,13 +212,6 @@ class UserCreate extends Component {
 											isDisabled={true}
 											value={this.props.signupData.email}
 										/>
-										<div className="subscribeBox">
-											<Checkbox
-												label="Subscribe to our feature release & community newsletter (recommended)"
-												checked={this.state.subscribed}
-												onChange={this.onSubscribedChange}
-											/>
-										</div>
 										<InputField
 											label="First Name"
 											isRequired={true}
@@ -287,6 +280,15 @@ class UserCreate extends Component {
 												</div>
 											</InputField>
 										}
+
+										{/*<div className="subscribeBox">*/}
+										<InputField wrapperClassName="pt-callout" label="Stay Up To Date">
+											<Checkbox
+												label="Subscribe to our feature release & community newsletter."
+												checked={this.state.subscribed}
+												onChange={this.onSubscribedChange}
+											/>
+										</InputField>
 
 										<InputField error={this.state.postUserError && 'Error Creating User'}>
 											<Button

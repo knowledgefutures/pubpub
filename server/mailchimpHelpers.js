@@ -25,7 +25,7 @@ const callback = (error, response, body) => {
 			const options = {
 				method: 'POST',
 				auth: {
-					user: 'foo',
+					user: 'pubpub-backend',
 					password: key
 				},
 				uri: `${base}/${list}/members/${member}/tags`,
@@ -47,7 +47,7 @@ export const subscribeUser = (email, list, tags) => {
 	const options = {
 		method: 'PUT',
 		auth: {
-			user: 'foo',
+			user: 'pubpub-backend',
 			password: key
 		},
 		uri: `${base}/${list}/members/${subHash}`,

@@ -21,11 +21,10 @@
 		.pt-button.expandable .pt-icon:first-child:last-child {
 			margin: 0px 5px 0px 0px;
 		}
-		.subscribeBox {
-			margin: 1em 0 1em 1em;
-			padding: .5em .25em 0 .5em;
-			border: 1px solid #ccc;
-			background-color: #fcfcfc;
+		.pt-callout {
+			.pt-label {
+				font-weight: bold;
+			}
 		}
 	}
 }

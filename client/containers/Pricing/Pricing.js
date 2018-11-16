@@ -19,6 +19,7 @@ const Pricing = (props)=> {
 				communityData={props.communityData}
 				locationData={props.locationData}
 				hideNav={true}
+				hideFooter={true}
 			>
 				<div className="container">
 					<div className="row">

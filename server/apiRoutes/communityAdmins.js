@@ -13,7 +13,6 @@ app.post('/api/communityAdmins', (req, res)=> {
 		if (user.id !== 'b242f616-7aaa-479c-8ee5-3933dcf70859' && !communityAdminData) {
 			throw new Error('Not Authorized to edit this community');
 		}
-		subscribeUser(user.email, '2847d5271c', ['Community Admins']);
 		return CommunityAdmin.create({
 			userId: req.body.userId,
 			communityId: req.body.communityId,
@@ -22,11 +21,14 @@ app.post('/api/communityAdmins', (req, res)=> {
 	.then((newAdmin)=> {
 		return User.findOne({
 			where: { id: newAdmin.userId },
-			attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
+			attributes: ['id', 'slug', 'fullName', 'initials', 'avatar', 'email'],
 		});
 	})
 	.then((newAdminData)=> {
-		return res.status(201).json(newAdminData);
+		subscribeUser(newAdminData.email, '2847d5271c', ['Community Admins']);
+		const adminDataJson = newAdminData.toJSON();
+		delete adminDataJson.email;
+		return res.status(201).json(adminDataJson);
 	})
 	.catch((err)=> {
 		console.error('Error in postCommunityAdmin: ', err);

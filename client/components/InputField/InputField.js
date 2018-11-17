@@ -40,7 +40,7 @@ const defaultProps = {
 const InputField = function(props) {
 	return (
 		<div className={`input-field-component pt-form-group ${props.error ? 'pt-intent-danger' : ''} ${props.wrapperClassName}`}>
-			<label className="pt-lablel" htmlFor={`input-${props.label}`}>
+			<label className="pt-label" htmlFor={`input-${props.label}`}>
 				{props.label}
 				{props.isRequired &&
 					<span className="pt-text-muted required-text"> (required)</span>

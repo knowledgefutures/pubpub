@@ -3,6 +3,7 @@ import Color from 'color';
 import app from '../server';
 import { Community, Page, CommunityAdmin } from '../models';
 import { generateHash, slugifyString } from '../utilities';
+import { subscribeUser } from '../mailchimpHelpers';
 
 app.post('/api/communities', (req, res)=> {
 	const user = req.user || {};
@@ -53,6 +54,7 @@ app.post('/api/communities', (req, res)=> {
 		return Page.create(newpage);
 	})
 	.then(()=> {
+		subscribeUser(user.email, '2847d5271c', ['Community Admins']);
 		return CommunityAdmin.create({
 			communityId: newCommunityId,
 			userId: user.id

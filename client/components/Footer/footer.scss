@@ -1,44 +1,97 @@
 .footer-component {
-	margin-top: 2em;
-	ul {
+	padding: 2.5em 0;
+	.col-12 {
+		display: flex;
+	}
+	.pt-input-group {
+		margin-top: .25em;
+	}
+	.left {
+		.title {
+			display: flex;
+			align-items: center;
+			a {
+				flex: 1 1 auto;
+			}
+			img.logo {
+				max-width: 100px;
+				height: auto;
+			}
+		}
+	}
+	.right {
 		text-align: right;
-		list-style: none;
+		flex: 1 1 auto;
+		.title {
+			font-size: 18px;
+			font-weight: 800;
+		}
+	}
+
+	.social-list {
+		width: auto;
+		li {
+			display: inline-block;
+			margin-left: 0.75em;
+		}
+	}
+	ul {
 		margin: 0px;
-		padding: 2.5em 0px;
-		width: 100%;
-		white-space: nowrap;
+		padding: 0px;
+		&.separated {
+			padding: 1em 0em;
+			li:not(:last-child):after {
+				content: "·";
+				display: inline-block;
+				padding: 0em 0.75em;
+			}
+		}
+		li {
+			display: inline-block;
+			position: relative;
+		}
 	}
 	li {
 		text-decoration: inherit;
-		padding: 0em 0em 0em 2em;
-		display: inline-block;
-	}
-	a {
-		color: inherit;
-		user-select: none;
+		display: block;
 	}
 	&.base-pubpub {
-		
-		ul {
-			border-top: 1px solid #CCC;
-			padding: 1em 0em;
+		border-top: 1px solid #CCC;
+		.title {
+			display: none;
 		}
 	}
 }
 
 @media only screen and (max-width: 720px) {  /* Used to be 45em */
 	.footer-component {
-		ul {
-			text-align: center;
+		text-align: center;
+		font-size: 18px;
+		.col-12 {
+			display: flex;
+			flex-direction: column-reverse;
 		}
-		li {
-			padding: 1em 0em;
-			display: block;
+		.left .title {
+			flex-direction: column;
+			a {
+				margin-bottom: 1em;
+			}
+		}
+		.right {
+			border-bottom: 1px solid white;
+			text-align: center;
+			margin-bottom: 2em;
+			padding-bottom: 2em;
+		}
+		.social-list {
+			li {
+				margin: 0em 0.5em;
+			}
 		}
 	}
 }
 @media print {
 	.footer-component {
 		display: none;
-	}	
+	}
 }

@@ -91,6 +91,7 @@ const PageWrapper = (props)=> {
 				<Footer
 					isAdmin={loginData.isAdmin}
 					isBasePubPub={props.locationData.isBasePubPub}
+					communityData={communityData}
 					socialItems={socialItems}
 				/>
 			}

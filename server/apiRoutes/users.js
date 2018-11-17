@@ -3,6 +3,7 @@ import passport from 'passport';
 import app from '../server';
 import { User, Signup } from '../models';
 import { slugifyString } from '../utilities';
+import { subscribeUser } from '../mailchimpHelpers';
 
 app.post('/api/users', (req, res)=> {
 	// Check that hash and email sync up
@@ -53,6 +54,9 @@ app.post('/api/users', (req, res)=> {
 		return userRegister(newUser, req.body.password);
 	})
 	.then(()=> {
+		if (req.body.subscribed) {
+			subscribeUser(req.body.email, '2847d5271c', ['Users']);
+		}
 		return Signup.update({ completed: true }, {
 			where: { email: email, hash: req.body.hash, completed: false },
 		});

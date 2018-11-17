@@ -1,5 +1,6 @@
 import app from '../server';
 import { CommunityAdmin, User } from '../models';
+import { subscribeUser } from '../mailchimpHelpers';
 
 app.post('/api/communityAdmins', (req, res)=> {
 	const user = req.user || {};
@@ -20,11 +21,14 @@ app.post('/api/communityAdmins', (req, res)=> {
 	.then((newAdmin)=> {
 		return User.findOne({
 			where: { id: newAdmin.userId },
-			attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
+			attributes: ['id', 'slug', 'fullName', 'initials', 'avatar', 'email'],
 		});
 	})
 	.then((newAdminData)=> {
-		return res.status(201).json(newAdminData);
+		subscribeUser(newAdminData.email, '2847d5271c', ['Community Admins']);
+		const adminDataJson = newAdminData.toJSON();
+		delete adminDataJson.email;
+		return res.status(201).json(adminDataJson);
 	})
 	.catch((err)=> {
 		console.error('Error in postCommunityAdmin: ', err);

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
-import { Button, NonIdealState } from '@blueprintjs/core';
+import { Button, NonIdealState, Checkbox } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
@@ -24,6 +24,7 @@ class UserCreate extends Component {
 		this.state = {
 			postUserIsLoading: false,
 			postUserError: undefined,
+			subscribed: false,
 			firstName: '',
 			lastName: '',
 			password: '',
@@ -39,6 +40,7 @@ class UserCreate extends Component {
 			googleScholar: '',
 		};
 		this.onCreateSubmit = this.onCreateSubmit.bind(this);
+		this.onSubscribedChange = this.onSubscribedChange.bind(this);
 		this.onFirstNameChange = this.onFirstNameChange.bind(this);
 		this.onLastNameChange = this.onLastNameChange.bind(this);
 		this.onPasswordChange = this.onPasswordChange.bind(this);
@@ -56,6 +58,7 @@ class UserCreate extends Component {
 			body: JSON.stringify({
 				email: this.props.signupData.email,
 				hash: this.props.signupData.hash,
+				subscribed: this.state.subscribed,
 				firstName: this.state.firstName,
 				lastName: this.state.lastName,
 				password: SHA3(this.state.password).toString(encHex),
@@ -77,6 +80,12 @@ class UserCreate extends Component {
 		.catch((err)=> {
 			this.setState({ postUserIsLoading: false, postUserError: err });
 		});
+	}
+
+	onSubscribedChange() {
+		this.setState((prevState) => ({
+			subscribed: !prevState.subscribed
+		}));
 	}
 
 	onFirstNameChange(evt) {
@@ -271,6 +280,15 @@ class UserCreate extends Component {
 												</div>
 											</InputField>
 										}
+
+										{/*<div className="subscribeBox">*/}
+										<InputField wrapperClassName="pt-callout" label="Stay Up To Date">
+											<Checkbox
+												label="Subscribe to our feature release & community newsletter."
+												checked={this.state.subscribed}
+												onChange={this.onSubscribedChange}
+											/>
+										</InputField>
 
 										<InputField error={this.state.postUserError && 'Error Creating User'}>
 											<Button

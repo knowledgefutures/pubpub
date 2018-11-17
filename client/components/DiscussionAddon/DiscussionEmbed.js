@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import DiscussionThread from 'components/DiscussionThread/DiscussionThread';
-import { nestDiscussionsToThreads } from 'utilities';
-
 
 require('./discussionEmbed.scss');
 

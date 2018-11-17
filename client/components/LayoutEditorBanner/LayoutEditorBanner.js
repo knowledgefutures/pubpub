@@ -11,7 +11,6 @@ require('./layoutEditorBanner.scss');
 
 const propTypes = {
 	onChange: PropTypes.func.isRequired,
-	onRemove: PropTypes.func.isRequired,
 	layoutIndex: PropTypes.number.isRequired,
 	content: PropTypes.object.isRequired,
 	communityData: PropTypes.object.isRequired,
@@ -88,10 +87,6 @@ class LayoutEditorBanner extends Component {
 			...this.props.content,
 			defaultTagIds: newTagIds,
 		});
-	}
-
-	handleRemove() {
-		this.props.onRemove(this.props.layoutIndex);
 	}
 
 	render() {

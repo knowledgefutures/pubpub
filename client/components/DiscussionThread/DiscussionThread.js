@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { Button, AnchorButton } from '@blueprintjs/core';
 import DiscussionInput from 'components/DiscussionInput/DiscussionInput';
 import DiscussionLabels from 'components/DiscussionLabels/DiscussionLabels';
 import DiscussionThreadItem from 'components/DiscussionThreadItem/DiscussionThreadItem';
@@ -303,9 +303,11 @@ class DiscussionThread extends Component {
 										getHighlightContent={this.props.getHighlightContent}
 										inputKey="thread-reply"
 									/>
-									: <a href={`/login?redirect=${this.props.locationData.pathpathname}`} className="pt-button pt-fill">
-										Login to Reply
-									</a>
+									: <AnchorButton
+										href={`/login?redirect=${this.props.locationData.pathpathname}`}
+										className="pt-fill"
+										text="Login to Reply"
+									/>
 								}
 							</div>
 						}

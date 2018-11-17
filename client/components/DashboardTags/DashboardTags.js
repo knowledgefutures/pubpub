@@ -32,7 +32,9 @@ class DashboardTags extends Component {
 		}, true);
 
 		if (!isUniqueTitle) {
-			return this.setState({ error: `'${this.state.newTagValue}' already exists.` });
+			return this.setState((prevState)=> {
+				return { error: `'${prevState.newTagValue}' already exists.` };
+			});
 		}
 
 		this.setState({ error: undefined });

@@ -140,65 +140,73 @@ class PubOptionsAttribution extends Component {
 			})
 		})
 		.then((result)=> {
-			const newPubData = {
-				...this.state.pubData,
-				attributions: [
-					...this.state.pubData.attributions,
-					result,
-				]
-			};
-			this.setState({ pubData: newPubData });
-			this.props.setPubData(newPubData);
+			this.setState((prevState)=> {
+				const newPubData = {
+					...prevState.pubData,
+					attributions: [
+						...prevState.pubData.attributions,
+						result,
+					]
+				};
+				this.props.setPubData(newPubData);
+				return { pubData: newPubData };
+			});
 		});
 	}
 
 	handleAttributionUpdate(updatedAttribution) {
-		const newPubData = {
-			...this.state.pubData,
-			attributions: this.state.pubData.attributions.map((attribution)=> {
-				if (attribution.id !== updatedAttribution.pubAttributionId) {
-					return attribution;
-				}
-				return {
-					...attribution,
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
+				attributions: prevState.pubData.attributions.map((attribution)=> {
+					if (attribution.id !== updatedAttribution.pubAttributionId) {
+						return attribution;
+					}
+					return {
+						...attribution,
+						...updatedAttribution,
+					};
+				})
+			};
+			return { pubData: newPubData, isLoading: true };
+		}, ()=> {
+			apiFetch('/api/pubAttributions', {
+				method: 'PUT',
+				body: JSON.stringify({
 					...updatedAttribution,
-				};
+					pubId: this.state.pubData.id,
+					communityId: this.props.communityData.id,
+				})
 			})
-		};
-		this.setState({ pubData: newPubData, isLoading: true });
-		return apiFetch('/api/pubAttributions', {
-			method: 'PUT',
-			body: JSON.stringify({
-				...updatedAttribution,
-				pubId: this.state.pubData.id,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			this.props.setPubData(newPubData);
-			this.setState({ isLoading: false });
+			.then(()=> {
+				this.props.setPubData(this.state.pubData);
+				this.setState({ isLoading: false });
+			});
 		});
 	}
 
 	handleAttributionDelete(pubAttributionId) {
-		const newPubData = {
-			...this.state.pubData,
-			attributions: this.state.pubData.attributions.filter((attribution)=> {
-				return attribution.id !== pubAttributionId;
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
+				attributions: prevState.pubData.attributions.filter((attribution)=> {
+					return attribution.id !== pubAttributionId;
+				})
+			};
+			return { pubData: newPubData, isLoading: true };
+		}, ()=> {
+			apiFetch('/api/pubAttributions', {
+				method: 'DELETE',
+				body: JSON.stringify({
+					pubAttributionId: pubAttributionId,
+					pubId: this.state.pubData.id,
+					communityId: this.props.communityData.id,
+				})
 			})
-		};
-		this.setState({ pubData: newPubData, isLoading: true });
-		return apiFetch('/api/pubAttributions', {
-			method: 'DELETE',
-			body: JSON.stringify({
-				pubAttributionId: pubAttributionId,
-				pubId: this.state.pubData.id,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			this.props.setPubData(newPubData);
-			this.setState({ isLoading: false });
+			.then(()=> {
+				this.props.setPubData(this.state.pubData);
+				this.setState({ isLoading: false });
+			});
 		});
 	}
 

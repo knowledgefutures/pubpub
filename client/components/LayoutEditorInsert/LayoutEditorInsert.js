@@ -7,22 +7,17 @@ require('./layoutEditorInsert.scss');
 const propTypes = {
 	insertIndex: PropTypes.number.isRequired,
 	onInsert: PropTypes.func.isRequired,
-	// isPage: PropTypes.bool.isRequired,
 };
 
 const LayoutEditorInsert = function(props) {
+	const insertIndex = props.insertIndex;
+	const onInsert = props.onInsert;
 	const types = [
 		{ title: 'Add Pub List', type: 'pubs' },
 		{ title: 'Add Text Block', type: 'text' },
 		{ title: 'Add HTML Block', type: 'html' },
 		{ title: 'Add Banner Block', type: 'banner' },
-		// { title: 'Add Create Pub Button', type: 'createPub' },
-		// { title: 'Add Open Drafts Block', type: 'drafts' },
 	];
-	// if (props.isPage) {
-	// 	types.splice(3, 1);
-	// 	types.splice(0, 1);
-	// }
 	return (
 		<div className="layout-editor-insert-component">
 			<Popover
@@ -35,7 +30,7 @@ const LayoutEditorInsert = function(props) {
 									tabIndex={-1}
 									key={`insert-${item.type}`}
 									className="pt-menu-item pt-popover-dismiss"
-									onClick={()=>{ props.onInsert(props.insertIndex, item.type); }}
+									onClick={()=>{ onInsert(insertIndex, item.type); }}
 								>
 									{item.title}
 								</div>

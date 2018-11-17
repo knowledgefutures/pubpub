@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Checkbox } from '@blueprintjs/core';
+import { Checkbox } from '@blueprintjs/core';
 import PubOptionsSharingCard from 'components/PubOptionsSharingCard/PubOptionsSharingCard';
 import UserAutocomplete from 'components/UserAutocomplete/UserAutocomplete';
 import Avatar from 'components/Avatar/Avatar';
@@ -41,18 +41,20 @@ class PubOptionsDiscussions extends Component {
 			})
 		})
 		.then((newDiscussionChannel)=> {
-			const newPubData = {
-				...this.state.pubData,
-				discussionChannels: [
-					newDiscussionChannel,
-					...this.state.pubData.discussionChannels
-				],
-			};
-			this.setState({
-				newChannelTitle: '',
-				pubData: newPubData,
+			this.setState((prevState)=> {
+				const newPubData = {
+					...prevState.pubData,
+					discussionChannels: [
+						newDiscussionChannel,
+						...prevState.pubData.discussionChannels
+					],
+				};
+				this.props.setPubData(newPubData);
+				return {
+					newChannelTitle: '',
+					pubData: newPubData,
+				};
 			});
-			this.props.setPubData(newPubData);
 		})
 		.catch((err)=> {
 			console.error('Error creating discussion channel', err);
@@ -69,18 +71,20 @@ class PubOptionsDiscussions extends Component {
 			})
 		})
 		.then((newDiscussionChannelData)=> {
-			const newPubData = {
-				...this.state.pubData,
-				discussionChannels: this.state.pubData.discussionChannels.map((channel)=> {
-					if (channel.id !== updatedChannelObject.discussionChannelId) { return channel; }
-					return {
-						...channel,
-						...newDiscussionChannelData,
-					};
-				})
-			};
-			this.setState({ pubData: newPubData });
-			this.props.setPubData(newPubData);
+			this.setState((prevState)=> {
+				const newPubData = {
+					...prevState.pubData,
+					discussionChannels: prevState.pubData.discussionChannels.map((channel)=> {
+						if (channel.id !== updatedChannelObject.discussionChannelId) { return channel; }
+						return {
+							...channel,
+							...newDiscussionChannelData,
+						};
+					})
+				};
+				this.props.setPubData(newPubData);
+				return { pubData: newPubData };
+			});
 		})
 		.catch((err)=> {
 			console.error('Error updated discussion channel', err);
@@ -96,78 +100,85 @@ class PubOptionsDiscussions extends Component {
 			})
 		})
 		.then((result)=> {
-			const newPubData = {
-				...this.state.pubData,
-				discussionChannels: this.state.pubData.discussionChannels.map((channel)=> {
-					if (channel.id !== newChannelParticipant.discussionChannelId) { return channel; }
-					return {
-						...channel,
-						participants: [
-							...channel.participants,
-							result
-						]
-					};
-				})
-			};
-			this.setState({ pubData: newPubData });
-			this.props.setPubData(newPubData);
+			this.setState((prevState)=> {
+				const newPubData = {
+					...prevState.pubData,
+					discussionChannels: prevState.pubData.discussionChannels.map((channel)=> {
+						if (channel.id !== newChannelParticipant.discussionChannelId) { return channel; }
+						return {
+							...channel,
+							participants: [
+								...channel.participants,
+								result
+							]
+						};
+					})
+				};
+				this.props.setPubData(newPubData);
+				return { pubData: newPubData };
+			});
 		});
 	}
 
 	handleChannelParticipantUpdate(channelParticipantUpdates) {
-		const newPubData = {
-			...this.state.pubData,
-			discussionChannels: this.state.pubData.discussionChannels.map((channel)=> {
-				return {
-					...channel,
-					participants: channel.participants.map((participant)=> {
-						if (participant.id !== channelParticipantUpdates.discussionChannelParticipantId) { return participant; }
-						return {
-							...participant,
-							...channelParticipantUpdates
-						};
-					})
-				};
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
+				discussionChannels: prevState.pubData.discussionChannels.map((channel)=> {
+					return {
+						...channel,
+						participants: channel.participants.map((participant)=> {
+							if (participant.id !== channelParticipantUpdates.discussionChannelParticipantId) { return participant; }
+							return {
+								...participant,
+								...channelParticipantUpdates
+							};
+						})
+					};
+				})
+			};
+			return { pubData: newPubData };
+		}, ()=> {
+			apiFetch('/api/discussionChannelParticipants', {
+				method: 'PUT',
+				body: JSON.stringify({
+					...channelParticipantUpdates,
+					communityId: this.props.communityData.id,
+				})
 			})
-		};
-		this.setState({ pubData: newPubData });
-		return apiFetch('/api/discussionChannelParticipants', {
-			method: 'PUT',
-			body: JSON.stringify({
-				...channelParticipantUpdates,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			// this.setState({ isLoading: false });
-			this.props.setPubData(newPubData);
+			.then(()=> {
+				// this.setState({ isLoading: false });
+				this.props.setPubData(this.state.pubData);
+			});
 		});
 	}
 
 	handleChannelParticipantDelete(channelId, channelParticipantId) {
-		const newPubData = {
-			...this.state.pubData,
-			discussionChannels: this.state.pubData.discussionChannels.map((channel)=> {
-				return {
-					...channel,
-					participants: channel.participants.filter((participant)=> {
-						return participant.id !== channelParticipantId;
-					})
-				};
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
+				discussionChannels: prevState.pubData.discussionChannels.map((channel)=> {
+					return {
+						...channel,
+						participants: channel.participants.filter((participant)=> {
+							return participant.id !== channelParticipantId;
+						})
+					};
+				})
+			};
+			return { pubData: newPubData };
+		}, ()=> {
+			apiFetch('/api/discussionChannelParticipants', {
+				method: 'DELETE',
+				body: JSON.stringify({
+					discussionChannelId: channelId,
+					discussionChannelParticipantId: channelParticipantId,
+					communityId: this.props.communityData.id,
+				})
 			})
-		};
-		this.setState({ pubData: newPubData });
-		return apiFetch('/api/discussionChannelParticipants', {
-			method: 'DELETE',
-			body: JSON.stringify({
-				discussionChannelId: channelId,
-				discussionChannelParticipantId: channelParticipantId,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			// this.setState({ isLoading: false });
-			this.props.setPubData(newPubData);
+			.then(()=> {
+				this.props.setPubData(this.state.pubData);
+			});
 		});
 	}
 

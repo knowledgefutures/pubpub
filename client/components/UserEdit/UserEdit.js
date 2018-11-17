@@ -39,30 +39,32 @@ class UserEdit extends Component {
 		};
 		this.onFirstNameChange = this.onFirstNameChange.bind(this);
 		this.onLastNameChange = this.onLastNameChange.bind(this);
-		this.onPasswordChange = this.onPasswordChange.bind(this);
 		this.onTitleChange = this.onTitleChange.bind(this);
 		this.onBioChange = this.onBioChange.bind(this);
 		this.onAvatarChange = this.onAvatarChange.bind(this);
 		this.handleSaveDetails = this.handleSaveDetails.bind(this);
 	}
+
 	onFirstNameChange(evt) {
 		this.setState({ firstName: evt.target.value, hasChanged: true });
 	}
+
 	onLastNameChange(evt) {
 		this.setState({ lastName: evt.target.value, hasChanged: true });
 	}
-	onPasswordChange(evt) {
-		this.setState({ password: evt.target.value, hasChanged: true });
-	}
+
 	onTitleChange(evt) {
 		this.setState({ title: evt.target.value.substring(0, 70).replace(/\n/g, ' '), hasChanged: true });
 	}
+
 	onBioChange(evt) {
 		this.setState({ bio: evt.target.value.substring(0, 280).replace(/\n/g, ' '), hasChanged: true });
 	}
+
 	onAvatarChange(val) {
 		this.setState({ avatar: val, hasChanged: true });
 	}
+
 	handleSaveDetails(evt) {
 		evt.preventDefault();
 		const newUserObject = {
@@ -82,13 +84,13 @@ class UserEdit extends Component {
 		};
 		this.props.onSave(newUserObject);
 	}
+
 	render() {
 		const expandables = [
 			{
 				label: 'Location',
 				showTextOnButton: true,
 				// icon: 'pt-icon-map-marker',
-				action: ()=> { this.setState({ showLocation: true }); },
 				value: this.state.location,
 				onChange: (evt)=> { this.setState({ location: evt.target.value, hasChanged: true }); }
 			},
@@ -96,14 +98,12 @@ class UserEdit extends Component {
 				label: 'Website',
 				showTextOnButton: true,
 				// icon: 'pt-icon-link',
-				action: ()=> { this.setState({ showWebsite: true }); },
 				value: this.state.website,
 				onChange: (evt)=> { this.setState({ website: evt.target.value, hasChanged: true }); }
 			},
 			{
 				label: 'Orcid',
 				// icon: 'pt-icon-orcid',
-				action: ()=> { this.setState({ showOrcid: true }); },
 				helperText: `https://orcid.org/${this.state.orcid}`,
 				value: this.state.orcid,
 				onChange: (evt)=> { this.setState({ orcid: evt.target.value, hasChanged: true }); }
@@ -111,7 +111,6 @@ class UserEdit extends Component {
 			{
 				label: 'Github',
 				// icon: 'pt-icon-github',
-				action: ()=> { this.setState({ showGithub: true }); },
 				helperText: `https://github.com/${this.state.github}`,
 				value: this.state.github,
 				onChange: (evt)=> { this.setState({ github: evt.target.value, hasChanged: true }); }
@@ -119,7 +118,6 @@ class UserEdit extends Component {
 			{
 				label: 'Twitter',
 				// icon: 'pt-icon-twitter',
-				action: ()=> { this.setState({ showTwitter: true }); },
 				helperText: `https://twitter.com/${this.state.twitter}`,
 				value: this.state.twitter,
 				onChange: (evt)=> { this.setState({ twitter: evt.target.value, hasChanged: true }); }
@@ -127,7 +125,6 @@ class UserEdit extends Component {
 			{
 				label: 'Facebook',
 				// icon: 'pt-icon-facebook',
-				action: ()=> { this.setState({ showFacebook: true }); },
 				helperText: `https://facebook.com/${this.state.facebook}`,
 				value: this.state.facebook,
 				onChange: (evt)=> { this.setState({ facebook: evt.target.value, hasChanged: true }); }
@@ -135,7 +132,6 @@ class UserEdit extends Component {
 			{
 				label: 'Google Scholar',
 				// icon: 'pt-icon-google-scholar',
-				action: ()=> { this.setState({ showGoogleScholar: true }); },
 				helperText: `https://scholar.google.com/citations?user=${this.state.googleScholar}`,
 				value: this.state.googleScholar,
 				onChange: (evt)=> { this.setState({ googleScholar: evt.target.value, hasChanged: true }); }

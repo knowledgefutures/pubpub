@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { MenuItem } from '@blueprintjs/core';
-// import { Suggest } from '@blueprintjs/labs';
 import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 import Avatar from 'components/Avatar/Avatar';
@@ -24,7 +23,7 @@ class DiscussionAutocomplete extends Component {
 		super(props);
 		this.getFilteredItems = this.getFilteredItems.bind(this);
 		this.state = {
-			items: this.getFilteredItems(props, ''),
+			items: this.getFilteredItems(props.threads, ''),
 			value: '',
 		};
 		this.filterItems = this.filterItems.bind(this);
@@ -33,12 +32,12 @@ class DiscussionAutocomplete extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		this.setState({
-			items: this.getFilteredItems(nextProps, ''),
+			items: this.getFilteredItems(nextProps.threads, ''),
 		});
 	}
 
-	getFilteredItems(props, query) {
-		return props.threads.map((item)=> {
+	getFilteredItems(threads, query) {
+		return threads.map((item)=> {
 			if (item[0].title) { return item; }
 			const outputItem = [...item];
 			outputItem[0].title = `Discussion by ${item[0].author.fullName}`;
@@ -56,7 +55,7 @@ class DiscussionAutocomplete extends Component {
 
 	filterItems(evt) {
 		const query = evt.target.value;
-		const filteredItems = this.getFilteredItems(this.props, query);
+		const filteredItems = this.getFilteredItems(this.props.threads, query);
 
 		this.setState({
 			value: query,
@@ -68,7 +67,6 @@ class DiscussionAutocomplete extends Component {
 		this.props.onSelect(data);
 		this.setState({ value: '' });
 	}
-
 
 	render() {
 		return (
@@ -86,7 +84,7 @@ class DiscussionAutocomplete extends Component {
 						const discussion = item[0];
 						return (
 							<li key={item[0].id}>
-								<a role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'pt-menu-item pt-active' : 'pt-menu-item'}>
+								<div role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'pt-menu-item pt-active' : 'pt-menu-item'}>
 									<div className="avatar-wrapper">
 										<Avatar
 											width={20}
@@ -99,7 +97,7 @@ class DiscussionAutocomplete extends Component {
 										<div className="title">{discussion.title}</div>
 										<div className="count">{item.length} repl{item.length === 1 ? 'y' : 'ies'}</div>
 									</div>
-								</a>
+								</div>
 							</li>
 						);
 					}}

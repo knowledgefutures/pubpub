@@ -106,18 +106,20 @@ class PubOptionsAnalytics extends Component {
 	}
 
 	handleMouseMove(geography, evt) {
-		const x = evt.clientX;
-		const y = evt.clientY + window.pageYOffset;
-		const countryVisits = this.state.countryData[geography.properties.name] || 0;
-		const percentage = this.state.totalVisits ? (Math.round((countryVisits / this.state.totalVisits) * 10000) / 100) : 0;
-		this.setState({
-			toolTipData: {
-				x: x,
-				y: y,
-				name: geography.properties.name,
-				visits: countryVisits,
-				percentage: percentage,
-			}
+		this.setState((prevState)=> {
+			const x = evt.clientX;
+			const y = evt.clientY + window.pageYOffset;
+			const countryVisits = prevState.countryData[geography.properties.name] || 0;
+			const percentage = prevState.totalVisits ? (Math.round((countryVisits / prevState.totalVisits) * 10000) / 100) : 0;
+			return {
+				toolTipData: {
+					x: x,
+					y: y,
+					name: geography.properties.name,
+					visits: countryVisits,
+					percentage: percentage,
+				}
+			};
 		});
 	}
 

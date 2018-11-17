@@ -64,7 +64,7 @@ class PubOptionsDoi extends Component {
 				{pubData.doi && this.state.justSetDoi &&
 					<div>
 						<p>Successfully registered DOIs for this pub and all of its published versions!</p>
-						<p>Registration may take a few hours to complete in Crossref's system. If DOI URLs do not work immediately, the registration is likely still processing.</p>
+						<p>Registration may take a few hours to complete in Crossref&apos;s system. If DOI URLs do not work immediately, the registration is likely still processing.</p>
 						<p>Pub DOI: <a href={`https://doi.org/${pubData.doi}`}>{pubData.doi}</a></p>
 					</div>
 				}

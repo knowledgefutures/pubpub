@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 const propTypes = {
 	onChange: PropTypes.func.isRequired,
-	// onRemove: PropTypes.func.isRequired,
 	layoutIndex: PropTypes.number.isRequired,
 	content: PropTypes.object.isRequired,
 	/* Expected content */

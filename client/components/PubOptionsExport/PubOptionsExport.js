@@ -7,7 +7,7 @@ import { getCollabJSONs } from '@pubpub/editor';
 require('./pubOptionsExport.scss');
 
 const propTypes = {
-	communityData: PropTypes.object.isRequired,
+	// communityData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	editorView: PropTypes.object.isRequired,
 	// loginData: PropTypes.object.isRequired,

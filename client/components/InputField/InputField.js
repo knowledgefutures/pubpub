@@ -1,4 +1,4 @@
-import React from 'react';
+/* eslint-disable jsx-a11y/label-has-for */import React from 'react';
 import PropTypes from 'prop-types';
 
 require('./inputField.scss');

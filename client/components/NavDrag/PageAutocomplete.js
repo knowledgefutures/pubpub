@@ -6,7 +6,7 @@ import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 import { generateHash } from 'utilities';
 
-require('./collectionAutocomplete.scss');
+require('./pageAutocomplete.scss');
 
 const propTypes = {
 	pages: PropTypes.array.isRequired,
@@ -23,7 +23,7 @@ const defaultProps = {
 	allowCustom: false,
 };
 
-class CollectionAutocomplete extends Component {
+class PageAutocomplete extends Component {
 	constructor(props) {
 		super(props);
 		this.getFilteredItems = this.getFilteredItems.bind(this);
@@ -82,7 +82,7 @@ class CollectionAutocomplete extends Component {
 
 	render() {
 		return (
-			<div className="collection-autocomplete-component">
+			<div className="page-autocomplete-component">
 				<Suggest
 					className="input"
 					items={this.state.items}
@@ -111,6 +111,6 @@ class CollectionAutocomplete extends Component {
 	}
 }
 
-CollectionAutocomplete.propTypes = propTypes;
-CollectionAutocomplete.defaultProps = defaultProps;
-export default CollectionAutocomplete;
+PageAutocomplete.propTypes = propTypes;
+PageAutocomplete.defaultProps = defaultProps;
+export default PageAutocomplete;

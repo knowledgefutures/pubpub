@@ -68,38 +68,40 @@ class PubOptionsTags extends Component {
 			})
 		})
 		.then((result)=> {
-			const newPubTags = [...this.state.pubTags, result];
-
-			this.setState({
-				pubTags: newPubTags
-			});
-			this.props.setPubData({
-				...this.props.pubData,
-				pubTags: newPubTags
+			this.setState((prevState)=> {
+				const newPubTags = [...prevState.pubTags, result];
+				this.props.setPubData({
+					...this.props.pubData,
+					pubTags: newPubTags
+				});
+				return { pubTags: newPubTags };
 			});
 		});
 	}
 
 
 	handlePubTagDelete(pubTagId) {
-		const newPubTags = this.state.pubTags.filter((pubTag)=> {
-			return pubTag.id !== pubTagId;
-		});
-		this.setState({ pubTags: newPubTags, isLoading: true });
-		return apiFetch('/api/pubTags', {
-			method: 'DELETE',
-			body: JSON.stringify({
-				pubTagId: pubTagId,
-				pubId: this.props.pubData.id,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			this.props.setPubData({
-				...this.props.pubData,
-				pubTags: newPubTags
+		this.setState((prevState)=> {
+			const newPubTags = prevState.pubTags.filter((pubTag)=> {
+				return pubTag.id !== pubTagId;
 			});
-			this.setState({ isLoading: false });
+			return { pubTags: newPubTags, isLoading: true };
+		}, ()=> {
+			apiFetch('/api/pubTags', {
+				method: 'DELETE',
+				body: JSON.stringify({
+					pubTagId: pubTagId,
+					pubId: this.props.pubData.id,
+					communityId: this.props.communityData.id,
+				})
+			})
+			.then(()=> {
+				this.props.setPubData({
+					...this.props.pubData,
+					pubTags: this.state.pubTags
+				});
+				this.setState({ isLoading: false });
+			});
 		});
 	}
 

@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import PubPreview from 'components/PubPreview/PubPreview';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
 import InputField from 'components/InputField/InputField';
-// import { Position } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
 // import { MultiSelect } from '@blueprintjs/select';
 // import fuzzysearch from 'fuzzysearch';
 
 const propTypes = {
 	onChange: PropTypes.func.isRequired,
-	onRemove: PropTypes.func.isRequired,
 	layoutIndex: PropTypes.number.isRequired,
 	content: PropTypes.object.isRequired,
 	pubs: PropTypes.array.isRequired,
@@ -22,7 +21,6 @@ const propTypes = {
 class LayoutEditorPubs extends Component {
 	constructor(props) {
 		super(props);
-		this.handleRemove = this.handleRemove.bind(this);
 		this.setSmall = this.setSmall.bind(this);
 		this.setMedium = this.setMedium.bind(this);
 		this.setLarge = this.setLarge.bind(this);
@@ -30,10 +28,6 @@ class LayoutEditorPubs extends Component {
 		this.setTagIds = this.setTagIds.bind(this);
 		this.changeTitle = this.changeTitle.bind(this);
 		this.changePubId = this.changePubId.bind(this);
-	}
-
-	handleRemove() {
-		this.props.onRemove(this.props.layoutIndex);
 	}
 
 	setSmall() {
@@ -75,7 +69,7 @@ class LayoutEditorPubs extends Component {
 			pubIds: this.props.content.pubIds.filter((item)=> {
 				return item;
 			}).filter((pubId)=> {
-				if (!newTagsIds.length) { return true; }
+				if (!newTagIds.length) { return true; }
 				const specifiedPub = this.props.pubs.reduce((prev, curr)=> {
 					if (curr.id === pubId) { return curr; }
 					return prev;
@@ -142,7 +136,6 @@ class LayoutEditorPubs extends Component {
 						value={this.props.content.title}
 						onChange={this.changeTitle}
 					/>
-					
 					<InputField label="Use Tag">
 						<div className="pt-button-group pt-select">
 							<TagMultiSelect
@@ -166,9 +159,21 @@ class LayoutEditorPubs extends Component {
 					</InputField>
 					<InputField label="Use Tag">
 						<div className="pt-button-group">
-							<button className={`pt-button ${pubPreviewType === 'large' ? 'pt-active' : ''}`} onClick={this.setLarge}>Large</button>
-							<button className={`pt-button ${pubPreviewType === 'medium' ? 'pt-active' : ''}`} onClick={this.setMedium}>Medium</button>
-							<button className={`pt-button ${pubPreviewType === 'small' ? 'pt-active' : ''}`} onClick={this.setSmall}>Small</button>
+							<Button
+								className={`${pubPreviewType === 'large' ? 'pt-active' : ''}`}
+								onClick={this.setLarge}
+								text="Large"
+							/>
+							<Button
+								className={`${pubPreviewType === 'medium' ? 'pt-active' : ''}`}
+								onClick={this.setMedium}
+								text="Medium"
+							/>
+							<Button
+								className={`${pubPreviewType === 'small' ? 'pt-active' : ''}`}
+								onClick={this.setSmall}
+								text="Small"
+							/>
 						</div>
 					</InputField>
 					<InputField label="Limit">
@@ -176,7 +181,7 @@ class LayoutEditorPubs extends Component {
 							<select value={this.props.content.limit} onChange={this.setLimit}>
 								<option value={0}>Show All pubs</option>
 								{selectOptions.map((item)=> {
-									return <option value={item} key={`option-${item}`}>Show {item} pub{item === 1 ? '' : 's'}</option>
+									return <option value={item} key={`option-${item}`}>Show {item} pub{item === 1 ? '' : 's'}</option>;
 								})}
 							</select>
 						</div>
@@ -196,35 +201,38 @@ class LayoutEditorPubs extends Component {
 						<div className="row">
 							{previews.map((item, index)=> {
 								const selectPub = (this.props.pubRenderList && this.props.pubRenderList[index]) || {};
+								const keyString = `preview-${this.props.layoutIndex}-${index}`;
 								return (
-									<div key={`preview-${this.props.layoutIndex}-${index}`} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
+									<div key={keyString} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
 										<PubPreview
 											size={pubPreviewType}
 											isPlaceholder={true}
 											title={this.props.content.pubIds[index] ? selectPub.title : undefined}
 											inputContent={this.props.content.pubIds.length >= index
-												? <div className="pt-select">
-													<select value={this.props.content.pubIds[index] || ''} onChange={(evt)=> { this.changePubId(index, evt.target.value); }}>
-														<option value="">Choose specific Pub</option>
-														{this.props.pubs.filter((pub)=> {
-															const tagIds = this.props.content.tagIds || [];
-															if (!tagIds.length) { return true; }
-															return pub.pubTags.reduce((prev, curr)=> {
-																// if (curr.tagId === this.props.content.tagId) { return true; }
-																if (tagIds.indexOf(curr.tagId) > -1) { return true; }
-																return prev;
-															}, false);
-														// }).filter((pub)=> {
-															// return pub.firstPublishedAt;
-														}).sort((foo, bar)=> {
-															if (foo.title < bar.title) { return -1; }
-															if (foo.title > bar.title) { return 1; }
-															return 0;
-														}).map((pub)=> {
-															return <option value={pub.id} key={`option-${pub.id}`}>{pub.title}</option>;
-														})}
-													</select>
-												</div>
+												? (
+													<div className="pt-select">
+														<select value={this.props.content.pubIds[index] || ''} onChange={(evt)=> { this.changePubId(index, evt.target.value); }}>
+															<option value="">Choose specific Pub</option>
+															{this.props.pubs.filter((pub)=> {
+																const tagIds = this.props.content.tagIds || [];
+																if (!tagIds.length) { return true; }
+																return pub.pubTags.reduce((prev, curr)=> {
+																	// if (curr.tagId === this.props.content.tagId) { return true; }
+																	if (tagIds.indexOf(curr.tagId) > -1) { return true; }
+																	return prev;
+																}, false);
+															// }).filter((pub)=> {
+																// return pub.firstPublishedAt;
+															}).sort((foo, bar)=> {
+																if (foo.title < bar.title) { return -1; }
+																if (foo.title > bar.title) { return 1; }
+																return 0;
+															}).map((pub)=> {
+																return <option value={pub.id} key={`option-${pub.id}`}>{pub.title}</option>;
+															})}
+														</select>
+													</div>
+												)
 												: null
 											}
 										/>

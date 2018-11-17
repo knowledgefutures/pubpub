@@ -47,83 +47,94 @@ class PubOptionsSharing extends Component {
 			})
 		})
 		.then((result)=> {
-			const newPubData = {
-				...this.state.pubData,
-				managers: [
-					...this.state.pubData.managers,
-					result,
-				]
-			};
-			this.setState({ pubData: newPubData });
-			this.props.setPubData(newPubData);
+			this.setState((prevState)=> {
+				const newPubData = {
+					...prevState.pubData,
+					managers: [
+						...prevState.pubData.managers,
+						result,
+					]
+				};
+				this.props.setPubData(newPubData);
+				return { pubData: newPubData };
+			});
 		});
 	}
 
 	handleRemoveManager(managerId) {
-		const newPubData = {
-			...this.state.pubData,
-			managers: this.state.pubData.managers.filter((manager)=> {
-				return manager.id !== managerId;
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
+				managers: prevState.pubData.managers.filter((manager)=> {
+					return manager.id !== managerId;
+				})
+			};
+			return { pubData: newPubData, isLoading: true }
+		}, ()=> {
+			apiFetch('/api/pubManagers', {
+				method: 'DELETE',
+				body: JSON.stringify({
+					pubManagerId: managerId,
+					pubId: this.state.pubData.id,
+					communityId: this.props.communityData.id,
+				})
 			})
-		};
-		this.setState({ pubData: newPubData, isLoading: true });
-		return apiFetch('/api/pubManagers', {
-			method: 'DELETE',
-			body: JSON.stringify({
-				pubManagerId: managerId,
-				pubId: this.state.pubData.id,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			this.props.setPubData(newPubData);
-			this.setState({ isLoading: false });
+			.then(()=> {
+				this.props.setPubData(this.state.pubData);
+				this.setState({ isLoading: false });
+			});
 		});
 	}
 
 	handleVersionUpdate(versionUpdates) {
-		const newPubData = {
-			...this.state.pubData,
-			versions: this.state.pubData.versions.map((version)=> {
-				if (version.id !== versionUpdates.versionId) { return version; }
-				return {
-					...version,
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
+				versions: prevState.pubData.versions.map((version)=> {
+					if (version.id !== versionUpdates.versionId) { return version; }
+					return {
+						...version,
+						...versionUpdates,
+					};
+				})
+			};
+			return { pubData: newPubData, isLoading: true };
+		}, ()=> {
+			apiFetch('/api/versions', {
+				method: 'PUT',
+				body: JSON.stringify({
 					...versionUpdates,
-				};
+					pubId: this.state.pubData.id,
+					communityId: this.props.communityData.id,
+				})
 			})
-		};
-		this.setState({ pubData: newPubData, isLoading: true });
-		return apiFetch('/api/versions', {
-			method: 'PUT',
-			body: JSON.stringify({
-				...versionUpdates,
-				pubId: this.state.pubData.id,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			this.props.setPubData(newPubData);
-			this.setState({ isLoading: false });
+			.then(()=> {
+				this.props.setPubData(this.state.pubData);
+				this.setState({ isLoading: false });
+			});
 		});
 	}
 
 	handlePubUpdate(pubUpdates) {
-		const newPubData = {
-			...this.state.pubData,
-			...pubUpdates,
-		};
-		this.setState({ pubData: newPubData, isLoading: true });
-		return apiFetch('/api/pubs', {
-			method: 'PUT',
-			body: JSON.stringify({
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
 				...pubUpdates,
-				pubId: this.state.pubData.id,
-				communityId: this.props.communityData.id,
+			};
+			return { pubData: newPubData, isLoading: true };
+		}, ()=> {
+			apiFetch('/api/pubs', {
+				method: 'PUT',
+				body: JSON.stringify({
+					...pubUpdates,
+					pubId: this.state.pubData.id,
+					communityId: this.props.communityData.id,
+				})
 			})
-		})
-		.then(()=> {
-			this.props.setPubData(newPubData);
-			this.setState({ isLoading: false });
+			.then(()=> {
+				this.props.setPubData(this.state.pubData);
+				this.setState({ isLoading: false });
+			});
 		});
 	}
 
@@ -137,63 +148,71 @@ class PubOptionsSharing extends Component {
 			})
 		})
 		.then((result)=> {
-			const newPubData = {
-				...this.state.pubData,
-				versionPermissions: [
-					...this.state.pubData.versionPermissions,
-					result,
-				]
-			};
-			this.setState({ pubData: newPubData });
-			this.props.setPubData(newPubData);
+			this.setState((prevState)=> {
+				const newPubData = {
+					...prevState.pubData,
+					versionPermissions: [
+						...prevState.pubData.versionPermissions,
+						result,
+					]
+				};
+				this.props.setPubData(newPubData);
+				return { pubData: newPubData };
+			});
 		});
 	}
 
 	handleVersionPermissionUpdate(versionPermissionUpdates) {
-		const newPubData = {
-			...this.state.pubData,
-			versionPermissions: this.state.pubData.versionPermissions.map((versionPermission)=> {
-				if (versionPermission.id !== versionPermissionUpdates.versionPermissionId) { return versionPermission; }
-				return {
-					...versionPermission,
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
+				versionPermissions: prevState.pubData.versionPermissions.map((versionPermission)=> {
+					if (versionPermission.id !== versionPermissionUpdates.versionPermissionId) { return versionPermission; }
+					return {
+						...versionPermission,
+						...versionPermissionUpdates,
+					};
+				})
+			};
+			return { pubData: newPubData, isLoading: true };
+		}, ()=> {
+			apiFetch('/api/versionPermissions', {
+				method: 'PUT',
+				body: JSON.stringify({
 					...versionPermissionUpdates,
-				};
+					pubId: this.state.pubData.id,
+					communityId: this.props.communityData.id,
+				})
 			})
-		};
-		this.setState({ pubData: newPubData, isLoading: true });
-		return apiFetch('/api/versionPermissions', {
-			method: 'PUT',
-			body: JSON.stringify({
-				...versionPermissionUpdates,
-				pubId: this.state.pubData.id,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			this.setState({ isLoading: false });
-			this.props.setPubData(newPubData);
+			.then(()=> {
+				this.setState({ isLoading: false });
+				this.props.setPubData(this.state.pubData);
+			});
 		});
 	}
 
 	handleVersionPermissionDelete(versionPermissionId) {
-		const newPubData = {
-			...this.state.pubData,
-			versionPermissions: this.state.pubData.versionPermissions.filter((versionPermission)=> {
-				return versionPermission.id !== versionPermissionId;
+		this.setState((prevState)=> {
+			const newPubData = {
+				...prevState.pubData,
+				versionPermissions: prevState.pubData.versionPermissions.filter((versionPermission)=> {
+					return versionPermission.id !== versionPermissionId;
+				})
+			};
+			return { pubData: newPubData, isLoading: true };
+		}, ()=> {
+			apiFetch('/api/versionPermissions', {
+				method: 'DELETE',
+				body: JSON.stringify({
+					versionPermissionId: versionPermissionId,
+					pubId: this.state.pubData.id,
+					communityId: this.props.communityData.id,
+				})
 			})
-		};
-		this.setState({ pubData: newPubData, isLoading: true });
-		return apiFetch('/api/versionPermissions', {
-			method: 'DELETE',
-			body: JSON.stringify({
-				versionPermissionId: versionPermissionId,
-				pubId: this.state.pubData.id,
-				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
-			this.setState({ isLoading: false });
-			this.props.setPubData(newPubData);
+			.then(()=> {
+				this.setState({ isLoading: false });
+				this.props.setPubData(this.state.pubData);
+			});
 		});
 	}
 

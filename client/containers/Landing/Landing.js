@@ -105,26 +105,6 @@ class Landing extends React.Component {
 				>
 					{/* BEGIN Jumbotron */}
 					<div id="jumbotron">
-						{/* BEGIN Nav */}
-						{/* <div className="container">
-							<div className="row">
-								<div className="col-12">
-									<nav>
-										<img src="/static/logo.svg" alt="PubPub" />
-										<span className="title">PubPub</span>
-										<div className="spacer" />
-										<a href="/new/about" className="link">About</a>
-										<a href="/new/features" className="link">Features</a>
-										<a href="/new/pricing" className="link">Pricing</a>
-										<a href="/new/contact" className="link">Contact</a>
-										<span className="separator">·</span>
-										<a className="link">Search</a>
-										<a className="link">Signup or Login</a>
-									</nav>
-								</div>
-							</div>
-						</div> */}
-						{/* END Nav */}
 						{/* BEGIN Jumbotron Content */}
 						<div className="container">
 							<div className="row content">
@@ -135,7 +115,8 @@ class Landing extends React.Component {
 												timeout={750}
 												classNames="landing-header"
 												appear={true}
-												key={this.state.landingHeader}>
+												key={this.state.landingHeader}
+											>
 												<span className="landing-header">{this.state.landingHeader}</span>
 											</CSSTransition>
 										</TransitionGroup>
@@ -174,8 +155,8 @@ class Landing extends React.Component {
 												</div>
 											</div>
 											<div className="image">
-												<img src="/static/landing/journals.png" />
-												<p className="credit"><a href="https://jods.mitpress.mit.edu" target="_blank">Journal of Design and Science</a> / <a href="http://stanford-jblp.pubpub.org" target="_blank">Stanford Journal of Blockchain Law & Policy</a></p>
+												<img alt="Journal communities" src="/static/landing/journals.png" />
+												<p className="credit"><a href="https://jods.mitpress.mit.edu" target="_blank" rel="noopener noreferrer">Journal of Design and Science</a> / <a alt="Stanford Blockchain community" href="http://stanford-jblp.pubpub.org" target="_blank" rel="noopener noreferrer">Stanford Journal of Blockchain Law & Policy</a></p>
 											</div>
 										</div>
 
@@ -189,8 +170,8 @@ class Landing extends React.Component {
 												</div>
 											</div>
 											<div className="image">
-												<a href="https://www.frankenbook.org" target="_blank"><img className="pt-elevation-2" src="/static/landing/frankenbook.png" /></a>
-												<p className="credit"><a href="https://frankenbook.org" target="_blank">Frankenbook</a></p>
+												<a href="https://www.frankenbook.org" target="_blank" rel="noopener noreferrer"><img alt="Frankenbook" className="pt-elevation-2" src="/static/landing/frankenbook.png" /></a>
+												<p className="credit"><a href="https://frankenbook.org" target="_blank" rel="noopener noreferrer">Frankenbook</a></p>
 											</div>
 										</div>
 
@@ -204,8 +185,8 @@ class Landing extends React.Component {
 												</div>
 											</div>
 											<div className="image">
-												<img src="/static/landing/labs.png" />
-												<p className="credit"><a href="https://www.responsivescience.org" target="_blank">Responsive Science</a> / <a href="http://viral.pubpub.org" target="_blank">Viral Communications</a></p>
+												<img alt="Lab communities" src="/static/landing/labs.png" />
+												<p className="credit"><a href="https://www.responsivescience.org" target="_blank" rel="noopener noreferrer">Responsive Science</a> / <a href="http://viral.pubpub.org" target="_blank" rel="noopener noreferrer">Viral Communications</a></p>
 											</div>
 										</div>
 
@@ -219,42 +200,15 @@ class Landing extends React.Component {
 												</div>
 											</div>
 											<div className="image">
-												<a href="https://millie.pubpub.org" target="_blank"><img className="pt-elevation-2" src="/static/landing/millie.png" /></a>
-												<p className="credit"><a href="https://millie.pubpub.org" target="_blank">Celebrating Millie</a></p>
+												<a href="https://millie.pubpub.org" target="_blank" rel="noopener noreferrer"><img alt="Millie Conference" className="pt-elevation-2" src="/static/landing/millie.png" /></a>
+												<p className="credit"><a href="https://millie.pubpub.org" target="_blank" rel="noopener noreferrer">Celebrating Millie</a></p>
 											</div>
 										</div>
-										{/*<div className="type-block centered">
-											<div className="content">
-												<h2>For You!</h2>
-												<p className="description">We designed PubPub with flexibility in mind. Use every feature, or just the ones you need. If you’re a company or community that needs to collaboratively draft, review, edit and publish documents, we want to support you.</p>
-												<div className="buttons">
-													<button className="pt-button pt-intent-primary">Get in touch</button>
-													<button className="pt-button">Explore the possibilities</button>
-												</div>
-											</div>
-									</div>*/}
 									</div>
 								</div>
 							</div>
 						</div>
 						{/* END Community Block */}
-						{/* BEGIN For You Block
-						<div className="bg" id="foryou">
-							<div className="container">
-								<div className="row">
-									<div className="col-12">
-										<h2>For You!</h2>
-										<p>We designed PubPub with flexibility in mind. Use every feature, or just the ones you need. If you’re a company or community that needs to collaboratively draft, review, edit and publish documents, we want to support you.</p>
-										<div className="buttons">
-											<button className="pt-button pt-intent-primary">Get in touch</button>
-											<button className="pt-button">Explore the possibilities</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						*/}
-						{/* END For You Block */}
 						{/* BEGIN O/S Block */}
 						<div className="bg" id="opensource">
 							<div className="container">
@@ -330,31 +284,6 @@ class Landing extends React.Component {
 							</div>
 						</div>
 						{/* END For You */}
-						{/* BEGIN Friends Block
-						<div className="bg" id="friends">
-							<div className="container">
-								<div className="row bg2">
-									<div className="col-12">
-										<h2>Built with a growing, open communtiy</h2>
-										<ul>
-											<li>Travis</li>
-											<li>Catherine</li>
-											<li>Gabe</li>
-											<li>SJ</li>
-											<li>Amy Brand</li>
-											<li>Joi Ito</li>
-											<li>Jess Polka</li>
-											<li>Andy Lippman</li>
-											<li>Terry</li>
-											<li>Joel</li>
-											<li>Ed Finn</li>
-											<li>Thomas</li>
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-						 Friends Block */}
 					</div>
 					{/* END Main content */}
 				</PageWrapper>

@@ -95,7 +95,7 @@ class DiscussionLabels extends Component {
 										: ()=> { this.applyLabel(label.id); };
 									return (
 										<li key={label.id}>
-											<div className="pt-menu-item" onClick={handleClick}>
+											<div role="button" tabIndex={-1} className="pt-menu-item" onClick={handleClick}>
 												<div className="color" style={{ backgroundColor: label.color }}>
 													{isActive && <span className="pt-icon-standard pt-icon-tick" />}
 												</div>

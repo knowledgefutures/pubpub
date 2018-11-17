@@ -9,6 +9,7 @@ const propTypes = {
 };
 
 const DiscussionSortList = (props)=> {
+	const onSelect = props.onSelect;
 	const options = [
 		{ id: 0, slug: 'newestThread', title: 'Newest Thread' },
 		{ id: 1, slug: 'oldestThread', title: 'Oldest Thread' },
@@ -22,10 +23,10 @@ const DiscussionSortList = (props)=> {
 			<li className="pt-menu-header"><h6>Filter by Author</h6></li>
 
 			{options.map((option)=> {
-				const handleClick = ()=> { props.onSelect(option.slug); };
+				const handleClick = ()=> { onSelect(option.slug); };
 				return (
 					<li>
-						<div key={`option-${option.id}`} className="pt-menu-item" onClick={handleClick}>
+						<div role="button" tabIndex={-1} key={`option-${option.id}`} className="pt-menu-item" onClick={handleClick}>
 							<div className="color">
 								{props.selected === option.slug &&
 									<span className="pt-icon-standard pt-icon-small-tick" />

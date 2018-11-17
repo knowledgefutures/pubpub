@@ -15,6 +15,15 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		.pt-button {
+			padding: 0em;
+			min-height: auto;
+			min-width: auto;
+			&:hover {
+				background: transparent;
+				text-decoration: underline;
+			}
+		}
 		.pt-icon {
 			opacity: 0.75;
 		}

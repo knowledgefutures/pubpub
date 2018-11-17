@@ -4,15 +4,7 @@ import TimeAgo from 'react-timeago';
 import { Button } from '@blueprintjs/core';
 import Avatar from 'components/Avatar/Avatar';
 import Editor, { getText, getJSON } from '@pubpub/editor';
-// import { Editor } from '@pubpub/editor';
-// import Image from '@pubpub/editor/addons/Image';
-// import Video from '@pubpub/editor/addons/Video';
-// import File from '@pubpub/editor/addons/File';
-// import Iframe from '@pubpub/editor/addons/Iframe';
-// import FormattingMenu from '@pubpub/editor/addons/FormattingMenu';
-// import InsertMenu from '@pubpub/editor/addons/InsertMenu';
-// import HighlightQuote from '@pubpub/editor/addons/HighlightQuote';
-import { s3Upload, getResizedUrl } from 'utilities';
+import { getResizedUrl } from 'utilities';
 
 require('./discussionThreadItem.scss');
 
@@ -65,7 +57,9 @@ class DiscussionThreadItem extends Component {
 	}
 
 	onEditToggle() {
-		this.setState({ isEditing: !this.state.isEditing });
+		this.setState((prevState)=> {
+			return { isEditing: !prevState.isEditing };
+		});
 	}
 
 	onBodyChange(changeObject) {
@@ -77,10 +71,6 @@ class DiscussionThreadItem extends Component {
 			});
 		}
 	}
-
-	// focusEditor() {
-	// 	this.editorRef.focus();
-	// }
 
 	onSubmit(evt) {
 		evt.preventDefault();
@@ -141,19 +131,6 @@ class DiscussionThreadItem extends Component {
 									Edit
 								</button>
 							}
-
-							{/*
-							<DropdownButton icon="pt-icon-more" isRightAligned={true}>
-								<div className="pt-menu">
-									<div className="pt-menu-item pt-popover-dismiss">
-										Flag
-									</div>
-									<div className="pt-menu-item pt-popover-dismiss">
-										Link To...
-									</div>
-								</div>
-							</DropdownButton>
-							*/}
 						</div>
 					}
 
@@ -173,37 +150,6 @@ class DiscussionThreadItem extends Component {
 							},
 						}}
 					/>
-
-					{/*<Editor
-						key={this.state.isEditing ? `discussion-${discussion.id}-editing` : `discussion-${discussion.id}`}
-						ref={(ref)=> { this.editorRef = ref; }}
-						initialContent={discussion.content}
-						isReadOnly={!this.state.isEditing}
-						placeholder="Reply..."
-						onChange={this.onBodyChange}
-						editorId={discussion.id}
-					>
-						{this.state.isEditing &&
-							<FormattingMenu include={['link']} />
-						}
-						{this.state.isEditing &&
-							<InsertMenu />
-						}
-						<HighlightQuote
-							hideScrollButton={this.props.hideScrollButton}
-							getHighlightContent={this.props.getHighlightContent}
-							handlePermalink={this.props.handleQuotePermalink}
-							hoverBackgroundColor={this.props.hoverBackgroundColor}
-						/>
-						<Image
-							handleFileUpload={s3Upload}
-							handleResizeUrl={(url)=> { return getResizedUrl(url, 'fit-in', '800x0'); }}
-							linkToSrc={!this.state.isEditing}
-						/>
-						<Video handleFileUpload={s3Upload} />
-						<File handleFileUpload={s3Upload} />
-						<Iframe />
-					</Editor>*/}
 				</div>
 				{this.state.isEditing &&
 					<div className="editing-buttons">

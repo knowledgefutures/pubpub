@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'components/Icon/Icon';
-import { Button } from '@blueprintjs/core';
+import { AnchorButton, Button } from '@blueprintjs/core';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 
 require('./pubSideOptions.scss');
@@ -72,7 +72,7 @@ class PubSideOptions extends Component {
 		// Iterate over all discussionSidePreviews
 		// Set all to be position: absolute, top: 0
 		// On every click - you iterate over them all, calculate their height and set their transformY
-		// On every click - you figure out where they want to be, and then get as close as possible given the other 
+		// On every click - you figure out where they want to be, and then get as close as possible given the other
 		// heights and position that exist.
 		// If one is selected - you have to give that one priority, so you set it first, and then calculate
 		// for the previews before and after.
@@ -89,9 +89,17 @@ class PubSideOptions extends Component {
 			<div className="pub-side-options-component" ref={this.wrapperRef}>
 				<div className="side-options-wrapper" style={wrapperStyle}>
 					<div className="links">
-						<a onClick={()=> { this.props.setOptionsMode('cite'); }}>Cite</a>
+						<AnchorButton
+							className="pt-minimal"
+							onClick={()=> { this.props.setOptionsMode('cite'); }}
+							text="Cite"
+						/>
 						<span>·</span>
-						<a onClick={()=> { this.props.setOptionsMode('export'); }}>Export</a>
+						<AnchorButton
+							className="pt-minimal"
+							onClick={()=> { this.props.setOptionsMode('export'); }}
+							text="Export"
+						/>
 						<span>·</span>
 						<a href={`https://www.facebook.com/sharer.php?u=${pubLink}`} rel="noopener noreferrer" target="_blank">
 							<Icon icon="facebook" />

@@ -171,7 +171,6 @@ class LayoutEditor extends Component {
 									<LayoutEditorPubs
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
-										onRemove={this.handleRemove}
 										layoutIndex={index}
 										content={item.content}
 										pubRenderList={this.state.pubRenderLists[index] || []}
@@ -183,7 +182,6 @@ class LayoutEditor extends Component {
 									<LayoutEditorText
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
-										onRemove={this.handleRemove}
 										layoutIndex={index}
 										content={item.content}
 									/>
@@ -192,7 +190,6 @@ class LayoutEditor extends Component {
 									<LayoutEditorHtml
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
-										onRemove={this.handleRemove}
 										layoutIndex={index}
 										content={item.content}
 									/>
@@ -201,7 +198,6 @@ class LayoutEditor extends Component {
 									<LayoutEditorBanner
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
-										onRemove={this.handleRemove}
 										layoutIndex={index}
 										content={item.content}
 										communityData={this.props.communityData}

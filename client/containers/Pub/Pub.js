@@ -638,7 +638,6 @@ class Pub extends Component {
 										loginData={this.props.loginData}
 										threads={threads}
 										locationData={this.state.locationData}
-										onPreviewClick={this.setActiveThread}
 										onLabelsSave={this.handlePutLabels}
 										onPostDiscussion={this.handlePostDiscussion}
 										onPutDiscussion={this.handlePutDiscussion}
@@ -646,7 +645,6 @@ class Pub extends Component {
 										activeDiscussionChannel={activeDiscussionChannel}
 										setDiscussionChannel={this.setDiscussionChannel}
 										handleQuotePermalink={this.handleQuotePermalink}
-										// showAll={queryObject.all}
 									/>
 								</div>
 							</div>
@@ -672,21 +670,6 @@ class Pub extends Component {
 						editorChangeObject={this.state.editorChangeObject}
 						getAbsolutePosition={this.getAbsolutePosition}
 					/>
-					{/* <DiscussionViewer
-						pubData={pubData}
-						loginData={this.props.loginData}
-						locationData={this.props.locationData}
-						communityData={this.props.communityData}
-						activeThreadNumber={this.state.activeThreadNumber}
-						activeThreadNode={this.state.activeThreadNode}
-						onClose={this.closeThreadOverlay}
-						getHighlightContent={this.getHighlightContent}
-						onPostDiscussion={this.handlePostDiscussion}
-						onPutDiscussion={this.handlePutDiscussion}
-						postDiscussionIsLoading={this.state.postDiscussionIsLoading}
-						initialContent={this.state.initialDiscussionContent}
-					/>
-					*/}
 					<PubOptions
 						communityData={this.props.communityData}
 						pubData={pubData}
@@ -698,38 +681,6 @@ class Pub extends Component {
 						setOptionsMode={this.setOptionsMode}
 						setPubData={this.setPubData}
 					/>
-
-					{/* mode === 'discussions' &&
-						<div className="container pub mode-content">
-							<div className="row">
-								<div className="col-12">
-									{!subMode &&
-										<DiscussionList
-											pubData={pubData}
-											mode={mode}
-											onLabelsSave={this.handlePutLabels}
-										/>
-									}
-									{subMode &&
-										<DiscussionThread
-											pubData={pubData}
-											discussions={activeThread}
-											canManage={pubData.isManager}
-											slug={pubData.slug}
-											loginData={this.props.loginData}
-											pathname={`${this.props.locationData.path}${this.props.locationData.queryString}`}
-											handleReplySubmit={this.handlePostDiscussion}
-											handleReplyEdit={this.handlePutDiscussion}
-											submitIsLoading={this.state.postDiscussionIsLoading}
-											hideScrollButton={true}
-											getHighlightContent={()=>{}}
-											hoverBackgroundColor={this.props.communityData.accentMinimalColor}
-										/>
-									}
-								</div>
-							</div>
-						</div>
-					*/}
 				</PageWrapper>
 			</div>
 		);

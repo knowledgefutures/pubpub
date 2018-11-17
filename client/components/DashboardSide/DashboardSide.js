@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { AnchorButton } from '@blueprintjs/core';
 
 require('./dashboardSide.scss');
 
@@ -63,9 +64,10 @@ const DashboardSide = function(props) {
 			</ul>
 			<ul className="pt-menu">
 				<li className="pt-menu-header">
-					<a
+					<AnchorButton
 						href="/dashboard/page"
-						className="pt-button pt-icon-plus pt-small pt-minimal title-button"
+						className="pt-small pt-minimal title-button"
+						icon="plus"
 					/>
 					<h6>Pages</h6>
 				</li>

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Button } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
-import CollectionAutocomplete from './CollectionAutocomplete';
+import PageAutocomplete from './PageAutocomplete';
 
 require('./navDrag.scss');
 
@@ -27,33 +28,32 @@ class NavDrag extends Component {
 
 	onDragEnd(result) {
 		if (!result.destination) { return null; }
-		const items = result.destination.droppableId === 'mainDroppable'
-			? this.reorder(
-				this.state.nav,
-				result.source.index,
-				result.destination.index
-			)
-			: this.state.nav.map((item)=> {
-				if (item.id === result.destination.droppableId) {
-					return {
-						...item,
-						children: this.reorder(
-							item.children,
-							result.source.index,
-							result.destination.index
-						)
-					};
-				}
-				return item;
-			});
-
-		this.setState({
-			nav: items,
+		return this.setState((prevState)=> {
+			const items = result.destination.droppableId === 'mainDroppable'
+				? this.reorder(
+					prevState.nav,
+					result.source.index,
+					result.destination.index
+				)
+				: prevState.nav.map((item)=> {
+					if (item.id === result.destination.droppableId) {
+						return {
+							...item,
+							children: this.reorder(
+								item.children,
+								result.source.index,
+								result.destination.index
+							)
+						};
+					}
+					return item;
+				});
+			this.props.onChange([
+				this.props.initialNav[0].id,
+				...this.cleanOutputNav(items)
+			]);
+			return { nav: items };
 		});
-		return this.props.onChange([
-			this.props.initialNav[0].id,
-			...this.cleanOutputNav(items)
-		]);
 	}
 
 	cleanOutputNav(populatedNav) {
@@ -80,46 +80,50 @@ class NavDrag extends Component {
 	}
 
 	addItem(newItem, dropdownId) {
-		const newItems = dropdownId
-			? this.state.nav.map((item)=> {
-				if (item.id === dropdownId) {
-					return {
-						...item,
-						children: [newItem, ...item.children]
-					};
-				}
-				return item;
-			})
-			: [newItem, ...this.state.nav];
+		this.setState((prevState)=> {
+			const newItems = dropdownId
+				? prevState.nav.map((item)=> {
+					if (item.id === dropdownId) {
+						return {
+							...item,
+							children: [newItem, ...item.children]
+						};
+					}
+					return item;
+				})
+				: [newItem, ...prevState.nav];
 
-		this.setState({ nav: newItems });
-		return this.props.onChange([
-			this.props.initialNav[0].id,
-			...this.cleanOutputNav(newItems)
-		]);
+			this.props.onChange([
+				this.props.initialNav[0].id,
+				...this.cleanOutputNav(newItems)
+			]);
+			return { nav: newItems };
+		});
 	}
 
 	removeItem(itemId, dropdownId) {
-		const newItems = !dropdownId
-			? this.state.nav.filter((item)=> {
-				return item.id !== itemId;
-			})
-			: this.state.nav.map((item)=> {
-				if (item.id === dropdownId) {
-					return {
-						...item,
-						children: item.children.filter((subItem)=> {
-							return subItem.id !== itemId;
-						})
-					};
-				}
-				return item;
-			});
-		this.setState({ nav: newItems });
-		return this.props.onChange([
-			this.props.initialNav[0].id,
-			...this.cleanOutputNav(newItems)
-		]);
+		this.setState((prevState)=> {
+			const newItems = !dropdownId
+				? prevState.nav.filter((item)=> {
+					return item.id !== itemId;
+				})
+				: prevState.nav.map((item)=> {
+					if (item.id === dropdownId) {
+						return {
+							...item,
+							children: item.children.filter((subItem)=> {
+								return subItem.id !== itemId;
+							})
+						};
+					}
+					return item;
+				});
+			this.props.onChange([
+				this.props.initialNav[0].id,
+				...this.cleanOutputNav(newItems)
+			]);
+			return { nav: newItems };
+		});
 	}
 
 	render() {
@@ -130,7 +134,7 @@ class NavDrag extends Component {
 		return (
 			<div className="nav-drag-component">
 				<div className="new-collection-wrapper">
-					<CollectionAutocomplete
+					<PageAutocomplete
 						pages={this.props.pages}
 						usedItems={this.state.nav}
 						onSelect={(newItem)=>{ this.addItem(newItem, undefined); }}
@@ -166,11 +170,14 @@ class NavDrag extends Component {
 																<span className="pt-icon-standard pt-icon-caret-down pt-align-right" />
 															}
 														</span>
-														<button onClick={()=>{ this.removeItem(item.id); }} className="pt-button pt-icon-small-cross pt-minimal" />
+														<Button
+															onClick={()=>{ this.removeItem(item.id); }}
+															className="pt-icon-small-cross pt-minimal"
+														/>
 
 														{item.children &&
 															<div className="dropdown-wrapper pt-card pt-elevation-2">
-																<CollectionAutocomplete
+																<PageAutocomplete
 																	pages={this.props.pages}
 																	usedItems={item.children}
 																	placeholder="Add..."
@@ -198,7 +205,10 @@ class NavDrag extends Component {
 																									}
 																									{child.title}
 																								</span>
-																								<button onClick={()=>{ this.removeItem(child.id, item.id); }} className="pt-button pt-minimal pt-icon-small-cross" />
+																								<Button
+																									onClick={()=>{ this.removeItem(child.id, item.id); }}
+																									className="pt-minimal pt-icon-small-cross"
+																								/>
 																							</div>
 																						)}
 																					</Draggable>

@@ -16,6 +16,7 @@ const defaultProps = {
 
 const DiscussionAuthorsList = (props)=> {
 	const authorsObject = {};
+	const onSelect = props.onSelect;
 	props.threadsData.forEach((thread)=> {
 		thread.forEach((discussion)=> {
 			authorsObject[discussion.author.id] = discussion.author;
@@ -31,16 +32,15 @@ const DiscussionAuthorsList = (props)=> {
 			<li className="pt-menu-header"><h6>Filter by Discussion Author</h6></li>
 
 			{authors.map((author)=> {
-				const handleClick = ()=> { props.onSelect(author.id); };
+				const handleClick = ()=> { onSelect(author.id); };
 				return (
 					<li>
-						<div key={`author-${author.id}`} className="pt-menu-item" onClick={handleClick}>
+						<div role="button" tabIndex={-1} key={`author-${author.id}`} className="pt-menu-item" onClick={handleClick}>
 							<div className="color">
 								{props.selected.indexOf(author.id) > -1 &&
 									<span className="pt-icon-standard pt-icon-small-tick" />
 								}
 							</div>
-							{/*<img src={author.avatar} alt={author.fullName} />*/}
 							<Avatar width={16} userInitials={author.initials} userAvatar={author.avatar} />
 							<div className="title">{author.fullName}</div>
 						</div>

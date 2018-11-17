@@ -41,7 +41,6 @@ class ImageUpload extends Component {
 		super(props);
 		this.state = {
 			imageFile: undefined,
-			imageURL: undefined,
 			imageBlob: this.props.defaultImage,
 			uploading: false,
 		};
@@ -56,7 +55,6 @@ class ImageUpload extends Component {
 	onUploadFinish(evt, index, type, filename) {
 		const newImageUrl = `https://assets.pubpub.org/${filename}`;
 		this.setState({
-			imageURL: newImageUrl,
 			uploading: false,
 		});
 		this.props.onNewImage(newImageUrl);
@@ -65,7 +63,6 @@ class ImageUpload extends Component {
 	onCropUploaded(newImageUrl, newImageBlob) {
 		this.setState({
 			imageFile: undefined,
-			imageURL: newImageUrl,
 			imageBlob: newImageBlob,
 			uploading: false,
 		});
@@ -105,7 +102,6 @@ class ImageUpload extends Component {
 		evt.preventDefault();
 		this.setState({
 			imageFile: undefined,
-			imageURL: undefined,
 			imageBlob: undefined,
 			uploading: false
 		});

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
-import { Button, NonIdealState } from '@blueprintjs/core';
+import { AnchorButton, Button, NonIdealState } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import { hydrateWrapper, apiFetch } from 'utilities';
@@ -168,9 +168,11 @@ class PasswordReset extends Component {
 										title="Reset Password Successful"
 										visual="tick"
 										action={
-											<a href="/login">
-												<button className="pt-button pt-intent-primary pt-large">Login with new password</button>
-											</a>
+											<AnchorButton
+												href="/login"
+												className="pt-intent-primary pt-large"
+												text="Login with new password"
+											/>
 										}
 									/>
 								}

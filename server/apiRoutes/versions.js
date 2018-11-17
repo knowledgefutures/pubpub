@@ -1,5 +1,5 @@
 import app from '../server';
-import { Pub, Version, CommunityAdmin, Discussion, Collection, PubManager } from '../models';
+import { Pub, Version, CommunityAdmin, Discussion, PubManager } from '../models';
 import { submitDoiData, generateHash } from '../utilities';
 
 app.post('/api/versions', (req, res)=> {
@@ -19,12 +19,6 @@ app.post('/api/versions', (req, res)=> {
 	});
 	const findPub = Pub.findOne({
 		where: { id: req.body.pubId, communityId: req.body.communityId },
-		// include: [{
-		// 	// model: Collection,
-		// 	as: 'collections',
-		// 	attributes: ['id', 'isOpenPublish'],
-		// 	through: { attributes: [] },
-		// }]
 	});
 
 	const currentTimestamp = new Date();

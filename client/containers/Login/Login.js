@@ -110,7 +110,7 @@ class Login extends Component {
 											</InputField>
 										</form>
 
-										<a href="/signup" className="switch-message">Don't have a PubPub account? Click to Signup</a>
+										<a href="/signup" className="switch-message">Don&apos;t have a PubPub account? Click to Signup</a>
 									</div>
 								}
 								{this.props.loginData.id &&

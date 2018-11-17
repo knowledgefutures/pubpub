@@ -22,9 +22,7 @@ const propTypes = {
 class LayoutEditorBanner extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			key: new Date().getTime(),
-		};
+
 		this.handleRemove = this.handleRemove.bind(this);
 		this.setAlign = this.setAlign.bind(this);
 		this.setBackgroundSize = this.setBackgroundSize.bind(this);
@@ -58,7 +56,6 @@ class LayoutEditorBanner extends Component {
 	}
 
 	setBackgroundImage(value) {
-		console.log(value);
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			backgroundImage: value,

@@ -21,7 +21,7 @@ export const hydrateWrapper = (Component)=> {
 
 		const initialData = JSON.parse(document.getElementById('initial-data').getAttribute('data-json'));
 		isPubPubProduction = initialData.locationData.isPubPubProduction;
-		
+
 		const isDev = window.location.origin.indexOf('localhost:') > -1;
 		if (!isDev) {
 			Raven.config('https://b4764efd07c240488d390c8343193208@sentry.io/197897').install();
@@ -284,10 +284,11 @@ export function s3Upload(file, progressEvent, finishEvent, index) {
 			? generateHash(8)
 			: '_testing';
 
-		const extension = file.name !== undefined ? file.name.substr((~-file.name.lastIndexOf('.') >>> 0) + 2) : 'jpg';
+		const extension = file.name !== undefined ? file.name.split('.').pop() : 'jpg';
 
 		// const filename = folderName + '/' + new Date().getTime() + '.' + extension;
-		const filename = folderName + '/' + (Math.floor(Math.random() * 8)) + new Date().getTime() + '.' + extension;
+		// const filename = folderName + '/' + (Math.floor(Math.random() * 8)) + new Date().getTime() + '.' + extension;
+		const filename = `${folderName}/${Math.floor(Math.random() * 8)}${new Date().getTime()}.${extension}`;
 		const fileType = file.type !== undefined ? file.type : 'image/jpeg';
 		const formData = new FormData();
 

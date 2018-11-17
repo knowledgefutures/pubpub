@@ -25,13 +25,13 @@ const Pricing = (props)=> {
 					<div className="row">
 						<div className="col-12">
 							<h1>Pricing</h1>
-							<p>We are committed to providing PubPub users with robust, free-forever tools to support their community publishing. To fulfill this mission and ensure our sustainability, PubPub offers paid options that we've found to be predominantly required by large publishers.</p>
+							<p>We are committed to providing PubPub users with robust, free-forever tools to support their community publishing. To fulfill this mission and ensure our sustainability, PubPub offers paid options that we&apos;ve found to be predominantly required by large publishers.</p>
 							<div className="pricing-tiers">
 								<div className="option pt-card pt-elevation-1">
 									<h2>Community</h2>
 									<p className="subtitle">Free, forever</p>
 									<ul className="features">
-										<li>All of PubPub's core drafting, review, publishing, and discussion features</li>
+										<li>All of PubPub&apos;s core drafting, review, publishing, and discussion features</li>
 										<li>Unlimited publications</li>
 										<li>Your own pubpub.org subdomain</li>
 										<li>Publish with select CC licenses</li>

@@ -5,7 +5,6 @@ import app from '../server';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utilities';
 
 app.get('/signup', (req, res, next)=> {
-
 	return getInitialData(req)
 	.then((initialData)=> {
 		return renderToNodeStream(res,

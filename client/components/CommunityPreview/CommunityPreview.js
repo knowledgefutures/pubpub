@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getResizedUrl } from 'utilities';
-import Icon from 'components/Icon/Icon';
 
 require('./communityPreview.scss');
 

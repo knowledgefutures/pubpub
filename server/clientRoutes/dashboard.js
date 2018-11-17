@@ -3,7 +3,6 @@ import Promise from 'bluebird';
 import Dashboard from 'containers/Dashboard/Dashboard';
 import Html from '../Html';
 import app from '../server';
-import { Pub, Version, Discussion, PubTag, Tag } from '../models';
 import { hostIsValid, renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utilities';
 import { findPage } from '../queryHelpers';
 

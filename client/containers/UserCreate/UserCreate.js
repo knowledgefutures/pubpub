@@ -281,7 +281,6 @@ class UserCreate extends Component {
 											</InputField>
 										}
 
-										{/*<div className="subscribeBox">*/}
 										<InputField wrapperClassName="pt-callout" label="Stay Up To Date">
 											<Checkbox
 												label="Subscribe to our feature release & community newsletter."

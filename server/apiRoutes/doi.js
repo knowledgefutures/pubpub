@@ -34,7 +34,7 @@ app.post('/api/doi', (req, res)=> {
 		});
 	})
 	.catch((err)=> {
-		console.log('Error creating DOI', err);
+		console.error('Error creating DOI', err);
 		return res.status(500).json(err);
 	});
 });

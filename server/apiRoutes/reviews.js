@@ -1,5 +1,5 @@
 import app from '../server';
-import { Pub, CommunityAdmin, PubManager} from '../models';
+import { Pub, CommunityAdmin, PubManager } from '../models';
 
 app.put('/api/pubs/reviews', (req, res)=> {
 	const user = req.user || {};

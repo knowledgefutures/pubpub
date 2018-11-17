@@ -3,8 +3,6 @@ import app from '../server';
 const tokenAuth = process.env.MATOMO_TOKEN_AUTH;
 
 app.get('/api/analytics', (req, res)=> {
-	const pubId = req.query.pubId;
-
 	const queryString = `
 		module=API
 		&method=API.getBulkRequest

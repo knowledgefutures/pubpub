@@ -1,5 +1,5 @@
 import app from '../server';
-import { Collection, Pub, Collaborator, CollectionPub, CommunityAdmin, PubManager, PubAttribution, PubTag } from '../models';
+import { Pub, CommunityAdmin, PubManager, PubAttribution, PubTag } from '../models';
 import { generateHash, slugifyString } from '../utilities';
 
 app.post('/api/pubs', (req, res)=> {

@@ -282,9 +282,9 @@ class DashboardDetails extends Component {
 					<InputField
 						label={
 							<span>
-								Public 'New Pub' button
+								Public &apos;New Pub&apos; button
 								<Tooltip
-									content={<span>Toggles 'New Pub' button in header bar.<br />Button will always be available to community admins.</span>}
+									content={<span>Toggles &apos;New Pub&apos; button in header bar.<br />Button will always be available to community admins.</span>}
 									tooltipClassName="pt-dark"
 								>
 									<Icon icon="info-sign" />

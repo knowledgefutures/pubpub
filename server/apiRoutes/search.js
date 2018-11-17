@@ -1,6 +1,6 @@
 import app from '../server';
-import { User, Pub, Discussion, Collaborator, Collection, Community } from '../models';
-
+// import { User, Pub, Discussion, Collaborator, Collection, Community } from '../models';
+import { User } from '../models';
 
 app.get('/api/search/users', (req, res)=> {
 	User.findAll({

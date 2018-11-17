@@ -100,7 +100,7 @@ class LayoutBanner extends Component {
 			</div>
 		);
 	}
-};
+}
 
 LayoutBanner.propTypes = propTypes;
 export default LayoutBanner;

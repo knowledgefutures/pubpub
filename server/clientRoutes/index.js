@@ -8,10 +8,6 @@ require('./pricing');			// Route: '/pricing'
 require('./pubRedirect');		// Route: '/pub/:slug'
 require('./landing');			// Route: '/'
 
-require('./newAbout');			// Route: '/new/about'
-require('./newFeatures');		// Route: '/new/features'
-require('./newContact');		// Route: '/new/contact'
-
 /* Routes for Communities */
 require('./dashboard');			// Route: ['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug']
 require('./pub');				// Route: ['/pub/:slug', '/pub/:slug/content/:chapterId', '/pub/:slug/draft', '/pub/:slug/draft/content/:chapterId', '/pub/:slug/:mode', '/pub/:slug/:mode/:subMode']

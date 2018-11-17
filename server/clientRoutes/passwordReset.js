@@ -7,7 +7,6 @@ import { User } from '../models';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utilities';
 
 app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next)=> {
-
 	const findUser = User.findOne({
 		where: { slug: req.params.slug },
 	});

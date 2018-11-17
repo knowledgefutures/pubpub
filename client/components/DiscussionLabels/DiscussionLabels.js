@@ -24,6 +24,7 @@ class DiscussionLabels extends Component {
 		this.removeLabel = this.removeLabel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
 	}
+
 	componentWillReceiveProps(nextProps) {
 		this.setState({
 			labelsData: nextProps.labelsData,
@@ -31,23 +32,30 @@ class DiscussionLabels extends Component {
 			labelsDataChanged: false,
 		});
 	}
+
 	applyLabel(labelId) {
-		this.setState({
-			labelsData: [
-				...this.state.labelsData,
-				labelId,
-			],
-			labelsDataChanged: true,
+		this.setState((prevState)=> {
+			return {
+				labelsData: [
+					...prevState.labelsData,
+					labelId,
+				],
+				labelsDataChanged: true,
+			};
 		});
 	}
+
 	removeLabel(labelId) {
-		this.setState({
-			labelsData: this.state.labelsData.filter((label)=> {
-				return label !== labelId;
-			}),
-			labelsDataChanged: true,
+		this.setState((prevState)=> {
+			return {
+				labelsData: prevState.labelsData.filter((label)=> {
+					return label !== labelId;
+				}),
+				labelsDataChanged: true,
+			};
 		});
 	}
+
 	handleSave() {
 		this.setState({ isSaving: true });
 		this.props.onLabelsSave(this.state.labelsData);
@@ -118,7 +126,13 @@ class DiscussionLabels extends Component {
 						inline={true}
 						inheritDarkTheme={false}
 					>
-						<button className="pt-tag pt-minimal" onClick={this.toggleEditMode}>Edit Labels</button>
+						<button
+							type="button"
+							className="pt-tag pt-minimal"
+							onClick={this.toggleEditMode}
+						>
+							Edit Labels
+						</button>
 					</Popover>
 				}
 				{this.props.labelsData.sort((foo, bar)=> {

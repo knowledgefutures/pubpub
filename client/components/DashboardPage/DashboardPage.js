@@ -286,7 +286,7 @@ class DashboardPage extends Component {
 							<div className="pt-callout pt-intent-danger">
 								<h5>Delete Page from Community</h5>
 								<p>Deleting a Page is permanent.</p>
-								<p>This will permanantely delete <b>{pageData.title}</b>. This will not delete pubs that are included in this page's layout.</p>
+								<p>This will permanantely delete <b>{pageData.title}</b>. This will not delete pubs that are included in this page&apos;s layout.</p>
 								<p>Please type the title of the Page below to confirm your intention.</p>
 
 								<InputField

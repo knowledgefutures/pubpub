@@ -105,4 +105,3 @@ Search.propTypes = propTypes;
 export default Search;
 
 hydrateWrapper(Search);
-

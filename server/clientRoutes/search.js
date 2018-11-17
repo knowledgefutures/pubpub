@@ -7,7 +7,6 @@ import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponent
 import { getPubSearch } from '../queryHelpers';
 
 app.get('/search', (req, res, next)=> {
-
 	return getInitialData(req)
 	.then((initialData)=> {
 		return Promise.all([initialData, getPubSearch(req.query, initialData)]);

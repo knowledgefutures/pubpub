@@ -1,5 +1,5 @@
 import app from '../server';
-import { Pub, User, Discussion, Collaborator, CommunityAdmin, PubManager } from '../models';
+import { Pub, User, Discussion, CommunityAdmin, PubManager } from '../models';
 
 app.post('/api/discussions', (req, res)=> {
 	Discussion.findAll({
@@ -54,7 +54,7 @@ app.post('/api/discussions', (req, res)=> {
 		});
 	})
 	.catch((err)=> {
-		console.log('Error creating Discussion', err);
+		console.error('Error creating Discussion', err);
 		return res.status(500).json(err);
 	});
 });
@@ -119,7 +119,7 @@ app.put('/api/discussions', (req, res)=> {
 		});
 	})
 	.catch((err)=> {
-		console.log('Error putting Discussion', err);
+		console.error('Error putting Discussion', err);
 		return res.status(500).json(err);
 	});
 });

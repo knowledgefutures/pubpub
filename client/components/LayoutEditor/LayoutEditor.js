@@ -32,88 +32,98 @@ class LayoutEditor extends Component {
 	}
 
 	handleInsert(index, type) {
-		const newLayout = this.state.layout;
-		const defaultContents = {
-			pubs: {
-				title: '',
-				pubPreviewType: 'medium',
-				limit: 0,
-				pubIds: [],
-				tagIds: [],
-			},
-			text: {
-				align: 'left',
-				text: undefined,
-			},
-			html: {
-				html: '',
-			},
-			banner: {
-				text: 'Hello',
-				align: 'center',
-				backgroundColor: '#3275d8',
-				backgroundImage: '',
-				backgroundSize: 'full',
-				showButton: false,
-				buttonText: '',
-				defaultTagIds: [],
-			},
-		};
-		newLayout.splice(index, 0, {
-			id: generateHash(8),
-			type: type,
-			content: defaultContents[type],
+		this.setState((prevState)=> {
+			const newLayout = prevState.layout;
+			const defaultContents = {
+				pubs: {
+					title: '',
+					pubPreviewType: 'medium',
+					limit: 0,
+					pubIds: [],
+					tagIds: [],
+				},
+				text: {
+					align: 'left',
+					text: undefined,
+				},
+				html: {
+					html: '',
+				},
+				banner: {
+					text: 'Hello',
+					align: 'center',
+					backgroundColor: '#3275d8',
+					backgroundImage: '',
+					backgroundSize: 'full',
+					showButton: false,
+					buttonText: '',
+					defaultTagIds: [],
+				},
+			};
+			newLayout.splice(index, 0, {
+				id: generateHash(8),
+				type: type,
+				content: defaultContents[type],
+			});
+			const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
+			this.props.onChange(newLayout);
+			return {
+				layout: newLayout,
+				pubRenderLists: newPubRenderList,
+			};
 		});
-		const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
-		this.setState({
-			layout: newLayout,
-			pubRenderLists: newPubRenderList,
-		});
-		this.props.onChange(newLayout);
 	}
 
 	handleChange(index, newContent) {
-		const newLayout = this.state.layout;
-		newLayout[index].content = newContent;
-		const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
-		this.setState({
-			layout: newLayout,
-			pubRenderLists: newPubRenderList,
+		this.setState((prevState)=> {
+			const newLayout = prevState.layout;
+			newLayout[index].content = newContent;
+			const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
+			this.props.onChange(newLayout);
+			return {
+				layout: newLayout,
+				pubRenderLists: newPubRenderList,
+			};
 		});
-		this.props.onChange(newLayout);
 	}
 
 	handleRemove(index) {
-		const newLayout = this.state.layout;
-		newLayout.splice(index, 1);
-		this.setState({ layout: newLayout });
-		this.props.onChange(newLayout);
+		this.setState((prevState)=> {
+			const newLayout = prevState.layout;
+			newLayout.splice(index, 1);
+			this.props.onChange(newLayout);
+			return { layout: newLayout };
+		});
 	}
 
 	handleMoveUp(index) {
-		const newLayout = [...this.state.layout];
-		newLayout[index - 1] = newLayout[index];
-		newLayout[index] = this.state.layout[index - 1];
+		this.setState((prevState)=> {
+			const newLayout = [...prevState.layout];
+			newLayout[index - 1] = newLayout[index];
+			newLayout[index] = prevState.layout[index - 1];
 
-		const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
-		this.setState({
-			layout: newLayout,
-			pubRenderLists: newPubRenderList,
+			const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
+			this.props.onChange(newLayout);
+			return {
+				layout: newLayout,
+				pubRenderLists: newPubRenderList,
+			};
 		});
-		this.props.onChange(newLayout);
 	}
 
 	handleMoveDown(index) {
-		const newLayout = [...this.state.layout];
-		newLayout[index + 1] = newLayout[index];
-		newLayout[index] = this.state.layout[index + 1];
+		this.setState((prevState)=> {
+			const newLayout = [...prevState.layout];
+			newLayout[index + 1] = newLayout[index];
+			newLayout[index] = prevState.layout[index + 1];
 
-		const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
-		this.setState({
-			layout: newLayout,
-			pubRenderLists: newPubRenderList,
+			const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
+			this.props.onChange(newLayout);
+			return {
+				layout: newLayout,
+				pubRenderLists: newPubRenderList,
+			};
 		});
-		this.props.onChange(newLayout);
 	}
 
 	render() {

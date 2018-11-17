@@ -15,17 +15,7 @@ app.get('/api/uploadPolicy', (req, res)=> {
 		acl: 'public-read',
 		https: 'true',
 		error_message: '',
-		pad: function(padding) {
-			if ((padding + '').length === 1) {
-				return '0' + padding;
-			}
-			return '' + padding;
-		},
 		expiration_date: function() {
-			// const now = new Date();
-			// const date = new Date(now.getTime() + (3600 * 1000));
-			// let edate = date.getFullYear() + '-' + this.pad(date.getMonth() + 1) + '-' + this.pad(date.getDate());
-			// edate += 'T' + this.pad(date.getHours()) + ':' + this.pad(date.getMinutes()) + ':' + this.pad(date.getSeconds()) + '.000Z';
 			return new Date(Date.now() + 60000);
 		}
 	};
@@ -46,7 +36,7 @@ app.get('/api/uploadPolicy', (req, res)=> {
 			['starts-with', '$Content-Type', ''],
 		]
 	};
-	policy = new Buffer(JSON.stringify(policy)).toString('base64').replace(/\n|\r/, '');
+	policy = Buffer.from(JSON.stringify(policy)).toString('base64').replace(/\n|\r/, '');
 	const hmac = crypto.createHmac('sha1', s3.secret_key);
 	hmac.update(policy);
 	const signature = hmac.digest('base64');

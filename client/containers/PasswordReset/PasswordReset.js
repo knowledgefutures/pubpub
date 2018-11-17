@@ -33,9 +33,11 @@ class PasswordReset extends Component {
 	onEmailChange(evt) {
 		this.setState({ email: evt.target.value });
 	}
+
 	onPasswordChange(evt) {
 		this.setState({ password: evt.target.value });
 	}
+
 	handlePostPasswordReset(evt) {
 		evt.preventDefault();
 
@@ -53,6 +55,7 @@ class PasswordReset extends Component {
 			this.setState({ postIsLoading: false, postError: 'Error' });
 		});
 	}
+
 	handlePutPasswordReset(evt) {
 		evt.preventDefault();
 

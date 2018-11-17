@@ -1,6 +1,6 @@
 import RSS from 'rss';
 import app from '../server';
-import { Community, Pub, User, Collaborator, Collection, PubAttribution } from '../models';
+import { Community, Pub, User, PubAttribution } from '../models';
 
 app.get('/rss.xml', (req, res)=> {
 	const hostname = req.hostname;
@@ -22,26 +22,6 @@ app.get('/rss.xml', (req, res)=> {
 				attributes: ['id', 'title', 'slug', 'firstPublishedAt', 'description', 'avatar', 'communityId'],
 				separate: true,
 				include: [
-					// {
-					// 	model: Collection,
-					// 	as: 'collections',
-					// 	where: { isPublic: true },
-					// 	attributes: ['id', 'isPublic'],
-					// 	through: { attributes: [] },
-					// },
-					// {
-					// 	model: User,
-					// 	as: 'collaborators',
-					// 	attributes: ['id', 'fullName'],
-					// 	through: { attributes: { exclude: ['updatedAt'] } },
-					// },
-					// {
-					// 	required: false,
-					// 	model: Collaborator,
-					// 	as: 'emptyCollaborators',
-					// 	where: { userId: null },
-					// 	attributes: { exclude: ['updatedAt'] },
-					// },
 					{
 						model: PubAttribution,
 						as: 'attributions',
@@ -114,7 +94,7 @@ app.get('/rss.xml', (req, res)=> {
 		return res.send(outputXML);
 	})
 	.catch((err)=> {
-		console.log(err);
+		console.error(err);
 		return res.status(200).json('Error producing RSS feed');
 	});
 });

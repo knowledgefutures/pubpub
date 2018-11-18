@@ -19,7 +19,7 @@ storiesOf('Components', module)
 		</div>
 
 		<div style={wrapperStyle}>
-			<Footer isAdmin={false} isBasePubPub={true }/>
+			<Footer isAdmin={false} isBasePubPub={true} />
 		</div>
 	</div>
 ))

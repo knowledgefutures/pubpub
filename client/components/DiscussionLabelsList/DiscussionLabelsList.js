@@ -46,61 +46,74 @@ class DiscussionLabelsList extends Component {
 	}
 
 	toggleEditMode() {
-		this.setState({ isEditMode: !this.state.isEditMode });
+		this.setState((prevState)=> {
+			return { isEditMode: !prevState.isEditMode };
+		});
 	}
 
 	updateTitle(id, newTitle) {
-		const newLabelsData = this.state.labelsData.map((label)=> {
-			if (label.id !== id) { return label; }
-			return {
-				...label,
-				title: newTitle,
-			};
+		this.setState((prevState)=> {
+			const newLabelsData = prevState.labelsData.map((label)=> {
+				if (label.id !== id) { return label; }
+				return {
+					...label,
+					title: newTitle,
+				};
+			});
+			return { labelsData: newLabelsData, labelsDataChanged: true };
 		});
-		this.setState({ labelsData: newLabelsData, labelsDataChanged: true });
 	}
 
 	updateColor(id, newColor) {
-		const newLabelsData = this.state.labelsData.map((label)=> {
-			if (label.id !== id) { return label; }
-			return {
-				...label,
-				color: newColor,
-			};
+		this.setState((prevState)=> {
+			const newLabelsData = prevState.labelsData.map((label)=> {
+				if (label.id !== id) { return label; }
+				return {
+					...label,
+					color: newColor,
+				};
+			});
+			return { labelsData: newLabelsData, labelsDataChanged: true };
 		});
-		this.setState({ labelsData: newLabelsData, labelsDataChanged: true });
 	}
 
 	togglePublicApply(id) {
-		const newLabelsData = this.state.labelsData.map((label)=> {
-			if (label.id !== id) { return label; }
-			return {
-				...label,
-				publicApply: !label.publicApply,
-			};
+		this.setState((prevState)=> {
+			const newLabelsData = prevState.labelsData.map((label)=> {
+				if (label.id !== id) { return label; }
+				return {
+					...label,
+					publicApply: !label.publicApply,
+				};
+			});
+			return { labelsData: newLabelsData, labelsDataChanged: true };
 		});
-		this.setState({ labelsData: newLabelsData, labelsDataChanged: true });
 	}
 
 	removeLabel(id) {
-		const newLabelsData = this.state.labelsData.filter((label)=> {
-			return label.id !== id;
+		this.setState((prevState)=> {
+			const newLabelsData = prevState.labelsData.filter((label)=> {
+				return label.id !== id;
+			});
+			return { labelsData: newLabelsData, labelsDataChanged: true };
 		});
-		this.setState({ labelsData: newLabelsData, labelsDataChanged: true });
 	}
 
 	addLabel() {
-		const newLabelsData = [
-			...this.state.labelsData,
-			{
-				id: uuidv4(),
-				title: 'New Label',
-				color: '#b71540',
-				publicApply: false,
-			}
-		];
-		this.setState({ labelsData: newLabelsData, labelsDataChanged: true });
+		this.setState((prevState)=> {
+			const newLabelsData = [
+				...prevState.labelsData,
+				{
+					id: uuidv4(),
+					title: 'New Label',
+					color: '#b71540',
+					publicApply: false,
+				}
+			];
+			return { labelsData: newLabelsData, labelsDataChanged: true };
+		});
 	}
+
 	handleSave() {
 		this.setState({ isSaving: true });
 		this.props.onLabelsUpdate(this.state.labelsData);
@@ -137,7 +150,7 @@ class DiscussionLabelsList extends Component {
 					const handleClick = ()=> { this.props.onLabelSelect(label.id); };
 					return (
 						<li>
-							<div key={`label-${label.id}`} className="pt-menu-item label" onClick={handleClick}>
+							<div role="button" tabIndex={-1} key={`label-${label.id}`} className="pt-menu-item label" onClick={handleClick}>
 								<div className="color" style={{ backgroundColor: label.color }}>
 									{this.props.selectedLabels.indexOf(label.id) > -1 &&
 										<span className="pt-icon-standard pt-icon-small-tick" />
@@ -183,6 +196,8 @@ class DiscussionLabelsList extends Component {
 										{colors.map((color)=> {
 											return (
 												<span
+													role="button"
+													tabIndex={-1}
 													key={color}
 													className="color-select"
 													style={{ backgroundColor: color }}
@@ -212,15 +227,25 @@ class DiscussionLabelsList extends Component {
 								tooltipClassName="pt-dark"
 								position={Position.TOP}
 							>
-								<button onClick={handlePublicApplyToggle} className={`pt-button pt-minimal pt-icon-endorsed ${label.publicApply ? '' : 'active'}`} />
+								<Button
+									onClick={handlePublicApplyToggle}
+									className={`pt-minimal pt-icon-endorsed ${label.publicApply ? '' : 'active'}`}
+								/>
 							</Tooltip>
-							<button onClick={handleLabelRemove} className="pt-button pt-icon-trash pt-minimal" />
+							<Button
+								onClick={handleLabelRemove}
+								className="pt-icon-trash pt-minimal"
+							/>
 						</div>
 					);
 				})}
 
 				{showEditMode &&
-					<button className="pt-button pt-fill" onClick={this.addLabel}>Add Label</button>
+					<Button
+						className="pt-fill"
+						onClick={this.addLabel}
+						text="Add Label"
+					/>
 				}
 			</div>
 		);

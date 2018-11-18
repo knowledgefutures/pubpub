@@ -59,11 +59,8 @@ class Pub extends Component {
 			activeCollaborators: [this.localUser],
 			optionsMode: undefined,
 			collabStatus: 'connecting',
-			docReadyForHighlights: false,
 			activeThreadNumber: undefined,
-			activeThreadNode: undefined,
 			initialDiscussionContent: undefined,
-			fixIt: true,
 			scrolledToPermanent: false,
 			// sectionsData: [{ id: '', order: 0, title: 'Introduction' }],
 			menuWrapperRefNode: undefined,
@@ -149,11 +146,10 @@ class Pub extends Component {
 		return highlightObject;
 	}
 
-	setActiveThread(threadNumber, highlightNode) {
+	setActiveThread(threadNumber, /* highlightNode */) {
 		// TODO: set highlight node
 		this.setState({
 			activeThreadNumber: threadNumber,
-			activeThreadNode: highlightNode,
 		});
 	}
 
@@ -181,24 +177,37 @@ class Pub extends Component {
 		};
 	}
 
+	getThreads() {
+		const pubData = this.state.pubData;
+		const discussions = pubData.discussions || [];
+		const activeDiscussionChannel = this.getActiveDiscussionChannel();
+		const threads = nestDiscussionsToThreads(discussions).filter((thread)=> {
+			const activeDiscussionChannelId = activeDiscussionChannel ? activeDiscussionChannel.id : null;
+			return activeDiscussionChannelId === thread[0].discussionChannelId;
+		});
+		return threads;
+	}
+
 	setDiscussionChannel(channelTitle) {
-		const newQuery = {
-			...this.state.locationData.query,
-			channel: channelTitle === 'public' ? undefined : channelTitle,
-		};
-		const newQueryString = Object.values(newQuery).filter(item => !!item).length
-			? `?${queryString.stringify(newQuery)}`
-			: '';
-		this.setState({
-			locationData: {
-				...this.state.locationData,
-				query: newQuery,
-				queryString: newQueryString
-			}
+		this.setState((prevState)=> {
+			const newQuery = {
+				...prevState.locationData.query,
+				channel: channelTitle === 'public' ? undefined : channelTitle,
+			};
+			const newQueryString = Object.values(newQuery).filter(item => !!item).length
+				? `?${queryString.stringify(newQuery)}`
+				: '';
+			return {
+				locationData: {
+					...prevState.locationData,
+					query: newQuery,
+					queryString: newQueryString
+				}
+			};
 		}, ()=> {
 			dispatchEmptyTransaction(this.state.editorChangeObject.view);
+			window.history.replaceState({}, '', `${this.state.locationData.path}${this.state.locationData.queryString}`);
 		});
-		window.history.replaceState({}, '', `${this.state.locationData.path}${newQueryString}`);
 	}
 
 	handleSectionsChange(snapshot) {
@@ -309,7 +318,6 @@ class Pub extends Component {
 	}
 
 	handlePostDiscussion(discussionObject) {
-		this.setState({ postDiscussionIsLoading: true });
 		const activeDiscussionChannel = this.getActiveDiscussionChannel();
 		return apiFetch('/api/discussions', {
 			method: 'POST',
@@ -322,22 +330,23 @@ class Pub extends Component {
 			})
 		})
 		.then((result)=> {
-			this.setState({
-				postDiscussionIsLoading: false,
-				activeThreadNumber: this.state.activeThreadNumber === 'new' ? result.threadNumber : this.state.activeThreadNumber,
-				pubData: {
-					...this.state.pubData,
-					discussions: [
-						...this.state.pubData.discussions,
-						result,
-					],
-				},
+			this.setState((prevState)=> {
+				return {
+					activeThreadNumber: prevState.activeThreadNumber === 'new' ? result.threadNumber : prevState.activeThreadNumber,
+					pubData: {
+						...prevState.pubData,
+						discussions: [
+							...prevState.pubData.discussions,
+							result,
+						],
+					},
+				};
 			}, ()=> {
 				dispatchEmptyTransaction(this.state.editorChangeObject.view);
 			});
 		})
-		.catch(()=> {
-			this.setState({ postDiscussionIsLoading: false });
+		.catch((err)=> {
+			console.error(err);
 		});
 	}
 
@@ -350,17 +359,19 @@ class Pub extends Component {
 			})
 		})
 		.then((result)=> {
-			this.setState({
-				pubData: {
-					...this.state.pubData,
-					discussions: this.state.pubData.discussions.map((item)=> {
-						if (item.id !== result.id) { return item; }
-						return {
-							...item,
-							...result,
-						};
-					}),
-				},
+			this.setState((prevState)=> {
+				return {
+					pubData: {
+						...prevState.pubData,
+						discussions: prevState.pubData.discussions.map((item)=> {
+							if (item.id !== result.id) { return item; }
+							return {
+								...item,
+								...result,
+							};
+						}),
+					},
+				};
 			});
 		});
 	}
@@ -382,17 +393,6 @@ class Pub extends Component {
 		});
 	}
 
-	getThreads() {
-		const pubData = this.state.pubData;
-		const discussions = pubData.discussions || [];
-		const activeDiscussionChannel = this.getActiveDiscussionChannel();
-		const threads = nestDiscussionsToThreads(discussions).filter((thread)=> {
-			const activeDiscussionChannelId = activeDiscussionChannel ? activeDiscussionChannel.id : null;
-			return activeDiscussionChannelId === thread[0].discussionChannelId;
-		});
-		return threads;
-	}
-
 	render() {
 		const pubData = this.state.pubData;
 		const loginData = this.props.loginData;
@@ -409,15 +409,15 @@ class Pub extends Component {
 		// console.log('Threads in render is ', threads);
 		/* The activeThread can either be the one selected in state, */
 		/* or one hardcoded in the URL */
-		const activeThread = threads.reduce((prev, curr)=> {
-			if (
-				curr[0].threadNumber === Number(this.props.locationData.params.subMode) ||
-				curr[0].threadNumber === Number(this.state.activeThreadNumber)
-			) {
-				return curr;
-			}
-			return prev;
-		}, undefined);
+		// const activeThread = threads.reduce((prev, curr)=> {
+		// 	if (
+		// 		curr[0].threadNumber === Number(this.props.locationData.params.subMode) ||
+		// 		curr[0].threadNumber === Number(this.state.activeThreadNumber)
+		// 	) {
+		// 		return curr;
+		// 	}
+		// 	return prev;
+		// }, undefined);
 
 		/* Section variables */
 		const hasSections = pubData.isDraft
@@ -565,8 +565,6 @@ class Pub extends Component {
 
 									{!isCollabLoading && isEmptyDoc && pubData.isDraft && (pubData.isEditor || pubData.isManager) &&
 										<PubInlineImport
-											communityData={this.props.communityData}
-											pubData={pubData}
 											editorView={this.state.editorChangeObject.view}
 										/>
 									}

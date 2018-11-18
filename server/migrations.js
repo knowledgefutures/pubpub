@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable */
 import { Sequelize } from 'sequelize';
 import { sequelize, Pub, Version, PubManager, Collaborator, VersionPermission, PubAttribution, Collection, Page, CollectionPub, Tag, PubTag, Community } from './models';
 import { generateHash } from './utilities';

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
-// import PubOptionsSharingDropdownPrivacy from 'components/PubOptionsSharingDropdownPrivacy/PubOptionsSharingDropdownPrivacy';
 import { apiFetch } from 'utilities';
 import { getCollabJSONs } from '@pubpub/editor';
 
@@ -73,18 +72,12 @@ class PubOptionsSaveVersion extends Component {
 	}
 
 	render() {
-		// const isUnlisted = this.props.pubData.collections.reduce((prev, curr)=> {
-		// 	if (curr.isPublic) { return false; }
-		// 	return prev;
-		// }, true);
-
 		if (!this.props.editorView) { return null; }
 
-		// const currentPrivacy = this.state.isPublic ? 'publicView' : 'private';
 		return (
 			<div className="pub-options-save-version-component">
 				<h1>Save Version</h1>
-				<p>Saving a version <b>creates a time-stamped snapshot</b> of the working draft at it's current state.</p>
+				<p>Saving a version <b>creates a time-stamped snapshot</b> of the working draft at it&apos;s current state.</p>
 				<p>The <b>working draft autosaves</b> - you do not need to create a new saved version just to save your working draft.</p>
 				<p>You can change the privacy of any saved version in the <span className="link" tabIndex={-1} role="button" onClick={()=> { this.props.setOptionsMode('sharing'); }}>Sharing panel</span>.</p>
 
@@ -116,44 +109,6 @@ class PubOptionsSaveVersion extends Component {
 						/>
 					</div>
 				</div>
-
-				{/*<h6>Privacy</h6>
-				<PubOptionsSharingDropdownPrivacy
-					value={currentPrivacy}
-					isDraft={false}
-					onChange={(newValue)=> {
-						this.setState({
-							isPublic: newValue === 'public'
-						});
-					}}
-				/>*/}
-				{/* <div className="wrapper">
-					<h6>Working Draft Privacy</h6>
-					<PubCollabDropdownPrivacy
-						value={this.state.collaborationMode}
-						onChange={this.handleCollaborationModeChange}
-					/>
-				</div> */}
-
-				{/* isUnlisted &&
-					<div className="pt-callout pt-intent-danger">
-						<h5>Pub will be Unlisted</h5>
-						<div>This pub is only included in Private collections. When published, it will be publicly available but will be unlisted.</div>
-						<div>Anyone with the link will be able to view the published snapshot, but it will not show up in search results, rss feds, or search engines.</div>
-					</div>
-				*/}
-				{/*<div className="button-wrapper">
-					<Button
-						onClick={()this.handlePublish}
-						className="pt-intent-primary"
-						text={this.state.isPublic
-							? 'Publish (Save Public Version)'
-							: 'Save Private Version'
-						}
-						loading={this.state.isLoading}
-					/>
-				</div>*/}
-
 			</div>
 		);
 	}

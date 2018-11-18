@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-assign */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getJSON } from '@pubpub/editor';
@@ -15,6 +16,7 @@ const defaultProps = {
 };
 
 const PubSideToc = function(props) {
+	const pubData = props.pubData;
 	/* activeContent will be defined on saved versions */
 	/* editorChangeObject will be defined and used on working drafts */
 	if (!props.activeContent && !props.editorChangeObject.view) { return null; }
@@ -57,7 +59,7 @@ const PubSideToc = function(props) {
 								/* a fixed header bar. Plus, the URL with an anchor tag will behave */
 								/* unexpectedly on reload given the async loading of doc. Instead, */
 								/* manually scroll to the position and offset by fixed header height. */
-								if (props.pubData.isDraft) {
+								if (pubData.isDraft) {
 									evt.preventDefault();
 									document.getElementById(item.href).scrollIntoView();
 									const currentTop = document.body.scrollTop || document.documentElement.scrollTop;

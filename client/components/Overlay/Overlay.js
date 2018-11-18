@@ -35,7 +35,7 @@ const Overlay = function(props) {
 				`}
 			</style>
 			<div className="overlay-wrapper pt-card pt-elevation-2">
-					{props.children}
+				{props.children}
 			</div>
 		</BlueprintOverlay>
 	);

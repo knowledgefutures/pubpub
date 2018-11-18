@@ -1,7 +1,7 @@
+/* eslint-disable react/no-unused-prop-types */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { MenuItem } from '@blueprintjs/core';
-// import { Suggest } from '@blueprintjs/labs';
 import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 import { generateHash } from 'utilities';
@@ -95,10 +95,10 @@ class PageAutocomplete extends Component {
 					itemRenderer={(item = {}, { handleClick, isActive })=> {
 						return (
 							<li key={item.id || 'empty-user-create'}>
-								<a role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'pt-menu-item pt-active' : 'pt-menu-item'}>
+								<span role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'pt-menu-item pt-active' : 'pt-menu-item'}>
 									{item.children && <span className="new-title">Create dropdown group:</span>}
 									<span className="title">{item.title}</span>
-								</a>
+								</span>
 							</li>
 						);
 					}}

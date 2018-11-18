@@ -62,12 +62,12 @@ const NavBar = function(props) {
 										interactionKind={PopoverInteractionKind.CLICK}
 										key={`dropdown-${item.title}`}
 									>
-										<a className="dropdown">
+										<span className="dropdown">
 											<li>
 												{item.title}
 												<span className="pt-icon-standard pt-icon-caret-down pt-align-right" />
 											</li>
-										</a>
+										</span>
 									</Popover>
 								);
 							})}

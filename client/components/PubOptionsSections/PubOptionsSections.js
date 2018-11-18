@@ -111,7 +111,7 @@ class PubOptionsSections extends Component {
 		return (
 			<div className="pub-options-sections-component">
 				<style>
-					{/* 
+					{/*
 						Only this sections component wants right-column to be overflow: auto.
 						It messes with shadows, etc on other panels.
 					*/}
@@ -133,7 +133,7 @@ class PubOptionsSections extends Component {
 					</div>
 				}
 				<h1>Sections</h1>
-				<p>Sections allow you to break up your pub's content into multiple pieces. This allows you to create chapters, volumes, etc. for longer documents.</p>
+				<p>Sections allow you to break up your pub&apos;s content into multiple pieces. This allows you to create chapters, volumes, etc. for longer documents.</p>
 				{!isDraft && Array.isArray(content) &&
 					<ul className="pt-menu">
 						{content.map((section, index)=> {

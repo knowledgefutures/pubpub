@@ -7,13 +7,7 @@ import { importHtml } from '@pubpub/editor';
 require('./pubInlineImport.scss');
 
 const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	pubData: PropTypes.object.isRequired,
 	editorView: PropTypes.object.isRequired,
-	// loginData: PropTypes.object.isRequired,
-	// setPubData: PropTypes.func.isRequired,
-	// TODO: we should pass in content in the case that we are in the working draft
-	// or maybe just a reference to the function to get draft content.
 };
 
 class PubInlineImport extends Component {

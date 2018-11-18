@@ -19,7 +19,7 @@ const LayoutPubs = function(props) {
 		emptyPreviews.push(null);
 	}
 	const previews = [...props.content.pubIds, ...emptyPreviews].slice(0, displayLimit);
-	const selectOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+	// const selectOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 	// const dataAvailable = props.pubRenderList.reduce((prev, curr)=> {
 	// 	if (curr.slug) { return true; }
 	// 	return prev;
@@ -45,8 +45,9 @@ const LayoutPubs = function(props) {
 					<div className="row">
 						{renderItems.map((item, index)=> {
 							const selectedPub = props.pubRenderList[index] || { collaborators: [] };
+							const itemKey = `preview-${props.layoutIndex}-${index}`;
 							return (
-								<div key={`preview-${props.layoutIndex}-${index}`} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
+								<div key={itemKey} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
 									<PubPreview
 										title={selectedPub.title}
 										description={selectedPub.description}

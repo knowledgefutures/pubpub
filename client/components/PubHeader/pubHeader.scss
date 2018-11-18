@@ -101,8 +101,9 @@
 		.pt-icon-standard {
 			padding-right: 0.5em;
 		}
-		a {
+		.detail-button {
 			margin-right: 2em;
+			display: inline-block;
 			&:not(:last-of-type):after {
 				content: "";
 				position: relative;

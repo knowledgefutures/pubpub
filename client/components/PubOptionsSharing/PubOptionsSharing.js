@@ -69,7 +69,7 @@ class PubOptionsSharing extends Component {
 					return manager.id !== managerId;
 				})
 			};
-			return { pubData: newPubData, isLoading: true }
+			return { pubData: newPubData, isLoading: true };
 		}, ()=> {
 			apiFetch('/api/pubManagers', {
 				method: 'DELETE',

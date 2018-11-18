@@ -244,13 +244,15 @@ class PubHeader extends Component {
 										// inline={true}
 										inheritDarkTheme={false}
 									>
-										<a
+										<div
 											// href={`/pub/${pubData.slug}/versions`}
 											// onClick={(evt)=> {
 											// 	evt.preventDefault();
 											// 	this.props.setOptionsMode('versions');
 											// }}
-											className="versions"
+											role="button"
+											tabIndex={-1}
+											className="detail-button versions"
 										>
 											{!pubData.isDraft && !activeVersion.isPublic &&
 												<Icon icon="lock2" />
@@ -258,7 +260,6 @@ class PubHeader extends Component {
 											{!pubData.isDraft &&
 												<span>{sortedVersionsList[sortedVersionsList.length - 1].id !== activeVersion.id ? 'Updated ' : ''}{dateFormat(pubData.activeVersion.createdAt, 'mmm dd, yyyy')}</span>
 											}
-											
 											{/* If is draft, say total number of saved versions */}
 											{pubData.isDraft &&
 												<span>Working Draft ({pubData.versions.length} Saved Version{pubData.versions.length === 1 ? '' : 's'})</span>
@@ -274,16 +275,22 @@ class PubHeader extends Component {
 												<span> ({pubData.versions.length - 1} Older Version{pubData.versions.length - 1 === 1 ? '' : 's'})</span>
 											}
 											<Icon icon="chevron-down" />
-										</a>
+										</div>
 									</Popover>
-									<a
+									<div
 										href="#discussions"
+										role="button"
+										tabIndex={-1}
+										className="detail-button"
 									>
 										{/* <span className="pt-icon-standard pt-icon-chat" /> */}
 										{numDiscussions} Discussion{numDiscussions === 1 ? '' : 's'} (#{activeDiscussionChannel.title})
-									</a>
+									</div>
 									{!!numAttributions &&
-										<a
+										<div
+											role="button"
+											tabIndex={-1}
+											className="detail-button"
 											// href={`/pub/${pubData.slug}/collaborators`}
 											onClick={(evt)=> {
 												evt.preventDefault();
@@ -292,7 +299,7 @@ class PubHeader extends Component {
 										>
 											{/* <span className="pt-icon-standard pt-icon-team" /> */}
 											{numAttributions} Contributor{numAttributions === 1 ? '' : 's'}
-										</a>
+										</div>
 									}
 								</div>
 							</div>
@@ -307,26 +314,3 @@ class PubHeader extends Component {
 PubHeader.propTypes = propTypes;
 PubHeader.defaultProps = defaultProps;
 export default PubHeader;
-
-// <a
-// 									// href={`/pub/${pubData.slug}/versions`}
-// 									onClick={(evt)=> {
-// 										evt.preventDefault();
-// 										props.setOptionsMode('versions');
-// 									}}
-// 								>
-// 									{/* If is draft, say total number of saved versions */}
-// 									{pubData.isDraft &&
-// 										<span>{pubData.versions.length} Saved Version{pubData.versions.length === 1 ? '' : 's'}</span>
-// 									}
-
-// 									{/* If not draft, and newer versions, say numNewerVersions */}
-// 									{!pubData.isDraft && !!numNewerVersions &&
-// 										<span>{numNewerVersions} Newer Version{pubData.versions.length === 1 ? '' : 's'}</span>
-// 									}
-									
-// 									{/* If not draft, and no newer versions, say numVersions - 1 Older Versions */}
-// 									{!pubData.isDraft && !numNewerVersions &&
-// 										<span>{pubData.versions.length - 1} Older Version{pubData.versions.length === 1 ? '' : 's'}</span>
-// 									}
-// 								</a>

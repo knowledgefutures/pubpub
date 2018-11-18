@@ -38,6 +38,7 @@ class PubOptionsReview extends Component {
 		if (status === 'accepted') { return 'pt-intent-success'; }
 		if (status === 'rejected') { return 'pt-intent-danger'; }
 		if (status === 'changes requested') { return 'pt-intent-warning'; }
+		return '';
 	}
 
 	handleMessageChange(changeObject) {
@@ -109,7 +110,6 @@ class PubOptionsReview extends Component {
 		// 	- Add review text
 		// 	- Add review changes
 		// 	- Assign reviewers
-		// 	- 
 
 		// Option to move to public is when everyone in a channel approves (or - channel has 'publicTransfer request approver')
 		// Types:

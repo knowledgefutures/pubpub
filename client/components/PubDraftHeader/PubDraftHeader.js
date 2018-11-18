@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-for */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
@@ -58,7 +59,6 @@ class PubDraftHeader extends Component {
 
 	handleInsertFunction(insertItem) {
 		const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
-		console.log(insertFunctions);
 		const uploadKeys = ['image', 'video', 'file'];
 		if (uploadKeys.indexOf(insertItem.key) > -1) {
 			return this.setState({

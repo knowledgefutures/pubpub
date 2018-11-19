@@ -158,6 +158,9 @@ class LayoutEditorPubs extends Component {
 		this.props.communityData.tags.forEach((tag)=> {
 			tagsById[tag.id] = tag;
 		});
+
+		// TODO: Need to create an order drag-drop interface
+		// that allows theuser to set the pubIds array.
 		return (
 			<div className="layout-editor-pubs-component">
 				<div className="block-header">
@@ -166,7 +169,7 @@ class LayoutEditorPubs extends Component {
 						value={this.props.content.title}
 						onChange={this.changeTitle}
 					/>
-					<InputField label="Use Tag">
+					<InputField label="Filter by Tag">
 						<div className="pt-button-group pt-select">
 							<TagMultiSelect
 								allTags={this.props.communityData.tags}
@@ -196,6 +199,10 @@ class LayoutEditorPubs extends Component {
 								})}
 							</select>
 						</div>
+					</InputField>
+
+					<InputField label="Order">
+						Set custom options
 					</InputField>
 
 					<div className="line-break" />
@@ -249,6 +256,7 @@ class LayoutEditorPubs extends Component {
 						<div className="row">
 							{previews.map((item, index)=> {
 								const selectPub = (this.props.pubRenderList && this.props.pubRenderList[index]) || {};
+								if (!selectPub.id) { return null; }
 								const keyString = `preview-${this.props.layoutIndex}-${index}`;
 								return (
 									<div key={keyString} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>

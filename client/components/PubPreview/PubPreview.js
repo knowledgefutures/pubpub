@@ -15,37 +15,15 @@ const propTypes = {
 	hideDescription: PropTypes.boolean,
 	hideDates: PropTypes.boolean,
 	hideContributors: PropTypes.boolean,
-	// title: PropTypes.string,
-	// description: PropTypes.string,
-	// slug: PropTypes.string,
-	// versions: PropTypes.array,
-	// isDraftAccessible: PropTypes.bool,
-	// draftPermissions: PropTypes.string,
-	// authors: PropTypes.array,
-	// collaborators: PropTypes.array,
-	// bannerImage: PropTypes.string,
-	// inputContent: PropTypes.node,
-	// isPlaceholder: PropTypes.bool,
 };
 
 const defaultProps = {
-	// title: undefined,
-	// slug: undefined,
-	// description: undefined,
-	// versions: [],
-	// isDraftAccessible: false,
-	// draftPermissions: 'public',
-	// authors: [],
-	// collaborators: [],
-	// bannerImage: undefined,
-	size: 'large',
 	communityData: undefined,
+	size: 'large',
 	hideByline: false,
 	hideDescription: false,
 	hideDates: false,
 	hideContributors: false,
-	// inputContent: null,
-	// isPlaceholder: false,
 };
 
 const PubPreview = function(props) {
@@ -56,7 +34,6 @@ const PubPreview = function(props) {
 	const bannerStyle = pubData.avatar || !pubData.slug
 		? { backgroundImage: `url("${resizedBannerImage}")` }
 		: { background: generatePubBackground(pubData.title) };
-
 	const resizedSmallHeaderLogo = props.communityData && getResizedUrl(props.communityData.smallHeaderLogo, 'fit-in', '125x35');
 	const communityHostname = props.communityData && (props.communityData.domain || `${props.communityData.subdomain}.pubpub.org`);
 	const communityUrl = props.communityData && (props.communityData.domain ? `https://${props.communityData.domain}` : `https://${props.communityData.subdomain}.pubpub.org`);
@@ -83,26 +60,6 @@ const PubPreview = function(props) {
 		return prev;
 	}, true);
 
-	/* Placeholder state */
-	/* if (!pubData.slug) {
-		return (
-			<div className={`pub-preview-component skeleton ${props.size}-preview ${props.isPlaceholder ? 'placeholder' : ''}`}>
-				<div className="pt-skeleton banner-image" />
-				<div className="content">
-					{props.title
-						? <h3 className="title">{props.title}</h3>
-						: <h3 className="pt-skeleton title">-</h3>
-					}
-					<div className="pt-skeleton description" />
-					<div className="pt-skeleton description" />
-					<div className="input-wrapper">
-						{props.inputContent}
-					</div>
-				</div>
-			</div>
-		);
-	} */
-
 	return (
 		<div className={`pub-preview-component ${props.size}-preview`}>
 			{props.size !== 'small' &&
@@ -121,7 +78,7 @@ const PubPreview = function(props) {
 						</a>
 					}
 					<a href={pubLink} alt={pubData.title}>
-						<h3 className="title">
+						<h3 className="pub-title">
 							{pubData.title}
 							{isPrivate &&
 								<Icon icon="lock2" />

@@ -76,39 +76,13 @@
 			padding-top: 5px;
 		}
 	}
-	&.skeleton {
-		.title {
-			&.pt-skeleton {
-				height: 1.5em;
-				width: 85%;	
-			}
-			margin-bottom: 20px;
-		}
-		.description {
-			height: 1em;
-			margin-bottom: 8px;
-		}
-		.input-wrapper {
-			height: 50px;
-			max-width: 100%;
-			.pt-select, select {
-				max-width: 100%;
-			}
-		}
-	}
-	&.placeholder {
-		.pt-skeleton {
-			animation: none;
-			background-color: rgba(100, 100, 100, 0.2) !important;
-			display: block;
-		}
-	}
 	.title-wrapper {
 		padding-bottom: 5px;
 	}
-	.title {
+	.pub-title {
 		line-height: 1em;
 		display: inline;
+		font-weight: 800;
 	}
 	.authors {
 		font-size: 14px;
@@ -137,9 +111,8 @@
 		}
 	}
 	.pt-icon {
-		// vertical-align: middle;
 		margin-left: 0.25em;
-		margin-top: 3px;
+		vertical-align: baseline;
 	}
 	.description {
 		padding-top: 15px;

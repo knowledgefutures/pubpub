@@ -8,7 +8,7 @@ const propTypes = {
 	pubRenderList: PropTypes.array.isRequired,
 	isLoading: PropTypes.bool.isRequired,
 	/* Expected content */
-	/* title, pubPreviewType, limit, pubIds, tagIds */
+	/* title, pubPreviewType, limit, pubIds, tagIds, hideByline, hideDescription, hideDates, hideContributors */
 };
 
 const LayoutPubs = function(props) {
@@ -49,20 +49,12 @@ const LayoutPubs = function(props) {
 							return (
 								<div key={itemKey} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
 									<PubPreview
-										title={selectedPub.title}
-										description={selectedPub.description}
-										slug={selectedPub.slug}
-										versions={selectedPub.versions}
-										isDraftAccessible={selectedPub.isDraftEditor || selectedPub.isDraftViewer || selectedPub.isManager}
-										draftPermissions={selectedPub.draftPermissions}
-										bannerImage={selectedPub.avatar}
+										pubData={selectedPub}
 										size={pubPreviewType}
-										collaborators={selectedPub.attributions.filter((collaborator)=> {
-											return !collaborator.isAuthor;
-										})}
-										authors={selectedPub.attributions.filter((collaborator)=> {
-											return collaborator.isAuthor;
-										})}
+										hideByline={props.content.hideByline}
+										hideDescription={props.content.hideDescription}
+										hideDates={props.content.hideDates}
+										hideContributors={props.content.hideContributors}
 									/>
 								</div>
 							);

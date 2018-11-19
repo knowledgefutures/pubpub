@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import dateFormat from 'dateformat';
 import { NonIdealState } from '@blueprintjs/core';
 import UserHeader from 'components/UserHeader/UserHeader';
 import UserNav from 'components/UserNav/UserNav';
@@ -122,18 +121,13 @@ class User extends Component {
 							}
 							<div className="container narrow content">
 								{pubsToRender.map((pub)=> {
-									// const attributions = pub.attributions || [];
 									return (
 										<div key={`pub-${pub.id}`} className="row">
 											<div className="col-12">
 												<PubPreview
+													pubData={pub}
 													communityData={localCommunityId ? undefined : pub.community}
-													title={pub.title}
-													description={pub.description}
-													slug={pub.slug}
-													bannerImage={pub.avatar}
 													size="medium"
-													publicationDate={dateFormat(pub.firstPublishedAt, 'mmm dd, yyyy')}
 												/>
 											</div>
 										</div>

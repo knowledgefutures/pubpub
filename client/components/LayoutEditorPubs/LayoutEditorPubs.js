@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import PubPreview from 'components/PubPreview/PubPreview';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
 import InputField from 'components/InputField/InputField';
-import { Button } from '@blueprintjs/core';
-// import { MultiSelect } from '@blueprintjs/select';
-// import fuzzysearch from 'fuzzysearch';
+import { Button, Checkbox } from '@blueprintjs/core';
 
 const propTypes = {
 	onChange: PropTypes.func.isRequired,
@@ -15,7 +13,7 @@ const propTypes = {
 	pubRenderList: PropTypes.array.isRequired,
 	communityData: PropTypes.object.isRequired,
 	/* Expected content */
-	/* title, pubPreviewType, limit, pubIds, tagIds */
+	/* title, pubPreviewType, limit, pubIds, tagIds, hideByline, hideDescription, hideDates, hideContributors */
 };
 
 class LayoutEditorPubs extends Component {
@@ -28,6 +26,10 @@ class LayoutEditorPubs extends Component {
 		this.setTagIds = this.setTagIds.bind(this);
 		this.changeTitle = this.changeTitle.bind(this);
 		this.changePubId = this.changePubId.bind(this);
+		this.setHideByline = this.setHideByline.bind(this);
+		this.setHideDescription = this.setHideDescription.bind(this);
+		this.setHideDates = this.setHideDates.bind(this);
+		this.setHideContributors = this.setHideContributors.bind(this);
 	}
 
 	setSmall() {
@@ -55,6 +57,34 @@ class LayoutEditorPubs extends Component {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			limit: Number(evt.target.value)
+		});
+	}
+
+	setHideByline(evt) {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			hideByline: !evt.target.checked
+		});
+	}
+
+	setHideDescription(evt) {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			hideDescription: !evt.target.checked
+		});
+	}
+
+	setHideDates(evt) {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			hideDates: !evt.target.checked
+		});
+	}
+
+	setHideContributors(evt) {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			hideContributors: !evt.target.checked
 		});
 	}
 
@@ -157,7 +187,20 @@ class LayoutEditorPubs extends Component {
 							/>
 						</div>
 					</InputField>
-					<InputField label="Use Tag">
+					<InputField label="Limit">
+						<div className="pt-button-group pt-select">
+							<select value={this.props.content.limit} onChange={this.setLimit}>
+								<option value={0}>Show All pubs</option>
+								{selectOptions.map((item)=> {
+									return <option value={item} key={`option-${item}`}>Show {item} pub{item === 1 ? '' : 's'}</option>;
+								})}
+							</select>
+						</div>
+					</InputField>
+
+					<div className="line-break" />
+
+					<InputField label="Preview Type">
 						<div className="pt-button-group">
 							<Button
 								className={`${pubPreviewType === 'large' ? 'pt-active' : ''}`}
@@ -176,15 +219,20 @@ class LayoutEditorPubs extends Component {
 							/>
 						</div>
 					</InputField>
-					<InputField label="Limit">
-						<div className="pt-button-group pt-select">
-							<select value={this.props.content.limit} onChange={this.setLimit}>
-								<option value={0}>Show All pubs</option>
-								{selectOptions.map((item)=> {
-									return <option value={item} key={`option-${item}`}>Show {item} pub{item === 1 ? '' : 's'}</option>;
-								})}
-							</select>
-						</div>
+
+					<InputField label="Preview Elements">
+						<Checkbox checked={!this.props.content.hideByline} onChange={this.setHideByline}>
+							Byline
+						</Checkbox>
+						<Checkbox checked={!this.props.content.hideDescription} onChange={this.setHideDescription}>
+							Description
+						</Checkbox>
+						<Checkbox checked={!this.props.content.hideDates} onChange={this.setHideDates}>
+							Dates
+						</Checkbox>
+						<Checkbox checked={!this.props.content.hideContributors} onChange={this.setHideContributors}>
+							Contributors
+						</Checkbox>
 					</InputField>
 				</div>
 
@@ -206,35 +254,40 @@ class LayoutEditorPubs extends Component {
 									<div key={keyString} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
 										<PubPreview
 											size={pubPreviewType}
-											isPlaceholder={true}
-											title={this.props.content.pubIds[index] ? selectPub.title : undefined}
-											inputContent={this.props.content.pubIds.length >= index
-												? (
-													<div className="pt-select">
-														<select value={this.props.content.pubIds[index] || ''} onChange={(evt)=> { this.changePubId(index, evt.target.value); }}>
-															<option value="">Choose specific Pub</option>
-															{this.props.pubs.filter((pub)=> {
-																const tagIds = this.props.content.tagIds || [];
-																if (!tagIds.length) { return true; }
-																return pub.pubTags.reduce((prev, curr)=> {
-																	// if (curr.tagId === this.props.content.tagId) { return true; }
-																	if (tagIds.indexOf(curr.tagId) > -1) { return true; }
-																	return prev;
-																}, false);
-															// }).filter((pub)=> {
-																// return pub.firstPublishedAt;
-															}).sort((foo, bar)=> {
-																if (foo.title < bar.title) { return -1; }
-																if (foo.title > bar.title) { return 1; }
-																return 0;
-															}).map((pub)=> {
-																return <option value={pub.id} key={`option-${pub.id}`}>{pub.title}</option>;
-															})}
-														</select>
-													</div>
-												)
-												: null
-											}
+											pubData={selectPub}
+											hideByline={this.props.content.hideByline}
+											hideDescription={this.props.content.hideDescription}
+											hideDates={this.props.content.hideDates}
+											hideContributors={this.props.content.hideContributors}
+											// isPlaceholder={true}
+											// title={this.props.content.pubIds[index] ? selectPub.title : undefined}
+											// inputContent={this.props.content.pubIds.length >= index
+											// 	? (
+											// 		<div className="pt-select">
+											// 			<select value={this.props.content.pubIds[index] || ''} onChange={(evt)=> { this.changePubId(index, evt.target.value); }}>
+											// 				<option value="">Choose specific Pub</option>
+											// 				{this.props.pubs.filter((pub)=> {
+											// 					const tagIds = this.props.content.tagIds || [];
+											// 					if (!tagIds.length) { return true; }
+											// 					return pub.pubTags.reduce((prev, curr)=> {
+											// 						// if (curr.tagId === this.props.content.tagId) { return true; }
+											// 						if (tagIds.indexOf(curr.tagId) > -1) { return true; }
+											// 						return prev;
+											// 					}, false);
+											// 				// }).filter((pub)=> {
+											// 					// return pub.firstPublishedAt;
+											// 				}).sort((foo, bar)=> {
+											// 					if (foo.title < bar.title) { return -1; }
+											// 					if (foo.title > bar.title) { return 1; }
+											// 					return 0;
+											// 				}).map((pub)=> {
+											// 					return <option value={pub.id} key={`option-${pub.id}`}>{pub.title}</option>;
+											// 				})}
+											// 			</select>
+											// 		</div>
+											// 	)
+											// 	: null
+											// }
 										/>
 									</div>
 								);

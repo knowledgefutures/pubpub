@@ -73,19 +73,8 @@ class Search extends Component {
 											return (
 												<div className="preview-wrapper" key={`result-${pub.id}`}>
 													<PubPreview
-														communityData={pub.community}
-														title={pub.title}
-														description={pub.description}
-														slug={pub.slug}
-														bannerImage={pub.avatar}
+														pubData={pub}
 														size="medium"
-														publicationDate={pub.updatedAt}
-														collaborators={pub.attributions.filter((item)=> {
-															return !item.isAuthor;
-														})}
-														authors={pub.attributions.filter((item)=> {
-															return item.isAuthor;
-														})}
 													/>
 												</div>
 											);

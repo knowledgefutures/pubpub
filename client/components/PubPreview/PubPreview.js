@@ -8,67 +8,83 @@ import { getResizedUrl, generatePubBackground } from 'utilities';
 require('./pubPreview.scss');
 
 const propTypes = {
-	title: PropTypes.string,
-	description: PropTypes.string,
-	slug: PropTypes.string,
-	versions: PropTypes.array,
-	isDraftAccessible: PropTypes.bool,
-	draftPermissions: PropTypes.string,
-	authors: PropTypes.array,
-	collaborators: PropTypes.array,
-	bannerImage: PropTypes.string,
-	size: PropTypes.string,
+	pubData: PropTypes.object.isRequired,
 	communityData: PropTypes.object,
-	inputContent: PropTypes.node,
-	isPlaceholder: PropTypes.bool,
+	size: PropTypes.string,
+	hideByline: PropTypes.boolean,
+	hideDescription: PropTypes.boolean,
+	hideDates: PropTypes.boolean,
+	hideContributors: PropTypes.boolean,
+	// title: PropTypes.string,
+	// description: PropTypes.string,
+	// slug: PropTypes.string,
+	// versions: PropTypes.array,
+	// isDraftAccessible: PropTypes.bool,
+	// draftPermissions: PropTypes.string,
+	// authors: PropTypes.array,
+	// collaborators: PropTypes.array,
+	// bannerImage: PropTypes.string,
+	// inputContent: PropTypes.node,
+	// isPlaceholder: PropTypes.bool,
 };
 
 const defaultProps = {
-	title: undefined,
-	slug: undefined,
-	description: undefined,
-	versions: [],
-	isDraftAccessible: false,
-	draftPermissions: 'public',
-	authors: [],
-	collaborators: [],
-	bannerImage: undefined,
+	// title: undefined,
+	// slug: undefined,
+	// description: undefined,
+	// versions: [],
+	// isDraftAccessible: false,
+	// draftPermissions: 'public',
+	// authors: [],
+	// collaborators: [],
+	// bannerImage: undefined,
 	size: 'large',
 	communityData: undefined,
-	inputContent: null,
-	isPlaceholder: false,
+	hideByline: false,
+	hideDescription: false,
+	hideDates: false,
+	hideContributors: false,
+	// inputContent: null,
+	// isPlaceholder: false,
 };
 
 const PubPreview = function(props) {
-	const resizedBannerImage = getResizedUrl(props.bannerImage, 'fit-in', '800x0');
-	const bannerStyle = props.bannerImage || !props.slug
-		? { backgroundImage: `url("${resizedBannerImage}")` }
-		: { background: generatePubBackground(props.title) };
+	const pubData = props.pubData;
 
-	// const collaboratorsCount = props.authors.length + props.collaborators.length;
+	const isDraftAccessible = pubData.isDraftEditor || pubData.isDraftViewer || pubData.isManager;
+	const resizedBannerImage = getResizedUrl(pubData.avatar, 'fit-in', '800x0');
+	const bannerStyle = pubData.avatar || !pubData.slug
+		? { backgroundImage: `url("${resizedBannerImage}")` }
+		: { background: generatePubBackground(pubData.title) };
+
 	const resizedSmallHeaderLogo = props.communityData && getResizedUrl(props.communityData.smallHeaderLogo, 'fit-in', '125x35');
 	const communityHostname = props.communityData && (props.communityData.domain || `${props.communityData.subdomain}.pubpub.org`);
 	const communityUrl = props.communityData && (props.communityData.domain ? `https://${props.communityData.domain}` : `https://${props.communityData.subdomain}.pubpub.org`);
-	const pubLink = props.communityData ? `https://${communityHostname}/pub/${props.slug}` : `/pub/${props.slug}`;
+	const pubLink = props.communityData ? `https://${communityHostname}/pub/${pubData.slug}` : `/pub/${pubData.slug}`;
+	const attributions = pubData.attributions || [];
+	const authors = attributions.filter((attribution)=> {
+		return attribution.isAuthor;
+	});
 
-	const earliestDate = props.versions.reduce((prev, curr)=> {
+	const versions = pubData.versions || [];
+	const earliestDate = versions.reduce((prev, curr)=> {
 		if (!prev) { return curr.createdAt; }
 		if (curr.createdAt < prev) { return curr.createdAt; }
 		return prev;
 	}, undefined);
-	const latestDate = props.versions.reduce((prev, curr)=> {
+	const latestDate = versions.reduce((prev, curr)=> {
 		const sameDayAsEarliest = earliestDate && new Date(earliestDate).toISOString().substring(0, 10) === new Date(curr.createdAt).toISOString().substring(0, 10);
 		if (!prev && !sameDayAsEarliest) { return curr.createdAt; }
 		if (curr.createdAt > prev) { return curr.createdAt; }
 		return prev;
 	}, undefined);
-	const isPrivate = (!props.versions && props.draftPermissions === 'private') || props.versions.reduce((prev, curr)=> {
+	const isPrivate = (!versions && pubData.draftPermissions === 'private') || versions.reduce((prev, curr)=> {
 		if (curr.isPublic) { return false; }
 		return prev;
 	}, true);
 
 	/* Placeholder state */
-	if (!props.slug) {
+	/* if (!pubData.slug) {
 		return (
 			<div className={`pub-preview-component skeleton ${props.size}-preview ${props.isPlaceholder ? 'placeholder' : ''}`}>
 				<div className="pt-skeleton banner-image" />
@@ -85,12 +101,12 @@ const PubPreview = function(props) {
 				</div>
 			</div>
 		);
-	}
+	} */
 
 	return (
 		<div className={`pub-preview-component ${props.size}-preview`}>
 			{props.size !== 'small' &&
-				<a href={pubLink} alt={props.title}>
+				<a href={pubLink} alt={pubData.title}>
 					<div className="banner-image" style={bannerStyle} />
 				</a>
 			}
@@ -104,9 +120,9 @@ const PubPreview = function(props) {
 							/>
 						</a>
 					}
-					<a href={pubLink} alt={props.title}>
+					<a href={pubLink} alt={pubData.title}>
 						<h3 className="title">
-							{props.title}
+							{pubData.title}
 							{isPrivate &&
 								<Icon icon="lock2" />
 							}
@@ -114,18 +130,18 @@ const PubPreview = function(props) {
 					</a>
 				</div>
 
-				{!!props.authors.length &&
+				{!!authors.length && !props.hideByline &&
 					<div className="authors">
 						<span>by </span>
-						{props.authors.sort((foo, bar)=> {
+						{authors.sort((foo, bar)=> {
 							if (foo.order < bar.order) { return -1; }
 							if (foo.order > bar.order) { return 1; }
 							if (foo.createdAt < bar.createdAt) { return 1; }
 							if (foo.createdAt > bar.createdAt) { return -1; }
 							return 0;
 						}).map((author, index)=> {
-							const separator = index === props.authors.length - 1 || props.authors.length === 2 ? '' : ', ';
-							const prefix = index === props.authors.length - 1 && index !== 0 ? ' and ' : '';
+							const separator = index === authors.length - 1 || authors.length === 2 ? '' : ', ';
+							const prefix = index === authors.length - 1 && index !== 0 ? ' and ' : '';
 							if (author.user.slug) {
 								return (
 									<span key={`author-${author.id}`}>
@@ -140,45 +156,49 @@ const PubPreview = function(props) {
 					</div>
 				}
 
-				<div className="date-details">
-					{!earliestDate &&
-						<span className="date">Working Draft</span>
-					}
-					{earliestDate &&
-						<span className="date">{dateFormat(earliestDate, 'mmm dd, yyyy')}</span>
-					}
-					{latestDate &&
-						<span className="date">Updated: {dateFormat(latestDate, 'mmm dd, yyyy')}</span>
-					}
-				</div>
+				{!props.hideDates &&
+					<div className="date-details">
+						{!earliestDate &&
+							<span className="date">Working Draft</span>
+						}
+						{earliestDate &&
+							<span className="date">{dateFormat(earliestDate, 'mmm dd, yyyy')}</span>
+						}
+						{latestDate &&
+							<span className="date">Updated: {dateFormat(latestDate, 'mmm dd, yyyy')}</span>
+						}
+					</div>
+				}
 
-				<div className="date-details">
-					{[...props.authors, ...props.collaborators].sort((foo, bar)=> {
-						if (foo.order < bar.order) { return -1; }
-						if (foo.order > bar.order) { return 1; }
-						if (foo.createdAt < bar.createdAt) { return 1; }
-						if (foo.createdAt > bar.createdAt) { return -1; }
-						return 0;
-					}).map((collaborator, index)=> {
-						return (
-							<Avatar
-								key={`avatar-${collaborator.id}`}
-								instanceNumber={index}
-								userInitials={collaborator.user.initials}
-								userAvatar={collaborator.user.avatar}
-								borderColor="rgba(255, 255, 255, 1.0)"
-								width={20}
-								doesOverlap={true}
-							/>
-						);
-					})}
-					{earliestDate && props.isDraftAccessible &&
-						<a className="date draft-link" href={`${pubLink}/draft`}>Go To Working Draft</a>
-					}
-				</div>
+				{!props.hideContributors &&
+					<div className="date-details">
+						{attributions.sort((foo, bar)=> {
+							if (foo.order < bar.order) { return -1; }
+							if (foo.order > bar.order) { return 1; }
+							if (foo.createdAt < bar.createdAt) { return 1; }
+							if (foo.createdAt > bar.createdAt) { return -1; }
+							return 0;
+						}).map((collaborator, index)=> {
+							return (
+								<Avatar
+									key={`avatar-${collaborator.id}`}
+									instanceNumber={index}
+									userInitials={collaborator.user.initials}
+									userAvatar={collaborator.user.avatar}
+									borderColor="rgba(255, 255, 255, 1.0)"
+									width={20}
+									doesOverlap={true}
+								/>
+							);
+						})}
+						{earliestDate && isDraftAccessible &&
+							<a className="date draft-link" href={`${pubLink}/draft`}>Go To Working Draft</a>
+						}
+					</div>
+				}
 
-				{props.description &&
-					<div className="description">{props.description}</div>
+				{pubData.description && !props.hideDescription &&
+					<div className="description">{pubData.description}</div>
 				}
 			</div>
 		</div>

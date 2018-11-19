@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { AnchorButton } from '@blueprintjs/core';
 import { apiFetch, getResizedUrl } from 'utilities';
 
 require('./layoutBanner.scss');
@@ -60,6 +60,17 @@ class LayoutBanner extends Component {
 			alignItems: 'center',
 			maxWidth: 'none',
 		};
+
+		const buttonType = this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
+		const buttonText = (buttonType === 'create-pub' && !this.props.loginData.id && 'Login to Create Pub')
+			|| this.props.content.buttonText
+			|| (buttonType === 'create-pub' && this.props.loginData.id && 'Create Pub')
+			|| (buttonType === 'signup' && 'Create an Account')
+			|| (buttonType === 'link' && 'Go to Link');
+		const buttonUrl = (buttonType === 'link' && this.props.content.buttonUrl)
+			|| (buttonType === 'create-pub' && !this.props.loginData.id && `/login?redirect=${this.props.locationData.path}`)
+			|| (buttonType === 'signup' && '/signup');
+
 		return (
 			<div className="layout-banner-component">
 				<div className="block-content" style={this.props.content.backgroundSize === 'full' ? backgroundStyle : undefined}>
@@ -77,21 +88,14 @@ class LayoutBanner extends Component {
 										{this.props.content.text}
 									</h2>
 								}
-								{this.props.loginData.id && this.props.content.showButton &&
-									<Button
+								{this.props.content.showButton &&
+									<AnchorButton
 										className="pt-large"
-										onClick={this.createPub}
+										onClick={buttonType === 'create-pub' && this.props.loginData.id && this.createPub}
 										loading={this.state.isLoading}
-										text={this.props.content.buttonText || 'Create Pub'}
+										text={buttonText}
+										href={buttonUrl}
 									/>
-								}
-								{!this.props.loginData.id && this.props.content.showButton &&
-									<a
-										href={`/login?redirect=${this.props.locationData.path}`}
-										className="pt-button pt-large"
-									>
-										Login to Create Pub
-									</a>
 								}
 							</div>
 						</div>

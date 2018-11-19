@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, Button } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
@@ -15,14 +15,12 @@ const propTypes = {
 	content: PropTypes.object.isRequired,
 	communityData: PropTypes.object.isRequired,
 	/* Expected content */
-	/* text, align, backgroundColor, backgroundImage, backgroundSize, showButton, buttonText, defaultTagIds */
+	/* text, align, backgroundColor, backgroundImage, backgroundSize, showButton, buttonType, buttonText, defaultTagIds, buttonUrl */
 };
 
 class LayoutEditorBanner extends Component {
 	constructor(props) {
 		super(props);
-
-		this.handleRemove = this.handleRemove.bind(this);
 		this.setAlign = this.setAlign.bind(this);
 		this.setBackgroundSize = this.setBackgroundSize.bind(this);
 		this.setBackgroundColor = this.setBackgroundColor.bind(this);
@@ -30,7 +28,9 @@ class LayoutEditorBanner extends Component {
 		this.setDefaultTagIds = this.setDefaultTagIds.bind(this);
 		this.setText = this.setText.bind(this);
 		this.setShowButton = this.setShowButton.bind(this);
+		this.setButtonType = this.setButtonType.bind(this);
 		this.setButtonText = this.setButtonText.bind(this);
+		this.setButtonUrl = this.setButtonUrl.bind(this);
 	}
 
 	setAlign(alignValue) {
@@ -75,10 +75,26 @@ class LayoutEditorBanner extends Component {
 		});
 	}
 
+	setButtonType(evt) {
+		const buttonType = evt.target.value;
+		return this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			showButton: buttonType !== 'none',
+			buttonType: buttonType
+		});
+	}
+
 	setButtonText(evt) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			buttonText: evt.target.value,
+		});
+	}
+
+	setButtonUrl(evt) {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			buttonUrl: evt.target.value,
 		});
 	}
 
@@ -109,6 +125,8 @@ class LayoutEditorBanner extends Component {
 			display: 'flex',
 			alignItems: 'center',
 		};
+
+		const buttonType = this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
 
 		return (
 			<div className="layout-editor-banner-component">
@@ -172,13 +190,15 @@ class LayoutEditorBanner extends Component {
 
 					<div className="line-break" />
 
-					<InputField label="Create Pub Button">
-						<Checkbox
-							checked={this.props.content.showButton}
-							onChange={this.setShowButton}
-						>
-							Show Button
-						</Checkbox>
+					<InputField label="Banner Button Type">
+						<div className="pt-button-group pt-select">
+							<select value={buttonType} onChange={this.setButtonType}>
+								<option value="none">None</option>
+								<option value="create-pub">Create Pub</option>
+								<option value="signup">Create Account</option>
+								<option value="link">Link</option>
+							</select>
+						</div>
 					</InputField>
 
 					{this.props.content.showButton &&
@@ -188,7 +208,7 @@ class LayoutEditorBanner extends Component {
 							onChange={this.setButtonText}
 						/>
 					}
-					{this.props.content.showButton &&
+					{this.props.content.showButton && buttonType === 'create-pub' &&
 						<InputField label="Default Pub Tags">
 							<div className="pt-button-group pt-select">
 								<TagMultiSelect
@@ -211,6 +231,13 @@ class LayoutEditorBanner extends Component {
 							</div>
 						</InputField>
 					}
+					{this.props.content.showButton && buttonType === 'link' &&
+						<InputField
+							label="Link"
+							value={this.props.content.buttonUrl}
+							onChange={this.setButtonUrl}
+						/>
+					}
 				</div>
 
 				<div className="block-content" style={this.props.content.backgroundSize === 'full' ? backgroundStyle : undefined}>
@@ -232,7 +259,11 @@ class LayoutEditorBanner extends Component {
 									<Button
 										className="pt-large"
 										onClick={()=>{}}
-										text={this.props.content.buttonText || 'Create Pub'}
+										text={this.props.content.buttonText
+											|| (buttonType === 'create-pub' && 'Create Pub')
+											|| (buttonType === 'signup' && 'Create an Account')
+											|| (buttonType === 'link' && 'Go to Link')
+										}
 									/>
 								}
 							</div>

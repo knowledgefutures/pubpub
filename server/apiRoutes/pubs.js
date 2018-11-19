@@ -4,8 +4,9 @@ import { generateHash, slugifyString } from '../utilities';
 
 app.post('/api/pubs', (req, res)=> {
 	const user = req.user || {};
-	const newPubSlug = generateHash(8);
+	if (!user.id) { return res.status(500).json('Not Authorized to Create Pub'); }
 
+	const newPubSlug = generateHash(8);
 	const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	const date = new Date();
 	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;

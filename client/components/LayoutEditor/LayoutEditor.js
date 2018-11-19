@@ -58,6 +58,8 @@ class LayoutEditor extends Component {
 					showButton: false,
 					buttonText: '',
 					defaultTagIds: [],
+					buttonUrl: '',
+					buttonType: 'none',
 				},
 			};
 			newLayout.splice(index, 0, {

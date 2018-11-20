@@ -96,7 +96,7 @@
     "raven-js": "^3.21.0",
     "react": "^16.4.1",
     "react-avatar-editor": "^11.0.4",
-    "react-beautiful-dnd": "^8.0.2",
+    "react-beautiful-dnd": "^10.0.1",
     "react-color": "^2.14.1",
     "react-dom": "^16.4.1",
     "react-portal": "^4.1.5",

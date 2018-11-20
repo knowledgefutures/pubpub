@@ -1,0 +1,19 @@
+.pubs-picker-component {
+	display: flex;
+	.droppable {
+		overflow-y: auto;
+		overflow-x: hidden;
+		height: 350px;
+		max-height: 85vh;
+		padding: 1em;
+		border: 1px solid #CCC;
+		width: 50%;
+		min-height: 1px;
+	}
+	.draggable {
+		padding: 0.5em;
+		border: 1px solid #CCC;
+		margin: 0.5em 0em;
+		background: white;
+	}
+}

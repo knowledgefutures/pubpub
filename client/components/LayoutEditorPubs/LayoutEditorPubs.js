@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import PubPreview from 'components/PubPreview/PubPreview';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
 import InputField from 'components/InputField/InputField';
-import { Button, Checkbox } from '@blueprintjs/core';
+import DropdownButton from 'components/DropdownButton/DropdownButton';
+import PubsPicker from 'components/PubsPicker/PubsPicker';
+import { Button, Checkbox, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 
 const propTypes = {
 	onChange: PropTypes.func.isRequired,
@@ -30,6 +32,7 @@ class LayoutEditorPubs extends Component {
 		this.setHideDescription = this.setHideDescription.bind(this);
 		this.setHideDates = this.setHideDates.bind(this);
 		this.setHideContributors = this.setHideContributors.bind(this);
+		this.orderPopoverRef = React.createRef();
 	}
 
 	setSmall() {
@@ -159,6 +162,8 @@ class LayoutEditorPubs extends Component {
 			tagsById[tag.id] = tag;
 		});
 
+		const availablePubs = this.props.pubs;
+
 		// TODO: Need to create an order drag-drop interface
 		// that allows theuser to set the pubIds array.
 		return (
@@ -202,7 +207,43 @@ class LayoutEditorPubs extends Component {
 					</InputField>
 
 					<InputField label="Order">
-						Set custom options
+						<Popover
+							content={
+								<PubsPicker
+									selectedPubs={this.props.content.pubIds.map((pubId)=> {
+										return availablePubs.reduce((prev, curr)=> {
+											if (curr.id === pubId) { return curr; }
+											return prev;
+										}, undefined)
+										.filter((pub)=> {
+											return !!pub;
+										});
+									})}
+									allPubs={availablePubs}
+									uniqueId={this.props.layoutIndex}
+								/>
+							}
+							interactionKind={PopoverInteractionKind.CLICK}
+							position={Position.BOTTOM_RIGHT}
+							usePortal={false}
+							minimal={true}
+							popoverClassName="pubs-picker-popover"
+							popoverDidOpen={()=> {
+								setTimeout(()=> {
+									/* This is a hacky way to solve this bug: */
+									/* https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/using-a-portal.md */
+									const overlayNode = this.orderPopoverRef.current.popoverElement.parentNode;
+									const positions = overlayNode.style.transform.replace('translate3d(', '').split(', ');
+									overlayNode.style.left = positions[0];
+									overlayNode.style.top = positions[1];
+									overlayNode.style.transform = '';
+									overlayNode.style.willChange = '';
+								}, 0);
+							}}
+							ref={this.orderPopoverRef}
+						>
+							<DropdownButton label="Custom order" />
+						</Popover>
 					</InputField>
 
 					<div className="line-break" />

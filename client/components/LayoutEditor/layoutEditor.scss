@@ -85,8 +85,13 @@
 
 .pubs-picker-popover {
 	transform: none !important;
+	.intro {
+		background: #eaeaea;
+		padding: 1em;
+		border-bottom: 1px solid #CCC;	
+	}
 	.pubs-picker-component {
 		width: 600px;
 		max-width: 100vw;
-	}	
+	}
 }

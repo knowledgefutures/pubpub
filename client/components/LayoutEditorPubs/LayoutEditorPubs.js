@@ -171,8 +171,15 @@ class LayoutEditorPubs extends Component {
 		this.props.communityData.tags.forEach((tag)=> {
 			tagsById[tag.id] = tag;
 		});
+		const availablePubs = this.props.pubs.filter((pub)=> {
+			const tagIds = this.props.content.tagIds || [];
+			if (!tagIds.length) { return true; }
+			return pub.pubTags.reduce((prev, curr)=> {
+				if (tagIds.indexOf(curr.tagId) > -1) { return true; }
+				return prev;
+			}, false);
+		});
 
-		const availablePubs = this.props.pubs || [];
 		return (
 			<div className="layout-editor-pubs-component">
 				<div className="block-header">
@@ -216,20 +223,23 @@ class LayoutEditorPubs extends Component {
 					<InputField label="Order">
 						<Popover
 							content={
-								<PubsPicker
-									selectedPubs={this.props.content.pubIds.map((pubId)=> {
-										return availablePubs.reduce((prev, curr)=> {
-											if (curr.id === pubId) { return curr; }
-											return prev;
-										}, undefined);
-									})
-									.filter((pub)=> {
-										return !!pub;
-									})}
-									allPubs={availablePubs}
-									onChange={this.setPubIds}
-									uniqueId={this.props.layoutIndex}
-								/>
+								<div>
+									<div className="intro">Pinned pubs will be displayed first, followed by newest pubs.</div>
+									<PubsPicker
+										selectedPubs={this.props.content.pubIds.map((pubId)=> {
+											return availablePubs.reduce((prev, curr)=> {
+												if (curr.id === pubId) { return curr; }
+												return prev;
+											}, undefined);
+										})
+										.filter((pub)=> {
+											return !!pub;
+										})}
+										allPubs={availablePubs}
+										onChange={this.setPubIds}
+										uniqueId={this.props.layoutIndex}
+									/>
+								</div>
 							}
 							interactionKind={PopoverInteractionKind.CLICK}
 							position={Position.BOTTOM_RIGHT}
@@ -250,7 +260,7 @@ class LayoutEditorPubs extends Component {
 							}}
 							ref={this.orderPopoverRef}
 						>
-							<DropdownButton label="Custom order" />
+							<DropdownButton label="Set custom order" />
 						</Popover>
 					</InputField>
 
@@ -316,35 +326,6 @@ class LayoutEditorPubs extends Component {
 											hideDescription={this.props.content.hideDescription}
 											hideDates={this.props.content.hideDates}
 											hideContributors={this.props.content.hideContributors}
-											// isPlaceholder={true}
-											// title={this.props.content.pubIds[index] ? selectPub.title : undefined}
-											// inputContent={this.props.content.pubIds.length >= index
-											// 	? (
-											// 		<div className="pt-select">
-											// 			<select value={this.props.content.pubIds[index] || ''} onChange={(evt)=> { this.changePubId(index, evt.target.value); }}>
-											// 				<option value="">Choose specific Pub</option>
-											// 				{this.props.pubs.filter((pub)=> {
-											// 					const tagIds = this.props.content.tagIds || [];
-											// 					if (!tagIds.length) { return true; }
-											// 					return pub.pubTags.reduce((prev, curr)=> {
-											// 						// if (curr.tagId === this.props.content.tagId) { return true; }
-											// 						if (tagIds.indexOf(curr.tagId) > -1) { return true; }
-											// 						return prev;
-											// 					}, false);
-											// 				// }).filter((pub)=> {
-											// 					// return pub.firstPublishedAt;
-											// 				}).sort((foo, bar)=> {
-											// 					if (foo.title < bar.title) { return -1; }
-											// 					if (foo.title > bar.title) { return 1; }
-											// 					return 0;
-											// 				}).map((pub)=> {
-											// 					return <option value={pub.id} key={`option-${pub.id}`}>{pub.title}</option>;
-											// 				})}
-											// 			</select>
-											// 		</div>
-											// 	)
-											// 	: null
-											// }
 										/>
 									</div>
 								);

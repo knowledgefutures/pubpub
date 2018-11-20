@@ -72,7 +72,7 @@ class PubsPicker extends Component {
 									className={`droppable ${droppableSnapshot.isDraggingOver ? 'dragging-over' : ''}`}
 									{...droppableProvided.droppableProps}
 								>
-									<div className="panel-header">Ordered Pubs</div>
+									<div className="panel-header">Pinned Pubs</div>
 									{this.state.selectedPubs.map((pub, index)=> {
 										return (
 											<Draggable key={pub.id} draggableId={pub.id} index={index}>

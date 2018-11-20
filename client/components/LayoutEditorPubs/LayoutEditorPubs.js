@@ -32,6 +32,7 @@ class LayoutEditorPubs extends Component {
 		this.setHideDescription = this.setHideDescription.bind(this);
 		this.setHideDates = this.setHideDates.bind(this);
 		this.setHideContributors = this.setHideContributors.bind(this);
+		this.setPubIds = this.setPubIds.bind(this);
 		this.orderPopoverRef = React.createRef();
 	}
 
@@ -115,6 +116,15 @@ class LayoutEditorPubs extends Component {
 		});
 	}
 
+	setPubIds(newPubObjects) {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			pubIds: newPubObjects.map((pub)=> {
+				return pub.id;
+			})
+		});
+	}
+
 	changeTitle(evt) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
@@ -162,10 +172,7 @@ class LayoutEditorPubs extends Component {
 			tagsById[tag.id] = tag;
 		});
 
-		const availablePubs = this.props.pubs;
-
-		// TODO: Need to create an order drag-drop interface
-		// that allows theuser to set the pubIds array.
+		const availablePubs = this.props.pubs || [];
 		return (
 			<div className="layout-editor-pubs-component">
 				<div className="block-header">
@@ -214,12 +221,13 @@ class LayoutEditorPubs extends Component {
 										return availablePubs.reduce((prev, curr)=> {
 											if (curr.id === pubId) { return curr; }
 											return prev;
-										}, undefined)
-										.filter((pub)=> {
-											return !!pub;
-										});
+										}, undefined);
+									})
+									.filter((pub)=> {
+										return !!pub;
 									})}
 									allPubs={availablePubs}
+									onChange={this.setPubIds}
 									uniqueId={this.props.layoutIndex}
 								/>
 							}

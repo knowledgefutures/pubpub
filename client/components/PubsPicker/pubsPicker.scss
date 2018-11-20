@@ -6,14 +6,29 @@
 		height: 350px;
 		max-height: 85vh;
 		padding: 1em;
-		border: 1px solid #CCC;
 		width: 50%;
 		min-height: 1px;
+		&:first-of-type {
+			border-right: 1px solid #CCC;
+		}
 	}
 	.draggable {
-		padding: 0.5em;
-		border: 1px solid #CCC;
-		margin: 0.5em 0em;
-		background: white;
+		padding: 0.25em 0em;
+	}
+	.drag-title {
+		display: flex;
+	    align-items: center;
+	    svg {
+	    	margin-right: 0.5em;
+	    }
+	    .text {
+	    	white-space: nowrap;
+	    	overflow: hidden;
+	    	text-overflow: ellipsis;
+	    }
+	}
+	.panel-header {
+		font-weight: bold;
+		padding-bottom: 1em;
 	}
 }

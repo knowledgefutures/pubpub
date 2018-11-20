@@ -226,7 +226,7 @@ class LayoutEditorBanner extends Component {
 										});
 										this.setDefaultTagIds(newTagIds);
 									}}
-									placeholder="Default Pub Tags..."
+									placeholder="Add tags..."
 								/>
 							</div>
 						</InputField>

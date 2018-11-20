@@ -31,41 +31,13 @@ class LayoutEditor extends Component {
 		this.handleMoveDown = this.handleMoveDown.bind(this);
 	}
 
-	handleInsert(index, type) {
+	handleInsert(index, type, newContent) {
 		this.setState((prevState)=> {
 			const newLayout = prevState.layout;
-			const defaultContents = {
-				pubs: {
-					title: '',
-					pubPreviewType: 'medium',
-					limit: 0,
-					pubIds: [],
-					tagIds: [],
-				},
-				text: {
-					align: 'left',
-					text: undefined,
-				},
-				html: {
-					html: '',
-				},
-				banner: {
-					text: 'Hello',
-					align: 'center',
-					backgroundColor: '#3275d8',
-					backgroundImage: '',
-					backgroundSize: 'full',
-					showButton: false,
-					buttonText: '',
-					defaultTagIds: [],
-					buttonUrl: '',
-					buttonType: 'none',
-				},
-			};
 			newLayout.splice(index, 0, {
 				id: generateHash(8),
 				type: type,
-				content: defaultContents[type],
+				content: newContent,
 			});
 			const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
 			this.props.onChange(newLayout);

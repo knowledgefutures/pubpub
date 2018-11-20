@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
+import { Popover, PopoverInteractionKind, Position, Menu, MenuItem } from '@blueprintjs/core';
+import Icon from 'components/Icon/Icon';
 
 require('./layoutEditorInsert.scss');
 
@@ -12,39 +13,148 @@ const propTypes = {
 const LayoutEditorInsert = function(props) {
 	const insertIndex = props.insertIndex;
 	const onInsert = props.onInsert;
-	const types = [
-		{ title: 'Add Pub List', type: 'pubs' },
-		{ title: 'Add Text Block', type: 'text' },
-		{ title: 'Add HTML Block', type: 'html' },
-		{ title: 'Add Banner Block', type: 'banner' },
+	const pubsBlocks = [
+		{
+			title: 'Default Pubs Block',
+			type: 'pubs',
+			content: {
+				title: '',
+				pubPreviewType: 'medium',
+				limit: 0,
+				pubIds: [],
+				tagIds: [],
+			}
+		},
+		{
+			title: 'Table of Contents',
+			type: 'pubs',
+			content: {
+				title: '',
+				pubPreviewType: 'small',
+				limit: 0,
+				pubIds: [],
+				tagIds: [],
+				hideByline: true,
+				hideDates: true,
+				hideContributors: true,
+			}
+		},
 	];
+	const bannerBlocks = [
+		{
+			title: 'Default Banner Block',
+			type: 'banner',
+			content: {
+				text: 'Hello',
+				align: 'center',
+				backgroundColor: '#3275d8',
+				backgroundImage: '',
+				backgroundSize: 'full',
+				showButton: false,
+				buttonText: '',
+				defaultTagIds: [],
+				buttonUrl: '',
+				buttonType: 'none',
+			}
+		},
+		{
+			title: 'Submission Button Banner',
+			type: 'banner',
+			content: {
+				text: 'Create a pub to begin your submission.',
+				align: 'center',
+				backgroundColor: '#3275d8',
+				backgroundImage: '',
+				backgroundSize: 'full',
+				showButton: true,
+				buttonText: '',
+				defaultTagIds: [],
+				buttonUrl: '',
+				buttonType: 'create-pub',
+			}
+		},
+	];
+	const htmlBlocks = [
+		{
+			title: 'Default HTML Block',
+			type: 'html',
+			content: {
+				html: '',
+			}
+		},
+	];
+	const textBlocks = [
+		{
+			title: 'Default Text Block',
+			type: 'text',
+			content: {
+				text: undefined,
+				align: 'left',
+			}
+		},
+	];
+
+	const generateMenuItem = (item)=> {
+		return (
+			<MenuItem
+				key={`insert-${item.type}-${item.title}`}
+				onClick={()=>{ onInsert(insertIndex, item.type, item.content); }}
+				text={item.title}
+				shouldDismissPopover={true}
+			/>
+		);
+	};
 	return (
 		<div className="layout-editor-insert-component">
 			<Popover
 				content={
-					<div className="pt-menu">
-						{types.map((item)=> {
-							return (
-								<div
-									role="button"
-									tabIndex={-1}
-									key={`insert-${item.type}`}
-									className="pt-menu-item pt-popover-dismiss"
-									onClick={()=>{ onInsert(insertIndex, item.type); }}
-								>
-									{item.title}
-								</div>
-							);
+					<Menu>
+						<li className="pt-menu-header">
+							<h6>
+								Pubs Block
+								<Icon icon="widget-header" />
+							</h6>
+						</li>
+						{pubsBlocks.map((item)=> {
+							return generateMenuItem(item);
 						})}
-					</div>
+						<li className="pt-menu-header">
+							<h6>
+								Banner Block
+								<Icon icon="vertical-distribution" />
+							</h6>
+						</li>
+						{bannerBlocks.map((item)=> {
+							return generateMenuItem(item);
+						})}
+						<li className="pt-menu-header">
+							<h6>
+								Text Block
+								<Icon icon="new-text-box" />
+							</h6>
+						</li>
+						{textBlocks.map((item)=> {
+							return generateMenuItem(item);
+						})}
+						<li className="pt-menu-header">
+							<h6>
+								HTML Block
+								<Icon icon="code" />
+							</h6>
+						</li>
+						{htmlBlocks.map((item)=> {
+							return generateMenuItem(item);
+						})}
+					</Menu>
 				}
 				interactionKind={PopoverInteractionKind.CLICK}
 				position={Position.BOTTOM}
 				popoverClassName="pt-minimal"
 				transitionDuration={-1}
 				inheritDarkTheme={false}
+				usePortal={false}
 			>
-				<button type="button" className="pt-button pt-icon-add">Add Section</button>
+				<button type="button" className="pt-button pt-icon-add">Add Block</button>
 			</Popover>
 			<div className="center-line" />
 		</div>

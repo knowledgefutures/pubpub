@@ -4,6 +4,8 @@ import { Position } from '@blueprintjs/core';
 import { MultiSelect } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
+require('./tagMultiSelect.scss');
+
 const propTypes = {
 	allTags: PropTypes.array.isRequired,
 	selectedTagIds: PropTypes.array.isRequired,

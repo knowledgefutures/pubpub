@@ -15,7 +15,7 @@ const LayoutEditorInsert = function(props) {
 	const onInsert = props.onInsert;
 	const pubsBlocks = [
 		{
-			title: 'Default Pubs Block',
+			title: 'Default',
 			type: 'pubs',
 			content: {
 				title: '',
@@ -42,7 +42,7 @@ const LayoutEditorInsert = function(props) {
 	];
 	const bannerBlocks = [
 		{
-			title: 'Default Banner Block',
+			title: 'Default',
 			type: 'banner',
 			content: {
 				text: 'Hello',
@@ -76,7 +76,7 @@ const LayoutEditorInsert = function(props) {
 	];
 	const htmlBlocks = [
 		{
-			title: 'Default HTML Block',
+			title: 'Default',
 			type: 'html',
 			content: {
 				html: '',
@@ -85,7 +85,7 @@ const LayoutEditorInsert = function(props) {
 	];
 	const textBlocks = [
 		{
-			title: 'Default Text Block',
+			title: 'Default',
 			type: 'text',
 			content: {
 				text: undefined,

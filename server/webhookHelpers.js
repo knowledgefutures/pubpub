@@ -1,5 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-
 import request from 'request-promise';
 
 const base = 'https://hooks.slack.com/services/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';

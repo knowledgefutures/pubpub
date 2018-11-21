@@ -4,7 +4,7 @@ import app from '../server';
 import { Community, Page, CommunityAdmin } from '../models';
 import { generateHash, slugifyString } from '../utilities';
 import { subscribeUser } from '../mailchimpHelpers';
-import { alertNewCommunity } from '../webhookHelpers'
+import { alertNewCommunity } from '../webhookHelpers';
 
 app.post('/api/communities', (req, res)=> {
 	const user = req.user || {};

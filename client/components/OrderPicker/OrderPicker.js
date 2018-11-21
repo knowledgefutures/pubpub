@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Tooltip } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 
 require('./orderPicker.scss');
@@ -12,11 +13,15 @@ const propTypes = {
 	uniqueId: PropTypes.func.isRequired,
 	selectedTitle: PropTypes.string,
 	availableTitle: PropTypes.string,
+	selectedTitleTooltip: PropTypes.string,
+	availableTitleTooltip: PropTypes.string,
 };
 
 const defaultProps = {
 	selectedTitle: 'Selected',
 	availableTitle: 'Available',
+	selectedTitleTooltip: undefined,
+	availableTitleTooltip: undefined,
 };
 
 class OrderPicker extends Component {
@@ -71,78 +76,101 @@ class OrderPicker extends Component {
 		return (
 			<div className="order-picker-component">
 				<DragDropContext onDragEnd={this.onDragEnd}>
-					<Droppable droppableId={`column-1-${this.props.uniqueId}`} ignoreContainerClipping={false}>
-						{(droppableProvided, droppableSnapshot)=> {
-							return (
-								<div
-									ref={droppableProvided.innerRef}
-									className={`droppable ${droppableSnapshot.isDraggingOver ? 'dragging-over' : ''}`}
-									{...droppableProvided.droppableProps}
+					<div className="column">
+						<div className="column-header">
+							{this.props.selectedTitle}
+							{this.props.selectedTitleTooltip &&
+								<Tooltip
+									content={this.props.selectedTitleTooltip}
 								>
-									<div className="panel-header">{this.props.selectedTitle}</div>
-									{this.state.selectedItems.map((item, index)=> {
-										return (
-											<Draggable key={item.id} draggableId={item.id} index={index}>
-												{(draggableProvided, draggableSnapshot) => {
-													return (
-														<div
-															ref={draggableProvided.innerRef}
-															{...draggableProvided.draggableProps}
-															className={`draggable ${draggableSnapshot.isDragging ? 'dragging' : ''}`}
-														>
-															<div className="drag-title">
-																<span {...draggableProvided.dragHandleProps}>
-																	<Icon icon="drag-handle-horizontal" />
-																</span>
-																<span className="text" title={item.title}>{item.title}</span>
+									<Icon icon="help" iconSize={12} />
+								</Tooltip>
+							}
+						</div>
+						<Droppable droppableId={`column-1-${this.props.uniqueId}`} ignoreContainerClipping={false}>
+							{(droppableProvided, droppableSnapshot)=> {
+								return (
+									<div
+										ref={droppableProvided.innerRef}
+										className={`droppable ${droppableSnapshot.isDraggingOver ? 'dragging-over' : ''}`}
+										{...droppableProvided.droppableProps}
+									>
+										{this.state.selectedItems.map((item, index)=> {
+											return (
+												<Draggable key={item.id} draggableId={item.id} index={index}>
+													{(draggableProvided, draggableSnapshot) => {
+														return (
+															<div
+																ref={draggableProvided.innerRef}
+																{...draggableProvided.draggableProps}
+																className={`draggable ${draggableSnapshot.isDragging ? 'dragging' : ''}`}
+															>
+																<div className="drag-title">
+																	<span {...draggableProvided.dragHandleProps}>
+																		<Icon icon="drag-handle-horizontal" />
+																	</span>
+																	<span className="text" title={item.title}>{item.title}</span>
+																</div>
 															</div>
-														</div>
-													);
-												}}
-											</Draggable>
-										);
-									})}
-									{droppableProvided.placeholder}
-								</div>
-							);
-						}}
-					</Droppable>
-					<Droppable droppableId={`column-2-${this.props.uniqueId}`} ignoreContainerClipping={false}>
-						{(droppableProvided, droppableSnapshot)=> {
-							return (
-								<div
-									ref={droppableProvided.innerRef}
-									className={`droppable ${droppableSnapshot.isDraggingOver ? 'dragging-over' : ''}`}
-									{...droppableProvided.droppableProps}
+														);
+													}}
+												</Draggable>
+											);
+										})}
+										{droppableProvided.placeholder}
+									</div>
+								);
+							}}
+						</Droppable>
+					</div>
+					<div className="column">
+						<div className="column-header">
+							{this.props.availableTitle}
+							{this.props.availableTitleTooltip &&
+								<Tooltip
+									content={this.props.availableTitleTooltip}
+									disabled={!this.props.availableTitleTooltip}
 								>
-									<div className="panel-header">{this.props.availableTitle}</div>
-									{this.state.availableItems.map((item, index)=> {
-										return (
-											<Draggable key={item.id} draggableId={item.id} index={index}>
-												{(draggableProvided, draggableSnapshot) => {
-													return (
-														<div
-															ref={draggableProvided.innerRef}
-															{...draggableProvided.draggableProps}
-															className={`draggable ${draggableSnapshot.isDragging ? 'dragging' : ''}`}
-														>
-															<div className="drag-title">
-																<span {...draggableProvided.dragHandleProps}>
-																	<Icon icon="drag-handle-horizontal" />
-																</span>
-																<span className="text" title={item.title}>{item.title}</span>
+									<Icon icon="help" iconSize={12} />
+								</Tooltip>
+							}
+						</div>
+						<Droppable droppableId={`column-2-${this.props.uniqueId}`} ignoreContainerClipping={false}>
+							{(droppableProvided, droppableSnapshot)=> {
+								return (
+									<div
+										ref={droppableProvided.innerRef}
+										className={`droppable ${droppableSnapshot.isDraggingOver ? 'dragging-over' : ''}`}
+										{...droppableProvided.droppableProps}
+									>
+										{this.state.availableItems.map((item, index)=> {
+											return (
+												<Draggable key={item.id} draggableId={item.id} index={index}>
+													{(draggableProvided, draggableSnapshot) => {
+														return (
+															<div
+																ref={draggableProvided.innerRef}
+																{...draggableProvided.draggableProps}
+																className={`draggable ${draggableSnapshot.isDragging ? 'dragging' : ''}`}
+															>
+																<div className="drag-title">
+																	<span {...draggableProvided.dragHandleProps}>
+																		<Icon icon="drag-handle-horizontal" />
+																	</span>
+																	<span className="text" title={item.title}>{item.title}</span>
+																</div>
 															</div>
-														</div>
-													);
-												}}
-											</Draggable>
-										);
-									})}
-									{droppableProvided.placeholder}
-								</div>
-							);
-						}}
-					</Droppable>
+														);
+													}}
+												</Draggable>
+											);
+										})}
+										{droppableProvided.placeholder}
+									</div>
+								);
+							}}
+						</Droppable>
+					</div>
 
 					{/* This fixed droppable is a kludge to make window scrolling disabled */}
 					<Droppable droppableId={`fixed-column-${this.props.uniqueId}`} ignoreContainerClipping={false}>

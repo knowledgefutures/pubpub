@@ -224,7 +224,6 @@ class LayoutEditorPubs extends Component {
 						<Popover
 							content={
 								<div>
-									<div className="intro">Pinned pubs will be displayed first, followed by newest pubs.</div>
 									<OrderPicker
 										selectedItems={this.props.content.pubIds.map((pubId)=> {
 											return availablePubs.reduce((prev, curr)=> {
@@ -240,6 +239,7 @@ class LayoutEditorPubs extends Component {
 										uniqueId={this.props.layoutIndex}
 										selectedTitle="Pinned Pubs"
 										availableTitle="Available Pubs"
+										selectedTitleTooltip="Pinned pubs will be displayed first, followed by newest pubs."
 									/>
 								</div>
 							}

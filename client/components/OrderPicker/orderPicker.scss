@@ -1,16 +1,28 @@
 .order-picker-component {
 	display: flex;
+	.column {
+		width: 50%;
+		&:first-of-type {
+			border-right: 1px solid #CCC;
+		}
+	}
+	.column-header {
+		background: #EEE;
+		border-bottom: 1px solid #CCC;
+		font-weight: bold;
+		padding: 0.5em 1em;
+		svg {
+			margin-left: 0.5em;
+			opacity: 0.5;
+		}
+	}
 	.droppable {
 		overflow-y: auto;
 		overflow-x: hidden;
 		height: 350px;
 		max-height: 85vh;
 		padding: 1em;
-		width: 50%;
 		min-height: 1px;
-		&:first-of-type {
-			border-right: 1px solid #CCC;
-		}
 	}
 	.draggable {
 		padding: 0.25em 0em;
@@ -26,9 +38,5 @@
 	    	overflow: hidden;
 	    	text-overflow: ellipsis;
 	    }
-	}
-	.panel-header {
-		font-weight: bold;
-		padding-bottom: 1em;
 	}
 }

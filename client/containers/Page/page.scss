@@ -44,6 +44,9 @@
 		    line-height: 1.6
 		}
 	}
+	.component-wrapper:last-of-type {
+		margin-bottom: 8em;
+	}
 }
 
 @supports (display: grid) {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import LayoutEditorInsert from 'components/LayoutEditorInsert/LayoutEditorInsert';
 import LayoutEditorPubs from 'components/LayoutEditorPubs/LayoutEditorPubs';
+import LayoutEditorPages from 'components/LayoutEditorPages/LayoutEditorPages';
 import LayoutEditorText from 'components/LayoutEditorText/LayoutEditorText';
 import LayoutEditorHtml from 'components/LayoutEditorHtml/LayoutEditorHtml';
 import LayoutEditorBanner from 'components/LayoutEditorBanner/LayoutEditorBanner';
@@ -106,9 +107,10 @@ class LayoutEditor extends Component {
 				<LayoutEditorInsert
 					insertIndex={0}
 					onInsert={this.handleInsert}
+					communityData={this.props.communityData}
 				/>
 				{this.state.layout.map((item, index)=> {
-					const validType = ['pubs', 'text', 'html', 'banner'].indexOf(item.type) > -1;
+					const validType = ['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
 					if (!validType) { return null; }
 					return (
 						<div key={item.id}>
@@ -177,11 +179,21 @@ class LayoutEditor extends Component {
 										communityData={this.props.communityData}
 									/>
 								}
+								{item.type === 'pages' &&
+									<LayoutEditorPages
+										key={`item-${item.id}`}
+										onChange={this.handleChange}
+										layoutIndex={index}
+										content={item.content}
+										pages={this.props.communityData.pages}
+									/>
+								}
 							</div>
 							<LayoutEditorInsert
 								key={`insert-${item.id}`}
 								insertIndex={index + 1}
 								onInsert={this.handleInsert}
+								communityData={this.props.communityData}
 							/>
 						</div>
 					);

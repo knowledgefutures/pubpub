@@ -4,7 +4,7 @@ import PubPreview from 'components/PubPreview/PubPreview';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
 import InputField from 'components/InputField/InputField';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
-import PubsPicker from 'components/PubsPicker/PubsPicker';
+import OrderPicker from 'components/OrderPicker/OrderPicker';
 import { Button, Checkbox, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 
 const propTypes = {
@@ -225,8 +225,8 @@ class LayoutEditorPubs extends Component {
 							content={
 								<div>
 									<div className="intro">Pinned pubs will be displayed first, followed by newest pubs.</div>
-									<PubsPicker
-										selectedPubs={this.props.content.pubIds.map((pubId)=> {
+									<OrderPicker
+										selectedItems={this.props.content.pubIds.map((pubId)=> {
 											return availablePubs.reduce((prev, curr)=> {
 												if (curr.id === pubId) { return curr; }
 												return prev;
@@ -235,9 +235,11 @@ class LayoutEditorPubs extends Component {
 										.filter((pub)=> {
 											return !!pub;
 										})}
-										allPubs={availablePubs}
+										allItems={availablePubs}
 										onChange={this.setPubIds}
 										uniqueId={this.props.layoutIndex}
+										selectedTitle="Pinned Pubs"
+										availableTitle="Available Pubs"
 									/>
 								</div>
 							}
@@ -245,7 +247,7 @@ class LayoutEditorPubs extends Component {
 							position={Position.BOTTOM_RIGHT}
 							usePortal={false}
 							minimal={true}
-							popoverClassName="pubs-picker-popover"
+							popoverClassName="order-picker-popover"
 							popoverDidOpen={()=> {
 								setTimeout(()=> {
 									/* This is a hacky way to solve this bug: */
@@ -316,9 +318,8 @@ class LayoutEditorPubs extends Component {
 							{previews.map((item, index)=> {
 								const selectPub = (this.props.pubRenderList && this.props.pubRenderList[index]) || {};
 								if (!selectPub.id) { return null; }
-								const keyString = `preview-${this.props.layoutIndex}-${index}`;
 								return (
-									<div key={keyString} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
+									<div key={selectPub.id} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
 										<PubPreview
 											size={pubPreviewType}
 											pubData={selectPub}

@@ -5,6 +5,7 @@ import LayoutPubs from 'components/LayoutPubs/LayoutPubs';
 import LayoutHtml from 'components/LayoutHtml/LayoutHtml';
 import LayoutBanner from 'components/LayoutBanner/LayoutBanner';
 import LayoutText from 'components/LayoutText/LayoutText';
+import LayoutPages from 'components/LayoutPages/LayoutPages';
 import { hydrateWrapper, getDefaultLayout, generateRenderLists } from 'utilities';
 
 require('./page.scss');
@@ -37,14 +38,13 @@ class Page extends Component {
 					locationData={this.props.locationData}
 				>
 					{layout.map((item, index)=> {
-						const validType = ['pubs', 'text', 'html', 'banner'].indexOf(item.type) > -1;
+						const validType = ['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
 						if (!validType) { return null; }
 						return (
 							<div key={`block-${item.id}`} className="component-wrapper">
 								{item.type === 'pubs' &&
 									<LayoutPubs
 										key={`item-${item.id}`}
-										layoutIndex={index}
 										content={item.content}
 										pubRenderList={pubRenderLists[index]}
 									/>
@@ -68,6 +68,13 @@ class Page extends Component {
 										communityData={this.props.communityData}
 										loginData={this.props.loginData}
 										locationData={this.props.locationData}
+									/>
+								}
+								{item.type === 'pages' &&
+									<LayoutPages
+										key={`item-${item.id}`}
+										content={item.content}
+										pages={this.props.communityData.pages}
 									/>
 								}
 							</div>

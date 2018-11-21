@@ -1,17 +1,4 @@
 .dashboard-side-component {
-	// border-right: 1px solid #ECECEC;
-	// width: 200px;
-	// height: 100%;
-	// overflow: hidden;
-
-	.content {
-		// width: 250px;
-		// padding: 1em calc(1em + 50px) 1em 1em;
-		// padding: 1em calc(1em + 50px) 1em 0em;
-		// height: 100%;
-		// overflow-y: scroll;
-		// overflow-x: hidden;
-	}
 	ul {
 		background-color: inherit;
 		min-width: 0px;
@@ -40,5 +27,7 @@
 		padding: 0.5em 1em;
 		margin-bottom: 0.5em;
 	}
-
+	.pt-menu-item {
+		word-break: break-word;
+	}
 }

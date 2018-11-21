@@ -71,6 +71,14 @@
 		.pub-preview-component {
 			margin-bottom: 2em;
 		}
+		.pages-wrapper {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0em -18px;
+		}
+		.page-preview-component {
+			margin: 0em 18px 2em;
+		}
 	}
 	.layout-editor-text-component, .layout-editor-html-component {
 		a {
@@ -83,14 +91,14 @@
 	}
 }
 
-.pubs-picker-popover {
+.order-picker-popover {
 	transform: none !important;
 	.intro {
 		background: #eaeaea;
 		padding: 1em;
 		border-bottom: 1px solid #CCC;	
 	}
-	.pubs-picker-component {
+	.order-picker-component {
 		width: 600px;
 		max-width: 100vw;
 	}

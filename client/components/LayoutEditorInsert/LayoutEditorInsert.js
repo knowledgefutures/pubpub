@@ -8,6 +8,7 @@ require('./layoutEditorInsert.scss');
 const propTypes = {
 	insertIndex: PropTypes.number.isRequired,
 	onInsert: PropTypes.func.isRequired,
+	communityData: PropTypes.object.isRequired,
 };
 
 const LayoutEditorInsert = function(props) {
@@ -71,6 +72,18 @@ const LayoutEditorInsert = function(props) {
 				defaultTagIds: [],
 				buttonUrl: '',
 				buttonType: 'create-pub',
+			}
+		},
+	];
+	const pagesBlocks = [
+		{
+			title: 'Default',
+			type: 'pages',
+			content: {
+				title: '',
+				pageIds: props.communityData.pages.slice(0, 3).map((page)=> {
+					return page.id;
+				}),
 			}
 		},
 	];
@@ -143,6 +156,15 @@ const LayoutEditorInsert = function(props) {
 							</h6>
 						</li>
 						{htmlBlocks.map((item)=> {
+							return generateMenuItem(item);
+						})}
+						<li className="pt-menu-header">
+							<h6>
+								Pages Block
+								<Icon icon="application" />
+							</h6>
+						</li>
+						{pagesBlocks.map((item)=> {
 							return generateMenuItem(item);
 						})}
 					</Menu>

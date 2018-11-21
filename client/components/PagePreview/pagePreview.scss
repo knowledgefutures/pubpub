@@ -1,0 +1,29 @@
+.page-preview-component {
+	display: block;
+	width: 175px;
+	height: 225px;
+	box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 2px 4px rgba(16, 22, 26, 0.2), 0 8px 24px rgba(16, 22, 26, 0.2);
+	color: white;
+	font-size: 18px;
+	font-weight: 800;
+	padding: 0.5em;
+	position: relative;
+	word-break: break-word;
+	border-radius: 3px;
+	&:hover {
+		text-decoration: none;
+		color: white;
+		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 4px 8px rgba(16, 22, 26, 0.2), 0 18px 46px 6px rgba(16, 22, 26, 0.2);
+	}
+	.dim {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.25);
+	}
+	span {
+		position: relative;
+	}
+}

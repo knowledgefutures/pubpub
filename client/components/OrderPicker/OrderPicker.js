@@ -3,23 +3,30 @@ import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Icon from 'components/Icon/Icon';
 
-require('./pubsPicker.scss');
+require('./orderPicker.scss');
 
 const propTypes = {
-	selectedPubs: PropTypes.array.isRequired,
-	allPubs: PropTypes.array.isRequired,
+	selectedItems: PropTypes.array.isRequired,
+	allItems: PropTypes.array.isRequired,
 	onChange: PropTypes.func.isRequired,
 	uniqueId: PropTypes.func.isRequired,
+	selectedTitle: PropTypes.string,
+	availableTitle: PropTypes.string,
 };
 
-class PubsPicker extends Component {
+const defaultProps = {
+	selectedTitle: 'Selected',
+	availableTitle: 'Available',
+};
+
+class OrderPicker extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			selectedPubs: props.selectedPubs,
-			availablePubs: props.allPubs.filter((pub)=> {
-				return props.selectedPubs.reduce((prev, curr)=> {
-					if (curr.id === pub.id) { return false; }
+			selectedItems: props.selectedItems,
+			availableItems: props.allItems.filter((item)=> {
+				return props.selectedItems.reduce((prev, curr)=> {
+					if (curr.id === item.id) { return false; }
 					return prev;
 				}, true);
 			}).sort((foo, bar)=> {
@@ -33,36 +40,36 @@ class PubsPicker extends Component {
 
 	onDragEnd(dragEvent) {
 		this.setState((prevState)=> {
-			const sourcePub = dragEvent.source.droppableId.indexOf('column-1') > -1
-				? prevState.selectedPubs[dragEvent.source.index]
-				: prevState.availablePubs[dragEvent.source.index];
+			const sourceItem = dragEvent.source.droppableId.indexOf('column-1') > -1
+				? prevState.selectedItems[dragEvent.source.index]
+				: prevState.availableItems[dragEvent.source.index];
 
-			const newSelectedPubs = [...prevState.selectedPubs];
-			const newAvailablePubs = [...prevState.availablePubs];
+			const newSelectedItems = [...prevState.selectedItems];
+			const newAvailableItems = [...prevState.availableItems];
 			if (dragEvent.source.droppableId.indexOf('column-1') > -1) {
-				newSelectedPubs.splice(dragEvent.source.index, 1);
+				newSelectedItems.splice(dragEvent.source.index, 1);
 			}
 			if (dragEvent.source.droppableId.indexOf('column-2') > -1) {
-				newAvailablePubs.splice(dragEvent.source.index, 1);
+				newAvailableItems.splice(dragEvent.source.index, 1);
 			}
 			if (dragEvent.destination.droppableId.indexOf('column-1') > -1) {
-				newSelectedPubs.splice(dragEvent.destination.index, 0, sourcePub);
+				newSelectedItems.splice(dragEvent.destination.index, 0, sourceItem);
 			}
 			if (dragEvent.destination.droppableId.indexOf('column-2') > -1) {
-				newAvailablePubs.splice(dragEvent.destination.index, 0, sourcePub);
+				newAvailableItems.splice(dragEvent.destination.index, 0, sourceItem);
 			}
 			return {
-				selectedPubs: newSelectedPubs,
-				availablePubs: newAvailablePubs,
+				selectedItems: newSelectedItems,
+				availableItems: newAvailableItems,
 			};
 		}, ()=> {
-			this.props.onChange(this.state.selectedPubs);
+			this.props.onChange(this.state.selectedItems);
 		});
 	}
 
 	render() {
 		return (
-			<div className="pubs-picker-component">
+			<div className="order-picker-component">
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<Droppable droppableId={`column-1-${this.props.uniqueId}`} ignoreContainerClipping={false}>
 						{(droppableProvided, droppableSnapshot)=> {
@@ -72,10 +79,10 @@ class PubsPicker extends Component {
 									className={`droppable ${droppableSnapshot.isDraggingOver ? 'dragging-over' : ''}`}
 									{...droppableProvided.droppableProps}
 								>
-									<div className="panel-header">Pinned Pubs</div>
-									{this.state.selectedPubs.map((pub, index)=> {
+									<div className="panel-header">{this.props.selectedTitle}</div>
+									{this.state.selectedItems.map((item, index)=> {
 										return (
-											<Draggable key={pub.id} draggableId={pub.id} index={index}>
+											<Draggable key={item.id} draggableId={item.id} index={index}>
 												{(draggableProvided, draggableSnapshot) => {
 													return (
 														<div
@@ -87,7 +94,7 @@ class PubsPicker extends Component {
 																<span {...draggableProvided.dragHandleProps}>
 																	<Icon icon="drag-handle-horizontal" />
 																</span>
-																<span className="text" title={pub.title}>{pub.title}</span>
+																<span className="text" title={item.title}>{item.title}</span>
 															</div>
 														</div>
 													);
@@ -108,10 +115,10 @@ class PubsPicker extends Component {
 									className={`droppable ${droppableSnapshot.isDraggingOver ? 'dragging-over' : ''}`}
 									{...droppableProvided.droppableProps}
 								>
-									<div className="panel-header">Available Pubs</div>
-									{this.state.availablePubs.map((pub, index)=> {
+									<div className="panel-header">{this.props.availableTitle}</div>
+									{this.state.availableItems.map((item, index)=> {
 										return (
-											<Draggable key={pub.id} draggableId={pub.id} index={index}>
+											<Draggable key={item.id} draggableId={item.id} index={index}>
 												{(draggableProvided, draggableSnapshot) => {
 													return (
 														<div
@@ -123,7 +130,7 @@ class PubsPicker extends Component {
 																<span {...draggableProvided.dragHandleProps}>
 																	<Icon icon="drag-handle-horizontal" />
 																</span>
-																<span className="text" title={pub.title}>{pub.title}</span>
+																<span className="text" title={item.title}>{item.title}</span>
 															</div>
 														</div>
 													);
@@ -155,5 +162,6 @@ class PubsPicker extends Component {
 	}
 }
 
-PubsPicker.propTypes = propTypes;
-export default PubsPicker;
+OrderPicker.propTypes = propTypes;
+OrderPicker.defaultProps = defaultProps;
+export default OrderPicker;

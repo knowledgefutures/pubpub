@@ -359,6 +359,19 @@ export function generatePubBackground(pubTitle) {
 	return gradients[pubTitle.charCodeAt(pubTitle.length - 1) % 5];
 }
 
+export function generatePageBackground(pageTitle) {
+	const gradients = [
+		'#b33939',
+		'#cd6133',
+		'#474787',
+		'#227093',
+		'#218c74',
+	];
+
+	if (!pageTitle) { return gradients[0]; }
+	return gradients[pageTitle.charCodeAt(pageTitle.length - 1) % 5];
+}
+
 export function generateRenderLists(layout, pubs) {
 	/* Sort pubs by activeVersion date - or date of pub */
 	/* creation when there are no saved versions */

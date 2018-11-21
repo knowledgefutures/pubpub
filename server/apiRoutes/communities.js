@@ -4,6 +4,7 @@ import app from '../server';
 import { Community, Page, CommunityAdmin } from '../models';
 import { generateHash, slugifyString } from '../utilities';
 import { subscribeUser } from '../mailchimpHelpers';
+import { alertNewCommunity } from '../webhookHelpers'
 
 app.post('/api/communities', (req, res)=> {
 	const user = req.user || {};
@@ -55,6 +56,7 @@ app.post('/api/communities', (req, res)=> {
 	})
 	.then(()=> {
 		subscribeUser(user.email, '2847d5271c', ['Community Admins']);
+		alertNewCommunity(req.body.title, subdomain, user.fullName, user.email);
 		return CommunityAdmin.create({
 			communityId: newCommunityId,
 			userId: user.id

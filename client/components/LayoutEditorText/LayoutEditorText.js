@@ -80,6 +80,7 @@ class LayoutEditorText extends Component {
 										nodeOptions={{
 											image: {
 												onResizeUrl: (url)=> { return getResizedUrl(url, 'fit-in', '1200x0'); },
+												linkToSrc: false,
 											},
 										}}
 										placeholder="Enter text..."

@@ -26,6 +26,7 @@ const LayoutText = function(props) {
 									nodeOptions={{
 										image: {
 											onResizeUrl: (url)=> { return getResizedUrl(url, 'fit-in', '1200x0'); },
+											linkToSrc: false,
 										},
 									}}
 									initialContent={props.content.text || undefined}

@@ -13,10 +13,9 @@
 	.pages-wrapper {
 		display: flex;
 		flex-wrap: wrap;
-		margin: 0em -18px;
 	}
 	.page-preview-component {
-		margin: 0em 18px 2em;
+		margin: 0em 1em 2em 0em;
 	}
 
 	.block-content {
@@ -43,6 +42,22 @@
 		p, li {
 			font-size: 18px;
 		    line-height: 1.6
+		}
+	}
+}
+
+@supports (display: grid) {
+	#page-container {
+		.block-content {
+			.pages-wrapper {
+				display: grid;
+				grid-gap: 2em;
+				grid-template-columns: repeat(auto-fit, 175px);
+				justify-content: space-between;
+			}
+			.page-preview-component {
+				margin: 0em;
+			}
 		}
 	}
 }

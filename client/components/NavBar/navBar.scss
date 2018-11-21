@@ -8,10 +8,7 @@
 		display: inline-block;
 		height: 40px;
 		user-select: none;
-		// &.dropdown {
-		// 	text-decoration: none;
-		// 	cursor: default;
-		// }
+		cursor: pointer;
 	}
 	.row [class^="col"] {
 		margin-top: 0em;

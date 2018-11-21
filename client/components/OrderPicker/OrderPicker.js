@@ -44,7 +44,8 @@ class OrderPicker extends Component {
 	}
 
 	onDragEnd(dragEvent) {
-		this.setState((prevState)=> {
+		if (!dragEvent.destination) { return null; }
+		return this.setState((prevState)=> {
 			const sourceItem = dragEvent.source.droppableId.indexOf('column-1') > -1
 				? prevState.selectedItems[dragEvent.source.index]
 				: prevState.availableItems[dragEvent.source.index];
@@ -87,7 +88,7 @@ class OrderPicker extends Component {
 								</Tooltip>
 							}
 						</div>
-						<Droppable droppableId={`column-1-${this.props.uniqueId}`} ignoreContainerClipping={false}>
+						<Droppable droppableId={`column-1-${this.props.uniqueId}`}>
 							{(droppableProvided, droppableSnapshot)=> {
 								return (
 									<div
@@ -135,7 +136,7 @@ class OrderPicker extends Component {
 								</Tooltip>
 							}
 						</div>
-						<Droppable droppableId={`column-2-${this.props.uniqueId}`} ignoreContainerClipping={false}>
+						<Droppable droppableId={`column-2-${this.props.uniqueId}`}>
 							{(droppableProvided, droppableSnapshot)=> {
 								return (
 									<div
@@ -173,7 +174,7 @@ class OrderPicker extends Component {
 					</div>
 
 					{/* This fixed droppable is a kludge to make window scrolling disabled */}
-					<Droppable droppableId={`fixed-column-${this.props.uniqueId}`} ignoreContainerClipping={false}>
+					<Droppable droppableId={`fixed-column-${this.props.uniqueId}`}>
 						{(droppableProvided)=> {
 							return (
 								<div

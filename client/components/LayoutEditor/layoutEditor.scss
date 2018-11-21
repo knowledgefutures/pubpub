@@ -1,4 +1,4 @@
-.layout-editor-component {	
+.layout-editor-component {
 	.block-title {
 		display: flex;
 		justify-content: space-between;
@@ -74,10 +74,9 @@
 		.pages-wrapper {
 			display: flex;
 			flex-wrap: wrap;
-			margin: 0em -18px;
 		}
 		.page-preview-component {
-			margin: 0em 18px 2em;
+			margin: 0em 1em 2em 0em;
 		}
 	}
 	.layout-editor-text-component, .layout-editor-html-component {
@@ -96,5 +95,21 @@
 	.order-picker-component {
 		width: 600px;
 		max-width: 100vw;
+	}
+}
+
+@supports (display: grid) {
+	.layout-editor-component {
+		.block-content {
+			.pages-wrapper {
+				display: grid;
+				grid-gap: 2em;
+				grid-template-columns: repeat(auto-fit, 175px);
+				justify-content: space-between;
+			}
+			.page-preview-component {
+				margin: 0em;
+			}
+		}
 	}
 }

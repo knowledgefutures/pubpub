@@ -1,8 +1,7 @@
 #page-container {
 	&.narrow {
-		.block-content {
+		.block-content .container {
 			max-width: 800px;
-			margin: 2em auto 0em;
 		}
 	}
 

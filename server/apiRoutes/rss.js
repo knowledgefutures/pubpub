@@ -1,6 +1,6 @@
 import RSS from 'rss';
 import app from '../server';
-import { Community, Pub, User, PubAttribution } from '../models';
+import { Community, Pub, User, PubAttribution, Version } from '../models';
 
 app.get('/rss.xml', (req, res)=> {
 	const hostname = req.hostname;
@@ -15,11 +15,8 @@ app.get('/rss.xml', (req, res)=> {
 			{
 				model: Pub,
 				as: 'pubs',
-				where: {
-					firstPublishedAt: { $ne: null },
-				},
 				through: { attributes: [] },
-				attributes: ['id', 'title', 'slug', 'firstPublishedAt', 'description', 'avatar', 'communityId'],
+				attributes: ['id', 'title', 'slug', 'draftPermissions', 'description', 'avatar', 'communityId', 'createdAt'],
 				separate: true,
 				include: [
 					{
@@ -27,6 +24,12 @@ app.get('/rss.xml', (req, res)=> {
 						as: 'attributions',
 						required: false,
 						include: [{ model: User, as: 'user', required: false, attributes: ['id', 'firstName', 'lastName', 'fullName', 'avatar', 'slug', 'initials', 'title'] }],
+					},
+					{
+						model: Version,
+						required: false,
+						as: 'versions',
+						attributes: ['id', 'isPublic', 'createdAt']
 					},
 				]
 			},
@@ -51,9 +54,27 @@ app.get('/rss.xml', (req, res)=> {
 			ttl: '60',
 		});
 
-		communityData.pubs.sort((foo, bar)=> {
-			if (foo.firstPublishedAt < bar.firstPublishedAt) { return 1; }
-			if (foo.firstPublishedAt < bar.firstPublishedAt) { return -1; }
+		communityData.pubs.map((pub)=> {
+			const pubJSON = pub.toJSON();
+			if (pub.draftPermissions !== 'private') {
+				pubJSON.listedDate = pub.createdAt;
+			}
+			const publicVersions = pub.versions.filter((version)=> {
+				return version.isPublic;
+			}).sort((foo, bar)=> {
+				if (foo.createdAt < bar.createdAt) { return -1; }
+				if (foo.createdAt > bar.createdAt) { return 1; }
+				return 0;
+			});
+			if (publicVersions.length) {
+				pubJSON.listedDate = publicVersions[0].createdAt;
+			}
+			return pubJSON;
+		}).filter((pub)=> {
+			return pub.listedDate;
+		}).sort((foo, bar)=> {
+			if (foo.listedDate < bar.listedDate) { return 1; }
+			if (foo.listedDate > bar.listedDate) { return -1; }
 			return 0;
 		}).forEach((pub)=> {
 			const authors = pub.attributions.map((attribution)=> {

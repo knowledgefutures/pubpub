@@ -18,6 +18,11 @@ app.get('/api/dashboard', (req, res)=> {
 	GROUP BY DATE_TRUNC('month', "Communities"."createdAt")
 	ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
 
+	const countDiscussions = sequelize.query(`select count(*), DATE_TRUNC('month', "Discussions"."createdAt") as "month"
+	from "Discussions"
+	GROUP BY DATE_TRUNC('month', "Discussions"."createdAt")
+	ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
+
 	const countActiveCommunities = sequelize.query(`select count(DISTINCT "communityId"), month
 	FROM ((select "Pages"."communityId", DATE_TRUNC('month', "Pages"."updatedAt") as "month" from "Pages")
 	UNION
@@ -35,11 +40,12 @@ app.get('/api/dashboard', (req, res)=> {
 	as ActiveCommunities
 	GROUP BY month`, { type: sequelize.QueryTypes.SELECT });
 
-	return Promise.all([countUsers, countCommunities, countActiveCommunities])
-	.then(([userCountData, communityCountData, activeCommunityCount]) => {
+	return Promise.all([countUsers, countCommunities, countDiscussions, countActiveCommunities])
+	.then(([userCountData, communityCountData, discussionCountData, activeCommunityCountData]) => {
 		stats.users = userCountData;
 		stats.communities = communityCountData;
-		stats.activeCommunities = activeCommunityCount;
+		stats.discussions = discussionCountData;
+		stats.activeCommunities = activeCommunityCountData;
 		return res.status(200).json(stats);
 	})
 	.catch(err => { console.warn(err); return res.status(500).json('Internal server error'); });

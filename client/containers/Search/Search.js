@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import algoliasearch from 'algoliasearch';
 import { NonIdealState } from '@blueprintjs/core';
 import PubPreview from 'components/PubPreview/PubPreview';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
@@ -11,7 +12,7 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
-	searchData: PropTypes.array.isRequired,
+	searchData: PropTypes.object.isRequired,
 };
 
 class Search extends Component {
@@ -19,23 +20,30 @@ class Search extends Component {
 		super(props);
 		this.state = {
 			searchQuery: props.locationData.query.q || '',
+			searchResults: undefined,
 		};
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+
+		const client = algoliasearch(props.searchData.searchId, props.searchData.searchKey);
+		this.pubIndex = client.initIndex('pubs');
 	}
 
 	handleSearchChange(evt) {
 		this.setState({ searchQuery: evt.target.value });
+		this.pubIndex.search(evt.target.value).then((results)=>{
+			this.setState({ searchResults: results });
+		});
 	}
 
 	handleSearchSubmit(evt) {
 		evt.preventDefault();
 
-		window.location.href = `/search?q=${this.state.searchQuery}`;
+		// window.location.href = `/search?q=${this.state.searchQuery}`;
 	}
 
 	render() {
-		const searchData = this.props.searchData;
+		// const searchData = this.props.searchData;
 		return (
 			<div id="search-container">
 				<PageWrapper
@@ -61,7 +69,8 @@ class Search extends Component {
 
 						<div className="row">
 							<div className="col-12">
-								{!searchData.length && this.props.locationData.query.q &&
+								{JSON.stringify(this.state.searchResults, null, 2)}
+								{/*!searchData.length && this.props.locationData.query.q &&
 									<NonIdealState
 										title="No Results"
 										visual="pt-icon-search"
@@ -80,7 +89,7 @@ class Search extends Component {
 											);
 										})}
 									</div>
-								}
+								*/}
 							</div>
 						</div>
 					</div>

@@ -110,6 +110,7 @@
     "sanitize-html": "^1.14.1",
     "sass-loader": "^7.0.3",
     "sequelize": "^4.11.1",
+    "stopword": "^0.1.13",
     "strip-indent": "^2.0.0",
     "style-loader": "^0.21.0",
     "throng": "^4.0.0",

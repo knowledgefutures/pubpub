@@ -1,20 +1,28 @@
-import Promise from 'bluebird';
 import React from 'react';
+import algoliasearch from 'algoliasearch';
 import Search from 'containers/Search/Search';
 import Html from '../Html';
 import app from '../server';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utilities';
-import { getPubSearch } from '../queryHelpers';
+// import { getPubSearch } from '../queryHelpers';
+
+const client = algoliasearch(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);
+const searchId = process.env.ALGOLIA_ID;
+const searchKey = process.env.ALGOLIA_SEARCH_KEY;
+
 
 app.get('/search', (req, res, next)=> {
 	return getInitialData(req)
 	.then((initialData)=> {
-		return Promise.all([initialData, getPubSearch(req.query, initialData)]);
-	})
-	.then(([initialData, searchData])=> {
+		const searchParams = {
+			filters: 'versionIsPublic:true'
+		};
 		const newInitialData = {
 			...initialData,
-			searchData: searchData,
+			searchData: {
+				searchId: searchId,
+				searchKey: client.generateSecuredApiKey(searchKey, searchParams),
+			},
 		};
 		return renderToNodeStream(res,
 			<Html

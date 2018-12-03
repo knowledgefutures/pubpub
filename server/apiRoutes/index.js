@@ -1,6 +1,7 @@
 require('./analytics');
 require('./communities');
 require('./communityAdmins');
+require('./dashboard');
 require('./discussions');
 require('./discussionChannels');
 require('./discussionChannelParticipants');

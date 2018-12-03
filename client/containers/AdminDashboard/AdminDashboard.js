@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { hydrateWrapper } from 'utilities';
+import { apiFetch, hydrateWrapper } from 'utilities';
 
 require('./adminDashboard.scss');
 
@@ -12,7 +12,25 @@ const propTypes = {
 };
 
 class AdminDashboard extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			pubPubData: {},
+			keenData: {}
+		};
+	}
+
 	componentDidMount() {
+		apiFetch('/api/dashboard', {
+			method: 'GET',
+		})
+		.then((data)=> {
+			this.setState({ pubPubData: data });
+			console.log(this.state.statsData);
+		})
+		.catch((err)=> {
+			console.warn(err);
+		});
 	}
 
 	render() {

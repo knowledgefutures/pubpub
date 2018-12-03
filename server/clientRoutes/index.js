@@ -7,6 +7,7 @@ require('./about');				// Route: '/about'
 require('./pricing');			// Route: '/pricing'
 require('./pubRedirect');		// Route: '/pub/:slug'
 require('./landing');			// Route: '/'
+require('./adminDashboard'); // Route: '/admin'
 
 /* Routes for Communities */
 require('./dashboard');			// Route: ['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug']

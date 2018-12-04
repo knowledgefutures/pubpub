@@ -4,7 +4,6 @@ import Search from 'containers/Search/Search';
 import Html from '../Html';
 import app from '../server';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utilities';
-// import { getPubSearch } from '../queryHelpers';
 
 const client = algoliasearch(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);
 const searchId = process.env.ALGOLIA_ID;
@@ -14,14 +13,18 @@ const searchKey = process.env.ALGOLIA_SEARCH_KEY;
 app.get('/search', (req, res, next)=> {
 	return getInitialData(req)
 	.then((initialData)=> {
-		const searchParams = {
-			filters: 'versionIsPublic:true'
+		const pubSearchParams = {
+			filters: 'versionIsPublic:true',
+		};
+		const pageSearchParams = {
+			filters: 'isPublic:true',
 		};
 		const newInitialData = {
 			...initialData,
 			searchData: {
 				searchId: searchId,
-				searchKey: client.generateSecuredApiKey(searchKey, searchParams),
+				pubsSearchKey: client.generateSecuredApiKey(searchKey, pubSearchParams),
+				pagesSearchKey: client.generateSecuredApiKey(searchKey, pageSearchParams),
 			},
 		};
 		return renderToNodeStream(res,

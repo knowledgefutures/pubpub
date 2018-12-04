@@ -400,6 +400,9 @@ Tag.belongsTo(Page, { as: 'page', foreignKey: 'pageId' });
 Community.hasMany(Pub, { onDelete: 'CASCADE', as: 'pubs', foreignKey: 'communityId' });
 Pub.belongsTo(Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' });
 
+/* Pages belong to a single Community */
+Page.belongsTo(Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' });
+
 /* Communities have many Discussions. Discussions belong to a single Community */
 Community.hasMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'communityId' });
 Discussion.belongsTo(Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' });

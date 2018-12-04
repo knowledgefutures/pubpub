@@ -1,6 +1,22 @@
 #search-container {
 	.page-content {
 		padding: 2em 0em;
+		.search-header {
+			display: flex;
+			align-items: center;
+			h2 {
+				flex: 1 1 auto;
+				font-weight: 800;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			a {
+				white-space: nowrap;
+				flex: 0 0 auto;
+				margin-left: 1em;
+			}
+		}
 		.pt-input-group input {
 			margin-bottom: 1em;
 			font-size: 35px;
@@ -11,21 +27,35 @@
 		.pt-input-action {
 			margin-top: 7px;
 		}
+		.pt-tabs {
+			border-bottom: 1px solid #CCC;
+		}
 		.pt-spinner {
 			width: 35px;
 			margin: 13px;
 		}
-		.pub-result {
+		.result {
 			margin-bottom: 3em;
 			display: flex;
 			font-size: 16px;
+			&.pubs {
+				.banner-image {
+					width: 100px;
+				    height: 100px;
+				}
+			}
+			&.pages {
+				.banner-image {
+					width: 100px;
+				    height: 125px;
+				    box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 2px 4px rgba(16, 22, 26, 0.2), 0 8px 24px rgba(16, 22, 26, 0.2);
+				}
+			}
 			.banner-image {
 				background-size: cover;
 				background-repeat: no-repeat;
 				background-position: center center;
 				background-color: #F0F0F0;
-			    width: 100px;
-			    height: 100px;
 			    margin-right: 1em;
 			    border-radius: 2px;
 			}
@@ -36,9 +66,6 @@
 			.byline {
 				font-style: italic;
 				margin: 0.5em 0em;
-			}
-			.description {
-				
 			}
 		}
 	}

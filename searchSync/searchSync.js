@@ -3,6 +3,7 @@
 import Promise from 'bluebird';
 import algoliasearch from 'algoliasearch';
 import stopword from 'stopword';
+import stopWordList from './stopwords';
 // import fs from 'fs';
 import { Pub, Community, Version, VersionPermission, PubAttribution, User, PubManager, Page } from '../server/models';
 
@@ -21,8 +22,8 @@ function lengthInUtf8Bytes(str) {
 const validateTextSize = (stringArray)=> {
 	return stringArray.map((string)=> {
 		const stringSize = lengthInUtf8Bytes(string);
-		if (stringSize > 8000) {
-			const re = new RegExp(`.{1,${Math.floor(64000 / stringSize)}}`, 'g');
+		if (stringSize > 8500) {
+			const re = new RegExp(`.{1,${Math.floor(8000 / (Math.ceil(stringSize / 8000) + 1))}}`, 'g');
 			return string.match(re);
 		}
 		return string;
@@ -32,6 +33,10 @@ const validateTextSize = (stringArray)=> {
 	}, []);
 };
 
+
+// Get pub data
+// get versionContent
+let records = 0;
 const findAndIndexPubs = (pubIds)=> {
 	return Pub.findAll({
 		where: {
@@ -53,12 +58,18 @@ const findAndIndexPubs = (pubIds)=> {
 				// separate: true,
 				model: Version,
 				as: 'versions',
+				where: { isPublic: true },
 				attributes: ['createdAt', 'id', 'isPublic', 'isCommunityAdminShared', 'content'],
 				required: false,
 			},
 			{
 				model: VersionPermission,
 				as: 'versionPermissions',
+				where: {
+					// We only need to get the versionPermissions for items related to the working draft,
+					// since all version are isPublic
+					versionId: { $eq: null }
+				},
 				separate: true,
 				required: false,
 			},
@@ -95,6 +106,7 @@ const findAndIndexPubs = (pubIds)=> {
 				const prefix = index === array.length - 1 && index !== 0 ? ' and ' : '';
 				return `${prefix}${author.user.fullName}${separator}`;
 			}).join('');
+
 			const draftVersion = {
 				id: 'draft',
 				isPublic: pub.draftPermissions !== 'private',
@@ -105,10 +117,21 @@ const findAndIndexPubs = (pubIds)=> {
 			const managerIds = pub.managers.map((manager)=> {
 				return manager.userId;
 			});
-			const versions = [draftVersion, ...pub.versions];
+
+
+			// const versions = [draftVersion, ...pub.versions];
+			const versions = [draftVersion];
+			const publicVersion = pub.versions.reduce((prev, curr)=> {
+				if (!prev || curr.createdAt > prev.createdAt) { return curr; }
+				return prev;
+			}, undefined);
+			if (publicVersion) {
+				versions.push(publicVersion);
+			}
+
 			versions.filter((version, index)=> {
-				// return true;
-				return index === 0;
+				return true;
+				// return index === 0;
 			}).forEach((version)=> {
 				const versionPermissionIds = pub.versionPermissions.filter((versionPermission)=> {
 					if (version.id === 'draft') { return !versionPermission.versionId; }
@@ -148,13 +171,13 @@ const findAndIndexPubs = (pubIds)=> {
 					communityColor: pub.community.accentColor,
 					versionId: version.id,
 					versionIsPublic: version.isPublic,
-					versionIsAdminAccessible: pub.isCommunityAdminManaged || version.isCommunityAdminShared,
+					versionAdminAccessId: (pub.isCommunityAdminManaged || version.isCommunityAdminShared) && pub.community.id,
 					versionAccessIds: [...versionPermissionIds, ...managerIds],
 					versionCreatedAt: version.createdAt,
 					versionContent: undefined,
 				};
 
-				const splitText = stopword.removeStopwords(text.split(' ')).join(' ').match(/.{1,8000}/g) || [''];
+				const splitText = stopword.removeStopwords(text.split(' '), stopWordList).join(' ').match(/.{1,8000}/g) || [''];
 				const validatedSplitText = validateTextSize(splitText);
 				validatedSplitText.forEach((textChunk)=> {
 					dataToSync.push({
@@ -164,8 +187,9 @@ const findAndIndexPubs = (pubIds)=> {
 				});
 			});
 		});
+		records += dataToSync.length;
 		// return true;
-		// return pubIndex.addObjects(dataToSync);
+		return pubIndex.addObjects(dataToSync);
 		// return new Promise((resolve, reject)=> {
 		// 	fs.writeFile(`${__dirname}/pubs-${index}.json`, JSON.stringify(dataToSync), (err)=> {
 		// 		if (err) {
@@ -174,13 +198,13 @@ const findAndIndexPubs = (pubIds)=> {
 		// 		resolve('The file was saved!');
 		// 	});
 		// });
-		const smallArraysOfVersions = [];
-		while (dataToSync.length) {
-			smallArraysOfVersions.push(dataToSync.splice(0, 1000));
-		}
-		return Promise.each(smallArraysOfVersions, (objectsArray)=> {
-			return pubIndex.addObjects(objectsArray);
-		});
+		// const smallArraysOfVersions = [];
+		// while (dataToSync.length) {
+		// 	smallArraysOfVersions.push(dataToSync.splice(0, 1000));
+		// }
+		// return Promise.each(smallArraysOfVersions, (objectsArray)=> {
+		// 	return pubIndex.addObjects(objectsArray);
+		// });
 	});
 };
 
@@ -230,7 +254,7 @@ const findAndIndexPages = (pageIds)=> {
 					return '';
 				};
 				const text = getText(block.content.text).replace(/\s\s+/g, ' ');
-				const splitText = stopword.removeStopwords(text.split(' ')).join(' ').match(/.{1,8000}/g) || [''];
+				const splitText = stopword.removeStopwords(text.split(' '), stopWordList).join(' ').match(/.{1,8000}/g) || [''];
 				const validatedSplitText = validateTextSize(splitText);
 				validatedSplitText.forEach((textChunk)=> {
 					hasContent = true;
@@ -253,68 +277,68 @@ new Promise((resolve, reject)=> {
 	return resolve();
 	// return reject('Fail-safe reject');
 })
+.then(()=> {
+	return pubIndex.setSettings({
+		unretrievableAttributes: ['versionAdminAccessId', 'versionAccessIds', 'versionContent'],
+		searchableAttributes: ['title', 'description', 'slug', 'byline', 'versionContent', 'communityTitle', 'communityDomain'],
+		distinct: true,
+		attributeForDistinct: 'pubId',
+		attributesForFaceting: [
+			'filterOnly(versionIsPublic)',
+			'filterOnly(versionAccessIds)',
+			'filterOnly(versionAdminAccessId)',
+		],
+	});
+})
+.then(()=> {
+	return Pub.findAll({
+		attributes: ['id'],
+		// limit: 100,
+	});
+})
+.then((pubIds)=> {
+	const smallArrays = [];
+	while (pubIds.length) {
+		smallArrays.push(pubIds.splice(0, 25).map((item)=> { return item.id; }));
+	}
+	return Promise.each(smallArrays, (idArray, index)=> {
+		console.log('Starting pub batch ', index + 1, ' of ', smallArrays.length);
+		return findAndIndexPubs(idArray);
+	});
+})
 // .then(()=> {
-// 	return pubIndex.setSettings({
-// 		unretrievableAttributes: ['versionIsAdminAccessible', 'versionAccessIds', 'versionContent'],
-// 		searchableAttributes: ['title', 'description', 'slug', 'byline', 'versionContent', 'communityTitle', 'communityDomain'],
+// 	return pageIndex.setSettings({
+// 		unretrievableAttributes: ['content'],
+// 		searchableAttributes: ['title', 'description', 'slug', 'content', 'communityTitle', 'communityDomain'],
 // 		distinct: true,
-// 		attributeForDistinct: 'pubId',
+// 		attributeForDistinct: 'pageId',
 // 		attributesForFaceting: [
-// 			'filterOnly(versionIsPublic)',
-// 			'filterOnly(versionAccessIds)',
-// 			'filterOnly(versionIsAdminAccessible)',
+// 			'filterOnly(isPublic)',
 // 			'filterOnly(communityId)',
 // 		],
 // 	});
 // })
 // .then(()=> {
-// 	return Pub.findAll({
+// 	return Page.findAll({
 // 		attributes: ['id'],
-// 		limit: 100,
+// 		// limit: 100,
 // 	});
 // })
-// .then((pubIds)=> {
+// .then((pageIds)=> {
 // 	const smallArrays = [];
-// 	while (pubIds.length) {
-// 		smallArrays.push(pubIds.splice(0, 25).map((item)=> { return item.id; }));
+// 	while (pageIds.length) {
+// 		smallArrays.push(pageIds.splice(0, 25).map((item)=> { return item.id; }));
 // 	}
 // 	return Promise.each(smallArrays, (idArray, index)=> {
-// 		console.log('Starting pub batch ', index + 1, ' of ', smallArrays.length);
-// 		return findAndIndexPubs(idArray);
+// 		console.log('Starting page batch ', index + 1, ' of ', smallArrays.length);
+// 		return findAndIndexPages(idArray);
 // 	});
 // })
-.then(()=> {
-	return pageIndex.setSettings({
-		unretrievableAttributes: ['content'],
-		searchableAttributes: ['title', 'description', 'slug', 'content', 'communityTitle', 'communityDomain'],
-		distinct: true,
-		attributeForDistinct: 'pageId',
-		attributesForFaceting: [
-			'filterOnly(isPublic)',
-			'filterOnly(communityId)',
-		],
-	});
-})
-.then(()=> {
-	return Page.findAll({
-		attributes: ['id'],
-		// limit: 100,
-	});
-})
-.then((pageIds)=> {
-	const smallArrays = [];
-	while (pageIds.length) {
-		smallArrays.push(pageIds.splice(0, 25).map((item)=> { return item.id; }));
-	}
-	return Promise.each(smallArrays, (idArray, index)=> {
-		console.log('Starting page batch ', index + 1, ' of ', smallArrays.length);
-		return findAndIndexPages(idArray);
-	});
-})
 .catch((err)=> {
 	console.log('Error with search sync', err);
 })
 .finally(()=> {
+	console.log('Num Pub Records: ', records);
 	console.log('Ending search sync');
 	process.exit();
 });

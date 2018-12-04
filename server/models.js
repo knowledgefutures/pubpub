@@ -13,6 +13,7 @@ const operatorsAliases = {
 	$ilike: Sequelize.Op.iLike,
 	$in: Sequelize.Op.in,
 	$not: Sequelize.Op.not,
+	$eq: Sequelize.Op.eq,
 	$ne: Sequelize.Op.ne,
 	$lt: Sequelize.Op.lt,
 	$gt: Sequelize.Op.gt,

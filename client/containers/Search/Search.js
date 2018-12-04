@@ -5,6 +5,7 @@ import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprin
 import dateFormat from 'dateformat';
 import throttle from 'lodash.throttle';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
+import Icon from 'components/Icon/Icon';
 import { hydrateWrapper, getResizedUrl, generatePubBackground, generatePageBackground } from 'utilities';
 
 require('./search.scss');
@@ -194,6 +195,7 @@ class Search extends Component {
 											let link;
 											let bannerStyle;
 											let keyId;
+											let isPublic;
 											const resizedBannerImage = getResizedUrl(item.avatar, 'fit-in', '800x0');
 
 											if (this.state.mode === 'pubs') {
@@ -202,6 +204,7 @@ class Search extends Component {
 													? { backgroundImage: `url("${resizedBannerImage}")` }
 													: { background: generatePubBackground(item.title) };
 												keyId = item.pubId;
+												isPublic = item.versionIsPublic;
 											}
 											if (this.state.mode === 'pages') {
 												link = `https://${item.communityDomain}/${item.slug}`;
@@ -209,6 +212,7 @@ class Search extends Component {
 													? { backgroundImage: `url("${resizedBannerImage}")` }
 													: { background: generatePageBackground(item.title) };
 												keyId = item.pageId;
+												isPublic = item.isPublic;
 											}
 
 											return (
@@ -221,6 +225,9 @@ class Search extends Component {
 													<div>
 														<a href={link} alt={item.title} className="title">
 															{item.title}
+															{!isPublic &&
+																<Icon icon="lock2" />
+															}
 														</a>
 														{this.state.mode === 'pubs' &&
 															<div className="byline">

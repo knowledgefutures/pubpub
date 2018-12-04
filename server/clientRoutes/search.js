@@ -46,7 +46,6 @@ app.get('/search', (req, res, next)=> {
 		const pageSearchParams = {
 			filters: `isPublic:true${pageCommunityAccessFilterString}`,
 		};
-		console.log(pageSearchParams)
 		const newInitialData = {
 			...initialData,
 			searchData: {

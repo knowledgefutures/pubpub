@@ -1,6 +1,29 @@
 import KeenAnalysis from 'keen-analysis';
 import app from '../server';
 import { sequelize } from '../models';
+import { getListGrowth } from '../mailchimpHelpers';
+
+const processQueryData = function(baseObj, activeObj) {
+	baseObj.forEach((o, i) => {
+		const el = o;
+		const prev = baseObj[i - 1];
+		if (activeObj) {
+			activeObj.forEach((ao) => {
+				if (ao.month === el.month) {
+					el.active = ao.active;
+				}
+			});
+		}
+		if (i > 0) {
+			el.prev = prev.prev + prev.new;
+			el.growth = el.new / el.prev;
+		} else if (i === 0) {
+			el.prev = el.new;
+			el.growth = 0;
+		}
+	});
+	return baseObj;
+};
 
 app.get('/api/dashboard', (req, res)=> {
 	const user = req.user || {};
@@ -9,22 +32,22 @@ app.get('/api/dashboard', (req, res)=> {
 	if (!users.includes(user.id)) { return res.status(404).json('Page not found.'); }
 	const stats = {};
 
-	const countUsers = sequelize.query(`select count(*), DATE_TRUNC('month', "Users"."createdAt")::date as "month"
+	const countUsers = sequelize.query(`select count(*)::integer as "new", DATE_TRUNC('month', "Users"."createdAt")::date as "month"
 	from "Users"
 	GROUP BY "month"
 	ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
 
-	const countCommunities = sequelize.query(`select count(*), DATE_TRUNC('month', "Communities"."createdAt")::date as "month"
+	const countCommunities = sequelize.query(`select count(*)::integer as "new", DATE_TRUNC('month', "Communities"."createdAt")::date as "month"
 	from "Communities"
 	GROUP BY "month"
 	ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
 
-	const countDiscussions = sequelize.query(`select count(*), DATE_TRUNC('month', "Discussions"."createdAt")::date as "month"
+	const countDiscussions = sequelize.query(`select count(*)::integer as "new", DATE_TRUNC('month', "Discussions"."createdAt")::date as "month"
 	from "Discussions"
 	GROUP BY "month"
 	ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
 
-	const countActiveCommunities = sequelize.query(`select count(DISTINCT "communityId"), month
+	const countActiveCommunities = sequelize.query(`select count(DISTINCT "communityId")::integer as "active", month
 	FROM ((select "Pages"."communityId", DATE_TRUNC('month', "Pages"."updatedAt")::date as "month" from "Pages")
 	UNION
 	(select "Discussions"."communityId", DATE_TRUNC('month', "Discussions"."updatedAt")::date as "month" from "Discussions")
@@ -67,19 +90,32 @@ app.get('/api/dashboard', (req, res)=> {
 		interval: 'monthly'
 	});
 
-	return Promise.all([countUsers, countCommunities, countDiscussions, countActiveCommunities, countActiveUsers])
-	.then(([userCountData, communityCountData, discussionCountData, activeCommunityCountData, activeUserData]) => {
-		stats.users = userCountData;
-		stats.communities = communityCountData;
-		stats.discussions = discussionCountData;
-		stats.activeCommunities = activeCommunityCountData;
-		const activeUserObj = activeUserData.result.map((i) => {
+	const countSubscribers = getListGrowth('2847d5271c');
+
+	return Promise.all([countUsers, countCommunities, countDiscussions, countActiveCommunities, countActiveUsers, countSubscribers])
+	.then(([userCountData, communityCountData, discussionCountData, activeCommunityData, activeUserData, subscriberData]) => {
+		const activeUsersObj = activeUserData.result.map((i) => {
 			return {
-				count: i.value,
+				active: i.value,
 				month: i.timeframe.start.split('T')[0]
 			};
 		});
-		stats.activeUsers = activeUserObj;
+		stats.users = processQueryData(userCountData, activeUsersObj);
+		stats.communities = processQueryData(communityCountData, activeCommunityData);
+		stats.discussions = processQueryData(discussionCountData);
+		stats.activeCommunities = activeCommunityData;
+
+		const subscribersObj = subscriberData.history.map((i) => {
+			return {
+				prev: i.existing,
+				new: i.optins + i.imports,
+				month: `${i.month}-01`,
+				growth: (i.optins + i.imports) / i.existing
+			};
+		});
+		stats.subscribers = subscribersObj;
+
+		stats.activeUsers = activeUsersObj;
 		return res.status(200).json(stats);
 	})
 	.catch(err => { console.warn(err); return res.status(500).json('Internal server error'); });

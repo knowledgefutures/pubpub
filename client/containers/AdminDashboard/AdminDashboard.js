@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import { apiFetch, hydrateWrapper } from 'utilities';
-import { Tooltip, BarChart, Bar, XAxis, YAxis } from 'recharts';
+import { Tooltip, ComposedChart, Bar, Line, XAxis, YAxis } from 'recharts';
 
 require('./adminDashboard.scss');
 
@@ -16,12 +16,16 @@ const Chart = function(props) {
 	return (
 		<div>
 			<h2>{props.title}</h2>
-			<BarChart width={730} height={250} data={props.data}>
+			<ComposedChart width={730} height={250} data={props.data}>
 				<XAxis dataKey="month" />
-				<YAxis />
+				<YAxis yAxisId="left" orientation="left" />
+				<YAxis yAxisId="right" orientation="right" />
 				<Tooltip />
-				<Bar dataKey="count" />
-			</BarChart>
+				<Bar dataKey="prev" yAxisId="left" stackId="a" fill="green" />
+				<Bar dataKey="new" yAxisId="left" stackId="a" fill="blue" />
+				<Bar dataKey="active" yAxisId="left" stackId="b" fill="red" />
+				<Line dataKey="growth" yAxisId="right" />
+			</ComposedChart>
 		</div>
 	)
 };
@@ -67,11 +71,10 @@ class AdminDashboard extends React.Component {
 								<h1>Admin Dashboard</h1>
 								{!this.state.isLoading &&
 									<div>
-										<Chart data={this.state.pubPubData.users} title="New Users" />
-										<Chart data={this.state.pubPubData.communities} title="New Communities" />
-										<Chart data={this.state.pubPubData.discussions} title="New Discussions" />
-										<Chart data={this.state.pubPubData.activeCommunities} title="Active Communities" />
-										<Chart data={this.state.pubPubData.activeUsers} title="Active Users" />
+										<Chart data={this.state.pubPubData.users} title="Users" />
+										<Chart data={this.state.pubPubData.communities} title="Communities" />
+										<Chart data={this.state.pubPubData.discussions} title="Discussions" />
+										<Chart data={this.state.pubPubData.subscribers} title="Newsletter Subscribers" />
 									</div>
 								}
 							</div>

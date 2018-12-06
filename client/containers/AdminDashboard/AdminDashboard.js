@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import { apiFetch, hydrateWrapper } from 'utilities';
-import { Tooltip, ComposedChart, Bar, Line, XAxis, YAxis } from 'recharts';
+import Chart from './Chart';
 
 require('./adminDashboard.scss');
 
@@ -10,24 +10,6 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
-};
-
-const Chart = function(props) {
-	return (
-		<div>
-			<h2>{props.title}</h2>
-			<ComposedChart width={730} height={250} data={props.data}>
-				<XAxis dataKey="month" />
-				<YAxis yAxisId="left" orientation="left" />
-				<YAxis yAxisId="right" orientation="right" />
-				<Tooltip />
-				<Bar dataKey="prev" yAxisId="left" stackId="a" fill="green" />
-				<Bar dataKey="new" yAxisId="left" stackId="a" fill="blue" />
-				<Bar dataKey="active" yAxisId="left" stackId="b" fill="red" />
-				<Line dataKey="growth" yAxisId="right" />
-			</ComposedChart>
-		</div>
-	)
 };
 
 class AdminDashboard extends React.Component {
@@ -48,7 +30,6 @@ class AdminDashboard extends React.Component {
 				pubPubData: data,
 				isLoading: false
 			});
-			console.log(data);
 		})
 		.catch((err)=> {
 			console.warn(err);

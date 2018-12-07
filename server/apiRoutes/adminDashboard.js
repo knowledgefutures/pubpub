@@ -17,17 +17,17 @@ const processQueryData = function(baseObj, activeObj) {
 			});
 		}
 		if (i > 0) {
-			el.prev = prev.prev + prev.new;
-			el.growth = el.new / el.prev;
+			el.prev = prev.prev + prev.current;
+			el.growth = el.current / el.prev;
 		} else if (i === 0) {
-			el.prev = el.new;
+			el.prev = el.current;
 			el.growth = 0;
 		}
 	});
 	return baseObj;
 };
 
-app.get('/api/dashboard', (req, res)=> {
+app.get('/api/admin-dashboard', (req, res)=> {
 	return getInitialData(req)
 	.then((initialData) => {
 		const user = req.user || {};
@@ -36,17 +36,17 @@ app.get('/api/dashboard', (req, res)=> {
 		if (!users.includes(user.id)) { return res.status(404).json('Page not found.'); }
 		const stats = {};
 
-		const countUsers = sequelize.query(`select count(*)::integer as "new", DATE_TRUNC('month', "Users"."createdAt")::date as "month"
+		const countUsers = sequelize.query(`select count(*)::integer as "current", DATE_TRUNC('month', "Users"."createdAt")::date as "month"
 		from "Users"
 		GROUP BY "month"
 		ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
 
-		const countCommunities = sequelize.query(`select count(*)::integer as "new", DATE_TRUNC('month', "Communities"."createdAt")::date as "month"
+		const countCommunities = sequelize.query(`select count(*)::integer as "current", DATE_TRUNC('month', "Communities"."createdAt")::date as "month"
 		from "Communities"
 		GROUP BY "month"
 		ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
 
-		const countDiscussions = sequelize.query(`select count(*)::integer as "new", DATE_TRUNC('month', "Discussions"."createdAt")::date as "month"
+		const countDiscussions = sequelize.query(`select count(*)::integer as "current", DATE_TRUNC('month', "Discussions"."createdAt")::date as "month"
 		from "Discussions"
 		GROUP BY "month"
 		ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
@@ -112,7 +112,7 @@ app.get('/api/dashboard', (req, res)=> {
 			const subscribersObj = subscriberData.history.map((i) => {
 				return {
 					prev: i.existing,
-					new: i.optins + i.imports,
+					current: i.optins + i.imports,
 					month: `${i.month}-01`,
 					growth: (i.optins + i.imports) / i.existing
 				};

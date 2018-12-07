@@ -22,7 +22,7 @@ class AdminDashboard extends React.Component {
 	}
 
 	componentDidMount() {
-		apiFetch('/api/dashboard', {
+		apiFetch('/api/admin-dashboard', {
 			method: 'GET',
 		})
 		.then((data)=> {

@@ -17,7 +17,7 @@ const Chart = function(props) {
 				<YAxis yAxisId="right" orientation="right" />
 				<Tooltip />
 				<Bar dataKey="prev" yAxisId="left" stackId="a" fill="green" />
-				<Bar dataKey="new" yAxisId="left" stackId="a" fill="blue" />
+				<Bar dataKey="current" yAxisId="left" stackId="a" fill="blue" />
 				<Bar dataKey="active" yAxisId="left" stackId="b" fill="red" />
 				<Line dataKey="growth" yAxisId="right" />
 			</ComposedChart>

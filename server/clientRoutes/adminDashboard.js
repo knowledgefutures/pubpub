@@ -6,6 +6,7 @@ import { hostIsValid, renderToNodeStream, getInitialData, handleErrors, generate
 
 app.get('/admin', (req, res, next)=> {
 	if (!hostIsValid(req, 'pubpub')) { return next(); }
+
 	return getInitialData(req)
 	.then((initialData)=> {
 		const user = req.user || {};

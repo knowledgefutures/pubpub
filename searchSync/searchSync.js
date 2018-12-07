@@ -8,8 +8,8 @@ import stopWordList from './stopwords';
 import { Pub, Community, Version, VersionPermission, PubAttribution, User, PubManager, Page } from '../server/models';
 
 const client = algoliasearch(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);
-const pubIndex = client.initIndex('pubs');
-const pageIndex = client.initIndex('pages');
+const pubsIndex = client.initIndex('pubs');
+const pagesIndex = client.initIndex('pages');
 
 console.log('Beginning search sync');
 
@@ -189,7 +189,7 @@ const findAndIndexPubs = (pubIds)=> {
 		});
 		records += dataToSync.length;
 		// return true;
-		return pubIndex.addObjects(dataToSync);
+		return pubsIndex.addObjects(dataToSync);
 		// return new Promise((resolve, reject)=> {
 		// 	fs.writeFile(`${__dirname}/pubs-${index}.json`, JSON.stringify(dataToSync), (err)=> {
 		// 		if (err) {
@@ -203,7 +203,7 @@ const findAndIndexPubs = (pubIds)=> {
 		// 	smallArraysOfVersions.push(dataToSync.splice(0, 1000));
 		// }
 		// return Promise.each(smallArraysOfVersions, (objectsArray)=> {
-		// 	return pubIndex.addObjects(objectsArray);
+		// 	return pubsIndex.addObjects(objectsArray);
 		// });
 	});
 };
@@ -269,7 +269,7 @@ const findAndIndexPages = (pageIds)=> {
 			}
 		});
 
-		return pageIndex.addObjects(dataToSync);
+		return pagesIndex.addObjects(dataToSync);
 	});
 };
 
@@ -278,46 +278,50 @@ new Promise((resolve, reject)=> {
 	// return reject('Fail-safe reject');
 })
 .then(()=> {
-	return pubIndex.setSettings({
+	return pubsIndex.setSettings({
 		unretrievableAttributes: ['versionAdminAccessId', 'versionAccessIds', 'versionContent'],
 		searchableAttributes: ['title', 'description', 'slug', 'byline', 'versionContent', 'communityTitle', 'communityDomain'],
 		distinct: true,
 		attributeForDistinct: 'pubId',
 		attributesForFaceting: [
+			'filterOnly(pubId)',
+			'filterOnly(communityId)',
 			'filterOnly(versionIsPublic)',
 			'filterOnly(versionAccessIds)',
 			'filterOnly(versionAdminAccessId)',
 		],
 	});
 })
-.then(()=> {
-	return Pub.findAll({
-		attributes: ['id'],
-		// limit: 100,
-	});
-})
-.then((pubIds)=> {
-	const smallArrays = [];
-	while (pubIds.length) {
-		smallArrays.push(pubIds.splice(0, 25).map((item)=> { return item.id; }));
-	}
-	return Promise.each(smallArrays, (idArray, index)=> {
-		console.log('Starting pub batch ', index + 1, ' of ', smallArrays.length);
-		return findAndIndexPubs(idArray);
-	});
-})
 // .then(()=> {
-// 	return pageIndex.setSettings({
-// 		unretrievableAttributes: ['content'],
-// 		searchableAttributes: ['title', 'description', 'slug', 'content', 'communityTitle', 'communityDomain'],
-// 		distinct: true,
-// 		attributeForDistinct: 'pageId',
-// 		attributesForFaceting: [
-// 			'filterOnly(isPublic)',
-// 			'filterOnly(communityId)',
-// 		],
+// 	return Pub.findAll({
+// 		attributes: ['id'],
+// 		// limit: 100,
 // 	});
 // })
+// .then((pubIds)=> {
+// 	const smallArrays = [];
+// 	while (pubIds.length) {
+// 		smallArrays.push(pubIds.splice(0, 25).map((item)=> { return item.id; }));
+// 	}
+// 	return Promise.each(smallArrays, (idArray, index)=> {
+// 		console.log('Starting pub batch ', index + 1, ' of ', smallArrays.length);
+// 		return findAndIndexPubs(idArray);
+// 	});
+// })
+.then(()=> {
+	return pagesIndex.setSettings({
+		unretrievableAttributes: ['content'],
+		searchableAttributes: ['title', 'description', 'slug', 'content', 'communityTitle', 'communityDomain'],
+		distinct: true,
+		attributeForDistinct: 'pageId',
+		attributesForFaceting: [
+			'filterOnly(isPublic)',
+			'filterOnly(pageId)',
+			'filterOnly(communityId)',
+			'filterOnly(communityId)',
+		],
+	});
+})
 // .then(()=> {
 // 	return Page.findAll({
 // 		attributes: ['id'],

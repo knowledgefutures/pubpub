@@ -3,7 +3,7 @@ import sanitizeHtml from 'sanitize-html';
 import app from '../server';
 import { Page, Community, CommunityAdmin } from '../models';
 import { generateHash, slugifyString } from '../utilities';
-
+import { setPageSearchData, deletePageSearchData } from '../searchUtilities';
 
 app.post('/api/pages', (req, res)=> {
 	// Authenticate user. Make sure they have manage permissions on the given pub.
@@ -31,6 +31,7 @@ app.post('/api/pages', (req, res)=> {
 	})
 	.then((newPage)=> {
 		newPageOutput = newPage;
+		setPageSearchData(newPage.id);
 		return Community.findOne({
 			where: { id: req.body.communityId },
 			attributes: ['id', 'navigation']
@@ -101,6 +102,7 @@ app.put('/api/pages', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		setPageSearchData(req.body.pageId);
 		return res.status(202).json('success');
 	})
 	.catch((err)=> {
@@ -154,6 +156,7 @@ app.delete('/api/pages', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		deletePageSearchData(req.body.pageId);
 		return res.status(202).json('success');
 	})
 	.catch((err)=> {

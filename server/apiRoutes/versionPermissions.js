@@ -1,5 +1,6 @@
 import app from '../server';
 import { PubManager, User, CommunityAdmin, VersionPermission } from '../models';
+import { setPubSearchData } from '../searchUtilities';
 
 app.post('/api/versionPermissions', (req, res)=> {
 	// Authenticate user. Make sure they have edit permissions on the given pub.
@@ -57,6 +58,7 @@ app.post('/api/versionPermissions', (req, res)=> {
 		// 		createdAt: newCollaboratorData.createdAt,
 		// 	}
 		// };
+		setPubSearchData(req.body.pubId);
 		return res.status(201).json(newVersionPermissionData);
 	})
 	.catch((err)=> {
@@ -98,6 +100,7 @@ app.put('/api/versionPermissions', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		setPubSearchData(req.body.pubId);
 		return res.status(201).json(updatedVersionPermission);
 	})
 	.catch((err)=> {
@@ -131,6 +134,7 @@ app.delete('/api/versionPermissions', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		setPubSearchData(req.body.pubId);
 		return res.status(201).json(req.body.versionPermissionId);
 	})
 	.catch((err)=> {

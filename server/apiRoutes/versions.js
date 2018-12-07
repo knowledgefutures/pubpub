@@ -1,6 +1,7 @@
 import app from '../server';
 import { Pub, Version, CommunityAdmin, Discussion, PubManager } from '../models';
 import { submitDoiData, generateHash } from '../utilities';
+import { setPubSearchData } from '../searchUtilities';
 
 app.post('/api/versions', (req, res)=> {
 	const user = req.user || {};
@@ -49,7 +50,6 @@ app.post('/api/versions', (req, res)=> {
 		}, {
 			where: { id: req.body.pubId }
 		});
-
 		return updatePub;
 	})
 	.then(()=> {
@@ -65,6 +65,7 @@ app.post('/api/versions', (req, res)=> {
 		return Promise.all([updateDiscussion, updateDoiData]);
 	})
 	.then(()=> {
+		setPubSearchData(req.body.pubId);
 		return res.status(201).json('Version Published Successfully');
 	})
 	.catch((err)=> {
@@ -109,6 +110,7 @@ app.put('/api/versions', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		setPubSearchData(req.body.pubId);
 		return res.status(201).json(updatedVersion);
 	})
 	.catch((err)=> {

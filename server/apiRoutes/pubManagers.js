@@ -1,5 +1,6 @@
 import app from '../server';
 import { PubManager, User, CommunityAdmin } from '../models';
+import { setPubSearchData } from '../searchUtilities';
 
 app.post('/api/pubManagers', (req, res)=> {
 	// Authenticate user. Make sure they have edit permissions on the given pub.
@@ -54,6 +55,7 @@ app.post('/api/pubManagers', (req, res)=> {
 		// 		createdAt: newCollaboratorData.createdAt,
 		// 	}
 		// };
+		setPubSearchData(req.body.pubId);
 		return res.status(201).json(newPubManagerData);
 	})
 	.catch((err)=> {
@@ -132,6 +134,7 @@ app.delete('/api/pubManagers', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		setPubSearchData(req.body.pubId);
 		return res.status(201).json(req.body.pubManagerId);
 	})
 	.catch((err)=> {

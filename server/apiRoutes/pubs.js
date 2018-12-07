@@ -1,6 +1,7 @@
 import app from '../server';
 import { Pub, CommunityAdmin, PubManager, PubAttribution, PubTag } from '../models';
 import { generateHash, slugifyString } from '../utilities';
+import { setPubSearchData, deletePubSearchData } from '../searchUtilities';
 
 app.post('/api/pubs', (req, res)=> {
 	const user = req.user || {};
@@ -40,10 +41,11 @@ app.post('/api/pubs', (req, res)=> {
 			};
 		});
 		const createPubTags = PubTag.bulkCreate(newPubTagObjects);
-		return Promise.all([createPubManager, createPubAttribution, createPubTags]);
+		return Promise.all([newPub, createPubManager, createPubAttribution, createPubTags]);
 	})
-	.then(()=> {
-		return res.status(201).json(`/pub/${newPubSlug}/draft`);
+	.then(([newPub])=> {
+		setPubSearchData(newPub.id);
+		return res.status(201).json(`/pub/${newPub.slug}/draft`);
 	})
 	.catch((err)=> {
 		console.error('Error creating Pub', err);
@@ -96,6 +98,7 @@ app.put('/api/pubs', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		setPubSearchData(req.body.pubId);
 		return res.status(201).json(updatedPub);
 	})
 	.catch((err)=> {
@@ -144,6 +147,7 @@ app.delete('/api/pubs', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		deletePubSearchData(req.body.pubId);
 		return res.status(201).json(req.body.pubId);
 	})
 	.catch((err)=> {

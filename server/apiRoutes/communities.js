@@ -5,6 +5,7 @@ import { Community, Page, CommunityAdmin } from '../models';
 import { generateHash, slugifyString } from '../utilities';
 import { subscribeUser } from '../mailchimpHelpers';
 import { alertNewCommunity } from '../webhookHelpers';
+import { updateCommunityData } from '../searchUtilities';
 
 app.post('/api/communities', (req, res)=> {
 	const user = req.user || {};
@@ -126,6 +127,7 @@ app.put('/api/communities', (req, res)=> {
 		});
 	})
 	.then(()=> {
+		updateCommunityData(req.body.communityId);
 		return res.status(201).json(updatedCommunity);
 	})
 	.catch((err)=> {

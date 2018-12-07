@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 import request from 'request-promise';
 import md5 from 'crypto-js/md5';
 
@@ -59,4 +57,21 @@ export const subscribeUser = (email, list, tags) => {
 		json: true
 	};
 	return request(options, callback);
+};
+
+export const getListGrowth = (list) => {
+	const options = {
+		method: 'GET',
+		auth: {
+			user: 'pubpub-backend',
+			password: key
+		},
+		uri: `${base}/${list}/growth-history`,
+		qs: {
+			sort_field: 'month',
+			sort_dir: 'asc'
+		},
+		json: true
+	};
+	return request(options);
 };

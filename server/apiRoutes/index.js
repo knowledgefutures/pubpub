@@ -1,3 +1,4 @@
+require('./adminDashboard');
 require('./analytics');
 require('./communities');
 require('./communityAdmins');

@@ -116,7 +116,7 @@ class DiscussionInput extends Component {
 						<Button
 							name="submit"
 							type="submit"
-							className="pt-button pt-intent-primary pt-small"
+							className="bp3-button bp3-intent-primary bp3-small"
 							onClick={this.onSubmit}
 							text={this.props.isNew || this.props.showTitle ? `Post to #${this.props.activeDiscussionChannel.title}` : 'Submit Reply'}
 							disabled={this.state.submitDisabled}

@@ -22,21 +22,21 @@ const PubOptionsSharingDropdownPermissions = function(props) {
 		none: {
 			value: 'none',
 			title: 'None',
-			// icon: 'pt-icon-lock2',
+			// icon: 'bp3-icon-lock2',
 			onClick: ()=>{ props.onChange('none'); },
 			description: 'Cannot view the working draft or discussions.',
 		},
 		view: {
 			value: 'view',
 			title: 'View',
-			// icon: 'pt-icon-eye-open',
+			// icon: 'bp3-icon-eye-open',
 			onClick: ()=>{ props.onChange('view'); },
 			description: 'Can participate in discussions and view updates to the working draft.',
 		},
 		edit: {
 			value: 'edit',
 			title: 'Edit',
-			// icon: 'pt-icon-edit2',
+			// icon: 'bp3-icon-edit2',
 			onClick: ()=>{ props.onChange('edit'); },
 			description: 'Can directly edit the working draft and participate in discussions.',
 		},
@@ -53,13 +53,13 @@ const PubOptionsSharingDropdownPermissions = function(props) {
 				isDisabled={props.isDisabled}
 				isSmall={true}
 			>
-				<ul className="pub-options-sharing-dropdown-permissions-component pub-options-dropdown pt-menu">
+				<ul className="pub-options-sharing-dropdown-permissions-component pub-options-dropdown bp3-menu">
 					{Object.keys(items).map((key)=> {
 						const item = items[key];
 						return (
 							<li key={`${item.value}-option-${keySuffix}`}>
 								<button
-									className={`pt-menu-item pt-popover-dismiss ${item.icon}`}
+									className={`bp3-menu-item bp3-popover-dismiss ${item.icon}`}
 									onClick={item.onClick}
 									type="button"
 								>

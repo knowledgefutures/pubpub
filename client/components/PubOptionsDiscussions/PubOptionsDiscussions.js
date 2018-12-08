@@ -206,7 +206,7 @@ class PubOptionsDiscussions extends Component {
 				<form onSubmit={this.handleChannelAdd}>
 					<input
 						type="text"
-						className="pt-input pt-fill"
+						className="bp3-input bp3-fill"
 						placeholder="New Discussion Channel Title..."
 						value={this.state.newChannelTitle}
 						onChange={(evt)=> {
@@ -242,12 +242,12 @@ class PubOptionsDiscussions extends Component {
 												// icon={items[props.value].icon}
 												isRightAligned={true}
 											>
-												<ul className="channel-permissions-dropdown pt-menu">
+												<ul className="channel-permissions-dropdown bp3-menu">
 													{channelPermissionOptions.map((option)=> {
 														return (
 															<li key={`permissions-${option.value}`}>
 																<button
-																	className="pt-menu-item pt-popover-dismiss"
+																	className="bp3-menu-item bp3-popover-dismiss"
 																	onClick={()=> {
 																		this.handleChannelUpdate({
 																			discussionChannelId: channel.id,
@@ -273,7 +273,7 @@ class PubOptionsDiscussions extends Component {
 											{/* If community admins are not managers, show options for their permissions */}
 											<PubOptionsSharingCard
 												content={[
-													<span className="pt-icon-standard pt-icon-people" />,
+													<span className="bp3-icon-standard bp3-icon-people" />,
 													<span>Community Admins</span>
 												]}
 												options={(
@@ -319,13 +319,13 @@ class PubOptionsDiscussions extends Component {
 																Can Moderate
 															</Checkbox>,
 															<button
-																className="pt-button pt-minimal pt-small"
+																className="bp3-button bp3-minimal bp3-small"
 																type="button"
 																onClick={()=> {
 																	this.handleChannelParticipantDelete(channel.id, participant.id);
 																}}
 															>
-																<span className="pt-icon-standard pt-icon-small-cross" />
+																<span className="bp3-icon-standard bp3-icon-small-cross" />
 															</button>
 														]}
 													/>

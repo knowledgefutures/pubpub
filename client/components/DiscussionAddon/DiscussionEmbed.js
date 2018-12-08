@@ -48,7 +48,7 @@ class DiscussionEmbed extends Component {
 
 		return (
 			<div className="figure-wrapper">
-				<figure className={`discussion pt-elevation-2 ${this.props.isSelected ? 'isSelected' : ''} ${this.props.isEditable ? 'isEditable' : ''}`} style={figStyle}>
+				<figure className={`discussion bp3-elevation-2 ${this.props.isSelected ? 'isSelected' : ''} ${this.props.isEditable ? 'isEditable' : ''}`} style={figStyle}>
 					{activeThread &&
 						<DiscussionThread
 							key={`thread-${activeThread[0].id}`}

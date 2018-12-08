@@ -122,7 +122,7 @@ class DiscussionLabelsList extends Component {
 	render() {
 		const showEditMode = this.state.isEditMode || (!this.props.labelsData.length && this.props.isManager);
 		return (
-			<div className="discussion-labels-list-component pt-menu pt-elevation-1">
+			<div className="discussion-labels-list-component bp3-menu bp3-elevation-1">
 				{this.props.isManager && !showEditMode &&
 					<Button
 						className="action-button"
@@ -132,14 +132,14 @@ class DiscussionLabelsList extends Component {
 				}
 				{this.props.isManager && showEditMode &&
 					<Button
-						className="pt-button pt-intent-primary action-button"
+						className="bp3-button bp3-intent-primary action-button"
 						onClick={this.handleSave}
 						text="Save"
 						loading={this.state.isSaving}
 						disabled={!this.state.labelsDataChanged}
 					/>
 				}
-				<li className="pt-menu-header"><h6>Filter by Label</h6></li>
+				<li className="bp3-menu-header"><h6>Filter by Label</h6></li>
 
 				{/* Labels View Mode */}
 				{!showEditMode && this.state.labelsData.sort((foo, bar)=> {
@@ -150,10 +150,10 @@ class DiscussionLabelsList extends Component {
 					const handleClick = ()=> { this.props.onLabelSelect(label.id); };
 					return (
 						<li>
-							<div role="button" tabIndex={-1} key={`label-${label.id}`} className="pt-menu-item label" onClick={handleClick}>
+							<div role="button" tabIndex={-1} key={`label-${label.id}`} className="bp3-menu-item label" onClick={handleClick}>
 								<div className="color" style={{ backgroundColor: label.color }}>
 									{this.props.selectedLabels.indexOf(label.id) > -1 &&
-										<span className="pt-icon-standard pt-icon-small-tick" />
+										<span className="bp3-icon-standard bp3-icon-small-tick" />
 									}
 								</div>
 								<div className="title">{label.title}</div>
@@ -162,10 +162,10 @@ class DiscussionLabelsList extends Component {
 										? <span>All discussion authors can apply this label.</span>
 										: <span>Only managers can apply this label.</span>
 									}
-									tooltipClassName="pt-dark"
+									tooltipClassName="bp3-dark"
 									position={Position.TOP}
 								>
-									<span className={`pt-icon-standard pt-icon-endorsed ${label.publicApply ? '' : 'active'}`} />
+									<span className={`bp3-icon-standard bp3-icon-endorsed ${label.publicApply ? '' : 'active'}`} />
 								</Tooltip>
 							</div>
 						</li>
@@ -173,7 +173,7 @@ class DiscussionLabelsList extends Component {
 				})}
 
 				{!showEditMode && !this.state.labelsData.length &&
-					<div className="pt-menu-item empty">No Labels to Filter by</div>
+					<div className="bp3-menu-item empty">No Labels to Filter by</div>
 				}
 
 				{/* Labels Edit Mode */}
@@ -192,7 +192,7 @@ class DiscussionLabelsList extends Component {
 						<div key={`label-edit-${label.id}`} className="label edit">
 							<Popover
 								content={
-									<div className="pt-menu color-select-menu">
+									<div className="bp3-menu color-select-menu">
 										{colors.map((color)=> {
 											return (
 												<span
@@ -218,23 +218,23 @@ class DiscussionLabelsList extends Component {
 							>
 								<div className="color edit" style={{ backgroundColor: label.color }} />
 							</Popover>
-							<input className="pt-input" type="text" value={label.title} onChange={handleTitleChange} />
+							<input className="bp3-input" type="text" value={label.title} onChange={handleTitleChange} />
 							<Tooltip
 								content={label.publicApply
 									? <span>All discussion authors can apply this label.</span>
 									: <span>Only managers can apply this label.</span>
 								}
-								tooltipClassName="pt-dark"
+								tooltipClassName="bp3-dark"
 								position={Position.TOP}
 							>
 								<Button
 									onClick={handlePublicApplyToggle}
-									className={`pt-minimal pt-icon-endorsed ${label.publicApply ? '' : 'active'}`}
+									className={`bp3-minimal bp3-icon-endorsed ${label.publicApply ? '' : 'active'}`}
 								/>
 							</Tooltip>
 							<Button
 								onClick={handleLabelRemove}
-								className="pt-icon-trash pt-minimal"
+								className="bp3-icon-trash bp3-minimal"
 							/>
 						</div>
 					);
@@ -242,7 +242,7 @@ class DiscussionLabelsList extends Component {
 
 				{showEditMode &&
 					<Button
-						className="pt-fill"
+						className="bp3-fill"
 						onClick={this.addLabel}
 						text="Add Label"
 					/>

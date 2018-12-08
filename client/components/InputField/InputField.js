@@ -39,20 +39,20 @@ const defaultProps = {
 
 const InputField = function(props) {
 	return (
-		<div className={`input-field-component pt-form-group ${props.error ? 'pt-intent-danger' : ''} ${props.wrapperClassName}`}>
-			<label className="pt-label" htmlFor={`input-${props.label}`}>
+		<div className={`input-field-component bp3-form-group ${props.error ? 'bp3-intent-danger' : ''} ${props.wrapperClassName}`}>
+			<label className="bp3-label" htmlFor={`input-${props.label}`}>
 				{props.label}
 				{props.isRequired &&
-					<span className="pt-text-muted required-text"> (required)</span>
+					<span className="bp3-text-muted required-text"> (required)</span>
 				}
 			</label>
-			<div className="pt-form-content">
+			<div className="bp3-form-content">
 				{props.children}
-				<div className={`pt-input-group ${props.error ? 'pt-intent-danger' : ''}`}>
+				<div className={`bp3-input-group ${props.error ? 'bp3-intent-danger' : ''}`}>
 					{!props.children && !props.isTextarea &&
 						<input
 							id={`input-${props.label}`}
-							className="pt-input"
+							className="bp3-input"
 							disabled={props.isDisabled}
 							placeholder={props.placeholder}
 							value={props.value}
@@ -66,7 +66,7 @@ const InputField = function(props) {
 					{!props.children && props.isTextarea &&
 						<textarea
 							id={`input-${props.label}`}
-							className="pt-input"
+							className="bp3-input"
 							disabled={props.isDisabled}
 							placeholder={props.placeholder}
 							value={props.value}
@@ -76,7 +76,7 @@ const InputField = function(props) {
 							ref={props.inputRef}
 						/>
 					}
-					<div className="pt-form-helper-text">{props.error || props.helperText}</div>
+					<div className="bp3-form-helper-text">{props.error || props.helperText}</div>
 				</div>
 
 			</div>

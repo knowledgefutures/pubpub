@@ -41,11 +41,11 @@ class PubOptionsVersions extends Component {
 				<div className="version-sections">
 					<div className="section">
 						<div className="title">All Versions</div>
-						<ul className="pt-menu">
+						<ul className="bp3-menu">
 							{versions.map((version)=> {
 								return (
 									<li key={`version-${version.id}`}>
-										<a href={`/pub/${pubData.slug}?version=${version.id}`} className={`pt-menu-item pt-popover-dismiss ${version.isActive ? 'pt-active' : ''}`}>
+										<a href={`/pub/${pubData.slug}?version=${version.id}`} className={`bp3-menu-item bp3-popover-dismiss ${version.isActive ? 'bp3-active' : ''}`}>
 											{dateFormat(version.createdAt, 'mmm dd, yyyy · h:MMTT')}
 											{!version.isPublic && <Icon icon="lock2" />}
 										</a>
@@ -56,9 +56,9 @@ class PubOptionsVersions extends Component {
 					</div>
 					<div className="section">
 						<div className="title">First Published</div>
-						<ul className="pt-menu">
+						<ul className="bp3-menu">
 							<li>
-								<a href={`/pub/${pubData.slug}?version=${versions[versions.length - 1].id}`} className="pt-menu-item pt-popover-dismiss">
+								<a href={`/pub/${pubData.slug}?version=${versions[versions.length - 1].id}`} className="bp3-menu-item bp3-popover-dismiss">
 									{dateFormat(versions[versions.length - 1].createdAt, 'mmm dd, yyyy · h:MMTT')}
 									{!versions[versions.length - 1].isPublic && <Icon icon="lock2" />}
 								</a>
@@ -67,9 +67,9 @@ class PubOptionsVersions extends Component {
 					</div>
 					<div className="section">
 						<div className="title">Most Recently Updated</div>
-						<ul className="pt-menu">
+						<ul className="bp3-menu">
 							<li>
-								<a href={`/pub/${pubData.slug}?version=${versions[0].id}`} className="pt-menu-item pt-popover-dismiss">
+								<a href={`/pub/${pubData.slug}?version=${versions[0].id}`} className="bp3-menu-item bp3-popover-dismiss">
 									{dateFormat(versions[0].createdAt, 'mmm dd, yyyy · h:MMTT')}
 									{!versions[0].isPublic && <Icon icon="lock2" />}
 								</a>

@@ -161,22 +161,22 @@ class NavDrag extends Component {
 														{...providedItem.draggableProps}
 													>
 														<span {...providedItem.dragHandleProps} className="dragger-horiz">
-															<span className="pt-icon-standard pt-icon-drag-handle-vertical" />
+															<span className="bp3-icon-standard bp3-icon-drag-handle-vertical" />
 															{!item.children && !item.isPublic &&
 																<Icon icon="lock2" iconSize={14} />
 															}
 															{item.title}
 															{item.children &&
-																<span className="pt-icon-standard pt-icon-caret-down pt-align-right" />
+																<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 															}
 														</span>
 														<Button
 															onClick={()=>{ this.removeItem(item.id); }}
-															className="pt-icon-small-cross pt-minimal"
+															className="bp3-icon-small-cross bp3-minimal"
 														/>
 
 														{item.children &&
-															<div className="dropdown-wrapper pt-card pt-elevation-2">
+															<div className="dropdown-wrapper bp3-card bp3-elevation-2">
 																<PageAutocomplete
 																	pages={this.props.pages}
 																	usedItems={item.children}
@@ -199,7 +199,7 @@ class NavDrag extends Component {
 																								{...providedItemSub.draggableProps}
 																							>
 																								<span {...providedItemSub.dragHandleProps} className="dragger-vert">
-																									<span className="pt-icon-standard pt-icon-drag-handle-horizontal" />
+																									<span className="bp3-icon-standard bp3-icon-drag-handle-horizontal" />
 																									{!child.children && !child.isPublic &&
 																										<Icon icon="lock2" iconSize={14} />
 																									}
@@ -207,7 +207,7 @@ class NavDrag extends Component {
 																								</span>
 																								<Button
 																									onClick={()=>{ this.removeItem(child.id, item.id); }}
-																									className="pt-minimal pt-icon-small-cross"
+																									className="bp3-minimal bp3-icon-small-cross"
 																								/>
 																							</div>
 																						)}

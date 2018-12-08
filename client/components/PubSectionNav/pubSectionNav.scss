@@ -3,21 +3,21 @@
 	&:not(:first-child) {
 		margin-top: 4em;	
 	}
-	.pt-button-group.pt-fill .pt-button:not(.pt-fixed) {
+	.bp3-button-group.bp3-fill .bp3-button:not(.bp3-fixed) {
 		flex: 0 1 auto;
 		&.dropdown-button {
 			flex: 1 1 auto;
 			width: 100%;
 		}
 	}
-	.pt-popover-wrapper {
+	.bp3-popover-wrapper {
 		flex: 1 1 auto;
 		margin-right: -1px;
 		margin-left: -1px;
 	}
-	.pt-overlay-content {
+	.bp3-overlay-content {
 		width: 100%;
-		.pt-popover {
+		.bp3-popover {
 			width: 100%;
 		}
 	}

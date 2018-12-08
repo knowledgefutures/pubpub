@@ -42,7 +42,7 @@ const PubCollabDropdownPrivacy = function(props) {
 	return (
 		<div className="pub-collab-dropdown-privacy-component">
 			<DropdownButton label={items[props.value].title} icon={items[props.value].icon}>
-				<div className="pt-menu">
+				<div className="bp3-menu">
 					{Object.keys(items).map((key, index, array)=> {
 						const item = items[key];
 						return (

@@ -112,7 +112,7 @@ class PasswordReset extends Component {
 											<Button
 												name="create"
 												type="submit"
-												className="pt-button pt-intent-primary create-account-button"
+												className="bp3-button bp3-intent-primary create-account-button"
 												onClick={this.handlePostPasswordReset}
 												text="Reset Password"
 												disabled={!this.state.email}
@@ -133,7 +133,7 @@ class PasswordReset extends Component {
 
 								{/* Show Error message if invalid hash */}
 								{resetHash && !this.props.passwordResetData.hashIsValid &&
-									<div className="pt-callout pt-intent-danger">
+									<div className="bp3-callout bp3-intent-danger">
 										Invalid hash. Try <a href="/password-reset">resetting your password</a> again.
 									</div>
 								}
@@ -151,7 +151,7 @@ class PasswordReset extends Component {
 											<Button
 												name="create"
 												type="submit"
-												className="pt-button pt-intent-primary create-account-button"
+												className="bp3-button bp3-intent-primary create-account-button"
 												onClick={this.handlePutPasswordReset}
 												text="Set New Password"
 												disabled={!this.state.password}
@@ -170,7 +170,7 @@ class PasswordReset extends Component {
 										action={
 											<AnchorButton
 												href="/login"
-												className="pt-intent-primary pt-large"
+												className="bp3-intent-primary bp3-large"
 												text="Login with new password"
 											/>
 										}

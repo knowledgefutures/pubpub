@@ -50,7 +50,7 @@ class PubOptionsDelete extends Component {
 			<div className="pub-options-delete-component">
 				<h1>Delete Pub</h1>
 
-				<div className="pt-callout pt-intent-danger">
+				<div className="bp3-callout bp3-intent-danger">
 					<p>Deleting a Pub is permanent - it cannot be undone.</p>
 					<p>This will permanantely delete <b>{this.props.pubData.title}</b>, its discussions, versions, and associated metadata.</p>
 					<p>Please type the title of the Pub below to confirm your intention.</p>
@@ -63,7 +63,7 @@ class PubOptionsDelete extends Component {
 
 					<Button
 						type="button"
-						className="pt-intent-danger"
+						className="bp3-intent-danger"
 						text="Delete Pub"
 						loading={this.state.isLoading}
 						onClick={this.handleDelete}

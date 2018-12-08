@@ -56,7 +56,7 @@ class PubSideControlsFootnote extends Component {
 				</div>
 				<textarea
 					placeholder="Enter bibtex, DOI, wikidata url, or bibjson..."
-					className="pt-input pt-fill"
+					className="bp3-input bp3-fill"
 					value={this.state.structuredValue}
 					onChange={this.handleValueChange}
 				/>

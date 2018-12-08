@@ -124,7 +124,7 @@ class PubOptionsSections extends Component {
 				{isDraft &&
 					<div className="save-wrapper">
 						<button
-							className="pt-button add-sections-button"
+							className="bp3-button add-sections-button"
 							onClick={this.handleSectionAdd}
 							type="button"
 						>
@@ -135,7 +135,7 @@ class PubOptionsSections extends Component {
 				<h1>Sections</h1>
 				<p>Sections allow you to break up your pub&apos;s content into multiple pieces. This allows you to create chapters, volumes, etc. for longer documents.</p>
 				{!isDraft && Array.isArray(content) &&
-					<ul className="pt-menu">
+					<ul className="bp3-menu">
 						{content.map((section, index)=> {
 							const split = section.title.split('/');
 							const prefix = split.length > 1
@@ -149,7 +149,7 @@ class PubOptionsSections extends Component {
 									{prefix &&
 										<span className={`section-header ${index === 0 ? 'first' : ''}`}>{prefix}</span>
 									}
-									<a href={`/pub/${this.props.pubData.slug}/${index === 0 ? '' : 'content/'}${section.id}${queryObject.version ? `?version=${queryObject.version}` : ''}`} className={`pt-menu-item pt-popover-dismiss ${activeSectionId === section.id ? 'pt-active' : ''}`}>
+									<a href={`/pub/${this.props.pubData.slug}/${index === 0 ? '' : 'content/'}${section.id}${queryObject.version ? `?version=${queryObject.version}` : ''}`} className={`bp3-menu-item bp3-popover-dismiss ${activeSectionId === section.id ? 'bp3-active' : ''}`}>
 										{title}
 									</a>
 								</li>
@@ -163,7 +163,7 @@ class PubOptionsSections extends Component {
 							<div className="title">
 								{this.state.editIndex === 0 &&
 									<input
-										className="pt-fill pt-input"
+										className="bp3-fill bp3-input"
 										value={sectionsData[0].title}
 										onChange={(evt)=> { this.handleTitleChange(evt, 0); }}
 									/>
@@ -176,14 +176,14 @@ class PubOptionsSections extends Component {
 							</div>
 							{this.state.editIndex === 0 &&
 								<button
-									className="pt-button pt-minimal pt-icon-tick"
+									className="bp3-button bp3-minimal bp3-icon-tick"
 									onClick={()=> { this.handleSetEdit(undefined); }}
 									type="button"
 								/>
 							}
 							{this.state.editIndex !== 0 &&
 								<Button
-									className="pt-minimal"
+									className="bp3-minimal"
 									onClick={()=> { this.handleSetEdit(0); }}
 									icon={<Icon icon="edit2" />}
 								/>
@@ -208,12 +208,12 @@ class PubOptionsSections extends Component {
 															{...providedItem.draggableProps}
 														>
 															<span {...providedItem.dragHandleProps} className="drag">
-																<span className="pt-icon-standard pt-icon-drag-handle-horizontal" />
+																<span className="bp3-icon-standard bp3-icon-drag-handle-horizontal" />
 															</span>
 															<div className="title">
 																{isEditing &&
 																	<input
-																		className="pt-fill pt-input"
+																		className="bp3-fill bp3-input"
 																		value={section.title}
 																		onChange={(evt)=> { this.handleTitleChange(evt, index); }}
 																	/>
@@ -227,20 +227,20 @@ class PubOptionsSections extends Component {
 															</div>
 															{isEditing &&
 																<button
-																	className="pt-button pt-minimal pt-icon-tick"
+																	className="bp3-button bp3-minimal bp3-icon-tick"
 																	onClick={()=> { this.handleSetEdit(undefined); }}
 																	type="button"
 																/>
 															}
 															{!isEditing &&
 																<Button
-																	className="pt-minimal"
+																	className="bp3-minimal"
 																	onClick={()=> { this.handleSetEdit(index); }}
 																	icon={<Icon icon="edit2" />}
 																/>
 															}
 															<button
-																className="pt-button pt-minimal pt-icon-trash pt-intent-danger"
+																className="bp3-button bp3-minimal bp3-icon-trash bp3-intent-danger"
 																onClick={()=> { this.handleSectionRemove(index); }}
 																type="button"
 															/>

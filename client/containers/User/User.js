@@ -110,8 +110,8 @@ class User extends Component {
 								<div className="container narrow nav">
 									<div className="row">
 										<div className="col-12">
-											<div className="pt-callout external-pubs-wrapper">
-												<a href={`https://www.pubpub.org/user/${userData.slug}`} className="pt-button pt-intent-primary">Go to Full Profile</a>
+											<div className="bp3-callout external-pubs-wrapper">
+												<a href={`https://www.pubpub.org/user/${userData.slug}`} className="bp3-button bp3-intent-primary">Go to Full Profile</a>
 												<h5>{externalPubs.length} pub{externalPubs.length === 1 ? '' : 's'} in other communities.</h5>
 												<div>{userData.firstName} has published in other PubPub communities. Click to go to their full profile.</div>
 											</div>
@@ -138,7 +138,7 @@ class User extends Component {
 										visual="widget"
 										title="No Pubs"
 										action={selfProfile && !this.props.locationData.isBasePubPub
-											? <a href="/pub/create" className="pt-button">Create New pub</a>
+											? <a href="/pub/create" className="bp3-button">Create New pub</a>
 											: undefined
 										}
 									/>

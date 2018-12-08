@@ -191,7 +191,7 @@ class DashboardDetails extends Component {
 								Favicon
 								<Tooltip
 									content={<span>Used for browser icons. Must be square.<br />Recommended: 50*50px</span>}
-									tooltipClassName="pt-dark"
+									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -207,7 +207,7 @@ class DashboardDetails extends Component {
 								Preview
 								<Tooltip
 									content={<span>Used as default preview image for social sharing cards.<br />Recommended: 500*500px</span>}
-									tooltipClassName="pt-dark"
+									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -225,7 +225,7 @@ class DashboardDetails extends Component {
 								Header Logo
 								<Tooltip
 									content={<span>Used in the header bar.<br />Recommended: ~40*150px</span>}
-									tooltipClassName="pt-dark"
+									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -245,7 +245,7 @@ class DashboardDetails extends Component {
 								Landing Logo
 								<Tooltip
 									content={<span>Used on the landing page.<br />Recommended: ~200*750px</span>}
-									tooltipClassName="pt-dark"
+									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -265,7 +265,7 @@ class DashboardDetails extends Component {
 								Landing Background
 								<Tooltip
 									content={<span>Used on the landing page.<br />Recommended: ~1200*800px</span>}
-									tooltipClassName="pt-dark"
+									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -285,7 +285,7 @@ class DashboardDetails extends Component {
 								Public &apos;New Pub&apos; button
 								<Tooltip
 									content={<span>Toggles &apos;New Pub&apos; button in header bar.<br />Button will always be available to community admins.</span>}
-									tooltipClassName="pt-dark"
+									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -358,7 +358,7 @@ class DashboardDetails extends Component {
 					<Button
 						name="create"
 						type="submit"
-						className="pt-button pt-intent-primary save-community-button"
+						className="bp3-button bp3-intent-primary save-community-button"
 						onClick={this.handleSaveClick}
 						text="Save Site Details"
 						disabled={!this.state.title || !this.state.subdomain}

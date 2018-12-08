@@ -2,13 +2,13 @@
 	// margin-top: -25px;
 	margin-bottom: 2em;
 	min-height: 1px;
-	.pt-minimal {
+	.bp3-minimal {
 		cursor: pointer;
 	}
-	.pt-fill {
+	.bp3-fill {
 		margin-bottom: 10px;
 	}
-	.pt-menu-item {
+	.bp3-menu-item {
 		display: flex;
 		align-items: center;
 	}
@@ -16,7 +16,7 @@
 		flex-grow: 1;
 		flex-shrink: 1;
 	}
-	.pt-tag {
+	.bp3-tag {
 		margin: 0px 5px 5px 0px;
 	}
 	.color {
@@ -24,14 +24,14 @@
 		width: 20px;
 		margin-right: 10px;
 		border-radius: 2px;
-		.pt-icon-tick {
+		.bp3-icon-tick {
 			padding: 2px;
 			&:before {
 				color: white;
 			}
 		}
 	}
-	.pt-icon-endorsed {
+	.bp3-icon-endorsed {
 		margin-left: 10px;
 		&:before {
 			opacity: 0.25;

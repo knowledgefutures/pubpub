@@ -221,7 +221,7 @@ class PubSideDiscussions extends Component {
 							isNew={true}
 							leftButtons={
 								<Button
-									className="pt-minimal pt-small"
+									className="bp3-minimal bp3-small"
 									onClick={()=> {
 										this.props.setActiveThread(undefined);
 									}}

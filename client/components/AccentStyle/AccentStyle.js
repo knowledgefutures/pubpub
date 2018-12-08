@@ -15,18 +15,18 @@ const AccentStyle = function(props) {
 		<style dangerouslySetInnerHTML={{ __html: `
 			.accent-background { background-color: ${props.accentColor}; } 
 			.accent-color { color: ${props.accentTextColor}; }
-			.pt-button.pt-intent-primary { background-color: ${props.accentActionColor}; color: ${props.accentTextColor}; }
-			.pt-button.pt-intent-primary:hover:not(.pt-disabled) { background-color: ${props.accentHoverColor}; color: ${props.accentTextColor}; }
-			.pt-button.pt-intent-primary:active:not(.pt-disabled), .pt-button.pt-intent-primary.pt-active:not(.pt-disabled) { background-color: ${props.accentColor}; color: ${props.accentTextColor}; }
-			.pt-tag.pt-intent-primary { background: ${props.accentColor}; color: ${props.accentTextColor}; }
-			.pt-tag.pt-minimal.pt-intent-primary { background-color: ${props.accentMinimalColor}; color: inherit; }
-			.accent-color .pt-button:not([class*="pt-intent-"]), .accent-color .pt-button[class*="pt-icon-"]::before { color: inherit; }
+			.bp3-button.bp3-intent-primary { background-color: ${props.accentActionColor}; color: ${props.accentTextColor}; }
+			.bp3-button.bp3-intent-primary:hover:not(.bp3-disabled) { background-color: ${props.accentHoverColor}; color: ${props.accentTextColor}; }
+			.bp3-button.bp3-intent-primary:active:not(.bp3-disabled), .bp3-button.bp3-intent-primary.bp3-active:not(.bp3-disabled) { background-color: ${props.accentColor}; color: ${props.accentTextColor}; }
+			.bp3-tag.bp3-intent-primary { background: ${props.accentColor}; color: ${props.accentTextColor}; }
+			.bp3-tag.bp3-minimal.bp3-intent-primary { background-color: ${props.accentMinimalColor}; color: inherit; }
+			.accent-color .bp3-button:not([class*="bp3-intent-"]), .accent-color .bp3-button[class*="bp3-icon-"]::before { color: inherit; }
 			.accent-color a, .accent-color a:hover { color: inherit; }
-			.pt-tab[aria-selected="true"], .pt-tab:not([aria-selected="true"]):hover { box-shadow: inset 0 -3px 0 ${props.accentMinimalColor}; }
-			.pt-tab[aria-selected="true"] { box-shadow: inset 0 -3px 0 ${props.accentColor}; }
+			.bp3-tab[aria-selected="true"], .bp3-tab:not([aria-selected="true"]):hover { box-shadow: inset 0 -3px 0 ${props.accentMinimalColor}; }
+			.bp3-tab[aria-selected="true"] { box-shadow: inset 0 -3px 0 ${props.accentColor}; }
 			.thread:hover:after { background-color: ${props.accentColor}; }
-			.pt-slider-progress, .pt-dark .pt-slider-progress { background: ${props.accentColor}; }
-			.pt-slider-handle .pt-slider-label { background: ${props.accentColor}; color: ${props.accentTextColor}; }
+			.bp3-slider-progress, .bp3-dark .bp3-slider-progress { background: ${props.accentColor}; }
+			.bp3-slider-handle .bp3-slider-label { background: ${props.accentColor}; color: ${props.accentTextColor}; }
 			.footnote-text a { text-decoration: underline; }
 			.highlight-dot-wrapper .highlight-dot { background-color: ${props.accentColor}; }
 		` }}

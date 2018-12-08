@@ -1,15 +1,15 @@
 .image-upload-component {
 	margin-bottom: 15px;
-	.upload-button, .upload-button.pt-disabled, .image-wrapper {
+	.upload-button, .upload-button.bp3-disabled, .image-wrapper {
 		display: inline-flex;
 		margin-top: 0.5em;
-		svg.pt-icon {
+		svg {
 			height: 30px;
 			width: 30px;
 			opacity: 0.75;
 		}
 	}
-	.upload-button, .upload-button.pt-disabled {
+	.upload-button, .upload-button.bp3-disabled {
 		background-color: #F0F0F0;
 	}
 	.image-wrapper {
@@ -30,7 +30,7 @@
 		margin: 0.5em 0em;
 		display: inline-block;
 		width: 30px;
-		.pt-button {
+		.bp3-button {
 			display: block;
 		}
 	}

@@ -97,9 +97,9 @@ const PubOptions = (props)=> {
 			<div className="pub-options-component">
 				{/* Left Navigation Buttons */}
 				<div className="left-column" style={leftColumnStyle}>
-					<ul className="pt-menu">
+					<ul className="bp3-menu">
 						{props.pubData.isManager &&
-							<li className="pt-menu-header"><h6>Admin</h6></li>
+							<li className="bp3-menu-header"><h6>Admin</h6></li>
 						}
 						{props.pubData.isManager && adminModes.map((mode)=> {
 							return (
@@ -107,7 +107,7 @@ const PubOptions = (props)=> {
 									<button
 										type="button"
 										onClick={()=> { props.setOptionsMode(mode); }}
-										className={`pt-menu-item ${optionsMode === mode ? 'pt-active' : ''}`}
+										className={`bp3-menu-item ${optionsMode === mode ? 'bp3-active' : ''}`}
 										tabIndex="0"
 									>
 										{mode}
@@ -116,7 +116,7 @@ const PubOptions = (props)=> {
 							);
 						})}
 						{props.pubData.isManager &&
-							<li className="pt-menu-header"><h6>Public</h6></li>
+							<li className="bp3-menu-header"><h6>Public</h6></li>
 						}
 						{modes.map((mode)=> {
 							return (
@@ -124,7 +124,7 @@ const PubOptions = (props)=> {
 									<button
 										type="button"
 										onClick={()=> { props.setOptionsMode(mode); }}
-										className={`pt-menu-item ${optionsMode === mode ? 'pt-active' : ''}`}
+										className={`bp3-menu-item ${optionsMode === mode ? 'bp3-active' : ''}`}
 										tabIndex="0"
 									>
 										{mode}

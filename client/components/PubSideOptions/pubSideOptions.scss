@@ -15,7 +15,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		.pt-button {
+		.bp3-button {
 			padding: 0em;
 			min-height: auto;
 			min-width: auto;
@@ -24,7 +24,7 @@
 				text-decoration: underline;
 			}
 		}
-		.pt-icon {
+		.bp3-icon {
 			opacity: 0.75;
 		}
 	}
@@ -34,7 +34,7 @@
 		align-items: center;
 		padding: 1em 0em;
 		border-bottom: 1px solid #CCC;
-		.pt-popover-wrapper {
+		.bp3-popover-wrapper {
 			flex-grow: 1;
 			flex-shrink: 1;
 			margin-right: 1em;

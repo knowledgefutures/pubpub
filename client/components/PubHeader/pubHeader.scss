@@ -11,25 +11,25 @@
 		&.dim {
 			background-color: rgba(0, 0, 0, 0.5);
 			text-shadow: 0px 0px 2px black;
-			.pt-tag {
+			.bp3-tag {
 			    background-color: rgba(255,255,255,0.3)
 			}
-			a:not(.pt-button), .pt-tag, .pt-icon-standard:before, .pt-button:before, .pt-breadcrumb, .pt-breadcrumbs li:after {
+			a:not(.bp3-button), .bp3-tag, .bp3-icon-standard:before, .bp3-button:before, .bp3-breadcrumb, .bp3-breadcrumbs li:after {
 				color: white;
 			}
-			a.pt-button {
+			a.bp3-button {
 				text-shadow: 0px 0px 0px transparent;
 			}
-			.pt-editable-text {
+			.bp3-editable-text {
 				&:hover:before {
 					box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255), inset 0 0 0 1px rgba(247, 252, 255, 0.54);
 					background-color: transparent;
 				}
-				&.pt-editable-text-editing:before {
+				&.bp3-editable-text-editing:before {
 					box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255), inset 0 0 0 1px rgba(247, 252, 255, 0.54);
 					background-color: rgba(0, 0, 0, 0.35);
 				}
-				&.pt-editable-text-placeholder > .pt-editable-text-content, ::placeholder {
+				&.bp3-editable-text-placeholder > .bp3-editable-text-content, ::placeholder {
 					color: inherit;
 					opacity: 0.75;
 				}
@@ -45,7 +45,7 @@
 			a:hover {
 				text-decoration: none;
 			}
-			.pt-tag {
+			.bp3-tag {
 				margin: 6px 6px 0px 0px;
 			}
 		}
@@ -98,7 +98,7 @@
 		font-weight: 200;
 
 		padding-top: 10px;
-		.pt-icon-standard {
+		.bp3-icon-standard {
 			padding-right: 0.5em;
 		}
 		.detail-button {
@@ -118,11 +118,11 @@
 			}
 		}
 		.versions {
-			.pt-icon:first-child {
+			.bp3-icon:first-child {
 				margin-top: -5px;
 				margin-right: 3px;
 			}
-			.pt-icon:not(:first-child) {
+			.bp3-icon:not(:first-child) {
 				opacity: 0.6;
 				margin-left: 3px;
 			}
@@ -139,7 +139,7 @@
 		h1 {
 			padding: 20px 0px;
 		}
-		.pt-breadcrumb {
+		.bp3-breadcrumb {
 			text-transform: capitalize;
 		}
 	}
@@ -147,7 +147,7 @@
 
 .versions-popover {
 	color: red;
-	.pt-icon {
+	.bp3-icon {
 		margin-top: 0px;
 		margin-left: 5px;	
 	}

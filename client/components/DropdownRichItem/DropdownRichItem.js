@@ -21,7 +21,7 @@ const defaultProps = {
 
 const DropdownRichItem = function(props) {
 	return (
-		<div role="button" tabIndex={-1} className={`dropdown-rich-item-component ${props.hideBottomBorder ? 'no-border' : ''} pt-menu-item pt-popover-dismiss`} onClick={props.onClick}>
+		<div role="button" tabIndex={-1} className={`dropdown-rich-item-component ${props.hideBottomBorder ? 'no-border' : ''} bp3-menu-item bp3-popover-dismiss`} onClick={props.onClick}>
 			{props.icon &&
 				<Icon icon={props.icon} />
 			}

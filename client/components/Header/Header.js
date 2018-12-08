@@ -114,32 +114,32 @@ class Header extends Component {
 
 									{isBasePubPub &&
 										[
-											<a href="/about" role="button" tabIndex="0" className="hide-on-mobile pt-button pt-large pt-minimal">About</a>,
-											/* <a href="/features" role="button" tabIndex="0" className="pt-button pt-large pt-minimal">Features</a>, */
-											<a href="/pricing" role="button" tabIndex="0" className="hide-on-mobile pt-button pt-large pt-minimal">Pricing</a>,
-											<a href="/search" role="button" tabIndex="0" className="hide-on-mobile pt-button pt-large pt-minimal">Search</a>,
-											<a href="mailto:team@pubpub.org" target="_blank" rel="noopener noreferrer" role="button" tabIndex="0" className="hide-on-mobile pt-button pt-large pt-minimal">Contact</a>,
+											<a href="/about" role="button" tabIndex="0" className="hide-on-mobile bp3-button bp3-large bp3-minimal">About</a>,
+											/* <a href="/features" role="button" tabIndex="0" className="bp3-button bp3-large bp3-minimal">Features</a>, */
+											<a href="/pricing" role="button" tabIndex="0" className="hide-on-mobile bp3-button bp3-large bp3-minimal">Pricing</a>,
+											<a href="/search" role="button" tabIndex="0" className="hide-on-mobile bp3-button bp3-large bp3-minimal">Search</a>,
+											<a href="mailto:team@pubpub.org" target="_blank" rel="noopener noreferrer" role="button" tabIndex="0" className="hide-on-mobile bp3-button bp3-large bp3-minimal">Contact</a>,
 											<span className="hide-on-mobile separator">·</span>,
 										]
 									}
 									{/* Search button */}
-									{/* <a href="/search" role="button" tabIndex="0" className="pt-button pt-large pt-minimal pt-icon-search" /> */}
-									{/* <a className="pt-button pt-large pt-minimal">Search</a> */}
+									{/* <a href="/search" role="button" tabIndex="0" className="bp3-button bp3-large bp3-minimal bp3-icon-search" /> */}
+									{/* <a className="bp3-button bp3-large bp3-minimal">Search</a> */}
 
 									{/* Dashboard panel button */}
 									{!isBasePubPub && loggedIn && (!communityData.hideCreatePubButton || isAdmin) &&
 										<Button
-											className="pt-large pt-minimal nav-link"
+											className="bp3-large bp3-minimal nav-link"
 											text="New Pub"
 											onClick={this.createPub}
 											loading={this.state.isLoading}
 										/>
 									}
 									{!isBasePubPub &&
-										<a href="/search" role="button" tabIndex="0" className="hide-on-mobile pt-button pt-large pt-minimal">Search</a>
+										<a href="/search" role="button" tabIndex="0" className="hide-on-mobile bp3-button bp3-large bp3-minimal">Search</a>
 									}
 									{isAdmin &&
-										<a href="/dashboard" className="pt-button pt-large pt-minimal">Manage</a>
+										<a href="/dashboard" className="bp3-button bp3-large bp3-minimal">Manage</a>
 									}
 									{/* User avatar and menu */}
 									{loggedIn &&
@@ -147,7 +147,7 @@ class Header extends Component {
 											content={
 												<Menu>
 													<li>
-														<a href={`/user/${this.props.loginData.slug}`} className="pt-menu-item pt-popover-dismiss">
+														<a href={`/user/${this.props.loginData.slug}`} className="bp3-menu-item bp3-popover-dismiss">
 															<div>{this.props.loginData.fullName}</div>
 															<div className="subtext">View Profile</div>
 														</a>
@@ -155,14 +155,14 @@ class Header extends Component {
 													<MenuDivider />
 													{/* !isBasePubPub &&
 														<li>
-															<a href="/pub/create" className="pt-menu-item pt-popover-dismiss">
+															<a href="/pub/create" className="bp3-menu-item bp3-popover-dismiss">
 																Create New Pub
 															</a>
 														</li>
 													*/ }
 													{/* !isBasePubPub && isAdmin &&
 														<li>
-															<a href="/dashboard" className="pt-menu-item pt-popover-dismiss">
+															<a href="/dashboard" className="bp3-menu-item bp3-popover-dismiss">
 																Manage Community
 															</a>
 														</li>
@@ -175,7 +175,7 @@ class Header extends Component {
 											transitionDuration={-1}
 											inheritDarkTheme={false}
 										>
-											<button type="button" className="pt-button pt-large pt-minimal avatar-button">
+											<button type="button" className="bp3-button bp3-large bp3-minimal avatar-button">
 												<Avatar
 													userInitials={this.props.loginData.initials}
 													userAvatar={this.props.loginData.avatar}
@@ -187,7 +187,7 @@ class Header extends Component {
 
 									{/* Login or Signup button */}
 									{!loggedIn &&
-										<a href={`/login${redirectString}`} className="pt-button pt-large pt-minimal">Login or Signup</a>
+										<a href={`/login${redirectString}`} className="bp3-button bp3-large bp3-minimal">Login or Signup</a>
 									}
 								</div>
 							</div>

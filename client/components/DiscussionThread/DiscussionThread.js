@@ -165,7 +165,7 @@ class DiscussionThread extends Component {
 									return 0;
 								}).map((labelId)=> {
 									const label = labelsById[labelId];
-									return <span className="pt-tag" style={{ backgroundColor: label.color }}>{label.title}</span>;
+									return <span className="bp3-tag" style={{ backgroundColor: label.color }}>{label.title}</span>;
 								})}
 							</div>
 						}
@@ -206,19 +206,19 @@ class DiscussionThread extends Component {
 					<div className={`full ${this.props.isMinimal ? 'minimal' : ''}`}>
 						<div className="collapse-wrapper">
 							<Button
-								className="pt-minimal pt-fill"
+								className="bp3-minimal bp3-fill"
 								onClick={this.handleExpand}
 								text="Collapse Thread"
 							/>
 						</div>
 						{isArchived &&
-							<div className="pt-callout pt-intent-danger">
+							<div className="bp3-callout bp3-intent-danger">
 								{!sortedDiscussions[0].submitHash && 'Thread is Archived'}
 								{canManageThread &&
 									<Button
 										type="button"
 										text="Unarchive"
-										className="pt-small"
+										className="bp3-small"
 										loading={this.state.isLoadingArchive}
 										onClick={this.archiveDiscussion}
 									/>
@@ -226,7 +226,7 @@ class DiscussionThread extends Component {
 							</div>
 						}
 						{canManageThread && !this.state.isEditing && !isArchived &&
-							<div className="thread-buttons pt-button-group pt-small">
+							<div className="thread-buttons bp3-button-group bp3-small">
 								<Button
 									text="Edit"
 									onClick={()=> {
@@ -247,13 +247,13 @@ class DiscussionThread extends Component {
 									onChange={(evt)=> {
 										this.setState({ title: evt.target.value });
 									}}
-									className="pt-input pt-fill"
+									className="bp3-input bp3-fill"
 									type="text"
 								/>
 								<div className="editing-buttons">
 									<Button
 										text="Cancel Edit"
-										className="pt-small"
+										className="bp3-small"
 										onClick={()=> {
 											this.setState({ isEditing: false });
 										}}
@@ -262,7 +262,7 @@ class DiscussionThread extends Component {
 										name="submit"
 										type="submit"
 										text="Edit Title"
-										className="pt-small pt-intent-primary"
+										className="bp3-small bp3-intent-primary"
 										onClick={this.handleThreadEdit}
 										loading={this.state.isLoadingThreadEdit}
 									/>
@@ -305,7 +305,7 @@ class DiscussionThread extends Component {
 									/>
 									: <AnchorButton
 										href={`/login?redirect=${this.props.locationData.pathpathname}`}
-										className="pt-fill"
+										className="bp3-fill"
 										text="Login to Reply"
 									/>
 								}

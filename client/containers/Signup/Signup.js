@@ -76,7 +76,7 @@ class Signup extends Component {
 											<Button
 												name="signup"
 												type="submit"
-												className="pt-button pt-intent-primary"
+												className="bp3-button bp3-intent-primary"
 												onClick={this.onSignupSubmit}
 												text="Signup"
 												disabled={!this.state.email}
@@ -101,7 +101,7 @@ class Signup extends Component {
 											<Button
 												name="resendEmail"
 												type="button"
-												className="pt-button"
+												className="bp3-button"
 												onClick={this.onSignupSubmit}
 												text="Resend Email"
 												loading={this.state.postSignupIsLoading}

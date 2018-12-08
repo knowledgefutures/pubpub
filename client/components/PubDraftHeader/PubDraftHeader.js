@@ -270,14 +270,14 @@ class PubDraftHeader extends Component {
 								</div>
 								{pubData.isManager &&
 									<div className="right-section">
-										<button className="pt-button pt-intent-primary pt-small" type="button" onClick={()=> { this.props.setOptionsMode('saveVersion'); }}>Save Version</button>
+										<button className="bp3-button bp3-intent-primary bp3-small" type="button" onClick={()=> { this.props.setOptionsMode('saveVersion'); }}>Save Version</button>
 									</div>
 								}
 							</div>
 							<div className="col-12">
 								{viewOnly &&
 									<div className="left-section">
-										<div className="pt-callout pt-intent-warning">
+										<div className="bp3-callout bp3-intent-warning">
 											<b>Read Only</b> You have view permissions to the working draft but cannot edit it.
 										</div>
 									</div>
@@ -289,7 +289,7 @@ class PubDraftHeader extends Component {
 											return (
 												<Button
 													key={item.key}
-													className="pt-minimal menu-button"
+													className="bp3-minimal menu-button"
 													icon={item.icon}
 													active={menuItem.isActive}
 													onClick={menuItem.run}
@@ -314,7 +314,7 @@ class PubDraftHeader extends Component {
 												};
 												return (
 													<label
-														className={`pt-menu-item insert-menu-item ${this.state.insertFunction ? '' : ' pt-popover-dismiss'}`}
+														className={`bp3-menu-item insert-menu-item ${this.state.insertFunction ? '' : ' bp3-popover-dismiss'}`}
 														key={item.key}
 														onClick={()=> {
 															this.handleInsertFunction(item);
@@ -325,7 +325,7 @@ class PubDraftHeader extends Component {
 														{item.icon}
 														<span>{item.title}</span>
 														{!!this.state.insertLoading && item.key === this.state.insertKey &&
-															<span className="pt-menu-item-label">
+															<span className="bp3-menu-item-label">
 																<Spinner small={true} />
 															</span>
 														}
@@ -355,7 +355,7 @@ class PubDraftHeader extends Component {
 											<div className="avatar-wrapper" key={`present-avatar-${collaborator.id}`}>
 												<Tooltip
 													content={collaborator.name}
-													tooltipClassName="pt-dark"
+													tooltipClassName="bp3-dark"
 												>
 													<Avatar
 														/* Cast userInitials to string since
@@ -370,9 +370,9 @@ class PubDraftHeader extends Component {
 											</div>
 										);
 									})}
-									{/* <button className="pt-button pt-small" type="button">
+									{/* <button className="bp3-button bp3-small" type="button">
 										Editing
-										<span className="pt-icon-standard pt-icon-caret-down pt-align-right" />
+										<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 									</button> */}
 								</div>
 							</div>

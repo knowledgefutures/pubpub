@@ -95,7 +95,7 @@ class DashboardTeam extends Component {
 							<div className="remove-wrapper">
 								<button
 									type="button"
-									className="pt-button pt-minimal"
+									className="bp3-button bp3-minimal"
 									onClick={()=>{ this.handleAdminRemove(admin.id); }}
 								>
 									Remove

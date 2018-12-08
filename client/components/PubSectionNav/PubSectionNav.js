@@ -34,10 +34,10 @@ const PubSectionNav = function(props) {
 		: '';
 	return (
 		<div className="pub-section-nav-component">
-			<div className="pt-button-group pt-fill pt-large">
+			<div className="bp3-button-group bp3-fill bp3-large">
 				<a
 					href={`/pub/${pubData.slug}/${pubData.isDraft ? 'draft/' : ''}${prevSectionId ? 'content/' : ''}${prevSectionId}${props.queryObject.version ? `?version=${props.queryObject.version}` : ''}`}
-					className={`pt-button pt-icon-arrow-left ${prevSectionId || currentSectionIndex > 0 ? '' : ' disabled'}`}
+					className={`bp3-button bp3-icon-arrow-left ${prevSectionId || currentSectionIndex > 0 ? '' : ' disabled'}`}
 				>
 					Previous
 				</a>
@@ -45,23 +45,23 @@ const PubSectionNav = function(props) {
 					label={sectionsData[currentSectionIndex].title}
 					usePortal={false}
 				>
-					<ul className="pt-menu pt-large">
+					<ul className="bp3-menu bp3-large">
 						{sectionsData.map((section, index)=> {
 							const isActive = index === currentSectionIndex;
 							const href = `/pub/${pubData.slug}/${pubData.isDraft ? 'draft/' : ''}content/${section.id}${props.queryObject.version ? `?version=${props.queryObject.version}` : ''}`;
 							return (
 								<li key={`section-link-${section.id}`}>
-									<a className={`pt-menu-item ${isActive ? 'pt-active' : ''}`} tabIndex="0" href={href}>
+									<a className={`bp3-menu-item ${isActive ? 'bp3-active' : ''}`} tabIndex="0" href={href}>
 										{section.title}
 									</a>
 								</li>
 							);
 						})}
 						{pubData.isDraft && (pubData.isDraftEditor || pubData.isManager) && [
-							<li className="pt-menu-divider" />,
+							<li className="bp3-menu-divider" />,
 							<li>
 								<Button
-									className="pt-menu-item pt-popover-dismiss pt-minimal"
+									className="bp3-menu-item bp3-popover-dismiss bp3-minimal"
 									onClick={()=> { props.setOptionsMode('sections'); }}
 									text="Manage Sections"
 								/>
@@ -71,10 +71,10 @@ const PubSectionNav = function(props) {
 				</DropdownButton>
 				<a
 					href={`/pub/${pubData.slug}/${pubData.isDraft ? 'draft/' : ''}content/${nextSectionId}${props.queryObject.version ? `?version=${props.queryObject.version}` : ''}`}
-					className={`pt-button ${nextSectionId ? '' : ' disabled'}`}
+					className={`bp3-button ${nextSectionId ? '' : ' disabled'}`}
 				>
 					Next
-					<span className="pt-icon-standard pt-icon-arrow-right pt-align-right" />
+					<span className="bp3-icon-standard bp3-icon-arrow-right bp3-align-right" />
 				</a>
 			</div>
 		</div>

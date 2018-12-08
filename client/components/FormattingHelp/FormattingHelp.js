@@ -15,15 +15,15 @@ const FormattingHelp = function() {
 		pointerEvents: 'none',
 	};
 	return (
-		<ul className="pt-menu">
-			<li className="pt-menu-header">
+		<ul className="bp3-menu">
+			<li className="bp3-menu-header">
 				<h6>Formatting Shortcuts</h6>
 			</li>
 			{items.map((item)=> {
 				return (
-					<li className="pt-menu-item" key={`formatting-item-${item.id}`} style={itemStyle}>
+					<li className="bp3-menu-item" key={`formatting-item-${item.id}`} style={itemStyle}>
 						<span>{item.title}</span>
-						<span className="pt-menu-item-label">{item.shortcut}</span>
+						<span className="bp3-menu-item-label">{item.shortcut}</span>
 					</li>
 				);
 			})}

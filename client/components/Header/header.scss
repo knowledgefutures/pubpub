@@ -12,7 +12,7 @@
 	.header-gradient {
 		background-image: linear-gradient(-180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.0) 100%);
 		color: white;
-		.pt-button:not([class*="pt-intent-"]), .pt-button[class*="pt-icon-"]::before { color: inherit; }
+		.bp3-button:not([class*="bp3-intent-"]), .bp3-button[class*="bp3-icon-"]::before { color: inherit; }
 	}
 	.separator { 
 		color: inherit;
@@ -41,10 +41,10 @@
 		font-size: 30px;
 		letter-spacing: 1px;
 	}
-	.avatar-button.pt-button.pt-large, .pt-button.pt-large.pt-minimal {
+	.avatar-button.bp3-button.bp3-large, .bp3-button.bp3-large.bp3-minimal {
 		padding: 0px 5px;
 	}
-	a.pt-button.pt-large.pt-minimal, button.pt-button.pt-large.pt-minimal.nav-link {
+	a.bp3-button.bp3-large.bp3-minimal, button.bp3-button.bp3-large.bp3-minimal.nav-link {
 		padding: 0px 10px;
 	}
 	.avatar-button {

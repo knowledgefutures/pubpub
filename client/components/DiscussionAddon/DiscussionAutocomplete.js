@@ -84,7 +84,7 @@ class DiscussionAutocomplete extends Component {
 						const discussion = item[0];
 						return (
 							<li key={item[0].id}>
-								<div role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'pt-menu-item pt-active' : 'pt-menu-item'}>
+								<div role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}>
 									<div className="avatar-wrapper">
 										<Avatar
 											width={20}
@@ -103,7 +103,7 @@ class DiscussionAutocomplete extends Component {
 					}}
 					onItemSelect={this.handleSelect}
 					noResults={<MenuItem disabled text="No results" />}
-					popoverProps={{ popoverClassName: 'pt-minimal discussion-autocomplete-popover' }}
+					popoverProps={{ popoverClassName: 'bp3-minimal discussion-autocomplete-popover' }}
 				/>
 			</div>
 		);

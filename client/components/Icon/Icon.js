@@ -105,15 +105,15 @@ const Icon = function(props) {
 	if (customIcons[props.icon]) {
 		const viewbox = customIcons[props.icon].viewboxDefault;
 		return (
-			<svg
-				className="pt-icon"
-				data-icon={props.icon.toLowerCase().replace(/_/gi, '-')}
-				width={`${props.iconSize}px`}
-				height={`${props.iconSize}px`}
-				viewBox={`0 0 ${viewbox} ${viewbox}`}
-			>
-				{customIcons[props.icon].path}
-			</svg>
+			<span className="bp3-icon" data-icon={props.icon.toLowerCase().replace(/_/gi, '-')}>
+				<svg
+					width={`${props.iconSize}px`}
+					height={`${props.iconSize}px`}
+					viewBox={`0 0 ${viewbox} ${viewbox}`}
+				>
+					{customIcons[props.icon].path}
+				</svg>
+			</span>
 		);
 	}
 

@@ -90,13 +90,13 @@ class PubSideOptions extends Component {
 				<div className="side-options-wrapper" style={wrapperStyle}>
 					<div className="links">
 						<AnchorButton
-							className="pt-minimal"
+							className="bp3-minimal"
 							onClick={()=> { this.props.setOptionsMode('cite'); }}
 							text="Cite"
 						/>
 						<span>·</span>
 						<AnchorButton
-							className="pt-minimal"
+							className="bp3-minimal"
 							onClick={()=> { this.props.setOptionsMode('export'); }}
 							text="Export"
 						/>
@@ -124,12 +124,12 @@ class PubSideOptions extends Component {
 							// isRightAligned={true}
 							isSmall={true}
 						>
-							<ul className="channel-permissions-dropdown pt-menu">
+							<ul className="channel-permissions-dropdown bp3-menu">
 								{discussionChannels.map((channel)=> {
 									return (
 										<li key={`channel-option-${channel.title}`}>
 											<button
-												className="pt-menu-item pt-popover-dismiss"
+												className="bp3-menu-item bp3-popover-dismiss"
 												onClick={()=> {
 													this.props.setDiscussionChannel(channel.title);
 												}}
@@ -140,7 +140,7 @@ class PubSideOptions extends Component {
 										</li>
 									);
 								})}
-								<li className="pt-menu-divider" />
+								<li className="bp3-menu-divider" />
 								<li>
 									<Button
 										minimal={true}

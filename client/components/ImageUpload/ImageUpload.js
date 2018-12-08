@@ -122,13 +122,13 @@ class ImageUpload extends Component {
 				<label htmlFor={`input-${this.props.htmlFor}`}>
 					{this.props.label}
 					{this.props.isRequired &&
-						<span className="pt-text-muted required-text"> (required)</span>
+						<span className="bp3-text-muted required-text"> (required)</span>
 					}
 					<br />
 
 					{(this.state.uploading || !this.state.imageBlob) &&
 						<AnchorButton
-							className="upload-button pt-minimal"
+							className="upload-button bp3-minimal"
 							style={buttonStyle}
 							loading={this.state.uploading}
 							icon="media"
@@ -142,13 +142,13 @@ class ImageUpload extends Component {
 					<div className="image-options">
 						{!this.state.uploading && this.state.imageBlob &&
 							<AnchorButton
-								className="pt-minimal"
+								className="bp3-minimal"
 								icon={<Icon icon="edit2" />}
 							/>
 						}
 						{!this.state.uploading && this.state.imageBlob && this.props.canClear &&
 							<AnchorButton
-								className="pt-minimal pt-intent-danger"
+								className="bp3-minimal bp3-intent-danger"
 								icon="trash"
 								onClick={this.clearImage}
 							/>

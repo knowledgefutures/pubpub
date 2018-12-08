@@ -123,15 +123,15 @@ class PubOptionsExport extends Component {
 			<div className="pub-options-export-component">
 				<h1>Export Pub</h1>
 
-				<div className="pt-callout working-draft pt-intent-warning" style={{ marginBottom: '2em' }}>
+				<div className="bp3-callout working-draft bp3-intent-warning" style={{ marginBottom: '2em' }}>
 					Export and import are still under development. Please excuse any bugs as we work to stabilize the functionality.
 				</div>
-				<div className="pt-button-group">
+				<div className="bp3-button-group">
 					{types.map((type)=> {
 						return (
 							<button
 								key={type.format}
-								className={`pt-button ${this.state.type.format === type.format ? 'pt-active' : ''}`}
+								className={`bp3-button ${this.state.type.format === type.format ? 'bp3-active' : ''}`}
 								onClick={()=> {
 									this.setState({ type: type });
 								}}
@@ -146,7 +146,7 @@ class PubOptionsExport extends Component {
 				<div>
 					<Button
 						type="button"
-						className="pt-intent-primary pt-large"
+						className="bp3-intent-primary bp3-large"
 						text={`Export ${this.state.type.title} File`}
 						loading={this.state.isLoading}
 						onClick={this.handleExport}

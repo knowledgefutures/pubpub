@@ -87,11 +87,11 @@ class PubBody extends Component {
 		return (
 			<div className="pub-body-component">
 				{this.props.showWorkingDraftButton &&
-					<div className="pt-callout working-draft pt-intent-warning" style={{ marginBottom: '2em' }}>
+					<div className="bp3-callout working-draft bp3-intent-warning" style={{ marginBottom: '2em' }}>
 						<span>You are viewing a saved version</span>
 						<a
 							href={`/pub/${this.props.slug}/draft`}
-							className="pt-button"
+							className="bp3-button"
 						>
 							Go to Working Draft
 						</a>

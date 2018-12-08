@@ -257,7 +257,7 @@ class PubOptionsSharing extends Component {
 						{/* Dedicated card for Community Admin manager permissions */}
 						<PubOptionsSharingCard
 							content={[
-								<span className="pt-icon-standard pt-icon-people" />,
+								<span className="bp3-icon-standard bp3-icon-people" />,
 								<span>Community Admins</span>
 							]}
 							options={
@@ -289,7 +289,7 @@ class PubOptionsSharing extends Component {
 									]}
 									options={managers.length > 1
 										? <button
-											className="pt-button pt-minimal pt-small pt-icon-small-cross"
+											className="bp3-button bp3-minimal bp3-small bp3-icon-small-cross"
 											type="button"
 											onClick={()=> {
 												this.handleRemoveManager(manager.id);
@@ -396,7 +396,7 @@ class PubOptionsSharing extends Component {
 								{showPreviewAcess &&
 									<div className="access-preview">
 										{communityAdminsHavePermission &&
-											<span className="pt-icon-standard pt-icon-people" />
+											<span className="bp3-icon-standard bp3-icon-people" />
 										}
 										{pubData.managers.concat(pubData.versionPermissions.filter((versionPermission)=> {
 											return !managerIds[versionPermission.user.id];
@@ -421,7 +421,7 @@ class PubOptionsSharing extends Component {
 													<span>Managers</span>,
 													<span className="managers-preview">
 														{communityAdminsHaveFullAccess &&
-															<span className="pt-icon-standard pt-icon-people" />
+															<span className="bp3-icon-standard bp3-icon-people" />
 														}
 														{managers.slice(0, 2).map((manager)=> {
 															return <Avatar width={20} userInitials={manager.user.initials} userAvatar={manager.user.avatar} />;
@@ -441,7 +441,7 @@ class PubOptionsSharing extends Component {
 											{!pubData.isCommunityAdminManaged &&
 												<PubOptionsSharingCard
 													content={[
-														<span className="pt-icon-standard pt-icon-people" />,
+														<span className="bp3-icon-standard bp3-icon-people" />,
 														<span>Community Admins</span>
 													]}
 													options={isDraft
@@ -505,13 +505,13 @@ class PubOptionsSharing extends Component {
 																)
 																: null,
 															<button
-																className="pt-button pt-minimal pt-small"
+																className="bp3-button bp3-minimal bp3-small"
 																type="button"
 																onClick={()=> {
 																	this.handleVersionPermissionDelete(versionPermission.id || null);
 																}}
 															>
-																<span className="pt-icon-standard pt-icon-small-cross" />
+																<span className="bp3-icon-standard bp3-icon-small-cross" />
 															</button>
 														]}
 													/>

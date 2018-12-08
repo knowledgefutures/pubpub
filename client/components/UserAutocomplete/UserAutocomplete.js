@@ -77,7 +77,7 @@ class UserAutocomplete extends Component {
 					items={this.state.items}
 					inputProps={{
 						placeholder: this.props.placeholder,
-						className: 'pt-large',
+						className: 'bp3-large',
 						inputRef: (ref)=> { this.inputRef = ref; },
 					}}
 					itemListPredicate={this.filterItems}
@@ -89,7 +89,7 @@ class UserAutocomplete extends Component {
 									type="button"
 									tabIndex={-1}
 									onClick={handleClick}
-									className={modifiers.active ? 'pt-menu-item pt-active' : 'pt-menu-item'}
+									className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
 								>
 									{item.fullName && <Avatar userInitials={item.initials} userAvatar={item.avatar} width={25} />}
 									{item.name && <span>Add collaborator named: </span>}
@@ -103,7 +103,7 @@ class UserAutocomplete extends Component {
 					noResults={<MenuItem disabled text="No results" />}
 					popoverProps={{
 						isOpen: this.state.queryValue,
-						popoverClassName: 'pt-minimal user-autocomplete-popover',
+						popoverClassName: 'bp3-minimal user-autocomplete-popover',
 						position: Position.BOTTOM_LEFT,
 						modifiers: {
 							preventOverflow: { enabled: false },

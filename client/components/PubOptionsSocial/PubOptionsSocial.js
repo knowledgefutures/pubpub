@@ -61,7 +61,7 @@ class PubOptionsSocial extends Component {
 				<div className="buttons">
 					{links.map((link)=> {
 						return (
-							<a href={link.url} className="pt-button pt-large" rel="noopener noreferrer" target="_blank" key={link.title}>
+							<a href={link.url} className="bp3-button bp3-large" rel="noopener noreferrer" target="_blank" key={link.title}>
 								{link.icon}
 								{link.title}
 							</a>

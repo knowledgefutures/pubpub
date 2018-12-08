@@ -197,7 +197,7 @@ class UserCreate extends Component {
 								</div>
 							}
 							visual="error"
-							action={<a href="/signup" className="pt-button">Signup</a>}
+							action={<a href="/signup" className="bp3-button">Signup</a>}
 						/>
 					}
 
@@ -266,12 +266,12 @@ class UserCreate extends Component {
 
 										{!!expandables.filter(item => !item.isVisible).length &&
 											<InputField label="Add More">
-												<div className="pt-button-group">
+												<div className="bp3-button-group">
 													{expandables.filter((item)=> {
 														return !item.isVisible;
 													}).map((item)=> {
 														return (
-															<button type="button" key={`button-${item.label}`} className="pt-button expandable" onClick={item.action}>
+															<button type="button" key={`button-${item.label}`} className="bp3-button expandable" onClick={item.action}>
 																{item.icon}
 																{item.showTextOnButton ? item.label : ''}
 															</button>
@@ -281,7 +281,7 @@ class UserCreate extends Component {
 											</InputField>
 										}
 
-										<InputField wrapperClassName="pt-callout" label="Stay Up To Date">
+										<InputField wrapperClassName="bp3-callout" label="Stay Up To Date">
 											<Checkbox
 												label="Subscribe to our feature release & community newsletter."
 												checked={this.state.subscribed}
@@ -293,7 +293,7 @@ class UserCreate extends Component {
 											<Button
 												name="create"
 												type="submit"
-												className="pt-button pt-intent-primary create-account-button"
+												className="bp3-button bp3-intent-primary create-account-button"
 												onClick={this.onCreateSubmit}
 												text="Create Account"
 												disabled={!this.state.firstName || !this.state.lastName || !this.state.password}

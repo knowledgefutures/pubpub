@@ -140,12 +140,12 @@ class PubOptionsAnalytics extends Component {
 				<h1>Analytics</h1>
 
 				{hasPreAnalytics &&
-					<div className="pt-callout pt-intent-warning" style={{ marginBottom: '2em' }}>
+					<div className="bp3-callout bp3-intent-warning" style={{ marginBottom: '2em' }}>
 						Pubs created before the launch of PubPub v5 display analytics back to October 15th.
 					</div>
 				}
 				{this.state.toolTipData &&
-					<div className="pt-elevation-2" style={tooltipStyle}>
+					<div className="bp3-elevation-2" style={tooltipStyle}>
 						<div><b>Country: </b>{this.state.toolTipData.name}</div>
 						<div><b>Visits: </b>{this.state.toolTipData.visits.toLocaleString()}</div>
 						<div><b>Percent of Total Visits: </b>{this.state.toolTipData.percentage}%</div>
@@ -178,7 +178,7 @@ class PubOptionsAnalytics extends Component {
 									const payload = instance.payload[0].payload;
 									// console.log(payload);
 									return (
-										<div className="pt-elevation-2">
+										<div className="bp3-elevation-2">
 											<div><b>{payload.date}</b></div>
 											<div>Visits: {payload.visits}</div>
 											{/* <div>Unique Visits: {payload.unique}</div>

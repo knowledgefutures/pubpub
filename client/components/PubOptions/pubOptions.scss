@@ -15,15 +15,15 @@
 			top: -20px;
 			right: 0px;
 		}
-		.pt-menu {
+		.bp3-menu {
 			padding: 0px;
 			min-width: auto;
 		}
-		.pt-menu-item {
+		.bp3-menu-item {
 			// font-weight: bold;
 			text-transform: capitalize;
 		}
-		.pt-menu-header {
+		.bp3-menu-header {
 			h6 {
 				font-weight: bold;
 				margin-left: -5px;
@@ -48,7 +48,7 @@
 			float: right;
 			display: flex;
 			align-items: center;
-			.pt-button {
+			.bp3-button {
 				margin-bottom: 5px;
 			}
 			.save-success-message {
@@ -61,11 +61,11 @@
 					opacity: 1;
 				}
 			}
-			.pt-spinner {
+			.bp3-spinner {
 				margin-right: 0.25em;
 			}
 		}
-		.pt-form-group {
+		.bp3-form-group {
 			max-width: 500px;
 		}
 	}

@@ -90,7 +90,7 @@ class LayoutBanner extends Component {
 								}
 								{this.props.content.showButton &&
 									<AnchorButton
-										className="pt-large"
+										className="bp3-large"
 										onClick={buttonType === 'create-pub' && this.props.loginData.id && this.createPub}
 										loading={this.state.isLoading}
 										text={buttonText}

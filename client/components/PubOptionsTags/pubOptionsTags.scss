@@ -1,11 +1,11 @@
 .pub-options-tags-component {
 	.tags-wrapper {
 		margin-top: 1em;
-		.pt-tag {
+		.bp3-tag {
 			margin-right: 0.5em;
 			margin-bottom: 0.5em;
 		}
-		svg.pt-icon {
+		.bp3-icon {
 			margin-right: 0.25em;
 		}
 	}	
@@ -15,7 +15,7 @@
 	.autocomplete-name {
 		position: relative;
 		padding: 0px 10px;
-		svg.pt-icon {
+		.bp3-icon {
 			position: absolute;
 			left: -7px;
 		}

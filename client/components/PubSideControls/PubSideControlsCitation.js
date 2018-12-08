@@ -43,7 +43,7 @@ class PubSideControlsCitation extends Component {
 				</div>
 				<textarea
 					placeholder="Enter bibtex, DOI, wikidata url, or bibjson..."
-					className="pt-input pt-fill"
+					className="bp3-input bp3-fill"
 					value={this.state.value}
 					onChange={this.handleValueChange}
 				/>

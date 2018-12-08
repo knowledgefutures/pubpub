@@ -30,14 +30,14 @@ class PubOptionsCite extends Component {
 		return (
 			<div className="pub-options-cite-component">
 				<div className="save-wrapper">
-					<div className="pt-button-group pt-small">
+					<div className="bp3-button-group bp3-small">
 						<Tooltip
 							content="Cite the work as a whole. The url below will always produce the most recent version of the work."
-							tooltipClassName="pt-dark cite-tooltip"
+							tooltipClassName="bp3-dark cite-tooltip"
 							position={Position.BOTTOM}
 						>
 							<button
-								className={`pt-button ${this.state.mode === 'pub' ? 'pt-active' : ''}`}
+								className={`bp3-button ${this.state.mode === 'pub' ? 'bp3-active' : ''}`}
 								onClick={()=> { this.setState({ mode: 'pub' }); }}
 								type="button"
 							>
@@ -46,11 +46,11 @@ class PubOptionsCite extends Component {
 						</Tooltip>
 						<Tooltip
 							content="Cite this specific version. The url below will always produce this specific version of the work."
-							tooltipClassName="pt-dark cite-tooltip"
+							tooltipClassName="bp3-dark cite-tooltip"
 							position={Position.BOTTOM}
 						>
 							<button
-								className={`pt-button ${this.state.mode === 'version' ? 'pt-active' : ''}`}
+								className={`bp3-button ${this.state.mode === 'version' ? 'bp3-active' : ''}`}
 								onClick={()=> { this.setState({ mode: 'version' }); }}
 								type="button"
 							>

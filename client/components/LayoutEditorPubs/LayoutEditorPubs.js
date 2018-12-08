@@ -189,7 +189,7 @@ class LayoutEditorPubs extends Component {
 						onChange={this.changeTitle}
 					/>
 					<InputField label="Filter by Tag">
-						<div className="pt-button-group pt-select">
+						<div className="bp3-button-group bp3-select">
 							<TagMultiSelect
 								allTags={this.props.communityData.tags}
 								selectedTagIds={this.props.content.tagIds || []}
@@ -210,7 +210,7 @@ class LayoutEditorPubs extends Component {
 						</div>
 					</InputField>
 					<InputField label="Limit">
-						<div className="pt-button-group pt-select">
+						<div className="bp3-button-group bp3-select">
 							<select value={this.props.content.limit} onChange={this.setLimit}>
 								<option value={0}>Show All pubs</option>
 								{selectOptions.map((item)=> {
@@ -269,19 +269,19 @@ class LayoutEditorPubs extends Component {
 					<div className="line-break" />
 
 					<InputField label="Preview Type">
-						<div className="pt-button-group">
+						<div className="bp3-button-group">
 							<Button
-								className={`${pubPreviewType === 'large' ? 'pt-active' : ''}`}
+								className={`${pubPreviewType === 'large' ? 'bp3-active' : ''}`}
 								onClick={this.setLarge}
 								text="Large"
 							/>
 							<Button
-								className={`${pubPreviewType === 'medium' ? 'pt-active' : ''}`}
+								className={`${pubPreviewType === 'medium' ? 'bp3-active' : ''}`}
 								onClick={this.setMedium}
 								text="Medium"
 							/>
 							<Button
-								className={`${pubPreviewType === 'small' ? 'pt-active' : ''}`}
+								className={`${pubPreviewType === 'small' ? 'bp3-active' : ''}`}
 								onClick={this.setSmall}
 								text="Small"
 							/>

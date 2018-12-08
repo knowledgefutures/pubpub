@@ -84,7 +84,7 @@ class PubOptionsImport extends Component {
 				<label htmlFor="import-select-file">
 					<AnchorButton
 						type="button"
-						className="pt-intent-primary pt-large"
+						className="bp3-intent-primary bp3-large"
 						text="Import File"
 						loading={this.state.isLoading}
 					/>

@@ -120,7 +120,7 @@ storiesOf('Components', module)
 					title="A sample title for placeholder"
 					size="medium"
 					isPlaceholder={true}
-					inputContent={<input className="pt-input pt-fill" type="text" />}
+					inputContent={<input className="bp3-input bp3-fill" type="text" />}
 				/>
 			</div>
 		</div>

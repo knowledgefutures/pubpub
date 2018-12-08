@@ -261,17 +261,17 @@ class PubOptionsAttribution extends Component {
 																<div className="top-content">
 																	<div className="name">
 																		<span>{attribution.user.fullName}</span>
-																		<span key={`${attribution.id}-handle`} style={isManager ? {} : { display: 'none' }} {...providedItem.dragHandleProps} className="pt-icon-standard pt-icon-drag-handle-horizontal" />
+																		<span key={`${attribution.id}-handle`} style={isManager ? {} : { display: 'none' }} {...providedItem.dragHandleProps} className="bp3-icon-standard bp3-icon-drag-handle-horizontal" />
 																	</div>
 																	{isManager &&
 																		<button
-																			className="pt-button pt-minimal"
+																			className="bp3-button bp3-minimal"
 																			type="button"
 																			onClick={()=> {
 																				this.handleAttributionDelete(attribution.id);
 																			}}
 																		>
-																			<span className="pt-icon-standard pt-icon-small-cross" />
+																			<span className="bp3-icon-standard bp3-icon-small-cross" />
 																		</button>
 																	}
 																</div>
@@ -281,7 +281,7 @@ class PubOptionsAttribution extends Component {
 																	}
 																	{!isManager && roles.map((item)=> {
 																		return (
-																			<span className="pt-tag pt-minimal pt-intent-primary">{item}</span>
+																			<span className="bp3-tag bp3-minimal bp3-intent-primary">{item}</span>
 																		);
 																	})}
 																	{isManager &&
@@ -308,7 +308,7 @@ class PubOptionsAttribution extends Component {
 																							type="button"
 																							tabIndex={-1}
 																							onClick={handleClick}
-																							className={modifiers.active ? 'pt-menu-item pt-active' : 'pt-menu-item'}
+																							className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
 																						>
 																							{item}
 																						</button>
@@ -335,7 +335,7 @@ class PubOptionsAttribution extends Component {
 																				},
 																				placeholder: 'Add roles...',
 																				tagProps: {
-																					className: 'pt-minimal pt-intent-primary'
+																					className: 'bp3-minimal bp3-intent-primary'
 																				},
 																				inputProps: {
 																					placeholder: 'Add roles...',
@@ -350,9 +350,9 @@ class PubOptionsAttribution extends Component {
 																					roles: newRoles,
 																				});
 																			}}
-																			noResults={<div className="pt-menu-item">No Matching Roles</div>}
+																			noResults={<div className="bp3-menu-item">No Matching Roles</div>}
 																			popoverProps={{
-																				popoverClassName: 'pt-minimal',
+																				popoverClassName: 'bp3-minimal',
 																				position: Position.BOTTOM_LEFT,
 																				modifiers: {
 																					preventOverflow: { enabled: false },

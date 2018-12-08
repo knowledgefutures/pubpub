@@ -119,7 +119,7 @@ class PubOptionsTags extends Component {
 					items={pubTags}
 					inputProps={{
 						placeholder: 'Add Tag...',
-						className: 'pt-large',
+						className: 'bp3-large',
 						inputRef: (ref)=> { this.inputRef = ref; },
 					}}
 					itemListPredicate={this.getFilteredTags}
@@ -131,7 +131,7 @@ class PubOptionsTags extends Component {
 									type="button"
 									tabIndex={-1}
 									onClick={handleClick}
-									className={modifiers.active ? 'pt-menu-item pt-active' : 'pt-menu-item'}
+									className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
 								>
 									{!item.id && <span>Create new tag: </span>}
 									<span className="autocomplete-name">
@@ -149,7 +149,7 @@ class PubOptionsTags extends Component {
 					noResults={<MenuItem disabled text="No results" />}
 					popoverProps={{
 						// isOpen: this.state.queryValue,
-						popoverClassName: 'pt-minimal tag-autocomplete-popover',
+						popoverClassName: 'bp3-minimal tag-autocomplete-popover',
 						position: Position.BOTTOM_LEFT,
 						modifiers: {
 							preventOverflow: { enabled: false },
@@ -163,7 +163,7 @@ class PubOptionsTags extends Component {
 						return (
 							<Tag
 								key={pubTag.id}
-								className="pt-minimal pt-intent-primary"
+								className="bp3-minimal bp3-intent-primary"
 								large={true}
 								onRemove={()=> {
 									this.handlePubTagDelete(pubTag.id);

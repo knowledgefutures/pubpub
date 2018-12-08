@@ -117,7 +117,7 @@ class LayoutEditor extends Component {
 							<div className="block-title">
 								<div className="text">{item.type === 'html' ? 'HTML' : item.type} Block</div>
 
-								<div className="pt-button-group pt-minimal pt-small">
+								<div className="bp3-button-group bp3-minimal bp3-small">
 									<Button
 										text="Move Up"
 										icon="caret-up"

@@ -20,7 +20,7 @@ const PubSideControlsTable = (props)=> {
 			<div className="form-label first">
 				Row
 			</div>
-			<div className="pt-button-group pt-fill">
+			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-add-row-before'].isActive}
 					onClick={commands['table-add-row-before'].run}
@@ -32,7 +32,7 @@ const PubSideControlsTable = (props)=> {
 					text="Add Below"
 				/>
 			</div>
-			<div className="pt-button-group pt-fill">
+			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-toggle-header-row'].isActive}
 					onClick={commands['table-toggle-header-row'].run}
@@ -49,7 +49,7 @@ const PubSideControlsTable = (props)=> {
 			<div className="form-label">
 				Column
 			</div>
-			<div className="pt-button-group pt-fill">
+			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-add-column-before'].isActive}
 					onClick={commands['table-add-column-before'].run}
@@ -61,7 +61,7 @@ const PubSideControlsTable = (props)=> {
 					text="Add Right"
 				/>
 			</div>
-			<div className="pt-button-group pt-fill">
+			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-toggle-header-column'].isActive}
 					onClick={commands['table-toggle-header-column'].run}
@@ -78,7 +78,7 @@ const PubSideControlsTable = (props)=> {
 			<div className="form-label">
 				Cell
 			</div>
-			<div className="pt-button-group pt-fill">
+			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-merge-cells'].isActive}
 					onClick={commands['table-merge-cells'].run}
@@ -90,7 +90,7 @@ const PubSideControlsTable = (props)=> {
 					text="Split Cell"
 				/>
 			</div>
-			<div className="pt-button-group pt-fill">
+			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-toggle-header-cell'].isActive}
 					onClick={commands['table-toggle-header-cell'].run}
@@ -102,7 +102,7 @@ const PubSideControlsTable = (props)=> {
 			<div className="form-label">
 				Table
 			</div>
-			<div className="pt-button-group pt-fill">
+			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-delete'].isActive}
 					onClick={commands['table-delete'].run}

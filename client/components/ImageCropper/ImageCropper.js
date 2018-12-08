@@ -92,7 +92,7 @@ class ImageCropper extends Component {
 					/>
 					<Button
 						text="Crop and Save"
-						className="pt-intent-primary"
+						className="bp3-intent-primary"
 						onClick={this.handleSaveClick}
 						loading={this.state.isUploading}
 					/>

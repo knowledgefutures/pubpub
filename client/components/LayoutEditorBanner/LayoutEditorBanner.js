@@ -143,16 +143,16 @@ class LayoutEditorBanner extends Component {
 						/>
 					</InputField>
 					<InputField label="Align">
-						<div className="pt-button-group">
+						<div className="bp3-button-group">
 							<Button
-								className={`${this.props.content.align === 'left' ? 'pt-active' : ''}`}
+								className={`${this.props.content.align === 'left' ? 'bp3-active' : ''}`}
 								onClick={()=> {
 									this.setAlign('left');
 								}}
 								text="Left"
 							/>
 							<Button
-								className={`${this.props.content.align === 'center' ? 'pt-active' : ''}`}
+								className={`${this.props.content.align === 'center' ? 'bp3-active' : ''}`}
 								onClick={()=> {
 									this.setAlign('center');
 								}}
@@ -161,16 +161,16 @@ class LayoutEditorBanner extends Component {
 						</div>
 					</InputField>
 					<InputField label="Size">
-						<div className="pt-button-group">
+						<div className="bp3-button-group">
 							<Button
-								className={`${this.props.content.backgroundSize === 'full' ? 'pt-active' : ''}`}
+								className={`${this.props.content.backgroundSize === 'full' ? 'bp3-active' : ''}`}
 								onClick={()=> {
 									this.setBackgroundSize('full');
 								}}
 								text="Full"
 							/>
 							<Button
-								className={`${this.props.content.backgroundSize === 'standard' ? 'pt-active' : ''}`}
+								className={`${this.props.content.backgroundSize === 'standard' ? 'bp3-active' : ''}`}
 								onClick={()=> {
 									this.setBackgroundSize('standard');
 								}}
@@ -191,7 +191,7 @@ class LayoutEditorBanner extends Component {
 					<div className="line-break" />
 
 					<InputField label="Banner Button Type">
-						<div className="pt-button-group pt-select">
+						<div className="bp3-button-group bp3-select">
 							<select value={buttonType} onChange={this.setButtonType}>
 								<option value="none">None</option>
 								<option value="create-pub">Create Pub</option>
@@ -210,7 +210,7 @@ class LayoutEditorBanner extends Component {
 					}
 					{this.props.content.showButton && buttonType === 'create-pub' &&
 						<InputField label="Default Pub Tags">
-							<div className="pt-button-group pt-select">
+							<div className="bp3-button-group bp3-select">
 								<TagMultiSelect
 									allTags={this.props.communityData.tags}
 									selectedTagIds={this.props.content.defaultTagIds || []}
@@ -257,7 +257,7 @@ class LayoutEditorBanner extends Component {
 								}
 								{this.props.content.showButton &&
 									<Button
-										className="pt-large"
+										className="bp3-large"
 										onClick={()=>{}}
 										text={this.props.content.buttonText
 											|| (buttonType === 'create-pub' && 'Create Pub')

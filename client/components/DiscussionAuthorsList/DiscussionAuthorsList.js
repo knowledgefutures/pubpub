@@ -28,17 +28,17 @@ const DiscussionAuthorsList = (props)=> {
 		return 0;
 	});
 	return (
-		<div className="discussion-authors-list-component pt-menu pt-elevation-1">
-			<li className="pt-menu-header"><h6>Filter by Discussion Author</h6></li>
+		<div className="discussion-authors-list-component bp3-menu bp3-elevation-1">
+			<li className="bp3-menu-header"><h6>Filter by Discussion Author</h6></li>
 
 			{authors.map((author)=> {
 				const handleClick = ()=> { onSelect(author.id); };
 				return (
 					<li>
-						<div role="button" tabIndex={-1} key={`author-${author.id}`} className="pt-menu-item" onClick={handleClick}>
+						<div role="button" tabIndex={-1} key={`author-${author.id}`} className="bp3-menu-item" onClick={handleClick}>
 							<div className="color">
 								{props.selected.indexOf(author.id) > -1 &&
-									<span className="pt-icon-standard pt-icon-small-tick" />
+									<span className="bp3-icon-standard bp3-icon-small-tick" />
 								}
 							</div>
 							<Avatar width={16} userInitials={author.initials} userAvatar={author.avatar} />
@@ -48,7 +48,7 @@ const DiscussionAuthorsList = (props)=> {
 				);
 			})}
 			{!authors.length &&
-				<div className="pt-menu-item empty">No Authors to Filter by</div>
+				<div className="bp3-menu-item empty">No Authors to Filter by</div>
 			}
 		</div>
 	);

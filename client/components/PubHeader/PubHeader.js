@@ -113,7 +113,7 @@ class PubHeader extends Component {
 											if (foo.title.toLowerCase() > bar.title.toLowerCase()) { return 1; }
 											return 0;
 										}).map((item)=> {
-											return <a key={`footer-collection-${item.id}`} href={`/${item.slug}`} className="pt-tag pt-intent-primary pt-minimal">{item.title}</a>;
+											return <a key={`footer-collection-${item.id}`} href={`/${item.slug}`} className="bp3-tag bp3-intent-primary bp3-minimal">{item.title}</a>;
 										}) */}
 										<div className="tags new-tags">
 											{pubData.pubTags.filter((pubTag)=> {
@@ -124,7 +124,7 @@ class PubHeader extends Component {
 												return 0;
 											}).map((item)=> {
 												return (
-													<a key={`new-tag-collection-${item.id}`} href={item.tag.page ? `/${item.tag.page.slug}` : `/search?tag=${item.tag.title}`} className="pt-tag pt-intent-primary pt-minimal">
+													<a key={`new-tag-collection-${item.id}`} href={item.tag.page ? `/${item.tag.page.slug}` : `/search?tag=${item.tag.title}`} className="bp3-tag bp3-intent-primary bp3-minimal">
 														{!item.tag.isPublic &&
 															<Icon icon="lock2" />
 														}
@@ -137,14 +137,14 @@ class PubHeader extends Component {
 									<div className="buttons">
 										{!pubData.isDraft && (pubData.isDraftViewer || pubData.isDraftEditor || pubData.isManager) &&
 											<a
-												className="pt-button pt-small"
+												className="bp3-button bp3-small"
 												href={`/pub/${pubData.slug}/draft`}
 											>
 												Go To Working Draft
 											</a>
 										}
 										<button
-											className="pt-button pt-small"
+											className="bp3-button bp3-small"
 											type="button"
 											onClick={()=> {
 												this.props.setOptionsMode(pubData.isManager ? 'details' : 'attribution');
@@ -155,7 +155,7 @@ class PubHeader extends Component {
 
 										{pubData.isManager &&
 											<button
-												className="pt-button pt-small"
+												className="bp3-button bp3-small"
 												type="button"
 												onClick={()=> {
 													this.props.setOptionsMode('sharing');
@@ -216,10 +216,10 @@ class PubHeader extends Component {
 								<div className="details">
 									<Popover
 										content={
-											<div className="pt-menu">
+											<div className="bp3-menu">
 												{(pubData.isDraftViewer || pubData.isDraftEditor || pubData.isManager) &&
 													<li>
-														<a className={`pt-menu-item ${pubData.isDraft ? 'pt-active' : ''}`} tabIndex="0" href={`/pub/${pubData.slug}/draft`}>
+														<a className={`bp3-menu-item ${pubData.isDraft ? 'bp3-active' : ''}`} tabIndex="0" href={`/pub/${pubData.slug}/draft`}>
 															Working Draft
 														</a>
 													</li>
@@ -227,7 +227,7 @@ class PubHeader extends Component {
 												{sortedVersionsList.map((version)=> {
 													return (
 														<li key={version.id}>
-															<a className={`pt-menu-item ${version.id === pubData.activeVersion.id ? 'pt-active' : ''}`} tabIndex="0" href={`/pub/${pubData.slug}?version=${version.id}`}>
+															<a className={`bp3-menu-item ${version.id === pubData.activeVersion.id ? 'bp3-active' : ''}`} tabIndex="0" href={`/pub/${pubData.slug}?version=${version.id}`}>
 																{dateFormat(version.createdAt, 'mmm dd, yyyy · h:MMTT')}
 																{!version.isPublic && <Icon icon="lock2" />}
 															</a>
@@ -283,7 +283,7 @@ class PubHeader extends Component {
 										tabIndex={-1}
 										className="detail-button"
 									>
-										{/* <span className="pt-icon-standard pt-icon-chat" /> */}
+										{/* <span className="bp3-icon-standard bp3-icon-chat" /> */}
 										{numDiscussions} Discussion{numDiscussions === 1 ? '' : 's'} (#{activeDiscussionChannel.title})
 									</div>
 									{!!numAttributions &&
@@ -297,7 +297,7 @@ class PubHeader extends Component {
 												this.props.setOptionsMode('attribution');
 											}}
 										>
-											{/* <span className="pt-icon-standard pt-icon-team" /> */}
+											{/* <span className="bp3-icon-standard bp3-icon-team" /> */}
 											{numAttributions} Contributor{numAttributions === 1 ? '' : 's'}
 										</div>
 									}

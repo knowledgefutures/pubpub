@@ -1243,7 +1243,7 @@ export default {
                                     },
                                     "content": [
                                         {
-                                            "text": "Information collected and processed by Google Analytics and Mixpanel include the user’s IP address, network location, and geographic location. Google Analytics and Mixpanel acquires all its information directly from the user, by installing a cookie (see below) on JavaScript-enabled computers. The Site does not share any information it collects with Google or Mixpanel, and neither Google nor Mixpanel collect any personal identifying information such as names, contact information, social security numbers or financial information.",
+                                            "text": "Information collected and processed by Google Analytics and Mixpanel include the user’s IP address, network location, and geographic location. Google Analytics and Mixpanel acquires all its information directly from the user, by installing a cookie (see below) on JavaScribp3-enabled computers. The Site does not share any information it collects with Google or Mixpanel, and neither Google nor Mixpanel collect any personal identifying information such as names, contact information, social security numbers or financial information.",
                                             "type": "text",
                                             "currIndex": 0
                                         }

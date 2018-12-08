@@ -90,48 +90,48 @@ class UserEdit extends Component {
 			{
 				label: 'Location',
 				showTextOnButton: true,
-				// icon: 'pt-icon-map-marker',
+				// icon: 'bp3-icon-map-marker',
 				value: this.state.location,
 				onChange: (evt)=> { this.setState({ location: evt.target.value, hasChanged: true }); }
 			},
 			{
 				label: 'Website',
 				showTextOnButton: true,
-				// icon: 'pt-icon-link',
+				// icon: 'bp3-icon-link',
 				value: this.state.website,
 				onChange: (evt)=> { this.setState({ website: evt.target.value, hasChanged: true }); }
 			},
 			{
 				label: 'Orcid',
-				// icon: 'pt-icon-orcid',
+				// icon: 'bp3-icon-orcid',
 				helperText: `https://orcid.org/${this.state.orcid}`,
 				value: this.state.orcid,
 				onChange: (evt)=> { this.setState({ orcid: evt.target.value, hasChanged: true }); }
 			},
 			{
 				label: 'Github',
-				// icon: 'pt-icon-github',
+				// icon: 'bp3-icon-github',
 				helperText: `https://github.com/${this.state.github}`,
 				value: this.state.github,
 				onChange: (evt)=> { this.setState({ github: evt.target.value, hasChanged: true }); }
 			},
 			{
 				label: 'Twitter',
-				// icon: 'pt-icon-twitter',
+				// icon: 'bp3-icon-twitter',
 				helperText: `https://twitter.com/${this.state.twitter}`,
 				value: this.state.twitter,
 				onChange: (evt)=> { this.setState({ twitter: evt.target.value, hasChanged: true }); }
 			},
 			{
 				label: 'Facebook',
-				// icon: 'pt-icon-facebook',
+				// icon: 'bp3-icon-facebook',
 				helperText: `https://facebook.com/${this.state.facebook}`,
 				value: this.state.facebook,
 				onChange: (evt)=> { this.setState({ facebook: evt.target.value, hasChanged: true }); }
 			},
 			{
 				label: 'Google Scholar',
-				// icon: 'pt-icon-google-scholar',
+				// icon: 'bp3-icon-google-scholar',
 				helperText: `https://scholar.google.com/citations?user=${this.state.googleScholar}`,
 				value: this.state.googleScholar,
 				onChange: (evt)=> { this.setState({ googleScholar: evt.target.value, hasChanged: true }); }
@@ -193,7 +193,7 @@ class UserEdit extends Component {
 										<Button
 											name="create"
 											type="submit"
-											className="pt-button pt-intent-primary"
+											className="bp3-button bp3-intent-primary"
 											onClick={this.handleSaveDetails}
 											text="Save Details"
 											disabled={!this.state.firstName || !this.state.lastName || !this.state.hasChanged}

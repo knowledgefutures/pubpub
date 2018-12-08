@@ -40,12 +40,12 @@ const PubInlineMenu = (props)=> {
 	];
 	const isReadOnly = !props.pubData.isDraft || (!props.pubData.isManager && !props.pubData.isDraftEditor);
 	return (
-		<div className="pub-inline-menu-component pt-elevation-2" style={menuStyle}>
+		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
 			{!isReadOnly && formattingItems.map((item)=> {
 				if (!menuItemsObject[item.key]) { return null; }
 				return (
 					<Button
-						className="pt-minimal"
+						className="bp3-minimal"
 						icon={item.icon}
 						active={menuItemsObject[item.key].isActive}
 						onClick={menuItemsObject[item.key].run}
@@ -56,7 +56,7 @@ const PubInlineMenu = (props)=> {
 				);
 			})}
 			<Button
-				className="pt-minimal"
+				className="bp3-minimal"
 				icon={<Icon icon="chat" />}
 				onClick={()=> {
 					props.onNewHighlightDiscussion({

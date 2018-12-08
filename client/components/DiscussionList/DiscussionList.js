@@ -168,12 +168,12 @@ class DiscussionList extends Component {
 						// icon={items[props.value].icon}
 						isRightAligned={true}
 					>
-						<ul className="channel-permissions-dropdown pt-menu">
+						<ul className="channel-permissions-dropdown bp3-menu">
 							{discussionChannels.map((channel)=> {
 								return (
 									<li key={`channel-option-${channel.title}`}>
 										<button
-											className="pt-menu-item pt-popover-dismiss"
+											className="bp3-menu-item bp3-popover-dismiss"
 											onClick={()=> {
 												this.props.setDiscussionChannel(channel.title);
 											}}
@@ -203,12 +203,12 @@ class DiscussionList extends Component {
 				<div className="filter-bar">
 					<div className="left">
 						<Button
-							className={`pt-minimal ${!this.state.isArchivedMode ? 'active' : ''}`}
+							className={`bp3-minimal ${!this.state.isArchivedMode ? 'active' : ''}`}
 							onClick={this.setDiscussionsMode}
 							text={`${activeThreads.length} Discussion${activeThreads.length === 1 ? '' : 's'}`}
 						/>
 						<Button
-							className={`pt-minimal ${this.state.isArchivedMode ? 'active' : ''}`}
+							className={`bp3-minimal ${this.state.isArchivedMode ? 'active' : ''}`}
 							onClick={this.setArchivedMode}
 							text={`${archivedThreads.length} Archived`}
 						/>
@@ -224,11 +224,11 @@ class DiscussionList extends Component {
 							}
 							interactionKind={PopoverInteractionKind.CLICK}
 							position={Position.BOTTOM_RIGHT}
-							popoverClassName="pt-minimal"
+							popoverClassName="bp3-minimal"
 							transitionDuration={-1}
 							inheritDarkTheme={false}
 						>
-							<div className={`pt-button pt-minimal ${this.state.filteredAuthors.length ? 'active' : ''}`}>Authors</div>
+							<div className={`bp3-button bp3-minimal ${this.state.filteredAuthors.length ? 'active' : ''}`}>Authors</div>
 						</Popover>
 						*/}
 						<Popover
@@ -243,11 +243,11 @@ class DiscussionList extends Component {
 							}
 							interactionKind={PopoverInteractionKind.CLICK}
 							position={Position.BOTTOM_RIGHT}
-							popoverClassName="pt-minimal"
+							popoverClassName="bp3-minimal"
 							transitionDuration={-1}
 							inheritDarkTheme={false}
 						>
-							<div className={`pt-button pt-minimal ${this.state.filteredLabels.length ? 'active' : ''}`}>Labels</div>
+							<div className={`bp3-button bp3-minimal ${this.state.filteredLabels.length ? 'active' : ''}`}>Labels</div>
 						</Popover>
 						<Popover
 							content={
@@ -258,11 +258,11 @@ class DiscussionList extends Component {
 							}
 							interactionKind={PopoverInteractionKind.CLICK}
 							position={Position.BOTTOM_RIGHT}
-							popoverClassName="pt-minimal"
+							popoverClassName="bp3-minimal"
 							transitionDuration={-1}
 							inheritDarkTheme={false}
 						>
-							<div className={`pt-button pt-minimal ${this.state.sortMode !== 'newestThread' ? 'active' : ''}`}>Sort</div>
+							<div className={`bp3-button bp3-minimal ${this.state.sortMode !== 'newestThread' ? 'active' : ''}`}>Sort</div>
 						</Popover>
 					</div>
 				</div>
@@ -270,14 +270,14 @@ class DiscussionList extends Component {
 				{!this.state.isArchivedMode && !activeThreads.length &&
 					<NonIdealState
 						title={filtersActive ? 'No Discussions Match Filter' : 'No Discussions Yet'}
-						visual="pt-icon-widget"
+						visual="bp3-icon-widget"
 					/>
 				}
 
 				{this.state.isArchivedMode && !archivedThreads.length &&
 					<NonIdealState
 						title={filtersActive ? 'No Archived Discussions Match Filter' : 'No Archived Discussions'}
-						visual="pt-icon-widget"
+						visual="bp3-icon-widget"
 					/>
 				}
 				{threadsToShow.map((thread)=> {

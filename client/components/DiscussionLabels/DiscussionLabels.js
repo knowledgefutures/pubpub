@@ -76,9 +76,9 @@ class DiscussionLabels extends Component {
 				{this.props.canManageThread && !!availableLabels.length &&
 					<Popover
 						content={
-							<div className="pt-menu">
+							<div className="bp3-menu">
 								<Button
-									className="pt-fill"
+									className="bp3-fill"
 									text="Save"
 									onClick={this.handleSave}
 									loading={this.state.isSaving}
@@ -95,9 +95,9 @@ class DiscussionLabels extends Component {
 										: ()=> { this.applyLabel(label.id); };
 									return (
 										<li key={label.id}>
-											<div role="button" tabIndex={-1} className="pt-menu-item" onClick={handleClick}>
+											<div role="button" tabIndex={-1} className="bp3-menu-item" onClick={handleClick}>
 												<div className="color" style={{ backgroundColor: label.color }}>
-													{isActive && <span className="pt-icon-standard pt-icon-tick" />}
+													{isActive && <span className="bp3-icon-standard bp3-icon-tick" />}
 												</div>
 												<div className="label-title">{label.title}</div>
 												{this.props.isAdmin &&
@@ -106,10 +106,10 @@ class DiscussionLabels extends Component {
 															? <span>All discussion authors can apply this label.</span>
 															: <span>Only managers can apply this label.</span>
 														}
-														tooltipClassName="pt-dark"
+														tooltipClassName="bp3-dark"
 														position={Position.TOP}
 													>
-														<span className={`pt-icon-standard pt-icon-endorsed ${label.publicApply ? '' : 'active'}`} />
+														<span className={`bp3-icon-standard bp3-icon-endorsed ${label.publicApply ? '' : 'active'}`} />
 													</Tooltip>
 												}
 											</div>
@@ -128,7 +128,7 @@ class DiscussionLabels extends Component {
 					>
 						<button
 							type="button"
-							className="pt-tag pt-minimal"
+							className="bp3-tag bp3-minimal"
 							onClick={this.toggleEditMode}
 						>
 							Edit Labels
@@ -141,7 +141,7 @@ class DiscussionLabels extends Component {
 					return 0;
 				}).map((labelId)=> {
 					const label = labelsById[labelId];
-					return <span className="pt-tag" style={{ backgroundColor: label.color }}>{label.title}</span>;
+					return <span className="bp3-tag" style={{ backgroundColor: label.color }}>{label.title}</span>;
 				})}
 			</div>
 		);

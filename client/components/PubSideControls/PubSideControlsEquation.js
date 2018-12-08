@@ -72,7 +72,7 @@ class PubSideControlsEquation extends Component {
 				</div>
 				<textarea
 					placeholder="Enter LaTeX math"
-					className="pt-input pt-fill"
+					className="bp3-input bp3-fill"
 					value={this.props.attrs.value}
 					onChange={this.handleValueChange}
 				/>
@@ -82,14 +82,14 @@ class PubSideControlsEquation extends Component {
 					Display
 				</div>
 
-				<div className="pt-button-group pt-fill">
+				<div className="bp3-button-group bp3-fill">
 					<Button
-						className={`pt-button pt-icon-align-left ${!isBlock ? 'pt-active' : ''}`}
+						className={`bp3-button bp3-icon-align-left ${!isBlock ? 'bp3-active' : ''}`}
 						onClick={this.changeToInline}
 						text="Inline"
 					/>
 					<Button
-						className={`pt-button pt-icon-align-justify ${isBlock ? 'pt-active' : ''}`}
+						className={`bp3-button bp3-icon-align-justify ${isBlock ? 'bp3-active' : ''}`}
 						onClick={this.changeToBlock}
 						text="Block"
 					/>

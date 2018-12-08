@@ -43,7 +43,7 @@ const PubOptionsDropdownPrivacy = function(props) {
 				icon={items[props.value].icon}
 				isRightAligned={true}
 			>
-				<ul className="pub-options-dropdown pt-menu">
+				<ul className="pub-options-dropdown bp3-menu">
 					{Object.keys(items).filter((item, index)=> {
 						return props.isDraft || index < 2;
 					}).map((key)=> {
@@ -51,7 +51,7 @@ const PubOptionsDropdownPrivacy = function(props) {
 						return (
 							<li key={`${item.value}-option-${keySuffix}`}>
 								<button
-									className="pt-menu-item pt-popover-dismiss"
+									className="bp3-menu-item bp3-popover-dismiss"
 									onClick={item.onClick}
 									type="button"
 								>

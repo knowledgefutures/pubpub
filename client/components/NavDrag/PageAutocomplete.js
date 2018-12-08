@@ -95,7 +95,7 @@ class PageAutocomplete extends Component {
 					itemRenderer={(item = {}, { handleClick, isActive })=> {
 						return (
 							<li key={item.id || 'empty-user-create'}>
-								<span role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'pt-menu-item pt-active' : 'pt-menu-item'}>
+								<span role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}>
 									{item.children && <span className="new-title">Create dropdown group:</span>}
 									<span className="title">{item.title}</span>
 								</span>
@@ -104,7 +104,7 @@ class PageAutocomplete extends Component {
 					}}
 					onItemSelect={this.handleSelect}
 					noResults={<MenuItem disabled text="No results" />}
-					popoverProps={{ popoverClassName: 'pt-minimal collection-autocomplete-popover' }}
+					popoverProps={{ popoverClassName: 'bp3-minimal collection-autocomplete-popover' }}
 				/>
 			</div>
 		);

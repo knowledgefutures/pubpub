@@ -125,9 +125,9 @@ class DiscussionThreadItem extends Component {
 					</div>
 
 					{!this.state.isEditing &&
-						<div className="pt-button-group pt-small">
+						<div className="bp3-button-group bp3-small">
 							{this.props.isAuthor &&
-								<button type="button" className="pt-button" onClick={this.onEditToggle}>
+								<button type="button" className="bp3-button" onClick={this.onEditToggle}>
 									Edit
 								</button>
 							}
@@ -155,14 +155,14 @@ class DiscussionThreadItem extends Component {
 					<div className="editing-buttons">
 						<Button
 							text="Cancel Edit"
-							className="pt-small"
+							className="bp3-small"
 							onClick={this.onEditToggle}
 						/>
 						<Button
 							name="submit"
 							type="submit"
 							text="Edit Reply"
-							className="pt-small pt-intent-primary"
+							className="bp3-small bp3-intent-primary"
 							onClick={this.onSubmit}
 							disabled={this.state.submitDisabled}
 							loading={this.state.isLoading}

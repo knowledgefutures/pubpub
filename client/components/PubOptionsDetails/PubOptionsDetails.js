@@ -124,13 +124,13 @@ class PubOptionsDetails extends Component {
 				<div className="save-wrapper">
 					<Button
 						text="Save Details"
-						className="pt-intent-primary"
+						className="bp3-intent-primary"
 						onClick={this.handleSave}
 						loading={this.state.isLoading}
 						disabled={!this.state.hasUpdated || !this.state.title || !this.state.slug}
 					/>
 					<div className={`save-success-message ${this.state.saveSuccess && !this.state.hasUpdated ? 'active' : ''}`}>
-						<span className="pt-icon-standard pt-icon-tick-circle" /> Saved
+						<span className="bp3-icon-standard bp3-icon-tick-circle" /> Saved
 					</div>
 				</div>
 				<h1>Pub Details</h1>

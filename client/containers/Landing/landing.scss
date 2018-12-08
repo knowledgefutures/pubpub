@@ -3,7 +3,7 @@
 .header-component {
 	color: white;
 	background-color: transparent;
-	.pt-button:not([class*="pt-intent-"]), .pt-button[class*="pt-icon-"]::before { color: white; }
+	.bp3-button:not([class*="bp3-intent-"]), .bp3-button[class*="bp3-icon-"]::before { color: white; }
 }
 
 
@@ -12,7 +12,7 @@
 	.buttons {
 		margin: 3em 0;
 		text-align: center;
-		.pt-button {
+		.bp3-button {
 			margin: 0 0.5em;
 		}
 	}
@@ -89,7 +89,7 @@
 			.col-12 {
 				margin-bottom: 0;
 			}
-			.pt-intent-primary {
+			.bp3-intent-primary {
 				background-color: #BF8C0A;
 				&:hover {
 					background-color: #B2830A;
@@ -127,7 +127,7 @@
 					color: #fff;
 				}
 				a, a:visited, a:active, a:hover {
-					&:not(.pt-button) {
+					&:not(.bp3-button) {
 						color: #ccc;
 					}
 				}
@@ -144,7 +144,7 @@
 			    .buttons {
 			    	margin-bottom: 0em;
 			    }
-				.pt-intent-primary {
+				.bp3-intent-primary {
 					background-color: #BF8C0A;
 					&:hover {
 						background-color: #B2830A;
@@ -177,7 +177,7 @@
 						}
 					.buttons {
 						text-align: center;
-						.pt-button {
+						.bp3-button {
 							margin: 0 .5em;
 						}
 					}
@@ -189,7 +189,7 @@
 				.buttons {
 					margin: 0;
 					text-align: left;
-					.pt-button {
+					.bp3-button {
 						margin: 0;
 					}
 				}
@@ -279,7 +279,7 @@
 					margin-bottom: 0.5em;
 					font-size: 25px;
 				}
-				.pt-icon {
+				.bp3-icon {
 					// padding-top: 4px;
 					opacity: 0.6;
 				}
@@ -289,7 +289,7 @@
 			}
 			.buttons {
 				margin: 0em;
-				.pt-button {
+				.bp3-button {
 					color: inherit;
 				}
 			}
@@ -321,7 +321,7 @@
 @media only screen and (max-width: 720px) {
 	#landing-container {
 		.buttons {
-			> a.pt-button {
+			> a.bp3-button {
 				margin: .25em;
 			}
 		}

@@ -89,7 +89,7 @@ class PubOptionsSaveVersion extends Component {
 							onClick={()=> {
 								this.handlePublish(false);
 							}}
-							className="pt-intent-primary pt-large"
+							className="bp3-intent-primary bp3-large"
 							text="Save Private Version"
 							disabled={this.state.isLoadingPublic}
 							loading={this.state.isLoadingPrivate}
@@ -102,7 +102,7 @@ class PubOptionsSaveVersion extends Component {
 							onClick={()=> {
 								this.handlePublish(true);
 							}}
-							className="pt-intent-primary pt-large"
+							className="bp3-intent-primary bp3-large"
 							text="Save Public Version"
 							disabled={this.state.isLoadingPrivate}
 							loading={this.state.isLoadingPublic}

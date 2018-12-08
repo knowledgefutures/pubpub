@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@blueprintjs/core": "^3.10.0",
+    "@blueprintjs/icons": "^3.4.0",
     "@blueprintjs/select": "^3.4.0",
     "@pubpub/editor": "^5.1.2",
     "@storybook/addon-options": "^4.0.0-alpha.14",

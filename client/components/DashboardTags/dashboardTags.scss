@@ -3,7 +3,7 @@
 	// margin: 0 auto;
 	.autocomplete-wrapper {
 		padding: 2em 0em;
-		.pt-input {
+		.bp3-input {
 			width: 100%;
 		}
 	}
@@ -20,8 +20,8 @@
 			flex-grow: 1;
 			flex-shrink: 1;
 			display: flex;
-			// .pt-editable-text:not(.pt-editable-text-editing) {
-			.pt-editable-text-content {
+			// .bp3-editable-text:not(.bp3-editable-text-editing) {
+			.bp3-editable-text-content {
 				padding-right: 2em;
 				height: 18px !important;
 				line-height: 18px !important;
@@ -36,12 +36,12 @@
 				}
 			}
 			// }
-			.pt-editable-text-input {
+			.bp3-editable-text-input {
 				height: 18px !important;
 				line-height: 18px !important;
 			}
 		}
-		.pt-checkbox {
+		.bp3-checkbox {
 			margin: 0px 2em 0px;
 		}
 	}

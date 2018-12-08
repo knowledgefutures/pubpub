@@ -10,7 +10,7 @@
 		.image-options {
 			width: 60px;
 			margin: 0px;
-			.pt-button {
+			.bp3-button {
 				display: inline-block;
 			}
 		}
@@ -36,10 +36,10 @@
 			font-size: inherit;
 			line-height: inherit;
 		}
-		h2 + .pt-button {
+		h2 + .bp3-button {
 			margin-top: 1em;
 		}
-		.pt-button {
+		.bp3-button {
 			padding: 10px 40px;
 			line-height: 30px;
 		}

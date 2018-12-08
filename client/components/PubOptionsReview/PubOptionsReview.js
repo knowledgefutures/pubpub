@@ -34,10 +34,10 @@ class PubOptionsReview extends Component {
 
 	getStatusClassName(status) {
 		if (status === 'unsubmitted' || status === 'closed') { return ''; }
-		if (status === 'submitted') { return 'pt-intent-warning'; }
-		if (status === 'accepted') { return 'pt-intent-success'; }
-		if (status === 'rejected') { return 'pt-intent-danger'; }
-		if (status === 'changes requested') { return 'pt-intent-warning'; }
+		if (status === 'submitted') { return 'bp3-intent-warning'; }
+		if (status === 'accepted') { return 'bp3-intent-success'; }
+		if (status === 'rejected') { return 'bp3-intent-danger'; }
+		if (status === 'changes requested') { return 'bp3-intent-warning'; }
 		return '';
 	}
 
@@ -197,12 +197,12 @@ class PubOptionsReview extends Component {
 				<div className="header-bar">
 					<h1>Review</h1>
 					<div>
-						<span className={`pt-tag ${this.getStatusClassName(currentStatus)}`}>Status: {currentStatus}</span>
+						<span className={`bp3-tag ${this.getStatusClassName(currentStatus)}`}>Status: {currentStatus}</span>
 					</div>
 				</div>
 
 				{!this.props.pubData.versions.length &&
-					<div className="pt-callout pt-intent-warning">
+					<div className="bp3-callout bp3-intent-warning">
 						Reviews apply to specific versions. To begin a review you must first save a version of the working draft. You will then have options here to select the specific version you would like to submit for review.
 					</div>
 				}
@@ -220,7 +220,7 @@ class PubOptionsReview extends Component {
 											type="button"
 											tabIndex={-1}
 											onClick={handleClick}
-											className={modifiers.active ? 'pt-menu-item pt-active' : 'pt-menu-item'}
+											className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
 										>
 											Version: {dateFormat(item.createdAt, 'mmm dd, yyyy · h:MMTT')}
 										</button>
@@ -231,8 +231,8 @@ class PubOptionsReview extends Component {
 										selectedVersion: item,
 									});
 								}}
-								popoverProps={{ popoverClassName: 'pt-minimal' }}
-								inputProps={{ className: 'pt-fill' }}
+								popoverProps={{ popoverClassName: 'bp3-minimal' }}
+								inputProps={{ className: 'bp3-fill' }}
 							>
 								<Button
 									text={this.state.selectedVersion ? `Version: ${dateFormat(this.state.selectedVersion.createdAt, 'mmm dd, yyyy · h:MMTT')}` : 'Select a Version'}
@@ -255,10 +255,10 @@ class PubOptionsReview extends Component {
 						<div className="button-row">
 							{currentStatus === 'submitted' &&
 								<div className="statuses">
-									<div className="pt-button-group">
+									<div className="bp3-button-group">
 										<Button
 											text="Submitted"
-											className={!this.state.selectedStatus ? 'pt-active' : ''}
+											className={!this.state.selectedStatus ? 'bp3-active' : ''}
 											onClick={()=> {
 												this.setState({ selectedStatus: undefined });
 											}}
@@ -266,7 +266,7 @@ class PubOptionsReview extends Component {
 										{isManager &&
 											<Button
 												text="Closed"
-												className={this.state.selectedStatus === 'closed' ? 'pt-active' : ''}
+												className={this.state.selectedStatus === 'closed' ? 'bp3-active' : ''}
 												onClick={()=> {
 													this.setState({ selectedStatus: 'closed' });
 												}}
@@ -275,7 +275,7 @@ class PubOptionsReview extends Component {
 										{isAdmin &&
 											<Button
 												text="Accepted"
-												className={this.state.selectedStatus === 'accepted' ? 'pt-active' : ''}
+												className={this.state.selectedStatus === 'accepted' ? 'bp3-active' : ''}
 												onClick={()=> {
 													this.setState({ selectedStatus: 'accepted' });
 												}}
@@ -284,7 +284,7 @@ class PubOptionsReview extends Component {
 										{isAdmin &&
 											<Button
 												text="Rejected"
-												className={this.state.selectedStatus === 'rejected' ? 'pt-active' : ''}
+												className={this.state.selectedStatus === 'rejected' ? 'bp3-active' : ''}
 												onClick={()=> {
 													this.setState({ selectedStatus: 'rejected' });
 												}}
@@ -293,7 +293,7 @@ class PubOptionsReview extends Component {
 										{isAdmin &&
 											<Button
 												text="Changes Requested"
-												className={this.state.selectedStatus === 'changes requested' ? 'pt-active' : ''}
+												className={this.state.selectedStatus === 'changes requested' ? 'bp3-active' : ''}
 												onClick={()=> {
 													this.setState({ selectedStatus: 'changes requested' });
 												}}
@@ -304,7 +304,7 @@ class PubOptionsReview extends Component {
 							}
 							<Button
 								text={buttonLanguage}
-								className="pt-intent-primary"
+								className="bp3-intent-primary"
 								disabled={isDisabled}
 								loading={this.state.isLoading}
 								onClick={()=> {
@@ -333,12 +333,12 @@ class PubOptionsReview extends Component {
 								<div className="name">{user.fullName}</div>
 								{reviewItem.status &&
 									<div className="status-change">
-										Status Changed to: <span className={`pt-tag ${this.getStatusClassName(reviewItem.status)}`}>{reviewItem.status}</span>
+										Status Changed to: <span className={`bp3-tag ${this.getStatusClassName(reviewItem.status)}`}>{reviewItem.status}</span>
 									</div>
 								}
 							</div>
 							{reviewItem.versionId &&
-								<div className="pt-callout">
+								<div className="bp3-callout">
 									Submitted <a href={`/pub/${pubData.slug}?version=${version.id}`}>Version {dateFormat(version.createdAt, 'mmm dd, yyyy · h:MMTT')}</a>
 								</div>
 							}

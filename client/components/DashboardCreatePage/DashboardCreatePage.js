@@ -110,7 +110,7 @@ class DashboardCreatePage extends Component {
 						<Button
 							name="login"
 							type="submit"
-							className="pt-button pt-intent-primary"
+							className="bp3-button bp3-intent-primary"
 							onClick={this.handleCreateSubmit}
 							text="Create Page"
 							disabled={!this.state.title || !this.state.slug}

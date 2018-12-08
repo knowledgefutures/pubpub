@@ -41,20 +41,20 @@
 		text-transform: uppercase;
 		font-weight: 500;
 		margin: 0em 1em;
-		.pt-icon-lock2 {
+		.bp3-icon-lock2 {
 			font-size: 14px;
 			padding-right: 0.15em;
 			position: relative;
 			top: -1px;
 		}
-		.pt-icon-small-cross {
+		.bp3-icon-small-cross {
 			opacity: 0.75;
 		}
 		// &.dragging {
 		// 	background: lightgreen;
 		// }
 	}
-	.pt-icon-drag-handle-horizontal, .pt-icon-drag-handle-vertical {
+	.bp3-icon-drag-handle-horizontal, .bp3-icon-drag-handle-vertical {
 		padding-right: 0.25em;
 	}
 	.sub-nav-item {
@@ -76,7 +76,7 @@
 		text-transform: none;
 		font-weight: 400;
 		padding: 0.5em;
-		.pt-icon-small-cross {
+		.bp3-icon-small-cross {
 			opacity: 0.5;
 		}
 	}

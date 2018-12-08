@@ -35,7 +35,7 @@ const UserHeader = function(props) {
 				/>
 				{props.isUser &&
 					<div>
-						<a href={`/user/${props.userData.slug}/edit`} className="pt-button pt-intent-primary">Edit Profile</a>
+						<a href={`/user/${props.userData.slug}/edit`} className="bp3-button bp3-intent-primary">Edit Profile</a>
 					</div>
 				}
 			</div>
@@ -51,7 +51,7 @@ const UserHeader = function(props) {
 					{links.filter((link)=> {
 						return link.value;
 					}).map((link)=> {
-						return <a key={`link-${link.id}`} className={`pt-button pt-minimal ${!link.href ? 'no-click' : ''}`} href={link.href} rel="noopener noreferrer">{link.icon}{link.value}</a>;
+						return <a key={`link-${link.id}`} className={`bp3-button bp3-minimal ${!link.href ? 'no-click' : ''}`} href={link.href} rel="noopener noreferrer">{link.icon}{link.value}</a>;
 					})}
 				</div>
 			</div>

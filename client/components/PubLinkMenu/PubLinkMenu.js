@@ -23,25 +23,25 @@ const PubLinkMenu = (props)=> {
 	};
 
 	return (
-		<div className="pub-link-menu-component pt-elevation-2" style={menuStyle}>
+		<div className="pub-link-menu-component bp3-elevation-2" style={menuStyle}>
 			<input
 				ref={(elem)=> {
 					if (elem && !activeLink.attrs.href) {
 						elem.focus();
 					}
 				}}
-				className="pt-input"
+				className="bp3-input"
 				type="text"
 				value={activeLink.attrs.href}
 				onChange={(evt)=> {
 					activeLink.updateAttrs({ href: evt.target.value });
 				}}
 			/>
-			<a className="pt-button pt-minimal" href={activeLink.attrs.href} target="_blank" rel="noopener noreferrer">
+			<a className="bp3-button bp3-minimal" href={activeLink.attrs.href} target="_blank" rel="noopener noreferrer">
 				Go To Link
 			</a>
 			<Button
-				className="pt-minimal"
+				className="bp3-minimal"
 				text="Remove"
 				onClick={activeLink.removeLink}
 			/>

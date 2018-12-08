@@ -167,11 +167,11 @@ class DashboardPage extends Component {
 			<div className="dashboard-page-component">
 				<div className="content-buttons">
 					{this.state.hasChanged &&
-						<a href={`/dashboard/pages/${pageData.slug}`} className="pt-button">Cancel</a>
+						<a href={`/dashboard/pages/${pageData.slug}`} className="bp3-button">Cancel</a>
 					}
 					<Button
 						type="button"
-						className="pt-intent-primary"
+						className="bp3-intent-primary"
 						text="Save Changes"
 						disabled={!this.state.hasChanged || !this.state.title || (pageData.slug && !this.state.slug)}
 						loading={this.state.isLoading}
@@ -230,14 +230,14 @@ class DashboardPage extends Component {
 						}
 
 						<InputField label="Width">
-							<div className="pt-button-group">
+							<div className="bp3-button-group">
 								<Button
-									className={this.state.isNarrowWidth ? '' : 'pt-active'}
+									className={this.state.isNarrowWidth ? '' : 'bp3-active'}
 									onClick={this.setWide}
 									text="Wide"
 								/>
 								<Button
-									className={this.state.isNarrowWidth ? 'pt-active' : ''}
+									className={this.state.isNarrowWidth ? 'bp3-active' : ''}
 									onClick={this.setNarrow}
 									text="Narrow"
 								/>
@@ -246,15 +246,15 @@ class DashboardPage extends Component {
 
 						{pageData.slug &&
 							<InputField label="Privacy">
-								<div className="pt-button-group">
+								<div className="bp3-button-group">
 									<Button
-										className={this.state.isPublic ? 'pt-active' : ''}
+										className={this.state.isPublic ? 'bp3-active' : ''}
 										onClick={this.setPublic}
 										text="Public"
 										icon="globe"
 									/>
 									<Button
-										className={this.state.isPublic ? '' : 'pt-active'}
+										className={this.state.isPublic ? '' : 'bp3-active'}
 										onClick={this.setPrivate}
 										text="Private"
 										icon="lock"
@@ -283,7 +283,7 @@ class DashboardPage extends Component {
 							Delete
 						</div>
 						<div className="content">
-							<div className="pt-callout pt-intent-danger">
+							<div className="bp3-callout bp3-intent-danger">
 								<h5>Delete Page from Community</h5>
 								<p>Deleting a Page is permanent.</p>
 								<p>This will permanantely delete <b>{pageData.title}</b>. This will not delete pubs that are included in this page&apos;s layout.</p>
@@ -299,7 +299,7 @@ class DashboardPage extends Component {
 								<div className="delete-button-wrapper">
 									<Button
 										type="button"
-										className="pt-intent-danger"
+										className="bp3-intent-danger"
 										text="Delete Page"
 										disabled={this.state.deleteString !== pageData.title}
 										loading={this.state.isLoadingDelete}

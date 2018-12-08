@@ -16,6 +16,48 @@ body {
 	color: #333;
 	font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue", sans-serif;
 }
+h1 {
+	line-height:40px;
+	font-size:36px
+}
+h1,h2 {
+	color:#1f1f1f;
+	font-weight:600;
+	margin:0 0 10px;
+	padding:0
+}
+h2 {
+	line-height:32px;
+	font-size:28px
+}
+h3 {
+	line-height:25px;
+	font-size:22px
+}
+h3,h4 {
+	color:#1f1f1f;
+	font-weight:600;
+	margin:0 0 10px;
+	padding:0
+}
+h4 {
+	line-height:21px;
+	font-size:18px
+}
+h5 {
+	line-height:19px;
+	font-size:16px
+}
+h5,h6 {
+	color:#1f1f1f;
+	font-weight:600;
+	margin:0 0 10px;
+	padding:0
+}
+h6 {
+	line-height:16px;
+	font-size:14px
+}
 sup {
 	line-height: 1;
 }
@@ -23,13 +65,13 @@ sup {
 	color: #555;
 	font-size: 0.85em;
 }
-.pt-non-ideal-state {
+.bp3-non-ideal-state {
 	height: auto;
 }
 .no-click {
 	pointer-events: none;
 }
-svg.pt-icon {
+.bp3-icon {
 	vertical-align: middle;
 }
 .clearfix:after {
@@ -51,6 +93,6 @@ svg.pt-icon {
 	}
 }
 
-.pt-input {
+.bp3-input {
 	-webkit-appearance: none;
 }

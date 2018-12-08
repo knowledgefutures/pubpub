@@ -56,14 +56,14 @@ class LayoutEditorText extends Component {
 			<div className="layout-editor-text-component">
 				<div className="block-header">
 					<InputField label="Text Align">
-						<div className="pt-button-group">
+						<div className="bp3-button-group">
 							<Button
-								className={`${this.props.content.align === 'left' ? 'pt-active' : ''}`}
+								className={`${this.props.content.align === 'left' ? 'bp3-active' : ''}`}
 								onClick={this.setAlignLeft}
 								text="Left"
 							/>
 							<Button
-								className={`${this.props.content.align === 'center' ? 'pt-active' : ''}`}
+								className={`${this.props.content.align === 'center' ? 'bp3-active' : ''}`}
 								onClick={this.setAlignCenter}
 								text="Center"
 							/>

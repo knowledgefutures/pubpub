@@ -32,7 +32,7 @@ const NoMatch = (props)=> {
 					}
 					action={props.loginData.id
 						? null // TODO: eventually, put a search box here.
-						: <a href={`/login${redirectString}`} className="pt-button pt-large pt-intent-primary">Login</a>
+						: <a href={`/login${redirectString}`} className="bp3-button bp3-large bp3-intent-primary">Login</a>
 					}
 				/>
 			</PageWrapper>

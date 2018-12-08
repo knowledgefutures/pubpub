@@ -96,7 +96,7 @@ class CommunityCreate extends Component {
 									<NonIdealState
 										title="To create your community, create an account or login."
 										visual="error"
-										action={<a href="/login?redirect=/community/create" className="pt-button">Login or Signup</a>}
+										action={<a href="/login?redirect=/community/create" className="bp3-button">Login or Signup</a>}
 									/>
 								}
 								{this.props.loginData.id &&
@@ -144,7 +144,7 @@ class CommunityCreate extends Component {
 												<Button
 													name="create"
 													type="submit"
-													className="pt-button pt-intent-primary create-account-button"
+													className="bp3-button bp3-intent-primary create-account-button"
 													onClick={this.onCreateSubmit}
 													text="Create Community"
 													disabled={!this.state.subdomain || !this.state.title || !colorRegex.test(this.state.accentColor)}

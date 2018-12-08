@@ -18,13 +18,13 @@
 	.editor.read-only {
 		margin-top: 0.5em;
 	}
-	.pt-tag, .status {
+	.bp3-tag, .status {
 		text-transform: capitalize;
-		&.pt-intent-warning {
+		&.bp3-intent-warning {
 			background: #d9c72b;
 		}
 	}
-	.pt-callout a {
+	.bp3-callout a {
 		text-decoration: underline;
 	}
 	.button-row {
@@ -36,7 +36,7 @@
 			flex-shrink: 1;
 			margin-bottom: 0.5em;
 		}
-		.pt-intent-primary {
+		.bp3-intent-primary {
 			margin-bottom: 0.5em;
 		}
 	}

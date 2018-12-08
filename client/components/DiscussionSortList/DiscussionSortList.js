@@ -19,17 +19,17 @@ const DiscussionSortList = (props)=> {
 		{ id: 5, slug: 'leastReplies', title: 'Least Replies' },
 	];
 	return (
-		<div className="discussion-authors-list-component pt-menu pt-elevation-1">
-			<li className="pt-menu-header"><h6>Filter by Author</h6></li>
+		<div className="discussion-authors-list-component bp3-menu bp3-elevation-1">
+			<li className="bp3-menu-header"><h6>Filter by Author</h6></li>
 
 			{options.map((option)=> {
 				const handleClick = ()=> { onSelect(option.slug); };
 				return (
 					<li>
-						<div role="button" tabIndex={-1} key={`option-${option.id}`} className="pt-menu-item" onClick={handleClick}>
+						<div role="button" tabIndex={-1} key={`option-${option.id}`} className="bp3-menu-item" onClick={handleClick}>
 							<div className="color">
 								{props.selected === option.slug &&
-									<span className="pt-icon-standard pt-icon-small-tick" />
+									<span className="bp3-icon-standard bp3-icon-small-tick" />
 								}
 							</div>
 							<div className="title">{option.title}</div>

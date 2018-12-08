@@ -77,7 +77,7 @@ class Login extends Component {
 				>
 					<div className="container small">
 						<div className="row">
-							<div className="col-12 pt-elevation">
+							<div className="col-12 bp3-elevation">
 								{!this.props.loginData.id &&
 									<div>
 										<h1>Login</h1>
@@ -102,7 +102,7 @@ class Login extends Component {
 												<Button
 													name="login"
 													type="submit"
-													className="pt-button pt-intent-primary"
+													className="bp3-button bp3-intent-primary"
 													onClick={this.onLoginSubmit}
 													text="Login"
 													loading={this.state.loginLoading}
@@ -126,12 +126,12 @@ class Login extends Component {
 										action={
 											<div>
 												<AnchorButton
-													className="pt-large"
+													className="bp3-large"
 													text="View Profile"
 													href={`/user/${this.props.loginData.slug}`}
 												/>
 												<Button
-													className="pt-large"
+													className="bp3-large"
 													text="Logout"
 													onClick={this.onLogoutSubmit}
 													loading={this.state.logoutLoading}

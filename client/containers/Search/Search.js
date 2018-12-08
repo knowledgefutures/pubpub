@@ -269,7 +269,7 @@ class Search extends Component {
 											);
 										})}
 										{this.state.numPages > 1 &&
-											<div className="pt-button-group pt-large">
+											<div className="bp3-button-group bp3-large">
 												{pages.map((page, index)=> {
 													const key = `page-button-${index}`;
 													return (

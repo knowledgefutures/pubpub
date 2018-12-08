@@ -13,7 +13,7 @@ const LandingFeature = function(props) {
 	return (
 		<div className="landing-feature-component">
 			<div>
-				<span className={`pt-icon-large pt-icon-${props.icon}`} />
+				<span className={`bp3-icon-large bp3-icon-${props.icon}`} />
 			</div>
 			<div>
 				<div className="title">{props.title}</div>

@@ -111,7 +111,7 @@ class DashboardTags extends Component {
 				<div className="autocomplete-wrapper">
 					<form onSubmit={this.handleTagCreate}>
 						<input
-							className="pt-input pt-large"
+							className="bp3-input bp3-large"
 							type="text"
 							placeholder="Create new tag..."
 							value={this.state.newTagValue}
@@ -151,7 +151,7 @@ class DashboardTags extends Component {
 											type="button"
 											tabIndex={-1}
 											onClick={handleClick}
-											className={modifiers.active ? 'pt-menu-item pt-active' : 'pt-menu-item'}
+											className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
 										>
 											{item.title}
 										</button>
@@ -168,7 +168,7 @@ class DashboardTags extends Component {
 										tagId: tag.id,
 									});
 								}}
-								popoverProps={{ popoverClassName: 'pt-minimal' }}
+								popoverProps={{ popoverClassName: 'bp3-minimal' }}
 							>
 								<Button text={tag.page ? `Linked to: ${tag.page.title}` : 'Link to Page'} rightIcon="caret-down" />
 							</Select>
@@ -185,7 +185,7 @@ class DashboardTags extends Component {
 							</Checkbox>
 							<button
 								type="button"
-								className="pt-button pt-icon-small-cross pt-minimal"
+								className="bp3-button bp3-icon-small-cross bp3-minimal"
 								onClick={()=> {
 									this.handleTagDelete(tag.id);
 								}}

@@ -26,14 +26,14 @@ const UserNav = function(props) {
 	];
 	return (
 		<div className="user-nav-component">
-			<div className="pt-tabs">
-				<div className="pt-tab-list pt-large" role="tablist">
+			<div className="bp3-tabs">
+				<div className="bp3-tab-list bp3-large" role="tablist">
 					{tabs.map((tab)=> {
 						return (
 							<a
 								key={`tab-${tab.id}`}
 								href={`/user/${props.userSlug}${tab.path}`}
-								className="pt-tab"
+								className="bp3-tab"
 								role="tab"
 								aria-selected={(tab.path.indexOf(props.activeTab) > -1 || (!tab.path && !props.activeTab)) ? 'true' : 'false'}
 							>

@@ -11,10 +11,10 @@ const propTypes = {
 
 const PubSideControlsDiscussion = (props)=> {
 	const alignOptions = [
-		{ key: 'left', icon: 'pt-icon-align-left' },
-		{ key: 'center', icon: 'pt-icon-align-center' },
-		{ key: 'right', icon: 'pt-icon-align-right' },
-		{ key: 'full', icon: 'pt-icon-vertical-distribution' },
+		{ key: 'left', icon: 'bp3-icon-align-left' },
+		{ key: 'center', icon: 'bp3-icon-align-center' },
+		{ key: 'right', icon: 'bp3-icon-align-right' },
+		{ key: 'full', icon: 'bp3-icon-vertical-distribution' },
 	];
 	return (
 		<div className="pub-side-controls-discussion-component">
@@ -24,12 +24,12 @@ const PubSideControlsDiscussion = (props)=> {
 			<div className="form-label first">
 				Alignment
 			</div>
-			<div className="pt-button-group pt-fill">
+			<div className="bp3-button-group bp3-fill">
 				{alignOptions.map((item)=> {
 					return (
 						<Button
 							key={`align-option-${item.key}`}
-							className={`pt-button ${item.icon} ${props.attrs.align === item.key ? 'pt-active' : ''}`}
+							className={`bp3-button ${item.icon} ${props.attrs.align === item.key ? 'bp3-active' : ''}`}
 							onClick={()=> {
 								props.updateAttrs({ align: item.key });
 							}}

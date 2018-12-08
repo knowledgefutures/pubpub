@@ -122,7 +122,7 @@ const LayoutEditorInsert = function(props) {
 			<Popover
 				content={
 					<Menu>
-						<li className="pt-menu-header">
+						<li className="bp3-menu-header">
 							<h6>
 								Pubs Block
 								<Icon icon="widget-header" />
@@ -131,7 +131,7 @@ const LayoutEditorInsert = function(props) {
 						{pubsBlocks.map((item)=> {
 							return generateMenuItem(item);
 						})}
-						<li className="pt-menu-header">
+						<li className="bp3-menu-header">
 							<h6>
 								Banner Block
 								<Icon icon="vertical-distribution" />
@@ -140,7 +140,7 @@ const LayoutEditorInsert = function(props) {
 						{bannerBlocks.map((item)=> {
 							return generateMenuItem(item);
 						})}
-						<li className="pt-menu-header">
+						<li className="bp3-menu-header">
 							<h6>
 								Text Block
 								<Icon icon="new-text-box" />
@@ -149,7 +149,7 @@ const LayoutEditorInsert = function(props) {
 						{textBlocks.map((item)=> {
 							return generateMenuItem(item);
 						})}
-						<li className="pt-menu-header">
+						<li className="bp3-menu-header">
 							<h6>
 								HTML Block
 								<Icon icon="code" />
@@ -158,7 +158,7 @@ const LayoutEditorInsert = function(props) {
 						{htmlBlocks.map((item)=> {
 							return generateMenuItem(item);
 						})}
-						<li className="pt-menu-header">
+						<li className="bp3-menu-header">
 							<h6>
 								Pages Block
 								<Icon icon="application" />
@@ -171,12 +171,12 @@ const LayoutEditorInsert = function(props) {
 				}
 				interactionKind={PopoverInteractionKind.CLICK}
 				position={Position.BOTTOM}
-				popoverClassName="pt-minimal"
+				popoverClassName="bp3-minimal"
 				transitionDuration={-1}
 				inheritDarkTheme={false}
 				usePortal={false}
 			>
-				<button type="button" className="pt-button pt-icon-add">Add Block</button>
+				<button type="button" className="bp3-button bp3-icon-add">Add Block</button>
 			</Popover>
 			<div className="center-line" />
 		</div>

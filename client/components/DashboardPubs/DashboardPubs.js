@@ -75,7 +75,7 @@ class DashboardPubs extends Component {
 								</div>
 								<div className="nowrap">
 									{pub.pubTags.map((pubTag)=> {
-										return <span className="pt-tag pt-minimal pt-small">{pubTag.tag.title}</span>;
+										return <span className="bp3-tag bp3-minimal bp3-small">{pubTag.tag.title}</span>;
 									})}
 								</div>
 								{!pub.versions.length &&

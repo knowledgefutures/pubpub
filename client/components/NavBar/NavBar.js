@@ -40,7 +40,7 @@ const NavBar = function(props) {
 											<Menu>
 												{item.children.map((subitem)=> {
 													return (
-														<a href={`/${subitem.slug}`} className="pt-menu-item pt-popover-dismiss" key={`nav-item-${subitem.id}`}>
+														<a href={`/${subitem.slug}`} className="bp3-menu-item bp3-popover-dismiss" key={`nav-item-${subitem.id}`}>
 															<li>
 																{!subitem.isPublic &&
 																	<Icon icon="lock2" iconSize={14} />
@@ -52,7 +52,7 @@ const NavBar = function(props) {
 												})}
 											</Menu>
 										}
-										popoverClassName="pt-minimal nav-bar-popover"
+										popoverClassName="bp3-minimal nav-bar-popover"
 										inheritDarkTheme={false}
 										position={Position.BOTTOM_LEFT}
 										modifiers={{
@@ -65,7 +65,7 @@ const NavBar = function(props) {
 										<span className="dropdown">
 											<li>
 												{item.title}
-												<span className="pt-icon-standard pt-icon-caret-down pt-align-right" />
+												<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 											</li>
 										</span>
 									</Popover>

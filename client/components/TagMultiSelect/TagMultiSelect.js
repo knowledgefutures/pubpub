@@ -43,7 +43,7 @@ const TagMultiSelect = function(props) {
 							type="button"
 							tabIndex={-1}
 							onClick={handleClick}
-							className={modifiers.active ? 'pt-menu-item pt-active' : 'pt-menu-item'}
+							className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
 						>
 							{tag.title}
 						</button>
@@ -59,7 +59,7 @@ const TagMultiSelect = function(props) {
 				onRemove: props.onRemove,
 				placeholder: props.placeholder,
 				tagProps: {
-					className: 'pt-minimal pt-intent-primary'
+					className: 'bp3-minimal bp3-intent-primary'
 				},
 				inputProps: {
 					placeholder: props.placeholder,
@@ -67,9 +67,9 @@ const TagMultiSelect = function(props) {
 			}}
 			resetOnSelect={true}
 			onItemSelect={props.onItemSelect}
-			noResults={<div className="pt-menu-item">No Matching Tags</div>}
+			noResults={<div className="bp3-menu-item">No Matching Tags</div>}
 			popoverProps={{
-				popoverClassName: 'pt-minimal',
+				popoverClassName: 'bp3-minimal',
 				position: Position.BOTTOM_LEFT,
 				modifiers: {
 					preventOverflow: { enabled: false },

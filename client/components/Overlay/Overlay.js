@@ -18,7 +18,7 @@ const defaultProps = {
 const Overlay = function(props) {
 	return (
 		<BlueprintOverlay
-			className="pt-overlay-scroll-container"
+			className="bp3-overlay-scroll-container"
 			isOpen={props.isOpen}
 			onClose={props.onClose}
 			transitionName="pub-overlay"
@@ -34,7 +34,7 @@ const Overlay = function(props) {
 					}
 				`}
 			</style>
-			<div className="overlay-wrapper pt-card pt-elevation-2">
+			<div className="overlay-wrapper bp3-card bp3-elevation-2">
 				{props.children}
 			</div>
 		</BlueprintOverlay>

@@ -11,6 +11,7 @@ require('./export');
 require('./import');
 require('./logout');
 require('./login');
+require('./openSearch');
 require('./pages');
 require('./passwordReset');
 require('./pubs');

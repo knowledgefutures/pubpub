@@ -42,6 +42,7 @@ const Html = (props) => {
 				<link rel="stylesheet" type="text/css" href={getPath('baseStyle', 'css')} />
 				<link rel="stylesheet" type="text/css" href={getPath('vendor', 'css')} />
 				<link rel="stylesheet" type="text/css" href={getPath(props.chunkName, 'css')} />
+				<link rel="search" type="application/opensearchdescription+xml" title={props.initialData.communityData.title} href="/opensearch.xml" />
 			</head>
 			<body>
 				<div id="root">

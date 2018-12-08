@@ -3,7 +3,9 @@
 import amqplib from 'amqplib';
 import exportTask from './exportTask';
 import importTask from './importTask';
+import { deletePageSearchData, setPageSearchData, deletePubSearchData, setPubSearchData, updateCommunityData, updateUserData } from './searchTasks';
 import { WorkerTask } from '../server/models';
+
 
 if (process.env.NODE_ENV !== 'production') {
 	require('../server/config.js');
@@ -20,6 +22,18 @@ const processTask = (channel)=> {
 		} else if (taskData.type === 'import') {
 			taskFunction = importTask(taskData.input.sourceUrl);
 			// taskFunction = importTask('https://assets.pubpub.org/ywh5c35b/61529509039692.docx');
+		} else if (taskData.type === 'deletePageSearchData') {
+			taskFunction = deletePageSearchData(taskData.input);
+		} else if (taskData.type === 'setPageSearchData') {
+			taskFunction = setPageSearchData(taskData.input);
+		} else if (taskData.type === 'deletePubSearchData') {
+			taskFunction = deletePubSearchData(taskData.input);
+		} else if (taskData.type === 'setPubSearchData') {
+			taskFunction = setPubSearchData(taskData.input);
+		} else if (taskData.type === 'updateCommunityData') {
+			taskFunction = updateCommunityData(taskData.input);
+		} else if (taskData.type === 'updateUserData') {
+			taskFunction = updateUserData(taskData.input);
 		} else {
 			taskFunction = new Promise((resolve, reject)=> {
 				reject(new Error('Invalid Task Type'));

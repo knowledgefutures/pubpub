@@ -44,6 +44,9 @@ class Search extends Component {
 
 	componentDidMount() {
 		this.inputRef.current.focus();
+		const val = this.inputRef.current.value;
+		this.inputRef.current.value = '';
+		this.inputRef.current.value = val;
 		const query = this.state.searchQuery;
 		if (query) {
 			this.setState({ isLoading: !!query, searchQuery: query }, ()=> {

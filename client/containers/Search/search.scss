@@ -59,11 +59,32 @@
 			    margin-right: 1em;
 			    border-radius: 2px;
 			}
+			.content {
+				flex: 1 1 auto;
+			}
 			.title {
-				font-size: 22px;
 				font-weight: 800;
+				display: flex;
 				svg {
 					margin: -5px 0px 0px 5px;
+				}
+				.pub-title {
+					flex: 1 1 auto;
+					font-size: 22px;
+					word-break: break-word;
+				}
+				.community-title {
+				    max-width: 40%;
+				    font-size: 14px;
+				    margin-left: 1em;
+				    a {
+				    	padding: 0.5em;
+				    	white-space: nowrap;	
+				    	border-radius: 2px;
+				    	display: block;
+				    	overflow: hidden;
+				    	text-overflow: ellipsis;
+				    }
 				}
 			}
 			.byline {

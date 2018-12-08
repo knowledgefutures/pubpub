@@ -169,6 +169,7 @@ const findAndIndexPubs = (pubIds)=> {
 					communityAvatar: pub.community.avatar,
 					communityTitle: pub.community.title,
 					communityColor: pub.community.accentColor,
+					communityTextColor: pub.community.accentTextColor,
 					versionId: version.id,
 					versionIsPublic: version.isPublic,
 					versionAdminAccessId: (pub.isCommunityAdminManaged || version.isCommunityAdminShared) && pub.community.id,
@@ -236,6 +237,7 @@ const findAndIndexPages = (pageIds)=> {
 				communityAvatar: page.community.avatar,
 				communityTitle: page.community.title,
 				communityColor: page.community.accentColor,
+				communityTextColor: page.community.accentTextColor,
 				content: undefined
 			};
 
@@ -292,22 +294,22 @@ new Promise((resolve, reject)=> {
 		],
 	});
 })
-// .then(()=> {
-// 	return Pub.findAll({
-// 		attributes: ['id'],
-// 		// limit: 100,
-// 	});
-// })
-// .then((pubIds)=> {
-// 	const smallArrays = [];
-// 	while (pubIds.length) {
-// 		smallArrays.push(pubIds.splice(0, 25).map((item)=> { return item.id; }));
-// 	}
-// 	return Promise.each(smallArrays, (idArray, index)=> {
-// 		console.log('Starting pub batch ', index + 1, ' of ', smallArrays.length);
-// 		return findAndIndexPubs(idArray);
-// 	});
-// })
+.then(()=> {
+	return Pub.findAll({
+		attributes: ['id'],
+		// limit: 100,
+	});
+})
+.then((pubIds)=> {
+	const smallArrays = [];
+	while (pubIds.length) {
+		smallArrays.push(pubIds.splice(0, 25).map((item)=> { return item.id; }));
+	}
+	return Promise.each(smallArrays, (idArray, index)=> {
+		console.log('Starting pub batch ', index + 1, ' of ', smallArrays.length);
+		return findAndIndexPubs(idArray);
+	});
+})
 .then(()=> {
 	return pagesIndex.setSettings({
 		unretrievableAttributes: ['content'],
@@ -322,22 +324,22 @@ new Promise((resolve, reject)=> {
 		],
 	});
 })
-// .then(()=> {
-// 	return Page.findAll({
-// 		attributes: ['id'],
-// 		// limit: 100,
-// 	});
-// })
-// .then((pageIds)=> {
-// 	const smallArrays = [];
-// 	while (pageIds.length) {
-// 		smallArrays.push(pageIds.splice(0, 25).map((item)=> { return item.id; }));
-// 	}
-// 	return Promise.each(smallArrays, (idArray, index)=> {
-// 		console.log('Starting page batch ', index + 1, ' of ', smallArrays.length);
-// 		return findAndIndexPages(idArray);
-// 	});
-// })
+.then(()=> {
+	return Page.findAll({
+		attributes: ['id'],
+		// limit: 100,
+	});
+})
+.then((pageIds)=> {
+	const smallArrays = [];
+	while (pageIds.length) {
+		smallArrays.push(pageIds.splice(0, 25).map((item)=> { return item.id; }));
+	}
+	return Promise.each(smallArrays, (idArray, index)=> {
+		console.log('Starting page batch ', index + 1, ' of ', smallArrays.length);
+		return findAndIndexPages(idArray);
+	});
+})
 .catch((err)=> {
 	console.log('Error with search sync', err);
 })

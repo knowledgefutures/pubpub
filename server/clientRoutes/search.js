@@ -30,6 +30,9 @@ app.get('/search', (req, res, next)=> {
 	})
 	.then(([initialData, userData])=> {
 		const userCommunities = (userData && userData.communities) || [];
+		const communityFilter = initialData.locationData.isBasePubPub
+			? ''
+			: `communityId:${initialData.communityData.id} AND `;
 		const pubCommunityAccessFilterString = userCommunities.reduce((prev, curr)=> {
 			return `${prev} OR versionAdminAccessId:${curr.id}`;
 		}, '');
@@ -37,14 +40,14 @@ app.get('/search', (req, res, next)=> {
 			? ` OR versionAccessIds:${initialData.loginData.id}`
 			: '';
 		const pubSearchParams = {
-			filters: `versionIsPublic:true${pubCommunityAccessFilterString}${pubUserFilterString}`,
+			filters: `${communityFilter}(versionIsPublic:true${pubCommunityAccessFilterString}${pubUserFilterString})`,
 		};
 
 		const pageCommunityAccessFilterString = userCommunities.reduce((prev, curr)=> {
 			return `${prev} OR communityId:${curr.id}`;
 		}, '');
 		const pageSearchParams = {
-			filters: `isPublic:true${pageCommunityAccessFilterString}`,
+			filters: `${communityFilter}(isPublic:true${pageCommunityAccessFilterString})`,
 		};
 		const newInitialData = {
 			...initialData,

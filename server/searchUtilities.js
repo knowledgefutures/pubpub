@@ -84,6 +84,7 @@ export const setPageSearchData = (pageId)=> {
 			communityAvatar: page.community.avatar,
 			communityTitle: page.community.title,
 			communityColor: page.community.accentColor,
+			communityTextColor: page.community.accentTextColor,
 			content: undefined
 		};
 
@@ -239,6 +240,7 @@ export const setPubSearchData = (pubId)=> {
 				communityAvatar: pub.community.avatar,
 				communityTitle: pub.community.title,
 				communityColor: pub.community.accentColor,
+				communityTextColor: pub.community.accentTextColor,
 				versionId: version.id,
 				versionIsPublic: version.isPublic,
 				versionAdminAccessId: (pub.isCommunityAdminManaged || version.isCommunityAdminShared) && pub.community.id,
@@ -300,6 +302,7 @@ export const updateCommunityData = (communityId)=> {
 			communityAvatar: communityData.avatar,
 			communityTitle: communityData.title,
 			communityColor: communityData.accentColor,
+			communityTextColor: communityData.accentTextColor,
 		};
 		const pubObjects = pubObjectIds.map((objectId)=> {
 			return { objectID: objectId, ...updatedCommunityData };

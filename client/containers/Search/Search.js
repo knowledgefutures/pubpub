@@ -128,7 +128,7 @@ class Search extends Component {
 				this.setState({
 					isLoading: false,
 					searchResults: results.hits,
-					numPages: results.nbPages,
+					numPages: Math.min(results.nbPages, 10),
 				});
 			});
 		}
@@ -197,6 +197,7 @@ class Search extends Component {
 											let keyId;
 											let isPublic;
 											const resizedBannerImage = getResizedUrl(item.avatar, 'fit-in', '800x0');
+											const resizedCommunityLogo = getResizedUrl(item.communityAvatar, 'fit-in', '125x35');
 
 											if (this.state.mode === 'pubs') {
 												link = `https://${item.communityDomain}/pub/${item.slug}`;
@@ -222,13 +223,30 @@ class Search extends Component {
 															<div className="banner-image" style={bannerStyle} />
 														</a>
 													</div>
-													<div>
-														<a href={link} alt={item.title} className="title">
-															{item.title}
-															{!isPublic &&
-																<Icon icon="lock2" />
+													<div className="content">
+														<div className="title">
+															<a href={link} alt={item.title} className="pub-title">
+																{item.title}
+																{!isPublic &&
+																	<Icon icon="lock2" />
+																}
+															</a>
+															{(this.props.locationData.isBasePubPub) &&
+																<div className="community-title">
+																	<a href={`https://${item.communityDomain}`} alt={item.communityTitle} style={{ backgroundColor: item.communityColor, color: item.communityTextColor }}>
+																		{resizedCommunityLogo &&
+																			<img
+																				alt={`${item.communityTitle} logo`}
+																				src={resizedCommunityLogo}
+																			/>
+																		}
+																		{!resizedCommunityLogo &&
+																			<span>{item.communityTitle}</span>
+																		}
+																	</a>
+																</div>
 															}
-														</a>
+														</div>
 														{this.state.mode === 'pubs' &&
 															<div className="byline">
 																{dateFormat(item.versionCreatedAt, 'mmm dd, yyyy')}

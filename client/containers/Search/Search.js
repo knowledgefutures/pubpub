@@ -155,9 +155,11 @@ class Search extends Component {
 							<div className="col-12">
 								<div className="search-header">
 									<h2>Search {this.props.communityData.title}</h2>
-									<a href={`https://www.pubpub.org${searchString}`}>
-										Search all PubPub Communities
-									</a>
+									{!this.props.locationData.isBasePubPub &&
+										<a href={`https://www.pubpub.org${searchString}`}>
+											Search all PubPub Communities
+										</a>
+									}
 								</div>
 								<InputGroup
 									placeholder="search..."

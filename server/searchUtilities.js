@@ -266,7 +266,7 @@ export const updateCommunityData = (communityId)=> {
 		return new Promise((resolve, reject)=> {
 			const browser = index.browseAll('', {
 				filters: `communityId:${communityId}`,
-				attributesToRetrieve: ['objectId', 'title'],
+				attributesToRetrieve: ['objectId'],
 			});
 			let objectIds = [];
 
@@ -314,5 +314,29 @@ export const updateCommunityData = (communityId)=> {
 	})
 	.catch((err)=> {
 		console.error('Error updating community search data: ', err);
+	});
+};
+
+export const updateUserData = (userId)=> {
+	return PubAttribution.findAll({
+		where: {
+			isAuthor: true,
+			userId: userId,
+		},
+		attributes: ['id', 'isAuthor', 'userId', 'pubId']
+	})
+	.then((attributionsData)=> {
+		if (!attributionsData.length) { return null; }
+
+		const pubIds = attributionsData.map((pubAttribution)=> {
+			return pubAttribution.pubId;
+		});
+		const updateFunctions = pubIds.map((pubId)=> {
+			return setPubSearchData(pubId);
+		});
+		return Promise.all(updateFunctions);
+	})
+	.catch((err)=> {
+		console.error('Error updating user search data: ', err);
 	});
 };

@@ -4,6 +4,7 @@ import app from '../server';
 import { User, Signup } from '../models';
 import { slugifyString } from '../utilities';
 import { subscribeUser } from '../mailchimpHelpers';
+import { updateUserData } from '../searchUtilities';
 
 app.post('/api/users', (req, res)=> {
 	// Check that hash and email sync up
@@ -98,6 +99,10 @@ app.put('/api/users', (req, res)=> {
 		where: { id: req.body.userId }
 	})
 	.then(()=> {
+		if (user.fullName !== updatedUser.fullName) {
+			console.log('change the name!');
+			updateUserData(user.id);
+		}
 		return res.status(201).json('success');
 	})
 	.catch((err)=> {

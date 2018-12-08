@@ -100,7 +100,6 @@ app.put('/api/users', (req, res)=> {
 	})
 	.then(()=> {
 		if (user.fullName !== updatedUser.fullName) {
-			console.log('change the name!');
 			updateUserData(user.id);
 		}
 		return res.status(201).json('success');

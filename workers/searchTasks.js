@@ -1,6 +1,6 @@
 import algoliasearch from 'algoliasearch';
 import stopword from 'stopword';
-import { Pub, Community, Version, VersionPermission, PubAttribution, User, PubManager, Page } from './models';
+import { Pub, Community, Version, VersionPermission, PubAttribution, User, PubManager, Page } from '../server/models';
 import stopWordList from '../searchSync/stopwords';
 
 const client = algoliasearch(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);
@@ -193,7 +193,8 @@ export const setPubSearchData = (pubId)=> {
 			const separator = index === array.length - 1 || array.length === 2 ? '' : ', ';
 			const prefix = index === array.length - 1 && index !== 0 ? ' and ' : '';
 			return `${prefix}${author.user.fullName}${separator}`;
-		}).join('');
+		})
+		.join('');
 
 		const draftVersion = {
 			id: 'draft',

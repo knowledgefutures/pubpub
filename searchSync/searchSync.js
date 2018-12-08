@@ -129,10 +129,7 @@ const findAndIndexPubs = (pubIds)=> {
 				versions.push(publicVersion);
 			}
 
-			versions.filter((version, index)=> {
-				return true;
-				// return index === 0;
-			}).forEach((version)=> {
+			versions.forEach((version)=> {
 				const versionPermissionIds = pub.versionPermissions.filter((versionPermission)=> {
 					if (version.id === 'draft') { return !versionPermission.versionId; }
 					return versionPermission.versionId === version.id;
@@ -275,7 +272,7 @@ const findAndIndexPages = (pageIds)=> {
 	});
 };
 
-new Promise((resolve, reject)=> {
+new Promise((resolve)=> {
 	return resolve();
 	// return reject('Fail-safe reject');
 })

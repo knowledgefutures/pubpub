@@ -2,7 +2,7 @@
 if (process.env.NODE_ENV === 'production') {
 	require('newrelic');
 }
-require('babel-register');
+require('@babel/register');
 const throng = require('throng');
 
 throng({

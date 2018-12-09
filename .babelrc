@@ -1,11 +1,8 @@
 {
-  "presets": ["es2015", "react", "stage-0"],
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
   "plugins": [
-    "transform-runtime",
-    "add-module-exports",
-    "transform-decorators-legacy",
-    "transform-react-constant-elements",
-    "transform-react-inline-elements",
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-transform-react-constant-elements",
+    "@babel/plugin-transform-react-inline-elements",
   ]
 }
-

@@ -3,7 +3,7 @@ const { readdirSync } = require('fs');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const containerEntries = readdirSync(resolve(__dirname, '../containers')).filter((item)=> {
@@ -73,7 +73,7 @@ module.exports = {
 	],
 	optimization: {
 		minimizer: [
-			new UglifyJsPlugin({
+			new TerserPlugin({
 				sourceMap: true,
 			}),
 		],

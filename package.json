@@ -45,7 +45,7 @@
     "body-parser": "^1.18.1",
     "bourbon": "^5.1.0",
     "cheerio": "^1.0.0-rc.2",
-    "citation-js": "^0.4.0-6",
+    "citation-js": "0.4.0-6",
     "color": "^3.1.0",
     "compression": "^1.7.3",
     "concurrently": "^4.1.0",
@@ -120,6 +120,6 @@
     "xmlbuilder": "^10.1.1"
   },
   "engines": {
-    "node": "10.5.0"
+    "node": "10.14.1"
   }
 }

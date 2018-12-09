@@ -11,10 +11,10 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	communityData: PropTypes.object,
 	size: PropTypes.string,
-	hideByline: PropTypes.boolean,
-	hideDescription: PropTypes.boolean,
-	hideDates: PropTypes.boolean,
-	hideContributors: PropTypes.boolean,
+	hideByline: PropTypes.bool,
+	hideDescription: PropTypes.bool,
+	hideDates: PropTypes.bool,
+	hideContributors: PropTypes.bool,
 };
 
 const defaultProps = {

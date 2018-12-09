@@ -36,6 +36,7 @@ module.exports = {
 		timings: true,
 		chunks: false,
 		chunkModules: false,
+		entrypoints: false,
 		modules: false,
 	},
 	module: {

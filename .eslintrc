@@ -1,12 +1,11 @@
 {
-    extends: "eslint-config-airbnb",
+    extends: "airbnb",
+    plugins: ["react", "import"],
+    parser: "babel-eslint",
     env: {
         "browser": true,
         "node": true
     },
-    plugins: [
-        "react", "import"
-    ],
     "settings": {
       "import/resolver": {
         "node": {

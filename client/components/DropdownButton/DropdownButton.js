@@ -14,7 +14,7 @@ const propTypes = {
 	isSmall: PropTypes.bool,
 	isOpen: PropTypes.bool,
 	usePortal: PropTypes.bool,
-	children: PropTypes.node.isRequired,
+	children: PropTypes.node,
 };
 
 const defaultProps = {
@@ -26,6 +26,7 @@ const defaultProps = {
 	isSmall: false,
 	usePortal: true,
 	isOpen: undefined,
+	children: undefined,
 };
 
 const DropdownButton = function(props) {

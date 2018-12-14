@@ -260,7 +260,10 @@ class PubOptionsAttribution extends Component {
 															<div className="content">
 																<div className="top-content">
 																	<div className="name">
-																		<span>{attribution.user.fullName}</span>
+																		{attribution.user.slug
+																			? <a href={`/user/${attribution.user.slug}`}>{attribution.user.fullName}</a>
+																			: <span>{attribution.user.fullName}</span>
+																		}
 																		<span key={`${attribution.id}-handle`} style={isManager ? {} : { display: 'none' }} {...providedItem.dragHandleProps} className="bp3-icon-standard bp3-icon-drag-handle-horizontal" />
 																	</div>
 																	{isManager &&

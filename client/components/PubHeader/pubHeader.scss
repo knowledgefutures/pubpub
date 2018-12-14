@@ -104,6 +104,7 @@
 		.detail-button {
 			margin-right: 2em;
 			display: inline-block;
+			cursor: pointer;
 			&:not(:last-of-type):after {
 				content: "";
 				position: relative;
@@ -115,6 +116,9 @@
 				background: white;
 				display: inline-block;
 				border-radius: 2px;
+			}
+			&:hover {
+				text-decoration: underline;
 			}
 		}
 		.versions {

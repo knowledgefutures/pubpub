@@ -277,7 +277,7 @@ class PubHeader extends Component {
 											<Icon icon="chevron-down" />
 										</div>
 									</Popover>
-									<div
+									<a
 										href="#discussions"
 										role="button"
 										tabIndex={-1}
@@ -285,7 +285,7 @@ class PubHeader extends Component {
 									>
 										{/* <span className="bp3-icon-standard bp3-icon-chat" /> */}
 										{numDiscussions} Discussion{numDiscussions === 1 ? '' : 's'} (#{activeDiscussionChannel.title})
-									</div>
+									</a>
 									{!!numAttributions &&
 										<div
 											role="button"

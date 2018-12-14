@@ -146,6 +146,15 @@ class ImageUpload extends Component {
 								icon={<Icon icon="edit2" />}
 							/>
 						}
+						{!this.state.uploading && this.state.imageBlob &&
+							<AnchorButton
+								className="bp3-minimal"
+								href={this.state.imageBlob}
+								target="_blank"
+								icon="download"
+								download
+							/>
+						}
 						{!this.state.uploading && this.state.imageBlob && this.props.canClear &&
 							<AnchorButton
 								className="bp3-minimal bp3-intent-danger"

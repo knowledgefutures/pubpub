@@ -159,6 +159,9 @@ class Pub extends Component {
 
 	setPubData(newPubData) {
 		this.setState({ pubData: newPubData });
+		if (typeof document !== 'undefined') {
+			document.title = this.state.pubData.title;
+		}
 	}
 
 	getAbsolutePosition(top, left, placeInSideMargin) {

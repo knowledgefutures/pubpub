@@ -69,6 +69,14 @@ class Header extends Component {
 	render() {
 		const communityData = this.props.communityData;
 		const locationData = this.props.locationData;
+		// console.log(locationData);
+		// console.log(communityData);
+		const isPage = communityData.pages.reduce((prev, curr)=> {
+			if (curr.slug === locationData.params.slug || (!curr.slug && locationData.path === '/')) {
+				return true;
+			}
+			return prev;
+		}, false);
 		const isAdmin = this.props.loginData.isAdmin;
 		const loggedIn = !!this.props.loginData.slug;
 		const isBasePubPub = this.props.locationData.isBasePubPub;
@@ -138,8 +146,9 @@ class Header extends Component {
 									{!isBasePubPub &&
 										<a href="/search" role="button" tabIndex="0" className="hide-on-mobile bp3-button bp3-large bp3-minimal">Search</a>
 									}
-									{isAdmin &&
-										<a href="/dashboard" className="bp3-button bp3-large bp3-minimal">Manage</a>
+									{isAdmin && isPage
+										? <a href={`/dashboard/pages/${this.props.locationData.params.slug || ''}`} className="bp3-button bp3-large bp3-minimal">Manage</a>
+										: <a href="/dashboard" className="bp3-button bp3-large bp3-minimal">Manage</a>
 									}
 									{/* User avatar and menu */}
 									{loggedIn &&

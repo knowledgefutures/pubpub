@@ -117,7 +117,16 @@ class DiscussionThreadItem extends Component {
 							<a href={`/user/${discussion.author.slug}`}>{discussion.author.fullName || discussion.author.userInitials}</a>
 						</div>
 						<span className="date">
-							<TimeAgo date={discussion.createdAt} />
+							<TimeAgo
+								minPeriod={60}
+								formatter={(value, unit, suffix) => {
+									if (unit === 'second') { return 'just now'; }
+									let newUnit = unit;
+									if (value > 1) { newUnit += 's'; }
+									return `${value} ${newUnit} ${suffix}`;
+								}}
+								date={discussion.createdAt}
+							/>
 							{discussion.createdAt !== discussion.updatedAt &&
 								<span> (edited)</span>
 							}

@@ -32,6 +32,8 @@
 		width: 30px;
 		.bp3-button {
 			display: block;
+			min-width: 20px;
+			min-height: 20px;
 		}
 	}
 	.helper-text {

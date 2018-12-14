@@ -5,7 +5,7 @@ import { Overlay as BlueprintOverlay } from '@blueprintjs/core';
 require('./overlay.scss');
 
 const propTypes = {
-	isOpen: PropTypes.bool.isRequired,
+	isOpen: PropTypes.bool,
 	onClose: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired,
 	maxWidth: PropTypes.number,
@@ -13,6 +13,7 @@ const propTypes = {
 
 const defaultProps = {
 	maxWidth: 940,
+	isOpen: false,
 };
 
 const Overlay = function(props) {

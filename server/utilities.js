@@ -221,7 +221,7 @@ export const generateMetaComponents = ({ initialData, title, description, image,
 			<meta key="i1" property="og:image" content={avatar} />,
 			<meta key="i2" property="og:image:url" content={avatar} />,
 			<meta key="i3" property="og:image:width" content="500" />,
-			<meta name="twitter:image" content={avatar} />,
+			<meta key="i4" name="twitter:image" content={avatar} />,
 		];
 	}
 

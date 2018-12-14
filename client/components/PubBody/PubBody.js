@@ -12,7 +12,7 @@ const propTypes = {
 	showWorkingDraftButton: PropTypes.bool.isRequired,
 	// versionId: PropTypes.string.isRequired,
 	// sectionId: PropTypes.string,
-	content: PropTypes.object.isRequired,
+	content: PropTypes.object,
 	// threads: PropTypes.array,
 	slug: PropTypes.string,
 	highlights: PropTypes.array,
@@ -33,6 +33,7 @@ const propTypes = {
 };
 const defaultProps = {
 	// sectionId: undefined,
+	content: undefined,
 	highlights: [],
 	// threads: [],
 	slug: '',

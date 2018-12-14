@@ -9,7 +9,7 @@ require('./footer.scss');
 const propTypes = {
 	isBasePubPub: PropTypes.bool.isRequired,
 	isAdmin: PropTypes.bool.isRequired,
-	communityData: PropTypes.bool.isRequired,
+	communityData: PropTypes.object.isRequired,
 	socialItems: PropTypes.array.isRequired,
 };
 

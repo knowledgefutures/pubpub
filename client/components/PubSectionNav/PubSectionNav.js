@@ -58,8 +58,8 @@ const PubSectionNav = function(props) {
 							);
 						})}
 						{pubData.isDraft && (pubData.isDraftEditor || pubData.isManager) && [
-							<li className="bp3-menu-divider" />,
-							<li>
+							<li key="i1" className="bp3-menu-divider" />,
+							<li key="i2">
 								<Button
 									className="bp3-menu-item bp3-popover-dismiss bp3-minimal"
 									onClick={()=> { props.setOptionsMode('sections'); }}

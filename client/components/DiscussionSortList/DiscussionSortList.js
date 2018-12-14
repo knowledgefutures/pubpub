@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 require('./discussionSortList.scss');
 
 const propTypes = {
-	selected: PropTypes.array.isRequired,
+	selected: PropTypes.string.isRequired,
 	onSelect: PropTypes.func.isRequired,
 };
 

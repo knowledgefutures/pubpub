@@ -52,7 +52,7 @@ const PubOptions = (props)=> {
 		'DOI',
 		'delete'
 	];
-	if (!props.pubData.isDraft) {
+	if (!props.pubData.isDraft || (props.pubData.sectionsData && props.pubData.sectionsData.length === 1)) {
 		adminModes = adminModes.filter((item)=> {
 			return item !== 'sections';
 		});
@@ -90,7 +90,7 @@ const PubOptions = (props)=> {
 
 	return (
 		<Overlay
-			isOpen={optionsMode}
+			isOpen={!!optionsMode}
 			onClose={()=> { props.setOptionsMode(undefined); }}
 			maxWidth={928}
 		>

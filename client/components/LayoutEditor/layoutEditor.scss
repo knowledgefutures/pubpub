@@ -104,7 +104,7 @@
 			.pages-wrapper {
 				display: grid;
 				grid-gap: 2em;
-				grid-template-columns: repeat(auto-fit, 175px);
+				grid-template-columns: repeat(auto-fill, 175px);
 				justify-content: space-between;
 			}
 			.page-preview-component {

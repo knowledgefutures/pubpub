@@ -76,7 +76,7 @@ const PageWrapper = (props)=> {
 				// largeHeaderBackground={communityData.largeHeaderBackground}
 			/>
 
-			{!props.hideNav &&
+			{!props.hideNav && !props.communityData.hideNav &&
 				<NavBar
 					navItems={navItems}
 					socialItems={socialItems}

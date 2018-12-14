@@ -367,6 +367,12 @@ new Promise((resolve)=> {
 // 		sequelize.queryInterface.addColumn('Pages', 'isNarrowWidth', { type: Sequelize.BOOLEAN }),
 // 	]);
 // })
+// .then(()=> {
+// 	return sequelize.queryInterface.addColumn('Communities', 'hideNav', { type: Sequelize.BOOLEAN });
+// })
+// .then(()=> {
+// 	return sequelize.queryInterface.addColumn('Communities', 'hideLandingBanner', { type: Sequelize.BOOLEAN });
+// })
 .catch((err)=> {
 	console.log('Error with Migration', err);
 })

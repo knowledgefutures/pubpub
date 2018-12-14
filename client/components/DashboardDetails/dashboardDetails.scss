@@ -13,4 +13,8 @@
 			padding-top: 2px;
 		}
 	}
+	.disable-block {
+		opacity: 0.5;
+		pointer-events: none
+	}
 }

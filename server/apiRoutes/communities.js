@@ -98,6 +98,8 @@ app.put('/api/communities', (req, res)=> {
 			'facebook',
 			'email',
 			'hideCreatePubButton',
+			'hideNav',
+			'hideLandingBanner',
 			'defaultPubTags',
 		].indexOf(key) > -1) {
 			updatedCommunity[key] = req.body[key] && req.body[key].trim ? req.body[key].trim() : req.body[key];

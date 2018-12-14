@@ -75,6 +75,8 @@ const Community = sequelize.define('Community', {
 	email: { type: Sequelize.TEXT },
 	issn: { type: Sequelize.TEXT },
 	hideCreatePubButton: { type: Sequelize.BOOLEAN },
+	hideNav: { type: Sequelize.BOOLEAN },
+	hideLandingBanner: { type: Sequelize.BOOLEAN },
 	defaultPubTags: { type: Sequelize.JSONB },
 });
 

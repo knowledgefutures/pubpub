@@ -34,6 +34,8 @@ class DashboardDetails extends Component {
 			facebook: props.communityData.facebook || '',
 			email: props.communityData.email || '',
 			hideCreatePubButton: props.communityData.hideCreatePubButton || false,
+			hideNav: props.communityData.hideNav || false,
+			hideLandingBanner: props.communityData.hideLandingBanner || false,
 			defaultPubTags: props.communityData.defaultPubTags || [],
 			isLoading: false,
 			error: undefined,
@@ -53,6 +55,8 @@ class DashboardDetails extends Component {
 		this.handleFacebookChange = this.handleFacebookChange.bind(this);
 		this.handleEmailChange = this.handleEmailChange.bind(this);
 		this.handleHideCreatePubButtonChange = this.handleHideCreatePubButtonChange.bind(this);
+		this.handleHideNavChange = this.handleHideNavChange.bind(this);
+		this.handleHideLandingBannerChange = this.handleHideLandingBannerChange.bind(this);
 		this.handleDefaultPubTagsChange = this.handleDefaultPubTagsChange.bind(this);
 		this.handleSaveClick = this.handleSaveClick.bind(this);
 	}
@@ -115,6 +119,14 @@ class DashboardDetails extends Component {
 
 	handleHideCreatePubButtonChange(evt) {
 		this.setState({ hideCreatePubButton: !evt.target.checked });
+	}
+
+	handleHideNavChange(evt) {
+		this.setState({ hideNav: !evt.target.checked });
+	}
+
+	handleHideLandingBannerChange(evt) {
+		this.setState({ hideLandingBanner: !evt.target.checked });
 	}
 
 	handleDefaultPubTagsChange(items) {
@@ -216,8 +228,6 @@ class DashboardDetails extends Component {
 						defaultImage={this.state.avatar}
 						onNewImage={this.handleAvatarChange}
 					/>
-				</div>
-				<div className="row-wrapper">
 					<ImageUpload
 						htmlFor="small-header-logo-upload"
 						label={
@@ -238,6 +248,15 @@ class DashboardDetails extends Component {
 						useAccentBackground={true}
 						canClear={true}
 					/>
+				</div>
+				<div className="row-wrapper">
+					<InputField
+						label="Show Landing Page Banner"
+					>
+						<Checkbox checked={!this.state.hideLandingBanner} onChange={this.handleHideLandingBannerChange} />
+					</InputField>
+				</div>
+				<div className={this.state.hideLandingBanner ? 'row-wrapper disable-block' : 'row-wrapper'}>
 					<ImageUpload
 						htmlFor="large-header-logo-upload"
 						label={
@@ -347,13 +366,20 @@ class DashboardDetails extends Component {
 					helperText="e.g. #FF9944"
 					onChange={this.handleAccentColorChange}
 				/>
-				<InputField label="Navigation">
-					<NavDrag
-						initialNav={initialNav}
-						pages={pages}
-						onChange={this.handleNavigationChange}
-					/>
+				<InputField
+					label="Show Navigation Bar"
+				>
+					<Checkbox checked={!this.state.hideNav} onChange={this.handleHideNavChange} />
 				</InputField>
+				<div className={this.state.hideNav ? 'disable-block' : ''}>
+					<InputField label="Navigation">
+						<NavDrag
+							initialNav={initialNav}
+							pages={pages}
+							onChange={this.handleNavigationChange}
+						/>
+					</InputField>
+				</div>
 				<InputField error={this.state.error}>
 					<Button
 						name="create"

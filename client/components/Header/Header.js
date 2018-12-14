@@ -72,15 +72,15 @@ class Header extends Component {
 		const isAdmin = this.props.loginData.isAdmin;
 		const loggedIn = !!this.props.loginData.slug;
 		const isBasePubPub = this.props.locationData.isBasePubPub;
-		const isLandingPage = this.props.locationData.path === '/';
-		const showGradient = isLandingPage && !!communityData.largeHeaderBackground;
+		const showLandingBanner = this.props.locationData.path === '/' && !this.props.communityData.hideLandingBanner;
+		const showGradient = showLandingBanner && !!communityData.largeHeaderBackground;
 		const backgroundStyle = {};
 
 		if (showGradient) {
 			const resizedBackground = getResizedUrl(communityData.largeHeaderBackground, 'fit-in', '1500x600');
 			backgroundStyle.backgroundImage = `url("${resizedBackground}")`;
 		}
-		if (isBasePubPub && !isLandingPage) {
+		if (isBasePubPub && !showLandingBanner) {
 			backgroundStyle.boxShadow = '0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0), 0 1px 1px rgba(16, 22, 26, 0.2)';
 		}
 
@@ -90,14 +90,14 @@ class Header extends Component {
 
 		const redirectString = `?redirect=${locationData.path}${locationData.queryString.length > 1 ? locationData.queryString : ''}`;
 		return (
-			<nav className={`header-component ${useAccentsString} ${communityData.largeHeaderBackground && isLandingPage ? 'has-image' : ''}`} style={backgroundStyle}>
+			<nav className={`header-component ${useAccentsString} ${communityData.largeHeaderBackground && showLandingBanner ? 'has-image' : ''}`} style={backgroundStyle}>
 				<div className={showGradient ? 'header-gradient' : ''}>
 					<div className="container">
 						<div className="row">
 							<div className="col-12">
 
 								{/* App Logo - do not show on homepage */}
-								{(!isLandingPage || isBasePubPub) &&
+								{(!showLandingBanner || isBasePubPub) &&
 									<div className="header-items header-items-left">
 										<a href="/">
 											{communityData.smallHeaderLogo &&
@@ -194,7 +194,7 @@ class Header extends Component {
 						</div>
 					</div>
 				</div>
-				{isLandingPage && !isBasePubPub &&
+				{showLandingBanner && !isBasePubPub &&
 					<div className="community-header">
 						<div className="container">
 							<div className="row">

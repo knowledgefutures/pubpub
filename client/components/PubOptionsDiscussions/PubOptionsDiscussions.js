@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox } from '@blueprintjs/core';
+import { Checkbox, Button, Intent, EditableText } from '@blueprintjs/core';
 import PubOptionsSharingCard from 'components/PubOptionsSharingCard/PubOptionsSharingCard';
 import UserAutocomplete from 'components/UserAutocomplete/UserAutocomplete';
 import Avatar from 'components/Avatar/Avatar';
@@ -23,6 +23,7 @@ class PubOptionsDiscussions extends Component {
 		this.state = {
 			pubData: props.pubData,
 			newChannelTitle: '',
+			channelArchiveLoading: '',
 		};
 		this.handleChannelAdd = this.handleChannelAdd.bind(this);
 		this.handleChannelUpdate = this.handleChannelUpdate.bind(this);
@@ -61,7 +62,10 @@ class PubOptionsDiscussions extends Component {
 		});
 	}
 
-	handleChannelUpdate(updatedChannelObject) {
+	handleChannelUpdate(updatedChannelObject, isArchiveToggle) {
+		if (isArchiveToggle) {
+			this.setState({ channelArchiveLoading: updatedChannelObject.discussionChannelId });
+		}
 		return apiFetch('/api/discussionChannels', {
 			method: 'PUT',
 			body: JSON.stringify({
@@ -83,7 +87,7 @@ class PubOptionsDiscussions extends Component {
 					})
 				};
 				this.props.setPubData(newPubData);
-				return { pubData: newPubData };
+				return { pubData: newPubData, channelArchiveLoading: '' };
 			});
 		})
 		.catch((err)=> {
@@ -216,16 +220,31 @@ class PubOptionsDiscussions extends Component {
 				</form>
 
 				<div className="channels">
-					{channels.map((channel)=> {
+					{channels.sort((foo, bar)=> {
+						if (foo.isArchived && !bar.isArchived) { return 1; }
+						if (!foo.isArchived && bar.isArchived) { return -1; }
+						return 0;
+					}).map((channel)=> {
 						const canModerate = channel.participants.reduce((prev, curr)=> {
 							if (curr.userId === this.props.loginData.id) { return true; }
 							return prev;
 						}, channel.isCommunityAdminModerated && this.props.loginData.isAdmin);
+						if (!canModerate && channel.isArchived) { return null; }
+
 						return (
 							<div className="channel" key={`channel-${channel.id}`}>
 								<div className="header">
 									<div className="title">
-										#{channel.title}
+										#<EditableText
+											defaultValue={channel.title}
+											onConfirm={(newTitle)=> {
+												this.handleChannelUpdate({
+													discussionChannelId: channel.id,
+													title: newTitle.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase(),
+												});
+											}}
+											disabled={!canModerate || !channel.id}
+										/>
 									</div>
 									<div className="option">
 										{!channel.id &&
@@ -235,8 +254,26 @@ class PubOptionsDiscussions extends Component {
 											<span className="static">{channel.permissions}</span>
 										}
 
-										{/* Permissions Dropdown for channels other than #public */}
 										{canModerate && channel.id &&
+											<Button
+												text={channel.isArchived
+													? 'Unarchive Channel'
+													: 'Archive Channel'
+												}
+												onClick={()=> {
+													this.handleChannelUpdate({
+														discussionChannelId: channel.id,
+														isArchived: !channel.isArchived,
+													}, true);
+												}}
+												intent={channel.isArchived ? Intent.NONE : Intent.DANGER}
+												minimal={true}
+												loading={this.state.channelArchiveLoading === channel.id}
+											/>
+										}
+
+										{/* Permissions Dropdown for channels other than #public */}
+										{canModerate && channel.id && !channel.isArchived &&
 											<DropdownButton
 												label={channel.permissions}
 												// icon={items[props.value].icon}
@@ -267,105 +304,107 @@ class PubOptionsDiscussions extends Component {
 										}
 									</div>
 								</div>
-								<div>
-									{canModerate &&
-										<div className="cards-wrapper">
-											{/* If community admins are not managers, show options for their permissions */}
-											<PubOptionsSharingCard
-												content={[
-													<span className="bp3-icon-standard bp3-icon-people" />,
-													<span>Community Admins</span>
-												]}
-												options={(
-													<Checkbox
-														checked={channel.isCommunityAdminModerated}
-														onChange={(evt)=> {
-															this.handleChannelUpdate({
-																discussionChannelId: channel.id,
-																isCommunityAdminModerated: evt.target.checked,
-															});
-														}}
-														disabled={!channel.id}
-													>
-														Can Moderate
-													</Checkbox>
-												)}
-											/>
-
-											{/* List all version permissions, filtering out managers */}
-											{channel.participants.sort((foo, bar)=> {
-												if (foo.createdAt < bar.createdAt) { return -1; }
-												if (foo.createdAt > bar.createdAt) { return 1; }
-												return 0;
-											}).map((participant)=> {
-												return (
-													<PubOptionsSharingCard
-														key={participant.id}
-														content={[
-															<Avatar width={25} userInitials={participant.user.initials} userAvatar={participant.user.avatar} />,
-															<span>{participant.user.fullName}</span>
-														]}
-														options={[
-															<Checkbox
-																checked={participant.isModerator}
-																onChange={(evt)=> {
-																	this.handleChannelParticipantUpdate({
-																		discussionChannelParticipantId: participant.id,
-																		discussionChannelId: channel.id,
-																		isModerator: evt.target.checked,
-																	});
-																}}
-															>
-																Can Moderate
-															</Checkbox>,
-															<button
-																className="bp3-button bp3-minimal bp3-small"
-																type="button"
-																onClick={()=> {
-																	this.handleChannelParticipantDelete(channel.id, participant.id);
-																}}
-															>
-																<span className="bp3-icon-standard bp3-icon-small-cross" />
-															</button>
-														]}
-													/>
-												);
-											})}
-
-											{/* Card for adding new user to channel. Not used for #public */}
-											{channel.id &&
+								{!channel.isArchived &&
+									<div>
+										{canModerate &&
+											<div className="cards-wrapper">
+												{/* If community admins are not managers, show options for their permissions */}
 												<PubOptionsSharingCard
-													content={
-														<UserAutocomplete
-															onSelect={(user)=> {
-																return this.handleChannelParticipantAdd({
-																	userId: user.id,
+													content={[
+														<span className="bp3-icon-standard bp3-icon-people" />,
+														<span>Community Admins</span>
+													]}
+													options={(
+														<Checkbox
+															checked={channel.isCommunityAdminModerated}
+															onChange={(evt)=> {
+																this.handleChannelUpdate({
 																	discussionChannelId: channel.id,
+																	isCommunityAdminModerated: evt.target.checked,
 																});
 															}}
-															allowCustomUser={false} // Eventually use this for emails
-															placeholder={`Add participant to #${channel.title}...`}
-															usedUserIds={channel.participants.map((item)=> {
-																return item.user.id;
-															})}
-														/>
-													}
-													isAddCard={true}
+															disabled={!channel.id}
+														>
+															Can Moderate
+														</Checkbox>
+													)}
 												/>
-											}
-										</div>
-									}
-									{!canModerate &&
-										<div className="access-preview">
-											{channel.isCommunityAdminModerated &&
-												<Icon icon="people" />
-											}
-											{channel.participants.map((item)=> {
-												return <Avatar width={20} userInitials={item.user.initials} userAvatar={item.user.avatar} />;
-											})}
-										</div>
-									}
-								</div>
+
+												{/* List all version permissions, filtering out managers */}
+												{channel.participants.sort((foo, bar)=> {
+													if (foo.createdAt < bar.createdAt) { return -1; }
+													if (foo.createdAt > bar.createdAt) { return 1; }
+													return 0;
+												}).map((participant)=> {
+													return (
+														<PubOptionsSharingCard
+															key={participant.id}
+															content={[
+																<Avatar width={25} userInitials={participant.user.initials} userAvatar={participant.user.avatar} />,
+																<span>{participant.user.fullName}</span>
+															]}
+															options={[
+																<Checkbox
+																	checked={participant.isModerator}
+																	onChange={(evt)=> {
+																		this.handleChannelParticipantUpdate({
+																			discussionChannelParticipantId: participant.id,
+																			discussionChannelId: channel.id,
+																			isModerator: evt.target.checked,
+																		});
+																	}}
+																>
+																	Can Moderate
+																</Checkbox>,
+																<button
+																	className="bp3-button bp3-minimal bp3-small"
+																	type="button"
+																	onClick={()=> {
+																		this.handleChannelParticipantDelete(channel.id, participant.id);
+																	}}
+																>
+																	<span className="bp3-icon-standard bp3-icon-small-cross" />
+																</button>
+															]}
+														/>
+													);
+												})}
+
+												{/* Card for adding new user to channel. Not used for #public */}
+												{channel.id &&
+													<PubOptionsSharingCard
+														content={
+															<UserAutocomplete
+																onSelect={(user)=> {
+																	return this.handleChannelParticipantAdd({
+																		userId: user.id,
+																		discussionChannelId: channel.id,
+																	});
+																}}
+																allowCustomUser={false} // Eventually use this for emails
+																placeholder={`Add participant to #${channel.title}...`}
+																usedUserIds={channel.participants.map((item)=> {
+																	return item.user.id;
+																})}
+															/>
+														}
+														isAddCard={true}
+													/>
+												}
+											</div>
+										}
+										{!canModerate &&
+											<div className="access-preview">
+												{channel.isCommunityAdminModerated &&
+													<Icon icon="people" />
+												}
+												{channel.participants.map((item)=> {
+													return <Avatar width={20} userInitials={item.user.initials} userAvatar={item.user.avatar} />;
+												})}
+											</div>
+										}
+									</div>
+								}
 							</div>
 						);
 					})}

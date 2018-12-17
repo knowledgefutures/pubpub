@@ -155,7 +155,9 @@ class DiscussionList extends Component {
 		const threadsToShow = this.state.isArchivedMode ? archivedThreads : activeThreads;
 		const discussionChannels = [
 			{ title: 'public' },
-			...pubData.discussionChannels,
+			...pubData.discussionChannels.filter((channel)=> {
+				return !channel.isArchived;
+			}),
 		];
 
 		return (

@@ -78,7 +78,9 @@ class PubSideOptions extends Component {
 		// for the previews before and after.
 		const discussionChannels = [
 			{ title: 'public' },
-			...this.props.pubData.discussionChannels,
+			...this.props.pubData.discussionChannels.filter((channel)=> {
+				return !channel.isArchived;
+			}),
 		];
 
 		const pubData = this.props.pubData;

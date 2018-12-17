@@ -342,6 +342,7 @@ const DiscussionChannel = sequelize.define('DiscussionChannel', {
 	isCommunityAdminModerated: { type: Sequelize.BOOLEAN },
 	viewHash: { type: Sequelize.STRING },
 	writeHash: { type: Sequelize.STRING },
+	isArchived: { type: Sequelize.BOOLEAN },
 
 	/* Set by Associations */
 	pubId: { type: Sequelize.UUID, allowNull: false },

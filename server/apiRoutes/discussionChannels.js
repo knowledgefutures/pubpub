@@ -50,7 +50,7 @@ app.put('/api/discussionChannels', (req, res)=> {
 	// Filter to only allow certain fields to be updated
 	const updatedDiscussionChannel = {};
 	Object.keys(req.body).forEach((key)=> {
-		if (['title', 'permissions', 'isCommunityAdminModerated'].indexOf(key) > -1) {
+		if (['title', 'permissions', 'isCommunityAdminModerated', 'isArchived'].indexOf(key) > -1) {
 			updatedDiscussionChannel[key] = req.body[key];
 		}
 	});

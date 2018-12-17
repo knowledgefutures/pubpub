@@ -45,7 +45,7 @@ const PubSideCollaborators = function(props) {
 						if (foo.createdAt > bar.createdAt) { return -1; }
 						return 0;
 					}).map((item)=> {
-						return <PubPresSideUser user={item.user} key={item.id} />;
+						return <PubPresSideUser attribution={item} key={item.id} />;
 					})}
 				</div>
 			}

@@ -5,31 +5,40 @@ import Avatar from 'components/Avatar/Avatar';
 require('./pubPresSideUser.scss');
 
 const propTypes = {
-	user: PropTypes.object.isRequired,
+	attribution: PropTypes.object.isRequired,
 };
 
 const PubPresSideUser = function(props) {
-	const avatarElement = props.user.slug
+	const user = props.attribution.user;
+	const avatarElement = user.slug
 		? (
-			<a href={`/user/${props.user.slug}`}>
+			<a href={`/user/${user.slug}`}>
 				<Avatar
-					userInitials={props.user.initials}
-					userAvatar={props.user.avatar}
+					userInitials={user.initials}
+					userAvatar={user.avatar}
 					width={40}
 				/>
 			</a>
 		)
 		: (
 			<Avatar
-				userInitials={props.user.initials}
-				userAvatar={props.user.avatar}
+				userInitials={user.initials}
+				userAvatar={user.avatar}
 				width={40}
 			/>
 		);
 
-	const nameElement = props.user.slug
-		? <a href={`/user/${props.user.slug}`}>{props.user.fullName}</a>
-		: <span>{props.user.fullName}</span>;
+	const nameElement = user.slug
+		? <a href={`/user/${user.slug}`}>{user.fullName}</a>
+		: <span>{user.fullName}</span>;
+
+	const roles = props.attribution.roles || [];
+	const rolesString = roles.reduce((prev, curr)=> {
+		if (prev) {
+			return `${prev}, ${curr}`;
+		}
+		return curr;
+	}, '');
 
 	return (
 		<div className="pub-pres-side-user-component">
@@ -40,7 +49,10 @@ const PubPresSideUser = function(props) {
 				<div className="name">
 					{nameElement}
 				</div>
-				<div>{props.user.title}</div>
+				<div>{user.title}</div>
+				{!!rolesString &&
+					<div className="roles">Roles: {rolesString}</div>
+				}
 			</div>
 		</div>
 	);

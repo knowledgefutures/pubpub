@@ -32,6 +32,7 @@ class Signup extends Component {
 			method: 'POST',
 			body: JSON.stringify({
 				email: this.state.email.toLowerCase(),
+				communityId: this.props.communityData.id,
 			})
 		})
 		.then(()=> {

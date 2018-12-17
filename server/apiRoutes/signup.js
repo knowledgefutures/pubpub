@@ -27,6 +27,7 @@ app.post('/api/signup', (req, res)=> {
 			hash: generateHash(),
 			count: 1,
 			completed: false,
+			communityId: req.body.communityId,
 		});
 	})
 	.then(()=> {

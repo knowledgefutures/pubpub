@@ -153,6 +153,7 @@ const Signup = sequelize.define('Signup', {
 	hash: { type: Sequelize.TEXT },
 	count: { type: Sequelize.INTEGER },
 	completed: { type: Sequelize.BOOLEAN },
+	communityId: { type: Sequelize.UUID },
 });
 
 const Pub = sequelize.define('Pub', {

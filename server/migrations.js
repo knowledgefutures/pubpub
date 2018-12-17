@@ -373,6 +373,9 @@ new Promise((resolve)=> {
 // .then(()=> {
 // 	return sequelize.queryInterface.addColumn('Communities', 'hideLandingBanner', { type: Sequelize.BOOLEAN });
 // })
+// .then(()=> {
+// 	return sequelize.queryInterface.addColumn('Signups', 'communityId', { type: Sequelize.UUID });
+// })
 .catch((err)=> {
 	console.log('Error with Migration', err);
 })

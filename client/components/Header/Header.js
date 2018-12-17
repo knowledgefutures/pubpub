@@ -71,7 +71,7 @@ class Header extends Component {
 		const locationData = this.props.locationData;
 		// console.log(locationData);
 		// console.log(communityData);
-		const isPage = communityData.pages.reduce((prev, curr)=> {
+		const isPage = communityData.pages && communityData.pages.reduce((prev, curr)=> {
 			if (curr.slug === locationData.params.slug || (!curr.slug && locationData.path === '/')) {
 				return true;
 			}

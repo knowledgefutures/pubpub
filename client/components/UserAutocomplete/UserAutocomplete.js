@@ -98,7 +98,7 @@ class UserAutocomplete extends Component {
 							</li>
 						);
 					}}
-					closeOnSelect={true}
+					resetOnSelect={true}
 					onItemSelect={this.handleSelect}
 					noResults={<MenuItem disabled text="No results" />}
 					popoverProps={{

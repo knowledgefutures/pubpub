@@ -144,7 +144,7 @@ class PubOptionsTags extends Component {
 							</li>
 						);
 					}}
-					closeOnSelect={true}
+					resetOnSelect={true}
 					onItemSelect={this.handlePubTagAdd}
 					noResults={<MenuItem disabled text="No results" />}
 					popoverProps={{

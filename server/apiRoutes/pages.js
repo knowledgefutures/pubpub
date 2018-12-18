@@ -80,9 +80,22 @@ app.put('/api/pages', (req, res)=> {
 							'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'img', 'video', 'iframe', 'style'],
 						allowedAttributes: {
 							'*': ['class', 'id', 'style', 'src', 'width', 'height', 'preload', 'controls', 'allowfullscreen', 'frameborder'],
-							a: ['href'],
+							a: ['href', 'target', 'rel'],
 						},
 						allowedSchemes: ['https', 'mailto'],
+						transformTags: {
+							a: (tagName, attribs)=> {
+								const needsRel = attribs.target && attribs.target === '_blank';
+								const newAttribs = { ...attribs };
+								if (needsRel) {
+									newAttribs.rel = 'noopener noreferrer';
+								}
+								return {
+									tagName: 'a',
+									attribs: newAttribs
+								};
+							}
+						},
 					});
 					return cleanedBlock;
 				});

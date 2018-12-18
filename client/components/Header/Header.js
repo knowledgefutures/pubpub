@@ -146,9 +146,11 @@ class Header extends Component {
 									{!isBasePubPub &&
 										<a href="/search" role="button" tabIndex="0" className="hide-on-mobile bp3-button bp3-large bp3-minimal">Search</a>
 									}
-									{isAdmin && isPage
-										? <a href={`/dashboard/pages/${this.props.locationData.params.slug || ''}`} className="bp3-button bp3-large bp3-minimal">Manage</a>
-										: <a href="/dashboard" className="bp3-button bp3-large bp3-minimal">Manage</a>
+									{isAdmin && isPage &&
+										<a href={`/dashboard/pages/${this.props.locationData.params.slug || ''}`} className="bp3-button bp3-large bp3-minimal">Manage</a>
+									}
+									{isAdmin && !isPage &&
+										<a href="/dashboard" className="bp3-button bp3-large bp3-minimal">Manage</a>
 									}
 									{/* User avatar and menu */}
 									{loggedIn &&

@@ -72,11 +72,7 @@ class DashboardTeam extends Component {
 					/>
 				</div>
 
-				{this.props.communityData.admins.sort((foo, bar)=> {
-					if (foo.createdAt < bar.createdAt) { return -1; }
-					if (foo.createdAt > bar.createdAt) { return 1; }
-					return 0;
-				}).map((admin)=> {
+				{this.props.communityData.admins.map((admin)=> {
 					return (
 						<div key={`admin-${admin.id}`} className="admin-wrapper">
 							<div className="avatar-wrapper">

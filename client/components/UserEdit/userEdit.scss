@@ -15,6 +15,12 @@
 	input, textarea {
 		max-width: 500px;
 	}
+	p.confirmation {
+		max-width: 60%;
+    float: right;
+    font-style: italic;
+    font-size: small;
+	}
 }
 @media only screen and (max-width: 720px) {  /* Used to be 45em */
 	.user-edit-component {

@@ -11,12 +11,20 @@ const propTypes = {
 	onSave: PropTypes.func,
 	error: PropTypes.string,
 	isLoading: PropTypes.bool,
+	onReset: PropTypes.func,
+	resetError: PropTypes.string,
+	resetIsLoading: PropTypes.bool,
+	showResetConfirmation: PropTypes.bool
 };
 
 const defaultProps = {
 	onSave: ()=>{},
 	error: undefined,
 	isLoading: false,
+	onReset: ()=>{},
+	resetError: undefined,
+	resetIsLoading: false,
+	showResetConfirmation: false
 };
 
 class UserEdit extends Component {
@@ -35,7 +43,7 @@ class UserEdit extends Component {
 			github: props.userData.github || '',
 			twitter: props.userData.twitter || '',
 			facebook: props.userData.facebook || '',
-			googleScholar: props.userData.googleScholar || '',
+			googleScholar: props.userData.googleScholar || ''
 		};
 		this.onFirstNameChange = this.onFirstNameChange.bind(this);
 		this.onLastNameChange = this.onLastNameChange.bind(this);
@@ -43,6 +51,7 @@ class UserEdit extends Component {
 		this.onBioChange = this.onBioChange.bind(this);
 		this.onAvatarChange = this.onAvatarChange.bind(this);
 		this.handleSaveDetails = this.handleSaveDetails.bind(this);
+		this.handlePasswordReset = this.handlePasswordReset.bind(this);
 	}
 
 	onFirstNameChange(evt) {
@@ -83,6 +92,11 @@ class UserEdit extends Component {
 			googleScholar: this.state.googleScholar,
 		};
 		this.props.onSave(newUserObject);
+	}
+
+	handlePasswordReset(evt) {
+		evt.preventDefault();
+		this.props.onReset();
 	}
 
 	render() {
@@ -200,6 +214,21 @@ class UserEdit extends Component {
 											loading={this.props.isLoading}
 										/>
 									</InputField>
+									{ this.props.showResetConfirmation
+										? <p className="confirmation">Password reset requested. Check your email for reset instructions.</p>
+										:
+										<InputField error={this.props.resetError && 'Error Requesting Reset'}>
+											<Button
+												name="reset"
+												type="button"
+												className="bp3-button"
+												onClick={this.handlePasswordReset}
+												text="Request Password Reset"
+												disabled={this.props.showResetConfirmation}
+												loading={this.props.resetIsLoading}
+											/>
+										</InputField>
+									}
 								</div>
 							</form>
 						</div>

@@ -25,6 +25,7 @@ class User extends Component {
 			putUserError: undefined,
 		};
 		this.handleUserEditSave = this.handleUserEditSave.bind(this);
+		this.handleUserEditReset = this.handleUserEditReset.bind(this);
 	}
 
 	handleUserEditSave(userObject) {
@@ -38,6 +39,21 @@ class User extends Component {
 		})
 		.catch((err)=> {
 			this.setState({ putUserIsLoading: false, putUserError: err });
+		});
+	}
+
+	handleUserEditReset() {
+		console.log('test?');
+		this.setState({ postResetIsLoading: true });
+		return apiFetch('/api/password-reset', {
+			method: 'POST',
+			body: JSON.stringify({})
+		})
+		.then(()=> {
+			this.setState({ postResetIsLoading: false, showResetConfirmation: true });
+		})
+		.catch(()=> {
+			this.setState({ postResetIsLoading: false, postResetError: 'Error' });
 		});
 	}
 
@@ -82,6 +98,10 @@ class User extends Component {
 							onSave={this.handleUserEditSave}
 							error={this.state.putUserError}
 							isLoading={this.state.putUserIsLoading}
+							onReset={this.handleUserEditReset}
+							resetIsLoading={this.state.postResetIsLoading}
+							resetError={this.state.postResetError}
+							showResetConfirmation={this.state.showResetConfirmation}
 						/>
 					}
 					{mode !== 'edit' &&

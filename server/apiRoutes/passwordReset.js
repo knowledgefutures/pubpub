@@ -6,8 +6,15 @@ import { sendPasswordResetEmail } from '../emailHelpers';
 
 
 app.post('/api/password-reset', (req, res)=> {
+	const userObj = req.user || {};
+	const email = req.body.email || false;
+
+	const whereQuery = email
+		? { email: email }
+		: { id: userObj.id };
+
 	User.findOne({
-		where: { email: req.body.email }
+		where: whereQuery
 	}).then((user)=> {
 		if (!user) { throw new Error('User doesn\'t exist'); }
 

@@ -11,5 +11,5 @@ Module.prototype.require = function(...args) {
 	return originalRequire.apply(this, args);
 };
 
-require('babel-register');
+require('@babel/register');
 require('./worker');

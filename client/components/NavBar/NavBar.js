@@ -58,6 +58,7 @@ const NavBar = function(props) {
 										modifiers={{
 											preventOverflow: { enabled: false },
 											hide: { enabled: false },
+											flip: { enabled: false },
 										}}
 										interactionKind={PopoverInteractionKind.CLICK}
 										key={`dropdown-${item.title}`}

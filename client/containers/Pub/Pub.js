@@ -497,135 +497,137 @@ class Pub extends Component {
 						setPubData={this.setPubData}
 					/>
 
-					{pubData.isDraft &&
-						<PubDraftHeader
-							pubData={pubData}
-							loginData={loginData}
-							editorChangeObject={this.state.editorChangeObject}
-							setOptionsMode={this.setOptionsMode}
-							bottomCutoffId="discussions"
-							onRef={this.handleMenuWrapperRef}
-							collabStatus={this.state.collabStatus}
-							activeCollaborators={this.state.activeCollaborators}
-						/>
-					}
+					<div>
+						{pubData.isDraft &&
+							<PubDraftHeader
+								pubData={pubData}
+								loginData={loginData}
+								editorChangeObject={this.state.editorChangeObject}
+								setOptionsMode={this.setOptionsMode}
+								bottomCutoffId="discussions"
+								onRef={this.handleMenuWrapperRef}
+								collabStatus={this.state.collabStatus}
+								activeCollaborators={this.state.activeCollaborators}
+							/>
+						}
 
-					<div className="container pub">
-						<div className="row">
-							<div className="col-12 pub-columns">
-								<div className="main-content">
-									{isCollabLoading &&
-										<PubLoadingBars />
-									}
+						<div className="container pub">
+							<div className="row">
+								<div className="col-12 pub-columns">
+									<div className="main-content">
+										{isCollabLoading &&
+											<PubLoadingBars />
+										}
 
-									{/* Prev/Content/Next Buttons */}
-									{!isCollabLoading && hasSections &&
-										<PubSectionNav
+										{/* Prev/Content/Next Buttons */}
+										{!isCollabLoading && hasSections &&
+											<PubSectionNav
+												pubData={pubData}
+												queryObject={queryObject}
+												hasSections={hasSections}
+												sectionId={sectionId}
+												setOptionsMode={this.setOptionsMode}
+											/>
+										}
+
+										<div style={isCollabLoading ? { opacity: 0 } : {}}>
+											<PubBody
+												showWorkingDraftButton={!pubData.isDraft && (pubData.isEditor || pubData.isManager)}
+												isDraft={pubData.isDraft}
+												versionId={activeVersion && activeVersion.id}
+												sectionId={sectionId}
+												content={activeContent}
+												threads={threads}
+												slug={pubData.slug}
+												highlights={highlights}
+												hoverBackgroundColor={this.props.communityData.accentMinimalColor}
+												setActiveThread={this.setActiveThread}
+												onChange={this.handleEditorChange}
+
+												// Props from CollabEditor
+												editorKey={`${this.props.pubData.editorKey}${sectionId ? '/' : ''}${sectionId || ''}`}
+												isReadOnly={!pubData.isDraft || (!pubData.isManager && !pubData.isDraftEditor)}
+												clientData={this.state.activeCollaborators[0]}
+												onClientChange={this.handleClientChange}
+												onStatusChange={this.handleStatusChange}
+												discussionNodeOptions={{
+													// getThreads: this.getThreads,
+													getThreads: ()=> { return this.getThreads(); },
+													// getThreads: ()=> { return ()=>{ return threads; }; },
+													// getThreads: function() { return threads; },
+													getPubData: ()=> { return pubData; },
+													getLocationData: ()=> { return this.props.locationData; },
+													getLoginData: ()=> { return loginData; },
+													getOnPostDiscussion: ()=> { return this.handlePostDiscussion; },
+													getOnPutDiscussion: ()=> { return this.handlePutDiscussion; },
+													getGetHighlightContent: ()=> { return this.getHighlightContent; },
+													getHandleQuotePermalink: ()=> { return this.handleQuotePermalink; },
+												}}
+												// menuWrapperRefNode={this.state.menuWrapperRefNode}
+											/>
+										</div>
+
+										{!isCollabLoading && isEmptyDoc && pubData.isDraft && (pubData.isEditor || pubData.isManager) &&
+											<PubInlineImport
+												editorView={this.state.editorChangeObject.view}
+											/>
+										}
+
+										{/* Prev/Content/Next Buttons */}
+										{!isCollabLoading && hasSections &&
+											<PubSectionNav
+												pubData={pubData}
+												queryObject={queryObject}
+												hasSections={hasSections}
+												sectionId={sectionId}
+												setOptionsMode={this.setOptionsMode}
+											/>
+										}
+
+										{/* License */}
+										{!pubData.isDraft &&
+											<PubLicense />
+										}
+									</div>
+									<div className="side-content" ref={this.sideMarginRef}>
+										{/* Table of Contents */}
+										<PubSideToc
 											pubData={pubData}
-											queryObject={queryObject}
-											hasSections={hasSections}
-											sectionId={sectionId}
+											activeContent={activeContent}
+											editorChangeObject={this.state.editorChangeObject}
+										/>
+
+										{/* Collaborators */}
+										<PubSideCollaborators
+											pubData={pubData}
 											setOptionsMode={this.setOptionsMode}
 										/>
-									}
 
-									<div style={isCollabLoading ? { opacity: 0 } : {}}>
-										<PubBody
-											showWorkingDraftButton={!pubData.isDraft && (pubData.isEditor || pubData.isManager)}
-											isDraft={pubData.isDraft}
-											versionId={activeVersion && activeVersion.id}
-											sectionId={sectionId}
-											content={activeContent}
+										{/* Quick Options */}
+										<PubSideOptions
+											pubData={pubData}
+											communityData={this.props.communityData}
+											setOptionsMode={this.setOptionsMode}
+											activeDiscussionChannel={activeDiscussionChannel}
+											setDiscussionChannel={this.setDiscussionChannel}
+										/>
+										<PubSideDiscussions
+											key={activeDiscussionChannel ? activeDiscussionChannel.id : 'public-channel'}
 											threads={threads}
-											slug={pubData.slug}
-											highlights={highlights}
-											hoverBackgroundColor={this.props.communityData.accentMinimalColor}
+											pubData={pubData}
+											locationData={this.state.locationData}
+											editorChangeObject={this.state.editorChangeObject}
+											loginData={this.props.loginData}
+											onPostDiscussion={this.handlePostDiscussion}
+											onPutDiscussion={this.handlePutDiscussion}
+											getHighlightContent={this.getHighlightContent}
+											activeThread={this.state.activeThreadNumber}
 											setActiveThread={this.setActiveThread}
-											onChange={this.handleEditorChange}
-
-											// Props from CollabEditor
-											editorKey={`${this.props.pubData.editorKey}${sectionId ? '/' : ''}${sectionId || ''}`}
-											isReadOnly={!pubData.isDraft || (!pubData.isManager && !pubData.isDraftEditor)}
-											clientData={this.state.activeCollaborators[0]}
-											onClientChange={this.handleClientChange}
-											onStatusChange={this.handleStatusChange}
-											discussionNodeOptions={{
-												// getThreads: this.getThreads,
-												getThreads: ()=> { return this.getThreads(); },
-												// getThreads: ()=> { return ()=>{ return threads; }; },
-												// getThreads: function() { return threads; },
-												getPubData: ()=> { return pubData; },
-												getLocationData: ()=> { return this.props.locationData; },
-												getLoginData: ()=> { return loginData; },
-												getOnPostDiscussion: ()=> { return this.handlePostDiscussion; },
-												getOnPutDiscussion: ()=> { return this.handlePutDiscussion; },
-												getGetHighlightContent: ()=> { return this.getHighlightContent; },
-												getHandleQuotePermalink: ()=> { return this.handleQuotePermalink; },
-											}}
-											// menuWrapperRefNode={this.state.menuWrapperRefNode}
+											activeDiscussionChannel={activeDiscussionChannel}
+											initialContent={this.state.initialDiscussionContent}
+											getAbsolutePosition={this.getAbsolutePosition}
 										/>
 									</div>
-
-									{!isCollabLoading && isEmptyDoc && pubData.isDraft && (pubData.isEditor || pubData.isManager) &&
-										<PubInlineImport
-											editorView={this.state.editorChangeObject.view}
-										/>
-									}
-
-									{/* Prev/Content/Next Buttons */}
-									{!isCollabLoading && hasSections &&
-										<PubSectionNav
-											pubData={pubData}
-											queryObject={queryObject}
-											hasSections={hasSections}
-											sectionId={sectionId}
-											setOptionsMode={this.setOptionsMode}
-										/>
-									}
-
-									{/* License */}
-									{!pubData.isDraft &&
-										<PubLicense />
-									}
-								</div>
-								<div className="side-content" ref={this.sideMarginRef}>
-									{/* Table of Contents */}
-									<PubSideToc
-										pubData={pubData}
-										activeContent={activeContent}
-										editorChangeObject={this.state.editorChangeObject}
-									/>
-
-									{/* Collaborators */}
-									<PubSideCollaborators
-										pubData={pubData}
-										setOptionsMode={this.setOptionsMode}
-									/>
-
-									{/* Quick Options */}
-									<PubSideOptions
-										pubData={pubData}
-										communityData={this.props.communityData}
-										setOptionsMode={this.setOptionsMode}
-										activeDiscussionChannel={activeDiscussionChannel}
-										setDiscussionChannel={this.setDiscussionChannel}
-									/>
-									<PubSideDiscussions
-										key={activeDiscussionChannel ? activeDiscussionChannel.id : 'public-channel'}
-										threads={threads}
-										pubData={pubData}
-										locationData={this.state.locationData}
-										editorChangeObject={this.state.editorChangeObject}
-										loginData={this.props.loginData}
-										onPostDiscussion={this.handlePostDiscussion}
-										onPutDiscussion={this.handlePutDiscussion}
-										getHighlightContent={this.getHighlightContent}
-										activeThread={this.state.activeThreadNumber}
-										setActiveThread={this.setActiveThread}
-										activeDiscussionChannel={activeDiscussionChannel}
-										initialContent={this.state.initialDiscussionContent}
-										getAbsolutePosition={this.getAbsolutePosition}
-									/>
 								</div>
 							</div>
 						</div>

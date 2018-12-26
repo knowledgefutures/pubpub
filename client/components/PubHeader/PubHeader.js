@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
+import stickybits from 'stickybits';
+import throttle from 'lodash.throttle';
 import { apiFetch, getResizedUrl } from 'utilities';
 import { EditableText, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
@@ -29,10 +31,32 @@ class PubHeader extends Component {
 
 		this.handleTitleChange = this.handleTitleChange.bind(this);
 		this.handleTitleSave = this.handleTitleSave.bind(this);
+		this.recalculateStickyOffset = this.recalculateStickyOffset.bind(this);
+		this.stickyInstance = undefined;
+		this.headerRef = React.createRef();
+		this.handleResize = throttle(this.recalculateStickyOffset, 50, { leading: true, trailing: true });
 	}
 
 	componentDidMount() {
 		this.setState({ isMounted: true });
+		const offsetHeight = this.headerRef.current.offsetHeight;
+		this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - offsetHeight, useStickyClasses: true });
+		window.addEventListener('resize', this.handleResize);
+	}
+
+	componentDidUpdate() {
+		this.recalculateStickyOffset();
+	}
+
+	componentWillUnmount() {
+		this.stickyInstance.cleanup();
+		window.removeEventListener('resize', this.handleResize);
+	}
+
+	recalculateStickyOffset() {
+		const offsetHeight = this.headerRef.current.offsetHeight;
+		this.stickyInstance.cleanup();
+		this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - offsetHeight, useStickyClasses: true });
 	}
 
 	handleTitleChange(newTitle) {
@@ -101,7 +125,7 @@ class PubHeader extends Component {
 
 		const useEditableTitle = pubData.isDraft && pubData.isManager && this.state.isMounted;
 		return (
-			<div className="pub-header-component" style={backgroundStyle}>
+			<div className="pub-header-component" style={backgroundStyle} ref={this.headerRef}>
 				<div className={`wrapper ${useHeaderImage ? 'dim' : ''}`}>
 					<div className="container pub">
 						<div className="row">
@@ -304,6 +328,10 @@ class PubHeader extends Component {
 								</div>
 							</div>
 						</div>
+					</div>
+					<div className="bottom-text">
+						<div className="bottom-title">{pubData.title}</div>
+						<div className="bottom-buttons">Cite · Options · Other</div>
 					</div>
 				</div>
 			</div>

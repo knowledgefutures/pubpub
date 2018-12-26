@@ -45,6 +45,7 @@ const PubInlineMenu = (props)=> {
 				if (!menuItemsObject[item.key]) { return null; }
 				return (
 					<Button
+						key={item.key}
 						className="bp3-minimal"
 						icon={item.icon}
 						active={menuItemsObject[item.key].isActive}

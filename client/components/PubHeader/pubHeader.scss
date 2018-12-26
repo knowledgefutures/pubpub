@@ -5,7 +5,34 @@
 	background-color: #F8F8F8;
 	border-bottom: 1px solid #D2D2D2;
 	position: relative;
-	z-index: 1;
+	z-index: 20;
+	&.js-is-sticky {
+		.bottom-text {
+			opacity: 1;
+		}
+	}
+	.bottom-text {
+		opacity: 0;
+		position: absolute;
+		bottom: 0px;
+		padding: 0em 1em;
+		line-height: 35px;
+		width: 100%;
+		transition: .2s linear opacity;
+		display: flex;
+		.bottom-title {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			flex: 1 1 auto;
+			font-weight: 800;
+			font-size: 18px;
+			padding-right: 2em;
+		}
+		.bottom-buttons {
+			white-space: nowrap;
+		}
+	}
 	.wrapper {
 		padding-bottom: 40px;
 		&.dim {

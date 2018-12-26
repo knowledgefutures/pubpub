@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/label-has-for */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import throttle from 'lodash.throttle';
+// import throttle from 'lodash.throttle';
 import { Button, Tooltip, Spinner } from '@blueprintjs/core';
+import stickybits from 'stickybits';
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
@@ -17,44 +18,47 @@ const propTypes = {
 	editorChangeObject: PropTypes.object.isRequired,
 	setOptionsMode: PropTypes.func.isRequired,
 	// onRef: PropTypes.func.isRequired,
-	bottomCutoffId: PropTypes.string,
+	// bottomCutoffId: PropTypes.string,
 	collabStatus: PropTypes.string.isRequired,
 	activeCollaborators: PropTypes.array.isRequired,
 };
 
 const defaultProps = {
 	// locationData: { params: {} },
-	bottomCutoffId: '',
+	// bottomCutoffId: '',
 };
 
 class PubDraftHeader extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isFixed: false,
+			// isFixed: false,
 			insertFunction: undefined,
 			insertKey: undefined,
 			insertLoading: false,
 			randKey: Math.round(Math.random() * 99999),
 		};
 
-		this.calculateIfFixed = this.calculateIfFixed.bind(this);
+		// this.calculateIfFixed = this.calculateIfFixed.bind(this);
 		this.handleInsertFunction = this.handleInsertFunction.bind(this);
 		this.handleFileSelect = this.handleFileSelect.bind(this);
 		this.handleUploadFinish = this.handleUploadFinish.bind(this);
-		this.headerRef = React.createRef();
-		this.bottomCutoffElem = null;
-		this.handleScroll = throttle(this.calculateIfFixed, 50, { leading: true, trailing: true });
+		// this.headerRef = React.createRef();
+		// this.bottomCutoffElem = null;
+		// this.handleScroll = throttle(this.calculateIfFixed, 50, { leading: true, trailing: true });
+		this.stickyInstance = undefined;
 	}
 
 	componentDidMount() {
-		this.calculateIfFixed();
-		window.addEventListener('scroll', this.handleScroll);
-		this.bottomCutoffElem = document.getElementById(this.props.bottomCutoffId);
+		this.stickyInstance = stickybits('.pub-draft-header-component', { stickyBitStickyOffset: 35 });
+		// this.calculateIfFixed();
+		// window.addEventListener('scroll', this.handleScroll);
+		// this.bottomCutoffElem = document.getElementById(this.props.bottomCutoffId);
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener('scroll', this.handleScroll);
+		this.stickyInstance.cleanUp();
+		// window.removeEventListener('scroll', this.handleScroll);
 	}
 
 	handleInsertFunction(insertItem) {
@@ -92,21 +96,21 @@ class PubDraftHeader extends Component {
 		}, 500);
 	}
 
-	calculateIfFixed() {
-		/* 73 is the height of .wrapper */
-		const isOverBottom = this.bottomCutoffElem && this.bottomCutoffElem.getBoundingClientRect().top < 73;
-		if (!this.state.isFixed) {
-			const isAboveTop = this.headerRef.current.getBoundingClientRect().top < 0;
-			if (isAboveTop && !isOverBottom) {
-				this.setState({ isFixed: true });
-			}
-		} else {
-			const isBelowTop = this.headerRef.current.getBoundingClientRect().top > 0;
-			if (isBelowTop || isOverBottom) {
-				this.setState({ isFixed: false });
-			}
-		}
-	}
+	// calculateIfFixed() {
+	// 	/* 73 is the height of .wrapper */
+	// 	const isOverBottom = this.bottomCutoffElem && this.bottomCutoffElem.getBoundingClientRect().top < 73;
+	// 	if (!this.state.isFixed) {
+	// 		const isAboveTop = this.headerRef.current.getBoundingClientRect().top < 0;
+	// 		if (isAboveTop && !isOverBottom) {
+	// 			this.setState({ isFixed: true });
+	// 		}
+	// 	} else {
+	// 		const isBelowTop = this.headerRef.current.getBoundingClientRect().top > 0;
+	// 		if (isBelowTop || isOverBottom) {
+	// 			this.setState({ isFixed: false });
+	// 		}
+	// 	}
+	// }
 
 	render() {
 		const pubData = this.props.pubData;
@@ -254,10 +258,10 @@ class PubDraftHeader extends Component {
 		];
 
 		const viewOnly = !pubData.isDraftEditor && !pubData.isManager;
-
+		
 		return (
-			<div className="pub-draft-header-component" ref={this.headerRef}>
-				<div className={`wrapper ${this.state.isFixed ? 'fixed' : ''}`}>
+			<div className="pub-draft-header-component">
+				<div className="wrapper">
 					<div className="container pub">
 						<div className="row">
 							<div className="col-12">
@@ -284,7 +288,10 @@ class PubDraftHeader extends Component {
 								}
 								{!viewOnly &&
 									<div className="left-section">
-										{formattingItems.map((item)=> {
+										{formattingItems.filter((item)=> {
+											const menuItem = menuItemsObject[item.key] || {};
+											return !this.props.editorChangeObject.selectedNode && menuItem.canRun;
+										}).map((item)=> {
 											const menuItem = menuItemsObject[item.key] || {};
 											return (
 												<Button
@@ -299,6 +306,9 @@ class PubDraftHeader extends Component {
 												/>
 											);
 										})}
+										{this.props.editorChangeObject.selectedNode &&
+											<div style={{ display: 'inline-block', height: '60px', backgroundColor: 'blue' }}>DOG</div>
+										}
 										<DropdownButton
 											label="Insert"
 											isSmall={true}

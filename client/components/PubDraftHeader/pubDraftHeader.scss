@@ -1,18 +1,18 @@
 .pub-draft-header-component {
-	height: 73px; /* Height of wrapper */
+	z-index: 19;
 	.wrapper {
 		background: #F0F0F0;
 		border-bottom: 1px solid #D2D2D2;
-		&.fixed {
-			position: fixed;
-			top: 0;
-			width: 100%;
-			z-index: 19;
-		}
+		// &.fixed {
+		// 	position: fixed;
+		// 	top: 0;
+		// 	width: 100%;
+			
+		// }
 		.col-12 {
 			display: flex;
 			align-items: center;
-			height: 24px;
+			// height: 24px;
 			&:first-of-type {
 				margin-bottom: 0px;
 			}

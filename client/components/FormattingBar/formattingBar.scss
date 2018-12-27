@@ -1,0 +1,27 @@
+.formatting-bar-component {
+	button {
+	    min-width: auto;
+	    min-height: auto;
+	    padding: 5px 14px;
+	    margin: 0em 1px;
+	}
+	&.reduced {
+		button {
+			padding: 5px 10px;
+		}
+		.dropdown-button {
+			padding: 3px;
+			font-size: 12px;
+		}
+	}
+	.dropdown-button {
+		padding: 5px;
+		min-height: auto;
+	}
+	.bp3-menu-item.bp3-active {
+		/* This code is specified beause intent-primary */
+		/* is being applied for some reason */
+		background-color: rgba(132, 132, 132, 0.3);
+		color: #2a2a2a;
+	}
+}

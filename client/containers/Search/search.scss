@@ -15,6 +15,7 @@
 				white-space: nowrap;
 				flex: 0 0 auto;
 				margin-left: 1em;
+				text-decoration: none;
 			}
 		}
 		.bp3-input-group input {
@@ -38,6 +39,9 @@
 			margin-bottom: 3em;
 			display: flex;
 			font-size: 16px;
+			a {
+				text-decoration: none;
+			}
 			&.pubs {
 				.banner-image {
 					width: 100px;

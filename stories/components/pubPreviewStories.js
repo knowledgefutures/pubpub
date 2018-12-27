@@ -4,8 +4,8 @@ import PubPreview from 'components/PubPreview/PubPreview';
 import { collectionData } from '../data';
 
 
-storiesOf('Components', module)
-.add('PubPreview', () => (
+storiesOf('Components/PubPreview', module)
+.add('default', () => (
 	<div className="container">
 		<h1 style={{ margin: '0em 0em 0.5em' }}>Large</h1>
 		<div className="row">

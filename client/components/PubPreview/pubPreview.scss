@@ -3,6 +3,9 @@
 	border: 1px solid rgba(0, 0, 0, 0.1);
 	border-radius: 2px;
 	position: relative;
+	a {
+		text-decoration: none;
+	}
 	.banner-image {
 		background-size: cover;
 		background-repeat: no-repeat;

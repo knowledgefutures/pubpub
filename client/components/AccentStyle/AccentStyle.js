@@ -27,7 +27,6 @@ const AccentStyle = function(props) {
 			.thread:hover:after { background-color: ${props.accentColor}; }
 			.bp3-slider-progress, .bp3-dark .bp3-slider-progress { background: ${props.accentColor}; }
 			.bp3-slider-handle .bp3-slider-label { background: ${props.accentColor}; color: ${props.accentTextColor}; }
-			.footnote-text a { text-decoration: underline; }
 			.highlight-dot-wrapper .highlight-dot { background-color: ${props.accentColor}; }
 		` }}
 		/>

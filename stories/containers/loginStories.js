@@ -3,8 +3,8 @@ import { storiesOf } from '@storybook/react';
 import Login from 'containers/Login/Login';
 import { locationData, loginData, communityData } from '../data';
 
-storiesOf('Containers', module)
-.add('Login', () => (
+storiesOf('Containers/Login', module)
+.add('default', () => (
 	<Login
 		locationData={locationData}
 		loginData={loginData}

@@ -52,18 +52,19 @@
 			background: rgba(0,0,0,.05);
 			padding: 20px;
 			box-shadow: none;
-			font-size: 16px;
 			white-space: pre;
 			overflow: hidden;
 			overflow-x: scroll;
 			code {
 				white-space: pre;
+				background-color: transparent;
+				padding: 0em;
 			}
 		}
 		code {
 			background-color: rgba(27, 31, 35, .06);
 			border-radius: 2px;
-			font-size: 85%;
+			font-size: 16px;
 			margin: 0;
 			padding: .2em .4em;
 		}
@@ -87,9 +88,6 @@
 		}
 		*:first-child {
 			margin-top: 0em;
-		}
-		a:not(.header-link) {
-			text-decoration: underline;
 		}
 		.insert-popup {
 			font-size: 15px;

@@ -35,12 +35,13 @@ class PubHeader extends Component {
 		this.stickyInstance = undefined;
 		this.headerRef = React.createRef();
 		this.handleResize = throttle(this.recalculateStickyOffset, 50, { leading: true, trailing: true });
+		this.offsetHeight = undefined;
 	}
 
 	componentDidMount() {
 		this.setState({ isMounted: true });
-		const offsetHeight = this.headerRef.current.offsetHeight;
-		this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - offsetHeight, useStickyClasses: true });
+		this.offsetHeight = this.headerRef.current.offsetHeight;
+		this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
 		window.addEventListener('resize', this.handleResize);
 	}
 
@@ -54,9 +55,12 @@ class PubHeader extends Component {
 	}
 
 	recalculateStickyOffset() {
-		const offsetHeight = this.headerRef.current.offsetHeight;
-		this.stickyInstance.cleanup();
-		this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - offsetHeight, useStickyClasses: true });
+		const nextOffsetHeight = this.headerRef.current.offsetHeight;
+		if (nextOffsetHeight !== this.offsetHeight) {
+			this.offsetHeight = nextOffsetHeight;
+			this.stickyInstance.cleanup();
+			this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
+		}
 	}
 
 	handleTitleChange(newTitle) {

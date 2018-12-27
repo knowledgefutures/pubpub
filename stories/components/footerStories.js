@@ -5,8 +5,8 @@ import AccentStyle from 'components/AccentStyle/AccentStyle';
 import { accentDataDark, accentDataLight } from '../data';
 
 const wrapperStyle = { margin: '1em 0em' };
-storiesOf('Components', module)
-.add('Footer - Dark', () => (
+storiesOf('Components/Footer', module)
+.add('Dark', () => (
 	<div>
 		<AccentStyle {...accentDataDark} />
 
@@ -23,7 +23,7 @@ storiesOf('Components', module)
 		</div>
 	</div>
 ))
-.add('Footer - Light', () => (
+.add('Light', () => (
 	<div>
 		<AccentStyle {...accentDataLight} />
 		<div style={wrapperStyle}>

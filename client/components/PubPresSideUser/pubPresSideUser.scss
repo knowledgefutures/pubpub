@@ -10,6 +10,9 @@
 		flex-grow: 1;
 		padding-left: 7px;
 		width: calc(100% - 40px);
+		a {
+			text-decoration: none;
+		}
 		.name {
 			font-weight: 600;
 			width: 100%;

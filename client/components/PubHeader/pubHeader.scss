@@ -118,6 +118,9 @@
 		font-size: 1.1em;
 		font-style: italic;
 		font-weight: 200;
+		a {
+			text-decoration: none;	
+		}
 	}
 	.details {
 		
@@ -144,6 +147,7 @@
 				display: inline-block;
 				border-radius: 2px;
 			}
+			text-decoration: none;
 			&:hover {
 				text-decoration: underline;
 			}

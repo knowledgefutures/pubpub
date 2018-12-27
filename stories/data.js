@@ -22,3 +22,5 @@ export const loginData = initialData.loginData;
 export const communityData = require('./dataCommunity.js');
 export const collectionData = require('./dataCollection.js');
 export const pubData = require('./dataPub.js');
+export const plainDoc = require('./dataDocs.js').plainDoc;
+export const imageDoc = require('./dataDocs.js').imageDoc;

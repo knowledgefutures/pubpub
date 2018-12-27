@@ -168,7 +168,7 @@ class Search extends Component {
 									placeholder="search..."
 									value={this.state.searchQuery}
 									onChange={this.handleSearchChange}
-									rightElement={this.state.isLoading && <Spinner />}
+									rightElement={this.state.isLoading && <Spinner size={35} />}
 									inputRef={this.inputRef}
 								/>
 							</div>

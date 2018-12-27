@@ -6,7 +6,7 @@ import { Button, Tooltip, Spinner } from '@blueprintjs/core';
 import stickybits from 'stickybits';
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
-import DropdownButton from 'components/DropdownButton/DropdownButton';
+import FormattingBar from 'components/FormattingBar/FormattingBar';
 import { s3Upload } from 'utilities';
 
 require('./pubDraftHeader.scss');
@@ -288,71 +288,9 @@ class PubDraftHeader extends Component {
 								}
 								{!viewOnly &&
 									<div className="left-section">
-										{formattingItems.filter((item)=> {
-											const menuItem = menuItemsObject[item.key] || {};
-											return !this.props.editorChangeObject.selectedNode && menuItem.canRun;
-										}).map((item)=> {
-											const menuItem = menuItemsObject[item.key] || {};
-											return (
-												<Button
-													key={item.key}
-													className="bp3-minimal menu-button"
-													icon={item.icon}
-													active={menuItem.isActive}
-													onClick={menuItem.run}
-													onMouseDown={(evt)=> {
-														evt.preventDefault();
-													}}
-												/>
-											);
-										})}
-										{this.props.editorChangeObject.selectedNode &&
-											<div style={{ display: 'inline-block', height: '60px', backgroundColor: 'blue' }}>DOG</div>
-										}
-										<DropdownButton
-											label="Insert"
-											isSmall={true}
-											isMinimal={true}
-											isOpen={this.state.insertFunction ? true : undefined}
-											key={this.state.randKey}
-										>
-											{insertItems.map((item)=> {
-												const uploadTypes = {
-													image: 'image/png, image/jpeg, image/gif',
-													video: 'video/mp4, video/webm',
-													file: '*',
-												};
-												return (
-													<label
-														className={`bp3-menu-item insert-menu-item ${this.state.insertFunction ? '' : ' bp3-popover-dismiss'}`}
-														key={item.key}
-														onClick={()=> {
-															this.handleInsertFunction(item);
-														}}
-														id={`label-${item.key}`}
-														htmlFor={item.key}
-													>
-														{item.icon}
-														<span>{item.title}</span>
-														{!!this.state.insertLoading && item.key === this.state.insertKey &&
-															<span className="bp3-menu-item-label">
-																<Spinner small={true} />
-															</span>
-														}
-														{Object.keys(uploadTypes).indexOf(item.key) > -1 &&
-															<input
-																type="file"
-																id={item.key}
-																name={item.key}
-																style={{ display: 'none' }}
-																onChange={this.handleFileSelect}
-																accept={uploadTypes[item.key]}
-															/>
-														}
-													</label>
-												);
-											})}
-										</DropdownButton>
+										<FormattingBar
+											editorChangeObject={this.props.editorChangeObject}
+										/>
 									</div>
 								}
 								<div className="right-section">

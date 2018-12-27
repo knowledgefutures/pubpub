@@ -72,7 +72,7 @@ class FormattingBar extends Component {
 		const insertItems = [
 			{ key: 'citation', 			title: 'Citation', 			icon: 'bookmark' },
 			{ key: 'citationList', 		title: 'Citation List', 	icon: 'numbered-list' },
-			// { key: 'discussion', 		title: 'Discussion Thread', icon: 'chat' },
+			{ key: 'discussion', 		title: 'Discussion Thread', icon: 'chat' },
 			{ key: 'equation', 			title: 'Equation', 			icon: 'function' },
 			// { key: 'file', 				title: 'File', 				icon: 'document' },
 			{ key: 'footnote', 			title: 'Footnote', 			icon: 'asterisk' },

@@ -4,10 +4,10 @@ import FormattingBarControlsImage from 'components/FormattingBarControls/Formatt
 import FormattingBarControlsVideo from 'components/FormattingBarControls/FormattingBarControlsVideo';
 import FormattingBarControlsIframe from 'components/FormattingBarControls/FormattingBarControlsIframe';
 import FormattingBarControlsCitation from 'components/FormattingBarControls/FormattingBarControlsCitation';
-// import FormattingBarControlsFootnote from 'components/FormattingBarControls/FormattingBarControlsFootnote';
-// import FormattingBarControlsTable from 'components/FormattingBarControls/FormattingBarControlsTable';
-// import FormattingBarControlsEquation from 'components/FormattingBarControls/FormattingBarControlsEquation';
-// import FormattingBarControlsDiscussion from 'components/FormattingBarControls/FormattingBarControlsDiscussion';
+import FormattingBarControlsFootnote from 'components/FormattingBarControls/FormattingBarControlsFootnote';
+import FormattingBarControlsTable from 'components/FormattingBarControls/FormattingBarControlsTable';
+import FormattingBarControlsEquation from 'components/FormattingBarControls/FormattingBarControlsEquation';
+import FormattingBarControlsDiscussion from 'components/FormattingBarControls/FormattingBarControlsDiscussion';
 
 require('./formattingBarControls.scss');
 
@@ -49,18 +49,18 @@ const FormattingBarControls = (props)=> {
 	if (nodeType === 'citation') {
 		return <FormattingBarControlsCitation {...controlsProps} />;
 	}
-	// if (nodeType === 'footnote') {
-	// 	return <FormattingBarControlsFootnote {...controlsProps} />;
-	// }
-	// if (nodeType === 'table') {
-	// 	return <FormattingBarControlsTable {...controlsProps} />;
-	// }
-	// if ((nodeType === 'equation' || nodeType === 'block_equation')) {
-	// 	return <FormattingBarControlsEquation {...controlsProps} />;
-	// }
-	// if (nodeType === 'discussion') {
-	// 	return <FormattingBarControlsDiscussion {...controlsProps} />;
-	// }
+	if (nodeType === 'footnote') {
+		return <FormattingBarControlsFootnote {...controlsProps} />;
+	}
+	if (nodeType === 'table') {
+		return <FormattingBarControlsTable {...controlsProps} />;
+	}
+	if ((nodeType === 'equation' || nodeType === 'block_equation')) {
+		return <FormattingBarControlsEquation {...controlsProps} />;
+	}
+	if (nodeType === 'discussion') {
+		return <FormattingBarControlsDiscussion {...controlsProps} />;
+	}
 	return null;
 };
 

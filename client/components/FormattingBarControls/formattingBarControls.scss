@@ -34,6 +34,10 @@
 	    height: 50px;
 	    overflow-y: scroll;
 	}
+	textarea {
+		height: 50px;
+		min-height: 50px;
+	}
 	.file-select {
 		input.file-input {
 			display: none;

@@ -21,11 +21,13 @@ const propTypes = {
 	// bottomCutoffId: PropTypes.string,
 	collabStatus: PropTypes.string.isRequired,
 	activeCollaborators: PropTypes.array.isRequired,
+	threads: PropTypes.array,
 };
 
 const defaultProps = {
 	// locationData: { params: {} },
 	// bottomCutoffId: '',
+	threads: [],
 };
 
 class PubDraftHeader extends Component {
@@ -290,6 +292,7 @@ class PubDraftHeader extends Component {
 									<div className="left-section">
 										<FormattingBar
 											editorChangeObject={this.props.editorChangeObject}
+											threads={this.props.threads}
 										/>
 									</div>
 								}

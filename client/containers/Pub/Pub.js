@@ -508,6 +508,7 @@ class Pub extends Component {
 								onRef={this.handleMenuWrapperRef}
 								collabStatus={this.state.collabStatus}
 								activeCollaborators={this.state.activeCollaborators}
+								threads={threads}
 							/>
 						}
 

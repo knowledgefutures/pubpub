@@ -6,7 +6,7 @@
 	border-bottom: 1px solid #D2D2D2;
 	position: relative;
 	z-index: 20;
-	&.js-is-sticky {
+	&.js-is-sticky, &.js-is-stuck {
 		.bottom-text {
 			opacity: 1;
 		}

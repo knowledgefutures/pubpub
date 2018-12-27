@@ -10,7 +10,7 @@ require('components/FormattingBar/formattingBar.scss');
 class EditorUnit extends Component {
 	static propTypes = {
 		useSimpleEditor: PropTypes.bool.isRequired,
-		useSimpleFormatting: PropTypes.bool.isRequired,
+		useReduced: PropTypes.bool.isRequired,
 	}
 
 	constructor(props) {
@@ -32,8 +32,8 @@ class EditorUnit extends Component {
 				<div style={{ background: '#F0F0F0', marginBottom: '0.5em' }}>
 					<FormattingBar
 						editorChangeObject={this.state.editorChangeObject}
-						isReduced={this.props.useSimpleFormatting}
-						hideMedia={this.props.useSimpleEditor}
+						isReduced={this.props.useReduced}
+						isSimple={this.props.useSimpleEditor}
 					/>
 				</div>
 				<div style={{ padding: '0.25em' }}>
@@ -61,15 +61,15 @@ storiesOf('Components/FormattingBar', module)
 	<div style={wrapperStyle}>
 		<EditorUnit
 			useSimpleEditor={false}
-			useSimpleFormatting={false}
+			useReduced={false}
 		/>
 		<EditorUnit
 			useSimpleEditor={false}
-			useSimpleFormatting={true}
+			useReduced={true}
 		/>
 		<EditorUnit
 			useSimpleEditor={true}
-			useSimpleFormatting={true}
+			useReduced={true}
 		/>
 	</div>
 ));

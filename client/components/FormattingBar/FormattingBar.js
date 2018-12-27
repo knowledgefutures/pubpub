@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'components/Icon/Icon';
-import { Button, Tooltip, Spinner, Menu, MenuItem } from '@blueprintjs/core';
+import { Button, Tooltip, Spinner, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 import Overlay from 'components/Overlay/Overlay';
 
@@ -9,13 +9,13 @@ require('./formattingBar.scss');
 
 const propTypes = {
 	editorChangeObject: PropTypes.object.isRequired,
-	isReduced: PropTypes.bool,
-	hideMedia: PropTypes.bool,
+	isReduced: PropTypes.bool, /* true if you wish to display fewer options on a smaller footprint (e.g. discussions) */
+	isSimple: PropTypes.bool, /* true if you wish to only support text formatting (e.g. captions) */
 };
 
 const defaultProps = {
 	isReduced: false,
-	hideMedia: false,
+	isSimple: false,
 };
 
 class FormattingBar extends Component {
@@ -57,12 +57,13 @@ class FormattingBar extends Component {
 			{ key: 'bullet-list', 	title: 'Bullet List', 	icon: 'list-ul' },
 			{ key: 'numbered-list', title: 'Numbered List', icon: 'list-ol' },
 			{ key: 'link', 			title: 'Link', 			icon: 'link', showInReduced: true },
-		];
+		].filter((item)=> {
+			return !this.props.isReduced || item.showInReduced;
+		});
 
 		const insertItems = [
 			{ key: 'citation', 			title: 'Citation', 			icon: 'bookmark' },
 			{ key: 'citationList', 		title: 'Citation List', 	icon: 'numbered-list' },
-			// { key: 'code_block', 		title: 'Code Block', 		icon: 'code' },
 			// { key: 'discussion', 		title: 'Discussion Thread', icon: 'chat' },
 			{ key: 'equation', 			title: 'Equation', 			icon: 'function' },
 			// { key: 'file', 				title: 'File', 				icon: 'document' },
@@ -76,17 +77,21 @@ class FormattingBar extends Component {
 		];
 
 		const iconSize = this.props.isReduced ? 12 : 16;
-
+		const nodeSelected = !!this.props.editorChangeObject.selectedNode;
+		const showBlockTypes = !this.props.isReduced && !this.props.isSimple && !nodeSelected;
+		const showFormatting = !nodeSelected;
+		const showMoreFormatting = showFormatting && !this.props.isReduced && !this.props.isSimple;
+		const showMedia = !nodeSelected && !this.props.isSimple;
 		return (
 			<div className={`formatting-bar-component ${this.props.isReduced ? 'reduced' : ''}`}>
-				{!this.props.editorChangeObject.selectedNode && !this.props.hideMedia &&
+				{/* Block Types Dropdown */}
+				{showBlockTypes &&
 					<DropdownButton
 						label={blockTypeItems.reduce((prev, curr)=> {
 							const menuItem = menuItemsObject[curr.key] || {};
 							if (menuItem.isActive) { return curr.title; }
 							return prev;
 						}, '')}
-						isSmall={true}
 						isMinimal={true}
 						usePortal={false}
 					>
@@ -108,11 +113,13 @@ class FormattingBar extends Component {
 						</Menu>
 					</DropdownButton>
 				}
-				{formattingItems.filter((item)=> {
+
+				{showBlockTypes && <div className="separator" />}
+
+				{/* Formatting Options */}
+				{showFormatting && formattingItems.filter((item)=> {
 					const menuItem = menuItemsObject[item.key] || {};
-					return !this.props.editorChangeObject.selectedNode && menuItem.canRun;
-				}).filter((item)=> {
-					return !this.props.isReduced || item.showInReduced;
+					return menuItem.canRun;
 				}).map((item)=> {
 					const menuItem = menuItemsObject[item.key] || {};
 					return (
@@ -128,9 +135,48 @@ class FormattingBar extends Component {
 						/>
 					);
 				})}
-				{!this.props.editorChangeObject.selectedNode && !this.props.hideMedia &&
+				{showMoreFormatting &&
+					<Popover
+						content={
+							<Menu>
+								{insertItems.map((item)=> {
+									return (
+										<MenuItem
+											key={item.key}
+											text={item.title}
+											icon={item.icon}
+											onClick={()=> {
+												const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
+												insertFunctions[item.key]();
+												this.props.editorChangeObject.view.focus();
+											}}
+										/>
+									);
+								})}
+							</Menu>
+						}
+						interactionKind={PopoverInteractionKind.CLICK}
+						position={Position.BOTTOM}
+						minimal={true}
+						transitionDuration={-1}
+						// inheritDarkTheme={false}
+						tetherOptions={{
+							constraints: [{ attachment: 'together', to: 'window' }]
+						}}
+					>
+						<Button
+							icon={<Icon icon="more" iconSize={iconSize} />}
+							minimal={true}
+						/>
+					</Popover>
+				}
+				{showMoreFormatting && showMedia && <div className="separator" /> }
+
+				{/* Media Button */}
+				{showMedia &&
 					<Button
 						icon={<Icon icon="media" iconSize={iconSize} />}
+						text="Media"
 						minimal={true}
 						onClick={()=> {
 							this.setState({ mediaGalleryOpen: true });
@@ -140,33 +186,13 @@ class FormattingBar extends Component {
 						}}
 					/>
 				}
+
+				{/* Node Options Blocks */}
 				{this.props.editorChangeObject.selectedNode &&
 					<div style={{ display: 'inline-block', height: '60px', backgroundColor: 'blue' }}>DOG</div>
 				}
-				{!this.props.editorChangeObject.selectedNode && !this.props.hideMedia &&
-					<DropdownButton
-						label="More"
-						isSmall={true}
-						isMinimal={true}
-					>
-						<Menu>
-							{insertItems.map((item)=> {
-								return (
-									<MenuItem
-										key={item.key}
-										text={item.title}
-										icon={item.icon}
-										onClick={()=> {
-											const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
-											insertFunctions[item.key]();
-											this.props.editorChangeObject.view.focus();
-										}}
-									/>
-								);
-							})}
-						</Menu>
-					</DropdownButton>
-				}
+
+				{/* Media Gallery Overlay */}
 				<Overlay
 					isOpen={this.state.mediaGalleryOpen}
 					onClose={this.closeMediaGallery}

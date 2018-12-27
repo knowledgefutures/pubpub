@@ -11,7 +11,10 @@
 		}
 		.dropdown-button {
 			padding: 3px;
-			font-size: 12px;
+			// font-size: 12px;
+		}
+		.separator {
+			height: 22px;
 		}
 	}
 	.dropdown-button {
@@ -23,5 +26,13 @@
 		/* is being applied for some reason */
 		background-color: rgba(132, 132, 132, 0.3);
 		color: #2a2a2a;
+	}
+	.separator {
+		display: inline-block;
+		width: 1px;
+		height: 26px;
+		vertical-align: middle;
+		background: #CCC;
+		margin: 0px 3px;
 	}
 }

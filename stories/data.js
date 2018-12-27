@@ -24,3 +24,4 @@ export const collectionData = require('./dataCollection.js');
 export const pubData = require('./dataPub.js');
 export const plainDoc = require('./dataDocs.js').plainDoc;
 export const imageDoc = require('./dataDocs.js').imageDoc;
+export const fullDoc = require('./dataDocs.js').fullDoc;

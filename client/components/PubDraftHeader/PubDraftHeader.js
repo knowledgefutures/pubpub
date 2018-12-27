@@ -258,7 +258,7 @@ class PubDraftHeader extends Component {
 		];
 
 		const viewOnly = !pubData.isDraftEditor && !pubData.isManager;
-		
+
 		return (
 			<div className="pub-draft-header-component">
 				<div className="wrapper">

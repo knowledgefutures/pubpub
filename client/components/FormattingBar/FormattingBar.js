@@ -3,19 +3,26 @@ import PropTypes from 'prop-types';
 import Icon from 'components/Icon/Icon';
 import { Button, Tooltip, Spinner, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
+import FormattingBarControls from 'components/FormattingBarControls/FormattingBarControls';
 import Overlay from 'components/Overlay/Overlay';
 
 require('./formattingBar.scss');
 
 const propTypes = {
 	editorChangeObject: PropTypes.object.isRequired,
-	isReduced: PropTypes.bool, /* true if you wish to display fewer options on a smaller footprint (e.g. discussions) */
-	isSimple: PropTypes.bool, /* true if you wish to only support text formatting (e.g. captions) */
+	hideMedia: PropTypes.bool,
+	hideBlocktypes: PropTypes.bool,
+	hideExtraFormatting: PropTypes.bool,
+	isSmall: PropTypes.bool,
+	threads: PropTypes.array,
 };
 
 const defaultProps = {
-	isReduced: false,
-	isSimple: false,
+	hideMedia: false,
+	hideBlocktypes: false,
+	hideExtraFormatting: false,
+	isSmall: false,
+	threads: [],
 };
 
 class FormattingBar extends Component {
@@ -46,9 +53,10 @@ class FormattingBar extends Component {
 			{ key: 'header3', 		title: 'Header 3', 		icon: 'comparison' },
 			{ key: 'code_block', 	title: 'Code Block', 	icon: 'code' },
 		];
+
 		const formattingItems = [
-			{ key: 'strong', 		title: 'Bold', 			icon: 'bold', showInReduced: true },
-			{ key: 'em', 			title: 'Italic', 		icon: 'italic', showInReduced: true },
+			{ key: 'strong', 		title: 'Bold', 			icon: 'bold', priority: true },
+			{ key: 'em', 			title: 'Italic', 		icon: 'italic', priority: true },
 			{ key: 'code', 			title: 'Code', 			icon: 'code' },
 			{ key: 'subscript', 	title: 'Subscript', 	icon: 'subscript' },
 			{ key: 'superscript', 	title: 'Superscript', 	icon: 'superscript' },
@@ -56,9 +64,9 @@ class FormattingBar extends Component {
 			{ key: 'blockquote', 	title: 'Blockquote', 	icon: 'citation' },
 			{ key: 'bullet-list', 	title: 'Bullet List', 	icon: 'list-ul' },
 			{ key: 'numbered-list', title: 'Numbered List', icon: 'list-ol' },
-			{ key: 'link', 			title: 'Link', 			icon: 'link', showInReduced: true },
+			{ key: 'link', 			title: 'Link', 			icon: 'link', priority: true },
 		].filter((item)=> {
-			return !this.props.isReduced || item.showInReduced;
+			return !this.props.hideExtraFormatting || item.priority;
 		});
 
 		const insertItems = [
@@ -76,14 +84,23 @@ class FormattingBar extends Component {
 			// { key: 'video', 			title: 'Video', 			icon: 'video' },
 		];
 
-		const iconSize = this.props.isReduced ? 12 : 16;
-		const nodeSelected = !!this.props.editorChangeObject.selectedNode;
-		const showBlockTypes = !this.props.isReduced && !this.props.isSimple && !nodeSelected;
+		const iconSize = this.props.isSmall ? 12 : 16;
+		const selectedNode = this.props.editorChangeObject.selectedNode || {};
+		const isTable = menuItems.reduce((prev, curr)=> {
+			if (curr.title === 'table-delete') { return true; }
+			return prev;
+		}, false);
+
+		const uncontrolledNodes = ['paragraph', 'blockquote', 'horizontal_rule', 'heading', 'ordered_list', 'bullet_list', 'list_item', 'code_block', 'citationList', 'footnoteList'];
+		const isUncontrolledNode = selectedNode.type && uncontrolledNodes.indexOf(selectedNode.type.name) > -1;
+		const isBlockquote = selectedNode.type && selectedNode.type.name === 'blockquote';
+		const nodeSelected = !isUncontrolledNode && (selectedNode.attrs || isTable);
+		const showBlockTypes = !this.props.hideBlocktypes && !nodeSelected && !isBlockquote;
 		const showFormatting = !nodeSelected;
-		const showMoreFormatting = showFormatting && !this.props.isReduced && !this.props.isSimple;
-		const showMedia = !nodeSelected && !this.props.isSimple;
+		const showExtraFormatting = showFormatting && !this.props.hideExtraFormatting;
+		const showMedia = !nodeSelected && !this.props.hideMedia;
 		return (
-			<div className={`formatting-bar-component ${this.props.isReduced ? 'reduced' : ''}`}>
+			<div className={`formatting-bar-component ${this.props.isSmall ? 'small' : ''}`}>
 				{/* Block Types Dropdown */}
 				{showBlockTypes &&
 					<DropdownButton
@@ -135,7 +152,7 @@ class FormattingBar extends Component {
 						/>
 					);
 				})}
-				{showMoreFormatting &&
+				{showExtraFormatting &&
 					<Popover
 						content={
 							<Menu>
@@ -159,7 +176,6 @@ class FormattingBar extends Component {
 						position={Position.BOTTOM}
 						minimal={true}
 						transitionDuration={-1}
-						// inheritDarkTheme={false}
 						tetherOptions={{
 							constraints: [{ attachment: 'together', to: 'window' }]
 						}}
@@ -170,7 +186,7 @@ class FormattingBar extends Component {
 						/>
 					</Popover>
 				}
-				{showMoreFormatting && showMedia && <div className="separator" /> }
+				{showExtraFormatting && showMedia && <div className="separator" /> }
 
 				{/* Media Button */}
 				{showMedia &&
@@ -188,8 +204,12 @@ class FormattingBar extends Component {
 				}
 
 				{/* Node Options Blocks */}
-				{this.props.editorChangeObject.selectedNode &&
-					<div style={{ display: 'inline-block', height: '60px', backgroundColor: 'blue' }}>DOG</div>
+				{nodeSelected &&
+					<FormattingBarControls
+						editorChangeObject={this.props.editorChangeObject}
+						threads={this.props.threads}
+						isSmall={this.props.isSmall}
+					/>
 				}
 
 				{/* Media Gallery Overlay */}

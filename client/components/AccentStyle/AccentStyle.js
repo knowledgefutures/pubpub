@@ -25,7 +25,7 @@ const AccentStyle = function(props) {
 			.bp3-tab[aria-selected="true"], .bp3-tab:not([aria-selected="true"]):hover { box-shadow: inset 0 -3px 0 ${props.accentMinimalColor}; }
 			.bp3-tab[aria-selected="true"] { box-shadow: inset 0 -3px 0 ${props.accentColor}; }
 			.thread:hover:after { background-color: ${props.accentColor}; }
-			.bp3-slider-progress, .bp3-dark .bp3-slider-progress { background: ${props.accentColor}; }
+			.bp3-slider-progress.bp3-intent-primary, .bp3-dark .bp3-slider-progress.bp3-intent-primary { background: ${props.accentColor}; }
 			.bp3-slider-handle .bp3-slider-label { background: ${props.accentColor}; color: ${props.accentTextColor}; }
 			.highlight-dot-wrapper .highlight-dot { background-color: ${props.accentColor}; }
 		` }}

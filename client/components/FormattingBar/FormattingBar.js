@@ -4,6 +4,7 @@ import Icon from 'components/Icon/Icon';
 import { Button, Tooltip, Spinner, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 import FormattingBarControls from 'components/FormattingBarControls/FormattingBarControls';
+import FormattingBarMedia from 'components/FormattingBarMedia/FormattingBarMedia';
 import Overlay from 'components/Overlay/Overlay';
 
 require('./formattingBar.scss');
@@ -216,15 +217,9 @@ class FormattingBar extends Component {
 				<Overlay
 					isOpen={this.state.mediaGalleryOpen}
 					onClose={this.closeMediaGallery}
+					maxWidth={750}
 				>
-					<h3>DOGGY</h3>
-					<Button
-						onClick={()=> {
-							const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
-							insertFunctions.image({ url: 'https://s7d2.scene7.com/is/image/PetSmart/5251722?$sclp-prd-main_small$' });
-							this.closeMediaGallery();
-						}}
-					/>
+					<FormattingBarMedia />
 				</Overlay>
 			</div>
 		);

@@ -1,12 +1,17 @@
 .formatting-bar-media-component {
 	display: flex;
+	height: 430px;
+	max-height: calc(100vh - 75px);
+	margin: -20px; /* To undo the padding of the overlay card */
 	.options {
 		flex: 0 0 auto;
-		border-right: 1px solid grey;
+		border-right: 1px solid #DDD;
+		overflow: scroll;
 	}
-	.content {
-		background: #CCC;
+	.formatting-bar-media-component-content {
 		flex: 1 1 auto;
+		padding: 20px;
+		overflow: scroll;
 	}
 	.bp3-menu {
 		min-width: auto;

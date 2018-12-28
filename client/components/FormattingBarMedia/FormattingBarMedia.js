@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'components/Icon/Icon';
 import { Button, Menu, MenuItem } from '@blueprintjs/core';
+import FormattingBarMediaImage from 'components/FormattingBarMedia/FormattingBarMediaImage';
 
 require('./formattingBarMedia.scss');
 
@@ -17,7 +18,7 @@ class FormattingBarMedia extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			
+			activeItem: 'Image',
 		};
 	}
 
@@ -26,7 +27,7 @@ class FormattingBarMedia extends Component {
 			{ text: 'Image', icon: 'media' },
 			{ text: 'Video', icon: 'video' },
 			{ text: 'Audio', icon: 'volume-up' },
-			{ text: 'File', icon: 'document' },
+			{ text: 'Other', icon: 'document' },
 		];
 		const apps = [
 			{ text: 'Twitter', icon: 'twitter' },
@@ -45,6 +46,7 @@ class FormattingBarMedia extends Component {
 			{ text: 'Google Maps', icon: 'googlemaps' },
 			{ text: 'Slideshare', icon: 'slideshare' },
 		];
+		const activeItem = this.state.activeItem;
 		return (
 			<div className="formatting-bar-media-component">
 				<div className="options">
@@ -56,6 +58,10 @@ class FormattingBarMedia extends Component {
 									key={file.text}
 									text={file.text}
 									icon={<Icon icon={file.icon} iconSize={30} useColor={true} />}
+									active={activeItem === file.text}
+									onClick={()=> {
+										this.setState({ activeItem: file.text });
+									}}
 								/>
 							);
 						})}
@@ -66,14 +72,19 @@ class FormattingBarMedia extends Component {
 									key={app.text}
 									text={app.text}
 									icon={<Icon icon={app.icon} iconSize={30} useColor={true} />}
+									active={activeItem === app.text}
+									onClick={()=> {
+										this.setState({ activeItem: app.text });
+									}}
 								/>
 							);
 						})}
 					</Menu>
 				</div>
-				<div className="content">
 
-				</div>
+				{activeItem === 'Image' &&
+					<FormattingBarMediaImage />
+				}
 			</div>
 		);
 	}

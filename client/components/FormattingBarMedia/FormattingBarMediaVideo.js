@@ -10,7 +10,7 @@ const propTypes = {
 	isSmall: PropTypes.bool.isRequired,
 };
 
-class FormattingBarMediaImage extends Component {
+class FormattingBarMediaVideo extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -38,14 +38,14 @@ class FormattingBarMediaImage extends Component {
 	}
 
 	onUploadFinish(evt, index, type, filename) {
-		this.props.onInsert('image', { url: `https://assets.pubpub.org/${filename}` });
+		this.props.onInsert('video', { url: `https://assets.pubpub.org/${filename}` });
 	}
 
 	render () {
 		return (
 			<Dropzone
 				onDrop={this.onDrop}
-				accept="image/png, image/jpeg, image/gif"
+				accept="video/mp4, video/webm"
 			>
 				{({ getRootProps, getInputProps, isDragActive }) => {
 					return (
@@ -57,9 +57,9 @@ class FormattingBarMediaImage extends Component {
 							{!this.state.isUploading &&
 								<div className="drag-message">
 									<Icon icon="circle-arrow-up" iconSize={50} />
-									<div className="drag-title">Drag & drop to upload an Image</div>
+									<div className="drag-title">Drag & drop to upload a Video</div>
 									<div className="drag-details">Or click to browse files</div>
-									<div className="drag-details">.jpeg .png or .gif</div>
+									<div className="drag-details">.mp4 or .webm</div>
 								</div>
 							}
 							{this.state.isUploading &&
@@ -75,5 +75,5 @@ class FormattingBarMediaImage extends Component {
 	}
 }
 
-FormattingBarMediaImage.propTypes = propTypes;
-export default FormattingBarMediaImage;
+FormattingBarMediaVideo.propTypes = propTypes;
+export default FormattingBarMediaVideo;

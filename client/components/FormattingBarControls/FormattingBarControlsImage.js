@@ -23,16 +23,10 @@ class FormattingBarControlsImage extends Component {
 	}
 
 	onUploadFinish(evt, index, type, filename) {
-		/* This timeout is due to S3 returning a 404 if we render the */
-		/* image immediately after upload. S3 seems to have read-after-write */
-		/* consistency - but I am still seeing problems with it. 500ms */
-		/* seems to do the trick, but this is pretty hand-wavy. */
-		setTimeout(()=> {
-			this.props.updateAttrs({ url: `https://assets.pubpub.org/${filename}` });
-			this.setState({
-				isUploading: false,
-			});
-		}, 500);
+		this.props.updateAttrs({ url: `https://assets.pubpub.org/${filename}` });
+		this.setState({
+			isUploading: false,
+		});
 	}
 
 	handleImageSelect(evt) {

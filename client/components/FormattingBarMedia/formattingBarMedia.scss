@@ -12,6 +12,32 @@
 		flex: 1 1 auto;
 		padding: 20px;
 		overflow: scroll;
+		&.dropzone {
+			background-color: #F7F7F9;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			&.dropzone--isActive {
+				background-color: #E7E7E9;
+			}
+			.drag-message {
+				text-align: center;
+			}
+			.bp3-icon {
+				color: #666;
+				margin-bottom: 0.5em;
+			}
+			.drag-title {
+				color: #444;
+				font-weight: 800;
+				font-size: 24px;
+			}
+			.drag-details {
+				padding-top: 1em;
+				font-size: 16px;
+			}
+
+		}
 	}
 	.bp3-menu {
 		min-width: auto;
@@ -20,7 +46,6 @@
 		padding-right: 1em;
 		align-items: center;
 	}
-	img {
-		width: 30px;
-	}
+	
+
 }

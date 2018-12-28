@@ -1,118 +1,39 @@
-/* eslint-disable jsx-a11y/label-has-for */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import throttle from 'lodash.throttle';
-import { Button, Tooltip, Spinner } from '@blueprintjs/core';
+import { Tooltip } from '@blueprintjs/core';
 import stickybits from 'stickybits';
 import Avatar from 'components/Avatar/Avatar';
-import Icon from 'components/Icon/Icon';
 import FormattingBar from 'components/FormattingBar/FormattingBar';
-import { s3Upload } from 'utilities';
 
 require('./pubDraftHeader.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
-	// locationData: PropTypes.object,
 	editorChangeObject: PropTypes.object.isRequired,
 	setOptionsMode: PropTypes.func.isRequired,
-	// onRef: PropTypes.func.isRequired,
-	// bottomCutoffId: PropTypes.string,
 	collabStatus: PropTypes.string.isRequired,
 	activeCollaborators: PropTypes.array.isRequired,
 	threads: PropTypes.array,
 };
 
 const defaultProps = {
-	// locationData: { params: {} },
-	// bottomCutoffId: '',
 	threads: [],
 };
 
 class PubDraftHeader extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			// isFixed: false,
-			insertFunction: undefined,
-			insertKey: undefined,
-			insertLoading: false,
-			randKey: Math.round(Math.random() * 99999),
-		};
-
-		// this.calculateIfFixed = this.calculateIfFixed.bind(this);
-		this.handleInsertFunction = this.handleInsertFunction.bind(this);
-		this.handleFileSelect = this.handleFileSelect.bind(this);
-		this.handleUploadFinish = this.handleUploadFinish.bind(this);
-		// this.headerRef = React.createRef();
-		// this.bottomCutoffElem = null;
-		// this.handleScroll = throttle(this.calculateIfFixed, 50, { leading: true, trailing: true });
 		this.stickyInstance = undefined;
 	}
 
 	componentDidMount() {
 		this.stickyInstance = stickybits('.pub-draft-header-component', { stickyBitStickyOffset: 35 });
-		// this.calculateIfFixed();
-		// window.addEventListener('scroll', this.handleScroll);
-		// this.bottomCutoffElem = document.getElementById(this.props.bottomCutoffId);
 	}
 
 	componentWillUnmount() {
 		this.stickyInstance.cleanUp();
-		// window.removeEventListener('scroll', this.handleScroll);
 	}
-
-	handleInsertFunction(insertItem) {
-		const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
-		const uploadKeys = ['image', 'video', 'file'];
-		if (uploadKeys.indexOf(insertItem.key) > -1) {
-			return this.setState({
-				insertFunction: insertFunctions[insertItem.key],
-				insertKey: insertItem.key,
-			});
-		}
-		return insertFunctions[insertItem.key]();
-	}
-
-	handleFileSelect(evt) {
-		if (evt.target.files.length) {
-			s3Upload(evt.target.files[0], ()=>{}, this.handleUploadFinish, 0);
-			this.setState({ insertLoading: true });
-		}
-	}
-
-	handleUploadFinish(evt, index, type, filename) {
-		/* This timeout is due to S3 returning a 404 if we render the */
-		/* image immediately after upload. S3 seems to have read-after-write */
-		/* consistency - but I am still seeing problems with it. 500ms */
-		/* seems to do the trick, but this is pretty hand-wavy. */
-		setTimeout(()=> {
-			this.state.insertFunction({ url: `https://assets.pubpub.org/${filename}` });
-			this.setState({
-				insertFunction: undefined,
-				insertKey: undefined,
-				insertLoading: false,
-				randKey: Math.round(Math.random() * 99999)
-			});
-		}, 500);
-	}
-
-	// calculateIfFixed() {
-	// 	/* 73 is the height of .wrapper */
-	// 	const isOverBottom = this.bottomCutoffElem && this.bottomCutoffElem.getBoundingClientRect().top < 73;
-	// 	if (!this.state.isFixed) {
-	// 		const isAboveTop = this.headerRef.current.getBoundingClientRect().top < 0;
-	// 		if (isAboveTop && !isOverBottom) {
-	// 			this.setState({ isFixed: true });
-	// 		}
-	// 	} else {
-	// 		const isBelowTop = this.headerRef.current.getBoundingClientRect().top > 0;
-	// 		if (isBelowTop || isOverBottom) {
-	// 			this.setState({ isFixed: false });
-	// 		}
-	// 	}
-	// }
 
 	render() {
 		const pubData = this.props.pubData;
@@ -135,130 +56,6 @@ class PubDraftHeader extends Component {
 				name: `${numAnonymous} anonymous user${numAnonymous === 1 ? '' : 's'}`,
 			};
 		}
-		const menuItems = this.props.editorChangeObject.menuItems || [];
-		const menuItemsObject = menuItems.reduce((prev, curr)=> {
-			return { ...prev, [curr.title]: curr };
-		}, {});
-
-		const formattingItems = [
-			{
-				key: 'header1',
-				icon: <Icon icon="header-one" />
-			},
-			{
-				key: 'header2',
-				icon: <Icon icon="header-two" />
-			},
-			{
-				key: 'strong',
-				icon: <Icon icon="bold" />
-			},
-			{
-				key: 'em',
-				icon: <Icon icon="italic" />
-			},
-			{
-				key: 'code',
-				icon: <Icon icon="code" />
-			},
-			{
-				key: 'subscript',
-				icon: <Icon icon="subscript" />
-			},
-			{
-				key: 'superscript',
-				icon: <Icon icon="superscript" />
-			},
-			{
-				key: 'strikethrough',
-				icon: <Icon icon="strikethrough" />
-			},
-			{
-				key: 'blockquote',
-				icon: <Icon icon="citation" />
-			},
-			{
-				key: 'bullet-list',
-				icon: <Icon icon="list-ul" />
-			},
-			{
-				key: 'numbered-list',
-				icon: <Icon icon="list-ol" />
-			},
-			{
-				key: 'link',
-				icon: <Icon icon="link" />
-			},
-		];
-
-		const insertItems = [
-			{
-				key: 'citation',
-				title: 'Citation',
-				icon: <Icon icon="bookmark" />
-			},
-			{
-				key: 'citationList',
-				title: 'Citation List',
-				icon: <Icon icon="numbered-list" />
-			},
-			{
-				key: 'code_block',
-				title: 'Code Block',
-				icon: <Icon icon="code" />
-			},
-			{
-				key: 'discussion',
-				title: 'Discussion Thread',
-				icon: <Icon icon="chat" />
-			},
-			{
-				key: 'equation',
-				title: 'Equation',
-				icon: <Icon icon="function" />
-			},
-			{
-				key: 'file',
-				title: 'File',
-				icon: <Icon icon="document" />
-			},
-			{
-				key: 'footnote',
-				title: 'Footnote',
-				icon: <Icon icon="asterisk" />
-			},
-			{
-				key: 'footnoteList',
-				title: 'Footnote List',
-				icon: <Icon icon="numbered-list" />
-			},
-			{
-				key: 'horizontal_rule',
-				title: 'Horizontal Line',
-				icon: <Icon icon="minus" />
-			},
-			{
-				key: 'iframe',
-				title: 'Iframe',
-				icon: <Icon icon="code-block" />
-			},
-			{
-				key: 'image',
-				title: 'Image',
-				icon: <Icon icon="media" />
-			},
-			{
-				key: 'table',
-				title: 'Table',
-				icon: <Icon icon="th" />
-			},
-			{
-				key: 'video',
-				title: 'Video',
-				icon: <Icon icon="video" />
-			},
-		];
-
 		const viewOnly = !pubData.isDraftEditor && !pubData.isManager;
 
 		return (

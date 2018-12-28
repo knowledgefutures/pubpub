@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FormattingBarControlsImage from 'components/FormattingBarControls/FormattingBarControlsImage';
 import FormattingBarControlsVideo from 'components/FormattingBarControls/FormattingBarControlsVideo';
+import FormattingBarControlsAudio from 'components/FormattingBarControls/FormattingBarControlsAudio';
 import FormattingBarControlsIframe from 'components/FormattingBarControls/FormattingBarControlsIframe';
 import FormattingBarControlsCitation from 'components/FormattingBarControls/FormattingBarControlsCitation';
 import FormattingBarControlsFootnote from 'components/FormattingBarControls/FormattingBarControlsFootnote';
@@ -42,6 +43,9 @@ const FormattingBarControls = (props)=> {
 	}
 	if (nodeType === 'video') {
 		return <FormattingBarControlsVideo {...controlsProps} />;
+	}
+	if (nodeType === 'audio') {
+		return <FormattingBarControlsAudio {...controlsProps} />;
 	}
 	if (nodeType === 'iframe') {
 		return <FormattingBarControlsIframe {...controlsProps} />;

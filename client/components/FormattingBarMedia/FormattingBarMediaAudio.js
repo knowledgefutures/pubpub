@@ -10,7 +10,7 @@ const propTypes = {
 	isSmall: PropTypes.bool.isRequired,
 };
 
-class FormattingBarMediaImage extends Component {
+class FormattingBarMediaAudio extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -38,14 +38,14 @@ class FormattingBarMediaImage extends Component {
 	}
 
 	onUploadFinish(evt, index, type, filename) {
-		this.props.onInsert('image', { url: `https://assets.pubpub.org/${filename}` });
+		this.props.onInsert('audio', { url: `https://assets.pubpub.org/${filename}` });
 	}
 
 	render () {
 		return (
 			<Dropzone
 				onDrop={this.onDrop}
-				accept="image/png, image/jpeg, image/gif"
+				accept="audio/mp3, audio/ogg, audio/wav"
 			>
 				{({ getRootProps, getInputProps, isDragActive }) => {
 					return (
@@ -57,9 +57,9 @@ class FormattingBarMediaImage extends Component {
 							{!this.state.isUploading &&
 								<div className="drag-message">
 									<Icon icon="circle-arrow-up" iconSize={50} />
-									<div className="drag-title">Drag & drop to upload an Image</div>
+									<div className="drag-title">Drag & drop to upload Audio</div>
 									<div className="drag-details">Or click to browse files</div>
-									<div className="drag-details">.jpeg .png or .gif</div>
+									<div className="drag-details">.mp3, .wav, or .ogg</div>
 								</div>
 							}
 							{this.state.isUploading &&
@@ -75,5 +75,5 @@ class FormattingBarMediaImage extends Component {
 	}
 }
 
-FormattingBarMediaImage.propTypes = propTypes;
-export default FormattingBarMediaImage;
+FormattingBarMediaAudio.propTypes = propTypes;
+export default FormattingBarMediaAudio;

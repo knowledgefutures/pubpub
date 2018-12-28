@@ -278,6 +278,31 @@ export function renderLatexString(value, isBlock, callback) {
 		callback(error);
 	});
 }
+
+export function checkForAsset(url) {
+	let checkCount = 0;
+	const maxCheckCount = 10;
+	const checkInterval = 1000; /* This will check for 10 seconds and then fail */
+	return new Promise((resolve, reject)=> {
+		const checkUrl = ()=> {
+			fetch(url, {
+				method: 'HEAD',
+			})
+			.then((response)=> {
+				if (!response.ok) {
+					if (checkCount < maxCheckCount) {
+						checkCount += 1;
+						return setTimeout(checkUrl, checkInterval);
+					}
+					return reject();
+				}
+				return resolve();
+			});
+		};
+		checkUrl();
+	});
+}
+
 export function s3Upload(file, progressEvent, finishEvent, index) {
 	function beginUpload() {
 		const folderName = isPubPubProduction
@@ -305,7 +330,10 @@ export function s3Upload(file, progressEvent, finishEvent, index) {
 			progressEvent(evt, index);
 		}, false);
 		sendFile.upload.addEventListener('load', (evt)=>{
-			finishEvent(evt, index, file.type, filename, file.name);
+			checkForAsset(`https://s3-external-1.amazonaws.com/assets.pubpub.org/${filename}`)
+			.then(()=> {
+				finishEvent(evt, index, file.type, filename, file.name);
+			});
 		}, false);
 		sendFile.open('POST', 'https://s3-external-1.amazonaws.com/assets.pubpub.org', true);
 		sendFile.send(formData);

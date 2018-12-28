@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@blueprintjs/core';
 import Dropzone from 'react-dropzone';
+import filesize from 'filesize';
 import Icon from 'components/Icon/Icon';
 import { s3Upload } from 'utilities';
 
@@ -10,12 +11,14 @@ const propTypes = {
 	isSmall: PropTypes.bool.isRequired,
 };
 
-class FormattingBarMediaImage extends Component {
+class FormattingBarMediaFile extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			isUploading: false,
 			progress: 0,
+			loadingFileName: '',
+			loadingFileSize: '',
 		};
 		this.onDrop = this.onDrop.bind(this);
 		this.onUploadFinish = this.onUploadFinish.bind(this);
@@ -27,6 +30,8 @@ class FormattingBarMediaImage extends Component {
 			s3Upload(files[0], this.onUploadProgress, this.onUploadFinish, 0);
 			this.setState({
 				isUploading: true,
+				loadingFileName: files[0].name,
+				loadingFileSize: filesize(files[0].size, { round: 0 }),
 			});
 		}
 	}
@@ -38,14 +43,17 @@ class FormattingBarMediaImage extends Component {
 	}
 
 	onUploadFinish(evt, index, type, filename) {
-		this.props.onInsert('image', { url: `https://assets.pubpub.org/${filename}` });
+		this.props.onInsert('file', {
+			url: `https://assets.pubpub.org/${filename}`,
+			fileName: this.state.loadingFileName,
+			fileSize: this.state.loadingFileSize,
+		});
 	}
 
 	render () {
 		return (
 			<Dropzone
 				onDrop={this.onDrop}
-				accept="image/png, image/jpeg, image/gif"
 			>
 				{({ getRootProps, getInputProps, isDragActive }) => {
 					return (
@@ -57,14 +65,13 @@ class FormattingBarMediaImage extends Component {
 							{!this.state.isUploading &&
 								<div className="drag-message">
 									<Icon icon="circle-arrow-up" iconSize={50} />
-									<div className="drag-title">Drag & drop to upload an Image</div>
+									<div className="drag-title">Drag & drop to upload a File</div>
 									<div className="drag-details">Or click to browse files</div>
-									<div className="drag-details">.jpeg .png or .gif</div>
 								</div>
 							}
 							{this.state.isUploading &&
 								<div className="drag-message">
-									<Spinner value={this.state.progress === 1 ? null : this.state.progress} />
+									<Spinner value={this.state.progress} />
 								</div>
 							}
 						</div>
@@ -75,5 +82,5 @@ class FormattingBarMediaImage extends Component {
 	}
 }
 
-FormattingBarMediaImage.propTypes = propTypes;
-export default FormattingBarMediaImage;
+FormattingBarMediaFile.propTypes = propTypes;
+export default FormattingBarMediaFile;

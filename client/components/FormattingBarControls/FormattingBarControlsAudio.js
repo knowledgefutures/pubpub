@@ -11,7 +11,7 @@ const propTypes = {
 	isSmall: PropTypes.bool.isRequired,
 };
 
-class FormattingBarControlsVideo extends Component {
+class FormattingBarControlsAudio extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -19,7 +19,7 @@ class FormattingBarControlsVideo extends Component {
 		};
 		this.randKey = Math.round(Math.random() * 99999);
 		this.onUploadFinish = this.onUploadFinish.bind(this);
-		this.handleVideoSelect = this.handleVideoSelect.bind(this);
+		this.handleAudioSelect = this.handleAudioSelect.bind(this);
 	}
 
 	onUploadFinish(evt, index, type, filename) {
@@ -29,7 +29,7 @@ class FormattingBarControlsVideo extends Component {
 		});
 	}
 
-	handleVideoSelect(evt) {
+	handleAudioSelect(evt) {
 		if (evt.target.files.length) {
 			s3Upload(evt.target.files[0], ()=>{}, this.onUploadFinish, 0);
 			this.setState({
@@ -122,10 +122,10 @@ class FormattingBarControlsVideo extends Component {
 								/>
 								<input
 									id={this.randKey}
-									name="video"
+									name="audio"
 									type="file"
-									accept="video/mp4, video/webm"
-									onChange={this.handleVideoSelect}
+									accept="audio/mp3, audio/ogg, audio/wav"
+									onChange={this.handleAudioSelect}
 									className="file-input"
 								/>
 							</label>
@@ -138,5 +138,5 @@ class FormattingBarControlsVideo extends Component {
 }
 
 
-FormattingBarControlsVideo.propTypes = propTypes;
-export default FormattingBarControlsVideo;
+FormattingBarControlsAudio.propTypes = propTypes;
+export default FormattingBarControlsAudio;

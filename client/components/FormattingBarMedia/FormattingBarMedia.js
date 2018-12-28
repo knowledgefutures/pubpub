@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'components/Icon/Icon';
-import { Button, Menu, MenuItem } from '@blueprintjs/core';
+import { Menu, MenuItem } from '@blueprintjs/core';
 import FormattingBarMediaImage from 'components/FormattingBarMedia/FormattingBarMediaImage';
+import FormattingBarMediaVideo from 'components/FormattingBarMedia/FormattingBarMediaVideo';
+import FormattingBarMediaAudio from 'components/FormattingBarMedia/FormattingBarMediaAudio';
+import FormattingBarMediaFile from 'components/FormattingBarMedia/FormattingBarMediaFile';
+
 
 require('./formattingBarMedia.scss');
 
 const propTypes = {
-	
-};
-
-const defaultProps = {
-	
+	onInsert: PropTypes.func.isRequired,
+	isSmall: PropTypes.bool.isRequired,
 };
 
 class FormattingBarMedia extends Component {
@@ -20,6 +21,13 @@ class FormattingBarMedia extends Component {
 		this.state = {
 			activeItem: 'Image',
 		};
+		this.handleInsert = this.handleInsert.bind(this);
+	}
+
+	handleInsert(insertType, insertData) {
+		const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
+		insertFunctions[insertType](insertData);
+		this.props.editorChangeObject.view.focus();
 	}
 
 	render () {
@@ -47,6 +55,10 @@ class FormattingBarMedia extends Component {
 			{ text: 'Slideshare', icon: 'slideshare' },
 		];
 		const activeItem = this.state.activeItem;
+		const componentProps = {
+			onInsert: this.props.onInsert,
+			isSmall: this.props.isSmall,
+		};
 		return (
 			<div className="formatting-bar-media-component">
 				<div className="options">
@@ -83,7 +95,16 @@ class FormattingBarMedia extends Component {
 				</div>
 
 				{activeItem === 'Image' &&
-					<FormattingBarMediaImage />
+					<FormattingBarMediaImage {...componentProps} />
+				}
+				{activeItem === 'Video' &&
+					<FormattingBarMediaVideo {...componentProps} />
+				}
+				{activeItem === 'Audio' &&
+					<FormattingBarMediaAudio {...componentProps} />
+				}
+				{activeItem === 'Other' &&
+					<FormattingBarMediaFile {...componentProps} />
 				}
 			</div>
 		);
@@ -91,5 +112,4 @@ class FormattingBarMedia extends Component {
 }
 
 FormattingBarMedia.propTypes = propTypes;
-FormattingBarMedia.defaultProps = defaultProps;
 export default FormattingBarMedia;

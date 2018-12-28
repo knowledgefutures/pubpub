@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'components/Icon/Icon';
-import { Button, Tooltip, Spinner, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
+import { Button, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 import FormattingBarControls from 'components/FormattingBarControls/FormattingBarControls';
 import FormattingBarMedia from 'components/FormattingBarMedia/FormattingBarMedia';
@@ -33,12 +33,19 @@ class FormattingBar extends Component {
 			mediaGalleryOpen: false,
 		};
 		this.closeMediaGallery = this.closeMediaGallery.bind(this);
+		this.handleInsert = this.handleInsert.bind(this);
 	}
 
 	closeMediaGallery() {
 		this.setState({ mediaGalleryOpen: false }, ()=> {
 			this.props.editorChangeObject.view.focus();
 		});
+	}
+
+	handleInsert(insertType, insertData) {
+		const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
+		insertFunctions[insertType](insertData);
+		this.closeMediaGallery();
 	}
 
 	render () {
@@ -219,7 +226,10 @@ class FormattingBar extends Component {
 					onClose={this.closeMediaGallery}
 					maxWidth={750}
 				>
-					<FormattingBarMedia />
+					<FormattingBarMedia
+						onInsert={this.handleInsert}
+						isSmall={this.props.isSmall}
+					/>
 				</Overlay>
 			</div>
 		);

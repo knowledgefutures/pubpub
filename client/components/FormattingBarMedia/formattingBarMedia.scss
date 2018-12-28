@@ -1,0 +1,21 @@
+.formatting-bar-media-component {
+	display: flex;
+	.options {
+		flex: 0 0 auto;
+		border-right: 1px solid grey;
+	}
+	.content {
+		background: #CCC;
+		flex: 1 1 auto;
+	}
+	.bp3-menu {
+		min-width: auto;
+	}
+	.bp3-menu-item {
+		padding-right: 1em;
+		align-items: center;
+	}
+	img {
+		width: 30px;
+	}
+}

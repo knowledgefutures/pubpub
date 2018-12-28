@@ -1,0 +1,78 @@
+.color[data-icon="twitter"] {
+	color: #1DA1F2;
+}
+.color[data-icon="prezi"] {
+	.rings { color: #1966cc; }
+	.bars { color: #318bff; }
+}
+.color[data-icon="reddit"] {
+	color: #FF4500;
+}
+.color[data-icon="linkedin"] {
+	color: #0077B5;
+}
+.color[data-icon="github"] {
+	color: #181717;
+}
+.color[data-icon="facebook"] {
+	color: #3B5998;
+}
+.color[data-icon="giphy"] {
+	.a { color: #0f9; }
+	.b { color: #93f; }
+	.c { color: #0cf; }
+	.d { color: #ff9; }
+	.e { color: #f66; }
+	.f { color: #4c197f; }
+}
+.color[data-icon="unsplash"] {
+	color: #000000;
+}
+.color[data-icon="vimeo"] {
+	color: #1AB7EA;
+}
+.color[data-icon="youtube"] {
+	color: #FF0000;
+}
+.color[data-icon="spotify"] {
+	color: #1ED760;
+}
+.color[data-icon="codepen"] {
+	color: #000000;
+}
+.color[data-icon="soundcloud"] {
+	color: #FF3300;
+}
+.color[data-icon="googlemaps"] {
+	.a { color: #34a668; }
+	.b { color: #5c88c5; }
+	.c { color: #dd4b3e; }
+	.d { color: #802d27; }
+	.e { color: #fff; }
+	.f { color: #c3c3c3; }
+	.g { color: #fddc4f; }
+	.h { color: #fff; }
+}
+
+.color[data-icon="slideshare"] {
+	.a { fill: none; stroke: #bdbdbd; }
+	.b { color: #0277bd; }
+	.c { color: #01579b; }
+	.d { color: #fb8c00; }
+}
+[data-icon="slideshare"]:not(.color) {
+	.a { fill: none; stroke: currentColor; opacity: 0.5; }
+	.b { opacity: 0.9; }
+	.c { opacity: 1; }
+	.d { opacity: 1; }
+}
+[data-icon="googlemaps"]:not(.color) {
+	.a { opacity: 0.3; }
+	.b { opacity: 0.2; }
+	.c { opacity: 0.9; }
+	.d { fill: white; }
+	.e { opacity: 1; }
+	.f { opacity: 0.4; }
+	.g { opacity: 0.9; }
+	.h { opacity: 1; }
+}

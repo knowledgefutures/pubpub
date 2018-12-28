@@ -6,6 +6,7 @@ import FormattingBarMediaImage from 'components/FormattingBarMedia/FormattingBar
 import FormattingBarMediaVideo from 'components/FormattingBarMedia/FormattingBarMediaVideo';
 import FormattingBarMediaAudio from 'components/FormattingBarMedia/FormattingBarMediaAudio';
 import FormattingBarMediaFile from 'components/FormattingBarMedia/FormattingBarMediaFile';
+import FormattingBarMediaIframe from 'components/FormattingBarMedia/FormattingBarMediaIframe';
 
 
 require('./formattingBarMedia.scss');
@@ -19,7 +20,7 @@ class FormattingBarMedia extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			activeItem: 'Image',
+			activeItem: 'Iframe',
 		};
 		this.handleInsert = this.handleInsert.bind(this);
 	}
@@ -38,6 +39,7 @@ class FormattingBarMedia extends Component {
 			{ text: 'Other', icon: 'document' },
 		];
 		const apps = [
+			{ text: 'Iframe', icon: 'application' },
 			{ text: 'Twitter', icon: 'twitter' },
 			{ text: 'Github', icon: 'github' },
 			{ text: 'Prezi', icon: 'prezi' },
@@ -105,6 +107,9 @@ class FormattingBarMedia extends Component {
 				}
 				{activeItem === 'Other' &&
 					<FormattingBarMediaFile {...componentProps} />
+				}
+				{activeItem === 'Iframe' &&
+					<FormattingBarMediaIframe {...componentProps} />
 				}
 			</div>
 		);

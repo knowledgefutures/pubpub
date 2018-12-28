@@ -10,8 +10,6 @@
 	}
 	.formatting-bar-media-component-content {
 		flex: 1 1 auto;
-		padding: 20px;
-		overflow: scroll;
 		&.dropzone {
 			background-color: #F7F7F9;
 			display: flex;
@@ -37,6 +35,25 @@
 				font-size: 16px;
 			}
 
+		}
+		.top-input {
+			display: flex;
+			border-bottom: 1px solid #DDD;
+			input {
+				box-shadow: none;
+			}
+		}
+		iframe {
+			width: 100%;
+			height: calc(100% - 41px);
+			display: block;
+		}
+		.splash-panel {
+			width: 100%;
+			height: calc(100% - 41px);
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 	}
 	.bp3-menu {

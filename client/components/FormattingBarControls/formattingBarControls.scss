@@ -31,12 +31,13 @@
 		padding: 0.5em;
 		background: white;
 		width: 100%;
-	    height: 50px;
+	    // height: 50px;
+	    height: 30px;
 	    overflow-y: scroll;
 	}
 	textarea {
-		height: 50px;
-		min-height: 50px;
+		height: 30px;
+		min-height: 30px;
 	}
 	.file-select {
 		input.file-input {

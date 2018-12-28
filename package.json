@@ -115,6 +115,7 @@
     "throng": "^4.0.0",
     "tmp-promise": "^1.0.5",
     "uuid": "^3.3.0",
+    "valid-url": "^1.0.9",
     "validator": "^10.9.0",
     "webpack": "^4.27.1",
     "webpack-bundle-analyzer": "^3.0.3",

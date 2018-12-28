@@ -335,7 +335,9 @@ class PubHeader extends Component {
 					</div>
 					<div className="bottom-text">
 						<div className="bottom-title">{pubData.title}</div>
-						<div className="bottom-buttons">Cite · Options · Other</div>
+						<div className="bottom-buttons">
+							Share · Cite · Options · Other
+						</div>
 					</div>
 				</div>
 			</div>

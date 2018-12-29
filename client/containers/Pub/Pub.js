@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import firebase from '@firebase/app';
+// import applyDevTools from 'prosemirror-dev-tools';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import PubHeader from 'components/PubHeader/PubHeader';
 import PubDraftHeader from 'components/PubDraftHeader/PubDraftHeader';
@@ -387,6 +388,10 @@ class Pub extends Component {
 			setTimeout(()=> {
 				dispatchEmptyTransaction(this.state.editorChangeObject.view);
 			}, 1000);
+
+			/* Uncomment the follwing line and the import at the top */
+			/* if you need to debug a pub document. */
+			// applyDevTools(changeObject.view);
 		}
 		this.setState({
 			editorChangeObject: {

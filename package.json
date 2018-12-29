@@ -89,6 +89,7 @@
     "passport-local": "^1.0.0",
     "passport-local-sequelize": "^0.8.0",
     "pg": "^7.7.1",
+    "prosemirror-dev-tools": "^2.1.1",
     "query-string": "^6.2.0",
     "raven-js": "^3.27.0",
     "react": "^16.7.0",

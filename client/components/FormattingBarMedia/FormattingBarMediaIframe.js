@@ -53,11 +53,11 @@ class FormattingBarMediaIframe extends Component {
 						title="URL preview"
 					/>
 				}
-				{!isValid && this.state.url &&
-					<div className="splash-panel">
+				{!isValid &&
+					<div className="preview-wrapper">
 						<NonIdealState
-							title="Must be an HTTPS URL"
-							icon="globe-network"
+							title="Enter an HTTPS URL above"
+							icon="application"
 						/>
 					</div>
 				}

@@ -43,17 +43,20 @@
 				box-shadow: none;
 			}
 		}
-		iframe {
-			width: 100%;
-			height: calc(100% - 41px);
-			display: block;
-		}
-		.splash-panel {
+		.preview-wrapper {
 			width: 100%;
 			height: calc(100% - 41px);
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			&.scroll {
+				overflow: scroll;
+			}
+		}
+		iframe {
+			width: 90%;
+			height: 85%;
+			box-shadow: 0 0 0 1px rgba(16,22,26,.1), 0 2px 4px rgba(16,22,26,.2), 0 8px 24px rgba(16,22,26,.2);
 		}
 	}
 	.bp3-menu {

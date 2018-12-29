@@ -7,7 +7,8 @@ import FormattingBarMediaVideo from 'components/FormattingBarMedia/FormattingBar
 import FormattingBarMediaAudio from 'components/FormattingBarMedia/FormattingBarMediaAudio';
 import FormattingBarMediaFile from 'components/FormattingBarMedia/FormattingBarMediaFile';
 import FormattingBarMediaIframe from 'components/FormattingBarMedia/FormattingBarMediaIframe';
-
+import FormattingBarMediaYoutube from 'components/FormattingBarMedia/FormattingBarMediaYoutube';
+import FormattingBarMediaCodepen from 'components/FormattingBarMedia/FormattingBarMediaCodepen';
 
 require('./formattingBarMedia.scss');
 
@@ -20,7 +21,7 @@ class FormattingBarMedia extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			activeItem: 'Iframe',
+			activeItem: 'YouTube',
 		};
 		this.handleInsert = this.handleInsert.bind(this);
 	}
@@ -40,6 +41,8 @@ class FormattingBarMedia extends Component {
 		];
 		const apps = [
 			{ text: 'Iframe', icon: 'application' },
+			{ text: 'YouTube', icon: 'youtube' },
+			{ text: 'Codepen', icon: 'codepen' },
 			{ text: 'Twitter', icon: 'twitter' },
 			{ text: 'Github', icon: 'github' },
 			{ text: 'Prezi', icon: 'prezi' },
@@ -47,11 +50,9 @@ class FormattingBarMedia extends Component {
 			{ text: 'Reddit', icon: 'reddit' },
 			{ text: 'Facebook', icon: 'facebook' },
 			{ text: 'Giphy', icon: 'giphy' },
-			{ text: 'Youtube', icon: 'youtube' },
 			{ text: 'Vimeo', icon: 'vimeo' },
 			{ text: 'Soundcloud', icon: 'soundcloud' },
 			{ text: 'Spotify', icon: 'spotify' },
-			{ text: 'Codepen', icon: 'codepen' },
 			{ text: 'Unsplash', icon: 'unsplash' },
 			{ text: 'Google Maps', icon: 'googlemaps' },
 			{ text: 'Slideshare', icon: 'slideshare' },
@@ -110,6 +111,12 @@ class FormattingBarMedia extends Component {
 				}
 				{activeItem === 'Iframe' &&
 					<FormattingBarMediaIframe {...componentProps} />
+				}
+				{activeItem === 'YouTube' &&
+					<FormattingBarMediaYoutube {...componentProps} />
+				}
+				{activeItem === 'Codepen' &&
+					<FormattingBarMediaCodepen {...componentProps} />
 				}
 			</div>
 		);

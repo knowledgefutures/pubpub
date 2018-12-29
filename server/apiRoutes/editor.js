@@ -1,5 +1,6 @@
 import Cite from 'citation-js';
 import katex from 'katex';
+import request from 'request-promise';
 import app from '../server';
 
 app.post('/api/editor/citation-format', (req, res)=> {
@@ -35,4 +36,26 @@ app.post('/api/editor/latex-render', (req, res)=> {
 	} catch (err) {
 		return res.status(201).json('<div class="pub-latex-error">Error rendering equation</div>');
 	}
+});
+
+app.get('/api/editor/embed', (req, res)=> {
+	const type = req.query.type;
+	const input = req.query.input;
+	const oembedUrls = {
+		youtube: `https://www.youtube.com/oembed?url=${input}&format=json`,
+		codepen: `https://codepen.io/api/oembed?url=${input}&format=json`
+	};
+	const oembedUrl = oembedUrls[type];
+
+	if (!oembedUrl) {
+		return res.status(400).json('Type not supported');
+	}
+
+	return request(oembedUrl, { json: true })
+	.then((result)=> {
+		return res.status(200).json(result);
+	})
+	.catch((err)=> {
+		return res.status(500).json(err);
+	});
 });

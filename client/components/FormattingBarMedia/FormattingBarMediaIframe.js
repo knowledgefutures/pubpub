@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { InputGroup, Button, Intent, NonIdealState } from '@blueprintjs/core';
 import { isHttpsUri } from 'valid-url';
+import { getIframeSrc } from 'utilities';
 
 const propTypes = {
 	onInsert: PropTypes.func.isRequired,
@@ -33,9 +34,7 @@ class FormattingBarMediaIframe extends Component {
 					large={true}
 					onChange={(evt)=> {
 						const val = evt.target.value;
-						const re = /(?<=src=").*?(?=[?"])/;
-						const getSrc = val.indexOf('<iframe') > -1 && val.match(re) && val.match(re)[0];
-						this.setState({ url: getSrc || val });
+						this.setState({ url: getIframeSrc(val) || val });
 					}}
 					rightElement={
 						<Button

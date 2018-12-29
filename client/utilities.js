@@ -474,3 +474,31 @@ export function generateRenderLists(layout, pubs) {
 	});
 	return pubRenderLists;
 }
+
+export const getIframeSrc = (val)=> {
+	const re = /(?<=src=").*?(?=[?"])/;
+	const getSrc = val.indexOf('<iframe') > -1 && val.match(re) && val.match(re)[0];
+	return getSrc || null;
+};
+
+export const getEmbedType = (input)=> {
+	const urls = {
+		youtube: [
+			'https://www.youtube.com',
+			'https://youtu.be'
+		],
+		codepen: [
+			'https://codepen.io',
+		],
+	};
+
+	return Object.keys(urls).reduce((prev, curr)=> {
+		const currUrls = urls[curr];
+		const isMatch = currUrls.reduce((prevMatch, currUrl)=> {
+			if (input.indexOf(currUrl) === 0) { return true; }
+			return prevMatch;
+		}, false);
+		if (isMatch) { return curr; }
+		return prev;
+	}, null);
+};

@@ -43,7 +43,9 @@ app.get('/api/editor/embed', (req, res)=> {
 	const input = req.query.input;
 	const oembedUrls = {
 		youtube: `https://www.youtube.com/oembed?url=${input}&format=json`,
-		codepen: `https://codepen.io/api/oembed?url=${input}&format=json`
+		codepen: `https://codepen.io/api/oembed?url=${input}&format=json`,
+		vimeo: `https://vimeo.com/api/oembed.json?url=${input}`,
+		soundcloud: `https://soundcloud.com/oembed?url=${input}&format=json`,
 	};
 	const oembedUrl = oembedUrls[type];
 

@@ -476,7 +476,7 @@ export function generateRenderLists(layout, pubs) {
 }
 
 export const getIframeSrc = (val)=> {
-	const re = /(?<=src=").*?(?=[?"])/;
+	const re = /(?<=src=").*?(?=["])/;
 	const getSrc = val.indexOf('<iframe') > -1 && val.match(re) && val.match(re)[0];
 	return getSrc || null;
 };
@@ -489,6 +489,13 @@ export const getEmbedType = (input)=> {
 		],
 		codepen: [
 			'https://codepen.io',
+		],
+		vimeo: [
+			'https://vimeo.com',
+			'https://player.vimeo.com',
+		],
+		soundcloud: [
+			'https://soundcloud.com',
 		],
 	};
 

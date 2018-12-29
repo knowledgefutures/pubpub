@@ -9,6 +9,8 @@ import FormattingBarMediaFile from 'components/FormattingBarMedia/FormattingBarM
 import FormattingBarMediaIframe from 'components/FormattingBarMedia/FormattingBarMediaIframe';
 import FormattingBarMediaYoutube from 'components/FormattingBarMedia/FormattingBarMediaYoutube';
 import FormattingBarMediaCodepen from 'components/FormattingBarMedia/FormattingBarMediaCodepen';
+import FormattingBarMediaVimeo from 'components/FormattingBarMedia/FormattingBarMediaVimeo';
+import FormattingBarMediaSoundcloud from 'components/FormattingBarMedia/FormattingBarMediaSoundcloud';
 
 require('./formattingBarMedia.scss');
 
@@ -43,19 +45,20 @@ class FormattingBarMedia extends Component {
 			{ text: 'Iframe', icon: 'application' },
 			{ text: 'YouTube', icon: 'youtube' },
 			{ text: 'Codepen', icon: 'codepen' },
+			{ text: 'Vimeo', icon: 'vimeo' },
+			{ text: 'SoundCloud', icon: 'soundcloud' },
+
+			{ text: 'Spotify', icon: 'spotify' },
 			{ text: 'Twitter', icon: 'twitter' },
 			{ text: 'Github', icon: 'github' },
 			{ text: 'Prezi', icon: 'prezi' },
 			{ text: 'LinkedIn', icon: 'linkedin' },
-			{ text: 'Reddit', icon: 'reddit' },
-			{ text: 'Facebook', icon: 'facebook' },
 			{ text: 'Giphy', icon: 'giphy' },
-			{ text: 'Vimeo', icon: 'vimeo' },
-			{ text: 'Soundcloud', icon: 'soundcloud' },
-			{ text: 'Spotify', icon: 'spotify' },
 			{ text: 'Unsplash', icon: 'unsplash' },
 			{ text: 'Google Maps', icon: 'googlemaps' },
 			{ text: 'Slideshare', icon: 'slideshare' },
+			// { text: 'Facebook', icon: 'facebook' },
+			// { text: 'Reddit', icon: 'reddit' }, /* oEmbed URL is not functioning as of 12/2018 */
 		];
 		const activeItem = this.state.activeItem;
 		const componentProps = {
@@ -117,6 +120,12 @@ class FormattingBarMedia extends Component {
 				}
 				{activeItem === 'Codepen' &&
 					<FormattingBarMediaCodepen {...componentProps} />
+				}
+				{activeItem === 'Vimeo' &&
+					<FormattingBarMediaVimeo {...componentProps} />
+				}
+				{activeItem === 'SoundCloud' &&
+					<FormattingBarMediaSoundcloud {...componentProps} />
 				}
 			</div>
 		);

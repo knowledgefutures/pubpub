@@ -23,7 +23,7 @@ class FormattingBarMedia extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			activeItem: 'YouTube',
+			activeItem: 'Image',
 		};
 		this.handleInsert = this.handleInsert.bind(this);
 	}

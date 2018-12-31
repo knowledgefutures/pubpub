@@ -39,6 +39,14 @@
 			// 	line-height: 24px;
 			// 	min-height: 0px;
 			// }
+			.formatting-bar-component {
+				flex: 1 1 auto;
+				min-width: 0;
+			}
+			.right-content {
+				display: flex;
+				align-items: center;
+			}
 			.collab-status {
 				&.disconnected {
 					background: #db3737;
@@ -60,6 +68,10 @@
 				}
 				text-transform: capitalize;
 				margin-right: 1em;
+				white-space: nowrap;
+			}
+			.save-version-button {
+				white-space: nowrap;
 			}
 			.header-menu {
 				border-bottom: 0px solid transparent;

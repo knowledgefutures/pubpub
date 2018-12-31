@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'components/Icon/Icon';
-import { Button, AnchorButton, Classes, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
+import { OverflowList, Boundary, Button, AnchorButton, Classes, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 import FormattingBarControls from 'components/FormattingBarControls/FormattingBarControls';
 import FormattingBarMedia from 'components/FormattingBarMedia/FormattingBarMedia';
@@ -73,6 +73,7 @@ class FormattingBar extends Component {
 			{ key: 'subscript', 	title: 'Subscript', 	icon: 'subscript' },
 			{ key: 'superscript', 	title: 'Superscript', 	icon: 'superscript' },
 			{ key: 'strikethrough', title: 'Strikethrough', icon: 'strikethrough' },
+			{ key: 'expander' },
 		].filter((item)=> {
 			return !this.props.hideExtraFormatting || item.priority;
 		});
@@ -86,7 +87,9 @@ class FormattingBar extends Component {
 			{ key: 'footnoteList', 		title: 'Footnote List', 	icon: 'numbered-list' },
 			{ key: 'horizontal_rule', 	title: 'Horizontal Line', 	icon: 'minus' },
 			{ key: 'table', 			title: 'Table', 			icon: 'th' },
-		];
+		].filter(()=> {
+			return !this.props.hideExtraFormatting;
+		});
 
 		const iconSize = this.props.isSmall ? 12 : 16;
 		const selectedNode = this.props.editorChangeObject.selectedNode || {};
@@ -140,62 +143,89 @@ class FormattingBar extends Component {
 				{showBlockTypes && <div className="separator" />}
 
 				{/* Formatting Options */}
-				{showFormatting && formattingItems.filter((item)=> {
-					const menuItem = menuItemsObject[item.key] || {};
-					return menuItem.canRun;
-				}).filter((item)=> {
-					if (item.key === 'link' && this.props.isSmall && showLink) { return false; }
-					return true;
-				}).map((item)=> {
-					const menuItem = menuItemsObject[item.key] || {};
-					const linkIsActive = item.key === 'link' && showLink;
-					return (
-						<Button
-							key={item.key}
-							icon={<Icon icon={item.icon} iconSize={iconSize} />}
-							active={menuItem.isActive || linkIsActive}
-							minimal={true}
-							onClick={menuItem.run}
-							onMouseDown={(evt)=> {
-								evt.preventDefault();
-							}}
-						/>
-					);
-				})}
-				{showExtraFormatting &&
-					<Popover
-						content={
-							<Menu>
-								{insertItems.map((item)=> {
-									return (
-										<MenuItem
-											key={item.key}
-											text={item.title}
-											icon={item.icon}
-											onClick={()=> {
-												const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
-												insertFunctions[item.key]();
-												this.props.editorChangeObject.view.focus();
-											}}
-										/>
-									);
-								})}
-							</Menu>
-						}
-						interactionKind={PopoverInteractionKind.CLICK}
-						position={Position.BOTTOM}
-						minimal={true}
-						transitionDuration={-1}
-						tetherOptions={{
-							constraints: [{ attachment: 'together', to: 'window' }]
+				{showFormatting &&
+					<OverflowList
+						className="formatting-list"
+						collapseFrom={Boundary.END}
+						observeParents={true}
+						items={formattingItems}
+						visibleItemRenderer={(item)=> {
+							if (item.key === 'expander') { return <div key={item.key} style={{ width: '100vw' }} />; }
+
+							const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
+							const insertFunction = insertFunctions[item.key];
+							const menuItem = menuItemsObject[item.key] || {};
+							if (!menuItem.canRun && !insertFunction) { return null; }
+							if (item.key === 'link' && this.props.isSmall && showLink) { return null; }
+							const linkIsActive = item.key === 'link' && showLink;
+							return (
+								<Button
+									key={item.key}
+									icon={<Icon icon={item.icon} iconSize={iconSize} />}
+									active={menuItem.isActive || linkIsActive}
+									minimal={true}
+									onClick={()=> {
+										if (insertFunction) {
+											insertFunction();
+											this.props.editorChangeObject.view.focus();
+										} else {
+											menuItem.run();
+										}
+									}}
+									onMouseDown={(evt)=> {
+										evt.preventDefault();
+									}}
+								/>
+							);
 						}}
-					>
-						<Button
-							icon={<Icon icon="more" iconSize={iconSize} />}
-							minimal={true}
-						/>
-					</Popover>
+						overflowRenderer={(items)=> {
+							const allItems = [...items, ...insertItems];
+							return (
+								<Popover
+									content={
+										<Menu>
+											{allItems.map((item)=> {
+												if (item.key === 'expander') { return null; }
+
+												const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
+												const insertFunction = insertFunctions[item.key];
+												const menuItem = menuItemsObject[item.key] || {};
+												if (!menuItem.canRun && !insertFunction) { return null; }
+												if (item.key === 'link' && this.props.isSmall && showLink) { return null; }
+
+												return (
+													<MenuItem
+														key={item.key}
+														text={item.title}
+														icon={<Icon icon={item.icon} />}
+														onClick={()=> {
+															if (insertFunction) {
+																insertFunction();
+																this.props.editorChangeObject.view.focus();
+															} else {
+																menuItem.run();
+															}
+														}}
+													/>
+												);
+											})}
+										</Menu>
+									}
+									interactionKind={PopoverInteractionKind.CLICK}
+									position={Position.BOTTOM}
+									minimal={true}
+									transitionDuration={-1}
+								>
+									<Button
+										icon={<Icon icon="more" iconSize={iconSize} />}
+										minimal={true}
+									/>
+								</Popover>
+							);
+						}}
+					/>
 				}
+
 				{showExtraFormatting && showMedia && <div className="separator" /> }
 
 				{/* Media Button */}

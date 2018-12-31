@@ -35,12 +35,9 @@ const DropdownButton = function(props) {
 			content={props.children}
 			interactionKind={PopoverInteractionKind.CLICK}
 			position={props.isRightAligned ? Position.BOTTOM_RIGHT : Position.BOTTOM_LEFT}
-			popoverClassName="bp3-minimal"
+			minimal={true}
 			transitionDuration={-1}
 			inheritDarkTheme={false}
-			tetherOptions={{
-				constraints: [{ attachment: 'together', to: 'window' }]
-			}}
 			isOpen={props.isOpen}
 			usePortal={props.usePortal}
 		>

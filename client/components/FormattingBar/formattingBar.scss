@@ -1,4 +1,5 @@
 .formatting-bar-component {
+	display: flex;
 	.bp3-button {
 	    min-width: auto;
 	    min-height: auto;
@@ -8,6 +9,7 @@
 	.dropdown-button {
 		padding: 5px;
 		min-height: auto;
+		white-space: nowrap;
 	}
 	.separator {
 		display: inline-block;

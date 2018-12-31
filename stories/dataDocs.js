@@ -223,15 +223,15 @@ export const fullDoc = {
 				caption: 'Most videos are colorful - but some are black and white.',
 			},
 		},
-		{
-			type: 'iframe',
-			attrs: {
-				url: 'https://www.youtube.com/embed/RK1K2bCg4J8',
-				caption: 'Hello there!',
-				align: 'full',
-				height: 350,
-			},
-		},
+		// {
+		// 	type: 'iframe',
+		// 	attrs: {
+		// 		url: 'https://www.youtube.com/embed/RK1K2bCg4J8',
+		// 		caption: 'Hello there!',
+		// 		align: 'full',
+		// 		height: 350,
+		// 	},
+		// },
 		{
 			type: 'file',
 			attrs: {

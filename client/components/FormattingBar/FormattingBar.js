@@ -65,14 +65,14 @@ class FormattingBar extends Component {
 		const formattingItems = [
 			{ key: 'strong', 		title: 'Bold', 			icon: 'bold', priority: true },
 			{ key: 'em', 			title: 'Italic', 		icon: 'italic', priority: true },
+			{ key: 'link', 			title: 'Link', 			icon: 'link', priority: true },
+			{ key: 'bullet-list', 	title: 'Bullet List', 	icon: 'list-ul' },
+			{ key: 'numbered-list', title: 'Numbered List', icon: 'list-ol' },
+			{ key: 'blockquote', 	title: 'Blockquote', 	icon: 'citation' },
 			{ key: 'code', 			title: 'Code', 			icon: 'code' },
 			{ key: 'subscript', 	title: 'Subscript', 	icon: 'subscript' },
 			{ key: 'superscript', 	title: 'Superscript', 	icon: 'superscript' },
 			{ key: 'strikethrough', title: 'Strikethrough', icon: 'strikethrough' },
-			{ key: 'blockquote', 	title: 'Blockquote', 	icon: 'citation' },
-			{ key: 'bullet-list', 	title: 'Bullet List', 	icon: 'list-ul' },
-			{ key: 'numbered-list', title: 'Numbered List', icon: 'list-ol' },
-			{ key: 'link', 			title: 'Link', 			icon: 'link', priority: true },
 		].filter((item)=> {
 			return !this.props.hideExtraFormatting || item.priority;
 		});
@@ -82,14 +82,10 @@ class FormattingBar extends Component {
 			{ key: 'citationList', 		title: 'Citation List', 	icon: 'numbered-list' },
 			{ key: 'discussion', 		title: 'Discussion Thread', icon: 'chat' },
 			{ key: 'equation', 			title: 'Equation', 			icon: 'function' },
-			// { key: 'file', 				title: 'File', 				icon: 'document' },
 			{ key: 'footnote', 			title: 'Footnote', 			icon: 'asterisk' },
 			{ key: 'footnoteList', 		title: 'Footnote List', 	icon: 'numbered-list' },
 			{ key: 'horizontal_rule', 	title: 'Horizontal Line', 	icon: 'minus' },
-			// { key: 'iframe', 			title: 'Iframe', 			icon: 'code-block' },
-			// { key: 'image', 			title: 'Image', 			icon: 'media' },
 			{ key: 'table', 			title: 'Table', 			icon: 'th' },
-			// { key: 'video', 			title: 'Video', 			icon: 'video' },
 		];
 
 		const iconSize = this.props.isSmall ? 12 : 16;

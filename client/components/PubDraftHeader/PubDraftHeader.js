@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from '@blueprintjs/core';
 import stickybits from 'stickybits';
-import throttle from 'lodash.throttle';
-import checkIfMobile from 'is-mobile';
 import Avatar from 'components/Avatar/Avatar';
 import FormattingBar from 'components/FormattingBar/FormattingBar';
 
@@ -27,29 +25,14 @@ class PubDraftHeader extends Component {
 	constructor(props) {
 		super(props);
 		this.stickyInstance = undefined;
-		this.recalculateStickyOffset = this.recalculateStickyOffset.bind(this);
-		this.handleResize = throttle(this.recalculateStickyOffset, 50, { leading: true, trailing: true });
 	}
 
 	componentDidMount() {
-		const options = !checkIfMobile()
-			? { stickyBitStickyOffset: 35 }
-			: { stickyBitStickyOffset: 0 };
-		this.stickyInstance = stickybits('.pub-draft-header-component', options);
-		window.addEventListener('resize', this.handleResize);
+		this.stickyInstance = stickybits('.pub-draft-header-component', { stickyBitStickyOffset: 35 });
 	}
 
 	componentWillUnmount() {
 		this.stickyInstance.cleanUp();
-		window.removeEventListener('resize', this.handleResize);
-	}
-
-	recalculateStickyOffset() {
-		const options = !checkIfMobile()
-			? { stickyBitStickyOffset: 35 }
-			: { stickyBitStickyOffset: 0 };
-		this.stickyInstance.cleanup();
-		this.stickyInstance = stickybits('.pub-draft-header-component', options);
 	}
 
 	render() {
@@ -74,7 +57,6 @@ class PubDraftHeader extends Component {
 			};
 		}
 		const viewOnly = !pubData.isDraftEditor && !pubData.isManager;
-		const isMobile = checkIfMobile();
 		return (
 			<div className="pub-draft-header-component">
 				{viewOnly &&
@@ -86,8 +68,6 @@ class PubDraftHeader extends Component {
 					<FormattingBar
 						editorChangeObject={this.props.editorChangeObject}
 						threads={this.props.threads}
-						hideBlocktypes={isMobile}
-						hideExtraFormatting={isMobile}
 					/>
 				}
 				<div className="spacer" />
@@ -117,9 +97,7 @@ class PubDraftHeader extends Component {
 				})}
 				{!viewOnly &&
 					<span className={`collab-status ${this.props.collabStatus}`}>
-						{!isMobile &&
-							<span>Working Draft </span>
-						}
+						<span className="status-prefix">Working Draft </span>
 						{this.props.collabStatus}
 						{this.props.collabStatus === 'saving' || this.props.collabStatus === 'connecting' ? '...' : ''}
 					</span>
@@ -128,9 +106,7 @@ class PubDraftHeader extends Component {
 					Editing
 					<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 				</button> */}
-				{!isMobile &&
-					<button className="bp3-button bp3-intent-primary bp3-small" type="button" onClick={()=> { this.props.setOptionsMode('saveVersion'); }}>Save Version</button>
-				}
+				<button className="save-version-button bp3-button bp3-intent-primary bp3-small" type="button" onClick={()=> { this.props.setOptionsMode('saveVersion'); }}>Save Version</button>
 			</div>
 		);
 	}

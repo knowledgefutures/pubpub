@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'components/Icon/Icon';
-import { Button, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
+import { Button, AnchorButton, Classes, Menu, MenuItem, Popover, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 import FormattingBarControls from 'components/FormattingBarControls/FormattingBarControls';
 import FormattingBarMedia from 'components/FormattingBarMedia/FormattingBarMedia';
@@ -98,6 +98,8 @@ class FormattingBar extends Component {
 			if (curr.title === 'table-delete') { return true; }
 			return prev;
 		}, false);
+		const activeLink = this.props.editorChangeObject.activeLink || {};
+		const showLink = !!activeLink.attrs;
 
 		const uncontrolledNodes = ['paragraph', 'blockquote', 'horizontal_rule', 'heading', 'ordered_list', 'bullet_list', 'list_item', 'code_block', 'citationList', 'footnoteList'];
 		const isUncontrolledNode = selectedNode.type && uncontrolledNodes.indexOf(selectedNode.type.name) > -1;
@@ -106,7 +108,7 @@ class FormattingBar extends Component {
 		const showBlockTypes = !this.props.hideBlocktypes && !nodeSelected && !isBlockquote;
 		const showFormatting = !nodeSelected;
 		const showExtraFormatting = showFormatting && !this.props.hideExtraFormatting;
-		const showMedia = !nodeSelected && !this.props.hideMedia;
+		const showMedia = !nodeSelected && !this.props.hideMedia && !(this.props.isSmall && showLink);
 		return (
 			<div className={`formatting-bar-component ${this.props.isSmall ? 'small' : ''}`}>
 				{/* Block Types Dropdown */}
@@ -145,6 +147,9 @@ class FormattingBar extends Component {
 				{showFormatting && formattingItems.filter((item)=> {
 					const menuItem = menuItemsObject[item.key] || {};
 					return menuItem.canRun;
+				}).filter((item)=> {
+					if (item.key === 'link' && this.props.isSmall && showLink) { return false; }
+					return true;
 				}).map((item)=> {
 					const menuItem = menuItemsObject[item.key] || {};
 					return (
@@ -218,6 +223,33 @@ class FormattingBar extends Component {
 						threads={this.props.threads}
 						isSmall={this.props.isSmall}
 					/>
+				}
+
+				{/* Link Formatting */}
+				{showLink && !this.props.isSmall && <div className="separator" />}
+				{showLink &&
+					<div className="link-formatting">
+						<input
+							placeholder="Enter URL"
+							className={`${Classes.INPUT} ${Classes.SMALL}`}
+							value={activeLink.attrs.href}
+							onChange={(evt)=> {
+								activeLink.updateAttrs({ href: evt.target.value });
+							}}
+						/>
+						<AnchorButton
+							icon={<Icon icon="share" iconSize={iconSize} />}
+							href={activeLink.attrs.href}
+							target="_blank"
+							rel="noopener noreferrer"
+							minimal={true}
+						/>
+						<Button
+							minimal={true}
+							icon={<Icon icon="delete" iconSize={iconSize} />}
+							onClick={activeLink.removeLink}
+						/>
+					</div>
 				}
 
 				{/* Media Gallery Overlay */}

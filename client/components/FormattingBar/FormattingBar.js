@@ -152,11 +152,12 @@ class FormattingBar extends Component {
 					return true;
 				}).map((item)=> {
 					const menuItem = menuItemsObject[item.key] || {};
+					const linkIsActive = item.key === 'link' && showLink;
 					return (
 						<Button
 							key={item.key}
 							icon={<Icon icon={item.icon} iconSize={iconSize} />}
-							active={menuItem.isActive}
+							active={menuItem.isActive || linkIsActive}
 							minimal={true}
 							onClick={menuItem.run}
 							onMouseDown={(evt)=> {

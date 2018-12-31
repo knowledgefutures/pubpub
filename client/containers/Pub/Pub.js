@@ -19,7 +19,7 @@ import PubLinkMenu from 'components/PubLinkMenu/PubLinkMenu';
 import PubSideControls from 'components/PubSideControls/PubSideControls';
 import PubSectionNav from 'components/PubSectionNav/PubSectionNav';
 import DiscussionList from 'components/DiscussionList/DiscussionList';
-import { dispatchEmptyTransaction, docIsEmpty } from '@pubpub/editor';
+import { dispatchEmptyTransaction, docIsEmpty, marksAtSelection } from '@pubpub/editor';
 import queryString from 'query-string';
 import { apiFetch, hydrateWrapper, getFirebaseConfig, nestDiscussionsToThreads, getRandomColor, generateHash } from 'utilities';
 
@@ -66,6 +66,8 @@ class Pub extends Component {
 			// sectionsData: [{ id: '', order: 0, title: 'Introduction' }],
 			menuWrapperRefNode: undefined,
 			editorChangeObject: {},
+			clickedMarks: [],
+			linkPopupIsOpen: false,
 		};
 		this.firebaseRef = null;
 		this.pageRef = React.createRef();
@@ -88,7 +90,10 @@ class Pub extends Component {
 		this.handlePostDiscussion = this.handlePostDiscussion.bind(this);
 		this.handlePutDiscussion = this.handlePutDiscussion.bind(this);
 		this.handleEditorChange = this.handleEditorChange.bind(this);
+		this.handleEditorSingleClick = this.handleEditorSingleClick.bind(this);
 		this.handleQuotePermalink = this.handleQuotePermalink.bind(this);
+		this.calculateLinkPopupState = this.calculateLinkPopupState.bind(this);
+		this.handleKeyPressEvents = this.handleKeyPressEvents.bind(this);
 		this.getThreads = this.getThreads.bind(this);
 	}
 
@@ -108,12 +113,16 @@ class Pub extends Component {
 				/* Add listener event to update sectionsData when it changes in Firebase */
 				this.firebaseRef.child('/sections').on('value', this.handleSectionsChange);
 			});
+			window.addEventListener('keydown', this.handleKeyPressEvents);
 		}
 	}
 
 	componentWillUnmount() {
 		if (this.firebaseRef) {
 			this.firebaseRef.child('/sections').off('value', this.handleSectionsChange);
+		}
+		if (this.state.pubData.isDraft) {
+			window.removeEventListener('keydown', this.handleKeyPressEvents);
 		}
 	}
 
@@ -212,6 +221,20 @@ class Pub extends Component {
 			dispatchEmptyTransaction(this.state.editorChangeObject.view);
 			window.history.replaceState({}, '', `${this.state.locationData.path}${this.state.locationData.queryString}`);
 		});
+	}
+
+	handleKeyPressEvents(evt) {
+		if (this.state.linkPopupIsOpen && (evt.key === 'Escape' || evt.key === 'Enter')) {
+			evt.preventDefault();
+			this.setState({ linkPopupIsOpen: false }, ()=> {
+				this.state.editorChangeObject.view.focus();
+			});
+		}
+		if (evt.key === 'k' && evt.metaKey) {
+			this.setState({ linkPopupIsOpen: true }, ()=> {
+				this.calculateLinkPopupState();
+			});
+		}
 	}
 
 	handleSectionsChange(snapshot) {
@@ -381,7 +404,6 @@ class Pub extends Component {
 	}
 
 	handleEditorChange(changeObject) {
-		// console.log(changeObject);
 		if (!this.state.editorChangeObject.view) {
 			/* Sometimes the bounding boxes need updating */
 			/* after initial load. */
@@ -398,6 +420,26 @@ class Pub extends Component {
 				...changeObject,
 				currentScroll: window.scrollY,
 			},
+			clickedMarks: [],
+		}, this.calculateLinkPopupState);
+	}
+
+	handleEditorSingleClick(view) {
+		this.setState({
+			clickedMarks: marksAtSelection(view)
+		}, this.calculateLinkPopupState);
+	}
+
+	calculateLinkPopupState() {
+		this.setState((prevState)=> {
+			const activeLink = prevState.editorChangeObject.activeLink || {};
+			const selectionIsLink = !!activeLink.attrs;
+			const clickedOnLink = prevState.clickedMarks.indexOf('link') > -1;
+			// const linkPopupIsOpen = clickedOnLink || (prevState.linkPopupIsOpen && selectionIsLink) || (selectionIsLink && !activeLink.attrs.href);
+			const linkPopupIsOpen = clickedOnLink || (prevState.linkPopupIsOpen && selectionIsLink);
+			return {
+				linkPopupIsOpen: linkPopupIsOpen,
+			};
 		});
 	}
 
@@ -549,6 +591,7 @@ class Pub extends Component {
 												hoverBackgroundColor={this.props.communityData.accentMinimalColor}
 												setActiveThread={this.setActiveThread}
 												onChange={this.handleEditorChange}
+												onSingleClick={this.handleEditorSingleClick}
 
 												// Props from CollabEditor
 												editorKey={`${this.props.pubData.editorKey}${sectionId ? '/' : ''}${sectionId || ''}`}
@@ -661,18 +704,27 @@ class Pub extends Component {
 					</div>
 
 					{/* Components that render overlays */}
-					<PubInlineMenu
-						pubData={pubData}
-						editorChangeObject={this.state.editorChangeObject}
-						getAbsolutePosition={this.getAbsolutePosition}
-						onNewHighlightDiscussion={this.handleNewHighlightDiscussion}
-						sectionId={sectionId}
-					/>
-					<PubLinkMenu
-						pubData={pubData}
-						editorChangeObject={this.state.editorChangeObject}
-						getAbsolutePosition={this.getAbsolutePosition}
-					/>
+					{!this.state.linkPopupIsOpen &&
+						<PubInlineMenu
+							pubData={pubData}
+							editorChangeObject={this.state.editorChangeObject}
+							getAbsolutePosition={this.getAbsolutePosition}
+							onNewHighlightDiscussion={this.handleNewHighlightDiscussion}
+							sectionId={sectionId}
+							openLinkMenu={()=> {
+								this.setState({ linkPopupIsOpen: true });
+							}}
+						/>
+					}
+					{this.state.linkPopupIsOpen &&
+						<PubLinkMenu
+							// key={`${this.state.editorChangeObject.selection.from}-${this.state.editorChangeObject.selection.to}`}
+							pubData={pubData}
+							editorChangeObject={this.state.editorChangeObject}
+							getAbsolutePosition={this.getAbsolutePosition}
+						/>
+					}
+
 					<PubSideControls
 						pubData={pubData}
 						threads={threads}

@@ -11,6 +11,7 @@ const propTypes = {
 	getAbsolutePosition: PropTypes.func.isRequired,
 	onNewHighlightDiscussion: PropTypes.func.isRequired,
 	sectionId: PropTypes.string,
+	openLinkMenu: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -43,13 +44,19 @@ const PubInlineMenu = (props)=> {
 		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
 			{!isReadOnly && formattingItems.map((item)=> {
 				if (!menuItemsObject[item.key]) { return null; }
+				const onClickAction = item.key === 'link'
+					? ()=> {
+						menuItemsObject[item.key].run();
+						props.openLinkMenu();
+					}
+					: menuItemsObject[item.key].run;
 				return (
 					<Button
 						key={item.key}
 						className="bp3-minimal"
 						icon={item.icon}
 						active={menuItemsObject[item.key].isActive}
-						onClick={menuItemsObject[item.key].run}
+						onClick={onClickAction}
 						onMouseDown={(evt)=> {
 							evt.preventDefault();
 						}}

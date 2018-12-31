@@ -29,6 +29,7 @@ const propTypes = {
 	onStatusChange: PropTypes.func,
 	// menuWrapperRefNode: PropTypes.object,
 	onChange: PropTypes.func,
+	onSingleClick: PropTypes.func,
 	discussionNodeOptions: PropTypes.object.isRequired,
 };
 const defaultProps = {
@@ -42,6 +43,7 @@ const defaultProps = {
 	onStatusChange: ()=>{},
 	// menuWrapperRefNode: undefined,
 	onChange: ()=> {},
+	onSingleClick: ()=> {},
 };
 
 class PubBody extends Component {
@@ -124,6 +126,7 @@ class PubBody extends Component {
 						: undefined
 					}
 					highlights={this.props.highlights}
+					handleSingleClick={this.props.onSingleClick}
 				/>
 			</div>
 		);

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { Button, AnchorButton } from '@blueprintjs/core';
 
 require('./pubLinkMenu.scss');
 
@@ -12,8 +12,6 @@ const propTypes = {
 
 const PubLinkMenu = (props)=> {
 	const activeLink = props.editorChangeObject.activeLink || {};
-	// const selectionBoundingBox = props.editorChangeObject.selectionBoundingBox || {};
-
 	const isReadOnly = !props.pubData.isDraft || (!props.pubData.isManager && !props.pubData.isDraftEditor);
 	if (isReadOnly || !activeLink.attrs) { return null; }
 
@@ -26,9 +24,7 @@ const PubLinkMenu = (props)=> {
 		<div className="pub-link-menu-component bp3-elevation-2" style={menuStyle}>
 			<input
 				ref={(elem)=> {
-					if (elem && !activeLink.attrs.href) {
-						elem.focus();
-					}
+					if (elem) { elem.focus(); }
 				}}
 				className="bp3-input"
 				type="text"
@@ -37,13 +33,19 @@ const PubLinkMenu = (props)=> {
 					activeLink.updateAttrs({ href: evt.target.value });
 				}}
 			/>
-			<a className="bp3-button bp3-minimal" href={activeLink.attrs.href} target="_blank" rel="noopener noreferrer">
-				Go To Link
-			</a>
+			<AnchorButton
+				minimal={true}
+				href={activeLink.attrs.href}
+				target="_blank"
+				rel="noopener noreferrer"
+				text="Go To Link"
+				icon="share"
+			/>
 			<Button
-				className="bp3-minimal"
+				minimal={true}
 				text="Remove"
 				onClick={activeLink.removeLink}
+				icon="delete"
 			/>
 		</div>
 	);

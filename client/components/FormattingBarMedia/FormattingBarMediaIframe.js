@@ -19,7 +19,10 @@ class FormattingBarMediaIframe extends Component {
 	}
 
 	handleInsert() {
-		this.props.onInsert('iframe', { url: this.state.url });
+		this.props.onInsert('iframe', {
+			url: this.state.url,
+			align: this.props.isSmall ? 'full' : undefined,
+		});
 	}
 
 	render () {

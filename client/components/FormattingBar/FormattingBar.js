@@ -73,7 +73,7 @@ class FormattingBar extends Component {
 			{ key: 'subscript', 	title: 'Subscript', 	icon: 'subscript' },
 			{ key: 'superscript', 	title: 'Superscript', 	icon: 'superscript' },
 			{ key: 'strikethrough', title: 'Strikethrough', icon: 'strikethrough' },
-			{ key: 'expander' },
+			{ key: 'expander' }, /* This is used so that there is always overflow, allowing the insertItems to be shown */
 		].filter((item)=> {
 			return !this.props.hideExtraFormatting || item.priority;
 		});

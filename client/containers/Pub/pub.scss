@@ -46,22 +46,6 @@ Print
 	}
 }
 
-@supports (display: grid) {
-	#pub-container {
-		.mobile-wrapper {
-			display: grid;
-			grid-template-areas: "body" "formatting";
-		}
-		.pub-draft-header-component {
-			grid-area: formatting;
-			bottom: 0;
-		}
-		.container.pub {
-			grid-area: body;
-		}
-	}
-}
-
 @media only screen and (max-width: 750px) {
 	#pub-container {
 		.main-content {

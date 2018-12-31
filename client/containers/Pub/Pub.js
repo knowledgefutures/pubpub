@@ -529,10 +529,8 @@ class Pub extends Component {
 		const isCollabLoading = pubData.isDraft && !this.state.editorChangeObject.isCollabLoaded;
 		const isEmptyDoc = this.state.editorChangeObject.view && docIsEmpty(this.state.editorChangeObject.view.state.doc);
 		// const shortcutValues = this.state.editorChangeObject.shortcutValues || {};
-		const isMobile = !!checkIfMobile();
-		console.log(isMobile, typeof isMobile);
-		const mobileClassName = isMobile ? 'mobile-wrapper' : '';
-		console.log(mobileClassName);
+		const isMobile = checkIfMobile();
+
 		return (
 			<div id="pub-container" ref={this.pageRef}>
 				<PageWrapper
@@ -548,7 +546,7 @@ class Pub extends Component {
 						setPubData={this.setPubData}
 					/>
 
-					<div className={mobileClassName}>
+					<div>
 						{pubData.isDraft &&
 							<PubDraftHeader
 								pubData={pubData}
@@ -708,7 +706,7 @@ class Pub extends Component {
 					</div>
 
 					{/* Components that render overlays */}
-					{!this.state.linkPopupIsOpen &&
+					{!this.state.linkPopupIsOpen && !isMobile &&
 						<PubInlineMenu
 							pubData={pubData}
 							editorChangeObject={this.state.editorChangeObject}
@@ -720,7 +718,7 @@ class Pub extends Component {
 							}}
 						/>
 					}
-					{this.state.linkPopupIsOpen &&
+					{this.state.linkPopupIsOpen && !isMobile &&
 						<PubLinkMenu
 							// key={`${this.state.editorChangeObject.selection.from}-${this.state.editorChangeObject.selection.to}`}
 							pubData={pubData}

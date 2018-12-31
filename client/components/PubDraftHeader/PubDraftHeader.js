@@ -34,7 +34,6 @@ class PubDraftHeader extends Component {
 	componentDidMount() {
 		const options = !checkIfMobile()
 			? { stickyBitStickyOffset: 35 }
-			// : { verticalPosition: 'bottom' };
 			: { stickyBitStickyOffset: 0 };
 		this.stickyInstance = stickybits('.pub-draft-header-component', options);
 		window.addEventListener('resize', this.handleResize);
@@ -49,7 +48,6 @@ class PubDraftHeader extends Component {
 		const options = !checkIfMobile()
 			? { stickyBitStickyOffset: 35 }
 			: { stickyBitStickyOffset: 0 };
-			// : { verticalPosition: 'bottom' };
 		this.stickyInstance.cleanup();
 		this.stickyInstance = stickybits('.pub-draft-header-component', options);
 	}
@@ -76,7 +74,7 @@ class PubDraftHeader extends Component {
 			};
 		}
 		const viewOnly = !pubData.isDraftEditor && !pubData.isManager;
-
+		const isMobile = checkIfMobile();
 		return (
 			<div className="pub-draft-header-component">
 				{viewOnly &&
@@ -88,8 +86,8 @@ class PubDraftHeader extends Component {
 					<FormattingBar
 						editorChangeObject={this.props.editorChangeObject}
 						threads={this.props.threads}
-						hideBlocktypes={checkIfMobile()}
-						hideExtraFormatting={checkIfMobile()}
+						hideBlocktypes={isMobile}
+						hideExtraFormatting={isMobile}
 					/>
 				}
 				<div className="spacer" />
@@ -119,7 +117,9 @@ class PubDraftHeader extends Component {
 				})}
 				{!viewOnly &&
 					<span className={`collab-status ${this.props.collabStatus}`}>
-						<span>Working Draft </span>
+						{!isMobile &&
+							<span>Working Draft </span>
+						}
 						{this.props.collabStatus}
 						{this.props.collabStatus === 'saving' || this.props.collabStatus === 'connecting' ? '...' : ''}
 					</span>
@@ -128,7 +128,9 @@ class PubDraftHeader extends Component {
 					Editing
 					<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 				</button> */}
-				<button className="bp3-button bp3-intent-primary bp3-small" type="button" onClick={()=> { this.props.setOptionsMode('saveVersion'); }}>Save Version</button>
+				{!isMobile &&
+					<button className="bp3-button bp3-intent-primary bp3-small" type="button" onClick={()=> { this.props.setOptionsMode('saveVersion'); }}>Save Version</button>
+				}
 			</div>
 		);
 	}

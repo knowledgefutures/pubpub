@@ -244,6 +244,7 @@ class FormattingBar extends Component {
 							target="_blank"
 							rel="noopener noreferrer"
 							minimal={true}
+							disabled={!activeLink.attrs.href}
 						/>
 						<Button
 							minimal={true}

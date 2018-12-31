@@ -40,6 +40,7 @@ const PubLinkMenu = (props)=> {
 				rel="noopener noreferrer"
 				text="Go To Link"
 				icon="share"
+				disabled={!activeLink.attrs.href}
 			/>
 			<Button
 				minimal={true}

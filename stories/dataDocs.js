@@ -170,6 +170,13 @@ export const fullDoc = {
 			},
 		},
 		{
+			type: 'audio',
+			attrs: {
+				url: 'http://www.noiseaddicts.com/samples_1w72b820/3819.mp3',
+				caption: 'A more perfect union',
+			},
+		},
+		{
 			type: 'block_equation',
 			attrs: {
 				value: '\\sum_ix^i',
@@ -216,15 +223,15 @@ export const fullDoc = {
 				caption: 'Most videos are colorful - but some are black and white.',
 			},
 		},
-		// {
-		// 	type: 'iframe',
-		// 	attrs: {
-		// 		url: 'https://www.youtube.com/embed/RK1K2bCg4J8',
-		// 		caption: 'Hello there!',
-		// 		align: 'full',
-		// 		height: 350,
-		// 	},
-		// },
+		{
+			type: 'iframe',
+			attrs: {
+				url: 'https://www.youtube.com/embed/RK1K2bCg4J8',
+				caption: 'Hello there!',
+				align: 'full',
+				height: 350,
+			},
+		},
 		{
 			type: 'file',
 			attrs: {

@@ -38,7 +38,10 @@ class FormattingBarMediaImage extends Component {
 	}
 
 	onUploadFinish(evt, index, type, filename) {
-		this.props.onInsert('image', { url: `https://assets.pubpub.org/${filename}` });
+		this.props.onInsert('image', {
+			url: `https://assets.pubpub.org/${filename}`,
+			align: this.props.isSmall ? 'full' : undefined,
+		});
 	}
 
 	render () {

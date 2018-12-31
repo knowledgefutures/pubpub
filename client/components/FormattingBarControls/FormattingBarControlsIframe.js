@@ -22,7 +22,7 @@ const FormattingBarControlsIframe = (props)=> {
 	return (
 		<div className={`formatting-bar-controls-component ${props.isSmall ? 'small' : ''}`}>
 			{/*  Size Adjustment */}
-			<div className="block">
+			<div className="block hide-on-small">
 				<div className="label">Size</div>
 				<div className="input">
 					<Slider
@@ -55,7 +55,7 @@ const FormattingBarControlsIframe = (props)=> {
 			</div>
 
 			{/*  Alignment Adjustment */}
-			<div className="block">
+			<div className="block hide-on-small">
 				<div className="label">Alignment</div>
 				<div className="input">
 					<ButtonGroup>
@@ -96,7 +96,7 @@ const FormattingBarControlsIframe = (props)=> {
 				<div className="input wide">
 					<input
 						type="text"
-						className="bp3-input bp3-fill"
+						className={`bp3-input bp3-fill ${props.isSmall ? 'bp3-small' : ''}`}
 						value={props.attrs.url}
 						onChange={(evt)=>{
 							props.updateAttrs({ url: evt.target.value });

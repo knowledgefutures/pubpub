@@ -40,8 +40,10 @@ class PubHeader extends Component {
 
 	componentDidMount() {
 		this.setState({ isMounted: true });
-		this.offsetHeight = this.headerRef.current.offsetHeight;
-		this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
+		if (window.innerWidth > 750) {
+			this.offsetHeight = this.headerRef.current.offsetHeight;
+			this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
+		}
 		window.addEventListener('resize', this.handleResize);
 	}
 
@@ -56,10 +58,14 @@ class PubHeader extends Component {
 
 	recalculateStickyOffset() {
 		const nextOffsetHeight = this.headerRef.current.offsetHeight;
-		if (nextOffsetHeight !== this.offsetHeight) {
+		if (nextOffsetHeight !== this.offsetHeight && window.innerWidth > 750) {
 			this.offsetHeight = nextOffsetHeight;
-			this.stickyInstance.cleanup();
+			if (this.stickyInstance) { this.stickyInstance.cleanup(); }
 			this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
+		}
+		if (window.innerWidth < 750) {
+			this.offsetHeight = undefined;
+			if (this.stickyInstance) { this.stickyInstance.cleanup(); }
 		}
 	}
 

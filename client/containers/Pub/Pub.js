@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import firebase from '@firebase/app';
+import checkIfMobile from 'is-mobile';
 // import applyDevTools from 'prosemirror-dev-tools';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import PubHeader from 'components/PubHeader/PubHeader';
@@ -528,7 +529,10 @@ class Pub extends Component {
 		const isCollabLoading = pubData.isDraft && !this.state.editorChangeObject.isCollabLoaded;
 		const isEmptyDoc = this.state.editorChangeObject.view && docIsEmpty(this.state.editorChangeObject.view.state.doc);
 		// const shortcutValues = this.state.editorChangeObject.shortcutValues || {};
-
+		const isMobile = !!checkIfMobile();
+		console.log(isMobile, typeof isMobile);
+		const mobileClassName = isMobile ? 'mobile-wrapper' : '';
+		console.log(mobileClassName);
 		return (
 			<div id="pub-container" ref={this.pageRef}>
 				<PageWrapper
@@ -544,7 +548,7 @@ class Pub extends Component {
 						setPubData={this.setPubData}
 					/>
 
-					<div>
+					<div className={mobileClassName}>
 						{pubData.isDraft &&
 							<PubDraftHeader
 								pubData={pubData}

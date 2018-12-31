@@ -1,11 +1,6 @@
 .formatting-bar-controls-component {
 	display: flex;
 	flex-wrap: wrap;
-	&.small {
-		.block .label {
-			display: none;
-		}
-	}
 	.block {
 		margin-right: 1em;
 		.label {
@@ -42,6 +37,19 @@
 	.file-select {
 		input.file-input {
 			display: none;
+		}
+	}
+	&.small {
+		.block .label, .hide-on-small {
+			display: none;
+		}
+		.simple-editor-wrapper {
+			font-size: 12px;
+			height: 22px;
+			padding: 0.3em;
+		}
+		.input {
+			min-height: 22px;
 		}
 	}
 }

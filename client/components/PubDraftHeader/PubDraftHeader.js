@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from '@blueprintjs/core';
 import stickybits from 'stickybits';
+import throttle from 'lodash.throttle';
+import checkIfMobile from 'is-mobile';
 import Avatar from 'components/Avatar/Avatar';
 import FormattingBar from 'components/FormattingBar/FormattingBar';
 
@@ -25,14 +27,31 @@ class PubDraftHeader extends Component {
 	constructor(props) {
 		super(props);
 		this.stickyInstance = undefined;
+		this.recalculateStickyOffset = this.recalculateStickyOffset.bind(this);
+		this.handleResize = throttle(this.recalculateStickyOffset, 50, { leading: true, trailing: true });
 	}
 
 	componentDidMount() {
-		this.stickyInstance = stickybits('.pub-draft-header-component', { stickyBitStickyOffset: 35 });
+		const options = !checkIfMobile()
+			? { stickyBitStickyOffset: 35 }
+			// : { verticalPosition: 'bottom' };
+			: { stickyBitStickyOffset: 0 };
+		this.stickyInstance = stickybits('.pub-draft-header-component', options);
+		window.addEventListener('resize', this.handleResize);
 	}
 
 	componentWillUnmount() {
 		this.stickyInstance.cleanUp();
+		window.removeEventListener('resize', this.handleResize);
+	}
+
+	recalculateStickyOffset() {
+		const options = !checkIfMobile()
+			? { stickyBitStickyOffset: 35 }
+			: { stickyBitStickyOffset: 0 };
+			// : { verticalPosition: 'bottom' };
+		this.stickyInstance.cleanup();
+		this.stickyInstance = stickybits('.pub-draft-header-component', options);
 	}
 
 	render() {
@@ -69,6 +88,8 @@ class PubDraftHeader extends Component {
 					<FormattingBar
 						editorChangeObject={this.props.editorChangeObject}
 						threads={this.props.threads}
+						hideBlocktypes={checkIfMobile()}
+						hideExtraFormatting={checkIfMobile()}
 					/>
 				}
 				<div className="spacer" />

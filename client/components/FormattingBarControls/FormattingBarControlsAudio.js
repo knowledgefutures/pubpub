@@ -50,7 +50,7 @@ class FormattingBarControlsAudio extends Component {
 		return (
 			<div className={`formatting-bar-controls-component ${this.props.isSmall ? 'small' : ''}`}>
 				{/*  Size Adjustment */}
-				<div className="block">
+				<div className="block hide-on-small">
 					<div className="label">Size</div>
 					<div className="input">
 						<Slider
@@ -67,7 +67,7 @@ class FormattingBarControlsAudio extends Component {
 				</div>
 
 				{/*  Alignment Adjustment */}
-				<div className="block">
+				<div className="block hide-on-small">
 					<div className="label over-buttons">Alignment</div>
 					<div className="input">
 						<ButtonGroup>

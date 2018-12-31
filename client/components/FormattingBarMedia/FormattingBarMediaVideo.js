@@ -38,7 +38,10 @@ class FormattingBarMediaVideo extends Component {
 	}
 
 	onUploadFinish(evt, index, type, filename) {
-		this.props.onInsert('video', { url: `https://assets.pubpub.org/${filename}` });
+		this.props.onInsert('video', {
+			url: `https://assets.pubpub.org/${filename}`,
+			align: this.props.isSmall ? 'full' : undefined,
+		});
 	}
 
 	render () {

@@ -73,6 +73,12 @@ storiesOf('Components/FormattingBar', module)
 		/>
 		<EditorUnit
 			hideMedia={false}
+			hideBlocktypes={false}
+			hideExtraFormatting={true}
+			isSmall={true}
+		/>
+		<EditorUnit
+			hideMedia={false}
 			hideBlocktypes={true}
 			hideExtraFormatting={true}
 			isSmall={true}

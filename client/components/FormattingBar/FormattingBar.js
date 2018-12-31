@@ -55,11 +55,11 @@ class FormattingBar extends Component {
 		}, {});
 
 		const blockTypeItems = [
-			{ key: 'paragraph', 	title: 'Paragraph',		icon: 'git-merge' },
-			{ key: 'header1', 		title: 'Header 1', 		icon: 'header-one' },
-			{ key: 'header2', 		title: 'Header 2', 		icon: 'header-two' },
-			{ key: 'header3', 		title: 'Header 3', 		icon: 'comparison' },
-			{ key: 'code_block', 	title: 'Code Block', 	icon: 'code' },
+			{ key: 'paragraph', 	title: 'Paragraph',		shortTitle: 'Para', 	icon: 'git-merge' },
+			{ key: 'header1', 		title: 'Header 1', 		shortTitle: 'H1', 	icon: 'header-one' },
+			{ key: 'header2', 		title: 'Header 2', 		shortTitle: 'H2', 	icon: 'header-two' },
+			{ key: 'header3', 		title: 'Header 3', 		shortTitle: 'H3', 	icon: 'comparison' },
+			{ key: 'code_block', 	title: 'Code Block', 	shortTitle: 'Code', icon: 'code' },
 		];
 
 		const formattingItems = [
@@ -115,7 +115,14 @@ class FormattingBar extends Component {
 					<DropdownButton
 						label={blockTypeItems.reduce((prev, curr)=> {
 							const menuItem = menuItemsObject[curr.key] || {};
-							if (menuItem.isActive) { return curr.title; }
+							if (menuItem.isActive) {
+								return (
+									<span>
+										<span className="full-title">{curr.title}</span>
+										<span className="short-title">{curr.shortTitle}</span>
+									</span>
+								);
+							}
 							return prev;
 						}, '')}
 						isMinimal={true}

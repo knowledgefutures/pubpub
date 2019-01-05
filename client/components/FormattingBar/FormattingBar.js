@@ -59,6 +59,9 @@ class FormattingBar extends Component {
 			{ key: 'header1', 		title: 'Header 1', 		shortTitle: 'H1', 	icon: 'header-one' },
 			{ key: 'header2', 		title: 'Header 2', 		shortTitle: 'H2', 	icon: 'header-two' },
 			{ key: 'header3', 		title: 'Header 3', 		shortTitle: 'H3', 	icon: 'comparison' },
+			{ key: 'header4', 		title: 'Header 4', 		shortTitle: 'H4', 	icon: 'comparison', hideInMenu: true },
+			{ key: 'header5', 		title: 'Header 5', 		shortTitle: 'H5', 	icon: 'comparison', hideInMenu: true },
+			{ key: 'header6', 		title: 'Header 6', 		shortTitle: 'H6', 	icon: 'comparison', hideInMenu: true },
 			{ key: 'code_block', 	title: 'Code Block', 	shortTitle: 'Code', icon: 'code' },
 		];
 
@@ -130,7 +133,9 @@ class FormattingBar extends Component {
 						usePortal={false}
 					>
 						<Menu>
-							{blockTypeItems.map((item)=> {
+							{blockTypeItems.filter((item)=> {
+								return !item.hideInMenu;
+							}).map((item)=> {
 								const menuItem = menuItemsObject[item.key] || {};
 								return (
 									<MenuItem

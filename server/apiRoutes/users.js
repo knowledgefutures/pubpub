@@ -75,7 +75,7 @@ app.post('/api/users', (req, res)=> {
 
 app.put('/api/users', (req, res)=> {
 	const user = req.user || {};
-	const authenticated = req.user && req.user.id === user.id;
+	const authenticated = req.user && req.body.userId === user.id;
 	if (!authenticated) { return res.status(500).json('Unauthorized'); }
 
 	// Filter to only allow certain fields to be updated

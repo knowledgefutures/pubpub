@@ -90,7 +90,8 @@ class FormattingBar extends Component {
 			{ key: 'footnoteList', 		title: 'Footnote List', 	icon: 'numbered-list' },
 			{ key: 'horizontal_rule', 	title: 'Horizontal Line', 	icon: 'minus' },
 			{ key: 'table', 			title: 'Table', 			icon: 'th' },
-		].filter(()=> {
+		].filter((item)=> {
+			if (!this.props.threads.length && item.key === 'discussion') { return false; }
 			return !this.props.hideExtraFormatting;
 		});
 

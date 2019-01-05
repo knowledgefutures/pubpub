@@ -16,6 +16,7 @@
 		border: 1px solid #CCC;	
 	}
 	.block-header {
+		z-index: 1;
 		display: flex;
 		// align-items: flex-end;
 		justify-content: space-between;

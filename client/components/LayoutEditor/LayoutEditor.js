@@ -7,6 +7,7 @@ import LayoutEditorText from 'components/LayoutEditorText/LayoutEditorText';
 import LayoutEditorHtml from 'components/LayoutEditorHtml/LayoutEditorHtml';
 import LayoutEditorBanner from 'components/LayoutEditorBanner/LayoutEditorBanner';
 import { Button } from '@blueprintjs/core';
+import stickybits from 'stickybits';
 import { generateHash, generateRenderLists } from 'utilities';
 
 require('./layoutEditor.scss');
@@ -30,6 +31,15 @@ class LayoutEditor extends Component {
 		this.handleRemove = this.handleRemove.bind(this);
 		this.handleMoveUp = this.handleMoveUp.bind(this);
 		this.handleMoveDown = this.handleMoveDown.bind(this);
+		this.stickyInstance = undefined;
+	}
+
+	componentDidMount() {
+		this.stickyInstance = stickybits('.block-header');
+	}
+
+	componentWillUnmount() {
+		this.stickyInstance.cleanUp();
 	}
 
 	handleInsert(index, type, newContent) {

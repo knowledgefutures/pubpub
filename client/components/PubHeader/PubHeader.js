@@ -4,8 +4,9 @@ import dateFormat from 'dateformat';
 import stickybits from 'stickybits';
 import throttle from 'lodash.throttle';
 import { apiFetch, getResizedUrl } from 'utilities';
-import { EditableText, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
+import { Button, EditableText, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
+import DropdownButton from 'components/DropdownButton/DropdownButton';
 
 require('./pubHeader.scss');
 
@@ -15,10 +16,13 @@ const propTypes = {
 	locationData: PropTypes.object,
 	setOptionsMode: PropTypes.func.isRequired,
 	setPubData: PropTypes.func.isRequired,
+	activeDiscussionChannel: PropTypes.object,
+	setDiscussionChannel: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
 	locationData: { params: {} },
+	activeDiscussionChannel: { title: 'public' },
 };
 
 class PubHeader extends Component {
@@ -126,6 +130,13 @@ class PubHeader extends Component {
 		// 	return item.Collaborator.isAuthor || item.Collaborator.isContributor;
 		// }).length;
 		const numAttributions = pubData.attributions.length;
+
+		const discussionChannels = [
+			{ title: 'public' },
+			...this.props.pubData.discussionChannels.filter((channel)=> {
+				return !channel.isArchived;
+			}),
+		];
 
 		const useEditableTitle = pubData.isDraft && pubData.isManager && this.state.isMounted;
 		return (
@@ -336,7 +347,55 @@ class PubHeader extends Component {
 					<div className="bottom-text">
 						<div className="bottom-title">{pubData.title}</div>
 						<div className="bottom-buttons">
-							Share · Cite · Options · Other
+							<Button
+								minimal={true}
+								small={true}
+								onClick={()=> { this.props.setOptionsMode('cite'); }}
+								text="Cite"
+							/>
+							<span className="dot">·</span>
+							<Button
+								minimal={true}
+								small={true}
+								onClick={()=> { this.props.setOptionsMode('export'); }}
+								text="Export"
+							/>
+							<span className="dot">·</span>
+							<DropdownButton
+								label={`#${this.props.activeDiscussionChannel.title}`}
+								// icon={items[props.value].icon}
+								isRightAligned={true}
+								isMinimal={true}
+								isSmall={true}
+							>
+								<ul className="channel-permissions-dropdown bp3-menu">
+									{discussionChannels.map((channel)=> {
+										return (
+											<li key={`channel-option-${channel.title}`}>
+												<button
+													className="bp3-menu-item bp3-popover-dismiss"
+													onClick={()=> {
+														this.props.setDiscussionChannel(channel.title);
+													}}
+													type="button"
+												>
+													#{channel.title}
+												</button>
+											</li>
+										);
+									})}
+									<li className="bp3-menu-divider" />
+									<li>
+										<Button
+											minimal={true}
+											text="Manage Discussion Channels"
+											onClick={()=> {
+												this.props.setOptionsMode('discussions');
+											}}
+										/>
+									</li>
+								</ul>
+							</DropdownButton>
 						</div>
 					</div>
 				</div>

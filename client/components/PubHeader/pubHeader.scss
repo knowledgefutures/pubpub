@@ -31,6 +31,14 @@
 		}
 		.bottom-buttons {
 			white-space: nowrap;
+			display: flex;
+			align-items: center;
+			.dot {
+				padding: 0em 0.3em;
+			    height: 24px;
+			    line-height: 24px;
+			    display: block;
+			}
 		}
 	}
 	.wrapper {
@@ -59,6 +67,14 @@
 				&.bp3-editable-text-placeholder > .bp3-editable-text-content, ::placeholder {
 					color: inherit;
 					opacity: 0.75;
+				}
+			}
+			.bottom-text {
+				.bottom-buttons {
+					.bp3-minimal, .bp3-minimal:hover {
+						color: white;
+
+					}
 				}
 			}
 		}

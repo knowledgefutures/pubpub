@@ -544,6 +544,8 @@ class Pub extends Component {
 						locationData={this.props.locationData}
 						setOptionsMode={this.setOptionsMode}
 						setPubData={this.setPubData}
+						activeDiscussionChannel={activeDiscussionChannel}
+						setDiscussionChannel={this.setDiscussionChannel}
 					/>
 
 					<div>
@@ -655,13 +657,13 @@ class Pub extends Component {
 										/>
 
 										{/* Quick Options */}
-										<PubSideOptions
+										{/* <PubSideOptions
 											pubData={pubData}
 											communityData={this.props.communityData}
 											setOptionsMode={this.setOptionsMode}
 											activeDiscussionChannel={activeDiscussionChannel}
 											setDiscussionChannel={this.setDiscussionChannel}
-										/>
+										/> */}
 										<PubSideDiscussions
 											key={activeDiscussionChannel ? activeDiscussionChannel.id : 'public-channel'}
 											threads={threads}
@@ -727,12 +729,12 @@ class Pub extends Component {
 						/>
 					}
 
-					<PubSideControls
+					{/* <PubSideControls
 						pubData={pubData}
 						threads={threads}
 						editorChangeObject={this.state.editorChangeObject}
 						getAbsolutePosition={this.getAbsolutePosition}
-					/>
+					/> */}
 					<PubOptions
 						communityData={this.props.communityData}
 						pubData={pubData}

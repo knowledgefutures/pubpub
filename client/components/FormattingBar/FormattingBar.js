@@ -103,10 +103,11 @@ class FormattingBar extends Component {
 		const uncontrolledNodes = ['paragraph', 'blockquote', 'horizontal_rule', 'heading', 'ordered_list', 'bullet_list', 'list_item', 'code_block', 'citationList', 'footnoteList'];
 		const isUncontrolledNode = selectedNode.type && uncontrolledNodes.indexOf(selectedNode.type.name) > -1;
 		const isBlockquote = selectedNode.type && selectedNode.type.name === 'blockquote';
-		const nodeSelected = !isUncontrolledNode && (selectedNode.attrs || isTable);
+		const nodeSelected = !isUncontrolledNode && (selectedNode.attrs);
 		const showBlockTypes = !this.props.hideBlocktypes && !nodeSelected && !isBlockquote;
 		const showFormatting = !nodeSelected;
 		const showExtraFormatting = showFormatting && !this.props.hideExtraFormatting;
+		const showTable = isTable && !nodeSelected;
 		const showMedia = !nodeSelected && !this.props.hideMedia && !(this.props.isSmall && showLink);
 		return (
 			<div className={`formatting-bar-component ${this.props.isSmall ? 'small' : ''}`}>
@@ -251,7 +252,7 @@ class FormattingBar extends Component {
 				}
 
 				{/* Node Options Blocks */}
-				{nodeSelected &&
+				{(nodeSelected || showTable) &&
 					<FormattingBarControls
 						editorChangeObject={this.props.editorChangeObject}
 						threads={this.props.threads}

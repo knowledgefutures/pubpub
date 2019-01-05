@@ -48,15 +48,17 @@ class FormattingBarMedia extends Component {
 			{ text: 'Vimeo', icon: 'vimeo' },
 			{ text: 'SoundCloud', icon: 'soundcloud' },
 
-			{ text: 'Spotify', icon: 'spotify' },
-			{ text: 'Twitter', icon: 'twitter' },
-			{ text: 'Github', icon: 'github' },
-			{ text: 'Prezi', icon: 'prezi' },
-			{ text: 'LinkedIn', icon: 'linkedin' },
-			{ text: 'Giphy', icon: 'giphy' },
-			{ text: 'Unsplash', icon: 'unsplash' },
-			{ text: 'Google Maps', icon: 'googlemaps' },
-			{ text: 'Slideshare', icon: 'slideshare' },
+			// TODO: Not yet implemented
+			// { text: 'Spotify', icon: 'spotify' },
+			// { text: 'Twitter', icon: 'twitter' },
+			// { text: 'Github', icon: 'github' },
+			// { text: 'Prezi', icon: 'prezi' },
+			// { text: 'LinkedIn', icon: 'linkedin' },
+			// { text: 'Giphy', icon: 'giphy' },
+			// { text: 'Unsplash', icon: 'unsplash' },
+			// { text: 'Google Maps', icon: 'googlemaps' },
+			// { text: 'Slideshare', icon: 'slideshare' },
+
 			// { text: 'Facebook', icon: 'facebook' },
 			// { text: 'Reddit', icon: 'reddit' }, /* oEmbed URL is not functioning as of 12/2018 */
 		];

@@ -71,9 +71,11 @@ class LayoutEditorText extends Component {
 							/>
 						</div>
 					</InputField>
-					<FormattingBar
-						editorChangeObject={this.state.editorChangeObject}
-					/>
+					<div className="formatting-wrapper">
+						<FormattingBar
+							editorChangeObject={this.state.editorChangeObject}
+						/>
+					</div>
 				</div>
 
 				<div className="block-content">

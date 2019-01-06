@@ -45,6 +45,11 @@
 		// .bp3-form-group:not(:last-child) {
 		// 	padding-right: 1em;
 		// }
+		.formatting-wrapper {
+			flex: 1 1 auto;
+			max-width: 100%;
+			padding-top: 12px;
+		}
 	}
 	.block-content {
 		padding: 1em 0em;
@@ -84,6 +89,10 @@
 		p, li {
 			font-size: 18px;
 		    line-height: 1.6
+		}
+		.block-header {
+			flex-wrap: nowrap;
+			align-items: center;
 		}
 	}
 }

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
-import Editor, { getText, getJSON } from '@pubpub/editor';
+import Editor, { getText, getJSON, moveSelectionToEnd } from '@pubpub/editor';
+import FormattingBar from 'components/FormattingBar/FormattingBar';
 import { getResizedUrl } from 'utilities';
 
 require('./discussionInput.scss');
@@ -15,7 +16,7 @@ const propTypes = {
 	getHighlightContent: PropTypes.func,
 	inputKey: PropTypes.string,
 	activeDiscussionChannel: PropTypes.object.isRequired,
-	leftButtons: PropTypes.node,
+	onCancel: PropTypes.func,
 };
 
 const defaultProps = {
@@ -25,7 +26,7 @@ const defaultProps = {
 	submitIsLoading: false,
 	getHighlightContent: undefined,
 	inputKey: undefined,
-	leftButtons: undefined,
+	onCancel: undefined,
 };
 
 class DiscussionInput extends Component {
@@ -33,7 +34,7 @@ class DiscussionInput extends Component {
 		super(props);
 		this.state = {
 			title: '',
-			editorChangeObject: undefined,
+			editorChangeObject: {},
 			// isPublic: true,
 			submitDisabled: true,
 			key: props.inputKey || new Date().getTime(),
@@ -42,6 +43,7 @@ class DiscussionInput extends Component {
 		this.onBodyChange = this.onBodyChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		// this.editorRef = undefined;
+		this.isEditorLoaded = false;
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -50,7 +52,7 @@ class DiscussionInput extends Component {
 				key: new Date().getTime(),
 				title: '',
 				// body: '',
-				editorChangeObject: undefined,
+				editorChangeObject: {},
 				submitDisabled: true,
 			});
 		}
@@ -61,6 +63,19 @@ class DiscussionInput extends Component {
 	}
 
 	onBodyChange(changeObject) {
+		/* When a new highlight discussion is opened, focus after */
+		/* the highlight, so you can type right away. */
+		if (!this.isEditorLoaded) {
+			this.isEditorLoaded = true;
+			const selectedNode = changeObject.selectedNode;
+			const isQuote = selectedNode && selectedNode.type.name === 'highlightQuote';
+			if (isQuote) {
+				setTimeout(()=> {
+					moveSelectionToEnd(changeObject.view);
+					changeObject.view.focus();
+				}, 0);
+			}
+		}
 		this.setState({
 			editorChangeObject: changeObject,
 			submitDisabled: !getText(changeObject.view),
@@ -110,9 +125,24 @@ class DiscussionInput extends Component {
 				</div>
 				<div className="buttons">
 					<div className="buttons-left">
-						{this.props.leftButtons}
+						{/* TODO: Formatting bar needs at least 233 px wide */}
+						<FormattingBar
+							editorChangeObject={this.state.editorChangeObject}
+							hideBlocktypes={true}
+							hideExtraFormatting={true}
+							isSmall={true}
+						/>
 					</div>
 					<div className="buttons-right">
+						{this.props.onCancel &&
+							<Button
+								minimal={true}
+								small={true}
+								onClick={this.props.onCancel}
+								// text="Cancel"
+								icon="cross"
+							/>
+						}
 						<Button
 							name="submit"
 							type="submit"

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Editor, { importHtml, getText } from '@pubpub/editor';
+// import FormattingBar from 'components/FormattingBar/FormattingBar';
 
 const propTypes = {
 	initialHtmlString: PropTypes.string.isRequired,
@@ -16,7 +17,7 @@ class SimpleEditor extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-
+			// editorChangeObject: {},
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.intializedWithHtmlInput = false;
@@ -31,11 +32,21 @@ class SimpleEditor extends Component {
 			? changeObject.view.dom.innerHTML
 			: '';
 		this.props.onChange(innerHtml);
+		// this.setState({
+		// 	editorChangeObject: changeObject,
+		// });
 	}
 
 	render() {
 		return (
 			<div className="simple-editor-component">
+				{/* <FormattingBar
+					editorChangeObject={this.state.editorChangeObject}
+					hideBlocktypes={true}
+					hideExtraFormatting={true}
+					hideMedia={true}
+					isSmall={true}
+				/> */}
 				<Editor
 					onChange={this.handleChange}
 					customNodes={{

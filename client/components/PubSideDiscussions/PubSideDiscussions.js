@@ -219,15 +219,9 @@ class PubSideDiscussions extends Component {
 							initialContent={this.props.initialContent}
 							submitIsLoading={this.state.newIsLoading}
 							isNew={true}
-							leftButtons={
-								<Button
-									className="bp3-minimal bp3-small"
-									onClick={()=> {
-										this.props.setActiveThread(undefined);
-									}}
-									text="Cancel"
-								/>
-							}
+							onCancel={()=> {
+								this.props.setActiveThread(undefined);
+							}}
 						/>
 					</div>
 				}

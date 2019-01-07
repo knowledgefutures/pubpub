@@ -9,18 +9,15 @@ import { hostIsValid, renderToNodeStream, getInitialData, handleErrors, generate
 app.get('/explore', (req, res, next)=> {
 	if (!hostIsValid(req, 'pubpub')) { return next(); }
 
+	const whereQuery = req.query.show === 'all'
+		? {}
+		: { where: { isFeatured: true } };
 	const getActiveCommunities = Community.findAll({
 		attributes: [
 			'id', 'subdomain', 'domain', 'title', 'description', 'largeHeaderBackground',
 			'largeHeaderLogo', 'accentColor', 'accentTextColor', 'createdAt', 'updatedAt'
 		],
-		where: {
-			createdAt: {
-				$lt: req.query.show === 'all'
-					? new Date()
-					: new Date(new Date().setDate(new Date().getDate() - 30))
-			}
-		}
+		...whereQuery,
 	});
 
 	return Promise.all([getInitialData(req), getActiveCommunities])

@@ -1,30 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { Button, Callout, Intent } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
+import { apiFetch } from 'utilities';
 
 require('./userEdit.scss');
 
 const propTypes = {
 	userData: PropTypes.object.isRequired,
-	onSave: PropTypes.func,
-	error: PropTypes.string,
-	isLoading: PropTypes.bool,
-	onReset: PropTypes.func,
-	resetError: PropTypes.string,
-	resetIsLoading: PropTypes.bool,
-	showResetConfirmation: PropTypes.bool
-};
-
-const defaultProps = {
-	onSave: ()=>{},
-	error: undefined,
-	isLoading: false,
-	onReset: ()=>{},
-	resetError: undefined,
-	resetIsLoading: false,
-	showResetConfirmation: false
 };
 
 class UserEdit extends Component {
@@ -43,7 +27,13 @@ class UserEdit extends Component {
 			github: props.userData.github || '',
 			twitter: props.userData.twitter || '',
 			facebook: props.userData.facebook || '',
-			googleScholar: props.userData.googleScholar || ''
+			googleScholar: props.userData.googleScholar || '',
+			putUserIsLoading: false,
+			putUserError: undefined,
+			postResetIsLoading: false,
+			postResetError: undefined,
+			showResetConfirmation: false,
+
 		};
 		this.onFirstNameChange = this.onFirstNameChange.bind(this);
 		this.onLastNameChange = this.onLastNameChange.bind(this);
@@ -91,12 +81,33 @@ class UserEdit extends Component {
 			facebook: this.state.facebook,
 			googleScholar: this.state.googleScholar,
 		};
-		this.props.onSave(newUserObject);
+
+		this.setState({ putUserIsLoading: true, putUserError: undefined });
+		return apiFetch('/api/users', {
+			method: 'PUT',
+			body: JSON.stringify(newUserObject)
+		})
+		.then(()=> {
+			window.location.href = `/user/${this.props.userData.slug}`;
+		})
+		.catch((err)=> {
+			this.setState({ putUserIsLoading: false, putUserError: err });
+		});
 	}
 
 	handlePasswordReset(evt) {
 		evt.preventDefault();
-		this.props.onReset();
+		this.setState({ postResetIsLoading: true });
+		return apiFetch('/api/password-reset', {
+			method: 'POST',
+			body: JSON.stringify({})
+		})
+		.then(()=> {
+			this.setState({ postResetIsLoading: false, showResetConfirmation: true });
+		})
+		.catch(()=> {
+			this.setState({ postResetIsLoading: false, postResetError: 'Error' });
+		});
 	}
 
 	render() {
@@ -170,6 +181,28 @@ class UserEdit extends Component {
 									value={this.state.lastName}
 									onChange={this.onLastNameChange}
 								/>
+								<InputField label="Password">
+									{this.state.showResetConfirmation
+										? (
+											<Callout icon="tick" intent={Intent.SUCCESS}>
+												Password reset requested. Check your email for reset instructions.
+											</Callout>
+										)
+										: (
+											<InputField error={this.state.postResetError && 'Error Requesting Reset'}>
+												<Button
+													name="reset"
+													type="button"
+													className="bp3-button"
+													onClick={this.handlePasswordReset}
+													text="Request Password Reset"
+													disabled={this.state.showResetConfirmation}
+													loading={this.state.postResetIsLoading}
+												/>
+											</InputField>
+										)
+									}
+								</InputField>
 								<ImageUpload
 									htmlFor="avatar-upload"
 									label="Avatar Image"
@@ -203,7 +236,7 @@ class UserEdit extends Component {
 								})}
 
 								<div className="buttons">
-									<InputField error={this.props.error && 'Error Saving Details'}>
+									<InputField error={this.state.putUserError && 'Error Saving Details'}>
 										<Button
 											name="create"
 											type="submit"
@@ -211,24 +244,9 @@ class UserEdit extends Component {
 											onClick={this.handleSaveDetails}
 											text="Save Details"
 											disabled={!this.state.firstName || !this.state.lastName || !this.state.hasChanged}
-											loading={this.props.isLoading}
+											loading={this.state.putUserIsLoading}
 										/>
 									</InputField>
-									{ this.props.showResetConfirmation
-										? <p className="confirmation">Password reset requested. Check your email for reset instructions.</p>
-										:
-										<InputField error={this.props.resetError && 'Error Requesting Reset'}>
-											<Button
-												name="reset"
-												type="button"
-												className="bp3-button"
-												onClick={this.handlePasswordReset}
-												text="Request Password Reset"
-												disabled={this.props.showResetConfirmation}
-												loading={this.props.resetIsLoading}
-											/>
-										</InputField>
-									}
 								</div>
 							</form>
 						</div>
@@ -239,6 +257,6 @@ class UserEdit extends Component {
 	}
 }
 
-UserEdit.defaultProps = defaultProps;
+// UserEdit.defaultProps = defaultProps;
 UserEdit.propTypes = propTypes;
 export default UserEdit;

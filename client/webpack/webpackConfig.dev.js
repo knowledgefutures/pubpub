@@ -51,6 +51,7 @@ module.exports = {
 				use: [
 					MiniCssExtractPlugin.loader,
 					{ loader: 'css-loader' },
+					{ loader: 'postcss-loader', options: { ident: 'postcss', plugins: [require('autoprefixer')({})] } },
 					{ loader: 'sass-loader', options: { includePaths: [resolve(__dirname, '../')] } }
 				],
 			},

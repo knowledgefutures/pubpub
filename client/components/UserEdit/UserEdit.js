@@ -95,8 +95,7 @@ class UserEdit extends Component {
 		});
 	}
 
-	handlePasswordReset(evt) {
-		evt.preventDefault();
+	handlePasswordReset() {
 		this.setState({ postResetIsLoading: true });
 		return apiFetch('/api/password-reset', {
 			method: 'POST',
@@ -191,11 +190,8 @@ class UserEdit extends Component {
 										: (
 											<InputField error={this.state.postResetError && 'Error Requesting Reset'}>
 												<Button
-													name="reset"
-													type="button"
-													className="bp3-button"
-													onClick={this.handlePasswordReset}
 													text="Request Password Reset"
+													onClick={this.handlePasswordReset}
 													disabled={this.state.showResetConfirmation}
 													loading={this.state.postResetIsLoading}
 												/>
@@ -238,11 +234,10 @@ class UserEdit extends Component {
 								<div className="buttons">
 									<InputField error={this.state.putUserError && 'Error Saving Details'}>
 										<Button
-											name="create"
 											type="submit"
-											className="bp3-button bp3-intent-primary"
-											onClick={this.handleSaveDetails}
+											intent={Intent.PRIMARY}
 											text="Save Details"
+											onClick={this.handleSaveDetails}
 											disabled={!this.state.firstName || !this.state.lastName || !this.state.hasChanged}
 											loading={this.state.putUserIsLoading}
 										/>
@@ -257,6 +252,5 @@ class UserEdit extends Component {
 	}
 }
 
-// UserEdit.defaultProps = defaultProps;
 UserEdit.propTypes = propTypes;
 export default UserEdit;

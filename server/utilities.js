@@ -21,7 +21,7 @@ export const slugifyString = (input)=> {
 		return '';
 	}
 
-	return removeDiacritics(input).replace(/[^a-zA-Z0-9-]/gi, '').replace(/ /g, '-').toLowerCase();
+	return removeDiacritics(input).replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase();
 };
 
 export const hostIsValid = (req, access)=> {

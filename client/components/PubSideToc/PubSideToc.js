@@ -1,4 +1,5 @@
 /* eslint-disable no-multi-assign */
+/* eslint-disable newline-per-chained-call */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getJSON } from '@pubpub/editor';
@@ -35,7 +36,7 @@ const PubSideToc = function(props) {
 		return {
 			title: textContent,
 			level: item.attrs.level,
-			href: textContent && textContent.trim().toLowerCase().replace(/ /gi, '-').replace(/[^a-zA-Z0-9-]/gi, ''),
+			href: textContent && textContent.replace(/[^a-zA-Z0-9-\s]/gi, '').replace(/\s+/gi, ' ').trim().toLowerCase().replace(/\s/gi, '-'),
 			index: index,
 		};
 	}).filter((item)=> {

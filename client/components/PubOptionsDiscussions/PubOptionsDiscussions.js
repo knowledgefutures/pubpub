@@ -6,7 +6,7 @@ import UserAutocomplete from 'components/UserAutocomplete/UserAutocomplete';
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
-import { apiFetch } from 'utilities';
+import { apiFetch, slugifyString } from 'utilities';
 
 require('./pubOptionsDiscussions.scss');
 
@@ -214,7 +214,7 @@ class PubOptionsDiscussions extends Component {
 						placeholder="New Discussion Channel Title..."
 						value={this.state.newChannelTitle}
 						onChange={(evt)=> {
-							this.setState({ newChannelTitle: evt.target.value.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase() });
+							this.setState({ newChannelTitle: slugifyString(evt.target.value) });
 						}}
 					/>
 				</form>
@@ -240,7 +240,7 @@ class PubOptionsDiscussions extends Component {
 											onConfirm={(newTitle)=> {
 												this.handleChannelUpdate({
 													discussionChannelId: channel.id,
-													title: newTitle.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase(),
+													title: slugifyString(newTitle),
 												});
 											}}
 											disabled={!canModerate || !channel.id}

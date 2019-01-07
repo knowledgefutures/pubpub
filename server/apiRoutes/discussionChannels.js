@@ -1,12 +1,12 @@
 import app from '../server';
 import { User, CommunityAdmin, DiscussionChannel, DiscussionChannelParticipant } from '../models';
-import { generateHash } from '../utilities';
+import { generateHash, slugifyString } from '../utilities';
 
 app.post('/api/discussionChannels', (req, res)=> {
 	const user = req.user || {};
 
 	DiscussionChannel.create({
-		title: req.body.title.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase(),
+		title: slugifyString(req.body.title),
 		permissions: 'private',
 		isCommunityAdminModerated: true,
 		pubId: req.body.pubId,

@@ -6,7 +6,7 @@ import ImageUpload from 'components/ImageUpload/ImageUpload';
 import NavDrag from 'components/NavDrag/NavDrag';
 import Icon from 'components/Icon/Icon';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
-import { populateNavigationIds, apiFetch } from 'utilities';
+import { populateNavigationIds, apiFetch, slugifyString } from 'utilities';
 
 require('./dashboardDetails.scss');
 
@@ -66,7 +66,7 @@ class DashboardDetails extends Component {
 	}
 
 	handleSubdomainChange(evt) {
-		this.setState({ subdomain: evt.target.value.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase() });
+		this.setState({ subdomain: slugifyString(evt.target.value) });
 	}
 
 	handleDescriptionChange(evt) {

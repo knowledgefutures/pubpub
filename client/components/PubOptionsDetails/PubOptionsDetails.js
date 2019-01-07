@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Checkbox } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
-import { apiFetch } from 'utilities';
+import { apiFetch, slugifyString } from 'utilities';
 
 require('./pubOptionsDetails.scss');
 
@@ -46,7 +46,7 @@ class PubOptionsDetails extends Component {
 	updateSlug(evt) {
 		this.setState({
 			hasUpdated: true,
-			slug: evt.target.value.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase()
+			slug: slugifyString(evt.target.value)
 		});
 	}
 

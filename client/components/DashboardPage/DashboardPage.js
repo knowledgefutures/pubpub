@@ -5,7 +5,7 @@ import { Button } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import LayoutEditor from 'components/LayoutEditor/LayoutEditor';
-import { getDefaultLayout, apiFetch } from 'utilities';
+import { getDefaultLayout, apiFetch, slugifyString } from 'utilities';
 
 require('./dashboardPage.scss');
 
@@ -65,7 +65,7 @@ class DashboardPage extends Component {
 	}
 
 	setSlug(evt) {
-		this.setState({ hasChanged: true, slug: evt.target.value.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase() });
+		this.setState({ hasChanged: true, slug: slugifyString(evt.target.value) });
 	}
 
 	setAvatar(value) {

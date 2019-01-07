@@ -4,7 +4,7 @@ import { Button, NonIdealState } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { hydrateWrapper, apiFetch } from 'utilities';
+import { hydrateWrapper, apiFetch, slugifyString } from 'utilities';
 
 require('./communityCreate.scss');
 
@@ -59,7 +59,7 @@ class CommunityCreate extends Component {
 	}
 
 	onSubdomainChange(evt) {
-		this.setState({ subdomain: evt.target.value.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase() });
+		this.setState({ subdomain: slugifyString(evt.target.value) });
 	}
 
 	onTitleChange(evt) {

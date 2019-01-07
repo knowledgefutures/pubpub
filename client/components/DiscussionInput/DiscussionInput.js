@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import Editor, { getText, getJSON, moveSelectionToEnd } from '@pubpub/editor';
-import FormattingBar from 'components/FormattingBar/FormattingBar';
+// import FormattingBar from 'components/FormattingBar/FormattingBar';
 import { getResizedUrl } from 'utilities';
 
 require('./discussionInput.scss');
@@ -126,12 +126,12 @@ class DiscussionInput extends Component {
 				<div className="buttons">
 					<div className="buttons-left">
 						{/* TODO: Formatting bar needs at least 233 px wide */}
-						<FormattingBar
+						{/* <FormattingBar
 							editorChangeObject={this.state.editorChangeObject}
 							hideBlocktypes={true}
 							hideExtraFormatting={true}
 							isSmall={true}
-						/>
+						/> */}
 					</div>
 					<div className="buttons-right">
 						{this.props.onCancel &&
@@ -139,8 +139,8 @@ class DiscussionInput extends Component {
 								minimal={true}
 								small={true}
 								onClick={this.props.onCancel}
-								// text="Cancel"
-								icon="cross"
+								text="Cancel"
+								// icon="cross"
 							/>
 						}
 						<Button

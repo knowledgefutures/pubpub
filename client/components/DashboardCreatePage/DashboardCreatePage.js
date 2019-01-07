@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
-import { apiFetch } from 'utilities';
+import { apiFetch, slugifyString } from 'utilities';
 
 require('./dashboardCreatePage.scss');
 
@@ -33,7 +33,7 @@ class DashboardCreatePage extends Component {
 
 	handleSlugChange(evt) {
 		this.setState({
-			slug: evt.target.value.replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/gi, '').toLowerCase()
+			slug: slugifyString(evt.target.value)
 		});
 	}
 

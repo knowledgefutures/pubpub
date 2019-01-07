@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
-import { Button } from '@blueprintjs/core';
 import DiscussionThread from 'components/DiscussionThread/DiscussionThread';
 import DiscussionInput from 'components/DiscussionInput/DiscussionInput';
 

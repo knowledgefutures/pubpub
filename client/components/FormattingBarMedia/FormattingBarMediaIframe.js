@@ -50,11 +50,13 @@ class FormattingBarMediaIframe extends Component {
 					}
 				/>
 				{isValid &&
-					<iframe
-						frameBorder="none"
-						src={this.state.url}
-						title="URL preview"
-					/>
+					<div className="preview-wrapper">
+						<iframe
+							frameBorder="none"
+							src={this.state.url}
+							title="URL preview"
+						/>
+					</div>
 				}
 				{!isValid &&
 					<div className="preview-wrapper">

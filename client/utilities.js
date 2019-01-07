@@ -486,8 +486,8 @@ export function generateRenderLists(layout, pubs) {
 }
 
 export const getIframeSrc = (val)=> {
-	const re = /(?<=src=").*?(?=["])/;
-	const getSrc = val.indexOf('<iframe') > -1 && val.match(re) && val.match(re)[0];
+	const re = /<iframe.*?src="(.*?)"/;
+	const getSrc = val.indexOf('<iframe') > -1 && val.match(re) && val.match(re)[1];
 	return getSrc || null;
 };
 

@@ -1,22 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { Button, Callout, Intent } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
+import { apiFetch } from 'utilities';
 
 require('./userEdit.scss');
 
 const propTypes = {
 	userData: PropTypes.object.isRequired,
-	onSave: PropTypes.func,
-	error: PropTypes.string,
-	isLoading: PropTypes.bool,
-};
-
-const defaultProps = {
-	onSave: ()=>{},
-	error: undefined,
-	isLoading: false,
 };
 
 class UserEdit extends Component {
@@ -36,6 +28,12 @@ class UserEdit extends Component {
 			twitter: props.userData.twitter || '',
 			facebook: props.userData.facebook || '',
 			googleScholar: props.userData.googleScholar || '',
+			putUserIsLoading: false,
+			putUserError: undefined,
+			postResetIsLoading: false,
+			postResetError: undefined,
+			showResetConfirmation: false,
+
 		};
 		this.onFirstNameChange = this.onFirstNameChange.bind(this);
 		this.onLastNameChange = this.onLastNameChange.bind(this);
@@ -43,6 +41,7 @@ class UserEdit extends Component {
 		this.onBioChange = this.onBioChange.bind(this);
 		this.onAvatarChange = this.onAvatarChange.bind(this);
 		this.handleSaveDetails = this.handleSaveDetails.bind(this);
+		this.handlePasswordReset = this.handlePasswordReset.bind(this);
 	}
 
 	onFirstNameChange(evt) {
@@ -82,7 +81,32 @@ class UserEdit extends Component {
 			facebook: this.state.facebook,
 			googleScholar: this.state.googleScholar,
 		};
-		this.props.onSave(newUserObject);
+
+		this.setState({ putUserIsLoading: true, putUserError: undefined });
+		return apiFetch('/api/users', {
+			method: 'PUT',
+			body: JSON.stringify(newUserObject)
+		})
+		.then(()=> {
+			window.location.href = `/user/${this.props.userData.slug}`;
+		})
+		.catch((err)=> {
+			this.setState({ putUserIsLoading: false, putUserError: err });
+		});
+	}
+
+	handlePasswordReset() {
+		this.setState({ postResetIsLoading: true });
+		return apiFetch('/api/password-reset', {
+			method: 'POST',
+			body: JSON.stringify({})
+		})
+		.then(()=> {
+			this.setState({ postResetIsLoading: false, showResetConfirmation: true });
+		})
+		.catch(()=> {
+			this.setState({ postResetIsLoading: false, postResetError: 'Error' });
+		});
 	}
 
 	render() {
@@ -156,6 +180,25 @@ class UserEdit extends Component {
 									value={this.state.lastName}
 									onChange={this.onLastNameChange}
 								/>
+								<InputField label="Password">
+									{this.state.showResetConfirmation
+										? (
+											<Callout icon="tick" intent={Intent.SUCCESS}>
+												Password reset requested. Check your email for reset instructions.
+											</Callout>
+										)
+										: (
+											<InputField error={this.state.postResetError && 'Error Requesting Reset'}>
+												<Button
+													text="Request Password Reset"
+													onClick={this.handlePasswordReset}
+													disabled={this.state.showResetConfirmation}
+													loading={this.state.postResetIsLoading}
+												/>
+											</InputField>
+										)
+									}
+								</InputField>
 								<ImageUpload
 									htmlFor="avatar-upload"
 									label="Avatar Image"
@@ -189,15 +232,14 @@ class UserEdit extends Component {
 								})}
 
 								<div className="buttons">
-									<InputField error={this.props.error && 'Error Saving Details'}>
+									<InputField error={this.state.putUserError && 'Error Saving Details'}>
 										<Button
-											name="create"
 											type="submit"
-											className="bp3-button bp3-intent-primary"
-											onClick={this.handleSaveDetails}
+											intent={Intent.PRIMARY}
 											text="Save Details"
+											onClick={this.handleSaveDetails}
 											disabled={!this.state.firstName || !this.state.lastName || !this.state.hasChanged}
-											loading={this.props.isLoading}
+											loading={this.state.putUserIsLoading}
 										/>
 									</InputField>
 								</div>
@@ -210,6 +252,5 @@ class UserEdit extends Component {
 	}
 }
 
-UserEdit.defaultProps = defaultProps;
 UserEdit.propTypes = propTypes;
 export default UserEdit;

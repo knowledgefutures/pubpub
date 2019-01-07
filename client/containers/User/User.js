@@ -6,7 +6,7 @@ import UserNav from 'components/UserNav/UserNav';
 import UserEdit from 'components/UserEdit/UserEdit';
 import PubPreview from 'components/PubPreview/PubPreview';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { hydrateWrapper, apiFetch } from 'utilities';
+import { hydrateWrapper } from 'utilities';
 
 require('./user.scss');
 
@@ -18,29 +18,6 @@ const propTypes = {
 };
 
 class User extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			putUserIsLoading: false,
-			putUserError: undefined,
-		};
-		this.handleUserEditSave = this.handleUserEditSave.bind(this);
-	}
-
-	handleUserEditSave(userObject) {
-		this.setState({ putUserIsLoading: true, putUserError: undefined });
-		return apiFetch('/api/users', {
-			method: 'PUT',
-			body: JSON.stringify(userObject)
-		})
-		.then(()=> {
-			window.location.href = `/user/${this.props.userData.slug}`;
-		})
-		.catch((err)=> {
-			this.setState({ putUserIsLoading: false, putUserError: err });
-		});
-	}
-
 	render() {
 		const userData = this.props.userData;
 		const pubs = userData.attributions.map((attribution)=> {
@@ -77,12 +54,7 @@ class User extends Component {
 					hideNav={this.props.locationData.isBasePubPub}
 				>
 					{mode === 'edit' &&
-						<UserEdit
-							userData={userData}
-							onSave={this.handleUserEditSave}
-							error={this.state.putUserError}
-							isLoading={this.state.putUserIsLoading}
-						/>
+						<UserEdit userData={userData} />
 					}
 					{mode !== 'edit' &&
 						<div>

@@ -6,17 +6,22 @@ import { sendPasswordResetEmail } from '../emailHelpers';
 
 
 app.post('/api/password-reset', (req, res)=> {
+	const user = req.user || {};
+	const email = req.body.email;
+
 	User.findOne({
-		where: { email: req.body.email }
-	}).then((user)=> {
-		if (!user) { throw new Error('User doesn\'t exist'); }
+		where: email
+			? { email: email }
+			: { id: user.id }
+	}).then((userData)=> {
+		if (!userData) { throw new Error('User doesn\'t exist'); }
 
 		const updateData = {
 			resetHash: generateHash(),
 			resetHashExpiration: Date.now() + (1000 * 60 * 60 * 24) // Expires in 24 hours.
 		};
 		return User.update(updateData, {
-			where: { id: user.id },
+			where: { id: userData.id },
 			returning: true,
 			individualHooks: true
 		});

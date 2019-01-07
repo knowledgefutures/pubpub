@@ -22,6 +22,12 @@
 		.authors {
 			font-style: italic;
 		}
+		a {
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 		.bp3-tag {
 			margin-right: 0.5em;
 		}

@@ -36,7 +36,8 @@
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "prosemirror-dev-tools": "^2.1.1",
-    "webpack-bundle-analyzer": "^3.0.3"
+    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-cli": "^3.1.2"
   },
   "dependencies": {
     "@babel/core": "^7.2.0",
@@ -124,7 +125,6 @@
     "valid-url": "^1.0.9",
     "validator": "^10.9.0",
     "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2",
     "webpack-manifest-plugin": "^2.0.4",
     "xmlbuilder": "^10.1.1"
   },

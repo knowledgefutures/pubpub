@@ -36,7 +36,7 @@
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "prosemirror-dev-tools": "^2.1.1",
-    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-bundle-analyzer": "^3.0.3"
   },
   "dependencies": {
     "@babel/core": "^7.2.0",

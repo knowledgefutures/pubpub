@@ -78,6 +78,7 @@
     "fuzzysearch": "^1.0.3",
     "getstream": "^4.0.3",
     "install": "^0.12.2",
+    "is-mobile": "^2.0.0",
     "katex": "^0.10.0",
     "keen-analysis": "^3.1.5",
     "keen-tracking": "^3.1.2",

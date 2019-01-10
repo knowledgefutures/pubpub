@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Sequelize } from 'sequelize';
-import { sequelize, Pub, Version, PubManager, Collaborator, VersionPermission, PubAttribution, Collection, Page, CollectionPub, Tag, PubTag, Community } from './models';
+import { sequelize, Pub, Version, PubManager, Collaborator, VersionPermission, PubAttribution, Collection, Page, CollectionPub, Tag, PubTag, Community, WorkerTask } from './models';
 import { generateHash } from './utilities';
 
 console.log('Beginning Migration');
@@ -381,6 +381,9 @@ new Promise((resolve)=> {
 // })
 // .then(()=> {
 // 	return sequelize.queryInterface.addColumn('Communities', 'isFeatured', { type: Sequelize.BOOLEAN });
+// })
+// .then(()=> {
+// 	return sequelize.queryInterface.addColumn('WorkerTasks', 'attemptCount', { type: Sequelize.INTEGER });
 // })
 .catch((err)=> {
 	console.log('Error with Migration', err);

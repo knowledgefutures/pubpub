@@ -614,16 +614,23 @@ export function submitDoiData(pubId, communityId, isNew) {
 /* Worker Queue Tasks */
 const queueName = 'pubpubTaskQueue';
 let openChannel;
-amqplib.connect(process.env.CLOUDAMQP_URL).then((conn)=> {
-	return conn.createConfirmChannel().then((channel)=> {
-		return channel.assertQueue(queueName, { durable: true })
-		.then(()=> {
-			openChannel = channel;
+
+const setOpenChannel = ()=> {
+	amqplib.connect(process.env.CLOUDAMQP_URL).then((conn)=> {
+		return conn.createConfirmChannel().then((channel)=> {
+			return channel.assertQueue(queueName, { durable: true })
+			.then(()=> {
+				openChannel = channel;
+			});
 		});
 	});
-});
+};
+setOpenChannel();
 
 export function addWorkerTask(message) {
+	if (!openChannel) {
+		setOpenChannel();
+	}
 	openChannel.sendToQueue(queueName, Buffer.from(message), { deliveryMode: true });
 	return openChannel.waitForConfirms();
 }

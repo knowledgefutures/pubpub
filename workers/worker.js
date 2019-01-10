@@ -32,7 +32,7 @@ const processTask = (channel)=> {
 			/* In these cases, let's try it a couple times, and */
 			/* if it winds up back in the queue after those attempts, */
 			/* finish and ack the task. */
-			if (workerTaskData.attemptCount > 2) {
+			if (workerTaskData.attemptCount >= 2) {
 				throw new Error('Too many attempts');
 			}
 			/* If we are below the allowed attemptCount, increment */

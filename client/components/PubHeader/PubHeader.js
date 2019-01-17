@@ -4,7 +4,7 @@ import dateFormat from 'dateformat';
 import stickybits from 'stickybits';
 import throttle from 'lodash.throttle';
 import { apiFetch, getResizedUrl } from 'utilities';
-import { Button, EditableText, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
+import { Button, EditableText, Popover, PopoverInteractionKind, Position, Tag, Intent } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 
@@ -147,31 +147,25 @@ class PubHeader extends Component {
 							<div className="col-12">
 								<div className="tags-buttons-wrapper">
 									<div className="tags">
-										{/* pubData.collections.sort((foo, bar)=> {
-											if (foo.title.toLowerCase() < bar.title.toLowerCase()) { return -1; }
-											if (foo.title.toLowerCase() > bar.title.toLowerCase()) { return 1; }
+										{pubData.pubTags.filter((pubTag)=> {
+											return pubTag.tag;
+										}).sort((foo, bar)=> {
+											if (foo.tag.title.toLowerCase() < bar.tag.title.toLowerCase()) { return -1; }
+											if (foo.tag.title.toLowerCase() > bar.tag.title.toLowerCase()) { return 1; }
 											return 0;
 										}).map((item)=> {
-											return <a key={`footer-collection-${item.id}`} href={`/${item.slug}`} className="bp3-tag bp3-intent-primary bp3-minimal">{item.title}</a>;
-										}) */}
-										<div className="tags new-tags">
-											{pubData.pubTags.filter((pubTag)=> {
-												return pubTag.tag;
-											}).sort((foo, bar)=> {
-												if (foo.tag.title.toLowerCase() < bar.tag.title.toLowerCase()) { return -1; }
-												if (foo.tag.title.toLowerCase() > bar.tag.title.toLowerCase()) { return 1; }
-												return 0;
-											}).map((item)=> {
-												return (
-													<a key={`new-tag-collection-${item.id}`} href={item.tag.page ? `/${item.tag.page.slug}` : `/search?tag=${item.tag.title}`} className="bp3-tag bp3-intent-primary bp3-minimal">
-														{!item.tag.isPublic &&
-															<Icon icon="lock2" />
-														}
+											return (
+												<a key={item.id} href={item.tag.page ? `/${item.tag.page.slug}` : `/search?tag=${item.tag.title}`}>
+													<Tag
+														intent={Intent.PRIMARY}
+														minimal={true}
+														icon={!item.tag.isPublic ? <Icon icon="lock2" /> : undefined}
+													>
 														{item.tag.title}
-													</a>
-												);
-											})}
-										</div>
+													</Tag>
+												</a>
+											);
+										})}
 									</div>
 									<div className="buttons">
 										{!pubData.isDraft && (pubData.isDraftViewer || pubData.isDraftEditor || pubData.isManager) &&
@@ -243,7 +237,7 @@ class PubHeader extends Component {
 												return (
 													<span key={`author-${user.id}`}>
 														{prefix}
-														<a href={`/user/${user.slug}`}>{user.fullName}</a>
+														<a href={`/user/${user.slug}`} className="underline-on-hover">{user.fullName}</a>
 														{separator}
 													</span>
 												);

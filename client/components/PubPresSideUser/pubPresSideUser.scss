@@ -4,15 +4,16 @@
 	font-size: 12px;
 	.avatar-wrapper {
 		flex-shrink: 0;
-		z-index: -1;
+		z-index: 0;
+		a {
+			text-decoration: none;
+			display: block;
+		}
 	}
 	.details-wrapper {
 		flex-grow: 1;
 		padding-left: 7px;
 		width: calc(100% - 40px);
-		a {
-			text-decoration: none;
-		}
 		.name {
 			font-weight: 600;
 			width: 100%;

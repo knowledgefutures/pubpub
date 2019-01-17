@@ -261,7 +261,7 @@ class PubOptionsAttribution extends Component {
 																<div className="top-content">
 																	<div className="name">
 																		{attribution.user.slug
-																			? <a href={`/user/${attribution.user.slug}`}>{attribution.user.fullName}</a>
+																			? <a href={`/user/${attribution.user.slug}`} className="underline-on-hover">{attribution.user.fullName}</a>
 																			: <span>{attribution.user.fullName}</span>
 																		}
 																		<span key={`${attribution.id}-handle`} style={isManager ? {} : { display: 'none' }} {...providedItem.dragHandleProps} className="bp3-icon-standard bp3-icon-drag-handle-horizontal" />
@@ -357,9 +357,11 @@ class PubOptionsAttribution extends Component {
 																			popoverProps={{
 																				popoverClassName: 'bp3-minimal',
 																				position: Position.BOTTOM_LEFT,
+																				usePortal: false,
 																				modifiers: {
 																					preventOverflow: { enabled: false },
 																					hide: { enabled: false },
+																					flip: { enabled: false },
 																				},
 																			}}
 																		/>

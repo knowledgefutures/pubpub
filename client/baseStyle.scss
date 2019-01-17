@@ -18,6 +18,14 @@ body {
 }
 a {
 	text-decoration: underline;
+	cursor: pointer;
+}
+.underline-on-hover {
+	text-decoration: none;
+	&:hover {
+		text-decoration: underline;
+		cursor: pointer;
+	}
 }
 h1 {
 	line-height:40px;

@@ -85,7 +85,9 @@
 		padding-top: 5px;
 		.tags {
 			flex-shrink: 1;
-			a:hover {
+			display: flex;
+			align-items: flex-start;
+			a {
 				text-decoration: none;
 			}
 			.bp3-tag {
@@ -134,9 +136,6 @@
 		font-size: 1.1em;
 		font-style: italic;
 		font-weight: 200;
-		a {
-			text-decoration: none;	
-		}
 	}
 	.details {
 		

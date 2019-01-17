@@ -29,7 +29,7 @@ const PubPresSideUser = function(props) {
 		);
 
 	const nameElement = user.slug
-		? <a href={`/user/${user.slug}`}>{user.fullName}</a>
+		? <a href={`/user/${user.slug}`} className="underline-on-hover">{user.fullName}</a>
 		: <span>{user.fullName}</span>;
 
 	const roles = props.attribution.roles || [];

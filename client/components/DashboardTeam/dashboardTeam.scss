@@ -4,6 +4,11 @@
 	.autocomplete-wrapper {
 		padding: 2em 0em;
 	}
+	.avatar-wrapper {
+		a {
+			text-decoration: none;
+		}
+	}
 	.admin-wrapper {
 		display: flex;
 		align-items: center;

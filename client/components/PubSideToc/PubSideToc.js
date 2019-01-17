@@ -53,7 +53,7 @@ const PubSideToc = function(props) {
 					return (
 						<a
 							href={`#${item.href}`}
-							className={`subsection-${item.level - 1}`}
+							className={`subsection-${item.level - 1} underline-on-hover`}
 							key={`subsection-${item.index}`}
 							onClick={(evt)=> {
 								/* In the working draft, don't use anchor tags for nav since we have */

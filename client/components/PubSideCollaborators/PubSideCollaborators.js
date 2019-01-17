@@ -30,6 +30,7 @@ const PubSideCollaborators = function(props) {
 					<div className="header-title">
 						<span
 							role="button"
+							className="underline-on-hover"
 							tabIndex={-1}
 							onClick={()=> {
 								props.setOptionsMode('attribution');

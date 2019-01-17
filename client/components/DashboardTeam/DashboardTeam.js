@@ -72,7 +72,7 @@ class DashboardTeam extends Component {
 					/>
 				</div>
 
-				{this.props.communityData.admins.map((admin)=> {
+				{this.props.communityData.admins.map((admin, index, array)=> {
 					return (
 						<div key={`admin-${admin.id}`} className="admin-wrapper">
 							<div className="avatar-wrapper">
@@ -83,21 +83,22 @@ class DashboardTeam extends Component {
 
 							<div className="content">
 								<div className="name">
-									<a href={`/user/${admin.slug}`}>
+									<a href={`/user/${admin.slug}`} className="underline-on-hover">
 										{admin.fullName}
 									</a>
 								</div>
 							</div>
-							<div className="remove-wrapper">
-								<button
-									type="button"
-									className="bp3-button bp3-minimal"
-									onClick={()=>{ this.handleAdminRemove(admin.id); }}
-								>
-									Remove
-								</button>
-							</div>
-
+							{array.length > 1 &&
+								<div className="remove-wrapper">
+									<button
+										type="button"
+										className="bp3-button bp3-minimal"
+										onClick={()=>{ this.handleAdminRemove(admin.id); }}
+									>
+										Remove
+									</button>
+								</div>
+							}
 						</div>
 					);
 				})}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Card } from '@blueprintjs/core';
 import DiscussionThread from 'components/DiscussionThread/DiscussionThread';
 
 require('./discussionEmbed.scss');
@@ -74,7 +75,7 @@ class DiscussionEmbed extends Component {
 						/>
 					}
 					{!activeThread &&
-						<div>Please select a discussion from the right.</div>
+						<Card>Please select a discussion from the formatting bar.</Card>
 					}
 				</figure>
 			</div>

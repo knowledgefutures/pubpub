@@ -36,6 +36,12 @@ class PubOptionsDetails extends Component {
 		this.showSaveSuccess = this.showSaveSuccess.bind(this);
 	}
 
+	componentWillUnmount() {
+		if (this.saveTimeout) {
+			clearTimeout(this.saveTimeout);
+		}
+	}
+
 	updateTitle(evt) {
 		this.setState({
 			hasUpdated: true,
@@ -113,7 +119,7 @@ class PubOptionsDetails extends Component {
 
 	showSaveSuccess() {
 		this.setState({ saveSuccess: true });
-		setTimeout(()=> {
+		this.saveTimeout = setTimeout(()=> {
 			this.setState({ saveSuccess: false });
 		}, 5000);
 	}

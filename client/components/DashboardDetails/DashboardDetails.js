@@ -375,7 +375,6 @@ class DashboardDetails extends Component {
 					<InputField label="Navigation">
 						<NavDrag
 							initialNav={initialNav}
-							accentColor={this.state.accentColor}
 							pages={pages}
 							onChange={this.handleNavigationChange}
 						/>

@@ -149,7 +149,7 @@ class NavDrag extends Component {
 									ref={provided.innerRef}
 									className={`main-list ${snapshot.isDraggingOver ? 'dragging' : ''}`}
 								>
-									<div className="nav-item-background accent-background" />
+									<div className="nav-item-background accent-background" style={{ backgroundColor: this.props.accentColor }} />
 									<div className="nav-item accent-color">{homeTitle}</div>
 									{this.state.nav.map((item, index)=> {
 										return (

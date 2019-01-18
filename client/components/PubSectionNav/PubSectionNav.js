@@ -48,7 +48,7 @@ const PubSectionNav = function(props) {
 					<ul className="bp3-menu bp3-large">
 						{sectionsData.map((section, index)=> {
 							const isActive = index === currentSectionIndex;
-							const href = `/pub/${pubData.slug}/${pubData.isDraft ? 'draft/' : ''}content/${section.id}${props.queryObject.version ? `?version=${props.queryObject.version}` : ''}`;
+							const href = `/pub/${pubData.slug}/${pubData.isDraft ? 'draft/' : ''}${section.id ? 'content/' : ''}${section.id}${props.queryObject.version ? `?version=${props.queryObject.version}` : ''}`;
 							return (
 								<li key={`section-link-${section.id}`}>
 									<a className={`bp3-menu-item ${isActive ? 'bp3-active' : ''}`} tabIndex="0" href={href}>

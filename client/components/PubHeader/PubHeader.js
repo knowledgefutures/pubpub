@@ -29,11 +29,9 @@ class PubHeader extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			title: props.pubData.title,
 			isMounted: false,
 		};
 
-		this.handleTitleChange = this.handleTitleChange.bind(this);
 		this.handleTitleSave = this.handleTitleSave.bind(this);
 		this.recalculateStickyOffset = this.recalculateStickyOffset.bind(this);
 		this.stickyInstance = undefined;
@@ -65,10 +63,6 @@ class PubHeader extends Component {
 			this.stickyInstance.cleanup();
 			this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
 		}
-	}
-
-	handleTitleChange(newTitle) {
-		this.setState({ title: newTitle.replace(/\n/g, '') });
 	}
 
 	handleTitleSave(newTitle) {
@@ -205,10 +199,10 @@ class PubHeader extends Component {
 										<EditableText
 											placeholder="Add a Pub Title"
 											onConfirm={this.handleTitleSave}
-											onChange={this.handleTitleChange}
-											value={this.state.title}
+											defaultValue={pubData.title}
 											multiline={true}
 											confirmOnEnterKey={true}
+											key={pubData.title}
 										/>
 									}
 									{!useEditableTitle &&

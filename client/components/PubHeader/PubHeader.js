@@ -29,9 +29,14 @@ class PubHeader extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			title: props.pubData.title,
 			isMounted: false,
+			isEditingTitle: false
 		};
 
+		this.handleTitleEdit = this.handleTitleEdit.bind(this);
+		this.handleTitleCancel = this.handleTitleCancel.bind(this);
+		this.handleTitleChange = this.handleTitleChange.bind(this);
 		this.handleTitleSave = this.handleTitleSave.bind(this);
 		this.recalculateStickyOffset = this.recalculateStickyOffset.bind(this);
 		this.stickyInstance = undefined;
@@ -65,6 +70,18 @@ class PubHeader extends Component {
 		}
 	}
 
+	handleTitleEdit() {
+		this.setState({ title: this.props.pubData.title, isEditingTitle: true });
+	}
+
+	handleTitleCancel() {
+		this.setState({ isEditingTitle: false });
+	}
+
+	handleTitleChange(newTitle) {
+		this.setState({ title: newTitle.replace(/\n/g, '') });
+	}
+
 	handleTitleSave(newTitle) {
 		return apiFetch('/api/pubs', {
 			method: 'PUT',
@@ -79,6 +96,7 @@ class PubHeader extends Component {
 				...this.props.pubData,
 				title: newTitle,
 			});
+			this.setState({ isEditingTitle: false });
 		})
 		.catch((err)=> {
 			console.error('Error Saving: ', err);
@@ -133,6 +151,9 @@ class PubHeader extends Component {
 		];
 
 		const useEditableTitle = pubData.isDraft && pubData.isManager && this.state.isMounted;
+		let pubTitle = pubData.title;
+		if (this.state.isEditingTitle) { pubTitle = this.state.title; }
+
 		return (
 			<div className="pub-header-component" style={backgroundStyle} ref={this.headerRef}>
 				<div className={`wrapper ${useHeaderImage ? 'dim' : ''}`}>
@@ -199,10 +220,12 @@ class PubHeader extends Component {
 										<EditableText
 											placeholder="Add a Pub Title"
 											onConfirm={this.handleTitleSave}
-											defaultValue={pubData.title}
+											onChange={this.handleTitleChange}
+											onEdit={this.handleTitleEdit}
+											onCancel={this.handleTitleCancel}
+											value={pubTitle}
 											multiline={true}
 											confirmOnEnterKey={true}
-											key={pubData.title}
 										/>
 									}
 									{!useEditableTitle &&

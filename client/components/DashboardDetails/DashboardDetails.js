@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Tooltip, Checkbox } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
+import ColorInput from 'components/ColorInput/ColorInput';
 import NavDrag from 'components/NavDrag/NavDrag';
 import Icon from 'components/Icon/Icon';
 import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
@@ -94,7 +95,7 @@ class DashboardDetails extends Component {
 	}
 
 	handleAccentColorChange(evt) {
-		this.setState({ accentColor: evt.target.value });
+		this.setState({ accentColor: evt.hex });
 	}
 
 	handleNavigationChange(val) {
@@ -359,13 +360,12 @@ class DashboardDetails extends Component {
 					value={this.state.email}
 					onChange={this.handleEmailChange}
 				/>
-				<InputField
-					label="Accent Color"
-					type="text"
-					value={this.state.accentColor}
-					helperText="e.g. #FF9944"
-					onChange={this.handleAccentColorChange}
-				/>
+				<InputField label="Accent Color">
+					<ColorInput
+						value={this.state.accentColor}
+						onChange={this.handleAccentColorChange}
+					/>
+				</InputField>
 				<InputField
 					label="Show Navigation Bar"
 				>

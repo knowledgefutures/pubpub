@@ -6,9 +6,15 @@ app.get('/iai', (req, res, next)=> {
 	return res.redirect('https://v3.pubpub.org/iai');
 });
 
-app.get('/pub/resisting-reduction', (req, res, next)=> {
-	if (req.hostname === 'pubpub.ito.com') {
-		return res.redirect('https://jods.mitpress.mit.edu/pub/resisting-reduction');
-	}
-	return next();
-});
+const setRedirect = (oldHostname, oldPath, newUrl)=> {
+	app.get(oldPath, (req, res, next)=> {
+		if (req.hostname === oldHostname) {
+			return res.redirect(newUrl);
+		}
+		return next();
+	});
+};
+
+setRedirect('pubpub.ito.com', '/pub/resisting-reduction', 'https://jods.mitpress.mit.edu/pub/resisting-reduction');
+setRedirect('bookbook.pubpub.org', '/pub/oki', 'https://wip.mitpress.mit.edu/pub/oki');
+setRedirect('bookbook.pubpub.org', '/oki', 'https://wip.mitpress.mit.edu/oki');

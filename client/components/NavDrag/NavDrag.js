@@ -148,6 +148,7 @@ class NavDrag extends Component {
 								<div
 									ref={provided.innerRef}
 									className={`main-list ${snapshot.isDraggingOver ? 'dragging' : ''}`}
+									{...provided.droppableProps}
 								>
 									<div className="nav-item-background accent-background" />
 									<div className="nav-item accent-color">{homeTitle}</div>
@@ -188,6 +189,7 @@ class NavDrag extends Component {
 																		<div
 																			ref={providedSub.innerRef}
 																			className={`sub-list ${snapshotSub.isDraggingOver ? 'dragging' : ''}`}
+																			{...providedSub.droppableProps}
 																		>
 																			{item.children.map((child, childIndex)=> {
 																				return (

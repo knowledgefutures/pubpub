@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unused-prop-types */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { MenuItem } from '@blueprintjs/core';
+import { MenuItem, Position } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 import { generateHash } from 'utilities';
@@ -57,8 +57,7 @@ class PageAutocomplete extends Component {
 		});
 	}
 
-	filterItems(evt) {
-		const query = evt.target.value;
+	filterItems(query) {
 		const filteredItems = this.getFilteredItems(this.props, query);
 		const createOption = {
 			title: query,
@@ -66,7 +65,7 @@ class PageAutocomplete extends Component {
 			id: generateHash(8),
 		};
 		const outputItems = query && this.props.allowCustom
-			? [createOption, ...filteredItems]
+			? [...filteredItems, createOption]
 			: filteredItems;
 		this.setState({
 			value: query,
@@ -76,7 +75,7 @@ class PageAutocomplete extends Component {
 
 	handleSelect(data) {
 		this.props.onSelect(data);
-		this.setState({ value: '' });
+		this.filterItems('');
 	}
 
 
@@ -87,15 +86,15 @@ class PageAutocomplete extends Component {
 					className="input"
 					items={this.state.items}
 					inputProps={{
-						value: this.state.value,
-						onChange: this.filterItems,
 						placeholder: this.props.placeholder,
 					}}
+					query={this.state.value}
+					onQueryChange={this.filterItems}
 					inputValueRenderer={(item) => { return item.title; }}
-					itemRenderer={(item = {}, { handleClick, isActive })=> {
+					itemRenderer={(item = {}, { handleClick, modifiers })=> {
 						return (
 							<li key={item.id || 'empty-user-create'}>
-								<span role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}>
+								<span role="button" tabIndex={-1} onClick={handleClick} className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}>
 									{item.children && <span className="new-title">Create dropdown group:</span>}
 									<span className="title">{item.title}</span>
 								</span>
@@ -103,8 +102,17 @@ class PageAutocomplete extends Component {
 						);
 					}}
 					onItemSelect={this.handleSelect}
+					resetOnSelect={true}
 					noResults={<MenuItem disabled text="No results" />}
-					popoverProps={{ popoverClassName: 'bp3-minimal collection-autocomplete-popover' }}
+					popoverProps={{
+						minimal: true,
+						position: Position.BOTTOM_LEFT,
+						modifiers: {
+							preventOverflow: { enabled: false },
+							hide: { enabled: false },
+							flip: { enabled: false },
+						},
+					}}
 				/>
 			</div>
 		);

@@ -17,29 +17,45 @@ class FormattingBarControlsEquation extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: props.attrs.value,
+			isEditing: false,
+			editingValue: '',
 		};
+		this.handleFocus = this.handleFocus.bind(this);
+		this.handleBlur = this.handleBlur.bind(this);
 		this.handleValueChange = this.handleValueChange.bind(this);
 		this.handleHTMLChange = this.handleHTMLChange.bind(this);
 		this.changeToInline = this.changeToInline.bind(this);
 		this.changeToBlock = this.changeToBlock.bind(this);
 	}
 
+	handleFocus() {
+		this.setState({
+			isEditing: true,
+			editingValue: this.props.attrs.value,
+		});
+	}
+
+	handleBlur() {
+		this.setState({
+			isEditing: false,
+		});
+	}
+
 	handleValueChange(evt) {
-		this.setState({ value: evt.target.value });
+		this.setState({ editingValue: evt.target.value });
 		const isBlock = this.props.selectedNode.type.name === 'block_equation';
 		renderLatexString(evt.target.value, isBlock, this.handleHTMLChange);
 	}
 
 	handleHTMLChange(html) {
-		this.props.updateAttrs({ value: this.state.value, html: html });
+		this.props.updateAttrs({ value: this.state.editingValue, html: html });
 	}
 
 	changeToInline() {
 		const isBlock = this.props.selectedNode.type.name === 'block_equation';
 		if (isBlock) {
 			const nodeType = this.props.editorChangeObject.view.state.schema.nodes.equation;
-			renderLatexString(this.state.value, false, (newHtml)=> {
+			renderLatexString(this.props.attrs.value, false, (newHtml)=> {
 				this.props.changeNode(nodeType, {
 					value: this.props.attrs.value,
 					html: newHtml,
@@ -52,7 +68,7 @@ class FormattingBarControlsEquation extends Component {
 		const isBlock = this.props.selectedNode.type.name === 'block_equation';
 		if (!isBlock) {
 			const nodeType = this.props.editorChangeObject.view.state.schema.nodes.block_equation;
-			renderLatexString(this.state.value, true, (newHtml)=> {
+			renderLatexString(this.props.attrs.value, true, (newHtml)=> {
 				this.props.changeNode(nodeType, {
 					value: this.props.attrs.value,
 					html: newHtml,
@@ -75,7 +91,9 @@ class FormattingBarControlsEquation extends Component {
 						<textarea
 							placeholder="Enter LaTeX math"
 							className="bp3-input bp3-fill"
-							value={this.props.attrs.value}
+							value={this.state.isEditing ? this.state.editingValue : this.props.attrs.value}
+							onFocus={this.handleFocus}
+							onBlur={this.handleBlur}
 							onChange={this.handleValueChange}
 						/>
 					</div>

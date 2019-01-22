@@ -77,7 +77,7 @@ class UserAutocomplete extends Component {
 					items={this.state.items}
 					inputProps={{
 						placeholder: this.props.placeholder,
-						className: 'bp3-large',
+						large: true,
 						inputRef: (ref)=> { this.inputRef = ref; },
 					}}
 					itemListPredicate={this.filterItems}
@@ -102,8 +102,8 @@ class UserAutocomplete extends Component {
 					onItemSelect={this.handleSelect}
 					noResults={<MenuItem disabled text="No results" />}
 					popoverProps={{
-						isOpen: this.state.queryValue,
-						popoverClassName: 'bp3-minimal user-autocomplete-popover',
+						popoverClassName: 'user-autocomplete-popover',
+						minimal: true,
 						position: Position.BOTTOM_LEFT,
 						modifiers: {
 							preventOverflow: { enabled: false },

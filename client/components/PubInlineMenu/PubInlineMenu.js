@@ -40,6 +40,7 @@ const PubInlineMenu = (props)=> {
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
 	const isReadOnly = !props.pubData.isDraft || (!props.pubData.isManager && !props.pubData.isDraftEditor);
+	if (!props.pubData.publicDiscussions) { return null; }
 	return (
 		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
 			{!isReadOnly && formattingItems.map((item)=> {
@@ -63,21 +64,23 @@ const PubInlineMenu = (props)=> {
 					/>
 				);
 			})}
-			<Button
-				className="bp3-minimal"
-				icon={<Icon icon="chat" />}
-				onClick={()=> {
-					props.onNewHighlightDiscussion({
-						from: props.editorChangeObject.selection.from,
-						to: props.editorChangeObject.selection.to,
-						version: props.pubData.activeVersion.id,
-						section: props.sectionId,
-						exact: props.editorChangeObject.selectedText.exact,
-						prefix: props.editorChangeObject.selectedText.prefix,
-						suffix: props.editorChangeObject.selectedText.suffix,
-					});
-				}}
-			/>
+			{props.pubData.publicDiscussions &&
+				<Button
+					className="bp3-minimal"
+					icon={<Icon icon="chat" />}
+					onClick={()=> {
+						props.onNewHighlightDiscussion({
+							from: props.editorChangeObject.selection.from,
+							to: props.editorChangeObject.selection.to,
+							version: props.pubData.activeVersion.id,
+							section: props.sectionId,
+							exact: props.editorChangeObject.selectedText.exact,
+							prefix: props.editorChangeObject.selectedText.prefix,
+							suffix: props.editorChangeObject.selectedText.suffix,
+						});
+					}}
+				/>
+			}
 
 		</div>
 	);

@@ -40,7 +40,7 @@ const PubInlineMenu = (props)=> {
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
 	const isReadOnly = !props.pubData.isDraft || (!props.pubData.isManager && !props.pubData.isDraftEditor);
-	if (!props.pubData.publicDiscussions) { return null; }
+	if (isReadOnly && !props.pubData.publicDiscussions) { return null; }
 	return (
 		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
 			{!isReadOnly && formattingItems.map((item)=> {

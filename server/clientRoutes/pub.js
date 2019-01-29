@@ -51,13 +51,15 @@ app.get(['/pub/:slug', '/pub/:slug/content/:sectionId', '/pub/:slug/draft', '/pu
 	})
 	.then(([initialData, pubData, firebaseToken])=> {
 		const isUnlistedDraft = !pubData.activeVersion.isPublic && pubData.draftPermissions === 'private';
-
+		const noPublicDiscussionsList = ['98a202e3-9cf2-403f-bd5e-b828f0287f40'];
+		const allowPublicDiscussions = !noPublicDiscussionsList.includes(pubData.id);
 		const newInitialData = {
 			...initialData,
 			pubData: {
 				...pubData,
 				firebaseToken: firebaseToken,
 				editorKey: `pub-${pubData.id}`,
+				publicDiscussions: allowPublicDiscussions
 			}
 		};
 		return renderToNodeStream(res,

@@ -664,6 +664,7 @@ class Pub extends Component {
 											activeDiscussionChannel={activeDiscussionChannel}
 											setDiscussionChannel={this.setDiscussionChannel}
 										/> */}
+										{pubData.publicDiscussions &&
 										<PubSideDiscussions
 											key={activeDiscussionChannel ? activeDiscussionChannel.id : 'public-channel'}
 											threads={threads}
@@ -680,11 +681,13 @@ class Pub extends Component {
 											initialContent={this.state.initialDiscussionContent}
 											getAbsolutePosition={this.getAbsolutePosition}
 										/>
+										}
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+					{pubData.publicDiscussions &&
 					<div id="discussions" className="discussions">
 						<div className="container pub">
 							<div className="row">
@@ -706,6 +709,7 @@ class Pub extends Component {
 							</div>
 						</div>
 					</div>
+					}
 
 					{/* Components that render overlays */}
 					{!this.state.linkPopupIsOpen && !isMobile &&

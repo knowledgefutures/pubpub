@@ -327,15 +327,17 @@ class PubHeader extends Component {
 											<Icon icon="chevron-down" />
 										</div>
 									</Popover>
-									<a
-										href="#discussions"
-										role="button"
-										tabIndex={-1}
-										className="detail-button"
-									>
-										{/* <span className="bp3-icon-standard bp3-icon-chat" /> */}
-										{numDiscussions} Discussion{numDiscussions === 1 ? '' : 's'} (#{activeDiscussionChannel.title})
-									</a>
+									{this.props.pubData.publicDiscussions &&
+										<a
+											href="#discussions"
+											role="button"
+											tabIndex={-1}
+											className="detail-button"
+										>
+											{/* <span className="bp3-icon-standard bp3-icon-chat" /> */}
+											{numDiscussions} Discussion{numDiscussions === 1 ? '' : 's'} (#{activeDiscussionChannel.title})
+										</a>
+									}
 									{!!numAttributions &&
 										<div
 											role="button"
@@ -372,41 +374,43 @@ class PubHeader extends Component {
 								text="Export"
 							/>
 							<span className="dot">·</span>
-							<DropdownButton
-								label={`#${this.props.activeDiscussionChannel.title}`}
-								// icon={items[props.value].icon}
-								isRightAligned={true}
-								isMinimal={true}
-								isSmall={true}
-							>
-								<ul className="channel-permissions-dropdown bp3-menu">
-									{discussionChannels.map((channel)=> {
-										return (
-											<li key={`channel-option-${channel.title}`}>
-												<button
-													className="bp3-menu-item bp3-popover-dismiss"
-													onClick={()=> {
-														this.props.setDiscussionChannel(channel.title);
-													}}
-													type="button"
-												>
-													#{channel.title}
-												</button>
-											</li>
-										);
-									})}
-									<li className="bp3-menu-divider" />
-									<li>
-										<Button
-											minimal={true}
-											text="Manage Discussion Channels"
-											onClick={()=> {
-												this.props.setOptionsMode('discussions');
-											}}
-										/>
-									</li>
-								</ul>
-							</DropdownButton>
+							{this.props.pubData.publicDiscussions &&
+								<DropdownButton
+									label={`#${this.props.activeDiscussionChannel.title}`}
+									// icon={items[props.value].icon}
+									isRightAligned={true}
+									isMinimal={true}
+									isSmall={true}
+								>
+									<ul className="channel-permissions-dropdown bp3-menu">
+										{discussionChannels.map((channel)=> {
+											return (
+												<li key={`channel-option-${channel.title}`}>
+													<button
+														className="bp3-menu-item bp3-popover-dismiss"
+														onClick={()=> {
+															this.props.setDiscussionChannel(channel.title);
+														}}
+														type="button"
+													>
+														#{channel.title}
+													</button>
+												</li>
+											);
+										})}
+										<li className="bp3-menu-divider" />
+										<li>
+											<Button
+												minimal={true}
+												text="Manage Discussion Channels"
+												onClick={()=> {
+													this.props.setOptionsMode('discussions');
+												}}
+											/>
+										</li>
+									</ul>
+								</DropdownButton>
+							}
 						</div>
 					</div>
 				</div>

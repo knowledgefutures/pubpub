@@ -71,7 +71,9 @@ const PubOptions = (props)=> {
 		'social',
 		'export',
 		'analytics',
-	];
+	].filter((item)=> {
+		return item !== 'discussions' || props.pubData.publicDiscussions;
+	});
 
 	const defaultChildProps = {
 		communityData: props.communityData,

@@ -50,7 +50,7 @@
     "@blueprintjs/icons": "^3.4.0",
     "@blueprintjs/select": "^3.4.0",
     "@pubpub/editor": "^5.3.2",
-    "algoliasearch": "^3.31.0",
+    "algoliasearch": "^3.32.0",
     "amqplib": "^0.5.3",
     "aws-sdk": "^2.403.0",
     "babel-loader": "^8.0.4",

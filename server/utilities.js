@@ -178,6 +178,13 @@ export const generateMetaComponents = ({ initialData, title, description, image,
 	const avatar = image || initialData.communityData.avatar;
 	let outputComponents = [];
 
+	if (!initialData.locationData.isBasePubPub) {
+		outputComponents = [
+			...outputComponents,
+			<link key="rss1" rel="alternate" type="application/rss+xml" title={`${title} RSS Feed`} href={`https://${initialData.locationData.hostname}/rss.xml`} />
+		];
+	}
+
 	if (title) {
 		outputComponents = [
 			...outputComponents,

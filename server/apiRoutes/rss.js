@@ -103,7 +103,7 @@ app.get('/rss.xml', (req, res)=> {
 				url: `${communityUrl}/pub/${pub.slug}`,
 				guid: pub.id,
 				author: authors,
-				date: pub.firstPublishedAt,
+				date: pub.listedDate,
 				enclosure: {
 					url: pub.avatar
 				}

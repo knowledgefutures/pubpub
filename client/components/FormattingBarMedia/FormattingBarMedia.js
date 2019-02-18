@@ -17,6 +17,7 @@ require('./formattingBarMedia.scss');
 const propTypes = {
 	onInsert: PropTypes.func.isRequired,
 	isSmall: PropTypes.bool.isRequired,
+	editorChangeObject: PropTypes.object.isRequired,
 };
 
 class FormattingBarMedia extends Component {

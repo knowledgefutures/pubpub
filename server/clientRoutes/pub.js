@@ -51,7 +51,17 @@ app.get(['/pub/:slug', '/pub/:slug/content/:sectionId', '/pub/:slug/draft', '/pu
 	})
 	.then(([initialData, pubData, firebaseToken])=> {
 		const isUnlistedDraft = !pubData.activeVersion.isPublic && pubData.draftPermissions === 'private';
-		const noPublicDiscussionsList = ['98a202e3-9cf2-403f-bd5e-b828f0287f40'];
+		const noPublicDiscussionsList =
+		[
+			'2cc76a0e-0c75-4b43-a0bf-4563a14c4383',
+			'6b394588-80a4-45d9-8069-8938e1549aa6',
+			'a7770635-f22f-4785-9904-8ae64ac286fa',
+			'25e3cdd1-b665-4d13-97f1-39f87f74a1e8',
+			'0efde196-f4c0-419a-a0d8-c9984fe215ed',
+			'30934456-bb22-4099-ae2e-4b1a4eb5db47',
+			'07343849-1e82-4d0e-a806-430fb32bae81',
+			'fb6bfdbb-3037-408f-bfc5-e8be34d590a6'
+		];
 		const allowPublicDiscussions = !noPublicDiscussionsList.includes(pubData.id);
 		const newInitialData = {
 			...initialData,

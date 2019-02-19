@@ -5,7 +5,7 @@ import { getInitialData } from '../utilities';
 app.get('/opensearch.xml', (req, res)=> {
 	return getInitialData(req)
 	.then((initialData)=> {
-		const domain = initialData.communityData.domain || `${initialData.communityData.subdomain}.pubpub.org`;
+		const domain = initialData.communityData.domain || `${initialData.communityData.subdomain || 'www'}.pubpub.org`;
 		const outputXML = stripIndent(`
 			<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
 				<ShortName>${initialData.communityData.title}</ShortName>

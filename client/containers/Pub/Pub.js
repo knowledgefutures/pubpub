@@ -70,6 +70,7 @@ class Pub extends Component {
 			clickedMarks: [],
 			linkPopupIsOpen: false,
 		};
+		console.log(this.state);
 		this.firebaseRef = null;
 		this.pageRef = React.createRef();
 		this.sideMarginRef = React.createRef();

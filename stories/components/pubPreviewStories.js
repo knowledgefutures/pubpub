@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import PubPreview from 'components/PubPreview/PubPreview';
-import { collectionData } from '../data';
+import { collectionData, pubData } from '../data';
 
 
 storiesOf('Components/PubPreview', module)
@@ -11,6 +11,7 @@ storiesOf('Components/PubPreview', module)
 		<div className="row">
 			<div className="col-12">
 				<PubPreview
+					pubData={pubData}
 					title={collectionData.pubs[0].title}
 					description={collectionData.pubs[0].description}
 					slug={collectionData.pubs[0].slug}
@@ -26,6 +27,7 @@ storiesOf('Components/PubPreview', module)
 		<div className="row">
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title={collectionData.pubs[1].title}
 					description={collectionData.pubs[1].description}
 					slug={collectionData.pubs[1].slug}
@@ -38,6 +40,7 @@ storiesOf('Components/PubPreview', module)
 			</div>
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title={collectionData.pubs[2].title}
 					description={collectionData.pubs[2].description}
 					slug={collectionData.pubs[2].slug}
@@ -50,6 +53,7 @@ storiesOf('Components/PubPreview', module)
 			</div>
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title={collectionData.pubs[1].title}
 					description={collectionData.pubs[1].description}
 					slug={collectionData.pubs[1].slug}
@@ -74,6 +78,7 @@ storiesOf('Components/PubPreview', module)
 		<div className="row">
 			<div className="col-12">
 				<PubPreview
+					pubData={pubData}
 					title={collectionData.pubs[0].title}
 					description={collectionData.pubs[0].description}
 					slug={collectionData.pubs[0].slug}
@@ -86,6 +91,7 @@ storiesOf('Components/PubPreview', module)
 			</div>
 			<div className="col-12">
 				<PubPreview
+					pubData={pubData}
 					title={collectionData.pubs[1].title}
 					description={collectionData.pubs[1].description}
 					slug={collectionData.pubs[1].slug}
@@ -102,6 +108,7 @@ storiesOf('Components/PubPreview', module)
 		<div className="row">
 			<div className="col-12">
 				<PubPreview
+					pubData={pubData}
 					size="large"
 					isPlaceholder={true}
 				/>
@@ -110,6 +117,7 @@ storiesOf('Components/PubPreview', module)
 		<div className="row">
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title="A sample title for placeholder"
 					size="medium"
 					isPlaceholder={true}
@@ -117,6 +125,7 @@ storiesOf('Components/PubPreview', module)
 			</div>
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title="A sample title for placeholder"
 					size="medium"
 					isPlaceholder={true}
@@ -127,6 +136,7 @@ storiesOf('Components/PubPreview', module)
 		<div className="row">
 			<div className="col-12">
 				<PubPreview
+					pubData={pubData}
 					size="small"
 					isPlaceholder={true}
 				/>
@@ -137,6 +147,7 @@ storiesOf('Components/PubPreview', module)
 		<div className="row">
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title="a"
 					description={collectionData.pubs[0].description}
 					slug={collectionData.pubs[0].slug}
@@ -148,6 +159,7 @@ storiesOf('Components/PubPreview', module)
 			</div>
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title="b"
 					description={collectionData.pubs[0].description}
 					slug={collectionData.pubs[0].slug}
@@ -159,6 +171,7 @@ storiesOf('Components/PubPreview', module)
 			</div>
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title="c"
 					description={collectionData.pubs[0].description}
 					slug={collectionData.pubs[0].slug}
@@ -170,6 +183,7 @@ storiesOf('Components/PubPreview', module)
 			</div>
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title="d"
 					description={collectionData.pubs[0].description}
 					slug={collectionData.pubs[0].slug}
@@ -181,6 +195,7 @@ storiesOf('Components/PubPreview', module)
 			</div>
 			<div className="col-6">
 				<PubPreview
+					pubData={pubData}
 					title="e"
 					description={collectionData.pubs[0].description}
 					slug={collectionData.pubs[0].slug}

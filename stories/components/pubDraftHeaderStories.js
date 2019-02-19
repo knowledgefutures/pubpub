@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import PubDraftHeader from 'components/PubDraftHeader/PubDraftHeader';
-import { pubData, locationData } from '../data';
+import { pubData, locationData, loginData} from '../data';
 
 storiesOf('Components/PubDraftHeader', module)
 .add('default', () => (
@@ -10,6 +10,9 @@ storiesOf('Components/PubDraftHeader', module)
 			pubData={pubData}
 			locationData={locationData}
 			setOverlayPanel={()=>{}}
+			loginData={loginData}
+			editorChangeObject={{}}
+			activeCollaborators={[]}
 		/>
 	</div>
 ));

@@ -32,7 +32,7 @@ class PubDraftHeader extends Component {
 	}
 
 	componentWillUnmount() {
-		this.stickyInstance.cleanUp();
+		this.stickyInstance.cleanup();
 	}
 
 	render() {

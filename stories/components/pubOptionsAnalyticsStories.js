@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import PubOptionsAnalytics from 'components/PubOptionsAnalytics/PubOptionsAnalytics';
-import { pubData, communityData } from '../data';
+import { pubData, communityData, locationData } from '../data';
 
 require('components/PubOptions/pubOptions.scss');
 
@@ -12,6 +12,7 @@ storiesOf('Components/PubOptionsAnalytics', module)
 			<PubOptionsAnalytics
 				pubData={pubData}
 				communityData={communityData}
+				locationData={locationData}
 				setPubData={()=>{}}
 			/>
 		</div>

@@ -57,7 +57,7 @@ class PubHeader extends Component {
 	}
 
 	componentWillUnmount() {
-		this.stickyInstance.cleanup();
+		this.cleanupSticky();
 		window.removeEventListener('resize', this.handleResize);
 	}
 
@@ -65,8 +65,14 @@ class PubHeader extends Component {
 		const nextOffsetHeight = this.headerRef.current.offsetHeight;
 		if (nextOffsetHeight !== this.offsetHeight) {
 			this.offsetHeight = nextOffsetHeight;
-			this.stickyInstance.cleanup();
+			this.cleanupSticky();
 			this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
+		}
+	}
+
+	cleanupSticky() {
+		if (this.stickyInstance && typeof this.stickyInstance.cleanup === "function") {
+			this.stickyInstance.cleanup();
 		}
 	}
 

@@ -14,14 +14,10 @@ export const accentDataLight = {
 	accentMinimalColor: 'rgba(38, 224, 208, 0.15)',
 };
 
-const initialData = require('./dataInitial.js');
+import initialData from './dataInitial.js';
+export const {locationData, loginData} = initialData;
 
-export const locationData = initialData.locationData;
-export const loginData = initialData.loginData;
-// export const communityData = initialData.communityData;
-export const communityData = require('./dataCommunity.js');
-export const collectionData = require('./dataCollection.js');
-export const pubData = require('./dataPub.js');
-export const plainDoc = require('./dataDocs.js').plainDoc;
-export const imageDoc = require('./dataDocs.js').imageDoc;
-export const fullDoc = require('./dataDocs.js').fullDoc;
+export {default as communityData} from './dataCommunity.js';
+export {default as collectionData} from './dataCollection.js';
+export {default as pubData} from './dataPub.js';
+export {plainDoc, imageDoc, fullDoc} from './dataDocs.js';

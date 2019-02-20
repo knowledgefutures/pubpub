@@ -2,7 +2,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import Header from 'components/Header/Header';
 import AccentStyle from 'components/AccentStyle/AccentStyle';
-import { accentDataDark, accentDataLight } from '../data';
+import { accentDataDark, accentDataLight, communityData, locationData } from '../data';
 
 const wrapperStyle = { margin: '1em', boxShadow: '0px 0px 1px rgba(0, 0, 0, 0.25)' };
 const titleStyle = { margin: '1em 1em -0.5em' };
@@ -29,6 +29,9 @@ const headerBars = function(isBasePubPub) {
 			<h4 style={titleStyle}>Logged Out</h4>
 			<div style={wrapperStyle}>
 				<Header
+					loginData={{isAdmin: false}}
+					communityData={communityData}
+					locationData={locationData}
 					smallHeaderLogo={data.smallHeaderLogo}
 					onLogout={data.onLogout}
 					isBasePubPub={data.isBasePubPub}
@@ -39,6 +42,8 @@ const headerBars = function(isBasePubPub) {
 			<h4 style={titleStyle}>Logged In · User</h4>
 			<div style={wrapperStyle}>
 				<Header
+					communityData={communityData}
+					locationData={locationData}
 					loginData={{
 						fullName: data.userName,
 						initials: data.userInitials,
@@ -55,6 +60,8 @@ const headerBars = function(isBasePubPub) {
 			<h4 style={titleStyle}>Logged In · Admin</h4>
 			<div style={wrapperStyle}>
 				<Header
+					communityData={communityData}
+					locationData={locationData}
 					loginData={{
 						fullName: data.userName,
 						initials: data.userInitials,
@@ -74,6 +81,8 @@ const headerBars = function(isBasePubPub) {
 					<h4 style={titleStyle}>Home · No Background</h4>
 					<div style={wrapperStyle}>
 						<Header
+							communityData={communityData}
+							locationData={locationData}
 							loginData={{
 								fullName: data.userName,
 								initials: data.userInitials,
@@ -93,6 +102,8 @@ const headerBars = function(isBasePubPub) {
 					<h4 style={titleStyle}>Home · Background (Image)</h4>
 					<div style={wrapperStyle}>
 						<Header
+							communityData={communityData}
+							locationData={locationData}
 							loginData={{
 								fullName: data.userName,
 								initials: data.userInitials,

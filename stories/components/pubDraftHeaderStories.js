@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import PubDraftHeader from 'components/PubDraftHeader/PubDraftHeader';
-import { pubData, locationData, loginData} from '../data';
+import { pubData, locationData, loginData } from '../data';
 
 storiesOf('Components/PubDraftHeader', module)
 .add('default', () => (

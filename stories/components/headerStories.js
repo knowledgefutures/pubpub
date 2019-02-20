@@ -29,7 +29,7 @@ const headerBars = function(isBasePubPub) {
 			<h4 style={titleStyle}>Logged Out</h4>
 			<div style={wrapperStyle}>
 				<Header
-					loginData={{isAdmin: false}}
+					loginData={{ isAdmin: false }}
 					communityData={communityData}
 					locationData={locationData}
 					smallHeaderLogo={data.smallHeaderLogo}

@@ -5,7 +5,13 @@ import DiscussionLabelsList from 'components/DiscussionLabelsList/DiscussionLabe
 import DiscussionSortList from 'components/DiscussionSortList/DiscussionSortList';
 import DiscussionInput from 'components/DiscussionInput/DiscussionInput';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
-import { Popover, PopoverInteractionKind, Position, NonIdealState, Button } from '@blueprintjs/core';
+import {
+	Popover,
+	PopoverInteractionKind,
+	Position,
+	NonIdealState,
+	Button,
+} from '@blueprintjs/core';
 
 require('./discussionList.scss');
 
@@ -64,84 +70,161 @@ class DiscussionList extends Component {
 
 	handlePostNewThread(discussionObject) {
 		this.setState({ newThreadLoading: true });
-		return this.props.onPostDiscussion(discussionObject)
-		.then(()=> {
+		return this.props.onPostDiscussion(discussionObject).then(() => {
 			this.setState({ newThreadLoading: false });
 		});
 	}
 
 	toggleFilteredAuthor(authorId) {
-		this.setState((prevState)=> {
-			const newFilteredAuthors = prevState.filteredAuthors.indexOf(authorId) > -1
-				? prevState.filteredAuthors.filter((id)=> { return id !== authorId; })
-				: [...prevState.filteredAuthors, authorId];
+		this.setState((prevState) => {
+			const newFilteredAuthors =
+				prevState.filteredAuthors.indexOf(authorId) > -1
+					? prevState.filteredAuthors.filter((id) => {
+							return id !== authorId;
+					  })
+					: [...prevState.filteredAuthors, authorId];
 			return { filteredAuthors: newFilteredAuthors };
 		});
 	}
 
 	toggleFilteredLabel(labelId) {
-		this.setState((prevState)=> {
-			const newFilteredLabels = prevState.filteredLabels.indexOf(labelId) > -1
-				? prevState.filteredLabels.filter((id)=> { return id !== labelId; })
-				: [...prevState.filteredLabels, labelId];
+		this.setState((prevState) => {
+			const newFilteredLabels =
+				prevState.filteredLabels.indexOf(labelId) > -1
+					? prevState.filteredLabels.filter((id) => {
+							return id !== labelId;
+					  })
+					: [...prevState.filteredLabels, labelId];
 			return { filteredLabels: newFilteredLabels };
 		});
 	}
 
 	filterAndSortThreads(threads, isArchivedList) {
-		return threads.filter((items)=> {
-			const threadIsArchived = items.reduce((prev, curr)=> {
-				if (curr.isArchived) { return true; }
-				return prev;
-			}, false);
-			return isArchivedList ? threadIsArchived : !threadIsArchived;
-		}).filter((items)=> {
-			const threadLabels = items.reduce((prev, curr)=> {
-				if (curr.labels && curr.labels.length) { return curr.labels; }
-				return prev;
-			}, []);
-			if (this.state.filteredLabels.length === 0) { return true; }
-			const hasNecessaryLabel = this.state.filteredLabels.reduce((prev, curr)=> {
-				if (threadLabels.indexOf(curr) === -1) { return false; }
-				return prev;
-			}, true);
-			return hasNecessaryLabel;
-		}).filter((items)=> {
-			const authors = {};
-			items.forEach((discussion)=> {
-				authors[discussion.author.id] = discussion.author;
+		return threads
+			.filter((items) => {
+				const threadIsArchived = items.reduce((prev, curr) => {
+					if (curr.isArchived) {
+						return true;
+					}
+					return prev;
+				}, false);
+				return isArchivedList ? threadIsArchived : !threadIsArchived;
+			})
+			.filter((items) => {
+				const threadLabels = items.reduce((prev, curr) => {
+					if (curr.labels && curr.labels.length) {
+						return curr.labels;
+					}
+					return prev;
+				}, []);
+				if (this.state.filteredLabels.length === 0) {
+					return true;
+				}
+				const hasNecessaryLabel = this.state.filteredLabels.reduce((prev, curr) => {
+					if (threadLabels.indexOf(curr) === -1) {
+						return false;
+					}
+					return prev;
+				}, true);
+				return hasNecessaryLabel;
+			})
+			.filter((items) => {
+				const authors = {};
+				items.forEach((discussion) => {
+					authors[discussion.author.id] = discussion.author;
+				});
+				if (this.state.filteredAuthors.length === 0) {
+					return true;
+				}
+				const hasNecessaryAuthor = this.state.filteredAuthors.reduce((prev, curr) => {
+					if (!authors[curr]) {
+						return false;
+					}
+					return prev;
+				}, true);
+				return hasNecessaryAuthor;
+			})
+			.sort((foo, bar) => {
+				/* Newest Thread */
+				if (
+					this.state.sortMode === 'newestThread' &&
+					foo[0].threadNumber > bar[0].threadNumber
+				) {
+					return -1;
+				}
+				if (
+					this.state.sortMode === 'newestThread' &&
+					foo[0].threadNumber < bar[0].threadNumber
+				) {
+					return 1;
+				}
+				/* Oldest Thread */
+				if (
+					this.state.sortMode === 'oldestThread' &&
+					foo[0].threadNumber < bar[0].threadNumber
+				) {
+					return -1;
+				}
+				if (
+					this.state.sortMode === 'oldestThread' &&
+					foo[0].threadNumber > bar[0].threadNumber
+				) {
+					return 1;
+				}
+				/* Newest Reply */
+				const fooNewestReply = foo.reduce((prev, curr) => {
+					if (curr.createdAt > prev) {
+						return curr.createdAt;
+					}
+					return prev;
+				}, '0000-02-01T22:21:19.608Z');
+				const barNewestReply = bar.reduce((prev, curr) => {
+					if (curr.createdAt > prev) {
+						return curr.createdAt;
+					}
+					return prev;
+				}, '0000-02-01T22:21:19.608Z');
+				if (this.state.sortMode === 'newestReply' && fooNewestReply > barNewestReply) {
+					return -1;
+				}
+				if (this.state.sortMode === 'newestReply' && fooNewestReply < barNewestReply) {
+					return 1;
+				}
+				/* Oldest Reply */
+				const fooOldestReply = foo.reduce((prev, curr) => {
+					if (curr.createdAt < prev) {
+						return curr.createdAt;
+					}
+					return prev;
+				}, '9999-02-01T22:21:19.608Z');
+				const barOldestReply = bar.reduce((prev, curr) => {
+					if (curr.createdAt < prev) {
+						return curr.createdAt;
+					}
+					return prev;
+				}, '9999-02-01T22:21:19.608Z');
+				if (this.state.sortMode === 'oldestReply' && fooOldestReply < barOldestReply) {
+					return -1;
+				}
+				if (this.state.sortMode === 'oldestReply' && fooOldestReply > barOldestReply) {
+					return 1;
+				}
+				/* Most Replies */
+				if (this.state.sortMode === 'mostReplies' && foo.length > bar.length) {
+					return -1;
+				}
+				if (this.state.sortMode === 'mostReplies' && foo.length < bar.length) {
+					return 1;
+				}
+				/* Least Replies */
+				if (this.state.sortMode === 'leastReplies' && foo.length < bar.length) {
+					return -1;
+				}
+				if (this.state.sortMode === 'leastReplies' && foo.length > bar.length) {
+					return 1;
+				}
+				return 0;
 			});
-			if (this.state.filteredAuthors.length === 0) { return true; }
-			const hasNecessaryAuthor = this.state.filteredAuthors.reduce((prev, curr)=> {
-				if (!authors[curr]) { return false; }
-				return prev;
-			}, true);
-			return hasNecessaryAuthor;
-		}).sort((foo, bar)=> {
-			/* Newest Thread */
-			if (this.state.sortMode === 'newestThread' && foo[0].threadNumber > bar[0].threadNumber) { return -1; }
-			if (this.state.sortMode === 'newestThread' && foo[0].threadNumber < bar[0].threadNumber) { return 1; }
-			/* Oldest Thread */
-			if (this.state.sortMode === 'oldestThread' && foo[0].threadNumber < bar[0].threadNumber) { return -1; }
-			if (this.state.sortMode === 'oldestThread' && foo[0].threadNumber > bar[0].threadNumber) { return 1; }
-			/* Newest Reply */
-			const fooNewestReply = foo.reduce((prev, curr)=> { if (curr.createdAt > prev) { return curr.createdAt; } return prev; }, '0000-02-01T22:21:19.608Z');
-			const barNewestReply = bar.reduce((prev, curr)=> { if (curr.createdAt > prev) { return curr.createdAt; } return prev; }, '0000-02-01T22:21:19.608Z');
-			if (this.state.sortMode === 'newestReply' && fooNewestReply > barNewestReply) { return -1; }
-			if (this.state.sortMode === 'newestReply' && fooNewestReply < barNewestReply) { return 1; }
-			/* Oldest Reply */
-			const fooOldestReply = foo.reduce((prev, curr)=> { if (curr.createdAt < prev) { return curr.createdAt; } return prev; }, '9999-02-01T22:21:19.608Z');
-			const barOldestReply = bar.reduce((prev, curr)=> { if (curr.createdAt < prev) { return curr.createdAt; } return prev; }, '9999-02-01T22:21:19.608Z');
-			if (this.state.sortMode === 'oldestReply' && fooOldestReply < barOldestReply) { return -1; }
-			if (this.state.sortMode === 'oldestReply' && fooOldestReply > barOldestReply) { return 1; }
-			/* Most Replies */
-			if (this.state.sortMode === 'mostReplies' && foo.length > bar.length) { return -1; }
-			if (this.state.sortMode === 'mostReplies' && foo.length < bar.length) { return 1; }
-			/* Least Replies */
-			if (this.state.sortMode === 'leastReplies' && foo.length < bar.length) { return -1; }
-			if (this.state.sortMode === 'leastReplies' && foo.length > bar.length) { return 1; }
-			return 0;
-		});
 	}
 
 	render() {
@@ -155,7 +238,7 @@ class DiscussionList extends Component {
 		const threadsToShow = this.state.isArchivedMode ? archivedThreads : activeThreads;
 		const discussionChannels = [
 			{ title: 'public' },
-			...pubData.discussionChannels.filter((channel)=> {
+			...pubData.discussionChannels.filter((channel) => {
 				return !channel.isArchived;
 			}),
 		];
@@ -171,12 +254,12 @@ class DiscussionList extends Component {
 						isRightAligned={true}
 					>
 						<ul className="channel-permissions-dropdown bp3-menu">
-							{discussionChannels.map((channel)=> {
+							{discussionChannels.map((channel) => {
 								return (
 									<li key={`channel-option-${channel.title}`}>
 										<button
 											className="bp3-menu-item bp3-popover-dismiss"
-											onClick={()=> {
+											onClick={() => {
 												this.props.setDiscussionChannel(channel.title);
 											}}
 											type="button"
@@ -207,7 +290,9 @@ class DiscussionList extends Component {
 						<Button
 							className={`bp3-minimal ${!this.state.isArchivedMode ? 'active' : ''}`}
 							onClick={this.setDiscussionsMode}
-							text={`${activeThreads.length} Discussion${activeThreads.length === 1 ? '' : 's'}`}
+							text={`${activeThreads.length} Discussion${
+								activeThreads.length === 1 ? '' : 's'
+							}`}
 						/>
 						<Button
 							className={`bp3-minimal ${this.state.isArchivedMode ? 'active' : ''}`}
@@ -249,7 +334,13 @@ class DiscussionList extends Component {
 							transitionDuration={-1}
 							inheritDarkTheme={false}
 						>
-							<div className={`bp3-button bp3-minimal ${this.state.filteredLabels.length ? 'active' : ''}`}>Labels</div>
+							<div
+								className={`bp3-button bp3-minimal ${
+									this.state.filteredLabels.length ? 'active' : ''
+								}`}
+							>
+								Labels
+							</div>
 						</Popover>
 						<Popover
 							content={
@@ -264,25 +355,35 @@ class DiscussionList extends Component {
 							transitionDuration={-1}
 							inheritDarkTheme={false}
 						>
-							<div className={`bp3-button bp3-minimal ${this.state.sortMode !== 'newestThread' ? 'active' : ''}`}>Sort</div>
+							<div
+								className={`bp3-button bp3-minimal ${
+									this.state.sortMode !== 'newestThread' ? 'active' : ''
+								}`}
+							>
+								Sort
+							</div>
 						</Popover>
 					</div>
 				</div>
 
-				{!this.state.isArchivedMode && !activeThreads.length &&
+				{!this.state.isArchivedMode && !activeThreads.length && (
 					<NonIdealState
 						title={filtersActive ? 'No Discussions Match Filter' : 'No Discussions Yet'}
 						visual="bp3-icon-widget"
 					/>
-				}
+				)}
 
-				{this.state.isArchivedMode && !archivedThreads.length &&
+				{this.state.isArchivedMode && !archivedThreads.length && (
 					<NonIdealState
-						title={filtersActive ? 'No Archived Discussions Match Filter' : 'No Archived Discussions'}
+						title={
+							filtersActive
+								? 'No Archived Discussions Match Filter'
+								: 'No Archived Discussions'
+						}
 						visual="bp3-icon-widget"
 					/>
-				}
-				{threadsToShow.map((thread)=> {
+				)}
+				{threadsToShow.map((thread) => {
 					return (
 						<DiscussionThread
 							key={`thread-${thread[0].id}`}

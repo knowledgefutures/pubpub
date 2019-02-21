@@ -24,7 +24,7 @@ const LayoutEditorInsert = function(props) {
 				limit: 0,
 				pubIds: [],
 				tagIds: [],
-			}
+			},
 		},
 		{
 			title: 'Table of Contents',
@@ -38,7 +38,7 @@ const LayoutEditorInsert = function(props) {
 				hideByline: true,
 				hideDates: true,
 				hideContributors: true,
-			}
+			},
 		},
 	];
 	const bannerBlocks = [
@@ -56,7 +56,7 @@ const LayoutEditorInsert = function(props) {
 				defaultTagIds: [],
 				buttonUrl: '',
 				buttonType: 'none',
-			}
+			},
 		},
 		{
 			title: 'Submission Button Banner',
@@ -72,7 +72,7 @@ const LayoutEditorInsert = function(props) {
 				defaultTagIds: [],
 				buttonUrl: '',
 				buttonType: 'create-pub',
-			}
+			},
 		},
 	];
 	const pagesBlocks = [
@@ -81,10 +81,10 @@ const LayoutEditorInsert = function(props) {
 			type: 'pages',
 			content: {
 				title: '',
-				pageIds: props.communityData.pages.slice(0, 3).map((page)=> {
+				pageIds: props.communityData.pages.slice(0, 3).map((page) => {
 					return page.id;
 				}),
-			}
+			},
 		},
 	];
 	const htmlBlocks = [
@@ -93,7 +93,7 @@ const LayoutEditorInsert = function(props) {
 			type: 'html',
 			content: {
 				html: '',
-			}
+			},
 		},
 	];
 	const textBlocks = [
@@ -103,15 +103,17 @@ const LayoutEditorInsert = function(props) {
 			content: {
 				text: undefined,
 				align: 'left',
-			}
+			},
 		},
 	];
 
-	const generateMenuItem = (item)=> {
+	const generateMenuItem = (item) => {
 		return (
 			<MenuItem
 				key={`insert-${item.type}-${item.title}`}
-				onClick={()=>{ onInsert(insertIndex, item.type, item.content); }}
+				onClick={() => {
+					onInsert(insertIndex, item.type, item.content);
+				}}
 				text={item.title}
 				shouldDismissPopover={true}
 			/>
@@ -128,7 +130,7 @@ const LayoutEditorInsert = function(props) {
 								<Icon icon="widget-header" />
 							</h6>
 						</li>
-						{pubsBlocks.map((item)=> {
+						{pubsBlocks.map((item) => {
 							return generateMenuItem(item);
 						})}
 						<li className="bp3-menu-header">
@@ -137,7 +139,7 @@ const LayoutEditorInsert = function(props) {
 								<Icon icon="vertical-distribution" />
 							</h6>
 						</li>
-						{bannerBlocks.map((item)=> {
+						{bannerBlocks.map((item) => {
 							return generateMenuItem(item);
 						})}
 						<li className="bp3-menu-header">
@@ -146,7 +148,7 @@ const LayoutEditorInsert = function(props) {
 								<Icon icon="new-text-box" />
 							</h6>
 						</li>
-						{textBlocks.map((item)=> {
+						{textBlocks.map((item) => {
 							return generateMenuItem(item);
 						})}
 						<li className="bp3-menu-header">
@@ -155,7 +157,7 @@ const LayoutEditorInsert = function(props) {
 								<Icon icon="code" />
 							</h6>
 						</li>
-						{htmlBlocks.map((item)=> {
+						{htmlBlocks.map((item) => {
 							return generateMenuItem(item);
 						})}
 						<li className="bp3-menu-header">
@@ -164,7 +166,7 @@ const LayoutEditorInsert = function(props) {
 								<Icon icon="application" />
 							</h6>
 						</li>
-						{pagesBlocks.map((item)=> {
+						{pagesBlocks.map((item) => {
 							return generateMenuItem(item);
 						})}
 					</Menu>
@@ -176,7 +178,9 @@ const LayoutEditorInsert = function(props) {
 				inheritDarkTheme={false}
 				usePortal={false}
 			>
-				<button type="button" className="bp3-button bp3-icon-add">Add Block</button>
+				<button type="button" className="bp3-button bp3-icon-add">
+					Add Block
+				</button>
 			</Popover>
 			<div className="center-line" />
 		</div>

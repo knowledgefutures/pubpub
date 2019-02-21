@@ -7,7 +7,7 @@
 		display: flex;
 	}
 	.bp3-input-group {
-		margin-top: .25em;
+		margin-top: 0.25em;
 	}
 	.left {
 		.title {
@@ -44,7 +44,7 @@
 		&.separated {
 			padding: 1em 0em;
 			li:not(:last-child):after {
-				content: "·";
+				content: '·';
 				display: inline-block;
 				padding: 0em 0.75em;
 			}
@@ -59,14 +59,15 @@
 		display: block;
 	}
 	&.base-pubpub {
-		border-top: 1px solid #CCC;
+		border-top: 1px solid #ccc;
 		.title {
 			display: none;
 		}
 	}
 }
 
-@media only screen and (max-width: 720px) {  /* Used to be 45em */
+@media only screen and (max-width: 720px) {
+	/* Used to be 45em */
 	.footer-component {
 		text-align: center;
 		font-size: 18px;

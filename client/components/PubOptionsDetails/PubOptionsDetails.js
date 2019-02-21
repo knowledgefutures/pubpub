@@ -45,35 +45,35 @@ class PubOptionsDetails extends Component {
 	updateTitle(evt) {
 		this.setState({
 			hasUpdated: true,
-			title: evt.target.value
+			title: evt.target.value,
 		});
 	}
 
 	updateSlug(evt) {
 		this.setState({
 			hasUpdated: true,
-			slug: slugifyString(evt.target.value)
+			slug: slugifyString(evt.target.value),
 		});
 	}
 
 	updateDescription(evt) {
 		this.setState({
 			hasUpdated: true,
-			description: evt.target.value.substring(0, 280).replace(/\n/g, ' ')
+			description: evt.target.value.substring(0, 280).replace(/\n/g, ' '),
 		});
 	}
 
 	updateAvatar(val) {
 		this.setState({
 			hasUpdated: true,
-			avatar: val
+			avatar: val,
 		});
 	}
 
 	updateUseHeaderImage(evt) {
 		this.setState({
 			hasUpdated: true,
-			useHeaderImage: evt.target.checked
+			useHeaderImage: evt.target.checked,
 		});
 	}
 
@@ -93,33 +93,35 @@ class PubOptionsDetails extends Component {
 				...newValues,
 				pubId: this.props.pubData.id,
 				communityId: this.props.communityData.id,
+			}),
+		})
+			.then(() => {
+				/* Load new URL if slug changes */
+				if (newValues.slug && newValues.slug !== this.props.pubData.slug) {
+					window.location.href = `/pub/${newValues.slug}/${
+						this.props.pubData.isDraft ? 'draft' : ''
+					}`;
+				} else {
+					this.setState({
+						hasUpdated: false,
+						isLoading: false,
+					});
+					this.props.setPubData({
+						...this.props.pubData,
+						...newValues,
+					});
+					this.showSaveSuccess();
+				}
 			})
-		})
-		.then(()=> {
-			/* Load new URL if slug changes */
-			if (newValues.slug && newValues.slug !== this.props.pubData.slug) {
-				window.location.href = `/pub/${newValues.slug}/${this.props.pubData.isDraft ? 'draft' : ''}`;
-			} else {
-				this.setState({
-					hasUpdated: false,
-					isLoading: false,
-				});
-				this.props.setPubData({
-					...this.props.pubData,
-					...newValues
-				});
-				this.showSaveSuccess();
-			}
-		})
-		.catch((err)=> {
-			console.error('Error Saving: ', err);
-			this.setState({ isLoading: false });
-		});
+			.catch((err) => {
+				console.error('Error Saving: ', err);
+				this.setState({ isLoading: false });
+			});
 	}
 
 	showSaveSuccess() {
 		this.setState({ saveSuccess: true });
-		this.saveTimeout = setTimeout(()=> {
+		this.saveTimeout = setTimeout(() => {
 			this.setState({ saveSuccess: false });
 		}, 5000);
 	}
@@ -135,7 +137,11 @@ class PubOptionsDetails extends Component {
 						loading={this.state.isLoading}
 						disabled={!this.state.hasUpdated || !this.state.title || !this.state.slug}
 					/>
-					<div className={`save-success-message ${this.state.saveSuccess && !this.state.hasUpdated ? 'active' : ''}`}>
+					<div
+						className={`save-success-message ${
+							this.state.saveSuccess && !this.state.hasUpdated ? 'active' : ''
+						}`}
+					>
 						<span className="bp3-icon-standard bp3-icon-tick-circle" /> Saved
 					</div>
 				</div>
@@ -148,7 +154,9 @@ class PubOptionsDetails extends Component {
 				/>
 				<InputField
 					label="Link"
-					helperText={`Pub will be available at ${window.location.host}/pub/${this.state.slug}`}
+					helperText={`Pub will be available at ${window.location.host}/pub/${
+						this.state.slug
+					}`}
 					value={this.state.slug}
 					onChange={this.updateSlug}
 					error={!this.state.slug ? 'Required' : null}
@@ -171,7 +179,10 @@ class PubOptionsDetails extends Component {
 					helperText="Suggested minimum dimensions: 1200px x 800px."
 				/>
 				<InputField label="Use Header Image">
-					<Checkbox checked={this.state.useHeaderImage} onChange={this.updateUseHeaderImage}>
+					<Checkbox
+						checked={this.state.useHeaderImage}
+						onChange={this.updateUseHeaderImage}
+					>
 						Set to use the pub image at the top of published snapshots.
 					</Checkbox>
 				</InputField>

@@ -36,14 +36,14 @@ class LayoutEditorBanner extends Component {
 	setAlign(alignValue) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			align: alignValue, /* left or center */
+			align: alignValue /* left or center */,
 		});
 	}
 
 	setBackgroundSize(backgroundSizeValue) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			backgroundSize: backgroundSizeValue /* full or standard */
+			backgroundSize: backgroundSizeValue /* full or standard */,
 		});
 	}
 
@@ -80,7 +80,7 @@ class LayoutEditorBanner extends Component {
 		return this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			showButton: buttonType !== 'none',
-			buttonType: buttonType
+			buttonType: buttonType,
 		});
 	}
 
@@ -116,17 +116,20 @@ class LayoutEditorBanner extends Component {
 		const backgroundStyle = {
 			backgroundColor: this.props.content.backgroundColor,
 			backgroundImage: this.props.content.backgroundImage
-				? `url("${getResizedUrl(this.props.content.backgroundImage, 'fit-in', '1500x600')}")`
+				? `url("${getResizedUrl(
+						this.props.content.backgroundImage,
+						'fit-in',
+						'1500x600',
+				  )}")`
 				: undefined,
-			textShadow: this.props.content.backgroundImage
-				? '0 0 2px #000'
-				: '',
+			textShadow: this.props.content.backgroundImage ? '0 0 2px #000' : '',
 			minHeight: '200px',
 			display: 'flex',
 			alignItems: 'center',
 		};
 
-		const buttonType = this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
+		const buttonType =
+			this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
 
 		return (
 			<div className="layout-editor-banner-component">
@@ -145,15 +148,19 @@ class LayoutEditorBanner extends Component {
 					<InputField label="Align">
 						<div className="bp3-button-group">
 							<Button
-								className={`${this.props.content.align === 'left' ? 'bp3-active' : ''}`}
-								onClick={()=> {
+								className={`${
+									this.props.content.align === 'left' ? 'bp3-active' : ''
+								}`}
+								onClick={() => {
 									this.setAlign('left');
 								}}
 								text="Left"
 							/>
 							<Button
-								className={`${this.props.content.align === 'center' ? 'bp3-active' : ''}`}
-								onClick={()=> {
+								className={`${
+									this.props.content.align === 'center' ? 'bp3-active' : ''
+								}`}
+								onClick={() => {
 									this.setAlign('center');
 								}}
 								text="Center"
@@ -163,15 +170,21 @@ class LayoutEditorBanner extends Component {
 					<InputField label="Size">
 						<div className="bp3-button-group">
 							<Button
-								className={`${this.props.content.backgroundSize === 'full' ? 'bp3-active' : ''}`}
-								onClick={()=> {
+								className={`${
+									this.props.content.backgroundSize === 'full' ? 'bp3-active' : ''
+								}`}
+								onClick={() => {
 									this.setBackgroundSize('full');
 								}}
 								text="Full"
 							/>
 							<Button
-								className={`${this.props.content.backgroundSize === 'standard' ? 'bp3-active' : ''}`}
-								onClick={()=> {
+								className={`${
+									this.props.content.backgroundSize === 'standard'
+										? 'bp3-active'
+										: ''
+								}`}
+								onClick={() => {
 									this.setBackgroundSize('standard');
 								}}
 								text="Standard"
@@ -201,71 +214,84 @@ class LayoutEditorBanner extends Component {
 						</div>
 					</InputField>
 
-					{this.props.content.showButton &&
+					{this.props.content.showButton && (
 						<InputField
 							label="Button Text"
 							value={this.props.content.buttonText}
 							onChange={this.setButtonText}
 						/>
-					}
-					{this.props.content.showButton && buttonType === 'create-pub' &&
+					)}
+					{this.props.content.showButton && buttonType === 'create-pub' && (
 						<InputField label="Default Pub Tags">
 							<div className="bp3-button-group bp3-select">
 								<TagMultiSelect
 									allTags={this.props.communityData.tags}
 									selectedTagIds={this.props.content.defaultTagIds || []}
-									onItemSelect={(newTagId)=> {
-										const existingTagIds = this.props.content.defaultTagIds || [];
+									onItemSelect={(newTagId) => {
+										const existingTagIds =
+											this.props.content.defaultTagIds || [];
 										const newTagIds = [...existingTagIds, newTagId];
 										this.setDefaultTagIds(newTagIds);
 									}}
-									onRemove={(evt, tagIndex)=> {
-										const existingTagIds = this.props.content.defaultTagIds || [];
-										const newTagIds = existingTagIds.filter((item, filterIndex)=> {
-											return filterIndex !== tagIndex;
-										});
+									onRemove={(evt, tagIndex) => {
+										const existingTagIds =
+											this.props.content.defaultTagIds || [];
+										const newTagIds = existingTagIds.filter(
+											(item, filterIndex) => {
+												return filterIndex !== tagIndex;
+											},
+										);
 										this.setDefaultTagIds(newTagIds);
 									}}
 									placeholder="Add tags..."
 								/>
 							</div>
 						</InputField>
-					}
-					{this.props.content.showButton && buttonType === 'link' &&
+					)}
+					{this.props.content.showButton && buttonType === 'link' && (
 						<InputField
 							label="Link"
 							value={this.props.content.buttonUrl}
 							onChange={this.setButtonUrl}
 						/>
-					}
+					)}
 				</div>
 
-				<div className="block-content" style={this.props.content.backgroundSize === 'full' ? backgroundStyle : undefined}>
-					{this.props.content.backgroundImage && this.props.content.backgroundSize === 'full' &&
-						<div className="dim" />
+				<div
+					className="block-content"
+					style={
+						this.props.content.backgroundSize === 'full' ? backgroundStyle : undefined
 					}
+				>
+					{this.props.content.backgroundImage &&
+						this.props.content.backgroundSize === 'full' && <div className="dim" />}
 					<div className="container">
-						<div className="row" style={this.props.content.backgroundSize === 'standard' ? backgroundStyle : undefined}>
-							{this.props.content.backgroundImage && this.props.content.backgroundSize === 'standard' &&
-								<div className="dim" />
+						<div
+							className="row"
+							style={
+								this.props.content.backgroundSize === 'standard'
+									? backgroundStyle
+									: undefined
 							}
+						>
+							{this.props.content.backgroundImage &&
+								this.props.content.backgroundSize === 'standard' && (
+									<div className="dim" />
+								)}
 							<div className="col-12" style={textStyle}>
-								{this.props.content.text &&
-									<h2>
-										{this.props.content.text}
-									</h2>
-								}
-								{this.props.content.showButton &&
+								{this.props.content.text && <h2>{this.props.content.text}</h2>}
+								{this.props.content.showButton && (
 									<Button
 										className="bp3-large"
-										onClick={()=>{}}
-										text={this.props.content.buttonText
-											|| (buttonType === 'create-pub' && 'Create Pub')
-											|| (buttonType === 'signup' && 'Create an Account')
-											|| (buttonType === 'link' && 'Go to Link')
+										onClick={() => {}}
+										text={
+											this.props.content.buttonText ||
+											(buttonType === 'create-pub' && 'Create Pub') ||
+											(buttonType === 'signup' && 'Create an Account') ||
+											(buttonType === 'link' && 'Go to Link')
 										}
 									/>
-								}
+								)}
 							</div>
 						</div>
 					</div>

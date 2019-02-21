@@ -26,13 +26,15 @@ class DashboardTags extends Component {
 
 	handleTagCreate(evt) {
 		evt.preventDefault();
-		const isUniqueTitle = this.props.communityData.tags.reduce((prev, curr)=> {
-			if (curr.title === this.state.newTagValue) { return false; }
+		const isUniqueTitle = this.props.communityData.tags.reduce((prev, curr) => {
+			if (curr.title === this.state.newTagValue) {
+				return false;
+			}
 			return prev;
 		}, true);
 
 		if (!isUniqueTitle) {
-			return this.setState((prevState)=> {
+			return this.setState((prevState) => {
 				return { error: `'${prevState.newTagValue}' already exists.` };
 			});
 		}
@@ -43,16 +45,12 @@ class DashboardTags extends Component {
 			body: JSON.stringify({
 				title: this.state.newTagValue,
 				communityId: this.props.communityData.id,
-			})
-		})
-		.then((newTag)=> {
+			}),
+		}).then((newTag) => {
 			this.setState({ newTagValue: '' });
 			this.props.setCommunityData({
 				...this.props.communityData,
-				tags: [
-					...this.props.communityData.tags,
-					newTag,
-				]
+				tags: [...this.props.communityData.tags, newTag],
 			});
 		});
 	}
@@ -63,23 +61,28 @@ class DashboardTags extends Component {
 			body: JSON.stringify({
 				...updatedTag,
 				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
+			}),
+		}).then(() => {
 			this.props.setCommunityData({
 				...this.props.communityData,
-				tags: this.props.communityData.tags.map((tag)=> {
-					if (tag.id !== updatedTag.tagId) { return tag; }
-					if (!updatedTag.pageId) { return { ...tag, ...updatedTag }; }
+				tags: this.props.communityData.tags.map((tag) => {
+					if (tag.id !== updatedTag.tagId) {
+						return tag;
+					}
+					if (!updatedTag.pageId) {
+						return { ...tag, ...updatedTag };
+					}
 					return {
 						...tag,
 						...updatedTag,
-						page: this.props.communityData.pages.reduce((prev, curr)=> {
-							if (curr.id === updatedTag.pageId) { return curr; }
+						page: this.props.communityData.pages.reduce((prev, curr) => {
+							if (curr.id === updatedTag.pageId) {
+								return curr;
+							}
 							return prev;
-						}, undefined)
+						}, undefined),
 					};
-				})
+				}),
 			});
 		});
 	}
@@ -90,14 +93,13 @@ class DashboardTags extends Component {
 			body: JSON.stringify({
 				tagId: tagId,
 				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
+			}),
+		}).then(() => {
 			this.props.setCommunityData({
 				...this.props.communityData,
-				tags: this.props.communityData.tags.filter((tag)=> {
+				tags: this.props.communityData.tags.filter((tag) => {
 					return tag.id !== tagId;
-				})
+				}),
 			});
 		});
 	}
@@ -106,7 +108,9 @@ class DashboardTags extends Component {
 		return (
 			<div className="dashboard-tags-component">
 				<h1 className="content-title">Tags</h1>
-				<div className="details">Tags can be used to organize content and can be used to flow content onto pages.</div>
+				<div className="details">
+					Tags can be used to organize content and can be used to flow content onto pages.
+				</div>
 
 				<div className="autocomplete-wrapper">
 					<form onSubmit={this.handleTagCreate}>
@@ -115,84 +119,102 @@ class DashboardTags extends Component {
 							type="text"
 							placeholder="Create new tag..."
 							value={this.state.newTagValue}
-							onChange={(evt)=> {
+							onChange={(evt) => {
 								this.setState({ newTagValue: evt.target.value });
 							}}
 						/>
 					</form>
-					{this.state.error &&
-						<p className="error">{this.state.error}</p>
-					}
+					{this.state.error && <p className="error">{this.state.error}</p>}
 				</div>
 
-				{this.props.communityData.tags.sort((foo, bar)=> {
-					if (foo.title < bar.title) { return -1; }
-					if (foo.title > bar.title) { return 1; }
-					return 0;
-				}).map((tag)=> {
-					return (
-						<div key={`tag-${tag.id}`} className="tag-wrapper">
-							<div className="title">
-								<EditableText
-									defaultValue={tag.title}
-									onConfirm={(newTitle)=> {
+				{this.props.communityData.tags
+					.sort((foo, bar) => {
+						if (foo.title < bar.title) {
+							return -1;
+						}
+						if (foo.title > bar.title) {
+							return 1;
+						}
+						return 0;
+					})
+					.map((tag) => {
+						return (
+							<div key={`tag-${tag.id}`} className="tag-wrapper">
+								<div className="title">
+									<EditableText
+										defaultValue={tag.title}
+										onConfirm={(newTitle) => {
+											this.handleTagUpdate({
+												title: newTitle,
+												tagId: tag.id,
+											});
+										}}
+									/>
+								</div>
+								<Select
+									items={this.props.communityData.pages}
+									itemRenderer={(item, { handleClick, modifiers }) => {
+										return (
+											<button
+												type="button"
+												tabIndex={-1}
+												onClick={handleClick}
+												className={
+													modifiers.active
+														? 'bp3-menu-item bp3-active'
+														: 'bp3-menu-item'
+												}
+											>
+												{item.title}
+											</button>
+										);
+									}}
+									itemListPredicate={(query, items) => {
+										return items.filter((item) => {
+											return fuzzysearch(
+												query.toLowerCase(),
+												item.title.toLowerCase(),
+											);
+										});
+									}}
+									onItemSelect={(item) => {
 										this.handleTagUpdate({
-											title: newTitle,
+											pageId: item.id,
 											tagId: tag.id,
 										});
 									}}
+									popoverProps={{ popoverClassName: 'bp3-minimal' }}
+								>
+									<Button
+										text={
+											tag.page
+												? `Linked to: ${tag.page.title}`
+												: 'Link to Page'
+										}
+										rightIcon="caret-down"
+									/>
+								</Select>
+								<Checkbox
+									checked={!tag.isPublic}
+									onChange={(evt) => {
+										this.handleTagUpdate({
+											isPublic: !evt.target.checked,
+											tagId: tag.id,
+										});
+									}}
+								>
+									Private
+								</Checkbox>
+								<button
+									type="button"
+									className="bp3-button bp3-icon-small-cross bp3-minimal"
+									onClick={() => {
+										this.handleTagDelete(tag.id);
+									}}
 								/>
 							</div>
-							<Select
-								items={this.props.communityData.pages}
-								itemRenderer={(item, { handleClick, modifiers })=> {
-									return (
-										<button
-											type="button"
-											tabIndex={-1}
-											onClick={handleClick}
-											className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
-										>
-											{item.title}
-										</button>
-									);
-								}}
-								itemListPredicate={(query, items)=> {
-									return items.filter((item)=> {
-										return fuzzysearch(query.toLowerCase(), item.title.toLowerCase());
-									});
-								}}
-								onItemSelect={(item)=> {
-									this.handleTagUpdate({
-										pageId: item.id,
-										tagId: tag.id,
-									});
-								}}
-								popoverProps={{ popoverClassName: 'bp3-minimal' }}
-							>
-								<Button text={tag.page ? `Linked to: ${tag.page.title}` : 'Link to Page'} rightIcon="caret-down" />
-							</Select>
-							<Checkbox
-								checked={!tag.isPublic}
-								onChange={(evt)=> {
-									this.handleTagUpdate({
-										isPublic: !evt.target.checked,
-										tagId: tag.id,
-									});
-								}}
-							>
-								Private
-							</Checkbox>
-							<button
-								type="button"
-								className="bp3-button bp3-icon-small-cross bp3-minimal"
-								onClick={()=> {
-									this.handleTagDelete(tag.id);
-								}}
-							/>
-						</div>
-					);
-				})}
+						);
+					})}
 			</div>
 		);
 	}

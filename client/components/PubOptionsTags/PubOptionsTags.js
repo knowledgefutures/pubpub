@@ -14,7 +14,6 @@ const propTypes = {
 	setPubData: PropTypes.func.isRequired,
 };
 
-
 class PubOptionsTags extends Component {
 	constructor(props) {
 		super(props);
@@ -30,24 +29,31 @@ class PubOptionsTags extends Component {
 		this.handlePubTagDelete = this.handlePubTagDelete.bind(this);
 	}
 
-
 	getFilteredTags(query, existingPubTags) {
-		const existingTagIds = existingPubTags.map((pubTag)=> {
+		const existingTagIds = existingPubTags.map((pubTag) => {
 			return pubTag.tag.id;
 		});
 		const defaultTags = this.props.communityData.tags;
-		const filteredDefaultTags = defaultTags.filter((item)=> {
-			const fuzzyMatchTag = fuzzysearch(query.toLowerCase(), item.title.toLowerCase());
-			const alreadyUsed = existingTagIds.indexOf(item.id) > -1;
-			return !alreadyUsed && fuzzyMatchTag;
-		}).sort((foo, bar)=> {
-			if (foo.title.toLowerCase() < bar.title.toLowerCase()) { return -1; }
-			if (foo.title.toLowerCase() > bar.title.toLowerCase()) { return 1; }
-			return 0;
-		});
+		const filteredDefaultTags = defaultTags
+			.filter((item) => {
+				const fuzzyMatchTag = fuzzysearch(query.toLowerCase(), item.title.toLowerCase());
+				const alreadyUsed = existingTagIds.indexOf(item.id) > -1;
+				return !alreadyUsed && fuzzyMatchTag;
+			})
+			.sort((foo, bar) => {
+				if (foo.title.toLowerCase() < bar.title.toLowerCase()) {
+					return -1;
+				}
+				if (foo.title.toLowerCase() > bar.title.toLowerCase()) {
+					return 1;
+				}
+				return 0;
+			});
 
-		const addNewTagOption = defaultTags.reduce((prev, curr)=> {
-			if (curr.title.toLowerCase() === query.toLowerCase()) { return false; }
+		const addNewTagOption = defaultTags.reduce((prev, curr) => {
+			if (curr.title.toLowerCase() === query.toLowerCase()) {
+				return false;
+			}
 			return prev;
 		}, true);
 		const newTagOption = query && addNewTagOption ? [{ title: query }] : [];
@@ -65,79 +71,85 @@ class PubOptionsTags extends Component {
 				tagId: tag.id,
 				pubId: this.props.pubData.id,
 				communityId: this.props.communityData.id,
-			})
-		})
-		.then((result)=> {
-			this.setState((prevState)=> {
+			}),
+		}).then((result) => {
+			this.setState((prevState) => {
 				const newPubTags = [...prevState.pubTags, result];
 				this.props.setPubData({
 					...this.props.pubData,
-					pubTags: newPubTags
+					pubTags: newPubTags,
 				});
 				return { pubTags: newPubTags };
 			});
 		});
 	}
 
-
 	handlePubTagDelete(pubTagId) {
-		this.setState((prevState)=> {
-			const newPubTags = prevState.pubTags.filter((pubTag)=> {
-				return pubTag.id !== pubTagId;
-			});
-			return { pubTags: newPubTags, isLoading: true };
-		}, ()=> {
-			apiFetch('/api/pubTags', {
-				method: 'DELETE',
-				body: JSON.stringify({
-					pubTagId: pubTagId,
-					pubId: this.props.pubData.id,
-					communityId: this.props.communityData.id,
-				})
-			})
-			.then(()=> {
-				this.props.setPubData({
-					...this.props.pubData,
-					pubTags: this.state.pubTags
+		this.setState(
+			(prevState) => {
+				const newPubTags = prevState.pubTags.filter((pubTag) => {
+					return pubTag.id !== pubTagId;
 				});
-				this.setState({ isLoading: false });
-			});
-		});
+				return { pubTags: newPubTags, isLoading: true };
+			},
+			() => {
+				apiFetch('/api/pubTags', {
+					method: 'DELETE',
+					body: JSON.stringify({
+						pubTagId: pubTagId,
+						pubId: this.props.pubData.id,
+						communityId: this.props.communityData.id,
+					}),
+				}).then(() => {
+					this.props.setPubData({
+						...this.props.pubData,
+						pubTags: this.state.pubTags,
+					});
+					this.setState({ isLoading: false });
+				});
+			},
+		);
 	}
 
 	render() {
 		const pubTags = this.state.pubTags;
 		return (
 			<div className="pub-options-tags-component">
-				{this.state.isLoading &&
+				{this.state.isLoading && (
 					<div className="save-wrapper">
 						<Spinner small={true} /> Saving...
 					</div>
-				}
+				)}
 				<h1>Tags</h1>
 				<Suggest
 					items={pubTags}
 					inputProps={{
 						placeholder: 'Add Tag...',
 						className: 'bp3-large',
-						inputRef: (ref)=> { this.inputRef = ref; },
+						inputRef: (ref) => {
+							this.inputRef = ref;
+						},
 					}}
 					itemListPredicate={this.getFilteredTags}
-					inputValueRenderer={()=> { return ''; }}
-					itemRenderer={(item, { handleClick, modifiers })=> {
+					inputValueRenderer={() => {
+						return '';
+					}}
+					itemRenderer={(item, { handleClick, modifiers }) => {
 						return (
 							<li key={item.id || 'empty-user-create'}>
 								<button
 									type="button"
 									tabIndex={-1}
 									onClick={handleClick}
-									className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
+									className={
+										modifiers.active
+											? 'bp3-menu-item bp3-active'
+											: 'bp3-menu-item'
+									}
 								>
 									{!item.id && <span>Create new tag: </span>}
 									<span className="autocomplete-name">
-										{item.id && !item.isPublic &&
-											<Icon icon="lock2" />
-										}
+										{item.id && !item.isPublic && <Icon icon="lock2" />}
 										{item.title}
 									</span>
 								</button>
@@ -159,19 +171,17 @@ class PubOptionsTags extends Component {
 				/>
 
 				<div className="tags-wrapper">
-					{pubTags.map((pubTag)=> {
+					{pubTags.map((pubTag) => {
 						return (
 							<Tag
 								key={pubTag.id}
 								className="bp3-minimal bp3-intent-primary"
 								large={true}
-								onRemove={()=> {
+								onRemove={() => {
 									this.handlePubTagDelete(pubTag.id);
 								}}
 							>
-								{!pubTag.tag.isPublic &&
-									<Icon icon="lock2" />
-								}
+								{!pubTag.tag.isPublic && <Icon icon="lock2" />}
 								{pubTag.tag.title}
 							</Tag>
 						);

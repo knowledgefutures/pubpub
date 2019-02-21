@@ -20,22 +20,26 @@ const defaultProps = {
 
 const TagMultiSelect = function(props) {
 	const tagsById = {};
-	props.allTags.forEach((tag)=> {
+	props.allTags.forEach((tag) => {
 		tagsById[tag.id] = tag;
 	});
 
 	return (
 		<MultiSelect
 			items={Object.keys(tagsById)}
-			itemPredicate={(query, item)=> {
+			itemPredicate={(query, item) => {
 				const existingTagIds = props.selectedTagIds || [];
-				if (existingTagIds.indexOf(item) > -1) { return false; }
+				if (existingTagIds.indexOf(item) > -1) {
+					return false;
+				}
 
-				if (!query) { return true; }
+				if (!query) {
+					return true;
+				}
 				const tag = tagsById[item];
 				return fuzzysearch(query.toLowerCase(), tag.title.toLowerCase());
 			}}
-			itemRenderer={(item, { handleClick, modifiers })=> {
+			itemRenderer={(item, { handleClick, modifiers }) => {
 				const tag = tagsById[item];
 				return (
 					<li key={item}>
@@ -43,7 +47,9 @@ const TagMultiSelect = function(props) {
 							type="button"
 							tabIndex={-1}
 							onClick={handleClick}
-							className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
+							className={
+								modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'
+							}
 						>
 							{tag.title}
 						</button>
@@ -51,7 +57,7 @@ const TagMultiSelect = function(props) {
 				);
 			}}
 			selectedItems={props.selectedTagIds}
-			tagRenderer={(item)=> {
+			tagRenderer={(item) => {
 				const tag = tagsById[item];
 				return tag && tag.title;
 			}}
@@ -59,7 +65,7 @@ const TagMultiSelect = function(props) {
 				onRemove: props.onRemove,
 				placeholder: props.placeholder,
 				tagProps: {
-					className: 'bp3-minimal bp3-intent-primary'
+					className: 'bp3-minimal bp3-intent-primary',
 				},
 				inputProps: {
 					placeholder: props.placeholder,

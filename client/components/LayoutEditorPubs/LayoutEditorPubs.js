@@ -39,56 +39,56 @@ class LayoutEditorPubs extends Component {
 	setSmall() {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			pubPreviewType: 'small'
+			pubPreviewType: 'small',
 		});
 	}
 
 	setMedium() {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			pubPreviewType: 'medium'
+			pubPreviewType: 'medium',
 		});
 	}
 
 	setLarge() {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			pubPreviewType: 'large'
+			pubPreviewType: 'large',
 		});
 	}
 
 	setLimit(evt) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			limit: Number(evt.target.value)
+			limit: Number(evt.target.value),
 		});
 	}
 
 	setHideByline(evt) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			hideByline: !evt.target.checked
+			hideByline: !evt.target.checked,
 		});
 	}
 
 	setHideDescription(evt) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			hideDescription: !evt.target.checked
+			hideDescription: !evt.target.checked,
 		});
 	}
 
 	setHideDates(evt) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			hideDates: !evt.target.checked
+			hideDates: !evt.target.checked,
 		});
 	}
 
 	setHideContributors(evt) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			hideContributors: !evt.target.checked
+			hideContributors: !evt.target.checked,
 		});
 	}
 
@@ -100,28 +100,36 @@ class LayoutEditorPubs extends Component {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			tagIds: newTagIds,
-			pubIds: this.props.content.pubIds.filter((item)=> {
-				return item;
-			}).filter((pubId)=> {
-				if (!newTagIds.length) { return true; }
-				const specifiedPub = this.props.pubs.reduce((prev, curr)=> {
-					if (curr.id === pubId) { return curr; }
-					return prev;
-				}, undefined);
-				return specifiedPub.pubTags.reduce((prev, curr)=> {
-					if (newTagIds.indexOf(curr.tagId) > -1) { return true; }
-					return prev;
-				}, false);
-			}),
+			pubIds: this.props.content.pubIds
+				.filter((item) => {
+					return item;
+				})
+				.filter((pubId) => {
+					if (!newTagIds.length) {
+						return true;
+					}
+					const specifiedPub = this.props.pubs.reduce((prev, curr) => {
+						if (curr.id === pubId) {
+							return curr;
+						}
+						return prev;
+					}, undefined);
+					return specifiedPub.pubTags.reduce((prev, curr) => {
+						if (newTagIds.indexOf(curr.tagId) > -1) {
+							return true;
+						}
+						return prev;
+					}, false);
+				}),
 		});
 	}
 
 	setPubIds(newPubObjects) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			pubIds: newPubObjects.map((pub)=> {
+			pubIds: newPubObjects.map((pub) => {
 				return pub.id;
-			})
+			}),
 		});
 	}
 
@@ -137,19 +145,27 @@ class LayoutEditorPubs extends Component {
 		newPubIds[index] = string;
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			pubIds: newPubIds.filter((item)=> {
-				return item;
-			}).filter((pubId)=> {
-				if (!this.props.content.tagId) { return true; }
-				const specifiedPub = this.props.pubs.reduce((prev, curr)=> {
-					if (curr.id === pubId) { return curr; }
-					return prev;
-				}, undefined);
-				return specifiedPub.pubTags.reduce((prev, curr)=> {
-					if (curr.tagId === this.props.content.tagId) { return true; }
-					return prev;
-				}, false);
-			}),
+			pubIds: newPubIds
+				.filter((item) => {
+					return item;
+				})
+				.filter((pubId) => {
+					if (!this.props.content.tagId) {
+						return true;
+					}
+					const specifiedPub = this.props.pubs.reduce((prev, curr) => {
+						if (curr.id === pubId) {
+							return curr;
+						}
+						return prev;
+					}, undefined);
+					return specifiedPub.pubTags.reduce((prev, curr) => {
+						if (curr.tagId === this.props.content.tagId) {
+							return true;
+						}
+						return prev;
+					}, false);
+				}),
 		});
 	}
 
@@ -168,14 +184,18 @@ class LayoutEditorPubs extends Component {
 		// 	return prev;
 		// }, {});
 		const tagsById = {};
-		this.props.communityData.tags.forEach((tag)=> {
+		this.props.communityData.tags.forEach((tag) => {
 			tagsById[tag.id] = tag;
 		});
-		const availablePubs = this.props.pubs.filter((pub)=> {
+		const availablePubs = this.props.pubs.filter((pub) => {
 			const tagIds = this.props.content.tagIds || [];
-			if (!tagIds.length) { return true; }
-			return pub.pubTags.reduce((prev, curr)=> {
-				if (tagIds.indexOf(curr.tagId) > -1) { return true; }
+			if (!tagIds.length) {
+				return true;
+			}
+			return pub.pubTags.reduce((prev, curr) => {
+				if (tagIds.indexOf(curr.tagId) > -1) {
+					return true;
+				}
 				return prev;
 			}, false);
 		});
@@ -193,14 +213,14 @@ class LayoutEditorPubs extends Component {
 							<TagMultiSelect
 								allTags={this.props.communityData.tags}
 								selectedTagIds={this.props.content.tagIds || []}
-								onItemSelect={(newTagId)=> {
+								onItemSelect={(newTagId) => {
 									const existingTagIds = this.props.content.tagIds || [];
 									const newTagIds = [...existingTagIds, newTagId];
 									this.setTagIds(newTagIds);
 								}}
-								onRemove={(evt, tagIndex)=> {
+								onRemove={(evt, tagIndex) => {
 									const existingTagIds = this.props.content.tagIds || [];
-									const newTagIds = existingTagIds.filter((item, filterIndex)=> {
+									const newTagIds = existingTagIds.filter((item, filterIndex) => {
 										return filterIndex !== tagIndex;
 									});
 									this.setTagIds(newTagIds);
@@ -213,8 +233,12 @@ class LayoutEditorPubs extends Component {
 						<div className="bp3-button-group bp3-select">
 							<select value={this.props.content.limit} onChange={this.setLimit}>
 								<option value={0}>Show All pubs</option>
-								{selectOptions.map((item)=> {
-									return <option value={item} key={`option-${item}`}>Show {item} pub{item === 1 ? '' : 's'}</option>;
+								{selectOptions.map((item) => {
+									return (
+										<option value={item} key={`option-${item}`}>
+											Show {item} pub{item === 1 ? '' : 's'}
+										</option>
+									);
 								})}
 							</select>
 						</div>
@@ -225,15 +249,18 @@ class LayoutEditorPubs extends Component {
 							content={
 								<div>
 									<OrderPicker
-										selectedItems={this.props.content.pubIds.map((pubId)=> {
-											return availablePubs.reduce((prev, curr)=> {
-												if (curr.id === pubId) { return curr; }
-												return prev;
-											}, undefined);
-										})
-										.filter((pub)=> {
-											return !!pub;
-										})}
+										selectedItems={this.props.content.pubIds
+											.map((pubId) => {
+												return availablePubs.reduce((prev, curr) => {
+													if (curr.id === pubId) {
+														return curr;
+													}
+													return prev;
+												}, undefined);
+											})
+											.filter((pub) => {
+												return !!pub;
+											})}
 										allItems={availablePubs}
 										onChange={this.setPubIds}
 										uniqueId={this.props.layoutIndex}
@@ -248,12 +275,15 @@ class LayoutEditorPubs extends Component {
 							usePortal={false}
 							minimal={true}
 							popoverClassName="order-picker-popover"
-							popoverDidOpen={()=> {
-								setTimeout(()=> {
+							popoverDidOpen={() => {
+								setTimeout(() => {
 									/* This is a hacky way to solve this bug: */
 									/* https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/using-a-portal.md */
-									const overlayNode = this.orderPopoverRef.current.popoverElement.parentNode;
-									const positions = overlayNode.style.transform.replace('translate3d(', '').split(', ');
+									const overlayNode = this.orderPopoverRef.current.popoverElement
+										.parentNode;
+									const positions = overlayNode.style.transform
+										.replace('translate3d(', '')
+										.split(', ');
 									overlayNode.style.left = positions[0];
 									overlayNode.style.top = positions[1];
 									overlayNode.style.transform = '';
@@ -289,16 +319,28 @@ class LayoutEditorPubs extends Component {
 					</InputField>
 
 					<InputField label="Preview Elements">
-						<Checkbox checked={!this.props.content.hideByline} onChange={this.setHideByline}>
+						<Checkbox
+							checked={!this.props.content.hideByline}
+							onChange={this.setHideByline}
+						>
 							Byline
 						</Checkbox>
-						<Checkbox checked={!this.props.content.hideDescription} onChange={this.setHideDescription}>
+						<Checkbox
+							checked={!this.props.content.hideDescription}
+							onChange={this.setHideDescription}
+						>
 							Description
 						</Checkbox>
-						<Checkbox checked={!this.props.content.hideDates} onChange={this.setHideDates}>
+						<Checkbox
+							checked={!this.props.content.hideDates}
+							onChange={this.setHideDates}
+						>
 							Dates
 						</Checkbox>
-						<Checkbox checked={!this.props.content.hideContributors} onChange={this.setHideContributors}>
+						<Checkbox
+							checked={!this.props.content.hideContributors}
+							onChange={this.setHideContributors}
+						>
 							Contributors
 						</Checkbox>
 					</InputField>
@@ -306,20 +348,27 @@ class LayoutEditorPubs extends Component {
 
 				<div className="block-content">
 					<div className="container">
-						{this.props.content.title &&
+						{this.props.content.title && (
 							<div className="row">
 								<div className="col-12">
 									<h1>{this.props.content.title}</h1>
 								</div>
 							</div>
-						}
+						)}
 
 						<div className="row">
-							{previews.map((item, index)=> {
-								const selectPub = (this.props.pubRenderList && this.props.pubRenderList[index]) || {};
-								if (!selectPub.id) { return null; }
+							{previews.map((item, index) => {
+								const selectPub =
+									(this.props.pubRenderList && this.props.pubRenderList[index]) ||
+									{};
+								if (!selectPub.id) {
+									return null;
+								}
 								return (
-									<div key={selectPub.id} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
+									<div
+										key={selectPub.id}
+										className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}
+									>
 										<PubPreview
 											size={pubPreviewType}
 											pubData={selectPub}

@@ -20,7 +20,7 @@ const propTypes = {
 const defaultProps = {
 	isAuthor: false,
 	hideScrollButton: false,
-	onReplyEdit: ()=> {},
+	onReplyEdit: () => {},
 	getHighlightContent: undefined,
 	handleQuotePermalink: undefined,
 	hoverBackgroundColor: undefined,
@@ -57,7 +57,7 @@ class DiscussionThreadItem extends Component {
 	}
 
 	onEditToggle() {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			return { isEditing: !prevState.isEditing };
 		});
 	}
@@ -75,11 +75,13 @@ class DiscussionThreadItem extends Component {
 	onSubmit(evt) {
 		evt.preventDefault();
 		this.setState({ isLoading: true });
-		const highlights = this.state.editorChangeObject.view.state.doc.content.content.filter((item)=> {
-			return item.type.name === 'highlightQuote';
-		}).map((item)=> {
-			return item.attrs;
-		});
+		const highlights = this.state.editorChangeObject.view.state.doc.content.content
+			.filter((item) => {
+				return item.type.name === 'highlightQuote';
+			})
+			.map((item) => {
+				return item.attrs;
+			});
 		this.props.onReplyEdit({
 			content: getJSON(this.state.editorChangeObject.view),
 			text: getText(this.state.editorChangeObject.view),
@@ -94,11 +96,11 @@ class DiscussionThreadItem extends Component {
 		const discussion = this.props.discussion;
 		const editingProps = this.state.isEditing
 			? {
-				onClick: this.focusEditor,
-				tabIndex: -1,
-				role: 'textbox',
-				className: 'text editing',
-			}
+					onClick: this.focusEditor,
+					tabIndex: -1,
+					role: 'textbox',
+					className: 'text editing',
+			  }
 			: {};
 
 		return (
@@ -114,40 +116,53 @@ class DiscussionThreadItem extends Component {
 
 					<div className="details">
 						<div className="name">
-							<a href={`/user/${discussion.author.slug}`}>{discussion.author.fullName || discussion.author.userInitials}</a>
+							<a href={`/user/${discussion.author.slug}`}>
+								{discussion.author.fullName || discussion.author.userInitials}
+							</a>
 						</div>
 						<span className="date">
 							<TimeAgo
 								minPeriod={60}
 								formatter={(value, unit, suffix) => {
-									if (unit === 'second') { return 'just now'; }
+									if (unit === 'second') {
+										return 'just now';
+									}
 									let newUnit = unit;
-									if (value > 1) { newUnit += 's'; }
+									if (value > 1) {
+										newUnit += 's';
+									}
 									return `${value} ${newUnit} ${suffix}`;
 								}}
 								date={discussion.createdAt}
 							/>
-							{discussion.createdAt !== discussion.updatedAt &&
+							{discussion.createdAt !== discussion.updatedAt && (
 								<span> (edited)</span>
-							}
+							)}
 						</span>
 					</div>
 
-					{!this.state.isEditing &&
+					{!this.state.isEditing && (
 						<div className="bp3-button-group bp3-small">
-							{this.props.isAuthor &&
-								<button type="button" className="bp3-button" onClick={this.onEditToggle}>
+							{this.props.isAuthor && (
+								<button
+									type="button"
+									className="bp3-button"
+									onClick={this.onEditToggle}
+								>
 									Edit
 								</button>
-							}
+							)}
 						</div>
-					}
-
+					)}
 				</div>
 
 				<div className="text" {...editingProps}>
 					<Editor
-						key={this.state.isEditing ? `discussion-${discussion.id}-editing` : `discussion-${discussion.id}`}
+						key={
+							this.state.isEditing
+								? `discussion-${discussion.id}-editing`
+								: `discussion-${discussion.id}`
+						}
 						initialContent={discussion.content}
 						isReadOnly={!this.state.isEditing}
 						placeholder="Reply..."
@@ -160,7 +175,7 @@ class DiscussionThreadItem extends Component {
 						}}
 					/>
 				</div>
-				{this.state.isEditing &&
+				{this.state.isEditing && (
 					<div className="editing-buttons">
 						<Button
 							text="Cancel Edit"
@@ -177,8 +192,7 @@ class DiscussionThreadItem extends Component {
 							loading={this.state.isLoading}
 						/>
 					</div>
-				}
-
+				)}
 			</div>
 		);
 	}

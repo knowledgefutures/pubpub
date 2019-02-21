@@ -10,7 +10,7 @@ const propTypes = {
 	isSmall: PropTypes.bool.isRequired,
 };
 
-const FormattingBarControlsIframe = (props)=> {
+const FormattingBarControlsIframe = (props) => {
 	const alignOptions = [
 		{ key: 'left', icon: 'align-left' },
 		{ key: 'center', icon: 'align-center' },
@@ -29,7 +29,7 @@ const FormattingBarControlsIframe = (props)=> {
 						min={25}
 						max={100}
 						value={props.attrs.size}
-						onChange={(newSize)=> {
+						onChange={(newSize) => {
 							props.updateAttrs({ size: newSize });
 						}}
 						labelRenderer={false}
@@ -46,7 +46,7 @@ const FormattingBarControlsIframe = (props)=> {
 						min={150}
 						max={800}
 						value={props.attrs.height}
-						onChange={(newHeight)=> {
+						onChange={(newHeight) => {
 							props.updateAttrs({ height: newHeight });
 						}}
 						labelRenderer={false}
@@ -59,14 +59,16 @@ const FormattingBarControlsIframe = (props)=> {
 				<div className="label">Alignment</div>
 				<div className="input">
 					<ButtonGroup>
-						{alignOptions.map((item)=> {
+						{alignOptions.map((item) => {
 							return (
 								<Button
 									key={item.key}
 									icon={<Icon icon={item.icon} iconSize={iconSize} />}
 									minimal={true}
 									active={props.attrs.align === item.key}
-									onClick={()=> { props.updateAttrs({ align: item.key }); }}
+									onClick={() => {
+										props.updateAttrs({ align: item.key });
+									}}
 								/>
 							);
 						})}
@@ -81,7 +83,7 @@ const FormattingBarControlsIframe = (props)=> {
 					<div className="simple-editor-wrapper">
 						<SimpleEditor
 							initialHtmlString={props.attrs.caption}
-							onChange={(htmlString)=> {
+							onChange={(htmlString) => {
 								props.updateAttrs({ caption: htmlString });
 							}}
 							placeholder="Enter caption..."
@@ -98,7 +100,7 @@ const FormattingBarControlsIframe = (props)=> {
 						type="text"
 						className={`bp3-input bp3-fill ${props.isSmall ? 'bp3-small' : ''}`}
 						value={props.attrs.url}
-						onChange={(evt)=>{
+						onChange={(evt) => {
 							props.updateAttrs({ url: evt.target.value });
 						}}
 						placeholder="Enter URL..."

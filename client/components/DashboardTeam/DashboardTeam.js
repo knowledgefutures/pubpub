@@ -19,21 +19,19 @@ class DashboardTeam extends Component {
 	}
 
 	handleAdminAdd(user) {
-		if (!user) { return null; }
+		if (!user) {
+			return null;
+		}
 		return apiFetch('/api/communityAdmins', {
 			method: 'POST',
 			body: JSON.stringify({
 				userId: user.id,
 				communityId: this.props.communityData.id,
-			})
-		})
-		.then((result)=> {
+			}),
+		}).then((result) => {
 			this.props.setCommunityData({
 				...this.props.communityData,
-				admins: [
-					result,
-					...this.props.communityData.admins,
-				]
+				admins: [result, ...this.props.communityData.admins],
 			});
 		});
 	}
@@ -44,14 +42,13 @@ class DashboardTeam extends Component {
 			body: JSON.stringify({
 				userId: userId,
 				communityId: this.props.communityData.id,
-			})
-		})
-		.then(()=> {
+			}),
+		}).then(() => {
 			this.props.setCommunityData({
 				...this.props.communityData,
-				admins: this.props.communityData.admins.filter((admin)=> {
+				admins: this.props.communityData.admins.filter((admin) => {
 					return admin.id !== userId;
-				})
+				}),
 			});
 		});
 	}
@@ -60,24 +57,31 @@ class DashboardTeam extends Component {
 		return (
 			<div className="dashboard-team-component">
 				<h1 className="content-title">Team</h1>
-				<div className="details">Add administrators to the team. Administrators will be able to publish documents, see private collections, and create new collections.</div>
+				<div className="details">
+					Add administrators to the team. Administrators will be able to publish
+					documents, see private collections, and create new collections.
+				</div>
 
 				<div className="autocomplete-wrapper">
 					<UserAutocomplete
 						onSelect={this.handleAdminAdd}
 						placeholder="Add new administrator..."
-						usedUserIds={this.props.communityData.admins.map((item)=> {
+						usedUserIds={this.props.communityData.admins.map((item) => {
 							return item.id;
 						})}
 					/>
 				</div>
 
-				{this.props.communityData.admins.map((admin, index, array)=> {
+				{this.props.communityData.admins.map((admin, index, array) => {
 					return (
 						<div key={`admin-${admin.id}`} className="admin-wrapper">
 							<div className="avatar-wrapper">
 								<a href={`/user/${admin.slug}`}>
-									<Avatar width={50} userInitials={admin.initials} userAvatar={admin.avatar} />
+									<Avatar
+										width={50}
+										userInitials={admin.initials}
+										userAvatar={admin.avatar}
+									/>
 								</a>
 							</div>
 
@@ -88,17 +92,19 @@ class DashboardTeam extends Component {
 									</a>
 								</div>
 							</div>
-							{array.length > 1 &&
+							{array.length > 1 && (
 								<div className="remove-wrapper">
 									<button
 										type="button"
 										className="bp3-button bp3-minimal"
-										onClick={()=>{ this.handleAdminRemove(admin.id); }}
+										onClick={() => {
+											this.handleAdminRemove(admin.id);
+										}}
 									>
 										Remove
 									</button>
 								</div>
-							}
+							)}
 						</div>
 					);
 				})}

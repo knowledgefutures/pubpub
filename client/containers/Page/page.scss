@@ -27,17 +27,24 @@
 			font-size: 28px;
 			font-weight: 800;
 		}
-		h1, h2, h3, h4, h5, h6 {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
 			clear: both;
 			margin-bottom: 0.5em;
 			line-height: 1em;
 		}
 	}
 
-	.layout-text-component, .layout-html-component {
-		p, li {
+	.layout-text-component,
+	.layout-html-component {
+		p,
+		li {
 			font-size: 18px;
-		    line-height: 1.6
+			line-height: 1.6;
 		}
 	}
 	.component-wrapper:last-of-type {

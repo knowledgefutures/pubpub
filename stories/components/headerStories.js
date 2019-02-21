@@ -18,11 +18,12 @@ const headerBars = function(isBasePubPub) {
 			? '/static/icon.png'
 			: 'https://assets.pubpub.org/c7cfyyz6/31507218538557.png',
 		largeHeaderLogo: 'https://assets.pubpub.org/c7cfyyz6/31507218538557.png',
-		largeHeaderDescription: 'Group publications and research docs from around the world all situated here in this little community.',
+		largeHeaderDescription:
+			'Group publications and research docs from around the world all situated here in this little community.',
 		largeHeaderBackground: 'https://assets.pubpub.org/9s4gbj5y/51507218425793.png',
 		isBasePubPub: isBasePubPub,
 		isLandingPage: false,
-		onLogout: ()=> {},
+		onLogout: () => {},
 	};
 	return (
 		<div>
@@ -48,7 +49,7 @@ const headerBars = function(isBasePubPub) {
 						fullName: data.userName,
 						initials: data.userInitials,
 						slug: data.userSlug,
-						isAdmin: false
+						isAdmin: false,
 					}}
 					smallHeaderLogo={data.smallHeaderLogo}
 					onLogout={data.onLogout}
@@ -67,7 +68,7 @@ const headerBars = function(isBasePubPub) {
 						initials: data.userInitials,
 						avatar: data.userAvatar,
 						slug: data.userSlug,
-						isAdmin: true
+						isAdmin: true,
 					}}
 					smallHeaderLogo={data.smallHeaderLogo}
 					onLogout={data.onLogout}
@@ -76,7 +77,7 @@ const headerBars = function(isBasePubPub) {
 				/>
 			</div>
 
-			{!isBasePubPub &&
+			{!isBasePubPub && (
 				<div>
 					<h4 style={titleStyle}>Home · No Background</h4>
 					<div style={wrapperStyle}>
@@ -88,7 +89,7 @@ const headerBars = function(isBasePubPub) {
 								initials: data.userInitials,
 								avatar: data.userAvatar,
 								slug: data.userSlug,
-								isAdmin: true
+								isAdmin: true,
 							}}
 							smallHeaderLogo={data.smallHeaderLogo}
 							largeHeaderLogo={data.largeHeaderLogo}
@@ -109,7 +110,7 @@ const headerBars = function(isBasePubPub) {
 								initials: data.userInitials,
 								avatar: data.userAvatar,
 								slug: data.userSlug,
-								isAdmin: true
+								isAdmin: true,
 							}}
 							smallHeaderLogo={data.smallHeaderLogo}
 							largeHeaderLogo={data.largeHeaderLogo}
@@ -121,26 +122,22 @@ const headerBars = function(isBasePubPub) {
 						/>
 					</div>
 				</div>
-			}
+			)}
 		</div>
 	);
 };
 
 storiesOf('Components/Header', module)
-.add('PubPub', () => (
-	<div>
-		{headerBars(true)}
-	</div>
-))
-.add('Dark', () => (
-	<div>
-		<AccentStyle {...accentDataDark} />
-		{headerBars()}
-	</div>
-))
-.add('Light', () => (
-	<div>
-		<AccentStyle {...accentDataLight} />
-		{headerBars()}
-	</div>
-));
+	.add('PubPub', () => <div>{headerBars(true)}</div>)
+	.add('Dark', () => (
+		<div>
+			<AccentStyle {...accentDataDark} />
+			{headerBars()}
+		</div>
+	))
+	.add('Light', () => (
+		<div>
+			<AccentStyle {...accentDataLight} />
+			{headerBars()}
+		</div>
+	));

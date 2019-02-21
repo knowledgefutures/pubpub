@@ -2,11 +2,13 @@ import stripIndent from 'strip-indent';
 import app from '../server';
 import { getInitialData } from '../utilities';
 
-app.get('/opensearch.xml', (req, res)=> {
+app.get('/opensearch.xml', (req, res) => {
 	return getInitialData(req)
-	.then((initialData)=> {
-		const domain = initialData.communityData.domain || `${initialData.communityData.subdomain || 'www'}.pubpub.org`;
-		const outputXML = stripIndent(`
+		.then((initialData) => {
+			const domain =
+				initialData.communityData.domain ||
+				`${initialData.communityData.subdomain || 'www'}.pubpub.org`;
+			const outputXML = stripIndent(`
 			<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
 				<ShortName>${initialData.communityData.title}</ShortName>
 				<Description>Search ${initialData.communityData.title}</Description>
@@ -15,11 +17,11 @@ app.get('/opensearch.xml', (req, res)=> {
 				<Url type="text/html" method="get" template="https://${domain}/search?q={searchTerms}"/>
 			</OpenSearchDescription>
 		`);
-		res.set('Content-Type', 'text/xml');
-		return res.send(outputXML);
-	})
-	.catch((err)=> {
-		console.error(err);
-		return res.status(200).json('Error producing OpenSearch XML');
-	});
+			res.set('Content-Type', 'text/xml');
+			return res.send(outputXML);
+		})
+		.catch((err) => {
+			console.error(err);
+			return res.status(200).json('Error producing OpenSearch XML');
+		});
 });

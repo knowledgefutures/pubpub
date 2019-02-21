@@ -18,7 +18,7 @@ const propTypes = {
 	isSmall: PropTypes.bool.isRequired,
 };
 
-const FormattingBarControls = (props)=> {
+const FormattingBarControls = (props) => {
 	const selectedNode = props.editorChangeObject.selectedNode || {};
 	const attrs = selectedNode.attrs;
 	const updateFunc = props.editorChangeObject.updateNode;
@@ -59,7 +59,7 @@ const FormattingBarControls = (props)=> {
 	if (nodeType === 'table') {
 		return <FormattingBarControlsTable {...controlsProps} />;
 	}
-	if ((nodeType === 'equation' || nodeType === 'block_equation')) {
+	if (nodeType === 'equation' || nodeType === 'block_equation') {
 		return <FormattingBarControlsEquation {...controlsProps} />;
 	}
 	if (nodeType === 'discussion') {
@@ -67,7 +67,6 @@ const FormattingBarControls = (props)=> {
 	}
 	return null;
 };
-
 
 FormattingBarControls.propTypes = propTypes;
 export default FormattingBarControls;

@@ -3,9 +3,11 @@
 .header-component {
 	color: white;
 	background-color: transparent;
-	.bp3-button:not([class*="bp3-intent-"]), .bp3-button[class*="bp3-icon-"]::before { color: white; }
+	.bp3-button:not([class*='bp3-intent-']),
+	.bp3-button[class*='bp3-icon-']::before {
+		color: white;
+	}
 }
-
 
 #landing-container {
 	/***** Globals *****/
@@ -24,7 +26,7 @@
 		background-size: cover;
 		background-repeat: no-repeat;
 		background-position: center center;
-		background-color: #454F60;
+		background-color: #454f60;
 		background-image: url('/static/landing/herobg.jpg');
 		color: #fff;
 		font-size: 16px;
@@ -63,8 +65,10 @@
 				display: inline-block;
 				text-align: right;
 				text-decoration: underline;
-				transition: opacity .75s;
-				&.landing-header-exit-active, &.landing-header-enter, &.landing-header-exit {
+				transition: opacity 0.75s;
+				&.landing-header-exit-active,
+				&.landing-header-enter,
+				&.landing-header-exit {
 					opacity: 0;
 				}
 				&.landing-header-enter {
@@ -90,23 +94,25 @@
 				margin-bottom: 0;
 			}
 			.bp3-intent-primary {
-				background-color: #BF8C0A;
+				background-color: #bf8c0a;
 				&:hover {
-					background-color: #B2830A;
+					background-color: #b2830a;
 				}
 				&:active {
-					background-color: #A67908;
+					background-color: #a67908;
 				}
 			}
 		}
-
-
 	}
 
 	/***** Main Content *****/
 	#main {
-		h2, h3, .subtitle, .title, .divider {
-			color: #454F60;
+		h2,
+		h3,
+		.subtitle,
+		.title,
+		.divider {
+			color: #454f60;
 			text-align: center;
 		}
 		.subtitle {
@@ -120,19 +126,26 @@
 		}
 		.bg {
 			padding: 2em 0;
-			&#opensource, &#foryou {
-				background-color: #454F60;
+			&#opensource,
+			&#foryou {
+				background-color: #454f60;
 				color: #fff;
-				h2, .subtitle, .title {
+				h2,
+				.subtitle,
+				.title {
 					color: #fff;
 				}
-				a, a:visited, a:active, a:hover {
+				a,
+				a:visited,
+				a:active,
+				a:hover {
 					&:not(.bp3-button) {
 						color: #ccc;
 					}
 				}
 			}
-			&#foryou, &#opensource {
+			&#foryou,
+			&#opensource {
 				p {
 					max-width: 400px;
 					margin: 0 auto 10px;
@@ -141,16 +154,16 @@
 			}
 			&#foryou {
 				padding: 4em 0em;
-			    .buttons {
-			    	margin-bottom: 0em;
-			    }
+				.buttons {
+					margin-bottom: 0em;
+				}
 				.bp3-intent-primary {
-					background-color: #BF8C0A;
+					background-color: #bf8c0a;
 					&:hover {
-						background-color: #B2830A;
+						background-color: #b2830a;
 					}
 					&:active {
-						background-color: #A67908;
+						background-color: #a67908;
 					}
 				}
 			}
@@ -174,11 +187,11 @@
 					margin: 0;
 					.title {
 						text-align: center;
-						}
+					}
 					.buttons {
 						text-align: center;
 						.bp3-button {
-							margin: 0 .5em;
+							margin: 0 0.5em;
 						}
 					}
 				}
@@ -223,98 +236,97 @@
 				}
 			}
 		}
-	/*** END type block ***/
+		/*** END type block ***/
 
-	#features {
-		padding: 4em 0em;
-		background-repeat: repeat;
-		background-position: 50%;
-		background-color: #f9fafb;
-		background-image: url(/static/landing/featuresbg.png);
-		.feature-list {
-			margin: 4em auto 0em;
-			padding: 0;
-			max-width: 1000px;
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			grid-template-rows: auto auto auto;
-			list-style-type: none;
-			li {
-				margin: 2em;
-				.icon {
-					margin: 0 .75em .75em 0;
-					float: left;
-					opacity: 0.6;
-				}
-				.title {
-					text-align: left;
-					font-weight: 600;
-					font-size: 18px;
-				}
-				.description {
-					font-size: 16px;
-					font-weight: 300;
-					padding: 0 .25em;
-					clear: both;
+		#features {
+			padding: 4em 0em;
+			background-repeat: repeat;
+			background-position: 50%;
+			background-color: #f9fafb;
+			background-image: url(/static/landing/featuresbg.png);
+			.feature-list {
+				margin: 4em auto 0em;
+				padding: 0;
+				max-width: 1000px;
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				grid-template-rows: auto auto auto;
+				list-style-type: none;
+				li {
+					margin: 2em;
+					.icon {
+						margin: 0 0.75em 0.75em 0;
+						float: left;
+						opacity: 0.6;
+					}
+					.title {
+						text-align: left;
+						font-weight: 600;
+						font-size: 18px;
+					}
+					.description {
+						font-size: 16px;
+						font-weight: 300;
+						padding: 0 0.25em;
+						clear: both;
+					}
 				}
 			}
 		}
-	}
-	/***** END Features *****/
+		/***** END Features *****/
 
-	/**** BEGIN Open Source *****/
-	#opensource {
-		padding: 4em 0em;
-		.col-12 {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: space-evenly;
-			margin: 2em 0em;
-			// > * {
-			// 	align-self: center;
-			// }
-			.header {
-				h2 {
-					text-align: left;
-					margin-bottom: 0.5em;
-					font-size: 25px;
-				}
-				.bp3-icon {
-					// padding-top: 4px;
-					opacity: 0.6;
-				}
-			}
-			.content {
-				font-size: 18px;
-			}
-			.buttons {
-				margin: 0em;
-				.bp3-button {
-					color: inherit;
-				}
-			}
-			.pubpub-links {
-				margin: 1.5em 0em 0em;
-				max-width: 400px;
+		/**** BEGIN Open Source *****/
+		#opensource {
+			padding: 4em 0em;
+			.col-12 {
 				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				a {
-					white-space: nowrap;
-					&:not(:first-of-type) {
-						margin-left: 1em;
+				flex-wrap: wrap;
+				justify-content: space-evenly;
+				margin: 2em 0em;
+				// > * {
+				// 	align-self: center;
+				// }
+				.header {
+					h2 {
+						text-align: left;
+						margin-bottom: 0.5em;
+						font-size: 25px;
+					}
+					.bp3-icon {
+						// padding-top: 4px;
+						opacity: 0.6;
+					}
+				}
+				.content {
+					font-size: 18px;
+				}
+				.buttons {
+					margin: 0em;
+					.bp3-button {
+						color: inherit;
+					}
+				}
+				.pubpub-links {
+					margin: 1.5em 0em 0em;
+					max-width: 400px;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					a {
+						white-space: nowrap;
+						&:not(:first-of-type) {
+							margin-left: 1em;
+						}
 					}
 				}
 			}
 		}
 	}
-}
-/*** End Main Block ***/
+	/*** End Main Block ***/
 	/**** Footer *****/
 	.footer {
-		background-color: #454F60;
+		background-color: #454f60;
 	}
-
 }
 
 /***** Mobile *****/
@@ -322,7 +334,7 @@
 	#landing-container {
 		.buttons {
 			> a.bp3-button {
-				margin: .25em;
+				margin: 0.25em;
 			}
 		}
 		#jumbotron {
@@ -379,7 +391,6 @@
 					}
 				}
 			}
-
 		}
 	}
 }

@@ -29,7 +29,7 @@
 			margin-top: 7px;
 		}
 		.bp3-tabs {
-			border-bottom: 1px solid #CCC;
+			border-bottom: 1px solid #ccc;
 		}
 		.bp3-spinner {
 			width: 35px;
@@ -45,23 +45,24 @@
 			&.pubs {
 				.banner-image {
 					width: 100px;
-				    height: 100px;
+					height: 100px;
 				}
 			}
 			&.pages {
 				.banner-image {
 					width: 100px;
-				    height: 125px;
-				    box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 2px 4px rgba(16, 22, 26, 0.2), 0 8px 24px rgba(16, 22, 26, 0.2);
+					height: 125px;
+					box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 2px 4px rgba(16, 22, 26, 0.2),
+						0 8px 24px rgba(16, 22, 26, 0.2);
 				}
 			}
 			.banner-image {
 				background-size: cover;
 				background-repeat: no-repeat;
 				background-position: center center;
-				background-color: #F0F0F0;
-			    margin-right: 1em;
-			    border-radius: 2px;
+				background-color: #f0f0f0;
+				margin-right: 1em;
+				border-radius: 2px;
 			}
 			.content {
 				flex: 1 1 auto;
@@ -78,17 +79,17 @@
 					word-break: break-word;
 				}
 				.community-title {
-				    max-width: 40%;
-				    font-size: 14px;
-				    margin-left: 1em;
-				    a {
-				    	padding: 0.5em;
-				    	white-space: nowrap;	
-				    	border-radius: 2px;
-				    	display: block;
-				    	overflow: hidden;
-				    	text-overflow: ellipsis;
-				    }
+					max-width: 40%;
+					font-size: 14px;
+					margin-left: 1em;
+					a {
+						padding: 0.5em;
+						white-space: nowrap;
+						border-radius: 2px;
+						display: block;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
 				}
 			}
 			.byline {

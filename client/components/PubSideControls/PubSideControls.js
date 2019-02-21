@@ -40,24 +40,48 @@ class PubSideControls extends Component {
 	}
 
 	render() {
-		const isReadOnly = !this.props.pubData.isDraft || (!this.props.pubData.isManager && !this.props.pubData.isDraftEditor);
-		if (isReadOnly) { return null; }
+		const isReadOnly =
+			!this.props.pubData.isDraft ||
+			(!this.props.pubData.isManager && !this.props.pubData.isDraftEditor);
+		if (isReadOnly) {
+			return null;
+		}
 
 		const selectedNode = this.props.editorChangeObject.selectedNode || {};
 		const selectionBoundingBox = this.props.editorChangeObject.selectionBoundingBox || {};
 		const menuItems = this.props.editorChangeObject.menuItems || [];
-		const isTable = menuItems.reduce((prev, curr)=> {
-			if (curr.title === 'table-delete') { return true; }
+		const isTable = menuItems.reduce((prev, curr) => {
+			if (curr.title === 'table-delete') {
+				return true;
+			}
 			return prev;
 		}, false);
 
-		const uncontrolledNodes = ['paragraph', 'blockquote', 'horizontal_rule', 'heading', 'ordered_list', 'bullet_list', 'list_item', 'code_block', 'citationList', 'footnoteList'];
-		const isUncontrolledNode = selectedNode.type && uncontrolledNodes.indexOf(selectedNode.type.name) > -1;
-		if (!this.props.pubData.isDraft || isUncontrolledNode || (!selectedNode.attrs && !isTable)) { return null; }
+		const uncontrolledNodes = [
+			'paragraph',
+			'blockquote',
+			'horizontal_rule',
+			'heading',
+			'ordered_list',
+			'bullet_list',
+			'list_item',
+			'code_block',
+			'citationList',
+			'footnoteList',
+		];
+		const isUncontrolledNode =
+			selectedNode.type && uncontrolledNodes.indexOf(selectedNode.type.name) > -1;
+		if (
+			!this.props.pubData.isDraft ||
+			isUncontrolledNode ||
+			(!selectedNode.attrs && !isTable)
+		) {
+			return null;
+		}
 
 		const menuStyle = {
 			position: 'absolute',
-			...this.props.getAbsolutePosition(selectionBoundingBox.top, undefined, true)
+			...this.props.getAbsolutePosition(selectionBoundingBox.top, undefined, true),
 		};
 
 		const attrs = selectedNode.attrs;
@@ -78,36 +102,21 @@ class PubSideControls extends Component {
 		return (
 			<div className="pub-side-controls-component" style={menuStyle}>
 				<div className="content-wrapper">
-					{nodeType === 'iframe' &&
-						<PubSideControlsIframe {...controlsProps} />
-					}
-					{nodeType === 'image' &&
-						<PubSideControlsImage {...controlsProps} />
-					}
-					{nodeType === 'video' &&
-						<PubSideControlsVideo {...controlsProps} />
-					}
-					{nodeType === 'citation' &&
-						<PubSideControlsCitation {...controlsProps} />
-					}
-					{nodeType === 'footnote' &&
-						<PubSideControlsFootnote {...controlsProps} />
-					}
-					{nodeType === 'table' &&
-						<PubSideControlsTable {...controlsProps} />
-					}
-					{(nodeType === 'equation' || nodeType === 'block_equation') &&
+					{nodeType === 'iframe' && <PubSideControlsIframe {...controlsProps} />}
+					{nodeType === 'image' && <PubSideControlsImage {...controlsProps} />}
+					{nodeType === 'video' && <PubSideControlsVideo {...controlsProps} />}
+					{nodeType === 'citation' && <PubSideControlsCitation {...controlsProps} />}
+					{nodeType === 'footnote' && <PubSideControlsFootnote {...controlsProps} />}
+					{nodeType === 'table' && <PubSideControlsTable {...controlsProps} />}
+					{(nodeType === 'equation' || nodeType === 'block_equation') && (
 						<PubSideControlsEquation {...controlsProps} />
-					}
-					{nodeType === 'discussion' &&
-						<PubSideControlsDiscussion {...controlsProps} />
-					}
+					)}
+					{nodeType === 'discussion' && <PubSideControlsDiscussion {...controlsProps} />}
 				</div>
 			</div>
 		);
 	}
 }
-
 
 PubSideControls.propTypes = propTypes;
 export default PubSideControls;

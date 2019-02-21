@@ -31,18 +31,20 @@ class PubOptionsAnalytics extends Component {
 
 	componentDidMount() {
 		fetch('https://assets.pubpub.org/_site/world-50m.json')
-		.then((response)=> {
-			if (!response.ok) {
-				return response.json().then((err)=> { throw err; });
-			}
-			return response.json();
-		})
-		.then((data)=> {
-			this.setState({ mapData: data });
-		})
-		.catch((err)=> {
-			console.error('Error fetching map data', err);
-		});
+			.then((response) => {
+				if (!response.ok) {
+					return response.json().then((err) => {
+						throw err;
+					});
+				}
+				return response.json();
+			})
+			.then((data) => {
+				this.setState({ mapData: data });
+			})
+			.catch((err) => {
+				console.error('Error fetching map data', err);
+			});
 
 		this.keenClient = new KeenAnalysis({
 			projectId: this.props.locationData.isPubPubProduction
@@ -53,64 +55,71 @@ class PubOptionsAnalytics extends Component {
 				: 'E4C526BC021F960D2C84AB1521E8D1D3F0D1089292947A27880D43F83997554C5F95F34DD9E16A18B5F5FC0809A415AF4A2E74AAF9379B51520924BF2B692598FF80D751E8E6EC63F3B931432DF394799EFC0E0E6C100ED64C1E628873E9D16C',
 		});
 
-		const startDate = new Date(this.props.pubData.createdAt).toISOString() < '2018-10-15T00:00:00.000Z'
-			? '2018-10-15T00:00:00.000Z'
-			: this.props.pubData.createdAt;
+		const startDate =
+			new Date(this.props.pubData.createdAt).toISOString() < '2018-10-15T00:00:00.000Z'
+				? '2018-10-15T00:00:00.000Z'
+				: this.props.pubData.createdAt;
 
-		this.keenClient.query({
-			analysis_type: 'count',
-			event_collection: 'pageviews',
-			cache: this.props.locationData.isPubPubProduction
-				? { maxAge: 10 * 60 * 1000 } /* 10 minutes */
-				: false,
-			filters: [{
-				property_name: 'pubpub.pubId',
-				operator: 'eq',
-				property_value: this.props.pubData.id,
-			}],
-			timeframe: {
-				// TODO: We need to set the start date based on the earliest visible entry.
-				start: startDate,
-				end: new Date().toISOString()
-			},
-			interval: 'daily',
-			group_by: 'geo.country',
-		})
-		.then((res)=> {
-			const visitsData = res.result.map((item)=> {
-				return {
-					date: item.timeframe.start.substring(0, 10),
-					visits: item.value.reduce((prev, curr)=> {
-						return prev + curr.result;
-					}, 0)
-				};
-			});
-			const countryData = {};
-			res.result.forEach((item)=> {
-				item.value.forEach((itemValue)=> {
-					const previousCountryValue = countryData[itemValue['geo.country']] || 0;
-					countryData[itemValue['geo.country']] = previousCountryValue + itemValue.result;
+		this.keenClient
+			.query({
+				analysis_type: 'count',
+				event_collection: 'pageviews',
+				cache: this.props.locationData.isPubPubProduction
+					? { maxAge: 10 * 60 * 1000 } /* 10 minutes */
+					: false,
+				filters: [
+					{
+						property_name: 'pubpub.pubId',
+						operator: 'eq',
+						property_value: this.props.pubData.id,
+					},
+				],
+				timeframe: {
+					// TODO: We need to set the start date based on the earliest visible entry.
+					start: startDate,
+					end: new Date().toISOString(),
+				},
+				interval: 'daily',
+				group_by: 'geo.country',
+			})
+			.then((res) => {
+				const visitsData = res.result.map((item) => {
+					return {
+						date: item.timeframe.start.substring(0, 10),
+						visits: item.value.reduce((prev, curr) => {
+							return prev + curr.result;
+						}, 0),
+					};
 				});
+				const countryData = {};
+				res.result.forEach((item) => {
+					item.value.forEach((itemValue) => {
+						const previousCountryValue = countryData[itemValue['geo.country']] || 0;
+						countryData[itemValue['geo.country']] =
+							previousCountryValue + itemValue.result;
+					});
+				});
+				this.setState({
+					visitsData: visitsData,
+					countryData: countryData,
+					totalVisits: visitsData.reduce((prev, curr) => {
+						return prev + curr.visits;
+					}, 0),
+				});
+			})
+			.catch((err) => {
+				console.error('Keen error: ', err);
 			});
-			this.setState({
-				visitsData: visitsData,
-				countryData: countryData,
-				totalVisits: visitsData.reduce((prev, curr)=> {
-					return prev + curr.visits;
-				}, 0),
-			});
-		})
-		.catch((err)=> {
-			console.error('Keen error: ', err);
-		});
 	}
 
 	handleMouseMove(geography, evt) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			const x = evt.clientX;
 			const y = evt.clientY + window.pageYOffset;
 			const countryVisits = prevState.countryData[geography.properties.name] || 0;
-			const percentage = prevState.totalVisits ? (Math.round((countryVisits / prevState.totalVisits) * 10000) / 100) : 0;
+			const percentage = prevState.totalVisits
+				? Math.round((countryVisits / prevState.totalVisits) * 10000) / 100
+				: 0;
 			return {
 				toolTipData: {
 					x: x,
@@ -118,7 +127,7 @@ class PubOptionsAnalytics extends Component {
 					name: geography.properties.name,
 					visits: countryVisits,
 					percentage: percentage,
-				}
+				},
 			};
 		});
 	}
@@ -134,31 +143,42 @@ class PubOptionsAnalytics extends Component {
 			left: toolTipData.x,
 			position: 'fixed',
 		};
-		const hasPreAnalytics = new Date(this.props.pubData.createdAt).toISOString() < '2018-10-15T00:00:00.000Z';
+		const hasPreAnalytics =
+			new Date(this.props.pubData.createdAt).toISOString() < '2018-10-15T00:00:00.000Z';
 		return (
 			<div className="pub-options-analytics-component">
 				<h1>Analytics</h1>
 
-				{hasPreAnalytics &&
+				{hasPreAnalytics && (
 					<div className="bp3-callout bp3-intent-warning" style={{ marginBottom: '2em' }}>
-						Pubs created before the launch of PubPub v5 display analytics back to October 15th.
+						Pubs created before the launch of PubPub v5 display analytics back to
+						October 15th.
 					</div>
-				}
-				{this.state.toolTipData &&
+				)}
+				{this.state.toolTipData && (
 					<div className="bp3-elevation-2" style={tooltipStyle}>
-						<div><b>Country: </b>{this.state.toolTipData.name}</div>
-						<div><b>Visits: </b>{this.state.toolTipData.visits.toLocaleString()}</div>
-						<div><b>Percent of Total Visits: </b>{this.state.toolTipData.percentage}%</div>
+						<div>
+							<b>Country: </b>
+							{this.state.toolTipData.name}
+						</div>
+						<div>
+							<b>Visits: </b>
+							{this.state.toolTipData.visits.toLocaleString()}
+						</div>
+						<div>
+							<b>Percent of Total Visits: </b>
+							{this.state.toolTipData.percentage}%
+						</div>
 					</div>
-				}
+				)}
 
 				<h2>Visits</h2>
-				{!this.state.visitsData &&
+				{!this.state.visitsData && (
 					<div className="spinner-wrapper">
 						<Spinner />
 					</div>
-				}
-				{this.state.visitsData &&
+				)}
+				{this.state.visitsData && (
 					<ResponsiveContainer width="100%" height={150}>
 						<AreaChart
 							data={this.state.visitsData}
@@ -173,13 +193,17 @@ class PubOptionsAnalytics extends Component {
 							<XAxis dataKey="date" />
 							<YAxis />
 							<Tooltip
-								content={(instance)=> {
-									if (!instance.active) { return null; }
+								content={(instance) => {
+									if (!instance.active) {
+										return null;
+									}
 									const payload = instance.payload[0].payload;
 									// console.log(payload);
 									return (
 										<div className="bp3-elevation-2">
-											<div><b>{payload.date}</b></div>
+											<div>
+												<b>{payload.date}</b>
+											</div>
 											<div>Visits: {payload.visits}</div>
 											{/* <div>Unique Visits: {payload.unique}</div>
 											<div>Average Time on Page: {payload.avgTime}s</div>
@@ -188,18 +212,24 @@ class PubOptionsAnalytics extends Component {
 									);
 								}}
 							/>
-							<Area type="monotone" dataKey="visits" stroke="#607D8B" fillOpacity={1} fill="url(#colorUv)" />
+							<Area
+								type="monotone"
+								dataKey="visits"
+								stroke="#607D8B"
+								fillOpacity={1}
+								fill="url(#colorUv)"
+							/>
 						</AreaChart>
 					</ResponsiveContainer>
-				}
+				)}
 
 				<h2>Visit Locations</h2>
-				{(!this.state.mapData || !this.state.countryData) &&
+				{(!this.state.mapData || !this.state.countryData) && (
 					<div className="spinner-wrapper">
 						<Spinner />
 					</div>
-				}
-				{this.state.mapData && this.state.countryData &&
+				)}
+				{this.state.mapData && this.state.countryData && (
 					<ComposableMap
 						projectionConfig={{
 							scale: 205,
@@ -216,9 +246,14 @@ class PubOptionsAnalytics extends Component {
 							<Geographies geography={this.state.mapData}>
 								{(geographies, projection) => {
 									return geographies.map((geography) => {
-										const countryVisits = this.state.countryData[geography.properties.name] || 0;
-										const visitRatio = this.state.totalVisits ? countryVisits / this.state.totalVisits : 0;
-										const fill = `rgba(26, 76, 109, ${visitRatio ? visitRatio * 0.75 + 0.25 : 0.05})`;
+										const countryVisits =
+											this.state.countryData[geography.properties.name] || 0;
+										const visitRatio = this.state.totalVisits
+											? countryVisits / this.state.totalVisits
+											: 0;
+										const fill = `rgba(26, 76, 109, ${
+											visitRatio ? visitRatio * 0.75 + 0.25 : 0.05
+										})`;
 										return (
 											<Geography
 												key={geography.id}
@@ -253,7 +288,7 @@ class PubOptionsAnalytics extends Component {
 							</Geographies>
 						</ZoomableGroup>
 					</ComposableMap>
-				}
+				)}
 			</div>
 		);
 	}

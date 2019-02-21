@@ -31,7 +31,7 @@ class FormattingBarControlsVideo extends Component {
 
 	handleVideoSelect(evt) {
 		if (evt.target.files.length) {
-			s3Upload(evt.target.files[0], ()=>{}, this.onUploadFinish, 0);
+			s3Upload(evt.target.files[0], () => {}, this.onUploadFinish, 0);
 			this.setState({
 				isUploading: true,
 			});
@@ -48,7 +48,9 @@ class FormattingBarControlsVideo extends Component {
 		const iconSize = this.props.isSmall ? 12 : 16;
 
 		return (
-			<div className={`formatting-bar-controls-component ${this.props.isSmall ? 'small' : ''}`}>
+			<div
+				className={`formatting-bar-controls-component ${this.props.isSmall ? 'small' : ''}`}
+			>
 				{/*  Size Adjustment */}
 				<div className="block hide-on-small">
 					<div className="label">Size</div>
@@ -57,7 +59,7 @@ class FormattingBarControlsVideo extends Component {
 							min={25}
 							max={100}
 							value={this.props.attrs.size}
-							onChange={(newSize)=> {
+							onChange={(newSize) => {
 								this.props.updateAttrs({ size: newSize });
 							}}
 							labelRenderer={false}
@@ -71,14 +73,16 @@ class FormattingBarControlsVideo extends Component {
 					<div className="label over-buttons">Alignment</div>
 					<div className="input">
 						<ButtonGroup>
-							{alignOptions.map((item)=> {
+							{alignOptions.map((item) => {
 								return (
 									<Button
 										key={item.key}
 										icon={<Icon icon={item.icon} iconSize={iconSize} />}
 										minimal={true}
 										active={this.props.attrs.align === item.key}
-										onClick={()=> { this.props.updateAttrs({ align: item.key }); }}
+										onClick={() => {
+											this.props.updateAttrs({ align: item.key });
+										}}
 									/>
 								);
 							})}
@@ -93,7 +97,7 @@ class FormattingBarControlsVideo extends Component {
 						<div className="simple-editor-wrapper">
 							<SimpleEditor
 								initialHtmlString={this.props.attrs.caption}
-								onChange={(htmlString)=> {
+								onChange={(htmlString) => {
 									this.props.updateAttrs({ caption: htmlString });
 								}}
 								placeholder="Enter caption..."
@@ -136,7 +140,6 @@ class FormattingBarControlsVideo extends Component {
 		);
 	}
 }
-
 
 FormattingBarControlsVideo.propTypes = propTypes;
 export default FormattingBarControlsVideo;

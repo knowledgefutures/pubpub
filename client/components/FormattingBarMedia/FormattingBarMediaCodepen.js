@@ -26,23 +26,25 @@ class FormattingBarMediaCodepen extends Component {
 	handleInput(url) {
 		const input = getIframeSrc(url) || url;
 		const isValid = isHttpsUri(input) && getEmbedType(input) === 'codepen';
-		this.setState({
-			input: input,
-			isValid: isValid,
-		}, ()=> {
-			if (!this.state.isValid) {
-				return this.setState({ embedUrl: '', embedTitle: '' });
-			}
+		this.setState(
+			{
+				input: input,
+				isValid: isValid,
+			},
+			() => {
+				if (!this.state.isValid) {
+					return this.setState({ embedUrl: '', embedTitle: '' });
+				}
 
-			const queryParams = `?type=${getEmbedType(input)}&input=${input}`;
-			return apiFetch(`/api/editor/embed${queryParams}`)
-			.then((result)=> {
-				this.setState({
-					embedUrl: getIframeSrc(result.html),
-					embedTitle: result.title,
+				const queryParams = `?type=${getEmbedType(input)}&input=${input}`;
+				return apiFetch(`/api/editor/embed${queryParams}`).then((result) => {
+					this.setState({
+						embedUrl: getIframeSrc(result.html),
+						embedTitle: result.title,
+					});
 				});
-			});
-		});
+			},
+		);
 	}
 
 	handleInsert() {
@@ -53,7 +55,7 @@ class FormattingBarMediaCodepen extends Component {
 		});
 	}
 
-	render () {
+	render() {
 		return (
 			<div className="formatting-bar-media-component-content">
 				<InputGroup
@@ -62,7 +64,7 @@ class FormattingBarMediaCodepen extends Component {
 					placeholder="Enter Codepen URL"
 					large={true}
 					value={this.state.input}
-					onChange={(evt)=> {
+					onChange={(evt) => {
 						this.handleInput(evt.target.value);
 					}}
 					rightElement={
@@ -75,31 +77,29 @@ class FormattingBarMediaCodepen extends Component {
 						/>
 					}
 				/>
-				{this.state.isValid &&
+				{this.state.isValid && (
 					<div className="preview-wrapper">
-						<iframe
-							frameBorder="none"
-							src={this.state.embedUrl}
-							title="URL preview"
-						/>
+						<iframe frameBorder="none" src={this.state.embedUrl} title="URL preview" />
 					</div>
-				}
-				{!this.state.isValid &&
+				)}
+				{!this.state.isValid && (
 					<div className="preview-wrapper">
 						<NonIdealState
 							title="Paste a Codepen URL above"
 							icon={<Icon icon="codepen" iconSize={60} useColor={true} />}
-							action={(
+							action={
 								<Button
 									text="Load Sample URL"
-									onClick={()=> {
-										this.handleInput('https://codepen.io/juliangarnier/pen/idhuG');
+									onClick={() => {
+										this.handleInput(
+											'https://codepen.io/juliangarnier/pen/idhuG',
+										);
 									}}
 								/>
-							)}
+							}
 						/>
 					</div>
-				}
+				)}
 			</div>
 		);
 	}

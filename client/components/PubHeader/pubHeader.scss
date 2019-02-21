@@ -2,11 +2,12 @@
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center center;
-	background-color: #F8F8F8;
-	border-bottom: 1px solid #D2D2D2;
+	background-color: #f8f8f8;
+	border-bottom: 1px solid #d2d2d2;
 	position: relative;
 	z-index: 20;
-	&.js-is-sticky, &.js-is-stuck {
+	&.js-is-sticky,
+	&.js-is-stuck {
 		.bottom-text {
 			opacity: 1;
 		}
@@ -18,7 +19,7 @@
 		padding: 0em 1em;
 		line-height: 35px;
 		width: 100%;
-		transition: .2s linear opacity;
+		transition: 0.2s linear opacity;
 		display: flex;
 		.bottom-title {
 			overflow: hidden;
@@ -35,9 +36,9 @@
 			align-items: center;
 			.dot {
 				padding: 0em 0.3em;
-			    height: 24px;
-			    line-height: 24px;
-			    display: block;
+				height: 24px;
+				line-height: 24px;
+				display: block;
 			}
 		}
 	}
@@ -47,9 +48,14 @@
 			background-color: rgba(0, 0, 0, 0.5);
 			text-shadow: 0px 0px 2px black;
 			.bp3-tag {
-			    background-color: rgba(255,255,255,0.3)
+				background-color: rgba(255, 255, 255, 0.3);
 			}
-			a:not(.bp3-button), .bp3-tag, .bp3-icon-standard:before, .bp3-button:before, .bp3-breadcrumb, .bp3-breadcrumbs li:after {
+			a:not(.bp3-button),
+			.bp3-tag,
+			.bp3-icon-standard:before,
+			.bp3-button:before,
+			.bp3-breadcrumb,
+			.bp3-breadcrumbs li:after {
 				color: white;
 			}
 			a.bp3-button {
@@ -57,23 +63,26 @@
 			}
 			.bp3-editable-text {
 				&:hover:before {
-					box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255), inset 0 0 0 1px rgba(247, 252, 255, 0.54);
+					box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
+						inset 0 0 0 1px rgba(247, 252, 255, 0.54);
 					background-color: transparent;
 				}
 				&.bp3-editable-text-editing:before {
-					box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255), inset 0 0 0 1px rgba(247, 252, 255, 0.54);
+					box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
+						inset 0 0 0 1px rgba(247, 252, 255, 0.54);
 					background-color: rgba(0, 0, 0, 0.35);
 				}
-				&.bp3-editable-text-placeholder > .bp3-editable-text-content, ::placeholder {
+				&.bp3-editable-text-placeholder > .bp3-editable-text-content,
+				::placeholder {
 					color: inherit;
 					opacity: 0.75;
 				}
 			}
 			.bottom-text {
 				.bottom-buttons {
-					.bp3-minimal, .bp3-minimal:hover {
+					.bp3-minimal,
+					.bp3-minimal:hover {
 						color: white;
-
 					}
 				}
 			}
@@ -138,7 +147,6 @@
 		font-weight: 200;
 	}
 	.details {
-		
 		font-style: italic;
 		font-weight: 200;
 
@@ -151,10 +159,10 @@
 			display: inline-block;
 			cursor: pointer;
 			&:not(:last-of-type):after {
-				content: "";
+				content: '';
 				position: relative;
 				left: 1em;
-				top: -.25em;
+				top: -0.25em;
 				pointer-events: none;
 				width: 2px;
 				height: 2px;
@@ -179,7 +187,10 @@
 		}
 	}
 	&.mode {
-		.buttons, .details, .authors, .description {
+		.buttons,
+		.details,
+		.authors,
+		.description {
 			display: none;
 		}
 		.wrapper {
@@ -199,7 +210,7 @@
 	color: red;
 	.bp3-icon {
 		margin-top: 0px;
-		margin-left: 5px;	
+		margin-left: 5px;
 	}
 }
 @media only screen and (max-width: 750px) {

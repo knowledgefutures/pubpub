@@ -13,7 +13,7 @@
 	}
 	.component-wrapper {
 		margin-bottom: 2em;
-		border: 1px solid #CCC;	
+		border: 1px solid #ccc;
 	}
 	.block-header {
 		z-index: 1;
@@ -22,13 +22,14 @@
 		justify-content: space-between;
 		padding: 1em 0em;
 		flex-wrap: wrap;
-		background-color: #F0F0F0;
-		border-bottom: 1px solid #CCC;
+		background-color: #f0f0f0;
+		border-bottom: 1px solid #ccc;
 		// .spacer {
 		// 	flex-shrink: 1;
 		// 	flex-grow: 1;
 		// }
-		.input-field-component, .image-upload-component {
+		.input-field-component,
+		.image-upload-component {
 			// margin-bottom: 0px;
 			margin: 0em 1em;
 		}
@@ -61,7 +62,12 @@
 			font-size: 28px;
 			font-weight: 800;
 		}
-		h1, h2, h3, h4, h5, h6 {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
 			clear: both;
 			margin-bottom: 0.5em;
 			line-height: 1em;
@@ -85,10 +91,12 @@
 			margin: 0em 1em 2em 0em;
 		}
 	}
-	.layout-editor-text-component, .layout-editor-html-component {
-		p, li {
+	.layout-editor-text-component,
+	.layout-editor-html-component {
+		p,
+		li {
 			font-size: 18px;
-		    line-height: 1.6
+			line-height: 1.6;
 		}
 		.block-header {
 			flex-wrap: nowrap;

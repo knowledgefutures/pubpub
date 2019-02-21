@@ -2,7 +2,8 @@
 	display: block;
 	width: 175px;
 	height: 225px;
-	box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 2px 4px rgba(16, 22, 26, 0.2), 0 8px 24px rgba(16, 22, 26, 0.2);
+	box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 2px 4px rgba(16, 22, 26, 0.2),
+		0 8px 24px rgba(16, 22, 26, 0.2);
 	color: white;
 	font-size: 18px;
 	font-weight: 800;
@@ -16,7 +17,8 @@
 	text-shadow: 0 0 2px #000;
 	text-decoration: none;
 	&:hover {
-		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 4px 8px rgba(16, 22, 26, 0.2), 0 18px 46px 6px rgba(16, 22, 26, 0.2);
+		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 4px 8px rgba(16, 22, 26, 0.2),
+			0 18px 46px 6px rgba(16, 22, 26, 0.2);
 		color: white;
 		text-decoration: none;
 	}
@@ -30,5 +32,5 @@
 	}
 	span {
 		position: relative;
-	}	
+	}
 }

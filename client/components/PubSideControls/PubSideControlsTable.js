@@ -6,9 +6,9 @@ const propTypes = {
 	menuItems: PropTypes.array.isRequired,
 };
 
-const PubSideControlsTable = (props)=> {
+const PubSideControlsTable = (props) => {
 	const commands = {};
-	props.menuItems.forEach((menuItem)=> {
+	props.menuItems.forEach((menuItem) => {
 		commands[menuItem.title] = menuItem;
 	});
 
@@ -17,9 +17,7 @@ const PubSideControlsTable = (props)=> {
 			<div className="options-title">Table Details</div>
 
 			{/*  Row Adjustment */}
-			<div className="form-label first">
-				Row
-			</div>
+			<div className="form-label first">Row</div>
 			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-add-row-before'].isActive}
@@ -46,9 +44,7 @@ const PubSideControlsTable = (props)=> {
 			</div>
 
 			{/*  Column Adjustment */}
-			<div className="form-label">
-				Column
-			</div>
+			<div className="form-label">Column</div>
 			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-add-column-before'].isActive}
@@ -75,9 +71,7 @@ const PubSideControlsTable = (props)=> {
 			</div>
 
 			{/*  Cell Adjustment */}
-			<div className="form-label">
-				Cell
-			</div>
+			<div className="form-label">Cell</div>
 			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-merge-cells'].isActive}
@@ -99,9 +93,7 @@ const PubSideControlsTable = (props)=> {
 			</div>
 
 			{/*  Table Adjustment */}
-			<div className="form-label">
-				Table
-			</div>
+			<div className="form-label">Table</div>
 			<div className="bp3-button-group bp3-fill">
 				<Button
 					disabled={!commands['table-delete'].isActive}
@@ -112,7 +104,6 @@ const PubSideControlsTable = (props)=> {
 		</div>
 	);
 };
-
 
 PubSideControlsTable.propTypes = propTypes;
 export default PubSideControlsTable;

@@ -26,23 +26,25 @@ class FormattingBarMediaSoundcloud extends Component {
 	handleInput(url) {
 		const input = getIframeSrc(url) || url;
 		const isValid = isHttpsUri(input) && getEmbedType(input) === 'soundcloud';
-		this.setState({
-			input: input,
-			isValid: isValid,
-		}, ()=> {
-			if (!this.state.isValid) {
-				return this.setState({ embedUrl: '', embedTitle: '' });
-			}
+		this.setState(
+			{
+				input: input,
+				isValid: isValid,
+			},
+			() => {
+				if (!this.state.isValid) {
+					return this.setState({ embedUrl: '', embedTitle: '' });
+				}
 
-			const queryParams = `?type=${getEmbedType(input)}&input=${input}`;
-			return apiFetch(`/api/editor/embed${queryParams}`)
-			.then((result)=> {
-				this.setState({
-					embedUrl: getIframeSrc(result.html),
-					embedTitle: result.title,
+				const queryParams = `?type=${getEmbedType(input)}&input=${input}`;
+				return apiFetch(`/api/editor/embed${queryParams}`).then((result) => {
+					this.setState({
+						embedUrl: getIframeSrc(result.html),
+						embedTitle: result.title,
+					});
 				});
-			});
-		});
+			},
+		);
 	}
 
 	handleInsert() {
@@ -54,7 +56,7 @@ class FormattingBarMediaSoundcloud extends Component {
 		});
 	}
 
-	render () {
+	render() {
 		return (
 			<div className="formatting-bar-media-component-content">
 				<InputGroup
@@ -63,7 +65,7 @@ class FormattingBarMediaSoundcloud extends Component {
 					placeholder="Enter SoundCloud URL"
 					large={true}
 					value={this.state.input}
-					onChange={(evt)=> {
+					onChange={(evt) => {
 						this.handleInput(evt.target.value);
 					}}
 					rightElement={
@@ -76,7 +78,7 @@ class FormattingBarMediaSoundcloud extends Component {
 						/>
 					}
 				/>
-				{this.state.isValid &&
+				{this.state.isValid && (
 					<div className="preview-wrapper">
 						<iframe
 							frameBorder="none"
@@ -85,23 +87,25 @@ class FormattingBarMediaSoundcloud extends Component {
 							className="short"
 						/>
 					</div>
-				}
-				{!this.state.isValid &&
+				)}
+				{!this.state.isValid && (
 					<div className="preview-wrapper">
 						<NonIdealState
 							title="Paste a SoundCloud URL above"
 							icon={<Icon icon="soundcloud" iconSize={60} useColor={true} />}
-							action={(
+							action={
 								<Button
 									text="Load Sample URL"
-									onClick={()=> {
-										this.handleInput('https://soundcloud.com/romainroux/charlotte-dada-dont-let-me-down-ghana-1971');
+									onClick={() => {
+										this.handleInput(
+											'https://soundcloud.com/romainroux/charlotte-dada-dont-let-me-down-ghana-1971',
+										);
 									}}
 								/>
-							)}
+							}
 						/>
 					</div>
-				}
+				)}
 			</div>
 		);
 	}

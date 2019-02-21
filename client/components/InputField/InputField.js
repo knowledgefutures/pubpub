@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/label-has-for */import React from 'react';
+/* eslint-disable jsx-a11y/label-has-for */ import React from 'react';
 import PropTypes from 'prop-types';
 
 require('./inputField.scss');
@@ -39,17 +39,21 @@ const defaultProps = {
 
 const InputField = function(props) {
 	return (
-		<div className={`input-field-component bp3-form-group ${props.error ? 'bp3-intent-danger' : ''} ${props.wrapperClassName}`}>
+		<div
+			className={`input-field-component bp3-form-group ${
+				props.error ? 'bp3-intent-danger' : ''
+			} ${props.wrapperClassName}`}
+		>
 			<label className="bp3-label" htmlFor={`input-${props.label}`}>
 				{props.label}
-				{props.isRequired &&
+				{props.isRequired && (
 					<span className="bp3-text-muted required-text"> (required)</span>
-				}
+				)}
 			</label>
 			<div className="bp3-form-content">
 				{props.children}
 				<div className={`bp3-input-group ${props.error ? 'bp3-intent-danger' : ''}`}>
-					{!props.children && !props.isTextarea &&
+					{!props.children && !props.isTextarea && (
 						<input
 							id={`input-${props.label}`}
 							className="bp3-input"
@@ -62,8 +66,8 @@ const InputField = function(props) {
 							dir="auto"
 							ref={props.inputRef}
 						/>
-					}
-					{!props.children && props.isTextarea &&
+					)}
+					{!props.children && props.isTextarea && (
 						<textarea
 							id={`input-${props.label}`}
 							className="bp3-input"
@@ -75,10 +79,9 @@ const InputField = function(props) {
 							dir="auto"
 							ref={props.inputRef}
 						/>
-					}
+					)}
 					<div className="bp3-form-helper-text">{props.error || props.helperText}</div>
 				</div>
-
 			</div>
 		</div>
 	);

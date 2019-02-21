@@ -44,19 +44,21 @@ class PubOptionsSections extends Component {
 	}
 
 	handleDragEnd(result) {
-		if (!result.destination) { return null; }
+		if (!result.destination) {
+			return null;
+		}
 		const source = result.source.index + 1;
 		const destination = result.destination.index + 1;
 		const movedItem = this.props.pubData.sectionsData[source];
-		const remainingItems = this.props.pubData.sectionsData.filter((item, index)=> {
+		const remainingItems = this.props.pubData.sectionsData.filter((item, index) => {
 			return index !== source;
 		});
 
 		const newSectionsArray = [
 			...remainingItems.slice(0, destination),
 			movedItem,
-			...remainingItems.slice(destination)
-		].map((item, index)=> {
+			...remainingItems.slice(destination),
+		].map((item, index) => {
 			return {
 				...item,
 				order: index,
@@ -66,20 +68,22 @@ class PubOptionsSections extends Component {
 	}
 
 	handleSectionRemove(removeIndex) {
-		const newSectionsArray = this.props.pubData.sectionsData.filter((item)=> {
-			return item.order !== removeIndex;
-		}).map((item, index)=> {
-			return {
-				...item,
-				order: index,
-			};
-		});
+		const newSectionsArray = this.props.pubData.sectionsData
+			.filter((item) => {
+				return item.order !== removeIndex;
+			})
+			.map((item, index) => {
+				return {
+					...item,
+					order: index,
+				};
+			});
 		this.handleSectionsChange(newSectionsArray);
 	}
 
 	handleSectionsChange(newSectionsArray) {
 		const newSectionsData = {};
-		newSectionsArray.forEach((section)=> {
+		newSectionsArray.forEach((section) => {
 			newSectionsData[section.firebaseId] = {
 				...section,
 				firebaseId: null,
@@ -99,13 +103,12 @@ class PubOptionsSections extends Component {
 	}
 
 	render() {
-		const content = this.props.pubData.activeVersion && this.props.pubData.activeVersion.content;
+		const content =
+			this.props.pubData.activeVersion && this.props.pubData.activeVersion.content;
 		const queryObject = this.props.locationData.query;
 
 		const activeSectionId = this.props.locationData.params.sectionId || '';
-		const sectionsData = this.props.pubData.isDraft
-			? this.props.pubData.sectionsData
-			: [];
+		const sectionsData = this.props.pubData.isDraft ? this.props.pubData.sectionsData : [];
 
 		const isDraft = this.props.pubData.isDraft;
 		return (
@@ -121,7 +124,7 @@ class PubOptionsSections extends Component {
 						}
 					`}
 				</style>
-				{isDraft &&
+				{isDraft && (
 					<div className="save-wrapper">
 						<button
 							className="bp3-button add-sections-button"
@@ -131,117 +134,183 @@ class PubOptionsSections extends Component {
 							Add Section
 						</button>
 					</div>
-				}
+				)}
 				<h1>Sections</h1>
-				<p>Sections allow you to break up your pub&apos;s content into multiple pieces. This allows you to create chapters, volumes, etc. for longer documents.</p>
-				{!isDraft && Array.isArray(content) &&
+				<p>
+					Sections allow you to break up your pub&apos;s content into multiple pieces.
+					This allows you to create chapters, volumes, etc. for longer documents.
+				</p>
+				{!isDraft && Array.isArray(content) && (
 					<ul className="bp3-menu">
-						{content.map((section, index)=> {
+						{content.map((section, index) => {
 							const split = section.title.split('/');
-							const prefix = split.length > 1
-								? split[0].trim()
-								: undefined;
-							const title = split.length > 1
-								? split[1].trim()
-								: split[0].trim();
+							const prefix = split.length > 1 ? split[0].trim() : undefined;
+							const title = split.length > 1 ? split[1].trim() : split[0].trim();
 							return (
 								<li key={section.id}>
-									{prefix &&
-										<span className={`section-header ${index === 0 ? 'first' : ''}`}>{prefix}</span>
-									}
-									<a href={`/pub/${this.props.pubData.slug}/${index === 0 ? '' : 'content/'}${section.id}${queryObject.version ? `?version=${queryObject.version}` : ''}`} className={`bp3-menu-item bp3-popover-dismiss ${activeSectionId === section.id ? 'bp3-active' : ''}`}>
+									{prefix && (
+										<span
+											className={`section-header ${
+												index === 0 ? 'first' : ''
+											}`}
+										>
+											{prefix}
+										</span>
+									)}
+									<a
+										href={`/pub/${this.props.pubData.slug}/${
+											index === 0 ? '' : 'content/'
+										}${section.id}${
+											queryObject.version
+												? `?version=${queryObject.version}`
+												: ''
+										}`}
+										className={`bp3-menu-item bp3-popover-dismiss ${
+											activeSectionId === section.id ? 'bp3-active' : ''
+										}`}
+									>
 										{title}
 									</a>
 								</li>
 							);
 						})}
 					</ul>
-				}
-				{isDraft &&
+				)}
+				{isDraft && (
 					<div>
 						<div className={`section first ${activeSectionId === '' ? 'active' : ''}`}>
 							<div className="title">
-								{this.state.editIndex === 0 &&
+								{this.state.editIndex === 0 && (
 									<input
 										className="bp3-fill bp3-input"
 										value={sectionsData[0].title}
-										onChange={(evt)=> { this.handleTitleChange(evt, 0); }}
+										onChange={(evt) => {
+											this.handleTitleChange(evt, 0);
+										}}
 									/>
-								}
-								{this.state.editIndex !== 0 &&
-									<a className="link-title" href={`/pub/${this.props.locationData.params.slug}/draft`}>
+								)}
+								{this.state.editIndex !== 0 && (
+									<a
+										className="link-title"
+										href={`/pub/${this.props.locationData.params.slug}/draft`}
+									>
 										{sectionsData[0].title}
 									</a>
-								}
+								)}
 							</div>
-							{this.state.editIndex === 0 &&
+							{this.state.editIndex === 0 && (
 								<button
 									className="bp3-button bp3-minimal bp3-icon-tick"
-									onClick={()=> { this.handleSetEdit(undefined); }}
+									onClick={() => {
+										this.handleSetEdit(undefined);
+									}}
 									type="button"
 								/>
-							}
-							{this.state.editIndex !== 0 &&
+							)}
+							{this.state.editIndex !== 0 && (
 								<Button
 									className="bp3-minimal"
-									onClick={()=> { this.handleSetEdit(0); }}
+									onClick={() => {
+										this.handleSetEdit(0);
+									}}
 									icon={<Icon icon="edit2" />}
 								/>
-							}
+							)}
 						</div>
 						<DragDropContext onDragEnd={this.handleDragEnd}>
 							<Droppable droppableId="mainDroppable">
 								{(provided, snapshot) => (
 									<div
 										ref={provided.innerRef}
-										className={`main-list ${snapshot.isDraggingOver ? 'dragging' : ''}`}
+										className={`main-list ${
+											snapshot.isDraggingOver ? 'dragging' : ''
+										}`}
 									>
-										{sectionsData.map((section, index)=> {
-											if (index === 0) { return null; }
+										{sectionsData.map((section, index) => {
+											if (index === 0) {
+												return null;
+											}
 											const isEditing = this.state.editIndex === index;
 											return (
-												<Draggable key={`draggable-${section.id}`} draggableId={section.id} index={index - 1}>
+												<Draggable
+													key={`draggable-${section.id}`}
+													draggableId={section.id}
+													index={index - 1}
+												>
 													{(providedItem, snapshotItem) => (
 														<div
 															ref={providedItem.innerRef}
-															className={`section ${snapshotItem.isDragging ? 'dragging' : ''} ${activeSectionId === section.id ? 'active' : ''}`}
+															className={`section ${
+																snapshotItem.isDragging
+																	? 'dragging'
+																	: ''
+															} ${
+																activeSectionId === section.id
+																	? 'active'
+																	: ''
+															}`}
 															{...providedItem.draggableProps}
 														>
-															<span {...providedItem.dragHandleProps} className="drag">
+															<span
+																{...providedItem.dragHandleProps}
+																className="drag"
+															>
 																<span className="bp3-icon-standard bp3-icon-drag-handle-horizontal" />
 															</span>
 															<div className="title">
-																{isEditing &&
+																{isEditing && (
 																	<input
 																		className="bp3-fill bp3-input"
 																		value={section.title}
-																		onChange={(evt)=> { this.handleTitleChange(evt, index); }}
+																		onChange={(evt) => {
+																			this.handleTitleChange(
+																				evt,
+																				index,
+																			);
+																		}}
 																	/>
-																}
-																{!isEditing &&
-																	<a className="link-title" href={`/pub/${this.props.locationData.params.slug}/draft/content/${section.id}`}>
+																)}
+																{!isEditing && (
+																	<a
+																		className="link-title"
+																		href={`/pub/${
+																			this.props.locationData
+																				.params.slug
+																		}/draft/content/${
+																			section.id
+																		}`}
+																	>
 																		{section.title}
 																	</a>
-																	// <span onClick={()=> { this.props.onSectionSet(section.id); }} className="link-title">{section.title}</span>
+																)
+																// <span onClick={()=> { this.props.onSectionSet(section.id); }} className="link-title">{section.title}</span>
 																}
 															</div>
-															{isEditing &&
+															{isEditing && (
 																<button
 																	className="bp3-button bp3-minimal bp3-icon-tick"
-																	onClick={()=> { this.handleSetEdit(undefined); }}
+																	onClick={() => {
+																		this.handleSetEdit(
+																			undefined,
+																		);
+																	}}
 																	type="button"
 																/>
-															}
-															{!isEditing &&
+															)}
+															{!isEditing && (
 																<Button
 																	className="bp3-minimal"
-																	onClick={()=> { this.handleSetEdit(index); }}
+																	onClick={() => {
+																		this.handleSetEdit(index);
+																	}}
 																	icon={<Icon icon="edit2" />}
 																/>
-															}
+															)}
 															<button
 																className="bp3-button bp3-minimal bp3-icon-trash bp3-intent-danger"
-																onClick={()=> { this.handleSectionRemove(index); }}
+																onClick={() => {
+																	this.handleSectionRemove(index);
+																}}
 																type="button"
 															/>
 														</div>
@@ -255,7 +324,7 @@ class PubOptionsSections extends Component {
 							</Droppable>
 						</DragDropContext>
 					</div>
-				}
+				)}
 			</div>
 		);
 	}

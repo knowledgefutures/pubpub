@@ -28,14 +28,19 @@ const UserNav = function(props) {
 		<div className="user-nav-component">
 			<div className="bp3-tabs">
 				<div className="bp3-tab-list bp3-large" role="tablist">
-					{tabs.map((tab)=> {
+					{tabs.map((tab) => {
 						return (
 							<a
 								key={`tab-${tab.id}`}
 								href={`/user/${props.userSlug}${tab.path}`}
 								className="bp3-tab"
 								role="tab"
-								aria-selected={(tab.path.indexOf(props.activeTab) > -1 || (!tab.path && !props.activeTab)) ? 'true' : 'false'}
+								aria-selected={
+									tab.path.indexOf(props.activeTab) > -1 ||
+									(!tab.path && !props.activeTab)
+										? 'true'
+										: 'false'
+								}
 							>
 								{tab.label}
 							</a>

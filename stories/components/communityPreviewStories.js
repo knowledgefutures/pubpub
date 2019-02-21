@@ -17,8 +17,7 @@ const data = {
 	numDiscussions: '49',
 };
 
-storiesOf('Components/CommunityPreview', module)
-.add('default', () => (
+storiesOf('Components/CommunityPreview', module).add('default', () => (
 	<div>
 		<div className="container">
 			<div className="row">

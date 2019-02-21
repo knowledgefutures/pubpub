@@ -19,7 +19,7 @@ const LayoutPubs = function(props) {
 	const previews = [...props.content.pubIds, ...emptyPreviews].slice(0, displayLimit);
 
 	/* Only show blocks if there was a pub available */
-	const renderItems = previews.filter((item, index)=> {
+	const renderItems = previews.filter((item, index) => {
 		const pub = props.pubRenderList[index];
 		return pub && pub.slug;
 	});
@@ -27,19 +27,22 @@ const LayoutPubs = function(props) {
 		<div className="layout-pubs-component">
 			<div className="block-content">
 				<div className="container">
-					{props.content.title &&
+					{props.content.title && (
 						<div className="row">
 							<div className="col-12">
 								<h1>{props.content.title}</h1>
 							</div>
 						</div>
-					}
+					)}
 
 					<div className="row">
-						{renderItems.map((item, index)=> {
+						{renderItems.map((item, index) => {
 							const selectedPub = props.pubRenderList[index] || { collaborators: [] };
 							return (
-								<div key={selectedPub.id} className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}>
+								<div
+									key={selectedPub.id}
+									className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}
+								>
 									<PubPreview
 										pubData={selectedPub}
 										size={pubPreviewType}

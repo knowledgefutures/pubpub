@@ -12,14 +12,17 @@
 		padding-bottom: 1em;
 	}
 
-	input, textarea {
+	input,
+	textarea {
 		max-width: 500px;
 	}
 }
 
-@media only screen and (max-width: 720px) {  /* Used to be 45em */
+@media only screen and (max-width: 720px) {
+	/* Used to be 45em */
 	.user-edit-component {
-		input, textarea {
+		input,
+		textarea {
 			max-width: none;
 		}
 	}

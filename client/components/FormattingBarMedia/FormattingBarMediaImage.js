@@ -33,7 +33,7 @@ class FormattingBarMediaImage extends Component {
 
 	onUploadProgress(evt) {
 		this.setState({
-			progress: evt.loaded / evt.total
+			progress: evt.loaded / evt.total,
 		});
 	}
 
@@ -44,32 +44,35 @@ class FormattingBarMediaImage extends Component {
 		});
 	}
 
-	render () {
+	render() {
 		return (
-			<Dropzone
-				onDrop={this.onDrop}
-				accept="image/png, image/jpeg, image/gif"
-			>
+			<Dropzone onDrop={this.onDrop} accept="image/png, image/jpeg, image/gif">
 				{({ getRootProps, getInputProps, isDragActive }) => {
 					return (
 						<div
 							{...getRootProps()}
-							className={`formatting-bar-media-component-content dropzone ${isDragActive ? 'dropzone--isActive' : ''}`}
+							className={`formatting-bar-media-component-content dropzone ${
+								isDragActive ? 'dropzone--isActive' : ''
+							}`}
 						>
 							<input {...getInputProps()} />
-							{!this.state.isUploading &&
+							{!this.state.isUploading && (
 								<div className="drag-message">
 									<Icon icon="circle-arrow-up" iconSize={50} />
 									<div className="drag-title">Drag & drop to upload an Image</div>
 									<div className="drag-details">Or click to browse files</div>
 									<div className="drag-details">.jpeg .png or .gif</div>
 								</div>
-							}
-							{this.state.isUploading &&
+							)}
+							{this.state.isUploading && (
 								<div className="drag-message">
-									<Spinner value={this.state.progress === 1 ? null : this.state.progress} />
+									<Spinner
+										value={
+											this.state.progress === 1 ? null : this.state.progress
+										}
+									/>
 								</div>
-							}
+							)}
 						</div>
 					);
 				}}

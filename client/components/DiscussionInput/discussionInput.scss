@@ -1,7 +1,7 @@
 .discussion-input-component {
-	$border-color: #CCC;
+	$border-color: #ccc;
 	border: 1px solid $border-color;
-	background-color: #FFF;
+	background-color: #fff;
 	// margin-bottom: 2em;
 	.title-input {
 		padding: 0.75em 0.5em;
@@ -34,7 +34,7 @@
 	}
 	.buttons-left {
 		flex-grow: 1;
-		flex-shrink: 1;	
+		flex-shrink: 1;
 		min-width: 0px;
 	}
 	.buttons-right {

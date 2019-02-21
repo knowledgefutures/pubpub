@@ -8,7 +8,7 @@ const propTypes = {
 	onSelect: PropTypes.func.isRequired,
 };
 
-const DiscussionSortList = (props)=> {
+const DiscussionSortList = (props) => {
 	const onSelect = props.onSelect;
 	const options = [
 		{ id: 0, slug: 'newestThread', title: 'Newest Thread' },
@@ -20,17 +20,27 @@ const DiscussionSortList = (props)=> {
 	];
 	return (
 		<div className="discussion-authors-list-component bp3-menu bp3-elevation-1">
-			<li className="bp3-menu-header"><h6>Filter by Author</h6></li>
+			<li className="bp3-menu-header">
+				<h6>Filter by Author</h6>
+			</li>
 
-			{options.map((option)=> {
-				const handleClick = ()=> { onSelect(option.slug); };
+			{options.map((option) => {
+				const handleClick = () => {
+					onSelect(option.slug);
+				};
 				return (
 					<li>
-						<div role="button" tabIndex={-1} key={`option-${option.id}`} className="bp3-menu-item" onClick={handleClick}>
+						<div
+							role="button"
+							tabIndex={-1}
+							key={`option-${option.id}`}
+							className="bp3-menu-item"
+							onClick={handleClick}
+						>
 							<div className="color">
-								{props.selected === option.slug &&
+								{props.selected === option.slug && (
 									<span className="bp3-icon-standard bp3-icon-small-tick" />
-								}
+								)}
 							</div>
 							<div className="title">{option.title}</div>
 						</div>

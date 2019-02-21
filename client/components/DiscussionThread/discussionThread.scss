@@ -2,7 +2,7 @@
 	.preview {
 		padding: 1em;
 		&:hover {
-			background-color: #F0F0F0;
+			background-color: #f0f0f0;
 			cursor: pointer;
 		}
 		&.minimal {
@@ -12,10 +12,10 @@
 			opacity: 0.8;
 			&:hover {
 				opacity: 1;
-				background-color: #F9F9F9;
+				background-color: #f9f9f9;
 				box-shadow: inset 0px 0px 1px 0px rgba(0, 0, 0, 0.5);
 				// padding: 0.5em 0px 0.5em 0.5em;
-			    // margin: 0px 0px 2em -0.5em;
+				// margin: 0px 0px 2em -0.5em;
 			}
 		}
 		.title {
@@ -32,7 +32,7 @@
 				padding: 0px 4px;
 			}
 		}
-		
+
 		.discussion {
 			margin: 0.25em 0em;
 			position: relative;
@@ -40,7 +40,7 @@
 				width: 2px;
 				height: calc(100% + 10px);
 				position: absolute;
-				background: #CCC;
+				background: #ccc;
 				left: 9px;
 				top: 0px;
 				z-index: 0;
@@ -64,25 +64,23 @@
 			margin-right: -14px;
 		}
 		&.minimal {
-			background-color: #F9F9F9;
+			background-color: #f9f9f9;
 			margin-bottom: 0.5em;
 			border-radius: 4px;
 			// box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.5);
 			box-shadow: inset 0px 0px 1px 0px rgba(0, 0, 0, 0.5);
 			// padding: 1em 0.5em 1em 0.5em;
-		    // margin: 0px 0px 2em -0.5em;
-		    .collapse-wrapper {
-		    	border-bottom: 1px solid #CCC;
-		    }
+			// margin: 0px 0px 2em -0.5em;
+			.collapse-wrapper {
+				border-bottom: 1px solid #ccc;
+			}
 		}
-
 	}
-
 
 	// padding: 0em 1em;
 	.back {
 		display: block;
-		border-bottom: 1px solid #E0E0E0;
+		border-bottom: 1px solid #e0e0e0;
 		margin-bottom: 1em;
 	}
 	// .title {

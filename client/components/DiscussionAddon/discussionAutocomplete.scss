@@ -1,29 +1,29 @@
 .discussion-autocomplete {
 	.input {
 		width: 100%;
-	}	
+	}
 }
 .discussion-autocomplete-popover {
 	.autocomplete-name {
 		padding: 0em 1em;
-	}	
+	}
 	.bp3-menu-item {
 		display: flex;
-	    align-content: center;
-	    align-items: flex-start;
-	    .avatar-wrapper {
-	    	padding-right: 0.5em;
-	    }
-	    .details {
-	    	flex-grow: 1;
-	    	flex-shrink: 1;
-	    }
-	    .title {
-	    	font-weight: 600;
-	    }
-	    .count {
-	    	font-size: 0.85em;
-	    }
+		align-content: center;
+		align-items: flex-start;
+		.avatar-wrapper {
+			padding-right: 0.5em;
+		}
+		.details {
+			flex-grow: 1;
+			flex-shrink: 1;
+		}
+		.title {
+			font-weight: 600;
+		}
+		.count {
+			font-size: 0.85em;
+		}
 	}
 	.new-title {
 		padding-right: 0.5em;

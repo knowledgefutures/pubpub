@@ -24,7 +24,7 @@ class PubOptionsDelete extends Component {
 
 	updateTitle(evt) {
 		this.setState({
-			title: evt.target.value
+			title: evt.target.value,
 		});
 	}
 
@@ -35,14 +35,14 @@ class PubOptionsDelete extends Component {
 			body: JSON.stringify({
 				pubId: this.props.pubData.id,
 				communityId: this.props.communityData.id,
+			}),
+		})
+			.then(() => {
+				window.location.href = '/';
 			})
-		})
-		.then(()=> {
-			window.location.href = '/';
-		})
-		.catch(()=> {
-			this.setState({ isLoading: false });
-		});
+			.catch(() => {
+				this.setState({ isLoading: false });
+			});
 	}
 
 	render() {
@@ -52,7 +52,10 @@ class PubOptionsDelete extends Component {
 
 				<div className="bp3-callout bp3-intent-danger">
 					<p>Deleting a Pub is permanent - it cannot be undone.</p>
-					<p>This will permanantely delete <b>{this.props.pubData.title}</b>, its discussions, versions, and associated metadata.</p>
+					<p>
+						This will permanantely delete <b>{this.props.pubData.title}</b>, its
+						discussions, versions, and associated metadata.
+					</p>
 					<p>Please type the title of the Pub below to confirm your intention.</p>
 
 					<InputField

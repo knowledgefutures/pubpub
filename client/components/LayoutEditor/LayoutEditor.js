@@ -43,7 +43,7 @@ class LayoutEditor extends Component {
 	}
 
 	handleInsert(index, type, newContent) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			const newLayout = prevState.layout;
 			newLayout.splice(index, 0, {
 				id: generateHash(8),
@@ -60,7 +60,7 @@ class LayoutEditor extends Component {
 	}
 
 	handleChange(index, newContent) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			const newLayout = prevState.layout;
 			newLayout[index].content = newContent;
 			const newPubRenderList = generateRenderLists(newLayout, this.props.pubs);
@@ -73,7 +73,7 @@ class LayoutEditor extends Component {
 	}
 
 	handleRemove(index) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			const newLayout = prevState.layout;
 			newLayout.splice(index, 1);
 			this.props.onChange(newLayout);
@@ -82,7 +82,7 @@ class LayoutEditor extends Component {
 	}
 
 	handleMoveUp(index) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			const newLayout = [...prevState.layout];
 			newLayout[index - 1] = newLayout[index];
 			newLayout[index] = prevState.layout[index - 1];
@@ -97,7 +97,7 @@ class LayoutEditor extends Component {
 	}
 
 	handleMoveDown(index) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			const newLayout = [...prevState.layout];
 			newLayout[index + 1] = newLayout[index];
 			newLayout[index] = prevState.layout[index + 1];
@@ -119,20 +119,25 @@ class LayoutEditor extends Component {
 					onInsert={this.handleInsert}
 					communityData={this.props.communityData}
 				/>
-				{this.state.layout.map((item, index)=> {
-					const validType = ['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
-					if (!validType) { return null; }
+				{this.state.layout.map((item, index) => {
+					const validType =
+						['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
+					if (!validType) {
+						return null;
+					}
 					return (
 						<div key={item.id}>
 							<div className="block-title">
-								<div className="text">{item.type === 'html' ? 'HTML' : item.type} Block</div>
+								<div className="text">
+									{item.type === 'html' ? 'HTML' : item.type} Block
+								</div>
 
 								<div className="bp3-button-group bp3-minimal bp3-small">
 									<Button
 										text="Move Up"
 										icon="caret-up"
 										disabled={index === 0}
-										onClick={()=> {
+										onClick={() => {
 											this.handleMoveUp(index);
 										}}
 									/>
@@ -140,20 +145,20 @@ class LayoutEditor extends Component {
 										text="Move Down"
 										icon="caret-down"
 										disabled={index === this.state.layout.length - 1}
-										onClick={()=> {
+										onClick={() => {
 											this.handleMoveDown(index);
 										}}
 									/>
 									<Button
 										text="Remove"
-										onClick={()=> {
+										onClick={() => {
 											this.handleRemove(index);
 										}}
 									/>
 								</div>
 							</div>
 							<div key={`block-${item.id}`} className="component-wrapper">
-								{item.type === 'pubs' &&
+								{item.type === 'pubs' && (
 									<LayoutEditorPubs
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
@@ -163,24 +168,24 @@ class LayoutEditor extends Component {
 										pubs={this.props.pubs}
 										communityData={this.props.communityData}
 									/>
-								}
-								{item.type === 'text' &&
+								)}
+								{item.type === 'text' && (
 									<LayoutEditorText
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
 										layoutIndex={index}
 										content={item.content}
 									/>
-								}
-								{item.type === 'html' &&
+								)}
+								{item.type === 'html' && (
 									<LayoutEditorHtml
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
 										layoutIndex={index}
 										content={item.content}
 									/>
-								}
-								{item.type === 'banner' &&
+								)}
+								{item.type === 'banner' && (
 									<LayoutEditorBanner
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
@@ -188,8 +193,8 @@ class LayoutEditor extends Component {
 										content={item.content}
 										communityData={this.props.communityData}
 									/>
-								}
-								{item.type === 'pages' &&
+								)}
+								{item.type === 'pages' && (
 									<LayoutEditorPages
 										key={`item-${item.id}`}
 										onChange={this.handleChange}
@@ -197,7 +202,7 @@ class LayoutEditor extends Component {
 										content={item.content}
 										pages={this.props.communityData.pages}
 									/>
-								}
+								)}
 							</div>
 							<LayoutEditorInsert
 								key={`insert-${item.id}`}

@@ -13,7 +13,7 @@ const propTypes = {
 	exploreData: PropTypes.object.isRequired,
 };
 
-const Explore = (props)=> {
+const Explore = (props) => {
 	const exploreData = props.exploreData;
 
 	return (
@@ -28,32 +28,42 @@ const Explore = (props)=> {
 					<div className="row">
 						<div className="col-12">
 							<h1>Explore PubPub Communities</h1>
-							<div className="details">Communities are groups focused on a particular topic, theme, or expertise. While their focus may be narrow, they invite perspective and contribution from all.</div>
+							<div className="details">
+								Communities are groups focused on a particular topic, theme, or
+								expertise. While their focus may be narrow, they invite perspective
+								and contribution from all.
+							</div>
 						</div>
 
-
-						{exploreData.activeCommunities.filter((item)=> {
-							return item;
-						}).sort((foo, bar)=> {
-							if (foo.updatedAt < bar.updatedAt) { return 1; }
-							if (foo.updatedAt > bar.updatedAt) { return -1; }
-							return 0;
-						}).map((item)=> {
-							return (
-								<div className="col-4" key={`active-${item.id}`}>
-									<CommunityPreview
-										subdomain={item.subdomain}
-										domain={item.domain}
-										title={item.title}
-										description={item.description}
-										largeHeaderBackground={item.largeHeaderBackground}
-										largeHeaderLogo={item.largeHeaderLogo}
-										accentColor={item.accentColor}
-										accentTextColor={item.accentTextColor}
-									/>
-								</div>
-							);
-						})}
+						{exploreData.activeCommunities
+							.filter((item) => {
+								return item;
+							})
+							.sort((foo, bar) => {
+								if (foo.updatedAt < bar.updatedAt) {
+									return 1;
+								}
+								if (foo.updatedAt > bar.updatedAt) {
+									return -1;
+								}
+								return 0;
+							})
+							.map((item) => {
+								return (
+									<div className="col-4" key={`active-${item.id}`}>
+										<CommunityPreview
+											subdomain={item.subdomain}
+											domain={item.domain}
+											title={item.title}
+											description={item.description}
+											largeHeaderBackground={item.largeHeaderBackground}
+											largeHeaderLogo={item.largeHeaderLogo}
+											accentColor={item.accentColor}
+											accentTextColor={item.accentTextColor}
+										/>
+									</div>
+								);
+							})}
 					</div>
 				</div>
 			</PageWrapper>

@@ -35,10 +35,11 @@ class Login extends Component {
 
 	onLoginSubmit(evt) {
 		evt.preventDefault();
-		if (!this.emailRef.current
-			|| !this.emailRef.current.value
-			|| !this.passwordRef.current
-			|| !this.passwordRef.current.value
+		if (
+			!this.emailRef.current ||
+			!this.emailRef.current.value ||
+			!this.passwordRef.current ||
+			!this.passwordRef.current.value
 		) {
 			return this.setState({ loginLoading: false, loginError: 'Invalid Email or Password' });
 		}
@@ -49,20 +50,21 @@ class Login extends Component {
 			body: JSON.stringify({
 				email: this.emailRef.current.value.toLowerCase(),
 				password: SHA3(this.passwordRef.current.value).toString(encHex),
+			}),
+		})
+			.then(() => {
+				window.location.href = this.props.locationData.query.redirect || '/';
 			})
-		})
-		.then(()=> {
-			window.location.href = this.props.locationData.query.redirect || '/';
-		})
-		.catch(()=> {
-			this.setState({ loginLoading: false, loginError: 'Invalid Email or Password' });
-		});
+			.catch(() => {
+				this.setState({ loginLoading: false, loginError: 'Invalid Email or Password' });
+			});
 	}
 
 	onLogoutSubmit() {
 		this.setState({ logoutLoading: true });
-		apiFetch('/api/logout')
-		.then(()=> { window.location.href = '/'; });
+		apiFetch('/api/logout').then(() => {
+			window.location.href = '/';
+		});
 	}
 
 	render() {
@@ -78,12 +80,16 @@ class Login extends Component {
 					<div className="container small">
 						<div className="row">
 							<div className="col-12 bp3-elevation">
-								{!this.props.loginData.id &&
+								{!this.props.loginData.id && (
 									<div>
 										<h1>Login</h1>
-										{!this.props.locationData.isBasePubPub &&
-											<p>Login to <b>{this.props.communityData.title}</b> using your <a href="https://www.pubpub.org">PubPub</a> account.</p>
-										}
+										{!this.props.locationData.isBasePubPub && (
+											<p>
+												Login to <b>{this.props.communityData.title}</b>{' '}
+												using your{' '}
+												<a href="https://www.pubpub.org">PubPub</a> account.
+											</p>
+										)}
 										<form onSubmit={this.onLoginSubmit}>
 											<InputField
 												label="Email"
@@ -95,7 +101,9 @@ class Login extends Component {
 												label="Password"
 												type="password"
 												autocomplete="current-password"
-												helperText={<a href="/password-reset">Forgot Password</a>}
+												helperText={
+													<a href="/password-reset">Forgot Password</a>
+												}
 												inputRef={this.passwordRef}
 											/>
 											<InputField error={this.state.loginError}>
@@ -110,10 +118,12 @@ class Login extends Component {
 											</InputField>
 										</form>
 
-										<a href="/signup" className="switch-message">Don&apos;t have a PubPub account? Click to Signup</a>
+										<a href="/signup" className="switch-message">
+											Don&apos;t have a PubPub account? Click to Signup
+										</a>
 									</div>
-								}
-								{this.props.loginData.id &&
+								)}
+								{this.props.loginData.id && (
 									<NonIdealState
 										visual={
 											<Avatar
@@ -139,7 +149,7 @@ class Login extends Component {
 											</div>
 										}
 									/>
-								}
+								)}
 							</div>
 						</div>
 					</div>

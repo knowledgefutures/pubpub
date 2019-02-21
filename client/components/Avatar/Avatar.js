@@ -29,14 +29,15 @@ const Avatar = function(props) {
 		width: props.width,
 		height: props.width,
 		borderColor: props.borderColor,
-		borderWidth: props.borderColor ? (props.borderWidth || Math.floor(props.width / 50) + 1) : 0,
+		borderWidth: props.borderColor ? props.borderWidth || Math.floor(props.width / 50) + 1 : 0,
 		fontSize: Math.floor(props.width / 2.5),
 		zIndex: props.instanceNumber ? -1 * props.instanceNumber : 'initial',
 	};
 
-	const resizedImageUrl = props.width <= 50
-		? getResizedUrl(props.userAvatar, null, '50x50')
-		: getResizedUrl(props.userAvatar, null, '250x250');
+	const resizedImageUrl =
+		props.width <= 50
+			? getResizedUrl(props.userAvatar, null, '50x50')
+			: getResizedUrl(props.userAvatar, null, '250x250');
 
 	if (props.doesOverlap) {
 		avatarStyle.marginRight = `${props.width * 0.45 * -1}px`;
@@ -47,9 +48,7 @@ const Avatar = function(props) {
 
 	return (
 		<div className="avatar-component" style={avatarStyle}>
-			{!props.userAvatar &&
-				<div>{props.userInitials}</div>
-			}
+			{!props.userAvatar && <div>{props.userInitials}</div>}
 		</div>
 	);
 };

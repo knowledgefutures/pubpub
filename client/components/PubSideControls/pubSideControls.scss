@@ -1,9 +1,10 @@
 .pub-side-controls-component {
 	z-index: 18;
 	.content-wrapper {
-		background: #F7F7F9;
+		background: #f7f7f9;
 		padding: 1em;
-		box-shadow: 0 0 0 1px rgba(16,22,26,.1), 0 0 0 rgba(16,22,26,0), 0 1px 1px rgba(16,22,26,.2);
+		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0),
+			0 1px 1px rgba(16, 22, 26, 0.2);
 		border-radius: 2px;
 		.options-title {
 			font-weight: 600;
@@ -13,7 +14,7 @@
 			left: -1em;
 			width: calc(100% + 2em);
 			padding: 0.5em 1em;
-			border-bottom: 1px solid #DDD;
+			border-bottom: 1px solid #ddd;
 			text-align: center;
 		}
 		.form-label {
@@ -25,20 +26,21 @@
 				margin-top: 1em;
 				position: relative;
 				&:before {
-					content: "";
+					content: '';
 					position: absolute;
 					width: calc(100% + 2em);
 					top: 0;
 					left: -1em;
 					height: 1px;
-					background-color: #DDD;
+					background-color: #ddd;
 					display: block;
 				}
 			}
 		}
 		.simple-editor-wrapper {
 			border-radius: 3px;
-			box-shadow: 0 0 0 0 rgba(19,124,189,0), 0 0 0 0 rgba(19,124,189,0), inset 0 0 0 1px rgba(16,22,26,.15), inset 0 1px 1px rgba(16,22,26,.2);
+			box-shadow: 0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0),
+				inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
 			padding: 0.5em;
 			background: white;
 		}

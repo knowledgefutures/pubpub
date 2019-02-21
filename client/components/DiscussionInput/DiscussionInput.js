@@ -70,7 +70,7 @@ class DiscussionInput extends Component {
 			const selectedNode = changeObject.selectedNode;
 			const isQuote = selectedNode && selectedNode.type.name === 'highlightQuote';
 			if (isQuote) {
-				setTimeout(()=> {
+				setTimeout(() => {
 					moveSelectionToEnd(changeObject.view);
 					changeObject.view.focus();
 				}, 0);
@@ -84,11 +84,13 @@ class DiscussionInput extends Component {
 
 	onSubmit(evt) {
 		evt.preventDefault();
-		const highlights = this.state.editorChangeObject.view.state.doc.content.content.filter((item)=> {
-			return item.type.name === 'highlightQuote';
-		}).map((item)=> {
-			return item.attrs;
-		});
+		const highlights = this.state.editorChangeObject.view.state.doc.content.content
+			.filter((item) => {
+				return item.type.name === 'highlightQuote';
+			})
+			.map((item) => {
+				return item.attrs;
+			});
 		this.props.handleSubmit({
 			title: this.state.title,
 			content: getJSON(this.state.editorChangeObject.view),
@@ -101,14 +103,14 @@ class DiscussionInput extends Component {
 	render() {
 		return (
 			<div className="discussion-input-component">
-				{this.props.showTitle &&
+				{this.props.showTitle && (
 					<input
 						className="title-input"
 						placeholder="Add Discussion Title..."
 						value={this.state.title}
 						onChange={this.onTitleChange}
 					/>
-				}
+				)}
 				<div className="input-text">
 					<Editor
 						key={this.state.key}
@@ -134,7 +136,7 @@ class DiscussionInput extends Component {
 						/> */}
 					</div>
 					<div className="buttons-right">
-						{this.props.onCancel &&
+						{this.props.onCancel && (
 							<Button
 								minimal={true}
 								small={true}
@@ -142,13 +144,17 @@ class DiscussionInput extends Component {
 								text="Cancel"
 								// icon="cross"
 							/>
-						}
+						)}
 						<Button
 							name="submit"
 							type="submit"
 							className="bp3-button bp3-intent-primary bp3-small"
 							onClick={this.onSubmit}
-							text={this.props.isNew || this.props.showTitle ? `Post to #${this.props.activeDiscussionChannel.title}` : 'Submit Reply'}
+							text={
+								this.props.isNew || this.props.showTitle
+									? `Post to #${this.props.activeDiscussionChannel.title}`
+									: 'Submit Reply'
+							}
 							disabled={this.state.submitDisabled}
 							loading={this.props.submitIsLoading}
 						/>

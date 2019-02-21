@@ -4,7 +4,7 @@ import { Tooltip, ComposedChart, Bar, Line, XAxis, YAxis } from 'recharts';
 
 const propTypes = {
 	title: PropTypes.string.isRequired,
-	data: PropTypes.object.isRequired
+	data: PropTypes.object.isRequired,
 };
 
 const Chart = function(props) {

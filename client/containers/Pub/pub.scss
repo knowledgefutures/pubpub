@@ -9,15 +9,13 @@ Print
 	position: relative;
 	.container.pub {
 		.main-content {
-
 		}
 	}
 	.discussions {
-		background-color: #F8F8F8;
+		background-color: #f8f8f8;
 		line-height: 1.6;
 		padding: 4em 0em;
 	}
-	
 }
 
 @media only screen and (min-width: 750px) {
@@ -26,7 +24,7 @@ Print
 			.pub-columns {
 				display: grid;
 				grid-template-columns: 1fr 275px;
-				grid-template-areas: "main side";
+				grid-template-areas: 'main side';
 				grid-column-gap: 4%;
 				margin-top: 3em;
 			}

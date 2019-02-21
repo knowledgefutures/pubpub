@@ -5,7 +5,7 @@ import Editor, { importHtml, getText } from '@pubpub/editor';
 
 const propTypes = {
 	initialHtmlString: PropTypes.string.isRequired,
-	onChange: PropTypes.func.isRequired, /* Return HTML string of content */
+	onChange: PropTypes.func.isRequired /* Return HTML string of content */,
 	placeholder: PropTypes.string,
 };
 
@@ -28,9 +28,7 @@ class SimpleEditor extends Component {
 			this.intializedWithHtmlInput = true;
 			importHtml(changeObject.view, this.props.initialHtmlString);
 		}
-		const innerHtml = getText(changeObject.view)
-			? changeObject.view.dom.innerHTML
-			: '';
+		const innerHtml = getText(changeObject.view) ? changeObject.view.dom.innerHTML : '';
 		this.props.onChange(innerHtml);
 		// this.setState({
 		// 	editorChangeObject: changeObject,
@@ -81,7 +79,6 @@ class SimpleEditor extends Component {
 		);
 	}
 }
-
 
 SimpleEditor.propTypes = propTypes;
 SimpleEditor.defaultProps = defaultProps;

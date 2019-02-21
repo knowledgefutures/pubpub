@@ -18,8 +18,8 @@ const defaultProps = {
 	height: 200,
 	width: 200,
 	image: undefined,
-	onCancel: ()=> {},
-	onUploaded: ()=> {},
+	onCancel: () => {},
+	onUploaded: () => {},
 };
 
 class ImageCropper extends Component {
@@ -49,13 +49,17 @@ class ImageCropper extends Component {
 	}
 
 	handleSaveClick() {
-		this.editor.getImage().toBlob((blob)=>{
-			s3Upload(blob, ()=>{}, this.onFileFinish, 0);
-			this.setState({
-				isUploading: true,
-				blob: URL.createObjectURL(blob),
-			});
-		}, 'image/jpeg', 0.9);
+		this.editor.getImage().toBlob(
+			(blob) => {
+				s3Upload(blob, () => {}, this.onFileFinish, 0);
+				this.setState({
+					isUploading: true,
+					blob: URL.createObjectURL(blob),
+				});
+			},
+			'image/jpeg',
+			0.9,
+		);
 	}
 
 	render() {
@@ -67,7 +71,9 @@ class ImageCropper extends Component {
 				<h5>Crop Image</h5>
 				<div className="editor-wrapper">
 					<AvatarEditor
-						ref={(ref)=> { this.editor = ref; }}
+						ref={(ref) => {
+							this.editor = ref;
+						}}
 						image={this.props.image}
 						width={this.props.width}
 						height={this.props.height}
@@ -86,10 +92,7 @@ class ImageCropper extends Component {
 				/>
 
 				<div className="buttons">
-					<Button
-						text="Cancel"
-						onClick={this.props.onCancel}
-					/>
+					<Button text="Cancel" onClick={this.props.onCancel} />
 					<Button
 						text="Crop and Save"
 						className="bp3-intent-primary"

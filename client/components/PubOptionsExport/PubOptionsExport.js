@@ -31,80 +31,81 @@ class PubOptionsExport extends Component {
 
 	getDraftContent() {
 		if (!this.props.pubData.isDraft) {
-			return new Promise((resolve)=> {
+			return new Promise((resolve) => {
 				resolve(undefined);
 			});
 		}
 
 		const sectionsData = this.props.pubData.sectionsData;
-		const editorRefs = sectionsData.map((item)=> {
+		const editorRefs = sectionsData.map((item) => {
 			return `${this.props.pubData.editorKey}/${item.id}`;
 		});
 
 		return getCollabJSONs(this.props.editorView, editorRefs)
-		.then((content)=> {
-			const newContent = content.length === 1
-				? content[0]
-				: content.map((item, index)=> {
-					return {
-						title: sectionsData[index].title,
-						id: sectionsData[index].id,
-						content: item,
-					};
-				});
-			return newContent;
-		})
-		.catch((err)=> {
-			console.error('Error getting draft content', err);
-		});
+			.then((content) => {
+				const newContent =
+					content.length === 1
+						? content[0]
+						: content.map((item, index) => {
+								return {
+									title: sectionsData[index].title,
+									id: sectionsData[index].id,
+									content: item,
+								};
+						  });
+				return newContent;
+			})
+			.catch((err) => {
+				console.error('Error getting draft content', err);
+			});
 	}
 
 	handleExport() {
 		// Check if that format is available for download, if not send off event.
 		this.setState({ isLoading: true });
 		return this.getDraftContent()
-		.then((draftContent)=> {
-			return apiFetch('/api/export', {
-				method: 'POST',
-				body: JSON.stringify({
-					pubId: this.props.pubData.id,
-					versionId: this.props.pubData.isDraft
-						? 'draft'
-						: this.props.pubData.activeVersion.id,
-					content: draftContent,
-					format: this.state.type.format,
-				})
+			.then((draftContent) => {
+				return apiFetch('/api/export', {
+					method: 'POST',
+					body: JSON.stringify({
+						pubId: this.props.pubData.id,
+						versionId: this.props.pubData.isDraft
+							? 'draft'
+							: this.props.pubData.activeVersion.id,
+						content: draftContent,
+						format: this.state.type.format,
+					}),
+				});
+			})
+			.then((taskId) => {
+				this.setState({ taskId: taskId });
+				setTimeout(() => {
+					this.checkTask();
+				}, 1500);
+			})
+			.catch(() => {
+				this.setState({ isLoading: false });
 			});
-		})
-		.then((taskId)=> {
-			this.setState({ taskId: taskId });
-			setTimeout(()=> {
-				this.checkTask();
-			}, 1500);
-		})
-		.catch(()=> {
-			this.setState({ isLoading: false });
-		});
 	}
 
 	checkTask() {
 		return apiFetch(`/api/workerTasks?workerTaskId=${this.state.taskId}`)
-		.then((taskData)=> {
-			if (taskData.isProcessing) {
-				setTimeout(()=> {
-					this.checkTask();
-				}, 1500);
-			} else {
-				this.setState({
-					isLoading: false,
-					taskId: undefined,
-				});
-				window.open(taskData.output.url);
-			}
-		})
-		.catch(()=> {
-			this.setState({ isLoading: false });
-		});
+			.then((taskData) => {
+				if (taskData.isProcessing) {
+					setTimeout(() => {
+						this.checkTask();
+					}, 1500);
+				} else {
+					this.setState({
+						isLoading: false,
+						taskId: undefined,
+					});
+					window.open(taskData.output.url);
+				}
+			})
+			.catch(() => {
+				this.setState({ isLoading: false });
+			});
 	}
 
 	render() {
@@ -123,16 +124,22 @@ class PubOptionsExport extends Component {
 			<div className="pub-options-export-component">
 				<h1>Export Pub</h1>
 
-				<div className="bp3-callout working-draft bp3-intent-warning" style={{ marginBottom: '2em' }}>
-					Export and import are still under development. Please excuse any bugs as we work to stabilize the functionality.
+				<div
+					className="bp3-callout working-draft bp3-intent-warning"
+					style={{ marginBottom: '2em' }}
+				>
+					Export and import are still under development. Please excuse any bugs as we work
+					to stabilize the functionality.
 				</div>
 				<div className="bp3-button-group">
-					{types.map((type)=> {
+					{types.map((type) => {
 						return (
 							<button
 								key={type.format}
-								className={`bp3-button ${this.state.type.format === type.format ? 'bp3-active' : ''}`}
-								onClick={()=> {
+								className={`bp3-button ${
+									this.state.type.format === type.format ? 'bp3-active' : ''
+								}`}
+								onClick={() => {
 									this.setState({ type: type });
 								}}
 								type="button"

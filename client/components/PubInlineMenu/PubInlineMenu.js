@@ -18,18 +18,24 @@ const defaultProps = {
 	sectionId: undefined,
 };
 
-const PubInlineMenu = (props)=> {
+const PubInlineMenu = (props) => {
 	const selection = props.editorChangeObject.selection || {};
 	const selectionBoundingBox = props.editorChangeObject.selectionBoundingBox || {};
 
-	if (!props.editorChangeObject.selection || selection.empty || props.editorChangeObject.selectedNode) { return null; }
+	if (
+		!props.editorChangeObject.selection ||
+		selection.empty ||
+		props.editorChangeObject.selectedNode
+	) {
+		return null;
+	}
 
 	const menuStyle = {
 		position: 'absolute',
-		...props.getAbsolutePosition(selectionBoundingBox.top - 50, selectionBoundingBox.left)
+		...props.getAbsolutePosition(selectionBoundingBox.top - 50, selectionBoundingBox.left),
 	};
 	const menuItems = props.editorChangeObject.menuItems;
-	const menuItemsObject = menuItems.reduce((prev, curr)=> {
+	const menuItemsObject = menuItems.reduce((prev, curr) => {
 		return { ...prev, [curr.title]: curr };
 	}, {});
 	const formattingItems = [
@@ -39,36 +45,43 @@ const PubInlineMenu = (props)=> {
 		{ key: 'em', icon: <Icon icon="italic" /> },
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
-	const isReadOnly = !props.pubData.isDraft || (!props.pubData.isManager && !props.pubData.isDraftEditor);
-	if (isReadOnly && !props.pubData.publicDiscussions) { return null; }
+	const isReadOnly =
+		!props.pubData.isDraft || (!props.pubData.isManager && !props.pubData.isDraftEditor);
+	if (isReadOnly && !props.pubData.publicDiscussions) {
+		return null;
+	}
 	return (
 		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
-			{!isReadOnly && formattingItems.map((item)=> {
-				if (!menuItemsObject[item.key]) { return null; }
-				const onClickAction = item.key === 'link'
-					? ()=> {
-						menuItemsObject[item.key].run();
-						props.openLinkMenu();
+			{!isReadOnly &&
+				formattingItems.map((item) => {
+					if (!menuItemsObject[item.key]) {
+						return null;
 					}
-					: menuItemsObject[item.key].run;
-				return (
-					<Button
-						key={item.key}
-						className="bp3-minimal"
-						icon={item.icon}
-						active={menuItemsObject[item.key].isActive}
-						onClick={onClickAction}
-						onMouseDown={(evt)=> {
-							evt.preventDefault();
-						}}
-					/>
-				);
-			})}
-			{props.pubData.publicDiscussions &&
+					const onClickAction =
+						item.key === 'link'
+							? () => {
+									menuItemsObject[item.key].run();
+									props.openLinkMenu();
+							  }
+							: menuItemsObject[item.key].run;
+					return (
+						<Button
+							key={item.key}
+							className="bp3-minimal"
+							icon={item.icon}
+							active={menuItemsObject[item.key].isActive}
+							onClick={onClickAction}
+							onMouseDown={(evt) => {
+								evt.preventDefault();
+							}}
+						/>
+					);
+				})}
+			{props.pubData.publicDiscussions && (
 				<Button
 					className="bp3-minimal"
 					icon={<Icon icon="chat" />}
-					onClick={()=> {
+					onClick={() => {
 						props.onNewHighlightDiscussion({
 							from: props.editorChangeObject.selection.from,
 							to: props.editorChangeObject.selection.to,
@@ -80,8 +93,7 @@ const PubInlineMenu = (props)=> {
 						});
 					}}
 				/>
-			}
-
+			)}
 		</div>
 	);
 };

@@ -3,7 +3,8 @@
 	overflow: hidden;
 	position: relative;
 	z-index: 1;
-	a, .dropdown {
+	a,
+	.dropdown {
 		margin-right: 2em;
 		display: inline-block;
 		height: 40px;
@@ -11,7 +12,7 @@
 		cursor: pointer;
 		text-decoration: none;
 	}
-	.row [class^="col"] {
+	.row [class^='col'] {
 		margin-top: 0em;
 		margin-bottom: 0em;
 	}

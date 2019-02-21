@@ -14,7 +14,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-	onSelect: ()=>{},
+	onSelect: () => {},
 	placeholder: 'Select a discussion thread...',
 };
 
@@ -37,20 +37,35 @@ class DiscussionAutocomplete extends Component {
 	}
 
 	getFilteredItems(threads, query) {
-		return threads.map((item)=> {
-			if (item[0].title) { return item; }
-			const outputItem = [...item];
-			outputItem[0].title = `Discussion by ${item[0].author.fullName}`;
-			return outputItem;
-		}).filter((item)=> {
-			const fuzzyMatchTitle = fuzzysearch(query.toLowerCase(), item[0].title.toLowerCase());
-			const fuzzyMatchAuthor = fuzzysearch(query.toLowerCase(), item[0].author.fullName.toLowerCase());
-			return fuzzyMatchTitle || fuzzyMatchAuthor;
-		}).sort((foo, bar)=> {
-			if (foo.title < bar.title) { return -1; }
-			if (foo.title > bar.title) { return 1; }
-			return 0;
-		});
+		return threads
+			.map((item) => {
+				if (item[0].title) {
+					return item;
+				}
+				const outputItem = [...item];
+				outputItem[0].title = `Discussion by ${item[0].author.fullName}`;
+				return outputItem;
+			})
+			.filter((item) => {
+				const fuzzyMatchTitle = fuzzysearch(
+					query.toLowerCase(),
+					item[0].title.toLowerCase(),
+				);
+				const fuzzyMatchAuthor = fuzzysearch(
+					query.toLowerCase(),
+					item[0].author.fullName.toLowerCase(),
+				);
+				return fuzzyMatchTitle || fuzzyMatchAuthor;
+			})
+			.sort((foo, bar) => {
+				if (foo.title < bar.title) {
+					return -1;
+				}
+				if (foo.title > bar.title) {
+					return 1;
+				}
+				return 0;
+			});
 	}
 
 	filterItems(evt) {
@@ -79,12 +94,21 @@ class DiscussionAutocomplete extends Component {
 						onChange: this.filterItems,
 						placeholder: this.props.placeholder,
 					}}
-					inputValueRenderer={(item) => { return item.title; }}
-					itemRenderer={(item, { handleClick, isActive })=> {
+					inputValueRenderer={(item) => {
+						return item.title;
+					}}
+					itemRenderer={(item, { handleClick, isActive }) => {
 						const discussion = item[0];
 						return (
 							<li key={item[0].id}>
-								<div role="button" tabIndex={-1} onClick={handleClick} className={isActive ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}>
+								<div
+									role="button"
+									tabIndex={-1}
+									onClick={handleClick}
+									className={
+										isActive ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'
+									}
+								>
 									<div className="avatar-wrapper">
 										<Avatar
 											width={20}
@@ -95,7 +119,9 @@ class DiscussionAutocomplete extends Component {
 
 									<div className="details">
 										<div className="title">{discussion.title}</div>
-										<div className="count">{item.length} repl{item.length === 1 ? 'y' : 'ies'}</div>
+										<div className="count">
+											{item.length} repl{item.length === 1 ? 'y' : 'ies'}
+										</div>
 									</div>
 								</div>
 							</li>
@@ -103,7 +129,9 @@ class DiscussionAutocomplete extends Component {
 					}}
 					onItemSelect={this.handleSelect}
 					noResults={<MenuItem disabled text="No results" />}
-					popoverProps={{ popoverClassName: 'bp3-minimal discussion-autocomplete-popover' }}
+					popoverProps={{
+						popoverClassName: 'bp3-minimal discussion-autocomplete-popover',
+					}}
 				/>
 			</div>
 		);

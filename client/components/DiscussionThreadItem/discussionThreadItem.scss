@@ -7,7 +7,8 @@
 		a {
 			text-decoration: none;
 		}
-		.avatar-component, .bp3-button-group {
+		.avatar-component,
+		.bp3-button-group {
 			flex-shrink: 0;
 		}
 		.details {
@@ -16,7 +17,8 @@
 			min-width: 0;
 			margin: 0em 0.5em;
 			height: 30px;
-			.name, .date {
+			.name,
+			.date {
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -24,7 +26,6 @@
 				line-height: 14px;
 				padding-bottom: 2px;
 				display: block;
-
 			}
 			.name {
 				font-weight: bold;
@@ -46,7 +47,7 @@
 		&.editing {
 			background-color: white;
 			padding: 0.5em;
-			border: 1px solid #CCC;
+			border: 1px solid #ccc;
 		}
 	}
 	.editing-buttons {

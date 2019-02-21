@@ -2,11 +2,12 @@
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center center;
-	background-color: #F0F0F0;
+	background-color: #f0f0f0;
 	padding: 1em;
 	// border: 1px solid #E5E5E5;
 	border-radius: 2px;
-	box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0), 0 1px 1px rgba(16, 22, 26, 0.2);
+	box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0),
+		0 1px 1px rgba(16, 22, 26, 0.2);
 	display: block;
 	text-decoration: none;
 	height: 200px;
@@ -14,7 +15,8 @@
 	flex-direction: column;
 	&:hover {
 		text-decoration: none;
-		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 4px 8px rgba(16, 22, 26, 0.2), 0 18px 46px 6px rgba(16, 22, 26, 0.2);
+		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 4px 8px rgba(16, 22, 26, 0.2),
+			0 18px 46px 6px rgba(16, 22, 26, 0.2);
 	}
 	.logo-wrapper {
 		margin: auto auto;
@@ -44,5 +46,4 @@
 			overflow: hidden;
 		}
 	}
-
 }

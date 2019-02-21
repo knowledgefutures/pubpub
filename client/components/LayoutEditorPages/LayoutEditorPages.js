@@ -26,9 +26,9 @@ class LayoutEditorPages extends Component {
 	setPageIds(newPageObjects) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			pageIds: newPageObjects.map((page)=> {
+			pageIds: newPageObjects.map((page) => {
 				return page.id;
-			})
+			}),
 		});
 	}
 
@@ -53,15 +53,18 @@ class LayoutEditorPages extends Component {
 							content={
 								<div>
 									<OrderPicker
-										selectedItems={this.props.content.pageIds.map((pageId)=> {
-											return this.props.pages.reduce((prev, curr)=> {
-												if (curr.id === pageId) { return curr; }
-												return prev;
-											}, undefined);
-										})
-										.filter((page)=> {
-											return !!page;
-										})}
+										selectedItems={this.props.content.pageIds
+											.map((pageId) => {
+												return this.props.pages.reduce((prev, curr) => {
+													if (curr.id === pageId) {
+														return curr;
+													}
+													return prev;
+												}, undefined);
+											})
+											.filter((page) => {
+												return !!page;
+											})}
 										allItems={this.props.pages}
 										onChange={this.setPageIds}
 										uniqueId={this.props.layoutIndex}
@@ -75,12 +78,15 @@ class LayoutEditorPages extends Component {
 							usePortal={false}
 							minimal={true}
 							popoverClassName="order-picker-popover"
-							popoverDidOpen={()=> {
-								setTimeout(()=> {
+							popoverDidOpen={() => {
+								setTimeout(() => {
 									/* This is a hacky way to solve this bug: */
 									/* https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/using-a-portal.md */
-									const overlayNode = this.orderPopoverRef.current.popoverElement.parentNode;
-									const positions = overlayNode.style.transform.replace('translate3d(', '').split(', ');
+									const overlayNode = this.orderPopoverRef.current.popoverElement
+										.parentNode;
+									const positions = overlayNode.style.transform
+										.replace('translate3d(', '')
+										.split(', ');
 									overlayNode.style.left = positions[0];
 									overlayNode.style.top = positions[1];
 									overlayNode.style.transform = '';
@@ -96,32 +102,32 @@ class LayoutEditorPages extends Component {
 
 				<div className="block-content">
 					<div className="container">
-						{this.props.content.title &&
+						{this.props.content.title && (
 							<div className="row">
 								<div className="col-12">
 									<h1>{this.props.content.title}</h1>
 								</div>
 							</div>
-						}
+						)}
 
 						<div className="row">
 							<div className="col-12">
 								<div className="pages-wrapper">
-									{this.props.content.pageIds.map((pageId)=> {
-										return this.props.pages.reduce((prev, curr)=> {
-											if (curr.id === pageId) { return curr; }
-											return prev;
-										}, undefined);
-									}).filter((page)=> {
-										return !!page;
-									}).map((page)=> {
-										return (
-											<PagePreview
-												key={page.id}
-												pageData={page}
-											/>
-										);
-									})}
+									{this.props.content.pageIds
+										.map((pageId) => {
+											return this.props.pages.reduce((prev, curr) => {
+												if (curr.id === pageId) {
+													return curr;
+												}
+												return prev;
+											}, undefined);
+										})
+										.filter((page) => {
+											return !!page;
+										})
+										.map((page) => {
+											return <PagePreview key={page.id} pageData={page} />;
+										})}
 								</div>
 							</div>
 						</div>

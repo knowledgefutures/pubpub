@@ -11,7 +11,7 @@ const propTypes = {
 	isSmall: PropTypes.bool.isRequired,
 };
 
-const FormattingBarControlsDiscussion = (props)=> {
+const FormattingBarControlsDiscussion = (props) => {
 	const alignOptions = [
 		{ key: 'left', icon: 'align-left' },
 		{ key: 'center', icon: 'align-center' },
@@ -27,14 +27,16 @@ const FormattingBarControlsDiscussion = (props)=> {
 				<div className="label over-buttons">Alignment</div>
 				<div className="input">
 					<ButtonGroup>
-						{alignOptions.map((item)=> {
+						{alignOptions.map((item) => {
 							return (
 								<Button
 									key={item.key}
 									icon={<Icon icon={item.icon} iconSize={iconSize} />}
 									minimal={true}
 									active={props.attrs.align === item.key}
-									onClick={()=> { props.updateAttrs({ align: item.key }); }}
+									onClick={() => {
+										props.updateAttrs({ align: item.key });
+									}}
 								/>
 							);
 						})}
@@ -48,7 +50,7 @@ const FormattingBarControlsDiscussion = (props)=> {
 				<div className="input">
 					<DiscussionAutocomplete
 						threads={props.threads}
-						onSelect={(thread)=> {
+						onSelect={(thread) => {
 							props.updateAttrs({ threadNumber: thread[0].threadNumber });
 						}}
 						placeholder="Change discussion thread"

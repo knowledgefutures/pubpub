@@ -13,20 +13,18 @@ class EditorUnit extends Component {
 		hideBlocktypes: PropTypes.bool.isRequired,
 		hideExtraFormatting: PropTypes.bool.isRequired,
 		isSmall: PropTypes.bool.isRequired,
-	}
+	};
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			editorChangeObject: {}
+			editorChangeObject: {},
 		};
 	}
 
 	render() {
 		const editorStyle = {
-			width: this.props.isSmall
-				? 'calc(100% / 3 - 1em)'
-				: '100%',
+			width: this.props.isSmall ? 'calc(100% / 3 - 1em)' : '100%',
 			border: '1px solid #CCC',
 			borderRadius: '2px',
 		};
@@ -45,13 +43,10 @@ class EditorUnit extends Component {
 				<div style={{ padding: '0.25em' }}>
 					<Editor
 						placeholder="hello"
-						onChange={(changeObject)=> {
+						onChange={(changeObject) => {
 							this.setState({ editorChangeObject: changeObject });
 						}}
-						initialContent={this.props.hideMedia
-							? plainDoc
-							: fullDoc
-						}
+						initialContent={this.props.hideMedia ? plainDoc : fullDoc}
 					/>
 				</div>
 			</div>
@@ -59,11 +54,14 @@ class EditorUnit extends Component {
 	}
 }
 
+const wrapperStyle = {
+	padding: '1em 0em',
+	display: 'flex',
+	justifyContent: 'space-evenly',
+	flexWrap: 'wrap',
+};
 
-const wrapperStyle = { padding: '1em 0em', display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' };
-
-storiesOf('Components/FormattingBar', module)
-.add('default', () => (
+storiesOf('Components/FormattingBar', module).add('default', () => (
 	<div style={wrapperStyle}>
 		<EditorUnit
 			hideMedia={false}

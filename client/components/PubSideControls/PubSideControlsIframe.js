@@ -8,7 +8,7 @@ const propTypes = {
 	updateAttrs: PropTypes.func.isRequired,
 };
 
-const PubSideControlsIframe = (props)=> {
+const PubSideControlsIframe = (props) => {
 	const alignOptions = [
 		{ key: 'left', icon: 'bp3-icon-align-left' },
 		{ key: 'center', icon: 'bp3-icon-align-center' },
@@ -19,14 +19,12 @@ const PubSideControlsIframe = (props)=> {
 		<div className="pub-side-controls-iframe-component">
 			<div className="options-title">Iframe Details</div>
 			{/*  Size Adjustment */}
-			<div className="form-label first">
-				Size
-			</div>
+			<div className="form-label first">Size</div>
 			<Slider
 				min={25}
 				max={100}
 				value={props.attrs.size}
-				onChange={(newSize)=> {
+				onChange={(newSize) => {
 					props.updateAttrs({ size: newSize });
 				}}
 				labelRenderer={false}
@@ -34,31 +32,29 @@ const PubSideControlsIframe = (props)=> {
 			/>
 
 			{/*  Height Adjustment */}
-			<div className="form-label">
-				Height
-			</div>
+			<div className="form-label">Height</div>
 			<Slider
 				min={150}
 				max={800}
 				value={props.attrs.height}
-				onChange={(newHeight)=> {
+				onChange={(newHeight) => {
 					props.updateAttrs({ height: newHeight });
 				}}
 				labelRenderer={false}
 			/>
 
 			{/*  Alignment Adjustment */}
-			<div className="form-label">
-				Alignment
-			</div>
+			<div className="form-label">Alignment</div>
 			<div className="bp3-button-group bp3-fill">
-				{alignOptions.map((item)=> {
+				{alignOptions.map((item) => {
 					return (
 						<button
 							key={`align-option-${item.key}`}
 							type="button"
-							className={`bp3-button ${item.icon} ${props.attrs.align === item.key ? 'bp3-active' : ''}`}
-							onClick={()=> {
+							className={`bp3-button ${item.icon} ${
+								props.attrs.align === item.key ? 'bp3-active' : ''
+							}`}
+							onClick={() => {
 								props.updateAttrs({ align: item.key });
 							}}
 						/>
@@ -67,13 +63,11 @@ const PubSideControlsIframe = (props)=> {
 			</div>
 
 			{/*  Caption Adjustment */}
-			<div className="form-label">
-				Caption
-			</div>
+			<div className="form-label">Caption</div>
 			<div className="simple-editor-wrapper">
 				<SimpleEditor
 					initialHtmlString={props.attrs.caption}
-					onChange={(htmlString)=> {
+					onChange={(htmlString) => {
 						props.updateAttrs({ caption: htmlString });
 					}}
 					placeholder="Enter caption..."
@@ -81,13 +75,11 @@ const PubSideControlsIframe = (props)=> {
 			</div>
 
 			{/*  Source Details */}
-			<div className="form-label">
-				Source
-			</div>
+			<div className="form-label">Source</div>
 			<textarea
 				className="bp3-input bp3-fill"
 				value={props.attrs.url}
-				onChange={(evt)=>{
+				onChange={(evt) => {
 					props.updateAttrs({ url: evt.target.value });
 				}}
 				placeholder="Enter URL..."
@@ -95,7 +87,6 @@ const PubSideControlsIframe = (props)=> {
 		</div>
 	);
 };
-
 
 PubSideControlsIframe.propTypes = propTypes;
 export default PubSideControlsIframe;

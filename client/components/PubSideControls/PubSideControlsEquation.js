@@ -37,11 +37,15 @@ class PubSideControlsEquation extends Component {
 		const isBlock = this.props.selectedNode.type.name === 'block_equation';
 		if (isBlock) {
 			const nodeType = this.props.editorChangeObject.view.state.schema.nodes.equation;
-			renderLatexString(this.state.value, false, (newHtml)=> {
-				this.props.changeNode(nodeType, {
-					value: this.props.attrs.value,
-					html: newHtml,
-				}, null);
+			renderLatexString(this.state.value, false, (newHtml) => {
+				this.props.changeNode(
+					nodeType,
+					{
+						value: this.props.attrs.value,
+						html: newHtml,
+					},
+					null,
+				);
 			});
 		}
 	}
@@ -50,11 +54,15 @@ class PubSideControlsEquation extends Component {
 		const isBlock = this.props.selectedNode.type.name === 'block_equation';
 		if (!isBlock) {
 			const nodeType = this.props.editorChangeObject.view.state.schema.nodes.block_equation;
-			renderLatexString(this.state.value, true, (newHtml)=> {
-				this.props.changeNode(nodeType, {
-					value: this.props.attrs.value,
-					html: newHtml,
-				}, null);
+			renderLatexString(this.state.value, true, (newHtml) => {
+				this.props.changeNode(
+					nodeType,
+					{
+						value: this.props.attrs.value,
+						html: newHtml,
+					},
+					null,
+				);
 			});
 		}
 	}
@@ -67,9 +75,7 @@ class PubSideControlsEquation extends Component {
 			<div className="pub-side-controls-citation-component">
 				<div className="options-title">Equation Details</div>
 				{/*  LaTex Adjustment */}
-				<div className="form-label first">
-					LaTeX
-				</div>
+				<div className="form-label first">LaTeX</div>
 				<textarea
 					placeholder="Enter LaTeX math"
 					className="bp3-input bp3-fill"
@@ -78,9 +84,7 @@ class PubSideControlsEquation extends Component {
 				/>
 
 				{/*  Display Adjustment */}
-				<div className="form-label">
-					Display
-				</div>
+				<div className="form-label">Display</div>
 
 				<div className="bp3-button-group bp3-fill">
 					<Button
@@ -89,7 +93,9 @@ class PubSideControlsEquation extends Component {
 						text="Inline"
 					/>
 					<Button
-						className={`bp3-button bp3-icon-align-justify ${isBlock ? 'bp3-active' : ''}`}
+						className={`bp3-button bp3-icon-align-justify ${
+							isBlock ? 'bp3-active' : ''
+						}`}
 						onClick={this.changeToBlock}
 						text="Block"
 					/>
@@ -98,7 +104,6 @@ class PubSideControlsEquation extends Component {
 		);
 	}
 }
-
 
 PubSideControlsEquation.propTypes = propTypes;
 export default PubSideControlsEquation;

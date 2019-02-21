@@ -107,14 +107,14 @@ const User = sequelize.define('User', {
 		validate: {
 			isEmail: true,
 			isLowercase: true,
-		}
+		},
 	},
 	publicEmail: {
 		type: Sequelize.TEXT,
 		validate: {
 			isEmail: true,
 			isLowercase: true,
-		}
+		},
 	},
 	location: { type: Sequelize.TEXT },
 	website: { type: Sequelize.TEXT },
@@ -149,7 +149,7 @@ const Signup = sequelize.define('Signup', {
 		validate: {
 			isEmail: true,
 			isLowercase: true,
-		}
+		},
 	},
 	hash: { type: Sequelize.TEXT },
 	count: { type: Sequelize.INTEGER },
@@ -157,81 +157,87 @@ const Signup = sequelize.define('Signup', {
 	communityId: { type: Sequelize.UUID },
 });
 
-const Pub = sequelize.define('Pub', {
-	id: id,
-	slug: {
-		type: Sequelize.TEXT,
-		unique: true,
-		allowNull: false,
-		validate: {
-			isLowercase: true,
-			len: [1, 280],
-			is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
+const Pub = sequelize.define(
+	'Pub',
+	{
+		id: id,
+		slug: {
+			type: Sequelize.TEXT,
+			unique: true,
+			allowNull: false,
+			validate: {
+				isLowercase: true,
+				len: [1, 280],
+				is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
+			},
 		},
-	},
-	title: { type: Sequelize.TEXT, allowNull: false },
-	description: {
-		type: Sequelize.TEXT,
-		validate: {
-			len: [0, 280],
+		title: { type: Sequelize.TEXT, allowNull: false },
+		description: {
+			type: Sequelize.TEXT,
+			validate: {
+				len: [0, 280],
+			},
 		},
+		avatar: { type: Sequelize.TEXT },
+		useHeaderImage: { type: Sequelize.BOOLEAN },
+		firstPublishedAt: { type: Sequelize.DATE },
+		lastPublishedAt: { type: Sequelize.DATE },
+		draftEditHash: { type: Sequelize.STRING }, // TODO: This is used for draft
+		draftViewHash: { type: Sequelize.STRING }, // TODO: This is used for draft
+		doi: { type: Sequelize.TEXT },
+		labels: { type: Sequelize.JSONB },
+
+		isCommunityAdminManaged: { type: Sequelize.BOOLEAN },
+		communityAdminDraftPermissions: {
+			type: Sequelize.ENUM,
+			values: ['none', 'view', 'edit'],
+			defaultValue: 'none',
+		},
+		draftPermissions: {
+			type: Sequelize.ENUM,
+			values: ['private', 'publicView', 'publicEdit'],
+			defaultValue: 'private',
+		},
+		review: { type: Sequelize.JSONB },
+
+		/* Set by Associations */
+		communityId: { type: Sequelize.UUID, allowNull: false },
 	},
-	avatar: { type: Sequelize.TEXT },
-	useHeaderImage: { type: Sequelize.BOOLEAN },
-	firstPublishedAt: { type: Sequelize.DATE },
-	lastPublishedAt: { type: Sequelize.DATE },
-	draftEditHash: { type: Sequelize.STRING }, // TODO: This is used for draft
-	draftViewHash: { type: Sequelize.STRING }, // TODO: This is used for draft
-	doi: { type: Sequelize.TEXT },
-	labels: { type: Sequelize.JSONB },
-
-	isCommunityAdminManaged: { type: Sequelize.BOOLEAN },
-	communityAdminDraftPermissions: {
-		type: Sequelize.ENUM,
-		values: ['none', 'view', 'edit'],
-		defaultValue: 'none',
+	{
+		indexes: [{ fields: ['communityId'], method: 'BTREE' }],
 	},
-	draftPermissions: {
-		type: Sequelize.ENUM,
-		values: ['private', 'publicView', 'publicEdit'],
-		defaultValue: 'private',
+);
+
+const Discussion = sequelize.define(
+	'Discussion',
+	{
+		id: id,
+		title: { type: Sequelize.TEXT },
+		threadNumber: { type: Sequelize.INTEGER, allowNull: false },
+		text: { type: Sequelize.TEXT },
+		content: { type: Sequelize.JSONB },
+		attachments: { type: Sequelize.JSONB },
+		suggestions: { type: Sequelize.JSONB },
+		highlights: { type: Sequelize.JSONB },
+		submitHash: { type: Sequelize.TEXT }, // Deprecated since v5
+		submitApprovedAt: { type: Sequelize.DATE }, // Deprecated since v5
+		isArchived: { type: Sequelize.BOOLEAN },
+		labels: { type: Sequelize.JSONB },
+
+		/* Set by Associations */
+		userId: { type: Sequelize.UUID, allowNull: false },
+		pubId: { type: Sequelize.UUID, allowNull: false },
+		communityId: { type: Sequelize.UUID, allowNull: false },
+		discussionChannelId: { type: Sequelize.UUID },
 	},
-	review: { type: Sequelize.JSONB },
-
-	/* Set by Associations */
-	communityId: { type: Sequelize.UUID, allowNull: false },
-}, {
-	indexes: [
-		{ fields: ['communityId'], method: 'BTREE' },
-	]
-});
-
-const Discussion = sequelize.define('Discussion', {
-	id: id,
-	title: { type: Sequelize.TEXT },
-	threadNumber: { type: Sequelize.INTEGER, allowNull: false },
-	text: { type: Sequelize.TEXT },
-	content: { type: Sequelize.JSONB },
-	attachments: { type: Sequelize.JSONB },
-	suggestions: { type: Sequelize.JSONB },
-	highlights: { type: Sequelize.JSONB },
-	submitHash: { type: Sequelize.TEXT }, // Deprecated since v5
-	submitApprovedAt: { type: Sequelize.DATE }, // Deprecated since v5
-	isArchived: { type: Sequelize.BOOLEAN },
-	labels: { type: Sequelize.JSONB },
-
-	/* Set by Associations */
-	userId: { type: Sequelize.UUID, allowNull: false },
-	pubId: { type: Sequelize.UUID, allowNull: false },
-	communityId: { type: Sequelize.UUID, allowNull: false },
-	discussionChannelId: { type: Sequelize.UUID },
-}, {
-	indexes: [
-		{ fields: ['userId'], method: 'BTREE' },
-		{ fields: ['pubId'], method: 'BTREE' },
-		{ fields: ['communityId'], method: 'BTREE' },
-	]
-});
+	{
+		indexes: [
+			{ fields: ['userId'], method: 'BTREE' },
+			{ fields: ['pubId'], method: 'BTREE' },
+			{ fields: ['communityId'], method: 'BTREE' },
+		],
+	},
+);
 
 const Version = sequelize.define('Version', {
 	id: id,
@@ -251,7 +257,7 @@ const Page = sequelize.define('Page', {
 	slug: { type: Sequelize.TEXT, allowNull: false },
 	description: { type: Sequelize.TEXT },
 	avatar: { type: Sequelize.TEXT },
-	isPublic: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false, },
+	isPublic: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
 	isNarrowWidth: { type: Sequelize.BOOLEAN },
 	viewHash: { type: Sequelize.TEXT },
 	layout: { type: Sequelize.JSONB },
@@ -302,9 +308,9 @@ const VersionPermission = sequelize.define('VersionPermission', {
 
 const PubAttribution = sequelize.define('PubAttribution', {
 	id: id,
-	name: { type: Sequelize.TEXT }, /* Used for non-account attribution */
-	avatar: { type: Sequelize.TEXT }, /* Used for non-account attribution */
-	title: { type: Sequelize.TEXT }, /* Used for non-account attribution */
+	name: { type: Sequelize.TEXT } /* Used for non-account attribution */,
+	avatar: { type: Sequelize.TEXT } /* Used for non-account attribution */,
+	title: { type: Sequelize.TEXT } /* Used for non-account attribution */,
 	order: { type: Sequelize.DOUBLE },
 	isAuthor: { type: Sequelize.BOOLEAN },
 	roles: { type: Sequelize.JSONB },
@@ -317,11 +323,13 @@ const PubAttribution = sequelize.define('PubAttribution', {
 const Tag = sequelize.define('Tag', {
 	id: id,
 	title: { type: Sequelize.TEXT },
-	isRestricted: { type: Sequelize.BOOLEAN }, /* Restricted tags can only be set by Community Admins */
-	isPublic: { type: Sequelize.BOOLEAN }, /* Only visible to community admins */
+	isRestricted: {
+		type: Sequelize.BOOLEAN,
+	} /* Restricted tags can only be set by Community Admins */,
+	isPublic: { type: Sequelize.BOOLEAN } /* Only visible to community admins */,
 
 	/* Set by Associations */
-	pageId: { type: Sequelize.UUID }, /* Used to link a tag to a specific page */
+	pageId: { type: Sequelize.UUID } /* Used to link a tag to a specific page */,
 	communityId: { type: Sequelize.UUID, allowNull: false },
 });
 
@@ -363,8 +371,16 @@ const DiscussionChannelParticipant = sequelize.define('DiscussionChannelParticip
 });
 
 /* Communities can have many Admins. Users can admin many communities. */
-User.belongsToMany(Community, { as: 'communities', through: 'CommunityAdmin', foreignKey: 'userId' });
-Community.belongsToMany(User, { as: 'admins', through: 'CommunityAdmin', foreignKey: 'communityId' });
+User.belongsToMany(Community, {
+	as: 'communities',
+	through: 'CommunityAdmin',
+	foreignKey: 'userId',
+});
+Community.belongsToMany(User, {
+	as: 'admins',
+	through: 'CommunityAdmin',
+	foreignKey: 'communityId',
+});
 
 /* Pubs can have many Users. Users can belong to many Pubs. */
 // User.belongsToMany(Pub, { as: 'pubs', through: 'PubAttribution', foreignKey: 'userId' });
@@ -382,15 +398,31 @@ PubAttribution.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'u
 PubAttribution.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 User.hasMany(PubAttribution, { onDelete: 'CASCADE', as: 'attributions', foreignKey: 'userId' });
 /* Pubs have many VersionPermissions. */
-Pub.hasMany(VersionPermission, { onDelete: 'CASCADE', as: 'versionPermissions', foreignKey: 'pubId' });
+Pub.hasMany(VersionPermission, {
+	onDelete: 'CASCADE',
+	as: 'versionPermissions',
+	foreignKey: 'pubId',
+});
 VersionPermission.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 /* Pubs have many PubManagers. */
 Pub.hasMany(PubManager, { onDelete: 'CASCADE', as: 'managers', foreignKey: 'pubId' });
 PubManager.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 
-Pub.hasMany(DiscussionChannel, { onDelete: 'CASCADE', as: 'discussionChannels', foreignKey: 'pubId' });
-DiscussionChannel.hasMany(DiscussionChannelParticipant, { onDelete: 'CASCADE', as: 'participants', foreignKey: 'discussionChannelId' });
-DiscussionChannelParticipant.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
+Pub.hasMany(DiscussionChannel, {
+	onDelete: 'CASCADE',
+	as: 'discussionChannels',
+	foreignKey: 'pubId',
+});
+DiscussionChannel.hasMany(DiscussionChannelParticipant, {
+	onDelete: 'CASCADE',
+	as: 'participants',
+	foreignKey: 'discussionChannelId',
+});
+DiscussionChannelParticipant.belongsTo(User, {
+	onDelete: 'CASCADE',
+	as: 'user',
+	foreignKey: 'userId',
+});
 /* ---------- */
 /* ---------- */
 
@@ -411,8 +443,16 @@ Pub.belongsTo(Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'co
 Page.belongsTo(Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' });
 
 /* Communities have many Discussions. Discussions belong to a single Community */
-Community.hasMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'communityId' });
-Discussion.belongsTo(Community, { onDelete: 'CASCADE', as: 'community', foreignKey: 'communityId' });
+Community.hasMany(Discussion, {
+	onDelete: 'CASCADE',
+	as: 'discussions',
+	foreignKey: 'communityId',
+});
+Discussion.belongsTo(Community, {
+	onDelete: 'CASCADE',
+	as: 'community',
+	foreignKey: 'communityId',
+});
 
 /*  Pubs can have many Discussions. Discussions belong to a single Pub. */
 Pub.hasMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'pubId' });

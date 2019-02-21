@@ -3,7 +3,7 @@ import React from 'react';
 require('./pubLoadingBars.scss');
 
 const PubLoadingBars = function() {
-	const getStyle = (width)=> {
+	const getStyle = (width) => {
 		return {
 			height: '25px',
 			width: `${width}%`,

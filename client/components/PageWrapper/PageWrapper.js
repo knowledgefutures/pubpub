@@ -23,7 +23,7 @@ const defaultProps = {
 	hideFooter: false,
 };
 
-const PageWrapper = (props)=> {
+const PageWrapper = (props) => {
 	const loginData = props.loginData;
 	const communityData = props.communityData;
 
@@ -31,32 +31,56 @@ const PageWrapper = (props)=> {
 	const navigation = communityData.navigation || [];
 	const navItems = populateNavigationIds(pages, navigation);
 	const socialItems = [
-		{ id: 'si-0', icon: <Icon icon="globe" />, title: 'Website', value: communityData.website, url: communityData.website },
-		{ id: 'si-1', icon: <Icon icon="twitter" />, title: 'Twitter', value: communityData.twitter, url: `https://twitter.com/${communityData.twitter}` },
-		{ id: 'si-2', icon: <Icon icon="facebook" />, title: 'Facebook', value: communityData.facebook, url: `https://facebook.com/${communityData.facebook}` },
-		{ id: 'si-3', icon: <Icon icon="envelope" />, title: 'Contact', value: communityData.email, url: `mailto:${communityData.email}` },
-	].filter((item)=> {
+		{
+			id: 'si-0',
+			icon: <Icon icon="globe" />,
+			title: 'Website',
+			value: communityData.website,
+			url: communityData.website,
+		},
+		{
+			id: 'si-1',
+			icon: <Icon icon="twitter" />,
+			title: 'Twitter',
+			value: communityData.twitter,
+			url: `https://twitter.com/${communityData.twitter}`,
+		},
+		{
+			id: 'si-2',
+			icon: <Icon icon="facebook" />,
+			title: 'Facebook',
+			value: communityData.facebook,
+			url: `https://facebook.com/${communityData.facebook}`,
+		},
+		{
+			id: 'si-3',
+			icon: <Icon icon="envelope" />,
+			title: 'Contact',
+			value: communityData.email,
+			url: `mailto:${communityData.email}`,
+		},
+	].filter((item) => {
 		return item.value;
 	});
 
 	const useBottomShadow = communityData.accentTextColor === '#000000';
 	return (
 		<div id="page-wrapper-component" className={useBottomShadow ? 'bottom-shadow' : ''}>
-			{props.fixHeader &&
+			{props.fixHeader && (
 				<style>
 					{`
 						.header-component { position: fixed; width: 100%; z-index: 19; }
 						.page-content { padding-top: 56px; }
 					`}
 				</style>
-			}
-			{useBottomShadow &&
+			)}
+			{useBottomShadow && (
 				<style>
 					{`
 						nav:last-of-type { border-bottom: 1px solid #DDD; }
 					`}
 				</style>
-			}
+			)}
 
 			<AccentStyle
 				accentColor={communityData.accentColor}
@@ -76,25 +100,20 @@ const PageWrapper = (props)=> {
 				// largeHeaderBackground={communityData.largeHeaderBackground}
 			/>
 
-			{!props.hideNav && !props.communityData.hideNav &&
-				<NavBar
-					navItems={navItems}
-					socialItems={socialItems}
-				/>
-			}
+			{!props.hideNav && !props.communityData.hideNav && (
+				<NavBar navItems={navItems} socialItems={socialItems} />
+			)}
 
-			<div className="page-content">
-				{props.children}
-			</div>
+			<div className="page-content">{props.children}</div>
 
-			{!props.hideFooter &&
+			{!props.hideFooter && (
 				<Footer
 					isAdmin={loginData.isAdmin}
 					isBasePubPub={props.locationData.isBasePubPub}
 					communityData={communityData}
 					socialItems={socialItems}
 				/>
-			}
+			)}
 		</div>
 	);
 };

@@ -2,49 +2,76 @@
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	-moz-font-feature-settings: "liga" on;
+	-moz-font-feature-settings: 'liga' on;
 	font-size: 20px;
 	min-height: 300px;
 	.editor.ProseMirror {
 		min-height: 150px;
-		h1, h2, h3, h4, h5, h6 {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
 			margin-bottom: 0.5em;
 			line-height: 1em;
 			font-weight: 900;
 		}
-		h4, h5, h6 {
+		h4,
+		h5,
+		h6 {
 			font-weight: 600;
 		}
-		h1 { font-size: 1.5em; }
-		h2 { font-size: 1.25em; }
-		h3 { font-size: 1.1em; }
-		h4 { font-size: 1.1em; }
-		h5 { font-size: 1em; }
-		h6 { font-size: 0.875em; }
-		* + h1, * + h2, * + h3, * + h4, * + h5, * + h6 {
+		h1 {
+			font-size: 1.5em;
+		}
+		h2 {
+			font-size: 1.25em;
+		}
+		h3 {
+			font-size: 1.1em;
+		}
+		h4 {
+			font-size: 1.1em;
+		}
+		h5 {
+			font-size: 1em;
+		}
+		h6 {
+			font-size: 0.875em;
+		}
+		* + h1,
+		* + h2,
+		* + h3,
+		* + h4,
+		* + h5,
+		* + h6 {
 			margin-top: 1em;
 		}
-		p, li {
-			font-family: Georgia, Cambria, "Times New Roman", Times, serif; 
-			letter-spacing: .01rem;
+		p,
+		li {
+			font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
+			letter-spacing: 0.01rem;
 			font-weight: 400;
 			font-style: normal;
 			font-size: 1em;
 			line-height: 1.58;
-			letter-spacing: -.003em;
+			letter-spacing: -0.003em;
 			margin: 0em 0em 1em;
 			word-break: break-word;
 		}
 		li {
-			margin: 0em;	
+			margin: 0em;
 			p {
 				margin: 0;
 			}
 		}
-		ul, ol {
+		ul,
+		ol {
 			padding-left: 1em;
 			margin: 0em 0em 1em;
-			ul, ol {
+			ul,
+			ol {
 				margin-bottom: 0em;
 			}
 		}
@@ -52,33 +79,34 @@
 			margin: 1em 0em;
 		}
 		pre {
-			background: rgba(0,0,0,.05);
+			background: rgba(0, 0, 0, 0.05);
 			padding: 20px;
 			box-shadow: none;
-			white-space: pre;
-			overflow: hidden;
-			overflow-x: scroll;
+			white-space: pre;
+			overflow: hidden;
+			overflow-x: scroll;
 			code {
-				white-space: pre;
+				white-space: pre;
 				background-color: transparent;
 				padding: 0em;
 			}
 		}
 		code {
-			background-color: rgba(27, 31, 35, .06);
+			background-color: rgba(27, 31, 35, 0.06);
 			border-radius: 2px;
 			font-size: 16px;
 			margin: 0;
-			padding: .2em .4em;
+			padding: 0.2em 0.4em;
 		}
 		blockquote {
 			line-height: inherit;
-		    font-size: 1em;
-		    margin: 0 0 1em;
-		    border-left: solid 4px rgba(181, 181, 181, 0.5);
-		    padding: 0 1em;
+			font-size: 1em;
+			margin: 0 0 1em;
+			border-left: solid 4px rgba(181, 181, 181, 0.5);
+			padding: 0 1em;
 		}
-		figure, .file {
+		figure,
+		.file {
 			font-size: 15px;
 		}
 		figcaption {
@@ -86,7 +114,8 @@
 			p {
 				margin-bottom: 0em;
 				line-height: 1;
-				font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue", sans-serif;
+				font-family: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen',
+					'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
 			}
 		}
 		*:first-child {
@@ -117,7 +146,12 @@
 @media print {
 	.pub-body-component {
 		font-size: 14px;
-		h1, h2, h3, h4, h5, h6 {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
 			page-break-after: avoid;
 		}
 	}

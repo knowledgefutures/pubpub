@@ -17,7 +17,7 @@
 			.dashboard-columns {
 				display: grid;
 				grid-template-columns: 200px 1fr;
-				grid-template-areas: "side main";
+				grid-template-areas: 'side main';
 				grid-column-gap: 4%;
 				margin-top: 2em;
 			}
@@ -28,7 +28,6 @@
 				grid-area: main;
 				min-width: 0;
 			}
-			
 		}
 	}
 }

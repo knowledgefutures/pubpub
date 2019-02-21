@@ -6,7 +6,12 @@ import dateFormat from 'dateformat';
 import throttle from 'lodash.throttle';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import Icon from 'components/Icon/Icon';
-import { hydrateWrapper, getResizedUrl, generatePubBackground, generatePageBackground } from 'utilities';
+import {
+	hydrateWrapper,
+	getResizedUrl,
+	generatePubBackground,
+	generatePageBackground,
+} from 'utilities';
 
 require('./search.scss');
 
@@ -49,11 +54,18 @@ class Search extends Component {
 		this.inputRef.current.value = val;
 		const query = this.state.searchQuery;
 		if (query) {
-			this.setState({ isLoading: !!query, searchQuery: query }, ()=> {
+			this.setState({ isLoading: !!query, searchQuery: query }, () => {
 				const queryString = query ? `?q=${query}` : '';
 				const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-				const modeString = this.state.mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${this.state.mode}` : '';
-				window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
+				const modeString =
+					this.state.mode !== 'pubs'
+						? `${queryString ? '&' : '?'}mode=${this.state.mode}`
+						: '';
+				window.history.replaceState(
+					{},
+					'',
+					`/search${queryString}${pageString}${modeString}`,
+				);
 				this.throttledSearch();
 			});
 		}
@@ -76,64 +88,91 @@ class Search extends Component {
 
 	setMode(mode) {
 		if (mode !== this.state.mode) {
-			this.setState((prevState)=> {
-				return {
-					mode: mode,
-					page: 0,
-					searchResults: [],
-					isLoading: !!prevState.searchQuery,
-				};
-			}, ()=> {
-				this.setClient();
-				const queryString = this.state.searchQuery ? `?q=${this.state.searchQuery}` : '';
-				const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-				const modeString = this.state.mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${this.state.mode}` : '';
-				window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
-				this.throttledSearch();
-			});
+			this.setState(
+				(prevState) => {
+					return {
+						mode: mode,
+						page: 0,
+						searchResults: [],
+						isLoading: !!prevState.searchQuery,
+					};
+				},
+				() => {
+					this.setClient();
+					const queryString = this.state.searchQuery
+						? `?q=${this.state.searchQuery}`
+						: '';
+					const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
+					const modeString =
+						this.state.mode !== 'pubs'
+							? `${queryString ? '&' : '?'}mode=${this.state.mode}`
+							: '';
+					window.history.replaceState(
+						{},
+						'',
+						`/search${queryString}${pageString}${modeString}`,
+					);
+					this.throttledSearch();
+				},
+			);
 		}
 	}
 
 	handleSearchChange(evt) {
 		const query = evt.target.value;
-		this.setState({ isLoading: !!query, searchQuery: query, page: 0 }, ()=> {
+		this.setState({ isLoading: !!query, searchQuery: query, page: 0 }, () => {
 			const queryString = query ? `?q=${query}` : '';
 			const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-			const modeString = this.state.mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${this.state.mode}` : '';
+			const modeString =
+				this.state.mode !== 'pubs'
+					? `${queryString ? '&' : '?'}mode=${this.state.mode}`
+					: '';
 			window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
 			this.throttledSearch();
 		});
 	}
 
 	handleSetPage(pageIndex) {
-		this.setState((prevState)=> {
-			return {
-				isLoading: pageIndex !== prevState.page,
-				page: pageIndex,
-				searchResults: [],
-			};
-		}, ()=> {
-			const queryString = this.state.searchQuery ? `?q=${this.state.searchQuery}` : '';
-			const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-			const modeString = this.state.mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${this.state.mode}` : '';
-			window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
-			window.scrollTo(0, 0);
-			this.throttledSearch();
-		});
+		this.setState(
+			(prevState) => {
+				return {
+					isLoading: pageIndex !== prevState.page,
+					page: pageIndex,
+					searchResults: [],
+				};
+			},
+			() => {
+				const queryString = this.state.searchQuery ? `?q=${this.state.searchQuery}` : '';
+				const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
+				const modeString =
+					this.state.mode !== 'pubs'
+						? `${queryString ? '&' : '?'}mode=${this.state.mode}`
+						: '';
+				window.history.replaceState(
+					{},
+					'',
+					`/search${queryString}${pageString}${modeString}`,
+				);
+				window.scrollTo(0, 0);
+				this.throttledSearch();
+			},
+		);
 	}
 
 	handleSearch() {
 		if (this.state.searchQuery) {
-			this.index.search({
-				query: this.state.searchQuery,
-				page: this.state.page,
-			}).then((results)=>{
-				this.setState({
-					isLoading: false,
-					searchResults: results.hits,
-					numPages: Math.min(results.nbPages, 10),
+			this.index
+				.search({
+					query: this.state.searchQuery,
+					page: this.state.page,
+				})
+				.then((results) => {
+					this.setState({
+						isLoading: false,
+						searchResults: results.hits,
+						numPages: Math.min(results.nbPages, 10),
+					});
 				});
-			});
 		}
 	}
 
@@ -142,7 +181,8 @@ class Search extends Component {
 		const pages = new Array(this.state.numPages).fill('');
 		const queryString = this.state.searchQuery ? `?q=${this.state.searchQuery}` : '';
 		const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-		const modeString = this.state.mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${this.state.mode}` : '';
+		const modeString =
+			this.state.mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${this.state.mode}` : '';
 		const searchString = `/search${queryString}${pageString}${modeString}`;
 		return (
 			<div id="search-container">
@@ -158,11 +198,11 @@ class Search extends Component {
 							<div className="col-12">
 								<div className="search-header">
 									<h2>Search {this.props.communityData.title}</h2>
-									{!this.props.locationData.isBasePubPub &&
+									{!this.props.locationData.isBasePubPub && (
 										<a href={`https://www.pubpub.org${searchString}`}>
 											Search all PubPub Communities
 										</a>
-									}
+									)}
 								</div>
 								<InputGroup
 									placeholder="search..."
@@ -188,79 +228,131 @@ class Search extends Component {
 						</div>
 						<div className="row">
 							<div className="col-12">
-								{!this.state.searchResults.length && this.state.searchQuery && !this.state.isLoading &&
-									<NonIdealState
-										title="No Results"
-										visual="search"
-									/>
-								}
-								{!!this.state.searchResults.length &&
+								{!this.state.searchResults.length &&
+									this.state.searchQuery &&
+									!this.state.isLoading && (
+										<NonIdealState title="No Results" visual="search" />
+									)}
+								{!!this.state.searchResults.length && (
 									<div>
-										{this.state.searchResults.map((item)=> {
+										{this.state.searchResults.map((item) => {
 											let link;
 											let bannerStyle;
 											let keyId;
 											let isPublic;
-											const resizedBannerImage = getResizedUrl(item.avatar, 'fit-in', '800x0');
-											const resizedCommunityLogo = getResizedUrl(item.communityAvatar, 'fit-in', '125x35');
+											const resizedBannerImage = getResizedUrl(
+												item.avatar,
+												'fit-in',
+												'800x0',
+											);
+											const resizedCommunityLogo = getResizedUrl(
+												item.communityAvatar,
+												'fit-in',
+												'125x35',
+											);
 
 											if (this.state.mode === 'pubs') {
-												link = `https://${item.communityDomain}/pub/${item.slug}`;
+												link = `https://${item.communityDomain}/pub/${
+													item.slug
+												}`;
 												bannerStyle = item.avatar
-													? { backgroundImage: `url("${resizedBannerImage}")` }
-													: { background: generatePubBackground(item.title) };
+													? {
+															backgroundImage: `url("${resizedBannerImage}")`,
+													  }
+													: {
+															background: generatePubBackground(
+																item.title,
+															),
+													  };
 												keyId = item.pubId;
 												isPublic = item.versionIsPublic;
 											}
 											if (this.state.mode === 'pages') {
-												link = `https://${item.communityDomain}/${item.slug}`;
+												link = `https://${item.communityDomain}/${
+													item.slug
+												}`;
 												bannerStyle = item.avatar
-													? { backgroundImage: `url("${resizedBannerImage}")` }
-													: { background: generatePageBackground(item.title) };
+													? {
+															backgroundImage: `url("${resizedBannerImage}")`,
+													  }
+													: {
+															background: generatePageBackground(
+																item.title,
+															),
+													  };
 												keyId = item.pageId;
 												isPublic = item.isPublic;
 											}
 
 											return (
-												<div className={`result ${this.state.mode}`} key={`result-${keyId}`}>
+												<div
+													className={`result ${this.state.mode}`}
+													key={`result-${keyId}`}
+												>
 													<div>
 														<a href={link} alt={item.title}>
-															<div className="banner-image" style={bannerStyle} />
+															<div
+																className="banner-image"
+																style={bannerStyle}
+															/>
 														</a>
 													</div>
 													<div className="content">
 														<div className="title">
-															<a href={link} alt={item.title} className="pub-title">
+															<a
+																href={link}
+																alt={item.title}
+																className="pub-title"
+															>
 																{item.title}
-																{!isPublic &&
-																	<Icon icon="lock2" />
-																}
+																{!isPublic && <Icon icon="lock2" />}
 															</a>
-															{(this.props.locationData.isBasePubPub) &&
+															{this.props.locationData
+																.isBasePubPub && (
 																<div className="community-title">
-																	<a href={`https://${item.communityDomain}`} alt={item.communityTitle} style={{ backgroundColor: item.communityColor, color: item.communityTextColor }}>
-																		{resizedCommunityLogo &&
+																	<a
+																		href={`https://${
+																			item.communityDomain
+																		}`}
+																		alt={item.communityTitle}
+																		style={{
+																			backgroundColor:
+																				item.communityColor,
+																			color:
+																				item.communityTextColor,
+																		}}
+																	>
+																		{resizedCommunityLogo && (
 																			<img
-																				alt={`${item.communityTitle} logo`}
-																				src={resizedCommunityLogo}
+																				alt={`${
+																					item.communityTitle
+																				} logo`}
+																				src={
+																					resizedCommunityLogo
+																				}
 																			/>
-																		}
-																		{!resizedCommunityLogo &&
-																			<span>{item.communityTitle}</span>
-																		}
+																		)}
+																		{!resizedCommunityLogo && (
+																			<span>
+																				{
+																					item.communityTitle
+																				}
+																			</span>
+																		)}
 																	</a>
 																</div>
-															}
+															)}
 														</div>
-														{this.state.mode === 'pubs' &&
+														{this.state.mode === 'pubs' && (
 															<div className="byline">
-																{dateFormat(item.versionCreatedAt, 'mmm dd, yyyy')}
-																{item.byline &&
-																	<span> · </span>
-																}
+																{dateFormat(
+																	item.versionCreatedAt,
+																	'mmm dd, yyyy',
+																)}
+																{item.byline && <span> · </span>}
 																{item.byline}
 															</div>
-														}
+														)}
 														<div className="description">
 															{item.description}
 														</div>
@@ -268,25 +360,25 @@ class Search extends Component {
 												</div>
 											);
 										})}
-										{this.state.numPages > 1 &&
+										{this.state.numPages > 1 && (
 											<div className="bp3-button-group bp3-large">
-												{pages.map((page, index)=> {
+												{pages.map((page, index) => {
 													const key = `page-button-${index}`;
 													return (
 														<Button
 															key={key}
 															text={index + 1}
 															active={index === this.state.page}
-															onClick={()=> {
+															onClick={() => {
 																this.handleSetPage(index);
 															}}
 														/>
 													);
 												})}
 											</div>
-										}
+										)}
 									</div>
-								}
+								)}
 							</div>
 						</div>
 					</div>

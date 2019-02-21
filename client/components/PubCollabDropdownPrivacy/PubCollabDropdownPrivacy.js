@@ -7,11 +7,11 @@ require('./pubCollabDropdownPrivacy.scss');
 
 const propTypes = {
 	value: PropTypes.string,
-	onChange: PropTypes.func
+	onChange: PropTypes.func,
 };
 const defaultProps = {
 	value: 'private',
-	onChange: ()=>{},
+	onChange: () => {},
 };
 
 const PubCollabDropdownPrivacy = function(props) {
@@ -21,21 +21,27 @@ const PubCollabDropdownPrivacy = function(props) {
 			value: 'private',
 			title: 'Private',
 			icon: 'lock2',
-			onClick: ()=>{ props.onChange('private'); },
+			onClick: () => {
+				props.onChange('private');
+			},
 			description: 'Collaborators must be invited to view or edit the working draft.',
 		},
 		publicView: {
 			value: 'publicView',
 			title: 'Public View',
 			icon: 'team',
-			onClick: ()=>{ props.onChange('publicView'); },
+			onClick: () => {
+				props.onChange('publicView');
+			},
 			description: 'The working draft can be viewed by anyone.',
 		},
 		publicEdit: {
 			value: 'publicEdit',
 			title: 'Public Edit',
 			icon: 'globe',
-			onClick: ()=>{ props.onChange('publicEdit'); },
+			onClick: () => {
+				props.onChange('publicEdit');
+			},
 			description: 'The working draft can be edited by anyone.',
 		},
 	};
@@ -43,7 +49,7 @@ const PubCollabDropdownPrivacy = function(props) {
 		<div className="pub-collab-dropdown-privacy-component">
 			<DropdownButton label={items[props.value].title} icon={items[props.value].icon}>
 				<div className="bp3-menu">
-					{Object.keys(items).map((key, index, array)=> {
+					{Object.keys(items).map((key, index, array) => {
 						const item = items[key];
 						return (
 							<DropdownRichItem

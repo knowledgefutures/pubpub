@@ -3,22 +3,21 @@ import { storiesOf } from '@storybook/react';
 import PubHeader from 'components/PubHeader/PubHeader';
 import { pubData, locationData } from '../data';
 
-storiesOf('Components/PubHeader', module)
-.add('default', () => (
+storiesOf('Components/PubHeader', module).add('default', () => (
 	<div className="container">
 		<PubHeader
 			pubData={pubData}
 			locationData={locationData}
-			setOverlayPanel={()=>{}}
+			setOverlayPanel={() => {}}
 			// isMinimal={false}
 		/>
 		<PubHeader
 			pubData={{
 				...pubData,
-				useHeaderImage: false
+				useHeaderImage: false,
 			}}
 			locationData={locationData}
-			setOverlayPanel={()=>{}}
+			setOverlayPanel={() => {}}
 			// isMinimal={false}
 		/>
 		<PubHeader
@@ -28,24 +27,24 @@ storiesOf('Components/PubHeader', module)
 				params: {
 					...locationData.params,
 					mode: 'Discussions',
-				}
+				},
 			}}
-			setOverlayPanel={()=>{}}
+			setOverlayPanel={() => {}}
 			// isMinimal={true}
 		/>
 		<PubHeader
 			pubData={{
 				...pubData,
-				useHeaderImage: false
+				useHeaderImage: false,
 			}}
 			locationData={{
 				...locationData,
 				params: {
 					...locationData.params,
 					mode: 'Discussions',
-				}
+				},
 			}}
-			setOverlayPanel={()=>{}}
+			setOverlayPanel={() => {}}
 			// isMinimal={true}
 		/>
 	</div>

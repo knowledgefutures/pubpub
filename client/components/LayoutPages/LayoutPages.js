@@ -14,32 +14,32 @@ const LayoutPages = function(props) {
 		<div className="layout-pubs-component">
 			<div className="block-content">
 				<div className="container">
-					{props.content.title &&
+					{props.content.title && (
 						<div className="row">
 							<div className="col-12">
 								<h1>{props.content.title}</h1>
 							</div>
 						</div>
-					}
+					)}
 
 					<div className="row">
 						<div className="col-12">
 							<div className="pages-wrapper">
-								{props.content.pageIds.map((pageId)=> {
-									return props.pages.reduce((prev, curr)=> {
-										if (curr.id === pageId) { return curr; }
-										return prev;
-									}, undefined);
-								}).filter((page)=> {
-									return !!page;
-								}).map((page)=> {
-									return (
-										<PagePreview
-											key={page.id}
-											pageData={page}
-										/>
-									);
-								})}
+								{props.content.pageIds
+									.map((pageId) => {
+										return props.pages.reduce((prev, curr) => {
+											if (curr.id === pageId) {
+												return curr;
+											}
+											return prev;
+										}, undefined);
+									})
+									.filter((page) => {
+										return !!page;
+									})
+									.map((page) => {
+										return <PagePreview key={page.id} pageData={page} />;
+									})}
 							</div>
 						</div>
 					</div>

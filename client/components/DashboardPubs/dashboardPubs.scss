@@ -2,10 +2,10 @@
 	.pub-wrapper {
 		margin-bottom: 0.75em;
 		padding-bottom: 0.75em;
-		border-bottom: 1px solid #DDD;
+		border-bottom: 1px solid #ddd;
 		min-height: 45px;
 		.header {
-			display: flex;	
+			display: flex;
 		}
 		.title {
 			flex-shrink: 1;
@@ -34,5 +34,5 @@
 		.nowrap {
 			white-space: nowrap;
 		}
-	}		
+	}
 }

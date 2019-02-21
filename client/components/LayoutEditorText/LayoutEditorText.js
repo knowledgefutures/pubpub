@@ -32,14 +32,14 @@ class LayoutEditorText extends Component {
 	setAlignLeft() {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			align: 'left'
+			align: 'left',
 		});
 	}
 
 	setAlignCenter() {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			align: 'center'
+			align: 'center',
 		});
 	}
 
@@ -60,21 +60,23 @@ class LayoutEditorText extends Component {
 					<InputField label="Text Align">
 						<div className="bp3-button-group">
 							<Button
-								className={`${this.props.content.align === 'left' ? 'bp3-active' : ''}`}
+								className={`${
+									this.props.content.align === 'left' ? 'bp3-active' : ''
+								}`}
 								onClick={this.setAlignLeft}
 								text="Left"
 							/>
 							<Button
-								className={`${this.props.content.align === 'center' ? 'bp3-active' : ''}`}
+								className={`${
+									this.props.content.align === 'center' ? 'bp3-active' : ''
+								}`}
 								onClick={this.setAlignCenter}
 								text="Center"
 							/>
 						</div>
 					</InputField>
 					<div className="formatting-wrapper">
-						<FormattingBar
-							editorChangeObject={this.state.editorChangeObject}
-						/>
+						<FormattingBar editorChangeObject={this.state.editorChangeObject} />
 					</div>
 				</div>
 
@@ -86,13 +88,15 @@ class LayoutEditorText extends Component {
 									<Editor
 										nodeOptions={{
 											image: {
-												onResizeUrl: (url)=> { return getResizedUrl(url, 'fit-in', '1200x0'); },
+												onResizeUrl: (url) => {
+													return getResizedUrl(url, 'fit-in', '1200x0');
+												},
 												linkToSrc: false,
 											},
 										}}
 										placeholder="Enter text..."
 										initialContent={this.state.initialContent}
-										onChange={(editorChangeObject)=> {
+										onChange={(editorChangeObject) => {
 											if (editorChangeObject.view.state.history$.prevTime) {
 												/* history$.prevTime will be 0 if the transaction */
 												/* does not generate an undo item in the history */
@@ -101,7 +105,9 @@ class LayoutEditorText extends Component {
 											if (this.textChangesMade) {
 												this.setText(getJSON(editorChangeObject.view));
 											}
-											this.setState({ editorChangeObject: editorChangeObject });
+											this.setState({
+												editorChangeObject: editorChangeObject,
+											});
 										}}
 									/>
 								</div>

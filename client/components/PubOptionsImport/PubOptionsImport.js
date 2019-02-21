@@ -30,7 +30,7 @@ class PubOptionsImport extends Component {
 	}
 
 	handleFileSelect(evt) {
-		s3Upload(evt.target.files[0], ()=>{}, this.handleUploadFinish, 0);
+		s3Upload(evt.target.files[0], () => {}, this.handleUploadFinish, 0);
 		this.setState({
 			isLoading: true,
 		});
@@ -43,37 +43,37 @@ class PubOptionsImport extends Component {
 		return apiFetch('/api/import', {
 			method: 'POST',
 			body: JSON.stringify({
-				sourceUrl: sourceUrl
+				sourceUrl: sourceUrl,
 				// sourceUrl: 'https://assets.pubpub.org/juflxg08/427a3c55-993a-4083-918c-85c682bedccf.docx',
 				// sourceUrl: 'https://assets.pubpub.org/_testing/01532122050220.docx',
+			}),
+		})
+			.then((taskId) => {
+				this.setState({ taskId: taskId });
+				setTimeout(() => {
+					this.checkTask();
+				}, 1500);
 			})
-		})
-		.then((taskId)=> {
-			this.setState({ taskId: taskId });
-			setTimeout(()=> {
-				this.checkTask();
-			}, 1500);
-		})
-		.catch(()=> {
-			this.setState({ isLoading: false });
-		});
+			.catch(() => {
+				this.setState({ isLoading: false });
+			});
 	}
 
 	checkTask() {
 		return apiFetch(`/api/workerTasks?workerTaskId=${this.state.taskId}`)
-		.then((taskData)=> {
-			if (taskData.isProcessing) {
-				setTimeout(()=> {
-					this.checkTask();
-				}, 1500);
-			} else {
-				importHtml(this.props.editorView, taskData.output.html);
-				this.props.setOptionsMode(undefined);
-			}
-		})
-		.catch(()=> {
-			this.setState({ isLoading: false });
-		});
+			.then((taskData) => {
+				if (taskData.isProcessing) {
+					setTimeout(() => {
+						this.checkTask();
+					}, 1500);
+				} else {
+					importHtml(this.props.editorView, taskData.output.html);
+					this.props.setOptionsMode(undefined);
+				}
+			})
+			.catch(() => {
+				this.setState({ isLoading: false });
+			});
 	}
 
 	render() {
@@ -96,7 +96,6 @@ class PubOptionsImport extends Component {
 						onChange={this.handleFileSelect}
 					/>
 				</label>
-
 			</div>
 		);
 	}

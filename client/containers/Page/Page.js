@@ -21,12 +21,18 @@ class Page extends Component {
 	render() {
 		const pageData = this.props.pageData;
 		const slug = this.props.locationData.params.slug;
-		const title = this.props.communityData.pages.reduce((prev, curr)=> {
-			if (curr.slug === '' && slug === undefined) { return curr.title; }
-			if (curr.slug === slug) { return curr.title; }
+		const title = this.props.communityData.pages.reduce((prev, curr) => {
+			if (curr.slug === '' && slug === undefined) {
+				return curr.title;
+			}
+			if (curr.slug === slug) {
+				return curr.title;
+			}
 			return prev;
 		}, undefined);
-		if (!title) { return <h1>Nothing</h1>; }
+		if (!title) {
+			return <h1>Nothing</h1>;
+		}
 
 		const layout = pageData.layout || getDefaultLayout();
 		const pubRenderLists = generateRenderLists(layout, this.props.pageData.pubs);
@@ -37,31 +43,28 @@ class Page extends Component {
 					communityData={this.props.communityData}
 					locationData={this.props.locationData}
 				>
-					{layout.map((item, index)=> {
-						const validType = ['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
-						if (!validType) { return null; }
+					{layout.map((item, index) => {
+						const validType =
+							['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
+						if (!validType) {
+							return null;
+						}
 						return (
 							<div key={`block-${item.id}`} className="component-wrapper">
-								{item.type === 'pubs' &&
+								{item.type === 'pubs' && (
 									<LayoutPubs
 										key={`item-${item.id}`}
 										content={item.content}
 										pubRenderList={pubRenderLists[index]}
 									/>
-								}
-								{item.type === 'text' &&
-									<LayoutText
-										key={`item-${item.id}`}
-										content={item.content}
-									/>
-								}
-								{item.type === 'html' &&
-									<LayoutHtml
-										key={`item-${item.id}`}
-										content={item.content}
-									/>
-								}
-								{item.type === 'banner' &&
+								)}
+								{item.type === 'text' && (
+									<LayoutText key={`item-${item.id}`} content={item.content} />
+								)}
+								{item.type === 'html' && (
+									<LayoutHtml key={`item-${item.id}`} content={item.content} />
+								)}
+								{item.type === 'banner' && (
 									<LayoutBanner
 										key={`item-${item.id}`}
 										content={item.content}
@@ -69,14 +72,14 @@ class Page extends Component {
 										loginData={this.props.loginData}
 										locationData={this.props.locationData}
 									/>
-								}
-								{item.type === 'pages' &&
+								)}
+								{item.type === 'pages' && (
 									<LayoutPages
 										key={`item-${item.id}`}
 										content={item.content}
 										pages={this.props.communityData.pages}
 									/>
-								}
+								)}
 							</div>
 						);
 					})}

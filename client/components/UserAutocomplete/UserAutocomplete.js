@@ -15,7 +15,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-	onSelect: ()=>{},
+	onSelect: () => {},
 	placeholder: 'Search for users...',
 	usedUserIds: [],
 	allowCustomUser: false,
@@ -41,24 +41,25 @@ class UserAutocomplete extends Component {
 		if (query !== this.state.queryValue) {
 			this.setState({ queryValue: query });
 			apiFetch(`/api/search/users?q=${query}`)
-			.then((result) => {
-				const appendedResult = this.props.allowCustomUser && query
-					? [
-						{
-							name: query,
-						},
-						...result,
-					]
-					: result;
-				this.setState({
-					items: appendedResult.filter((item)=> {
-						return this.props.usedUserIds.indexOf(item.id) === -1;
-					})
+				.then((result) => {
+					const appendedResult =
+						this.props.allowCustomUser && query
+							? [
+									{
+										name: query,
+									},
+									...result,
+							  ]
+							: result;
+					this.setState({
+						items: appendedResult.filter((item) => {
+							return this.props.usedUserIds.indexOf(item.id) === -1;
+						}),
+					});
+				})
+				.catch((error) => {
+					console.error(error);
 				});
-			})
-			.catch((error) => {
-				console.error(error);
-			});
 		}
 		return this.state.items;
 	}
@@ -67,7 +68,6 @@ class UserAutocomplete extends Component {
 		this.props.onSelect(data);
 		this.inputRef.focus();
 	}
-
 
 	render() {
 		return (
@@ -78,22 +78,38 @@ class UserAutocomplete extends Component {
 					inputProps={{
 						placeholder: this.props.placeholder,
 						large: true,
-						inputRef: (ref)=> { this.inputRef = ref; },
+						inputRef: (ref) => {
+							this.inputRef = ref;
+						},
 					}}
 					itemListPredicate={this.filterItems}
-					inputValueRenderer={()=> { return ''; }}
-					itemRenderer={(item, { handleClick, modifiers })=> {
+					inputValueRenderer={() => {
+						return '';
+					}}
+					itemRenderer={(item, { handleClick, modifiers }) => {
 						return (
 							<li key={item.id || 'empty-user-create'}>
 								<button
 									type="button"
 									tabIndex={-1}
 									onClick={handleClick}
-									className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
+									className={
+										modifiers.active
+											? 'bp3-menu-item bp3-active'
+											: 'bp3-menu-item'
+									}
 								>
-									{item.fullName && <Avatar userInitials={item.initials} userAvatar={item.avatar} width={25} />}
+									{item.fullName && (
+										<Avatar
+											userInitials={item.initials}
+											userAvatar={item.avatar}
+											width={25}
+										/>
+									)}
 									{item.name && <span>Add collaborator named: </span>}
-									<span className="autocomplete-name">{item.name || item.fullName}</span>
+									<span className="autocomplete-name">
+										{item.name || item.fullName}
+									</span>
 								</button>
 							</li>
 						);

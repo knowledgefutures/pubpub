@@ -14,15 +14,16 @@ const propTypes = {
 class PubOptionsSocial extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-
-		};
+		this.state = {};
 	}
 
 	render() {
 		const pubData = this.props.pubData;
-		const communityHostname = this.props.communityData.domain || `${this.props.communityData.subdomain}.pubpub.org`;
-		const pubLink = `https://${communityHostname}/pub/${pubData.slug}/${pubData.isDraft ? 'draft' : ''}`;
+		const communityHostname =
+			this.props.communityData.domain || `${this.props.communityData.subdomain}.pubpub.org`;
+		const pubLink = `https://${communityHostname}/pub/${pubData.slug}/${
+			pubData.isDraft ? 'draft' : ''
+		}`;
 		const pubTitle = pubData.title;
 		const links = [
 			{
@@ -59,9 +60,15 @@ class PubOptionsSocial extends Component {
 		return (
 			<div className="pub-options-social-component">
 				<div className="buttons">
-					{links.map((link)=> {
+					{links.map((link) => {
 						return (
-							<a href={link.url} className="bp3-button bp3-large" rel="noopener noreferrer" target="_blank" key={link.title}>
+							<a
+								href={link.url}
+								className="bp3-button bp3-large"
+								rel="noopener noreferrer"
+								target="_blank"
+								key={link.title}
+							>
 								{link.icon}
 								{link.title}
 							</a>

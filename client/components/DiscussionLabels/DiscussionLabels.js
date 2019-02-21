@@ -34,21 +34,18 @@ class DiscussionLabels extends Component {
 	}
 
 	applyLabel(labelId) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			return {
-				labelsData: [
-					...prevState.labelsData,
-					labelId,
-				],
+				labelsData: [...prevState.labelsData, labelId],
 				labelsDataChanged: true,
 			};
 		});
 	}
 
 	removeLabel(labelId) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			return {
-				labelsData: prevState.labelsData.filter((label)=> {
+				labelsData: prevState.labelsData.filter((label) => {
 					return label !== labelId;
 				}),
 				labelsDataChanged: true,
@@ -63,17 +60,17 @@ class DiscussionLabels extends Component {
 
 	render() {
 		const labelsById = {};
-		this.props.availableLabels.forEach((label)=> {
+		this.props.availableLabels.forEach((label) => {
 			labelsById[label.id] = label;
 		});
 
-		const availableLabels = this.props.availableLabels.filter((label)=> {
+		const availableLabels = this.props.availableLabels.filter((label) => {
 			return this.props.isAdmin || label.publicApply;
 		});
 
 		return (
 			<div className="discussion-labels-component">
-				{this.props.canManageThread && !!availableLabels.length &&
+				{this.props.canManageThread && !!availableLabels.length && (
 					<Popover
 						content={
 							<div className="bp3-menu">
@@ -84,39 +81,74 @@ class DiscussionLabels extends Component {
 									loading={this.state.isSaving}
 									disabled={!this.state.labelsDataChanged}
 								/>
-								{availableLabels.sort((foo, bar)=> {
-									if (foo.title < bar.title) { return -1; }
-									if (foo.title > bar.title) { return 1; }
-									return 0;
-								}).map((label)=> {
-									const isActive = this.state.labelsData.indexOf(label.id) > -1;
-									const handleClick = isActive
-										? ()=> { this.removeLabel(label.id); }
-										: ()=> { this.applyLabel(label.id); };
-									return (
-										<li key={label.id}>
-											<div role="button" tabIndex={-1} className="bp3-menu-item" onClick={handleClick}>
-												<div className="color" style={{ backgroundColor: label.color }}>
-													{isActive && <span className="bp3-icon-standard bp3-icon-tick" />}
-												</div>
-												<div className="label-title">{label.title}</div>
-												{this.props.isAdmin &&
-													<Tooltip
-														content={label.publicApply
-															? <span>All discussion authors can apply this label.</span>
-															: <span>Only managers can apply this label.</span>
-														}
-														tooltipClassName="bp3-dark"
-														position={Position.TOP}
+								{availableLabels
+									.sort((foo, bar) => {
+										if (foo.title < bar.title) {
+											return -1;
+										}
+										if (foo.title > bar.title) {
+											return 1;
+										}
+										return 0;
+									})
+									.map((label) => {
+										const isActive =
+											this.state.labelsData.indexOf(label.id) > -1;
+										const handleClick = isActive
+											? () => {
+													this.removeLabel(label.id);
+											  }
+											: () => {
+													this.applyLabel(label.id);
+											  };
+										return (
+											<li key={label.id}>
+												<div
+													role="button"
+													tabIndex={-1}
+													className="bp3-menu-item"
+													onClick={handleClick}
+												>
+													<div
+														className="color"
+														style={{ backgroundColor: label.color }}
 													>
-														<span className={`bp3-icon-standard bp3-icon-endorsed ${label.publicApply ? '' : 'active'}`} />
-													</Tooltip>
-												}
-											</div>
-										</li>
-									);
-								})}
-
+														{isActive && (
+															<span className="bp3-icon-standard bp3-icon-tick" />
+														)}
+													</div>
+													<div className="label-title">{label.title}</div>
+													{this.props.isAdmin && (
+														<Tooltip
+															content={
+																label.publicApply ? (
+																	<span>
+																		All discussion authors can
+																		apply this label.
+																	</span>
+																) : (
+																	<span>
+																		Only managers can apply this
+																		label.
+																	</span>
+																)
+															}
+															tooltipClassName="bp3-dark"
+															position={Position.TOP}
+														>
+															<span
+																className={`bp3-icon-standard bp3-icon-endorsed ${
+																	label.publicApply
+																		? ''
+																		: 'active'
+																}`}
+															/>
+														</Tooltip>
+													)}
+												</div>
+											</li>
+										);
+									})}
 							</div>
 						}
 						interactionKind={PopoverInteractionKind.CLICK}
@@ -134,15 +166,25 @@ class DiscussionLabels extends Component {
 							Edit Labels
 						</button>
 					</Popover>
-				}
-				{this.props.labelsData.sort((foo, bar)=> {
-					if (labelsById[foo].title < labelsById[bar].title) { return -1; }
-					if (labelsById[foo].title > labelsById[bar].title) { return 1; }
-					return 0;
-				}).map((labelId)=> {
-					const label = labelsById[labelId];
-					return <span className="bp3-tag" style={{ backgroundColor: label.color }}>{label.title}</span>;
-				})}
+				)}
+				{this.props.labelsData
+					.sort((foo, bar) => {
+						if (labelsById[foo].title < labelsById[bar].title) {
+							return -1;
+						}
+						if (labelsById[foo].title > labelsById[bar].title) {
+							return 1;
+						}
+						return 0;
+					})
+					.map((labelId) => {
+						const label = labelsById[labelId];
+						return (
+							<span className="bp3-tag" style={{ backgroundColor: label.color }}>
+								{label.title}
+							</span>
+						);
+					})}
 			</div>
 		);
 	}

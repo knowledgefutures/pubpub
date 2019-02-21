@@ -5,15 +5,10 @@ import { pubData, communityData } from '../data';
 
 require('components/PubOptions/pubOptions.scss');
 
-storiesOf('Components/PubOptionsTags', module)
-.add('default', () => (
+storiesOf('Components/PubOptionsTags', module).add('default', () => (
 	<div className="pub-options-component" style={{ padding: '20px' }}>
 		<div className="right-column">
-			<PubOptionsTags
-				pubData={pubData}
-				communityData={communityData}
-				setPubData={()=>{}}
-			/>
+			<PubOptionsTags pubData={pubData} communityData={communityData} setPubData={() => {}} />
 		</div>
 	</div>
 ));

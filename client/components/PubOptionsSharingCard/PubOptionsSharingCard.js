@@ -18,15 +18,13 @@ const defaultProps = {
 
 const PubOptionsSharingCard = function(props) {
 	return (
-		<div className={`pub-options-sharing-card-component ${props.isAddCard ? 'add' : ''} ${props.isFlatCard ? 'flat bp3-elevation-0' : 'bp3-elevation-1'}`}>
-			<div className="content">
-				{props.content}
-			</div>
-			{props.options &&
-				<div className="options">
-					{props.options}
-				</div>
-			}
+		<div
+			className={`pub-options-sharing-card-component ${props.isAddCard ? 'add' : ''} ${
+				props.isFlatCard ? 'flat bp3-elevation-0' : 'bp3-elevation-1'
+			}`}
+		>
+			<div className="content">{props.content}</div>
+			{props.options && <div className="options">{props.options}</div>}
 		</div>
 	);
 };

@@ -23,10 +23,11 @@ class PubOptionsCite extends Component {
 	render() {
 		const pubData = this.props.pubData;
 		// TODO: How do we cite on drafts?
-		if (!pubData.citationData) { return null; }
-		const modeData = this.state.mode === 'pub'
-			? pubData.citationData.pub
-			: pubData.citationData.version;
+		if (!pubData.citationData) {
+			return null;
+		}
+		const modeData =
+			this.state.mode === 'pub' ? pubData.citationData.pub : pubData.citationData.version;
 		return (
 			<div className="pub-options-cite-component">
 				<div className="save-wrapper">
@@ -37,8 +38,12 @@ class PubOptionsCite extends Component {
 							position={Position.BOTTOM}
 						>
 							<button
-								className={`bp3-button ${this.state.mode === 'pub' ? 'bp3-active' : ''}`}
-								onClick={()=> { this.setState({ mode: 'pub' }); }}
+								className={`bp3-button ${
+									this.state.mode === 'pub' ? 'bp3-active' : ''
+								}`}
+								onClick={() => {
+									this.setState({ mode: 'pub' });
+								}}
 								type="button"
 							>
 								Cite the Work
@@ -50,8 +55,12 @@ class PubOptionsCite extends Component {
 							position={Position.BOTTOM}
 						>
 							<button
-								className={`bp3-button ${this.state.mode === 'version' ? 'bp3-active' : ''}`}
-								onClick={()=> { this.setState({ mode: 'version' }); }}
+								className={`bp3-button ${
+									this.state.mode === 'version' ? 'bp3-active' : ''
+								}`}
+								onClick={() => {
+									this.setState({ mode: 'version' });
+								}}
 								type="button"
 							>
 								Cite this Version
@@ -63,22 +72,34 @@ class PubOptionsCite extends Component {
 				<h1>Cite</h1>
 				<div className="style-wrapper">
 					<div className="style-title">APA</div>
-					<div className="style-content" dangerouslySetInnerHTML={{ __html: modeData.apa }} />
+					<div
+						className="style-content"
+						dangerouslySetInnerHTML={{ __html: modeData.apa }}
+					/>
 				</div>
 
 				<div className="style-wrapper">
 					<div className="style-title">Harvard</div>
-					<div className="style-content" dangerouslySetInnerHTML={{ __html: modeData.harvard }} />
+					<div
+						className="style-content"
+						dangerouslySetInnerHTML={{ __html: modeData.harvard }}
+					/>
 				</div>
 
 				<div className="style-wrapper">
 					<div className="style-title">Vancouver</div>
-					<div className="style-content" dangerouslySetInnerHTML={{ __html: modeData.vancouver }} />
+					<div
+						className="style-content"
+						dangerouslySetInnerHTML={{ __html: modeData.vancouver }}
+					/>
 				</div>
 
 				<div className="style-wrapper">
 					<div className="style-title">Bibtex</div>
-					<div className="style-content bibtex" dangerouslySetInnerHTML={{ __html: modeData.bibtex }} />
+					<div
+						className="style-content bibtex"
+						dangerouslySetInnerHTML={{ __html: modeData.bibtex }}
+					/>
 				</div>
 			</div>
 		);

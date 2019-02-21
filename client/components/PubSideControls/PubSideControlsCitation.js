@@ -38,9 +38,7 @@ class PubSideControlsCitation extends Component {
 				<div className="options-title">Citation Details</div>
 
 				{/*  Content Adjustment */}
-				<div className="form-label first">
-					Structured Data
-				</div>
+				<div className="form-label first">Structured Data</div>
 				<textarea
 					placeholder="Enter bibtex, DOI, wikidata url, or bibjson..."
 					className="bp3-input bp3-fill"
@@ -49,22 +47,18 @@ class PubSideControlsCitation extends Component {
 				/>
 
 				{/*  Output */}
-				<div className="form-label">
-					Structured Data Output
-				</div>
+				<div className="form-label">Structured Data Output</div>
 				<div
 					className="rendered-citation"
 					dangerouslySetInnerHTML={{ __html: this.state.html }}
 				/>
 
 				{/*  Content Adjustment */}
-				<div className="form-label">
-					Text
-				</div>
+				<div className="form-label">Text</div>
 				<div className="simple-editor-wrapper">
 					<SimpleEditor
 						initialHtmlString={this.props.attrs.unstructuredValue}
-						onChange={(htmlString)=> {
+						onChange={(htmlString) => {
 							this.props.updateAttrs({ unstructuredValue: htmlString });
 						}}
 					/>
@@ -73,7 +67,6 @@ class PubSideControlsCitation extends Component {
 		);
 	}
 }
-
 
 PubSideControlsCitation.propTypes = propTypes;
 export default PubSideControlsCitation;

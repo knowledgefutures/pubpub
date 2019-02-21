@@ -25,7 +25,7 @@ class FormattingBarMediaIframe extends Component {
 		});
 	}
 
-	render () {
+	render() {
 		const isValid = isHttpsUri(this.state.url);
 		return (
 			<div className="formatting-bar-media-component-content">
@@ -35,7 +35,7 @@ class FormattingBarMediaIframe extends Component {
 					placeholder="Enter URL"
 					value={this.state.url}
 					large={true}
-					onChange={(evt)=> {
+					onChange={(evt) => {
 						const val = evt.target.value;
 						this.setState({ url: getIframeSrc(val) || val });
 					}}
@@ -49,23 +49,16 @@ class FormattingBarMediaIframe extends Component {
 						/>
 					}
 				/>
-				{isValid &&
+				{isValid && (
 					<div className="preview-wrapper">
-						<iframe
-							frameBorder="none"
-							src={this.state.url}
-							title="URL preview"
-						/>
+						<iframe frameBorder="none" src={this.state.url} title="URL preview" />
 					</div>
-				}
-				{!isValid &&
+				)}
+				{!isValid && (
 					<div className="preview-wrapper">
-						<NonIdealState
-							title="Enter an HTTPS URL above"
-							icon="application"
-						/>
+						<NonIdealState title="Enter an HTTPS URL above" icon="application" />
 					</div>
-				}
+				)}
 			</div>
 		);
 	}

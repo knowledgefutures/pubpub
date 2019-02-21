@@ -27,46 +27,42 @@ class NavDrag extends Component {
 	}
 
 	onDragEnd(result) {
-		if (!result.destination) { return null; }
-		return this.setState((prevState)=> {
-			const items = result.destination.droppableId === 'mainDroppable'
-				? this.reorder(
-					prevState.nav,
-					result.source.index,
-					result.destination.index
-				)
-				: prevState.nav.map((item)=> {
-					if (item.id === result.destination.droppableId) {
-						return {
-							...item,
-							children: this.reorder(
-								item.children,
-								result.source.index,
-								result.destination.index
-							)
-						};
-					}
-					return item;
-				});
-			this.props.onChange([
-				this.props.initialNav[0].id,
-				...this.cleanOutputNav(items)
-			]);
+		if (!result.destination) {
+			return null;
+		}
+		return this.setState((prevState) => {
+			const items =
+				result.destination.droppableId === 'mainDroppable'
+					? this.reorder(prevState.nav, result.source.index, result.destination.index)
+					: prevState.nav.map((item) => {
+							if (item.id === result.destination.droppableId) {
+								return {
+									...item,
+									children: this.reorder(
+										item.children,
+										result.source.index,
+										result.destination.index,
+									),
+								};
+							}
+							return item;
+					  });
+			this.props.onChange([this.props.initialNav[0].id, ...this.cleanOutputNav(items)]);
 			return { nav: items };
 		});
 	}
 
 	cleanOutputNav(populatedNav) {
-		return populatedNav.map((item)=> {
+		return populatedNav.map((item) => {
 			if (!item.children) {
 				return item.id;
 			}
 			return {
 				id: item.id,
 				title: item.title,
-				children: item.children.map((child)=> {
+				children: item.children.map((child) => {
 					return child.id;
-				})
+				}),
 			};
 		});
 	}
@@ -80,55 +76,51 @@ class NavDrag extends Component {
 	}
 
 	addItem(newItem, dropdownId) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			const newItems = dropdownId
-				? prevState.nav.map((item)=> {
-					if (item.id === dropdownId) {
-						return {
-							...item,
-							children: [newItem, ...item.children]
-						};
-					}
-					return item;
-				})
+				? prevState.nav.map((item) => {
+						if (item.id === dropdownId) {
+							return {
+								...item,
+								children: [newItem, ...item.children],
+							};
+						}
+						return item;
+				  })
 				: [newItem, ...prevState.nav];
 
-			this.props.onChange([
-				this.props.initialNav[0].id,
-				...this.cleanOutputNav(newItems)
-			]);
+			this.props.onChange([this.props.initialNav[0].id, ...this.cleanOutputNav(newItems)]);
 			return { nav: newItems };
 		});
 	}
 
 	removeItem(itemId, dropdownId) {
-		this.setState((prevState)=> {
+		this.setState((prevState) => {
 			const newItems = !dropdownId
-				? prevState.nav.filter((item)=> {
-					return item.id !== itemId;
-				})
-				: prevState.nav.map((item)=> {
-					if (item.id === dropdownId) {
-						return {
-							...item,
-							children: item.children.filter((subItem)=> {
-								return subItem.id !== itemId;
-							})
-						};
-					}
-					return item;
-				});
-			this.props.onChange([
-				this.props.initialNav[0].id,
-				...this.cleanOutputNav(newItems)
-			]);
+				? prevState.nav.filter((item) => {
+						return item.id !== itemId;
+				  })
+				: prevState.nav.map((item) => {
+						if (item.id === dropdownId) {
+							return {
+								...item,
+								children: item.children.filter((subItem) => {
+									return subItem.id !== itemId;
+								}),
+							};
+						}
+						return item;
+				  });
+			this.props.onChange([this.props.initialNav[0].id, ...this.cleanOutputNav(newItems)]);
 			return { nav: newItems };
 		});
 	}
 
 	render() {
-		const homeTitle = this.props.pages.reduce((prev, curr)=> {
-			if (!curr.slug) { return curr.title; }
+		const homeTitle = this.props.pages.reduce((prev, curr) => {
+			if (!curr.slug) {
+				return curr.title;
+			}
 			return prev;
 		}, '');
 		return (
@@ -137,7 +129,9 @@ class NavDrag extends Component {
 					<PageAutocomplete
 						pages={this.props.pages}
 						usedItems={this.state.nav}
-						onSelect={(newItem)=>{ this.addItem(newItem, undefined); }}
+						onSelect={(newItem) => {
+							this.addItem(newItem, undefined);
+						}}
 						allowCustom={true}
 					/>
 				</div>
@@ -147,81 +141,151 @@ class NavDrag extends Component {
 							{(provided, snapshot) => (
 								<div
 									ref={provided.innerRef}
-									className={`main-list ${snapshot.isDraggingOver ? 'dragging' : ''}`}
+									className={`main-list ${
+										snapshot.isDraggingOver ? 'dragging' : ''
+									}`}
 									{...provided.droppableProps}
 								>
 									<div className="nav-item-background accent-background" />
 									<div className="nav-item accent-color">{homeTitle}</div>
-									{this.state.nav.map((item, index)=> {
+									{this.state.nav.map((item, index) => {
 										return (
-											<Draggable key={`draggable-${item.id}`} draggableId={item.id} index={index}>
+											<Draggable
+												key={`draggable-${item.id}`}
+												draggableId={item.id}
+												index={index}
+											>
 												{(providedItem, snapshotItem) => (
 													<div
 														ref={providedItem.innerRef}
-														className={`nav-item accent-color ${snapshotItem.isDragging ? 'dragging' : ''}`}
+														className={`nav-item accent-color ${
+															snapshotItem.isDragging
+																? 'dragging'
+																: ''
+														}`}
 														{...providedItem.draggableProps}
 													>
-														<span {...providedItem.dragHandleProps} className="dragger-horiz">
+														<span
+															{...providedItem.dragHandleProps}
+															className="dragger-horiz"
+														>
 															<span className="bp3-icon-standard bp3-icon-drag-handle-vertical" />
-															{!item.children && !item.isPublic &&
+															{!item.children && !item.isPublic && (
 																<Icon icon="lock2" iconSize={14} />
-															}
+															)}
 															{item.title}
-															{item.children &&
+															{item.children && (
 																<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
-															}
+															)}
 														</span>
 														<Button
-															onClick={()=>{ this.removeItem(item.id); }}
+															onClick={() => {
+																this.removeItem(item.id);
+															}}
 															className="bp3-icon-small-cross bp3-minimal"
 														/>
 
-														{item.children &&
+														{item.children && (
 															<div className="dropdown-wrapper bp3-card bp3-elevation-2">
 																<PageAutocomplete
 																	pages={this.props.pages}
 																	usedItems={item.children}
 																	placeholder="Add..."
-																	onSelect={(newItem)=>{ this.addItem(newItem, item.id); }}
+																	onSelect={(newItem) => {
+																		this.addItem(
+																			newItem,
+																			item.id,
+																		);
+																	}}
 																/>
 																<Droppable droppableId={item.id}>
 																	{(providedSub, snapshotSub) => (
 																		<div
-																			ref={providedSub.innerRef}
-																			className={`sub-list ${snapshotSub.isDraggingOver ? 'dragging' : ''}`}
+																			ref={
+																				providedSub.innerRef
+																			}
+																			className={`sub-list ${
+																				snapshotSub.isDraggingOver
+																					? 'dragging'
+																					: ''
+																			}`}
 																			{...providedSub.droppableProps}
 																		>
-																			{item.children.map((child, childIndex)=> {
-																				return (
-																					<Draggable key={`subitem-${item.id}-${child.id}`} draggableId={child.id} index={childIndex}>
-																						{(providedItemSub, snapshotItemSub) => (
-																							<div
-																								ref={providedItemSub.innerRef}
-																								className={`sub-nav-item ${snapshotItemSub.isDragging ? 'dragging' : ''}`}
-																								{...providedItemSub.draggableProps}
-																							>
-																								<span {...providedItemSub.dragHandleProps} className="dragger-vert">
-																									<span className="bp3-icon-standard bp3-icon-drag-handle-horizontal" />
-																									{!child.children && !child.isPublic &&
-																										<Icon icon="lock2" iconSize={14} />
+																			{item.children.map(
+																				(
+																					child,
+																					childIndex,
+																				) => {
+																					return (
+																						<Draggable
+																							key={`subitem-${
+																								item.id
+																							}-${
+																								child.id
+																							}`}
+																							draggableId={
+																								child.id
+																							}
+																							index={
+																								childIndex
+																							}
+																						>
+																							{(
+																								providedItemSub,
+																								snapshotItemSub,
+																							) => (
+																								<div
+																									ref={
+																										providedItemSub.innerRef
 																									}
-																									{child.title}
-																								</span>
-																								<Button
-																									onClick={()=>{ this.removeItem(child.id, item.id); }}
-																									className="bp3-minimal bp3-icon-small-cross"
-																								/>
-																							</div>
-																						)}
-																					</Draggable>
-																				);
-																			})}
-																			{providedSub.placeholder}
+																									className={`sub-nav-item ${
+																										snapshotItemSub.isDragging
+																											? 'dragging'
+																											: ''
+																									}`}
+																									{...providedItemSub.draggableProps}
+																								>
+																									<span
+																										{...providedItemSub.dragHandleProps}
+																										className="dragger-vert"
+																									>
+																										<span className="bp3-icon-standard bp3-icon-drag-handle-horizontal" />
+																										{!child.children &&
+																											!child.isPublic && (
+																												<Icon
+																													icon="lock2"
+																													iconSize={
+																														14
+																													}
+																												/>
+																											)}
+																										{
+																											child.title
+																										}
+																									</span>
+																									<Button
+																										onClick={() => {
+																											this.removeItem(
+																												child.id,
+																												item.id,
+																											);
+																										}}
+																										className="bp3-minimal bp3-icon-small-cross"
+																									/>
+																								</div>
+																							)}
+																						</Draggable>
+																					);
+																				},
+																			)}
+																			{
+																				providedSub.placeholder
+																			}
 																		</div>
 																	)}
 																</Droppable>
 															</div>
-														}
+														)}
 													</div>
 												)}
 											</Draggable>

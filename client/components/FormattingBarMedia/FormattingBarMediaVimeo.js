@@ -26,23 +26,25 @@ class FormattingBarMediaVimeo extends Component {
 	handleInput(url) {
 		const input = getIframeSrc(url) || url;
 		const isValid = isHttpsUri(input) && getEmbedType(input) === 'vimeo';
-		this.setState({
-			input: input,
-			isValid: isValid,
-		}, ()=> {
-			if (!this.state.isValid) {
-				return this.setState({ embedUrl: '', embedTitle: '' });
-			}
+		this.setState(
+			{
+				input: input,
+				isValid: isValid,
+			},
+			() => {
+				if (!this.state.isValid) {
+					return this.setState({ embedUrl: '', embedTitle: '' });
+				}
 
-			const queryParams = `?type=${getEmbedType(input)}&input=${input}`;
-			return apiFetch(`/api/editor/embed${queryParams}`)
-			.then((result)=> {
-				this.setState({
-					embedUrl: getIframeSrc(result.html),
-					embedTitle: result.title,
+				const queryParams = `?type=${getEmbedType(input)}&input=${input}`;
+				return apiFetch(`/api/editor/embed${queryParams}`).then((result) => {
+					this.setState({
+						embedUrl: getIframeSrc(result.html),
+						embedTitle: result.title,
+					});
 				});
-			});
-		});
+			},
+		);
 	}
 
 	handleInsert() {
@@ -53,7 +55,7 @@ class FormattingBarMediaVimeo extends Component {
 		});
 	}
 
-	render () {
+	render() {
 		return (
 			<div className="formatting-bar-media-component-content">
 				<InputGroup
@@ -62,7 +64,7 @@ class FormattingBarMediaVimeo extends Component {
 					placeholder="Enter Vimeo URL"
 					large={true}
 					value={this.state.input}
-					onChange={(evt)=> {
+					onChange={(evt) => {
 						this.handleInput(evt.target.value);
 					}}
 					rightElement={
@@ -75,31 +77,27 @@ class FormattingBarMediaVimeo extends Component {
 						/>
 					}
 				/>
-				{this.state.isValid &&
+				{this.state.isValid && (
 					<div className="preview-wrapper">
-						<iframe
-							frameBorder="none"
-							src={this.state.embedUrl}
-							title="URL preview"
-						/>
+						<iframe frameBorder="none" src={this.state.embedUrl} title="URL preview" />
 					</div>
-				}
-				{!this.state.isValid &&
+				)}
+				{!this.state.isValid && (
 					<div className="preview-wrapper">
 						<NonIdealState
 							title="Paste a Vimeo URL above"
 							icon={<Icon icon="vimeo" iconSize={60} useColor={true} />}
-							action={(
+							action={
 								<Button
 									text="Load Sample URL"
-									onClick={()=> {
+									onClick={() => {
 										this.handleInput('https://vimeo.com/146022717');
 									}}
 								/>
-							)}
+							}
 						/>
 					</div>
-				}
+				)}
 			</div>
 		);
 	}

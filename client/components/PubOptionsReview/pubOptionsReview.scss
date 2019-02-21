@@ -10,7 +10,7 @@
 		}
 	}
 	.editor:not(.read-only) {
-		border: 1px solid #CCC;
+		border: 1px solid #ccc;
 		border-radius: 2px;
 		padding: 1em;
 		margin: 0.5em 0em;
@@ -18,7 +18,8 @@
 	.editor.read-only {
 		margin-top: 0.5em;
 	}
-	.bp3-tag, .status {
+	.bp3-tag,
+	.status {
 		text-transform: capitalize;
 		&.bp3-intent-warning {
 			background: #d9c72b;
@@ -46,10 +47,10 @@
 		margin-left: 13px;
 		position: relative;
 		&:not(:last-of-type) {
-			border-left: 1px solid #CCC;	
+			border-left: 1px solid #ccc;
 		}
 		&:before {
-			content: "";
+			content: '';
 			display: block;
 			position: absolute;
 			top: 0;
@@ -57,7 +58,7 @@
 			width: 25px;
 			height: 25px;
 			border-radius: 25px;
-			background: #DDD;
+			background: #ddd;
 		}
 		.avatar-component {
 			position: absolute;

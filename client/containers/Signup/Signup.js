@@ -33,14 +33,14 @@ class Signup extends Component {
 			body: JSON.stringify({
 				email: this.state.email.toLowerCase(),
 				communityId: this.props.communityData.id,
+			}),
+		})
+			.then(() => {
+				this.setState({ postSignupIsLoading: false, isSuccessful: true });
 			})
-		})
-		.then(()=> {
-			this.setState({ postSignupIsLoading: false, isSuccessful: true });
-		})
-		.catch((err)=> {
-			this.setState({ postSignupIsLoading: false, postSignupError: err });
-		});
+			.catch((err) => {
+				this.setState({ postSignupIsLoading: false, postSignupError: err });
+			});
 	}
 
 	onEmailChange(evt) {
@@ -60,12 +60,18 @@ class Signup extends Component {
 					<div className="container small">
 						<div className="row">
 							<div className="col-12">
-								{!this.state.isSuccessful &&
+								{!this.state.isSuccessful && (
 									<div>
 										<h1>Signup</h1>
-										{!this.props.locationData.isBasePubPub &&
-											<p>Signup to create a <a href="https://www.pubpub.org">PubPub</a> account, which will work on <b>{this.props.communityData.title}</b> and all other PubPub communities.</p>
-										}
+										{!this.props.locationData.isBasePubPub && (
+											<p>
+												Signup to create a{' '}
+												<a href="https://www.pubpub.org">PubPub</a> account,
+												which will work on{' '}
+												<b>{this.props.communityData.title}</b> and all
+												other PubPub communities.
+											</p>
+										)}
 										<form onSubmit={this.onSignupSubmit}>
 											<InputField
 												label="Email"
@@ -84,17 +90,25 @@ class Signup extends Component {
 												loading={this.state.postSignupIsLoading}
 											/>
 										</form>
-										<a href="/login" className="switch-message">Already have a PubPub account? Click to Login</a>
+										<a href="/login" className="switch-message">
+											Already have a PubPub account? Click to Login
+										</a>
 									</div>
-								}
+								)}
 
-								{this.state.isSuccessful &&
+								{this.state.isSuccessful && (
 									<NonIdealState
 										title="Signup Successful"
 										description={
 											<div className="success">
-												<p>An email has been sent to <b>{this.state.email}</b></p>
-												<p>Follow the link in that email to create your account.</p>
+												<p>
+													An email has been sent to{' '}
+													<b>{this.state.email}</b>
+												</p>
+												<p>
+													Follow the link in that email to create your
+													account.
+												</p>
 											</div>
 										}
 										visual="tick-circle"
@@ -109,7 +123,7 @@ class Signup extends Component {
 											/>
 										}
 									/>
-								}
+								)}
 							</div>
 						</div>
 					</div>

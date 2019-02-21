@@ -20,7 +20,6 @@ const propTypes = {
 	setActiveThread: PropTypes.func,
 	// onNewHighlightDiscussion: PropTypes.func,
 
-
 	clientData: PropTypes.object.isRequired,
 	editorKey: PropTypes.string.isRequired,
 	onClientChange: PropTypes.func.isRequired,
@@ -38,12 +37,12 @@ const defaultProps = {
 	highlights: [],
 	// threads: [],
 	slug: '',
-	setActiveThread: ()=>{},
+	setActiveThread: () => {},
 	// onNewHighlightDiscussion: ()=>{},
-	onStatusChange: ()=>{},
+	onStatusChange: () => {},
 	// menuWrapperRefNode: undefined,
-	onChange: ()=> {},
-	onSingleClick: ()=> {},
+	onChange: () => {},
+	onSingleClick: () => {},
 };
 
 class PubBody extends Component {
@@ -62,8 +61,10 @@ class PubBody extends Component {
 	}
 
 	findThreadNumberFromHighlightId(highlightId, highlightNode) {
-		const threadNumber = this.props.highlights.reduce((prev, curr)=> {
-			if (curr.id === highlightId) { return curr.threadNumber; }
+		const threadNumber = this.props.highlights.reduce((prev, curr) => {
+			if (curr.id === highlightId) {
+				return curr.threadNumber;
+			}
 			return prev;
 		}, undefined);
 		this.props.setActiveThread(threadNumber, highlightNode);
@@ -80,7 +81,9 @@ class PubBody extends Component {
 					description="An error has occured. We've logged the bug and have notified our development team. Please reload the page to continue."
 					action={
 						<Button
-							onClick={()=>{ window.location.reload(); }}
+							onClick={() => {
+								window.location.reload();
+							}}
 							text="Reload Page"
 						/>
 					}
@@ -89,17 +92,17 @@ class PubBody extends Component {
 		}
 		return (
 			<div className="pub-body-component">
-				{this.props.showWorkingDraftButton &&
-					<div className="bp3-callout working-draft bp3-intent-warning" style={{ marginBottom: '2em' }}>
+				{this.props.showWorkingDraftButton && (
+					<div
+						className="bp3-callout working-draft bp3-intent-warning"
+						style={{ marginBottom: '2em' }}
+					>
 						<span>You are viewing a saved version</span>
-						<a
-							href={`/pub/${this.props.slug}/draft`}
-							className="bp3-button"
-						>
+						<a href={`/pub/${this.props.slug}/draft`} className="bp3-button">
 							Go to Working Draft
 						</a>
 					</div>
-				}
+				)}
 
 				<Editor
 					customNodes={{
@@ -107,7 +110,9 @@ class PubBody extends Component {
 					}}
 					nodeOptions={{
 						image: {
-							onResizeUrl: (url)=> { return getResizedUrl(url, 'fit-in', '800x0'); },
+							onResizeUrl: (url) => {
+								return getResizedUrl(url, 'fit-in', '800x0');
+							},
 						},
 						discussion: this.props.discussionNodeOptions,
 					}}
@@ -115,15 +120,16 @@ class PubBody extends Component {
 					initialContent={this.props.isDraft ? undefined : this.props.content}
 					isReadOnly={this.props.isReadOnly}
 					onChange={this.props.onChange}
-					collaborativeOptions={this.props.isDraft
-						? {
-							firebaseConfig: getFirebaseConfig(),
-							clientData: this.props.clientData,
-							editorKey: this.props.editorKey,
-							onClientChange: this.props.onClientChange,
-							onStatusChange: this.props.onStatusChange,
-						}
-						: undefined
+					collaborativeOptions={
+						this.props.isDraft
+							? {
+									firebaseConfig: getFirebaseConfig(),
+									clientData: this.props.clientData,
+									editorKey: this.props.editorKey,
+									onClientChange: this.props.onClientChange,
+									onStatusChange: this.props.onStatusChange,
+							  }
+							: undefined
 					}
 					highlights={this.props.highlights}
 					handleSingleClick={this.props.onSingleClick}

@@ -5,10 +5,12 @@
 	margin-bottom: 50px;
 }
 
-.pub-overlay-enter, .pub-overlay-appear {
+.pub-overlay-enter,
+.pub-overlay-appear {
 	opacity: 0;
 }
-.pub-overlay-enter-active, .pub-overlay-appear-active {
+.pub-overlay-enter-active,
+.pub-overlay-appear-active {
 	opacity: 1;
 	transition: 200ms cubic-bezier(0.4, 1, 0.75, 0.9) opacity;
 }

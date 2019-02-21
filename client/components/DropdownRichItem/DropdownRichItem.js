@@ -16,22 +16,24 @@ const defaultProps = {
 	icon: undefined,
 	description: undefined,
 	hideBottomBorder: false,
-	onClick: ()=>{},
+	onClick: () => {},
 };
 
 const DropdownRichItem = function(props) {
 	return (
-		<div role="button" tabIndex={-1} className={`dropdown-rich-item-component ${props.hideBottomBorder ? 'no-border' : ''} bp3-menu-item bp3-popover-dismiss`} onClick={props.onClick}>
-			{props.icon &&
-				<Icon icon={props.icon} />
-			}
+		<div
+			role="button"
+			tabIndex={-1}
+			className={`dropdown-rich-item-component ${
+				props.hideBottomBorder ? 'no-border' : ''
+			} bp3-menu-item bp3-popover-dismiss`}
+			onClick={props.onClick}
+		>
+			{props.icon && <Icon icon={props.icon} />}
 
 			<div className="title">{props.title}</div>
 
-			{props.description &&
-				<div className="description">{props.description}</div>
-			}
-
+			{props.description && <div className="description">{props.description}</div>}
 		</div>
 	);
 };

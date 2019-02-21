@@ -7,8 +7,8 @@
 		flex-grow: 0;
 		position: relative;
 		&:after {
-			content: "";
-			background: #E0E0E0;
+			content: '';
+			background: #e0e0e0;
 			position: absolute;
 			width: 1px;
 			height: calc(100% + 40px);
@@ -52,11 +52,11 @@
 				margin-bottom: 5px;
 			}
 			.save-success-message {
-				color: #35AE6D;
+				color: #35ae6d;
 				text-align: right;
 				user-select: none;
 				opacity: 0;
-				transition: .1s linear opacity;
+				transition: 0.1s linear opacity;
 				&.active {
 					opacity: 1;
 				}

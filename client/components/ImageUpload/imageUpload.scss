@@ -1,6 +1,8 @@
 .image-upload-component {
 	margin-bottom: 15px;
-	.upload-button, .upload-button.bp3-disabled, .image-wrapper {
+	.upload-button,
+	.upload-button.bp3-disabled,
+	.image-wrapper {
 		display: inline-flex;
 		margin-top: 0.5em;
 		svg {
@@ -9,8 +11,9 @@
 			opacity: 0.75;
 		}
 	}
-	.upload-button, .upload-button.bp3-disabled {
-		background-color: #F0F0F0;
+	.upload-button,
+	.upload-button.bp3-disabled {
+		background-color: #f0f0f0;
 	}
 	.image-wrapper {
 		position: relative;
@@ -19,7 +22,7 @@
 		background-repeat: no-repeat;
 		background-position: center;
 		&:not(.accent-background) {
-			background-color: #F0F0F0;
+			background-color: #f0f0f0;
 		}
 	}
 	input {

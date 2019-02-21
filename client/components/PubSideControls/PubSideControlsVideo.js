@@ -25,7 +25,7 @@ class PubSideControlsVideo extends Component {
 		/* video immediately after upload. S3 seems to have read-after-write */
 		/* consistency - but I am still seeing problems with it. 500ms */
 		/* seems to do the trick, but this is pretty hand-wavy. */
-		setTimeout(()=> {
+		setTimeout(() => {
 			this.props.updateAttrs({ url: `https://assets.pubpub.org/${filename}` });
 			this.setState({
 				isUploading: false,
@@ -35,7 +35,7 @@ class PubSideControlsVideo extends Component {
 
 	handleVideoSelect(evt) {
 		if (evt.target.files.length) {
-			s3Upload(evt.target.files[0], ()=>{}, this.onUploadFinish, 0);
+			s3Upload(evt.target.files[0], () => {}, this.onUploadFinish, 0);
 			this.setState({
 				isUploading: true,
 			});
@@ -53,14 +53,12 @@ class PubSideControlsVideo extends Component {
 			<div className="pub-side-controls-video-component">
 				<div className="options-title">Video Details</div>
 				{/*  Size Adjustment */}
-				<div className="form-label first">
-					Size
-				</div>
+				<div className="form-label first">Size</div>
 				<Slider
 					min={25}
 					max={100}
 					value={this.props.attrs.size}
-					onChange={(newSize)=> {
+					onChange={(newSize) => {
 						this.props.updateAttrs({ size: newSize });
 					}}
 					labelRenderer={false}
@@ -70,30 +68,30 @@ class PubSideControlsVideo extends Component {
 				/>
 
 				{/*  Alignment Adjustment */}
-				<div className="form-label">
-					Alignment
-				</div>
+				<div className="form-label">Alignment</div>
 				<div className="bp3-button-group bp3-fill">
-					{alignOptions.map((item)=> {
+					{alignOptions.map((item) => {
 						return (
 							<button
 								type="button"
 								key={`align-option-${item.key}`}
-								className={`bp3-button ${item.icon} ${this.props.attrs.align === item.key ? 'bp3-active' : ''}`}
-								onClick={()=> { this.props.updateAttrs({ align: item.key }); }}
+								className={`bp3-button ${item.icon} ${
+									this.props.attrs.align === item.key ? 'bp3-active' : ''
+								}`}
+								onClick={() => {
+									this.props.updateAttrs({ align: item.key });
+								}}
 							/>
 						);
 					})}
 				</div>
 
 				{/*  Caption Adjustment */}
-				<div className="form-label">
-					Caption
-				</div>
+				<div className="form-label">Caption</div>
 				<div className="simple-editor-wrapper">
 					<SimpleEditor
 						initialHtmlString={this.props.attrs.caption}
-						onChange={(htmlString)=> {
+						onChange={(htmlString) => {
 							this.props.updateAttrs({ caption: htmlString });
 						}}
 						placeholder="Enter caption..."
@@ -101,9 +99,7 @@ class PubSideControlsVideo extends Component {
 				</div>
 
 				{/*  Source Details */}
-				<div className="form-label">
-					Source
-				</div>
+				<div className="form-label">Source</div>
 				<div className="source-url">
 					<a href={this.props.attrs.url} target="_blank" rel="noopener noreferrer">
 						{this.props.attrs.url}
@@ -130,7 +126,6 @@ class PubSideControlsVideo extends Component {
 		);
 	}
 }
-
 
 PubSideControlsVideo.propTypes = propTypes;
 export default PubSideControlsVideo;

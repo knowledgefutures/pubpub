@@ -33,7 +33,7 @@ class FormattingBarMediaAudio extends Component {
 
 	onUploadProgress(evt) {
 		this.setState({
-			progress: evt.loaded / evt.total
+			progress: evt.loaded / evt.total,
 		});
 	}
 
@@ -44,32 +44,35 @@ class FormattingBarMediaAudio extends Component {
 		});
 	}
 
-	render () {
+	render() {
 		return (
-			<Dropzone
-				onDrop={this.onDrop}
-				accept="audio/mp3, audio/ogg, audio/wav"
-			>
+			<Dropzone onDrop={this.onDrop} accept="audio/mp3, audio/ogg, audio/wav">
 				{({ getRootProps, getInputProps, isDragActive }) => {
 					return (
 						<div
 							{...getRootProps()}
-							className={`formatting-bar-media-component-content dropzone ${isDragActive ? 'dropzone--isActive' : ''}`}
+							className={`formatting-bar-media-component-content dropzone ${
+								isDragActive ? 'dropzone--isActive' : ''
+							}`}
 						>
 							<input {...getInputProps()} />
-							{!this.state.isUploading &&
+							{!this.state.isUploading && (
 								<div className="drag-message">
 									<Icon icon="circle-arrow-up" iconSize={50} />
 									<div className="drag-title">Drag & drop to upload Audio</div>
 									<div className="drag-details">Or click to browse files</div>
 									<div className="drag-details">.mp3, .wav, or .ogg</div>
 								</div>
-							}
-							{this.state.isUploading &&
+							)}
+							{this.state.isUploading && (
 								<div className="drag-message">
-									<Spinner value={this.state.progress === 1 ? null : this.state.progress} />
+									<Spinner
+										value={
+											this.state.progress === 1 ? null : this.state.progress
+										}
+									/>
 								</div>
-							}
+							)}
 						</div>
 					);
 				}}

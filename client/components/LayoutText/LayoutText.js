@@ -11,7 +11,9 @@ const propTypes = {
 };
 
 const LayoutText = function(props) {
-	if (!props.content.text) { return null; }
+	if (!props.content.text) {
+		return null;
+	}
 	const wrapperStyle = {
 		textAlign: props.content.align || 'left',
 	};
@@ -25,7 +27,9 @@ const LayoutText = function(props) {
 								<Editor
 									nodeOptions={{
 										image: {
-											onResizeUrl: (url)=> { return getResizedUrl(url, 'fit-in', '1200x0'); },
+											onResizeUrl: (url) => {
+												return getResizedUrl(url, 'fit-in', '1200x0');
+											},
 											linkToSrc: false,
 										},
 									}}

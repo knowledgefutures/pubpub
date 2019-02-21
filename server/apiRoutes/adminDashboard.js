@@ -27,31 +27,46 @@ const processQueryData = function(baseObj, activeObj) {
 	return baseObj;
 };
 
-app.get('/api/admin-dashboard', (req, res)=> {
-	return getInitialData(req)
-	.then((initialData) => {
+app.get('/api/admin-dashboard', (req, res) => {
+	return getInitialData(req).then((initialData) => {
 		const user = req.user || {};
-		const users = ['b242f616-7aaa-479c-8ee5-3933dcf70859', '5d9d63b3-6990-407c-81fb-5f87b9d3e360',
-			'807f3604-4223-4495-b576-861d04d2f39e', '237fe275-0618-4a8f-bd40-ea9065836e67'];
-		if (!users.includes(user.id)) { return res.status(404).json('Page not found.'); }
+		const users = [
+			'b242f616-7aaa-479c-8ee5-3933dcf70859',
+			'5d9d63b3-6990-407c-81fb-5f87b9d3e360',
+			'807f3604-4223-4495-b576-861d04d2f39e',
+			'237fe275-0618-4a8f-bd40-ea9065836e67',
+		];
+		if (!users.includes(user.id)) {
+			return res.status(404).json('Page not found.');
+		}
 		const stats = {};
 
-		const countUsers = sequelize.query(`select count(*)::integer as "current", DATE_TRUNC('month', "Users"."createdAt")::date as "month"
+		const countUsers = sequelize.query(
+			`select count(*)::integer as "current", DATE_TRUNC('month', "Users"."createdAt")::date as "month"
 		from "Users"
 		GROUP BY "month"
-		ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
+		ORDER BY "month" asc`,
+			{ type: sequelize.QueryTypes.SELECT },
+		);
 
-		const countCommunities = sequelize.query(`select count(*)::integer as "current", DATE_TRUNC('month', "Communities"."createdAt")::date as "month"
+		const countCommunities = sequelize.query(
+			`select count(*)::integer as "current", DATE_TRUNC('month', "Communities"."createdAt")::date as "month"
 		from "Communities"
 		GROUP BY "month"
-		ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
+		ORDER BY "month" asc`,
+			{ type: sequelize.QueryTypes.SELECT },
+		);
 
-		const countDiscussions = sequelize.query(`select count(*)::integer as "current", DATE_TRUNC('month', "Discussions"."createdAt")::date as "month"
+		const countDiscussions = sequelize.query(
+			`select count(*)::integer as "current", DATE_TRUNC('month', "Discussions"."createdAt")::date as "month"
 		from "Discussions"
 		GROUP BY "month"
-		ORDER BY "month" asc`, { type: sequelize.QueryTypes.SELECT });
+		ORDER BY "month" asc`,
+			{ type: sequelize.QueryTypes.SELECT },
+		);
 
-		const countActiveCommunities = sequelize.query(`select count(DISTINCT "communityId")::integer as "active", month
+		const countActiveCommunities = sequelize.query(
+			`select count(DISTINCT "communityId")::integer as "active", month
 		FROM ((select "Pages"."communityId", DATE_TRUNC('month', "Pages"."updatedAt")::date as "month" from "Pages")
 		UNION
 		(select "Discussions"."communityId", DATE_TRUNC('month', "Discussions"."updatedAt")::date as "month" from "Discussions")
@@ -66,7 +81,9 @@ app.get('/api/admin-dashboard', (req, res)=> {
 		UNION
 		(select "Pubs"."communityId", DATE_TRUNC('month', "Versions"."updatedAt")::date as "month" from "Versions" join "Pubs" on "Pubs".id = "Versions"."pubId"))
 		as ActiveCommunities
-		GROUP BY month`, { type: sequelize.QueryTypes.SELECT });
+		GROUP BY month`,
+			{ type: sequelize.QueryTypes.SELECT },
+		);
 
 		const keenClient = new KeenAnalysis({
 			projectId: initialData.locationData.isPubPubProduction
@@ -82,46 +99,66 @@ app.get('/api/admin-dashboard', (req, res)=> {
 		const countActiveUsers = keenClient.query({
 			analysis_type: 'count_unique',
 			event_collection: 'pageviews',
-			cache: req.headers.referer.indexOf('localhost') > -1
-				? { maxAge: 10 * 60 * 1000 } /* 10 minutes */
-				: false,
+			cache:
+				req.headers.referer.indexOf('localhost') > -1
+					? { maxAge: 10 * 60 * 1000 } /* 10 minutes */
+					: false,
 			target_property: 'pubpub.userId',
 			timeframe: {
 				// TODO: We need to set the start date based on the earliest visible entry.
 				start: startDate,
-				end: new Date().toISOString()
+				end: new Date().toISOString(),
 			},
-			interval: 'monthly'
+			interval: 'monthly',
 		});
 
 		const countSubscribers = getListGrowth('2847d5271c');
 
-		return Promise.all([countUsers, countCommunities, countDiscussions, countActiveCommunities, countActiveUsers, countSubscribers])
-		.then(([userCountData, communityCountData, discussionCountData, activeCommunityData, activeUserData, subscriberData]) => {
-			const activeUsersObj = activeUserData.result.map((i) => {
-				return {
-					active: i.value,
-					month: i.timeframe.start.split('T')[0]
-				};
-			});
-			stats.users = processQueryData(userCountData, activeUsersObj);
-			stats.communities = processQueryData(communityCountData, activeCommunityData);
-			stats.discussions = processQueryData(discussionCountData);
-			stats.activeCommunities = activeCommunityData;
+		return Promise.all([
+			countUsers,
+			countCommunities,
+			countDiscussions,
+			countActiveCommunities,
+			countActiveUsers,
+			countSubscribers,
+		])
+			.then(
+				([
+					userCountData,
+					communityCountData,
+					discussionCountData,
+					activeCommunityData,
+					activeUserData,
+					subscriberData,
+				]) => {
+					const activeUsersObj = activeUserData.result.map((i) => {
+						return {
+							active: i.value,
+							month: i.timeframe.start.split('T')[0],
+						};
+					});
+					stats.users = processQueryData(userCountData, activeUsersObj);
+					stats.communities = processQueryData(communityCountData, activeCommunityData);
+					stats.discussions = processQueryData(discussionCountData);
+					stats.activeCommunities = activeCommunityData;
 
-			const subscribersObj = subscriberData.history.map((i) => {
-				return {
-					prev: i.existing,
-					current: i.optins + i.imports,
-					month: `${i.month}-01`,
-					growth: (i.optins + i.imports) / i.existing
-				};
-			});
-			stats.subscribers = subscribersObj;
+					const subscribersObj = subscriberData.history.map((i) => {
+						return {
+							prev: i.existing,
+							current: i.optins + i.imports,
+							month: `${i.month}-01`,
+							growth: (i.optins + i.imports) / i.existing,
+						};
+					});
+					stats.subscribers = subscribersObj;
 
-			stats.activeUsers = activeUsersObj;
-			return res.status(200).json(stats);
-		})
-		.catch(err => { console.warn(err); return res.status(500).json('Internal server error'); });
+					stats.activeUsers = activeUsersObj;
+					return res.status(200).json(stats);
+				},
+			)
+			.catch((err) => {
+				console.warn(err);
+				return res.status(500).json('Internal server error');
+			});
 	});
 });

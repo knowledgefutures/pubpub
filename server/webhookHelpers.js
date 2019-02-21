@@ -18,14 +18,18 @@ export const alertNewCommunity = (communityName, communitySubdomain, adminName, 
 					fields: [
 						{
 							title: `${communityName}`,
-							value: `https://${communitySubdomain}.pubpub.org\n_${adminName} (${adminEmail})_`
-						}
-					]
-				}
+							value: `https://${communitySubdomain}.pubpub.org\n_${adminName} (${adminEmail})_`,
+						},
+					],
+				},
 			],
-			unfurl_links: true
+			unfurl_links: true,
 		},
-		json: true
+		json: true,
 	};
-	return request(options).then().catch((err) => { console.warn(err); });
+	return request(options)
+		.then()
+		.catch((err) => {
+			console.warn(err);
+		});
 };

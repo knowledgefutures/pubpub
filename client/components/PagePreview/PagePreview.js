@@ -18,9 +18,7 @@ const PagePreview = function(props) {
 
 	return (
 		<a className="page-preview-component" style={bannerStyle} href={`/${pageData.slug}`}>
-			{pageData.avatar &&
-				<div className="dim" />
-			}
+			{pageData.avatar && <div className="dim" />}
 			<span>{pageData.title}</span>
 		</a>
 	);

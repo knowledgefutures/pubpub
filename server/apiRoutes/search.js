@@ -2,24 +2,24 @@ import app from '../server';
 // import { User, Pub, Discussion, Collaborator, Collection, Community } from '../models';
 import { User } from '../models';
 
-app.get('/api/search/users', (req, res)=> {
+app.get('/api/search/users', (req, res) => {
 	User.findAll({
 		where: {
 			$or: [
 				{ fullName: { $ilike: `%${req.query.q}%` } },
 				{ slug: { $ilike: `%${req.query.q}%` } },
-			]
+			],
 		},
 		attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
 		limit: 5,
 	})
-	.then((results)=> {
-		return res.status(201).json(results);
-	})
-	.catch((err)=> {
-		console.error('Error in searchUsers: ', err);
-		return res.status(500).json(err.message);
-	});
+		.then((results) => {
+			return res.status(201).json(results);
+		})
+		.catch((err) => {
+			console.error('Error in searchUsers: ', err);
+			return res.status(500).json(err.message);
+		});
 });
 
 // app.get('/api/search/pubs', (req, res)=> {

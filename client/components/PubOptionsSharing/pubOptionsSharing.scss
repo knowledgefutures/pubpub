@@ -6,17 +6,17 @@
 	}
 	.version-block {
 		&:last-of-type {
-			border-bottom: 1px solid #CCC;
+			border-bottom: 1px solid #ccc;
 		}
 		&:not(.active):hover {
-			background: #F9F9F9;
+			background: #f9f9f9;
 		}
 		&.active {
 			cursor: default;
-			background: #F4F4F4;
+			background: #f4f4f4;
 		}
 		cursor: pointer;
-		border: 1px solid #CCC;
+		border: 1px solid #ccc;
 		border-bottom: 0px solid transparent;
 		padding: 1em;
 		.header {
@@ -34,7 +34,7 @@
 			}
 		}
 		a {
-			color: #2B88DF;
+			color: #2b88df;
 			margin-right: 1em;
 			display: inline-block;
 		}

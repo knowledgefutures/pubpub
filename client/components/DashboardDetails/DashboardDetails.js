@@ -148,23 +148,28 @@ class DashboardDetails extends Component {
 			body: JSON.stringify({
 				...siteObject,
 				communityId: this.props.communityData.id,
+			}),
+		})
+			.then((result) => {
+				if (
+					!this.props.communityData.domain &&
+					this.props.communityData.slug !== siteObject.slug
+				) {
+					window.location.replace(
+						`https://${siteObject.subdomain}.pubpub.org/dashboard/details`,
+					);
+				} else {
+					this.setState({ isLoading: false, error: undefined });
+					this.props.setCommunityData({
+						...this.props.communityData,
+						...result,
+					});
+				}
 			})
-		})
-		.then((result)=> {
-			if (!this.props.communityData.domain && this.props.communityData.slug !== siteObject.slug) {
-				window.location.replace(`https://${siteObject.subdomain}.pubpub.org/dashboard/details`);
-			} else {
-				this.setState({ isLoading: false, error: undefined });
-				this.props.setCommunityData({
-					...this.props.communityData,
-					...result
-				});
-			}
-		})
-		.catch((err)=> {
-			console.error(err);
-			this.setState({ isLoading: false, error: err });
-		});
+			.catch((err) => {
+				console.error(err);
+				this.setState({ isLoading: false, error: err });
+			});
 	}
 
 	render() {
@@ -203,7 +208,13 @@ class DashboardDetails extends Component {
 							<span>
 								Favicon
 								<Tooltip
-									content={<span>Used for browser icons. Must be square.<br />Recommended: 50*50px</span>}
+									content={
+										<span>
+											Used for browser icons. Must be square.
+											<br />
+											Recommended: 50*50px
+										</span>
+									}
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -219,7 +230,13 @@ class DashboardDetails extends Component {
 							<span>
 								Preview
 								<Tooltip
-									content={<span>Used as default preview image for social sharing cards.<br />Recommended: 500*500px</span>}
+									content={
+										<span>
+											Used as default preview image for social sharing cards.
+											<br />
+											Recommended: 500*500px
+										</span>
+									}
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -235,7 +252,13 @@ class DashboardDetails extends Component {
 							<span>
 								Header Logo
 								<Tooltip
-									content={<span>Used in the header bar.<br />Recommended: ~40*150px</span>}
+									content={
+										<span>
+											Used in the header bar.
+											<br />
+											Recommended: ~40*150px
+										</span>
+									}
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -251,20 +274,31 @@ class DashboardDetails extends Component {
 					/>
 				</div>
 				<div className="row-wrapper">
-					<InputField
-						label="Show Landing Page Banner"
-					>
-						<Checkbox checked={!this.state.hideLandingBanner} onChange={this.handleHideLandingBannerChange} />
+					<InputField label="Show Landing Page Banner">
+						<Checkbox
+							checked={!this.state.hideLandingBanner}
+							onChange={this.handleHideLandingBannerChange}
+						/>
 					</InputField>
 				</div>
-				<div className={this.state.hideLandingBanner ? 'row-wrapper disable-block' : 'row-wrapper'}>
+				<div
+					className={
+						this.state.hideLandingBanner ? 'row-wrapper disable-block' : 'row-wrapper'
+					}
+				>
 					<ImageUpload
 						htmlFor="large-header-logo-upload"
 						label={
 							<span>
 								Landing Logo
 								<Tooltip
-									content={<span>Used on the landing page.<br />Recommended: ~200*750px</span>}
+									content={
+										<span>
+											Used on the landing page.
+											<br />
+											Recommended: ~200*750px
+										</span>
+									}
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -284,7 +318,13 @@ class DashboardDetails extends Component {
 							<span>
 								Landing Background
 								<Tooltip
-									content={<span>Used on the landing page.<br />Recommended: ~1200*800px</span>}
+									content={
+										<span>
+											Used on the landing page.
+											<br />
+											Recommended: ~1200*800px
+										</span>
+									}
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -304,7 +344,13 @@ class DashboardDetails extends Component {
 							<span>
 								Public &apos;New Pub&apos; button
 								<Tooltip
-									content={<span>Toggles &apos;New Pub&apos; button in header bar.<br />Button will always be available to community admins.</span>}
+									content={
+										<span>
+											Toggles &apos;New Pub&apos; button in header bar.
+											<br />
+											Button will always be available to community admins.
+										</span>
+									}
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -312,20 +358,23 @@ class DashboardDetails extends Component {
 							</span>
 						}
 					>
-						<Checkbox checked={!this.state.hideCreatePubButton} onChange={this.handleHideCreatePubButtonChange} />
+						<Checkbox
+							checked={!this.state.hideCreatePubButton}
+							onChange={this.handleHideCreatePubButtonChange}
+						/>
 					</InputField>
 					<InputField label="Default Pub Tag">
 						<TagMultiSelect
 							allTags={this.props.communityData.tags}
 							selectedTagIds={this.state.defaultPubTags || []}
-							onItemSelect={(newTagId)=> {
+							onItemSelect={(newTagId) => {
 								const existingTagIds = this.state.defaultPubTags || [];
 								const newTagIds = [...existingTagIds, newTagId];
 								this.handleDefaultPubTagsChange(newTagIds);
 							}}
-							onRemove={(evt, tagIndex)=> {
+							onRemove={(evt, tagIndex) => {
 								const existingTagIds = this.state.defaultPubTags || [];
-								const newTagIds = existingTagIds.filter((item, filterIndex)=> {
+								const newTagIds = existingTagIds.filter((item, filterIndex) => {
 									return filterIndex !== tagIndex;
 								});
 								this.handleDefaultPubTagsChange(newTagIds);
@@ -366,9 +415,7 @@ class DashboardDetails extends Component {
 						onChange={this.handleAccentColorChange}
 					/>
 				</InputField>
-				<InputField
-					label="Show Navigation Bar"
-				>
+				<InputField label="Show Navigation Bar">
 					<Checkbox checked={!this.state.hideNav} onChange={this.handleHideNavChange} />
 				</InputField>
 				<div className={this.state.hideNav ? 'disable-block' : ''}>

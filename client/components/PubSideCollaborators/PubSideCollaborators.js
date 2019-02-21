@@ -25,31 +25,41 @@ const PubSideCollaborators = function(props) {
 
 	return (
 		<div className="pub-side-collaborators-component">
-			{!!props.pubData.attributions.length &&
+			{!!props.pubData.attributions.length && (
 				<div>
 					<div className="header-title">
 						<span
 							role="button"
 							className="underline-on-hover"
 							tabIndex={-1}
-							onClick={()=> {
+							onClick={() => {
 								props.setOptionsMode('attribution');
 							}}
 						>
 							Contributors
 						</span>
 					</div>
-					{props.pubData.attributions.sort((foo, bar)=> {
-						if (foo.order < bar.order) { return -1; }
-						if (foo.order > bar.order) { return 1; }
-						if (foo.createdAt < bar.createdAt) { return 1; }
-						if (foo.createdAt > bar.createdAt) { return -1; }
-						return 0;
-					}).map((item)=> {
-						return <PubPresSideUser attribution={item} key={item.id} />;
-					})}
+					{props.pubData.attributions
+						.sort((foo, bar) => {
+							if (foo.order < bar.order) {
+								return -1;
+							}
+							if (foo.order > bar.order) {
+								return 1;
+							}
+							if (foo.createdAt < bar.createdAt) {
+								return 1;
+							}
+							if (foo.createdAt > bar.createdAt) {
+								return -1;
+							}
+							return 0;
+						})
+						.map((item) => {
+							return <PubPresSideUser attribution={item} key={item.id} />;
+						})}
 				</div>
-			}
+			)}
 		</div>
 	);
 };

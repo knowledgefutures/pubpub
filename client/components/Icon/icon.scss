@@ -1,80 +1,147 @@
 .bp3-icon.color {
-	&[data-icon="twitter"] {
-		color: #1DA1F2;
+	&[data-icon='twitter'] {
+		color: #1da1f2;
 	}
-	&[data-icon="prezi"] {
-		.rings { color: #1966cc; }
-		.bars { color: #318bff; }
+	&[data-icon='prezi'] {
+		.rings {
+			color: #1966cc;
+		}
+		.bars {
+			color: #318bff;
+		}
 	}
-	&[data-icon="reddit"] {
-		color: #FF4500;
+	&[data-icon='reddit'] {
+		color: #ff4500;
 	}
-	&[data-icon="linkedin"] {
-		color: #0077B5;
+	&[data-icon='linkedin'] {
+		color: #0077b5;
 	}
-	&[data-icon="github"] {
+	&[data-icon='github'] {
 		color: #181717;
 	}
-	&[data-icon="facebook"] {
-		color: #3B5998;
+	&[data-icon='facebook'] {
+		color: #3b5998;
 	}
-	&[data-icon="giphy"] {
-		.a { color: #0f9; }
-		.b { color: #93f; }
-		.c { color: #0cf; }
-		.d { color: #ff9; }
-		.e { color: #f66; }
-		.f { color: #4c197f; }
+	&[data-icon='giphy'] {
+		.a {
+			color: #0f9;
+		}
+		.b {
+			color: #93f;
+		}
+		.c {
+			color: #0cf;
+		}
+		.d {
+			color: #ff9;
+		}
+		.e {
+			color: #f66;
+		}
+		.f {
+			color: #4c197f;
+		}
 	}
-	&[data-icon="unsplash"] {
+	&[data-icon='unsplash'] {
 		color: #000000;
 	}
-	&[data-icon="vimeo"] {
-		color: #1AB7EA;
+	&[data-icon='vimeo'] {
+		color: #1ab7ea;
 	}
-	&[data-icon="youtube"] {
-		color: #FF0000;
+	&[data-icon='youtube'] {
+		color: #ff0000;
 	}
-	&[data-icon="spotify"] {
-		color: #1ED760;
+	&[data-icon='spotify'] {
+		color: #1ed760;
 	}
-	&[data-icon="codepen"] {
+	&[data-icon='codepen'] {
 		color: #000000;
 	}
-	&[data-icon="soundcloud"] {
-		color: #FF3300;
+	&[data-icon='soundcloud'] {
+		color: #ff3300;
 	}
-	&[data-icon="googlemaps"] {
-		.a { color: #34a668; }
-		.b { color: #5c88c5; }
-		.c { color: #dd4b3e; }
-		.d { color: #802d27; }
-		.e { color: #fff; }
-		.f { color: #c3c3c3; }
-		.g { color: #fddc4f; }
-		.h { color: #fff; }
+	&[data-icon='googlemaps'] {
+		.a {
+			color: #34a668;
+		}
+		.b {
+			color: #5c88c5;
+		}
+		.c {
+			color: #dd4b3e;
+		}
+		.d {
+			color: #802d27;
+		}
+		.e {
+			color: #fff;
+		}
+		.f {
+			color: #c3c3c3;
+		}
+		.g {
+			color: #fddc4f;
+		}
+		.h {
+			color: #fff;
+		}
 	}
 
-	&[data-icon="slideshare"] {
-		.a { fill: none; stroke: #bdbdbd; }
-		.b { color: #0277bd; }
-		.c { color: #01579b; }
-		.d { color: #fb8c00; }
+	&[data-icon='slideshare'] {
+		.a {
+			fill: none;
+			stroke: #bdbdbd;
+		}
+		.b {
+			color: #0277bd;
+		}
+		.c {
+			color: #01579b;
+		}
+		.d {
+			color: #fb8c00;
+		}
 	}
 }
-[data-icon="slideshare"]:not(.color) {
-	.a { fill: none; stroke: currentColor; opacity: 0.5; }
-	.b { opacity: 0.9; }
-	.c { opacity: 1; }
-	.d { opacity: 1; }
+[data-icon='slideshare']:not(.color) {
+	.a {
+		fill: none;
+		stroke: currentColor;
+		opacity: 0.5;
+	}
+	.b {
+		opacity: 0.9;
+	}
+	.c {
+		opacity: 1;
+	}
+	.d {
+		opacity: 1;
+	}
 }
-[data-icon="googlemaps"]:not(.color) {
-	.a { opacity: 0.3; }
-	.b { opacity: 0.2; }
-	.c { opacity: 0.9; }
-	.d { fill: white; }
-	.e { opacity: 1; }
-	.f { opacity: 0.4; }
-	.g { opacity: 0.9; }
-	.h { opacity: 1; }
+[data-icon='googlemaps']:not(.color) {
+	.a {
+		opacity: 0.3;
+	}
+	.b {
+		opacity: 0.2;
+	}
+	.c {
+		opacity: 0.9;
+	}
+	.d {
+		fill: white;
+	}
+	.e {
+		opacity: 1;
+	}
+	.f {
+		opacity: 0.4;
+	}
+	.g {
+		opacity: 0.9;
+	}
+	.h {
+		opacity: 1;
+	}
 }

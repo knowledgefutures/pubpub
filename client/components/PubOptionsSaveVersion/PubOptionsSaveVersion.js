@@ -33,60 +33,85 @@ class PubOptionsSaveVersion extends Component {
 			isLoadingPrivate: !isPublic,
 		});
 		const sectionsData = this.props.pubData.sectionsData;
-		const editorRefs = sectionsData.map((item)=> {
+		const editorRefs = sectionsData.map((item) => {
 			return `${this.props.pubData.editorKey}/${item.id}`;
 		});
 
 		getCollabJSONs(this.props.editorView, editorRefs)
-		.then((content)=> {
-			const newContent = content.length === 1
-				? content[0]
-				: content.map((item, index)=> {
-					return {
-						title: sectionsData[index].title,
-						id: sectionsData[index].id,
-						content: item,
-					};
+			.then((content) => {
+				const newContent =
+					content.length === 1
+						? content[0]
+						: content.map((item, index) => {
+								return {
+									title: sectionsData[index].title,
+									id: sectionsData[index].id,
+									content: item,
+								};
+						  });
+				return apiFetch('/api/versions', {
+					method: 'POST',
+					body: JSON.stringify({
+						pubId: this.props.pubData.id,
+						communityId: this.props.communityData.id,
+						content: newContent,
+						isPublic: isPublic,
+						// submitHash: submitHash,
+					}),
 				});
-			return apiFetch('/api/versions', {
-				method: 'POST',
-				body: JSON.stringify({
-					pubId: this.props.pubData.id,
-					communityId: this.props.communityData.id,
-					content: newContent,
-					isPublic: isPublic,
-					// submitHash: submitHash,
-				})
+			})
+			.then(() => {
+				window.location.href = `/pub/${this.props.locationData.params.slug}`;
+			})
+			.catch((err) => {
+				console.error('Error Publishing', err);
+				this.setState({
+					isLoadingPublic: false,
+					isLoadingPrivate: false,
+				});
 			});
-		})
-		.then(()=> {
-			window.location.href = `/pub/${this.props.locationData.params.slug}`;
-		})
-		.catch((err)=> {
-			console.error('Error Publishing', err);
-			this.setState({
-				isLoadingPublic: false,
-				isLoadingPrivate: false,
-			});
-		});
 	}
 
 	render() {
-		if (!this.props.editorView) { return null; }
+		if (!this.props.editorView) {
+			return null;
+		}
 
 		return (
 			<div className="pub-options-save-version-component">
 				<h1>Save Version</h1>
-				<p>Saving a version <b>creates a time-stamped snapshot</b> of the working draft at it&apos;s current state.</p>
-				<p>The <b>working draft autosaves</b> - you do not need to create a new saved version just to save your working draft.</p>
-				<p>You can change the privacy of any saved version in the <span className="link" tabIndex={-1} role="button" onClick={()=> { this.props.setOptionsMode('sharing'); }}>Sharing panel</span>.</p>
+				<p>
+					Saving a version <b>creates a time-stamped snapshot</b> of the working draft at
+					it&apos;s current state.
+				</p>
+				<p>
+					The <b>working draft autosaves</b> - you do not need to create a new saved
+					version just to save your working draft.
+				</p>
+				<p>
+					You can change the privacy of any saved version in the{' '}
+					<span
+						className="link"
+						tabIndex={-1}
+						role="button"
+						onClick={() => {
+							this.props.setOptionsMode('sharing');
+						}}
+					>
+						Sharing panel
+					</span>
+					.
+				</p>
 
 				<div className="options-wrapper">
 					<div className="option">
 						<h2>Snapshot</h2>
-						<p>Save a private version. The saved version will be visible to pub managers and chosen users.</p>
+						<p>
+							Save a private version. The saved version will be visible to pub
+							managers and chosen users.
+						</p>
 						<Button
-							onClick={()=> {
+							onClick={() => {
 								this.handlePublish(false);
 							}}
 							className="bp3-intent-primary bp3-large"
@@ -97,9 +122,12 @@ class PubOptionsSaveVersion extends Component {
 					</div>
 					<div className="option">
 						<h2>Publish</h2>
-						<p>Publish by saving a public version. The saved version will be visible to all.</p>
+						<p>
+							Publish by saving a public version. The saved version will be visible to
+							all.
+						</p>
 						<Button
-							onClick={()=> {
+							onClick={() => {
 								this.handlePublish(true);
 							}}
 							className="bp3-intent-primary bp3-large"

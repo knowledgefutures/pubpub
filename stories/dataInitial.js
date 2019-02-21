@@ -3,7 +3,7 @@ export default {
 		id: 'fae5a6f1-3c7c-479c-9cda-7c36ed445883',
 		subdomain: 'joi',
 		domain: 'pubpub.ito.com',
-		title: 'Joi Ito\'s PubPub',
+		title: "Joi Ito's PubPub",
 		description: '',
 		avatar: null,
 		favicon: 'https://assets.pubpub.org/12e422ul/41507920476077.png',
@@ -18,7 +18,7 @@ export default {
 		navigation: [
 			'c7ecce46-4849-46f8-94c3-782600def182',
 			'ba0a9dc8-9650-484f-9b38-c230b76f6359',
-			'9666909d-4d0a-445c-bdea-c511dee190d4'
+			'9666909d-4d0a-445c-bdea-c511dee190d4',
 		],
 		collections: [
 			{
@@ -38,10 +38,8 @@ export default {
 							size: 'small',
 							limit: 0,
 							title: '',
-							pubIds: [
-
-							]
-						}
+							pubIds: [],
+						},
 					},
 					{
 						id: 'gruw36cv',
@@ -50,21 +48,19 @@ export default {
 							size: 'medium',
 							limit: 0,
 							title: '',
-							pubIds: [
-
-							]
-						}
+							pubIds: [],
+						},
 					},
 					{
 						id: 'kruw36cv',
 						type: 'drafts',
 						content: {
-							title: 'Open Drafts'
-						}
-					}
+							title: 'Open Drafts',
+						},
+					},
 				],
 				createPubHash: 'kku78hng',
-				createPubMessage: null
+				createPubMessage: null,
 			},
 			{
 				id: 'c7ecce46-4849-46f8-94c3-782600def182',
@@ -83,10 +79,8 @@ export default {
 							size: 'large',
 							limit: 1,
 							title: '',
-							pubIds: [
-								'8f7503e4-6e51-4e13-8204-708ad04067ec'
-							]
-						}
+							pubIds: ['8f7503e4-6e51-4e13-8204-708ad04067ec'],
+						},
 					},
 					{
 						id: 'gruw36cv',
@@ -98,9 +92,9 @@ export default {
 							pubIds: [
 								'84d4755f-560c-4b3c-baa6-7f0538fcee65',
 								'594813d0-57e6-4f28-9283-4ff060da1a2b',
-								'53faed07-bf81-4022-aa66-1aec6c3cf26e'
-							]
-						}
+								'53faed07-bf81-4022-aa66-1aec6c3cf26e',
+							],
+						},
 					},
 					{
 						id: '3tt371y4',
@@ -109,22 +103,20 @@ export default {
 							size: 'small',
 							limit: 1,
 							title: '',
-							pubIds: [
-								'c23aabdc-b066-4dd3-b5c1-87019237ae93'
-							]
-						}
+							pubIds: ['c23aabdc-b066-4dd3-b5c1-87019237ae93'],
+						},
 					},
 					{
 						id: 'kruw36cv',
 						type: 'drafts',
 						content: {
-							title: 'Working Drafts'
-						}
-					}
+							title: 'Working Drafts',
+						},
+					},
 				],
 				createPubHash: 'k9ul1hng',
-				createPubMessage: null
-			}
+				createPubMessage: null,
+			},
 		],
 		admins: [
 			{
@@ -132,37 +124,37 @@ export default {
 				slug: 'joi-ito',
 				fullName: 'Joichi Ito',
 				initials: 'JI',
-				avatar: 'https://s3.amazonaws.com/pubpub-upload/users/1453146915476.jpg'
+				avatar: 'https://s3.amazonaws.com/pubpub-upload/users/1453146915476.jpg',
 			},
 			{
 				id: 'b242f616-7aaa-479c-8ee5-3933dcf70859',
 				slug: 'pubpub-team',
 				fullName: 'PubPub Team',
 				initials: 'PT',
-				avatar: 'https://s3.amazonaws.com/pubpub-upload/users/1451933144166.jpg'
+				avatar: 'https://s3.amazonaws.com/pubpub-upload/users/1451933144166.jpg',
 			},
 			{
 				id: '8dd8e941-ec18-4f37-9cff-595895849805',
 				slug: 'boris-anthony',
 				fullName: 'Boris Anthony',
 				initials: 'BA',
-				avatar: 'https://s3.amazonaws.com/pubpub-upload/users/1456389191148.jpg'
+				avatar: 'https://s3.amazonaws.com/pubpub-upload/users/1456389191148.jpg',
 			},
 			{
 				id: '807f3604-4223-4495-b576-861d04d2f39e',
 				slug: 'catherine--ahearn',
 				fullName: 'Catherine Ahearn',
 				initials: 'CA',
-				avatar: 'https://assets.pubpub.org/pntuhhwt/71505746226201.jpg'
+				avatar: 'https://assets.pubpub.org/pntuhhwt/71505746226201.jpg',
 			},
 			{
 				id: '62b4310d-ba55-4bf1-9eb6-19f75bc95e1b',
 				slug: 'natalie-saltiel',
 				fullName: 'Natalie Saltiel',
 				initials: 'NS',
-				avatar: 'https://assets.pubpub.org/nrkeqvnn/1470340445317.jpg'
-			}
-		]
+				avatar: 'https://assets.pubpub.org/nrkeqvnn/1470340445317.jpg',
+			},
+		],
 	},
 	loginData: {
 		id: '237fe275-0618-4a8f-bd40-ea9065836e67',
@@ -170,18 +162,14 @@ export default {
 		slug: 'travis-rich',
 		fullName: 'Travis Rich',
 		avatar: 'https://s3.amazonaws.com/pubpub-upload/users/1451521226772.jpg',
-		isAdmin: false
+		isAdmin: false,
 	},
 	locationData: {
 		hostname: 'localhost',
 		path: '/login',
-		params: {
-
-		},
-		query: {
-
-		},
+		params: {},
+		query: {},
 		queryString: '',
-		isBasePubPub: false
-	}
+		isBasePubPub: false,
+	},
 };

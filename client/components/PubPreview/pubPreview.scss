@@ -10,7 +10,7 @@
 		background-size: cover;
 		background-repeat: no-repeat;
 		background-position: center center;
-		background-color: #F0F0F0;
+		background-color: #f0f0f0;
 	}
 	.content {
 		padding: 1em;
@@ -18,7 +18,7 @@
 		position: relative;
 		overflow: hidden;
 		&:after {
-			content: "";
+			content: '';
 			display: block;
 			background: white;
 			background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95), white);
@@ -30,21 +30,21 @@
 		}
 	}
 	&:after {
-		content: "";
+		content: '';
 		clear: both;
 		display: table;
 	}
 	&.large-preview {
 		height: 350px;
-		
+
 		.banner-image {
 			width: 65%;
 			height: 100%;
 			float: left;
-			border-right: 1px solid #F0F0F0;
+			border-right: 1px solid #f0f0f0;
 		}
 		.content {
-			float: left; 
+			float: left;
 			width: 35%;
 			height: 100%;
 		}
@@ -55,10 +55,10 @@
 			width: 35%;
 			height: 100%;
 			float: left;
-			border-right: 1px solid #F0F0F0;
+			border-right: 1px solid #f0f0f0;
 		}
 		.content {
-			float: left; 
+			float: left;
 			width: 65%;
 			height: 100%;
 		}
@@ -126,33 +126,35 @@
 		padding: 3px 5px;
 		border-radius: 2px;
 		float: right;
-	    margin: 0px 0px 5px 5px;
+		margin: 0px 0px 5px 5px;
 		img {
-			display: block;	
+			display: block;
 		}
 	}
 }
 
-@media only screen and (max-width: 720px) {  /* Used to be 45em */
+@media only screen and (max-width: 720px) {
+	/* Used to be 45em */
 	.pub-preview-component {
-		&.large-preview, &.medium-preview {
+		&.large-preview,
+		&.medium-preview {
 			height: auto;
 			.banner-image {
 				width: 100%;
 				height: 200px;
 				float: none;
-				border-right: 0px solid #F0F0F0;
-				border-bottom: 1px solid #F0F0F0;
+				border-right: 0px solid #f0f0f0;
+				border-bottom: 1px solid #f0f0f0;
 			}
 			.content {
-				float: none; 
+				float: none;
 				width: 100%;
 				height: auto;
 			}
 			.community-banner {
 				float: none;
 				margin: 0px 0px 10px;
-				display: block;	
+				display: block;
 			}
 		}
 	}

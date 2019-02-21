@@ -35,7 +35,9 @@ class FormattingBarControlsFootnote extends Component {
 
 	render() {
 		return (
-			<div className={`formatting-bar-controls-component ${this.props.isSmall ? 'small' : ''}`}>
+			<div
+				className={`formatting-bar-controls-component ${this.props.isSmall ? 'small' : ''}`}
+			>
 				{/*  Content Adjustment */}
 				<div className="block">
 					<div className="label">Text</div>
@@ -43,7 +45,7 @@ class FormattingBarControlsFootnote extends Component {
 						<div className="simple-editor-wrapper">
 							<SimpleEditor
 								initialHtmlString={this.props.attrs.value}
-								onChange={(htmlString)=> {
+								onChange={(htmlString) => {
 									this.props.updateAttrs({ value: htmlString });
 								}}
 							/>
@@ -78,7 +80,6 @@ class FormattingBarControlsFootnote extends Component {
 		);
 	}
 }
-
 
 FormattingBarControlsFootnote.propTypes = propTypes;
 export default FormattingBarControlsFootnote;

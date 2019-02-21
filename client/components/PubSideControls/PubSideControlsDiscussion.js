@@ -9,7 +9,7 @@ const propTypes = {
 	threads: PropTypes.array.isRequired,
 };
 
-const PubSideControlsDiscussion = (props)=> {
+const PubSideControlsDiscussion = (props) => {
 	const alignOptions = [
 		{ key: 'left', icon: 'bp3-icon-align-left' },
 		{ key: 'center', icon: 'bp3-icon-align-center' },
@@ -21,16 +21,16 @@ const PubSideControlsDiscussion = (props)=> {
 			<div className="options-title">Discussion Details</div>
 
 			{/*  Alignment Adjustment */}
-			<div className="form-label first">
-				Alignment
-			</div>
+			<div className="form-label first">Alignment</div>
 			<div className="bp3-button-group bp3-fill">
-				{alignOptions.map((item)=> {
+				{alignOptions.map((item) => {
 					return (
 						<Button
 							key={`align-option-${item.key}`}
-							className={`bp3-button ${item.icon} ${props.attrs.align === item.key ? 'bp3-active' : ''}`}
-							onClick={()=> {
+							className={`bp3-button ${item.icon} ${
+								props.attrs.align === item.key ? 'bp3-active' : ''
+							}`}
+							onClick={() => {
 								props.updateAttrs({ align: item.key });
 							}}
 						/>
@@ -39,12 +39,10 @@ const PubSideControlsDiscussion = (props)=> {
 			</div>
 
 			{/*  Thread Selection */}
-			<div className="form-label">
-				Thread Selection
-			</div>
+			<div className="form-label">Thread Selection</div>
 			<DiscussionAutocomplete
 				threads={props.threads}
-				onSelect={(thread)=> {
+				onSelect={(thread) => {
 					props.updateAttrs({ threadNumber: thread[0].threadNumber });
 				}}
 				placeholder="Change discussion thread"

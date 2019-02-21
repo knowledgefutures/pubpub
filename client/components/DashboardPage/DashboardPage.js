@@ -61,7 +61,10 @@ class DashboardPage extends Component {
 	}
 
 	setDescription(evt) {
-		this.setState({ hasChanged: true, description: evt.target.value.substring(0, 280).replace(/\n/g, ' ') });
+		this.setState({
+			hasChanged: true,
+			description: evt.target.value.substring(0, 280).replace(/\n/g, ' '),
+		});
 	}
 
 	setSlug(evt) {
@@ -108,7 +111,6 @@ class DashboardPage extends Component {
 			isNarrowWidth: this.state.isNarrowWidth,
 			isPublic: this.state.isPublic,
 			layout: this.state.layout,
-
 		};
 		this.setState({ isLoading: true, error: undefined });
 		return apiFetch('/api/pages', {
@@ -117,29 +119,31 @@ class DashboardPage extends Component {
 				...pageObject,
 				pageId: this.props.pageData.id,
 				communityId: this.props.communityData.id,
+			}),
+		})
+			.then(() => {
+				this.setState({ isLoading: false, error: undefined, hasChanged: false });
+				this.props.setCommunityData({
+					...this.props.communityData,
+					pages: this.props.communityData.pages.map((page) => {
+						if (page.id !== this.props.pageData.id) {
+							return page;
+						}
+						return {
+							...page,
+							...pageObject,
+						};
+					}),
+				});
+				this.props.setPageData({
+					...this.props.pageData,
+					...pageObject,
+				});
 			})
-		})
-		.then(()=> {
-			this.setState({ isLoading: false, error: undefined, hasChanged: false });
-			this.props.setCommunityData({
-				...this.props.communityData,
-				pages: this.props.communityData.pages.map((page)=> {
-					if (page.id !== this.props.pageData.id) { return page; }
-					return {
-						...page,
-						...pageObject,
-					};
-				})
+			.catch((err) => {
+				console.error(err);
+				this.setState({ isLoading: false, error: err });
 			});
-			this.props.setPageData({
-				...this.props.pageData,
-				...pageObject,
-			});
-		})
-		.catch((err)=> {
-			console.error(err);
-			this.setState({ isLoading: false, error: err });
-		});
 	}
 
 	handleDelete() {
@@ -149,15 +153,15 @@ class DashboardPage extends Component {
 			body: JSON.stringify({
 				pageId: this.props.pageData.id,
 				communityId: this.props.communityData.id,
+			}),
+		})
+			.then(() => {
+				window.location.href = '/dashboard';
 			})
-		})
-		.then(()=> {
-			window.location.href = '/dashboard';
-		})
-		.catch((err)=> {
-			console.error(err);
-			this.setState({ isLoadingDelete: false });
-		});
+			.catch((err) => {
+				console.error(err);
+				this.setState({ isLoadingDelete: false });
+			});
 	}
 
 	render() {
@@ -166,27 +170,29 @@ class DashboardPage extends Component {
 		return (
 			<div className="dashboard-page-component">
 				<div className="content-buttons">
-					{this.state.hasChanged &&
-						<a href={`/dashboard/pages/${pageData.slug}`} className="bp3-button">Cancel</a>
-					}
+					{this.state.hasChanged && (
+						<a href={`/dashboard/pages/${pageData.slug}`} className="bp3-button">
+							Cancel
+						</a>
+					)}
 					<Button
 						type="button"
 						className="bp3-intent-primary"
 						text="Save Changes"
-						disabled={!this.state.hasChanged || !this.state.title || (pageData.slug && !this.state.slug)}
+						disabled={
+							!this.state.hasChanged ||
+							!this.state.title ||
+							(pageData.slug && !this.state.slug)
+						}
 						loading={this.state.isLoading}
 						onClick={this.handleSaveChanges}
 					/>
-					{this.state.error &&
-						<div className="error">Error Saving</div>
-					}
+					{this.state.error && <div className="error">Error Saving</div>}
 				</div>
 
 				<h1>
 					{pageData.title}
-					<a href={`/${pageData.slug}`}>
-						Go to Page
-					</a>
+					<a href={`/${pageData.slug}`}>Go to Page</a>
 				</h1>
 
 				<div className="section-wrapper">
@@ -217,17 +223,19 @@ class DashboardPage extends Component {
 							canClear={true}
 							helperText="Used in social media cards"
 						/>
-						{pageData.slug &&
+						{pageData.slug && (
 							<InputField
 								label="Link"
 								placeholder="Enter link"
 								isRequired={true}
-								helperText={`Page URL will be https://${this.props.locationData.hostname}/${this.state.slug}`}
+								helperText={`Page URL will be https://${
+									this.props.locationData.hostname
+								}/${this.state.slug}`}
 								value={this.state.slug}
 								onChange={this.setSlug}
 								error={undefined}
 							/>
-						}
+						)}
 
 						<InputField label="Width">
 							<div className="bp3-button-group">
@@ -244,7 +252,7 @@ class DashboardPage extends Component {
 							</div>
 						</InputField>
 
-						{pageData.slug &&
+						{pageData.slug && (
 							<InputField label="Privacy">
 								<div className="bp3-button-group">
 									<Button
@@ -261,13 +269,11 @@ class DashboardPage extends Component {
 									/>
 								</div>
 							</InputField>
-						}
+						)}
 					</div>
 				</div>
 				<div className="section-wrapper">
-					<div className="title">
-						Layout
-					</div>
+					<div className="title">Layout</div>
 					<div className="content">
 						<LayoutEditor
 							onChange={this.setLayout}
@@ -277,22 +283,26 @@ class DashboardPage extends Component {
 						/>
 					</div>
 				</div>
-				{this.props.pageData.slug &&
+				{this.props.pageData.slug && (
 					<div className="section-wrapper">
-						<div className="title">
-							Delete
-						</div>
+						<div className="title">Delete</div>
 						<div className="content">
 							<div className="bp3-callout bp3-intent-danger">
 								<h5>Delete Page from Community</h5>
 								<p>Deleting a Page is permanent.</p>
-								<p>This will permanantely delete <b>{pageData.title}</b>. This will not delete pubs that are included in this page&apos;s layout.</p>
-								<p>Please type the title of the Page below to confirm your intention.</p>
+								<p>
+									This will permanantely delete <b>{pageData.title}</b>. This will
+									not delete pubs that are included in this page&apos;s layout.
+								</p>
+								<p>
+									Please type the title of the Page below to confirm your
+									intention.
+								</p>
 
 								<InputField
 									label={<b>Confirm Page Title</b>}
 									value={this.state.deleteString}
-									onChange={(evt)=> {
+									onChange={(evt) => {
 										this.setState({ deleteString: evt.target.value });
 									}}
 								/>
@@ -309,12 +319,11 @@ class DashboardPage extends Component {
 							</div>
 						</div>
 					</div>
-				}
+				)}
 			</div>
 		);
 	}
 }
-
 
 DashboardPage.propTypes = propTypes;
 export default DashboardPage;

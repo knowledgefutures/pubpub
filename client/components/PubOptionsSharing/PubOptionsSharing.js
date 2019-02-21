@@ -44,16 +44,12 @@ class PubOptionsSharing extends Component {
 				userId: user.id,
 				pubId: this.state.pubData.id,
 				communityId: this.props.communityData.id,
-			})
-		})
-		.then((result)=> {
-			this.setState((prevState)=> {
+			}),
+		}).then((result) => {
+			this.setState((prevState) => {
 				const newPubData = {
 					...prevState.pubData,
-					managers: [
-						...prevState.pubData.managers,
-						result,
-					]
+					managers: [...prevState.pubData.managers, result],
 				};
 				this.props.setPubData(newPubData);
 				return { pubData: newPubData };
@@ -62,80 +58,88 @@ class PubOptionsSharing extends Component {
 	}
 
 	handleRemoveManager(managerId) {
-		this.setState((prevState)=> {
-			const newPubData = {
-				...prevState.pubData,
-				managers: prevState.pubData.managers.filter((manager)=> {
-					return manager.id !== managerId;
-				})
-			};
-			return { pubData: newPubData, isLoading: true };
-		}, ()=> {
-			apiFetch('/api/pubManagers', {
-				method: 'DELETE',
-				body: JSON.stringify({
-					pubManagerId: managerId,
-					pubId: this.state.pubData.id,
-					communityId: this.props.communityData.id,
-				})
-			})
-			.then(()=> {
-				this.props.setPubData(this.state.pubData);
-				this.setState({ isLoading: false });
-			});
-		});
+		this.setState(
+			(prevState) => {
+				const newPubData = {
+					...prevState.pubData,
+					managers: prevState.pubData.managers.filter((manager) => {
+						return manager.id !== managerId;
+					}),
+				};
+				return { pubData: newPubData, isLoading: true };
+			},
+			() => {
+				apiFetch('/api/pubManagers', {
+					method: 'DELETE',
+					body: JSON.stringify({
+						pubManagerId: managerId,
+						pubId: this.state.pubData.id,
+						communityId: this.props.communityData.id,
+					}),
+				}).then(() => {
+					this.props.setPubData(this.state.pubData);
+					this.setState({ isLoading: false });
+				});
+			},
+		);
 	}
 
 	handleVersionUpdate(versionUpdates) {
-		this.setState((prevState)=> {
-			const newPubData = {
-				...prevState.pubData,
-				versions: prevState.pubData.versions.map((version)=> {
-					if (version.id !== versionUpdates.versionId) { return version; }
-					return {
-						...version,
+		this.setState(
+			(prevState) => {
+				const newPubData = {
+					...prevState.pubData,
+					versions: prevState.pubData.versions.map((version) => {
+						if (version.id !== versionUpdates.versionId) {
+							return version;
+						}
+						return {
+							...version,
+							...versionUpdates,
+						};
+					}),
+				};
+				return { pubData: newPubData, isLoading: true };
+			},
+			() => {
+				apiFetch('/api/versions', {
+					method: 'PUT',
+					body: JSON.stringify({
 						...versionUpdates,
-					};
-				})
-			};
-			return { pubData: newPubData, isLoading: true };
-		}, ()=> {
-			apiFetch('/api/versions', {
-				method: 'PUT',
-				body: JSON.stringify({
-					...versionUpdates,
-					pubId: this.state.pubData.id,
-					communityId: this.props.communityData.id,
-				})
-			})
-			.then(()=> {
-				this.props.setPubData(this.state.pubData);
-				this.setState({ isLoading: false });
-			});
-		});
+						pubId: this.state.pubData.id,
+						communityId: this.props.communityData.id,
+					}),
+				}).then(() => {
+					this.props.setPubData(this.state.pubData);
+					this.setState({ isLoading: false });
+				});
+			},
+		);
 	}
 
 	handlePubUpdate(pubUpdates) {
-		this.setState((prevState)=> {
-			const newPubData = {
-				...prevState.pubData,
-				...pubUpdates,
-			};
-			return { pubData: newPubData, isLoading: true };
-		}, ()=> {
-			apiFetch('/api/pubs', {
-				method: 'PUT',
-				body: JSON.stringify({
+		this.setState(
+			(prevState) => {
+				const newPubData = {
+					...prevState.pubData,
 					...pubUpdates,
-					pubId: this.state.pubData.id,
-					communityId: this.props.communityData.id,
-				})
-			})
-			.then(()=> {
-				this.props.setPubData(this.state.pubData);
-				this.setState({ isLoading: false });
-			});
-		});
+				};
+				return { pubData: newPubData, isLoading: true };
+			},
+			() => {
+				apiFetch('/api/pubs', {
+					method: 'PUT',
+					body: JSON.stringify({
+						...pubUpdates,
+						pubId: this.state.pubData.id,
+						communityId: this.props.communityData.id,
+					}),
+				}).then(() => {
+					this.props.setPubData(this.state.pubData);
+					this.setState({ isLoading: false });
+				});
+			},
+		);
 	}
 
 	handleVersionPermissionAdd(newVersionPermission) {
@@ -145,16 +149,12 @@ class PubOptionsSharing extends Component {
 				...newVersionPermission,
 				pubId: this.state.pubData.id,
 				communityId: this.props.communityData.id,
-			})
-		})
-		.then((result)=> {
-			this.setState((prevState)=> {
+			}),
+		}).then((result) => {
+			this.setState((prevState) => {
 				const newPubData = {
 					...prevState.pubData,
-					versionPermissions: [
-						...prevState.pubData.versionPermissions,
-						result,
-					]
+					versionPermissions: [...prevState.pubData.versionPermissions, result],
 				};
 				this.props.setPubData(newPubData);
 				return { pubData: newPubData };
@@ -163,78 +163,103 @@ class PubOptionsSharing extends Component {
 	}
 
 	handleVersionPermissionUpdate(versionPermissionUpdates) {
-		this.setState((prevState)=> {
-			const newPubData = {
-				...prevState.pubData,
-				versionPermissions: prevState.pubData.versionPermissions.map((versionPermission)=> {
-					if (versionPermission.id !== versionPermissionUpdates.versionPermissionId) { return versionPermission; }
-					return {
-						...versionPermission,
+		this.setState(
+			(prevState) => {
+				const newPubData = {
+					...prevState.pubData,
+					versionPermissions: prevState.pubData.versionPermissions.map(
+						(versionPermission) => {
+							if (
+								versionPermission.id !==
+								versionPermissionUpdates.versionPermissionId
+							) {
+								return versionPermission;
+							}
+							return {
+								...versionPermission,
+								...versionPermissionUpdates,
+							};
+						},
+					),
+				};
+				return { pubData: newPubData, isLoading: true };
+			},
+			() => {
+				apiFetch('/api/versionPermissions', {
+					method: 'PUT',
+					body: JSON.stringify({
 						...versionPermissionUpdates,
-					};
-				})
-			};
-			return { pubData: newPubData, isLoading: true };
-		}, ()=> {
-			apiFetch('/api/versionPermissions', {
-				method: 'PUT',
-				body: JSON.stringify({
-					...versionPermissionUpdates,
-					pubId: this.state.pubData.id,
-					communityId: this.props.communityData.id,
-				})
-			})
-			.then(()=> {
-				this.setState({ isLoading: false });
-				this.props.setPubData(this.state.pubData);
-			});
-		});
+						pubId: this.state.pubData.id,
+						communityId: this.props.communityData.id,
+					}),
+				}).then(() => {
+					this.setState({ isLoading: false });
+					this.props.setPubData(this.state.pubData);
+				});
+			},
+		);
 	}
 
 	handleVersionPermissionDelete(versionPermissionId) {
-		this.setState((prevState)=> {
-			const newPubData = {
-				...prevState.pubData,
-				versionPermissions: prevState.pubData.versionPermissions.filter((versionPermission)=> {
-					return versionPermission.id !== versionPermissionId;
-				})
-			};
-			return { pubData: newPubData, isLoading: true };
-		}, ()=> {
-			apiFetch('/api/versionPermissions', {
-				method: 'DELETE',
-				body: JSON.stringify({
-					versionPermissionId: versionPermissionId,
-					pubId: this.state.pubData.id,
-					communityId: this.props.communityData.id,
-				})
-			})
-			.then(()=> {
-				this.setState({ isLoading: false });
-				this.props.setPubData(this.state.pubData);
-			});
-		});
+		this.setState(
+			(prevState) => {
+				const newPubData = {
+					...prevState.pubData,
+					versionPermissions: prevState.pubData.versionPermissions.filter(
+						(versionPermission) => {
+							return versionPermission.id !== versionPermissionId;
+						},
+					),
+				};
+				return { pubData: newPubData, isLoading: true };
+			},
+			() => {
+				apiFetch('/api/versionPermissions', {
+					method: 'DELETE',
+					body: JSON.stringify({
+						versionPermissionId: versionPermissionId,
+						pubId: this.state.pubData.id,
+						communityId: this.props.communityData.id,
+					}),
+				}).then(() => {
+					this.setState({ isLoading: false });
+					this.props.setPubData(this.state.pubData);
+				});
+			},
+		);
 	}
 
 	render() {
 		const pubData = this.state.pubData;
 		const managers = pubData.managers;
 		const managerIds = {};
-		managers.forEach((manager)=> {
+		managers.forEach((manager) => {
 			managerIds[manager.user.id] = true;
 		});
-		const defaultPublicVersionId = pubData.versions.sort((foo, bar)=> {
-			if (foo.createdAt > bar.createdAt) { return -1; }
-			if (foo.createdAt < bar.createdAt) { return 1; }
-			return 0;
-		}).reduce((prev, curr)=> {
-			if (!prev && curr.isPublic) { return curr.id; }
-			return prev;
-		}, undefined);
+		const defaultPublicVersionId = pubData.versions
+			.sort((foo, bar) => {
+				if (foo.createdAt > bar.createdAt) {
+					return -1;
+				}
+				if (foo.createdAt < bar.createdAt) {
+					return 1;
+				}
+				return 0;
+			})
+			.reduce((prev, curr) => {
+				if (!prev && curr.isPublic) {
+					return curr.id;
+				}
+				return prev;
+			}, undefined);
 
-		const sortedVersions = pubData.versions.sort((foo, bar)=> {
-			if (foo.createdAt < bar.createdAt) { return 1; }
-			if (foo.createdAt > bar.createdAt) { return -1; }
+		const sortedVersions = pubData.versions.sort((foo, bar) => {
+			if (foo.createdAt < bar.createdAt) {
+				return 1;
+			}
+			if (foo.createdAt > bar.createdAt) {
+				return -1;
+			}
 			return 0;
 		});
 		const versionBlockItems = [
@@ -244,11 +269,11 @@ class PubOptionsSharing extends Component {
 		return (
 			<div className="pub-options-sharing-component">
 				<div>
-					{this.state.isLoading &&
+					{this.state.isLoading && (
 						<div className="save-wrapper">
 							<Spinner small={true} /> Saving...
 						</div>
-					}
+					)}
 					<h1>Sharing</h1>
 					<h2>Managers</h2>
 					<p>Managers can view all versions, edit pub details, and edit the draft.</p>
@@ -258,12 +283,12 @@ class PubOptionsSharing extends Component {
 						<PubOptionsSharingCard
 							content={[
 								<span className="bp3-icon-standard bp3-icon-people" />,
-								<span>Community Admins</span>
+								<span>Community Admins</span>,
 							]}
 							options={
 								<Checkbox
 									checked={pubData.isCommunityAdminManaged}
-									onChange={(evt)=> {
+									onChange={(evt) => {
 										this.handlePubUpdate({
 											isCommunityAdminManaged: evt.target.checked,
 										});
@@ -275,31 +300,42 @@ class PubOptionsSharing extends Component {
 						/>
 
 						{/* Iterate and list all existing pub managers */}
-						{managers.sort((foo, bar)=> {
-							if (foo.createdAt < bar.createdAt) { return -1; }
-							if (foo.createdAt > bar.createdAt) { return 1; }
-							return 0;
-						}).map((manager)=> {
-							return (
-								<PubOptionsSharingCard
-									key={`card-${manager.id}`}
-									content={[
-										<Avatar width={25} userInitials={manager.user.initials} userAvatar={manager.user.avatar} />,
-										<span>{manager.user.fullName}</span>
-									]}
-									options={managers.length > 1
-										? <button
-											className="bp3-button bp3-minimal bp3-small bp3-icon-small-cross"
-											type="button"
-											onClick={()=> {
-												this.handleRemoveManager(manager.id);
-											}}
-										/>
-										: null
-									}
-								/>
-							);
-						})}
+						{managers
+							.sort((foo, bar) => {
+								if (foo.createdAt < bar.createdAt) {
+									return -1;
+								}
+								if (foo.createdAt > bar.createdAt) {
+									return 1;
+								}
+								return 0;
+							})
+							.map((manager) => {
+								return (
+									<PubOptionsSharingCard
+										key={`card-${manager.id}`}
+										content={[
+											<Avatar
+												width={25}
+												userInitials={manager.user.initials}
+												userAvatar={manager.user.avatar}
+											/>,
+											<span>{manager.user.fullName}</span>,
+										]}
+										options={
+											managers.length > 1 ? (
+												<button
+													className="bp3-button bp3-minimal bp3-small bp3-icon-small-cross"
+													type="button"
+													onClick={() => {
+														this.handleRemoveManager(manager.id);
+													}}
+												/>
+											) : null
+										}
+									/>
+								);
+							})}
 
 						{/* Input card for adding new manager */}
 						<PubOptionsSharingCard
@@ -308,7 +344,7 @@ class PubOptionsSharing extends Component {
 									onSelect={this.handleAddManager}
 									allowCustomUser={false} // Eventually use this for emails
 									placeholder="Add manager..."
-									usedUserIds={managers.map((item)=> {
+									usedUserIds={managers.map((item) => {
 										return item.user.id;
 									})}
 								/>
@@ -320,7 +356,7 @@ class PubOptionsSharing extends Component {
 					<h2>Version Permissions</h2>
 
 					{/* Iterate and list options for all versions including working draft */}
-					{versionBlockItems.map((version)=> {
+					{versionBlockItems.map((version) => {
 						const isDraft = !version.id;
 						const isActive = isDraft
 							? this.state.activePermissionsVersion === 'draft'
@@ -330,88 +366,122 @@ class PubOptionsSharing extends Component {
 							? pubData.draftPermissions
 							: savedVersionPrivacy;
 						const communityAdminsHavePermission = isDraft
-							? pubData.isCommunityAdminManaged || pubData.communityAdminDraftPermissions !== 'none'
+							? pubData.isCommunityAdminManaged ||
+							  pubData.communityAdminDraftPermissions !== 'none'
 							: pubData.isCommunityAdminManaged || version.isCommunityAdminShared;
 						const showPreviewAcess = isDraft
-							? this.state.activePermissionsVersion !== 'draft' && pubData.draftPermissions !== 'publicEdit'
+							? this.state.activePermissionsVersion !== 'draft' &&
+							  pubData.draftPermissions !== 'publicEdit'
 							: !isActive && !version.isPublic;
 						const privacyTitle = isDraft
-							? currentPrivacy.replace('public', 'Public ').replace('private', 'Private')
-							: currentPrivacy.replace('public', 'Public').replace('private', 'Private').replace('Edit', '').replace('View', '');
+							? currentPrivacy
+									.replace('public', 'Public ')
+									.replace('private', 'Private')
+							: currentPrivacy
+									.replace('public', 'Public')
+									.replace('private', 'Private')
+									.replace('Edit', '')
+									.replace('View', '');
 						const communityAdminsHaveFullAccess = pubData.isCommunityAdminManaged;
 
 						return (
 							<div
 								className={`version-block ${isActive ? 'active' : ''}`}
-								onClick={()=> {
-									this.setState({ activePermissionsVersion: version.id || 'draft' });
+								onClick={() => {
+									this.setState({
+										activePermissionsVersion: version.id || 'draft',
+									});
 								}}
 								role="button"
 								tabIndex="-1"
 							>
 								<div className="header">
 									<div className="title">
-										<b>{isDraft ? 'Working Draft' : dateFormat(version.createdAt, 'mmm dd, yyyy · h:MMTT')}</b>
+										<b>
+											{isDraft
+												? 'Working Draft'
+												: dateFormat(
+														version.createdAt,
+														'mmm dd, yyyy · h:MMTT',
+												  )}
+										</b>
 										<span>{version.description}</span>
 									</div>
 									<div className="privacy">
 										{/* If isActive version block, show dropdown button with options */}
-										{isActive &&
+										{isActive && (
 											<PubOptionsSharingDropdownPrivacy
 												value={currentPrivacy}
 												isDraft={isDraft}
-												onChange={(newValue)=> {
+												onChange={(newValue) => {
 													if (isDraft) {
 														this.handlePubUpdate({
-															draftPermissions: newValue
+															draftPermissions: newValue,
 														});
 													} else {
 														this.handleVersionUpdate({
 															versionId: version.id,
-															isPublic: newValue === 'public'
+															isPublic: newValue === 'public',
 														});
 													}
 												}}
 											/>
-										}
+										)}
 
 										{/* If collapsed block and defaultPublicVersion, show message */}
-										{!isActive && !isDraft && version.id === defaultPublicVersionId &&
-											<span>(Default Public Version) </span>
-										}
+										{!isActive &&
+											!isDraft &&
+											version.id === defaultPublicVersionId && (
+												<span>(Default Public Version) </span>
+											)}
 
 										{/* If collapsed block, show privacy status */}
-										{!isActive &&
+										{!isActive && (
 											<span>
-												{currentPrivacy === 'private' &&
+												{currentPrivacy === 'private' && (
 													<Icon icon="lock2" />
-												}
+												)}
 												<span>{privacyTitle}</span>
 											</span>
-										}
+										)}
 									</div>
 								</div>
 
 								{/* Preview who has access when the version block is collapsed */}
-								{showPreviewAcess &&
+								{showPreviewAcess && (
 									<div className="access-preview">
-										{communityAdminsHavePermission &&
+										{communityAdminsHavePermission && (
 											<span className="bp3-icon-standard bp3-icon-people" />
-										}
-										{pubData.managers.concat(pubData.versionPermissions.filter((versionPermission)=> {
-											return !managerIds[versionPermission.user.id];
-										}).filter((versionPermission)=> {
-											return isDraft
-												? !versionPermission.versionId
-												: versionPermission.versionId === version.id;
-										})).map((item)=> {
-											return <Avatar width={20} userInitials={item.user.initials} userAvatar={item.user.avatar} />;
-										})}
+										)}
+										{pubData.managers
+											.concat(
+												pubData.versionPermissions
+													.filter((versionPermission) => {
+														return !managerIds[
+															versionPermission.user.id
+														];
+													})
+													.filter((versionPermission) => {
+														return isDraft
+															? !versionPermission.versionId
+															: versionPermission.versionId ===
+																	version.id;
+													}),
+											)
+											.map((item) => {
+												return (
+													<Avatar
+														width={20}
+														userInitials={item.user.initials}
+														userAvatar={item.user.avatar}
+													/>
+												);
+											})}
 									</div>
-								}
+								)}
 
 								{/* Expanded permissions view */}
-								{isActive &&
+								{isActive && (
 									<div>
 										<div>Permissions</div>
 										<div className="cards-wrapper">
@@ -420,16 +490,28 @@ class PubOptionsSharing extends Component {
 												content={[
 													<span>Managers</span>,
 													<span className="managers-preview">
-														{communityAdminsHaveFullAccess &&
+														{communityAdminsHaveFullAccess && (
 															<span className="bp3-icon-standard bp3-icon-people" />
-														}
-														{managers.slice(0, 2).map((manager)=> {
-															return <Avatar width={20} userInitials={manager.user.initials} userAvatar={manager.user.avatar} />;
+														)}
+														{managers.slice(0, 2).map((manager) => {
+															return (
+																<Avatar
+																	width={20}
+																	userInitials={
+																		manager.user.initials
+																	}
+																	userAvatar={manager.user.avatar}
+																/>
+															);
 														})}
-														{managers.length - 2 > 0 &&
-															<Avatar width={20} userInitials={`+${managers.length - 2}`} />
-														}
-													</span>
+														{managers.length - 2 > 0 && (
+															<Avatar
+																width={20}
+																userInitials={`+${managers.length -
+																	2}`}
+															/>
+														)}
+													</span>,
 												]}
 												options={
 													<span>{isDraft ? 'Can Edit' : 'Can View'}</span>
@@ -438,28 +520,34 @@ class PubOptionsSharing extends Component {
 											/>
 
 											{/* If community admins are not managers, show options for their permissions */}
-											{!pubData.isCommunityAdminManaged &&
+											{!pubData.isCommunityAdminManaged && (
 												<PubOptionsSharingCard
 													content={[
 														<span className="bp3-icon-standard bp3-icon-people" />,
-														<span>Community Admins</span>
+														<span>Community Admins</span>,
 													]}
-													options={isDraft
-														? <PubOptionsSharingDropdownPermissions
-															value={pubData.communityAdminDraftPermissions}
-															onChange={(newValue)=> {
-																this.handlePubUpdate({
-																	communityAdminDraftPermissions: newValue,
-																});
-															}}
-														/>
-														: (
+													options={
+														isDraft ? (
+															<PubOptionsSharingDropdownPermissions
+																value={
+																	pubData.communityAdminDraftPermissions
+																}
+																onChange={(newValue) => {
+																	this.handlePubUpdate({
+																		communityAdminDraftPermissions: newValue,
+																	});
+																}}
+															/>
+														) : (
 															<Checkbox
-																checked={version.isCommunityAdminShared}
-																onChange={(evt)=> {
+																checked={
+																	version.isCommunityAdminShared
+																}
+																onChange={(evt) => {
 																	this.handleVersionUpdate({
 																		versionId: version.id,
-																		isCommunityAdminShared: evt.target.checked,
+																		isCommunityAdminShared:
+																			evt.target.checked,
 																	});
 																}}
 															>
@@ -468,75 +556,112 @@ class PubOptionsSharing extends Component {
 														)
 													}
 												/>
-											}
+											)}
 
 											{/* List all version permissions, filtering out managers */}
-											{pubData.versionPermissions.filter((versionPermission)=> {
-												return !managerIds[versionPermission.user.id];
-											}).filter((versionPermission)=> {
-												return isDraft
-													? !versionPermission.versionId
-													: versionPermission.versionId === version.id;
-											}).sort((foo, bar)=> {
-												if (foo.createdAt < bar.createdAt) { return -1; }
-												if (foo.createdAt > bar.createdAt) { return 1; }
-												return 0;
-											}).map((versionPermission)=> {
-												return (
-													<PubOptionsSharingCard
-														key={versionPermission.id}
-														content={[
-															<Avatar width={25} userInitials={versionPermission.user.initials} userAvatar={versionPermission.user.avatar} />,
-															<span>{versionPermission.user.fullName}</span>
-														]}
-														options={[
-															isDraft
-																? (
+											{pubData.versionPermissions
+												.filter((versionPermission) => {
+													return !managerIds[versionPermission.user.id];
+												})
+												.filter((versionPermission) => {
+													return isDraft
+														? !versionPermission.versionId
+														: versionPermission.versionId ===
+																version.id;
+												})
+												.sort((foo, bar) => {
+													if (foo.createdAt < bar.createdAt) {
+														return -1;
+													}
+													if (foo.createdAt > bar.createdAt) {
+														return 1;
+													}
+													return 0;
+												})
+												.map((versionPermission) => {
+													return (
+														<PubOptionsSharingCard
+															key={versionPermission.id}
+															content={[
+																<Avatar
+																	width={25}
+																	userInitials={
+																		versionPermission.user
+																			.initials
+																	}
+																	userAvatar={
+																		versionPermission.user
+																			.avatar
+																	}
+																/>,
+																<span>
+																	{
+																		versionPermission.user
+																			.fullName
+																	}
+																</span>,
+															]}
+															options={[
+																isDraft ? (
 																	<PubOptionsSharingDropdownPermissions
-																		value={versionPermission.permissions}
+																		value={
+																			versionPermission.permissions
+																		}
 																		hideNone={true}
-																		onChange={(newValue)=> {
-																			this.handleVersionPermissionUpdate({
-																				versionPermissionId: versionPermission.id,
-																				permissions: newValue,
-																			});
+																		onChange={(newValue) => {
+																			this.handleVersionPermissionUpdate(
+																				{
+																					versionPermissionId:
+																						versionPermission.id,
+																					permissions: newValue,
+																				},
+																			);
 																		}}
 																	/>
-																)
-																: null,
-															<button
-																className="bp3-button bp3-minimal bp3-small"
-																type="button"
-																onClick={()=> {
-																	this.handleVersionPermissionDelete(versionPermission.id || null);
-																}}
-															>
-																<span className="bp3-icon-standard bp3-icon-small-cross" />
-															</button>
-														]}
-													/>
-												);
-											})}
+																) : null,
+																<button
+																	className="bp3-button bp3-minimal bp3-small"
+																	type="button"
+																	onClick={() => {
+																		this.handleVersionPermissionDelete(
+																			versionPermission.id ||
+																				null,
+																		);
+																	}}
+																>
+																	<span className="bp3-icon-standard bp3-icon-small-cross" />
+																</button>,
+															]}
+														/>
+													);
+												})}
 
 											{/* Card for adding new user to version permissions */}
 											<PubOptionsSharingCard
 												content={
 													<UserAutocomplete
-														onSelect={(user)=> {
+														onSelect={(user) => {
 															return this.handleVersionPermissionAdd({
 																userId: user.id,
-																versionId: isDraft ? null : version.id,
+																versionId: isDraft
+																	? null
+																	: version.id,
 															});
 														}}
 														allowCustomUser={false} // Eventually use this for emails
 														placeholder="Add user..."
-														usedUserIds={pubData.versionPermissions.filter((versionPermission)=> {
-															return !versionPermission.versionId;
-														}).map((item)=> {
-															return item.user.id;
-														}).concat(pubData.managers.map((item)=> {
-															return item.user.id;
-														}))}
+														usedUserIds={pubData.versionPermissions
+															.filter((versionPermission) => {
+																return !versionPermission.versionId;
+															})
+															.map((item) => {
+																return item.user.id;
+															})
+															.concat(
+																pubData.managers.map((item) => {
+																	return item.user.id;
+																}),
+															)}
 													/>
 												}
 												isAddCard={true}
@@ -545,18 +670,39 @@ class PubOptionsSharing extends Component {
 
 										<div>Sharing Links</div>
 										{isDraft && [
-											<div><a href={`${window.location.origin}/pub/${pubData.slug}/draft?access=${pubData.draftViewHash}`}>Anyone with this link can view</a></div>,
-											<div><a href={`${window.location.origin}/pub/${pubData.slug}/draft?access=${pubData.draftEditHash}`}>Anyone with this link can edit</a></div>
+											<div>
+												<a
+													href={`${window.location.origin}/pub/${
+														pubData.slug
+													}/draft?access=${pubData.draftViewHash}`}
+												>
+													Anyone with this link can view
+												</a>
+											</div>,
+											<div>
+												<a
+													href={`${window.location.origin}/pub/${
+														pubData.slug
+													}/draft?access=${pubData.draftEditHash}`}
+												>
+													Anyone with this link can edit
+												</a>
+											</div>,
 										]}
-										{!isDraft &&
-											<a href={`${window.location.origin}/pub/${pubData.slug}?version=${version.id}&access=${version.viewHash}`}>Anyone with this link can view</a>
-										}
+										{!isDraft && (
+											<a
+												href={`${window.location.origin}/pub/${
+													pubData.slug
+												}?version=${version.id}&access=${version.viewHash}`}
+											>
+												Anyone with this link can view
+											</a>
+										)}
 									</div>
-								}
+								)}
 							</div>
 						);
 					})}
-
 				</div>
 			</div>
 		);

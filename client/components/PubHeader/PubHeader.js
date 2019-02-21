@@ -4,7 +4,15 @@ import dateFormat from 'dateformat';
 import stickybits from 'stickybits';
 import throttle from 'lodash.throttle';
 import { apiFetch, getResizedUrl } from 'utilities';
-import { Button, EditableText, Popover, PopoverInteractionKind, Position, Tag, Intent } from '@blueprintjs/core';
+import {
+	Button,
+	EditableText,
+	Popover,
+	PopoverInteractionKind,
+	Position,
+	Tag,
+	Intent,
+} from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 
@@ -31,7 +39,7 @@ class PubHeader extends Component {
 		this.state = {
 			title: props.pubData.title,
 			isMounted: false,
-			isEditingTitle: false
+			isEditingTitle: false,
 		};
 
 		this.handleTitleEdit = this.handleTitleEdit.bind(this);
@@ -41,14 +49,20 @@ class PubHeader extends Component {
 		this.recalculateStickyOffset = this.recalculateStickyOffset.bind(this);
 		this.stickyInstance = undefined;
 		this.headerRef = React.createRef();
-		this.handleResize = throttle(this.recalculateStickyOffset, 50, { leading: true, trailing: true });
+		this.handleResize = throttle(this.recalculateStickyOffset, 50, {
+			leading: true,
+			trailing: true,
+		});
 		this.offsetHeight = undefined;
 	}
 
 	componentDidMount() {
 		this.setState({ isMounted: true });
 		this.offsetHeight = this.headerRef.current.offsetHeight;
-		this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
+		this.stickyInstance = stickybits('.pub-header-component', {
+			stickyBitStickyOffset: 35 - this.offsetHeight,
+			useStickyClasses: true,
+		});
 		window.addEventListener('resize', this.handleResize);
 	}
 
@@ -66,7 +80,10 @@ class PubHeader extends Component {
 		if (nextOffsetHeight !== this.offsetHeight) {
 			this.offsetHeight = nextOffsetHeight;
 			this.stickyInstance.cleanup();
-			this.stickyInstance = stickybits('.pub-header-component', { stickyBitStickyOffset: 35 - this.offsetHeight, useStickyClasses: true });
+			this.stickyInstance = stickybits('.pub-header-component', {
+				stickyBitStickyOffset: 35 - this.offsetHeight,
+				useStickyClasses: true,
+			});
 		}
 	}
 
@@ -89,18 +106,18 @@ class PubHeader extends Component {
 				title: newTitle,
 				pubId: this.props.pubData.id,
 				communityId: this.props.communityData.id,
+			}),
+		})
+			.then(() => {
+				this.props.setPubData({
+					...this.props.pubData,
+					title: newTitle,
+				});
+				this.setState({ isEditingTitle: false });
 			})
-		})
-		.then(()=> {
-			this.props.setPubData({
-				...this.props.pubData,
-				title: newTitle,
+			.catch((err) => {
+				console.error('Error Saving: ', err);
 			});
-			this.setState({ isEditingTitle: false });
-		})
-		.catch((err)=> {
-			console.error('Error Saving: ', err);
-		});
 	}
 
 	render() {
@@ -109,12 +126,17 @@ class PubHeader extends Component {
 		// 	return collaborator.Collaborator.isAuthor;
 		// });
 		const queryObject = this.props.locationData.query;
-		const activeDiscussionChannel = pubData.discussionChannels.reduce((prev, curr)=> {
-			if (queryObject.channel === curr.title) { return curr; }
-			return prev;
-		}, { title: 'public' });
+		const activeDiscussionChannel = pubData.discussionChannels.reduce(
+			(prev, curr) => {
+				if (queryObject.channel === curr.title) {
+					return curr;
+				}
+				return prev;
+			},
+			{ title: 'public' },
+		);
 
-		const authors = pubData.attributions.filter((attribution)=> {
+		const authors = pubData.attributions.filter((attribution) => {
 			return attribution.isAuthor;
 		});
 		const useHeaderImage = pubData.useHeaderImage && pubData.avatar;
@@ -127,16 +149,24 @@ class PubHeader extends Component {
 		// const mode = props.locationData.params.mode;
 		// const subMode = props.locationData.params.subMode;
 		const activeVersion = pubData.activeVersion;
-		const sortedVersionsList = pubData.versions.sort((foo, bar)=>{
-			if (foo.createdAt < bar.createdAt) { return 1; }
-			if (foo.createdAt > bar.createdAt) { return -1; }
+		const sortedVersionsList = pubData.versions.sort((foo, bar) => {
+			if (foo.createdAt < bar.createdAt) {
+				return 1;
+			}
+			if (foo.createdAt > bar.createdAt) {
+				return -1;
+			}
 			return 0;
 		});
 
-		const numNewerVersions = !pubData.isDraft && pubData.versions.reduce((prev, curr)=> {
-			if (curr.createdAt > activeVersion.createdAt) { return prev + 1; }
-			return prev;
-		}, 0);
+		const numNewerVersions =
+			!pubData.isDraft &&
+			pubData.versions.reduce((prev, curr) => {
+				if (curr.createdAt > activeVersion.createdAt) {
+					return prev + 1;
+				}
+				return prev;
+			}, 0);
 		const numDiscussions = pubData.discussions.length;
 		// const numAttributions = pubData.collaborators.filter((item)=> {
 		// 	return item.Collaborator.isAuthor || item.Collaborator.isContributor;
@@ -145,14 +175,16 @@ class PubHeader extends Component {
 
 		const discussionChannels = [
 			{ title: 'public' },
-			...this.props.pubData.discussionChannels.filter((channel)=> {
+			...this.props.pubData.discussionChannels.filter((channel) => {
 				return !channel.isArchived;
 			}),
 		];
 
 		const useEditableTitle = pubData.isDraft && pubData.isManager && this.state.isMounted;
 		let pubTitle = pubData.title;
-		if (this.state.isEditingTitle) { pubTitle = this.state.title; }
+		if (this.state.isEditingTitle) {
+			pubTitle = this.state.title;
+		}
 
 		return (
 			<div className="pub-header-component" style={backgroundStyle} ref={this.headerRef}>
@@ -162,61 +194,92 @@ class PubHeader extends Component {
 							<div className="col-12">
 								<div className="tags-buttons-wrapper">
 									<div className="tags">
-										{pubData.pubTags.filter((pubTag)=> {
-											return pubTag.tag;
-										}).sort((foo, bar)=> {
-											if (foo.tag.title.toLowerCase() < bar.tag.title.toLowerCase()) { return -1; }
-											if (foo.tag.title.toLowerCase() > bar.tag.title.toLowerCase()) { return 1; }
-											return 0;
-										}).map((item)=> {
-											return (
-												<a key={item.id} href={item.tag.page ? `/${item.tag.page.slug}` : `/search?tag=${item.tag.title}`}>
-													<Tag
-														intent={Intent.PRIMARY}
-														minimal={true}
-														icon={!item.tag.isPublic ? <Icon icon="lock2" /> : undefined}
+										{pubData.pubTags
+											.filter((pubTag) => {
+												return pubTag.tag;
+											})
+											.sort((foo, bar) => {
+												if (
+													foo.tag.title.toLowerCase() <
+													bar.tag.title.toLowerCase()
+												) {
+													return -1;
+												}
+												if (
+													foo.tag.title.toLowerCase() >
+													bar.tag.title.toLowerCase()
+												) {
+													return 1;
+												}
+												return 0;
+											})
+											.map((item) => {
+												return (
+													<a
+														key={item.id}
+														href={
+															item.tag.page
+																? `/${item.tag.page.slug}`
+																: `/search?tag=${item.tag.title}`
+														}
 													>
-														{item.tag.title}
-													</Tag>
-												</a>
-											);
-										})}
+														<Tag
+															intent={Intent.PRIMARY}
+															minimal={true}
+															icon={
+																!item.tag.isPublic ? (
+																	<Icon icon="lock2" />
+																) : (
+																	undefined
+																)
+															}
+														>
+															{item.tag.title}
+														</Tag>
+													</a>
+												);
+											})}
 									</div>
 									<div className="buttons">
-										{!pubData.isDraft && (pubData.isDraftViewer || pubData.isDraftEditor || pubData.isManager) &&
-											<a
-												className="bp3-button bp3-small"
-												href={`/pub/${pubData.slug}/draft`}
-											>
-												Go To Working Draft
-											</a>
-										}
+										{!pubData.isDraft &&
+											(pubData.isDraftViewer ||
+												pubData.isDraftEditor ||
+												pubData.isManager) && (
+												<a
+													className="bp3-button bp3-small"
+													href={`/pub/${pubData.slug}/draft`}
+												>
+													Go To Working Draft
+												</a>
+											)}
 										<button
 											className="bp3-button bp3-small"
 											type="button"
-											onClick={()=> {
-												this.props.setOptionsMode(pubData.isManager ? 'details' : 'attribution');
+											onClick={() => {
+												this.props.setOptionsMode(
+													pubData.isManager ? 'details' : 'attribution',
+												);
 											}}
 										>
 											Options
 										</button>
 
-										{pubData.isManager &&
+										{pubData.isManager && (
 											<button
 												className="bp3-button bp3-small"
 												type="button"
-												onClick={()=> {
+												onClick={() => {
 													this.props.setOptionsMode('sharing');
 												}}
 											>
 												Share
 											</button>
-										}
+										)}
 									</div>
 								</div>
 
 								<h1>
-									{useEditableTitle &&
+									{useEditableTitle && (
 										<EditableText
 											placeholder="Add a Pub Title"
 											onConfirm={this.handleTitleSave}
@@ -227,59 +290,111 @@ class PubHeader extends Component {
 											multiline={true}
 											confirmOnEnterKey={true}
 										/>
-									}
-									{!useEditableTitle &&
+									)}
+									{!useEditableTitle && (
 										<span className="editable-text-match">{pubData.title}</span>
-									}
+									)}
 								</h1>
 
-								{pubData.description &&
+								{pubData.description && (
 									<div className="description">{pubData.description}</div>
-								}
+								)}
 
-								{!!authors.length &&
+								{!!authors.length && (
 									<div className="authors">
 										<span>by </span>
-										{authors.sort((foo, bar)=> {
-											if (foo.order < bar.order) { return -1; }
-											if (foo.order > bar.order) { return 1; }
-											if (foo.createdAt < bar.createdAt) { return 1; }
-											if (foo.createdAt > bar.createdAt) { return -1; }
-											return 0;
-										}).map((author, index)=> {
-											const separator = index === authors.length - 1 || authors.length === 2 ? '' : ', ';
-											const prefix = index === authors.length - 1 && index !== 0 ? ' and ' : '';
-											const user = author.user;
-											if (user.slug) {
+										{authors
+											.sort((foo, bar) => {
+												if (foo.order < bar.order) {
+													return -1;
+												}
+												if (foo.order > bar.order) {
+													return 1;
+												}
+												if (foo.createdAt < bar.createdAt) {
+													return 1;
+												}
+												if (foo.createdAt > bar.createdAt) {
+													return -1;
+												}
+												return 0;
+											})
+											.map((author, index) => {
+												const separator =
+													index === authors.length - 1 ||
+													authors.length === 2
+														? ''
+														: ', ';
+												const prefix =
+													index === authors.length - 1 && index !== 0
+														? ' and '
+														: '';
+												const user = author.user;
+												if (user.slug) {
+													return (
+														<span key={`author-${user.id}`}>
+															{prefix}
+															<a
+																href={`/user/${user.slug}`}
+																className="underline-on-hover"
+															>
+																{user.fullName}
+															</a>
+															{separator}
+														</span>
+													);
+												}
 												return (
 													<span key={`author-${user.id}`}>
 														{prefix}
-														<a href={`/user/${user.slug}`} className="underline-on-hover">{user.fullName}</a>
+														{user.fullName}
 														{separator}
 													</span>
 												);
-											}
-											return <span key={`author-${user.id}`}>{prefix}{user.fullName}{separator}</span>;
-										})}
+											})}
 									</div>
-								}
+								)}
 								<div className="details">
 									<Popover
 										content={
 											<div className="bp3-menu">
-												{(pubData.isDraftViewer || pubData.isDraftEditor || pubData.isManager) &&
+												{(pubData.isDraftViewer ||
+													pubData.isDraftEditor ||
+													pubData.isManager) && (
 													<li>
-														<a className={`bp3-menu-item ${pubData.isDraft ? 'bp3-active' : ''}`} tabIndex="0" href={`/pub/${pubData.slug}/draft`}>
+														<a
+															className={`bp3-menu-item ${
+																pubData.isDraft ? 'bp3-active' : ''
+															}`}
+															tabIndex="0"
+															href={`/pub/${pubData.slug}/draft`}
+														>
 															Working Draft
 														</a>
 													</li>
-												}
-												{sortedVersionsList.map((version)=> {
+												)}
+												{sortedVersionsList.map((version) => {
 													return (
 														<li key={version.id}>
-															<a className={`bp3-menu-item ${version.id === pubData.activeVersion.id ? 'bp3-active' : ''}`} tabIndex="0" href={`/pub/${pubData.slug}?version=${version.id}`}>
-																{dateFormat(version.createdAt, 'mmm dd, yyyy · h:MMTT')}
-																{!version.isPublic && <Icon icon="lock2" />}
+															<a
+																className={`bp3-menu-item ${
+																	version.id ===
+																	pubData.activeVersion.id
+																		? 'bp3-active'
+																		: ''
+																}`}
+																tabIndex="0"
+																href={`/pub/${
+																	pubData.slug
+																}?version=${version.id}`}
+															>
+																{dateFormat(
+																	version.createdAt,
+																	'mmm dd, yyyy · h:MMTT',
+																)}
+																{!version.isPublic && (
+																	<Icon icon="lock2" />
+																)}
 															</a>
 														</li>
 													);
@@ -304,30 +419,57 @@ class PubHeader extends Component {
 											tabIndex={-1}
 											className="detail-button versions"
 										>
-											{!pubData.isDraft && !activeVersion.isPublic &&
+											{!pubData.isDraft && !activeVersion.isPublic && (
 												<Icon icon="lock2" />
-											}
-											{!pubData.isDraft &&
-												<span>{sortedVersionsList[sortedVersionsList.length - 1].id !== activeVersion.id ? 'Updated ' : ''}{dateFormat(pubData.activeVersion.createdAt, 'mmm dd, yyyy')}</span>
-											}
+											)}
+											{!pubData.isDraft && (
+												<span>
+													{sortedVersionsList[
+														sortedVersionsList.length - 1
+													].id !== activeVersion.id
+														? 'Updated '
+														: ''}
+													{dateFormat(
+														pubData.activeVersion.createdAt,
+														'mmm dd, yyyy',
+													)}
+												</span>
+											)}
 											{/* If is draft, say total number of saved versions */}
-											{pubData.isDraft &&
-												<span>Working Draft ({pubData.versions.length} Saved Version{pubData.versions.length === 1 ? '' : 's'})</span>
-											}
+											{pubData.isDraft && (
+												<span>
+													Working Draft ({pubData.versions.length} Saved
+													Version
+													{pubData.versions.length === 1 ? '' : 's'})
+												</span>
+											)}
 
 											{/* If not draft, and newer versions, say numNewerVersions */}
-											{!pubData.isDraft && !!numNewerVersions &&
-												<span> ({numNewerVersions} Newer Version{numNewerVersions === 1 ? '' : 's'})</span>
-											}
+											{!pubData.isDraft && !!numNewerVersions && (
+												<span>
+													{' '}
+													({numNewerVersions} Newer Version
+													{numNewerVersions === 1 ? '' : 's'})
+												</span>
+											)}
 
 											{/* If not draft, and no newer versions, and more than one version, say numVersions - 1 Older Versions */}
-											{!pubData.isDraft && !numNewerVersions && pubData.versions.length > 1 &&
-												<span> ({pubData.versions.length - 1} Older Version{pubData.versions.length - 1 === 1 ? '' : 's'})</span>
-											}
+											{!pubData.isDraft &&
+												!numNewerVersions &&
+												pubData.versions.length > 1 && (
+													<span>
+														{' '}
+														({pubData.versions.length - 1} Older Version
+														{pubData.versions.length - 1 === 1
+															? ''
+															: 's'}
+														)
+													</span>
+												)}
 											<Icon icon="chevron-down" />
 										</div>
 									</Popover>
-									{this.props.pubData.publicDiscussions &&
+									{this.props.pubData.publicDiscussions && (
 										<a
 											href="#discussions"
 											role="button"
@@ -335,24 +477,27 @@ class PubHeader extends Component {
 											className="detail-button"
 										>
 											{/* <span className="bp3-icon-standard bp3-icon-chat" /> */}
-											{numDiscussions} Discussion{numDiscussions === 1 ? '' : 's'} (#{activeDiscussionChannel.title})
+											{numDiscussions} Discussion
+											{numDiscussions === 1 ? '' : 's'} (#
+											{activeDiscussionChannel.title})
 										</a>
-									}
-									{!!numAttributions &&
+									)}
+									{!!numAttributions && (
 										<div
 											role="button"
 											tabIndex={-1}
 											className="detail-button"
 											// href={`/pub/${pubData.slug}/collaborators`}
-											onClick={(evt)=> {
+											onClick={(evt) => {
 												evt.preventDefault();
 												this.props.setOptionsMode('attribution');
 											}}
 										>
 											{/* <span className="bp3-icon-standard bp3-icon-team" /> */}
-											{numAttributions} Contributor{numAttributions === 1 ? '' : 's'}
+											{numAttributions} Contributor
+											{numAttributions === 1 ? '' : 's'}
 										</div>
-									}
+									)}
 								</div>
 							</div>
 						</div>
@@ -363,18 +508,22 @@ class PubHeader extends Component {
 							<Button
 								minimal={true}
 								small={true}
-								onClick={()=> { this.props.setOptionsMode('cite'); }}
+								onClick={() => {
+									this.props.setOptionsMode('cite');
+								}}
 								text="Cite"
 							/>
 							<span className="dot">·</span>
 							<Button
 								minimal={true}
 								small={true}
-								onClick={()=> { this.props.setOptionsMode('export'); }}
+								onClick={() => {
+									this.props.setOptionsMode('export');
+								}}
 								text="Export"
 							/>
 							<span className="dot">·</span>
-							{this.props.pubData.publicDiscussions &&
+							{this.props.pubData.publicDiscussions && (
 								<DropdownButton
 									label={`#${this.props.activeDiscussionChannel.title}`}
 									// icon={items[props.value].icon}
@@ -383,13 +532,15 @@ class PubHeader extends Component {
 									isSmall={true}
 								>
 									<ul className="channel-permissions-dropdown bp3-menu">
-										{discussionChannels.map((channel)=> {
+										{discussionChannels.map((channel) => {
 											return (
 												<li key={`channel-option-${channel.title}`}>
 													<button
 														className="bp3-menu-item bp3-popover-dismiss"
-														onClick={()=> {
-															this.props.setDiscussionChannel(channel.title);
+														onClick={() => {
+															this.props.setDiscussionChannel(
+																channel.title,
+															);
 														}}
 														type="button"
 													>
@@ -403,14 +554,14 @@ class PubHeader extends Component {
 											<Button
 												minimal={true}
 												text="Manage Discussion Channels"
-												onClick={()=> {
+												onClick={() => {
 													this.props.setOptionsMode('discussions');
 												}}
 											/>
 										</li>
 									</ul>
 								</DropdownButton>
-							}
+							)}
 						</div>
 					</div>
 				</div>

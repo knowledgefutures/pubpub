@@ -10,7 +10,9 @@ const propTypes = {
 };
 
 const LayoutHtml = function(props) {
-	if (!props.content.html) { return null; }
+	if (!props.content.html) {
+		return null;
+	}
 	return (
 		<div className="layout-html-component">
 			<div className="block-content">

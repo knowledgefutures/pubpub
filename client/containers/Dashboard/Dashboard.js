@@ -57,7 +57,6 @@ class Dashboard extends Component {
 					<div className="container">
 						<div className="row">
 							<div className="col-12 dashboard-columns">
-
 								<div className="side-content">
 									<DashboardSide
 										pages={communityData.pages}
@@ -66,53 +65,53 @@ class Dashboard extends Component {
 								</div>
 
 								<div className="main-content">
-									{(()=> {
+									{(() => {
 										switch (activeMode) {
-										case 'pubs':
-											return (
-												<DashboardPubs
-													communityData={communityData}
-													pubsData={this.props.pubsData}
-												/>
-											);
-										case 'team':
-											return (
-												<DashboardTeam
-													communityData={communityData}
-													setCommunityData={this.setCommunityData}
-												/>
-											);
-										case 'details':
-											return (
-												<DashboardDetails
-													communityData={communityData}
-													setCommunityData={this.setCommunityData}
-												/>
-											);
-										case 'tags':
-											return (
-												<DashboardTags
-													communityData={communityData}
-													setCommunityData={this.setCommunityData}
-												/>
-											);
-										case 'page':
-											return (
-												<DashboardCreatePage
-													communityData={communityData}
-													hostname={this.props.locationData.hostname}
-												/>
-											);
-										default:
-											return (
-												<DashboardPage
-													communityData={communityData}
-													locationData={this.props.locationData}
-													pageData={pageData}
-													setCommunityData={this.setCommunityData}
-													setPageData={this.setPageData}
-												/>
-											);
+											case 'pubs':
+												return (
+													<DashboardPubs
+														communityData={communityData}
+														pubsData={this.props.pubsData}
+													/>
+												);
+											case 'team':
+												return (
+													<DashboardTeam
+														communityData={communityData}
+														setCommunityData={this.setCommunityData}
+													/>
+												);
+											case 'details':
+												return (
+													<DashboardDetails
+														communityData={communityData}
+														setCommunityData={this.setCommunityData}
+													/>
+												);
+											case 'tags':
+												return (
+													<DashboardTags
+														communityData={communityData}
+														setCommunityData={this.setCommunityData}
+													/>
+												);
+											case 'page':
+												return (
+													<DashboardCreatePage
+														communityData={communityData}
+														hostname={this.props.locationData.hostname}
+													/>
+												);
+											default:
+												return (
+													<DashboardPage
+														communityData={communityData}
+														locationData={this.props.locationData}
+														pageData={pageData}
+														setCommunityData={this.setCommunityData}
+														setPageData={this.setPageData}
+													/>
+												);
 										}
 									})()}
 								</div>

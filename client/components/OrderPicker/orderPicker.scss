@@ -3,12 +3,12 @@
 	.column {
 		width: 50%;
 		&:first-of-type {
-			border-right: 1px solid #CCC;
+			border-right: 1px solid #ccc;
 		}
 	}
 	.column-header {
-		background: #EEE;
-		border-bottom: 1px solid #CCC;
+		background: #eee;
+		border-bottom: 1px solid #ccc;
 		font-weight: bold;
 		padding: 0.5em 1em;
 		display: flex;
@@ -31,14 +31,14 @@
 	}
 	.drag-title {
 		display: flex;
-	    align-items: center;
-	    svg {
-	    	margin-right: 0.5em;
-	    }
-	    .text {
-	    	white-space: nowrap;
-	    	overflow: hidden;
-	    	text-overflow: ellipsis;
-	    }
+		align-items: center;
+		svg {
+			margin-right: 0.5em;
+		}
+		.text {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 }

@@ -72,19 +72,19 @@ class UserCreate extends Component {
 				twitter: this.state.twitter,
 				facebook: this.state.facebook,
 				googleScholar: this.state.googleScholar,
+			}),
+		})
+			.then(() => {
+				window.location.href = '/';
 			})
-		})
-		.then(()=> {
-			window.location.href = '/';
-		})
-		.catch((err)=> {
-			this.setState({ postUserIsLoading: false, postUserError: err });
-		});
+			.catch((err) => {
+				this.setState({ postUserIsLoading: false, postUserError: err });
+			});
 	}
 
 	onSubscribedChange() {
 		this.setState((prevState) => ({
-			subscribed: !prevState.subscribed
+			subscribed: !prevState.subscribed,
 		}));
 	}
 
@@ -118,64 +118,92 @@ class UserCreate extends Component {
 				label: 'Location',
 				showTextOnButton: true,
 				icon: <Icon icon="map-marker" />,
-				action: ()=> { this.setState({ showLocation: true }); },
+				action: () => {
+					this.setState({ showLocation: true });
+				},
 				isVisible: this.state.showLocation,
 				value: this.state.location,
-				onChange: (evt)=> { this.setState({ location: evt.target.value }); }
+				onChange: (evt) => {
+					this.setState({ location: evt.target.value });
+				},
 			},
 			{
 				label: 'Website',
 				showTextOnButton: true,
 				icon: <Icon icon="link" />,
-				action: ()=> { this.setState({ showWebsite: true }); },
+				action: () => {
+					this.setState({ showWebsite: true });
+				},
 				isVisible: this.state.showWebsite,
 				value: this.state.website,
-				onChange: (evt)=> { this.setState({ website: evt.target.value }); }
+				onChange: (evt) => {
+					this.setState({ website: evt.target.value });
+				},
 			},
 			{
 				label: 'Orcid',
 				icon: <Icon icon="orcid" />,
-				action: ()=> { this.setState({ showOrcid: true }); },
+				action: () => {
+					this.setState({ showOrcid: true });
+				},
 				isVisible: this.state.showOrcid,
 				helperText: `https://orcid.org/${this.state.orcid}`,
 				value: this.state.orcid,
-				onChange: (evt)=> { this.setState({ orcid: evt.target.value }); }
+				onChange: (evt) => {
+					this.setState({ orcid: evt.target.value });
+				},
 			},
 			{
 				label: 'Github',
 				icon: <Icon icon="github" />,
-				action: ()=> { this.setState({ showGithub: true }); },
+				action: () => {
+					this.setState({ showGithub: true });
+				},
 				helperText: `https://github.com/${this.state.github}`,
 				isVisible: this.state.showGithub,
 				value: this.state.github,
-				onChange: (evt)=> { this.setState({ github: evt.target.value }); }
+				onChange: (evt) => {
+					this.setState({ github: evt.target.value });
+				},
 			},
 			{
 				label: 'Twitter',
 				icon: <Icon icon="twitter" />,
-				action: ()=> { this.setState({ showTwitter: true }); },
+				action: () => {
+					this.setState({ showTwitter: true });
+				},
 				helperText: `https://twitter.com/${this.state.twitter}`,
 				isVisible: this.state.showTwitter,
 				value: this.state.twitter,
-				onChange: (evt)=> { this.setState({ twitter: evt.target.value }); }
+				onChange: (evt) => {
+					this.setState({ twitter: evt.target.value });
+				},
 			},
 			{
 				label: 'Facebook',
 				icon: <Icon icon="facebook" />,
-				action: ()=> { this.setState({ showFacebook: true }); },
+				action: () => {
+					this.setState({ showFacebook: true });
+				},
 				helperText: `https://facebook.com/${this.state.facebook}`,
 				isVisible: this.state.showFacebook,
 				value: this.state.facebook,
-				onChange: (evt)=> { this.setState({ facebook: evt.target.value }); }
+				onChange: (evt) => {
+					this.setState({ facebook: evt.target.value });
+				},
 			},
 			{
 				label: 'Google Scholar',
 				icon: <Icon icon="google-scholar" />,
-				action: ()=> { this.setState({ showGoogleScholar: true }); },
+				action: () => {
+					this.setState({ showGoogleScholar: true });
+				},
 				helperText: `https://scholar.google.com/citations?user=${this.state.googleScholar}`,
 				isVisible: this.state.showGoogleScholar,
 				value: this.state.googleScholar,
-				onChange: (evt)=> { this.setState({ googleScholar: evt.target.value }); }
+				onChange: (evt) => {
+					this.setState({ googleScholar: evt.target.value });
+				},
 			},
 		];
 		return (
@@ -187,7 +215,7 @@ class UserCreate extends Component {
 					hideNav={this.props.locationData.isBasePubPub}
 					hideFooter={true}
 				>
-					{this.props.signupData.hashError &&
+					{this.props.signupData.hashError && (
 						<NonIdealState
 							title="Signup URL Invalid"
 							description={
@@ -197,11 +225,15 @@ class UserCreate extends Component {
 								</div>
 							}
 							visual="error"
-							action={<a href="/signup" className="bp3-button">Signup</a>}
+							action={
+								<a href="/signup" className="bp3-button">
+									Signup
+								</a>
+							}
 						/>
-					}
+					)}
 
-					{!this.props.signupData.hashError &&
+					{!this.props.signupData.hashError && (
 						<div className="container small">
 							<div className="row">
 								<div className="col-12">
@@ -241,7 +273,9 @@ class UserCreate extends Component {
 											label="Title"
 											value={this.state.title}
 											onChange={this.onTitleChange}
-											helperText={`${this.state.title.length}/70 characters. Displayed by your name on discussions.`}
+											helperText={`${
+												this.state.title.length
+											}/70 characters. Displayed by your name on discussions.`}
 										/>
 										<InputField
 											label="Bio"
@@ -250,38 +284,52 @@ class UserCreate extends Component {
 											onChange={this.onBioChange}
 											helperText={`${this.state.bio.length}/280 characters`}
 										/>
-										{expandables.filter((item)=> {
-											return item.isVisible;
-										}).map((item)=> {
-											return (
-												<InputField
-													key={`input-field-${item.label}`}
-													label={item.label}
-													value={item.value}
-													onChange={item.onChange}
-													helperText={item.helperText}
-												/>
-											);
-										})}
+										{expandables
+											.filter((item) => {
+												return item.isVisible;
+											})
+											.map((item) => {
+												return (
+													<InputField
+														key={`input-field-${item.label}`}
+														label={item.label}
+														value={item.value}
+														onChange={item.onChange}
+														helperText={item.helperText}
+													/>
+												);
+											})}
 
-										{!!expandables.filter(item => !item.isVisible).length &&
+										{!!expandables.filter((item) => !item.isVisible).length && (
 											<InputField label="Add More">
 												<div className="bp3-button-group">
-													{expandables.filter((item)=> {
-														return !item.isVisible;
-													}).map((item)=> {
-														return (
-															<button type="button" key={`button-${item.label}`} className="bp3-button expandable" onClick={item.action}>
-																{item.icon}
-																{item.showTextOnButton ? item.label : ''}
-															</button>
-														);
-													})}
+													{expandables
+														.filter((item) => {
+															return !item.isVisible;
+														})
+														.map((item) => {
+															return (
+																<button
+																	type="button"
+																	key={`button-${item.label}`}
+																	className="bp3-button expandable"
+																	onClick={item.action}
+																>
+																	{item.icon}
+																	{item.showTextOnButton
+																		? item.label
+																		: ''}
+																</button>
+															);
+														})}
 												</div>
 											</InputField>
-										}
+										)}
 
-										<InputField wrapperClassName="bp3-callout" label="Stay Up To Date">
+										<InputField
+											wrapperClassName="bp3-callout"
+											label="Stay Up To Date"
+										>
 											<Checkbox
 												label="Subscribe to our feature release & community newsletter."
 												checked={this.state.subscribed}
@@ -289,14 +337,22 @@ class UserCreate extends Component {
 											/>
 										</InputField>
 
-										<InputField error={this.state.postUserError && 'Error Creating User'}>
+										<InputField
+											error={
+												this.state.postUserError && 'Error Creating User'
+											}
+										>
 											<Button
 												name="create"
 												type="submit"
 												className="bp3-button bp3-intent-primary create-account-button"
 												onClick={this.onCreateSubmit}
 												text="Create Account"
-												disabled={!this.state.firstName || !this.state.lastName || !this.state.password}
+												disabled={
+													!this.state.firstName ||
+													!this.state.lastName ||
+													!this.state.password
+												}
 												loading={this.state.postUserIsLoading}
 											/>
 										</InputField>
@@ -304,7 +360,7 @@ class UserCreate extends Component {
 								</div>
 							</div>
 						</div>
-					}
+					)}
 				</PageWrapper>
 			</div>
 		);

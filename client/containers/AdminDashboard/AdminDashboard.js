@@ -17,7 +17,7 @@ class AdminDashboard extends React.Component {
 		super(props);
 		this.state = {
 			pubPubData: {},
-			isLoading: true
+			isLoading: true,
 		};
 	}
 
@@ -25,15 +25,15 @@ class AdminDashboard extends React.Component {
 		apiFetch('/api/admin-dashboard', {
 			method: 'GET',
 		})
-		.then((data)=> {
-			this.setState({
-				pubPubData: data,
-				isLoading: false
+			.then((data) => {
+				this.setState({
+					pubPubData: data,
+					isLoading: false,
+				});
+			})
+			.catch((err) => {
+				console.warn(err);
 			});
-		})
-		.catch((err)=> {
-			console.warn(err);
-		});
 	}
 
 	render() {
@@ -50,14 +50,23 @@ class AdminDashboard extends React.Component {
 						<div className="row">
 							<div className="col-12">
 								<h1>Admin Dashboard</h1>
-								{!this.state.isLoading &&
+								{!this.state.isLoading && (
 									<div>
 										<Chart data={this.state.pubPubData.users} title="Users" />
-										<Chart data={this.state.pubPubData.communities} title="Communities" />
-										<Chart data={this.state.pubPubData.discussions} title="Discussions" />
-										<Chart data={this.state.pubPubData.subscribers} title="Newsletter Subscribers" />
+										<Chart
+											data={this.state.pubPubData.communities}
+											title="Communities"
+										/>
+										<Chart
+											data={this.state.pubPubData.discussions}
+											title="Discussions"
+										/>
+										<Chart
+											data={this.state.pubPubData.subscribers}
+											title="Newsletter Subscribers"
+										/>
 									</div>
-								}
+								)}
 							</div>
 						</div>
 					</div>

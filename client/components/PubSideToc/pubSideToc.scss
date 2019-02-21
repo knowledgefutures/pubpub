@@ -7,11 +7,12 @@
 	z-index: 1;
 	position: relative;
 	.toc {
-		border-left: 2px solid #CCC;
+		border-left: 2px solid #ccc;
 		padding-left: 10px;
 		font-size: 14px;
 	}
-	.section-header, a {
+	.section-header,
+	a {
 		width: 100%;
 		white-space: nowrap;
 		overflow: hidden;

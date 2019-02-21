@@ -55,11 +55,15 @@ class FormattingBarControlsEquation extends Component {
 		const isBlock = this.props.selectedNode.type.name === 'block_equation';
 		if (isBlock) {
 			const nodeType = this.props.editorChangeObject.view.state.schema.nodes.equation;
-			renderLatexString(this.props.attrs.value, false, (newHtml)=> {
-				this.props.changeNode(nodeType, {
-					value: this.props.attrs.value,
-					html: newHtml,
-				}, null);
+			renderLatexString(this.props.attrs.value, false, (newHtml) => {
+				this.props.changeNode(
+					nodeType,
+					{
+						value: this.props.attrs.value,
+						html: newHtml,
+					},
+					null,
+				);
 			});
 		}
 	}
@@ -68,11 +72,15 @@ class FormattingBarControlsEquation extends Component {
 		const isBlock = this.props.selectedNode.type.name === 'block_equation';
 		if (!isBlock) {
 			const nodeType = this.props.editorChangeObject.view.state.schema.nodes.block_equation;
-			renderLatexString(this.props.attrs.value, true, (newHtml)=> {
-				this.props.changeNode(nodeType, {
-					value: this.props.attrs.value,
-					html: newHtml,
-				}, null);
+			renderLatexString(this.props.attrs.value, true, (newHtml) => {
+				this.props.changeNode(
+					nodeType,
+					{
+						value: this.props.attrs.value,
+						html: newHtml,
+					},
+					null,
+				);
 			});
 		}
 	}
@@ -83,7 +91,9 @@ class FormattingBarControlsEquation extends Component {
 		const iconSize = this.props.isSmall ? 12 : 16;
 
 		return (
-			<div className={`formatting-bar-controls-component ${this.props.isSmall ? 'small' : ''}`}>
+			<div
+				className={`formatting-bar-controls-component ${this.props.isSmall ? 'small' : ''}`}
+			>
 				{/*  LaTex Adjustment */}
 				<div className="block">
 					<div className="label">LaTeX</div>
@@ -91,7 +101,11 @@ class FormattingBarControlsEquation extends Component {
 						<textarea
 							placeholder="Enter LaTeX math"
 							className="bp3-input bp3-fill"
-							value={this.state.isEditing ? this.state.editingValue : this.props.attrs.value}
+							value={
+								this.state.isEditing
+									? this.state.editingValue
+									: this.props.attrs.value
+							}
 							onFocus={this.handleFocus}
 							onBlur={this.handleBlur}
 							onChange={this.handleValueChange}
@@ -121,7 +135,6 @@ class FormattingBarControlsEquation extends Component {
 		);
 	}
 }
-
 
 FormattingBarControlsEquation.propTypes = propTypes;
 export default FormattingBarControlsEquation;

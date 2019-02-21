@@ -2,7 +2,7 @@ import app from '../server';
 
 const tokenAuth = process.env.MATOMO_TOKEN_AUTH;
 
-app.get('/api/analytics', (req, res)=> {
+app.get('/api/analytics', (req, res) => {
 	const queryString = `
 		module=API
 		&method=API.getBulkRequest
@@ -22,20 +22,22 @@ app.get('/api/analytics', (req, res)=> {
 		body: queryString,
 		headers: {
 			Accept: 'application/json',
-			'Content-Type': 'application/x-www-form-urlencoded'
+			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 	})
-	.then((response)=> {
-		if (!response.ok) {
-			return response.json().then((err)=> { throw err; });
-		}
-		return response.json();
-	})
-	.then((data)=> {
-		return res.status(201).json(data);
-	})
-	.catch((err)=> {
-		console.error('Error getting Analytics data', err);
-		return res.status(500).json(err);
-	});
+		.then((response) => {
+			if (!response.ok) {
+				return response.json().then((err) => {
+					throw err;
+				});
+			}
+			return response.json();
+		})
+		.then((data) => {
+			return res.status(201).json(data);
+		})
+		.catch((err) => {
+			console.error('Error getting Analytics data', err);
+			return res.status(500).json(err);
+		});
 });

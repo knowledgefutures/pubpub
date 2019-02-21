@@ -33,7 +33,6 @@ class UserEdit extends Component {
 			postResetIsLoading: false,
 			postResetError: undefined,
 			showResetConfirmation: false,
-
 		};
 		this.onFirstNameChange = this.onFirstNameChange.bind(this);
 		this.onLastNameChange = this.onLastNameChange.bind(this);
@@ -53,11 +52,17 @@ class UserEdit extends Component {
 	}
 
 	onTitleChange(evt) {
-		this.setState({ title: evt.target.value.substring(0, 70).replace(/\n/g, ' '), hasChanged: true });
+		this.setState({
+			title: evt.target.value.substring(0, 70).replace(/\n/g, ' '),
+			hasChanged: true,
+		});
 	}
 
 	onBioChange(evt) {
-		this.setState({ bio: evt.target.value.substring(0, 280).replace(/\n/g, ' '), hasChanged: true });
+		this.setState({
+			bio: evt.target.value.substring(0, 280).replace(/\n/g, ' '),
+			hasChanged: true,
+		});
 	}
 
 	onAvatarChange(val) {
@@ -85,28 +90,28 @@ class UserEdit extends Component {
 		this.setState({ putUserIsLoading: true, putUserError: undefined });
 		return apiFetch('/api/users', {
 			method: 'PUT',
-			body: JSON.stringify(newUserObject)
+			body: JSON.stringify(newUserObject),
 		})
-		.then(()=> {
-			window.location.href = `/user/${this.props.userData.slug}`;
-		})
-		.catch((err)=> {
-			this.setState({ putUserIsLoading: false, putUserError: err });
-		});
+			.then(() => {
+				window.location.href = `/user/${this.props.userData.slug}`;
+			})
+			.catch((err) => {
+				this.setState({ putUserIsLoading: false, putUserError: err });
+			});
 	}
 
 	handlePasswordReset() {
 		this.setState({ postResetIsLoading: true });
 		return apiFetch('/api/password-reset', {
 			method: 'POST',
-			body: JSON.stringify({})
+			body: JSON.stringify({}),
 		})
-		.then(()=> {
-			this.setState({ postResetIsLoading: false, showResetConfirmation: true });
-		})
-		.catch(()=> {
-			this.setState({ postResetIsLoading: false, postResetError: 'Error' });
-		});
+			.then(() => {
+				this.setState({ postResetIsLoading: false, showResetConfirmation: true });
+			})
+			.catch(() => {
+				this.setState({ postResetIsLoading: false, postResetError: 'Error' });
+			});
 	}
 
 	render() {
@@ -116,49 +121,63 @@ class UserEdit extends Component {
 				showTextOnButton: true,
 				// icon: 'bp3-icon-map-marker',
 				value: this.state.location,
-				onChange: (evt)=> { this.setState({ location: evt.target.value, hasChanged: true }); }
+				onChange: (evt) => {
+					this.setState({ location: evt.target.value, hasChanged: true });
+				},
 			},
 			{
 				label: 'Website',
 				showTextOnButton: true,
 				// icon: 'bp3-icon-link',
 				value: this.state.website,
-				onChange: (evt)=> { this.setState({ website: evt.target.value, hasChanged: true }); }
+				onChange: (evt) => {
+					this.setState({ website: evt.target.value, hasChanged: true });
+				},
 			},
 			{
 				label: 'Orcid',
 				// icon: 'bp3-icon-orcid',
 				helperText: `https://orcid.org/${this.state.orcid}`,
 				value: this.state.orcid,
-				onChange: (evt)=> { this.setState({ orcid: evt.target.value, hasChanged: true }); }
+				onChange: (evt) => {
+					this.setState({ orcid: evt.target.value, hasChanged: true });
+				},
 			},
 			{
 				label: 'Github',
 				// icon: 'bp3-icon-github',
 				helperText: `https://github.com/${this.state.github}`,
 				value: this.state.github,
-				onChange: (evt)=> { this.setState({ github: evt.target.value, hasChanged: true }); }
+				onChange: (evt) => {
+					this.setState({ github: evt.target.value, hasChanged: true });
+				},
 			},
 			{
 				label: 'Twitter',
 				// icon: 'bp3-icon-twitter',
 				helperText: `https://twitter.com/${this.state.twitter}`,
 				value: this.state.twitter,
-				onChange: (evt)=> { this.setState({ twitter: evt.target.value, hasChanged: true }); }
+				onChange: (evt) => {
+					this.setState({ twitter: evt.target.value, hasChanged: true });
+				},
 			},
 			{
 				label: 'Facebook',
 				// icon: 'bp3-icon-facebook',
 				helperText: `https://facebook.com/${this.state.facebook}`,
 				value: this.state.facebook,
-				onChange: (evt)=> { this.setState({ facebook: evt.target.value, hasChanged: true }); }
+				onChange: (evt) => {
+					this.setState({ facebook: evt.target.value, hasChanged: true });
+				},
 			},
 			{
 				label: 'Google Scholar',
 				// icon: 'bp3-icon-google-scholar',
 				helperText: `https://scholar.google.com/citations?user=${this.state.googleScholar}`,
 				value: this.state.googleScholar,
-				onChange: (evt)=> { this.setState({ googleScholar: evt.target.value, hasChanged: true }); }
+				onChange: (evt) => {
+					this.setState({ googleScholar: evt.target.value, hasChanged: true });
+				},
 			},
 		];
 		return (
@@ -181,23 +200,26 @@ class UserEdit extends Component {
 									onChange={this.onLastNameChange}
 								/>
 								<InputField label="Password">
-									{this.state.showResetConfirmation
-										? (
-											<Callout icon="tick" intent={Intent.SUCCESS}>
-												Password reset requested. Check your email for reset instructions.
-											</Callout>
-										)
-										: (
-											<InputField error={this.state.postResetError && 'Error Requesting Reset'}>
-												<Button
-													text="Request Password Reset"
-													onClick={this.handlePasswordReset}
-													disabled={this.state.showResetConfirmation}
-													loading={this.state.postResetIsLoading}
-												/>
-											</InputField>
-										)
-									}
+									{this.state.showResetConfirmation ? (
+										<Callout icon="tick" intent={Intent.SUCCESS}>
+											Password reset requested. Check your email for reset
+											instructions.
+										</Callout>
+									) : (
+										<InputField
+											error={
+												this.state.postResetError &&
+												'Error Requesting Reset'
+											}
+										>
+											<Button
+												text="Request Password Reset"
+												onClick={this.handlePasswordReset}
+												disabled={this.state.showResetConfirmation}
+												loading={this.state.postResetIsLoading}
+											/>
+										</InputField>
+									)}
 								</InputField>
 								<ImageUpload
 									htmlFor="avatar-upload"
@@ -210,7 +232,9 @@ class UserEdit extends Component {
 									label="Title"
 									value={this.state.title}
 									onChange={this.onTitleChange}
-									helperText={`${this.state.title.length}/70 characters. Displayed by your name on discussions.`}
+									helperText={`${
+										this.state.title.length
+									}/70 characters. Displayed by your name on discussions.`}
 								/>
 								<InputField
 									label="Bio"
@@ -219,7 +243,7 @@ class UserEdit extends Component {
 									onChange={this.onBioChange}
 									helperText={`${this.state.bio.length}/280 characters`}
 								/>
-								{expandables.map((item)=> {
+								{expandables.map((item) => {
 									return (
 										<InputField
 											key={`input-field-${item.label}`}
@@ -232,13 +256,19 @@ class UserEdit extends Component {
 								})}
 
 								<div className="buttons">
-									<InputField error={this.state.putUserError && 'Error Saving Details'}>
+									<InputField
+										error={this.state.putUserError && 'Error Saving Details'}
+									>
 										<Button
 											type="submit"
 											intent={Intent.PRIMARY}
 											text="Save Details"
 											onClick={this.handleSaveDetails}
-											disabled={!this.state.firstName || !this.state.lastName || !this.state.hasChanged}
+											disabled={
+												!this.state.firstName ||
+												!this.state.lastName ||
+												!this.state.hasChanged
+											}
 											loading={this.state.putUserIsLoading}
 										/>
 									</InputField>

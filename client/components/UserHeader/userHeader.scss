@@ -2,7 +2,7 @@
 	&:after {
 		display: table;
 		clear: both;
-		content: "";
+		content: '';
 	}
 	.avatar-wrapper {
 		float: right;
@@ -30,7 +30,6 @@
 			margin: 20px 0px 0px -10px;
 		}
 	}
-	
 }
 
 @media only screen and (max-width: 720px) {

@@ -47,15 +47,15 @@ class CommunityCreate extends Component {
 				smallHeaderLogo: this.state.largeHeaderLogo,
 				largeHeaderLogo: this.state.largeHeaderLogo,
 				accentColor: this.state.accentColor,
+			}),
+		})
+			.then(() => {
+				this.setState({ createIsLoading: false, createError: undefined });
+				window.location.href = `https://${this.state.subdomain}.pubpub.org`;
 			})
-		})
-		.then(()=> {
-			this.setState({ createIsLoading: false, createError: undefined });
-			window.location.href = `https://${this.state.subdomain}.pubpub.org`;
-		})
-		.catch((err)=> {
-			this.setState({ createIsLoading: false, createError: err });
-		});
+			.catch((err) => {
+				this.setState({ createIsLoading: false, createError: err });
+			});
 	}
 
 	onSubdomainChange(evt) {
@@ -92,14 +92,21 @@ class CommunityCreate extends Component {
 					<div className="container small">
 						<div className="row">
 							<div className="col-12">
-								{!this.props.loginData.id &&
+								{!this.props.loginData.id && (
 									<NonIdealState
 										title="To create your community, create an account or login."
 										visual="error"
-										action={<a href="/login?redirect=/community/create" className="bp3-button">Login or Signup</a>}
+										action={
+											<a
+												href="/login?redirect=/community/create"
+												className="bp3-button"
+											>
+												Login or Signup
+											</a>
+										}
 									/>
-								}
-								{this.props.loginData.id &&
+								)}
+								{this.props.loginData.id && (
 									<div>
 										<h1>Create Community</h1>
 										<form onSubmit={this.onCreateSubmit}>
@@ -108,7 +115,8 @@ class CommunityCreate extends Component {
 												isRequired={true}
 												value={this.state.subdomain}
 												onChange={this.onSubdomainChange}
-												helperText={`https://${this.state.subdomain || '[URL]'}.pubpub.org`}
+												helperText={`https://${this.state.subdomain ||
+													'[URL]'}.pubpub.org`}
 											/>
 											<InputField
 												label="Title"
@@ -121,7 +129,9 @@ class CommunityCreate extends Component {
 												isTextarea={true}
 												value={this.state.description}
 												onChange={this.onDescriptionChange}
-												helperText={`${this.state.description.length}/280 characters`}
+												helperText={`${
+													this.state.description.length
+												}/280 characters`}
 											/>
 											<ImageUpload
 												htmlFor="large-header-logo-upload"
@@ -137,8 +147,19 @@ class CommunityCreate extends Component {
 												isRequired={true}
 												value={this.state.accentColor}
 												onChange={this.onAccentColorChange}
-												error={!colorRegex.test(this.state.accentColor) ? 'Must be a hex format color: e.g. #123456' : ''}
-												helperText={<div className="color-swatch" style={{ backgroundColor: this.state.accentColor }} />}
+												error={
+													!colorRegex.test(this.state.accentColor)
+														? 'Must be a hex format color: e.g. #123456'
+														: ''
+												}
+												helperText={
+													<div
+														className="color-swatch"
+														style={{
+															backgroundColor: this.state.accentColor,
+														}}
+													/>
+												}
 											/>
 											<InputField error={this.state.createError}>
 												<Button
@@ -147,13 +168,17 @@ class CommunityCreate extends Component {
 													className="bp3-button bp3-intent-primary create-account-button"
 													onClick={this.onCreateSubmit}
 													text="Create Community"
-													disabled={!this.state.subdomain || !this.state.title || !colorRegex.test(this.state.accentColor)}
+													disabled={
+														!this.state.subdomain ||
+														!this.state.title ||
+														!colorRegex.test(this.state.accentColor)
+													}
 													loading={this.state.createIsLoading}
 												/>
 											</InputField>
 										</form>
 									</div>
-								}
+								)}
 							</div>
 						</div>
 					</div>

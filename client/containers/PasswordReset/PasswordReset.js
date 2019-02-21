@@ -46,14 +46,14 @@ class PasswordReset extends Component {
 			method: 'POST',
 			body: JSON.stringify({
 				email: this.state.email.toLowerCase(),
+			}),
+		})
+			.then(() => {
+				this.setState({ postIsLoading: false, showConfirmation: true });
 			})
-		})
-		.then(()=> {
-			this.setState({ postIsLoading: false, showConfirmation: true });
-		})
-		.catch(()=> {
-			this.setState({ postIsLoading: false, postError: 'Error' });
-		});
+			.catch(() => {
+				this.setState({ postIsLoading: false, postError: 'Error' });
+			});
 	}
 
 	handlePutPasswordReset(evt) {
@@ -66,14 +66,14 @@ class PasswordReset extends Component {
 				password: SHA3(this.state.password).toString(encHex),
 				slug: this.props.locationData.params.slug,
 				resetHash: this.props.locationData.params.resetHash,
+			}),
+		})
+			.then(() => {
+				this.setState({ putIsLoading: false, showConfirmation: true });
 			})
-		})
-		.then(()=> {
-			this.setState({ putIsLoading: false, showConfirmation: true });
-		})
-		.catch(()=> {
-			this.setState({ putIsLoading: false, putError: 'Error' });
-		});
+			.catch(() => {
+				this.setState({ putIsLoading: false, putError: 'Error' });
+			});
 	}
 
 	render() {
@@ -90,17 +90,20 @@ class PasswordReset extends Component {
 					<div className="container small">
 						<div className="row">
 							<div className="col-12">
-								{!this.state.showConfirmation && !resetHash &&
+								{!this.state.showConfirmation && !resetHash && (
 									<h1>Reset Password</h1>
-								}
-								{!this.state.showConfirmation && !!resetHash &&
+								)}
+								{!this.state.showConfirmation && !!resetHash && (
 									<h1>Set Password</h1>
-								}
+								)}
 
 								{/* Show form to submit email */}
-								{!resetHash && !this.state.showConfirmation &&
+								{!resetHash && !this.state.showConfirmation && (
 									<form onSubmit={this.handlePostPasswordReset}>
-										<p>Enter your email and a link to reset your password will be sent to you.</p>
+										<p>
+											Enter your email and a link to reset your password will
+											be sent to you.
+										</p>
 										<InputField
 											label="Email"
 											type="email"
@@ -108,7 +111,11 @@ class PasswordReset extends Component {
 											value={this.state.email}
 											onChange={this.onEmailChange}
 										/>
-										<InputField error={this.state.postError && 'Error Resetting Password'}>
+										<InputField
+											error={
+												this.state.postError && 'Error Resetting Password'
+											}
+										>
 											<Button
 												name="create"
 												type="submit"
@@ -120,62 +127,72 @@ class PasswordReset extends Component {
 											/>
 										</InputField>
 									</form>
-								}
+								)}
 
 								{/* Show password reset request confirmation, with directions to check email  */}
-								{!resetHash && this.state.showConfirmation &&
+								{!resetHash && this.state.showConfirmation && (
 									<NonIdealState
 										description="Check your inbox for an email with a reset link"
 										title="Reset Password Email Sent"
 										visual="envelope"
 									/>
-								}
+								)}
 
 								{/* Show Error message if invalid hash */}
-								{resetHash && !this.props.passwordResetData.hashIsValid &&
+								{resetHash && !this.props.passwordResetData.hashIsValid && (
 									<div className="bp3-callout bp3-intent-danger">
-										Invalid hash. Try <a href="/password-reset">resetting your password</a> again.
+										Invalid hash. Try{' '}
+										<a href="/password-reset">resetting your password</a> again.
 									</div>
-								}
+								)}
 
 								{/* Show form to submit new password */}
-								{resetHash && this.props.passwordResetData.hashIsValid && !this.state.showConfirmation &&
-									<form onSubmit={this.handlePutPasswordReset}>
-										<InputField
-											label="Password"
-											type="password"
-											value={this.state.password}
-											onChange={this.onPasswordChange}
-										/>
-										<InputField error={this.state.putError && 'Error Resetting Password'}>
-											<Button
-												name="create"
-												type="submit"
-												className="bp3-button bp3-intent-primary create-account-button"
-												onClick={this.handlePutPasswordReset}
-												text="Set New Password"
-												disabled={!this.state.password}
-												loading={this.state.putIsLoading}
+								{resetHash &&
+									this.props.passwordResetData.hashIsValid &&
+									!this.state.showConfirmation && (
+										<form onSubmit={this.handlePutPasswordReset}>
+											<InputField
+												label="Password"
+												type="password"
+												value={this.state.password}
+												onChange={this.onPasswordChange}
 											/>
-										</InputField>
-									</form>
-								}
+											<InputField
+												error={
+													this.state.putError &&
+													'Error Resetting Password'
+												}
+											>
+												<Button
+													name="create"
+													type="submit"
+													className="bp3-button bp3-intent-primary create-account-button"
+													onClick={this.handlePutPasswordReset}
+													text="Set New Password"
+													disabled={!this.state.password}
+													loading={this.state.putIsLoading}
+												/>
+											</InputField>
+										</form>
+									)}
 
 								{/* Show confirmation of password reset. Link to Login */}
-								{resetHash && this.props.passwordResetData.hashIsValid && this.state.showConfirmation &&
-									<NonIdealState
-										description="Your password has been successfully changed."
-										title="Reset Password Successful"
-										visual="tick"
-										action={
-											<AnchorButton
-												href="/login"
-												className="bp3-intent-primary bp3-large"
-												text="Login with new password"
-											/>
-										}
-									/>
-								}
+								{resetHash &&
+									this.props.passwordResetData.hashIsValid &&
+									this.state.showConfirmation && (
+										<NonIdealState
+											description="Your password has been successfully changed."
+											title="Reset Password Successful"
+											visual="tick"
+											action={
+												<AnchorButton
+													href="/login"
+													className="bp3-intent-primary bp3-large"
+													text="Login with new password"
+												/>
+											}
+										/>
+									)}
 							</div>
 						</div>
 					</div>

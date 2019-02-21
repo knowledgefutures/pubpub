@@ -17,24 +17,26 @@ const callback = (error, response, body) => {
 		const member = response.body.id;
 		const tagsSent = JSON.parse(response.request.body).tags;
 		const tagsReceived = response.body.tags;
-		if (!tagsSent.every(val => tagsReceived.includes(val))) {
+		if (!tagsSent.every((val) => tagsReceived.includes(val))) {
 			const tagsArr = [];
-			tagsSent.map(val => tagsArr.push({ name: val, status: 'active' }));
+			tagsSent.map((val) => tagsArr.push({ name: val, status: 'active' }));
 			const options = {
 				method: 'POST',
 				auth: {
 					user: 'pubpub-backend',
-					password: key
+					password: key,
 				},
 				uri: `${base}/${list}/members/${member}/tags`,
 				body: {
-					tags: tagsArr
+					tags: tagsArr,
 				},
-				json: true
+				json: true,
 			};
-			request(options).then().catch((err) => {
-				console.warn(err);
-			});
+			request(options)
+				.then()
+				.catch((err) => {
+					console.warn(err);
+				});
 		}
 	}
 	return false;
@@ -46,15 +48,15 @@ export const subscribeUser = (email, list, tags) => {
 		method: 'PUT',
 		auth: {
 			user: 'pubpub-backend',
-			password: key
+			password: key,
 		},
 		uri: `${base}/${list}/members/${subHash}`,
 		body: {
 			email_address: email,
 			status_if_new: 'pending',
-			tags: tags
+			tags: tags,
 		},
-		json: true
+		json: true,
 	};
 	return request(options, callback);
 };
@@ -64,14 +66,14 @@ export const getListGrowth = (list) => {
 		method: 'GET',
 		auth: {
 			user: 'pubpub-backend',
-			password: key
+			password: key,
 		},
 		uri: `${base}/${list}/growth-history`,
 		qs: {
 			sort_field: 'month',
-			sort_dir: 'asc'
+			sort_dir: 'asc',
 		},
-		json: true
+		json: true,
 	};
 	return request(options);
 };

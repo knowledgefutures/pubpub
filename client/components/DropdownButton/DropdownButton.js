@@ -6,10 +6,7 @@ import Icon from 'components/Icon/Icon';
 require('./dropdownButton.scss');
 
 const propTypes = {
-	label: PropTypes.oneOfType([
-		PropTypes.string,
-		PropTypes.node
-	]),
+	label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 	icon: PropTypes.string,
 	isRightAligned: PropTypes.bool,
 	isMinimal: PropTypes.bool,
@@ -44,26 +41,29 @@ const DropdownButton = function(props) {
 			isOpen={props.isOpen}
 			usePortal={props.usePortal}
 		>
-			{props.icon && !props.label
-				? <Button
+			{props.icon && !props.label ? (
+				<Button
 					disabled={props.isDisabled}
-					className={`dropdown-button ${props.isSmall ? 'bp3-small' : ''} ${props.isMinimal ? 'bp3-minimal' : ''}`}
+					className={`dropdown-button ${props.isSmall ? 'bp3-small' : ''} ${
+						props.isMinimal ? 'bp3-minimal' : ''
+					}`}
 					icon={<Icon icon={props.icon} />}
 				/>
-				: <Button
+			) : (
+				<Button
 					disabled={props.isDisabled}
-					className={`dropdown-button ${props.isSmall ? 'bp3-small' : ''} ${props.isMinimal ? 'bp3-minimal' : ''}`}
+					className={`dropdown-button ${props.isSmall ? 'bp3-small' : ''} ${
+						props.isMinimal ? 'bp3-minimal' : ''
+					}`}
 					text={
 						<span>
-							{props.icon &&
-								<Icon icon={props.icon} />
-							}
+							{props.icon && <Icon icon={props.icon} />}
 							{props.label.trim ? props.label.trim() : props.label}
 							<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 						</span>
 					}
 				/>
-			}
+			)}
 		</Popover>
 	);
 };

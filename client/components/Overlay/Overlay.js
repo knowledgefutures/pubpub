@@ -27,7 +27,7 @@ const Overlay = function(props) {
 		>
 			<style>
 				{`
-					@media only screen and (min-width: ${props.maxWidth / 0.90}px) {
+					@media only screen and (min-width: ${props.maxWidth / 0.9}px) {
 						.overlay-wrapper {
 							left: calc(50vw - ${props.maxWidth / 2}px);
 							width: ${props.maxWidth}px; // Effectively it's max width
@@ -35,9 +35,7 @@ const Overlay = function(props) {
 					}
 				`}
 			</style>
-			<div className="overlay-wrapper bp3-card bp3-elevation-2">
-				{props.children}
-			</div>
+			<div className="overlay-wrapper bp3-card bp3-elevation-2">{props.children}</div>
 		</BlueprintOverlay>
 	);
 };

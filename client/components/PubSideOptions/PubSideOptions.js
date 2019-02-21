@@ -38,30 +38,32 @@ class PubSideOptions extends Component {
 	}
 
 	handleScroll() {
-		const topOffset = this.props.pubData.isDraft
-			? 73 /* Height of draftHeaderBar */
-			: 0;
+		const topOffset = this.props.pubData.isDraft ? 73 /* Height of draftHeaderBar */ : 0;
 		if (this.wrapperRef.current) {
 			if (!this.state.isPositionFixed) {
 				const isPastTop = this.wrapperRef.current.getBoundingClientRect().top < topOffset;
-				const isBeforeBottom = this.wrapperRef.current.parentNode.getBoundingClientRect().bottom > 200;
+				const isBeforeBottom =
+					this.wrapperRef.current.parentNode.getBoundingClientRect().bottom > 200;
 				if (isPastTop && isBeforeBottom) {
-					this.setState(()=> { return { isPositionFixed: true }; });
+					this.setState(() => {
+						return { isPositionFixed: true };
+					});
 				}
 			} else {
 				const isBeforeTop = this.wrapperRef.current.getBoundingClientRect().top > topOffset;
-				const isAfterBottom = this.wrapperRef.current.parentNode.getBoundingClientRect().bottom < 200;
+				const isAfterBottom =
+					this.wrapperRef.current.parentNode.getBoundingClientRect().bottom < 200;
 				if (isBeforeTop || isAfterBottom) {
-					this.setState(()=> { return { isPositionFixed: false }; });
+					this.setState(() => {
+						return { isPositionFixed: false };
+					});
 				}
 			}
 		}
 	}
 
 	render() {
-		const topOffset = this.props.pubData.isDraft
-			? 73 /* Height of draftHeaderBar */
-			: 0;
+		const topOffset = this.props.pubData.isDraft ? 73 /* Height of draftHeaderBar */ : 0;
 		const wrapperStyle = {
 			position: this.state.isPositionFixed ? 'fixed' : 'static',
 			paddingTop: this.state.isPositionFixed ? '1em' : '0em',
@@ -78,14 +80,17 @@ class PubSideOptions extends Component {
 		// for the previews before and after.
 		const discussionChannels = [
 			{ title: 'public' },
-			...this.props.pubData.discussionChannels.filter((channel)=> {
+			...this.props.pubData.discussionChannels.filter((channel) => {
 				return !channel.isArchived;
 			}),
 		];
 
 		const pubData = this.props.pubData;
-		const communityHostname = this.props.communityData.domain || `${this.props.communityData.subdomain}.pubpub.org`;
-		const pubLink = `https://${communityHostname}/pub/${pubData.slug}/${pubData.isDraft ? 'draft' : ''}`;
+		const communityHostname =
+			this.props.communityData.domain || `${this.props.communityData.subdomain}.pubpub.org`;
+		const pubLink = `https://${communityHostname}/pub/${pubData.slug}/${
+			pubData.isDraft ? 'draft' : ''
+		}`;
 		const pubTitle = pubData.title;
 		return (
 			<div className="pub-side-options-component" ref={this.wrapperRef}>
@@ -93,29 +98,49 @@ class PubSideOptions extends Component {
 					<div className="links">
 						<AnchorButton
 							className="bp3-minimal"
-							onClick={()=> { this.props.setOptionsMode('cite'); }}
+							onClick={() => {
+								this.props.setOptionsMode('cite');
+							}}
 							text="Cite"
 						/>
 						<span>·</span>
 						<AnchorButton
 							className="bp3-minimal"
-							onClick={()=> { this.props.setOptionsMode('export'); }}
+							onClick={() => {
+								this.props.setOptionsMode('export');
+							}}
 							text="Export"
 						/>
 						<span>·</span>
-						<a href={`https://www.facebook.com/sharer.php?u=${pubLink}`} rel="noopener noreferrer" target="_blank">
+						<a
+							href={`https://www.facebook.com/sharer.php?u=${pubLink}`}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
 							<Icon icon="facebook" />
 						</a>
 						<span>·</span>
-						<a href={`https://twitter.com/intent/tweet?url=${pubLink}&text=${pubTitle}`} rel="noopener noreferrer" target="_blank">
+						<a
+							href={`https://twitter.com/intent/tweet?url=${pubLink}&text=${pubTitle}`}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
 							<Icon icon="twitter" />
 						</a>
 						<span>·</span>
-						<a href={`https://reddit.com/submit?url=${pubLink}&title=${pubTitle}`} rel="noopener noreferrer" target="_blank">
+						<a
+							href={`https://reddit.com/submit?url=${pubLink}&title=${pubTitle}`}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
 							<Icon icon="reddit" />
 						</a>
 						<span>·</span>
-						<a href={`https://www.linkedin.com/shareArticle?url=${pubLink}&title=${pubTitle}`} rel="noopener noreferrer" target="_blank">
+						<a
+							href={`https://www.linkedin.com/shareArticle?url=${pubLink}&title=${pubTitle}`}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
 							<Icon icon="linkedin" />
 						</a>
 					</div>
@@ -127,12 +152,12 @@ class PubSideOptions extends Component {
 							isSmall={true}
 						>
 							<ul className="channel-permissions-dropdown bp3-menu">
-								{discussionChannels.map((channel)=> {
+								{discussionChannels.map((channel) => {
 									return (
 										<li key={`channel-option-${channel.title}`}>
 											<button
 												className="bp3-menu-item bp3-popover-dismiss"
-												onClick={()=> {
+												onClick={() => {
 													this.props.setDiscussionChannel(channel.title);
 												}}
 												type="button"
@@ -147,7 +172,7 @@ class PubSideOptions extends Component {
 									<Button
 										minimal={true}
 										text="Manage Discussion Channels"
-										onClick={()=> {
+										onClick={() => {
 											this.props.setOptionsMode('discussions');
 										}}
 									/>

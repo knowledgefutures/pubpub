@@ -7,11 +7,10 @@ const propTypes = {
 	onChange: PropTypes.func,
 	isDisabled: PropTypes.bool,
 	hideNone: PropTypes.bool,
-
 };
 const defaultProps = {
 	value: 'none',
-	onChange: ()=>{},
+	onChange: () => {},
 	isDisabled: false,
 	hideNone: false,
 };
@@ -23,26 +22,34 @@ const PubOptionsSharingDropdownPermissions = function(props) {
 			value: 'none',
 			title: 'None',
 			// icon: 'bp3-icon-lock2',
-			onClick: ()=>{ props.onChange('none'); },
+			onClick: () => {
+				props.onChange('none');
+			},
 			description: 'Cannot view the working draft or discussions.',
 		},
 		view: {
 			value: 'view',
 			title: 'View',
 			// icon: 'bp3-icon-eye-open',
-			onClick: ()=>{ props.onChange('view'); },
+			onClick: () => {
+				props.onChange('view');
+			},
 			description: 'Can participate in discussions and view updates to the working draft.',
 		},
 		edit: {
 			value: 'edit',
 			title: 'Edit',
 			// icon: 'bp3-icon-edit2',
-			onClick: ()=>{ props.onChange('edit'); },
+			onClick: () => {
+				props.onChange('edit');
+			},
 			description: 'Can directly edit the working draft and participate in discussions.',
 		},
 	};
 
-	if (props.hideNone) { delete items.none; }
+	if (props.hideNone) {
+		delete items.none;
+	}
 	const selectedKey = props.value === 'none' && props.hideNone ? 'view' : props.value;
 	return (
 		<div className="pub-options-sharing-dropdown-permissions-component">
@@ -54,7 +61,7 @@ const PubOptionsSharingDropdownPermissions = function(props) {
 				isSmall={true}
 			>
 				<ul className="pub-options-sharing-dropdown-permissions-component pub-options-dropdown bp3-menu">
-					{Object.keys(items).map((key)=> {
+					{Object.keys(items).map((key) => {
 						const item = items[key];
 						return (
 							<li key={`${item.value}-option-${keySuffix}`}>

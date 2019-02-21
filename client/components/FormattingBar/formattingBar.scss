@@ -2,10 +2,10 @@
 	display: flex;
 	max-width: 100%;
 	.bp3-button {
-	    min-width: auto;
-	    min-height: auto;
-	    padding: 5px 14px;
-	    margin: 0em 1px;
+		min-width: auto;
+		min-height: auto;
+		padding: 5px 14px;
+		margin: 0em 1px;
 	}
 	.dropdown-button {
 		padding: 5px;
@@ -17,7 +17,7 @@
 		width: 1px;
 		height: 26px;
 		vertical-align: middle;
-		background: #CCC;
+		background: #ccc;
 		margin: 0px 3px;
 	}
 	.link-formatting {
@@ -28,7 +28,7 @@
 		display: none;
 	}
 	&.small {
-		.bp3-button  {
+		.bp3-button {
 			padding: 5px 10px;
 		}
 		.bp3-button-text {

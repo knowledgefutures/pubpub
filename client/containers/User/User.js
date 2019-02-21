@@ -20,25 +20,30 @@ const propTypes = {
 class User extends Component {
 	render() {
 		const userData = this.props.userData;
-		const pubs = userData.attributions.map((attribution)=> {
-			return attribution.pub;
-		}).filter((pub)=> {
-			return pub;
-		}) || [];
+		const pubs =
+			userData.attributions
+				.map((attribution) => {
+					return attribution.pub;
+				})
+				.filter((pub) => {
+					return pub;
+				}) || [];
 		const loginData = this.props.loginData;
 		const selfProfile = loginData.id && userData.id === loginData.id;
 		const mode = this.props.locationData.params.mode;
 		const localCommunityId = this.props.communityData.id;
-		const communityPubs = pubs.filter((pub)=> {
+		const communityPubs = pubs.filter((pub) => {
 			return !localCommunityId || pub.communityId === localCommunityId;
 		});
-		const externalPubs = pubs.filter((pub)=> {
+		const externalPubs = pubs.filter((pub) => {
 			return localCommunityId && pub.communityId !== localCommunityId;
 		});
-		const authoredPubs = communityPubs.filter((pub)=> {
+		const authoredPubs = communityPubs.filter((pub) => {
 			const collaborators = pub.attributions || [];
-			const isAuthor = collaborators.reduce((prev, curr)=> {
-				if (curr.user.id === loginData.id && curr.isAuthor) { return true; }
+			const isAuthor = collaborators.reduce((prev, curr) => {
+				if (curr.user.id === loginData.id && curr.isAuthor) {
+					return true;
+				}
 				return prev;
 			}, false);
 			return isAuthor;
@@ -53,10 +58,8 @@ class User extends Component {
 					locationData={this.props.locationData}
 					hideNav={this.props.locationData.isBasePubPub}
 				>
-					{mode === 'edit' &&
-						<UserEdit userData={userData} />
-					}
-					{mode !== 'edit' &&
+					{mode === 'edit' && <UserEdit userData={userData} />}
+					{mode !== 'edit' && (
 						<div>
 							<div className="container narrow">
 								<div className="row">
@@ -78,46 +81,68 @@ class User extends Component {
 									</div>
 								</div>
 							</div>
-							{!!externalPubs.length &&
+							{!!externalPubs.length && (
 								<div className="container narrow nav">
 									<div className="row">
 										<div className="col-12">
 											<div className="bp3-callout external-pubs-wrapper">
-												<a href={`https://www.pubpub.org/user/${userData.slug}`} className="bp3-button bp3-intent-primary">Go to Full Profile</a>
-												<h5>{externalPubs.length} pub{externalPubs.length === 1 ? '' : 's'} in other communities.</h5>
-												<div>{userData.firstName} has published in other PubPub communities. Click to go to their full profile.</div>
+												<a
+													href={`https://www.pubpub.org/user/${
+														userData.slug
+													}`}
+													className="bp3-button bp3-intent-primary"
+												>
+													Go to Full Profile
+												</a>
+												<h5>
+													{externalPubs.length} pub
+													{externalPubs.length === 1 ? '' : 's'} in other
+													communities.
+												</h5>
+												<div>
+													{userData.firstName} has published in other
+													PubPub communities. Click to go to their full
+													profile.
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							}
+							)}
 							<div className="container narrow content">
-								{pubsToRender.map((pub)=> {
+								{pubsToRender.map((pub) => {
 									return (
 										<div key={`pub-${pub.id}`} className="row">
 											<div className="col-12">
 												<PubPreview
 													pubData={pub}
-													communityData={localCommunityId ? undefined : pub.community}
+													communityData={
+														localCommunityId ? undefined : pub.community
+													}
 													size="medium"
 												/>
 											</div>
 										</div>
 									);
 								})}
-								{!pubsToRender.length &&
+								{!pubsToRender.length && (
 									<NonIdealState
 										visual="widget"
 										title="No Pubs"
-										action={selfProfile && !this.props.locationData.isBasePubPub
-											? <a href="/pub/create" className="bp3-button">Create New pub</a>
-											: undefined
+										action={
+											selfProfile && !this.props.locationData.isBasePubPub ? (
+												<a href="/pub/create" className="bp3-button">
+													Create New pub
+												</a>
+											) : (
+												undefined
+											)
 										}
 									/>
-								}
+								)}
 							</div>
 						</div>
-					}
+					)}
 				</PageWrapper>
 			</div>
 		);

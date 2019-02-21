@@ -14,7 +14,7 @@
 			}
 		}
 		&.active {
-			background-color: #DDD;
+			background-color: #ddd;
 		}
 		.drag {
 			padding-right: 10px;
@@ -39,7 +39,8 @@
 				}
 			}
 		}
-		.bp3-icon, .bp3-icon-tick {
+		.bp3-icon,
+		.bp3-icon-tick {
 			margin-left: 10px;
 		}
 	}

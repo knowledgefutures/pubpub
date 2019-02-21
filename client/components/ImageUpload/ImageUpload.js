@@ -31,7 +31,7 @@ const defaultProps = {
 	isRequired: false,
 	helperText: undefined,
 	htmlFor: String(new Date().getTime()),
-	onNewImage: ()=> {},
+	onNewImage: () => {},
 	canClear: false,
 	useAccentBackground: false,
 };
@@ -71,7 +71,7 @@ class ImageUpload extends Component {
 
 	setBlob(image) {
 		const reader = new FileReader();
-		reader.onload = (imageBlob)=> {
+		reader.onload = (imageBlob) => {
 			this.setState({ imageBlob: imageBlob.target.result });
 		};
 		reader.readAsDataURL(image);
@@ -83,7 +83,7 @@ class ImageUpload extends Component {
 		}
 
 		if (evt.target.files.length && !this.props.useCrop) {
-			s3Upload(evt.target.files[0], ()=>{}, this.onUploadFinish, 0);
+			s3Upload(evt.target.files[0], () => {}, this.onUploadFinish, 0);
 			this.setState({
 				uploading: true,
 			});
@@ -103,7 +103,7 @@ class ImageUpload extends Component {
 		this.setState({
 			imageFile: undefined,
 			imageBlob: undefined,
-			uploading: false
+			uploading: false,
 		});
 		this.props.onNewImage(null);
 	}
@@ -121,32 +121,34 @@ class ImageUpload extends Component {
 			<div className="image-upload-component">
 				<label htmlFor={`input-${this.props.htmlFor}`}>
 					{this.props.label}
-					{this.props.isRequired &&
+					{this.props.isRequired && (
 						<span className="bp3-text-muted required-text"> (required)</span>
-					}
+					)}
 					<br />
 
-					{(this.state.uploading || !this.state.imageBlob) &&
+					{(this.state.uploading || !this.state.imageBlob) && (
 						<AnchorButton
 							className="upload-button bp3-minimal"
 							style={buttonStyle}
 							loading={this.state.uploading}
 							icon="media"
 						/>
-					}
+					)}
 
-					{!this.state.uploading && this.state.imageBlob &&
-						<div className={`image-wrapper ${this.props.useAccentBackground ? 'accent-background' : ''}`} style={imageStyle} />
-					}
+					{!this.state.uploading && this.state.imageBlob && (
+						<div
+							className={`image-wrapper ${
+								this.props.useAccentBackground ? 'accent-background' : ''
+							}`}
+							style={imageStyle}
+						/>
+					)}
 
 					<div className="image-options">
-						{!this.state.uploading && this.state.imageBlob &&
-							<AnchorButton
-								className="bp3-minimal"
-								icon={<Icon icon="edit2" />}
-							/>
-						}
-						{!this.state.uploading && this.state.imageBlob &&
+						{!this.state.uploading && this.state.imageBlob && (
+							<AnchorButton className="bp3-minimal" icon={<Icon icon="edit2" />} />
+						)}
+						{!this.state.uploading && this.state.imageBlob && (
 							<AnchorButton
 								className="bp3-minimal"
 								href={this.state.imageBlob}
@@ -154,14 +156,14 @@ class ImageUpload extends Component {
 								icon="download"
 								download
 							/>
-						}
-						{!this.state.uploading && this.state.imageBlob && this.props.canClear &&
+						)}
+						{!this.state.uploading && this.state.imageBlob && this.props.canClear && (
 							<AnchorButton
 								className="bp3-minimal bp3-intent-danger"
 								icon="trash"
 								onClick={this.clearImage}
 							/>
-						}
+						)}
 					</div>
 					<input
 						id={`input-${this.props.htmlFor}`}
@@ -173,7 +175,11 @@ class ImageUpload extends Component {
 				</label>
 				<div className="helper-text">{this.props.helperText}</div>
 
-				<Overlay maxWidth={300} isOpen={!!this.state.imageFile} onClose={this.cancelImageUpload}>
+				<Overlay
+					maxWidth={300}
+					isOpen={!!this.state.imageFile}
+					onClose={this.cancelImageUpload}
+				>
 					<ImageCropper
 						image={this.state.imageFile}
 						onCancel={this.cancelImageUpload}

@@ -30,15 +30,15 @@ class LayoutBanner extends Component {
 			body: JSON.stringify({
 				communityId: this.props.communityData.id,
 				defaultTagIds: this.props.content.defaultTagIds,
+			}),
+		})
+			.then((result) => {
+				window.location.href = result;
 			})
-		})
-		.then((result)=> {
-			window.location.href = result;
-		})
-		.catch((err)=> {
-			console.error(err);
-			this.setState({ isLoading: false });
-		});
+			.catch((err) => {
+				console.error(err);
+				this.setState({ isLoading: false });
+			});
 	}
 
 	render() {
@@ -61,42 +61,59 @@ class LayoutBanner extends Component {
 			maxWidth: 'none',
 		};
 
-		const buttonType = this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
-		const buttonText = (buttonType === 'create-pub' && !this.props.loginData.id && 'Login to Create Pub')
-			|| this.props.content.buttonText
-			|| (buttonType === 'create-pub' && this.props.loginData.id && 'Create Pub')
-			|| (buttonType === 'signup' && 'Create an Account')
-			|| (buttonType === 'link' && 'Go to Link');
-		const buttonUrl = (buttonType === 'link' && this.props.content.buttonUrl)
-			|| (buttonType === 'create-pub' && !this.props.loginData.id && `/login?redirect=${this.props.locationData.path}`)
-			|| (buttonType === 'signup' && '/signup');
+		const buttonType =
+			this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
+		const buttonText =
+			(buttonType === 'create-pub' && !this.props.loginData.id && 'Login to Create Pub') ||
+			this.props.content.buttonText ||
+			(buttonType === 'create-pub' && this.props.loginData.id && 'Create Pub') ||
+			(buttonType === 'signup' && 'Create an Account') ||
+			(buttonType === 'link' && 'Go to Link');
+		const buttonUrl =
+			(buttonType === 'link' && this.props.content.buttonUrl) ||
+			(buttonType === 'create-pub' &&
+				!this.props.loginData.id &&
+				`/login?redirect=${this.props.locationData.path}`) ||
+			(buttonType === 'signup' && '/signup');
 
 		return (
 			<div className="layout-banner-component">
-				<div className="block-content" style={this.props.content.backgroundSize === 'full' ? backgroundStyle : undefined}>
-					{this.props.content.backgroundImage && this.props.content.backgroundSize === 'full' &&
-						<div className="dim" />
+				<div
+					className="block-content"
+					style={
+						this.props.content.backgroundSize === 'full' ? backgroundStyle : undefined
 					}
+				>
+					{this.props.content.backgroundImage &&
+						this.props.content.backgroundSize === 'full' && <div className="dim" />}
 					<div className="container">
-						<div className="row" style={this.props.content.backgroundSize === 'standard' ? backgroundStyle : undefined}>
-							{this.props.content.backgroundImage && this.props.content.backgroundSize === 'standard' &&
-								<div className="dim" />
+						<div
+							className="row"
+							style={
+								this.props.content.backgroundSize === 'standard'
+									? backgroundStyle
+									: undefined
 							}
+						>
+							{this.props.content.backgroundImage &&
+								this.props.content.backgroundSize === 'standard' && (
+									<div className="dim" />
+								)}
 							<div className="col-12" style={textStyle}>
-								{this.props.content.text &&
-									<h2>
-										{this.props.content.text}
-									</h2>
-								}
-								{this.props.content.showButton &&
+								{this.props.content.text && <h2>{this.props.content.text}</h2>}
+								{this.props.content.showButton && (
 									<AnchorButton
 										className="bp3-large"
-										onClick={buttonType === 'create-pub' && this.props.loginData.id && this.createPub}
+										onClick={
+											buttonType === 'create-pub' &&
+											this.props.loginData.id &&
+											this.createPub
+										}
 										loading={this.state.isLoading}
 										text={buttonText}
 										href={buttonUrl}
 									/>
-								}
+								)}
 							</div>
 						</div>
 					</div>

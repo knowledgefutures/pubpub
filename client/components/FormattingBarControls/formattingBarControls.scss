@@ -23,13 +23,14 @@
 	}
 	.simple-editor-wrapper {
 		border-radius: 3px;
-		box-shadow: 0 0 0 0 rgba(19,124,189,0), 0 0 0 0 rgba(19,124,189,0), inset 0 0 0 1px rgba(16,22,26,.15), inset 0 1px 1px rgba(16,22,26,.2);
+		box-shadow: 0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0),
+			inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
 		padding: 0.5em;
 		background: white;
 		width: 100%;
-	    // height: 50px;
-	    height: 45px;
-	    overflow-y: scroll;
+		// height: 50px;
+		height: 45px;
+		overflow-y: scroll;
 	}
 	textarea {
 		height: 45px;
@@ -41,7 +42,8 @@
 		}
 	}
 	&.small {
-		.block .label, .hide-on-small {
+		.block .label,
+		.hide-on-small {
 			display: none;
 		}
 		.simple-editor-wrapper {

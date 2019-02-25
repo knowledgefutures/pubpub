@@ -21,14 +21,20 @@
 		"postinstall": "npm run build-prod",
 		"start": "concurrently --kill-others \"npm run api-dev\" \"npm run build-dev\"",
 		"storybook": "start-storybook -p 9001 -c .storybook -s ./",
+		"test": "jest --silent",
 		"workers-dev": "NODE_PATH=./client WORKER=true nodemon workers/init.js --watch workers",
 		"workers-prod": "NODE_PATH=./client WORKER=true node workers/init.js"
 	},
 	"devDependencies": {
 		"@storybook/addon-options": "^4.1.11",
+		"@storybook/addon-storyshots": "^4.1.12",
 		"@storybook/react": "^4.1.11",
 		"babel-eslint": "^10.0.1",
+		"babel-plugin-macros": "^2.5.0",
+		"babel-plugin-require-context-hook": "^1.0.0",
 		"concurrently": "^4.1.0",
+		"enzyme": "^3.9.0",
+		"enzyme-adapter-react-16": "^1.9.1",
 		"eslint": "^5.14.0",
 		"eslint-config-airbnb": "^17.1.0",
 		"eslint-config-prettier": "^4.0.0",
@@ -38,8 +44,11 @@
 		"eslint-plugin-jsx-a11y": "^6.2.1",
 		"eslint-plugin-prettier": "^3.0.1",
 		"eslint-plugin-react": "^7.12.4",
+		"jest": "^24.1.0",
 		"prettier": "^1.16.4",
 		"prosemirror-dev-tools": "^2.1.1",
+		"react-test-renderer": "^16.8.2",
+		"require-context.macro": "^1.0.4",
 		"webpack-bundle-analyzer": "^3.0.4",
 		"webpack-cli": "^3.2.3"
 	},
@@ -135,5 +144,18 @@
 	},
 	"engines": {
 		"node": "10.14.1"
+	},
+	"jest": {
+		"moduleDirectories": [
+			"node_modules",
+			"<rootDir>/client"
+		],
+		"moduleNameMapper": {
+			"\\.[s]?css$": "<rootDir>/stories/styleMock.js"
+		},
+		"setupFiles": [
+			"<rootDir>/.jest/register-context.js",
+			"<rootDir>/.jest/setup-env.js"
+		]
 	}
 }

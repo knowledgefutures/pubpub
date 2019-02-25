@@ -12,7 +12,11 @@ const propTypes = {
 	locationData: PropTypes.object.isRequired,
 	setOptionsMode: PropTypes.func.isRequired,
 	// setPubData: PropTypes.func.isRequired,
-	editorView: PropTypes.object.isRequired,
+	editorView: PropTypes.object,
+};
+
+const defaultProps = {
+	editorView: null,
 };
 
 class PubOptionsSaveVersion extends Component {
@@ -141,6 +145,8 @@ class PubOptionsSaveVersion extends Component {
 		);
 	}
 }
+
+PubOptionsSaveVersion.defaultProps = defaultProps;
 
 PubOptionsSaveVersion.propTypes = propTypes;
 export default PubOptionsSaveVersion;

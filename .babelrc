@@ -3,5 +3,14 @@
   "plugins": [
     "@babel/plugin-transform-runtime",
     "@babel/plugin-transform-react-constant-elements",
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "macros",
+        "require-context-hook",
+        "@babel/plugin-proposal-class-properties"
+      ]
+    }
+  }
 }

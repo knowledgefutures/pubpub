@@ -5,6 +5,7 @@ import { Button } from '@blueprintjs/core';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import LayoutEditor from 'components/LayoutEditor/LayoutEditor';
+import SettingsSection from 'components/SettingsSection/SettingsSection';
 import { getDefaultLayout, apiFetch, slugifyString } from 'utilities';
 
 require('./dashboardPage.scss');
@@ -195,130 +196,121 @@ class DashboardPage extends Component {
 					<a href={`/${pageData.slug}`}>Go to Page</a>
 				</h1>
 
-				<div className="section-wrapper">
-					<div className="title">Details</div>
-					<div className="content">
+				<SettingsSection title="Details">
+					<InputField
+						label="Title"
+						placeholder="Enter title"
+						isRequired={true}
+						value={this.state.title}
+						onChange={this.setTitle}
+						error={undefined}
+					/>
+					<InputField
+						label="Description"
+						placeholder="Enter description"
+						isTextarea={true}
+						helperText="Used for search results and social media cards. Max 180 characters."
+						value={this.state.description}
+						onChange={this.setDescription}
+						error={undefined}
+					/>
+					<ImageUpload
+						htmlFor="dashboard-page-avatar"
+						label="Preview Image"
+						defaultImage={this.state.avatar}
+						onNewImage={this.setAvatar}
+						canClear={true}
+						helperText="Used in social media cards"
+					/>
+					{pageData.slug && (
 						<InputField
-							label="Title"
-							placeholder="Enter title"
+							label="Link"
+							placeholder="Enter link"
 							isRequired={true}
-							value={this.state.title}
-							onChange={this.setTitle}
+							helperText={`Page URL will be https://${
+								this.props.locationData.hostname
+							}/${this.state.slug}`}
+							value={this.state.slug}
+							onChange={this.setSlug}
 							error={undefined}
 						/>
-						<InputField
-							label="Description"
-							placeholder="Enter description"
-							isTextarea={true}
-							helperText="Used for search results and social media cards. Max 180 characters."
-							value={this.state.description}
-							onChange={this.setDescription}
-							error={undefined}
-						/>
-						<ImageUpload
-							htmlFor="dashboard-page-avatar"
-							label="Preview Image"
-							defaultImage={this.state.avatar}
-							onNewImage={this.setAvatar}
-							canClear={true}
-							helperText="Used in social media cards"
-						/>
-						{pageData.slug && (
-							<InputField
-								label="Link"
-								placeholder="Enter link"
-								isRequired={true}
-								helperText={`Page URL will be https://${
-									this.props.locationData.hostname
-								}/${this.state.slug}`}
-								value={this.state.slug}
-								onChange={this.setSlug}
-								error={undefined}
-							/>
-						)}
+					)}
 
-						<InputField label="Width">
+					<InputField label="Width">
+						<div className="bp3-button-group">
+							<Button
+								className={this.state.isNarrowWidth ? '' : 'bp3-active'}
+								onClick={this.setWide}
+								text="Wide"
+							/>
+							<Button
+								className={this.state.isNarrowWidth ? 'bp3-active' : ''}
+								onClick={this.setNarrow}
+								text="Narrow"
+							/>
+						</div>
+					</InputField>
+
+					{pageData.slug && (
+						<InputField label="Privacy">
 							<div className="bp3-button-group">
 								<Button
-									className={this.state.isNarrowWidth ? '' : 'bp3-active'}
-									onClick={this.setWide}
-									text="Wide"
+									className={this.state.isPublic ? 'bp3-active' : ''}
+									onClick={this.setPublic}
+									text="Public"
+									icon="globe"
 								/>
 								<Button
-									className={this.state.isNarrowWidth ? 'bp3-active' : ''}
-									onClick={this.setNarrow}
-									text="Narrow"
+									className={this.state.isPublic ? '' : 'bp3-active'}
+									onClick={this.setPrivate}
+									text="Private"
+									icon="lock"
 								/>
 							</div>
 						</InputField>
+					)}
+				</SettingsSection>
 
-						{pageData.slug && (
-							<InputField label="Privacy">
-								<div className="bp3-button-group">
-									<Button
-										className={this.state.isPublic ? 'bp3-active' : ''}
-										onClick={this.setPublic}
-										text="Public"
-										icon="globe"
-									/>
-									<Button
-										className={this.state.isPublic ? '' : 'bp3-active'}
-										onClick={this.setPrivate}
-										text="Private"
-										icon="lock"
-									/>
-								</div>
-							</InputField>
-						)}
-					</div>
-				</div>
-				<div className="section-wrapper">
-					<div className="title">Layout</div>
-					<div className="content">
-						<LayoutEditor
-							onChange={this.setLayout}
-							initialLayout={this.state.layout}
-							pubs={pageData.pubs}
-							communityData={this.props.communityData}
-						/>
-					</div>
-				</div>
+				<SettingsSection title="Layout">
+					<LayoutEditor
+						onChange={this.setLayout}
+						initialLayout={this.state.layout}
+						pubs={pageData.pubs}
+						communityData={this.props.communityData}
+					/>
+				</SettingsSection>
 				{this.props.pageData.slug && (
-					<div className="section-wrapper">
-						<div className="title">Delete</div>
-						<div className="content">
-							<div className="bp3-callout bp3-intent-danger">
-								<h5>Delete Page from Community</h5>
-								<p>Deleting a Page is permanent.</p>
-								<p>
-									This will permanantely delete <b>{pageData.title}</b>. This will
-									not delete pubs that are included in this page&apos;s layout.
-								</p>
-								<p>
-									Please type the title of the Page below to confirm your
-									intention.
-								</p>
+					<SettingsSection title="Delete">
+						<div className="bp3-callout bp3-intent-danger">
+							<h5>Delete Page from Community</h5>
+							<p>Deleting a Page is permanent.</p>
+							<p>
+								This will permanantely delete <b>{pageData.title}</b>. This will not
+								delete pubs that are included in this page&apos;s layout.
+							</p>
+							<p>
+								Please type the title of the Page below to confirm your intention.
+							</p>
 
-								<InputField
-									label={<b>Confirm Page Title</b>}
-									value={this.state.deleteString}
-									onChange={(evt) => {
-										this.setState({ deleteString: evt.target.value });
-									}}
+							<InputField
+								label={<b>Confirm Page Title</b>}
+								value={this.state.deleteString}
+								onChange={(evt) => {
+									this.setState({ deleteString: evt.target.value });
+								}}
+							/>
+							<div className="delete-button-wrapper">
+								<Button
+									type="button"
+									className="bp3-intent-danger"
+									text="Delete Page"
+									disabled={this.state.deleteString !== pageData.title}
+									loading={this.state.isLoadingDelete}
+									onClick={this.handleDelete}
 								/>
-								<div className="delete-button-wrapper">
-									<Button
-										type="button"
-										className="bp3-intent-danger"
-										text="Delete Page"
-										disabled={this.state.deleteString !== pageData.title}
-										loading={this.state.isLoadingDelete}
-										onClick={this.handleDelete}
-									/>
-								</div>
 							</div>
 						</div>
-					</div>
+					</SettingsSection>
 				)}
 			</div>
 		);

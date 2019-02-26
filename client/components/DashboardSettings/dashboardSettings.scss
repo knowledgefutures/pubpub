@@ -1,0 +1,21 @@
+.dashboard-settings-component {
+	.settings-section-component {
+		margin-top: 3em;
+	}
+	.row-wrapper {
+		display: flex;
+		.input-field-component:not(:first-of-type) {
+			margin-left: 10px;
+		}
+	}
+	.bp3-popover-target .bp3-icon {
+		opacity: 0.5;
+		margin-left: 7px;
+		font-size: 14px;
+		padding-top: 2px;
+	}
+	.disable-block {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+}

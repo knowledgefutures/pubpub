@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import DashboardSide from 'components/DashboardSide/DashboardSide';
 import DashboardCreatePage from 'components/DashboardCreatePage/DashboardCreatePage';
-import DashboardDetails from 'components/DashboardDetails/DashboardDetails';
+import DashboardSettings from 'components/DashboardSettings/DashboardSettings';
 import DashboardTeam from 'components/DashboardTeam/DashboardTeam';
 import DashboardTags from 'components/DashboardTags/DashboardTags';
 import DashboardPubs from 'components/DashboardPubs/DashboardPubs';
@@ -81,9 +81,9 @@ class Dashboard extends Component {
 														setCommunityData={this.setCommunityData}
 													/>
 												);
-											case 'details':
+											case 'settings':
 												return (
-													<DashboardDetails
+													<DashboardSettings
 														communityData={communityData}
 														setCommunityData={this.setCommunityData}
 													/>

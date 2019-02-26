@@ -12,7 +12,9 @@ const propTypes = {
 	isMinimal: PropTypes.bool,
 	isDisabled: PropTypes.bool,
 	isSmall: PropTypes.bool,
+	isLarge: PropTypes.bool,
 	isOpen: PropTypes.bool,
+	className: PropTypes.string,
 	usePortal: PropTypes.bool,
 	children: PropTypes.node,
 };
@@ -24,6 +26,8 @@ const defaultProps = {
 	isDisabled: false,
 	isRightAligned: false,
 	isSmall: false,
+	isLarge: false,
+	className: '',
 	usePortal: true,
 	isOpen: undefined,
 	children: undefined,
@@ -44,17 +48,19 @@ const DropdownButton = function(props) {
 			{props.icon && !props.label ? (
 				<Button
 					disabled={props.isDisabled}
-					className={`dropdown-button ${props.isSmall ? 'bp3-small' : ''} ${
-						props.isMinimal ? 'bp3-minimal' : ''
-					}`}
+					className={`dropdown-button ${props.className}`}
+					large={props.isLarge}
+					small={props.isSmall}
+					minimal={props.isMinimal}
 					icon={<Icon icon={props.icon} />}
 				/>
 			) : (
 				<Button
 					disabled={props.isDisabled}
-					className={`dropdown-button ${props.isSmall ? 'bp3-small' : ''} ${
-						props.isMinimal ? 'bp3-minimal' : ''
-					}`}
+					className={`dropdown-button ${props.className}`}
+					large={props.isLarge}
+					small={props.isSmall}
+					minimal={props.isMinimal}
 					text={
 						<span>
 							{props.icon && <Icon icon={props.icon} />}

@@ -60,13 +60,17 @@ app.post('/api/communities', (req, res) => {
 			if (existingCommunity) {
 				throw new Error('URL already used');
 			}
+			const description = req.body.description.substring(0, 280).replace(/\n/g, ' ') || '';
 			return Community.create({
 				id: newCommunityId,
 				subdomain: subdomain,
 				title: req.body.title,
-				description: req.body.description.substring(0, 280).replace(/\n/g, ' ') || '',
-				smallHeaderLogo: req.body.smallHeaderLogo,
-				largeHeaderLogo: req.body.largeHeaderLogo,
+				description: description,
+				headerLogo: req.body.headerLogo,
+				heroLogo: req.body.heroLogo,
+				heroTitle: req.body.heroLogo ? req.body.title : '',
+				hideHeaderLogo: true,
+				heroText: description,
 				accentColor: req.body.accentColor,
 				accentTextColor: Color(req.body.accentColor).isLight() ? '#000000' : '#FFFFFF',
 				accentHoverColor: Color(req.body.accentColor)
@@ -133,6 +137,23 @@ app.put('/api/communities', (req, res) => {
 				'hideNav',
 				'hideLandingBanner',
 				'defaultPubTags',
+				// TODO: Cleanup unused fields here
+
+				'headerLogo',
+				'headerLinks',
+				'hideHero',
+				'hideHeaderLogo',
+				'heroLogo',
+				'heroBackgroundImage',
+				'heroBackgroundColor',
+				'heroTextColor',
+				'useHeaderGradient',
+				'heroImage',
+				'heroTitle',
+				'heroText',
+				'heroPrimaryButton',
+				'heroSecondaryButton',
+				'heroAlign',
 			].indexOf(key) > -1
 		) {
 			updatedCommunity[key] =

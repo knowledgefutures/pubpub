@@ -34,8 +34,8 @@ app.get(['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug'], (req, res,
 			if (mode === 'team') {
 				activeItem.title = 'Team';
 			}
-			if (mode === 'details') {
-				activeItem.title = 'Details';
+			if (mode === 'settings') {
+				activeItem.title = 'Settings';
 			}
 			if (mode === 'tags') {
 				activeItem.title = 'Tags';

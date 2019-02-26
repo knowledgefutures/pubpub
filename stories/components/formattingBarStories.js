@@ -5,8 +5,6 @@ import FormattingBar from 'components/FormattingBar/FormattingBar';
 import Editor from '@pubpub/editor';
 import { plainDoc, fullDoc } from '../data';
 
-require('components/FormattingBar/formattingBar.scss');
-
 class EditorUnit extends Component {
 	static propTypes = {
 		hideMedia: PropTypes.bool.isRequired,

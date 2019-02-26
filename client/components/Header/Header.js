@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Avatar from 'components/Avatar/Avatar';
+import DropdownButton from 'components/DropdownButton/DropdownButton';
 import {
 	Popover,
 	PopoverInteractionKind,
@@ -9,6 +10,8 @@ import {
 	MenuItem,
 	MenuDivider,
 	Button,
+	AnchorButton,
+	Intent,
 } from '@blueprintjs/core';
 import { apiFetch, getResizedUrl } from 'utilities';
 
@@ -18,38 +21,21 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
-
-	// smallHeaderLogo: PropTypes.string,
-	// largeHeaderLogo: PropTypes.string,
-	// largeHeaderDescription: PropTypes.string,
-	// largeHeaderBackground: PropTypes.string,
 };
-
-// const defaultProps = {
-// 	smallHeaderLogo: undefined,
-// 	largeHeaderLogo: undefined,
-// 	largeHeaderDescription: undefined,
-// 	largeHeaderBackground: undefined,
-// };
 
 class Header extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			// 	redirect: '',
 			isLoading: false,
 		};
 		this.handleLogout = this.handleLogout.bind(this);
-		this.createPub = this.createPub.bind(this);
+		this.handleCreatePub = this.handleCreatePub.bind(this);
+		this.calculateComponentClasses = this.calculateComponentClasses.bind(this);
+		this.calculateMainClasses = this.calculateMainClasses.bind(this);
+		this.calculateHeroClasses = this.calculateHeroClasses.bind(this);
+		this.calculateBackgroundStyle = this.calculateBackgroundStyle.bind(this);
 	}
-
-	// componentDidMount() {
-	// 	if (window.location.pathname !== '/') {
-	// 		this.setState({
-	// 			redirect: `?redirect=${window.location.pathname}${window.location.search}`
-	// 		});
-	// 	}
-	// }
 
 	handleLogout() {
 		apiFetch('/api/logout').then(() => {
@@ -57,7 +43,7 @@ class Header extends Component {
 		});
 	}
 
-	createPub() {
+	handleCreatePub() {
 		this.setState({ isLoading: true });
 		return apiFetch('/api/pubs', {
 			method: 'POST',
@@ -75,174 +61,243 @@ class Header extends Component {
 			});
 	}
 
+	calculateComponentClasses(hideHero) {
+		let dynamicComponentClasses = '';
+
+		const backgroundColorChange =
+			this.props.communityData.accentColor !== this.props.communityData.heroBackgroundColor;
+		const textColorChange =
+			this.props.communityData.accentTextColor !== this.props.communityData.heroTextColor;
+		if (!this.props.locationData.isBasePubPub && !backgroundColorChange) {
+			dynamicComponentClasses += ' accent-background';
+		}
+		if (!this.props.locationData.isBasePubPub && !textColorChange) {
+			dynamicComponentClasses += ' accent-color';
+		}
+		if (this.props.locationData.isBasePubPub && this.props.locationData.path === '/') {
+			dynamicComponentClasses += ' bp3-dark';
+		}
+		if (hideHero) {
+			return dynamicComponentClasses;
+		}
+		const heroTextColor =
+			this.props.communityData.heroTextColor || this.props.communityData.accentTextColor;
+		if (heroTextColor === '#FFFFFF') {
+			dynamicComponentClasses += ' bp3-dark';
+		}
+		return dynamicComponentClasses;
+	}
+
+	calculateMainClasses(hideHero) {
+		let dynamicMainClasses = 'main';
+		if (hideHero) {
+			return dynamicMainClasses;
+		}
+		if (
+			!this.props.communityData.hideHero &&
+			this.props.communityData.useHeaderGradient &&
+			this.props.communityData.heroBackgroundImage
+		) {
+			dynamicMainClasses += ' gradient bp3-dark';
+		}
+		return dynamicMainClasses;
+	}
+
+	calculateHeroClasses(hideHero) {
+		let dynamicHeroClasses = 'hero';
+		if (hideHero) {
+			return dynamicHeroClasses;
+		}
+		if (this.props.communityData.heroAlign === 'center') {
+			dynamicHeroClasses += ' centered';
+		}
+		return dynamicHeroClasses;
+	}
+
+	calculateBackgroundStyle(hideHero) {
+		const backgroundStyle = {};
+		if (this.props.locationData.isBasePubPub) {
+			backgroundStyle.boxShadow =
+				this.props.locationData.path === '/'
+					? ''
+					: '0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0), 0 1px 1px rgba(16, 22, 26, 0.2)';
+			backgroundStyle.backgroundColor = this.props.locationData.path === '/' ? '' : '#f7f7f9';
+		}
+
+		if (hideHero) {
+			return backgroundStyle;
+		}
+
+		if (this.props.communityData.heroBackgroundImage) {
+			const resizedBackgroundImage = getResizedUrl(
+				this.props.communityData.heroBackgroundImage,
+				'fit-in',
+				'1500x600',
+			);
+			backgroundStyle.backgroundImage = `url("${resizedBackgroundImage}")`;
+		}
+		const heroBackgroundColor =
+			this.props.communityData.heroBackgroundColor || this.props.communityData.accentColor;
+		if (heroBackgroundColor) {
+			backgroundStyle.backgroundColor = this.props.communityData.heroBackgroundColor;
+		}
+
+		return backgroundStyle;
+	}
+
 	render() {
-		const communityData = this.props.communityData;
-		const locationData = this.props.locationData;
-		// console.log(locationData);
-		// console.log(communityData);
+		const headerLinks = this.props.communityData.headerLinks || [];
+		const hideHero = this.props.locationData.path !== '/' || this.props.communityData.hideHero;
+		const hideHeaderLogo = !hideHero && this.props.communityData.hideHeaderLogo;
+		const componentClasses = this.calculateComponentClasses(hideHero);
+		const mainClasses = this.calculateMainClasses(hideHero);
+		const heroClasses = this.calculateHeroClasses(hideHero);
+		const backgroundStyle = this.calculateBackgroundStyle(hideHero);
+
+		const loggedIn = !!this.props.loginData.slug;
+		const isAdmin = this.props.loginData.isAdmin;
+		const isBasePubPub = this.props.locationData.isBasePubPub;
 		const isPage =
-			communityData.pages &&
-			communityData.pages.reduce((prev, curr) => {
+			this.props.communityData.pages &&
+			this.props.communityData.pages.reduce((prev, curr) => {
 				if (
-					curr.slug === locationData.params.slug ||
-					(!curr.slug && locationData.path === '/')
+					curr.slug === this.props.locationData.params.slug ||
+					(!curr.slug && this.props.locationData.path === '/')
 				) {
 					return true;
 				}
 				return prev;
 			}, false);
-		const isAdmin = this.props.loginData.isAdmin;
-		const loggedIn = !!this.props.loginData.slug;
-		const isBasePubPub = this.props.locationData.isBasePubPub;
-		const showLandingBanner =
-			this.props.locationData.path === '/' && !this.props.communityData.hideLandingBanner;
-		const showGradient = showLandingBanner && !!communityData.largeHeaderBackground;
-		const backgroundStyle = {};
 
-		if (showGradient) {
-			const resizedBackground = getResizedUrl(
-				communityData.largeHeaderBackground,
-				'fit-in',
-				'1500x600',
-			);
-			backgroundStyle.backgroundImage = `url("${resizedBackground}")`;
-		}
-		if (isBasePubPub && !showLandingBanner) {
-			backgroundStyle.boxShadow =
-				'0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0), 0 1px 1px rgba(16, 22, 26, 0.2)';
-		}
-
-		const resizedSmallHeaderLogo = getResizedUrl(
-			communityData.smallHeaderLogo,
+		const resizedHeaderLogo = getResizedUrl(
+			this.props.communityData.headerLogo,
 			'fit-in',
 			'0x50',
 		);
-		const resizedLargeHeaderLogo = getResizedUrl(
-			communityData.largeHeaderLogo,
+		const resizedHeroLogo = getResizedUrl(this.props.communityData.heroLogo, 'fit-in', '0x200');
+		const resizedHeroImage = getResizedUrl(
+			this.props.communityData.heroImage,
 			'fit-in',
-			'0x200',
+			'600x0',
 		);
-		const useAccentsString = isBasePubPub ? '' : 'accent-background accent-color';
-
-		const redirectString = `?redirect=${locationData.path}${
-			locationData.queryString.length > 1 ? locationData.queryString : ''
+		const redirectString = `?redirect=${this.props.locationData.path}${
+			this.props.locationData.queryString.length > 1
+				? this.props.locationData.queryString
+				: ''
 		}`;
+		const heroPrimaryButton = this.props.communityData.heroPrimaryButton || {};
+		const heroSecondaryButton = this.props.communityData.heroSecondaryButton || {};
+
 		return (
-			<nav
-				className={`header-component ${useAccentsString} ${
-					communityData.largeHeaderBackground && showLandingBanner ? 'has-image' : ''
-				}`}
-				style={backgroundStyle}
-			>
-				<div className={showGradient ? 'header-gradient' : ''}>
+			<nav className={`header-component ${componentClasses}`} style={backgroundStyle}>
+				<div className={mainClasses}>
 					<div className="container">
 						<div className="row">
-							<div className="col-12">
-								{/* App Logo - do not show on homepage */}
-								{(!showLandingBanner || isBasePubPub) && (
-									<div className="header-items header-items-left">
+							<div className="col-12 main-content">
+								<div className="logo-wrapper">
+									{!hideHeaderLogo && (
 										<a href="/">
-											{communityData.smallHeaderLogo && (
+											{this.props.communityData.headerLogo && (
 												<img
-													alt="header logo"
-													className="headerLogo"
 													style={
-														isBasePubPub ? { padding: '3px 0px' } : {}
+														isBasePubPub ? { padding: '1px 0px' } : {}
 													}
-													src={resizedSmallHeaderLogo}
+													alt="Community Logo"
+													src={resizedHeaderLogo}
 												/>
 											)}
-											{!communityData.smallHeaderLogo && (
-												<span className="headerTitle">
-													{this.props.communityData.title}
-												</span>
+											{!this.props.communityData.headerLogo && (
+												<span>{this.props.communityData.title}</span>
 											)}
 										</a>
-									</div>
-								)}
-
-								<div className="header-items header-items-right">
-									{isBasePubPub && [
-										<a
-											href="/about"
-											role="button"
-											tabIndex="0"
-											className="hide-on-mobile bp3-button bp3-large bp3-minimal"
-										>
-											About
-										</a>,
-										/* <a href="/features" role="button" tabIndex="0" className="bp3-button bp3-large bp3-minimal">Features</a>, */
-										<a
-											href="/pricing"
-											role="button"
-											tabIndex="0"
-											className="hide-on-mobile bp3-button bp3-large bp3-minimal"
-										>
-											Pricing
-										</a>,
-										<a
-											href="/search"
-											role="button"
-											tabIndex="0"
-											className="hide-on-mobile bp3-button bp3-large bp3-minimal"
-										>
-											Search
-										</a>,
-										<a
-											href="mailto:team@pubpub.org"
-											target="_blank"
-											rel="noopener noreferrer"
-											role="button"
-											tabIndex="0"
-											className="hide-on-mobile bp3-button bp3-large bp3-minimal"
-										>
-											Contact
-										</a>,
-										<span className="hide-on-mobile separator">·</span>,
-									]}
-									{/* Search button */}
-									{/* <a href="/search" role="button" tabIndex="0" className="bp3-button bp3-large bp3-minimal bp3-icon-search" /> */}
-									{/* <a className="bp3-button bp3-large bp3-minimal">Search</a> */}
-
-									{/* Dashboard panel button */}
+									)}
+								</div>
+								<div className="buttons-wrapper">
+									{headerLinks.map((linkItem, index) => {
+										const key = `${index}-${linkItem.title}`;
+										if (linkItem.children) {
+											return (
+												<DropdownButton
+													key={key}
+													label={linkItem.title}
+													isMinimal={true}
+													isLarge={true}
+													className="hide-on-mobile"
+												>
+													<Menu>
+														{linkItem.children.map((child, cIndex) => {
+															const childKey = `${cIndex}-${
+																child.title
+															}`;
+															return (
+																<MenuItem
+																	key={childKey}
+																	text={child.title}
+																	href={child.url}
+																	target={
+																		child.external
+																			? '_blank'
+																			: ''
+																	}
+																	rel={
+																		child.external
+																			? 'noopener noreferrer'
+																			: ''
+																	}
+																/>
+															);
+														})}
+													</Menu>
+												</DropdownButton>
+											);
+										}
+										return (
+											<AnchorButton
+												key={key}
+												minimal={true}
+												large={true}
+												text={linkItem.title}
+												href={linkItem.url}
+												target={linkItem.external ? '_blank' : ''}
+												rel={linkItem.external ? 'noopener noreferrer' : ''}
+												className="hide-on-mobile"
+											/>
+										);
+									})}
 									{!isBasePubPub &&
 										loggedIn &&
-										(!communityData.hideCreatePubButton || isAdmin) && (
+										(!this.props.communityData.hideCreatePubButton ||
+											isAdmin) && (
 											<Button
-												className="bp3-large bp3-minimal nav-link"
+												large={true}
+												minimal={true}
 												text="New Pub"
 												onClick={this.createPub}
 												loading={this.state.isLoading}
 											/>
 										)}
 									{!isBasePubPub && (
-										<a
+										<AnchorButton
 											href="/search"
-											role="button"
-											tabIndex="0"
-											className="hide-on-mobile bp3-button bp3-large bp3-minimal"
-										>
-											Search
-										</a>
+											minimal={true}
+											large={true}
+											text="Search"
+											className="hide-on-mobile"
+										/>
 									)}
-									{isAdmin && isPage && (
-										<a
-											href={`/dashboard/pages/${this.props.locationData.params
-												.slug || ''}`}
-											className="bp3-button bp3-large bp3-minimal"
-										>
-											Manage
-										</a>
+									{isAdmin && (
+										<AnchorButton
+											minimal={true}
+											large={true}
+											href={
+												isPage
+													? `/dashboard/pages/${this.props.locationData
+															.params.slug || ''}`
+													: '/dashboard'
+											}
+											text="Manage"
+										/>
 									)}
-									{isAdmin && !isPage && (
-										<a
-											href="/dashboard"
-											className="bp3-button bp3-large bp3-minimal"
-										>
-											Manage
-										</a>
-									)}
-									{/* User avatar and menu */}
 									{loggedIn && (
 										<Popover
 											content={
@@ -288,53 +343,73 @@ class Header extends Component {
 											transitionDuration={-1}
 											inheritDarkTheme={false}
 										>
-											<button
-												type="button"
-												className="bp3-button bp3-large bp3-minimal avatar-button"
-											>
+											<Button large={true} minimal={true}>
 												<Avatar
 													userInitials={this.props.loginData.initials}
 													userAvatar={this.props.loginData.avatar}
 													width={30}
 												/>
-											</button>
+											</Button>
 										</Popover>
 									)}
-
-									{/* Login or Signup button */}
 									{!loggedIn && (
-										<a
+										<AnchorButton
+											large={true}
+											minimal={true}
+											text="Login or Signup"
 											href={`/login${redirectString}`}
-											className="bp3-button bp3-large bp3-minimal"
-										>
-											Login or Signup
-										</a>
+										/>
 									)}
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				{showLandingBanner && !isBasePubPub && (
-					<div className="community-header">
+				{!hideHero && (
+					<div className={heroClasses}>
 						<div className="container">
 							<div className="row">
-								<div className="col-12">
-									{communityData.largeHeaderLogo && (
-										<img
-											alt="community logo"
-											className="logo"
-											src={resizedLargeHeaderLogo}
-										/>
-									)}
-									{!communityData.largeHeaderLogo && (
-										<div className="title">
-											{this.props.communityData.title}
+								<div className="col-12 hero-content">
+									<div className="hero-copy">
+										{this.props.communityData.heroLogo && (
+											<div className="hero-logo">
+												<img alt="Community Logo" src={resizedHeroLogo} />
+											</div>
+										)}
+										{this.props.communityData.heroTitle && (
+											<div className="hero-title">
+												{this.props.communityData.heroTitle}
+											</div>
+										)}
+										{this.props.communityData.heroText && (
+											<div className="hero-text">
+												{this.props.communityData.heroText}
+											</div>
+										)}
+										<div className="hero-button">
+											{heroPrimaryButton.title && (
+												<AnchorButton
+													intent={Intent.PRIMARY}
+													large={true}
+													text={heroPrimaryButton.title}
+													href={heroPrimaryButton.url}
+												/>
+											)}
+											{heroSecondaryButton.title && (
+												<AnchorButton
+													large={true}
+													minimal={true}
+													text={heroSecondaryButton.title}
+													href={heroSecondaryButton.url}
+												/>
+											)}
+										</div>
+									</div>
+									{this.props.communityData.heroImage && (
+										<div className="hero-image">
+											<img alt="Community banner" src={resizedHeroImage} />
 										</div>
 									)}
-									<div className="description">
-										{communityData.largeHeaderDescription}
-									</div>
 								</div>
 							</div>
 						</div>

@@ -72,7 +72,7 @@ storiesOf('Components/PubPreview', module).add('default', () => (
 						accentColor: '#000000',
 						domain: 'jods.mitpress.mit.edu',
 						id: 'fake-id',
-						smallHeaderLogo: 'https://assets.pubpub.org/b5ftxm4v/51508255582371.png',
+						headerLogo: 'https://assets.pubpub.org/b5ftxm4v/51508255582371.png',
 						subdomain: 'jods',
 						title: 'Journal of Design and Science',
 					}}

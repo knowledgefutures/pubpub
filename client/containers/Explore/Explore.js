@@ -56,8 +56,8 @@ const Explore = (props) => {
 											domain={item.domain}
 											title={item.title}
 											description={item.description}
-											largeHeaderBackground={item.largeHeaderBackground}
-											largeHeaderLogo={item.largeHeaderLogo}
+											heroBackgroundImage={item.heroBackgroundImage}
+											heroLogo={item.heroLogo}
 											accentColor={item.accentColor}
 											accentTextColor={item.accentTextColor}
 										/>

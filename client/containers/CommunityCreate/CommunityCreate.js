@@ -21,7 +21,7 @@ class CommunityCreate extends Component {
 			subdomain: '',
 			title: '',
 			description: '',
-			largeHeaderLogo: '',
+			heroLogo: '',
 			accentColor: '#2D2E2F',
 			createIsLoading: false,
 			createError: undefined,
@@ -30,7 +30,7 @@ class CommunityCreate extends Component {
 		this.onSubdomainChange = this.onSubdomainChange.bind(this);
 		this.onTitleChange = this.onTitleChange.bind(this);
 		this.onDescriptionChange = this.onDescriptionChange.bind(this);
-		this.onLargeHeaderLogoChange = this.onLargeHeaderLogoChange.bind(this);
+		this.onHeroHeaderLogoChange = this.onHeroHeaderLogoChange.bind(this);
 		this.onAccentColorChange = this.onAccentColorChange.bind(this);
 	}
 
@@ -44,8 +44,8 @@ class CommunityCreate extends Component {
 				subdomain: this.state.subdomain,
 				title: this.state.title,
 				description: this.state.description,
-				smallHeaderLogo: this.state.largeHeaderLogo,
-				largeHeaderLogo: this.state.largeHeaderLogo,
+				headerLogo: this.state.heroLogo,
+				heroLogo: this.state.heroLogo,
 				accentColor: this.state.accentColor,
 			}),
 		})
@@ -70,8 +70,8 @@ class CommunityCreate extends Component {
 		this.setState({ description: evt.target.value.substring(0, 280).replace(/\n/g, ' ') });
 	}
 
-	onLargeHeaderLogoChange(val) {
-		this.setState({ largeHeaderLogo: val });
+	onHeroHeaderLogoChange(val) {
+		this.setState({ heroLogo: val });
 	}
 
 	onAccentColorChange(evt) {
@@ -136,10 +136,10 @@ class CommunityCreate extends Component {
 											<ImageUpload
 												htmlFor="large-header-logo-upload"
 												label="Community Logo"
-												defaultImage={this.state.largeHeaderLogo}
+												defaultImage={this.state.heroLogo}
 												height={60}
 												width={150}
-												onNewImage={this.onLargeHeaderLogoChange}
+												onNewImage={this.onHeroHeaderLogoChange}
 												helperText="Used on the landing page. Suggested height: 200px"
 											/>
 											<InputField

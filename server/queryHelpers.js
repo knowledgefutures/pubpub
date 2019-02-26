@@ -604,7 +604,7 @@ export const getPubSearch = (query, initialData) => {
 		includes.push({
 			model: Community,
 			as: 'community',
-			attributes: ['id', 'subdomain', 'domain', 'title', 'smallHeaderLogo', 'accentColor'],
+			attributes: ['id', 'subdomain', 'domain', 'title', 'headerLogo', 'accentColor'],
 		});
 	}
 

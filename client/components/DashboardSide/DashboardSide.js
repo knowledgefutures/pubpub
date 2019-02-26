@@ -28,12 +28,6 @@ const DashboardSide = function(props) {
 			id: 0,
 		},
 		{
-			title: 'Details',
-			icon: 'bp3-icon-application',
-			slug: 'details',
-			id: 1,
-		},
-		{
 			title: 'Team',
 			icon: 'bp3-icon-people',
 			slug: 'team',
@@ -44,6 +38,12 @@ const DashboardSide = function(props) {
 			icon: 'bp3-icon-tag',
 			slug: 'tags',
 			id: 3,
+		},
+		{
+			title: 'Settings',
+			icon: 'bp3-icon-cog',
+			slug: 'settings',
+			id: 1,
 		},
 	];
 	return (

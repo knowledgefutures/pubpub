@@ -60,23 +60,47 @@ const Community = sequelize.define('Community', {
 	},
 	avatar: { type: Sequelize.TEXT },
 	favicon: { type: Sequelize.TEXT },
-	smallHeaderLogo: { type: Sequelize.TEXT },
+	accentColor: { type: Sequelize.STRING },
+
+	hideCreatePubButton: { type: Sequelize.BOOLEAN },
+
+	// To Remove
+	/* ------ */
+	hideLandingBanner: { type: Sequelize.BOOLEAN },
 	largeHeaderLogo: { type: Sequelize.TEXT },
 	largeHeaderBackground: { type: Sequelize.TEXT },
-	accentColor: { type: Sequelize.STRING },
+	smallHeaderLogo: { type: Sequelize.TEXT },
+	/* ------ */
+
+	headerLogo: { type: Sequelize.TEXT },
+	headerLinks: { type: Sequelize.JSONB },
+	hideHero: { type: Sequelize.BOOLEAN },
+	hideHeaderLogo: { type: Sequelize.BOOLEAN },
+	heroLogo: { type: Sequelize.TEXT },
+	heroBackgroundImage: { type: Sequelize.TEXT },
+	heroBackgroundColor: { type: Sequelize.TEXT },
+	heroTextColor: { type: Sequelize.TEXT },
+	useHeaderGradient: { type: Sequelize.BOOLEAN },
+	heroImage: { type: Sequelize.TEXT },
+	heroTitle: { type: Sequelize.TEXT },
+	heroText: { type: Sequelize.TEXT },
+	heroPrimaryButton: { type: Sequelize.JSONB },
+	heroSecondaryButton: { type: Sequelize.JSONB },
+	heroAlign: { type: Sequelize.TEXT },
+
 	accentTextColor: { type: Sequelize.STRING },
 	accentActionColor: { type: Sequelize.STRING },
 	accentHoverColor: { type: Sequelize.STRING },
 	accentMinimalColor: { type: Sequelize.STRING },
 	navigation: { type: Sequelize.JSONB },
+	hideNav: { type: Sequelize.BOOLEAN },
+
 	website: { type: Sequelize.TEXT },
 	facebook: { type: Sequelize.TEXT },
 	twitter: { type: Sequelize.TEXT },
 	email: { type: Sequelize.TEXT },
 	issn: { type: Sequelize.TEXT },
-	hideCreatePubButton: { type: Sequelize.BOOLEAN },
-	hideNav: { type: Sequelize.BOOLEAN },
-	hideLandingBanner: { type: Sequelize.BOOLEAN },
+
 	isFeatured: { type: Sequelize.BOOLEAN },
 	defaultPubTags: { type: Sequelize.JSONB },
 });

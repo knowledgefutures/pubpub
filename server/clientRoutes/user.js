@@ -38,7 +38,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 									'subdomain',
 									'domain',
 									'title',
-									'smallHeaderLogo',
+									'headerLogo',
 									'accentColor',
 								],
 							},

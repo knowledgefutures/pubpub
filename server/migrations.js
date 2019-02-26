@@ -399,6 +399,44 @@ new Promise((resolve) => {
 	// .then(()=> {
 	// 	return sequelize.queryInterface.addColumn('WorkerTasks', 'attemptCount', { type: Sequelize.INTEGER });
 	// })
+	// .then(()=> {
+	// 	return Promise.all([
+	//		sequelize.queryInterface.addColumn('Communities', 'headerLogo', { type: Sequelize.TEXT }),		
+	// 		sequelize.queryInterface.addColumn('Communities', 'headerLinks', { type: Sequelize.JSONB }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'hideHeaderLogo', { type: Sequelize.BOOLEAN }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroTextColor', { type: Sequelize.TEXT }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'useHeaderGradient', { type: Sequelize.BOOLEAN }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroImage', { type: Sequelize.TEXT }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroTitle', { type: Sequelize.TEXT }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroText', { type: Sequelize.TEXT }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroPrimaryButton', { type: Sequelize.JSONB }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroSecondaryButton', { type: Sequelize.JSONB }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroAlign', { type: Sequelize.TEXT }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'hideHero', { type: Sequelize.BOOLEAN }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroLogo', { type: Sequelize.TEXT }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroBackgroundImage', { type: Sequelize.TEXT }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'heroBackgroundColor', { type: Sequelize.TEXT }),
+	// 	]);
+	// })
+	// .then(() => {
+	// 	return Promise.all([
+	// 		sequelize.query('UPDATE "Communities" SET "hideHero" = "hideLandingBanner"'),
+	// 		sequelize.query('UPDATE "Communities" SET "heroLogo" = "largeHeaderLogo"'),
+	// 		sequelize.query('UPDATE "Communities" SET "heroBackgroundImage" = "largeHeaderBackground"'),
+	//		sequelize.query('UPDATE "Communities" SET "heroTitle" = "title"'),
+	//		sequelize.query('UPDATE "Communities" SET "useHeaderGradient" = true'),
+	//		sequelize.query('UPDATE "Communities" SET "hideHeaderLogo" = true'),
+	//		sequelize.query('UPDATE "Communities" SET "heroBackgroundColor" = "accentColor"'),
+	//		sequelize.query('UPDATE "Communities" SET "heroTextColor" = "accentTextColor"'),
+	// 	]);
+	// })
+	// .then(()=> {
+	// 	return Promise.all([
+	// 		sequelize.queryInterface.removeColumn('Communities', 'hideLandingBanner'),
+	// 		sequelize.queryInterface.removeColumn('Communities', 'largeHeaderLogo'),
+	// 		sequelize.queryInterface.removeColumn('Communities', 'largeHeaderBackground'),
+	// 	]);
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

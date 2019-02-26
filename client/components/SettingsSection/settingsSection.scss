@@ -1,0 +1,25 @@
+.settings-section-component {
+	.title {
+		font-weight: bold;
+		font-size: 16px;
+		padding-bottom: 1em;
+	}
+}
+
+@media only screen and (min-width: 750px) {
+	@supports (display: grid) {
+		.settings-section-component {
+			display: grid;
+			grid-template-columns: 100px 1fr;
+			grid-template-areas: 'title content';
+			grid-column-gap: 4%;
+			.title {
+				grid-area: title;
+			}
+			.content {
+				grid-area: content;
+				min-width: 0px;
+			}
+		}
+	}
+}

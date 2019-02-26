@@ -35,9 +35,8 @@ const PubPreview = function(props) {
 		pubData.avatar || !pubData.slug
 			? { backgroundImage: `url("${resizedBannerImage}")` }
 			: { background: generatePubBackground(pubData.title) };
-	const resizedSmallHeaderLogo =
-		props.communityData &&
-		getResizedUrl(props.communityData.smallHeaderLogo, 'fit-in', '125x35');
+	const resizedHeaderLogo =
+		props.communityData && getResizedUrl(props.communityData.headerLogo, 'fit-in', '125x35');
 	const communityHostname =
 		props.communityData &&
 		(props.communityData.domain || `${props.communityData.subdomain}.pubpub.org`);
@@ -104,7 +103,7 @@ const PubPreview = function(props) {
 						>
 							<img
 								alt={`${props.communityData.title} logo`}
-								src={resizedSmallHeaderLogo}
+								src={resizedHeaderLogo}
 							/>
 						</a>
 					)}

@@ -7,13 +7,8 @@
 			font-weight: 400;
 		}
 	}
-	.section-wrapper {
+	.settings-section-component {
 		margin-top: 3em;
-	}
-	.title {
-		font-weight: bold;
-		font-size: 16px;
-		padding-bottom: 1em;
 	}
 	// .bp3-form-content {
 	// 	max-width: 500px;
@@ -54,26 +49,6 @@
 		}
 		.bp3-tab {
 			text-decoration: none;
-		}
-	}
-}
-
-@media only screen and (min-width: 750px) {
-	@supports (display: grid) {
-		.dashboard-page-component {
-			.section-wrapper {
-				display: grid;
-				grid-template-columns: 100px 1fr;
-				grid-template-areas: 'title content';
-				grid-column-gap: 4%;
-			}
-			.title {
-				grid-area: title;
-			}
-			.content {
-				grid-area: content;
-				min-width: 0px;
-			}
 		}
 	}
 }

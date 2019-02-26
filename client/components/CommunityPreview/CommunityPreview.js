@@ -9,8 +9,8 @@ const propTypes = {
 	description: PropTypes.string,
 	subdomain: PropTypes.string,
 	domain: PropTypes.string,
-	largeHeaderLogo: PropTypes.string,
-	largeHeaderBackground: PropTypes.string,
+	heroLogo: PropTypes.string,
+	heroBackgroundImage: PropTypes.string,
 	accentColor: PropTypes.string,
 	accentTextColor: PropTypes.string,
 };
@@ -20,20 +20,20 @@ const defaultProps = {
 	description: undefined,
 	subdomain: undefined,
 	domain: undefined,
-	largeHeaderLogo: undefined,
-	largeHeaderBackground: undefined,
+	heroLogo: undefined,
+	heroBackgroundImage: undefined,
 	accentColor: '#000',
 	accentTextColor: '#FFF',
 };
 
 const CommunityPreview = function(props) {
-	const resizedHeaderLogo = getResizedUrl(props.largeHeaderLogo, 'fit-in', '600x0');
-	const resizedHeaderBackground = getResizedUrl(props.largeHeaderBackground, 'fit-in', '800x0');
+	const resizedHeroLogo = getResizedUrl(props.heroLogo, 'fit-in', '600x0');
+	const resizedHeroBackground = getResizedUrl(props.heroBackgroundImage, 'fit-in', '800x0');
 	const logoStyle = { color: props.accentTextColor };
 	const backgroundStyle = {
 		backgroundColor: props.accentColor,
 		color: props.accentTextColor,
-		backgroundImage: props.largeHeaderBackground ? `url("${resizedHeaderBackground}")` : '',
+		backgroundImage: props.heroBackgroundImage ? `url("${resizedHeroBackground}")` : '',
 	};
 	const communityUrl = props.domain
 		? `https://${props.domain}`
@@ -41,10 +41,10 @@ const CommunityPreview = function(props) {
 	return (
 		<a className="community-preview-component" href={communityUrl} style={backgroundStyle}>
 			<div className="logo-wrapper">
-				{props.largeHeaderLogo && (
-					<img className="logo" src={resizedHeaderLogo} alt={props.title} />
+				{props.heroLogo && (
+					<img className="logo" src={resizedHeroLogo} alt={props.title} />
 				)}
-				{!props.largeHeaderLogo && <h3 style={logoStyle}>{props.title}</h3>}
+				{!props.heroLogo && <h3 style={logoStyle}>{props.title}</h3>}
 			</div>
 			<div className="description">{props.description}</div>
 		</a>

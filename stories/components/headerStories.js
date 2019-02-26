@@ -2,142 +2,173 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import Header from 'components/Header/Header';
 import AccentStyle from 'components/AccentStyle/AccentStyle';
-import { accentDataDark, accentDataLight, communityData, locationData } from '../data';
+import { accentDataLight, locationData, loginData } from '../data';
 
-const wrapperStyle = { margin: '1em', boxShadow: '0px 0px 1px rgba(0, 0, 0, 0.25)' };
-const titleStyle = { margin: '1em 1em -0.5em' };
+const wrapperStyle = { margin: '2em 1em', border: '1px solid #CCC' };
 
-const headerBars = function(isBasePubPub) {
-	const data = {
-		userName: 'Maggie Farnkrux',
-		userInitials: 'MF',
-		userSlug: 'maggiefarn',
-		userAvatar: 'https://assets.pubpub.org/mflaxicd/11505393046254.jpg',
-		userIsAdmin: true,
-		smallHeaderLogo: isBasePubPub
-			? '/static/icon.png'
-			: 'https://assets.pubpub.org/c7cfyyz6/31507218538557.png',
-		largeHeaderLogo: 'https://assets.pubpub.org/c7cfyyz6/31507218538557.png',
-		largeHeaderDescription:
-			'Group publications and research docs from around the world all situated here in this little community.',
-		largeHeaderBackground: 'https://assets.pubpub.org/9s4gbj5y/51507218425793.png',
-		isBasePubPub: isBasePubPub,
-		isLandingPage: false,
-		onLogout: () => {},
-	};
-	return (
-		<div>
-			<h4 style={titleStyle}>Logged Out</h4>
-			<div style={wrapperStyle}>
-				<Header
-					loginData={{ isAdmin: false }}
-					communityData={communityData}
-					locationData={locationData}
-					smallHeaderLogo={data.smallHeaderLogo}
-					onLogout={data.onLogout}
-					isBasePubPub={data.isBasePubPub}
-					isLandingPage={false}
-				/>
-			</div>
+const communityData = {};
 
-			<h4 style={titleStyle}>Logged In · User</h4>
-			<div style={wrapperStyle}>
-				<Header
-					communityData={communityData}
-					locationData={locationData}
-					loginData={{
-						fullName: data.userName,
-						initials: data.userInitials,
-						slug: data.userSlug,
-						isAdmin: false,
-					}}
-					smallHeaderLogo={data.smallHeaderLogo}
-					onLogout={data.onLogout}
-					isBasePubPub={data.isBasePubPub}
-					isLandingPage={false}
-				/>
-			</div>
+// title: 'toggl',
+// headerLogo: 'https://assets.pubpub.org/_testing/71551104387305.png',
+// headerLinks: [],
 
-			<h4 style={titleStyle}>Logged In · Admin</h4>
-			<div style={wrapperStyle}>
-				<Header
-					communityData={communityData}
-					locationData={locationData}
-					loginData={{
-						fullName: data.userName,
-						initials: data.userInitials,
-						avatar: data.userAvatar,
-						slug: data.userSlug,
-						isAdmin: true,
-					}}
-					smallHeaderLogo={data.smallHeaderLogo}
-					onLogout={data.onLogout}
-					isBasePubPub={data.isBasePubPub}
-					isLandingPage={false}
-				/>
-			</div>
+// hideHero: true,
+//	hideHeaderLogo: false,
 
-			{!isBasePubPub && (
-				<div>
-					<h4 style={titleStyle}>Home · No Background</h4>
-					<div style={wrapperStyle}>
-						<Header
-							communityData={communityData}
-							locationData={locationData}
-							loginData={{
-								fullName: data.userName,
-								initials: data.userInitials,
-								avatar: data.userAvatar,
-								slug: data.userSlug,
-								isAdmin: true,
-							}}
-							smallHeaderLogo={data.smallHeaderLogo}
-							largeHeaderLogo={data.largeHeaderLogo}
-							largeHeaderDescription={data.largeHeaderDescription}
-							onLogout={data.onLogout}
-							isBasePubPub={data.isBasePubPub}
-							isLandingPage={true}
-						/>
-					</div>
+//	heroBackgroundColor: '#d4a3e1', (default is community accent)
+//	heroTextColor: '#fff', (default is community text color)
+//	heroBackgroundImage: undefined,
+//		useHeaderGradient: false,
+//
+//	heroImage: 'https://assets.pubpub.org/_testing/31551104397980.png',
+//	heroTitle: 'Where did time go?',
+//	heroLogo: undefined,
+//	heroText: 'Turn your team on to productivity with Toggl the time tracker.',
+//	heroPrimaryButton: 'Sign Up',
+//		heroSecondaryButton: 'Find out more',
+//	heroAlign: 'center',
 
-					<h4 style={titleStyle}>Home · Background (Image)</h4>
-					<div style={wrapperStyle}>
-						<Header
-							communityData={communityData}
-							locationData={locationData}
-							loginData={{
-								fullName: data.userName,
-								initials: data.userInitials,
-								avatar: data.userAvatar,
-								slug: data.userSlug,
-								isAdmin: true,
-							}}
-							smallHeaderLogo={data.smallHeaderLogo}
-							largeHeaderLogo={data.largeHeaderLogo}
-							largeHeaderDescription={data.largeHeaderDescription}
-							largeHeaderBackground={data.largeHeaderBackground}
-							onLogout={data.onLogout}
-							isBasePubPub={data.isBasePubPub}
-							isLandingPage={true}
-						/>
-					</div>
-				</div>
-			)}
+storiesOf('Components/Header', module).add('default', () => (
+	<div>
+		<AccentStyle {...accentDataLight} />
+		<div style={wrapperStyle}>
+			<Header
+				communityData={{
+					...communityData,
+					title: 'Hiptest',
+					headerLinks: [
+						{ title: 'About', url: '/about' },
+						{ title: 'Pricing', url: '/pricing' },
+						{
+							title: 'Issues',
+							children: [
+								{ title: 'Issue 1 or so', url: '/whatever1' },
+								{ title: 'Issue 2', url: '/whatever2' },
+							],
+						},
+					],
+					hideHero: false,
+					hideHeaderLogo: false,
+					heroBackgroundImage: undefined,
+					heroBackgroundColor: '#FFF',
+					heroTextColor: '#000000',
+					headerLogo: 'https://assets.pubpub.org/_testing/01551104299949.png',
+					heroImage: 'https://assets.pubpub.org/_testing/31551104270100.png',
+					heroTitle: 'Get to market faster with continuous testing',
+					// heroLogo: 'https://assets.pubpub.org/_testing/01551104299949.png',
+					heroText:
+						'From idea to production, test your product continuously with Behavior Driven Development and Agile test management.',
+					heroPrimaryButton: { title: 'Start your free trial' },
+					heroSecondaryButton: { title: 'Explore stuff' },
+					heroAlign: undefined,
+				}}
+				locationData={{
+					...locationData,
+					path: '/',
+				}}
+				loginData={loginData}
+			/>
 		</div>
-	);
-};
-
-storiesOf('Components/Header', module)
-	.add('PubPub', () => <div>{headerBars(true)}</div>)
-	.add('Dark', () => (
-		<div>
-			<AccentStyle {...accentDataDark} />
-			{headerBars()}
+		<div style={wrapperStyle}>
+			<Header
+				communityData={{
+					...communityData,
+					hideHeaderLogo: false,
+					title: 'WHITEOUT',
+					hideHero: false,
+					heroBackgroundImage: 'https://assets.pubpub.org/_testing/71551104341423.jpg',
+					useHeaderGradient: true,
+					heroBackgroundColor: undefined,
+					heroTextColor: 'light',
+					headerLogo: 'https://assets.pubpub.org/_testing/31551104320889.png',
+					heroImage: undefined,
+					heroTitle: undefined,
+					heroLogo: 'https://assets.pubpub.org/_testing/71551104353671.png',
+					heroText: undefined,
+					heroPrimaryButton: undefined,
+					heroSecondaryButton: undefined,
+					heroAlign: 'center',
+				}}
+				locationData={{
+					...locationData,
+					path: '/',
+				}}
+				loginData={loginData}
+			/>
 		</div>
-	))
-	.add('Light', () => (
-		<div>
-			<AccentStyle {...accentDataLight} />
-			{headerBars()}
+		<div style={wrapperStyle}>
+			<Header
+				communityData={{
+					...communityData,
+					hideHeaderLogo: false,
+					title: 'Timepal',
+					heroBackgroundImage: undefined,
+					heroBackgroundColor: '#fdfaf4',
+					heroTextColor: '#000000',
+					headerLogo: 'https://assets.pubpub.org/_testing/41551104374754.png',
+					heroImage: undefined,
+					heroTitle: 'Automatic and manual time-tracking finally united',
+					heroLogo: undefined,
+					heroText: 'Stressless timekeeping became a reality',
+					heroPrimaryButton: { title: 'Download Free Trial' },
+					heroSecondaryButton: undefined,
+					heroAlign: 'center',
+				}}
+				locationData={{
+					...locationData,
+					path: '/',
+				}}
+				loginData={loginData}
+			/>
 		</div>
-	));
+		<div style={wrapperStyle}>
+			<Header
+				communityData={{
+					...communityData,
+					hideHeaderLogo: false,
+					title: 'toggl',
+					heroBackgroundImage: undefined,
+					heroBackgroundColor: '#d4a3e1',
+					headerLogo: 'https://assets.pubpub.org/_testing/71551104387305.png',
+					heroImage: 'https://assets.pubpub.org/_testing/31551104397980.png',
+					heroTitle: 'Where did time go?',
+					heroLogo: undefined,
+					heroText: 'Turn your team on to productivity with Toggl the time tracker.',
+					heroPrimaryButton: { title: 'Sign Up' },
+					heroSecondaryButton: { title: 'Find out more' },
+					heroAlign: 'center',
+				}}
+				locationData={{
+					...locationData,
+					path: '/',
+				}}
+				loginData={loginData}
+			/>
+		</div>
+		<div style={wrapperStyle}>
+			<Header
+				communityData={{
+					...communityData,
+					hideHeaderLogo: false,
+					title: 'Simple Community',
+					hideHero: true,
+					// heroBackgroundImage: undefined,
+					// heroBackgroundColor: '#d4a3e1',
+					// headerLogo: 'https://assets.pubpub.org/_testing/71551104387305.png',
+					// heroImage: 'https://assets.pubpub.org/_testing/31551104397980.png',
+					// heroTitle: 'Where did time go?',
+					// heroLogo: undefined,
+					// heroText: 'Turn your team on to productivity with Toggl the time tracker.',
+					// heroPrimaryButton: 'Sign Up',
+					// heroSecondaryButton: 'Find out more',
+					// heroAlign: 'center',
+				}}
+				locationData={{
+					...locationData,
+					path: '/',
+				}}
+				loginData={loginData}
+			/>
+		</div>
+	</div>
+));

@@ -136,12 +136,12 @@ class Login extends Component {
 										action={
 											<div>
 												<AnchorButton
-													className="bp3-large"
+													className="bp3-large action-button"
 													text="View Profile"
 													href={`/user/${this.props.loginData.slug}`}
 												/>
 												<Button
-													className="bp3-large"
+													className="bp3-large action-button"
 													text="Logout"
 													onClick={this.onLogoutSubmit}
 													loading={this.state.logoutLoading}

@@ -1,8 +1,10 @@
 # Style Guide
+
 This style guide outlines best practices for this repo. The styles captured in this guide are a bit more subjective than those caught by eslint or prettier. As such, we are not militant about enforcing these best practices - but don't be upset if someone comes and refactors your code to make it consistent with this style guide and the rest of the repo.
 
 ## React Components
-```
+
+```jsx
 /* Use `React.Component` rather than `import React, { Component}` */
 /* so that your import lines are consistent across functional and */
 /* class components. */

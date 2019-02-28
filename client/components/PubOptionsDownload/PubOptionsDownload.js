@@ -213,8 +213,7 @@ class PubOptionsDownload extends Component {
 										}}
 									/>
 									<div className="subtext">
-										Uploaded{' '}
-										{dateFormat(formattedDownloadDate, 'mmm dd, yyyy')}
+										Uploaded {dateFormat(formattedDownloadDate, 'mmm dd, yyyy')}
 									</div>
 								</div>
 							)}

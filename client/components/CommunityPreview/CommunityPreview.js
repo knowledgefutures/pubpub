@@ -41,9 +41,7 @@ const CommunityPreview = function(props) {
 	return (
 		<a className="community-preview-component" href={communityUrl} style={backgroundStyle}>
 			<div className="logo-wrapper">
-				{props.heroLogo && (
-					<img className="logo" src={resizedHeroLogo} alt={props.title} />
-				)}
+				{props.heroLogo && <img className="logo" src={resizedHeroLogo} alt={props.title} />}
 				{!props.heroLogo && <h3 style={logoStyle}>{props.title}</h3>}
 			</div>
 			<div className="description">{props.description}</div>

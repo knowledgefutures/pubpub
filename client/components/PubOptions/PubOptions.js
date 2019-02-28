@@ -7,7 +7,7 @@ import PubOptionsCite from 'components/PubOptionsCite/PubOptionsCite';
 import PubOptionsDoi from 'components/PubOptionsDoi/PubOptionsDoi';
 import PubOptionsDetails from 'components/PubOptionsDetails/PubOptionsDetails';
 import PubOptionsDelete from 'components/PubOptionsDelete/PubOptionsDelete';
-import PubOptionsExport from 'components/PubOptionsExport/PubOptionsExport';
+import PubOptionsDownload from 'components/PubOptionsDownload/PubOptionsDownload';
 // import PubOptionsImport from 'components/PubOptionsImport/PubOptionsImport';
 import PubOptionsTags from 'components/PubOptionsTags/PubOptionsTags';
 import PubOptionsSections from 'components/PubOptionsSections/PubOptionsSections';
@@ -63,7 +63,7 @@ const PubOptions = (props) => {
 		'cite',
 		'discussions',
 		'social',
-		'export',
+		'download',
 		'analytics',
 	].filter((item) => {
 		return item !== 'discussions' || props.pubData.publicDiscussions;
@@ -157,11 +157,11 @@ const PubOptions = (props) => {
 					{optionsMode === 'details' && (
 						<PubOptionsDetails key="details" {...defaultChildProps} />
 					)}
+					{optionsMode === 'download' && (
+						<PubOptionsDownload key="download" {...defaultChildProps} />
+					)}
 					{optionsMode === 'delete' && (
 						<PubOptionsDelete key="delete" {...defaultChildProps} />
-					)}
-					{optionsMode === 'export' && (
-						<PubOptionsExport key="export" {...defaultChildProps} />
 					)}
 					{/* optionsMode === 'import' &&
 						<PubOptionsImport key="import" {...defaultChildProps} />

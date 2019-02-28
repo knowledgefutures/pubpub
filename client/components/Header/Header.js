@@ -272,7 +272,7 @@ class Header extends Component {
 												large={true}
 												minimal={true}
 												text="New Pub"
-												onClick={this.createPub}
+												onClick={this.handleCreatePub}
 												loading={this.state.isLoading}
 											/>
 										)}

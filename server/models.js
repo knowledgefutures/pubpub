@@ -223,6 +223,7 @@ const Pub = sequelize.define(
 			defaultValue: 'private',
 		},
 		review: { type: Sequelize.JSONB },
+		downloads: { type: Sequelize.JSONB },
 
 		/* Set by Associations */
 		communityId: { type: Sequelize.UUID, allowNull: false },

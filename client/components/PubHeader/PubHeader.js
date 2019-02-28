@@ -518,9 +518,9 @@ class PubHeader extends Component {
 								minimal={true}
 								small={true}
 								onClick={() => {
-									this.props.setOptionsMode('export');
+									this.props.setOptionsMode('download');
 								}}
-								text="Export"
+								text="Download"
 							/>
 							<span className="dot">·</span>
 							{this.props.pubData.publicDiscussions && (

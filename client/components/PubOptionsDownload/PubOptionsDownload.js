@@ -198,13 +198,13 @@ class PubOptionsDownload extends Component {
 
 				{(this.props.pubData.isManager || !!formattedDownloadUrl) && (
 					<div>
-						<h2>Typeset Download</h2>
-						<p>Editor specified download.</p>
+						<h2>Download</h2>
+						<p>Default file provided by Pub manager</p>
 						<div className="buttons-wrapper">
 							{!!formattedDownloadUrl && (
 								<div>
 									<Button
-										text="Download Typeset File"
+										text={`Download ${formattedDownloadExtenstion.toUpperCase()}`}
 										large={true}
 										intent={Intent.PRIMARY}
 										className="typset-button"
@@ -213,7 +213,7 @@ class PubOptionsDownload extends Component {
 										}}
 									/>
 									<div className="subtext">
-										.{formattedDownloadExtenstion} uploaded on{' '}
+										Uploaded{' '}
 										{dateFormat(formattedDownloadDate, 'mmm dd, yyyy')}
 									</div>
 								</div>
@@ -224,15 +224,15 @@ class PubOptionsDownload extends Component {
 										this.updateDownloads('formatted', fileUrl);
 									}}
 									className="typset-button"
-									text="Upload new typeset file"
+									text="Upload new default file"
 								/>
 							)}
 						</div>
 					</div>
 				)}
 
-				<h2>Generated Downloads</h2>
-				<p>Auto-generated exports based on article content.</p>
+				<h2>Download Generated File</h2>
+				<p>Auto-generated files based on article content.</p>
 				<div className="bp3-button-group">
 					{types.map((type) => {
 						return (
@@ -254,7 +254,7 @@ class PubOptionsDownload extends Component {
 						type="button"
 						large={true}
 						intent={Intent.PRIMARY}
-						text={`Download ${this.state.type.title} File`}
+						text={`Download Generated ${this.state.type.title}`}
 						loading={this.state.isLoading}
 						onClick={this.handleExport}
 					/>

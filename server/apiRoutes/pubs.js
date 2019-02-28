@@ -85,6 +85,7 @@ app.put('/api/pubs', (req, res) => {
 				'communityAdminDraftPermissions',
 				'draftPermissions',
 				'labels',
+				'downloads',
 			].indexOf(key) > -1
 		) {
 			updatedPub[key] =

@@ -6,7 +6,6 @@ import AWS from 'aws-sdk';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { buildSchema, renderStatic } from '@pubpub/editor';
-import discussionSchema from 'components/DiscussionAddon/discussionSchema';
 import { Pub, Version } from '../server/models';
 import { generateHash } from '../server/utilities';
 
@@ -27,6 +26,8 @@ const dataDir =
 - get file, enter into pandoc, get html, convert into pubpub json
 - Have a 'check task' route and 'task' table that can be queried for task results
 */
+
+const filterNonExportableNodes = (nodes) => nodes.filter((n) => n.type !== 'discussion');
 
 export default (pubId, versionId, content, format) => {
 	const formatTypes = {
@@ -61,8 +62,8 @@ export default (pubId, versionId, content, format) => {
 					</head>
 					<body>
 						{renderStatic(
-							buildSchema({ ...discussionSchema }),
-							initialContent.content,
+							buildSchema(),
+							filterNonExportableNodes(initialContent.content),
 							{},
 						)}
 					</body>

@@ -1,0 +1,21 @@
+.pub-options-download-component {
+	h2 {
+		margin: 1em 0em 0.5em;
+	}
+	h2 + p {
+		margin: -1em 0em 2em;
+	}
+	.buttons-wrapper {
+		margin: 1em 0em 4em;
+		display: flex;
+		align-items: flex-end;
+	}
+	.subtext {
+		height: 0px;
+		position: relative;
+		top: 3px;
+	}
+	.typset-button {
+		margin-right: 1em;
+	}
+}

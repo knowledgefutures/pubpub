@@ -437,6 +437,9 @@ new Promise((resolve) => {
 	// 		sequelize.queryInterface.removeColumn('Communities', 'largeHeaderBackground'),
 	// 	]);
 	// })
+	// .then(()=> {
+	// 	return sequelize.queryInterface.addColumn('Pubs', 'downloads', { type: Sequelize.JSONB });
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

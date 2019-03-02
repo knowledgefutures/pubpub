@@ -2,6 +2,10 @@ import app from '../server';
 import { Pub, User, Discussion, CommunityAdmin, PubManager } from '../models';
 
 app.post('/api/discussions', (req, res) => {
+	if (req.body.userId !== (req.user || {}).id) {
+		res.status(500).json('Not authorized to add to discussions as this user');
+	}
+
 	Discussion.findAll({
 		where: {
 			pubId: req.body.pubId,

@@ -61,11 +61,6 @@ module.exports = {
 			{
 				test: /\.(ttf|eot|svg|woff|woff2)$/,
 				use: [
-					/* TODO for prod: Since static.pubpub.org isn't useful for */
-					/* blueprint 2.0 fonts, we need to not use the static path here. */
-					/* When pushing to prod for the first time, use the static.pubpub publicPath again */
-
-					// { loader: 'file-loader', query: { name: 'fonts/[hash].[ext]', publicPath: 'https://static.pubpub.org/dist/' } }
 					{
 						loader: 'file-loader',
 						query: { name: 'fonts/[hash].[ext]', publicPath: '/dist/' },

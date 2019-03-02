@@ -61,17 +61,7 @@ const Community = sequelize.define('Community', {
 	avatar: { type: Sequelize.TEXT },
 	favicon: { type: Sequelize.TEXT },
 	accentColor: { type: Sequelize.STRING },
-
 	hideCreatePubButton: { type: Sequelize.BOOLEAN },
-
-	// To Remove
-	/* ------ */
-	// hideLandingBanner: { type: Sequelize.BOOLEAN },
-	// largeHeaderLogo: { type: Sequelize.TEXT },
-	// largeHeaderBackground: { type: Sequelize.TEXT },
-	// smallHeaderLogo: { type: Sequelize.TEXT },
-	/* ------ */
-
 	headerLogo: { type: Sequelize.TEXT },
 	headerLinks: { type: Sequelize.JSONB },
 	hideHero: { type: Sequelize.BOOLEAN },
@@ -87,20 +77,17 @@ const Community = sequelize.define('Community', {
 	heroPrimaryButton: { type: Sequelize.JSONB },
 	heroSecondaryButton: { type: Sequelize.JSONB },
 	heroAlign: { type: Sequelize.TEXT },
-
 	accentTextColor: { type: Sequelize.STRING },
 	accentActionColor: { type: Sequelize.STRING },
 	accentHoverColor: { type: Sequelize.STRING },
 	accentMinimalColor: { type: Sequelize.STRING },
 	navigation: { type: Sequelize.JSONB },
 	hideNav: { type: Sequelize.BOOLEAN },
-
 	website: { type: Sequelize.TEXT },
 	facebook: { type: Sequelize.TEXT },
 	twitter: { type: Sequelize.TEXT },
 	email: { type: Sequelize.TEXT },
 	issn: { type: Sequelize.TEXT },
-
 	isFeatured: { type: Sequelize.BOOLEAN },
 	defaultPubTags: { type: Sequelize.JSONB },
 });

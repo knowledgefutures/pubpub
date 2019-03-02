@@ -22,6 +22,7 @@ const propTypes = {
 
 	clientData: PropTypes.object.isRequired,
 	editorKey: PropTypes.string.isRequired,
+	editorCustomPlugins: PropTypes.shape({}),
 	onClientChange: PropTypes.func.isRequired,
 	// onHighlightClick: PropTypes.func.isRequired,
 	isReadOnly: PropTypes.bool.isRequired,
@@ -34,6 +35,7 @@ const propTypes = {
 const defaultProps = {
 	// sectionId: undefined,
 	content: undefined,
+	editorCustomPlugins: {},
 	highlights: [],
 	// threads: [],
 	slug: '',
@@ -105,6 +107,7 @@ class PubBody extends Component {
 				)}
 
 				<Editor
+					customPlugins={this.props.editorCustomPlugins}
 					customNodes={{
 						...discussionSchema,
 					}}

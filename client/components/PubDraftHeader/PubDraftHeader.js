@@ -10,6 +10,7 @@ require('./pubDraftHeader.scss');
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
+	formattingBarKey: PropTypes.string,
 	editorChangeObject: PropTypes.object.isRequired,
 	setOptionsMode: PropTypes.func.isRequired,
 	collabStatus: PropTypes.string.isRequired,
@@ -19,6 +20,7 @@ const propTypes = {
 
 const defaultProps = {
 	threads: [],
+	formattingBarKey: '',
 };
 
 class PubDraftHeader extends Component {
@@ -73,6 +75,7 @@ class PubDraftHeader extends Component {
 					<FormattingBar
 						editorChangeObject={this.props.editorChangeObject}
 						threads={this.props.threads}
+						key={this.props.formattingBarKey}
 					/>
 				)}
 				{/* <div className="spacer" /> */}

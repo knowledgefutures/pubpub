@@ -33,6 +33,7 @@ import {
 	getRandomColor,
 	generateHash,
 } from 'utilities';
+import PubEditorUserInputCapture from '../../components/PubEditorUserInputCapture/PubEditorUserInputCapture';
 
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 require('@firebase/auth');
@@ -635,173 +636,200 @@ class Pub extends Component {
 						setDiscussionChannel={this.setDiscussionChannel}
 					/>
 
-					<div>
-						{pubData.isDraft && (
-							<PubDraftHeader
-								pubData={pubData}
-								loginData={loginData}
-								editorChangeObject={this.state.editorChangeObject}
-								setOptionsMode={this.setOptionsMode}
-								bottomCutoffId="discussions"
-								onRef={this.handleMenuWrapperRef}
-								collabStatus={this.state.collabStatus}
-								activeCollaborators={this.state.activeCollaborators}
-								threads={threads}
-							/>
-						)}
+					<PubEditorUserInputCapture>
+						{({ captureInputPlugin, lastInputCapture }) => (
+							<React.Fragment>
+								{pubData.isDraft && (
+									<PubDraftHeader
+										pubData={pubData}
+										loginData={loginData}
+										editorChangeObject={this.state.editorChangeObject}
+										setOptionsMode={this.setOptionsMode}
+										bottomCutoffId="discussions"
+										onRef={this.handleMenuWrapperRef}
+										collabStatus={this.state.collabStatus}
+										activeCollaborators={this.state.activeCollaborators}
+										threads={threads}
+										formattingBarKey={lastInputCapture.toString()}
+									/>
+								)}
 
-						<div className="container pub">
-							<div className="row">
-								<div className="col-12 pub-columns">
-									<div className="main-content">
-										{isCollabLoading && <PubLoadingBars />}
+								<div className="container pub">
+									<div className="row">
+										<div className="col-12 pub-columns">
+											<div className="main-content">
+												{isCollabLoading && <PubLoadingBars />}
 
-										{/* Prev/Content/Next Buttons */}
-										{!isCollabLoading && hasSections && (
-											<PubSectionNav
-												pubData={pubData}
-												queryObject={queryObject}
-												hasSections={hasSections}
-												sectionId={sectionId}
-												setOptionsMode={this.setOptionsMode}
-											/>
-										)}
+												{/* Prev/Content/Next Buttons */}
+												{!isCollabLoading && hasSections && (
+													<PubSectionNav
+														pubData={pubData}
+														queryObject={queryObject}
+														hasSections={hasSections}
+														sectionId={sectionId}
+														setOptionsMode={this.setOptionsMode}
+													/>
+												)}
 
-										<div style={isCollabLoading ? { opacity: 0 } : {}}>
-											<PubBody
-												showWorkingDraftButton={
-													!pubData.isDraft &&
-													(pubData.isEditor || pubData.isManager)
-												}
-												isDraft={pubData.isDraft}
-												versionId={activeVersion && activeVersion.id}
-												sectionId={sectionId}
-												content={activeContent}
-												threads={threads}
-												slug={pubData.slug}
-												highlights={highlights}
-												hoverBackgroundColor={
-													this.props.communityData.accentMinimalColor
-												}
-												setActiveThread={this.setActiveThread}
-												onChange={this.handleEditorChange}
-												onSingleClick={this.handleEditorSingleClick}
-												// Props from CollabEditor
-												editorKey={`${this.props.pubData.editorKey}${
-													sectionId ? '/' : ''
-												}${sectionId || ''}`}
-												isReadOnly={
-													!pubData.isDraft ||
-													(!pubData.isManager && !pubData.isDraftEditor)
-												}
-												clientData={this.state.activeCollaborators[0]}
-												onClientChange={this.handleClientChange}
-												onStatusChange={this.handleStatusChange}
-												discussionNodeOptions={{
-													// getThreads: this.getThreads,
-													getThreads: () => {
-														return this.getThreads();
-													},
-													// getThreads: ()=> { return ()=>{ return threads; }; },
-													// getThreads: function() { return threads; },
-													getPubData: () => {
-														return pubData;
-													},
-													getLocationData: () => {
-														return this.props.locationData;
-													},
-													getLoginData: () => {
-														return loginData;
-													},
-													getOnPostDiscussion: () => {
-														return this.handlePostDiscussion;
-													},
-													getOnPutDiscussion: () => {
-														return this.handlePutDiscussion;
-													},
-													getGetHighlightContent: () => {
-														return this.getHighlightContent;
-													},
-													getHandleQuotePermalink: () => {
-														return this.handleQuotePermalink;
-													},
-												}}
-												// menuWrapperRefNode={this.state.menuWrapperRefNode}
-											/>
-										</div>
+												<div style={isCollabLoading ? { opacity: 0 } : {}}>
+													<PubBody
+														showWorkingDraftButton={
+															!pubData.isDraft &&
+															(pubData.isEditor || pubData.isManager)
+														}
+														isDraft={pubData.isDraft}
+														versionId={
+															activeVersion && activeVersion.id
+														}
+														sectionId={sectionId}
+														content={activeContent}
+														threads={threads}
+														slug={pubData.slug}
+														highlights={highlights}
+														hoverBackgroundColor={
+															this.props.communityData
+																.accentMinimalColor
+														}
+														setActiveThread={this.setActiveThread}
+														onChange={this.handleEditorChange}
+														onSingleClick={this.handleEditorSingleClick}
+														// Props from CollabEditor
+														editorKey={`${
+															this.props.pubData.editorKey
+														}${sectionId ? '/' : ''}${sectionId || ''}`}
+														editorCustomPlugins={{
+															captureInputPlugin: captureInputPlugin,
+														}}
+														isReadOnly={
+															!pubData.isDraft ||
+															(!pubData.isManager &&
+																!pubData.isDraftEditor)
+														}
+														clientData={
+															this.state.activeCollaborators[0]
+														}
+														onClientChange={this.handleClientChange}
+														onStatusChange={this.handleStatusChange}
+														discussionNodeOptions={{
+															// getThreads: this.getThreads,
+															getThreads: () => {
+																return this.getThreads();
+															},
+															// getThreads: ()=> { return ()=>{ return threads; }; },
+															// getThreads: function() { return threads; },
+															getPubData: () => {
+																return pubData;
+															},
+															getLocationData: () => {
+																return this.props.locationData;
+															},
+															getLoginData: () => {
+																return loginData;
+															},
+															getOnPostDiscussion: () => {
+																return this.handlePostDiscussion;
+															},
+															getOnPutDiscussion: () => {
+																return this.handlePutDiscussion;
+															},
+															getGetHighlightContent: () => {
+																return this.getHighlightContent;
+															},
+															getHandleQuotePermalink: () => {
+																return this.handleQuotePermalink;
+															},
+														}}
+													/>
+												</div>
 
-										{!isCollabLoading &&
-											isEmptyDoc &&
-											pubData.isDraft &&
-											(pubData.isEditor || pubData.isManager) && (
-												<PubInlineImport
-													editorView={this.state.editorChangeObject.view}
+												{!isCollabLoading &&
+													isEmptyDoc &&
+													pubData.isDraft &&
+													(pubData.isEditor || pubData.isManager) && (
+														<PubInlineImport
+															editorView={
+																this.state.editorChangeObject.view
+															}
+														/>
+													)}
+
+												{/* Prev/Content/Next Buttons */}
+												{!isCollabLoading && hasSections && (
+													<PubSectionNav
+														pubData={pubData}
+														queryObject={queryObject}
+														hasSections={hasSections}
+														sectionId={sectionId}
+														setOptionsMode={this.setOptionsMode}
+													/>
+												)}
+
+												{/* License */}
+												{!pubData.isDraft && <PubLicense />}
+											</div>
+											<div className="side-content" ref={this.sideMarginRef}>
+												{/* Table of Contents */}
+												<PubSideToc
+													pubData={pubData}
+													activeContent={activeContent}
+													editorChangeObject={
+														this.state.editorChangeObject
+													}
 												/>
-											)}
 
-										{/* Prev/Content/Next Buttons */}
-										{!isCollabLoading && hasSections && (
-											<PubSectionNav
-												pubData={pubData}
-												queryObject={queryObject}
-												hasSections={hasSections}
-												sectionId={sectionId}
-												setOptionsMode={this.setOptionsMode}
-											/>
-										)}
+												{/* Collaborators */}
+												<PubSideCollaborators
+													pubData={pubData}
+													setOptionsMode={this.setOptionsMode}
+												/>
 
-										{/* License */}
-										{!pubData.isDraft && <PubLicense />}
-									</div>
-									<div className="side-content" ref={this.sideMarginRef}>
-										{/* Table of Contents */}
-										<PubSideToc
-											pubData={pubData}
-											activeContent={activeContent}
-											editorChangeObject={this.state.editorChangeObject}
-										/>
-
-										{/* Collaborators */}
-										<PubSideCollaborators
-											pubData={pubData}
-											setOptionsMode={this.setOptionsMode}
-										/>
-
-										{/* Quick Options */}
-										{/* <PubSideOptions
+												{/* Quick Options */}
+												{/* <PubSideOptions
 											pubData={pubData}
 											communityData={this.props.communityData}
 											setOptionsMode={this.setOptionsMode}
 											activeDiscussionChannel={activeDiscussionChannel}
 											setDiscussionChannel={this.setDiscussionChannel}
 										/> */}
-										{pubData.publicDiscussions && (
-											<PubSideDiscussions
-												key={
-													activeDiscussionChannel
-														? activeDiscussionChannel.id
-														: 'public-channel'
-												}
-												threads={threads}
-												pubData={pubData}
-												locationData={this.state.locationData}
-												editorChangeObject={this.state.editorChangeObject}
-												loginData={this.props.loginData}
-												onPostDiscussion={this.handlePostDiscussion}
-												onPutDiscussion={this.handlePutDiscussion}
-												getHighlightContent={this.getHighlightContent}
-												activeThread={this.state.activeThreadNumber}
-												setActiveThread={this.setActiveThread}
-												activeDiscussionChannel={activeDiscussionChannel}
-												initialContent={this.state.initialDiscussionContent}
-												getAbsolutePosition={this.getAbsolutePosition}
-											/>
-										)}
+												{pubData.publicDiscussions && (
+													<PubSideDiscussions
+														key={
+															activeDiscussionChannel
+																? activeDiscussionChannel.id
+																: 'public-channel'
+														}
+														threads={threads}
+														pubData={pubData}
+														locationData={this.state.locationData}
+														editorChangeObject={
+															this.state.editorChangeObject
+														}
+														loginData={this.props.loginData}
+														onPostDiscussion={this.handlePostDiscussion}
+														onPutDiscussion={this.handlePutDiscussion}
+														getHighlightContent={
+															this.getHighlightContent
+														}
+														activeThread={this.state.activeThreadNumber}
+														setActiveThread={this.setActiveThread}
+														activeDiscussionChannel={
+															activeDiscussionChannel
+														}
+														initialContent={
+															this.state.initialDiscussionContent
+														}
+														getAbsolutePosition={
+															this.getAbsolutePosition
+														}
+													/>
+												)}
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
-					</div>
+							</React.Fragment>
+						)}
+					</PubEditorUserInputCapture>
 					{pubData.publicDiscussions && (
 						<div id="discussions" className="discussions">
 							<div className="container pub">

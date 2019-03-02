@@ -19,7 +19,7 @@
 		"pretty": "prettier --write '**/*.js'",
 		"migrate": "node initMigrations.js",
 		"install-git-hooks": "rm -f ./.git/hooks/* && cp ./.githooks/* ./.git/hooks && chmod +x ./.git/hooks/*",
-		"postinstall": "npm run install-git-hooks && npm run build-prod",
+		"postinstall": "npm run build-prod",
 		"start": "concurrently --kill-others \"npm run api-dev\" \"npm run build-dev\"",
 		"storybook": "start-storybook -p 9001 -c .storybook -s ./",
 		"test": "jest --silent",

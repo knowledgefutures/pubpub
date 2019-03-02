@@ -401,7 +401,7 @@ new Promise((resolve) => {
 	// })
 	// .then(()=> {
 	// 	return Promise.all([
-	//		sequelize.queryInterface.addColumn('Communities', 'headerLogo', { type: Sequelize.TEXT }),		
+	// 		sequelize.queryInterface.addColumn('Communities', 'headerLogo', { type: Sequelize.TEXT }),		
 	// 		sequelize.queryInterface.addColumn('Communities', 'headerLinks', { type: Sequelize.JSONB }),
 	// 		sequelize.queryInterface.addColumn('Communities', 'hideHeaderLogo', { type: Sequelize.BOOLEAN }),
 	// 		sequelize.queryInterface.addColumn('Communities', 'heroTextColor', { type: Sequelize.TEXT }),
@@ -423,11 +423,11 @@ new Promise((resolve) => {
 	// 		sequelize.query('UPDATE "Communities" SET "hideHero" = "hideLandingBanner"'),
 	// 		sequelize.query('UPDATE "Communities" SET "heroLogo" = "largeHeaderLogo"'),
 	// 		sequelize.query('UPDATE "Communities" SET "heroBackgroundImage" = "largeHeaderBackground"'),
-	//		sequelize.query('UPDATE "Communities" SET "heroTitle" = "title"'),
-	//		sequelize.query('UPDATE "Communities" SET "useHeaderGradient" = true'),
-	//		sequelize.query('UPDATE "Communities" SET "hideHeaderLogo" = true'),
-	//		sequelize.query('UPDATE "Communities" SET "heroBackgroundColor" = "accentColor"'),
-	//		sequelize.query('UPDATE "Communities" SET "heroTextColor" = "accentTextColor"'),
+	// 		sequelize.query('UPDATE "Communities" SET "heroTitle" = "title"'),
+	// 		sequelize.query('UPDATE "Communities" SET "useHeaderGradient" = true'),
+	// 		sequelize.query('UPDATE "Communities" SET "hideHeaderLogo" = true'),
+	// 		sequelize.query('UPDATE "Communities" SET "heroBackgroundColor" = "accentColor"'),
+	// 		sequelize.query('UPDATE "Communities" SET "heroTextColor" = "accentTextColor"'),
 	// 	]);
 	// })
 	// .then(()=> {
@@ -435,6 +435,7 @@ new Promise((resolve) => {
 	// 		sequelize.queryInterface.removeColumn('Communities', 'hideLandingBanner'),
 	// 		sequelize.queryInterface.removeColumn('Communities', 'largeHeaderLogo'),
 	// 		sequelize.queryInterface.removeColumn('Communities', 'largeHeaderBackground'),
+	// 		sequelize.queryInterface.removeColumn('Communities', 'smallHeaderLogo'),
 	// 	]);
 	// })
 	// .then(()=> {

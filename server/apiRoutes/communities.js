@@ -124,9 +124,12 @@ app.put('/api/communities', (req, res) => {
 				'description',
 				'avatar',
 				'favicon',
+				/* to delete */
 				'smallHeaderLogo',
 				'largeHeaderLogo',
 				'largeHeaderBackground',
+				'hideLandingBanner',
+				/* ---- */
 				'accentColor',
 				'navigation',
 				'website',
@@ -135,7 +138,6 @@ app.put('/api/communities', (req, res) => {
 				'email',
 				'hideCreatePubButton',
 				'hideNav',
-				'hideLandingBanner',
 				'defaultPubTags',
 				// TODO: Cleanup unused fields here
 

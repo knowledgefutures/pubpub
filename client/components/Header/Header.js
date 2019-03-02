@@ -65,17 +65,19 @@ class Header extends Component {
 		let dynamicComponentClasses = '';
 
 		const isLanding = this.props.locationData.path === '/';
+		const isBasePubPub = this.props.locationData.isBasePubPub;
 		const backgroundColorChange =
 			this.props.communityData.accentColor !== this.props.communityData.heroBackgroundColor;
 		const textColorChange =
 			this.props.communityData.accentTextColor !== this.props.communityData.heroTextColor;
-		if ((!this.props.locationData.isBasePubPub && !backgroundColorChange) || !isLanding) {
+
+		if ((!isBasePubPub && !backgroundColorChange) || !isLanding) {
 			dynamicComponentClasses += ' accent-background';
 		}
-		if ((!this.props.locationData.isBasePubPub && !textColorChange) || !isLanding) {
+		if ((!isBasePubPub && !textColorChange) || (!isBasePubPub && !isLanding)) {
 			dynamicComponentClasses += ' accent-color';
 		}
-		if (this.props.locationData.isBasePubPub && this.props.locationData.path === '/') {
+		if (isBasePubPub && this.props.locationData.path === '/') {
 			dynamicComponentClasses += ' bp3-dark';
 		}
 		if (hideHero) {

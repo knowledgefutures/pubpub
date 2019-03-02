@@ -66,10 +66,10 @@ const Community = sequelize.define('Community', {
 
 	// To Remove
 	/* ------ */
-	hideLandingBanner: { type: Sequelize.BOOLEAN },
-	largeHeaderLogo: { type: Sequelize.TEXT },
-	largeHeaderBackground: { type: Sequelize.TEXT },
-	smallHeaderLogo: { type: Sequelize.TEXT },
+	// hideLandingBanner: { type: Sequelize.BOOLEAN },
+	// largeHeaderLogo: { type: Sequelize.TEXT },
+	// largeHeaderBackground: { type: Sequelize.TEXT },
+	// smallHeaderLogo: { type: Sequelize.TEXT },
 	/* ------ */
 
 	headerLogo: { type: Sequelize.TEXT },

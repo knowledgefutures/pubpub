@@ -125,10 +125,10 @@ app.put('/api/communities', (req, res) => {
 				'avatar',
 				'favicon',
 				/* to delete */
-				'smallHeaderLogo',
-				'largeHeaderLogo',
-				'largeHeaderBackground',
-				'hideLandingBanner',
+				// 'smallHeaderLogo',
+				// 'largeHeaderLogo',
+				// 'largeHeaderBackground',
+				// 'hideLandingBanner',
 				/* ---- */
 				'accentColor',
 				'navigation',

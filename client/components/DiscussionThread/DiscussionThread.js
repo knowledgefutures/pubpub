@@ -336,13 +336,13 @@ class DiscussionThread extends Component {
 										handleSubmit={this.handleReplySubmit}
 										submitIsLoading={this.state.isLoadingReply}
 										getHighlightContent={this.props.getHighlightContent}
+										locationData={this.props.locationData}
+										loginData={this.props.loginData}
 										inputKey="thread-reply"
 									/>
 								) : (
 									<AnchorButton
-										href={`/login?redirect=${
-											this.props.locationData.pathpathname
-										}`}
+										href={`/login?redirect=${this.props.locationData.path}`}
 										className="bp3-fill"
 										text="Login to Reply"
 									/>

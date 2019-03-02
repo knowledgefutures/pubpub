@@ -234,6 +234,8 @@ class PubSideDiscussions extends Component {
 						className="new-discussions"
 					>
 						<DiscussionInput
+							locationData={this.props.locationData}
+							loginData={this.props.loginData}
 							handleSubmit={(data) => {
 								this.setState({ newIsLoading: true });
 								this.props.onPostDiscussion(data).then(() => {

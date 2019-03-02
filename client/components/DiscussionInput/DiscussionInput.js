@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { Button, Tooltip } from '@blueprintjs/core';
 import Editor, { getText, getJSON, moveSelectionToEnd } from '@pubpub/editor';
 // import FormattingBar from 'components/FormattingBar/FormattingBar';
 import { getResizedUrl } from 'utilities';
@@ -12,6 +12,8 @@ const propTypes = {
 	showTitle: PropTypes.bool,
 	isNew: PropTypes.bool,
 	initialContent: PropTypes.object,
+	locationData: PropTypes.object.isRequired,
+	loginData: PropTypes.object.isRequired,
 	submitIsLoading: PropTypes.bool,
 	getHighlightContent: PropTypes.func,
 	inputKey: PropTypes.string,
@@ -42,6 +44,7 @@ class DiscussionInput extends Component {
 		this.onTitleChange = this.onTitleChange.bind(this);
 		this.onBodyChange = this.onBodyChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.getInputContent = this.getInputContent.bind(this);
 		// this.editorRef = undefined;
 		this.isEditorLoaded = false;
 	}
@@ -94,13 +97,18 @@ class DiscussionInput extends Component {
 		this.props.handleSubmit({
 			title: this.state.title,
 			content: getJSON(this.state.editorChangeObject.view),
-			text: getText(this.state.editorChangeObject.view),
+			text: this.getInputContent(),
 			// isPublic: this.state.isPublic,
 			highlights: highlights.length ? highlights : undefined,
 		});
 	}
 
+	getInputContent() {
+		return getText(this.state.editorChangeObject.view) || '';
+	}
+
 	render() {
+		const mustLoginToSubmit = !this.props.loginData.slug;
 		return (
 			<div className="discussion-input-component">
 				{this.props.showTitle && (
@@ -145,19 +153,31 @@ class DiscussionInput extends Component {
 								// icon="cross"
 							/>
 						)}
-						<Button
-							name="submit"
-							type="submit"
-							className="bp3-button bp3-intent-primary bp3-small"
-							onClick={this.onSubmit}
-							text={
-								this.props.isNew || this.props.showTitle
-									? `Post to #${this.props.activeDiscussionChannel.title}`
-									: 'Submit Reply'
+						<Tooltip
+							isOpen={mustLoginToSubmit && this.getInputContent().length > 0}
+							content={
+								<span className="discussion-input-login-to-discuss-text">
+									<a href={`/login?redirect=${this.props.locationData.path}`}>
+										Log in
+									</a>{' '}
+									to to annotate and discuss
+								</span>
 							}
-							disabled={this.state.submitDisabled}
-							loading={this.props.submitIsLoading}
-						/>
+						>
+							<Button
+								name="submit"
+								type="submit"
+								className="bp3-button bp3-intent-primary bp3-small"
+								onClick={this.onSubmit}
+								text={
+									this.props.isNew || this.props.showTitle
+										? `Post to #${this.props.activeDiscussionChannel.title}`
+										: 'Submit Reply'
+								}
+								disabled={this.state.submitDisabled || mustLoginToSubmit}
+								loading={this.props.submitIsLoading}
+							/>
+						</Tooltip>
 					</div>
 				</div>
 			</div>

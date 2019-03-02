@@ -280,6 +280,8 @@ class DiscussionList extends Component {
 						showTitle={true}
 						submitIsLoading={this.state.newThreadLoading}
 						getHighlightContent={this.props.getHighlightContent}
+						loginData={this.props.loginData}
+						locationData={this.props.locationData}
 						inputKey="bottom-general"
 						activeDiscussionChannel={this.props.activeDiscussionChannel}
 					/>

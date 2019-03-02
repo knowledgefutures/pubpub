@@ -64,7 +64,7 @@
 		"@blueprintjs/core": "^3.13.0",
 		"@blueprintjs/icons": "^3.6.0",
 		"@blueprintjs/select": "^3.6.1",
-		"@pubpub/editor": "^5.3.3",
+		"@pubpub/editor": "^5.3.5",
 		"algoliasearch": "^3.32.0",
 		"amqplib": "^0.5.3",
 		"autoprefixer": "^9.4.9",

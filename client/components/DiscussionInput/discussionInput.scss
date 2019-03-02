@@ -47,3 +47,10 @@
 		float: right;
 	}
 }
+
+/* This gets rendered by a portal outside of the main component */
+.discussion-input-login-to-discuss-text {
+	a {
+		color: white;
+	}
+}

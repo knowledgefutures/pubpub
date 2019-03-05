@@ -209,25 +209,23 @@ class LayoutEditorPubs extends Component {
 						onChange={this.changeTitle}
 					/>
 					<InputField label="Filter by Tag">
-						<div className="bp3-button-group bp3-select">
-							<TagMultiSelect
-								allTags={this.props.communityData.tags}
-								selectedTagIds={this.props.content.tagIds || []}
-								onItemSelect={(newTagId) => {
-									const existingTagIds = this.props.content.tagIds || [];
-									const newTagIds = [...existingTagIds, newTagId];
-									this.setTagIds(newTagIds);
-								}}
-								onRemove={(evt, tagIndex) => {
-									const existingTagIds = this.props.content.tagIds || [];
-									const newTagIds = existingTagIds.filter((item, filterIndex) => {
-										return filterIndex !== tagIndex;
-									});
-									this.setTagIds(newTagIds);
-								}}
-								placeholder="Add tags..."
-							/>
-						</div>
+						<TagMultiSelect
+							allTags={this.props.communityData.tags}
+							selectedTagIds={this.props.content.tagIds || []}
+							onItemSelect={(newTagId) => {
+								const existingTagIds = this.props.content.tagIds || [];
+								const newTagIds = [...existingTagIds, newTagId];
+								this.setTagIds(newTagIds);
+							}}
+							onRemove={(evt, tagIndex) => {
+								const existingTagIds = this.props.content.tagIds || [];
+								const newTagIds = existingTagIds.filter((item, filterIndex) => {
+									return filterIndex !== tagIndex;
+								});
+								this.setTagIds(newTagIds);
+							}}
+							placeholder="Add tags..."
+						/>
 					</InputField>
 					<InputField label="Limit">
 						<div className="bp3-button-group bp3-select">

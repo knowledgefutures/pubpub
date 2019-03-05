@@ -10,3 +10,4 @@ config.js
 migrate
 dist
 .node-version
+.vscode

@@ -70,6 +70,7 @@ class Header extends Component {
 			this.props.communityData.heroBackgroundColor &&
 			this.props.communityData.accentColor !== this.props.communityData.heroBackgroundColor;
 		const textColorChange =
+			this.props.communityData.heroTextColor &&
 			this.props.communityData.accentTextColor !== this.props.communityData.heroTextColor;
 
 		if ((!isBasePubPub && !backgroundColorChange) || !isLanding) {

@@ -67,6 +67,7 @@ class Header extends Component {
 		const isLanding = this.props.locationData.path === '/';
 		const isBasePubPub = this.props.locationData.isBasePubPub;
 		const backgroundColorChange =
+			this.props.communityData.heroBackgroundColor &&
 			this.props.communityData.accentColor !== this.props.communityData.heroBackgroundColor;
 		const textColorChange =
 			this.props.communityData.accentTextColor !== this.props.communityData.heroTextColor;

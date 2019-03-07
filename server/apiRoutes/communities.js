@@ -68,7 +68,7 @@ app.post('/api/communities', (req, res) => {
 				description: description,
 				headerLogo: req.body.headerLogo,
 				heroLogo: req.body.heroLogo,
-				heroTitle: req.body.heroLogo ? req.body.title : '',
+				heroTitle: req.body.heroLogo ? '' : req.body.title,
 				hideHeaderLogo: true,
 				heroText: description,
 				accentColor: req.body.accentColor,

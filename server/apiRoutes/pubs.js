@@ -182,7 +182,7 @@ app.delete('/api/pubs', (req, res) => {
 			return res.status(201).json(req.body.pubId);
 		})
 		.catch((err) => {
-			console.error('Error putting Pub', err);
+			console.error('Error deleting Pub', err);
 			return res.status(500).json(err);
 		});
 });

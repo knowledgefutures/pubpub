@@ -421,6 +421,7 @@ new Promise((resolve) => {
 	// .then(() => {
 	// 	return Promise.all([
 	// 		sequelize.query('UPDATE "Communities" SET "hideHero" = "hideLandingBanner"'),
+	// 		sequelize.query('UPDATE "Communities" SET "headerLogo" = "smallHeaderLogo"'),
 	// 		sequelize.query('UPDATE "Communities" SET "heroLogo" = "largeHeaderLogo"'),
 	// 		sequelize.query('UPDATE "Communities" SET "heroBackgroundImage" = "largeHeaderBackground"'),
 	// 		sequelize.query('UPDATE "Communities" SET "heroTitle" = "title"'),

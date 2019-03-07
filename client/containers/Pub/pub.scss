@@ -23,7 +23,7 @@ Print
 		#pub-container {
 			.pub-columns {
 				display: grid;
-				grid-template-columns: 1fr 275px;
+				grid-template-columns: minmax(0, 1fr) 275px;
 				grid-template-areas: 'main side';
 				grid-column-gap: 4%;
 				margin-top: 3em;

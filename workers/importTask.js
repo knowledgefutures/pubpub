@@ -60,6 +60,12 @@ const processFootnotes = (inputHtml) => {
 					.contents()
 					.find(selector.footnoteBackLink)
 					.remove();
+
+				/* TODO - I can't get cheerio to play nicely here. */
+				/* hasContents works for footnoteSelectors[0] but is null for [1]. */
+				/* noContents works though for footnoteSelectors[1]. */
+				/* We probably want something that lets each selector */
+				/* specify their own function for grabbing content */
 				const hasContents = elemContext.contents().html();
 				const noContents = elemContext.html();
 				footnoteContents.push(hasContents || noContents);

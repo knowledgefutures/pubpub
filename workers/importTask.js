@@ -46,7 +46,7 @@ const processFootnotes = (inputHtml) => {
 			footnoteBackLink: 'a.footnote-back',
 		},
 		{
-			wrapperSection: 'section.notes',
+			wrapperSection: 'section#notes',
 			footnoteContent: 'div.endnote',
 			footnoteBackLink: 'a.ennum',
 		},

@@ -37,25 +37,52 @@ const processImages = (inputHtml) => {
 const processFootnotes = (inputHtml) => {
 	const htmlContext = cheerio.load(inputHtml);
 	const footnoteContents = [];
-	htmlContext('section.footnotes')
-		.find('li')
-		.each((index, elem) => {
-			htmlContext(elem)
-				.contents()
-				.find('a.footnote-back')
-				.remove();
-			footnoteContents.push(
+	/* Find footnote content, remove the backlink, and then stick the contents */
+	/* into an array to access later. */
+	const footnoteSelectors = [
+		{
+			wrapperSection: 'section.footnotes',
+			footnoteContent: 'li',
+			footnoteBackLink: 'a.footnote-back',
+		},
+		{
+			wrapperSection: 'section.notes',
+			footnoteContent: 'div.endnote',
+			footnoteBackLink: 'a.ennum',
+		},
+	];
+	footnoteSelectors.forEach((selector) => {
+		htmlContext(selector.wrapperSection)
+			.find(selector.footnoteContents)
+			.each((index, elem) => {
 				htmlContext(elem)
 					.contents()
-					.html(),
+					.find(selector.footnoteBackLink)
+					.remove();
+				footnoteContents.push(
+					htmlContext(elem)
+						.contents()
+						.html(),
+				);
+			});
+	});
+
+	/* Find all inline footnotes and replace their content with the content from above */
+	const footnoteRefSelectors = ['a.footnote-ref', 'a.enref'];
+	footnoteRefSelectors.forEach((selector) => {
+		htmlContext(selector).each((index, elem) => {
+			htmlContext(elem).replaceWith(
+				`<footnote data-value="${footnoteContents[index]}"></footnote>`,
 			);
 		});
-	htmlContext('a.footnote-ref').each((index, elem) => {
-		htmlContext(elem).replaceWith(
-			`<footnote data-value="${footnoteContents[index]}"></footnote>`,
-		);
 	});
-	htmlContext('section.footnotes').remove();
+
+	/* Remove the list of footnotes at the end of the doc */
+	const footnoteSectionSelectors = ['section.footnotes', 'section.notes'];
+	footnoteSectionSelectors.forEach((selector) => {
+		htmlContext(selector).remove();
+	});
+
 	return htmlContext('body').html();
 };
 

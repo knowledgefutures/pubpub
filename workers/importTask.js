@@ -42,28 +42,27 @@ const processFootnotes = (inputHtml) => {
 	const footnoteSelectors = [
 		{
 			wrapperSection: 'section.footnotes',
-			footnoteContent: 'li',
+			footnoteElem: 'li',
 			footnoteBackLink: 'a.footnote-back',
 		},
 		{
 			wrapperSection: 'section#notes',
-			footnoteContent: 'div.endnote',
-			footnoteBackLink: 'a.ennum',
+			footnoteElem: 'div.endnote',
+			footnoteBackLink: '.ennum',
 		},
 	];
 	footnoteSelectors.forEach((selector) => {
 		htmlContext(selector.wrapperSection)
-			.find(selector.footnoteContents)
+			.find(selector.footnoteElem)
 			.each((index, elem) => {
-				htmlContext(elem)
+				const elemContext = htmlContext(elem);
+				elemContext
 					.contents()
 					.find(selector.footnoteBackLink)
 					.remove();
-				footnoteContents.push(
-					htmlContext(elem)
-						.contents()
-						.html(),
-				);
+				const hasContents = elemContext.contents().html();
+				const noContents = elemContext.html();
+				footnoteContents.push(hasContents || noContents);
 			});
 	});
 
@@ -78,7 +77,7 @@ const processFootnotes = (inputHtml) => {
 	});
 
 	/* Remove the list of footnotes at the end of the doc */
-	const footnoteSectionSelectors = ['section.footnotes', 'section.notes'];
+	const footnoteSectionSelectors = ['section.footnotes', 'section#notes'];
 	footnoteSectionSelectors.forEach((selector) => {
 		htmlContext(selector).remove();
 	});

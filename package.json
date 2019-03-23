@@ -46,6 +46,7 @@
 		"eslint-plugin-jsx-a11y": "^6.2.1",
 		"eslint-plugin-prettier": "^3.0.1",
 		"eslint-plugin-react": "^7.12.4",
+		"eslint-plugin-react-hooks": "^1.6.0",
 		"jest": "^24.1.0",
 		"prettier": "^1.16.4",
 		"prosemirror-dev-tools": "^2.1.1",

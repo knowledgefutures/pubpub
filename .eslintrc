@@ -1,6 +1,6 @@
 {
     extends: ["airbnb", "prettier"],
-    plugins: ["react", "import", "prettier"],
+    plugins: ["react", "import", "prettier", "react-hooks"],
     parser: "babel-eslint",
     env: {
         "browser": true,
@@ -36,6 +36,7 @@
         "react/jsx-indent-props": [2, "tab"],
         "react/jsx-one-expression-per-line": 0,
         "react/jsx-wrap-multilines": 0,
-        "space-before-function-paren": [2, "never"],
+        "react-hooks/rules-of-hooks": 2,
+        "react-hooks/exhaustive-deps": 1
     },
 }

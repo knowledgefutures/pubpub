@@ -11,7 +11,7 @@ const propTypes = {
 	locationData: PropTypes.object.isRequired,
 };
 
-const Terms = function(props) {
+const About = function(props) {
 	return (
 		<div id="about-container">
 			<PageWrapper
@@ -129,7 +129,7 @@ const Terms = function(props) {
 	);
 };
 
-Terms.propTypes = propTypes;
-export default Terms;
+About.propTypes = propTypes;
+export default About;
 
-hydrateWrapper(Terms);
+hydrateWrapper(About);

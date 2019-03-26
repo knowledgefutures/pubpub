@@ -88,10 +88,10 @@ class DashboardPubs extends Component {
 											)}
 									</div>
 									<div className="nowrap">
-										{pub.pubTags.map((pubTag) => {
+										{pub.collectionPubs.map(({ collection }) => {
 											return (
 												<span className="bp3-tag bp3-minimal bp3-small">
-													{pubTag.tag.title}
+													{collection.title}
 												</span>
 											);
 										})}

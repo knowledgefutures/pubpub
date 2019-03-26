@@ -1,46 +1,6 @@
-.pub-options-attribution-component {
-	.draggable-item {
-		// margin-bottom: 1em;
-		background-color: rgba(255, 255, 255, 0.75);
-		&.dragging {
-			box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, 0.25);
-		}
-	}
-	.bp3-icon-drag-handle-horizontal {
-		padding: 0em 1em;
-		cursor: ns-resize;
-	}
-	.attribution-wrapper {
-		display: flex;
-		padding: 1em 0;
-		width: 100%;
-		border-bottom: 1px solid #ccc;
-		.avatar-wrapper {
-		}
-		.content {
-			flex-shrink: 1;
-			flex-grow: 1;
-			margin-left: 1em;
-		}
-		.top-content {
-			display: flex;
-			align-items: center;
-			.name {
-				flex-grow: 1;
-				flex-shrink: 1;
-				font-weight: bold;
-			}
-		}
-		.bottom-content {
-			display: flex;
-			align-items: flex-start;
-			margin-right: 1em;
-			.bp3-checkbox {
-				margin-bottom: 0px;
-				margin-right: 2em;
-				margin-top: 7px;
-				white-space: nowrap;
-			}
-		}
-	}
+.component-pub-options-attribution {
+    .save-wrapper {
+        position: absolute;
+        right: 10px;
+    }
 }

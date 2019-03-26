@@ -1,5 +1,5 @@
 import app from '../server';
-import { Pub, CommunityAdmin, PubManager, PubAttribution, PubTag } from '../models';
+import { Pub, CommunityAdmin, PubManager, PubAttribution, CollectionPub } from '../models';
 import { generateHash, slugifyString } from '../utilities';
 import { setPubSearchData, deletePubSearchData } from '../searchUtilities';
 
@@ -48,15 +48,21 @@ app.post('/api/pubs', (req, res) => {
 				order: 0.5,
 			});
 
-			const defaultTagIds = req.body.defaultTagIds || [];
-			const newPubTagObjects = defaultTagIds.map((tagId) => {
+			const defaultCollectionIds = req.body.defaultTagIds || [];
+			const newCollectionPubObjects = defaultCollectionIds.map((collectionId) => {
 				return {
+					kind: 'tag',
 					pubId: newPub.id,
-					tagId: tagId,
+					collectionId: collectionId,
 				};
 			});
-			const createPubTags = PubTag.bulkCreate(newPubTagObjects);
-			return Promise.all([newPub, createPubManager, createPubAttribution, createPubTags]);
+			const createCollectionPubs = CollectionPub.bulkCreate(newCollectionPubObjects);
+			return Promise.all([
+				newPub,
+				createPubManager,
+				createPubAttribution,
+				createCollectionPubs,
+			]);
 		})
 		.then(([newPub]) => {
 			setPubSearchData(newPub.id);

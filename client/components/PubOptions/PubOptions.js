@@ -9,7 +9,7 @@ import PubOptionsDetails from 'components/PubOptionsDetails/PubOptionsDetails';
 import PubOptionsDelete from 'components/PubOptionsDelete/PubOptionsDelete';
 import PubOptionsDownload from 'components/PubOptionsDownload/PubOptionsDownload';
 // import PubOptionsImport from 'components/PubOptionsImport/PubOptionsImport';
-import PubOptionsTags from 'components/PubOptionsTags/PubOptionsTags';
+import PubOptionsCollections from 'components/PubOptionsCollections/PubOptionsCollections';
 import PubOptionsSections from 'components/PubOptionsSections/PubOptionsSections';
 import PubOptionsSharing from 'components/PubOptionsSharing/PubOptionsSharing';
 import PubOptionsSocial from 'components/PubOptionsSocial/PubOptionsSocial';
@@ -42,7 +42,7 @@ const PubOptions = (props) => {
 	const optionsMode = props.optionsMode;
 	// TODO: Hide based on isManager, and other metrics
 
-	let adminModes = ['details', 'tags', 'sharing', 'sections', 'review', 'DOI', 'delete'];
+	let adminModes = ['details', 'collections', 'sharing', 'sections', 'review', 'DOI', 'delete'];
 	if (
 		!props.pubData.isDraft ||
 		(props.pubData.sectionsData && props.pubData.sectionsData.length === 1)
@@ -53,7 +53,7 @@ const PubOptions = (props) => {
 	}
 	if (!props.loginData.isAdmin) {
 		adminModes = adminModes.filter((item) => {
-			return item !== 'tags';
+			return item !== 'collections';
 		});
 	}
 
@@ -166,7 +166,9 @@ const PubOptions = (props) => {
 					{/* optionsMode === 'import' &&
 						<PubOptionsImport key="import" {...defaultChildProps} />
 					*/}
-					{optionsMode === 'tags' && <PubOptionsTags key="tags" {...defaultChildProps} />}
+					{optionsMode === 'collections' && (
+						<PubOptionsCollections key="collections" {...defaultChildProps} />
+					)}
 					{optionsMode === 'sections' && (
 						<PubOptionsSections key="sections" {...defaultChildProps} />
 					)}

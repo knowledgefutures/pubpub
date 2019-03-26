@@ -1,0 +1,16 @@
+.component-collection-metadata-editor {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    .fields-empty-state {
+        flex-grow: 1;
+    }
+    .fields {
+        width: 100%;
+        padding-top: 8px;
+    }
+    .field {
+        width: 100%;
+        max-width: 500px;
+    }
+}

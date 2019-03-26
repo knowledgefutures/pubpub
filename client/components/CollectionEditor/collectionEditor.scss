@@ -1,0 +1,56 @@
+$pubs-pane-width: 300px;
+
+.collection-editor-component {
+    display: flex;
+    width: 100%;
+    .pane {
+        display: flex;
+        flex-direction: column;
+    }
+    .pubs-pane {
+        width: $pubs-pane-width;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        .available-pubs-heading {
+            margin-bottom: 10px;
+        }
+        .pubs-listing {
+            flex-grow: 1;
+            overflow: auto;
+        }
+    }
+    .selections-pane {
+        flex-grow: 1;
+        margin-left: 0px;
+    }
+    .pub-row {
+        background: none;
+        display: flex;
+        height: 45px;
+        padding: 0px;
+        border-radius: 0px;
+        .contents {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: space-between;
+            padding: 10px;
+        }
+        .drag-handle {
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .controls {
+            opacity: 1;
+            transition: 0.1s ease-out opacity;   
+        }
+    }
+    .pub-row.is-dragging {
+        .controls {
+            opacity: 0;
+        }
+    }
+}

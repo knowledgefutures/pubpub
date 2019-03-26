@@ -10,7 +10,96 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utilities';
-import { findPage } from '../queryHelpers';
+import {
+	findPage,
+	getCollectionAttributions,
+	getCollectionPubsInCollection,
+} from '../queryHelpers';
+
+const extraContextualData = [
+	{
+		retrieve: ({ initialData, mode }) => {
+			if (['collections', 'pubs'].includes(mode)) {
+				// TODO(ian): this looks like a bit of a hack, we should maybe just query for pubs?
+				return findPage(initialData.communityData.pages[0].id, true, initialData);
+			}
+			return { pubs: [] };
+		},
+		transform: (initialData, result) => ({
+			...initialData,
+			pubsData: result.pubs,
+		}),
+	},
+	{
+		retrieve: ({ activeItem, initialData, pageId }) => {
+			if (activeItem.title) {
+				return activeItem;
+			}
+			return findPage(pageId, true, initialData);
+		},
+		transform: (initialData, result) => ({
+			...initialData,
+			pageData: result,
+		}),
+	},
+	{
+		retrieve: ({ mode, slug: collectionId }) => {
+			if (mode === 'collections' && collectionId) {
+				return Promise.all([
+					getCollectionAttributions(collectionId),
+					getCollectionPubsInCollection(collectionId),
+				]);
+			}
+			return null;
+		},
+		transform: (initialData, result, { slug: collectionId }) => {
+			const { communityData } = initialData;
+			const { collections } = communityData;
+			if (!result) {
+				return initialData;
+			}
+			const [attributions, collectionPubs] = result;
+			const newCollections = collections.map((collection) => {
+				if (collection.id === collectionId) {
+					return {
+						...collection,
+						attributions: attributions,
+						collectionPubs: collectionPubs,
+					};
+				}
+				return collection;
+			});
+			return {
+				...initialData,
+				communityData: {
+					...communityData,
+					collections: newCollections,
+				},
+			};
+		},
+	},
+];
+
+const addExtraData = (initialDataPromise, context) =>
+	Promise.all([
+		initialDataPromise,
+		...extraContextualData.map(
+			({ retrieve, transform }) =>
+				new Promise((resolve, reject) => {
+					const retrieved = retrieve(context);
+					const resolveWithTransformer = (result) =>
+						resolve((initialData) => transform(initialData, result, context));
+					if (retrieved && typeof retrieved.then === 'function') {
+						return retrieved
+							.then((result) => resolveWithTransformer(result))
+							.catch((err) => reject(err));
+					}
+					return resolveWithTransformer(retrieved);
+				}),
+		),
+	]).then(([initialData, ...transformers]) =>
+		transformers.reduce((data, nextTransformer) => nextTransformer(data), initialData),
+	);
 
 app.get(['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug'], (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
@@ -37,8 +126,8 @@ app.get(['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug'], (req, res,
 			if (mode === 'settings') {
 				activeItem.title = 'Settings';
 			}
-			if (mode === 'tags') {
-				activeItem.title = 'Tags';
+			if (mode === 'collections') {
+				activeItem.title = 'Collections';
 			}
 			if (mode === 'pubs') {
 				activeItem.title = 'Pubs';
@@ -61,35 +150,27 @@ app.get(['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug'], (req, res,
 				throw new Error('Page Not Found');
 			}
 
-			const findPageData = activeItem.title
-				? activeItem
-				: findPage(pageId, true, initialData);
-
-			const findPubs =
-				mode === 'pubs'
-					? findPage(initialData.communityData.pages[0].id, true, initialData)
-					: { pubs: [] };
-
-			return Promise.all([initialData, findPageData, findPubs]);
+			return addExtraData(initialData, {
+				activeItem: activeItem,
+				initialData: initialData,
+				mode: mode,
+				pageId: pageId,
+				slug: slug,
+			});
 		})
-		.then(([initialData, pageData, pubsData]) => {
-			const newInitialData = {
-				...initialData,
-				pageData: pageData,
-				pubsData: pubsData.pubs,
-			};
+		.then((initialData) => {
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="Dashboard"
-					initialData={newInitialData}
+					initialData={initialData}
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
-						title: `${pageData.title} · Dashboard`,
+						title: `${initialData.pageData.title} · Dashboard`,
 						unlisted: true,
 					})}
 				>
-					<Dashboard {...newInitialData} />
+					<Dashboard {...initialData} />
 				</Html>,
 			);
 		})

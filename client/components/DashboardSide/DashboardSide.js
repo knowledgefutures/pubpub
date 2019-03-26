@@ -6,11 +6,12 @@ require('./dashboardSide.scss');
 
 const propTypes = {
 	pages: PropTypes.array.isRequired,
-	activeTab: PropTypes.string,
+	activeSlug: PropTypes.string,
+	activeMode: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
-	activeTab: undefined,
+	activeSlug: null,
 };
 
 const DashboardSide = function(props) {
@@ -34,9 +35,9 @@ const DashboardSide = function(props) {
 			id: 2,
 		},
 		{
-			title: 'Tags',
+			title: 'Collections',
 			icon: 'bp3-icon-tag',
-			slug: 'tags',
+			slug: 'collections',
 			id: 3,
 		},
 		{
@@ -56,7 +57,7 @@ const DashboardSide = function(props) {
 					return (
 						<li key={`side-control-${control.id}`}>
 							<a
-								className={`bp3-menu-item ${props.activeTab === control.slug &&
+								className={`bp3-menu-item ${props.activeMode === control.slug &&
 									'bp3-active'} ${control.icon}`}
 								tabIndex="0"
 								href={`/dashboard/${control.slug}`}
@@ -98,8 +99,8 @@ const DashboardSide = function(props) {
 						const publicStatusIcon = page.isPublic ? 'bp3-icon-globe' : 'bp3-icon-lock';
 						const pageIcon = page.slug ? publicStatusIcon : 'bp3-icon-home';
 						const isActive = page.slug
-							? props.activeTab === page.slug
-							: props.activeTab === 'pages';
+							? props.activeSlug === page.slug
+							: props.activeMode === 'pages';
 						return (
 							<li key={`side-page-${page.id}`}>
 								<a

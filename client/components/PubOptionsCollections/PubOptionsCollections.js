@@ -6,7 +6,7 @@ import fuzzysearch from 'fuzzysearch';
 import Icon from 'components/Icon/Icon';
 import { apiFetch } from 'utilities';
 
-require('./pubOptionsTags.scss');
+require('./pubOptionsCollections.scss');
 
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
@@ -14,31 +14,34 @@ const propTypes = {
 	setPubData: PropTypes.func.isRequired,
 };
 
-class PubOptionsTags extends Component {
+class PubOptionsCollections extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			/* We store pubTags in state of this component so we can do immediate */
+			/* We store collectionPubs in state of this component so we can do immediate */
 			/* updates and save in the background without jumpy effects */
-			pubTags: this.props.pubData.pubTags,
+			collectionPubs: this.props.pubData.collectionPubs,
 			isLoading: false,
 		};
 		this.inputRef = undefined;
-		this.getFilteredTags = this.getFilteredTags.bind(this);
-		this.handlePubTagAdd = this.handlePubTagAdd.bind(this);
-		this.handlePubTagDelete = this.handlePubTagDelete.bind(this);
+		this.getFilteredCollections = this.getFilteredCollections.bind(this);
+		this.handleCollectionPubAdd = this.handleCollectionPubAdd.bind(this);
+		this.handleCollectionPubDelete = this.handleCollectionPubDelete.bind(this);
 	}
 
-	getFilteredTags(query, existingPubTags) {
-		const existingTagIds = existingPubTags.map((pubTag) => {
-			return pubTag.tag.id;
+	getFilteredCollections(query, existingCollectionPubs) {
+		const existingCollectionPubIds = existingCollectionPubs.map((collectionPub) => {
+			return collectionPub.collection.id;
 		});
-		const defaultTags = this.props.communityData.tags;
-		const filteredDefaultTags = defaultTags
+		const defaultCollections = this.props.communityData.collections;
+		const filteredDefaultCollections = defaultCollections
 			.filter((item) => {
-				const fuzzyMatchTag = fuzzysearch(query.toLowerCase(), item.title.toLowerCase());
-				const alreadyUsed = existingTagIds.indexOf(item.id) > -1;
-				return !alreadyUsed && fuzzyMatchTag;
+				const fuzzyMatchCollection = fuzzysearch(
+					query.toLowerCase(),
+					item.title.toLowerCase(),
+				);
+				const alreadyUsed = existingCollectionPubIds.indexOf(item.id) > -1;
+				return !alreadyUsed && fuzzyMatchCollection;
 			})
 			.sort((foo, bar) => {
 				if (foo.title.toLowerCase() < bar.title.toLowerCase()) {
@@ -50,60 +53,61 @@ class PubOptionsTags extends Component {
 				return 0;
 			});
 
-		const addNewTagOption = defaultTags.reduce((prev, curr) => {
+		const addNewCollectionOption = defaultCollections.reduce((prev, curr) => {
 			if (curr.title.toLowerCase() === query.toLowerCase()) {
 				return false;
 			}
 			return prev;
 		}, true);
-		const newTagOption = query && addNewTagOption ? [{ title: query }] : [];
+		const newCollectionOption = query && addNewCollectionOption ? [{ title: query }] : [];
 
-		const outputTags = [...newTagOption, ...filteredDefaultTags];
-		return outputTags;
+		const outputCollections = [...newCollectionOption, ...filteredDefaultCollections];
+		return outputCollections;
 	}
 
-	handlePubTagAdd(tag) {
+	handleCollectionPubAdd(collection) {
 		this.inputRef.focus();
-		return apiFetch('/api/pubTags', {
+		return apiFetch('/api/collectionPubs/legacy', {
 			method: 'POST',
 			body: JSON.stringify({
-				title: tag.title,
-				tagId: tag.id,
+				kind: 'tag',
+				title: collection.title,
+				collectionId: collection.id,
 				pubId: this.props.pubData.id,
 				communityId: this.props.communityData.id,
 			}),
 		}).then((result) => {
 			this.setState((prevState) => {
-				const newPubTags = [...prevState.pubTags, result];
+				const newCollectionPubs = [...prevState.collectionPubs, result];
 				this.props.setPubData({
 					...this.props.pubData,
-					pubTags: newPubTags,
+					collectionPubs: newCollectionPubs,
 				});
-				return { pubTags: newPubTags };
+				return { collectionPubs: newCollectionPubs };
 			});
 		});
 	}
 
-	handlePubTagDelete(pubTagId) {
+	handleCollectionPubDelete(collectionPubId) {
 		this.setState(
 			(prevState) => {
-				const newPubTags = prevState.pubTags.filter((pubTag) => {
-					return pubTag.id !== pubTagId;
+				const newCollectionPubs = prevState.collectionPubs.filter((collectionPub) => {
+					return collectionPub.id !== collectionPubId;
 				});
-				return { pubTags: newPubTags, isLoading: true };
+				return { collectionPubs: newCollectionPubs, isLoading: true };
 			},
 			() => {
-				apiFetch('/api/pubTags', {
+				apiFetch('/api/collectionPubs/legacy', {
 					method: 'DELETE',
 					body: JSON.stringify({
-						pubTagId: pubTagId,
+						collectionPubId: collectionPubId,
 						pubId: this.props.pubData.id,
 						communityId: this.props.communityData.id,
 					}),
 				}).then(() => {
 					this.props.setPubData({
 						...this.props.pubData,
-						pubTags: this.state.pubTags,
+						collectionPubs: this.state.collectionPubs,
 					});
 					this.setState({ isLoading: false });
 				});
@@ -112,25 +116,25 @@ class PubOptionsTags extends Component {
 	}
 
 	render() {
-		const pubTags = this.state.pubTags;
+		const collectionPubs = this.state.collectionPubs;
 		return (
-			<div className="pub-options-tags-component">
+			<div className="pub-options-collections-component">
 				{this.state.isLoading && (
 					<div className="save-wrapper">
 						<Spinner small={true} /> Saving...
 					</div>
 				)}
-				<h1>Tags</h1>
+				<h1>Collections</h1>
 				<Suggest
-					items={pubTags}
+					items={collectionPubs}
 					inputProps={{
-						placeholder: 'Add Tag...',
+						placeholder: 'Add to collection...',
 						className: 'bp3-large',
 						inputRef: (ref) => {
 							this.inputRef = ref;
 						},
 					}}
-					itemListPredicate={this.getFilteredTags}
+					itemListPredicate={this.getFilteredCollections}
 					inputValueRenderer={() => {
 						return '';
 					}}
@@ -157,11 +161,11 @@ class PubOptionsTags extends Component {
 						);
 					}}
 					resetOnSelect={true}
-					onItemSelect={this.handlePubTagAdd}
+					onItemSelect={this.handleCollectionPubAdd}
 					noResults={<MenuItem disabled text="No results" />}
 					popoverProps={{
 						// isOpen: this.state.queryValue,
-						popoverClassName: 'bp3-minimal tag-autocomplete-popover',
+						popoverClassName: 'bp3-minimal collection-autocomplete-popover',
 						position: Position.BOTTOM_LEFT,
 						modifiers: {
 							preventOverflow: { enabled: false },
@@ -170,19 +174,19 @@ class PubOptionsTags extends Component {
 					}}
 				/>
 
-				<div className="tags-wrapper">
-					{pubTags.map((pubTag) => {
+				<div className="collections-wrapper">
+					{collectionPubs.map((collectionPub) => {
 						return (
 							<Tag
-								key={pubTag.id}
+								key={collectionPub.id}
 								className="bp3-minimal bp3-intent-primary"
 								large={true}
 								onRemove={() => {
-									this.handlePubTagDelete(pubTag.id);
+									this.handleCollectionPubDelete(collectionPub.id);
 								}}
 							>
-								{!pubTag.tag.isPublic && <Icon icon="lock2" />}
-								{pubTag.tag.title}
+								{!collectionPub.collection.isPublic && <Icon icon="lock2" />}
+								{collectionPub.collection.title}
 							</Tag>
 						);
 					})}
@@ -192,5 +196,5 @@ class PubOptionsTags extends Component {
 	}
 }
 
-PubOptionsTags.propTypes = propTypes;
-export default PubOptionsTags;
+PubOptionsCollections.propTypes = propTypes;
+export default PubOptionsCollections;

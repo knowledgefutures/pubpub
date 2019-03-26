@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import * as ReactBeautifulDnD from 'react-beautiful-dnd';
 import { resolve } from 'path';
 import { Readable } from 'stream';
 import queryString from 'query-string';
@@ -8,7 +9,7 @@ import builder from 'xmlbuilder';
 import request from 'request-promise';
 import amqplib from 'amqplib';
 import { remove as removeDiacritics } from 'diacritics';
-import { Community, User, Pub, Version, PubAttribution, Tag, Page } from './models';
+import { Collection, Community, Page, Pub, PubAttribution, User, Version } from './models';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 const doiSubmissionUrl = process.env.DOI_SUBMISSION_URL;
@@ -40,6 +41,7 @@ export const hostIsValid = (req, access) => {
 
 export const renderToNodeStream = (res, reactElement) => {
 	res.setHeader('content-type', 'text/html');
+	ReactBeautifulDnD.resetServerContext();
 	return ReactDOMServer.renderToNodeStream(reactElement).pipe(res);
 };
 
@@ -132,10 +134,9 @@ export const getInitialData = (req) => {
 				attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
 			},
 			{
-				model: Tag,
-				as: 'tags',
+				model: Collection,
+				as: 'collections',
 				separate: true,
-				// include: [{ model: Page, as: 'page', required: false, attributes: ['id', 'title', 'slug'] }]
 			},
 		],
 	}).then((communityResult) => {
@@ -170,17 +171,19 @@ export const getInitialData = (req) => {
 			return true;
 		});
 
-		communityData.tags = communityData.tags.filter((item) => {
+		communityData.collections = communityData.collections.filter((item) => {
 			return loginData.isAdmin || item.isPublic;
 		});
 
-		communityData.tags = communityData.tags.map((tag) => {
-			if (!tag.pageId) {
-				return tag;
+		communityData.tags = communityData.collections.filter((c) => c.kind === 'tag');
+
+		communityData.collections = communityData.collections.map((collection) => {
+			if (!collection.pageId) {
+				return collection;
 			}
 			return {
-				...tag,
-				page: availablePages[tag.pageId],
+				...collection,
+				page: availablePages[collection.pageId],
 			};
 		});
 

@@ -3,6 +3,8 @@ import validator from 'validator';
 import {
 	User,
 	Collection,
+	CollectionAttribution,
+	CollectionPub,
 	Pub,
 	Collaborator,
 	Discussion,
@@ -12,8 +14,6 @@ import {
 	PubManager,
 	PubAttribution,
 	VersionPermission,
-	Tag,
-	PubTag,
 	Page,
 	DiscussionChannel,
 	DiscussionChannelParticipant,
@@ -149,23 +149,18 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 						return item;
 					})
 			: undefined,
-		// collections: pub.collections
-		// 	? pub.collections.filter((item)=> {
-		// 		return item.isPublic || communityAdminData;
-		// 	})
-		// 	: undefined,
-		pubTags: pub.pubTags
+		collectionPubs: pub.collectionPubs
 			.map((item) => {
-				if (!communityAdminData && item.tag && !item.tag.isPublic) {
+				if (!communityAdminData && item.collection && !item.collection.isPublic) {
 					return {
 						...item,
-						tag: undefined,
+						collection: undefined,
 					};
 				}
 				return item;
 			})
 			.filter((item) => {
-				return !item.tag || item.tag.isPublic || communityAdminData;
+				return !item.collection || item.collection.isPublic || communityAdminData;
 			}),
 		discussionChannels: pub.discussionChannels
 			? pub.discussionChannels.filter((channel) => {
@@ -285,14 +280,14 @@ export const findPub = (req, initialData, isDraftRoute) => {
 				],
 			},
 			{
-				model: PubTag,
-				as: 'pubTags',
+				model: CollectionPub,
+				as: 'collectionPubs',
 				required: false,
 				separate: true,
 				include: [
 					{
-						model: Tag,
-						as: 'tag',
+						model: Collection,
+						as: 'collection',
 						include: [
 							{
 								model: Page,
@@ -513,14 +508,14 @@ export const findPage = (pageId, useIncludes, initialData) => {
 					separate: true,
 				},
 				{
-					model: PubTag,
-					as: 'pubTags',
+					model: CollectionPub,
+					as: 'collectionPubs',
 					required: false,
 					separate: true,
 					include: [
 						{
-							model: Tag,
-							as: 'tag',
+							model: Collection,
+							as: 'collection',
 						},
 					],
 				},
@@ -655,3 +650,31 @@ export const getPubSearch = (query, initialData) => {
 		return output;
 	});
 };
+
+export const getCollectionAttributions = (collectionId) =>
+	CollectionAttribution.findAll({
+		where: { collectionId: collectionId },
+		include: [
+			{
+				model: User,
+				as: 'user',
+				required: false,
+				attributes: [
+					'id',
+					'firstName',
+					'lastName',
+					'fullName',
+					'avatar',
+					'slug',
+					'initials',
+					'title',
+				],
+			},
+		],
+	});
+
+export const getCollectionPubsInCollection = (collectionId) =>
+	CollectionPub.findAll({
+		where: { collectionId: collectionId },
+		order: [['rank', 'ASC']],
+	});

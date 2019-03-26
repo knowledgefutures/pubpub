@@ -81,3 +81,7 @@ ExampleComponent.defaultProps = defaultProps;
 /* a wrapped version of the component. */
 export default ExampleComponent;
 ```
+
+## File naming
+
+- When faced with the desire to name something `util.js`, `utils.js`, `utilities.js` or something similar permutation - pick `utils.js`.

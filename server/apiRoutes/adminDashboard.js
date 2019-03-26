@@ -75,7 +75,7 @@ app.get('/api/admin-dashboard', (req, res) => {
 		UNION
 		(select "CommunityAdmins"."communityId", DATE_TRUNC('month', "CommunityAdmins"."updatedAt")::date as "month" from "CommunityAdmins")
 		UNION
-		(select "Tags"."communityId", DATE_TRUNC('month', "Tags"."updatedAt")::date as "month" from "Tags")
+		(select "Collections"."communityId", DATE_TRUNC('month', "Collections"."updatedAt")::date as "month" from "Collections")
 		UNION
 		(select "Pages"."communityId", DATE_TRUNC('month', "Pages"."updatedAt")::date as "month" from "Pages")
 		UNION

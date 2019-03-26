@@ -503,7 +503,7 @@ export function generateRenderLists(layout, pubs) {
 				if (!tagIds.length) {
 					return true;
 				}
-				return pub.pubTags.reduce((prev, curr) => {
+				return pub.collectionPubs.reduce((prev, curr) => {
 					// if (curr.tagId === block.content.tagId) { return true; }
 					if (tagIds.indexOf(curr.tagId) > -1) {
 						return true;

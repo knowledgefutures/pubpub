@@ -429,15 +429,16 @@ export default {
 			},
 		},
 	],
-	pubTags: [
+	collectionPubs: [
 		{
 			id: '526e506e-4ece-4d69-99e1-23814af4921e',
 			pubId: '3ecac2f5-8065-4bde-aa0e-c1ab222fd673',
 			tagId: 'af1f0e57-6fc9-4cdf-9c15-e5e58af59d6b',
 			createdAt: '2018-08-06T15:26:05.647Z',
 			updatedAt: '2018-08-06T15:26:05.647Z',
-			tag: {
+			collection: {
 				id: 'af1f0e57-6fc9-4cdf-9c15-e5e58af59d6b',
+				kind: 'tag',
 				title: 'Essays',
 				isRestricted: true,
 				isPublic: true,
@@ -458,8 +459,9 @@ export default {
 			tagId: '0fd7f42c-d8a1-4275-bf2b-cd641416959c',
 			createdAt: '2018-08-06T15:26:05.647Z',
 			updatedAt: '2018-08-06T15:26:05.647Z',
-			tag: {
+			collection: {
 				id: '0fd7f42c-d8a1-4275-bf2b-cd641416959c',
+				kind: 'tag',
 				title: 'Home',
 				isRestricted: true,
 				isPublic: true,

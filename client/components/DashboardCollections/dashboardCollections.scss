@@ -1,4 +1,4 @@
-.dashboard-tags-component {
+.dashboard-collections-component {
 	// max-width: 600px;
 	// margin: 0 auto;
 	.autocomplete-wrapper {
@@ -7,10 +7,13 @@
 			width: 100%;
 		}
 	}
+	.add-collection-input {
+		flex-grow: 1;
+	}
 	.error {
 		color: #c23030;
 	}
-	.tag-wrapper {
+	.collection-wrapper {
 		display: flex;
 		align-items: center;
 		padding-bottom: 1em;

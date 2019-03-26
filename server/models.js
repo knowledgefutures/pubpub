@@ -13,6 +13,7 @@ const operatorsAliases = {
 	$ilike: Sequelize.Op.iLike,
 	$in: Sequelize.Op.in,
 	$not: Sequelize.Op.not,
+	$notIn: Sequelize.Op.notIn,
 	$eq: Sequelize.Op.eq,
 	$ne: Sequelize.Op.ne,
 	$lt: Sequelize.Op.lt,
@@ -332,25 +333,75 @@ const PubAttribution = sequelize.define('PubAttribution', {
 	pubId: { type: Sequelize.UUID, allowNull: false },
 });
 
-const Tag = sequelize.define('Tag', {
+const Collection = sequelize.define('Collection', {
 	id: id,
 	title: { type: Sequelize.TEXT },
 	isRestricted: {
 		type: Sequelize.BOOLEAN,
-	} /* Restricted tags can only be set by Community Admins */,
+	} /* Restricted collections can only be set by Community Admins */,
 	isPublic: { type: Sequelize.BOOLEAN } /* Only visible to community admins */,
 
 	/* Set by Associations */
-	pageId: { type: Sequelize.UUID } /* Used to link a tag to a specific page */,
-	communityId: { type: Sequelize.UUID, allowNull: false },
+	pageId: { type: Sequelize.UUID } /* Used to link a collection to a specific page */,
+	communityId: { type: Sequelize.UUID },
+
+	metadata: { type: Sequelize.JSONB },
+	kind: { type: Sequelize.TEXT },
 });
 
-const PubTag = sequelize.define('PubTag', {
+const CollectionPub = sequelize.define(
+	'CollectionPub',
+	{
+		id: id,
+		pubId: { type: Sequelize.UUID, allowNull: false },
+		collectionId: { type: Sequelize.UUID, allowNull: false },
+		contextHint: { type: Sequelize.TEXT },
+		rank: { type: Sequelize.TEXT },
+		isPrimary: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false },
+	},
+	{
+		indexes: [
+			// Index to maintain invariant that every pub have at most one primary collection
+			{
+				fields: ['pubId'],
+				where: {
+					isPrimary: true,
+				},
+				unique: true,
+			},
+			// Index to enforce that there is one CollectionPub per (collection, pub) pair
+			{
+				fields: ['collectionId', 'pubId'],
+				unique: true,
+			},
+		],
+	},
+);
+
+const CollectionAttribution = sequelize.define('CollectionAttribution', {
 	id: id,
+	name: { type: Sequelize.TEXT } /* Used for non-account attribution */,
+	avatar: { type: Sequelize.TEXT } /* Used for non-account attribution */,
+	title: { type: Sequelize.TEXT } /* Used for non-account attribution */,
+	order: { type: Sequelize.DOUBLE },
+	isAuthor: { type: Sequelize.BOOLEAN },
+	roles: { type: Sequelize.JSONB },
 
 	/* Set by Associations */
-	pubId: { type: Sequelize.UUID },
-	tagId: { type: Sequelize.UUID },
+	userId: { type: Sequelize.UUID },
+	collectionId: { type: Sequelize.UUID, allowNull: false },
+});
+
+Collection.hasMany(CollectionAttribution, {
+	onDelete: 'CASCADE',
+	as: 'attributions',
+	foreignKey: 'pubId',
+});
+CollectionAttribution.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
+CollectionAttribution.belongsTo(Collection, {
+	onDelete: 'CASCADE',
+	as: 'collection',
+	foreignKey: 'collectionId',
 });
 
 const DiscussionChannel = sequelize.define('DiscussionChannel', {
@@ -438,14 +489,18 @@ DiscussionChannelParticipant.belongsTo(User, {
 /* ---------- */
 /* ---------- */
 
-/* Communities have many Tags */
-Community.hasMany(Tag, { onDelete: 'CASCADE', as: 'tags', foreignKey: 'communityId' });
-/* Tags can belong to many Pubs. */
-// Tag.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubTag', foreignKey: 'tagId' });
-/* Pubs have many PubTags. */
-Pub.hasMany(PubTag, { onDelete: 'CASCADE', as: 'pubTags', foreignKey: 'pubId' });
-PubTag.belongsTo(Tag, { onDelete: 'CASCADE', as: 'tag', foreignKey: 'tagId' });
-Tag.belongsTo(Page, { as: 'page', foreignKey: 'pageId' });
+Community.hasMany(Collection, {
+	onDelete: 'CASCADE',
+	as: 'collections',
+	foreignKey: 'communityId',
+});
+Pub.hasMany(CollectionPub, { onDelete: 'CASCADE', as: 'collectionPubs', foreignKey: 'pubId' });
+CollectionPub.belongsTo(Collection, {
+	onDelete: 'CASCADE',
+	as: 'collection',
+	foreignKey: 'collectionId',
+});
+Collection.belongsTo(Page, { as: 'page', foreignKey: 'pageId' });
 
 /* Communities have many Pubs. Pubs belong to a single Community */
 Community.hasMany(Pub, { onDelete: 'CASCADE', as: 'pubs', foreignKey: 'communityId' });
@@ -489,7 +544,33 @@ Discussion.belongsTo(User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'use
 /* Communities have many Pages. */
 Community.hasMany(Page, { onDelete: 'CASCADE', as: 'pages', foreignKey: 'communityId' });
 
+/* Read for deprecation */
+
+const Tag = sequelize.define('Tag', {
+	id: id,
+	title: { type: Sequelize.TEXT },
+	isRestricted: {
+		type: Sequelize.BOOLEAN,
+	} /* Restricted tags can only be set by Community Admins */,
+	isPublic: { type: Sequelize.BOOLEAN } /* Only visible to community admins */,
+
+	/* Set by Associations */
+	pageId: { type: Sequelize.UUID } /* Used to link a tag to a specific page */,
+	communityId: { type: Sequelize.UUID, allowNull: false },
+});
+
+const PubTag = sequelize.define('PubTag', {
+	id: id,
+
+	/* Set by Associations */
+	pubId: { type: Sequelize.UUID },
+	tagId: { type: Sequelize.UUID },
+});
+
 const db = {
+	Collection: Collection,
+	CollectionAttribution: CollectionAttribution,
+	CollectionPub: CollectionPub,
 	Community: Community,
 	CommunityAdmin: CommunityAdmin,
 	Discussion: Discussion,
@@ -501,11 +582,12 @@ const db = {
 	PubManager: PubManager,
 	VersionPermission: VersionPermission,
 	PubAttribution: PubAttribution,
-	Tag: Tag,
-	PubTag: PubTag,
 	Page: Page,
 	DiscussionChannel: DiscussionChannel,
 	DiscussionChannelParticipant: DiscussionChannelParticipant,
+	/* Ready for deprecation */
+	Tag: Tag,
+	PubTag: PubTag,
 };
 
 db.sequelize = sequelize;

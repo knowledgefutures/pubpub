@@ -5,11 +5,12 @@ import DashboardSide from 'components/DashboardSide/DashboardSide';
 import DashboardCreatePage from 'components/DashboardCreatePage/DashboardCreatePage';
 import DashboardSettings from 'components/DashboardSettings/DashboardSettings';
 import DashboardTeam from 'components/DashboardTeam/DashboardTeam';
-import DashboardTags from 'components/DashboardTags/DashboardTags';
 import DashboardPubs from 'components/DashboardPubs/DashboardPubs';
 import DashboardPage from 'components/DashboardPage/DashboardPage';
 
 import { hydrateWrapper } from 'utilities';
+import DashboardCollections from '../../components/DashboardCollections/DashboardCollections';
+import DashboardCollection from '../../components/DashboardCollection/DashboardCollection';
 
 require('./dashboard.scss');
 
@@ -40,13 +41,41 @@ class Dashboard extends Component {
 		this.setState({ pageData: newPageData });
 	}
 
+	renderCollections() {
+		const {
+			pubsData,
+			locationData: {
+				params: { slug },
+			},
+		} = this.props;
+		const { communityData } = this.state;
+		if (slug) {
+			const collection = communityData.collections.find((c) => c.id === slug);
+			return (
+				<DashboardCollection
+					communityData={communityData}
+					initialCollection={collection}
+					pubsData={pubsData}
+					collectionId={slug}
+				/>
+			);
+		}
+		return (
+			<DashboardCollections
+				communityData={communityData}
+				setCommunityData={this.setCommunityData}
+			/>
+		);
+	}
+
 	render() {
 		const communityData = this.state.communityData;
 		const pageData = this.state.pageData;
 		const activeSlug = this.props.locationData.params.slug || '';
 		const activeMode = this.props.locationData.params.mode || '';
+		const useNoScrollClass = activeMode === 'collections' && activeSlug;
 		return (
-			<div id="dashboard-container">
+			<div id="dashboard-container" className={useNoScrollClass ? 'no-scroll' : ''}>
 				<PageWrapper
 					loginData={this.props.loginData}
 					communityData={communityData}
@@ -60,7 +89,8 @@ class Dashboard extends Component {
 								<div className="side-content">
 									<DashboardSide
 										pages={communityData.pages}
-										activeTab={activeSlug || activeMode}
+										activeSlug={activeSlug}
+										activeMode={activeMode}
 									/>
 								</div>
 
@@ -88,13 +118,8 @@ class Dashboard extends Component {
 														setCommunityData={this.setCommunityData}
 													/>
 												);
-											case 'tags':
-												return (
-													<DashboardTags
-														communityData={communityData}
-														setCommunityData={this.setCommunityData}
-													/>
-												);
+											case 'collections':
+												return this.renderCollections();
 											case 'page':
 												return (
 													<DashboardCreatePage

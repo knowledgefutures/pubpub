@@ -194,20 +194,23 @@ class PubHeader extends Component {
 							<div className="col-12">
 								<div className="tags-buttons-wrapper">
 									<div className="tags">
-										{pubData.pubTags
-											.filter((pubTag) => {
-												return pubTag.tag;
+										{pubData.collectionPubs
+											.filter((collectionPub) => {
+												return (
+													collectionPub.collection &&
+													collectionPub.collection.kind === 'tag'
+												);
 											})
 											.sort((foo, bar) => {
 												if (
-													foo.tag.title.toLowerCase() <
-													bar.tag.title.toLowerCase()
+													foo.collection.title.toLowerCase() <
+													bar.collection.title.toLowerCase()
 												) {
 													return -1;
 												}
 												if (
-													foo.tag.title.toLowerCase() >
-													bar.tag.title.toLowerCase()
+													foo.collection.title.toLowerCase() >
+													bar.collection.title.toLowerCase()
 												) {
 													return 1;
 												}
@@ -218,23 +221,25 @@ class PubHeader extends Component {
 													<a
 														key={item.id}
 														href={
-															item.tag.page
-																? `/${item.tag.page.slug}`
-																: `/search?tag=${item.tag.title}`
+															item.collection.page
+																? `/${item.collection.page.slug}`
+																: `/search?tag=${
+																		item.collection.title
+																  }`
 														}
 													>
 														<Tag
 															intent={Intent.PRIMARY}
 															minimal={true}
 															icon={
-																!item.tag.isPublic ? (
+																!item.collection.isPublic ? (
 																	<Icon icon="lock2" />
 																) : (
 																	undefined
 																)
 															}
 														>
-															{item.tag.title}
+															{item.collection.title}
 														</Tag>
 													</a>
 												);

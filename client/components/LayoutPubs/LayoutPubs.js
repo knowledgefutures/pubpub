@@ -6,7 +6,8 @@ const propTypes = {
 	content: PropTypes.object.isRequired,
 	pubRenderList: PropTypes.array.isRequired,
 	/* Expected content */
-	/* title, pubPreviewType, limit, pubIds, tagIds, hideByline, hideDescription, hideDates, hideContributors */
+	/* title, pubPreviewType, limit, pubIds, collectionIds,
+	   hideByline, hideDescription, hideDates, hideContributors */
 };
 
 const LayoutPubs = function(props) {

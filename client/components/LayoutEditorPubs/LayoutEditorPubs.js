@@ -114,7 +114,7 @@ class LayoutEditorPubs extends Component {
 						}
 						return prev;
 					}, undefined);
-					return specifiedPub.pubTags.reduce((prev, curr) => {
+					return specifiedPub.collectionPubs.reduce((prev, curr) => {
 						if (newTagIds.indexOf(curr.tagId) > -1) {
 							return true;
 						}
@@ -159,7 +159,7 @@ class LayoutEditorPubs extends Component {
 						}
 						return prev;
 					}, undefined);
-					return specifiedPub.pubTags.reduce((prev, curr) => {
+					return specifiedPub.collectionPubs.reduce((prev, curr) => {
 						if (curr.tagId === this.props.content.tagId) {
 							return true;
 						}
@@ -192,7 +192,7 @@ class LayoutEditorPubs extends Component {
 			if (!tagIds.length) {
 				return true;
 			}
-			return pub.pubTags.reduce((prev, curr) => {
+			return pub.collectionPubs.reduce((prev, curr) => {
 				if (tagIds.indexOf(curr.tagId) > -1) {
 					return true;
 				}

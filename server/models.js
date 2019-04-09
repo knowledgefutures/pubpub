@@ -19,7 +19,7 @@ const operatorsAliases = {
 	$lt: Sequelize.Op.lt,
 	$gt: Sequelize.Op.gt,
 };
-const useSSL = process.env.DATABASE_URL.indexOf('localhost:') === -1;
+const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	logging: false,
 	dialectOptions: { ssl: useSSL },
@@ -200,16 +200,16 @@ const Pub = sequelize.define(
 		labels: { type: Sequelize.JSONB },
 
 		isCommunityAdminManaged: { type: Sequelize.BOOLEAN },
-		communityAdminDraftPermissions: {
-			type: Sequelize.ENUM,
-			values: ['none', 'view', 'edit'],
-			defaultValue: 'none',
-		},
-		draftPermissions: {
-			type: Sequelize.ENUM,
-			values: ['private', 'publicView', 'publicEdit'],
-			defaultValue: 'private',
-		},
+		// communityAdminDraftPermissions: {
+		// 	type: Sequelize.ENUM,
+		// 	values: ['none', 'view', 'edit'],
+		// 	defaultValue: 'none',
+		// },
+		// draftPermissions: {
+		// 	type: Sequelize.ENUM,
+		// 	values: ['private', 'publicView', 'publicEdit'],
+		// 	defaultValue: 'private',
+		// },
 		review: { type: Sequelize.JSONB },
 		downloads: { type: Sequelize.JSONB },
 
@@ -262,6 +262,44 @@ const Version = sequelize.define('Version', {
 
 	/* Set by Associations */
 	pubId: { type: Sequelize.UUID, allowNull: false },
+});
+
+const Branch = sequelize.define('Branch', {
+	id: id,
+	shortId: { type: Sequelize.INTEGER, allowNull: false },
+	title: { type: Sequelize.TEXT },
+	description: { type: Sequelize.TEXT },
+	order: { type: Sequelize.DOUBLE },
+	communityAdminPermissions: {
+		type: Sequelize.ENUM,
+		values: ['none', 'view', 'discuss', 'edit', 'manage'],
+		defaultValue: 'none',
+	},
+	// pubManagerPermissions
+	publicPermissions: {
+		type: Sequelize.ENUM,
+		values: ['none', 'view', 'discuss', 'edit'],
+		defaultValue: 'none',
+	},
+	viewHash: { type: Sequelize.STRING },
+	editHash: { type: Sequelize.STRING },
+
+	/* Set by Associations */
+	pubId: { type: Sequelize.UUID, allowNull: false },
+});
+
+const BranchPermission = sequelize.define('BranchPermission', {
+	id: id,
+	permissions: {
+		type: Sequelize.ENUM,
+		values: ['view', 'discuss', 'edit', 'manage'],
+		defaultValue: 'view',
+	},
+
+	/* Set by Associations */
+	userId: { type: Sequelize.UUID, allowNull: false },
+	pubId: { type: Sequelize.UUID, allowNull: false },
+	branchId: { type: Sequelize.UUID, allowNull: false },
 });
 
 const Page = sequelize.define('Page', {
@@ -467,7 +505,13 @@ Pub.hasMany(VersionPermission, {
 	as: 'versionPermissions',
 	foreignKey: 'pubId',
 });
+Pub.hasMany(BranchPermission, {
+	onDelete: 'CASCADE',
+	as: 'branchPermissions',
+	foreignKey: 'pubId',
+});
 VersionPermission.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
+BranchPermission.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 /* Pubs have many PubManagers. */
 Pub.hasMany(PubManager, { onDelete: 'CASCADE', as: 'managers', foreignKey: 'pubId' });
 PubManager.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
@@ -530,6 +574,7 @@ Discussion.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' 
 /* We also select as activeVersion at time */
 Pub.hasMany(Version, { onDelete: 'CASCADE', as: 'versions', foreignKey: 'pubId' });
 Pub.hasMany(Version, { onDelete: 'CASCADE', as: 'activeVersion', foreignKey: 'pubId' });
+Pub.hasMany(Branch, { onDelete: 'CASCADE', as: 'branches', foreignKey: 'pubId' });
 
 /*  Users can have many Discussions. Discussions belong to a single User. */
 User.hasMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'userId' });
@@ -576,6 +621,8 @@ const db = {
 	CommunityAdmin: CommunityAdmin,
 	Discussion: Discussion,
 	Pub: Pub,
+	Branch: Branch,
+	BranchPermission: BranchPermission,
 	Signup: Signup,
 	User: User,
 	Version: Version,

@@ -1,0 +1,15 @@
+.pub-inline-menu-component {
+	padding: 0.25em;
+	border-radius: 2px;
+	background-color: #444;
+	color: white;
+	.bp3-button.bp3-minimal {
+		color: white;
+		&:hover {
+			color: white;
+		}
+	}
+	.bp3-icon {
+		color: inherit;
+	}
+}

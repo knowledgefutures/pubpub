@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 /* Firebase has some issues with their auth packages and importing */
 /* conflicting dependencies. https://github.com/firebase/firebase-js-sdk/issues/752 */
 /* eslint-disable-next-line import/no-extraneous-dependencies */
-import firebase from '@firebase/app';
+// import firebase from '@firebase/app';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 import checkIfMobile from 'is-mobile';
 // import applyDevTools from 'prosemirror-dev-tools';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
@@ -36,9 +39,9 @@ import {
 import PubEditorUserInputCapture from '../../components/PubEditorUserInputCapture/PubEditorUserInputCapture';
 
 /* eslint-disable-next-line import/no-extraneous-dependencies */
-require('@firebase/auth');
+// require('@firebase/auth');
 /* eslint-disable-next-line import/no-extraneous-dependencies */
-require('@firebase/database');
+// require('@firebase/database');
 require('./pub.scss');
 
 const propTypes = {

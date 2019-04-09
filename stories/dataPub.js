@@ -2,7 +2,7 @@ export default {
 	id: '3ecac2f5-8065-4bde-aa0e-c1ab222fd673',
 	slug: 'zw3syn5h',
 	title: 'Introduction',
-	description: '',
+	description: 'Are institutions, through compartmentalization, a root cause of the exploitation and reduction that spans relations from gender to ecology? A new language—and a new sense-making—to address the horrors of this exploitation.',
 	avatar: 'https://assets.pubpub.org/_testing/51517935062313.jpg',
 	useHeaderImage: true,
 	firstPublishedAt: '2018-02-06T16:37:59.317Z',

@@ -1,0 +1,17 @@
+.pub-header-action-button-component {
+	&.skewed {
+		transform: skew(-20deg);
+		& > * {
+			transform: skew(20deg);
+		}
+	}
+	min-width: 55px;
+	min-height: 55px;
+	&.wide {
+		min-width: 200px;
+	}
+	&.skinny {
+		min-width: 30px;
+	}
+}
+

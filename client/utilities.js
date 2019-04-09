@@ -94,30 +94,15 @@ export const apiFetch = function(path, opts) {
 };
 
 export const getFirebaseConfig = function() {
-	// TODO: Remove this once we don't need dev.pubpub.org to point to v4-dev firebase
-	if (
-		typeof window === 'undefined' ||
-		window.location.origin.indexOf('pubpub-v4-dev.herokuapp.com') > -1
-	) {
-		return {
-			apiKey: 'AIzaSyBNlAp1EW5zhiPS8HWwXwZ8WMs-EdkMmKI',
-			authDomain: 'pubpub-v4-dev-60334.firebaseapp.com',
-			databaseURL: 'https://pubpub-v4-dev-60334.firebaseio.com',
-			projectId: 'pubpub-v4-dev-60334',
-			storageBucket: 'pubpub-v4-dev-60334.appspot.com',
-			messagingSenderId: '410839613714',
-		};
-	}
-
 	return {
-		apiKey: 'AIzaSyBSzFrgIh2MQdWXwjVRGFnC30qv4uYZn08',
-		authDomain: 'pubpub-v5.firebaseapp.com',
-		projectId: 'pubpub-v5',
-		storageBucket: 'pubpub-v5.appspot.com',
-		messagingSenderId: '865496864907',
+		apiKey: 'AIzaSyCVBq7I9ddJpHhs-DzVEEdM09-VqTVex1g',
+		authDomain: 'pubpub-v6.firebaseapp.com',
+		projectId: 'pubpub-v6',
+		storageBucket: 'pubpub-v6.appspot.com',
+		messagingSenderId: '503345633278',
 		databaseURL: isPubPubProduction
-			? 'https://pubpub-v5-production.firebaseio.com'
-			: 'https://pubpub-v5-development.firebaseio.com',
+			? 'https://pubpub-v6-prod.firebaseio.com'
+			: 'https://pubpub-v6-dev.firebaseio.com',
 	};
 };
 

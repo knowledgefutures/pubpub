@@ -1,0 +1,28 @@
+@media only screen and (min-width: 750px) {
+	@supports (display: grid) {
+		.pub-settings-component {
+			.settings-columns {
+				display: grid;
+				grid-template-columns: 150px 1fr;
+				grid-template-areas: 'side main';
+				grid-column-gap: 4%;
+				margin-top: 2em;
+			}
+			.side-content {
+				grid-area: side;
+				min-width: 0px;
+				padding: 0px;
+				margin-bottom: 1em;
+				border-radius: 2px;
+				background-color: #f4f4f4;
+				ul {
+					background-color: inherit;
+				}
+			}
+			.main-content {
+				grid-area: main;
+				min-width: 0;
+			}
+		}
+	}
+}

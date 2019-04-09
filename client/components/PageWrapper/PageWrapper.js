@@ -23,6 +23,8 @@ const defaultProps = {
 	hideFooter: false,
 };
 
+export const PageContext = React.createContext({});
+
 const PageWrapper = (props) => {
 	const loginData = props.loginData;
 	const communityData = props.communityData;
@@ -64,57 +66,64 @@ const PageWrapper = (props) => {
 	});
 
 	const useBottomShadow = communityData.accentTextColor === '#000000';
+	const pageContextProps = {
+		communityData: props.communityData,
+		loginData: props.loginData,
+		locationData: props.locationData,
+	};
 	return (
-		<div id="page-wrapper-component" className={useBottomShadow ? 'bottom-shadow' : ''}>
-			{props.fixHeader && (
-				<style>
-					{`
+		<PageContext.Provider value={pageContextProps}>
+			<div id="page-wrapper-component" className={useBottomShadow ? 'bottom-shadow' : ''}>
+				{props.fixHeader && (
+					<style>
+						{`
 						.header-component { position: fixed; width: 100%; z-index: 19; }
 						.page-content { padding-top: 56px; }
 					`}
-				</style>
-			)}
-			{useBottomShadow && (
-				<style>
-					{`
+					</style>
+				)}
+				{useBottomShadow && (
+					<style>
+						{`
 						nav:last-of-type { border-bottom: 1px solid #DDD; }
 					`}
-				</style>
-			)}
+					</style>
+				)}
 
-			<AccentStyle
-				accentColor={communityData.accentColor}
-				accentTextColor={communityData.accentTextColor}
-				accentActionColor={communityData.accentActionColor}
-				accentHoverColor={communityData.accentHoverColor}
-				accentMinimalColor={communityData.accentMinimalColor}
-			/>
-
-			<Header
-				communityData={props.communityData}
-				locationData={props.locationData}
-				loginData={props.loginData}
-				// smallHeaderLogo={communityData.smallHeaderLogo}
-				// largeHeaderLogo={communityData.largeHeaderLogo}
-				// largeHeaderDescription={communityData.largeHeaderDescription}
-				// largeHeaderBackground={communityData.largeHeaderBackground}
-			/>
-
-			{!props.hideNav && !props.communityData.hideNav && (
-				<NavBar navItems={navItems} socialItems={socialItems} />
-			)}
-
-			<div className="page-content">{props.children}</div>
-
-			{!props.hideFooter && (
-				<Footer
-					isAdmin={loginData.isAdmin}
-					isBasePubPub={props.locationData.isBasePubPub}
-					communityData={communityData}
-					socialItems={socialItems}
+				<AccentStyle
+					accentColor={communityData.accentColor}
+					accentTextColor={communityData.accentTextColor}
+					accentActionColor={communityData.accentActionColor}
+					accentHoverColor={communityData.accentHoverColor}
+					accentMinimalColor={communityData.accentMinimalColor}
 				/>
-			)}
-		</div>
+
+				<Header
+					communityData={props.communityData}
+					locationData={props.locationData}
+					loginData={props.loginData}
+					// smallHeaderLogo={communityData.smallHeaderLogo}
+					// largeHeaderLogo={communityData.largeHeaderLogo}
+					// largeHeaderDescription={communityData.largeHeaderDescription}
+					// largeHeaderBackground={communityData.largeHeaderBackground}
+				/>
+
+				{!props.hideNav && !props.communityData.hideNav && (
+					<NavBar navItems={navItems} socialItems={socialItems} />
+				)}
+
+				<div className="page-content">{props.children}</div>
+
+				{!props.hideFooter && (
+					<Footer
+						isAdmin={loginData.isAdmin}
+						isBasePubPub={props.locationData.isBasePubPub}
+						communityData={communityData}
+						socialItems={socialItems}
+					/>
+				)}
+			</div>
+		</PageContext.Provider>
 	);
 };
 

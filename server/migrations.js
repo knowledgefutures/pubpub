@@ -316,7 +316,7 @@ new Promise((resolve) => {
 	// 	.then((collectionPubsData)=> {
 	// 		const newPubTags = collectionPubsData.map((collectionPub)=> {
 	// 			return {
-	// 				tagId: collectionPub.collectionId,
+	// 				collectionId: collectionPub.collectionId,
 	// 				pubId: collectionPub.pubId,
 	// 			};
 	// 		});
@@ -349,7 +349,7 @@ new Promise((resolve) => {
 	// 						...block.content,
 	// 						size: undefined,
 	// 						pubPreviewType: block.content.size,
-	// 						tagIds: [pageData.id]
+	// 						collectionIds: [pageData.id]
 	// 					}
 	// 				};
 	// 			});
@@ -459,7 +459,7 @@ new Promise((resolve) => {
 			.then(() => {
 				return PubTag.findAll().then(pubTags => {
 					const collectionPubs = pubTags.map(pt => {
-						return {pubId: pt.pubId, collectionId: pt.tagId};
+						return {pubId: pt.pubId, collectionId: pt.collectionId};
 					});
 					return CollectionPub.bulkCreate(collectionPubs);
 				});

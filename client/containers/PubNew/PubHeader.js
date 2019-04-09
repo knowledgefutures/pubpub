@@ -159,15 +159,15 @@ const PubHeader = (props) => {
 				<GridWrapper containerClassName="pub">
 					<div className="tags-bar">
 						<div className="left">
-							{pubData.pubTags
-								.filter((pubTag) => {
-									return pubTag.tag;
+							{pubData.collectionPubs
+								.filter((collectionPub) => {
+									return collectionPub.collection;
 								})
 								.sort((foo, bar) => {
-									if (foo.tag.title.toLowerCase() < bar.tag.title.toLowerCase()) {
+									if (foo.collection.title.toLowerCase() < bar.collection.title.toLowerCase()) {
 										return -1;
 									}
-									if (foo.tag.title.toLowerCase() > bar.tag.title.toLowerCase()) {
+									if (foo.collection.title.toLowerCase() > bar.collection.title.toLowerCase()) {
 										return 1;
 									}
 									return 0;
@@ -178,23 +178,23 @@ const PubHeader = (props) => {
 											key={item.id}
 											className="header-collection"
 											href={
-												item.tag.page
-													? `/${item.tag.page.slug}`
-													: `/search?tag=${item.tag.title}`
+												item.collection.page
+													? `/${item.collection.page.slug}`
+													: `/search?tag=${item.collection.title}`
 											}
 										>
 											<Tag
 												intent={Intent.PRIMARY}
 												minimal={true}
 												icon={
-													!item.tag.isPublic ? (
+													!item.collection.isPublic ? (
 														<Icon icon="lock2" />
 													) : (
 														undefined
 													)
 												}
 											>
-												{item.tag.title}
+												{item.collection.title}
 											</Tag>
 										</a>
 									);

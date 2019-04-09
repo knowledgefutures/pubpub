@@ -10,7 +10,9 @@ import {
 	PubManager,
 	PubAttribution,
 	Tag,
-	PubTag,
+	CollectionPub,
+	Collection,
+	CollectionAttribution,
 	Page,
 	Branch,
 	BranchPermission,
@@ -175,18 +177,18 @@ const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req) => {
 		// 		return item.isPublic || communityAdminData;
 		// 	})
 		// 	: undefined,
-		pubTags: pub.pubTags
+		collectionPubs: pub.collectionPubs
 			.map((item) => {
-				if (!communityAdminData && item.tag && !item.tag.isPublic) {
+				if (!communityAdminData && item.collection && !item.collection.isPublic) {
 					return {
 						...item,
-						tag: undefined,
+						collection: undefined,
 					};
 				}
 				return item;
 			})
 			.filter((item) => {
-				return !item.tag || item.tag.isPublic || communityAdminData;
+				return !item.collection || item.collection.isPublic || communityAdminData;
 			}),
 		isManager: isManager,
 		isEditor: isEditor,
@@ -232,14 +234,14 @@ export const findPub = (req, initialData, mode) => {
 				],
 			},
 			{
-				model: PubTag,
-				as: 'pubTags',
+				model: CollectionPub,
+				as: 'collectionPubs',
 				required: false,
 				separate: true,
 				include: [
 					{
-						model: Tag,
-						as: 'tag',
+						model: Collection,
+						as: 'collection',
 						include: [
 							{
 								model: Page,

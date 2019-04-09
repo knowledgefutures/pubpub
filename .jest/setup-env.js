@@ -31,3 +31,5 @@ document.createRange = document.createRange || function() {
 
 // ProseMirror wants to use execCommand (probably for copy/paste)
 document.execCommand = () => true;
+
+global.fetch = () => Promise.resolve();

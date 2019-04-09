@@ -1,8 +1,8 @@
 {
-    extends: ["airbnb", "prettier"],
-    plugins: ["react", "import", "prettier", "react-hooks"],
-    parser: "babel-eslint",
-    env: {
+    "extends": ["airbnb", "prettier"],
+    "plugins": ["react", "import", "prettier", "react-hooks"],
+    "parser": "babel-eslint",
+    "env": {
         "browser": true,
         "node": true
     },
@@ -16,27 +16,30 @@
     "rules": {
         "arrow-parens": [2, "always"],
         "arrow-body-style": 0,
-        "comma-dangle": [2, "always-multiline"],
+        "comma-dangle": 0,
         "class-methods-use-this": 0,
         "func-names": 0,
-        "import/no-extraneous-dependencies": [2, { devDependencies: true }],
+        "import/no-extraneous-dependencies": [2, { "devDependencies": true }],
+        "import/prefer-default-export": 0,
         "jsx-a11y/click-events-have-key-events": 0,
-        "no-console": [1, { allow: ["warn", "error", "info"] }],
+        "no-console": [1, { "allow": ["warn", "error", "info"] }],
+        "no-nested-ternary": 0,
         "object-shorthand": [2, "never"],
-        "object-curly-newline": [2, { consistent: true }],
-        "prefer-destructuring": [2, { object: false, array: false }],
+        "object-curly-newline": 0,
+        "prefer-destructuring": [2, { "object": false, "array": false }],
         "prettier/prettier": "error",
         "no-tabs": 0,
         "operator-linebreak": 0,
         "react/destructuring-assignment": 0,
         "react/jsx-boolean-value": 0,
         "react/forbid-prop-types": 0,
-        "react/jsx-filename-extension": [2, { extensions: [".js"] }],
+        "react/jsx-filename-extension": [2, { "extensions": [".js"] }],
         "react/jsx-indent": [2, "tab"],
         "react/jsx-indent-props": [2, "tab"],
         "react/jsx-one-expression-per-line": 0,
         "react/jsx-wrap-multilines": 0,
+        "space-before-function-paren": 0,
         "react-hooks/rules-of-hooks": 2,
         "react-hooks/exhaustive-deps": 1
-    },
+    }
 }

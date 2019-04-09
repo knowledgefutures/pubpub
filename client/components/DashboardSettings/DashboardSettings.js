@@ -8,7 +8,7 @@ import NavDrag from 'components/NavDrag/NavDrag';
 import Header from 'components/Header/Header';
 import Icon from 'components/Icon/Icon';
 import SettingsSection from 'components/SettingsSection/SettingsSection';
-import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
+import CollectionMultiSelect from 'components/CollectionMultiSelect/CollectionMultiSelect';
 import { populateNavigationIds, apiFetch, slugifyString } from 'utilities';
 
 require('./dashboardSettings.scss');
@@ -36,7 +36,7 @@ class DashboardSettings extends Component {
 			/* Header */
 			headerLogo: props.communityData.headerLogo,
 			hideCreatePubButton: props.communityData.hideCreatePubButton || false,
-			defaultPubTags: props.communityData.defaultPubTags || [],
+			defaultPubCollections: props.communityData.defaultPubCollections || [],
 			// headerLinks
 
 			/* Navigation */
@@ -274,25 +274,32 @@ class DashboardSettings extends Component {
 						/>
 					</InputField>
 					<InputField
-						label="Default 'New Pub' Tag"
+						label="Default 'New Pub' Collection"
 						wrapperClassName={this.state.hideCreatePubButton ? 'disable-block' : ''}
 					>
-						<TagMultiSelect
-							allTags={this.props.communityData.tags}
-							selectedTagIds={this.state.defaultPubTags || []}
-							onItemSelect={(newTagId) => {
-								const existingTagIds = this.state.defaultPubTags || [];
-								const newTagIds = [...existingTagIds, newTagId];
-								this.setState({ defaultPubTags: newTagIds });
+						<CollectionMultiSelect
+							allCollections={this.props.communityData.collections}
+							selectedCollectionIds={this.state.defaultPubCollections || []}
+							onItemSelect={(newCollectionId) => {
+								const existingCollectionIds =
+									this.state.defaultPubCollections || [];
+								const newCollectionIds = [
+									...existingCollectionIds,
+									newCollectionId,
+								];
+								this.setState({ defaultPubCollections: newCollectionIds });
 							}}
-							onRemove={(evt, tagIndex) => {
-								const existingTagIds = this.state.defaultPubTags || [];
-								const newTagIds = existingTagIds.filter((item, filterIndex) => {
-									return filterIndex !== tagIndex;
-								});
-								this.setState({ defaultPubTags: newTagIds });
+							onRemove={(evt, collectionIndex) => {
+								const existingCollectionIds =
+									this.state.defaultPubCollections || [];
+								const newCollectionIds = existingCollectionIds.filter(
+									(item, filterIndex) => {
+										return filterIndex !== collectionIndex;
+									},
+								);
+								this.setState({ defaultPubCollections: newCollectionIds });
 							}}
-							placeholder="Select Tags..."
+							placeholder="Select Collections..."
 						/>
 					</InputField>
 				</SettingsSection>

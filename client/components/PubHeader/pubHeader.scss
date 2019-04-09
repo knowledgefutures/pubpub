@@ -88,11 +88,11 @@
 			}
 		}
 	}
-	.tags-buttons-wrapper {
+	.collections-buttons-wrapper {
 		display: flex;
 		align-items: flex-start;
 		padding-top: 5px;
-		.tags {
+		.collections {
 			flex-shrink: 1;
 			display: flex;
 			align-items: flex-start;
@@ -215,7 +215,7 @@
 }
 @media only screen and (max-width: 750px) {
 	.pub-header-component {
-		.tags-buttons-wrapper {
+		.collections-buttons-wrapper {
 			.buttons {
 				display: none;
 			}
@@ -225,7 +225,7 @@
 
 @media print {
 	.pub-header-component {
-		.tags-buttons-wrapper {
+		.collections-buttons-wrapper {
 			display: none;
 		}
 		.wrapper {

@@ -23,6 +23,7 @@ class DashboardCollections extends Component {
 			newCollectionValue: '',
 			currentCollectionSchema: getSchemaForKind('tag'),
 			error: undefined,
+			isCreatingCollection: false,
 		};
 		this.handleCreateCollection = this.handleCreateCollection.bind(this);
 		this.handleUpdateCollection = this.handleUpdateCollection.bind(this);
@@ -50,7 +51,7 @@ class DashboardCollections extends Component {
 			});
 		}
 
-		this.setState({ error: undefined });
+		this.setState({ error: undefined, isCreatingCollection: true });
 		return apiFetch('/api/collections', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -59,7 +60,7 @@ class DashboardCollections extends Component {
 				kind: this.state.currentCollectionSchema.kind,
 			}),
 		}).then((newCollection) => {
-			this.setState({ newCollectionValue: '' });
+			this.setState({ newCollectionValue: '', isCreatingCollection: false });
 			this.props.setCommunityData({
 				...this.props.communityData,
 				collections: [...this.props.communityData.collections, newCollection],
@@ -81,18 +82,15 @@ class DashboardCollections extends Component {
 					if (collection.id !== updatedCollection.id) {
 						return collection;
 					}
-					if (!updatedCollection.pageId) {
+					if (!Object.keys(updatedCollection).includes('pageId')) {
 						return { ...collection, ...updatedCollection };
 					}
 					return {
 						...collection,
 						...updatedCollection,
-						page: this.props.communityData.pages.reduce((prev, curr) => {
-							if (curr.id === updatedCollection.pageId) {
-								return curr;
-							}
-							return prev;
-						}, undefined),
+						page: this.props.communityData.pages.find(
+							(page) => page.id === updatedCollection.pageId,
+						),
 					};
 				}),
 			});
@@ -117,7 +115,7 @@ class DashboardCollections extends Component {
 	}
 
 	renderTopControlGroup() {
-		const { currentCollectionSchema } = this.state;
+		const { currentCollectionSchema, isCreatingCollection } = this.state;
 		const label = currentCollectionSchema.label.singular.toLowerCase();
 		// TODO(ian): figure out how to grow the InputGroup without resorting to CSS
 		return (
@@ -137,7 +135,7 @@ class DashboardCollections extends Component {
 						onSelect={(schema) => this.setState({ currentCollectionSchema: schema })}
 						large={true}
 					/>
-					<Button large={true} type="submit">
+					<Button large={true} type="submit" loading={isCreatingCollection}>
 						Create
 					</Button>
 				</ControlGroup>
@@ -149,7 +147,7 @@ class DashboardCollections extends Component {
 		const schema = getSchemaForKind(kind);
 		const title = capitalize(schema.label.plural);
 		return (
-			<div>
+			<div className="collection-group">
 				<h2>{title}</h2>
 				{collections.map((collection) => (
 					<CollectionRow

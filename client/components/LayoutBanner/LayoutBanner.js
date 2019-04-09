@@ -11,7 +11,7 @@ const propTypes = {
 	locationData: PropTypes.object.isRequired,
 	content: PropTypes.object.isRequired,
 	/* Expected content */
-	/* text, align, backgroundColor, backgroundImage, backgroundSize, showButton, buttonText, defaultTagIds */
+	/* text, align, backgroundColor, backgroundImage, backgroundSize, showButton, buttonText, defaultCollectionIds */
 };
 
 class LayoutBanner extends Component {
@@ -29,7 +29,7 @@ class LayoutBanner extends Component {
 			method: 'POST',
 			body: JSON.stringify({
 				communityId: this.props.communityData.id,
-				defaultTagIds: this.props.content.defaultTagIds,
+				defaultCollectionIds: this.props.content.defaultCollectionIds,
 			}),
 		})
 			.then((result) => {

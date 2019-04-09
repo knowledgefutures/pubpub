@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Select } from '@blueprintjs/select';
-
 import { Button, MenuItem } from '@blueprintjs/core';
+
 import collectionSchemas from 'shared/collections/schemas';
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);

@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Checkbox, FormGroup, Button } from '@blueprintjs/core';
 
 import collectionType from 'types/collection';
 import communityType from 'types/community';
+import { getSchemaForKind } from 'shared/collections/schemas';
 
-import { Checkbox, FormGroup, Button } from '@blueprintjs/core';
 import LinkedPageSelect from '../DashboardCollections/LinkedPageSelect';
-import { getSchemaForKind } from '../../shared/collections/schemas';
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 
 const propTypes = {

@@ -1,15 +1,24 @@
 /* eslint-disable react/no-danger */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, Position } from '@blueprintjs/core';
+import { Tooltip, Position, Spinner } from '@blueprintjs/core';
+import queryString from 'query-string';
+
+import { apiFetch } from 'utilities';
 
 require('./pubOptionsCite.scss');
 
 const propTypes = {
-	// communityData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
-	// loginData: PropTypes.object.isRequired,
-	// setPubData: PropTypes.func.isRequired,
+};
+
+// TODO(ian): please move this somewhere else
+export const getPubCitationData = (pubData) => {
+	const versionId = pubData.activeVersion.id;
+	const slug = pubData.slug;
+	return apiFetch(
+		`/api/citations?${queryString.stringify({ versionId: versionId, slug: slug })}`,
+	).then(({ citationData }) => citationData);
 };
 
 class PubOptionsCite extends Component {
@@ -17,17 +26,27 @@ class PubOptionsCite extends Component {
 		super(props);
 		this.state = {
 			mode: 'pub',
+			citationData: null,
 		};
 	}
 
+	componentDidMount() {
+		getPubCitationData(this.props.pubData).then((citationData) =>
+			this.setState({ citationData: citationData }),
+		);
+	}
+
 	render() {
-		const pubData = this.props.pubData;
+		const { citationData } = this.state;
 		// TODO: How do we cite on drafts?
-		if (!pubData.citationData) {
-			return null;
+		if (!citationData) {
+			return (
+				<div className="pub-options-spinner-wrapper">
+					<Spinner />
+				</div>
+			);
 		}
-		const modeData =
-			this.state.mode === 'pub' ? pubData.citationData.pub : pubData.citationData.version;
+		const modeData = this.state.mode === 'pub' ? citationData.pub : citationData.version;
 		return (
 			<div className="pub-options-cite-component">
 				<div className="save-wrapper">

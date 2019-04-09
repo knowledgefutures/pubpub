@@ -271,7 +271,7 @@ class PubOptionsSharing extends Component {
 				<div>
 					{this.state.isLoading && (
 						<div className="save-wrapper">
-							<Spinner small={true} /> Saving...
+							<Spinner size={Spinner.SIZE_SMALL} /> Saving...
 						</div>
 					)}
 					<h1>Sharing</h1>

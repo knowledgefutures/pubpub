@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
-import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
+import CollectionMultiSelect from 'components/CollectionMultiSelect/CollectionMultiSelect';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import ColorInput from 'components/ColorInput/ColorInput';
@@ -15,7 +15,7 @@ const propTypes = {
 	content: PropTypes.object.isRequired,
 	communityData: PropTypes.object.isRequired,
 	/* Expected content */
-	/* text, align, backgroundColor, backgroundImage, backgroundSize, showButton, buttonType, buttonText, defaultTagIds, buttonUrl */
+	/* text, align, backgroundColor, backgroundImage, backgroundSize, showButton, buttonType, buttonText, defaultCollectionIds, buttonUrl */
 };
 
 class LayoutEditorBanner extends Component {
@@ -25,7 +25,7 @@ class LayoutEditorBanner extends Component {
 		this.setBackgroundSize = this.setBackgroundSize.bind(this);
 		this.setBackgroundColor = this.setBackgroundColor.bind(this);
 		this.setBackgroundImage = this.setBackgroundImage.bind(this);
-		this.setDefaultTagIds = this.setDefaultTagIds.bind(this);
+		this.setdefaultCollectionIds = this.setdefaultCollectionIds.bind(this);
 		this.setText = this.setText.bind(this);
 		this.setShowButton = this.setShowButton.bind(this);
 		this.setButtonType = this.setButtonType.bind(this);
@@ -98,10 +98,10 @@ class LayoutEditorBanner extends Component {
 		});
 	}
 
-	setDefaultTagIds(newTagIds) {
+	setdefaultCollectionIds(newCollectionIds) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			defaultTagIds: newTagIds,
+			defaultCollectionIds: newCollectionIds,
 		});
 	}
 
@@ -222,28 +222,33 @@ class LayoutEditorBanner extends Component {
 						/>
 					)}
 					{this.props.content.showButton && buttonType === 'create-pub' && (
-						<InputField label="Default Pub Tags">
+						<InputField label="Default Pub Collections">
 							<div className="bp3-button-group bp3-select">
-								<TagMultiSelect
-									allTags={this.props.communityData.tags}
-									selectedTagIds={this.props.content.defaultTagIds || []}
-									onItemSelect={(newTagId) => {
-										const existingTagIds =
-											this.props.content.defaultTagIds || [];
-										const newTagIds = [...existingTagIds, newTagId];
-										this.setDefaultTagIds(newTagIds);
+								<CollectionMultiSelect
+									allCollections={this.props.communityData.collections}
+									selectedCollectionIds={
+										this.props.content.defaultCollectionIds || []
+									}
+									onItemSelect={(newCollectionId) => {
+										const existingCollectionIds =
+											this.props.content.defaultCollectionIds || [];
+										const newCollectionIds = [
+											...existingCollectionIds,
+											newCollectionId,
+										];
+										this.setdefaultCollectionIds(newCollectionIds);
 									}}
-									onRemove={(evt, tagIndex) => {
-										const existingTagIds =
-											this.props.content.defaultTagIds || [];
-										const newTagIds = existingTagIds.filter(
+									onRemove={(evt, collectionIndex) => {
+										const existingCollectionIds =
+											this.props.content.defaultCollectionIds || [];
+										const newCollectionIds = existingCollectionIds.filter(
 											(item, filterIndex) => {
-												return filterIndex !== tagIndex;
+												return filterIndex !== collectionIndex;
 											},
 										);
-										this.setDefaultTagIds(newTagIds);
+										this.setdefaultCollectionIds(newCollectionIds);
 									}}
-									placeholder="Add tags..."
+									placeholder="Add collections..."
 								/>
 							</div>
 						</InputField>

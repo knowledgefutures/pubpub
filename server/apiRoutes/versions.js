@@ -1,7 +1,8 @@
 import app from '../server';
 import { Pub, Version, CommunityAdmin, Discussion, PubManager } from '../models';
-import { submitDoiData, generateHash } from '../utilities';
+import { generateHash } from '../utilities';
 import { setPubSearchData } from '../searchUtilities';
+import { setDoiData } from './handlers/doi';
 
 app.post('/api/versions', (req, res) => {
 	const user = req.user || {};
@@ -68,7 +69,10 @@ app.post('/api/versions', (req, res) => {
 					},
 				},
 			);
-			const updateDoiData = submitDoiData(req.body.pubId, req.body.communityId, false);
+			const updateDoiData = setDoiData({
+				pubId: req.body.pubId,
+				communityId: req.body.communityId,
+			});
 			return Promise.all([updateDiscussion, updateDoiData]);
 		})
 		.then(() => {

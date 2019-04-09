@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import PubPreview from 'components/PubPreview/PubPreview';
-import TagMultiSelect from 'components/TagMultiSelect/TagMultiSelect';
+import CollectionMultiSelect from 'components/CollectionMultiSelect/CollectionMultiSelect';
 import InputField from 'components/InputField/InputField';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 import OrderPicker from 'components/OrderPicker/OrderPicker';
@@ -15,7 +15,7 @@ const propTypes = {
 	pubRenderList: PropTypes.array.isRequired,
 	communityData: PropTypes.object.isRequired,
 	/* Expected content */
-	/* title, pubPreviewType, limit, pubIds, tagIds, hideByline, hideDescription, hideDates, hideContributors */
+	/* title, pubPreviewType, limit, pubIds, collectionIds, hideByline, hideDescription, hideDates, hideContributors */
 };
 
 class LayoutEditorPubs extends Component {
@@ -25,7 +25,7 @@ class LayoutEditorPubs extends Component {
 		this.setMedium = this.setMedium.bind(this);
 		this.setLarge = this.setLarge.bind(this);
 		this.setLimit = this.setLimit.bind(this);
-		this.setTagIds = this.setTagIds.bind(this);
+		this.setCollectionIds = this.setCollectionIds.bind(this);
 		this.changeTitle = this.changeTitle.bind(this);
 		this.changePubId = this.changePubId.bind(this);
 		this.setHideByline = this.setHideByline.bind(this);
@@ -92,20 +92,16 @@ class LayoutEditorPubs extends Component {
 		});
 	}
 
-	setTagIds(newTagIds) {
-		// console.log('evt', evt);
-		// const newTagId = evt.target.value;
-		// const existingTagIds = this.props.content.tagIds || [];
-		// const newTagIds = [...existingTagIds, newTagId];
+	setCollectionIds(newCollectionIds) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
-			tagIds: newTagIds,
+			collectionIds: newCollectionIds,
 			pubIds: this.props.content.pubIds
 				.filter((item) => {
 					return item;
 				})
 				.filter((pubId) => {
-					if (!newTagIds.length) {
+					if (!newCollectionIds.length) {
 						return true;
 					}
 					const specifiedPub = this.props.pubs.reduce((prev, curr) => {
@@ -115,7 +111,7 @@ class LayoutEditorPubs extends Component {
 						return prev;
 					}, undefined);
 					return specifiedPub.collectionPubs.reduce((prev, curr) => {
-						if (newTagIds.indexOf(curr.tagId) > -1) {
+						if (newCollectionIds.indexOf(curr.collectionId) > -1) {
 							return true;
 						}
 						return prev;
@@ -150,7 +146,7 @@ class LayoutEditorPubs extends Component {
 					return item;
 				})
 				.filter((pubId) => {
-					if (!this.props.content.tagId) {
+					if (!this.props.content.collectionId) {
 						return true;
 					}
 					const specifiedPub = this.props.pubs.reduce((prev, curr) => {
@@ -160,7 +156,7 @@ class LayoutEditorPubs extends Component {
 						return prev;
 					}, undefined);
 					return specifiedPub.collectionPubs.reduce((prev, curr) => {
-						if (curr.tagId === this.props.content.tagId) {
+						if (curr.collectionId === this.props.content.collectionId) {
 							return true;
 						}
 						return prev;
@@ -171,7 +167,6 @@ class LayoutEditorPubs extends Component {
 
 	render() {
 		const pubPreviewType = this.props.content.pubPreviewType;
-		// const displayLimit = this.props.content.limit || Math.max(4, this.props.pubRenderList.length);
 		const displayLimit = this.props.content.limit || this.props.pubRenderList.length;
 		const emptyPreviews = [];
 		for (let index = 0; index < displayLimit; index += 1) {
@@ -179,21 +174,17 @@ class LayoutEditorPubs extends Component {
 		}
 		const previews = [...this.props.content.pubIds, ...emptyPreviews].slice(0, displayLimit);
 		const selectOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-		// const activeTag = this.props.communityData.tags.reduce((prev, curr)=> {
-		// 	if (curr.id === this.props.content.tagId) { return curr; }
-		// 	return prev;
-		// }, {});
-		const tagsById = {};
-		this.props.communityData.tags.forEach((tag) => {
-			tagsById[tag.id] = tag;
+		const collectionsById = {};
+		this.props.communityData.collections.forEach((collection) => {
+			collectionsById[collection.id] = collection;
 		});
 		const availablePubs = this.props.pubs.filter((pub) => {
-			const tagIds = this.props.content.tagIds || [];
-			if (!tagIds.length) {
+			const collectionIds = this.props.content.collectionIds || [];
+			if (!collectionIds.length) {
 				return true;
 			}
 			return pub.collectionPubs.reduce((prev, curr) => {
-				if (tagIds.indexOf(curr.tagId) > -1) {
+				if (collectionIds.indexOf(curr.collectionId) > -1) {
 					return true;
 				}
 				return prev;
@@ -208,23 +199,30 @@ class LayoutEditorPubs extends Component {
 						value={this.props.content.title}
 						onChange={this.changeTitle}
 					/>
-					<InputField label="Filter by Tag">
-						<TagMultiSelect
-							allTags={this.props.communityData.tags}
-							selectedTagIds={this.props.content.tagIds || []}
-							onItemSelect={(newTagId) => {
-								const existingTagIds = this.props.content.tagIds || [];
-								const newTagIds = [...existingTagIds, newTagId];
-								this.setTagIds(newTagIds);
+					<InputField label="Filter by Collection">
+						<CollectionMultiSelect
+							allCollections={this.props.communityData.collections}
+							selectedCollectionIds={this.props.content.collectionIds || []}
+							onItemSelect={(newCollectionId) => {
+								const existingCollectionIds =
+									this.props.content.collectionIds || [];
+								const newCollectionIds = [
+									...existingCollectionIds,
+									newCollectionId,
+								];
+								this.setCollectionIds(newCollectionIds);
 							}}
-							onRemove={(evt, tagIndex) => {
-								const existingTagIds = this.props.content.tagIds || [];
-								const newTagIds = existingTagIds.filter((item, filterIndex) => {
-									return filterIndex !== tagIndex;
-								});
-								this.setTagIds(newTagIds);
+							onRemove={(evt, collectionIndex) => {
+								const existingCollectionIds =
+									this.props.content.collectionIds || [];
+								const newCollectionIds = existingCollectionIds.filter(
+									(item, filterIndex) => {
+										return filterIndex !== collectionIndex;
+									},
+								);
+								this.setCollectionIds(newCollectionIds);
 							}}
-							placeholder="Add tags..."
+							placeholder="Add collections..."
 						/>
 					</InputField>
 					<InputField label="Limit">

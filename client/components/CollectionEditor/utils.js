@@ -5,7 +5,7 @@ export const createPubSelection = (pub, collection, rank, id = null, contextHint
 	const { contextHints } = getSchemaForKind(collection.kind);
 	const contextHint = contextHintValue
 		? contextHints.find((ch) => ch.value === contextHintValue)
-		: contextHints.find((ch) => ch.default);
+		: contextHints.find((ch) => ch.isDefault);
 	return {
 		pub: pub,
 		collection: collection,

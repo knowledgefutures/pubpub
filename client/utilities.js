@@ -265,7 +265,7 @@ export function getDefaultLayout() {
 		// 		limit:
 		// 		pubIds:
 		// 		draftsOnly:
-		// 		tagId:
+		// 		collectionId:
 		// 	}
 		// }
 	];
@@ -497,15 +497,15 @@ export function generateRenderLists(layout, pubs) {
 			pubs.forEach((curr) => {
 				allPubIds[curr.id] = curr;
 			});
-			const tagIds = block.content.tagIds || [];
-			// console.log(tagIds);
+			const collectionIds = block.content.collectionIds || [];
+			// console.log(collectionIds);
 			const availablePubs = nonSpecifiedPubs.filter((pub) => {
-				if (!tagIds.length) {
+				if (!collectionIds.length) {
 					return true;
 				}
 				return pub.collectionPubs.reduce((prev, curr) => {
-					// if (curr.tagId === block.content.tagId) { return true; }
-					if (tagIds.indexOf(curr.tagId) > -1) {
+					// if (curr.collectionId === block.content.collectionId) { return true; }
+					if (collectionIds.indexOf(curr.collectionId) > -1) {
 						return true;
 					}
 					return prev;
@@ -529,8 +529,8 @@ export function generateRenderLists(layout, pubs) {
 				availablePubs.splice(0, 1);
 			}
 
-			/* Filter renderList to remove any undefined (due to specified pubs not in the tag) */
-			/* or non-tag pubs. */
+			/* Filter renderList to remove any undefined (due to specified pubs not in the collection) */
+			/* or non-collection pubs. */
 			pubRenderLists[index] = renderList.filter((pub) => {
 				return pub;
 			});

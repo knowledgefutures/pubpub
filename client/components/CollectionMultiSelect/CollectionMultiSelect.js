@@ -4,11 +4,11 @@ import { Position } from '@blueprintjs/core';
 import { MultiSelect } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
-require('./tagMultiSelect.scss');
+require('./collectionMultiSelect.scss');
 
 const propTypes = {
-	allTags: PropTypes.array.isRequired,
-	selectedTagIds: PropTypes.array.isRequired,
+	allCollections: PropTypes.array.isRequired,
+	selectedCollectionIds: PropTypes.array.isRequired,
 	onItemSelect: PropTypes.func.isRequired,
 	onRemove: PropTypes.func.isRequired,
 	placeholder: PropTypes.string,
@@ -18,29 +18,29 @@ const defaultProps = {
 	placeholder: '',
 };
 
-const TagMultiSelect = function(props) {
-	const tagsById = {};
-	props.allTags.forEach((tag) => {
-		tagsById[tag.id] = tag;
+const CollectionMultiSelect = function(props) {
+	const collectionsById = {};
+	props.allCollections.forEach((collection) => {
+		collectionsById[collection.id] = collection;
 	});
 
 	return (
 		<MultiSelect
-			items={Object.keys(tagsById)}
+			items={Object.keys(collectionsById)}
 			itemPredicate={(query, item) => {
-				const existingTagIds = props.selectedTagIds || [];
-				if (existingTagIds.indexOf(item) > -1) {
+				const existingCollectionIds = props.selectedCollectionIds || [];
+				if (existingCollectionIds.indexOf(item) > -1) {
 					return false;
 				}
 
 				if (!query) {
 					return true;
 				}
-				const tag = tagsById[item];
-				return fuzzysearch(query.toLowerCase(), tag.title.toLowerCase());
+				const collection = collectionsById[item];
+				return fuzzysearch(query.toLowerCase(), collection.title.toLowerCase());
 			}}
 			itemRenderer={(item, { handleClick, modifiers }) => {
-				const tag = tagsById[item];
+				const collection = collectionsById[item];
 				return (
 					<li key={item}>
 						<button
@@ -51,20 +51,20 @@ const TagMultiSelect = function(props) {
 								modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'
 							}
 						>
-							{tag.title}
+							{collection.title}
 						</button>
 					</li>
 				);
 			}}
-			selectedItems={props.selectedTagIds}
+			selectedItems={props.selectedCollectionIds}
 			tagRenderer={(item) => {
-				const tag = tagsById[item];
-				return tag && tag.title;
+				const collection = collectionsById[item];
+				return collection && collection.title;
 			}}
 			tagInputProps={{
 				onRemove: props.onRemove,
 				placeholder: props.placeholder,
-				tagProps: {
+				collectionProps: {
 					className: 'bp3-minimal bp3-intent-primary',
 				},
 				inputProps: {
@@ -73,7 +73,7 @@ const TagMultiSelect = function(props) {
 			}}
 			resetOnSelect={true}
 			onItemSelect={props.onItemSelect}
-			noResults={<div className="bp3-menu-item">No Matching Tags</div>}
+			noResults={<div className="bp3-menu-item">No Matching Collections</div>}
 			popoverProps={{
 				popoverClassName: 'bp3-minimal',
 				position: Position.BOTTOM_LEFT,
@@ -86,6 +86,6 @@ const TagMultiSelect = function(props) {
 	);
 };
 
-TagMultiSelect.propTypes = propTypes;
-TagMultiSelect.defaultProps = defaultProps;
-export default TagMultiSelect;
+CollectionMultiSelect.propTypes = propTypes;
+CollectionMultiSelect.defaultProps = defaultProps;
+export default CollectionMultiSelect;

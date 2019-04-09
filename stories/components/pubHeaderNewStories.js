@@ -4,7 +4,7 @@ import PubHeader from 'containers/PubNew/PubHeader';
 import { pubData, locationData } from '../data';
 
 storiesOf('Components/PubHeaderNew', module).add('default', () => (
-	<div className="container">
+	<div>
 		<PubHeader
 			pubData={pubData}
 			locationData={locationData}

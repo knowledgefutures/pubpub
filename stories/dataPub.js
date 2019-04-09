@@ -34,7 +34,7 @@ export default {
 			id: '0fd7f42c-d8a1-4275-bf2b-cd641416959c',
 			title: 'Home',
 			slug: '',
-			isPublic: true,
+			isPublic: false,
 			isOpenPublish: false,
 		},
 		{
@@ -433,7 +433,7 @@ export default {
 		{
 			id: '526e506e-4ece-4d69-99e1-23814af4921e',
 			pubId: '3ecac2f5-8065-4bde-aa0e-c1ab222fd673',
-			tagId: 'af1f0e57-6fc9-4cdf-9c15-e5e58af59d6b',
+			collectionId: 'af1f0e57-6fc9-4cdf-9c15-e5e58af59d6b',
 			createdAt: '2018-08-06T15:26:05.647Z',
 			updatedAt: '2018-08-06T15:26:05.647Z',
 			collection: {
@@ -441,7 +441,7 @@ export default {
 				kind: 'tag',
 				title: 'Essays',
 				isRestricted: true,
-				isPublic: true,
+				isPublic: false,
 				pageId: 'af1f0e57-6fc9-4cdf-9c15-e5e58af59d6b',
 				communityId: 'da083fb3-8b6b-4f89-8e8e-b607f9ed1cf4',
 				createdAt: '2018-08-06T15:26:05.468Z',
@@ -456,7 +456,7 @@ export default {
 		{
 			id: '368c8c18-9f74-4c9b-872c-338752d53844',
 			pubId: '3ecac2f5-8065-4bde-aa0e-c1ab222fd673',
-			tagId: '0fd7f42c-d8a1-4275-bf2b-cd641416959c',
+			collectionId: '0fd7f42c-d8a1-4275-bf2b-cd641416959c',
 			createdAt: '2018-08-06T15:26:05.647Z',
 			updatedAt: '2018-08-06T15:26:05.647Z',
 			collection: {

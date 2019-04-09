@@ -42,7 +42,7 @@ class PubOptionsAttribution extends React.Component {
 			<div className="component-pub-options-attribution">
 				{isPersisting && (
 					<div className="save-wrapper">
-						<Spinner small={true} /> Saving...
+						<Spinner size={Spinner.SIZE_SMALL} /> Saving...
 					</div>
 				)}
 				<h1>Attribution</h1>

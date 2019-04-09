@@ -1,11 +1,18 @@
 import { communityUrl } from 'shared/util/canonicalUrls';
 
+const types = {
+	date: {
+		name: 'date',
+		deserialize: (str) => new Date(str),
+	},
+};
+
 const sharedFields = {
 	doi: {
 		name: 'doi',
 		label: 'DOI',
-		defaultDerivedFrom: ({ collection }) => collection && collection.doi,
-		disabled: true,
+		derivedFrom: ({ collection }) => collection && collection.doi,
+		derivedLabelInfo: '(Registered and cannot be changed)',
 	},
 	url: {
 		name: 'url',
@@ -26,15 +33,29 @@ const schemas = [
 		label: { singular: 'book', plural: 'books' },
 		bpDisplayIcon: 'book',
 		contextHints: [
-			{ value: 'foreword', label: 'Foreword' },
+			{ value: 'foreword', label: 'Foreword', crossrefComponentType: 'section' },
+			{ value: 'preface', label: 'Preface', crossrefComponentType: 'section' },
 			{ value: 'supplementaryMaterial', label: 'Supplementary Material' },
-			{ value: 'chapter', label: 'Chapter', default: true },
+			{
+				value: 'chapter',
+				label: 'Chapter',
+				isDefault: true,
+				crossrefComponentType: 'chapter',
+			},
+			{ value: 'appendix', label: 'Appendix', crossrefComponentType: 'reference_entry' },
+			{ value: 'glossary', label: 'Glossary', crossrefComponentType: 'reference_entry' },
+			{
+				value: 'acknowledgements',
+				label: 'Acknowledgements',
+				crossrefComponentType: 'section',
+			},
 		],
 		metadata: [
 			sharedFields.doi,
 			sharedFields.url,
 			{ name: 'isbn', label: 'ISBN' },
 			{ name: 'copyrightYear', label: 'Copyright year', pattern: '^[0-9]*$' },
+			{ name: 'publicationDate', label: 'Publication date', type: types.date },
 			{ name: 'edition', label: 'Edition no.', pattern: '^[0-9]*$' },
 		],
 	},
@@ -50,8 +71,12 @@ const schemas = [
 			{ name: 'electronicIssn', label: 'Electronic ISSN' },
 			{ name: 'volume', label: 'Volume' },
 			{ name: 'issue', label: 'Issue' },
-			{ name: 'printPublicationDate', label: 'Print publication date' },
-			{ name: 'electronicPublicationDate', label: 'Electronic publication date' },
+			{ name: 'printPublicationDate', label: 'Print publication date', type: types.date },
+			{
+				name: 'publicationDate',
+				label: 'Publication date',
+				type: types.date,
+			},
 		],
 	},
 	{
@@ -65,7 +90,7 @@ const schemas = [
 			{ name: 'theme', label: 'Theme' },
 			{ name: 'acronym', label: 'Acronym' },
 			{ name: 'location', label: 'Location' },
-			{ name: 'date', label: 'Date' },
+			{ name: 'date', label: 'Date', type: types.date },
 		],
 	},
 ];

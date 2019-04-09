@@ -10,6 +10,7 @@ import collectionType from 'types/collection';
 import { apiFetch } from 'utilities';
 import { enumerateMetadataFields, normalizeMetadataToKind } from 'shared/collections/metadata';
 import { getSchemaForKind } from 'shared/collections/schemas';
+import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
 
 require('./collectionMetadataEditor.scss');
 
@@ -27,11 +28,13 @@ class CollectionMetadataEditor extends React.Component {
 		this.state = {
 			title: props.collection.title,
 			metadata: initialMetadata,
+			isGettingDoi: false,
 			isSaving: false,
 		};
 		this.handleInputChange = this.handleInputChange.bind(this);
 		this.handleTitleChange = this.handleTitleChange.bind(this);
 		this.handleSaveClick = this.handleSaveClick.bind(this);
+		this.handleGetDoiClick = this.handleGetDoiClick.bind(this);
 	}
 
 	normalizeMetadata(metadata) {
@@ -42,9 +45,27 @@ class CollectionMetadataEditor extends React.Component {
 		});
 	}
 
-	deriveInputDefault(defaultDerivedFrom) {
-		const { communityData: community } = this.props;
-		return defaultDerivedFrom({ community: community });
+	deriveInputValue(derive) {
+		const { communityData: community, collection } = this.props;
+		return derive({ community: community, collection: collection });
+	}
+
+	handleGetDoiClick() {
+		const { communityData, collection, onPersistStateChange, onUpdateCollection } = this.props;
+		this.setState({ isGettingDoi: true });
+		onPersistStateChange(1);
+		return apiFetch('/api/doi', {
+			method: 'POST',
+			body: JSON.stringify({
+				collectionId: collection.id,
+				communityId: communityData.id,
+				doiTarget: 'collection',
+			}),
+		}).then(({ dois }) => {
+			onPersistStateChange(-1);
+			onUpdateCollection({ doi: dois.collection });
+			this.setState({ isSaving: false });
+		});
 	}
 
 	handleSaveClick() {
@@ -85,27 +106,38 @@ class CollectionMetadataEditor extends React.Component {
 	}
 
 	renderField(field) {
-		const { name, value, derived, defaultDerivedFrom, pattern } = field;
-		const derivedHintValue = defaultDerivedFrom && this.deriveInputDefault(defaultDerivedFrom);
+		const {
+			name,
+			value,
+			label,
+			derivedFrom,
+			defaultDerivedFrom,
+			derivedLabelInfo,
+			pattern,
+		} = field;
+		const derivedValue = derivedFrom && this.deriveInputValue(derivedFrom);
+		const derivedHintValue = defaultDerivedFrom && this.deriveInputValue(defaultDerivedFrom);
+		const labelInfo = derivedValue ? derivedLabelInfo : '';
 		return (
-			<InputGroup
-				className="field"
-				value={value || ''}
-				disabled={derived}
-				onChange={(event) => this.handleInputChange(name, event.target.value, pattern)}
-				rightElement={
-					derivedHintValue && (
-						<Button
-							minimal
-							icon="lightbulb"
-							disabled={value === derivedHintValue}
-							onClick={() => this.handleInputChange(name, derivedHintValue)}
-						>
-							Use default
-						</Button>
-					)
-				}
-			/>
+			<FormGroup key={name} label={label} labelInfo={labelInfo}>
+				<InputGroup
+					className="field"
+					value={derivedValue || value || ''}
+					onChange={(event) => this.handleInputChange(name, event.target.value, pattern)}
+					rightElement={
+						derivedHintValue && (
+							<Button
+								minimal
+								icon="lightbulb"
+								disabled={value === derivedHintValue}
+								onClick={() => this.handleInputChange(name, derivedHintValue)}
+							>
+								Use default
+							</Button>
+						)
+					}
+				/>
+			</FormGroup>
 		);
 	}
 
@@ -128,19 +160,14 @@ class CollectionMetadataEditor extends React.Component {
 				<FormGroup label="Title">
 					<InputGroup className="field" value={title} onChange={this.handleTitleChange} />
 				</FormGroup>
-				{fields.map((field) =>
-					field.disabled ? null : (
-						<FormGroup key={field.name} label={field.label}>
-							{this.renderField(field)}
-						</FormGroup>
-					),
-				)}
+				{fields.map((field) => this.renderField(field))}
 			</div>
 		);
 	}
 
 	render() {
-		const { isSaving } = this.state;
+		const { collection } = this.props;
+		const { isSaving, isGettingDoi } = this.state;
 		return (
 			<div className="component-collection-metadata-editor">
 				{this.renderFields()}
@@ -148,6 +175,24 @@ class CollectionMetadataEditor extends React.Component {
 					<Button icon="tick" disabled={isSaving} onClick={this.handleSaveClick}>
 						Save changes
 					</Button>
+					{!collection.doi && (
+						<ConfirmDialog
+							onConfirm={this.handleGetDoiClick}
+							confirmLabel="Assign DOI"
+							intent="primary"
+							text={
+								<span>
+									Once assigned, the DOI for this collection cannot be changed.
+								</span>
+							}
+						>
+							{({ open }) => (
+								<Button icon="link" disabled={isGettingDoi} onClick={open}>
+									Get DOI
+								</Button>
+							)}
+						</ConfirmDialog>
+					)}
 				</ButtonGroup>
 			</div>
 		);
@@ -155,5 +200,4 @@ class CollectionMetadataEditor extends React.Component {
 }
 
 CollectionMetadataEditor.propTypes = propTypes;
-
 export default CollectionMetadataEditor;

@@ -1,8 +1,8 @@
 /**
  * Helper functions for interacting with Collection models
  */
-import { Community, Collection } from '../../models';
-import { normalizeMetadataToKind } from '../../../shared/collections/metadata';
+import { normalizeMetadataToKind } from 'shared/collections/metadata';
+import { Community, Collection, CollectionPub } from '../../models';
 import withPermissions from '../permissions/withPermissions';
 
 const createCollection = (title, kind, communityId) => {
@@ -29,16 +29,20 @@ const updateCollection = (collectionId, updateRequest) => {
 			updatedCollection[key] = updateRequest[key];
 		}
 	});
-	return Collection.update(updatedCollection, {
-		where: { id: collectionId },
-		returning: true,
+	return Collection.findOne({ where: { id: collectionId } }).then((collection) => {
+		return Promise.all([
+			collection.update(updatedCollection),
+			collection.isPublic &&
+				updateRequest.isPublic === false &&
+				CollectionPub.update(
+					{ isPrimary: false },
+					{ where: { isPrimary: true, collectionId: collection.id } },
+				),
+		]);
 	});
 };
 
-const destroyCollection = (collectionId) =>
-	Collection.destroy({
-		where: { id: collectionId },
-	});
+const destroyCollection = (collectionId) => Collection.destroy({ where: { id: collectionId } });
 
 export default withPermissions({
 	createCollection: createCollection,

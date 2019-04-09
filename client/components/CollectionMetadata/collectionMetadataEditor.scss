@@ -13,4 +13,10 @@
         width: 100%;
         max-width: 500px;
     }
+    &:last-child:after {
+        content: '';
+        height: 20px;
+        display: block;
+        flex-shrink: 0;
+    }
 }

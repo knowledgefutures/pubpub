@@ -13,6 +13,9 @@
 	.error {
 		color: #c23030;
 	}
+	.collection-group:not(:last-child) {
+		margin-bottom: 2em;
+	}
 	.collection-wrapper {
 		display: flex;
 		align-items: center;
@@ -23,22 +26,11 @@
 			flex-grow: 1;
 			flex-shrink: 1;
 			display: flex;
-			// .bp3-editable-text:not(.bp3-editable-text-editing) {
 			.bp3-editable-text-content {
 				padding-right: 2em;
 				height: 18px !important;
 				line-height: 18px !important;
-				&:after {
-					// TODO
-					// font-family: 'pubpub-icons' !important;
-					// content: "\E904";
-					// padding-left: 0.5em;
-					// opacity: 0.75;
-					// // height: 18px;
-					// position: absolute;
-				}
 			}
-			// }
 			.bp3-editable-text-input {
 				height: 18px !important;
 				line-height: 18px !important;

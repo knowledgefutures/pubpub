@@ -20,7 +20,7 @@ const defaultProps = {
 
 const LinkedPageSelect = ({ communityData, collection, onSelectPage, minimal }) => (
 	<Select
-		items={communityData.pages}
+		items={[{ title: '(None)', id: null }].concat(communityData.pages)}
 		itemRenderer={(page, { handleClick, modifiers }) => {
 			return (
 				<button

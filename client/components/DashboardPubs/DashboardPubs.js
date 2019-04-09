@@ -26,7 +26,7 @@ class DashboardPubs extends Component {
 			method: 'POST',
 			body: JSON.stringify({
 				communityId: this.props.communityData.id,
-				defaultTagIds: this.props.communityData.defaultPubCollections || [],
+				defaultCollectionIds: this.props.communityData.defaultPubCollections || [],
 			}),
 		})
 			.then((result) => {

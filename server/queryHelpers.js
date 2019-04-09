@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import validator from 'validator';
+import generateCitationHTML from 'shared/citations/generateCitationHtml';
 import {
 	User,
 	Collection,
@@ -18,7 +19,6 @@ import {
 	DiscussionChannel,
 	DiscussionChannelParticipant,
 } from './models';
-import { generateCitationHTML } from './utilities';
 
 export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req, isDraftRoute) => {
 	/* Used to format pub JSON and to test */

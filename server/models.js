@@ -347,6 +347,7 @@ const Collection = sequelize.define('Collection', {
 
 	metadata: { type: Sequelize.JSONB },
 	kind: { type: Sequelize.TEXT },
+	doi: { type: Sequelize.TEXT },
 });
 
 const CollectionPub = sequelize.define(
@@ -395,7 +396,7 @@ const CollectionAttribution = sequelize.define('CollectionAttribution', {
 Collection.hasMany(CollectionAttribution, {
 	onDelete: 'CASCADE',
 	as: 'attributions',
-	foreignKey: 'pubId',
+	foreignKey: 'collectionId',
 });
 CollectionAttribution.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 CollectionAttribution.belongsTo(Collection, {

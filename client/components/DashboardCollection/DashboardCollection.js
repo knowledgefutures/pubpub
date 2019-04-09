@@ -56,7 +56,7 @@ class DashboardCollection extends React.Component {
 				}),
 			}).then(() => this.handlePersistStateChange(-1));
 		}
-		const pageUpdate = updatedCollection.pageId
+		const pageUpdate = Object.keys(updatedCollection).includes('pageId')
 			? { page: communityData.pages.find((page) => page.id === updatedCollection.pageId) }
 			: {};
 		this.setState({

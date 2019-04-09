@@ -13,6 +13,7 @@ require('./landing'); // Route: '/'
 require('./dashboard'); // Route: ['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug']
 require('./pub'); // Route: ['/pub/:slug', '/pub/:slug/content/:chapterId', '/pub/:slug/draft', '/pub/:slug/draft/content/:chapterId', '/pub/:slug/:mode', '/pub/:slug/:mode/:subMode']
 require('./page'); // Route: ['/', '/:slug']
+require('./collection'); // Route: /collection/:id
 
 /* Routes for all */
 require('./login'); // Route: '/login'

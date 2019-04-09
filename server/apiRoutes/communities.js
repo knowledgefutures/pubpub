@@ -132,7 +132,7 @@ app.put('/api/communities', (req, res) => {
 				'email',
 				'hideCreatePubButton',
 				'hideNav',
-				'defaultPubTags',
+				'defaultPubCollections',
 				'headerLogo',
 				'headerLinks',
 				'hideHero',

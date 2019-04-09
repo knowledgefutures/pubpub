@@ -90,7 +90,7 @@ const Community = sequelize.define('Community', {
 	email: { type: Sequelize.TEXT },
 	issn: { type: Sequelize.TEXT },
 	isFeatured: { type: Sequelize.BOOLEAN },
-	defaultPubTags: { type: Sequelize.JSONB },
+	defaultPubCollections: { type: Sequelize.JSONB },
 });
 
 const User = sequelize.define('User', {

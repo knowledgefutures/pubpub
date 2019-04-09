@@ -36,7 +36,7 @@ class DashboardSettings extends Component {
 			/* Header */
 			headerLogo: props.communityData.headerLogo,
 			hideCreatePubButton: props.communityData.hideCreatePubButton || false,
-			defaultPubTags: props.communityData.defaultPubTags || [],
+			defaultPubCollections: props.communityData.defaultPubCollections || [],
 			// headerLinks
 
 			/* Navigation */
@@ -279,18 +279,18 @@ class DashboardSettings extends Component {
 					>
 						<TagMultiSelect
 							allTags={this.props.communityData.tags}
-							selectedTagIds={this.state.defaultPubTags || []}
+							selectedTagIds={this.state.defaultPubCollections || []}
 							onItemSelect={(newTagId) => {
-								const existingTagIds = this.state.defaultPubTags || [];
+								const existingTagIds = this.state.defaultPubCollections || [];
 								const newTagIds = [...existingTagIds, newTagId];
-								this.setState({ defaultPubTags: newTagIds });
+								this.setState({ defaultPubCollections: newTagIds });
 							}}
 							onRemove={(evt, tagIndex) => {
-								const existingTagIds = this.state.defaultPubTags || [];
+								const existingTagIds = this.state.defaultPubCollections || [];
 								const newTagIds = existingTagIds.filter((item, filterIndex) => {
 									return filterIndex !== tagIndex;
 								});
-								this.setState({ defaultPubTags: newTagIds });
+								this.setState({ defaultPubCollections: newTagIds });
 							}}
 							placeholder="Select Tags..."
 						/>

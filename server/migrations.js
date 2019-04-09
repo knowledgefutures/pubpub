@@ -374,7 +374,7 @@ new Promise((resolve) => {
 	// 	return sequelize.queryInterface.addColumn('Communities', 'hideCreatePubButton', { type: Sequelize.BOOLEAN });
 	// })
 	// .then(()=> {
-	// 	return sequelize.queryInterface.addColumn('Communities', 'defaultPubTags', { type: Sequelize.JSONB });
+	// 	return sequelize.queryInterface.addColumn('Communities', 'defaultPubCollections', { type: Sequelize.JSONB });
 	// })
 	// .then(()=> {
 	// 	return Promise.all([

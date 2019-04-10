@@ -25,7 +25,7 @@ class LayoutEditorBanner extends Component {
 		this.setBackgroundSize = this.setBackgroundSize.bind(this);
 		this.setBackgroundColor = this.setBackgroundColor.bind(this);
 		this.setBackgroundImage = this.setBackgroundImage.bind(this);
-		this.setdefaultCollectionIds = this.setdefaultCollectionIds.bind(this);
+		this.setDefaultCollectionIds = this.setDefaultCollectionIds.bind(this);
 		this.setText = this.setText.bind(this);
 		this.setShowButton = this.setShowButton.bind(this);
 		this.setButtonType = this.setButtonType.bind(this);
@@ -98,7 +98,7 @@ class LayoutEditorBanner extends Component {
 		});
 	}
 
-	setdefaultCollectionIds(newCollectionIds) {
+	setDefaultCollectionIds(newCollectionIds) {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			defaultCollectionIds: newCollectionIds,
@@ -236,7 +236,7 @@ class LayoutEditorBanner extends Component {
 											...existingCollectionIds,
 											newCollectionId,
 										];
-										this.setdefaultCollectionIds(newCollectionIds);
+										this.setDefaultCollectionIds(newCollectionIds);
 									}}
 									onRemove={(evt, collectionIndex) => {
 										const existingCollectionIds =
@@ -246,7 +246,7 @@ class LayoutEditorBanner extends Component {
 												return filterIndex !== collectionIndex;
 											},
 										);
-										this.setdefaultCollectionIds(newCollectionIds);
+										this.setDefaultCollectionIds(newCollectionIds);
 									}}
 									placeholder="Add collections..."
 								/>

@@ -195,12 +195,6 @@ class PubHeader extends Component {
 								<div className="collections-buttons-wrapper">
 									<div className="collections">
 										{pubData.collectionPubs
-											.filter((collectionPub) => {
-												return (
-													collectionPub.collection &&
-													collectionPub.collection.kind === 'tag'
-												);
-											})
 											.sort((foo, bar) => {
 												if (
 													foo.collection.title.toLowerCase() <

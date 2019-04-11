@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, AnchorButton, ButtonGroup, Popover } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
+
 require('./pubHeaderActionButton.scss');
 
 const propTypes = {

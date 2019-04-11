@@ -26,5 +26,12 @@ storiesOf('Components/PubHeaderNew', module).add('default', () => (
 				avatar: 'https://i.imgur.com/s9Gj6o6.png',
 			}}
 		/>
+		<PubHeader
+			pubData={{
+				...altPubData,
+				headerStyle: 'black-blocks',
+				avatar: 'https://i.imgur.com/kts3zH1.jpg',
+			}}
+		/>
 	</div>
 ));

@@ -81,6 +81,13 @@
 					opacity: 0.75;
 				}
 			}
+			.pub-header-action-button-component {
+				.bp3-button {
+					&.skinny {
+						box-shadow: inset 7px 0 1px -7px rgba(255, 255, 255, 0.2);
+					}
+				}
+			}
 			.bottom-text {
 				.bottom-buttons {
 					.bp3-minimal,
@@ -122,7 +129,58 @@
 				box-decoration-break: clone;
 				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.2);
 			}
+			.pub-header-action-button-component {
+				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+				.bp3-button {
+					border: 0px solid white;
+				}
+			}
+			.bottom-text {
+				background-color: rgba(0, 0, 0, 0.5);
+				color: white;
+				.bottom-buttons {
+					.bp3-minimal,
+					.bp3-minimal:hover {
+						color: white;
+					}
+				}
+			}
+		}
+		&.black-blocks {
+			.bp3-tag {
+				background-color: black;
+			}
 
+			.text-wrapper,
+			.bp3-editable-text-content {
+				/* Ways of accomplishing this effect: */
+				/* https://css-tricks.com/multi-line-padded-text/ */
+				display: inline;
+				background: black;
+				padding: 2px 12px;
+				box-decoration-break: clone;
+				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.2);
+			}
+			h1,
+			.description {
+				color: white;
+			}
+			.pub-header-action-button-component {
+				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+				.bp3-button {
+					background: #000;
+					border: 0px solid black;
+					&:hover {
+						background: #111;
+					}
+					&:active {
+						background: #222;
+					}
+					&.skinny {
+						box-shadow: inset 7px 0 3px -7px rgba(255, 255, 255, 0.4);
+					}
+				}
+			}
 			.bottom-text {
 				background-color: rgba(0, 0, 0, 0.5);
 				color: white;

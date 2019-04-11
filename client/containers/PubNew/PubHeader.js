@@ -1,11 +1,13 @@
+/* eslint-disable react/no-danger */
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import useCss from 'react-use/lib/useCss';
+// import useCss from 'react-use/lib/useCss';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import dateFormat from 'dateformat';
 import stickybits from 'stickybits';
 import throttle from 'lodash.throttle';
+
 import { apiFetch, getResizedUrl } from 'utilities';
 import {
 	Button,
@@ -25,6 +27,7 @@ import GridWrapper from 'components/GridWrapper/GridWrapper';
 // import DropdownButton from 'components/DropdownButton/DropdownButton';
 
 import PubHeaderActionButton from './PubHeaderActionButton';
+import styleGenerator from './styleGenerator';
 
 require('./pubHeader.scss');
 
@@ -44,6 +47,14 @@ const propTypes = {
 // };
 
 const PubHeader = (props) => {
+	/*
+		We need communityWide accentColor (dark and light)
+		We need pub headerStyle setting
+		We need pub headerStyle background (color, gradient, tile, stretch)
+			Do we ever infer from avatar - or should we drop that idea?
+		We need pub headerStyle accent color (do we allow something other than community default?)
+	*/
+
 	const { communityData } = useContext(PageContext);
 	const headerRef = useRef(null);
 	const [title, setTitle] = useState(props.pubData.title);
@@ -154,41 +165,47 @@ const PubHeader = (props) => {
 		{ title: 'Download', icon: 'download', key: 'download' },
 	];
 
-	const accentColor = '#A2273E';
-	let dynamicStyle = {};
-	if (pubData.headerStyle === 'white-blocks') {
-		dynamicStyle = {
-			'.header-collection .bp3-tag': {
-				border: `1px solid ${accentColor}`,
-				color: accentColor,
-				borderRadius: '0px',
-			},
-			'.authors, .authors a': {
-				color: accentColor,
-			},
-			'.pub-header-action-button-component.large': {
-				color: accentColor,
-				border: '0px solid white',
-				boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.2)',
-			},
-			'.pub-header-action-button-component .bp3-icon': {
-				color: accentColor,
-			},
-			'.pub-header-action-button-component .bp3-button': {
-				color: accentColor,
-			},
-		};
-	}
-	const styleClassName = useCss(dynamicStyle);
+	const accentColor = pubData.headerStyle === 'white-blocks' ? '#A2273E' : '#ecd721';
+	const headerStyleClassName = pubData.headerStyle || '';
+	// let dynamicStyle = {};
+	// if (pubData.headerStyle === 'white-blocks') {
+	// 	dynamicStyle = {
+	// 		'.header-collection .bp3-tag': {
+	// 			border: `1px solid ${accentColor}`,
+	// 			color: accentColor,
+	// 			borderRadius: '0px',
+	// 		},
+	// 		'.authors, .authors a': {
+	// 			color: accentColor,
+	// 		},
+	// 		'.pub-header-action-button-component.large': {
+	// 			color: accentColor,
+	// 			border: '0px solid white',
+	// 			boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.2)',
+	// 		},
+	// 		'.pub-header-action-button-component .bp3-icon': {
+	// 			color: accentColor,
+	// 		},
+	// 		'.pub-header-action-button-component .bp3-button': {
+	// 			color: accentColor,
+	// 		},
+	// 	};
+	// }
+	// const styleClassName = useCss(dynamicStyle);
 
 	return (
 		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>
 			<div
-				className={`wrapper ${styleClassName} ${
-					pubData.headerStyle !== 'white-blocks' && useHeaderImage ? 'dim' : ''
-				} ${pubData.headerStyle === 'white-blocks' ? 'white-blocks' : ''}`}
+				className={`wrapper ${
+					!headerStyleClassName && useHeaderImage ? 'dim' : ''
+				} ${headerStyleClassName}`}
 			>
 				<GridWrapper containerClassName="pub">
+					<style
+						dangerouslySetInnerHTML={{
+							__html: styleGenerator(pubData.headerStyle, accentColor),
+						}}
+					/>
 					<div className="tags-bar">
 						<div className="left">
 							{pubData.collectionPubs

@@ -1,4 +1,4 @@
-.pub-header-action-button-component {
+.action-button-component {
 	&.skewed {
 		transform: skew(-20deg);
 		.bp3-button > * {
@@ -20,6 +20,18 @@
 			.bp3-button-text {
 				margin-right: 15px;
 			}
+		}
+	}
+	.text-stack {
+		font-size: 12px;
+		text-align: left;
+		padding-left: 10px;
+		font-weight: 500;
+		.subtext {
+			font-weight: 400;
+			font-size: 10px;
+			display: block;
+
 		}
 	}
 }

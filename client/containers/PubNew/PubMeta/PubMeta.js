@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import GridWrapper from 'components/GridWrapper/GridWrapper';
-import { pubDataProps } from './sharedPropTypes';
+import { pubDataProps } from 'containers/PubNew/sharedPropTypes';
+import Details from './Details';
 
 require('./pubMeta.scss');
 
@@ -20,8 +21,8 @@ const PubMeta = (props) => {
 	return (
 		<div className="pub-meta-component">
 			<GridWrapper containerClassName="pub">
-				<h3>
-					{pubData.metaMode}
+				<div className="header">
+					<h3>{pubData.metaMode}</h3>
 					<Button
 						icon="small-cross"
 						minimal={true}
@@ -33,7 +34,8 @@ const PubMeta = (props) => {
 							});
 						}}
 					/>
-				</h3>
+				</div>
+				{pubData.metaMode === 'details' && <Details />}
 			</GridWrapper>
 		</div>
 	);

@@ -28,7 +28,7 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			flex: 1 1 auto;
-			font-weight: 800;
+			font-family: $header-font;
 			font-size: 18px;
 			padding-right: 2em;
 		}
@@ -81,13 +81,19 @@
 					opacity: 0.75;
 				}
 			}
-			.pub-header-action-button-component {
+			.action-button-component {
 				.bp3-button {
 					&.skinny {
 						box-shadow: inset 7px 0 1px -7px rgba(255, 255, 255, 0.2);
 					}
 				}
+				.text-stack {
+					.subtext {
+						color: #bbb;
+					}
+				}
 			}
+
 			.bottom-text {
 				.bottom-buttons {
 					.bp3-minimal,
@@ -97,7 +103,7 @@
 				}
 			}
 			.actions-bar {
-				.pub-header-action-button-component {
+				.action-button-component {
 					.bp3-button {
 						background: rgba(255, 255, 255, 0.1);
 						color: white;
@@ -107,7 +113,8 @@
 						&:hover {
 							background: rgba(255, 255, 255, 0.2);
 						}
-						&:active {
+						&:active,
+						&.bp3-active {
 							background: rgba(255, 255, 255, 0.3);
 						}
 					}
@@ -129,7 +136,7 @@
 				box-decoration-break: clone;
 				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.2);
 			}
-			.pub-header-action-button-component {
+			.action-button-component {
 				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
 				.bp3-button {
 					border: 0px solid white;
@@ -165,7 +172,7 @@
 			.description {
 				color: white;
 			}
-			.pub-header-action-button-component {
+			.action-button-component {
 				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
 				.bp3-button {
 					background: #000;
@@ -178,6 +185,11 @@
 					}
 					&.skinny {
 						box-shadow: inset 7px 0 3px -7px rgba(255, 255, 255, 0.4);
+					}
+				}
+				.text-stack {
+					.subtext {
+						color: #bbb;
 					}
 				}
 			}
@@ -226,12 +238,12 @@
 	.actions-bar {
 		padding: 40px 0px 20px;
 		.left {
-			.pub-header-action-button-component {
+			.action-button-component {
 				margin-right: 35px;
 			}
 		}
 		.right {
-			.pub-header-action-button-component {
+			.action-button-component {
 				margin-left: 22px;
 			}
 		}
@@ -353,6 +365,11 @@
 		margin-top: 0px;
 		margin-left: 5px;
 	}
+}
+
+.right-aligned-skewed {
+	position: relative;
+	right: 15px;
 }
 @media only screen and (max-width: 750px) {
 	.pub-header-component {

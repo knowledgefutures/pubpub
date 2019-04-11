@@ -2,13 +2,14 @@ import React from 'react';
 import PageWrapper from 'components/PageWrapper/PageWrapper';
 import { hydrateWrapper } from 'utilities';
 import { communityDataProps, locationDataProps, loginDataProps } from 'utilities/sharedPropTypes';
+import { pubDataProps } from 'containers/PubNew/sharedPropTypes';
 import PubSyncManager from './PubSyncManager';
 import PubHeader from './PubHeader';
 import PubDocument from './PubDocument';
 import PubSubmission from './PubSubmission';
 import PubMeta from './PubMeta';
-import PubSettings from './PubSettings';
-import { pubDataProps } from './sharedPropTypes';
+import PubManage from './PubManage';
+
 
 require('./pubNew.scss');
 
@@ -43,7 +44,7 @@ const PubNew = (props) => {
 								<PubMeta pubData={pubData} updateLocalData={updateLocalData} />
 								{mode === 'document' && <PubDocument {...modeProps} />}
 								{mode === 'submission' && <PubSubmission {...modeProps} />}
-								{mode === 'settings' && <PubSettings {...modeProps} />}
+								{mode === 'manage' && <PubManage {...modeProps} />}
 							</React.Fragment>
 						);
 					}}

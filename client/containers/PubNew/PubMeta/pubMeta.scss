@@ -1,0 +1,13 @@
+.pub-meta-component {
+	position: relative;
+	min-height: 250px;
+	border-bottom: 1px solid #d2d2d2;
+	.header {
+		display: flex;
+	    align-items: center;
+		h3 {
+			flex: 1 1 auto;
+			margin: 0;
+		}
+	}
+}

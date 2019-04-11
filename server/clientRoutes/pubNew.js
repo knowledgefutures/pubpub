@@ -17,20 +17,27 @@ const getMode = (path, slug) => {
 	if (path.indexOf(`/pubnew/${slug}/submission`) > -1) {
 		return 'submission';
 	}
-	if (path.indexOf(`/pubnew/${slug}/settings`) > -1) {
-		return 'settings';
+	if (path.indexOf(`/pubnew/${slug}/manage`) > -1) {
+		return 'manage';
 	}
 	return 'document';
 };
 
+
+/*
+	What does the header do in Settings mode?
+	How do we get back to the 'doc'
+	How do we navigate when in a submission?
+
+*/
 app.get(
 	[
 		'/pubnew/:slug',
 		'/pubnew/:slug/branch/:branchShortId',
 		'/pubnew/:slug/branch/:branchShortId/:versionNumber',
 		'/pubnew/:slug/submission',
-		'/pubnew/:slug/settings/',
-		'/pubnew/:slug/settings/:settingsMode',
+		'/pubnew/:slug/manage/',
+		'/pubnew/:slug/manage/:manageMode',
 	],
 	(req, res, next) => {
 		if (!hostIsValid(req, 'community')) {

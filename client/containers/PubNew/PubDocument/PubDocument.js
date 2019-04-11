@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { marksAtSelection } from '@pubpub/editor';
+import { pubDataProps } from 'containers/PubNew/sharedPropTypes';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
 import PubLinkMenu from './PubLinkMenu';
 import PubDiscussions from './PubDiscussions';
 import PubFooter from './PubFooter';
-import { pubDataProps } from './sharedPropTypes';
+
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,

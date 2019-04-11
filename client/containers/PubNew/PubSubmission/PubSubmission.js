@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { communityDataProps, locationDataProps, loginDataProps } from 'utilities/sharedPropTypes';
-import { pubDataProps } from './sharedPropTypes';
+import { pubDataProps } from 'containers/PubNew/sharedPropTypes';
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,

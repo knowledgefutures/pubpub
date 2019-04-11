@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, AnchorButton, ButtonGroup, Popover } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 
-require('./pubHeaderActionButton.scss');
+require('./actionButton.scss');
 
 const propTypes = {
 	buttons: PropTypes.arrayOf(
@@ -52,7 +52,7 @@ const ActionButton = function(props) {
 		return buttonComponent;
 	});
 
-	let groupClass = 'pub-header-action-button-component';
+	let groupClass = 'action-button-component';
 	if (props.isSkewed) {
 		groupClass += ' skewed';
 	}

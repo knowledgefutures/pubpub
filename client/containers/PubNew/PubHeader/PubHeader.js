@@ -2,31 +2,23 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useWindowSize from 'react-use/lib/useWindowSize';
-// import useCss from 'react-use/lib/useCss';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import dateFormat from 'dateformat';
 import stickybits from 'stickybits';
-import throttle from 'lodash.throttle';
-
 import { apiFetch, getResizedUrl } from 'utilities';
 import {
 	Button,
 	AnchorButton,
 	EditableText,
-	// Popover,
-	// PopoverInteractionKind,
 	Position,
 	Tag,
 	Intent,
-	// ButtonGroup,
 	Menu,
 	MenuItem,
 } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 import GridWrapper from 'components/GridWrapper/GridWrapper';
-// import DropdownButton from 'components/DropdownButton/DropdownButton';
-
-import PubHeaderActionButton from './PubHeaderActionButton';
+import ActionButton from './ActionButton';
 import styleGenerator from './styleGenerator';
 
 require('./pubHeader.scss');
@@ -118,80 +110,25 @@ const PubHeader = (props) => {
 	if (useHeaderImage) {
 		const resizedBackground = getResizedUrl(pubData.avatar, 'fit-in', '1500x600');
 		backgroundStyle.backgroundImage = `url("${resizedBackground}")`;
-		// backgroundStyle.color = 'white';
 	}
-	// const mode = props.locationData.params.mode;
-	// const subMode = props.locationData.params.subMode;
-	// const activeVersion = pubData.activeVersion;
-	// const sortedVersionsList = pubData.versions.sort((foo, bar) => {
-	// 	if (foo.createdAt < bar.createdAt) {
-	// 		return 1;
-	// 	}
-	// 	if (foo.createdAt > bar.createdAt) {
-	// 		return -1;
-	// 	}
-	// 	return 0;
-	// });
 
-	// const numNewerVersions =
-	// 	!pubData.isDraft &&
-	// 	pubData.versions.reduce((prev, curr) => {
-	// 		if (curr.createdAt > activeVersion.createdAt) {
-	// 			return prev + 1;
-	// 		}
-	// 		return prev;
-	// 	}, 0);
-	const numDiscussions = pubData.discussions.length;
-	// const numAttributions = pubData.collaborators.filter((item)=> {
-	// 	return item.Collaborator.isAuthor || item.Collaborator.isContributor;
-	// }).length;
-	const numAttributions = pubData.attributions.length;
-
-	// const discussionChannels = [
-	// 	{ title: 'public' },
-	// 	...this.props.pubData.discussionChannels.filter((channel) => {
-	// 		return !channel.isArchived;
-	// 	}),
-	// ];
-
-	const useEditableTitle = pubData.isManager && isMounted;
+	const isDocMode = pubData.mode === 'document';
+	const useEditableTitle = pubData.isManager && isMounted && isDocMode;
 	let pubTitle = pubData.title;
 	if (isEditingTitle) {
 		pubTitle = title;
 	}
 
 	const metaModes = [
-		{ title: 'Details', icon: '...', key: 'details' },
-		{ title: 'Download', icon: 'download', key: 'download' },
+		{ title: 'Details', icon: 'more', key: 'details' },
+		{ title: 'Download', icon: 'download2', key: 'download' },
+		{ title: 'Social Sharing', icon: 'share2', key: 'social' },
+		{ title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
+		{ title: 'Discussions', icon: 'chat', key: 'discussions' },
 	];
 
 	const accentColor = pubData.headerStyle === 'white-blocks' ? '#A2273E' : '#ecd721';
 	const headerStyleClassName = pubData.headerStyle || '';
-	// let dynamicStyle = {};
-	// if (pubData.headerStyle === 'white-blocks') {
-	// 	dynamicStyle = {
-	// 		'.header-collection .bp3-tag': {
-	// 			border: `1px solid ${accentColor}`,
-	// 			color: accentColor,
-	// 			borderRadius: '0px',
-	// 		},
-	// 		'.authors, .authors a': {
-	// 			color: accentColor,
-	// 		},
-	// 		'.pub-header-action-button-component.large': {
-	// 			color: accentColor,
-	// 			border: '0px solid white',
-	// 			boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.2)',
-	// 		},
-	// 		'.pub-header-action-button-component .bp3-icon': {
-	// 			color: accentColor,
-	// 		},
-	// 		'.pub-header-action-button-component .bp3-button': {
-	// 			color: accentColor,
-	// 		},
-	// 	};
-	// }
-	// const styleClassName = useCss(dynamicStyle);
 
 	return (
 		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>
@@ -256,8 +193,27 @@ const PubHeader = (props) => {
 								})}
 						</div>
 						<div className="right">
-							<AnchorButton className="manager-button" text="Share" href="" />
-							<AnchorButton className="manager-button" text="Manage" href="" />
+							{isDocMode && (
+								<React.Fragment>
+									<AnchorButton
+										className="manager-button"
+										text="Share"
+										href={`/pubnew/${pubData.slug}/manage/sharing`}
+									/>
+									<AnchorButton
+										className="manager-button"
+										text="Manage"
+										href={`/pubnew/${pubData.slug}/manage`}
+									/>
+								</React.Fragment>
+							)}
+							{!isDocMode && (
+								<AnchorButton
+									className="manager-button"
+									text="Return to Document"
+									href={`/pubnew/${pubData.slug}`}
+								/>
+							)}
 						</div>
 						{/* <div className="buttons">
 										{!pubData.isDraft &&
@@ -320,13 +276,13 @@ const PubHeader = (props) => {
 						{!useEditableTitle && <span className="text-wrapper">{pubData.title}</span>}
 					</h1>
 
-					{pubData.description && (
+					{isDocMode && pubData.description && (
 						<div className="description">
 							<span className="text-wrapper">{pubData.description}</span>
 						</div>
 					)}
 
-					{!!authors.length && (
+					{isDocMode && !!authors.length && (
 						<div className="authors">
 							<span className="text-wrapper">
 								<span>by </span>
@@ -381,114 +337,145 @@ const PubHeader = (props) => {
 							</span>
 						</div>
 					)}
-					<div className="actions-bar">
-						<div className="left">
-							{/* History Button */}
+					{isDocMode && (
+						<div className="actions-bar">
+							<div className="left">
+								{/* History Button */}
 
-							<PubHeaderActionButton
-								buttons={[
-									{
-										text: 'Mar 31, 2019',
-										rightIcon: 'history',
-										isWide: true,
-									},
-								]}
-							/>
-
-							{/* Branches Button */}
-
-							<PubHeaderActionButton
-								buttons={[
-									{
-										text: 'Branch: Hello',
-										rightIcon: 'caret-down',
-										isWide: true,
-									},
-								]}
-								isSkewed={true}
-							/>
-
-							{/* Submit Button */}
-
-							<PubHeaderActionButton
-								buttons={[
-									{
-										text: 'hello',
-										href: 'https://web.mit.edu',
-										isWide: true,
-									},
-									{
-										// text: 'hello',
-										rightIcon: 'caret-down',
-										isSkinny: true,
-										popoverProps: {
-											content: (
-												<Menu>
-													<MenuItem text="Hello Hello Hello" />
-													<MenuItem text="Okay" />
-												</Menu>
-											),
-											minimal: true,
-											position: Position.BOTTOM_RIGHT,
+								<ActionButton
+									buttons={[
+										{
+											text: 'Mar 31, 2019',
+											rightIcon: 'history',
+											active: pubData.metaMode === 'history',
+											onClick: () => {
+												props.updateLocalData('pub', {
+													metaMode:
+														pubData.metaMode === 'history'
+															? undefined
+															: 'history',
+												});
+											},
+											isWide: true,
 										},
-									},
-								]}
-								isSkewed={true}
-							/>
+									]}
+								/>
+
+								{/* Branches Button */}
+
+								<ActionButton
+									buttons={[
+										{
+											text: (
+												<div className="text-stack">
+													<span className="subtext">now on branch</span>
+													<span className>Public</span>
+												</div>
+											),
+											rightIcon: 'caret-down',
+											isWide: true,
+											popoverProps: {
+												content: (
+													<Menu>
+														<MenuItem text="Branch1" />
+														<MenuItem text="Branch12" />
+													</Menu>
+												),
+												minimal: true,
+												position: Position.BOTTOM_LEFT,
+											},
+										},
+									]}
+									isSkewed={true}
+								/>
+
+								{/* Submit Button */}
+
+								<ActionButton
+									buttons={[
+										{
+											text: (
+												<div className="text-stack">
+													<span>Submit for Review</span>
+													<span className="subtext">
+														to branch: public
+													</span>
+												</div>
+											),
+											href: 'https://web.mit.edu',
+											isWide: true,
+										},
+										{
+											// text: 'hello',
+											rightIcon: 'caret-down',
+											isSkinny: true,
+											popoverProps: {
+												content: (
+													<Menu>
+														<MenuItem text="Hello Hello Hello" />
+														<MenuItem text="Okay" />
+													</Menu>
+												),
+												minimal: true,
+												popoverClassName: 'right-aligned-skewed',
+												position: Position.BOTTOM_RIGHT,
+											},
+										},
+									]}
+									isSkewed={true}
+								/>
+							</div>
+							<div className="right">
+								{metaModes.map((mode) => {
+									const isActive = pubData.metaMode === mode.key;
+									return (
+										<ActionButton
+											isLarge={true}
+											buttons={[
+												{
+													icon: mode.icon,
+													active: isActive,
+													alt: mode.title,
+													onClick: () => {
+														props.updateLocalData('pub', {
+															metaMode: isActive
+																? undefined
+																: mode.key,
+														});
+													},
+												},
+											]}
+										/>
+									);
+								})}
+							</div>
 						</div>
-						<div className="right">
-							<PubHeaderActionButton
-								isLarge={true}
-								buttons={[
-									{
-										// text: 'hello',
-										icon: 'more',
-									},
-								]}
-							/>
-							<PubHeaderActionButton
-								isLarge={true}
-								buttons={[
-									{
-										// text: 'hello',
-										icon: 'timeline-bar-chart',
-									},
-								]}
-							/>
-							<PubHeaderActionButton
-								isLarge={true}
-								buttons={[
-									{
-										// text: 'hello',
-										icon: 'download',
-									},
-								]}
-							/>
-						</div>
-					</div>
+					)}
 				</GridWrapper>
 				<div className="bottom-text">
 					<div className="bottom-title">{pubData.title}</div>
-					<div className="bottom-buttons">
-						<Button
-							minimal={true}
-							small={true}
-							// onClick={() => {
-							// 	this.props.setOptionsMode('cite');
-							// }}
-							text="Cite"
-						/>
-						<span className="dot">·</span>
-						<Button
-							minimal={true}
-							small={true}
-							// onClick={() => {
-							// 	this.props.setOptionsMode('download');
-							// }}
-							text="Download"
-						/>
-						<span className="dot">·</span>
-					</div>
+					{isDocMode && (
+						<div className="bottom-buttons">
+							<Button
+								minimal={true}
+								small={true}
+								// onClick={() => {
+								// 	this.props.setOptionsMode('cite');
+								// }}
+								text="Cite"
+							/>
+							<span className="dot">·</span>
+							<Button
+								minimal={true}
+								small={true}
+								// onClick={() => {
+								// 	this.props.setOptionsMode('download');
+								// }}
+								text="Download"
+							/>
+							<span className="dot">·</span>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
@@ -496,22 +483,4 @@ const PubHeader = (props) => {
 };
 
 PubHeader.propTypes = propTypes;
-// PubHeader.defaultProps = defaultProps;
 export default PubHeader;
-
-// <div className="meta-buttons">
-// 						{metaModes.map((mode) => {
-// 							const isActive = pubData.metaMode === mode.key;
-// 							return (
-// 								<Button
-// 									text={mode.icon}
-// 									active={isActive}
-// 									onClick={() => {
-// 										props.updateLocalData('pub', {
-// 											metaMode: isActive ? undefined : mode.key,
-// 										});
-// 									}}
-// 								/>
-// 							);
-// 						})}
-// 					</div>

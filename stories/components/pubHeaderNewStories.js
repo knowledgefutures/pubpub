@@ -1,51 +1,30 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import PubHeader from 'containers/PubNew/PubHeader';
-import { pubData, locationData } from '../data';
+import { pubData } from '../data';
+
+const altPubData = {
+	...pubData,
+	title: 'Eloquent Elephants show signs of specialized skills amongst young and old',
+	description:
+		'Are institutions, through compartmentalization, a root cause of the exploitation and reduction that spans relations from gender to ecology? A new language—and a new sense-making—to address the horrors of this exploitation.',
+};
 
 storiesOf('Components/PubHeaderNew', module).add('default', () => (
 	<div>
+		<PubHeader pubData={altPubData} />
 		<PubHeader
-			pubData={pubData}
-			locationData={locationData}
-			setOverlayPanel={() => {}}
-			// isMinimal={false}
+			pubData={{
+				...altPubData,
+				useHeaderImage: false,
+			}}
 		/>
 		<PubHeader
 			pubData={{
-				...pubData,
-				useHeaderImage: false,
+				...altPubData,
+				headerStyle: 'white-blocks',
+				avatar: 'https://i.imgur.com/s9Gj6o6.png',
 			}}
-			locationData={locationData}
-			setOverlayPanel={() => {}}
-			// isMinimal={false}
-		/>
-		<PubHeader
-			pubData={pubData}
-			locationData={{
-				...locationData,
-				params: {
-					...locationData.params,
-					mode: 'Discussions',
-				},
-			}}
-			setOverlayPanel={() => {}}
-			// isMinimal={true}
-		/>
-		<PubHeader
-			pubData={{
-				...pubData,
-				useHeaderImage: false,
-			}}
-			locationData={{
-				...locationData,
-				params: {
-					...locationData.params,
-					mode: 'Discussions',
-				},
-			}}
-			setOverlayPanel={() => {}}
-			// isMinimal={true}
 		/>
 	</div>
 ));

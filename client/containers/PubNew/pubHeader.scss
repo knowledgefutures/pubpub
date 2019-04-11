@@ -1,4 +1,6 @@
-.pub-header-component {
+@import 'variables.scss';
+
+.pub-header-component.new {
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -47,8 +49,9 @@
 		&.dim {
 			background-color: rgba(0, 0, 0, 0.5);
 			text-shadow: 0px 0px 2px black;
+			color: white;
 			.bp3-tag {
-				background-color: rgba(255, 255, 255, 0.3);
+				background-color: rgba(255, 255, 255, 0.1);
 			}
 			a:not(.bp3-button),
 			.bp3-tag,
@@ -86,6 +89,50 @@
 					}
 				}
 			}
+			.actions-bar {
+				.pub-header-action-button-component {
+					.bp3-button {
+						background: rgba(255, 255, 255, 0.1);
+						color: white;
+						.bp3-icon {
+							color: white;
+						}
+						&:hover {
+							background: rgba(255, 255, 255, 0.2);
+						}
+						&:active {
+							background: rgba(255, 255, 255, 0.3);
+						}
+					}
+				}
+			}
+		}
+		&.white-blocks {
+			.bp3-tag {
+				background-color: white;
+			}
+
+			.text-wrapper,
+			.bp3-editable-text-content {
+				/* Ways of accomplishing this effect: */
+				/* https://css-tricks.com/multi-line-padded-text/ */
+				display: inline;
+				background: white;
+				padding: 2px 12px;
+				box-decoration-break: clone;
+				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.2);
+			}
+
+			.bottom-text {
+				background-color: rgba(0, 0, 0, 0.5);
+				color: white;
+				.bottom-buttons {
+					.bp3-minimal,
+					.bp3-minimal:hover {
+						color: white;
+					}
+				}
+			}
 		}
 	}
 	.tags-bar,
@@ -106,19 +153,22 @@
 	}
 
 	.tags-bar {
-		margin-top: 20px;
+		padding-top: 20px;
 		.header-collection {
 			text-decoration: none;
 			margin: 6px 6px 0px 0px;
+			.bp3-tag {
+				padding: 4px 10px;
+			}
 		}
 		.manager-button {
 			margin: 6px 0px 0px 6px;
 		}
 	}
 	.actions-bar {
-		margin: 40px 0px 20px;
+		padding: 40px 0px 20px;
 		.left {
-			.action-group {
+			.pub-header-action-button-component {
 				margin-right: 35px;
 			}
 		}
@@ -129,124 +179,114 @@
 		}
 	}
 
-	.tags-buttons-wrapper {
-		display: flex;
-		align-items: flex-start;
-		padding-top: 5px;
-		.tags {
-			flex-shrink: 1;
-			display: flex;
-			align-items: flex-start;
-			a {
-				text-decoration: none;
-			}
-			.bp3-tag {
-				margin: 6px 6px 0px 0px;
-			}
-		}
-		.buttons {
-			flex-grow: 1;
-			text-align: right;
-			position: relative;
-			right: -10px;
-		}
-		button {
-			margin-left: 1em;
-		}
-	}
+	// .tags-buttons-wrapper {
+	// 	display: flex;
+	// 	align-items: flex-start;
+	// 	padding-top: 5px;
+	// 	.tags {
+	// 		flex-shrink: 1;
+	// 		display: flex;
+	// 		align-items: flex-start;
+	// 		a {
+	// 			text-decoration: none;
+	// 		}
+	// 		.bp3-tag {
+	// 			margin: 6px 6px 0px 0px;
+	// 			padding: 4px 10px;
+	// 		}
+	// 	}
+	// 	.buttons {
+	// 		flex-grow: 1;
+	// 		text-align: right;
+	// 		position: relative;
+	// 		right: -10px;
+	// 	}
+	// 	button {
+	// 		margin-left: 1em;
+	// 	}
+	// }
 
 	h1 {
 		color: inherit;
 		line-height: 1;
 		margin: 0;
 		padding: 50px 0px 10px;
-		font-weight: 800;
+		font-size: 48px;
+		line-height: 1.4;
+		font-weight: 500;
 		letter-spacing: 1px;
-		font-family: multi-display, -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-			'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-		.editable-text-match {
-			/* This padding is to match the mystery 3 pixels added by EditableText */
-			display: block;
-			padding-bottom: 3px;
-		}
-	}
-	h2 {
-		color: inherit;
-		font-weight: 800;
-		letter-spacing: 1px;
-		margin-bottom: 25px;
-		line-height: 1;
-		font-size: 1.5em;
+		font-family: $header-font;
 	}
 	.description {
-		padding-bottom: 30px;
-		font-size: 1.3em;
-		line-height: 1.3;
-		font-weight: 200;
+		padding-top: 30px;
+		font-size: 16px;
+		line-height: 1.4;
+		font-weight: 400;
 	}
 	.authors {
-		font-size: 1.1em;
+		padding-top: 30px;
+		font-size: 18px;
 		font-style: italic;
-		font-weight: 200;
+		font-weight: 400;
 	}
-	.details {
-		font-style: italic;
-		font-weight: 200;
+	// .details {
+	// 	font-style: italic;
+	// 	font-weight: 200;
 
-		padding-top: 10px;
-		.bp3-icon-standard {
-			padding-right: 0.5em;
-		}
-		.detail-button {
-			margin-right: 2em;
-			display: inline-block;
-			cursor: pointer;
-			&:not(:last-of-type):after {
-				content: '';
-				position: relative;
-				left: 1em;
-				top: -0.25em;
-				pointer-events: none;
-				width: 2px;
-				height: 2px;
-				background: white;
-				display: inline-block;
-				border-radius: 2px;
-			}
-			text-decoration: none;
-			&:hover {
-				text-decoration: underline;
-			}
-		}
-		.versions {
-			.bp3-icon:first-child {
-				margin-top: -5px;
-				margin-right: 3px;
-			}
-			.bp3-icon:not(:first-child) {
-				opacity: 0.6;
-				margin-left: 3px;
-			}
-		}
-	}
-	&.mode {
-		.buttons,
-		.details,
-		.authors,
-		.description {
-			display: none;
-		}
-		.wrapper {
-			margin-bottom: 0px;
-			padding-bottom: 10px;
-		}
-		h1 {
-			padding: 20px 0px;
-		}
-		.bp3-breadcrumb {
-			text-transform: capitalize;
-		}
-	}
+	// 	padding-top: 10px;
+	// 	.bp3-icon-standard {
+	// 		padding-right: 0.5em;
+	// 	}
+	// 	.detail-button {
+	// 		margin-right: 2em;
+	// 		display: inline-block;
+	// 		cursor: pointer;
+	// 		&:not(:last-of-type):after {
+	// 			content: '';
+	// 			position: relative;
+	// 			left: 1em;
+	// 			top: -0.25em;
+	// 			pointer-events: none;
+	// 			width: 2px;
+	// 			height: 2px;
+	// 			background: white;
+	// 			display: inline-block;
+	// 			border-radius: 2px;
+	// 		}
+	// 		text-decoration: none;
+	// 		&:hover {
+	// 			text-decoration: underline;
+	// 		}
+	// 	}
+	// 	.versions {
+	// 		.bp3-icon:first-child {
+	// 			margin-top: -5px;
+	// 			margin-right: 3px;
+	// 		}
+	// 		.bp3-icon:not(:first-child) {
+	// 			opacity: 0.6;
+	// 			margin-left: 3px;
+	// 		}
+	// 	}
+	// }
+	// &.mode {
+	// 	.buttons,
+	// 	.details,
+	// 	.authors,
+	// 	.description {
+	// 		display: none;
+	// 	}
+	// 	.wrapper {
+	// 		margin-bottom: 0px;
+	// 		padding-bottom: 10px;
+	// 	}
+	// 	h1 {
+	// 		padding: 20px 0px;
+	// 	}
+	// 	.bp3-breadcrumb {
+	// 		text-transform: capitalize;
+	// 	}
+	// }
 }
 
 .versions-popover {

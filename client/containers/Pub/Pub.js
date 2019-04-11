@@ -4,9 +4,16 @@ import PropTypes from 'prop-types';
 /* conflicting dependencies. https://github.com/firebase/firebase-js-sdk/issues/752 */
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 // import firebase from '@firebase/app';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/database';
+
+/* Using @firebase because of the following issue */
+/* https://github.com/firebase/firebase-js-sdk/issues/1668 */
+/* eslint-disable-next-line */
+import firebase from '@firebase/app';
+/* eslint-disable-next-line */
+import '@firebase/auth';
+/* eslint-disable-next-line */
+import '@firebase/database';
+
 import checkIfMobile from 'is-mobile';
 // import applyDevTools from 'prosemirror-dev-tools';
 import PageWrapper from 'components/PageWrapper/PageWrapper';

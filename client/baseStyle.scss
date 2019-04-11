@@ -5,6 +5,7 @@
 @import './grid.scss';
 
 @import url("https://use.typekit.net/kmi0tdo.css");
+@import 'variables.scss';
 
 // Set global styles
 // ****************************
@@ -15,8 +16,7 @@ body {
 	width: 100vw;
 	overflow-x: hidden;
 	color: #333;
-	font-family: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-		'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+	font-family: $base-font;
 }
 a {
 	text-decoration: underline;

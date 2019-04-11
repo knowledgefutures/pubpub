@@ -1,17 +1,25 @@
 .pub-header-action-button-component {
 	&.skewed {
 		transform: skew(-20deg);
-		& > * {
+		.bp3-button > * {
 			transform: skew(20deg);
 		}
 	}
-	min-width: 55px;
-	min-height: 55px;
-	&.wide {
-		min-width: 200px;
-	}
-	&.skinny {
-		min-width: 30px;
+	.bp3-button {
+		min-width: 40px;
+		min-height: 40px;
+		&.skinny {
+			min-width: 30px;
+		}
+		&.large {
+			min-width: 55px;
+			min-height: 55px;
+		}
+		&.wide {
+			// min-width: 200px;
+			.bp3-button-text {
+				margin-right: 15px;
+			}
+		}
 	}
 }
-

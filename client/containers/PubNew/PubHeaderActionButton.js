@@ -1,45 +1,62 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, AnchorButton } from '@blueprintjs/core';
+import { Button, AnchorButton, ButtonGroup, Popover } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
-
 require('./pubHeaderActionButton.scss');
 
 const propTypes = {
-	buttonProps: PropTypes.object.isRequired,
+	buttons: PropTypes.arrayOf(
+		PropTypes.shape({
+			isWide: PropTypes.bool,
+			isSkinny: PropTypes.bool,
+			popoverProps: PropTypes.object,
+		}),
+	).isRequired,
 	isSkewed: PropTypes.bool,
-	isWide: PropTypes.bool,
-	isSkinny: PropTypes.bool,
+	isLarge: PropTypes.bool,
 };
 
 const defaultProps = {
 	isSkewed: false,
-	isWide: false,
-	isSkinny: false,
+	isLarge: false,
 };
 
 const ActionButton = function(props) {
-	let buttonClass = 'pub-header-action-button-component';
+	const buttons = props.buttons.map((buttonData) => {
+		const icon = buttonData.icon ? (
+			<Icon icon={buttonData.icon} iconSize={props.isLarge ? 22 : 18} />
+		) : (
+			undefined
+		);
+
+		let buttonClass = '';
+		if (buttonData.isWide) {
+			buttonClass += ' wide';
+		}
+		if (buttonData.isSkinny) {
+			buttonClass += ' skinny';
+		}
+		if (props.isLarge) {
+			buttonClass += ' large';
+		}
+
+		const buttonComponent = buttonData.href ? (
+			<AnchorButton className={buttonClass} {...buttonData} icon={icon} />
+		) : (
+			<Button className={buttonClass} {...buttonData} icon={icon} />
+		);
+		if (buttonData.popoverProps) {
+			return <Popover {...buttonData.popoverProps} target={buttonComponent} />;
+		}
+		return buttonComponent;
+	});
+
+	let groupClass = 'pub-header-action-button-component';
 	if (props.isSkewed) {
-		buttonClass += ' skewed';
-	}
-	if (props.isWide) {
-		buttonClass += ' wide';
-	}
-	if (props.isSkinny) {
-		buttonClass += ' skinny';
+		groupClass += ' skewed';
 	}
 
-	const icon = props.buttonProps.icon ? (
-		<Icon icon={props.buttonProps.icon} iconSize={25} />
-	) : (
-		undefined
-	);
-
-	if (props.buttonProps.href) {
-		return <AnchorButton className={buttonClass} {...props.buttonProps} icon={icon} />;
-	}
-	return <Button className={buttonClass} {...props.buttonProps} icon={icon} />;
+	return <ButtonGroup className={groupClass}>{buttons}</ButtonGroup>;
 };
 
 ActionButton.propTypes = propTypes;

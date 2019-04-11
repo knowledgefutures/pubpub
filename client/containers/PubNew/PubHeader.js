@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import useCss from 'react-use/lib/useCss';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import dateFormat from 'dateformat';
 import stickybits from 'stickybits';
@@ -10,18 +11,18 @@ import {
 	Button,
 	AnchorButton,
 	EditableText,
-	Popover,
-	PopoverInteractionKind,
+	// Popover,
+	// PopoverInteractionKind,
 	Position,
 	Tag,
 	Intent,
-	ButtonGroup,
+	// ButtonGroup,
 	Menu,
 	MenuItem,
 } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 import GridWrapper from 'components/GridWrapper/GridWrapper';
-import DropdownButton from 'components/DropdownButton/DropdownButton';
+// import DropdownButton from 'components/DropdownButton/DropdownButton';
 
 import PubHeaderActionButton from './PubHeaderActionButton';
 
@@ -106,7 +107,7 @@ const PubHeader = (props) => {
 	if (useHeaderImage) {
 		const resizedBackground = getResizedUrl(pubData.avatar, 'fit-in', '1500x600');
 		backgroundStyle.backgroundImage = `url("${resizedBackground}")`;
-		backgroundStyle.color = 'white';
+		// backgroundStyle.color = 'white';
 	}
 	// const mode = props.locationData.params.mode;
 	// const subMode = props.locationData.params.subMode;
@@ -153,9 +154,40 @@ const PubHeader = (props) => {
 		{ title: 'Download', icon: 'download', key: 'download' },
 	];
 
+	const accentColor = '#A2273E';
+	let dynamicStyle = {};
+	if (pubData.headerStyle === 'white-blocks') {
+		dynamicStyle = {
+			'.header-collection .bp3-tag': {
+				border: `1px solid ${accentColor}`,
+				color: accentColor,
+				borderRadius: '0px',
+			},
+			'.authors, .authors a': {
+				color: accentColor,
+			},
+			'.pub-header-action-button-component.large': {
+				color: accentColor,
+				border: '0px solid white',
+				boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.2)',
+			},
+			'.pub-header-action-button-component .bp3-icon': {
+				color: accentColor,
+			},
+			'.pub-header-action-button-component .bp3-button': {
+				color: accentColor,
+			},
+		};
+	}
+	const styleClassName = useCss(dynamicStyle);
+
 	return (
-		<div className="pub-header-component" style={backgroundStyle} ref={headerRef}>
-			<div className={`wrapper ${useHeaderImage ? 'dim' : ''}`}>
+		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>
+			<div
+				className={`wrapper ${styleClassName} ${
+					pubData.headerStyle !== 'white-blocks' && useHeaderImage ? 'dim' : ''
+				} ${pubData.headerStyle === 'white-blocks' ? 'white-blocks' : ''}`}
+			>
 				<GridWrapper containerClassName="pub">
 					<div className="tags-bar">
 						<div className="left">
@@ -164,10 +196,16 @@ const PubHeader = (props) => {
 									return collectionPub.collection;
 								})
 								.sort((foo, bar) => {
-									if (foo.collection.title.toLowerCase() < bar.collection.title.toLowerCase()) {
+									if (
+										foo.collection.title.toLowerCase() <
+										bar.collection.title.toLowerCase()
+									) {
 										return -1;
 									}
-									if (foo.collection.title.toLowerCase() > bar.collection.title.toLowerCase()) {
+									if (
+										foo.collection.title.toLowerCase() >
+										bar.collection.title.toLowerCase()
+									) {
 										return 1;
 									}
 									return 0;
@@ -262,143 +300,153 @@ const PubHeader = (props) => {
 								confirmOnEnterKey={true}
 							/>
 						)}
-						{!useEditableTitle && (
-							<span className="editable-text-match">{pubData.title}</span>
-						)}
+						{!useEditableTitle && <span className="text-wrapper">{pubData.title}</span>}
 					</h1>
 
 					{pubData.description && (
-						<div className="description">{pubData.description}</div>
+						<div className="description">
+							<span className="text-wrapper">{pubData.description}</span>
+						</div>
 					)}
 
 					{!!authors.length && (
 						<div className="authors">
-							<span>by </span>
-							{authors
-								.sort((foo, bar) => {
-									if (foo.order < bar.order) {
-										return -1;
-									}
-									if (foo.order > bar.order) {
-										return 1;
-									}
-									if (foo.createdAt < bar.createdAt) {
-										return 1;
-									}
-									if (foo.createdAt > bar.createdAt) {
-										return -1;
-									}
-									return 0;
-								})
-								.map((author, index) => {
-									const separator =
-										index === authors.length - 1 || authors.length === 2
-											? ''
-											: ', ';
-									const prefix =
-										index === authors.length - 1 && index !== 0 ? ' and ' : '';
-									const user = author.user;
-									if (user.slug) {
+							<span className="text-wrapper">
+								<span>by </span>
+								{authors
+									.sort((foo, bar) => {
+										if (foo.order < bar.order) {
+											return -1;
+										}
+										if (foo.order > bar.order) {
+											return 1;
+										}
+										if (foo.createdAt < bar.createdAt) {
+											return 1;
+										}
+										if (foo.createdAt > bar.createdAt) {
+											return -1;
+										}
+										return 0;
+									})
+									.map((author, index) => {
+										const separator =
+											index === authors.length - 1 || authors.length === 2
+												? ''
+												: ', ';
+										const prefix =
+											index === authors.length - 1 && index !== 0
+												? ' and '
+												: '';
+										const user = author.user;
+										if (user.slug) {
+											return (
+												<span key={`author-${user.id}`}>
+													{prefix}
+													<a
+														href={`/user/${user.slug}`}
+														className="underline-on-hover"
+													>
+														{user.fullName}
+													</a>
+													{separator}
+												</span>
+											);
+										}
 										return (
 											<span key={`author-${user.id}`}>
 												{prefix}
-												<a
-													href={`/user/${user.slug}`}
-													className="underline-on-hover"
-												>
-													{user.fullName}
-												</a>
+												{user.fullName}
 												{separator}
 											</span>
 										);
-									}
-									return (
-										<span key={`author-${user.id}`}>
-											{prefix}
-											{user.fullName}
-											{separator}
-										</span>
-									);
-								})}
+									})}
+							</span>
 						</div>
 					)}
 					<div className="actions-bar">
 						<div className="left">
 							{/* History Button */}
-							<ButtonGroup className="action-group">
-								<PubHeaderActionButton
-									buttonProps={{
+
+							<PubHeaderActionButton
+								buttons={[
+									{
 										text: 'Mar 31, 2019',
 										rightIcon: 'history',
-									}}
-									isWide={true}
-								/>
-							</ButtonGroup>
+										isWide: true,
+									},
+								]}
+							/>
+
 							{/* Branches Button */}
-							<ButtonGroup className="action-group">
-								<PubHeaderActionButton
-									buttonProps={{
+
+							<PubHeaderActionButton
+								buttons={[
+									{
 										text: 'Branch: Hello',
 										rightIcon: 'caret-down',
-									}}
-									isSkewed={true}
-									isWide={true}
-								/>
-							</ButtonGroup>
+										isWide: true,
+									},
+								]}
+								isSkewed={true}
+							/>
 
 							{/* Submit Button */}
-							<ButtonGroup className="action-group">
-								<PubHeaderActionButton
-									buttonProps={{
+
+							<PubHeaderActionButton
+								buttons={[
+									{
 										text: 'hello',
 										href: 'https://web.mit.edu',
-									}}
-									isSkewed={true}
-									isWide={true}
-								/>
-								<Popover
-									content={
-										<Menu>
-											<MenuItem text="Hello" />
-											<MenuItem text="Okay" />
-										</Menu>
-									}
-									minimal={true}
-									position={Position.BOTTOM_RIGHT}
-									target={
-										<PubHeaderActionButton
-											buttonProps={{
-												// text: 'hello',
-												rightIcon: 'caret-down',
-											}}
-											isSkewed={true}
-											isSkinny={true}
-										/>
-									}
-								/>
-							</ButtonGroup>
+										isWide: true,
+									},
+									{
+										// text: 'hello',
+										rightIcon: 'caret-down',
+										isSkinny: true,
+										popoverProps: {
+											content: (
+												<Menu>
+													<MenuItem text="Hello Hello Hello" />
+													<MenuItem text="Okay" />
+												</Menu>
+											),
+											minimal: true,
+											position: Position.BOTTOM_RIGHT,
+										},
+									},
+								]}
+								isSkewed={true}
+							/>
 						</div>
 						<div className="right">
-							
 							<PubHeaderActionButton
-								buttonProps={{
-									// text: 'hello',
-									icon: 'more',
-								}}
+								isLarge={true}
+								buttons={[
+									{
+										// text: 'hello',
+										icon: 'more',
+									},
+								]}
 							/>
 							<PubHeaderActionButton
-								buttonProps={{
-									// text: 'hello',
-									icon: 'timeline-bar-chart',
-								}}
+								isLarge={true}
+								buttons={[
+									{
+										// text: 'hello',
+										icon: 'timeline-bar-chart',
+									},
+								]}
 							/>
 							<PubHeaderActionButton
-								buttonProps={{
-									// text: 'hello',
-									icon: 'download',
-								}}
+								isLarge={true}
+								buttons={[
+									{
+										// text: 'hello',
+										icon: 'download',
+									},
+								]}
 							/>
-							
 						</div>
 					</div>
 				</GridWrapper>

@@ -194,9 +194,9 @@ class CollectionMetadataEditor extends React.Component {
 		}
 		return (
 			<div className="fields">
-				<FormGroup label="Title">
+				{/* <FormGroup label="Title">
 					<InputGroup className="field" value={title} onChange={this.handleTitleChange} />
-				</FormGroup>
+				</FormGroup> */}
 				{fields.map((field) => this.renderField(field))}
 			</div>
 		);

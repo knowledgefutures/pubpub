@@ -44,7 +44,14 @@ const PubHeader = (props) => {
 		We need pub headerStyle setting
 		We need pub headerStyle background (color, gradient, tile, stretch)
 			Do we ever infer from avatar - or should we drop that idea?
+			No. We can infer the avatar from the backgroundHeader if we want - but not the other way around.
+			We probably want a component that can wrap and be used as a background tool. Takes image, dim, etc.
+			Use it on the pub header, previews, etc
 		We need pub headerStyle accent color (do we allow something other than community default?)
+			No - use the light or dark community accent default for now.
+		Where do we show open/completed submissions?
+			How do you get to pub/slug/submissions?
+		Do we require an accent color with the block styles? Or can they be simple white/black text?
 	*/
 
 	const { communityData } = useContext(PageContext);
@@ -421,6 +428,10 @@ const PubHeader = (props) => {
 												position: Position.BOTTOM_RIGHT,
 											},
 										},
+										// {
+										// 	text: '5',
+										// 	isSkinny: true,
+										// },
 									]}
 									isSkewed={true}
 								/>

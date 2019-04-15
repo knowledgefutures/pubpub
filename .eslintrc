@@ -16,8 +16,9 @@
     "rules": {
         "arrow-parens": [2, "always"],
         "arrow-body-style": 0,
-        "comma-dangle": 0,
+        "camelcase": 0,
         "class-methods-use-this": 0,
+        "comma-dangle": 0,
         "func-names": 0,
         "import/no-extraneous-dependencies": [2, { "devDependencies": true }],
         "import/prefer-default-export": 0,

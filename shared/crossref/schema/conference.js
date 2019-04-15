@@ -26,7 +26,7 @@ export default ({
 			conference_acronym: acronym,
 			conference_location: location,
 			conference_date: {
-				'#text': dateFormat(date, 'YYYY-MM-DD'),
+				'#text': dateFormat(date, 'yyyy-mm-dd'),
 			},
 		},
 		proceedings_metadata: {

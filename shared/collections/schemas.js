@@ -1,9 +1,20 @@
-import { communityUrl } from 'shared/util/canonicalUrls';
+import { collectionUrl } from '../util/canonicalUrls';
+
+const dateRegex = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/;
 
 const types = {
 	date: {
 		name: 'date',
-		deserialize: (str) => new Date(str),
+		deserialize: (str) => {
+			const [year, month, day] = dateRegex.exec(str).slice(1);
+			const date = new Date();
+			date.setFullYear(parseInt(year, 10));
+			date.setMonth(parseInt(month, 10) - 1);
+			date.setDate(parseInt(day, 10));
+			return date;
+		},
+		validate: (str) => dateRegex.test(str),
+		labelInfo: '(in YYYY-MM-DD format)',
 	},
 };
 
@@ -17,7 +28,8 @@ const sharedFields = {
 	url: {
 		name: 'url',
 		label: 'URL',
-		defaultDerivedFrom: ({ community }) => community && communityUrl(community),
+		defaultDerivedFrom: ({ community, collection }) =>
+			community && collection && collection.id && collectionUrl(community, collection),
 	},
 };
 
@@ -27,6 +39,27 @@ const schemas = [
 		label: { singular: 'tag', plural: 'tags' },
 		bpDisplayIcon: 'tag',
 		metadata: [],
+		contextHints: [],
+	},
+	{
+		kind: 'issue',
+		label: { singular: 'issue', plural: 'issues' },
+		bpDisplayIcon: 'manual',
+		contextHints: [{ value: 'article', label: 'Article', default: true }],
+		metadata: [
+			sharedFields.doi,
+			sharedFields.url,
+			{ name: 'printIssn', label: 'Print ISSN' },
+			{ name: 'electronicIssn', label: 'Electronic ISSN' },
+			{ name: 'volume', label: 'Volume' },
+			{ name: 'issue', label: 'Issue' },
+			{ name: 'printPublicationDate', label: 'Print publication date', type: types.date },
+			{
+				name: 'publicationDate',
+				label: 'Publication date',
+				type: types.date,
+			},
+		],
 	},
 	{
 		kind: 'book',
@@ -35,7 +68,11 @@ const schemas = [
 		contextHints: [
 			{ value: 'foreword', label: 'Foreword', crossrefComponentType: 'section' },
 			{ value: 'preface', label: 'Preface', crossrefComponentType: 'section' },
-			{ value: 'supplementaryMaterial', label: 'Supplementary Material' },
+			{
+				value: 'supplementaryMaterial',
+				label: 'Supplementary Material',
+				crossrefComponentType: 'reference_entry',
+			},
 			{
 				value: 'chapter',
 				label: 'Chapter',
@@ -57,26 +94,6 @@ const schemas = [
 			{ name: 'copyrightYear', label: 'Copyright year', pattern: '^[0-9]*$' },
 			{ name: 'publicationDate', label: 'Publication date', type: types.date },
 			{ name: 'edition', label: 'Edition no.', pattern: '^[0-9]*$' },
-		],
-	},
-	{
-		kind: 'issue',
-		label: { singular: 'issue', plural: 'issues' },
-		bpDisplayIcon: 'manual',
-		contextHints: [{ value: 'article', label: 'Article', default: true }],
-		metadata: [
-			sharedFields.doi,
-			sharedFields.url,
-			{ name: 'printIssn', label: 'Print ISSN' },
-			{ name: 'electronicIssn', label: 'Electronic ISSN' },
-			{ name: 'volume', label: 'Volume' },
-			{ name: 'issue', label: 'Issue' },
-			{ name: 'printPublicationDate', label: 'Print publication date', type: types.date },
-			{
-				name: 'publicationDate',
-				label: 'Publication date',
-				type: types.date,
-			},
 		],
 	},
 	{

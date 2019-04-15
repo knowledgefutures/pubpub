@@ -8,42 +8,41 @@ import collectionSchemas from 'shared/collections/schemas';
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 const propTypes = {
-	selectedSchema: PropTypes.oneOf(collectionSchemas).isRequired,
+	selectedSchema: PropTypes.oneOf(collectionSchemas),
 	onSelect: PropTypes.func.isRequired,
-	large: PropTypes.bool,
 };
 
 const defaultProps = {
-	large: false,
+	selectedSchema: null,
 };
 
+const iconAndTextForSchema = (schema) => ({
+	text: schema ? capitalize(schema.label.plural) : 'All collections',
+	icon: schema && schema.bpDisplayIcon,
+});
+
+// eslint-disable-next-line react/prop-types
 const renderCollectionKindItem = (schema, { handleClick, modifiers: { active } }) => (
 	<MenuItem
+		{...iconAndTextForSchema(schema)}
 		active={active}
 		onClick={handleClick}
-		icon={schema.bpDisplayIcon}
-		text={capitalize(schema.label.singular)}
-		key={schema.kind}
+		key={schema ? schema.kind : 'none'}
 	/>
 );
 
-const CollectionKindDropdown = ({ large, onSelect, selectedSchema }) => {
+const CollectionKindDropdown = ({ onSelect, selectedSchema }) => {
 	const [activeItem, setActiveItem] = useState(selectedSchema);
 	return (
 		<Select
-			items={collectionSchemas}
+			items={[null].concat(collectionSchemas)}
 			itemRenderer={renderCollectionKindItem}
 			onItemSelect={onSelect}
 			filterable={false}
 			activeItem={activeItem}
 			onActiveItemChange={(item) => setActiveItem(item)}
 		>
-			<Button
-				icon={selectedSchema.bpDisplayIcon}
-				text={capitalize(selectedSchema.label.singular)}
-				rightIcon="caret-down"
-				large={large}
-			/>
+			<Button {...iconAndTextForSchema(selectedSchema)} rightIcon="caret-down" />
 		</Select>
 	);
 };

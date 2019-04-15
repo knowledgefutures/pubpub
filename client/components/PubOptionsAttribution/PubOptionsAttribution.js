@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@blueprintjs/core';
 
+import ensureUserForAttribution from 'shared/util/ensureUserForAttribution';
+
 import AttributionEditor from '../AttributionEditor/AttributionEditor';
 
 require('./pubOptionsAttribution.scss');
@@ -26,7 +28,7 @@ class PubOptionsAttribution extends React.Component {
 		const { pubData, setPubData } = this.props;
 		setPubData({
 			...pubData,
-			attributions: newAttributions,
+			attributions: newAttributions.map(ensureUserForAttribution),
 		});
 	}
 

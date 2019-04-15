@@ -152,6 +152,7 @@ class DashboardCollection extends React.Component {
 	}
 
 	renderTabs() {
+		const isTag = this.state.collection.kind === 'tag';
 		return (
 			<Tabs
 				id="collection"
@@ -160,8 +161,16 @@ class DashboardCollection extends React.Component {
 				className="tab-container"
 			>
 				<Tab id="contents" title="Contents" panel={this.renderContentsEditor()} />
-				<Tab id="attribution" title="Attribution" panel={this.renderAttributionEditor()} />
-				<Tab id="metadata" title="Metadata" panel={this.renderMetadataEditor()} />
+				{!isTag && (
+					<Tab
+						id="attribution"
+						title="Attribution"
+						panel={this.renderAttributionEditor()}
+					/>
+				)}
+				{!isTag && (
+					<Tab id="metadata" title="Metadata" panel={this.renderMetadataEditor()} />
+				)}
 				<Tab id="details" title="Details" panel={this.renderDetailsEditor()} />
 			</Tabs>
 		);

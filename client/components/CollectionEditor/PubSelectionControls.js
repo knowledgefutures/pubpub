@@ -21,26 +21,29 @@ const propTypes = {
 	}).isRequired,
 };
 
-const PubSelectionControls = ({ onRemove, onSetContext, pubSelection }) => (
-	<ControlGroup>
-		<Select
-			items={[{ value: null, label: 'None' }].concat(
-				getSchemaForKind(pubSelection.collection.kind).contextHints,
+const PubSelectionControls = ({ onRemove, onSetContext, pubSelection }) => {
+	const availableContextHints = getSchemaForKind(pubSelection.collection.kind).contextHints;
+	return (
+		<ControlGroup>
+			{availableContextHints.length > 0 && (
+				<Select
+					items={[{ value: null, label: 'None' }].concat(availableContextHints)}
+					itemRenderer={(hint, { handleClick }) => (
+						<MenuItem onClick={handleClick} key={hint.value} text={hint.label} />
+					)}
+					filterable={false}
+					popoverProps={{ minimal: true }}
+					onItemSelect={onSetContext}
+				>
+					<Button minimal>
+						<em>{(pubSelection.contextHint || {}).label || 'Use as...'}</em>
+					</Button>
+				</Select>
 			)}
-			itemRenderer={(hint, { handleClick }) => (
-				<MenuItem onClick={handleClick} key={hint.value} text={hint.label} />
-			)}
-			filterable={false}
-			popoverProps={{ minimal: true }}
-			onItemSelect={onSetContext}
-		>
-			<Button minimal>
-				<em>{(pubSelection.contextHint || {}).label || 'Use as...'}</em>
-			</Button>
-		</Select>
-		<Button minimal icon="cross" onClick={onRemove} />
-	</ControlGroup>
-);
+			<Button minimal icon="cross" onClick={onRemove} />
+		</ControlGroup>
+	);
+};
 
 PubSelectionControls.propTypes = propTypes;
 

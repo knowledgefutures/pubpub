@@ -60,16 +60,16 @@ const getDois = (context, doiTarget) => {
 		createDoi({ community: community, collection: collection, target: pub, version: version });
 	dois.collection =
 		collection &&
-		(doiTarget === 'collection'
-			? createDoi({ community: community, target: collection })
-			: getCollectionDoi(collection));
+		(getCollectionDoi(collection) ||
+			(doiTarget === 'collection' &&
+				createDoi({ community: community, target: collection })));
 	return dois;
 };
 
-export default (context, doiTarget) => {
+export default (context, doiTarget, dateForTimestamp) => {
 	checkDepositAssertions(context, doiTarget);
 	const { community } = context;
-	const timestamp = new Date().getTime();
+	const timestamp = (dateForTimestamp || new Date()).getTime();
 	const doiBatchId = `${timestamp}_${community.id.slice(0, 8)}`;
 	const dois = getDois(context, doiTarget);
 	const deposit = removeEmptyKeys(

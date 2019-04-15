@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
@@ -11,28 +11,20 @@ const propTypes = {
 	collection: collectionType.isRequired,
 	communityData: communityType.isRequired,
 	onSelectPage: PropTypes.func.isRequired,
+	targetElement: PropTypes.node,
 	minimal: PropTypes.bool,
 };
 
 const defaultProps = {
 	minimal: false,
+	targetElement: null,
 };
 
-const LinkedPageSelect = ({ communityData, collection, onSelectPage, minimal }) => (
+const LinkedPageSelect = ({ communityData, collection, onSelectPage, minimal, targetElement }) => (
 	<Select
 		items={[{ title: '(None)', id: null }].concat(communityData.pages)}
-		itemRenderer={(page, { handleClick, modifiers }) => {
-			return (
-				<button
-					key={page.title}
-					type="button"
-					tabIndex={-1}
-					onClick={handleClick}
-					className={modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'}
-				>
-					{page.title}
-				</button>
-			);
+		itemRenderer={(page, { handleClick }) => {
+			return <MenuItem key={page.title} onClick={handleClick} text={page.title} />;
 		}}
 		itemListPredicate={(query, pages) => {
 			return pages.filter((page) => {
@@ -42,11 +34,14 @@ const LinkedPageSelect = ({ communityData, collection, onSelectPage, minimal }) 
 		onItemSelect={(page) => onSelectPage(page.id)}
 		popoverProps={{ popoverClassName: 'bp3-minimal' }}
 	>
-		<Button
-			minimal={minimal}
-			text={collection.page ? `Linked to: ${collection.page.title}` : 'Link to Page'}
-			rightIcon="caret-down"
-		/>
+		{targetElement || (
+			<Button
+				className="linked-page-select-button"
+				minimal={minimal}
+				text={collection.page ? collection.page.title : <em>Link to Page</em>}
+				icon="link"
+			/>
+		)}
 	</Select>
 );
 

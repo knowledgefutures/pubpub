@@ -8,6 +8,7 @@ import { Checkbox, FormGroup, Button } from '@blueprintjs/core';
 import collectionType from 'types/collection';
 import communityType from 'types/community';
 import { getSchemaForKind } from 'shared/collections/schemas';
+import InputField from 'components/InputField/InputField';
 
 import LinkedPageSelect from '../DashboardCollections/LinkedPageSelect';
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
@@ -24,6 +25,18 @@ const CollectionDetailsEditor = (props) => {
 	const collectionLabel = getSchemaForKind(collection.kind).label.singular;
 	return (
 		<div>
+			<InputField
+				label="Title"
+				placeholder="title"
+				isRequired={true}
+				onChange={(evt) => {
+					onUpdateCollection({ title: evt.target.value }, false);
+				}}
+				value={props.collection.title}
+				onBlur={() => {
+					onUpdateCollection({ title: collection.title }, true);
+				}}
+			/>
 			<FormGroup
 				helperText={
 					`You can link a ${collectionLabel} to a Page, and it` +

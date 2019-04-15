@@ -27,12 +27,11 @@ class PubOptionsDoi extends Component {
 	handleAssignDoi() {
 		const { communityData, pubData, setPubData } = this.props;
 		this.setState({ isLoading: true });
-		return apiFetch('/api/doi', {
+		return apiFetch('/api/doi/pub', {
 			method: 'POST',
 			body: JSON.stringify({
 				pubId: pubData.id,
 				communityId: communityData.id,
-				doiTarget: 'pub',
 			}),
 		})
 			.then(({ dois: { pub: pubDoi } }) => {

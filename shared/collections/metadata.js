@@ -2,7 +2,7 @@ import metadataSchemas, { getSchemaForKind } from './schemas';
 
 const isNullOrUndefined = (val) => val === null || val === undefined;
 
-const mapMetadataFields = (kind, fn) => {
+export const mapMetadataFields = (kind, fn) => {
 	const schema = getSchemaForKind(kind);
 	const res = {};
 	schema.metadata.forEach((field) => {

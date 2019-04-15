@@ -17,6 +17,7 @@ const propTypes = {
 	wrapperClassName: PropTypes.string,
 	inputRef: PropTypes.object,
 	onChange: PropTypes.func,
+	onBlur: PropTypes.func,
 	children: PropTypes.node,
 };
 
@@ -34,6 +35,7 @@ const defaultProps = {
 	wrapperClassName: '',
 	inputRef: undefined,
 	onChange: undefined,
+	onBlur: undefined,
 	children: undefined,
 };
 
@@ -61,6 +63,7 @@ const InputField = function(props) {
 							placeholder={props.placeholder}
 							value={props.value}
 							onChange={props.onChange}
+							onBlur={props.onBlur}
 							type={props.type}
 							autoComplete={props.autocomplete}
 							dir="auto"
@@ -75,6 +78,7 @@ const InputField = function(props) {
 							placeholder={props.placeholder}
 							value={props.value}
 							onChange={props.onChange}
+							onBlur={props.onBlur}
 							type={props.type}
 							dir="auto"
 							ref={props.inputRef}

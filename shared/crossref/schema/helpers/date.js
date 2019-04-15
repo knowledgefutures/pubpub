@@ -9,7 +9,7 @@ export default (kind, date, mediaType = 'online') => {
 		[kind]: {
 			'@media_type': mediaType,
 			month: `0${date.getMonth() + 1}`.slice(-2),
-			day: date.getDate().toString(),
+			day: `0${date.getDate()}`.toString().slice(-2),
 			year: date.getFullYear().toString(),
 		},
 	};

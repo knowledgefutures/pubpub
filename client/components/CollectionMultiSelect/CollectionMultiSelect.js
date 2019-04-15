@@ -61,7 +61,7 @@ const CollectionMultiSelect = function(props) {
 				const collection = collectionsById[item];
 				return collection && collection.title;
 			}}
-			collectionInputProps={{
+			tagInputProps={{
 				onRemove: props.onRemove,
 				placeholder: props.placeholder,
 				collectionProps: {

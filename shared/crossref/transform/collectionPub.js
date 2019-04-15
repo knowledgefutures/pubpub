@@ -1,4 +1,4 @@
-import { getSchemaForKind } from '../../collections/schemas';
+import { getSchemaForKind } from 'shared/collections/schemas';
 
 const getComponentTypeForCollectionPub = (collectionPub) => {
 	const { contextHints } = getSchemaForKind(collectionPub.collection.kind);

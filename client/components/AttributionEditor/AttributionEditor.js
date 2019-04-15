@@ -6,6 +6,7 @@ import { apiFetch } from 'utilities';
 import attributionType from 'types/attribution';
 import UserAutocomplete from 'components/UserAutocomplete/UserAutocomplete';
 
+import { NonIdealState } from '@blueprintjs/core';
 import AttributionRow from './AttributionRow';
 import DragDropListing from '../DragDropListing/DragDropListing';
 
@@ -19,6 +20,7 @@ const propTypes = {
 	onUpdateAttributions: PropTypes.func.isRequired,
 	onPersistStateChange: PropTypes.func.isRequired,
 };
+
 class AttributionEditor extends Component {
 	constructor(props) {
 		super(props);
@@ -169,6 +171,13 @@ class AttributionEditor extends Component {
 								dragHandleProps={dragHandleProps}
 								onAttributionDelete={this.handleAttributionDelete}
 								onAttributionUpdate={this.handleAttributionUpdate}
+							/>
+						)}
+						renderEmptyState={() => (
+							<NonIdealState
+								icon="person"
+								title="No attribution yet!"
+								description="Start typing a person's name above to add attribution."
 							/>
 						)}
 					/>

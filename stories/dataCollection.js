@@ -11,6 +11,8 @@ export default {
 	communityId: 'fa4c4dd0-9f15-427d-8560-2d7860baadc1',
 	createdAt: '2017-09-01T15:28:24.256Z',
 	updatedAt: '2017-09-01T15:28:24.256Z',
+	kind: 'book',
+	metadata: {},
 	pubs: [
 		{
 			id: 'ead5a604-d8b0-4dec-837b-fcdff88264f1',

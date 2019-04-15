@@ -8,7 +8,7 @@ export const communityUrl = (community) =>
 		: `https://${community.subdomain}.pubpub.org`;
 
 export const collectionUrl = (community, collection) =>
-	`${communityUrl(community)}/collection/${collection.id}`;
+	`${communityUrl(community)}/collection/${collection.id.slice(0, 8)}`;
 
 export const pubUrl = (community, pub, version) => {
 	const baseUrl = `${communityUrl(community)}/pub/${pub.slug}`;

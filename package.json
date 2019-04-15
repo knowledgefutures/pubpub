@@ -168,6 +168,9 @@
 		"setupFiles": [
 			"<rootDir>/.jest/register-context.js",
 			"<rootDir>/.jest/setup-env.js"
+		],
+		"testPathIgnorePatterns": [
+			"<rootDir>/shared/crossref/__tests__/data"
 		]
 	}
 }

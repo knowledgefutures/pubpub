@@ -5797,24 +5797,6 @@ export default {
 				slug: 'essays',
 			},
 		},
-	],
-	collections: [
-		{
-			id: 'af1f0e57-6fc9-4cdf-9c15-e5e58af59d6b',
-			title: 'Essays',
-			kind: 'tag',
-			isRestricted: true,
-			isPublic: true,
-			pageId: 'af1f0e57-6fc9-4cdf-9c15-e5e58af59d6b',
-			communityId: 'da083fb3-8b6b-4f89-8e8e-b607f9ed1cf4',
-			createdAt: '2018-08-06T15:26:05.468Z',
-			updatedAt: '2018-08-06T15:26:05.468Z',
-			page: {
-				id: 'af1f0e57-6fc9-4cdf-9c15-e5e58af59d6b',
-				title: 'Essays',
-				slug: 'essays',
-			},
-		},
 		{
 			id: '35d1cbbd-2e54-4334-8443-2df07fbd7383',
 			title: 'Terms of Service',
@@ -5893,7 +5875,7 @@ export default {
 		{
 			id: '72a43321-6b86-4d94-8412-288c3d28fd6a',
 			title: 'Dev Notes',
-			kind: 'tag',
+			kind: 'book',
 			isRestricted: true,
 			isPublic: false,
 			pageId: '72a43321-6b86-4d94-8412-288c3d28fd6a',
@@ -5909,7 +5891,7 @@ export default {
 		{
 			id: 'dd0d1dd0-30c2-4f27-9ef1-dec455c84177',
 			title: 'Credits',
-			kind: 'tag',
+			kind: 'issue',
 			isRestricted: true,
 			isPublic: true,
 			pageId: 'dd0d1dd0-30c2-4f27-9ef1-dec455c84177',
@@ -5941,7 +5923,7 @@ export default {
 		{
 			id: '7a8bb3b2-a197-4062-a0b3-5c283d7f1df1',
 			title: 'Neuroscience',
-			kind: 'tag',
+			kind: 'issue',
 			isRestricted: true,
 			isPublic: true,
 			pageId: null,

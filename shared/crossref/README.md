@@ -45,7 +45,7 @@ as a chapter or a conference paper, respectively.
 By convention, we'll represent a pub in context using an object with this shape:
 
 ```
-{globals, community, ?collection, pub}
+{globals, community, ?collection, ?collectionPub, pub}
 ```
 
 This is mostly self-explanatory, but keep in mind:
@@ -54,6 +54,8 @@ This is mostly self-explanatory, but keep in mind:
 - `collection` is optional. We can derive a Crossref submission for a pub that doesn't belong to any
   collection, or we can derive different submissions for the same pub by looking at it in the
   context of different collections.
+- `collectionPub` is provided when there is a both a collection and a pub; it contains contextually
+  useful information about the relationship between the two.
 
 ## Local code conventions
 

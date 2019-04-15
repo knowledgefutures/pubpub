@@ -1,66 +1,63 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ControlGroup, InputGroup } from '@blueprintjs/core';
+import fuzzysearch from 'fuzzysearch';
+import { ControlGroup, InputGroup, NonIdealState } from '@blueprintjs/core';
 import { apiFetch } from 'utilities';
 
 import { getSchemaForKind } from 'shared/collections/schemas';
 import CollectionKindDropdown from './CollectionKindDropdown';
-import CollectionRow from './CollectionRow';
+import CollectionTile from './CollectionTile';
+import NewCollectionCard from './NewCollectionCard';
 
 require('./dashboardCollections.scss');
 
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
-	pubsData: PropTypes.object.isRequired,
 	setCommunityData: PropTypes.func.isRequired,
 };
-
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-class DashboardCollections extends Component {
+class DashboardCollections extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			newCollectionValue: '',
-			currentCollectionSchema: getSchemaForKind('tag'),
-			error: undefined,
-			isCreatingCollection: false,
+			matchCollectionQuery: null,
+			matchCollectionSchema: null,
 		};
 		this.handleCreateCollection = this.handleCreateCollection.bind(this);
 		this.handleUpdateCollection = this.handleUpdateCollection.bind(this);
 		this.handleDeleteCollection = this.handleDeleteCollection.bind(this);
 	}
 
-	getCollectionsByKind() {
-		const { collections } = this.props.communityData;
-		const hasKinds = Array.from(new Set(collections.map((c) => c.kind))).sort();
-		return hasKinds.map((kind) => [kind, collections.filter((c) => c.kind === kind)]);
+	getDisplayedCollections() {
+		const {
+			communityData: { collections },
+		} = this.props;
+		const { matchCollectionQuery, matchCollectionSchema } = this.state;
+		const createdAtTime = (collection) => new Date(collection.createdAt).getTime();
+		return collections
+			.filter((collection) => {
+				const matchesQuery =
+					!matchCollectionQuery ||
+					fuzzysearch(matchCollectionQuery.toLowerCase(), collection.title.toLowerCase());
+				const matchesKind =
+					!matchCollectionSchema || matchCollectionSchema.kind === collection.kind;
+				return matchesQuery && matchesKind;
+			})
+			.sort((a, b) => createdAtTime(b) - createdAtTime(a));
 	}
 
-	handleCreateCollection(evt) {
-		evt.preventDefault();
-		const isUniqueTitle = this.props.communityData.collections.reduce((prev, curr) => {
-			if (curr.title === this.state.newCollectionValue) {
-				return false;
-			}
-			return prev;
-		}, true);
-
-		if (!isUniqueTitle) {
-			return this.setState((prevState) => {
-				return { error: `'${prevState.newCollectionValue}' already exists.` };
-			});
-		}
-
-		this.setState({ error: undefined, isCreatingCollection: true });
+	handleCreateCollection(title, kind) {
 		return apiFetch('/api/collections', {
 			method: 'POST',
 			body: JSON.stringify({
-				title: this.state.newCollectionValue,
 				communityId: this.props.communityData.id,
-				kind: this.state.currentCollectionSchema.kind,
+				title: title,
+				kind: kind,
 			}),
 		}).then((newCollection) => {
-			this.setState({ newCollectionValue: '', isCreatingCollection: false });
+			const { matchCollectionSchema } = this.state;
+			if (matchCollectionSchema && matchCollectionSchema.kind !== newCollection.kind) {
+				this.setState({ matchCollectionSchema: null });
+			}
 			this.props.setCommunityData({
 				...this.props.communityData,
 				collections: [...this.props.communityData.collections, newCollection],
@@ -115,50 +112,105 @@ class DashboardCollections extends Component {
 	}
 
 	renderTopControlGroup() {
-		const { currentCollectionSchema, isCreatingCollection } = this.state;
-		const label = currentCollectionSchema.label.singular.toLowerCase();
-		// TODO(ian): figure out how to grow the InputGroup without resorting to CSS
+		const { matchCollectionSchema, matchCollectionQuery } = this.state;
 		return (
-			<form onSubmit={this.handleCreateCollection}>
-				<ControlGroup>
-					<InputGroup
-						placeholder={`Create a new ${label}...`}
-						onChange={(evt) => {
-							this.setState({ newCollectionValue: evt.target.value });
-						}}
-						large={true}
-						value={this.state.newCollectionValue}
-						className="add-collection-input"
+			<div className="top-controls">
+				<div className="top-controls-cards">
+					<NewCollectionCard
+						schema={getSchemaForKind('tag')}
+						header="Create a tag"
+						onCreateCollection={(name) => this.handleCreateCollection(name, 'tag')}
+						description={
+							<React.Fragment>
+								A lightweight collection of thematically related pubs
+							</React.Fragment>
+						}
 					/>
-					<CollectionKindDropdown
-						selectedSchema={currentCollectionSchema}
-						onSelect={(schema) => this.setState({ currentCollectionSchema: schema })}
-						large={true}
+					<NewCollectionCard
+						schema={getSchemaForKind('issue')}
+						header="Create an issue"
+						onCreateCollection={(name) => this.handleCreateCollection(name, 'issue')}
+						description={
+							<React.Fragment>
+								Organize your pubs into an issue of your journal
+							</React.Fragment>
+						}
 					/>
-					<Button large={true} type="submit" loading={isCreatingCollection}>
-						Create
-					</Button>
-				</ControlGroup>
-			</form>
+					<NewCollectionCard
+						schema={getSchemaForKind('book')}
+						header="Create a book"
+						onCreateCollection={(name) => this.handleCreateCollection(name, 'book')}
+						description={
+							<React.Fragment>
+								Arrange pubs into chapters for a longer reading experience
+							</React.Fragment>
+						}
+					/>
+					<NewCollectionCard
+						schema={getSchemaForKind('conference')}
+						onCreateCollection={(name) =>
+							this.handleCreateCollection(name, 'conference')
+						}
+						header="Create a conference"
+						description={<React.Fragment>Host a conference on PubPub</React.Fragment>}
+					/>
+				</div>
+				{this.props.communityData.collections.length > 0 && (
+					<ControlGroup className="search-and-filter bp3-large">
+						<CollectionKindDropdown
+							selectedSchema={matchCollectionSchema}
+							onSelect={(schema) => this.setState({ matchCollectionSchema: schema })}
+						/>
+						<InputGroup
+							className="search-bar bp3-large"
+							leftIcon="search"
+							value={matchCollectionQuery}
+							onChange={(e) =>
+								this.setState({ matchCollectionQuery: e.target.value })
+							}
+							placeholder="Filter collections"
+						/>
+					</ControlGroup>
+				)}
+			</div>
 		);
 	}
 
-	renderCollectionGroup(kind, collections) {
-		const schema = getSchemaForKind(kind);
-		const title = capitalize(schema.label.plural);
+	renderCollections() {
+		const { communityData } = this.props;
+		const { matchCollectionQuery, matchCollectionSchema } = this.state;
+		const isFiltering = matchCollectionQuery || matchCollectionSchema;
+		const collections = this.getDisplayedCollections();
+		if (collections.length > 0) {
+			return (
+				<div className="collections">
+					{collections.map((collection) => (
+						<CollectionTile
+							key={collection.id}
+							communityData={communityData}
+							collection={collection}
+							onDeleteCollection={() => this.handleDeleteCollection(collection.id)}
+							onUpdateCollection={(updatedValue) =>
+								this.handleUpdateCollection({ ...updatedValue, id: collection.id })
+							}
+						/>
+					))}
+				</div>
+			);
+		}
 		return (
-			<div className="collection-group">
-				<h2>{title}</h2>
-				{collections.map((collection) => (
-					<CollectionRow
-						communityData={this.props.communityData}
-						pubsData={this.props.pubsData}
-						collection={collection}
-						key={collection.id}
-						onUpdateCollection={this.handleUpdateCollection}
-						onDeleteCollection={this.handleDeleteCollection}
-					/>
-				))}
+			<div className="empty-state">
+				<NonIdealState
+					icon={matchCollectionSchema ? matchCollectionSchema.bpDisplayIcon : 'tag'}
+					title={isFiltering ? 'No matching collections found' : 'No collections yet!'}
+					description={
+						matchCollectionSchema
+							? `You can create ${
+									matchCollectionSchema.label.plural
+							  } with the buttons above.`
+							: 'You can start creating collections with the buttons above.'
+					}
+				/>
 			</div>
 		);
 	}
@@ -167,14 +219,8 @@ class DashboardCollections extends Component {
 		return (
 			<div className="dashboard-collections-component">
 				<h1 className="content-title">Collections</h1>
-				<div className="details">You can use collections to yadda yadda yadda</div>
-				<div className="autocomplete-wrapper">
-					{this.renderTopControlGroup()}
-					{this.state.error && <p className="error">{this.state.error}</p>}
-				</div>
-				{this.getCollectionsByKind().map(([kind, collections]) =>
-					this.renderCollectionGroup(kind, collections),
-				)}
+				{this.renderTopControlGroup()}
+				{this.renderCollections()}
 			</div>
 		);
 	}

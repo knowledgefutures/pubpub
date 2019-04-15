@@ -2,11 +2,11 @@ import app from '../server';
 import { findPub } from '../queryHelpers';
 import { getInitialData } from '../utilities';
 
-// TODO(ian): add some kind of authentication here
 app.get('/api/citations', (req, res) => {
 	const { slug, versionId } = req.query;
 	getInitialData(req)
 		.then((initialData) => {
+			// Authentication is delegated to findPub here
 			return findPub(
 				{
 					query: { version: versionId },

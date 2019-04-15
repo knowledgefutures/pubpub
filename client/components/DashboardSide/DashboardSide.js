@@ -100,7 +100,7 @@ const DashboardSide = function(props) {
 						const pageIcon = page.slug ? publicStatusIcon : 'bp3-icon-home';
 						const isActive = page.slug
 							? props.activeSlug === page.slug
-							: props.activeMode === 'pages';
+							: props.activeMode === 'pages' && !props.activeSlug;
 						return (
 							<li key={`side-page-${page.id}`}>
 								<a

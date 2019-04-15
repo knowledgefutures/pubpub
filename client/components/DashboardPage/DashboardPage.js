@@ -285,7 +285,7 @@ class DashboardPage extends Component {
 							<h5>Delete Page from Community</h5>
 							<p>Deleting a Page is permanent.</p>
 							<p>
-								This will permanantely delete <b>{pageData.title}</b>. This will not
+								This will permanently delete <b>{pageData.title}</b>. This will not
 								delete pubs that are included in this page&apos;s layout.
 							</p>
 							<p>

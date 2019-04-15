@@ -1,8 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Position, Spinner, Tag, MenuItem } from '@blueprintjs/core';
+import {
+	Button,
+	ButtonGroup,
+	Divider,
+	Menu,
+	MenuItem,
+	Popover,
+	Position,
+	Spinner,
+} from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
+
+import { getSchemaForKind } from 'shared/collections/schemas';
 import Icon from 'components/Icon/Icon';
 import { apiFetch } from 'utilities';
 
@@ -59,7 +70,8 @@ class PubOptionsCollections extends Component {
 			}
 			return prev;
 		}, true);
-		const newCollectionOption = query && addNewCollectionOption ? [{ title: query }] : [];
+		const newCollectionOption =
+			query && addNewCollectionOption ? [{ title: query.trim() }] : [];
 
 		const outputCollections = [...newCollectionOption, ...filteredDefaultCollections];
 		return outputCollections;
@@ -67,25 +79,39 @@ class PubOptionsCollections extends Component {
 
 	handleCollectionPubAdd(collection) {
 		this.inputRef.focus();
-		return apiFetch('/api/collectionPubs/legacy', {
-			method: 'POST',
-			body: JSON.stringify({
-				kind: 'tag',
-				title: collection.title,
-				collectionId: collection.id,
-				pubId: this.props.pubData.id,
-				communityId: this.props.communityData.id,
-			}),
-		}).then((result) => {
-			this.setState((prevState) => {
-				const newCollectionPubs = [...prevState.collectionPubs, result];
-				this.props.setPubData({
-					...this.props.pubData,
-					collectionPubs: newCollectionPubs,
+		this.setState({ isLoading: true });
+		const firstCreateCollectionPromise = collection.id
+			? Promise.resolve(collection)
+			: apiFetch('/api/collections', {
+					method: 'POST',
+					body: JSON.stringify({
+						title: collection.title.trim(),
+						communityId: this.props.communityData.id,
+						kind: 'tag',
+					}),
+			  });
+		return firstCreateCollectionPromise
+			.then((collectionWithId) =>
+				apiFetch('/api/collectionPubs', {
+					method: 'POST',
+					body: JSON.stringify({
+						collectionId: collectionWithId.id,
+						pubId: this.props.pubData.id,
+						communityId: this.props.communityData.id,
+					}),
+				}).then((collectionPub) => ({ ...collectionPub, collection: collectionWithId })),
+			)
+			.then((result) => {
+				this.setState((prevState) => {
+					const newCollectionPubs = [...prevState.collectionPubs, result];
+					this.props.setPubData({
+						...this.props.pubData,
+						collectionPubs: newCollectionPubs,
+					});
+					return { collectionPubs: newCollectionPubs };
 				});
-				return { collectionPubs: newCollectionPubs };
+				this.setState({ isLoading: false });
 			});
-		});
 	}
 
 	handleCollectionPubDelete(collectionPubId) {
@@ -97,11 +123,10 @@ class PubOptionsCollections extends Component {
 				return { collectionPubs: newCollectionPubs, isLoading: true };
 			},
 			() => {
-				apiFetch('/api/collectionPubs/legacy', {
+				apiFetch('/api/collectionPubs', {
 					method: 'DELETE',
 					body: JSON.stringify({
-						collectionPubId: collectionPubId,
-						pubId: this.props.pubData.id,
+						id: collectionPubId,
 						communityId: this.props.communityData.id,
 					}),
 				}).then(() => {
@@ -115,82 +140,179 @@ class PubOptionsCollections extends Component {
 		);
 	}
 
+	handleCollectionPubSetPrimary(collectionPubId, setPrimary = true) {
+		const { communityData, pubData, setPubData } = this.props;
+		const isPrimary = (collectionPub) => {
+			if (setPrimary) {
+				return collectionPub.id === collectionPubId;
+			}
+			return false;
+		};
+		this.setState(
+			(state) => ({
+				isLoading: true,
+				collectionPubs: state.collectionPubs.map((collectionPub) => ({
+					...collectionPub,
+					isPrimary: isPrimary(collectionPub),
+				})),
+			}),
+			() =>
+				apiFetch('/api/collectionPubs/setPrimary', {
+					method: 'PUT',
+					body: JSON.stringify({
+						id: collectionPubId,
+						communityId: communityData.id,
+					}),
+				}).then(() => {
+					setPubData({
+						...pubData,
+						collectionPubs: this.state.collectionPubs,
+					});
+					this.setState({ isLoading: false });
+				}),
+		);
+	}
+
+	renderAddCollection() {
+		const { collectionPubs } = this.state;
+		return (
+			<Suggest
+				items={collectionPubs}
+				inputProps={{
+					placeholder: 'Add to collection...',
+					className: 'bp3-large',
+					inputRef: (ref) => {
+						this.inputRef = ref;
+					},
+				}}
+				itemListPredicate={this.getFilteredCollections}
+				inputValueRenderer={() => {
+					return '';
+				}}
+				itemRenderer={(item, { handleClick, modifiers }) => {
+					return (
+						<li key={item.id || 'empty-user-create'}>
+							<button
+								type="button"
+								tabIndex={-1}
+								onClick={handleClick}
+								className={
+									modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'
+								}
+							>
+								{!item.id && <span>Create new tag: </span>}
+								<span className="autocomplete-name">
+									{item.title}
+									{item.id && !item.isPublic && (
+										<Icon className="lock-icon" icon="lock2" />
+									)}
+								</span>
+							</button>
+						</li>
+					);
+				}}
+				resetOnSelect={true}
+				onItemSelect={this.handleCollectionPubAdd}
+				noResults={<MenuItem disabled text="No results" />}
+				popoverProps={{
+					// isOpen: this.state.queryValue,
+					popoverClassName: 'bp3-minimal collections-autocomplete-popover',
+					position: Position.BOTTOM_LEFT,
+					modifiers: {
+						preventOverflow: { enabled: false },
+						hide: { enabled: false },
+					},
+				}}
+			/>
+		);
+	}
+
+	renderCollectionRow(collectionPub) {
+		const { collection, isPrimary, id } = collectionPub;
+		const { title, isPublic } = collection;
+		const schema = getSchemaForKind(collection.kind);
+		return (
+			<div key={collectionPub.id}>
+				<div className="collection-row">
+					<div className="title">
+						<Icon icon={schema.bpDisplayIcon} />
+						{title}
+						{!collection.isPublic && <Icon icon="lock2" className="lock-icon" />}
+						{isPrimary && (
+							<span className="is-primary-notice bp3-text-muted">
+								(Primary collection)
+							</span>
+						)}
+					</div>
+					<ButtonGroup className="buttons">
+						<Popover
+							minimal
+							content={
+								<Menu>
+									{collection.kind !== 'tag' && isPublic && (
+										<MenuItem
+											icon="highlight"
+											text={
+												isPrimary
+													? 'Stop using as primary collection'
+													: 'Use as primary collection'
+											}
+											onClick={() =>
+												this.handleCollectionPubSetPrimary(id, !isPrimary)
+											}
+										/>
+									)}
+									<MenuItem
+										intent="danger"
+										icon="trash"
+										onClick={() => this.handleCollectionPubDelete(id)}
+										text="Remove from collection"
+									/>
+								</Menu>
+							}
+						>
+							<Button minimal="true" icon="more" />
+						</Popover>
+					</ButtonGroup>
+				</div>
+				<Divider />
+			</div>
+		);
+	}
+
+	renderCollections() {
+		return (
+			<div className="collections-wrapper">
+				<Divider />
+				{this.state.collectionPubs
+					.sort((a, b) => {
+						if (a.collection.kind === 'tag' && b.collection.kind !== 'tag') {
+							return 1;
+						}
+						return a.kind - b.kind;
+					})
+					.map((collectionPub) => this.renderCollectionRow(collectionPub))}
+			</div>
+		);
+	}
+
 	render() {
-		const collectionPubs = this.state.collectionPubs;
+		const { isLoading } = this.state;
 		return (
 			<div className="pub-options-collections-component">
-				{this.state.isLoading && (
+				{isLoading && (
 					<div className="save-wrapper">
-						<Spinner small={true} /> Saving...
+						<Spinner size={Spinner.SIZE_SMALL} /> Saving...
 					</div>
 				)}
 				<h1>Collections</h1>
-				<Suggest
-					items={collectionPubs}
-					inputProps={{
-						placeholder: 'Add to collection...',
-						className: 'bp3-large',
-						inputRef: (ref) => {
-							this.inputRef = ref;
-						},
-					}}
-					itemListPredicate={this.getFilteredCollections}
-					inputValueRenderer={() => {
-						return '';
-					}}
-					itemRenderer={(item, { handleClick, modifiers }) => {
-						return (
-							<li key={item.id || 'empty-user-create'}>
-								<button
-									type="button"
-									tabIndex={-1}
-									onClick={handleClick}
-									className={
-										modifiers.active
-											? 'bp3-menu-item bp3-active'
-											: 'bp3-menu-item'
-									}
-								>
-									{!item.id && <span>Create new tag: </span>}
-									<span className="autocomplete-name">
-										{item.id && !item.isPublic && <Icon icon="lock2" />}
-										{item.title}
-									</span>
-								</button>
-							</li>
-						);
-					}}
-					resetOnSelect={true}
-					onItemSelect={this.handleCollectionPubAdd}
-					noResults={<MenuItem disabled text="No results" />}
-					popoverProps={{
-						// isOpen: this.state.queryValue,
-						popoverClassName: 'bp3-minimal collection-autocomplete-popover',
-						position: Position.BOTTOM_LEFT,
-						modifiers: {
-							preventOverflow: { enabled: false },
-							hide: { enabled: false },
-						},
-					}}
-				/>
-
-				<div className="collections-wrapper">
-					{collectionPubs.map((collectionPub) => {
-						return (
-							<Tag
-								key={collectionPub.id}
-								className="bp3-minimal bp3-intent-primary"
-								large={true}
-								onRemove={() => {
-									this.handleCollectionPubDelete(collectionPub.id);
-								}}
-							>
-								{!collectionPub.collection.isPublic && <Icon icon="lock2" />}
-								{collectionPub.collection.title}
-							</Tag>
-						);
-					})}
-				</div>
+				<p>
+					A pub can belong to many collections. You can choose here which (non-tag)
+					collection acts as its <em>primary collection</em>, and appears as part of the
+					pub&apos;s citations and DOI deposit information.
+				</p>
+				{this.renderAddCollection()}
+				{this.renderCollections()}
 			</div>
 		);
 	}

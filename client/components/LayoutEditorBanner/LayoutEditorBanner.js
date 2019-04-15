@@ -223,34 +223,32 @@ class LayoutEditorBanner extends Component {
 					)}
 					{this.props.content.showButton && buttonType === 'create-pub' && (
 						<InputField label="Default Pub Collections">
-							<div className="bp3-button-group bp3-select">
-								<CollectionMultiSelect
-									allCollections={this.props.communityData.collections}
-									selectedCollectionIds={
-										this.props.content.defaultCollectionIds || []
-									}
-									onItemSelect={(newCollectionId) => {
-										const existingCollectionIds =
-											this.props.content.defaultCollectionIds || [];
-										const newCollectionIds = [
-											...existingCollectionIds,
-											newCollectionId,
-										];
-										this.setDefaultCollectionIds(newCollectionIds);
-									}}
-									onRemove={(evt, collectionIndex) => {
-										const existingCollectionIds =
-											this.props.content.defaultCollectionIds || [];
-										const newCollectionIds = existingCollectionIds.filter(
-											(item, filterIndex) => {
-												return filterIndex !== collectionIndex;
-											},
-										);
-										this.setDefaultCollectionIds(newCollectionIds);
-									}}
-									placeholder="Add collections..."
-								/>
-							</div>
+							<CollectionMultiSelect
+								allCollections={this.props.communityData.collections}
+								selectedCollectionIds={
+									this.props.content.defaultCollectionIds || []
+								}
+								onItemSelect={(newCollectionId) => {
+									const existingCollectionIds =
+										this.props.content.defaultCollectionIds || [];
+									const newCollectionIds = [
+										...existingCollectionIds,
+										newCollectionId,
+									];
+									this.setDefaultCollectionIds(newCollectionIds);
+								}}
+								onRemove={(evt, collectionIndex) => {
+									const existingCollectionIds =
+										this.props.content.defaultCollectionIds || [];
+									const newCollectionIds = existingCollectionIds.filter(
+										(item, filterIndex) => {
+											return filterIndex !== collectionIndex;
+										},
+									);
+									this.setDefaultCollectionIds(newCollectionIds);
+								}}
+								placeholder="Add collections..."
+							/>
 						</InputField>
 					)}
 					{this.props.content.showButton && buttonType === 'link' && (

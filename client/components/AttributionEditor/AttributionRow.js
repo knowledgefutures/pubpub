@@ -10,27 +10,6 @@ import attributionType from 'types/attribution';
 
 import { getFilteredRoles } from './roles';
 
-const addFallbackUser = (attribution) => {
-	if (attribution.user) {
-		return attribution;
-	}
-	return {
-		...attribution,
-		user: {
-			id: attribution.id,
-			initials: attribution.name[0],
-			fullName: attribution.name,
-			firstName: attribution.name.split(' ')[0],
-			lastName: attribution.name
-				.split(' ')
-				.slice(1, attribution.name.split(' ').length)
-				.join(' '),
-			avatar: attribution.avatar,
-			title: attribution.title,
-		},
-	};
-};
-
 const propTypes = {
 	attribution: attributionType.isRequired,
 	canEdit: PropTypes.bool.isRequired,
@@ -47,13 +26,14 @@ const defaultProps = {
 
 const AttributionRow = (props) => {
 	const {
+		attribution,
 		canEdit,
 		dragHandleProps,
 		isDragging,
 		onAttributionDelete,
 		onAttributionUpdate,
 	} = props;
-	const { user, id, isAuthor, roles } = addFallbackUser(props.attribution);
+	const { user, id, isAuthor, roles } = attribution;
 	return (
 		<div className={classNames('attribution-row', isDragging && 'is-dragging')}>
 			{dragHandleProps && (

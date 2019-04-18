@@ -42,5 +42,35 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				metaMode: 'details',
 			}}
 		/>
+
+		<PubHeader
+			pubData={{
+				...altPubData,
+				mode: 'manage',
+			}}
+		/>
+		<PubHeader
+			pubData={{
+				...altPubData,
+				useHeaderImage: false,
+				mode: 'manage',
+			}}
+		/>
+		<PubHeader
+			pubData={{
+				...altPubData,
+				headerStyle: 'white-blocks',
+				avatar: 'https://i.imgur.com/s9Gj6o6.png',
+				mode: 'manage',
+			}}
+		/>
+		<PubHeader
+			pubData={{
+				...altPubData,
+				headerStyle: 'black-blocks',
+				avatar: 'https://i.imgur.com/kts3zH1.jpg',
+				mode: 'manage',
+			}}
+		/>
 	</div>
 ));

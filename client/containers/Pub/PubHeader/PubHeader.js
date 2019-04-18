@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import dateFormat from 'dateformat';
+import classNames from 'classnames';
 import stickybits from 'stickybits';
 import { apiFetch, getResizedUrl } from 'utils';
 import {
@@ -53,7 +54,7 @@ const PubHeader = (props) => {
 		Do we require an accent color with the block styles? Or can they be simple white/black text?
 	*/
 
-	const { communityData } = useContext(PageContext);
+	const { communityData, locationData } = useContext(PageContext);
 	const headerRef = useRef(null);
 	const [title, setTitle] = useState(props.pubData.title);
 	const [isMounted, setIsMounted] = useState(false);
@@ -133,15 +134,19 @@ const PubHeader = (props) => {
 		{ title: 'Discussions', icon: 'chat', key: 'discussions' },
 	];
 
+	const manageMode = locationData.params && locationData.params.manageMode;
+
 	const accentColor = pubData.headerStyle === 'white-blocks' ? '#A2273E' : '#ecd721';
-	const headerStyleClassName = pubData.headerStyle || '';
+	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
 
 	return (
 		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>
 			<div
-				className={`wrapper ${
-					!headerStyleClassName && useHeaderImage ? 'dim' : ''
-				} ${headerStyleClassName}`}
+				className={classNames({
+					wrapper: true,
+					dim: !headerStyleClassName && useHeaderImage,
+					[headerStyleClassName]: true,
+				})}
 			>
 				<GridWrapper containerClassName="pub">
 					<style
@@ -149,79 +154,70 @@ const PubHeader = (props) => {
 							__html: styleGenerator(pubData.headerStyle, accentColor),
 						}}
 					/>
-					<div className="tags-bar">
-						<div className="left">
-							{pubData.collectionPubs
-								.filter((collectionPub) => {
-									return collectionPub.collection;
-								})
-								.sort((foo, bar) => {
-									if (
-										foo.collection.title.toLowerCase() <
-										bar.collection.title.toLowerCase()
-									) {
-										return -1;
-									}
-									if (
-										foo.collection.title.toLowerCase() >
-										bar.collection.title.toLowerCase()
-									) {
-										return 1;
-									}
-									return 0;
-								})
-								.map((item) => {
-									return (
-										<a
-											key={item.id}
-											className="header-collection"
-											href={
-												item.collection.page
-													? `/${item.collection.page.slug}`
-													: `/search?tag=${item.collection.title}`
-											}
-										>
-											<Tag
-												intent={Intent.PRIMARY}
-												minimal={true}
-												icon={
-													!item.collection.isPublic ? (
-														<Icon icon="lock2" />
-													) : (
-														undefined
-													)
+					{isDocMode && (
+						<div className="tags-bar">
+							<div className="left">
+								{pubData.collectionPubs
+									.filter((collectionPub) => {
+										return collectionPub.collection;
+									})
+									.sort((foo, bar) => {
+										if (
+											foo.collection.title.toLowerCase() <
+											bar.collection.title.toLowerCase()
+										) {
+											return -1;
+										}
+										if (
+											foo.collection.title.toLowerCase() >
+											bar.collection.title.toLowerCase()
+										) {
+											return 1;
+										}
+										return 0;
+									})
+									.map((item) => {
+										return (
+											<a
+												key={item.id}
+												className="header-collection"
+												href={
+													item.collection.page
+														? `/${item.collection.page.slug}`
+														: `/search?tag=${item.collection.title}`
 												}
 											>
-												{item.collection.title}
-											</Tag>
-										</a>
-									);
-								})}
-						</div>
-						<div className="right">
-							{isDocMode && (
-								<React.Fragment>
-									<AnchorButton
-										className="manager-button"
-										text="Share"
-										href={`/pub/${pubData.slug}/manage/sharing`}
-									/>
-									<AnchorButton
-										className="manager-button"
-										text="Manage"
-										href={`/pub/${pubData.slug}/manage`}
-									/>
-								</React.Fragment>
-							)}
-							{!isDocMode && (
+												<Tag
+													intent={Intent.PRIMARY}
+													minimal={true}
+													icon={
+														!item.collection.isPublic ? (
+															<Icon icon="lock2" />
+														) : (
+															undefined
+														)
+													}
+												>
+													{item.collection.title}
+												</Tag>
+											</a>
+										);
+									})}
+							</div>
+							<div className="right">
 								<AnchorButton
 									className="manager-button"
-									text="Return to Document"
-									href={`/pub/${pubData.slug}`}
+									text="Share"
+									href={`/pub/${pubData.slug}/manage/sharing`}
 								/>
-							)}
-						</div>
-						{/* <div className="buttons">
+								<AnchorButton
+									className="manager-button"
+									text="Manage"
+									href={`/pub/${pubData.slug}/manage`}
+								/>
+							</div>
+
+							{/* <div className="buttons">
 										{!pubData.isDraft &&
 											(pubData.isDraftViewer ||
 												pubData.isDraftEditor ||
@@ -257,9 +253,9 @@ const PubHeader = (props) => {
 											</button>
 										)}
 									</div> */}
-					</div>
-
-					<h1>
+						</div>
+					)}
+					<h1 className={classNames({ small: !isDocMode })}>
 						{useEditableTitle && (
 							<EditableText
 								placeholder="Add a Pub Title"
@@ -279,7 +275,20 @@ const PubHeader = (props) => {
 								confirmOnEnterKey={true}
 							/>
 						)}
-						{!useEditableTitle && <span className="text-wrapper">{pubData.title}</span>}
+						{!useEditableTitle && (
+							<React.Fragment>
+								{isDocMode && <span className="text-wrapper">{pubData.title}</span>}
+								{!isDocMode && (
+									<a href={`/pub/${pubData.slug}`} className="text-wrapper">
+										{pubData.title}
+									</a>
+								)}
+								{!isDocMode && <span className="breadcrumb">{pubData.mode}</span>}
+								{!isDocMode && manageMode && (
+									<span className="breadcrumb">{manageMode}</span>
+								)}
+							</React.Fragment>
+						)}
 					</h1>
 
 					{isDocMode && pubData.description && (
@@ -462,9 +471,9 @@ const PubHeader = (props) => {
 						</div>
 					)}
 				</GridWrapper>
-				<div className="bottom-text">
-					<div className="bottom-title">{pubData.title}</div>
-					{isDocMode && (
+				{isDocMode && (
+					<div className="bottom-text">
+						<div className="bottom-title">{pubData.title}</div>
 						<div className="bottom-buttons">
 							<Button
 								minimal={true}
@@ -485,8 +494,8 @@ const PubHeader = (props) => {
 							/>
 							<span className="dot">·</span>
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);

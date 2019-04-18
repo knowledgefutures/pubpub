@@ -286,6 +286,37 @@
 		font-weight: 500;
 		letter-spacing: 1px;
 		font-family: $header-font;
+		&.small {
+			font-size: 28px;
+			padding: 15px 0px;
+			margin-bottom: -40px;
+			display: flex;
+			align-items: center;
+			.text-wrapper {
+				flex: 0 1 auto;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				display: inline-block;
+				text-decoration: none;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+			.breadcrumb {
+				font-family: $base-font;
+				font-size: 22px;
+				margin-left: 0.5em;
+				padding-left: 0.5em;
+				display: inline-block;
+				text-transform: capitalize;
+				&:before {
+					content: '>';
+					position: relative;
+					left: -0.5em;
+				}
+			}
+		}
 	}
 	.description {
 		padding-top: 30px;

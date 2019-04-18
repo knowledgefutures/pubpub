@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { marksAtSelection } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
+import { GridWrapper } from 'components';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
 import PubLinkMenu from './PubLinkMenu';
 import PubDiscussions from './PubDiscussions';
 import PubFooter from './PubFooter';
+import PubInlineImport from './PubInlineImport';
+import PubToc from './PubToc';
+import PubSideCollaborators from './PubSideCollaborators';
 
+require('./pubDocument.scss');
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,
@@ -58,39 +63,55 @@ const PubDocument = (props) => {
 
 	const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
-		<React.Fragment>
+		<div className="pub-document-component">
 			<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />
-			<PubBody
-				pubData={props.pubData}
-				collabData={props.collabData}
-				firebaseBranchRef={props.firebaseBranchRef}
-				updateLocalData={props.updateLocalData}
-				onSingleClick={(view) => {
-					/* Used to trigger link popup when link mark clicked */
-					setClickedMarks(marksAtSelection(view));
-				}}
-			/>
-			{props.firebaseBranchRef && (
-				<PubDiscussions
-					pubData={props.pubData}
-					collabData={props.collabData}
-					firebaseBranchRef={props.firebaseBranchRef}
-				/>
-			)}
-			{!linkPopupIsOpen && editorFocused && (
-				<PubInlineMenu
-					pubData={props.pubData}
-					collabData={props.collabData}
-					openLinkMenu={() => {
-						setLinkPopupIsOpen(true);
-					}}
-				/>
-			)}
-			{linkPopupIsOpen && (
-				<PubLinkMenu pubData={props.pubData} collabData={props.collabData} />
-			)}
-			<PubFooter pubData={props.pubData} />
-		</React.Fragment>
+			<GridWrapper containerClassName="pub" columnClassName="pub-columns">
+				<div className="main-content">
+					<PubBody
+						pubData={props.pubData}
+						collabData={props.collabData}
+						firebaseBranchRef={props.firebaseBranchRef}
+						updateLocalData={props.updateLocalData}
+						onSingleClick={(view) => {
+							/* Used to trigger link popup when link mark clicked */
+							setClickedMarks(marksAtSelection(view));
+						}}
+					/>
+
+					<PubInlineImport
+						pubData={props.pubData}
+						editorView={props.collabData.editorChangeObject.view}
+					/>
+					{props.firebaseBranchRef && (
+						<PubDiscussions
+							pubData={props.pubData}
+							collabData={props.collabData}
+							firebaseBranchRef={props.firebaseBranchRef}
+						/>
+					)}
+					{!linkPopupIsOpen && editorFocused && (
+						<PubInlineMenu
+							pubData={props.pubData}
+							collabData={props.collabData}
+							openLinkMenu={() => {
+								setLinkPopupIsOpen(true);
+							}}
+						/>
+					)}
+					{linkPopupIsOpen && (
+						<PubLinkMenu pubData={props.pubData} collabData={props.collabData} />
+					)}
+					<PubFooter pubData={props.pubData} />
+				</div>
+				<div className="side-content">
+					<PubToc
+						pubData={props.pubData}
+						editorChangeObject={props.collabData.editorChangeObject}
+					/>
+					<PubSideCollaborators pubData={props.pubData} />
+				</div>
+			</GridWrapper>
+		</div>
 	);
 };
 

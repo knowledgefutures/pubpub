@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const autoprefixer = require('autoprefixer');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const containerEntries = readdirSync(resolve(__dirname, '../containers'))
 	.filter((item) => {
@@ -73,7 +73,7 @@ module.exports = {
 		],
 	},
 	plugins: [
-		new BundleAnalyzerPlugin(),
+		// new BundleAnalyzerPlugin(),
 		new webpack.DefinePlugin({
 			'process.env': {
 				NODE_ENV: JSON.stringify('production'),

@@ -1,0 +1,63 @@
+/*
+There are three views:
+Default (used in mobile/narrow and browsers that don't support CSS grid)
+Grid (used in desktops that support CSS grid)
+Print
+ */
+
+.pub-document-component {
+	position: relative;
+	.container.pub {
+		.main-content {
+		}
+	}
+	.discussions {
+		background-color: #f8f8f8;
+		line-height: 1.6;
+		padding: 4em 0em;
+	}
+}
+
+@media only screen and (min-width: 750px) {
+	@supports (display: grid) {
+		.pub-document-component {
+			.pub-columns {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) 275px;
+				grid-template-areas: 'main side';
+				grid-column-gap: 4%;
+				margin-top: 3em;
+			}
+			.main-content {
+				grid-area: main;
+			}
+			.side-content {
+				grid-area: side;
+				.header-title {
+					display: block;
+					font-weight: 600;
+					font-size: 16px;
+					margin-bottom: 10px;
+				}
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 750px) {
+	.pub-document-component {
+		.main-content {
+			margin-top: 2em;
+		}
+		.side-content {
+			display: none;
+		}
+	}
+}
+@media print {
+	#pub-old-container {
+		.container.pub {
+			max-width: 100%;
+		}
+	}
+}

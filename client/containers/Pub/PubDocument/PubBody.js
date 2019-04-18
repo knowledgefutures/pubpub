@@ -1,7 +1,6 @@
 import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Editor from '@pubpub/editor';
-import { GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { getResizedUrl } from 'utils';
 import discussionSchema from './DiscussionAddon/discussionSchema';
@@ -54,45 +53,43 @@ const PubBody = (props) => {
 
 	return (
 		<div className="pub-body-component">
-			<GridWrapper containerClassName="pub">
-				<Editor
-					key={firebaseBranchRef ? 'ready' : 'unready'}
-					customNodes={{
-						...discussionSchema,
-					}}
-					nodeOptions={{
-						image: {
-							onResizeUrl: (url) => {
-								return getResizedUrl(url, 'fit-in', '800x0');
-							},
+			<Editor
+				key={firebaseBranchRef ? 'ready' : 'unready'}
+				customNodes={{
+					...discussionSchema,
+				}}
+				nodeOptions={{
+					image: {
+						onResizeUrl: (url) => {
+							return getResizedUrl(url, 'fit-in', '800x0');
 						},
-						// discussion: this.props.discussionNodeOptions,
-					}}
-					placeholder={pubData.isStaticDoc ? 'Begin writing here...' : undefined}
-					initialContent={pubData.initialDoc}
-					isReadOnly={pubData.isStaticDoc || !pubData.isEditor}
-					onChange={(editorChangeObject) => {
-						updateLocalData('collab', { editorChangeObject: editorChangeObject });
-					}}
-					collaborativeOptions={
-						firebaseBranchRef && !pubData.isStaticDoc
-							? {
-									firebaseRef: firebaseBranchRef,
-									clientData: { id: loginData.id },
-									initialDocKey: pubData.initialDocKey,
-									onClientChange: () => {},
-									onStatusChange: (status) => {
-										getNextStatus(status, (nextStatus) => {
-											props.updateLocalData('collab', nextStatus);
-										});
-									},
-							  }
-							: undefined
-					}
-					highlights={[]}
-					handleSingleClick={props.onSingleClick}
-				/>
-			</GridWrapper>
+					},
+					// discussion: this.props.discussionNodeOptions,
+				}}
+				placeholder={pubData.isStaticDoc ? 'Begin writing here...' : undefined}
+				initialContent={pubData.initialDoc}
+				isReadOnly={pubData.isStaticDoc || !pubData.isEditor}
+				onChange={(editorChangeObject) => {
+					updateLocalData('collab', { editorChangeObject: editorChangeObject });
+				}}
+				collaborativeOptions={
+					firebaseBranchRef && !pubData.isStaticDoc
+						? {
+								firebaseRef: firebaseBranchRef,
+								clientData: { id: loginData.id },
+								initialDocKey: pubData.initialDocKey,
+								onClientChange: () => {},
+								onStatusChange: (status) => {
+									getNextStatus(status, (nextStatus) => {
+										props.updateLocalData('collab', nextStatus);
+									});
+								},
+						  }
+						: undefined
+				}
+				highlights={[]}
+				handleSingleClick={props.onSingleClick}
+			/>
 		</div>
 	);
 };

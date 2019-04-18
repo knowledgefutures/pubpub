@@ -1,7 +1,7 @@
 import app from '../server';
 import { Pub, Version, CommunityAdmin, Discussion, PubManager } from '../models';
-import { generateHash } from '../utilities';
-import { setPubSearchData } from '../searchUtilities';
+import { generateHash } from '../utils';
+import { setPubSearchData } from '../utils/search';
 import { setDoiData } from './handlers/doi';
 
 app.post('/api/versions', (req, res) => {

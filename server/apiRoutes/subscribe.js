@@ -1,5 +1,5 @@
 import app from '../server';
-import { subscribeUser } from '../mailchimpHelpers';
+import { subscribeUser } from '../utils/mailchimp';
 
 app.post('/api/subscribe', (req, res) => {
 	const email = req.body.email;

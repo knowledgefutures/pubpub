@@ -2,10 +2,10 @@ import uuidv4 from 'uuid/v4';
 import Color from 'color';
 import app from '../server';
 import { Community, Page, CommunityAdmin } from '../models';
-import { generateHash, slugifyString } from '../utilities';
-import { subscribeUser } from '../mailchimpHelpers';
-import { alertNewCommunity } from '../webhookHelpers';
-import { updateCommunityData } from '../searchUtilities';
+import { generateHash, slugifyString } from '../utils';
+import { subscribeUser } from '../utils/mailchimp';
+import { alertNewCommunity } from '../utils/webhooks';
+import { updateCommunityData } from '../utils/search';
 
 app.post('/api/communities', (req, res) => {
 	const user = req.user || {};

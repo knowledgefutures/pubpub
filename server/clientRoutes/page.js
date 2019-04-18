@@ -1,6 +1,6 @@
 import React from 'react';
 import Promise from 'bluebird';
-import PageContainer from 'containers/Page/Page';
+import { Page as PageContainer } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -9,8 +9,8 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
-import { findPage } from '../queryHelpers';
+} from '../utils';
+import { findPage } from '../utils/pageQueries';
 
 app.get(['/', '/:slug'], (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {

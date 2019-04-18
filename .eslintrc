@@ -10,6 +10,13 @@
       "import/resolver": {
         "node": {
             "paths": ["client"]
+        },
+        "alias": {
+            "map": [
+                ["shared", "./shared"],
+                ["data", "./stories/data"]
+            ],
+            "extensions": [".js"]
         }
       }
     },

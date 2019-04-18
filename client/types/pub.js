@@ -1,4 +1,13 @@
 import PropTypes from 'prop-types';
 
-// TODO(ian): put something here!
-export default PropTypes.shape({});
+export const pubDataProps = PropTypes.shape({
+	slug: PropTypes.string.isRequired,
+	isManager: PropTypes.bool.isRequired,
+	mode: PropTypes.string.isRequired,
+});
+
+export const collabDataProps = PropTypes.shape({
+	editorChangeObject: PropTypes.object,
+	activeClients: PropTypes.array,
+	status: PropTypes.string,
+});

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NonIdealState } from '@blueprintjs/core';
-import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { hydrateWrapper } from 'utilities';
+import { PageWrapper } from 'components';
+import { hydrateWrapper } from 'utils';
 
 require('./noMatch.scss');
 

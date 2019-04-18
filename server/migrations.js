@@ -17,7 +17,7 @@ import {
 	Community,
 	WorkerTask,
 } from './models';
-import { generateHash } from './utilities';
+import { generateHash } from './utils';
 
 console.log('Beginning Migration');
 

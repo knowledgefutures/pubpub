@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { apiFetch, hydrateWrapper } from 'utilities';
+import { PageWrapper } from 'components';
+import { apiFetch, hydrateWrapper } from 'utils';
 import Chart from './Chart';
 
 require('./adminDashboard.scss');

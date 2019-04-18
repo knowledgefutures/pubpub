@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import app from '../server';
 import { WorkerTask } from '../models';
-import { addWorkerTask } from '../utilities';
+import { addWorkerTask } from '../utils';
 
 AWS.config.setPromisesDependency(Promise);
 const s3bucket = new AWS.S3({ params: { Bucket: 'assets.pubpub.org' } });

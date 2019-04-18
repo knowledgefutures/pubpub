@@ -1,6 +1,6 @@
 import app from '../server';
 import { WorkerTask } from '../models';
-import { addWorkerTask } from '../utilities';
+import { addWorkerTask } from '../utils';
 
 app.post('/api/export', (req, res) => {
 	const input = {

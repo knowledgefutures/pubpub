@@ -1,5 +1,5 @@
 import React from 'react';
-import NoMatch from 'containers/NoMatch/NoMatch';
+import { NoMatch } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -7,7 +7,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get('/*', (req, res, next) => {
 	res.status(404);

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getResizedUrl } from 'utilities';
+import { getResizedUrl } from 'utils';
 
 require('./communityPreview.scss');
 

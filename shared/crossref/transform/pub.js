@@ -1,4 +1,4 @@
-import { pubUrl } from 'shared/util/canonicalUrls';
+import { pubUrl } from 'shared/utils/canonicalUrls';
 
 import transformAttributions from './attributions';
 

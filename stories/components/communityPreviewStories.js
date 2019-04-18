@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import CommunityPreview from 'components/CommunityPreview/CommunityPreview';
+import { CommunityPreview } from 'components';
 
 const data = {
 	subdomain: 'jods',
@@ -15,7 +15,7 @@ const data = {
 	numDiscussions: '49',
 };
 
-storiesOf('Components/CommunityPreview', module).add('default', () => (
+storiesOf('components/CommunityPreview', module).add('default', () => (
 	<div>
 		<div className="container">
 			<div className="row">

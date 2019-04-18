@@ -4,14 +4,13 @@ import algoliasearch from 'algoliasearch';
 import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
 import throttle from 'lodash.throttle';
-import PageWrapper from 'components/PageWrapper/PageWrapper';
-import Icon from 'components/Icon/Icon';
+import { PageWrapper, Icon } from 'components';
 import {
 	hydrateWrapper,
 	getResizedUrl,
 	generatePubBackground,
 	generatePageBackground,
-} from 'utilities';
+} from 'utils';
 
 require('./search.scss');
 

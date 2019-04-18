@@ -1,5 +1,5 @@
 import React from 'react';
-import Terms from 'containers/Terms/Terms';
+import { Terms } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -7,7 +7,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get('/tos', (req, res, next) => {
 	return getInitialData(req)

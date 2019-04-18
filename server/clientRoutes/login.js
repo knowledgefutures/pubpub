@@ -1,5 +1,5 @@
 import React from 'react';
-import Login from 'containers/Login/Login';
+import { Login } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -7,7 +7,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get('/login', (req, res, next) => {
 	return getInitialData(req)

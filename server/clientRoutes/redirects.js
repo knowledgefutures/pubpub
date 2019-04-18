@@ -1,5 +1,5 @@
 import app from '../server';
-import { hostIsValid } from '../utilities';
+import { hostIsValid } from '../utils';
 
 app.get('/iai', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {

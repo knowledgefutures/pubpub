@@ -13,7 +13,7 @@ import {
 	AnchorButton,
 	Intent,
 } from '@blueprintjs/core';
-import { apiFetch, getResizedUrl } from 'utilities';
+import { apiFetch, getResizedUrl } from 'utils';
 
 require('./header.scss');
 

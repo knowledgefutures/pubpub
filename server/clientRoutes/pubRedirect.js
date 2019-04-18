@@ -1,6 +1,6 @@
 import app from '../server';
 import { Community, Pub } from '../models';
-import { hostIsValid, handleErrors } from '../utilities';
+import { hostIsValid, handleErrors } from '../utils';
 
 app.get('/pub/:slug', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Slider } from '@blueprintjs/core';
 import AvatarEditor from 'react-avatar-editor';
-import { s3Upload } from 'utilities';
+import { s3Upload } from 'utils';
 
 require('./imageCropper.scss');
 

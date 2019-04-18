@@ -1,5 +1,5 @@
 import React from 'react';
-import Landing from 'containers/Landing/Landing';
+import { Landing } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -8,7 +8,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get('/', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {

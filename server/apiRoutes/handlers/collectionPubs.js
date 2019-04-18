@@ -1,6 +1,6 @@
-import findRank from 'shared/util/findRank';
+import findRank from 'shared/utils/findRank';
 import { Collection, CollectionPub, sequelize } from '../../models';
-import { getCollectionPubsInCollection } from '../../queryHelpers';
+import { getCollectionPubsInCollection } from '../../utils/collectionQueries';
 import withPermissions from '../permissions/withPermissions';
 
 const CAN_UPDATE_ATTRIBUTES = ['rank', 'contextHint'];

@@ -1,6 +1,6 @@
 import app from '../server';
-import { findPub } from '../queryHelpers';
-import { getInitialData } from '../utilities';
+import { findPub } from '../utils/pubQueries';
+import { getInitialData } from '../utils';
 
 app.get('/api/citations', (req, res) => {
 	const { slug, versionId } = req.query;

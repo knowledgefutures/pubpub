@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { MenuItem, Position } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 import Avatar from 'components/Avatar/Avatar';
-import { apiFetch } from 'utilities';
+import { apiFetch } from 'utils';
 
 require('./userAutocomplete.scss');
 

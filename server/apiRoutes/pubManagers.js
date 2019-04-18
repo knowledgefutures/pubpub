@@ -1,6 +1,6 @@
 import app from '../server';
 import { PubManager, User, CommunityAdmin } from '../models';
-import { setPubSearchData } from '../searchUtilities';
+import { setPubSearchData } from '../utils/search';
 
 app.post('/api/pubManagers', (req, res) => {
 	// Authenticate user. Make sure they have edit permissions on the given pub.

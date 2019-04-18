@@ -1,6 +1,6 @@
 import app from '../server';
 import { Collection, sequelize } from '../models';
-import { hostIsValid } from '../utilities';
+import { hostIsValid } from '../utils';
 
 app.get('/collection/:slug', (req, res, next) => {
 	const { slug } = req.params;

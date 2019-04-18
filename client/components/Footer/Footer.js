@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, InputGroup } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
-import { apiFetch } from 'utilities';
+import { apiFetch } from 'utils';
 
 require('./footer.scss');
 

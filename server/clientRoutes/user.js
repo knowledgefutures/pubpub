@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import React from 'react';
-import UserContainer from 'containers/User/User';
+import { UserContainer } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { Community, Pub, User, PubAttribution } from '../models';
@@ -9,7 +9,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 	const getUserData = User.findOne({

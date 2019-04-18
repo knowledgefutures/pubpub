@@ -1,6 +1,6 @@
 import stripIndent from 'strip-indent';
 import app from '../server';
-import { getInitialData } from '../utilities';
+import { getInitialData } from '../utils';
 
 app.get('/opensearch.xml', (req, res) => {
 	return getInitialData(req)

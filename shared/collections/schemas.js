@@ -1,4 +1,4 @@
-import { collectionUrl } from '../util/canonicalUrls';
+import { collectionUrl } from 'shared/utils/canonicalUrls';
 
 const dateRegex = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/;
 

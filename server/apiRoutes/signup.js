@@ -1,7 +1,7 @@
 import app from '../server';
-import { generateHash } from '../utilities';
+import { generateHash } from '../utils';
 import { sequelize, Signup, User } from '../models';
-import { sendSignupEmail } from '../emailHelpers';
+import { sendSignupEmail } from '../utils/email';
 
 app.post('/api/signup', (req, res) => {
 	/* First, try to update the emailSentCount. */

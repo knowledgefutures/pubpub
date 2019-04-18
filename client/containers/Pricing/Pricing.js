@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { hydrateWrapper } from 'utilities';
+import { PageWrapper } from 'components';
+import { hydrateWrapper } from 'utils';
 
 require('./pricing.scss');
 

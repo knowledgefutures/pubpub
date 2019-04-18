@@ -13,10 +13,9 @@ import {
 	Position,
 	PopoverInteractionKind,
 } from '@blueprintjs/core';
-import DropdownButton from 'components/DropdownButton/DropdownButton';
-import FormattingBarControls from 'components/FormattingBarControls/FormattingBarControls';
-import FormattingBarMedia from 'components/FormattingBarMedia/FormattingBarMedia';
-import Overlay from 'components/Overlay/Overlay';
+import { Overlay, DropdownButton } from 'components';
+import Controls from './Controls';
+import Media from './Media';
 
 require('./formattingBar.scss');
 
@@ -328,7 +327,7 @@ class FormattingBar extends Component {
 
 				{/* Node Options Blocks */}
 				{(nodeSelected || showTable) && (
-					<FormattingBarControls
+					<Controls
 						editorChangeObject={this.props.editorChangeObject}
 						threads={this.props.threads}
 						isSmall={this.props.isSmall}
@@ -369,7 +368,11 @@ class FormattingBar extends Component {
 					onClose={this.closeMediaGallery}
 					maxWidth={750}
 				>
-					<FormattingBarMedia editorChangeObject={this.props.editorChangeObject} onInsert={this.handleInsert} isSmall={this.props.isSmall} />
+					<Media
+						editorChangeObject={this.props.editorChangeObject}
+						onInsert={this.handleInsert}
+						isSmall={this.props.isSmall}
+					/>
 				</Overlay>
 			</div>
 		);

@@ -2,8 +2,8 @@
 // import { storiesOf } from '@storybook/react';
 // import NavBar from 'components/NavBar/NavBar';
 // import AccentStyle from 'components/AccentStyle/AccentStyle';
-// import { populateNavigationIds } from 'utilities';
-// import { communityData, accentDataDark, accentDataLight } from '../data';
+// import { populateNavigationIds } from 'utils';
+// import { communityData, accentDataDark, accentDataLight } from 'data';
 
 // const navItems = populateNavigationIds(communityData.collections, communityData.navigation);
 

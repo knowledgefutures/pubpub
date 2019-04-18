@@ -2,8 +2,8 @@
 import sanitizeHtml from 'sanitize-html';
 import app from '../server';
 import { Page, Community, CommunityAdmin } from '../models';
-import { generateHash, slugifyString } from '../utilities';
-import { setPageSearchData, deletePageSearchData } from '../searchUtilities';
+import { generateHash, slugifyString } from '../utils';
+import { setPageSearchData, deletePageSearchData } from '../utils/search';
 
 app.post('/api/pages', (req, res) => {
 	// Authenticate user. Make sure they have manage permissions on the given pub.

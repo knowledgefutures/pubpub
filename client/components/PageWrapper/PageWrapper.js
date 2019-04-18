@@ -5,7 +5,7 @@ import Footer from 'components/Footer/Footer';
 import AccentStyle from 'components/AccentStyle/AccentStyle';
 import NavBar from 'components/NavBar/NavBar';
 import Icon from 'components/Icon/Icon';
-import { populateNavigationIds } from 'utilities';
+import { populateNavigationIds } from 'utils';
 
 const propTypes = {
 	communityData: PropTypes.object.isRequired,

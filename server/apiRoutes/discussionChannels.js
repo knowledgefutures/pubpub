@@ -1,6 +1,6 @@
 import app from '../server';
 import { User, CommunityAdmin, DiscussionChannel, DiscussionChannelParticipant } from '../models';
-import { generateHash, slugifyString } from '../utilities';
+import { generateHash, slugifyString } from '../utils';
 
 app.post('/api/discussionChannels', (req, res) => {
 	const user = req.user || {};

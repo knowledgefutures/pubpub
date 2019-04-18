@@ -1,5 +1,5 @@
 import React from 'react';
-import Pricing from 'containers/Pricing/Pricing';
+import { Pricing } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -8,7 +8,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get('/pricing', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {

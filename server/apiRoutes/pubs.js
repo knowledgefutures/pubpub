@@ -9,8 +9,8 @@ import {
 	Branch,
 	BranchPermission,
 } from '../models';
-import { generateHash, slugifyString } from '../utilities';
-import { setPubSearchData, deletePubSearchData } from '../searchUtilities';
+import { generateHash, slugifyString } from '../utils';
+import { setPubSearchData, deletePubSearchData } from '../utils/search';
 
 app.post('/api/pubs', (req, res) => {
 	const user = req.user || {};
@@ -93,7 +93,7 @@ app.post('/api/pubs', (req, res) => {
 		})
 		.then(([newPub]) => {
 			setPubSearchData(newPub.id);
-			return res.status(201).json(`/pubnew/${newPub.slug}`);
+			return res.status(201).json(`/pub/${newPub.slug}`);
 		})
 		.catch((err) => {
 			console.error('Error creating Pub', err);

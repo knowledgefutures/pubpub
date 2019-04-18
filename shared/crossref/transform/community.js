@@ -1,4 +1,4 @@
-import { communityUrl } from 'shared/util/canonicalUrls';
+import { communityUrl } from 'shared/utils/canonicalUrls';
 
 const getLanguageForCommunity = () => 'en';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import Privacy from 'containers/Privacy/Privacy';
+import { Privacy } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -7,7 +7,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get('/privacy', (req, res, next) => {
 	return getInitialData(req)

@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import React from 'react';
 import algoliasearch from 'algoliasearch';
-import Search from 'containers/Search/Search';
+import { Search } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -9,7 +9,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 import { User, Community } from '../models';
 
 const client = algoliasearch(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);

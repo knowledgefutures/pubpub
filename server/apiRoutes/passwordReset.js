@@ -1,8 +1,8 @@
 import Promise from 'bluebird';
 import app from '../server';
 import { User } from '../models';
-import { generateHash } from '../utilities';
-import { sendPasswordResetEmail } from '../emailHelpers';
+import { generateHash } from '../utils';
+import { sendPasswordResetEmail } from '../utils/email';
 
 app.post('/api/password-reset', (req, res) => {
 	const user = req.user || {};

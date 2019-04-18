@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 /* Following by globally referenced repo imports */
 /* Following by relative-path imports */
 /* Followed by require statements */
-import { helperFunc } from 'utilities';
+import { helperFunc } from 'utils';
 import localFunc from './siblingFile';
 
 require('./style.scss');

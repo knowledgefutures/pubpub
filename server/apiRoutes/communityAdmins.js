@@ -1,6 +1,6 @@
 import app from '../server';
 import { CommunityAdmin, User } from '../models';
-import { subscribeUser } from '../mailchimpHelpers';
+import { subscribeUser } from '../utils/mailchimp';
 
 app.post('/api/communityAdmins', (req, res) => {
 	const user = req.user || {};

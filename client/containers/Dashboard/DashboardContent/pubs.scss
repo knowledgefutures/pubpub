@@ -1,0 +1,38 @@
+.dashboard-content_pubs-component {
+	.pub-wrapper {
+		margin-bottom: 0.75em;
+		padding-bottom: 0.75em;
+		border-bottom: 1px solid #ddd;
+		min-height: 45px;
+		.header {
+			display: flex;
+		}
+		.title {
+			flex-shrink: 1;
+			flex-grow: 1;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-weight: bold;
+			.draft {
+				font-weight: 400;
+				margin-left: 1em;
+			}
+		}
+		.authors {
+			font-style: italic;
+		}
+		a {
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		.bp3-tag {
+			margin-right: 0.5em;
+		}
+		.nowrap {
+			white-space: nowrap;
+		}
+	}
+}

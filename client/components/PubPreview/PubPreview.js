@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
-import { getResizedUrl, generatePubBackground } from 'utilities';
+import { getResizedUrl, generatePubBackground } from 'utils';
 
 require('./pubPreview.scss');
 

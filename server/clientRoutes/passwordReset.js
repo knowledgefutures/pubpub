@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import React from 'react';
-import PasswordReset from 'containers/PasswordReset/PasswordReset';
+import { PasswordReset } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { User } from '../models';
@@ -9,7 +9,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next) => {
 	const findUser = User.findOne({

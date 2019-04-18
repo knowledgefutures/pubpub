@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import React from 'react';
-import Explore from 'containers/Explore/Explore';
+import { Explore } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { Community } from '../models';
@@ -10,7 +10,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get('/explore', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {

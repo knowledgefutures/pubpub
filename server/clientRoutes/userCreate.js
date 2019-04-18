@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import React from 'react';
-import UserCreate from 'containers/UserCreate/UserCreate';
+import { UserCreate } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { Signup } from '../models';
@@ -9,7 +9,7 @@ import {
 	getInitialData,
 	handleErrors,
 	generateMetaComponents,
-} from '../utilities';
+} from '../utils';
 
 app.get('/user/create/:hash', (req, res, next) => {
 	const getSignup = Signup.findOne({

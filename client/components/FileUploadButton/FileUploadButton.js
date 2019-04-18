@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
-import { s3Upload } from 'utilities';
+import { s3Upload } from 'utils';
 
 require('./fileUploadButton.scss');
 

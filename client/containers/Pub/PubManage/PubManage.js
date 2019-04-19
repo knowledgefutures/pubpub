@@ -4,6 +4,7 @@ import { Menu, MenuItem, Intent } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
+import Attribution from './Attribution';
 import Collections from './Collections';
 import Details from './Details';
 import Delete from './Delete';
@@ -48,6 +49,13 @@ const PubManage = (props) => {
 					{manageMode === 'details' && (
 						<Details
 							locationData={locationData}
+							communityData={communityData}
+							pubData={props.pubData}
+							updateLocalData={props.updateLocalData}
+						/>
+					)}
+					{manageMode === 'attribution' && (
+						<Attribution
 							communityData={communityData}
 							pubData={props.pubData}
 							updateLocalData={props.updateLocalData}

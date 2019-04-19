@@ -60,8 +60,13 @@ const PubHeader = (props) => {
 	const [isMounted, setIsMounted] = useState(false);
 	const [isEditingTitle, setIsEditingTitle] = useState(false);
 	const { width: windowWidth } = useWindowSize();
+	const pubData = props.pubData;
+	const isDocMode = pubData.mode === 'document';
 
 	useEffect(() => {
+		if (!isDocMode) {
+			return () => {};
+		}
 		setIsMounted(true);
 		const nextOffsetHeight = headerRef.current.offsetHeight;
 		const stickyInstance = stickybits('.pub-header-component', {
@@ -72,7 +77,7 @@ const PubHeader = (props) => {
 		return () => {
 			stickyInstance.cleanup();
 		};
-	}, [props.pubData, windowWidth]);
+	}, [pubData, windowWidth, isDocMode]);
 
 	const handleTitleSave = (newTitle) => {
 		return apiFetch('/api/pubs', {
@@ -94,7 +99,6 @@ const PubHeader = (props) => {
 			});
 	};
 
-	const pubData = props.pubData;
 	// const authors = pubData.collaborators.filter((collaborator)=> {
 	// 	return collaborator.Collaborator.isAuthor;
 	// });
@@ -119,7 +123,7 @@ const PubHeader = (props) => {
 		backgroundStyle.backgroundImage = `url("${resizedBackground}")`;
 	}
 
-	const isDocMode = pubData.mode === 'document';
+	// const isDocMode = pubData.mode === 'document';
 	const useEditableTitle = pubData.isManager && isMounted && isDocMode;
 	let pubTitle = pubData.title;
 	if (isEditingTitle) {
@@ -283,10 +287,11 @@ const PubHeader = (props) => {
 										{pubData.title}
 									</a>
 								)}
+								{/* TODO: This needs to be a link that functions more cleanly */}
 								{!isDocMode && <span className="breadcrumb">{pubData.mode}</span>}
-								{!isDocMode && manageMode && (
+								{/* !isDocMode && manageMode && (
 									<span className="breadcrumb">{manageMode}</span>
-								)}
+								) */}
 							</React.Fragment>
 						)}
 					</h1>

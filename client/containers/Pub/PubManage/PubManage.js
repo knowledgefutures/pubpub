@@ -4,6 +4,9 @@ import { Menu, MenuItem, Intent } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
+import Collections from './Collections';
+import Details from './Details';
+import Delete from './Delete';
 
 require('./pubManage.scss');
 
@@ -13,7 +16,7 @@ const propTypes = {
 };
 
 const PubManage = (props) => {
-	const { locationData } = useContext(PageContext);
+	const { locationData, communityData } = useContext(PageContext);
 	const manageMode = locationData.params.manageMode || 'details';
 	const modes = [
 		{ text: 'Details', active: manageMode === 'details', path: '' },
@@ -26,10 +29,11 @@ const PubManage = (props) => {
 		<div className="pub-manage-component">
 			<GridWrapper containerClassName="pub" columnClassName="manage-columns">
 				<div className="side-content">
-					<Menu>
+					<Menu className="side-menu">
 						{modes.map((mode) => {
 							return (
 								<MenuItem
+									key={mode.text}
 									text={mode.text}
 									active={mode.active}
 									href={`/pub/${locationData.params.slug}/manage/${mode.path}`}
@@ -41,7 +45,24 @@ const PubManage = (props) => {
 				</div>
 
 				<div className="main-content">
-					<h2>This is some content</h2>
+					{manageMode === 'details' && (
+						<Details
+							locationData={locationData}
+							communityData={communityData}
+							pubData={props.pubData}
+							updateLocalData={props.updateLocalData}
+						/>
+					)}
+					{manageMode === 'collections' && (
+						<Collections
+							communityData={communityData}
+							pubData={props.pubData}
+							updateLocalData={props.updateLocalData}
+						/>
+					)}
+					{manageMode === 'delete' && (
+						<Delete communityData={communityData} pubData={props.pubData} />
+					)}
 				</div>
 			</GridWrapper>
 		</div>

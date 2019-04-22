@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
 import GridWrapper from 'components/GridWrapper/GridWrapper';
 import { pubDataProps } from 'types/pub';
 import Details from './Details';
+import Social from './Social';
+import Download from './Download';
 
 require('./pubMeta.scss');
 
@@ -15,6 +16,7 @@ const propTypes = {
 
 const PubMeta = (props) => {
 	const { pubData, updateLocalData } = props;
+
 	if (!pubData.metaMode) {
 		return null;
 	}
@@ -35,7 +37,9 @@ const PubMeta = (props) => {
 						}}
 					/>
 				</div>
-				{pubData.metaMode === 'details' && <Details />}
+				{pubData.metaMode === 'details' && <Details pubData={pubData} />}
+				{pubData.metaMode === 'social' && <Social pubData={pubData} />}
+				{pubData.metaMode === 'download' && <Download pubData={pubData} />}
 			</GridWrapper>
 		</div>
 	);

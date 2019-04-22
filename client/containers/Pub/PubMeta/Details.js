@@ -7,11 +7,10 @@ require('./details.scss');
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,
-	updateLocalData: PropTypes.func.isRequired,
 };
 
 const Details = (props) => {
-	const { pubData, updateLocalData } = props;
+	const { pubData } = props;
 
 	return <div className="pub-meta-details">Details!</div>;
 };

@@ -8,7 +8,11 @@ require('./pubInlineImport.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
-	editorView: PropTypes.object.isRequired,
+	editorView: PropTypes.object,
+};
+
+const defaultProps = {
+	editorView: undefined,
 };
 
 class PubInlineImport extends Component {
@@ -103,4 +107,5 @@ class PubInlineImport extends Component {
 }
 
 PubInlineImport.propTypes = propTypes;
+PubInlineImport.defaultProps = defaultProps;
 export default PubInlineImport;

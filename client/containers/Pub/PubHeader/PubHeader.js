@@ -389,7 +389,7 @@ const PubHeader = (props) => {
 											text: (
 												<div className="text-stack">
 													<span className="subtext">now on branch</span>
-													<span className>Public</span>
+													<span>Public</span>
 												</div>
 											),
 											rightIcon: 'caret-down',
@@ -454,6 +454,7 @@ const PubHeader = (props) => {
 									const isActive = pubData.metaMode === mode.key;
 									return (
 										<ActionButton
+											key={mode.title}
 											isLarge={true}
 											buttons={[
 												{

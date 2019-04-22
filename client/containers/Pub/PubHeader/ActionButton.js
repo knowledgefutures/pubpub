@@ -24,6 +24,7 @@ const defaultProps = {
 
 const ActionButton = function(props) {
 	const buttons = props.buttons.map((buttonData) => {
+		const key = `${buttonData.text}-${buttonData.icon}-${buttonData.href}`;
 		const icon = buttonData.icon ? (
 			<Icon icon={buttonData.icon} iconSize={props.isLarge ? 22 : 18} />
 		) : (
@@ -41,13 +42,28 @@ const ActionButton = function(props) {
 			buttonClass += ' large';
 		}
 
+		/* We don't want to apply isSkinny, isLarge, etc as dom attributes */
+		const buttonProps = { ...buttonData };
+		Object.keys(buttonProps).forEach((buttonPropKey) => {
+			const invalidProps = ['isWide', 'isSkinny', 'isLarge'];
+			if (invalidProps.includes(buttonPropKey)) {
+				delete buttonProps[buttonPropKey];
+			}
+		});
+
 		const buttonComponent = buttonData.href ? (
-			<AnchorButton className={buttonClass} {...buttonData} icon={icon} />
+			<AnchorButton key={key} className={buttonClass} {...buttonProps} icon={icon} />
 		) : (
-			<Button className={buttonClass} {...buttonData} icon={icon} />
+			<Button key={key} className={buttonClass} {...buttonProps} icon={icon} />
 		);
 		if (buttonData.popoverProps) {
-			return <Popover {...buttonData.popoverProps} target={buttonComponent} />;
+			return (
+				<Popover
+					key={`popover-${key}`}
+					{...buttonData.popoverProps}
+					target={buttonComponent}
+				/>
+			);
 		}
 		return buttonComponent;
 	});

@@ -122,7 +122,7 @@ const PubDiscussions = (props) => {
 				return `${prev}${curr.key}${curr.ids.join()}`;
 			}, '');
 		};
-		console.log(newGroupTops);
+		// console.log(newGroupTops);
 		if (getCompareKey(groupTops) !== getCompareKey(newGroupTops)) {
 			setGroupTops(newGroupTops);
 		}

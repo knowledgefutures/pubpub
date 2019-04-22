@@ -22,6 +22,7 @@ export default (sequelize) => {
 			pubId: { type: Sequelize.UUID, allowNull: false },
 			communityId: { type: Sequelize.UUID, allowNull: false },
 			discussionChannelId: { type: Sequelize.UUID },
+			branchId: { type: Sequelize.UUID }, // Should be allowNull: false after migration
 		},
 		{
 			indexes: [
@@ -31,7 +32,7 @@ export default (sequelize) => {
 			],
 			classMethods: {
 				associate: (models) => {
-					const { Discussion, Community, Pub, User } = models;
+					const { Discussion, Community, Pub, User, Branch } = models;
 					Discussion.belongsTo(Community, {
 						onDelete: 'CASCADE',
 						as: 'community',
@@ -46,6 +47,11 @@ export default (sequelize) => {
 						onDelete: 'CASCADE',
 						as: 'author',
 						foreignKey: 'userId',
+					});
+					Discussion.belongsTo(Branch, {
+						onDelete: 'CASCADE',
+						as: 'branch',
+						foreignKey: 'branchId',
 					});
 				},
 			},

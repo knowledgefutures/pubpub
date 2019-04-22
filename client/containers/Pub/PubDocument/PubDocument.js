@@ -77,18 +77,18 @@ const PubDocument = (props) => {
 							setClickedMarks(marksAtSelection(view));
 						}}
 					/>
-
 					<PubInlineImport
 						pubData={props.pubData}
 						editorView={props.collabData.editorChangeObject.view}
 					/>
-					{props.firebaseBranchRef && (
-						<PubDiscussions
-							pubData={props.pubData}
-							collabData={props.collabData}
-							firebaseBranchRef={props.firebaseBranchRef}
-						/>
-					)}
+					<PubFooter pubData={props.pubData} />
+					<PubDiscussions
+						pubData={props.pubData}
+						collabData={props.collabData}
+						firebaseBranchRef={props.firebaseBranchRef}
+						updateLocalData={props.updateLocalData}
+					/>
+
 					{!linkPopupIsOpen && editorFocused && (
 						<PubInlineMenu
 							pubData={props.pubData}
@@ -101,7 +101,6 @@ const PubDocument = (props) => {
 					{linkPopupIsOpen && (
 						<PubLinkMenu pubData={props.pubData} collabData={props.collabData} />
 					)}
-					<PubFooter pubData={props.pubData} />
 				</div>
 				<div className="side-content">
 					<PubToc

@@ -125,36 +125,6 @@ export const getResizedUrl = function(url, type, dimensions) {
 	return `https://resize.pubpub.org/${prefix}${dimensions}/${filepath}`;
 };
 
-export const nestDiscussionsToThreads = function(discussions) {
-	const maxThreadNumber = discussions.reduce((prev, curr) => {
-		if (curr.threadNumber > prev) {
-			return curr.threadNumber;
-		}
-		return prev;
-	}, 0);
-
-	const tempThreads = new Array(maxThreadNumber).fill([]);
-	discussions.forEach((item) => {
-		tempThreads[item.threadNumber - 1] = [...tempThreads[item.threadNumber - 1], item];
-	});
-
-	return tempThreads
-		.filter((thread) => {
-			return thread.length;
-		})
-		.map((thread) => {
-			return thread.sort((foo, bar) => {
-				if (foo.createdAt > bar.createdAt) {
-					return 1;
-				}
-				if (foo.createdAt < bar.createdAt) {
-					return -1;
-				}
-				return 0;
-			});
-		});
-};
-
 export const populateNavigationIds = function(collections, navigation) {
 	const collectionsObject = {};
 	collections.forEach((item) => {

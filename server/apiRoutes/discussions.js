@@ -43,17 +43,19 @@ app.post('/api/discussions', (req, res) => {
 			const generatedTitle = isReply ? '' : `New Discussion on ${dateString}`;
 
 			return Discussion.create({
+				id: req.body.discussionId,
 				title: req.body.title || generatedTitle,
 				content: req.body.content,
 				text: req.body.text,
 				userId: req.body.userId,
 				pubId: req.body.pubId,
 				communityId: req.body.communityId,
-				discussionChannelId: req.body.discussionChannelId,
+				// discussionChannelId: req.body.discussionChannelId,
+				branchId: req.body.branchId,
 				threadNumber: req.body.threadNumber || maxThreadNumber + 1,
-				submitHash: req.body.submitHash,
-				highlights: req.body.highlights,
-				isPublic: req.body.isPublic || false,
+				// submitHash: req.body.submitHash,
+				// highlights: req.body.highlights,
+				// isPublic: req.body.isPublic || false,
 			});
 		})
 		.then((newDiscussion) => {

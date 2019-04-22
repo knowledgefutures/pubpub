@@ -8,6 +8,7 @@ import Attribution from './Attribution';
 import Collections from './Collections';
 import Details from './Details';
 import Delete from './Delete';
+import Doi from './Doi';
 
 require('./pubManage.scss');
 
@@ -24,6 +25,7 @@ const PubManage = (props) => {
 		{ text: 'Attribution', active: manageMode === 'attribution', path: 'attribution' },
 		{ text: 'Collections', active: manageMode === 'collections', path: 'collections' },
 		{ text: 'Sharing', active: manageMode === 'sharing', path: 'sharing' },
+		{ text: 'DOI', active: manageMode === 'doi', path: 'doi' },
 		{ text: 'Delete', active: manageMode === 'delete', path: 'delete', danger: true },
 	];
 	return (
@@ -63,6 +65,13 @@ const PubManage = (props) => {
 					)}
 					{manageMode === 'collections' && (
 						<Collections
+							communityData={communityData}
+							pubData={props.pubData}
+							updateLocalData={props.updateLocalData}
+						/>
+					)}
+					{manageMode === 'doi' && (
+						<Doi
 							communityData={communityData}
 							pubData={props.pubData}
 							updateLocalData={props.updateLocalData}

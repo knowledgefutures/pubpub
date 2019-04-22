@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import GridWrapper from 'components/GridWrapper/GridWrapper';
 import { pubDataProps } from 'types/pub';
+import Metrics from './Metrics';
 import Details from './Details';
 import Social from './Social';
 import Download from './Download';
@@ -38,6 +39,7 @@ const PubMeta = (props) => {
 					/>
 				</div>
 				{pubData.metaMode === 'details' && <Details pubData={pubData} />}
+				{pubData.metaMode === 'metrics' && <Metrics pubData={pubData} />}
 				{pubData.metaMode === 'social' && <Social pubData={pubData} />}
 				{pubData.metaMode === 'download' && <Download pubData={pubData} />}
 			</GridWrapper>

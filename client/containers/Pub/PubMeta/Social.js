@@ -7,7 +7,6 @@ import { PageContext } from 'components/PageWrapper/PageWrapper';
 require('./social.scss');
 
 const propTypes = {
-	communityData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	// loginData: PropTypes.object.isRequired,
 	// setPubData: PropTypes.func.isRequired,

@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import Promise from 'bluebird';
 import passport from 'passport';
 import app from '../server';
@@ -30,7 +31,7 @@ app.post('/api/users', (req, res) => {
 			}
 			return User.count({
 				where: {
-					slug: { $ilike: `${newSlug}%` },
+					slug: { [Op.iLike]: `${newSlug}%` },
 				},
 			});
 		})

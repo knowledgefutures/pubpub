@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import app from '../server';
 import { Collection, sequelize } from '../models';
 import { hostIsValid } from '../utils';
@@ -11,7 +12,7 @@ app.get('/collection/:slug', (req, res, next) => {
 		where: [
 			{ isPublic: true },
 			sequelize.where(sequelize.cast(sequelize.col('Collection.id'), 'varchar'), {
-				$ilike: `${slug}%`,
+				[Op.iLike]: `${slug}%`,
 			}),
 		],
 	})

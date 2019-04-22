@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import GridWrapper from 'components/GridWrapper/GridWrapper';
 import { pubDataProps } from 'types/pub';
-import Metrics from './Metrics';
 import Details from './Details';
-import Social from './Social';
 import Download from './Download';
+import Metrics from './Metrics';
+import Social from './Social';
 
 require('./pubMeta.scss');
 

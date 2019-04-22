@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import algoliasearch from 'algoliasearch';
 import stopword from 'stopword';
 import {
@@ -190,7 +191,7 @@ export const setPubSearchData = (pubId) => {
 						where: {
 							// We only need to get the versionPermissions for items related to the working draft,
 							// since all version are isPublic
-							versionId: { $eq: null },
+							versionId: { [Op.eq]: null },
 						},
 						separate: true,
 						required: false,

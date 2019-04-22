@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 /* eslint-disable no-console */
 /* eslint-disable newline-per-chained-call */
 import Promise from 'bluebird';
@@ -83,7 +84,7 @@ const findAndIndexPubs = (pubIds) => {
 				where: {
 					// We only need to get the versionPermissions for items related to the working draft,
 					// since all version are isPublic
-					versionId: { $eq: null },
+					versionId: { [Op.eq]: null },
 				},
 				separate: true,
 				required: false,

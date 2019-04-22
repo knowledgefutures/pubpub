@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import app from '../server';
 // import { User, Pub, Discussion, Collaborator, Collection, Community } from '../models';
 import { User } from '../models';
@@ -5,9 +6,9 @@ import { User } from '../models';
 app.get('/api/search/users', (req, res) => {
 	User.findAll({
 		where: {
-			$or: [
-				{ fullName: { $ilike: `%${req.query.q}%` } },
-				{ slug: { $ilike: `%${req.query.q}%` } },
+			[Op.or]: [
+				{ fullName: { [Op.iLike]: `%${req.query.q}%` } },
+				{ slug: { [Op.iLike]: `%${req.query.q}%` } },
 			],
 		},
 		attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
@@ -27,7 +28,7 @@ app.get('/api/search/users', (req, res) => {
 // 	const searchTerms = [
 // 		{
 // 			$or: [
-// 				{ title: { $ilike: `%${req.query.q}%` } },
+// 				{ title: { [Op.iLike]: `%${req.query.q}%` } },
 // 				{ description: { $ilike: `%${req.query.q}%` } },
 // 			]
 // 		},

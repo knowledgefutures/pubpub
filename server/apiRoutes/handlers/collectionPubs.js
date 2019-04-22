@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import findRank from 'shared/utils/findRank';
 import { Collection, CollectionPub, sequelize } from '../../models';
 import { getCollectionPubsInCollection } from '../../utils/collectionQueries';
@@ -55,7 +56,7 @@ const setCollectionPubAsPrimary = (id) =>
 					{ isPrimary: false },
 					{
 						transaction: txn,
-						where: { pubId: collectionPub.pubId, id: { $ne: id } },
+						where: { pubId: collectionPub.pubId, id: { [Op.ne]: id } },
 					},
 				).then(() =>
 					CollectionPub.update(

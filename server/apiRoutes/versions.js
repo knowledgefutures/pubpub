@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import app from '../server';
 import { Pub, Version, CommunityAdmin, Discussion, PubManager } from '../models';
 import { generateHash } from '../utils';
@@ -65,7 +66,7 @@ app.post('/api/versions', (req, res) => {
 						submitHash: req.body.submitHash,
 						pubId: req.body.pubId,
 						communityId: req.body.communityId || null,
-						isArchived: { $not: true },
+						isArchived: { [Op.not]: true },
 					},
 				},
 			);

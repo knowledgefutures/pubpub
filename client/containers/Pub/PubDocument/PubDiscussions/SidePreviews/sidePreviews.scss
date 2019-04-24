@@ -3,6 +3,7 @@
 	position: absolute;
 	display: inline-block;
 	font-family: $base-font;
+	user-select: none;
 	.thread-group-target {
 		border: 1px solid #CCC;
 		&:hover {

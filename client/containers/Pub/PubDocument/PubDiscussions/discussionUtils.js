@@ -77,7 +77,7 @@ export const groupDiscussionsByTop = (decorations) => {
 
 			/* 70 comes from the rough max height of PubDiscussions/SidePreviews/Preview */
 			const nextItemIsNear =
-				index < array.length - 1 && Number(array[index + 1]) < Number(topKey) + 70;
+				index < array.length - 1 && Number(array[index + 1]) < Number(topKey) + 110;
 			const isCollapsed = nextItemIsNear || ids.length > 1;
 			groupings.push({
 				key: Number(topKey) + window.scrollY,

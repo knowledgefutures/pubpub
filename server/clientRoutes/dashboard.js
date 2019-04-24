@@ -64,7 +64,9 @@ const extraContextualData = [
 					return {
 						...collection,
 						attributions: attributions,
-						collectionPubs: collectionPubs,
+						collectionPubs: collectionPubs.filter((item) => {
+							return item.pub;
+						}),
 					};
 				}
 				return collection;

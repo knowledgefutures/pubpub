@@ -59,7 +59,7 @@ export const getInitialData = (req) => {
 	/* Gather user data */
 	const user = req.user || {};
 	const loginData = {
-		id: user.id,
+		id: user.id || null,
 		initials: user.initials,
 		slug: user.slug,
 		fullName: user.fullName,

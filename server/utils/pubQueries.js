@@ -23,7 +23,6 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 	/* whether the user has permissions */
 	const isPubPubAdmin = loginData.id === 'b242f616-7aaa-479c-8ee5-3933dcf70859';
 	const isCommunityAdminManager = communityAdminData && pub.isCommunityAdminManaged;
-
 	const allowedBranches = pub.branches
 		.sort((foo, bar) => {
 			if (foo.order < bar.order) {
@@ -51,6 +50,10 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 				return prev;
 			}, false);
 		});
+
+	if (!allowedBranches.length) {
+		return null;
+	}
 
 	const activeBranch = allowedBranches.reduce((prev, curr, index) => {
 		if (index === 0) {

@@ -25,7 +25,26 @@ export default (AttributionModel) =>
 						include: [INCLUDE_USER_ATTRIBUTES],
 					}),
 				)
-				.then((newModelWithUser) => newModelWithUser.toJSON()),
+				.then((newModelWithUser) => {
+					if (newModelWithUser.user) {
+						return newModelWithUser.toJSON();
+					}
+					return {
+						...newModelWithUser.toJSON(),
+						user: {
+							id: newModelWithUser.id,
+							initials: newModelWithUser.name[0],
+							fullName: newModelWithUser.name,
+							firstName: newModelWithUser.name.split(' ')[0],
+							lastName: newModelWithUser.name
+								.split(' ')
+								.slice(1, newModelWithUser.name.split(' ').length)
+								.join(' '),
+							avatar: newModelWithUser.avatar,
+							title: newModelWithUser.title,
+						},
+					};
+				}),
 		updateAttribution: (modelId, requestToUpdate) => {
 			const updatedAttribution = {};
 			Object.keys(requestToUpdate).forEach((key) => {

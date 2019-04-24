@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	logging: false,
 	dialectOptions: { ssl: useSSL },
 });
@@ -22,28 +22,29 @@ sequelize.idType = {
 	defaultValue: Sequelize.UUIDV4,
 };
 
-/* Import and create all models */
-sequelize.import('./branch.js');
-sequelize.import('./branchPermission.js');
-sequelize.import('./collection.js');
-sequelize.import('./collectionAttribution.js');
-sequelize.import('./collectionPub.js');
-sequelize.import('./community.js');
-sequelize.import('./communityAdmin.js');
-sequelize.import('./discussion.js');
-sequelize.import('./discussionChannel.js');
-sequelize.import('./discussionChannelParticipant.js');
-sequelize.import('./page.js');
-sequelize.import('./pub.js');
-sequelize.import('./pubAttribution.js');
-sequelize.import('./pubManager.js');
-sequelize.import('./pubTag.js');
-sequelize.import('./signup.js');
-sequelize.import('./tag.js');
-sequelize.import('./user.js');
-sequelize.import('./version.js');
-sequelize.import('./versionPermission.js');
-sequelize.import('./workerTask.js');
+/* Import and create all models. */
+/* Also export them to make them available to other modules */
+export const Branch = sequelize.import('./branch.js');
+export const BranchPermission = sequelize.import('./branchPermission.js');
+export const Collection = sequelize.import('./collection.js');
+export const CollectionAttribution = sequelize.import('./collectionAttribution.js');
+export const CollectionPub = sequelize.import('./collectionPub.js');
+export const Community = sequelize.import('./community.js');
+export const CommunityAdmin = sequelize.import('./communityAdmin.js');
+export const Discussion = sequelize.import('./discussion.js');
+export const DiscussionChannel = sequelize.import('./discussionChannel.js');
+export const DiscussionChannelParticipant = sequelize.import('./discussionChannelParticipant.js');
+export const Page = sequelize.import('./page.js');
+export const Pub = sequelize.import('./pub.js');
+export const PubAttribution = sequelize.import('./pubAttribution.js');
+export const PubManager = sequelize.import('./pubManager.js');
+export const PubTag = sequelize.import('./pubTag.js');
+export const Signup = sequelize.import('./signup.js');
+export const Tag = sequelize.import('./tag.js');
+export const User = sequelize.import('./user.js');
+export const Version = sequelize.import('./version.js');
+export const VersionPermission = sequelize.import('./versionPermission.js');
+export const WorkerTask = sequelize.import('./workerTask.js');
 
 /* Create associations for models that have associate function */
 Object.values(sequelize.models).forEach((model) => {
@@ -52,8 +53,3 @@ Object.values(sequelize.models).forEach((model) => {
 		classMethods.associate(sequelize.models);
 	}
 });
-
-module.exports = {
-	...sequelize.models,
-	sequelize: sequelize,
-};

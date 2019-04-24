@@ -24,6 +24,7 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
+	loginData: PropTypes.object.isRequired,
 };
 
 class Collections extends Component {
@@ -65,17 +66,19 @@ class Collections extends Component {
 				return 0;
 			});
 
-		const addNewCollectionOption = defaultCollections.reduce((prev, curr) => {
-			if (curr.title.toLowerCase() === query.toLowerCase()) {
-				return false;
-			}
-			return prev;
-		}, true);
-		const newCollectionOption =
-			query && addNewCollectionOption ? [{ title: query.trim() }] : [];
+		return filteredDefaultCollections;
 
-		const outputCollections = [...newCollectionOption, ...filteredDefaultCollections];
-		return outputCollections;
+		// const addNewCollectionOption = defaultCollections.reduce((prev, curr) => {
+		// 	if (curr.title.toLowerCase() === query.toLowerCase()) {
+		// 		return false;
+		// 	}
+		// 	return prev;
+		// }, true);
+		// const newCollectionOption =
+		// 	query && addNewCollectionOption ? [{ title: query.trim() }] : [];
+
+		// const outputCollections = [...newCollectionOption, ...filteredDefaultCollections];
+		// return outputCollections;
 	}
 
 	handleCollectionPubAdd(collection) {
@@ -312,6 +315,12 @@ class Collections extends Component {
 					collection acts as its <em>primary collection</em>, and appears as part of the
 					pub&apos;s citations and DOI deposit information.
 				</p>
+				{this.props.loginData.isAdmin && (
+					<p>
+						Collections can be created and edited in the{' '}
+						<a href="/dashboard/collections">community Manage dashboard</a>.
+					</p>
+				)}
 				{this.renderAddCollection()}
 				{this.renderCollections()}
 				{!this.state.collectionPubs.length && (

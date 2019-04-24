@@ -145,43 +145,59 @@ class AttributionEditor extends Component {
 		return (
 			<div className="attribution-editor-component">
 				{canEdit && (
-					<UserAutocomplete
-						onSelect={this.handleAttributionAdd}
-						allowCustomUser={true}
-						placeholder="Add new person..."
-						usedUserIds={attributions
-							.map((item) => {
-								return item.user && item.user.id;
-							})
-							.filter((x) => x)}
-					/>
+					<React.Fragment>
+						<UserAutocomplete
+							onSelect={this.handleAttributionAdd}
+							allowCustomUser={true}
+							placeholder="Add new person..."
+							usedUserIds={attributions
+								.map((item) => {
+									return item.user && item.user.id;
+								})
+								.filter((x) => x)}
+						/>
+						<DragDropContext onDragEnd={this.handleDragEnd}>
+							<DragDropListing
+								droppableType="ATTRIBUTION"
+								droppableId="attributionEditor"
+								items={sortedAttributions}
+								itemId={(attribution) => attribution.id}
+								withDragHandles={true}
+								renderItem={(attribution, dragHandleProps, isDragging) => (
+									<AttributionRow
+										attribution={attribution}
+										canEdit={true}
+										isDragging={isDragging}
+										dragHandleProps={dragHandleProps}
+										onAttributionDelete={this.handleAttributionDelete}
+										onAttributionUpdate={this.handleAttributionUpdate}
+									/>
+								)}
+								renderEmptyState={() => (
+									<NonIdealState
+										icon="person"
+										title="No attribution yet!"
+										description="Start typing a person's name above to add attribution."
+									/>
+								)}
+							/>
+						</DragDropContext>
+					</React.Fragment>
 				)}
-				<DragDropContext onDragEnd={this.handleDragEnd}>
-					<DragDropListing
-						droppableType="ATTRIBUTION"
-						droppableId="attributionEditor"
-						items={sortedAttributions}
-						itemId={(attribution) => attribution.id}
-						withDragHandles={true}
-						renderItem={(attribution, dragHandleProps, isDragging) => (
+				{!canEdit &&
+					sortedAttributions.map((attribution) => {
+						return (
 							<AttributionRow
+								key={attribution.id}
 								attribution={attribution}
-								canEdit={canEdit}
-								isDragging={isDragging}
-								dragHandleProps={dragHandleProps}
-								onAttributionDelete={this.handleAttributionDelete}
-								onAttributionUpdate={this.handleAttributionUpdate}
+								canEdit={false}
+								// isDragging={isDragging}
+								// dragHandleProps={dragHandleProps}
+								onAttributionDelete={()=>{}}
+								onAttributionUpdate={()=>{}}
 							/>
-						)}
-						renderEmptyState={() => (
-							<NonIdealState
-								icon="person"
-								title="No attribution yet!"
-								description="Start typing a person's name above to add attribution."
-							/>
-						)}
-					/>
-				</DragDropContext>
+						);
+					})}
 			</div>
 		);
 	}

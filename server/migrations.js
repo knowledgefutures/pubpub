@@ -445,8 +445,8 @@ new Promise((resolve) => {
 	// })
 	.then(() => {
 		return Collection.sync()
-			.then(() =>  sequelize.getQueryInterface()
-				.renameColumn('Communities', 'defaultPubTags', 'defaultPubCollections'))
+			// .then(() =>  sequelize.getQueryInterface()
+			// 	.renameColumn('Communities', 'defaultPubTags', 'defaultPubCollections'))
 			.then(() => {
 				return Tag.findAll().then(tags => {
 					const collections = tags.map(tag => {
@@ -458,8 +458,16 @@ new Promise((resolve) => {
 			.then(() => CollectionPub.sync())
 			.then(() => {
 				return PubTag.findAll().then(pubTags => {
-					const collectionPubs = pubTags.map(pt => {
-						return {pubId: pt.pubId, collectionId: pt.collectionId};
+					const pubTagIds = {};
+					const collectionPubs = pubTags.filter((pt) => {
+						if (pubTagIds[`${pt.pubId}_${pt.tagId}`]) {
+							console.log('yep - got a false', `${pt.pubId}_${pt.tagId}`);
+							return false;
+						}
+						pubTagIds[`${pt.pubId}_${pt.tagId}`] = true;
+						return true;
+					}).map(pt => {
+						return {pubId: pt.pubId, collectionId: pt.tagId};
 					});
 					return CollectionPub.bulkCreate(collectionPubs);
 				});

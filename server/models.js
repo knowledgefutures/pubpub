@@ -565,7 +565,7 @@ const PubTag = sequelize.define('PubTag', {
 
 	/* Set by Associations */
 	pubId: { type: Sequelize.UUID },
-	collectionId: { type: Sequelize.UUID },
+	tagId: { type: Sequelize.UUID },
 });
 
 const db = {

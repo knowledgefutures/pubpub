@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import PubDiscussionThread from './PubDiscussionThread';
-import PubDiscussionThreadNew from './PubDiscussionThreadNew';
+import DiscussionThread from './DiscussionThread';
+// import PubDiscussionThreadNew from './PubDiscussionThreadNew';
 import SidePreviews from './SidePreviews';
 import {
 	getDiscussionIdArray,
@@ -13,7 +13,7 @@ import {
 	nestDiscussionsToThreads,
 } from './discussionUtils';
 
-require('./discussions.scss');
+require('./pubDiscussions.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
@@ -56,24 +56,6 @@ const PubDiscussions = (props) => {
 			delete newState[action.id];
 			return newState;
 		}
-
-		// if (
-		// 	state[action.id] &&
-		// 	state[action.id][action.key] &&
-		// 	state[action.id][action.key].state &&
-		// 	state[action.id][action.key].state.history$
-		// ) {
-		// 	console.log(
-		// 		state[action.id][action.key].state.history$.prevTime,
-		// 		action.value.state.history$.prevTime,
-		// 	);
-		// 	if (
-		// 		action.value.state.history$.prevTime ===
-		// 		state[action.id][action.key].state.history$.prevTime
-		// 	) {
-		// 		return state;
-		// 	}
-		// }
 		return {
 			...state,
 			[action.id]: {
@@ -125,18 +107,22 @@ const PubDiscussions = (props) => {
 	// You want to calculate all the ones that are the same - and then look to see if there is
 	// a following one within 100. If there are multipe - collapse. If there is one within 100, collapse
 	// If there is only one, and none within a hundred - show full.
-
+	const threadIds = [
+		...discussionIds.map((id) => ({ id: id, type: 'dm' })),
+		...newDiscussionIds.map((id) => ({ id: id, type: 'lm' })),
+	];
 	return (
 		<div className="pub-discussions-component">
-			{discussionIds.map((id) => {
+			{threadIds.map(({ id, type }) => {
 				const threadData = threads.find((thread) => {
 					return thread[0].id === id;
 				});
-				if (!threadData) {
+				if (!threadData && type === 'dm') {
 					return null;
 				}
+
 				return ReactDOM.createPortal(
-					<PubDiscussionThread
+					<DiscussionThread
 						pubData={pubData}
 						collabData={collabData}
 						firebaseBranchRef={firebaseBranchRef}
@@ -144,8 +130,9 @@ const PubDiscussions = (props) => {
 						discussionState={discussionsState[id] || {}}
 						dispatch={discussionsDispatch}
 						threadData={threadData}
+						updateLocalData={props.updateLocalData}
 					/>,
-					document.getElementsByClassName(`dm-${id}`)[0],
+					document.getElementsByClassName(`${type}-${id}`)[0],
 				);
 			})}
 
@@ -161,7 +148,7 @@ const PubDiscussions = (props) => {
 				);
 			})}
 
-			{newDiscussionIds.map((id) => {
+			{/* newDiscussionIds.map((id) => {
 				return ReactDOM.createPortal(
 					<PubDiscussionThreadNew
 						pubData={pubData}
@@ -174,7 +161,7 @@ const PubDiscussions = (props) => {
 					/>,
 					document.getElementsByClassName(`lm-${id}`)[0],
 				);
-			})}
+			}) */}
 		</div>
 	);
 };

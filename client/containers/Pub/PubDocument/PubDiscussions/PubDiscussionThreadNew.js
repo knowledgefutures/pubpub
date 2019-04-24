@@ -32,9 +32,6 @@ const PubDiscussionThreadNew = (props) => {
 			editorView.focus();
 		}
 	}, [editorView]);
-	useEffect(()=> {
-		console.log('mounting');
-	}, []);
 
 	const handlePostDiscussion = () => {
 		setIsLoading(true);
@@ -86,9 +83,6 @@ const PubDiscussionThreadNew = (props) => {
 					<div className="discussion-body-wrapper editable">
 						<Editor
 							placeholder="Type your discussion here..."
-							// This calls .toJSON everytime which seems inefficient
-							// Why do we only need this for local changes to doc - and not remote edits?
-							// initialContent={editorView ? editorView.state.doc.toJSON() : undefined}
 							onChange={(editorChangeObject) => {
 								dispatch({
 									id: discussionId,

@@ -64,7 +64,7 @@ const PubDocument = (props) => {
 	const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />
+			{/*<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />*/}
 			<GridWrapper containerClassName="pub" columnClassName="pub-columns">
 				<div className="main-content">
 					<PubBody

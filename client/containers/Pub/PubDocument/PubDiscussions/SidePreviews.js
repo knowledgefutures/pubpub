@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Popover, Position, Menu, MenuItem } from '@blueprintjs/core';
+import { Button, Popover, Position, Menu, MenuItem, PopoverInteractionKind } from '@blueprintjs/core';
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
@@ -34,6 +34,7 @@ const SidePreviews = (props) => {
 							key: 'isOpen',
 							value: false,
 						});
+						setActiveHighlightId(undefined);
 					}}
 				/>
 			</div>
@@ -102,6 +103,7 @@ const SidePreviews = (props) => {
 				}
 				target={<Button text={groupIds.length} />}
 				minimal={true}
+				interactionKind={PopoverInteractionKind.HOVER}
 				position={Position.BOTTOM_LEFT}
 			/>
 		</div>

@@ -13,6 +13,8 @@ import {
 	nestDiscussionsToThreads,
 } from './discussionUtils';
 
+require('./discussions.scss');
+
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
@@ -54,6 +56,24 @@ const PubDiscussions = (props) => {
 			delete newState[action.id];
 			return newState;
 		}
+
+		// if (
+		// 	state[action.id] &&
+		// 	state[action.id][action.key] &&
+		// 	state[action.id][action.key].state &&
+		// 	state[action.id][action.key].state.history$
+		// ) {
+		// 	console.log(
+		// 		state[action.id][action.key].state.history$.prevTime,
+		// 		action.value.state.history$.prevTime,
+		// 	);
+		// 	if (
+		// 		action.value.state.history$.prevTime ===
+		// 		state[action.id][action.key].state.history$.prevTime
+		// 	) {
+		// 		return state;
+		// 	}
+		// }
 		return {
 			...state,
 			[action.id]: {

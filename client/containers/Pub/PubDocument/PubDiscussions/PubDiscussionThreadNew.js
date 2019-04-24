@@ -1,12 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ButtonGroup, Button } from '@blueprintjs/core';
+import { Button, Intent } from '@blueprintjs/core';
 import Editor, {
 	getText,
 	getJSON,
 	removeLocalHighlight,
 	convertLocalHighlightToDiscussion,
 } from '@pubpub/editor';
+import { Avatar } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { apiFetch } from 'utils';
 
@@ -23,10 +24,17 @@ const propTypes = {
 const PubDiscussionThreadNew = (props) => {
 	const { pubData, collabData, discussionId, discussionState, dispatch, updateLocalData } = props;
 	const { loginData, communityData } = useContext(PageContext);
-	const { editorState } = discussionState;
+	const { editorView } = discussionState;
 	const pubView = collabData.editorChangeObject.view;
 	const [isLoading, setIsLoading] = useState(false);
-	const [discussionEditorView, setDiscussionEditorView] = useState(null);
+	useEffect(() => {
+		if (editorView) {
+			editorView.focus();
+		}
+	}, [editorView]);
+	useEffect(()=> {
+		console.log('mounting');
+	}, []);
 
 	const handlePostDiscussion = () => {
 		setIsLoading(true);
@@ -38,8 +46,8 @@ const PubDiscussionThreadNew = (props) => {
 				pubId: pubData.id,
 				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,
-				content: getJSON(discussionEditorView),
-				text: getText(discussionEditorView) || '',
+				content: getJSON(editorView),
+				text: getText(editorView) || '',
 			}),
 		})
 			.then((discussionData) => {
@@ -65,36 +73,47 @@ const PubDiscussionThreadNew = (props) => {
 	};
 
 	return (
-		<div className="bp3-card bp3-elevation-2">
-			<Editor
-				placeholder="New"
-				// This calls .toJSON everytime which seems inefficient
-				// Why do we only need this for local changes to doc - and not remote edits?
-				initialContent={
-					editorState && editorState.doc ? editorState.doc.toJSON() : undefined
-				}
-				onChange={(editorChangeObject) => {
-					if (!editorState) {
-						editorChangeObject.view.focus();
-					}
-					setDiscussionEditorView(editorChangeObject.view);
-					dispatch({
-						id: discussionId,
-						key: 'editorState',
-						value: editorChangeObject.view.state,
-					});
-				}}
-			/>
-			<ButtonGroup>
-				<Button
-					text="Cancel"
-					onClick={() => {
-						removeLocalHighlight(pubView, discussionId);
-						dispatch({ id: discussionId, delete: true });
-					}}
-				/>
-				<Button text="Save" loading={isLoading} onClick={handlePostDiscussion} />
-			</ButtonGroup>
+		<div className="discussion-thread" tabIndex={-1}>
+			<div className="discussion-item">
+				<div className="avatar-wrapper">
+					<Avatar
+						width={30}
+						userInitials={loginData.intials}
+						userAvatar={loginData.avatar}
+					/>
+				</div>
+				<div className="content-wrapper">
+					<div className="discussion-body-wrapper editable">
+						<Editor
+							placeholder="Type your discussion here..."
+							// This calls .toJSON everytime which seems inefficient
+							// Why do we only need this for local changes to doc - and not remote edits?
+							// initialContent={editorView ? editorView.state.doc.toJSON() : undefined}
+							onChange={(editorChangeObject) => {
+								dispatch({
+									id: discussionId,
+									key: 'editorView',
+									value: editorChangeObject.view,
+								});
+							}}
+						/>
+					</div>
+					<Button
+						className="discussion-primary-button"
+						intent={Intent.PRIMARY}
+						text="Post Discussion"
+						loading={isLoading}
+						onClick={handlePostDiscussion}
+					/>
+					<Button
+						text="Cancel"
+						onClick={() => {
+							removeLocalHighlight(pubView, discussionId);
+							dispatch({ id: discussionId, delete: true });
+						}}
+					/>
+				</div>
+			</div>
 		</div>
 	);
 };

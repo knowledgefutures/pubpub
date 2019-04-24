@@ -193,8 +193,8 @@ class AttributionEditor extends Component {
 								canEdit={false}
 								// isDragging={isDragging}
 								// dragHandleProps={dragHandleProps}
-								// onAttributionDelete={this.handleAttributionDelete}
-								// onAttributionUpdate={this.handleAttributionUpdate}
+								onAttributionDelete={()=>{}}
+								onAttributionUpdate={()=>{}}
 							/>
 						);
 					})}

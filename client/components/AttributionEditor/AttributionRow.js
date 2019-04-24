@@ -33,7 +33,8 @@ const AttributionRow = (props) => {
 		onAttributionDelete,
 		onAttributionUpdate,
 	} = props;
-	const { user, id, isAuthor, roles } = attribution;
+	const { user, id, isAuthor } = attribution;
+	const roles = attribution.roles || [];
 	return (
 		<div className={classNames('attribution-row', isDragging && 'is-dragging')}>
 			{dragHandleProps && (

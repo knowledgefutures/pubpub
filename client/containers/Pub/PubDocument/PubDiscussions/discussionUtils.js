@@ -74,8 +74,10 @@ export const groupDiscussionsByTop = (decorations) => {
 			const ids = discussionTops[topKey].map((discussion) => {
 				return discussion.attrs.class.replace('discussion-range d-', '');
 			});
+
+			/* 70 comes from the rough max height of PubDiscussions/SidePreviews/Preview */
 			const nextItemIsNear =
-				index < array.length - 1 && Number(array[index + 1]) < Number(topKey) + 100;
+				index < array.length - 1 && Number(array[index + 1]) < Number(topKey) + 70;
 			const isCollapsed = nextItemIsNear || ids.length > 1;
 			groupings.push({
 				key: Number(topKey) + window.scrollY,

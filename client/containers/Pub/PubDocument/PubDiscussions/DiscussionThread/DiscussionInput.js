@@ -16,7 +16,6 @@ const propTypes = {
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object.isRequired,
 	discussionId: PropTypes.string.isRequired,
-	// discussionState: PropTypes.object.isRequired,
 	dispatch: PropTypes.func.isRequired,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,

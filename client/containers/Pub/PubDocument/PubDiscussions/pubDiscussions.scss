@@ -22,8 +22,10 @@
 		}
 	}
 	.item-header {
+		display: flex;
+		align-items: center;
 		line-height: 1em;
-		margin-bottom: 0.5em;
+		margin-bottom: 0.25em;
 		font-size: 14px;
 		color: #888;
 		.name {
@@ -33,6 +35,9 @@
 		}
 		.time {
 			margin-right: 1em;
+		}
+		.bp3-button {
+			min-height: 17px;
 		}
 	}
 

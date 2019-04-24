@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { marksAtSelection } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
@@ -31,6 +31,8 @@ const PubDocument = (props) => {
 	const [clickedMarks, setClickedMarks] = useState([]);
 	// const [tempId, setTempId] = useState(uuidv4());
 	const editorChangeObject = props.collabData.editorChangeObject;
+	const mainContentRef = useRef(null);
+	const sideContentRef = useRef(null);
 
 	/* Calculate whether the link popup should be open */
 	const activeLink = editorChangeObject.activeLink || {};
@@ -64,9 +66,9 @@ const PubDocument = (props) => {
 	const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			{/*<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />*/}
+			<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />
 			<GridWrapper containerClassName="pub" columnClassName="pub-columns">
-				<div className="main-content">
+				<div className="main-content" ref={mainContentRef}>
 					<PubBody
 						pubData={props.pubData}
 						collabData={props.collabData}
@@ -87,6 +89,8 @@ const PubDocument = (props) => {
 						collabData={props.collabData}
 						firebaseBranchRef={props.firebaseBranchRef}
 						updateLocalData={props.updateLocalData}
+						mainContentRef={mainContentRef}
+						sideContentRef={sideContentRef}
 					/>
 
 					{!linkPopupIsOpen && editorFocused && (
@@ -102,7 +106,7 @@ const PubDocument = (props) => {
 						<PubLinkMenu pubData={props.pubData} collabData={props.collabData} />
 					)}
 				</div>
-				<div className="side-content">
+				<div className="side-content" ref={sideContentRef}>
 					<PubToc
 						pubData={props.pubData}
 						editorChangeObject={props.collabData.editorChangeObject}

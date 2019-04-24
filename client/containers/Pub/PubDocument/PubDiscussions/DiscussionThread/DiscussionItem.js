@@ -90,7 +90,7 @@ const DiscussionItem = (props) => {
 					{loginData.id === discussionData.userId && (
 						<span className="actions">
 							<Button
-								icon={isEditing ? undefined : <Icon icon="edit2" iconSize={14} />}
+								icon={isEditing ? undefined : <Icon icon="edit2" iconSize={12} />}
 								text={isEditing ? 'Cancel Edit' : undefined}
 								minimal={true}
 								small={true}

@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import DiscussionThread from './DiscussionThread';
-// import PubDiscussionThreadNew from './PubDiscussionThreadNew';
 import SidePreviews from './SidePreviews';
 import {
 	getDiscussionIdArray,
@@ -20,35 +19,16 @@ const propTypes = {
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
+	mainContentRef: PropTypes.object.isRequired,
+	sideContentRef: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
 	firebaseBranchRef: undefined,
 };
 
-/*
-
-Parse into threads.
-
-
-DiscussionThread
-	DiscussionItem
-DiscussionNew
-SidePreviews (handles preview or group)
-	PreviewGroup
-	Preview
-
-
-On new thread,
-	need to write to firebase, write to database
-On update,
-	need to write to firebase, write to database
-
-
-*/
-
 const PubDiscussions = (props) => {
-	const { pubData, collabData, firebaseBranchRef } = props;
+	const { pubData, collabData, firebaseBranchRef, sideContentRef, mainContentRef } = props;
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const [discussionsState, discussionsDispatch] = useReducer((state, action) => {
 		if (action.delete) {
@@ -139,29 +119,16 @@ const PubDiscussions = (props) => {
 			{groupTops.map((group) => {
 				return ReactDOM.createPortal(
 					<SidePreviews
-						pubData={pubData}
-						groupIds={group.ids}
+						threads={threads}
+						groupData={group}
 						discussionsState={discussionsState}
 						dispatch={discussionsDispatch}
+						mainContentRef={mainContentRef}
+						sideContentRef={sideContentRef}
 					/>,
 					document.getElementsByClassName(`dm-${group.ids[0]}`)[0],
 				);
 			})}
-
-			{/* newDiscussionIds.map((id) => {
-				return ReactDOM.createPortal(
-					<PubDiscussionThreadNew
-						pubData={pubData}
-						collabData={collabData}
-						firebaseBranchRef={firebaseBranchRef}
-						discussionId={id}
-						discussionState={discussionsState[id] || {}}
-						dispatch={discussionsDispatch}
-						updateLocalData={props.updateLocalData}
-					/>,
-					document.getElementsByClassName(`lm-${id}`)[0],
-				);
-			}) */}
 		</div>
 	);
 };

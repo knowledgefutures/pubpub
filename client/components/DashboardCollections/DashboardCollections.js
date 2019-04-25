@@ -32,7 +32,6 @@ class DashboardCollections extends React.Component {
 			communityData: { collections },
 		} = this.props;
 		const { matchCollectionQuery, matchCollectionSchema } = this.state;
-		const createdAtTime = (collection) => new Date(collection.createdAt).getTime();
 		return collections
 			.filter((collection) => {
 				const matchesQuery =
@@ -42,7 +41,21 @@ class DashboardCollections extends React.Component {
 					!matchCollectionSchema || matchCollectionSchema.kind === collection.kind;
 				return matchesQuery && matchesKind;
 			})
-			.sort((a, b) => createdAtTime(b) - createdAtTime(a));
+			.sort((foo, bar) => {
+				if (foo.createdAt < bar.createdAt) {
+					return 1;
+				}
+				if (foo.createdAt > bar.createdAt) {
+					return -1;
+				}
+				if (foo.title < bar.title) {
+					return -1;
+				}
+				if (foo.title > bar.title) {
+					return 1;
+				}
+				return 0;
+			});
 	}
 
 	handleCreateCollection(title, kind) {

@@ -444,64 +444,102 @@ new Promise((resolve) => {
 	// 	return sequelize.queryInterface.addColumn('Pubs', 'downloads', { type: Sequelize.JSONB });
 	// })
 	// .then(() => {
-		// return (
-		// 	Collection.sync()
-		// 		.then(() =>
-		// 			sequelize.getQueryInterface().addColumn('Communities', 'defaultPubCollections', Sequelize.JSONB),
-		// 		)
-		// 		.then(() => {
-		// 			return Community.findAll({
-		// 				where: {
-		// 					defaultPubTags: { [Op.ne]: null }
-		// 					// id: 'c153eec9-671d-4d38-a720-8e7164f6e12a'
-		// 				}
-		// 			}).then((communityData) => {
-		// 				return Promise.all(
-		// 					communityData.map((data) => {
-		// 						console.log(data.defaultPubTags, data.id);
-		// 						return Community.update(
-		// 							{
-		// 								updatedAt: data.updatedAt,
-		// 								defaultPubCollections: data.defaultPubTags,
-		// 							},
-		// 							{
-		// 								where: {
-		// 									id: data.id,
-		// 								},
-		// 							},
-		// 						);
-		// 					}),
-		// 				);
-		// 			});
-		// 		})
-		// );
-		// .renameColumn('Communities', 'defaultPubTags', 'defaultPubCollections'))
-		// .then(() => {
-		// 	return Tag.findAll().then(tags => {
-		// 		const collections = tags.map(tag => {
-		// 			return {...tag.dataValues, kind: "tag"};
-		// 		});
-		// 		return Collection.bulkCreate(collections);
-		// 	})
-		// })
-		// .then(() => CollectionPub.sync())
-		// .then(() => {
-		// 	return PubTag.findAll().then(pubTags => {
-		// 		const pubTagIds = {};
-		// 		const collectionPubs = pubTags.filter((pt) => {
-		// 			if (pubTagIds[`${pt.pubId}_${pt.tagId}`]) {
-		// 				console.log('yep - got a false', `${pt.pubId}_${pt.tagId}`);
-		// 				return false;
-		// 			}
-		// 			pubTagIds[`${pt.pubId}_${pt.tagId}`] = true;
-		// 			return true;
-		// 		}).map(pt => {
-		// 			return {pubId: pt.pubId, collectionId: pt.tagId};
-		// 		});
-		// 		return CollectionPub.bulkCreate(collectionPubs);
-		// 	});
-		// })
-		// .then(() => CollectionAttribution.sync())
+	// return (
+	// 	Collection.sync()
+	// 		.then(() =>
+	// 			sequelize.getQueryInterface().addColumn('Communities', 'defaultPubCollections', Sequelize.JSONB),
+	// 		)
+	// 		.then(() => {
+	// 			return Community.findAll({
+	// 				where: {
+	// 					defaultPubTags: { [Op.ne]: null }
+	// 					// id: 'c153eec9-671d-4d38-a720-8e7164f6e12a'
+	// 				}
+	// 			}).then((communityData) => {
+	// 				return Promise.all(
+	// 					communityData.map((data) => {
+	// 						console.log(data.defaultPubTags, data.id);
+	// 						return Community.update(
+	// 							{
+	// 								updatedAt: data.updatedAt,
+	// 								defaultPubCollections: data.defaultPubTags,
+	// 							},
+	// 							{
+	// 								where: {
+	// 									id: data.id,
+	// 								},
+	// 							},
+	// 						);
+	// 					}),
+	// 				);
+	// 			});
+	// 		})
+	// );
+	// .renameColumn('Communities', 'defaultPubTags', 'defaultPubCollections'))
+	// .then(() => {
+	// 	return Tag.findAll().then(tags => {
+	// 		const collections = tags.map(tag => {
+	// 			return {...tag.dataValues, kind: "tag"};
+	// 		});
+	// 		return Collection.bulkCreate(collections);
+	// 	})
+	// })
+	// .then(() => CollectionPub.sync())
+	// .then(() => {
+	// 	return PubTag.findAll().then(pubTags => {
+	// 		const pubTagIds = {};
+	// 		const collectionPubs = pubTags.filter((pt) => {
+	// 			if (pubTagIds[`${pt.pubId}_${pt.tagId}`]) {
+	// 				console.log('yep - got a false', `${pt.pubId}_${pt.tagId}`);
+	// 				return false;
+	// 			}
+	// 			pubTagIds[`${pt.pubId}_${pt.tagId}`] = true;
+	// 			return true;
+	// 		}).map(pt => {
+	// 			return {pubId: pt.pubId, collectionId: pt.tagId};
+	// 		});
+	// 		return CollectionPub.bulkCreate(collectionPubs);
+	// 	});
+	// })
+	// .then(() => CollectionAttribution.sync())
+	// })
+	// .then(() => {
+	// 	return Page.findAll().then((pageData) => {
+	// 		const pageUpdates = pageData
+	// 			.filter((page) => {
+	// 				return page.layout;
+	// 			})
+	// 			.map((page) => {
+	// 				const newLayout = page.layout.map((block) => {
+	// 					if (block.type === 'pubs') {
+	// 						const newBlock = { ...block };
+	// 						if (block.content.tagIds) {
+	// 							newBlock.content.collectionIds = block.content.tagIds;
+	// 							delete newBlock.content.tagIds;
+	// 						}
+	// 						return newBlock;
+	// 					}
+	// 					if (block.type === 'banner') {
+	// 						const newBlock = { ...block };
+	// 						if (block.content.defaultTagIds) {
+	// 							newBlock.content.defaultCollectionIds = block.content.defaultTagIds;
+	// 							delete newBlock.content.defaultTagIds;
+	// 						}
+	// 						return newBlock;
+	// 					}
+	// 					return block;
+	// 				});
+	// 				return Page.update(
+	// 					{ layout: newLayout },
+	// 					{
+	// 						where: {
+	// 							id: page.id,
+	// 						},
+	// 					},
+	// 				);
+	// 			});
+	// 		return Promise.all(pageUpdates);
+	// 	});
 	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);

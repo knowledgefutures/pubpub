@@ -28,9 +28,14 @@ class CollectionEditor extends React.Component {
 		super(props);
 		this.state = {
 			pendingOperationsCount: 0,
-			selections: props.collection.collectionPubs.map((cp) =>
-				createPubSelectionFromCollectionPub(cp, props.pubs, props.collection),
-			),
+			selections: props.collection.collectionPubs
+				.map((cp) => createPubSelectionFromCollectionPub(cp, props.pubs, props.collection))
+				.filter((cp) => {
+					/* We filter here because you may have a CollectionPub object that is */
+					/* pointing to a private pub you don't have access to. In this case, */
+					/* cp.pub will be undefined, so we filter those CollectionPubs out. */
+					return cp;
+				}),
 		};
 		this.handleAddSelection = this.handleAddSelection.bind(this);
 		this.handleRemoveSelectionByPub = this.handleRemoveSelectionByPub.bind(this);

@@ -22,6 +22,9 @@ export const createPubSelection = (pub, collection, rank, id = null, contextHint
 export const createPubSelectionFromCollectionPub = (collectionPub, allPubs, collection) => {
 	const { contextHint, rank, id } = collectionPub;
 	const pub = allPubs.find((p) => p.id === collectionPub.pubId);
+	if (!pub) {
+		return null;
+	}
 	return createPubSelection(pub, collection, rank, id, contextHint);
 };
 

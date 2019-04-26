@@ -108,6 +108,9 @@ app.use((req, res, next) => {
 	if (req.hostname.indexOf('localhost') > -1) {
 		req.headers.host = 'dev.pubpub.org';
 	}
+	if (req.hostname.indexOf('v6.pubpub.org') > -1) {
+		req.headers.host = 'dev.pubpub.org';
+	}
 	// if (req.hostname.indexOf('localhost') > -1) { req.headers.host = 'www.pubpub.org'; }
 	if (req.hostname.indexOf('dev-pubpub.pubpub.org') > -1) {
 		req.headers.host = 'www.pubpub.org';

@@ -42,8 +42,9 @@ export default (pubData, communityData) => {
 				family: attribution.user.lastName,
 			};
 		});
+	const cleanedTitle = pubData.title.replace(/\"/gi, '');
 	const commonData = {
-		title: pubData.title,
+		title: cleanedTitle,
 		'container-title': communityData.title,
 		...(authorData.length ? { author: authorData } : {}),
 		...getCollectionLevelData(primaryCollectionPub),

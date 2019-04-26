@@ -250,7 +250,7 @@ class Landing extends React.Component {
 												</a>
 												<p className="credit">
 													<a
-														href="https://frankenbook.org"
+														href="https://www.frankenbook.org"
 														target="_blank"
 														rel="noopener noreferrer"
 													>

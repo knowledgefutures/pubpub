@@ -49,7 +49,7 @@ app.get(
 				return Promise.all([
 					initialData,
 					findPub(req, initialData, mode),
-					getFirebaseToken(initialData.loginData.id, {}),
+					getFirebaseToken(initialData.loginData.id || 'anon', {}),
 				]);
 			})
 			.then(([initialData, pubData, firebaseToken]) => {

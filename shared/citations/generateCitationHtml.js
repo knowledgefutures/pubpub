@@ -42,6 +42,8 @@ export default (pubData, communityData) => {
 				family: attribution.user.lastName,
 			};
 		});
+	/* We have to clean this title because of a bug in Citation.js */
+	/* Issue here: https://github.com/citation-js/citation-js/issues/35 */
 	const cleanedTitle = pubData.title.replace(/\"/gi, '');
 	const commonData = {
 		title: cleanedTitle,

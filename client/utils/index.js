@@ -65,9 +65,9 @@ export const hydrateWrapper = (Component) => {
 			}
 			client.extendEvents({ pubpub: customEventData });
 			client.initAutoTracking({
-				recordPageViews: true,
-				// recordPageViewsOnExit: true,
-				recordClicks: false,
+				// recordPageViews: true,
+				recordPageViewsOnExit: true,
+				// recordClicks: false,
 				// TODO: recordClicks being true breaks functionality on file input overlays (e.g. pub header image upload)
 			});
 		}

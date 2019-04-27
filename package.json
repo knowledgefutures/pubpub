@@ -98,7 +98,7 @@
 		"is-mobile": "^2.0.0",
 		"katex": "^0.10.1",
 		"keen-analysis": "^3.3.1",
-		"keen-tracking": "^3.1.2",
+		"keen-tracking": "^4.4.0",
 		"lodash.throttle": "^4.1.1",
 		"mailgun.js": "^2.0.1",
 		"mini-css-extract-plugin": "^0.6.0",

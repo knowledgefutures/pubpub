@@ -67,8 +67,6 @@ export const hydrateWrapper = (Component) => {
 			client.initAutoTracking({
 				// recordPageViews: true,
 				recordPageViewsOnExit: true,
-				// recordClicks: false,
-				// TODO: recordClicks being true breaks functionality on file input overlays (e.g. pub header image upload)
 			});
 		}
 

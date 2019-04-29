@@ -8,7 +8,7 @@ import Editor, {
 } from '@pubpub/editor';
 import { Button, Intent } from '@blueprintjs/core';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import { Avatar } from 'components';
+import { Avatar, FormattingBar } from 'components';
 import { apiFetch } from 'utils';
 
 const propTypes = {
@@ -82,6 +82,13 @@ const DiscussionInput = (props) => {
 				<Avatar width={30} userInitials={loginData.intials} userAvatar={loginData.avatar} />
 			</div>
 			<div className="content-wrapper">
+				<FormattingBar
+					editorChangeObject={changeObject || {}}
+					threads={[]}
+					hideBlocktypes={true}
+					hideExtraFormatting={true}
+					isSmall={true}
+				/>
 				<div className="discussion-body-wrapper editable">
 					<Editor
 						placeholder={

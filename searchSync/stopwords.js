@@ -493,7 +493,7 @@ export default [
 	'sufficiently',
 	'suggest',
 	'sup',
-	'sure	t',
+	'sure',
 	'take',
 	'taken',
 	'taking',

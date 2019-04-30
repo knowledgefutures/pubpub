@@ -14,11 +14,14 @@ import { getFirebaseToken } from '../utils/firebaseAdmin';
 import { findPub } from '../utils/pubQueries';
 
 const getMode = (path, slug) => {
-	if (path.indexOf(`/pub/${slug}/submission`) > -1) {
-		return 'submission';
+	if (path.indexOf(`/pub/${slug}/submissions`) > -1) {
+		return 'submissions';
 	}
 	if (path.indexOf(`/pub/${slug}/manage`) > -1) {
 		return 'manage';
+	}
+	if (path.indexOf(`/pub/${slug}/branch/new`) > -1) {
+		return 'new branch';
 	}
 	return 'document';
 };
@@ -32,9 +35,11 @@ const getMode = (path, slug) => {
 app.get(
 	[
 		'/pub/:slug',
+		'/pub/:slug/branch/new',
 		'/pub/:slug/branch/:branchShortId',
 		'/pub/:slug/branch/:branchShortId/:versionNumber',
-		'/pub/:slug/submission',
+		'/pub/:slug/submissions/new/:fromBranchShortId/:toBranchShortId',
+		'/pub/:slug/submissions/:submissionShortId',
 		'/pub/:slug/manage/',
 		'/pub/:slug/manage/:manageMode',
 	],

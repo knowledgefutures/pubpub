@@ -4,6 +4,7 @@ export default (sequelize, dataTypes) => {
 		shortId: { type: dataTypes.INTEGER, allowNull: false },
 		title: { type: dataTypes.TEXT },
 		description: { type: dataTypes.TEXT },
+		submissionAlias: { type: dataTypes.TEXT },
 		order: { type: dataTypes.DOUBLE },
 		communityAdminPermissions: {
 			type: dataTypes.ENUM,

@@ -9,6 +9,7 @@ import PubDocument from './PubDocument';
 import PubSubmission from './PubSubmission';
 import PubMeta from './PubMeta';
 import PubManage from './PubManage';
+import PubBranchCreate from './PubBranchCreate';
 
 require('./pub.scss');
 
@@ -42,8 +43,9 @@ const Pub = (props) => {
 								<PubHeader pubData={pubData} updateLocalData={updateLocalData} />
 								<PubMeta pubData={pubData} updateLocalData={updateLocalData} />
 								{mode === 'document' && <PubDocument {...modeProps} />}
-								{mode === 'submission' && <PubSubmission {...modeProps} />}
+								{mode === 'submissions' && <PubSubmission {...modeProps} />}
 								{mode === 'manage' && <PubManage {...modeProps} />}
+								{mode === 'new branch' && <PubBranchCreate {...modeProps} />}
 							</React.Fragment>
 						);
 					}}

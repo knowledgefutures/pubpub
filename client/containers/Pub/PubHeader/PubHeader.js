@@ -16,10 +16,12 @@ import {
 	Intent,
 	Menu,
 	MenuItem,
+	MenuDivider,
 } from '@blueprintjs/core';
 import { Icon, GridWrapper } from 'components';
 import ActionButton from './ActionButton';
 import styleGenerator from './styleGenerator';
+import { generateSubmissionButtons } from './headerUtils';
 
 require('./pubHeader.scss');
 
@@ -62,6 +64,7 @@ const PubHeader = (props) => {
 	const { width: windowWidth } = useWindowSize();
 	const pubData = props.pubData;
 	const isDocMode = pubData.mode === 'document';
+	const isSubmissionsMode = pubData.mode === 'submission'
 
 	useEffect(() => {
 		if (!isDocMode) {
@@ -142,6 +145,7 @@ const PubHeader = (props) => {
 
 	const accentColor = pubData.headerStyle === 'white-blocks' ? '#A2273E' : '#ecd721';
 	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
+	const submissionButtons = generateSubmissionButtons(pubData);
 
 	return (
 		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>
@@ -389,7 +393,7 @@ const PubHeader = (props) => {
 											text: (
 												<div className="text-stack">
 													<span className="subtext">now on branch</span>
-													<span>Public</span>
+													<span>{pubData.activeBranch.title}</span>
 												</div>
 											),
 											rightIcon: 'caret-down',
@@ -397,8 +401,46 @@ const PubHeader = (props) => {
 											popoverProps: {
 												content: (
 													<Menu>
-														<MenuItem text="Branch1" />
-														<MenuItem text="Branch12" />
+														<li className="bp3-menu-header">
+															<h6 className="bp3-heading">
+																Switch To...
+															</h6>
+														</li>
+														{pubData.branches
+															.sort((foo, bar) => {
+																if (foo.order < bar.order) {
+																	return -1;
+																}
+																if (foo.order > bar.order) {
+																	return 1;
+																}
+																return 0;
+															})
+															.map((branch, index) => {
+																const branchUrlSuffix = index
+																	? `branch/${branch.shortId}`
+																	: '';
+																return (
+																	<MenuItem
+																		text={branch.title}
+																		active={
+																			pubData.activeBranch
+																				.id === branch.id
+																		}
+																		href={`/pub/${
+																			pubData.slug
+																		}/${branchUrlSuffix}`}
+																	/>
+																);
+															})}
+														<MenuDivider />
+														<MenuItem
+															icon="add"
+															text="Create New Branch"
+															href={`/pub/${
+																pubData.slug
+															}/branch/new`}
+														/>
 													</Menu>
 												),
 												minimal: true,
@@ -410,44 +452,9 @@ const PubHeader = (props) => {
 								/>
 
 								{/* Submit Button */}
-
-								<ActionButton
-									buttons={[
-										{
-											text: (
-												<div className="text-stack">
-													<span>Submit for Review</span>
-													<span className="subtext">
-														to branch: public
-													</span>
-												</div>
-											),
-											href: 'https://web.mit.edu',
-											isWide: true,
-										},
-										{
-											// text: 'hello',
-											rightIcon: 'caret-down',
-											isSkinny: true,
-											popoverProps: {
-												content: (
-													<Menu>
-														<MenuItem text="Hello Hello Hello" />
-														<MenuItem text="Okay" />
-													</Menu>
-												),
-												minimal: true,
-												popoverClassName: 'right-aligned-skewed',
-												position: Position.BOTTOM_RIGHT,
-											},
-										},
-										// {
-										// 	text: '5',
-										// 	isSkinny: true,
-										// },
-									]}
-									isSkewed={true}
-								/>
+								{submissionButtons && (
+									<ActionButton buttons={submissionButtons} isSkewed={true} />
+								)}
 							</div>
 							<div className="right">
 								{metaModes.map((mode) => {
@@ -455,7 +462,7 @@ const PubHeader = (props) => {
 									return (
 										<ActionButton
 											key={mode.title}
-											isLarge={true}
+											// isLarge={true}
 											buttons={[
 												{
 													icon: mode.icon,

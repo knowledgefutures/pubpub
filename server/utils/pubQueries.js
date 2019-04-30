@@ -54,12 +54,11 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 	if (!allowedBranches.length) {
 		return null;
 	}
-
 	const activeBranch = allowedBranches.reduce((prev, curr, index) => {
 		if (index === 0) {
 			return curr;
 		}
-		if (curr.shortId === req.params.branchShortId) {
+		if (curr.shortId === Number(req.params.branchShortId)) {
 			return curr;
 		}
 		return prev;
@@ -279,6 +278,7 @@ export const findPub = (req, initialData, mode) => {
 					'shortId',
 					'title',
 					'description',
+					'submissionAlias',
 					'order',
 					'communityAdminPermissions',
 					'publicPermissions',

@@ -18,7 +18,7 @@ const propTypes = {
 };
 
 const PubManage = (props) => {
-	const { locationData, communityData } = useContext(PageContext);
+	const { locationData, communityData, loginData } = useContext(PageContext);
 	const manageMode = locationData.params.manageMode || 'details';
 	const modes = [
 		{ text: 'Details', active: manageMode === 'details', path: '' },
@@ -66,6 +66,7 @@ const PubManage = (props) => {
 					{manageMode === 'collections' && (
 						<Collections
 							communityData={communityData}
+							loginData={loginData}
 							pubData={props.pubData}
 							updateLocalData={props.updateLocalData}
 						/>

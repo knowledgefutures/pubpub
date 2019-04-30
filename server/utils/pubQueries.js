@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser, checkIfSuperAdmin } from '../utils';
 import { generateCitationHTML } from './citations';
 import { getBranchDoc } from './firebaseAdmin';
 import {
@@ -21,8 +21,8 @@ import {
 export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req) => {
 	/* Used to format pub JSON and to test */
 	/* whether the user has permissions */
-	const isPubPubAdmin = loginData.id === 'b242f616-7aaa-479c-8ee5-3933dcf70859';
-	const isCommunityAdminManager = communityAdminData && pub.isCommunityAdminManaged;
+	const isSuperAdmin = checkIfSuperAdmin(loginData.id);
+
 	const allowedBranches = pub.branches
 		.sort((foo, bar) => {
 			if (foo.order < bar.order) {
@@ -39,21 +39,18 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			const hasHashAccess =
 				branch.shortId === req.params.branchShortId && (validViewHash || validEditHash);
 			const publicAccess = branch.publicPermissions !== 'none';
-			if (publicAccess || hasHashAccess) {
-				return true;
-			}
-
 			return branch.permissions.reduce((prev, curr) => {
 				if (curr.userId === loginData.id) {
 					return true;
 				}
 				return prev;
-			}, false);
+			}, publicAccess || hasHashAccess);
 		});
 
 	if (!allowedBranches.length) {
 		return null;
 	}
+
 	const activeBranch = allowedBranches.reduce((prev, curr, index) => {
 		if (index === 0) {
 			return curr;
@@ -64,70 +61,88 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 		return prev;
 	}, undefined);
 
-	const isValidViewHash = req.query.access === activeBranch.viewHash;
-	const isValidEditHash = req.query.access === activeBranch.editHash;
-	const isCommunityAdminViewer =
-		communityAdminData && activeBranch.communityAdminPermissions === 'view';
-	const isCommunityAdminEditor =
-		communityAdminData && activeBranch.communityAdminPermissions === 'edit';
-	const isCommunityAdminBranchAdmin =
-		communityAdminData && activeBranch.communityAdminPermissions === 'admin';
-
-	const isManager = pub.managers.reduce((prev, curr) => {
+	/* Compute canManage */
+	const isCommunityAdminManager = communityAdminData && pub.isCommunityAdminManaged;
+	const canManage = pub.managers.reduce((prev, curr) => {
 		if (curr.userId === loginData.id) {
 			return true;
 		}
 		return prev;
-	}, isCommunityAdminManager || isPubPubAdmin);
+	}, isCommunityAdminManager || isSuperAdmin);
 
-	const isBranchAdmin = activeBranch.permissions.reduce((prev, curr) => {
+	/* Compute canManageBranch */
+	const isCommunityAdminBranchManager =
+		communityAdminData && activeBranch.communityAdminPermissions === 'manage';
+	const isPubManagerBranchManager = canManage && activeBranch.pubManagerPermissions === 'manage';
+	const canManageBranch = activeBranch.permissions.reduce((prev, curr) => {
 		if (curr.userId === loginData.id && curr.permissions === 'manage') {
 			return true;
 		}
 		return prev;
-	}, isCommunityAdminBranchAdmin);
+	}, isCommunityAdminBranchManager || isPubManagerBranchManager || isSuperAdmin);
 
-	// TODO: Change these to canView, canEdit, canDiscuss
-	const isViewer = activeBranch.permissions.reduce((prev, curr) => {
-		if (curr.userId === loginData.id && curr.permissions === 'view') {
-			return true;
-		}
-		return prev;
-	}, isCommunityAdminViewer || isValidViewHash || activeBranch.publicPermissions === 'view');
-
-	const isEditor = activeBranch.permissions.reduce((prev, curr) => {
+	/* Compute canEditBranch */
+	const isValidEditHash = req.query.access === activeBranch.editHash;
+	const isCommunityAdminEditor =
+		communityAdminData && activeBranch.communityAdminPermissions === 'edit';
+	const isPubManagerBranchEditor = canManage && activeBranch.pubManagerPermissions === 'edit';
+	const canEditBranch = activeBranch.permissions.reduce((prev, curr) => {
 		if (curr.userId === loginData.id && curr.permissions === 'edit') {
 			return true;
 		}
 		return prev;
-	}, isCommunityAdminEditor || isBranchAdmin || isValidEditHash || allowedBranches[0].publicPermissions === 'edit');
+	}, canManageBranch || isValidEditHash || isCommunityAdminEditor || isPubManagerBranchEditor);
 
-	/* Ensure access of some kind */
-	/* TODO: Something weird here. There shouldn't be a case where you have a Pub Manager */
-	/* who has no access to any branch, so I'm not sure isManager matters here */
-	if (!isManager && !isEditor && !isViewer && !isBranchAdmin) {
+	/* Compute canDiscussBranch */
+	const isValidDiscussHash = req.query.access === activeBranch.discussHash;
+	const isCommunityAdminDiscussor =
+		communityAdminData && activeBranch.communityAdminPermissions === 'discuss';
+	const isPubManagerBranchDiscussor =
+		canManage && activeBranch.pubManagerPermissions === 'discuss';
+	const canDiscussBranch = activeBranch.permissions.reduce((prev, curr) => {
+		if (curr.userId === loginData.id && curr.permissions === 'discuss') {
+			return true;
+		}
+		return prev;
+	}, canEditBranch || isValidDiscussHash || isCommunityAdminDiscussor || isPubManagerBranchDiscussor);
+
+	/* Compute canViewBranch */
+	const isValidViewHash = req.query.access === activeBranch.viewHash;
+	const isCommunityAdminViewer =
+		communityAdminData && activeBranch.communityAdminPermissions === 'view';
+	const isPubManagerBranchViewer = canManage && activeBranch.pubManagerPermissions === 'view';
+	const canViewBranch = activeBranch.permissions.reduce((prev, curr) => {
+		if (curr.userId === loginData.id && curr.permissions === 'view') {
+			return true;
+		}
+		return prev;
+	}, canDiscussBranch || isValidViewHash || isCommunityAdminViewer || isPubManagerBranchViewer);
+
+	if (!canViewBranch) {
 		return null;
 	}
 
 	const formattedBranches = allowedBranches.map((branch) => {
-		const isCurrBranchAdmin = branch.permissions.reduce((prev, curr) => {
-			if (
-				branch.id === curr.branchId &&
-				curr.userId === loginData.id &&
-				curr.permissions === 'manage'
-			) {
+		const isCommunityAdminCurrBranchManager =
+			communityAdminData && branch.communityAdminPermissions === 'manage';
+		const isPubManagerCurrBranchManager =
+			canManage && branch.pubManagerPermissions === 'manage';
+		const canManageCurrBranch = branch.permissions.reduce((prev, curr) => {
+			if (curr.userId === loginData.id && curr.permissions === 'manage') {
 				return true;
 			}
 			return prev;
-		}, false);
+		}, isCommunityAdminCurrBranchManager || isPubManagerCurrBranchManager || isSuperAdmin);
 
 		return {
 			...branch,
-			viewHash: isCurrBranchAdmin ? branch.viewHash : undefined,
-			editHash: isCurrBranchAdmin ? branch.editHash : undefined,
+			editHash: canManageCurrBranch ? branch.editHash : undefined,
+			discussHash: canManageCurrBranch ? branch.discussHash : undefined,
+			viewHash: canManageCurrBranch ? branch.viewHash : undefined,
 			isActive: activeBranch.id === branch.id,
 		};
 	});
+
 	const formattedPubData = {
 		...pub,
 		branches: formattedBranches,
@@ -180,10 +195,11 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			.filter((item) => {
 				return !item.collection || item.collection.isPublic || communityAdminData;
 			}),
-		isManager: isManager,
-		isEditor: isEditor,
-		isViewer: isViewer,
-		isBranchAdmin: isBranchAdmin,
+		canManage: canManage,
+		canManageBranch: canManageBranch,
+		canEditBranch: canEditBranch,
+		canDiscussBranch: canDiscussBranch,
+		canViewBranch: canViewBranch,
 		isStaticDoc: !!req.params.versionNumber,
 	};
 

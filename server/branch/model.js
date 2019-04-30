@@ -24,6 +24,7 @@ export default (sequelize, dataTypes) => {
 				defaultValue: 'none',
 			},
 			viewHash: { type: dataTypes.STRING },
+			discussHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
 
 			/* Set by Associations */

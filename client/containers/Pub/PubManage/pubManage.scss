@@ -31,6 +31,10 @@
 		// 	margin-right: 0.25em;
 		// }
 	}
+	.cards-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+	}
 }
 
 @media only screen and (min-width: 750px) {
@@ -55,7 +59,6 @@
 		}
 	}
 }
-
 
 // .pub-options-spinner-wrapper {
 // 	height: 100%;

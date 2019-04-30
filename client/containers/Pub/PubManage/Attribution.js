@@ -10,7 +10,7 @@ const propTypes = {
 	updateLocalData: PropTypes.func.isRequired,
 };
 
-class PubOptionsAttribution extends React.Component {
+class Attribution extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -61,5 +61,5 @@ class PubOptionsAttribution extends React.Component {
 	}
 }
 
-PubOptionsAttribution.propTypes = propTypes;
-export default PubOptionsAttribution;
+Attribution.propTypes = propTypes;
+export default Attribution;

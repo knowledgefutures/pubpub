@@ -114,7 +114,7 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			if (
 				branch.id === curr.branchId &&
 				curr.userId === loginData.id &&
-				curr.permissions === 'admin'
+				curr.permissions === 'manage'
 			) {
 				return true;
 			}

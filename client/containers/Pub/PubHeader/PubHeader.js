@@ -18,8 +18,9 @@ import {
 	MenuItem,
 	MenuDivider,
 } from '@blueprintjs/core';
-import { Icon, GridWrapper } from 'components';
+import { Icon, GridWrapper, Overlay } from 'components';
 import ActionButton from './ActionButton';
+import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
 import { generateSubmissionButtons } from './headerUtils';
 
@@ -55,14 +56,14 @@ const PubHeader = (props) => {
 			How do you get to pub/slug/submissions?
 		Do we require an accent color with the block styles? Or can they be simple white/black text?
 	*/
-
+	const { pubData, updateLocalData } = props;
 	const { communityData, locationData } = useContext(PageContext);
 	const headerRef = useRef(null);
 	const [title, setTitle] = useState(props.pubData.title);
 	const [isMounted, setIsMounted] = useState(false);
 	const [isEditingTitle, setIsEditingTitle] = useState(false);
+	const [isShareOpen, setIsShareOpen] = useState(false);
 	const { width: windowWidth } = useWindowSize();
-	const pubData = props.pubData;
 	const isDocMode = pubData.mode === 'document';
 	const isSubmissionsMode = pubData.mode === 'submission';
 
@@ -92,7 +93,7 @@ const PubHeader = (props) => {
 			}),
 		})
 			.then(() => {
-				props.updateLocalData('pub', {
+				updateLocalData('pub', {
 					title: newTitle,
 				});
 				setIsEditingTitle(false);
@@ -212,10 +213,15 @@ const PubHeader = (props) => {
 									})}
 							</div>
 							<div className="right">
-								<AnchorButton
+								<Button
 									className="manager-button"
 									text="Share"
-									href={`/pub/${pubData.slug}/manage/sharing`}
+									icon="people"
+									intent={Intent.PRIMARY}
+									onClick={() => {
+										setIsShareOpen(true);
+									}}
+									// href={`/pub/${pubData.slug}/manage/sharing`}
 								/>
 								<AnchorButton
 									className="manager-button"
@@ -372,7 +378,7 @@ const PubHeader = (props) => {
 											rightIcon: 'history',
 											active: pubData.metaMode === 'history',
 											onClick: () => {
-												props.updateLocalData('pub', {
+												updateLocalData('pub', {
 													metaMode:
 														pubData.metaMode === 'history'
 															? undefined
@@ -466,7 +472,7 @@ const PubHeader = (props) => {
 													active: isActive,
 													alt: mode.title,
 													onClick: () => {
-														props.updateLocalData('pub', {
+														updateLocalData('pub', {
 															metaMode: isActive
 																? undefined
 																: mode.key,
@@ -481,6 +487,14 @@ const PubHeader = (props) => {
 						</div>
 					)}
 				</GridWrapper>
+				<Overlay
+					isOpen={isShareOpen}
+					onClose={() => {
+						setIsShareOpen(false);
+					}}
+				>
+					<SharePanel pubData={pubData} updateLocalData={updateLocalData} />
+				</Overlay>
 				{isDocMode && (
 					<div className="bottom-text">
 						<div className="bottom-title">{pubData.title}</div>

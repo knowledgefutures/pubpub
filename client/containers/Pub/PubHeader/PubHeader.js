@@ -64,7 +64,7 @@ const PubHeader = (props) => {
 	const { width: windowWidth } = useWindowSize();
 	const pubData = props.pubData;
 	const isDocMode = pubData.mode === 'document';
-	const isSubmissionsMode = pubData.mode === 'submission'
+	const isSubmissionsMode = pubData.mode === 'submission';
 
 	useEffect(() => {
 		if (!isDocMode) {
@@ -142,7 +142,6 @@ const PubHeader = (props) => {
 	];
 
 	const manageMode = locationData.params && locationData.params.manageMode;
-
 	const accentColor = pubData.headerStyle === 'white-blocks' ? '#A2273E' : '#ecd721';
 	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
 	const submissionButtons = generateSubmissionButtons(pubData);
@@ -437,9 +436,7 @@ const PubHeader = (props) => {
 														<MenuItem
 															icon="add"
 															text="Create New Branch"
-															href={`/pub/${
-																pubData.slug
-															}/branch/new`}
+															href={`/pub/${pubData.slug}/branch/new`}
 														/>
 													</Menu>
 												),

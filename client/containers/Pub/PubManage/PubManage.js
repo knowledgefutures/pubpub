@@ -24,10 +24,10 @@ const PubManage = (props) => {
 	const manageMode = locationData.params.manageMode || 'details';
 	const modes = [
 		{ text: 'Details', active: manageMode === 'details', path: '' },
-		{ text: 'Attribution', active: manageMode === 'attribution', path: 'attribution' },
-		{ text: 'Collections', active: manageMode === 'collections', path: 'collections' },
-		{ text: 'Branches', active: manageMode === 'branches', path: 'branches' },
 		{ text: 'Managers', active: manageMode === 'managers', path: 'managers' },
+		{ text: 'Attribution', active: manageMode === 'attribution', path: 'attribution' },
+		{ text: 'Branches', active: manageMode === 'branches', path: 'branches' },
+		{ text: 'Collections', active: manageMode === 'collections', path: 'collections' },
 		{ text: 'DOI', active: manageMode === 'doi', path: 'doi' },
 		{ text: 'Delete', active: manageMode === 'delete', path: 'delete', danger: true },
 	];

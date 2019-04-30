@@ -24,8 +24,8 @@ sequelize.idType = {
 
 /* Import and create all models. */
 /* Also export them to make them available to other modules */
-export const Branch = sequelize.import('./branch.js');
-export const BranchPermission = sequelize.import('./branchPermission.js');
+export const Branch = sequelize.import('../branch/model.js');
+export const BranchPermission = sequelize.import('../branchPermission/model.js');
 export const Collection = sequelize.import('./collection.js');
 export const CollectionAttribution = sequelize.import('./collectionAttribution.js');
 export const CollectionPub = sequelize.import('./collectionPub.js');

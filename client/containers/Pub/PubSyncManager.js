@@ -81,7 +81,6 @@ class PubSyncManager extends React.Component {
 				const keysToSync = [
 					'attributions',
 					'avatar',
-					'branchPermissions',
 					'branches',
 					'citationData',
 					'description',

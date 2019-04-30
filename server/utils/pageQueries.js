@@ -81,17 +81,19 @@ export const findPage = (pageId, useIncludes, initialData) => {
 						'editHash',
 					],
 					required: true,
-				},
-				{
-					model: BranchPermission,
-					as: 'branchPermissions',
-					separate: true,
-					required: false,
 					include: [
 						{
-							model: User,
-							as: 'user',
-							attributes: attributesPublicUser,
+							model: BranchPermission,
+							as: 'permissions',
+							separate: true,
+							required: false,
+							include: [
+								{
+									model: User,
+									as: 'user',
+									attributes: attributesPublicUser,
+								},
+							],
 						},
 					],
 				},

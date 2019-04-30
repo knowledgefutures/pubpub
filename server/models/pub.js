@@ -75,11 +75,6 @@ export default (sequelize) => {
 						as: 'versionPermissions',
 						foreignKey: 'pubId',
 					});
-					Pub.hasMany(BranchPermission, {
-						onDelete: 'CASCADE',
-						as: 'branchPermissions',
-						foreignKey: 'pubId',
-					});
 					Pub.hasMany(PubManager, {
 						onDelete: 'CASCADE',
 						as: 'managers',

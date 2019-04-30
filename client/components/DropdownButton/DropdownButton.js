@@ -61,11 +61,11 @@ const DropdownButton = function(props) {
 					large={props.isLarge}
 					small={props.isSmall}
 					minimal={props.isMinimal}
+					rightIcon={<Icon icon="caret-down" />}
 					text={
 						<span>
 							{props.icon && <Icon icon={props.icon} />}
 							{props.label.trim ? props.label.trim() : props.label}
-							<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 						</span>
 					}
 				/>

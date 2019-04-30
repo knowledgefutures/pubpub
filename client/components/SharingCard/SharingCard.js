@@ -5,7 +5,7 @@ require('./sharingCard.scss');
 
 const propTypes = {
 	content: PropTypes.node.isRequired,
-	options: PropTypes.object,
+	options: PropTypes.node,
 	isAddCard: PropTypes.bool,
 	isFlatCard: PropTypes.bool,
 };

@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Checkbox, Spinner } from '@blueprintjs/core';
-import { Icon, Avatar, SharingCard, UserAutocomplete, PermissionsDropdown, SettingsSection, InputField } from 'components';
-import { apiFetch } from 'utils';
+import { Button, Spinner } from '@blueprintjs/core';
+import {
+	Icon,
+	Avatar,
+	SharingCard,
+	UserAutocomplete,
+	PermissionsDropdown,
+	SettingsSection,
+	InputField,
+} from 'components';
+import { apiFetch, slugifyString } from 'utils';
 
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
@@ -11,8 +19,137 @@ const propTypes = {
 };
 
 const Branches = (props) => {
-	const { pubData } = props;
+	const { pubData, updateLocalData, communityData } = props;
 	const [isLoading, setIsLoading] = useState(false);
+	const handleBranchUpdate = (branchUpdates) => {
+		setIsLoading(true);
+		updateLocalData('pub', {
+			...pubData,
+			branches: pubData.branches.map((branch) => {
+				if (branch.id !== branchUpdates.branchId) {
+					return branch;
+				}
+				return {
+					...branch,
+					...branchUpdates,
+				};
+			}),
+		});
+		return apiFetch('/api/branches', {
+			method: 'PUT',
+			body: JSON.stringify({
+				...branchUpdates,
+				pubId: pubData.id,
+				communityId: communityData.id,
+			}),
+		})
+			.then(() => {
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
+
+	const handleBranchPermissionAdd = (newBranchPermission) => {
+		setIsLoading(true);
+		return apiFetch('/api/branchPermissions', {
+			method: 'POST',
+			body: JSON.stringify({
+				...newBranchPermission,
+				pubId: pubData.id,
+				communityId: communityData.id,
+			}),
+		})
+			.then((branchPermissionData) => {
+				updateLocalData('pub', {
+					...pubData,
+					branches: pubData.branches.map((branch) => {
+						if (branch.id !== newBranchPermission.branchId) {
+							return branch;
+						}
+						return {
+							...branch,
+							permissions: [...branch.permissions, branchPermissionData],
+						};
+					}),
+				});
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
+	const handleBranchPermissionUpdate = (updatedBranchPermission) => {
+		setIsLoading(true);
+		updateLocalData('pub', {
+			...pubData,
+			branches: pubData.branches.map((branch) => {
+				if (branch.id !== updatedBranchPermission.branchId) {
+					return branch;
+				}
+				return {
+					...branch,
+					permissions: branch.permissions.map((branchPermission) => {
+						if (branchPermission.id !== updatedBranchPermission.branchPermissionId) {
+							return branchPermission;
+						}
+						return {
+							...branchPermission,
+							...updatedBranchPermission,
+						};
+					}),
+				};
+			}),
+		});
+		return apiFetch('/api/branchPermissions', {
+			method: 'PUT',
+			body: JSON.stringify({
+				...updatedBranchPermission,
+				pubId: pubData.id,
+				communityId: communityData.id,
+			}),
+		})
+			.then(() => {
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
+
+	const handleBranchPermissionDelete = (updatedBranchPermission) => {
+		setIsLoading(true);
+		updateLocalData('pub', {
+			...pubData,
+			branches: pubData.branches.map((branch) => {
+				if (branch.id !== updatedBranchPermission.branchId) {
+					return branch;
+				}
+				return {
+					...branch,
+					permissions: branch.permissions.filter((branchPermission) => {
+						return branchPermission.id !== updatedBranchPermission.branchPermissionId;
+					}),
+				};
+			}),
+		});
+		return apiFetch('/api/branchPermissions', {
+			method: 'DELETE',
+			body: JSON.stringify({
+				...updatedBranchPermission,
+				pubId: pubData.id,
+				communityId: communityData.id,
+			}),
+		})
+			.then(() => {
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
+
 	return (
 		<div className="pub-manage_branches-component">
 			{isLoading && (
@@ -25,8 +162,17 @@ const Branches = (props) => {
 
 			{pubData.branches.map((branch) => {
 				return (
-					<SettingsSection title={branch.title}>
-						<InputField label="Title" value={branch.title} />
+					<SettingsSection title={branch.title} key={branch.id}>
+						<InputField
+							label="Title"
+							value={branch.title}
+							onChange={(evt) => {
+								handleBranchUpdate({
+									branchId: branch.id,
+									title: slugifyString(evt.target.value),
+								});
+							}}
+						/>
 						<p>Permissions</p>
 						<div className="cards-wrapper">
 							{/* Public Permissions */}
@@ -40,7 +186,10 @@ const Branches = (props) => {
 										allowedTyped={['none', 'view', 'discuss', 'edit']}
 										value={branch.publicPermissions}
 										onChange={(newPermission) => {
-											console.log(newPermission);
+											handleBranchUpdate({
+												branchId: branch.id,
+												publicPermissions: newPermission,
+											});
 										}}
 									/>
 								}
@@ -57,7 +206,10 @@ const Branches = (props) => {
 										allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
 										value={branch.pubManagerPermissions}
 										onChange={(newPermission) => {
-											console.log(newPermission);
+											handleBranchUpdate({
+												branchId: branch.id,
+												pubManagerPermissions: newPermission,
+											});
 										}}
 									/>
 								}
@@ -74,7 +226,10 @@ const Branches = (props) => {
 										allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
 										value={branch.communityAdminPermissions}
 										onChange={(newPermission) => {
-											console.log(newPermission);
+											handleBranchUpdate({
+												branchId: branch.id,
+												communityAdminPermissions: newPermission,
+											});
 										}}
 									/>
 								}
@@ -115,7 +270,11 @@ const Branches = (props) => {
 													]}
 													value={permission.permissions}
 													onChange={(newPermission) => {
-														console.log(newPermission);
+														handleBranchPermissionUpdate({
+															branchId: branch.id,
+															branchPermissionId: permission.id,
+															permissions: newPermission,
+														});
 													}}
 												/>,
 												<Button
@@ -124,7 +283,10 @@ const Branches = (props) => {
 													small={true}
 													icon="small-cross"
 													onClick={() => {
-														// handleRemoveManager(manager.id);
+														handleBranchPermissionDelete({
+															branchId: branch.id,
+															branchPermissionId: permission.id,
+														});
 													}}
 												/>,
 											]}
@@ -136,7 +298,12 @@ const Branches = (props) => {
 							<SharingCard
 								content={
 									<UserAutocomplete
-										// onSelect={handleAddManager}
+										onSelect={(user) => {
+											handleBranchPermissionAdd({
+												userId: user.id,
+												branchId: branch.id,
+											});
+										}}
 										allowCustomUser={false} // Eventually use this for emails
 										placeholder="Add person..."
 										usedUserIds={branch.permissions.map((item) => {

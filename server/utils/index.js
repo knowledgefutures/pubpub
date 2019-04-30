@@ -9,6 +9,11 @@ import { Collection, Community, Page, User } from '../models';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 
+export const checkIfSuperAdmin = (userId) => {
+	const adminIds = ['b242f616-7aaa-479c-8ee5-3933dcf70859'];
+	return adminIds.includes(userId);
+};
+
 export const attributesPublicUser = [
 	'id',
 	'firstName',

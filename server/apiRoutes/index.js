@@ -33,3 +33,7 @@ require('./users');
 require('./versions');
 require('./versionPermissions');
 require('./workerTasks');
+
+/* In new format */
+require('../branch/api');
+require('../branchPermission/api');

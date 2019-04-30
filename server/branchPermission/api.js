@@ -1,6 +1,6 @@
 import app from '../server';
 import { getPermissions } from './permissions';
-import { createBranch, updateBranch, destroyBranch } from './queries';
+import { createBranchPermission, updateBranchPermission, destroyBranchPermission } from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -12,51 +12,50 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post('/api/branches', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
+app.post('/api/branchPermissions', (req, res) => {
+	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			return createBranch(req.body, requestIds.userId);
+			return createBranchPermission(req.body);
 		})
-		.then((newBranch) => {
-			return res.status(201).json(newBranch);
+		.then((newBranchPermission) => {
+			return res.status(201).json(newBranchPermission);
 		})
 		.catch((err) => {
-			console.error('Error in postBranch: ', err);
+			console.error('Error in postBranchPermission: ', err);
 			return res.status(500).json(err.message);
 		});
 });
 
-app.put('/api/branches', (req, res) => {
+app.put('/api/branchPermissions', (req, res) => {
 	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.update) {
 				throw new Error('Not Authorized');
 			}
-			return updateBranch(req.body, permissions.update);
+			return updateBranchPermission(req.body, permissions.update);
 		})
-		.then((updatedBranchValues) => {
-			return res.status(201).json(updatedBranchValues);
+		.then((updatedBranchPermissionValues) => {
+			return res.status(201).json(updatedBranchPermissionValues);
 		})
 		.catch((err) => {
-			console.error('Error in putBranch: ', err);
+			console.error('Error in putBranchPermission: ', err);
 			return res.status(500).json(err.message);
 		});
 });
 
-app.delete('/api/branches', (req, res) => {
+app.delete('/api/branchPermissions', (req, res) => {
 	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.destroy) {
 				throw new Error('Not Authorized');
 			}
-			return destroyBranch(req.body);
+			return destroyBranchPermission(req.body);
 		})
 		.then(() => {
-			return res.status(201).json(req.body.branchId);
+			return res.status(201).json(req.body.branchPermissionId);
 		})
 		.catch((err) => {
 			console.error('Error in deleteBranch: ', err);

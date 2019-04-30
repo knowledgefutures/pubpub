@@ -54,10 +54,22 @@ class PubSyncManager extends React.Component {
 
 	syncMetadata(snapshot) {
 		this.setState((prevState) => {
+			/* Firebase erases empty arrays, so empty arrays we sync up have */
+			/* to be manually reconstructed here */
+			let newVal = snapshot.val();
+			if (snapshot.key === 'branches') {
+				newVal = newVal.map((branch) => {
+					return {
+						...branch,
+						permissions: branch.permissions || [],
+					};
+				});
+			}
+
 			return {
 				pubData: {
 					...prevState.pubData,
-					[snapshot.key]: snapshot.val(),
+					[snapshot.key]: newVal,
 				},
 			};
 		});

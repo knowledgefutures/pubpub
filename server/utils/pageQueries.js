@@ -68,18 +68,6 @@ export const findPage = (pageId, useIncludes, initialData) => {
 					// separate: true,
 					model: Branch,
 					as: 'branches',
-					attributes: [
-						'createdAt',
-						'id',
-						'shortId',
-						'title',
-						'description',
-						'order',
-						'communityAdminPermissions',
-						'publicPermissions',
-						'viewHash',
-						'editHash',
-					],
 					required: true,
 					include: [
 						{

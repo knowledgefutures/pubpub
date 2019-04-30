@@ -62,25 +62,18 @@ const PubHeaderFormatting = (props) => {
 			name: `${numAnonymous} anonymous user${numAnonymous === 1 ? '' : 's'}`,
 		};
 	}
-	const viewOnly = !pubData.isDraftEditor && !pubData.isManager;
-	if (pubData.isStaticDoc || !pubData.isEditor) {
+	// const viewOnly = !pubData.canEditBranch;
+	if (!pubData.canEditBranch) {
 		return null;
 	}
 	return (
 		<div className="pub-draft-header-component">
-			{viewOnly && (
-				<div className="bp3-callout bp3-intent-warning">
-					<b>Read Only</b> You have view permissions to the working draft but cannot edit
-					it.
-				</div>
-			)}
-			{!viewOnly && (
-				<FormattingBar
-					editorChangeObject={props.collabData.editorChangeObject || {}}
-					threads={props.threads}
-					// key={props.formattingBarKey}
-				/>
-			)}
+			<FormattingBar
+				editorChangeObject={props.collabData.editorChangeObject || {}}
+				threads={props.threads}
+				// key={props.formattingBarKey}
+			/>
+
 			{/* <div className="spacer" /> */}
 			<div className="right-content">
 				{Object.keys(uniqueActiveCollaborators)
@@ -110,15 +103,15 @@ const PubHeaderFormatting = (props) => {
 							</div>
 						);
 					})}
-				{!viewOnly && (
-					<span className={`collab-status ${collabData.status}`}>
-						<span className="status-prefix">Working Draft </span>
-						{collabData.status}
-						{collabData.status === 'saving' || collabData.status === 'connecting'
-							? '...'
-							: ''}
-					</span>
-				)}
+
+				<span className={`collab-status ${collabData.status}`}>
+					<span className="status-prefix">Working Draft </span>
+					{collabData.status}
+					{collabData.status === 'saving' || collabData.status === 'connecting'
+						? '...'
+						: ''}
+				</span>
+
 				{/* <button className="bp3-button bp3-small" type="button">
 					Editing
 					<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />

@@ -177,6 +177,7 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 					return discussion.branchId === activeBranch.id;
 			  })
 			: undefined,
+		/* TODO: Why are we not filtering collections as below anymore? */
 		// collections: pub.collections
 		// 	? pub.collections.filter((item)=> {
 		// 		return item.isPublic || communityAdminData;

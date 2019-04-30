@@ -75,7 +75,7 @@ class PubInlineImport extends Component {
 
 	render() {
 		const isEmptyDoc = this.props.editorView && docIsEmpty(this.props.editorView.state.doc);
-		if (!isEmptyDoc || (!this.props.pubData.isEditor && !this.props.pubData.isManager)) {
+		if (!isEmptyDoc || !this.props.pubData.canEditBranch) {
 			return null;
 		}
 

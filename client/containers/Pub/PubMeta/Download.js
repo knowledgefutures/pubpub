@@ -203,7 +203,7 @@ const Download = (props) => {
 	];
 	return (
 		<div className="pub-meta_download-component">
-			{(props.pubData.isManager || !!formattedDownloadUrl) && (
+			{(props.pubData.canManage || !!formattedDownloadUrl) && (
 				<div>
 					<h2>Download</h2>
 					<p>Default file provided by Pub manager</p>

@@ -51,7 +51,7 @@ class Attribution extends React.Component {
 						pubId: pubData.id,
 					}}
 					attributions={pubData.attributions}
-					canEdit={pubData.isManager}
+					canEdit={pubData.canManage}
 					communityData={communityData}
 					onUpdateAttributions={this.handleUpdateAttributions}
 					onPersistStateChange={this.handlePersistStateChange}

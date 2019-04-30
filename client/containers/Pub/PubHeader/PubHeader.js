@@ -128,7 +128,7 @@ const PubHeader = (props) => {
 	}
 
 	// const isDocMode = pubData.mode === 'document';
-	const useEditableTitle = pubData.isManager && isMounted && isDocMode;
+	const useEditableTitle = pubData.canManage && isMounted && isDocMode;
 	let pubTitle = pubData.title;
 	if (isEditingTitle) {
 		pubTitle = title;

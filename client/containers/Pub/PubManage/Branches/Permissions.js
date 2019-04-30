@@ -156,56 +156,51 @@ const Permissions = (props) => {
 	const baseUrl = `https://${locationData.hostname}/pub/${pubData.slug}/branch/${
 		pubData.activeBranch.shortId
 	}`;
+
+	const accessLinks = [
+		{
+			text: 'view',
+			accessHash: pubData.activeBranch.viewHash,
+		},
+		{
+			text: 'discuss',
+			accessHash: pubData.activeBranch.discussHash,
+		},
+		{
+			text: 'edit',
+			accessHash: pubData.activeBranch.editHash,
+		},
+	];
 	return (
 		<div className="pub-manage_branches_permissions-component">
 			<div>
-				<ButtonGroup minimal={true}>
-					<Tooltip
-						popoverClassName="bp3-dark"
-						content="Copied"
-						isOpen={
-							showTooltip &&
-							copied.value === `${baseUrl}?access=${pubData.activeBranch.viewHash}`
-						}
-						position={Position.TOP}
-					>
-						<Button
-							onClick={() => {
-								copyToClipboard(
-									`${baseUrl}?access=${pubData.activeBranch.viewHash}`,
-								);
-								setShowTooltip(true);
-								clearTimeout(tooltipTimeout.current);
-								tooltipTimeout.current = setTimeout(() => {
-									setShowTooltip(false);
-								}, 1500);
-							}}
-							text="Anyone with this link can view"
-						/>
-					</Tooltip>
-					<Tooltip
-						popoverClassName="bp3-dark"
-						content="Copied"
-						isOpen={
-							showTooltip &&
-							copied.value === `${baseUrl}?access=${pubData.activeBranch.editHash}`
-						}
-						position={Position.TOP}
-					>
-						<Button
-							onClick={() => {
-								copyToClipboard(
-									`${baseUrl}?access=${pubData.activeBranch.editHash}`,
-								);
-								setShowTooltip(true);
-								clearTimeout(tooltipTimeout.current);
-								tooltipTimeout.current = setTimeout(() => {
-									setShowTooltip(false);
-								}, 1500);
-							}}
-							text="Anyone with this link can edit"
-						/>
-					</Tooltip>
+				<ButtonGroup minimal={true} small={true}>
+					{accessLinks.map((linkType) => {
+						return (
+							<Tooltip
+								key={linkType.text}
+								popoverClassName="bp3-dark"
+								content="Copied"
+								isOpen={
+									showTooltip &&
+									copied.value === `${baseUrl}?access=${linkType.accessHash}`
+								}
+								position={Position.TOP}
+							>
+								<Button
+									onClick={() => {
+										copyToClipboard(`${baseUrl}?access=${linkType.accessHash}`);
+										setShowTooltip(true);
+										clearTimeout(tooltipTimeout.current);
+										tooltipTimeout.current = setTimeout(() => {
+											setShowTooltip(false);
+										}, 1500);
+									}}
+									text={`Anyone with this link can ${linkType.text}`}
+								/>
+							</Tooltip>
+						);
+					})}
 				</ButtonGroup>
 			</div>
 			<div className="cards-wrapper">

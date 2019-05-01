@@ -207,7 +207,7 @@ const Permissions = (props) => {
 					prefix={
 						<React.Fragment>
 							<Icon icon="id-number" />
-							<span>Pub Manager:</span>
+							<span>Pub Managers:</span>
 						</React.Fragment>
 					}
 					allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
@@ -226,7 +226,7 @@ const Permissions = (props) => {
 					prefix={
 						<React.Fragment>
 							<Icon icon="people" />
-							<span>Community Admin:</span>
+							<span>Community Admins:</span>
 						</React.Fragment>
 					}
 					allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}

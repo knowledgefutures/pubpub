@@ -1,7 +1,5 @@
 .pub-header_share-panel-component {
-	.cards-wrapper {
-		display: flex;
-		flex-wrap: wrap;
-		width: 100%;
-	}
+	h3:not(:first-of-type) {
+		margin-top: 2em;
+	}	
 }

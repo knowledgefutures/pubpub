@@ -4,7 +4,7 @@
 @import './blueprint.scss';
 @import './grid.scss';
 
-@import url("https://use.typekit.net/kmi0tdo.css");
+@import url('https://use.typekit.net/kmi0tdo.css');
 @import 'styles/variables.scss';
 
 // Set global styles
@@ -80,6 +80,14 @@ sup {
 .subtext {
 	color: #555;
 	font-size: 0.85em;
+}
+.confirmable {
+	opacity: 0;
+	transition: 0.2s linear opacity;
+	color: #0d8050;
+	&.confirmed {
+		opacity: 1;
+	}
 }
 .bp3-non-ideal-state {
 	height: auto;

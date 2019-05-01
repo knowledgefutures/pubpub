@@ -465,7 +465,7 @@ const PubHeader = (props) => {
 									return (
 										<ActionButton
 											key={mode.title}
-											// isLarge={true}
+											isLarge={true}
 											buttons={[
 												{
 													icon: mode.icon,

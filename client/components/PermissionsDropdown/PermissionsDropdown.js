@@ -1,15 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Menu, MenuItem } from '@blueprintjs/core';
 import { DropdownButton } from 'components';
 
 const propTypes = {
+	prefix: PropTypes.node,
+	isSmall: PropTypes.bool,
+	isMinimal: PropTypes.bool,
 	value: PropTypes.string,
 	onChange: PropTypes.func,
 	isDisabled: PropTypes.bool,
 	allowedTyped: PropTypes.array.isRequired,
 };
 const defaultProps = {
+	prefix: '',
+	isSmall: true,
+	isMinimal: false,
 	value: 'none',
 	onChange: () => {},
 	isDisabled: false,
@@ -64,14 +71,23 @@ const PermissionsDropdown = function(props) {
 	});
 
 	const selectedKey = props.value || items[props.allowedTyped[0]].value;
+	const style = {
+		marginRight: props.prefix ? '1em' : '0em',
+	};
 	return (
-		<div className="permissions-dropdwon-component">
+		<div className="permissions-dropdown-component">
 			<DropdownButton
-				label={items[selectedKey].title}
+				label={
+					<React.Fragment>
+						<span style={style}>{props.prefix}</span>
+						<span>{items[selectedKey].title}</span>
+					</React.Fragment>
+				}
 				// icon={items[selectedKey].icon}
 				isRightAligned={true}
 				isDisabled={props.isDisabled}
-				isSmall={true}
+				isSmall={props.isSmall}
+				isMinimal={props.isMinimal}
 			>
 				<Menu>
 					{Object.keys(items).map((key) => {

@@ -1,10 +1,20 @@
 import React, { useContext, useRef, useState } from 'react';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Tooltip, Position } from '@blueprintjs/core';
-import { Icon, Avatar, SharingCard, UserAutocomplete, PermissionsDropdown } from 'components';
+import { Button, Menu, MenuItem } from '@blueprintjs/core';
+import {
+	Icon,
+	Avatar,
+	SharingCard,
+	UserAutocomplete,
+	PermissionsDropdown,
+	DropdownButton,
+} from 'components';
 import { apiFetch } from 'utils';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
+
+require('./permissions.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
@@ -173,97 +183,113 @@ const Permissions = (props) => {
 	];
 	return (
 		<div className="pub-manage_branches_permissions-component">
-			<div>
-				<ButtonGroup minimal={true} small={true}>
-					{accessLinks.map((linkType) => {
-						return (
-							<Tooltip
-								key={linkType.text}
-								popoverClassName="bp3-dark"
-								content="Copied"
-								isOpen={
-									showTooltip &&
-									copied.value === `${baseUrl}?access=${linkType.accessHash}`
-								}
-								position={Position.TOP}
-							>
-								<Button
-									onClick={() => {
-										copyToClipboard(`${baseUrl}?access=${linkType.accessHash}`);
-										setShowTooltip(true);
-										clearTimeout(tooltipTimeout.current);
-										tooltipTimeout.current = setTimeout(() => {
-											setShowTooltip(false);
-										}, 1500);
-									}}
-									text={`Anyone with this link can ${linkType.text}`}
-								/>
-							</Tooltip>
-						);
-					})}
-				</ButtonGroup>
+			<div className="dropdown-bar">
+				<PermissionsDropdown
+					isMinimal={true}
+					prefix={
+						<React.Fragment>
+							<Icon icon="globe" />
+							<span>Public:</span>
+						</React.Fragment>
+					}
+					allowedTyped={['none', 'view', 'discuss', 'edit']}
+					isSmall={false}
+					value={branchData.publicPermissions}
+					onChange={(newPermission) => {
+						handleBranchUpdate({
+							branchId: branchData.id,
+							publicPermissions: newPermission,
+						});
+					}}
+				/>
+				<PermissionsDropdown
+					isMinimal={true}
+					prefix={
+						<React.Fragment>
+							<Icon icon="id-number" />
+							<span>Pub Manager:</span>
+						</React.Fragment>
+					}
+					allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
+					isSmall={false}
+					value={branchData.pubManagerPermissions}
+					onChange={(newPermission) => {
+						handleBranchUpdate({
+							branchId: branchData.id,
+							pubManagerPermissions: newPermission,
+						});
+					}}
+				/>
+
+				<PermissionsDropdown
+					isMinimal={true}
+					prefix={
+						<React.Fragment>
+							<Icon icon="people" />
+							<span>Community Admin:</span>
+						</React.Fragment>
+					}
+					allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
+					isSmall={false}
+					value={branchData.communityAdminPermissions}
+					onChange={(newPermission) => {
+						handleBranchUpdate({
+							branchId: branchData.id,
+							communityAdminPermissions: newPermission,
+						});
+					}}
+				/>
+				<div className="links-dropdown">
+					<DropdownButton
+						isMinimal={true}
+						label={
+							<React.Fragment>
+								<Icon icon="link" />
+								<span>Sharing Links</span>
+							</React.Fragment>
+						}
+						// icon={items[selectedKey].icon}
+						isRightAligned={true}
+						// isSmall={true}
+						// isMinimal={props.isMinimal}
+					>
+						<Menu>
+							{accessLinks.map((linkType) => {
+								const linkUrl = `${baseUrl}?access=${linkType.accessHash}`;
+								const showCopied = showTooltip && linkUrl === copied.value;
+								const confirmClasses = classNames({
+									confirmable: true,
+									confirmed: showCopied,
+								});
+								return (
+									<MenuItem
+										key={linkType.text}
+										onClick={() => {
+											copyToClipboard(linkUrl);
+											setShowTooltip(true);
+											clearTimeout(tooltipTimeout.current);
+											tooltipTimeout.current = setTimeout(() => {
+												setShowTooltip(false);
+											}, 2500);
+										}}
+										shouldDismissPopover={false}
+										text={
+											<div>
+												Anyone with this link can {linkType.text}
+												<div className="subtext">
+													Click to copy{' '}
+													<span className={confirmClasses}>Copied!</span>
+												</div>
+											</div>
+										}
+									/>
+								);
+							})}
+						</Menu>
+					</DropdownButton>
+				</div>
 			</div>
 			<div className="cards-wrapper">
-				{/* Public Permissions */}
-				<SharingCard
-					content={[
-						<Icon key="icon" icon="globe" iconSize={20} />,
-						<span key="title">Public</span>,
-					]}
-					options={
-						<PermissionsDropdown
-							allowedTyped={['none', 'view', 'discuss', 'edit']}
-							value={branchData.publicPermissions}
-							onChange={(newPermission) => {
-								handleBranchUpdate({
-									branchId: branchData.id,
-									publicPermissions: newPermission,
-								});
-							}}
-						/>
-					}
-				/>
-
-				{/* Pub Manager Permissions */}
-				<SharingCard
-					content={[
-						<Icon key="icon" icon="id-number" iconSize={20} />,
-						<span key="title">Pub Managers</span>,
-					]}
-					options={
-						<PermissionsDropdown
-							allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
-							value={branchData.pubManagerPermissions}
-							onChange={(newPermission) => {
-								handleBranchUpdate({
-									branchId: branchData.id,
-									pubManagerPermissions: newPermission,
-								});
-							}}
-						/>
-					}
-				/>
-
-				{/* Community Admin Permissions */}
-				<SharingCard
-					content={[
-						<Icon key="icon" icon="people" iconSize={20} />,
-						<span key="title">Community Admins</span>,
-					]}
-					options={
-						<PermissionsDropdown
-							allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
-							value={branchData.communityAdminPermissions}
-							onChange={(newPermission) => {
-								handleBranchUpdate({
-									branchId: branchData.id,
-									communityAdminPermissions: newPermission,
-								});
-							}}
-						/>
-					}
-				/>
-
 				{/* Iterate and list all existing pub managers */}
 				{branchData.permissions
 					.sort((foo, bar) => {
@@ -329,7 +355,7 @@ const Permissions = (props) => {
 								});
 							}}
 							allowCustomUser={false} // Eventually use this for emails
-							placeholder="Add person..."
+							placeholder="Add individual user permissions..."
 							usedUserIds={branchData.permissions.map((item) => {
 								return item.user.id;
 							})}

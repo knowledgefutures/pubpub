@@ -5,6 +5,8 @@ import { SettingsSection } from 'components';
 import Settings from './Settings';
 import Permissions from './Permissions';
 
+require('./branches.scss');
+
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -26,14 +28,14 @@ const Branches = (props) => {
 
 			{pubData.branches.map((branch) => {
 				return (
-					<SettingsSection title={branch.title} key={branch.id}>
+					<SettingsSection title={branch.title} className="branch-wrapper" key={branch.id}>
 						<Settings
 							pubData={pubData}
 							branchData={branch}
 							updateLocalData={updateLocalData}
 							setIsLoading={setIsLoading}
 						/>
-						<p>Permissions</p>
+						<h5>Permissions</h5>
 						<Permissions
 							pubData={pubData}
 							branchData={branch}

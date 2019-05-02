@@ -2,6 +2,10 @@
 import Cite from 'citation-js';
 
 export const generateCitationHTML = (pubData, communityData) => {
+	/* TODO: This is a v6 debug line only! */
+	return {};
+
+	
 	// if (!pubData.versions.length) { return null; }
 	// const isDraft = !pubData.versions.length;
 	const isDraft = true;

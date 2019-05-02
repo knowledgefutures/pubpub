@@ -427,6 +427,7 @@ const PubHeader = (props) => {
 																	: '';
 																return (
 																	<MenuItem
+																		key={branch.id}
 																		text={branch.title}
 																		active={
 																			pubData.activeBranch

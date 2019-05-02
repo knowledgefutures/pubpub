@@ -224,7 +224,7 @@ const Download = (props) => {
 								</div>
 							</div>
 						)}
-						{props.pubData.isManager && (
+						{props.pubData.canManage && (
 							<FileUploadButton
 								onUploadFinish={(fileUrl) => {
 									updateDownloads('formatted', fileUrl);

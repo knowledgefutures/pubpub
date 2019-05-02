@@ -11,7 +11,7 @@ const propTypes = {
 
 const PubLinkMenu = (props) => {
 	const activeLink = props.collabData.editorChangeObject.activeLink || {};
-	const isReadOnly = props.pubData.isStaticDoc || !props.pubData.isEditor;
+	const isReadOnly = props.pubData.isStaticDoc || !props.pubData.canEditBranch;
 	if (isReadOnly || !activeLink.attrs) {
 		return null;
 	}

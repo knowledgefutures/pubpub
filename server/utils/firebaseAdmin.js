@@ -1,5 +1,5 @@
 import firebaseAdmin from 'firebase-admin';
-import { buildSchema, getFirebaseDoc } from '@pubpub/editor';
+import { buildSchema, getFirebaseDoc, restoreDiscussionMaps } from '@pubpub/editor';
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
 import { getFirebaseConfig } from 'utils';
 /* To encode: Buffer.from(JSON.stringify(serviceAccountJson)).toString('base64'); */
@@ -30,7 +30,12 @@ export const getBranchDoc = (pubId, branchId, versionNumber) => {
 			selections: []
 	*/
 	const editorSchema = buildSchema({ ...discussionSchema }, {});
+
 	return getFirebaseDoc(firebaseRef, editorSchema, versionNumber);
+	// return restoreDiscussionMaps(firebaseRef, editorSchema, true).then(() => {
+	// 	console.log('Finished with restoreDiscussionMaps');
+	// 	return getFirebaseDoc(firebaseRef, editorSchema, versionNumber);
+	// });
 };
 
 export const getFirebaseToken = (clientId, clientData) => {

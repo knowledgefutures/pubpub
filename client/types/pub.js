@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 export const pubDataProps = PropTypes.shape({
 	slug: PropTypes.string.isRequired,
-	isManager: PropTypes.bool.isRequired,
+	canManage: PropTypes.bool.isRequired,
 	mode: PropTypes.string.isRequired,
 });
 

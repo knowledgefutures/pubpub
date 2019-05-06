@@ -27,7 +27,7 @@ $pubs-pane-width: 300px;
     .pub-row {
         background: none;
         display: flex;
-        height: 45px;
+        min-height: 45px;
         padding: 0px;
         border-radius: 0px;
         .contents {

@@ -46,12 +46,16 @@ export const communityAdminFor = (identification, modelsMapping) =>
 					userId: userId,
 				},
 			}).then((communityAdmin) => {
-				if (modelsMapping) {
-					Promise.all(checkForeignKeys(identification, modelsMapping))
-						.then(() => resolve(communityAdmin))
-						.catch((err) => reject(err));
+				if (communityAdmin) {
+					if (modelsMapping) {
+						Promise.all(checkForeignKeys(identification, modelsMapping))
+							.then(() => resolve(communityAdmin))
+							.catch((err) => reject(err));
+					} else {
+						resolve(communityAdmin);
+					}
 				} else {
-					resolve(communityAdmin);
+					reject();
 				}
 			});
 		}

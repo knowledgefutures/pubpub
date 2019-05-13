@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { marksAtSelection } from '@pubpub/editor';
+import { marksAtSelection, cursor } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper } from 'components';
 import PubHeaderFormatting from './PubHeaderFormatting';
@@ -49,6 +49,7 @@ const PubDocument = (props) => {
 		if (linkPopupIsOpen && (evt.key === 'Escape' || evt.key === 'Enter')) {
 			evt.preventDefault();
 			setLinkPopupIsOpen(false);
+			cursor.moveToEndOfSelection(editorChangeObject.view);
 			editorChangeObject.view.focus();
 		}
 		if (evt.key === 'k' && evt.metaKey) {

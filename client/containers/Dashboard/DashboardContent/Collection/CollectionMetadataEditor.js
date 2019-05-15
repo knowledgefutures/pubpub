@@ -180,7 +180,7 @@ class CollectionMetadataEditor extends React.Component {
 
 	renderFields() {
 		const { collection } = this.props;
-		const { title, metadata } = this.state;
+		const { metadata } = this.state;
 		const { kind } = collection;
 		const fields = enumerateMetadataFields(metadata, kind);
 		if (fields.length === 0) {

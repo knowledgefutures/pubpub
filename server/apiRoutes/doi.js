@@ -18,22 +18,25 @@ app.post('/api/doi/:target', (req, res) => {
 			target,
 		);
 	return communityAdminFor({ communityId: communityId, userId: userId })
-		.then((communityAdmin) => {
+		.catch(() => null)
+		.then((maybeCommunityAdmin) => {
 			if (target === 'pub') {
 				// Both community admins and pub managers can manage pub DOIs
-				if (communityAdmin) {
+				if (maybeCommunityAdmin) {
 					return setData();
 				}
-				return pubManagerFor({ userId: userId, pubId: pubId }).then((pubManager) => {
-					if (pubManager) {
-						return setData();
-					}
-					return res.status(401).send({});
-				});
+				return pubManagerFor({ userId: userId, pubId: pubId })
+					.catch(() => null)
+					.then((maybePubManager) => {
+						if (maybePubManager) {
+							return setData();
+						}
+						return res.status(401).send({});
+					});
 			}
 			if (target === 'collection') {
 				// Community admins can manage collection DOIs
-				if (communityAdmin) {
+				if (maybeCommunityAdmin) {
 					return setData();
 				}
 				return res.status(401).send({});

@@ -68,11 +68,13 @@ class Collection extends React.Component {
 	}
 
 	handleDeleteCollection() {
+		const { communityData } = this.props;
 		const { collection } = this.state;
 		apiFetch('/api/collections', {
 			method: 'DELETE',
 			body: JSON.stringify({
 				id: collection.id,
+				communityId: communityData.id,
 			}),
 		}).then(() => {
 			window.location = '/dashboard/collections';

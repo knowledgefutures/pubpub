@@ -28,20 +28,31 @@ const Pub = (props) => {
 				communityData={props.communityData}
 				loginData={props.loginData}
 			>
-				<PubSyncManager pubData={props.pubData}>
-					{({ pubData, collabData, firebaseBranchRef, updateLocalData }) => {
+				<PubSyncManager pubData={props.pubData} locationData={props.locationData}>
+					{({ pubData, collabData, firebaseBranchRef, updateLocalData, historyData }) => {
 						const mode = pubData.mode;
 						const modeProps = {
 							pubData: pubData,
 							collabData: collabData,
+							historyData: historyData,
 							firebaseBranchRef: firebaseBranchRef,
 							updateLocalData: updateLocalData,
 						};
 
 						return (
 							<React.Fragment>
-								<PubHeader pubData={pubData} updateLocalData={updateLocalData} />
-								<PubMeta pubData={pubData} updateLocalData={updateLocalData} />
+								<PubHeader
+									pubData={pubData}
+									updateLocalData={updateLocalData}
+									collabData={collabData}
+									historyData={historyData}
+								/>
+								<PubMeta
+									pubData={pubData}
+									updateLocalData={updateLocalData}
+									collabData={collabData}
+									historyData={historyData}
+								/>
 								{mode === 'document' && <PubDocument {...modeProps} />}
 								{mode === 'submissions' && <PubSubmission {...modeProps} />}
 								{mode === 'manage' && <PubManage {...modeProps} />}

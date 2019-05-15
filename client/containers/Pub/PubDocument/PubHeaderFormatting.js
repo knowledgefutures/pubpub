@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { Tooltip } from '@blueprintjs/core';
@@ -28,15 +28,15 @@ const defaultProps = {
 
 const PubHeaderFormatting = (props) => {
 	const { loginData } = useContext(PageContext);
-	const [stickyInstance, setStickyInstance] = useState(undefined);
+	const stickyInstanceRef = useRef(undefined);
 	useEffect(() => {
-		setStickyInstance(
-			stickybits('.pub-draft-header-component', {
-				stickyBitStickyOffset: 35,
-			}),
-		);
+		stickyInstanceRef.current = stickybits('.pub-draft-header-component', {
+			stickyBitStickyOffset: 35,
+		});
 		return () => {
-			stickyInstance.cleanup();
+			if (stickyInstanceRef.current) {
+				stickyInstanceRef.current.cleanup();
+			}
 		};
 	}, []);
 

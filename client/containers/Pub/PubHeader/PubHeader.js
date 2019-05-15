@@ -56,7 +56,7 @@ const PubHeader = (props) => {
 			How do you get to pub/slug/submissions?
 		Do we require an accent color with the block styles? Or can they be simple white/black text?
 	*/
-	const { pubData, updateLocalData } = props;
+	const { pubData, collabData, updateLocalData, historyData } = props;
 	const { communityData, locationData } = useContext(PageContext);
 	const headerRef = useRef(null);
 	const [title, setTitle] = useState(props.pubData.title);
@@ -146,6 +146,12 @@ const PubHeader = (props) => {
 	const accentColor = pubData.headerStyle === 'white-blocks' ? '#A2273E' : '#ecd721';
 	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
 	const submissionButtons = generateSubmissionButtons(pubData);
+
+	const pubDate =
+		(historyData && historyData.timestamps && historyData.timestamps[historyData.currentKey]) ||
+		pubData.updatedAt;
+	const pubDateString =
+		historyData.outstandingRequests > 0 ? '...' : dateFormat(pubDate, 'mmm dd, yyyy');
 
 	return (
 		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>
@@ -374,7 +380,12 @@ const PubHeader = (props) => {
 								<ActionButton
 									buttons={[
 										{
-											text: 'Mar 31, 2019',
+											text: (
+												<div className="text-stack">
+													<span>Pub history</span>
+													<span className="subtext">{pubDateString}</span>
+												</div>
+											),
 											rightIcon: 'history',
 											active: pubData.metaMode === 'history',
 											onClick: () => {
@@ -388,6 +399,7 @@ const PubHeader = (props) => {
 											isWide: true,
 										},
 									]}
+									isSkewed={true}
 								/>
 
 								{/* Branches Button */}

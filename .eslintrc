@@ -38,6 +38,7 @@
         "prettier/prettier": "error",
         "no-tabs": 0,
         "operator-linebreak": 0,
+        "prefer-template": 0,
         "react/destructuring-assignment": 0,
         "react/jsx-boolean-value": 0,
         "react/forbid-prop-types": 0,

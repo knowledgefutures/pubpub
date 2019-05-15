@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { attributesPublicUser, checkIfSuperAdmin } from '../utils';
+import { attributesPublicUser, checkIfSuperAdmin } from '.';
 import { generateCitationHTML } from './citations';
 import { getBranchDoc } from './firebaseAdmin';
 import {
@@ -328,10 +328,12 @@ export const findPub = (req, initialData, mode) => {
 			]);
 		})
 		.then(([formattedPubData, branchDocData]) => {
+			const { content, historyData, mostRecentRemoteKey } = branchDocData;
 			return {
 				...formattedPubData,
-				initialDoc: branchDocData.content,
-				initialDocKey: branchDocData.mostRecentRemoteKey,
+				initialDoc: content,
+				initialDocKey: mostRecentRemoteKey,
+				historyData: historyData,
 				citationData: generateCitationHTML(formattedPubData, initialData.communityData),
 			};
 		});

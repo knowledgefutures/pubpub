@@ -16,7 +16,7 @@ const firebaseApp = firebaseAdmin.initializeApp(
 );
 const database = firebaseApp.database();
 
-export const getBranchDoc = (pubId, branchId, versionNumber) => {
+export const getBranchDoc = (pubId, branchId, historyKey) => {
 	const pubKey = `pub-${pubId}`;
 	const branchKey = `branch-${branchId}`;
 	// const branchKey = '';
@@ -31,7 +31,7 @@ export const getBranchDoc = (pubId, branchId, versionNumber) => {
 	*/
 	const editorSchema = buildSchema({ ...discussionSchema }, {});
 
-	return getFirebaseDoc(firebaseRef, editorSchema, versionNumber);
+	return getFirebaseDoc(firebaseRef, editorSchema, historyKey);
 	// return restoreDiscussionMaps(firebaseRef, editorSchema, true).then(() => {
 	// 	console.log('Finished with restoreDiscussionMaps');
 	// 	return getFirebaseDoc(firebaseRef, editorSchema, versionNumber);

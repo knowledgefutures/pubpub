@@ -1,4 +1,4 @@
-import { pubUrl } from 'shared/utils/canonicalUrls';
+import { pubUrlV5 } from 'shared/utils/canonicalUrls';
 
 import transformAttributions from './attributions';
 
@@ -13,7 +13,7 @@ export default ({ globals, community }) => (pub) => {
 		sortedVersions: sortedVersions,
 		publicationDate: publicationDate,
 		attributions: transformAttributions(pub.attributions),
-		getResourceUrl: (version) => pubUrl(community, pub, version),
+		getResourceUrl: (version) => pubUrlV5(community, pub, version),
 		doi: dois.pub,
 		getVersionDoi: dois.getPubVersionDoi,
 	};

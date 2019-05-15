@@ -21,6 +21,7 @@ require('./pages');
 require('./passwordReset');
 require('./pubs');
 require('./pubAttributions');
+require('./pubHistory');
 require('./pubManagers');
 require('./reviews.js');
 require('./rss.js');

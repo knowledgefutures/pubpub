@@ -21,7 +21,7 @@ const defaultProps = {
 let setSavingTimeout;
 
 const PubBody = (props) => {
-	const { pubData, collabData, firebaseBranchRef, updateLocalData } = props;
+	const { pubData, collabData, firebaseBranchRef, updateLocalData, historyData } = props;
 	const { loginData } = useContext(PageContext);
 	const prevStatusRef = useRef(null);
 	prevStatusRef.current = collabData.status;
@@ -51,10 +51,19 @@ const PubBody = (props) => {
 		}
 	};
 
+	const isViewingHistory = pubData.metaMode === 'history';
+	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
+	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
+	const editorKey = editorKeyHistory || editorKeyCollab;
+	const useCollaborativeOptions =
+		firebaseBranchRef && !pubData.isStaticDoc && !(isViewingHistory && historyData.historyDoc);
+	const isReadOnly = !!(pubData.isStaticDoc || !pubData.canEditBranch || isViewingHistory);
+	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
+
 	return (
 		<div className="pub-body-component">
 			<Editor
-				key={firebaseBranchRef ? 'ready' : 'unready'}
+				key={editorKey}
 				customNodes={{
 					...discussionSchema,
 				}}
@@ -67,13 +76,15 @@ const PubBody = (props) => {
 					// discussion: this.props.discussionNodeOptions,
 				}}
 				placeholder={pubData.isStaticDoc ? 'Begin writing here...' : undefined}
-				initialContent={pubData.initialDoc}
-				isReadOnly={pubData.isStaticDoc || !pubData.canEditBranch}
+				initialContent={initialContent}
+				isReadOnly={isReadOnly}
 				onChange={(editorChangeObject) => {
-					updateLocalData('collab', { editorChangeObject: editorChangeObject });
+					if (useCollaborativeOptions) {
+						updateLocalData('collab', { editorChangeObject: editorChangeObject });
+					}
 				}}
 				collaborativeOptions={
-					firebaseBranchRef && !pubData.isStaticDoc
+					useCollaborativeOptions
 						? {
 								firebaseRef: firebaseBranchRef,
 								clientData: { id: loginData.id },
@@ -82,6 +93,12 @@ const PubBody = (props) => {
 								onStatusChange: (status) => {
 									getNextStatus(status, (nextStatus) => {
 										props.updateLocalData('collab', nextStatus);
+									});
+								},
+								onUpdateLatestKey: (latestKey) => {
+									props.updateLocalData('history', {
+										latestKey: latestKey,
+										currentKey: latestKey,
 									});
 								},
 						  }

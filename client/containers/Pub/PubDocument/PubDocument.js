@@ -28,6 +28,7 @@ const defaultProps = {
 
 const PubDocument = (props) => {
 	const [linkPopupIsOpen, setLinkPopupIsOpen] = useState(false);
+	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	const [clickedMarks, setClickedMarks] = useState([]);
 	// const [tempId, setTempId] = useState(uuidv4());
 	const editorChangeObject = props.collabData.editorChangeObject;
@@ -64,15 +65,24 @@ const PubDocument = (props) => {
 		};
 	});
 
+	// We use the useEffect hook to wait until after the render to show or hide discussions, since
+	// they mount into portals that we rely on Prosemirror to create.
+	useEffect(() => {
+		setDiscussionsShown(props.pubData.metaMode !== 'history');
+	}, [props.pubData.metaMode]);
+
 	const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />
+			{props.pubData.metaMode !== 'history' && (
+				<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />
+			)}
 			<GridWrapper containerClassName="pub" columnClassName="pub-columns">
 				<div className="main-content" ref={mainContentRef}>
 					<PubBody
 						pubData={props.pubData}
 						collabData={props.collabData}
+						historyData={props.historyData}
 						firebaseBranchRef={props.firebaseBranchRef}
 						updateLocalData={props.updateLocalData}
 						onSingleClick={(view) => {
@@ -80,19 +90,24 @@ const PubDocument = (props) => {
 							setClickedMarks(marksAtSelection(view));
 						}}
 					/>
-					<PubInlineImport
-						pubData={props.pubData}
-						editorView={props.collabData.editorChangeObject.view}
-					/>
+					{props.pubData.metaMode !== 'history' && (
+						<PubInlineImport
+							pubData={props.pubData}
+							editorView={props.collabData.editorChangeObject.view}
+						/>
+					)}
 					<PubFooter pubData={props.pubData} />
-					<PubDiscussions
-						pubData={props.pubData}
-						collabData={props.collabData}
-						firebaseBranchRef={props.firebaseBranchRef}
-						updateLocalData={props.updateLocalData}
-						mainContentRef={mainContentRef}
-						sideContentRef={sideContentRef}
-					/>
+
+					{areDiscussionsShown && (
+						<PubDiscussions
+							pubData={props.pubData}
+							collabData={props.collabData}
+							firebaseBranchRef={props.firebaseBranchRef}
+							updateLocalData={props.updateLocalData}
+							mainContentRef={mainContentRef}
+							sideContentRef={sideContentRef}
+						/>
+					)}
 
 					{!linkPopupIsOpen && editorFocused && (
 						<PubInlineMenu

@@ -49,7 +49,6 @@ const PubInlineMenu = (props) => {
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
 	const isReadOnly = pubData.isStaticDoc || !pubData.canEditBranch;
-	console.log('isReadOnly', isReadOnly);
 	// TODO: Make discussions disable-able
 	// if (isReadOnly && !pubData.publicDiscussions) {
 	// 	return null;

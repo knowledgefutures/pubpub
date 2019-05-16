@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Slider, ButtonGroup, Button } from '@blueprintjs/core';
+import { Slider, NumericInput, ButtonGroup, Button } from '@blueprintjs/core';
 import SimpleEditor from 'components/SimpleEditor/SimpleEditor';
 import Icon from 'components/Icon/Icon';
 
@@ -45,11 +45,26 @@ const ControlsIframe = (props) => {
 					<Slider
 						min={150}
 						max={800}
-						value={props.attrs.height}
+						stepSize={10}
+						value={Math.max(Math.min(800, props.attrs.height), 150)}
 						onChange={(newHeight) => {
 							props.updateAttrs({ height: newHeight });
 						}}
 						labelRenderer={false}
+					/>
+				</div>
+				<div className="input">
+					<NumericInput
+						value={props.attrs.height}
+						stepSize={10}
+						min={50}
+						minorStepSize={1}
+						majorStepSize={100}
+						buttonPosition="none"
+						rightElement={<div className="input-suffix">pixels</div>}
+						onValueChange={(newVal) => {
+							props.updateAttrs({ height: Math.max(newVal, 50) });
+						}}
 					/>
 				</div>
 			</div>

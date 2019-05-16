@@ -19,6 +19,16 @@
 				width: 200px;
 				word-break: break-word;
 			}
+			.bp3-numeric-input {
+				input {
+					width: 150px;
+					height: 20px;
+				}
+				.input-suffix {
+					padding: 1px 10px;
+					opacity: 0.7;
+				}
+			}
 		}
 	}
 	.simple-editor-wrapper {

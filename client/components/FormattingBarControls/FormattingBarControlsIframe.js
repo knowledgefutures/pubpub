@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Slider, NumericInput, ButtonGroup, Button } from '@blueprintjs/core';
 import SimpleEditor from 'components/SimpleEditor/SimpleEditor';
@@ -18,6 +18,7 @@ const FormattingBarControlsIframe = (props) => {
 		{ key: 'full', icon: 'vertical-distribution' },
 	];
 	const iconSize = props.isSmall ? 12 : 16;
+	const [heightStringVal, setHeightStringVal] = useState(props.attrs.height);
 
 	return (
 		<div className={`formatting-bar-controls-component ${props.isSmall ? 'small' : ''}`}>
@@ -48,6 +49,7 @@ const FormattingBarControlsIframe = (props) => {
 						stepSize={10}
 						value={Math.max(Math.min(800, props.attrs.height), 150)}
 						onChange={(newHeight) => {
+							setHeightStringVal(newHeight);
 							props.updateAttrs({ height: newHeight });
 						}}
 						labelRenderer={false}
@@ -55,15 +57,19 @@ const FormattingBarControlsIframe = (props) => {
 				</div>
 				<div className="input">
 					<NumericInput
-						value={props.attrs.height}
+						value={heightStringVal}
 						stepSize={10}
+						clampValueOnBlur={true}
 						min={50}
 						minorStepSize={1}
 						majorStepSize={100}
 						buttonPosition="none"
 						rightElement={<div className="input-suffix">pixels</div>}
-						onValueChange={(newVal) => {
-							props.updateAttrs({ height: Math.max(newVal, 50) });
+						onValueChange={(newVal, newValString) => {
+							setHeightStringVal(newValString);
+							if (newVal >= 50) {
+								props.updateAttrs({ height: newVal });
+							}
 						}}
 					/>
 				</div>

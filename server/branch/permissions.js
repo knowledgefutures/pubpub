@@ -25,7 +25,7 @@ export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
 	]).then(([branchData, pubManagerData, communityAdminData]) => {
 		if (!branchData) {
-			return {};
+			return { create: true };
 		}
 
 		/* calculate canManage */

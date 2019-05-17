@@ -455,7 +455,11 @@ const PubHeader = (props) => {
 														<MenuItem
 															icon="add"
 															text="Create New Branch"
-															href={`/pub/${pubData.slug}/branch/new`}
+															href={`/pub/${
+																pubData.slug
+															}/branch/new?init=${
+																pubData.activeBranch.shortId
+															}`}
 														/>
 													</Menu>
 												),

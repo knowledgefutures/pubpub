@@ -1,5 +1,6 @@
-import { Branch, BranchPermission, User } from '../models';
-import { attributesPublicUser, generateHash } from '../utils';
+import { Branch, BranchPermission } from '../models';
+import { generateHash } from '../utils';
+import { createFirebaseBranch } from '../utils/firebaseAdmin';
 
 export const createBranch = (inputValues, userId) => {
 	return Branch.findAll({
@@ -24,6 +25,10 @@ export const createBranch = (inputValues, userId) => {
 			return Branch.create({
 				shortId: maxShortId + 1,
 				title: inputValues.title,
+				description: inputValues.description,
+				publicPermissions: inputValues.publicPermissions,
+				pubManagerPermissions: inputValues.pubManagerPermissions,
+				communityAdminPermissions: inputValues.communityAdminPermissions,
 				order: (1 - maxOrder) / 2 + maxOrder,
 				viewHash: generateHash(8),
 				editHash: generateHash(8),
@@ -31,45 +36,35 @@ export const createBranch = (inputValues, userId) => {
 			});
 		})
 		.then((newBranch) => {
-			return BranchPermission.create({
-				permissions: 'manage',
-				userId: userId,
-				pubId: inputValues.pubId,
-				branchId: newBranch.id,
-			});
+			const newPermissions = [
+				{ user: { id: userId }, permissions: 'manage' },
+				...inputValues.userPermissions,
+			];
+			return Promise.all(
+				newPermissions.map((permission) => {
+					return BranchPermission.create({
+						permissions: permission.permissions,
+						userId: permission.user.id,
+						pubId: inputValues.pubId,
+						branchId: newBranch.id,
+					});
+				}),
+			);
 		})
-		.then((newBranchPermission) => {
+		.then((newBranchPermissions) => {
+			const baseBranchId = inputValues.baseBranchId;
+			const newBranchId = newBranchPermissions[0].branchId;
+			return Promise.all([
+				newBranchId,
+				createFirebaseBranch(inputValues.pubId, baseBranchId, newBranchId),
+			]);
+		})
+		.then(([newBranchId]) => {
 			return Branch.findOne({
 				where: {
-					id: newBranchPermission.branchId,
+					id: newBranchId,
 				},
-				attributes: [
-					'createdAt',
-					'id',
-					'shortId',
-					'title',
-					'description',
-					'submissionAlias',
-					'order',
-					'communityAdminPermissions',
-					'publicPermissions',
-					'viewHash',
-					'editHash',
-				],
-				include: [
-					{
-						model: BranchPermission,
-						as: 'permissions',
-						required: false,
-						include: [
-							{
-								model: User,
-								as: 'user',
-								attributes: attributesPublicUser,
-							},
-						],
-					},
-				],
+				attributes: ['id', 'shortId'],
 			});
 		});
 };

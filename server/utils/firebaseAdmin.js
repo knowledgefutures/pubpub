@@ -1,5 +1,5 @@
 import firebaseAdmin from 'firebase-admin';
-import { buildSchema, getFirebaseDoc, restoreDiscussionMaps } from '@pubpub/editor';
+import { buildSchema, getFirebaseDoc, restoreDiscussionMaps, createBranch } from '@pubpub/editor';
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
 import { getFirebaseConfig } from 'utils';
 /* To encode: Buffer.from(JSON.stringify(serviceAccountJson)).toString('base64'); */
@@ -40,4 +40,14 @@ export const getBranchDoc = (pubId, branchId, historyKey) => {
 
 export const getFirebaseToken = (clientId, clientData) => {
 	return firebaseAdmin.auth(firebaseApp).createCustomToken(clientId, clientData);
+};
+
+export const createFirebaseBranch = (pubId, baseBranchId, newBranchId) => {
+	const pubKey = `pub-${pubId}`;
+	const baseBranchKey = `branch-${baseBranchId}`;
+	const newBranchKey = `branch-${newBranchId}`;
+
+	const baseFirebaseRef = database.ref(`${pubKey}/${baseBranchKey}`);
+	const newFirebaseRef = database.ref(`${pubKey}/${newBranchKey}`);
+	return createBranch(baseFirebaseRef, newFirebaseRef);
 };

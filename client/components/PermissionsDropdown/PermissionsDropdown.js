@@ -79,8 +79,10 @@ const PermissionsDropdown = function(props) {
 			<DropdownButton
 				label={
 					<React.Fragment>
-						<span style={style}>{props.prefix}</span>
-						<span>{items[selectedKey].title}</span>
+						<span style={style} key="prefix">
+							{props.prefix}
+						</span>
+						<span key="title">{items[selectedKey].title}</span>
 					</React.Fragment>
 				}
 				// icon={items[selectedKey].icon}

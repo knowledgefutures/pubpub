@@ -69,10 +69,13 @@ app.post('/api/versions', (req, res) => {
 					},
 				},
 			);
-			const updateDoiData = setDoiData({
-				pubId: req.body.pubId,
-				communityId: req.body.communityId,
-			});
+			const updateDoiData = setDoiData(
+				{
+					pubId: req.body.pubId,
+					communityId: req.body.communityId,
+				},
+				'pub',
+			);
 			return Promise.all([updateDiscussion, updateDoiData]);
 		})
 		.then(() => {

@@ -1,8 +1,7 @@
 import app from '../server';
 import { getBranchDoc } from '../utils/firebaseAdmin';
 import { Branch, BranchPermission, User, CommunityAdmin, PubManager } from '../models';
-
-import calculateBranchPermissions from '../branchPermission/calculateBranchPermissions';
+import calculateBranchAccess from '../branch/calculateBranchAccess';
 
 app.get('/api/pubHistory', async (req, res) => {
 	try {
@@ -34,7 +33,7 @@ app.get('/api/pubHistory', async (req, res) => {
 				},
 			}),
 		]);
-		const { canView } = calculateBranchPermissions(
+		const { canView } = calculateBranchAccess(
 			accessHash,
 			branch,
 			userId,

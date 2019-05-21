@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
 import { checkIfSuperAdmin } from '../utils';
+import calculateBranchAccess from './calculateBranchAccess';
 
 export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 	if (!userId || !communityId || !pubId) {
@@ -29,14 +30,13 @@ export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 		}
 
 		/* calculate canManage */
-		const canManageAsPubManager = branchData.pubManagerPermissions === 'manage' && pubManagerData;
-		const canManageAsCommunityAdmin = branchData.communityAdminPermissions === 'manage' && communityAdminData;
-		const canManage = branchData.permissions.reduce((prev, curr) => {
-			if (curr.userId === userId && curr.permissions === 'manage') {
-				return true;
-			}
-			return prev;
-		}, canManageAsPubManager || canManageAsCommunityAdmin || isSuperAdmin);
+		const branchAccess = calculateBranchAccess(
+			null,
+			branchData,
+			userId,
+			communityAdminData,
+			pubManagerData,
+		);
 
 		const baseEdit = [
 			'title',
@@ -47,14 +47,13 @@ export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 			'communityAdminPermissions',
 		];
 		const fullEdit = [...baseEdit, 'publicPermissions'];
-		const editProps = isSuperAdmin || communityAdminData || pubManagerData 
-			? fullEdit
-			: baseEdit;
+		const editProps =
+			isSuperAdmin || communityAdminData || pubManagerData ? fullEdit : baseEdit;
 
 		return {
 			create: true,
-			update: canManage && editProps,
-			destroy: canManage, 
+			update: branchAccess.canManage && editProps,
+			destroy: branchAccess.canManage,
 		};
 	});
 };

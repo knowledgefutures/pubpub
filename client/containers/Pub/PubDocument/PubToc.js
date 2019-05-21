@@ -2,6 +2,7 @@
 /* eslint-disable newline-per-chained-call */
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { getJSON } from '@pubpub/editor';
 
 require('./pubToc.scss');
@@ -9,6 +10,11 @@ require('./pubToc.scss');
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	editorChangeObject: PropTypes.object.isRequired,
+	useSideStyling: PropTypes.bool,
+};
+
+const defaultProps = {
+	useSideStyling: true,
 };
 
 const PubToc = function(props) {
@@ -59,8 +65,12 @@ const PubToc = function(props) {
 		return null;
 	}
 
+	const classes = classNames({
+		'pub-toc-component': true,
+		'side-styling': props.useSideStyling,
+	});
 	return (
-		<div className="pub-toc-component">
+		<div className={classes}>
 			<div className="toc">
 				{headings.map((item) => {
 					return (
@@ -94,4 +104,5 @@ const PubToc = function(props) {
 };
 
 PubToc.propTypes = propTypes;
+PubToc.defaultProps = defaultProps;
 export default PubToc;

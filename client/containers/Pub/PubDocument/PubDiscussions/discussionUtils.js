@@ -38,7 +38,7 @@ export const groupDiscussionsByTop = (decorations) => {
 		}
 		return 0;
 	});
-	let lastTop = 0;
+	let lastTop;
 	const discussionTops = {};
 	sortedDecorations
 		.filter((decoration) => {

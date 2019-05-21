@@ -17,7 +17,9 @@ import {
 	Menu,
 	MenuItem,
 	MenuDivider,
+	Popover,
 } from '@blueprintjs/core';
+import PubToc from 'containers/Pub/PubDocument/PubToc';
 import { Icon, GridWrapper, Overlay } from 'components';
 import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
@@ -516,6 +518,19 @@ const PubHeader = (props) => {
 					<div className="bottom-text">
 						<div className="bottom-title">{pubData.title}</div>
 						<div className="bottom-buttons">
+							<Popover
+								minimal={true}
+								position={Position.BOTTOM_RIGHT}
+								content={
+									<PubToc
+										pubData={pubData}
+										editorChangeObject={collabData.editorChangeObject}
+										useSideStyling={false}
+									/>
+								}
+								target={<Button minimal={true}>Contents</Button>}
+							/>
+
 							<Button
 								minimal={true}
 								small={true}

@@ -1,14 +1,20 @@
 .pub-toc-component {
-	margin-top: -3em;
-	padding-top: 3em;
-	padding-bottom: 3em;
+	padding: 1em;
+	&.side-styling {
+		margin-top: -3em;
+		padding-top: 3em;
+		padding-bottom: 3em;	
+		.toc {
+			border-left: 2px solid #ccc;
+			padding-left: 10px;
+		}
+	}
+	
 	overflow: auto;
 	background-color: white;
 	z-index: 1;
 	position: relative;
 	.toc {
-		border-left: 2px solid #ccc;
-		padding-left: 10px;
 		font-size: 14px;
 	}
 	.section-header,

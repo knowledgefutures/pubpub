@@ -9,7 +9,7 @@ const propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
 	copyString: PropTypes.string.isRequired,
-	icon: PropTypes.oneOf([PropTypes.string, PropTypes.node]),
+	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 	tooltipPosition: PropTypes.string,
 };
 

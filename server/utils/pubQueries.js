@@ -192,7 +192,7 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			.filter((item) => {
 				return !item.collection || item.collection.isPublic || communityAdminData;
 			}),
-		canManage: canManage,
+		canManage: canManagePub,
 		canManageBranch: activeBranch.canManage,
 		canEditBranch: activeBranch.canEdit,
 		canDiscussBranch: activeBranch.canDiscuss,

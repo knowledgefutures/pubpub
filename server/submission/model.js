@@ -19,12 +19,12 @@ export default (sequelize, dataTypes) => {
 						as: 'submissions',
 						foreignKey: 'pubId',
 					});
-					Submission.hasOne(Branch, {
+					Submission.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'sourceBranch',
 						foreignKey: 'sourceBranchId',
 					});
-					Submission.hasOne(Branch, {
+					Submission.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'destinationBranch',
 						foreignKey: 'destinationBranchId',

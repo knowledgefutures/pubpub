@@ -382,7 +382,7 @@ const PubHeader = (props) => {
 										{
 											text: (
 												<div className="text-stack">
-													<span>Pub history</span>
+													<span>History</span>
 													<span className="subtext">{pubDateString}</span>
 												</div>
 											),
@@ -482,7 +482,7 @@ const PubHeader = (props) => {
 									return (
 										<ActionButton
 											key={mode.title}
-											isLarge={true}
+											// isLarge={true}
 											buttons={[
 												{
 													icon: mode.icon,

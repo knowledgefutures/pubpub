@@ -24,6 +24,7 @@ const defaultProps = {
 };
 
 const ActionButton = function(props) {
+	const { isLarge, isSkewed } = props;
 	const buttons = props.buttons.map((buttonData) => {
 		const key = `${buttonData.text}-${buttonData.icon}-${buttonData.href}`;
 		const icon = buttonData.icon ? (
@@ -32,9 +33,8 @@ const ActionButton = function(props) {
 			undefined
 		);
 
-		const { isWide, isSkinny, isLarge, ...buttonProps } = buttonData;
+		const { isWide, isSkinny, ...buttonProps } = buttonData;
 		const buttonClass = classNames(isWide && 'wide', isSkinny && 'skinny', isLarge && 'large');
-
 		const buttonComponent = buttonData.href ? (
 			<AnchorButton key={key} className={buttonClass} {...buttonProps} icon={icon} />
 		) : (
@@ -53,7 +53,7 @@ const ActionButton = function(props) {
 	});
 
 	let groupClass = 'action-button-component';
-	if (props.isSkewed) {
+	if (isSkewed) {
 		groupClass += ' skewed';
 	}
 

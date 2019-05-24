@@ -15,7 +15,11 @@ export default (attributions) => {
 					surname: attribution.user.lastName
 						? attribution.user.lastName
 						: attribution.user.firstName,
+					affiliation: attribution.affiliation,
 				};
+				if (!personNameOutput.affiliation) {
+					delete personNameOutput.affiliation;
+				}
 				if (!personNameOutput.given_name) {
 					delete personNameOutput.given_name;
 				}

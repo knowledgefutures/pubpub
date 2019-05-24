@@ -541,6 +541,13 @@ new Promise((resolve) => {
 	// 		return Promise.all(pageUpdates);
 	// 	});
 	// })
+	.then(() => {
+		console.log("Syncing attributions models");
+		return Promise.all([
+			sequelize.queryInterface.addColumn('CollectionAttributions', 'affiliation', { type: Sequelize.TEXT }),
+			sequelize.queryInterface.addColumn('PubAttributions', 'affiliation', { type: Sequelize.TEXT }),
+		]);
+	})
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

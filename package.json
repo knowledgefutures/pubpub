@@ -161,7 +161,8 @@
 	"jest": {
 		"moduleDirectories": [
 			"node_modules",
-			"<rootDir>/client"
+			"<rootDir>/client",
+			"<rootDir>"
 		],
 		"moduleNameMapper": {
 			"\\.[s]?css$": "<rootDir>/stories/styleMock.js"

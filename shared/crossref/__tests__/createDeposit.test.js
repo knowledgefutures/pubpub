@@ -1,6 +1,6 @@
 /* global describe, it, expect */
-import { mapMetadataFields } from 'shared/collections/metadata';
-import { getSchemaForKind } from 'shared/collections/schemas';
+import { mapMetadataFields } from '../../collections/metadata';
+import { getSchemaForKind } from '../../collections/schemas';
 
 import createDepositPartial from '../createDeposit';
 

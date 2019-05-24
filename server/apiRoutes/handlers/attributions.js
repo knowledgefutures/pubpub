@@ -5,7 +5,15 @@
 import { User } from '../../models';
 import withPermissions from '../permissions/withPermissions';
 
-const CAN_UPDATE_ATTRIBUTES = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles'];
+const CAN_UPDATE_ATTRIBUTES = [
+	'name',
+	'avatar',
+	'title',
+	'order',
+	'isAuthor',
+	'roles',
+	'affiliation',
+];
 
 const INCLUDE_USER_ATTRIBUTES = {
 	model: User,

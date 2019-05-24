@@ -57,6 +57,7 @@ export default {
 			order: 0.5,
 			isAuthor: true,
 			roles: null,
+			affiliation: 'Springfield A&M',
 			userId: '6ddd7a7b-c542-4127-b403-33a67eb40ff3',
 			pubId: '1519656b-cc26-43ad-83f2-dbf5b828a8c7',
 			createdAt: '2019-04-11T18:39:11.942Z',

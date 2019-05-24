@@ -17,6 +17,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Massachusetts Institute of Technology",
                   "given_name": "Travis",
                   "surname": "Rich",
                 },
@@ -35,6 +36,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "additional",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -100,6 +102,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Massachusetts Institute of Technology",
                   "given_name": "Travis",
                   "surname": "Rich",
                 },
@@ -118,6 +121,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "additional",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -181,6 +185,7 @@ Object {
               Object {
                 "@contributor_role": "author",
                 "@sequence": "first",
+                "affiliation": "Massachusetts Institute of Technology",
                 "given_name": "Travis",
                 "surname": "Rich",
               },
@@ -199,6 +204,7 @@ Object {
               Object {
                 "@contributor_role": "author",
                 "@sequence": "additional",
+                "affiliation": "Springfield A&M",
                 "given_name": "Ian",
                 "surname": "Reynolds",
               },
@@ -271,6 +277,7 @@ Object {
               Object {
                 "@contributor_role": "author",
                 "@sequence": "first",
+                "affiliation": "Massachusetts Institute of Technology",
                 "given_name": "Travis",
                 "surname": "Rich",
               },
@@ -289,6 +296,7 @@ Object {
               Object {
                 "@contributor_role": "author",
                 "@sequence": "additional",
+                "affiliation": "Springfield A&M",
                 "given_name": "Ian",
                 "surname": "Reynolds",
               },
@@ -381,6 +389,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -457,6 +466,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Massachusetts Institute of Technology",
                   "given_name": "Travis",
                   "surname": "Rich",
                 },
@@ -475,6 +485,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "additional",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -525,6 +536,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -591,6 +603,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Massachusetts Institute of Technology",
                   "given_name": "Travis",
                   "surname": "Rich",
                 },
@@ -609,6 +622,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "additional",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -659,6 +673,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -725,6 +740,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Massachusetts Institute of Technology",
                   "given_name": "Travis",
                   "surname": "Rich",
                 },
@@ -743,6 +759,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "additional",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -793,6 +810,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -858,6 +876,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Massachusetts Institute of Technology",
                   "given_name": "Travis",
                   "surname": "Rich",
                 },
@@ -876,6 +895,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "additional",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },
@@ -949,6 +969,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "first",
+                  "affiliation": "Massachusetts Institute of Technology",
                   "given_name": "Travis",
                   "surname": "Rich",
                 },
@@ -967,6 +988,7 @@ Object {
                 Object {
                   "@contributor_role": "author",
                   "@sequence": "additional",
+                  "affiliation": "Springfield A&M",
                   "given_name": "Ian",
                   "surname": "Reynolds",
                 },

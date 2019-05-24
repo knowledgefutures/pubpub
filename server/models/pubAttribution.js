@@ -11,6 +11,7 @@ export default (sequelize) => {
 			order: { type: Sequelize.DOUBLE },
 			isAuthor: { type: Sequelize.BOOLEAN },
 			roles: { type: Sequelize.JSONB },
+			affiliation: { type: Sequelize.TEXT },
 
 			/* Set by Associations */
 			userId: { type: Sequelize.UUID },

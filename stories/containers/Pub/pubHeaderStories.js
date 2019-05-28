@@ -14,12 +14,14 @@ const altPubData = {
 storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 	<div>
 		<PubHeader
+			collabData={{}}
 			pubData={{
 				...altPubData,
 				metaMode: 'details',
 			}}
 		/>
 		<PubHeader
+			collabData={{}}
 			pubData={{
 				...altPubData,
 				useHeaderImage: false,
@@ -27,6 +29,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			}}
 		/>
 		<PubHeader
+			collabData={{}}
 			pubData={{
 				...altPubData,
 				headerStyle: 'white-blocks',
@@ -35,6 +38,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			}}
 		/>
 		<PubHeader
+			collabData={{}}
 			pubData={{
 				...altPubData,
 				headerStyle: 'black-blocks',
@@ -44,12 +48,14 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 		/>
 
 		<PubHeader
+			collabData={{}}
 			pubData={{
 				...altPubData,
 				mode: 'manage',
 			}}
 		/>
 		<PubHeader
+			collabData={{}}
 			pubData={{
 				...altPubData,
 				useHeaderImage: false,
@@ -57,6 +63,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			}}
 		/>
 		<PubHeader
+			collabData={{}}
 			pubData={{
 				...altPubData,
 				headerStyle: 'white-blocks',
@@ -65,6 +72,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			}}
 		/>
 		<PubHeader
+			collabData={{}}
 			pubData={{
 				...altPubData,
 				headerStyle: 'black-blocks',

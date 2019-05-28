@@ -153,7 +153,9 @@ const PubHeader = (props) => {
 		(historyData && historyData.timestamps && historyData.timestamps[historyData.currentKey]) ||
 		pubData.updatedAt;
 	const pubDateString =
-		historyData.outstandingRequests > 0 ? '...' : dateFormat(pubDate, 'mmm dd, yyyy');
+		historyData && historyData.outstandingRequests > 0
+			? '...'
+			: dateFormat(pubDate, 'mmm dd, yyyy');
 
 	return (
 		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>

@@ -171,6 +171,24 @@ export const fullDoc = {
 			],
 		},
 		{
+			type: 'paragraph',
+			content: [
+				{
+					type: 'text',
+					text: 'As certain currencies became abundant',
+				},
+				{
+					type: 'text',
+					text: ' as an output of a successful',
+					marks: [{ type: 'em' }],
+				},
+				{
+					type: 'text',
+					text: ' process or organism, other organisms evolved to take that output and convert it into something else. Over billions of years, this is how the Earth’s ecosystem has evolved, creating vast systems of metabolic pathways and forming highly complex self-regulating systems that, for example, stabilize our body temperatures or the temperature of the Earth, despite continuous fluctuations and changes among the individual elements at every scale—from micro to macro. The output of one process becomes the input of another. Ultimately, everything interconnects.',
+				},
+			],
+		},
+		{
 			type: 'image',
 			attrs: {
 				url: 'https://assets.pubpub.org/_testing/41517872250621.png',

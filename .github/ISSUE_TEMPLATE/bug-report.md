@@ -1,7 +1,7 @@
 ---
-name: 
-about: 
-title: Bug Report
+name: Bug Report
+about: Report a bug.
+title: ''
 labels: bug
 assignees: gabestein
 

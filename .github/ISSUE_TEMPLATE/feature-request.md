@@ -1,7 +1,7 @@
 ---
-name: 
-about: 
-title: Feature Request
+name: Feature Request
+about: Log a feature request.
+title: ''
 labels: feature request
 assignees: gabestein
 

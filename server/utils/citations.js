@@ -1,32 +1,40 @@
 /* eslint-disable import/prefer-default-export */
 import Cite from 'citation-js';
+import { getPubPublishedDate } from 'shared/utils/pubDates';
+import { pubUrl } from 'shared/utils/canonicalUrls';
+
+const getDatePartsObject = (date) => ({
+	'date-parts': [date.getFullYear(), date.getMonth() + 1, date.getDate()],
+});
+
+const collectionKindToCitationJSPart = (kind) =>
+	({
+		book: 'chapter',
+		conference: 'paper-conference',
+		issue: 'article-journal',
+	}[kind] || 'article-journal');
+
+const getCollectionLevelData = (primaryCollectionPub) => {
+	if (!primaryCollectionPub) {
+		return { type: 'article-journal' };
+	}
+	const { collection } = primaryCollectionPub;
+	const { metadata = {}, title, kind } = collection;
+	return {
+		type: collectionKindToCitationJSPart(kind),
+		'container-title': title,
+		ISBN: metadata.isbn,
+		ISSN: metadata.issn || metadata.printIssn || metadata.electronicIssn,
+		edition: metadata.edition,
+		volume: metadata.volume,
+	};
+};
 
 export const generateCitationHTML = (pubData, communityData) => {
-	/* TODO: This is a v6 debug line only! */
-	return {};
-
-	
-	// if (!pubData.versions.length) { return null; }
-	// const isDraft = !pubData.versions.length;
-	const isDraft = true;
-
 	// TODO: We need to set the updated times properly, which are likely stored in firebase.
-	const pubIssuedDate = isDraft ? new Date() : new Date(pubData.updatedAt);
-	const versionIssuedDate = isDraft ? new Date() : new Date(pubData.activeVersion.updatedAt);
-	const communityHostname = communityData.domain || `${communityData.subdomain}.pubpub.org`;
-	const pubLink = `https://${communityHostname}/pub/${pubData.slug}`;
-	// const authorData = pubData.collaborators.filter((item)=> {
-	// 	return item.Collaborator.isAuthor;
-	// }).sort((foo, bar)=> {
-	// 	if (foo.Collaborator.order < bar.Collaborator.order) { return -1; }
-	// 	if (foo.Collaborator.order > bar.Collaborator.order) { return 1; }
-	// 	return 0;
-	// }).map((author)=> {
-	// 	return {
-	// 		given: author.firstName,
-	// 		family: author.lastName,
-	// 	};
-	// });
+	const pubIssuedDate = getPubPublishedDate(pubData);
+	const pubLink = pubUrl(communityData, pubData);
+	const primaryCollectionPub = pubData.collectionPubs.find((cp) => cp.isPrimary);
 	const authorData = pubData.attributions
 		.filter((attribution) => {
 			return attribution.isAuthor;
@@ -47,54 +55,24 @@ export const generateCitationHTML = (pubData, communityData) => {
 			};
 		});
 	const authorsEntry = authorData.length ? { author: authorData } : {};
+	/* We have to clean this title because of a bug in Citation.js */
+	/* Issue here: https://github.com/citation-js/citation-js/issues/35 */
+	const cleanedTitle = pubData.title.replace(/"/gi, '');
 	const commonData = {
 		type: 'article-journal',
-		title: pubData.title,
+		title: cleanedTitle,
 		...authorsEntry,
 		'container-title': communityData.title,
+		...getCollectionLevelData(primaryCollectionPub),
 	};
 	const pubCiteObject = new Cite({
 		...commonData,
 		id: pubData.id,
 		DOI: pubData.doi,
-		// ISSN: pubData.doi ? (communityData.issn || '2471–2388') : null,
 		ISSN: pubData.doi ? communityData.issn : null,
-		issued: [
-			{
-				'date-parts': [
-					pubIssuedDate.getFullYear(),
-					pubIssuedDate.getMonth() + 1,
-					pubIssuedDate.getDate(),
-				],
-			},
-		],
+		issued: pubIssuedDate && [getDatePartsObject(pubIssuedDate)],
 		note: pubLink,
 		URL: pubLink,
-	});
-	const versionCiteObject = new Cite({
-		...commonData,
-		id: pubData.activeVersion ? pubData.activeVersion.id : 'Draft',
-		DOI:
-			pubData.doi && pubData.activeVersion.id
-				? `${pubData.doi}/${pubData.activeVersion.id.split('-')[0]}`
-				: null,
-		// ISSN: pubData.doi ? (communityData.issn || '2471–2388') : null,
-		ISSN: pubData.doi ? communityData.issn : null,
-		issued: [
-			{
-				'date-parts': [
-					versionIssuedDate.getFullYear(),
-					versionIssuedDate.getMonth() + 1,
-					versionIssuedDate.getDate(),
-				],
-			},
-		],
-		note: pubData.activeVersion
-			? `${pubLink}?version=${pubData.activeVersion.id}`
-			: `${pubLink}/draft`,
-		URL: pubData.activeVersion
-			? `${pubLink}?version=${pubData.activeVersion.id}`
-			: `${pubLink}/draft`,
 	});
 
 	return {
@@ -109,23 +87,6 @@ export const generateCitationHTML = (pubData, communityData) => {
 				.get({ format: 'string', type: 'html', style: 'citation-vancouver', lang: 'en-US' })
 				.replace(/\n/gi, ''),
 			bibtex: pubCiteObject.get({
-				format: 'string',
-				type: 'html',
-				style: 'bibtex',
-				lang: 'en-US',
-			}),
-		},
-		version: {
-			apa: versionCiteObject
-				.get({ format: 'string', type: 'html', style: 'citation-apa', lang: 'en-US' })
-				.replace(/\n/gi, ''),
-			harvard: versionCiteObject
-				.get({ format: 'string', type: 'html', style: 'citation-harvard', lang: 'en-US' })
-				.replace(/\n/gi, ''),
-			vancouver: versionCiteObject
-				.get({ format: 'string', type: 'html', style: 'citation-vancouver', lang: 'en-US' })
-				.replace(/\n/gi, ''),
-			bibtex: versionCiteObject.get({
 				format: 'string',
 				type: 'html',
 				style: 'bibtex',

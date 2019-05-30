@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { Button, Icon } from '@blueprintjs/core';
 import stickybits from 'stickybits';
 
 import GridWrapper from 'components/GridWrapper/GridWrapper';
@@ -21,6 +21,13 @@ const propTypes = {
 const shouldShowHeader = (metaMode) => metaMode !== 'history';
 
 const shouldUseSticky = (metaMode) => metaMode === 'history';
+
+const metaHeaderText = (metaMode) => {
+	if (metaMode === 'details') {
+		return 'Article details';
+	}
+	return metaMode.charAt(0).toUpperCase() + metaMode.slice(1);
+};
 
 const PubMeta = (props) => {
 	const { pubData, collabData, historyData, updateLocalData } = props;
@@ -58,10 +65,10 @@ const PubMeta = (props) => {
 			<GridWrapper containerClassName="pub">
 				{shouldShowHeader(metaMode) && (
 					<div className="header">
+						<h3>{metaHeaderText(metaMode)}</h3>
 						<Button
-							icon="small-cross"
+							icon={<Icon icon="small-cross" iconSize={18} />}
 							minimal={true}
-							small={true}
 							className="meta-close"
 							onClick={() => {
 								updateLocalData('pub', {

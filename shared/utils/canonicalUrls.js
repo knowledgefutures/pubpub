@@ -27,3 +27,5 @@ export const pubUrl = (community, pub, branchShortId, versionInBranch) => {
 	}
 	return baseUrl;
 };
+
+export const doiUrl = (doi) => `https://doi.org/${doi}`;

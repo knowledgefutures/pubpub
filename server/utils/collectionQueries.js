@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
 import validator from 'validator';
-import generateCitationHTML from 'shared/citations/generateCitationHtml';
 import {
 	User,
 	Collection,

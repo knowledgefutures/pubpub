@@ -35,7 +35,7 @@ const ClickToCopyButton = (props) => {
 	const [copyState, copyToClipboard] = useCopyToClipboard();
 
 	const handleClick = () => {
-		copyToClipboard(copyString);
+		copyToClipboard(typeof copyString === 'function' ? copyString() : copyString);
 		setHasCopied(true);
 	};
 

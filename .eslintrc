@@ -40,15 +40,16 @@
         "operator-linebreak": 0,
         "prefer-template": 0,
         "react/destructuring-assignment": 0,
-        "react/jsx-boolean-value": 0,
         "react/forbid-prop-types": 0,
+        "react-hooks/exhaustive-deps": 1,
+        "react-hooks/rules-of-hooks": 2,
+        "react/jsx-boolean-value": 0,
         "react/jsx-filename-extension": [2, { "extensions": [".js"] }],
         "react/jsx-indent": [2, "tab"],
         "react/jsx-indent-props": [2, "tab"],
         "react/jsx-one-expression-per-line": 0,
         "react/jsx-wrap-multilines": 0,
-        "space-before-function-paren": 0,
-        "react-hooks/rules-of-hooks": 2,
-        "react-hooks/exhaustive-deps": 1
+        "react/no-danger": 0,
+        "space-before-function-paren": 0
     }
 }

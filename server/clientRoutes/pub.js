@@ -17,6 +17,9 @@ const getMode = (path, slug) => {
 	if (path.indexOf(`/pub/${slug}/submissions`) > -1) {
 		return 'submissions';
 	}
+	if (path.indexOf(`/pub/${slug}/reviews`) > -1) {
+		return 'reviews';
+	}
 	if (path.indexOf(`/pub/${slug}/manage`) > -1) {
 		return 'manage';
 	}
@@ -39,7 +42,8 @@ app.get(
 		'/pub/:slug/branch/:branchShortId',
 		'/pub/:slug/branch/:branchShortId/:versionNumber',
 		'/pub/:slug/submissions/new/:fromBranchShortId/:toBranchShortId',
-		'/pub/:slug/submissions/:submissionShortId',
+		'/pub/:slug/reviews',
+		'/pub/:slug/reviews/:reviewShortId',
 		'/pub/:slug/manage/',
 		'/pub/:slug/manage/:manageMode',
 	],
@@ -66,6 +70,7 @@ app.get(
 						mode: mode,
 					},
 				};
+				// TODO: For submission mode, check to make sure branches exist - and are visible to client
 				return renderToNodeStream(
 					res,
 					<Html

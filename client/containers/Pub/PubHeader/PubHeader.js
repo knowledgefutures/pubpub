@@ -414,7 +414,7 @@ const PubHeader = (props) => {
 											text: (
 												<div className="text-stack">
 													<span className="subtext">now on branch</span>
-													<span>{pubData.activeBranch.title}</span>
+													<span>#{pubData.activeBranch.title}</span>
 												</div>
 											),
 											rightIcon: 'caret-down',
@@ -444,7 +444,7 @@ const PubHeader = (props) => {
 																return (
 																	<MenuItem
 																		key={branch.id}
-																		text={branch.title}
+																		text={`#${branch.title}`}
 																		active={
 																			pubData.activeBranch
 																				.id === branch.id
@@ -457,14 +457,36 @@ const PubHeader = (props) => {
 															})}
 														<MenuDivider />
 														<MenuItem
-															icon="add"
-															text="Create New Branch"
-															href={`/pub/${
-																pubData.slug
-															}/branch/new?init=${
-																pubData.activeBranch.shortId
-															}`}
+															// intent={Intent.WARNING}
+															icon="issue-new"
+															text={
+																<span>
+																	Branches will be slowly rolling
+																	out in the coming months.
+																	<br />
+																	We would love your feedback
+																	about the exciting new
+																	possibilites.
+																	<br />
+																	Click to learn more and discuss.
+																</span>
+															}
+															href="https://discourse.knowledgefutures.org/"
 														/>
+														{/*
+															TODO-BRANCH: We're removing these items until full branch
+															capabilities are rolled out
+															
+															<MenuItem
+																icon="add"
+																text="Create New Branch"
+																href={`/pub/${
+																	pubData.slug
+																}/branch/new?init=${
+																	pubData.activeBranch.shortId
+																}`}
+															/>
+														*/}
 													</Menu>
 												),
 												minimal: true,

@@ -9,6 +9,7 @@ import PubDocument from './PubDocument';
 import PubSubmission from './PubSubmission';
 import PubMeta from './PubMeta';
 import PubManage from './PubManage';
+import PubReviews from './PubReviews';
 import PubBranchCreate from './PubBranchCreate';
 
 require('./pub.scss');
@@ -60,6 +61,7 @@ const Pub = (props) => {
 								{mode === 'document' && <PubDocument {...modeProps} />}
 								{mode === 'submissions' && <PubSubmission {...modeProps} />}
 								{mode === 'manage' && <PubManage {...modeProps} />}
+								{mode === 'reviews' && <PubReviews {...modeProps} />}
 								{mode === 'new branch' && <PubBranchCreate {...modeProps} />}
 							</React.Fragment>
 						);

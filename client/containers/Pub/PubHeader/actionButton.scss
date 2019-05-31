@@ -16,7 +16,7 @@
 			min-height: 55px;
 		}
 		&.wide {
-			// min-width: 200px;
+			// min-width: 140px;
 			.bp3-button-text {
 				margin-right: 15px;
 			}
@@ -37,6 +37,7 @@
 			font-weight: 400;
 			font-size: 10px;
 			display: block;
+			min-width: 65px;
 
 		}
 	}

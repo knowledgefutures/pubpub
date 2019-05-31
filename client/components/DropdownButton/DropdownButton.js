@@ -8,6 +8,7 @@ require('./dropdownButton.scss');
 const propTypes = {
 	label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 	icon: PropTypes.string,
+	intent: PropTypes.string,
 	isRightAligned: PropTypes.bool,
 	isMinimal: PropTypes.bool,
 	isDisabled: PropTypes.bool,
@@ -22,6 +23,7 @@ const propTypes = {
 const defaultProps = {
 	label: undefined,
 	icon: undefined,
+	intent: undefined,
 	isMinimal: false,
 	isDisabled: false,
 	isRightAligned: false,
@@ -52,6 +54,7 @@ const DropdownButton = function(props) {
 					large={props.isLarge}
 					small={props.isSmall}
 					minimal={props.isMinimal}
+					intent={props.intent}
 					icon={<Icon icon={props.icon} />}
 				/>
 			) : (
@@ -61,6 +64,7 @@ const DropdownButton = function(props) {
 					large={props.isLarge}
 					small={props.isSmall}
 					minimal={props.isMinimal}
+					intent={props.intent}
 					rightIcon={<Icon icon="caret-down" />}
 					text={
 						<span>

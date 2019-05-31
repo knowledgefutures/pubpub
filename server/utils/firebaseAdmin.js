@@ -1,5 +1,11 @@
 import firebaseAdmin from 'firebase-admin';
-import { buildSchema, getFirebaseDoc, restoreDiscussionMaps, createBranch } from '@pubpub/editor';
+import {
+	buildSchema,
+	getFirebaseDoc,
+	restoreDiscussionMaps,
+	createBranch,
+	mergeBranch,
+} from '@pubpub/editor';
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
 import { getFirebaseConfig } from 'utils';
 /* To encode: Buffer.from(JSON.stringify(serviceAccountJson)).toString('base64'); */
@@ -50,4 +56,14 @@ export const createFirebaseBranch = (pubId, baseBranchId, newBranchId) => {
 	const baseFirebaseRef = database.ref(`${pubKey}/${baseBranchKey}`);
 	const newFirebaseRef = database.ref(`${pubKey}/${newBranchKey}`);
 	return createBranch(baseFirebaseRef, newFirebaseRef);
+};
+
+export const mergeFirebaseBranch = (pubId, sourceBranchId, destinationBranchId) => {
+	const pubKey = `pub-${pubId}`;
+	const sourceBranchKey = `branch-${sourceBranchId}`;
+	const destinationBranchKey = `branch-${destinationBranchId}`;
+
+	const sourceFirebaseRef = database.ref(`${pubKey}/${sourceBranchKey}`);
+	const destinationFirebaseRef = database.ref(`${pubKey}/${destinationBranchKey}`);
+	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef);
 };

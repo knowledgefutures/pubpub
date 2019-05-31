@@ -192,7 +192,11 @@ const Permissions = (props) => {
 							<span>Public:</span>
 						</React.Fragment>
 					}
-					allowedTyped={['none', 'view', 'discuss', 'edit']}
+					allowedTyped={
+						branchData.title === 'public'
+							? ['none', 'view', 'discuss']
+							: ['none', 'view', 'discuss', 'edit']
+					}
 					isSmall={false}
 					value={branchData.publicPermissions}
 					onChange={(newPermission) => {
@@ -210,7 +214,11 @@ const Permissions = (props) => {
 							<span>Pub Managers:</span>
 						</React.Fragment>
 					}
-					allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
+					allowedTyped={
+						branchData.title === 'public'
+							? ['none', 'view', 'discuss']
+							: ['none', 'view', 'discuss', 'edit', 'manage']
+					}
 					isSmall={false}
 					value={branchData.pubManagerPermissions}
 					onChange={(newPermission) => {
@@ -229,7 +237,11 @@ const Permissions = (props) => {
 							<span>Community Admins:</span>
 						</React.Fragment>
 					}
-					allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
+					allowedTyped={
+						branchData.title === 'public'
+							? ['none', 'view', 'discuss']
+							: ['none', 'view', 'discuss', 'edit', 'manage']
+					}
 					isSmall={false}
 					value={branchData.communityAdminPermissions}
 					onChange={(newPermission) => {
@@ -254,37 +266,46 @@ const Permissions = (props) => {
 						// isMinimal={props.isMinimal}
 					>
 						<Menu>
-							{accessLinks.map((linkType) => {
-								const linkUrl = `${baseUrl}?access=${linkType.accessHash}`;
-								const showCopied = showTooltip && linkUrl === copied.value;
-								const confirmClasses = classNames({
-									confirmable: true,
-									confirmed: showCopied,
-								});
-								return (
-									<MenuItem
-										key={linkType.text}
-										onClick={() => {
-											copyToClipboard(linkUrl);
-											setShowTooltip(true);
-											clearTimeout(tooltipTimeout.current);
-											tooltipTimeout.current = setTimeout(() => {
-												setShowTooltip(false);
-											}, 2500);
-										}}
-										shouldDismissPopover={false}
-										text={
-											<div>
-												Anyone with this link can {linkType.text}
-												<div className="subtext">
-													Click to copy{' '}
-													<span className={confirmClasses}>Copied!</span>
+							{accessLinks
+								.filter((linkType) => {
+									/* TODO-BRANCH: */
+									return (
+										branchData.title !== 'public' || linkType.text !== 'edit'
+									);
+								})
+								.map((linkType) => {
+									const linkUrl = `${baseUrl}?access=${linkType.accessHash}`;
+									const showCopied = showTooltip && linkUrl === copied.value;
+									const confirmClasses = classNames({
+										confirmable: true,
+										confirmed: showCopied,
+									});
+									return (
+										<MenuItem
+											key={linkType.text}
+											onClick={() => {
+												copyToClipboard(linkUrl);
+												setShowTooltip(true);
+												clearTimeout(tooltipTimeout.current);
+												tooltipTimeout.current = setTimeout(() => {
+													setShowTooltip(false);
+												}, 2500);
+											}}
+											shouldDismissPopover={false}
+											text={
+												<div>
+													Anyone with this link can {linkType.text}
+													<div className="subtext">
+														Click to copy{' '}
+														<span className={confirmClasses}>
+															Copied!
+														</span>
+													</div>
 												</div>
-											</div>
-										}
-									/>
-								);
-							})}
+											}
+										/>
+									);
+								})}
 						</Menu>
 					</DropdownButton>
 				</div>

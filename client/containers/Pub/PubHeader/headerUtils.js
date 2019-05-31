@@ -3,22 +3,36 @@ import { Position, Menu, MenuItem } from '@blueprintjs/core';
 
 export const generateSubmissionButtons = (pubData) => {
 	const defaultSubmissionBranch = pubData.branches.reduce((prev, curr) => {
-		if (!prev && curr.id !== pubData.activeBranch.id) {
+		// if (!prev && curr.id !== pubData.activeBranch.id) {
+		/* TODO-BRANCH: The check for title === 'public' is because we only want to support */
+		/* publishing to a public branch until full branch capabilities are rolled out */
+		if (curr.title === 'public' && curr.id !== pubData.activeBranch.id) {
 			return curr;
 		}
 		return prev;
 	}, undefined);
 
-	if (!defaultSubmissionBranch) {
+	/* TODO-BRANCH: this check to make sure the activeBranch is 'draft' is only */
+	/* to valid until we roll out full branch features */
+	if (pubData.activeBranch.title !== 'draft') {
 		return null;
 	}
 
+	if (!defaultSubmissionBranch) {
+		return null;
+	}
 	const outputButtons = [];
+	/* TODO-BRANCH: Once we roll out full branch capabilities, we may want to rethink this language. */
+	/* To change the button default to say Merge, into #branch. Rather than Publish, merge into #public */
+	const buttonText = defaultSubmissionBranch.canManage ? 'Publish' : 'Submit for Review';
+	const buttonSubText = defaultSubmissionBranch.canManage
+		? `merge into #${defaultSubmissionBranch.title}`
+		: `to #${defaultSubmissionBranch.title}`;
 	outputButtons.push({
 		text: (
 			<div className="text-stack">
-				<span>{defaultSubmissionBranch.submissionAlias || 'New Submission'}</span>
-				<span className="subtext">to branch: {defaultSubmissionBranch.title}</span>
+				<span>{buttonText}</span>
+				<span className="subtext">{buttonSubText}</span>
 			</div>
 		),
 		href: `/pub/${pubData.slug}/submissions/new/${pubData.activeBranch.shortId}/${
@@ -26,7 +40,10 @@ export const generateSubmissionButtons = (pubData) => {
 		}`,
 		isWide: true,
 	});
-	if (pubData.branches.length > 2) {
+
+	/* TODO-BRANCH: The following 'false' is because we only want to support publishing */
+	/* to a public branch until full branch capabilities are rolled out */
+	if (false && pubData.branches.length > 2) {
 		outputButtons.push({
 			// text: 'hello',
 			rightIcon: 'caret-down',

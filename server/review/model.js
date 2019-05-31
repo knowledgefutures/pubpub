@@ -1,6 +1,6 @@
 export default (sequelize, dataTypes) => {
 	return sequelize.define(
-		'Submission',
+		'Review',
 		{
 			id: sequelize.idType,
 			shortId: { type: dataTypes.INTEGER, allowNull: false },
@@ -8,23 +8,23 @@ export default (sequelize, dataTypes) => {
 			/* Set by Associations */
 			pubId: { type: dataTypes.UUID, allowNull: false },
 			sourceBranchId: { type: dataTypes.UUID, allowNull: false },
-			destinationBranchId: { type: dataTypes.UUID, allowNull: false },
+			destinationBranchId: { type: dataTypes.UUID },
 		},
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Pub, Submission, Branch } = models;
-					Pub.hasMany(Submission, {
+					const { Pub, Review, Branch } = models;
+					Pub.hasMany(Review, {
 						onDelete: 'CASCADE',
-						as: 'submissions',
+						as: 'reviews',
 						foreignKey: 'pubId',
 					});
-					Submission.belongsTo(Branch, {
+					Review.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'sourceBranch',
 						foreignKey: 'sourceBranchId',
 					});
-					Submission.belongsTo(Branch, {
+					Review.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'destinationBranch',
 						foreignKey: 'destinationBranchId',

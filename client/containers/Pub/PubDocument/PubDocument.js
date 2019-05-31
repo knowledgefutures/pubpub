@@ -18,6 +18,7 @@ require('./pubDocument.scss');
 const propTypes = {
 	pubData: pubDataProps.isRequired,
 	collabData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 };
@@ -74,7 +75,7 @@ const PubDocument = (props) => {
 	const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			{props.pubData.metaMode !== 'history' && (
+			{!props.pubData.isStaticDoc && props.pubData.metaMode !== 'history' && (
 				<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />
 			)}
 			<GridWrapper containerClassName="pub" columnClassName="pub-columns">

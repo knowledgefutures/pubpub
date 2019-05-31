@@ -73,7 +73,7 @@ const PubBody = (props) => {
 					},
 					// discussion: this.props.discussionNodeOptions,
 				}}
-				placeholder={pubData.isStaticDoc ? 'Begin writing here...' : undefined}
+				placeholder={pubData.isStaticDoc ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}
 				isReadOnly={isReadOnly}
 				onChange={(editorChangeObject) => {

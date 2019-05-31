@@ -38,3 +38,4 @@ require('./workerTasks');
 /* In new format */
 require('../branch/api');
 require('../branchPermission/api');
+require('../review/api');

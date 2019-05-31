@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@blueprintjs/core';
 import { SettingsSection } from 'components';
-import Settings from './Settings';
+// import Settings from './Settings';
 import Permissions from './Permissions';
 
 require('./branches.scss');
@@ -28,14 +28,21 @@ const Branches = (props) => {
 
 			{pubData.branches.map((branch) => {
 				return (
-					<SettingsSection title={branch.title} className="branch-wrapper" key={branch.id}>
-						<Settings
-							pubData={pubData}
-							branchData={branch}
-							updateLocalData={updateLocalData}
-							setIsLoading={setIsLoading}
-						/>
-						<h5>Permissions</h5>
+					<SettingsSection
+						title={`#${branch.title}`}
+						className="branch-wrapper"
+						key={branch.id}
+					>
+						{/*
+							TODO-BRANCH: This is commented out until we unroll full branch functionality
+							<Settings
+								pubData={pubData}
+								branchData={branch}
+								updateLocalData={updateLocalData}
+								setIsLoading={setIsLoading}
+							/>
+							<h5>Permissions</h5>
+						*/}
 						<Permissions
 							pubData={pubData}
 							branchData={branch}

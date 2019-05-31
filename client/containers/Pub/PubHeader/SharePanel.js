@@ -22,7 +22,7 @@ const SharePanel = function(props) {
 				</div>
 			)}
 
-			<h3>Share this Branch</h3>
+			<h3>Share this Branch (#{pubData.activeBranch.title})</h3>
 			<BranchPermissions
 				pubData={pubData}
 				branchData={pubData.activeBranch}

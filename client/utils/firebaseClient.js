@@ -26,5 +26,3 @@ export const initFirebase = (rootKey, authToken) => {
 			console.error('Error authenticating firebase', err);
 		});
 };
-
-export const y = 6;

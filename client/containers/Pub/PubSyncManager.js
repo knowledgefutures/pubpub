@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { apiFetch } from 'utils';
+
+import { loginDataProps } from 'types/base';
+import { apiFetch, getRandomColor } from 'utils';
 import queryString from 'query-string';
 import { initFirebase } from 'utils/firebaseClient';
 
@@ -8,6 +10,7 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	children: PropTypes.func.isRequired,
 	locationData: PropTypes.object.isRequired,
+	loginData: loginDataProps.isRequired,
 };
 
 const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
@@ -22,6 +25,20 @@ const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
 			}),
 	);
 
+const getLocalCollabUser = (pubData, loginData) => {
+	const userColor = getRandomColor(loginData.id);
+	return {
+		id: loginData.id,
+		backgroundColor: `rgba(${userColor}, 0.2)`,
+		cursorColor: `rgba(${userColor}, 1.0)`,
+		image: loginData.avatar || null,
+		name: loginData.fullName || 'Anonymous',
+		initials: loginData.initials || '?',
+		canEdit: !!pubData.canEditBranch,
+		firebaseToken: pubData.firebaseToken,
+	};
+};
+
 class PubSyncManager extends React.Component {
 	constructor(props) {
 		super(props);
@@ -33,12 +50,15 @@ class PubSyncManager extends React.Component {
 			collabData: {
 				editorChangeObject: {},
 				status: 'connecting',
+				localCollabUser: getLocalCollabUser(this.props.pubData, this.props.loginData),
+				remoteCollabUsers: [],
 			},
 			historyData: {
 				...historyData,
 				outstandingRequests: 0,
 			},
 		};
+		this.syncRemoteCollabUsers = this.syncRemoteCollabUsers.bind(this);
 		this.syncMetadata = this.syncMetadata.bind(this);
 		this.updatePubData = this.updatePubData.bind(this);
 		this.updateCollabData = this.updateCollabData.bind(this);
@@ -49,20 +69,29 @@ class PubSyncManager extends React.Component {
 		const rootKey = `pub-${this.props.pubData.id}`;
 		const branchKey = `branch-${this.props.pubData.activeBranch.id}`;
 		initFirebase(rootKey, this.props.pubData.firebaseToken).then(([rootRef, connectionRef]) => {
-			this.setState({
-				firebaseRootRef: rootRef,
-				firebaseBranchRef: rootRef.child(branchKey),
-			});
+			this.setState(
+				{
+					firebaseRootRef: rootRef,
+					firebaseBranchRef: rootRef.child(branchKey),
+				},
+				() => {
+					this.state.firebaseRootRef
+						.child('metadata')
+						.on('child_changed', this.syncMetadata);
 
-			this.state.firebaseRootRef.child('metadata').on('child_changed', this.syncMetadata);
+					this.state.firebaseBranchRef
+						.child('cursors')
+						.on('value', this.syncRemoteCollabUsers);
 
-			connectionRef.on('value', (snapshot) => {
-				if (snapshot.val() === true) {
-					this.updateLocalData('collab', { status: 'connected' });
-				} else {
-					this.updateLocalData('collab', { status: 'disconnected' });
-				}
-			});
+					connectionRef.on('value', (snapshot) => {
+						if (snapshot.val() === true) {
+							this.updateLocalData('collab', { status: 'connected' });
+						} else {
+							this.updateLocalData('collab', { status: 'disconnected' });
+						}
+					});
+				},
+			);
 		});
 	}
 
@@ -93,6 +122,16 @@ class PubSyncManager extends React.Component {
 				},
 			};
 		});
+	}
+
+	syncRemoteCollabUsers(snapshot) {
+		const { loginData } = this.props;
+		const users = snapshot.val();
+		if (users) {
+			this.updateCollabData({
+				remoteCollabUsers: Object.values(users).filter((user) => user.id !== loginData.id),
+			});
+		}
 	}
 
 	updatePubData(newPubData) {

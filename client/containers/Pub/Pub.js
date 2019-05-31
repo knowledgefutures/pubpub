@@ -28,7 +28,11 @@ const Pub = (props) => {
 				communityData={props.communityData}
 				loginData={props.loginData}
 			>
-				<PubSyncManager pubData={props.pubData} locationData={props.locationData}>
+				<PubSyncManager
+					pubData={props.pubData}
+					locationData={props.locationData}
+					loginData={props.loginData}
+				>
 					{({ pubData, collabData, firebaseBranchRef, updateLocalData, historyData }) => {
 						const mode = pubData.mode;
 						const modeProps = {

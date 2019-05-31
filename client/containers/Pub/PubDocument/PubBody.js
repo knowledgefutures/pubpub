@@ -1,7 +1,6 @@
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import Editor from '@pubpub/editor';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { getResizedUrl } from 'utils';
 import discussionSchema from './DiscussionAddon/discussionSchema';
 
@@ -22,7 +21,6 @@ let setSavingTimeout;
 
 const PubBody = (props) => {
 	const { pubData, collabData, firebaseBranchRef, updateLocalData, historyData } = props;
-	const { loginData } = useContext(PageContext);
 	const prevStatusRef = useRef(null);
 	prevStatusRef.current = collabData.status;
 
@@ -87,9 +85,8 @@ const PubBody = (props) => {
 					useCollaborativeOptions
 						? {
 								firebaseRef: firebaseBranchRef,
-								clientData: { id: loginData.id },
+								clientData: props.collabData.localCollabUser,
 								initialDocKey: pubData.initialDocKey,
-								onClientChange: () => {},
 								onStatusChange: (status) => {
 									getNextStatus(status, (nextStatus) => {
 										props.updateLocalData('collab', nextStatus);

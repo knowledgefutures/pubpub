@@ -60,8 +60,7 @@ const processTask = (channel) => {
 				if (taskData.type === 'export') {
 					taskFunction = exportTask(
 						taskData.input.pubId,
-						taskData.input.versionId,
-						taskData.input.content,
+						taskData.input.branchId,
 						taskData.input.format,
 					);
 				} else if (taskData.type === 'import') {

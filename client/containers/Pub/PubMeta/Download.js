@@ -1,270 +1,235 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Intent } from '@blueprintjs/core';
-import { getCollabJSONs } from '@pubpub/editor';
 import dateFormat from 'dateformat';
+import { Button, ButtonGroup, Menu, MenuItem, Popover, Tooltip } from '@blueprintjs/core';
+
 import { FileUploadButton } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { apiFetch } from 'utils';
+import { pingTask } from 'utils/pingTask';
 
 require('./download.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
-	editorView: PropTypes.object.isRequired,
-	// loginData: PropTypes.object.isRequired,
-	setPubData: PropTypes.func.isRequired,
-	// TODO: we should pass in content in the case that we are in the working draft
-	// or maybe just a reference to the function to get draft content.
+	updateLocalData: PropTypes.func.isRequired,
 };
 
-const Download = (props) => {
-	const [isLoading, setIsLoading] = useState(false);
-	const [selectedType, setSelectedType] = useState({ format: 'pdf', title: 'PDF' });
-	const [taskId, setTaskId] = useState(undefined);
-	const { communityData } = useContext(PageContext);
+const formatTypes = [
+	{ format: 'pdf', title: 'PDF' },
+	{ format: 'docx', title: 'Word' },
+	{ format: 'markdown', title: 'Markdown' },
+	{ format: 'epub', title: 'EPUB' },
+	{ format: 'html', title: 'HTML' },
+	{ format: 'odt', title: 'OpenDocument' },
+	{ format: 'plain', title: 'Plain Text' },
+	{ format: 'jats', title: 'JATS XML' },
+	{ format: 'tex', title: 'LaTeX' },
+];
 
-	// class Download extends Component {
-	// constructor(props) {
-	// 	super(props);
-	// 	this.state = {
-	// 		isLoading: false,
-	// 		type: { format: 'pdf', title: 'PDF' },
-	// 		taskId: undefined,
-	// 	};
-	// 	this.getDraftContent = this.getDraftContent.bind(this);
-	// 	this.handleExport = this.handleExport.bind(this);
-	// 	this.updateDownloads = this.updateDownloads.bind(this);
-	// 	this.checkTask = this.checkTask.bind(this);
-	// 	this.getExistingDownload = this.getExistingDownload.bind(this);
-	// 	this.getFormattedDownload = this.getFormattedDownload.bind(this);
-	// }
-
-	const updateDownloads = (type, fileUrl) => {
-		if (type !== 'formatted' && !props.pubData.activeVersion.id) {
-			return null;
+// The "formatted download" is the file that the pub manager can upload themselves to represent the
+// pub. It's stored in pub.downloads, but it's treated as a kind of special case.
+const getFormattedDownload = (downloads) => {
+	return downloads.reduce((prev, curr) => {
+		const currIsNewer = !prev || !prev.createdAt || curr.createdAt > prev.createdAt;
+		if (curr.type === 'formatted' && currIsNewer) {
+			return curr;
 		}
-		const downloadItem = {
-			type: type,
-			url: fileUrl,
-			versionId: type === 'formatted' ? undefined : props.pubData.activeVersion.id,
-			createdAt: new Date(),
-		};
-		const prevDownloads = props.pubData.downloads || [];
-		const newDownloads = [...prevDownloads, downloadItem];
-		return apiFetch('/api/pubs', {
-			method: 'PUT',
-			body: JSON.stringify({
+		return prev;
+	}, null);
+};
+
+// Finds a download for the given branchId and formatType
+const getExistingDownload = (downloads, branchId, formatType) => {
+	return downloads.find((download) => {
+		const sameBranch = download.branchId === branchId;
+		const sameType = download.type === formatType.format;
+		return sameType && sameBranch;
+	});
+};
+
+// Updates the pub's downloads list, both locally and on the server
+const updateDownloads = (type, fileUrl, pubData, communityData, updateLocalData) => {
+	if (type !== 'formatted' && !pubData.activeBranch.id) {
+		return null;
+	}
+	const downloadItem = {
+		type: type,
+		url: fileUrl,
+		branchId: type === 'formatted' ? null : pubData.activeBranch.id,
+		createdAt: new Date(),
+	};
+	const prevDownloads = pubData.downloads || [];
+	const newDownloads = [...prevDownloads, downloadItem];
+	return apiFetch('/api/pubs', {
+		method: 'PUT',
+		body: JSON.stringify({
+			downloads: newDownloads,
+			pubId: pubData.id,
+			communityId: communityData.id,
+		}),
+	})
+		.then(() => {
+			updateLocalData('pub', {
 				downloads: newDownloads,
-				pubId: props.pubData.id,
-				communityId: communityData.id,
-			}),
+			});
 		})
-			.then(() => {
-				props.setPubData({
-					...props.pubData,
-					downloads: newDownloads,
-				});
-			})
-			.catch((err) => {
-				console.error('Error Saving Pub Downloads: ', err);
-			});
-	};
-
-	const checkTask = () => {
-		return apiFetch(`/api/workerTasks?workerTaskId=${taskId}`)
-			.then((taskData) => {
-				if (taskData.isProcessing) {
-					setTimeout(() => {
-						checkTask();
-					}, 1500);
-				} else {
-					setIsLoading(false);
-					setTaskId(undefined);
-					// this.setState({
-					// 	isLoading: false,
-					// 	taskId: undefined,
-					// });
-					window.open(taskData.output.url);
-					updateDownloads(selectedType.format, taskData.output.url);
-				}
-			})
-			.catch(() => {
-				setIsLoading(false);
-				// this.setState({ isLoading: false });
-			});
-	};
-
-	const getDraftContent = () => {
-		if (!props.pubData.isDraft) {
-			return new Promise((resolve) => {
-				resolve(undefined);
-			});
-		}
-
-		const sectionsData = props.pubData.sectionsData;
-		const editorRefs = sectionsData.map((item) => {
-			return `${props.pubData.editorKey}/${item.id}`;
+		.catch((err) => {
+			console.error('Error Saving Pub Downloads: ', err);
 		});
+};
 
-		return getCollabJSONs(props.editorView, editorRefs)
-			.then((content) => {
-				const newContent =
-					content.length === 1
-						? content[0]
-						: content.map((item, index) => {
-								return {
-									title: sectionsData[index].title,
-									id: sectionsData[index].id,
-									content: item,
-								};
-						  });
-				return newContent;
-			})
-			.catch((err) => {
-				console.error('Error getting draft content', err);
-			});
-	};
+// Kicks off an export task on the backend
+const startExportTask = (pubId, branchId, format) =>
+	apiFetch('/api/export', {
+		method: 'POST',
+		body: JSON.stringify({
+			pubId: pubId,
+			branchId: branchId,
+			format: format,
+		}),
+	});
 
-	const getFormattedDownload = () => {
-		const downloads = props.pubData.downloads || [];
-		const formattedDownload = downloads.reduce((prev, curr) => {
-			const currIsNewer = !prev.createdAt || curr.createdAt > prev.createdAt;
-			if (curr.type === 'formatted' && currIsNewer) {
-				return curr;
-			}
-			return prev;
-		}, {});
-		return formattedDownload;
-	};
-
-	const getExistingDownload = () => {
-		const downloads = props.pubData.downloads || [];
-		return downloads.reduce((prev, curr) => {
-			const sameVersion = curr.versionId === props.pubData.activeVersion.id;
-			const sameType = curr.type === selectedType.format;
-			if (sameType && sameVersion) {
-				return curr.url;
-			}
-			return prev;
-		}, undefined);
-	};
-
-	const handleExport = () => {
-		const existingDownload = getExistingDownload();
-		if (existingDownload) {
-			return window.open(existingDownload);
-		}
-		// Check if that format is available for download, if not send off event.
-		setIsLoading(true);
-		// this.setState({ isLoading: true });
-		return getDraftContent()
-			.then((draftContent) => {
-				return apiFetch('/api/export', {
-					method: 'POST',
-					body: JSON.stringify({
-						pubId: props.pubData.id,
-						versionId: props.pubData.isDraft ? 'draft' : props.pubData.activeVersion.id,
-						content: draftContent,
-						format: selectedType.format,
-					}),
-				});
-			})
-			.then((newTaskId) => {
-				setTaskId(newTaskId);
-				// this.setState({ taskId: taskId });
-				setTimeout(() => {
-					checkTask();
-				}, 1500);
-			})
-			.catch(() => {
-				setIsLoading(false);
-				// this.setState({ isLoading: false });
-			});
-	};
-
-	const formattedDownload = getFormattedDownload();
-	const formattedDownloadUrl = formattedDownload.url || '';
-	const formattedDownloadExtenstion = formattedDownloadUrl
+const FormattedDownloadView = (props) => {
+	const { formattedDownload, onUpdateDownloads, shouldShowUploadForm } = props;
+	const { url = '', date } = formattedDownload || {};
+	const extension = url
 		.split('.')
 		.pop()
 		.toLowerCase();
-	const formattedDownloadDate = formattedDownload.date;
-	const types = [
-		{ format: 'pdf', title: 'PDF' },
-		{ format: 'docx', title: 'Word' },
-		{ format: 'markdown', title: 'Markdown' },
-		{ format: 'epub', title: 'EPUB' },
-		{ format: 'html', title: 'HTML' },
-		{ format: 'odt', title: 'OpenDocument' },
-		{ format: 'plain', title: 'Plain Text' },
-		{ format: 'jats', title: 'JATS XML' },
-		{ format: 'tex', title: 'LaTeX' },
-	];
+	return (
+		<div>
+			<h5>Custom download</h5>
+			{shouldShowUploadForm ? (
+				<p>
+					You can upload a file, like a PDF with custom styling, to associate with this
+					pub. It will be provided to readers as the pub's default download, but they'll
+					still be able to use the automatic export tools.
+				</p>
+			) : (
+				<p>
+					The Pub manager has provided a custom version of this pub that you can download.
+				</p>
+			)}
+			<div className="buttons-wrapper">
+				{formattedDownload && (
+					<div>
+						<Button
+							text={`Download ${extension.toUpperCase()}`}
+							onClick={() => window.open(url)}
+						/>
+						<div className="subtext">Uploaded {dateFormat(date, 'mmm dd, yyyy')}</div>
+					</div>
+				)}
+				{shouldShowUploadForm && (
+					<FileUploadButton
+						onUploadFinish={onUpdateDownloads}
+						className="typset-button"
+						text="Upload new file"
+					/>
+				)}
+			</div>
+		</div>
+	);
+};
+
+FormattedDownloadView.propTypes = {
+	formattedDownload: PropTypes.oneOf([
+		null,
+		PropTypes.shape({
+			date: PropTypes.string,
+			extension: PropTypes.string,
+			url: PropTypes.string,
+		}),
+	]).isRequired,
+	onUpdateDownloads: PropTypes.func.isRequired,
+	shouldShowUploadForm: PropTypes.bool.isRequired,
+};
+
+const Download = (props) => {
+	const { pubData, updateLocalData } = props;
+	const {
+		canManage,
+		downloads: maybeDownloads,
+		activeBranch: { id: branchId },
+		id: pubId,
+	} = pubData;
+	const downloads = maybeDownloads || [];
+	const [isLoading, setIsLoading] = useState(false);
+	const [isError, setIsError] = useState(false);
+	const [selectedType, setSelectedType] = useState(formatTypes[0]);
+	const { communityData } = useContext(PageContext);
+	const formattedDownload = getFormattedDownload(downloads);
+
+	const updateDownloadsHere = useCallback(
+		(format, url) => updateDownloads(format, url, pubData, communityData, updateLocalData),
+		[pubData, communityData, updateLocalData],
+	);
+
+	useEffect(() => {
+		if (!isLoading) {
+			return;
+		}
+		setIsError(false);
+		// Check if that format is available for download -- if not, request it from the server.
+		const existingDownload = getExistingDownload(downloads, branchId, selectedType);
+		if (existingDownload) {
+			setIsLoading(false);
+			window.open(existingDownload.url);
+			return;
+		}
+		startExportTask(pubId, branchId, selectedType.format)
+			.then((newTaskId) => pingTask(newTaskId, 1500))
+			.then((taskOutput) => {
+				setIsLoading(false);
+				window.open(taskOutput.url);
+			})
+			.catch(() => {
+				setIsError(true);
+				setIsLoading(false);
+			});
+	}, [branchId, downloads, isLoading, pubId, selectedType, updateDownloadsHere]);
+
 	return (
 		<div className="pub-meta_download-component">
-			{(props.pubData.canManage || !!formattedDownloadUrl) && (
-				<div>
-					<h2>Download</h2>
-					<p>Default file provided by Pub manager</p>
-					<div className="buttons-wrapper">
-						{!!formattedDownloadUrl && (
-							<div>
-								<Button
-									text={`Download ${formattedDownloadExtenstion.toUpperCase()}`}
-									large={true}
-									intent={Intent.PRIMARY}
-									className="typset-button"
-									onClick={() => {
-										window.open(formattedDownloadUrl);
-									}}
-								/>
-								<div className="subtext">
-									Uploaded {dateFormat(formattedDownloadDate, 'mmm dd, yyyy')}
-								</div>
-							</div>
-						)}
-						{props.pubData.canManage && (
-							<FileUploadButton
-								onUploadFinish={(fileUrl) => {
-									updateDownloads('formatted', fileUrl);
-								}}
-								className="typset-button"
-								text="Upload new default file"
-							/>
-						)}
-					</div>
+			{(canManage || formattedDownload) && (
+				<div className="formatted-download-option">
+					<FormattedDownloadView
+						formattedDownload={formattedDownload}
+						shouldShowUploadForm={canManage}
+						onUpdateDownloads={(fileUrl) => updateDownloadsHere('formatted', fileUrl)}
+					/>
 				</div>
 			)}
-
-			<h2>Download Generated File</h2>
-			<p>Auto-generated files based on article content.</p>
-			<div className="bp3-button-group">
-				{types.map((type) => {
-					return (
-						<Button
-							key={type.format}
-							active={selectedType.format === type.format}
-							disabled={isLoading}
-							onClick={() => {
-								setSelectedType(type);
-								// this.setState({ type: type });
-							}}
-							text={type.title}
-						/>
-					);
-				})}
-			</div>
-
-			<div className="buttons-wrapper">
-				<Button
-					type="button"
-					large={true}
-					intent={Intent.PRIMARY}
-					text={`Download Generated ${selectedType.title}`}
-					loading={isLoading}
-					onClick={handleExport}
-				/>
+			<div className="export-option">
+				<h5>Download Generated File</h5>
+				<p>Auto-generated files based on pub content.</p>
+				<ButtonGroup>
+					<Tooltip isOpen={isError} content="There was a problem generating the file.">
+						<Button loading={isLoading} onClick={() => setIsLoading(true)}>
+							Download as {selectedType.title}
+						</Button>
+					</Tooltip>
+					<Popover
+						content={
+							<Menu>
+								{formatTypes.map((type) => (
+									<MenuItem
+										key={type.format}
+										active={selectedType.format === type.format}
+										onClick={() => {
+											setSelectedType(type);
+											setIsError(false);
+										}}
+										text={type.title}
+									/>
+								))}
+							</Menu>
+						}
+					>
+						<Button disabled={isLoading} icon="chevron-down" />
+					</Popover>
+				</ButtonGroup>
 			</div>
 		</div>
 	);

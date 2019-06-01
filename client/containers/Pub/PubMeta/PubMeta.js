@@ -24,7 +24,7 @@ const shouldUseSticky = (metaMode) => metaMode === 'history';
 
 const metaHeaderText = (metaMode) => {
 	if (metaMode === 'details') {
-		return 'Article details';
+		return 'Pub details';
 	}
 	return metaMode.charAt(0).toUpperCase() + metaMode.slice(1);
 };
@@ -81,7 +81,9 @@ const PubMeta = (props) => {
 				{metaMode === 'details' && <Details pubData={pubData} />}
 				{metaMode === 'metrics' && <Metrics pubData={pubData} />}
 				{metaMode === 'social' && <Social pubData={pubData} />}
-				{metaMode === 'download' && <Download pubData={pubData} />}
+				{metaMode === 'download' && (
+					<Download pubData={pubData} updateLocalData={updateLocalData} />
+				)}
 				{metaMode === 'history' && (
 					<History
 						pubData={pubData}

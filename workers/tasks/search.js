@@ -10,8 +10,8 @@ import {
 	User,
 	PubManager,
 	Page,
-} from '../server/models';
-import stopWordList from '../searchSync/stopwords';
+} from '../../server/models';
+import stopWordList from '../../searchSync/stopwords';
 
 const client = algoliasearch(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);
 const pubsIndex = client.initIndex('pubs');

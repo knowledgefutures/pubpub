@@ -5,8 +5,7 @@ import { addWorkerTask } from '../utils';
 app.post('/api/export', (req, res) => {
 	const input = {
 		pubId: req.body.pubId,
-		versionId: req.body.versionId,
-		content: req.body.content,
+		branchId: req.body.branchId,
 		format: req.body.format,
 	};
 

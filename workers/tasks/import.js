@@ -6,7 +6,7 @@ import nodePandoc from 'node-pandoc';
 import tmp from 'tmp-promise';
 import AWS from 'aws-sdk';
 import cheerio from 'cheerio';
-import { generateHash } from '../server/utils';
+import { generateHash } from '../../server/utils';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 

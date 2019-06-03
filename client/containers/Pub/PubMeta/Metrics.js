@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ComposableMap, ZoomableGroup, Geographies, Geography } from 'react-simple-maps';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
-import { Spinner } from '@blueprintjs/core';
+import { Spinner, Tab, Tabs } from '@blueprintjs/core';
 import KeenAnalysis from 'keen-analysis';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 
@@ -21,13 +21,11 @@ let keenClient;
 const Metrics = (props) => {
 	const [mapData, setMapData] = useState(undefined);
 	const [visitsData, setVisitsData] = useState(undefined);
-	const [countryData, setCountryData] = useState(undefined);
+	const [countryData, setCountryData] = useState({});
 	const [toolTipData, setToolTipData] = useState(undefined);
 	const [totalVisits, setTotalVisits] = useState(undefined);
 	const { locationData } = useContext(PageContext);
-	console.log('locdat', locationData);
 	useEffect(() => {
-		console.log('in effec');
 		fetch('https://assets.pubpub.org/_site/world-50m.json')
 			.then((response) => {
 				if (!response.ok) {
@@ -39,7 +37,6 @@ const Metrics = (props) => {
 			})
 			.then((data) => {
 				setMapData(data);
-				// this.setState({ mapData: data });
 			})
 			.catch((err) => {
 				console.error('Error fetching map data', err);
@@ -105,118 +102,14 @@ const Metrics = (props) => {
 						return prev + curr.visits;
 					}, 0),
 				);
-				// this.setState({
-				// 	visitsData: visitsData,
-				// 	countryData: countryData,
-				// 	totalVisits: visitsData.reduce((prev, curr) => {
-				// 		return prev + curr.visits;
-				// 	}, 0),
-				// });
 			})
 			.catch((err) => {
 				console.error('Keen error: ', err);
 			});
 		return () => {};
-	}, []);
-
-	// constructor(props) {
-	// 	super(props);
-	// 	this.state = {
-	// 		mapData: undefined,
-	// 		visitsData: undefined,
-	// 		countryData: undefined,
-	// 		toolTipData: undefined,
-	// 	};
-	// 	this.handleMouseMove = this.handleMouseMove.bind(this);
-	// 	this.handleMouseLeave = this.handleMouseLeave.bind(this);
-	// 	this.keenClient = undefined;
-	// }
-
-	// componentDidMount() {
-	// 	fetch('https://assets.pubpub.org/_site/world-50m.json')
-	// 		.then((response) => {
-	// 			if (!response.ok) {
-	// 				return response.json().then((err) => {
-	// 					throw err;
-	// 				});
-	// 			}
-	// 			return response.json();
-	// 		})
-	// 		.then((data) => {
-	// 			this.setState({ mapData: data });
-	// 		})
-	// 		.catch((err) => {
-	// 			console.error('Error fetching map data', err);
-	// 		});
-
-	// 	this.keenClient = new KeenAnalysis({
-	// 		projectId: props.locationData.isPubPubProduction
-	// 			? '5b57a01ac9e77c0001eef181'
-	// 			: '5b5791b9c9e77c000175ca3b',
-	// 		readKey: props.locationData.isPubPubProduction
-	// 			? '5CF12741FA41DC030D092D2B6D247344B3C25183E9862A598D452F59B346BC5CD667E1C2B2DA03CFDE17339312D3880BC20C1051DAA146CAFF2ABA684FCE5B4B8985FF9C9EEC4406C3D851F0E81D67B33E65431FB39963378B9A8D8925B9C081'
-	// 			: 'E4C526BC021F960D2C84AB1521E8D1D3F0D1089292947A27880D43F83997554C5F95F34DD9E16A18B5F5FC0809A415AF4A2E74AAF9379B51520924BF2B692598FF80D751E8E6EC63F3B931432DF394799EFC0E0E6C100ED64C1E628873E9D16C',
-	// 	});
-
-	// 	const startDate =
-	// 		new Date(props.pubData.createdAt).toISOString() < '2018-10-15T00:00:00.000Z'
-	// 			? '2018-10-15T00:00:00.000Z'
-	// 			: props.pubData.createdAt;
-
-	// 	this.keenClient
-	// 		.query({
-	// 			analysis_type: 'count',
-	// 			event_collection: 'pageviews',
-	// 			cache: props.locationData.isPubPubProduction
-	// 				? { maxAge: 10 * 60 * 1000 } /* 10 minutes */
-	// 				: false,
-	// 			filters: [
-	// 				{
-	// 					property_name: 'pubpub.pubId',
-	// 					operator: 'eq',
-	// 					property_value: props.pubData.id,
-	// 				},
-	// 			],
-	// 			timeframe: {
-	// 				// TODO: We need to set the start date based on the earliest visible entry.
-	// 				start: startDate,
-	// 				end: new Date().toISOString(),
-	// 			},
-	// 			interval: 'daily',
-	// 			group_by: 'geo.country',
-	// 		})
-	// 		.then((res) => {
-	// 			const visitsData = res.result.map((item) => {
-	// 				return {
-	// 					date: item.timeframe.start.substring(0, 10),
-	// 					visits: item.value.reduce((prev, curr) => {
-	// 						return prev + curr.result;
-	// 					}, 0),
-	// 				};
-	// 			});
-	// 			const countryData = {};
-	// 			res.result.forEach((item) => {
-	// 				item.value.forEach((itemValue) => {
-	// 					const previousCountryValue = countryData[itemValue['geo.country']] || 0;
-	// 					countryData[itemValue['geo.country']] =
-	// 						previousCountryValue + itemValue.result;
-	// 				});
-	// 			});
-	// 			this.setState({
-	// 				visitsData: visitsData,
-	// 				countryData: countryData,
-	// 				totalVisits: visitsData.reduce((prev, curr) => {
-	// 					return prev + curr.visits;
-	// 				}, 0),
-	// 			});
-	// 		})
-	// 		.catch((err) => {
-	// 			console.error('Keen error: ', err);
-	// 		});
-	// }
+	}, [countryData, locationData.isPubPubProduction, props.pubData.createdAt, props.pubData.id]);
 
 	const handleMouseMove = (geography, evt) => {
-		// this.setState((prevState) => {
 		const x = evt.clientX;
 		const y = evt.clientY + window.pageYOffset;
 		const countryVisits = countryData[geography.properties.name] || 0;
@@ -230,23 +123,12 @@ const Metrics = (props) => {
 			visits: countryVisits,
 			percentage: percentage,
 		});
-		// return {
-		// 	toolTipData: {
-		// 		x: x,
-		// 		y: y,
-		// 		name: geography.properties.name,
-		// 		visits: countryVisits,
-		// 		percentage: percentage,
-		// 	},
-		// };
-		// });
 	};
 
 	const handleMouseLeave = () => {
 		setToolTipData(undefined);
 	};
 
-	// const toolTipData = this.state.toolTipData || {};
 	const tooltipStyle = toolTipData
 		? {
 				top: toolTipData.y,
@@ -256,32 +138,9 @@ const Metrics = (props) => {
 		: {};
 	const hasPreAnalytics =
 		new Date(props.pubData.createdAt).toISOString() < '2018-10-15T00:00:00.000Z';
-	return (
-		<div className="pub-meta_metrics-component">
-			{hasPreAnalytics && (
-				<div className="bp3-callout bp3-intent-warning" style={{ marginBottom: '2em' }}>
-					Pubs created before the launch of PubPub v5 display analytics back to October
-					15th.
-				</div>
-			)}
-			{toolTipData && (
-				<div className="bp3-elevation-2" style={tooltipStyle}>
-					<div>
-						<b>Country: </b>
-						{toolTipData.name}
-					</div>
-					<div>
-						<b>Visits: </b>
-						{toolTipData.visits.toLocaleString()}
-					</div>
-					<div>
-						<b>Percent of Total Visits: </b>
-						{toolTipData.percentage}%
-					</div>
-				</div>
-			)}
 
-			<h2>Visits</h2>
+	const visitsPanel = (
+		<div className="visits">
 			{!visitsData && (
 				<div className="spinner-wrapper">
 					<Spinner />
@@ -307,7 +166,6 @@ const Metrics = (props) => {
 									return null;
 								}
 								const payload = instance.payload[0].payload;
-								// console.log(payload);
 								return (
 									<div className="bp3-elevation-2">
 										<div>
@@ -315,8 +173,8 @@ const Metrics = (props) => {
 										</div>
 										<div>Visits: {payload.visits}</div>
 										{/* <div>Unique Visits: {payload.unique}</div>
-											<div>Average Time on Page: {payload.avgTime}s</div>
-											*/}
+								<div>Average Time on Page: {payload.avgTime}s</div>
+								*/}
 									</div>
 								);
 							}}
@@ -331,8 +189,11 @@ const Metrics = (props) => {
 					</AreaChart>
 				</ResponsiveContainer>
 			)}
+		</div>
+	);
 
-			<h2>Visit Locations</h2>
+	const locationsPanel = (
+		<div className="locations">
 			{(!mapData || !countryData) && (
 				<div className="spinner-wrapper">
 					<Spinner />
@@ -398,6 +259,37 @@ const Metrics = (props) => {
 					</ZoomableGroup>
 				</ComposableMap>
 			)}
+		</div>
+	);
+
+	return (
+		<div className="pub-meta_metrics-component">
+			{hasPreAnalytics && (
+				<div className="bp3-callout bp3-intent-warning" style={{ marginBottom: '2em' }}>
+					Pubs created before the launch of PubPub v5 display analytics back to October
+					15th.
+				</div>
+			)}
+			{toolTipData && (
+				<div className="bp3-elevation-2" style={tooltipStyle}>
+					<div>
+						<b>Country: </b>
+						{toolTipData.name}
+					</div>
+					<div>
+						<b>Visits: </b>
+						{toolTipData.visits.toLocaleString()}
+					</div>
+					<div>
+						<b>Percent of Total Visits: </b>
+						{toolTipData.percentage}%
+					</div>
+				</div>
+			)}
+			<Tabs id="pub-metrics">
+				<Tab id="visits" title="Visits" panel={visitsPanel} />
+				<Tab id="locations" title="Visit locations" panel={locationsPanel} />
+			</Tabs>
 		</div>
 	);
 };

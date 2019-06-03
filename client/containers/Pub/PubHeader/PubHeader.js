@@ -141,7 +141,8 @@ const PubHeader = (props) => {
 		{ title: 'Download', icon: 'download2', key: 'download' },
 		{ title: 'Social Sharing', icon: 'share2', key: 'social' },
 		{ title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
-		{ title: 'Discussions', icon: 'chat', key: 'discussions' },
+		// TODO(ian): re-enable this once we have something to put there
+		// { title: 'Discussions', icon: 'chat', key: 'discussions' },
 	];
 
 	const manageMode = locationData.params && locationData.params.manageMode;

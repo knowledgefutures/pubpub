@@ -1,11 +1,4 @@
 .pub-meta_metrics-component {
-	h2 {
-		font-size: 22px;
-		font-weight: 800;
-		&:not(:first-of-type) {
-			margin-top: 2em;
-		}
-	}
 	.spinner-wrapper {
 		margin: 1em 0em 5em;
 	}
@@ -13,5 +6,8 @@
 		background: white;
 		padding: 1em;
 		pointer-events: none;
+	}
+	.locations > svg {
+		max-height: 300px;
 	}
 }

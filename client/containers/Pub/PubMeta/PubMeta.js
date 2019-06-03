@@ -26,6 +26,9 @@ const metaHeaderText = (metaMode) => {
 	if (metaMode === 'details') {
 		return 'Pub details';
 	}
+	if (metaMode === 'social') {
+		return 'Share this Pub';
+	}
 	return metaMode.charAt(0).toUpperCase() + metaMode.slice(1);
 };
 

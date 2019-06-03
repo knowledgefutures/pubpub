@@ -4,28 +4,34 @@ import { Tooltip } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
 
+const collaboratorType = PropTypes.shape({
+	cursorColor: PropTypes.string,
+	id: PropTypes.string,
+	image: PropTypes.string,
+	initials: PropTypes.string,
+	name: PropTypes.string,
+});
+
 const propTypes = {
-	collaborators: PropTypes.arrayOf(
-		PropTypes.shape({
-			cursorColor: PropTypes.string,
-			id: PropTypes.string,
-			image: PropTypes.string,
-			initials: PropTypes.string,
-			name: PropTypes.string,
-		}),
-	).isRequired,
+	collabData: PropTypes.shape({
+		localCollabUser: collaboratorType,
+		collaborators: PropTypes.arrayOf(collaboratorType),
+	}).isRequired,
 };
 
-const getUniqueCollaborators = (collaborators) => {
+const getUniqueCollaborators = (collaborators, isAnonymous) => {
 	const uniqueCollaborators = {};
 	collaborators.forEach((item) => {
 		if (item.initials !== '?') {
 			uniqueCollaborators[item.id] = item;
 		}
 	});
-	const numAnonymous = collaborators.reduce(
-		(sum, collaborator) => (collaborator.initials === '?' ? sum + 1 : sum),
+	const numAnonymous = Math.max(
 		0,
+		collaborators.reduce(
+			(sum, collaborator) => (collaborator.initials === '?' ? sum + 1 : sum),
+			0,
+		) - (isAnonymous ? 1 : 0),
 	);
 	if (numAnonymous) {
 		uniqueCollaborators.anon = {
@@ -40,7 +46,8 @@ const getUniqueCollaborators = (collaborators) => {
 };
 
 const PubHeaderCollaborators = (props) => {
-	const uniqueCollaborators = getUniqueCollaborators(props.collaborators);
+	const { remoteCollabUsers, localCollabUser } = props.collabData;
+	const uniqueCollaborators = getUniqueCollaborators(remoteCollabUsers, !localCollabUser.id);
 	return (
 		<div>
 			{Object.keys(uniqueCollaborators)

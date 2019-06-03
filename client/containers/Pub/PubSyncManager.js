@@ -35,7 +35,6 @@ const getLocalCollabUser = (pubData, loginData) => {
 		name: loginData.fullName || 'Anonymous',
 		initials: loginData.initials || '?',
 		canEdit: !!pubData.canEditBranch,
-		firebaseToken: pubData.firebaseToken,
 	};
 };
 

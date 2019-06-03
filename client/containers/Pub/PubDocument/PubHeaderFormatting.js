@@ -53,7 +53,7 @@ const PubHeaderFormatting = (props) => {
 
 			{/* <div className="spacer" /> */}
 			<div className="right-content">
-				<PubHeaderCollaborators collaborators={props.collabData.remoteCollabUsers} />
+				<PubHeaderCollaborators collabData={props.collabData} />
 				<span className={`collab-status ${collabData.status}`}>
 					<span className="status-prefix">Working Draft </span>
 					{collabData.status}

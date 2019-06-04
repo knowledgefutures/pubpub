@@ -584,7 +584,12 @@ const PubHeader = (props) => {
 								target={<Button minimal={true}>Contents</Button>}
 							/>
 							<span className="dot">·</span>
-							<Button minimal={true} onClick={() => window.scrollTo({left: 0, top: 0, behavior: "auto"})}>
+							<Button
+								minimal={true}
+								onClick={() =>
+									window.scrollTo({ left: 0, top: 0, behavior: 'auto' })
+								}
+							>
 								Back to top
 							</Button>
 						</div>

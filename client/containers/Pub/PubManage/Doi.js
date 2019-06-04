@@ -113,7 +113,7 @@ class Doi extends Component {
 		const { isLoading, justSetDoi } = this.state;
 		return (
 			<div className="pub-manage_doi-component">
-				<h1>DOI Assignment</h1>
+				<h2>DOI Assignment</h2>
 				{this.renderStatusMessage()}
 				{this.renderCollectionContextMessage()}
 				{this.renderDoi()}

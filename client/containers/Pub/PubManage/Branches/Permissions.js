@@ -33,7 +33,7 @@ const Permissions = (props) => {
 	const tooltipTimeout = useRef(null);
 	const [showTooltip, setShowTooltip] = useState(false);
 	const [copied, copyToClipboard] = useCopyToClipboard();
-
+	
 	const handleBranchUpdate = (branchUpdates) => {
 		setIsLoading(true);
 		updateLocalData('pub', {
@@ -180,7 +180,8 @@ const Permissions = (props) => {
 			text: 'edit',
 			accessHash: pubData.activeBranch.editHash,
 		},
-	];
+	]
+
 	return (
 		<div className="pub-manage_branches_permissions-component">
 			<div className="dropdown-bar">
@@ -192,7 +193,7 @@ const Permissions = (props) => {
 							<span>Public:</span>
 						</React.Fragment>
 					}
-					allowedTyped={
+					allowedTypes={
 						branchData.title === 'public'
 							? ['none', 'view', 'discuss']
 							: ['none', 'view', 'discuss', 'edit']
@@ -214,7 +215,7 @@ const Permissions = (props) => {
 							<span>Pub Managers:</span>
 						</React.Fragment>
 					}
-					allowedTyped={
+					allowedTypes={
 						branchData.title === 'public'
 							? ['none', 'view', 'discuss']
 							: ['none', 'view', 'discuss', 'edit', 'manage']
@@ -228,7 +229,7 @@ const Permissions = (props) => {
 						});
 					}}
 				/>
-
+{/* 
 				<PermissionsDropdown
 					isMinimal={true}
 					prefix={
@@ -237,7 +238,7 @@ const Permissions = (props) => {
 							<span>Community Admins:</span>
 						</React.Fragment>
 					}
-					allowedTyped={
+					allowedTypes={
 						branchData.title === 'public'
 							? ['none', 'view', 'discuss']
 							: ['none', 'view', 'discuss', 'edit', 'manage']
@@ -250,7 +251,7 @@ const Permissions = (props) => {
 							communityAdminPermissions: newPermission,
 						});
 					}}
-				/>
+				/> */}
 				<div className="links-dropdown">
 					<DropdownButton
 						isMinimal={true}
@@ -338,7 +339,7 @@ const Permissions = (props) => {
 								options={[
 									<PermissionsDropdown
 										key={permission.id}
-										allowedTyped={['view', 'discuss', 'edit', 'manage']}
+										allowedTypes={['view', 'discuss', 'edit', 'manage']}
 										value={permission.permissions}
 										onChange={(newPermission) => {
 											handleBranchPermissionUpdate({

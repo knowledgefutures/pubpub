@@ -10,6 +10,7 @@ import Details from './Details';
 import Delete from './Delete';
 import Managers from './Managers';
 import Branches from './Branches';
+import Metrics from './Metrics';
 import Doi from './Doi';
 
 require('./pubManage.scss');
@@ -29,6 +30,7 @@ const PubManage = (props) => {
 		{ text: 'Branches', active: manageMode === 'branches', path: 'branches' },
 		{ text: 'Collections', active: manageMode === 'collections', path: 'collections' },
 		{ text: 'DOI', active: manageMode === 'doi', path: 'doi' },
+		{ text: 'Metrics', active: manageMode === 'metrics', path: 'metrics' },
 		{ text: 'Delete', active: manageMode === 'delete', path: 'delete', danger: true },
 	];
 	return (
@@ -98,6 +100,7 @@ const PubManage = (props) => {
 					{manageMode === 'delete' && (
 						<Delete communityData={communityData} pubData={props.pubData} />
 					)}
+					{manageMode === 'metrics' && <Metrics pubData={props.pubData} />}
 				</div>
 			</GridWrapper>
 		</div>

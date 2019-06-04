@@ -118,7 +118,7 @@ const PubBranchCreate = (props) => {
 								<span>Public:</span>
 							</React.Fragment>
 						}
-						allowedTyped={['none', 'view', 'discuss', 'edit']}
+						allowedTypes={['none', 'view', 'discuss', 'edit']}
 						isSmall={false}
 						value={publicPermissions}
 						onChange={(newPermission) => {
@@ -133,7 +133,7 @@ const PubBranchCreate = (props) => {
 								<span>Pub Managers:</span>
 							</React.Fragment>
 						}
-						allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
+						allowedTypes={['none', 'view', 'discuss', 'edit', 'manage']}
 						isSmall={false}
 						value={pubManagerPermissions}
 						onChange={(newPermission) => {
@@ -149,7 +149,7 @@ const PubBranchCreate = (props) => {
 								<span>Community Admins:</span>
 							</React.Fragment>
 						}
-						allowedTyped={['none', 'view', 'discuss', 'edit', 'manage']}
+						allowedTypes={['none', 'view', 'discuss', 'edit', 'manage']}
 						isSmall={false}
 						value={communityAdminPermissions}
 						onChange={(newPermission) => {
@@ -175,7 +175,7 @@ const PubBranchCreate = (props) => {
 								options={[
 									<PermissionsDropdown
 										key={permission.id}
-										allowedTyped={['view', 'discuss', 'edit', 'manage']}
+										allowedTypes={['view', 'discuss', 'edit', 'manage']}
 										value={permission.permissions}
 										onChange={(newPermission) => {
 											const newUserPermissions = userPermissions.map(

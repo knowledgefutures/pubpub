@@ -264,6 +264,7 @@ const Metrics = (props) => {
 
 	return (
 		<div className="pub-meta_metrics-component">
+			<h2>Metrics</h2>
 			{hasPreAnalytics && (
 				<div className="bp3-callout bp3-intent-warning" style={{ marginBottom: '2em' }}>
 					Pubs created before the launch of PubPub v5 display analytics back to October

@@ -158,8 +158,8 @@ const PubHeader = (props) => {
 		{ title: 'Details', icon: 'more', key: 'details' },
 		{ title: 'Download', icon: 'download2', key: 'download' },
 		{ title: 'Social Sharing', icon: 'share2', key: 'social' },
-		{ title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
-		// TODO(ian): re-enable this once we have something to put there
+		// TODO(ian): re-enable these once we have something to put there
+		// { title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
 		// { title: 'Discussions', icon: 'chat', key: 'discussions' },
 	];
 
@@ -244,23 +244,26 @@ const PubHeader = (props) => {
 										);
 									})}
 							</div>
-							<div className="right">
-								<Button
-									className="manager-button"
-									text="Share"
-									icon="people"
-									intent={Intent.PRIMARY}
-									onClick={() => {
-										setIsShareOpen(true);
-									}}
-									// href={`/pub/${pubData.slug}/manage/sharing`}
-								/>
-								<AnchorButton
-									className="manager-button"
-									text="Manage"
-									href={`/pub/${pubData.slug}/manage`}
-								/>
-							</div>
+							{pubData.canManage && (
+								<React.Fragment>
+									<div className="right">
+										<Button
+											className="manager-button"
+											text="Share"
+											icon="people"
+											intent={Intent.PRIMARY}
+											onClick={() => {
+												setIsShareOpen(true);
+											}}
+										/>
+										<AnchorButton
+											className="manager-button"
+											text="Manage"
+											href={`/pub/${pubData.slug}/manage`}
+										/>
+									</div>
+								</React.Fragment>
+							)}
 
 							{/* <div className="buttons">
 										{!pubData.isDraft &&

@@ -7,6 +7,8 @@ import NavBar from 'components/NavBar/NavBar';
 import Icon from 'components/Icon/Icon';
 import { populateNavigationIds } from 'utils';
 
+require('./pageWrapper.scss');
+
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,

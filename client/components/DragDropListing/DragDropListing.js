@@ -84,6 +84,7 @@ const DragDropListing = (props) => {
 							</Draggable>
 						);
 					})}
+					{droppableProvided.placeholder}
 				</div>
 			)}
 		</Droppable>

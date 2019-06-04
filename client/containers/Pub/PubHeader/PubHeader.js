@@ -412,7 +412,9 @@ const PubHeader = (props) => {
 											text: (
 												<div className="text-stack">
 													<span>History</span>
-													<span className="action-subtext">{pubDateString}</span>
+													<span className="action-subtext">
+														{pubDateString}
+													</span>
 												</div>
 											),
 											rightIcon: 'history',
@@ -438,7 +440,9 @@ const PubHeader = (props) => {
 										{
 											text: (
 												<div className="text-stack">
-													<span className="action-subtext">now on branch</span>
+													<span className="action-subtext">
+														now on branch
+													</span>
 													<span>#{pubData.activeBranch.title}</span>
 												</div>
 											),
@@ -579,25 +583,10 @@ const PubHeader = (props) => {
 								}
 								target={<Button minimal={true}>Contents</Button>}
 							/>
-
-							<Button
-								minimal={true}
-								small={true}
-								// onClick={() => {
-								// 	this.props.setOptionsMode('cite');
-								// }}
-								text="Cite"
-							/>
 							<span className="dot">·</span>
-							<Button
-								minimal={true}
-								small={true}
-								// onClick={() => {
-								// 	this.props.setOptionsMode('download');
-								// }}
-								text="Download"
-							/>
-							<span className="dot">·</span>
+							<Button minimal={true} onClick={() => window.scrollTo({left: 0, top: 0, behavior: "auto"})}>
+								Back to top
+							</Button>
 						</div>
 					</div>
 				)}

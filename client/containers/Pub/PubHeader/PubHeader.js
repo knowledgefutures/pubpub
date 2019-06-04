@@ -223,23 +223,26 @@ const PubHeader = (props) => {
 										);
 									})}
 							</div>
-							<div className="right">
-								<Button
-									className="manager-button"
-									text="Share"
-									icon="people"
-									intent={Intent.PRIMARY}
-									onClick={() => {
-										setIsShareOpen(true);
-									}}
-									// href={`/pub/${pubData.slug}/manage/sharing`}
-								/>
-								<AnchorButton
-									className="manager-button"
-									text="Manage"
-									href={`/pub/${pubData.slug}/manage`}
-								/>
-							</div>
+							{pubData.canManage && (
+								<React.Fragment>
+									<div className="right">
+										<Button
+											className="manager-button"
+											text="Share"
+											icon="people"
+											intent={Intent.PRIMARY}
+											onClick={() => {
+												setIsShareOpen(true);
+											}}
+										/>
+										<AnchorButton
+											className="manager-button"
+											text="Manage"
+											href={`/pub/${pubData.slug}/manage`}
+										/>
+									</div>
+								</React.Fragment>
+							)}
 
 							{/* <div className="buttons">
 										{!pubData.isDraft &&

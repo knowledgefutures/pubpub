@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { Menu, MenuItem } from '@blueprintjs/core';
 import { DropdownButton } from 'components';
 
@@ -11,13 +10,12 @@ const propTypes = {
 	value: PropTypes.string,
 	onChange: PropTypes.func,
 	isDisabled: PropTypes.bool,
-	allowedTyped: PropTypes.array.isRequired,
+	allowedTypes: PropTypes.array.isRequired,
 };
 const defaultProps = {
 	prefix: '',
 	isSmall: true,
 	isMinimal: false,
-	value: 'none',
 	onChange: () => {},
 	isDisabled: false,
 };
@@ -65,12 +63,19 @@ const PermissionsDropdown = function(props) {
 	};
 
 	Object.keys(items).forEach((type) => {
-		if (!props.allowedTyped.includes(type)) {
+		if (!props.allowedTypes.includes(type)) {
 			delete items[type];
 		}
 	});
 
-	const selectedKey = props.value || items[props.allowedTyped[0]].value;
+	const selectedKey = props.value || items[props.allowedTypes[0]].value;
+	console.log(
+		props.value,
+		props.allowedTypes[0],
+		items[props.allowedTypes[0]].value,
+		selectedKey,
+		items[selectedKey],
+	);
 	const style = {
 		marginRight: props.prefix ? '1em' : '0em',
 	};

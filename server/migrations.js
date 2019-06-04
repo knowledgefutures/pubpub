@@ -612,6 +612,9 @@ new Promise((resolve) => {
 	// 		return Promise.all(pubUpdates);
 	// 	});
 	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Communities', 'useHeaderTextAccent', { type: Sequelize.BOOLEAN });
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

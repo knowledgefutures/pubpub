@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import Color from 'color';
 
 const propTypes = {
-	accentColorLight: PropTypes.string.isRequired, // Primary accent color
-	accentColorDark: PropTypes.string.isRequired, // Primary accent color
-	headerColorType: PropTypes.string.isRequired,
+	communityData: PropTypes.string.isRequired,
+	isNavHidden: PropTypes.bool.isRequired,
 };
 
 const AccentStyle = function(props) {
+	const { communityData, isNavHidden } = props;
+	const { accentColorLight, accentColorDark, headerColorType, useHeaderTextAccent } = communityData;
 	const generateColors = (inputColor) => {
 		return {
 			base: inputColor,
@@ -34,11 +35,16 @@ const AccentStyle = function(props) {
 		hover: baseHover,
 		action: baseAction,
 		minimal: baseMinimal,
-	} = generateColors(props.accentColorDark);
+	} = generateColors(accentColorDark);
 
 	const headerAccentColor = generateColors(
-		props.headerColorType === 'light' ? props.accentColorLight : props.accentColorDark,
+		headerColorType === 'light' ? accentColorLight : accentColorDark,
 	);
+
+	const navAccentColor = headerColorType === 'light' ? accentColorDark : accentColorLight;
+	const bottomBorder = `.accent-color.${
+		isNavHidden ? 'header-component' : 'nav-bar-component'
+	} { border-bottom: 2px solid ${navAccentColor}; }`;
 	return (
 		<style
 			dangerouslySetInnerHTML={{
@@ -49,7 +55,7 @@ const AccentStyle = function(props) {
 				headerAccentColor.base
 			}; } 
 			.accent-color.header-component, .accent-color.nav-bar-component, .accent-color.footer-component, .accent-color.nav-item { color: ${
-				headerAccentColor.text
+				useHeaderTextAccent ? navAccentColor : headerAccentColor.text
 			}; }
 			.bp3-button.bp3-intent-primary { background-color: ${baseAction}; color: ${baseText}; }
 			.bp3-button.bp3-intent-primary:hover:not(.bp3-disabled) { background-color: ${baseHover}; color: ${baseText}; }
@@ -64,6 +70,7 @@ const AccentStyle = function(props) {
 			.bp3-slider-progress.bp3-intent-primary, .bp3-dark .bp3-slider-progress.bp3-intent-primary { background: ${baseColor}; }
 			.bp3-slider-handle .bp3-slider-label { background: ${baseColor}; color: ${baseText}; }
 			.highlight-dot-wrapper .highlight-dot { background-color: ${baseColor}; }
+			${useHeaderTextAccent ? bottomBorder : ''}
 		`,
 			}}
 		/>

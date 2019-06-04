@@ -123,6 +123,7 @@ app.put('/api/communities', (req, res) => {
 				'defaultPubCollections',
 				'headerLogo',
 				'headerColorType',
+				'useHeaderTextAccent',
 				'headerLinks',
 				'hideHero',
 				'hideHeaderLogo',

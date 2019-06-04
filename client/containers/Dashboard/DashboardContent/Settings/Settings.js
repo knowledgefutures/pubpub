@@ -45,6 +45,7 @@ class Settings extends Component {
 
 			/* Navigation */
 			hideNav: props.communityData.hideNav || false,
+			useHeaderTextAccent: props.communityData.useHeaderTextAccent || false,
 			navigation: props.communityData.navigation,
 
 			/* Homepage */
@@ -274,6 +275,28 @@ class Settings extends Component {
 								active={this.state.headerColorType === 'dark'}
 								onClick={() => {
 									this.setState({ headerColorType: 'dark' });
+								}}
+							/>
+						</ButtonGroup>
+					</InputField>
+					<InputField label="Header Text Color">
+						<ButtonGroup>
+							<Button
+								text={this.state.headerColorType === 'light' ? 'Black' : 'White'}
+								active={!this.state.useHeaderTextAccent}
+								onClick={() => {
+									this.setState({ useHeaderTextAccent: false });
+								}}
+							/>
+							<Button
+								text={
+									this.state.headerColorType === 'light'
+										? 'Dark Accent'
+										: 'Light Accent'
+								}
+								active={this.state.useHeaderTextAccent}
+								onClick={() => {
+									this.setState({ useHeaderTextAccent: true });
 								}}
 							/>
 						</ButtonGroup>

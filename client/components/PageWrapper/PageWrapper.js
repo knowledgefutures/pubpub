@@ -91,9 +91,10 @@ const PageWrapper = (props) => {
 				)}
 
 				<AccentStyle
-					accentColorLight={communityData.accentColorLight}
-					accentColorDark={communityData.accentColorDark}
-					headerColorType={communityData.headerColorType}
+					communityData={communityData}
+					isNavHidden={props.hideNav}
+					// accentColorDark={communityData.accentColorDark}
+					// headerColorType={communityData.headerColorType}
 					// accentTextColor={communityData.accentTextColor}
 					// accentActionColor={communityData.accentActionColor}
 					// accentHoverColor={communityData.accentHoverColor}

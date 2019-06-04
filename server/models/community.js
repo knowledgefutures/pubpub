@@ -38,6 +38,7 @@ export default (sequelize) => {
 				values: ['light', 'dark', 'custom'],
 				defaultValue: 'light',
 			},
+			useHeaderTextAccent: { type: Sequelize.BOOLEAN },
 			hideHero: { type: Sequelize.BOOLEAN },
 			hideHeaderLogo: { type: Sequelize.BOOLEAN },
 			heroLogo: { type: Sequelize.TEXT },

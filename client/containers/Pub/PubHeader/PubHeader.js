@@ -140,8 +140,8 @@ const PubHeader = (props) => {
 		{ title: 'Details', icon: 'more', key: 'details' },
 		{ title: 'Download', icon: 'download2', key: 'download' },
 		{ title: 'Social Sharing', icon: 'share2', key: 'social' },
-		{ title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
-		// TODO(ian): re-enable this once we have something to put there
+		// TODO(ian): re-enable these once we have something to put there
+		// { title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
 		// { title: 'Discussions', icon: 'chat', key: 'discussions' },
 	];
 

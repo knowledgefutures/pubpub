@@ -67,22 +67,12 @@ class Doi extends Component {
 		const { pubData } = this.props;
 		const { justSetDoi } = this.state;
 		if (!pubData.doi) {
-			return (
-				<p>
-					A DOI can be registered for each pub by community admins. When completed, the
-					pub is assigned an article-level DOI and each version is assigned its own
-					component DOI. The article-level DOI will always point to the most recent
-					version while each version DOI can be used to reference earlier snapshots.
-				</p>
-			);
+			return <p>A DOI can be registered for each pub by community admins.</p>;
 		}
 		if (justSetDoi) {
 			return (
 				<React.Fragment>
-					<p>
-						Successfully submitted a DOI registration for this pub and each of its
-						published versions!
-					</p>
+					<p>Successfully submitted a DOI registration for this pub.</p>
 					<p>
 						Registration may take a few hours to complete in Crossref&apos;s system. If
 						DOI URLs do not work immediately, the registration is likely still
@@ -91,7 +81,7 @@ class Doi extends Component {
 				</React.Fragment>
 			);
 		}
-		return <p>DOIs have been registered for this pub and all of its published versions.</p>;
+		return <p>DOIs have been registered for this pub.</p>;
 	}
 
 	renderDoi() {

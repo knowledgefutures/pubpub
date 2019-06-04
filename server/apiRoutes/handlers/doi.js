@@ -4,13 +4,13 @@ import xmlbuilder from 'xmlbuilder';
 
 import createDeposit from 'shared/crossref/createDeposit';
 import {
+	Branch,
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
 	Community,
 	Pub,
 	PubAttribution,
-	Version,
 	User,
 } from '../../models';
 
@@ -57,7 +57,7 @@ const findPub = (pubId) =>
 	Pub.findOne({
 		where: { id: pubId },
 		include: [
-			{ model: Version, as: 'versions', where: { isPublic: true } },
+			{ model: Branch, as: 'branches' },
 			{
 				model: PubAttribution,
 				as: 'attributions',

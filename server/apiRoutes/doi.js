@@ -44,7 +44,5 @@ app.post('/api/doi/:target', (req, res) => {
 			throw new Error('Invalid DOI target');
 		})
 		.then((json) => res.status(201).json(json))
-		.catch((err) => {
-			res.status(500).json(err);
-		});
+		.catch((err) => res.status(500).json(err));
 });

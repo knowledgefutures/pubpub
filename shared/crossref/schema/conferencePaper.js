@@ -1,17 +1,7 @@
-import componentList from './componentList';
 import contributors from './contributors';
 import doiData from './doiData';
 
-export default ({
-	attributions,
-	doi,
-	getResourceUrl,
-	getVersionDoi,
-	language,
-	sortedVersions,
-	timestamp,
-	title,
-}) => {
+export default ({ attributions, doi, getResourceUrl, language, timestamp, title }) => {
 	return {
 		conference_paper: {
 			'@language': language,
@@ -20,7 +10,8 @@ export default ({
 				title: title,
 			},
 			...doiData(doi, timestamp, getResourceUrl()),
-			...componentList(sortedVersions, timestamp, getVersionDoi, getResourceUrl),
+			// TODO(ian): Re-enable this for branches at some point?
+			// ...componentList(sortedVersions, timestamp, getVersionDoi, getResourceUrl),
 		},
 	};
 };

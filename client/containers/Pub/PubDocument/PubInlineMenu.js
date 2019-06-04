@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 import uuidv4 from 'uuid/v4';
 import { setLocalHighlight } from '@pubpub/editor';
 
@@ -10,6 +11,7 @@ require('./pubInlineMenu.scss');
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	// onNewHighlightDiscussion: PropTypes.func,
 	openLinkMenu: PropTypes.func,
 };
@@ -20,7 +22,8 @@ const defaultProps = {
 };
 
 const PubInlineMenu = (props) => {
-	const { pubData, collabData } = props;
+	const { pubData, collabData, historyData } = props;
+	const { locationData } = useContext(PageContext);
 	const selection = collabData.editorChangeObject.selection || {};
 	const selectionBoundingBox = collabData.editorChangeObject.selectionBoundingBox || {};
 
@@ -70,7 +73,7 @@ const PubInlineMenu = (props) => {
 					return (
 						<Button
 							key={item.key}
-							className="bp3-minimal"
+							minimal={true}
 							icon={item.icon}
 							active={menuItemsObject[item.key].isActive}
 							onClick={onClickAction}
@@ -81,7 +84,7 @@ const PubInlineMenu = (props) => {
 					);
 				})}
 			<Button
-				className="bp3-minimal"
+				minimal={true}
 				icon={<Icon icon="chat" />}
 				onClick={() => {
 					const view = collabData.editorChangeObject.view;
@@ -97,6 +100,19 @@ const PubInlineMenu = (props) => {
 					// });
 				}}
 			/>
+			{/* <Button
+				minimal={true}
+				icon="link"
+				onClick={() => {
+					console.log(historyData, selection);
+					console.log(
+						'Permalink is: ',
+						`https://${locationData.hostname}/pub/${pubData.slug}/branch/${
+							pubData.activeBranch.shortId
+						}/${historyData.currentKey}?from=${selection.from}&to=${selection.to}`,
+					);
+				}}
+			/> */}
 		</div>
 	);
 };

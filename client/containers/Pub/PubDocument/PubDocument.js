@@ -114,6 +114,7 @@ const PubDocument = (props) => {
 						<PubInlineMenu
 							pubData={props.pubData}
 							collabData={props.collabData}
+							historyData={props.historyData}
 							openLinkMenu={() => {
 								setLinkPopupIsOpen(true);
 							}}

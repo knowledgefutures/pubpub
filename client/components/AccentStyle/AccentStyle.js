@@ -51,7 +51,7 @@ const AccentStyle = function(props) {
 				__html: `
 			.accent-background { background-color: ${baseColor}; } 
 			.accent-color { color: ${baseText}; }
-			.accent-background.header-component, .accent-background.nav-bar-component, .accent-background.footer-component, .accent-background.nav-item-background { background-color: ${
+			.accent-background.header-component, .accent-background.nav-bar-component, .accent-background.footer-component, .accent-background.nav-item-background, .accent-background.image-wrapper{ background-color: ${
 				headerAccentColor.base
 			}; } 
 			.accent-color.header-component, .accent-color.nav-bar-component, .accent-color.footer-component, .accent-color.nav-item { color: ${

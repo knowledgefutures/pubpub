@@ -45,6 +45,19 @@ const propTypes = {
 
 const PubHeader = (props) => {
 	/*
+	COMMUNITY:
+	accentColorDark
+	accentColorLight
+	headerColorType: ['light', 'dark', 'custom']
+
+	PUB:
+	headerStyle: ['white-blocks', 'black-blocks', null]
+	headerBackgroundType: color, image, 
+	headerBackgroundImage: https://
+	headerAccentType: ['light', 'dark', 'custom', null]
+	*/
+
+	/*
 		We need communityWide accentColor (dark and light)
 		We need pub headerStyle setting
 		We need pub headerStyle background (color, gradient, tile, stretch)
@@ -122,10 +135,15 @@ const PubHeader = (props) => {
 	const authors = pubData.attributions.filter((attribution) => {
 		return attribution.isAuthor;
 	});
-	const useHeaderImage = pubData.useHeaderImage && pubData.avatar;
+	const useHeaderImage =
+		pubData.headerBackgroundType === 'image' && pubData.headerBackgroundImage;
 	const backgroundStyle = {};
 	if (useHeaderImage) {
-		const resizedBackground = getResizedUrl(pubData.avatar, 'fit-in', '1500x600');
+		const resizedBackground = getResizedUrl(
+			pubData.headerBackgroundImage,
+			'fit-in',
+			'1500x600',
+		);
 		backgroundStyle.backgroundImage = `url("${resizedBackground}")`;
 	}
 
@@ -146,7 +164,10 @@ const PubHeader = (props) => {
 	];
 
 	const manageMode = locationData.params && locationData.params.manageMode;
-	const accentColor = pubData.headerStyle === 'white-blocks' ? '#A2273E' : '#ecd721';
+	const accentColor =
+		pubData.headerStyle === 'white-blocks'
+			? communityData.accentColorDark
+			: communityData.accentColorLight;
 	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
 	const submissionButtons = generateSubmissionButtons(pubData);
 
@@ -388,7 +409,7 @@ const PubHeader = (props) => {
 											text: (
 												<div className="text-stack">
 													<span>History</span>
-													<span className="subtext">{pubDateString}</span>
+													<span className="action-subtext">{pubDateString}</span>
 												</div>
 											),
 											rightIcon: 'history',
@@ -414,7 +435,7 @@ const PubHeader = (props) => {
 										{
 											text: (
 												<div className="text-stack">
-													<span className="subtext">now on branch</span>
+													<span className="action-subtext">now on branch</span>
 													<span>#{pubData.activeBranch.title}</span>
 												</div>
 											),

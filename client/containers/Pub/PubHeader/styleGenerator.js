@@ -22,6 +22,9 @@ export default (styleType, accentColor) => {
 			${whiteBlocksPrefix} .action-button-component .bp3-button {
 				color: ${accentColor};
 			}
+			${whiteBlocksPrefix} .action-button-component .bp3-button:not(.bp3-active) .action-subtext {
+				color: #1f1f1f;
+			}
 			${whiteBlocksPrefix} .action-button-component .bp3-button.bp3-active {
 				color: white;
 				background-color: ${accentColor};
@@ -54,6 +57,9 @@ export default (styleType, accentColor) => {
 			}
 			${blackBlocksPrefix} .action-button-component .bp3-button {
 				color: ${accentColor};
+			}
+			${blackBlocksPrefix} .action-button-component .bp3-button:not(.bp3-active) .action-subtext {
+				color: #bbb;
 			}
 			${blackBlocksPrefix} .action-button-component .bp3-button.bp3-active {
 				color: black;

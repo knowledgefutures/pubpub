@@ -91,11 +91,13 @@ const PageWrapper = (props) => {
 				)}
 
 				<AccentStyle
-					accentColor={communityData.accentColor}
-					accentTextColor={communityData.accentTextColor}
-					accentActionColor={communityData.accentActionColor}
-					accentHoverColor={communityData.accentHoverColor}
-					accentMinimalColor={communityData.accentMinimalColor}
+					accentColorLight={communityData.accentColorLight}
+					accentColorDark={communityData.accentColorDark}
+					headerColorType={communityData.headerColorType}
+					// accentTextColor={communityData.accentTextColor}
+					// accentActionColor={communityData.accentActionColor}
+					// accentHoverColor={communityData.accentHoverColor}
+					// accentMinimalColor={communityData.accentMinimalColor}
 				/>
 
 				<Header

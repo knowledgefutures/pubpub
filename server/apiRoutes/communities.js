@@ -71,21 +71,8 @@ app.post('/api/communities', (req, res) => {
 				heroTitle: req.body.heroLogo ? '' : req.body.title,
 				hideHeaderLogo: true,
 				heroText: description,
-				accentColor: req.body.accentColor,
-				accentTextColor: Color(req.body.accentColor).isLight() ? '#000000' : '#FFFFFF',
-				accentHoverColor: Color(req.body.accentColor)
-					.fade(0.2)
-					.rgb()
-					.string(),
-				accentActionColor: Color(req.body.accentColor)
-					.fade(0.4)
-					.rgb()
-					.string(),
-				accentMinimalColor: Color(req.body.accentColor)
-					.fade(0.8)
-					.rgb()
-					.string(),
-				navigation: [homePageId],
+				accentColorLight: req.body.accentColorLight,
+				accentColorDark: req.body.accentColorDark,
 			});
 		})
 		.then(() => {
@@ -124,7 +111,8 @@ app.put('/api/communities', (req, res) => {
 				'description',
 				'avatar',
 				'favicon',
-				'accentColor',
+				'accentColorLight',
+				'accentColorDark',
 				'navigation',
 				'website',
 				'twitter',
@@ -134,6 +122,7 @@ app.put('/api/communities', (req, res) => {
 				'hideNav',
 				'defaultPubCollections',
 				'headerLogo',
+				'headerColorType',
 				'headerLinks',
 				'hideHero',
 				'hideHeaderLogo',
@@ -156,22 +145,6 @@ app.put('/api/communities', (req, res) => {
 	});
 	if (updatedCommunity.subdomain) {
 		updatedCommunity.subdomain = slugifyString(updatedCommunity.subdomain);
-	}
-	if (updatedCommunity.accentColor) {
-		const accentColor = updatedCommunity.accentColor;
-		updatedCommunity.accentTextColor = Color(accentColor).isLight() ? '#000000' : '#FFFFFF';
-		updatedCommunity.accentHoverColor = Color(accentColor)
-			.fade(0.2)
-			.rgb()
-			.string();
-		updatedCommunity.accentActionColor = Color(accentColor)
-			.fade(0.4)
-			.rgb()
-			.string();
-		updatedCommunity.accentMinimalColor = Color(accentColor)
-			.fade(0.8)
-			.rgb()
-			.string();
 	}
 
 	CommunityAdmin.findOne({

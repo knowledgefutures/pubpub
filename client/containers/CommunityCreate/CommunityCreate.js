@@ -20,7 +20,8 @@ class CommunityCreate extends Component {
 			title: '',
 			description: '',
 			heroLogo: '',
-			accentColor: '#2D2E2F',
+			accentColorDark: '#2D2E2F',
+			accentColorLight: '#FFFFFF',
 			createIsLoading: false,
 			createError: undefined,
 		};
@@ -29,7 +30,8 @@ class CommunityCreate extends Component {
 		this.onTitleChange = this.onTitleChange.bind(this);
 		this.onDescriptionChange = this.onDescriptionChange.bind(this);
 		this.onHeroHeaderLogoChange = this.onHeroHeaderLogoChange.bind(this);
-		this.onAccentColorChange = this.onAccentColorChange.bind(this);
+		this.onAccentColorLightChange = this.onAccentColorLightChange.bind(this);
+		this.onAccentColorDarkChange = this.onAccentColorDarkChange.bind(this);
 	}
 
 	onCreateSubmit(evt) {
@@ -44,7 +46,8 @@ class CommunityCreate extends Component {
 				description: this.state.description,
 				headerLogo: this.state.heroLogo,
 				heroLogo: this.state.heroLogo,
-				accentColor: this.state.accentColor,
+				accentColorLight: this.state.accentColorLight,
+				accentColorDark: this.state.accentColorDark,
 			}),
 		})
 			.then(() => {
@@ -72,8 +75,12 @@ class CommunityCreate extends Component {
 		this.setState({ heroLogo: val });
 	}
 
-	onAccentColorChange(evt) {
-		this.setState({ accentColor: evt.target.value });
+	onAccentColorLightChange(evt) {
+		this.setState({ accentColorLight: evt.target.value });
+	}
+
+	onAccentColorDarkChange(evt) {
+		this.setState({ accentColorDark: evt.target.value });
 	}
 
 	render() {
@@ -141,12 +148,12 @@ class CommunityCreate extends Component {
 												helperText="Used on the landing page. Suggested height: 200px"
 											/>
 											<InputField
-												label="Accent Color"
+												label="Light Accent Color"
 												isRequired={true}
-												value={this.state.accentColor}
-												onChange={this.onAccentColorChange}
+												value={this.state.accentColorLight}
+												onChange={this.onAccentColorLightChange}
 												error={
-													!colorRegex.test(this.state.accentColor)
+													!colorRegex.test(this.state.accentColorLight)
 														? 'Must be a hex format color: e.g. #123456'
 														: ''
 												}
@@ -154,7 +161,28 @@ class CommunityCreate extends Component {
 													<div
 														className="color-swatch"
 														style={{
-															backgroundColor: this.state.accentColor,
+															backgroundColor: this.state
+																.accentColorLight,
+														}}
+													/>
+												}
+											/>
+											<InputField
+												label="Dark Accent Color"
+												isRequired={true}
+												value={this.state.accentColorDark}
+												onChange={this.onAccentColorDarkChange}
+												error={
+													!colorRegex.test(this.state.accentColorDark)
+														? 'Must be a hex format color: e.g. #123456'
+														: ''
+												}
+												helperText={
+													<div
+														className="color-swatch"
+														style={{
+															backgroundColor: this.state
+																.accentColorDark,
 														}}
 													/>
 												}

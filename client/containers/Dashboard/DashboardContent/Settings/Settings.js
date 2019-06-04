@@ -33,10 +33,12 @@ class Settings extends Component {
 			description: props.communityData.description,
 			avatar: props.communityData.avatar,
 			favicon: props.communityData.favicon,
-			accentColor: props.communityData.accentColor,
+			accentColorLight: props.communityData.accentColorLight,
+			accentColorDark: props.communityData.accentColorDark,
 
 			/* Header */
 			headerLogo: props.communityData.headerLogo,
+			headerColorType: props.communityData.headerColorType,
 			hideCreatePubButton: props.communityData.hideCreatePubButton || false,
 			defaultPubCollections: props.communityData.defaultPubCollections || [],
 			// headerLinks
@@ -212,11 +214,19 @@ class Settings extends Component {
 							}}
 						/>
 					</div>
-					<InputField label="Accent Color">
+					<InputField label="Light Accent Color">
 						<ColorInput
-							value={this.state.accentColor}
+							value={this.state.accentColorLight}
 							onChange={(val) => {
-								this.setState({ accentColor: val.hex });
+								this.setState({ accentColorLight: val.hex });
+							}}
+						/>
+					</InputField>
+					<InputField label="Dark Accent Color">
+						<ColorInput
+							value={this.state.accentColorDark}
+							onChange={(val) => {
+								this.setState({ accentColorDark: val.hex });
 							}}
 						/>
 					</InputField>
@@ -250,6 +260,24 @@ class Settings extends Component {
 						useAccentBackground={true}
 						canClear={true}
 					/>
+					<InputField label="Header Color">
+						<ButtonGroup>
+							<Button
+								text="Light"
+								active={this.state.headerColorType === 'light'}
+								onClick={() => {
+									this.setState({ headerColorType: 'light' });
+								}}
+							/>
+							<Button
+								text="Dark"
+								active={this.state.headerColorType === 'dark'}
+								onClick={() => {
+									this.setState({ headerColorType: 'dark' });
+								}}
+							/>
+						</ButtonGroup>
+					</InputField>
 					<InputField>
 						<Switch
 							label={

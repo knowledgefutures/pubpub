@@ -23,7 +23,24 @@ export default (sequelize) => {
 				},
 			},
 			avatar: { type: Sequelize.TEXT },
+
+			headerStyle: {
+				type: Sequelize.ENUM,
+				values: ['white-blocks', 'black-blocks'],
+				defaultValue: null,
+			},
+			headerBackgroundType: {
+				type: Sequelize.ENUM,
+				values: ['color', 'image'],
+				defaultValue: 'color',
+			},
+			headerBackgroundColor: { type: Sequelize.STRING },
+			headerBackgroundImage: { type: Sequelize.TEXT },
+
+			/* Deprecated */
 			useHeaderImage: { type: Sequelize.BOOLEAN },
+			/* ---------- */
+
 			firstPublishedAt: { type: Sequelize.DATE },
 			lastPublishedAt: { type: Sequelize.DATE },
 			draftEditHash: { type: Sequelize.STRING }, // TODO: This is used for draft

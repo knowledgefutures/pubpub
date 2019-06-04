@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Checkbox } from '@blueprintjs/core';
-import { InputField, ImageUpload } from 'components';
+import { Button, ButtonGroup, Checkbox } from '@blueprintjs/core';
+import { InputField, ImageUpload, SettingsSection } from 'components';
 import { apiFetch, slugifyString } from 'utils';
 
 const propTypes = {
@@ -23,13 +23,22 @@ class Details extends Component {
 			slug: props.pubData.slug,
 			description: props.pubData.description || '',
 			avatar: props.pubData.avatar || '',
-			useHeaderImage: props.pubData.useHeaderImage || false,
+			// useHeaderImage: props.pubData.useHeaderImage || false,
+
+			headerStyle: props.pubData.headerStyle,
+			headerBackgroundType: props.pubData.headerBackgroundType,
+			headerBackgroundImage: props.pubData.headerBackgroundImage,
+			headerPreviewKey: Math.random(),
 		};
 		this.updateTitle = this.updateTitle.bind(this);
 		this.updateSlug = this.updateSlug.bind(this);
 		this.updateDescription = this.updateDescription.bind(this);
 		this.updateAvatar = this.updateAvatar.bind(this);
-		this.updateUseHeaderImage = this.updateUseHeaderImage.bind(this);
+		// this.updateUseHeaderImage = this.updateUseHeaderImage.bind(this);
+		this.updateHeaderStyle = this.updateHeaderStyle.bind(this);
+		// this.updateHeaderBackgroundType = this.updateHeaderBackgroundType.bind(this);
+		this.updateHeaderBackgroundImage = this.updateHeaderBackgroundImage.bind(this);
+
 		this.handleSave = this.handleSave.bind(this);
 		this.showSaveSuccess = this.showSaveSuccess.bind(this);
 	}
@@ -68,12 +77,34 @@ class Details extends Component {
 		});
 	}
 
-	updateUseHeaderImage(evt) {
+	updateHeaderStyle(val) {
 		this.setState({
 			hasUpdated: true,
-			useHeaderImage: evt.target.checked,
+			headerStyle: val,
 		});
 	}
+
+	// updateHeaderBackgroundType(val) {
+	// 	this.setState({
+	// 		hasUpdated: true,
+	// 		headerBackgroundType: val,
+	// 	});
+	// }
+
+	updateHeaderBackgroundImage(val) {
+		this.setState({
+			hasUpdated: true,
+			headerBackgroundType: val ? 'image' : 'color',
+			headerBackgroundImage: val,
+		});
+	}
+
+	// updateUseHeaderImage(evt) {
+	// 	this.setState({
+	// 		hasUpdated: true,
+	// 		useHeaderImage: evt.target.checked,
+	// 	});
+	// }
 
 	handleSave() {
 		const newValues = {
@@ -81,7 +112,10 @@ class Details extends Component {
 			slug: this.state.slug,
 			description: this.state.description,
 			avatar: this.state.avatar,
-			useHeaderImage: this.state.useHeaderImage,
+			// useHeaderImage: this.state.useHeaderImage,
+			headerStyle: this.state.headerStyle,
+			headerBackgroundType: this.state.headerBackgroundType,
+			headerBackgroundImage: this.state.headerBackgroundImage,
 		};
 
 		this.setState({ isLoading: true });
@@ -143,47 +177,101 @@ class Details extends Component {
 						<span className="bp3-icon-standard bp3-icon-tick-circle" /> Saved
 					</div>
 				</div>
-				<h2>Pub Details</h2>
-				<InputField
-					label="Title"
-					value={this.state.title}
-					onChange={this.updateTitle}
-					error={!this.state.title ? 'Required' : null}
-				/>
-				<InputField
-					label="Link"
-					helperText={`Pub will be available at ${this.props.locationData.hostname}/pub/${
-						this.state.slug
-					}`}
-					value={this.state.slug}
-					onChange={this.updateSlug}
-					error={!this.state.slug ? 'Required' : null}
-				/>
-				<InputField
-					label="Description"
-					placeholder="Enter description"
-					helperText={`${this.state.description.length}/280 characters`}
-					isTextarea={true}
-					value={this.state.description}
-					onChange={this.updateDescription}
-					error={undefined}
-				/>
-				<ImageUpload
-					htmlFor="avatar-upload"
-					label="Pub Image"
-					defaultImage={this.state.avatar}
-					onNewImage={this.updateAvatar}
-					width={150}
-					helperText="Suggested minimum dimensions: 1200px x 800px."
-				/>
-				<InputField label="Use Header Image">
+				<h2>Details</h2>
+				<SettingsSection title="Pub">
+					<InputField
+						label="Title"
+						value={this.state.title}
+						onChange={this.updateTitle}
+						error={!this.state.title ? 'Required' : null}
+					/>
+					<InputField
+						label="Link"
+						helperText={`Pub will be available at ${
+							this.props.locationData.hostname
+						}/pub/${this.state.slug}`}
+						value={this.state.slug}
+						onChange={this.updateSlug}
+						error={!this.state.slug ? 'Required' : null}
+					/>
+					<InputField
+						label="Description"
+						placeholder="Enter description"
+						helperText={`${this.state.description.length}/280 characters`}
+						isTextarea={true}
+						value={this.state.description}
+						onChange={this.updateDescription}
+						error={undefined}
+					/>
+					<ImageUpload
+						htmlFor="avatar-upload"
+						label="Preview Image"
+						defaultImage={this.state.avatar}
+						onNewImage={this.updateAvatar}
+						width={150}
+						helperText="Suggested minimum dimensions: 1200px x 800px."
+					/>
+				</SettingsSection>
+				<SettingsSection title="Header">
+					<InputField label="Style">
+						<ButtonGroup>
+							<Button
+								text="Default"
+								active={!this.state.headerStyle}
+								onClick={() => {
+									this.updateHeaderStyle(null);
+								}}
+							/>
+							<Button
+								text="White Blocks"
+								active={this.state.headerStyle === 'white-blocks'}
+								onClick={() => {
+									this.updateHeaderStyle('white-blocks');
+								}}
+							/>
+							<Button
+								text="Black Blocks"
+								active={this.state.headerStyle === 'black-blocks'}
+								onClick={() => {
+									this.updateHeaderStyle('black-blocks');
+								}}
+							/>
+						</ButtonGroup>
+					</InputField>
+					<ImageUpload
+						key={this.state.headerPreviewKey}
+						htmlFor="header-background-upload"
+						label="Background Image"
+						defaultImage={this.state.headerBackgroundImage}
+						onNewImage={this.updateHeaderBackgroundImage}
+						width={150}
+						canClear={true}
+						helperText={
+							<span>
+								<span>Suggested minimum dimensions: 1200px x 800px.</span>
+								{this.state.avatar &&
+									this.state.avatar !== this.state.headerBackgroundImage && (
+										<Button
+											small={true}
+											text="Use Preview Image"
+											onClick={() => {
+												this.updateHeaderBackgroundImage(prevState.avatar);
+											}}
+										/>
+									)}
+							</span>
+						}
+					/>
+
+					{/* <InputField label="Use Header Image">
 					<Checkbox
 						checked={this.state.useHeaderImage}
 						onChange={this.updateUseHeaderImage}
 					>
 						Set to use the pub image at the top of published snapshots.
 					</Checkbox>
-				</InputField>
+				</InputField> */}
+				</SettingsSection>
 			</div>
 		);
 	}

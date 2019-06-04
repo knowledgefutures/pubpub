@@ -28,10 +28,16 @@ export default (sequelize) => {
 			},
 			avatar: { type: Sequelize.TEXT },
 			favicon: { type: Sequelize.TEXT },
-			accentColor: { type: Sequelize.STRING },
+			accentColorLight: { type: Sequelize.STRING },
+			accentColorDark: { type: Sequelize.STRING },
 			hideCreatePubButton: { type: Sequelize.BOOLEAN },
 			headerLogo: { type: Sequelize.TEXT },
 			headerLinks: { type: Sequelize.JSONB },
+			headerColorType: {
+				type: Sequelize.ENUM,
+				values: ['light', 'dark', 'custom'],
+				defaultValue: 'light',
+			},
 			hideHero: { type: Sequelize.BOOLEAN },
 			hideHeaderLogo: { type: Sequelize.BOOLEAN },
 			heroLogo: { type: Sequelize.TEXT },
@@ -45,10 +51,15 @@ export default (sequelize) => {
 			heroPrimaryButton: { type: Sequelize.JSONB },
 			heroSecondaryButton: { type: Sequelize.JSONB },
 			heroAlign: { type: Sequelize.TEXT },
+
+			/* Deprecated */
+			accentColor: { type: Sequelize.STRING },
 			accentTextColor: { type: Sequelize.STRING },
 			accentActionColor: { type: Sequelize.STRING },
 			accentHoverColor: { type: Sequelize.STRING },
 			accentMinimalColor: { type: Sequelize.STRING },
+			/* ---------- */
+
 			navigation: { type: Sequelize.JSONB },
 			hideNav: { type: Sequelize.BOOLEAN },
 			website: { type: Sequelize.TEXT },

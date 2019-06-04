@@ -32,7 +32,7 @@ export const generateSubmissionButtons = (pubData) => {
 		text: (
 			<div className="text-stack">
 				<span>{buttonText}</span>
-				<span className="subtext">{buttonSubText}</span>
+				<span className="action-subtext">{buttonSubText}</span>
 			</div>
 		),
 		href: `/pub/${pubData.slug}/submissions/new/${pubData.activeBranch.shortId}/${

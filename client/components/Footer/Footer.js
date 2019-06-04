@@ -71,9 +71,9 @@ class Footer extends Component {
 
 	render() {
 		const pubpubLogo =
-			this.props.communityData.accentTextColor === '#FFFFFF'
-				? '/static/logoWhite.svg'
-				: '/static/logoBlack.svg';
+			this.props.communityData.headerColorType === 'light'
+				? '/static/logoBlack.svg'
+				: '/static/logoWhite.svg';
 		const wrapperClasses = this.props.isBasePubPub
 			? 'base-pubpub'
 			: 'accent-background accent-color';

@@ -55,7 +55,6 @@ const PubHeaderFormatting = (props) => {
 			<div className="right-content">
 				<PubHeaderCollaborators collabData={props.collabData} />
 				<span className={`collab-status ${collabData.status}`}>
-					<span className="status-prefix">Working Draft </span>
 					{collabData.status}
 					{collabData.status === 'saving' || collabData.status === 'connecting'
 						? '...'

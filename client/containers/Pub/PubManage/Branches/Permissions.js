@@ -29,11 +29,11 @@ const defaultProps = {
 
 const Permissions = (props) => {
 	const { pubData, branchData, updateLocalData, setIsLoading } = props;
-	const { communityData, locationData } = useContext(PageContext);
+	const { communityData, locationData, loginData } = useContext(PageContext);
 	const tooltipTimeout = useRef(null);
 	const [showTooltip, setShowTooltip] = useState(false);
 	const [copied, copyToClipboard] = useCopyToClipboard();
-	
+
 	const handleBranchUpdate = (branchUpdates) => {
 		setIsLoading(true);
 		updateLocalData('pub', {
@@ -180,7 +180,7 @@ const Permissions = (props) => {
 			text: 'edit',
 			accessHash: pubData.activeBranch.editHash,
 		},
-	]
+	];
 
 	return (
 		<div className="pub-manage_branches_permissions-component">
@@ -215,9 +215,10 @@ const Permissions = (props) => {
 							<span>Pub Managers:</span>
 						</React.Fragment>
 					}
+					isDisabled={branchData.title === 'public' && !loginData.isAdmin}
 					allowedTypes={
 						branchData.title === 'public'
-							? ['none', 'view', 'discuss']
+							? ['none', 'view', 'discuss', 'manage']
 							: ['none', 'view', 'discuss', 'edit', 'manage']
 					}
 					isSmall={false}
@@ -229,7 +230,7 @@ const Permissions = (props) => {
 						});
 					}}
 				/>
-{/* 
+
 				<PermissionsDropdown
 					isMinimal={true}
 					prefix={
@@ -238,11 +239,8 @@ const Permissions = (props) => {
 							<span>Community Admins:</span>
 						</React.Fragment>
 					}
-					allowedTypes={
-						branchData.title === 'public'
-							? ['none', 'view', 'discuss']
-							: ['none', 'view', 'discuss', 'edit', 'manage']
-					}
+					isDisabled={branchData.title === 'public'}
+					allowedTypes={['none', 'view', 'discuss', 'edit', 'manage']}
 					isSmall={false}
 					value={branchData.communityAdminPermissions}
 					onChange={(newPermission) => {
@@ -251,7 +249,7 @@ const Permissions = (props) => {
 							communityAdminPermissions: newPermission,
 						});
 					}}
-				/> */}
+				/>
 				<div className="links-dropdown">
 					<DropdownButton
 						isMinimal={true}

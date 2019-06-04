@@ -69,13 +69,6 @@ const PermissionsDropdown = function(props) {
 	});
 
 	const selectedKey = props.value || items[props.allowedTypes[0]].value;
-	console.log(
-		props.value,
-		props.allowedTypes[0],
-		items[props.allowedTypes[0]].value,
-		selectedKey,
-		items[selectedKey],
-	);
 	const style = {
 		marginRight: props.prefix ? '1em' : '0em',
 	};

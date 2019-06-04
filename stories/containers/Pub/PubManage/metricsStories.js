@@ -1,9 +1,9 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import Metrics from 'containers/Pub/PubMeta/Metrics';
+import Metrics from 'containers/Pub/PubManage/Metrics';
 import { pubData } from 'data';
 
-require('containers/Pub/PubMeta/pubMeta.scss');
+require('containers/Pub/PubManage/pubManage.scss');
 
 storiesOf('containers/Pub/PubMeta/Metrics', module).add('default', () => (
 	<div className="pub-manage-component" style={{ margin: '20px' }}>

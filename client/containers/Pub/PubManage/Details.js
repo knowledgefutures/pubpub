@@ -255,7 +255,7 @@ class Details extends Component {
 											small={true}
 											text="Use Preview Image"
 											onClick={() => {
-												this.updateHeaderBackgroundImage(prevState.avatar);
+												this.updateHeaderBackgroundImage(this.state.avatar);
 											}}
 										/>
 									)}

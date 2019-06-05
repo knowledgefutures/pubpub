@@ -8,7 +8,9 @@ export default (attribution) => {
 		return attribution;
 	}
 	return {
-		...attribution,
+		// TODO(ian): this will break code that expects the returned value to still be a Sequelize
+		// model rather than a plain object.
+		...(attribution.dataValues || attribution),
 		user: {
 			id: attribution.id,
 			initials: attribution.name[0],

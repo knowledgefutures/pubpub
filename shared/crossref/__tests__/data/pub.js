@@ -96,6 +96,13 @@ export default {
 			},
 		},
 	],
+	branches: [
+		{
+			publishedAt: '2019-03-01T21:58:52.618Z',
+			id: 'e63e2770-bf49-43bb-bc9b-17b00dbeb4d8',
+			title: 'public',
+		},
+	],
 	versionPermissions: [],
 	collectionPubs: [
 		{

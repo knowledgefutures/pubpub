@@ -63,6 +63,7 @@ export const conference = {
 		location: 'Kalamazoo, MI',
 	},
 	kind: 'conference',
+	doi: 'yes_it_is_a_conference_doi',
 	createdAt: '2019-04-11T18:10:54.634Z',
 	updatedAt: '2019-04-11T18:11:23.352Z',
 	attributions: attributions,

@@ -78,7 +78,6 @@ Object {
   "dois": Object {
     "collection": "an_utterly_fake_doi",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": undefined,
   },
   "timestamp": 1555009335577,
@@ -163,7 +162,6 @@ Object {
   "dois": Object {
     "collection": "an_utterly_fake_doi",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": undefined,
   },
   "timestamp": 1555009335577,
@@ -221,7 +219,7 @@ Object {
           },
           "proceedings_metadata": Object {
             "doi_data": Object {
-              "doi": "10.21428/eea8ec7d.4c3a0515",
+              "doi": "yes_it_is_a_conference_doi",
               "resource": "https://dev.pubpub.org/collection/4c3a0515",
               "timestamp": 1555009335577,
             },
@@ -253,9 +251,8 @@ Object {
     },
   },
   "dois": Object {
-    "collection": "10.21428/eea8ec7d.4c3a0515",
+    "collection": "yes_it_is_a_conference_doi",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": undefined,
   },
   "timestamp": 1555009335577,
@@ -313,7 +310,7 @@ Object {
           },
           "proceedings_metadata": Object {
             "doi_data": Object {
-              "doi": "10.21428/eea8ec7d.4c3a0515",
+              "doi": "yes_it_is_a_conference_doi",
               "resource": "https://dev.pubpub.org/collection/4c3a0515",
               "timestamp": 1555009335577,
             },
@@ -345,9 +342,8 @@ Object {
     },
   },
   "dois": Object {
-    "collection": "10.21428/eea8ec7d.4c3a0515",
+    "collection": "yes_it_is_a_conference_doi",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": undefined,
   },
   "timestamp": 1555009335577,
@@ -366,24 +362,6 @@ Object {
         "journal": Object {
           "journal_article": Object {
             "@publication_type": "full_text",
-            "component_list": Object {
-              "component": Array [
-                Object {
-                  "@parent_relation": "isPartOf",
-                  "doi_data": Object {
-                    "doi": "10.21428/eea8ec7d.1519656b/e63e2770",
-                    "resource": "https://frankdev.pubpub.org/pub/h2muzdpv?version=e63e2770-bf49-43bb-bc9b-17b00dbeb4d8",
-                    "timestamp": 1555009335577,
-                  },
-                  "publication_date": Object {
-                    "@media_type": "online",
-                    "day": "01",
-                    "month": "03",
-                    "year": "2019",
-                  },
-                },
-              ],
-            },
             "contributors": Object {
               "person_name": Array [
                 Object {
@@ -442,7 +420,6 @@ Object {
   "dois": Object {
     "collection": undefined,
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": "10.21428/eea8ec7d.1519656b",
   },
   "timestamp": 1555009335577,
@@ -513,24 +490,6 @@ Object {
           },
           "content_item": Object {
             "@component_type": "chapter",
-            "component_list": Object {
-              "component": Array [
-                Object {
-                  "@parent_relation": "isPartOf",
-                  "doi_data": Object {
-                    "doi": "10.21428/eea8ec7d.1519656b/e63e2770",
-                    "resource": "https://frankdev.pubpub.org/pub/h2muzdpv?version=e63e2770-bf49-43bb-bc9b-17b00dbeb4d8",
-                    "timestamp": 1555009335577,
-                  },
-                  "publication_date": Object {
-                    "@media_type": "online",
-                    "day": "01",
-                    "month": "03",
-                    "year": "2019",
-                  },
-                },
-              ],
-            },
             "contributors": Object {
               "person_name": Array [
                 Object {
@@ -579,7 +538,6 @@ Object {
   "dois": Object {
     "collection": "an_utterly_fake_doi",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": "10.21428/eea8ec7d.1519656b",
   },
   "timestamp": 1555009335577,
@@ -595,79 +553,8 @@ Object {
       "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
       "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
       "body": Object {
-        "book": Object {
-          "@book_type": "other",
-          "book_metadata": Object {
-            "contributors": Object {
-              "person_name": Array [
-                Object {
-                  "@contributor_role": "author",
-                  "@sequence": "first",
-                  "affiliation": "Massachusetts Institute of Technology",
-                  "given_name": "Travis",
-                  "surname": "Rich",
-                },
-                Object {
-                  "@contributor_role": "reader",
-                  "@sequence": "additional",
-                  "given_name": "Gabriel",
-                  "surname": "Stein",
-                },
-                Object {
-                  "@contributor_role": "reader",
-                  "@sequence": "additional",
-                  "given_name": "Catherine",
-                  "surname": "Ahearn",
-                },
-                Object {
-                  "@contributor_role": "author",
-                  "@sequence": "additional",
-                  "affiliation": "Springfield A&M",
-                  "given_name": "Ian",
-                  "surname": "Reynolds",
-                },
-              ],
-            },
-            "doi_data": Object {
-              "doi": "an_utterly_fake_doi",
-              "resource": "https://test.com",
-              "timestamp": 1555009335577,
-            },
-            "edition_number": "3",
-            "isbn": "this_is_an_isbn",
-            "publication_date": Object {
-              "@media_type": "online",
-              "day": "02",
-              "month": "03",
-              "year": "2015",
-            },
-            "publisher": Object {
-              "publisher_name": "PubPub",
-            },
-            "titles": Object {
-              "title": "My new book full of pubs",
-            },
-          },
-          "content_item": Object {
-            "@component_type": "chapter",
-            "component_list": Object {
-              "component": Array [
-                Object {
-                  "@parent_relation": "isPartOf",
-                  "doi_data": Object {
-                    "doi": "10.21428/eea8ec7d.1519656b/e63e2770",
-                    "resource": "https://frankdev.pubpub.org/pub/h2muzdpv?version=e63e2770-bf49-43bb-bc9b-17b00dbeb4d8",
-                    "timestamp": 1555009335577,
-                  },
-                  "publication_date": Object {
-                    "@media_type": "online",
-                    "day": "01",
-                    "month": "03",
-                    "year": "2019",
-                  },
-                },
-              ],
-            },
+        "conference": Object {
+          "conference_paper": Object {
             "contributors": Object {
               "person_name": Array [
                 Object {
@@ -690,14 +577,67 @@ Object {
               "resource": "https://frankdev.pubpub.org/pub/h2muzdpv",
               "timestamp": 1555009335577,
             },
+            "titles": Object {
+              "title": "In Which Ian Makes A Pub",
+            },
+          },
+          "contributors": Object {
+            "person_name": Array [
+              Object {
+                "@contributor_role": "author",
+                "@sequence": "first",
+                "affiliation": "Massachusetts Institute of Technology",
+                "given_name": "Travis",
+                "surname": "Rich",
+              },
+              Object {
+                "@contributor_role": "reader",
+                "@sequence": "additional",
+                "given_name": "Gabriel",
+                "surname": "Stein",
+              },
+              Object {
+                "@contributor_role": "reader",
+                "@sequence": "additional",
+                "given_name": "Catherine",
+                "surname": "Ahearn",
+              },
+              Object {
+                "@contributor_role": "author",
+                "@sequence": "additional",
+                "affiliation": "Springfield A&M",
+                "given_name": "Ian",
+                "surname": "Reynolds",
+              },
+            ],
+          },
+          "event_metadata": Object {
+            "conference_acronym": "TCIHA",
+            "conference_date": Object {
+              "#text": "2019-05-01",
+            },
+            "conference_location": "Kalamazoo, MI",
+            "conference_name": "This Conference Is Happening Again",
+            "conference_theme": "We love conferences don't we",
+          },
+          "proceedings_metadata": Object {
+            "doi_data": Object {
+              "doi": "yes_it_is_a_conference_doi",
+              "resource": "https://dev.pubpub.org/collection/4c3a0515",
+              "timestamp": 1555009335577,
+            },
+            "noisbn": Object {
+              "@reason": "archive_volume",
+            },
+            "proceedings_title": "This Conference Is Happening Again",
             "publication_date": Object {
               "@media_type": "online",
               "day": "01",
-              "month": "03",
+              "month": "05",
               "year": "2019",
             },
-            "titles": Object {
-              "title": "In Which Ian Makes A Pub",
+            "publisher": Object {
+              "publisher_name": "PubPub",
             },
           },
         },
@@ -714,9 +654,8 @@ Object {
     },
   },
   "dois": Object {
-    "collection": "an_utterly_fake_doi",
+    "collection": "yes_it_is_a_conference_doi",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": "10.21428/eea8ec7d.1519656b",
   },
   "timestamp": 1555009335577,
@@ -732,79 +671,9 @@ Object {
       "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
       "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
       "body": Object {
-        "book": Object {
-          "@book_type": "other",
-          "book_metadata": Object {
-            "contributors": Object {
-              "person_name": Array [
-                Object {
-                  "@contributor_role": "author",
-                  "@sequence": "first",
-                  "affiliation": "Massachusetts Institute of Technology",
-                  "given_name": "Travis",
-                  "surname": "Rich",
-                },
-                Object {
-                  "@contributor_role": "reader",
-                  "@sequence": "additional",
-                  "given_name": "Gabriel",
-                  "surname": "Stein",
-                },
-                Object {
-                  "@contributor_role": "reader",
-                  "@sequence": "additional",
-                  "given_name": "Catherine",
-                  "surname": "Ahearn",
-                },
-                Object {
-                  "@contributor_role": "author",
-                  "@sequence": "additional",
-                  "affiliation": "Springfield A&M",
-                  "given_name": "Ian",
-                  "surname": "Reynolds",
-                },
-              ],
-            },
-            "doi_data": Object {
-              "doi": "an_utterly_fake_doi",
-              "resource": "https://test.com",
-              "timestamp": 1555009335577,
-            },
-            "edition_number": "3",
-            "isbn": "this_is_an_isbn",
-            "publication_date": Object {
-              "@media_type": "online",
-              "day": "02",
-              "month": "03",
-              "year": "2015",
-            },
-            "publisher": Object {
-              "publisher_name": "PubPub",
-            },
-            "titles": Object {
-              "title": "My new book full of pubs",
-            },
-          },
-          "content_item": Object {
-            "@component_type": "chapter",
-            "component_list": Object {
-              "component": Array [
-                Object {
-                  "@parent_relation": "isPartOf",
-                  "doi_data": Object {
-                    "doi": "10.21428/eea8ec7d.1519656b/e63e2770",
-                    "resource": "https://frankdev.pubpub.org/pub/h2muzdpv?version=e63e2770-bf49-43bb-bc9b-17b00dbeb4d8",
-                    "timestamp": 1555009335577,
-                  },
-                  "publication_date": Object {
-                    "@media_type": "online",
-                    "day": "01",
-                    "month": "03",
-                    "year": "2019",
-                  },
-                },
-              ],
-            },
+        "journal": Object {
+          "journal_article": Object {
+            "@publication_type": "full_text",
             "contributors": Object {
               "person_name": Array [
                 Object {
@@ -837,6 +706,66 @@ Object {
               "title": "In Which Ian Makes A Pub",
             },
           },
+          "journal_issue": Object {
+            "contributors": Object {
+              "person_name": Array [
+                Object {
+                  "@contributor_role": "author",
+                  "@sequence": "first",
+                  "affiliation": "Massachusetts Institute of Technology",
+                  "given_name": "Travis",
+                  "surname": "Rich",
+                },
+                Object {
+                  "@contributor_role": "reader",
+                  "@sequence": "additional",
+                  "given_name": "Gabriel",
+                  "surname": "Stein",
+                },
+                Object {
+                  "@contributor_role": "reader",
+                  "@sequence": "additional",
+                  "given_name": "Catherine",
+                  "surname": "Ahearn",
+                },
+                Object {
+                  "@contributor_role": "author",
+                  "@sequence": "additional",
+                  "affiliation": "Springfield A&M",
+                  "given_name": "Ian",
+                  "surname": "Reynolds",
+                },
+              ],
+            },
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d.e281f63f",
+              "resource": "https://dev.pubpub.org/collection/e281f63f",
+              "timestamp": 1555009335577,
+            },
+            "issue": "5",
+            "journal_volume": Object {
+              "volume": "2",
+            },
+            "publication_date": Object {
+              "@media_type": "online",
+              "day": "25",
+              "month": "03",
+              "year": "2017",
+            },
+            "titles": Object {
+              "title": "Another Great Issue",
+            },
+          },
+          "journal_metadata": Object {
+            "@language": "en",
+            "abbrev_title": "PubPub Dev",
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d",
+              "resource": "https://frankdev.pubpub.org",
+              "timestamp": 1555009335577,
+            },
+            "full_title": "PubPub Dev",
+          },
         },
       },
       "head": Object {
@@ -851,9 +780,8 @@ Object {
     },
   },
   "dois": Object {
-    "collection": "an_utterly_fake_doi",
+    "collection": "10.21428/eea8ec7d.e281f63f",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": "10.21428/eea8ec7d.1519656b",
   },
   "timestamp": 1555009335577,
@@ -946,7 +874,6 @@ Object {
   "dois": Object {
     "collection": "10.21428/eea8ec7d.e281f63f",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": undefined,
   },
   "timestamp": 1555009335577,
@@ -1039,7 +966,6 @@ Object {
   "dois": Object {
     "collection": "10.21428/eea8ec7d.e281f63f",
     "community": "10.21428/eea8ec7d",
-    "getPubVersionDoi": [Function],
     "pub": undefined,
   },
   "timestamp": 1555009335577,

@@ -48,7 +48,7 @@ const PubReviews = (props) => {
 					return branch.id === review.destinationBranchId;
 				});
 				return (
-					<div className="review-row">
+					<div className="review-row" key={review.id}>
 						<div>
 							<b>{review.shortId}</b>
 						</div>

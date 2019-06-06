@@ -4,13 +4,18 @@ import PropTypes from 'prop-types';
 import Color from 'color';
 
 const propTypes = {
-	communityData: PropTypes.string.isRequired,
+	communityData: PropTypes.object.isRequired,
 	isNavHidden: PropTypes.bool.isRequired,
 };
 
 const AccentStyle = function(props) {
 	const { communityData, isNavHidden } = props;
-	const { accentColorLight, accentColorDark, headerColorType, useHeaderTextAccent } = communityData;
+	const {
+		accentColorLight,
+		accentColorDark,
+		headerColorType,
+		useHeaderTextAccent,
+	} = communityData;
 	const generateColors = (inputColor) => {
 		return {
 			base: inputColor,

@@ -17,7 +17,7 @@ import {
 	Page,
 	Branch,
 	BranchPermission,
-	Review
+	Review,
 } from '../models';
 
 // const calculateBranchPermissions = (
@@ -321,6 +321,47 @@ export const findPub = (req, initialData, mode) => {
 
 			if (!formattedPubData) {
 				throw new Error('Pub Not Found');
+			}
+
+			if (mode === 'merge') {
+				/* Validate that the user has permissions to merge */
+				/* and thus permissions to view this merge screen */
+				const sourceBranch = formattedPubData.branches.find((branch) => {
+					return branch.shortId === Number(req.params.fromBranchShortId);
+				});
+				const destinationBranch = formattedPubData.branches.find((branch) => {
+					return branch.shortId === Number(req.params.toBranchShortId);
+				});
+				if (
+					!sourceBranch ||
+					!destinationBranch ||
+					!sourceBranch.canView ||
+					!destinationBranch.canManage
+				) {
+					throw new Error('Pub Not Found');
+				}
+			}
+
+			if (mode === 'new review') {
+				/* Validate that the user has permissions to create a review from */
+				/* this branch and thus permissions to view this merge screen */
+				const sourceBranch = formattedPubData.branches.find((branch) => {
+					return branch.shortId === Number(req.params.fromBranchShortId);
+				});
+				if (!sourceBranch || !sourceBranch.canManage) {
+					throw new Error('Pub Not Found');
+				}
+			}
+
+			if (mode === 'review') {
+				/* Validate that the user has permissions to view a review */
+				/* and thus permissions to view this merge screen */
+				const activeReview = formattedPubData.reviews.find((review) => {
+					return review.shortId === Number(req.params.reviewShortId);
+				});
+				if (req.params.reviewShortId && !activeReview) {
+					throw new Error('Pub Not Found');
+				}
 			}
 
 			/* We only want to get the branch doc if we're in document mode */

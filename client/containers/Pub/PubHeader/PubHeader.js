@@ -24,7 +24,7 @@ import { Icon, GridWrapper, Overlay } from 'components';
 import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
-import { generateSubmissionButtons } from './headerUtils';
+// import { generateSubmissionButtons } from './headerUtils';
 
 require('./pubHeader.scss');
 
@@ -80,7 +80,6 @@ const PubHeader = (props) => {
 	const [isShareOpen, setIsShareOpen] = useState(false);
 	const { width: windowWidth } = useWindowSize();
 	const isDocMode = pubData.mode === 'document';
-	const isSubmissionsMode = pubData.mode === 'submission';
 
 	useEffect(() => {
 		if (!isDocMode) {
@@ -169,7 +168,7 @@ const PubHeader = (props) => {
 			? communityData.accentColorDark
 			: communityData.accentColorLight;
 	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
-	const submissionButtons = generateSubmissionButtons(pubData);
+	// const submissionButtons = generateSubmissionButtons(pubData);
 
 	const pubDate =
 		(historyData && historyData.timestamps && historyData.timestamps[historyData.currentKey]) ||
@@ -178,6 +177,11 @@ const PubHeader = (props) => {
 		historyData && historyData.outstandingRequests > 0
 			? '...'
 			: dateFormat(pubDate, 'mmm dd, yyyy');
+
+	const publicBranch = pubData.branches.find((branch) => {
+		return branch.title === 'public';
+	});
+	const currentBranchIsPublicBranch = publicBranch.id === pubData.activeBranch.id;
 
 	return (
 		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>
@@ -526,10 +530,59 @@ const PubHeader = (props) => {
 									isSkewed={true}
 								/>
 
-								{/* Submit Button */}
-								{submissionButtons && (
-									<ActionButton buttons={submissionButtons} isSkewed={true} />
+								{/* Merge Button */}
+								{!currentBranchIsPublicBranch &&
+									pubData.activeBranch.canManage &&
+									publicBranch.canManage && (
+										<ActionButton
+											buttons={[
+												{
+													text: (
+														<div className="text-stack">
+															<span>Publish</span>
+															<span className="action-subtext">
+																Merge into #public
+															</span>
+														</div>
+													),
+													href: `/pub/${pubData.slug}/merge/${
+														pubData.activeBranch.shortId
+													}/${publicBranch.shortId}`,
+													isWide: true,
+												},
+											]}
+											isSkewed={true}
+										/>
+									)}
+
+								{/* Submit for Review button */}
+								{!currentBranchIsPublicBranch && pubData.activeBranch.canManage && (
+									<ActionButton
+										buttons={[
+											{
+												text: (
+													<div className="text-stack">
+														<span>Submit for Review</span>
+														<span className="action-subtext">
+															to #public
+														</span>
+													</div>
+												),
+												href: `/pub/${pubData.slug}/reviews/new/${
+													pubData.activeBranch.shortId
+												}/${publicBranch.shortId}`,
+
+												isWide: true,
+											},
+										]}
+										isSkewed={true}
+									/>
 								)}
+
+								{/* Submit Button */}
+								{/* submissionButtons && (
+									<ActionButton buttons={submissionButtons} isSkewed={true} />
+								) */}
 							</div>
 							<div className="right">
 								{metaModes.map((mode) => {

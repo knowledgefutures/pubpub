@@ -379,7 +379,7 @@ export const handleErrors = (req, res, next) => {
 		if (err.message === 'Community Not Found') {
 			return res
 				.status(404)
-				.sendFile(resolve(__dirname, './errorPages/communityNotFound.html'));
+				.sendFile(resolve(__dirname, '../errorPages/communityNotFound.html'));
 		}
 		if (err.message.indexOf('DraftRedirect:') === 0) {
 			const slug = err.message.split(':')[1];

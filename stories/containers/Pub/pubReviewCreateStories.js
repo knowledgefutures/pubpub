@@ -9,6 +9,8 @@ storiesOf('containers/Pub/PubReviewCreate', module).add('default', () => (
 			padding: '50px',
 		}}
 	>
+		<PubReviewCreate pubData={{ ...pubData, reviews: [] }} />
+		<hr />
 		<PubReviewCreate pubData={pubData} />
 	</div>
 ));

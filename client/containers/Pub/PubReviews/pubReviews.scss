@@ -1,9 +1,23 @@
 .pub-reviews-component {
+	margin-top: 2em;
 	.review-row {
 		display: flex;
 		align-items: center;
-		.expand {
+		margin-bottom: 1em;
+		.short-id {
+			font-weight: 600;
+			font-size: 16px;
+		}
+		.branch-tag {
+			margin: 0em 1em;
+		}
+		.date {
 			flex: 1 1 auto;
+		}
+		.status-tag {
+			margin-left: 1em;
+			min-width: 95px;
+			text-align: center;
 		}
 	}
 }

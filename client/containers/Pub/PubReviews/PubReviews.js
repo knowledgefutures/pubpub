@@ -133,17 +133,20 @@ const PubReviews = (props) => {
 							</div>
 						)}
 
-						{review.isCompleted && !review.mergeId && destinationBranch.id && (
-							<div>
-								<Button
-									text="Merge"
-									loading={isLoading}
-									onClick={() => {
-										mergeBranch(review, sourceBranch, destinationBranch);
-									}}
-								/>
-							</div>
-						)}
+						{review.isCompleted &&
+							!review.mergeId &&
+							destinationBranch.id &&
+							destinationBranch.canManage && (
+								<div>
+									<Button
+										text="Merge"
+										loading={isLoading}
+										onClick={() => {
+											mergeBranch(review, sourceBranch, destinationBranch);
+										}}
+									/>
+								</div>
+							)}
 						<div>
 							<Tag minimal={true} large={true} intent={statusIntent}>
 								{!review.isClosed && 'Open'}

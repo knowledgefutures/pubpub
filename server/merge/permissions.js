@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
 import calculateBranchAccess from '../branch/calculateBranchAccess';
 
@@ -38,17 +37,14 @@ export const getPermissions = ({
 		}
 
 		const destinationAccess = calculateBranchAccess(
-				null,
-				destinationBranchData,
-				userId,
-				communityAdminData,
-				pubManagerData,
-			);
+			null,
+			destinationBranchData,
+			userId,
+			communityAdminData,
+			pubManagerData,
+		);
 
-
-		const editProps = destinationAccess.canManage
-			? ['note']
-			: [];
+		const editProps = destinationAccess.canManage ? ['note'] : [];
 
 		return {
 			create: destinationAccess.canManage,

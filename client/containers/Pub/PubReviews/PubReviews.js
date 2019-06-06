@@ -81,7 +81,6 @@ const PubReviews = (props) => {
 					return bar.shortId - foo.shortId;
 				})
 				.map((review) => {
-					console.log(isLoading, isLoading === `close-${review.id}`);
 					const sourceBranch = pubData.branches.find((branch) => {
 						return branch.id === review.sourceBranchId;
 					});

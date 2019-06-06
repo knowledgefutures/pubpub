@@ -1,23 +1,4 @@
-import Promise from 'bluebird';
-import validator from 'validator';
-import {
-	User,
-	Collection,
-	CollectionAttribution,
-	CollectionPub,
-	Pub,
-	Collaborator,
-	Discussion,
-	CommunityAdmin,
-	Community,
-	Version,
-	PubManager,
-	PubAttribution,
-	VersionPermission,
-	Page,
-	DiscussionChannel,
-	DiscussionChannelParticipant,
-} from '../models';
+import { User, CollectionAttribution, CollectionPub } from '../models';
 
 export const getCollectionAttributions = (collectionId) =>
 	CollectionAttribution.findAll({

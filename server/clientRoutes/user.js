@@ -1,9 +1,10 @@
 import Promise from 'bluebird';
 import React from 'react';
 import { User as UserContainer } from 'containers';
+import { isPubPublic } from 'shared/pub/permissions';
 import Html from '../Html';
 import app from '../server';
-import { Community, Pub, User, PubAttribution } from '../models';
+import { Branch, Community, Pub, PubAttribution, User } from '../models';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
 
 app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
@@ -25,6 +26,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 						as: 'pub',
 						attributes: ['id', 'title', 'description', 'slug', 'avatar', 'communityId'],
 						include: [
+							{ model: Branch, as: 'branches' },
 							{
 								model: Community,
 								as: 'community',
@@ -54,8 +56,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 			if (userDataJson.pubs) {
 				userDataJson.pubs = userDataJson.pubs.filter((item) => {
 					const isOwnProfile = userDataJson.id === initialData.loginData.id;
-					const isPublicCollab = item.draftPermissions !== 'private';
-					return !!item.firstPublishedAt || isOwnProfile || isPublicCollab;
+					return isOwnProfile || isPubPublic(item);
 				});
 			}
 

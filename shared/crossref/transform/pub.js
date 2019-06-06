@@ -1,5 +1,5 @@
-import { pubUrlV5 } from 'shared/utils/canonicalUrls';
-import { getPubPublishedDate } from 'shared/utils/pubDates';
+import { pubUrl } from 'shared/utils/canonicalUrls';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
 
 import transformAttributions from './attributions';
 
@@ -12,7 +12,7 @@ export default ({ globals, community }) => (pub) => {
 		timestamp: timestamp,
 		publicationDate: publicationDate,
 		attributions: transformAttributions(pub.attributions),
-		getResourceUrl: (version) => pubUrlV5(community, pub, version),
+		resourceUrl: pubUrl(community, pub),
 		doi: dois.pub,
 	};
 };

@@ -6,8 +6,8 @@ export default ({
 	attributions,
 	componentType,
 	doi,
-	getResourceUrl,
 	publicationDate,
+	resourceUrl,
 	timestamp,
 	title,
 }) => {
@@ -19,9 +19,7 @@ export default ({
 				title: title,
 			},
 			...date('publication_date', publicationDate),
-			...doiData(doi, timestamp, getResourceUrl()),
-			// TODO(ian): Re-enable this for branches at some point?
-			// ...componentList(sortedVersions, timestamp, getVersionDoi, getResourceUrl),
+			...doiData(doi, timestamp, resourceUrl),
 		},
 	};
 };

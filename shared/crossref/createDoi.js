@@ -9,9 +9,8 @@ export const makeComponentId = (community, collection, pub) =>
 		.map((result) => result || 'none')
 		.join('-');
 
-export default ({ community, target, version }) => {
+export default ({ community, target }) => {
 	const communityPart = splitId(community);
 	const targetPart = target ? `.${splitId(target)}` : '';
-	const versionPart = version ? `/${splitId(version)}` : '';
-	return withPubPubDoiPrefix(communityPart + targetPart + versionPart);
+	return withPubPubDoiPrefix(communityPart + targetPart);
 };

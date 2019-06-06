@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
+
+import { getResizedUrl, generatePubBackground } from 'utils';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { isPubPublic } from 'shared/pub/permissions';
 import Avatar from 'components/Avatar/Avatar';
 import Icon from 'components/Icon/Icon';
-import { getResizedUrl, generatePubBackground } from 'utils';
 
 require('./pubPreview.scss');
 
@@ -29,7 +32,6 @@ const defaultProps = {
 const PubPreview = function(props) {
 	const pubData = props.pubData;
 
-	const isDraftAccessible = pubData.isDraftEditor || pubData.isDraftViewer || pubData.isManager;
 	const resizedBannerImage = getResizedUrl(pubData.avatar, 'fit-in', '800x0');
 	const bannerStyle =
 		pubData.avatar || !pubData.slug
@@ -53,37 +55,8 @@ const PubPreview = function(props) {
 		return attribution.isAuthor;
 	});
 
-	const versions = pubData.versions || [];
-	const earliestDate = versions.reduce((prev, curr) => {
-		if (!prev) {
-			return curr.createdAt;
-		}
-		if (curr.createdAt < prev) {
-			return curr.createdAt;
-		}
-		return prev;
-	}, undefined);
-	const latestDate = versions.reduce((prev, curr) => {
-		const sameDayAsEarliest =
-			earliestDate &&
-			new Date(earliestDate).toISOString().substring(0, 10) ===
-				new Date(curr.createdAt).toISOString().substring(0, 10);
-		if (!prev && !sameDayAsEarliest) {
-			return curr.createdAt;
-		}
-		if (curr.createdAt > prev) {
-			return curr.createdAt;
-		}
-		return prev;
-	}, undefined);
-	const isPrivate =
-		(!versions && pubData.draftPermissions === 'private') ||
-		versions.reduce((prev, curr) => {
-			if (curr.isPublic) {
-				return false;
-			}
-			return prev;
-		}, true);
+	const publishedDate = getPubPublishedDate(pubData);
+	const isPrivate = !isPubPublic(pubData);
 
 	return (
 		<div className={`pub-preview-component ${props.size}-preview`}>
@@ -165,13 +138,9 @@ const PubPreview = function(props) {
 
 				{!props.hideDates && (
 					<div className="date-details">
-						{!earliestDate && <span className="date">Working Draft</span>}
-						{earliestDate && (
-							<span className="date">{dateFormat(earliestDate, 'mmm dd, yyyy')}</span>
-						)}
-						{latestDate && (
+						{publishedDate && (
 							<span className="date">
-								Updated: {dateFormat(latestDate, 'mmm dd, yyyy')}
+								Published: {dateFormat(publishedDate, 'mmm dd, yyyy')}
 							</span>
 						)}
 					</div>
@@ -208,11 +177,6 @@ const PubPreview = function(props) {
 									/>
 								);
 							})}
-						{earliestDate && isDraftAccessible && (
-							<a className="date draft-link" href={`${pubLink}/draft`}>
-								Go To Working Draft
-							</a>
-						)}
 					</div>
 				)}
 

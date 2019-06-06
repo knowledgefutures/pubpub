@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import Cite from 'citation-js';
-import { getPubPublishedDate } from 'shared/utils/pubDates';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 
 const getDatePartsObject = (date) => ({

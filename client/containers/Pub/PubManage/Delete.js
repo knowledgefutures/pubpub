@@ -52,7 +52,7 @@ class PubOptionsDelete extends Component {
 					<p>Deleting a Pub is permanent - it cannot be undone.</p>
 					<p>
 						This will permanantely delete <b>{this.props.pubData.title}</b>, its
-						discussions, versions, and associated metadata.
+						discussions, branches, and associated metadata.
 					</p>
 					<p>Please type the title of the Pub below to confirm your intention.</p>
 

@@ -55,9 +55,6 @@ export const hydrateWrapper = (Component) => {
 			}
 			if (initialData.pubData) {
 				customEventData.pubId = initialData.pubData.id;
-				// customEventData.versionId = initialData.pubData.isDraft
-				// 	? 'draft'
-				// 	: initialData.pubData.activeVersion.id;
 				customEventData.branchId = initialData.pubData.activeBranch.id;
 			}
 			if (initialData.loginData.id) {
@@ -411,8 +408,7 @@ export function generatePageBackground(pageTitle) {
 }
 
 export function generateRenderLists(layout, pubs) {
-	/* Sort pubs by activeVersion date - or date of pub */
-	/* creation when there are no saved versions */
+	/* Sort pubs by activeBranch date */
 	const allPubs = pubs.sort((foo, bar) => {
 		const fooDate = foo.activeBranch.createdAt || foo.createdAt;
 		const barDate = bar.activeBranch.createdAt || bar.createdAt;

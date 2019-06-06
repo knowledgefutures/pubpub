@@ -1,23 +1,14 @@
 import Promise from 'bluebird';
-import validator from 'validator';
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser } from '.';
 import {
 	User,
 	Collection,
-	CollectionAttribution,
 	CollectionPub,
 	Pub,
-	Collaborator,
-	Discussion,
 	CommunityAdmin,
-	Community,
-	Version,
 	PubManager,
 	PubAttribution,
-	VersionPermission,
 	Page,
-	DiscussionChannel,
-	DiscussionChannelParticipant,
 	Branch,
 	BranchPermission,
 } from '../models';
@@ -38,12 +29,6 @@ export const findPage = (pageId, useIncludes, initialData) => {
 		Pub.findAll({
 			where: { communityId: initialData.communityData.id },
 			include: [
-				{
-					model: Version,
-					required: false,
-					as: 'versions',
-					attributes: ['id', 'isPublic', 'isCommunityAdminShared', 'createdAt'],
-				},
 				{
 					model: PubManager,
 					as: 'managers',

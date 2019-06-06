@@ -60,20 +60,6 @@ const PubHeaderFormatting = (props) => {
 						? '...'
 						: ''}
 				</span>
-
-				{/* <button className="bp3-button bp3-small" type="button">
-					Editing
-					<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
-				</button> */}
-				{/* <button
-					className="save-version-button bp3-button bp3-intent-primary bp3-small"
-					type="button"
-					onClick={() => {
-						// props.setOptionsMode('saveVersion');
-					}}
-				>
-					Save Version
-				</button> */}
 			</div>
 		</div>
 	);

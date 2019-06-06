@@ -72,24 +72,16 @@ export default (sequelize) => {
 					const {
 						Pub,
 						PubAttribution,
-						VersionPermission,
-						BranchPermission,
 						PubManager,
 						CollectionPub,
 						Community,
 						Discussion,
-						Version,
 						Branch,
 						DiscussionChannel,
 					} = models;
 					Pub.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
 						as: 'attributions',
-						foreignKey: 'pubId',
-					});
-					Pub.hasMany(VersionPermission, {
-						onDelete: 'CASCADE',
-						as: 'versionPermissions',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(PubManager, {
@@ -115,16 +107,6 @@ export default (sequelize) => {
 					Pub.hasMany(Discussion, {
 						onDelete: 'CASCADE',
 						as: 'discussions',
-						foreignKey: 'pubId',
-					});
-					Pub.hasMany(Version, {
-						onDelete: 'CASCADE',
-						as: 'versions',
-						foreignKey: 'pubId',
-					});
-					Pub.hasMany(Version, {
-						onDelete: 'CASCADE',
-						as: 'activeVersion',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(Branch, {

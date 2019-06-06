@@ -4,7 +4,7 @@ import { Button } from '@blueprintjs/core';
 
 import { pubDataProps } from 'types/pub';
 import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
-import { getPubPublishedDate } from 'shared/utils/pubDates';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
 import { doiUrl } from 'shared/utils/canonicalUrls';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 

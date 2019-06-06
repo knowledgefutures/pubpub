@@ -1,6 +1,7 @@
 import RSS from 'rss';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
 import app from '../server';
-import { Community, Pub, User, PubAttribution, Version } from '../models';
+import { Community, Pub, User, PubAttribution, Branch } from '../models';
 
 app.get('/rss.xml', (req, res) => {
 	const hostname = req.hostname;
@@ -52,10 +53,8 @@ app.get('/rss.xml', (req, res) => {
 						],
 					},
 					{
-						model: Version,
-						required: false,
-						as: 'versions',
-						attributes: ['id', 'isPublic', 'createdAt'],
+						model: Branch,
+						as: 'branches',
 					},
 				],
 			},
@@ -83,24 +82,9 @@ app.get('/rss.xml', (req, res) => {
 			communityData.pubs
 				.map((pub) => {
 					const pubJSON = pub.toJSON();
-					if (pub.draftPermissions !== 'private') {
-						pubJSON.listedDate = pub.createdAt;
-					}
-					const publicVersions = pub.versions
-						.filter((version) => {
-							return version.isPublic;
-						})
-						.sort((foo, bar) => {
-							if (foo.createdAt < bar.createdAt) {
-								return -1;
-							}
-							if (foo.createdAt > bar.createdAt) {
-								return 1;
-							}
-							return 0;
-						});
-					if (publicVersions.length) {
-						pubJSON.listedDate = publicVersions[0].createdAt;
+					const publishedDate = getPubPublishedDate(pub);
+					if (publishedDate) {
+						pubJSON.listedDate = publishedDate;
 					}
 					return pubJSON;
 				})

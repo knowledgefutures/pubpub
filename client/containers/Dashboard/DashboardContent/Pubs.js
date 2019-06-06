@@ -75,17 +75,6 @@ class Pubs extends Component {
 								<div className="header">
 									<div className="title">
 										<a href={`/pub/${pub.slug}`}>{pub.title}</a>
-										{!!pub.versions.length &&
-											(pub.isDraftEditor ||
-												pub.isDraftViewer ||
-												pub.isManager) && (
-												<a
-													className="draft"
-													href={`/pub/${pub.slug}/draft`}
-												>
-													Go To Working Draft
-												</a>
-											)}
 									</div>
 									<div className="nowrap">
 										{pub.collectionPubs.map(({ collection }) => {
@@ -96,15 +85,10 @@ class Pubs extends Component {
 											);
 										})}
 									</div>
-									{!pub.versions.length && (
-										<div className="nowrap">Working Draft</div>
-									)}
-									{!!pub.versions.length && (
-										<div className="nowrap">
-											{pub.versions.length} Saved Version
-											{pub.versions.length === 1 ? '' : 's'}
-										</div>
-									)}
+									<div className="nowrap">
+										{pub.branches.length} Branch
+										{pub.branches.length === 1 ? '' : 'es'}
+									</div>
 								</div>
 								<div className="authors">
 									{!!authors.length && <span>by </span>}

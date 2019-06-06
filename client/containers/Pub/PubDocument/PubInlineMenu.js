@@ -89,15 +89,6 @@ const PubInlineMenu = (props) => {
 				onClick={() => {
 					const view = collabData.editorChangeObject.view;
 					setLocalHighlight(view, selection.from, selection.to, uuidv4());
-					// props.onNewHighlightDiscussion({
-					// 	from: collabData.editorChangeObject.selection.from,
-					// 	to: props.collabData.editorChangeObject.selection.to,
-					// 	version: pubData.activeVersion.id,
-					// 	// section: props.sectionId,
-					// 	exact: props.collabData.editorChangeObject.selectedText.exact,
-					// 	prefix: props.collabData.editorChangeObject.selectedText.prefix,
-					// 	suffix: props.collabData.editorChangeObject.selectedText.suffix,
-					// });
 				}}
 			/>
 			{/* <Button

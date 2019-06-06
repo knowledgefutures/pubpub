@@ -1,4 +1,4 @@
-export const getPubPublishedDate = (pub, branch) => {
+export const getPubPublishedDate = (pub, branch = null) => {
 	// eslint-disable-next-line no-param-reassign
 	branch = branch || pub.branches.find((br) => br.title === 'public');
 	if (branch) {

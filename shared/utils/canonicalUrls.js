@@ -10,15 +10,7 @@ export const communityUrl = (community) =>
 export const collectionUrl = (community, collection) =>
 	`${communityUrl(community)}/collection/${collection.id.slice(0, 8)}`;
 
-export const pubUrlV5 = (community, pub, version) => {
-	const baseUrl = `${communityUrl(community)}/pub/${pub.slug}`;
-	if (version) {
-		return `${baseUrl}?version=${version.id}`;
-	}
-	return baseUrl;
-};
-
-export const pubUrl = (community, pub, branchShortId, versionInBranch) => {
+export const pubUrl = (community, pub, branchShortId = null, versionInBranch = null) => {
 	const baseUrl = `${communityUrl(community)}/pub/${pub.slug}`;
 	if (branchShortId) {
 		return (

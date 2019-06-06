@@ -1,0 +1,22 @@
+.pub-merge-component {
+	margin-top: 2em;
+	.merge-header {
+		display: flex;
+		align-items: center;
+		h2 {
+			display: inline;
+			margin: 0em 1em 0em 0em;
+		}
+	}
+	p {
+		margin: 1em 0em 2em;
+	}
+	textarea {
+		max-width: 500px;
+		min-height: 56px;
+	}
+	.merge-arrow {
+		margin: 0em 0.25em;
+		opacity: 0.75;
+	}
+}

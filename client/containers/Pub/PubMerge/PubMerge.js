@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { Button, Intent } from '@blueprintjs/core';
+import { Button, Intent, Tag } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
-import { GridWrapper, InputField } from 'components';
+import { GridWrapper, InputField, Icon } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { apiFetch } from 'utils';
+
+require('./pubMerge.scss');
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,
@@ -43,11 +45,19 @@ const PubMerge = (props) => {
 
 	return (
 		<GridWrapper containerClassName="pub pub-merge-component">
-			<h1>Merge</h1>
-			<p>
-				{sourceBranch.title} -> {destinationBranch.title}
-			</p>
+			<div className="merge-header">
+				<h2>Merge</h2>
+				<Tag minimal={true} large={true}>
+					#{sourceBranch.title}{' '}
+					<Icon icon="arrow-right" iconSize={14} className="merge-arrow" /> #
+					{destinationBranch.title}
+				</Tag>
+			</div>
 
+			<p>
+				Merging will update the #{destinationBranch.title} branch with the content from the
+				#{sourceBranch.title} branch.
+			</p>
 			<InputField
 				label="Note"
 				isTextarea={true}

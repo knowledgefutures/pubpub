@@ -5,6 +5,8 @@ export default (sequelize, dataTypes) => {
 			id: sequelize.idType,
 			shortId: { type: dataTypes.INTEGER, allowNull: false },
 			isClosed: { type: dataTypes.BOOLEAN },
+			isCompleted: { type: dataTypes.BOOLEAN },
+			isMerged: { type: dataTypes.BOOLEAN },
 			/* Set by Associations */
 			pubId: { type: dataTypes.UUID, allowNull: false },
 			sourceBranchId: { type: dataTypes.UUID, allowNull: false },

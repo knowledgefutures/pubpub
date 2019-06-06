@@ -22,7 +22,7 @@ const PubMerge = (props) => {
 
 	const mergeBranch = () => {
 		setIsLoading(true);
-		return apiFetch('/api/reviews/accept', {
+		return apiFetch('/api/reviews/merge', {
 			method: 'POST',
 			body: JSON.stringify({
 				sourceBranchId: sourceBranch.id,

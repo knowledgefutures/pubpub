@@ -1,6 +1,6 @@
 import app from '../server';
 import { getPermissions } from './permissions';
-import { createReview, acceptReview, updateReview, destroyReview } from './queries';
+import { createReview, mergeReview, updateReview, destroyReview } from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -32,14 +32,14 @@ app.post('/api/reviews', (req, res) => {
 		});
 });
 
-app.post('/api/reviews/accept', (req, res) => {
+app.post('/api/reviews/merge', (req, res) => {
 	const requestIds = getRequestIds(req);
 	getPermissions(requestIds)
 		.then((permissions) => {
-			if (!permissions.accept) {
+			if (!permissions.merge) {
 				throw new Error('Not Authorized');
 			}
-			return acceptReview(req.body);
+			return mergeReview(req.body);
 		})
 		.then(() => {
 			return res.status(201).json({ reviewId: req.body.reviewId });

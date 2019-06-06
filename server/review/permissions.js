@@ -53,15 +53,20 @@ export const getPermissions = ({
 			);
 
 
-		const baseEdit = [
-			'isClosed',
-		];
-		const editProps =
-			sourceAccess.canManage || destinationAccess.canManage ? baseEdit : [];
+		/* TODO: We need some concept of 'Review Owner' for reviews with no */
+		/* destinationBranch. Who is the one administrating the review, if not */
+		/* the destination branch owner? Perhaps the review creator? */
+		let editProps = [];
+		if (sourceAccess.canManage) {
+			editProps = ['isClosed'];
+		}
+		if (destinationAccess.canManage) {
+			editProps = ['isClosed', 'isCompleted', 'isMerged'];
+		}
 
 		return {
 			create: sourceAccess.canManage,
-			accept: destinationAccess.canManage,
+			merge: destinationAccess.canManage,
 			update: editProps,
 			destroy: sourceAccess.canManage,
 		};

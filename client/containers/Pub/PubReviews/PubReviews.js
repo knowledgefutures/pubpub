@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 import { Tag, Button, Intent } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
@@ -10,16 +11,17 @@ require('./pubReviews.scss');
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,
+	updateLocalData: PropTypes.func.isRequired,
 };
 
 const PubReviews = (props) => {
-	const { pubData } = props;
+	const { pubData, updateLocalData } = props;
 	const { communityData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const mergeBranch = (reviewId, sourceBranch, destinationBranch) => {
 		setIsLoading(true);
-		return apiFetch('/api/reviews/accept', {
+		return apiFetch('/api/reviews/merge', {
 			method: 'POST',
 			body: JSON.stringify({
 				reviewId: reviewId,
@@ -37,6 +39,39 @@ const PubReviews = (props) => {
 			});
 	};
 
+	const updateReview = (updatedData, reviewId, sourceBranch, destinationBranch) => {
+		setIsLoading(true);
+		return apiFetch('/api/reviews', {
+			method: 'PUT',
+			body: JSON.stringify({
+				...updatedData,
+				reviewId: reviewId,
+				sourceBranchId: sourceBranch.id,
+				destinationBranchId: destinationBranch && destinationBranch.id,
+				pubId: pubData.id,
+				communityId: communityData.id,
+			}),
+		})
+			.then(() => {
+				updateLocalData('pub', {
+					...pubData,
+					reviews: pubData.reviews.map((review) => {
+						if (review.id === reviewId) {
+							return {
+								...review,
+								...updatedData,
+							};
+						}
+						return review;
+					}),
+				});
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
+
 	return (
 		<GridWrapper containerClassName="pub pub-reviews-component">
 			<h1>Reviews</h1>
@@ -47,20 +82,59 @@ const PubReviews = (props) => {
 				const destinationBranch = pubData.branches.find((branch) => {
 					return branch.id === review.destinationBranchId;
 				});
+				let statusIntent = undefined;
+				if (review.isClosed && !review.isCompleted) {
+					statusIntent = Intent.DANGER;
+				}
+				if (review.isCompleted) {
+					statusIntent = Intent.SUCCESS;
+				}
+				if (review.isMerged) {
+					statusIntent = Intent.SUCCESS;
+				}
 				return (
 					<div className="review-row" key={review.id}>
 						<div>
 							<b>{review.shortId}</b>
 						</div>
 						<div>
-							{sourceBranch.title} -> {destinationBranch.title}
+							{sourceBranch.title} -> {destinationBranch && destinationBranch.title}
 						</div>
 						<div className="expand">{dateFormat(review.createdAt, 'mmm dd, yyyy')}</div>
 
 						{!review.isClosed && (
 							<div>
 								<Button
-									text="Accept and Merge"
+									text="Close"
+									loading={isLoading}
+									onClick={() => {
+										updateReview(
+											{ isClosed: true },
+											review.id,
+											sourceBranch,
+											destinationBranch,
+										);
+									}}
+								/>
+								<Button
+									text="Complete"
+									loading={isLoading}
+									onClick={() => {
+										updateReview(
+											{ isClosed: true, isCompleted: true },
+											review.id,
+											sourceBranch,
+											destinationBranch,
+										);
+									}}
+								/>
+							</div>
+						)}
+
+						{review.isCompleted && !review.isMerged && destinationBranch.id && (
+							<div>
+								<Button
+									text="Merge"
 									loading={isLoading}
 									onClick={() => {
 										mergeBranch(review.id, sourceBranch, destinationBranch);
@@ -69,12 +143,11 @@ const PubReviews = (props) => {
 							</div>
 						)}
 						<div>
-							<Tag
-								minimal={true}
-								large={true}
-								intent={review.isClosed ? Intent.DANGER : Intent.SUCCESS}
-							>
-								{review.isClosed ? 'Closed' : 'Open'}
+							<Tag minimal={true} large={true} intent={statusIntent}>
+								{!review.isClosed && 'Open'}
+								{review.isClosed && !review.isCompleted && 'Closed'}
+								{review.isCompleted && !review.isMerged && 'Completed'}
+								{review.isMerged && 'Merged'}
 							</Tag>
 						</div>
 					</div>

@@ -23,24 +23,24 @@ export const createReview = (inputValues) => {
 	});
 };
 
-export const acceptReview = (inputValues) => {
-	/* Accepting a review merges into the destinationBranch */
-	/* and closes the review. If there is no destinationBranch */
-	/* (i.e. you simply want to close the review), use updateReview() */
+export const mergeReview = (inputValues) => {
+	/* Merging a review merges into the destinationBranch */
+	/* and sets isMerged to true. If there is no destinationBranch */
+	/* the Review.update simply won't match any id */
 	const mergeBranches = mergeFirebaseBranch(
 		inputValues.pubId,
 		inputValues.sourceBranchId,
 		inputValues.destinationBranchId,
 	);
-	const closeReview = inputValues.reviewId
+	const setReviewMerged = inputValues.reviewId
 		? Review.update(
-				{ isClosed: true },
+				{ isMerged: true },
 				{
 					where: { id: inputValues.reviewId },
 				},
 		  )
 		: undefined;
-	return Promise.all([mergeBranches, closeReview]);
+	return Promise.all([mergeBranches, setReviewMerged]);
 };
 
 export const updateReview = (inputValues, updatePermissions) => {

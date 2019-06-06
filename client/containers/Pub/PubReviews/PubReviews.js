@@ -19,12 +19,13 @@ const PubReviews = (props) => {
 	const { communityData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const mergeBranch = (reviewId, sourceBranch, destinationBranch) => {
+	const mergeBranch = (review, sourceBranch, destinationBranch) => {
 		setIsLoading(true);
-		return apiFetch('/api/reviews/merge', {
+		return apiFetch('/api/merges', {
 			method: 'POST',
 			body: JSON.stringify({
-				reviewId: reviewId,
+				note: `Merge from Review ${review.shortId}`,
+				reviewId: review.id,
 				sourceBranchId: sourceBranch.id,
 				destinationBranchId: destinationBranch.id,
 				pubId: pubData.id,
@@ -82,14 +83,15 @@ const PubReviews = (props) => {
 				const destinationBranch = pubData.branches.find((branch) => {
 					return branch.id === review.destinationBranchId;
 				});
-				let statusIntent = undefined;
+
+				let statusIntent;
 				if (review.isClosed && !review.isCompleted) {
 					statusIntent = Intent.DANGER;
 				}
 				if (review.isCompleted) {
 					statusIntent = Intent.SUCCESS;
 				}
-				if (review.isMerged) {
+				if (review.mergeId) {
 					statusIntent = Intent.SUCCESS;
 				}
 				return (
@@ -131,13 +133,13 @@ const PubReviews = (props) => {
 							</div>
 						)}
 
-						{review.isCompleted && !review.isMerged && destinationBranch.id && (
+						{review.isCompleted && !review.mergeId && destinationBranch.id && (
 							<div>
 								<Button
 									text="Merge"
 									loading={isLoading}
 									onClick={() => {
-										mergeBranch(review.id, sourceBranch, destinationBranch);
+										mergeBranch(review, sourceBranch, destinationBranch);
 									}}
 								/>
 							</div>
@@ -146,8 +148,8 @@ const PubReviews = (props) => {
 							<Tag minimal={true} large={true} intent={statusIntent}>
 								{!review.isClosed && 'Open'}
 								{review.isClosed && !review.isCompleted && 'Closed'}
-								{review.isCompleted && !review.isMerged && 'Completed'}
-								{review.isMerged && 'Merged'}
+								{review.isCompleted && !review.mergeId && 'Completed'}
+								{review.mergeId && 'Merged'}
 							</Tag>
 						</div>
 					</div>

@@ -1,5 +1,4 @@
 import { Review } from '../models';
-import { mergeFirebaseBranch } from '../utils/firebaseAdmin';
 
 export const createReview = (inputValues) => {
 	return Review.findAll({
@@ -21,26 +20,6 @@ export const createReview = (inputValues) => {
 			destinationBranchId: inputValues.destinationBranchId,
 		});
 	});
-};
-
-export const mergeReview = (inputValues) => {
-	/* Merging a review merges into the destinationBranch */
-	/* and sets isMerged to true. If there is no destinationBranch */
-	/* the Review.update simply won't match any id */
-	const mergeBranches = mergeFirebaseBranch(
-		inputValues.pubId,
-		inputValues.sourceBranchId,
-		inputValues.destinationBranchId,
-	);
-	const setReviewMerged = inputValues.reviewId
-		? Review.update(
-				{ isMerged: true },
-				{
-					where: { id: inputValues.reviewId },
-				},
-		  )
-		: undefined;
-	return Promise.all([mergeBranches, setReviewMerged]);
 };
 
 export const updateReview = (inputValues, updatePermissions) => {

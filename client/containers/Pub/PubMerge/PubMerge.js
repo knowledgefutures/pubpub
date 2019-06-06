@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Button, Intent } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
-import { GridWrapper } from 'components';
+import { GridWrapper, InputField } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { apiFetch } from 'utils';
 
@@ -13,6 +13,7 @@ const PubMerge = (props) => {
 	const { pubData } = props;
 	const { locationData, communityData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(false);
+	const [noteText, setNoteText] = useState('');
 	const sourceBranch = pubData.branches.find((branch) => {
 		return branch.shortId === Number(locationData.params.fromBranchShortId);
 	});
@@ -22,9 +23,10 @@ const PubMerge = (props) => {
 
 	const mergeBranch = () => {
 		setIsLoading(true);
-		return apiFetch('/api/reviews/merge', {
+		return apiFetch('/api/merges', {
 			method: 'POST',
 			body: JSON.stringify({
+				note: noteText,
 				sourceBranchId: sourceBranch.id,
 				destinationBranchId: destinationBranch.id,
 				pubId: pubData.id,
@@ -46,6 +48,15 @@ const PubMerge = (props) => {
 				{sourceBranch.title} -> {destinationBranch.title}
 			</p>
 
+			<InputField
+				label="Note"
+				isTextarea={true}
+				placeholder="Add a comment describing the changes in this merge."
+				value={noteText}
+				onChange={(evt) => {
+					setNoteText(evt.target.value);
+				}}
+			/>
 			<Button
 				intent={Intent.PRIMARY}
 				text={`Merge into #${destinationBranch.title}`}

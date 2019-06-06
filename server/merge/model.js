@@ -1,37 +1,35 @@
 export default (sequelize, dataTypes) => {
 	return sequelize.define(
-		'Review',
+		'Merge',
 		{
 			id: sequelize.idType,
-			shortId: { type: dataTypes.INTEGER, allowNull: false },
-			isClosed: { type: dataTypes.BOOLEAN },
-			isCompleted: { type: dataTypes.BOOLEAN },
+			note: { type: dataTypes.TEXT },
 			/* Set by Associations */
-			mergeId: { type: dataTypes.UUID },
+			userId: { type: dataTypes.UUID, allowNull: false },
 			pubId: { type: dataTypes.UUID, allowNull: false },
 			sourceBranchId: { type: dataTypes.UUID, allowNull: false },
-			destinationBranchId: { type: dataTypes.UUID },
+			destinationBranchId: { type: dataTypes.UUID, allowNull: false },
 		},
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Pub, Review, Branch, Merge } = models;
-					Review.belongsTo(Merge, {
+					const { Pub, User, Merge, Branch } = models;
+					Pub.hasMany(Merge, {
 						onDelete: 'CASCADE',
-						as: 'merge',
-						foreignKey: 'mergeId',
-					});
-					Pub.hasMany(Review, {
-						onDelete: 'CASCADE',
-						as: 'reviews',
+						as: 'merges',
 						foreignKey: 'pubId',
 					});
-					Review.belongsTo(Branch, {
+					Merge.belongsTo(User, {
+						onDelete: 'CASCADE',
+						as: 'user',
+						foreignKey: 'userId',
+					});
+					Merge.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'sourceBranch',
 						foreignKey: 'sourceBranchId',
 					});
-					Review.belongsTo(Branch, {
+					Merge.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'destinationBranch',
 						foreignKey: 'destinationBranchId',

@@ -37,13 +37,6 @@ export const getPermissions = ({
 			return {};
 		}
 
-		const sourceAccess = calculateBranchAccess(
-				null,
-				sourceBranchData,
-				userId,
-				communityAdminData,
-				pubManagerData,
-			);
 		const destinationAccess = calculateBranchAccess(
 				null,
 				destinationBranchData,
@@ -53,21 +46,14 @@ export const getPermissions = ({
 			);
 
 
-		/* TODO: We need some concept of 'Review Owner' for reviews with no */
-		/* destinationBranch. Who is the one administrating the review, if not */
-		/* the destination branch owner? Perhaps the review creator? */
-		let editProps = [];
-		if (sourceAccess.canManage) {
-			editProps = ['isClosed'];
-		}
-		if (destinationAccess.canManage) {
-			editProps = ['isClosed', 'isCompleted'];
-		}
+		const editProps = destinationAccess.canManage
+			? ['note']
+			: [];
 
 		return {
-			create: sourceAccess.canManage,
+			create: destinationAccess.canManage,
 			update: editProps,
-			destroy: sourceAccess.canManage,
+			destroy: false,
 		};
 	});
 };

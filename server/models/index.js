@@ -34,6 +34,7 @@ export const CommunityAdmin = sequelize.import('./communityAdmin.js');
 export const Discussion = sequelize.import('./discussion.js');
 export const DiscussionChannel = sequelize.import('./discussionChannel.js');
 export const DiscussionChannelParticipant = sequelize.import('./discussionChannelParticipant.js');
+export const Merge = sequelize.import('../merge/model.js');
 export const Page = sequelize.import('./page.js');
 export const Pub = sequelize.import('./pub.js');
 export const PubAttribution = sequelize.import('./pubAttribution.js');

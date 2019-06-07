@@ -29,13 +29,14 @@ export const createReview = (inputValues, userData) => {
 				const reviewEvents = [
 					createCreatedReviewEvent(userData, reviewData.pubId, reviewData.id),
 				];
-				if (inputValues.note) {
+				if (inputValues.text) {
 					reviewEvents.push(
 						createCommentReviewEvent(
 							userData,
 							reviewData.pubId,
 							reviewData.id,
-							inputValues.note,
+							inputValues.content,
+							inputValues.text,
 						),
 					);
 				}

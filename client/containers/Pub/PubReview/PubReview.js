@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { ButtonGroup, Button, Intent, Tag, Tabs, Tab, Callout } from '@blueprintjs/core';
+import { Button, Intent, Tag, Tabs, Tab, Callout } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
-import { GridWrapper, Icon, InputField } from 'components';
+import { GridWrapper, Icon, InputField, MinimalEditor } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { apiFetch } from 'utils';
 import ReviewEvent from './ReviewEvent';
@@ -16,11 +16,12 @@ const propTypes = {
 
 const PubReview = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { communityData, locationData, loginData } = useContext(PageContext);
+	const { communityData, locationData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(undefined);
 	const [isLoadingCreateComment, setIsLoadingCreateComment] = useState(false);
 	const [currentTab, setCurrentTab] = useState('details');
-	const [noteText, setNoteText] = useState('');
+	const [noteData, setNoteData] = useState({});
+	const [noteKey, setNoteKey] = useState(Math.random());
 
 	const activeReview = pubData.reviews.find((review) => {
 		return review.shortId === Number(locationData.params.reviewShortId);
@@ -112,7 +113,7 @@ const PubReview = (props) => {
 			method: 'POST',
 			body: JSON.stringify({
 				type: 'comment',
-				data: { text: noteText },
+				data: { content: noteData.content, text: noteData.text },
 				reviewId: activeReview.id,
 				pubId: pubData.id,
 				communityId: communityData.id,
@@ -131,7 +132,7 @@ const PubReview = (props) => {
 						return review;
 					}),
 				});
-				setNoteText('');
+				setNoteKey(Math.random());
 				setIsLoadingCreateComment(undefined);
 			})
 			.catch((err) => {
@@ -206,15 +207,15 @@ const PubReview = (props) => {
 								})}
 
 							{/* Show input box */}
-							<InputField
-								label="Note"
-								isTextarea={true}
-								placeholder="Add a note for the review team."
-								value={noteText}
-								onChange={(evt) => {
-									setNoteText(evt.target.value);
-								}}
-							/>
+							<InputField label="Note">
+								<MinimalEditor
+									key={noteKey}
+									onChange={(data) => {
+										setNoteData(data);
+									}}
+									placeholder="Add a note for the review team."
+								/>
+							</InputField>
 							<Button
 								intent={Intent.PRIMARY}
 								text="Add comment"

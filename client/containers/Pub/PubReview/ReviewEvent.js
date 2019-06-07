@@ -1,23 +1,22 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
-import { AnchorButton, ButtonGroup, Button, Intent, Tag, Tabs, Tab } from '@blueprintjs/core';
+import { AnchorButton } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
-import { GridWrapper, Icon, InputField, Avatar } from 'components';
+import { Avatar } from 'components';
+import Editor from '@pubpub/editor';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import { apiFetch } from 'utils';
 
 require('./reviewEvent.scss');
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,
 	eventData: PropTypes.object.isRequired,
-	updateLocalData: PropTypes.func.isRequired,
 };
 
 const ReviewEvent = (props) => {
-	const { pubData, eventData, updateLocalData } = props;
-	const { communityData, locationData } = useContext(PageContext);
+	const { pubData, eventData } = props;
+	const { locationData } = useContext(PageContext);
 	const activeReview = pubData.reviews.find((review) => {
 		return review.shortId === Number(locationData.params.reviewShortId);
 	});
@@ -80,7 +79,11 @@ const ReviewEvent = (props) => {
 					</div>
 				)}
 				{eventData.type === 'comment' && <span> commented {time}</span>}
-				{eventData.type === 'comment' && <div className="comment-wrapper">{eventData.data.text}</div>}
+				{eventData.type === 'comment' && (
+					<div className="comment-wrapper">
+						<Editor initialContent={eventData.data.content} isReadOnly={true} />
+					</div>
+				)}
 			</div>
 		</div>
 	);

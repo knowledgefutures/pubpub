@@ -1,6 +1,6 @@
 import React from 'react';
 import TimeAgo from 'react-timeago';
-import { Tag, Intent } from '@blueprintjs/core';
+import { Tag, Intent, NonIdealState } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, Icon } from 'components';
 
@@ -16,6 +16,7 @@ const PubReviews = (props) => {
 	return (
 		<GridWrapper containerClassName="pub pub-reviews-component">
 			<h2>Reviews</h2>
+			{!pubData.reviews.length && <NonIdealState icon="issue" title="No Existing Reviews" />}
 			{pubData.reviews
 				.sort((foo, bar) => {
 					return bar.shortId - foo.shortId;

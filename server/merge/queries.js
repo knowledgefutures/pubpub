@@ -10,7 +10,8 @@ export const createMerge = (inputValues, userData) => {
 	)
 		.then(() => {
 			return Merge.create({
-				note: inputValues.note,
+				noteContent: inputValues.noteContent,
+				noteText: inputValues.noteText,
 				userId: userData.id,
 				pubId: inputValues.pubId,
 				sourceBranchId: inputValues.sourceBranchId,
@@ -24,11 +25,9 @@ export const createMerge = (inputValues, userData) => {
 					where: { id: inputValues.reviewId || null },
 				},
 			);
-			const createMergeEvent = createMergedReviewEvent(
-				userData,
-				inputValues.pubId,
-				inputValues.reviewId,
-			);
+			const createMergeEvent = inputValues.reviewId
+				? createMergedReviewEvent(userData, inputValues.pubId, inputValues.reviewId)
+				: undefined;
 			return Promise.all([newMergeData, createMergeEvent, updateReview]);
 		})
 		.then(([newMergeData, newReviewEvent]) => {

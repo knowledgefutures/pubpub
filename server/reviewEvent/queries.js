@@ -94,13 +94,13 @@ export const createMergedReviewEvent = (userData, pubId, reviewId) => {
 	);
 };
 
-export const createCommentReviewEvent = (userData, pubId, reviewId, note) => {
+export const createCommentReviewEvent = (userData, pubId, reviewId, content, text) => {
 	return createReviewEvent(
 		{
 			pubId: pubId,
 			reviewId: reviewId,
 			type: 'comment',
-			data: { text: note },
+			data: { content: content, text: text },
 		},
 		userData,
 	);

@@ -3,7 +3,8 @@ export default (sequelize, dataTypes) => {
 		'Merge',
 		{
 			id: sequelize.idType,
-			note: { type: dataTypes.TEXT },
+			noteContent: { type: dataTypes.JSONB },
+			noteText: { type: dataTypes.TEXT },
 			/* Set by Associations */
 			userId: { type: dataTypes.UUID, allowNull: false },
 			pubId: { type: dataTypes.UUID, allowNull: false },

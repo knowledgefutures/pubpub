@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Button, Intent, Tag } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
-import { GridWrapper, InputField, Icon } from 'components';
+import { GridWrapper, InputField, Icon, MinimalEditor } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { apiFetch } from 'utils';
 
@@ -15,7 +15,7 @@ const PubMerge = (props) => {
 	const { pubData } = props;
 	const { locationData, communityData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(false);
-	const [noteText, setNoteText] = useState('');
+	const [noteData, setNoteData] = useState({});
 	const sourceBranch = pubData.branches.find((branch) => {
 		return branch.shortId === Number(locationData.params.fromBranchShortId);
 	});
@@ -28,7 +28,8 @@ const PubMerge = (props) => {
 		return apiFetch('/api/merges', {
 			method: 'POST',
 			body: JSON.stringify({
-				note: noteText,
+				noteContent: noteData.content,
+				noteText: noteData.text,
 				sourceBranchId: sourceBranch.id,
 				destinationBranchId: destinationBranch.id,
 				pubId: pubData.id,
@@ -54,19 +55,19 @@ const PubMerge = (props) => {
 				</Tag>
 			</div>
 
-			<p>
+			<p className="intro">
 				Merging will update the #{destinationBranch.title} branch with the content from the
 				#{sourceBranch.title} branch.
 			</p>
-			<InputField
-				label="Note"
-				isTextarea={true}
-				placeholder="Add a comment describing the changes in this merge."
-				value={noteText}
-				onChange={(evt) => {
-					setNoteText(evt.target.value);
-				}}
-			/>
+			<InputField label="Note">
+				<MinimalEditor
+					onChange={(data) => {
+						setNoteData(data);
+					}}
+					focusOnLoad={true}
+					placeholder="Add a comment describing the changes in this merge."
+				/>
+			</InputField>
 			<Button
 				intent={Intent.PRIMARY}
 				text={`Merge into #${destinationBranch.title}`}

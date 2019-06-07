@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { AnchorButton, Button, Intent, NonIdealState, Tag, Tabs, Tab } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
-import { GridWrapper, InputField, Icon } from 'components';
+import { GridWrapper, InputField, Icon, MinimalEditor } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { apiFetch } from 'utils';
 
@@ -16,7 +16,7 @@ const PubReviewCreate = (props) => {
 	const { locationData, communityData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentTab, setCurrentTab] = useState('activity');
-	const [noteText, setNoteText] = useState('');
+	const [noteData, setNoteData] = useState({});
 	const sourceBranch = pubData.branches.find((branch) => {
 		return branch.shortId === Number(locationData.params.fromBranchShortId);
 	});
@@ -29,7 +29,8 @@ const PubReviewCreate = (props) => {
 		return apiFetch('/api/reviews', {
 			method: 'POST',
 			body: JSON.stringify({
-				note: noteText,
+				content: noteData.content,
+				text: noteData.text,
 				sourceBranchId: sourceBranch.id,
 				destinationBranchId: destinationBranch.id,
 				pubId: pubData.id,
@@ -90,15 +91,14 @@ const PubReviewCreate = (props) => {
 						title="Activity"
 						panel={
 							<div>
-								<InputField
-									label="Note"
-									isTextarea={true}
-									placeholder="Add a note for the review team."
-									value={noteText}
-									onChange={(evt) => {
-										setNoteText(evt.target.value);
-									}}
-								/>
+								<InputField label="Note">
+									<MinimalEditor
+										onChange={(data) => {
+											setNoteData(data);
+										}}
+										placeholder="Add a note for the review team."
+									/>
+								</InputField>
 								<Button
 									intent={Intent.PRIMARY}
 									text="Create Review"

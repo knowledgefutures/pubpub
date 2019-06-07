@@ -20,7 +20,7 @@ app.post('/api/reviewEvents', (req, res) => {
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			return createReviewEvent(req.body, requestIds.userId);
+			return createReviewEvent(req.body, req.user);
 		})
 		.then((newReviewEvent) => {
 			return res.status(201).json(newReviewEvent);

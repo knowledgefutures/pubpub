@@ -16,8 +16,9 @@ const propTypes = {
 
 const PubReview = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { communityData, locationData } = useContext(PageContext);
+	const { communityData, locationData, loginData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(undefined);
+	const [isLoadingCreateComment, setIsLoadingCreateComment] = useState(false);
 	const [currentTab, setCurrentTab] = useState('details');
 	const [noteText, setNoteText] = useState('');
 
@@ -44,8 +45,24 @@ const PubReview = (props) => {
 				communityId: communityData.id,
 			}),
 		})
-			.then(() => {
-				window.location.href = `/pub/${pubData.slug}/branch/${destinationBranch.shortId}`;
+			.then((mergeResult) => {
+				updateLocalData('pub', {
+					...pubData,
+					reviews: pubData.reviews.map((reviewItem) => {
+						if (reviewItem.id === activeReview.id) {
+							return {
+								...reviewItem,
+								mergeId: mergeResult.newMerge.id,
+								reviewEvents: [
+									...reviewItem.reviewEvents,
+									...mergeResult.newReviewEvents,
+								],
+							};
+						}
+						return reviewItem;
+					}),
+				});
+				setIsLoading(undefined);
 			})
 			.catch((err) => {
 				console.error(err);
@@ -65,20 +82,57 @@ const PubReview = (props) => {
 				communityId: communityData.id,
 			}),
 		})
-			.then(() => {
+			.then((updateResult) => {
 				updateLocalData('pub', {
 					...pubData,
 					reviews: pubData.reviews.map((review) => {
 						if (review.id === reviewId) {
 							return {
 								...review,
-								...updatedData,
+								...updateResult.updatedValues,
+								reviewEvents: [
+									...review.reviewEvents,
+									...updateResult.newReviewEvents,
+								],
 							};
 						}
 						return review;
 					}),
 				});
 				setIsLoading(undefined);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
+
+	const createComment = () => {
+		setIsLoadingCreateComment(true);
+		return apiFetch('/api/reviewEvents', {
+			method: 'POST',
+			body: JSON.stringify({
+				type: 'comment',
+				data: { text: noteText },
+				reviewId: activeReview.id,
+				pubId: pubData.id,
+				communityId: communityData.id,
+			}),
+		})
+			.then((newReviewEvent) => {
+				updateLocalData('pub', {
+					...pubData,
+					reviews: pubData.reviews.map((review) => {
+						if (review.id === activeReview.id) {
+							return {
+								...review,
+								reviewEvents: [...review.reviewEvents, newReviewEvent],
+							};
+						}
+						return review;
+					}),
+				});
+				setNoteText('');
+				setIsLoadingCreateComment(undefined);
 			})
 			.catch((err) => {
 				console.error(err);
@@ -112,6 +166,7 @@ const PubReview = (props) => {
 				{activeReview.isCompleted && !activeReview.mergeId && 'Completed'}
 				{activeReview.mergeId && 'Merged'}
 			</Tag>
+
 			<Tabs
 				onChange={(newTab) => {
 					setCurrentTab(newTab);
@@ -147,8 +202,8 @@ const PubReview = (props) => {
 							<Button
 								intent={Intent.PRIMARY}
 								text="Add comment"
-								loading={isLoading}
-								// onClick={createReview}
+								loading={isLoadingCreateComment}
+								onClick={createComment}
 							/>
 
 							{/* Show actions */}

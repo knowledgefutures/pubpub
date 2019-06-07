@@ -1,12 +1,24 @@
+import { attributesPublicUser } from '../utils';
 import { ReviewEvent } from '../models';
 
-export const createReviewEvent = (inputValues, userId) => {
+export const createReviewEvent = (inputValues, userData) => {
 	return ReviewEvent.create({
 		type: inputValues.type,
 		data: inputValues.data,
-		userId: userId,
+		userId: userData.id,
 		pubId: inputValues.pubId,
 		reviewId: inputValues.reviewId,
+	}).then((newReviewEvent) => {
+		/* Populate user data so it can be inserted into */
+		/* existing pubData client-side */
+		const cleanedUserData = {};
+		attributesPublicUser.forEach((key) => {
+			cleanedUserData[key] = userData[key];
+		});
+		return {
+			...newReviewEvent.toJSON(),
+			user: cleanedUserData,
+		};
 	});
 };
 
@@ -34,7 +46,7 @@ export const destroyReviewEvent = (inputValues) => {
 
 /* Event helpers */
 /* ------------- */
-export const createCreatedReviewEvent = (userId, pubId, reviewId) => {
+export const createCreatedReviewEvent = (userData, pubId, reviewId) => {
 	return createReviewEvent(
 		{
 			pubId: pubId,
@@ -42,11 +54,11 @@ export const createCreatedReviewEvent = (userId, pubId, reviewId) => {
 			type: 'status',
 			data: { statusChange: 'created' },
 		},
-		userId,
+		userData,
 	);
 };
 
-export const createClosedReviewEvent = (userId, pubId, reviewId) => {
+export const createClosedReviewEvent = (userData, pubId, reviewId) => {
 	return createReviewEvent(
 		{
 			pubId: pubId,
@@ -54,11 +66,11 @@ export const createClosedReviewEvent = (userId, pubId, reviewId) => {
 			type: 'status',
 			data: { statusChange: 'closed' },
 		},
-		userId,
+		userData,
 	);
 };
 
-export const createCompletedReviewEvent = (userId, pubId, reviewId) => {
+export const createCompletedReviewEvent = (userData, pubId, reviewId) => {
 	return createReviewEvent(
 		{
 			pubId: pubId,
@@ -66,11 +78,23 @@ export const createCompletedReviewEvent = (userId, pubId, reviewId) => {
 			type: 'status',
 			data: { statusChange: 'completed' },
 		},
-		userId,
+		userData,
 	);
 };
 
-export const createCommentReviewEvent = (userId, pubId, reviewId, note) => {
+export const createMergedReviewEvent = (userData, pubId, reviewId) => {
+	return createReviewEvent(
+		{
+			pubId: pubId,
+			reviewId: reviewId,
+			type: 'status',
+			data: { statusChange: 'merged' },
+		},
+		userData,
+	);
+};
+
+export const createCommentReviewEvent = (userData, pubId, reviewId, note) => {
 	return createReviewEvent(
 		{
 			pubId: pubId,
@@ -78,6 +102,6 @@ export const createCommentReviewEvent = (userId, pubId, reviewId, note) => {
 			type: 'comment',
 			data: { text: note },
 		},
-		userId,
+		userData,
 	);
 };

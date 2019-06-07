@@ -40,7 +40,7 @@ export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEve
 				findBranch(destinationBranchId),
 				PubManager.findOne({ where: { pubId: pubId, userId: userId } }),
 				CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
-				ReviewEvent.findOne({ where: { reviewEventId: reviewEventId } }),
+				ReviewEvent.findOne({ where: { id: reviewEventId } }),
 			]);
 		})
 		.then(
@@ -72,7 +72,7 @@ export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEve
 					  )
 					: {};
 
-				const editProps = reviewEventData.id === userId ? ['data'] : [];
+				const editProps = reviewEventData && reviewEventData.id === userId ? ['data'] : [];
 
 				return {
 					create: sourceAccess.canManage || destinationAccess.canManage,

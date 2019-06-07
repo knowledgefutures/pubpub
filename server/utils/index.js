@@ -68,7 +68,10 @@ export const getInitialData = (req) => {
 		initials: user.initials,
 		slug: user.slug,
 		fullName: user.fullName,
+		firstName: user.firstName,
+		lastName: user.lastName,
 		avatar: user.avatar,
+		title: user.title,
 	};
 
 	/* Gather location data */

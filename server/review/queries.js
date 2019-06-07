@@ -6,7 +6,7 @@ import {
 	createCommentReviewEvent,
 } from '../reviewEvent/queries';
 
-export const createReview = (inputValues, userId) => {
+export const createReview = (inputValues, userData) => {
 	return Review.findAll({
 		where: {
 			pubId: inputValues.pubId,
@@ -27,12 +27,12 @@ export const createReview = (inputValues, userId) => {
 		})
 			.then((reviewData) => {
 				const reviewEvents = [
-					createCreatedReviewEvent(userId, reviewData.pubId, reviewData.id),
+					createCreatedReviewEvent(userData, reviewData.pubId, reviewData.id),
 				];
 				if (inputValues.note) {
 					reviewEvents.push(
 						createCommentReviewEvent(
-							userId,
+							userData,
 							reviewData.pubId,
 							reviewData.id,
 							inputValues.note,
@@ -47,7 +47,7 @@ export const createReview = (inputValues, userId) => {
 	});
 };
 
-export const updateReview = (inputValues, updatePermissions, userId) => {
+export const updateReview = (inputValues, updatePermissions, userData) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -70,15 +70,19 @@ export const updateReview = (inputValues, updatePermissions, userId) => {
 			const wasClosed = !prevValues.isClosed && nextValues.isClosed;
 			const wasCompleted = !prevValues.isCompleted && nextValues.isCompleted;
 			if (wasClosed && !wasCompleted) {
-				return createClosedReviewEvent(userId, inputValues.pubId, inputValues.reviewId);
+				return createClosedReviewEvent(userData, inputValues.pubId, inputValues.reviewId);
 			}
 			if (wasCompleted) {
-				return createCompletedReviewEvent(userId, inputValues.pubId, inputValues.reviewId);
+				return createCompletedReviewEvent(
+					userData,
+					inputValues.pubId,
+					inputValues.reviewId,
+				);
 			}
 			return null;
 		})
-		.then(() => {
-			return filteredValues;
+		.then((newReviewEvent) => {
+			return { updatedValues: filteredValues, newReviewEvents: [newReviewEvent] };
 		});
 };
 

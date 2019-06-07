@@ -22,7 +22,7 @@ app.post('/api/merges', (req, res) => {
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			return createMerge(req.body, requestIds.userId);
+			return createMerge(req.body, req.user);
 		})
 		.then((newMerge) => {
 			return res.status(201).json(newMerge);

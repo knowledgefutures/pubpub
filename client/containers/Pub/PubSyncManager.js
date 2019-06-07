@@ -161,6 +161,7 @@ class PubSyncManager extends React.Component {
 					'labels',
 					'managers',
 					'pubTags',
+					'reviews',
 					'slug',
 					'title',
 					'useHeaderImage',

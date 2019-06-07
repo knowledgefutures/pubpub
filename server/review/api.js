@@ -21,7 +21,7 @@ app.post('/api/reviews', (req, res) => {
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			return createReview(req.body, requestIds.userId);
+			return createReview(req.body, req.user);
 		})
 		.then((newReview) => {
 			return res.status(201).json(newReview);
@@ -39,10 +39,10 @@ app.put('/api/reviews', (req, res) => {
 			if (!permissions.update) {
 				throw new Error('Not Authorized');
 			}
-			return updateReview(req.body, permissions.update, requestIds.userId);
+			return updateReview(req.body, permissions.update, req.user);
 		})
-		.then((updatedReviewValues) => {
-			return res.status(201).json(updatedReviewValues);
+		.then((updateResult) => {
+			return res.status(201).json(updateResult);
 		})
 		.catch((err) => {
 			console.error('Error in putReview: ', err);

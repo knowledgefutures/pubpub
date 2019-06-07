@@ -86,3 +86,35 @@ export const generateSubmissionButtons = (pubData) => {
 	}
 	return outputButtons;
 };
+
+export const generateHeaderBreadcrumbs = (pubData, locationData) => {
+	const { mode, slug } = pubData;
+	const sections = {
+		merge: [{ text: 'Merge' }],
+		reviewCreate: [{ text: 'New Review' }],
+		reviews: [{ text: 'Reviews' }],
+		review: [
+			{ text: 'Reviews', href: `/pub/${slug}/reviews` },
+			{ text: locationData.params.reviewShortId },
+		],
+		manage: [{ text: 'Manage' }],
+		branchCreate: [{ text: 'New Branch' }],
+	};
+	const sectionData = sections[mode];
+	if (!sectionData) {
+		return null;
+	}
+	return sectionData.map((data) => {
+		return (
+			<span key={data.text} className="breadcrumb">
+				{data.href ? (
+					<a key={data.text} href={data.href}>
+						{data.text}
+					</a>
+				) : (
+					data.text
+				)}
+			</span>
+		);
+	});
+};

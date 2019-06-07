@@ -13,12 +13,16 @@ import {
 import { getFirebaseToken } from '../utils/firebaseAdmin';
 import { findPub } from '../utils/pubQueries';
 
-const getMode = (path, slug) => {
+const getMode = (path, params) => {
+	const { slug, reviewShortId } = params;
 	if (path.indexOf(`/pub/${slug}/merge/`) > -1) {
 		return 'merge';
 	}
 	if (path.indexOf(`/pub/${slug}/reviews/new`) > -1) {
-		return 'new review';
+		return 'reviewCreate';
+	}
+	if (path.indexOf(`/pub/${slug}/reviews/${reviewShortId}`) > -1) {
+		return 'review';
 	}
 	if (path.indexOf(`/pub/${slug}/reviews`) > -1) {
 		return 'reviews';
@@ -27,7 +31,7 @@ const getMode = (path, slug) => {
 		return 'manage';
 	}
 	if (path.indexOf(`/pub/${slug}/branch/new`) > -1) {
-		return 'new branch';
+		return 'branchCreate';
 	}
 	return 'document';
 };
@@ -51,7 +55,7 @@ app.get(
 			return next();
 		}
 
-		const mode = getMode(req.path, req.params.slug);
+		const mode = getMode(req.path, req.params);
 		return getInitialData(req)
 			.then((initialData) => {
 				return Promise.all([

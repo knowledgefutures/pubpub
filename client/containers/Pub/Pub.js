@@ -11,6 +11,7 @@ import PubMerge from './PubMerge';
 import PubManage from './PubManage';
 import PubReviewCreate from './PubReviewCreate';
 import PubReviews from './PubReviews';
+import PubReview from './PubReview';
 import PubBranchCreate from './PubBranchCreate';
 
 require('./pub.scss');
@@ -62,9 +63,10 @@ const Pub = (props) => {
 								{mode === 'document' && <PubDocument {...modeProps} />}
 								{mode === 'manage' && <PubManage {...modeProps} />}
 								{mode === 'merge' && <PubMerge {...modeProps} />}
-								{mode === 'new review' && <PubReviewCreate {...modeProps} />}
+								{mode === 'review' && <PubReview {...modeProps} />}
 								{mode === 'reviews' && <PubReviews {...modeProps} />}
-								{mode === 'new branch' && <PubBranchCreate {...modeProps} />}
+								{mode === 'reviewCreate' && <PubReviewCreate {...modeProps} />}
+								{mode === 'branchCreate' && <PubBranchCreate {...modeProps} />}
 							</React.Fragment>
 						);
 					}}

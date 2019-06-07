@@ -308,11 +308,16 @@
 				margin-left: 0.5em;
 				padding-left: 0.5em;
 				display: inline-block;
-				text-transform: capitalize;
 				&:before {
 					content: '›';
 					position: relative;
 					left: -0.5em;
+				}
+				a {
+					text-decoration: none;
+					&:hover {
+						text-decoration: underline;
+					}
 				}
 			}
 		}

@@ -24,7 +24,7 @@ import { Icon, GridWrapper, Overlay } from 'components';
 import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
-// import { generateSubmissionButtons } from './headerUtils';
+import { generateHeaderBreadcrumbs } from './headerUtils';
 
 require('./pubHeader.scss');
 
@@ -331,15 +331,14 @@ const PubHeader = (props) => {
 							<React.Fragment>
 								{isDocMode && <span className="text-wrapper">{pubData.title}</span>}
 								{!isDocMode && (
-									<a href={`/pub/${pubData.slug}`} className="text-wrapper">
-										{pubData.title}
-									</a>
+									<React.Fragment>
+										<a href={`/pub/${pubData.slug}`} className="text-wrapper">
+											{pubData.title}
+										</a>	
+										{generateHeaderBreadcrumbs(pubData, locationData)}
+									</React.Fragment>
+									
 								)}
-								{/* TODO: This needs to be a link that functions more cleanly */}
-								{!isDocMode && <span className="breadcrumb">{pubData.mode}</span>}
-								{/* !isDocMode && manageMode && (
-									<span className="breadcrumb">{manageMode}</span>
-								) */}
 							</React.Fragment>
 						)}
 					</h1>

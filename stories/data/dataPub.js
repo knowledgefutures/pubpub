@@ -74,8 +74,8 @@ export default {
 					userId: 'b242f616-7aaa-479c-8ee5-3933dcf70859',
 					pubId: '97b60dbb-3ed3-40a1-bc93-323b51bf6f8d',
 					reviewId: '881df124-b771-427e-b5d3-9c0c5952db71',
-					createdAt: '2019-06-07T17:09:28.081Z',
-					updatedAt: '2019-06-07T17:09:28.081Z',
+					createdAt: '2019-06-06T17:09:28.081Z',
+					updatedAt: '2019-06-06T17:09:28.081Z',
 					user: {
 						id: 'b242f616-7aaa-479c-8ee5-3933dcf70859',
 						firstName: 'PubPub',

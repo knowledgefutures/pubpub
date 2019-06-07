@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { ButtonGroup, Button, Intent, Tag, Tabs, Tab } from '@blueprintjs/core';
+import { ButtonGroup, Button, Intent, Tag, Tabs, Tab, Callout } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, Icon, InputField } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
@@ -150,6 +150,11 @@ const PubReview = (props) => {
 		statusIntent = Intent.SUCCESS;
 	}
 
+	const canMerge =
+		activeReview.isCompleted &&
+		!activeReview.mergeId &&
+		destinationBranch.id &&
+		destinationBranch.canManage;
 	return (
 		<GridWrapper containerClassName="pub pub-reviews-component">
 			<div className="review-header">
@@ -179,16 +184,27 @@ const PubReview = (props) => {
 					panel={
 						<div>
 							{/* Show Events */}
-							{activeReview.reviewEvents.map((event) => {
-								return (
-									<ReviewEvent
-										key={event.id}
-										pubData={pubData}
-										eventData={event}
-										updateLocalData={updateLocalData}
-									/>
-								);
-							})}
+							{activeReview.reviewEvents
+								.sort((foo, bar) => {
+									if (foo.createdAt < bar.createdAt) {
+										return -1;
+									}
+									if (foo.createdAt > bar.createdAt) {
+										return 1;
+									}
+									return foo.type === 'status' ? -1 : 1;
+								})
+								.map((event) => {
+									return (
+										<ReviewEvent
+											key={event.id}
+											pubData={pubData}
+											eventData={event}
+											updateLocalData={updateLocalData}
+										/>
+									);
+								})}
+
 							{/* Show input box */}
 							<InputField
 								label="Note"
@@ -205,46 +221,48 @@ const PubReview = (props) => {
 								loading={isLoadingCreateComment}
 								onClick={createComment}
 							/>
-
 							{/* Show actions */}
-							<ButtonGroup>
-								{!activeReview.isClosed && (
-									<React.Fragment>
-										<Button
-											key="close"
-											text="Close"
-											loading={isLoading === `close-${activeReview.id}`}
-											disabled={isLoading === `complete-${activeReview.id}`}
-											onClick={() => {
-												updateReview(
-													{ isClosed: true },
-													activeReview.id,
-													sourceBranch,
-													destinationBranch,
-												);
-											}}
-										/>
-										<Button
-											key="complete"
-											text="Complete"
-											loading={isLoading === `complete-${activeReview.id}`}
-											disabled={isLoading === `close-${activeReview.id}`}
-											onClick={() => {
-												updateReview(
-													{ isClosed: true, isCompleted: true },
-													activeReview.id,
-													sourceBranch,
-													destinationBranch,
-												);
-											}}
-										/>
-									</React.Fragment>
-								)}
+							{(!activeReview.isClosed || canMerge) && (
+								<Callout title="Review Actions" className="actions-block">
+									{!activeReview.isClosed && (
+										<React.Fragment>
+											<Button
+												key="complete"
+												text="Complete Review"
+												intent={Intent.SUCCESS}
+												loading={
+													isLoading === `complete-${activeReview.id}`
+												}
+												disabled={isLoading === `close-${activeReview.id}`}
+												onClick={() => {
+													updateReview(
+														{ isClosed: true, isCompleted: true },
+														activeReview.id,
+														sourceBranch,
+														destinationBranch,
+													);
+												}}
+											/>
+											<Button
+												key="close"
+												text="Close Review"
+												loading={isLoading === `close-${activeReview.id}`}
+												disabled={
+													isLoading === `complete-${activeReview.id}`
+												}
+												onClick={() => {
+													updateReview(
+														{ isClosed: true },
+														activeReview.id,
+														sourceBranch,
+														destinationBranch,
+													);
+												}}
+											/>
+										</React.Fragment>
+									)}
 
-								{activeReview.isCompleted &&
-									!activeReview.mergeId &&
-									destinationBranch.id &&
-									destinationBranch.canManage && (
+									{canMerge && (
 										<Button
 											text="Merge"
 											loading={isLoading === `merge-${activeReview.id}`}
@@ -257,7 +275,8 @@ const PubReview = (props) => {
 											}}
 										/>
 									)}
-							</ButtonGroup>
+								</Callout>
+							)}
 						</div>
 					}
 				/>

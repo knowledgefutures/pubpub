@@ -19,6 +19,7 @@ import {
 	WorkerTask,
 } from './models';
 import { generateHash } from './utils';
+import mudder from 'mudder';
 
 console.log('Beginning Migration');
 
@@ -541,6 +542,24 @@ new Promise((resolve) => {
 	// 			});
 	// 		return Promise.all(pageUpdates);
 	// 	});
+	// })
+	// .then(() => {
+	// 	console.log("updating CollectionPubs");
+	// 	return Collection.findAll({ attributes: ["id"] })
+	// 		.then(collections => collections
+	// 			.reduce((promise, collection) => {
+	// 				console.log("Collection", collection.id);
+	// 				return promise.then(() => 
+	// 					CollectionPub.findAll({where: {collectionId: collection.id, rank: null }})
+	// 						.then(collectionPubs => {
+	// 							const ranks = mudder.base36.mudder('a', 'z', collectionPubs.length);
+	// 							return Promise.all(
+	// 								collectionPubs.map((cp, index) => cp.update({rank: ranks[index] }))
+	// 							);
+	// 						})
+	// 				);
+	// 			}, Promise.resolve())
+	// 		)
 	// })
 	// .then(() => {
 	// 	console.log("Syncing attributions models");

@@ -39,6 +39,7 @@ export const Page = sequelize.import('./page.js');
 export const Pub = sequelize.import('./pub.js');
 export const PubAttribution = sequelize.import('./pubAttribution.js');
 export const PubManager = sequelize.import('./pubManager.js');
+export const PubVersion = sequelize.import('./pubVersion.js');
 export const PubTag = sequelize.import('./pubTag.js');
 export const Signup = sequelize.import('./signup.js');
 export const Review = sequelize.import('../review/model.js');

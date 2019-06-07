@@ -15,7 +15,7 @@ const PubReviewCreate = (props) => {
 	const { pubData } = props;
 	const { locationData, communityData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(false);
-	const [currentTab, setCurrentTab] = useState('details');
+	const [currentTab, setCurrentTab] = useState('activity');
 	const [noteText, setNoteText] = useState('');
 	const sourceBranch = pubData.branches.find((branch) => {
 		return branch.shortId === Number(locationData.params.fromBranchShortId);
@@ -86,8 +86,8 @@ const PubReviewCreate = (props) => {
 					selectedTabId={currentTab}
 				>
 					<Tab
-						id="details"
-						title="Details"
+						id="activity"
+						title="Activity"
 						panel={
 							<div>
 								<InputField

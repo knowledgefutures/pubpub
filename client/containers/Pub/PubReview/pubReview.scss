@@ -1,23 +1,24 @@
 .pub-reviews-component {
 	margin-top: 2em;
-	.review-row {
+	.review-header {
 		display: flex;
 		align-items: center;
-		margin-bottom: 1em;
-		.short-id {
-			font-weight: 600;
-			font-size: 16px;
+		h2 {
+			display: inline;
+			margin: 0em 1em 0em 0em;
 		}
-		.branch-tag {
-			margin: 0em 1em;
-		}
-		.date {
-			flex: 1 1 auto;
-		}
-		.status-tag {
-			margin-left: 1em;
-			min-width: 95px;
-			text-align: center;
-		}
+	}
+	textarea {
+		max-width: 500px;
+		min-height: 56px;
+	}
+	.merge-arrow {
+		margin: 0em 0.25em;
+		opacity: 0.75;
+	}
+	.bp3-tab-list {
+		margin-top: 2em;
+		border-bottom: 1px solid #CCC;
+		display: none;
 	}
 }

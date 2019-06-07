@@ -167,7 +167,7 @@ export default {
 	locationData: {
 		hostname: 'localhost',
 		path: '/login',
-		params: { manageMode: 'attribution', fromBranchShortId: 1, toBranchShortId: 2 },
+		params: { manageMode: 'attribution', fromBranchShortId: '1', toBranchShortId: '2', reviewShortId: '8' },
 		query: {},
 		queryString: '',
 		isBasePubPub: false,

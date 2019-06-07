@@ -18,6 +18,7 @@ import {
 	Branch,
 	BranchPermission,
 	Review,
+	ReviewEvent,
 } from '../models';
 
 // const calculateBranchPermissions = (
@@ -296,6 +297,20 @@ export const findPub = (req, initialData, mode) => {
 			{
 				model: Review,
 				as: 'reviews',
+				include: [
+					{
+						model: ReviewEvent,
+						as: 'reviewEvents',
+						required: false,
+						include: [
+							{
+								model: User,
+								as: 'user',
+								attributes: attributesPublicUser,
+							},
+						],
+					},
+				],
 			},
 		],
 	});

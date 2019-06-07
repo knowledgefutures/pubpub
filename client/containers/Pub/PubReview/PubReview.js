@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import TimeAgo from 'react-timeago';
-import { Tag, Button, Intent, ButtonGroup } from '@blueprintjs/core';
+import { ButtonGroup, Button, Intent, Tag, Tabs, Tab } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
-import { GridWrapper, Icon } from 'components';
+import { GridWrapper, Icon, InputField } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { apiFetch } from 'utils';
+import ReviewEvent from './ReviewEvent';
 
 require('./pubReview.scss');
 
@@ -14,12 +14,24 @@ const propTypes = {
 	updateLocalData: PropTypes.func.isRequired,
 };
 
-const PubReviews = (props) => {
+const PubReview = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData, locationData } = useContext(PageContext);
 	const [isLoading, setIsLoading] = useState(undefined);
+	const [currentTab, setCurrentTab] = useState('details');
+	const [noteText, setNoteText] = useState('');
 
-	const mergeBranch = (review, sourceBranch, destinationBranch) => {
+	const activeReview = pubData.reviews.find((review) => {
+		return review.shortId === Number(locationData.params.reviewShortId);
+	});
+	const sourceBranch = pubData.branches.find((branch) => {
+		return branch.id === activeReview.sourceBranchId;
+	});
+	const destinationBranch = pubData.branches.find((branch) => {
+		return branch.id === activeReview.destinationBranchId;
+	});
+
+	const mergeBranch = (review) => {
 		setIsLoading(`merge-${review.id}`);
 		return apiFetch('/api/merges', {
 			method: 'POST',
@@ -40,7 +52,7 @@ const PubReviews = (props) => {
 			});
 	};
 
-	const updateReview = (updatedData, reviewId, sourceBranch, destinationBranch) => {
+	const updateReview = (updatedData, reviewId) => {
 		setIsLoading(updatedData.isCompleted ? `complete-${reviewId}` : `close-${reviewId}`);
 		return apiFetch('/api/reviews', {
 			method: 'PUT',
@@ -73,80 +85,85 @@ const PubReviews = (props) => {
 			});
 	};
 
+	let statusIntent;
+	if (activeReview.isClosed && !activeReview.isCompleted) {
+		statusIntent = Intent.DANGER;
+	}
+	if (activeReview.isCompleted) {
+		statusIntent = Intent.SUCCESS;
+	}
+	if (activeReview.mergeId) {
+		statusIntent = Intent.SUCCESS;
+	}
+
 	return (
 		<GridWrapper containerClassName="pub pub-reviews-component">
-			<h2>Reviews</h2>
-			{pubData.reviews
-				.sort((foo, bar) => {
-					return bar.shortId - foo.shortId;
-				})
-				.map((review) => {
-					const sourceBranch = pubData.branches.find((branch) => {
-						return branch.id === review.sourceBranchId;
-					});
-					const destinationBranch = pubData.branches.find((branch) => {
-						return branch.id === review.destinationBranchId;
-					});
+			<div className="review-header">
+				<h2>Review {activeReview.shortId}</h2>
+				<Tag minimal={true} large={true}>
+					#{sourceBranch.title}{' '}
+					<Icon icon="arrow-right" iconSize={14} className="merge-arrow" /> #
+					{destinationBranch.title}
+				</Tag>
+			</div>
+			<Tag className="status-tag" minimal={true} large={true} intent={statusIntent}>
+				{!activeReview.isClosed && 'Open'}
+				{activeReview.isClosed && !activeReview.isCompleted && 'Closed'}
+				{activeReview.isCompleted && !activeReview.mergeId && 'Completed'}
+				{activeReview.mergeId && 'Merged'}
+			</Tag>
+			<Tabs
+				onChange={(newTab) => {
+					setCurrentTab(newTab);
+				}}
+				selectedTabId={currentTab}
+			>
+				<Tab
+					id="details"
+					title="Details"
+					panel={
+						<div>
+							{/* Show Events */}
+							{activeReview.reviewEvents.map((event) => {
+								return (
+									<ReviewEvent
+										key={event.id}
+										pubData={pubData}
+										eventData={event}
+										updateLocalData={updateLocalData}
+									/>
+								);
+							})}
+							{/* Show input box */}
+							<InputField
+								label="Note"
+								isTextarea={true}
+								placeholder="Add a note for the review team."
+								value={noteText}
+								onChange={(evt) => {
+									setNoteText(evt.target.value);
+								}}
+							/>
+							<Button
+								intent={Intent.PRIMARY}
+								text="Add comment"
+								loading={isLoading}
+								// onClick={createReview}
+							/>
 
-					let statusIntent;
-					if (review.isClosed && !review.isCompleted) {
-						statusIntent = Intent.DANGER;
-					}
-					if (review.isCompleted) {
-						statusIntent = Intent.SUCCESS;
-					}
-					if (review.mergeId) {
-						statusIntent = Intent.SUCCESS;
-					}
-					return (
-						<div className="review-row" key={review.id}>
-							<div className="short-id">{review.shortId}</div>
-
-							<Tag minimal={true} className="branch-tag">
-								#{sourceBranch.title}{' '}
-								{destinationBranch.id && (
-									<React.Fragment>
-										<Icon
-											icon="arrow-right"
-											iconSize={12}
-											className="merge-arrow"
-										/>{' '}
-										#
-									</React.Fragment>
-								)}
-								{destinationBranch.title}
-							</Tag>
-
-							<div className="date">
-								Opened
-								<TimeAgo
-									minPeriod={60}
-									formatter={(value, unit, suffix) => {
-										if (unit === 'second') {
-											return 'just now';
-										}
-										let newUnit = unit;
-										if (value > 1) {
-											newUnit += 's';
-										}
-										return ` ${value} ${newUnit} ${suffix}`;
-									}}
-									date={review.createdAt}
-								/>
-							</div>
-
+							{/* Show actions */}
 							<ButtonGroup>
-								{!review.isClosed && (
+								{!activeReview.isClosed && (
 									<React.Fragment>
 										<Button
 											key="close"
 											text="Close"
-											loading={isLoading === `close-${review.id}`}
-											disabled={isLoading === `complete-${review.id}`}
+											loading={isLoading === `close-${activeReview.id}`}
+											disabled={isLoading === `complete-${activeReview.id}`}
 											onClick={() => {
 												updateReview(
 													{ isClosed: true },
-													review.id,
+													activeReview.id,
 													sourceBranch,
 													destinationBranch,
 												);
@@ -155,12 +172,12 @@ const PubReviews = (props) => {
 										<Button
 											key="complete"
 											text="Complete"
-											loading={isLoading === `complete-${review.id}`}
-											disabled={isLoading === `close-${review.id}`}
+											loading={isLoading === `complete-${activeReview.id}`}
+											disabled={isLoading === `close-${activeReview.id}`}
 											onClick={() => {
 												updateReview(
 													{ isClosed: true, isCompleted: true },
-													review.id,
+													activeReview.id,
 													sourceBranch,
 													destinationBranch,
 												);
@@ -169,16 +186,16 @@ const PubReviews = (props) => {
 									</React.Fragment>
 								)}
 
-								{review.isCompleted &&
-									!review.mergeId &&
+								{activeReview.isCompleted &&
+									!activeReview.mergeId &&
 									destinationBranch.id &&
 									destinationBranch.canManage && (
 										<Button
 											text="Merge"
-											loading={isLoading === `merge-${review.id}`}
+											loading={isLoading === `merge-${activeReview.id}`}
 											onClick={() => {
 												mergeBranch(
-													review,
+													activeReview,
 													sourceBranch,
 													destinationBranch,
 												);
@@ -186,25 +203,15 @@ const PubReviews = (props) => {
 										/>
 									)}
 							</ButtonGroup>
-							<div>
-								<Tag
-									className="status-tag"
-									minimal={true}
-									large={true}
-									intent={statusIntent}
-								>
-									{!review.isClosed && 'Open'}
-									{review.isClosed && !review.isCompleted && 'Closed'}
-									{review.isCompleted && !review.mergeId && 'Completed'}
-									{review.mergeId && 'Merged'}
-								</Tag>
-							</div>
 						</div>
-					);
-				})}
+					}
+				/>
+
+				{/* <Tab id="doc" title="Document" panel={<div>Doc here</div>} /> */}
+			</Tabs>
 		</GridWrapper>
 	);
 };
 
-PubReviews.propTypes = propTypes;
-export default PubReviews;
+PubReview.propTypes = propTypes;
+export default PubReview;

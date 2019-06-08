@@ -23,7 +23,6 @@ export default (sequelize) => {
 				},
 			},
 			avatar: { type: Sequelize.TEXT },
-
 			headerStyle: {
 				type: Sequelize.ENUM,
 				values: ['white-blocks', 'black-blocks'],
@@ -36,30 +35,11 @@ export default (sequelize) => {
 			},
 			headerBackgroundColor: { type: Sequelize.STRING },
 			headerBackgroundImage: { type: Sequelize.TEXT },
-
-			/* Deprecated */
-			useHeaderImage: { type: Sequelize.BOOLEAN },
-			/* ---------- */
-
 			firstPublishedAt: { type: Sequelize.DATE },
 			lastPublishedAt: { type: Sequelize.DATE },
-			draftEditHash: { type: Sequelize.STRING }, // TODO: This is used for draft
-			draftViewHash: { type: Sequelize.STRING }, // TODO: This is used for draft
 			doi: { type: Sequelize.TEXT },
 			labels: { type: Sequelize.JSONB },
-
 			isCommunityAdminManaged: { type: Sequelize.BOOLEAN },
-			// communityAdminDraftPermissions: {
-			// 	type: Sequelize.ENUM,
-			// 	values: ['none', 'view', 'edit'],
-			// 	defaultValue: 'none',
-			// },
-			// draftPermissions: {
-			// 	type: Sequelize.ENUM,
-			// 	values: ['private', 'publicView', 'publicEdit'],
-			// 	defaultValue: 'private',
-			// },
-			review: { type: Sequelize.JSONB },
 			downloads: { type: Sequelize.JSONB },
 
 			/* Set by Associations */
@@ -77,7 +57,6 @@ export default (sequelize) => {
 						Community,
 						Discussion,
 						Branch,
-						DiscussionChannel,
 					} = models;
 					Pub.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
@@ -87,11 +66,6 @@ export default (sequelize) => {
 					Pub.hasMany(PubManager, {
 						onDelete: 'CASCADE',
 						as: 'managers',
-						foreignKey: 'pubId',
-					});
-					Pub.hasMany(DiscussionChannel, {
-						onDelete: 'CASCADE',
-						as: 'discussionChannels',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(CollectionPub, {

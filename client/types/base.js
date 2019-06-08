@@ -1,11 +1,8 @@
 import PropTypes from 'prop-types';
 
 export const communityDataProps = PropTypes.shape({
-	accentActionColor: PropTypes.string.isRequired,
-	accentColor: PropTypes.string.isRequired,
-	accentHoverColor: PropTypes.string.isRequired,
-	accentMinimalColor: PropTypes.string.isRequired,
-	accentTextColor: PropTypes.string.isRequired,
+	accentColorLight: PropTypes.string.isRequired,
+	accentColorDark: PropTypes.string.isRequired,
 	admins: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 	avatar: PropTypes.string,
 	collections: PropTypes.arrayOf(PropTypes.shape({})),

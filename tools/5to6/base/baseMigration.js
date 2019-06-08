@@ -30,8 +30,6 @@ import {
 	Community as v6_Community,
 	CommunityAdmin as v6_CommunityAdmin,
 	Discussion as v6_Discussion,
-	DiscussionChannel as v6_DiscussionChannel,
-	DiscussionChannelParticipant as v6_DiscussionChannelParticipant,
 	Merge as v6_Merge,
 	Page as v6_Page,
 	Pub as v6_Pub,

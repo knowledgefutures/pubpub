@@ -10,7 +10,6 @@ import {
 	CommunityAdmin,
 	PubManager,
 	PubAttribution,
-	Tag,
 	CollectionPub,
 	Collection,
 	CollectionAttribution,

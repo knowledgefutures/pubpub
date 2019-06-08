@@ -33,18 +33,18 @@ app.post('/api/login', (req, res, next) => {
 			}
 
 			/* If the login failed, and there is no
-		userData, then the email doesn't exist */
+			userData, then the email doesn't exist */
 			if (!userData) {
 				throw new Error('Invalid email');
 			}
 			/* If the login failed, but the email exists, and the
-		digest is already sha512, it's simply a wrong password */
+			digest is already sha512, it's simply a wrong password */
 			if (userData.passwordDigest === 'sha512') {
 				throw new Error('Invalid password');
 			}
 
 			/* If the login failed, but the email exiss, and the digest
-		is not sha512, we need to check for valid legacy hashes */
+			is not sha512, we need to check for valid legacy hashes */
 			const pubpubSha1HashRaw = crypto.pbkdf2Sync(
 				req.body.password,
 				userData.salt,

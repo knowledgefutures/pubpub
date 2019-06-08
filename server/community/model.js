@@ -50,15 +50,6 @@ export default (sequelize, dataTypes) => {
 			heroPrimaryButton: { type: dataTypes.JSONB },
 			heroSecondaryButton: { type: dataTypes.JSONB },
 			heroAlign: { type: dataTypes.TEXT },
-
-			/* Deprecated */
-			accentColor: { type: dataTypes.STRING },
-			accentTextColor: { type: dataTypes.STRING },
-			accentActionColor: { type: dataTypes.STRING },
-			accentHoverColor: { type: dataTypes.STRING },
-			accentMinimalColor: { type: dataTypes.STRING },
-			/* ---------- */
-
 			navigation: { type: dataTypes.JSONB },
 			hideNav: { type: dataTypes.BOOLEAN },
 			website: { type: dataTypes.TEXT },

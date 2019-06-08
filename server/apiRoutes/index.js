@@ -4,7 +4,6 @@ require('./pubAttributions');
 require('./collections');
 require('./collectionAttributions');
 require('./collectionPubs');
-require('./communities');
 require('./communityAdmins');
 require('./discussions');
 require('./discussionChannels');
@@ -35,6 +34,7 @@ require('./workerTasks');
 /* In new format */
 require('../branch/api');
 require('../branchPermission/api');
+require('../community/api');
 require('../merge/api');
 require('../review/api');
 require('../reviewEvent/api');

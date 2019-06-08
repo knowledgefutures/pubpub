@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, NonIdealState } from '@blueprintjs/core';
-import { InputField, ImageUpload, PageWrapper } from 'components';
+import { InputField, ImageUpload, PageWrapper, ColorInput } from 'components';
 import { hydrateWrapper, apiFetch, slugifyString } from 'utils';
 
 require('./communityCreate.scss');
@@ -30,8 +30,6 @@ class CommunityCreate extends Component {
 		this.onTitleChange = this.onTitleChange.bind(this);
 		this.onDescriptionChange = this.onDescriptionChange.bind(this);
 		this.onHeroHeaderLogoChange = this.onHeroHeaderLogoChange.bind(this);
-		this.onAccentColorLightChange = this.onAccentColorLightChange.bind(this);
-		this.onAccentColorDarkChange = this.onAccentColorDarkChange.bind(this);
 	}
 
 	onCreateSubmit(evt) {
@@ -73,14 +71,6 @@ class CommunityCreate extends Component {
 
 	onHeroHeaderLogoChange(val) {
 		this.setState({ heroLogo: val });
-	}
-
-	onAccentColorLightChange(evt) {
-		this.setState({ accentColorLight: evt.target.value });
-	}
-
-	onAccentColorDarkChange(evt) {
-		this.setState({ accentColorDark: evt.target.value });
 	}
 
 	render() {
@@ -147,46 +137,24 @@ class CommunityCreate extends Component {
 												onNewImage={this.onHeroHeaderLogoChange}
 												helperText="Used on the landing page. Suggested height: 200px"
 											/>
-											<InputField
-												label="Light Accent Color"
-												isRequired={true}
-												value={this.state.accentColorLight}
-												onChange={this.onAccentColorLightChange}
-												error={
-													!colorRegex.test(this.state.accentColorLight)
-														? 'Must be a hex format color: e.g. #123456'
-														: ''
-												}
-												helperText={
-													<div
-														className="color-swatch"
-														style={{
-															backgroundColor: this.state
-																.accentColorLight,
-														}}
-													/>
-												}
-											/>
-											<InputField
-												label="Dark Accent Color"
-												isRequired={true}
-												value={this.state.accentColorDark}
-												onChange={this.onAccentColorDarkChange}
-												error={
-													!colorRegex.test(this.state.accentColorDark)
-														? 'Must be a hex format color: e.g. #123456'
-														: ''
-												}
-												helperText={
-													<div
-														className="color-swatch"
-														style={{
-															backgroundColor: this.state
-																.accentColorDark,
-														}}
-													/>
-												}
-											/>
+											<InputField label="Light Accent Color">
+												<ColorInput
+													value={this.state.accentColorLight}
+													onChange={(val) => {
+														this.setState({
+															accentColorLight: val.hex,
+														});
+													}}
+												/>
+											</InputField>
+											<InputField label="Dark Accent Color">
+												<ColorInput
+													value={this.state.accentColorDark}
+													onChange={(val) => {
+														this.setState({ accentColorDark: val.hex });
+													}}
+												/>
+											</InputField>
 											<InputField error={this.state.createError}>
 												<Button
 													name="create"
@@ -195,9 +163,7 @@ class CommunityCreate extends Component {
 													onClick={this.onCreateSubmit}
 													text="Create Community"
 													disabled={
-														!this.state.subdomain ||
-														!this.state.title ||
-														!colorRegex.test(this.state.accentColor)
+														!this.state.subdomain || !this.state.title
 													}
 													loading={this.state.createIsLoading}
 												/>

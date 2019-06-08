@@ -134,7 +134,7 @@ app.use((req, res, next) => {
 /* Import Routes */
 /* ------------- */
 require('./apiRoutes');
-require('./clientRoutes');
+require('./routes');
 
 /* ------------ */
 /* Start Server */

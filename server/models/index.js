@@ -46,7 +46,7 @@ export const Review = sequelize.import('../review/model.js');
 export const ReviewEvent = sequelize.import('../reviewEvent/model.js');
 export const Tag = sequelize.import('./tag.js');
 export const User = sequelize.import('./user.js');
-export const WorkerTask = sequelize.import('./workerTask.js');
+export const WorkerTask = sequelize.import('../workerTask/model.js');
 
 /* Create associations for models that have associate function */
 Object.values(sequelize.models).forEach((model) => {

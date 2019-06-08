@@ -25,7 +25,6 @@ require('./subscribe');
 require('./collections');
 require('./uploadPolicy.js');
 require('./users');
-require('./workerTasks');
 
 /* In new format */
 require('../branch/api');
@@ -37,3 +36,4 @@ require('../login/api');
 require('../merge/api');
 require('../review/api');
 require('../reviewEvent/api');
+require('../workerTask/api');

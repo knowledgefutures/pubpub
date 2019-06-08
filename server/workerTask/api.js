@@ -1,13 +1,8 @@
 import app from '../server';
-import { WorkerTask } from '../models';
+import { getWorkerTask } from './queries';
 
 app.get('/api/workerTasks', (req, res) => {
-	return WorkerTask.findOne({
-		where: {
-			id: req.query.workerTaskId,
-		},
-		attributes: ['id', 'isProcessing', 'error', 'output'],
-	})
+	return getWorkerTask(req.body)
 		.then((workerTaskData) => {
 			return res.status(201).json(workerTaskData);
 		})

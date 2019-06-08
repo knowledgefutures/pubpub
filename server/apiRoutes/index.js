@@ -3,7 +3,7 @@ require('./pubAttributions');
 require('./collections');
 require('./collectionAttributions');
 require('./collectionPubs');
-require('./communityAdmins');
+
 require('./discussions');
 require('./doi');
 require('./editor');
@@ -27,6 +27,7 @@ require('./users');
 require('../branch/api');
 require('../branchPermission/api');
 require('../community/api');
+require('../communityAdmin/api');
 require('../openSearch/api');
 require('../logout/api');
 require('../login/api');

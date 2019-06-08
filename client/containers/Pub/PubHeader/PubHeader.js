@@ -34,13 +34,10 @@ const propTypes = {
 	// locationData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	// setPubData: PropTypes.func.isRequired,
-	// activeDiscussionChannel: PropTypes.object,
-	// setDiscussionChannel: PropTypes.func.isRequired,
 };
 
 // const defaultProps = {
 // 	locationData: { params: {} },
-// 	activeDiscussionChannel: { title: 'public' },
 // };
 
 const PubHeader = (props) => {
@@ -121,15 +118,6 @@ const PubHeader = (props) => {
 	// 	return collaborator.Collaborator.isAuthor;
 	// });
 	// const queryObject = this.props.locationData.query;
-	// const activeDiscussionChannel = pubData.discussionChannels.reduce(
-	// 	(prev, curr) => {
-	// 		if (queryObject.channel === curr.title) {
-	// 			return curr;
-	// 		}
-	// 		return prev;
-	// 	},
-	// 	{ title: 'public' },
-	// );
 
 	const authors = pubData.attributions.filter((attribution) => {
 		return attribution.isAuthor;

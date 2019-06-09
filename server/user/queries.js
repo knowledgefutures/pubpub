@@ -63,7 +63,7 @@ export const updateUser = (inputValues, updatePermissions, req) => {
 		}
 	});
 	if (filteredValues.slug) {
-		filteredValues.slug = filteredValues.slug.toLowerCase();
+		filteredValues.slug = slugifyString(filteredValues.slug);
 	}
 	if (filteredValues.firstName) {
 		filteredValues.firstName = filteredValues.firstName.trim();

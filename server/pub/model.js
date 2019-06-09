@@ -1,12 +1,10 @@
-export default (sequelize) => {
-	const Sequelize = sequelize.Sequelize;
-
+export default (sequelize, dataTypes) => {
 	return sequelize.define(
 		'Pub',
 		{
 			id: sequelize.idType,
 			slug: {
-				type: Sequelize.TEXT,
+				type: dataTypes.TEXT,
 				unique: true,
 				allowNull: false,
 				validate: {
@@ -15,35 +13,35 @@ export default (sequelize) => {
 					is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
 				},
 			},
-			title: { type: Sequelize.TEXT, allowNull: false },
+			title: { type: dataTypes.TEXT, allowNull: false },
 			description: {
-				type: Sequelize.TEXT,
+				type: dataTypes.TEXT,
 				validate: {
 					len: [0, 280],
 				},
 			},
-			avatar: { type: Sequelize.TEXT },
+			avatar: { type: dataTypes.TEXT },
 			headerStyle: {
-				type: Sequelize.ENUM,
+				type: dataTypes.ENUM,
 				values: ['white-blocks', 'black-blocks'],
 				defaultValue: null,
 			},
 			headerBackgroundType: {
-				type: Sequelize.ENUM,
+				type: dataTypes.ENUM,
 				values: ['color', 'image'],
 				defaultValue: 'color',
 			},
-			headerBackgroundColor: { type: Sequelize.STRING },
-			headerBackgroundImage: { type: Sequelize.TEXT },
-			firstPublishedAt: { type: Sequelize.DATE },
-			lastPublishedAt: { type: Sequelize.DATE },
-			doi: { type: Sequelize.TEXT },
-			labels: { type: Sequelize.JSONB },
-			isCommunityAdminManaged: { type: Sequelize.BOOLEAN },
-			downloads: { type: Sequelize.JSONB },
+			headerBackgroundColor: { type: dataTypes.STRING },
+			headerBackgroundImage: { type: dataTypes.TEXT },
+			firstPublishedAt: { type: dataTypes.DATE },
+			lastPublishedAt: { type: dataTypes.DATE },
+			doi: { type: dataTypes.TEXT },
+			labels: { type: dataTypes.JSONB },
+			isCommunityAdminManaged: { type: dataTypes.BOOLEAN },
+			downloads: { type: dataTypes.JSONB },
 
 			/* Set by Associations */
-			communityId: { type: Sequelize.UUID, allowNull: false },
+			communityId: { type: dataTypes.UUID, allowNull: false },
 		},
 		{
 			indexes: [{ fields: ['communityId'], method: 'BTREE' }],

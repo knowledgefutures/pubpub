@@ -130,20 +130,19 @@ class Details extends Component {
 			.then(() => {
 				/* Load new URL if slug changes */
 				if (newValues.slug && newValues.slug !== this.props.pubData.slug) {
-					window.location.href = `/pub/${newValues.slug}/${
-						this.props.pubData.isDraft ? 'draft' : ''
-					}`;
-				} else {
-					this.setState({
-						hasUpdated: false,
-						isLoading: false,
-					});
-					this.props.updateLocalData('pub', {
-						...this.props.pubData,
-						...newValues,
-					});
-					this.showSaveSuccess();
+					window.location.href = `/pub/${newValues.slug}/manage`;
+					return null;
 				}
+				this.setState({
+					hasUpdated: false,
+					isLoading: false,
+				});
+				this.props.updateLocalData('pub', {
+					...this.props.pubData,
+					...newValues,
+				});
+				this.showSaveSuccess();
+				return null;
 			})
 			.catch((err) => {
 				console.error('Error Saving: ', err);

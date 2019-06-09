@@ -32,8 +32,8 @@ class LayoutBanner extends Component {
 				defaultCollectionIds: this.props.content.defaultCollectionIds,
 			}),
 		})
-			.then((result) => {
-				window.location.href = result;
+			.then((newPub) => {
+				window.location.href = `/pub/${newPub.slug}`;
 			})
 			.catch((err) => {
 				console.error(err);

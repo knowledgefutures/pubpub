@@ -29,8 +29,8 @@ class Pubs extends Component {
 				defaultCollectionIds: this.props.communityData.defaultPubCollections || [],
 			}),
 		})
-			.then((result) => {
-				window.location.href = result;
+			.then((newPub) => {
+				window.location.href = `/pub/${newPub.slug}`;
 			})
 			.catch((err) => {
 				console.error(err);

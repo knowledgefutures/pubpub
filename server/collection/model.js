@@ -1,23 +1,21 @@
-export default (sequelize) => {
-	const Sequelize = sequelize.Sequelize;
-
+export default (sequelize, dataTypes) => {
 	return sequelize.define(
 		'Collection',
 		{
 			id: sequelize.idType,
-			title: { type: Sequelize.TEXT },
+			title: { type: dataTypes.TEXT },
 			isRestricted: {
-				type: Sequelize.BOOLEAN,
+				type: dataTypes.BOOLEAN,
 			} /* Restricted collections can only be set by Community Admins */,
-			isPublic: { type: Sequelize.BOOLEAN } /* Only visible to community admins */,
+			isPublic: { type: dataTypes.BOOLEAN } /* Only visible to community admins */,
 
 			/* Set by Associations */
-			pageId: { type: Sequelize.UUID } /* Used to link a collection to a specific page */,
-			communityId: { type: Sequelize.UUID },
+			pageId: { type: dataTypes.UUID } /* Used to link a collection to a specific page */,
+			communityId: { type: dataTypes.UUID },
 
-			metadata: { type: Sequelize.JSONB },
-			kind: { type: Sequelize.TEXT },
-			doi: { type: Sequelize.TEXT },
+			metadata: { type: dataTypes.JSONB },
+			kind: { type: dataTypes.TEXT },
+			doi: { type: dataTypes.TEXT },
 		},
 		{
 			classMethods: {

@@ -2,7 +2,7 @@
 import Sequelize from 'sequelize';
 
 if (process.env.NODE_ENV !== 'production') {
-	require('../config.js');
+	require('./config.js');
 }
 
 const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
@@ -26,9 +26,9 @@ sequelize.idType = {
 /* Also export them to make them available to other modules */
 export const Branch = sequelize.import('../branch/model.js');
 export const BranchPermission = sequelize.import('../branchPermission/model.js');
-export const Collection = sequelize.import('./collection.js');
-export const CollectionAttribution = sequelize.import('./collectionAttribution.js');
-export const CollectionPub = sequelize.import('./collectionPub.js');
+export const Collection = sequelize.import('../collection/model.js');
+export const CollectionAttribution = sequelize.import('../collectionAttribution/model.js');
+export const CollectionPub = sequelize.import('../collectionPub/model.js');
 export const Community = sequelize.import('../community/model.js');
 export const CommunityAdmin = sequelize.import('../communityAdmin/model.js');
 export const Discussion = sequelize.import('../discussion/model.js');

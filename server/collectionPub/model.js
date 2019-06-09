@@ -1,15 +1,13 @@
-export default (sequelize) => {
-	const Sequelize = sequelize.Sequelize;
-
+export default (sequelize, dataTypes) => {
 	return sequelize.define(
 		'CollectionPub',
 		{
 			id: sequelize.idType,
-			pubId: { type: Sequelize.UUID, allowNull: false },
-			collectionId: { type: Sequelize.UUID, allowNull: false },
-			contextHint: { type: Sequelize.TEXT },
-			rank: { type: Sequelize.TEXT },
-			isPrimary: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false },
+			pubId: { type: dataTypes.UUID, allowNull: false },
+			collectionId: { type: dataTypes.UUID, allowNull: false },
+			contextHint: { type: dataTypes.TEXT },
+			rank: { type: dataTypes.TEXT },
+			isPrimary: { type: dataTypes.BOOLEAN, defaultValue: false, allowNull: false },
 		},
 		{
 			indexes: [

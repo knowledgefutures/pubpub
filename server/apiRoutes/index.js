@@ -8,7 +8,6 @@ require('./editor');
 require('./export');
 require('./import');
 require('./passwordReset');
-require('./pubs');
 require('./pubAttributions');
 require('./pubHistory');
 require('./rss.js');

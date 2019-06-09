@@ -120,7 +120,12 @@ class Page extends Component {
 				communityId: this.props.communityData.id,
 			}),
 		})
-			.then(() => {
+			.then((updatedValued) => {
+				if (this.props.locationData.params.slug !== updatedValued.slug) {
+					this.setState({ hasChanged: false });
+					window.location.href = `/dashboard/pages/${updatedValued.slug}`;
+					return null;
+				}
 				this.setState({ isLoading: false, error: undefined, hasChanged: false });
 				this.props.setCommunityData({
 					...this.props.communityData,
@@ -138,6 +143,7 @@ class Page extends Component {
 					...this.props.pageData,
 					...pageObject,
 				});
+				return null;
 			})
 			.catch((err) => {
 				console.error(err);
@@ -155,6 +161,7 @@ class Page extends Component {
 			}),
 		})
 			.then(() => {
+				this.setState({ hasChanged: false });
 				window.location.href = '/dashboard';
 			})
 			.catch((err) => {

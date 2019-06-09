@@ -69,9 +69,8 @@ class CreatePage extends Component {
 				communityId: this.props.communityData.id,
 			}),
 		})
-			.then(() => {
-				this.setState({ isLoading: false, error: undefined });
-				window.location.href = `/dashboard/pages/${newPageObject.slug}`;
+			.then((newPageResult) => {
+				window.location.href = `/dashboard/pages/${newPageResult.slug}`;
 			})
 			.catch((err) => {
 				console.error(err);

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Discussion, Pub, CommunityAdmin, PubManager } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 
@@ -29,8 +28,10 @@ export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 		}
 
 		/* calculate canManage */
-		const canManageAsPubManager = branchData.pubManagerPermissions === 'manage' && pubManagerData;
-		const canManageAsCommunityAdmin = branchData.communityAdminPermissions === 'manage' && communityAdminData;
+		const canManageAsPubManager =
+			branchData.pubManagerPermissions === 'manage' && pubManagerData;
+		const canManageAsCommunityAdmin =
+			branchData.communityAdminPermissions === 'manage' && communityAdminData;
 		const canManage = branchData.permissions.reduce((prev, curr) => {
 			if (curr.userId === userId && curr.permissions === 'manage') {
 				return true;
@@ -41,7 +42,7 @@ export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 		return {
 			create: true,
 			update: canManage && ['permissions'],
-			destroy: canManage, 
+			destroy: canManage,
 		};
 	});
 };

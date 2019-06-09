@@ -30,8 +30,18 @@ export const getPermissions = ({ userId, communityId, pubId }) => {
 	return Promise.all([findCommunityAdmin, findPubManager, findPub]).then(
 		([communityAdminData, pubManagerData, pubData]) => {
 			const authenticated = isSuperAdmin || (communityAdminData && pubData) || pubManagerData;
+			const editProps = [
+				'name',
+				'avatar',
+				'title',
+				'order',
+				'isAuthor',
+				'roles',
+				'affiliation',
+			];
 			return {
 				create: authenticated,
+				update: authenticated ? editProps : false,
 				destroy: authenticated,
 			};
 		},

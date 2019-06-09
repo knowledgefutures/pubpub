@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
 import calculateBranchAccess from '../branch/calculateBranchAccess';
 
@@ -38,20 +37,19 @@ export const getPermissions = ({
 		}
 
 		const sourceAccess = calculateBranchAccess(
-				null,
-				sourceBranchData,
-				userId,
-				communityAdminData,
-				pubManagerData,
-			);
+			null,
+			sourceBranchData,
+			userId,
+			communityAdminData,
+			pubManagerData,
+		);
 		const destinationAccess = calculateBranchAccess(
-				null,
-				destinationBranchData,
-				userId,
-				communityAdminData,
-				pubManagerData,
-			);
-
+			null,
+			destinationBranchData,
+			userId,
+			communityAdminData,
+			pubManagerData,
+		);
 
 		/* TODO: We need some concept of 'Review Owner' for reviews with no */
 		/* destinationBranch. Who is the one administrating the review, if not */

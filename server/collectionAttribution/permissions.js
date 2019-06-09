@@ -10,9 +10,20 @@ export const getPermissions = ({ userId, communityId }) => {
 	const isSuperAdmin = checkIfSuperAdmin(userId);
 	return CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }).then(
 		(communityAdminData) => {
+			const editProps = [
+				'name',
+				'avatar',
+				'title',
+				'order',
+				'isAuthor',
+				'roles',
+				'affiliation',
+			];
+			const isAuthenticated = isSuperAdmin || communityAdminData;
 			return {
-				create: isSuperAdmin || communityAdminData,
-				destroy: isSuperAdmin || communityAdminData,
+				create: isAuthenticated,
+				update: isAuthenticated ? editProps : false,
+				destroy: isAuthenticated,
 			};
 		},
 	);

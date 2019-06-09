@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { CommunityAdmin } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 

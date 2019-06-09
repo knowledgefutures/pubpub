@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 import calculateBranchAccess from './calculateBranchAccess';

@@ -11,7 +11,7 @@ require('./passwordReset');
 require('./pubs');
 require('./pubAttributions');
 require('./pubHistory');
-require('./pubManagers');
+
 require('./rss.js');
 require('./search');
 require('./subscribe');
@@ -29,6 +29,7 @@ require('../logout/api');
 require('../login/api');
 require('../merge/api');
 require('../page/api');
+require('../pubManager/api');
 require('../review/api');
 require('../reviewEvent/api');
 require('../signup/api');

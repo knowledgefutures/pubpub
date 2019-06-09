@@ -1,14 +1,12 @@
-export default (sequelize) => {
-	const Sequelize = sequelize.Sequelize;
-
+export default (sequelize, dataTypes) => {
 	return sequelize.define(
 		'PubManager',
 		{
 			id: sequelize.idType,
 
 			/* Set by Associations */
-			userId: { type: Sequelize.UUID, allowNull: false },
-			pubId: { type: Sequelize.UUID, allowNull: false },
+			userId: { type: dataTypes.UUID, allowNull: false },
+			pubId: { type: dataTypes.UUID, allowNull: false },
 		},
 		{
 			classMethods: {

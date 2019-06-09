@@ -3,8 +3,6 @@ require('./pubAttributions');
 require('./collections');
 require('./collectionAttributions');
 require('./collectionPubs');
-
-require('./discussions');
 require('./doi');
 require('./editor');
 require('./export');
@@ -28,6 +26,7 @@ require('../branch/api');
 require('../branchPermission/api');
 require('../community/api');
 require('../communityAdmin/api');
+require('../discussion/api');
 require('../openSearch/api');
 require('../logout/api');
 require('../login/api');

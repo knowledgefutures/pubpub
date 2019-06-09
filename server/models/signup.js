@@ -1,10 +1,8 @@
-export default (sequelize) => {
-	const Sequelize = sequelize.Sequelize;
-
+export default (sequelize, dataTypes) => {
 	return sequelize.define('Signup', {
 		id: sequelize.idType,
 		email: {
-			type: Sequelize.TEXT,
+			type: dataTypes.TEXT,
 			allowNull: false,
 			unique: true,
 			validate: {
@@ -12,9 +10,9 @@ export default (sequelize) => {
 				isLowercase: true,
 			},
 		},
-		hash: { type: Sequelize.TEXT },
-		count: { type: Sequelize.INTEGER },
-		completed: { type: Sequelize.BOOLEAN },
-		communityId: { type: Sequelize.UUID },
+		hash: { type: dataTypes.TEXT },
+		count: { type: dataTypes.INTEGER },
+		completed: { type: dataTypes.BOOLEAN },
+		communityId: { type: dataTypes.UUID },
 	});
 };

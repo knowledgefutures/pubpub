@@ -38,10 +38,10 @@ export const Pub = sequelize.import('./pub.js');
 export const PubAttribution = sequelize.import('./pubAttribution.js');
 export const PubManager = sequelize.import('./pubManager.js');
 export const PubVersion = sequelize.import('./pubVersion.js');
-export const Signup = sequelize.import('./signup.js');
+export const Signup = sequelize.import('../signup/model.js');
 export const Review = sequelize.import('../review/model.js');
 export const ReviewEvent = sequelize.import('../reviewEvent/model.js');
-export const User = sequelize.import('./user.js');
+export const User = sequelize.import('../user/model.js');
 export const WorkerTask = sequelize.import('../workerTask/model.js');
 
 /* Create associations for models that have associate function */

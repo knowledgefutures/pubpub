@@ -14,11 +14,9 @@ require('./pubHistory');
 require('./pubManagers');
 require('./rss.js');
 require('./search');
-require('./signup');
 require('./subscribe');
 require('./collections');
 require('./uploadPolicy.js');
-require('./users');
 
 /* In new format */
 require('../branch/api');
@@ -33,4 +31,6 @@ require('../merge/api');
 require('../page/api');
 require('../review/api');
 require('../reviewEvent/api');
+require('../signup/api');
+require('../user/api');
 require('../workerTask/api');

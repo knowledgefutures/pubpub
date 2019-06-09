@@ -1,14 +1,12 @@
 const passportLocalSequelize = require('passport-local-sequelize');
 
-export default (sequelize) => {
-	const Sequelize = sequelize.Sequelize;
-
+export default (sequelize, dataTypes) => {
 	const User = sequelize.define(
 		'User',
 		{
 			id: sequelize.idType,
 			slug: {
-				type: Sequelize.TEXT,
+				type: dataTypes.TEXT,
 				unique: true,
 				allowNull: false,
 				validate: {
@@ -17,15 +15,15 @@ export default (sequelize) => {
 					is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
 				},
 			},
-			firstName: { type: Sequelize.TEXT, allowNull: false },
-			lastName: { type: Sequelize.TEXT, allowNull: false },
-			fullName: { type: Sequelize.TEXT, allowNull: false },
-			initials: { type: Sequelize.STRING, allowNull: false },
-			avatar: { type: Sequelize.TEXT },
-			bio: { type: Sequelize.TEXT },
-			title: { type: Sequelize.TEXT },
+			firstName: { type: dataTypes.TEXT, allowNull: false },
+			lastName: { type: dataTypes.TEXT, allowNull: false },
+			fullName: { type: dataTypes.TEXT, allowNull: false },
+			initials: { type: dataTypes.STRING, allowNull: false },
+			avatar: { type: dataTypes.TEXT },
+			bio: { type: dataTypes.TEXT },
+			title: { type: dataTypes.TEXT },
 			email: {
-				type: Sequelize.TEXT,
+				type: dataTypes.TEXT,
 				allowNull: false,
 				unique: true,
 				validate: {
@@ -34,26 +32,26 @@ export default (sequelize) => {
 				},
 			},
 			publicEmail: {
-				type: Sequelize.TEXT,
+				type: dataTypes.TEXT,
 				validate: {
 					isEmail: true,
 					isLowercase: true,
 				},
 			},
-			location: { type: Sequelize.TEXT },
-			website: { type: Sequelize.TEXT },
-			facebook: { type: Sequelize.TEXT },
-			twitter: { type: Sequelize.TEXT },
-			github: { type: Sequelize.TEXT },
-			orcid: { type: Sequelize.TEXT },
-			googleScholar: { type: Sequelize.TEXT },
-			resetHashExpiration: { type: Sequelize.DATE },
-			resetHash: { type: Sequelize.TEXT },
-			inactive: { type: Sequelize.BOOLEAN },
-			pubpubV3Id: { type: Sequelize.INTEGER },
-			passwordDigest: { type: Sequelize.TEXT },
-			hash: { type: Sequelize.TEXT, allowNull: false },
-			salt: { type: Sequelize.TEXT, allowNull: false },
+			location: { type: dataTypes.TEXT },
+			website: { type: dataTypes.TEXT },
+			facebook: { type: dataTypes.TEXT },
+			twitter: { type: dataTypes.TEXT },
+			github: { type: dataTypes.TEXT },
+			orcid: { type: dataTypes.TEXT },
+			googleScholar: { type: dataTypes.TEXT },
+			resetHashExpiration: { type: dataTypes.DATE },
+			resetHash: { type: dataTypes.TEXT },
+			inactive: { type: dataTypes.BOOLEAN },
+			pubpubV3Id: { type: dataTypes.INTEGER },
+			passwordDigest: { type: dataTypes.TEXT },
+			hash: { type: dataTypes.TEXT, allowNull: false },
+			salt: { type: dataTypes.TEXT, allowNull: false },
 		},
 		{
 			classMethods: {

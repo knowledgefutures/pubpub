@@ -24,25 +24,25 @@ sequelize.idType = {
 
 /* Import and create all models. */
 /* Also export them to make them available to other modules */
-export const Branch = sequelize.import('../branch/model.js');
-export const BranchPermission = sequelize.import('../branchPermission/model.js');
-export const Collection = sequelize.import('../collection/model.js');
-export const CollectionAttribution = sequelize.import('../collectionAttribution/model.js');
-export const CollectionPub = sequelize.import('../collectionPub/model.js');
-export const Community = sequelize.import('../community/model.js');
-export const CommunityAdmin = sequelize.import('../communityAdmin/model.js');
-export const Discussion = sequelize.import('../discussion/model.js');
-export const Merge = sequelize.import('../merge/model.js');
-export const Page = sequelize.import('../page/model.js');
-export const Pub = sequelize.import('../pub/model.js');
-export const PubAttribution = sequelize.import('../pubAttribution/model.js');
-export const PubManager = sequelize.import('../pubManager/model.js');
-export const PubVersion = sequelize.import('../pubVersion/model.js');
-export const Signup = sequelize.import('../signup/model.js');
-export const Review = sequelize.import('../review/model.js');
-export const ReviewEvent = sequelize.import('../reviewEvent/model.js');
-export const User = sequelize.import('../user/model.js');
-export const WorkerTask = sequelize.import('../workerTask/model.js');
+export const Branch = sequelize.import('./branch/model.js');
+export const BranchPermission = sequelize.import('./branchPermission/model.js');
+export const Collection = sequelize.import('./collection/model.js');
+export const CollectionAttribution = sequelize.import('./collectionAttribution/model.js');
+export const CollectionPub = sequelize.import('./collectionPub/model.js');
+export const Community = sequelize.import('./community/model.js');
+export const CommunityAdmin = sequelize.import('./communityAdmin/model.js');
+export const Discussion = sequelize.import('./discussion/model.js');
+export const Merge = sequelize.import('./merge/model.js');
+export const Page = sequelize.import('./page/model.js');
+export const Pub = sequelize.import('./pub/model.js');
+export const PubAttribution = sequelize.import('./pubAttribution/model.js');
+export const PubManager = sequelize.import('./pubManager/model.js');
+export const PubVersion = sequelize.import('./pubVersion/model.js');
+export const Signup = sequelize.import('./signup/model.js');
+export const Review = sequelize.import('./review/model.js');
+export const ReviewEvent = sequelize.import('./reviewEvent/model.js');
+export const User = sequelize.import('./user/model.js');
+export const WorkerTask = sequelize.import('./workerTask/model.js');
 
 /* Create associations for models that have associate function */
 Object.values(sequelize.models).forEach((model) => {

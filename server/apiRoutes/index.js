@@ -17,6 +17,7 @@ require('./uploadPolicy.js');
 require('../branch/api');
 require('../branchPermission/api');
 require('../collectionAttribution/api');
+require('../collectionPub/api');
 require('../community/api');
 require('../communityAdmin/api');
 require('../discussion/api');

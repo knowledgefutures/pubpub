@@ -1,12 +1,11 @@
-import app from '../server';
 import { WorkerTask } from '../models';
 import { addWorkerTask } from '../utils';
 
-app.post('/api/export', (req, res) => {
+export const createExport = (inputValues) => {
 	const input = {
-		pubId: req.body.pubId,
-		branchId: req.body.branchId,
-		format: req.body.format,
+		pubId: inputValues.pubId,
+		branchId: inputValues.branchId,
+		format: inputValues.format,
 	};
 
 	return WorkerTask.create({
@@ -25,10 +24,6 @@ app.post('/api/export', (req, res) => {
 			return Promise.all([workerTaskData, sendMessage]);
 		})
 		.then(([workerTaskData]) => {
-			return res.status(201).json(workerTaskData.id);
-		})
-		.catch((err) => {
-			console.error('Error Adding Message', err);
-			return res.status(500).json(err);
+			return workerTaskData;
 		});
-});
+};

@@ -1,14 +1,13 @@
 import AWS from 'aws-sdk';
-import app from '../server';
 import { WorkerTask } from '../models';
 import { addWorkerTask } from '../utils';
 
 AWS.config.setPromisesDependency(Promise);
 const s3bucket = new AWS.S3({ params: { Bucket: 'assets.pubpub.org' } });
 
-app.post('/api/import', (req, res) => {
+export const createImport = (inputValues) => {
 	const input = {
-		sourceUrl: req.body.sourceUrl,
+		sourceUrl: inputValues.sourceUrl,
 	};
 
 	return new Promise((resolve, reject) => {
@@ -20,7 +19,9 @@ app.post('/api/import', (req, res) => {
 		let attempts = 0;
 		const checkForFile = () => {
 			s3bucket
-				.headObject({ Key: req.body.sourceUrl.replace('https://assets.pubpub.org/', '') })
+				.headObject({
+					Key: inputValues.sourceUrl.replace('https://assets.pubpub.org/', ''),
+				})
 				.promise()
 				.then(resolve)
 				.catch(() => {
@@ -53,10 +54,6 @@ app.post('/api/import', (req, res) => {
 			return Promise.all([workerTaskData, sendMessage]);
 		})
 		.then(([workerTaskData]) => {
-			return res.status(201).json(workerTaskData.id);
-		})
-		.catch((err) => {
-			console.error('Error Adding Message', err);
-			return res.status(500).json(err);
+			return workerTaskData;
 		});
-});
+};

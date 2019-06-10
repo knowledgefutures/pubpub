@@ -12,7 +12,7 @@ import {
 	Pub,
 	PubAttribution,
 	User,
-} from '../../models';
+} from '../models';
 
 const collectionIncludes = [
 	{

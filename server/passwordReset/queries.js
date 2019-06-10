@@ -1,14 +1,12 @@
 import Promise from 'bluebird';
-import app from '../server';
 import { User } from '../models';
 import { generateHash } from '../utils';
 import { sendPasswordResetEmail } from '../utils/email';
 
-app.post('/api/password-reset', (req, res) => {
-	const user = req.user || {};
-	const email = req.body.email;
+export const createPasswordReset = (inputValues, user, hostname) => {
+	const email = inputValues.email;
 
-	User.findOne({
+	return User.findOne({
 		where: email ? { email: email } : { id: user.id },
 	})
 		.then((userData) => {
@@ -30,24 +28,16 @@ app.post('/api/password-reset', (req, res) => {
 			const updatedUser = updatedUserData[1][0];
 			return sendPasswordResetEmail({
 				toEmail: updatedUser.email,
-				resetUrl: `https://${req.hostname}/password-reset/${updatedUser.resetHash}/${
+				resetUrl: `https://${hostname}/password-reset/${updatedUser.resetHash}/${
 					updatedUser.slug
 				}`,
 			});
-		})
-		.then(() => {
-			return res.status(200).json('success');
-		})
-		.catch((err) => {
-			console.error('Error resetting password post', err);
-			return res.status(401).json('Error resseting password.');
 		});
-});
+};
 
-app.put('/api/password-reset', (req, res) => {
-	const user = req.user || {};
-	const resetHash = req.body.resetHash;
-	const slug = req.body.slug;
+export const updatePasswordReset = (inputValues, user) => {
+	const resetHash = inputValues.resetHash;
+	const slug = inputValues.slug;
 	const currentTime = Date.now();
 
 	const whereQuery = user.id ? { id: user.id } : { resetHash: resetHash, slug: slug };
@@ -65,7 +55,7 @@ app.put('/api/password-reset', (req, res) => {
 
 			/* Promisify the setPassword function, and use .update to match API convention */
 			const setPassword = Promise.promisify(userData.setPassword, { context: userData });
-			return setPassword(req.body.password);
+			return setPassword(inputValues.password);
 		})
 		.then((passwordResetData) => {
 			const updateData = {
@@ -78,11 +68,5 @@ app.put('/api/password-reset', (req, res) => {
 			return User.update(updateData, {
 				where: whereQuery,
 			});
-		})
-		.then(() => {
-			return res.status(200).json('success');
-		})
-		.catch((err) => {
-			return res.status(401).json(err.message);
 		});
-});
+};

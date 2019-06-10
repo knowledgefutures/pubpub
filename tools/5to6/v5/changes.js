@@ -34,7 +34,7 @@ const uncompressChange = (compressedChange, draftBranchId) => {
 const compressChange = (change) => {
 	return {
 		id: change.id,
-		cId: change.clientId,
+		cId: change.clientId.replace('clientId-', ''),
 		bId: change.branchId,
 		t: change.timestamp,
 		s: change.steps.map((step) => compressStepJSON(step.toJSON())),

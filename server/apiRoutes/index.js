@@ -1,6 +1,4 @@
 require('./adminDashboard');
-require('./collections');
-require('./collectionPubs');
 require('./doi');
 require('./editor');
 require('./export');
@@ -17,6 +15,7 @@ require('./uploadPolicy.js');
 require('../branch/api');
 require('../branchPermission/api');
 require('../collectionAttribution/api');
+require('../collection/api');
 require('../collectionPub/api');
 require('../community/api');
 require('../communityAdmin/api');

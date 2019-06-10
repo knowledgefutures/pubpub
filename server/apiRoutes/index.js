@@ -8,7 +8,6 @@ require('./pubHistory');
 require('./rss.js');
 require('./search');
 require('./subscribe');
-require('./collections');
 require('./uploadPolicy.js');
 
 /* In new format */

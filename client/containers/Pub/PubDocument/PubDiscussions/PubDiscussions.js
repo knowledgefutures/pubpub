@@ -4,11 +4,13 @@ import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import DiscussionThread from './DiscussionThread';
+import ThreadGroup from './ThreadGroup';
 import SidePreviews from './SidePreviews';
 import {
 	getDiscussionIdArray,
 	getNewDiscussionIdArray,
-	groupDiscussionsByTop,
+	// groupDiscussionsByTop,
+	groupThreadsByTop,
 	nestDiscussionsToThreads,
 } from './discussionUtils';
 
@@ -55,45 +57,64 @@ const PubDiscussions = (props) => {
 	}, [discussionsState]);
 
 	const { width: windowWidth } = useWindowSize();
-	const discussionIds = getDiscussionIdArray(decorations);
-	const newDiscussionIds = getNewDiscussionIdArray(decorations);
+	// const discussionIds = getDiscussionIdArray(decorations);
+	// const newDiscussionIds = getNewDiscussionIdArray(decorations);
 
 	const [groupTops, setGroupTops] = useState([]);
 
+	const threads = nestDiscussionsToThreads(pubData.discussions);
+
 	useEffect(() => {
-		const newGroupTops = groupDiscussionsByTop(decorations);
+		// const newGroupTops = groupDiscussionsByTop(decorations);
+		const newGroupTops = groupThreadsByTop(decorations, threads);
 
 		const getCompareKey = (groupTopsArray) => {
 			return groupTopsArray.reduce((prev, curr) => {
-				return `${prev}${curr.key}${curr.ids.join()}`;
+				const currIds = curr.threads.map((thread) => thread[0].id);
+				return `${prev}${curr.key}${currIds.join()}`;
 			}, '');
 		};
 		if (getCompareKey(groupTops) !== getCompareKey(newGroupTops)) {
 			setGroupTops(newGroupTops);
 		}
-	}, [windowWidth, decorations, collabData.editorChangeObject, groupTops, discussionsState]);
+	}, [
+		windowWidth,
+		decorations,
+		collabData.editorChangeObject,
+		groupTops,
+		discussionsState,
+		threads,
+	]);
 
-	const threads = nestDiscussionsToThreads(pubData.discussions);
+	// const threadIds = [
+	// 	...discussionIds.map((id) => ({ id: id, type: 'dm' })),
+	// 	...newDiscussionIds.map((id) => ({ id: id, type: 'lm' })),
+	// ];
+	// console.log(groupTops);
 	if (!props.firebaseBranchRef) {
 		return null;
 	}
-
-	// TODO:
-	// I think what we do instead is have prosemirror include a mount point for a line-grouped
-	// set of discussions. When that exists, we mount into it and don't mount the other buttons
-	// Nope. We simply mount into one of existing dm- points on that line, and control it from there.
-	// It'd be nice if we didn't render the button at all when there were multiple.
-
-	// You want to calculate all the ones that are the same - and then look to see if there is
-	// a following one within 100. If there are multipe - collapse. If there is one within 100, collapse
-	// If there is only one, and none within a hundred - show full.
-	const threadIds = [
-		...discussionIds.map((id) => ({ id: id, type: 'dm' })),
-		...newDiscussionIds.map((id) => ({ id: id, type: 'lm' })),
-	];
 	return (
 		<div className="pub-discussions-component">
-			{threadIds.map(({ id, type }) => {
+			{groupTops.map((group) => {
+				const mountElement = document.getElementsByClassName(group.mountClassName)[0];
+				if (!mountElement) {
+					return null;
+				}
+				return ReactDOM.createPortal(
+					<ThreadGroup
+						pubData={pubData}
+						collabData={collabData}
+						firebaseBranchRef={firebaseBranchRef}
+						threads={group.threads}
+						updateLocalData={props.updateLocalData}
+						mainContentRef={mainContentRef}
+						sideContentRef={sideContentRef}
+					/>,
+					mountElement,
+				);
+			})}
+			{/*threadIds.map(({ id, type }) => {
 				const threadData = threads.find((thread) => {
 					return thread[0].id === id;
 				});
@@ -114,9 +135,23 @@ const PubDiscussions = (props) => {
 					/>,
 					document.getElementsByClassName(`${type}-${id}`)[0],
 				);
-			})}
+			})*/}
 
-			{groupTops.map((group) => {
+			{/*groupTops.map((group) => {
+				return ReactDOM.createPortal(
+					<ThreadGroup
+						threads={threads}
+						groupData={group}
+						discussionsState={discussionsState}
+						dispatch={discussionsDispatch}
+						mainContentRef={mainContentRef}
+						sideContentRef={sideContentRef}
+					/>,
+					document.getElementsByClassName(`dm-${group.ids[0]}`)[0],
+				);
+			})*/}
+
+			{/*groupTops.map((group) => {
 				return ReactDOM.createPortal(
 					<SidePreviews
 						threads={threads}
@@ -128,7 +163,7 @@ const PubDiscussions = (props) => {
 					/>,
 					document.getElementsByClassName(`dm-${group.ids[0]}`)[0],
 				);
-			})}
+			})*/}
 		</div>
 	);
 };

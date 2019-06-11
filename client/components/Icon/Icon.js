@@ -11,13 +11,18 @@ const propTypes = {
 	className: PropTypes.string,
 	icon: PropTypes.string.isRequired,
 	iconSize: PropTypes.number,
+	/* Used to toggle SVG included colors */
 	useColor: PropTypes.bool,
+	/* Used to assign a specific fill color */
+
+	color: PropTypes.string,
 };
 
 const defaultProps = {
 	className: null,
 	iconSize: 16,
 	useColor: false,
+	color: undefined,
 };
 
 const Icon = function(props) {
@@ -32,6 +37,7 @@ const Icon = function(props) {
 					width={`${props.iconSize}px`}
 					height={`${props.iconSize}px`}
 					viewBox={`0 0 ${viewbox} ${viewbox}`}
+					fill={props.color}
 				>
 					{customIcons[props.icon].path}
 				</svg>
@@ -40,7 +46,12 @@ const Icon = function(props) {
 	}
 
 	return (
-		<BlueprintIcon icon={props.icon} iconSize={props.iconSize} className={props.className} />
+		<BlueprintIcon
+			icon={props.icon}
+			color={props.color}
+			iconSize={props.iconSize}
+			className={props.className}
+		/>
 	);
 };
 

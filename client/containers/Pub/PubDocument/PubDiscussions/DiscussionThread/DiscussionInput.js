@@ -15,19 +15,26 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object.isRequired,
-	discussionId: PropTypes.string.isRequired,
-	dispatch: PropTypes.func.isRequired,
+	// discussionId: PropTypes.string.isRequired,
+	// dispatch: PropTypes.func.isRequired,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
+	setActiveThread: PropTypes.func.isRequired,
 };
 
 const DiscussionInput = (props) => {
-	const { pubData, collabData, discussionId, dispatch, updateLocalData, threadData } = props;
+	const {
+		pubData,
+		collabData,
+		/* discussionId, dispatch, */ updateLocalData,
+		threadData,
+		setActiveThread,
+	} = props;
 	const { loginData, communityData } = useContext(PageContext);
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
-	const isNewThread = !threadData.length;
+	const isNewThread = !threadData[0].threadNumber;
 	useEffect(() => {
 		if (isNewThread && changeObject.view) {
 			changeObject.view.focus();
@@ -39,7 +46,7 @@ const DiscussionInput = (props) => {
 		return apiFetch('/api/discussions', {
 			method: 'POST',
 			body: JSON.stringify({
-				discussionId: isNewThread ? discussionId : undefined,
+				discussionId: isNewThread ? threadData[0].id : undefined,
 				threadNumber: isNewThread ? undefined : threadData[0].threadNumber,
 				userId: loginData.id,
 				pubId: pubData.id,
@@ -57,10 +64,10 @@ const DiscussionInput = (props) => {
 					discussionData,
 					convertLocalHighlightToDiscussion(
 						pubView,
-						discussionId,
+						threadData[0].id,
 						props.firebaseBranchRef,
 					),
-					dispatch({ id: discussionId, delete: true }),
+					// dispatch({ id: threadData[0].id, delete: true }),
 				]);
 			})
 			.then(([discussionData]) => {
@@ -68,11 +75,12 @@ const DiscussionInput = (props) => {
 					...pubData,
 					discussions: [...pubData.discussions, discussionData],
 				});
+				setActiveThread(discussionData.id);
 			})
 			.then(() => {
-				if (isNewThread) {
-					dispatch({ id: discussionId, key: 'isOpen', value: true });
-				}
+				// if (isNewThread) {
+				// 	dispatch({ id: threadData[0].id, key: 'isOpen', value: true });
+				// }
 			});
 	};
 
@@ -111,8 +119,8 @@ const DiscussionInput = (props) => {
 					<Button
 						text="Cancel"
 						onClick={() => {
-							removeLocalHighlight(pubView, discussionId);
-							dispatch({ id: discussionId, delete: true });
+							removeLocalHighlight(pubView, threadData[0].id);
+							// dispatch({ id: threadData[0].id, delete: true });
 						}}
 					/>
 				)}

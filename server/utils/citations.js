@@ -19,10 +19,9 @@ const getCollectionLevelData = (primaryCollectionPub) => {
 		return { type: 'article-journal' };
 	}
 	const { collection } = primaryCollectionPub;
-	const { metadata = {}, title, kind } = collection;
+	const { metadata = {}, kind } = collection;
 	return {
 		type: collectionKindToCitationJSPart(kind),
-		'container-title': title,
 		ISBN: metadata.isbn,
 		ISSN: metadata.issn || metadata.printIssn || metadata.electronicIssn,
 		edition: metadata.edition,

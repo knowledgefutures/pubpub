@@ -332,6 +332,16 @@ class UserCreate extends Component {
 												checked={this.state.subscribed}
 												onChange={this.onSubscribedChange}
 											/>
+											<p className="notice">
+												<em>
+													We use a third party provider, Mailchimp, to
+													deliver newsletters. We never share your data
+													with anyone, and you can unsubscribe using the
+													link at the bottom of every email. Learn more by
+													visiting your&nbsp;
+													<a href="/privacy">privacy settings</a>.
+												</em>
+											</p>
 										</InputField>
 
 										<InputField

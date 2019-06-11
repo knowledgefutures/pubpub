@@ -1,15 +1,15 @@
-export const groupThreadsByTop = (decorations, threads) => {
+export const groupThreadsByLine = (decorations, threads) => {
 	const sortedDecorations = decorations.sort((foo, bar) => {
-		if (foo.boundingBox.top < bar.boundingBox.top) {
+		if (foo.boundingBox.bottom < bar.boundingBox.bottom) {
 			return -1;
 		}
-		if (foo.boundingBox.top > bar.boundingBox.top) {
+		if (foo.boundingBox.bottom > bar.boundingBox.bottom) {
 			return 1;
 		}
 		return 0;
 	});
-	let lastTop;
-	const discussionTops = {};
+	let lastBottom;
+	const discussionBottoms = {};
 	sortedDecorations
 		.filter((decoration) => {
 			return (
@@ -20,18 +20,18 @@ export const groupThreadsByTop = (decorations, threads) => {
 			);
 		})
 		.forEach((decoration) => {
-			const currentTop = decoration.boundingBox.top;
-			if (lastTop === currentTop) {
-				discussionTops[lastTop].push(decoration);
+			const currentBottom = decoration.boundingBox.bottom;
+			if (lastBottom === currentBottom) {
+				discussionBottoms[lastBottom].push(decoration);
 				return null;
 			}
-			lastTop = currentTop;
-			discussionTops[currentTop] = [decoration];
+			lastBottom = currentBottom;
+			discussionBottoms[currentBottom] = [decoration];
 			return null;
 		});
 
 	const groupings = [];
-	Object.keys(discussionTops)
+	Object.keys(discussionBottoms)
 		.sort((foo, bar) => {
 			if (Number(foo) < Number(bar)) {
 				return -1;
@@ -41,8 +41,8 @@ export const groupThreadsByTop = (decorations, threads) => {
 			}
 			return 0;
 		})
-		.forEach((topKey) => {
-			const conatainedThreads = discussionTops[topKey]
+		.forEach((bottomKey) => {
+			const conatainedThreads = discussionBottoms[bottomKey]
 				.sort((foo, bar) => {
 					if (foo.boundingBox.left < bar.boundingBox.left) {
 						return -1;
@@ -67,7 +67,7 @@ export const groupThreadsByTop = (decorations, threads) => {
 
 			/* Find the right-most id, and use that as the mount point */
 			/* for a group, so we don't break in the middle of a line. */
-			const mountDiscussion = discussionTops[topKey].reduce((prev, curr) => {
+			const mountDiscussion = discussionBottoms[bottomKey].reduce((prev, curr) => {
 				if (!prev) {
 					return curr;
 				}
@@ -83,7 +83,7 @@ export const groupThreadsByTop = (decorations, threads) => {
 					: mountDiscussion.attrs.class.replace('local-highlight lh-', 'lm-');
 
 			groupings.push({
-				key: Number(topKey) + window.scrollY,
+				key: bottomKey,
 				mountClassName: mountClassName,
 				threads: conatainedThreads,
 			});

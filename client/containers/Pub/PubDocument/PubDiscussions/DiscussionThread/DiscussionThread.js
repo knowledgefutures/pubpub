@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import DiscussionItem from './DiscussionItem';
 import DiscussionInput from './DiscussionInput';
 
+require('./discussionThread.scss');
+
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
@@ -12,11 +14,10 @@ const propTypes = {
 	setActiveThread: PropTypes.func.isRequired,
 };
 
-
 const DiscussionThread = (props) => {
 	const { threadData } = props;
 	return (
-		<div className="discussion-thread" tabIndex={-1}>
+		<div className="discussion-thread-component" tabIndex={-1}>
 			{threadData
 				.filter((item) => item.threadNumber)
 				.map((item) => {

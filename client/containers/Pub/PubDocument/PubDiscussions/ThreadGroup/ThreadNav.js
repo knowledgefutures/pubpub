@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import Color from 'color';
+import { Button } from '@blueprintjs/core';
 import { Icon } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 
@@ -12,6 +13,8 @@ const propTypes = {
 	setActiveThreadHover: PropTypes.func.isRequired,
 	activeThread: PropTypes.string,
 	setActiveThread: PropTypes.func.isRequired,
+	isExpanded: PropTypes.bool.isRequired,
+	setExpanded: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -26,11 +29,16 @@ const ThreadNav = (props) => {
 		setActiveThreadHover,
 		activeThread,
 		setActiveThread,
+		isExpanded,
+		setExpanded,
 	} = props;
 	const { communityData } = useContext(PageContext);
 
 	const accentStyle = {
 		color: communityData.accentColorDark,
+		borderBottom: activeThread
+			? `1px solid ${communityData.accentColorDark}`
+			: '1px solid transparent',
 	};
 	const accentStyleBubble = {
 		border: `1px solid ${communityData.accentColorDark}`,
@@ -70,7 +78,8 @@ const ThreadNav = (props) => {
 							setActiveThreadHover(undefined);
 						}}
 						onClick={() => {
-							setActiveThread(thread[0].id);
+							const setId = activeThread === thread[0].id ? undefined : thread[0].id;
+							setActiveThread(setId);
 						}}
 					>
 						<span className="bubble" style={bubbleStyle}>
@@ -91,6 +100,80 @@ const ThreadNav = (props) => {
 					</span>
 				);
 			})}
+			{activeThread && threads.length > 1 && (
+				<React.Fragment>
+					<Button
+						minimal={true}
+						small={true}
+						className="caret-button"
+						icon={<Icon icon="caret-left" color={communityData.accentColorDark} />}
+						onClick={() => {
+							const currIndex = threads.reduce((prev, curr, index) => {
+								if (activeThread === curr[0].id) {
+									return index;
+								}
+								return prev;
+							}, 0);
+							const leftId =
+								threads[(threads.length + currIndex - 1) % threads.length][0].id;
+							setActiveThread(leftId);
+						}}
+					/>
+					<Button
+						minimal={true}
+						small={true}
+						className="caret-button"
+						icon={<Icon icon="caret-right" color={communityData.accentColorDark} />}
+						onClick={() => {
+							const currIndex = threads.reduce((prev, curr, index) => {
+								if (activeThread === curr[0].id) {
+									return index;
+								}
+								return prev;
+							}, 0);
+							const leftId =
+								threads[(threads.length + currIndex + 1) % threads.length][0].id;
+							setActiveThread(leftId);
+						}}
+					/>
+				</React.Fragment>
+			)}
+			{activeThread && (
+				<div className="close-wrapper">
+					<Button
+						minimal={true}
+						small={true}
+						icon={
+							isExpanded ? (
+								<Icon
+									className="expand-icon"
+									icon="collapse-all"
+									iconSize={12}
+									color={communityData.accentColorDark}
+								/>
+							) : (
+								<Icon
+									className="expand-icon"
+									icon="expand-all"
+									iconSize={12}
+									color={communityData.accentColorDark}
+								/>
+							)
+						}
+						onClick={() => {
+							setExpanded(!isExpanded);
+						}}
+					/>
+					<Button
+						minimal={true}
+						small={true}
+						icon={<Icon icon="small-cross" color={communityData.accentColorDark} />}
+						onClick={() => {
+							setActiveThread(undefined);
+						}}
+					/>
+				</div>
+			)}
 		</span>
 	);
 };

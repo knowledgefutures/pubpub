@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import ThreadNav from './ThreadNav';
 import DiscussionThread from '../DiscussionThread';
 
@@ -27,6 +28,7 @@ const ThreadGroup = (props) => {
 	} = props;
 	const [activeThreadHover, setActiveThreadHover] = useState(undefined);
 	const [activeThread, setActiveThread] = useState(undefined);
+	const [isExpanded, setExpanded] = useState(false);
 	const prevNewDiscussionIds = useRef([]);
 
 	useEffect(() => {
@@ -59,15 +61,29 @@ const ThreadGroup = (props) => {
 	const sideWidth = sideContentRef.current.offsetWidth;
 	const left = (mainWidth + sideWidth) / 0.96 - sideWidth;
 
-	const style = { left: left, width: sideWidth, position: 'absolute' };
+	const style = {
+		left: isExpanded && activeThread ? 0 : left,
+		width: isExpanded && activeThread ? 'auto' : sideWidth,
+	};
 	return (
-		<span className="thread-group-component" style={style} tabIndex={-1}>
+		<span
+			className={classNames({
+				'thread-group-component': true,
+				active: activeThread,
+				expanded: isExpanded && activeThread,
+			})}
+			style={style}
+			tabIndex={-1}
+		>
 			<ThreadNav
+				key={isExpanded && activeThread}
 				threads={threads}
 				activeThreadHover={activeThreadHover}
 				setActiveThreadHover={setActiveThreadHover}
 				activeThread={activeThread}
 				setActiveThread={setActiveThread}
+				isExpanded={isExpanded}
+				setExpanded={setExpanded}
 			/>
 			{activeThread && (
 				<DiscussionThread

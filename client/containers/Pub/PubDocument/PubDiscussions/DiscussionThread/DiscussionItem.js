@@ -60,7 +60,7 @@ const DiscussionItem = (props) => {
 		<div className="discussion-item">
 			<div className="avatar-wrapper">
 				<Avatar
-					width={30}
+					width={18}
 					userInitials={discussionData.author.intials}
 					userAvatar={discussionData.author.avatar}
 				/>
@@ -68,30 +68,32 @@ const DiscussionItem = (props) => {
 			<div className="content-wrapper">
 				<div className="item-header">
 					<span className="name">{discussionData.author.fullName}</span>
-					<span className="time">
-						<TimeAgo
-							minPeriod={60}
-							formatter={(value, unit, suffix) => {
-								if (unit === 'second') {
-									return 'just now';
-								}
-								let newUnit = unit;
-								if (value > 1) {
-									newUnit += 's';
-								}
-								return `${value} ${newUnit} ${suffix}`;
-							}}
-							date={discussionData.createdAt}
-						/>
-						{discussionData.createdAt !== discussionData.updatedAt && (
-							<span> (edited)</span>
-						)}
-					</span>
+					{!isEditing && (
+						<span className="time">
+							<TimeAgo
+								minPeriod={60}
+								formatter={(value, unit, suffix) => {
+									if (unit === 'second') {
+										return 'just now';
+									}
+									let newUnit = unit;
+									if (value > 1) {
+										newUnit += 's';
+									}
+									return `${value} ${newUnit} ${suffix}`;
+								}}
+								date={discussionData.createdAt}
+							/>
+							{discussionData.createdAt !== discussionData.updatedAt && (
+								<span> (edited)</span>
+							)}
+						</span>
+					)}
 					{loginData.id === discussionData.userId && (
 						<span className="actions">
 							<Button
 								icon={isEditing ? undefined : <Icon icon="edit2" iconSize={12} />}
-								text={isEditing ? 'Cancel Edit' : undefined}
+								text={isEditing ? 'Cancel' : undefined}
 								minimal={true}
 								small={true}
 								onClick={() => {

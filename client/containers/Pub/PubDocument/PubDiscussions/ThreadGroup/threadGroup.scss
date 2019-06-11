@@ -1,5 +1,25 @@
 @import 'styles/variables.scss';
 .thread-group-component {
 	font-family: $base-font;
-	
+	position: absolute;
+	&.active {
+		&:before {
+			content: "";
+			position: absolute;
+			top: 0px;
+			bottom: 0;
+			left: -15px;
+			background: #E5E5E5;
+			width: 1px;
+		}
+	}
+	&.expanded {
+		position: relative;
+		padding: 1em 0em;
+		display: block;
+		&:before {
+			left: auto;
+			right: -15px;
+		}
+	}
 }

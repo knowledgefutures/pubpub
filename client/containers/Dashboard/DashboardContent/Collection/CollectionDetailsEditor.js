@@ -37,7 +37,7 @@ const CollectionDetailsEditor = (props) => {
 			/>
 			<FormGroup
 				helperText={
-					`You can link a ${collectionLabel} to a Page, and it` +
+					`You can link this ${collectionLabel} to a Page, and it` +
 					` will serve as the landing page for the ${collectionLabel}.`
 				}
 			>
@@ -50,7 +50,7 @@ const CollectionDetailsEditor = (props) => {
 			</FormGroup>
 			<FormGroup
 				helperText={
-					`Making a ${collectionLabel} private means that team members will see it` +
+					`Making this ${collectionLabel} private means that team members will see it` +
 					" but visitors won't know it exists."
 				}
 			>

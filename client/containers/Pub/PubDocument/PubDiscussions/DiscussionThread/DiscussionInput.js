@@ -15,21 +15,13 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object.isRequired,
-	// discussionId: PropTypes.string.isRequired,
-	// dispatch: PropTypes.func.isRequired,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	setActiveThread: PropTypes.func.isRequired,
 };
 
 const DiscussionInput = (props) => {
-	const {
-		pubData,
-		collabData,
-		/* discussionId, dispatch, */ updateLocalData,
-		threadData,
-		setActiveThread,
-	} = props;
+	const { pubData, collabData, updateLocalData, threadData, setActiveThread } = props;
 	const { loginData, communityData } = useContext(PageContext);
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState({});
@@ -67,7 +59,6 @@ const DiscussionInput = (props) => {
 						threadData[0].id,
 						props.firebaseBranchRef,
 					),
-					// dispatch({ id: threadData[0].id, delete: true }),
 				]);
 			})
 			.then(([discussionData]) => {
@@ -76,11 +67,6 @@ const DiscussionInput = (props) => {
 					discussions: [...pubData.discussions, discussionData],
 				});
 				setActiveThread(discussionData.id);
-			})
-			.then(() => {
-				// if (isNewThread) {
-				// 	dispatch({ id: threadData[0].id, key: 'isOpen', value: true });
-				// }
 			});
 	};
 
@@ -120,7 +106,6 @@ const DiscussionInput = (props) => {
 						text="Cancel"
 						onClick={() => {
 							removeLocalHighlight(pubView, threadData[0].id);
-							// dispatch({ id: threadData[0].id, delete: true });
 						}}
 					/>
 				)}

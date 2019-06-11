@@ -1,18 +1,10 @@
-import React, { useReducer, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import DiscussionThread from './DiscussionThread';
 import ThreadGroup from './ThreadGroup';
-import SidePreviews from './SidePreviews';
-import {
-	getDiscussionIdArray,
-	getNewDiscussionIdArray,
-	// groupDiscussionsByTop,
-	groupThreadsByTop,
-	nestDiscussionsToThreads,
-} from './discussionUtils';
+import { groupThreadsByTop, nestDiscussionsToThreads } from './discussionUtils';
 
 require('./pubDiscussions.scss');
 
@@ -32,20 +24,6 @@ const defaultProps = {
 const PubDiscussions = (props) => {
 	const { pubData, collabData, firebaseBranchRef, sideContentRef, mainContentRef } = props;
 	const decorations = collabData.editorChangeObject.decorations || [];
-	const [discussionsState, discussionsDispatch] = useReducer((state, action) => {
-		if (action.delete) {
-			const newState = { ...state };
-			delete newState[action.id];
-			return newState;
-		}
-		return {
-			...state,
-			[action.id]: {
-				...state[action.id],
-				[action.key]: action.value,
-			},
-		};
-	}, {});
 
 	useEffect(() => {
 		/* Need to dispatch an empty transaction so */
@@ -54,18 +32,15 @@ const PubDiscussions = (props) => {
 			dispatchEmptyTransaction(collabData.editorChangeObject.view);
 		}
 		/* eslint-disable-next-line react-hooks/exhaustive-deps */
-	}, [discussionsState]);
+	}, []);
 
 	const { width: windowWidth } = useWindowSize();
-	// const discussionIds = getDiscussionIdArray(decorations);
-	// const newDiscussionIds = getNewDiscussionIdArray(decorations);
 
 	const [groupTops, setGroupTops] = useState([]);
 
 	const threads = nestDiscussionsToThreads(pubData.discussions);
 
 	useEffect(() => {
-		// const newGroupTops = groupDiscussionsByTop(decorations);
 		const newGroupTops = groupThreadsByTop(decorations, threads);
 
 		const getCompareKey = (groupTopsArray) => {
@@ -77,20 +52,8 @@ const PubDiscussions = (props) => {
 		if (getCompareKey(groupTops) !== getCompareKey(newGroupTops)) {
 			setGroupTops(newGroupTops);
 		}
-	}, [
-		windowWidth,
-		decorations,
-		collabData.editorChangeObject,
-		groupTops,
-		discussionsState,
-		threads,
-	]);
+	}, [windowWidth, decorations, collabData.editorChangeObject, groupTops, threads]);
 
-	// const threadIds = [
-	// 	...discussionIds.map((id) => ({ id: id, type: 'dm' })),
-	// 	...newDiscussionIds.map((id) => ({ id: id, type: 'lm' })),
-	// ];
-	// console.log(groupTops);
 	if (!props.firebaseBranchRef) {
 		return null;
 	}
@@ -114,56 +77,6 @@ const PubDiscussions = (props) => {
 					mountElement,
 				);
 			})}
-			{/*threadIds.map(({ id, type }) => {
-				const threadData = threads.find((thread) => {
-					return thread[0].id === id;
-				});
-				if (!threadData && type === 'dm') {
-					return null;
-				}
-
-				return ReactDOM.createPortal(
-					<DiscussionThread
-						pubData={pubData}
-						collabData={collabData}
-						firebaseBranchRef={firebaseBranchRef}
-						discussionId={id}
-						discussionState={discussionsState[id] || {}}
-						dispatch={discussionsDispatch}
-						threadData={threadData}
-						updateLocalData={props.updateLocalData}
-					/>,
-					document.getElementsByClassName(`${type}-${id}`)[0],
-				);
-			})*/}
-
-			{/*groupTops.map((group) => {
-				return ReactDOM.createPortal(
-					<ThreadGroup
-						threads={threads}
-						groupData={group}
-						discussionsState={discussionsState}
-						dispatch={discussionsDispatch}
-						mainContentRef={mainContentRef}
-						sideContentRef={sideContentRef}
-					/>,
-					document.getElementsByClassName(`dm-${group.ids[0]}`)[0],
-				);
-			})*/}
-
-			{/*groupTops.map((group) => {
-				return ReactDOM.createPortal(
-					<SidePreviews
-						threads={threads}
-						groupData={group}
-						discussionsState={discussionsState}
-						dispatch={discussionsDispatch}
-						mainContentRef={mainContentRef}
-						sideContentRef={sideContentRef}
-					/>,
-					document.getElementsByClassName(`dm-${group.ids[0]}`)[0],
-				);
-			})*/}
 		</div>
 	);
 };
@@ -171,3 +84,8 @@ const PubDiscussions = (props) => {
 PubDiscussions.propTypes = propTypes;
 PubDiscussions.defaultProps = defaultProps;
 export default PubDiscussions;
+
+// const truncateText = (text) => {
+// 	const previewLimit = 45;
+// 	return text.length > previewLimit ? `${text.substring(0, previewLimit - 3)}...` : text;
+// };

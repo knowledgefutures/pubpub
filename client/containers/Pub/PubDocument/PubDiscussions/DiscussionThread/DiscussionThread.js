@@ -7,28 +7,14 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object.isRequired,
-	// discussionId: PropTypes.string.isRequired,
-	// discussionState: PropTypes.object.isRequired,
-	// dispatch: PropTypes.func.isRequired,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	setActiveThread: PropTypes.func.isRequired,
 };
 
-// const defaultProps = {
-// 	threadData: [],
-// };
 
 const DiscussionThread = (props) => {
-	// const { discussionState, threadData } = props;
 	const { threadData } = props;
-	// const { isOpen } = discussionState;
-	// const isNewThread = !threadData[0].threadNumber;
-
-	// if (!isNewThread && !isOpen) {
-	// 	return null;
-	// }
-
 	return (
 		<div className="discussion-thread" tabIndex={-1}>
 			{threadData
@@ -42,5 +28,4 @@ const DiscussionThread = (props) => {
 };
 
 DiscussionThread.propTypes = propTypes;
-// DiscussionThread.defaultProps = defaultProps;
 export default DiscussionThread;

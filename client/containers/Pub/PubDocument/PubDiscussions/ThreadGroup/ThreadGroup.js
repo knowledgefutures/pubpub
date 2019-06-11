@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ThreadNav from './ThreadNav';
 import DiscussionThread from '../DiscussionThread';
-// import DiscussionInput from './DiscussionInput';
 
 require('./threadGroup.scss');
 
@@ -46,7 +45,6 @@ const ThreadGroup = (props) => {
 		}
 	}, [threads]);
 
-	// useEffect(() => {
 	/* When a highlight is removed (i.e. a new one is Cancelled) */
 	/* and was the activeThread, we need to clear */
 	const activeThreadData = threads.find((thread) => {
@@ -56,14 +54,7 @@ const ThreadGroup = (props) => {
 	if (activeThread && !activeThreadData) {
 		setActiveThread(undefined);
 	}
-	// }, [activeThread, threads]);
 
-	// const { isOpen } = discussionState;
-	// const isNewThread = !threadData.length;
-
-	// if (!isNewThread && !isOpen) {
-	// 	return null;
-	// }
 	const mainWidth = mainContentRef.current.offsetWidth;
 	const sideWidth = sideContentRef.current.offsetWidth;
 	const left = (mainWidth + sideWidth) / 0.96 - sideWidth;

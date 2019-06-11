@@ -1,18 +1,13 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import Color from 'color';
-import { Button } from '@blueprintjs/core';
 import { Icon } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 
 require('./threadNav.scss');
 
 const propTypes = {
-	// pubData: PropTypes.object.isRequired,
-	// collabData: PropTypes.object.isRequired,
-	// firebaseBranchRef: PropTypes.object.isRequired,
 	threads: PropTypes.array.isRequired,
-	// updateLocalData: PropTypes.func.isRequired,
 	activeThreadHover: PropTypes.string,
 	setActiveThreadHover: PropTypes.func.isRequired,
 	activeThread: PropTypes.string,

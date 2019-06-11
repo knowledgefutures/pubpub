@@ -28,6 +28,7 @@ const getCollectionLevelData = (primaryCollectionPub) => {
 		ISSN: metadata.issn || metadata.printIssn || metadata.electronicIssn,
 		edition: metadata.edition,
 		volume: metadata.volume,
+		issue: metadata.issue,
 	};
 };
 

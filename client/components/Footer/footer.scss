@@ -10,6 +10,7 @@
 		margin-top: 0.25em;
 	}
 	.left {
+		max-width: 240px;
 		.title {
 			display: flex;
 			align-items: center;
@@ -19,6 +20,18 @@
 			img.logo {
 				max-width: 100px;
 				height: auto;
+			}
+		}
+		.confirm {
+			.bp3-checkbox {
+				margin-top: 0.5em;
+			}
+			font-size: 12px;
+			em {
+				text-decoration: underline;
+				text-decoration-style: dotted;
+				font-style: normal;
+				cursor: help;
 			}
 		}
 	}

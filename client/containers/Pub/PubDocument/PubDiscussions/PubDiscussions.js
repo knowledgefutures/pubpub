@@ -53,6 +53,7 @@ const PubDiscussions = (props) => {
 						collabData={collabData}
 						firebaseBranchRef={firebaseBranchRef}
 						threads={group.threads}
+						mountClassName={group.mountClassName}
 						updateLocalData={props.updateLocalData}
 						mainContentRef={mainContentRef}
 						sideContentRef={sideContentRef}

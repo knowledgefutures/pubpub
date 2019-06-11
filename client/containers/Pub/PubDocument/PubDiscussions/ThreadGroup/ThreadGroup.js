@@ -11,6 +11,7 @@ const propTypes = {
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object.isRequired,
 	threads: PropTypes.array.isRequired,
+	mountClassName: PropTypes.string.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	mainContentRef: PropTypes.object.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
@@ -25,6 +26,7 @@ const ThreadGroup = (props) => {
 		threads,
 		mainContentRef,
 		sideContentRef,
+		mountClassName,
 	} = props;
 	const [activeThreadHover, setActiveThreadHover] = useState(undefined);
 	const [activeThread, setActiveThread] = useState(undefined);
@@ -46,6 +48,13 @@ const ThreadGroup = (props) => {
 			setActiveThread(justCreatedDiscussionId);
 		}
 	}, [threads]);
+
+	useEffect(() => {
+		/* This effect is due to a Chrome rendering bug that causes */
+		/* the text to not reflow when moving back to position: absolute */
+		document.getElementsByClassName(mountClassName)[0].style.display =
+			activeThread && isExpanded ? 'block' : 'inline';
+	}, [mountClassName, isExpanded, activeThread]);
 
 	/* When a highlight is removed (i.e. a new one is Cancelled) */
 	/* and was the activeThread, we need to clear */
@@ -95,12 +104,6 @@ const ThreadGroup = (props) => {
 					setActiveThread={setActiveThread}
 				/>
 			)}
-			{/*
-				SideBubbles
-				SideExpanded
-				InlineExpanded
-				SideClose
-			*/}
 		</span>
 	);
 };

@@ -84,9 +84,9 @@ const DiscussionItem = (props) => {
 								}}
 								date={discussionData.createdAt}
 							/>
-							{discussionData.createdAt !== discussionData.updatedAt && (
+							{/* discussionData.createdAt !== discussionData.updatedAt && (
 								<span> (edited)</span>
-							)}
+							) */}
 						</span>
 					)}
 					{loginData.id === discussionData.userId && (

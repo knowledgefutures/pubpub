@@ -87,7 +87,12 @@ const ThreadNav = (props) => {
 					>
 						<span className="bubble" style={bubbleStyle}>
 							{bubbleCount}
-							{hasWrittenInThread && <span className="bubble-dot" style={{ border: `1px solid ${communityData.accentColorDark}`}}/>}
+							{hasWrittenInThread && (
+								<span
+									className="bubble-dot"
+									style={{ border: `1px solid ${communityData.accentColorDark}` }}
+								/>
+							)}
 						</span>
 						{threads.length === 1 && thread[0].threadNumber && (
 							<span className="names">

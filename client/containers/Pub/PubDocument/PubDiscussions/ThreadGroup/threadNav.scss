@@ -19,6 +19,15 @@
 		justify-content: center;
 		font-weight: 800;
 		margin-right: 5px;
+		position: relative;
+		.bubble-dot {
+			position: absolute;
+			bottom: -4px;
+			left: -4px;
+			width: 6px;
+			height: 6px;
+			border-radius: 6px;
+		}
 	}
 	.names {
 		font-size: 12px;

@@ -32,7 +32,7 @@ const ThreadNav = (props) => {
 		isExpanded,
 		setExpanded,
 	} = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData, loginData } = useContext(PageContext);
 
 	const accentStyle = {
 		color: communityData.accentColorDark,
@@ -59,6 +59,9 @@ const ThreadNav = (props) => {
 			{threads.map((thread) => {
 				const isActive =
 					activeThreadHover === thread[0].id || activeThread === thread[0].id;
+				const hasWrittenInThread = thread.find((discussion) => {
+					return discussion.userId === loginData.id;
+				});
 				const bubbleCount = thread[0].threadNumber ? (
 					thread.length
 				) : (
@@ -84,6 +87,7 @@ const ThreadNav = (props) => {
 					>
 						<span className="bubble" style={bubbleStyle}>
 							{bubbleCount}
+							{hasWrittenInThread && <span className="bubble-dot" style={{ border: `1px solid ${communityData.accentColorDark}`}}/>}
 						</span>
 						{threads.length === 1 && thread[0].threadNumber && (
 							<span className="names">

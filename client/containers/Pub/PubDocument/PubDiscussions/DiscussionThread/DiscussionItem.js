@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import Editor, { getText, getJSON } from '@pubpub/editor';
 import { Button, Intent } from '@blueprintjs/core';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import { Avatar, Icon } from 'components';
+import { Avatar, Icon, FormattingBar } from 'components';
 import { apiFetch } from 'utils';
 
 const propTypes = {
@@ -68,8 +68,9 @@ const DiscussionItem = (props) => {
 			<div className="content-wrapper">
 				<div className="item-header">
 					<span className="name">{discussionData.author.fullName}</span>
-					{!isEditing && (
-						<span className="time">
+
+					<span className="time">
+						{!isEditing && (
 							<TimeAgo
 								minPeriod={60}
 								formatter={(value, unit, suffix) => {
@@ -84,11 +85,9 @@ const DiscussionItem = (props) => {
 								}}
 								date={discussionData.createdAt}
 							/>
-							{/* discussionData.createdAt !== discussionData.updatedAt && (
-								<span> (edited)</span>
-							) */}
-						</span>
-					)}
+						)}
+					</span>
+
 					{loginData.id === discussionData.userId && (
 						<span className="actions">
 							<Button
@@ -121,14 +120,23 @@ const DiscussionItem = (props) => {
 					/>
 				</div>
 				{isEditing && (
-					<Button
-						className="discussion-primary-button"
-						intent={Intent.PRIMARY}
-						text="Update Discussion"
-						loading={isLoading}
-						disabled={!getText(changeObject.view)}
-						onClick={handlePutDiscussion}
-					/>
+					<React.Fragment>
+						<FormattingBar
+							editorChangeObject={changeObject || {}}
+							threads={[]}
+							hideBlocktypes={true}
+							hideExtraFormatting={true}
+							isSmall={true}
+						/>
+						<Button
+							className="discussion-primary-button"
+							intent={Intent.PRIMARY}
+							text="Update Discussion"
+							loading={isLoading}
+							disabled={!getText(changeObject.view)}
+							onClick={handlePutDiscussion}
+						/>
+					</React.Fragment>
 				)}
 			</div>
 		</div>

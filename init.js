@@ -1,9 +1,17 @@
 /* eslint-disable global-require */
+const {
+	argv: { watch },
+} = require('yargs');
+const throng = require('throng');
+require('@babel/register');
+
+const hotReloadServer = require('./hotReloadServer');
+
+const watchables = watch && (Array.isArray(watch) ? watch : [watch]).filter((x) => x);
+
 if (process.env.NODE_ENV === 'production') {
 	require('newrelic');
 }
-require('@babel/register');
-const throng = require('throng');
 
 throng(
 	{
@@ -11,6 +19,13 @@ throng(
 		lifetime: Infinity,
 	},
 	() => {
-		require('./server/server.js');
+		const startServer = () => {
+			return require('./server/server.js')();
+		};
+		if (watchables) {
+			hotReloadServer(startServer, watchables);
+		} else {
+			startServer();
+		}
 	},
 );

@@ -140,10 +140,12 @@ require('./routes');
 /* Start Server */
 /* ------------ */
 const port = process.env.PORT || 9876;
-app.listen(port, (err) => {
-	if (err) {
-		console.error(err);
-	}
-	console.info('----\n==> 🌎  API is running on port %s', port);
-	console.info('==> 💻  Send requests to http://localhost:%s', port);
-});
+module.exports = () => {
+	return app.listen(port, (err) => {
+		if (err) {
+			console.error(err);
+		}
+		console.info('----\n==> 🌎  API is running on port %s', port);
+		console.info('==> 💻  Send requests to http://localhost:%s', port);
+	});
+};

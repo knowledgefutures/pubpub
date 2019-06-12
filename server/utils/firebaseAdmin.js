@@ -13,13 +13,16 @@ const serviceAccount = JSON.parse(
 	Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
 );
 
-const firebaseApp = firebaseAdmin.initializeApp(
-	{
-		credential: firebaseAdmin.credential.cert(serviceAccount),
-		databaseURL: getFirebaseConfig().databaseURL,
-	},
-	'firebase-pub-new',
-);
+const firebaseApp =
+	firebaseAdmin.apps.length > 0
+		? firebaseAdmin.apps[0]
+		: firebaseAdmin.initializeApp(
+				{
+					credential: firebaseAdmin.credential.cert(serviceAccount),
+					databaseURL: getFirebaseConfig().databaseURL,
+				},
+				'firebase-pub-new',
+		  );
 const database = firebaseApp.database();
 
 export const getBranchDoc = (pubId, branchId, historyKey) => {

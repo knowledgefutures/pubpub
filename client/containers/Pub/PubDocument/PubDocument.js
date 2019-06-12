@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { marksAtSelection, cursor } from '@pubpub/editor';
+import { marksAtSelection, setLocalHighlight, cursor } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper } from 'components';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
@@ -28,7 +29,8 @@ const defaultProps = {
 };
 
 const PubDocument = (props) => {
-	const { pubData, collabData } = props;
+	const { pubData, collabData, firebaseBranchRef } = props;
+	const { locationData } = useContext(PageContext);
 	const [linkPopupIsOpen, setLinkPopupIsOpen] = useState(false);
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	const [clickedMarks, setClickedMarks] = useState([]);
@@ -67,6 +69,27 @@ const PubDocument = (props) => {
 		};
 	});
 
+	useEffect(() => {
+		/* TODO: Clean up the hanlding of permalink generation and scrolling */
+		const fromNumber = Number(locationData.query.from);
+		const toNumber = Number(locationData.query.to);
+		const permElement = document.getElementsByClassName('permanent')[0];
+		if (
+			editorChangeObject.view &&
+			firebaseBranchRef &&
+			fromNumber &&
+			toNumber &&
+			!permElement
+		) {
+			setTimeout(() => {
+				setLocalHighlight(editorChangeObject.view, fromNumber, toNumber, 'permanent');
+				setTimeout(() => {
+					document.getElementsByClassName('permanent')[0].scrollIntoView(false);
+				}, 0);
+			}, 0);
+		}
+	}, [editorChangeObject.view, firebaseBranchRef, locationData]);
+
 	// We use the useEffect hook to wait until after the render to show or hide discussions, since
 	// they mount into portals that we rely on Prosemirror to create.
 	useEffect(() => {
@@ -85,7 +108,7 @@ const PubDocument = (props) => {
 						pubData={pubData}
 						collabData={collabData}
 						historyData={props.historyData}
-						firebaseBranchRef={props.firebaseBranchRef}
+						firebaseBranchRef={firebaseBranchRef}
 						updateLocalData={props.updateLocalData}
 						onSingleClick={(view) => {
 							/* Used to trigger link popup when link mark clicked */
@@ -104,7 +127,7 @@ const PubDocument = (props) => {
 						<PubDiscussions
 							pubData={pubData}
 							collabData={collabData}
-							firebaseBranchRef={props.firebaseBranchRef}
+							firebaseBranchRef={firebaseBranchRef}
 							updateLocalData={props.updateLocalData}
 							mainContentRef={mainContentRef}
 							sideContentRef={sideContentRef}

@@ -9,6 +9,7 @@ require('./pubBody.scss');
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	onSingleClick: PropTypes.func.isRequired,

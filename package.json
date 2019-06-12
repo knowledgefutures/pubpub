@@ -10,7 +10,7 @@
 	},
 	"main": "init.js",
 	"scripts": {
-		"api-dev": "NODE_PATH=./client:./ node init.js --watch ./server --watch ./shared --watch ./client",
+		"api-dev": "NODE_PATH=./client:./ node init.js --watch ./server --watch ./shared --watch ./client --refresh ./dist",
 		"api-prod": "NODE_PATH=./client:./ node init.js",
 		"build-dev": "webpack --config ./client/webpack/webpackConfig.dev.js --watch",
 		"build-prod": "rm -rf ./dist && webpack --config ./client/webpack/webpackConfig.prod.js",

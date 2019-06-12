@@ -14,8 +14,9 @@ const cleanModuleCache = (watchablePaths) => {
 	});
 };
 
-module.exports = (startServer, watchablePathsRelative) => {
+module.exports = (startServer, watchablePathsRelative, refreshablePathsRelative) => {
 	const watchablePaths = watchablePathsRelative.map(fromRoot);
+	const refreshablePaths = refreshablePathsRelative.map(fromRoot);
 	const state = {
 		server: startServer(),
 		sockets: [],
@@ -27,7 +28,7 @@ module.exports = (startServer, watchablePathsRelative) => {
 	);
 
 	const restart = debounce(() => {
-		cleanModuleCache(watchablePaths);
+		cleanModuleCache(watchablePaths.concat(refreshablePaths));
 		state.sockets.forEach((socket) => {
 			if (socket.destroyed === false) {
 				socket.destroy();

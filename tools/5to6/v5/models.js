@@ -580,7 +580,7 @@ const db = {
 	User: User,
 	Version: Version,
 	VersionPermission: VersionPermission,
-	WorkerTask: WorkerTask,	
+	WorkerTask: WorkerTask,
 };
 
 module.exports = db;

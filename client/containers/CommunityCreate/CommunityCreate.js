@@ -74,7 +74,6 @@ class CommunityCreate extends Component {
 	}
 
 	render() {
-		const colorRegex = /^#([a-f]|[A-F]|[0-9]){6}$/;
 		return (
 			<div id="community-create-container">
 				<PageWrapper
@@ -124,9 +123,7 @@ class CommunityCreate extends Component {
 												isTextarea={true}
 												value={this.state.description}
 												onChange={this.onDescriptionChange}
-												helperText={`${
-													this.state.description.length
-												}/280 characters`}
+												helperText={`${this.state.description.length}/280 characters`}
 											/>
 											<ImageUpload
 												htmlFor="large-header-logo-upload"

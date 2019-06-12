@@ -155,9 +155,7 @@ const CollectionEditorView = (props) => {
 						renderEmptyState={() => (
 							<NonIdealState
 								icon={schema.bpDisplayIcon}
-								title={`This ${
-									schema.label.singular
-								} doesn't contain any pubs yet!`}
+								title={`This ${schema.label.singular} doesn't contain any pubs yet!`}
 								description="Try dragging some from the left-hand column"
 							/>
 						)}

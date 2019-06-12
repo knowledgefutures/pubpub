@@ -1,11 +1,5 @@
 import firebaseAdmin from 'firebase-admin';
-import {
-	buildSchema,
-	getFirebaseDoc,
-	restoreDiscussionMaps,
-	createBranch,
-	mergeBranch,
-} from '@pubpub/editor';
+import { buildSchema, getFirebaseDoc, createBranch, mergeBranch } from '@pubpub/editor';
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
 import { getFirebaseConfig } from 'utils';
 /* To encode: Buffer.from(JSON.stringify(serviceAccountJson)).toString('base64'); */

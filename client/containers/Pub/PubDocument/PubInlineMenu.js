@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import uuidv4 from 'uuid/v4';
 import { Button } from '@blueprintjs/core';
+import { setLocalHighlight, cursor } from '@pubpub/editor';
+
+import { pubUrl } from 'shared/utils/canonicalUrls';
 import Icon from 'components/Icon/Icon';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import uuidv4 from 'uuid/v4';
-import { setLocalHighlight, cursor } from '@pubpub/editor';
 
 require('./pubInlineMenu.scss');
 
@@ -24,7 +26,7 @@ const defaultProps = {
 
 const PubInlineMenu = (props) => {
 	const { pubData, collabData, historyData } = props;
-	const { locationData } = useContext(PageContext);
+	const { locationData, communityData } = useContext(PageContext);
 	const selection = collabData.editorChangeObject.selection || {};
 	const selectionBoundingBox = collabData.editorChangeObject.selectionBoundingBox || {};
 
@@ -97,7 +99,14 @@ const PubInlineMenu = (props) => {
 			)}
 			<ClickToCopyButton
 				className="click-to-copy"
-				copyString={`https://${locationData.hostname}/pub/${pubData.slug}/branch/${pubData.activeBranch.shortId}/${historyData.currentKey}?from=${selection.from}&to=${selection.to}`}
+				copyString={
+					pubUrl(
+						communityData,
+						pubData,
+						pubData.activeBranch.shortId,
+						historyData.currentKey,
+					) + `?from=${selection.from}&to=${selection.to}`
+				}
 				beforeCopyPrompt="Copy a permalink"
 			/>
 		</div>

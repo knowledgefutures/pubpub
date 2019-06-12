@@ -4,12 +4,7 @@ import { PasswordReset } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { User } from '../models';
-import {
-	renderToNodeStream,
-	getInitialData,
-	handleErrors,
-	generateMetaComponents,
-} from '../utils';
+import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
 
 app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next) => {
 	const findUser = User.findOne({

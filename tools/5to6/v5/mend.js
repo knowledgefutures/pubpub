@@ -77,6 +77,7 @@ const mend = (pubId) => {
 					// nope
 				}
 			}
+			// eslint-disable-next-line no-console
 			console.log(successfullyInvertedDocument);
 		}
 	}

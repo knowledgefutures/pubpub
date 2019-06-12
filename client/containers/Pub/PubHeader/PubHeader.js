@@ -29,11 +29,10 @@ import { generateHeaderBreadcrumbs } from './headerUtils';
 require('./pubHeader.scss');
 
 const propTypes = {
+	collabData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
-	// communityData: PropTypes.object.isRequired,
-	// locationData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
-	// setPubData: PropTypes.func.isRequired,
 };
 
 // const defaultProps = {
@@ -150,7 +149,6 @@ const PubHeader = (props) => {
 		// { title: 'Discussions', icon: 'chat', key: 'discussions' },
 	];
 
-	const manageMode = locationData.params && locationData.params.manageMode;
 	const accentColor =
 		pubData.headerStyle === 'white-blocks'
 			? communityData.accentColorDark
@@ -322,10 +320,9 @@ const PubHeader = (props) => {
 									<React.Fragment>
 										<a href={`/pub/${pubData.slug}`} className="text-wrapper">
 											{pubData.title}
-										</a>	
+										</a>
 										{generateHeaderBreadcrumbs(pubData, locationData)}
 									</React.Fragment>
-									
 								)}
 							</React.Fragment>
 						)}
@@ -469,9 +466,7 @@ const PubHeader = (props) => {
 																			pubData.activeBranch
 																				.id === branch.id
 																		}
-																		href={`/pub/${
-																			pubData.slug
-																		}/${branchUrlSuffix}`}
+																		href={`/pub/${pubData.slug}/${branchUrlSuffix}`}
 																	/>
 																);
 															})}
@@ -532,9 +527,7 @@ const PubHeader = (props) => {
 															</span>
 														</div>
 													),
-													href: `/pub/${pubData.slug}/merge/${
-														pubData.activeBranch.shortId
-													}/${publicBranch.shortId}`,
+													href: `/pub/${pubData.slug}/merge/${pubData.activeBranch.shortId}/${publicBranch.shortId}`,
 													isWide: true,
 												},
 											]}
@@ -555,9 +548,7 @@ const PubHeader = (props) => {
 														</span>
 													</div>
 												),
-												href: `/pub/${pubData.slug}/reviews/new/${
-													pubData.activeBranch.shortId
-												}/${publicBranch.shortId}`,
+												href: `/pub/${pubData.slug}/reviews/new/${pubData.activeBranch.shortId}/${publicBranch.shortId}`,
 
 												isWide: true,
 											},

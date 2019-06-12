@@ -67,6 +67,7 @@ class Media extends Component {
 		const componentProps = {
 			onInsert: this.props.onInsert,
 			isSmall: this.props.isSmall,
+			editorChangeObject: this.props.editorChangeObject,
 		};
 		return (
 			<div className="formatting-bar_media-component">

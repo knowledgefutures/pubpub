@@ -218,9 +218,7 @@ class Collections extends React.Component {
 					title={isFiltering ? 'No matching collections found' : 'No collections yet!'}
 					description={
 						matchCollectionSchema
-							? `You can create ${
-									matchCollectionSchema.label.plural
-							  } with the buttons above.`
+							? `You can create ${matchCollectionSchema.label.plural} with the buttons above.`
 							: 'You can start creating collections with the buttons above.'
 					}
 				/>

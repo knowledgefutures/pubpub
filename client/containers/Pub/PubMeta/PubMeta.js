@@ -14,6 +14,8 @@ require('./pubMeta.scss');
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,
+	historyData: PropTypes.shape({}).isRequired,
+	collabData: PropTypes.shape({}).isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
 

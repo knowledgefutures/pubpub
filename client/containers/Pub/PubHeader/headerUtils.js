@@ -35,14 +35,13 @@ export const generateSubmissionButtons = (pubData) => {
 				<span className="action-subtext">{buttonSubText}</span>
 			</div>
 		),
-		href: `/pub/${pubData.slug}/submissions/new/${pubData.activeBranch.shortId}/${
-			defaultSubmissionBranch.shortId
-		}`,
+		href: `/pub/${pubData.slug}/submissions/new/${pubData.activeBranch.shortId}/${defaultSubmissionBranch.shortId}`,
 		isWide: true,
 	});
 
 	/* TODO-BRANCH: The following 'false' is because we only want to support publishing */
 	/* to a public branch until full branch capabilities are rolled out */
+	// eslint-disable-next-line no-constant-condition
 	if (false && pubData.branches.length > 2) {
 		outputButtons.push({
 			// text: 'hello',
@@ -62,9 +61,7 @@ export const generateSubmissionButtons = (pubData) => {
 								return (
 									<MenuItem
 										key={branch.id}
-										href={`/pub/${pubData.slug}/submissions/new/${
-											pubData.activeBranch.shortId
-										}/${branch.shortId}`}
+										href={`/pub/${pubData.slug}/submissions/new/${pubData.activeBranch.shortId}/${branch.shortId}`}
 										text={
 											<div className="text-stack">
 												<span>{branch.submissionAlias || 'To'}</span>

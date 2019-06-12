@@ -5,6 +5,10 @@ import { pubData, fullDoc } from 'data';
 
 storiesOf('containers/Pub/PubDocument/PubBody', module).add('default', () => (
 	<div style={{ padding: '2em' }}>
-		<PubBody collabData={{}} pubData={{ ...pubData, initialDoc: fullDoc }} />
+		<PubBody
+			collabData={{}}
+			pubData={{ ...pubData, initialDoc: fullDoc }}
+			updateLocalData={() => {}}
+		/>
 	</div>
 ));

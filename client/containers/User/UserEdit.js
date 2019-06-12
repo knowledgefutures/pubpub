@@ -232,9 +232,7 @@ class UserEdit extends Component {
 									label="Title"
 									value={this.state.title}
 									onChange={this.onTitleChange}
-									helperText={`${
-										this.state.title.length
-									}/70 characters. Displayed by your name on discussions.`}
+									helperText={`${this.state.title.length}/70 characters. Displayed by your name on discussions.`}
 								/>
 								<InputField
 									label="Bio"

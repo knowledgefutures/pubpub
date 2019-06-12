@@ -233,9 +233,7 @@ class Header extends Component {
 												>
 													<Menu>
 														{linkItem.children.map((child, cIndex) => {
-															const childKey = `${cIndex}-${
-																child.title
-															}`;
+															const childKey = `${cIndex}-${child.title}`;
 															return (
 																<MenuItem
 																	key={childKey}
@@ -311,9 +309,7 @@ class Header extends Component {
 												<Menu>
 													<li>
 														<a
-															href={`/user/${
-																this.props.loginData.slug
-															}`}
+															href={`/user/${this.props.loginData.slug}`}
 															className="bp3-menu-item bp3-popover-dismiss"
 														>
 															<div>

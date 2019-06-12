@@ -166,9 +166,7 @@ const mapVersionsToChangeIndices = (versions, intermediateDocStates, draftBranch
 		).next();
 		versionIndexMap.set(version, nextState.index);
 		warn(
-			`creating ReplaceStep at index ${nextState.index} to accomodate orphan version ${
-				version.id
-			}`,
+			`creating ReplaceStep at index ${nextState.index} to accomodate orphan version ${version.id}`,
 		);
 		// eslint-disable-next-line no-param-reassign
 		intermediateDocStates = [...intermediateDocStates, nextState];

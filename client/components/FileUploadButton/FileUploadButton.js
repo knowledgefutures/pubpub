@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { AnchorButton, Button } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 import { s3Upload } from 'utils';
 

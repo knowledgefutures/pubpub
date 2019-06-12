@@ -86,9 +86,7 @@ class User extends Component {
 										<div className="col-12">
 											<div className="bp3-callout external-pubs-wrapper">
 												<a
-													href={`https://www.pubpub.org/user/${
-														userData.slug
-													}`}
+													href={`https://www.pubpub.org/user/${userData.slug}`}
 													className="bp3-button bp3-intent-primary"
 												>
 													Go to Full Profile

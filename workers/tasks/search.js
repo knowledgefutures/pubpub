@@ -1,3 +1,5 @@
+/* eslint-disable */
+// TODO(ian): Remove this eslint-disable once this has been written for v6
 import { Op } from 'sequelize';
 import algoliasearch from 'algoliasearch';
 import stopword from 'stopword';

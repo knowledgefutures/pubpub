@@ -163,9 +163,7 @@ const Permissions = (props) => {
 			});
 	};
 
-	const baseUrl = `https://${locationData.hostname}/pub/${pubData.slug}/branch/${
-		pubData.activeBranch.shortId
-	}`;
+	const baseUrl = `https://${locationData.hostname}/pub/${pubData.slug}/branch/${pubData.activeBranch.shortId}`;
 
 	const accessLinks = [
 		{

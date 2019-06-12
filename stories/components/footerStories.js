@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { Footer, AccentStyle, Icon } from 'components';
-import { accentDataDark, accentDataLight, communityData } from 'data';
+import { communityData } from 'data';
 
 const wrapperStyle = { margin: '1em 0em' };
 
@@ -32,7 +32,7 @@ const customSocialItems = [
 storiesOf('components/Footer', module)
 	.add('Dark', () => (
 		<div>
-			<AccentStyle {...accentDataDark} />
+			<AccentStyle communityData={communityData} isNavHidden={false} />
 
 			<div style={wrapperStyle}>
 				<Footer
@@ -53,13 +53,18 @@ storiesOf('components/Footer', module)
 			</div>
 
 			<div style={wrapperStyle}>
-				<Footer isAdmin={false} isBasePubPub={true} communityData={communityData} />
+				<Footer
+					isAdmin={false}
+					isBasePubPub={true}
+					communityData={communityData}
+					socialItems={customSocialItems}
+				/>
 			</div>
 		</div>
 	))
 	.add('Light', () => (
 		<div>
-			<AccentStyle {...accentDataLight} />
+			<AccentStyle communityData={communityData} isNavHidden={false} />
 			<div style={wrapperStyle}>
 				<Footer
 					isAdmin={true}

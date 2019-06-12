@@ -218,11 +218,7 @@ class NavDrag extends Component {
 																				) => {
 																					return (
 																						<Draggable
-																							key={`subitem-${
-																								item.id
-																							}-${
-																								child.id
-																							}`}
+																							key={`subitem-${item.id}-${child.id}`}
 																							draggableId={
 																								child.id
 																							}

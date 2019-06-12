@@ -549,7 +549,7 @@ new Promise((resolve) => {
 	// 		.then(collections => collections
 	// 			.reduce((promise, collection) => {
 	// 				console.log("Collection", collection.id);
-	// 				return promise.then(() => 
+	// 				return promise.then(() =>
 	// 					CollectionPub.findAll({where: {collectionId: collection.id, rank: null }})
 	// 						.then(collectionPubs => {
 	// 							const ranks = mudder.base36.mudder('a', 'z', collectionPubs.length);
@@ -635,7 +635,9 @@ new Promise((resolve) => {
 	// 	return sequelize.queryInterface.addColumn('Communities', 'useHeaderTextAccent', { type: Sequelize.BOOLEAN });
 	// })
 	.then(() => {
-		return sequelize.queryInterface.addColumn('Users', 'gdprConsent', { type: Sequelize.BOOLEAN });
+		return sequelize.queryInterface.addColumn('Users', 'gdprConsent', {
+			type: Sequelize.BOOLEAN,
+		});
 	})
 	.catch((err) => {
 		console.log('Error with Migration', err);

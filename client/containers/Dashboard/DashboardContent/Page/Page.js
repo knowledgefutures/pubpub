@@ -232,9 +232,7 @@ class Page extends Component {
 							label="Link"
 							placeholder="Enter link"
 							isRequired={true}
-							helperText={`Page URL will be https://${
-								this.props.locationData.hostname
-							}/${this.state.slug}`}
+							helperText={`Page URL will be https://${this.props.locationData.hostname}/${this.state.slug}`}
 							value={this.state.slug}
 							onChange={this.setSlug}
 							error={undefined}

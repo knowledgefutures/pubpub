@@ -1,4 +1,4 @@
-import { addWorkerTask } from '../utils';
+import { addWorkerTask } from '.';
 import { WorkerTask } from '../models';
 
 const generateTask = (type, input) => {

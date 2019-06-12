@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { Header, AccentStyle } from 'components';
-import { accentDataLight, locationData, loginData } from 'data';
+import { locationData, loginData } from 'data';
 
 const wrapperStyle = { margin: '2em 1em', border: '1px solid #CCC' };
 
@@ -29,7 +29,7 @@ const communityData = {};
 
 storiesOf('components/Header', module).add('default', () => (
 	<div>
-		<AccentStyle {...accentDataLight} />
+		<AccentStyle communityData={communityData} isNavHidden={false} />
 		<div style={wrapperStyle}>
 			<Header
 				communityData={{

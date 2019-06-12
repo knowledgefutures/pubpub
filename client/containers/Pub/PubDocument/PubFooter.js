@@ -1,12 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { pubDataProps } from 'types/pub';
 
 require('./pubFooter.scss');
-
-const propTypes = {
-	pubData: pubDataProps.isRequired,
-};
 
 const PubFooter = function() {
 	return (
@@ -28,5 +22,4 @@ const PubFooter = function() {
 	);
 };
 
-PubFooter.propTypes = propTypes;
 export default PubFooter;

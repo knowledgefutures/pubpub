@@ -53,9 +53,7 @@ const addDiscussionToBranch = (discussion, { branch, targetIndex }) => {
 					const bounds = prosemirrorBisect(doc, highlight.exact);
 					if (bounds) {
 						warn(
-							`Making a best guess at highlight for discussion ${
-								discussion.id
-							} on branch ${branch.name}`,
+							`Making a best guess at highlight for discussion ${discussion.id} on branch ${branch.name}`,
 						);
 						return {
 							entry: entry,

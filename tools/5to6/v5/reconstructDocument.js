@@ -1,10 +1,9 @@
 /* eslint-disable no-restricted-syntax, no-loop-func */
 const { uncompressStateJSON } = require('prosemirror-compress-pubpub');
-const { Transform } = require('prosemirror-transform');
 
 const { warn } = require('../problems');
 const editorSchema = require('../util/editorSchema');
-const { jsonToDoc, docToString } = require('../util/docUtils');
+const { jsonToDoc } = require('../util/docUtils');
 const { createReplaceWholeDocumentChange } = require('./changes');
 
 /**

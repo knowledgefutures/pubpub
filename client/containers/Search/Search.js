@@ -251,9 +251,7 @@ class Search extends Component {
 											);
 
 											if (this.state.mode === 'pubs') {
-												link = `https://${item.communityDomain}/pub/${
-													item.slug
-												}`;
+												link = `https://${item.communityDomain}/pub/${item.slug}`;
 												bannerStyle = item.avatar
 													? {
 															backgroundImage: `url("${resizedBannerImage}")`,
@@ -267,9 +265,7 @@ class Search extends Component {
 												isPublic = item.versionIsPublic;
 											}
 											if (this.state.mode === 'pages') {
-												link = `https://${item.communityDomain}/${
-													item.slug
-												}`;
+												link = `https://${item.communityDomain}/${item.slug}`;
 												bannerStyle = item.avatar
 													? {
 															backgroundImage: `url("${resizedBannerImage}")`,
@@ -310,9 +306,7 @@ class Search extends Component {
 																.isBasePubPub && (
 																<div className="community-title">
 																	<a
-																		href={`https://${
-																			item.communityDomain
-																		}`}
+																		href={`https://${item.communityDomain}`}
 																		alt={item.communityTitle}
 																		style={{
 																			backgroundColor:
@@ -323,9 +317,7 @@ class Search extends Component {
 																	>
 																		{resizedCommunityLogo && (
 																			<img
-																				alt={`${
-																					item.communityTitle
-																				} logo`}
+																				alt={`${item.communityTitle} logo`}
 																				src={
 																					resizedCommunityLogo
 																				}

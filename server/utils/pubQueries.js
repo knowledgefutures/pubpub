@@ -12,7 +12,6 @@ import {
 	PubAttribution,
 	CollectionPub,
 	Collection,
-	CollectionAttribution,
 	Page,
 	Branch,
 	BranchPermission,

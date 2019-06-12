@@ -38,13 +38,13 @@ class DiscussionEmbed extends Component {
 		};
 
 		const threads = this.props.options.getThreads();
-		const pubData = this.props.options.getPubData();
-		const locationData = this.props.options.getLocationData();
-		const loginData = this.props.options.getLoginData();
-		const onPostDiscussion = this.props.options.getOnPostDiscussion();
-		const onPutDiscussion = this.props.options.getOnPutDiscussion();
-		const getHighlightContent = this.props.options.getGetHighlightContent();
-		const handleQuotePermalink = this.props.options.getHandleQuotePermalink();
+		// const pubData = this.props.options.getPubData();
+		// const locationData = this.props.options.getLocationData();
+		// const loginData = this.props.options.getLoginData();
+		// const onPostDiscussion = this.props.options.getOnPostDiscussion();
+		// const onPutDiscussion = this.props.options.getOnPutDiscussion();
+		// const getHighlightContent = this.props.options.getGetHighlightContent();
+		// const handleQuotePermalink = this.props.options.getHandleQuotePermalink();
 
 		const activeThread = threads.reduce((prev, curr) => {
 			if (curr[0].threadNumber === this.props.attrs.threadNumber) {

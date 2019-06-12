@@ -28,9 +28,7 @@ export const createPasswordReset = (inputValues, user, hostname) => {
 			const updatedUser = updatedUserData[1][0];
 			return sendPasswordResetEmail({
 				toEmail: updatedUser.email,
-				resetUrl: `https://${hostname}/password-reset/${updatedUser.resetHash}/${
-					updatedUser.slug
-				}`,
+				resetUrl: `https://${hostname}/password-reset/${updatedUser.resetHash}/${updatedUser.slug}`,
 			});
 		});
 };

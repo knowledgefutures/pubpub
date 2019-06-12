@@ -7,10 +7,10 @@ const propTypes = {
 	prefix: PropTypes.node,
 	isSmall: PropTypes.bool,
 	isMinimal: PropTypes.bool,
-	value: PropTypes.string,
 	onChange: PropTypes.func,
 	isDisabled: PropTypes.bool,
 	allowedTypes: PropTypes.array.isRequired,
+	value: PropTypes.string.isRequired,
 };
 const defaultProps = {
 	prefix: '',

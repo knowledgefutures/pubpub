@@ -223,7 +223,8 @@ export default {
 			submissionAlias: null,
 			order: 0,
 			communityAdminPermissions: 'none',
-			publicPermissions: 'edit',
+			publicPermissions: 'view',
+			pubManagerPermissions: 'view',
 			permissions: [
 				{
 					id: '00ed4bc1-a408-4725-87f4-b07a41b2cfb5',
@@ -259,7 +260,8 @@ export default {
 			submissionAlias: 'Submit for Review',
 			order: 1,
 			communityAdminPermissions: 'none',
-			publicPermissions: 'edit',
+			publicPermissions: 'view',
+			pubManagerPermissions: 'view',
 			permissions: [],
 			isActive: false,
 			viewHash: 'cat2',

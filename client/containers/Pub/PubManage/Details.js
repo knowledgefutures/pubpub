@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Checkbox } from '@blueprintjs/core';
+import { Button, ButtonGroup } from '@blueprintjs/core';
 import { InputField, ImageUpload, SettingsSection } from 'components';
 import { apiFetch, slugifyString } from 'utils';
 
@@ -186,9 +186,7 @@ class Details extends Component {
 					/>
 					<InputField
 						label="Link"
-						helperText={`Pub will be available at ${
-							this.props.locationData.hostname
-						}/pub/${this.state.slug}`}
+						helperText={`Pub will be available at ${this.props.locationData.hostname}/pub/${this.state.slug}`}
 						value={this.state.slug}
 						onChange={this.updateSlug}
 						error={!this.state.slug ? 'Required' : null}

@@ -1,1 +1,1 @@
-export { default } from'./CollectionEditor';
+export { default } from './CollectionEditor';

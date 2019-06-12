@@ -1,18 +1,18 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import DashboardSettings from 'containers/Dashboard/DashboardContent/';
+import DashboardContent from 'containers/Dashboard/DashboardContent/';
 import { AccentStyle } from 'components';
-import { accentDataDark, pubData, communityData } from 'data';
+import { pubData, communityData } from 'data';
 
 require('containers/Dashboard/dashboard.scss');
 
-storiesOf('containers/Dashboard/DashboardContent/Settings', module).add('default', () => (
+storiesOf('containers/Dashboard/DashboardContent', module).add('default', () => (
 	<div id="dashboard-container">
-		<AccentStyle {...accentDataDark} />
+		<AccentStyle communityData={communityData} isNavHidden={false} />
 
 		<div style={{ padding: '20px' }}>
 			<div className="right-column">
-				<DashboardSettings pubData={pubData} communityData={communityData} />
+				<DashboardContent pubData={pubData} communityData={communityData} mode="settings" />
 			</div>
 		</div>
 	</div>

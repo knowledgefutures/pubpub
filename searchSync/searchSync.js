@@ -1,3 +1,5 @@
+/* eslint-disable */
+// TODO(ian): Remove this eslint-disable once this has been written for v6
 import { Op } from 'sequelize';
 /* eslint-disable no-console */
 /* eslint-disable newline-per-chained-call */

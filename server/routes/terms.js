@@ -2,12 +2,7 @@ import React from 'react';
 import { Terms } from 'containers';
 import Html from '../Html';
 import app from '../server';
-import {
-	renderToNodeStream,
-	getInitialData,
-	handleErrors,
-	generateMetaComponents,
-} from '../utils';
+import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
 
 app.get('/tos', (req, res, next) => {
 	return getInitialData(req)

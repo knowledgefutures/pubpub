@@ -4,12 +4,7 @@ import { UserCreate } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { Signup } from '../models';
-import {
-	renderToNodeStream,
-	getInitialData,
-	handleErrors,
-	generateMetaComponents,
-} from '../utils';
+import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
 
 app.get('/user/create/:hash', (req, res, next) => {
 	const getSignup = Signup.findOne({

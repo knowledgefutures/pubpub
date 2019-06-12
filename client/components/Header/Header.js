@@ -14,6 +14,7 @@ import {
 	Intent,
 } from '@blueprintjs/core';
 import { apiFetch, getResizedUrl } from 'utils';
+import GdprBanner from '../GdprBanner/GdprBanner';
 
 require('./header.scss');
 
@@ -195,6 +196,7 @@ class Header extends Component {
 
 		return (
 			<nav className={`header-component ${componentClasses}`} style={backgroundStyle}>
+				<GdprBanner loginData={this.props.loginData} />
 				<div className={mainClasses}>
 					<div className="container">
 						<div className="row">

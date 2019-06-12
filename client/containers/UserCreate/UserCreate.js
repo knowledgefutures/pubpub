@@ -5,6 +5,7 @@ import encHex from 'crypto-js/enc-hex';
 import { Button, NonIdealState, Checkbox } from '@blueprintjs/core';
 import { InputField, ImageUpload, PageWrapper, Icon } from 'components';
 import { hydrateWrapper, apiFetch } from 'utils';
+import { gdprCookiePersistsSignup, getGdprConsentElection } from 'utils/gdprConsent';
 
 require('./userCreate.scss');
 
@@ -69,6 +70,7 @@ class UserCreate extends Component {
 				twitter: this.state.twitter,
 				facebook: this.state.facebook,
 				googleScholar: this.state.googleScholar,
+				gdprConsent: gdprCookiePersistsSignup() ? getGdprConsentElection() : null,
 			}),
 		})
 			.then(() => {

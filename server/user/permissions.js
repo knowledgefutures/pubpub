@@ -28,6 +28,7 @@ export const getPermissions = ({ userId, submittedUserId, email, hash }) => {
 			'twitter',
 			'facebook',
 			'googleScholar',
+			'gdprConsent',
 		];
 
 		const isAuthenticated = submittedUserId === userId || isSuperAdmin;

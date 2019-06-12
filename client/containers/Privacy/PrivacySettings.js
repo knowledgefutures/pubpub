@@ -52,7 +52,7 @@ const ThirdPartyAnalyticsCard = () => {
 				If you allow us to enable Keen while you browse, we'll send requests to their
 				servers containing things like the URL of the current page, your browser version,
 				and your IP address. If you're logged in, we'll also send your PubPub user ID, which
-				made of random letters and numbers. We'll never send Keen any identifying
+				is made of random letters and numbers. We'll never send Keen any identifying
 				information such as your name, affiliation, or email address.
 			</p>
 			<Switch

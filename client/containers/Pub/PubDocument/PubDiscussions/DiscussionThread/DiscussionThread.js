@@ -15,7 +15,7 @@ const propTypes = {
 };
 
 const DiscussionThread = (props) => {
-	const { threadData } = props;
+	const { pubData, threadData } = props;
 	return (
 		<div className="discussion-thread-component" tabIndex={-1}>
 			{threadData
@@ -23,7 +23,7 @@ const DiscussionThread = (props) => {
 				.map((item) => {
 					return <DiscussionItem key={item.id} discussionData={item} {...props} />;
 				})}
-			<DiscussionInput key={threadData.length} {...props} />
+			{pubData.canDiscussBranch && <DiscussionInput key={threadData.length} {...props} />}
 		</div>
 	);
 };

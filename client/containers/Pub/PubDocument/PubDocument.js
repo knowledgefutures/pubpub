@@ -28,11 +28,12 @@ const defaultProps = {
 };
 
 const PubDocument = (props) => {
+	const { pubData, collabData } = props;
 	const [linkPopupIsOpen, setLinkPopupIsOpen] = useState(false);
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	const [clickedMarks, setClickedMarks] = useState([]);
 	// const [tempId, setTempId] = useState(uuidv4());
-	const editorChangeObject = props.collabData.editorChangeObject;
+	const editorChangeObject = collabData.editorChangeObject;
 	const mainContentRef = useRef(null);
 	const sideContentRef = useRef(null);
 
@@ -69,20 +70,20 @@ const PubDocument = (props) => {
 	// We use the useEffect hook to wait until after the render to show or hide discussions, since
 	// they mount into portals that we rely on Prosemirror to create.
 	useEffect(() => {
-		setDiscussionsShown(props.pubData.metaMode !== 'history');
-	}, [props.pubData.metaMode]);
+		setDiscussionsShown(pubData.metaMode !== 'history');
+	}, [pubData.metaMode]);
 
 	const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			{!props.pubData.isStaticDoc && props.pubData.metaMode !== 'history' && (
-				<PubHeaderFormatting pubData={props.pubData} collabData={props.collabData} />
+			{!pubData.isStaticDoc && pubData.metaMode !== 'history' && (
+				<PubHeaderFormatting pubData={pubData} collabData={collabData} />
 			)}
 			<GridWrapper containerClassName="pub" columnClassName="pub-columns">
 				<div className="main-content" ref={mainContentRef}>
 					<PubBody
-						pubData={props.pubData}
-						collabData={props.collabData}
+						pubData={pubData}
+						collabData={collabData}
 						historyData={props.historyData}
 						firebaseBranchRef={props.firebaseBranchRef}
 						updateLocalData={props.updateLocalData}
@@ -91,18 +92,18 @@ const PubDocument = (props) => {
 							setClickedMarks(marksAtSelection(view));
 						}}
 					/>
-					{props.pubData.metaMode !== 'history' && (
+					{pubData.metaMode !== 'history' && (
 						<PubInlineImport
-							pubData={props.pubData}
-							editorView={props.collabData.editorChangeObject.view}
+							pubData={pubData}
+							editorView={collabData.editorChangeObject.view}
 						/>
 					)}
-					<PubFooter pubData={props.pubData} />
+					<PubFooter pubData={pubData} />
 
 					{areDiscussionsShown && (
 						<PubDiscussions
-							pubData={props.pubData}
-							collabData={props.collabData}
+							pubData={pubData}
+							collabData={collabData}
 							firebaseBranchRef={props.firebaseBranchRef}
 							updateLocalData={props.updateLocalData}
 							mainContentRef={mainContentRef}
@@ -110,26 +111,21 @@ const PubDocument = (props) => {
 						/>
 					)}
 
-					{!linkPopupIsOpen && editorFocused && (
+					{!linkPopupIsOpen && (editorFocused || pubData.isStaticDoc) && (
 						<PubInlineMenu
-							pubData={props.pubData}
-							collabData={props.collabData}
+							pubData={pubData}
+							collabData={collabData}
 							historyData={props.historyData}
 							openLinkMenu={() => {
 								setLinkPopupIsOpen(true);
 							}}
 						/>
 					)}
-					{linkPopupIsOpen && (
-						<PubLinkMenu pubData={props.pubData} collabData={props.collabData} />
-					)}
+					{linkPopupIsOpen && <PubLinkMenu pubData={pubData} collabData={collabData} />}
 				</div>
 				<div className="side-content" ref={sideContentRef}>
-					<PubToc
-						pubData={props.pubData}
-						editorChangeObject={props.collabData.editorChangeObject}
-					/>
-					<PubSideCollaborators pubData={props.pubData} />
+					<PubToc pubData={pubData} editorChangeObject={collabData.editorChangeObject} />
+					<PubSideCollaborators pubData={pubData} />
 				</div>
 			</GridWrapper>
 		</div>

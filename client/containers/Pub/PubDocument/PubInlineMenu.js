@@ -4,7 +4,7 @@ import { Button } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import uuidv4 from 'uuid/v4';
-import { setLocalHighlight } from '@pubpub/editor';
+import { setLocalHighlight, cursor } from '@pubpub/editor';
 
 require('./pubInlineMenu.scss');
 
@@ -83,14 +83,17 @@ const PubInlineMenu = (props) => {
 						/>
 					);
 				})}
-			<Button
-				minimal={true}
-				icon={<Icon icon="chat" />}
-				onClick={() => {
-					const view = collabData.editorChangeObject.view;
-					setLocalHighlight(view, selection.from, selection.to, uuidv4());
-				}}
-			/>
+			{pubData.canDiscussBranch && (
+				<Button
+					minimal={true}
+					icon={<Icon icon="chat" />}
+					onClick={() => {
+						const view = collabData.editorChangeObject.view;
+						setLocalHighlight(view, selection.from, selection.to, uuidv4());
+						cursor.moveToEndOfSelection(collabData.editorChangeObject.view);
+					}}
+				/>
+			)}
 			{/* <Button
 				minimal={true}
 				icon="link"

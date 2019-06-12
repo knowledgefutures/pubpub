@@ -1,14 +1,7 @@
 .gdpr-banner-component {
     display: flex;
-    color: white;
     background: black;
     padding: 10px;
-    h3 {
-        color: white;
-    }
-    a, a:visited, a:hover {
-        color: white;
-    }
     .logo {
         display: flex;
         align-items: center;
@@ -20,6 +13,13 @@
     }
     .notice {
         flex-grow: 1;
+        color: white;
+        h3 {
+            color: white;
+        }
+        a, a:visited, a:hover {
+            color: white;
+        }
     }
     .buttons {
         display: flex;

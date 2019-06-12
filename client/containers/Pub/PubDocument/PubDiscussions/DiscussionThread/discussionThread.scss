@@ -75,8 +75,12 @@
 	.formatting-bar-component {
 		margin: -0.5em 0em 0.5em;
 	}
-	.discussion-primary-button {
-		margin-right: 1em;
+	.discussion-primary-button, .discussion-cancel-button {
+		margin-bottom: 1em;
+		white-space: nowrap;
+		&:not(:last-child) {
+			margin-right: 1em;
+		}
 	}
 }
 

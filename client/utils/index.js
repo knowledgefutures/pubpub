@@ -1,93 +1,8 @@
-import React from 'react';
-import Raven from 'raven-js';
-import { hydrate } from 'react-dom';
-import { FocusStyleManager } from '@blueprintjs/core';
-import KeenTracking from 'keen-tracking';
 import { remove as removeDiacritics } from 'diacritics';
+import { isProd } from './isProd';
 
-const isStorybookEnv = (windowObj) =>
-	windowObj.location.origin === 'http://localhost:9001' || windowObj.STORYBOOK_ENV === 'react';
-
-let isPubPubProduction = false;
-export const hydrateWrapper = (Component) => {
-	if (typeof window !== 'undefined' && !isStorybookEnv(window)) {
-		FocusStyleManager.onlyShowFocusOnTabs();
-
-		/* Remove any leftover service workers from last PubPub instance */
-		if (window.navigator && navigator.serviceWorker) {
-			navigator.serviceWorker.getRegistrations().then((registrations) => {
-				registrations.forEach((registration) => {
-					registration.unregister();
-				});
-			});
-		}
-
-		const initialData = JSON.parse(
-			document.getElementById('initial-data').getAttribute('data-json'),
-		);
-		isPubPubProduction = initialData.locationData.isPubPubProduction;
-
-		const isDev = window.location.origin.indexOf('localhost:') > -1;
-		if (!isDev) {
-			Raven.config('https://b4764efd07c240488d390c8343193208@sentry.io/197897').install();
-			Raven.setUserContext({ username: initialData.loginData.slug });
-
-			/* Keen Code */
-			const keenEnvironment = isPubPubProduction
-				? {
-						projectId: '5b57a01ac9e77c0001eef181',
-						writeKey:
-							'BA7C339A2A000ADC20572BBE37F49872DD8AB8EECBAF03E23AB8EDEF47E56FE9D1A54F63A7FC9548B06D7FF9AA057141E029369E637317B1E276CCE8206745A8D96CAFFFF2D6C4DB15E9E2D5C410426821E8379D0760A482ECF37C2F3868881C',
-				  }
-				: {
-						projectId: '5b5791b9c9e77c000175ca3b',
-						writeKey:
-							'44F36099BAA3DF17892D232C2D9A807E817FCA0D99461DBDCA05CB97E760D57409145F6E2045B616ED3BD16C3B4A75A467240F23CE78E09BB7515603C3DFD2061F430B27CDA4059F059EF58702514CDE5A09CD5134E6530CFAD8589D5341D185',
-				  };
-			const client = new KeenTracking(keenEnvironment);
-
-			const customEventData = {};
-			if (initialData.communityData) {
-				customEventData.communityId = initialData.communityData.id;
-			}
-			if (initialData.collectionData) {
-				customEventData.pageId = initialData.collectionData.id;
-			}
-			if (initialData.pubData) {
-				customEventData.pubId = initialData.pubData.id;
-				customEventData.branchId = initialData.pubData.activeBranch.id;
-			}
-			if (initialData.loginData.id) {
-				customEventData.userId = initialData.loginData.id;
-			}
-			client.extendEvents({ pubpub: customEventData });
-			client.initAutoTracking({
-				// recordPageViews: true,
-				recordPageViewsOnExit: true,
-			});
-		}
-
-		hydrate(<Component {...initialData} />, document.getElementById('root'));
-	}
-};
-
-export const apiFetch = function(path, opts) {
-	return fetch(path, {
-		...opts,
-		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-		},
-		credentials: 'include',
-	}).then((response) => {
-		if (!response.ok) {
-			return response.json().then((err) => {
-				throw err;
-			});
-		}
-		return response.json();
-	});
-};
+export { hydrateWrapper } from './hydrateWrapper';
+export { apiFetch } from './apiFetch';
 
 export const getFirebaseConfig = function() {
 	return {
@@ -96,7 +11,7 @@ export const getFirebaseConfig = function() {
 		projectId: 'pubpub-v6',
 		storageBucket: 'pubpub-v6.appspot.com',
 		messagingSenderId: '503345633278',
-		databaseURL: isPubPubProduction
+		databaseURL: isProd()
 			? 'https://pubpub-v6-prod.firebaseio.com'
 			: 'https://pubpub-v6-dev.firebaseio.com',
 	};
@@ -303,7 +218,7 @@ export function checkForAsset(url) {
 
 export function s3Upload(file, progressEvent, finishEvent, index) {
 	function beginUpload() {
-		const folderName = isPubPubProduction ? generateHash(8) : '_testing';
+		const folderName = isProd() ? generateHash(8) : '_testing';
 
 		const extension = file.name !== undefined ? file.name.split('.').pop() : 'jpg';
 

@@ -1,0 +1,41 @@
+.gdpr-banner-component {
+    display: flex;
+    color: white;
+    background: black;
+    padding: 10px;
+    h3 {
+        color: white;
+    }
+    a, a:visited, a:hover {
+        color: white;
+    }
+    .logo {
+        display: flex;
+        align-items: center;
+        img {
+            height: 50px;
+            display: block;
+        }
+        padding-right: 15px;
+    }
+    .notice {
+        flex-grow: 1;
+    }
+    .buttons {
+        display: flex;
+        align-items: center;
+        @media screen and (max-width: 720px) {
+            flex-direction: column;
+            padding-top: 10px;
+            padding-left: 15px;
+            padding-right: 10px;
+            & > * {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+        & > * {
+            margin-left: 10px;
+        }
+    }
+}

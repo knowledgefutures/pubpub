@@ -72,6 +72,7 @@ export const getInitialData = (req) => {
 		lastName: user.lastName,
 		avatar: user.avatar,
 		title: user.title,
+		gdprConsent: user.gdprConsent,
 	};
 
 	/* Gather location data */

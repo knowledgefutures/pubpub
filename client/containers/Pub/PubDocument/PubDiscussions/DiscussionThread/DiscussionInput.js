@@ -6,7 +6,7 @@ import Editor, {
 	removeLocalHighlight,
 	convertLocalHighlightToDiscussion,
 } from '@pubpub/editor';
-import { Button, Intent } from '@blueprintjs/core';
+import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { Avatar, FormattingBar } from 'components';
 import { apiFetch } from 'utils';
@@ -22,7 +22,7 @@ const propTypes = {
 
 const DiscussionInput = (props) => {
 	const { pubData, collabData, updateLocalData, threadData, setActiveThread } = props;
-	const { loginData, communityData } = useContext(PageContext);
+	const { loginData, locationData, communityData } = useContext(PageContext);
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
@@ -73,12 +73,36 @@ const DiscussionInput = (props) => {
 			});
 	};
 
+	const isLoggedIn = loginData.id;
+	const redirectString = `?redirect=${locationData.path}${
+		locationData.queryString.length > 1 ? locationData.queryString : ''
+	}`;
 	return (
 		<div className="discussion-item input">
 			<div className="avatar-wrapper">
 				<Avatar width={18} userInitials={loginData.intials} userAvatar={loginData.avatar} />
 			</div>
-			{!isNewThread && !didFocus && (
+			{!isLoggedIn && (
+				<React.Fragment>
+					<AnchorButton
+						className="discussion-primary-button"
+						text="Login to discuss"
+						href={`/login${redirectString}`}
+						small={true}
+					/>
+					{isNewThread && (
+						<Button
+							className="discussion-cancel-button"
+							text="Cancel"
+							small={true}
+							onClick={() => {
+								removeLocalHighlight(pubView, threadData[0].id);
+							}}
+						/>
+					)}
+				</React.Fragment>
+			)}
+			{isLoggedIn && !isNewThread && !didFocus && (
 				<input
 					type="text"
 					className="simple-input"
@@ -88,7 +112,7 @@ const DiscussionInput = (props) => {
 					}}
 				/>
 			)}
-			{(isNewThread || didFocus) && (
+			{isLoggedIn && (isNewThread || didFocus) && (
 				<div className="content-wrapper">
 					<div className="discussion-body-wrapper editable">
 						<Editor
@@ -116,7 +140,9 @@ const DiscussionInput = (props) => {
 					/>
 					{isNewThread && (
 						<Button
+							className="discussion-cancel-button"
 							text="Cancel"
+							small={true}
 							onClick={() => {
 								removeLocalHighlight(pubView, threadData[0].id);
 							}}

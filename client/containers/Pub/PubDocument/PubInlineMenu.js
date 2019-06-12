@@ -2,9 +2,10 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
+import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import uuidv4 from 'uuid/v4';
-import { setLocalHighlight } from '@pubpub/editor';
+import { setLocalHighlight, cursor } from '@pubpub/editor';
 
 require('./pubInlineMenu.scss');
 
@@ -83,27 +84,22 @@ const PubInlineMenu = (props) => {
 						/>
 					);
 				})}
-			<Button
-				minimal={true}
-				icon={<Icon icon="chat" />}
-				onClick={() => {
-					const view = collabData.editorChangeObject.view;
-					setLocalHighlight(view, selection.from, selection.to, uuidv4());
-				}}
+			{pubData.canDiscussBranch && !locationData.params.versionNumber && (
+				<Button
+					minimal={true}
+					icon={<Icon icon="chat" />}
+					onClick={() => {
+						const view = collabData.editorChangeObject.view;
+						setLocalHighlight(view, selection.from, selection.to, uuidv4());
+						cursor.moveToEndOfSelection(collabData.editorChangeObject.view);
+					}}
+				/>
+			)}
+			<ClickToCopyButton
+				className="click-to-copy"
+				copyString={`https://${locationData.hostname}/pub/${pubData.slug}/branch/${pubData.activeBranch.shortId}/${historyData.currentKey}?from=${selection.from}&to=${selection.to}`}
+				beforeCopyPrompt="Copy a permalink"
 			/>
-			{/* <Button
-				minimal={true}
-				icon="link"
-				onClick={() => {
-					console.log(historyData, selection);
-					console.log(
-						'Permalink is: ',
-						`https://${locationData.hostname}/pub/${pubData.slug}/branch/${
-							pubData.activeBranch.shortId
-						}/${historyData.currentKey}?from=${selection.from}&to=${selection.to}`,
-					);
-				}}
-			/> */}
 		</div>
 	);
 };

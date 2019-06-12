@@ -52,6 +52,7 @@ export default (sequelize, dataTypes) => {
 			passwordDigest: { type: dataTypes.TEXT },
 			hash: { type: dataTypes.TEXT, allowNull: false },
 			salt: { type: dataTypes.TEXT, allowNull: false },
+			gdprConsent: { type: dataTypes.BOOLEAN, defaultValue: null },
 		},
 		{
 			classMethods: {

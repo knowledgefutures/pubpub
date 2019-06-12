@@ -118,6 +118,15 @@ app.use((req, res, next) => {
 	if (req.hostname.indexOf('dev.pubpub.org') > -1) {
 		req.headers.host = 'dev.pubpub.org';
 	}
+	if (req.hostname.indexOf('v6-jblp.pubpub.org') > -1) {
+		req.headers.host = 'jblp.pubpub.org';
+	}
+	if (req.hostname.indexOf('v6-wip.pubpub.org') > -1) {
+		req.headers.host = 'wip.pubpub.org';
+	}
+	if (req.hostname.indexOf('v6-cursor.pubpub.org') > -1) {
+		req.headers.host = 'cursor.pubpub.org';
+	}
 	if (req.hostname.indexOf('pubpub-v6-prod.herokuapp.com') > -1) {
 		req.headers.host = 'jods.pubpub.org';
 	}

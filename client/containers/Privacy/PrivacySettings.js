@@ -1,8 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Card, Switch } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
+import { AnchorButton, Card, Switch } from '@blueprintjs/core';
 
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { getGdprConsentElection, updateGdprConsent } from 'utils/gdprConsent';
+
+const propTypes = {
+	isLoggedIn: PropTypes.bool.isRequired,
+};
+
+const exportEmailBody = `
+Hello. 
+
+I am writing to request an export of any PubPub account data associated with this email address. 
+`;
+
+const deleteEmailBody = `
+Hello. 
+
+I am writing to request that the PubPub account associated with this email address be deleted. 
+I understand that this action may be irreversible.
+`;
 
 const ThirdPartyAnalyticsCard = () => {
 	const { loginData } = useContext(PageContext);
@@ -49,12 +67,43 @@ const ThirdPartyAnalyticsCard = () => {
 	);
 };
 
-const PrivacySettings = () => {
+const PrivacySettings = (props) => {
+	const { isLoggedIn } = props;
 	return (
-		<React.Fragment>
+		<div className="privacy-settings">
 			<ThirdPartyAnalyticsCard />
-		</React.Fragment>
+			{isLoggedIn && (
+				<React.Fragment>
+					<Card>
+						<h5>Data export</h5>
+						<p>
+							You can request an export of the data associated with your account on
+							PubPub using the button below.
+						</p>
+						<AnchorButton
+							href={`mailto:privacy@pubpub.org?subject=Data export request&body=${exportEmailBody.trim()}`}
+						>
+							Request data export
+						</AnchorButton>
+					</Card>
+					<Card>
+						<h5>Account deletion</h5>
+						<p>
+							You can request that we completely delete your PubPub account using the
+							button below.
+						</p>
+						<AnchorButton
+							intent="danger"
+							href={`mailto:privacy@pubpub.org?subject=Account deletion request&body=${deleteEmailBody.trim()}`}
+						>
+							Request account deletion
+						</AnchorButton>
+					</Card>
+				</React.Fragment>
+			)}
+		</div>
 	);
 };
 
+PrivacySettings.propTypes = propTypes;
 export default PrivacySettings;

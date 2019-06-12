@@ -51,7 +51,7 @@ const Privacy = (props) => {
 						</Menu>
 					</div>
 					<div className="main-content">
-						{tab === 'settings' && <PrivacySettings />}
+						{tab === 'settings' && <PrivacySettings isLoggedIn={!!loginData.id} />}
 						{tab === 'policy' && <PrivacyPolicy />}
 					</div>
 				</GridWrapper>

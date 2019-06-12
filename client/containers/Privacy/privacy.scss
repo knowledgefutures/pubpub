@@ -2,6 +2,12 @@
     .privacy-columns {
         max-width: 900px;
     }
+
+    .privacy-settings {
+        .bp3-card {
+            margin-bottom: 15px;
+        }
+    }
 }
 
 @media only screen and (min-width: 750px) {

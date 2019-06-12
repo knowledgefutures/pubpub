@@ -320,6 +320,14 @@ class Header extends Component {
 															</div>
 														</a>
 													</li>
+													<li>
+														<a
+															href="/privacy/settings"
+															className="bp3-menu-item bp3-popover-dismiss"
+														>
+															<div>Privacy settings</div>
+														</a>
+													</li>
 													<MenuDivider />
 													{/* !isBasePubPub &&
 														<li>

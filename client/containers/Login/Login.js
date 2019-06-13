@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 import { AnchorButton, Button, NonIdealState } from '@blueprintjs/core';
-import { Avatar, InputField, PageWrapper } from 'components';
+import { Avatar, GridWrapper, InputField, PageWrapper } from 'components';
 import { apiFetch, hydrateWrapper } from 'utils';
 
 require('./login.scss');
@@ -75,82 +75,75 @@ class Login extends Component {
 					hideNav={true}
 					hideFooter={true}
 				>
-					<div className="container small">
-						<div className="row">
-							<div className="col-12 bp3-elevation">
-								{!this.props.loginData.id && (
-									<div>
-										<h1>Login</h1>
-										{!this.props.locationData.isBasePubPub && (
-											<p>
-												Login to <b>{this.props.communityData.title}</b>{' '}
-												using your{' '}
-												<a href="https://www.pubpub.org">PubPub</a> account.
-											</p>
-										)}
-										<form onSubmit={this.onLoginSubmit}>
-											<InputField
-												label="Email"
-												placeholder="example@email.com"
-												autocomplete="username"
-												inputRef={this.emailRef}
-											/>
-											<InputField
-												label="Password"
-												type="password"
-												autocomplete="current-password"
-												helperText={
-													<a href="/password-reset">Forgot Password</a>
-												}
-												inputRef={this.passwordRef}
-											/>
-											<InputField error={this.state.loginError}>
-												<Button
-													name="login"
-													type="submit"
-													className="bp3-button bp3-intent-primary"
-													onClick={this.onLoginSubmit}
-													text="Login"
-													loading={this.state.loginLoading}
-												/>
-											</InputField>
-										</form>
-
-										<a href="/signup" className="switch-message">
-											Don&apos;t have a PubPub account? Click to Signup
-										</a>
-									</div>
+					<GridWrapper containerClassName="small" columnClassName="bp3-elevation">
+						{!this.props.loginData.id && (
+							<div>
+								<h1>Login</h1>
+								{!this.props.locationData.isBasePubPub && (
+									<p>
+										Login to <b>{this.props.communityData.title}</b> using your{' '}
+										<a href="https://www.pubpub.org">PubPub</a> account.
+									</p>
 								)}
-								{this.props.loginData.id && (
-									<NonIdealState
-										visual={
-											<Avatar
-												userInitials={this.props.loginData.initials}
-												userAvatar={this.props.loginData.avatar}
-												width={100}
-											/>
-										}
-										title="Already Logged In"
-										action={
-											<div>
-												<AnchorButton
-													className="bp3-large action-button"
-													text="View Profile"
-													href={`/user/${this.props.loginData.slug}`}
-												/>
-												<Button
-													className="bp3-large action-button"
-													text="Logout"
-													onClick={this.onLogoutSubmit}
-													loading={this.state.logoutLoading}
-												/>
-											</div>
-										}
+								<form onSubmit={this.onLoginSubmit}>
+									<InputField
+										label="Email"
+										placeholder="example@email.com"
+										autocomplete="username"
+										inputRef={this.emailRef}
 									/>
-								)}
+									<InputField
+										label="Password"
+										type="password"
+										autocomplete="current-password"
+										helperText={<a href="/password-reset">Forgot Password</a>}
+										inputRef={this.passwordRef}
+									/>
+									<InputField error={this.state.loginError}>
+										<Button
+											name="login"
+											type="submit"
+											className="bp3-button bp3-intent-primary"
+											onClick={this.onLoginSubmit}
+											text="Login"
+											loading={this.state.loginLoading}
+										/>
+									</InputField>
+								</form>
+
+								<a href="/signup" className="switch-message">
+									Don&apos;t have a PubPub account? Click to Signup
+								</a>
 							</div>
-						</div>
-					</div>
+						)}
+						{this.props.loginData.id && (
+							<NonIdealState
+								visual={
+									<Avatar
+										userInitials={this.props.loginData.initials}
+										userAvatar={this.props.loginData.avatar}
+										width={100}
+									/>
+								}
+								title="Already Logged In"
+								action={
+									<div>
+										<AnchorButton
+											className="bp3-large action-button"
+											text="View Profile"
+											href={`/user/${this.props.loginData.slug}`}
+										/>
+										<Button
+											className="bp3-large action-button"
+											text="Logout"
+											onClick={this.onLogoutSubmit}
+											loading={this.state.logoutLoading}
+										/>
+									</div>
+								}
+							/>
+						)}
+					</GridWrapper>
 				</PageWrapper>
 			</div>
 		);

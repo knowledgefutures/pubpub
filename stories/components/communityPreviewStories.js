@@ -1,6 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import { CommunityPreview } from 'components';
+
+import { CommunityPreview, GridWrapper } from 'components';
 
 const data = {
 	subdomain: 'jods',
@@ -42,12 +43,8 @@ storiesOf('components/CommunityPreview', module).add('default', () => (
 			</div>
 		</div>
 
-		<div className="container">
-			<div className="row">
-				<div className="col-12">
-					<CommunityPreview {...data} />
-				</div>
-			</div>
-		</div>
+		<GridWrapper>
+			<CommunityPreview {...data} />
+		</GridWrapper>
 	</div>
 ));

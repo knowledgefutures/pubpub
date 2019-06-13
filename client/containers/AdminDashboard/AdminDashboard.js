@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PageWrapper } from 'components';
+import { PageWrapper, GridWrapper } from 'components';
 import { apiFetch, hydrateWrapper } from 'utils';
 import Chart from './Chart';
 
@@ -46,30 +46,26 @@ class AdminDashboard extends React.Component {
 					hideNav={true}
 					hideFooter={true}
 				>
-					<div className="container">
-						<div className="row">
-							<div className="col-12">
-								<h1>Admin Dashboard</h1>
-								{!this.state.isLoading && (
-									<div>
-										<Chart data={this.state.pubPubData.users} title="Users" />
-										<Chart
-											data={this.state.pubPubData.communities}
-											title="Communities"
-										/>
-										<Chart
-											data={this.state.pubPubData.discussions}
-											title="Discussions"
-										/>
-										<Chart
-											data={this.state.pubPubData.subscribers}
-											title="Newsletter Subscribers"
-										/>
-									</div>
-								)}
+					<GridWrapper>
+						<h1>Admin Dashboard</h1>
+						{!this.state.isLoading && (
+							<div>
+								<Chart data={this.state.pubPubData.users} title="Users" />
+								<Chart
+									data={this.state.pubPubData.communities}
+									title="Communities"
+								/>
+								<Chart
+									data={this.state.pubPubData.discussions}
+									title="Discussions"
+								/>
+								<Chart
+									data={this.state.pubPubData.subscribers}
+									title="Newsletter Subscribers"
+								/>
 							</div>
-						</div>
-					</div>
+						)}
+					</GridWrapper>
 				</PageWrapper>
 			</div>
 		);

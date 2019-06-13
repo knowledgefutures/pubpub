@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Callout, Intent } from '@blueprintjs/core';
+
+import { GridWrapper } from 'components';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { apiFetch } from 'utils';
@@ -182,99 +184,90 @@ class UserEdit extends Component {
 		];
 		return (
 			<div className="user-edit-component">
-				<div className="container narrow nav">
-					<div className="row">
-						<div className="col-12">
-							<h1>Edit User Details</h1>
-							<form onSubmit={this.handleSaveDetails}>
+				<GridWrapper containerClassName="narrow nav">
+					<h1>Edit User Details</h1>
+					<form onSubmit={this.handleSaveDetails}>
+						<InputField
+							label="First Name"
+							isRequired={true}
+							value={this.state.firstName}
+							onChange={this.onFirstNameChange}
+						/>
+						<InputField
+							label="Last Name"
+							isRequired={true}
+							value={this.state.lastName}
+							onChange={this.onLastNameChange}
+						/>
+						<InputField label="Password">
+							{this.state.showResetConfirmation ? (
+								<Callout icon="tick" intent={Intent.SUCCESS}>
+									Password reset requested. Check your email for reset
+									instructions.
+								</Callout>
+							) : (
 								<InputField
-									label="First Name"
-									isRequired={true}
-									value={this.state.firstName}
-									onChange={this.onFirstNameChange}
-								/>
-								<InputField
-									label="Last Name"
-									isRequired={true}
-									value={this.state.lastName}
-									onChange={this.onLastNameChange}
-								/>
-								<InputField label="Password">
-									{this.state.showResetConfirmation ? (
-										<Callout icon="tick" intent={Intent.SUCCESS}>
-											Password reset requested. Check your email for reset
-											instructions.
-										</Callout>
-									) : (
-										<InputField
-											error={
-												this.state.postResetError &&
-												'Error Requesting Reset'
-											}
-										>
-											<Button
-												text="Request Password Reset"
-												onClick={this.handlePasswordReset}
-												disabled={this.state.showResetConfirmation}
-												loading={this.state.postResetIsLoading}
-											/>
-										</InputField>
-									)}
+									error={this.state.postResetError && 'Error Requesting Reset'}
+								>
+									<Button
+										text="Request Password Reset"
+										onClick={this.handlePasswordReset}
+										disabled={this.state.showResetConfirmation}
+										loading={this.state.postResetIsLoading}
+									/>
 								</InputField>
-								<ImageUpload
-									htmlFor="avatar-upload"
-									label="Avatar Image"
-									defaultImage={this.state.avatar}
-									onNewImage={this.onAvatarChange}
-									useCrop={true}
-								/>
+							)}
+						</InputField>
+						<ImageUpload
+							htmlFor="avatar-upload"
+							label="Avatar Image"
+							defaultImage={this.state.avatar}
+							onNewImage={this.onAvatarChange}
+							useCrop={true}
+						/>
+						<InputField
+							label="Title"
+							value={this.state.title}
+							onChange={this.onTitleChange}
+							helperText={`${this.state.title.length}/70 characters. Displayed by your name on discussions.`}
+						/>
+						<InputField
+							label="Bio"
+							isTextarea={true}
+							value={this.state.bio}
+							onChange={this.onBioChange}
+							helperText={`${this.state.bio.length}/280 characters`}
+						/>
+						{expandables.map((item) => {
+							return (
 								<InputField
-									label="Title"
-									value={this.state.title}
-									onChange={this.onTitleChange}
-									helperText={`${this.state.title.length}/70 characters. Displayed by your name on discussions.`}
+									key={`input-field-${item.label}`}
+									label={item.label}
+									value={item.value}
+									onChange={item.onChange}
+									helperText={item.helperText}
 								/>
-								<InputField
-									label="Bio"
-									isTextarea={true}
-									value={this.state.bio}
-									onChange={this.onBioChange}
-									helperText={`${this.state.bio.length}/280 characters`}
-								/>
-								{expandables.map((item) => {
-									return (
-										<InputField
-											key={`input-field-${item.label}`}
-											label={item.label}
-											value={item.value}
-											onChange={item.onChange}
-											helperText={item.helperText}
-										/>
-									);
-								})}
+							);
+						})}
 
-								<div className="buttons">
-									<InputField
-										error={this.state.putUserError && 'Error Saving Details'}
-									>
-										<Button
-											type="submit"
-											intent={Intent.PRIMARY}
-											text="Save Details"
-											onClick={this.handleSaveDetails}
-											disabled={
-												!this.state.firstName ||
-												!this.state.lastName ||
-												!this.state.hasChanged
-											}
-											loading={this.state.putUserIsLoading}
-										/>
-									</InputField>
-								</div>
-							</form>
+						<div className="buttons">
+							<InputField error={this.state.putUserError && 'Error Saving Details'}>
+								<Button
+									type="submit"
+									intent={Intent.PRIMARY}
+									text="Save Details"
+									onClick={this.handleSaveDetails}
+									disabled={
+										!this.state.firstName ||
+										!this.state.lastName ||
+										!this.state.hasChanged
+									}
+									loading={this.state.putUserIsLoading}
+								/>
+							</InputField>
 						</div>
-					</div>
-				</div>
+					</form>
+				</GridWrapper>
 			</div>
 		);
 	}

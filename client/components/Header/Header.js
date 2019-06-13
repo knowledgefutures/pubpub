@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Avatar from 'components/Avatar/Avatar';
-import DropdownButton from 'components/DropdownButton/DropdownButton';
+
 import {
 	Popover,
 	PopoverInteractionKind,
@@ -13,8 +12,12 @@ import {
 	AnchorButton,
 	Intent,
 } from '@blueprintjs/core';
+
+import { GridWrapper } from 'components';
+import Avatar from 'components/Avatar/Avatar';
+import GdprBanner from 'components/GdprBanner/GdprBanner';
+import DropdownButton from 'components/DropdownButton/DropdownButton';
 import { apiFetch, getResizedUrl } from 'utils';
-import GdprBanner from '../GdprBanner/GdprBanner';
 
 require('./header.scss');
 
@@ -198,232 +201,210 @@ class Header extends Component {
 			<nav className={`header-component ${componentClasses}`} style={backgroundStyle}>
 				<GdprBanner loginData={this.props.loginData} />
 				<div className={mainClasses}>
-					<div className="container">
-						<div className="row">
-							<div className="col-12 main-content">
-								<div className="logo-wrapper">
-									{!hideHeaderLogo && (
-										<a href="/">
-											{this.props.communityData.headerLogo && (
-												<img
-													style={
-														isBasePubPub ? { padding: '1px 0px' } : {}
-													}
-													alt="Community Logo"
-													src={resizedHeaderLogo}
-												/>
-											)}
-											{!this.props.communityData.headerLogo && (
-												<span>{this.props.communityData.title}</span>
-											)}
-										</a>
+					<GridWrapper columnClassName="main-content">
+						<div className="logo-wrapper">
+							{!hideHeaderLogo && (
+								<a href="/">
+									{this.props.communityData.headerLogo && (
+										<img
+											style={isBasePubPub ? { padding: '1px 0px' } : {}}
+											alt="Community Logo"
+											src={resizedHeaderLogo}
+										/>
 									)}
-								</div>
-								<div className="buttons-wrapper">
-									{headerLinks.map((linkItem, index) => {
-										const key = `${index}-${linkItem.title}`;
-										if (linkItem.children) {
-											return (
-												<DropdownButton
-													key={key}
-													label={linkItem.title}
-													isMinimal={true}
-													isLarge={true}
-													className="hide-on-mobile"
-												>
-													<Menu>
-														{linkItem.children.map((child, cIndex) => {
-															const childKey = `${cIndex}-${child.title}`;
-															return (
-																<MenuItem
-																	key={childKey}
-																	text={child.title}
-																	href={child.url}
-																	target={
-																		child.external
-																			? '_blank'
-																			: ''
-																	}
-																	rel={
-																		child.external
-																			? 'noopener noreferrer'
-																			: ''
-																	}
-																/>
-															);
-														})}
-													</Menu>
-												</DropdownButton>
-											);
-										}
-										return (
-											<AnchorButton
-												key={key}
-												minimal={true}
-												large={true}
-												text={linkItem.title}
-												href={linkItem.url}
-												target={linkItem.external ? '_blank' : ''}
-												rel={linkItem.external ? 'noopener noreferrer' : ''}
-												className="hide-on-mobile"
-											/>
-										);
-									})}
-									{!isBasePubPub &&
-										loggedIn &&
-										(!this.props.communityData.hideCreatePubButton ||
-											isAdmin) && (
-											<Button
-												large={true}
-												minimal={true}
-												text="New Pub"
-												onClick={this.handleCreatePub}
-												loading={this.state.isLoading}
-											/>
-										)}
-									{!isBasePubPub && (
-										<AnchorButton
-											href="/search"
-											minimal={true}
-											large={true}
-											text="Search"
+									{!this.props.communityData.headerLogo && (
+										<span>{this.props.communityData.title}</span>
+									)}
+								</a>
+							)}
+						</div>
+						<div className="buttons-wrapper">
+							{headerLinks.map((linkItem, index) => {
+								const key = `${index}-${linkItem.title}`;
+								if (linkItem.children) {
+									return (
+										<DropdownButton
+											key={key}
+											label={linkItem.title}
+											isMinimal={true}
+											isLarge={true}
 											className="hide-on-mobile"
-										/>
-									)}
-									{isAdmin && (
-										<AnchorButton
-											minimal={true}
-											large={true}
-											href={
-												isPage
-													? `/dashboard/pages/${this.props.locationData
-															.params.slug || ''}`
-													: '/dashboard'
-											}
-											text="Manage"
-										/>
-									)}
-									{loggedIn && (
-										<Popover
-											content={
-												<Menu>
-													<li>
-														<a
-															href={`/user/${this.props.loginData.slug}`}
-															className="bp3-menu-item bp3-popover-dismiss"
-														>
-															<div>
-																{this.props.loginData.fullName}
-															</div>
-															<div className="subtext">
-																View Profile
-															</div>
-														</a>
-													</li>
-													<li>
-														<a
-															href="/privacy/settings"
-															className="bp3-menu-item bp3-popover-dismiss"
-														>
-															<div>Privacy settings</div>
-														</a>
-													</li>
-													<MenuDivider />
-													{/* !isBasePubPub &&
+										>
+											<Menu>
+												{linkItem.children.map((child, cIndex) => {
+													const childKey = `${cIndex}-${child.title}`;
+													return (
+														<MenuItem
+															key={childKey}
+															text={child.title}
+															href={child.url}
+															target={child.external ? '_blank' : ''}
+															rel={
+																child.external
+																	? 'noopener noreferrer'
+																	: ''
+															}
+														/>
+													);
+												})}
+											</Menu>
+										</DropdownButton>
+									);
+								}
+								return (
+									<AnchorButton
+										key={key}
+										minimal={true}
+										large={true}
+										text={linkItem.title}
+										href={linkItem.url}
+										target={linkItem.external ? '_blank' : ''}
+										rel={linkItem.external ? 'noopener noreferrer' : ''}
+										className="hide-on-mobile"
+									/>
+								);
+							})}
+							{!isBasePubPub &&
+								loggedIn &&
+								(!this.props.communityData.hideCreatePubButton || isAdmin) && (
+									<Button
+										large={true}
+										minimal={true}
+										text="New Pub"
+										onClick={this.handleCreatePub}
+										loading={this.state.isLoading}
+									/>
+								)}
+							{!isBasePubPub && (
+								<AnchorButton
+									href="/search"
+									minimal={true}
+									large={true}
+									text="Search"
+									className="hide-on-mobile"
+								/>
+							)}
+							{isAdmin && (
+								<AnchorButton
+									minimal={true}
+									large={true}
+									href={
+										isPage
+											? `/dashboard/pages/${this.props.locationData.params
+													.slug || ''}`
+											: '/dashboard'
+									}
+									text="Manage"
+								/>
+							)}
+							{loggedIn && (
+								<Popover
+									content={
+										<Menu>
+											<li>
+												<a
+													href={`/user/${this.props.loginData.slug}`}
+													className="bp3-menu-item bp3-popover-dismiss"
+												>
+													<div>{this.props.loginData.fullName}</div>
+													<div className="subtext">View Profile</div>
+												</a>
+											</li>
+											<li>
+												<a
+													href="/privacy/settings"
+													className="bp3-menu-item bp3-popover-dismiss"
+												>
+													<div>Privacy settings</div>
+												</a>
+											</li>
+											<MenuDivider />
+											{/* !isBasePubPub &&
 														<li>
 															<a href="/pub/create" className="bp3-menu-item bp3-popover-dismiss">
 																Create New Pub
 															</a>
 														</li>
 													*/}
-													{/* !isBasePubPub && isAdmin &&
+											{/* !isBasePubPub && isAdmin &&
 														<li>
 															<a href="/dashboard" className="bp3-menu-item bp3-popover-dismiss">
 																Manage Community
 															</a>
 														</li>
 													*/}
-													<MenuItem
-														text="Logout"
-														onClick={this.handleLogout}
-													/>
-												</Menu>
-											}
-											interactionKind={PopoverInteractionKind.CLICK}
-											position={Position.BOTTOM_RIGHT}
-											transitionDuration={-1}
-											inheritDarkTheme={false}
-										>
-											<Button large={true} minimal={true}>
-												<Avatar
-													userInitials={this.props.loginData.initials}
-													userAvatar={this.props.loginData.avatar}
-													width={30}
-												/>
-											</Button>
-										</Popover>
+											<MenuItem text="Logout" onClick={this.handleLogout} />
+										</Menu>
+									}
+									interactionKind={PopoverInteractionKind.CLICK}
+									position={Position.BOTTOM_RIGHT}
+									transitionDuration={-1}
+									inheritDarkTheme={false}
+								>
+									<Button large={true} minimal={true}>
+										<Avatar
+											userInitials={this.props.loginData.initials}
+											userAvatar={this.props.loginData.avatar}
+											width={30}
+										/>
+									</Button>
+								</Popover>
+							)}
+							{!loggedIn && (
+								<AnchorButton
+									large={true}
+									minimal={true}
+									text="Login or Signup"
+									href={`/login${redirectString}`}
+								/>
+							)}
+						</div>
+					</GridWrapper>
+				</div>
+				{!hideHero && (
+					<div className={heroClasses}>
+						<GridWrapper columnClassName="hero-content">
+							<div className="hero-copy">
+								{this.props.communityData.heroLogo && (
+									<div className="hero-logo">
+										<img alt="Community Logo" src={resizedHeroLogo} />
+									</div>
+								)}
+								{this.props.communityData.heroTitle && (
+									<div className="hero-title">
+										{this.props.communityData.heroTitle}
+									</div>
+								)}
+								{this.props.communityData.heroText && (
+									<div className="hero-text">
+										{this.props.communityData.heroText}
+									</div>
+								)}
+								<div className="hero-button">
+									{heroPrimaryButton.title && (
+										<AnchorButton
+											intent={Intent.PRIMARY}
+											large={true}
+											text={heroPrimaryButton.title}
+											href={heroPrimaryButton.url}
+										/>
 									)}
-									{!loggedIn && (
+									{heroSecondaryButton.title && (
 										<AnchorButton
 											large={true}
 											minimal={true}
-											text="Login or Signup"
-											href={`/login${redirectString}`}
+											text={heroSecondaryButton.title}
+											href={heroSecondaryButton.url}
 										/>
 									)}
 								</div>
 							</div>
-						</div>
-					</div>
-				</div>
-				{!hideHero && (
-					<div className={heroClasses}>
-						<div className="container">
-							<div className="row">
-								<div className="col-12 hero-content">
-									<div className="hero-copy">
-										{this.props.communityData.heroLogo && (
-											<div className="hero-logo">
-												<img alt="Community Logo" src={resizedHeroLogo} />
-											</div>
-										)}
-										{this.props.communityData.heroTitle && (
-											<div className="hero-title">
-												{this.props.communityData.heroTitle}
-											</div>
-										)}
-										{this.props.communityData.heroText && (
-											<div className="hero-text">
-												{this.props.communityData.heroText}
-											</div>
-										)}
-										<div className="hero-button">
-											{heroPrimaryButton.title && (
-												<AnchorButton
-													intent={Intent.PRIMARY}
-													large={true}
-													text={heroPrimaryButton.title}
-													href={heroPrimaryButton.url}
-												/>
-											)}
-											{heroSecondaryButton.title && (
-												<AnchorButton
-													large={true}
-													minimal={true}
-													text={heroSecondaryButton.title}
-													href={heroSecondaryButton.url}
-												/>
-											)}
-										</div>
-									</div>
-									{this.props.communityData.heroImage && (
-										<div className="hero-image">
-											<img alt="Community banner" src={resizedHeroImage} />
-										</div>
-									)}
+							{this.props.communityData.heroImage && (
+								<div className="hero-image">
+									<img alt="Community banner" src={resizedHeroImage} />
 								</div>
-							</div>
-						</div>
+							)}
+						</GridWrapper>
 					</div>
 				)}
 			</nav>

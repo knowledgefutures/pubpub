@@ -18,8 +18,16 @@
 		padding: 1em 0em;
 		display: block;
 		&:before {
-			left: auto;
+			left: -21px;
+		}
+		&:after {
+			content: "";
+			position: absolute;
+			top: 0px;
+			bottom: 0;
 			right: -21px;
+			background: #E5E5E5;
+			width: 1px;
 		}
 	}
 }

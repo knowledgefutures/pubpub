@@ -31,22 +31,16 @@ const Privacy = (props) => {
 					<div className="side-content">
 						<Menu className="side-menu">
 							<MenuItem
-								key="settings"
-								text="Privacy settings"
-								active={tab === 'settings'}
-								href="/privacy/settings"
-							/>
-							<MenuItem
 								key="policy"
 								text="Privacy policy"
 								active={tab === 'policy'}
 								href="/privacy/policy"
 							/>
 							<MenuItem
-								key="gpdr"
-								text="GDPR compliance"
-								active={tab === 'gdpr'}
-								href="/privacy/gdpr"
+								key="settings"
+								text="Privacy settings"
+								active={tab === 'settings'}
+								href="/privacy/settings"
 							/>
 						</Menu>
 					</div>

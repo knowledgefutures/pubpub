@@ -10,15 +10,15 @@ const propTypes = {
 };
 
 const exportEmailBody = `
-Hello. 
+Hello.
 
-I am writing to request an export of any PubPub account data associated with this email address. 
+I am writing to request an export of any PubPub account data associated with this email address.
 `;
 
 const deleteEmailBody = `
-Hello. 
+Hello.
 
-I am writing to request that the PubPub account associated with this email address be deleted. 
+I am writing to request that the PubPub account associated with this email address be deleted.
 I understand that this action may be irreversible.
 `;
 
@@ -43,10 +43,12 @@ const ThirdPartyAnalyticsCard = () => {
 			<h5>Third-party analytics</h5>
 			<p>
 				PubPub uses a third-party analytics service called Keen to store, aggregate and
-				summarize information about page views on our platform. We do this primarily to help
-				communities who use our service understand traffic to their Pubs. We pay Keen for
-				this service rather than using a more popular platform like Google Analytics, which
-				is free but allows Google to sell your data and track you across the web.
+				summarize information about user behavior on our platform. We do this to help our
+				engineering team make product decisions and communities who use our service to
+				measure the performance of their content. We do not share any personally
+				identifiable information with communities on PubPub or any other third parties. We
+				pay Keen rather than using a more popular platform like Google Analytics, which is
+				free but allows Google to process your data and re-sell it across the web.
 			</p>
 			<p>
 				If you allow us to enable Keen while you browse, we'll send requests to their
@@ -90,7 +92,9 @@ const PrivacySettings = (props) => {
 						<h5>Account deletion</h5>
 						<p>
 							You can request that we completely delete your PubPub account using the
-							button below.
+							button below. If you have left comments on notable Pubs, we may reserve
+							the right to continue to display them based on the scientific research
+							exception to GDPR.
 						</p>
 						<AnchorButton
 							intent="danger"

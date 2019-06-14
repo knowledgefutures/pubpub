@@ -42,10 +42,10 @@ const GdprBanner = (props) => {
 			</div>
 			<div className="notice">
 				<p>
-					<b>The Cookies Talk: </b>
-					PubPub uses cookies that help our team and our communities understand what
-					features and content on PubPub are receiving traffic. We don't sell this data or
-					share it with anyone else. Visit your{' '}
+					PubPub uses third-party cookies to help our team and our communities understand
+					which features and content on PubPub are receiving traffic. We don't sell this
+					data or share it with anyone else, and we don't use third-party processors who
+					aggregate and sell data. Visit your{' '}
 					<a href="/privacy/settings">privacy settings</a> to learn more.
 				</p>
 			</div>

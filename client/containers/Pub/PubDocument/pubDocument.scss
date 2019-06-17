@@ -1,15 +1,6 @@
-/*
-There are three views:
-Default (used in mobile/narrow and browsers that don't support CSS grid)
-Grid (used in desktops that support CSS grid)
-Print
- */
+@import '../pub.scss';
 
 .pub-document-component {
-	.container.pub {
-		.main-content {
-		}
-	}
 	.discussions {
 		background-color: #f8f8f8;
 		line-height: 1.6;
@@ -17,21 +8,33 @@ Print
 	}
 }
 
-@media only screen and (min-width: 750px) {
-	@supports (display: grid) {
+@supports (display: grid) {
+    .pub-grid {
+        @include has-grid('. . . comments .');
+        width: 100%;
+        margin-top: 3em;
+        .main-content {
+            grid-column: 1 / -1;
+            grid-row-start: 1;
+        }
+        .side-content {
+            grid-area: comments;
+        }
+    }
+    .pub-body-component > .editor.ProseMirror {
+        @include has-grid('. pub . . .');
+        & > * {
+            grid-column-start: pub;
+            grid-column-end: pub;
+        }
+	}
+	
+	@include pub-full-view {
 		.pub-document-component {
 			.pub-columns {
-				display: grid;
-				grid-template-columns: minmax(0, 1fr) 275px;
-				grid-template-areas: 'main side';
-				grid-column-gap: 4%;
 				margin-top: 3em;
 			}
-			.main-content {
-				grid-area: main;
-			}
 			.side-content {
-				grid-area: side;
 				.header-title {
 					display: block;
 					font-weight: 600;
@@ -41,18 +44,22 @@ Print
 			}
 		}
 	}
+
+    @include pub-compact-view {
+        .pub-grid {
+            margin-top: 3em;
+            .side-content > * {
+                display: none;
+            }
+		}
+		.pub-document-component {
+			.main-content {
+				margin-top: 2em;
+			}
+		}
+    }
 }
 
-@media only screen and (max-width: 750px) {
-	.pub-document-component {
-		.main-content {
-			margin-top: 2em;
-		}
-		.side-content {
-			display: none;
-		}
-	}
-}
 @media print {
 	#pub-old-container {
 		.container.pub {

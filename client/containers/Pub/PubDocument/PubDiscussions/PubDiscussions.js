@@ -13,7 +13,6 @@ const propTypes = {
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
-	mainContentRef: PropTypes.object.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
 };
 
@@ -22,7 +21,7 @@ const defaultProps = {
 };
 
 const PubDiscussions = (props) => {
-	const { pubData, collabData, firebaseBranchRef, sideContentRef, mainContentRef } = props;
+	const { pubData, collabData, firebaseBranchRef, sideContentRef } = props;
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const { width: windowWidth } = useWindowSize();
 
@@ -55,7 +54,6 @@ const PubDiscussions = (props) => {
 						threads={group.threads}
 						mountClassName={group.mountClassName}
 						updateLocalData={props.updateLocalData}
-						mainContentRef={mainContentRef}
 						sideContentRef={sideContentRef}
 					/>,
 					mountElement,

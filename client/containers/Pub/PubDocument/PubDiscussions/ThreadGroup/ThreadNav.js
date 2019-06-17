@@ -150,6 +150,7 @@ const ThreadNav = (props) => {
 			{activeThread && (
 				<div className="close-wrapper">
 					<Button
+						className="expand-button"
 						minimal={true}
 						small={true}
 						icon={
@@ -173,6 +174,7 @@ const ThreadNav = (props) => {
 							setExpanded(!isExpanded);
 						}}
 					/>
+
 					<Button
 						minimal={true}
 						small={true}

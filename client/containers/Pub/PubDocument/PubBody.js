@@ -58,7 +58,6 @@ const PubBody = (props) => {
 	const useCollaborativeOptions = firebaseBranchRef && !pubData.isStaticDoc && !isHistoryDoc;
 	const isReadOnly = !!(pubData.isStaticDoc || !pubData.canEditBranch || isViewingHistory);
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
-
 	return (
 		<div className="pub-body-component">
 			<Editor

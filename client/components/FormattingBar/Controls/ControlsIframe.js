@@ -94,6 +94,16 @@ const ControlsIframe = (props) => {
 							);
 						})}
 					</ButtonGroup>
+					<Button
+						icon="fullscreen"
+						minimal={true}
+						active={props.attrs.breakout}
+						onClick={() => {
+							props.updateAttrs({ breakout: !props.attrs.breakout });
+						}}
+					>
+						Breakout
+					</Button>
 				</div>
 			</div>
 

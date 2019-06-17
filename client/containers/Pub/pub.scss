@@ -1,31 +1,52 @@
-#pub-new-container {
-	// .page-content {
-	// 	max-width: 750px;
-	// 	margin: 0em auto;
-	// 	padding: 2em;
-	// 	min-height: 600px;
-	// }
-	// .test-comp {
-	// 	display: inline;
-	// 	.preview {
-	// 		position: absolute;
-	// 		left: calc(100% + 15px);
-	// 	}
-	// 	.content {
-	// 		border-top: 1px solid #ccc;
-	// 		border-bottom: 1px solid #ccc;
-	// 		background: #f7f7f9;
-	// 		margin: 1em 0em;
-	// 		padding: 1em;
-	// 		color: black;
-	// 	}
-	// }
-	// .insert-portal {
-	// 	position: static;
-	// 	display: inline;
-	// }
+/* Below this width, comments will be forced to a minimized view */
+$compact-cutoff-width: 750px;
+/* The pub won't grow beyond this width */
+$pub-max-width: 675px;
+/* The space available for comments */
+$comments-full-width: 275px;
+/* The space available for comments on smaller screens */
+$comments-compact-width: 21px;
+/* The maximum width of all the content */
+$content-max-width: $pub-max-width + $comments-full-width;
+/* Full width of the gutter */
+$gutter-full-width: 50px;
+/* The pub won't shrink beyond this width */
+$pub-min-width: $compact-cutoff-width - $comments-full-width - $gutter-full-width;
+/* Compact width of the gutter */
+$gutter-compact-width: 15px;
+/* The margin between the edge of the pub and the viewport (applied to the left and right side) */
+$pub-margin: 4%;
+
+@mixin pub-compact-view {
+    @media only screen and (max-width: $compact-cutoff-width) {
+        @content;
+    }
 }
 
-// .collab-cursor {
-// 	position: static !important;
-// }
+@mixin pub-full-view {
+    @media only screen and (min-width: $compact-cutoff-width) {
+        @content;
+    }
+}
+
+@mixin has-grid($areas) {
+    display: grid;
+    grid-template-columns:
+        minmax($pub-margin, auto)
+        minmax($pub-min-width, $pub-max-width)
+        $gutter-full-width
+        $comments-full-width
+        minmax($pub-margin, auto);
+    grid-template-areas: $areas;
+    @include pub-compact-view {
+        grid-template-columns:
+            minmax($pub-margin, auto)
+            1fr
+            $gutter-compact-width
+            $comments-compact-width
+            minmax($pub-margin, auto);
+	}
+	& > *[data-align-breakout] {
+		grid-column: 1 / -1;
+	}
+}

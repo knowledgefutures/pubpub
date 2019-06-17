@@ -87,6 +87,16 @@ class ControlsVideo extends Component {
 								);
 							})}
 						</ButtonGroup>
+						<Button
+							icon="fullscreen"
+							minimal={true}
+							active={this.props.attrs.breakout}
+							onClick={() => {
+								this.props.updateAttrs({ breakout: !this.props.attrs.breakout });
+							}}
+						>
+							Breakout
+						</Button>
 					</div>
 				</div>
 

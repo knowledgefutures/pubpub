@@ -215,6 +215,7 @@
 		}
 		.left {
 			flex: 0 1 auto;
+			overflow: scroll;
 		}
 		.right {
 			flex: 1 0 auto;

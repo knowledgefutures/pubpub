@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { marksAtSelection, setLocalHighlight, cursor } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
-import { GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubBody from './PubBody';
@@ -36,7 +35,6 @@ const PubDocument = (props) => {
 	const [clickedMarks, setClickedMarks] = useState([]);
 	// const [tempId, setTempId] = useState(uuidv4());
 	const editorChangeObject = collabData.editorChangeObject;
-	const mainContentRef = useRef(null);
 	const sideContentRef = useRef(null);
 
 	/* Calculate whether the link popup should be open */
@@ -102,8 +100,8 @@ const PubDocument = (props) => {
 			{!pubData.isStaticDoc && pubData.metaMode !== 'history' && (
 				<PubHeaderFormatting pubData={pubData} collabData={collabData} />
 			)}
-			<GridWrapper containerClassName="pub" columnClassName="pub-columns">
-				<div className="main-content" ref={mainContentRef}>
+			<div className="pub-grid">
+				<div className="main-content">
 					<PubBody
 						pubData={pubData}
 						collabData={collabData}
@@ -121,15 +119,12 @@ const PubDocument = (props) => {
 							editorView={collabData.editorChangeObject.view}
 						/>
 					)}
-					<PubFooter pubData={pubData} />
-
 					{areDiscussionsShown && (
 						<PubDiscussions
 							pubData={pubData}
 							collabData={collabData}
 							firebaseBranchRef={firebaseBranchRef}
 							updateLocalData={props.updateLocalData}
-							mainContentRef={mainContentRef}
 							sideContentRef={sideContentRef}
 						/>
 					)}
@@ -150,7 +145,8 @@ const PubDocument = (props) => {
 					<PubToc pubData={pubData} editorChangeObject={collabData.editorChangeObject} />
 					<PubSideCollaborators pubData={pubData} />
 				</div>
-			</GridWrapper>
+			</div>
+			<PubFooter pubData={pubData} />
 		</div>
 	);
 };

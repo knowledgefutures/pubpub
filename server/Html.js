@@ -26,9 +26,11 @@ const Html = (props) => {
 		/* Note that fonts will still be sourced from static.pubpub */
 		/* so if viewing those needs to be tested, the webpack config */
 		/* needs to change. */
-		if (!props.initialData.locationData.isPubPubProduction) {
-			manifestUrl = manifestUrl.replace('https://static.pubpub.org', '');
-		}
+
+		/* TODO: Uncomment when v6 is live */
+		// if (!props.initialData.locationData.isPubPubProduction) {
+		manifestUrl = manifestUrl.replace('https://static.pubpub.org', '');
+		// }
 
 		return manifestUrl;
 	};

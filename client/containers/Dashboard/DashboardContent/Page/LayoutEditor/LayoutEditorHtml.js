@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { GridWrapper } from 'components';
+
 const propTypes = {
 	onChange: PropTypes.func.isRequired,
 	layoutIndex: PropTypes.number.isRequired,
@@ -29,17 +31,13 @@ class LayoutEditorHtml extends Component {
 				<div className="block-header" />
 
 				<div className="block-content">
-					<div className="container">
-						<div className="row">
-							<div className="col-12">
-								<textarea
-									value={this.props.content.html}
-									onChange={this.setText}
-									placeholder="Type HTML here..."
-								/>
-							</div>
-						</div>
-					</div>
+					<GridWrapper>
+						<textarea
+							value={this.props.content.html}
+							onChange={this.setText}
+							placeholder="Type HTML here..."
+						/>
+					</GridWrapper>
 				</div>
 			</div>
 		);

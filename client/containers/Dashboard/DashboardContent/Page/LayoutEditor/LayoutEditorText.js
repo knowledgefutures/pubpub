@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Editor, { getJSON } from '@pubpub/editor';
 import { Button } from '@blueprintjs/core';
+
+import { GridWrapper } from 'components';
 import InputField from 'components/InputField/InputField';
 import FormattingBar from 'components/FormattingBar/FormattingBar';
 import { getResizedUrl } from 'utils';
@@ -81,39 +83,35 @@ class LayoutEditorText extends Component {
 				</div>
 
 				<div className="block-content">
-					<div className="container">
-						<div className="row">
-							<div className="col-12">
-								<div style={wrapperStyle} id={String(this.state.key)}>
-									<Editor
-										nodeOptions={{
-											image: {
-												onResizeUrl: (url) => {
-													return getResizedUrl(url, 'fit-in', '1200x0');
-												},
-												linkToSrc: false,
-											},
-										}}
-										placeholder="Enter text..."
-										initialContent={this.state.initialContent}
-										onChange={(editorChangeObject) => {
-											if (editorChangeObject.view.state.history$.prevTime) {
-												/* history$.prevTime will be 0 if the transaction */
-												/* does not generate an undo item in the history */
-												this.textChangesMade = true;
-											}
-											if (this.textChangesMade) {
-												this.setText(getJSON(editorChangeObject.view));
-											}
-											this.setState({
-												editorChangeObject: editorChangeObject,
-											});
-										}}
-									/>
-								</div>
-							</div>
+					<GridWrapper>
+						<div style={wrapperStyle} id={String(this.state.key)}>
+							<Editor
+								nodeOptions={{
+									image: {
+										onResizeUrl: (url) => {
+											return getResizedUrl(url, 'fit-in', '1200x0');
+										},
+										linkToSrc: false,
+									},
+								}}
+								placeholder="Enter text..."
+								initialContent={this.state.initialContent}
+								onChange={(editorChangeObject) => {
+									if (editorChangeObject.view.state.history$.prevTime) {
+										/* history$.prevTime will be 0 if the transaction */
+										/* does not generate an undo item in the history */
+										this.textChangesMade = true;
+									}
+									if (this.textChangesMade) {
+										this.setText(getJSON(editorChangeObject.view));
+									}
+									this.setState({
+										editorChangeObject: editorChangeObject,
+									});
+								}}
+							/>
 						</div>
-					</div>
+					</GridWrapper>
 				</div>
 			</div>
 		);

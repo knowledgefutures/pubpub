@@ -2,6 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { GridWrapper } from 'components';
+
 const propTypes = {
 	content: PropTypes.object.isRequired,
 	/* Expected content */
@@ -16,13 +18,9 @@ const LayoutHtml = function(props) {
 	return (
 		<div className="layout-html-component">
 			<div className="block-content">
-				<div className="container">
-					<div className="row">
-						<div className="col-12">
-							<div dangerouslySetInnerHTML={{ __html: props.content.html }} />
-						</div>
-					</div>
-				</div>
+				<GridWrapper>
+					<div dangerouslySetInnerHTML={{ __html: props.content.html }} />
+				</GridWrapper>
 			</div>
 		</div>
 	);

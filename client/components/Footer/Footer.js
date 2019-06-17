@@ -8,6 +8,7 @@ import {
 	Popover,
 	PopoverInteractionKind,
 } from '@blueprintjs/core';
+import { GridWrapper } from 'components';
 import Icon from 'components/Icon/Icon';
 import { apiFetch } from 'utils';
 
@@ -124,143 +125,126 @@ class Footer extends Component {
 
 		return (
 			<div className={`footer-component ${wrapperClasses}`}>
-				<div className="container">
-					<div className="row">
-						<div className="col-12">
-							<div className="left">
-								<div className="title">
-									<a href="https://pubpub.org">
-										<img className="logo" src={pubpubLogo} alt="PubPub logo" />
+				<GridWrapper>
+					<div className="left">
+						<div className="title">
+							<a href="https://pubpub.org">
+								<img className="logo" src={pubpubLogo} alt="PubPub logo" />
+							</a>
+							<ul className="social-list">
+								<li>
+									<a href="https://twitter.com/pubpub">
+										<Icon icon="twitter" />
 									</a>
-									<ul className="social-list">
-										<li>
-											<a href="https://twitter.com/pubpub">
-												<Icon icon="twitter" />
-											</a>
-										</li>
-										<li>
-											<a href="mailto:team@pubpub.org?subject=Contact">
-												<Icon icon="envelope" />
-											</a>
-										</li>
-										<li>
-											<a href="https://github.com/pubpub">
-												<Icon icon="github" />
-											</a>
-										</li>
-									</ul>
-								</div>
-								<ul className="separated">
-									<li>
-										<a href="https://pubpub.org/about">About</a>
-									</li>
-									<li>
-										<a href="https://pubpub.org/explore">Explore</a>
-									</li>
-									<li>
-										<a href="https://pubpub.org/pricing">Pricing</a>
-									</li>
-									<li>
-										<a href="https://help.pubpub.org">Help</a>
-									</li>
-								</ul>
-
-								<form onSubmit={this.handleEmailSubmit}>
-									<strong>Feature & Community Newsletter</strong>
-									<InputGroup
-										type="email"
-										placeholder="Your Email"
-										value={this.state.email}
-										onChange={this.handleEmailChange}
-										label="Feature & community newsletter"
-										rightElement={
-											<Button
-												type="submit"
-												icon={
-													!this.state.isSubscribed
-														? 'arrow-right'
-														: 'tick'
-												}
-												minimal={true}
-												loading={this.state.isLoadingSubscribe}
-											/>
-										}
-										disabled={this.state.isSubscribed}
-									/>
-									<div className="confirm">
-										<Checkbox
-											checked={this.state.isConfirmed}
-											disabled={this.state.isSubscribed}
-											required="required"
-											onChange={this.handleConfirmChange}
-											label={
-												<span>
-													<Popover
-														interactionKind={
-															PopoverInteractionKind.HOVER
-														}
-														popoverClassName="bp3-popover-content-sizing"
-														position={Position.RIGHT}
-													>
-														<p>
-															<em>
-																I agree to receive this newsletter.
-															</em>
-														</p>
-														<div>
-															<p>
-																We use a third party provider,
-																Mailchimp, to deliver our
-																newsletters. We never share your
-																data with anyone, and you can
-																unsubscribe using the link at the
-																bottom of every email. Learn more by
-																visiting your&nbsp;
-																<a href="/privacy">
-																	privacy settings
-																</a>
-																.
-															</p>
-														</div>
-													</Popover>
-												</span>
-											}
-										/>
-									</div>
-								</form>
-							</div>
-							<div className="right">
-								<div className="title">
-									<a href="/">{this.props.communityData.title}</a>
-								</div>
-								<ul className="separated">
-									{this.links
-										.filter((item) => {
-											return !item.adminOnly || this.props.isAdmin;
-										})
-										.map((link) => {
-											return (
-												<li key={`footer-item-${link.id}`}>
-													<a href={link.url}>{link.title}</a>
-												</li>
-											);
-										})}
-								</ul>
-								{!!socialItems.length && (
-									<ul className="social-list">
-										{socialItems.map((item) => {
-											return (
-												<a href={item.url} key={`social-item-${item.id}`}>
-													<li>{item.icon}</li>
-												</a>
-											);
-										})}
-									</ul>
-								)}
-							</div>
+								</li>
+								<li>
+									<a href="mailto:team@pubpub.org?subject=Contact">
+										<Icon icon="envelope" />
+									</a>
+								</li>
+								<li>
+									<a href="https://github.com/pubpub">
+										<Icon icon="github" />
+									</a>
+								</li>
+							</ul>
 						</div>
+						<ul className="separated">
+							<li>
+								<a href="https://pubpub.org/about">About</a>
+							</li>
+							<li>
+								<a href="https://pubpub.org/explore">Explore</a>
+							</li>
+							<li>
+								<a href="https://pubpub.org/pricing">Pricing</a>
+							</li>
+							<li>
+								<a href="https://help.pubpub.org">Help</a>
+							</li>
+						</ul>
+
+						<form onSubmit={this.handleEmailSubmit}>
+							<strong>Feature & Community Newsletter</strong>
+							<InputGroup
+								type="email"
+								placeholder="Your Email"
+								value={this.state.email}
+								onChange={this.handleEmailChange}
+								label="Feature & community newsletter"
+								rightElement={
+									<Button
+										type="submit"
+										icon={!this.state.isSubscribed ? 'arrow-right' : 'tick'}
+										minimal={true}
+										loading={this.state.isLoadingSubscribe}
+									/>
+								}
+								disabled={this.state.isSubscribed}
+							/>
+							<div className="confirm">
+								<Checkbox
+									checked={this.state.isConfirmed}
+									disabled={this.state.isSubscribed}
+									required="required"
+									onChange={this.handleConfirmChange}
+									label={
+										<span>
+											<Popover
+												interactionKind={PopoverInteractionKind.HOVER}
+												popoverClassName="bp3-popover-content-sizing"
+												position={Position.RIGHT}
+											>
+												<p>
+													<em>I agree to receive this newsletter.</em>
+												</p>
+												<div>
+													<p>
+														We use a third party provider, Mailchimp, to
+														deliver our newsletters. We never share your
+														data with anyone, and you can unsubscribe
+														using the link at the bottom of every email.
+														Learn more by visiting your&nbsp;
+														<a href="/privacy">privacy settings</a>.
+													</p>
+												</div>
+											</Popover>
+										</span>
+									}
+								/>
+							</div>
+						</form>
 					</div>
-				</div>
+					<div className="right">
+						<div className="title">
+							<a href="/">{this.props.communityData.title}</a>
+						</div>
+						<ul className="separated">
+							{this.links
+								.filter((item) => {
+									return !item.adminOnly || this.props.isAdmin;
+								})
+								.map((link) => {
+									return (
+										<li key={`footer-item-${link.id}`}>
+											<a href={link.url}>{link.title}</a>
+										</li>
+									);
+								})}
+						</ul>
+						{!!socialItems.length && (
+							<ul className="social-list">
+								{socialItems.map((item) => {
+									return (
+										<a href={item.url} key={`social-item-${item.id}`}>
+											<li>{item.icon}</li>
+										</a>
+									);
+								})}
+							</ul>
+						)}
+					</div>
+				</GridWrapper>
 			</div>
 		);
 	}

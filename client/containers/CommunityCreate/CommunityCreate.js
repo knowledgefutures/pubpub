@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, NonIdealState } from '@blueprintjs/core';
-import { InputField, ImageUpload, PageWrapper, ColorInput } from 'components';
+import { ColorInput, GridWrapper, InputField, ImageUpload, PageWrapper } from 'components';
 import { hydrateWrapper, apiFetch, slugifyString } from 'utils';
 
 require('./communityCreate.scss');
@@ -83,94 +83,88 @@ class CommunityCreate extends Component {
 					hideNav={true}
 					hideFooter={true}
 				>
-					<div className="container small">
-						<div className="row">
-							<div className="col-12">
-								{!this.props.loginData.id && (
-									<NonIdealState
-										title="To create your community, create an account or login."
-										visual="error"
-										action={
-											<a
-												href="/login?redirect=/community/create"
-												className="bp3-button"
-											>
-												Login or Signup
-											</a>
-										}
+					<GridWrapper containerClassName="small">
+						{!this.props.loginData.id && (
+							<NonIdealState
+								title="To create your community, create an account or login."
+								visual="error"
+								action={
+									<a
+										href="/login?redirect=/community/create"
+										className="bp3-button"
+									>
+										Login or Signup
+									</a>
+								}
+							/>
+						)}
+						{this.props.loginData.id && (
+							<div>
+								<h1>Create Community</h1>
+								<form onSubmit={this.onCreateSubmit}>
+									<InputField
+										label="URL"
+										isRequired={true}
+										value={this.state.subdomain}
+										onChange={this.onSubdomainChange}
+										helperText={`https://${this.state.subdomain ||
+											'[URL]'}.pubpub.org`}
 									/>
-								)}
-								{this.props.loginData.id && (
-									<div>
-										<h1>Create Community</h1>
-										<form onSubmit={this.onCreateSubmit}>
-											<InputField
-												label="URL"
-												isRequired={true}
-												value={this.state.subdomain}
-												onChange={this.onSubdomainChange}
-												helperText={`https://${this.state.subdomain ||
-													'[URL]'}.pubpub.org`}
-											/>
-											<InputField
-												label="Title"
-												isRequired={true}
-												value={this.state.title}
-												onChange={this.onTitleChange}
-											/>
-											<InputField
-												label="Description"
-												isTextarea={true}
-												value={this.state.description}
-												onChange={this.onDescriptionChange}
-												helperText={`${this.state.description.length}/280 characters`}
-											/>
-											<ImageUpload
-												htmlFor="large-header-logo-upload"
-												label="Community Logo"
-												defaultImage={this.state.heroLogo}
-												height={60}
-												width={150}
-												onNewImage={this.onHeroHeaderLogoChange}
-												helperText="Used on the landing page. Suggested height: 200px"
-											/>
-											<InputField label="Light Accent Color">
-												<ColorInput
-													value={this.state.accentColorLight}
-													onChange={(val) => {
-														this.setState({
-															accentColorLight: val.hex,
-														});
-													}}
-												/>
-											</InputField>
-											<InputField label="Dark Accent Color">
-												<ColorInput
-													value={this.state.accentColorDark}
-													onChange={(val) => {
-														this.setState({ accentColorDark: val.hex });
-													}}
-												/>
-											</InputField>
-											<InputField error={this.state.createError}>
-												<Button
-													name="create"
-													type="submit"
-													className="bp3-button bp3-intent-primary create-account-button"
-													onClick={this.onCreateSubmit}
-													text="Create Community"
-													disabled={
-														!this.state.subdomain || !this.state.title
-													}
-													loading={this.state.createIsLoading}
-												/>
-											</InputField>
-										</form>
-									</div>
-								)}
+									<InputField
+										label="Title"
+										isRequired={true}
+										value={this.state.title}
+										onChange={this.onTitleChange}
+									/>
+									<InputField
+										label="Description"
+										isTextarea={true}
+										value={this.state.description}
+										onChange={this.onDescriptionChange}
+										helperText={`${this.state.description.length}/280 characters`}
+									/>
+									<ImageUpload
+										htmlFor="large-header-logo-upload"
+										label="Community Logo"
+										defaultImage={this.state.heroLogo}
+										height={60}
+										width={150}
+										onNewImage={this.onHeroHeaderLogoChange}
+										helperText="Used on the landing page. Suggested height: 200px"
+									/>
+									<InputField label="Light Accent Color">
+										<ColorInput
+											value={this.state.accentColorLight}
+											onChange={(val) => {
+												this.setState({
+													accentColorLight: val.hex,
+												});
+											}}
+										/>
+									</InputField>
+									<InputField label="Dark Accent Color">
+										<ColorInput
+											value={this.state.accentColorDark}
+											onChange={(val) => {
+												this.setState({ accentColorDark: val.hex });
+											}}
+										/>
+									</InputField>
+									<InputField error={this.state.createError}>
+										<Button
+											name="create"
+											type="submit"
+											className="bp3-button bp3-intent-primary create-account-button"
+											onClick={this.onCreateSubmit}
+											text="Create Community"
+											disabled={!this.state.subdomain || !this.state.title}
+											loading={this.state.createIsLoading}
+										/>
+									</InputField>
+								</form>
 							</div>
-						</div>
-					</div>
+						)}
+					</GridWrapper>
 				</PageWrapper>
 			</div>
 		);

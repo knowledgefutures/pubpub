@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, NonIdealState } from '@blueprintjs/core';
-import { InputField, PageWrapper } from 'components';
+
+import { GridWrapper, InputField, PageWrapper } from 'components';
 import { hydrateWrapper, apiFetch } from 'utils';
 
 require('./signup.scss');
@@ -56,76 +57,67 @@ class Signup extends Component {
 					hideNav={true}
 					hideFooter={true}
 				>
-					<div className="container small">
-						<div className="row">
-							<div className="col-12">
-								{!this.state.isSuccessful && (
-									<div>
-										<h1>Signup</h1>
-										{!this.props.locationData.isBasePubPub && (
-											<p>
-												Signup to create a{' '}
-												<a href="https://www.pubpub.org">PubPub</a> account,
-												which will work on{' '}
-												<b>{this.props.communityData.title}</b> and all
-												other PubPub communities.
-											</p>
-										)}
-										<form onSubmit={this.onSignupSubmit}>
-											<InputField
-												label="Email"
-												placeholder="example@email.com"
-												value={this.state.email}
-												onChange={this.onEmailChange}
-												error={this.state.postSignupError}
-											/>
-											<Button
-												name="signup"
-												type="submit"
-												className="bp3-button bp3-intent-primary"
-												onClick={this.onSignupSubmit}
-												text="Signup"
-												disabled={!this.state.email}
-												loading={this.state.postSignupIsLoading}
-											/>
-										</form>
-										<a href="/login" className="switch-message">
-											Already have a PubPub account? Click to Login
-										</a>
-									</div>
+					<GridWrapper containerClassName="small">
+						{!this.state.isSuccessful && (
+							<div>
+								<h1>Signup</h1>
+								{!this.props.locationData.isBasePubPub && (
+									<p>
+										Signup to create a{' '}
+										<a href="https://www.pubpub.org">PubPub</a> account, which
+										will work on <b>{this.props.communityData.title}</b> and all
+										other PubPub communities.
+									</p>
 								)}
-
-								{this.state.isSuccessful && (
-									<NonIdealState
-										title="Signup Successful"
-										description={
-											<div className="success">
-												<p>
-													An email has been sent to{' '}
-													<b>{this.state.email}</b>
-												</p>
-												<p>
-													Follow the link in that email to create your
-													account.
-												</p>
-											</div>
-										}
-										visual="tick-circle"
-										action={
-											<Button
-												name="resendEmail"
-												type="button"
-												className="bp3-button"
-												onClick={this.onSignupSubmit}
-												text="Resend Email"
-												loading={this.state.postSignupIsLoading}
-											/>
-										}
+								<form onSubmit={this.onSignupSubmit}>
+									<InputField
+										label="Email"
+										placeholder="example@email.com"
+										value={this.state.email}
+										onChange={this.onEmailChange}
+										error={this.state.postSignupError}
 									/>
-								)}
+									<Button
+										name="signup"
+										type="submit"
+										className="bp3-button bp3-intent-primary"
+										onClick={this.onSignupSubmit}
+										text="Signup"
+										disabled={!this.state.email}
+										loading={this.state.postSignupIsLoading}
+									/>
+								</form>
+								<a href="/login" className="switch-message">
+									Already have a PubPub account? Click to Login
+								</a>
 							</div>
-						</div>
-					</div>
+						)}
+
+						{this.state.isSuccessful && (
+							<NonIdealState
+								title="Signup Successful"
+								description={
+									<div className="success">
+										<p>
+											An email has been sent to <b>{this.state.email}</b>
+										</p>
+										<p>Follow the link in that email to create your account.</p>
+									</div>
+								}
+								visual="tick-circle"
+								action={
+									<Button
+										name="resendEmail"
+										type="button"
+										className="bp3-button"
+										onClick={this.onSignupSubmit}
+										text="Resend Email"
+										loading={this.state.postSignupIsLoading}
+									/>
+								}
+							/>
+						)}
+					</GridWrapper>
 				</PageWrapper>
 			</div>
 		);

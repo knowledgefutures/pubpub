@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Editor from '@pubpub/editor';
+
+import { GridWrapper } from 'components';
 import { getResizedUrl } from 'utils';
 
 const propTypes = {
@@ -20,26 +22,22 @@ const LayoutText = function(props) {
 	return (
 		<div className="layout-text-component">
 			<div className="block-content">
-				<div className="container">
-					<div className="row">
-						<div className="col-12">
-							<div style={wrapperStyle}>
-								<Editor
-									nodeOptions={{
-										image: {
-											onResizeUrl: (url) => {
-												return getResizedUrl(url, 'fit-in', '1200x0');
-											},
-											linkToSrc: false,
-										},
-									}}
-									initialContent={props.content.text || undefined}
-									isReadOnly={true}
-								/>
-							</div>
-						</div>
+				<GridWrapper>
+					<div style={wrapperStyle}>
+						<Editor
+							nodeOptions={{
+								image: {
+									onResizeUrl: (url) => {
+										return getResizedUrl(url, 'fit-in', '1200x0');
+									},
+									linkToSrc: false,
+								},
+							}}
+							initialContent={props.content.text || undefined}
+							isReadOnly={true}
+						/>
 					</div>
-				</div>
+				</GridWrapper>
 			</div>
 		</div>
 	);

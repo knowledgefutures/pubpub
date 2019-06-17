@@ -249,7 +249,11 @@ class UserEdit extends Component {
 								/>
 							);
 						})}
-
+						<p>Privacy</p>
+						<p className="privacy">
+							To request account deletion or data export, visit your{' '}
+							<a href="/privacy/settings">privacy settings page</a>.
+						</p>
 						<div className="buttons">
 							<InputField error={this.state.putUserError && 'Error Saving Details'}>
 								<Button

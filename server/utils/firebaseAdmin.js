@@ -30,7 +30,7 @@ export const getBranchDoc = (pubId, branchId, historyKey) => {
 	/*
 		pubKey/branchKey 
 			changes: []
-			selections: []
+			cursors: []
 	*/
 	const editorSchema = buildSchema({ ...discussionSchema }, {});
 

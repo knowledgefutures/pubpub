@@ -91,30 +91,27 @@ const PrivacyPolicy = function() {
 				users. Any such internal analytics will be conducted on an anonymized set of
 				user-generated content.
 			</p>
-			<h3>Google Analytics and Mixpanel</h3>
+			<h3>Keen</h3>
 			<p>
-				We use Google Analytics and Mixpanel software to perform Site usage analytics.
-				Google Analytics collects anonymous information from users to help us track Site
-				usage and referrals from other websites. These data are used primarily to optimize
-				the website experience for our visitors, but we may use the data as well to assist
-				us in our marketing of the Site.
+				We use Keen software to perform Site usage analytics. Keen collects anonymous
+				information from users to help us track Site usage and referrals from other
+				websites. These data are used primarily to optimize the website experience for our
+				visitors, but we may use the data as well to assist us in our marketing of the Site.
 			</p>
 			<p>
-				Information collected and processed by Google Analytics and Mixpanel include the
-				user’s IP address, network location, and geographic location. Google Analytics and
-				Mixpanel acquires all its information directly from the user, by installing a cookie
-				(see below) on JavaScribp3-enabled computers. The Site does not share any
-				information it collects with Google or Mixpanel, and neither Google nor Mixpanel
-				collect any personal identifying information such as names, contact information,
-				social security numbers or financial information.
+				Information collected and processed by Keen include the user’s IP address, network
+				location, and geographic location. Keen acquires all its information directly from
+				the user, by installing a cookie (see below) on JavaScribp3-enabled computers. The
+				Site does not share any information it collects with Keen, and Keen does not collect
+				any personal identifying information such as names, contact information, social
+				security numbers or financial information.
 			</p>
 			<h3>Cookies</h3>
 			<p>
 				Cookies are unique bits of computer data that many major websites will transfer to
 				your computer the first time that you visit. Cookies are stored on your hard drive
-				and may be later accessed by the website to track prior usage. As noted above,
-				Google Analytics and Mixpanel will install a cookie on the hard drives of Site
-				visitors.
+				and may be later accessed by the website to track prior usage. As noted above, will
+				install a cookie on the hard drives of Site visitors.
 			</p>
 			<h3>Email</h3>
 			<p>

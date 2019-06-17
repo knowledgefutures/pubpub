@@ -5,8 +5,6 @@ const {
 const throng = require('throng');
 require('@babel/register');
 
-const hotReloadServer = require('./hotReloadServer');
-
 const watchables = watch && (Array.isArray(watch) ? watch : [watch]).filter((x) => x);
 
 if (process.env.NODE_ENV === 'production') {
@@ -23,6 +21,7 @@ throng(
 			return require('./server/server.js')();
 		};
 		if (watchables) {
+			const hotReloadServer = require('./hotReloadServer');
 			hotReloadServer(startServer, watchables);
 		} else {
 			startServer();

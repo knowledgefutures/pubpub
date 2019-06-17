@@ -36,7 +36,7 @@ const GdprBanner = (props) => {
 	}
 
 	return (
-		<div className="gdpr-banner-component">
+		<div className="gdpr-banner-component bp3-dark">
 			<div className="logo">
 				<img src="/static/logoWhite.png" alt="" />
 			</div>

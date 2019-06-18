@@ -8,7 +8,7 @@ const getPipedPubIds = require('../util/getPipedPubIds');
 
 const blacklist = [
 	'0f21f44a-dc5e-4e8d-83b8-d1194e38d755', // Frankenbook
-	'8f7503e4-6e51-4e13-8204-708ad04067ec', // Resisting Reduction
+	// '8f7503e4-6e51-4e13-8204-708ad04067ec', // Resisting Reduction
 ];
 
 const main = async () => {

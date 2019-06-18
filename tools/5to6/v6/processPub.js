@@ -29,7 +29,6 @@ const getBranchIdForVersionId = (versionPermission, transformed) => {
 };
 
 const updateBranches = async (model, transformed) => {
-	console.log('in updateBranches');
 	const { id: pubId } = model;
 	const { draftBranch, namedBranches } = transformed;
 	await BranchPermission.destroy({ where: { pubId: pubId } });
@@ -50,11 +49,8 @@ const updateBranches = async (model, transformed) => {
 			communityAdminPermissions: 'manage',
 		};
 	});
-	console.log(preArray);
-	console.log('-------');
-	console.log(preArrayMapped);
+
 	await Branch.bulkCreate(preArrayMapped);
-	console.log('After bulk create');
 	await BranchPermission.bulkCreate(
 		model.versionPermissions.map((versionPermission) => {
 			const { createdAt, permissions, updatedAt, userId } = versionPermission;

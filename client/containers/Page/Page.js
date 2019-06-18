@@ -7,6 +7,7 @@ import LayoutHtml from './LayoutHtml';
 import LayoutBanner from './LayoutBanner';
 import LayoutText from './LayoutText';
 import LayoutPages from './LayoutPages';
+import CustomLanding from './CustomLanding';
 
 require('./page.scss');
 
@@ -20,6 +21,7 @@ const propTypes = {
 const Page = (props) => {
 	const pageData = props.pageData;
 	const slug = props.locationData.params.slug;
+	console.log('slug', slug)
 	const title = props.communityData.pages.reduce((prev, curr) => {
 		if (curr.slug === '' && slug === undefined) {
 			return curr.title;
@@ -35,6 +37,8 @@ const Page = (props) => {
 
 	const layout = pageData.layout || getDefaultLayout();
 	const pubRenderLists = generateRenderLists(layout, props.pageData.pubs);
+	const customPageWhiteList = ['99608f92-d70f-46c1-a72c-df272215f13e', '7808da6b-94d1-436d-ad79-2e036a8e4428'];
+	const useCustom = !slug && customPageWhiteList.includes(props.communityData.id);
 	return (
 		<div id="page-container" className={pageData.isNarrowWidth ? 'narrow' : ''}>
 			<PageWrapper
@@ -42,7 +46,8 @@ const Page = (props) => {
 				communityData={props.communityData}
 				locationData={props.locationData}
 			>
-				{layout.map((item, index) => {
+				{useCustom && <CustomLanding pageData={pageData} />}
+				{!useCustom && layout.map((item, index) => {
 					const validType =
 						['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
 					if (!validType) {

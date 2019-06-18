@@ -55,6 +55,9 @@ const reconstructDocumentWithCheckpointFallback = (changes, checkpoint, draftBra
 	try {
 		return [...reconstructDocument(changes)];
 	} catch (err) {
+		if (!checkpoint) {
+			return [];
+		}
 		warn(`Full document reconstruction failed: ${err}. Falling back to checkpoint`);
 		const { k: checkpointKey } = checkpoint;
 		const checkpointDoc = jsonToDoc(uncompressStateJSON(checkpoint).doc);

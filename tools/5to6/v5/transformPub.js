@@ -135,7 +135,13 @@ const mapVersionsToChangeIndices = (versions, intermediateDocStates, draftBranch
 					return null;
 				})
 				.filter((x) => x)[0];
-			if (matchWithinChange) {
+			const splitBlacklist = [
+				'1936d637-7d7a-456b-9a0c-51e166450df3',
+				'20253ff8-785c-4653-a642-83fc61ed4140',
+				'23e35a84-c412-432f-a925-f0bd3614876f',
+				'37acf165-8b30-4ff3-8fda-bd385010fbda',
+			];
+			if (matchWithinChange && !splitBlacklist.includes(version.pubId)) {
 				const splitResult = splitIntermediateDocStates(
 					intermediateDocStates,
 					matchWithinChange.state,
@@ -247,11 +253,15 @@ const transformV5Pub = (
 	{ changes, checkpoint, draftBranchId },
 	checkBranchPointers = true,
 ) => {
-	let intermediateDocStates = reconstructDocumentWithCheckpointFallback(
-		changes,
-		checkpoint,
-		draftBranchId,
-	);
+	const skipReconstructList = ['605c8e28-913a-48a6-98f9-fb81e02953e7'];
+	
+	let intermediateDocStates = skipReconstructList.includes(pub.id)
+		? []
+		: reconstructDocumentWithCheckpointFallback(
+			changes,
+			checkpoint,
+			draftBranchId,
+		);
 	const mapResult = mapVersionsToChangeIndices(
 		pub.versions,
 		intermediateDocStates,

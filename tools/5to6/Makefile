@@ -18,3 +18,14 @@ clean:
 
 mend:
 	node v5/mend.js $(pub)
+
+
+# node status.js --print-status=error --print-problems
+
+
+
+# 4 or 5 upload bugs.
+	# too large, malformed JSON
+# wrote a if statement that handles transform bugs
+# 1 remaining transform bug
+# 

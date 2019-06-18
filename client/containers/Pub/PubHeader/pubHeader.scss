@@ -215,7 +215,6 @@
 		}
 		.left {
 			flex: 0 1 auto;
-			overflow: scroll;
 		}
 		.right {
 			flex: 1 0 auto;
@@ -225,6 +224,9 @@
 
 	.tags-bar {
 		padding-top: 20px;
+		.left {
+			overflow: scroll;
+		}
 		.header-collection {
 			text-decoration: none;
 			margin: 6px 6px 0px 0px;

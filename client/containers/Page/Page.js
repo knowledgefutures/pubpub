@@ -21,7 +21,6 @@ const propTypes = {
 const Page = (props) => {
 	const pageData = props.pageData;
 	const slug = props.locationData.params.slug;
-	console.log('slug', slug)
 	const title = props.communityData.pages.reduce((prev, curr) => {
 		if (curr.slug === '' && slug === undefined) {
 			return curr.title;
@@ -37,7 +36,10 @@ const Page = (props) => {
 
 	const layout = pageData.layout || getDefaultLayout();
 	const pubRenderLists = generateRenderLists(layout, props.pageData.pubs);
-	const customPageWhiteList = ['99608f92-d70f-46c1-a72c-df272215f13e', '7808da6b-94d1-436d-ad79-2e036a8e4428'];
+	const customPageWhiteList = [
+		'99608f92-d70f-46c1-a72c-df272215f13e',
+		'7808da6b-94d1-436d-ad79-2e036a8e4428',
+	];
 	const useCustom = !slug && customPageWhiteList.includes(props.communityData.id);
 	return (
 		<div id="page-container" className={pageData.isNarrowWidth ? 'narrow' : ''}>
@@ -46,47 +48,50 @@ const Page = (props) => {
 				communityData={props.communityData}
 				locationData={props.locationData}
 			>
-				{useCustom && <CustomLanding pageData={pageData} />}
-				{!useCustom && layout.map((item, index) => {
-					const validType =
-						['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
-					if (!validType) {
-						return null;
-					}
-					return (
-						<div key={`block-${item.id}`} className="component-wrapper">
-							{item.type === 'pubs' && (
-								<LayoutPubs
-									key={`item-${item.id}`}
-									content={item.content}
-									pubRenderList={pubRenderLists[index]}
-								/>
-							)}
-							{item.type === 'text' && (
-								<LayoutText key={`item-${item.id}`} content={item.content} />
-							)}
-							{item.type === 'html' && (
-								<LayoutHtml key={`item-${item.id}`} content={item.content} />
-							)}
-							{item.type === 'banner' && (
-								<LayoutBanner
-									key={`item-${item.id}`}
-									content={item.content}
-									communityData={props.communityData}
-									loginData={props.loginData}
-									locationData={props.locationData}
-								/>
-							)}
-							{item.type === 'pages' && (
-								<LayoutPages
-									key={`item-${item.id}`}
-									content={item.content}
-									pages={props.communityData.pages}
-								/>
-							)}
-						</div>
-					);
-				})}
+				{useCustom && (
+					<CustomLanding pageData={pageData} communityData={props.communityData} />
+				)}
+				{!useCustom &&
+					layout.map((item, index) => {
+						const validType =
+							['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
+						if (!validType) {
+							return null;
+						}
+						return (
+							<div key={`block-${item.id}`} className="component-wrapper">
+								{item.type === 'pubs' && (
+									<LayoutPubs
+										key={`item-${item.id}`}
+										content={item.content}
+										pubRenderList={pubRenderLists[index]}
+									/>
+								)}
+								{item.type === 'text' && (
+									<LayoutText key={`item-${item.id}`} content={item.content} />
+								)}
+								{item.type === 'html' && (
+									<LayoutHtml key={`item-${item.id}`} content={item.content} />
+								)}
+								{item.type === 'banner' && (
+									<LayoutBanner
+										key={`item-${item.id}`}
+										content={item.content}
+										communityData={props.communityData}
+										loginData={props.loginData}
+										locationData={props.locationData}
+									/>
+								)}
+								{item.type === 'pages' && (
+									<LayoutPages
+										key={`item-${item.id}`}
+										content={item.content}
+										pages={props.communityData.pages}
+									/>
+								)}
+							</div>
+						);
+					})}
 			</PageWrapper>
 		</div>
 	);

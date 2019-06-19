@@ -135,7 +135,7 @@ const processPub = async (storage, pubId, writeToFirebase, { current, total }) =
 	const firebaseJson = createFirebaseJson(transformed, pubDir);
 	const hasTransformBeenUploaded = matchTransformHash(pubDir);
 	if (hasTransformBeenUploaded) {
-		console.log('OK: already wrote this pub');
+		console.log(`OK: already wrote ${pubId}`);
 	} else {
 		try {
 			cleanBranchNames(transformed);

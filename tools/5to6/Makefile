@@ -9,18 +9,23 @@ parse-original-firebase:
 transform-all:
 	node status.js --print-status=unstarted | node -r esm --max-old-space-size=12000 v5
 
-#3
+# 3
 migrate-v5-postgres:
 	node -r esm base/index.js
 
-#4
+# 4
 upload-all:
 	node status.js --print-status=transformed,warning | node -r esm --max-old-space-size=12000 v6
 
-#5
+# 5
 sync-search:
 	node ../../searchSync/init.js
 
+# 6 
+## Manual file uploads for file-too-big errors
+
+# 7 
+## Manual discussion migration
 
 transform:
 	echo $(pub) | node -r esm --max-old-space-size=12000 v5 --bust-cache
@@ -38,7 +43,7 @@ mend:
 # parse-original-firebase: 8-9 minutes
 # transform-all: 47 min serial, ~same with concurrency
 # migrate-v5-postgres: 5 min
-# upload-all: 3:50
+# upload-all: ~75 minutes
 
 
 # node status.js --print-status=error --print-problems

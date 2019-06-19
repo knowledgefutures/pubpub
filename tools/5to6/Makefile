@@ -1,6 +1,9 @@
 .phony:
 	transform transform-all upload-all clean 
 
+parse-original-firebase:
+	node -r esm --max-old-space-size=12000 readFirebase.js
+
 transform:
 	echo $(pub) | node -r esm --max-old-space-size=12000 v5 --bust-cache
 	
@@ -19,6 +22,9 @@ clean:
 mend:
 	node v5/mend.js $(pub)
 
+
+# parse-original-firebase: 8-9 minutes
+# transform-all: 
 
 # node status.js --print-status=error --print-problems
 

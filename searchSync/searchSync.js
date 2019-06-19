@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import Promise from 'bluebird';
 import algoliasearch from 'algoliasearch';
-
 import { Pub, Page } from '../server/models';
 import { getPubSearchData, getPageSearchData } from '../workers/utils/searchUtils';
 

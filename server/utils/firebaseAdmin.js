@@ -22,16 +22,7 @@ const database = firebaseApp.database();
 export const getBranchDoc = (pubId, branchId, historyKey) => {
 	const pubKey = `pub-${pubId}`;
 	const branchKey = `branch-${branchId}`;
-	// const branchKey = '';
-
 	const firebaseRef = database.ref(`${pubKey}/${branchKey}`);
-
-	/* TODO: Document expected structure of content at firebaseRef. For example: */
-	/*
-		pubKey/branchKey 
-			changes: []
-			cursors: []
-	*/
 	const editorSchema = buildSchema({ ...discussionSchema }, {});
 
 	return getFirebaseDoc(firebaseRef, editorSchema, historyKey);

@@ -21,6 +21,7 @@
 		"migrate": "node initMigrations.js",
 		"install-git-hooks": "rm -f ./.git/hooks/* && cp ./.githooks/* ./.git/hooks && chmod +x ./.git/hooks/*",
 		"postinstall": "npm run build-prod",
+		"search-sync": "NODE_PATH=./client:./ node searchSync/init.js",
 		"start": "npm run build-dev-once && concurrently --kill-others \"npm run api-dev\" \"npm run build-dev\"",
 		"storybook": "start-storybook -p 9001 -c .storybook -s ./",
 		"test": "jest --silent",

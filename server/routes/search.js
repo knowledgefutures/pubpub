@@ -35,13 +35,13 @@ app.get('/search', (req, res, next) => {
 				? ''
 				: `communityId:${initialData.communityData.id} AND `;
 			const pubCommunityAccessFilterString = userCommunities.reduce((prev, curr) => {
-				return `${prev} OR versionAdminAccessId:${curr.id}`;
+				return `${prev} OR branchAdminAccessId:${curr.id}`;
 			}, '');
 			const pubUserFilterString = initialData.loginData.id
-				? ` OR versionAccessIds:${initialData.loginData.id}`
+				? ` OR branchAccessIds:${initialData.loginData.id}`
 				: '';
 			const pubSearchParams = {
-				filters: `${communityFilter}(versionIsPublic:true${pubCommunityAccessFilterString}${pubUserFilterString})`,
+				filters: `${communityFilter}(branchIsPublic:true${pubCommunityAccessFilterString}${pubUserFilterString})`,
 			};
 
 			const pageCommunityAccessFilterString = userCommunities.reduce((prev, curr) => {

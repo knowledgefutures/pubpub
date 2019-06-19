@@ -121,6 +121,9 @@ app.use((req, res, next) => {
 	if (req.hostname.indexOf('v6-jblp.pubpub.org') > -1) {
 		req.headers.host = 'stanford-jblp.pubpub.org';
 	}
+	if (req.hostname.indexOf('v6-hdsr.pubpub.org') > -1) {
+		req.headers.host = 'hdsr.pubpub.org';
+	}
 	if (req.hostname.indexOf('v6-wip.pubpub.org') > -1) {
 		req.headers.host = 'wip.pubpub.org';
 	}

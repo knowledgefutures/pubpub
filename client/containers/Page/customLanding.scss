@@ -46,6 +46,7 @@
 				border: 1px solid #a2273e;
 				position: absolute;
 				top: -8px;
+				z-index: 2;
 			}
 			.b2 {
 				width: 65px;
@@ -54,6 +55,7 @@
 				position: absolute;
 				top: -16px;
 				left: 8px;
+				z-index: 1;
 			}
 		}
 		h2 {

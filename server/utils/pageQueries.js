@@ -11,6 +11,7 @@ import {
 	Page,
 	Branch,
 	BranchPermission,
+	Review,
 } from '../models';
 import { formatAndAuthenticatePub } from './pubQueries';
 
@@ -68,6 +69,11 @@ export const findPage = (pageId, useIncludes, initialData) => {
 							],
 						},
 					],
+				},
+				{
+					model: Review,
+					as: 'reviews',
+					separate: true,
 				},
 				{
 					model: CollectionPub,

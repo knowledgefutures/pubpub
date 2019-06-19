@@ -169,12 +169,14 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			};
 		}),
 		reviews: pub.reviews.filter((review) => {
-			const sourceBranch = formattedBranches.find((branch) => {
-				return branch.id === review.sourceBranchId;
-			});
-			const destinationBranch = formattedBranches.find((branch) => {
-				return branch.id === review.destinationBranchId;
-			});
+			const sourceBranch =
+				formattedBranches.find((branch) => {
+					return branch.id === review.sourceBranchId;
+				}) || {};
+			const destinationBranch =
+				formattedBranches.find((branch) => {
+					return branch.id === review.destinationBranchId;
+				}) || {};
 			return sourceBranch.canManage || destinationBranch.canManage;
 		}),
 		discussions: pub.discussions

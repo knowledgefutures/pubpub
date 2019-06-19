@@ -45,7 +45,6 @@ const Pub = (props) => {
 							firebaseBranchRef: firebaseBranchRef,
 							updateLocalData: updateLocalData,
 						};
-
 						return (
 							<React.Fragment>
 								<PubHeader

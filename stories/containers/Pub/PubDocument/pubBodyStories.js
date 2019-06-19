@@ -8,6 +8,7 @@ storiesOf('containers/Pub/PubDocument/PubBody', module).add('default', () => (
 		<PubBody
 			collabData={{}}
 			pubData={{ ...pubData, initialDoc: fullDoc }}
+			historyData={{ isViewingHistory: false }}
 			updateLocalData={() => {}}
 		/>
 	</div>

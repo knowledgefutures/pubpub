@@ -55,6 +55,7 @@ class PubSyncManager extends React.Component {
 			historyData: {
 				...historyData,
 				outstandingRequests: 0,
+				isViewingHistory: false,
 			},
 		};
 		this.syncRemoteCollabUsers = this.syncRemoteCollabUsers.bind(this);

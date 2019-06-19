@@ -239,7 +239,7 @@
 		}
 	}
 	.actions-bar {
-		padding: 40px 0px 20px;
+		padding: 40px 0px 0px;
 		.left {
 			.action-button-component {
 				margin-right: 35px;
@@ -283,7 +283,7 @@
 		color: inherit;
 		line-height: 1;
 		margin: 0;
-		padding: 50px 0px 10px;
+		padding: 30px 0px 10px;
 		font-size: 48px;
 		line-height: 1.4;
 		font-weight: 500;
@@ -326,13 +326,13 @@
 		}
 	}
 	.description {
-		padding-top: 30px;
+		padding-bottom: 5px;
 		font-size: 16px;
 		line-height: 1.4;
 		font-weight: 400;
 	}
 	.authors {
-		padding-top: 30px;
+		padding-top: 10px;
 		font-size: 18px;
 		font-style: italic;
 		font-weight: 400;

@@ -5,9 +5,7 @@ import stickybits from 'stickybits';
 
 import GridWrapper from 'components/GridWrapper/GridWrapper';
 import { pubDataProps } from 'types/pub';
-import Details from './Details';
 import Download from './Download';
-import History from './History';
 import Social from './Social';
 
 require('./pubMeta.scss');
@@ -34,7 +32,7 @@ const metaHeaderText = (metaMode) => {
 };
 
 const PubMeta = (props) => {
-	const { pubData, collabData, historyData, updateLocalData } = props;
+	const { pubData, updateLocalData } = props;
 	const { metaMode } = pubData;
 
 	const stickyRef = useRef();
@@ -82,18 +80,9 @@ const PubMeta = (props) => {
 						/>
 					</div>
 				)}
-				{metaMode === 'details' && <Details pubData={pubData} />}
 				{metaMode === 'social' && <Social pubData={pubData} />}
 				{metaMode === 'download' && (
 					<Download pubData={pubData} updateLocalData={updateLocalData} />
-				)}
-				{metaMode === 'history' && (
-					<History
-						pubData={pubData}
-						collabData={collabData}
-						updateLocalData={updateLocalData}
-						historyData={historyData}
-					/>
 				)}
 			</GridWrapper>
 		</div>

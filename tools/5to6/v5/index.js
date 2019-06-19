@@ -1,6 +1,8 @@
 /* eslint-disable no-restricted-syntax */
+/* eslint-disable no-console */
 require('ignore-styles');
 
+const Promise = require('bluebird');
 const { storage } = require('../setup');
 const { queryPubUpdatedTimes } = require('./queryPub');
 const processPub = require('./processPub');
@@ -13,6 +15,7 @@ const blacklist = [
 ];
 
 const main = async () => {
+	console.time('Transform Time');
 	const pipedPubIds = await getPipedPubIds();
 	const pubUpdatedAtTimes = await queryPubUpdatedTimes();
 	const bustCache = process.argv.find((a) => a.startsWith('--bust-cache'));
@@ -20,20 +23,51 @@ const main = async () => {
 		.filter((pubId) => !blacklist.includes(pubId))
 		.reduce(
 			(promise, pubId, index, arr) =>
-				promise.then(() =>
-					processPub(
-						storage,
-						pubId,
-						pubUpdatedAtTimes,
-						{
-							current: index + 1,
-							total: arr.length,
-						},
-						bustCache,
-					),
-				),
+				promise
+					.then(() => {
+						return processPub(
+							storage,
+							pubId,
+							pubUpdatedAtTimes,
+							{
+								current: index + 1,
+								total: arr.length,
+							},
+							bustCache,
+						);
+					})
+					.then(() => {
+						if (index === arr.length - 1) {
+							console.timeEnd('Transform Time');
+						}
+					}),
 			Promise.resolve(),
 		);
+	// const filteredIds = pipedPubIds.filter((pubId) => !blacklist.includes(pubId));
+	// Promise.map(
+	// 	filteredIds,
+	// 	(pubId, index, length) => {
+	// 		return processPub(
+	// 			storage,
+	// 			pubId,
+	// 			pubUpdatedAtTimes,
+	// 			{
+	// 				current: index + 1,
+	// 				total: length,
+	// 			},
+	// 			bustCache,
+	// 		)
+	// 			.then(() => {
+	// 				if (index === length - 1) {
+	// 					console.timeEnd('Transform Time');
+	// 				}
+	// 			})
+	// 			.catch((err) => {
+	// 				console.error('Promise Map Error', err);
+	// 			});
+	// 	},
+	// 	{ concurrency: 25 },
+	// );
 };
 
 main();

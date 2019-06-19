@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const Promise = require('bluebird');
 const { storage } = require('../setup');
 const getPipedPubIds = require('../util/getPipedPubIds');
@@ -16,16 +17,24 @@ const main = async () => {
 	// 			total: length,
 	// 		});
 	// 	},
-	// 	{ concurrency: 100 },
+	// 	{ concurrency: 20 },
 	// );
+
+	console.time('Upload Time');
 	pipedPubIds.reduce(
 		(promise, pubId, index, arr) =>
-			promise.then(() =>
-				processPub(storage, pubId, writeToFirebase, {
-					current: index + 1,
-					total: arr.length,
+			promise
+				.then(() =>
+					processPub(storage, pubId, writeToFirebase, {
+						current: index + 1,
+						total: arr.length,
+					}),
+				)
+				.then(() => {
+					if (index === arr.length - 1) {
+						console.timeEnd('Upload Time');
+					}
 				}),
-			),
 		Promise.resolve(),
 	);
 };

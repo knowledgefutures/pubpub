@@ -70,13 +70,16 @@ class Pubs extends Component {
 						const authors = pub.attributions.filter((attribution) => {
 							return attribution.isAuthor;
 						});
+						const pendingReviews = pub.reviews.filter((review) => {
+							return !review.isClosed && !review.isCompleted;
+						});
 						return (
 							<div key={`pub-${pub.id}`} className="pub-wrapper">
 								<div className="header">
 									<div className="title">
 										<a href={`/pub/${pub.slug}`}>{pub.title}</a>
 									</div>
-									<div className="nowrap">
+									<div className="tags">
 										{pub.collectionPubs.map(({ collection }) => {
 											return (
 												<span className="bp3-tag bp3-minimal bp3-small">
@@ -84,10 +87,6 @@ class Pubs extends Component {
 												</span>
 											);
 										})}
-									</div>
-									<div className="nowrap">
-										{pub.branches.length} Branch
-										{pub.branches.length === 1 ? '' : 'es'}
 									</div>
 								</div>
 								<div className="authors">
@@ -136,6 +135,18 @@ class Pubs extends Component {
 												</span>
 											);
 										})}
+								</div>
+								<div className="details">
+									{!!pendingReviews.length && (
+										<div>
+											{pendingReviews.length} Pending Review
+											{pendingReviews.length === 1 ? '' : 's'}
+										</div>
+									)}
+									<div>
+										{pub.branches.length} Branch
+										{pub.branches.length === 1 ? '' : 'es'}
+									</div>
 								</div>
 							</div>
 						);

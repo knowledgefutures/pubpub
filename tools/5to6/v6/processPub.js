@@ -33,7 +33,7 @@ const cleanBranchNames = (transformed) => {
 	const { namedBranches, versionToBranch } = transformed;
 	const branchNames = Object.keys(namedBranches);
 	const overlyLongPublicBranchName = branchNames.find((name) => name.startsWith('public__'));
-	if (branchNames.length === 2 && overlyLongPublicBranchName) {
+	if (branchNames.length === 1 && overlyLongPublicBranchName) {
 		namedBranches.public = namedBranches[overlyLongPublicBranchName];
 		Object.keys(versionToBranch).forEach((key) => {
 			const branchObj = versionToBranch[key];

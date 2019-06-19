@@ -31,21 +31,20 @@ const getBranchIdForVersionId = (versionPermission, transformed) => {
 
 const cleanBranchNames = (transformed) => {
 	const { namedBranches, versionToBranch } = transformed;
-	if (!namedBranches.public) {
-		namedBranches.public = { id: uuid.v4() };
-	}
 	const branchNames = Object.keys(namedBranches);
 	const overlyLongPublicBranchName = branchNames.find((name) => name.startsWith('public__'));
 	if (branchNames.length === 2 && overlyLongPublicBranchName) {
-		branchNames.public = branchNames[overlyLongPublicBranchName];
+		namedBranches.public = namedBranches[overlyLongPublicBranchName];
 		Object.keys(versionToBranch).forEach((key) => {
 			const branchObj = versionToBranch[key];
 			if (branchObj.name === overlyLongPublicBranchName) {
-				console.log('renaming!');
 				branchObj.name = 'public';
 			}
 		});
 		delete namedBranches[overlyLongPublicBranchName];
+	}
+	if (!namedBranches.public) {
+		namedBranches.public = { id: uuid.v4() };
 	}
 };
 

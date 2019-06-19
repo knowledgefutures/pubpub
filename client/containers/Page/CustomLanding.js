@@ -85,7 +85,7 @@ const CustomLanding = (props) => {
 								<div className="b2" />
 							</div>
 							<h2>
-								<a href={`/${blockData.collection.slug}`}>
+								<a href={`/${blockData.collection.page.slug}`}>
 									{blockData.collection.title}
 								</a>
 							</h2>
@@ -119,7 +119,7 @@ const CustomLanding = (props) => {
 								<div className="b2" />
 							</div>
 							<h2>
-								<a href={`/${collection.slug}`}>{collection.title}</a>
+								<a href={`/${collection.page.slug}`}>{collection.title}</a>
 							</h2>
 						</div>
 					);

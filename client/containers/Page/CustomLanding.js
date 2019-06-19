@@ -78,6 +78,7 @@ const CustomLanding = (props) => {
 			</div>
 			<div className="collections grid">
 				{layoutData.map((blockData) => {
+					const page = blockData.collection.page || {};
 					return (
 						<div className="block" key={blockData.collection.id}>
 							<div className="flare">
@@ -85,9 +86,7 @@ const CustomLanding = (props) => {
 								<div className="b2" />
 							</div>
 							<h2>
-								<a href={`/${blockData.collection.page.slug}`}>
-									{blockData.collection.title}
-								</a>
+								<a href={`/${page.slug}`}>{blockData.collection.title}</a>
 							</h2>
 							<div className="subtitle">{blockData.description}</div>
 							{blockData.pubs.map((pubData) => {
@@ -112,6 +111,7 @@ const CustomLanding = (props) => {
 			</div>
 			<div className="columns-wrapper">
 				{columnsData.map((collection) => {
+					const page = collection.page || {};
 					return (
 						<div className="column" key={collection.id}>
 							<div className="flare2">
@@ -119,7 +119,7 @@ const CustomLanding = (props) => {
 								<div className="b2" />
 							</div>
 							<h2>
-								<a href={`/${collection.page.slug}`}>{collection.title}</a>
+								<a href={`/${page.slug}`}>{collection.title}</a>
 							</h2>
 						</div>
 					);

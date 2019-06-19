@@ -164,9 +164,10 @@ const PubHeader = (props) => {
 			? '...'
 			: dateFormat(pubDate, 'mmm dd, yyyy');
 
-	const publicBranch = pubData.branches.find((branch) => {
-		return branch.title === 'public';
-	});
+	const publicBranch =
+		pubData.branches.find((branch) => {
+			return branch.title === 'public';
+		}) || {};
 	const currentBranchIsPublicBranch = publicBranch.id === pubData.activeBranch.id;
 
 	return (

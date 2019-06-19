@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import uuid from 'uuid';
 import { Branch, BranchPermission, PubVersion } from '../../../server/models';
 
 const { matchTransformHash, updateTransformHash } = require('./transformHash');
@@ -33,24 +34,28 @@ const updateBranches = async (model, transformed) => {
 	const { draftBranch, namedBranches } = transformed;
 	await BranchPermission.destroy({ where: { pubId: pubId } });
 	await Branch.destroy({ where: { pubId: pubId } });
-	const preArray = [['draft', draftBranch]].concat(Object.entries(namedBranches));
-	const preArrayMapped = preArray.map(([title, branch], index, { length }) => {
-		return {
-			id: branch.id,
-			shortId: index + 1,
-			title: title,
-			order: title === 'public' ? 1 : index / length,
-			viewHash: generateHash(8),
-			discussHash: generateHash(8),
-			editHash: generateHash(8),
-			pubId: pubId,
-			publicPermissions: title === 'public' ? 'discuss' : 'none',
-			pubManagerPermissions: 'manage',
-			communityAdminPermissions: 'manage',
-		};
-	});
-
-	await Branch.bulkCreate(preArrayMapped);
+	if (!namedBranches.public) {
+		namedBranches.public = { id: uuid.v4() };
+	}
+	await Branch.bulkCreate(
+		[['draft', draftBranch]]
+			.concat(Object.entries(namedBranches))
+			.map(([title, branch], index, { length }) => {
+				return {
+					id: branch.id,
+					shortId: index + 1,
+					title: title,
+					order: title === 'public' ? 1 : index / length,
+					viewHash: generateHash(8),
+					discussHash: generateHash(8),
+					editHash: generateHash(8),
+					pubId: pubId,
+					publicPermissions: title === 'public' ? 'discuss' : 'none',
+					pubManagerPermissions: 'manage',
+					communityAdminPermissions: 'manage',
+				};
+			}),
+	);
 	await BranchPermission.bulkCreate(
 		model.versionPermissions.map((versionPermission) => {
 			const { createdAt, permissions, updatedAt, userId } = versionPermission;

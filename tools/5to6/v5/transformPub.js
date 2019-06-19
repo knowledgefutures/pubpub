@@ -254,14 +254,10 @@ const transformV5Pub = (
 	checkBranchPointers = true,
 ) => {
 	const skipReconstructList = ['605c8e28-913a-48a6-98f9-fb81e02953e7'];
-	
+
 	let intermediateDocStates = skipReconstructList.includes(pub.id)
 		? []
-		: reconstructDocumentWithCheckpointFallback(
-			changes,
-			checkpoint,
-			draftBranchId,
-		);
+		: reconstructDocumentWithCheckpointFallback(changes, checkpoint, draftBranchId);
 	const mapResult = mapVersionsToChangeIndices(
 		pub.versions,
 		intermediateDocStates,

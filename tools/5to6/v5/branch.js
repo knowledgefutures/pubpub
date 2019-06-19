@@ -5,9 +5,7 @@ const { reconstructDocument } = require('./reconstructDocument');
 const stringMapToObj = (strMap, processValue) => {
 	const res = {};
 	for (const [key, value] of strMap) {
-		const newKey = typeof key === 'number'
-			? (key - 1).toString()
-			: key;
+		const newKey = typeof key === 'number' ? (key - 1).toString() : key;
 		res[newKey] = processValue ? processValue(value) : value;
 	}
 	return res;

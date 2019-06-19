@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import fs from 'fs';
 import uuidv4 from 'uuid/v4';
 import firebaseAdmin from 'firebase-admin';

@@ -29,14 +29,31 @@ const getBranchIdForVersionId = (versionPermission, transformed) => {
 	}
 };
 
+const cleanBranchNames = (transformed) => {
+	const { namedBranches, versionToBranch } = transformed;
+	if (!namedBranches.public) {
+		namedBranches.public = { id: uuid.v4() };
+	}
+	const branchNames = Object.keys(namedBranches);
+	const overlyLongPublicBranchName = branchNames.find((name) => name.startsWith('public__'));
+	if (branchNames.length === 2 && overlyLongPublicBranchName) {
+		branchNames.public = branchNames[overlyLongPublicBranchName];
+		Object.keys(versionToBranch).forEach((key) => {
+			const branchObj = versionToBranch[key];
+			if (branchObj.name === overlyLongPublicBranchName) {
+				console.log('renaming!');
+				branchObj.name = 'public';
+			}
+		});
+		delete namedBranches[overlyLongPublicBranchName];
+	}
+};
+
 const updateBranches = async (model, transformed) => {
 	const { id: pubId } = model;
 	const { draftBranch, namedBranches } = transformed;
 	await BranchPermission.destroy({ where: { pubId: pubId } });
 	await Branch.destroy({ where: { pubId: pubId } });
-	if (!namedBranches.public) {
-		namedBranches.public = { id: uuid.v4() };
-	}
 	await Branch.bulkCreate(
 		[['draft', draftBranch]]
 			.concat(Object.entries(namedBranches))
@@ -121,6 +138,7 @@ const processPub = async (storage, pubId, writeToFirebase, { current, total }) =
 		console.log('OK: already wrote this pub');
 	} else {
 		try {
+			cleanBranchNames(transformed);
 			await updateBranches(model, transformed);
 			await createVersions(transformed);
 			await writeToFirebase(pubId, firebaseJson);

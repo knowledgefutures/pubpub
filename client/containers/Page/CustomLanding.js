@@ -80,7 +80,15 @@ const CustomLanding = (props) => {
 				{layoutData.map((blockData) => {
 					return (
 						<div className="block" key={blockData.collection.id}>
-							<h2>{blockData.collection.title}</h2>
+							<div className="flare">
+								<div className="b1" />
+								<div className="b2" />
+							</div>
+							<h2>
+								<a href={`/${blockData.collection.slug}`}>
+									{blockData.collection.title}
+								</a>
+							</h2>
 							<div className="subtitle">{blockData.description}</div>
 							{blockData.pubs.map((pubData) => {
 								return (
@@ -88,7 +96,10 @@ const CustomLanding = (props) => {
 										<div className="authors">
 											{generateAuthorString(pubData)}
 										</div>
-										<div className="title">{pubData.title}</div>
+										<div className="title">
+											<a href={`/pub/${pubData.slug}`}>{pubData.title}</a>
+										</div>
+										<div className="description">{pubData.description}</div>
 									</div>
 								);
 							})}
@@ -99,11 +110,22 @@ const CustomLanding = (props) => {
 			<div className="banner-bar grid">
 				<span className="content">Columns</span>
 			</div>
-			<div className="columns">
+			<div className="columns-wrapper">
 				{columnsData.map((collection) => {
-					return <div className="column">{collection.title}</div>;
+					return (
+						<div className="column" key={collection.id}>
+							<div className="flare2">
+								<div className="b1" />
+								<div className="b2" />
+							</div>
+							<h2>
+								<a href={`/${collection.slug}`}>{collection.title}</a>
+							</h2>
+						</div>
+					);
 				})}
 			</div>
+			<div className="line" />
 		</div>
 	);
 };

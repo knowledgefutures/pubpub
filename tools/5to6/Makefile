@@ -1,20 +1,32 @@
 .phony:
 	transform transform-all upload-all clean 
 
+# 1
 parse-original-firebase:
 	node -r esm --max-old-space-size=12000 readFirebase.js
+
+# 2
+transform-all:
+	node status.js --print-status=unstarted | node -r esm --max-old-space-size=12000 v5
+
+#3
+migrate-v5-postgres:
+	node -r esm base/index.js
+
+#4
+upload-all:
+	node status.js --print-status=transformed,warning | node -r esm --max-old-space-size=12000 v6
+
+#5
+sync-search:
+	node ../../searchSync/init.js
+
 
 transform:
 	echo $(pub) | node -r esm --max-old-space-size=12000 v5 --bust-cache
 	
 upload:
 	echo $(pub) | node -r esm --max-old-space-size=12000 v6
-
-transform-all:
-	node status.js --print-status=unstarted | node -r esm --max-old-space-size=12000 v5
-
-upload-all:
-	node status.js --print-status=transformed,warning | node -r esm --max-old-space-size=12000 v6
 
 clean:
 	node status.js --print-status=all | node clean.js
@@ -24,14 +36,9 @@ mend:
 
 
 # parse-original-firebase: 8-9 minutes
-# transform-all: 
+# transform-all: 47 min serial, ~same with concurrency
+# migrate-v5-postgres: 5 min
+# upload-all: 3:50
+
 
 # node status.js --print-status=error --print-problems
-
-
-
-# 4 or 5 upload bugs.
-	# too large, malformed JSON
-# wrote a if statement that handles transform bugs
-# 1 remaining transform bug
-# 

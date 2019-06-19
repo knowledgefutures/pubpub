@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 require('ignore-styles');
 
+const Promise = require('bluebird');
 const { storage } = require('../setup');
 const { queryPubUpdatedTimes } = require('./queryPub');
 const processPub = require('./processPub');
@@ -42,6 +43,31 @@ const main = async () => {
 					}),
 			Promise.resolve(),
 		);
+	// const filteredIds = pipedPubIds.filter((pubId) => !blacklist.includes(pubId));
+	// Promise.map(
+	// 	filteredIds,
+	// 	(pubId, index, length) => {
+	// 		return processPub(
+	// 			storage,
+	// 			pubId,
+	// 			pubUpdatedAtTimes,
+	// 			{
+	// 				current: index + 1,
+	// 				total: length,
+	// 			},
+	// 			bustCache,
+	// 		)
+	// 			.then(() => {
+	// 				if (index === length - 1) {
+	// 					console.timeEnd('Transform Time');
+	// 				}
+	// 			})
+	// 			.catch((err) => {
+	// 				console.error('Promise Map Error', err);
+	// 			});
+	// 	},
+	// 	{ concurrency: 25 },
+	// );
 };
 
 main();

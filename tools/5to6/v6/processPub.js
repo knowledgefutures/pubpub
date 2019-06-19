@@ -41,7 +41,7 @@ const cleanBranchNames = (transformed) => {
 		Object.keys(versionToBranch).forEach((key) => {
 			const branchObj = versionToBranch[key];
 			if (branchObj.name === overlyLongPublicBranchName) {
-				console.log('renaming!');
+				// console.log('renaming!');
 				branchObj.name = 'public';
 			}
 		});
@@ -143,9 +143,9 @@ const processPub = async (storage, pubId, writeToFirebase, { current, total }) =
 			await createVersions(transformed);
 			await writeToFirebase(pubId, firebaseJson);
 			updateTransformHash(pubDir);
-			console.log('OK: wrote this pub successfully!');
+			console.log(`OK: wrote ${pubId} successfully!`);
 		} catch (error) {
-			console.log('FAILURE:', error.toString());
+			console.log(`FAILURE: ${pubId} - ${error.toString()}`);
 		}
 	}
 };

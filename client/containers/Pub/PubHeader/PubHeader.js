@@ -6,6 +6,7 @@ import { PageContext } from 'components/PageWrapper/PageWrapper';
 import dateFormat from 'dateformat';
 import classNames from 'classnames';
 import stickybits from 'stickybits';
+import { getJSON } from '@pubpub/editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import {
 	Button,
@@ -26,7 +27,7 @@ import Social from './Social';
 import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
-import { generateHeaderBreadcrumbs } from './headerUtils';
+import { generateHeaderBreadcrumbs, getTocHeadings } from './headerUtils';
 
 require('./pubHeader.scss');
 
@@ -142,14 +143,19 @@ const PubHeader = (props) => {
 		pubTitle = title;
 	}
 
+	const docJson = collabData.editorChangeObject.view
+		? getJSON(collabData.editorChangeObject.view)
+		: pubData.initialDoc;
+
+	const headings =
+		pubData.initialDoc || collabData.editorChangeObject.view ? getTocHeadings(docJson) : [];
+
 	const metaModes = [
 		{
 			title: 'Contents',
 			icon: 'toc',
 			key: 'contents',
-			popoverContent: (
-				<PubToc pubData={pubData} editorChangeObject={collabData.editorChangeObject} />
-			),
+			popoverContent: <PubToc pubData={pubData} headings={headings} />,
 		},
 		{
 			title: 'Download',
@@ -582,6 +588,9 @@ const PubHeader = (props) => {
 							<div className="right">
 								{metaModes.map((mode) => {
 									const isActive = pubData.metaMode === mode.key;
+									if (mode.key === 'contents' && !headings.length) {
+										return null;
+									}
 									return (
 										<Popover
 											key={mode.key}
@@ -618,18 +627,17 @@ const PubHeader = (props) => {
 					<div className="bottom-text">
 						<div className="bottom-title">{pubData.title}</div>
 						<div className="bottom-buttons">
-							<Popover
-								minimal={true}
-								position={Position.BOTTOM_RIGHT}
-								content={
-									<PubToc
-										pubData={pubData}
-										editorChangeObject={collabData.editorChangeObject}
+							{!!headings.length && (
+								<React.Fragment>
+									<Popover
+										minimal={true}
+										position={Position.BOTTOM_RIGHT}
+										content={<PubToc pubData={pubData} headings={headings} />}
+										target={<Button minimal={true}>Contents</Button>}
 									/>
-								}
-								target={<Button minimal={true}>Contents</Button>}
-							/>
-							<span className="dot">·</span>
+									<span className="dot">·</span>
+								</React.Fragment>
+							)}
 							<Button
 								minimal={true}
 								onClick={() =>

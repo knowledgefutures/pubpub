@@ -4,7 +4,7 @@ import { Button, ButtonGroup } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
 import { InputField, ImageUpload, SettingsSection, FileUploadButton } from 'components';
 import { apiFetch, slugifyString } from 'utils';
-import { getFormattedDownload } from 'containers/Pub/pubUtils';
+import { getFormattedDownload } from 'containers/Pub/PubHeader/headerUtils';
 
 const propTypes = {
 	locationData: PropTypes.object.isRequired,

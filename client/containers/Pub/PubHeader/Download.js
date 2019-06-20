@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, ButtonGroup, Tooltip, Intent } from '@blueprintjs/core';
 import { apiFetch } from 'utils';
 import { pingTask } from 'utils/pingTask';
-import { getFormattedDownload, getExistingDownload } from 'containers/Pub/pubUtils';
+import { getFormattedDownload, getExistingDownload } from './headerUtils';
 
 require('./download.scss');
 

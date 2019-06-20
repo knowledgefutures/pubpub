@@ -116,7 +116,7 @@ const PubDocument = (props) => {
 							setClickedMarks(marksAtSelection(view));
 						}}
 					/>
-					{!isViewingHistory && (
+					{!isViewingHistory && pubData.canEditBranch && !pubData.isStaticDoc && (
 						<PubInlineImport
 							pubData={pubData}
 							editorView={collabData.editorChangeObject.view}

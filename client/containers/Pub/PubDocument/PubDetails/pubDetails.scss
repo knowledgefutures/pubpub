@@ -47,7 +47,6 @@
     position: relative;
     border-bottom: 1px solid #f0f0f7;
     display: flex;
-    margin-bottom: 1.5em;
     &.expanded {
         @include column;
         .contributors {
@@ -105,5 +104,8 @@
         position: absolute;
         top: 8px;
         right: 0;
+        .expand-icon {
+            transform: rotate(45deg);
+        }
     }
 }

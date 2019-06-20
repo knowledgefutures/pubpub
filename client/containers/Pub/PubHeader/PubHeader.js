@@ -143,13 +143,11 @@ const PubHeader = (props) => {
 		pubTitle = title;
 	}
 
-	const docJson =
-		collabData.editorChangeObject && collabData.editorChangeObject.view
-			? getJSON(collabData.editorChangeObject.view)
-			: pubData.initialDoc;
-
-	const headings =
-		pubData.initialDoc || collabData.editorChangeObject.view ? getTocHeadings(docJson) : [];
+	let docJson = pubData.initialDoc;
+	if (collabData.editorChangeObject && collabData.editorChangeObject.view) {
+		docJson = getJSON(collabData.editorChangeObject.view);
+	}
+	const headings = docJson ? getTocHeadings(docJson) : [];
 
 	const metaModes = [
 		{

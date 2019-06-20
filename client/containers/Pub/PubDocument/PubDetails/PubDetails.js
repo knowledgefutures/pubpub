@@ -27,11 +27,13 @@ const PubDetails = (props) => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [isCitationModalOpen, setCitationModalOpen] = useState(false);
 	const copyableCitationRef = useRef();
-	const {
-		communityData: { accentColorDark },
-	} = useContext(PageContext);
+	const { communityData } = useContext(PageContext);
 
 	const showSecondColumn = !!(pubData.doi || isExpanded);
+
+	if (!contributorsWithUser.length && !pubData.doi) {
+		return null;
+	}
 
 	return (
 		<GridWrapper containerClassName="pub">
@@ -39,17 +41,18 @@ const PubDetails = (props) => {
 				<div className="expand-contract">
 					<Button
 						minimal
-						icon={
+						rightIcon={
 							<Icon
 								className="expand-icon"
 								icon={isExpanded ? 'collapse-all' : 'expand-all'}
+								iconSize={12}
+								color={communityData.accentColorDark}
 							/>
 						}
 						onClick={() => setIsExpanded(!isExpanded)}
-						style={{ color: accentColorDark }}
-					>
-						Pub details
-					</Button>
+						style={{ color: communityData.accentColorDark }}
+						text={isExpanded ? 'Collapse Details' : 'Show All Details'}
+					/>
 				</div>
 				<div className="section contributors">
 					<h6>Contributors ({contributorsWithUser.length})</h6>
@@ -121,12 +124,11 @@ const CompactContributors = (props) => {
 	const leftoverContributors = contributors.length - maxContributorsInCompactView;
 	return (
 		<div className="compact-contributors">
-			{contributorsWithAvatars.map(({ user }, index) => (
+			{contributorsWithAvatars.map((contributor) => (
 				<Avatar
-					// eslint-disable-next-line react/no-array-index-key
-					key={index}
-					userInitials={user.initials}
-					userAvatar={user.avatar}
+					key={contributor.id}
+					userInitials={contributor.user.initials}
+					userAvatar={contributor.user.avatar}
 					width={20}
 				/>
 			))}

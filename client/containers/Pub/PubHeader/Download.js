@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Tooltip, Intent } from '@blueprintjs/core';
+import { Tooltip, Icon, Menu, MenuItem, Spinner } from '@blueprintjs/core';
 import { apiFetch } from 'utils';
 import { pingTask } from 'utils/pingTask';
 import { getFormattedDownload, getExistingDownload } from './headerUtils';
@@ -68,42 +68,60 @@ const Download = (props) => {
 	const formattedOptionsClassName = formattedDownload ? 'with-formatted' : '';
 	return (
 		<div className={`pub-download-component ${formattedOptionsClassName}`}>
-			{formattedDownload && (
-				<React.Fragment>
-					<h5>Author Generated Download</h5>
-					<Button
-						className="formatted-button"
-						intent={Intent.PRIMARY}
-						text={`Formatted ${formattedDownload.url
-							.split('.')
-							.pop()
-							.toUpperCase()}`}
-						loading={isLoading && selectedType.format === 'formatted'}
-						onClick={() => window.open(formattedDownload.url)}
-					/>
-				</React.Fragment>
-			)}
-			{formattedDownload && <h5>Auto Generated Download</h5>}
-			<ButtonGroup vertical={true}>
-				{formatTypes.map((type) => (
-					<Tooltip
-						key={type.format}
-						isOpen={isError && selectedType.format === type.format}
-						content="There was a problem generating the file."
-					>
-						<Button
-							disabled={isLoading && selectedType.format !== type.format}
-							loading={isLoading && selectedType.format === type.format}
-							onClick={() => {
-								setSelectedType(type);
-								setIsError(false);
-								setIsLoading(true);
-							}}
-							text={type.title}
+			<Menu>
+				{formattedDownload && (
+					<React.Fragment>
+						<li className="bp3-menu-header">
+							<h6 className="bp3-heading">Formatted Download</h6>
+						</li>
+						<MenuItem
+							shouldDismissPopover={false}
+							labelElement={<Icon icon="star" />}
+							className="formatted-button"
+							// intent={Intent.PRIMARY}
+							text={`Formatted ${formattedDownload.url
+								.split('.')
+								.pop()
+								.toUpperCase()}`}
+							loading={isLoading && selectedType.format === 'formatted'}
+							onClick={() => window.open(formattedDownload.url)}
 						/>
-					</Tooltip>
+					</React.Fragment>
+				)}
+				<li className="bp3-menu-header">
+					<h6 className="bp3-heading">
+						{formattedDownload ? 'Auto Generated Download' : 'Download'}
+					</h6>
+				</li>
+				{formatTypes.map((type) => (
+					<MenuItem
+						shouldDismissPopover={false}
+						disabled={isLoading && selectedType.format !== type.format}
+						// loading={isLoading && selectedType.format === type.format}
+						labelElement={
+							<span>
+								{isLoading && selectedType.format === type.format && (
+									<Spinner size={Spinner.SIZE_SMALL} />
+								)}
+							</span>
+						}
+						onClick={() => {
+							setSelectedType(type);
+							setIsError(false);
+							setIsLoading(true);
+						}}
+						text={
+							<Tooltip
+								key={type.format}
+								isOpen={isError && selectedType.format === type.format}
+								content="There was a problem generating the file."
+							>
+								{type.title}
+							</Tooltip>
+						}
+					/>
 				))}
-			</ButtonGroup>
+			</Menu>
 		</div>
 	);
 };

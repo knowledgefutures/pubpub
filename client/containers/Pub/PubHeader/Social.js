@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { AnchorButton, ButtonGroup } from '@blueprintjs/core';
+import { Menu, MenuItem } from '@blueprintjs/core';
 import { Icon } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 
@@ -54,12 +54,12 @@ const Social = (props) => {
 	];
 	return (
 		<div className="pub-social-component">
-			<ButtonGroup vertical={true}>
+			<Menu vertical={true}>
 				{links.map((link) => {
 					return (
-						<AnchorButton
+						<MenuItem
 							key={link.title}
-							icon={link.icon}
+							labelElement={link.icon}
 							text={link.title}
 							href={link.url}
 							rel="noopener noreferrer"
@@ -67,7 +67,7 @@ const Social = (props) => {
 						/>
 					);
 				})}
-			</ButtonGroup>
+			</Menu>
 		</div>
 	);
 };

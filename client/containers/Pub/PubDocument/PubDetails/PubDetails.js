@@ -67,7 +67,7 @@ const PubDetails = (props) => {
 									<ClickToCopyButton
 										copyString={`https://doi.org/${pubData.doi}`}
 										className="click-to-copy"
-										beforeCopyPrompt="Copy a doi.org link"
+										beforeCopyPrompt="Copy doi.org link"
 									/>
 								</span>
 							</React.Fragment>

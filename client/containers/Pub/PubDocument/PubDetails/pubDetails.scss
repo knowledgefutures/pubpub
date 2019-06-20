@@ -95,16 +95,16 @@
 		.doi-and-button {
 			display: flex;
 			align-items: center;
+			&:hover {
+				.click-to-copy {
+					opacity: 1;
+				}
+			}
 		}
 		.click-to-copy {
 			margin-left: 3px;
 			opacity: 0;
 			transition: 50ms ease-out opacity;
-		}
-		&:hover {
-			.click-to-copy {
-				opacity: 1;
-			}
 		}
 	}
 	.expand-contract {

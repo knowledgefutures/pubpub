@@ -419,11 +419,14 @@
 	right: 15px;
 }
 @media only screen and (max-width: 750px) {
-	.pub-header-component {
+	.pub-header-component.new {
 		.tags-buttons-wrapper {
 			.buttons {
 				display: none;
 			}
+		}
+		.actions-bar .left {
+			display: none;
 		}
 	}
 }

@@ -39,7 +39,6 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 									'accentColorDark',
 									'headerLogo',
 									'headerColorType',
-									'headerTextAccent',
 								],
 							},
 						],

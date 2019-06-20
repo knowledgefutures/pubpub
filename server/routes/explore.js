@@ -31,7 +31,6 @@ app.get('/explore', (req, res, next) => {
 			'accentColorDark',
 			'headerLogo',
 			'headerColorType',
-			'headerTextAccent',
 			'createdAt',
 			'updatedAt',
 		],

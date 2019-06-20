@@ -1,7 +1,7 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
 
 import { pubDataProps } from 'types/pub';
 import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
@@ -11,7 +11,7 @@ import Avatar from 'components/Avatar/Avatar';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 
 import Contributors from './Contributors';
-import CitationsModal from './CitationsModal';
+import CitationsPreview from './CitationsPreview';
 
 require('./pubDetails.scss');
 
@@ -25,8 +25,6 @@ const PubDetails = (props) => {
 	const { pubData } = props;
 	const contributorsWithUser = pubData.attributions.map(ensureUserForAttribution);
 	const [isExpanded, setIsExpanded] = useState(false);
-	const [isCitationModalOpen, setCitationModalOpen] = useState(false);
-	const copyableCitationRef = useRef();
 	const { communityData } = useContext(PageContext);
 
 	const showSecondColumn = !!(pubData.doi || isExpanded);
@@ -74,44 +72,7 @@ const PubDetails = (props) => {
 								</span>
 							</React.Fragment>
 						)}
-						{isExpanded && (
-							<React.Fragment>
-								<h6>Cite as</h6>
-								<div
-									className="citation-body"
-									ref={copyableCitationRef}
-									dangerouslySetInnerHTML={{
-										__html: pubData.citationData.pub.apa,
-									}}
-								/>
-								<ButtonGroup>
-									<ClickToCopyButton
-										className="copy-button"
-										icon="duplicate"
-										copyString={() => {
-											if (copyableCitationRef.current) {
-												return copyableCitationRef.current.textContent;
-											}
-											return '';
-										}}
-									>
-										Copy
-									</ClickToCopyButton>
-									<Button
-										icon="more"
-										minimal
-										onClick={() => setCitationModalOpen(true)}
-									>
-										More
-									</Button>
-								</ButtonGroup>
-								<CitationsModal
-									isOpen={isCitationModalOpen}
-									citationData={pubData.citationData}
-									onClose={() => setCitationModalOpen(false)}
-								/>
-							</React.Fragment>
-						)}
+						{isExpanded && <CitationsPreview pubData={pubData} />}
 					</div>
 				)}
 			</div>

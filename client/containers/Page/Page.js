@@ -38,7 +38,7 @@ const Page = (props) => {
 	const pubRenderLists = generateRenderLists(layout, props.pageData.pubs);
 	const customPageWhiteList = [
 		'99608f92-d70f-46c1-a72c-df272215f13e',
-		'7808da6b-94d1-436d-ad79-2e036a8e4428',
+		// '7808da6b-94d1-436d-ad79-2e036a8e4428',
 	];
 	const useCustom = !slug && customPageWhiteList.includes(props.communityData.id);
 	return (

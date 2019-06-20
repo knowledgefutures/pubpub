@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import dateFormat from 'dateformat';
+// import dateFormat from 'dateformat';
 import classNames from 'classnames';
 import stickybits from 'stickybits';
 import { getJSON } from '@pubpub/editor';
@@ -21,6 +21,7 @@ import {
 	Popover,
 } from '@blueprintjs/core';
 import { Icon, GridWrapper, Overlay } from 'components';
+import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
 import PubToc from './PubToc';
 import Download from './Download';
 import Social from './Social';
@@ -33,7 +34,7 @@ require('./pubHeader.scss');
 
 const propTypes = {
 	collabData: PropTypes.object.isRequired,
-	historyData: PropTypes.object.isRequired,
+	// historyData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
@@ -70,7 +71,7 @@ const PubHeader = (props) => {
 			How do you get to pub/slug/submissions?
 		Do we require an accent color with the block styles? Or can they be simple white/black text?
 	*/
-	const { pubData, collabData, updateLocalData, historyData } = props;
+	const { pubData, collabData, updateLocalData /* historyData */ } = props;
 	const { communityData, locationData } = useContext(PageContext);
 	const headerRef = useRef(null);
 	const [title, setTitle] = useState(props.pubData.title);
@@ -153,20 +154,31 @@ const PubHeader = (props) => {
 		{
 			title: 'Contents',
 			icon: 'toc',
-			key: 'contents',
 			popoverContent: <PubToc pubData={pubData} headings={headings} />,
+		},
+		{
+			title: 'Cite',
+			icon: 'cite',
+			popoverContent: (
+				<div style={{ padding: '1em' }}>
+					<CitationsPreview pubData={pubData} />
+				</div>
+			),
 		},
 		{
 			title: 'Download',
 			icon: 'download2',
-			key: 'download',
 			popoverContent: <Download pubData={pubData} />,
 		},
 		{
 			title: 'Social Sharing',
 			icon: 'share2',
-			key: 'social',
 			popoverContent: <Social pubData={pubData} />,
+		},
+		{
+			title: 'History',
+			icon: 'history',
+			popoverContent: <p>Need to Re-implement!</p>,
 		},
 		// TODO(ian): re-enable these once we have something to put there
 		// { title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
@@ -180,13 +192,13 @@ const PubHeader = (props) => {
 	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
 	// const submissionButtons = generateSubmissionButtons(pubData);
 
-	const pubDate =
-		(historyData && historyData.timestamps && historyData.timestamps[historyData.currentKey]) ||
-		pubData.updatedAt;
-	const pubDateString =
-		historyData && historyData.outstandingRequests > 0
-			? '...'
-			: dateFormat(pubDate, 'mmm dd, yyyy');
+	// const pubDate =
+	// 	(historyData && historyData.timestamps && historyData.timestamps[historyData.currentKey]) ||
+	// 	pubData.updatedAt;
+	// const pubDateString =
+	// 	historyData && historyData.outstandingRequests > 0
+	// 		? '...'
+	// 		: dateFormat(pubDate, 'mmm dd, yyyy');
 
 	const publicBranch =
 		pubData.branches.find((branch) => {
@@ -353,12 +365,6 @@ const PubHeader = (props) => {
 						)}
 					</h1>
 
-					{isDocMode && pubData.description && (
-						<div className="description">
-							<span className="text-wrapper">{pubData.description}</span>
-						</div>
-					)}
-
 					{isDocMode && !!authors.length && (
 						<div className="authors">
 							<span className="text-wrapper">
@@ -414,12 +420,19 @@ const PubHeader = (props) => {
 							</span>
 						</div>
 					)}
+
+					{isDocMode && pubData.description && (
+						<div className="description">
+							<span className="text-wrapper">{pubData.description}</span>
+						</div>
+					)}
+
 					{isDocMode && (
 						<div className="actions-bar">
 							<div className="left">
 								{/* History Button */}
 
-								<ActionButton
+								{/* <ActionButton
 									buttons={[
 										{
 											text: (
@@ -441,7 +454,7 @@ const PubHeader = (props) => {
 										},
 									]}
 									isSkewed={true}
-								/>
+								/> */}
 
 								{/* Branches Button */}
 
@@ -586,13 +599,13 @@ const PubHeader = (props) => {
 							</div>
 							<div className="right">
 								{metaModes.map((mode) => {
-									const isActive = pubData.metaMode === mode.key;
-									if (mode.key === 'contents' && !headings.length) {
+									const isActive = pubData.metaMode === mode.title;
+									if (mode.title === 'Contents' && !headings.length) {
 										return null;
 									}
 									return (
 										<Popover
-											key={mode.key}
+											key={mode.title}
 											minimal={true}
 											position={Position.BOTTOM_RIGHT}
 											content={mode.popoverContent}

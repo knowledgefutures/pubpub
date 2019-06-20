@@ -126,6 +126,9 @@
 				background-color: white;
 			}
 
+			h1 {
+				font-weight: 400;
+			}
 			.text-wrapper,
 			.bp3-editable-text-content {
 				/* Ways of accomplishing this effect: */
@@ -137,9 +140,10 @@
 				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.2);
 			}
 			.action-button-component {
-				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 				.bp3-button {
 					border: 0px solid white;
+					box-shadow: 0px 0px transparent;
 				}
 			}
 			.bottom-text {
@@ -168,20 +172,23 @@
 				box-decoration-break: clone;
 				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.2);
 			}
+			h1 {
+				font-weight: 400;
+			}
 			h1,
 			.description {
 				color: white;
 			}
 			.action-button-component {
-				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+				box-shadow: 0px 2px 8px rgba(255, 255, 255, 0.1);
 				.bp3-button {
 					background: #000;
-					border: 0px solid black;
+					border: 1px solid #444;
 					&:hover {
-						background: #111;
+						background: #151515;
 					}
 					&:active {
-						background: #222;
+						background: #333;
 					}
 					&.skinny {
 						box-shadow: inset 7px 0 3px -7px rgba(255, 255, 255, 0.4);
@@ -283,9 +290,9 @@
 		color: inherit;
 		line-height: 1;
 		margin: 0;
-		padding: 30px 0px 10px;
+		padding: 30px 0px 5px;
 		font-size: 48px;
-		line-height: 1.4;
+		line-height: 1.3;
 		font-weight: 500;
 		letter-spacing: 1px;
 		font-family: $header-font;
@@ -326,16 +333,18 @@
 		}
 	}
 	.description {
-		padding-bottom: 5px;
+		padding-top: 15px;
 		font-size: 16px;
 		line-height: 1.4;
 		font-weight: 400;
 	}
 	.authors {
-		padding-top: 10px;
+		padding-top: 15px;
 		font-size: 18px;
 		font-style: italic;
 		font-weight: 400;
+		font-family: $header-font;
+		letter-spacing: 0.5px;
 	}
 	// .details {
 	// 	font-style: italic;

@@ -22,6 +22,7 @@ import {
 import { Icon, GridWrapper, Overlay } from 'components';
 import PubToc from './PubToc';
 import Download from './Download';
+import Social from './Social';
 import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
@@ -156,7 +157,12 @@ const PubHeader = (props) => {
 			key: 'download',
 			popoverContent: <Download pubData={pubData} />,
 		},
-		{ title: 'Social Sharing', icon: 'share2', key: 'social' },
+		{
+			title: 'Social Sharing',
+			icon: 'share2',
+			key: 'social',
+			popoverContent: <Social pubData={pubData} />,
+		},
 		// TODO(ian): re-enable these once we have something to put there
 		// { title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
 		// { title: 'Discussions', icon: 'chat', key: 'discussions' },

@@ -65,8 +65,9 @@ const Download = (props) => {
 	}, [pubData.id, activeBranch.id, downloads, isLoading, selectedType]);
 
 	const formattedDownload = getFormattedDownload(downloads);
+	const formattedOptionsClassName = formattedDownload ? 'with-formatted' : '';
 	return (
-		<div className="pub-download-component">
+		<div className={`pub-download-component ${formattedOptionsClassName}`}>
 			{formattedDownload && (
 				<React.Fragment>
 					<h5>Author Generated Download</h5>

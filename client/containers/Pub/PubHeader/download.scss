@@ -1,5 +1,7 @@
 .pub-download-component {
-	padding: 1em;
+	&.with-formatted {
+		padding: 1em;	
+	}
 	display: flex;
 	flex-direction: column;
 	.formatted-button {

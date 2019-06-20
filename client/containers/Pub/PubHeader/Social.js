@@ -53,8 +53,8 @@ const Social = (props) => {
 		},
 	];
 	return (
-		<div className="pub-meta_social-component">
-			<ButtonGroup>
+		<div className="pub-social-component">
+			<ButtonGroup vertical={true}>
 				{links.map((link) => {
 					return (
 						<AnchorButton
@@ -64,7 +64,6 @@ const Social = (props) => {
 							href={link.url}
 							rel="noopener noreferrer"
 							target="_blank"
-							large={true}
 						/>
 					);
 				})}

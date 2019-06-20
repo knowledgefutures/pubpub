@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonGroup } from '@blueprintjs/core';
-import { InputField, ImageUpload, SettingsSection } from 'components';
+import dateFormat from 'dateformat';
+import { InputField, ImageUpload, SettingsSection, FileUploadButton } from 'components';
 import { apiFetch, slugifyString } from 'utils';
+import { getFormattedDownload } from 'containers/Pub/pubUtils';
 
 const propTypes = {
 	locationData: PropTypes.object.isRequired,
@@ -34,6 +36,7 @@ class Details extends Component {
 		this.updateSlug = this.updateSlug.bind(this);
 		this.updateDescription = this.updateDescription.bind(this);
 		this.updateAvatar = this.updateAvatar.bind(this);
+		this.updateDownloads = this.updateDownloads.bind(this);
 		// this.updateUseHeaderImage = this.updateUseHeaderImage.bind(this);
 		this.updateHeaderStyle = this.updateHeaderStyle.bind(this);
 		// this.updateHeaderBackgroundType = this.updateHeaderBackgroundType.bind(this);
@@ -106,6 +109,37 @@ class Details extends Component {
 	// 	});
 	// }
 
+	// Updates the pub's downloads list, both locally and on the server
+	updateDownloads(type, fileUrl) {
+		if (type !== 'formatted' && !this.props.pubData.activeBranch.id) {
+			return null;
+		}
+		const downloadItem = {
+			type: type,
+			url: fileUrl,
+			branchId: type === 'formatted' ? null : this.props.pubData.activeBranch.id,
+			createdAt: new Date(),
+		};
+		const prevDownloads = this.props.pubData.downloads || [];
+		const newDownloads = [...prevDownloads, downloadItem];
+		return apiFetch('/api/pubs', {
+			method: 'PUT',
+			body: JSON.stringify({
+				downloads: newDownloads,
+				pubId: this.props.pubData.id,
+				communityId: this.props.communityData.id,
+			}),
+		})
+			.then(() => {
+				this.props.updateLocalData('pub', {
+					downloads: newDownloads,
+				});
+			})
+			.catch((err) => {
+				console.error('Error Saving Pub Downloads: ', err);
+			});
+	}
+
 	handleSave() {
 		const newValues = {
 			title: this.state.title,
@@ -158,6 +192,12 @@ class Details extends Component {
 	}
 
 	render() {
+		const formattedDownload = getFormattedDownload(this.props.pubData.downloads);
+		const { url = '', date } = formattedDownload || {};
+		const extension = url
+			.split('.')
+			.pop()
+			.toLowerCase();
 		return (
 			<div className="pub-manage_details-component">
 				<div className="save-wrapper">
@@ -259,15 +299,33 @@ class Details extends Component {
 							</span>
 						}
 					/>
-
-					{/* <InputField label="Use Header Image">
-					<Checkbox
-						checked={this.state.useHeaderImage}
-						onChange={this.updateUseHeaderImage}
-					>
-						Set to use the pub image at the top of published snapshots.
-					</Checkbox>
-				</InputField> */}
+				</SettingsSection>
+				<SettingsSection title="Download">
+					<p>
+						You can upload a file, like a PDF with custom styling, to associate with
+						this pub. It will be provided to readers as the pub's default download, but
+						they'll still be able to use the automatic export tools.
+					</p>
+					<ButtonGroup>
+						<FileUploadButton
+							onUploadFinish={(fileUrl) => {
+								return this.updateDownloads('formatted', fileUrl);
+							}}
+							className="typset-button"
+							text="Upload new file"
+						/>
+						{formattedDownload && (
+							<div style={{ marginLeft: '1em' }}>
+								<Button
+									text={`Download ${extension.toUpperCase()}`}
+									onClick={() => window.open(url)}
+								/>
+								<div className="subtext">
+									Uploaded {dateFormat(date, 'mmm dd, yyyy')}
+								</div>
+							</div>
+						)}
+					</ButtonGroup>
 				</SettingsSection>
 			</div>
 		);

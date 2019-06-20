@@ -5,7 +5,7 @@ import stickybits from 'stickybits';
 
 import GridWrapper from 'components/GridWrapper/GridWrapper';
 import { pubDataProps } from 'types/pub';
-import Download from './Download';
+// import Download from './Download';
 import Social from './Social';
 
 require('./pubMeta.scss');
@@ -81,9 +81,9 @@ const PubMeta = (props) => {
 					</div>
 				)}
 				{metaMode === 'social' && <Social pubData={pubData} />}
-				{metaMode === 'download' && (
+				{/*metaMode === 'download' && (
 					<Download pubData={pubData} updateLocalData={updateLocalData} />
-				)}
+				)*/}
 			</GridWrapper>
 		</div>
 	);

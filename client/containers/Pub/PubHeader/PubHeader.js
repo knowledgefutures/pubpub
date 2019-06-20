@@ -19,7 +19,8 @@ import {
 	MenuDivider,
 	Popover,
 } from '@blueprintjs/core';
-import PubToc from 'containers/Pub/PubDocument/PubToc';
+import PubToc from './PubToc';
+import Download from './Download';
 import { Icon, GridWrapper, Overlay } from 'components';
 import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
@@ -141,7 +142,20 @@ const PubHeader = (props) => {
 	}
 
 	const metaModes = [
-		{ title: 'Download', icon: 'download2', key: 'download' },
+		{
+			title: 'Contents',
+			icon: 'toc',
+			key: 'contents',
+			popoverContent: (
+				<PubToc pubData={pubData} editorChangeObject={collabData.editorChangeObject} />
+			),
+		},
+		{
+			title: 'Download',
+			icon: 'download2',
+			key: 'download',
+			popoverContent: <Download pubData={pubData} />,
+		},
 		{ title: 'Social Sharing', icon: 'share2', key: 'social' },
 		// TODO(ian): re-enable these once we have something to put there
 		// { title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
@@ -563,23 +577,22 @@ const PubHeader = (props) => {
 								{metaModes.map((mode) => {
 									const isActive = pubData.metaMode === mode.key;
 									return (
-										<ActionButton
-											key={mode.title}
-											// isLarge={true}
-											buttons={[
-												{
-													icon: mode.icon,
-													active: isActive,
-													alt: mode.title,
-													onClick: () => {
-														updateLocalData('pub', {
-															metaMode: isActive
-																? undefined
-																: mode.key,
-														});
-													},
-												},
-											]}
+										<Popover
+											key={mode.key}
+											minimal={true}
+											position={Position.BOTTOM_RIGHT}
+											content={mode.popoverContent}
+											target={
+												<ActionButton
+													buttons={[
+														{
+															icon: mode.icon,
+															active: isActive,
+															alt: mode.title,
+														},
+													]}
+												/>
+											}
 										/>
 									);
 								})}
@@ -606,7 +619,6 @@ const PubHeader = (props) => {
 									<PubToc
 										pubData={pubData}
 										editorChangeObject={collabData.editorChangeObject}
-										useSideStyling={false}
 									/>
 								}
 								target={<Button minimal={true}>Contents</Button>}

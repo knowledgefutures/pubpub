@@ -1,8 +1,7 @@
 /* eslint-disable no-multi-assign */
-/* eslint-disable newline-per-chained-call */
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import { Menu, MenuItem } from '@blueprintjs/core';
 import { getJSON } from '@pubpub/editor';
 
 require('./pubToc.scss');
@@ -10,11 +9,6 @@ require('./pubToc.scss');
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	editorChangeObject: PropTypes.object.isRequired,
-	useSideStyling: PropTypes.bool,
-};
-
-const defaultProps = {
-	useSideStyling: true,
 };
 
 const PubToc = function(props) {
@@ -65,21 +59,17 @@ const PubToc = function(props) {
 		return null;
 	}
 
-	const classes = classNames({
-		'pub-toc-component': true,
-		'side-styling': props.useSideStyling,
-	});
 	return (
-		<div className={classes}>
-			<div className="toc">
+		<div className="pub-toc-component">
+			<Menu className="toc">
 				{headings.map((item) => {
 					return (
-						<a
+						<MenuItem
+							key={item.index}
 							href={`#${item.href}`}
-							className={`subsection-${item.level - 1} underline-on-hover`}
-							key={`subsection-${item.index}`}
+							className={`level-${item.level}`}
 							onClick={(evt) => {
-								/* In the working draft, don't use anchor tags for nav since we have */
+								/* If editing, don't use anchor tags for nav since we have */
 								/* a fixed header bar. Plus, the URL with an anchor tag will behave */
 								/* unexpectedly on reload given the async loading of doc. Instead, */
 								/* manually scroll to the position and offset by fixed header height. */
@@ -93,16 +83,14 @@ const PubToc = function(props) {
 										currentTop - 75;
 								}
 							}}
-						>
-							{item.title}
-						</a>
+							text={item.title}
+						/>
 					);
 				})}
-			</div>
+			</Menu>
 		</div>
 	);
 };
 
 PubToc.propTypes = propTypes;
-PubToc.defaultProps = defaultProps;
 export default PubToc;

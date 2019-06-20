@@ -81,9 +81,9 @@ const PubMeta = (props) => {
 					</div>
 				)}
 				{metaMode === 'social' && <Social pubData={pubData} />}
-				{/*metaMode === 'download' && (
+				{/* metaMode === 'download' && (
 					<Download pubData={pubData} updateLocalData={updateLocalData} />
-				)*/}
+				) */}
 			</GridWrapper>
 		</div>
 	);

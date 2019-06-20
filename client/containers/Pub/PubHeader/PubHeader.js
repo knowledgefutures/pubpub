@@ -19,9 +19,9 @@ import {
 	MenuDivider,
 	Popover,
 } from '@blueprintjs/core';
+import { Icon, GridWrapper, Overlay } from 'components';
 import PubToc from './PubToc';
 import Download from './Download';
-import { Icon, GridWrapper, Overlay } from 'components';
 import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';

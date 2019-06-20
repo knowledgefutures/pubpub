@@ -143,7 +143,7 @@ const PubHeader = (props) => {
 		pubTitle = title;
 	}
 
-	const docJson = collabData.editorChangeObject.view
+	const docJson = collabData.editorChangeObject && collabData.editorChangeObject.view
 		? getJSON(collabData.editorChangeObject.view)
 		: pubData.initialDoc;
 

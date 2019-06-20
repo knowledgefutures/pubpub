@@ -34,7 +34,7 @@ require('./pubHeader.scss');
 
 const propTypes = {
 	collabData: PropTypes.object.isRequired,
-	// historyData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
@@ -71,7 +71,7 @@ const PubHeader = (props) => {
 			How do you get to pub/slug/submissions?
 		Do we require an accent color with the block styles? Or can they be simple white/black text?
 	*/
-	const { pubData, collabData, updateLocalData /* historyData */ } = props;
+	const { pubData, collabData, updateLocalData, historyData } = props;
 	const { communityData, locationData } = useContext(PageContext);
 	const headerRef = useRef(null);
 	const [title, setTitle] = useState(props.pubData.title);
@@ -178,7 +178,11 @@ const PubHeader = (props) => {
 		{
 			title: 'History',
 			icon: 'history',
-			popoverContent: <p>Need to Re-implement!</p>,
+			onClick: () => {
+				updateLocalData('history', {
+					isViewingHistory: !historyData.isViewingHistory,
+				});
+			},
 		},
 		// TODO(ian): re-enable these once we have something to put there
 		// { title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
@@ -599,9 +603,24 @@ const PubHeader = (props) => {
 							</div>
 							<div className="right">
 								{metaModes.map((mode) => {
-									const isActive = pubData.metaMode === mode.title;
+									const isActive =
+										mode.title === 'History' && historyData.isViewingHistory;
 									if (mode.title === 'Contents' && !headings.length) {
 										return null;
+									}
+									if (mode.title === 'History') {
+										return (
+											<ActionButton
+												buttons={[
+													{
+														icon: mode.icon,
+														active: isActive,
+														alt: mode.title,
+														onClick: mode.onClick,
+													},
+												]}
+											/>
+										);
 									}
 									return (
 										<Popover

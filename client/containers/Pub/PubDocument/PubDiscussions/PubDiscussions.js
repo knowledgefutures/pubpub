@@ -18,6 +18,7 @@ const propTypes = {
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
+	mainContentRef: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -25,7 +26,7 @@ const defaultProps = {
 };
 
 const PubDiscussions = (props) => {
-	const { pubData, collabData, firebaseBranchRef, sideContentRef } = props;
+	const { pubData, collabData, firebaseBranchRef, mainContentRef, sideContentRef } = props;
 	const { communityData } = useContext(PageContext);
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const { width: windowWidth } = useWindowSize();
@@ -56,13 +57,15 @@ const PubDiscussions = (props) => {
 			</style>
 
 			{/* Side Discussions */}
-			{groupsByLine.map((group) => {
+			{groupsByLine.map((group, index) => {
 				const mountElement = document.getElementsByClassName(group.mountClassName)[0];
 				if (!mountElement) {
 					return null;
 				}
 				return ReactDOM.createPortal(
 					<ThreadGroup
+						// eslint-disable-next-line react/no-array-index-key
+						key={index}
 						pubData={pubData}
 						collabData={collabData}
 						firebaseBranchRef={firebaseBranchRef}
@@ -70,6 +73,7 @@ const PubDiscussions = (props) => {
 						mountClassName={group.mountClassName}
 						updateLocalData={props.updateLocalData}
 						sideContentRef={sideContentRef}
+						mainContentRef={mainContentRef}
 					/>,
 					mountElement,
 				);

@@ -63,6 +63,17 @@ export const groupThreadsByLine = (decorations, threads) => {
 					});
 					const newThread = [{ id: newDiscussionId }];
 					return decorationThread || newThread;
+				})
+				.filter((thread) => {
+					return !thread.sort((foo, bar) => {
+						if (foo.createdAt < bar.createdAt) {
+							return -1;
+						}
+						if (foo.createdAt > bar.createdAt) {
+							return 1;
+						}
+						return 0;
+					})[0].isArchived;
 				});
 
 			/* Find the right-most id, and use that as the mount point */

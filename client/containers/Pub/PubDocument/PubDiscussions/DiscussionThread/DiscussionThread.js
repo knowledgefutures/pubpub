@@ -49,7 +49,13 @@ const DiscussionThread = (props) => {
 					minimal
 					small
 					className="collapse-button"
-					icon={<Icon icon="collapse-all" iconSize={12} color={communityData.accentColorDark} />}
+					icon={
+						<Icon
+							icon="collapse-all"
+							iconSize={12}
+							color={communityData.accentColorDark}
+						/>
+					}
 					onClick={() => {
 						setPreviewExpanded(false);
 					}}
@@ -60,12 +66,13 @@ const DiscussionThread = (props) => {
 				.filter((item, index) => {
 					return !isPreview || index < 2;
 				})
-				.map((item) => {
+				.map((item, index) => {
 					return (
 						<DiscussionItem
 							key={item.id}
 							discussionData={item}
 							isPreview={isPreview}
+							isRootThread={index === 0}
 							{...props}
 						/>
 					);

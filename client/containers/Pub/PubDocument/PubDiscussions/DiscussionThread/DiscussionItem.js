@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
 import Editor, { getText, getJSON } from '@pubpub/editor';
-import { Button, Intent } from '@blueprintjs/core';
+import { Button, Intent, Tooltip } from '@blueprintjs/core';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { Avatar, Icon, FormattingBar } from 'components';
 import { apiFetch } from 'utils';
@@ -12,6 +12,7 @@ const propTypes = {
 	discussionData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
+	isRootThread: PropTypes.bool.isRequired,
 	isPreview: PropTypes.bool,
 };
 
@@ -20,24 +21,23 @@ const defaultProps = {
 };
 
 const DiscussionItem = (props) => {
-	const { discussionData, pubData, updateLocalData, isPreview } = props;
+	const { discussionData, pubData, updateLocalData, isRootThread, isPreview } = props;
 	const { loginData, communityData } = useContext(PageContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handlePutDiscussion = () => {
+	const handlePutDiscussion = (discussionUpdates) => {
 		setIsLoading(true);
 		return apiFetch('/api/discussions', {
 			method: 'PUT',
 			body: JSON.stringify({
+				...discussionUpdates,
 				discussionId: discussionData.id,
 				userId: loginData.id,
 				pubId: pubData.id,
 				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,
-				content: getJSON(changeObject.view),
-				text: getText(changeObject.view) || '',
 			}),
 		})
 			.then((updatedDiscussionData) => {
@@ -61,6 +61,8 @@ const DiscussionItem = (props) => {
 			});
 	};
 
+	const isDiscussionAuthor = loginData.id === discussionData.userId;
+	const canManage = pubData.canManageBranch || pubData.canManage;
 	return (
 		<div className="discussion-item">
 			<div className="avatar-wrapper">
@@ -99,8 +101,28 @@ const DiscussionItem = (props) => {
 						</span>
 					)}
 
-					{!isPreview && loginData.id === discussionData.userId && (
-						<span className="actions">
+					<span className="actions">
+						{!isPreview && (isDiscussionAuthor || canManage) && isRootThread && (
+							<Tooltip content={discussionData.isArchived ? 'Unarchive' : 'Archive'}>
+								<Button
+									icon={
+										<Icon
+											icon={discussionData.isArchived ? 'export' : 'import'}
+											iconSize={12}
+										/>
+									}
+									minimal={true}
+									small={true}
+									alt={discussionData.isArchived ? 'Unarchive' : 'Archive'}
+									onClick={() => {
+										handlePutDiscussion({
+											isArchived: !discussionData.isArchived,
+										});
+									}}
+								/>
+							</Tooltip>
+						)}
+						{!isPreview && isDiscussionAuthor && (
 							<Button
 								icon={isEditing ? undefined : <Icon icon="edit2" iconSize={12} />}
 								text={isEditing ? 'Cancel' : undefined}
@@ -110,8 +132,8 @@ const DiscussionItem = (props) => {
 									setIsEditing(!isEditing);
 								}}
 							/>
-						</span>
-					)}
+						)}
+					</span>
 				</div>
 				{!isPreview && (
 					<div
@@ -147,7 +169,12 @@ const DiscussionItem = (props) => {
 							text="Update Discussion"
 							loading={isLoading}
 							disabled={!getText(changeObject.view)}
-							onClick={handlePutDiscussion}
+							onClick={() => {
+								handlePutDiscussion({
+									content: getJSON(changeObject.view),
+									text: getText(changeObject.view) || '',
+								});
+							}}
 						/>
 					</React.Fragment>
 				)}

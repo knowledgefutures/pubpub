@@ -26,7 +26,14 @@ const defaultProps = {
 };
 
 const PubDiscussions = (props) => {
-	const { pubData, collabData, firebaseBranchRef, mainContentRef, sideContentRef } = props;
+	const {
+		pubData,
+		collabData,
+		firebaseBranchRef,
+		updateLocalData,
+		mainContentRef,
+		sideContentRef,
+	} = props;
 	const { communityData } = useContext(PageContext);
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const { width: windowWidth } = useWindowSize();
@@ -70,7 +77,7 @@ const PubDiscussions = (props) => {
 						firebaseBranchRef={firebaseBranchRef}
 						threads={group.threads}
 						mountClassName={group.mountClassName}
-						updateLocalData={props.updateLocalData}
+						updateLocalData={updateLocalData}
 						sideContentRef={sideContentRef}
 						mainContentRef={mainContentRef}
 					/>,
@@ -81,7 +88,12 @@ const PubDiscussions = (props) => {
 			{/* Bottom Discussions */}
 			<GridWrapper containerClassName="pub discussion-list">
 				<h2>Discussions</h2>
-				<DiscussionFilterBar pubData={pubData} threadData={threads}>
+				<DiscussionFilterBar
+					pubData={pubData}
+					communityData={communityData}
+					threadData={threads}
+					updateLocalData={updateLocalData}
+				>
 					{(filteredThreads) => {
 						return (
 							<React.Fragment>
@@ -93,7 +105,7 @@ const PubDiscussions = (props) => {
 											collabData={collabData}
 											firebaseBranchRef={firebaseBranchRef}
 											threadData={thread}
-											updateLocalData={props.updateLocalData}
+											updateLocalData={updateLocalData}
 											canPreview={true}
 										/>
 									);

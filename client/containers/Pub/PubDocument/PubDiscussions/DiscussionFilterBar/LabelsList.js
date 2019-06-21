@@ -3,15 +3,18 @@ import PropTypes from 'prop-types';
 import { Button, Popover, PopoverInteractionKind, Position, Tooltip } from '@blueprintjs/core';
 import Icon from 'components/Icon/Icon';
 import uuidv4 from 'uuid/v4';
+import { apiFetch } from 'utils';
 
 require('./labelsList.scss');
 
 const propTypes = {
+	pubData: PropTypes.object.isRequired,
+	communityData: PropTypes.object.isRequired,
 	labelsData: PropTypes.array,
 	selectedLabels: PropTypes.array.isRequired,
 	isManager: PropTypes.bool.isRequired,
 	onLabelSelect: PropTypes.func.isRequired,
-	onLabelsUpdate: PropTypes.func.isRequired,
+	updateLocalData: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -122,7 +125,24 @@ class LabelsList extends Component {
 
 	handleSave() {
 		this.setState({ isSaving: true });
-		this.props.onLabelsUpdate(this.state.labelsData);
+		return apiFetch('/api/pubs', {
+			method: 'PUT',
+			body: JSON.stringify({
+				labels: this.state.labelsData,
+				pubId: this.props.pubData.id,
+				communityId: this.props.communityData.id,
+			}),
+		})
+			.then((result) => {
+				this.props.updateLocalData('pub', {
+					...this.state.pubData,
+					...result,
+				});
+				this.setState({ isSaving: false });
+			})
+			.catch((err) => {
+				console.error('Error saving labels', err);
+			});
 	}
 
 	render() {
@@ -132,6 +152,7 @@ class LabelsList extends Component {
 			<div className="labels-list-component bp3-menu bp3-elevation-1">
 				{this.props.isManager && !showEditMode && (
 					<Button
+						minimal
 						className="action-button"
 						onClick={this.toggleEditMode}
 						icon={<Icon icon="edit2" />}
@@ -167,11 +188,10 @@ class LabelsList extends Component {
 								this.props.onLabelSelect(label.id);
 							};
 							return (
-								<li>
+								<li key={`label-${label.id}`}>
 									<div
 										role="button"
 										tabIndex={-1}
-										key={`label-${label.id}`}
 										className="bp3-menu-item label"
 										onClick={handleClick}
 									>

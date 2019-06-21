@@ -15,12 +15,14 @@ require('./discussionFilterBar.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
+	communityData: PropTypes.object.isRequired,
 	threadData: PropTypes.array.isRequired,
+	updateLocalData: PropTypes.func.isRequired,
 	children: PropTypes.func.isRequired,
 };
 
 const DiscussionFilterBar = (props) => {
-	const { pubData, threadData, children } = props;
+	const { pubData, communityData, threadData, updateLocalData, children } = props;
 	const [isArchivedMode, setIsArchivedMode] = useState(false);
 	const [sortMode, setSortMode] = useState('newestThread');
 	const [filteredLabels, setFilteredLabels] = useState([]);
@@ -57,9 +59,11 @@ const DiscussionFilterBar = (props) => {
 					<Popover
 						content={
 							<LabelsList
+								pubData={pubData}
+								communityData={communityData}
 								labelsData={pubData.labels || []}
 								selectedLabels={filteredLabels}
-								isManager={pubData.isManager}
+								isManager={pubData.canManage}
 								onLabelSelect={(labelId) => {
 									const newFilteredLabels =
 										filteredLabels.indexOf(labelId) > -1
@@ -69,8 +73,9 @@ const DiscussionFilterBar = (props) => {
 											: [...filteredLabels, labelId];
 									setFilteredLabels(newFilteredLabels);
 								}}
+								updateLocalData={updateLocalData}
 								// onLabelsUpdate={this.props.onLabelsSave}
-								onLabelsUpdate={() => {}}
+								// onLabelsUpdate={() => {}}
 							/>
 						}
 						interactionKind={PopoverInteractionKind.CLICK}

@@ -7,7 +7,7 @@ import { GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import ThreadGroup from './ThreadGroup';
 import DiscussionThread from './DiscussionThread';
-import DiscussionsFilterBar from './DiscussionsFilterBar';
+import DiscussionFilterBar from './DiscussionFilterBar';
 import { groupThreadsByLine, nestDiscussionsToThreads } from './discussionUtils';
 
 require('./pubDiscussions.scss');
@@ -81,7 +81,7 @@ const PubDiscussions = (props) => {
 			{/* Bottom Discussions */}
 			<GridWrapper containerClassName="pub discussion-list">
 				<h2>Discussions</h2>
-				<DiscussionsFilterBar pubData={pubData} threadData={threads}>
+				<DiscussionFilterBar pubData={pubData} threadData={threads}>
 					{(filteredThreads) => {
 						return (
 							<React.Fragment>
@@ -101,7 +101,7 @@ const PubDiscussions = (props) => {
 							</React.Fragment>
 						);
 					}}
-				</DiscussionsFilterBar>
+				</DiscussionFilterBar>
 			</GridWrapper>
 		</div>
 	);

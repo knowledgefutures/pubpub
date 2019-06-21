@@ -1,11 +1,13 @@
 .pub-discussions-component {
-	background: #f4f4f7;
+	background: #f8f8f8;
 	.discussion-list {
 		padding: 2em 0em 1.5em;
 		.discussion-thread-component {
 			padding: 2em 1em;
 			border: 1px solid #ccc;
-			border-bottom: 0px solid transparent;
+			&:not(:last-child) {
+				border-bottom: 0px solid transparent;
+			}
 			&.preview {
 				padding: 1em;
 				cursor: pointer;

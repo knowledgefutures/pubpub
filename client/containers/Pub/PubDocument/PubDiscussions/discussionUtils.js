@@ -120,3 +120,103 @@ export const nestDiscussionsToThreads = function(discussions) {
 			});
 		});
 };
+
+export const filterAndSortThreads = (threads, isArchivedList, sortMode, filteredLabels) => {
+	return threads
+		.filter((items) => {
+			const threadIsArchived = items.reduce((prev, curr) => {
+				if (curr.isArchived) {
+					return true;
+				}
+				return prev;
+			}, false);
+			return isArchivedList ? threadIsArchived : !threadIsArchived;
+		})
+		.filter((items) => {
+			const threadLabels = items.reduce((prev, curr) => {
+				if (curr.labels && curr.labels.length) {
+					return curr.labels;
+				}
+				return prev;
+			}, []);
+			if (filteredLabels.length === 0) {
+				return true;
+			}
+			const hasNecessaryLabel = filteredLabels.reduce((prev, curr) => {
+				if (threadLabels.indexOf(curr) === -1) {
+					return false;
+				}
+				return prev;
+			}, true);
+			return hasNecessaryLabel;
+		})
+		.sort((foo, bar) => {
+			/* Newest Thread */
+			if (sortMode === 'newestThread' && foo[0].threadNumber > bar[0].threadNumber) {
+				return -1;
+			}
+			if (sortMode === 'newestThread' && foo[0].threadNumber < bar[0].threadNumber) {
+				return 1;
+			}
+			/* Oldest Thread */
+			if (sortMode === 'oldestThread' && foo[0].threadNumber < bar[0].threadNumber) {
+				return -1;
+			}
+			if (sortMode === 'oldestThread' && foo[0].threadNumber > bar[0].threadNumber) {
+				return 1;
+			}
+			/* Newest Reply */
+			const fooNewestReply = foo.reduce((prev, curr) => {
+				if (curr.createdAt > prev) {
+					return curr.createdAt;
+				}
+				return prev;
+			}, '0000-02-01T22:21:19.608Z');
+			const barNewestReply = bar.reduce((prev, curr) => {
+				if (curr.createdAt > prev) {
+					return curr.createdAt;
+				}
+				return prev;
+			}, '0000-02-01T22:21:19.608Z');
+			if (sortMode === 'newestReply' && fooNewestReply > barNewestReply) {
+				return -1;
+			}
+			if (sortMode === 'newestReply' && fooNewestReply < barNewestReply) {
+				return 1;
+			}
+			/* Oldest Reply */
+			const fooOldestReply = foo.reduce((prev, curr) => {
+				if (curr.createdAt < prev) {
+					return curr.createdAt;
+				}
+				return prev;
+			}, '9999-02-01T22:21:19.608Z');
+			const barOldestReply = bar.reduce((prev, curr) => {
+				if (curr.createdAt < prev) {
+					return curr.createdAt;
+				}
+				return prev;
+			}, '9999-02-01T22:21:19.608Z');
+			if (sortMode === 'oldestReply' && fooOldestReply < barOldestReply) {
+				return -1;
+			}
+			if (sortMode === 'oldestReply' && fooOldestReply > barOldestReply) {
+				return 1;
+			}
+			/* Most Replies */
+			if (sortMode === 'mostReplies' && foo.length > bar.length) {
+				return -1;
+			}
+			if (sortMode === 'mostReplies' && foo.length < bar.length) {
+				return 1;
+			}
+			/* Least Replies */
+			if (sortMode === 'leastReplies' && foo.length < bar.length) {
+				return -1;
+			}
+			if (sortMode === 'leastReplies' && foo.length > bar.length) {
+				return 1;
+			}
+			return 0;
+		});
+};

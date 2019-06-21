@@ -1,0 +1,21 @@
+.sort-list-component {
+	padding: 1em;
+	min-width: 250px;
+	.bp3-menu-header {
+		margin-bottom: 15px;
+	}
+	.bp3-menu-item {
+		display: flex;
+		align-items: center;
+	}
+	.color {
+		height: 16px;
+		width: 16px;
+		border-radius: 2px;
+		margin-right: 5px;
+	}
+	.title {
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+}

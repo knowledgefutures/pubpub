@@ -7,6 +7,7 @@ import { GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import ThreadGroup from './ThreadGroup';
 import DiscussionThread from './DiscussionThread';
+import DiscussionsFilterBar from './DiscussionsFilterBar';
 import { groupThreadsByLine, nestDiscussionsToThreads } from './discussionUtils';
 
 require('./pubDiscussions.scss');
@@ -77,18 +78,27 @@ const PubDiscussions = (props) => {
 			{/* Bottom Discussions */}
 			<GridWrapper containerClassName="pub discussion-list">
 				<h2>Discussions</h2>
-				{threads.map((thread) => {
-					return (
-						<DiscussionThread
-							pubData={pubData}
-							collabData={collabData}
-							firebaseBranchRef={firebaseBranchRef}
-							threadData={thread}
-							updateLocalData={props.updateLocalData}
-							canPreview={true}
-						/>
-					);
-				})}
+				<DiscussionsFilterBar pubData={pubData} threadData={threads}>
+					{(filteredThreads) => {
+						return (
+							<React.Fragment>
+								{filteredThreads.map((thread) => {
+									return (
+										<DiscussionThread
+											key={thread[0].id}
+											pubData={pubData}
+											collabData={collabData}
+											firebaseBranchRef={firebaseBranchRef}
+											threadData={thread}
+											updateLocalData={props.updateLocalData}
+											canPreview={true}
+										/>
+									);
+								})}
+							</React.Fragment>
+						);
+					}}
+				</DiscussionsFilterBar>
 			</GridWrapper>
 		</div>
 	);

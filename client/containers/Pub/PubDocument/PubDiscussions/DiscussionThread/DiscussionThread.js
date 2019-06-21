@@ -14,12 +14,13 @@ const propTypes = {
 	firebaseBranchRef: PropTypes.object.isRequired,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
-	setActiveThread: PropTypes.func.isRequired,
+	setActiveThread: PropTypes.func,
 	canPreview: PropTypes.bool,
 };
 
 const defaultProps = {
 	canPreview: false,
+	setActiveThread: () => {},
 };
 
 const DiscussionThread = (props) => {

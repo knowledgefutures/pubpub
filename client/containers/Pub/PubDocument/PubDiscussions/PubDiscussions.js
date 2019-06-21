@@ -56,13 +56,15 @@ const PubDiscussions = (props) => {
 			</style>
 
 			{/* Side Discussions */}
-			{groupsByLine.map((group) => {
+			{groupsByLine.map((group, index) => {
 				const mountElement = document.getElementsByClassName(group.mountClassName)[0];
 				if (!mountElement) {
 					return null;
 				}
 				return ReactDOM.createPortal(
 					<ThreadGroup
+						// eslint-disable-next-line react/no-array-index-key
+						key={index}
 						pubData={pubData}
 						collabData={collabData}
 						firebaseBranchRef={firebaseBranchRef}

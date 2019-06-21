@@ -38,7 +38,7 @@ const DiscussionThread = (props) => {
 			}}
 			role="button"
 		>
-			{!isPreview && (
+			{canPreview && !isPreview && (
 				<Button
 					minimal
 					small

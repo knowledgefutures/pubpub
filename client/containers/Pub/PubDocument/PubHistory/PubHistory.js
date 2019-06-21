@@ -86,7 +86,7 @@ const History = (props) => {
 						<React.Fragment>
 							<Slider
 								min={0}
-								max={1}
+								max={latestKey}
 								stepSize={1}
 								labelRenderer={renderLabel}
 								labelStepSize={latestKey}

@@ -14,6 +14,7 @@ const propTypes = {
 	mountClassName: PropTypes.string.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
+	mainContentRef: PropTypes.object.isRequired,
 };
 
 const ThreadGroup = (props) => {
@@ -24,6 +25,7 @@ const ThreadGroup = (props) => {
 		updateLocalData,
 		threads,
 		sideContentRef,
+		mainContentRef,
 		mountClassName,
 	} = props;
 	const [activeThreadHover, setActiveThreadHover] = useState(undefined);
@@ -31,6 +33,7 @@ const ThreadGroup = (props) => {
 	const [isExpanded, setExpanded] = useState(false);
 	const prevNewDiscussionIds = useRef([]);
 
+	const mainRect = mainContentRef.current.getBoundingClientRect();
 	const sideRect = sideContentRef.current.getBoundingClientRect();
 
 	useEffect(() => {
@@ -67,7 +70,7 @@ const ThreadGroup = (props) => {
 	}
 
 	const style = {
-		left: sideRect.left,
+		left: sideRect.left - mainRect.left,
 		width: sideRect.width,
 	};
 

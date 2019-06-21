@@ -35,6 +35,7 @@ const PubDocument = (props) => {
 	const [clickedMarks, setClickedMarks] = useState([]);
 	// const [tempId, setTempId] = useState(uuidv4());
 	const editorChangeObject = collabData.editorChangeObject;
+	const mainContentRef = useRef(null);
 	const sideContentRef = useRef(null);
 
 	/* Calculate whether the link popup should be open */
@@ -101,7 +102,7 @@ const PubDocument = (props) => {
 				<PubHeaderFormatting pubData={pubData} collabData={collabData} />
 			)}
 			<div className="pub-grid">
-				<div className="main-content">
+				<div className="main-content" ref={mainContentRef}>
 					<PubBody
 						pubData={pubData}
 						collabData={collabData}
@@ -126,6 +127,7 @@ const PubDocument = (props) => {
 							firebaseBranchRef={firebaseBranchRef}
 							updateLocalData={props.updateLocalData}
 							sideContentRef={sideContentRef}
+							mainContentRef={mainContentRef}
 						/>
 					)}
 

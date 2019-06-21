@@ -10,25 +10,16 @@
 
 @supports (display: grid) {
     .pub-grid {
-        @include has-grid('. . . comments .');
+        @include has-grid('. pub . comments .');
         width: 100%;
         margin-top: 3em;
         .main-content {
-            grid-column: 1 / -1;
-            grid-row-start: 1;
+            grid-area: pub;
         }
         .side-content {
             grid-area: comments;
         }
-    }
-    .pub-body-component > .editor.ProseMirror {
-        @include has-grid('. pub . . .');
-        & > * {
-            grid-column-start: pub;
-            grid-column-end: pub;
-        }
 	}
-	
 	@include pub-full-view {
 		.pub-document-component {
 			.pub-columns {

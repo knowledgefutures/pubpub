@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 import { Icon } from 'components';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 import DiscussionItem from './DiscussionItem';
 import DiscussionInput from './DiscussionInput';
 
@@ -25,11 +26,16 @@ const defaultProps = {
 
 const DiscussionThread = (props) => {
 	const { pubData, threadData, canPreview } = props;
+	const { communityData } = useContext(PageContext);
 	const [previewExpanded, setPreviewExpanded] = useState(false);
 	const isPreview = canPreview && !previewExpanded;
 	return (
 		<div
-			className={classNames('discussion-thread-component', isPreview && 'preview')}
+			className={classNames(
+				'discussion-thread-component',
+				isPreview && 'preview',
+				previewExpanded && 'expanded-preview',
+			)}
 			tabIndex={-1}
 			onClick={() => {
 				if (isPreview) {
@@ -43,7 +49,7 @@ const DiscussionThread = (props) => {
 					minimal
 					small
 					className="collapse-button"
-					icon={<Icon icon="collapse-all" iconSize={12} />}
+					icon={<Icon icon="collapse-all" iconSize={12} color={communityData.accentColorDark} />}
 					onClick={() => {
 						setPreviewExpanded(false);
 					}}

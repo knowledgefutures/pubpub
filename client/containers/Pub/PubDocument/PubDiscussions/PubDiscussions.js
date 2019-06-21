@@ -56,7 +56,8 @@ const PubDiscussions = (props) => {
 		<div className="pub-discussions-component">
 			<style>
 				{`
-					.discussion-list .discussion-thread-component.preview:hover {
+					.discussion-list .discussion-thread-component.preview:hover,
+					.discussion-list .discussion-thread-component.expanded-preview {
 						border-left: 3px solid ${communityData.accentColorDark};
 						padding-left: calc(1em - 2px);
 					}

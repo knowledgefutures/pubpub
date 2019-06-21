@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import { GridWrapper } from 'components';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 import ThreadGroup from './ThreadGroup';
+import DiscussionThread from './DiscussionThread';
 import { groupThreadsByLine, nestDiscussionsToThreads } from './discussionUtils';
 
 require('./pubDiscussions.scss');
@@ -23,6 +26,7 @@ const defaultProps = {
 
 const PubDiscussions = (props) => {
 	const { pubData, collabData, firebaseBranchRef, mainContentRef, sideContentRef } = props;
+	const { communityData } = useContext(PageContext);
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const { width: windowWidth } = useWindowSize();
 
@@ -42,6 +46,16 @@ const PubDiscussions = (props) => {
 	}
 	return (
 		<div className="pub-discussions-component">
+			<style>
+				{`
+					.discussion-list .discussion-thread-component.preview:hover {
+						border-left: 3px solid ${communityData.accentColorDark};
+						padding-left: calc(1em - 2px);
+					}
+				`}
+			</style>
+
+			{/* Side Discussions */}
 			{groupsByLine.map((group) => {
 				const mountElement = document.getElementsByClassName(group.mountClassName)[0];
 				if (!mountElement) {
@@ -61,6 +75,23 @@ const PubDiscussions = (props) => {
 					mountElement,
 				);
 			})}
+
+			{/* Bottom Discussions */}
+			<GridWrapper containerClassName="pub discussion-list">
+				<h2>Discussions</h2>
+				{threads.map((thread) => {
+					return (
+						<DiscussionThread
+							pubData={pubData}
+							collabData={collabData}
+							firebaseBranchRef={firebaseBranchRef}
+							threadData={thread}
+							updateLocalData={props.updateLocalData}
+							canPreview={true}
+						/>
+					);
+				})}
+			</GridWrapper>
 		</div>
 	);
 };
@@ -68,8 +99,3 @@ const PubDiscussions = (props) => {
 PubDiscussions.propTypes = propTypes;
 PubDiscussions.defaultProps = defaultProps;
 export default PubDiscussions;
-
-// const truncateText = (text) => {
-// 	const previewLimit = 45;
-// 	return text.length > previewLimit ? `${text.substring(0, previewLimit - 3)}...` : text;
-// };

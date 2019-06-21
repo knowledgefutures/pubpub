@@ -6,7 +6,6 @@ import { pubDataProps } from 'types/pub';
 import PubSyncManager from './PubSyncManager';
 import PubHeader from './PubHeader';
 import PubDocument from './PubDocument';
-import PubMeta from './PubMeta';
 import PubMerge from './PubMerge';
 import PubManage from './PubManage';
 import PubReviewCreate from './PubReviewCreate';
@@ -45,16 +44,9 @@ const Pub = (props) => {
 							firebaseBranchRef: firebaseBranchRef,
 							updateLocalData: updateLocalData,
 						};
-
 						return (
 							<React.Fragment>
 								<PubHeader
-									pubData={pubData}
-									updateLocalData={updateLocalData}
-									collabData={collabData}
-									historyData={historyData}
-								/>
-								<PubMeta
 									pubData={pubData}
 									updateLocalData={updateLocalData}
 									collabData={collabData}

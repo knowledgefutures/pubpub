@@ -215,22 +215,24 @@ class Settings extends Component {
 							}}
 						/>
 					</div>
-					<InputField label="Light Accent Color">
-						<ColorInput
-							value={this.state.accentColorLight}
-							onChange={(val) => {
-								this.setState({ accentColorLight: val.hex });
-							}}
-						/>
-					</InputField>
-					<InputField label="Dark Accent Color">
-						<ColorInput
-							value={this.state.accentColorDark}
-							onChange={(val) => {
-								this.setState({ accentColorDark: val.hex });
-							}}
-						/>
-					</InputField>
+					<div className="row-wrapper">
+						<InputField label="Dark Accent Color">
+							<ColorInput
+								value={this.state.accentColorDark}
+								onChange={(val) => {
+									this.setState({ accentColorDark: val.hex });
+								}}
+							/>
+						</InputField>
+						<InputField label="Light Accent Color">
+							<ColorInput
+								value={this.state.accentColorLight}
+								onChange={(val) => {
+									this.setState({ accentColorLight: val.hex });
+								}}
+							/>
+						</InputField>
+					</div>
 				</SettingsSection>
 				<SettingsSection title="Header">
 					<ImageUpload

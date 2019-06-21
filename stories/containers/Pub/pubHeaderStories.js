@@ -11,22 +11,26 @@ const altPubData = {
 		'Are institutions, through compartmentalization, a root cause of the exploitation and reduction that spans relations from gender to ecology? A new language—and a new sense-making—to address the horrors of this exploitation.',
 };
 
+const historyData = {
+	isViewingHistory: false,
+};
+
 storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 	<div>
 		<PubHeader
 			collabData={{}}
 			pubData={{
 				...altPubData,
-				metaMode: 'details',
 			}}
+			historyData={historyData}
 		/>
 		<PubHeader
 			collabData={{}}
 			pubData={{
 				...altPubData,
 				useHeaderImage: false,
-				metaMode: 'details',
 			}}
+			historyData={historyData}
 		/>
 		<PubHeader
 			collabData={{}}
@@ -34,8 +38,8 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				...altPubData,
 				headerStyle: 'white-blocks',
 				avatar: 'https://i.imgur.com/s9Gj6o6.png',
-				metaMode: 'details',
 			}}
+			historyData={historyData}
 		/>
 		<PubHeader
 			collabData={{}}
@@ -43,8 +47,8 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				...altPubData,
 				headerStyle: 'black-blocks',
 				avatar: 'https://i.imgur.com/kts3zH1.jpg',
-				metaMode: 'details',
 			}}
+			historyData={historyData}
 		/>
 
 		<PubHeader
@@ -53,6 +57,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				...altPubData,
 				mode: 'manage',
 			}}
+			historyData={historyData}
 		/>
 		<PubHeader
 			collabData={{}}
@@ -61,6 +66,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				useHeaderImage: false,
 				mode: 'manage',
 			}}
+			historyData={historyData}
 		/>
 		<PubHeader
 			collabData={{}}
@@ -70,6 +76,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				avatar: 'https://i.imgur.com/s9Gj6o6.png',
 				mode: 'manage',
 			}}
+			historyData={historyData}
 		/>
 		<PubHeader
 			collabData={{}}
@@ -79,6 +86,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				avatar: 'https://i.imgur.com/kts3zH1.jpg',
 				mode: 'manage',
 			}}
+			historyData={historyData}
 		/>
 	</div>
 ));

@@ -1,4 +1,4 @@
-.pub-document_side-collaborator_user-component {
+.pub-contributors_contributor-component {
 	display: flex;
 	margin-bottom: 30px;
 	font-size: 12px;
@@ -21,6 +21,10 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
+	}
+	.affiliation {
+		font-style: italic;
+		margin-top: 0.5em;
 	}
 	.roles {
 		font-style: italic;

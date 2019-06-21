@@ -7,12 +7,13 @@
 	-moz-font-feature-settings: 'liga' on;
 	font-size: 20px;
 	min-height: 300px;
+	margin-top: 20px;
 	.editor.ProseMirror {
 		min-height: 150px;
 		h1#abstract:first-child {
 			text-transform: uppercase;
 			font-size: 1em;
-			border-top: 1px solid #CCC;
+			// border-top: 1px solid #CCC;
 			padding-top: 1em;
 			& + p {
 				border-bottom: 1px solid #CCC;
@@ -68,7 +69,7 @@
 			font-weight: 400;
 			font-style: normal;
 			font-size: 1em;
-			line-height: 1.58;
+			line-height: 1.7;
 			letter-spacing: -0.003em;
 			margin: 0em 0em 1em;
 			word-break: break-word;

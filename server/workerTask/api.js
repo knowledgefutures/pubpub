@@ -2,7 +2,7 @@ import app from '../server';
 import { getWorkerTask } from './queries';
 
 app.get('/api/workerTasks', (req, res) => {
-	return getWorkerTask(req.body)
+	return getWorkerTask(req.query)
 		.then((workerTaskData) => {
 			return res.status(201).json(workerTaskData);
 		})

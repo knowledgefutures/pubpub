@@ -1,0 +1,115 @@
+@import '../../pub.scss';
+
+@mixin column {
+	.section {
+		flex-direction: column;
+		align-items: flex-start !important;
+		height: auto;
+		h6 {
+			margin-bottom: 0;
+		}
+	}
+}
+
+@include pub-compact-view {
+	.pub-details-component {
+		@include column;
+		&.expanded {
+			flex-direction: column;
+			.section {
+				width: 100%;
+			}
+			& > *:last-child {
+				margin-bottom: 10px;
+			}
+		}
+		&:not(.expanded) {
+			.contributors {
+				width: 200px;
+			}
+			.section h6 {
+				height: 24px !important;
+			}
+		}
+		.expand-contract {
+			top: -2px !important;
+			.bp3-icon {
+				margin-right: 0;
+			}
+			.bp3-button-text {
+				display: none;
+			}
+		}
+	}
+}
+
+.pub-details-component {
+	position: relative;
+	border-bottom: 1px solid #f0f0f7;
+	display: flex;
+	&.expanded {
+		@include column;
+		.contributors {
+			flex-shrink: 0;
+		}
+		&:after {
+			position: absolute;
+			left: -50vw;
+			right: -50vw;
+			height: 1px;
+			background: #aaa;
+			content: '';
+			bottom: 0;
+			z-index: 1;
+		}
+	}
+	.section {
+		display: flex;
+		align-items: center;
+		margin-right: 30px;
+		h6 {
+			margin: 0;
+			margin-right: 10px;
+			height: 48px;
+			display: flex;
+			align-items: center;
+			line-height: initial;
+			color: #bcbcbc;
+			white-space: nowrap;
+		}
+	}
+	.contributors {
+		width: 300px;
+	}
+	.compact-contributors {
+		display: flex;
+		align-items: center;
+		height: 30px;
+		white-space: nowrap;
+		& > *:not(:last-child):not(h6) {
+			margin-right: 6px;
+			flex-shrink: 0;
+		}
+	}
+	.citation-and-doi {
+		.doi-and-button {
+			display: flex;
+			align-items: center;
+			&:hover {
+				.click-to-copy {
+					opacity: 1;
+				}
+			}
+		}
+		.click-to-copy {
+			margin-left: 3px;
+			opacity: 0;
+			transition: 50ms ease-out opacity;
+		}
+	}
+	.expand-contract {
+		position: absolute;
+		top: 8px;
+		right: 0;
+	}
+}

@@ -14,7 +14,6 @@ const propTypes = {
 	/* Used to toggle SVG included colors */
 	useColor: PropTypes.bool,
 	/* Used to assign a specific fill color */
-
 	color: PropTypes.string,
 };
 

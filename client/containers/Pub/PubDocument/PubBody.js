@@ -22,6 +22,7 @@ let setSavingTimeout;
 
 const PubBody = (props) => {
 	const { pubData, collabData, firebaseBranchRef, updateLocalData, historyData } = props;
+	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	prevStatusRef.current = collabData.status;
 
@@ -49,8 +50,6 @@ const PubBody = (props) => {
 			onComplete(nextStatus);
 		}
 	};
-
-	const isViewingHistory = pubData.metaMode === 'history';
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;

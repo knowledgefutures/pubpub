@@ -12,10 +12,15 @@ const propTypes = {
 	discussionData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
+	isPreview: PropTypes.bool,
+};
+
+const defaultProps = {
+	isPreview: false,
 };
 
 const DiscussionItem = (props) => {
-	const { discussionData, pubData, updateLocalData } = props;
+	const { discussionData, pubData, updateLocalData, isPreview } = props;
 	const { loginData, communityData } = useContext(PageContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState({});
@@ -67,28 +72,34 @@ const DiscussionItem = (props) => {
 			</div>
 			<div className="content-wrapper">
 				<div className="item-header">
-					<span className="name">{discussionData.author.fullName}</span>
-
-					<span className="time">
-						{!isEditing && (
-							<TimeAgo
-								minPeriod={60}
-								formatter={(value, unit, suffix) => {
-									if (unit === 'second') {
-										return 'just now';
-									}
-									let newUnit = unit;
-									if (value > 1) {
-										newUnit += 's';
-									}
-									return `${value} ${newUnit} ${suffix}`;
-								}}
-								date={discussionData.createdAt}
-							/>
-						)}
+					<span className="name">
+						{discussionData.author.fullName}
+						{isPreview ? ': ' : ''}
 					</span>
 
-					{loginData.id === discussionData.userId && (
+					{isPreview && <span className="preview-text">{discussionData.text}</span>}
+					{!isPreview && (
+						<span className="time">
+							{!isEditing && (
+								<TimeAgo
+									minPeriod={60}
+									formatter={(value, unit, suffix) => {
+										if (unit === 'second') {
+											return 'just now';
+										}
+										let newUnit = unit;
+										if (value > 1) {
+											newUnit += 's';
+										}
+										return `${value} ${newUnit} ${suffix}`;
+									}}
+									date={discussionData.createdAt}
+								/>
+							)}
+						</span>
+					)}
+
+					{!isPreview && loginData.id === discussionData.userId && (
 						<span className="actions">
 							<Button
 								icon={isEditing ? undefined : <Icon icon="edit2" iconSize={12} />}
@@ -102,23 +113,25 @@ const DiscussionItem = (props) => {
 						</span>
 					)}
 				</div>
-				<div
-					className={classNames({
-						'discussion-body-wrapper': true,
-						editable: isEditing,
-					})}
-				>
-					<Editor
-						key={`${isEditing}-${discussionData.text}`}
-						isReadOnly={!isEditing}
-						initialContent={discussionData.content}
-						onChange={(editorChangeObject) => {
-							if (isEditing) {
-								setChangeObject(editorChangeObject);
-							}
-						}}
-					/>
-				</div>
+				{!isPreview && (
+					<div
+						className={classNames({
+							'discussion-body-wrapper': true,
+							editable: isEditing,
+						})}
+					>
+						<Editor
+							key={`${isEditing}-${discussionData.text}`}
+							isReadOnly={!isEditing}
+							initialContent={discussionData.content}
+							onChange={(editorChangeObject) => {
+								if (isEditing) {
+									setChangeObject(editorChangeObject);
+								}
+							}}
+						/>
+					</div>
+				)}
 				{isEditing && (
 					<React.Fragment>
 						<FormattingBar
@@ -144,4 +157,5 @@ const DiscussionItem = (props) => {
 };
 
 DiscussionItem.propTypes = propTypes;
+DiscussionItem.defaultProps = defaultProps;
 export default DiscussionItem;

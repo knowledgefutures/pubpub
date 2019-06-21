@@ -99,6 +99,7 @@ const PubInlineMenu = (props) => {
 			)}
 			<ClickToCopyButton
 				className="click-to-copy"
+				icon="clipboard"
 				copyString={
 					pubUrl(
 						communityData,

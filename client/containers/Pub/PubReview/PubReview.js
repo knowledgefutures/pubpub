@@ -265,7 +265,7 @@ const PubReview = (props) => {
 
 									{canMerge && (
 										<Button
-											text="Merge"
+											text={`Merge to ${destinationBranch.title}`}
 											loading={isLoading === `merge-${activeReview.id}`}
 											onClick={() => {
 												mergeBranch(

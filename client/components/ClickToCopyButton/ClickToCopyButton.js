@@ -5,7 +5,7 @@ import { useCopyToClipboard } from 'react-use';
 
 const propTypes = {
 	afterCopyPrompt: PropTypes.string,
-	beforeCopyPrompt: PropTypes.string.isRequired,
+	beforeCopyPrompt: PropTypes.string,
 	children: PropTypes.node,
 	className: PropTypes.string,
 	copyString: PropTypes.string.isRequired,
@@ -15,6 +15,7 @@ const propTypes = {
 
 const defaultProps = {
 	afterCopyPrompt: 'Copied!',
+	beforeCopyPrompt: null,
 	icon: 'link',
 	children: null,
 	className: '',

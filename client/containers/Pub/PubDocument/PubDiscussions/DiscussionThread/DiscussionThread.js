@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { Button } from '@blueprintjs/core';
+import { Icon } from 'components';
 import DiscussionItem from './DiscussionItem';
 import DiscussionInput from './DiscussionInput';
 
@@ -12,21 +15,62 @@ const propTypes = {
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	setActiveThread: PropTypes.func.isRequired,
+	canPreview: PropTypes.bool,
+};
+
+const defaultProps = {
+	canPreview: false,
 };
 
 const DiscussionThread = (props) => {
-	const { pubData, threadData } = props;
+	const { pubData, threadData, canPreview } = props;
+	const [previewExpanded, setPreviewExpanded] = useState(false);
+	const isPreview = canPreview && !previewExpanded;
 	return (
-		<div className="discussion-thread-component" tabIndex={-1}>
+		<div
+			className={classNames('discussion-thread-component', isPreview && 'preview')}
+			tabIndex={-1}
+			onClick={() => {
+				if (isPreview) {
+					setPreviewExpanded(true);
+				}
+			}}
+			role="button"
+		>
+			{!isPreview && (
+				<Button
+					minimal
+					small
+					className="collapse-button"
+					icon={<Icon icon="collapse-all" iconSize={12} />}
+					onClick={() => {
+						setPreviewExpanded(false);
+					}}
+				/>
+			)}
 			{threadData
 				.filter((item) => item.threadNumber)
+				.filter((item, index) => {
+					return !isPreview || index < 2;
+				})
 				.map((item) => {
-					return <DiscussionItem key={item.id} discussionData={item} {...props} />;
+					return (
+						<DiscussionItem
+							key={item.id}
+							discussionData={item}
+							isPreview={isPreview}
+							{...props}
+						/>
+					);
 				})}
-			{pubData.canDiscussBranch && <DiscussionInput key={threadData.length} {...props} />}
+			{isPreview && threadData.length > 2 && <span> + {threadData.length - 2} more...</span>}
+			{!isPreview && pubData.canDiscussBranch && (
+				<DiscussionInput key={threadData.length} {...props} />
+			)}
 		</div>
 	);
 };
 
 DiscussionThread.propTypes = propTypes;
+DiscussionThread.defaultProps = defaultProps;
 export default DiscussionThread;

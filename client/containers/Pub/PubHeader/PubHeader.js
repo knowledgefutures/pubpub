@@ -3,9 +3,10 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import dateFormat from 'dateformat';
+// import dateFormat from 'dateformat';
 import classNames from 'classnames';
 import stickybits from 'stickybits';
+import { getJSON } from '@pubpub/editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import {
 	Button,
@@ -19,12 +20,15 @@ import {
 	MenuDivider,
 	Popover,
 } from '@blueprintjs/core';
-import PubToc from 'containers/Pub/PubDocument/PubToc';
 import { Icon, GridWrapper, Overlay } from 'components';
+import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
+import PubToc from './PubToc';
+import Download from './Download';
+import Social from './Social';
 import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
-import { generateHeaderBreadcrumbs } from './headerUtils';
+import { generateHeaderBreadcrumbs, getTocHeadings } from './headerUtils';
 
 require('./pubHeader.scss');
 
@@ -140,10 +144,46 @@ const PubHeader = (props) => {
 		pubTitle = title;
 	}
 
+	let docJson = pubData.initialDoc;
+	if (collabData.editorChangeObject && collabData.editorChangeObject.view) {
+		docJson = getJSON(collabData.editorChangeObject.view);
+	}
+	const headings = docJson ? getTocHeadings(docJson) : [];
+
 	const metaModes = [
-		{ title: 'Details', icon: 'more', key: 'details' },
-		{ title: 'Download', icon: 'download2', key: 'download' },
-		{ title: 'Social Sharing', icon: 'share2', key: 'social' },
+		{
+			title: 'Contents',
+			icon: 'toc',
+			popoverContent: <PubToc pubData={pubData} headings={headings} />,
+		},
+		{
+			title: 'Cite',
+			icon: 'cite',
+			popoverContent: (
+				<div style={{ padding: '1em' }}>
+					<CitationsPreview pubData={pubData} />
+				</div>
+			),
+		},
+		{
+			title: 'Download',
+			icon: 'download2',
+			popoverContent: <Download pubData={pubData} />,
+		},
+		{
+			title: 'Social Sharing',
+			icon: 'share2',
+			popoverContent: <Social pubData={pubData} />,
+		},
+		{
+			title: 'History',
+			icon: 'history',
+			onClick: () => {
+				updateLocalData('history', {
+					isViewingHistory: !historyData.isViewingHistory,
+				});
+			},
+		},
 		// TODO(ian): re-enable these once we have something to put there
 		// { title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
 		// { title: 'Discussions', icon: 'chat', key: 'discussions' },
@@ -156,13 +196,13 @@ const PubHeader = (props) => {
 	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
 	// const submissionButtons = generateSubmissionButtons(pubData);
 
-	const pubDate =
-		(historyData && historyData.timestamps && historyData.timestamps[historyData.currentKey]) ||
-		pubData.updatedAt;
-	const pubDateString =
-		historyData && historyData.outstandingRequests > 0
-			? '...'
-			: dateFormat(pubDate, 'mmm dd, yyyy');
+	// const pubDate =
+	// 	(historyData && historyData.timestamps && historyData.timestamps[historyData.currentKey]) ||
+	// 	pubData.updatedAt;
+	// const pubDateString =
+	// 	historyData && historyData.outstandingRequests > 0
+	// 		? '...'
+	// 		: dateFormat(pubDate, 'mmm dd, yyyy');
 
 	const publicBranch =
 		pubData.branches.find((branch) => {
@@ -329,12 +369,6 @@ const PubHeader = (props) => {
 						)}
 					</h1>
 
-					{isDocMode && pubData.description && (
-						<div className="description">
-							<span className="text-wrapper">{pubData.description}</span>
-						</div>
-					)}
-
 					{isDocMode && !!authors.length && (
 						<div className="authors">
 							<span className="text-wrapper">
@@ -390,12 +424,19 @@ const PubHeader = (props) => {
 							</span>
 						</div>
 					)}
+
+					{isDocMode && pubData.description && (
+						<div className="description">
+							<span className="text-wrapper">{pubData.description}</span>
+						</div>
+					)}
+
 					{isDocMode && (
 						<div className="actions-bar">
 							<div className="left">
 								{/* History Button */}
 
-								<ActionButton
+								{/* <ActionButton
 									buttons={[
 										{
 											text: (
@@ -407,20 +448,17 @@ const PubHeader = (props) => {
 												</div>
 											),
 											rightIcon: 'history',
-											active: pubData.metaMode === 'history',
+											active: historyData.isViewingHistory,
 											onClick: () => {
-												updateLocalData('pub', {
-													metaMode:
-														pubData.metaMode === 'history'
-															? undefined
-															: 'history',
+												updateLocalData('history', {
+													isViewingHistory: !historyData.isViewingHistory,
 												});
 											},
 											isWide: true,
 										},
 									]}
 									isSkewed={true}
-								/>
+								/> */}
 
 								{/* Branches Button */}
 
@@ -565,25 +603,42 @@ const PubHeader = (props) => {
 							</div>
 							<div className="right">
 								{metaModes.map((mode) => {
-									const isActive = pubData.metaMode === mode.key;
-									return (
-										<ActionButton
-											key={mode.title}
-											// isLarge={true}
-											buttons={[
-												{
-													icon: mode.icon,
-													active: isActive,
-													alt: mode.title,
-													onClick: () => {
-														updateLocalData('pub', {
-															metaMode: isActive
-																? undefined
-																: mode.key,
-														});
+									const isActive =
+										mode.title === 'History' && historyData.isViewingHistory;
+									if (mode.title === 'Contents' && !headings.length) {
+										return null;
+									}
+									if (mode.title === 'History') {
+										return (
+											<ActionButton
+												buttons={[
+													{
+														icon: mode.icon,
+														active: isActive,
+														alt: mode.title,
+														onClick: mode.onClick,
 													},
-												},
-											]}
+												]}
+											/>
+										);
+									}
+									return (
+										<Popover
+											key={mode.title}
+											minimal={true}
+											position={Position.BOTTOM_RIGHT}
+											content={mode.popoverContent}
+											target={
+												<ActionButton
+													buttons={[
+														{
+															icon: mode.icon,
+															active: isActive,
+															alt: mode.title,
+														},
+													]}
+												/>
+											}
 										/>
 									);
 								})}
@@ -603,19 +658,17 @@ const PubHeader = (props) => {
 					<div className="bottom-text">
 						<div className="bottom-title">{pubData.title}</div>
 						<div className="bottom-buttons">
-							<Popover
-								minimal={true}
-								position={Position.BOTTOM_RIGHT}
-								content={
-									<PubToc
-										pubData={pubData}
-										editorChangeObject={collabData.editorChangeObject}
-										useSideStyling={false}
+							{!!headings.length && (
+								<React.Fragment>
+									<Popover
+										minimal={true}
+										position={Position.BOTTOM_RIGHT}
+										content={<PubToc pubData={pubData} headings={headings} />}
+										target={<Button minimal={true}>Contents</Button>}
 									/>
-								}
-								target={<Button minimal={true}>Contents</Button>}
-							/>
-							<span className="dot">·</span>
+									<span className="dot">·</span>
+								</React.Fragment>
+							)}
 							<Button
 								minimal={true}
 								onClick={() =>

@@ -57,12 +57,9 @@ export const generateCitationHTML = (pubData, communityData) => {
 			};
 		});
 	const authorsEntry = authorData.length ? { author: authorData } : {};
-	/* We have to clean this title because of a bug in Citation.js */
-	/* Issue here: https://github.com/citation-js/citation-js/issues/35 */
-	const cleanedTitle = pubData.title.replace(/"/gi, '');
 	const commonData = {
 		type: 'article-journal',
-		title: cleanedTitle,
+		title: pubData.title,
 		...authorsEntry,
 		'container-title': communityData.title,
 		...getCollectionLevelData(primaryCollectionPub),

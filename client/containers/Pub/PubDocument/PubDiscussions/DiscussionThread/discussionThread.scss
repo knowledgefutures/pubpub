@@ -1,21 +1,30 @@
 @import 'styles/variables.scss';
-.thread-group-component .discussion-thread-component {
+.discussion-thread-component {
 	position: relative;
 	z-index: 1;
 	background: white;
 	padding: 1em 0em;
 	font-size: 14px;
+	.collapse-button {
+		position: absolute;
+		top: 0;
+		right: 0;
+		.bp3-icon {
+			transform: rotate(45deg);
+		}
+	}
 	.discussion-item {
 		display: flex;
 		&:not(:last-child) {
 			margin-bottom: 1em;
-			border-bottom: 1px solid #F0F0F7;
+			border-bottom: 1px solid #f0f0f7;
 		}
 		.avatar-wrapper {
 			margin-right: 0.5em;
 		}
 		.content-wrapper {
 			flex: 1 1 auto;
+			min-width: 0;
 		}
 	}
 	.item-header {
@@ -27,6 +36,7 @@
 		.name {
 			font-weight: 600;
 			margin-right: 1em;
+			white-space: nowrap;
 		}
 		.time {
 			margin-right: 1em;
@@ -37,7 +47,12 @@
 			min-height: 17px;
 		}
 	}
-
+	.preview-text {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font-style: 14px;
+	}
 	.discussion-body-wrapper {
 		.editor {
 			min-height: 0px;
@@ -65,7 +80,7 @@
 		}
 	}
 	.simple-input {
-		background: #F4F4F7;
+		background: #f4f4f7;
 		border-radius: 2px;
 		border: 0px solid white;
 		padding: 0.5em;
@@ -75,7 +90,8 @@
 	.formatting-bar-component {
 		margin: -0.5em 0em 0.5em;
 	}
-	.discussion-primary-button, .discussion-cancel-button {
+	.discussion-primary-button,
+	.discussion-cancel-button {
 		margin-bottom: 1em;
 		white-space: nowrap;
 		&:not(:last-child) {
@@ -83,4 +99,3 @@
 		}
 	}
 }
-

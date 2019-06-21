@@ -1,3 +1,26 @@
 .pub-discussions-component {
-
+	background: #f4f4f7;
+	.discussion-list {
+		padding: 2em 0em 1.5em;
+		.discussion-thread-component {
+			padding: 2em 1em;
+			border: 1px solid #ccc;
+			border-bottom: 0px solid transparent;
+			&.preview {
+				padding: 1em;
+				cursor: pointer;
+				.discussion-item {
+					margin-bottom: 0.5em;
+					border-bottom: 0px solid #f0f0f7; 
+					&:last-child {
+						margin-bottom: 0em;
+					}
+					.item-header {
+						margin-bottom: 0px;
+						line-height: 18px;
+					}
+				}
+			}
+		}
+	}
 }

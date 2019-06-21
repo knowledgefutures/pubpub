@@ -122,15 +122,6 @@ const PubDocument = (props) => {
 							editorView={collabData.editorChangeObject.view}
 						/>
 					)}
-					{areDiscussionsShown && (
-						<PubDiscussions
-							pubData={pubData}
-							collabData={collabData}
-							firebaseBranchRef={firebaseBranchRef}
-							updateLocalData={props.updateLocalData}
-							sideContentRef={sideContentRef}
-						/>
-					)}
 
 					{!linkPopupIsOpen && (editorFocused || pubData.isStaticDoc) && (
 						<PubInlineMenu
@@ -147,6 +138,15 @@ const PubDocument = (props) => {
 				<div className="side-content" ref={sideContentRef} />
 			</div>
 			<PubFooter pubData={pubData} />
+			{areDiscussionsShown && (
+				<PubDiscussions
+					pubData={pubData}
+					collabData={collabData}
+					firebaseBranchRef={firebaseBranchRef}
+					updateLocalData={props.updateLocalData}
+					sideContentRef={sideContentRef}
+				/>
+			)}
 		</div>
 	);
 };

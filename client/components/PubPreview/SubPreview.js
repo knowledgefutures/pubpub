@@ -55,6 +55,31 @@ const SubPreview = function(props) {
 				},
 			],
 		},
+		{
+			parentId: 'f06c6e61-5f54-4739-8012-8954a55c4d38',
+			children: [
+				{
+					prefix: 'Commentary by:',
+					elements: [
+						{ text: 'Rodney Brooks', href: '/pub/' },
+						{ text: 'Emmanuel Candes, John Duchi, and Chiara Sabatti', href: '/pub/' },
+						{ text: 'Greg Crane', href: '/pub/' },
+						{ text: 'David Donoho', href: '/pub/' },
+						{ text: 'Maria Fasli', href: '/pub/' },
+						{ text: 'Barbara Grosz', href: '/pub/' },
+						{ text: 'Andrew Lo', href: '/pub/' },
+						{ text: 'Maja Mataric', href: '/pub/' },
+						{ text: 'Brendan McCord', href: '/pub/' },
+						{ text: 'Max Welling', href: '/pub/' },
+						{ text: 'Rebecca Willett', href: '/pub/' },
+					],
+				},
+				{
+					prefix: 'Rejoinder from:',
+					elements: [{ text: 'Michael I. Jordan', href: '/pub/123' }],
+				},
+			],
+		},
 	];
 
 	const elementStyle = { color: communityData.accentColorDark };

@@ -1,0 +1,18 @@
+.sub-preview-component {
+	padding-left: 5%;
+	margin-top: 0.5em;
+	.child {
+		margin-top: 0.5em;
+	}
+	.prefix {
+		margin-right: 0.5em;
+	}
+	.element {
+		display: inline-block;
+		font-weight: 300;
+		font-style: italic;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}

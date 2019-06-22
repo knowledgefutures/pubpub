@@ -8,6 +8,7 @@ import { isPubPublic } from 'shared/pub/permissions';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { Avatar, Icon } from 'components';
 
+import SubPreview from './SubPreview';
 import { generateAuthorString } from './pubPreviewUtils';
 
 require('./pubPreview.scss');
@@ -155,10 +156,7 @@ const PubPreview = function(props) {
 
 				{showDescription && <div className="description">{pubData.description}</div>}
 			</div>
-			{/*
-				TODO: Stick in a component that renders special commentary pieces
-				for certain hard-coded pubs
-			*/}
+			<SubPreview pubData={pubData} size={size} />
 		</div>
 	);
 };

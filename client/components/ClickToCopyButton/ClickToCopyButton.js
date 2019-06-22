@@ -8,7 +8,7 @@ const propTypes = {
 	beforeCopyPrompt: PropTypes.string,
 	children: PropTypes.node,
 	className: PropTypes.string,
-	copyString: PropTypes.string.isRequired,
+	copyString: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
 	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 	tooltipPosition: PropTypes.string,
 };

@@ -49,6 +49,7 @@
 	display: flex;
 	&.expanded {
 		@include column;
+
 		.contributors {
 			flex-shrink: 0;
 		}
@@ -80,16 +81,6 @@
 	}
 	.contributors {
 		width: 300px;
-	}
-	.compact-contributors {
-		display: flex;
-		align-items: center;
-		height: 30px;
-		white-space: nowrap;
-		& > *:not(:last-child):not(h6) {
-			margin-right: 6px;
-			flex-shrink: 0;
-		}
 	}
 	.citation-and-doi {
 		.doi-and-button {

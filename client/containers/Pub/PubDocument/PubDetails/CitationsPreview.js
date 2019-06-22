@@ -1,10 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Button, ButtonGroup } from '@blueprintjs/core';
-
 import { pubDataProps } from 'types/pub';
-
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
-
 import CitationsModal from './CitationsModal';
 
 require('./citationsPreview.scss');

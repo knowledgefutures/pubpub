@@ -26,10 +26,10 @@ const DiscussionItem = (props) => {
 	const { loginData, communityData } = useContext(PageContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState({});
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+	const [isLoadingArchive, setIsLoadingArchive] = useState(false);
 
 	const handlePutDiscussion = (discussionUpdates) => {
-		setIsLoading(true);
 		return apiFetch('/api/discussions', {
 			method: 'PUT',
 			body: JSON.stringify({
@@ -40,26 +40,20 @@ const DiscussionItem = (props) => {
 				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,
 			}),
-		})
-			.then((updatedDiscussionData) => {
-				updateLocalData('pub', {
-					...pubData,
-					discussions: pubData.discussions.map((discussion) => {
-						if (discussion.id !== discussionData.id) {
-							return discussion;
-						}
-						return {
-							...discussion,
-							...updatedDiscussionData,
-						};
-					}),
-				});
-			})
-			.then(() => {
-				setIsEditing(false);
-				setChangeObject({});
-				setIsLoading(false);
+		}).then((updatedDiscussionData) => {
+			updateLocalData('pub', {
+				...pubData,
+				discussions: pubData.discussions.map((discussion) => {
+					if (discussion.id !== discussionData.id) {
+						return discussion;
+					}
+					return {
+						...discussion,
+						...updatedDiscussionData,
+					};
+				}),
 			});
+		});
 	};
 
 	const isDiscussionAuthor = loginData.id === discussionData.userId;
@@ -125,8 +119,10 @@ const DiscussionItem = (props) => {
 										}
 										minimal={true}
 										small={true}
+										loading={isLoadingArchive}
 										alt={discussionData.isArchived ? 'Unarchive' : 'Archive'}
 										onClick={() => {
+											setIsLoadingArchive(true);
 											handlePutDiscussion({
 												isArchived: !discussionData.isArchived,
 											});
@@ -178,15 +174,21 @@ const DiscussionItem = (props) => {
 							isSmall={true}
 						/>
 						<Button
+							small
 							className="discussion-primary-button"
 							intent={Intent.PRIMARY}
 							text="Update Discussion"
-							loading={isLoading}
+							loading={isLoadingEdit}
 							disabled={!getText(changeObject.view)}
 							onClick={() => {
+								setIsLoadingEdit(true);
 								handlePutDiscussion({
 									content: getJSON(changeObject.view),
 									text: getText(changeObject.view) || '',
+								}).then(() => {
+									setIsEditing(false);
+									setChangeObject({});
+									setIsLoadingEdit(false);
 								});
 							}}
 						/>

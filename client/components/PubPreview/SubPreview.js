@@ -25,10 +25,17 @@ const SubPreview = function(props) {
 				{
 					prefix: 'Commentary by:',
 					elements: [
-						{ text: 'Greg Crane', href: '/pub/123' },
-						{ text: 'Evelyn Masterson', href: '/pub/123' },
-						{ text: 'Don Rickle', href: '/pub/123' },
-						{ text: 'Gerald Ford', href: '/pub/123' },
+						{ text: 'Rodney Brooks', href: '/pub/' },
+						{ text: 'Candes, Duchi, and Sabatti', href: '/pub/' },
+						{ text: 'Greg Crane', href: '/pub/' },
+						{ text: 'David Donoho', href: '/pub/' },
+						{ text: 'Maria Fasli', href: '/pub/' },
+						{ text: 'Barbara Grosz', href: '/pub/' },
+						{ text: 'Andrew Lo', href: '/pub/' },
+						{ text: 'Maja Mataric', href: '/pub/' },
+						{ text: 'Brendan McCord', href: '/pub/' },
+						{ text: 'Max Welling', href: '/pub/' },
+						{ text: 'Rebecca Willett', href: '/pub/' },
 					],
 				},
 				{

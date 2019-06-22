@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
@@ -7,6 +7,7 @@ import { GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import ThreadGroup from './ThreadGroup';
 import DiscussionThread from './DiscussionThread';
+import DiscussionFilterBar from './DiscussionFilterBar';
 import { groupThreadsByLine, nestDiscussionsToThreads } from './discussionUtils';
 
 require('./pubDiscussions.scss');
@@ -25,7 +26,14 @@ const defaultProps = {
 };
 
 const PubDiscussions = (props) => {
-	const { pubData, collabData, firebaseBranchRef, mainContentRef, sideContentRef } = props;
+	const {
+		pubData,
+		collabData,
+		firebaseBranchRef,
+		updateLocalData,
+		mainContentRef,
+		sideContentRef,
+	} = props;
 	const { communityData } = useContext(PageContext);
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const { width: windowWidth } = useWindowSize();
@@ -40,15 +48,14 @@ const PubDiscussions = (props) => {
 	}, [windowWidth]);
 	const threads = nestDiscussionsToThreads(pubData.discussions);
 	const groupsByLine = groupThreadsByLine(decorations, threads);
-
-	if (!props.firebaseBranchRef) {
-		return null;
-	}
+	const prevNewDiscussionIds = useRef([]);
+	const prevConvertedDiscussionIds = useRef([]);
 	return (
 		<div className="pub-discussions-component">
 			<style>
 				{`
-					.discussion-list .discussion-thread-component.preview:hover {
+					.discussion-list .discussion-thread-component.preview:hover,
+					.discussion-list .discussion-thread-component.expanded-preview {
 						border-left: 3px solid ${communityData.accentColorDark};
 						padding-left: calc(1em - 2px);
 					}
@@ -56,23 +63,27 @@ const PubDiscussions = (props) => {
 			</style>
 
 			{/* Side Discussions */}
-			{groupsByLine.map((group, index) => {
+			{groupsByLine.map((group) => {
 				const mountElement = document.getElementsByClassName(group.mountClassName)[0];
 				if (!mountElement) {
 					return null;
 				}
+				// console.log('about to render portal');
+				// console.log('mountElement', mountElement);
+				// console.log(group)
 				return ReactDOM.createPortal(
 					<ThreadGroup
-						// eslint-disable-next-line react/no-array-index-key
-						key={index}
+						key={group.mountClassName}
 						pubData={pubData}
 						collabData={collabData}
 						firebaseBranchRef={firebaseBranchRef}
 						threads={group.threads}
 						mountClassName={group.mountClassName}
-						updateLocalData={props.updateLocalData}
+						updateLocalData={updateLocalData}
 						sideContentRef={sideContentRef}
 						mainContentRef={mainContentRef}
+						prevNewDiscussionIds={prevNewDiscussionIds}
+						prevConvertedDiscussionIds={prevConvertedDiscussionIds}
 					/>,
 					mountElement,
 				);
@@ -81,18 +92,32 @@ const PubDiscussions = (props) => {
 			{/* Bottom Discussions */}
 			<GridWrapper containerClassName="pub discussion-list">
 				<h2>Discussions</h2>
-				{threads.map((thread) => {
-					return (
-						<DiscussionThread
-							pubData={pubData}
-							collabData={collabData}
-							firebaseBranchRef={firebaseBranchRef}
-							threadData={thread}
-							updateLocalData={props.updateLocalData}
-							canPreview={true}
-						/>
-					);
-				})}
+				<DiscussionFilterBar
+					pubData={pubData}
+					communityData={communityData}
+					threadData={threads}
+					updateLocalData={updateLocalData}
+				>
+					{(filteredThreads) => {
+						return (
+							<React.Fragment>
+								{filteredThreads.map((thread) => {
+									return (
+										<DiscussionThread
+											key={thread[0].id}
+											pubData={pubData}
+											collabData={collabData}
+											firebaseBranchRef={firebaseBranchRef}
+											threadData={thread}
+											updateLocalData={updateLocalData}
+											canPreview={true}
+										/>
+									);
+								})}
+							</React.Fragment>
+						);
+					}}
+				</DiscussionFilterBar>
 			</GridWrapper>
 		</div>
 	);

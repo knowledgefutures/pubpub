@@ -47,3 +47,4 @@ mend:
 
 
 # node status.js --print-status=error --print-problems
+# node status.js --print-status=warning --print-problems

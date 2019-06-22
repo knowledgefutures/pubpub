@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ThreadNav from './ThreadNav';
@@ -15,6 +15,8 @@ const propTypes = {
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
 	mainContentRef: PropTypes.object.isRequired,
+	prevNewDiscussionIds: PropTypes.object.isRequired,
+	prevConvertedDiscussionIds: PropTypes.object.isRequired,
 };
 
 const ThreadGroup = (props) => {
@@ -27,17 +29,18 @@ const ThreadGroup = (props) => {
 		sideContentRef,
 		mainContentRef,
 		mountClassName,
+		prevNewDiscussionIds,
+		prevConvertedDiscussionIds,
 	} = props;
 	const [activeThreadHover, setActiveThreadHover] = useState(undefined);
 	const [activeThread, setActiveThread] = useState(undefined);
 	const [isExpanded, setExpanded] = useState(false);
-	const prevNewDiscussionIds = useRef([]);
 
 	const mainRect = mainContentRef.current.getBoundingClientRect();
 	const sideRect = sideContentRef.current.getBoundingClientRect();
 
 	useEffect(() => {
-		/* We want to set the activeThread to any newly created discussion */
+		/* We want to set the activeThread to any newly opened new discussion */
 		const justCreatedDiscussionId = threads.reduce((prev, curr) => {
 			const isNewDiscussion = !curr[0].threadNumber;
 			const alreadyKnowAboutNewDiscussion = prevNewDiscussionIds.current.includes(curr[0].id);
@@ -47,10 +50,29 @@ const ThreadGroup = (props) => {
 			return prev;
 		}, undefined);
 		if (justCreatedDiscussionId) {
-			prevNewDiscussionIds.current.concat(justCreatedDiscussionId);
+			prevNewDiscussionIds.current.push(justCreatedDiscussionId);
 			setActiveThread(justCreatedDiscussionId);
 		}
-	}, [threads]);
+		const justConvertedDiscussionId = threads.reduce((prev, curr) => {
+			const isNewDiscussion = !curr[0].threadNumber;
+			const alreadyKnowAboutNewDiscussion = prevNewDiscussionIds.current.includes(curr[0].id);
+			const alreadyKnowAboutConvertedDiscussion = prevConvertedDiscussionIds.current.includes(
+				curr[0].id,
+			);
+			if (
+				!isNewDiscussion &&
+				alreadyKnowAboutNewDiscussion &&
+				!alreadyKnowAboutConvertedDiscussion
+			) {
+				return curr[0].id;
+			}
+			return prev;
+		}, undefined);
+		if (justConvertedDiscussionId) {
+			prevConvertedDiscussionIds.current.push(justConvertedDiscussionId);
+			setActiveThread(justConvertedDiscussionId);
+		}
+	}, [prevNewDiscussionIds, prevConvertedDiscussionIds, threads]);
 
 	useEffect(() => {
 		/* This effect is due to a Chrome rendering bug that causes */
@@ -64,10 +86,6 @@ const ThreadGroup = (props) => {
 	const activeThreadData = threads.find((thread) => {
 		return thread[0].id === activeThread;
 	});
-
-	if (activeThread && !activeThreadData) {
-		setActiveThread(undefined);
-	}
 
 	const style = {
 		left: sideRect.left - mainRect.left,
@@ -94,14 +112,13 @@ const ThreadGroup = (props) => {
 				isExpanded={isExpanded}
 				setExpanded={setExpanded}
 			/>
-			{activeThread && (
+			{activeThreadData && (
 				<DiscussionThread
 					pubData={pubData}
 					collabData={collabData}
 					firebaseBranchRef={firebaseBranchRef}
-					threadData={threads.find((thread) => thread[0].id === activeThread)}
+					threadData={activeThreadData}
 					updateLocalData={updateLocalData}
-					setActiveThread={setActiveThread}
 				/>
 			)}
 		</span>

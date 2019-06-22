@@ -14,14 +14,17 @@ import { apiFetch } from 'utils';
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
-	firebaseBranchRef: PropTypes.object.isRequired,
+	firebaseBranchRef: PropTypes.object,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
-	setActiveThread: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+	firebaseBranchRef: undefined,
 };
 
 const DiscussionInput = (props) => {
-	const { pubData, collabData, updateLocalData, threadData, setActiveThread } = props;
+	const { pubData, collabData, updateLocalData, threadData } = props;
 	const { loginData, locationData, communityData } = useContext(PageContext);
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState({});
@@ -53,23 +56,20 @@ const DiscussionInput = (props) => {
 				if (!isNewThread) {
 					return Promise.all([discussionData]);
 				}
-				return Promise.all([
-					discussionData,
-					convertLocalHighlightToDiscussion(
-						pubView,
-						threadData[0].id,
-						props.firebaseBranchRef,
-					),
-				]);
+				const convertHighlight = props.firebaseBranchRef
+					? convertLocalHighlightToDiscussion(
+							pubView,
+							threadData[0].id,
+							props.firebaseBranchRef,
+					  )
+					: () => {};
+				return Promise.all([discussionData, convertHighlight]);
 			})
 			.then(([discussionData]) => {
 				updateLocalData('pub', {
 					...pubData,
 					discussions: [...pubData.discussions, discussionData],
 				});
-				if (isNewThread) {
-					setActiveThread(discussionData.id);
-				}
 			});
 	};
 
@@ -155,4 +155,5 @@ const DiscussionInput = (props) => {
 };
 
 DiscussionInput.propTypes = propTypes;
+DiscussionInput.defaultProps = defaultProps;
 export default DiscussionInput;

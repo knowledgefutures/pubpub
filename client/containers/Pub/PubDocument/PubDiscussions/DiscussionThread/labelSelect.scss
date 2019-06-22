@@ -1,0 +1,19 @@
+.label-select-component {
+	.color {
+		height: 18px;
+		width: 18px;
+		margin-right: 10px;
+		border-radius: 2px;
+		.bp3-icon-tick {
+			padding: 2px;
+			color: white;
+		}
+	}
+	.bp3-icon-endorsed {
+		margin-left: 10px;
+		opacity: 0.25;
+		&.active {
+			opacity: 0.75;
+		}
+	}
+}

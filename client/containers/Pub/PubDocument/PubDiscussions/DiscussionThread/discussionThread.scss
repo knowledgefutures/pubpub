@@ -37,11 +37,21 @@
 			font-weight: 600;
 			margin-right: 1em;
 			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			min-height: 17px;
 		}
 		.time {
 			margin-right: 1em;
 			color: #888;
 			flex: 1 1 auto;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			min-height: 17px;
+		}
+		.actions {
+			white-space: nowrap;
 		}
 		.bp3-button {
 			min-height: 17px;

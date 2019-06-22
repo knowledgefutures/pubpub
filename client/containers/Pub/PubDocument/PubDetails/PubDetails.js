@@ -1,15 +1,14 @@
 import React, { useState, useContext } from 'react';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 
 import { pubDataProps } from 'types/pub';
 import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { Icon, GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import Avatar from 'components/Avatar/Avatar';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 
+import CompactContributors from './CompactContributors';
 import Contributors from './Contributors';
 import CitationsPreview from './CitationsPreview';
 
@@ -18,8 +17,6 @@ require('./pubDetails.scss');
 const propTypes = {
 	pubData: pubDataProps.isRequired,
 };
-
-const maxContributorsInCompactView = 5;
 
 const PubDetails = (props) => {
 	const { pubData } = props;
@@ -78,28 +75,6 @@ const PubDetails = (props) => {
 			</div>
 		</GridWrapper>
 	);
-};
-const CompactContributors = (props) => {
-	const { contributors } = props;
-	const contributorsWithAvatars = contributors.slice(0, maxContributorsInCompactView);
-	const leftoverContributors = contributors.length - maxContributorsInCompactView;
-	return (
-		<div className="compact-contributors">
-			{contributorsWithAvatars.map((contributor) => (
-				<Avatar
-					key={contributor.id}
-					userInitials={contributor.user.initials}
-					userAvatar={contributor.user.avatar}
-					width={20}
-				/>
-			))}
-			{leftoverContributors > 0 && <span>&amp; {leftoverContributors} more</span>}
-		</div>
-	);
-};
-
-CompactContributors.propTypes = {
-	contributors: PropTypes.array.isRequired,
 };
 
 PubDetails.propTypes = propTypes;

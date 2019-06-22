@@ -44,6 +44,7 @@ class ControlsImage extends Component {
 			{ key: 'center', icon: 'align-center' },
 			{ key: 'right', icon: 'align-right' },
 			{ key: 'full', icon: 'vertical-distribution' },
+			{ key: 'breakout', icon: 'fullscreen' },
 		];
 		const iconSize = this.props.isSmall ? 12 : 16;
 
@@ -87,16 +88,6 @@ class ControlsImage extends Component {
 								);
 							})}
 						</ButtonGroup>
-						<Button
-							icon="fullscreen"
-							minimal={true}
-							active={this.props.attrs.breakout}
-							onClick={() => {
-								this.props.updateAttrs({ breakout: !this.props.attrs.breakout });
-							}}
-						>
-							Breakout
-						</Button>
 					</div>
 				</div>
 

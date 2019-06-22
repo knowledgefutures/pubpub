@@ -16,6 +16,7 @@ const ControlsIframe = (props) => {
 		{ key: 'center', icon: 'align-center' },
 		{ key: 'right', icon: 'align-right' },
 		{ key: 'full', icon: 'vertical-distribution' },
+		{ key: 'breakout', icon: 'fullscreen' },
 	];
 	const iconSize = props.isSmall ? 12 : 16;
 	const [heightStringVal, setHeightStringVal] = useState(props.attrs.height);
@@ -94,16 +95,6 @@ const ControlsIframe = (props) => {
 							);
 						})}
 					</ButtonGroup>
-					<Button
-						icon="fullscreen"
-						minimal={true}
-						active={props.attrs.breakout}
-						onClick={() => {
-							props.updateAttrs({ breakout: !props.attrs.breakout });
-						}}
-					>
-						Breakout
-					</Button>
 				</div>
 			</div>
 

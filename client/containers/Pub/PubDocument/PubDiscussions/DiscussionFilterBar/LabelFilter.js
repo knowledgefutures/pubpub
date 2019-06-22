@@ -5,7 +5,7 @@ import Icon from 'components/Icon/Icon';
 import uuidv4 from 'uuid/v4';
 import { apiFetch } from 'utils';
 
-require('./labelsList.scss');
+require('./labelFilter.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
@@ -21,7 +21,7 @@ const defaultProps = {
 	labelsData: [],
 };
 
-class LabelsList extends Component {
+class LabelFilter extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -149,7 +149,7 @@ class LabelsList extends Component {
 		const showEditMode =
 			this.state.isEditMode || (!this.props.labelsData.length && this.props.isManager);
 		return (
-			<div className="labels-list-component bp3-menu bp3-elevation-1">
+			<div className="label-filter-component bp3-menu bp3-elevation-1">
 				{this.props.isManager && !showEditMode && (
 					<Button
 						minimal
@@ -333,6 +333,6 @@ class LabelsList extends Component {
 	}
 }
 
-LabelsList.propTypes = propTypes;
-LabelsList.defaultProps = defaultProps;
-export default LabelsList;
+LabelFilter.propTypes = propTypes;
+LabelFilter.defaultProps = defaultProps;
+export default LabelFilter;

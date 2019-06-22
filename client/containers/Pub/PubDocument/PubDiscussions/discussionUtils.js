@@ -53,27 +53,22 @@ export const groupThreadsByLine = (decorations, threads) => {
 					return 0;
 				})
 				.map((decoration) => {
-					const newDiscussionId = decoration.attrs.class.replace(
-						'local-highlight lh-',
-						'',
-					);
+					const isNewDiscussion = decoration.attrs.class.indexOf('local-highlight') > -1;
+					if (isNewDiscussion) {
+						const newDiscussionId = decoration.attrs.class.replace(
+							'local-highlight lh-',
+							'',
+						);
+						return [{ id: newDiscussionId }];
+					}
 					const id = decoration.attrs.class.replace('discussion-range d-', '');
 					const decorationThread = threads.find((thread) => {
 						return thread[0].id === id;
 					});
-					const newThread = [{ id: newDiscussionId }];
-					return decorationThread || newThread;
+					return decorationThread;
 				})
 				.filter((thread) => {
-					return !thread.sort((foo, bar) => {
-						if (foo.createdAt < bar.createdAt) {
-							return -1;
-						}
-						if (foo.createdAt > bar.createdAt) {
-							return 1;
-						}
-						return 0;
-					})[0].isArchived;
+					return thread && !thread[0].isArchived;
 				});
 
 			/* Find the right-most id, and use that as the mount point */

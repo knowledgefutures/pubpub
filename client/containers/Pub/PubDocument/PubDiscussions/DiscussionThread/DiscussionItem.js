@@ -7,6 +7,7 @@ import { Button, Intent, Tooltip } from '@blueprintjs/core';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { Avatar, Icon, FormattingBar } from 'components';
 import { apiFetch } from 'utils';
+import LabelSelect from './LabelSelect';
 
 const propTypes = {
 	discussionData: PropTypes.object.isRequired,
@@ -62,7 +63,6 @@ const DiscussionItem = (props) => {
 	};
 
 	const isDiscussionAuthor = loginData.id === discussionData.userId;
-	const canManage = pubData.canManageBranch || pubData.canManage;
 	return (
 		<div className="discussion-item">
 			<div className="avatar-wrapper">
@@ -102,26 +102,40 @@ const DiscussionItem = (props) => {
 					)}
 
 					<span className="actions">
-						{!isPreview && (isDiscussionAuthor || canManage) && isRootThread && (
-							<Tooltip content={discussionData.isArchived ? 'Unarchive' : 'Archive'}>
-								<Button
-									icon={
-										<Icon
-											icon={discussionData.isArchived ? 'export' : 'import'}
-											iconSize={12}
-										/>
-									}
-									minimal={true}
-									small={true}
-									alt={discussionData.isArchived ? 'Unarchive' : 'Archive'}
-									onClick={() => {
-										handlePutDiscussion({
-											isArchived: !discussionData.isArchived,
-										});
-									}}
+						{!isPreview && (isDiscussionAuthor || pubData.canManage) && isRootThread && (
+							<React.Fragment>
+								<LabelSelect
+									availableLabels={pubData.labels || []}
+									labelsData={discussionData.labels || []}
+									onPutDiscussion={handlePutDiscussion}
+									canManagePub={pubData.canManage}
+									canManageThread={isDiscussionAuthor}
 								/>
-							</Tooltip>
+								<Tooltip
+									content={discussionData.isArchived ? 'Unarchive' : 'Archive'}
+								>
+									<Button
+										icon={
+											<Icon
+												icon={
+													discussionData.isArchived ? 'export' : 'import'
+												}
+												iconSize={12}
+											/>
+										}
+										minimal={true}
+										small={true}
+										alt={discussionData.isArchived ? 'Unarchive' : 'Archive'}
+										onClick={() => {
+											handlePutDiscussion({
+												isArchived: !discussionData.isArchived,
+											});
+										}}
+									/>
+								</Tooltip>
+							</React.Fragment>
 						)}
+
 						{!isPreview && isDiscussionAuthor && (
 							<Button
 								icon={isEditing ? undefined : <Icon icon="edit2" iconSize={12} />}

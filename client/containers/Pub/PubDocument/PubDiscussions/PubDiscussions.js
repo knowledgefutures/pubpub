@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
@@ -48,10 +48,8 @@ const PubDiscussions = (props) => {
 	}, [windowWidth]);
 	const threads = nestDiscussionsToThreads(pubData.discussions);
 	const groupsByLine = groupThreadsByLine(decorations, threads);
-
-	if (!props.firebaseBranchRef) {
-		return null;
-	}
+	const prevNewDiscussionIds = useRef([]);
+	const prevConvertedDiscussionIds = useRef([]);
 	return (
 		<div className="pub-discussions-component">
 			<style>
@@ -70,6 +68,9 @@ const PubDiscussions = (props) => {
 				if (!mountElement) {
 					return null;
 				}
+				// console.log('about to render portal');
+				// console.log('mountElement', mountElement);
+				// console.log(group)
 				return ReactDOM.createPortal(
 					<ThreadGroup
 						key={group.mountClassName}
@@ -81,6 +82,8 @@ const PubDiscussions = (props) => {
 						updateLocalData={updateLocalData}
 						sideContentRef={sideContentRef}
 						mainContentRef={mainContentRef}
+						prevNewDiscussionIds={prevNewDiscussionIds}
+						prevConvertedDiscussionIds={prevConvertedDiscussionIds}
 					/>,
 					mountElement,
 				);

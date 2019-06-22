@@ -6,22 +6,22 @@ import { Icon } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import DiscussionItem from './DiscussionItem';
 import DiscussionInput from './DiscussionInput';
+import LabelList from './LabelList';
 
 require('./discussionThread.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
-	firebaseBranchRef: PropTypes.object.isRequired,
+	firebaseBranchRef: PropTypes.object,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
-	setActiveThread: PropTypes.func,
 	canPreview: PropTypes.bool,
 };
 
 const defaultProps = {
+	firebaseBranchRef: undefined,
 	canPreview: false,
-	setActiveThread: () => {},
 };
 
 const DiscussionThread = (props) => {
@@ -29,20 +29,21 @@ const DiscussionThread = (props) => {
 	const { communityData } = useContext(PageContext);
 	const [previewExpanded, setPreviewExpanded] = useState(false);
 	const isPreview = canPreview && !previewExpanded;
+
 	return (
 		<div
+			tabIndex={-1}
+			role="button"
 			className={classNames(
 				'discussion-thread-component',
 				isPreview && 'preview',
 				previewExpanded && 'expanded-preview',
 			)}
-			tabIndex={-1}
 			onClick={() => {
 				if (isPreview) {
-					setPreviewExpanded(true);
+					setPreviewExpanded(isPreview);
 				}
 			}}
-			role="button"
 		>
 			{canPreview && !isPreview && (
 				<Button
@@ -61,6 +62,7 @@ const DiscussionThread = (props) => {
 					}}
 				/>
 			)}
+			<LabelList pubData={pubData} threadData={threadData} />
 			{threadData
 				.filter((item) => item.threadNumber)
 				.filter((item, index) => {

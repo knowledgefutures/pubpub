@@ -9,7 +9,7 @@ import {
 } from '@blueprintjs/core';
 import { filterAndSortThreads } from '../discussionUtils';
 import SortList from './SortList';
-import LabelsList from './LabelsList';
+import LabelFilter from './LabelFilter';
 
 require('./discussionFilterBar.scss');
 
@@ -58,7 +58,7 @@ const DiscussionFilterBar = (props) => {
 				<div className="right">
 					<Popover
 						content={
-							<LabelsList
+							<LabelFilter
 								pubData={pubData}
 								communityData={communityData}
 								labelsData={pubData.labels || []}

@@ -374,32 +374,48 @@ class LayoutEditorPubs extends Component {
 							</div>
 						)}
 
-						<div className="row">
-							{previews.map((item, index) => {
-								const selectPub =
-									(this.props.pubRenderList && this.props.pubRenderList[index]) ||
-									{};
-								const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);
-								if (!selectPub.id) {
-									return null;
-								}
-								return (
-									<div
-										key={selectPub.id}
-										className={isTwoColumn ? 'col-6' : 'col-12'}
-									>
+						{previews.map((item, index, array) => {
+							if (pubPreviewType === 'minimal' && index % 2 === 1) {
+								return null;
+							}
+							const selectedPub = this.props.pubRenderList[index] || {
+								collaborators: [],
+							};
+							const nextPub =
+								pubPreviewType === 'minimal' && index < array.length - 1
+									? this.props.pubRenderList[index + 1]
+									: null;
+							const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);
+							return (
+								<div key={selectedPub.id} className="row">
+									<div className={isTwoColumn ? 'col-6' : 'col-12'}>
 										<PubPreview
+											pubData={selectedPub}
 											size={pubPreviewType}
-											pubData={selectPub}
 											hideByline={this.props.content.hideByline}
 											hideDescription={this.props.content.hideDescription}
 											hideDates={this.props.content.hideDates}
 											hideContributors={this.props.content.hideContributors}
 										/>
 									</div>
-								);
-							})}
-						</div>
+
+									{nextPub && (
+										<div className={isTwoColumn ? 'col-6' : 'col-12'}>
+											<PubPreview
+												pubData={nextPub}
+												size={pubPreviewType}
+												hideByline={this.props.content.hideByline}
+												hideDescription={this.props.content.hideDescription}
+												hideDates={this.props.content.hideDates}
+												hideContributors={
+													this.props.content.hideContributors
+												}
+											/>
+										</div>
+									)}
+								</div>
+							);
+						})}
 					</div>
 				</div>
 			</div>

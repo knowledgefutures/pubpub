@@ -37,12 +37,12 @@ const LayoutPubs = function(props) {
 					)}
 
 					{renderItems.map((item, index, array) => {
-						if (pubPreviewType && index % 2 === 1) {
+						if (pubPreviewType === 'minimal' && index % 2 === 1) {
 							return null;
 						}
 						const selectedPub = props.pubRenderList[index] || { collaborators: [] };
 						const nextPub =
-							pubPreviewType && index < array.length - 2
+							pubPreviewType === 'minimal' && index < array.length - 1
 								? props.pubRenderList[index + 1]
 								: null;
 						const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);

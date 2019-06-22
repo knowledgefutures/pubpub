@@ -155,6 +155,10 @@ const PubPreview = function(props) {
 
 				{showDescription && <div className="description">{pubData.description}</div>}
 			</div>
+			{/*
+				TODO: Stick in a component that renders special commentary pieces
+				for certain hard-coded pubs
+			*/}
 		</div>
 	);
 };

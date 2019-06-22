@@ -410,7 +410,7 @@ export default {
 			},
 		},
 	],
-	branches: [{ publishedAt: '2019-04-29T22:01:27.918Z', title: 'public' }],
+	// branches: [{ publishedAt: '2019-04-29T22:01:27.918Z', title: 'public' }],
 	discussions: [],
 	activeBranch: {
 		createdAt: '2019-04-29T22:01:27.918Z',

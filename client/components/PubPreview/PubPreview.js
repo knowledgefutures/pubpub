@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 
 import { getResizedUrl, generatePubBackground } from 'utils';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 import { isPubPublic } from 'shared/pub/permissions';
-import Avatar from 'components/Avatar/Avatar';
-import Icon from 'components/Icon/Icon';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { Avatar, Icon } from 'components';
+
+import { generateAuthorString } from './pubPreviewUtils';
 
 require('./pubPreview.scss');
 
@@ -30,8 +32,8 @@ const defaultProps = {
 };
 
 const PubPreview = function(props) {
-	const pubData = props.pubData;
-
+	const { pubData, size } = props;
+	const { communityData: localCommunityData } = useContext(PageContext);
 	const resizedBannerImage = getResizedUrl(pubData.avatar, 'fit-in', '800x0');
 	const bannerStyle =
 		pubData.avatar || !pubData.slug
@@ -58,21 +60,33 @@ const PubPreview = function(props) {
 	const publishedDate = getPubPublishedDate(pubData);
 	const isPrivate = !isPubPublic(pubData);
 
+	const showBannerImage = ['large', 'medium'].includes(size);
+	const showUpperByline = !!authors.length && !props.hideByline && ['minimal'].includes(size);
+	const showLowerByline =
+		!!authors.length && !props.hideByline && ['large', 'medium', 'small'].includes(size);
+	const showDates = !props.hideDates && ['large', 'medium', 'small'].includes(size);
+	const showContributors = !props.hideContributors && ['large', 'medium', 'small'].includes(size);
+	const showDescription = pubData.description && !props.hideDescription;
 	return (
-		<div className={`pub-preview-component ${props.size}-preview`}>
-			{props.size !== 'small' && (
+		<div className={`pub-preview-component ${size}-preview`}>
+			{showBannerImage && (
 				<a href={pubLink} alt={pubData.title}>
 					<div className="banner-image" style={bannerStyle} />
 				</a>
 			)}
 			<div className="content">
+				{showUpperByline && (
+					<div className="authors" style={{ color: localCommunityData.accentColorDark }}>
+						{generateAuthorString(pubData)}
+					</div>
+				)}
 				<div className="title-wrapper">
 					{props.communityData && (
 						<a
 							href={communityUrl}
 							alt={props.communityData.title}
 							className="community-banner"
-							style={{ backgroundColor: props.communityData.accentColor }}
+							style={{ backgroundColor: props.communityData.accentColorDark }}
 						>
 							<img
 								alt={`${props.communityData.title} logo`}
@@ -88,55 +102,14 @@ const PubPreview = function(props) {
 					</a>
 				</div>
 
-				{!!authors.length && !props.hideByline && (
+				{showLowerByline && (
 					<div className="authors">
 						<span>by </span>
-						{authors
-							.sort((foo, bar) => {
-								if (foo.order < bar.order) {
-									return -1;
-								}
-								if (foo.order > bar.order) {
-									return 1;
-								}
-								if (foo.createdAt < bar.createdAt) {
-									return 1;
-								}
-								if (foo.createdAt > bar.createdAt) {
-									return -1;
-								}
-								return 0;
-							})
-							.map((author, index) => {
-								const separator =
-									index === authors.length - 1 || authors.length === 2
-										? ''
-										: ', ';
-								const prefix =
-									index === authors.length - 1 && index !== 0 ? ' and ' : '';
-								if (author.user.slug) {
-									return (
-										<span key={`author-${author.id}`}>
-											{prefix}
-											<a href={`/user/${author.user.slug}`}>
-												{author.user.fullName}
-											</a>
-											{separator}
-										</span>
-									);
-								}
-								return (
-									<span key={`author-${author.id}`}>
-										{prefix}
-										{author.user.fullName}
-										{separator}
-									</span>
-								);
-							})}
+						{generateAuthorString(pubData)}
 					</div>
 				)}
 
-				{!props.hideDates && (
+				{showDates && (
 					<div className="date-details">
 						{publishedDate && (
 							<span className="date">
@@ -146,7 +119,7 @@ const PubPreview = function(props) {
 					</div>
 				)}
 
-				{!props.hideContributors && (
+				{showContributors && (
 					<div className="date-details">
 						{attributions
 							.sort((foo, bar) => {
@@ -180,9 +153,7 @@ const PubPreview = function(props) {
 					</div>
 				)}
 
-				{pubData.description && !props.hideDescription && (
-					<div className="description">{pubData.description}</div>
-				)}
+				{showDescription && <div className="description">{pubData.description}</div>}
 			</div>
 		</div>
 	);

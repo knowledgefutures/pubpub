@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Color from 'color';
 import { AnchorButton } from '@blueprintjs/core';
 import { apiFetch, getResizedUrl } from 'utils';
 
@@ -11,7 +12,7 @@ const propTypes = {
 	locationData: PropTypes.object.isRequired,
 	content: PropTypes.object.isRequired,
 	/* Expected content */
-	/* text, align, backgroundColor, backgroundImage, backgroundSize, showButton, buttonText, defaultCollectionIds */
+	/* text, align, backgroundColor, backgroundImage, backgroundSize, backgroundHeight, showButton, buttonType, buttonText, defaultCollectionIds, buttonUrl */
 };
 
 class LayoutBanner extends Component {
@@ -48,14 +49,15 @@ class LayoutBanner extends Component {
 
 		const textStyle = {
 			textAlign: this.props.content.align || 'left',
-			color: 'white',
-			fontSize: '40px',
+			color: Color(this.props.content.backgroundColor).isLight() ? '#000000' : '#FFFFFF',
 			lineHeight: '1em',
+			fontSize: this.props.content.backgroundHeight === 'narrow' ? '18px' : '28px',
 		};
+
 		const backgroundStyle = {
 			backgroundColor: this.props.content.backgroundColor,
 			backgroundImage: backgroundImageCss,
-			minHeight: '200px',
+			minHeight: this.props.content.backgroundHeight === 'narrow' ? '60px' : '200px',
 			display: 'flex',
 			alignItems: 'center',
 			maxWidth: 'none',
@@ -99,8 +101,10 @@ class LayoutBanner extends Component {
 								this.props.content.backgroundSize === 'standard' && (
 									<div className="dim" />
 								)}
-							<div className="col-12" style={textStyle}>
-								{this.props.content.text && <h2>{this.props.content.text}</h2>}
+							<div className="col-12">
+								{this.props.content.text && (
+									<h2 style={textStyle}>{this.props.content.text}</h2>
+								)}
 								{this.props.content.showButton && (
 									<AnchorButton
 										className="bp3-large"

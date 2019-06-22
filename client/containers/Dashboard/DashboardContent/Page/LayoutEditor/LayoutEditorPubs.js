@@ -21,6 +21,7 @@ const propTypes = {
 class LayoutEditorPubs extends Component {
 	constructor(props) {
 		super(props);
+		this.setMinimal = this.setMinimal.bind(this);
 		this.setSmall = this.setSmall.bind(this);
 		this.setMedium = this.setMedium.bind(this);
 		this.setLarge = this.setLarge.bind(this);
@@ -34,6 +35,13 @@ class LayoutEditorPubs extends Component {
 		this.setHideContributors = this.setHideContributors.bind(this);
 		this.setPubIds = this.setPubIds.bind(this);
 		this.orderPopoverRef = React.createRef();
+	}
+
+	setMinimal() {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			pubPreviewType: 'minimal',
+		});
 	}
 
 	setSmall() {
@@ -297,19 +305,24 @@ class LayoutEditorPubs extends Component {
 					<InputField label="Preview Type">
 						<div className="bp3-button-group">
 							<Button
-								className={`${pubPreviewType === 'large' ? 'bp3-active' : ''}`}
+								active={pubPreviewType === 'large'}
 								onClick={this.setLarge}
 								text="Large"
 							/>
 							<Button
-								className={`${pubPreviewType === 'medium' ? 'bp3-active' : ''}`}
+								active={pubPreviewType === 'medium'}
 								onClick={this.setMedium}
 								text="Medium"
 							/>
 							<Button
-								className={`${pubPreviewType === 'small' ? 'bp3-active' : ''}`}
+								active={pubPreviewType === 'small'}
 								onClick={this.setSmall}
 								text="Small"
+							/>
+							<Button
+								active={pubPreviewType === 'minimal'}
+								onClick={this.setMinimal}
+								text="Minimal"
 							/>
 						</div>
 					</InputField>
@@ -318,27 +331,36 @@ class LayoutEditorPubs extends Component {
 						<Checkbox
 							checked={!this.props.content.hideByline}
 							onChange={this.setHideByline}
-						>
-							Byline
-						</Checkbox>
+							label="Byline"
+						/>
 						<Checkbox
-							checked={!this.props.content.hideDescription}
+							checked={
+								pubPreviewType === 'minimal'
+									? false
+									: !this.props.content.hideDescription
+							}
 							onChange={this.setHideDescription}
-						>
-							Description
-						</Checkbox>
+							disabled={pubPreviewType === 'minimal'}
+							label="Description"
+						/>
 						<Checkbox
-							checked={!this.props.content.hideDates}
+							checked={
+								pubPreviewType === 'minimal' ? false : !this.props.content.hideDates
+							}
 							onChange={this.setHideDates}
-						>
-							Dates
-						</Checkbox>
+							disabled={pubPreviewType === 'minimal'}
+							label="Dates"
+						/>
 						<Checkbox
-							checked={!this.props.content.hideContributors}
+							checked={
+								pubPreviewType === 'minimal'
+									? false
+									: !this.props.content.hideContributors
+							}
 							onChange={this.setHideContributors}
-						>
-							Contributors
-						</Checkbox>
+							disabled={pubPreviewType === 'minimal'}
+							label="Contributors"
+						/>
 					</InputField>
 				</div>
 
@@ -357,13 +379,14 @@ class LayoutEditorPubs extends Component {
 								const selectPub =
 									(this.props.pubRenderList && this.props.pubRenderList[index]) ||
 									{};
+								const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);
 								if (!selectPub.id) {
 									return null;
 								}
 								return (
 									<div
 										key={selectPub.id}
-										className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}
+										className={isTwoColumn ? 'col-6' : 'col-12'}
 									>
 										<PubPreview
 											size={pubPreviewType}

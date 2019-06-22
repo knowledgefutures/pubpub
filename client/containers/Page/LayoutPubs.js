@@ -36,14 +36,19 @@ const LayoutPubs = function(props) {
 						</div>
 					)}
 
-					<div className="row">
-						{renderItems.map((item, index) => {
-							const selectedPub = props.pubRenderList[index] || { collaborators: [] };
-							return (
-								<div
-									key={selectedPub.id}
-									className={pubPreviewType === 'medium' ? 'col-6' : 'col-12'}
-								>
+					{renderItems.map((item, index, array) => {
+						if (pubPreviewType && index % 2 === 1) {
+							return null;
+						}
+						const selectedPub = props.pubRenderList[index] || { collaborators: [] };
+						const nextPub =
+							pubPreviewType && index < array.length - 2
+								? props.pubRenderList[index + 1]
+								: null;
+						const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);
+						return (
+							<div key={selectedPub.id} className="row">
+								<div className={isTwoColumn ? 'col-6' : 'col-12'}>
 									<PubPreview
 										pubData={selectedPub}
 										size={pubPreviewType}
@@ -53,9 +58,22 @@ const LayoutPubs = function(props) {
 										hideContributors={props.content.hideContributors}
 									/>
 								</div>
-							);
-						})}
-					</div>
+
+								{nextPub && (
+									<div className={isTwoColumn ? 'col-6' : 'col-12'}>
+										<PubPreview
+											pubData={nextPub}
+											size={pubPreviewType}
+											hideByline={props.content.hideByline}
+											hideDescription={props.content.hideDescription}
+											hideDates={props.content.hideDates}
+											hideContributors={props.content.hideContributors}
+										/>
+									</div>
+								)}
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>

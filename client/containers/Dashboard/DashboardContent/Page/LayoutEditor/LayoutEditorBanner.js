@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import Color from 'color';
+import { ButtonGroup, Button } from '@blueprintjs/core';
 import CollectionMultiSelect from 'components/CollectionMultiSelect/CollectionMultiSelect';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
@@ -15,7 +16,7 @@ const propTypes = {
 	content: PropTypes.object.isRequired,
 	communityData: PropTypes.object.isRequired,
 	/* Expected content */
-	/* text, align, backgroundColor, backgroundImage, backgroundSize, showButton, buttonType, buttonText, defaultCollectionIds, buttonUrl */
+	/* text, align, backgroundColor, backgroundImage, backgroundSize, backgroundHeight, showButton, buttonType, buttonText, defaultCollectionIds, buttonUrl */
 };
 
 class LayoutEditorBanner extends Component {
@@ -23,6 +24,7 @@ class LayoutEditorBanner extends Component {
 		super(props);
 		this.setAlign = this.setAlign.bind(this);
 		this.setBackgroundSize = this.setBackgroundSize.bind(this);
+		this.setBackgroundHeight = this.setBackgroundHeight.bind(this);
 		this.setBackgroundColor = this.setBackgroundColor.bind(this);
 		this.setBackgroundImage = this.setBackgroundImage.bind(this);
 		this.setDefaultCollectionIds = this.setDefaultCollectionIds.bind(this);
@@ -44,6 +46,13 @@ class LayoutEditorBanner extends Component {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			backgroundSize: backgroundSizeValue /* full or standard */,
+		});
+	}
+
+	setBackgroundHeight(backgroundHeightValue) {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			backgroundHeight: backgroundHeightValue /* tall or narrow */,
 		});
 	}
 
@@ -106,26 +115,25 @@ class LayoutEditorBanner extends Component {
 	}
 
 	render() {
+		const backgroundImageCss = this.props.content.backgroundImage
+			? `url("${getResizedUrl(this.props.content.backgroundImage, 'fit-in', '1500x600')}")`
+			: undefined;
+
 		const textStyle = {
 			textAlign: this.props.content.align || 'left',
-			color: 'white',
-			fontSize: '40px',
+			color: Color(this.props.content.backgroundColor).isLight() ? '#000000' : '#FFFFFF',
 			lineHeight: '1em',
+			fontSize: this.props.content.backgroundHeight === 'narrow' ? '18px' : '28px',
 		};
 
 		const backgroundStyle = {
 			backgroundColor: this.props.content.backgroundColor,
-			backgroundImage: this.props.content.backgroundImage
-				? `url("${getResizedUrl(
-						this.props.content.backgroundImage,
-						'fit-in',
-						'1500x600',
-				  )}")`
-				: undefined,
+			backgroundImage: backgroundImageCss,
 			textShadow: this.props.content.backgroundImage ? '0 0 2px #000' : '',
-			minHeight: '200px',
+			minHeight: this.props.content.backgroundHeight === 'narrow' ? '60px' : '200px',
 			display: 'flex',
 			alignItems: 'center',
+			maxWidth: 'none',
 		};
 
 		const buttonType =
@@ -146,50 +154,58 @@ class LayoutEditorBanner extends Component {
 						/>
 					</InputField>
 					<InputField label="Align">
-						<div className="bp3-button-group">
+						<ButtonGroup>
 							<Button
-								className={`${
-									this.props.content.align === 'left' ? 'bp3-active' : ''
-								}`}
+								active={this.props.content.align === 'left'}
 								onClick={() => {
 									this.setAlign('left');
 								}}
 								text="Left"
 							/>
 							<Button
-								className={`${
-									this.props.content.align === 'center' ? 'bp3-active' : ''
-								}`}
+								active={this.props.content.align === 'center'}
 								onClick={() => {
 									this.setAlign('center');
 								}}
 								text="Center"
 							/>
-						</div>
+						</ButtonGroup>
 					</InputField>
 					<InputField label="Size">
-						<div className="bp3-button-group">
+						<ButtonGroup>
 							<Button
-								className={`${
-									this.props.content.backgroundSize === 'full' ? 'bp3-active' : ''
-								}`}
+								active={this.props.content.backgroundSize === 'full'}
 								onClick={() => {
 									this.setBackgroundSize('full');
 								}}
 								text="Full"
 							/>
 							<Button
-								className={`${
-									this.props.content.backgroundSize === 'standard'
-										? 'bp3-active'
-										: ''
-								}`}
+								active={this.props.content.backgroundSize === 'standard'}
 								onClick={() => {
 									this.setBackgroundSize('standard');
 								}}
 								text="Standard"
 							/>
-						</div>
+						</ButtonGroup>
+					</InputField>
+					<InputField label="Height">
+						<ButtonGroup>
+							<Button
+								active={this.props.content.backgroundHeight === 'tall'}
+								onClick={() => {
+									this.setBackgroundHeight('tall');
+								}}
+								text="Tall"
+							/>
+							<Button
+								active={this.props.content.backgroundHeight === 'narrow'}
+								onClick={() => {
+									this.setBackgroundHeight('narrow');
+								}}
+								text="Narrow"
+							/>
+						</ButtonGroup>
 					</InputField>
 					<ImageUpload
 						label="Image"
@@ -281,8 +297,10 @@ class LayoutEditorBanner extends Component {
 								this.props.content.backgroundSize === 'standard' && (
 									<div className="dim" />
 								)}
-							<div className="col-12" style={textStyle}>
-								{this.props.content.text && <h2>{this.props.content.text}</h2>}
+							<div className="col-12">
+								{this.props.content.text && (
+									<h2 style={textStyle}>{this.props.content.text}</h2>
+								)}
 								{this.props.content.showButton && (
 									<Button
 										className="bp3-large"

@@ -41,11 +41,11 @@ const LayoutPubs = function(props) {
 							return null;
 						}
 						const selectedPub = props.pubRenderList[index] || { collaborators: [] };
-						const nextPub =
-							pubPreviewType === 'minimal' && index < array.length - 1
-								? props.pubRenderList[index + 1]
-								: null;
 						const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);
+						const nextPub =
+							isTwoColumn && index < array.length - 1
+								? this.props.pubRenderList[index + 1]
+								: null;
 						return (
 							<div key={selectedPub.id} className="row">
 								<div className={isTwoColumn ? 'col-6' : 'col-12'}>

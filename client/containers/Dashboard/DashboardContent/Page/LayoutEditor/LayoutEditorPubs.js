@@ -381,11 +381,12 @@ class LayoutEditorPubs extends Component {
 							const selectedPub = this.props.pubRenderList[index] || {
 								collaborators: [],
 							};
+							const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);
 							const nextPub =
-								pubPreviewType === 'minimal' && index < array.length - 1
+								isTwoColumn && index < array.length - 1
 									? this.props.pubRenderList[index + 1]
 									: null;
-							const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);
+
 							return (
 								<div key={selectedPub.id} className="row">
 									<div className={isTwoColumn ? 'col-6' : 'col-12'}>

@@ -68,22 +68,34 @@ const SubPreview = function(props) {
 				{
 					prefix: 'Commentary by:',
 					elements: [
-						{ text: 'Rodney Brooks', href: '/pub/' },
-						{ text: 'Emmanuel Candes, John Duchi, and Chiara Sabatti', href: '/pub/' },
-						{ text: 'Greg Crane', href: '/pub/' },
-						{ text: 'David Donoho', href: '/pub/' },
-						{ text: 'Maria Fasli', href: '/pub/' },
-						{ text: 'Barbara Grosz', href: '/pub/' },
-						{ text: 'Andrew Lo', href: '/pub/' },
-						{ text: 'Maja Mataric', href: '/pub/' },
-						{ text: 'Brendan McCord', href: '/pub/' },
-						{ text: 'Max Welling', href: '/pub/' },
-						{ text: 'Rebecca Willett', href: '/pub/' },
+						{ text: 'Rodney Brooks', href: '/pub/tgl23krp' },
+						{
+							text: 'Emmanuel Candes, John Duchi, and Chiara Sabatti',
+							href: '/pub/djb16hzl',
+						},
+						{ text: 'Greg Crane', href: '/pub/kyzf7fjv' },
+						// { text: 'David Donoho', href: '' },
+						{ text: 'Maria Fasli', href: '/pub/pqddq8u5' },
+						{ text: 'Barbara Grosz', href: '/pub/wiq01ru6' },
+						{ text: 'Andrew Lo', href: '/pub/pjebp7io' },
+						{ text: 'Maja Mataric', href: '/pub/esfh2s4w' },
+						{ text: 'Brendan McCord', href: '/pub/4s0269ne' },
+						{ text: 'Max Welling', href: '/pub/u2econxe' },
+						{ text: 'Rebecca Willett', href: '/pub/plto69bh' },
 					],
 				},
 				{
 					prefix: 'Rejoinder from:',
-					elements: [{ text: 'Michael I. Jordan', href: '/pub/123' }],
+					elements: [{ text: 'Michael I. Jordan', href: '/pub/2imtstfu' }],
+				},
+			],
+		},
+		{
+			parentId: '5c5f0525-dd50-4ea2-886a-7db64633131a',
+			children: [
+				{
+					prefix: '',
+					elements: [{ text: 'Supplementary Materials', href: '/pub/dno70rhw/' }],
 				},
 			],
 		},
@@ -100,15 +112,15 @@ const SubPreview = function(props) {
 					return parentItem.children.map((child) => {
 						return (
 							<div className="child" key={child.prefix}>
-								<span className="prefix">{child.prefix}</span>
+								{child.prefix && (
+									<span className="prefix" style={elementStyle}>
+										{child.prefix}
+									</span>
+								)}
 								{child.elements.map((element, index, array) => {
 									return (
 										<React.Fragment key={element.text}>
-											<a
-												className="element"
-												href={element.href}
-												style={elementStyle}
-											>
+											<a className="element" href={element.href}>
 												{element.text}
 											</a>
 											{index < array.length - 1 && <span>, </span>}

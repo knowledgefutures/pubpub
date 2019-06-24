@@ -1,8 +1,12 @@
 import React, { useRef } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import { Card } from '@blueprintjs/core';
 import Editor from '@pubpub/editor';
 import { getResizedUrl } from 'utils';
 import discussionSchema from './DiscussionAddon/discussionSchema';
+import { nestDiscussionsToThreads } from './PubDiscussions/discussionUtils';
+import DiscussionThread from './PubDiscussions/DiscussionThread';
 
 require('./pubBody.scss');
 
@@ -24,6 +28,7 @@ const PubBody = (props) => {
 	const { pubData, collabData, firebaseBranchRef, updateLocalData, historyData } = props;
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
+	const embedDiscussions = useRef({});
 	prevStatusRef.current = collabData.status;
 
 	const getNextStatus = (status, onComplete) => {
@@ -57,6 +62,7 @@ const PubBody = (props) => {
 	const useCollaborativeOptions = firebaseBranchRef && !pubData.isStaticDoc && !isHistoryDoc;
 	const isReadOnly = !!(pubData.isStaticDoc || !pubData.canEditBranch || isViewingHistory);
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
+
 	return (
 		<div className="pub-body-component">
 			<Editor
@@ -70,7 +76,17 @@ const PubBody = (props) => {
 							return getResizedUrl(url, 'fit-in', '800x0');
 						},
 					},
-					// discussion: this.props.discussionNodeOptions,
+					discussion: {
+						addRef: (embedId, mountRef, threadNumber) => {
+							embedDiscussions.current[embedId] = {
+								mountRef: mountRef,
+								threadNumber: threadNumber,
+							};
+						},
+						removeRef: (embedId) => {
+							delete embedDiscussions.current[embedId];
+						},
+					},
 				}}
 				placeholder={pubData.isStaticDoc ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}
@@ -103,6 +119,43 @@ const PubBody = (props) => {
 				highlights={[]}
 				handleSingleClick={props.onSingleClick}
 			/>
+
+			{/* For now, we have PubBody mount Portals for embedded Discussions */}
+			{Object.keys(embedDiscussions.current).map((embedId) => {
+				const mountRef = embedDiscussions.current[embedId].mountRef;
+				if (!mountRef.current) {
+					return null;
+				}
+
+				const threadNumber = embedDiscussions.current[embedId].threadNumber;
+				const threads = nestDiscussionsToThreads(pubData.discussions);
+				const activeThread = threads.reduce((prev, curr) => {
+					if (curr[0].threadNumber === threadNumber) {
+						return curr;
+					}
+					return prev;
+				}, undefined);
+
+				return ReactDOM.createPortal(
+					<React.Fragment>
+						{!activeThread && (
+							<Card>Please select a discussion from the formatting bar.</Card>
+						)}
+						{activeThread && (
+							<DiscussionThread
+								key={embedId}
+								pubData={pubData}
+								collabData={collabData}
+								firebaseBranchRef={firebaseBranchRef}
+								threadData={activeThread}
+								updateLocalData={updateLocalData}
+								canPreview={true}
+							/>
+						)}
+					</React.Fragment>,
+					mountRef.current,
+				);
+			})}
 		</div>
 	);
 };

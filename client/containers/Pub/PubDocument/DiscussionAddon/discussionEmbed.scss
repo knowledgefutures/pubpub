@@ -1,4 +1,6 @@
+@import 'styles/variables.scss';
 .figure-wrapper {
+	font-family: $base-font;
 	// text-align: center;
 	// user-select: none;
 	// pointer-events: none;
@@ -17,7 +19,7 @@
 		text-align: left;
 		// display: inline-block;
 		// padding: 0px;
-		background-color: #f7f7f9;
+		// background-color: #f7f7f9;
 		.editor.ProseMirror {
 			min-height: auto;
 			p,

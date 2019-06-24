@@ -30,7 +30,7 @@ export default {
 		},
 		inline: false,
 		group: 'block',
-		draggable: true,
+		draggable: false,
 
 		/* NodeView Options. These are not part of the standard Prosemirror Schema spec */
 		isNodeView: true,

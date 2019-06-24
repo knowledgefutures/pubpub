@@ -48,9 +48,9 @@ const Page = (props) => {
 				communityData={props.communityData}
 				locationData={props.locationData}
 			>
-				{useCustom && (
+				{/* useCustom && (
 					<CustomLanding pageData={pageData} communityData={props.communityData} />
-				)}
+				) */}
 				{!useCustom &&
 					layout.map((item, index) => {
 						const validType =

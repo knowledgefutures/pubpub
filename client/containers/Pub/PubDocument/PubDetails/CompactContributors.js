@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Avatar from 'components/Avatar/Avatar';
 
+require('./compactContributors.scss');
+
 const propTypes = {
 	contributors: PropTypes.array.isRequired,
 };

@@ -51,47 +51,46 @@ const Page = (props) => {
 				{/* useCustom && (
 					<CustomLanding pageData={pageData} communityData={props.communityData} />
 				) */}
-				{!useCustom &&
-					layout.map((item, index) => {
-						const validType =
-							['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
-						if (!validType) {
-							return null;
-						}
-						return (
-							<div key={`block-${item.id}`} className="component-wrapper">
-								{item.type === 'pubs' && (
-									<LayoutPubs
-										key={`item-${item.id}`}
-										content={item.content}
-										pubRenderList={pubRenderLists[index]}
-									/>
-								)}
-								{item.type === 'text' && (
-									<LayoutText key={`item-${item.id}`} content={item.content} />
-								)}
-								{item.type === 'html' && (
-									<LayoutHtml key={`item-${item.id}`} content={item.content} />
-								)}
-								{item.type === 'banner' && (
-									<LayoutBanner
-										key={`item-${item.id}`}
-										content={item.content}
-										communityData={props.communityData}
-										loginData={props.loginData}
-										locationData={props.locationData}
-									/>
-								)}
-								{item.type === 'pages' && (
-									<LayoutPages
-										key={`item-${item.id}`}
-										content={item.content}
-										pages={props.communityData.pages}
-									/>
-								)}
-							</div>
-						);
-					})}
+				{layout.map((item, index) => {
+					const validType =
+						['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
+					if (!validType) {
+						return null;
+					}
+					return (
+						<div key={`block-${item.id}`} className="component-wrapper">
+							{item.type === 'pubs' && (
+								<LayoutPubs
+									key={`item-${item.id}`}
+									content={item.content}
+									pubRenderList={pubRenderLists[index]}
+								/>
+							)}
+							{item.type === 'text' && (
+								<LayoutText key={`item-${item.id}`} content={item.content} />
+							)}
+							{item.type === 'html' && (
+								<LayoutHtml key={`item-${item.id}`} content={item.content} />
+							)}
+							{item.type === 'banner' && (
+								<LayoutBanner
+									key={`item-${item.id}`}
+									content={item.content}
+									communityData={props.communityData}
+									loginData={props.loginData}
+									locationData={props.locationData}
+								/>
+							)}
+							{item.type === 'pages' && (
+								<LayoutPages
+									key={`item-${item.id}`}
+									content={item.content}
+									pages={props.communityData.pages}
+								/>
+							)}
+						</div>
+					);
+				})}
 			</PageWrapper>
 		</div>
 	);

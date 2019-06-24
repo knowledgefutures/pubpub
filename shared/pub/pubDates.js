@@ -3,16 +3,16 @@ export const getPubPublishedDate = (pub, branch = null) => {
 	if (!branch && !pub.branches) {
 		return null;
 	}
-	branch = branch || pub.branches.find((br) => br.title === 'public');
-	if (branch) {
-		if (!pub.branches.some((br) => br.id === branch.id)) {
-			throw new Error(`Branch ${branch.id} not a member of pub ${pub.id}!`);
+	const selectedBranch = branch || pub.branches.find((br) => br.title === 'public');
+	if (selectedBranch) {
+		if (!pub.branches.some((br) => br.id === selectedBranch.id)) {
+			throw new Error(`Branch ${selectedBranch.id} not a member of pub ${pub.id}!`);
 		}
-		if (branch.publishedAt) {
-			return new Date(branch.publishedAt);
+		if (selectedBranch.publishedAt) {
+			return new Date(selectedBranch.publishedAt);
 		}
-		if (branch.updatedAt) {
-			return new Date(branch.updatedAt);
+		if (selectedBranch.updatedAt) {
+			return new Date(selectedBranch.updatedAt);
 		}
 	}
 	return null;

@@ -39,7 +39,9 @@ class LayoutEditor extends Component {
 	}
 
 	componentWillUnmount() {
-		this.stickyInstance.cleanUp();
+		if (this.stickyInstance) {
+			this.stickyInstance.cleanUp();
+		}
 	}
 
 	handleInsert(index, type, newContent) {

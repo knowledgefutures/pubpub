@@ -1,8 +1,10 @@
 import React, { useState, useContext } from 'react';
 import classNames from 'classnames';
+import dateFormat from 'dateformat';
 import { Button } from '@blueprintjs/core';
 
 import { pubDataProps } from 'types/pub';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
 import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { Icon, GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
@@ -24,7 +26,7 @@ const PubDetails = (props) => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const { communityData } = useContext(PageContext);
 
-	const showSecondColumn = !!(pubData.doi || isExpanded);
+	const showThirdColumn = !!(pubData.doi || isExpanded);
 
 	if (!contributorsWithUser.length && !pubData.doi) {
 		return null;
@@ -54,7 +56,16 @@ const PubDetails = (props) => {
 					{!isExpanded && <CompactContributors contributors={contributorsWithUser} />}
 					{isExpanded && <Contributors contributors={contributorsWithUser} />}
 				</div>
-				{showSecondColumn && (
+				<div className="section publication-dates">
+					<h6>{pubData.activeBranch.title === 'public' ? 'Published' : 'Created'}</h6>
+					<div className="full-height-date">
+						{dateFormat(
+							getPubPublishedDate(pubData, pubData.activeBranch),
+							'mmm dd, yyyy',
+						)}
+					</div>
+				</div>
+				{showThirdColumn && (
 					<div className="section citation-and-doi">
 						{pubData.doi && (
 							<React.Fragment>
@@ -72,6 +83,7 @@ const PubDetails = (props) => {
 						{isExpanded && <CitationsPreview pubData={pubData} />}
 					</div>
 				)}
+				<div className="section spacing-placeholder" />
 			</div>
 		</GridWrapper>
 	);

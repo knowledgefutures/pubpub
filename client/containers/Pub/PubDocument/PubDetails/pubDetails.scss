@@ -1,5 +1,3 @@
-@import '../../pub.scss';
-
 @mixin column {
 	.section {
 		flex-direction: column;
@@ -11,22 +9,24 @@
 	}
 }
 
-@include pub-compact-view {
+@media only screen and (max-width: 1020px) {
 	.pub-details-component {
 		@include column;
 		&.expanded {
 			flex-direction: column;
 			.section {
 				width: 100%;
+				max-width: none;
+			}
+			.pub-contributors-component {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
 			}
 			& > *:last-child {
 				margin-bottom: 10px;
 			}
 		}
 		&:not(.expanded) {
-			.contributors {
-				width: 200px;
-			}
 			.section h6 {
 				height: 24px !important;
 			}
@@ -43,16 +43,30 @@
 	}
 }
 
+@media only screen and (max-width: 580px) {
+	.pub-details-component:not(.expanded) {
+		.section {
+			max-width: none;
+		}
+		.citation-and-doi {
+			display: none;
+		}
+	}
+}
+
+@media only screen and (max-width: 580px) {
+	.pub-contributors-component {
+		display: block !important;
+	}
+}
+
 .pub-details-component {
 	position: relative;
 	border-bottom: 1px solid #f0f0f7;
 	display: flex;
+	justify-content: space-between;
 	&.expanded {
 		@include column;
-
-		.contributors {
-			flex-shrink: 0;
-		}
 		&:after {
 			position: absolute;
 			left: -50vw;
@@ -67,7 +81,8 @@
 	.section {
 		display: flex;
 		align-items: center;
-		margin-right: 30px;
+		max-width: 25%;
+		min-width: 15%;
 		h6 {
 			margin: 0;
 			margin-right: 10px;
@@ -78,9 +93,6 @@
 			color: #bcbcbc;
 			white-space: nowrap;
 		}
-	}
-	.contributors {
-		width: 300px;
 	}
 	.citation-and-doi {
 		.doi-and-button {
@@ -97,6 +109,17 @@
 			opacity: 0;
 			transition: 50ms ease-out opacity;
 		}
+	}
+	.publication-dates {
+		.full-height-date {
+			height: 30px;
+			line-height: 30px;
+		}
+	}
+	.spacing-placeholder {
+		width: 10%;
+		min-width: 100px;
+		flex-shrink: 1;
 	}
 	.expand-contract {
 		position: absolute;

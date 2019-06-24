@@ -181,7 +181,20 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 		}),
 		discussions: pub.discussions
 			? pub.discussions.filter((discussion) => {
-					return discussion.branchId === activeBranch.id;
+					/* 
+					Note: We currently return discussions on any
+					branch the reader has access to. We only do this
+					to enable discussionEmbeds in the short term. 
+					Once we have a better solution to discussion embeds
+					in a branch world, we should use the simpler commented
+					line checking ===activeBranch.id below.
+					*/
+					const discussionBranch = formattedBranches.find((branch) => {
+						return branch.id === discussion.branchId;
+					});
+					return discussionBranch && discussionBranch.canView;
+
+					// return discussion.branchId === activeBranch.id;
 			  })
 			: undefined,
 		/* TODO: Why are we not filtering collections as below anymore? */

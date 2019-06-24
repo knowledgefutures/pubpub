@@ -103,9 +103,8 @@ const SubPreview = function(props) {
 								<span className="prefix">{child.prefix}</span>
 								{child.elements.map((element, index, array) => {
 									return (
-										<React.Fragment>
+										<React.Fragment key={element.text}>
 											<a
-												key={element.text}
 												className="element"
 												href={element.href}
 												style={elementStyle}

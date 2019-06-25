@@ -1,9 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import Color from 'color';
-import { Button } from '@blueprintjs/core';
+import { Button, OverflowList, Popover, Menu, MenuItem } from '@blueprintjs/core';
+
 import { Icon } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
+
+import ThreadBubble from './ThreadBubble';
 
 require('./threadNav.scss');
 
@@ -22,17 +25,51 @@ const defaultProps = {
 	activeThread: undefined,
 };
 
+const getLabelForThread = (thread) =>
+	thread
+		.map((discussion) => discussion.author.fullName)
+		.filter((name, index, array) => array.indexOf(name) === index)
+		.join(', ');
+
+const makeBubbleRenderer = ({
+	threads,
+	loginData,
+	communityData,
+	activeThreadHover,
+	activeThread,
+	getHandlersForThread,
+}) => (thread) => {
+	const isActive = activeThreadHover === thread[0].id || activeThread === thread[0].id;
+	const hasWrittenInThread = thread.some((discussion) => discussion.userId === loginData.id);
+	const bubbleCount = thread[0].threadNumber && thread.length;
+	const label = threads.length === 1 && thread[0].threadNumber && getLabelForThread(threads[0]);
+	return (
+		<ThreadBubble
+			{...getHandlersForThread(thread)}
+			key={thread[0].id}
+			color={communityData.accentColorDark}
+			count={bubbleCount}
+			isActive={isActive}
+			label={label}
+			showDot={hasWrittenInThread}
+		/>
+	);
+};
+
 const ThreadNav = (props) => {
 	const {
 		threads,
 		activeThreadHover,
-		setActiveThreadHover,
 		activeThread,
 		setActiveThread,
+		setActiveThreadHover,
 		isExpanded,
 		setExpanded,
 	} = props;
+
 	const { communityData, loginData } = useContext(PageContext);
+	const [isOverflowHovered, setOverflowHovered] = useState(false);
+	const [isOverflowShown, setOverflowShown] = useState(false);
 
 	const accentStyle = {
 		color: communityData.accentColorDark,
@@ -40,75 +77,77 @@ const ThreadNav = (props) => {
 			? `1px solid ${communityData.accentColorDark}`
 			: '1px solid transparent',
 	};
-	const accentStyleBubble = {
-		border: `1px solid ${communityData.accentColorDark}`,
-	};
-	const accentStyleBubbleActive = {
-		border: `1px solid ${communityData.accentColorDark}`,
-		background: communityData.accentColorDark,
-		color: 'white',
-	};
+
 	const fadedAccentColorDark = Color(communityData.accentColorDark)
 		.fade(0.5)
 		.rgb()
 		.string();
+
+	const getHandlersForThread = (thread) => ({
+		onMouseEnter: () => {
+			setActiveThreadHover(thread[0].id);
+		},
+		onMouseLeave: () => {
+			setActiveThreadHover(undefined);
+		},
+		onClick: () => {
+			const setId = activeThread === thread[0].id ? undefined : thread[0].id;
+			setActiveThread(setId);
+		},
+	});
+
+	const bubbleRenderer = makeBubbleRenderer({
+		threads: threads,
+		loginData: loginData,
+		communityData: communityData,
+		activeThreadHover: activeThreadHover,
+		activeThread: activeThread,
+		getHandlersForThread: getHandlersForThread,
+	});
+
 	return (
 		<span className="thread-nav-component" style={accentStyle}>
 			<style>{`.d-${activeThreadHover}, .lh-${activeThreadHover} { background-color: rgba(0, 0, 0, 0.2) !important; }`}</style>
 			<style>{`.d-${activeThread}, .lh-${activeThread} { background-color: ${fadedAccentColorDark} !important; }`}</style>
-			{threads.map((thread) => {
-				const isActive =
-					activeThreadHover === thread[0].id || activeThread === thread[0].id;
-				const hasWrittenInThread = thread.find((discussion) => {
-					return discussion.userId === loginData.id;
-				});
-				const bubbleCount = thread[0].threadNumber ? (
-					thread.length
-				) : (
-					<Icon icon="dot" color={isActive ? 'white' : communityData.accentColorDark} />
-				);
-				const bubbleStyle = isActive ? accentStyleBubbleActive : accentStyleBubble;
-				return (
-					<span
-						key={thread[0].id}
-						className="bubble-wrapper"
-						role="button"
-						tabIndex={0}
-						onMouseEnter={() => {
-							setActiveThreadHover(thread[0].id);
-						}}
-						onMouseLeave={() => {
-							setActiveThreadHover(undefined);
-						}}
-						onClick={() => {
-							const setId = activeThread === thread[0].id ? undefined : thread[0].id;
-							setActiveThread(setId);
-						}}
+			<OverflowList
+				minVisibleItems={1}
+				collapseFrom="end"
+				items={threads}
+				visibleItemRenderer={bubbleRenderer}
+				overflowRenderer={(overflowThreads) => (
+					<Popover
+						minimal
+						transitionDuration={-1}
+						isOpen={isOverflowShown}
+						onClose={() => setOverflowShown(false)}
+						content={
+							<Menu>
+								{overflowThreads.map((thread, index) => (
+									<MenuItem
+										{...getHandlersForThread(thread)}
+										// eslint-disable-next-line react/no-array-index-key
+										key={index}
+										icon={bubbleRenderer(thread)}
+										text={getLabelForThread(thread)}
+									/>
+								))}
+							</Menu>
+						}
 					>
-						<span className="bubble" style={bubbleStyle}>
-							{bubbleCount}
-							{hasWrittenInThread && (
-								<span
-									className="bubble-dot"
-									style={{ border: `1px solid ${communityData.accentColorDark}` }}
-								/>
+						<ThreadBubble
+							isActive={isOverflowHovered || isOverflowShown}
+							onMouseEnter={() => setOverflowHovered(true)}
+							onMouseLeave={() => setOverflowHovered(false)}
+							onClick={() => setOverflowShown(true)}
+							color={communityData.accentColorDark}
+							count={<Icon icon="more" iconSize={10} className="overflow-icon" />}
+							showDot={overflowThreads.some((thread) =>
+								thread.some((discussion) => discussion.userId === loginData.id),
 							)}
-						</span>
-						{threads.length === 1 && thread[0].threadNumber && (
-							<span className="names">
-								{threads[0]
-									.map((discussion) => {
-										return discussion.author.fullName;
-									})
-									.filter((name, index, array) => {
-										return array.indexOf(name) === index;
-									})
-									.join(', ')}
-							</span>
-						)}
-					</span>
-				);
-			})}
+						/>
+					</Popover>
+				)}
+			/>
 			{activeThread && threads.length > 1 && (
 				<React.Fragment>
 					<Button

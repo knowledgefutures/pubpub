@@ -2,36 +2,7 @@
 	display: flex;
 	align-items: center;
 	height: 1.7em;
-	.bubble-wrapper {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-		user-select: none;
-	}
-	.bubble {
-		width: 18px;
-		height: 18px;
-		line-height: 16px;
-		border-radius: 18px;
-		font-size: 11px;
-		display: flex;
-		text-align: center;
-		justify-content: center;
-		font-weight: 800;
-		margin-right: 5px;
-		position: relative;
-		.bubble-dot {
-			position: absolute;
-			bottom: -4px;
-			left: -4px;
-			width: 6px;
-			height: 6px;
-			border-radius: 6px;
-		}
-	}
-	.names {
-		font-size: 12px;
-	}
+	margin-left: 3px;
 	.caret-button {
 		min-width: 14px;
 	}
@@ -39,7 +10,10 @@
 		transform: rotate(45deg);
 	}
 	.close-wrapper {
-		text-align: right;
-		flex: 1 1 0;
+		display: flex;
+		margin-left: auto;
+	}
+	.overflow-icon {
+		padding-top: 3px;
 	}
 }

@@ -9,10 +9,9 @@ import { pubUrl, communityUrl } from 'shared/utils/canonicalUrls';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { Avatar, Icon } from 'components';
 
+import PubPreviewImage from './PubPreviewImage';
 import SubPreview from './SubPreview';
 import { generateAuthorString } from './pubPreviewUtils';
-
-import PubPreviewImage from './PubPreviewImage';
 
 require('./pubPreview.scss');
 

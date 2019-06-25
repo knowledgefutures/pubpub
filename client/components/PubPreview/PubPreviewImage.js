@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import { getResizedUrl, generatePubBackground } from 'utils';
-import { pubDataProps } from 'types/pub';
 
 const propTypes = {
 	className: PropTypes.string,
 	fitIn: PropTypes.number,
-	pubData: pubDataProps.isRequired,
+	pubData: PropTypes.object.isRequired,
 };
 
 const defaultProps = {

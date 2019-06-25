@@ -44,7 +44,7 @@ const LayoutPubs = function(props) {
 						const isTwoColumn = ['medium', 'minimal'].includes(pubPreviewType);
 						const nextPub =
 							isTwoColumn && index < array.length - 1
-								? this.props.pubRenderList[index + 1]
+								? props.pubRenderList[index + 1]
 								: null;
 						return (
 							<div key={selectedPub.id} className="row">

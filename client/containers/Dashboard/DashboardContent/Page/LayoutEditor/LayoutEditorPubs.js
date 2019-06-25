@@ -382,7 +382,6 @@ class LayoutEditorPubs extends Component {
 							const selectedPub = this.props.pubRenderList[index] || {
 								collaborators: [],
 							};
-
 							const nextPub =
 								isTwoColumn && index < array.length - 1
 									? this.props.pubRenderList[index + 1]

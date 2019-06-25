@@ -1,5 +1,3 @@
-import { CollectionPub } from '../models';
-
 export default (sequelize, dataTypes) => {
 	return sequelize.define(
 		'Collection',
@@ -22,7 +20,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Collection, CollectionAttribution, Page } = models;
+					const { Collection, CollectionAttribution, Page, CollectionPub } = models;
 					Collection.hasMany(CollectionAttribution, {
 						onDelete: 'CASCADE',
 						as: 'attributions',

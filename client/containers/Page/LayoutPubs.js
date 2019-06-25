@@ -42,7 +42,6 @@ const LayoutPubs = function(props) {
 							return null;
 						}
 						const selectedPub = props.pubRenderList[index] || { collaborators: [] };
-						
 						const nextPub =
 							isTwoColumn && index < array.length - 1
 								? props.pubRenderList[index + 1]

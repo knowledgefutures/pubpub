@@ -1,7 +1,44 @@
 import { Op } from 'sequelize';
 import findRank from 'shared/utils/findRank';
-import { Collection, CollectionPub, sequelize } from '../models';
+import {
+	Collection,
+	CollectionPub,
+	sequelize,
+	Pub,
+	Branch,
+	CommunityAdmin,
+	PubManager,
+	BranchPermission,
+} from '../models';
 import { getCollectionPubsInCollection } from '../utils/collectionQueries';
+import { canUserSeePub } from '../pub/permissions';
+
+export const getCollectionPubs = async ({ collectionId, userId }) => {
+	// TODO(ian): Figure out a good two-way collection <=> pub association
+	// so we can do all of this with a single query.
+	const [{ communityId }, collectionPubs] = await Promise.all([
+		Collection.findOne({ where: { id: collectionId }, attributes: ['communityId'] }),
+		CollectionPub.findAll({
+			where: { collectionId: collectionId },
+			attributes: ['pubId'],
+		}),
+	]);
+	const [communityAdmin, pubs] = await Promise.all([
+		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
+		Pub.findAll({
+			where: { id: { [Op.in]: collectionPubs.map((cp) => cp.pubId) } },
+			include: [
+				{
+					model: Branch,
+					as: 'branches',
+					include: [{ model: BranchPermission, as: 'permissions' }],
+				},
+				{ model: PubManager, as: 'managers' },
+			],
+		}),
+	]);
+	return pubs.filter((pubData) => canUserSeePub(userId, pubData, !!communityAdmin));
+};
 
 export const createCollectionPub = (inputValues) => {
 	return Promise.all([
@@ -42,7 +79,7 @@ export const setPrimaryCollectionPub = (inputValues) => {
 		include: [{ model: Collection, as: 'collection' }],
 	}).then((collectionPub) => {
 		return (
-			collectionPub.collection.isPublic &&
+			(!inputValues.collectionPubId || collectionPub.collection.isPublic) &&
 			sequelize.transaction((txn) => {
 				return CollectionPub.update(
 					{ isPrimary: false },
@@ -55,7 +92,7 @@ export const setPrimaryCollectionPub = (inputValues) => {
 					},
 				).then(() => {
 					return CollectionPub.update(
-						{ isPrimary: true },
+						{ isPrimary: inputValues.isPrimary },
 						{
 							where: { id: inputValues.collectionPubId },
 							returning: true,

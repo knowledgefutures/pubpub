@@ -6,7 +6,7 @@ import {
 	Review,
 	ReviewEvent,
 } from '../models';
-import calculateBranchAccess from '../branch/calculateBranchAccess';
+import { getBranchAccess } from '../branch/permissions';
 
 export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEventId }) => {
 	if (!userId || !communityId || !pubId || !reviewId) {
@@ -55,7 +55,7 @@ export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEve
 					return {};
 				}
 
-				const sourceAccess = calculateBranchAccess(
+				const sourceAccess = getBranchAccess(
 					null,
 					destinationBranchData,
 					userId,
@@ -63,7 +63,7 @@ export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEve
 					pubManagerData,
 				);
 				const destinationAccess = destinationBranchData
-					? calculateBranchAccess(
+					? getBranchAccess(
 							null,
 							destinationBranchData,
 							userId,

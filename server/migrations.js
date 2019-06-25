@@ -634,11 +634,11 @@ new Promise((resolve) => {
 	// .then(() => {
 	// 	return sequelize.queryInterface.addColumn('Communities', 'useHeaderTextAccent', { type: Sequelize.BOOLEAN });
 	// })
-	.then(() => {
-		return sequelize.queryInterface.addColumn('Users', 'gdprConsent', {
-			type: Sequelize.BOOLEAN,
-		});
-	})
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Users', 'gdprConsent', {
+	// 		type: Sequelize.BOOLEAN,
+	// 	});
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

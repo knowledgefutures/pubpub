@@ -164,6 +164,7 @@ class Collections extends Component {
 				apiFetch('/api/collectionPubs/setPrimary', {
 					method: 'PUT',
 					body: JSON.stringify({
+						isPrimary: setPrimary,
 						id: collectionPubId,
 						communityId: communityData.id,
 					}),

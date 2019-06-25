@@ -2,7 +2,7 @@
 import { attributesPublicUser, checkIfSuperAdmin } from '.';
 import { generateCitationHTML } from './citations';
 import { getBranchDoc } from './firebaseAdmin';
-import calculateBranchAccess from '../branch/calculateBranchAccess';
+import { getBranchAccess } from '../branch/permissions';
 import {
 	User,
 	Pub,
@@ -110,7 +110,7 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			return 0;
 		})
 		.map((branch) => {
-			const branchAccess = calculateBranchAccess(
+			const branchAccess = getBranchAccess(
 				req.query.access,
 				branch,
 				loginData.id,

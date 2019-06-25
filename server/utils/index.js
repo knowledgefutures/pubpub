@@ -198,6 +198,10 @@ export const getInitialData = (req) => {
 			};
 		});
 
+		if (req.headers.localhost) {
+			communityData.domain = req.headers.localhost;
+		}
+
 		const outputData = {
 			communityData: communityData,
 			loginData: loginData,

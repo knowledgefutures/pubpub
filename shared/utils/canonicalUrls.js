@@ -2,10 +2,15 @@
  * Utilities for providing canonical URLs for different entities
  */
 
-export const communityUrl = (community) =>
-	community && community.domain
-		? `https://${community.domain}`
-		: `https://${community.subdomain}.pubpub.org`;
+export const communityUrl = (community) => {
+	if (community.domain) {
+		if (community.domain.includes('localhost:')) {
+			return `http://${community.domain}`;
+		}
+		return `https://${community.domain}`;
+	}
+	return `https://${community.subdomain}.pubpub.org`;
+};
 
 export const collectionUrl = (community, collection) =>
 	`${communityUrl(community)}/collection/${collection.id.slice(0, 8)}`;

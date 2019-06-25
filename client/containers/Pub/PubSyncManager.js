@@ -141,10 +141,12 @@ class PubSyncManager extends React.Component {
 		/* triggers the syncMetadata function. */
 		this.setState(
 			(prevState) => {
+				const nextData =
+					typeof newPubData === 'function' ? newPubData(prevState.pubData) : newPubData;
 				return {
 					pubData: {
 						...prevState.pubData,
-						...newPubData,
+						...nextData,
 					},
 				};
 			},

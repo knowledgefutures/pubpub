@@ -52,12 +52,17 @@ const ActionButton = function(props) {
 		return buttonComponent;
 	});
 
-	let groupClass = 'action-button-component';
-	if (isSkewed) {
-		groupClass += ' skewed';
-	}
-
-	return <ButtonGroup className={groupClass}>{buttons}</ButtonGroup>;
+	return (
+		<ButtonGroup
+			className={classNames(
+				'action-button-component',
+				'themed-button-component',
+				isSkewed && 'skewed',
+			)}
+		>
+			{buttons}
+		</ButtonGroup>
+	);
 };
 
 ActionButton.propTypes = propTypes;

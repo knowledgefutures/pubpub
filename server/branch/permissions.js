@@ -1,6 +1,33 @@
 import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
 import { checkIfSuperAdmin } from '../utils';
-import calculateBranchAccess from './calculateBranchAccess';
+
+export const getBranchAccess = (accessHash, branchData, userId, isCommunityAdmin, canManagePub) => {
+	const hasSomePermissionTo = (permission, shouldCheckPublic = true) =>
+		checkIfSuperAdmin(userId) ||
+		(isCommunityAdmin && branchData.communityAdminPermissions === permission) ||
+		(canManagePub && branchData.pubManagerPermissions === permission) ||
+		(shouldCheckPublic && branchData.publicPermissions === permission) ||
+		branchData.permissions.some((bp) => bp.userId === userId && bp.permissions === permission);
+
+	/* Compute canManageBranch */
+	const canManageBranch = hasSomePermissionTo('manage', false);
+
+	const isValidEditHash = accessHash === branchData.editHash;
+	const canEditBranch = canManageBranch || isValidEditHash || hasSomePermissionTo('edit');
+
+	const isValidDiscussHash = accessHash === branchData.discussHash;
+	const canDiscussBranch = canEditBranch || isValidDiscussHash || hasSomePermissionTo('discuss');
+
+	const isValidViewHash = accessHash === branchData.viewHash;
+	const canViewBranch = canDiscussBranch || isValidViewHash || hasSomePermissionTo('view');
+
+	return {
+		canManage: canManageBranch,
+		canEdit: canEditBranch,
+		canDiscuss: canDiscussBranch,
+		canView: canViewBranch,
+	};
+};
 
 export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 	if (!userId || !communityId || !pubId) {
@@ -29,7 +56,7 @@ export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 		}
 
 		/* calculate canManage */
-		const branchAccess = calculateBranchAccess(
+		const branchAccess = getBranchAccess(
 			null,
 			branchData,
 			userId,

@@ -12,6 +12,7 @@ import PubInlineImport from './PubInlineImport';
 import PubDetails from './PubDetails';
 import PubHistory from './PubHistory';
 import PubHeaderFormatting from './PubHeaderFormatting';
+import PubReadNext from './PubReadNext';
 
 require('./pubDocument.scss');
 
@@ -28,7 +29,7 @@ const defaultProps = {
 };
 
 const PubDocument = (props) => {
-	const { pubData, historyData, collabData, firebaseBranchRef } = props;
+	const { pubData, historyData, collabData, firebaseBranchRef, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
 	const { locationData } = useContext(PageContext);
 	const [linkPopupIsOpen, setLinkPopupIsOpen] = useState(false);
@@ -109,9 +110,9 @@ const PubDocument = (props) => {
 					<PubBody
 						pubData={pubData}
 						collabData={collabData}
-						historyData={props.historyData}
+						historyData={historyData}
 						firebaseBranchRef={firebaseBranchRef}
-						updateLocalData={props.updateLocalData}
+						updateLocalData={updateLocalData}
 						onSingleClick={(view) => {
 							/* Used to trigger link popup when link mark clicked */
 							setClickedMarks(marksAtSelection(view));
@@ -127,7 +128,7 @@ const PubDocument = (props) => {
 						<PubInlineMenu
 							pubData={pubData}
 							collabData={collabData}
-							historyData={props.historyData}
+							historyData={historyData}
 							openLinkMenu={() => {
 								setLinkPopupIsOpen(true);
 							}}
@@ -138,12 +139,13 @@ const PubDocument = (props) => {
 				<div className="side-content" ref={sideContentRef} />
 			</div>
 			<PubFooter pubData={pubData} />
+			<PubReadNext pubData={pubData} updateLocalData={updateLocalData} />
 			{areDiscussionsShown && (
 				<PubDiscussions
 					pubData={pubData}
 					collabData={collabData}
 					firebaseBranchRef={firebaseBranchRef}
-					updateLocalData={props.updateLocalData}
+					updateLocalData={updateLocalData}
 					sideContentRef={sideContentRef}
 					mainContentRef={mainContentRef}
 				/>

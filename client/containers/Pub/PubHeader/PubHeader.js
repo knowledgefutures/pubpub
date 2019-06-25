@@ -13,14 +13,13 @@ import {
 	AnchorButton,
 	EditableText,
 	Position,
-	Tag,
 	Intent,
 	Menu,
 	MenuItem,
 	MenuDivider,
 	Popover,
 } from '@blueprintjs/core';
-import { Icon, GridWrapper, Overlay } from 'components';
+import { GridWrapper, Overlay } from 'components';
 import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
 import PubToc from './PubToc';
 import Download from './Download';
@@ -29,6 +28,7 @@ import ActionButton from './ActionButton';
 import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
 import { generateHeaderBreadcrumbs, getTocHeadings } from './headerUtils';
+import CollectionsBar from './CollectionsBar';
 
 require('./pubHeader.scss');
 
@@ -226,54 +226,12 @@ const PubHeader = (props) => {
 						}}
 					/>
 					{isDocMode && (
-						<div className="tags-bar">
+						<div className="top-bar">
 							<div className="left">
-								{pubData.collectionPubs
-									.filter((collectionPub) => {
-										return collectionPub.collection;
-									})
-									.sort((foo, bar) => {
-										if (
-											foo.collection.title.toLowerCase() <
-											bar.collection.title.toLowerCase()
-										) {
-											return -1;
-										}
-										if (
-											foo.collection.title.toLowerCase() >
-											bar.collection.title.toLowerCase()
-										) {
-											return 1;
-										}
-										return 0;
-									})
-									.map((item) => {
-										return (
-											<a
-												key={item.id}
-												className="header-collection"
-												href={
-													item.collection.page
-														? `/${item.collection.page.slug}`
-														: `/search?tag=${item.collection.title}`
-												}
-											>
-												<Tag
-													intent={Intent.PRIMARY}
-													minimal={true}
-													icon={
-														!item.collection.isPublic ? (
-															<Icon icon="lock2" />
-														) : (
-															undefined
-														)
-													}
-												>
-													{item.collection.title}
-												</Tag>
-											</a>
-										);
-									})}
+								<CollectionsBar
+									pubData={pubData}
+									updateLocalData={updateLocalData}
+								/>
 							</div>
 							{pubData.canManage && (
 								<React.Fragment>

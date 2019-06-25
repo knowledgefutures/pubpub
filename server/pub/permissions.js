@@ -1,5 +1,17 @@
 import { Pub, PubManager, CommunityAdmin } from '../models';
 import { checkIfSuperAdmin } from '../utils';
+import { getBranchAccess } from '../branch/permissions';
+
+export const canUserSeePub = (userId, pubData, isCommunityAdmin) =>
+	pubData.branches.some((branch) =>
+		getBranchAccess(
+			null,
+			branch,
+			userId,
+			isCommunityAdmin,
+			pubData.managers.some((manager) => manager.userId === userId),
+		),
+	);
 
 export const getPermissions = ({ userId, communityId, pubId }) => {
 	if (!userId || !communityId) {

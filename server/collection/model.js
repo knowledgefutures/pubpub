@@ -1,3 +1,5 @@
+import { CollectionPub } from '../models';
+
 export default (sequelize, dataTypes) => {
 	return sequelize.define(
 		'Collection',
@@ -24,6 +26,10 @@ export default (sequelize, dataTypes) => {
 					Collection.hasMany(CollectionAttribution, {
 						onDelete: 'CASCADE',
 						as: 'attributions',
+						foreignKey: 'collectionId',
+					});
+					Collection.hasMany(CollectionPub, {
+						as: 'collectionPubs',
 						foreignKey: 'collectionId',
 					});
 					Collection.belongsTo(Page, { as: 'page', foreignKey: 'pageId' });

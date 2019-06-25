@@ -1,0 +1,25 @@
+.collection-browser-component_menu {
+    padding: 0;
+    border-left: 0;
+    border-right: 0;
+    overflow-y: scroll;
+    max-height: 50vh;
+    max-width: 400px;
+    a {
+        padding: 0;
+        align-items: center;
+    }
+    li {
+        padding: 0;
+    }
+    .menu-item-text {
+        white-space: normal;
+        font-weight: 500;
+    }
+    .pub-preview {
+        width: 50px;
+        min-height: 50px;
+        height: 100%;
+        background-size: cover;
+    }
+}

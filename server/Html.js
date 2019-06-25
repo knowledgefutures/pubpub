@@ -60,7 +60,7 @@ const Html = (props) => {
 			</head>
 			<body>
 				<div id="root">{props.children}</div>
-				<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch,default,HTMLCanvasElement.prototype.toBlob,Object.entries,Object.values" />
+				<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch,default,HTMLCanvasElement.prototype.toBlob,Object.entries,Object.values,URL" />
 				<script
 					id="initial-data"
 					type="text/plain"

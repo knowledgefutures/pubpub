@@ -5,16 +5,26 @@ import {
 	updateCollectionPub,
 	setPrimaryCollectionPub,
 	destroyCollectionPub,
+	getCollectionPubs,
 } from './queries';
 
-const getRequestIds = (req) => {
+const getRequestIds = (req, argsFrom = req.body) => {
 	const user = req.user || {};
 	return {
 		userId: user.id,
-		collectionId: req.body.collectionId,
-		communityId: req.body.communityId,
+		collectionId: argsFrom.collectionId,
+		communityId: argsFrom.communityId,
 	};
 };
+
+app.get('/api/collectionPubs', async (req, res) => {
+	try {
+		const collectionPubs = await getCollectionPubs(getRequestIds(req, req.query));
+		return res.status(201).json(collectionPubs);
+	} catch (err) {
+		return res.status(500).json(err);
+	}
+});
 
 app.post('/api/collectionPubs', (req, res) => {
 	const requestIds = getRequestIds(req);

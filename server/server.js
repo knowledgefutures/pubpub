@@ -106,6 +106,7 @@ app.use((req, res, next) => {
 		req.headers.host = req.headers.communityhostname;
 	}
 	if (req.hostname.indexOf('localhost') > -1) {
+		req.headers.localhost = req.headers.host;
 		req.headers.host = 'dev.pubpub.org';
 	}
 	if (req.hostname.indexOf('v6.pubpub.org') > -1) {

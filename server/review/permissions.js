@@ -1,5 +1,5 @@
 import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
-import calculateBranchAccess from '../branch/calculateBranchAccess';
+import { getBranchAccess } from '../branch/permissions';
 
 export const getPermissions = ({
 	userId,
@@ -36,14 +36,14 @@ export const getPermissions = ({
 			return {};
 		}
 
-		const sourceAccess = calculateBranchAccess(
+		const sourceAccess = getBranchAccess(
 			null,
 			sourceBranchData,
 			userId,
 			communityAdminData,
 			pubManagerData,
 		);
-		const destinationAccess = calculateBranchAccess(
+		const destinationAccess = getBranchAccess(
 			null,
 			destinationBranchData,
 			userId,

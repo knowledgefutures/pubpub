@@ -13,6 +13,7 @@ import {
 	CollectionPub,
 	Collection,
 	Page,
+	PubVersion,
 	Branch,
 	BranchPermission,
 	Review,
@@ -423,4 +424,24 @@ export const findPub = (req, initialData, mode) => {
 				citationData: generateCitationHTML(formattedPubData, initialData.communityData),
 			};
 		});
+};
+
+export const lookupPubVersion = async (versionId) => {
+	const pubVersion = await PubVersion.findOne({
+		where: { id: versionId },
+		include: [
+			{
+				model: Branch,
+				as: 'branch',
+				required: true,
+			},
+		],
+	});
+	if (pubVersion) {
+		return {
+			shortId: pubVersion.branch.shortId,
+			historyKey: pubVersion.historyKey,
+		};
+	}
+	return null;
 };

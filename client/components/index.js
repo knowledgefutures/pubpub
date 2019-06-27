@@ -3,6 +3,7 @@ export { default as AttributionEditor } from './AttributionEditor/AttributionEdi
 export { default as Avatar } from './Avatar/Avatar';
 export { default as CollectionMultiSelect } from './CollectionMultiSelect/CollectionMultiSelect';
 export { default as ColorInput } from './ColorInput/ColorInput';
+export { default as ClickToCopyButton } from './ClickToCopyButton/ClickToCopyButton';
 export { default as CommunityPreview } from './CommunityPreview/CommunityPreview';
 export { default as ConfirmDialog } from './ConfirmDialog/ConfirmDialog';
 export { default as DragDropListing } from './DragDropListing/DragDropListing';

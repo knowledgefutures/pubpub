@@ -13,6 +13,7 @@
 		h1#abstract:first-child {
 			text-transform: uppercase;
 			font-size: 1em;
+			font-weight: 500;
 			// border-top: 1px solid #CCC;
 			padding-top: 1em;
 			& + p {
@@ -28,31 +29,34 @@
 		h6 {
 			margin-bottom: 0.5em;
 			line-height: 1em;
-			font-weight: 900;
+			font-weight: 500;
 			font-family: $header-font;
-		}
-		h4,
-		h5,
-		h6 {
-			font-weight: 600;
+			letter-spacing: 1px;
 		}
 		h1 {
-			font-size: 1.5em;
+			// font-size: 1.5em;
+			font-size: 28px;
+			font-weight: 600;
 		}
 		h2 {
-			font-size: 1.25em;
+			// font-size: 1.25em;
+			font-size: 26px;
 		}
 		h3 {
-			font-size: 1.1em;
+			// font-size: 1.1em;
+			font-size: 24px;
 		}
 		h4 {
-			font-size: 1.1em;
+			// font-size: 1.1em;
+			font-size: 22px;
 		}
 		h5 {
-			font-size: 1em;
+			// font-size: 1em;
+			font-size: 20px;
 		}
 		h6 {
-			font-size: 0.875em;
+			// font-size: 0.875em;
+			font-size: 18px;
 		}
 		* + h1,
 		* + h2,
@@ -60,7 +64,7 @@
 		* + h4,
 		* + h5,
 		* + h6 {
-			margin-top: 1em;
+			margin-top: 1.4em;
 		}
 		p,
 		li {

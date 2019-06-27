@@ -19,7 +19,7 @@ import {
 	MenuDivider,
 	Popover,
 } from '@blueprintjs/core';
-import { GridWrapper, Overlay } from 'components';
+import { GridWrapper, Overlay, Icon } from 'components';
 import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
 import PubToc from './PubToc';
 import Download from './Download';
@@ -633,9 +633,8 @@ const PubHeader = (props) => {
 								onClick={() =>
 									window.scrollTo({ left: 0, top: 0, behavior: 'auto' })
 								}
-							>
-								Back to top
-							</Button>
+								icon={<Icon icon="double-chevron-up" color="white" />}
+							/>
 						</div>
 					</div>
 				)}

@@ -47,8 +47,10 @@ class LayoutBanner extends Component {
 			? `url("${getResizedUrl(this.props.content.backgroundImage, 'fit-in', '1500x600')}")`
 			: undefined;
 
-		const textStyle = {
+		const wrapperStyle = {
 			textAlign: this.props.content.align || 'left',
+		};
+		const textStyle = {
 			color: Color(this.props.content.backgroundColor).isLight() ? '#000000' : '#FFFFFF',
 			lineHeight: '1em',
 			fontSize: this.props.content.backgroundHeight === 'narrow' ? '18px' : '28px',
@@ -101,7 +103,7 @@ class LayoutBanner extends Component {
 								this.props.content.backgroundSize === 'standard' && (
 									<div className="dim" />
 								)}
-							<div className="col-12">
+							<div className="col-12" style={wrapperStyle}>
 								{this.props.content.text && (
 									<h2 style={textStyle}>{this.props.content.text}</h2>
 								)}

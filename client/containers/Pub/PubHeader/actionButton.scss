@@ -1,8 +1,10 @@
 .action-button-component {
 	&.skewed {
-		transform: skew(-20deg);
+		transform: skew(-18deg);
+		position: relative;
+		left: 8px;
 		.bp3-button > * {
-			transform: skew(20deg);
+			transform: skew(18deg);
 		}
 	}
 	.bp3-button {
@@ -24,7 +26,8 @@
 	}
 }
 
-.action-button-component, .action-button-popover {
+.action-button-component,
+.action-button-popover {
 	.text-stack {
 		font-size: 12px;
 		text-align: left;

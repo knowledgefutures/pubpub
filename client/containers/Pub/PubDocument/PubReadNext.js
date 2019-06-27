@@ -27,11 +27,13 @@ const PubReadNext = (props) => {
 	if (!nextPub) {
 		return null;
 	}
+	const useImage = !!pubData.avatar;
 	return (
 		<div className="pub-read-next-component">
 			<GridWrapper containerClassName="pub">
 				<h2>Read next from {currentCollection.title}</h2>
 				<PubPreview
+					size={useImage ? 'medium' : 'minimal'}
 					pubData={nextPub}
 					customPubUrl={createReadingParamUrl(
 						pubUrl(communityData, pubData),

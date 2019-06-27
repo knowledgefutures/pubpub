@@ -20,9 +20,14 @@ export const getCollectionPubs = async ({ collectionId, userId }) => {
 		Collection.findOne({ where: { id: collectionId }, attributes: ['communityId'] }),
 		CollectionPub.findAll({
 			where: { collectionId: collectionId },
-			attributes: ['pubId'],
+			attributes: ['pubId', 'rank'],
+			order: [['rank', 'ASC']],
 		}),
 	]);
+	const pubRanks = {};
+	collectionPubs.forEach((cp) => {
+		pubRanks[cp.pubId] = cp.rank;
+	});
 	const [communityAdmin, pubs] = await Promise.all([
 		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
 		Pub.findAll({
@@ -37,7 +42,11 @@ export const getCollectionPubs = async ({ collectionId, userId }) => {
 			],
 		}),
 	]);
-	return pubs.filter((pubData) => canUserSeePub(userId, pubData, !!communityAdmin));
+	return pubs
+		.filter((pubData) => canUserSeePub(userId, pubData, !!communityAdmin))
+		.sort((a, b) => {
+			return pubRanks[a.id] > pubRanks[b.id] ? 1 : -1;
+		});
 };
 
 export const createCollectionPub = (inputValues) => {

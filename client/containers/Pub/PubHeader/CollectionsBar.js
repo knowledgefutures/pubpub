@@ -5,9 +5,9 @@ import { Menu, MenuItem, OverflowList, Popover, Position, Tag } from '@blueprint
 import { pubDataProps } from 'types/pub';
 import { chooseCollectionForPub } from 'utils/collections';
 import { collectionUrl } from 'shared/utils/canonicalUrls';
-import { getSchemaForKind } from 'shared/collections/schemas';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import CollectionBrowser from 'components/CollectionBrowser/CollectionBrowser';
+
+import CollectionBrowser from './CollectionBrowser';
 
 require('./collectionsBar.scss');
 
@@ -15,8 +15,6 @@ const propTypes = {
 	pubData: pubDataProps.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
-
-const iconForCollection = (collection) => getSchemaForKind(collection.kind).bpDisplayIcon;
 
 const CollectionsBar = (props) => {
 	const { pubData, updateLocalData } = props;
@@ -51,7 +49,7 @@ const CollectionsBar = (props) => {
 						className="header-collection"
 						href={collectionUrl(communityData, collection)}
 					>
-						<Tag icon={iconForCollection(collection)}>{collection.title}</Tag>
+						<Tag>{collection.title}</Tag>
 					</a>
 				)}
 				overflowRenderer={(collectionPubs) => (
@@ -68,7 +66,6 @@ const CollectionsBar = (props) => {
 								{collectionPubs.map(({ collection }) => (
 									<MenuItem
 										key={collection.id}
-										icon={iconForCollection(collection)}
 										text={collection.title}
 										href={collectionUrl(communityData, collection)}
 									/>

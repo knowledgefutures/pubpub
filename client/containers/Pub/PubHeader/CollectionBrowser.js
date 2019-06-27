@@ -1,20 +1,17 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
-	AnchorButton,
 	Button,
 	ButtonGroup,
+	Icon,
 	Menu,
 	MenuItem,
 	Popover,
 	Position,
+	Spinner,
 } from '@blueprintjs/core';
 
-import {
-	createReadingParamUrl,
-	useCollectionPubs,
-	getNeighborsInCollectionPub,
-} from 'utils/collections';
+import { createReadingParamUrl, useCollectionPubs } from 'utils/collections';
 import collectionType from 'types/collection';
 import { pubDataProps } from 'types/pub';
 import { pubUrl } from 'shared/utils/canonicalUrls';
@@ -38,25 +35,28 @@ const defaultProps = {
 const CollectionBrowser = (props) => {
 	const { className, collection, currentPub, updateLocalData } = props;
 	const { communityData } = useContext(PageContext);
-	const { isLoading, pubs } = useCollectionPubs(updateLocalData, collection);
+	const { pubs, isLoading } = useCollectionPubs(updateLocalData, collection);
 	const { bpDisplayIcon } = getSchemaForKind(collection.kind);
-	const { previousPub, nextPub } = getNeighborsInCollectionPub(pubs, currentPub);
 	const readingPubUrl = (pub) => createReadingParamUrl(pubUrl(communityData, pub), collection);
 	return (
 		<div className="collection-browser-component">
 			<ButtonGroup className={className}>
-				<AnchorButton
-					disabled={!previousPub}
-					href={previousPub && readingPubUrl(previousPub)}
-					icon="arrow-left"
-				/>
 				<Popover
 					minimal
-					position={Position.TOP_LEFT}
-					modifiers={{ preventOverflow: { enabled: false }, hide: { enabled: false } }}
+					position={Position.BOTTOM_LEFT}
 					content={
 						<Menu className="collection-browser-component_menu">
+							{isLoading && (
+								<MenuItem
+									disabled
+									className="loading-menu-item"
+									textClassName="menu-item-text"
+									icon={<Spinner size={30} />}
+									text="Loading..."
+								/>
+							)}
 							{pubs &&
+								!isLoading &&
 								pubs.map((pub) => (
 									<MenuItem
 										href={readingPubUrl(pub)}
@@ -70,20 +70,16 @@ const CollectionBrowser = (props) => {
 										}
 										key={pub.id}
 										text={pub.title}
+										multiline={true}
 									/>
 								))}
 						</Menu>
 					}
 				>
-					<Button loading={isLoading} icon={bpDisplayIcon}>
-						{collection.title}
+					<Button icon={bpDisplayIcon} rightIcon="caret-down">
+						<b>Reading:</b> {collection.title}
 					</Button>
 				</Popover>
-				<AnchorButton
-					disabled={!nextPub}
-					href={nextPub && readingPubUrl(nextPub)}
-					icon="arrow-right"
-				/>
 			</ButtonGroup>
 		</div>
 	);

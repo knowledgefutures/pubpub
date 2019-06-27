@@ -6,7 +6,15 @@ export default (styleType, accentColor) => {
 			${whiteBlocksPrefix} .header-collection .bp3-tag {
 				border: 1px solid ${accentColor};
 				color: ${accentColor};
-				borderRadius: 0px;
+				border-radius: 0px;
+			}
+			${whiteBlocksPrefix} .collection-browser-component .bp3-button {
+				border: 1px solid ${accentColor};
+				color: ${accentColor};
+				border-radius: 0px;
+			}
+			${whiteBlocksPrefix} .collection-browser-component.bp3-button .bp3-icon {
+				color: inherit;
 			}
 			${whiteBlocksPrefix} .authors, ${whiteBlocksPrefix} .authors a {
 				color: ${accentColor};
@@ -42,7 +50,15 @@ export default (styleType, accentColor) => {
 			${blackBlocksPrefix} .header-collection .bp3-tag {
 				border: 1px solid ${accentColor};
 				color: ${accentColor};
-				borderRadius: 0px;
+				border-radius: 0px;
+			}
+			${blackBlocksPrefix} .collection-browser-component .bp3-button {
+				border: 1px solid ${accentColor};
+				color: ${accentColor};
+				border-radius: 0px;
+			}
+			${blackBlocksPrefix} .collection-browser-component .bp3-button .bp3-icon {
+				color: inherit;
 			}
 			${blackBlocksPrefix} .authors, ${blackBlocksPrefix} .authors a {
 				color: ${accentColor};

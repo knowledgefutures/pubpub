@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable */
 import { Op } from 'sequelize';
 import Color from 'color';
 import {

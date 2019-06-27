@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { Card } from '@blueprintjs/core';
 import Editor from '@pubpub/editor';
 import { getResizedUrl } from 'utils';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 import discussionSchema from './DiscussionAddon/discussionSchema';
 import { nestDiscussionsToThreads } from './PubDiscussions/discussionUtils';
 import DiscussionThread from './PubDiscussions/DiscussionThread';
@@ -26,6 +27,7 @@ let setSavingTimeout;
 
 const PubBody = (props) => {
 	const { pubData, collabData, firebaseBranchRef, updateLocalData, historyData } = props;
+	const { communityData } = useContext(PageContext);
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
@@ -65,6 +67,13 @@ const PubBody = (props) => {
 
 	return (
 		<div className="pub-body-component">
+			<style>
+				{`
+					.editor.ProseMirror h1#abstract:first-child {
+						color: ${communityData.accentColorDark};
+					}
+				`}
+			</style>
 			<Editor
 				key={editorKey}
 				customNodes={{

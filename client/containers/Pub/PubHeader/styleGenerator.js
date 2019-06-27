@@ -12,6 +12,7 @@ export default (styleType, accentColor) => {
 				border: 1px solid ${accentColor};
 				color: ${accentColor};
 				border-radius: 0px;
+				background: white;
 			}
 			${whiteBlocksPrefix} .collection-browser-component .bp3-button .bp3-icon {
 				color: inherit;

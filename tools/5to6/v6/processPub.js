@@ -89,15 +89,13 @@ const updateBranches = async (model, transformed) => {
 };
 
 const createVersions = async (transformed) => {
-	// const { versionToBranch, versionToShortCode } = transformed;
 	const { versionToBranch } = transformed;
 	return PubVersion.bulkCreate(
 		Object.keys(versionToBranch).map((versionId) => {
 			const { id: branchId, key: historyKey } = versionToBranch[versionId];
-			// const shortCode = versionToShortCode[versionId];
 			return {
+				id: versionId,
 				branchId: branchId,
-				// shortCode: shortCode,
 				historyKey: historyKey,
 			};
 		}),

@@ -11,7 +11,7 @@ import {
 	generateMetaComponents,
 } from '../utils';
 import { getFirebaseToken } from '../utils/firebaseAdmin';
-import { findPub } from '../utils/pubQueries';
+import { findPub, lookupPubVersion } from '../utils/pubQueries';
 
 const getMode = (path, params) => {
 	const { slug, reviewShortId } = params;
@@ -50,9 +50,17 @@ app.get(
 		'/pub/:slug/manage/',
 		'/pub/:slug/manage/:manageMode',
 	],
-	(req, res, next) => {
+	async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
 			return next();
+		}
+
+		if (req.query.version) {
+			const versionLookup = await lookupPubVersion(req.query.version);
+			if (versionLookup) {
+				const { historyKey, shortId } = versionLookup;
+				return res.redirect(`/pub/${req.params.slug}/branch/${shortId}/${historyKey}`);
+			}
 		}
 
 		const mode = getMode(req.path, req.params);

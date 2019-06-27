@@ -23,7 +23,7 @@ const SubPreview = function(props) {
 			parentId: '4aa410e1-bbb2-4b49-b66d-2fd54074b60e',
 			children: [
 				{
-					prefix: 'Commentary by:',
+					prefix: 'Commentary:',
 					elements: [
 						{ text: 'Rodney Brooks', href: '/pub/' },
 						{ text: 'Candes, Duchi, and Sabatti', href: '/pub/' },
@@ -39,7 +39,7 @@ const SubPreview = function(props) {
 					],
 				},
 				{
-					prefix: 'Rejoinder from:',
+					prefix: 'Rejoinder:',
 					elements: [{ text: 'M. Jordan', href: '/pub/123' }],
 				},
 			],
@@ -123,7 +123,9 @@ const SubPreview = function(props) {
 											<a className="element" href={element.href}>
 												{element.text}
 											</a>
-											{index < array.length - 1 && <span>, </span>}
+											{index < array.length - 1 && (
+												<span style={elementStyle}> · </span>
+											)}
 										</React.Fragment>
 									);
 								})}

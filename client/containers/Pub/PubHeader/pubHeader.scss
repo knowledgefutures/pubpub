@@ -138,9 +138,9 @@
 				/* https://css-tricks.com/multi-line-padded-text/ */
 				display: inline;
 				background: white;
-				padding: 2px 12px;
+				padding: 2px 20px;
 				box-decoration-break: clone;
-				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.2);
+				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.1);
 			}
 			.themed-button-component {
 				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
@@ -171,9 +171,9 @@
 				/* https://css-tricks.com/multi-line-padded-text/ */
 				display: inline;
 				background: black;
-				padding: 2px 12px;
+				padding: 2px 20px;
 				box-decoration-break: clone;
-				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.2);
+				box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.1);
 			}
 			h1 {
 				font-weight: 400;
@@ -329,6 +329,7 @@
 		padding-top: 15px;
 		font-size: 16px;
 		line-height: 1.4;
+		font-family: $header-font;
 		font-weight: 400;
 	}
 	.authors {
@@ -420,6 +421,13 @@
 		}
 		.actions-bar .left {
 			display: none;
+		}
+		.actions-bar .right {
+			justify-content: flex-start;
+			.action-button-component {
+				margin-left: 0px;
+				margin-right: 22px;
+			}
 		}
 	}
 }

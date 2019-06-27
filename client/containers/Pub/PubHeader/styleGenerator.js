@@ -13,7 +13,7 @@ export default (styleType, accentColor) => {
 				color: ${accentColor};
 				border-radius: 0px;
 			}
-			${whiteBlocksPrefix} .collection-browser-component.bp3-button .bp3-icon {
+			${whiteBlocksPrefix} .collection-browser-component .bp3-button .bp3-icon {
 				color: inherit;
 			}
 			${whiteBlocksPrefix} .authors, ${whiteBlocksPrefix} .authors a {

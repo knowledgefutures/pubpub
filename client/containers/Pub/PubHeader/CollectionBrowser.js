@@ -1,15 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import {
-	Button,
-	ButtonGroup,
-	Icon,
-	Menu,
-	MenuItem,
-	Popover,
-	Position,
-	Spinner,
-} from '@blueprintjs/core';
+import { Button, ButtonGroup, Menu, MenuItem, Popover, Position, Spinner } from '@blueprintjs/core';
 
 import { createReadingParamUrl, useCollectionPubs } from 'utils/collections';
 import collectionType from 'types/collection';
@@ -59,6 +50,7 @@ const CollectionBrowser = (props) => {
 								!isLoading &&
 								pubs.map((pub) => (
 									<MenuItem
+										active={currentPub.id === pub.id}
 										href={readingPubUrl(pub)}
 										textClassName="menu-item-text"
 										icon={
@@ -77,7 +69,7 @@ const CollectionBrowser = (props) => {
 					}
 				>
 					<Button icon={bpDisplayIcon} rightIcon="caret-down">
-						<b>Reading:</b> {collection.title}
+						{collection.title}
 					</Button>
 				</Popover>
 			</ButtonGroup>

@@ -2,8 +2,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
-import { ImageUpload, InputField, SettingsSection } from 'components';
+import { ImageUpload, InputField, SettingsSection, ClickToCopyButton } from 'components';
 import { getDefaultLayout, apiFetch, slugifyString } from 'utils';
+import { communityUrl } from 'shared/utils/canonicalUrls';
 import LayoutEditor from './LayoutEditor';
 
 require('./page.scss');
@@ -269,6 +270,18 @@ class Page extends Component {
 									text="Private"
 									icon="lock"
 								/>
+								{!this.state.isPublic && (
+									<ClickToCopyButton
+										className="copy-button"
+										icon="duplicate"
+										beforeCopyPrompt="Anyone with this link can view the private Page."
+										copyString={`${communityUrl(this.props.communityData)}/${
+											pageData.slug
+										}?access=${pageData.viewHash}`}
+									>
+										Copy shareable link
+									</ClickToCopyButton>
+								)}
 							</div>
 						</InputField>
 					)}

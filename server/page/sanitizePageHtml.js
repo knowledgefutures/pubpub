@@ -37,6 +37,8 @@ export const sanitizePageHtml = (html) => {
 			'video',
 			'iframe',
 			'style',
+			'svg',
+			'path',
 		],
 		allowedAttributes: {
 			'*': [
@@ -50,6 +52,9 @@ export const sanitizePageHtml = (html) => {
 				'controls',
 				'allowfullscreen',
 				'frameborder',
+				'viewBox',
+				'd',
+				'fill-rule',
 			],
 			a: ['href', 'target', 'rel'],
 		},

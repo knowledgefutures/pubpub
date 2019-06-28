@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Button, ButtonGroup, Menu, MenuItem, Popover, Position, Spinner } from '@blueprintjs/core';
 
 import { createReadingParamUrl, useCollectionPubs } from 'utils/collections';
-import collectionType from 'types/collection';
 import { pubDataProps } from 'types/pub';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import { getSchemaForKind } from 'shared/collections/schemas';
@@ -14,7 +13,11 @@ require('./collectionBrowser.scss');
 
 const propTypes = {
 	className: PropTypes.string,
-	collection: collectionType.isRequired,
+	collection: PropTypes.shape({
+		id: PropTypes.string,
+		kind: PropTypes.string,
+		title: PropTypes.string,
+	}).isRequired,
 	currentPub: pubDataProps.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };

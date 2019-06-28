@@ -36,7 +36,7 @@ const PubReadNext = (props) => {
 					size={useImage ? 'medium' : 'minimal'}
 					pubData={nextPub}
 					customPubUrl={createReadingParamUrl(
-						pubUrl(communityData, pubData),
+						pubUrl(communityData, nextPub),
 						currentCollection,
 					)}
 				/>

@@ -29,7 +29,7 @@ export const getCollectionPubs = async ({ collectionId, userId }) => {
 		pubRanks[cp.pubId] = cp.rank;
 	});
 	const [communityAdmin, pubs] = await Promise.all([
-		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
+		userId && CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
 		Pub.findAll({
 			where: { id: { [Op.in]: collectionPubs.map((cp) => cp.pubId) } },
 			include: [

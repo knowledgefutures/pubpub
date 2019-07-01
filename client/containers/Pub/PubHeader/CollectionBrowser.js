@@ -7,7 +7,6 @@ import { pubDataProps } from 'types/pub';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import { getSchemaForKind } from 'shared/collections/schemas';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import PubPreviewImage from 'components/PubPreview/PubPreviewImage';
 
 require('./collectionBrowser.scss');
 

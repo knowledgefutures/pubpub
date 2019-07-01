@@ -56,13 +56,14 @@ const CollectionBrowser = (props) => {
 										active={currentPub.id === pub.id}
 										href={readingPubUrl(pub)}
 										textClassName="menu-item-text"
-										icon={
-											<PubPreviewImage
-												className="pub-preview"
-												pubData={pub}
-												fitIn={100}
-											/>
-										}
+										// icon={
+										// 	<PubPreviewImage
+										// 		className="pub-preview"
+										// 		pubData={pub}
+										// 		fitIn={100}
+										// 	/>
+										// }
+										icon="dot"
 										key={pub.id}
 										text={pub.title}
 										multiline={true}

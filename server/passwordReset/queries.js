@@ -40,7 +40,7 @@ export const updatePasswordReset = (inputValues, user) => {
 
 	const whereQuery = user.id ? { id: user.id } : { resetHash: resetHash, slug: slug };
 
-	User.findOne({
+	return User.findOne({
 		where: whereQuery,
 	})
 		.then((userData) => {

@@ -8,7 +8,7 @@ import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponent
 
 app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next) => {
 	const findUser = User.findOne({
-		where: { slug: req.params.slug },
+		where: { slug: req.params.slug || null },
 	});
 
 	return Promise.all([getInitialData(req), findUser])

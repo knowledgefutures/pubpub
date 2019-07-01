@@ -39,7 +39,7 @@ class LayoutEditor extends Component {
 	}
 
 	componentWillUnmount() {
-		if (this.stickyInstance) {
+		if (this.stickyInstance && this.stickyInstance.cleanUp) {
 			this.stickyInstance.cleanUp();
 		}
 	}

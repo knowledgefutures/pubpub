@@ -74,7 +74,7 @@ const SubPreview = function(props) {
 							href: '/pub/djb16hzl',
 						},
 						{ text: 'Greg Crane', href: '/pub/kyzf7fjv' },
-						// { text: 'David Donoho', href: '' },
+						{ text: 'David Donoho', href: '/pub/rim3pvdw' },
 						{ text: 'Maria Fasli', href: '/pub/pqddq8u5' },
 						{ text: 'Barbara Grosz', href: '/pub/wiq01ru6' },
 						{ text: 'Andrew Lo', href: '/pub/pjebp7io' },

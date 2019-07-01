@@ -134,10 +134,7 @@ class LabelFilter extends Component {
 			}),
 		})
 			.then((result) => {
-				this.props.updateLocalData('pub', {
-					...this.state.pubData,
-					...result,
-				});
+				this.props.updateLocalData('pub', result);
 				this.setState({ isSaving: false });
 			})
 			.catch((err) => {

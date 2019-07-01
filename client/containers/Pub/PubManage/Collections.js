@@ -109,7 +109,6 @@ class Collections extends Component {
 				this.setState((prevState) => {
 					const newCollectionPubs = [...prevState.collectionPubs, result];
 					this.props.updateLocalData('pub', {
-						...this.props.pubData,
 						collectionPubs: newCollectionPubs,
 					});
 					return { collectionPubs: newCollectionPubs };
@@ -135,7 +134,6 @@ class Collections extends Component {
 					}),
 				}).then(() => {
 					this.props.updateLocalData('pub', {
-						...this.props.pubData,
 						collectionPubs: this.state.collectionPubs,
 					});
 					this.setState({ isLoading: false });
@@ -145,7 +143,7 @@ class Collections extends Component {
 	}
 
 	handleCollectionPubSetPrimary(collectionPubId, setPrimary = true) {
-		const { communityData, pubData, updateLocalData } = this.props;
+		const { communityData, updateLocalData } = this.props;
 		const isPrimary = (collectionPub) => {
 			if (setPrimary) {
 				return collectionPub.id === collectionPubId;
@@ -170,7 +168,6 @@ class Collections extends Component {
 					}),
 				}).then(() => {
 					updateLocalData('pub', {
-						...pubData,
 						collectionPubs: this.state.collectionPubs,
 					});
 					this.setState({ isLoading: false });

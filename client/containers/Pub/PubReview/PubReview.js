@@ -48,7 +48,6 @@ const PubReview = (props) => {
 		})
 			.then((mergeResult) => {
 				updateLocalData('pub', {
-					...pubData,
 					reviews: pubData.reviews.map((reviewItem) => {
 						if (reviewItem.id === activeReview.id) {
 							return {
@@ -85,7 +84,6 @@ const PubReview = (props) => {
 		})
 			.then((updateResult) => {
 				updateLocalData('pub', {
-					...pubData,
 					reviews: pubData.reviews.map((review) => {
 						if (review.id === reviewId) {
 							return {
@@ -121,7 +119,6 @@ const PubReview = (props) => {
 		})
 			.then((newReviewEvent) => {
 				updateLocalData('pub', {
-					...pubData,
 					reviews: pubData.reviews.map((review) => {
 						if (review.id === activeReview.id) {
 							return {

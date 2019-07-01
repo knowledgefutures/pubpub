@@ -37,7 +37,6 @@ const Permissions = (props) => {
 	const handleBranchUpdate = (branchUpdates) => {
 		setIsLoading(true);
 		updateLocalData('pub', {
-			...pubData,
 			branches: pubData.branches.map((branch) => {
 				if (branch.id !== branchUpdates.branchId) {
 					return branch;
@@ -76,7 +75,6 @@ const Permissions = (props) => {
 		})
 			.then((branchPermissionData) => {
 				updateLocalData('pub', {
-					...pubData,
 					branches: pubData.branches.map((branch) => {
 						if (branch.id !== newBranchPermission.branchId) {
 							return branch;
@@ -96,7 +94,6 @@ const Permissions = (props) => {
 	const handleBranchPermissionUpdate = (updatedBranchPermission) => {
 		setIsLoading(true);
 		updateLocalData('pub', {
-			...pubData,
 			branches: pubData.branches.map((branch) => {
 				if (branch.id !== updatedBranchPermission.branchId) {
 					return branch;
@@ -134,7 +131,6 @@ const Permissions = (props) => {
 	const handleBranchPermissionDelete = (updatedBranchPermission) => {
 		setIsLoading(true);
 		updateLocalData('pub', {
-			...pubData,
 			branches: pubData.branches.map((branch) => {
 				if (branch.id !== updatedBranchPermission.branchId) {
 					return branch;

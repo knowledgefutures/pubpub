@@ -60,6 +60,7 @@ class PubSyncManager extends React.Component {
 		};
 		this.syncRemoteCollabUsers = this.syncRemoteCollabUsers.bind(this);
 		this.syncMetadata = this.syncMetadata.bind(this);
+		this.syncDiscussionsContent = this.syncDiscussionsContent.bind(this);
 		this.updatePubData = this.updatePubData.bind(this);
 		this.updateCollabData = this.updateCollabData.bind(this);
 		this.updateLocalData = this.updateLocalData.bind(this);
@@ -80,6 +81,10 @@ class PubSyncManager extends React.Component {
 						.on('child_changed', this.syncMetadata);
 
 					this.state.firebaseBranchRef
+						.child('discussionsContentLive')
+						.on('value', this.syncDiscussionsContent);
+
+					this.state.firebaseBranchRef
 						.child('cursors')
 						.on('value', this.syncRemoteCollabUsers);
 
@@ -98,6 +103,11 @@ class PubSyncManager extends React.Component {
 	componentWillUnmount() {
 		if (this.state.firebaseRootRef) {
 			this.state.firebaseRootRef.child('metadata').off('child_changed', this.syncMetadata);
+		}
+		if (this.state.firebaseBranchRef) {
+			this.state.firebaseBranchRef
+				.child('discussionsContentLive')
+				.off('child_changed', this.syncDiscussionsContent);
 		}
 	}
 
@@ -121,6 +131,22 @@ class PubSyncManager extends React.Component {
 					[snapshot.key]: newVal,
 				},
 			};
+		});
+	}
+
+	syncDiscussionsContent(snapshot) {
+		this.setState((prevState) => {
+			const val = snapshot.val();
+			if (val) {
+				const discussions = Object.values(val);
+				return {
+					pubData: {
+						...prevState.pubData,
+						discussions: discussions,
+					},
+				};
+			}
+			return null;
 		});
 	}
 
@@ -158,7 +184,6 @@ class PubSyncManager extends React.Component {
 					'citationData',
 					'collectionPubs',
 					'description',
-					'discussions',
 					'doi',
 					'downloads',
 					'isCommunityAdminManaged',

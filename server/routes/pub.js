@@ -1,5 +1,4 @@
 import React from 'react';
-import Promise from 'bluebird';
 import { Pub } from 'containers';
 import Html from '../Html';
 import app from '../server';
@@ -54,64 +53,68 @@ app.get(
 		if (!hostIsValid(req, 'community')) {
 			return next();
 		}
-
-		if (req.query.version) {
-			const versionLookup = await lookupPubVersion(req.query.version);
-			if (versionLookup) {
-				const { historyKey, shortId } = versionLookup;
-				return res.redirect(`/pub/${req.params.slug}/branch/${shortId}/${historyKey}`);
+		try {
+			if (req.query.version) {
+				const versionLookup = await lookupPubVersion(req.query.version);
+				if (versionLookup) {
+					const { historyKey, shortId } = versionLookup;
+					return res.redirect(`/pub/${req.params.slug}/branch/${shortId}/${historyKey}`);
+				}
 			}
-		}
 
-		const mode = getMode(req.path, req.params);
-		return getInitialData(req)
-			.then((initialData) => {
-				return Promise.all([
-					initialData,
-					findPub(req, initialData, mode),
-					getFirebaseToken(initialData.loginData.id || 'anon', {}),
-				]);
-			})
-			.then(([initialData, pubData, firebaseToken]) => {
-				const newInitialData = {
-					...initialData,
-					pubData: {
-						...pubData,
-						firebaseToken: firebaseToken,
-						mode: mode,
-					},
-				};
-				const primaryCollection = pubData.collectionPubs.reduce((prev, curr) => {
-					if (curr.isPrimary && curr.collection.kind !== 'issue') {
-						return curr;
-					}
-					return prev;
-				}, {});
-				const contextTitle = primaryCollection.title || initialData.communityData.title;
-				/* We calculate titleWithContext in generateMetaComponents. Since we will use */
-				/* titleWithContext in other locations (e.g. search), we should eventually */
-				/* write a helper function that generates these parameters. */
-				return renderToNodeStream(
-					res,
-					<Html
-						chunkName="Pub"
-						initialData={newInitialData}
-						headerComponents={generateMetaComponents({
-							initialData: initialData,
-							title: pubData.title,
-							contextTitle: contextTitle,
-							description: pubData.description,
-							image: pubData.avatar,
-							attributions: pubData.attributions,
-							publishedAt: pubData.firstPublishedAt,
-							doi: pubData.doi,
-							// unlisted: isUnlistedDraft,
-						})}
-					>
-						<Pub {...newInitialData} />
-					</Html>,
-				);
-			})
-			.catch(handleErrors(req, res, next));
+			const mode = getMode(req.path, req.params);
+			const initialData = await getInitialData(req);
+			const pubData = await findPub(req, initialData, mode);
+			const firebaseToken = await getFirebaseToken(initialData.loginData.id || 'anon', {
+				branchId: `branch-${pubData.activeBranch.id}`,
+				canEditBranch: pubData.activeBranch.canEdit,
+				canViewBranch: pubData.activeBranch.canView,
+				canDiscussBranch: pubData.activeBranch.canDiscuss,
+				canView: pubData.canView,
+				canManage: pubData.canManage,
+				userId: req.user.id,
+			});
+
+			const newInitialData = {
+				...initialData,
+				pubData: {
+					...pubData,
+					firebaseToken: firebaseToken,
+					mode: mode,
+				},
+			};
+			const primaryCollection = pubData.collectionPubs.reduce((prev, curr) => {
+				if (curr.isPrimary && curr.collection.kind !== 'issue') {
+					return curr;
+				}
+				return prev;
+			}, {});
+			const contextTitle = primaryCollection.title || initialData.communityData.title;
+			/* We calculate titleWithContext in generateMetaComponents. Since we will use */
+			/* titleWithContext in other locations (e.g. search), we should eventually */
+			/* write a helper function that generates these parameters. */
+			return renderToNodeStream(
+				res,
+				<Html
+					chunkName="Pub"
+					initialData={newInitialData}
+					headerComponents={generateMetaComponents({
+						initialData: initialData,
+						title: pubData.title,
+						contextTitle: contextTitle,
+						description: pubData.description,
+						image: pubData.avatar,
+						attributions: pubData.attributions,
+						publishedAt: pubData.firstPublishedAt,
+						doi: pubData.doi,
+						// unlisted: isUnlistedDraft,
+					})}
+				>
+					<Pub {...newInitialData} />
+				</Html>,
+			);
+		} catch (e) {
+			return handleErrors(req, res, next);
+		}
 	},
 );

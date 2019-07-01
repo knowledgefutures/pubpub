@@ -21,9 +21,8 @@ class Attribution extends React.Component {
 	}
 
 	handleUpdateAttributions(newAttributions) {
-		const { pubData, updateLocalData } = this.props;
+		const { updateLocalData } = this.props;
 		updateLocalData('pub', {
-			...pubData,
 			attributions: newAttributions.map(ensureUserForAttribution),
 		});
 	}

@@ -171,10 +171,7 @@ class Details extends Component {
 					hasUpdated: false,
 					isLoading: false,
 				});
-				this.props.updateLocalData('pub', {
-					...this.props.pubData,
-					...newValues,
-				});
+				this.props.updateLocalData('pub', newValues);
 				this.showSaveSuccess();
 				return null;
 			})

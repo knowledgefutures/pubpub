@@ -1,5 +1,20 @@
 import { attributesPublicUser } from '../utils';
 import { User, Discussion } from '../models';
+import { updateFirebaseDiscussion } from '../utils/firebaseAdmin';
+
+const findDiscussionWithUser = (id) =>
+	Discussion.findOne({
+		where: {
+			id: id,
+		},
+		include: [
+			{
+				model: User,
+				as: 'author',
+				attributes: attributesPublicUser,
+			},
+		],
+	});
 
 export const createDiscussion = (inputValues) => {
 	return Discussion.findAll({
@@ -50,21 +65,10 @@ export const createDiscussion = (inputValues) => {
 				threadNumber: inputValues.threadNumber || maxThreadNumber + 1,
 			});
 		})
-		.then((newDiscussion) => {
-			const findDiscussion = Discussion.findOne({
-				where: {
-					id: newDiscussion.id,
-				},
-				include: [
-					{
-						model: User,
-						as: 'author',
-						attributes: attributesPublicUser,
-					},
-				],
-			});
-
-			return findDiscussion;
+		.then(async (newDiscussion) => {
+			const discussionWithUser = await findDiscussionWithUser(newDiscussion.id);
+			updateFirebaseDiscussion(discussionWithUser.toJSON());
+			return discussionWithUser;
 		});
 };
 
@@ -76,10 +80,11 @@ export const updateDiscussion = (inputValues, updatePermissions) => {
 			filteredValues[key] = inputValues[key];
 		}
 	});
-
 	return Discussion.update(filteredValues, {
 		where: { id: inputValues.discussionId },
-	}).then(() => {
+	}).then(async () => {
+		const discussionWithUser = await findDiscussionWithUser(inputValues.discussionId);
+		updateFirebaseDiscussion(discussionWithUser.toJSON());
 		return {
 			...filteredValues,
 			id: inputValues.discussionId,

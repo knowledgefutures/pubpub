@@ -34,7 +34,7 @@ class Doi extends Component {
 			}),
 		})
 			.then(({ dois: { pub: pubDoi } }) => {
-				updateLocalData('pub', { ...pubData, doi: pubDoi });
+				updateLocalData('pub', { doi: pubDoi });
 				this.setState({ isLoading: false, justSetDoi: true });
 			})
 			.catch(() => {

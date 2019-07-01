@@ -22,10 +22,10 @@ export const getBranchAccess = (accessHash, branchData, userId, isCommunityAdmin
 	const canViewBranch = canDiscussBranch || isValidViewHash || hasSomePermissionTo('view');
 
 	return {
-		canManage: canManageBranch,
-		canEdit: canEditBranch,
-		canDiscuss: canDiscussBranch,
-		canView: canViewBranch,
+		canManage: !!canManageBranch,
+		canEdit: !!canEditBranch,
+		canDiscuss: !!canDiscussBranch,
+		canView: !!canViewBranch,
 	};
 };
 

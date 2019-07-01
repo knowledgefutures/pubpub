@@ -22,7 +22,6 @@ const Branches = (props) => {
 	const handleBranchUpdate = (branchUpdates) => {
 		setIsLoading(true);
 		updateLocalData('pub', {
-			...pubData,
 			branches: pubData.branches.map((branch) => {
 				if (branch.id !== branchUpdates.branchId) {
 					return branch;

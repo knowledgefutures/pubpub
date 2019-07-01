@@ -67,7 +67,6 @@ const DiscussionInput = (props) => {
 			})
 			.then(([discussionData]) => {
 				updateLocalData('pub', {
-					...pubData,
 					discussions: [...pubData.discussions, discussionData],
 				});
 			});

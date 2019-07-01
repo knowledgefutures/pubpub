@@ -23,10 +23,7 @@ const Permissions = (props) => {
 
 	const handlePubUpdate = (pubUpdates) => {
 		setIsLoading(true);
-		updateLocalData('pub', {
-			...pubData,
-			...pubUpdates,
-		});
+		updateLocalData('pub', pubUpdates);
 		return apiFetch('/api/pubs', {
 			method: 'PUT',
 			body: JSON.stringify({
@@ -69,7 +66,6 @@ const Permissions = (props) => {
 	const handleRemoveManager = (managerId) => {
 		setIsLoading(true);
 		updateLocalData('pub', {
-			...pubData,
 			managers: pubData.managers.filter((manager) => {
 				return manager.id !== managerId;
 			}),

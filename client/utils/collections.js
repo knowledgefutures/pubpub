@@ -57,7 +57,7 @@ export const useCollectionPubs = (updateLocalData, collection) => {
 				}
 				return cp;
 			});
-			return { ...pubData, collectionPubs: collectionPubs };
+			return { collectionPubs: collectionPubs };
 		});
 	};
 

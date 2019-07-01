@@ -42,7 +42,6 @@ const DiscussionItem = (props) => {
 			}),
 		}).then((updatedDiscussionData) => {
 			updateLocalData('pub', {
-				...pubData,
 				discussions: pubData.discussions.map((discussion) => {
 					if (discussion.id !== discussionData.id) {
 						return discussion;

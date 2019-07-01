@@ -55,3 +55,18 @@ export const mergeFirebaseBranch = (pubId, sourceBranchId, destinationBranchId) 
 	const destinationFirebaseRef = database.ref(`${pubKey}/${destinationBranchKey}`);
 	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef);
 };
+
+export const updateFirebaseDiscussion = async (discussion) => {
+	const { branchId, pubId, id: discussionId } = discussion;
+	const branchKey = `pub-${pubId}/branch-${branchId}`;
+	const discussionsRef = database.ref(`${branchKey}/discussionsContentLive`);
+	const existingDiscussion = await discussionsRef
+		.orderByChild('id')
+		.equalTo(discussionId)
+		.once('value');
+	if (existingDiscussion.exists()) {
+		const childKey = Object.keys(existingDiscussion.val())[0];
+		return existingDiscussion.ref.child(childKey).update(discussion);
+	}
+	return discussionsRef.push(discussion);
+};

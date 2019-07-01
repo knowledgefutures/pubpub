@@ -72,7 +72,7 @@ app.get(
 				canDiscussBranch: pubData.activeBranch.canDiscuss,
 				canView: pubData.canView,
 				canManage: pubData.canManage,
-				userId: req.user.id,
+				userId: initialData.loginData.id,
 			});
 
 			const newInitialData = {
@@ -113,8 +113,8 @@ app.get(
 					<Pub {...newInitialData} />
 				</Html>,
 			);
-		} catch (e) {
-			return handleErrors(req, res, next);
+		} catch (err) {
+			return handleErrors(req, res, next)(err);
 		}
 	},
 );

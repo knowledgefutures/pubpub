@@ -209,13 +209,13 @@ const PubHeader = (props) => {
 			return branch.title === 'public';
 		}) || {};
 	const currentBranchIsPublicBranch = publicBranch.id === pubData.activeBranch.id;
-
+	const useDim = !headerStyleClassName && useHeaderImage;
 	return (
 		<div className="pub-header-component new" style={backgroundStyle} ref={headerRef}>
 			<div
 				className={classNames({
 					wrapper: true,
-					dim: !headerStyleClassName && useHeaderImage,
+					dim: useDim,
 					[headerStyleClassName]: true,
 				})}
 			>
@@ -633,7 +633,7 @@ const PubHeader = (props) => {
 								onClick={() =>
 									window.scrollTo({ left: 0, top: 0, behavior: 'auto' })
 								}
-								icon={<Icon icon="double-chevron-up" color="white" />}
+								icon={<Icon icon="double-chevron-up" />}
 							/>
 						</div>
 					</div>

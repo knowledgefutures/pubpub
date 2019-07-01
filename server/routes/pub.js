@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pub } from 'containers';
+
 import Html from '../Html';
 import app from '../server';
 import {
@@ -11,6 +12,10 @@ import {
 } from '../utils';
 import { getFirebaseToken } from '../utils/firebaseAdmin';
 import { findPub, lookupPubVersion } from '../utils/pubQueries';
+
+// TODO(ian): Move this somewhere else, or actually parse the document with a Prosemirror schema
+// and use the corresponding utility from @pubpub/editor
+const isEmptyPubDoc = (docJson) => docJson.content.length === 1 && !docJson.content[0].content;
 
 const getMode = (path, params) => {
 	const { slug, reviewShortId } = params;
@@ -65,6 +70,11 @@ app.get(
 			const mode = getMode(req.path, req.params);
 			const initialData = await getInitialData(req);
 			const pubData = await findPub(req, initialData, mode);
+
+			if (!pubData.canEditBranch && isEmptyPubDoc(pubData.initialDoc)) {
+				throw new Error('Pub Not Found');
+			}
+
 			const firebaseToken = await getFirebaseToken(initialData.loginData.id || 'anon', {
 				branchId: `branch-${pubData.activeBranch.id}`,
 				canEditBranch: pubData.activeBranch.canEdit,

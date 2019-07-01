@@ -1,7 +1,6 @@
 @import 'styles/variables.scss';
 
 @mixin transparent-buttons {
-	
 }
 
 .pub-header-component.new {
@@ -45,6 +44,9 @@
 				height: 24px;
 				line-height: 24px;
 				display: block;
+			}
+			svg {
+				fill: #454545;
 			}
 		}
 	}
@@ -104,6 +106,9 @@
 					.bp3-minimal:hover {
 						color: white;
 					}
+					svg {
+						fill: #fff;
+					}
 				}
 			}
 			.themed-button-component {
@@ -122,7 +127,6 @@
 					}
 				}
 			}
-			
 		}
 		&.white-blocks {
 			.bp3-tag {
@@ -156,6 +160,9 @@
 					.bp3-minimal,
 					.bp3-minimal:hover {
 						color: white;
+					}
+					svg {
+						fill: #fff;
 					}
 				}
 			}
@@ -210,6 +217,9 @@
 					.bp3-minimal,
 					.bp3-minimal:hover {
 						color: white;
+					}
+					svg {
+						fill: #fff;
 					}
 				}
 			}

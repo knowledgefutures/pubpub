@@ -39,6 +39,7 @@ export const sanitizePageHtml = (html) => {
 			'style',
 			'svg',
 			'path',
+			'span',
 		],
 		allowedAttributes: {
 			'*': [

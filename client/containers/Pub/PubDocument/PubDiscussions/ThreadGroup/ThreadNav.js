@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import Color from 'color';
-import { Button, OverflowList, Popover, Menu, MenuItem } from '@blueprintjs/core';
+import { Button, Popover, Menu, MenuItem } from '@blueprintjs/core';
 
 import { Icon } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
@@ -105,49 +105,53 @@ const ThreadNav = (props) => {
 		getHandlersForThread: getHandlersForThread,
 	});
 
+	const maxBubblesBeforeOverflow = 7;
+	const bubbleThreads = threads.slice(0, maxBubblesBeforeOverflow);
+	const overflowThreads = threads.slice(maxBubblesBeforeOverflow);
+
 	return (
 		<span className="thread-nav-component" style={accentStyle}>
 			<style>{`.d-${activeThreadHover}, .lh-${activeThreadHover} { background-color: rgba(0, 0, 0, 0.2) !important; }`}</style>
 			<style>{`.d-${activeThread}, .lh-${activeThread} { background-color: ${fadedAccentColorDark} !important; }`}</style>
-			<OverflowList
-				minVisibleItems={1}
-				collapseFrom="end"
-				items={threads}
-				visibleItemRenderer={bubbleRenderer}
-				overflowRenderer={(overflowThreads) => (
-					<Popover
-						minimal
-						transitionDuration={-1}
-						isOpen={isOverflowShown}
-						onClose={() => setOverflowShown(false)}
-						content={
-							<Menu>
-								{overflowThreads.map((thread, index) => (
-									<MenuItem
-										{...getHandlersForThread(thread)}
-										// eslint-disable-next-line react/no-array-index-key
-										key={index}
-										icon={bubbleRenderer(thread)}
-										text={getLabelForThread(thread)}
-									/>
-								))}
-							</Menu>
+			{bubbleThreads.map(bubbleRenderer)}
+			{!!overflowThreads.length && (
+				<Popover
+					minimal
+					transitionDuration={-1}
+					isOpen={isOverflowShown}
+					onClose={() => setOverflowShown(false)}
+					content={
+						<Menu>
+							{overflowThreads.map((thread, index) => (
+								<MenuItem
+									{...getHandlersForThread(thread)}
+									// eslint-disable-next-line react/no-array-index-key
+									key={index}
+									icon={bubbleRenderer(thread)}
+									text={getLabelForThread(thread)}
+								/>
+							))}
+						</Menu>
+					}
+				>
+					<ThreadBubble
+						isActive={
+							isOverflowHovered ||
+							isOverflowShown ||
+							(activeThread &&
+								overflowThreads.some((thread) => thread.id === activeThread.id))
 						}
-					>
-						<ThreadBubble
-							isActive={isOverflowHovered || isOverflowShown}
-							onMouseEnter={() => setOverflowHovered(true)}
-							onMouseLeave={() => setOverflowHovered(false)}
-							onClick={() => setOverflowShown(true)}
-							color={communityData.accentColorDark}
-							count={<Icon icon="more" iconSize={10} className="overflow-icon" />}
-							showDot={overflowThreads.some((thread) =>
-								thread.some((discussion) => discussion.userId === loginData.id),
-							)}
-						/>
-					</Popover>
-				)}
-			/>
+						onMouseEnter={() => setOverflowHovered(true)}
+						onMouseLeave={() => setOverflowHovered(false)}
+						onClick={() => setOverflowShown(true)}
+						color={communityData.accentColorDark}
+						count={<Icon icon="more" iconSize={10} className="overflow-icon" />}
+						showDot={overflowThreads.some((thread) =>
+							thread.some((discussion) => discussion.userId === loginData.id),
+						)}
+					/>
+				</Popover>
+			)}
 			{activeThread && threads.length > 1 && (
 				<React.Fragment>
 					<Button

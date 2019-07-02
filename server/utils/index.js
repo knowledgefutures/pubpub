@@ -157,6 +157,9 @@ export const getInitialData = (req) => {
 			throw new Error('Community Not Found');
 		}
 
+		if (communityResult.domain && whereQuery.subdomain) {
+			throw new Error(`UseCustomDomain:${communityResult.domain}`);
+		}
 		const communityData = communityResult.toJSON();
 
 		loginData.isAdmin = communityData.admins.reduce((prev, curr) => {
@@ -397,9 +400,9 @@ export const handleErrors = (req, res, next) => {
 				.status(404)
 				.sendFile(resolve(__dirname, '../errorPages/communityNotFound.html'));
 		}
-		if (err.message.indexOf('DraftRedirect:') === 0) {
-			const slug = err.message.split(':')[1];
-			return res.redirect(`/pub/${slug}/draft`);
+		if (err.message.indexOf('UseCustomDomain:') === 0) {
+			const customDomain = err.message.split(':')[1];
+			return res.redirect(`https://${customDomain}${req.originalUrl}`);
 		}
 		if (
 			err.message === 'Page Not Found' ||

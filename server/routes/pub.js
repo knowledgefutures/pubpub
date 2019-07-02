@@ -80,7 +80,6 @@ app.get(
 				canEditBranch: pubData.activeBranch.canEdit,
 				canViewBranch: pubData.activeBranch.canView,
 				canDiscussBranch: pubData.activeBranch.canDiscuss,
-				canView: pubData.canView,
 				canManage: pubData.canManage,
 				userId: initialData.loginData.id,
 			});

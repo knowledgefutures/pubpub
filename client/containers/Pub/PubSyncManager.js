@@ -142,7 +142,16 @@ class PubSyncManager extends React.Component {
 				return {
 					pubData: {
 						...prevState.pubData,
-						discussions: discussions,
+						discussions: [
+							...prevState.pubData.discussions.filter(
+								(existingDiscussion) =>
+									!discussions.some(
+										(newDiscussion) =>
+											newDiscussion.id === existingDiscussion.id,
+									),
+							),
+							...discussions,
+						],
 					},
 				};
 			}

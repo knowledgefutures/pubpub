@@ -1,5 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useEffectOnce } from 'react-use';
 import { ComposableMap, ZoomableGroup, Geographies, Geography } from 'react-simple-maps';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
 import { Spinner, Tab, Tabs } from '@blueprintjs/core';
@@ -25,7 +26,7 @@ const Metrics = (props) => {
 	const [toolTipData, setToolTipData] = useState(undefined);
 	const [totalVisits, setTotalVisits] = useState(undefined);
 	const { locationData } = useContext(PageContext);
-	useEffect(() => {
+	useEffectOnce(() => {
 		fetch('https://assets.pubpub.org/_site/world-50m.json')
 			.then((response) => {
 				if (!response.ok) {
@@ -80,13 +81,15 @@ const Metrics = (props) => {
 			})
 			.then((res) => {
 				const newVisitsData = res.result.map((item) => {
-					return {
+					const x = {
 						date: item.timeframe.start.substring(0, 10),
-						visits: item.value.reduce((prev, curr) => {
-							return prev + curr.result;
+						visits: item.value.reduce((sum, next) => {
+							return sum + next.result;
 						}, 0),
 					};
+					return x;
 				});
+
 				const newCountryData = {};
 				res.result.forEach((item) => {
 					item.value.forEach((itemValue) => {
@@ -95,19 +98,19 @@ const Metrics = (props) => {
 							previousCountryValue + itemValue.result;
 					});
 				});
-				setVisitsData(newVisitsData);
-				setCountryData(newCountryData);
 				setTotalVisits(
 					newVisitsData.reduce((prev, curr) => {
 						return prev + curr.visits;
 					}, 0),
 				);
+				setVisitsData(newVisitsData);
+				setCountryData(newCountryData);
 			})
 			.catch((err) => {
 				console.error('Keen error: ', err);
 			});
 		return () => {};
-	}, [countryData, locationData.isPubPubProduction, props.pubData.createdAt, props.pubData.id]);
+	});
 
 	const handleMouseMove = (geography, evt) => {
 		const x = evt.clientX;
@@ -194,12 +197,12 @@ const Metrics = (props) => {
 
 	const locationsPanel = (
 		<div className="locations">
-			{(!mapData || !countryData) && (
+			{(!mapData || !countryData || !visitsData) && (
 				<div className="spinner-wrapper">
 					<Spinner />
 				</div>
 			)}
-			{mapData && countryData && (
+			{mapData && countryData && visitsData && (
 				<ComposableMap
 					projectionConfig={{
 						scale: 205,

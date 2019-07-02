@@ -31,13 +31,13 @@ new Promise((resolve) => {
 })
 	.then(() => {
 		return pubsIndex.setSettings({
-			unretrievableAttributes: ['versionAdminAccessId', 'versionAccessIds', 'versionContent'],
+			unretrievableAttributes: ['branchAdminAccessId', 'branchAccessIds', 'branchContent'],
 			searchableAttributes: [
 				'title',
 				'description',
 				'slug',
 				'byline',
-				'versionContent',
+				'branchContent',
 				'communityTitle',
 				'communityDomain',
 			],
@@ -46,9 +46,9 @@ new Promise((resolve) => {
 			attributesForFaceting: [
 				'filterOnly(pubId)',
 				'filterOnly(communityId)',
-				'filterOnly(versionIsPublic)',
-				'filterOnly(versionAccessIds)',
-				'filterOnly(versionAdminAccessId)',
+				'filterOnly(branchIsPublic)',
+				'filterOnly(branchAccessIds)',
+				'filterOnly(branchAdminAccessId)',
 			],
 		});
 	})
@@ -88,7 +88,6 @@ new Promise((resolve) => {
 			attributesForFaceting: [
 				'filterOnly(isPublic)',
 				'filterOnly(pageId)',
-				'filterOnly(communityId)',
 				'filterOnly(communityId)',
 			],
 		});

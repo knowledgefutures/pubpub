@@ -262,7 +262,7 @@ class Search extends Component {
 															),
 													  };
 												keyId = item.pubId;
-												isPublic = item.versionIsPublic;
+												isPublic = item.branchIsPublic;
 											}
 											if (this.state.mode === 'pages') {
 												link = `https://${item.communityDomain}/${item.slug}`;
@@ -337,7 +337,7 @@ class Search extends Component {
 														{this.state.mode === 'pubs' && (
 															<div className="byline">
 																{dateFormat(
-																	item.versionCreatedAt,
+																	item.branchCreatedAt,
 																	'mmm dd, yyyy',
 																)}
 																{item.byline && <span> · </span>}

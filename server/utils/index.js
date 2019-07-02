@@ -404,6 +404,10 @@ export const handleErrors = (req, res, next) => {
 			const customDomain = err.message.split(':')[1];
 			return res.redirect(`https://${customDomain}${req.originalUrl}`);
 		}
+		if (err.message.indexOf('UseCustomDomain:') === 0) {
+			const customDomain = err.message.split(':')[1];
+			return res.redirect(`https://${customDomain}${req.originalUrl}`);
+		}
 		if (
 			err.message === 'Page Not Found' ||
 			err.message === 'Pub Not Found' ||

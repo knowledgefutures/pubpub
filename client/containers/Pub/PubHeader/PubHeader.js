@@ -483,7 +483,7 @@ const PubHeader = (props) => {
 																	Click to learn more and discuss.
 																</span>
 															}
-															href="https://discourse.knowledgefutures.org/"
+															href="https://discourse.knowledgefutures.org/t/branches/157"
 														/>
 														{/*
 															TODO-BRANCH: We're removing these items until full branch

@@ -5,6 +5,8 @@ import { Card } from '@blueprintjs/core';
 import Editor from '@pubpub/editor';
 import { getResizedUrl } from 'utils';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
+
 import discussionSchema from './DiscussionAddon/discussionSchema';
 import { nestDiscussionsToThreads } from './PubDiscussions/discussionUtils';
 import DiscussionThread from './PubDiscussions/DiscussionThread';
@@ -64,6 +66,7 @@ const PubBody = (props) => {
 	const useCollaborativeOptions = firebaseBranchRef && !pubData.isStaticDoc && !isHistoryDoc;
 	const isReadOnly = !!(pubData.isStaticDoc || !pubData.canEditBranch || isViewingHistory);
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
+	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 
 	return (
 		<div className="pub-body-component">
@@ -101,6 +104,7 @@ const PubBody = (props) => {
 				initialContent={initialContent}
 				isReadOnly={isReadOnly}
 				onChange={(editorChangeObject) => {
+					markLastInput();
 					if (!isHistoryDoc) {
 						updateLocalData('collab', { editorChangeObject: editorChangeObject });
 					}

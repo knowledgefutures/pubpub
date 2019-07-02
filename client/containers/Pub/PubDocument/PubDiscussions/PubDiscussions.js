@@ -5,6 +5,8 @@ import { dispatchEmptyTransaction } from '@pubpub/editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PubSuspendWhileTyping } from '../../PubSuspendWhileTyping';
+
 import ThreadGroup from './ThreadGroup';
 import DiscussionThread from './DiscussionThread';
 import DiscussionFilterBar from './DiscussionFilterBar';
@@ -27,8 +29,8 @@ const defaultProps = {
 
 const PubDiscussions = (props) => {
 	const {
-		pubData,
 		collabData,
+		pubData,
 		firebaseBranchRef,
 		updateLocalData,
 		mainContentRef,
@@ -92,32 +94,36 @@ const PubDiscussions = (props) => {
 			{/* Bottom Discussions */}
 			<GridWrapper containerClassName="pub discussion-list">
 				<h2>Discussions</h2>
-				<DiscussionFilterBar
-					pubData={pubData}
-					communityData={communityData}
-					threadData={threads}
-					updateLocalData={updateLocalData}
-				>
-					{(filteredThreads) => {
-						return (
-							<React.Fragment>
-								{filteredThreads.map((thread) => {
-									return (
-										<DiscussionThread
-											key={thread[0].id}
-											pubData={pubData}
-											collabData={collabData}
-											firebaseBranchRef={firebaseBranchRef}
-											threadData={thread}
-											updateLocalData={updateLocalData}
-											canPreview={true}
-										/>
-									);
-								})}
-							</React.Fragment>
-						);
-					}}
-				</DiscussionFilterBar>
+				<PubSuspendWhileTyping delay={1000}>
+					{() => (
+						<DiscussionFilterBar
+							pubData={pubData}
+							communityData={communityData}
+							threadData={threads}
+							updateLocalData={updateLocalData}
+						>
+							{(filteredThreads) => {
+								return (
+									<React.Fragment>
+										{filteredThreads.map((thread) => {
+											return (
+												<DiscussionThread
+													key={thread[0].id}
+													pubData={pubData}
+													collabData={collabData}
+													firebaseBranchRef={firebaseBranchRef}
+													threadData={thread}
+													updateLocalData={updateLocalData}
+													canPreview={true}
+												/>
+											);
+										})}
+									</React.Fragment>
+								);
+							}}
+						</DiscussionFilterBar>
+					)}
+				</PubSuspendWhileTyping>
 			</GridWrapper>
 		</div>
 	);

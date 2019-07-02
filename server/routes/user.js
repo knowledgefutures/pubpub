@@ -55,10 +55,10 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 			}
 
 			const userDataJson = userData.toJSON();
-			if (userDataJson.pubs) {
-				userDataJson.pubs = userDataJson.pubs.filter((item) => {
+			if (userDataJson.attributions) {
+				userDataJson.attributions = userDataJson.attributions.filter((item) => {
 					const isOwnProfile = userDataJson.id === initialData.loginData.id;
-					return isOwnProfile || isPubPublic(item);
+					return isOwnProfile || isPubPublic(item.pub);
 				});
 			}
 

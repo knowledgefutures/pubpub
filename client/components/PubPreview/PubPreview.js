@@ -48,7 +48,6 @@ const PubPreview = function(props) {
 
 	const publishedDate = getPubPublishedDate(pubData);
 	const isPrivate = !isPubPublic(pubData);
-
 	const showBannerImage = ['large', 'medium'].includes(size);
 	const showUpperByline = !!authors.length && !props.hideByline && ['minimal'].includes(size);
 	const showLowerByline =

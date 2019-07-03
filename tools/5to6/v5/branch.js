@@ -23,7 +23,7 @@ class Branch {
 	}
 
 	getNextKey() {
-		return this.changes.size + this.merges.size;
+		return 1 + this.changes.size + this.merges.size;
 	}
 
 	addChange(change) {
@@ -39,11 +39,11 @@ class Branch {
 	}
 
 	getHighestMergeIndex() {
-		return [-1, ...this.merges.keys()].reduce((a, b) => Math.max(a, b));
+		return Math.max(...[-1, ...this.merges.keys()]);
 	}
 
 	getHighestChangeIndex() {
-		return [-1, ...this.changes.keys()].reduce((a, b) => Math.max(a, b));
+		return Math.max(...[-1, ...this.changes.keys()]);
 	}
 
 	getHighestIndex() {
@@ -57,14 +57,14 @@ class Branch {
 			changes: stringMapToObj(this.changes, compressChange),
 			merges: stringMapToObj(this.merges, (changes) => changes.map(compressChange)),
 			discussions: stringMapToObj(this.discussions),
-			lastMergeKey: lastMergeKey.toString(),
+			lastMergeKey: lastMergeKey,
 		};
 	}
 
 	*getIntermediateDocStates(optionalHighestIndex, withIndex) {
 		const highestIndex = optionalHighestIndex || this.getHighestIndex();
 		let intermediateDocument = null;
-		for (let index = 0; index <= highestIndex; index += 1) {
+		for (let index = 1; index <= highestIndex; index += 1) {
 			const changeAtIndex = this.changes.get(index);
 			const mergeAtIndex = this.merges.get(index);
 			if (changeAtIndex && mergeAtIndex) {

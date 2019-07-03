@@ -2,17 +2,23 @@
 const { error, warn } = require('../problems');
 const prosemirrorBisect = require('../util/prosemirrorBisect');
 
-const makeDiscussionEntry = (key, from, to) => ({
-	currentKey: key,
-	initKey: key,
-	initAnchor: from,
-	initHead: to,
-	selection: {
-		type: 'text',
-		a: from,
-		h: to,
-	},
-});
+const makeDiscussionEntry = (key, from, to, needsManualReanchor) => {
+	const entry = {
+		currentKey: key,
+		initKey: key,
+		initAnchor: from,
+		initHead: to,
+		selection: {
+			type: 'text',
+			a: from,
+			h: to,
+		},
+	};
+	if (needsManualReanchor) {
+		entry.needsManualReanchor = true;
+	}
+	return entry;
+};
 
 const searchBranch = (branch, criterion) => {
 	for (const entry of branch.getIntermediateDocStates(null, true)) {
@@ -24,10 +30,9 @@ const searchBranch = (branch, criterion) => {
 	return null;
 };
 
-const addDiscussionToBranch = (discussion, { branch, targetIndex }) => {
+const addDiscussionToBranch = (discussion, { branch, targetIndex }, ignoreHighlight) => {
 	const { highlights } = discussion;
-	console.log('Checking discussion', discussion.id, 'against branch', branch.name);
-	if (highlights) {
+	if (highlights && !ignoreHighlight) {
 		const [highlight] = highlights;
 		const exactMatch = searchBranch(branch, (entry) => {
 			const [indexInBranch, { doc }] = entry;
@@ -76,7 +81,10 @@ const addDiscussionToBranch = (discussion, { branch, targetIndex }) => {
 		}
 		return false;
 	}
-	branch.addDiscussion(discussion.id, makeDiscussionEntry(targetIndex || 1, null, null));
+	branch.addDiscussion(
+		discussion.id,
+		makeDiscussionEntry(targetIndex || 1, null, null, ignoreHighlight),
+	);
 	return true;
 };
 
@@ -137,7 +145,24 @@ module.exports = (pub, pubWithBranches, logAttempts = false) => {
 				return successHere;
 			}, false);
 			if (!succeeded) {
-				warn(`Failed to attach discussion ${discussion.id} to any branch`);
+				warn(
+					`Failed to attach discussion ${discussion.id} to any branch. Will attach it to the public branch.`,
+				);
+				const publicBranch = pubWithBranches.branchByNameMap.get('public');
+				if (!publicBranch) {
+					error(`No public branch to accept orphan discussion ${discussion.id}`);
+				}
+				const fallbackSucceeded = addDiscussionToBranch(
+					discussion,
+					{
+						targetIndex: publicBranch.getHighestIndex(),
+						branch: publicBranch,
+					},
+					true,
+				);
+				if (!fallbackSucceeded) {
+					error(`Fallback failed for discussion ${discussion.id}`);
+				}
 			}
 		} else {
 			throw error('No candidate branches for pub');

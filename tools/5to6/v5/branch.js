@@ -5,8 +5,7 @@ const { reconstructDocument } = require('./reconstructDocument');
 const stringMapToObj = (strMap, processValue) => {
 	const res = {};
 	for (const [key, value] of strMap) {
-		const newKey = typeof key === 'number' ? (key - 1).toString() : key;
-		res[newKey] = processValue ? processValue(value) : value;
+		res[key] = processValue ? processValue(value) : value;
 	}
 	return res;
 };
@@ -24,7 +23,7 @@ class Branch {
 	}
 
 	getNextKey() {
-		return 1 + this.changes.size + this.merges.size;
+		return this.changes.size + this.merges.size;
 	}
 
 	addChange(change) {
@@ -40,11 +39,11 @@ class Branch {
 	}
 
 	getHighestMergeIndex() {
-		return Math.max(...[-1, ...this.merges.keys()]);
+		return [-1, ...this.merges.keys()].reduce((a, b) => Math.max(a, b));
 	}
 
 	getHighestChangeIndex() {
-		return Math.max(...[-1, ...this.changes.keys()]);
+		return [-1, ...this.changes.keys()].reduce((a, b) => Math.max(a, b));
 	}
 
 	getHighestIndex() {
@@ -58,14 +57,14 @@ class Branch {
 			changes: stringMapToObj(this.changes, compressChange),
 			merges: stringMapToObj(this.merges, (changes) => changes.map(compressChange)),
 			discussions: stringMapToObj(this.discussions),
-			...(lastMergeKey !== -1 && { lastMergeKey: (lastMergeKey - 1).toString() }),
+			lastMergeKey: lastMergeKey.toString(),
 		};
 	}
 
 	*getIntermediateDocStates(optionalHighestIndex, withIndex) {
 		const highestIndex = optionalHighestIndex || this.getHighestIndex();
 		let intermediateDocument = null;
-		for (let index = 1; index <= highestIndex; index += 1) {
+		for (let index = 0; index <= highestIndex; index += 1) {
 			const changeAtIndex = this.changes.get(index);
 			const mergeAtIndex = this.merges.get(index);
 			if (changeAtIndex && mergeAtIndex) {

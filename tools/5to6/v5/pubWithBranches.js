@@ -19,7 +19,7 @@ class PubWithBranches {
 			versionToBranch[version.id] = {
 				name: branchPointer.branch.name,
 				id: branchPointer.branch.id,
-				key: branchPointer.v6MergeIndex - 1,
+				key: branchPointer.v6MergeIndex,
 			};
 		}
 		// for (const version of this.pub.versions) {

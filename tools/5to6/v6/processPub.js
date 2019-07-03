@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import uuid from 'uuid';
-import { Branch, BranchPermission, PubVersion } from '../../../server/models';
+import Sequelize from 'sequelize';
+
+import { Branch, BranchPermission, Discussion, PubVersion } from '../../../server/models';
 
 const { matchTransformHash, updateTransformHash } = require('./transformHash');
 
@@ -88,6 +90,22 @@ const updateBranches = async (model, transformed) => {
 	);
 };
 
+const updateDiscussions = async (transformed) => {
+	const { draftBranch, namedBranches } = transformed;
+	return [draftBranch].concat(Object.values(namedBranches)).reduce((promise, branch) => {
+		const discussionIds = Object.keys(branch.discussions);
+		if (discussionIds.length === 0) {
+			return promise;
+		}
+		return promise.then(() =>
+			Discussion.update(
+				{ branchId: branch.id },
+				{ where: { id: { [Sequelize.Op.in]: discussionIds } } },
+			),
+		);
+	}, Promise.resolve());
+};
+
 const createVersions = async (transformed) => {
 	const { versionToBranch } = transformed;
 	return PubVersion.bulkCreate(
@@ -137,6 +155,7 @@ const processPub = async (storage, pubId, writeToFirebase, { current, total }) =
 		try {
 			cleanBranchNames(transformed);
 			await updateBranches(model, transformed);
+			await updateDiscussions(transformed);
 			await createVersions(transformed);
 			await writeToFirebase(pubId, firebaseJson);
 			updateTransformHash(pubDir);

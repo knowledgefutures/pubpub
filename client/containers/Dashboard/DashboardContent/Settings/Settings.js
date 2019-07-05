@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ButtonGroup, Button, Tooltip, Switch } from '@blueprintjs/core';
+import { ButtonGroup, Button, Tooltip, Switch, Card, AnchorButton } from '@blueprintjs/core';
 import {
 	Icon,
 	Header,
@@ -23,6 +23,25 @@ const propTypes = {
 class Settings extends Component {
 	constructor(props) {
 		super(props);
+
+		/* Export & Delete Mailto Props */
+		this.exportEmailBody = `
+		Hello.
+		%0D%0A%0D%0A
+		I am writing to request an export of any PubPub community data associated with the community%20
+		${props.communityData.title} (${props.communityData.subdomain}).
+		`;
+
+		this.deleteEmailBody = `
+		Hello.
+		%0D%0A%0D%0A
+		I am writing to request that the PubPub community ${props.communityData.title}%20
+		(${props.communityData.subdomain}), and all data associated with that community, be deleted.
+		%0D%0A%0D%0A
+		I affirm that I have the legal authority to request this on behalf of my community,%20
+		and understand that this action may be irreversible.
+		`;
+
 		this.state = {
 			isLoading: false,
 			error: undefined,
@@ -684,6 +703,37 @@ class Settings extends Component {
 							this.setState({ email: evt.target.value });
 						}}
 					/>
+				</SettingsSection>
+				<SettingsSection title="Export & Delete">
+					<Card>
+						<h5>Data export</h5>
+						<p>
+							You can request an export of the data associated with your Community on
+							PubPub using the button below.
+						</p>
+						<AnchorButton
+							target="_blank"
+							href={`mailto:privacy@pubpub.org?subject=Community+data+export+request&body=${this.exportEmailBody.trim()}`}
+						>
+							Request data export
+						</AnchorButton>
+					</Card>
+					<Card>
+						<h5>Community deletion</h5>
+						<p>
+							You can request that we completely delete your PubPub community using
+							the button below. If you have published any notable Pubs, we may reserve
+							the right to continue to display them based on the academic research
+							exception to GDPR.
+						</p>
+						<AnchorButton
+							intent="danger"
+							target="_blank"
+							href={`mailto:privacy@pubpub.org?subject=Community+deletion+request&body=${this.deleteEmailBody.trim()}`}
+						>
+							Request community deletion
+						</AnchorButton>
+					</Card>
 				</SettingsSection>
 			</div>
 		);

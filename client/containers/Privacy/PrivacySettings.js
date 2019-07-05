@@ -11,14 +11,16 @@ const propTypes = {
 
 const exportEmailBody = `
 Hello.
-
+%0D%0A%0D%0A
 I am writing to request an export of any PubPub account data associated with this email address.
 `;
 
 const deleteEmailBody = `
 Hello.
-
-I am writing to request that the PubPub account associated with this email address be deleted.
+%0D%0A%0D%0A
+I am writing to request that the PubPub account associated with this email address, and all%20
+data associated with that account, be deleted.
+%0D%0A%0D%0A
 I understand that this action may be irreversible.
 `;
 
@@ -83,7 +85,8 @@ const PrivacySettings = (props) => {
 							PubPub using the button below.
 						</p>
 						<AnchorButton
-							href={`mailto:privacy@pubpub.org?subject=Data export request&body=${exportEmailBody.trim()}`}
+							target="_blank"
+							href={`mailto:privacy@pubpub.org?subject=Account+data+export+request&body=${exportEmailBody.trim()}`}
 						>
 							Request data export
 						</AnchorButton>
@@ -93,12 +96,13 @@ const PrivacySettings = (props) => {
 						<p>
 							You can request that we completely delete your PubPub account using the
 							button below. If you have left comments on notable Pubs, we may reserve
-							the right to continue to display them based on the scientific research
+							the right to continue to display them based on the academic research
 							exception to GDPR.
 						</p>
 						<AnchorButton
 							intent="danger"
-							href={`mailto:privacy@pubpub.org?subject=Account deletion request&body=${deleteEmailBody.trim()}`}
+							target="_blank"
+							href={`mailto:privacy@pubpub.org?subject=Account+deletion+request&body=${deleteEmailBody.trim()}`}
 						>
 							Request account deletion
 						</AnchorButton>

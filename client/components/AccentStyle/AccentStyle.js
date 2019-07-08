@@ -50,6 +50,9 @@ const AccentStyle = function(props) {
 	const bottomBorder = `.accent-color.${
 		isNavHidden ? 'header-component' : 'nav-bar-component'
 	} { border-bottom: 2px solid ${navAccentColor}; }`;
+	const simpleBottomBorder = `.accent-color.${
+		isNavHidden ? 'header-component' : 'nav-bar-component'
+	} { border-bottom: 1px solid #DDD; }`;
 	return (
 		<style
 			dangerouslySetInnerHTML={{
@@ -76,6 +79,11 @@ const AccentStyle = function(props) {
 			.bp3-slider-handle .bp3-slider-label { background: ${baseColor}; color: ${baseText}; }
 			.highlight-dot-wrapper .highlight-dot { background-color: ${baseColor}; }
 			${useHeaderTextAccent ? bottomBorder : ''}
+			${
+				!useHeaderTextAccent && headerAccentColor.base.toLowerCase() === '#ffffff'
+					? simpleBottomBorder
+					: ''
+			}
 		`,
 			}}
 		/>

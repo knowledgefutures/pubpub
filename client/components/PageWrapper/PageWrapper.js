@@ -67,7 +67,7 @@ const PageWrapper = (props) => {
 		return item.value;
 	});
 
-	const useBottomShadow = communityData.accentTextColor === '#000000';
+	const useBottomShadow = communityData.accentColorLight === '#ffffff';
 	const pageContextProps = {
 		communityData: props.communityData,
 		loginData: props.loginData,
@@ -75,19 +75,12 @@ const PageWrapper = (props) => {
 	};
 	return (
 		<PageContext.Provider value={pageContextProps}>
-			<div id="page-wrapper-component" className={useBottomShadow ? 'bottom-shadow' : ''}>
+			<div id="page-wrapper-component">
 				{props.fixHeader && (
 					<style>
 						{`
 						.header-component { position: fixed; width: 100%; z-index: 19; }
 						.page-content { padding-top: 56px; }
-					`}
-					</style>
-				)}
-				{useBottomShadow && (
-					<style>
-						{`
-						nav:last-of-type { border-bottom: 1px solid #DDD; }
 					`}
 					</style>
 				)}

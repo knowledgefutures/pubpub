@@ -46,7 +46,6 @@ const addDiscussionToBranch = (discussion, { branch, targetIndex }, ignoreHighli
 				}
 				return null;
 			} catch (e) {
-				warn(`highlight may be invalid`, highlight);
 				return null;
 			}
 		});

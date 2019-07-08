@@ -11,6 +11,7 @@ const stringMapToObj = (strMap, processValue) => {
 };
 class Branch {
 	constructor(name, id) {
+		this.startIndex = 0;
 		this.name = name;
 		this.id = id;
 		this.merges = new Map();
@@ -23,7 +24,7 @@ class Branch {
 	}
 
 	getNextKey() {
-		return 1 + this.changes.size + this.merges.size;
+		return this.startIndex + this.changes.size + this.merges.size;
 	}
 
 	addChange(change) {
@@ -62,9 +63,12 @@ class Branch {
 	}
 
 	*getIntermediateDocStates(optionalHighestIndex, withIndex) {
-		const highestIndex = optionalHighestIndex || this.getHighestIndex();
+		const highestIndex =
+			typeof optionalHighestIndex === 'number'
+				? optionalHighestIndex
+				: this.getHighestIndex();
 		let intermediateDocument = null;
-		for (let index = 1; index <= highestIndex; index += 1) {
+		for (let index = this.startIndex; index <= highestIndex; index += 1) {
 			const changeAtIndex = this.changes.get(index);
 			const mergeAtIndex = this.merges.get(index);
 			if (changeAtIndex && mergeAtIndex) {

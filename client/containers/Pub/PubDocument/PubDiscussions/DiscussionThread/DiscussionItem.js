@@ -8,8 +8,11 @@ import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { Avatar, Icon, FormattingBar } from 'components';
 import { apiFetch } from 'utils';
 import LabelSelect from './LabelSelect';
+import DiscussionReanchor from './DiscussionReanchor';
 
 const propTypes = {
+	collabData: PropTypes.object.isRequired,
+	firebaseBranchRef: PropTypes.object,
 	discussionData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -19,10 +22,19 @@ const propTypes = {
 
 const defaultProps = {
 	isPreview: false,
+	firebaseBranchRef: null,
 };
 
 const DiscussionItem = (props) => {
-	const { discussionData, pubData, updateLocalData, isRootThread, isPreview } = props;
+	const {
+		discussionData,
+		collabData,
+		firebaseBranchRef,
+		pubData,
+		updateLocalData,
+		isRootThread,
+		isPreview,
+	} = props;
 	const { loginData, communityData } = useContext(PageContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState({});
@@ -95,6 +107,17 @@ const DiscussionItem = (props) => {
 					)}
 
 					<span className="actions">
+						{!isPreview &&
+							pubData.canManage &&
+							isRootThread &&
+							firebaseBranchRef &&
+							loginData.id === 'b242f616-7aaa-479c-8ee5-3933dcf70859' && (
+								<DiscussionReanchor
+									collabData={collabData}
+									firebaseBranchRef={firebaseBranchRef}
+									discussionId={discussionData.id}
+								/>
+							)}
 						{!isPreview && (isDiscussionAuthor || pubData.canManage) && isRootThread && (
 							<React.Fragment>
 								<LabelSelect
@@ -130,7 +153,6 @@ const DiscussionItem = (props) => {
 								</Tooltip>
 							</React.Fragment>
 						)}
-
 						{!isPreview && isDiscussionAuthor && (
 							<Button
 								icon={isEditing ? undefined : <Icon icon="edit2" iconSize={12} />}

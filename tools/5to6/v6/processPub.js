@@ -71,6 +71,8 @@ const updateBranches = async (model, transformed) => {
 					publicPermissions: title === 'public' ? 'discuss' : 'none',
 					pubManagerPermissions: 'manage',
 					communityAdminPermissions: 'manage',
+					firstKeyAt: new Date(branch.firstKeyAt),
+					latestKeyAt: new Date(branch.latestKeyAt),
 				};
 			}),
 	);
@@ -164,7 +166,8 @@ const processPub = async (storage, pubId, writeToFirebase, { current, total }) =
 			updateTransformHash(pubDir);
 			console.log(`OK: wrote ${pubId} successfully!`);
 		} catch (error) {
-			console.log(`FAILURE: ${pubId} - ${error.toString()}`);
+			console.log(`FAILURE: ${pubId}`);
+			console.log(error);
 		}
 	}
 };

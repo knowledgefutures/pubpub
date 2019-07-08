@@ -9,6 +9,14 @@ const stringMapToObj = (strMap, processValue) => {
 	}
 	return res;
 };
+
+const getDateForItem = (item, fromEndOfMerge = false) => {
+	if (Array.isArray(item)) {
+		return (fromEndOfMerge ? item[item.length - 1] : item[0]).timestamp;
+	}
+	return item.timestamp;
+};
+
 class Branch {
 	constructor(name, id) {
 		this.startIndex = 0;
@@ -51,7 +59,21 @@ class Branch {
 		return Math.max(this.getHighestChangeIndex(), this.getHighestMergeIndex());
 	}
 
+	getItemAt(index) {
+		const changeAtIndex = this.changes.get(index);
+		const mergeAtIndex = this.merges.get(index);
+		if (changeAtIndex && mergeAtIndex) {
+			throw new Error(`Branch has a merge and a change with the same index ${index}`);
+		}
+		if (!(changeAtIndex || mergeAtIndex)) {
+			throw new Error(`Branch is missing an item at index ${index}`);
+		}
+		return changeAtIndex || mergeAtIndex;
+	}
+
 	serialize() {
+		const firstItem = this.getItemAt(0);
+		const latestItem = this.getItemAt(this.getNextKey() - 1);
 		const lastMergeKey = this.getHighestMergeIndex();
 		return {
 			id: this.id,
@@ -59,6 +81,8 @@ class Branch {
 			merges: stringMapToObj(this.merges, (changes) => changes.map(compressChange)),
 			discussions: stringMapToObj(this.discussions),
 			lastMergeKey: lastMergeKey,
+			firstKeyAt: firstItem && getDateForItem(firstItem),
+			latestKeyAt: latestItem && getDateForItem(latestItem, true),
 		};
 	}
 

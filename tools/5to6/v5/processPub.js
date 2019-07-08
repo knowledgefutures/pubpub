@@ -5,7 +5,7 @@ const { queryPub } = require('./queryPub');
 const transformPub = require('./transformPub');
 const { getChangesAndCheckpointForPub } = require('./changes');
 
-const getAndWritePubModelJson = async (pubDir, pubId, pubUpdatedTimes) => {
+const getAndWritePubModelJson = async (pubDir, pubId, pubUpdatedTimes, bustCache = false) => {
 	const queryAndUpdatePub = async () => {
 		console.log('querying pub');
 		const updatedModel = await queryPub(pubId);
@@ -14,7 +14,7 @@ const getAndWritePubModelJson = async (pubDir, pubId, pubUpdatedTimes) => {
 		}
 		return updatedModel;
 	};
-	if (pubDir.exists('model.json')) {
+	if (pubDir.exists('model.json') && !bustCache) {
 		const localModel = JSON.parse(pubDir.read('model.json'));
 		const localUpdateTime = localModel.updatedAt && new Date(localModel.updatedAt).getTime();
 		const remoteUpdateTime =
@@ -67,7 +67,7 @@ module.exports = async (storage, pubId, pubUpdatedTimes, { current, total }, bus
 	freshProblemContext();
 	const pubDir = storage.within(`pubs/${pubId}`);
 	pubDir.rm('problems.json');
-	const pub = await getAndWritePubModelJson(pubDir, pubId, pubUpdatedTimes);
+	const pub = await getAndWritePubModelJson(pubDir, pubId, pubUpdatedTimes, bustCache);
 	if (pub) {
 		console.log('Found pub at', pubId);
 		try {

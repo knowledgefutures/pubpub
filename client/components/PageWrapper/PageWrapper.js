@@ -67,7 +67,6 @@ const PageWrapper = (props) => {
 		return item.value;
 	});
 
-	const useBottomShadow = communityData.accentColorLight === '#ffffff';
 	const pageContextProps = {
 		communityData: props.communityData,
 		loginData: props.loginData,

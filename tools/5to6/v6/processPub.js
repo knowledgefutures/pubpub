@@ -71,8 +71,8 @@ const updateBranches = async (model, transformed) => {
 					publicPermissions: title === 'public' ? 'discuss' : 'none',
 					pubManagerPermissions: 'manage',
 					communityAdminPermissions: 'manage',
-					firstKeyAt: new Date(branch.firstKeyAt),
-					latestKeyAt: new Date(branch.latestKeyAt),
+					firstKeyAt: branch.firstKeyAt ? new Date(branch.firstKeyAt) : undefined,
+					latestKeyAt: branch.latestKeyAt ? new Date(branch.latestKeyAt) : undefined,
 				};
 			}),
 	);

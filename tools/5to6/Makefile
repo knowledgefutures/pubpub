@@ -7,7 +7,7 @@ parse-original-firebase:
 
 # 2
 transform-all:
-	node status.js --print-status=unstarted | node -r esm --max-old-space-size=12000 v5
+	node status.js --print-status=unstarted | node -r esm --max-old-space-size=12000 v5 --bust-cache
 
 # 3
 migrate-v5-postgres:

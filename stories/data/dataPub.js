@@ -5,13 +5,15 @@ export default {
 	description:
 		'The first computing machines were so large they filled entire rooms. Today they are ubiquitous, built invisibly into our environments. While it is tempting to view this change within a predetermined space of progress, we can still shape the future on our own terms.',
 	avatar: 'https://assets.pubpub.org/9pi1c5c6/41554230047846.jpeg',
-	useHeaderImage: true,
+	headerBackgroundType: 'image',
+	headerBackgroundImage: 'https://assets.pubpub.org/eys4nqr0/11528828519590.jpg',
 	firstPublishedAt: '2019-04-22T03:43:24.218Z',
 	lastPublishedAt: '2019-04-22T03:43:24.218Z',
 	draftEditHash: 'eyy8hltx',
 	draftViewHash: 's5mjfpdz',
 	doi: '10.21428/eea8ec7d.4c3a0515',
 	labels: null,
+	canManage: true,
 	isCommunityAdminManaged: true,
 	review: null,
 	downloads: null,
@@ -458,4 +460,303 @@ export default {
 	firebaseToken:
 		'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTU1NjYzODU3NCwiZXhwIjoxNTU2NjQyMTc0LCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay1pZTd5ZUBwdWJwdWItdjYuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1pZTd5ZUBwdWJwdWItdjYuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJ1aWQiOiJiMjQyZjYxNi03YWFhLTQ3OWMtOGVlNS0zOTMzZGNmNzA4NTkifQ.AFdYAfq3y1F1lgLfC0HKvfg4ZkqOP6draEEHBVDJM1ioxh8N9guJ6PM9rieoKry2UxNRCY3t9BttYXIffotOJLjj3L6MKq0FaOoEBycPZcrhqEQX43oTna54Zt54WD2ZKqGKO0TT1iUAdxJLJfqfthKe_o7IkXlc27z7uu09ek2RGBAvuiS10Jzc4j5urNQuLh6UFEVdoMaxBollkjEwK2wV333Df4TZ9jyfZCw7lR8VTPyXoXmVJbMUccLNM-i2tNO6FEqJ-C132qL19uGcw4LQtjwzSV0MQJJAhs16ZeEKPTkDF-XuOL-41ycq2tH0DBUlhHjAlhgbs53hCynVRg',
 	mode: 'manage',
+	initialDoc: {
+		type: 'doc',
+		attrs: { meta: {} },
+		content: [
+			{
+				type: 'heading',
+				attrs: { level: 1, id: 'abstract' },
+				content: [{ type: 'text', text: 'Abstract' }],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'The most elusive term in data science is ‘data.’ While often treated as objects to be computed upon, data is a theory-laden concept with a long history. Data exist within knowledge infrastructures that govern how they are created, managed, and interpreted. By comparing models of data life cycles, implicit assumptions about data become apparent. In linear models, data pass through stages from beginning to end of life, which suggest that data can be recreated as needed. Cyclical models, in which data flow in a virtuous circle of uses and reuses, are better suited for irreplaceable observational data that may retain value indefinitely. In astronomy, for example, observations from one generation of telescopes may become calibration and modeling data for the next generation, whether digital sky surveys or glass plates. The value and reusability of data can be enhanced through investments in knowledge infrastructures, especially digital curation and preservation. Determining what data to keep, why, how, and for how long, is the challenge of our day.',
+					},
+					{ type: 'hard_break' },
+					{ type: 'hard_break' },
+					{ type: 'text', marks: [{ type: 'strong' }], text: 'Keywords' },
+					{ type: 'hard_break', marks: [{ type: 'strong' }] },
+					{
+						type: 'text',
+						text:
+							'astronomy, curation, data, digital curation, life cycles, observations, preservation, reuse, science, stewardship',
+					},
+				],
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'heading',
+				attrs: { level: 1, id: 'introduction' },
+				content: [{ type: 'text', text: 'Introduction' }],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'As an interdisciplinary journal of data science whose goal is to provoke dialog among diverse stakeholders, the ',
+					},
+					{ type: 'text', marks: [{ type: 'em' }], text: 'Harvard Data Science Review' },
+					{
+						type: 'text',
+						text:
+							' is an ideal venue to explicate concepts whose terminological simplicity masks highly contested territory. ‘Data’ is the most elusive term of all. Data are often treated as objective entities to be computed upon, defined as facts or numbers, or operationalized by lists of examples. In practical business situations where correlation matters more than causation, such declarative simplicity may suffice. In scholarly contexts, however, data, facts, information, and knowledge are theory-laden concepts with long and contentious histories (Blair, 2010; Buckland, 1991; Case, 2006; Leonelli, 2015; Meadows, 2001; Rosenberg, 2013). Researchers are exceedingly clever at treating almost anything as data, be it the air we breathe, clothes we wear, traces of our digital lives, or photons captured by astronomical instruments. In scientific contexts, data can be viewed as “entities used as evidence of phenomena for the purposes of research or scholarship” (Borgman, 2015, p. 29). From a humanities perspective, “the concept of ',
+					},
+					{ type: 'text', marks: [{ type: 'em' }], text: 'data' },
+					{
+						type: 'text',
+						text:
+							' as a given has to be rethought through a humanistic lens and characterized as ',
+					},
+					{ type: 'text', marks: [{ type: 'em' }], text: 'capta' },
+					{
+						type: 'text',
+						text:
+							', taken and constructed. … rooted in a co-dependent relation between observer and experience” (Drucker, 2011).',
+					},
+				],
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'heading',
+				attrs: { level: 1, id: 'data-and-infrastructure' },
+				content: [{ type: 'text', text: 'Data and Infrastructure' }],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'Whether in science, humanities, business, or government contexts, data are a human construct. People decide what are data for a given purpose, how those data are to be interpreted, and what constitutes appropriate evidence. One scientist’s signal is another’s noise. One politician’s fact is another’s fake news. Data exist within knowledge infrastructures that govern how they are created, managed, used, and interpreted (Edwards et al., 2013). As infrastructures evolve, so do the characteristics and usability of data embedded within them.',
+					},
+				],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'The notion of ‘data life cycle’ reflects the array of knowledge infrastructures that govern the flows of data. The term ',
+					},
+					{ type: 'text', marks: [{ type: 'em' }], text: 'life cycle' },
+					{
+						type: 'text',
+						text:
+							' originated in biology in the 19th century as a linear model (“Oxford English Dictionary,” 2019): “The sequence of stages through which an individual organism passes from origin as a zygote to death, or through which the members of a species pass from the production of gametes by one generation to that by the next.” Life cycle is used similarly in business and economic contexts to span processes from their beginning through decay or ending. An example is personnel records that are created when a person is hired and destroyed at the end of a legally defined records retention cycle.',
+					},
+				],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'The common alternative to a linear data life cycle is a circular model, where data flow continually through stages. These models are common in scholarly communication and in other areas that benefit from the ability to mine and combine data indefinitely. Figure 1, a ‘research life cycle’ from a library perspective, illustrates the flow of scholarly products. In the planning stage of a project, researchers typically describe a problem and determine the research design. In the implementation stage, assets such as data are collected, organized, described, and analyzed. The next stage is to publish the resulting work, which may include depositing associated datasets for public access. Once published, the research findings may be disseminated further through social media, indexing and abstracting services, and various ‘impact’ mechanisms. The next stage in Figure 1 is preservation, which includes reliable storage and migration to new technologies that ensure continuous availability. The last and connecting stage is reuse, when research products become input to the planning and implementation of new research projects.',
+					},
+				],
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'image',
+				attrs: {
+					url: 'https://assets.pubpub.org/xs8ljqbx/11559215799656.png',
+					size: 50,
+					align: 'full',
+					caption:
+						'<p><br><br></p><p>Figure 1: Research Life Cycle (University of California, Irvine, Libraries, Digital Scholarship Services, 2019). Reprinted with permission of the UCI Libraries.</p>',
+				},
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'The idea behind the life cycle model in Figure 1 is to encourage researchers to think in terms of a virtuous circle wherein their work has greater impact, for longer periods of time, through dissemination and preservation of their research products. Libraries provide essential elements of the knowledge infrastructure for this virtuous circle, such as dissemination, curation, preservation, and access. In principle, a student or other researcher could begin an inquiry at any point in the cycle or could skip a stage or two. Questions provoked by the dissemination process could lead to reuse of data, as could datasets stored in archives, for example. Conversely, projects may proceed only through parts of this research life cycle. Researchers may fail to complete a project or fail to publish their findings. Publications may or may not receive citations from other authors. Only a minority of researchers preserve their datasets in ways that the data remain findable and accessible. Even if datasets are available, those data may not be reused by others.',
+					},
+				],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'Figure 2—a much more complex model that is widely adopted in the digital archiving community—also focuses on keeping digital data alive for long periods of time. Books and other paper objects often can survive indefinitely by benign neglect, given adequate storage conditions. Digital records, in contrast, require active management. The digital curation life cycle model in Figure 2, explained more fully in Higgins (2008) and on the DCC site (“Digital Curation Centre,” 2019), identifies activities that keep data available, useful, and usable. During reappraisal, archivists determine whether to continue investment in a dataset, such as migrating it to new formats and media, or whether to dispose of the dataset. Digital data archives of scholarly content, such as ICPSR in the social sciences, GBIF for biodiversity, UniProt for protein sequences, HEASARC for high energy astrophysics, or DANS for humanities and archaeology, all invest in data curation in a manner similar to that of the DCC model (Data Archiving and Networked Services, 2017; “GBIF,” 2019; “HEASARC: NASA’s Archive of Data on Energetic Phenomena,” 2019; “Inter-university Consortium for Political and Social Research,” 2019; “UniProt,” 2019). Lacking these investments in data curation and preservation, data fade away through neglect, benign or otherwise, as storage media fail and as software versions become obsolete (Borgman, 2015, 2016).',
+					},
+				],
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'image',
+				attrs: {
+					url: 'https://assets.pubpub.org/xlmpxpy3/41559215818479.png',
+					size: 50,
+					align: 'full',
+					caption:
+						'<p><br></p><p>Figure 2: Digital Curation Center Curation Lifecycle Model (Higgins, 2008). Reprinted with permission of the Digital Curation Centre, U.K.</p>',
+				},
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'The stark contrast between the popularity of linear life cycles in technical areas of data science and cyclical life cycles in the digital curation community reveals competing assumptions about data and infrastructure. If data exist only from the time they are generated ',
+					},
+					{ type: 'text', marks: [{ type: 'em' }], text: 'de novo' },
+					{
+						type: 'text',
+						text:
+							' to when they are interpreted (Wing, 2018; Wing, Janeja, Kloefkorn, & Erickson, 2018), they are ephemeral objects produced for a specific purpose. They can be discarded without further investment. In contrast, if data are entities humans created as evidence of a particular phenomenon, they may have enduring value. If those data are to be reused, they must be reusable, which requires considerable investment in the infrastructure necessary for documentation, interpretation, curation, and access.',
+					},
+				],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'Another implicit assumption about data that distinguishes these life cycle models is whether data can be recreated. Experiments and computational models can be re-executed, social media streams can be resampled, and even genome sequences can be recreated if the original tissue is available and viable. Observational data, in contrast, cannot be recreated. The census of 2010 cannot be conducted again, nor can infrared images of tonight’s sky be taken tomorrow, nor can the weather conditions of July 4, 1776, be observed again with modern instruments. These are time-specific observations that may be valuable indefinitely. One never steps in the same river twice, because the water continues to flow. That said, not all observational data can be kept alive, nor are all worth keeping.',
+					},
+				],
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'heading',
+				attrs: { level: 1, id: 'open-science-and-data-stewardship' },
+				content: [{ type: 'text', text: 'Open Science and Data Stewardship' }],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'Research policy initiatives for open science, open access to publications, data management plan requirements, and deposit of data associated with publications are predicated on assumptions that research data are valuable assets that should be preserved for reuse by others, whether for reproducibility, reuse for new questions or innovations, mining and integration, or other purposes (National Academies of Sciences, 2018; “NumFOCUS,” 2018; Wilkinson et al., 2016). Implicit in these policies are assumptions that research data should be curated and preserved to become part of the virtuous circle presented in Figure 1.',
+					},
+				],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'Astronomy offers numerous examples of cyclical data life cycles in which reuse is essential, as each round of observations and instrumentation lays the foundation for the next. Human observations of the cosmos long predate the written record, and the cosmos long predates humans. A contemporary case to consider is the Large Synoptic Survey Telescope (LSST), which is in its final stages of construction in Chile. “Engineering first light” is due in FY 2020 and science operations are due to begin in FY 2021, commencing 10 years of data collection (Ivezic et al., 2008; Large Synoptic Survey Telescope, 2019). Many milestones could be chosen to mark the beginning of LSST. Concept development and proposals began in the 1990s, long before funding for the telescope instrument was obtained. Countless design decisions and compromises were made by the time the glass was poured for the mirror, thus hardening the path to data collection. Many of these design decisions are based on data obtained by earlier surveys and instruments. Observations from the Sloan Digital Sky Survey, a ground-based survey that saw first light in 1998 and entered routine operations in 2000 (“Sloan Digital Sky Surveys,” 2019), are among those used to calibrate LSST.',
+					},
+				],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'More than half of the one billion dollar budget of the LSST project is devoted to data management because those data are expected to remain valuable to several generations of astronomers. The science is in the data. Major astronomy missions such as Chandra and Hubble report that more new papers are being published from their archival data than from new observations (“Chandra Data Archive,” 2019; “Hubble Legacy Archive,” 2019).',
+					},
+				],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'Old observational data yield new forms of evidence and new baselines for current evidence. LSST is expected to benefit greatly from DASCH, a project begun in 2005 to digitize the Harvard Observatory’s collection of a half-million glass plates, acquired over a period of more than a century. Because the irreplaceable observations captured on these plates represent the first complete map of the sky, they are an essential baseline comparison for LSST and other sky surveys. The scientific value of DASCH lies in the infrastructure that encompasses carefully curated data, high resolution imaging, and computational features that enable astronomers to explore and visualize time-domain astronomy in ways inconceivable when these data were collected in the 19',
+					},
+					{ type: 'text', marks: [{ type: 'sup' }], text: 'th' },
+					{ type: 'text', text: ' and 20' },
+					{ type: 'text', marks: [{ type: 'sup' }], text: 'th' },
+					{
+						type: 'text',
+						text:
+							' centuries (Digital Access to a Sky Century @ Harvard, 2019; Grindlay, Tang, Los, & Servillat, 2011; Sobel, 2017).',
+					},
+				],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'The lives and afterlives of data depend upon many factors, such as their perceived value and the efforts invested in their curation. Glass plates fell into disuse for scientific purposes when charge-coupled devices (CCDs) became a viable technology. These plates are large and fragile objects that are expensive to maintain, and thus many were discarded by the time that astronomy became digital. Harvard, despite the continuing specter of fires, floods, and budget cuts, managed to keep their plate collection and catalogs intact. The dedication of a core group of individuals facilitated the digital archive that is now openly available to the international community.',
+					},
+				],
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'heading',
+				attrs: { level: 1, id: 'knowledge-infrastructures-for-the-long-term' },
+				content: [{ type: 'text', text: 'Knowledge Infrastructures for the Long Term' }],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'Data life cycles, whether viewed as linear or cyclical processes, are necessarily reductionist. Paths from data creation to interpretation and back tend to look more like a random walk than a perfect line or circle. Infrastructures, by their nature, tend to be most visible when they break down. They build on an installed base and are embedded in the social practices of their communities (Star & Ruhleder, 1996). Data are selected, collected, organized, and generated by humans, using the knowledge infrastructures available to them at the time. Some of those data may be short-lived, discarded when they have served their purpose, and readily recreated if later needed. Other data, such as observations of the natural world, may be long-lived, with value apparent from their initial capture. Much else falls in between, including observations lost before their value was recognized, duplicative material that can be done without, and sensitive data that should be destroyed regularly due to privacy and ethics risks. In data science, we ignore knowledge infrastructures at our peril. Identifying principles for what to keep, why, how, and for how long, is the challenge of our day.',
+					},
+				],
+			},
+			{ type: 'paragraph', attrs: { class: null } },
+			{
+				type: 'heading',
+				attrs: { level: 1, id: 'acknowledgements' },
+				content: [{ type: 'text', text: 'Acknowledgements' }],
+			},
+			{
+				type: 'paragraph',
+				attrs: { class: null },
+				content: [
+					{
+						type: 'text',
+						text:
+							'Research on astronomy data practices reported here was supported by the Alfred P. Sloan Foundation, ',
+					},
+					{
+						type: 'text',
+						marks: [{ type: 'em' }],
+						text: 'If Data Sharing is the Answer, What is the Question',
+					},
+					{
+						type: 'text',
+						text:
+							'?, Sloan #2015-14001, Christine L. Borgman, PI, and by the Harvard-Smithsonian Center for Astrophysics as a Visiting Scholar. Thanks to John P. Renaud of University of California, Irvine, Libraries for permission to use Figure 1 and to Kevin Ashley of the U.K. Digital Curation Centre for permission to use Figure 2. Bernadette Boscoe, Michael Scroggins, Morgan Wofford, and Peter Darch of UCLA Center for Knowledge Infrastructures provided comments on an earlier draft.',
+					},
+				],
+			},
+		],
+	},
 };

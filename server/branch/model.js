@@ -26,7 +26,8 @@ export default (sequelize, dataTypes) => {
 			viewHash: { type: dataTypes.STRING },
 			discussHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
-
+			firstKeyAt: { type: dataTypes.DATE },
+			latestKeyAt: { type: dataTypes.DATE },
 			/* Set by Associations */
 			pubId: { type: dataTypes.UUID, allowNull: false },
 		},

@@ -128,7 +128,7 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			};
 		})
 		.filter((branch) => {
-			return branch.canView;
+			return branch.canView && branch.firstKeyAt;
 		});
 
 	if (!formattedBranches.length) {

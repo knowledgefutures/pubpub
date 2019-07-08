@@ -4,6 +4,7 @@ import Color from 'color';
 import {
 	sequelize,
 	Pub,
+	Branch,
 	Version,
 	PubManager,
 	Collaborator,
@@ -637,6 +638,16 @@ new Promise((resolve) => {
 	// .then(() => {
 	// 	return sequelize.queryInterface.addColumn('Users', 'gdprConsent', {
 	// 		type: Sequelize.BOOLEAN,
+	// 	});
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Branches', 'firstKeyAt', {
+	// 		type: Sequelize.DATE,
+	// 	});
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Branches', 'latestKeyAt', {
+	// 		type: Sequelize.DATE,
 	// 	});
 	// })
 	.catch((err) => {

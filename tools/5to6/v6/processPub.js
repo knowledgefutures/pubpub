@@ -93,6 +93,9 @@ const updateBranches = async (model, transformed) => {
 const updateDiscussions = async (transformed) => {
 	const { draftBranch, namedBranches } = transformed;
 	return [draftBranch].concat(Object.values(namedBranches)).reduce((promise, branch) => {
+		if (!branch.discussions) {
+			return promise;
+		}
 		const discussionIds = Object.keys(branch.discussions);
 		if (discussionIds.length === 0) {
 			return promise;

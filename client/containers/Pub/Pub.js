@@ -24,7 +24,6 @@ const propTypes = {
 };
 
 const Pub = (props) => {
-	console.log(JSON.stringify(props));
 	return (
 		<PubSuspendWhileTypingProvider>
 			<div id="pub-container">

@@ -29,11 +29,16 @@ const communityData = {};
 
 storiesOf('components/Header', module).add('default', () => (
 	<div>
-		<AccentStyle communityData={communityData} isNavHidden={false} />
+		<AccentStyle
+			communityData={{ accentColorLight: '#ffffff', accentColorDark: '#000000' }}
+			isNavHidden={false}
+		/>
 		<div style={wrapperStyle}>
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					title: 'Hiptest',
 					headerLinks: [
 						{ title: 'About', url: '/about' },
@@ -72,6 +77,8 @@ storiesOf('components/Header', module).add('default', () => (
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					hideHeaderLogo: false,
 					title: 'WHITEOUT',
 					hideHero: false,
@@ -99,6 +106,8 @@ storiesOf('components/Header', module).add('default', () => (
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					hideHeaderLogo: false,
 					title: 'Timepal',
 					heroBackgroundImage: undefined,
@@ -124,6 +133,8 @@ storiesOf('components/Header', module).add('default', () => (
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					hideHeaderLogo: false,
 					title: 'toggl',
 					heroBackgroundImage: undefined,
@@ -148,6 +159,8 @@ storiesOf('components/Header', module).add('default', () => (
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					hideHeaderLogo: false,
 					title: 'Simple Community',
 					hideHero: true,

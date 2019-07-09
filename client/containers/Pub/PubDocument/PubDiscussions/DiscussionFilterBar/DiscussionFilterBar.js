@@ -27,8 +27,20 @@ const DiscussionFilterBar = (props) => {
 	const [sortMode, setSortMode] = useState('newestThread');
 	const [filteredLabels, setFilteredLabels] = useState([]);
 
-	const activeThreads = filterAndSortThreads(threadData, false, sortMode, filteredLabels);
-	const archivedThreads = filterAndSortThreads(threadData, true, sortMode, filteredLabels);
+	const activeThreads = filterAndSortThreads(
+		threadData,
+		false,
+		sortMode,
+		filteredLabels,
+		pubData.activeBranch.id,
+	);
+	const archivedThreads = filterAndSortThreads(
+		threadData,
+		true,
+		sortMode,
+		filteredLabels,
+		pubData.activeBranch.id,
+	);
 	const filtersActive = !!filteredLabels.length;
 	const threadsToRender = isArchivedMode ? archivedThreads : activeThreads;
 
@@ -114,7 +126,11 @@ const DiscussionFilterBar = (props) => {
 
 			{!isArchivedMode && !activeThreads.length && (
 				<NonIdealState
-					title={filtersActive ? 'No Discussions Match Filter' : 'No Discussions Yet'}
+					title={
+						filtersActive
+							? 'No Discussions Match Filter'
+							: 'No Discussions on this Branch'
+					}
 					visual="bp3-icon-widget"
 				/>
 			)}

@@ -127,7 +127,13 @@ export const nestDiscussionsToThreads = function(discussions) {
 		});
 };
 
-export const filterAndSortThreads = (threads, isArchivedList, sortMode, filteredLabels) => {
+export const filterAndSortThreads = (
+	threads,
+	isArchivedList,
+	sortMode,
+	filteredLabels,
+	activeBranchId,
+) => {
 	return threads
 		.filter((items) => {
 			const threadIsArchived = items.reduce((prev, curr) => {
@@ -137,6 +143,9 @@ export const filterAndSortThreads = (threads, isArchivedList, sortMode, filtered
 				return prev;
 			}, false);
 			return isArchivedList ? threadIsArchived : !threadIsArchived;
+		})
+		.filter((items) => {
+			return items[0].branchId === activeBranchId;
 		})
 		.filter((items) => {
 			const threadLabels = items.reduce((prev, curr) => {

@@ -128,9 +128,21 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			};
 		})
 		.filter((branch) => {
-			return branch.canView && branch.firstKeyAt;
+			return branch.canView;
 		});
 
+	/* We want to make sure we only return pubs that can either be */
+	/* directly edited, or have a viewable branch which has content on it */
+	const canAccess = formattedBranches.reduce((prev, curr) => {
+		if (curr.canEdit || (curr.canView && curr.firstKeyAt)) {
+			return true;
+		}
+		return prev;
+	}, false);
+
+	if (!canAccess) {
+		return null;
+	}
 	if (!formattedBranches.length) {
 		return null;
 	}

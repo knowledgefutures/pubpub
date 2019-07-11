@@ -145,17 +145,17 @@ module.exports = (pub, pubWithBranches, logAttempts = false) => {
 			}, false);
 			if (!succeeded) {
 				warn(
-					`Failed to attach discussion ${discussion.id} to any branch. Will attach it to the public branch.`,
+					`Failed to attach discussion ${discussion.id} to any branch. Will attach it to the draft branch.`,
 				);
-				const publicBranch = pubWithBranches.branchByNameMap.get('public');
-				if (!publicBranch) {
-					error(`No public branch to accept orphan discussion ${discussion.id}`);
+				const draftBranch = pubWithBranches.draftBranch;
+				if (!draftBranch) {
+					error(`No draft branch to accept orphan discussion ${discussion.id}`);
 				}
 				const fallbackSucceeded = addDiscussionToBranch(
 					discussion,
 					{
-						targetIndex: publicBranch.getHighestIndex(),
-						branch: publicBranch,
+						targetIndex: draftBranch.getHighestIndex(),
+						branch: draftBranch,
 					},
 					true,
 				);

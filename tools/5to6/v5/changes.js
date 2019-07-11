@@ -41,8 +41,8 @@ const compressChange = (change) => {
 	};
 };
 
-const getChangesAndCheckpointForPub = (pubDir) => {
-	const { changes, checkpoint } = fromFirebaseJson(pubDir.read('firebase-v5.json').toString());
+const getChangesAndCheckpointForPub = (firebasePub) => {
+	const { changes, checkpoint } = fromFirebaseJson(firebasePub);
 	const draftBranchId = uuid.v4();
 	return {
 		draftBranchId: draftBranchId,

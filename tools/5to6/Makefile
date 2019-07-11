@@ -7,7 +7,7 @@ parse-original-firebase:
 
 # 2
 transform-all:
-	node status.js --print-status=unstarted | node -r esm --max-old-space-size=12000 v5
+	node allPubIds.js | node -r esm --max-old-space-size=12000 v5
 
 # 3
 migrate-v5-postgres:
@@ -15,7 +15,7 @@ migrate-v5-postgres:
 
 # 4
 upload-all:
-	node status.js --print-status=transformed,warning | node -r esm --max-old-space-size=12000 v6
+	node allPubIds.js | node -r esm --max-old-space-size=12000 v6
 
 # 5
 sync-search:
@@ -28,7 +28,7 @@ sync-search:
 ## Manual discussion migration
 
 transform:
-	echo $(pub) | node -r esm --max-old-space-size=12000 v5 --bust-cache
+	echo $(pub) | node -r esm --max-old-space-size=12000 v5
 	
 upload:
 	echo $(pub) | node -r esm --max-old-space-size=12000 v6

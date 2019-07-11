@@ -2,21 +2,21 @@
 const Sequelize = require('sequelize');
 const passportLocalSequelize = require('passport-local-sequelize');
 
-const operatorsAliases = {
-	$or: Sequelize.Op.or,
-	$and: Sequelize.Op.and,
-	$ilike: Sequelize.Op.iLike,
-	$in: Sequelize.Op.in,
-	$not: Sequelize.Op.not,
-	$eq: Sequelize.Op.eq,
-	$ne: Sequelize.Op.ne,
-	$lt: Sequelize.Op.lt,
-	$gt: Sequelize.Op.gt,
-};
+// const operatorsAliases = {
+// 	$or: Sequelize.Op.or,
+// 	$and: Sequelize.Op.and,
+// 	$ilike: Sequelize.Op.iLike,
+// 	$in: Sequelize.Op.in,
+// 	$not: Sequelize.Op.not,
+// 	$eq: Sequelize.Op.eq,
+// 	$ne: Sequelize.Op.ne,
+// 	$lt: Sequelize.Op.lt,
+// 	$gt: Sequelize.Op.gt,
+// };
+
 const sequelize = new Sequelize(process.env.V5_PROD_DATABASE_URL, {
-	logging: false,
+	logging: () => {},
 	dialectOptions: { ssl: true },
-	operatorsAliases: operatorsAliases,
 });
 
 // Change to true to update the model in the database.

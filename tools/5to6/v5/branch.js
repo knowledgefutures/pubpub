@@ -65,7 +65,7 @@ class Branch {
 		if (changeAtIndex && mergeAtIndex) {
 			throw new Error(`Branch has a merge and a change with the same index ${index}`);
 		}
-		if (!(changeAtIndex || mergeAtIndex)) {
+		if (!(changeAtIndex || mergeAtIndex) && index > 0) {
 			throw new Error(`Branch is missing an item at index ${index}`);
 		}
 		return changeAtIndex || mergeAtIndex;

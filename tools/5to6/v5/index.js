@@ -4,9 +4,10 @@ require('ignore-styles');
 
 const Promise = require('bluebird');
 const { storage } = require('../setup');
-const { queryPubUpdatedTimes } = require('./queryPub');
+// const { queryPubUpdatedTimes } = require('./queryPub');
 const processPub = require('./processPub');
 const getPipedPubIds = require('../util/getPipedPubIds');
+const createFirebaseClient = require('../util/createFirebaseClient');
 
 const blacklist = [
 	'0f21f44a-dc5e-4e8d-83b8-d1194e38d755', // Frankenbook
@@ -17,57 +18,41 @@ const blacklist = [
 const main = async () => {
 	console.time('Transform Time');
 	const pipedPubIds = await getPipedPubIds();
-	const pubUpdatedAtTimes = await queryPubUpdatedTimes();
+	// const pubUpdatedAtTimes = await queryPubUpdatedTimes();
 	const bustCache = process.argv.find((a) => a.startsWith('--bust-cache'));
+	const { reader: readFromFirebase } = await createFirebaseClient(
+		process.env.V5_FIREBASE_URL,
+		process.env.V5_FIREBASE_SERVICE_ACCOUNT_BASE64,
+	);
+	let updatedPubsCount = 0;
 	pipedPubIds
 		.filter((pubId) => !blacklist.includes(pubId))
 		.reduce(
 			(promise, pubId, index, arr) =>
 				promise
-					.then(() => {
-						return processPub(
+					.then(async () => {
+						const wasUpdated = await processPub(
 							storage,
 							pubId,
-							pubUpdatedAtTimes,
+							readFromFirebase,
 							{
 								current: index + 1,
 								total: arr.length,
 							},
 							bustCache,
 						);
+						if (wasUpdated) {
+							updatedPubsCount += 1;
+						}
 					})
 					.then(() => {
 						if (index === arr.length - 1) {
+							console.log('Transformed pubs count:', updatedPubsCount);
 							console.timeEnd('Transform Time');
 						}
 					}),
 			Promise.resolve(),
 		);
-	// const filteredIds = pipedPubIds.filter((pubId) => !blacklist.includes(pubId));
-	// Promise.map(
-	// 	filteredIds,
-	// 	(pubId, index, length) => {
-	// 		return processPub(
-	// 			storage,
-	// 			pubId,
-	// 			pubUpdatedAtTimes,
-	// 			{
-	// 				current: index + 1,
-	// 				total: length,
-	// 			},
-	// 			bustCache,
-	// 		)
-	// 			.then(() => {
-	// 				if (index === length - 1) {
-	// 					console.timeEnd('Transform Time');
-	// 				}
-	// 			})
-	// 			.catch((err) => {
-	// 				console.error('Promise Map Error', err);
-	// 			});
-	// 	},
-	// 	{ concurrency: 25 },
-	// );
 };
 
 main();

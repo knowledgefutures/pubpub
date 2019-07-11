@@ -1,5 +1,12 @@
 const { Community, Discussion, Pub, Version, VersionPermission } = require('./models');
 
+const getAllPubIds = async () => {
+	const pubs = await Pub.findAll({
+		attributes: ['id'],
+	});
+	return pubs.map((pub) => pub.id);
+};
+
 const queryPub = async (pubId) => {
 	const pub = await Pub.findOne({
 		where: { id: pubId },
@@ -16,13 +23,42 @@ const queryPub = async (pubId) => {
 	return null;
 };
 
+const getPubModelLatestUpdateTime = (pubModel) => {
+	const maxTimeOf = (models) => {
+		return models.reduce((maxTime, next) => {
+			const time = new Date(next.updatedAt).getTime();
+			return Math.max(maxTime, time);
+		}, 0);
+	};
+	return Math.max(
+		new Date(pubModel.updatedAt).getTime(),
+		maxTimeOf(pubModel.versions),
+		maxTimeOf(pubModel.versionPermissions),
+		maxTimeOf(pubModel.discussions),
+	);
+};
+
 const queryPubUpdatedTimes = async () =>
 	Pub.findAll({
 		attributes: { include: ['updatedAt', 'id'] },
+		include: [
+			{ model: Discussion, as: 'discussions', attributes: { include: ['updatedAt'] } },
+			{ model: Version, as: 'versions', attributes: { include: ['updatedAt'] } },
+			{
+				model: VersionPermission,
+				as: 'versionPermissions',
+				attributes: { include: ['updatedAt'] },
+			},
+		],
 	}).then((pubs) =>
 		pubs.reduce((idToUpdateMap, nextPub) => {
 			return { ...idToUpdateMap, [nextPub.id]: nextPub.updatedAt };
 		}),
 	);
 
-module.exports = { queryPub: queryPub, queryPubUpdatedTimes: queryPubUpdatedTimes };
+module.exports = {
+	queryPub: queryPub,
+	queryPubUpdatedTimes: queryPubUpdatedTimes,
+	getAllPubIds: getAllPubIds,
+	getPubModelLatestUpdateTime: getPubModelLatestUpdateTime,
+};

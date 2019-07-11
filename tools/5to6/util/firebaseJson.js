@@ -1,6 +1,7 @@
 const fromFirebaseJson = (string) =>
 	JSON.parse(string, (_, value) => {
 		if (
+			value &&
 			typeof value === 'object' &&
 			Object.keys(value).every((key) => !Number.isNaN(parseInt(key, 10)))
 		) {

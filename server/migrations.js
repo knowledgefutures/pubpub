@@ -650,6 +650,11 @@ new Promise((resolve) => {
 	// 		type: Sequelize.DATE,
 	// 	});
 	// })
+	.then(() => {
+		return sequelize.queryInterface.addColumn('PubVersions', 'pubId', {
+			type: Sequelize.UUID,
+		});
+	})
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

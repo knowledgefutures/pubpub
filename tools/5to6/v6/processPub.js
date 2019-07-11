@@ -3,8 +3,9 @@ import uuid from 'uuid';
 import Sequelize from 'sequelize';
 
 import { Branch, BranchPermission, Discussion, PubVersion } from '../../../server/models';
+import { createHashMatcher } from '../util/hash';
 
-const { matchTransformHash, updateTransformHash } = require('./transformHash');
+const hashMatcher = createHashMatcher('transformUploadedHash', ['transformed.json']);
 
 const generateHash = (length) => {
 	const tokenLength = length || 32;
@@ -31,7 +32,7 @@ const getBranchIdForVersionId = (versionPermission, transformed) => {
 	}
 };
 
-const cleanBranchNames = (transformed) => {
+const cleanBranchNames = (pubId, transformed) => {
 	const { namedBranches, versionToBranch } = transformed;
 	const branchNames = Object.keys(namedBranches);
 	const overlyLongPublicBranchName = branchNames.find((name) => name.startsWith('public__'));
@@ -111,7 +112,7 @@ const updateDiscussions = async (transformed) => {
 	}, Promise.resolve());
 };
 
-const createVersions = async (transformed) => {
+const createVersions = async (transformed, pubId) => {
 	const { versionToBranch } = transformed;
 	return PubVersion.bulkCreate(
 		Object.keys(versionToBranch).map((versionId) => {
@@ -120,6 +121,7 @@ const createVersions = async (transformed) => {
 				id: versionId,
 				branchId: branchId,
 				historyKey: historyKey,
+				pubId: pubId,
 			};
 		}),
 	);
@@ -153,23 +155,25 @@ const processPub = async (storage, pubId, writeToFirebase, { current, total }) =
 	const model = JSON.parse(pubDir.read('model.json'));
 	const { transformed } = JSON.parse(pubDir.read('transformed.json'));
 	const firebaseJson = createFirebaseJson(transformed, pubDir);
-	const hasTransformBeenUploaded = matchTransformHash(pubDir);
+	const hasTransformBeenUploaded = hashMatcher.matchHash(pubDir);
 	if (hasTransformBeenUploaded) {
 		console.log(`OK: already wrote ${pubId}`);
-	} else {
-		try {
-			cleanBranchNames(transformed);
-			await updateBranches(model, transformed);
-			await updateDiscussions(transformed);
-			await createVersions(transformed);
-			await writeToFirebase(pubId, firebaseJson);
-			updateTransformHash(pubDir);
-			console.log(`OK: wrote ${pubId} successfully!`);
-		} catch (error) {
-			console.log(`FAILURE: ${pubId}`);
-			console.log(error);
-		}
+		return false;
 	}
+	try {
+		cleanBranchNames(pubId, transformed);
+		await PubVersion.destroy({ where: { pubId: pubId } });
+		await updateBranches(model, transformed);
+		await updateDiscussions(transformed);
+		await createVersions(transformed, pubId);
+		await writeToFirebase(pubId, firebaseJson);
+		hashMatcher.updateHash(pubDir);
+		console.log(`OK: wrote ${pubId} successfully!`);
+	} catch (error) {
+		console.log(`FAILURE: ${pubId}`);
+		console.log(error);
+	}
+	return true;
 };
 
 module.exports = processPub;

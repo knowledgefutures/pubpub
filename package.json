@@ -56,7 +56,6 @@
 		"ignore-styles": "^5.0.1",
 		"jest": "^24.5.0",
 		"json-stable-stringify": "^1.0.1",
-		"md5": "^2.2.1",
 		"mutationobserver-shim": "^0.3.3",
 		"prettier": "^1.16.4",
 		"prosemirror-dev-tools": "^2.1.1",

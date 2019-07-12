@@ -1,4 +1,4 @@
-const md5 = require('md5');
+const crypto = require('crypto');
 
 const areInputFilesAvailable = (pubDir, inputFileNames) =>
 	inputFileNames.every((name) => pubDir.exists(name));
@@ -8,7 +8,10 @@ const getHashOfFiles = (pubDir, inputFileNames) => {
 	inputFileNames.forEach((name) => {
 		resObj[name] = pubDir.read(name);
 	});
-	return md5(JSON.stringify(resObj)).toString();
+	return crypto
+		.createHash('md5')
+		.update(JSON.stringify(resObj))
+		.digest('hex');
 };
 
 const createHashMatcher = (hashFilename, hashInputFiles) => {

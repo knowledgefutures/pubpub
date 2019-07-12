@@ -152,6 +152,10 @@ const createFirebaseJson = (transformed, pubDir) => {
 const processPub = async (storage, pubId, writeToFirebase, { current, total }) => {
 	console.log(`~~~~~~~~ Processing pub ${pubId} (${current}/${total}) ~~~~~~~~`);
 	const pubDir = storage.within(`pubs/${pubId}`);
+	if (pubDir.contents().indexOf('transformed.json') === -1) {
+		console.log(`OK: No transformed.json for ${pubId}`);
+		return false;
+	}
 	const model = JSON.parse(pubDir.read('model.json'));
 	const { transformed } = JSON.parse(pubDir.read('transformed.json'));
 	const firebaseJson = createFirebaseJson(transformed, pubDir);

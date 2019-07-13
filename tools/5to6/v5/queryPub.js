@@ -22,7 +22,18 @@ const queryPub = async (pubId) => {
 		],
 	});
 	if (pub) {
-		return pub.toJSON();
+		return {
+			...pub.toJSON(),
+			versions: pub.versions.sort((foo, bar) => {
+				if (foo.createdAt < bar.createdAt) {
+					return -1;
+				}
+				if (foo.createdAt > bar.createdAt) {
+					return 1;
+				}
+				return 0;
+			}),
+		};
 	}
 	return null;
 };

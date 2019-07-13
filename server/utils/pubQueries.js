@@ -141,28 +141,11 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 				return branch.id === discussion.branchId;
 			});
 			return discussionBranch && discussionBranch.canView;
-
 			// return discussion.branchId === activeBranch.id;
 		}),
-		/* TODO: Why are we not filtering collections as below anymore? */
-		// collections: pub.collections
-		// 	? pub.collections.filter((item)=> {
-		// 		return item.isPublic || communityAdminData;
-		// 	})
-		// 	: undefined,
-		collectionPubs: collectionPubs
-			.map((item) => {
-				if (!communityAdminData && item.collection && !item.collection.isPublic) {
-					return {
-						...item,
-						collection: undefined,
-					};
-				}
-				return item;
-			})
-			.filter((item) => {
-				return !item.collection || item.collection.isPublic || communityAdminData;
-			}),
+		collectionPubs: collectionPubs.filter((item) => {
+			return item.collection.isPublic || communityAdminData;
+		}),
 		canManage: canManagePub,
 		canManageBranch: activeBranch.canManage,
 		canEditBranch: activeBranch.canEdit,

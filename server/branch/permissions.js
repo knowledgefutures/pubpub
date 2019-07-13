@@ -16,6 +16,7 @@ export const getBranchAccess = (accessHash, branchData, userId, isCommunityAdmin
 
 	/* Compute canManageBranch */
 	const canManageBranch = hasSomePermissionTo('manage', false);
+
 	const isValidEditHash = accessHash === branchData.editHash;
 	const canEditBranch = canManageBranch || isValidEditHash || hasSomePermissionTo('edit');
 
@@ -25,9 +26,12 @@ export const getBranchAccess = (accessHash, branchData, userId, isCommunityAdmin
 	const isValidViewHash = accessHash === branchData.viewHash;
 	const canViewBranch = canDiscussBranch || isValidViewHash || hasSomePermissionTo('view');
 
+	/* TODO-BRANCH: This instance of conditional canEdit is only valid until */
+	/* we roll out full branch features */
 	return {
 		canManage: !!canManageBranch,
-		canEdit: !!canEditBranch,
+		// canEdit: !!canEditBranch,
+		canEdit: branchData.title !== 'public' && !!canEditBranch,
 		canDiscuss: !!canDiscussBranch,
 		canView: !!canViewBranch,
 	};

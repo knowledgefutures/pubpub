@@ -101,17 +101,22 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			if (attribution.user) {
 				return attribution;
 			}
+
+			/* When an attribution is only given a single name (i.e. no spaces) */
+			/* we use the single name as a last name for citation purposes */
+			const firstName = attribution.name.split(' ')[0];
+			const lastName = attribution.name
+				.split(' ')
+				.slice(1, attribution.name.split(' ').length)
+				.join(' ');
 			return {
 				...attribution,
 				user: {
 					id: attribution.id,
 					initials: attribution.name[0],
 					fullName: attribution.name,
-					firstName: attribution.name.split(' ')[0],
-					lastName: attribution.name
-						.split(' ')
-						.slice(1, attribution.name.split(' ').length)
-						.join(' '),
+					firstName: lastName ? firstName : '',
+					lastName: lastName || firstName,
 					avatar: attribution.avatar,
 					title: attribution.title,
 				},
@@ -151,9 +156,7 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 		canEditBranch: activeBranch.canEdit,
 		canDiscussBranch: activeBranch.canDiscuss,
 		canViewBranch: activeBranch.canView,
-		/* TODO-BRANCH: This check for title === public is only valid until */
-		/* we roll out full branch features */
-		isStaticDoc: activeBranch.title === 'public' || !!req.params.versionNumber,
+		isStaticDoc: !!req.params.versionNumber,
 	};
 
 	return formattedPubData;

@@ -25,7 +25,9 @@ const SharePanel = function(props) {
 			<h3>Share this Branch (#{pubData.activeBranch.title})</h3>
 			<BranchPermissions
 				pubData={pubData}
-				branchData={pubData.activeBranch}
+				branchData={pubData.branches.find((branch) => {
+					return branch.id === pubData.activeBranch.id;
+				})}
 				updateLocalData={updateLocalData}
 				setIsLoading={setIsLoading}
 			/>

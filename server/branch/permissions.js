@@ -2,16 +2,20 @@ import { Branch, BranchPermission, PubManager, CommunityAdmin, Pub } from '../mo
 import { checkIfSuperAdmin } from '../utils';
 
 export const getBranchAccess = (accessHash, branchData, userId, isCommunityAdmin, canManagePub) => {
-	const hasSomePermissionTo = (permission, shouldCheckPublic = true) =>
-		checkIfSuperAdmin(userId) ||
-		(isCommunityAdmin && branchData.communityAdminPermissions === permission) ||
-		(canManagePub && branchData.pubManagerPermissions === permission) ||
-		(shouldCheckPublic && branchData.publicPermissions === permission) ||
-		branchData.permissions.some((bp) => bp.userId === userId && bp.permissions === permission);
+	const hasSomePermissionTo = (permission, shouldCheckPublic = true) => {
+		return (
+			checkIfSuperAdmin(userId) ||
+			(isCommunityAdmin && branchData.communityAdminPermissions === permission) ||
+			(canManagePub && branchData.pubManagerPermissions === permission) ||
+			(shouldCheckPublic && branchData.publicPermissions === permission) ||
+			branchData.permissions.some(
+				(bp) => bp.userId === userId && bp.permissions === permission,
+			)
+		);
+	};
 
 	/* Compute canManageBranch */
 	const canManageBranch = hasSomePermissionTo('manage', false);
-
 	const isValidEditHash = accessHash === branchData.editHash;
 	const canEditBranch = canManageBranch || isValidEditHash || hasSomePermissionTo('edit');
 

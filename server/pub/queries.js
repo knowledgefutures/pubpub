@@ -54,7 +54,7 @@ export const createPub = (inputValues, userData) => {
 				discussHash: generateHash(8),
 				editHash: generateHash(8),
 				publicPermissions: 'discuss',
-				pubManagerPermissions: 'manage',
+				pubManagerPermissions: 'discuss',
 				communityAdminPermissions: 'manage',
 				pubId: newPub.id,
 			});

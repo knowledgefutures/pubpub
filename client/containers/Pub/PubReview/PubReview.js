@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Intent, Tag, Tabs, Tab, Callout } from '@blueprintjs/core';
+import { Button, Intent, Tag, Tabs, Tab } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, Icon, InputField, MinimalEditor } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
@@ -154,134 +154,131 @@ const PubReview = (props) => {
 		destinationBranch.id &&
 		destinationBranch.canManage;
 	return (
-		<GridWrapper containerClassName="pub pub-reviews-component">
-			<div className="review-header">
-				<h2>Review {activeReview.shortId}</h2>
-				<Tag minimal={true} large={true}>
-					#{sourceBranch.title}{' '}
-					<Icon icon="arrow-right" iconSize={14} className="merge-arrow" /> #
-					{destinationBranch.title}
-				</Tag>
-			</div>
-			<Tag className="status-tag" minimal={true} large={true} intent={statusIntent}>
-				{!activeReview.isClosed && 'Open'}
-				{activeReview.isClosed && !activeReview.isCompleted && 'Closed'}
-				{activeReview.isCompleted && !activeReview.mergeId && 'Completed'}
-				{activeReview.mergeId && 'Merged'}
-			</Tag>
-
-			<Tabs
-				onChange={(newTab) => {
-					setCurrentTab(newTab);
-				}}
-				selectedTabId={currentTab}
-			>
-				<Tab
-					id="details"
-					title="Details"
-					panel={
-						<div>
-							{/* Show Events */}
-							{activeReview.reviewEvents
-								.sort((foo, bar) => {
-									if (foo.createdAt < bar.createdAt) {
-										return -1;
-									}
-									if (foo.createdAt > bar.createdAt) {
-										return 1;
-									}
-									return foo.type === 'status' ? -1 : 1;
-								})
-								.map((event) => {
-									return (
-										<ReviewEvent
-											key={event.id}
-											pubData={pubData}
-											eventData={event}
-											updateLocalData={updateLocalData}
-										/>
-									);
-								})}
-
-							{/* Show input box */}
-							<InputField label="Note">
-								<MinimalEditor
-									key={noteKey}
-									onChange={(data) => {
-										setNoteData(data);
-									}}
-									placeholder="Add a note for the review team."
-								/>
-							</InputField>
-							<Button
-								intent={Intent.PRIMARY}
-								text="Add comment"
-								loading={isLoadingCreateComment}
-								onClick={createComment}
-							/>
-							{/* Show actions */}
-							{(!activeReview.isClosed || canMerge) && (
-								<Callout title="Review Actions" className="actions-block">
-									{!activeReview.isClosed && (
-										<React.Fragment>
-											<Button
-												key="complete"
-												text="Complete Review"
-												intent={Intent.SUCCESS}
-												loading={
-													isLoading === `complete-${activeReview.id}`
-												}
-												disabled={isLoading === `close-${activeReview.id}`}
-												onClick={() => {
-													updateReview(
-														{ isClosed: true, isCompleted: true },
-														activeReview.id,
-														sourceBranch,
-														destinationBranch,
-													);
-												}}
-											/>
-											<Button
-												key="close"
-												text="Close Review"
-												loading={isLoading === `close-${activeReview.id}`}
-												disabled={
-													isLoading === `complete-${activeReview.id}`
-												}
-												onClick={() => {
-													updateReview(
-														{ isClosed: true },
-														activeReview.id,
-														sourceBranch,
-														destinationBranch,
-													);
-												}}
-											/>
-										</React.Fragment>
-									)}
-
-									{canMerge && (
+		<div className="pub pub-reviews-component">
+			<GridWrapper>
+				<div className="review-header">
+					<h2>Review {activeReview.shortId}</h2>
+					<Tag minimal={true} large={true}>
+						#{sourceBranch.title}{' '}
+						<Icon icon="arrow-right" iconSize={14} className="merge-arrow" /> #
+						{destinationBranch.title}
+					</Tag>
+					{/* Show actions */}
+					{(!activeReview.isClosed || canMerge) && (
+						<div className="actions-block">
+							{!activeReview.isClosed && (
+								<React.Fragment>
+									{destinationBranch.canManage && (
 										<Button
-											text={`Merge to ${destinationBranch.title}`}
-											loading={isLoading === `merge-${activeReview.id}`}
+											key="complete"
+											text="Complete Review"
+											intent={Intent.SUCCESS}
+											loading={isLoading === `complete-${activeReview.id}`}
+											disabled={isLoading === `close-${activeReview.id}`}
 											onClick={() => {
-												mergeBranch(
-													activeReview,
+												updateReview(
+													{ isClosed: true, isCompleted: true },
+													activeReview.id,
 													sourceBranch,
 													destinationBranch,
 												);
 											}}
 										/>
 									)}
-								</Callout>
+									<Button
+										key="close"
+										text="Close Review"
+										loading={isLoading === `close-${activeReview.id}`}
+										disabled={isLoading === `complete-${activeReview.id}`}
+										onClick={() => {
+											updateReview(
+												{ isClosed: true },
+												activeReview.id,
+												sourceBranch,
+												destinationBranch,
+											);
+										}}
+									/>
+								</React.Fragment>
+							)}
+
+							{canMerge && (
+								<Button
+									text={`Merge to #${destinationBranch.title}`}
+									loading={isLoading === `merge-${activeReview.id}`}
+									onClick={() => {
+										mergeBranch(activeReview, sourceBranch, destinationBranch);
+									}}
+								/>
 							)}
 						</div>
-					}
-				/>
+					)}
+				</div>
+				<Tag className="status-tag" minimal={true} large={true} intent={statusIntent}>
+					{!activeReview.isClosed && 'Open'}
+					{activeReview.isClosed && !activeReview.isCompleted && 'Closed'}
+					{activeReview.isCompleted && !activeReview.mergeId && 'Completed'}
+					{activeReview.mergeId && 'Merged'}
+				</Tag>
 
-				{/* <Tab id="doc" title="Document" panel={<div>Doc here</div>} /> */}
-			</Tabs>
-		</GridWrapper>
+				<Tabs
+					onChange={(newTab) => {
+						setCurrentTab(newTab);
+					}}
+					selectedTabId={currentTab}
+				>
+					<Tab
+						id="details"
+						title="Details"
+						panel={
+							<div>
+								{/* Show Events */}
+								{activeReview.reviewEvents
+									.sort((foo, bar) => {
+										if (foo.createdAt < bar.createdAt) {
+											return -1;
+										}
+										if (foo.createdAt > bar.createdAt) {
+											return 1;
+										}
+										return foo.type === 'status' ? -1 : 1;
+									})
+									.map((event) => {
+										return (
+											<ReviewEvent
+												key={event.id}
+												pubData={pubData}
+												eventData={event}
+												updateLocalData={updateLocalData}
+											/>
+										);
+									})}
+
+								{/* Show input box */}
+								<InputField label="Note">
+									<MinimalEditor
+										key={noteKey}
+										onChange={(data) => {
+											setNoteData(data);
+										}}
+										placeholder="Add a note for the review team."
+									/>
+								</InputField>
+								<Button
+									intent={Intent.PRIMARY}
+									text="Add comment"
+									loading={isLoadingCreateComment}
+									onClick={createComment}
+									disabled={!noteData.text}
+								/>
+							</div>
+						}
+					/>
+
+					{/* <Tab id="doc" title="Document" panel={<div>Doc here</div>} /> */}
+				</Tabs>
+			</GridWrapper>
+		</div>
 	);
 };
 

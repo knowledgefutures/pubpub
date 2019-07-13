@@ -1,8 +1,9 @@
 .pub-reviews-component {
-	margin-top: 2em;
+	margin: 2em 0em;
 	.review-header {
 		display: flex;
 		align-items: center;
+		flex-wrap: wrap;
 		h2 {
 			display: inline;
 			margin: 0em 1em 0em 0em;
@@ -14,12 +15,16 @@
 	}
 	.bp3-tab-list {
 		margin-top: 2em;
-		border-bottom: 1px solid #CCC;
+		border-bottom: 1px solid #ccc;
 		display: none;
 	}
 	.actions-block {
+		flex: 1 1 auto;
+		justify-content: flex-end;
+		display: flex;
 		button {
-			margin-right: 1em;
+			margin-left: 1em;
+			white-space: nowrap;
 		}
 	}
 }

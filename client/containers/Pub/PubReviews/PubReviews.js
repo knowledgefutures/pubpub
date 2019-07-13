@@ -63,7 +63,7 @@ const PubReviews = (props) => {
 							</Tag>
 
 							<div className="date">
-								Opened
+								<span>Opened </span>
 								<TimeAgo
 									minPeriod={60}
 									formatter={(value, unit, suffix) => {

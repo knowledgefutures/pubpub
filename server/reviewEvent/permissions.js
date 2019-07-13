@@ -31,6 +31,7 @@ export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEve
 	return Review.findOne({
 		where: {
 			id: reviewId,
+			pubId: pubId,
 		},
 	})
 		.then((reviewData) => {
@@ -57,14 +58,14 @@ export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEve
 				if (!pubData || !sourceBranchData) {
 					return {};
 				}
-
 				const sourceAccess = getBranchAccess(
 					null,
-					destinationBranchData,
+					sourceBranchData,
 					userId,
 					communityAdminData,
 					pubManagerData,
 				);
+
 				const destinationAccess = destinationBranchData
 					? getBranchAccess(
 							null,

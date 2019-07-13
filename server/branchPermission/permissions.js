@@ -1,4 +1,4 @@
-import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
+import { Branch, BranchPermission, PubManager, CommunityAdmin, Pub } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 
 export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
@@ -22,8 +22,9 @@ export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 		}),
 		PubManager.findOne({ where: { pubId: pubId, userId: userId } }),
 		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
-	]).then(([branchData, pubManagerData, communityAdminData]) => {
-		if (!branchData) {
+		Pub.findOne({ where: { id: pubId, communityId: communityId } }),
+	]).then(([branchData, pubManagerData, communityAdminData, pubData]) => {
+		if (!branchData || !pubData) {
 			return {};
 		}
 

@@ -117,11 +117,11 @@ class Collections extends Component {
 			});
 	}
 
-	handleCollectionPubDelete(collectionPubId) {
+	handleCollectionPubDelete(collectionPub) {
 		this.setState(
 			(prevState) => {
-				const newCollectionPubs = prevState.collectionPubs.filter((collectionPub) => {
-					return collectionPub.id !== collectionPubId;
+				const newCollectionPubs = prevState.collectionPubs.filter((item) => {
+					return item.id !== collectionPub.id;
 				});
 				return { collectionPubs: newCollectionPubs, isLoading: true };
 			},
@@ -129,8 +129,9 @@ class Collections extends Component {
 				apiFetch('/api/collectionPubs', {
 					method: 'DELETE',
 					body: JSON.stringify({
-						id: collectionPubId,
+						id: collectionPub.id,
 						communityId: this.props.communityData.id,
+						collectionId: collectionPub.collectionId,
 					}),
 				}).then(() => {
 					this.props.updateLocalData('pub', {
@@ -142,20 +143,20 @@ class Collections extends Component {
 		);
 	}
 
-	handleCollectionPubSetPrimary(collectionPubId, setPrimary = true) {
+	handleCollectionPubSetPrimary(collectionPub, setPrimary = true) {
 		const { communityData, updateLocalData } = this.props;
-		const isPrimary = (collectionPub) => {
+		const isPrimary = (item) => {
 			if (setPrimary) {
-				return collectionPub.id === collectionPubId;
+				return item.id === collectionPub.id;
 			}
 			return false;
 		};
 		this.setState(
 			(state) => ({
 				isLoading: true,
-				collectionPubs: state.collectionPubs.map((collectionPub) => ({
-					...collectionPub,
-					isPrimary: isPrimary(collectionPub),
+				collectionPubs: state.collectionPubs.map((item) => ({
+					...item,
+					isPrimary: isPrimary(item),
 				})),
 			}),
 			() =>
@@ -163,8 +164,9 @@ class Collections extends Component {
 					method: 'PUT',
 					body: JSON.stringify({
 						isPrimary: setPrimary,
-						id: collectionPubId,
+						id: collectionPub.id,
 						communityId: communityData.id,
+						collectionId: collectionPub.collectionId,
 					}),
 				}).then(() => {
 					updateLocalData('pub', {
@@ -230,7 +232,7 @@ class Collections extends Component {
 	}
 
 	renderCollectionRow(collectionPub) {
-		const { collection, isPrimary, id } = collectionPub;
+		const { collection, isPrimary } = collectionPub;
 		const { title, isPublic } = collection;
 		const schema = getSchemaForKind(collection.kind);
 		return (
@@ -260,14 +262,19 @@ class Collections extends Component {
 													: 'Use as primary collection'
 											}
 											onClick={() =>
-												this.handleCollectionPubSetPrimary(id, !isPrimary)
+												this.handleCollectionPubSetPrimary(
+													collectionPub,
+													!isPrimary,
+												)
 											}
 										/>
 									)}
 									<MenuItem
 										intent="danger"
 										icon="trash"
-										onClick={() => this.handleCollectionPubDelete(id)}
+										onClick={() =>
+											this.handleCollectionPubDelete(collectionPub)
+										}
 										text="Remove from collection"
 									/>
 								</Menu>

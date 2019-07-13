@@ -1,4 +1,4 @@
-import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
+import { Branch, BranchPermission, PubManager, CommunityAdmin, Pub } from '../models';
 import { getBranchAccess } from '../branch/permissions';
 
 export const getPermissions = ({
@@ -31,41 +31,50 @@ export const getPermissions = ({
 		findBranch(destinationBranchId),
 		PubManager.findOne({ where: { pubId: pubId, userId: userId } }),
 		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
-	]).then(([sourceBranchData, destinationBranchData, pubManagerData, communityAdminData]) => {
-		if (!sourceBranchData || !destinationBranchData) {
-			return {};
-		}
-
-		const sourceAccess = getBranchAccess(
-			null,
+		Pub.findOne({ where: { id: pubId, communityId: communityId } }),
+	]).then(
+		([
 			sourceBranchData,
-			userId,
-			communityAdminData,
-			pubManagerData,
-		);
-		const destinationAccess = getBranchAccess(
-			null,
 			destinationBranchData,
-			userId,
-			communityAdminData,
 			pubManagerData,
-		);
+			communityAdminData,
+			pubData,
+		]) => {
+			if (!pubData || !sourceBranchData || !destinationBranchData) {
+				return {};
+			}
 
-		/* TODO: We need some concept of 'Review Owner' for reviews with no */
-		/* destinationBranch. Who is the one administrating the review, if not */
-		/* the destination branch owner? Perhaps the review creator? */
-		let editProps = [];
-		if (sourceAccess.canManage) {
-			editProps = ['isClosed'];
-		}
-		if (destinationAccess.canManage) {
-			editProps = ['isClosed', 'isCompleted'];
-		}
+			const sourceAccess = getBranchAccess(
+				null,
+				sourceBranchData,
+				userId,
+				communityAdminData,
+				pubManagerData,
+			);
+			const destinationAccess = getBranchAccess(
+				null,
+				destinationBranchData,
+				userId,
+				communityAdminData,
+				pubManagerData,
+			);
 
-		return {
-			create: sourceAccess.canManage,
-			update: editProps,
-			destroy: sourceAccess.canManage,
-		};
-	});
+			/* TODO: We need some concept of 'Review Owner' for reviews with no */
+			/* destinationBranch. Who is the one administrating the review, if not */
+			/* the destination branch owner? Perhaps the review creator? */
+			let editProps = [];
+			if (sourceAccess.canManage) {
+				editProps = ['isClosed'];
+			}
+			if (destinationAccess.canManage) {
+				editProps = ['isClosed', 'isCompleted'];
+			}
+
+			return {
+				create: sourceAccess.canManage,
+				update: editProps,
+				destroy: sourceAccess.canManage,
+			};
+		},
+	);
 };

@@ -35,13 +35,17 @@ export const getPermissions = ({ userId, communityId, pubId }) => {
 		},
 	});
 	const findPub = Pub.findOne({
-		where: { id: pubId, communityId: communityId, isCommunityAdminManaged: true },
+		where: { id: pubId, communityId: communityId },
 		attributes: ['id', 'communityId', 'isCommunityAdminManaged'],
 	});
 
 	return Promise.all([findPubManager, findCommunityAdmin, findPub]).then(
 		([pubManagerData, communityAdminData, pubData]) => {
-			const canManage = isSuperAdmin || pubManagerData || (communityAdminData && pubData);
+			const canManage =
+				pubData &&
+				(isSuperAdmin ||
+					pubManagerData ||
+					(communityAdminData && pubData.isCommunityAdminManaged));
 			const editProps = [
 				'slug',
 				'title',

@@ -23,7 +23,7 @@ export const getPermissions = ({ discussionId, pubId, userId, communityId }) => 
 
 	// Find if community admins are allowed to manage pubs
 	const findPub = Pub.findOne({
-		where: { id: pubId, isCommunityAdminManaged: true },
+		where: { id: pubId, communityId: communityId },
 		raw: true,
 	});
 
@@ -34,11 +34,14 @@ export const getPermissions = ({ discussionId, pubId, userId, communityId }) => 
 	});
 
 	return Promise.all([findPubManager, findCommunityAdmin, findPub, findDiscussion]).then(
-		([isPubManager, isCommunityAdmin, adminsManagePub, isDiscussionAuthor]) => {
+		([isPubManager, isCommunityAdmin, pubData, isDiscussionAuthor]) => {
+			if (!pubData) {
+				return {};
+			}
 			const editProps =
 				isSuperAdmin ||
 				isPubManager ||
-				(isCommunityAdmin && adminsManagePub) ||
+				(isCommunityAdmin && pubData.isCommunityAdminManaged) ||
 				isDiscussionAuthor
 					? ['title', 'content', 'text', 'isArchived', 'highlights', 'labels']
 					: false;

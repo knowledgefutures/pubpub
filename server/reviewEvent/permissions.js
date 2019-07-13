@@ -5,6 +5,7 @@ import {
 	CommunityAdmin,
 	Review,
 	ReviewEvent,
+	Pub,
 } from '../models';
 import { getBranchAccess } from '../branch/permissions';
 
@@ -41,6 +42,7 @@ export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEve
 				PubManager.findOne({ where: { pubId: pubId, userId: userId } }),
 				CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
 				ReviewEvent.findOne({ where: { id: reviewEventId } }),
+				Pub.findOne({ where: { id: pubId, communityId: communityId } }),
 			]);
 		})
 		.then(
@@ -50,8 +52,9 @@ export const getPermissions = ({ userId, communityId, pubId, reviewId, reviewEve
 				pubManagerData,
 				communityAdminData,
 				reviewEventData,
+				pubData,
 			]) => {
-				if (!sourceBranchData) {
+				if (!pubData || !sourceBranchData) {
 					return {};
 				}
 

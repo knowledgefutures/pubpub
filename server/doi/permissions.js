@@ -1,4 +1,4 @@
-import { PubManager, CommunityAdmin } from '../models';
+import { PubManager, CommunityAdmin, Pub } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 
 export const getPermissions = ({ pubId, userId, communityId }) => {
@@ -19,8 +19,16 @@ export const getPermissions = ({ pubId, userId, communityId }) => {
 		raw: true,
 	});
 
-	return Promise.all([findPubManager, findCommunityAdmin]).then(
-		([isPubManager, isCommunityAdmin]) => {
+	const findPub = Pub.findOne({
+		where: { id: pubId, communityId: communityId },
+		raw: true,
+	});
+
+	return Promise.all([findPubManager, findCommunityAdmin, findPub]).then(
+		([isPubManager, isCommunityAdmin, pubData]) => {
+			if (!pubData) {
+				return {};
+			}
 			return {
 				pub: isSuperAdmin || isCommunityAdmin || isPubManager,
 				collection: isSuperAdmin || isCommunityAdmin,

@@ -1,4 +1,4 @@
-import { Branch, BranchPermission, PubManager, CommunityAdmin } from '../models';
+import { Branch, BranchPermission, PubManager, CommunityAdmin, Pub } from '../models';
 import { getBranchAccess } from '../branch/permissions';
 
 export const getPermissions = ({
@@ -31,25 +31,34 @@ export const getPermissions = ({
 		findBranch(destinationBranchId),
 		PubManager.findOne({ where: { pubId: pubId, userId: userId } }),
 		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
-	]).then(([sourceBranchData, destinationBranchData, pubManagerData, communityAdminData]) => {
-		if (!sourceBranchData || !destinationBranchData) {
-			return {};
-		}
-
-		const destinationAccess = getBranchAccess(
-			null,
+		Pub.findOne({ where: { id: pubId, communityId: communityId } }),
+	]).then(
+		([
+			sourceBranchData,
 			destinationBranchData,
-			userId,
-			communityAdminData,
 			pubManagerData,
-		);
+			communityAdminData,
+			pubData,
+		]) => {
+			if (!pubData || !sourceBranchData || !destinationBranchData) {
+				return {};
+			}
 
-		const editProps = destinationAccess.canManage ? ['note'] : [];
+			const destinationAccess = getBranchAccess(
+				null,
+				destinationBranchData,
+				userId,
+				communityAdminData,
+				pubManagerData,
+			);
 
-		return {
-			create: destinationAccess.canManage,
-			update: editProps,
-			destroy: false,
-		};
-	});
+			const editProps = destinationAccess.canManage ? ['note'] : [];
+
+			return {
+				create: destinationAccess.canManage,
+				update: editProps,
+				destroy: false,
+			};
+		},
+	);
 };

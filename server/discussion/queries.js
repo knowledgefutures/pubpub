@@ -58,6 +58,7 @@ export const createDiscussion = (inputValues) => {
 				title: inputValues.title || generatedTitle,
 				content: inputValues.content,
 				text: inputValues.text,
+				initAnchorText: inputValues.initAnchorText,
 				userId: inputValues.userId,
 				pubId: inputValues.pubId,
 				communityId: inputValues.communityId,

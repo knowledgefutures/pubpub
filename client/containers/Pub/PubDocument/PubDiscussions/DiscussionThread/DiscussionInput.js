@@ -5,6 +5,7 @@ import Editor, {
 	getJSON,
 	removeLocalHighlight,
 	convertLocalHighlightToDiscussion,
+	getLocalHighlightText,
 } from '@pubpub/editor';
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
@@ -39,6 +40,7 @@ const DiscussionInput = (props) => {
 
 	const handlePostDiscussion = () => {
 		setIsLoading(true);
+		const initAnchorText = getLocalHighlightText(pubView, threadData[0].id);
 		return apiFetch('/api/discussions', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -50,6 +52,7 @@ const DiscussionInput = (props) => {
 				communityId: communityData.id,
 				content: getJSON(changeObject.view),
 				text: getText(changeObject.view) || '',
+				initAnchorText: initAnchorText,
 			}),
 		})
 			.then((discussionData) => {

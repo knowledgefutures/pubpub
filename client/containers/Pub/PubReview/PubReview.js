@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Intent, Tag, Tabs, Tab } from '@blueprintjs/core';
+import { Button, Intent, Tag, Tabs, Tab, Callout } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, Icon, InputField, MinimalEditor } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
@@ -154,8 +154,8 @@ const PubReview = (props) => {
 		destinationBranch.id &&
 		destinationBranch.canManage;
 	return (
-		<div className="pub pub-reviews-component">
-			<GridWrapper>
+		<div className="pub-review-component">
+			<GridWrapper containerClassName="pub">
 				<div className="review-header">
 					<h2>Review {activeReview.shortId}</h2>
 					<Tag minimal={true} large={true}>
@@ -232,6 +232,26 @@ const PubReview = (props) => {
 						title="Details"
 						panel={
 							<div>
+								<Callout
+									title="New Feature"
+									icon="cube-add"
+									intent={Intent.WARNING}
+									style={{ marginBottom: '2em' }}
+								>
+									<p>
+										With the introduction of{' '}
+										<a href="https://discourse.knowledgefutures.org/t/branches/157">
+											branches
+										</a>{' '}
+										we're beginning to roll out new review capabilities. We're
+										starting with limited functionality and will be pushing
+										updates soon. Share your input and learn{' '}
+										<a href="https://discourse.knowledgefutures.org/t/feature-discussion-reviews/166">
+											how we're thinking about reviews here
+										</a>
+										.
+									</p>
+								</Callout>
 								{/* Show Events */}
 								{activeReview.reviewEvents
 									.sort((foo, bar) => {

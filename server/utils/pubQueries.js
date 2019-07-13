@@ -20,73 +20,6 @@ import {
 	ReviewEvent,
 } from '../models';
 
-// const calculateBranchPermissions = (
-// 	req,
-// 	branchData,
-// 	loginData,
-// 	communityAdminData,
-// 	canManagePub,
-// 	isSuperAdmin,
-// ) => {
-// 	/* Compute canManageBranch */
-// 	const isCommunityAdminBranchManager =
-// 		communityAdminData && branchData.communityAdminPermissions === 'manage';
-// 	const isPubManagerBranchManager = canManagePub && branchData.pubManagerPermissions === 'manage';
-// 	const canManageBranch = branchData.permissions.reduce((prev, curr) => {
-// 		if (curr.userId === loginData.id && curr.permissions === 'manage') {
-// 			return true;
-// 		}
-// 		return prev;
-// 	}, isCommunityAdminBranchManager || isPubManagerBranchManager || isSuperAdmin);
-
-// 	/* Compute canEditBranch */
-// 	const isValidEditHash = req.query.access === branchData.editHash;
-// 	const isCommunityAdminEditor =
-// 		communityAdminData && branchData.communityAdminPermissions === 'edit';
-// 	const isPubManagerBranchEditor = canManagePub && branchData.pubManagerPermissions === 'edit';
-// 	const isPublicBranchEditor = branchData.publicPermissions === 'edit';
-// 	const canEditBranch = branchData.permissions.reduce((prev, curr) => {
-// 		if (curr.userId === loginData.id && curr.permissions === 'edit') {
-// 			return true;
-// 		}
-// 		return prev;
-// 	}, canManageBranch || isValidEditHash || isCommunityAdminEditor || isPubManagerBranchEditor || isPublicBranchEditor);
-
-// 	/* Compute canDiscussBranch */
-// 	const isValidDiscussHash = req.query.access === branchData.discussHash;
-// 	const isCommunityAdminDiscussor =
-// 		communityAdminData && branchData.communityAdminPermissions === 'discuss';
-// 	const isPubManagerBranchDiscussor =
-// 		canManagePub && branchData.pubManagerPermissions === 'discuss';
-// 	const isPublicBranchDiscussor = branchData.publicPermissions === 'discuss';
-// 	const canDiscussBranch = branchData.permissions.reduce((prev, curr) => {
-// 		if (curr.userId === loginData.id && curr.permissions === 'discuss') {
-// 			return true;
-// 		}
-// 		return prev;
-// 	}, canEditBranch || isValidDiscussHash || isCommunityAdminDiscussor || isPubManagerBranchDiscussor || isPublicBranchDiscussor);
-
-// 	/* Compute canViewBranch */
-// 	const isValidViewHash = req.query.access === branchData.viewHash;
-// 	const isCommunityAdminViewer =
-// 		communityAdminData && branchData.communityAdminPermissions === 'view';
-// 	const isPubManagerBranchViewer = canManagePub && branchData.pubManagerPermissions === 'view';
-// 	const isPublicBranchViewer = branchData.publicPermissions === 'view';
-// 	const canViewBranch = branchData.permissions.reduce((prev, curr) => {
-// 		if (curr.userId === loginData.id && curr.permissions === 'view') {
-// 			return true;
-// 		}
-// 		return prev;
-// 	}, canDiscussBranch || isValidViewHash || isCommunityAdminViewer || isPubManagerBranchViewer || isPublicBranchViewer);
-
-// 	return {
-// 		canManage: canManageBranch,
-// 		canEdit: canEditBranch,
-// 		canDiscuss: canDiscussBranch,
-// 		canView: canViewBranch,
-// 	};
-// };
-
 export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req) => {
 	/* Used to format pub JSON and to test */
 	/* whether the user has permissions */
@@ -157,6 +90,9 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 		return prev;
 	}, undefined);
 
+	const reviews = pub.reviews || [];
+	const discussions = pub.discussions || [];
+	const collectionPubs = pub.collectionPubs || [];
 	const formattedPubData = {
 		...pub,
 		branches: formattedBranches,
@@ -181,7 +117,7 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 				},
 			};
 		}),
-		reviews: pub.reviews.filter((review) => {
+		reviews: reviews.filter((review) => {
 			const sourceBranch =
 				formattedBranches.find((branch) => {
 					return branch.id === review.sourceBranchId;
@@ -192,31 +128,29 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 				}) || {};
 			return sourceBranch.canManage || destinationBranch.canManage;
 		}),
-		discussions: pub.discussions
-			? pub.discussions.filter((discussion) => {
-					/* 
-					Note: We currently return discussions on any
-					branch the reader has access to. We only do this
-					to enable discussionEmbeds in the short term. 
-					Once we have a better solution to discussion embeds
-					in a branch world, we should use the simpler commented
-					line checking ===activeBranch.id below.
-					*/
-					const discussionBranch = formattedBranches.find((branch) => {
-						return branch.id === discussion.branchId;
-					});
-					return discussionBranch && discussionBranch.canView;
+		discussions: discussions.filter((discussion) => {
+			/* 
+			Note: We currently return discussions on any
+			branch the reader has access to. We only do this
+			to enable discussionEmbeds in the short term. 
+			Once we have a better solution to discussion embeds
+			in a branch world, we should use the simpler commented
+			line checking ===activeBranch.id below.
+			*/
+			const discussionBranch = formattedBranches.find((branch) => {
+				return branch.id === discussion.branchId;
+			});
+			return discussionBranch && discussionBranch.canView;
 
-					// return discussion.branchId === activeBranch.id;
-			  })
-			: undefined,
+			// return discussion.branchId === activeBranch.id;
+		}),
 		/* TODO: Why are we not filtering collections as below anymore? */
 		// collections: pub.collections
 		// 	? pub.collections.filter((item)=> {
 		// 		return item.isPublic || communityAdminData;
 		// 	})
 		// 	: undefined,
-		collectionPubs: pub.collectionPubs
+		collectionPubs: collectionPubs
 			.map((item) => {
 				if (!communityAdminData && item.collection && !item.collection.isPublic) {
 					return {

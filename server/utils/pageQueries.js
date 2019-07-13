@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import { attributesPublicUser } from '.';
+// import { attributesPublicUser } from '.';
 import {
 	User,
 	Collection,
@@ -60,13 +60,6 @@ export const findPage = (pageId, useIncludes, initialData) => {
 							as: 'permissions',
 							separate: true,
 							required: false,
-							include: [
-								{
-									model: User,
-									as: 'user',
-									attributes: attributesPublicUser,
-								},
-							],
 						},
 					],
 				},

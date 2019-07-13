@@ -12,6 +12,7 @@ export default (sequelize, dataTypes) => {
 			highlights: { type: dataTypes.JSONB },
 			isArchived: { type: dataTypes.BOOLEAN },
 			labels: { type: dataTypes.JSONB },
+			initAnchorText: { type: dataTypes.JSONB },
 
 			/* Set by Associations */
 			userId: { type: dataTypes.UUID, allowNull: false },

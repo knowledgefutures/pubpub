@@ -650,11 +650,16 @@ new Promise((resolve) => {
 	// 		type: Sequelize.DATE,
 	// 	});
 	// })
-	.then(() => {
-		return sequelize.queryInterface.addColumn('PubVersions', 'pubId', {
-			type: Sequelize.UUID,
-		});
-	})
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('PubVersions', 'pubId', {
+	// 		type: Sequelize.UUID,
+	// 	});
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Discussions', 'initAnchorText', {
+	// 		type: Sequelize.JSONB,
+	// 	});
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

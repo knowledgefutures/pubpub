@@ -1,7 +1,11 @@
+const { Op } = require('sequelize');
 const { Community, Discussion, Pub, Version, VersionPermission } = require('./models');
 
 const getAllPubIds = async () => {
 	const pubs = await Pub.findAll({
+		where: {
+			communityId: { [Op.ne]: '99608f92-d70f-46c1-a72c-df272215f13e' },
+		},
 		attributes: ['id'],
 	});
 	return pubs.map((pub) => pub.id);

@@ -40,7 +40,6 @@ Promise.all([])
 	})
 	.then(() => {
 		/* Pub */
-		console.log('Migrating Pub');
 		return v5_Pub
 			.findAll({
 				where: {

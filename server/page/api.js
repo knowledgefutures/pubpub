@@ -8,7 +8,7 @@ const getRequestIds = (req) => {
 		userId: user.id,
 		communityId: req.body.communityId,
 		pubId: req.body.pubId,
-		pageId: req.body.reviewId || null,
+		pageId: req.body.pageId || null,
 	};
 };
 

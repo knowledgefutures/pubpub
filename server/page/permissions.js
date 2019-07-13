@@ -14,7 +14,7 @@ export const getPermissions = ({ userId, communityId, pageId }) => {
 	]).then(([isCommunityAdmin, pageData]) => {
 		const isAuthenticated = isCommunityAdmin || isSuperAdmin;
 		if (!pageData) {
-			return { created: isAuthenticated };
+			return { create: isAuthenticated };
 		}
 		const editProps = [
 			'title',

@@ -24,8 +24,7 @@ export const getBranchDoc = (pubId, branchId, historyKey) => {
 	const branchKey = `branch-${branchId}`;
 	const firebaseRef = database.ref(`${pubKey}/${branchKey}`);
 	const editorSchema = buildSchema({ ...discussionSchema }, {});
-
-	return getFirebaseDoc(firebaseRef, editorSchema, historyKey);
+	return getFirebaseDoc(firebaseRef, editorSchema, historyKey, true);
 	// return restoreDiscussionMaps(firebaseRef, editorSchema, true).then(() => {
 	// 	console.log('Finished with restoreDiscussionMaps');
 	// 	return getFirebaseDoc(firebaseRef, editorSchema, versionNumber);

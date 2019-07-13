@@ -113,9 +113,9 @@ const DiscussionItem = (props) => {
 							firebaseBranchRef &&
 							loginData.id === 'b242f616-7aaa-479c-8ee5-3933dcf70859' && (
 								<DiscussionReanchor
+									discussionData={discussionData}
 									collabData={collabData}
 									firebaseBranchRef={firebaseBranchRef}
-									discussionId={discussionData.id}
 								/>
 							)}
 						{!isPreview && (isDiscussionAuthor || pubData.canManage) && isRootThread && (

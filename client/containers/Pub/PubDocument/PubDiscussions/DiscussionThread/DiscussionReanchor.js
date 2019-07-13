@@ -7,21 +7,22 @@ import { Button, ButtonGroup, Card, Icon, Tooltip } from '@blueprintjs/core';
 require('./discussionReanchor.scss');
 
 const propTypes = {
+	discussionData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object.isRequired,
-	discussionId: PropTypes.string.isRequired,
 };
 
 const DiscussionReanchor = (props) => {
-	const { collabData, discussionId, firebaseBranchRef } = props;
+	const { collabData, discussionData, firebaseBranchRef } = props;
 	const [isActive, setIsActive] = useState(false);
 	const { selection } = collabData.editorChangeObject;
 	const onReanchor = () => {
 		const { view } = collabData.editorChangeObject;
-		reanchorDiscussion(view, firebaseBranchRef, discussionId);
+		reanchorDiscussion(view, firebaseBranchRef, discussionData.id);
 		setIsActive(false);
 	};
 
+	const initAnchorText = discussionData.initAnchorText || {};
 	return (
 		<React.Fragment>
 			<Tooltip content="Re-anchor discussion">
@@ -37,6 +38,11 @@ const DiscussionReanchor = (props) => {
 				ReactDOM.createPortal(
 					<Card className="discussion-reanchor-component">
 						<p>Make a highlight in the document and then click "Re-anchor".</p>
+						<p>
+							{initAnchorText.prefix}
+							<em style={{ fontWeight: 'bold' }}>{initAnchorText.exact}</em>
+							{initAnchorText.suffix}
+						</p>
 						<ButtonGroup>
 							<Button onClick={() => setIsActive(false)} style={{ marginRight: 10 }}>
 								Cancel

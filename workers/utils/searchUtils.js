@@ -22,9 +22,9 @@ const validateTextSize = (stringArray) => {
 	return stringArray
 		.map((string) => {
 			const stringSize = lengthInUtf8Bytes(string);
-			if (stringSize > 8500) {
+			if (stringSize > 7500) {
 				const re = new RegExp(
-					`.{1,${Math.floor(8000 / (Math.ceil(stringSize / 8000) + 1))}}`,
+					`.{1,${Math.floor(7000 / (Math.ceil(stringSize / 7000) + 1))}}`,
 					'g',
 				);
 				return string.match(re);
@@ -53,7 +53,7 @@ const jsonToTextChunks = (docJson) => {
 	const splitText = stopword
 		.removeStopwords(text.split(' '), stopWordList)
 		.join(' ')
-		.match(/.{1,8000}/g) || [''];
+		.match(/.{1,7000}/g) || [''];
 	return validateTextSize(splitText);
 };
 
@@ -153,7 +153,7 @@ export const getPubSearchData = (pubIds) => {
 					const branchPermissionIds = branch.permissions.map((branchPermission) => {
 						return branchPermission.userId;
 					});
-					/* Assume metadata is 2000 characters = 2000 bytes */
+					/* Assume metadata is 3000 characters = 3000 bytes */
 					const data = {
 						pubId: pub.id,
 						title: pub.title,

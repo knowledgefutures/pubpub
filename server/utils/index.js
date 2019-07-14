@@ -100,11 +100,9 @@ export const getInitialData = (req) => {
 							? '/static/logoWhite.svg'
 							: '/static/logoBlack.svg',
 					hideHero: true,
-					accentColor: '#112233',
-					accentTextColor: '#FFFFFF',
-					accentActionColor: 'rgba(17, 34, 51, 0.6)',
-					accentHoverColor: 'rgba(17, 34, 51, 0.8)',
-					accentMinimalColor: 'rgba(17, 34, 51, 0.2)',
+					accentColorLight: '#ffffff',
+					accentColorDark: '#112233',
+					headerColorType: 'light',
 					hideCreatePubButton: true,
 					headerLinks: [
 						{ title: 'About', url: '/about' },

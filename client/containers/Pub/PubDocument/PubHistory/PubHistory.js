@@ -81,7 +81,7 @@ const History = (props) => {
 			<GridWrapper containerClassName="pub pu">
 				<div className="pub-history-inner">
 					{isLoading && <Spinner size={25} />}
-					{nothingToShow && 'This branch has no history (yet)'}
+					{nothingToShow && 'This branch has no past versions.'}
 					{!isLoading && !nothingToShow && (
 						<React.Fragment>
 							<Slider

@@ -8,11 +8,11 @@ export const getPubPublishedDate = (pub, branch = null) => {
 		if (!pub.branches.some((br) => br.id === selectedBranch.id)) {
 			throw new Error(`Branch ${selectedBranch.id} not a member of pub ${pub.id}!`);
 		}
-		if (selectedBranch.publishedAt) {
-			return new Date(selectedBranch.publishedAt);
+		if (selectedBranch.firstKeyAt) {
+			return new Date(selectedBranch.firstKeyAt);
 		}
-		if (selectedBranch.updatedAt) {
-			return new Date(selectedBranch.updatedAt);
+		if (selectedBranch.lastKeyAt) {
+			return new Date(selectedBranch.lastKeyAt);
 		}
 	}
 	return null;

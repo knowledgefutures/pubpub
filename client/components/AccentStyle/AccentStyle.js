@@ -80,7 +80,9 @@ const AccentStyle = function(props) {
 			.highlight-dot-wrapper .highlight-dot { background-color: ${baseColor}; }
 			${useHeaderTextAccent ? bottomBorder : ''}
 			${
-				!useHeaderTextAccent && headerAccentColor.base.toLowerCase() === '#ffffff'
+				!useHeaderTextAccent &&
+				headerAccentColor.base &&
+				headerAccentColor.base.toLowerCase() === '#ffffff'
 					? simpleBottomBorder
 					: ''
 			}

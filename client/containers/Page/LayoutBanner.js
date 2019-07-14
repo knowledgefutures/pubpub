@@ -51,7 +51,11 @@ class LayoutBanner extends Component {
 			textAlign: this.props.content.align || 'left',
 		};
 		const textStyle = {
-			color: Color(this.props.content.backgroundColor).isLight() ? '#000000' : '#FFFFFF',
+			color:
+				this.props.content.backgroundImage ||
+				!Color(this.props.content.backgroundColor).isLight()
+					? '#FFFFFF'
+					: '#000000',
 			lineHeight: '1em',
 			fontSize: this.props.content.backgroundHeight === 'narrow' ? '18px' : '28px',
 		};

@@ -329,8 +329,8 @@ export function generatePageBackground(pageTitle) {
 export function generateRenderLists(layout, pubs) {
 	/* Sort pubs by activeBranch date */
 	const allPubs = pubs.sort((foo, bar) => {
-		const fooDate = foo.activeBranch.createdAt || foo.createdAt;
-		const barDate = bar.activeBranch.createdAt || bar.createdAt;
+		const fooDate = foo.activeBranch.firstKeyAt || foo.createdAt;
+		const barDate = bar.activeBranch.firstKeyAt || bar.createdAt;
 		if (fooDate < barDate) {
 			return 1;
 		}

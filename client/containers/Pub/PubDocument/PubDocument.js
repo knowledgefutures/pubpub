@@ -124,7 +124,7 @@ const PubDocument = (props) => {
 							editorView={collabData.editorChangeObject.view}
 						/>
 					)}
-					{!linkPopupIsOpen && (editorFocused || pubData.isStaticDoc) && (
+					{!linkPopupIsOpen && (editorFocused || !pubData.canEditBranch) && (
 						<PubInlineMenu
 							pubData={pubData}
 							collabData={collabData}

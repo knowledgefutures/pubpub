@@ -101,17 +101,22 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 			if (attribution.user) {
 				return attribution;
 			}
+
+			/* When an attribution is only given a single name (i.e. no spaces) */
+			/* we use the single name as a last name for citation purposes */
+			const firstName = attribution.name.split(' ')[0];
+			const lastName = attribution.name
+				.split(' ')
+				.slice(1, attribution.name.split(' ').length)
+				.join(' ');
 			return {
 				...attribution,
 				user: {
 					id: attribution.id,
 					initials: attribution.name[0],
 					fullName: attribution.name,
-					firstName: attribution.name.split(' ')[0],
-					lastName: attribution.name
-						.split(' ')
-						.slice(1, attribution.name.split(' ').length)
-						.join(' '),
+					firstName: lastName ? firstName : '',
+					lastName: lastName || firstName,
 					avatar: attribution.avatar,
 					title: attribution.title,
 				},
@@ -141,36 +146,17 @@ export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req
 				return branch.id === discussion.branchId;
 			});
 			return discussionBranch && discussionBranch.canView;
-
 			// return discussion.branchId === activeBranch.id;
 		}),
-		/* TODO: Why are we not filtering collections as below anymore? */
-		// collections: pub.collections
-		// 	? pub.collections.filter((item)=> {
-		// 		return item.isPublic || communityAdminData;
-		// 	})
-		// 	: undefined,
-		collectionPubs: collectionPubs
-			.map((item) => {
-				if (!communityAdminData && item.collection && !item.collection.isPublic) {
-					return {
-						...item,
-						collection: undefined,
-					};
-				}
-				return item;
-			})
-			.filter((item) => {
-				return !item.collection || item.collection.isPublic || communityAdminData;
-			}),
+		collectionPubs: collectionPubs.filter((item) => {
+			return item.collection.isPublic || communityAdminData;
+		}),
 		canManage: canManagePub,
 		canManageBranch: activeBranch.canManage,
 		canEditBranch: activeBranch.canEdit,
 		canDiscussBranch: activeBranch.canDiscuss,
 		canViewBranch: activeBranch.canView,
-		/* TODO-BRANCH: This check for title === public is only valid until */
-		/* we roll out full branch features */
-		isStaticDoc: activeBranch.title === 'public' || !!req.params.versionNumber,
+		isStaticDoc: !!req.params.versionNumber,
 	};
 
 	return formattedPubData;

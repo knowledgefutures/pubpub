@@ -53,13 +53,36 @@ const cleanBranchNames = (pubId, transformed) => {
 
 const updateBranches = async (model, transformed) => {
 	const { id: pubId } = model;
-	const { draftBranch, namedBranches } = transformed;
+	const { draftBranch, namedBranches, versionToBranch } = transformed;
 	await BranchPermission.destroy({ where: { pubId: pubId } });
 	await Branch.destroy({ where: { pubId: pubId } });
 	await Branch.bulkCreate(
 		[['draft', draftBranch]]
 			.concat(Object.entries(namedBranches))
 			.map(([title, branch], index, { length }) => {
+				const sortedVToBValues = Object.values(versionToBranch)
+					.filter((item) => {
+						return item.id === branch.id;
+					})
+					.sort((foo, bar) => {
+						if (foo.key < bar.key) {
+							return -1;
+						}
+						if (foo.key > bar.key) {
+							return 1;
+						}
+						return 0;
+					});
+
+				const firstKeyAtDate = branch.firstKeyAt ? new Date(branch.firstKeyAt) : undefined;
+				const lastKeyAtDate = branch.latestKeyAt ? new Date(branch.latestKeyAt) : undefined;
+				const firstVersionDate = sortedVToBValues.length
+					? new Date(sortedVToBValues[0].versionCreatedAt)
+					: undefined;
+				const lastVersionDate = sortedVToBValues.length
+					? new Date(sortedVToBValues[sortedVToBValues.length - 1].versionCreatedAt)
+					: undefined;
+
 				return {
 					id: branch.id,
 					shortId: index + 1,
@@ -72,8 +95,8 @@ const updateBranches = async (model, transformed) => {
 					publicPermissions: title === 'public' ? 'discuss' : 'none',
 					pubManagerPermissions: 'manage',
 					communityAdminPermissions: 'manage',
-					firstKeyAt: branch.firstKeyAt ? new Date(branch.firstKeyAt) : undefined,
-					latestKeyAt: branch.latestKeyAt ? new Date(branch.latestKeyAt) : undefined,
+					firstKeyAt: firstVersionDate || firstKeyAtDate,
+					lastKeyAt: lastVersionDate || lastKeyAtDate,
 				};
 			}),
 	);
@@ -116,12 +139,14 @@ const createVersions = async (transformed, pubId) => {
 	const { versionToBranch } = transformed;
 	return PubVersion.bulkCreate(
 		Object.keys(versionToBranch).map((versionId) => {
-			const { id: branchId, key: historyKey } = versionToBranch[versionId];
+			const { id: branchId, key: historyKey, versionCreatedAt } = versionToBranch[versionId];
 			return {
 				id: versionId,
 				branchId: branchId,
 				historyKey: historyKey,
 				pubId: pubId,
+				createdAt: versionCreatedAt,
+				updatedAt: versionCreatedAt,
 			};
 		}),
 	);

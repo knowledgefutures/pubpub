@@ -11,8 +11,8 @@ export const getPubPublishedDate = (pub, branch = null) => {
 		if (selectedBranch.firstKeyAt) {
 			return new Date(selectedBranch.firstKeyAt);
 		}
-		if (selectedBranch.lastKeyAt) {
-			return new Date(selectedBranch.lastKeyAt);
+		if (selectedBranch.latestKeyAt) {
+			return new Date(selectedBranch.latestKeyAt);
 		}
 	}
 	return null;

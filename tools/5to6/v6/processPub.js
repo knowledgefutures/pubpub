@@ -75,11 +75,13 @@ const updateBranches = async (model, transformed) => {
 					});
 
 				const firstKeyAtDate = branch.firstKeyAt ? new Date(branch.firstKeyAt) : undefined;
-				const lastKeyAtDate = branch.latestKeyAt ? new Date(branch.latestKeyAt) : undefined;
+				const latestKeyAtDate = branch.latestKeyAt
+					? new Date(branch.latestKeyAt)
+					: undefined;
 				const firstVersionDate = sortedVToBValues.length
 					? new Date(sortedVToBValues[0].versionCreatedAt)
 					: undefined;
-				const lastVersionDate = sortedVToBValues.length
+				const latestVersionDate = sortedVToBValues.length
 					? new Date(sortedVToBValues[sortedVToBValues.length - 1].versionCreatedAt)
 					: undefined;
 
@@ -96,7 +98,7 @@ const updateBranches = async (model, transformed) => {
 					pubManagerPermissions: 'manage',
 					communityAdminPermissions: 'manage',
 					firstKeyAt: firstVersionDate || firstKeyAtDate,
-					lastKeyAt: lastVersionDate || lastKeyAtDate,
+					latestKeyAt: latestVersionDate || latestKeyAtDate,
 				};
 			}),
 	);
@@ -152,7 +154,7 @@ const createVersions = async (transformed, pubId) => {
 	);
 };
 
-const stripExtraneousKeys = (branchObj, strip = ['id']) => {
+const stripExtraneousKeys = (branchObj, strip = ['id', 'firstKeyAt', 'latestKeyAt']) => {
 	const res = {};
 	Object.keys(branchObj).forEach((key) => {
 		if (strip.includes(key)) {

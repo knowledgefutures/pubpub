@@ -1,4 +1,4 @@
-import { Merge, Review } from '../models';
+import { Merge, Review, Branch } from '../models';
 import { mergeFirebaseBranch } from '../utils/firebaseAdmin';
 import { createMergedReviewEvent } from '../reviewEvent/queries';
 
@@ -9,16 +9,37 @@ export const createMerge = (inputValues, userData) => {
 		inputValues.destinationBranchId,
 	)
 		.then(() => {
-			return Merge.create({
+			const createDate = new Date();
+			const createMergeObject = Merge.create({
 				noteContent: inputValues.noteContent,
 				noteText: inputValues.noteText,
 				userId: userData.id,
 				pubId: inputValues.pubId,
 				sourceBranchId: inputValues.sourceBranchId,
 				destinationBranchId: inputValues.destinationBranchId,
+				createdAt: createDate,
+				updatedAt: createDate,
 			});
+			const setFirstKeyAt = Branch.update(
+				{ firstKeyAt: createDate },
+				{
+					where: {
+						id: inputValues.destinationBranchId,
+						firstKeyAt: null,
+					},
+				},
+			);
+			const setLatestKeyAt = Branch.update(
+				{ latestKeyAt: createDate },
+				{
+					where: {
+						id: inputValues.destinationBranchId,
+					},
+				},
+			);
+			return Promise.all([createMergeObject, setFirstKeyAt, setLatestKeyAt]);
 		})
-		.then((newMergeData) => {
+		.then(([newMergeData]) => {
 			const updateReview = Review.update(
 				{ mergeId: newMergeData.id },
 				{

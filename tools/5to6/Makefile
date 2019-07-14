@@ -17,6 +17,10 @@ migrate-v5-postgres:
 upload-all:
 	node allPubIds.js | node -r esm --max-old-space-size=12000 v6
 
+# 4.5
+map-discussions:
+	node -r esm allDiscussionBranchIds.js | node -r esm --max-old-space-size=12000 discussions/setup.js
+
 # 5
 sync-search:
 	node ../../searchSync/init.js

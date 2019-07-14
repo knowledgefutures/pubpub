@@ -31,6 +31,10 @@ sync-search:
 # 7 
 ## Manual discussion migration
 
+#8
+handbook:
+	node -r esm handbookBranch
+
 transform:
 	echo $(pub) | node -r esm --max-old-space-size=12000 v5
 	

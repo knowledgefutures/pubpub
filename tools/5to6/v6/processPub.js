@@ -21,7 +21,7 @@ const generateHash = (length) => {
 const getBranchIdForVersionId = (versionPermission, transformed) => {
 	const { draftBranch, namedBranches, versionToBranch } = transformed;
 	const { versionId } = versionPermission;
-	if (versionId) {
+	if (versionId && versionToBranch[versionId]) {
 		const proposedBranchName = versionToBranch[versionId].name;
 		if (proposedBranchName) {
 			return namedBranches[proposedBranchName].id;

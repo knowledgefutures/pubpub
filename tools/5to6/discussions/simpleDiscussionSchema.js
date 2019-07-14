@@ -65,7 +65,7 @@ export default {
 				return undefined;
 			},
 		},
-		toStatic: (node, options, isSelected, isEditable /* editorProps, children */) => {
+		toStatic: (/* node, options, isSelected, isEditable, editorProps, children */) => {
 			return null;
 			// return (
 			// 	<DiscussionEmbed

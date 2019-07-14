@@ -348,13 +348,43 @@ export const findPub = (req, initialData, mode) => {
 		})
 		.then(([formattedPubData, branchDocData]) => {
 			const { content, historyData, mostRecentRemoteKey } = branchDocData;
-			return {
+			const outputData = {
 				...formattedPubData,
 				initialDoc: content,
 				initialDocKey: mostRecentRemoteKey,
 				historyData: historyData,
 				citationData: generateCitationHTML(formattedPubData, initialData.communityData),
 			};
+
+			/* When getFirebaseDoc stores a checkpoint update, it also returns */
+			/* checkpointUpdates, which has firstKeyAt and latestKeyAt. We take */
+			/* those values and update the branch db row. There is likely a more */
+			/* appropriate place for this update if/when we have a server-side */
+			/* firebase doc validator. At the moment though, there isn't a great */
+			/* place for this code since it feels flaky to have the client update */
+			/* these values with API calls. */
+			if (branchDocData.checkpointUpdates) {
+				const whereQuery = { where: { id: outputData.activeBranch.id } };
+				const setFirstKeyAt = outputData.activeBranch.firstKeyAt
+					? undefined
+					: Branch.update(
+							{ firstKeyAt: branchDocData.checkpointUpdates.firstKeyAt },
+							whereQuery,
+					  );
+				const setLatestKeyAt =
+					new Date(outputData.activeBranch.latestKeyAt) >
+					branchDocData.checkpointUpdates.latestKeyAt
+						? undefined
+						: Branch.update(
+								{ latestKeyAt: branchDocData.checkpointUpdates.latestKeyAt },
+								whereQuery,
+						  );
+				return Promise.all([outputData, setFirstKeyAt, setLatestKeyAt]);
+			}
+			return [outputData];
+		})
+		.then(([outputData]) => {
+			return outputData;
 		});
 };
 

@@ -26,10 +26,6 @@ export default (sequelize, dataTypes) => {
 			viewHash: { type: dataTypes.STRING },
 			discussHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
-			/* TODO: We still do not have a way to handle setting */
-			/* firstKeyAt and latestKeyAt outside of Merge workflows. */
-			/* Perhaps if we have a tool that is validating the doc */
-			/* in the background for stability, it can also set these. */
 			firstKeyAt: { type: dataTypes.DATE },
 			latestKeyAt: { type: dataTypes.DATE },
 			/* Set by Associations */

@@ -5,7 +5,6 @@ const { Discussion } = require('../../server/models');
 const main = async () => {
 	const discussions = await Discussion.findAll({
 		attributes: ['id', 'branchId', 'pubId'],
-		limit: 1,
 	});
 	const branchIds = discussions
 		.map((item) => {

@@ -78,6 +78,12 @@ const DiscussionItem = (props) => {
 				/>
 			</div>
 			<div className="content-wrapper">
+				{/* Used for Debugging
+				isRootThread && (
+					<div style={{ background: 'rgba(100,200,0,0.3)' }}>
+						{discussionData.initAnchorText && discussionData.initAnchorText.exact}
+					</div>
+				) */}
 				<div className="item-header">
 					<span className="name">
 						{discussionData.author.fullName}

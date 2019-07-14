@@ -368,18 +368,32 @@ export function generateRenderLists(layout, pubs) {
 			});
 			const collectionIds = block.content.collectionIds || [];
 			// console.log(collectionIds);
-			const availablePubs = nonSpecifiedPubs.filter((pub) => {
-				if (!collectionIds.length) {
-					return true;
-				}
-				return pub.collectionPubs.reduce((prev, curr) => {
-					// if (curr.collectionId === block.content.collectionId) { return true; }
-					if (collectionIds.indexOf(curr.collectionId) > -1) {
+			const availablePubs = nonSpecifiedPubs
+				.filter((pub) => {
+					if (!collectionIds.length) {
 						return true;
 					}
-					return prev;
-				}, false);
-			});
+					return pub.collectionPubs.reduce((prev, curr) => {
+						// if (curr.collectionId === block.content.collectionId) { return true; }
+						if (collectionIds.indexOf(curr.collectionId) > -1) {
+							return true;
+						}
+						return prev;
+					}, false);
+				})
+				.sort((foo, bar) => {
+					const fooRank =
+						foo.collectionPubs && foo.collectionPubs[0] && foo.collectionPubs[0].rank;
+					const barRank =
+						bar.collectionPubs && bar.collectionPubs[0] && bar.collectionPubs[0].rank;
+					if (fooRank < barRank) {
+						return -1;
+					}
+					if (fooRank > barRank) {
+						return 1;
+					}
+					return 0;
+				});
 
 			/* First add the specified pubs for a given block to the renderList */
 			const renderList = block.content.pubIds.map((id) => {

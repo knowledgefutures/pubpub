@@ -343,6 +343,7 @@ export const findPub = (req, initialData, mode) => {
 					formattedPubData.id,
 					formattedPubData.activeBranch.id,
 					req.params.versionNumber,
+					true,
 				),
 			]);
 		})

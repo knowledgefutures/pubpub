@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import Promise from 'bluebird';
 import algoliasearch from 'algoliasearch';
+import { Op } from 'sequelize';
 import { Pub, Page } from '../server/models';
 import { getPubSearchData, getPageSearchData } from '../workers/utils/searchUtils';
 
@@ -56,6 +57,9 @@ new Promise((resolve) => {
 		return Pub.findAll({
 			attributes: ['id'],
 			// limit: 100,
+			where: {
+				id: { [Op.ne]: '5dea7a72-330d-4fbf-8a88-c4723e201b39' },
+			},
 		});
 	})
 	.then((pubIds) => {

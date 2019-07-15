@@ -25,6 +25,7 @@ Module.prototype.require = function(...args) {
 const app = express();
 export default app;
 
+console.log('source-version: ', process.env.SOURCE_VERSION);
 if (process.env.NODE_ENV === 'production') {
 	// The Sentry request handler must be the first middleware on the app
 	Sentry.init({ dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439' });

@@ -30,7 +30,7 @@ export const hydrateWrapper = (Component) => {
 
 		if (!isLocalEnv(window)) {
 			setupKeen();
-			Raven.config('https://b4764efd07c240488d390c8343193208@sentry.io/197897').install();
+			Raven.config('https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439').install();
 			Raven.setUserContext({ username: initialData.loginData.slug });
 		}
 

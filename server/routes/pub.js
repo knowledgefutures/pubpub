@@ -19,6 +19,9 @@ const isEmptyPubDoc = (docJson) => docJson.content.length === 1 && !docJson.cont
 
 const getMode = (path, params) => {
 	const { slug, reviewShortId } = params;
+	if (path.indexOf(`/pub/${slug}/draft`) > -1) {
+		return 'draft-redirect';
+	}
 	if (path.indexOf(`/pub/${slug}/merge/`) > -1) {
 		return 'merge';
 	}
@@ -43,6 +46,7 @@ const getMode = (path, params) => {
 app.get(
 	[
 		'/pub/:slug',
+		'/pub/:slug/draft',
 		'/pub/:slug/branch/new',
 		'/pub/:slug/branch/:branchShortId',
 		'/pub/:slug/branch/:branchShortId/:versionNumber',
@@ -70,6 +74,10 @@ app.get(
 			const mode = getMode(req.path, req.params);
 			const initialData = await getInitialData(req);
 			const pubData = await findPub(req, initialData, mode);
+
+			if (mode === 'draft-redirect') {
+				return res.redirect(`/pub/${req.params.slug}`);
+			}
 
 			if (!pubData.canEditBranch && isEmptyPubDoc(pubData.initialDoc)) {
 				throw new Error('Pub Not Found');

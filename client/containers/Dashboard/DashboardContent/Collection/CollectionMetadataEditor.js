@@ -16,7 +16,7 @@ require('./collectionMetadataEditor.scss');
 
 const propTypes = {
 	collection: collectionType.isRequired,
-	communityData: PropTypes.shape({}).isRequired,
+	communityData: PropTypes.object.isRequired,
 	onPersistStateChange: PropTypes.func.isRequired,
 	onUpdateCollection: PropTypes.func.isRequired,
 };

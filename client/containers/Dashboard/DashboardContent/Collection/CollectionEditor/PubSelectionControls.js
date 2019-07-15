@@ -15,6 +15,9 @@ const propTypes = {
 	onSetContext: PropTypes.func.isRequired,
 	pubSelection: PropTypes.shape({
 		pub: pubDataProps.isRequired,
+		collection: PropTypes.shape({
+			kind: PropTypes.string,
+		}),
 		contextHint: PropTypes.shape({
 			label: PropTypes.string.isRequired,
 		}).isRequired,

@@ -16,6 +16,7 @@ const propTypes = {
 	collabData: PropTypes.shape({
 		localCollabUser: collaboratorType,
 		collaborators: PropTypes.arrayOf(collaboratorType),
+		remoteCollabUsers: PropTypes.array,
 	}).isRequired,
 };
 

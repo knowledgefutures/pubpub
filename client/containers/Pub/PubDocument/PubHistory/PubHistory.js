@@ -17,6 +17,7 @@ const propTypes = {
 	historyData: PropTypes.shape({
 		latestKey: PropTypes.number,
 		timestamps: PropTypes.object,
+		currentKey: PropTypes.number,
 	}).isRequired,
 	pubData: pubDataProps.isRequired,
 	updateLocalData: PropTypes.func.isRequired,

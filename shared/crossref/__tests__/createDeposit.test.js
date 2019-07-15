@@ -1,6 +1,6 @@
 /* global describe, it, expect */
-import { mapMetadataFields } from 'shared/collections/metadata';
-import { getSchemaForKind } from 'shared/collections/schemas';
+import { mapMetadataFields } from '../../collections/metadata';
+import { getSchemaForKind } from '../../collections/schemas';
 
 import createDepositPartial from '../createDeposit';
 
@@ -61,8 +61,8 @@ describe('createDeposit', () => {
 		expect(
 			createDeposit(
 				{
-					collection: book,
-					collectionPub: makeCollectionPub(book, issue),
+					collection: issue,
+					collectionPub: makeCollectionPub(issue, pub),
 					pub: pub,
 				},
 				'pub',
@@ -74,8 +74,8 @@ describe('createDeposit', () => {
 		expect(
 			createDeposit(
 				{
-					collection: book,
-					collectionPub: makeCollectionPub(book, conference),
+					collection: conference,
+					collectionPub: makeCollectionPub(conference, pub),
 					pub: pub,
 				},
 				'pub',
@@ -169,7 +169,7 @@ describe('createDeposit', () => {
 		const { deposit } = createDeposit(
 			{
 				collection: conference,
-				collectionPub: makeCollectionPub(book, conference),
+				collectionPub: makeCollectionPub(conference, pub),
 				pub: pub,
 			},
 			'pub',

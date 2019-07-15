@@ -1,0 +1,20 @@
+.pub-review-create-component {
+	margin-top: 2em;
+	.review-header {
+		display: flex;
+		align-items: center;
+		h2 {
+			display: inline;
+			margin: 0em 1em 0em 0em;
+		}
+	}
+	.merge-arrow {
+		margin: 0em 0.25em;
+		opacity: 0.75;
+	}
+	.bp3-tab-list {
+		margin-top: 2em;
+		border-bottom: 1px solid #CCC;
+		display: none;
+	}
+}

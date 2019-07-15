@@ -1,17 +1,7 @@
-import componentList from './componentList';
 import contributors from './contributors';
 import doiData from './doiData';
 
-export default ({
-	attributions,
-	doi,
-	getResourceUrl,
-	getVersionDoi,
-	language,
-	sortedVersions,
-	timestamp,
-	title,
-}) => {
+export default ({ attributions, doi, language, resourceUrl, timestamp, title }) => {
 	return {
 		conference_paper: {
 			'@language': language,
@@ -19,8 +9,7 @@ export default ({
 			titles: {
 				title: title,
 			},
-			...doiData(doi, timestamp, getResourceUrl()),
-			...componentList(sortedVersions, timestamp, getVersionDoi, getResourceUrl),
+			...doiData(doi, timestamp, resourceUrl),
 		},
 	};
 };

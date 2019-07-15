@@ -1,63 +1,69 @@
-/*
-There are three views:
-Default (used in mobile/narrow and browsers that don't support CSS grid)
-Grid (used in desktops that support CSS grid)
-Print
- */
+/* The fraction of the screen used for the pub margin -- converted to CSS units below */
+$pub-margin-fraction: 0.04;
+/* Below this width, comments will be forced to a minimized view */
+$compact-cutoff-width: 750px;
+/* The pub won't grow beyond this width */
+$pub-max-width: 675px;
+/* The space available for comments */
+$comments-full-width: 275px;
+/* The space available for comments on smaller screens */
+$comments-compact-width: 21px;
+/* The maximum width of all the content */
+$content-max-width: $pub-max-width + $comments-full-width;
+/* Full width of the gutter */
+$gutter-full-width: 50px;
+/* The pub won't shrink beyond this width */
+$pub-min-width: $compact-cutoff-width - $comments-full-width - $gutter-full-width;
+/* Compact width of the gutter */
+$gutter-compact-width: 15px;
+/* The margin between the edge of the pub and the viewport (applied to the left and right side) */
+$pub-margin: #{$pub-margin-fraction * 100}vw;
+/* Used to determine when `minmax($pub-margin, auto) = $pub-margin`, which indicates that we should
+   treat the .breakout calculation differently.
+   Calculated as: 2 * $pub-margin-fraction * x + $compact-cutoff-width = x */
+$breakout-simplify-cutoff: $compact-cutoff-width / (1 - 2 * $pub-margin-fraction);
 
-#pub-container {
-	position: relative;
-	.container.pub {
-		.main-content {
-		}
-	}
-	.discussions {
-		background-color: #f8f8f8;
-		line-height: 1.6;
-		padding: 4em 0em;
-	}
+@mixin pub-compact-view {
+    @media only screen and (max-width: $compact-cutoff-width) {
+        @content;
+    }
 }
 
-@media only screen and (min-width: 750px) {
-	@supports (display: grid) {
-		#pub-container {
-			.pub-columns {
-				display: grid;
-				grid-template-columns: minmax(0, 1fr) 275px;
-				grid-template-areas: 'main side';
-				grid-column-gap: 4%;
-				margin-top: 3em;
-			}
-			.main-content {
-				grid-area: main;
-			}
-			.side-content {
-				grid-area: side;
-				.header-title {
-					display: block;
-					font-weight: 600;
-					font-size: 16px;
-					margin-bottom: 10px;
-				}
-			}
-		}
-	}
+@mixin pub-full-view {
+    @media only screen and (min-width: $compact-cutoff-width) {
+        @content;
+    }
 }
 
-@media only screen and (max-width: 750px) {
-	#pub-container {
-		.main-content {
-			margin-top: 2em;
-		}
-		.side-content {
-			display: none;
-		}
-	}
-}
-@media print {
-	#pub-container {
-		.container.pub {
-			max-width: 100%;
-		}
+@mixin has-grid($areas) {
+    display: grid;
+    grid-template-columns:
+        minmax($pub-margin, auto)
+        minmax($pub-min-width, $pub-max-width)
+        $gutter-full-width
+        $comments-full-width
+        minmax($pub-margin, auto);
+    grid-template-areas: $areas;
+    .breakout {
+        width: 100vw !important;
+        margin-left: 0;
+        position: relative;
+        left: calc(-1 * (50vw - (100% + #{$gutter-full-width} + #{$comments-full-width}) / 2));
+    }
+    @media only screen and (max-width: $breakout-simplify-cutoff) {
+        .breakout {
+            left: -#{$pub-margin};
+        }
+    }
+    @include pub-compact-view {
+        grid-template-columns:
+            minmax($pub-margin, auto)
+            minmax(0, 1fr)
+            $gutter-compact-width
+            $comments-compact-width
+            minmax($pub-margin, auto);
+        .breakout {
+            left: calc(-1 * (50vw - (100% + #{$gutter-compact-width} + #{$comments-compact-width}) / 2));
+        }
 	}
 }

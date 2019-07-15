@@ -1,0 +1,68 @@
+.sharing-card-component {
+	padding: 4px 6px;
+	display: flex;
+	height: 33px;
+	background-color: white;
+	width: calc(50% - 0.5em);
+	margin-bottom: 0.5em;
+	&:nth-of-type(odd) {
+		margin-right: 1em;
+	}
+	.content {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: flex;
+		align-items: center;
+		font-size: 14px;
+		margin-right: 2em;
+		flex-grow: 1;
+		flex-shrink: 1;
+		.avatar-component, .bp3-icon {
+			margin-right: 0.5em;
+			flex-shrink: 0;
+		}
+		.bp3-icon-people {
+			font-size: 14px;
+			margin-right: 2px;
+		}
+		.managers-preview {
+			margin-left: 5px;
+			.avatar-component {
+				margin-right: 1px;
+			}
+		}
+	}
+	.options {
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+	}
+	.bp3-control {
+		margin-bottom: 0px;
+	}
+	&.add {
+		padding: 0em;
+		.user-autocomplete-component {
+			width: 100%;
+			input {
+				height: 33px;
+				box-shadow: none;
+				// background: #F9F9F9;
+				font-size: 14px;
+			}
+		}
+	}
+	&.flat {
+		background: #f9f9f9;
+	}
+}
+
+@media only screen and (max-width: 750px) {
+	.sharing-card-component {
+		width: 100%;
+		&:nth-of-type(odd) {
+			margin-right: 0em;
+		}
+	}
+}

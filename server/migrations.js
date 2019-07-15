@@ -1,8 +1,10 @@
 /* eslint-disable */
 import { Sequelize, Op } from 'sequelize';
+import Color from 'color';
 import {
 	sequelize,
 	Pub,
+	Branch,
 	Version,
 	PubManager,
 	Collaborator,
@@ -17,7 +19,8 @@ import {
 	Community,
 	WorkerTask,
 } from './models';
-import { generateHash } from './utilities';
+import { generateHash } from './utils';
+import mudder from 'mudder';
 
 console.log('Beginning Migration');
 
@@ -539,6 +542,122 @@ new Promise((resolve) => {
 	// 				);
 	// 			});
 	// 		return Promise.all(pageUpdates);
+	// 	});
+	// })
+	// .then(() => {
+	// 	console.log("updating CollectionPubs");
+	// 	return Collection.findAll({ attributes: ["id"] })
+	// 		.then(collections => collections
+	// 			.reduce((promise, collection) => {
+	// 				console.log("Collection", collection.id);
+	// 				return promise.then(() =>
+	// 					CollectionPub.findAll({where: {collectionId: collection.id, rank: null }})
+	// 						.then(collectionPubs => {
+	// 							const ranks = mudder.base36.mudder('a', 'z', collectionPubs.length);
+	// 							return Promise.all(
+	// 								collectionPubs.map((cp, index) => cp.update({rank: ranks[index] }))
+	// 							);
+	// 						})
+	// 				);
+	// 			}, Promise.resolve())
+	// 		)
+	// })
+	// .then(() => {
+	// 	console.log("Syncing attributions models");
+	// 	return Promise.all([
+	// 		sequelize.queryInterface.addColumn('CollectionAttributions', 'affiliation', { type: Sequelize.TEXT }),
+	// 		sequelize.queryInterface.addColumn('PubAttributions', 'affiliation', { type: Sequelize.TEXT }),
+	// 	]);
+	// })
+	// .then(() => {
+	// 	/* Set new Community accent columns */
+	// 	return Promise.all([
+	// 		sequelize.queryInterface.addColumn('Communities', 'accentColorDark', { type: Sequelize.STRING }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'accentColorLight', { type: Sequelize.STRING }),
+	// 		sequelize.queryInterface.addColumn('Communities', 'headerColorType', {
+	// 			type: Sequelize.ENUM,
+	// 			values: ['light', 'dark', 'custom'],
+	// 			defaultValue: 'light',
+	// 		}),
+	// 	])
+	// 	.then(() => {
+	// 		return Community.findAll();
+	// 	})
+	// 	.then((communitiesData) => {
+	// 		const communityUpdates = communitiesData.map((community) => {
+	// 			const accentWasLight = Color(community.accentColor).isLight();
+	// 			console.log(community.id, community.headerColorType);
+	// 			const updates = {
+	// 				accentColorLight: accentWasLight ? community.accentColor : '#FFFFFF',
+	// 				accentColorDark: !accentWasLight ? community.accentColor : '#000000',
+	// 				headerColorType: accentWasLight ? 'light' : 'dark',
+	// 			};
+	// 			// console.log(updates);
+	// 			return Community.update(updates, {
+	// 				where: { id: community.id }
+	// 			});
+	// 		});
+	// 		return Promise.all(communityUpdates);
+	// 	});
+	// })
+	// .then(() => {
+	// 	/* Set new Pub header style columns */
+	// 	return Promise.all([
+	// 		sequelize.queryInterface.addColumn('Pubs', 'headerStyle', {
+	// 			type: Sequelize.ENUM,
+	// 			values: ['white-blocks', 'black-blocks'],
+	// 			defaultValue: null,
+	// 		}),
+	// 		sequelize.queryInterface.addColumn('Pubs', 'headerBackgroundType', {
+	// 			type: Sequelize.ENUM,
+	// 			values: ['color', 'image'],
+	// 			defaultValue: 'color',
+	// 		}),
+	// 		sequelize.queryInterface.addColumn('Pubs', 'headerBackgroundColor', { type: Sequelize.STRING }),
+	// 		sequelize.queryInterface.addColumn('Pubs', 'headerBackgroundImage', { type: Sequelize.TEXT }),
+	// 	])
+	// 	.then(() => {
+	// 		return Pub.findAll();
+	// 	})
+	// 	.then((pubsData) => {
+	// 		const pubUpdates = pubsData.map((pub) => {
+	// 			const updates = {
+	// 				headerBackgroundType: pub.avatar && pub.useHeaderImage ? 'image' : 'color',
+	// 				headerBackgroundImage: pub.useHeaderImage ? pub.avatar : null,
+	// 			};
+	// 			return Pub.update(updates, {
+	// 				where: { id: pub.id }
+	// 			});
+	// 		});
+	// 		return Promise.all(pubUpdates);
+	// 	});
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Communities', 'useHeaderTextAccent', { type: Sequelize.BOOLEAN });
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Users', 'gdprConsent', {
+	// 		type: Sequelize.BOOLEAN,
+	// 	});
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Branches', 'firstKeyAt', {
+	// 		type: Sequelize.DATE,
+	// 	});
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Branches', 'latestKeyAt', {
+	// 		type: Sequelize.DATE,
+	// 	});
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('PubVersions', 'pubId', {
+	// 		type: Sequelize.UUID,
+	// 	});
+	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Discussions', 'initAnchorText', {
+	// 		type: Sequelize.JSONB,
 	// 	});
 	// })
 	.catch((err) => {

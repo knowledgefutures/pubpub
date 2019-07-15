@@ -4,6 +4,7 @@
  * make these environments match. A lot of this is handled by JSDom, but there
  * are some edge cases.
  */
+require("mutationobserver-shim");
 
 // ProseMirror uses document.getSelection, which is not polyfilled by JSDOM.
 document.getSelection = document.getSelection || function() {
@@ -11,6 +12,8 @@ document.getSelection = document.getSelection || function() {
         focusNode: null,
         anchorNode: null,
         rangeCount: 0,
+        addRange: () => {},
+        removeAllRanges: () => {},
     };
 }
 

@@ -1,8 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import Header from 'components/Header/Header';
-import AccentStyle from 'components/AccentStyle/AccentStyle';
-import { accentDataLight, locationData, loginData } from '../data';
+import { Header, AccentStyle } from 'components';
+import { locationData, loginData } from 'data';
 
 const wrapperStyle = { margin: '2em 1em', border: '1px solid #CCC' };
 
@@ -28,13 +27,18 @@ const communityData = {};
 //		heroSecondaryButton: 'Find out more',
 //	heroAlign: 'center',
 
-storiesOf('Components/Header', module).add('default', () => (
+storiesOf('components/Header', module).add('default', () => (
 	<div>
-		<AccentStyle {...accentDataLight} />
+		<AccentStyle
+			communityData={{ accentColorLight: '#ffffff', accentColorDark: '#000000' }}
+			isNavHidden={false}
+		/>
 		<div style={wrapperStyle}>
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					title: 'Hiptest',
 					headerLinks: [
 						{ title: 'About', url: '/about' },
@@ -73,6 +77,8 @@ storiesOf('Components/Header', module).add('default', () => (
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					hideHeaderLogo: false,
 					title: 'WHITEOUT',
 					hideHero: false,
@@ -100,6 +106,8 @@ storiesOf('Components/Header', module).add('default', () => (
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					hideHeaderLogo: false,
 					title: 'Timepal',
 					heroBackgroundImage: undefined,
@@ -125,6 +133,8 @@ storiesOf('Components/Header', module).add('default', () => (
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					hideHeaderLogo: false,
 					title: 'toggl',
 					heroBackgroundImage: undefined,
@@ -149,6 +159,8 @@ storiesOf('Components/Header', module).add('default', () => (
 			<Header
 				communityData={{
 					...communityData,
+					accentColorLight: '#ffffff',
+					accentColorDark: '#000000',
 					hideHeaderLogo: false,
 					title: 'Simple Community',
 					hideHero: true,

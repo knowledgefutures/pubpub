@@ -1,0 +1,79 @@
+.label-filter-component {
+	padding: 1em;
+	min-width: 250px;
+	.action-button {
+		float: right;
+	}
+	.bp3-menu-header {
+		margin-bottom: 15px;
+	}
+	.bp3-fill {
+		margin-bottom: 10px;
+	}
+	.label {
+		display: flex;
+		align-items: center;
+		&.edit {
+			margin-bottom: 10px;
+		}
+	}
+	.color {
+		height: 16px;
+		width: 16px;
+		border-radius: 2px;
+		margin-right: 5px;
+		// display: inline-block;
+		// vertical-align: middle;
+		&.edit {
+			height: 30px;
+			width: 30px;
+			margin-right: 10px;
+		}
+		.bp3-icon-small-tick {
+			&:before {
+				color: white;
+			}
+		}
+	}
+	.title,
+	.bp3-input {
+		// vertical-align: middle;
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+	.empty {
+		pointer-events: none;
+		opacity: 0.75;
+	}
+	.bp3-icon-endorsed {
+		&:before {
+			opacity: 0.25;
+		}
+		&.active {
+			&:before {
+				opacity: 0.75;
+			}
+		}
+	}
+}
+.bp3-popover.color-select-popover {
+	.color-select-menu {
+		width: 150px;
+		min-width: 150px;
+		.color-select {
+			display: inline-block;
+			width: 25px;
+			height: 25px;
+			border-radius: 4px;
+			margin: 5px;
+			cursor: pointer;
+			border: 2px solid white;
+			&:hover {
+				border-color: transparent;
+			}
+		}
+	}
+	.bp3-popover-arrow {
+		display: block;
+	}
+}

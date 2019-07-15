@@ -1,0 +1,19 @@
+.sub-preview-component {
+	padding-left: 5%;
+	margin-top: 0.5em;
+	.child {
+		margin-top: 0.5em;
+		font-size: 14px;
+	}
+	.prefix {
+		margin-right: 0.5em;
+		letter-spacing: 0.5px;
+	}
+	.element {
+		font-weight: 300;
+		font-style: italic;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}

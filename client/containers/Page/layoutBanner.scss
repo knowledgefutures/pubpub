@@ -1,0 +1,41 @@
+#page-container .layout-banner-component {
+	.block-content {
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center center;
+		padding: 0em !important;
+		margin-top: 0em !important;
+		position: relative;
+		.row {
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-position: center center;
+			position: relative;
+		}
+		.col-12 {
+			position: relative;
+			h2 {
+				margin-bottom: 0em;
+				color: inherit;
+				line-height: inherit;
+				font-weight: 500;
+				letter-spacing: 1px;
+			}
+			h2 + .bp3-button {
+				margin-top: 1em;
+			}
+			.bp3-button {
+				padding: 10px 40px;
+				line-height: 30px;
+			}
+		}
+		.dim {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+	}
+}

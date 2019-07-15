@@ -1,23 +1,36 @@
+import React from 'react';
 import requireContext from 'require-context.macro';
-
-import { configure } from '@storybook/react';
-import { setOptions } from '@storybook/addon-options';
+import { addDecorator, addParameters, configure } from '@storybook/react';
 import { configureViewport } from '@storybook/addon-viewport';
 import { FocusStyleManager } from '@blueprintjs/core';
+import { communityData, locationData, loginData } from 'data';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
 /* Require default styles as done in Html.js */
-require('baseStyle.scss');
+require('styles/base.scss');
 
 /* Require stories */
 const req = requireContext('../stories/', true, /Stories\.js$/);
 function loadStories() {
 	req.keys().forEach(req);
 }
+
+addDecorator((storyFn) => {
+	return (
+		<PageContext.Provider value={{ communityData, locationData, loginData }}>
+			{storyFn()}
+		</PageContext.Provider>
+	);
+});
+
 /* Set Storybook options */
-setOptions({
-	showAddonPanel: false,
+addParameters({
+	options: {
+		sortStoriesByKind: true,
+		showPanel: false,
+	},
 });
 
 configure(loadStories, module);

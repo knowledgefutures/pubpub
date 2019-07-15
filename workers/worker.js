@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 /* eslint-disable no-console */
 import amqplib from 'amqplib';
-import exportTask from './exportTask';
-import importTask from './importTask';
+import exportTask from './tasks/export';
+import importTask from './tasks/import';
 import {
 	deletePageSearchData,
 	setPageSearchData,
@@ -10,7 +10,7 @@ import {
 	setPubSearchData,
 	updateCommunityData,
 	updateUserData,
-} from './searchTasks';
+} from './tasks/search';
 import { WorkerTask } from '../server/models';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -60,8 +60,7 @@ const processTask = (channel) => {
 				if (taskData.type === 'export') {
 					taskFunction = exportTask(
 						taskData.input.pubId,
-						taskData.input.versionId,
-						taskData.input.content,
+						taskData.input.branchId,
 						taskData.input.format,
 					);
 				} else if (taskData.type === 'import') {

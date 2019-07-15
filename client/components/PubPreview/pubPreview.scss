@@ -79,8 +79,45 @@
 			padding-top: 5px;
 		}
 	}
+	&.minimal-preview {
+		box-shadow: 0px 0px 0px transparent;
+		border: 0px solid transparent;
+		border-left: 1px solid #e0e0e0;
+		padding-left: 20px;
+		font-size: 16px;
+		margin-bottom: 1em;
+		.content {
+			padding: 0em;
+			&:after {
+				display: none;
+			}
+		}
+		.authors {
+			font-style: italic;
+			font-weight: 300;
+			font-size: 14px;
+		}
+		.title-wrapper {
+			padding: 5px 0px 2px;
+			&:hover {
+				text-decoration: underline;
+			}
+			.pub-title {
+				font-weight: 400;
+				font-size: 18px;
+				line-height: 1.2 !important;
+			}
+		}
+		.description {
+			padding-top: 3px;
+			font-size: 12px;
+			opacity: 0.75;
+		}
+	}
 	.title-wrapper {
 		padding-bottom: 5px;
+		font-family: multi-display, -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+			'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
 	}
 	.pub-title {
 		line-height: 1em;

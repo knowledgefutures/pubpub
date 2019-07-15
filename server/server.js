@@ -106,6 +106,10 @@ app.use((req, res, next) => {
 		req.headers.host = req.headers.communityhostname;
 	}
 	if (req.hostname.indexOf('localhost') > -1) {
+		req.headers.localhost = req.headers.host;
+		req.headers.host = 'dev.pubpub.org';
+	}
+	if (req.hostname.indexOf('v6.pubpub.org') > -1) {
 		req.headers.host = 'dev.pubpub.org';
 	}
 	// if (req.hostname.indexOf('localhost') > -1) { req.headers.host = 'www.pubpub.org'; }
@@ -114,6 +118,21 @@ app.use((req, res, next) => {
 	}
 	if (req.hostname.indexOf('dev.pubpub.org') > -1) {
 		req.headers.host = 'dev.pubpub.org';
+	}
+	if (req.hostname.indexOf('v6-jblp.pubpub.org') > -1) {
+		req.headers.host = 'stanford-jblp.pubpub.org';
+	}
+	if (req.hostname.indexOf('v6-hdsr.pubpub.org') > -1) {
+		req.headers.host = 'hdsr.pubpub.org';
+	}
+	if (req.hostname.indexOf('v6-wip.pubpub.org') > -1) {
+		req.headers.host = 'wip.pubpub.org';
+	}
+	if (req.hostname.indexOf('v6-cursor.pubpub.org') > -1) {
+		req.headers.host = 'cursor.pubpub.org';
+	}
+	if (req.hostname.indexOf('pubpub-v6-prod.herokuapp.com') > -1) {
+		req.headers.host = 'jods.pubpub.org';
 	}
 	if (req.hostname.indexOf('pubpub-v4-dev.herokuapp.com') > -1) {
 		req.headers.host = 'frankdev.pubpub.org';
@@ -128,16 +147,18 @@ app.use((req, res, next) => {
 /* Import Routes */
 /* ------------- */
 require('./apiRoutes');
-require('./clientRoutes');
+require('./routes');
 
 /* ------------ */
 /* Start Server */
 /* ------------ */
 const port = process.env.PORT || 9876;
-app.listen(port, (err) => {
-	if (err) {
-		console.error(err);
-	}
-	console.info('----\n==> 🌎  API is running on port %s', port);
-	console.info('==> 💻  Send requests to http://localhost:%s', port);
-});
+module.exports = () => {
+	return app.listen(port, (err) => {
+		if (err) {
+			console.error(err);
+		}
+		console.info('----\n==> 🌎  API is running on port %s', port);
+		console.info('==> 💻  Send requests to http://localhost:%s', port);
+	});
+};

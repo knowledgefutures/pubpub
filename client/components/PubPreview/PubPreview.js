@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
-import Avatar from 'components/Avatar/Avatar';
-import Icon from 'components/Icon/Icon';
-import { getResizedUrl, generatePubBackground } from 'utilities';
+
+import { getResizedUrl } from 'utils';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { isPubPublic } from 'shared/pub/permissions';
+import { pubUrl, communityUrl } from 'shared/utils/canonicalUrls';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { Avatar, Icon } from 'components';
+
+import PubPreviewImage from './PubPreviewImage';
+import SubPreview from './SubPreview';
+import { generateAuthorString } from './pubPreviewUtils';
 
 require('./pubPreview.scss');
 
@@ -15,6 +23,7 @@ const propTypes = {
 	hideDescription: PropTypes.bool,
 	hideDates: PropTypes.bool,
 	hideContributors: PropTypes.bool,
+	customPubUrl: PropTypes.string,
 };
 
 const defaultProps = {
@@ -24,82 +33,50 @@ const defaultProps = {
 	hideDescription: false,
 	hideDates: false,
 	hideContributors: false,
+	customPubUrl: null,
 };
 
 const PubPreview = function(props) {
-	const pubData = props.pubData;
-
-	const isDraftAccessible = pubData.isDraftEditor || pubData.isDraftViewer || pubData.isManager;
-	const resizedBannerImage = getResizedUrl(pubData.avatar, 'fit-in', '800x0');
-	const bannerStyle =
-		pubData.avatar || !pubData.slug
-			? { backgroundImage: `url("${resizedBannerImage}")` }
-			: { background: generatePubBackground(pubData.title) };
+	const { pubData, size, communityData, customPubUrl } = props;
+	const { communityData: localCommunityData } = useContext(PageContext);
 	const resizedHeaderLogo =
 		props.communityData && getResizedUrl(props.communityData.headerLogo, 'fit-in', '125x35');
-	const communityHostname =
-		props.communityData &&
-		(props.communityData.domain || `${props.communityData.subdomain}.pubpub.org`);
-	const communityUrl =
-		props.communityData &&
-		(props.communityData.domain
-			? `https://${props.communityData.domain}`
-			: `https://${props.communityData.subdomain}.pubpub.org`);
-	const pubLink = props.communityData
-		? `https://${communityHostname}/pub/${pubData.slug}`
-		: `/pub/${pubData.slug}`;
 	const attributions = pubData.attributions || [];
 	const authors = attributions.filter((attribution) => {
 		return attribution.isAuthor;
 	});
 
-	const versions = pubData.versions || [];
-	const earliestDate = versions.reduce((prev, curr) => {
-		if (!prev) {
-			return curr.createdAt;
-		}
-		if (curr.createdAt < prev) {
-			return curr.createdAt;
-		}
-		return prev;
-	}, undefined);
-	const latestDate = versions.reduce((prev, curr) => {
-		const sameDayAsEarliest =
-			earliestDate &&
-			new Date(earliestDate).toISOString().substring(0, 10) ===
-				new Date(curr.createdAt).toISOString().substring(0, 10);
-		if (!prev && !sameDayAsEarliest) {
-			return curr.createdAt;
-		}
-		if (curr.createdAt > prev) {
-			return curr.createdAt;
-		}
-		return prev;
-	}, undefined);
-	const isPrivate =
-		(!versions && pubData.draftPermissions === 'private') ||
-		versions.reduce((prev, curr) => {
-			if (curr.isPublic) {
-				return false;
-			}
-			return prev;
-		}, true);
-
+	const publishedDate = getPubPublishedDate(pubData);
+	const isPrivate = !isPubPublic(pubData);
+	const showBannerImage = ['large', 'medium'].includes(size);
+	const showUpperByline = !!authors.length && !props.hideByline && ['minimal'].includes(size);
+	const showLowerByline =
+		!!authors.length && !props.hideByline && ['large', 'medium', 'small'].includes(size);
+	const showDates = !props.hideDates && ['large', 'medium', 'small'].includes(size);
+	const showContributors = !props.hideContributors && ['large', 'medium', 'small'].includes(size);
+	const showDescription = pubData.description && !props.hideDescription;
+	const pubLink =
+		customPubUrl || (communityData ? pubUrl(communityData, pubData) : `/pub/${pubData.slug}`);
 	return (
-		<div className={`pub-preview-component ${props.size}-preview`}>
-			{props.size !== 'small' && (
+		<div className={`pub-preview-component ${size}-preview`}>
+			{showBannerImage && (
 				<a href={pubLink} alt={pubData.title}>
-					<div className="banner-image" style={bannerStyle} />
+					<PubPreviewImage pubData={pubData} className="banner-image" />
 				</a>
 			)}
 			<div className="content">
+				{showUpperByline && (
+					<div className="authors" style={{ color: localCommunityData.accentColorDark }}>
+						{generateAuthorString(pubData)}
+					</div>
+				)}
 				<div className="title-wrapper">
 					{props.communityData && (
 						<a
-							href={communityUrl}
+							href={communityUrl(communityData)}
 							alt={props.communityData.title}
 							className="community-banner"
-							style={{ backgroundColor: props.communityData.accentColor }}
+							style={{ backgroundColor: props.communityData.accentColorDark }}
 						>
 							<img
 								alt={`${props.communityData.title} logo`}
@@ -115,69 +92,24 @@ const PubPreview = function(props) {
 					</a>
 				</div>
 
-				{!!authors.length && !props.hideByline && (
+				{showLowerByline && (
 					<div className="authors">
 						<span>by </span>
-						{authors
-							.sort((foo, bar) => {
-								if (foo.order < bar.order) {
-									return -1;
-								}
-								if (foo.order > bar.order) {
-									return 1;
-								}
-								if (foo.createdAt < bar.createdAt) {
-									return 1;
-								}
-								if (foo.createdAt > bar.createdAt) {
-									return -1;
-								}
-								return 0;
-							})
-							.map((author, index) => {
-								const separator =
-									index === authors.length - 1 || authors.length === 2
-										? ''
-										: ', ';
-								const prefix =
-									index === authors.length - 1 && index !== 0 ? ' and ' : '';
-								if (author.user.slug) {
-									return (
-										<span key={`author-${author.id}`}>
-											{prefix}
-											<a href={`/user/${author.user.slug}`}>
-												{author.user.fullName}
-											</a>
-											{separator}
-										</span>
-									);
-								}
-								return (
-									<span key={`author-${author.id}`}>
-										{prefix}
-										{author.user.fullName}
-										{separator}
-									</span>
-								);
-							})}
+						{generateAuthorString(pubData)}
 					</div>
 				)}
 
-				{!props.hideDates && (
+				{showDates && (
 					<div className="date-details">
-						{!earliestDate && <span className="date">Working Draft</span>}
-						{earliestDate && (
-							<span className="date">{dateFormat(earliestDate, 'mmm dd, yyyy')}</span>
-						)}
-						{latestDate && (
+						{publishedDate && (
 							<span className="date">
-								Updated: {dateFormat(latestDate, 'mmm dd, yyyy')}
+								Published: {dateFormat(publishedDate, 'mmm dd, yyyy')}
 							</span>
 						)}
 					</div>
 				)}
 
-				{!props.hideContributors && (
+				{showContributors && (
 					<div className="date-details">
 						{attributions
 							.sort((foo, bar) => {
@@ -208,18 +140,12 @@ const PubPreview = function(props) {
 									/>
 								);
 							})}
-						{earliestDate && isDraftAccessible && (
-							<a className="date draft-link" href={`${pubLink}/draft`}>
-								Go To Working Draft
-							</a>
-						)}
 					</div>
 				)}
 
-				{pubData.description && !props.hideDescription && (
-					<div className="description">{pubData.description}</div>
-				)}
+				{showDescription && <div className="description">{pubData.description}</div>}
 			</div>
+			<SubPreview pubData={pubData} size={size} />
 		</div>
 	);
 };

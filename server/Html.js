@@ -26,9 +26,11 @@ const Html = (props) => {
 		/* Note that fonts will still be sourced from static.pubpub */
 		/* so if viewing those needs to be tested, the webpack config */
 		/* needs to change. */
-		if (!props.initialData.locationData.isPubPubProduction) {
-			manifestUrl = manifestUrl.replace('https://static.pubpub.org', '');
-		}
+
+		/* TODO: Uncomment when v6 is live */
+		// if (!props.initialData.locationData.isPubPubProduction) {
+		manifestUrl = manifestUrl.replace('https://static.pubpub.org', '');
+		// }
 
 		return manifestUrl;
 	};
@@ -58,7 +60,7 @@ const Html = (props) => {
 			</head>
 			<body>
 				<div id="root">{props.children}</div>
-				<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch,default,HTMLCanvasElement.prototype.toBlob,Object.entries,Object.values" />
+				<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch,default,HTMLCanvasElement.prototype.toBlob,Object.entries,Object.values,URL" />
 				<script
 					id="initial-data"
 					type="text/plain"

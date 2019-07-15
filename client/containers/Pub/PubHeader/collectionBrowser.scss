@@ -1,0 +1,35 @@
+.collection-browser-component_menu {
+    // padding: 0;
+    border-left: 0;
+    border-right: 0;
+    overflow-y: scroll;
+    max-height: 50vh;
+    min-height: 50px;
+    max-width: 80vw;
+    width: 400px;
+    a {
+        // padding: 0;
+        align-items: center;
+    }
+    li {
+        // padding: 0;
+    }
+    .loading-menu-item {
+        height: 100%;
+        .bp3-spinner {
+            margin-left: 5px;
+        }
+    }
+    .menu-item-text {
+        white-space: normal;
+        font-weight: 500;
+        max-height: 2.9em;
+        overflow: hidden;
+    }
+    .pub-preview {
+        width: 50px;
+        min-height: 50px;
+        height: 100%;
+        background-size: cover;
+    }
+}

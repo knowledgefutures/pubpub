@@ -1,0 +1,33 @@
+.pub-contributors_contributor-component {
+	display: flex;
+	margin-bottom: 30px;
+	font-size: 12px;
+	.avatar-wrapper {
+		flex-shrink: 0;
+		z-index: 0;
+		a {
+			text-decoration: none;
+			display: block;
+		}
+	}
+	.details-wrapper {
+		flex-grow: 1;
+		padding-left: 7px;
+		width: calc(100% - 40px);
+		.name {
+			font-weight: 600;
+			width: 100%;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+	.affiliation {
+		font-style: italic;
+		margin-top: 0.5em;
+	}
+	.roles {
+		font-style: italic;
+		margin-top: 0.5em;
+	}
+}

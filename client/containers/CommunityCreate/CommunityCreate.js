@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, NonIdealState } from '@blueprintjs/core';
-import InputField from 'components/InputField/InputField';
-import ImageUpload from 'components/ImageUpload/ImageUpload';
-import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { hydrateWrapper, apiFetch, slugifyString } from 'utilities';
+import { ColorInput, GridWrapper, InputField, ImageUpload, PageWrapper } from 'components';
+import { hydrateWrapper, apiFetch, slugifyString } from 'utils';
 
 require('./communityCreate.scss');
 
@@ -22,7 +20,8 @@ class CommunityCreate extends Component {
 			title: '',
 			description: '',
 			heroLogo: '',
-			accentColor: '#2D2E2F',
+			accentColorDark: '#2D2E2F',
+			accentColorLight: '#FFFFFF',
 			createIsLoading: false,
 			createError: undefined,
 		};
@@ -31,7 +30,6 @@ class CommunityCreate extends Component {
 		this.onTitleChange = this.onTitleChange.bind(this);
 		this.onDescriptionChange = this.onDescriptionChange.bind(this);
 		this.onHeroHeaderLogoChange = this.onHeroHeaderLogoChange.bind(this);
-		this.onAccentColorChange = this.onAccentColorChange.bind(this);
 	}
 
 	onCreateSubmit(evt) {
@@ -46,7 +44,8 @@ class CommunityCreate extends Component {
 				description: this.state.description,
 				headerLogo: this.state.heroLogo,
 				heroLogo: this.state.heroLogo,
-				accentColor: this.state.accentColor,
+				accentColorLight: this.state.accentColorLight,
+				accentColorDark: this.state.accentColorDark,
 			}),
 		})
 			.then(() => {
@@ -74,12 +73,7 @@ class CommunityCreate extends Component {
 		this.setState({ heroLogo: val });
 	}
 
-	onAccentColorChange(evt) {
-		this.setState({ accentColor: evt.target.value });
-	}
-
 	render() {
-		const colorRegex = /^#([a-f]|[A-F]|[0-9]){6}$/;
 		return (
 			<div id="community-create-container">
 				<PageWrapper
@@ -89,99 +83,88 @@ class CommunityCreate extends Component {
 					hideNav={true}
 					hideFooter={true}
 				>
-					<div className="container small">
-						<div className="row">
-							<div className="col-12">
-								{!this.props.loginData.id && (
-									<NonIdealState
-										title="To create your community, create an account or login."
-										visual="error"
-										action={
-											<a
-												href="/login?redirect=/community/create"
-												className="bp3-button"
-											>
-												Login or Signup
-											</a>
-										}
+					<GridWrapper containerClassName="small">
+						{!this.props.loginData.id && (
+							<NonIdealState
+								title="To create your community, create an account or login."
+								visual="error"
+								action={
+									<a
+										href="/login?redirect=/community/create"
+										className="bp3-button"
+									>
+										Login or Signup
+									</a>
+								}
+							/>
+						)}
+						{this.props.loginData.id && (
+							<div>
+								<h1>Create Community</h1>
+								<form onSubmit={this.onCreateSubmit}>
+									<InputField
+										label="URL"
+										isRequired={true}
+										value={this.state.subdomain}
+										onChange={this.onSubdomainChange}
+										helperText={`https://${this.state.subdomain ||
+											'[URL]'}.pubpub.org`}
 									/>
-								)}
-								{this.props.loginData.id && (
-									<div>
-										<h1>Create Community</h1>
-										<form onSubmit={this.onCreateSubmit}>
-											<InputField
-												label="URL"
-												isRequired={true}
-												value={this.state.subdomain}
-												onChange={this.onSubdomainChange}
-												helperText={`https://${this.state.subdomain ||
-													'[URL]'}.pubpub.org`}
-											/>
-											<InputField
-												label="Title"
-												isRequired={true}
-												value={this.state.title}
-												onChange={this.onTitleChange}
-											/>
-											<InputField
-												label="Description"
-												isTextarea={true}
-												value={this.state.description}
-												onChange={this.onDescriptionChange}
-												helperText={`${
-													this.state.description.length
-												}/280 characters`}
-											/>
-											<ImageUpload
-												htmlFor="large-header-logo-upload"
-												label="Community Logo"
-												defaultImage={this.state.heroLogo}
-												height={60}
-												width={150}
-												onNewImage={this.onHeroHeaderLogoChange}
-												helperText="Used on the landing page. Suggested height: 200px"
-											/>
-											<InputField
-												label="Accent Color"
-												isRequired={true}
-												value={this.state.accentColor}
-												onChange={this.onAccentColorChange}
-												error={
-													!colorRegex.test(this.state.accentColor)
-														? 'Must be a hex format color: e.g. #123456'
-														: ''
-												}
-												helperText={
-													<div
-														className="color-swatch"
-														style={{
-															backgroundColor: this.state.accentColor,
-														}}
-													/>
-												}
-											/>
-											<InputField error={this.state.createError}>
-												<Button
-													name="create"
-													type="submit"
-													className="bp3-button bp3-intent-primary create-account-button"
-													onClick={this.onCreateSubmit}
-													text="Create Community"
-													disabled={
-														!this.state.subdomain ||
-														!this.state.title ||
-														!colorRegex.test(this.state.accentColor)
-													}
-													loading={this.state.createIsLoading}
-												/>
-											</InputField>
-										</form>
-									</div>
-								)}
+									<InputField
+										label="Title"
+										isRequired={true}
+										value={this.state.title}
+										onChange={this.onTitleChange}
+									/>
+									<InputField
+										label="Description"
+										isTextarea={true}
+										value={this.state.description}
+										onChange={this.onDescriptionChange}
+										helperText={`${this.state.description.length}/280 characters`}
+									/>
+									<ImageUpload
+										htmlFor="large-header-logo-upload"
+										label="Community Logo"
+										defaultImage={this.state.heroLogo}
+										height={60}
+										width={150}
+										onNewImage={this.onHeroHeaderLogoChange}
+										helperText="Used on the landing page. Suggested height: 200px"
+									/>
+									<InputField label="Light Accent Color">
+										<ColorInput
+											value={this.state.accentColorLight}
+											onChange={(val) => {
+												this.setState({
+													accentColorLight: val.hex,
+												});
+											}}
+										/>
+									</InputField>
+									<InputField label="Dark Accent Color">
+										<ColorInput
+											value={this.state.accentColorDark}
+											onChange={(val) => {
+												this.setState({ accentColorDark: val.hex });
+											}}
+										/>
+									</InputField>
+									<InputField error={this.state.createError}>
+										<Button
+											name="create"
+											type="submit"
+											className="bp3-button bp3-intent-primary create-account-button"
+											onClick={this.onCreateSubmit}
+											text="Create Community"
+											disabled={!this.state.subdomain || !this.state.title}
+											loading={this.state.createIsLoading}
+										/>
+									</InputField>
+								</form>
 							</div>
-						</div>
-					</div>
+						)}
+					</GridWrapper>
 				</PageWrapper>
 			</div>
 		);

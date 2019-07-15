@@ -1,0 +1,33 @@
+.user-edit-component {
+	.col-12 {
+		position: relative;
+	}
+	.buttons {
+		position: absolute;
+		top: 0;
+		right: 0;
+		text-align: right;
+	}
+	h1 {
+		padding-bottom: 1em;
+	}
+
+	input,
+	textarea {
+		max-width: 500px;
+	}
+	.privacy {
+		font-size: 12px;
+		font-style: italic;
+	}
+}
+
+@media only screen and (max-width: 720px) {
+	/* Used to be 45em */
+	.user-edit-component {
+		input,
+		textarea {
+			max-width: none;
+		}
+	}
+}

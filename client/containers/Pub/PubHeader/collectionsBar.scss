@@ -1,0 +1,25 @@
+$element-height: 30px;
+$element-margin: 6px;
+
+.collections-bar-component {
+    display: flex;
+    align-items: center;
+    .bp3-button {
+        height: $element-height;
+    }
+    .collections-list {
+        overflow: hidden;
+        margin-left: $element-margin;
+    }
+    .header-collection {
+        text-decoration: none;
+        margin-right: $element-margin;
+        .bp3-tag {
+            padding: 4px 10px;
+            height: $element-height;
+            &.overflow-tag {
+                user-select: none;
+            }
+        }
+    }
+}

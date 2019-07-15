@@ -10,6 +10,7 @@ export default [
 		userId: '237fe275-0618-4a8f-bd40-ea9065836e67',
 		collectionId: 'e281f63f-02df-4153-9b7d-e5fe1386b0e3',
 		createdAt: '2019-04-11T18:06:51.222Z',
+		affiliation: 'Massachusetts Institute of Technology',
 		user: {
 			id: '237fe275-0618-4a8f-bd40-ea9065836e67',
 			firstName: 'Travis',
@@ -73,6 +74,7 @@ export default [
 		order: 0.03125,
 		isAuthor: true,
 		roles: null,
+		affiliation: 'Springfield A&M',
 		userId: '6ddd7a7b-c542-4127-b403-33a67eb40ff3',
 		collectionId: 'e281f63f-02df-4153-9b7d-e5fe1386b0e3',
 		createdAt: '2019-04-11T18:06:47.699Z',

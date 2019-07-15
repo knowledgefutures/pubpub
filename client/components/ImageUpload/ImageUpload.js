@@ -4,7 +4,7 @@ import { AnchorButton } from '@blueprintjs/core';
 import Overlay from 'components/Overlay/Overlay';
 import ImageCropper from 'components/ImageCropper/ImageCropper';
 import Icon from 'components/Icon/Icon';
-import { s3Upload } from 'utilities';
+import { s3Upload } from 'utils';
 
 require('./imageUpload.scss');
 

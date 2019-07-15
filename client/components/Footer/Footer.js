@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, InputGroup } from '@blueprintjs/core';
+import {
+	Button,
+	InputGroup,
+	Checkbox,
+	Position,
+	Popover,
+	PopoverInteractionKind,
+} from '@blueprintjs/core';
+import { GridWrapper } from 'components';
 import Icon from 'components/Icon/Icon';
-import { apiFetch } from 'utilities';
+import { apiFetch } from 'utils';
 
 require('./footer.scss');
 
@@ -20,9 +28,11 @@ class Footer extends Component {
 			email: '',
 			isLoadingSubscribe: false,
 			isSubscribed: false,
+			isConfirmed: false,
 		};
 		this.handleEmailChange = this.handleEmailChange.bind(this);
 		this.handleEmailSubmit = this.handleEmailSubmit.bind(this);
+		this.handleConfirmChange = this.handleConfirmChange.bind(this);
 		this.links = props.isBasePubPub
 			? [
 					{ id: 1, title: 'Create your community', url: '/create/community' },
@@ -48,6 +58,12 @@ class Footer extends Component {
 		this.setState({
 			isLoadingSubscribe: true,
 		});
+		if (!this.state.isConfirmed) {
+			this.setState({
+				isLoadingSubscribe: false,
+			});
+			return false;
+		}
 		return apiFetch('/api/subscribe', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -69,11 +85,15 @@ class Footer extends Component {
 			});
 	}
 
+	handleConfirmChange(evt) {
+		this.setState({ isConfirmed: evt.target.checked });
+	}
+
 	render() {
 		const pubpubLogo =
-			this.props.communityData.accentTextColor === '#FFFFFF'
-				? '/static/logoWhite.svg'
-				: '/static/logoBlack.svg';
+			this.props.communityData.headerColorType === 'light'
+				? '/static/logoBlack.svg'
+				: '/static/logoWhite.svg';
 		const wrapperClasses = this.props.isBasePubPub
 			? 'base-pubpub'
 			: 'accent-background accent-color';
@@ -105,102 +125,126 @@ class Footer extends Component {
 
 		return (
 			<div className={`footer-component ${wrapperClasses}`}>
-				<div className="container">
-					<div className="row">
-						<div className="col-12">
-							<div className="left">
-								<div className="title">
-									<a href="https://pubpub.org">
-										<img className="logo" src={pubpubLogo} alt="PubPub logo" />
+				<GridWrapper>
+					<div className="left">
+						<div className="title">
+							<a href="https://pubpub.org">
+								<img className="logo" src={pubpubLogo} alt="PubPub logo" />
+							</a>
+							<ul className="social-list">
+								<li>
+									<a href="https://twitter.com/pubpub">
+										<Icon icon="twitter" />
 									</a>
-									<ul className="social-list">
-										<li>
-											<a href="https://twitter.com/pubpub">
-												<Icon icon="twitter" />
-											</a>
-										</li>
-										<li>
-											<a href="mailto:team@pubpub.org?subject=Contact">
-												<Icon icon="envelope" />
-											</a>
-										</li>
-										<li>
-											<a href="https://github.com/pubpub">
-												<Icon icon="github" />
-											</a>
-										</li>
-									</ul>
-								</div>
-								<ul className="separated">
-									<li>
-										<a href="https://pubpub.org/about">About</a>
-									</li>
-									<li>
-										<a href="https://pubpub.org/explore">Explore</a>
-									</li>
-									<li>
-										<a href="https://pubpub.org/pricing">Pricing</a>
-									</li>
-									<li>
-										<a href="https://help.pubpub.org">Help</a>
-									</li>
-								</ul>
-
-								<form onSubmit={this.handleEmailSubmit}>
-									<strong>Feature & Community Newsletter</strong>
-									<InputGroup
-										placeholder="Your Email"
-										value={this.state.email}
-										onChange={this.handleEmailChange}
-										label="Feature & community newsletter"
-										rightElement={
-											<Button
-												icon={
-													!this.state.isSubscribed
-														? 'arrow-right'
-														: 'tick'
-												}
-												onClick={this.handleEmailSubmit}
-												minimal={true}
-												loading={this.state.isLoadingSubscribe}
-											/>
-										}
-										disabled={this.state.isSubscribed}
-									/>
-								</form>
-							</div>
-							<div className="right">
-								<div className="title">
-									<a href="/">{this.props.communityData.title}</a>
-								</div>
-								<ul className="separated">
-									{this.links
-										.filter((item) => {
-											return !item.adminOnly || this.props.isAdmin;
-										})
-										.map((link) => {
-											return (
-												<li key={`footer-item-${link.id}`}>
-													<a href={link.url}>{link.title}</a>
-												</li>
-											);
-										})}
-								</ul>
-								{!!socialItems.length && (
-									<ul className="social-list">
-										{socialItems.map((item) => {
-											return (
-												<a href={item.url} key={`social-item-${item.id}`}>
-													<li>{item.icon}</li>
-												</a>
-											);
-										})}
-									</ul>
-								)}
-							</div>
+								</li>
+								<li>
+									<a href="mailto:team@pubpub.org?subject=Contact">
+										<Icon icon="envelope" />
+									</a>
+								</li>
+								<li>
+									<a href="https://github.com/pubpub">
+										<Icon icon="github" />
+									</a>
+								</li>
+							</ul>
 						</div>
+						<ul className="separated">
+							<li>
+								<a href="https://pubpub.org/about">About</a>
+							</li>
+							<li>
+								<a href="https://pubpub.org/explore">Explore</a>
+							</li>
+							<li>
+								<a href="https://pubpub.org/pricing">Pricing</a>
+							</li>
+							<li>
+								<a href="https://help.pubpub.org">Help</a>
+							</li>
+						</ul>
+
+						<form onSubmit={this.handleEmailSubmit}>
+							<strong>Feature & Community Newsletter</strong>
+							<InputGroup
+								type="email"
+								placeholder="Your Email"
+								value={this.state.email}
+								onChange={this.handleEmailChange}
+								label="Feature & community newsletter"
+								rightElement={
+									<Button
+										type="submit"
+										icon={!this.state.isSubscribed ? 'arrow-right' : 'tick'}
+										minimal={true}
+										loading={this.state.isLoadingSubscribe}
+									/>
+								}
+								disabled={this.state.isSubscribed}
+							/>
+							<div className="confirm">
+								<Checkbox
+									checked={this.state.isConfirmed}
+									disabled={this.state.isSubscribed}
+									required="required"
+									onChange={this.handleConfirmChange}
+									label={
+										<span>
+											<Popover
+												interactionKind={PopoverInteractionKind.HOVER}
+												popoverClassName="bp3-popover-content-sizing"
+												position={Position.RIGHT}
+											>
+												<p>
+													<em>I agree to receive this newsletter.</em>
+												</p>
+												<div>
+													<p>
+														We use a third party provider, Mailchimp, to
+														deliver our newsletters. We never share your
+														data with anyone, and you can unsubscribe
+														using the link at the bottom of every email.
+														Learn more by visiting your&nbsp;
+														<a href="/privacy">privacy settings</a>.
+													</p>
+												</div>
+											</Popover>
+										</span>
+									}
+								/>
+							</div>
+						</form>
 					</div>
-				</div>
+					<div className="right">
+						<div className="title">
+							<a href="/">{this.props.communityData.title}</a>
+						</div>
+						<ul className="separated">
+							{this.links
+								.filter((item) => {
+									return !item.adminOnly || this.props.isAdmin;
+								})
+								.map((link) => {
+									return (
+										<li key={`footer-item-${link.id}`}>
+											<a href={link.url}>{link.title}</a>
+										</li>
+									);
+								})}
+						</ul>
+						{!!socialItems.length && (
+							<ul className="social-list">
+								{socialItems.map((item) => {
+									return (
+										<a href={item.url} key={`social-item-${item.id}`}>
+											<li>{item.icon}</li>
+										</a>
+									);
+								})}
+							</ul>
+						)}
+					</div>
+				</GridWrapper>
 			</div>
 		);
 	}

@@ -1,0 +1,67 @@
+.pub-manage-component {
+	.side-menu {
+		background-color: #f4f4f4;
+	}
+	.main-content {
+		grid-area: main;
+		min-width: 0;
+		margin: 2em 0em;
+	}
+	h2 {
+		margin-bottom: 1em;
+	}
+	.save-wrapper {
+		float: right;
+		display: flex;
+		flex-direction: column;
+		.bp3-button {
+			margin-bottom: 5px;
+		}
+		.save-success-message {
+			color: #35ae6d;
+			text-align: right;
+			user-select: none;
+			opacity: 0;
+			transition: 0.1s linear opacity;
+			&.active {
+				opacity: 1;
+			}
+		}
+		// .bp3-spinner {
+		// 	margin-right: 0.25em;
+		// }
+	}
+	.settings-section-component {
+		margin-top: 3em;
+	}
+}
+
+@media only screen and (min-width: 750px) {
+	@supports (display: grid) {
+		.pub-manage-component {
+			.manage-columns {
+				display: grid;
+				grid-template-columns: 150px 1fr;
+				grid-template-areas: 'side main';
+				grid-column-gap: 4%;
+				margin-top: 2em;
+			}
+			.side-content {
+				grid-area: side;
+				min-width: 0px;
+			}
+			.main-content {
+				grid-area: main;
+				min-width: 0;
+				margin: 0em 0em 2em;
+			}
+		}
+	}
+}
+
+// .pub-options-spinner-wrapper {
+// 	height: 100%;
+// 	display: flex;
+// 	justify-content: center;
+// 	align-items: center;
+// }

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NonIdealState } from '@blueprintjs/core';
-import UserHeader from 'components/UserHeader/UserHeader';
-import UserNav from 'components/UserNav/UserNav';
-import UserEdit from 'components/UserEdit/UserEdit';
-import PubPreview from 'components/PubPreview/PubPreview';
-import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { hydrateWrapper } from 'utilities';
+
+import { GridWrapper, PubPreview, PageWrapper } from 'components';
+import { hydrateWrapper } from 'utils';
+import UserHeader from './UserHeader';
+import UserNav from './UserNav';
+import UserEdit from './UserEdit';
 
 require('./user.scss');
 
@@ -61,53 +61,38 @@ class User extends Component {
 					{mode === 'edit' && <UserEdit userData={userData} />}
 					{mode !== 'edit' && (
 						<div>
-							<div className="container narrow">
-								<div className="row">
-									<div className="col-12">
-										<UserHeader userData={userData} isUser={selfProfile} />
-									</div>
-								</div>
-							</div>
+							<GridWrapper containerClassName="narrow">
+								<UserHeader userData={userData} isUser={selfProfile} />
+							</GridWrapper>
 
-							<div className="container narrow nav">
-								<div className="row">
-									<div className="col-12">
-										<UserNav
-											userSlug={userData.slug}
-											activeTab={mode}
-											allPubsCount={communityPubs.length}
-											authoredPubsCount={authoredPubs.length}
-										/>
-									</div>
-								</div>
-							</div>
+							<GridWrapper containerClassName="narrow nav">
+								<UserNav
+									userSlug={userData.slug}
+									activeTab={mode}
+									allPubsCount={communityPubs.length}
+									authoredPubsCount={authoredPubs.length}
+								/>
+							</GridWrapper>
 							{!!externalPubs.length && (
-								<div className="container narrow nav">
-									<div className="row">
-										<div className="col-12">
-											<div className="bp3-callout external-pubs-wrapper">
-												<a
-													href={`https://www.pubpub.org/user/${
-														userData.slug
-													}`}
-													className="bp3-button bp3-intent-primary"
-												>
-													Go to Full Profile
-												</a>
-												<h5>
-													{externalPubs.length} pub
-													{externalPubs.length === 1 ? '' : 's'} in other
-													communities.
-												</h5>
-												<div>
-													{userData.firstName} has published in other
-													PubPub communities. Click to go to their full
-													profile.
-												</div>
-											</div>
+								<GridWrapper containerClassName="narrow nav">
+									<div className="bp3-callout external-pubs-wrapper">
+										<a
+											href={`https://www.pubpub.org/user/${userData.slug}`}
+											className="bp3-button bp3-intent-primary"
+										>
+											Go to Full Profile
+										</a>
+										<h5>
+											{externalPubs.length} pub
+											{externalPubs.length === 1 ? '' : 's'} in other
+											communities.
+										</h5>
+										<div>
+											{userData.firstName} has published in other PubPub
+											communities. Click to go to their full profile.
 										</div>
 									</div>
-								</div>
+								</GridWrapper>
 							)}
 							<div className="container narrow content">
 								{pubsToRender.map((pub) => {

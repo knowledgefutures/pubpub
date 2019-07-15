@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const { resolve } = require('path');
+const autoprefixer = require('autoprefixer');
 
 module.exports = ({ config }) => {
 	config.module.rules.push({
@@ -7,6 +8,10 @@ module.exports = ({ config }) => {
 		use: [
 			{ loader: 'style-loader' }, // creates style nodes from JS strings
 			{ loader: 'css-loader' }, // translates CSS into CommonJS
+			{
+				loader: 'postcss-loader',
+				options: { ident: 'postcss', plugins: [autoprefixer({})] },
+			},
 			{ loader: 'sass-loader', options: { includePaths: [resolve(__dirname, '../client')] } }, // compiles Sass to CSS
 		],
 	});
@@ -18,5 +23,7 @@ module.exports = ({ config }) => {
 	});
 
 	config.resolve.modules = [resolve(__dirname, '../client'), 'node_modules'];
+	config.resolve.alias['shared'] = resolve(__dirname, '../shared');
+	config.resolve.alias['data'] = resolve(__dirname, '../stories/data');
 	return config;
 };

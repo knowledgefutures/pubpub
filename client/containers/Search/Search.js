@@ -4,14 +4,13 @@ import algoliasearch from 'algoliasearch';
 import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
 import throttle from 'lodash.throttle';
-import PageWrapper from 'components/PageWrapper/PageWrapper';
-import Icon from 'components/Icon/Icon';
+import { PageWrapper, Icon } from 'components';
 import {
 	hydrateWrapper,
 	getResizedUrl,
 	generatePubBackground,
 	generatePageBackground,
-} from 'utilities';
+} from 'utils';
 
 require('./search.scss');
 
@@ -252,9 +251,7 @@ class Search extends Component {
 											);
 
 											if (this.state.mode === 'pubs') {
-												link = `https://${item.communityDomain}/pub/${
-													item.slug
-												}`;
+												link = `https://${item.communityDomain}/pub/${item.slug}`;
 												bannerStyle = item.avatar
 													? {
 															backgroundImage: `url("${resizedBannerImage}")`,
@@ -265,12 +262,10 @@ class Search extends Component {
 															),
 													  };
 												keyId = item.pubId;
-												isPublic = item.versionIsPublic;
+												isPublic = item.branchIsPublic;
 											}
 											if (this.state.mode === 'pages') {
-												link = `https://${item.communityDomain}/${
-													item.slug
-												}`;
+												link = `https://${item.communityDomain}/${item.slug}`;
 												bannerStyle = item.avatar
 													? {
 															backgroundImage: `url("${resizedBannerImage}")`,
@@ -311,9 +306,7 @@ class Search extends Component {
 																.isBasePubPub && (
 																<div className="community-title">
 																	<a
-																		href={`https://${
-																			item.communityDomain
-																		}`}
+																		href={`https://${item.communityDomain}`}
 																		alt={item.communityTitle}
 																		style={{
 																			backgroundColor:
@@ -324,9 +317,7 @@ class Search extends Component {
 																	>
 																		{resizedCommunityLogo && (
 																			<img
-																				alt={`${
-																					item.communityTitle
-																				} logo`}
+																				alt={`${item.communityTitle} logo`}
 																				src={
 																					resizedCommunityLogo
 																				}
@@ -346,7 +337,7 @@ class Search extends Component {
 														{this.state.mode === 'pubs' && (
 															<div className="byline">
 																{dateFormat(
-																	item.versionCreatedAt,
+																	item.branchCreatedAt,
 																	'mmm dd, yyyy',
 																)}
 																{item.byline && <span> · </span>}

@@ -1,0 +1,58 @@
+@import '../pub.scss';
+
+.pub-document-component {
+	.discussions {
+		background-color: #f8f8f8;
+		line-height: 1.6;
+		padding: 4em 0em;
+	}
+}
+
+@supports (display: grid) {
+    .pub-grid {
+        @include has-grid('. pub . comments .');
+        width: 100%;
+        .main-content {
+            grid-area: pub;
+        }
+        .side-content {
+            grid-area: comments;
+        }
+	}
+	@include pub-full-view {
+		.pub-document-component {
+			.pub-columns {
+				margin-top: 3em;
+			}
+			.side-content {
+				.header-title {
+					display: block;
+					font-weight: 600;
+					font-size: 16px;
+					margin-bottom: 10px;
+				}
+			}
+		}
+	}
+
+    @include pub-compact-view {
+        .pub-grid {
+            .side-content > * {
+                display: none;
+            }
+		}
+		.pub-document-component {
+			.main-content {
+				margin-top: 2em;
+			}
+		}
+    }
+}
+
+@media print {
+	#pub-old-container {
+		.container.pub {
+			max-width: 100%;
+		}
+	}
+}

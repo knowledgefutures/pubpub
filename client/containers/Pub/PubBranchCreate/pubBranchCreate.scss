@@ -1,0 +1,25 @@
+.pub-branch-create-component {
+	.cards-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		width: 100%;
+	}
+	.dropdown-bar {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		.permissions-dropdown-component, .links-dropdown {
+			margin-bottom: 1em;
+		}
+		.dropdown-button {
+			background-color: #eaeaea;
+			border-radius: 16px;
+			&:hover {
+				background-color: #e0e0e0;
+			}
+			&:active {
+				background-color: #d7d7d7;
+			}
+		}
+	}
+}

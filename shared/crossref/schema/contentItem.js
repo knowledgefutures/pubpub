@@ -1,4 +1,3 @@
-import componentList from './componentList';
 import contributors from './contributors';
 import date from './helpers/date';
 import doiData from './doiData';
@@ -7,10 +6,8 @@ export default ({
 	attributions,
 	componentType,
 	doi,
-	getResourceUrl,
-	getVersionDoi,
 	publicationDate,
-	sortedVersions,
+	resourceUrl,
 	timestamp,
 	title,
 }) => {
@@ -22,8 +19,7 @@ export default ({
 				title: title,
 			},
 			...date('publication_date', publicationDate),
-			...doiData(doi, timestamp, getResourceUrl()),
-			...componentList(sortedVersions, timestamp, getVersionDoi, getResourceUrl),
+			...doiData(doi, timestamp, resourceUrl),
 		},
 	};
 };

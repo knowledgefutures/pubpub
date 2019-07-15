@@ -5,7 +5,9 @@ import Footer from 'components/Footer/Footer';
 import AccentStyle from 'components/AccentStyle/AccentStyle';
 import NavBar from 'components/NavBar/NavBar';
 import Icon from 'components/Icon/Icon';
-import { populateNavigationIds } from 'utilities';
+import { populateNavigationIds } from 'utils';
+
+require('./pageWrapper.scss');
 
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
@@ -22,6 +24,8 @@ const defaultProps = {
 	hideNav: false,
 	hideFooter: false,
 };
+
+export const PageContext = React.createContext({});
 
 const PageWrapper = (props) => {
 	const loginData = props.loginData;
@@ -63,58 +67,60 @@ const PageWrapper = (props) => {
 		return item.value;
 	});
 
-	const useBottomShadow = communityData.accentTextColor === '#000000';
+	const pageContextProps = {
+		communityData: props.communityData,
+		loginData: props.loginData,
+		locationData: props.locationData,
+	};
 	return (
-		<div id="page-wrapper-component" className={useBottomShadow ? 'bottom-shadow' : ''}>
-			{props.fixHeader && (
-				<style>
-					{`
+		<PageContext.Provider value={pageContextProps}>
+			<div id="page-wrapper-component">
+				{props.fixHeader && (
+					<style>
+						{`
 						.header-component { position: fixed; width: 100%; z-index: 19; }
 						.page-content { padding-top: 56px; }
 					`}
-				</style>
-			)}
-			{useBottomShadow && (
-				<style>
-					{`
-						nav:last-of-type { border-bottom: 1px solid #DDD; }
-					`}
-				</style>
-			)}
+					</style>
+				)}
 
-			<AccentStyle
-				accentColor={communityData.accentColor}
-				accentTextColor={communityData.accentTextColor}
-				accentActionColor={communityData.accentActionColor}
-				accentHoverColor={communityData.accentHoverColor}
-				accentMinimalColor={communityData.accentMinimalColor}
-			/>
-
-			<Header
-				communityData={props.communityData}
-				locationData={props.locationData}
-				loginData={props.loginData}
-				// smallHeaderLogo={communityData.smallHeaderLogo}
-				// largeHeaderLogo={communityData.largeHeaderLogo}
-				// largeHeaderDescription={communityData.largeHeaderDescription}
-				// largeHeaderBackground={communityData.largeHeaderBackground}
-			/>
-
-			{!props.hideNav && !props.communityData.hideNav && (
-				<NavBar navItems={navItems} socialItems={socialItems} />
-			)}
-
-			<div className="page-content">{props.children}</div>
-
-			{!props.hideFooter && (
-				<Footer
-					isAdmin={loginData.isAdmin}
-					isBasePubPub={props.locationData.isBasePubPub}
+				<AccentStyle
 					communityData={communityData}
-					socialItems={socialItems}
+					isNavHidden={props.hideNav}
+					// accentColorDark={communityData.accentColorDark}
+					// headerColorType={communityData.headerColorType}
+					// accentTextColor={communityData.accentTextColor}
+					// accentActionColor={communityData.accentActionColor}
+					// accentHoverColor={communityData.accentHoverColor}
+					// accentMinimalColor={communityData.accentMinimalColor}
 				/>
-			)}
-		</div>
+
+				<Header
+					communityData={props.communityData}
+					locationData={props.locationData}
+					loginData={props.loginData}
+					// smallHeaderLogo={communityData.smallHeaderLogo}
+					// largeHeaderLogo={communityData.largeHeaderLogo}
+					// largeHeaderDescription={communityData.largeHeaderDescription}
+					// largeHeaderBackground={communityData.largeHeaderBackground}
+				/>
+
+				{!props.hideNav && !props.communityData.hideNav && (
+					<NavBar navItems={navItems} socialItems={socialItems} />
+				)}
+
+				<div className="page-content">{props.children}</div>
+
+				{!props.hideFooter && (
+					<Footer
+						isAdmin={loginData.isAdmin}
+						isBasePubPub={props.locationData.isBasePubPub}
+						communityData={communityData}
+						socialItems={socialItems}
+					/>
+				)}
+			</div>
+		</PageContext.Provider>
 	);
 };
 

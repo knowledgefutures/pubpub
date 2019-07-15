@@ -1,0 +1,13 @@
+import app from '../server';
+import { getWorkerTask } from './queries';
+
+app.get('/api/workerTasks', (req, res) => {
+	return getWorkerTask(req.query)
+		.then((workerTaskData) => {
+			return res.status(201).json(workerTaskData);
+		})
+		.catch((err) => {
+			console.error('Error getting WorkerTask', err);
+			return res.status(500).json(err);
+		});
+});

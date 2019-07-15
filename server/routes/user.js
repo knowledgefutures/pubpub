@@ -82,7 +82,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 			const communityAdminQuery = CommunityAdmin.findOne({
 				where: {
 					userId: initialData.loginData.id,
-					communityId: initialData.communityData.id,
+					communityId: initialData.communityData.id || null,
 				},
 			});
 			return Promise.all([initialData, getUserData, communityAdminQuery]);

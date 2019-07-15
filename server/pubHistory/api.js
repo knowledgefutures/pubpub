@@ -6,8 +6,9 @@ import { getBranchAccess } from '../branch/permissions';
 app.get('/api/pubHistory', async (req, res) => {
 	try {
 		const { branchId, pubId, communityId, accessHash, historyKey } = req.query;
-		const { id: userId } = req.user;
+		const { id: userId } = req.user || {};
 		const branch = await Branch.findOne({
+			where: { id: branchId },
 			include: [
 				{
 					model: BranchPermission,
@@ -25,13 +26,15 @@ app.get('/api/pubHistory', async (req, res) => {
 			],
 		});
 		const [communityAdmin, pubManager] = await Promise.all([
-			CommunityAdmin.findOne({ where: { userId: userId, communityId: communityId } }),
-			PubManager.findOne({
-				where: {
-					pubId: pubId,
-					userId: userId,
-				},
-			}),
+			userId &&
+				CommunityAdmin.findOne({ where: { userId: userId, communityId: communityId } }),
+			userId &&
+				PubManager.findOne({
+					where: {
+						pubId: pubId,
+						userId: userId,
+					},
+				}),
 		]);
 		const { canView } = getBranchAccess(
 			accessHash,

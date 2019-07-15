@@ -1,4 +1,5 @@
 import React from 'react';
+import uuidValidate from 'uuid-validate';
 import { Pub } from 'containers';
 
 import Html from '../Html';
@@ -64,6 +65,9 @@ app.get(
 		}
 		try {
 			if (req.query.version) {
+				if (!uuidValidate(req.query.version)) {
+					throw new Error('Pub Not Found');
+				}
 				const versionLookup = await lookupPubVersion(req.query.version);
 				if (versionLookup) {
 					const { historyKey, shortId } = versionLookup;

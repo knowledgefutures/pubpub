@@ -161,6 +161,7 @@
 		"throng": "^4.0.0",
 		"tmp-promise": "^2.0.1",
 		"uuid": "^3.3.0",
+		"uuid-validate": "0.0.3",
 		"valid-url": "^1.0.9",
 		"webpack": "^4.29.6",
 		"webpack-manifest-plugin": "^2.0.4",

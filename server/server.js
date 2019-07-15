@@ -25,7 +25,6 @@ Module.prototype.require = function(...args) {
 const app = express();
 export default app;
 
-console.log('source-version: ', process.env.SOURCE_VERSION);
 if (process.env.NODE_ENV === 'production') {
 	// The Sentry request handler must be the first middleware on the app
 	Sentry.init({ dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439' });
@@ -116,33 +115,8 @@ app.use((req, res, next) => {
 	if (req.hostname.indexOf('v6.pubpub.org') > -1) {
 		req.headers.host = 'dev.pubpub.org';
 	}
-	// if (req.hostname.indexOf('localhost') > -1) { req.headers.host = 'www.pubpub.org'; }
-	if (req.hostname.indexOf('dev-pubpub.pubpub.org') > -1) {
-		req.headers.host = 'www.pubpub.org';
-	}
 	if (req.hostname.indexOf('dev.pubpub.org') > -1) {
 		req.headers.host = 'dev.pubpub.org';
-	}
-	if (req.hostname.indexOf('v6-jblp.pubpub.org') > -1) {
-		req.headers.host = 'stanford-jblp.pubpub.org';
-	}
-	if (req.hostname.indexOf('v6-hdsr.pubpub.org') > -1) {
-		req.headers.host = 'hdsr.pubpub.org';
-	}
-	if (req.hostname.indexOf('v6-wip.pubpub.org') > -1) {
-		req.headers.host = 'wip.pubpub.org';
-	}
-	if (req.hostname.indexOf('v6-cursor.pubpub.org') > -1) {
-		req.headers.host = 'cursor.pubpub.org';
-	}
-	if (req.hostname.indexOf('pubpub-v6-prod.herokuapp.com') > -1) {
-		req.headers.host = 'jods.pubpub.org';
-	}
-	if (req.hostname.indexOf('pubpub-v4-dev.herokuapp.com') > -1) {
-		req.headers.host = 'frankdev.pubpub.org';
-	}
-	if (req.hostname.indexOf('v4-testing.pubpub.org') > -1) {
-		req.headers.host = 'testing.pubpub.org';
 	}
 	next();
 });

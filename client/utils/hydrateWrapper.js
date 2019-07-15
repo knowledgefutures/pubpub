@@ -1,5 +1,5 @@
 import React from 'react';
-import Raven from 'raven-js';
+import * as Sentry from '@sentry/browser';
 import { hydrate } from 'react-dom';
 import { FocusStyleManager } from '@blueprintjs/core';
 
@@ -30,8 +30,11 @@ export const hydrateWrapper = (Component) => {
 
 		if (!isLocalEnv(window)) {
 			setupKeen();
-			Raven.config('https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439').install();
-			Raven.setUserContext({ username: initialData.loginData.slug });
+			Sentry.init({ dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439' });
+			Sentry.setUser({
+				id: initialData.loginData.id,
+				username: initialData.loginData.slug,
+			});
 		}
 
 		hydrate(<Component {...initialData} />, document.getElementById('root'));

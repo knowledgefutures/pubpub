@@ -6,6 +6,7 @@ import compression from 'compression';
 import enforce from 'express-sslify';
 import Module from 'module';
 import passport from 'passport';
+import * as Sentry from '@sentry/node';
 import { sequelize, User } from './models';
 
 /* Since we are server-rendering components, we 	*/
@@ -18,20 +19,22 @@ Module.prototype.require = function(...args) {
 	}
 	return originalRequire.apply(this, args);
 };
-
 /* ---------------------- */
 /* Initialize express app */
 /* ---------------------- */
 const app = express();
 export default app;
 
+if (process.env.NODE_ENV === 'production') {
+	// The Sentry request handler must be the first middleware on the app
+	Sentry.init({ dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439' });
+	app.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
+	app.use(enforce.HTTPS({ trustProtoHeader: true }));
+}
 app.use(compression());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
-if (process.env.NODE_ENV === 'production') {
-	app.use(enforce.HTTPS({ trustProtoHeader: true }));
-}
 
 /* --------------------- */
 /* Configure app session */
@@ -148,6 +151,14 @@ app.use((req, res, next) => {
 /* ------------- */
 require('./apiRoutes');
 require('./routes');
+
+/* ------------- */
+/* Error Handlers */
+/* ------------- */
+if (process.env.NODE_ENV === 'production') {
+	// The Sentry error handler must be before any other error middleware
+	app.use(Sentry.Handlers.errorHandler());
+}
 
 /* ------------ */
 /* Start Server */

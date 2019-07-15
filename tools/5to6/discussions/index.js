@@ -2,7 +2,7 @@
 const Promise = require('bluebird');
 const firebaseAdmin = require('firebase-admin');
 const { buildSchema, restoreDiscussionMaps } = require('@pubpub/editor');
-const discussionSchema = require('./simpleDiscussionSchema');
+const discussionSchema = require('./simpleDiscussionSchema').default;
 const getPipedPubIds = require('../util/getPipedPubIds');
 require('../../../server/config.js');
 
@@ -34,9 +34,10 @@ const main = async () => {
 						`~~~~~~~~ Processing ${branchJSON.pubId}/${branchJSON.branchId} (${index +
 							1}/${arr.length}) ~~~~~~~~`,
 					);
-					const branchRef = database.ref(`${branchJSON.pubId}/${branchJSON.branchId}`);
+					const branchRef = database.ref(
+						`pub-${branchJSON.pubId}/branch-${branchJSON.branchId}`,
+					);
 					const editorSchema = buildSchema({ ...discussionSchema }, {});
-
 					try {
 						await restoreDiscussionMaps(branchRef, editorSchema, true);
 						console.log(`OK: ${branchJSON.pubId}/${branchJSON.branchId}`);

@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 /* eslint-disable no-console */
 import amqplib from 'amqplib';
+import * as Sentry from '@sentry/node';
 import exportTask from './tasks/export';
 import importTask from './tasks/import';
 import {
@@ -95,6 +96,9 @@ const processTask = (channel) => {
 				};
 			})
 			.catch((taskErr) => {
+				if (process.env.NODE_ENV === 'production') {
+					Sentry.captureException(taskErr);
+				}
 				/* On failure, set the taskError to error */
 				updatedWorkerTaskData = {
 					isProcessing: false,

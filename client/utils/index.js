@@ -392,6 +392,12 @@ export function generateRenderLists(layout, pubs) {
 					if (fooRank > barRank) {
 						return 1;
 					}
+					if (foo.createdAt > bar.createdAt) {
+						return -1;
+					}
+					if (foo.createdAt < bar.createdAt) {
+						return 1;
+					}
 					return 0;
 				});
 

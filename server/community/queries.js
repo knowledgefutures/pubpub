@@ -51,6 +51,7 @@ export const createCommunity = (inputValues, userData) => {
 				heroText: description,
 				accentColorLight: inputValues.accentColorLight,
 				accentColorDark: inputValues.accentColorDark,
+				navigation: [homePageId],
 			});
 		})
 		.then(() => {

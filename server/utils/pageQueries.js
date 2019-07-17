@@ -13,6 +13,7 @@ import {
 	BranchPermission,
 	Review,
 } from '../models';
+import { attributesPublicUser } from '.';
 import { formatAndAuthenticatePub } from './pubQueries';
 
 export const findPage = (pageId, useIncludes, initialData) => {
@@ -45,7 +46,7 @@ export const findPage = (pageId, useIncludes, initialData) => {
 							model: User,
 							as: 'user',
 							required: false,
-							attributes: ['id', 'fullName', 'avatar', 'slug', 'initials', 'title'],
+							attributes: attributesPublicUser,
 						},
 					],
 				},

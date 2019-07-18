@@ -4,7 +4,7 @@ import dateFormat from 'dateformat';
 import { Button } from '@blueprintjs/core';
 
 import { pubDataProps } from 'types/pub';
-import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 import { Icon, GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
@@ -32,6 +32,12 @@ const PubDetails = (props) => {
 		return null;
 	}
 
+	const publishedAt = getPubPublishedDate(pubData, pubData.activeBranch);
+	const publishedAtString = dateFormat(publishedAt, 'mmm dd, yyyy');
+	const updatedAt = getPubUpdatedDate(pubData, pubData.activeBranch);
+	const updatedAtString = dateFormat(updatedAt, 'mmm dd, yyyy');
+	const shouldShowUpdatedDate = updatedAt && updatedAt !== publishedAt;
+
 	return (
 		<GridWrapper containerClassName="pub">
 			<div className={classNames('pub-details-component', isExpanded && 'expanded')}>
@@ -58,12 +64,13 @@ const PubDetails = (props) => {
 				</div>
 				<div className="section publication-dates">
 					<h6>{pubData.activeBranch.title === 'public' ? 'Published' : 'Created'}</h6>
-					<div className="full-height-date">
-						{dateFormat(
-							getPubPublishedDate(pubData, pubData.activeBranch),
-							'mmm dd, yyyy',
-						)}
-					</div>
+					<div className="full-height-date">{publishedAtString}</div>
+					{isExpanded && shouldShowUpdatedDate && (
+						<React.Fragment>
+							<h6>Updated</h6>
+							<div className="full-height-date">{updatedAtString}</div>
+						</React.Fragment>
+					)}
 				</div>
 				{showThirdColumn && (
 					<div className="section citation-and-doi">

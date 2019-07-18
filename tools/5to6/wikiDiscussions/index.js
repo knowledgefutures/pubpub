@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable */
 const Promise = require('bluebird');
 const firebaseAdmin = require('firebase-admin');
 const { buildSchema, restoreDiscussionMaps } = require('@pubpub/editor');
@@ -92,27 +92,29 @@ Pub.findAll({
 			// });
 
 			/* Restore discussion anchors */
-			return restoreDiscussionMaps(draftBranchRef, editorSchema, true).then(() => {
-				console.log(`~~~ Finished ${pub.id} ~~~`);
-			});
+			// return restoreDiscussionMaps(draftBranchRef, editorSchema, true).then(() => {
+			// 	console.log(`~~~ Finished ${pub.id} ~~~`);
+			// });
 
 			/* Delete unneeded content */
-
 			// const branchToDelete = pub.branches.find((branch) => {
 			// 	return branch.title !== 'draft' && branch.title !== 'public';
 			// });
 			// if (branchToDelete) {
 			// 	console.log('----:', pub.id);
-			// 	console.log(
-			// 		branchToDelete && branchToDelete.title,
-			// 		branchToDelete && branchToDelete.id,
-			// 	);
-			// 	// Branch.destory({
-			// 	// 	where: { id: branchToDelete.id}
-			// 	// });
-			// 	// const deletedBranchRef = database.ref(`pub-${pub.id}/branch-${branchToDelete.id}`);
-			// 	console.log(`pub-${pub.id}/branch-${branchToDelete.id}`);
+			// 	// console.log(
+			// 	// 	branchToDelete && branchToDelete.title,
+			// 	// 	branchToDelete && branchToDelete.id,
+			// 	// );
+			// 	const destroyPostgres = Branch.destroy({
+			// 		where: { id: branchToDelete.id },
+			// 	});
+			// 	const deletedBranchRef = database
+			// 		.ref(`pub-${pub.id}/branch-${branchToDelete.id}`)
+			// 		.remove();
+			// 	return Promise.all([destroyPostgres, deletedBranchRef]);
 			// }
+			// return null;
 		});
 		return Promise.all(processEach);
 	})
@@ -123,38 +125,3 @@ Pub.findAll({
 		console.log('Ending wiki migration');
 		process.exit();
 	});
-
-// const main = async () => {
-// 	const pipedBranchObjects = await getPipedPubIds();
-// 	console.time('Map Time');
-// 	pipedBranchObjects.reduce(
-// 		(promise, branchObject, index, arr) =>
-// 			promise
-// 				.then(async () => {
-// 					const branchJSON = JSON.parse(branchObject);
-// 					console.log(
-// 						`~~~~~~~~ Processing ${branchJSON.pubId}/${branchJSON.branchId} (${index +
-// 							1}/${arr.length}) ~~~~~~~~`,
-// 					);
-// 					const branchRef = database.ref(
-// 						`pub-${branchJSON.pubId}/branch-${branchJSON.branchId}`,
-// 					);
-// 					const editorSchema = buildSchema({ ...discussionSchema }, {});
-// 					try {
-// 						await restoreDiscussionMaps(branchRef, editorSchema, true);
-// 						console.log(`OK: ${branchJSON.pubId}/${branchJSON.branchId}`);
-// 					} catch (error) {
-// 						console.log(`FAILURE: ${branchJSON.pubId}/${branchJSON.branchId}`);
-// 						console.log(error);
-// 					}
-// 				})
-// 				.then(() => {
-// 					if (index === arr.length - 1) {
-// 						console.timeEnd('Map Time');
-// 					}
-// 				}),
-// 		Promise.resolve(),
-// 	);
-// };
-
-// main();

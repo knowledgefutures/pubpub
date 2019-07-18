@@ -12,6 +12,7 @@ export { default as FileUploadButton } from './FileUploadButton/FileUploadButton
 export { default as Footer } from './Footer/Footer';
 export { default as FormattingBar } from './FormattingBar/FormattingBar';
 export { default as GridWrapper } from './GridWrapper/GridWrapper';
+export { default as GdprBanner } from './GdprBanner/GdprBanner';
 export { default as Header } from './Header/Header';
 export { default as Icon } from './Icon/Icon';
 export { default as ImageCropper } from './ImageCropper/ImageCropper';

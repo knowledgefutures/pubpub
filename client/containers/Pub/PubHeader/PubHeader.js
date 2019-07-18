@@ -155,12 +155,14 @@ const PubHeader = (props) => {
 		{
 			title: 'Contents',
 			icon: 'toc',
-			popoverContent: <PubToc pubData={pubData} headings={headings} />,
+			popoverContent: (closePopover) => (
+				<PubToc pubData={pubData} headings={headings} onSelect={closePopover} />
+			),
 		},
 		{
 			title: 'Cite',
 			icon: 'cite',
-			popoverContent: (
+			popoverContent: () => (
 				<div style={{ padding: '1em' }}>
 					<CitationsPreview pubData={pubData} />
 				</div>
@@ -169,12 +171,12 @@ const PubHeader = (props) => {
 		{
 			title: 'Download',
 			icon: 'download2',
-			popoverContent: <Download pubData={pubData} />,
+			popoverContent: () => <Download pubData={pubData} />,
 		},
 		{
 			title: 'Social Sharing',
 			icon: 'share2',
-			popoverContent: <Social pubData={pubData} />,
+			popoverContent: () => <Social pubData={pubData} />,
 		},
 		{
 			title: 'History',
@@ -536,11 +538,6 @@ const PubHeader = (props) => {
 										isSkewed={true}
 									/>
 								)}
-
-								{/* Submit Button */}
-								{/* submissionButtons && (
-									<ActionButton buttons={submissionButtons} isSkewed={true} />
-								) */}
 							</div>
 							<div className="right">
 								{metaModes.map((mode) => {
@@ -549,38 +546,23 @@ const PubHeader = (props) => {
 									if (mode.title === 'Contents' && !headings.length) {
 										return null;
 									}
-									if (mode.title === 'History') {
-										return (
-											<ActionButton
-												key={mode.title}
-												buttons={[
-													{
-														icon: mode.icon,
-														active: isActive,
-														alt: mode.title,
-														onClick: mode.onClick,
-													},
-												]}
-											/>
-										);
-									}
 									return (
-										<Popover
+										<ActionButton
 											key={mode.title}
-											minimal={true}
-											position={Position.BOTTOM_RIGHT}
-											content={mode.popoverContent}
-											target={
-												<ActionButton
-													buttons={[
-														{
-															icon: mode.icon,
-															active: isActive,
-															alt: mode.title,
-														},
-													]}
-												/>
-											}
+											buttons={[
+												{
+													popoverProps: {
+														minimal: true,
+														position: Position.BOTTOM_LEFT,
+														content: mode.popoverContent,
+													},
+													tooltipText: mode.title,
+													icon: mode.icon,
+													active: mode.title === 'History' && isActive,
+													alt: mode.title,
+													onClick: mode.onClick,
+												},
+											]}
 										/>
 									);
 								})}

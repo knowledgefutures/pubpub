@@ -38,7 +38,7 @@ const PubBody = (props) => {
 
 	useBeforeUnload(
 		collabData.status === 'saving',
-		'If you close this page, the latest changes to your Pub will not be saved.',
+		'Your pub has not finished saving. Are you sure you wish to leave?',
 	);
 
 	const getNextStatus = (status, onComplete) => {

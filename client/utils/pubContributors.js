@@ -15,8 +15,17 @@ export const getAllPubContributors = (pubData, onlyBylineContributors = false) =
 	const contributors = orderedContributors(pubData.attributions)
 		.concat(orderedContributors((primaryCollection && primaryCollection.attributions) || []))
 		.map(ensureUserForAttribution);
-	if (onlyBylineContributors) {
-		return contributors.filter((attribution) => attribution.isAuthor);
-	}
-	return contributors;
+
+	const outputContributors = onlyBylineContributors
+		? contributors.filter((attribution) => attribution.isAuthor)
+		: contributors;
+
+	const uniqueAuthorIds = [];
+	return outputContributors.filter((attribution) => {
+		if (uniqueAuthorIds.includes(attribution.user.id)) {
+			return false;
+		}
+		uniqueAuthorIds.push(attribution.user.id);
+		return true;
+	});
 };

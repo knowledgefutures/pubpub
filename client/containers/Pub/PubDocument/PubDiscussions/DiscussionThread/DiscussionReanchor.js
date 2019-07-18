@@ -25,15 +25,13 @@ const DiscussionReanchor = (props) => {
 	const initAnchorText = discussionData.initAnchorText || {};
 	return (
 		<React.Fragment>
-			<Tooltip content="Re-anchor discussion">
-				<Button
-					small
-					minimal
-					disabled={isActive}
-					onClick={() => setIsActive(true)}
-					icon={<Icon icon="text-highlight" iconSize={12} />}
-				/>
-			</Tooltip>
+			<Button
+				small
+				minimal
+				disabled={isActive}
+				onClick={() => setIsActive(true)}
+				icon={<Icon icon="text-highlight" iconSize={12} />}
+			/>
 			{isActive &&
 				ReactDOM.createPortal(
 					<Card className="discussion-reanchor-component">

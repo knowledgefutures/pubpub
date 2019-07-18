@@ -35,6 +35,9 @@ sync-search:
 handbook:
 	node -r esm handbookBranch
 
+wiki:
+	node -r esm --max-old-space-size=12000 wikiDiscussions/setup.js
+
 transform:
 	echo $(pub) | node -r esm --max-old-space-size=12000 v5
 	

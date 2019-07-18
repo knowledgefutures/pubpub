@@ -19,11 +19,16 @@ export default (sequelize) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { BranchPermission, User } = models;
+					const { BranchPermission, User, Branch } = models;
 					BranchPermission.belongsTo(User, {
 						onDelete: 'CASCADE',
 						as: 'user',
 						foreignKey: 'userId',
+					});
+					BranchPermission.belongsTo(Branch, {
+						onDelete: 'CASCADE',
+						as: 'branch',
+						foreignKey: 'branchId',
 					});
 				},
 			},

@@ -2,8 +2,8 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
 // import dateFormat from 'dateformat';
+
 import classNames from 'classnames';
 import stickybits from 'stickybits';
 import { getJSON } from '@pubpub/editor';
@@ -20,6 +20,7 @@ import {
 	Popover,
 } from '@blueprintjs/core';
 import { GridWrapper, Overlay, Icon } from 'components';
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
 import PubToc from './PubToc';
 import Download from './Download';
@@ -29,6 +30,7 @@ import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
 import { generateHeaderBreadcrumbs, getTocHeadings } from './headerUtils';
 import CollectionsBar from './CollectionsBar';
+import { getAllPubContributors } from '../../../utils/pubContributors';
 
 require('./pubHeader.scss');
 
@@ -122,9 +124,8 @@ const PubHeader = (props) => {
 	// });
 	// const queryObject = this.props.locationData.query;
 
-	const authors = pubData.attributions.filter((attribution) => {
-		return attribution.isAuthor;
-	});
+	const authors = getAllPubContributors(pubData, true);
+
 	const useHeaderImage =
 		pubData.headerBackgroundType === 'image' && pubData.headerBackgroundImage;
 	const backgroundStyle = {};
@@ -331,54 +332,36 @@ const PubHeader = (props) => {
 						<div className="authors">
 							<span className="text-wrapper">
 								<span>by </span>
-								{authors
-									.sort((foo, bar) => {
-										if (foo.order < bar.order) {
-											return -1;
-										}
-										if (foo.order > bar.order) {
-											return 1;
-										}
-										if (foo.createdAt < bar.createdAt) {
-											return 1;
-										}
-										if (foo.createdAt > bar.createdAt) {
-											return -1;
-										}
-										return 0;
-									})
-									.map((author, index) => {
-										const separator =
-											index === authors.length - 1 || authors.length === 2
-												? ''
-												: ', ';
-										const prefix =
-											index === authors.length - 1 && index !== 0
-												? ' and '
-												: '';
-										const user = author.user;
-										if (user.slug) {
-											return (
-												<span key={`author-${user.id}`}>
-													{prefix}
-													<a
-														href={`/user/${user.slug}`}
-														className="underline-on-hover"
-													>
-														{user.fullName}
-													</a>
-													{separator}
-												</span>
-											);
-										}
+								{authors.map((author, index) => {
+									const separator =
+										index === authors.length - 1 || authors.length === 2
+											? ''
+											: ', ';
+									const prefix =
+										index === authors.length - 1 && index !== 0 ? ' and ' : '';
+									const user = author.user;
+									if (user.slug) {
 										return (
 											<span key={`author-${user.id}`}>
 												{prefix}
-												{user.fullName}
+												<a
+													href={`/user/${user.slug}`}
+													className="underline-on-hover"
+												>
+													{user.fullName}
+												</a>
 												{separator}
 											</span>
 										);
-									})}
+									}
+									return (
+										<span key={`author-${user.id}`}>
+											{prefix}
+											{user.fullName}
+											{separator}
+										</span>
+									);
+								})}
 							</span>
 						</div>
 					)}

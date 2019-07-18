@@ -4,20 +4,21 @@ import { generateCitationHTML } from './citations';
 import { getBranchDoc } from './firebaseAdmin';
 import { getBranchAccess } from '../branch/permissions';
 import {
-	User,
-	Pub,
-	Discussion,
-	CommunityAdmin,
-	PubManager,
-	PubAttribution,
-	CollectionPub,
-	Collection,
-	Page,
-	PubVersion,
 	Branch,
 	BranchPermission,
+	Collection,
+	CollectionAttribution,
+	CollectionPub,
+	CommunityAdmin,
+	Discussion,
+	Page,
+	Pub,
+	PubAttribution,
+	PubManager,
+	PubVersion,
 	Review,
 	ReviewEvent,
+	User,
 } from '../models';
 
 export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req) => {
@@ -210,6 +211,16 @@ export const findPub = (req, initialData, mode) => {
 								as: 'page',
 								required: false,
 								attributes: ['id', 'title', 'slug'],
+							},
+							{
+								model: CollectionAttribution,
+								as: 'attributions',
+								include: [
+									{
+										model: User,
+										as: 'user',
+									},
+								],
 							},
 						],
 					},

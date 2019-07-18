@@ -102,6 +102,7 @@ class Collection extends React.Component {
 				apiRoute="/api/collectionAttributions"
 				canEdit={true}
 				attributions={collection.attributions}
+				listOnBylineText="List on Pub byline"
 				identifyingProps={{ collectionId: collection.id, communityId: communityData.id }}
 				onPersistStateChange={this.handlePersistStateChange}
 				onUpdateAttributions={(attributions) =>

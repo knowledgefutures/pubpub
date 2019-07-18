@@ -19,6 +19,11 @@ const propTypes = {
 	identifyingProps: PropTypes.shape({}).isRequired,
 	onUpdateAttributions: PropTypes.func.isRequired,
 	onPersistStateChange: PropTypes.func.isRequired,
+	listOnBylineText: PropTypes.string,
+};
+
+const defaultProps = {
+	listOnBylineText: 'List on byline',
 };
 
 class AttributionEditor extends Component {
@@ -140,7 +145,7 @@ class AttributionEditor extends Component {
 	}
 
 	render() {
-		const { attributions, canEdit } = this.props;
+		const { attributions, canEdit, listOnBylineText } = this.props;
 		const sortedAttributions = attributions.sort((a, b) => a.order - b.order);
 		return (
 			<div className="attribution-editor-component">
@@ -171,6 +176,7 @@ class AttributionEditor extends Component {
 										dragHandleProps={dragHandleProps}
 										onAttributionDelete={this.handleAttributionDelete}
 										onAttributionUpdate={this.handleAttributionUpdate}
+										listOnBylineText={listOnBylineText}
 									/>
 								)}
 								renderEmptyState={() => (
@@ -203,5 +209,6 @@ class AttributionEditor extends Component {
 	}
 }
 
+AttributionEditor.defaultProps = defaultProps;
 AttributionEditor.propTypes = propTypes;
 export default AttributionEditor;

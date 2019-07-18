@@ -5,11 +5,11 @@ import { Button } from '@blueprintjs/core';
 
 import { pubDataProps } from 'types/pub';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { Icon, GridWrapper } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 
+import { getAllPubContributors } from 'utils/pubContributors';
 import CompactContributors from './CompactContributors';
 import Contributors from './Contributors';
 import CitationsPreview from './CitationsPreview';
@@ -22,13 +22,13 @@ const propTypes = {
 
 const PubDetails = (props) => {
 	const { pubData } = props;
-	const contributorsWithUser = pubData.attributions.map(ensureUserForAttribution);
+	const contributors = getAllPubContributors(pubData);
 	const [isExpanded, setIsExpanded] = useState(false);
 	const { communityData } = useContext(PageContext);
 
 	const showThirdColumn = !!(pubData.doi || isExpanded);
 
-	if (!contributorsWithUser.length && !pubData.doi) {
+	if (!contributors.length && !pubData.doi) {
 		return null;
 	}
 
@@ -52,9 +52,9 @@ const PubDetails = (props) => {
 					/>
 				</div>
 				<div className="section contributors">
-					<h6>Contributors ({contributorsWithUser.length})</h6>
-					{!isExpanded && <CompactContributors contributors={contributorsWithUser} />}
-					{isExpanded && <Contributors contributors={contributorsWithUser} />}
+					<h6>Contributors ({contributors.length})</h6>
+					{!isExpanded && <CompactContributors contributors={contributors} />}
+					{isExpanded && <Contributors contributors={contributors} />}
 				</div>
 				<div className="section publication-dates">
 					<h6>{pubData.activeBranch.title === 'public' ? 'Published' : 'Created'}</h6>

@@ -10,16 +10,9 @@ const Contributors = function(props) {
 	const { contributors } = props;
 	return (
 		<div className="pub-contributors-component">
-			{contributors
-				.sort((a, b) => {
-					if (a.order !== b.order) {
-						return a.order - b.order;
-					}
-					return b.createdAt - a.createdAt;
-				})
-				.map((item) => {
-					return <Contributor attribution={item} key={item.id} />;
-				})}
+			{contributors.map((item) => {
+				return <Contributor attribution={item} key={item.id} />;
+			})}
 		</div>
 	);
 };

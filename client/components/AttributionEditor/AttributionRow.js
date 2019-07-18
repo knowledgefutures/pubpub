@@ -17,6 +17,7 @@ const propTypes = {
 	isDragging: PropTypes.bool,
 	onAttributionDelete: PropTypes.func.isRequired,
 	onAttributionUpdate: PropTypes.func.isRequired,
+	listOnBylineText: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -25,7 +26,7 @@ const defaultProps = {
 };
 
 const AttributionDetailControls = (props) => {
-	const { attribution, onAttributionUpdate, roles } = props;
+	const { attribution, onAttributionUpdate, roles, listOnBylineText } = props;
 	const { affiliation, id, isAuthor } = attribution;
 	return (
 		<div className="detail-controls">
@@ -38,7 +39,7 @@ const AttributionDetailControls = (props) => {
 					})
 				}
 			>
-				List on byline
+				{listOnBylineText}
 			</Checkbox>
 			<MultiSelect
 				className="roles"

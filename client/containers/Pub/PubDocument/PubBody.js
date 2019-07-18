@@ -1,5 +1,6 @@
 import React, { useRef, useContext } from 'react';
 import ReactDOM from 'react-dom';
+import { useBeforeUnload } from 'react-use';
 import PropTypes from 'prop-types';
 import { Card } from '@blueprintjs/core';
 import Editor from '@pubpub/editor';
@@ -34,6 +35,11 @@ const PubBody = (props) => {
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
 	prevStatusRef.current = collabData.status;
+
+	useBeforeUnload(
+		collabData.status === 'saving',
+		'If you close this page, the latest changes to your Pub will not be saved.',
+	);
 
 	const getNextStatus = (status, onComplete) => {
 		clearTimeout(setSavingTimeout);

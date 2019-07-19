@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import {
 	Popover,
 	PopoverInteractionKind,
@@ -12,10 +11,8 @@ import {
 	AnchorButton,
 	Intent,
 } from '@blueprintjs/core';
-
 import { GridWrapper } from 'components';
 import Avatar from 'components/Avatar/Avatar';
-import GdprBanner from 'components/GdprBanner/GdprBanner';
 import DropdownButton from 'components/DropdownButton/DropdownButton';
 import { apiFetch, getResizedUrl } from 'utils';
 
@@ -199,7 +196,6 @@ class Header extends Component {
 
 		return (
 			<nav className={`header-component ${componentClasses}`} style={backgroundStyle}>
-				<GdprBanner loginData={this.props.loginData} />
 				<div className={mainClasses}>
 					<GridWrapper columnClassName="main-content">
 						<div className="logo-wrapper">

@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Header from 'components/Header/Header';
-import Footer from 'components/Footer/Footer';
-import AccentStyle from 'components/AccentStyle/AccentStyle';
-import NavBar from 'components/NavBar/NavBar';
-import Icon from 'components/Icon/Icon';
+import { Header, Footer, GdprBanner, AccentStyle, NavBar, Icon } from 'components';
 import { populateNavigationIds } from 'utils';
 
 require('./pageWrapper.scss');
@@ -94,6 +90,8 @@ const PageWrapper = (props) => {
 					// accentHoverColor={communityData.accentHoverColor}
 					// accentMinimalColor={communityData.accentMinimalColor}
 				/>
+
+				<GdprBanner loginData={props.loginData} />
 
 				<Header
 					communityData={props.communityData}

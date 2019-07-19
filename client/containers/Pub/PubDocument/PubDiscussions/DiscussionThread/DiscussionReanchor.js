@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { reanchorDiscussion } from '@pubpub/editor';
-import { Button, ButtonGroup, Card, Icon, Tooltip } from '@blueprintjs/core';
+import { Button, ButtonGroup, Card, Icon } from '@blueprintjs/core';
 
 require('./discussionReanchor.scss');
 
@@ -25,15 +25,13 @@ const DiscussionReanchor = (props) => {
 	const initAnchorText = discussionData.initAnchorText || {};
 	return (
 		<React.Fragment>
-			<Tooltip content="Re-anchor discussion">
-				<Button
-					small
-					minimal
-					disabled={isActive}
-					onClick={() => setIsActive(true)}
-					icon={<Icon icon="text-highlight" iconSize={12} />}
-				/>
-			</Tooltip>
+			<Button
+				small
+				minimal
+				disabled={isActive}
+				onClick={() => setIsActive(true)}
+				icon={<Icon icon="text-highlight" iconSize={12} />}
+			/>
 			{isActive &&
 				ReactDOM.createPortal(
 					<Card className="discussion-reanchor-component">

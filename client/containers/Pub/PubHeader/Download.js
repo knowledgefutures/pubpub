@@ -93,8 +93,10 @@ const Download = (props) => {
 						{formattedDownload ? 'Auto Generated Download' : 'Download'}
 					</h6>
 				</li>
-				{formatTypes.map((type) => (
+				{formatTypes.map((type, i) => (
 					<MenuItem
+						// eslint-disable-next-line react/no-array-index-key
+						key={`${i}-${type.format}`}
 						shouldDismissPopover={false}
 						disabled={isLoading && selectedType.format !== type.format}
 						// loading={isLoading && selectedType.format === type.format}

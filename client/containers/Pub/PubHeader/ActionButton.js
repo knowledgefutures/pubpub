@@ -31,7 +31,7 @@ const SubButton = (props) => {
 		<Icon icon={buttonData.icon} iconSize={props.isLarge ? 22 : 18} />
 	);
 
-	const { isWide, isSkinny, ...buttonProps } = buttonData;
+	const { isWide, isSkinny, tooltipText, ...buttonProps } = buttonData;
 	const buttonClass = classNames(isWide && 'wide', isSkinny && 'skinny', isLarge && 'large');
 	const buttonComponent = buttonData.href ? (
 		<AnchorButton className={buttonClass} {...buttonProps} icon={icon} />
@@ -40,7 +40,7 @@ const SubButton = (props) => {
 	);
 	const maybeWrapperButtonComponent =
 		!isPopoverOpen && buttonData.tooltipText ? (
-			<Tooltip content={buttonData.tooltipText}>{buttonComponent}</Tooltip>
+			<Tooltip content={tooltipText}>{buttonComponent}</Tooltip>
 		) : (
 			buttonComponent
 		);
@@ -54,7 +54,7 @@ const SubButton = (props) => {
 					typeof content === 'function' ? content(() => setPopoverOpen(false)) : content
 				}
 				target={maybeWrapperButtonComponent}
-				onInteraction={setPopoverOpen}
+				onInteraction={(isOpen) => setPopoverOpen(isOpen)}
 				isOpen={isPopoverOpen}
 			/>
 		);
@@ -63,8 +63,8 @@ const SubButton = (props) => {
 };
 
 SubButton.propTypes = {
-	...propTypes,
 	buttonData: buttonDataShape.isRequired,
+	isLarge: PropTypes.bool.isRequired,
 };
 
 const ActionButton = function(props) {

@@ -13,6 +13,17 @@
 			transform: rotate(45deg);
 		}
 	}
+	.anchor-text {
+		padding: 0.25em;
+		background: #f0f0f7;
+		font-family: $body-font;
+		margin: -0.25em 0em 1em;
+		color: #888;
+		line-height: 1.3;
+		.exact {
+			color: #000;
+		}
+	}
 	.discussion-item {
 		display: flex;
 		&:not(:last-child) {

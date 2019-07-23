@@ -63,6 +63,13 @@ const DiscussionThread = (props) => {
 				/>
 			)}
 			<LabelList pubData={pubData} threadData={threadData} />
+			{!isPreview && threadData[0].initAnchorText && threadData[0].initAnchorText.exact && (
+				<div className="anchor-text">
+					{threadData[0].initAnchorText.prefix}
+					<span className="exact">{threadData[0].initAnchorText.exact}</span>
+					{threadData[0].initAnchorText.suffix}
+				</div>
+			)}
 			{threadData
 				.filter((item) => item.threadNumber)
 				.filter((item, index) => {

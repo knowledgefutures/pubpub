@@ -40,5 +40,6 @@ export const setupKeen = () => {
 	client.extendEvents({ pubpub: customEventData });
 	client.initAutoTracking({
 		recordPageViewsOnExit: true,
+		recordClicks: false,
 	});
 };

@@ -26,7 +26,7 @@ const editorSchema = buildSchema({ ...discussionSchema }, {});
 Pub.findAll({
 	where: {
 		communityId: '59b78ccd-9bf0-43ab-9855-8cd37706e691',
-		// id: '2586840f-ca60-430e-bf10-c6787efaee9c',
+		// id: 'ad872a9a-95cf-4ac0-84a8-63b60e0727cb',
 	},
 	include: [
 		{
@@ -46,8 +46,172 @@ Pub.findAll({
 	.then((pubData) => {
 		const processEach = pubData.map((pub) => {
 			const draftBranch = pub.branches.find((branch) => branch.title === 'draft');
+			const publicBranch = pub.branches.find((branch) => branch.title === 'public');
 			const draftBranchRef = database.ref(`pub-${pub.id}/branch-${draftBranch.id}`);
+			const publicBranchRef = database.ref(`pub-${pub.id}/branch-${publicBranch.id}`);
 
+			/* v4 code -------------- */
+			// const getPublicMerges = publicBranchRef
+			// 	.child('merges')
+			// 	.once('value')
+			// 	.then((snapshot) => {
+			// 		return snapshot.val();
+			// 	});
+
+			// return getPublicMerges
+			// 	.then((mergesData) => {
+			// 		const mergesArray = mergesData || [];
+			// 		const newKeys = mergesArray.reduce((prev, curr) => {
+			// 			if (prev) {
+			// 				return [...prev, prev[prev.length - 1] + curr.length];
+			// 			}
+			// 			return [curr.length];
+			// 		}, undefined);
+
+			// 		const getDiscussions = draftBranchRef
+			// 			.child('discussions')
+			// 			.once('value')
+			// 			.then((snapshot) => {
+			// 				return snapshot.val();
+			// 			});
+			// 		return Promise.all([newKeys, getDiscussions]);
+			// 	})
+			// 	.then(([newKeys = [], discussionsData]) => {
+			// 		// console.log(discussionsData);
+			// 		const newDiscussionsData = {};
+			// 		Object.keys(discussionsData || {}).forEach((dataKey) => {
+			// 			const data = discussionsData[dataKey];
+			// 			// console.log(newKeys);
+			// 			if (newKeys.includes(data.initKey)) {
+			// 				const newData = {
+			// 					initKey: data.initKey - 1,
+			// 					currentKey: data.initKey - 1,
+			// 					initAnchor: data.initAnchor || null,
+			// 					initHead: data.initHead || null,
+			// 					selection: {
+			// 						t: 'text',
+			// 						a: data.initAnchor || null,
+			// 						h: data.initHead || null,
+			// 					}
+			// 				};
+			// 				newDiscussionsData[dataKey] = newData;
+			// 			} else {
+			// 				newDiscussionsData[dataKey] = data;	
+			// 			}
+			// 		});
+			// 		// console.log(newDiscussionsData);
+			// 		return draftBranchRef.child('discussions').set(newDiscussionsData);
+			// 	})
+			// 	.then(() => {
+			// 		return restoreDiscussionMaps(draftBranchRef, editorSchema, true).then(() => {
+			// 			console.log(`~~~ Finished ${pub.id} ~~~`);
+			// 		})
+			// 	});
+
+			/* v3 code -------------- */
+			// const getMaxDraftKey = draftBranchRef
+			// 	.child('checkpoint')
+			// 	.child('k')
+			// 	.once('value')
+			// 	.then((snapshot) => {
+			// 		return snapshot.val();
+			// 	});
+
+			// return getMaxDraftKey
+			// 	.then((maxDraftKey) => {
+					
+
+			// 		const getDiscussions = draftBranchRef
+			// 			.child('discussions')
+			// 			.once('value')
+			// 			.then((snapshot) => {
+			// 				return snapshot.val();
+			// 			});
+			// 		return Promise.all([Number(maxDraftKey), getDiscussions]);
+			// 	})
+			// 	.then(([maxDraftKey, discussionsData]) => {
+			// 		// console.log(discussionsData);
+			// 		const newDiscussionsData = {};
+			// 		Object.keys(discussionsData || {}).forEach((dataKey) => {
+			// 			const data = discussionsData[dataKey];
+			// 			if (Number(data.initKey) > maxDraftKey) {
+			// 				const newData = {
+			// 					initKey: maxDraftKey,
+			// 					currentKey: maxDraftKey,
+			// 					initAnchor: data.initAnchor || null,
+			// 					initHead: data.initHead || null,
+			// 					selection: {
+			// 						t: 'text',
+			// 						a: data.initAnchor || null,
+			// 						h: data.initHead || null,
+			// 					}
+			// 				};
+			// 				newDiscussionsData[dataKey] = newData;
+			// 			} else {
+			// 				newDiscussionsData[dataKey] = data;	
+			// 			}
+			// 		});
+			// 		return draftBranchRef.child('discussions').set(newDiscussionsData);
+			// 	});
+
+
+			/* v2 code -------------- */
+			// const getPublicMerges = publicBranchRef
+			// 	.child('merges')
+			// 	.once('value')
+			// 	.then((snapshot) => {
+			// 		return snapshot.val();
+			// 	});
+
+			// return getPublicMerges
+			// 	.then((mergesData) => {
+			// 		const mergesArray = mergesData || [];
+			// 		const newKeys = mergesArray.reduce((prev, curr) => {
+			// 			if (prev) {
+			// 				return [...prev, prev[prev.length - 1] + curr.length];
+			// 			}
+			// 			return [curr.length];
+			// 		}, undefined);
+
+			// 		const getDiscussions = draftBranchRef
+			// 			.child('discussions')
+			// 			.once('value')
+			// 			.then((snapshot) => {
+			// 				return snapshot.val();
+			// 			});
+			// 		return Promise.all([newKeys, getDiscussions]);
+			// 	})
+			// 	.then(([newKeys = [], discussionsData]) => {
+			// 		// console.log(discussionsData);
+			// 		const newDiscussionsData = {};
+			// 		Object.keys(discussionsData || {}).forEach((dataKey) => {
+			// 			const data = discussionsData[dataKey];
+			// 			if (data.initKey < newKeys.length) {
+			// 				const newData = {
+			// 					initKey: newKeys[data.initKey],
+			// 					currentKey: newKeys[data.initKey],
+			// 					initAnchor: data.initAnchor || null,
+			// 					initHead: data.initHead || null,
+			// 					selection: {
+			// 						t: 'text',
+			// 						a: data.initAnchor || null,
+			// 						h: data.initHead || null,
+			// 					}
+			// 				};
+			// 				newDiscussionsData[dataKey] = newData;
+			// 			} else {
+			// 				newDiscussionsData[dataKey] = data;	
+			// 			}
+			// 		});
+			// 		return draftBranchRef.child('discussions').set(newDiscussionsData);
+			// 	})
+			// 	.then(() => {
+			// 		return restoreDiscussionMaps(draftBranchRef, editorSchema, true).then(() => {
+			// 			console.log(`~~~ Finished ${pub.id} ~~~`);
+			// 		})
+			// 	});
+
+			/* v1 code -------------- */
 			/* Process and write new data */
 			// console.log(`~~~ Processing ${pub.id} ~~~`);
 			// const updatePostgresDiscussions = Discussion.update(

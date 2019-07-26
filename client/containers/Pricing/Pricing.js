@@ -80,8 +80,7 @@ const Pricing = (props) => {
 											page of your community. Usually this is the management
 											team, consisting of editors and project managers.
 											Authors, contributors, reviewers, and commenters will
-											typically not count not count towards your Active
-											Admins.
+											typically not count towards your Active Admins.
 										</p>
 									</div>
 								</Popover>
@@ -123,8 +122,7 @@ const Pricing = (props) => {
 											page of your community. Usually this is the management
 											team, consisting of editors and project managers.
 											Authors, contributors, reviewers, and commenters will
-											typically not count not count towards your Active
-											Admins.
+											typically not count towards your Active Admins.
 										</p>
 									</div>
 								</Popover>

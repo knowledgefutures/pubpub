@@ -50,6 +50,11 @@ const processFootnotes = (inputHtml) => {
 			footnoteElem: 'div.endnote',
 			footnoteBackLink: '.ennum',
 		},
+		{
+			wrapperSection: 'div.notes',
+			footnoteElem: 'div.endnote',
+			footnoteBackLink: '.ennum',
+		},
 	];
 	footnoteSelectors.forEach((selector) => {
 		htmlContext(selector.wrapperSection)
@@ -84,7 +89,7 @@ const processFootnotes = (inputHtml) => {
 	});
 
 	/* Remove the list of footnotes at the end of the doc */
-	const footnoteSectionSelectors = ['section.footnotes', 'section#notes'];
+	const footnoteSectionSelectors = ['section.footnotes', 'section#notes', 'div.notes'];
 	footnoteSectionSelectors.forEach((selector) => {
 		htmlContext(selector).remove();
 	});
@@ -169,6 +174,11 @@ export default (sourceUrl) => {
 			if (fs.existsSync(`${tmpDir}/media`)) {
 				fs.readdirSync(`${tmpDir}/media`).forEach((file) => {
 					extractedMediaFiles.push(`${tmpDir}/media/${file}`);
+				});
+			}
+			if (fs.existsSync(`${tmpDir}/images`)) {
+				fs.readdirSync(`${tmpDir}/images`).forEach((file) => {
+					extractedMediaFiles.push(`${tmpDir}/images/${file}`);
 				});
 			}
 

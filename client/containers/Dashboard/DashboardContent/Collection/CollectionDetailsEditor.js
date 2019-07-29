@@ -75,6 +75,7 @@ const CollectionDetailsEditor = (props) => {
 				helperText={`You can choose how the "Read Next" Pub preview will appear to readers in this collection.`}
 			>
 				<Select
+					popoverProps={{ minimal: true }}
 					items={['none', 'minimal', 'medium', 'choose-best']}
 					itemRenderer={(item, { handleClick }) => {
 						const isSelected = item === collection.readNextPreviewSize;

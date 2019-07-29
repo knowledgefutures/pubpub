@@ -12,9 +12,10 @@ _We use GitHub Issues for tracking active code development. If you have general 
 ### Required
 ---
 
-**What went wrong?**
-
-**What did you expect to happen?**
+**What went wrong, step-by-step?**
+1.
+2.
+...
 
 **What URL can we use to see the issue?**
 

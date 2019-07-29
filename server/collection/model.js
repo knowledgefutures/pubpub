@@ -18,6 +18,7 @@ export default (sequelize, dataTypes) => {
 			doi: { type: dataTypes.TEXT },
 			readNextPreviewSize: {
 				type: dataTypes.ENUM('none', 'minimal', 'medium', 'choose-best'),
+				defaultValue: 'choose-best',
 			},
 		},
 		{

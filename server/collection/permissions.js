@@ -17,7 +17,14 @@ export const getPermissions = ({ userId, communityId, collectionId }) => {
 			return { create: isAuthenticated };
 		}
 
-		const editProps = ['title', 'isRestricted', 'isPublic', 'pageId', 'metadata'];
+		const editProps = [
+			'title',
+			'isRestricted',
+			'isPublic',
+			'pageId',
+			'metadata',
+			'readNextPreviewSize',
+		];
 		return {
 			create: isAuthenticated,
 			update: isAuthenticated ? editProps : false,

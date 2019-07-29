@@ -16,6 +16,9 @@ export default (sequelize, dataTypes) => {
 			metadata: { type: dataTypes.JSONB },
 			kind: { type: dataTypes.TEXT },
 			doi: { type: dataTypes.TEXT },
+			readNextPreviewSize: {
+				type: dataTypes.ENUM('none', 'minimal', 'medium', 'choose-best'),
+			},
 		},
 		{
 			classMethods: {

@@ -3,12 +3,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, FormGroup, Button } from '@blueprintjs/core';
+import { Checkbox, FormGroup, Button, MenuItem } from '@blueprintjs/core';
 
 import collectionType from 'types/collection';
 import communityType from 'types/community';
 import { getSchemaForKind } from 'shared/collections/schemas';
 import { ConfirmDialog, InputField } from 'components';
+import { Select } from '@blueprintjs/select';
 import LinkedPageSelect from '../Collections/LinkedPageSelect';
 
 const propTypes = {
@@ -16,6 +17,13 @@ const propTypes = {
 	communityData: communityType.isRequired,
 	onDeleteCollection: PropTypes.func.isRequired,
 	onUpdateCollection: PropTypes.func.isRequired,
+};
+
+const readNextLabels = {
+	none: 'Never show "Read Next"',
+	minimal: 'Use compact preview with no image',
+	medium: 'Use a larger preview with an image',
+	'choose-best': 'Choose the best preview for each Pub',
 };
 
 const CollectionDetailsEditor = (props) => {
@@ -62,6 +70,30 @@ const CollectionDetailsEditor = (props) => {
 				>
 					Private
 				</Checkbox>
+			</FormGroup>
+			<FormGroup
+				helperText={`You can choose how the "Read Next" Pub preview will appear to readers in this collection.`}
+			>
+				<Select
+					items={['none', 'minimal', 'medium', 'choose-best']}
+					itemRenderer={(item, { handleClick }) => {
+						const isSelected = item === collection.readNextPreviewSize;
+						return (
+							<MenuItem
+								onClick={handleClick}
+								key={item}
+								text={readNextLabels[item]}
+								icon={isSelected ? 'tick' : 'blank'}
+							/>
+						);
+					}}
+					onItemSelect={(size) => onUpdateCollection({ readNextPreviewSize: size }, true)}
+					filterable={false}
+				>
+					<Button rightIcon="chevron-down">
+						{readNextLabels[collection.readNextPreviewSize]}
+					</Button>
+				</Select>
 			</FormGroup>
 			<FormGroup helperText={`You can delete this ${collectionLabel} permanently.`}>
 				<ConfirmDialog

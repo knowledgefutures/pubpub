@@ -24,16 +24,26 @@ const PubReadNext = (props) => {
 	const currentCollection = chooseCollectionForPub(pubData, locationData);
 	const { pubs } = useCollectionPubs(updateLocalData, currentCollection);
 	const { nextPub } = getNeighborsInCollectionPub(pubs, pubData);
+	const { readNextPreviewSize = 'choose-best' } = currentCollection || {};
+	if (readNextPreviewSize === 'none') {
+		return null;
+	}
 	if (!nextPub) {
 		return null;
 	}
 	const useImage = !!pubData.avatar;
+	const size =
+		readNextPreviewSize === 'choose-best'
+			? useImage
+				? 'medium'
+				: 'minimal'
+			: readNextPreviewSize;
 	return (
 		<div className="pub-read-next-component">
 			<GridWrapper containerClassName="pub">
 				<h2>Read next from {currentCollection.title}</h2>
 				<PubPreview
-					size={useImage ? 'medium' : 'minimal'}
+					size={size}
 					pubData={nextPub}
 					customPubUrl={createReadingParamUrl(
 						pubUrl(communityData, nextPub),

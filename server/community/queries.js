@@ -20,6 +20,7 @@ export const createCommunity = (inputValues, userData) => {
 		'v8',
 		'www',
 		'dev',
+		'analytics',
 		'assets',
 		'jake',
 		'resize',

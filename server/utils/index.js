@@ -155,7 +155,7 @@ export const getInitialData = (req) => {
 			throw new Error('Community Not Found');
 		}
 
-		if (communityResult.domain && whereQuery.subdomain) {
+		if (communityResult.domain && whereQuery.subdomain && !req.isDuqDuq) {
 			throw new Error(`UseCustomDomain:${communityResult.domain}`);
 		}
 		const communityData = communityResult.toJSON();

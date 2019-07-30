@@ -118,6 +118,10 @@ app.use((req, res, next) => {
 	if (req.hostname.indexOf('dev.pubpub.org') > -1) {
 		req.headers.host = 'dev.pubpub.org';
 	}
+	if (req.hostname.indexOf('duqduq.org') > -1) {
+		req.headers.host = req.hostname.replace('duqduq.org', 'pubpub.org');
+		req.isDuqDuq = true;
+	}
 	next();
 });
 

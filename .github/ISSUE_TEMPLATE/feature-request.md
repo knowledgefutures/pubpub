@@ -9,15 +9,22 @@ assignees: gabestein
 
 _We use GitHub Issues for tracking active code development. If you have general questions or feedback about PubPub, we invite you to use our [Discourse forum](https://discourse.knowledgefutures.org)._
 
-**Who requested**
+### Required
 
-**Stories**
-- As a PERSON, I want to be able to THING so that I can accomplish GOAL.
+---
 
-**Implementation Notes & Context**
+**What's your request?**
 
-**Technical Specification**
+**What would this feature help you accomplish, and why is that important to you?**
 
-_To be completed by the Engineering team/broken into sub-cards as needed."_
+**What's the URL to your PubPub community?**
 
-**Mockups or reference images**
+### Optional
+
+---
+
+**Are there any other products or services that do this well?**
+
+**Any attachments or reference images? (Drag them here)**
+
+**Who requested this? (If not you)***

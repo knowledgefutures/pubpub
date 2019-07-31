@@ -13,12 +13,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Review, User, ReviewEvent } = models;
-					Review.hasMany(ReviewEvent, {
-						onDelete: 'CASCADE',
-						as: 'reviewEvents',
-						foreignKey: 'reviewId',
-					});
+					const { User, ReviewEvent } = models;
 					ReviewEvent.belongsTo(User, {
 						onDelete: 'CASCADE',
 						as: 'user',

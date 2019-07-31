@@ -15,16 +15,11 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Pub, Review, Branch, Merge } = models;
+					const { Review, Branch, Merge, ReviewEvent } = models;
 					Review.belongsTo(Merge, {
 						onDelete: 'CASCADE',
 						as: 'merge',
 						foreignKey: 'mergeId',
-					});
-					Pub.hasMany(Review, {
-						onDelete: 'CASCADE',
-						as: 'reviews',
-						foreignKey: 'pubId',
 					});
 					Review.belongsTo(Branch, {
 						onDelete: 'CASCADE',
@@ -35,6 +30,11 @@ export default (sequelize, dataTypes) => {
 						onDelete: 'CASCADE',
 						as: 'destinationBranch',
 						foreignKey: 'destinationBranchId',
+					});
+					Review.hasMany(ReviewEvent, {
+						onDelete: 'CASCADE',
+						as: 'reviewEvents',
+						foreignKey: 'reviewId',
 					});
 				},
 			},

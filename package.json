@@ -149,7 +149,7 @@
 		"rss": "^1.2.2",
 		"sanitize-html": "^1.20.1",
 		"sass-loader": "^7.1.0",
-		"sequelize": "^5.7.6",
+		"sequelize": "^5.12.2",
 		"stickybits": "^3.6.5",
 		"stopword": "^0.2.1",
 		"strip-indent": "^3.0.0",

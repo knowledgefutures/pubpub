@@ -6,7 +6,7 @@ export const createBranchPermission = ({ userId, pubId, branchId, permissions = 
 		userId: userId,
 		pubId: pubId,
 		branchId: branchId,
-		permissions: permissions || 'view',
+		permissions: permissions,
 	}).then((newBranchPermission) => {
 		return BranchPermission.findOne({
 			where: { id: newBranchPermission.id },

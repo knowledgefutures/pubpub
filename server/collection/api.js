@@ -1,6 +1,7 @@
-import app from '../server';
+import app, { wrap } from '../server';
 import { getPermissions } from './permissions';
 import { createCollection, updateCollection, destroyCollection } from './queries';
+import { ForbiddenError } from '../errors';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -11,69 +12,54 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post('/api/collections', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
-		.then((permissions) => {
-			if (!permissions.create) {
-				throw new Error('Not Authorized');
-			}
-			return createCollection(
-				{
-					...req.body,
-					collectionId: req.body.id,
-				},
-				req.user,
-			);
-		})
-		.then((newCollection) => {
-			return res.status(201).json(newCollection);
-		})
-		.catch((err) => {
-			console.error('Error in postCollection: ', err);
-			return res.status(500).json(err.message);
-		});
-});
-
-app.put('/api/collections', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.update) {
-				throw new Error('Not Authorized');
-			}
-			return updateCollection(
-				{
-					...req.body,
-					collectionId: req.body.id,
-				},
-				permissions.update,
-			);
-		})
-		.then((updatedValues) => {
-			return res.status(201).json(updatedValues);
-		})
-		.catch((err) => {
-			console.error('Error in putCollection: ', err);
-			return res.status(500).json(err.message);
-		});
-});
-
-app.delete('/api/collections', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.destroy) {
-				throw new Error('Not Authorized');
-			}
-			return destroyCollection({
+app.post(
+	'/api/collections',
+	wrap(async (req, res) => {
+		const requestIds = getRequestIds(req);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.create) {
+			throw new ForbiddenError();
+		}
+		const newCollection = await createCollection(
+			{
 				...req.body,
 				collectionId: req.body.id,
-			});
-		})
-		.then(() => {
-			return res.status(201).json(req.body.id);
-		})
-		.catch((err) => {
-			console.error('Error in deleteCollection: ', err);
-			return res.status(500).json(err.message);
+			},
+			req.user,
+		);
+		return res.status(201).json(newCollection);
+	}),
+);
+
+app.put(
+	'/api/collections',
+	wrap(async (req, res) => {
+		const permissions = await getPermissions(getRequestIds(req));
+		if (!permissions.update) {
+			throw new ForbiddenError();
+		}
+		const updatedValues = await updateCollection(
+			{
+				...req.body,
+				collectionId: req.body.id,
+			},
+			permissions.update,
+		);
+		return res.status(200).json(updatedValues);
+	}),
+);
+
+app.delete(
+	'/api/collections',
+	wrap(async (req, res) => {
+		const permissions = await getPermissions(getRequestIds(req));
+		if (!permissions.update) {
+			throw new ForbiddenError();
+		}
+		await destroyCollection({
+			...req.body,
+			collectionId: req.body.id,
 		});
-});
+		return res.status(200).json(req.body.id);
+	}),
+);

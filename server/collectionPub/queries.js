@@ -61,7 +61,8 @@ export const createCollectionPub = (inputValues) => {
 		// If this is the first non-tag collection in the bunch, make it the primary one
 		const isPrimary =
 			pubLevelPeers.filter((peer) => peer.collection.kind !== 'tag').length === 0 &&
-			collection.kind !== 'tag';
+			collection.kind !== 'tag' &&
+			collection.isPublic;
 		// If a rank wasn't provided, move the CollectionPub to the end of the collection
 		let setRank = inputValues.rank;
 		if (!setRank) {
@@ -73,7 +74,7 @@ export const createCollectionPub = (inputValues) => {
 			{
 				collectionId: inputValues.collectionId,
 				pubId: inputValues.pubId,
-				rank: inputValues.rank,
+				rank: setRank,
 				isPrimary: isPrimary,
 			},
 			/* Unclear why this is included */

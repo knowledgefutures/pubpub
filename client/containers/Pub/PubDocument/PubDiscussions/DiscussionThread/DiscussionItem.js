@@ -47,7 +47,6 @@ const DiscussionItem = (props) => {
 			body: JSON.stringify({
 				...discussionUpdates,
 				discussionId: discussionData.id,
-				userId: loginData.id,
 				pubId: pubData.id,
 				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,

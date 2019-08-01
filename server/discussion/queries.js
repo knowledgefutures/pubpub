@@ -16,7 +16,7 @@ const findDiscussionWithUser = (id) =>
 		],
 	});
 
-export const createDiscussion = (inputValues) => {
+export const createDiscussion = (inputValues, user) => {
 	return Discussion.findAll({
 		where: {
 			pubId: inputValues.pubId,
@@ -59,7 +59,7 @@ export const createDiscussion = (inputValues) => {
 				content: inputValues.content,
 				text: inputValues.text,
 				initAnchorText: inputValues.initAnchorText,
-				userId: inputValues.userId,
+				userId: user.id,
 				pubId: inputValues.pubId,
 				communityId: inputValues.communityId,
 				branchId: inputValues.branchId,

@@ -46,7 +46,6 @@ const DiscussionInput = (props) => {
 			body: JSON.stringify({
 				discussionId: isNewThread ? threadData[0].id : undefined,
 				threadNumber: isNewThread ? undefined : threadData[0].threadNumber,
-				userId: loginData.id,
 				pubId: pubData.id,
 				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,

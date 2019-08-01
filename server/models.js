@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 import Sequelize from 'sequelize';
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 	require('./config.js');
 }
 

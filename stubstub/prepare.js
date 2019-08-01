@@ -1,4 +1,5 @@
 import { clearUserToAgentMap } from './userToAgentMap';
+import { sequelize } from '../server/models';
 
 export const setup = (beforeFn, actionsFn) => {
 	if (beforeFn.toString().startsWith('after')) {
@@ -8,6 +9,7 @@ export const setup = (beforeFn, actionsFn) => {
 		);
 	}
 	beforeFn(async () => {
+		sequelize.sync();
 		if (actionsFn) {
 			await actionsFn();
 		}

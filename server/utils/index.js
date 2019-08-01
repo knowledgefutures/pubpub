@@ -109,7 +109,7 @@ export const getInitialData = (req) => {
 						{ title: 'About', url: '/about' },
 						{ title: 'Pricing', url: '/pricing' },
 						{ title: 'Search', url: '/search' },
-						{ title: 'Contact', url: 'mailto:team@pubpub.org', external: true },
+						{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },
 					],
 				},
 				loginData: loginData,

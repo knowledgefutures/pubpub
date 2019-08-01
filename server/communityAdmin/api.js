@@ -1,6 +1,7 @@
-import app from '../server';
+import app, { wrap } from '../server';
 import { getPermissions } from './permissions';
 import { createCommunityAdmin, destroyCommunityAdmin } from './queries';
+import { ForbiddenError } from '../errors';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -10,36 +11,26 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post('/api/communityAdmins', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.create) {
-				throw new Error('Not Authorized');
-			}
-			return createCommunityAdmin(req.body);
-		})
-		.then((newCommunityAdmin) => {
-			return res.status(201).json(newCommunityAdmin);
-		})
-		.catch((err) => {
-			console.error('Error in postCommunityAdmin: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+app.post(
+	'/api/communityAdmins',
+	wrap(async (req, res) => {
+		const permissions = await getPermissions(getRequestIds(req));
+		if (!permissions.create) {
+			throw new ForbiddenError();
+		}
+		const newCommunityAdmin = await createCommunityAdmin(req.body);
+		return res.status(201).json(newCommunityAdmin);
+	}),
+);
 
-app.delete('/api/communityAdmins', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.destroy) {
-				throw new Error('Not Authorized');
-			}
-			return destroyCommunityAdmin(req.body);
-		})
-		.then(() => {
-			return res.status(201).json(req.body.userId);
-		})
-		.catch((err) => {
-			console.error('Error in deleteCommunityAdmin: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+app.delete(
+	'/api/communityAdmins',
+	wrap(async (req, res) => {
+		const permissions = await getPermissions(getRequestIds(req));
+		if (!permissions.destroy) {
+			throw new ForbiddenError();
+		}
+		await destroyCommunityAdmin(req.body);
+		return res.status(201).json(req.body.userId);
+	}),
+);

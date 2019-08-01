@@ -25,12 +25,9 @@ export const getPermissions = ({ pubId, userId, communityId }) => {
 	});
 
 	return Promise.all([findPubManager, findCommunityAdmin, findPub]).then(
-		([isPubManager, isCommunityAdmin, pubData]) => {
-			if (!pubData) {
-				return {};
-			}
+		([isPubManager, isCommunityAdmin, pubInCommunity]) => {
 			return {
-				pub: isSuperAdmin || isCommunityAdmin || isPubManager,
+				pub: isSuperAdmin || isCommunityAdmin || (isPubManager && pubInCommunity),
 				collection: isSuperAdmin || isCommunityAdmin,
 			};
 		},

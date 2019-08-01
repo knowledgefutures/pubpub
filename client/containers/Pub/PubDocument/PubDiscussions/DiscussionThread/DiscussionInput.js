@@ -44,6 +44,7 @@ const DiscussionInput = (props) => {
 		return apiFetch('/api/discussions', {
 			method: 'POST',
 			body: JSON.stringify({
+				discussHash: locationData.query.access,
 				discussionId: isNewThread ? threadData[0].id : undefined,
 				threadNumber: isNewThread ? undefined : threadData[0].threadNumber,
 				pubId: pubData.id,

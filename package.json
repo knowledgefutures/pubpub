@@ -24,7 +24,7 @@
 		"search-sync": "NODE_PATH=./client:./ node searchSync/init.js",
 		"start": "npm run build-dev-once && concurrently --kill-others \"npm run api-dev\" \"npm run build-dev\"",
 		"storybook": "start-storybook -p 9001 -c .storybook -s ./",
-		"test": "DATABASE_URL=$(./stubstub/test-db.sh) NODE_ENV=test jest --silent --runInBand --forceExit",
+		"test": "jest --silent --forceExit --runInBand",
 		"workers-dev": "NODE_PATH=./client:./ WORKER=true nodemon workers/init.js --watch workers",
 		"workers-prod": "NODE_PATH=./client:./ WORKER=true node workers/init.js"
 	},
@@ -53,6 +53,7 @@
 		"eslint-plugin-react-hooks": "^1.6.0",
 		"esm": "^3.2.22",
 		"googleapis": "^40.0.0",
+		"hasbin": "^1.2.3",
 		"ignore-styles": "^5.0.1",
 		"jest": "^24.5.0",
 		"json-stable-stringify": "^1.0.1",
@@ -183,6 +184,8 @@
 		"moduleNameMapper": {
 			"\\.[s]?css$": "<rootDir>/stories/styleMock.js"
 		},
+		"globalSetup": "<rootDir>/stubstub/global/setup.js",
+		"globalTeardown": "<rootDir>/stubstub/global/teardown.js",
 		"setupFiles": [
 			"<rootDir>/.jest/register-context.js",
 			"<rootDir>/.jest/setup-env.js"

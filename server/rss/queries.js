@@ -70,7 +70,7 @@ export const getCommunityRss = (hostname) => {
 			feed_url: `${communityUrl}/rss.xml`,
 			site_url: communityUrl,
 			image_url: communityData.favicon,
-			webMaster: 'team@pubpub.org',
+			webMaster: 'hello@pubpub.org',
 			language: 'en',
 			pubDate: new Date(),
 			ttl: '60',

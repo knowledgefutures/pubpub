@@ -84,6 +84,7 @@ export const getInitialData = (req) => {
 		queryString: req.query ? `?${queryString.stringify(req.query)}` : '',
 		isBasePubPub: hostname === 'www.pubpub.org',
 		isPubPubProduction: isPubPubProduction,
+		isDuqDuq: req.isDuqDuq,
 	};
 
 	/* If basePubPub - return fixed data */
@@ -108,7 +109,7 @@ export const getInitialData = (req) => {
 						{ title: 'About', url: '/about' },
 						{ title: 'Pricing', url: '/pricing' },
 						{ title: 'Search', url: '/search' },
-						{ title: 'Contact', url: 'mailto:team@pubpub.org', external: true },
+						{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },
 					],
 				},
 				loginData: loginData,
@@ -155,7 +156,7 @@ export const getInitialData = (req) => {
 			throw new Error('Community Not Found');
 		}
 
-		if (communityResult.domain && whereQuery.subdomain) {
+		if (communityResult.domain && whereQuery.subdomain && !locationData.isDuqDuq) {
 			throw new Error(`UseCustomDomain:${communityResult.domain}`);
 		}
 		const communityData = communityResult.toJSON();

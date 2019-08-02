@@ -96,7 +96,7 @@ const Pricing = (props) => {
 								<li>Email support</li>
 							</ul>
 							<a
-								href="mailto:team@pubpub.org?subject=PubPub%20Team%20Inquiry"
+								href="mailto:hello@pubpub.org?subject=PubPub%20Team%20Inquiry"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="bp3-button bp3-large bp3-intent-primary"
@@ -145,7 +145,7 @@ const Pricing = (props) => {
 								<li>Service-Level Agreement</li>
 							</ul>
 							<a
-								href="mailto:team@pubpub.org?subject=PubPub%20Organization%20Inquiry"
+								href="mailto:hello@pubpub.org?subject=PubPub%20Organization%20Inquiry"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="bp3-button bp3-large bp3-intent-primary"
@@ -158,7 +158,7 @@ const Pricing = (props) => {
 						We also provide article production, community design and setup, and training
 						workshops for communities of any size. If you're interested in these
 						services,{` `}
-						<a href="mailto:team@pubpub.org?subject=Additional%20Services">
+						<a href="mailto:hello@pubpub.org?subject=Additional%20Services">
 							feel free to get in touch
 						</a>
 						.

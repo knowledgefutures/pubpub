@@ -660,13 +660,13 @@ new Promise((resolve) => {
 	// 		type: Sequelize.JSONB,
 	// 	});
 	// })
-	.then(() => {
-		return sequelize.queryInterface.addColumn('Collections', 'readNextPreviewSize', {
-			type: Sequelize.ENUM,
-			values: ['none', 'medium', 'minimal', 'choose-best'],
-			defaultValue: 'choose-best',
-		});
-	})
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Collections', 'readNextPreviewSize', {
+	// 		type: Sequelize.ENUM,
+	// 		values: ['none', 'medium', 'minimal', 'choose-best'],
+	// 		defaultValue: 'choose-best',
+	// 	});
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

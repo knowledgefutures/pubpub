@@ -117,8 +117,8 @@ class Footer extends Component {
 						id: 'si-3',
 						icon: <Icon icon="envelope" />,
 						title: 'Contact',
-						value: 'team@pubpub.org',
-						url: 'mailto:team@pubpub.org?subject=Contact',
+						value: 'hello@pubpub.org',
+						url: 'mailto:hello@pubpub.org?subject=Contact',
 					},
 			  ]
 			: this.props.socialItems;
@@ -138,7 +138,7 @@ class Footer extends Component {
 									</a>
 								</li>
 								<li>
-									<a href="mailto:team@pubpub.org?subject=Contact">
+									<a href="mailto:hello@pubpub.org?subject=Contact">
 										<Icon icon="envelope" />
 									</a>
 								</li>

@@ -17,7 +17,7 @@
 			// border-top: 1px solid #CCC;
 			padding-top: 1em;
 			& + p {
-				border-bottom: 1px solid #CCC;
+				border-bottom: 1px solid #ccc;
 				padding-bottom: 1em;
 			}
 		}
@@ -158,7 +158,8 @@
 	}
 
 	.rendered-footnote.structured-value {
-		div.csl-bib-body, div.csl-entry {
+		div.csl-bib-body,
+		div.csl-entry {
 			display: inline;
 		}
 	}
@@ -183,5 +184,11 @@
 		h6 {
 			page-break-after: avoid;
 		}
+	}
+}
+
+.pub-body-alert {
+	.error-time {
+		font-weight: bold;
 	}
 }

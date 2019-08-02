@@ -55,6 +55,9 @@ export default (sequelize, dataTypes) => {
 						Community,
 						Discussion,
 						Branch,
+						Merge,
+						PubVersion,
+						Review,
 					} = models;
 					Pub.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
@@ -84,6 +87,21 @@ export default (sequelize, dataTypes) => {
 					Pub.hasMany(Branch, {
 						onDelete: 'CASCADE',
 						as: 'branches',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(Merge, {
+						onDelete: 'CASCADE',
+						as: 'merges',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(PubVersion, {
+						onDelete: 'CASCADE',
+						as: 'pubVersions',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(Review, {
+						onDelete: 'CASCADE',
+						as: 'reviews',
 						foreignKey: 'pubId',
 					});
 				},

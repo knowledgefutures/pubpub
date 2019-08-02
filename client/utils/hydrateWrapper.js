@@ -30,6 +30,7 @@ export const hydrateWrapper = (Component) => {
 
 		if (!isLocalEnv(window)) {
 			setupKeen();
+			window.sentryIsActive = true;
 			Sentry.init({ dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439' });
 			Sentry.setUser({
 				id: initialData.loginData.id,

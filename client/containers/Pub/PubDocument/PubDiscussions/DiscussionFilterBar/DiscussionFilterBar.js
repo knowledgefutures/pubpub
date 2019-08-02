@@ -129,7 +129,12 @@ const DiscussionFilterBar = (props) => {
 					title={
 						filtersActive
 							? 'No Discussions Match Filter'
-							: 'No Discussions on this Branch'
+							: 'No Discussions on this Branch yet'
+					}
+					description={
+						filtersActive || !pubData.canDiscussBranch
+							? ''
+							: 'Highlight text above to create a new Discussion'
 					}
 					visual="bp3-icon-widget"
 				/>

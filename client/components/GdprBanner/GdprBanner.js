@@ -49,7 +49,7 @@ const GdprBanner = (props) => {
 					<a href="/privacy/settings">privacy settings</a> to learn more.
 				</p>
 			</div>
-			<div className="buttons">
+			<div className="gdpr-buttons">
 				<Button onClick={() => closeWithConsent(true)} intent="success">
 					Accept
 				</Button>

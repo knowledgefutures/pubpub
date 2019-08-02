@@ -427,7 +427,7 @@ class Landing extends React.Component {
 								</p>
 								<div className="buttons">
 									<a
-										href="mailto:team@pubpub.org"
+										href="mailto:hello@pubpub.org"
 										className="bp3-button bp3-intent-primary bp3-large"
 									>
 										Get in touch

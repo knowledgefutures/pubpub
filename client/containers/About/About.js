@@ -107,7 +107,7 @@ const About = function(props) {
 					</p>
 					<p>
 						If you have questions or are interested in collaborating, get in touch
-						directly at <a href="mailto:team@pubpub.org">team@pubpub.org</a>.
+						directly at <a href="mailto:hello@pubpub.org">hello@pubpub.org</a>.
 					</p>
 					<p>—The PubPub Team</p>
 				</GridWrapper>

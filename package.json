@@ -2,7 +2,7 @@
 	"name": "pubpub",
 	"version": "6.0.0",
 	"description": "Collaborative Community Publishing",
-	"author": "PubPub Team <team@pubpub.org>",
+	"author": "PubPub Team <hello@pubpub.org>",
 	"license": "GPL-2.0+",
 	"repository": {
 		"type": "git",

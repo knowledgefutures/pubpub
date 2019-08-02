@@ -10,7 +10,7 @@ export default {
 	largeHeaderLogo: 'https://assets.pubpub.org/_testing/51535547817693.png',
 	largeHeaderBackground: null,
 	accentColorLight: "#ffffff",
-	accentColorDark: "#a2273e",  
+	accentColorDark: "#a2273e",
 	accentActionColor: 'rgba(69, 79, 96, 0.6)',
 	accentHoverColor: 'rgba(69, 79, 96, 0.8)',
 	accentMinimalColor: 'rgba(69, 79, 96, 0.19999999999999996)',
@@ -1549,7 +1549,7 @@ export default {
 									content: [
 										{
 											text:
-												'If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, you can contact team@pubpub.org.',
+												'If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, you can contact privacy@pubpub.org.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -5649,7 +5649,7 @@ export default {
 									content: [
 										{
 											text:
-												'If you have any questions about this TOS or Privacy Policy, the practices of the Site, or your dealings with this Site, you can contact team@pubpub.org.',
+												'If you have any questions about this TOS or Privacy Policy, the practices of the Site, or your dealings with this Site, you can contact privacy@pubpub.org.',
 											type: 'text',
 										},
 									],

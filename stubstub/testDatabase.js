@@ -1,10 +1,12 @@
 import { exec as execWithCallback, spawn } from 'child_process';
-import fs from 'fs';
+import fs from 'fs-extra';
+import os from 'os';
+import path from 'path';
 import hasbin from 'hasbin';
 
-const requiredBinaries = ['createdb', 'dropuser', 'dropdb', 'postgres', 'psql'];
+const requiredBinaries = ['createdb', 'dropuser', 'dropdb', 'pg_ctl', 'psql'];
 
-const pgDataPath = process.env.TEST_DB_PGSQL_PATH || '~/.pubpub-pgsql/data';
+const pgDataPath = process.env.TEST_DB_PGSQL_PATH || path.join(os.homedir(), '.pubpub-pgsql/data');
 
 const testDbConfig = {
 	username: 'testuser',
@@ -47,6 +49,7 @@ const throwBinariesWarning = () => {
 export const initTestDatabase = async () => {
 	if (!fs.existsSync(pgDataPath)) {
 		await exec('initdb');
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 	}
 };
 
@@ -63,14 +66,16 @@ export const setupTestDatabase = async (config = testDbConfig) => {
 	return createDbUrl(config);
 };
 
-export const startTestDatabaseServer = () => {
+export const startTestDatabaseServer = async () => {
 	if (!hasbin.all.sync(requiredBinaries)) {
 		throwBinariesWarning();
 	}
-	return spawn('postgres', {
+	const prs = spawn('pg_ctl', ['start', '-w'], {
 		env: {
 			...process.env,
 			PGDATA: pgDataPath,
 		},
 	});
+	await new Promise((resolve) => setTimeout(resolve, 1000));
+	return prs;
 };

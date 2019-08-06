@@ -9,7 +9,10 @@ export default async () => {
 	if (!process.env.DATABASE_URL) {
 		console.log('\nSit tight while a local test database is created...');
 		await initTestDatabase();
-		global.testDbServerProcess = startTestDatabaseServer();
+		global.testDbServerProcess = await startTestDatabaseServer();
 		process.env.DATABASE_URL = await setupTestDatabase();
+		// eslint-disable-next-line global-require
+		const { sequelize } = require('../../server/models.js');
+		await sequelize.sync({ force: true });
 	}
 };

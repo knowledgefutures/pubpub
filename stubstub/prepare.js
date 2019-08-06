@@ -9,7 +9,7 @@ export const setup = (beforeFn, actionsFn) => {
 		);
 	}
 	beforeFn(async () => {
-		// await sequelize.sync();
+		await sequelize.sync();
 		if (actionsFn) {
 			await actionsFn();
 		}

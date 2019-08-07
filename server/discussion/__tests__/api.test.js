@@ -32,79 +32,76 @@ afterEach(() => {
 });
 
 setup(beforeAll, async () => {
-	try {
-		firebaseStub = stub(firebaseAdmin, 'createFirebaseBranch');
-		testCommunity = await makeCommunity();
-		pubManager = await makeUser();
-		randomVisitor = await makeUser();
-		invitedToView = await makeUser();
-		invitedToDiscuss = await makeUser();
-		invitedToManage = await makeUser();
-		branchCreator = await makeUser();
-		pub = await createPub({ communityId: testCommunity.community.id }, pubManager);
-		openBranch = await createBranch(
-			{
-				pubId: pub.id,
-				title: 'branch-for-open-discussions',
-				publicPermissions: 'discuss',
-				userPermissions: [],
-				// These should not make a difference because they're superseded by publicPermissions
-				pubManagerPermissions: 'none',
-				communityAdminPermissions: 'none',
-			},
-			branchCreator.id,
-		);
-		closedBranch = await createBranch(
-			{
-				pubId: pub.id,
-				title: 'branch-for-secret-discussions',
-				publicPermissions: 'none',
-				pubManagerPermissions: 'discuss',
-				communityAdminPermissions: 'discuss',
-				userPermissions: [],
-			},
-			branchCreator.id,
-		);
-		secretiveBranch = await createBranch(
-			{
-				pubId: pub.id,
-				title: 'branch-for-secret-discussions',
-				publicPermissions: 'none',
-				pubManagerPermissions: 'none',
-				communityAdminPermissions: 'none',
-				userPermissions: [
-					{ user: invitedToView, permissions: 'view' },
-					{ user: invitedToDiscuss, permissions: 'discuss' },
-					{ user: invitedToManage, permissions: 'manage' },
-				],
-			},
-			branchCreator.id,
-		);
-
-		makeDiscussion = ({
-			discussionId,
-			branchId,
-			threadNumber,
-			title = 'Uhh yeah a title',
-			text = 'Hello, a discussion!',
-			content = 'Some test content',
-			initAnchorText = 'Some anchor text',
-			...whateverElse
-		}) => ({
-			discussionId: discussionId,
-			title: title,
-			content: content,
-			text: text,
-			initAnchorText: initAnchorText,
+	firebaseStub = stub(firebaseAdmin, 'createFirebaseBranch');
+	testCommunity = await makeCommunity();
+	pubManager = await makeUser();
+	randomVisitor = await makeUser();
+	invitedToView = await makeUser();
+	invitedToDiscuss = await makeUser();
+	invitedToManage = await makeUser();
+	branchCreator = await makeUser();
+	pub = await createPub({ communityId: testCommunity.community.id }, pubManager);
+	openBranch = await createBranch(
+		{
 			pubId: pub.id,
-			communityId: testCommunity.community.id,
-			branchId: branchId,
-			threadNumber: threadNumber,
-			...whateverElse,
-		});
-	} catch (e) {
-		console.log('eeee', e);
-	}
+			title: 'branch-for-open-discussions',
+			publicPermissions: 'discuss',
+			userPermissions: [],
+			// These should not make a difference because they're superseded by publicPermissions
+			pubManagerPermissions: 'none',
+			communityAdminPermissions: 'none',
+		},
+		branchCreator.id,
+	);
+	console.log('THIS IS THE OPENBRANCH', openBranch);
+	closedBranch = await createBranch(
+		{
+			pubId: pub.id,
+			title: 'branch-for-secret-discussions',
+			publicPermissions: 'none',
+			pubManagerPermissions: 'discuss',
+			communityAdminPermissions: 'discuss',
+			userPermissions: [],
+		},
+		branchCreator.id,
+	);
+	secretiveBranch = await createBranch(
+		{
+			pubId: pub.id,
+			title: 'branch-for-secret-discussions',
+			publicPermissions: 'none',
+			pubManagerPermissions: 'none',
+			communityAdminPermissions: 'none',
+			userPermissions: [
+				{ user: invitedToView, permissions: 'view' },
+				{ user: invitedToDiscuss, permissions: 'discuss' },
+				{ user: invitedToManage, permissions: 'manage' },
+			],
+		},
+		branchCreator.id,
+	);
+
+	makeDiscussion = ({
+		discussionId,
+		branchId,
+		threadNumber,
+		title = 'Uhh yeah a title',
+		text = 'Hello, a discussion!',
+		content = 'Some test content',
+		initAnchorText = 'Some anchor text',
+		...whateverElse
+	}) => ({
+		discussionId: discussionId,
+		title: title,
+		content: content,
+		text: text,
+		initAnchorText: initAnchorText,
+		pubId: pub.id,
+		communityId: testCommunity.community.id,
+		branchId: branchId,
+		threadNumber: threadNumber,
+		...whateverElse,
+	});
 });
 
 describe('/api/discussions', () => {

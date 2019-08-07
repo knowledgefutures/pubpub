@@ -1,4 +1,4 @@
-/* global describe, it, expect, beforeAll, afterAll, beforeEach, afterEach */
+/* global describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, jest */
 import uuid from 'uuid';
 
 import { makeUser, makeCommunity, setup, teardown, login, stub } from '../../../stubstub';
@@ -35,6 +35,7 @@ afterEach(() => {
 console.log('MODULE SCOPE');
 
 setup(beforeAll, async () => {
+	jest.setTimeout(30000);
 	console.log('START OF SETUP SCOPE');
 	firebaseStub = stub(firebaseAdmin, 'createFirebaseBranch');
 	testCommunity = await makeCommunity();
@@ -45,6 +46,7 @@ setup(beforeAll, async () => {
 	invitedToDiscuss = await makeUser();
 	invitedToManage = await makeUser();
 	branchCreator = await makeUser();
+	console.log('SLIGHTLY FARTHER IN THE SETUP SCOPE');
 	pub = await createPub({ communityId: testCommunity.community.id }, pubManager);
 	console.log('LATER IN THE SETUP SCOPE');
 	openBranch = await createBranch(

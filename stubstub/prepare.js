@@ -15,7 +15,7 @@ export const setup = (beforeFn, actionsFn) => {
 			console.log('SYNCED');
 			await actionsFn();
 		}
-	});
+	}, 30000);
 };
 
 export const teardown = (afterFn, actionsFn) => {

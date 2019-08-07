@@ -35,7 +35,6 @@ afterEach(() => {
 console.log('MODULE SCOPE');
 
 setup(beforeAll, async () => {
-	jest.setTimeout(30000);
 	console.log('START OF SETUP SCOPE');
 	firebaseStub = stub(firebaseAdmin, 'createFirebaseBranch');
 	testCommunity = await makeCommunity();

@@ -35,15 +35,18 @@ afterEach(() => {
 console.log('MODULE SCOPE');
 
 setup(beforeAll, async () => {
+	console.log('START OF SETUP SCOPE');
 	firebaseStub = stub(firebaseAdmin, 'createFirebaseBranch');
 	testCommunity = await makeCommunity();
 	pubManager = await makeUser();
 	randomVisitor = await makeUser();
 	invitedToView = await makeUser();
+	console.log('FARTHER IN THE SETUP SCOPE');
 	invitedToDiscuss = await makeUser();
 	invitedToManage = await makeUser();
 	branchCreator = await makeUser();
 	pub = await createPub({ communityId: testCommunity.community.id }, pubManager);
+	console.log('LATER IN THE SETUP SCOPE');
 	openBranch = await createBranch(
 		{
 			pubId: pub.id,

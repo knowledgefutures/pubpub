@@ -24,12 +24,15 @@ let secretiveBranch;
 let makeDiscussion;
 
 beforeEach(() => {
+	console.log('BEFOREEACH SCOPE');
 	firebaseStub = stub(firebaseAdmin, 'updateFirebaseDiscussion');
 });
 
 afterEach(() => {
 	firebaseStub.restore();
 });
+
+console.log('MODULE SCOPE');
 
 setup(beforeAll, async () => {
 	firebaseStub = stub(firebaseAdmin, 'createFirebaseBranch');
@@ -53,7 +56,7 @@ setup(beforeAll, async () => {
 		},
 		branchCreator.id,
 	);
-	console.log('THIS IS THE OPENBRANCH', openBranch);
+	console.log('SETUP SCOPE', openBranch);
 	closedBranch = await createBranch(
 		{
 			pubId: pub.id,
@@ -105,7 +108,9 @@ setup(beforeAll, async () => {
 });
 
 describe('/api/discussions', () => {
+	console.log('DESCRIBE SCOPE');
 	it('forbids logged-out visitors from making discussions', async () => {
+		console.log('TEST SCOPE');
 		const agent = await login();
 		await agent
 			.post('/api/discussions')

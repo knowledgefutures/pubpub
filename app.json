@@ -1,8 +1,7 @@
 {
-    "environments": {
-      "test": {
-        "addons": ["heroku-postgresql:in-dyno"]
-      }
+  "environments": {
+    "test": {
+      "addons": ["heroku-postgresql:in-dyno"]
     }
   }
-  
+}

@@ -1,1 +1,1 @@
-npm run lint && jest stories/
+npm run lint && npm run test stories/

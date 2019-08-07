@@ -1,6 +1,5 @@
 import { exec as execWithCallback, spawn } from 'child_process';
 import fs from 'fs-extra';
-import os from 'os';
 import path from 'path';
 import hasbin from 'hasbin';
 

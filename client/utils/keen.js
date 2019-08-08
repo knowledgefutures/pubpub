@@ -18,9 +18,8 @@ const keenEnvDev = {
 
 export const setupKeen = () => {
 	const { communityData, collectionData, pubData, loginData } = getClientInitialData();
-	if (!getGdprConsentElection(loginData)) {
-		return;
-	}
+	const hasGdprConsent = getGdprConsentElection(loginData);
+
 	const keenEnvironment = isProd() ? keenEnvProd : keenEnvDev;
 	const client = new KeenTracking(keenEnvironment);
 	const customEventData = {};
@@ -34,12 +33,14 @@ export const setupKeen = () => {
 		customEventData.pubId = pubData.id;
 		customEventData.branchId = pubData.activeBranch.id;
 	}
-	if (loginData.id) {
+	if (hasGdprConsent && loginData.id) {
 		customEventData.userId = loginData.id;
 	}
 	client.extendEvents({ pubpub: customEventData });
 	client.initAutoTracking({
 		recordPageViewsOnExit: true,
 		recordClicks: false,
+		collectIpAddress: hasGdprConsent,
+		collectUuid: hasGdprConsent,
 	});
 };

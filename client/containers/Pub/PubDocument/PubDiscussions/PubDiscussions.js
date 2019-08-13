@@ -10,6 +10,7 @@ import { PubSuspendWhileTyping } from '../../PubSuspendWhileTyping';
 import ThreadGroup from './ThreadGroup';
 import DiscussionThread from './DiscussionThread';
 import DiscussionFilterBar from './DiscussionFilterBar';
+import DiscussionInput from './DiscussionThread/DiscussionInput';
 import { groupThreadsByLine, nestDiscussionsToThreads } from './discussionUtils';
 
 require('./pubDiscussions.scss');
@@ -96,32 +97,43 @@ const PubDiscussions = (props) => {
 				<h2>Discussions</h2>
 				<PubSuspendWhileTyping delay={1000}>
 					{() => (
-						<DiscussionFilterBar
-							pubData={pubData}
-							communityData={communityData}
-							threadData={threads}
-							updateLocalData={updateLocalData}
-						>
-							{(filteredThreads) => {
-								return (
-									<React.Fragment>
-										{filteredThreads.map((thread) => {
-											return (
-												<DiscussionThread
-													key={thread[0].id}
-													pubData={pubData}
-													collabData={collabData}
-													firebaseBranchRef={firebaseBranchRef}
-													threadData={thread}
-													updateLocalData={updateLocalData}
-													canPreview={true}
-												/>
-											);
-										})}
-									</React.Fragment>
-								);
-							}}
-						</DiscussionFilterBar>
+						<React.Fragment>
+							{pubData.canDiscussBranch && (
+								<DiscussionInput
+									pubData={pubData}
+									collabData={collabData}
+									updateLocalData={updateLocalData}
+									threadData={[{ id: undefined }]}
+									isPubBottomInput={true}
+								/>
+							)}
+							<DiscussionFilterBar
+								pubData={pubData}
+								communityData={communityData}
+								threadData={threads}
+								updateLocalData={updateLocalData}
+							>
+								{(filteredThreads) => {
+									return (
+										<React.Fragment>
+											{filteredThreads.map((thread) => {
+												return (
+													<DiscussionThread
+														key={thread[0].id}
+														pubData={pubData}
+														collabData={collabData}
+														firebaseBranchRef={firebaseBranchRef}
+														threadData={thread}
+														updateLocalData={updateLocalData}
+														canPreview={true}
+													/>
+												);
+											})}
+										</React.Fragment>
+									);
+								}}
+							</DiscussionFilterBar>
+						</React.Fragment>
 					)}
 				</PubSuspendWhileTyping>
 			</GridWrapper>

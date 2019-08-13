@@ -10,6 +10,8 @@ import { apiFetch } from 'utils';
 import LabelSelect from './LabelSelect';
 import DiscussionReanchor from './DiscussionReanchor';
 
+require('./discussionItem.scss');
+
 const propTypes = {
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
@@ -69,7 +71,7 @@ const DiscussionItem = (props) => {
 
 	const isDiscussionAuthor = loginData.id === discussionData.userId;
 	return (
-		<div className="discussion-item">
+		<div className="discussion-item-component">
 			<div className="avatar-wrapper">
 				<Avatar
 					width={18}

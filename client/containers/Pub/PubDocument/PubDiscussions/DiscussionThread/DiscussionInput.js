@@ -18,19 +18,29 @@ const propTypes = {
 	firebaseBranchRef: PropTypes.object,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
+	isPubBottomInput: PropTypes.bool,
 };
 
 const defaultProps = {
 	firebaseBranchRef: undefined,
+	isPubBottomInput: false,
+};
+
+const getPlaceholderText = (isNewThread, isPubBottomInput) => {
+	if (isPubBottomInput) {
+		return 'Add a discussion here (or highlight some text in the Pub to begin a discussion inline)';
+	}
+	return isNewThread ? 'Add your discussion...' : 'Add a reply...';
 };
 
 const DiscussionInput = (props) => {
-	const { pubData, collabData, updateLocalData, threadData } = props;
+	const { pubData, collabData, updateLocalData, threadData, isPubBottomInput } = props;
 	const { loginData, locationData, communityData } = useContext(PageContext);
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
 	const [didFocus, setDidFocus] = useState(false);
+	const [editorKey, setEditorKey] = useState(Date.now());
 	const isNewThread = !threadData[0].threadNumber;
 	useEffect(() => {
 		if ((isNewThread || didFocus) && changeObject.view) {
@@ -72,6 +82,8 @@ const DiscussionInput = (props) => {
 				updateLocalData('pub', {
 					discussions: [...pubData.discussions, discussionData],
 				});
+				setIsLoading(false);
+				setEditorKey(Date.now());
 			});
 	};
 
@@ -80,7 +92,7 @@ const DiscussionInput = (props) => {
 		locationData.queryString.length > 1 ? locationData.queryString : ''
 	}`;
 	return (
-		<div className="discussion-item input">
+		<div className="discussion-item-component input">
 			<div className="avatar-wrapper">
 				<Avatar width={18} userInitials={loginData.intials} userAvatar={loginData.avatar} />
 			</div>
@@ -92,7 +104,7 @@ const DiscussionInput = (props) => {
 						href={`/login${redirectString}`}
 						small={true}
 					/>
-					{isNewThread && (
+					{isNewThread && !isPubBottomInput && (
 						<Button
 							className="discussion-cancel-button"
 							text="Cancel"
@@ -118,7 +130,8 @@ const DiscussionInput = (props) => {
 				<div className="content-wrapper">
 					<div className="discussion-body-wrapper editable">
 						<Editor
-							placeholder={isNewThread ? 'Add your discussion...' : 'Add a reply...'}
+							key={editorKey}
+							placeholder={getPlaceholderText(isNewThread, isPubBottomInput)}
 							onChange={(editorChangeObject) => {
 								setChangeObject(editorChangeObject);
 							}}
@@ -140,7 +153,7 @@ const DiscussionInput = (props) => {
 						onClick={handlePostDiscussion}
 						small={true}
 					/>
-					{isNewThread && (
+					{isNewThread && !isPubBottomInput && (
 						<Button
 							className="discussion-cancel-button"
 							text="Cancel"

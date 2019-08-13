@@ -91,6 +91,10 @@ const PageWrapper = (props) => {
 					// accentMinimalColor={communityData.accentMinimalColor}
 				/>
 
+				{props.locationData.isDuqDuq && (
+					<div className="duqduq-warning">Development Environment</div>
+				)}
+
 				<GdprBanner loginData={props.loginData} />
 
 				<Header

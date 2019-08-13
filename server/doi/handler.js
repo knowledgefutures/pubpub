@@ -123,7 +123,7 @@ const submitDoiData = (json, timestamp, communityId) => {
 		},
 		headers: {
 			'content-type': 'multipart/form-data',
-			'user-agent': 'PubPub (mailto:team@pubpub.org)',
+			'user-agent': 'PubPub (mailto:hello@pubpub.org)',
 		},
 	});
 };

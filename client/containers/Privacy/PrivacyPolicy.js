@@ -175,7 +175,7 @@ const PrivacyPolicy = function() {
 			</p>
 			<p>
 				If you have any questions about this Privacy Policy, the practices of this Site, or
-				your dealings with this Site, you can contact team@pubpub.org
+				your dealings with this Site, you can contact privacy@pubpub.org
 			</p>
 			<h1>Effective Date</h1>
 			<p>This Privacy Policy is in effect as of as of the August 31, 2016.</p>

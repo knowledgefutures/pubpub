@@ -14,12 +14,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Pub, User, Merge, Branch } = models;
-					Pub.hasMany(Merge, {
-						onDelete: 'CASCADE',
-						as: 'merges',
-						foreignKey: 'pubId',
-					});
+					const { User, Merge, Branch } = models;
 					Merge.belongsTo(User, {
 						onDelete: 'CASCADE',
 						as: 'user',

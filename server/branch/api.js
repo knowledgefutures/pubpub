@@ -1,6 +1,7 @@
-import app from '../server';
+import app, { wrap } from '../server';
 import { getPermissions } from './permissions';
 import { createBranch, updateBranch, destroyBranch } from './queries';
+import { ForbiddenError } from '../errors';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -12,54 +13,41 @@ const getRequestIds = (req) => {
 	};
 };
 
-app.post('/api/branches', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
-		.then((permissions) => {
-			if (!permissions.create) {
-				throw new Error('Not Authorized');
-			}
-			return createBranch(req.body, requestIds.userId);
-		})
-		.then((newBranch) => {
-			return res.status(201).json(newBranch);
-		})
-		.catch((err) => {
-			console.error('Error in postBranch: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+app.post(
+	'/api/branches',
+	wrap(async (req, res) => {
+		const requestIds = getRequestIds(req);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.create) {
+			throw new ForbiddenError();
+		}
+		const newBranch = await createBranch(req.body, requestIds.userId);
+		return res.status(201).json(newBranch);
+	}),
+);
 
-app.put('/api/branches', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.update) {
-				throw new Error('Not Authorized');
-			}
-			return updateBranch(req.body, permissions.update);
-		})
-		.then((updatedBranchValues) => {
-			return res.status(201).json(updatedBranchValues);
-		})
-		.catch((err) => {
-			console.error('Error in putBranch: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+app.put(
+	'/api/branches',
+	wrap(async (req, res) => {
+		const requestIds = getRequestIds(req);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.update) {
+			throw new ForbiddenError();
+		}
+		const updatedBranchValues = await updateBranch(req.body, permissions.update);
+		return res.status(200).json(updatedBranchValues);
+	}),
+);
 
-app.delete('/api/branches', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.destroy) {
-				throw new Error('Not Authorized');
-			}
-			return destroyBranch(req.body);
-		})
-		.then(() => {
-			return res.status(201).json(req.body.branchId);
-		})
-		.catch((err) => {
-			console.error('Error in deleteBranch: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+app.delete(
+	'/api/branches',
+	wrap(async (req, res) => {
+		const requestIds = getRequestIds(req);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.destroy) {
+			throw new ForbiddenError();
+		}
+		await destroyBranch(req.body);
+		return res.status(200).json(req.body.branchId);
+	}),
+);

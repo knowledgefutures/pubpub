@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 import Sequelize from 'sequelize';
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 	require('./config.js');
 }
 
@@ -13,7 +13,9 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 
 /* Change to true to update the model in the database. */
 /* NOTE: This being set to true will erase your data. */
-sequelize.sync({ force: false });
+if (process.env.NODE_ENV !== 'test') {
+	sequelize.sync({ force: false });
+}
 
 /* Create standard id type for our database */
 sequelize.idType = {

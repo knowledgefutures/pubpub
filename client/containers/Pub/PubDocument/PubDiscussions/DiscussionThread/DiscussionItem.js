@@ -35,7 +35,7 @@ const DiscussionItem = (props) => {
 		isRootThread,
 		isPreview,
 	} = props;
-	const { loginData, communityData } = useContext(PageContext);
+	const { loginData, communityData, locationData } = useContext(PageContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState({});
 	const [isLoadingEdit, setIsLoadingEdit] = useState(false);
@@ -46,8 +46,8 @@ const DiscussionItem = (props) => {
 			method: 'PUT',
 			body: JSON.stringify({
 				...discussionUpdates,
+				discussHash: locationData.query.access,
 				discussionId: discussionData.id,
-				userId: loginData.id,
 				pubId: pubData.id,
 				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,

@@ -1,12 +1,12 @@
 import { BranchPermission, User } from '../models';
 import { attributesPublicUser } from '../utils';
 
-export const createBranchPermission = (inputValues) => {
+export const createBranchPermission = ({ userId, pubId, branchId, permissions = 'view' }) => {
 	return BranchPermission.create({
-		userId: inputValues.userId,
-		pubId: inputValues.pubId,
-		branchId: inputValues.branchId,
-		permissions: 'view',
+		userId: userId,
+		pubId: pubId,
+		branchId: branchId,
+		permissions: permissions,
 	}).then((newBranchPermission) => {
 		return BranchPermission.findOne({
 			where: { id: newBranchPermission.id },

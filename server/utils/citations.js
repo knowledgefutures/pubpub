@@ -1,5 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-import Cite from 'citation-js';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 
@@ -33,6 +32,8 @@ const getCollectionLevelData = (primaryCollectionPub) => {
 };
 
 export const generateCitationHTML = (pubData, communityData) => {
+	// eslint-disable-next-line global-require
+	const Cite = require('citation-js');
 	// TODO: We need to set the updated times properly, which are likely stored in firebase.
 	const pubIssuedDate = getPubPublishedDate(pubData);
 	const pubLink = pubUrl(communityData, pubData);

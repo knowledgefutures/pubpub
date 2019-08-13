@@ -1,4 +1,5 @@
-import app from '../server';
+import app, { wrap } from '../server';
+import { ForbiddenError } from '../errors';
 import { getPermissions } from './permissions';
 import {
 	createCollectionAttribution,
@@ -15,70 +16,55 @@ const getRequestIds = (req) => {
 		collectionAttributionId: req.body.id,
 	};
 };
+
 /* Note: we typically use values like collectionAttributionId on API requests */
 /* here, id is sent up, so there is a little bit of kludge to make */
 /* the other interfaces consistent. I didn't fully understand AttributionEditor */
 /* so I didn't make the downstream change, which would be the right solution. */
-app.post('/api/collectionAttributions', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.create) {
-				throw new Error('Not Authorized');
-			}
-			return createCollectionAttribution({
+app.post(
+	'/api/collectionAttributions',
+	wrap(async (req, res) => {
+		const permissions = await getPermissions(getRequestIds(req));
+		if (!permissions.create) {
+			throw new ForbiddenError();
+		}
+		const newAttribution = await createCollectionAttribution({
+			...req.body,
+			collectionAttributionId: req.body.id,
+		});
+		return res.status(201).json(newAttribution);
+	}),
+);
+
+app.put(
+	'/api/collectionAttributions',
+	wrap(async (req, res) => {
+		const permissions = await getPermissions(getRequestIds(req));
+		if (!permissions.update) {
+			throw new ForbiddenError();
+		}
+		const updatedValues = await updateCollectionAttribution(
+			{
 				...req.body,
 				collectionAttributionId: req.body.id,
-			});
-		})
-		.then((newPubAttribution) => {
-			return res.status(201).json(newPubAttribution);
-		})
-		.catch((err) => {
-			console.error('Error in postPubAttribution: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+			},
+			permissions.update,
+		);
+		return res.status(200).json(updatedValues);
+	}),
+);
 
-app.put('/api/collectionAttributions', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
-		.then((permissions) => {
-			if (!permissions.update) {
-				throw new Error('Not Authorized');
-			}
-			return updateCollectionAttribution(
-				{
-					...req.body,
-					collectionAttributionId: req.body.id,
-				},
-				permissions.update,
-			);
-		})
-		.then((updatedValues) => {
-			return res.status(201).json(updatedValues);
-		})
-		.catch((err) => {
-			console.error('Error in putCollectionAttribution: ', err);
-			return res.status(500).json(err.message);
+app.delete(
+	'/api/collectionAttributions',
+	wrap(async (req, res) => {
+		const permissions = await getPermissions(getRequestIds(req));
+		if (!permissions.destroy) {
+			throw new ForbiddenError();
+		}
+		await destroyCollectionAttribution({
+			...req.body,
+			collectionAttributionId: req.body.id,
 		});
-});
-
-app.delete('/api/collectionAttributions', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.destroy) {
-				throw new Error('Not Authorized');
-			}
-			return destroyCollectionAttribution({
-				...req.body,
-				collectionAttributionId: req.body.id,
-			});
-		})
-		.then(() => {
-			return res.status(201).json(req.body.id);
-		})
-		.catch((err) => {
-			console.error('Error in deletePubAttribution: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+		return res.status(200).json(req.body.id);
+	}),
+);

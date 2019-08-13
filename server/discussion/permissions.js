@@ -12,9 +12,7 @@ export const getPermissions = async ({
 	discussHash,
 }) => {
 	if (!userId) {
-		return new Promise((resolve) => {
-			resolve({});
-		});
+		return {};
 	}
 
 	const [discussionOnBranch, branch, pub, pubManager, communityAdmin] = await Promise.all([

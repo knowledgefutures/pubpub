@@ -9,11 +9,11 @@ export const setup = (beforeFn, actionsFn) => {
 		);
 	}
 	beforeFn(async () => {
-		sequelize.sync();
 		if (actionsFn) {
+			await sequelize.sync();
 			await actionsFn();
 		}
-	});
+	}, 30000);
 };
 
 export const teardown = (afterFn, actionsFn) => {

@@ -8,6 +8,22 @@ import Module from 'module';
 import passport from 'passport';
 import * as Sentry from '@sentry/node';
 import { sequelize, User } from './models';
+import { HTTPStatusError } from './errors';
+
+// Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
+// return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.
+export const wrap = (routeHandlerFn) => (...args) => {
+	const next = args[args.length - 1];
+	Promise.resolve(routeHandlerFn(...args)).catch((err) => {
+		// Log the error if we're testing. Normally this is handled in the error middleware, but
+		// that isn't active while handling individual requests in a test environment.
+		if (process.env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
+			// eslint-disable-next-line no-console
+			console.log('Got an error in an API route while testing:', err);
+		}
+		next(err);
+	});
+};
 
 /* Since we are server-rendering components, we 	*/
 /* need to ensure we don't require things intended 	*/
@@ -86,7 +102,12 @@ passport.deserializeUser(User.deserializeUser());
 /* ------------ */
 /* Handle Error */
 /* ------------ */
+
 app.use((err, req, res, next) => {
+	const errStatus = err instanceof HTTPStatusError ? err.status : 500;
+	if (!res.headersSent) {
+		res.status(errStatus);
+	}
 	console.error(`Error!  ${err}`);
 	next();
 });
@@ -137,7 +158,7 @@ if (process.env.NODE_ENV === 'production') {
 /* Start Server */
 /* ------------ */
 const port = process.env.PORT || 9876;
-module.exports = () => {
+export const startServer = () => {
 	return app.listen(port, (err) => {
 		if (err) {
 			console.error(err);

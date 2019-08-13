@@ -1,9 +1,10 @@
-import Cite from 'citation-js';
 import katex from 'katex';
 import request from 'request-promise';
 import app from '../server';
 
 app.post('/api/editor/citation-format', (req, res) => {
+	// eslint-disable-next-line global-require
+	const Cite = require('citation-js');
 	Cite.async(req.body.input)
 		.then((data) => {
 			try {

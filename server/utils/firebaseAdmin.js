@@ -8,22 +8,34 @@ import {
 } from '@pubpub/editor';
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
 import { getFirebaseConfig } from 'utils';
-/* To encode: Buffer.from(JSON.stringify(serviceAccountJson)).toString('base64'); */
-const serviceAccount = JSON.parse(
-	Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
-);
 
-const firebaseApp =
-	firebaseAdmin.apps.length > 0
-		? firebaseAdmin.apps[0]
-		: firebaseAdmin.initializeApp(
-				{
-					credential: firebaseAdmin.credential.cert(serviceAccount),
-					databaseURL: getFirebaseConfig().databaseURL,
-				},
-				'firebase-pub-new',
-		  );
-const database = firebaseApp.database();
+const getFirebaseApp = () => {
+	if (firebaseAdmin.apps.length > 0) {
+		return firebaseAdmin.apps[0];
+	}
+	if (process.env.NODE_ENV === 'test') {
+		if (process.env.FIREBASE_TEST_DB_URL) {
+			return firebaseAdmin.initializeApp({ databaseUrl: process.env.FIREBASE_TEST_DB_URL });
+		}
+		// TODO(ian): Make sure we always get something here
+		return null;
+	}
+	/* To encode: Buffer.from(JSON.stringify(serviceAccountJson)).toString('base64'); */
+	const serviceAccount = JSON.parse(
+		Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
+	);
+	return firebaseAdmin.initializeApp(
+		{
+			credential: firebaseAdmin.credential.cert(serviceAccount),
+			databaseURL: getFirebaseConfig().databaseURL,
+		},
+		'firebase-pub-new',
+	);
+};
+
+const firebaseApp = getFirebaseApp();
+
+const database = firebaseApp && firebaseApp.database();
 
 export const getBranchDoc = (pubId, branchId, historyKey, updateOutdatedCheckpoint) => {
 	const pubKey = `pub-${pubId}`;

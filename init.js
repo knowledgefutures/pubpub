@@ -17,9 +17,7 @@ throng(
 		lifetime: Infinity,
 	},
 	() => {
-		const startServer = () => {
-			return require('./server/server.js')();
-		};
+		const { startServer } = require('./server/server.js');
 		if (watchables) {
 			const hotReloadServer = require('./hotReloadServer');
 			hotReloadServer(startServer, watchables);

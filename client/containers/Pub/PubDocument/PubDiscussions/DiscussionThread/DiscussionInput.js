@@ -28,7 +28,7 @@ const defaultProps = {
 
 const getPlaceholderText = (isNewThread, isPubBottomInput) => {
 	if (isPubBottomInput) {
-		return 'Add a discussion here (or highlight some text in the Pub to begin a discussion inline)';
+		return 'Start a discussion here (or highlight some text above to begin one inline)';
 	}
 	return isNewThread ? 'Add your discussion...' : 'Add a reply...';
 };

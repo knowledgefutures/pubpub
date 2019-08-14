@@ -41,7 +41,7 @@ export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 		}, canManageAsPubManager || canManageAsCommunityAdmin || isSuperAdmin);
 
 		return {
-			create: true,
+			create: canManage,
 			update: canManage && ['permissions'],
 			destroy: canManage,
 		};

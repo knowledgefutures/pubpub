@@ -383,9 +383,16 @@ export function generateRenderLists(layout, pubs) {
 				})
 				.sort((foo, bar) => {
 					const fooRank =
-						foo.collectionPubs && foo.collectionPubs[0] && foo.collectionPubs[0].rank;
+						(foo.collectionPubs &&
+							foo.collectionPubs[0] &&
+							foo.collectionPubs[0].rank) ||
+						foo.createdAt;
 					const barRank =
-						bar.collectionPubs && bar.collectionPubs[0] && bar.collectionPubs[0].rank;
+						(bar.collectionPubs &&
+							bar.collectionPubs[0] &&
+							bar.collectionPubs[0].rank) ||
+						bar.createdAt;
+
 					if (fooRank < barRank) {
 						return -1;
 					}

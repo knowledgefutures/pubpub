@@ -32,6 +32,7 @@ export const createBranch = (inputValues, userId) => {
 				order: (1 - maxOrder) / 2 + maxOrder,
 				viewHash: generateHash(8),
 				editHash: generateHash(8),
+				discussHash: generateHash(8),
 				pubId: inputValues.pubId,
 			});
 		})

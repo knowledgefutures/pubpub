@@ -1,49 +1,42 @@
-import app from '../server';
+import app, { wrap } from '../server';
 import { getPermissions } from './permissions';
 import { createDiscussion, updateDiscussion } from './queries';
+import { ForbiddenError } from '../errors';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
 	return {
 		userId: user.id,
-		discussionId: req.body.communityId || null,
+		discussionId: req.body.discussionId || null,
 		pubId: req.body.pubId,
 		communityId: req.body.communityId,
+		branchId: req.body.branchId,
+		discussHash: req.body.discussHash,
 	};
 };
 
-app.post('/api/discussions', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
-		.then((permissions) => {
-			if (!permissions.create) {
-				throw new Error('Not Authorized');
-			}
-			return createDiscussion(req.body, req.user);
-		})
-		.then((newDiscussion) => {
-			return res.status(201).json(newDiscussion);
-		})
-		.catch((err) => {
-			console.error('Error in postDiscussion: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+app.post(
+	'/api/discussions',
+	wrap(async (req, res) => {
+		const requestIds = getRequestIds(req);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.create) {
+			throw new ForbiddenError();
+		}
+		const newDiscussion = await createDiscussion(req.body, req.user);
+		return res.status(201).json(newDiscussion);
+	}),
+);
 
-app.put('/api/discussions', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
-		.then((permissions) => {
-			if (!permissions.update) {
-				throw new Error('Not Authorized');
-			}
-			return updateDiscussion(req.body, permissions.update);
-		})
-		.then((updatedValues) => {
-			return res.status(201).json(updatedValues);
-		})
-		.catch((err) => {
-			console.error('Error in pubDiscussion: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+app.put(
+	'/api/discussions',
+	wrap(async (req, res) => {
+		const requestIds = getRequestIds(req);
+		const permissions = await getPermissions(requestIds);
+		if (!permissions.update) {
+			throw new ForbiddenError();
+		}
+		const updatedValues = await updateDiscussion(req.body, permissions.update);
+		return res.status(200).json(updatedValues);
+	}),
+);

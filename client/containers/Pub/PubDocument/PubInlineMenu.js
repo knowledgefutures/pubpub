@@ -24,6 +24,12 @@ const defaultProps = {
 	// onNewHighlightDiscussion: () => {},
 };
 
+const shouldOpenBelowSelection = () => {
+	return ['Android', 'iPad', 'iPhone'].some((device) =>
+		navigator.userAgent.toLowerCase().includes(device.toLowerCase()),
+	);
+};
+
 const PubInlineMenu = (props) => {
 	const { pubData, collabData, historyData } = props;
 	const { locationData, communityData } = useContext(PageContext);
@@ -38,9 +44,14 @@ const PubInlineMenu = (props) => {
 		return null;
 	}
 
+	const topPosition =
+		window.scrollY +
+		(shouldOpenBelowSelection()
+			? selectionBoundingBox.bottom + 10
+			: selectionBoundingBox.top - 50);
 	const menuStyle = {
 		position: 'absolute',
-		top: selectionBoundingBox.top - 50 + window.scrollY,
+		top: topPosition,
 		left: selectionBoundingBox.left,
 	};
 	const menuItems = collabData.editorChangeObject.menuItems;

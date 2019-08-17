@@ -31,6 +31,14 @@ const defaultProps = {
 
 let setSavingTimeout;
 
+const shouldSuppressEditorErrors = () => {
+	if (window && 'URLSearchParams' in window) {
+		const urlParams = new URLSearchParams(window.location.search);
+		return !!urlParams.get('suppressEditorErrors');
+	}
+	return false;
+};
+
 const PubBody = (props) => {
 	const { pubData, collabData, firebaseBranchRef, updateLocalData, historyData } = props;
 	const { communityData } = useContext(PageContext);
@@ -163,7 +171,7 @@ const PubBody = (props) => {
 				highlights={[]}
 				handleSingleClick={props.onSingleClick}
 			/>
-			{!!editorError && (
+			{!!editorError && !shouldSuppressEditorErrors() && (
 				<Alert
 					isOpen={editorError}
 					icon="error"

@@ -45,6 +45,7 @@ export const makeCommunity = async (communityData, communityAdminInfo = {}) => {
 	const community = await Community.create({
 		title: 'Community ' + unique,
 		subdomain: unique,
+		navigation: [],
 		...communityData,
 	});
 	if (communityAdminInfo) {

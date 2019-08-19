@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import app from '../server';
-import { Collection, sequelize } from '../models';
+import { Collection, sequelize, Page } from '../models';
 import { hostIsValid } from '../utils';
 
 app.get('/collection/:slug', (req, res, next) => {
@@ -15,10 +15,15 @@ app.get('/collection/:slug', (req, res, next) => {
 				[Op.iLike]: `${slug}%`,
 			}),
 		],
+		include: [{ model: Page, as: 'page', attributes: ['slug'] }],
 	})
 		.then((collection) => {
 			if (collection) {
-				res.redirect(`/search?q=${collection.title}`);
+				if (collection.page) {
+					res.redirect('/' + collection.page.slug);
+				} else {
+					res.redirect(`/search?q=${collection.title}`);
+				}
 			} else {
 				res.status(404).json('Collection not found');
 			}

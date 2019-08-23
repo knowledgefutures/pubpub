@@ -1,6 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
+import { discussionsData as discussions, discussionLabels as labels } from 'data';
 import PubBottom from 'containers/Pub/PubDocument/PubBottom/PubBottom';
 
 const footnotes = [
@@ -35,10 +36,56 @@ const citations = [
 const pubData = {
 	footnotes: footnotes,
 	citations: citations,
+	discussions: discussions,
+	labels: labels,
+	canManage: false,
+	canDiscussBranch: true,
+	activeBranch: {
+		id: 'ff116d8b-c3e5-4472-ab1a-8041ec1cc842',
+	},
 };
 
-storiesOf('containers/Pub/PubDocument/PubBottom/PubBottom', module).add('default', () => (
-	<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-		<PubBottom pubData={pubData} />
-	</div>
-));
+storiesOf('containers/Pub/PubDocument/PubBottom/PubBottom', module)
+	.add('default', () => (
+		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+			<PubBottom pubData={pubData} collabData={{ editorChangeObject: {} }} />
+		</div>
+	))
+	.add('can-manage', () => (
+		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+			<PubBottom
+				pubData={{ ...pubData, canManage: true }}
+				collabData={{ editorChangeObject: {} }}
+			/>
+		</div>
+	))
+	.add('cannot-discuss', () => (
+		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+			<PubBottom
+				pubData={{ ...pubData, canDiscussBranch: false }}
+				collabData={{ editorChangeObject: {} }}
+			/>
+		</div>
+	))
+	.add('no-pub-bottom-discussions', () => (
+		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+			<PubBottom
+				pubData={{
+					...pubData,
+					discussions: pubData.discussions.filter((ds) => ds.highlights !== null),
+				}}
+				collabData={{ editorChangeObject: {} }}
+			/>
+		</div>
+	))
+	.add('no-discussions', () => (
+		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+			<PubBottom
+				pubData={{
+					...pubData,
+					discussions: [],
+				}}
+				collabData={{ editorChangeObject: {} }}
+			/>
+		</div>
+	));

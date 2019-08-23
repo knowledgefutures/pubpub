@@ -7,11 +7,12 @@ require('./pubBottomSection.scss');
 
 const propTypes = {
 	accentColor: PropTypes.string,
-	centerItems: PropTypes.oneOf([PropTypes.func, PropTypes.node]),
-	children: PropTypes.oneOf([PropTypes.func, PropTypes.node]),
+	centerItems: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+	children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
 	iconItems: PropTypes.node,
 	isSearchable: PropTypes.bool,
 	searchPlaceholder: PropTypes.string,
+	onSearch: PropTypes.func,
 	title: PropTypes.node.isRequired,
 };
 
@@ -21,17 +22,25 @@ const defaultProps = {
 	children: null,
 	iconItems: [],
 	isSearchable: false,
+	onSearch: () => {},
 	searchPlaceholder: 'Enter keywords to search for...',
 };
 
 export const AccentedIconButton = (props) => {
-	const { accentColor, icon, ...buttonProps } = props;
-	return <Button minimal icon={<Icon color={accentColor} icon={icon} />} {...buttonProps} />;
+	const { accentColor, icon, title, ...buttonProps } = props;
+	return (
+		<Button
+			minimal
+			icon={<Icon title={title} color={accentColor} icon={icon} />}
+			{...buttonProps}
+		/>
+	);
 };
 
 AccentedIconButton.propTypes = {
 	accentColor: PropTypes.string.isRequired,
 	icon: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
 };
 
 export const SectionBullets = ({ children }) => {
@@ -50,6 +59,7 @@ const PubBottomSection = (props) => {
 		children,
 		iconItems,
 		isSearchable,
+		onSearch,
 		searchPlaceholder,
 		title,
 	} = props;
@@ -64,7 +74,11 @@ const PubBottomSection = (props) => {
 			<input
 				type="text"
 				className="search-bar"
-				onChange={(evt) => setSearchTerm(evt.target.value.trim())}
+				onChange={(evt) => {
+					const value = evt.target.value.trim();
+					onSearch(value);
+					setSearchTerm(value);
+				}}
 				placeholder={searchPlaceholder}
 			/>
 		);
@@ -89,12 +103,14 @@ const PubBottomSection = (props) => {
 				<AccentedIconButton
 					accentColor="white"
 					icon="cross"
+					title="Search this section"
 					onClick={() => setSearchTerm(null)}
 				/>
 			);
 		}
 		return (
 			<AccentedIconButton
+				title={isExpanded ? 'Collapse this section' : 'Expand this section'}
 				accentColor={accentColor}
 				icon={isExpanded ? 'collapse-all' : 'expand-all'}
 				onClick={() => setIsExpanded(!isExpanded)}
@@ -137,7 +153,7 @@ const PubBottomSection = (props) => {
 			{isExpanded && (
 				<div className="section-content">
 					{typeof children === 'function'
-						? children({ searchTerm: searchTerm })
+						? children({ searchTerm: searchTerm, isSearching: isSearching })
 						: children}
 				</div>
 			)}

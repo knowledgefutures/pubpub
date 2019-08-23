@@ -2,8 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import fuzzysearch from 'fuzzysearch';
 
+import { PubSuspendWhileTyping } from '../../PubSuspendWhileTyping';
+
 import Footnotes, { footnotePropType } from './Footnotes';
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
+import DiscussionsSection from './Discussions/DiscussionsSection';
 
 require('./pubBottom.scss');
 
@@ -12,6 +15,16 @@ const propTypes = {
 		citations: PropTypes.arrayOf(footnotePropType).isRequired,
 		footnotes: PropTypes.arrayOf(footnotePropType).isRequired,
 	}).isRequired,
+	firebaseBranchRef: PropTypes.object,
+	updateLocalData: PropTypes.func.isRequired,
+	sideContentRef: PropTypes.object.isRequired,
+	mainContentRef: PropTypes.object.isRequired,
+	showDiscussions: PropTypes.bool,
+};
+
+const defaultProps = {
+	firebaseBranchRef: undefined,
+	showDiscussions: true,
 };
 
 const SearchableFootnoteSection = (props) => {
@@ -41,17 +54,28 @@ SearchableFootnoteSection.propTypes = {
 
 const PubBottom = (props) => {
 	const {
-		pubData: { citations, footnotes },
+		pubData: { citations = [], footnotes = [] },
+		showDiscussions,
 	} = props;
 	return (
-		<div className="pub-bottom-component">
-			<div className="inner">
-				<SearchableFootnoteSection title="Footnotes" items={footnotes} />
-				<SearchableFootnoteSection title="Citations" items={citations} />
-			</div>
-		</div>
+		<PubSuspendWhileTyping delay={1000}>
+			{() => (
+				<div className="pub-bottom-component">
+					<div className="inner">
+						{footnotes.length > 0 && (
+							<SearchableFootnoteSection title="Footnotes" items={footnotes} />
+						)}
+						{citations.length > 0 && (
+							<SearchableFootnoteSection title="Citations" items={citations} />
+						)}
+						{showDiscussions && <DiscussionsSection {...props} />}
+					</div>
+				</div>
+			)}
+		</PubSuspendWhileTyping>
 	);
 };
 
 PubBottom.propTypes = propTypes;
+PubBottom.defaultProps = defaultProps;
 export default PubBottom;

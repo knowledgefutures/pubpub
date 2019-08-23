@@ -1,5 +1,4 @@
 .label-filter-component {
-	padding: 1em;
 	min-width: 250px;
 	.action-button {
 		float: right;
@@ -10,11 +9,23 @@
 	.bp3-fill {
 		margin-bottom: 10px;
 	}
+	li {
+		list-style-type: none;
+	}
+	.labels {
+		margin-top: 4px;
+		margin-bottom: 10px;
+	}
 	.label {
 		display: flex;
 		align-items: center;
+		padding: 6px;
 		&.edit {
 			margin-bottom: 10px;
+		}
+		&:hover {
+			cursor: pointer;
+			background: #EEE;
 		}
 	}
 	.color {

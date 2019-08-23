@@ -20,6 +20,8 @@ export default {
 	communityId: '7808da6b-94d1-436d-ad79-2e036a8e4428',
 	createdAt: '2019-04-02T18:12:05.538Z',
 	updatedAt: '2019-04-30T15:23:17.211Z',
+	footnotes: [],
+	citations: [],
 	reviews: [
 		{
 			id: '2f2cce19-dde0-4a47-8e49-a5105cb27d83',

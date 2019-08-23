@@ -1,4 +1,6 @@
 /* eslint-disable import/prefer-default-export */
+import { buildSchema, jsonToNode, getNotes } from '@pubpub/editor';
+import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
 import { attributesPublicUser, checkIfSuperAdmin } from '.';
 import { generateCitationHTML } from './citations';
 import { getBranchDoc } from './firebaseAdmin';
@@ -20,6 +22,7 @@ import {
 	ReviewEvent,
 	User,
 } from '../models';
+import { generateCiteHtmls } from '../editor/queries';
 
 export const formatAndAuthenticatePub = (pub, loginData, communityAdminData, req) => {
 	/* Used to format pub JSON and to test */
@@ -359,9 +362,27 @@ export const findPub = (req, initialData, mode) => {
 			]);
 		})
 		.then(([formattedPubData, branchDocData]) => {
+			const { content } = branchDocData;
+			const { footnotes: footnotesRaw, citations: citationsRaw } = content
+				? getNotes(jsonToNode(content, buildSchema({ ...discussionSchema }, {})))
+				: { footnotes: [], citations: [] };
+			/* eslint-disable-next-line no-console */
+			console.time('citationRenderTime');
+			return Promise.all([
+				formattedPubData,
+				branchDocData,
+				generateCiteHtmls(footnotesRaw),
+				generateCiteHtmls(citationsRaw),
+			]);
+		})
+		.then(([formattedPubData, branchDocData, footnotesData, citationsData]) => {
+			/* eslint-disable-next-line no-console */
+			console.timeEnd('citationRenderTime');
 			const { content, historyData, mostRecentRemoteKey } = branchDocData;
 			const outputData = {
 				...formattedPubData,
+				footnotes: footnotesData,
+				citations: citationsData,
 				initialDoc: content,
 				initialDocKey: mostRecentRemoteKey,
 				historyData: historyData,

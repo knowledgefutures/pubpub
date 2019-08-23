@@ -26,6 +26,8 @@ const propTypes = {
 	hideExtraFormatting: PropTypes.bool,
 	isSmall: PropTypes.bool,
 	threads: PropTypes.array,
+	footnotes: PropTypes.array,
+	citations: PropTypes.array,
 };
 
 const defaultProps = {
@@ -34,6 +36,8 @@ const defaultProps = {
 	hideExtraFormatting: false,
 	isSmall: false,
 	threads: [],
+	footnotes: [],
+	citations: [],
 };
 
 class FormattingBar extends Component {
@@ -331,6 +335,8 @@ class FormattingBar extends Component {
 						editorChangeObject={this.props.editorChangeObject}
 						threads={this.props.threads}
 						isSmall={this.props.isSmall}
+						footnotes={this.props.footnotes}
+						citations={this.props.citations}
 					/>
 				)}
 

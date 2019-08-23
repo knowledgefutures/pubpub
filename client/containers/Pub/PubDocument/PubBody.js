@@ -1,11 +1,11 @@
-import React, { useRef, useContext, useState } from 'react';
+import React, { useRef, useContext, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useBeforeUnload } from 'react-use';
 import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 import { Card, Alert } from '@blueprintjs/core';
-import Editor, { getJSON } from '@pubpub/editor';
-import { getResizedUrl } from 'utils';
+import Editor, { getJSON, getNotes } from '@pubpub/editor';
+import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
@@ -45,11 +45,19 @@ const PubBody = (props) => {
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
+
+	const memoizeNoteContent = (items) => {
+		return items.reduce((prev, curr) => {
+			return prev + curr.structuredValue + curr.unstructuredValue;
+		}, '');
+	};
+
+	const lastFootnotesMemo = useRef(memoizeNoteContent(pubData.footnotes));
+	const lastCitationsMemo = useRef(memoizeNoteContent(pubData.citations));
 	const [editorError, setEditorError] = useState(null);
 	const [editorErrorTime, setEditorErrorTime] = useState(null);
 	const [lastSavedTime, setLastSavedTime] = useState(null);
 	prevStatusRef.current = collabData.status;
-
 	useBeforeUnload(
 		(collabData.status === 'saving' || collabData.status === 'disconnected') && !editorError,
 		'Your pub has not finished saving. Are you sure you wish to leave?',
@@ -88,6 +96,48 @@ const PubBody = (props) => {
 			onComplete(nextStatus);
 		}
 	};
+
+	useEffect(() => {
+		const updateFootnotesAndCitations = (doc) => {
+			const { footnotes, citations } = getNotes(doc);
+			const footnotesKey = memoizeNoteContent(footnotes);
+			const citationsKey = memoizeNoteContent(citations);
+
+			if (footnotesKey !== lastFootnotesMemo.current) {
+				/* TODO: We should debounce these calls */
+				lastFootnotesMemo.current = footnotesKey;
+				return apiFetch('/api/editor/citation-format', {
+					method: 'POST',
+					body: JSON.stringify({ data: footnotes }),
+				})
+					.then((result) => {
+						updateLocalData('pub', { footnotes: result });
+					})
+					.catch((err) => {
+						console.error(err);
+						Sentry.captureException(err);
+					});
+			}
+			if (citationsKey !== lastCitationsMemo.current) {
+				lastCitationsMemo.current = citationsKey;
+				return apiFetch('/api/editor/citation-format', {
+					method: 'POST',
+					body: JSON.stringify({ data: citations }),
+				})
+					.then((result) => {
+						updateLocalData('pub', { citations: result });
+					})
+					.catch((err) => {
+						console.error(err);
+						Sentry.captureException(err);
+					});
+			}
+			return null;
+		};
+		if (collabData.editorChangeObject && collabData.editorChangeObject.view) {
+			updateFootnotesAndCitations(collabData.editorChangeObject.view.state.doc);
+		}
+	}, [collabData.editorChangeObject, updateLocalData]);
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;

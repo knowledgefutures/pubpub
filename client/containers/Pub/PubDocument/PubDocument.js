@@ -13,6 +13,7 @@ import PubDetails from './PubDetails';
 import PubHistory from './PubHistory';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubReadNext from './PubReadNext';
+import PubMouseEvents from './PubMouseEvents';
 
 require('./pubDocument.scss');
 
@@ -140,6 +141,13 @@ const PubDocument = (props) => {
 			</div>
 			<PubFooter pubData={pubData} />
 			<PubReadNext pubData={pubData} updateLocalData={updateLocalData} />
+			<PubMouseEvents
+				pubData={pubData}
+				collabData={collabData}
+				locationData={locationData}
+				historyData={historyData}
+				mainContentRef={mainContentRef}
+			/>
 			{areDiscussionsShown && (
 				<PubDiscussions
 					pubData={pubData}

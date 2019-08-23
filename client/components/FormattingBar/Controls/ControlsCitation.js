@@ -1,13 +1,12 @@
-/* eslint-disable react/no-danger */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import SimpleEditor from 'components/SimpleEditor/SimpleEditor';
-import { formatCitationString } from 'utils';
+import { PubNoteContent, SimpleEditor } from 'components';
 
 const propTypes = {
 	attrs: PropTypes.object.isRequired,
 	updateAttrs: PropTypes.func.isRequired,
 	isSmall: PropTypes.bool.isRequired,
+	citations: PropTypes.array.isRequired,
 };
 
 class ControlsCitation extends Component {
@@ -15,25 +14,22 @@ class ControlsCitation extends Component {
 		super(props);
 		this.state = {
 			value: props.attrs.value,
-			html: props.attrs.html,
 		};
 
 		this.handleValueChange = this.handleValueChange.bind(this);
-		this.handleHTMLChange = this.handleHTMLChange.bind(this);
 	}
 
 	handleValueChange(evt) {
-		this.setState({ value: evt.target.value });
-		formatCitationString(evt.target.value, this.handleHTMLChange);
-	}
-
-	handleHTMLChange(html) {
-		const newAttrs = { value: this.state.value, html: html };
+		const newAttrs = { value: evt.target.value };
 		this.props.updateAttrs(newAttrs);
 		this.setState(newAttrs);
 	}
 
 	render() {
+		const hasRenderedContent = this.props.citations.length >= this.props.attrs.count;
+		/* countToIndex: Citation that renders as '1' is stored in 0th index of citations array */
+		const countToIndex = this.props.attrs.count - 1;
+		const renderContent = this.props.citations[countToIndex];
 		return (
 			<div
 				className={`formatting-bar_controls-component ${this.props.isSmall ? 'small' : ''}`}
@@ -51,17 +47,6 @@ class ControlsCitation extends Component {
 					</div>
 				</div>
 
-				{/*  Output */}
-				<div className="block">
-					<div className="label">Structured Data Output</div>
-					<div className="input wide">
-						<div
-							className="rendered-citation"
-							dangerouslySetInnerHTML={{ __html: this.state.html }}
-						/>
-					</div>
-				</div>
-
 				{/*  Content Adjustment */}
 				<div className="block">
 					<div className="label">Text</div>
@@ -74,6 +59,19 @@ class ControlsCitation extends Component {
 								}}
 							/>
 						</div>
+					</div>
+				</div>
+
+				{/*  Output */}
+				<div className="block">
+					<div className="label">Structured Data Output</div>
+					<div className="input wide">
+						{hasRenderedContent && (
+							<PubNoteContent
+								structured={renderContent.html}
+								unstructured={renderContent.unstructuredValue}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

@@ -26,6 +26,7 @@ export { default as PagePreview } from './PagePreview/PagePreview';
 export { default as PageWrapper } from './PageWrapper/PageWrapper';
 export { default as PermissionsDropdown } from './PermissionsDropdown/PermissionsDropdown';
 export { default as PubPreview } from './PubPreview/PubPreview';
+export { default as PubNoteContent } from './PubNoteContent/PubNoteContent';
 export { default as SettingsSection } from './SettingsSection/SettingsSection';
 export { default as SharingCard } from './SharingCard/SharingCard';
 export { default as SimpleEditor } from './SimpleEditor/SimpleEditor';

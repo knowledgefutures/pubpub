@@ -16,6 +16,8 @@ const propTypes = {
 	editorChangeObject: PropTypes.object.isRequired,
 	threads: PropTypes.array.isRequired,
 	isSmall: PropTypes.bool.isRequired,
+	footnotes: PropTypes.array.isRequired,
+	citations: PropTypes.array.isRequired,
 };
 
 const Controls = (props) => {
@@ -36,6 +38,8 @@ const Controls = (props) => {
 		selectedNode: selectedNode,
 		editorChangeObject: props.editorChangeObject,
 		isSmall: props.isSmall,
+		footnotes: props.footnotes,
+		citations: props.citations,
 	};
 
 	if (nodeType === 'image') {

@@ -44,14 +44,18 @@ $breakout-simplify-cutoff: $compact-cutoff-width / (1 - 2 * $pub-margin-fraction
         $comments-full-width
         minmax($pub-margin, auto);
     grid-template-areas: $areas;
-    .breakout {
-        width: 100vw !important;
+    [data-align='breakout'] {
         margin-left: 0;
         position: relative;
-        left: calc(-1 * (50vw - (100% + #{$gutter-full-width} + #{$comments-full-width}) / 2));
+        @for $i from 1 through 100 {
+            &[data-size='#{$i}'] {
+                width: $i * 1vw;
+                left: calc(-1 * ((#{$i} * 0.5vw) - (100% + #{$gutter-full-width} + #{$comments-full-width}) / 2));
+            }
+        }
     }
     @media only screen and (max-width: $breakout-simplify-cutoff) {
-        .breakout {
+        [data-align='breakout'] {
             left: -#{$pub-margin};
         }
     }
@@ -62,8 +66,9 @@ $breakout-simplify-cutoff: $compact-cutoff-width / (1 - 2 * $pub-margin-fraction
             $gutter-compact-width
             $comments-compact-width
             minmax($pub-margin, auto);
-        .breakout {
-            left: calc(-1 * (50vw - (100% + #{$gutter-compact-width} + #{$comments-compact-width}) / 2));
+        [data-align='breakout'] {
+            width: 100vw !important;
+            left: calc(-1 * (50vw - (100% + #{$gutter-compact-width} + #{$comments-compact-width}) / 2)) !important;
         }
 	}
 }

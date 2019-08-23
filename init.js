@@ -17,12 +17,15 @@ throng(
 		lifetime: Infinity,
 	},
 	() => {
-		const { startServer } = require('./server/server.js');
+		const loadServer = () => {
+			return require('./server/server.js').startServer();
+		};
+
 		if (watchables) {
 			const hotReloadServer = require('./hotReloadServer');
-			hotReloadServer(startServer, watchables);
+			hotReloadServer(loadServer, watchables);
 		} else {
-			startServer();
+			loadServer();
 		}
 	},
 );

@@ -1,26 +1,12 @@
 import katex from 'katex';
 import request from 'request-promise';
 import app from '../server';
+import { generateCiteHtmls } from './queries';
 
 app.post('/api/editor/citation-format', (req, res) => {
-	// eslint-disable-next-line global-require
-	const Cite = require('citation-js');
-	Cite.async(req.body.input)
-		.then((data) => {
-			try {
-				const output = data.get({
-					format: 'string',
-					type: 'html',
-					style: 'citation-apa',
-					lang: 'en-US',
-				});
-				if (output === '<div class="csl-bib-body">\n</div>') {
-					return res.status(500).json('Error rendering citation');
-				}
-				return res.status(201).json(output);
-			} catch (err) {
-				return res.status(500).json(err);
-			}
+	generateCiteHtmls(req.body.data)
+		.then((output) => {
+			return res.status(201).json(output);
 		})
 		.catch((err) => {
 			return res.status(500).json(err);

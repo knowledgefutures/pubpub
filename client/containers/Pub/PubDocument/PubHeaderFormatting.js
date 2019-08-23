@@ -37,6 +37,8 @@ const PubHeaderFormatting = (props) => {
 			<FormattingBar
 				editorChangeObject={props.collabData.editorChangeObject || {}}
 				threads={nestDiscussionsToThreads(props.pubData.discussions)}
+				footnotes={pubData.footnotes}
+				citations={pubData.citations}
 			/>
 			<div className="right-content">
 				<PubHeaderCollaborators collabData={props.collabData} />

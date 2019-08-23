@@ -1,13 +1,12 @@
-/* eslint-disable react/no-danger */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import SimpleEditor from 'components/SimpleEditor/SimpleEditor';
-import { formatCitationString } from 'utils';
+import { PubNoteContent, SimpleEditor } from 'components';
 
 const propTypes = {
 	attrs: PropTypes.object.isRequired,
 	updateAttrs: PropTypes.func.isRequired,
 	isSmall: PropTypes.bool.isRequired,
+	footnotes: PropTypes.array.isRequired,
 };
 
 class ControlsFootnote extends Component {
@@ -15,25 +14,14 @@ class ControlsFootnote extends Component {
 		super(props);
 		this.state = {
 			structuredValue: props.attrs.structuredValue,
-			structuredHtml: props.attrs.structuredHtml,
 		};
-
-		this.handleValueChange = this.handleValueChange.bind(this);
-		this.handleHTMLChange = this.handleHTMLChange.bind(this);
-	}
-
-	handleValueChange(evt) {
-		this.setState({ structuredValue: evt.target.value });
-		formatCitationString(evt.target.value, this.handleHTMLChange);
-	}
-
-	handleHTMLChange(html) {
-		const newAttrs = { structuredValue: this.state.structuredValue, structuredHtml: html };
-		this.props.updateAttrs(newAttrs);
-		this.setState(newAttrs);
 	}
 
 	render() {
+		const hasRenderedContent = this.props.footnotes.length >= this.props.attrs.count;
+		/* countToIndex: Footnote that renders as '1' is stored in 0th index of footnotes array */
+		const countToIndex = this.props.attrs.count - 1;
+		const renderContent = this.props.footnotes[countToIndex];
 		return (
 			<div
 				className={`formatting-bar_controls-component ${this.props.isSmall ? 'small' : ''}`}
@@ -61,7 +49,10 @@ class ControlsFootnote extends Component {
 							placeholder="Enter bibtex, DOI, wikidata url, or bibjson..."
 							className="bp3-input bp3-fill"
 							value={this.state.structuredValue}
-							onChange={this.handleValueChange}
+							onChange={(evt) => {
+								this.setState({ structuredValue: evt.target.value });
+								this.props.updateAttrs({ structuredValue: evt.target.value });
+							}}
 						/>
 					</div>
 				</div>
@@ -70,10 +61,12 @@ class ControlsFootnote extends Component {
 				<div className="block">
 					<div className="label">Structured Data Output</div>
 					<div className="input wide">
-						<div
-							className="rendered-citation"
-							dangerouslySetInnerHTML={{ __html: this.state.structuredHtml }}
-						/>
+						{hasRenderedContent && (
+							<PubNoteContent
+								structured={renderContent.html}
+								unstructured={renderContent.unstructuredValue}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

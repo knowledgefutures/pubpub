@@ -141,33 +141,6 @@ export function getDefaultLayout() {
 	];
 }
 
-export function formatCitationString(item, callback) {
-	fetch('/api/editor/citation-format', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			input: item,
-		}),
-		credentials: 'include',
-	})
-		.then((response) => {
-			if (!response.ok) {
-				return response.json().then((err) => {
-					throw err;
-				});
-			}
-			return response.json();
-		})
-		.then((result) => {
-			callback(result);
-		})
-		.catch((error) => {
-			callback(error);
-		});
-}
 export function renderLatexString(value, isBlock, callback) {
 	fetch('/api/editor/latex-render', {
 		method: 'POST',

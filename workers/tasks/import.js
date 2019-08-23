@@ -83,7 +83,7 @@ const processFootnotes = (inputHtml) => {
 	footnoteRefSelectors.forEach((selector) => {
 		htmlContext(selector).each((index, elem) => {
 			htmlContext(elem).replaceWith(
-				`<footnote data-value='${footnoteContents[index]}'></footnote>`,
+				`<span data-node-type='footnote' data-value='${footnoteContents[index]}'></span>`,
 			);
 		});
 	});

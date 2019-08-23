@@ -74,12 +74,7 @@ const PubMouseEvents = (props) => {
 				});
 			});
 		};
-	}, [
-		mouseElemTypes,
-		mouseEventHandlers,
-		collabData.editorChangeObject.isCollabLoaded,
-		historyData.currentKey,
-	]);
+	}, [mouseEventHandlers, collabData.editorChangeObject.isCollabLoaded, historyData.currentKey]);
 	const activeInlineFootnote =
 		hoverElems.note &&
 		hoverElems.note.getAttribute('data-node-type') === 'footnote' &&

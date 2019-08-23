@@ -1,0 +1,22 @@
+ul.footnotes-component {
+    line-height: 1.5em;
+    list-style-type: none;
+    li.footnote {
+        display: flex;
+        padding-top: 18px;
+        padding-bottom: 18px;
+        &:not(:last-child):not(:only-child) {
+            border-bottom: 1px adjust-color(#C7C7C7, $alpha: -0.5) solid;
+        }
+        .number {
+            font-weight: bold;
+        }
+        .inner {
+            display: block;
+            margin-left: 27px;
+        }
+        .jump-back-icon {
+            margin-left: 7px;
+        }
+    }
+}

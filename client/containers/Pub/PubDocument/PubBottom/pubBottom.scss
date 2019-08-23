@@ -1,0 +1,10 @@
+@import '../../pub.scss';
+
+.pub-bottom-component {
+    background: #F6F4F4;
+    flex-grow: 1;
+    @include has-grid('. pub . . .');
+    .inner {
+        grid-area: pub;
+    }
+}

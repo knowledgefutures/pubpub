@@ -37,7 +37,7 @@ const NotePopover = (props) => {
 	}, [elem, mainContentRef, popoverRef]);
 
 	const notePopoverMouseEnter = () => {
-		clearTimeout(timeouts.current.footnote);
+		clearTimeout(timeouts.current.note);
 	};
 
 	useEffect(() => {

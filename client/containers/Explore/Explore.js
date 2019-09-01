@@ -45,6 +45,12 @@ const Explore = (props) => {
 								if (foo.updatedAt > bar.updatedAt) {
 									return -1;
 								}
+								if (foo.title > bar.title) {
+									return 1;
+								}
+								if (foo.title < bar.title) {
+									return -1;
+								}
 								return 0;
 							})
 							.map((item) => {

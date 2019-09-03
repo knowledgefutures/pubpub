@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Button, Icon } from '@blueprintjs/core';
@@ -63,15 +63,23 @@ const PubBottomSection = (props) => {
 		searchPlaceholder,
 		title,
 	} = props;
+	const searchInputRef = useRef();
 	const [isExpanded, setIsExpanded] = useState();
 	const [searchTerm, setSearchTerm] = useState(null);
 	const isSearching = searchTerm !== null;
 
 	const searchingTextStyle = isSearching ? { color: 'white' } : {};
 
+	useEffect(() => {
+		if (isSearching && searchInputRef.current) {
+			searchInputRef.current.focus();
+		}
+	}, [isSearching]);
+
 	const renderSearchBar = () => {
 		return (
 			<input
+				ref={searchInputRef}
 				type="text"
 				className="search-bar"
 				onChange={(evt) => {

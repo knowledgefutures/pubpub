@@ -1,7 +1,10 @@
 .pub-discussions-component {
-	background: #f8f8f8;
+	padding-bottom: 18px;
+	.empty-state {
+		margin-top: 30px;
+		margin-bottom: 30px;
+	}
 	.discussion-list {
-		padding: 2em 0em 1.5em;
 		.discussion-thread-component {
 			padding: 2em 1em;
 			border: 1px solid #ccc;

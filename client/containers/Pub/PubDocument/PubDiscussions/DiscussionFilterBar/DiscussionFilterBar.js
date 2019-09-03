@@ -8,8 +8,8 @@ import {
 	Button,
 } from '@blueprintjs/core';
 import { filterAndSortThreads } from '../discussionUtils';
-import SortList from './SortList';
-import LabelFilter from './LabelFilter';
+import SortList from '../../PubBottom/Discussions/SortList';
+import LabelFilter from '../../PubBottom/Discussions/LabelFilter';
 
 require('./discussionFilterBar.scss');
 

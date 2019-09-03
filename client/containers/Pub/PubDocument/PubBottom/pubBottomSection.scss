@@ -1,0 +1,86 @@
+@import '../../pub.scss';
+
+$section-height: 50px;
+$section-padding: 5px;
+$search-padding: 21px;
+$light-color: #C4C4C4;
+$light-text-color: #707070;
+$center-content-margin: 31px;
+$center-content-margin-compact: 20px;
+
+.pub-bottom-section-component {
+    min-width: 100%;
+    &:not(:first-child) {
+        border-top: 1px solid $light-color;
+    }
+    &.searching {
+        &:not(:first-child) {
+            border-top: 1px solid transparent;
+        }
+        .top-row {
+            flex-shrink: 0;
+            width: calc(100% + 2 * #{$search-padding});
+            padding-left: $search-padding;
+            padding-right: $search-padding;
+            transform: translateX(-$search-padding);
+        }
+    }
+    .top-row {
+        display: flex;
+        align-items: center;
+        min-height: $section-height;
+        padding-top: $section-padding;
+        padding-bottom: $section-padding;
+        user-select: none;
+        .left-title {
+            text-transform: uppercase;
+            width: 120px;
+            flex-shrink: 0;
+            @include pub-compact-view {
+                width: 100px;
+            }
+        }
+        .center-content {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            color: $light-text-color;
+            a {
+                color: $light-text-color;
+                text-decoration: none;
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+            .center-content-item {
+                display: flex;
+                align-items: center;
+                &::before {
+                    content: "•";
+                    margin-right: $center-content-margin;
+                }
+                margin-right: $center-content-margin;
+                @include pub-compact-view {
+                    &::before {
+                        margin-right: $center-content-margin-compact;
+                    }
+                    margin-right: $center-content-margin-compact;
+                }
+            }
+            input {
+                width: 100%;
+                background: none;
+                border: none;
+                color: white;
+                font-style: italic;
+                &::-webkit-input-placeholder{
+                    color:white;
+                    opacity: 0.5;
+                }
+            }
+        }
+        .right-icons {
+            flex-shrink: 0;
+        }
+    }
+}

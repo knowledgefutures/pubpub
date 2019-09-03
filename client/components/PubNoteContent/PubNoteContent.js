@@ -13,15 +13,16 @@ const defaultProps = {
 	unstructured: '',
 };
 
-const PubNoteContent = (props) => {
+const PubNoteContent = React.forwardRef((props, ref) => {
 	const { structured, unstructured } = props;
 	return (
-		<span className="pub-note-content-component">
+		<span ref={ref} className="pub-note-content-component">
 			<span dangerouslySetInnerHTML={{ __html: structured }} />
 			<span dangerouslySetInnerHTML={{ __html: unstructured }} />
 		</span>
 	);
-};
+});
+
 PubNoteContent.propTypes = propTypes;
 PubNoteContent.defaultProps = defaultProps;
 export default PubNoteContent;

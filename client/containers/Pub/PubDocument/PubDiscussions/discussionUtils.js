@@ -133,6 +133,8 @@ export const filterAndSortThreads = (
 	sortMode,
 	filteredLabels,
 	activeBranchId,
+	searchTerm = null,
+	showAnchoredDiscussions = true,
 ) => {
 	return threads
 		.filter((items) => {
@@ -146,6 +148,26 @@ export const filterAndSortThreads = (
 		})
 		.filter((items) => {
 			return items[0].branchId === activeBranchId;
+		})
+		.filter((items) => {
+			if (!searchTerm) {
+				return true;
+			}
+			return items.some((discussion) => {
+				return [discussion.text, discussion.author.fullName]
+					.map((x) => x.toLowerCase())
+					.some((entry) => entry.toLowerCase().includes(searchTerm.toLowerCase()));
+			});
+		})
+		.filter((items) => {
+			if (showAnchoredDiscussions) {
+				return true;
+			}
+			return (
+				items[0] &&
+				(items[0].highlights === null ||
+					(Array.isArray(items[0].highlights) && items[0].highlights.length === 0))
+			);
 		})
 		.filter((items) => {
 			const threadLabels = items.reduce((prev, curr) => {

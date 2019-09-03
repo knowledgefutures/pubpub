@@ -8,6 +8,8 @@ import customIcons from './customIcons';
 require('./icon.scss');
 
 const propTypes = {
+	ariaHidden: PropTypes.bool,
+	ariaLabel: PropTypes.string,
 	className: PropTypes.string,
 	icon: PropTypes.string.isRequired,
 	iconSize: PropTypes.number,
@@ -18,6 +20,8 @@ const propTypes = {
 };
 
 const defaultProps = {
+	ariaHidden: false,
+	ariaLabel: '',
 	className: null,
 	iconSize: 16,
 	useColor: false,
@@ -31,6 +35,8 @@ const Icon = function(props) {
 			<span
 				className={classNames('bp3-icon', props.useColor && 'color', props.className)}
 				data-icon={props.icon.toLowerCase().replace(/_/gi, '-')}
+				aria-label={props.ariaLabel}
+				aria-hidden={props.ariaHidden}
 			>
 				<svg
 					width={`${props.iconSize}px`}
@@ -50,6 +56,7 @@ const Icon = function(props) {
 			color={props.color}
 			iconSize={props.iconSize}
 			className={props.className}
+			title={props.ariaHidden ? null : props.ariaLabel}
 		/>
 	);
 };

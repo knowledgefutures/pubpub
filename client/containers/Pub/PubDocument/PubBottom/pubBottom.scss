@@ -7,4 +7,10 @@
     .inner {
         grid-area: pub;
     }
+    .pub-bottom-license {
+        .section-content {
+            margin-bottom: 18px;
+            text-align: center;
+        }
+    }
 }

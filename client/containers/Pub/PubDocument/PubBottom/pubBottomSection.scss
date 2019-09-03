@@ -1,14 +1,12 @@
 $section-height: 60px;
 $search-padding: 21px;
 $light-color: #C4C4C4;
+$light-text-color: #707070;
 
 .pub-bottom-section-component {
     min-width: 100%;
     &:not(:first-child) {
         border-top: 1px solid $light-color;
-    }
-    &:last-child {
-        border-bottom: 1px solid $light-color;
     }
     &.searching {
         &:not(:first-child) {
@@ -25,15 +23,16 @@ $light-color: #C4C4C4;
         display: flex;
         align-items: center;
         height: $section-height;
+        user-select: none;
         .left-title {
             text-transform: uppercase;
-            width: 125px;
+            width: 120px;
         }
         .center-content {
             display: flex;
             align-items: center;
             flex-grow: 1;
-            color: $light-color;
+            color: $light-text-color;
             .center-content-item {
                 &::before {
                     content: "•";

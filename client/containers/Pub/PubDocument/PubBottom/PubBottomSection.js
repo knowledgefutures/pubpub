@@ -9,6 +9,8 @@ const propTypes = {
 	accentColor: PropTypes.string,
 	centerItems: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
 	children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+	className: PropTypes.string,
+	defaultExpanded: PropTypes.bool,
 	iconItems: PropTypes.func,
 	isSearchable: PropTypes.bool,
 	searchPlaceholder: PropTypes.string,
@@ -20,6 +22,8 @@ const defaultProps = {
 	accentColor: 'black',
 	centerItems: [],
 	children: null,
+	className: '',
+	defaultExpanded: false,
 	iconItems: () => null,
 	isSearchable: false,
 	onSearch: () => {},
@@ -61,13 +65,15 @@ const PubBottomSection = (props) => {
 		accentColor,
 		centerItems,
 		children,
+		className,
+		defaultExpanded,
 		iconItems,
 		isSearchable,
 		onSearch,
 		searchPlaceholder,
 		title,
 	} = props;
-	const [isExpanded, setIsExpanded] = useState();
+	const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 	const [searchTerm, setSearchTerm] = useState(null);
 	const isSearching = searchTerm !== null;
 
@@ -126,14 +132,20 @@ const PubBottomSection = (props) => {
 		<div
 			className={classNames(
 				'pub-bottom-section-component',
+				className,
 				isSearching && 'searching',
 				isExpanded && 'expanded',
 			)}
 		>
+			{/* We already have a fully interactive expand button -- this is a bonus */}
+			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 			<div
+				role={!isExpanded && 'button'}
+				onClick={!isExpanded && (() => setIsExpanded(true))}
 				className="top-row"
 				style={{
 					...(isSearching && { background: accentColor }),
+					...(!isExpanded && { cursor: 'pointer' }),
 				}}
 			>
 				<div className="left-title" style={searchingTextStyle}>

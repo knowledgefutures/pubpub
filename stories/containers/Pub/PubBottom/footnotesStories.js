@@ -10,23 +10,12 @@ storiesOf('containers/Pub/PubDocument/PubBottom/Footnotes', module).add('default
 				accentColor="#a2273e"
 				footnotes={[
 					{
-						content:
-							'This footnote is purely for demonstration purposes. It is neither too long, nor too short, making it the perfect size to illustrate what an informal text block of footnote looks like in real life.',
-						href: '#1',
-						number: 1,
+						structuredValue: 'https://doi.org/10.21428/8f7503e4',
+						unstructuredValue: '<p>Some text for folks.</p>',
+						html:
+							'<div class="csl-bib-body">\n  <div data-csl-entry-id="temp_id_9869594710326501" class="csl-entry">Ito, J. (2017). Resisting Reduction: A Manifesto. <i>Journal of Design and Science</i>. https://doi.org/10.21428/8f7503e4</div>\n</div>',
 					},
-					{
-						content:
-							'This footnote is purely for demonstration purposes. It is neither too... oh it is short.',
-						href: '#2',
-						number: 2,
-					},
-					{
-						content:
-							'And this one is purely for demonstration purposes. It is a long one to make sure that we all know what a super long footnote will look like in rea world situations where authors may tend to be verbose and not really know how to punctuate their sentences like what is happening with this very long sentence right now. When I add more gibberish words to it like this asdfas dh h1o and then bf kh ygaisgd fih then we really have a long footnote which noone is going to read.',
-						href: '#3',
-						number: 3,
-					},
+					{ structuredValue: '', unstructuredValue: '<p>okok</p>', html: '' },
 				]}
 			/>
 		</div>

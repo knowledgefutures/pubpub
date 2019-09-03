@@ -40,7 +40,9 @@ const DiscussionsSection = (props) => {
 	const [sortMode, setSortMode] = useState('newestThread');
 	const [filteredLabels, setFilteredLabels] = useState([]);
 
-	const nonArchivedDiscussions = discussions.filter((ds) => !ds.isArchived);
+	const nonArchivedDiscussions = discussions.filter(
+		(ds) => !ds.isArchived && ds.branchId === pubData.activeBranch.id,
+	);
 
 	const renderCenterItems = () => (
 		<SectionBullets>{nonArchivedDiscussions.length}</SectionBullets>
@@ -126,10 +128,13 @@ const DiscussionsSection = (props) => {
 
 	return (
 		<PubBottomSection
+			accentColor={communityData.accentColorDark}
 			isSearchable={true}
 			title="Comments"
 			centerItems={renderCenterItems}
 			iconItems={renderIconItems}
+			defaultExpanded={true}
+			searchPlaceholder="Search comments..."
 		>
 			{({ searchTerm, isSearching }) => (
 				<PubDiscussions

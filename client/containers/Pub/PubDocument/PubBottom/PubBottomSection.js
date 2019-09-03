@@ -9,7 +9,10 @@ const propTypes = {
 	accentColor: PropTypes.string,
 	centerItems: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
 	children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-	iconItems: PropTypes.node,
+	className: PropTypes.string,
+	defaultExpanded: PropTypes.bool,
+	iconItems: PropTypes.func,
+	isExpandable: PropTypes.bool,
 	isSearchable: PropTypes.bool,
 	searchPlaceholder: PropTypes.string,
 	onSearch: PropTypes.func,
@@ -20,7 +23,10 @@ const defaultProps = {
 	accentColor: 'black',
 	centerItems: [],
 	children: null,
-	iconItems: [],
+	className: '',
+	defaultExpanded: false,
+	iconItems: () => null,
+	isExpandable: true,
 	isSearchable: false,
 	onSearch: () => {},
 	searchPlaceholder: 'Enter keywords to search for...',
@@ -31,7 +37,7 @@ export const AccentedIconButton = (props) => {
 	return (
 		<Button
 			minimal
-			icon={<Icon title={title} color={accentColor} icon={icon} />}
+			icon={<Icon title={title} color={accentColor} icon={icon} iconSize={14} />}
 			{...buttonProps}
 		/>
 	);
@@ -40,7 +46,11 @@ export const AccentedIconButton = (props) => {
 AccentedIconButton.propTypes = {
 	accentColor: PropTypes.string.isRequired,
 	icon: PropTypes.string.isRequired,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.string,
+};
+
+AccentedIconButton.defaultProps = {
+	title: null,
 };
 
 export const SectionBullets = ({ children }) => {
@@ -57,14 +67,17 @@ const PubBottomSection = (props) => {
 		accentColor,
 		centerItems,
 		children,
+		className,
+		defaultExpanded,
 		iconItems,
+		isExpandable,
 		isSearchable,
 		onSearch,
 		searchPlaceholder,
 		title,
 	} = props;
 	const searchInputRef = useRef();
-	const [isExpanded, setIsExpanded] = useState();
+	const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 	const [searchTerm, setSearchTerm] = useState(null);
 	const isSearching = searchTerm !== null;
 
@@ -116,6 +129,9 @@ const PubBottomSection = (props) => {
 				/>
 			);
 		}
+		if (!isExpandable) {
+			return null;
+		}
 		return (
 			<AccentedIconButton
 				title={isExpanded ? 'Collapse this section' : 'Expand this section'}
@@ -126,18 +142,26 @@ const PubBottomSection = (props) => {
 		);
 	};
 
+	const largeExpandClickTarget = isExpandable && !isSearching;
+
 	return (
 		<div
 			className={classNames(
 				'pub-bottom-section-component',
+				className,
 				isSearching && 'searching',
 				isExpanded && 'expanded',
 			)}
 		>
+			{/* We already have a fully interactive expand button -- this is a bonus */}
+			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 			<div
+				role={largeExpandClickTarget ? 'button' : 'none'}
+				onClick={largeExpandClickTarget && (() => setIsExpanded(!isExpanded))}
 				className="top-row"
 				style={{
 					...(isSearching && { background: accentColor }),
+					...(largeExpandClickTarget && { cursor: 'pointer' }),
 				}}
 			>
 				<div className="left-title" style={searchingTextStyle}>
@@ -146,7 +170,14 @@ const PubBottomSection = (props) => {
 				<div className="center-content">
 					{isSearching ? renderSearchBar() : renderCenterItems()}
 				</div>
-				<div className="right-icons" style={searchingTextStyle}>
+				<div
+					className="right-icons"
+					style={searchingTextStyle}
+					// Use this handler to prevent clicking on the icon content from closing
+					// the entire section.
+					onClick={(e) => e.stopPropagation()}
+					role="none"
+				>
 					{isExpanded && isSearchable && !isSearching && (
 						<AccentedIconButton
 							accentColor={accentColor}

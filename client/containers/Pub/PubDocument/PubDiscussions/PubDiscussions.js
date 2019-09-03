@@ -88,9 +88,11 @@ const PubDiscussions = (props) => {
 	const renderBottomDiscussions = () => {
 		const filteredThreads = filterThreads(threads);
 		const emptyMessage =
-			threads.length > 0
+			threads.filter(
+				(th) => th[0] && th[0].branchId === pubData.activeBranch.id && !th[0].isArchived,
+			).length > 0
 				? 'No matching comments (some are hidden by filters)'
-				: 'No comments yet. Why not write one?';
+				: 'No comments yet.' + (pubData.canDiscuss ? ' Why not start the discussion?' : '');
 		return (
 			<React.Fragment>
 				{showBottomInput && (
@@ -104,6 +106,7 @@ const PubDiscussions = (props) => {
 				)}
 				{filteredThreads.length === 0 && (
 					<NonIdealState
+						className="empty-state"
 						icon="comment"
 						title="No comments here"
 						description={emptyMessage}

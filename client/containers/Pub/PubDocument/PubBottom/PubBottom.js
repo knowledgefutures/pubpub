@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import fuzzysearch from 'fuzzysearch';
 
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { PubSuspendWhileTyping } from '../../PubSuspendWhileTyping';
 
 import Footnotes, { footnotePropType } from './Footnotes';
@@ -15,6 +15,7 @@ const propTypes = {
 		citations: PropTypes.arrayOf(footnotePropType).isRequired,
 		footnotes: PropTypes.arrayOf(footnotePropType).isRequired,
 	}).isRequired,
+	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
@@ -27,20 +28,57 @@ const defaultProps = {
 	showDiscussions: true,
 };
 
-const SearchableFootnoteSection = (props) => {
-	const { items, ...restProps } = props;
+const LicenseSection = () => {
+	const { communityData } = useContext(PageContext);
+
 	return (
 		<PubBottomSection
+			accentColor={communityData.accentColorDark}
+			isExpandable={false}
+			className="pub-bottom-license"
+			title="License"
+			centerItems={
+				<SectionBullets>
+					<a
+						target="_blank"
+						rel="license noopener noreferrer"
+						href="https://creativecommons.org/licenses/by/4.0/"
+					>
+						Creative Commons Attribution 4.0 International (CC-BY 4.0)
+					</a>
+				</SectionBullets>
+			}
+		/>
+	);
+};
+
+const SearchableFootnoteSection = (props) => {
+	const { items, nodeType, viewNode, ...restProps } = props;
+	const numberedItems = items.map((item, index) => ({ ...item, number: index + 1 }));
+	const { communityData } = useContext(PageContext);
+
+	const targetFootnoteElement = (fn) =>
+		viewNode &&
+		viewNode.querySelector(`*[data-node-type="${nodeType}"][data-count="${fn.number}"]`);
+
+	return (
+		<PubBottomSection
+			accentColor={communityData.accentColorDark}
 			isSearchable={true}
 			centerItems={<SectionBullets>{items.length}</SectionBullets>}
 			{...restProps}
 		>
 			{({ searchTerm }) => (
 				<Footnotes
-					footnotes={items.filter(
+					accentColor={communityData.accentColorDark}
+					targetFootnoteElement={targetFootnoteElement}
+					footnotes={numberedItems.filter(
 						(fn) =>
 							!searchTerm ||
-							fuzzysearch(searchTerm.toLowerCase(), fn.content.toLowerCase()),
+							[fn.html, fn.unstructuredValue]
+								.filter((x) => x)
+								.map((source) => source.toLowerCase())
+								.some((source) => source.includes(searchTerm.toLowerCase())),
 					)}
 				/>
 			)}
@@ -50,24 +88,54 @@ const SearchableFootnoteSection = (props) => {
 
 SearchableFootnoteSection.propTypes = {
 	items: PropTypes.arrayOf(footnotePropType).isRequired,
+	nodeType: PropTypes.string.isRequired,
+	viewNode: PropTypes.object,
+};
+
+SearchableFootnoteSection.defaultProps = {
+	viewNode: null,
 };
 
 const PubBottom = (props) => {
 	const {
+		collabData: { editorChangeObject },
 		pubData: { citations = [], footnotes = [] },
 		showDiscussions,
 	} = props;
+
 	return (
 		<PubSuspendWhileTyping delay={1000}>
 			{() => (
 				<div className="pub-bottom-component">
 					<div className="inner">
+						<LicenseSection />
 						{footnotes.length > 0 && (
-							<SearchableFootnoteSection title="Footnotes" items={footnotes} />
+							<SearchableFootnoteSection
+								title="Footnotes"
+								items={footnotes}
+								nodeType="footnote"
+								searchPlaceholder="Search footnotes..."
+								viewNode={
+									editorChangeObject &&
+									editorChangeObject.view &&
+									editorChangeObject.view.dom
+								}
+							/>
 						)}
 						{citations.length > 0 && (
-							<SearchableFootnoteSection title="Citations" items={citations} />
+							<SearchableFootnoteSection
+								title="Citations"
+								items={citations}
+								nodeType="citation"
+								searchPlaceholder="Search citations..."
+								viewNode={
+									editorChangeObject &&
+									editorChangeObject.view &&
+									editorChangeObject.view.dom
+								}
+							/>
 						)}
+						<LicenseSection />
 						{showDiscussions && <DiscussionsSection {...props} />}
 					</div>
 				</div>

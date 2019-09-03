@@ -4,34 +4,41 @@ import { storiesOf } from '@storybook/react';
 import { discussionsData as discussions, discussionLabels as labels } from 'data';
 import PubBottom from 'containers/Pub/PubDocument/PubBottom/PubBottom';
 
-const footnotes = [
-	'This footnote is purely for demonstration purposes. It is neither too long, nor too short, making it the perfect size to illustrate what an informal text block of footnote looks like in real life.',
-	'This footnote is purely for demonstration purposes. It is neither too... oh it is short.',
-	'And this one is purely for demonstration purposes. It is a long one to make sure that we all know what a super long footnote will look like in rea world situations where authors may tend to be verbose and not really know how to punctuate their sentences like what is happening with this very long sentence right now. When I add more gibberish words to it like this asdfas dh h1o and then bf kh ygaisgd fih then we really have a long footnote which noone is going to read.',
-].map((str, index) => ({
-	content: str,
-	href: '#' + index.toString(),
-	number: index + 1,
-}));
-
 const citations = [
-	'Huntford, R., “The Last Place on Earth – Scott and Amundsen’s Race to the South Pole”, The Modern Library, New York, 1999',
-	'Discussion with Paul Sheppard, Chief Program Officer, Antarctic Infrastructure and Logistics Section, Office of Polar Programs, National Science Foundation',
-	'Lunney, G.S., “Discussion of Several Problem Areas During the Apollo 13 Operation”, AIAA 70-1260, AIAA 7th Annual Meeting and Technical Display, October 19-22, 1970, Houston TX',
-	'Portree, D.S.F., “Mir Hardware Heritage”, NASA Reference Publication 1357, NASA Lyndon B. Johnson Space Center, Houston, TX, March 1995',
-	'Harland, D.M., “The Story of Space Station Mir”, Praxis Publishing, Chichester, UK, 2005',
-	'Space Station Program Office, “International Space Station Logistics and Maintenance Lessons Learned for Future Programs”, briefing by W. W. Robbins, Chief, Logistics and Maintenance Office, Johnson Space Center, 30 June 2005.',
-	'National Aeronautics and Space Administration, “Mars Human Landing Sites Study (HLS2) Overview,” https://www.nasa.gov/sites/default/files/atoms/files/hls2-overview-v3tagged.pdf',
-	'National Aeronautics and Space Administration, “Lunar L1 Gateway Conceptual Design Report, V.1.0,” EX15-01-001, NASA/JSC, October 2001.',
-	'Troutman, P., Mazanek, D., et al., “Orbital Aggregation and Space Infrastructure Systems (OASIS),” IAC-02-IAA.13.2.06, 53rd International Astronautical Congress, Houston, TX, 10-19 October 2002.',
-	'Space Studies Program Team, Operations and Service Infrastructure for Space (OASIS) Final Report, International Space University, 2012.',
-	'Whitley, R., Martinez, R., “Options for Staging Orbits in Cislunar Space,” 2016 IEEE Aerospace Conference, 5-12 March 2016.',
-	'Woolley, R., Landau, D., et al., “Human Cargo Resupply Logistics at Mars Using 150kW SEP Tug Cyclers,” IEEE Aerospace Conference, Big Sky, MT, 2017.',
-].map((str, index) => ({
-	content: str,
-	href: '#' + index.toString(),
-	number: index + 1,
-}));
+	{
+		structuredValue: 'https://doi.org/10.21428/8f7503e4',
+		unstructuredValue: '<p>Some text for folks.</p>',
+		html:
+			'<div class="csl-bib-body">\n  <div data-csl-entry-id="temp_id_9869594710326501" class="csl-entry">Ito, J. (2017). Resisting Reduction: A Manifesto. <i>Journal of Design and Science</i>. https://doi.org/10.21428/8f7503e4</div>\n</div>',
+	},
+	{ structuredValue: '', unstructuredValue: '<p>okok</p>', html: '' },
+];
+
+const footnotes = [
+	{
+		structuredValue:
+			'@article{spier2002history,\n  title={The history of the peer-review pzro212121asasa2cess},\n  author={Spier, Ray},\n  journal={TReeeeeeENDS in Biotechnology},\n  volume={20},\n  number={8},\n  pages={357--358},\n  year={2002},\n  publisher={Elsevier}\n}',
+		unstructuredValue: '<p>Tigers are stri1234567ped.</p>',
+		html:
+			'<div class="csl-bib-body">\n  <div data-csl-entry-id="spier2002history" class="csl-entry">Spier, R. (2002). The history of the peer-review pzro212121asasa2cess. <i>TReeeeeeENDS in Biotechnology</i>, <i>20</i>(8), 357–358.</div>\n</div>',
+	},
+	{
+		structuredValue:
+			'@article{spier2002history,\n  title={The history of the peer-review process},\n  author={Spier, Ray},\n  journal={TeNDS in Biotechnology},\n  volume={20},\n  number={8},\n  pages={357--358},\n  year={2002},\n  publisher={Elsevier}\n}',
+		unstructuredValue: '<p>Tigers are 123.!</p>',
+		html:
+			'<div class="csl-bib-body">\n  <div data-csl-entry-id="spier2002history" class="csl-entry">Spier, R. (2002). The history of the peer-review process. <i>TeNDS in Biotechnology</i>, <i>20</i>(8), 357–358.</div>\n</div>',
+	},
+	{ structuredValue: '', unstructuredValue: '<p>Tigers are striped.njn</p>', html: '' },
+	{ structuredValue: '', unstructuredValue: '<p>Tigers are striped.</p>', html: '' },
+	{
+		structuredValue: 'https://doi.org/10.21428/8f7503e4',
+		unstructuredValue: '<p>Tigers are striped.</p>',
+		html:
+			'<div class="csl-bib-body">\n  <div data-csl-entry-id="temp_id_7637804677847417" class="csl-entry">Ito, J. (2017). Resisting Reduction: A Manifesto. <i>Journal of Design and Science</i>. https://doi.org/10.21428/8f7503e4</div>\n</div>',
+	},
+	{ structuredValue: '', unstructuredValue: '<p>Tigers are striped!</p>', html: '' },
+];
 
 const pubData = {
 	footnotes: footnotes,

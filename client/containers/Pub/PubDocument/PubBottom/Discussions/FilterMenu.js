@@ -9,8 +9,8 @@ const propTypes = {
 	...labelFilterPropTypes,
 	isBrowsingArchive: PropTypes.bool.isRequired,
 	isShowingAnchoredComments: PropTypes.bool.isRequired,
-	onBrowseArchive: PropTypes.bool.isRequired,
-	onShowAnchoredComments: PropTypes.bool.isRequired,
+	onBrowseArchive: PropTypes.func.isRequired,
+	onShowAnchoredComments: PropTypes.func.isRequired,
 };
 
 const FilterMenu = (props) => {

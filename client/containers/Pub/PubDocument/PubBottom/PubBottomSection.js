@@ -12,6 +12,7 @@ const propTypes = {
 	className: PropTypes.string,
 	defaultExpanded: PropTypes.bool,
 	iconItems: PropTypes.func,
+	isExpandable: PropTypes.bool,
 	isSearchable: PropTypes.bool,
 	searchPlaceholder: PropTypes.string,
 	onSearch: PropTypes.func,
@@ -25,6 +26,7 @@ const defaultProps = {
 	className: '',
 	defaultExpanded: false,
 	iconItems: () => null,
+	isExpandable: true,
 	isSearchable: false,
 	onSearch: () => {},
 	searchPlaceholder: 'Enter keywords to search for...',
@@ -35,7 +37,7 @@ export const AccentedIconButton = (props) => {
 	return (
 		<Button
 			minimal
-			icon={<Icon title={title} color={accentColor} icon={icon} />}
+			icon={<Icon title={title} color={accentColor} icon={icon} iconSize={14} />}
 			{...buttonProps}
 		/>
 	);
@@ -68,6 +70,7 @@ const PubBottomSection = (props) => {
 		className,
 		defaultExpanded,
 		iconItems,
+		isExpandable,
 		isSearchable,
 		onSearch,
 		searchPlaceholder,
@@ -118,6 +121,9 @@ const PubBottomSection = (props) => {
 				/>
 			);
 		}
+		if (!isExpandable) {
+			return null;
+		}
 		return (
 			<AccentedIconButton
 				title={isExpanded ? 'Collapse this section' : 'Expand this section'}
@@ -127,6 +133,8 @@ const PubBottomSection = (props) => {
 			/>
 		);
 	};
+
+	const largeExpandClickTarget = isExpandable && !isSearching;
 
 	return (
 		<div
@@ -140,12 +148,12 @@ const PubBottomSection = (props) => {
 			{/* We already have a fully interactive expand button -- this is a bonus */}
 			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 			<div
-				role={!isExpanded && 'button'}
-				onClick={!isExpanded && (() => setIsExpanded(true))}
+				role={largeExpandClickTarget ? 'button' : 'none'}
+				onClick={largeExpandClickTarget && (() => setIsExpanded(!isExpanded))}
 				className="top-row"
 				style={{
 					...(isSearching && { background: accentColor }),
-					...(!isExpanded && { cursor: 'pointer' }),
+					...(largeExpandClickTarget && { cursor: 'pointer' }),
 				}}
 			>
 				<div className="left-title" style={searchingTextStyle}>
@@ -154,7 +162,14 @@ const PubBottomSection = (props) => {
 				<div className="center-content">
 					{isSearching ? renderSearchBar() : renderCenterItems()}
 				</div>
-				<div className="right-icons" style={searchingTextStyle}>
+				<div
+					className="right-icons"
+					style={searchingTextStyle}
+					// Use this handler to prevent clicking on the icon content from closing
+					// the entire section.
+					onClick={(e) => e.stopPropagation()}
+					role="none"
+				>
 					{isExpanded && isSearchable && !isSearching && (
 						<AccentedIconButton
 							accentColor={accentColor}

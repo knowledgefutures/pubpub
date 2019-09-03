@@ -3,9 +3,16 @@
 .pub-bottom-component {
     background: #F6F4F4;
     flex-grow: 1;
+    overflow: hidden;
     @include has-grid('. pub . . .');
     .inner {
         grid-area: pub;
+        @include pub-compact-view {
+            grid-area: unset;
+            width: 100vw;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
     }
     .pub-bottom-license {
         .section-content {

@@ -43,6 +43,10 @@
 				border-radius: 2px;
 				padding: 0.5em;
 				margin-bottom: 0.5em;
+				.prosemirror-placeholder {
+					white-space: unset;
+					width: unset;
+				}
 			}
 		}
 	}

@@ -106,6 +106,7 @@ const PubDiscussions = (props) => {
 				)}
 				{filteredThreads.length === 0 && (
 					<NonIdealState
+						className="empty-state"
 						icon="comment"
 						title="No comments here"
 						description={emptyMessage}

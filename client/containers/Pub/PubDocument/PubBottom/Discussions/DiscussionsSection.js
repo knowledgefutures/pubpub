@@ -134,6 +134,7 @@ const DiscussionsSection = (props) => {
 			centerItems={renderCenterItems}
 			iconItems={renderIconItems}
 			defaultExpanded={true}
+			searchPlaceholder="Search comments..."
 		>
 			{({ searchTerm, isSearching }) => (
 				<PubDiscussions

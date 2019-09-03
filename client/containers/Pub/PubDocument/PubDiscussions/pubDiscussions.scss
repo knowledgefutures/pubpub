@@ -1,5 +1,9 @@
 .pub-discussions-component {
 	padding-bottom: 18px;
+	.empty-state {
+		margin-top: 30px;
+		margin-bottom: 30px;
+	}
 	.discussion-list {
 		.discussion-thread-component {
 			padding: 2em 1em;

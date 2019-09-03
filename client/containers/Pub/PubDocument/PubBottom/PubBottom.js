@@ -34,26 +34,21 @@ const LicenseSection = () => {
 	return (
 		<PubBottomSection
 			accentColor={communityData.accentColorDark}
+			isExpandable={false}
 			className="pub-bottom-license"
 			title="License"
 			centerItems={
-				<SectionBullets>Creative Commons Attribution 4.0 International</SectionBullets>
+				<SectionBullets>
+					<a
+						target="_blank"
+						rel="license noopener noreferrer"
+						href="https://creativecommons.org/licenses/by/4.0/"
+					>
+						Creative Commons Attribution 4.0 International (CC-BY 4.0)
+					</a>
+				</SectionBullets>
 			}
-		>
-			<a rel="license" href="https://creativecommons.org/licenses/by/4.0/">
-				<img
-					alt="Creative Commons License"
-					src="https://licensebuttons.net/l/by/4.0/88x31.png"
-				/>
-			</a>
-			<div className="license-text">
-				This work is licensed under a{' '}
-				<a rel="license" href="https://creativecommons.org/licenses/by/4.0/">
-					Creative Commons Attribution 4.0 International License
-				</a>
-				.
-			</div>
-		</PubBottomSection>
+		/>
 	);
 };
 
@@ -119,6 +114,7 @@ const PubBottom = (props) => {
 								title="Footnotes"
 								items={footnotes}
 								nodeType="footnote"
+								searchPlaceholder="Search footnotes..."
 								viewNode={
 									editorChangeObject &&
 									editorChangeObject.view &&
@@ -131,6 +127,7 @@ const PubBottom = (props) => {
 								title="Citations"
 								items={citations}
 								nodeType="citation"
+								searchPlaceholder="Search citations..."
 								viewNode={
 									editorChangeObject &&
 									editorChangeObject.view &&
@@ -138,6 +135,7 @@ const PubBottom = (props) => {
 								}
 							/>
 						)}
+						<LicenseSection />
 						{showDiscussions && <DiscussionsSection {...props} />}
 					</div>
 				</div>

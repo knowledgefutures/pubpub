@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import React from 'react';
 import { User as UserContainer } from 'containers';
 import { isPubPublic } from 'shared/pub/permissions';
-import { formatAndAuthenticatePub } from '../utils/pubQueries';
+import { formatAndAuthenticatePub } from '../utils/formatPub';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -103,12 +103,14 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 					}
 					const formattedPub = formatAndAuthenticatePub(
 						{
-							...attribution.pub,
-							attributions: [{ ...attribution, user: userDataJson }],
+							pub: {
+								...attribution.pub,
+								attributions: [{ ...attribution, user: userDataJson }],
+							},
+							loginData: initialData.loginData,
+							communityAdminData: communityAdminData,
+							req: { query: {}, params: {} },
 						},
-						initialData.loginData,
-						communityAdminData,
-						{ query: {}, params: {} },
 						false,
 					);
 					return formattedPub && isPubPublic(formattedPub);

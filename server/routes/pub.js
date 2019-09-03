@@ -13,10 +13,7 @@ import {
 } from '../utils';
 import { getFirebaseToken } from '../utils/firebaseAdmin';
 import { findPub, lookupPubVersion } from '../utils/pubQueries';
-
-// TODO(ian): Move this somewhere else, or actually parse the document with a Prosemirror schema
-// and use the corresponding utility from @pubpub/editor
-const isEmptyPubDoc = (docJson) => docJson.content.length === 1 && !docJson.content[0].content;
+import { PubBranchNotVisibleError } from '../utils/formatPub';
 
 const getMode = (path, params) => {
 	const { slug, reviewShortId } = params;
@@ -77,14 +74,25 @@ app.get(
 
 			const mode = getMode(req.path, req.params);
 			const initialData = await getInitialData(req);
-			const pubData = await findPub(req, initialData, mode);
+			let pubData;
+
+			try {
+				pubData = await findPub(req, initialData, mode);
+			} catch (e) {
+				if (e instanceof PubBranchNotVisibleError) {
+					const redirectBranch =
+						req.params.branchShortId === undefined && e.availableBranches[0];
+					if (redirectBranch) {
+						const { shortId } = redirectBranch;
+						return res.redirect(`/pub/${req.params.slug}/branch/${shortId}/`);
+					}
+					throw new Error('Pub Not Found');
+				}
+				throw e;
+			}
 
 			if (mode === 'draft-redirect') {
 				return res.redirect(`/pub/${req.params.slug}`);
-			}
-
-			if (!pubData.canEditBranch && isEmptyPubDoc(pubData.initialDoc)) {
-				throw new Error('Pub Not Found');
 			}
 
 			const firebaseToken = await getFirebaseToken(initialData.loginData.id || 'anon', {

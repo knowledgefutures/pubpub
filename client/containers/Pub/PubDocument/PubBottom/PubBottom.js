@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import fuzzysearch from 'fuzzysearch';
 
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { PubSuspendWhileTyping } from '../../PubSuspendWhileTyping';
 
 import Footnotes, { footnotePropType } from './Footnotes';
@@ -15,6 +15,7 @@ const propTypes = {
 		citations: PropTypes.arrayOf(footnotePropType).isRequired,
 		footnotes: PropTypes.arrayOf(footnotePropType).isRequired,
 	}).isRequired,
+	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
@@ -28,7 +29,14 @@ const defaultProps = {
 };
 
 const SearchableFootnoteSection = (props) => {
-	const { items, ...restProps } = props;
+	const { items, nodeType, viewNode, ...restProps } = props;
+	const numberedItems = items.map((item, index) => ({ ...item, number: index + 1 }));
+	const { communityData } = useContext(PageContext);
+
+	const targetFootnoteElement = (fn) =>
+		viewNode &&
+		viewNode.querySelector(`*[data-node-type="${nodeType}"][data-count="${fn.number}"]`);
+
 	return (
 		<PubBottomSection
 			isSearchable={true}
@@ -37,10 +45,15 @@ const SearchableFootnoteSection = (props) => {
 		>
 			{({ searchTerm }) => (
 				<Footnotes
-					footnotes={items.filter(
+					accentColor={communityData.accentColorDark}
+					targetFootnoteElement={targetFootnoteElement}
+					footnotes={numberedItems.filter(
 						(fn) =>
 							!searchTerm ||
-							fuzzysearch(searchTerm.toLowerCase(), fn.content.toLowerCase()),
+							[fn.html, fn.unstructuredValue]
+								.filter((x) => x)
+								.map((source) => source.toLowerCase())
+								.some((source) => source.includes(searchTerm.toLowerCase())),
 					)}
 				/>
 			)}
@@ -50,23 +63,49 @@ const SearchableFootnoteSection = (props) => {
 
 SearchableFootnoteSection.propTypes = {
 	items: PropTypes.arrayOf(footnotePropType).isRequired,
+	nodeType: PropTypes.string.isRequired,
+	viewNode: PropTypes.object,
+};
+
+SearchableFootnoteSection.defaultProps = {
+	viewNode: null,
 };
 
 const PubBottom = (props) => {
 	const {
+		collabData: { editorChangeObject },
 		pubData: { citations = [], footnotes = [] },
 		showDiscussions,
 	} = props;
+
 	return (
 		<PubSuspendWhileTyping delay={1000}>
 			{() => (
 				<div className="pub-bottom-component">
 					<div className="inner">
 						{footnotes.length > 0 && (
-							<SearchableFootnoteSection title="Footnotes" items={footnotes} />
+							<SearchableFootnoteSection
+								title="Footnotes"
+								items={footnotes}
+								nodeType="footnote"
+								viewNode={
+									editorChangeObject &&
+									editorChangeObject.view &&
+									editorChangeObject.view.dom
+								}
+							/>
 						)}
 						{citations.length > 0 && (
-							<SearchableFootnoteSection title="Citations" items={citations} />
+							<SearchableFootnoteSection
+								title="Citations"
+								items={citations}
+								nodeType="citation"
+								viewNode={
+									editorChangeObject &&
+									editorChangeObject.view &&
+									editorChangeObject.view.dom
+								}
+							/>
 						)}
 						{showDiscussions && <DiscussionsSection {...props} />}
 					</div>

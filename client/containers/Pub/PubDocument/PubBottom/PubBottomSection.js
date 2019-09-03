@@ -9,7 +9,7 @@ const propTypes = {
 	accentColor: PropTypes.string,
 	centerItems: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
 	children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-	iconItems: PropTypes.node,
+	iconItems: PropTypes.func,
 	isSearchable: PropTypes.bool,
 	searchPlaceholder: PropTypes.string,
 	onSearch: PropTypes.func,
@@ -20,7 +20,7 @@ const defaultProps = {
 	accentColor: 'black',
 	centerItems: [],
 	children: null,
-	iconItems: [],
+	iconItems: () => null,
 	isSearchable: false,
 	onSearch: () => {},
 	searchPlaceholder: 'Enter keywords to search for...',
@@ -40,7 +40,11 @@ export const AccentedIconButton = (props) => {
 AccentedIconButton.propTypes = {
 	accentColor: PropTypes.string.isRequired,
 	icon: PropTypes.string.isRequired,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.string,
+};
+
+AccentedIconButton.defaultProps = {
+	title: null,
 };
 
 export const SectionBullets = ({ children }) => {

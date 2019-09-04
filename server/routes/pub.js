@@ -2,6 +2,7 @@ import React from 'react';
 import uuidValidate from 'uuid-validate';
 import { Pub } from 'containers';
 
+import { getPubPageContextTitle } from 'shared/utils/pubPageTitle';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -112,13 +113,6 @@ app.get(
 					mode: mode,
 				},
 			};
-			const primaryCollection = pubData.collectionPubs.reduce((prev, curr) => {
-				if (curr.isPrimary && curr.collection.kind !== 'issue') {
-					return curr;
-				}
-				return prev;
-			}, {});
-			const contextTitle = primaryCollection.title || initialData.communityData.title;
 			/* We calculate titleWithContext in generateMetaComponents. Since we will use */
 			/* titleWithContext in other locations (e.g. search), we should eventually */
 			/* write a helper function that generates these parameters. */
@@ -130,7 +124,7 @@ app.get(
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
 						title: pubData.title,
-						contextTitle: contextTitle,
+						contextTitle: getPubPageContextTitle(pubData, initialData.communityData),
 						description: pubData.description,
 						image: pubData.avatar,
 						attributions: pubData.attributions,

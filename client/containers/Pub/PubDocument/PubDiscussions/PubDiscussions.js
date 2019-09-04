@@ -92,7 +92,9 @@ const PubDiscussions = (props) => {
 				(th) => th[0] && th[0].branchId === pubData.activeBranch.id && !th[0].isArchived,
 			).length > 0
 				? 'No matching comments (some are hidden by filters)'
-				: 'No comments yet.' + (pubData.canDiscuss ? ' Why not start the discussion?' : '');
+				: pubData.canDiscuss
+				? ' Why not start the discussion?'
+				: '';
 		return (
 			<React.Fragment>
 				{showBottomInput && (

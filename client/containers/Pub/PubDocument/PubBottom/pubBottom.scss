@@ -21,3 +21,13 @@
         }
     }
 }
+
+/* This selector is a IE 10+ kludge */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .pub-bottom-component {
+        .inner {
+            max-width: $pub-max-width;
+            margin: 0 auto;
+        }
+    }
+}

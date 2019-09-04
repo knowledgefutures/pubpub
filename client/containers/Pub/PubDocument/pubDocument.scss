@@ -8,6 +8,21 @@
 	}
 }
 
+/* This selector is a IE 10+ kludge */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .pub-grid {
+        width: 100%;
+        .main-content {
+            max-width: $pub-max-width;
+            margin: 0 auto;
+        }
+        .side-content {
+            max-width: $pub-max-width;
+            margin: 0 auto;
+        }
+	}
+}
+
 @supports (display: grid) {
     .pub-grid {
         @include has-grid('. pub . comments .');

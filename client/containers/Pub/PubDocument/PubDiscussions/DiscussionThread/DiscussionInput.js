@@ -82,8 +82,10 @@ const DiscussionInput = (props) => {
 				updateLocalData('pub', {
 					discussions: [...pubData.discussions, discussionData],
 				});
-				setIsLoading(false);
-				setEditorKey(Date.now());
+				if (isPubBottomInput) {
+					setIsLoading(false);
+					setEditorKey(Date.now());
+				}
 			});
 	};
 

@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
-import { InputField, ImageUpload, SettingsSection, FileUploadButton } from 'components';
+import {
+	InputField,
+	ImageUpload,
+	SettingsSection,
+	FileUploadButton,
+	LicenseSelect,
+} from 'components';
 import { apiFetch, slugifyString } from 'utils';
 import { getFormattedDownload } from 'containers/Pub/PubHeader/headerUtils';
 
@@ -25,6 +31,7 @@ class Details extends Component {
 			slug: props.pubData.slug,
 			description: props.pubData.description || '',
 			avatar: props.pubData.avatar || '',
+			licenseSlug: props.pubData.licenseSlug,
 			// useHeaderImage: props.pubData.useHeaderImage || false,
 
 			headerStyle: props.pubData.headerStyle,
@@ -41,6 +48,7 @@ class Details extends Component {
 		this.updateHeaderStyle = this.updateHeaderStyle.bind(this);
 		// this.updateHeaderBackgroundType = this.updateHeaderBackgroundType.bind(this);
 		this.updateHeaderBackgroundImage = this.updateHeaderBackgroundImage.bind(this);
+		this.updateLicense = this.updateLicense.bind(this);
 
 		this.handleSave = this.handleSave.bind(this);
 		this.showSaveSuccess = this.showSaveSuccess.bind(this);
@@ -84,6 +92,13 @@ class Details extends Component {
 		this.setState({
 			hasUpdated: true,
 			headerStyle: val,
+		});
+	}
+
+	updateLicense(val) {
+		this.setState({
+			hasUpdated: true,
+			licenseSlug: val.slug,
 		});
 	}
 
@@ -146,6 +161,7 @@ class Details extends Component {
 			slug: this.state.slug,
 			description: this.state.description,
 			avatar: this.state.avatar,
+			licenseSlug: this.state.licenseSlug,
 			// useHeaderImage: this.state.useHeaderImage,
 			headerStyle: this.state.headerStyle,
 			headerBackgroundType: this.state.headerBackgroundType,
@@ -245,6 +261,17 @@ class Details extends Component {
 						width={150}
 						helperText="Suggested minimum dimensions: 1200px x 800px."
 					/>
+					<InputField label="License">
+						<LicenseSelect
+							persistSelections={false}
+							pubData={{ ...this.props.pubData, licenseSlug: this.state.licenseSlug }}
+							onSelect={this.updateLicense}
+						>
+							{({ title, icon }) => (
+								<Button icon={icon} text={title} rightIcon="caret-down" />
+							)}
+						</LicenseSelect>
+					</InputField>
 				</SettingsSection>
 				<SettingsSection title="Header">
 					<InputField label="Style">

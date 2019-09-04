@@ -238,9 +238,10 @@ export const findPub = (req, initialData, mode) => {
 				branchDocData,
 				generateCiteHtmls(footnotesRaw),
 				generateCiteHtmls(citationsRaw),
+				generateCitationHTML(formattedPubData, initialData.communityData),
 			]);
 		})
-		.then(([formattedPubData, branchDocData, footnotesData, citationsData]) => {
+		.then(([formattedPubData, branchDocData, footnotesData, citationsData, citationHtml]) => {
 			/* eslint-disable-next-line no-console */
 			console.timeEnd('citationRenderTime');
 			const { content, historyData, mostRecentRemoteKey } = branchDocData;
@@ -251,7 +252,7 @@ export const findPub = (req, initialData, mode) => {
 				initialDoc: content,
 				initialDocKey: mostRecentRemoteKey,
 				historyData: historyData,
-				citationData: generateCitationHTML(formattedPubData, initialData.communityData),
+				citationData: citationHtml,
 			};
 
 			/* When getFirebaseDoc stores a checkpoint update, it also returns */

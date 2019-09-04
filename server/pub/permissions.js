@@ -60,6 +60,7 @@ export const getPermissions = ({ userId, communityId, pubId }) => {
 				'draftPermissions',
 				'labels',
 				'downloads',
+				'licenseSlug',
 			];
 			/* TODO: There are open questions about who should */
 			/* be able to delete pubs. Does a PubManager have the */

@@ -157,7 +157,7 @@ const PubBottomSection = (props) => {
 			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 			<div
 				role={largeExpandClickTarget ? 'button' : 'none'}
-				onClick={largeExpandClickTarget && (() => setIsExpanded(!isExpanded))}
+				onClick={largeExpandClickTarget ? () => setIsExpanded(!isExpanded) : undefined}
 				className="top-row"
 				style={{
 					...(isSearching && { background: accentColor }),

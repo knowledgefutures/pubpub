@@ -90,7 +90,7 @@ app.get(
 				}
 				throw e;
 			}
-
+        
 			if (mode === 'draft-redirect') {
 				return res.redirect(`/pub/${req.params.slug}`);
 			}

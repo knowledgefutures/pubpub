@@ -1,14 +1,14 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import Footnotes from 'containers/Pub/PubDocument/PubBottom/Footnotes';
+import Notes from 'containers/Pub/PubDocument/PubBottom/Notes';
 
-storiesOf('containers/Pub/PubDocument/PubBottom/Footnotes', module).add('default', () => (
+storiesOf('containers/Pub/PubDocument/PubBottom/Notes', module).add('default', () => (
 	<div style={{ background: '#F6F4F4', 'min-height': '100vh' }}>
 		<div style={{ width: 600, margin: 'auto' }}>
-			<Footnotes
+			<Notes
 				accentColor="#a2273e"
-				footnotes={[
+				notes={[
 					{
 						structuredValue: 'https://doi.org/10.21428/8f7503e4',
 						unstructuredValue: '<p>Some text for folks.</p>',

@@ -1,4 +1,4 @@
-const Cite = require('citation-js');
+import Cite from 'citation-js';
 
 export const generateCiteHtmls = (inputVals, format = 'citation-apa') => {
 	const citeObjects = inputVals.map((input) => {

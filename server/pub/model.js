@@ -39,6 +39,7 @@ export default (sequelize, dataTypes) => {
 			labels: { type: dataTypes.JSONB },
 			isCommunityAdminManaged: { type: dataTypes.BOOLEAN },
 			downloads: { type: dataTypes.JSONB },
+			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
 
 			/* Set by Associations */
 			communityId: { type: dataTypes.UUID, allowNull: false },

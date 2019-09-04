@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 
 import { Icon, PubNoteContent } from 'components';
 
-require('./footnotes.scss');
+require('./notes.scss');
 
-export const footnotePropType = PropTypes.shape({
+export const notePropType = PropTypes.shape({
 	html: PropTypes.string,
 	unstructuredValue: PropTypes.string,
 	count: PropTypes.number,
@@ -14,8 +14,8 @@ export const footnotePropType = PropTypes.shape({
 
 const propTypes = {
 	accentColor: PropTypes.string.isRequired,
-	footnotes: PropTypes.arrayOf(footnotePropType).isRequired,
-	targetFootnoteElement: PropTypes.func.isRequired,
+	notes: PropTypes.arrayOf(notePropType).isRequired,
+	targetNoteElement: PropTypes.func.isRequired,
 };
 
 const scrollToNode = (node) => {
@@ -41,8 +41,8 @@ const findLastElementChild = (node) => {
 	return child;
 };
 
-const Footnote = (props) => {
-	const { footnote, accentColor, targetFootnoteElement } = props;
+const Note = (props) => {
+	const { note, accentColor, targetNoteElement } = props;
 	const contentRef = useRef();
 	const [returnLinkTarget, setReturnLinkTarget] = useState(null);
 
@@ -59,13 +59,13 @@ const Footnote = (props) => {
 	}, []);
 
 	return (
-		<li className="footnote">
-			<div className="number">{footnote.number}.</div>
+		<li className="note">
+			<div className="number">{note.number}.</div>
 			<div className="inner">
 				<PubNoteContent
 					ref={contentRef}
-					structured={footnote.html}
-					unstructured={footnote.unstructuredValue}
+					structured={note.html}
+					unstructured={note.unstructuredValue}
 				/>
 				{returnLinkTarget &&
 					ReactDOM.createPortal(
@@ -74,7 +74,7 @@ const Footnote = (props) => {
 							aria-label="Jump back to source"
 							tabIndex="0"
 							style={{ cursor: 'pointer' }}
-							onClick={() => scrollToNode(targetFootnoteElement(footnote))}
+							onClick={() => scrollToNode(targetNoteElement(note))}
 						>
 							<Icon
 								className="jump-back-icon"
@@ -90,22 +90,22 @@ const Footnote = (props) => {
 	);
 };
 
-Footnote.propTypes = {
+Note.propTypes = {
 	accentColor: PropTypes.string.isRequired,
-	footnote: footnotePropType.isRequired,
-	targetFootnoteElement: PropTypes.func.isRequired,
+	note: notePropType.isRequired,
+	targetNoteElement: PropTypes.func.isRequired,
 };
 
-const Footnotes = (props) => {
-	const { footnotes, ...restProps } = props;
+const Notes = (props) => {
+	const { notes, ...restProps } = props;
 	return (
-		<ul className="footnotes-component">
-			{footnotes.map((fn) => (
-				<Footnote key={fn.number} footnote={fn} {...restProps} />
+		<ul className="notes-component">
+			{notes.map((fn) => (
+				<Note key={fn.number} note={fn} {...restProps} />
 			))}
 		</ul>
 	);
 };
 
-Footnotes.propTypes = propTypes;
-export default Footnotes;
+Notes.propTypes = propTypes;
+export default Notes;

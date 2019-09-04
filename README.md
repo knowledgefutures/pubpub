@@ -90,5 +90,5 @@ Preferred practice is to prefix commits with one of the following categories:
 ## Supporting Services
 Thank you to these groups for providing their tools for free to PubPub's open source mission.
 
-![Browserstack-logo@2x](https://user-images.githubusercontent.com/1000455/64237395-318a4c80-cef4-11e9-8b78-98ed3ec58ce3.png)
+[![Browserstack-logo@2x](https://user-images.githubusercontent.com/1000455/64237395-318a4c80-cef4-11e9-8b78-98ed3ec58ce3.png)](https://www.browserstack.com/)
 

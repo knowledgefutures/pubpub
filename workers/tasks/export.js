@@ -5,8 +5,9 @@ import tmp from 'tmp-promise';
 import AWS from 'aws-sdk';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { buildSchema, renderStatic } from '@pubpub/editor';
+import { buildSchema, renderStatic, jsonToNode, getNotes } from '@pubpub/editor';
 
+import { SimpleNotesList } from 'components';
 import { Pub } from '../../server/models';
 import { generateHash } from '../../server/utils';
 import { getBranchDoc } from '../../server/utils/firebaseAdmin';
@@ -44,15 +45,24 @@ const formatTypes = {
 
 const filterNonExportableNodes = (nodes) => nodes.filter((n) => n.type !== 'discussion');
 
-const createStaticHtml = (pubTitle, pubDocJson) =>
-	ReactDOMServer.renderToStaticMarkup(
+const createStaticHtml = (pubTitle, branchDoc) => {
+	const { content: branchDocNodes } = branchDoc;
+	const schema = buildSchema();
+	const doc = jsonToNode(branchDoc, schema);
+	const { footnotes, citations } = getNotes(doc);
+	return ReactDOMServer.renderToStaticMarkup(
 		<html lang="en">
 			<head>
 				<title>{pubTitle}</title>
 			</head>
-			<body>{renderStatic(buildSchema(), filterNonExportableNodes(pubDocJson), {})}</body>
+			<body>
+				{renderStatic(schema, filterNonExportableNodes(branchDocNodes), {})}
+				<SimpleNotesList title="Footnotes" notes={footnotes} />
+				<SimpleNotesList title="Citations" notes={citations} />
+			</body>
 		</html>,
 	);
+};
 
 const callPandoc = (staticHtml, tmpFile, format) => {
 	const args = `${dataDir}-f html -t ${formatTypes[format].output}${formatTypes[format].flags ||
@@ -98,10 +108,8 @@ export default async (pubId, branchId, format) => {
 	const { extension } = formatTypes[format];
 	const pubData = await Pub.findOne({ where: { id: pubId } });
 	const tmpFile = await tmp.file({ postfix: `.${extension}` });
-	const {
-		content: { content: branchDocNodes },
-	} = await getBranchDoc(pubId, branchId);
-	const staticHtml = createStaticHtml(pubData.title, branchDocNodes);
+	const { content: branchDoc } = await getBranchDoc(pubId, branchId);
+	const staticHtml = createStaticHtml(pubData.title, branchDoc);
 	await callPandoc(staticHtml, tmpFile, format);
 	return uploadDocument(branchId, fs.createReadStream(tmpFile.path), extension);
 };

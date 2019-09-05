@@ -7,6 +7,7 @@ import { notePropType } from './Notes';
 import LicenseSection from './LicenseSection';
 import SearchableNoteSection from './SearchableNoteSection';
 import DiscussionsSection from './Discussions/DiscussionsSection';
+import ReadNextSection from './ReadNextSection';
 
 require('./pubBottom.scss');
 
@@ -43,6 +44,7 @@ const PubBottom = (props) => {
 			{() => (
 				<div className="pub-bottom-component">
 					<div className="inner">
+						<ReadNextSection pubData={pubData} updateLocalData={updateLocalData} />
 						{footnotes.length > 0 && (
 							<SearchableNoteSection
 								title="Footnotes"

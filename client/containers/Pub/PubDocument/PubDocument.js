@@ -10,7 +10,6 @@ import PubInlineImport from './PubInlineImport';
 import PubDetails from './PubDetails';
 import PubHistory from './PubHistory';
 import PubHeaderFormatting from './PubHeaderFormatting';
-import PubReadNext from './PubReadNext';
 import PubBottom from './PubBottom/PubBottom';
 import PubMouseEvents from './PubMouseEvents';
 
@@ -138,7 +137,6 @@ const PubDocument = (props) => {
 				</div>
 				<div className="side-content" ref={sideContentRef} />
 			</div>
-			<PubReadNext pubData={pubData} updateLocalData={updateLocalData} />
 			<PubBottom
 				pubData={pubData}
 				collabData={collabData}

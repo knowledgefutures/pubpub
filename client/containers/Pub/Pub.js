@@ -35,6 +35,7 @@ const Pub = (props) => {
 					<PubSyncManager
 						pubData={props.pubData}
 						locationData={props.locationData}
+						communityData={props.communityData}
 						loginData={props.loginData}
 					>
 						{({

@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import queryString from 'query-string';
 
 import { loginDataProps } from 'types/base';
 import { apiFetch, getRandomColor } from 'utils';
-import queryString from 'query-string';
 import { initFirebase } from 'utils/firebaseClient';
+import { getPubPageTitle } from 'shared/utils/pubPageTitle';
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	children: PropTypes.func.isRequired,
 	locationData: PropTypes.object.isRequired,
+	communityData: PropTypes.object.isRequired,
 	loginData: loginDataProps.isRequired,
 };
 
@@ -212,6 +214,7 @@ class PubSyncManager extends React.Component {
 				if (this.state.firebaseRootRef && hasUpdates) {
 					this.state.firebaseRootRef.child('metadata').update(firebaseSyncData);
 				}
+				document.title = getPubPageTitle(this.state.pubData, this.props.communityData);
 			},
 		);
 	}

@@ -1,6 +1,9 @@
 @import '../pub.scss';
 
 .pub-document-component {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
 	.discussions {
 		background-color: #f8f8f8;
 		line-height: 1.6;

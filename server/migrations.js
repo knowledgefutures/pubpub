@@ -673,6 +673,12 @@ new Promise((resolve) => {
 	// 		defaultValue: 'cc-by'
 	// 	});
 	// })
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Communities', 'premiumLicenseFlag', {
+	// 		type: Sequelize.BOOLEAN,
+	// 		defaultValue: false,
+	// 	});
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

@@ -57,33 +57,39 @@ const LicenseSelect = (props) => {
 	const renderMenu = () => {
 		return (
 			<Menu>
-				{licenses.map((license) => (
-					<MenuItem
-						key={license.slug}
-						onClick={() => selectLicense(license)}
-						className="license-select-component__menu-item"
-						text={
-							<div>
-								<div className="title">
-									{license.short}{' '}
-									<a
-										href={license.link}
-										className="link"
-										onClick={(e) => e.stopPropagation()}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										Learn more
-										<Icon iconSize={12} icon="share" />
-									</a>
+				{licenses
+					.filter((license) => {
+						return communityData.premiumLicenseFlag || !license.requiresPremium;
+					})
+					.map((license) => (
+						<MenuItem
+							key={license.slug}
+							onClick={() => selectLicense(license)}
+							className="license-select-component__menu-item"
+							text={
+								<div>
+									<div className="title">
+										{license.short}{' '}
+										<a
+											href={license.link}
+											className="link"
+											onClick={(e) => e.stopPropagation()}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											Learn more
+											<Icon iconSize={12} icon="share" />
+										</a>
+									</div>
+									<div className="full">{license.full}</div>
 								</div>
-								<div className="full">{license.full}</div>
-							</div>
-						}
-						icon={renderIcon(license)}
-						labelElement={license.slug === currentLicense.slug && <Icon icon="tick" />}
-					/>
-				))}
+							}
+							icon={renderIcon(license)}
+							labelElement={
+								license.slug === currentLicense.slug && <Icon icon="tick" />
+							}
+						/>
+					))}
 			</Menu>
 		);
 	};

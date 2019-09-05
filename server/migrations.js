@@ -667,12 +667,12 @@ new Promise((resolve) => {
 	// 		defaultValue: 'choose-best',
 	// 	});
 	// })
-	.then(() => {
-		return sequelize.queryInterface.addColumn('Pubs', 'licenseSlug', {
-			type: Sequelize.TEXT,
-			defaultValue: 'cc-by'
-		});
-	})
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Pubs', 'licenseSlug', {
+	// 		type: Sequelize.TEXT,
+	// 		defaultValue: 'cc-by'
+	// 	});
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

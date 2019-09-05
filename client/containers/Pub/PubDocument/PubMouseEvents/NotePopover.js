@@ -55,7 +55,7 @@ const NotePopover = (props) => {
 
 	return (
 		<div
-			className="inline-popover-component"
+			className="note-popover-component"
 			ref={popoverRef}
 			style={{ position: 'absolute', top: '-9999px' }}
 		>

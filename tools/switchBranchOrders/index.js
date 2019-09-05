@@ -24,6 +24,7 @@ const main = async () => {
 	await pubs.reduce((promise, pub) => {
 		return promise.then(() => fixPubBranchOrders(pub)).catch((e) => console.log('Error:', e));
 	}, Promise.resolve());
+	// const setPublicBranches = await Branch.update({ order: 0.01 }, { where: { title: 'public' } });
 	process.exit();
 };
 

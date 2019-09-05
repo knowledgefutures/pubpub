@@ -58,6 +58,7 @@ export default (sequelize, dataTypes) => {
 			email: { type: dataTypes.TEXT },
 			issn: { type: dataTypes.TEXT },
 			isFeatured: { type: dataTypes.BOOLEAN },
+			premiumLicenseFlag: { type: dataTypes.BOOLEAN, defaultValue: false },
 			defaultPubCollections: { type: dataTypes.JSONB },
 		},
 		{

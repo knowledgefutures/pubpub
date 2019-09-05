@@ -49,7 +49,7 @@ export const createPub = (inputValues, userData) => {
 				id: publicBranchId,
 				shortId: 1,
 				title: 'public',
-				order: 0.5,
+				order: 0.01,
 				viewHash: generateHash(8),
 				discussHash: generateHash(8),
 				editHash: generateHash(8),

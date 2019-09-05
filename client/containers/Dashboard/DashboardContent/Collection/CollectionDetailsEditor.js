@@ -76,7 +76,7 @@ const CollectionDetailsEditor = (props) => {
 			>
 				<Select
 					popoverProps={{ minimal: true }}
-					items={['none', 'minimal', 'medium', 'choose-best']}
+					items={['none', 'choose-best']}
 					itemRenderer={(item, { handleClick }) => {
 						const isSelected = item === collection.readNextPreviewSize;
 						return (

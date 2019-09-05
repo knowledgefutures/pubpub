@@ -74,6 +74,10 @@ app.get(
 			}
 
 			const mode = getMode(req.path, req.params);
+			if (mode === 'draft-redirect') {
+				return res.redirect(`/pub/${req.params.slug}`);
+			}
+
 			const initialData = await getInitialData(req);
 			let pubData;
 
@@ -92,8 +96,18 @@ app.get(
 				throw e;
 			}
 
-			if (mode === 'draft-redirect') {
-				return res.redirect(`/pub/${req.params.slug}`);
+			if (
+				mode === 'document' &&
+				pubData.activeBranch.title === 'public' &&
+				!pubData.activeBranch.firstKeyAt
+			) {
+				const draftBranch = pubData.branches.find((br) => {
+					return br.title === 'draft';
+				});
+				if (!draftBranch || !draftBranch.canView) {
+					throw new Error('Pub Not Found');
+				}
+				return res.redirect(`/pub/${req.params.slug}/branch/${draftBranch.shortId}`);
 			}
 
 			const firebaseToken = await getFirebaseToken(initialData.loginData.id || 'anon', {

@@ -129,7 +129,12 @@ app.use((req, res, next) => {
 	}
 	if (req.hostname.indexOf('localhost') > -1) {
 		req.headers.localhost = req.headers.host;
-		req.headers.host = 'demo.pubpub.org';
+		if (process.env.PUBPUB_LOCAL_COMMUNITY) {
+			const subdomain = process.env.PUBPUB_LOCAL_COMMUNITY;
+			req.headers.host = `${subdomain}.duqduq.org`;
+		} else {
+			req.headers.host = 'demo.pubpub.org';
+		}
 	}
 	if (req.hostname.indexOf('duqduq.org') > -1) {
 		req.headers.host = req.hostname.replace('duqduq.org', 'pubpub.org');

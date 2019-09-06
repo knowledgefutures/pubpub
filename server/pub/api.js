@@ -8,6 +8,7 @@ const getRequestIds = (req) => {
 		userId: user.id,
 		communityId: req.body.communityId,
 		pubId: req.body.pubId || null,
+		licenseSlug: req.body.licenseSlug,
 	};
 };
 
@@ -25,7 +26,8 @@ app.post('/api/pubs', (req, res) => {
 		})
 		.catch((err) => {
 			console.error('Error in postPub: ', err);
-			return res.status(500).json(err.message);
+			const statusCode = err.message === 'Not Authorized' ? 401 : 500;
+			return res.status(statusCode).json(err.message);
 		});
 });
 
@@ -43,7 +45,8 @@ app.put('/api/pubs', (req, res) => {
 		})
 		.catch((err) => {
 			console.error('Error in putPub: ', err);
-			return res.status(500).json(err.message);
+			const statusCode = err.message === 'Not Authorized' ? 401 : 500;
+			return res.status(statusCode).json(err.message);
 		});
 });
 
@@ -60,6 +63,7 @@ app.delete('/api/pubs', (req, res) => {
 		})
 		.catch((err) => {
 			console.error('Error in deletePub: ', err);
-			return res.status(500).json(err.message);
+			const statusCode = err.message === 'Not Authorized' ? 401 : 500;
+			return res.status(statusCode).json(err.message);
 		});
 });

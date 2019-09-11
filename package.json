@@ -89,7 +89,7 @@
 		"bourbon": "^5.1.0",
 		"cheerio": "^1.0.0-rc.2",
 		"chokidar": "^3.0.1",
-		"citation-js": "^0.4.5",
+		"citation-js": "^0.5.0-alpha.2",
 		"classnames": "^2.2.6",
 		"color": "^3.1.1",
 		"compression": "^1.7.4",

@@ -43,7 +43,7 @@ const DiscussionInput = (props) => {
 	const [editorKey, setEditorKey] = useState(Date.now());
 	const isNewThread = !threadData[0].threadNumber;
 	useEffect(() => {
-		if ((isNewThread || didFocus) && changeObject.view) {
+		if (!isPubBottomInput && (isNewThread || didFocus) && changeObject.view) {
 			changeObject.view.focus();
 		}
 	}, [isNewThread, changeObject.view, didFocus]);

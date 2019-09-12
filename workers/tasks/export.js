@@ -11,6 +11,7 @@ import { SimpleNotesList } from 'components';
 import { Pub } from '../../server/models';
 import { generateHash } from '../../server/utils';
 import { getBranchDoc } from '../../server/utils/firebaseAdmin';
+import { generateCiteHtmls } from '../../server/editor/queries';
 
 AWS.config.setPromisesDependency(Promise);
 const s3bucket = new AWS.S3({ params: { Bucket: 'assets.pubpub.org' } });
@@ -45,11 +46,13 @@ const formatTypes = {
 
 const filterNonExportableNodes = (nodes) => nodes.filter((n) => n.type !== 'discussion');
 
-const createStaticHtml = (pubTitle, branchDoc) => {
+const createStaticHtml = async (pubTitle, branchDoc) => {
 	const { content: branchDocNodes } = branchDoc;
 	const schema = buildSchema();
 	const doc = jsonToNode(branchDoc, schema);
-	const { footnotes, citations } = getNotes(doc);
+	const { footnotes: rawFootnotes, citations: rawCitations } = getNotes(doc);
+	const footnotes = await generateCiteHtmls(rawFootnotes);
+	const citations = await generateCiteHtmls(rawCitations);
 	return ReactDOMServer.renderToStaticMarkup(
 		<html lang="en">
 			<head>
@@ -109,7 +112,7 @@ export default async (pubId, branchId, format) => {
 	const pubData = await Pub.findOne({ where: { id: pubId } });
 	const tmpFile = await tmp.file({ postfix: `.${extension}` });
 	const { content: branchDoc } = await getBranchDoc(pubId, branchId);
-	const staticHtml = createStaticHtml(pubData.title, branchDoc);
+	const staticHtml = await createStaticHtml(pubData.title, branchDoc);
 	await callPandoc(staticHtml, tmpFile, format);
 	return uploadDocument(branchId, fs.createReadStream(tmpFile.path), extension);
 };

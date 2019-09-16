@@ -46,7 +46,7 @@ const DiscussionInput = (props) => {
 		if (!isPubBottomInput && (isNewThread || didFocus) && changeObject.view) {
 			changeObject.view.focus();
 		}
-	}, [isNewThread, changeObject.view, didFocus]);
+	}, [isNewThread, changeObject.view, didFocus, isPubBottomInput]);
 
 	const handlePostDiscussion = () => {
 		setIsLoading(true);

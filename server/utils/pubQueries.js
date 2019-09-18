@@ -159,14 +159,18 @@ export const findPub = (req, initialData, mode) => {
 				throw new Error('Pub Not Found');
 			}
 			const pubDataJson = pubData.toJSON();
-			const formattedPubData = formatAndAuthenticatePub({
-				pub: pubDataJson,
-				loginData: initialData.loginData,
-				communityAdminData: communityAdminData,
-				accessHash: req.query.access,
-				branchShortId: req.params.branchShortId,
-				versionNumber: req.params.versionNumber,
-			});
+			const matchActiveBranch = mode === 'document';
+			const formattedPubData = formatAndAuthenticatePub(
+				{
+					pub: pubDataJson,
+					loginData: initialData.loginData,
+					communityAdminData: communityAdminData,
+					accessHash: req.query.access,
+					branchShortId: req.params.branchShortId,
+					versionNumber: req.params.versionNumber,
+				},
+				matchActiveBranch,
+			);
 
 			if (!formattedPubData) {
 				throw new Error('Pub Not Found');

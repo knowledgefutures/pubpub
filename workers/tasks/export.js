@@ -4,11 +4,15 @@ import nodePandoc from 'node-pandoc';
 import tmp from 'tmp-promise';
 import AWS from 'aws-sdk';
 import React from 'react';
+import dateFormat from 'dateformat';
 import ReactDOMServer from 'react-dom/server';
+import YAML from 'yaml';
 import { buildSchema, renderStatic, jsonToNode, getNotes } from '@pubpub/editor';
 
+import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
+import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 import { SimpleNotesList } from 'components';
-import { Pub } from '../../server/models';
+import { Branch, Pub, PubAttribution, User } from '../../server/models';
 import { generateHash } from '../../server/utils';
 import { getBranchDoc } from '../../server/utils/firebaseAdmin';
 import { generateCiteHtmls } from '../../server/editor/queries';
@@ -46,19 +50,35 @@ const formatTypes = {
 
 const filterNonExportableNodes = (nodes) => nodes.filter((n) => n.type !== 'discussion');
 
-const createStaticHtml = async (pubTitle, branchDoc) => {
+const createStaticHtml = async (pubData, branchDoc) => {
+	const { title } = pubData;
 	const { content: branchDocNodes } = branchDoc;
 	const schema = buildSchema();
 	const doc = jsonToNode(branchDoc, schema);
 	const { footnotes: rawFootnotes, citations: rawCitations } = getNotes(doc);
 	const footnotes = await generateCiteHtmls(rawFootnotes);
 	const citations = await generateCiteHtmls(rawCitations);
+	const publishedDate = getPubPublishedDate(pubData);
+	const updatedDate = getPubUpdatedDate(pubData);
+	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
+	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
+	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
 	return ReactDOMServer.renderToStaticMarkup(
 		<html lang="en">
 			<head>
-				<title>{pubTitle}</title>
+				<title>{title}</title>
 			</head>
 			<body>
+				{showUpdatedDate && (
+					<div>
+						<strong>Updated on:</strong> {updatedDateString}
+					</div>
+				)}
+				{pubData.doi && (
+					<div>
+						<strong>DOI:</strong> {pubData.doi}
+					</div>
+				)}
 				{renderStatic(schema, filterNonExportableNodes(branchDocNodes), {})}
 				<SimpleNotesList title="Footnotes" notes={footnotes} />
 				<SimpleNotesList title="Citations" notes={citations} />
@@ -67,9 +87,24 @@ const createStaticHtml = async (pubTitle, branchDoc) => {
 	);
 };
 
-const callPandoc = (staticHtml, tmpFile, format) => {
+const createYamlMetadataFile = async (pubData) => {
+	const publishedDate = getPubPublishedDate(pubData);
+	const dateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
+	const metadata = YAML.stringify({
+		author: pubData.attributions
+			.concat()
+			.sort((a, b) => a.order - b.order)
+			.map((attr) => ensureUserForAttribution(attr).user.fullName),
+		...(dateString && { date: dateString }),
+	});
+	const file = await tmp.file({ extension: '.yaml' });
+	fs.writeFileSync(file.path, metadata);
+	return file;
+};
+
+const callPandoc = (staticHtml, metadataFile, tmpFile, format) => {
 	const args = `${dataDir}-f html -t ${formatTypes[format].output}${formatTypes[format].flags ||
-		''} -o ${tmpFile.path}`;
+		''} -o ${tmpFile.path} --metadata-file=${metadataFile.path}`;
 	return new Promise((resolve, reject) => {
 		nodePandoc(staticHtml, args, (err, result) => {
 			if (err && err.message) {
@@ -109,10 +144,26 @@ const uploadDocument = (branchId, readableStream, extension) => {
 
 export default async (pubId, branchId, format) => {
 	const { extension } = formatTypes[format];
-	const pubData = await Pub.findOne({ where: { id: pubId } });
+	const pubData = await Pub.findOne({
+		where: { id: pubId },
+		include: [
+			{ model: Branch, as: 'branches' },
+			{
+				model: PubAttribution,
+				as: 'attributions',
+				include: [
+					{
+						model: User,
+						as: 'user',
+					},
+				],
+			},
+		],
+	});
 	const tmpFile = await tmp.file({ postfix: `.${extension}` });
 	const { content: branchDoc } = await getBranchDoc(pubId, branchId);
-	const staticHtml = await createStaticHtml(pubData.title, branchDoc);
-	await callPandoc(staticHtml, tmpFile, format);
+	const staticHtml = await createStaticHtml(pubData, branchDoc);
+	const metadataFile = await createYamlMetadataFile(pubData);
+	await callPandoc(staticHtml, metadataFile, tmpFile, format);
 	return uploadDocument(branchId, fs.createReadStream(tmpFile.path), extension);
 };

@@ -56,7 +56,7 @@ class ControlsAudio extends Component {
 					<div className="label">Size</div>
 					<div className="input">
 						<Slider
-							min={25}
+							min={20}
 							max={100}
 							value={this.props.attrs.size}
 							onChange={(newSize) => {

@@ -28,7 +28,7 @@ const ControlsIframe = (props) => {
 				<div className="label">Size</div>
 				<div className="input">
 					<Slider
-						min={25}
+						min={20}
 						max={100}
 						value={props.attrs.size}
 						onChange={(newSize) => {

@@ -82,7 +82,7 @@ const PageWrapper = (props) => {
 
 				<AccentStyle
 					communityData={communityData}
-					isNavHidden={props.hideNav}
+					isNavHidden={props.hideNav || communityData.hideNav}
 					// accentColorDark={communityData.accentColorDark}
 					// headerColorType={communityData.headerColorType}
 					// accentTextColor={communityData.accentTextColor}

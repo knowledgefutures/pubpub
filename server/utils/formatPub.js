@@ -51,7 +51,7 @@ const formatBranches = ({
 		};
 	});
 	const visibleBranches = branchesWithAccessData.filter((br) => {
-		return br.title === 'public' || canUserSeeBranch(br)
+		return br.title === 'public' || canUserSeeBranch(br);
 	});
 	const activeBranch = branchShortId
 		? // If we have a short ID, then grab the pub that matches it

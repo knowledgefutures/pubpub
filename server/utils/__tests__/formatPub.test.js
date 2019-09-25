@@ -173,7 +173,7 @@ describe('formatAndAuthenticatePub', () => {
 				loginData: user,
 				branchShortId: visibleBranchA.shortId,
 			}).branches.map((br) => br.title),
-		).toEqual(['a-visible-branch', 'another-visible-branch']);
+		).toEqual(['public', 'a-visible-branch', 'another-visible-branch']);
 		// As a pub manager
 		expect(
 			formatAndAuthenticatePub({
@@ -181,7 +181,7 @@ describe('formatAndAuthenticatePub', () => {
 				loginData: pubManager,
 				branchShortId: draftBranch.shortId,
 			}).branches.map((br) => br.title),
-		).toEqual(['draft', 'a-visible-branch', 'another-visible-branch', 'private']);
+		).toEqual(['public', 'draft', 'a-visible-branch', 'another-visible-branch', 'private']);
 		// #public is not included here because it has no content
 	});
 
@@ -212,7 +212,7 @@ describe('formatAndAuthenticatePub', () => {
 				accessHash: draftBranch.editHash,
 				branchShortId: draftBranch.shortId,
 			}).branches.map((br) => br.title),
-		).toEqual(['draft', 'a-visible-branch', 'another-visible-branch']);
+		).toEqual(['public', 'draft', 'a-visible-branch', 'another-visible-branch']);
 	});
 
 	it('copypastas the permissions for the active branch to the pub object', () => {

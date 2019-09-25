@@ -50,9 +50,7 @@ const formatBranches = ({
 			viewHash: branchAccess.canManage && branch.viewHash,
 		};
 	});
-	const visibleBranches = branchesWithAccessData.filter((br) => {
-		return br.title === 'public' || canUserSeeBranch(br);
-	});
+	const visibleBranches = branchesWithAccessData.filter((br) => canUserSeeBranch(br));
 	const activeBranch = branchShortId
 		? // If we have a short ID, then grab the pub that matches it
 		  visibleBranches.find((br) => br.shortId.toString() === branchShortId.toString())
@@ -127,9 +125,15 @@ export const formatAndAuthenticatePub = (
 		return null;
 	}
 
+	/* We need the public branch even if it is empty for certain UI functionality */
+	/* For example, clicking on 'New Review' needs to know the shortId of #public */
+	const publicBranch = pub.branches.find((br) => br.title === 'public');
+	const hasPublicBranch = branches.some((br) => br.title === 'public');
+	const branchesWithPublic = hasPublicBranch ? branches : [publicBranch, ...branches];
+
 	return {
 		...pub,
-		branches: branches,
+		branches: branchesWithPublic,
 		activeBranch: activeBranch,
 		attributions: pub.attributions.map(ensureUserForAttribution),
 		reviews: filterReviews(pub, branches),

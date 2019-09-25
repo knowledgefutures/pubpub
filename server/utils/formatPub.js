@@ -50,7 +50,9 @@ const formatBranches = ({
 			viewHash: branchAccess.canManage && branch.viewHash,
 		};
 	});
-	const visibleBranches = branchesWithAccessData.filter((br) => canUserSeeBranch(br));
+	const visibleBranches = branchesWithAccessData.filter((br) => {
+		return br.title === 'public' || canUserSeeBranch(br)
+	});
 	const activeBranch = branchShortId
 		? // If we have a short ID, then grab the pub that matches it
 		  visibleBranches.find((br) => br.shortId.toString() === branchShortId.toString())

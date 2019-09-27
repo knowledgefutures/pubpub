@@ -69,7 +69,8 @@ class Header extends Component {
 		const isBasePubPub = this.props.locationData.isBasePubPub;
 		const backgroundColorChange =
 			this.props.communityData.heroBackgroundColor &&
-			this.props.communityData.accentColor !== this.props.communityData.heroBackgroundColor;
+			this.props.communityData.accentColorDark !==
+				this.props.communityData.heroBackgroundColor;
 		const textColorChange =
 			this.props.communityData.heroTextColor &&
 			this.props.communityData.accentTextColor !== this.props.communityData.heroTextColor;
@@ -143,7 +144,8 @@ class Header extends Component {
 			backgroundStyle.backgroundImage = `url("${resizedBackgroundImage}")`;
 		}
 		const heroBackgroundColor =
-			this.props.communityData.heroBackgroundColor || this.props.communityData.accentColor;
+			this.props.communityData.heroBackgroundColor ||
+			this.props.communityData.accentColorDark;
 		if (heroBackgroundColor) {
 			backgroundStyle.backgroundColor = this.props.communityData.heroBackgroundColor;
 		}

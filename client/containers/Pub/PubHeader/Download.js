@@ -85,6 +85,7 @@ const Download = (props) => {
 								.toUpperCase()}`}
 							loading={isLoading && selectedType.format === 'formatted'}
 							onClick={() => window.open(formattedDownload.url)}
+							rel="nofollow"
 						/>
 					</React.Fragment>
 				)}
@@ -112,6 +113,7 @@ const Download = (props) => {
 							setIsError(false);
 							setIsLoading(true);
 						}}
+						rel="nofollow"
 						text={
 							<Tooltip
 								key={type.format}

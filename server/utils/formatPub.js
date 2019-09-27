@@ -58,9 +58,9 @@ const formatBranches = ({
 		visibleBranches.includes(branchesWithAccessData[0])
 		? // Then return it
 		  branchesWithAccessData[0]
-		: // Otherwise, return null. This will cause the caller to throw an error, triggering a
+		: // Otherwise, return an empty object. This will cause the caller to throw an error, triggering a
 		  // redirect to one of the other visibleBranches
-		  null;
+		  {};
 	return { activeBranch: activeBranch, branches: visibleBranches };
 };
 
@@ -113,17 +113,27 @@ export const formatAndAuthenticatePub = (
 		branchShortId: branchShortId,
 	});
 
-	if (!activeBranch) {
-		if (matchActiveBranch) {
-			throw new PubBranchNotVisibleError(branches);
-		} else {
-			return null;
-		}
+	/* If the activeBranch is note visible, throw an error that will trigger */
+	/* a redirect. */
+	if (!activeBranch || (!activeBranch.id && matchActiveBranch)) {
+		throw new PubBranchNotVisibleError(branches);
 	}
+
+	/* If a user has access to no branches, they don't have access to the pub. */
+	/* Returning null will cause a 404 error to be returned. */
+	if (!branches.length) {
+		return null;
+	}
+
+	/* We need the public branch even if it is empty for certain UI functionality */
+	/* For example, clicking on 'New Review' needs to know the shortId of #public */
+	const publicBranch = pub.branches.find((br) => br.title === 'public');
+	const hasPublicBranch = branches.some((br) => br.title === 'public');
+	const branchesWithPublic = hasPublicBranch ? branches : [publicBranch, ...branches];
 
 	return {
 		...pub,
-		branches: branches,
+		branches: branchesWithPublic,
 		activeBranch: activeBranch,
 		attributions: pub.attributions.map(ensureUserForAttribution),
 		reviews: filterReviews(pub, branches),

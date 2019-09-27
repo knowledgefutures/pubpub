@@ -76,7 +76,7 @@
 		"@blueprintjs/core": "^3.17.1",
 		"@blueprintjs/icons": "^3.9.1",
 		"@blueprintjs/select": "^3.9.0",
-		"@pubpub/editor": "^6.2.6",
+		"@pubpub/editor": "^6.2.7",
 		"@sentry/browser": "^5.5.0",
 		"@sentry/node": "^5.5.0",
 		"algoliasearch": "^3.32.1",
@@ -170,6 +170,7 @@
 		"webpack": "^4.29.6",
 		"webpack-manifest-plugin": "^2.0.4",
 		"xmlbuilder": "^13.0.2",
+		"yaml": "^1.6.0",
 		"yargs": "^13.2.4"
 	},
 	"engines": {

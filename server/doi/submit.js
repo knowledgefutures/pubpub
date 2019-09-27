@@ -8,10 +8,15 @@ const getDoiLogin = (communityId) => {
 		DOI_LOGIN_PASSWORD,
 		MITP_DOI_LOGIN_ID,
 		MITP_DOI_LOGIN_PASSWORD,
+		IASTATE_DOI_LOGIN_ID,
+		IASTATE_DOI_LOGIN_PASSWORD,
 	} = process.env;
 	if (communityId === '99608f92-d70f-46c1-a72c-df272215f13e') {
 		// HDSR
 		return { login: MITP_DOI_LOGIN_ID, password: MITP_DOI_LOGIN_PASSWORD };
+	}
+	if (communityId === '3d9ea6a4-25b9-42d3-8ceb-22459c649096') {
+		return { login: IASTATE_DOI_LOGIN_ID, password: IASTATE_DOI_LOGIN_PASSWORD };
 	}
 	return { login: DOI_LOGIN_ID, password: DOI_LOGIN_PASSWORD };
 };

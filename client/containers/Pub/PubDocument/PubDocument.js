@@ -6,8 +6,8 @@ import { PageContext } from 'components/PageWrapper/PageWrapper';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
 import PubLinkMenu from './PubLinkMenu';
-import PubInlineImport from './PubInlineImport';
 import PubDetails from './PubDetails';
+import PubFileImport from './PubFileImport';
 import PubHistory from './PubHistory';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubBottom from './PubBottom/PubBottom';
@@ -118,9 +118,9 @@ const PubDocument = (props) => {
 						}}
 					/>
 					{!isViewingHistory && pubData.canEditBranch && !pubData.isStaticDoc && (
-						<PubInlineImport
-							pubData={pubData}
-							editorView={collabData.editorChangeObject.view}
+						<PubFileImport
+							editorChangeObject={collabData.editorChangeObject}
+							updateLocalData={updateLocalData}
 						/>
 					)}
 					{!linkPopupIsOpen && (editorFocused || !pubData.canEditBranch) && (

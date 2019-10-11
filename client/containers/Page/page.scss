@@ -4,7 +4,20 @@
 			max-width: 800px;
 		}
 	}
-
+	&.ultrawide {
+		.container {
+			max-width: none !important;
+		}
+		.layout-pubs-component {
+			.container {
+				display: flex;
+				flex-wrap: wrap;
+			}
+			.row {
+				width: calc(100% / 3);
+			}
+		}
+	}
 	.pages-wrapper {
 		display: flex;
 		flex-wrap: wrap;

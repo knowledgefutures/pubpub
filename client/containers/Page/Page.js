@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { PageWrapper } from 'components';
 import { hydrateWrapper, getDefaultLayout, generateRenderLists } from 'utils';
 import LayoutPubs from './LayoutPubs';
@@ -36,7 +37,13 @@ const Page = (props) => {
 	const layout = pageData.layout || getDefaultLayout();
 	const pubRenderLists = generateRenderLists(layout, props.pageData.pubs);
 	return (
-		<div id="page-container" className={pageData.isNarrowWidth ? 'narrow' : ''}>
+		<div
+			id="page-container"
+			className={classNames({
+				narrow: pageData.isNarrowWidth,
+				ultrawide: props.locationData.query.display === 'ultrawide',
+			})}
+		>
 			<PageWrapper
 				loginData={props.loginData}
 				communityData={props.communityData}

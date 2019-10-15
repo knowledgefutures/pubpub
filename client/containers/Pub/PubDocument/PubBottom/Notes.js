@@ -56,7 +56,7 @@ const Note = (props) => {
 				setReturnLinkTarget(newReturnLinkTarget);
 			}
 		}
-	}, []);
+	}, [note.unstructuredValue]);
 
 	return (
 		<li className="note">

@@ -26,10 +26,8 @@ module.exports = ({ config }) => {
 	config.resolve.alias['shared'] = resolve(__dirname, '../shared');
 	config.resolve.alias['data'] = resolve(__dirname, '../stories/data');
 	config.node = {
-		console: 'mock',
-		fs: 'empty',
-		net: 'empty',
-		tls: 'empty',
+		...config.node,
+		fs: "empty",
 	};
 	return config;
 };

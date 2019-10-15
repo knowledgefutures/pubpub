@@ -5,11 +5,8 @@ import { addWorkerTask } from '../utils';
 AWS.config.setPromisesDependency(Promise);
 const s3bucket = new AWS.S3({ params: { Bucket: 'assets.pubpub.org' } });
 
-export const createImport = (inputValues) => {
-	const input = {
-		sourceUrl: inputValues.sourceUrl,
-	};
-
+const createLegacyImport = (sourceUrl) => {
+	const input = { sourceUrl: sourceUrl };
 	return new Promise((resolve, reject) => {
 		/* This block is set because the worker event */
 		/* was reaching the queue before the uploaded S3 file */
@@ -20,7 +17,7 @@ export const createImport = (inputValues) => {
 		const checkForFile = () => {
 			s3bucket
 				.headObject({
-					Key: inputValues.sourceUrl.replace('https://assets.pubpub.org/', ''),
+					Key: sourceUrl.replace('https://assets.pubpub.org/', ''),
 				})
 				.promise()
 				.then(resolve)
@@ -56,4 +53,28 @@ export const createImport = (inputValues) => {
 		.then(([workerTaskData]) => {
 			return workerTaskData;
 		});
+};
+
+const createNewImport = async (sourceFiles) => {
+	const input = { sourceFiles: sourceFiles };
+	const workerTask = await WorkerTask.create({
+		isProcessing: true,
+		type: 'import',
+		input: input,
+	});
+	await addWorkerTask(
+		JSON.stringify({
+			id: workerTask.id,
+			type: workerTask.type,
+			input: input,
+		}),
+	);
+	return workerTask;
+};
+
+export const createImport = ({ sourceUrl = null, sourceFiles = null, useNewImporter }) => {
+	if (useNewImporter) {
+		return createNewImport(sourceFiles);
+	}
+	return createLegacyImport(sourceUrl);
 };

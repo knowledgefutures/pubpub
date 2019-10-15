@@ -1,0 +1,49 @@
+.file-import-entry {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    .file-title {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow: hidden;
+        flex-grow: 1;
+        .start {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          flex-shrink: 1;
+        }
+        .end {
+          white-space: nowrap;
+          flex-basis: content;
+          flex-grow: 0;
+          flex-shrink: 0;
+        }
+    }
+    .file-label {
+      flex-shrink: 0;
+      margin: 0 5px;
+      user-select: none;
+    }
+    .file-progress {
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        flex-shrink: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        font-style: italic;
+        color: #999;
+        .bp3-progress-bar {
+          width: 100px;
+        }
+        .bp3-icon {
+          margin-right: 2px;
+        }
+    }   
+    .file-delete-button {
+      margin-left: 5px;
+    }
+}

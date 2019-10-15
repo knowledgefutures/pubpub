@@ -1,0 +1,47 @@
+.breadcrumbs-component {
+	margin-bottom: 16px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #ccc;
+	display: flex;
+	align-items: flex-end;
+	.crumb {
+		display: block;
+		text-decoration: none;
+		.top {
+			font-size: 12px;
+			opacity: 0.5;
+			.avatar-block {
+				margin-left: 5px;
+			}
+		}
+		.bottom {
+			font-size: 14px;
+			white-space: nowrap;
+			overflow: hidden;
+			display: flex;
+			align-items: center;
+			.avatar-block {
+				margin-right: 5px;
+			}
+			&.capitalize {
+				text-transform: capitalize;
+			}
+		}
+		&.truncate {
+			min-width: 0;
+			.bottom-text {
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+		}
+		&:hover {
+			.bottom {
+				text-decoration: underline;
+			}
+		}
+	}
+	.crumb-icon {
+		opacity: 0.5;
+		padding: 0em 8px;
+	}
+}

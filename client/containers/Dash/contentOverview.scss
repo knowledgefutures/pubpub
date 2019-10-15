@@ -1,0 +1,42 @@
+@import 'styles/variables.scss';
+.content-overview-component {
+	.header {
+		display: flex;
+		align-items: flex-start;
+		.avatar-block {
+			margin-right: 10px;
+			flex: 0 0 auto;
+		}
+		.header-name {
+			font-weight: 600;
+			font-size: 24px;
+			flex: 1 1 auto;
+			&.collection {
+				font-family: $header-font;
+			}
+		}
+		.header-buttons {
+			flex: 0 0 auto;
+			.bp3-button {
+				margin-left: 1em;
+			}
+		}
+	}
+	.filter-bar {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+		margin-top: 60px;
+		margin-bottom: -21px;
+		.left {
+			border-bottom: 2px solid #333;
+			font-weight: 500;
+			font-size: 16px;
+			line-height: 36px;
+		}
+		.right {
+			max-width: 450px;
+			flex: 1 1 auto;
+		}
+	}
+}

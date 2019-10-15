@@ -2,6 +2,7 @@ export { default as About } from './About/About';
 export { default as AdminDashboard } from './AdminDashboard/AdminDashboard';
 export { default as CommunityCreate } from './CommunityCreate/CommunityCreate';
 export { default as Dashboard } from './Dashboard/Dashboard';
+export { default as Dash } from './Dash/Dash';
 export { default as Explore } from './Explore/Explore';
 export { default as Landing } from './Landing/Landing';
 export { default as Login } from './Login/Login';

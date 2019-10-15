@@ -5,7 +5,19 @@ import { resolve } from 'path';
 import queryString from 'query-string';
 import amqplib from 'amqplib';
 import { remove as removeDiacritics } from 'diacritics';
-import { Collection, Community, Page, User } from '../models';
+import {
+	Collection,
+	Community,
+	Page,
+	User,
+	Pub,
+	CollectionPub,
+	Discussion,
+	Review,
+	PubAttribution,
+	CollectionAttribution,
+	Merge,
+} from '../models';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 
@@ -149,6 +161,77 @@ export const getInitialData = (req) => {
 				model: Collection,
 				as: 'collections',
 				separate: true,
+				include: [
+					{
+						model: CollectionAttribution,
+						as: 'attributions',
+						include: [
+							{
+								model: User,
+								as: 'user',
+								attributes: attributesPublicUser,
+							},
+						],
+					},
+				],
+			},
+			{
+				model: Pub,
+				as: 'pubs',
+				separate: true,
+				attributes: ['id', 'slug', 'title', 'avatar', 'doi', 'createdAt'],
+				include: [
+					{
+						model: CollectionPub,
+						as: 'collectionPubs',
+						required: false,
+						separate: true,
+						attributes: ['id', 'collectionId', 'pubId', 'isPrimary', 'rank'],
+					},
+					{
+						required: false,
+						separate: true,
+						model: Discussion,
+						as: 'discussions',
+						attributes: ['id', 'title', 'threadNumber', 'userId', 'pubId', 'createdAt'],
+						include: [
+							{
+								model: User,
+								as: 'author',
+								required: false,
+								attributes: attributesPublicUser,
+							},
+						],
+					},
+					{
+						required: false,
+						separate: true,
+						model: Review,
+						as: 'reviews',
+						attributes: ['id'],
+					},
+					{
+						required: false,
+						separate: true,
+						model: Merge,
+						as: 'merges',
+						attributes: ['id'],
+					},
+					{
+						model: PubAttribution,
+						as: 'attributions',
+						required: false,
+						separate: true,
+						include: [
+							{
+								model: User,
+								as: 'user',
+								required: false,
+								attributes: attributesPublicUser,
+							},
+						],
+					},
+				],
 			},
 		],
 	}).then((communityResult) => {

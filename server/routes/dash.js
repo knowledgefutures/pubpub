@@ -11,6 +11,7 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
+import { getPermissionLevel } from '../utils/memberPermissions';
 
 app.get(
 	[
@@ -31,10 +32,22 @@ app.get(
 
 		return getInitialData(req)
 			.then((initialData) => {
+				return Promise.all([
+					initialData,
+					getPermissionLevel({
+						userId: initialData.loginData.id,
+						targetId: 'd2112c45-7188-490e-a8c2-28542097a749',
+						targetType: 'pub',
+					}),
+				]);
+			})
+			.then(([initialData, permissionLevel]) => {
+				console.log('permissionLevel: ', permissionLevel);
 				const mode = initialData.locationData.params.mode || 'overview';
 				const capitalizeFirstLetter = (string) => {
 					return string.charAt(0).toUpperCase() + string.slice(1);
 				};
+				console.log(initialData.loginData.id, initialData.communityData.id);
 				return renderToNodeStream(
 					res,
 					<Html

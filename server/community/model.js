@@ -60,11 +60,19 @@ export default (sequelize, dataTypes) => {
 			isFeatured: { type: dataTypes.BOOLEAN },
 			premiumLicenseFlag: { type: dataTypes.BOOLEAN, defaultValue: false },
 			defaultPubCollections: { type: dataTypes.JSONB },
+
+			/* Set by Associations */
+			organizationId: { type: dataTypes.UUID },
 		},
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Community, User, Collection, Discussion, Page, Pub } = models;
+					const { Community, Organization, User, Collection, Discussion, Page, Pub } = models;
+					Community.belongsTo(Organization, {
+						onDelete: 'CASCADE',
+						as: 'organization',
+						foreignKey: 'organizationId',
+					});
 					Community.belongsToMany(User, {
 						as: 'admins',
 						through: 'CommunityAdmin',

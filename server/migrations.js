@@ -679,6 +679,31 @@ new Promise((resolve) => {
 	// 		defaultValue: false,
 	// 	});
 	// })
+
+	/* New Dashboard migrations */
+	// .then(() => {
+	// 	return sequelize.queryInterface.addColumn('Communities', 'organizationId', {
+	// 		type: Sequelize.UUID,
+	// 		defaultValue: null,
+	// 	});
+	// })
+
+	/* Need to add in dashboard world */
+	/*
+		Pub.publicPermissions
+		Collection.publicPermissions
+		Community.publicPermissions
+		Organization.publicPermissions
+	*/
+		
+	/* Can Deprecate in dashboard world */
+	/*
+		discussions' communityId
+		PubManagers
+		CommunityAdmins
+		BranchPermissions
+
+	*/
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

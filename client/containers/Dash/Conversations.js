@@ -5,7 +5,7 @@ import TimeAgo from 'react-timeago';
 import fuzzysearch from 'fuzzysearch';
 import { nestDiscussionsToThreads } from 'containers/Pub/PubDocument/PubDiscussions/discussionUtils';
 import { Icon } from 'components';
-import { getDashUrl, getActiveDiscussions } from './utils';
+import { getDashUrl, getActiveDiscussions } from 'utils/dashboard';
 
 require('./conversations.scss');
 

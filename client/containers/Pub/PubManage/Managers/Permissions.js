@@ -129,8 +129,8 @@ const Permissions = (props) => {
 									<Avatar
 										key="avatar"
 										width={25}
-										userInitials={manager.user.initials}
-										userAvatar={manager.user.avatar}
+										initials={manager.user.initials}
+										avatar={manager.user.avatar}
 									/>,
 									<span key="name">{manager.user.fullName}</span>,
 								]}

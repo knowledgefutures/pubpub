@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from 'components';
-import { getDashUrl } from './utils';
-import AvatarBlock from './AvatarBlock';
+import { Avatar, Icon } from 'components';
+import { getDashUrl } from 'utils/dashboard';
 
 require('./breadcrumbs.scss');
 
@@ -29,11 +28,11 @@ const Breadcrumbs = (props) => {
 			<a className="crumb truncate" href={getDashUrl({})}>
 				<div className="top">Community</div>
 				<div className="bottom">
-					<AvatarBlock
+					<Avatar
 						avatar={communityData.avatar}
-						title={communityData.title}
-						communityData={communityData}
+						initials={communityData.title[0]}
 						width={12}
+						isBlock={true}
 					/>
 					<span className="bottom-text">{communityData.title}</span>
 				</div>
@@ -47,11 +46,11 @@ const Breadcrumbs = (props) => {
 					>
 						<div className="top">Collection</div>
 						<div className="bottom">
-							<AvatarBlock
+							<Avatar
 								avatar={activeCollection.avatar}
-								title={activeCollection.title}
-								communityData={communityData}
+								initials={activeCollection.title[0]}
 								width={12}
+								isBlock={true}
 							/>
 							<span className="bottom-text">{activeCollection.title}</span>
 						</div>
@@ -68,11 +67,11 @@ const Breadcrumbs = (props) => {
 					>
 						<div className="top">Pub</div>
 						<div className="bottom">
-							<AvatarBlock
+							<Avatar
 								avatar={activePub.avatar}
-								title={activePub.title}
-								communityData={communityData}
+								initials={activePub.title[0]}
 								width={12}
+								isBlock={true}
 							/>
 							<span className="bottom-text">{activePub.title}</span>
 						</div>

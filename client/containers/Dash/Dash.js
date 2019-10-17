@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { hydrateWrapper } from 'utils';
-import { AccentStyle, Header } from 'components';
-import SideMenu from './SideMenu';
-import Breadcrumbs from './Breadcrumbs';
+import { PageWrapper } from 'components';
 import ContentOverview from './ContentOverview';
 import PubOverview from './PubOverview';
 import Conversations from './Conversations';
@@ -27,41 +25,34 @@ const Dash = (props) => {
 
 	return (
 		<div className="container-dash">
-			<AccentStyle communityData={communityData} isNavHidden={true} />
-			<Header
+			<PageWrapper
+				loginData={loginData}
 				communityData={communityData}
 				locationData={locationData}
-				loginData={loginData}
-			/>
-			<div className="side-content">
-				<SideMenu communityData={communityData} locationData={locationData} />
-			</div>
-			<div className="body-block">
-				<div className="body-content">
-					<Breadcrumbs communityData={communityData} locationData={locationData} />
-					{activeMode === 'overview' && !pubSlug && (
-						<ContentOverview
-							communityData={communityData}
-							locationData={locationData}
-							loginData={loginData}
-						/>
-					)}
-					{activeMode === 'overview' && pubSlug && (
-						<PubOverview
-							communityData={communityData}
-							locationData={locationData}
-							loginData={loginData}
-						/>
-					)}
-					{activeMode === 'conversations' && activeSubmode === 'list' && (
-						<Conversations
-							communityData={communityData}
-							locationData={locationData}
-							loginData={loginData}
-						/>
-					)}
-				</div>
-			</div>
+				isDashboard={true}
+			>
+				{activeMode === 'overview' && !pubSlug && (
+					<ContentOverview
+						communityData={communityData}
+						locationData={locationData}
+						loginData={loginData}
+					/>
+				)}
+				{activeMode === 'overview' && pubSlug && (
+					<PubOverview
+						communityData={communityData}
+						locationData={locationData}
+						loginData={loginData}
+					/>
+				)}
+				{activeMode === 'conversations' && activeSubmode === 'list' && (
+					<Conversations
+						communityData={communityData}
+						locationData={locationData}
+						loginData={loginData}
+					/>
+				)}
+			</PageWrapper>
 		</div>
 	);
 };

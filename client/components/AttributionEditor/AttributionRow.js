@@ -143,7 +143,7 @@ const AttributionRow = (props) => {
 				</div>
 			)}
 			<div className="avatar-wrapper">
-				<Avatar width={50} userInitials={user.initials} userAvatar={user.avatar} />
+				<Avatar width={50} initials={user.initials} avatar={user.avatar} />
 			</div>
 			<div className="content">
 				<div className="top-content">

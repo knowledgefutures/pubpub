@@ -10,7 +10,7 @@
 		.top {
 			font-size: 12px;
 			opacity: 0.5;
-			.avatar-block {
+			.avatar-component {
 				margin-left: 5px;
 			}
 		}
@@ -20,7 +20,7 @@
 			overflow: hidden;
 			display: flex;
 			align-items: center;
-			.avatar-block {
+			.avatar-component {
 				margin-right: 5px;
 			}
 			&.capitalize {

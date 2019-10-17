@@ -341,8 +341,8 @@ class Header extends Component {
 								>
 									<Button large={true} minimal={true}>
 										<Avatar
-											userInitials={this.props.loginData.initials}
-											userAvatar={this.props.loginData.avatar}
+											initials={this.props.loginData.initials}
+											avatar={this.props.loginData.avatar}
 											width={30}
 										/>
 									</Button>

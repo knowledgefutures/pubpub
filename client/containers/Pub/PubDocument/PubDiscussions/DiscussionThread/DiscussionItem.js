@@ -75,8 +75,8 @@ const DiscussionItem = (props) => {
 			<div className="avatar-wrapper">
 				<Avatar
 					width={18}
-					userInitials={discussionData.author.intials}
-					userAvatar={discussionData.author.avatar}
+					initials={discussionData.author.intials}
+					avatar={discussionData.author.avatar}
 				/>
 			</div>
 			<div className="content-wrapper">

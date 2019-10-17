@@ -120,8 +120,8 @@ class Login extends Component {
 							<NonIdealState
 								visual={
 									<Avatar
-										userInitials={this.props.loginData.initials}
-										userAvatar={this.props.loginData.avatar}
+										initials={this.props.loginData.initials}
+										avatar={this.props.loginData.avatar}
 										width={100}
 									/>
 								}

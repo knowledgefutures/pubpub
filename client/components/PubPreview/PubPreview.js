@@ -132,8 +132,8 @@ const PubPreview = function(props) {
 									<Avatar
 										key={`avatar-${collaborator.id}`}
 										instanceNumber={index}
-										userInitials={collaborator.user.initials}
-										userAvatar={collaborator.user.avatar}
+										initials={collaborator.user.initials}
+										avatar={collaborator.user.avatar}
 										borderColor="rgba(255, 255, 255, 1.0)"
 										width={20}
 										doesOverlap={true}

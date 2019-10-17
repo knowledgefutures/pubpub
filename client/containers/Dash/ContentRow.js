@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Tag, Intent } from '@blueprintjs/core';
 import { Icon } from 'components';
 import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
-import { getDashUrl } from './utils';
+import { getDashUrl } from 'utils/dashboard';
 
 require('./contentRow.scss');
 

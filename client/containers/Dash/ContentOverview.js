@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { Button, InputGroup } from '@blueprintjs/core';
 import fuzzysearch from 'fuzzysearch';
 import classNames from 'classnames';
+import { Avatar } from 'components';
 import { generatePlainAuthorString } from 'components/PubPreview/pubPreviewUtils';
-import { groupPubs } from './utils';
+import { groupPubs } from 'utils/dashboard';
 import ContentRow from './ContentRow';
-import AvatarBlock from './AvatarBlock';
 
 require('./contentOverview.scss');
 
@@ -77,11 +77,14 @@ const ContentOverview = (props) => {
 	return (
 		<div className="content-overview-component">
 			<div className="header">
-				<AvatarBlock
+				<Avatar
 					avatar={!collectionSlug && communityData.avatar}
-					title={activeCollection ? activeCollection.title : communityData.title}
+					initials={
+						activeCollection.title ? activeCollection.title[0] : communityData.title[0]
+					}
 					communityData={communityData}
 					width={75}
+					isBlock={true}
 				/>
 				<div className={classNames({ 'header-name': true, collection: collectionSlug })}>
 					{collectionSlug ? activeCollection.title : communityData.title}

@@ -167,8 +167,8 @@ const PubBranchCreate = (props) => {
 									<Avatar
 										key="avatar"
 										width={25}
-										userInitials={permission.user.initials}
-										userAvatar={permission.user.avatar}
+										initials={permission.user.initials}
+										avatar={permission.user.avatar}
 									/>,
 									<span key="name">{permission.user.fullName}</span>,
 								]}

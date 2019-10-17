@@ -101,8 +101,8 @@ class UserAutocomplete extends Component {
 								>
 									{item.fullName && (
 										<Avatar
-											userInitials={item.initials}
-											userAvatar={item.avatar}
+											initials={item.initials}
+											avatar={item.avatar}
 											width={25}
 										/>
 									)}

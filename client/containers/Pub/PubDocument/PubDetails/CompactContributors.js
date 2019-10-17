@@ -18,8 +18,8 @@ const CompactContributors = (props) => {
 			{contributorsWithAvatars.map((contributor) => (
 				<Avatar
 					key={contributor.id}
-					userInitials={contributor.user.initials}
-					userAvatar={contributor.user.avatar}
+					initials={contributor.user.initials}
+					avatar={contributor.user.avatar}
 					width={20}
 				/>
 			))}

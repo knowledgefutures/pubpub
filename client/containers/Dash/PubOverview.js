@@ -5,7 +5,7 @@ import dateFormat from 'dateformat';
 import { getAllPubContributors } from 'utils/pubContributors';
 import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
 import Contributors from 'containers/Pub/PubDocument/PubDetails/Contributors';
-import AvatarBlock from './AvatarBlock';
+import { Avatar } from 'components';
 
 require('./pubOverview.scss');
 
@@ -23,11 +23,12 @@ const PubOverview = (props) => {
 	return (
 		<div className="pub-overview-component">
 			<div className="header">
-				<AvatarBlock
+				<Avatar
 					avatar={activePub.avatar}
-					title={activePub.title}
+					initials={activePub.title[0]}
 					communityData={communityData}
 					width={75}
+					isBlock={true}
 				/>
 				<div className="header-name">
 					<div className="title">{activePub.title}</div>

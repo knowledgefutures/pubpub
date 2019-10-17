@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { getDashUrl } from './utils';
-import AvatarBlock from './AvatarBlock';
+import { getDashUrl } from 'utils/dashboard';
+import { Avatar } from 'components';
 
 require('./topTabs.scss');
 
@@ -96,11 +96,12 @@ const TopTabs = (props) => {
 						})}
 					>
 						<div className="title">{tab.title}</div>
-						<AvatarBlock
+						<Avatar
 							avatar={tab.avatar}
-							title={tab.contentTitle}
+							initials={tab.contentTitle[0]}
 							communityData={communityData}
 							width={25}
+							isBlock={true}
 						/>
 					</a>
 				);

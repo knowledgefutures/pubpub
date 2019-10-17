@@ -58,8 +58,8 @@ const UserHeader = function(props) {
 		<div className="user-header-component">
 			<div className="avatar-wrapper">
 				<Avatar
-					userAvatar={props.userData.avatar}
-					userInitials={props.userData.initials}
+					avatar={props.userData.avatar}
+					initials={props.userData.initials}
 					width={150}
 				/>
 				{props.isUser && (

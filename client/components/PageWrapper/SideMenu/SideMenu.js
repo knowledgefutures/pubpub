@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Icon } from 'components';
 import TopTabs from './TopTabs';
-import { getDashUrl, getActiveDiscussions } from './utils';
+import { getDashUrl, getActiveDiscussions } from 'utils/dashboard';
 
 require('./sideMenu.scss');
 

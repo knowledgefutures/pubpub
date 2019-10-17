@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Header, Footer, GdprBanner, AccentStyle, NavBar, Icon } from 'components';
 import { populateNavigationIds } from 'utils';
+import SideMenu from './SideMenu';
+import Breadcrumbs from './Breadcrumbs';
 
 require('./pageWrapper.scss');
 
@@ -10,13 +13,13 @@ const propTypes = {
 	loginData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
 	children: PropTypes.node.isRequired,
-	fixHeader: PropTypes.bool,
+	isDashboard: PropTypes.bool,
 	hideNav: PropTypes.bool,
 	hideFooter: PropTypes.bool,
 };
 
 const defaultProps = {
-	fixHeader: false,
+	isDashboard: false,
 	hideNav: false,
 	hideFooter: false,
 };
@@ -24,9 +27,15 @@ const defaultProps = {
 export const PageContext = React.createContext({});
 
 const PageWrapper = (props) => {
-	const loginData = props.loginData;
-	const communityData = props.communityData;
-
+	const {
+		loginData,
+		communityData,
+		locationData,
+		children,
+		isDashboard,
+		hideNav,
+		hideFooter,
+	} = props;
 	const pages = communityData.pages || [];
 	const navigation = communityData.navigation || [];
 	const navItems = populateNavigationIds(pages, navigation);
@@ -64,59 +73,48 @@ const PageWrapper = (props) => {
 	});
 
 	const pageContextProps = {
-		communityData: props.communityData,
-		loginData: props.loginData,
-		locationData: props.locationData,
+		communityData: communityData,
+		loginData: loginData,
+		locationData: locationData,
 	};
+
+	const showNav = !hideNav && !communityData.hideNav && !isDashboard;
+	const showFooter = !hideFooter && !isDashboard;
 	return (
 		<PageContext.Provider value={pageContextProps}>
-			<div id="page-wrapper-component">
-				{props.fixHeader && (
-					<style>
-						{`
-						.header-component { position: fixed; width: 100%; z-index: 19; }
-						.page-content { padding-top: 56px; }
-					`}
-					</style>
-				)}
+			<div id="page-wrapper-component" className={classNames({ dashboard: isDashboard })}>
+				<AccentStyle communityData={communityData} isNavHidden={!showNav} />
 
-				<AccentStyle
-					communityData={communityData}
-					isNavHidden={props.hideNav || communityData.hideNav}
-					// accentColorDark={communityData.accentColorDark}
-					// headerColorType={communityData.headerColorType}
-					// accentTextColor={communityData.accentTextColor}
-					// accentActionColor={communityData.accentActionColor}
-					// accentHoverColor={communityData.accentHoverColor}
-					// accentMinimalColor={communityData.accentMinimalColor}
-				/>
-
-				{props.locationData.isDuqDuq && (
+				{locationData.isDuqDuq && (
 					<div className="duqduq-warning">Development Environment</div>
 				)}
 
-				<GdprBanner loginData={props.loginData} />
+				<GdprBanner loginData={loginData} />
 
 				<Header
-					communityData={props.communityData}
-					locationData={props.locationData}
-					loginData={props.loginData}
-					// smallHeaderLogo={communityData.smallHeaderLogo}
-					// largeHeaderLogo={communityData.largeHeaderLogo}
-					// largeHeaderDescription={communityData.largeHeaderDescription}
-					// largeHeaderBackground={communityData.largeHeaderBackground}
+					communityData={communityData}
+					locationData={locationData}
+					loginData={loginData}
 				/>
 
-				{!props.hideNav && !props.communityData.hideNav && (
-					<NavBar navItems={navItems} socialItems={socialItems} />
+				{showNav && <NavBar navItems={navItems} socialItems={socialItems} />}
+
+				{isDashboard && (
+					<div className="side-content">
+						<SideMenu communityData={communityData} locationData={locationData} />
+					</div>
 				)}
+				<div className="page-content">
+					{isDashboard && (
+						<Breadcrumbs communityData={communityData} locationData={locationData} />
+					)}
+					{children}
+				</div>
 
-				<div className="page-content">{props.children}</div>
-
-				{!props.hideFooter && (
+				{showFooter && (
 					<Footer
 						isAdmin={loginData.isAdmin}
-						isBasePubPub={props.locationData.isBasePubPub}
+						isBasePubPub={locationData.isBasePubPub}
 						communityData={communityData}
 						socialItems={socialItems}
 					/>

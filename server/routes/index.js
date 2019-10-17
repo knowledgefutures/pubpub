@@ -1,7 +1,11 @@
 require('./redirects'); // Redirect needed v3 routes;
 
+/* Routes for Communities */
+require('./dashboard'); // Route: ['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug']
+require('./dash'); // Route: '/'
 require('./pub'); // Route: ['/pub/:slug', '/pub/:slug/branch/:branchShortId', '/pub/:slug/:mode']
-// require('./pubTest'); // Route: '/pub-test'
+require('./page'); // Route: ['/', '/:slug']
+require('./collection'); // Route: /collection/:id
 
 /* Routes for PubPub */
 require('./communityCreate'); // Route: '/community/create'
@@ -11,13 +15,6 @@ require('./pricing'); // Route: '/pricing'
 require('./pubRedirect'); // Route: '/pub/:slug'
 require('./adminDashboard'); // Route: '/admin'
 require('./landing'); // Route: '/'
-
-/* Routes for Communities */
-require('./dashboard'); // Route: ['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug']
-require('./dash'); // Route: '/'
-// require('./pub'); // Route: ['/pub/:slug', '/pub/:slug/content/:chapterId', '/pub/:slug/draft', '/pub/:slug/draft/content/:chapterId', '/pub/:slug/:mode', '/pub/:slug/:mode/:subMode']
-require('./page'); // Route: ['/', '/:slug']
-require('./collection'); // Route: /collection/:id
 
 /* Routes for all */
 require('./login'); // Route: '/login'
@@ -29,3 +26,15 @@ require('./passwordReset'); // Route: ['/password-reset', '/password-reset/:rese
 require('./userCreate'); // Route: '/user/create/:hash'
 require('./user'); // Route: ['/user/:slug', '/user/:slug/:mode']
 require('./noMatch'); // Route: '/*'
+
+
+// dashboardOverviewContent
+// dashboardOverviewPub
+// dashboardOverviewOrganization
+// dashboardActivity
+// dashboardConversations
+// dashboardReviews
+// dashboardMembers
+// dashboardMetrics
+// dashboardSettings
+// dashboardSite

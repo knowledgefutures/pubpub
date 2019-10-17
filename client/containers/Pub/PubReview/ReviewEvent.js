@@ -47,8 +47,8 @@ const ReviewEvent = (props) => {
 		<div className="review-event-component">
 			<Avatar
 				width={30}
-				userInitials={eventData.user.initials}
-				userAvatar={eventData.user.avatar}
+				initials={eventData.user.initials}
+				avatar={eventData.user.avatar}
 			/>
 			<div className="event-content">
 				<a className="user" href={`/user/${eventData.user.slug}`}>

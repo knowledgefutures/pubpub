@@ -13,10 +13,10 @@ const Contributor = function(props) {
 	const { user, affiliation } = attribution;
 	const avatarElement = user.slug ? (
 		<a href={`/user/${user.slug}`}>
-			<Avatar userInitials={user.initials} userAvatar={user.avatar} width={30} />
+			<Avatar initials={user.initials} avatar={user.avatar} width={30} />
 		</a>
 	) : (
-		<Avatar userInitials={user.initials} userAvatar={user.avatar} width={30} />
+		<Avatar initials={user.initials} avatar={user.avatar} width={30} />
 	);
 
 	const nameElement = user.slug ? (

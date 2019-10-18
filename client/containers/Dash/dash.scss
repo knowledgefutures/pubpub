@@ -1,33 +1,33 @@
 .container-dash {
-	$side-menu-width: 235px;
-	.header-component {
-		position: fixed;
-		width: 100%;
-		.container {
-			max-width: 100%;
-			width: 100%;
-		}
-		.col-12 {
-			margin-left: 16px;
-			margin-right: 16px;
-			width: calc(100% - 32px);
-		}
-	}
-	.side-content {
-		width: $side-menu-width;
-		border-right: 1px solid #ddd;
-		position: fixed;
-		height: calc(100vh - 56px);
-		top: 56px;
-		overflow: scroll;
-	}
-	.body-block {
-		padding-top: 56px;
-		padding-left: $side-menu-width;
-	}
-	.body-content {
-		padding: 1em 16px;
-		max-width: 1024px;
-		margin: 0 auto;
-	}
+	// $side-menu-width: 235px;
+	// .header-component {
+	// 	position: fixed;
+	// 	width: 100%;
+	// 	.container {
+	// 		max-width: 100%;
+	// 		width: 100%;
+	// 	}
+	// 	.col-12 {
+	// 		margin-left: 16px;
+	// 		margin-right: 16px;
+	// 		width: calc(100% - 32px);
+	// 	}
+	// }
+	// .side-content {
+	// 	width: $side-menu-width;
+	// 	border-right: 1px solid #ddd;
+	// 	position: fixed;
+	// 	height: calc(100vh - 56px);
+	// 	top: 56px;
+	// 	overflow: scroll;
+	// }
+	// .body-block {
+	// 	padding-top: 56px;
+	// 	padding-left: $side-menu-width;
+	// }
+	// .body-content {
+	// 	padding: 1em 16px;
+	// 	max-width: 1024px;
+	// 	margin: 0 auto;
+	// }
 }

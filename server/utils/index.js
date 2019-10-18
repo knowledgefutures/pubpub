@@ -131,6 +131,7 @@ export const getInitialData = (req) => {
 	}
 
 	/* If we have a community to find, search, and then return */
+	console.time('added query');
 	return Community.findOne({
 		where: whereQuery,
 		attributes: {
@@ -161,6 +162,7 @@ export const getInitialData = (req) => {
 				model: Collection,
 				as: 'collections',
 				separate: true,
+				// --------
 				include: [
 					{
 						model: CollectionAttribution,
@@ -235,6 +237,7 @@ export const getInitialData = (req) => {
 			},
 		],
 	}).then((communityResult) => {
+		console.timeEnd('added query');
 		if (!communityResult) {
 			throw new Error('Community Not Found');
 		}

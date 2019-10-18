@@ -27,7 +27,7 @@ const dataDir =
 const formatTypes = {
 	docx: { output: 'docx', extension: 'docx' },
 	// pdf: { output: 'latex', extension: 'pdf', flags: ` --pdf-engine=xelatex --template=${__dirname}/template.tex` },
-	pdf: { output: 'latex', extension: 'pdf', flags: ' --pdf-engine=xelatex' },
+	pdf: { output: 'latex', extension: 'pdf', flags: ' --pdf-engine=pdflatex' },
 	epub: { output: 'epub', extension: 'epub' },
 	html: { output: 'html', extension: 'html' },
 	markdown: { output: 'markdown_strict', extension: 'md' },

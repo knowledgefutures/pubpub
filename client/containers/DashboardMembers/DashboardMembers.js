@@ -22,15 +22,29 @@ const DashboardMembers = (props) => {
 	if (locationData.params.collectionSlug) {
 		scope = 'Collection';
 	}
-	if (locationData.params.pubSlug) {
+	if (true || locationData.params.pubSlug) {
 		scope = 'Pub';
 	}
 
 	const pubMembers = membersData.members.filter((mb) => mb.pubId);
-	const collectionMembers = membersData.members.filter((mb) => mb.collectionId);
-	const communityMembers = membersData.members.filter((mb) => mb.communityId);
-	const organizationMembers = membersData.members.filter((mb) => mb.organizationId);
-	const hasInheritedMembers = collectionMembers || communityMembers || organizationMembers;
+	const collectionMembers = membersData.members.filter(
+		(mb) =>
+			scope !== 'Collection' &&
+			scope !== 'Community' &&
+			scope !== 'Organization' &&
+			mb.collectionId,
+	);
+	const communityMembers = membersData.members.filter(
+		(mb) => scope !== 'Community' && scope !== 'Organization' && mb.communityId,
+	);
+	const organizationMembers = membersData.members.filter(
+		(mb) => scope !== 'Organization' && mb.organizationId,
+	);
+	const hasInheritedMembers = !!(
+		collectionMembers.length ||
+		communityMembers.length ||
+		organizationMembers.length
+	);
 
 	return (
 		<div className="dashboard-members-container">
@@ -46,11 +60,13 @@ const DashboardMembers = (props) => {
 					<ControlGroup>
 						<InputGroup
 							fill
+							large
 							placeholder="Search by name, username, or invite by email"
 						/>
-						<Button text="Add" intent={Intent.PRIMARY} />
+						<Button large text="Add" intent={Intent.PRIMARY} />
 					</ControlGroup>
 				</SettingsSection>
+
 				<SettingsSection title="Members">
 					{membersData.invitations.map((invitation) => {
 						return <MemberRow isInvitation={true} memberData={invitation} />;

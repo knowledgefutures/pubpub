@@ -1,0 +1,21 @@
+.inherited-block-component {
+	padding: 1em;
+	margin-bottom: 1em;
+	background: #f9f9f9;
+	border: 1px solid #e0e0e0;
+	.top {
+		display: flex;
+		justify-content: space-between;
+		.scope {
+			font-weight: bold;
+		}
+	}
+	.preview-block {
+		.avatar-component {
+			margin-right: 5px;
+		}
+	}
+	.members-block {
+		margin-top: 2em;
+	}
+}

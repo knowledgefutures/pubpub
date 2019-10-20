@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { getResizedUrl } from 'utils';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 
@@ -14,6 +15,7 @@ const propTypes = {
 	borderWidth: PropTypes.string,
 	doesOverlap: PropTypes.bool, // Boolean on whether a lisst of avatars will be overlapping
 	isBlock: PropTypes.bool,
+	className: PropTypes.string,
 };
 
 const defaultProps = {
@@ -24,6 +26,7 @@ const defaultProps = {
 	borderWidth: undefined,
 	doesOverlap: false,
 	isBlock: false,
+	className: '',
 };
 
 const Avatar = function(props) {
@@ -36,6 +39,7 @@ const Avatar = function(props) {
 		width,
 		doesOverlap,
 		isBlock,
+		className,
 	} = props;
 	const { communityData } = useContext(PageContext);
 
@@ -62,7 +66,7 @@ const Avatar = function(props) {
 	}
 
 	return (
-		<div className="avatar-component" style={avatarStyle}>
+		<div className={classNames(['avatar-component', className])} style={avatarStyle}>
 			{!avatar && <div>{initials}</div>}
 		</div>
 	);

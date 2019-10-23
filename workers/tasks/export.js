@@ -48,9 +48,13 @@ const formatTypes = {
 - Have a 'check task' route and 'task' table that can be queried for task results
 */
 
-const filterNonExportableNodes = (nodes) => nodes.filter((n) => n.type !== 'discussion');
+const filterNonExportableNodes = (nodes, filterHorizontalRules) =>
+	nodes.filter(
+		(n) =>
+			!(n.type === 'discussion' || (filterHorizontalRules && n.type === 'horizontal_rule')),
+	);
 
-const createStaticHtml = async (pubData, branchDoc) => {
+const createStaticHtml = async (pubData, branchDoc, format) => {
 	const { title } = pubData;
 	const { content: branchDocNodes } = branchDoc;
 	const schema = buildSchema();
@@ -79,7 +83,11 @@ const createStaticHtml = async (pubData, branchDoc) => {
 						<strong>DOI:</strong> {pubData.doi}
 					</div>
 				)}
-				{renderStatic(schema, filterNonExportableNodes(branchDocNodes), {})}
+				{renderStatic(
+					schema,
+					filterNonExportableNodes(branchDocNodes, format === 'pdf'),
+					{},
+				)}
 				<SimpleNotesList title="Footnotes" notes={footnotes} />
 				<SimpleNotesList title="Citations" notes={citations} />
 			</body>
@@ -162,7 +170,7 @@ export default async (pubId, branchId, format) => {
 	});
 	const tmpFile = await tmp.file({ postfix: `.${extension}` });
 	const { content: branchDoc } = await getBranchDoc(pubId, branchId);
-	const staticHtml = await createStaticHtml(pubData, branchDoc);
+	const staticHtml = await createStaticHtml(pubData, branchDoc, format);
 	const metadataFile = await createYamlMetadataFile(pubData);
 	await callPandoc(staticHtml, metadataFile, tmpFile, format);
 	return uploadDocument(branchId, fs.createReadStream(tmpFile.path), extension);

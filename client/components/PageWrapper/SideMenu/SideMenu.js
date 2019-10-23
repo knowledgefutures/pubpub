@@ -129,7 +129,7 @@ const SideMenu = (props) => {
 			}),
 		},
 		{
-			title: 'Metrics',
+			title: 'Impact',
 			icon: 'dashboard',
 			href: getDashUrl({
 				collectionSlug: collectionSlug,

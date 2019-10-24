@@ -134,7 +134,7 @@ const SideMenu = (props) => {
 			href: getDashUrl({
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
-				mode: 'metrics',
+				mode: 'impact',
 			}),
 		},
 		{

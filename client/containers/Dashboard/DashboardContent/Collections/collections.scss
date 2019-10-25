@@ -2,6 +2,12 @@
 	.top-controls {
 		.top-controls-cards {
 			display: flex;
+			.top-controls-card-button {
+				border: 0;
+				padding: 0;
+				font-size: 100%;
+				background: none;
+			}
 			.top-controls-card {
 				padding: 10px;
 				width: 25%;

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Header, Footer, GdprBanner, AccentStyle, NavBar, Icon } from 'components';
+import { Header, Footer, GdprBanner, AccentStyle, NavBar, Icon, SkipLink } from 'components';
 import { populateNavigationIds } from 'utils';
 
 require('./pageWrapper.scss');
@@ -95,6 +95,8 @@ const PageWrapper = (props) => {
 					<div className="duqduq-warning">Development Environment</div>
 				)}
 
+				<SkipLink targetId="main-content">Skip to main content</SkipLink>
+
 				<GdprBanner loginData={props.loginData} />
 
 				<Header
@@ -111,7 +113,9 @@ const PageWrapper = (props) => {
 					<NavBar navItems={navItems} socialItems={socialItems} />
 				)}
 
-				<div className="page-content">{props.children}</div>
+				<div id="main-content" tabIndex="-1" className="page-content">
+					{props.children}
+				</div>
 
 				{!props.hideFooter && (
 					<Footer

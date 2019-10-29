@@ -62,7 +62,11 @@ const NavBar = function(props) {
 					<ul className="social-list">
 						{props.socialItems.map((item) => {
 							return (
-								<a href={item.url} key={`social-item-${item.id}`}>
+								<a
+									href={item.url}
+									key={`social-item-${item.id}`}
+									aria-label={item.title}
+								>
 									<li>{item.icon}</li>
 								</a>
 							);

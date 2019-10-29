@@ -187,18 +187,20 @@ class Header extends Component {
 		const heroSecondaryButton = this.props.communityData.heroSecondaryButton || {};
 
 		return (
-			<nav className={`header-component ${componentClasses}`} style={backgroundStyle}>
+			<header className={`header-component ${componentClasses}`} style={backgroundStyle}>
 				<div className={mainClasses}>
 					<GridWrapper columnClassName="main-content">
 						<div className="logo-wrapper">
 							{!hideHeaderLogo && (
-								<a href="/">
+								<a href="/" aria-label={this.props.communityData.title}>
 									{this.props.communityData.headerLogo && (
-										<img
-											style={isBasePubPub ? { padding: '1px 0px' } : {}}
-											alt="Community Logo"
-											src={resizedHeaderLogo}
-										/>
+										<React.Fragment>
+											<img
+												alt=""
+												style={isBasePubPub ? { padding: '1px 0px' } : {}}
+												src={resizedHeaderLogo}
+											/>
+										</React.Fragment>
 									)}
 									{!this.props.communityData.headerLogo && (
 										<span>{this.props.communityData.title}</span>
@@ -290,7 +292,10 @@ class Header extends Component {
 							<div className="hero-copy">
 								{this.props.communityData.heroLogo && (
 									<div className="hero-logo">
-										<img alt="Community Logo" src={resizedHeroLogo} />
+										<img
+											alt={this.props.communityData.title}
+											src={resizedHeroLogo}
+										/>
 									</div>
 								)}
 								{this.props.communityData.heroTitle && (
@@ -330,7 +335,7 @@ class Header extends Component {
 						</GridWrapper>
 					</div>
 				)}
-			</nav>
+			</header>
 		);
 	}
 }

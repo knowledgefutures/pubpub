@@ -149,7 +149,7 @@ const PubBody = (props) => {
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;
 	return (
-		<div className="pub-body-component">
+		<main className="pub-body-component">
 			<style>
 				{`
 					.editor.ProseMirror h1#abstract:first-child {
@@ -300,7 +300,7 @@ const PubBody = (props) => {
 					mountRef.current,
 				);
 			})}
-		</div>
+		</main>
 	);
 };
 

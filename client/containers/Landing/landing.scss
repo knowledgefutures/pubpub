@@ -16,6 +16,9 @@
 		text-align: center;
 		.bp3-button {
 			margin: 0 0.5em;
+			&:focus {
+				outline: 2px solid white;
+			}
 		}
 	}
 

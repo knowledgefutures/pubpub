@@ -101,7 +101,7 @@ const CollectionTile = (props) => {
 						{collection.isPublic ? 'Public' : 'Private'}
 					</div>
 					{collection.page && (
-						<div className="info-label shrinks">
+						<div className="info-label shrinks" title={collection.page.title}>
 							<Icon iconSize={10} icon="link" />
 							{collection.page.title}
 						</div>

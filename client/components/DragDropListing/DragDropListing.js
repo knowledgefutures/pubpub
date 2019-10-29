@@ -44,6 +44,7 @@ const DragDropListing = (props) => {
 				<div
 					{...droppableProvided.droppableProps}
 					className={classNames(className, 'drag-drop-listing-component')}
+					role="list"
 					ref={droppableProvided.innerRef}
 				>
 					{renderEmptyState && items.length === 0 && (

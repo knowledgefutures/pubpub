@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { PageWrapper, GridWrapper } from 'components';
+import { PageWrapper, GridWrapper, SkipLink } from 'components';
 import { hydrateWrapper } from 'utils';
 import DashboardSide from './DashboardSide';
 import DashboardContent from './DashboardContent';
@@ -32,6 +32,7 @@ const Dashboard = (props) => {
 			>
 				<GridWrapper columnClassName="dashboard-columns">
 					<div className="side-content">
+						<SkipLink targetId="dashboard-content">Skip to dashboard content</SkipLink>
 						<DashboardSide
 							pages={communityData.pages}
 							activeSlug={activeSlug}
@@ -39,7 +40,7 @@ const Dashboard = (props) => {
 						/>
 					</div>
 
-					<div className="main-content">
+					<div id="dashboard-content" tabIndex="-1" className="main-content">
 						<DashboardContent
 							mode={activeMode}
 							slug={activeSlug}

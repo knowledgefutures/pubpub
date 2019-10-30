@@ -74,6 +74,7 @@ const DashboardSide = function(props) {
 						href="/dashboard/page"
 						className="bp3-small bp3-minimal title-button"
 						icon="plus"
+						aria-label="Add new page"
 					/>
 					<h6>Pages</h6>
 				</li>

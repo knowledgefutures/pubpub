@@ -45,6 +45,7 @@ export const PubSuspendWhileTyping = (props) => {
 	const setForceUpdate = useState()[1];
 	const timeRemainingToUpdate = getTimeRemainingToUpdate(delay, Date.now());
 	const shouldUpdate = timeRemainingToUpdate === 0;
+
 	const maybeClearTimeout = () => {
 		if (checkAgainRef.current) {
 			clearTimeout(checkAgainRef.current);

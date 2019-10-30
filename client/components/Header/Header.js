@@ -1,19 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-	Popover,
-	PopoverInteractionKind,
-	Position,
-	Menu,
-	MenuItem,
-	MenuDivider,
-	Button,
-	AnchorButton,
-	Intent,
-} from '@blueprintjs/core';
+import { Button, AnchorButton, Intent } from '@blueprintjs/core';
+
 import { GridWrapper } from 'components';
+import { MenuButton, MenuItem } from 'components/Menu';
 import Avatar from 'components/Avatar/Avatar';
-import DropdownButton from 'components/DropdownButton/DropdownButton';
 import { apiFetch, getResizedUrl } from 'utils';
 
 require('./header.scss');
@@ -154,7 +145,6 @@ class Header extends Component {
 	}
 
 	render() {
-		const headerLinks = this.props.communityData.headerLinks || [];
 		const hideHero = this.props.locationData.path !== '/' || this.props.communityData.hideHero;
 		const hideHeaderLogo = !hideHero && this.props.communityData.hideHeaderLogo;
 		const componentClasses = this.calculateComponentClasses(hideHero);
@@ -197,18 +187,20 @@ class Header extends Component {
 		const heroSecondaryButton = this.props.communityData.heroSecondaryButton || {};
 
 		return (
-			<nav className={`header-component ${componentClasses}`} style={backgroundStyle}>
+			<header className={`header-component ${componentClasses}`} style={backgroundStyle}>
 				<div className={mainClasses}>
 					<GridWrapper columnClassName="main-content">
 						<div className="logo-wrapper">
 							{!hideHeaderLogo && (
-								<a href="/">
+								<a href="/" aria-label={this.props.communityData.title}>
 									{this.props.communityData.headerLogo && (
-										<img
-											style={isBasePubPub ? { padding: '1px 0px' } : {}}
-											alt="Community Logo"
-											src={resizedHeaderLogo}
-										/>
+										<React.Fragment>
+											<img
+												alt=""
+												style={isBasePubPub ? { padding: '1px 0px' } : {}}
+												src={resizedHeaderLogo}
+											/>
+										</React.Fragment>
 									)}
 									{!this.props.communityData.headerLogo && (
 										<span>{this.props.communityData.title}</span>
@@ -217,51 +209,6 @@ class Header extends Component {
 							)}
 						</div>
 						<div className="buttons-wrapper">
-							{headerLinks.map((linkItem, index) => {
-								const key = `${index}-${linkItem.title}`;
-								if (linkItem.children) {
-									return (
-										<DropdownButton
-											key={key}
-											label={linkItem.title}
-											isMinimal={true}
-											isLarge={true}
-											className="hide-on-mobile"
-										>
-											<Menu>
-												{linkItem.children.map((child, cIndex) => {
-													const childKey = `${cIndex}-${child.title}`;
-													return (
-														<MenuItem
-															key={childKey}
-															text={child.title}
-															href={child.url}
-															target={child.external ? '_blank' : ''}
-															rel={
-																child.external
-																	? 'noopener noreferrer'
-																	: ''
-															}
-														/>
-													);
-												})}
-											</Menu>
-										</DropdownButton>
-									);
-								}
-								return (
-									<AnchorButton
-										key={key}
-										minimal={true}
-										large={true}
-										text={linkItem.title}
-										href={linkItem.url}
-										target={linkItem.external ? '_blank' : ''}
-										rel={linkItem.external ? 'noopener noreferrer' : ''}
-										className="hide-on-mobile"
-									/>
-								);
-							})}
 							{!isBasePubPub &&
 								loggedIn &&
 								(!this.props.communityData.hideCreatePubButton || isAdmin) && (
@@ -296,57 +243,37 @@ class Header extends Component {
 								/>
 							)}
 							{loggedIn && (
-								<Popover
-									content={
-										<Menu>
-											<li>
-												<a
-													href={`/user/${this.props.loginData.slug}`}
-													className="bp3-menu-item bp3-popover-dismiss"
-												>
-													<div>{this.props.loginData.fullName}</div>
-													<div className="subtext">View Profile</div>
-												</a>
-											</li>
-											<li>
-												<a
-													href="/privacy/settings"
-													className="bp3-menu-item bp3-popover-dismiss"
-												>
-													<div>Privacy settings</div>
-												</a>
-											</li>
-											<MenuDivider />
-											{/* !isBasePubPub &&
-														<li>
-															<a href="/pub/create" className="bp3-menu-item bp3-popover-dismiss">
-																Create New Pub
-															</a>
-														</li>
-													*/}
-											{/* !isBasePubPub && isAdmin &&
-														<li>
-															<a href="/dashboard" className="bp3-menu-item bp3-popover-dismiss">
-																Manage Community
-															</a>
-														</li>
-													*/}
-											<MenuItem text="Logout" onClick={this.handleLogout} />
-										</Menu>
-									}
-									interactionKind={PopoverInteractionKind.CLICK}
-									position={Position.BOTTOM_RIGHT}
-									transitionDuration={-1}
-									inheritDarkTheme={false}
-								>
-									<Button large={true} minimal={true}>
+								<MenuButton
+									placement="auto-end"
+									// The z-index of the PubHeaderFormatting is 19
+									menuStyle={{ zIndex: 20 }}
+									buttonProps={{
+										minimal: true,
+										large: true,
+										'aria-label': 'User menu',
+									}}
+									buttonContent={
 										<Avatar
 											userInitials={this.props.loginData.initials}
 											userAvatar={this.props.loginData.avatar}
 											width={30}
 										/>
-									</Button>
-								</Popover>
+									}
+								>
+									<MenuItem
+										href={`/user/${this.props.loginData.slug}`}
+										text={
+											<React.Fragment>
+												{this.props.loginData.fullName}
+												<span className="subtext" style={{ marginLeft: 4 }}>
+													View Profile
+												</span>
+											</React.Fragment>
+										}
+									/>
+									<MenuItem href="/privacy/settings" text="Privacy settings" />
+									<MenuItem onClick={this.handleLogout} text="Logout" />
+								</MenuButton>
 							)}
 							{!loggedIn && (
 								<AnchorButton
@@ -365,7 +292,10 @@ class Header extends Component {
 							<div className="hero-copy">
 								{this.props.communityData.heroLogo && (
 									<div className="hero-logo">
-										<img alt="Community Logo" src={resizedHeroLogo} />
+										<img
+											alt={this.props.communityData.title}
+											src={resizedHeroLogo}
+										/>
 									</div>
 								)}
 								{this.props.communityData.heroTitle && (
@@ -405,7 +335,7 @@ class Header extends Component {
 						</GridWrapper>
 					</div>
 				)}
-			</nav>
+			</header>
 		);
 	}
 }

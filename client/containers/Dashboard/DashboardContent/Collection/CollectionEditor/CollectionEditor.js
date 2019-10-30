@@ -63,6 +63,10 @@ class CollectionEditor extends React.Component {
 	handleAddSelection(pubToAdd, index) {
 		const { collection } = this.props;
 		const { selections } = this.state;
+		if (index === undefined) {
+			// eslint-disable-next-line no-param-reassign
+			index = selections.length;
+		}
 		const rank = findRankForSelection(selections, index);
 		const selection = createPubSelection(pubToAdd, collection, rank);
 		this.setState({

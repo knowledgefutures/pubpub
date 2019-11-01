@@ -20,6 +20,15 @@ const SubPreview = function(props) {
 
 	const subData = [
 		{
+			parentId: '6fdaa9de-a01b-428f-b750-592bfbdc8bd0',
+			children: [
+				{
+					prefix: '',
+					elements: [{ text: 'Supplementary Materials', href: '/pub/3cfhdct9/' }],
+				},
+			],
+		},
+		{
 			parentId: '4aa410e1-bbb2-4b49-b66d-2fd54074b60e',
 			children: [
 				{

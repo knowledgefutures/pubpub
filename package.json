@@ -176,7 +176,7 @@
 		"yargs": "^13.2.4"
 	},
 	"engines": {
-		"node": "10.14.1"
+		"node": "12.13.0"
 	},
 	"jest": {
 		"testEnvironment": "node",

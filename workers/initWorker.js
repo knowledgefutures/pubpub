@@ -1,2 +1,2 @@
 require('./environment');
-require('./queue');
+require('./worker');

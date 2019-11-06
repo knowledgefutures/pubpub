@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Tooltip, Icon, Menu, MenuItem, Spinner } from '@blueprintjs/core';
 import { apiFetch } from 'utils';
 import { pingTask } from 'utils/pingTask';
-import { getFormattedDownload, getExistingDownload } from './headerUtils';
+import { getFormattedDownload } from './headerUtils';
 
 require('./download.scss');
 
@@ -37,13 +37,7 @@ const Download = (props) => {
 			return;
 		}
 		setIsError(false);
-		// Check if that format is available for download -- if not, request it from the server.
-		const existingDownload = getExistingDownload(downloads, activeBranch.id, selectedType);
-		if (existingDownload) {
-			setIsLoading(false);
-			window.open(existingDownload.url);
-			return;
-		}
+
 		// Kicks off an export task on the backend
 		apiFetch('/api/export', {
 			method: 'POST',
@@ -62,7 +56,7 @@ const Download = (props) => {
 				setIsError(true);
 				setIsLoading(false);
 			});
-	}, [pubData.id, activeBranch.id, downloads, isLoading, selectedType]);
+	}, [isLoading, selectedType, pubData.id, activeBranch.id]);
 
 	const formattedDownload = getFormattedDownload(downloads);
 	const formattedOptionsClassName = formattedDownload ? 'with-formatted' : '';

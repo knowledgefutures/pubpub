@@ -235,6 +235,7 @@ class FormattingBar extends Component {
 							return (
 								<Button
 									key={item.key}
+									aria-label={item.title}
 									icon={<Icon icon={item.icon} iconSize={iconSize} />}
 									active={menuItem.isActive || linkIsActive}
 									minimal={true}

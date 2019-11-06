@@ -9,6 +9,11 @@ const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
 export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	logging: false,
 	dialectOptions: { ssl: useSSL },
+	pool: {
+		max: process.env.SEQUELIZE_MAX_CONNECTIONS
+			? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
+			: 5,
+	},
 });
 
 /* Change to true to update the model in the database. */

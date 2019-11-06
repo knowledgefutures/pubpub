@@ -1,0 +1,10 @@
+.tab-to-show-component {
+    &:not(:focus):not(:active):not(.hold-open) {
+        position: fixed;
+        top: auto;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateX(-4000px);
+        z-index: -999;
+    }
+}

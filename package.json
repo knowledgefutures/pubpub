@@ -25,8 +25,8 @@
 		"start": "npm run build-dev-once && concurrently --kill-others \"npm run api-dev\" \"npm run build-dev\"",
 		"storybook": "start-storybook -p 9001 -c .storybook -s ./",
 		"test": "jest --forceExit --silent --detectOpenHandles",
-		"workers-dev": "NODE_PATH=./client:./ WORKER=true nodemon workers/init.js --watch workers",
-		"workers-prod": "NODE_PATH=./client:./ WORKER=true node workers/init.js"
+		"workers-dev": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./client:./ WORKER=true nodemon workers/init.js --watch workers",
+		"workers-prod": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./client:./ WORKER=true node workers/init.js"
 	},
 	"devDependencies": {
 		"@storybook/addon-storyshots": "^5.0.11",
@@ -148,6 +148,7 @@
 		"react-timeago": "^4.4.0",
 		"react-transition-group": "^4.0.0",
 		"react-use": "^9.4.0",
+		"reakit": "^1.0.0-beta.9",
 		"rebound": "^0.1.0",
 		"recharts": "^1.5.0",
 		"request": "^2.88.0",
@@ -175,7 +176,7 @@
 		"yargs": "^13.2.4"
 	},
 	"engines": {
-		"node": "10.14.1"
+		"node": "12.13.0"
 	},
 	"jest": {
 		"testEnvironment": "node",

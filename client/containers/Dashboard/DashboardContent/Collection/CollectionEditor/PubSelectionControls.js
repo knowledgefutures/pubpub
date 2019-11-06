@@ -43,7 +43,12 @@ const PubSelectionControls = ({ onRemove, onSetContext, pubSelection }) => {
 					</Button>
 				</Select>
 			)}
-			<Button minimal icon="cross" onClick={onRemove} />
+			<Button
+				minimal
+				icon="cross"
+				aria-label="Remove pub from selections"
+				onClick={onRemove}
+			/>
 		</ControlGroup>
 	);
 };

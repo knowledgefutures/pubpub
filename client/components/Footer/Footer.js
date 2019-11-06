@@ -116,7 +116,7 @@ class Footer extends Component {
 					{
 						id: 'si-3',
 						icon: <Icon icon="envelope" />,
-						title: 'Contact',
+						title: 'Contact by email',
 						value: 'hello@pubpub.org',
 						url: 'mailto:hello@pubpub.org?subject=Contact',
 					},

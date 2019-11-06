@@ -140,7 +140,7 @@ const importFiles = async ({ sourceFiles }) => {
 	return { doc: prosemirrorDoc, warnings: warnings };
 };
 
-export default ({ sourceFiles }) =>
+export const importTask = ({ sourceFiles }) =>
 	importFiles({ sourceFiles: sourceFiles }).catch((error) => ({
 		error: {
 			message: error.toString(),

@@ -8,7 +8,6 @@ import classNames from 'classnames';
 
 import { pubDataProps } from 'types/pub';
 import Icon from 'components/Icon/Icon';
-import { AnchorButton } from '@blueprintjs/core';
 
 import { authorsNamesFromPub } from './utils';
 
@@ -36,30 +35,14 @@ const PubRow = (props) => {
 			)}
 			<div className="contents">
 				<div className="info">
-					<div>
-						{dragHandleProps ? (
-							<a href={`/pub/${pub.slug}`}>{pub.title}</a>
-						) : (
-							<span className="left-title">
-								{pub.title}
-								<AnchorButton
-									href={`/pub/${pub.slug}`}
-									target="_blank"
-									rel="noopener noreferrer"
-									minimal={true}
-									small={true}
-									className="out-link"
-									icon={
-										<Icon
-											icon="share"
-											alt="open in new tab icon"
-											iconSize={11}
-										/>
-									}
-								/>
-							</span>
-						)}
-					</div>
+					<a
+						className="pub-title"
+						href={`/pub/${pub.slug}`}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{pub.title}
+					</a>
 					<div className="bp3-text-muted">
 						<em>{authorsNamesFromPub(pub).join(', ')}</em>
 					</div>
@@ -72,5 +55,4 @@ const PubRow = (props) => {
 
 PubRow.propTypes = propTypes;
 PubRow.defaultProps = defaultProps;
-
 export default PubRow;

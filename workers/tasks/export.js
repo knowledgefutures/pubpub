@@ -150,7 +150,7 @@ const uploadDocument = (branchId, readableStream, extension) => {
 	});
 };
 
-export default async (pubId, branchId, format) => {
+export const exportTask = async (pubId, branchId, format) => {
 	const { extension } = formatTypes[format];
 	const pubData = await Pub.findOne({
 		where: { id: pubId },

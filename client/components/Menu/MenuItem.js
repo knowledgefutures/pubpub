@@ -8,7 +8,7 @@ import { MenuContext } from './menuContext';
 import { Menu } from './Menu';
 
 const sharedPropTypes = {
-	disabled: PropTypes.boolean,
+	disabled: PropTypes.bool,
 	href: PropTypes.string,
 	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 	onClick: PropTypes.func,
@@ -74,12 +74,13 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 
 DisplayMenuItem.propTypes = {
 	...sharedPropTypes,
-	hasSubmenu: PropTypes.bool.isRequired,
+	hasSubmenu: PropTypes.bool,
 	onDismiss: PropTypes.func,
 };
 
 DisplayMenuItem.defaultProps = {
 	...sharedDefaultProps,
+	hasSubmenu: false,
 	onDismiss: null,
 };
 
@@ -123,7 +124,7 @@ export const MenuItem = React.forwardRef((props, ref) => {
 MenuItem.propTypes = {
 	...sharedPropTypes,
 	children: PropTypes.arrayOf(PropTypes.node),
-	text: PropTypes.string.isRequired,
+	text: PropTypes.node.isRequired,
 	dismissOnClick: PropTypes.bool,
 };
 

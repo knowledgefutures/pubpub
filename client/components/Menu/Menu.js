@@ -8,7 +8,7 @@ import { MenuContext } from './menuContext';
 
 const propTypes = {
 	children: PropTypes.node.isRequired,
-	disclosure: PropTypes.oneOf([PropTypes.func, PropTypes.node]).isRequired,
+	disclosure: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
 	gutter: PropTypes.number,
 	menuStyle: PropTypes.shape({}),
 	onDismiss: PropTypes.func,

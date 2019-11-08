@@ -54,6 +54,41 @@ const filterNonExportableNodes = (nodes, filterHorizontalRules) =>
 			!(n.type === 'discussion' || (filterHorizontalRules && n.type === 'horizontal_rule')),
 	);
 
+const healBrokenImageCaptions = (nodes) =>
+	nodes.map((node) => {
+		if (node.type !== 'image') {
+			return node;
+		}
+		const healedCaption = node.attrs.caption.split('<br>').join('');
+		return {
+			...node,
+			attrs: {
+				...node.attrs,
+				caption: healedCaption,
+			},
+		};
+	});
+
+const hideEquationChildren = (nodes) =>
+	nodes.map((node) => {
+		if (node.type === 'equation' || node.type === 'block_equation') {
+			return {
+				...node,
+				attrs: {
+					...node.attrs,
+					renderForPandoc: true,
+				},
+			};
+		}
+		if (node.content) {
+			return {
+				...node,
+				content: hideEquationChildren(node.content),
+			};
+		}
+		return node;
+	});
+
 const createStaticHtml = async (pubData, branchDoc, format) => {
 	const { title } = pubData;
 	const { content: branchDocNodes } = branchDoc;
@@ -85,7 +120,11 @@ const createStaticHtml = async (pubData, branchDoc, format) => {
 				)}
 				{renderStatic(
 					schema,
-					filterNonExportableNodes(branchDocNodes, format === 'pdf'),
+					hideEquationChildren(
+						healBrokenImageCaptions(
+							filterNonExportableNodes(branchDocNodes, format === 'pdf'),
+						),
+					),
 					{},
 				)}
 				<SimpleNotesList title="Footnotes" notes={footnotes} />

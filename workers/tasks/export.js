@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import Promise from 'bluebird';
 import nodePandoc from 'node-pandoc';
 import tmp from 'tmp-promise';
@@ -47,6 +48,12 @@ const formatTypes = {
 - get file, enter into pandoc, get html, convert into pubpub json
 - Have a 'check task' route and 'task' table that can be queried for task results
 */
+
+const getLatexTemplate = () => {
+	// Will only work on unix-like systems
+	const rootDir = process.env.PWD;
+	return path.join(rootDir, 'static', 'default.latex');
+};
 
 const filterNonExportableNodes = (nodes, filterHorizontalRules) =>
 	nodes.filter(
@@ -150,8 +157,9 @@ const createYamlMetadataFile = async (pubData) => {
 };
 
 const callPandoc = (staticHtml, metadataFile, tmpFile, format) => {
+	const latexTemplate = getLatexTemplate();
 	const args = `${dataDir}-f html -t ${formatTypes[format].output}${formatTypes[format].flags ||
-		''} -o ${tmpFile.path} --metadata-file=${metadataFile.path}`;
+		''} -o ${tmpFile.path} --metadata-file=${metadataFile.path} --template=${latexTemplate}`;
 	return new Promise((resolve, reject) => {
 		nodePandoc(staticHtml, args, (err, result) => {
 			if (err && err.message) {

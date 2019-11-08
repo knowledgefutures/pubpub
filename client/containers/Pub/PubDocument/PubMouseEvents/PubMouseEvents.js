@@ -15,7 +15,12 @@ const propTypes = {
 /* Specify the types of elems we want events for */
 const mouseElemTypes = [
 	{ key: 'note', querySelector: '.pub-body-component .footnote, .pub-body-component .citation' },
-	{ key: 'header', querySelector: 'h1, h2, h3, h4, h5, h6' },
+	{
+		key: 'header',
+		querySelector: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map(
+			(headerType) => `.pub-body-component > .editor >${headerType}`,
+		),
+	},
 ];
 
 const PubMouseEvents = (props) => {

@@ -8,6 +8,7 @@ import Editor, { getJSON, getNotes } from '@pubpub/editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
+import debounce from 'debounce';
 
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
@@ -183,8 +184,8 @@ const PubBody = (props) => {
 				placeholder={pubData.isStaticDoc ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}
 				isReadOnly={isReadOnly}
+				onKeyPress={markLastInput}
 				onChange={(editorChangeObject) => {
-					markLastInput();
 					if (!isHistoryDoc) {
 						updateLocalData('collab', { editorChangeObject: editorChangeObject });
 					}
@@ -205,11 +206,11 @@ const PubBody = (props) => {
 								firebaseRef: firebaseBranchRef,
 								clientData: props.collabData.localCollabUser,
 								initialDocKey: pubData.initialDocKey,
-								onStatusChange: (status) => {
+								onStatusChange: debounce((status) => {
 									getNextStatus(status, (nextStatus) => {
 										props.updateLocalData('collab', nextStatus);
 									});
-								},
+								}, 250),
 								onUpdateLatestKey: (latestKey) => {
 									props.updateLocalData('history', {
 										latestKey: latestKey,

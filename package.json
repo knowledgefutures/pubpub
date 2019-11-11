@@ -74,7 +74,7 @@
 		"@blueprintjs/core": "^3.17.1",
 		"@blueprintjs/icons": "^3.9.1",
 		"@blueprintjs/select": "^3.9.0",
-		"@pubpub/editor": "^6.3.1",
+		"@pubpub/editor": "^6.5.0",
 		"@pubpub/prosemirror-pandoc": "0.1.1",
 		"@sentry/browser": "^5.5.0",
 		"@sentry/node": "^5.5.0",

@@ -164,6 +164,11 @@ class FormattingBar extends Component {
 		const showTable = isTable && !nodeSelected;
 		const showMedia =
 			!nodeSelected && !this.props.hideMedia && !(this.props.isSmall && showLink);
+
+		const view = this.props.editorChangeObject.view || {};
+		if (!view.editable) {
+			return <div className="formatting-bar-component" />;
+		}
 		return (
 			<div className={`formatting-bar-component ${this.props.isSmall ? 'small' : ''}`}>
 				{/* Block Types Dropdown */}

@@ -44,7 +44,7 @@ export const createUser = (inputValues) => {
 		})
 		.then(() => {
 			if (inputValues.subscribed) {
-				subscribeUser(inputValues.email, '2847d5271c', ['Users']);
+				subscribeUser(inputValues.email, 'be26e45660', ['Users']);
 			}
 			return Signup.update(
 				{ completed: true },

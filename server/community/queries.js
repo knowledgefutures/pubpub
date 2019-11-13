@@ -71,7 +71,7 @@ export const createCommunity = (inputValues, userData) => {
 			return Page.create(newpage);
 		})
 		.then(() => {
-			subscribeUser(userData.email, '2847d5271c', ['Community Admins']);
+			subscribeUser(userData.email, 'be26e45660', ['Community Admins']);
 			alertNewCommunity(inputValues.title, subdomain, userData.fullName, userData.email);
 			return CommunityAdmin.create({
 				communityId: newCommunityId,

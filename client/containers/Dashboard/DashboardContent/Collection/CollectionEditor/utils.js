@@ -46,4 +46,7 @@ export const fuzzyMatchPub = (pub, input) => {
 };
 
 export const findRankForSelection = (selections, index) =>
-	findRank(selections.map((s) => s.rank), index);
+	findRank(
+		selections.map((s) => s.rank),
+		index,
+	);

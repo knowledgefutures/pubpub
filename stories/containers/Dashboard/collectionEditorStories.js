@@ -44,7 +44,9 @@ const TEST_PUBS = [
 	},
 ];
 
-storiesOf('containers/Dashboard/DashboardContent/Collection/CollectionEditor', module).add(
-	'default',
-	() => <CollectionEditor collection={TEST_COLLECTION} pubs={TEST_PUBS} selections={[]} />,
-);
+storiesOf(
+	'containers/Dashboard/DashboardContent/Collection/CollectionEditor',
+	module,
+).add('default', () => (
+	<CollectionEditor collection={TEST_COLLECTION} pubs={TEST_PUBS} selections={[]} />
+));

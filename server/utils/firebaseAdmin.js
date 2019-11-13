@@ -4,7 +4,7 @@ import {
 	getFirebaseDoc,
 	createBranch,
 	mergeBranch,
-	// restoreDiscussionMaps,
+	restoreDiscussionMaps,
 } from '@pubpub/editor';
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
 import { getFirebaseConfig } from 'utils';
@@ -70,7 +70,10 @@ export const mergeFirebaseBranch = (pubId, sourceBranchId, destinationBranchId) 
 
 	const sourceFirebaseRef = database.ref(`${pubKey}/${sourceBranchKey}`);
 	const destinationFirebaseRef = database.ref(`${pubKey}/${destinationBranchKey}`);
-	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef);
+	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef).then(() => {
+		const editorSchema = buildSchema({ ...discussionSchema }, {});
+		return restoreDiscussionMaps(destinationFirebaseRef, editorSchema, true);
+	});
 };
 
 export const updateFirebaseDiscussion = async (discussion) => {

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-curly-brace-presence */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -47,7 +48,7 @@ const Pricing = (props) => {
 								<li>Publish with select CC licenses</li>
 								<li>Unlimited publications</li>
 								<li>
-									Community support on our{` `}
+									Community support on our{' '}
 									<a
 										href="https://discourse.knowledgefutures.org"
 										target="_blank"
@@ -68,7 +69,7 @@ const Pricing = (props) => {
 							<h2>Premium</h2>
 							<p className="subtitle">For communities with advanced requirements.</p>
 							<p className="pricing">
-								Yearly Fee Per{` `}
+								Yearly Fee Per{' '}
 								<Popover
 									interactionKind={PopoverInteractionKind.HOVER}
 									popoverClassName="bp3-popover-content-sizing"
@@ -110,7 +111,7 @@ const Pricing = (props) => {
 								For organizations managing multiple communities.
 							</p>
 							<p className="pricing">
-								Yearly Fee Per{` `}
+								Yearly Fee Per{' '}
 								<Popover
 									interactionKind={PopoverInteractionKind.HOVER}
 									popoverClassName="bp3-popover-content-sizing"
@@ -157,7 +158,7 @@ const Pricing = (props) => {
 					<p className="description">
 						We also provide article production, community design and setup, and training
 						workshops for communities of any size. If you're interested in these
-						services,{` `}
+						services,{' '}
 						<a href="mailto:hello@pubpub.org?subject=Additional%20Services">
 							feel free to get in touch
 						</a>

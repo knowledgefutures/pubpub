@@ -161,6 +161,7 @@ class Collection extends React.Component {
 				onChange={this.handleTabChange}
 				selectedTab="contents"
 				className="tab-container"
+				renderActiveTabPanelOnly={true}
 			>
 				<Tab id="contents" title="Contents" panel={this.renderContentsEditor()} />
 				{!isTag && (

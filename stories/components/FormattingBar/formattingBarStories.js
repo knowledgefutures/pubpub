@@ -22,7 +22,8 @@ class EditorUnit extends Component {
 
 	render() {
 		const editorStyle = {
-			width: this.props.isSmall ? 'calc(100% / 3 - 1em)' : '100%',
+			width: this.props.isSmall ? 'calc(100% / 3 - 1em)' : 'calc(100%)',
+			marginBottom: '1em',
 			border: '1px solid #CCC',
 			borderRadius: '2px',
 		};
@@ -38,7 +39,7 @@ class EditorUnit extends Component {
 						isSmall={this.props.isSmall}
 					/>
 				</div>
-				<div style={{ padding: '0.25em' }}>
+				<div style={{ padding: '0.25em', height: '250px', overflow: 'scroll' }}>
 					<Editor
 						placeholder="hello"
 						onChange={(changeObject) => {
@@ -53,9 +54,9 @@ class EditorUnit extends Component {
 }
 
 const wrapperStyle = {
-	padding: '1em 0em',
+	padding: '1em 1em',
 	display: 'flex',
-	justifyContent: 'space-evenly',
+	justifyContent: 'space-between',
 	flexWrap: 'wrap',
 };
 

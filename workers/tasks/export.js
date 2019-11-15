@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import Promise from 'bluebird';
 import nodePandoc from 'node-pandoc';
 import tmp from 'tmp-promise';
@@ -48,11 +49,52 @@ const formatTypes = {
 - Have a 'check task' route and 'task' table that can be queried for task results
 */
 
+const getLatexTemplate = () => {
+	// Will only work on unix-like systems
+	const rootDir = process.env.PWD;
+	return path.join(rootDir, 'static', 'default.latex');
+};
+
 const filterNonExportableNodes = (nodes, filterHorizontalRules) =>
 	nodes.filter(
 		(n) =>
 			!(n.type === 'discussion' || (filterHorizontalRules && n.type === 'horizontal_rule')),
 	);
+
+const healBrokenImageCaptions = (nodes) =>
+	nodes.map((node) => {
+		if (node.type !== 'image') {
+			return node;
+		}
+		const healedCaption = node.attrs.caption.split('<br>').join('');
+		return {
+			...node,
+			attrs: {
+				...node.attrs,
+				caption: healedCaption,
+			},
+		};
+	});
+
+const hideEquationChildren = (nodes) =>
+	nodes.map((node) => {
+		if (node.type === 'equation' || node.type === 'block_equation') {
+			return {
+				...node,
+				attrs: {
+					...node.attrs,
+					renderForPandoc: true,
+				},
+			};
+		}
+		if (node.content) {
+			return {
+				...node,
+				content: hideEquationChildren(node.content),
+			};
+		}
+		return node;
+	});
 
 const createStaticHtml = async (pubData, branchDoc, format) => {
 	const { title } = pubData;
@@ -85,7 +127,11 @@ const createStaticHtml = async (pubData, branchDoc, format) => {
 				)}
 				{renderStatic(
 					schema,
-					filterNonExportableNodes(branchDocNodes, format === 'pdf'),
+					hideEquationChildren(
+						healBrokenImageCaptions(
+							filterNonExportableNodes(branchDocNodes, format === 'pdf'),
+						),
+					),
 					{},
 				)}
 				<SimpleNotesList title="Footnotes" notes={footnotes} />
@@ -111,8 +157,9 @@ const createYamlMetadataFile = async (pubData) => {
 };
 
 const callPandoc = (staticHtml, metadataFile, tmpFile, format) => {
+	const latexTemplate = getLatexTemplate();
 	const args = `${dataDir}-f html -t ${formatTypes[format].output}${formatTypes[format].flags ||
-		''} -o ${tmpFile.path} --metadata-file=${metadataFile.path}`;
+		''} -o ${tmpFile.path} --metadata-file=${metadataFile.path} --template=${latexTemplate}`;
 	return new Promise((resolve, reject) => {
 		nodePandoc(staticHtml, args, (err, result) => {
 			if (err && err.message) {
@@ -150,7 +197,7 @@ const uploadDocument = (branchId, readableStream, extension) => {
 	});
 };
 
-export default async (pubId, branchId, format) => {
+export const exportTask = async (pubId, branchId, format) => {
 	const { extension } = formatTypes[format];
 	const pubData = await Pub.findOne({
 		where: { id: pubId },

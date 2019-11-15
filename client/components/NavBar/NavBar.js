@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Popover, PopoverInteractionKind, Position, Menu } from '@blueprintjs/core';
 
 import { GridWrapper } from 'components';
 import Icon from 'components/Icon/Icon';
+import { Menu, MenuItem } from 'components/Menu';
 
 require('./navBar.scss');
 
@@ -35,45 +35,26 @@ const NavBar = function(props) {
 							}
 							/* Return Dropdown */
 							return (
-								<Popover
-									content={
-										<Menu>
-											{item.children.map((subitem) => {
-												return (
-													<a
-														href={`/${subitem.slug}`}
-														className="bp3-menu-item bp3-popover-dismiss"
-														key={`nav-item-${subitem.id}`}
-													>
-														<li>
-															{!subitem.isPublic && (
-																<Icon icon="lock2" iconSize={14} />
-															)}
-															{subitem.title}
-														</li>
-													</a>
-												);
-											})}
-										</Menu>
-									}
-									popoverClassName="bp3-minimal nav-bar-popover"
-									inheritDarkTheme={false}
-									position={Position.BOTTOM_LEFT}
-									modifiers={{
-										preventOverflow: { enabled: false },
-										hide: { enabled: false },
-										flip: { enabled: false },
-									}}
-									interactionKind={PopoverInteractionKind.CLICK}
-									key={`dropdown-${item.title}`}
-								>
-									<span className="dropdown">
-										<li>
+								<Menu
+									disclosure={
+										<li className="dropdown">
 											{item.title}
 											<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 										</li>
-									</span>
-								</Popover>
+									}
+								>
+									{item.children.map((subitem) => (
+										<MenuItem
+											href={`/${subitem.slug}`}
+											icon={
+												!subitem.isPublic && (
+													<Icon icon="lock2" iconSize={14} />
+												)
+											}
+											text={subitem.title}
+										/>
+									))}
+								</Menu>
 							);
 						})}
 				</ul>
@@ -81,7 +62,11 @@ const NavBar = function(props) {
 					<ul className="social-list">
 						{props.socialItems.map((item) => {
 							return (
-								<a href={item.url} key={`social-item-${item.id}`}>
+								<a
+									href={item.url}
+									key={`social-item-${item.id}`}
+									aria-label={item.title}
+								>
 									<li>{item.icon}</li>
 								</a>
 							);

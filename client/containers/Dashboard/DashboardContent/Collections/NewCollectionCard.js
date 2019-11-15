@@ -61,10 +61,12 @@ const NewCollectionCard = ({ schema, description, header, onCreateCollection }) 
 				</div>
 			</Overlay>
 			<Card className="top-controls-card" onClick={() => setIsOpen(true)}>
-				<h6>
-					<Icon icon={bpDisplayIcon} iconSize={20} />
-					{header}
-				</h6>
+				<button type="button" className="top-controls-card-button">
+					<h6>
+						<Icon icon={bpDisplayIcon} iconSize={20} />
+						{header}
+					</h6>
+				</button>
 				<p>{description}</p>
 			</Card>
 		</React.Fragment>

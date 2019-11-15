@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Header, Footer, GdprBanner, AccentStyle, NavBar, Icon } from 'components';
+import { Header, Footer, GdprBanner, AccentStyle, NavBar, Icon, SkipLink } from 'components';
 import { populateNavigationIds } from 'utils';
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
@@ -89,6 +89,8 @@ const PageWrapper = (props) => {
 					<div className="duqduq-warning">Development Environment</div>
 				)}
 
+				<SkipLink targetId="main-content">Skip to main content</SkipLink>
+
 				<GdprBanner loginData={loginData} />
 
 				<Header
@@ -104,7 +106,7 @@ const PageWrapper = (props) => {
 						<SideMenu communityData={communityData} locationData={locationData} />
 					</div>
 				)}
-				<div className="page-content">
+				<div id="main-content" tabIndex="-1" className="page-content">
 					{isDashboard && (
 						<Breadcrumbs communityData={communityData} locationData={locationData} />
 					)}

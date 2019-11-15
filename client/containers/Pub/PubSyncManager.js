@@ -141,18 +141,27 @@ class PubSyncManager extends React.Component {
 			const val = snapshot.val();
 			if (val) {
 				const syncedDiscussions = Object.values(val);
+				const newSyncedDiscussions = syncedDiscussions.filter((item) => {
+					const exists = prevState.pubData.discussions.find((existingItem) => {
+						return item.id === existingItem.id;
+					});
+					return !exists;
+				});
+				const updatedDiscussions = prevState.pubData.discussions.map(
+					(existingDiscussion) => {
+						const syncedContent = syncedDiscussions.find((item) => {
+							return item.id === existingDiscussion.id;
+						});
+						return {
+							...existingDiscussion,
+							...(syncedContent || {}),
+						};
+					},
+				);
 				return {
 					pubData: {
 						...prevState.pubData,
-						discussions: prevState.pubData.discussions.map((existingDiscussion) => {
-							const syncedContent = syncedDiscussions.find((item) => {
-								return item.id === existingDiscussion.id;
-							});
-							return {
-								...existingDiscussion,
-								...(syncedContent || {}),
-							};
-						}),
+						discussions: [...newSyncedDiscussions, ...updatedDiscussions],
 					},
 				};
 			}

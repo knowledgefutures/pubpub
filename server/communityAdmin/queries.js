@@ -13,7 +13,7 @@ export const createCommunityAdmin = (inputValues) => {
 			});
 		})
 		.then((newAdminData) => {
-			subscribeUser(newAdminData.email, '2847d5271c', ['Community Admins']);
+			subscribeUser(newAdminData.email, 'be26e45660', ['Community Admins']);
 			const adminDataJson = newAdminData.toJSON();
 			delete adminDataJson.email;
 			return adminDataJson;

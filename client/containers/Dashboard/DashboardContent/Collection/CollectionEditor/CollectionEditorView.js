@@ -2,18 +2,20 @@
  * This is where the magic happens, for some pretty tame definition of "magic". This component
  * builds the entire collections editor, mostly from other adjacent helper components.
  */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { Divider, NonIdealState, InputGroup } from '@blueprintjs/core';
+import { Divider, NonIdealState, InputGroup, Card, Button } from '@blueprintjs/core';
 
 import { getSchemaForKind } from 'shared/collections/schemas';
 import collectionType from 'types/collection';
 import { pubDataProps } from 'types/pub';
-import { DragDropListing } from 'components';
+import { DragDropListing, TabToShow } from 'components';
 
+import { useKey } from 'react-use';
 import PubRow from './PubRow';
 import PubSelectionControls from './PubSelectionControls';
+import PubListingControls from './PubListingControls';
 import { fuzzyMatchPub } from './utils';
 
 // NOTE(ian): It's critical that this delimiter doesn't appear in actual ids!
@@ -91,78 +93,163 @@ const CollectionEditorView = (props) => {
 	const schema = getSchemaForKind(collection.kind);
 	const { wrapToId, unwrapFromId } = makePubIdWrapping(pubs);
 	const [searchQuery, updateSearchQuery] = useState('');
+	const [isKeyboardHelpSticky, setIsKeyboardHelpSticky] = useState(false);
+
+	const keyboardExplainerRef = useRef();
+	const filterBarRef = useRef();
+	const pubsPaneRef = useRef();
+	const selectionsPaneRef = useRef();
+
+	const focusRef = (evt, ref) => {
+		const shouldCancel = evt && evt.target && evt.target === filterBarRef.current;
+		if (shouldCancel) {
+			return;
+		}
+		if (ref && ref.current && typeof ref.current.focus === 'function') {
+			if (evt) {
+				evt.preventDefault();
+			}
+			ref.current.focus();
+		}
+	};
+
+	useKey('h', (evt) => focusRef(evt, keyboardExplainerRef));
+	useKey('f', (evt) => focusRef(evt, filterBarRef));
+	useKey('p', (evt) => focusRef(evt, pubsPaneRef));
+	useKey('s', (evt) => focusRef(evt, selectionsPaneRef));
+
 	const availablePubs = pubs.filter(
 		(pub) =>
 			fuzzyMatchPub(pub, searchQuery) &&
 			!selections.some((selection) => selection.pub === pub),
 	);
-	return (
-		<div className="collection-editor-component">
-			<DragDropContext
-				onDragEnd={(dragResult) =>
-					handleTransferPub({
-						addSelectionByPub: onAddSelection,
-						dragResult: dragResult,
-						removeSelectionByPub: onRemoveSelectionByPub,
-						reorderSelections: onReorderSelections,
-						unwrapFromId: unwrapFromId,
-					})
-				}
+
+	const renderKeyboardExplainer = () => {
+		return (
+			<TabToShow
+				ref={keyboardExplainerRef}
+				className="collection-editor-keyboard-explainer-component"
+				tagName="div"
+				holdOpen={isKeyboardHelpSticky}
+				onFocus={() => setIsKeyboardHelpSticky(true)}
 			>
-				<div className="pane pubs-pane">
-					<div className="available-pubs-heading">
-						<InputGroup
-							round
-							leftIcon="search"
-							placeholder="Filter pubs"
-							onChange={(e) => updateSearchQuery(e.target.value)}
+				<Card>
+					<h6>Keyboard shorcuts</h6>
+					Editing collections using the keyboard
+					<ul>
+						<li>
+							<span className="bp3-key">p</span> choose pubs for selection
+						</li>
+						<li>
+							<span className="bp3-key">s</span> edit selected pubs
+						</li>
+						<li>
+							<span className="bp3-key">f</span> filter pubs
+						</li>
+						<li>
+							<span className="bp3-key">h</span> show help again
+						</li>
+						<li>
+							<span className="bp3-key">space</span> pick up/put down pub
+						</li>
+						<li>
+							<span className="bp3-key">&rarr;</span> move pub into selections
+						</li>
+						<li>
+							<span className="bp3-key">&larr;</span> move pub out of selections
+						</li>
+					</ul>
+					<Button
+						onClick={() => {
+							setIsKeyboardHelpSticky(false);
+							focusRef(null, pubsPaneRef);
+						}}
+					>
+						Dismiss
+					</Button>
+				</Card>
+			</TabToShow>
+		);
+	};
+
+	return (
+		<React.Fragment>
+			<div className="collection-editor-component">
+				{renderKeyboardExplainer()}
+				<DragDropContext
+					onDragEnd={(dragResult) =>
+						handleTransferPub({
+							addSelectionByPub: onAddSelection,
+							dragResult: dragResult,
+							removeSelectionByPub: onRemoveSelectionByPub,
+							reorderSelections: onReorderSelections,
+							unwrapFromId: unwrapFromId,
+						})
+					}
+				>
+					<div className="pane pubs-pane" tabIndex={-1} ref={pubsPaneRef}>
+						<div className="available-pubs-heading">
+							<InputGroup
+								round
+								inputRef={filterBarRef}
+								leftIcon="search"
+								placeholder="Filter pubs"
+								onChange={(e) => updateSearchQuery(e.target.value)}
+							/>
+						</div>
+						<DragDropListing
+							className="pubs-listing"
+							items={availablePubs}
+							itemId={(item) => wrapToId(PUBS_DRAG_SOURCE, item.id)}
+							renderItem={(pub) => (
+								<PubRow
+									pub={pub}
+									controls={
+										<PubListingControls onAdd={() => onAddSelection(pub)} />
+									}
+								/>
+							)}
+							droppableId={PUBS_DRAG_SOURCE}
+							droppableType={DND_TYPE}
 						/>
 					</div>
-					<DragDropListing
-						className="pubs-listing"
-						items={availablePubs}
-						itemId={(item) => wrapToId(PUBS_DRAG_SOURCE, item.id)}
-						renderItem={(pub) => <PubRow pub={pub} />}
-						droppableId={PUBS_DRAG_SOURCE}
-						droppableType={DND_TYPE}
-					/>
-				</div>
-				<Divider />
-				<div className="pane selections-pane">
-					<DragDropListing
-						className="selections-listing"
-						items={selections}
-						itemId={(item) => wrapToId(SELECTIONS_DROP_TARGET, item.pub.id)}
-						droppableId={SELECTIONS_DROP_TARGET}
-						droppableType={DND_TYPE}
-						withDragHandles={true}
-						renderItem={(selection, dragHandleProps, isDragging) => (
-							<PubRow
-								pub={selection.pub}
-								isDragging={isDragging}
-								dragHandleProps={dragHandleProps}
-								controls={
-									<PubSelectionControls
-										pubSelection={selection}
-										onSetContext={(value) => {
-											onSetSelectionContextHint(selection, value);
-										}}
-										onRemove={() => onRemoveSelectionByPub(selection.pub)}
-									/>
-								}
-							/>
-						)}
-						renderEmptyState={() => (
-							<NonIdealState
-								icon={schema.bpDisplayIcon}
-								title={`This ${schema.label.singular} doesn't contain any pubs yet!`}
-								description="Try dragging some from the left-hand column"
-							/>
-						)}
-					/>
-				</div>
-			</DragDropContext>
-		</div>
+					<Divider />
+					<div className="pane selections-pane" tabIndex={-1} ref={selectionsPaneRef}>
+						<DragDropListing
+							className="selections-listing"
+							items={selections}
+							itemId={(item) => wrapToId(SELECTIONS_DROP_TARGET, item.pub.id)}
+							droppableId={SELECTIONS_DROP_TARGET}
+							droppableType={DND_TYPE}
+							withDragHandles={true}
+							renderItem={(selection, dragHandleProps, isDragging) => (
+								<PubRow
+									pub={selection.pub}
+									isDragging={isDragging}
+									dragHandleProps={dragHandleProps}
+									controls={
+										<PubSelectionControls
+											pubSelection={selection}
+											onSetContext={(value) => {
+												onSetSelectionContextHint(selection, value);
+											}}
+											onRemove={() => onRemoveSelectionByPub(selection.pub)}
+										/>
+									}
+								/>
+							)}
+							renderEmptyState={() => (
+								<NonIdealState
+									icon={schema.bpDisplayIcon}
+									title={`This ${schema.label.singular} doesn't contain any pubs yet!`}
+									description="Try dragging some from the left-hand column"
+								/>
+							)}
+						/>
+					</div>
+				</DragDropContext>
+			</div>
+		</React.Fragment>
 	);
 };
 

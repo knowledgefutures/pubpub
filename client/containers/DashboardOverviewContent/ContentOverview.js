@@ -77,17 +77,8 @@ const ContentOverview = (props) => {
 	return (
 		<div className="content-overview-component">
 			<div className="header">
-				<Avatar
-					avatar={!collectionSlug && communityData.avatar}
-					initials={
-						activeCollection.title ? activeCollection.title[0] : communityData.title[0]
-					}
-					communityData={communityData}
-					width={75}
-					isBlock={true}
-				/>
 				<div className={classNames({ 'header-name': true, collection: collectionSlug })}>
-					{collectionSlug ? activeCollection.title : communityData.title}
+					Overview
 				</div>
 				<div className="header-buttons">
 					<Button text="New Pub" />

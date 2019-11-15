@@ -24,19 +24,16 @@ const Breadcrumbs = (props) => {
 	const activeSubmode = locationData.params.submode;
 
 	let title = communityData.title;
-	if (activeCollection) {
-		title = activeCollection.title;
-	}
-	if (activePub) {
-		title = activePub.title;
-	}
 	let avatar = communityData.avatar;
 	if (activeCollection) {
+		title = activeCollection.title;
 		avatar = activeCollection.avatar;
 	}
 	if (activePub) {
+		title = activePub.title;
 		avatar = activePub.avatar;
 	}
+
 	return (
 		<div className="breadcrumbs-component">
 			<Avatar

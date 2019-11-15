@@ -13,6 +13,7 @@ const propTypes = {
 	menuStyle: PropTypes.shape({}),
 	onDismiss: PropTypes.func,
 	placement: PropTypes.string,
+	className: PropTypes.string,
 };
 
 const defaultProps = {
@@ -20,6 +21,7 @@ const defaultProps = {
 	menuStyle: {},
 	onDismiss: () => {},
 	placement: undefined,
+	className: undefined,
 };
 
 const renderDisclosure = (disclosure, disclosureProps) => {
@@ -30,7 +32,7 @@ const renderDisclosure = (disclosure, disclosureProps) => {
 };
 
 export const Menu = (props) => {
-	const { children, disclosure, placement, onDismiss, gutter, menuStyle } = props;
+	const { children, disclosure, placement, onDismiss, gutter, menuStyle, className } = props;
 
 	const menu = RK.useMenuState({
 		placement: placement,
@@ -54,7 +56,7 @@ export const Menu = (props) => {
 			<RK.Menu
 				as="ul"
 				style={{ zIndex: 1, ...menuStyle }}
-				className={classNames(Classes.MENU, Classes.ELEVATION_1)}
+				className={classNames(Classes.MENU, Classes.ELEVATION_1, className)}
 				unstable_portal={true}
 				{...menu}
 			>

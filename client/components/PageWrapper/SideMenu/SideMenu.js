@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Color from 'color';
 import { Icon } from 'components';
-import TopTabs from './TopTabs';
 import { getDashUrl, getActiveDiscussions } from 'utils/dashboard';
+import ScopePicker from './ScopePicker';
 
 require('./sideMenu.scss');
 
@@ -18,18 +19,10 @@ const SideMenu = (props) => {
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
 
-	const activeCollection = communityData.collections.find(
-		(collection) => collection.title.toLowerCase().replace(/ /gi, '-') === collectionSlug,
-	);
-	const activePub = communityData.pubs.find((pub) => pub.slug === pubSlug);
-
-	let title = communityData.title;
-	if (activeCollection) {
-		title = activeCollection.title;
-	}
-	if (activePub) {
-		title = activePub.title;
-	}
+	const backgroundColor = Color(communityData.accentColorDark)
+		.fade(0.95)
+		.rgb()
+		.string();
 
 	const contentItems = [
 		{
@@ -161,11 +154,14 @@ const SideMenu = (props) => {
 		<div className="side-menu-component">
 			<style
 				dangerouslySetInnerHTML={{
-					__html: `.menu.active:before { background: ${communityData.accentColorDark}`,
+					__html: `
+						.menu.active:before { background: ${communityData.accentColorDark} }
+						.side-content { background: ${backgroundColor} }
+					`,
 				}}
 			/>
-			<TopTabs communityData={communityData} locationData={locationData} />
-			<div className="side-title">{title}</div>
+			<ScopePicker communityData={communityData} locationData={locationData} />
+
 			<div className="content">
 				{contentItems
 					.filter((item) => {

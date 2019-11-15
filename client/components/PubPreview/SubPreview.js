@@ -104,7 +104,16 @@ const SubPreview = function(props) {
 			children: [
 				{
 					prefix: '',
-					elements: [{ text: 'Supplementary Materials', href: '/pub/dno70rhw/' }],
+					elements: [{ text: 'Supplementary Materials', href: '/pub/dno70rhw' }],
+				},
+			],
+		},
+		{
+			parentId: 'fc14bf2d-fb55-4cea-9291-a66fd4ab5c7d',
+			children: [
+				{
+					prefix: '',
+					elements: [{ text: 'Supplementary Materials', href: '/pub/tn4j86t1' }],
 				},
 			],
 		},

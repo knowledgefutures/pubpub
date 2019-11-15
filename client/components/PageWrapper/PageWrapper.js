@@ -106,10 +106,10 @@ const PageWrapper = (props) => {
 						<SideMenu communityData={communityData} locationData={locationData} />
 					</div>
 				)}
+				{isDashboard && (
+					<Breadcrumbs communityData={communityData} locationData={locationData} />
+				)}
 				<div id="main-content" tabIndex="-1" className="page-content">
-					{isDashboard && (
-						<Breadcrumbs communityData={communityData} locationData={locationData} />
-					)}
 					{children}
 				</div>
 

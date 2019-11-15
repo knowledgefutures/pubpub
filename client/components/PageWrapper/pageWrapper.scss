@@ -13,6 +13,8 @@
 	}
 	&.dashboard {
 		$side-menu-width: 235px;
+		$breadcrumbs-height: 73px;
+		$header-height: 56px;
 		display: block;
 		.header-component {
 			position: fixed;
@@ -31,15 +33,24 @@
 			width: $side-menu-width;
 			border-right: 1px solid #ddd;
 			position: fixed;
-			height: calc(100vh - 56px);
-			top: 56px;
+			height: calc(100vh - #{$header-height});
+			top: $header-height;
 			overflow: scroll;
 		}
+		.breadcrumbs-component {
+			width: calc(100vw - #{$side-menu-width});
+			border-bottom: 1px solid #ddd;
+			position: fixed;
+			height: $breadcrumbs-height;
+			top: $header-height;
+			margin-left: $side-menu-width;
+
+		}
 		.page-content {
-			padding-top: calc(1em + 56px);
+			padding-top: calc(16px + #{$header-height} + #{$breadcrumbs-height});
 			padding-left: calc(16px + #{$side-menu-width});
 			padding-right: 16px;
-			padding-bottom: 1em;
+			padding-bottom: 16px;
 			max-width: calc(1024px + #{$side-menu-width});
 			margin: 0 auto;
 			.dashboard-content-title {

@@ -3,9 +3,7 @@ export { default as AdminDashboard } from './AdminDashboard/AdminDashboard';
 export { default as CommunityCreate } from './CommunityCreate/CommunityCreate';
 export { default as Dashboard } from './Dashboard/Dashboard';
 // export { default as Dash } from './Dash/Dash';
-export {
-	default as DashboardOverviewContent,
-} from './DashboardOverviewContent/DashboardOverviewContent';
+export { default as DashboardOverviewContent } from './DashboardOverviewContent/DashboardOverviewContent';
 export { default as Explore } from './Explore/Explore';
 export { default as Landing } from './Landing/Landing';
 export { default as Login } from './Login/Login';

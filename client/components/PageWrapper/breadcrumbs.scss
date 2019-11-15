@@ -1,47 +1,59 @@
 .breadcrumbs-component {
-	margin-bottom: 16px;
-	padding-bottom: 8px;
-	border-bottom: 1px solid #ccc;
-	display: flex;
-	align-items: flex-end;
-	.crumb {
-		display: block;
-		text-decoration: none;
-		.top {
+	min-height: 40px;
+	padding: 16px;
+	z-index: 1;
+	position: relative;
+	background: #fff;
+	.avatar-component {
+		float: left;
+		margin-right: 15px;
+	}
+	.titles {
+		margin-top: -5px;
+	}
+	.title {
+		font-size: 24px;
+		line-height: 30px;
+		width: calc(100% - 15px - 40px);
+		margin-bottom: 1px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.crumbs {
+		display: flex;
+		align-items: center;
+		.crumb {
+			display: block;
+			text-decoration: none;
 			font-size: 12px;
-			opacity: 0.5;
-			.avatar-component {
-				margin-left: 5px;
-			}
-		}
-		.bottom {
-			font-size: 14px;
+			color: #444;
 			white-space: nowrap;
 			overflow: hidden;
 			display: flex;
-			align-items: center;
-			.avatar-component {
+			align-items: baseline;
+			.bp3-icon {
 				margin-right: 5px;
+				opacity: 0.5;
 			}
 			&.capitalize {
 				text-transform: capitalize;
 			}
-		}
-		&.truncate {
-			min-width: 0;
-			.bottom-text {
-				text-overflow: ellipsis;
-				overflow: hidden;
+
+			&.truncate {
+				min-width: 0;
+				.bottom-text {
+					text-overflow: ellipsis;
+					overflow: hidden;
+				}
 			}
-		}
-		&:hover {
-			.bottom {
+			&:hover {
 				text-decoration: underline;
 			}
 		}
-	}
-	.crumb-icon {
-		opacity: 0.5;
-		padding: 0em 8px;
+		.crumb-icon {
+			opacity: 0.4;
+			padding: 0em 8px;
+		}
 	}
 }

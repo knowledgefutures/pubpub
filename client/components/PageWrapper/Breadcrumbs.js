@@ -23,95 +23,100 @@ const Breadcrumbs = (props) => {
 	const isParentMode = activeMode === 'conversations' || activeMode === 'reviews';
 	const activeSubmode = locationData.params.submode;
 
+	let title = communityData.title;
+	if (activeCollection) {
+		title = activeCollection.title;
+	}
+	if (activePub) {
+		title = activePub.title;
+	}
+	let avatar = communityData.avatar;
+	if (activeCollection) {
+		avatar = activeCollection.avatar;
+	}
+	if (activePub) {
+		avatar = activePub.avatar;
+	}
 	return (
 		<div className="breadcrumbs-component">
-			<a className="crumb truncate" href={getDashUrl({})}>
-				<div className="top">Community</div>
-				<div className="bottom">
-					<Avatar
-						avatar={communityData.avatar}
-						initials={communityData.title[0]}
-						width={12}
-						isBlock={true}
-					/>
-					<span className="bottom-text">{communityData.title}</span>
-				</div>
-			</a>
-			{activeCollection && (
-				<React.Fragment>
-					<Icon icon="chevron-right" className="crumb-icon" />
-					<a
-						className="crumb truncate"
-						href={getDashUrl({ collectionSlug: collectionSlug })}
-					>
-						<div className="top">Collection</div>
-						<div className="bottom">
-							<Avatar
-								avatar={activeCollection.avatar}
-								initials={activeCollection.title[0]}
-								width={12}
-								isBlock={true}
-							/>
-							<span className="bottom-text">{activeCollection.title}</span>
-						</div>
-					</a>
-				</React.Fragment>
-			)}
+			<Avatar
+				avatar={avatar}
+				initials={title[0]}
+				communityData={communityData}
+				width={40}
+				isBlock={true}
+			/>
+			<div className="titles">
+				<div className="title">{title}</div>
 
-			{activePub && (
-				<React.Fragment>
-					<Icon icon="chevron-right" className="crumb-icon" />
-					<a
-						className="crumb truncate"
-						href={getDashUrl({ collectionSlug: collectionSlug, pubSlug: pubSlug })}
-					>
-						<div className="top">Pub</div>
-						<div className="bottom">
-							<Avatar
-								avatar={activePub.avatar}
-								initials={activePub.title[0]}
-								width={12}
-								isBlock={true}
-							/>
-							<span className="bottom-text">{activePub.title}</span>
-						</div>
+				<div className="crumbs">
+					<a className="crumb truncate" href={getDashUrl({})}>
+						<Icon icon="office" iconSize={10} />
+						<span className="bottom-text">{communityData.title}</span>
 					</a>
-				</React.Fragment>
-			)}
-			{activeMode && (
-				<React.Fragment>
-					<Icon icon="chevron-right" className="crumb-icon" />
-					<a
-						className="crumb"
-						href={getDashUrl({
-							collectionSlug: collectionSlug,
-							pubSlug: pubSlug,
-							mode: activeMode,
-							submode: isParentMode ? 'list' : undefined,
-						})}
-					>
-						<div className="top" />
-						<div className="bottom capitalize">{activeMode}</div>
-					</a>
-				</React.Fragment>
-			)}
-			{activeSubmode && (
-				<React.Fragment>
-					<Icon icon="chevron-right" className="crumb-icon" />
-					<a
-						className="crumb"
-						href={getDashUrl({
-							collectionSlug: collectionSlug,
-							pubSlug: pubSlug,
-							mode: activeMode,
-							submode: activeSubmode,
-						})}
-					>
-						<div className="top" />
-						<div className="bottom capitalize">{activeSubmode}</div>
-					</a>
-				</React.Fragment>
-			)}
+					{activeCollection && (
+						<React.Fragment>
+							<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
+							<a
+								className="crumb truncate"
+								href={getDashUrl({ collectionSlug: collectionSlug })}
+							>
+								<Icon icon="collection" iconSize={10} />
+								<span className="bottom-text">{activeCollection.title}</span>
+							</a>
+						</React.Fragment>
+					)}
+
+					{activePub && (
+						<React.Fragment>
+							<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
+							<a
+								className="crumb truncate"
+								href={getDashUrl({
+									collectionSlug: collectionSlug,
+									pubSlug: pubSlug,
+								})}
+							>
+								<Icon icon="pubDoc" iconSize={10} />
+								<span className="bottom-text">{activePub.title}</span>
+							</a>
+						</React.Fragment>
+					)}
+					{activeMode && (
+						<React.Fragment>
+							<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
+							<a
+								className="crumb"
+								href={getDashUrl({
+									collectionSlug: collectionSlug,
+									pubSlug: pubSlug,
+									mode: activeMode,
+									submode: isParentMode ? 'list' : undefined,
+								})}
+							>
+								<div className="top" />
+								<div className="bottom capitalize">{activeMode}</div>
+							</a>
+						</React.Fragment>
+					)}
+					{activeSubmode && (
+						<React.Fragment>
+							<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
+							<a
+								className="crumb"
+								href={getDashUrl({
+									collectionSlug: collectionSlug,
+									pubSlug: pubSlug,
+									mode: activeMode,
+									submode: activeSubmode,
+								})}
+							>
+								<div className="capitalize">{activeSubmode}</div>
+							</a>
+						</React.Fragment>
+					)}
+				</div>
+			</div>
 		</div>
 	);
 };

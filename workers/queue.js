@@ -33,6 +33,7 @@ const processTask = (channel) => async (message) => {
 	const taskData = JSON.parse(message.content.toString());
 	let hasFinished = false;
 	let taskTimeout;
+	const startTime = Date.now();
 	console.log(`Beginning ${taskData.id} (load ${currentWorkerThreads}/${maxWorkerThreads})`);
 
 	const worker = new Worker(path.join(__dirname, 'initWorker.js'), {
@@ -47,7 +48,11 @@ const processTask = (channel) => async (message) => {
 		clearTimeout(taskTimeout);
 		hasFinished = true;
 		currentWorkerThreads -= 1;
-		console.log(`Finished ${taskData.id} (load ${currentWorkerThreads}/${maxWorkerThreads})`);
+		const endTime = Date.now();
+		const duration = (Math.round((startTime - endTime) / 100) / 10).toString();
+		console.log(
+			`Finished ${taskData.id} in ${duration} secs (load ${currentWorkerThreads}/${maxWorkerThreads})`,
+		);
 		await WorkerTask.update(updatedTaskData, {
 			where: { id: taskData.id },
 		});

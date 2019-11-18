@@ -49,7 +49,7 @@ const processTask = (channel) => async (message) => {
 		hasFinished = true;
 		currentWorkerThreads -= 1;
 		const endTime = Date.now();
-		const duration = (Math.round((startTime - endTime) / 100) / 10).toString();
+		const duration = (Math.round((endTime - startTime) / 100) / 10).toString();
 		console.log(
 			`Finished ${taskData.id} in ${duration} secs (load ${currentWorkerThreads}/${maxWorkerThreads})`,
 		);

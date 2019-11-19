@@ -23,6 +23,11 @@ module.exports = ({ config }) => {
 		],
 	});
 	config.module.rules.push({
+		test: /\.mjs$/,
+		include: /node_modules/,
+		type: "javascript/auto"
+	});
+	config.module.rules.push({
 		test: /\.(ttf|eot|svg|woff|woff2)$/,
 		use: [
 			{ loader: 'file-loader', query: { name: 'fonts/[hash].[ext]', publicPath: '/dist/' } },

@@ -50,6 +50,11 @@ module.exports = {
 	module: {
 		rules: [
 			{
+				test: /\.mjs$/,
+				include: /node_modules/,
+				type: 'javascript/auto',
+			},
+			{
 				test: /\.(js|jsx)$/,
 				include: [resolve(__dirname, '../')],
 				use: 'babel-loader',

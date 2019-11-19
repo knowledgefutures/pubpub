@@ -244,13 +244,13 @@ class Header extends Component {
 							)}
 							{loggedIn && (
 								<MenuButton
+									aria-label="User menu"
 									placement="auto-end"
 									// The z-index of the PubHeaderFormatting is 19
 									menuStyle={{ zIndex: 20 }}
 									buttonProps={{
 										minimal: true,
 										large: true,
-										'aria-label': 'User menu',
 									}}
 									buttonContent={
 										<Avatar

@@ -36,6 +36,7 @@ const NavBar = function(props) {
 							/* Return Dropdown */
 							return (
 								<Menu
+									aria-label={item.title}
 									disclosure={
 										<li className="dropdown">
 											{item.title}
@@ -45,6 +46,7 @@ const NavBar = function(props) {
 								>
 									{item.children.map((subitem) => (
 										<MenuItem
+											key={subitem}
 											href={`/${subitem.slug}`}
 											icon={
 												!subitem.isPublic && (

@@ -5,7 +5,8 @@
 @import './grid.scss';
 
 @import url('https://use.typekit.net/kmi0tdo.css');
-@import 'styles/variables.scss';
+@import './variables.scss';
+@import './typography.scss';
 
 // Set global styles
 // ****************************
@@ -15,8 +16,6 @@ body {
 	padding: 0;
 	width: 100vw;
 	overflow-x: hidden;
-	color: #333;
-	font-family: $base-font;
 }
 a {
 	text-decoration: underline;
@@ -29,54 +28,7 @@ a {
 		cursor: pointer;
 	}
 }
-h1 {
-	line-height: 40px;
-	font-size: 36px;
-}
-h1,
-h2 {
-	color: #1f1f1f;
-	font-weight: 600;
-	margin: 0 0 10px;
-	padding: 0;
-}
-h2 {
-	line-height: 32px;
-	font-size: 28px;
-}
-h3 {
-	line-height: 25px;
-	font-size: 22px;
-}
-h3,
-h4 {
-	color: #1f1f1f;
-	font-weight: 600;
-	margin: 0 0 10px;
-	padding: 0;
-}
-h4 {
-	line-height: 21px;
-	font-size: 18px;
-}
-h5 {
-	line-height: 19px;
-	font-size: 16px;
-}
-h5,
-h6 {
-	color: #1f1f1f;
-	font-weight: 600;
-	margin: 0 0 10px;
-	padding: 0;
-}
-h6 {
-	line-height: 16px;
-	font-size: 14px;
-}
-sup {
-	line-height: 1;
-}
+
 .subtext {
 	color: #555;
 	font-size: 0.85em;

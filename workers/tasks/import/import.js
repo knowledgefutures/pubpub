@@ -25,7 +25,7 @@ const dataRoot = process.env.NODE_ENV === 'production' ? '/app/.apt/usr/share/pa
 const createPandocArgs = (pandocFormat, tmpDirPath) => {
 	const shouldExtractMedia = ['odt', 'docx', 'epub'].includes(pandocFormat);
 	return [
-		[`--data-dir=${dataRoot}`],
+		dataRoot && [`--data-dir=${dataRoot}`],
 		['-f', pandocFormat],
 		['-t', 'json'],
 		shouldExtractMedia && [`--extract-media=${tmpDirPath}`],

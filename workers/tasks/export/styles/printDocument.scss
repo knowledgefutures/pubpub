@@ -1,0 +1,186 @@
+@import '~@pubpub/editor/src/styles/base.scss';
+
+@import 'styles/variables.scss';
+@import 'containers/Pub/PubDocument/pubBody.scss';
+
+.csl-bib-body,
+.csl-entry {
+    display: inline;
+}
+
+.pub-body-component {
+    margin-top: 0 !important;
+    .editor.ProseMirror .pub-notes ol > li {
+        list-style-position: inside;
+        margin: inherit;
+        &:target {
+            background: cornsilk;
+        }
+        p:last-child {
+            display: inline;
+        }
+        .return-link {
+            font-size: 0.75em;
+        }
+    }
+}
+
+section.cover {
+    font-family: $header-font;
+    .title {
+        margin-top: 0;
+        font-size: 3em;
+    }
+    .byline {
+        h3 {
+            margin: 0;
+            span.name {
+                white-space: nowrap;
+                display: inline-block;
+                margin-right: 0.2em;
+            }
+        }
+        h5 {
+            margin: 0;
+            margin-top: 0.5em;
+            span.affiliation {
+                white-space: nowrap;
+                display: inline-block;
+                margin-right: 0.2em;
+            }
+        }
+    }
+    .details > *:not(:last-child) {
+        margin-bottom: 7px;
+    }
+    .title,
+    .byline,
+    .details {
+        margin-bottom: 30px !important;
+    }
+}
+
+@media screen {
+    body > * {
+        max-width: 50em;
+        margin: 0 auto;
+        &.pub-body-component {
+            font-size: initial !important;
+        }
+    }
+}
+
+@media print {
+    /* Baseline page styles */
+    @page {
+        size: Letter;
+        @top-left {
+            color: #666;
+            font-size: 10px;
+            font-family: $header-font;
+            content: string(community-and-collection);
+        }
+        @top-right {
+            color: #666;
+            font-size: 10px;
+            font-family: $header-font;
+            content: string(title);
+        }
+        @bottom-center {
+            color: #666;
+            font-size: 10px;
+            font-family: $header-font;
+            content: counter(page);
+        }
+    }
+
+    /* Avoid being the last element on the page */
+    h1,
+    h2,
+    h3,
+    h4 {
+        break-after: avoid;
+    }
+
+    tr,
+    th {
+        break-inside: avoid;
+        max-height: 90vh;
+        overflow-y: hidden;
+    }
+
+    figure {
+        display: flex;
+        flex-direction: column;
+        break-inside: avoid;
+        max-height: 100%;
+        img, video {
+            width: 100%;
+            min-height: 0;
+            flex-shrink: 1;
+            object-fit: contain;
+        }
+    }
+
+    figcaption {
+        font-size: 10px;
+        color: #555;
+        flex-shrink: 0;
+    }
+
+    table {
+        font-size: 12px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    table,
+    tr,
+    th,
+    td {
+        border: 1px #ccc solid;
+        padding: 5px;
+    }
+
+    th {
+        font-weight: bold;
+        text-align: left;
+        background-color: #f0f0f4;
+    }
+
+    td,
+    a {
+        word-break: break-word;
+    }
+
+    a.footnote {
+        vertical-align: super;
+        font-size: 10px;
+    }
+
+    section.cover {
+        page: cover;
+    }
+
+    @page cover {
+        @top-left {
+            content: '';
+        }
+        @top-right {
+            content: '';
+        }
+        @bottom-center {
+            content: '';
+        }
+    }
+
+    .community-and-collection {
+        string-set: community-and-collection content();
+    }
+
+    .title {
+        string-set: title content();
+    }
+}

@@ -10,10 +10,11 @@ import { notePropType } from 'containers/Pub/PubDocument/PubBottom/Notes';
 const propTypes = {
 	notes: PropTypes.arrayOf(notePropType).isRequired,
 	title: PropTypes.string.isRequired,
+	prefix: PropTypes.string.isRequired,
 };
 
 const SimpleNotesList = (props) => {
-	const { notes, title } = props;
+	const { notes, prefix, title } = props;
 	if (notes.length === 0) {
 		return null;
 	}
@@ -23,11 +24,14 @@ const SimpleNotesList = (props) => {
 			<ol>
 				{notes.map((note, index) => (
 					// eslint-disable-next-line react/no-array-index-key
-					<li key={index}>
+					<li key={index} id={`${prefix}-${index + 1}`}>
 						<PubNoteContent
 							structured={note.html}
 							unstructured={note.unstructuredValue}
-						/>
+						/>{' '}
+						<a href={`#${prefix}-${index + 1}-return`} className="return-link">
+							↩
+						</a>
 					</li>
 				))}
 			</ol>

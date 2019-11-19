@@ -9,7 +9,7 @@ const {
 	updateCommunityData,
 	updateUserData,
 } = require('./tasks/search');
-const { importTask } = require('./tasks/import-export/import');
+const { importTask } = require('./tasks/import');
 const { exportTask } = require('./tasks/export');
 
 if (isMainThread) {

@@ -12,7 +12,14 @@ module.exports = ({ config }) => {
 				loader: 'postcss-loader',
 				options: { ident: 'postcss', plugins: [autoprefixer({})] },
 			},
-			{ loader: 'sass-loader', options: { includePaths: [resolve(__dirname, '../client')] } }, // compiles Sass to CSS
+			{ loader: 'resolve-url-loader' },
+			{ loader: 'sass-loader',
+				options: {
+					sourceMap: true,
+					sourceMapContents: false,
+					includePaths: [resolve(__dirname, '../client')]
+				}
+			}, // compiles Sass to CSS
 		],
 	});
 	config.module.rules.push({

@@ -93,8 +93,13 @@ const processTask = (channel) => async (message) => {
 	worker.on('error', onWorkerError);
 	worker.on('message', onWorkerMessage);
 	taskTimeout = setTimeout(() => {
-		worker.terminate();
-		onWorkerError(`Worker terminated after ${maxWorkerTimeSeconds} seconds`);
+		// Ask the worker nicely to kill its subprocesses
+		worker.postMessage('yield');
+		setTimeout(() => {
+			// Well, you had your chance
+			worker.terminate();
+			onWorkerError(`Worker terminated after ${maxWorkerTimeSeconds} seconds`);
+		}, 1000);
 	}, maxWorkerTimeSeconds * 1000);
 };
 

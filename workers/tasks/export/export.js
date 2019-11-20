@@ -5,7 +5,7 @@ import { getProsemirrorPubData } from './prosemirror';
 import { getFormatDetails, getTmpFileForExtension, uploadDocument, writeToFile } from './util';
 import { callPaged } from './paged';
 
-export const exportTask = async (pubId, branchId, format) => {
+export const exportTask = async ({ pubId, branchId, format }, collectSubprocess) => {
 	const { extension, pandocTarget, pagedTarget } = getFormatDetails(format);
 	const tmpFile = await getTmpFileForExtension(extension);
 	const pubMetadata = await getPubMetadata(pubId);
@@ -28,7 +28,7 @@ export const exportTask = async (pubId, branchId, format) => {
 			pandocTarget: pandocTarget,
 		});
 	} else if (pagedTarget) {
-		await callPaged(staticHtml, tmpFile);
+		await callPaged(staticHtml, tmpFile, collectSubprocess);
 	} else {
 		await writeToFile(staticHtml, tmpFile);
 	}

@@ -7,6 +7,7 @@ import * as RK from 'reakit/Menu';
 import { MenuContext } from './menuContext';
 
 const propTypes = {
+	'aria-label': PropTypes.string.isRequired,
 	children: PropTypes.node.isRequired,
 	disclosure: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
 	gutter: PropTypes.number,
@@ -32,7 +33,16 @@ const renderDisclosure = (disclosure, disclosureProps) => {
 };
 
 export const Menu = (props) => {
-	const { children, disclosure, placement, onDismiss, gutter, menuStyle, className } = props;
+	const {
+		'aria-label': ariaLabel,
+		children,
+		disclosure,
+		placement,
+		onDismiss,
+		gutter,
+		menuStyle,
+		className,
+	} = props;
 
 	const menu = RK.useMenuState({
 		placement: placement,
@@ -48,12 +58,15 @@ export const Menu = (props) => {
 	return (
 		<React.Fragment>
 			<RK.MenuDisclosure
-				style={{ display: 'inline-block', '-webkit-appearance': 'unset' }}
+				style={{ display: 'inline-block', WebkitAppearance: 'unset' }}
 				{...menu}
 			>
-				{(disclosureProps) => renderDisclosure(disclosure, disclosureProps)}
+				{(disclosureProps) =>
+					renderDisclosure(disclosure, { ...disclosureProps, 'aria-label': ariaLabel })
+				}
 			</RK.MenuDisclosure>
 			<RK.Menu
+				aria-label={ariaLabel}
 				as="ul"
 				style={{ zIndex: 1, ...menuStyle }}
 				className={classNames(Classes.MENU, Classes.ELEVATION_1, className)}

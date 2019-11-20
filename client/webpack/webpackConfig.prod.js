@@ -55,9 +55,14 @@ module.exports = {
 						loader: 'postcss-loader',
 						options: { ident: 'postcss', plugins: [autoprefixer({})] },
 					},
+					{ loader: 'resolve-url-loader' },
 					{
 						loader: 'sass-loader',
-						options: { includePaths: [resolve(__dirname, '../')] },
+						options: {
+							sourceMap: true,
+							sourceMapContents: false,
+							includePaths: [resolve(__dirname, '../')],
+						},
 					},
 				],
 			},

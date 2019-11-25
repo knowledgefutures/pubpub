@@ -39,8 +39,7 @@ const Contributor = function(props) {
 			<div className="avatar-wrapper">{avatarElement}</div>
 			<div className="details-wrapper">
 				<div className="name">{nameElement}</div>
-				<div>{user.title}</div>
-				{affiliation && <div className="affiliation">{affiliation}</div>}
+				{affiliation && <div className="affiliation">{affiliation || user.title}</div>}
 				{!!rolesString && <div className="roles">Roles: {rolesString}</div>}
 			</div>
 		</div>

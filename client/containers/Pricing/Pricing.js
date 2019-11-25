@@ -28,11 +28,9 @@ const Pricing = (props) => {
 					<h1>Pricing</h1>
 					<p className="description">
 						PubPub's goal is to provide a high-quality, open-source, institution-owned,
-						hosted alternative to commercial publishing software. We're committed to
-						giving anyone the ability to start a community and publish without
-						limitations for free. For groups who need advanced features (or who just
-						want to support our mission), we offer paid options designed to scale to
-						meet the needs of any organization.
+						hosted alternative to commercial publishing software. We offer a Free tier
+						with no user or publishing limits, as well as an Organization tier for those
+						who need more advanced features (or just want to support our mission).
 					</p>
 					<div className="pricing-tiers">
 						<div className="option bp3-card bp3-elevation-1">
@@ -45,8 +43,13 @@ const Pricing = (props) => {
 									discussion features
 								</li>
 								<li>Your own pubpub.org subdomain</li>
-								<li>Publish with select CC licenses</li>
 								<li>Unlimited publications</li>
+								<li>Unlimited users</li>
+								<li>Custom site design</li>
+								<li>
+									Up to 25 free DOIs per year ($1 after, or free if you have a
+									crossref membership)
+								</li>
 								<li>
 									Community support on our{' '}
 									<a
@@ -66,87 +69,54 @@ const Pricing = (props) => {
 							</a>
 						</div>
 						<div className="option bp3-card bp3-elevation-1">
-							<h2>Premium</h2>
-							<p className="subtitle">For communities with advanced requirements.</p>
-							<p className="pricing">
-								Yearly Fee Per{' '}
-								<Popover
-									interactionKind={PopoverInteractionKind.HOVER}
-									popoverClassName="bp3-popover-content-sizing"
-								>
-									<em>Active Admin</em>
-									<div>
-										<p>
-											An Active Admin is any user account added to the team
-											page of your community. Usually this is the management
-											team, consisting of editors and project managers.
-											Authors, contributors, reviewers, and commenters will
-											typically not count towards your Active Admins.
-										</p>
-									</div>
-								</Popover>
-							</p>
-							<ul className="features">
-								<li>
-									All of PubPub&apos;s core drafting, review, publishing, and
-									discussion features
-								</li>
-								<li>Use your own custom domain name</li>
-								<li>Publish with any license</li>
-								<li>Unlimited publications</li>
-								<li>Email support</li>
-							</ul>
-							<a
-								href="mailto:hello@pubpub.org?subject=PubPub%20Team%20Inquiry"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="bp3-button bp3-large bp3-intent-primary"
-							>
-								Get In Touch
-							</a>
-						</div>
-						<div className="option bp3-card bp3-elevation-1">
 							<h2>Organization</h2>
-							<p className="subtitle">
-								For organizations managing multiple communities.
-							</p>
+							<p className="subtitle">For communities with advanced needs.</p>
 							<p className="pricing">
-								Yearly Fee Per{' '}
+								Flat Yearly Fee Per{' '}
 								<Popover
 									interactionKind={PopoverInteractionKind.HOVER}
 									popoverClassName="bp3-popover-content-sizing"
 								>
-									<em>Active Admin</em>
+									<em>Active Community</em>
 									<div>
 										<p>
-											An Active Admin is any user account added to the team
-											page of your community. Usually this is the management
-											team, consisting of editors and project managers.
-											Authors, contributors, reviewers, and commenters will
-											typically not count towards your Active Admins.
+											Active years are calculated as any year in which one or
+											more new Pubs have been added to the Community. In
+											non-active years, communities are hosted for free.
+											Organization plans include a 3-month grace period
+											before ‘active’ status is calculated, allowing
+											organizations to experiment and create short-lived
+											communities for events and conferences at no additional
+											cost.
 										</p>
 									</div>
 								</Popover>
 							</p>
 							<ul className="features">
+								<li>Everything in the free version, plus:</li>
+								<li>Use your own custom domain name</li>
+								<li>Custom PDF export design</li>
 								<li>
-									All of PubPub&apos;s core drafting, review, publishing, and
-									discussion features
+									Organization Dashboard for managing users, branding, and
+									settings across multiple Communities
 								</li>
-								<li>Your own custom domain name</li>
-								<li>Publish with any license</li>
-								<li>Unlimited publications</li>
-								<li>Unlimited communities</li>
-								<li>Dedicated support</li>
-								<li>Organization Dashboard for managing multiple Communities</li>
 								<li>
 									Organization Landing Page for displaying all of the content and
 									Communities in your organization
 								</li>
-								<li>Service-Level Agreement</li>
+								<li>
+									3-month grace period for new Communities for experiments and
+									short-lived conferences and events.
+								</li>
+								<li>
+									Up to 100 free DOIs per community per year ($1 each after, or
+									free if you have a crossref membership).
+								</li>
+								<li>Initial organization setup support</li>
+								<li>Priority email support</li>
 							</ul>
 							<a
-								href="mailto:hello@pubpub.org?subject=PubPub%20Organization%20Inquiry"
+								href="mailto:partnerships@pubpub.org?subject=PubPub%20Org%20Inquiry"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="bp3-button bp3-large bp3-intent-primary"
@@ -155,15 +125,26 @@ const Pricing = (props) => {
 							</a>
 						</div>
 					</div>
-					<p className="description">
-						We also provide article production, community design and setup, and training
-						workshops for communities of any size. If you're interested in these
-						services,{' '}
-						<a href="mailto:hello@pubpub.org?subject=Additional%20Services">
-							feel free to get in touch
-						</a>
-						.
-					</p>
+					<div className="pricing-footer">
+						<p className="description">
+							Need advanced features, but unsure you can afford PubPub Organization?
+							We offer substantial discounts for small, mission-driven communities.
+							information,{' '}
+							<a href="mailto:partnerships@pubpub.org?subject=Discounts">
+								please reach out
+							</a>
+							.
+						</p>
+						<p className="description">
+							We also provide article production, community design and setup,
+							interactive visualization development, and training workshops for
+							communities of any size. If you're interested in these services,{' '}
+							<a href="mailto:partnerships@pubpub.org?subject=Additional%20Services">
+								please get in touch
+							</a>
+							.
+						</p>
+					</div>
 				</GridWrapper>
 			</PageWrapper>
 		</div>

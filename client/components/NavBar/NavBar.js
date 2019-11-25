@@ -46,7 +46,7 @@ const NavBar = function(props) {
 								>
 									{item.children.map((subitem) => (
 										<MenuItem
-											key={subitem}
+											key={subitem.slug}
 											href={`/${subitem.slug}`}
 											icon={
 												!subitem.isPublic && (

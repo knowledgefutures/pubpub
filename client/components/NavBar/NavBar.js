@@ -44,9 +44,10 @@ const NavBar = function(props) {
 										</li>
 									}
 								>
-									{item.children.map((subitem) => (
+									{item.children.map((subitem, index) => (
 										<MenuItem
-											key={subitem.slug}
+											// eslint-disable-next-line react/no-array-index-key
+											key={index}
 											href={`/${subitem.slug}`}
 											icon={
 												!subitem.isPublic && (

@@ -10,7 +10,7 @@ const propTypes = {
 
 const Contributor = function(props) {
 	const { attribution } = props;
-	const { user, affiliation } = attribution;
+	const { user } = attribution;
 	const avatarElement = user.slug ? (
 		<a href={`/user/${user.slug}`}>
 			<Avatar userInitials={user.initials} userAvatar={user.avatar} width={30} />
@@ -27,6 +27,8 @@ const Contributor = function(props) {
 		<span>{user.fullName}</span>
 	);
 
+	const affiliation = attribution.affiliation || user.title;
+
 	const rolesString = (attribution.roles || []).reduce((prev, curr) => {
 		if (prev) {
 			return `${prev}, ${curr}`;
@@ -39,7 +41,7 @@ const Contributor = function(props) {
 			<div className="avatar-wrapper">{avatarElement}</div>
 			<div className="details-wrapper">
 				<div className="name">{nameElement}</div>
-				{affiliation && <div className="affiliation">{affiliation || user.title}</div>}
+				{affiliation && <div className="affiliation">{affiliation}</div>}
 				{!!rolesString && <div className="roles">Roles: {rolesString}</div>}
 			</div>
 		</div>

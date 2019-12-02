@@ -4,8 +4,8 @@ import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discuss
 import { getBranchDoc } from '../../../server/utils/firebaseAdmin';
 import { generateCiteHtmls } from '../../../server/editor/queries';
 
-export const getProsemirrorPubData = async (pubId, branchId) => {
-	const { content: prosemirrorDoc } = await getBranchDoc(pubId, branchId);
+export const getProsemirrorPubData = async (pubId, branchId, historyKey) => {
+	const { content: prosemirrorDoc } = await getBranchDoc(pubId, branchId, historyKey);
 	const schema = buildSchema(discussionSchema);
 	const doc = jsonToNode(prosemirrorDoc, schema);
 	const { footnotes: rawFootnotes, citations: rawCitations } = getNotes(doc);

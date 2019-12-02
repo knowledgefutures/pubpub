@@ -10,6 +10,7 @@ import {
 	CollectionPub,
 	CommunityAdmin,
 	Discussion,
+	Export,
 	Page,
 	Pub,
 	PubAttribution,
@@ -120,6 +121,10 @@ export const findPubQuery = (slug, communityId) =>
 								attributes: attributesPublicUser,
 							},
 						],
+					},
+					{
+						model: Export,
+						as: 'exports',
 					},
 				],
 			},

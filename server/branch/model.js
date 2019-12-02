@@ -34,10 +34,15 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Branch, BranchPermission } = models;
+					const { Branch, BranchPermission, Export } = models;
 					Branch.hasMany(BranchPermission, {
 						onDelete: 'CASCADE',
 						as: 'permissions',
+						foreignKey: 'branchId',
+					});
+					Branch.hasMany(Export, {
+						onDelete: 'CASCADE',
+						as: 'exports',
 						foreignKey: 'branchId',
 					});
 				},

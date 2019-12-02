@@ -39,6 +39,7 @@ export const CollectionPub = sequelize.import('./collectionPub/model.js');
 export const Community = sequelize.import('./community/model.js');
 export const CommunityAdmin = sequelize.import('./communityAdmin/model.js');
 export const Discussion = sequelize.import('./discussion/model.js');
+export const Export = sequelize.import('./export/model.js');
 export const Merge = sequelize.import('./merge/model.js');
 export const Page = sequelize.import('./page/model.js');
 export const Pub = sequelize.import('./pub/model.js');

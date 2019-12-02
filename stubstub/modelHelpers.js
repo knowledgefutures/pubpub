@@ -2,7 +2,8 @@ import uuid from 'uuid';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 
-import { Community, CommunityAdmin, User } from '../server/models';
+import { Branch, Community, CommunityAdmin, User, Pub } from '../server/models';
+import { createPub } from '../server/pub/queries';
 
 export const makeUser = async (info = {}) => {
 	const uniqueness = uuid.v4();
@@ -57,4 +58,13 @@ export const makeCommunity = async (communityData, communityAdminInfo = {}) => {
 		};
 	}
 	return { community: community };
+};
+
+export const makePub = async (community, manager) => {
+	if (!manager) {
+		// eslint-disable-next-line no-param-reassign
+		manager = await makeUser();
+	}
+	const { id: pubId } = await createPub({ communityId: community.id }, manager);
+	return Pub.findOne({ where: { id: pubId }, include: [{ model: Branch, as: 'branches' }] });
 };

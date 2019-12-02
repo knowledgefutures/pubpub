@@ -5,6 +5,7 @@ import {
 	sequelize,
 	Pub,
 	Branch,
+	Export,
 	Version,
 	PubManager,
 	Collaborator,
@@ -679,6 +680,10 @@ new Promise((resolve) => {
 	// 		defaultValue: false,
 	// 	});
 	// })
+	.then(() => {
+		// Handle addition of Export model and Branch.exports field
+		return sequelize.sync();
+	})
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

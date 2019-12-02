@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { storiesOf } from '@storybook/react';
-import { FormattingBar } from 'components';
+import FormattingBar from 'components/FormattingBarNew/FormattingBar';
 import Editor from '@pubpub/editor';
 import { plainDoc, fullDoc } from 'data';
 
@@ -16,7 +16,7 @@ class EditorUnit extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			editorChangeObject: {},
+			editorChangeObject: null,
 		};
 	}
 
@@ -31,13 +31,15 @@ class EditorUnit extends Component {
 		return (
 			<div style={editorStyle}>
 				<div style={{ background: '#F0F0F0', marginBottom: '0.5em' }}>
-					<FormattingBar
-						editorChangeObject={this.state.editorChangeObject}
-						hideMedia={this.props.hideMedia}
-						hideBlocktypes={this.props.hideBlocktypes}
-						hideExtraFormatting={this.props.hideExtraFormatting}
-						isSmall={this.props.isSmall}
-					/>
+					{this.state.editorChangeObject && (
+						<FormattingBar
+							editorChangeObject={this.state.editorChangeObject}
+							hideMedia={this.props.hideMedia}
+							hideBlocktypes={this.props.hideBlocktypes}
+							hideExtraFormatting={this.props.hideExtraFormatting}
+							isSmall={this.props.isSmall}
+						/>
+					)}
 				</div>
 				<div style={{ padding: '0.25em', height: '250px', overflow: 'scroll' }}>
 					<Editor

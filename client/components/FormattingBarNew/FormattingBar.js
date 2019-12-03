@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { Toolbar, ToolbarItem, useToolbarState, Button } from 'reakit';
-import { OverflowList } from '@blueprintjs/core';
-
-import { Icon } from 'components';
+import { Toolbar, ToolbarItem, useToolbarState, useDialogState } from 'reakit';
 
 import BlockTypeSelector from './BlockTypeSelector';
+import ElementControls from './ElementControls';
+import FormattingBarButton from './FormattingBarButton';
 
 require('./formattingBar.scss');
 
@@ -17,73 +15,101 @@ const propTypes = {
 			focus: PropTypes.func,
 		}),
 	}).isRequired,
+	hideExtraFormatting: PropTypes.bool,
 	isSmall: PropTypes.bool,
+	threads: PropTypes.arrayOf(PropTypes.object),
 };
 
 const defaultProps = {
+	hideExtraFormatting: false,
 	isSmall: false,
+	threads: [],
 };
 
 const formattingItems = [
-	{ key: 'strong', title: 'Bold', icon: 'bold', priority: true, toggle: true },
-	{ key: 'em', title: 'Italic', icon: 'italic', priority: true, toggle: true },
-	{ key: 'link', title: 'Link', icon: 'link', priority: true, toggle: true },
+	{ key: 'strong', title: 'Bold', icon: 'bold', priority: true, isToggle: true },
+	{ key: 'em', title: 'Italic', icon: 'italic', priority: true, isToggle: true },
+	{ key: 'link', title: 'Link', icon: 'link', priority: true, isToggle: true },
 	{ key: 'bullet-list', title: 'Bullet List', icon: 'list-ul' },
 	{ key: 'numbered-list', title: 'Numbered List', icon: 'list-ol' },
 	{ key: 'blockquote', title: 'Blockquote', icon: 'citation' },
-	{ key: 'code', title: 'Code', icon: 'code', toggle: true },
-	{ key: 'subscript', title: 'Subscript', icon: 'subscript', toggle: true },
-	{ key: 'superscript', title: 'Superscript', icon: 'superscript', toggle: true },
+	{ key: 'code', title: 'Code', icon: 'code', isToggle: true },
+	{ key: 'subscript', title: 'Subscript', icon: 'subscript', isToggle: true },
+	{ key: 'superscript', title: 'Superscript', icon: 'superscript', isToggle: true },
 	{
 		key: 'strikethrough',
 		title: 'Strikethrough',
 		ariaTitle: 'strike through',
 		icon: 'strikethrough',
-		toggle: true,
+		isToggle: true,
 	},
 ];
 
-const FormattingBar = (props) => {
-	const { editorChangeObject, isSmall } = props;
-	const { menuItems } = editorChangeObject;
-	const toolbar = useToolbarState({});
+const tableItem = { key: 'table', title: 'Table', icon: 'th' };
 
-	const showFormattingItem = (item) => !isSmall || item.priority;
+const insertItems = [
+	{ key: 'citation', title: 'Citation', icon: 'bookmark' },
+	{ key: 'discussion', title: 'Discussion Thread', icon: 'chat' },
+	{ key: 'equation', title: 'Equation', icon: 'function' },
+	{ key: 'footnote', title: 'Footnote', icon: 'asterisk' },
+	{ key: 'horizontal_rule', title: 'Horizontal Line', icon: 'minus' },
+	tableItem,
+];
+
+const deriveIndicatedControlsItems = (editorChangeObject) => {
+	const { selectedNode, selectionInTable } = editorChangeObject;
+	return [
+		selectedNode && insertItems.find((item) => item.key === selectedNode.type.name),
+		selectionInTable && insertItems.find((i) => i.key === 'table'),
+	].filter((x) => x);
+};
+
+const deriveOpenControlsItem = (indicatedItems) => indicatedItems[0];
+
+const FormattingBar = (props) => {
+	const { editorChangeObject, isSmall, hideExtraFormatting, threads } = props;
+	const { menuItems } = editorChangeObject;
+	const toolbar = useToolbarState({ loop: true });
+	const controlsDialog = useDialogState({ visible: true });
+
+	const toolbarItems = [
+		...formattingItems.filter((item) => !isSmall || item.priority),
+		...insertItems.filter((item) => {
+			if (!threads.length && item.key === 'discussion') {
+				return false;
+			}
+			return !hideExtraFormatting;
+		}),
+	];
+
+	const indicatedItems = deriveIndicatedControlsItems(editorChangeObject);
+	const openControlsItem = deriveOpenControlsItem(indicatedItems);
 
 	return (
-		<Toolbar className="formatting-bar-component" aria-label="Formatting toolbar" {...toolbar}>
-			<ToolbarItem
-				as={BlockTypeSelector}
-				editorChangeObject={editorChangeObject}
-				{...toolbar}
-			/>
-			{formattingItems.filter(showFormattingItem).map((formattingItem) => {
-				const matchingMenuItem =
-					menuItems.find((menuItem) => menuItem.title === formattingItem.key) || {};
-				const { isActive } = matchingMenuItem;
-				return (
-					<ToolbarItem {...toolbar}>
-						{(toolbarItemProps) => (
-							<Button
-								{...toolbarItemProps}
-								role="button"
-								key={formattingItem.key}
-								as="a"
-								aria-label={formattingItem.ariaTitle || formattingItem.title}
-								aria-pressed={formattingItem.toggle ? isActive : undefined}
-								className={classNames(
-									'bp3-button',
-									'bp3-minimal',
-									isActive && 'bp3-active',
-								)}
-							>
-								<Icon icon={formattingItem.icon} />
-							</Button>
-						)}
-					</ToolbarItem>
-				);
-			})}
-		</Toolbar>
+		<div className="formatting-bar-component">
+			<Toolbar aria-label="Formatting toolbar" {...toolbar}>
+				<ToolbarItem
+					as={BlockTypeSelector}
+					editorChangeObject={editorChangeObject}
+					{...toolbar}
+				/>
+				<div className="separator" as="div" />
+				{toolbarItems.map((formattingItem) => {
+					const matchingMenuItem =
+						menuItems.find((menuItem) => menuItem.title === formattingItem.key) || {};
+					const { isActive } = matchingMenuItem;
+					return (
+						<ToolbarItem
+							{...toolbar}
+							as={FormattingBarButton}
+							formattingItem={formattingItem}
+							isActive={isActive}
+						/>
+					);
+				})}
+			</Toolbar>
+			{openControlsItem && <ElementControls />}
+		</div>
 	);
 };
 

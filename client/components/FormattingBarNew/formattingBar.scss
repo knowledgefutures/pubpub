@@ -1,6 +1,7 @@
 .formatting-bar-component {
     display: flex;
     max-width: 100%;
+    position: relative;
     .bp3-button {
         min-width: auto;
         min-height: auto;
@@ -48,6 +49,13 @@
     }
     .short-title {
         display: none;
+    }
+    .element-controls {
+        position: absolute;
+        transform: none;
+        width: 100%;
+        top: 100%;
+        background: white;
     }
 }
 

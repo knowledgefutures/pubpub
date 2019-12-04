@@ -110,12 +110,15 @@ section.cover {
     }
 
     figure {
+        break-inside: avoid;
         display: flex;
         flex-direction: column;
-        max-height: 100%;
+        max-height: 800px;
         img, video {
+            break-inside: avoid;
             width: 100%;
             min-height: 0;
+            max-height: 100%;
             flex-shrink: 1;
             object-fit: contain;
         }
@@ -157,6 +160,11 @@ section.cover {
     a.footnote {
         vertical-align: super;
         font-size: 10px;
+    }
+
+    [data-node-type='math-block'] {
+        font-size: 16px;
+        break-inside: avoid;
     }
 
     section.cover {

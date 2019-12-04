@@ -13,8 +13,15 @@ const propTypes = {
 	}).isRequired,
 };
 
+const paragraphBlockType = {
+	key: 'paragraph',
+	title: 'Paragraph',
+	shortTitle: 'Para',
+	icon: 'git-merge',
+};
+
 const blockTypes = [
-	{ key: 'paragraph', title: 'Paragraph', shortTitle: 'Para', icon: 'git-merge' },
+	paragraphBlockType,
 	{ key: 'header1', title: 'Header 1', shortTitle: 'H1', icon: 'header-one' },
 	{ key: 'header2', title: 'Header 2', shortTitle: 'H2', icon: 'header-two' },
 	{ key: 'header3', title: 'Header 3', shortTitle: 'H3', icon: 'comparison' },
@@ -48,27 +55,25 @@ const BlockTypeSelector = React.forwardRef((props, ref) => {
 		...restProps
 	} = props;
 
-	const renderButtonContent = () => {
+	// eslint-disable-next-line react/prop-types
+	const renderDisclosure = ({ ref: innerRef, ...disclosureProps }) => {
 		const activeMenuItem = menuItems.find((item) => item.isActive);
 		const activeBlockType =
 			activeMenuItem &&
 			blockTypes.find((blockType) => blockType.key === activeMenuItem.title);
-		if (activeBlockType) {
-			return (
-				<span>
-					<span className="full-title">{activeBlockType.title}</span>
-					<span className="short-title">{activeBlockType.shortTitle}</span>
-				</span>
-			);
-		}
-		return null;
-	};
-
-	// eslint-disable-next-line react/prop-types
-	const renderDisclosure = ({ ref: innerRef, ...disclosureProps }) => {
+		const effectiveBlockType = activeBlockType || paragraphBlockType;
 		return (
-			<Button minimal rightIcon="caret-down" elementRef={innerRef} {...disclosureProps}>
-				{renderButtonContent()}
+			<Button
+				minimal
+				rightIcon="caret-down"
+				elementRef={innerRef}
+				{...disclosureProps}
+				disabled={!activeBlockType}
+			>
+				<span>
+					<span className="full-title">{effectiveBlockType.title}</span>
+					<span className="short-title">{effectiveBlockType.shortTitle}</span>
+				</span>
 			</Button>
 		);
 	};

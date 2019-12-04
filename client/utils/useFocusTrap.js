@@ -35,19 +35,10 @@ export const useFocusTrap = ({ onClickOutside = defaultOnClickOutside, isActive 
 		if (refElement) {
 			focusTrap.current = createFocusTrap(refElement, {
 				escapeDeactivates: false,
+				clickOutsideDeactivates: true,
 				allowOutsideClick: (evt) => {
-					let allowed = false;
-					const allowClickOutside = () => {
-						allowed = true;
-					};
-					onClickOutside({
-						allowClickOutside: allowClickOutside,
-						dispatchToTarget: () => {
-							setFocusTrapActive(false);
-							setTimeout(() => evt.target.dispatchEvent(evt));
-						},
-					});
-					return allowed;
+					onClickOutside(evt);
+					return true;
 				},
 			});
 			setFocusTrapActive(true);

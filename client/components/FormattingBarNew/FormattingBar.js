@@ -70,11 +70,16 @@ const FormattingBar = (props) => {
 	const { editorChangeObject, isSmall, hideExtraFormatting, threads } = props;
 	const { menuItems } = editorChangeObject;
 	const toolbar = useToolbarState({ loop: true });
-	const controlsDialog = useDialogState({ visible: true });
+
+	const indicatedItems = deriveIndicatedControlsItems(editorChangeObject);
+	const openControlsItem = deriveOpenControlsItem(indicatedItems);
 
 	const toolbarItems = [
 		...formattingItems.filter((item) => !isSmall || item.priority),
 		...insertItems.filter((item) => {
+			if (indicatedItems.includes(item)) {
+				return true;
+			}
 			if (!threads.length && item.key === 'discussion') {
 				return false;
 			}
@@ -82,13 +87,11 @@ const FormattingBar = (props) => {
 		}),
 	];
 
-	const indicatedItems = deriveIndicatedControlsItems(editorChangeObject);
-	const openControlsItem = deriveOpenControlsItem(indicatedItems);
-
 	return (
 		<div className="formatting-bar-component">
 			<Toolbar aria-label="Formatting toolbar" {...toolbar}>
 				<ToolbarItem
+					className="block-type-selector"
 					as={BlockTypeSelector}
 					editorChangeObject={editorChangeObject}
 					{...toolbar}
@@ -104,6 +107,8 @@ const FormattingBar = (props) => {
 							as={FormattingBarButton}
 							formattingItem={formattingItem}
 							isActive={isActive}
+							isIndicated={indicatedItems.includes(formattingItem)}
+							isOpen={openControlsItem === formattingItem}
 						/>
 					);
 				})}

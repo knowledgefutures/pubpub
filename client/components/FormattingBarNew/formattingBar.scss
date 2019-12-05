@@ -1,21 +1,42 @@
+$indicator-size: 4px;
+
 .formatting-bar-component {
     display: flex;
     max-width: 100%;
     position: relative;
-    .block-type-selector {
+    .block-type-selector-component {
         width: 120px;
     }
     .formatting-bar-button {
-        min-width: auto;
-        min-height: auto;
-        padding: 5px 14px;
-        margin: 0em 1px;
+        display: inline-block;
+        position: relative;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        .bp3-button {
+            min-width: auto;
+            min-height: auto;
+            padding: 5px 14px;
+            margin: 0em 1px;
+        }
         &.open {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
+            .bp3-button {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                &:hover {
+                    background: none;
+                }
+            }
             .bp3-icon {
                 color: white;
             }
+        }
+        .indicator {
+            position: absolute;
+            top: calc(100% - 8px);
+            left: calc(50% - #{$indicator-size / 2});
+            width: $indicator-size;
+            height: $indicator-size;
+            border-radius: $indicator-size / 2;
         }
     }
     .separator {
@@ -26,26 +47,20 @@
         background: #ccc;
         margin: 0px 3px;
     }
-    .link-formatting {
-        display: inline-block;
-        padding-left: 5px;
+    .short-title {
+        display: none;
     }
     &.small {
         .formatting-bar-button {
-            padding: 5px 10px;
+            .bp3-button {
+                padding: 5px 10px;
+            }
             .bp3-button-text {
                 line-height: 12px;
             }
         }
         .separator {
             height: 22px;
-        }
-        .link-formatting {
-            padding-left: 2px;
-            .bp3-input {
-                height: 18px;
-                line-height: 18px;
-            }
         }
         .short-title {
             display: inline;
@@ -54,23 +69,22 @@
             display: none;
         }
     }
-    .short-title {
-        display: none;
-    }
-    .element-controls {
-        color: white;
-        z-index: 1;
-        min-height: 100px;
-        position: absolute;
-        transform: none;
-        width: 100%;
-        top: 100%;
-    }
+}
+
+.formatting-bar-popover {
+    position: absolute;
+    z-index: 1;
+    color: white;
+    padding: 10px;
+    min-height: 100px;
+    top: 100%;
+    width: 100%;
 }
 
 @media only screen and (max-width: 750px) {
     .formatting-bar-component {
         .block-type-selector-component {
+            width: unset;
             .short-title {
                 display: inline;
             }

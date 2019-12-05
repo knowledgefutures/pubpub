@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Toolbar, ToolbarItem, useToolbarState, useDialogState } from 'reakit';
+import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
+
+import { usePageContext } from 'containers/Pub/pubHooks';
 
 import BlockTypeSelector from './BlockTypeSelector';
-import ElementControls from './ElementControls';
 import FormattingBarButton from './FormattingBarButton';
+import FormattingBarPopover from './FormattingBarPopover';
 
 require('./formattingBar.scss');
 
@@ -50,7 +52,12 @@ const tableItem = { key: 'table', title: 'Table', icon: 'th' };
 const insertItems = [
 	{ key: 'citation', title: 'Citation', icon: 'bookmark' },
 	{ key: 'discussion', title: 'Discussion Thread', icon: 'chat' },
-	{ key: 'equation', title: 'Equation', icon: 'function' },
+	{
+		key: 'equation',
+		matchesNodes: ['equation', 'block_equation'],
+		title: 'Equation',
+		icon: 'function',
+	},
 	{ key: 'footnote', title: 'Footnote', icon: 'asterisk' },
 	{ key: 'horizontal_rule', title: 'Horizontal Line', icon: 'minus' },
 	tableItem,
@@ -59,20 +66,36 @@ const insertItems = [
 const deriveIndicatedControlsItems = (editorChangeObject) => {
 	const { selectedNode, selectionInTable } = editorChangeObject;
 	return [
-		selectedNode && insertItems.find((item) => item.key === selectedNode.type.name),
+		selectedNode &&
+			insertItems.find(
+				(item) =>
+					(item.matchesNodes &&
+						item.matchesNodes.some(
+							(nodeType) => nodeType === selectedNode.type.name,
+						)) ||
+					item.key === selectedNode.type.name,
+			),
 		selectionInTable && insertItems.find((i) => i.key === 'table'),
 	].filter((x) => x);
 };
 
-const deriveOpenControlsItem = (indicatedItems) => indicatedItems[0];
-
 const FormattingBar = (props) => {
 	const { editorChangeObject, isSmall, hideExtraFormatting, threads } = props;
-	const { menuItems } = editorChangeObject;
+	const { menuItems = [], selectedNode, latestDomEvent } = editorChangeObject;
+	const placementRef = useRef();
+	const [openedItem, setOpenedItem] = useState(null);
+	const {
+		communityData: { accentColorDark },
+	} = usePageContext();
 	const toolbar = useToolbarState({ loop: true });
-
 	const indicatedItems = deriveIndicatedControlsItems(editorChangeObject);
-	const openControlsItem = deriveOpenControlsItem(indicatedItems);
+	const [firstIndicatedItem] = indicatedItems;
+
+	useEffect(() => {
+		const clickedOnNode = latestDomEvent && latestDomEvent.type === 'click';
+		console.log(clickedOnNode, firstIndicatedItem, selectedNode);
+		setOpenedItem(clickedOnNode ? firstIndicatedItem : null);
+	}, [firstIndicatedItem, latestDomEvent, selectedNode]);
 
 	const toolbarItems = [
 		...formattingItems.filter((item) => !isSmall || item.priority),
@@ -87,33 +110,47 @@ const FormattingBar = (props) => {
 		}),
 	];
 
+	const handleFormattingItemClick = (item) => {
+		if (indicatedItems.includes(item)) {
+			setOpenedItem(openedItem === item ? null : item);
+		}
+	};
+
 	return (
-		<div className="formatting-bar-component">
+		<div className="formatting-bar-component" ref={placementRef}>
 			<Toolbar aria-label="Formatting toolbar" {...toolbar}>
 				<ToolbarItem
-					className="block-type-selector"
 					as={BlockTypeSelector}
 					editorChangeObject={editorChangeObject}
 					{...toolbar}
 				/>
 				<div className="separator" as="div" />
 				{toolbarItems.map((formattingItem) => {
-					const matchingMenuItem =
-						menuItems.find((menuItem) => menuItem.title === formattingItem.key) || {};
-					const { isActive } = matchingMenuItem;
+					const matchingMenuItem = menuItems.find(
+						(menuItem) => menuItem.title === formattingItem.key,
+					);
+					const isActive = matchingMenuItem ? matchingMenuItem.isActive : false;
+					const isIndicated = indicatedItems.includes(formattingItem) && !isActive;
+					const isOpen = openedItem === formattingItem;
 					return (
 						<ToolbarItem
 							{...toolbar}
 							as={FormattingBarButton}
+							key={formattingItem.key}
 							formattingItem={formattingItem}
+							disabled={indicatedItems.length > 0 && !isIndicated}
 							isActive={isActive}
-							isIndicated={indicatedItems.includes(formattingItem)}
-							isOpen={openControlsItem === formattingItem}
+							isIndicated={isIndicated && !isActive}
+							isOpen={isOpen}
+							accentColor={accentColorDark}
+							onClick={() => handleFormattingItemClick(formattingItem)}
 						/>
 					);
 				})}
 			</Toolbar>
-			{openControlsItem && <ElementControls />}
+			{openedItem && (
+				<FormattingBarPopover accentColor={accentColorDark} formattingItem={openedItem} />
+			)}
 		</div>
 	);
 };

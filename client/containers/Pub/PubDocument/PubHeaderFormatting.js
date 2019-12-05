@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import stickybits from 'stickybits';
 
-import { FormattingBar } from 'components';
+import FormattingBar from 'components/FormattingBarNew/FormattingBar';
 import { nestDiscussionsToThreads } from 'containers/Pub/PubDocument/PubDiscussions/discussionUtils';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
 

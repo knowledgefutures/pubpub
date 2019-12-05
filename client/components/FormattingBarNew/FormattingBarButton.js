@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import { Button } from 'reakit';
 
 import { Icon } from 'components';
-import { usePageContext } from 'containers/Pub/pubHooks';
 
 const propTypes = {
+	accentColor: PropTypes.string.isRequired,
 	formattingItem: PropTypes.shape({
 		ariaTitle: PropTypes.string,
 		title: PropTypes.string.isRequired,
@@ -19,47 +19,62 @@ const propTypes = {
 	onClick: PropTypes.func.isRequired,
 };
 
-const getButtonStyle = (accentColor, isIndicated, isOpen) => {
+const getButtonStyle = (accentColor, isOpen) => {
 	if (isOpen) {
 		return {
 			color: 'white',
 			background: accentColor,
 		};
 	}
-	if (isIndicated) {
-		return {
-			borderBottom: `2px solid ${accentColor}`,
-		};
-	}
 	return {};
 };
 
+const getIndicatorStyle = (accentColor) => {
+	return {
+		background: accentColor,
+	};
+};
+
 const FormattingBarButton = React.forwardRef((props, ref) => {
-	const { formattingItem, isActive, isIndicated, isOpen, onClick, ...restProps } = props;
 	const {
-		communityData: { accentColorDark },
-	} = usePageContext();
+		disabled,
+		formattingItem,
+		isActive,
+		isIndicated,
+		isOpen,
+		onClick,
+		accentColor,
+		...restProps
+	} = props;
+
 	return (
-		<Button
-			ref={ref}
-			{...restProps}
-			role="button"
-			as="a"
-			aria-label={formattingItem.ariaTitle || formattingItem.title}
-			aria-pressed={formattingItem.isToggle ? isActive : undefined}
-			style={getButtonStyle(accentColorDark, isIndicated, isOpen)}
-			className={classNames(
-				'bp3-button',
-				'bp3-minimal',
-				'formatting-bar-button',
-				isActive && 'bp3-active',
-				isOpen && 'open',
-			)}
-			onClick={() => onClick(formattingItem)}
-			data-accent-dark={accentColorDark}
+		<span
+			className={classNames('formatting-bar-button', isOpen && 'open')}
+			style={getButtonStyle(accentColor, isOpen)}
 		>
-			<Icon icon={formattingItem.icon} />
-		</Button>
+			<Button
+				ref={ref}
+				{...restProps}
+				role="button"
+				as="a"
+				disabled={disabled}
+				focusable
+				aria-label={formattingItem.ariaTitle || formattingItem.title}
+				aria-pressed={formattingItem.isToggle ? isActive : undefined}
+				className={classNames(
+					'bp3-button',
+					'bp3-minimal',
+					'formatting-bar-button',
+					isActive && 'bp3-active',
+					disabled && 'bp3-disabled',
+				)}
+				onClick={() => onClick(formattingItem)}
+				data-accent-dark={accentColor}
+			>
+				<Icon icon={formattingItem.icon} />
+			</Button>
+			{isIndicated && <div className="indicator" style={getIndicatorStyle(accentColor)} />}
+		</span>
 	);
 });
 

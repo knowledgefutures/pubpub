@@ -51,7 +51,7 @@ const blockTypes = [
 
 const BlockTypeSelector = React.forwardRef((props, ref) => {
 	const {
-		editorChangeObject: { menuItems, view: editorView },
+		editorChangeObject: { menuItems = [], view: editorView },
 		...restProps
 	} = props;
 
@@ -65,6 +65,7 @@ const BlockTypeSelector = React.forwardRef((props, ref) => {
 		return (
 			<Button
 				minimal
+				className="block-type-selector-component"
 				rightIcon="caret-down"
 				elementRef={innerRef}
 				{...disclosureProps}
@@ -88,7 +89,7 @@ const BlockTypeSelector = React.forwardRef((props, ref) => {
 			{blockTypes
 				.filter((blockType) => !blockType.hideInMenu)
 				.map((blockType) => {
-					const menuItem = menuItems.find((item) => item.title === blockType.key);
+					const menuItem = menuItems.find((item) => item.title === blockType.key) || {};
 					return (
 						<MenuItem
 							key={blockType.key}

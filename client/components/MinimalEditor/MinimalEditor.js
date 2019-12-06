@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import Editor, { getText, getJSON } from '@pubpub/editor';
-import { FormattingBar } from 'components';
+import FormattingBar from 'components/FormattingBarNew/FormattingBar';
 
 require('./minimalEditor.scss');
 
@@ -11,6 +12,7 @@ const propTypes = {
 	useFormattingBar: PropTypes.bool,
 	focusOnLoad: PropTypes.bool,
 	placeholder: PropTypes.string,
+	isTranslucent: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -19,10 +21,19 @@ const defaultProps = {
 	useFormattingBar: false,
 	focusOnLoad: false,
 	placeholder: undefined,
+	isTranslucent: false,
 };
 
 const MinimalEditor = (props) => {
-	const { initialContent, onChange, useFormattingBar, focusOnLoad, placeholder } = props;
+	const {
+		initialContent,
+		onChange,
+		useFormattingBar,
+		focusOnLoad,
+		placeholder,
+		isTranslucent,
+		formattingBarButtons,
+	} = props;
 	const [changeObject, setChangeObject] = useState({});
 	useEffect(() => {
 		if (focusOnLoad && changeObject.view) {
@@ -30,15 +41,21 @@ const MinimalEditor = (props) => {
 		}
 	}, [focusOnLoad, changeObject.view]);
 	return (
-		<div className="minimal-editor-component">
+		<div
+			className={classNames(
+				'minimal-editor-component',
+				isTranslucent && 'translucent',
+				useFormattingBar && 'has-formatting-bar',
+			)}
+		>
 			{useFormattingBar && (
 				<FormattingBar
 					editorChangeObject={changeObject}
-					threads={[]}
-					hideBlocktypes={true}
-					hideExtraFormatting={true}
-					hideMedia={true}
+					showBlockTypes={false}
+					showMedia={false}
 					isSmall={true}
+					isTranslucent={isTranslucent}
+					buttons={formattingBarButtons}
 				/>
 			)}
 			<div className="editor-wrapper">

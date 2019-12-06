@@ -38,13 +38,6 @@ class SimpleEditor extends Component {
 	render() {
 		return (
 			<div className="simple-editor-component">
-				{/* <FormattingBar
-					editorChangeObject={this.state.editorChangeObject}
-					hideBlocktypes={true}
-					hideExtraFormatting={true}
-					hideMedia={true}
-					isSmall={true}
-				/> */}
 				<Editor
 					onChange={this.handleChange}
 					customNodes={{

@@ -141,9 +141,7 @@ const DiscussionInput = (props) => {
 					</div>
 					<FormattingBar
 						editorChangeObject={changeObject || {}}
-						threads={[]}
-						hideBlocktypes={true}
-						hideExtraFormatting={true}
+						showBlockTypes={false}
 						isSmall={true}
 					/>
 					<Button

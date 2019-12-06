@@ -22,7 +22,7 @@ require('./formattingBar.scss');
 const propTypes = {
 	editorChangeObject: PropTypes.object.isRequired,
 	hideMedia: PropTypes.bool,
-	hideBlocktypes: PropTypes.bool,
+	hideBlockTypes: PropTypes.bool,
 	hideExtraFormatting: PropTypes.bool,
 	isSmall: PropTypes.bool,
 	threads: PropTypes.array,
@@ -32,7 +32,7 @@ const propTypes = {
 
 const defaultProps = {
 	hideMedia: false,
-	hideBlocktypes: false,
+	hideBlockTypes: false,
 	hideExtraFormatting: false,
 	isSmall: false,
 	threads: [],
@@ -158,7 +158,7 @@ class FormattingBar extends Component {
 			selectedNode.type && uncontrolledNodes.indexOf(selectedNode.type.name) > -1;
 		const isBlockquote = selectedNode.type && selectedNode.type.name === 'blockquote';
 		const nodeSelected = !isUncontrolledNode && selectedNode.attrs;
-		const showBlockTypes = !this.props.hideBlocktypes && !nodeSelected && !isBlockquote;
+		const showBlockTypes = !this.props.hideBlockTypes && !nodeSelected && !isBlockquote;
 		const showFormatting = !nodeSelected;
 		const showExtraFormatting = showFormatting && !this.props.hideExtraFormatting;
 		const showTable = isTable && !nodeSelected;

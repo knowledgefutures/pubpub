@@ -16,6 +16,7 @@ const propTypes = {
 	isActive: PropTypes.bool.isRequired,
 	isIndicated: PropTypes.bool.isRequired,
 	isOpen: PropTypes.bool.isRequired,
+	isSmall: PropTypes.bool.isRequired,
 	onClick: PropTypes.func.isRequired,
 };
 
@@ -42,6 +43,7 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 		isActive,
 		isIndicated,
 		isOpen,
+		isSmall,
 		onClick,
 		accentColor,
 		...restProps
@@ -66,12 +68,13 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 					'bp3-minimal',
 					'formatting-bar-button',
 					isActive && 'bp3-active',
+					isSmall && 'bp3-small',
 					disabled && 'bp3-disabled',
 				)}
 				onClick={() => onClick(formattingItem)}
 				data-accent-dark={accentColor}
 			>
-				<Icon icon={formattingItem.icon} />
+				<Icon icon={formattingItem.icon} iconSize={isSmall ? 12 : 16} />
 			</Button>
 			{isIndicated && <div className="indicator" style={getIndicatorStyle(accentColor)} />}
 		</span>

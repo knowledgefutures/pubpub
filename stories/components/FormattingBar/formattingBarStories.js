@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { storiesOf } from '@storybook/react';
-import FormattingBar from 'components/FormattingBarNew/FormattingBar';
+import { FormattingBar, buttons } from 'components/FormattingBarNew';
+
 import Editor from '@pubpub/editor';
 import { plainDoc, fullDoc } from 'data';
 
 class EditorUnit extends Component {
 	static propTypes = {
-		hideMedia: PropTypes.bool.isRequired,
-		hideBlocktypes: PropTypes.bool.isRequired,
-		hideExtraFormatting: PropTypes.bool.isRequired,
+		showMedia: PropTypes.bool.isRequired,
+		showBlockTypes: PropTypes.bool.isRequired,
 		isSmall: PropTypes.bool.isRequired,
+		buttons: PropTypes.array.isRequired,
 	};
 
 	constructor(props) {
@@ -34,10 +35,10 @@ class EditorUnit extends Component {
 					{this.state.editorChangeObject && (
 						<FormattingBar
 							editorChangeObject={this.state.editorChangeObject}
-							hideMedia={this.props.hideMedia}
-							hideBlocktypes={this.props.hideBlocktypes}
-							hideExtraFormatting={this.props.hideExtraFormatting}
+							showMedia={this.props.showMedia}
+							showBlockTypes={this.props.showBlockTypes}
 							isSmall={this.props.isSmall}
+							buttons={this.props.buttons}
 						/>
 					)}
 				</div>
@@ -47,7 +48,7 @@ class EditorUnit extends Component {
 						onChange={(changeObject) => {
 							this.setState({ editorChangeObject: changeObject });
 						}}
-						initialContent={this.props.hideMedia ? plainDoc : fullDoc}
+						initialContent={this.props.showMedia ? plainDoc : fullDoc}
 					/>
 				</div>
 			</div>
@@ -64,29 +65,19 @@ const wrapperStyle = {
 
 storiesOf('components/FormattingBar', module).add('default', () => (
 	<div style={wrapperStyle}>
+		<EditorUnit isSmall={false} buttons={buttons.fullButtonSet} />
+		<EditorUnit isSmall={true} buttons={buttons.fullButtonSet} />
 		<EditorUnit
-			hideMedia={false}
-			hideBlocktypes={false}
-			hideExtraFormatting={false}
-			isSmall={false}
+			showMedia={false}
+			showBlockTypes={true}
+			isSmall={true}
+			buttons={buttons.minimalButtonSet}
 		/>
 		<EditorUnit
-			hideMedia={false}
-			hideBlocktypes={false}
-			hideExtraFormatting={true}
+			showMedia={false}
+			showBlockTypes={false}
 			isSmall={true}
-		/>
-		<EditorUnit
-			hideMedia={false}
-			hideBlocktypes={true}
-			hideExtraFormatting={true}
-			isSmall={true}
-		/>
-		<EditorUnit
-			hideMedia={true}
-			hideBlocktypes={true}
-			hideExtraFormatting={true}
-			isSmall={true}
+			buttons={buttons.minimalButtonSet}
 		/>
 	</div>
 ));

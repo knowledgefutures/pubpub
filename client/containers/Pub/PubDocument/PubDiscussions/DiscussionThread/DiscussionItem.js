@@ -197,9 +197,7 @@ const DiscussionItem = (props) => {
 					<React.Fragment>
 						<FormattingBar
 							editorChangeObject={changeObject || {}}
-							threads={[]}
-							hideBlocktypes={true}
-							hideExtraFormatting={true}
+							showBlockTypes={false}
 							isSmall={true}
 						/>
 						<Button

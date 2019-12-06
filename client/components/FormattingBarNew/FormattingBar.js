@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 
 import { usePageContext } from 'containers/Pub/pubHooks';
@@ -17,57 +18,33 @@ const propTypes = {
 			focus: PropTypes.func,
 		}),
 	}).isRequired,
-	hideExtraFormatting: PropTypes.bool,
+	buttons: PropTypes.arrayOf(
+		PropTypes.shape({
+			key: PropTypes.string.isRequired,
+			title: PropTypes.string.isRequired,
+			ariaTitle: PropTypes.string,
+			icon: PropTypes.string.isRequired,
+			isToggle: PropTypes.bool,
+		}),
+	),
+	showBlockTypes: PropTypes.bool,
+	showMedia: PropTypes.bool,
 	isSmall: PropTypes.bool,
-	threads: PropTypes.arrayOf(PropTypes.object),
+	isTranslucent: PropTypes.bool,
 };
 
 const defaultProps = {
-	hideExtraFormatting: false,
+	showMedia: true,
+	showBlockTypes: true,
+	isTranslucent: false,
 	isSmall: false,
-	threads: [],
 };
 
-const formattingItems = [
-	{ key: 'strong', title: 'Bold', icon: 'bold', priority: true, isToggle: true },
-	{ key: 'em', title: 'Italic', icon: 'italic', priority: true, isToggle: true },
-	{ key: 'link', title: 'Link', icon: 'link', priority: true, isToggle: true },
-	{ key: 'bullet-list', title: 'Bullet List', icon: 'list-ul' },
-	{ key: 'numbered-list', title: 'Numbered List', icon: 'list-ol' },
-	{ key: 'blockquote', title: 'Blockquote', icon: 'citation' },
-	{ key: 'code', title: 'Code', icon: 'code', isToggle: true },
-	{ key: 'subscript', title: 'Subscript', icon: 'subscript', isToggle: true },
-	{ key: 'superscript', title: 'Superscript', icon: 'superscript', isToggle: true },
-	{
-		key: 'strikethrough',
-		title: 'Strikethrough',
-		ariaTitle: 'strike through',
-		icon: 'strikethrough',
-		isToggle: true,
-	},
-];
-
-const tableItem = { key: 'table', title: 'Table', icon: 'th' };
-
-const insertItems = [
-	{ key: 'citation', title: 'Citation', icon: 'bookmark' },
-	{ key: 'discussion', title: 'Discussion Thread', icon: 'chat' },
-	{
-		key: 'equation',
-		matchesNodes: ['equation', 'block_equation'],
-		title: 'Equation',
-		icon: 'function',
-	},
-	{ key: 'footnote', title: 'Footnote', icon: 'asterisk' },
-	{ key: 'horizontal_rule', title: 'Horizontal Line', icon: 'minus' },
-	tableItem,
-];
-
-const deriveIndicatedControlsItems = (editorChangeObject) => {
+const deriveIndicatedButton = (buttons, editorChangeObject) => {
 	const { selectedNode, selectionInTable } = editorChangeObject;
 	return [
 		selectedNode &&
-			insertItems.find(
+			buttons.find(
 				(item) =>
 					(item.matchesNodes &&
 						item.matchesNodes.some(
@@ -75,63 +52,61 @@ const deriveIndicatedControlsItems = (editorChangeObject) => {
 						)) ||
 					item.key === selectedNode.type.name,
 			),
-		selectionInTable && insertItems.find((i) => i.key === 'table'),
+		selectionInTable && buttons.find((i) => i.key === 'table'),
 	].filter((x) => x);
 };
 
 const FormattingBar = (props) => {
-	const { editorChangeObject, isSmall, hideExtraFormatting, threads } = props;
+	const { buttons, editorChangeObject, showBlockTypes, isSmall, isTranslucent } = props;
 	const { menuItems = [], selectedNode, latestDomEvent } = editorChangeObject;
 	const placementRef = useRef();
-	const [openedItem, setOpenedItem] = useState(null);
+	const [openedButton, setOpenedButton] = useState(null);
 	const {
 		communityData: { accentColorDark },
 	} = usePageContext();
 	const toolbar = useToolbarState({ loop: true });
-	const indicatedItems = deriveIndicatedControlsItems(editorChangeObject);
+	const indicatedItems = deriveIndicatedButton(buttons, editorChangeObject);
 	const [firstIndicatedItem] = indicatedItems;
 
 	useEffect(() => {
 		const clickedOnNode = latestDomEvent && latestDomEvent.type === 'click';
-		console.log(clickedOnNode, firstIndicatedItem, selectedNode);
-		setOpenedItem(clickedOnNode ? firstIndicatedItem : null);
+		setOpenedButton(clickedOnNode ? firstIndicatedItem : null);
 	}, [firstIndicatedItem, latestDomEvent, selectedNode]);
-
-	const toolbarItems = [
-		...formattingItems.filter((item) => !isSmall || item.priority),
-		...insertItems.filter((item) => {
-			if (indicatedItems.includes(item)) {
-				return true;
-			}
-			if (!threads.length && item.key === 'discussion') {
-				return false;
-			}
-			return !hideExtraFormatting;
-		}),
-	];
 
 	const handleFormattingItemClick = (item) => {
 		if (indicatedItems.includes(item)) {
-			setOpenedItem(openedItem === item ? null : item);
+			setOpenedButton(openedButton === item ? null : item);
 		}
 	};
 
 	return (
-		<div className="formatting-bar-component" ref={placementRef}>
+		<div
+			className={classNames(
+				'formatting-bar-component',
+				isSmall && 'small',
+				isTranslucent && 'translucent',
+			)}
+			ref={placementRef}
+		>
 			<Toolbar aria-label="Formatting toolbar" {...toolbar}>
-				<ToolbarItem
-					as={BlockTypeSelector}
-					editorChangeObject={editorChangeObject}
-					{...toolbar}
-				/>
-				<div className="separator" as="div" />
-				{toolbarItems.map((formattingItem) => {
+				{showBlockTypes && (
+					<>
+						<ToolbarItem
+							as={BlockTypeSelector}
+							isSmall={isSmall}
+							editorChangeObject={editorChangeObject}
+							{...toolbar}
+						/>
+						<div className="separator" as="div" />
+					</>
+				)}
+				{buttons.map((formattingItem) => {
 					const matchingMenuItem = menuItems.find(
 						(menuItem) => menuItem.title === formattingItem.key,
 					);
 					const isActive = matchingMenuItem ? matchingMenuItem.isActive : false;
 					const isIndicated = indicatedItems.includes(formattingItem) && !isActive;
-					const isOpen = openedItem === formattingItem;
+					const isOpen = openedButton === formattingItem;
 					return (
 						<ToolbarItem
 							{...toolbar}
@@ -142,14 +117,17 @@ const FormattingBar = (props) => {
 							isActive={isActive}
 							isIndicated={isIndicated && !isActive}
 							isOpen={isOpen}
+							isSmall={isSmall}
 							accentColor={accentColorDark}
 							onClick={() => handleFormattingItemClick(formattingItem)}
 						/>
 					);
 				})}
 			</Toolbar>
-			{openedItem && (
-				<FormattingBarPopover accentColor={accentColorDark} formattingItem={openedItem} />
+			{openedButton && (
+				<FormattingBarPopover accentColor={accentColorDark} button={openedButton}>
+					<openedButton.controls />
+				</FormattingBarPopover>
 			)}
 		</div>
 	);

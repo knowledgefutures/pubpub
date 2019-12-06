@@ -11,6 +11,7 @@ const propTypes = {
 			focus: PropTypes.func,
 		}),
 	}).isRequired,
+	isSmall: PropTypes.bool.isRequired,
 };
 
 const paragraphBlockType = {
@@ -52,6 +53,7 @@ const blockTypes = [
 const BlockTypeSelector = React.forwardRef((props, ref) => {
 	const {
 		editorChangeObject: { menuItems = [], view: editorView },
+		isSmall,
 		...restProps
 	} = props;
 
@@ -70,6 +72,7 @@ const BlockTypeSelector = React.forwardRef((props, ref) => {
 				elementRef={innerRef}
 				{...disclosureProps}
 				disabled={!activeBlockType}
+				small={isSmall}
 			>
 				<span>
 					<span className="full-title">{effectiveBlockType.title}</span>

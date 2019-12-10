@@ -3,18 +3,21 @@ import PropTypes from 'prop-types';
 import { hydrateWrapper } from 'utils';
 import { PageWrapper } from 'components';
 import ContentOverview from './ContentOverview';
-
-// require('./dash.scss');
+import PubOverview from './PubOverview';
 
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
-	// pubData: PropTypes.array.isRequired,
+	scopeData: PropTypes.object.isRequired,
+	overviewData: PropTypes.object.isRequired,
 };
 
 const DashboardOverview = (props) => {
-	const { communityData, locationData, loginData } = props;
+	const { communityData, locationData, loginData, scopeData, overviewData } = props;
+	const { activeTargetType } = scopeData;
+	const isContentList = activeTargetType === 'community' || activeTargetType === 'collection';
+	const isPub = activeTargetType === 'pub';
 
 	return (
 		<div className="dashboard-overview-container">
@@ -22,13 +25,11 @@ const DashboardOverview = (props) => {
 				loginData={loginData}
 				communityData={communityData}
 				locationData={locationData}
+				scopeData={scopeData}
 				isDashboard={true}
 			>
-				{/*<ContentOverview
-					communityData={communityData}
-					locationData={locationData}
-					loginData={loginData}
-				/>*/}
+				{isContentList && <ContentOverview overviewData={overviewData} />}
+				{isPub && <PubOverview overviewData={overviewData} />}
 			</PageWrapper>
 		</div>
 	);

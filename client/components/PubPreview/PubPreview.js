@@ -6,7 +6,7 @@ import { getResizedUrl } from 'utils';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 import { isPubPublic } from 'shared/pub/permissions';
 import { pubUrl, communityUrl } from 'shared/utils/canonicalUrls';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import { Avatar, Icon } from 'components';
 
 import PubPreviewImage from './PubPreviewImage';

@@ -1,23 +1,4 @@
 .content-overview-component {
-	.header {
-		display: flex;
-		align-items: flex-start;
-		.avatar-component {
-			margin-right: 10px;
-			flex: 0 0 auto;
-		}
-		.header-name {
-			font-weight: 600;
-			font-size: 24px;
-			flex: 1 1 auto;
-		}
-		.header-buttons {
-			flex: 0 0 auto;
-			.bp3-button {
-				margin-left: 1em;
-			}
-		}
-	}
 	.filter-bar {
 		display: flex;
 		width: 100%;

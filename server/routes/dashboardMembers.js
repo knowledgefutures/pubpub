@@ -10,7 +10,7 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-// import { getPermissionLevel } from '../utils/memberPermissions';
+import { getMembersData } from '../utils/membersQueries';
 
 app.get(
 	[
@@ -19,14 +19,6 @@ app.get(
 		'/dash/collection/:collectionSlug/members',
 		'/dash/pub/:pubSlug',
 		'/dash/pub/:pubSlug/members',
-
-		// '/dash/collection/:collectionSlug/:mode',
-		// '/dash/collection/:collectionSlug/:mode/:submode',
-		// '/dash/pub/:pubSlug/',
-		// '/dash/pub/:pubSlug/:mode',
-		// '/dash/pub/:pubSlug/:mode/:submode',
-		// '/dash/:mode',
-		// '/dash/:mode/:submode',
 	],
 	(req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
@@ -35,41 +27,25 @@ app.get(
 
 		return getInitialData(req)
 			.then((initialData) => {
-				return Promise.all([
-					initialData,
-					// getPermissionLevel({
-					// 	userId: initialData.loginData.id,
-					// 	targetId: 'd2112c45-7188-490e-a8c2-28542097a749',
-					// 	targetType: 'pub',
-					// }),
-					'manage',
-					// Member.findAll() // associated with this full stack
-					// dashboard data, which will give the active elements at each scope, and active scope
-				]);
+				return Promise.all([initialData, getMembersData(initialData)]);
 			})
-			.then(([initialData, permissionLevel]) => {
-				// console.log('permissionLevel: ', permissionLevel);
-				const mode = initialData.locationData.params.mode || 'overview';
-				const capitalizeFirstLetter = (string) => {
-					return string.charAt(0).toUpperCase() + string.slice(1);
-				};
-				// console.log(initialData.loginData.id, initialData.communityData.id);
-				const newInitialData = {
+			.then(([initialData, membersData]) => {
+				const inputData = {
 					...initialData,
-					// membersData: 
-				}
+					membersData: membersData,
+				};
 				return renderToNodeStream(
 					res,
 					<Html
 						chunkName="DashboardMembers"
-						initialData={initialData}
+						initialData={inputData}
 						headerComponents={generateMetaComponents({
 							initialData: initialData,
-							title: `${capitalizeFirstLetter(mode)} · Dash`,
+							title: `Members · ${initialData.scopeData.activeTarget.title}`,
 							unlisted: true,
 						})}
 					>
-						<DashboardMembers {...newInitialData} />
+						<DashboardMembers {...inputData} />
 					</Html>,
 				);
 			})

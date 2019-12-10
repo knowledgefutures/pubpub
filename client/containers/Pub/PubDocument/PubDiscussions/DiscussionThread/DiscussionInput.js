@@ -8,7 +8,7 @@ import Editor, {
 	getLocalHighlightText,
 } from '@pubpub/editor';
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import { Avatar, FormattingBar } from 'components';
 import { apiFetch } from 'utils';
 

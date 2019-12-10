@@ -12,7 +12,7 @@ import {
 	DropdownButton,
 } from 'components';
 import { apiFetch } from 'utils';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 require('./permissions.scss');
 

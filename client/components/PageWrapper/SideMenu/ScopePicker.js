@@ -1,25 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { getDashUrl } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
 import { Avatar, Icon, MenuButton, MenuItem } from 'components';
 
 require('./scopePicker.scss');
 
-const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
-};
-
-const ScopePicker = (props) => {
-	const { communityData, locationData } = props;
+const ScopePicker = () => {
+	const { locationData, communityData, scopeData } = usePageContext();
+	const { activeCollection, activePub } = scopeData;
 
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
-
-	const activeCollection = communityData.collections.find(
-		(collection) => collection.title.toLowerCase().replace(/ /gi, '-') === collectionSlug,
-	);
-	const activePub = communityData.pubs.find((pub) => pub.slug === pubSlug);
 
 	let currentScopeTitle = 'Community';
 	let icon = 'office';
@@ -90,6 +81,7 @@ const ScopePicker = (props) => {
 							return (
 								<MenuItem
 									href={scope.href}
+									key={scope.type}
 									text={
 										<div className={`scope-item item-${index}`}>
 											<div className="top">
@@ -118,5 +110,4 @@ const ScopePicker = (props) => {
 	);
 };
 
-ScopePicker.propTypes = propTypes;
 export default ScopePicker;

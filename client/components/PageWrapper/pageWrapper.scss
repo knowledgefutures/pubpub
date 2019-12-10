@@ -58,7 +58,20 @@
 			padding-bottom: 16px;
 			max-width: calc(1024px + #{$side-menu-width});
 			margin: 0 auto;
-			.dashboard-content-title {
+			.dashboard-content-header {
+				display: flex;
+				align-items: flex-start;
+				.name {
+					font-weight: 600;
+					font-size: 24px;
+					flex: 1 1 auto;
+				}
+				.buttons {
+					flex: 0 0 auto;
+					.bp3-button {
+						margin-left: 1em;
+					}
+				}
 			}
 		}
 	}

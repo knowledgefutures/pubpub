@@ -4,8 +4,9 @@ import { Button, Icon, Menu, MenuItem, Spinner, Tooltip } from '@blueprintjs/cor
 
 import { apiFetch } from 'utils';
 import { pingTask } from 'utils/pingTask';
+import { usePageContext } from 'utils/hooks';
+import { usePubHistory } from '../pubHooks';
 import { getFormattedDownload } from './headerUtils';
-import { usePubHistory, usePageContext } from '../pubHooks';
 
 require('./download.scss');
 

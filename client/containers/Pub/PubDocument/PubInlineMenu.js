@@ -7,7 +7,7 @@ import { setLocalHighlight, cursor } from '@pubpub/editor';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import Icon from 'components/Icon/Icon';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 require('./pubInlineMenu.scss');
 

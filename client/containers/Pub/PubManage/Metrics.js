@@ -5,7 +5,7 @@ import { ComposableMap, ZoomableGroup, Geographies, Geography } from 'react-simp
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
 import { Spinner, Tab, Tabs } from '@blueprintjs/core';
 import KeenAnalysis from 'keen-analysis';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 require('./metrics.scss');
 

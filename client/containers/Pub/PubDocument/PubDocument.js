@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { marksAtSelection, setLocalHighlight, cursor } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';

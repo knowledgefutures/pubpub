@@ -10,7 +10,7 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-// import { getPermissionLevel } from '../utils/memberPermissions';
+import { getOverviewData } from '../utils/overviewQueries';
 
 app.get(
 	[
@@ -20,14 +20,6 @@ app.get(
 		'/dash/collection/:collectionSlug/overview',
 		'/dash/pub/:pubSlug',
 		'/dash/pub/:pubSlug/overview',
-
-		// '/dash/collection/:collectionSlug/:mode',
-		// '/dash/collection/:collectionSlug/:mode/:submode',
-		// '/dash/pub/:pubSlug/',
-		// '/dash/pub/:pubSlug/:mode',
-		// '/dash/pub/:pubSlug/:mode/:submode',
-		// '/dash/:mode',
-		// '/dash/:mode/:submode',
 	],
 	(req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
@@ -41,34 +33,25 @@ app.get(
 
 		return getInitialData(req)
 			.then((initialData) => {
-				return Promise.all([
-					initialData,
-					// getPermissionLevel({
-					// 	userId: initialData.loginData.id,
-					// 	targetId: 'd2112c45-7188-490e-a8c2-28542097a749',
-					// 	targetType: 'pub',
-					// }),
-				]);
+				return Promise.all([initialData, getOverviewData(initialData)]);
 			})
-			.then(([initialData, permissionLevel]) => {
-				// console.log('permissionLevel: ', permissionLevel);
-				const mode = initialData.locationData.params.mode || 'overview';
-				const capitalizeFirstLetter = (string) => {
-					return string.charAt(0).toUpperCase() + string.slice(1);
+			.then(([initialData, overviewData]) => {
+				const inputData = {
+					...initialData,
+					overviewData: overviewData,
 				};
-				// console.log(initialData.loginData.id, initialData.communityData.id);
 				return renderToNodeStream(
 					res,
 					<Html
 						chunkName="DashboardOverview"
-						initialData={initialData}
+						initialData={inputData}
 						headerComponents={generateMetaComponents({
 							initialData: initialData,
-							title: `${capitalizeFirstLetter(mode)} · Dash`,
+							title: `Overview · ${initialData.scopeData.activeTarget.title}`,
 							unlisted: true,
 						})}
 					>
-						<DashboardOverview {...initialData} />
+						<DashboardOverview {...inputData} />
 					</Html>,
 				);
 			})

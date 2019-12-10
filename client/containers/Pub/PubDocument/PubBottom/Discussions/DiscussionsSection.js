@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Popover, Position } from '@blueprintjs/core';
 
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 import PubDiscussions from '../../PubDiscussions/PubDiscussions';
 import PubBottomSection, { SectionBullets, AccentedIconButton } from '../PubBottomSection';

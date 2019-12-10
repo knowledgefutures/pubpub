@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Header, Footer, GdprBanner, AccentStyle, NavBar, Icon, SkipLink } from 'components';
 import { populateNavigationIds } from 'utils';
+import { PageContext } from 'utils/hooks';
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
 
@@ -12,6 +13,7 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
+	scopeData: PropTypes.object.isRequired,
 	children: PropTypes.node.isRequired,
 	isDashboard: PropTypes.bool,
 	hideNav: PropTypes.bool,
@@ -24,13 +26,12 @@ const defaultProps = {
 	hideFooter: false,
 };
 
-export const PageContext = React.createContext({});
-
 const PageWrapper = (props) => {
 	const {
 		loginData,
 		communityData,
 		locationData,
+		scopeData,
 		children,
 		isDashboard,
 		hideNav,
@@ -76,6 +77,7 @@ const PageWrapper = (props) => {
 		communityData: communityData,
 		loginData: loginData,
 		locationData: locationData,
+		scopeData: scopeData,
 	};
 
 	const showNav = !hideNav && !communityData.hideNav && !isDashboard;
@@ -101,7 +103,14 @@ const PageWrapper = (props) => {
 
 				{showNav && <NavBar navItems={navItems} socialItems={socialItems} />}
 
-				
+				{isDashboard && (
+					<div className="side-content">
+						<SideMenu />
+					</div>
+				)}
+
+				{isDashboard && <Breadcrumbs />}
+
 				<div id="main-content" tabIndex="-1" className="page-content">
 					{children}
 				</div>

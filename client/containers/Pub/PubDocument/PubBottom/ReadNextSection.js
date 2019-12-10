@@ -9,7 +9,7 @@ import {
 } from 'utils/collections';
 import { pubDataProps } from 'types/pub';
 import { pubUrl } from 'shared/utils/canonicalUrls';
-import { usePageContext } from '../../pubHooks';
+import { usePageContext } from 'utils/hooks';
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
 
 const propTypes = {

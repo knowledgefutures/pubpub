@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton, Card, Switch } from '@blueprintjs/core';
 
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import { getGdprConsentElection, updateGdprConsent } from 'utils/gdprConsent';
 
 const propTypes = {

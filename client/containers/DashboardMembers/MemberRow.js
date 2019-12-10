@@ -43,7 +43,7 @@ const MemberRow = (props) => {
 				<Select
 					className="permission-select"
 					activeItem={memberData.permissions}
-					items={['view', 'discuss', 'edit', 'manage', 'admin']}
+					items={['view', 'edit', 'manage', 'admin']}
 					filterable={false}
 					popoverProps={{ minimal: true, position: Position.BOTTOM_RIGHT }}
 					onItemSelect={(item) => {

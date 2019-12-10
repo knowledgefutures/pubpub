@@ -6,7 +6,7 @@ import { createReadingParamUrl, useCollectionPubs } from 'utils/collections';
 import { pubDataProps } from 'types/pub';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import { getSchemaForKind } from 'shared/collections/schemas';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 require('./collectionBrowser.scss');
 

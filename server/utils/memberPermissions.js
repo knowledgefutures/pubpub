@@ -1,14 +1,14 @@
 import { Op } from 'sequelize';
 import { Member } from '../models';
 
-export const getMemberData = async (scopedData, userId) => {
+export const buildMemberQueryOr = (scopeData) => {
 	const {
 		activePub,
 		activeCollection,
 		inactiveCollections,
 		activeCommunity,
 		activeOrganization,
-	} = scopedData;
+	} = scopeData;
 
 	const orQuery = [];
 	orQuery.push({ communityId: activeCommunity.id });
@@ -16,16 +16,24 @@ export const getMemberData = async (scopedData, userId) => {
 		orQuery.push({ pubId: activePub.id });
 	}
 	if (activeCollection || inactiveCollections.length) {
+		const collectionsList = [...inactiveCollections];
+		if (activeCollection) {
+			collectionsList.push(activeCollection);
+		}
 		orQuery.push({
 			collectionId: {
-				[Op.in]: [activeCollection, ...inactiveCollections].map((cl) => cl.id),
+				[Op.in]: collectionsList.map((cl) => cl.id),
 			},
 		});
 	}
 	if (activeOrganization) {
 		orQuery.push({ organizationId: activeOrganization.id });
 	}
+	return orQuery;
+};
 
+export const getMemberData = async (scopeData, userId) => {
+	const orQuery = buildMemberQueryOr(scopeData);
 	return Member.findAll({
 		where: {
 			userId: userId,
@@ -34,7 +42,7 @@ export const getMemberData = async (scopedData, userId) => {
 	});
 };
 
-export const getPublicPermissions = (scopedData) => {
+export const getPublicPermissions = (scopeData) => {
 	// TODO
 	return {};
 };
@@ -49,9 +57,9 @@ export const getPermissionLevel = (memberData) => {
 	return permissionLevelIndex > -1 ? permissionLevels[permissionLevelIndex] : null;
 };
 
-export const getScopedPermissions = async (scopedData, userId) => {
-	const memberData = await getMemberData(scopedData, userId);
-	const { isPublic, isPublicDiscussion, isPublicReview } = getPublicPermissions(scopedData);
+export const getScopePermissions = async (scopeData, userId) => {
+	const memberData = await getMemberData(scopeData, userId);
+	const { isPublic, isPublicDiscussion, isPublicReview } = getPublicPermissions(scopeData);
 	const memberPermission = getPermissionLevel(memberData);
 
 	return {

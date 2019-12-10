@@ -3,33 +3,28 @@ import PropTypes from 'prop-types';
 import { Button, InputGroup } from '@blueprintjs/core';
 import fuzzysearch from 'fuzzysearch';
 import classNames from 'classnames';
-import { Avatar } from 'components';
 import { generatePlainAuthorString } from 'components/PubPreview/pubPreviewUtils';
+import { usePageContext } from 'utils/hooks';
 import { groupPubs } from 'utils/dashboard';
 import ContentRow from './ContentRow';
 
 require('./contentOverview.scss');
 
 const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	// loginData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
+	overviewData: PropTypes.object.isRequired,
 };
 
 const ContentOverview = (props) => {
-	const { communityData, locationData } = props;
-	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
-	const { collections, pubs } = groupPubs(communityData.pubs, communityData.collections);
-	const rootPubs = collectionSlug
+	const { overviewData } = props;
+	const { scopeData } = usePageContext();
+	const { activeCollection } = scopeData;
+	const collectionSlug = activeCollection && activeCollection.slug;
+	const { collections, pubs } = groupPubs(overviewData.pubs, overviewData.collections);
+	const rootPubs = activeCollection
 		? collections.find((collection) => {
-				const currSlug = collection.title.toLowerCase().replace(/ /gi, '-');
-				return collectionSlug === currSlug;
+				return collectionSlug === collection.slug;
 		  }).pubs
 		: pubs;
-	const activeCollection =
-		communityData.collections.find((collection) => {
-			return collection.title.toLowerCase().replace(/ /gi, '-') === collectionSlug;
-		}) || {};
 
 	const [filterText, setFilterText] = useState('');
 	const filteredCollections = collections
@@ -76,11 +71,9 @@ const ContentOverview = (props) => {
 		.filter((pub) => !!pub);
 	return (
 		<div className="content-overview-component">
-			<div className="header">
-				<div className={classNames({ 'header-name': true, collection: collectionSlug })}>
-					Overview
-				</div>
-				<div className="header-buttons">
+			<div className="dashboard-content-header">
+				<div className="name">Overview</div>
+				<div className="buttons">
 					<Button text="New Pub" />
 					{!collectionSlug && <Button text="New Collection" />}
 				</div>

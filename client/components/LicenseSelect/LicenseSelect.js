@@ -4,7 +4,7 @@ import { Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
 
 import { licenses, getLicenseBySlug } from 'shared/license';
 import { apiFetch } from 'utils';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 require('./licenseSelect.scss');
 

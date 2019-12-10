@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { AnchorButton, Button, Intent, NonIdealState, Tag, Tabs, Tab } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, InputField, Icon, MinimalEditor } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import { apiFetch } from 'utils';
 
 require('./pubReviewCreate.scss');

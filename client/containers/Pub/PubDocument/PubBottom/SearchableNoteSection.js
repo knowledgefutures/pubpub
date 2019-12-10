@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 import Notes, { notePropType } from './Notes';
 import PubBottomSection, { SectionBullets } from './PubBottomSection';

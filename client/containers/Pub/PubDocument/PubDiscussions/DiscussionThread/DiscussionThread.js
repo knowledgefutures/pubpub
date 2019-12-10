@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 import { Icon } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import DiscussionItem from './DiscussionItem';
 import DiscussionInput from './DiscussionInput';
 import LabelList from './LabelList';

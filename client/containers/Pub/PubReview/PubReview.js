@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Intent, Tag, Tabs, Tab, Callout } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, Icon, InputField, MinimalEditor } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import { apiFetch } from 'utils';
 import ReviewEvent from './ReviewEvent';
 

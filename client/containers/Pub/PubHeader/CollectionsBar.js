@@ -5,7 +5,7 @@ import { Menu, MenuItem, OverflowList, Popover, Position, Tag } from '@blueprint
 import { pubDataProps } from 'types/pub';
 import { chooseCollectionForPub } from 'utils/collections';
 import { collectionUrl } from 'shared/utils/canonicalUrls';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 import CollectionBrowser from './CollectionBrowser';
 

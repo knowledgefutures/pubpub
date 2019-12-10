@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { InputField } from 'components';
 import { apiFetch, slugifyString } from 'utils';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,

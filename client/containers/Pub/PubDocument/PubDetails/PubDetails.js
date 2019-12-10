@@ -6,7 +6,7 @@ import { Button } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 import { Icon, GridWrapper } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 
 import { getAllPubContributors } from 'utils/pubContributors';

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 import { NonIdealState } from '@blueprintjs/core';
 import ThreadGroup from './ThreadGroup';

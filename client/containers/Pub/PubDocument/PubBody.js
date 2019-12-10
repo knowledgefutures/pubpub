@@ -10,7 +10,7 @@ import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
 import debounce from 'debounce';
 
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 
 import discussionSchema from './DiscussionAddon/discussionSchema';

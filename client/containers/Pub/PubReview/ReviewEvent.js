@@ -5,7 +5,7 @@ import { AnchorButton } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { Avatar } from 'components';
 import Editor from '@pubpub/editor';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 require('./reviewEvent.scss');
 

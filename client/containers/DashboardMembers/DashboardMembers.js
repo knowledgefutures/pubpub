@@ -12,39 +12,32 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
+	scopeData: PropTypes.object.isRequired,
 	membersData: PropTypes.object.isRequired,
 };
 
 const DashboardMembers = (props) => {
-	const { communityData, locationData, loginData, membersData } = props;
+	const { communityData, locationData, loginData, scopeData, membersData } = props;
+	const { activeTargetType } = scopeData;
+	// let scope = 'Community';
+	// if (locationData.params.collectionSlug) {
+	// 	scope = 'Collection';
+	// }
+	// if (locationData.params.pubSlug) {
+	// 	scope = 'Pub';
+	// }
 
-	let scope = 'Community';
-	if (locationData.params.collectionSlug) {
-		scope = 'Collection';
-	}
-	if (locationData.params.pubSlug) {
-		scope = 'Pub';
-	}
+	const membersByType = {
+		pub: membersData.members.filter((mb) => mb.pubId),
+		collection: membersData.members.filter((mb) => mb.collectionId),
+		community: membersData.members.filter((mb) => mb.communityId),
+		organization: membersData.members.filter((mb) => mb.organizationId),
+	};
 
-	const pubMembers = membersData.members.filter((mb) => mb.pubId);
-	const collectionMembers = membersData.members.filter(
-		(mb) =>
-			scope !== 'Collection' &&
-			scope !== 'Community' &&
-			scope !== 'Organization' &&
-			mb.collectionId,
-	);
-	const communityMembers = membersData.members.filter(
-		(mb) => scope !== 'Community' && scope !== 'Organization' && mb.communityId,
-	);
-	const organizationMembers = membersData.members.filter(
-		(mb) => scope !== 'Organization' && mb.organizationId,
-	);
-	const hasInheritedMembers = !!(
-		collectionMembers.length ||
-		communityMembers.length ||
-		organizationMembers.length
-	);
+	const hasInheritedMembers =
+		(membersByType.collection.length && activeTargetType !== 'collection') ||
+		(membersByType.community.length && activeTargetType !== 'community') ||
+		(membersByType.organization.length && activeTargetType !== 'organization');
 
 	return (
 		<div className="dashboard-members-container">
@@ -52,9 +45,10 @@ const DashboardMembers = (props) => {
 				loginData={loginData}
 				communityData={communityData}
 				locationData={locationData}
+				scopeData={scopeData}
 				isDashboard={true}
 			>
-				<h2 className="dashboard-content-title">{scope} Members</h2>
+				<h2 className="dashboard-content-header">Members</h2>
 
 				<SettingsSection title="Add Member">
 					<ControlGroup>
@@ -71,21 +65,25 @@ const DashboardMembers = (props) => {
 					{membersData.invitations.map((invitation) => {
 						return <MemberRow isInvitation={true} memberData={invitation} />;
 					})}
-					{pubMembers.map((member) => {
+					{membersByType[activeTargetType].map((member) => {
 						return <MemberRow memberData={member} />;
 					})}
 				</SettingsSection>
-				{hasInheritedMembers && (
+				{!!hasInheritedMembers && (
 					<SettingsSection title="Inherited Members">
-						{!!collectionMembers.length && (
-							<InheritedBlock members={collectionMembers} scope="Collection" />
+						{!!membersByType.collection.length && activeTargetType !== 'collection' && (
+							<InheritedBlock members={membersByType.collection} scope="Collection" />
 						)}
-						{!!communityMembers.length && (
-							<InheritedBlock members={communityMembers} scope="Community" />
+						{!!membersByType.community.length && activeTargetType !== 'community' && (
+							<InheritedBlock members={membersByType.community} scope="Community" />
 						)}
-						{!!organizationMembers.length && (
-							<InheritedBlock members={organizationMembers} scope="Organization" />
-						)}
+						{!!membersByType.organization.length &&
+							activeTargetType !== 'organization' && (
+								<InheritedBlock
+									members={membersByType.organization}
+									scope="Organization"
+								/>
+							)}
 					</SettingsSection>
 				)}
 			</PageWrapper>

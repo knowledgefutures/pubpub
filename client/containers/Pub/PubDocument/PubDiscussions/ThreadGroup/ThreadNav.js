@@ -4,7 +4,7 @@ import Color from 'color';
 import { Button, Popover, Menu, MenuItem } from '@blueprintjs/core';
 
 import { Icon } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 import ThreadBubble from './ThreadBubble';
 

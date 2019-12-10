@@ -1,21 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Color from 'color';
 import { Icon } from 'components';
-import { getDashUrl, getActiveDiscussions } from 'utils/dashboard';
+import { usePageContext } from 'utils/hooks';
+// import { getDashUrl, getActiveDiscussions } from 'utils/dashboard';
+import { getDashUrl } from 'utils/dashboard';
 import ScopePicker from './ScopePicker';
 
 require('./sideMenu.scss');
 
-const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
-};
-
-const SideMenu = (props) => {
-	const { communityData, locationData } = props;
-	const discussions = getActiveDiscussions(communityData, locationData);
+const SideMenu = () => {
+	const { locationData, communityData } = usePageContext();
+	// const discussions = getActiveDiscussions(communityData, locationData);
+	const discussions = [];
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
 
@@ -160,7 +157,7 @@ const SideMenu = (props) => {
 					`,
 				}}
 			/>
-			<ScopePicker communityData={communityData} locationData={locationData} />
+			<ScopePicker />
 
 			<div className="content">
 				{contentItems
@@ -168,10 +165,8 @@ const SideMenu = (props) => {
 						return !item.communityOnly || (!collectionSlug && !pubSlug);
 					})
 					.map((item) => {
-						const active =
-							item.title.toLowerCase().replace(/ /gi, '-') ===
-								locationData.params.mode ||
-							(!locationData.params.mode && item.title === 'Overview');
+						const itemMode = item.title.toLowerCase().replace(/ /gi, '-')
+						const active = locationData.path.split('/').slice(-1)[0] === itemMode;
 						return (
 							<div
 								key={item.title}
@@ -220,5 +215,4 @@ const SideMenu = (props) => {
 	);
 };
 
-SideMenu.propTypes = propTypes;
 export default SideMenu;

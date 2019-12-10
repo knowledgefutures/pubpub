@@ -4,7 +4,7 @@ import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
 import Editor, { getText, getJSON } from '@pubpub/editor';
 import { Button, Intent, Tooltip } from '@blueprintjs/core';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import { Avatar, Icon, FormattingBar } from 'components';
 import { apiFetch } from 'utils';
 import LabelSelect from './LabelSelect';

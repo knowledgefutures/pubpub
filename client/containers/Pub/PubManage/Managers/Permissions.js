@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Checkbox } from '@blueprintjs/core';
 import { Icon, Avatar, SharingCard, UserAutocomplete } from 'components';
 import { apiFetch } from 'utils';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 require('./permissions.scss');
 

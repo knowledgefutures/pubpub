@@ -40,6 +40,7 @@ export const groupPubs = (pubs, collections) => {
 };
 
 export const getActiveDiscussions = (communityData, locationData) => {
+	return [];
 	const { collections } = groupPubs(communityData.pubs, communityData.collections);
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;

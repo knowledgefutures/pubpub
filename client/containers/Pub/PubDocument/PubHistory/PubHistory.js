@@ -8,7 +8,7 @@ import stickybits from 'stickybits';
 import { pubDataProps } from 'types/pub';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import { GridWrapper } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 
 require('./pubHistory.scss');

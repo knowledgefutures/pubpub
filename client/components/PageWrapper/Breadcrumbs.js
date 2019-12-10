@@ -1,24 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Avatar, Icon } from 'components';
+import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 
 require('./breadcrumbs.scss');
 
-const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
-};
-
-const Breadcrumbs = (props) => {
-	const { communityData, locationData } = props;
+const Breadcrumbs = () => {
+	const { locationData, communityData, scopeData } = usePageContext();
+	const { activePub, activeCollection } = scopeData;
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
 
-	const activeCollection = communityData.collections.find(
-		(collection) => collection.title.toLowerCase().replace(/ /gi, '-') === collectionSlug,
-	);
-	const activePub = communityData.pubs.find((pub) => pub.slug === pubSlug);
 	const activeMode = locationData.params.mode || 'Overview';
 	const isParentMode = activeMode === 'conversations' || activeMode === 'reviews';
 	const activeSubmode = locationData.params.submode;
@@ -118,5 +110,4 @@ const Breadcrumbs = (props) => {
 	);
 };
 
-Breadcrumbs.propTypes = propTypes;
 export default Breadcrumbs;

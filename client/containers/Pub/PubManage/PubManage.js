@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Menu, MenuItem, Intent } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import Attribution from './Attribution';
 import Collections from './Collections';
 import Details from './Details';

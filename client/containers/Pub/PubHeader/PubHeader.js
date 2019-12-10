@@ -20,7 +20,7 @@ import {
 	Popover,
 } from '@blueprintjs/core';
 import { GridWrapper, Overlay, Icon } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
 import PubToc from './PubToc';
 import Download from './Download';

@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import queryString from 'query-string';
 import { Collection, Community, Page, User, Pub, CollectionPub } from '../models';
-import { getScopedPermissions } from './memberPermissions';
+import { getScopePermissions } from './memberPermissions';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 
@@ -16,7 +16,7 @@ const getTargetType = (params) => {
 	return 'community';
 };
 
-export const getScopedData = async (communityData, loginData, locationData) => {
+export const getScopeData = async (communityData, loginData, locationData) => {
 	const activeTargetType = getTargetType(locationData.params);
 	let activeTarget;
 	let activePub;
@@ -55,6 +55,10 @@ export const getScopedData = async (communityData, loginData, locationData) => {
 			where: { slug: locationData.params.collectionSlug },
 		});
 		activeCollection = activeTarget;
+	}
+
+	if (activeTargetType === 'community') {
+		activeTarget = activeCommunity;
 	}
 
 	return {
@@ -215,14 +219,21 @@ export const getInitialData = async (req) => {
 		/* eslint-disable-next-line no-param-reassign */
 		communityData.domain = req.headers.localhost;
 	}
-	const scopedData = await getScopedData(communityData, loginData, locationData);
-	const scopedPermissions = await getScopedPermissions(scopedData, loginData.id);
+	const scopeData = await getScopeData(communityData, loginData, locationData);
+	const scopePermissions = await getScopePermissions(scopeData, loginData.id);
+	const scopeDataWithPermissions = {
+		...scopeData,
+		activePermissions: {
+			...scopePermissions,
+			memberData: undefined,
+		},
+		memberData: scopePermissions.memberData,
+	};
 
 	return {
 		communityData: communityData,
 		loginData: loginData,
 		locationData: locationData,
-		scopedData: scopedData,
-		scopedPermissions: scopedPermissions,
+		scopeData: scopeDataWithPermissions,
 	};
 };

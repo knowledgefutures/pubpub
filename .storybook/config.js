@@ -4,7 +4,7 @@ import { addDecorator, addParameters, configure } from '@storybook/react';
 import { configureViewport } from '@storybook/addon-viewport';
 import { FocusStyleManager } from '@blueprintjs/core';
 import { communityData, locationData, loginData } from 'data';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { PageContext } from 'utils/hooks';
 
 FocusStyleManager.onlyShowFocusOnTabs();
 

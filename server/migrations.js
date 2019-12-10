@@ -682,29 +682,111 @@ new Promise((resolve) => {
 	// })
 
 	/* New Dashboard migrations */
-	// .then(() => {
-	// 	return sequelize.queryInterface.addColumn('Communities', 'organizationId', {
-	// 		type: Sequelize.UUID,
-	// 		defaultValue: null,
-	// 	});
-	// })
+	.then(() => {
+		return Promise.all([
+			// sequelize.queryInterface.addColumn('Collections', 'viewHash', {
+			// 	type: Sequelize.STRING,
+			// }),
+			// sequelize.queryInterface.addColumn('Collections', 'editHash', {
+			// 	type: Sequelize.STRING,
+			// }),
+			// sequelize.queryInterface.addColumn('Collections', 'avatar', {
+			// 	type: Sequelize.TEXT,
+			// }),
+			// sequelize.queryInterface.addColumn('Communities', 'isPublic', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
+			// sequelize.queryInterface.addColumn('Communities', 'viewHash', {
+			// 	type: Sequelize.STRING,
+			// }),
+			// sequelize.queryInterface.addColumn('Communities', 'editHash', {
+			// 	type: Sequelize.STRING,
+			// }),
+			// sequelize.queryInterface.addColumn('Communities', 'organizationId', {
+			// 	type: Sequelize.UUID,
+			// }),
+			// sequelize.queryInterface.addColumn('Discussions', 'isPublic', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
+			// sequelize.queryInterface.addColumn('Discussions', 'initBranchId', {
+			// 	type: Sequelize.UUID,
+			// }),
+			// sequelize.queryInterface.addColumn('Discussions', 'collectionId', {
+			// 	type: Sequelize.UUID,
+			// }),
+			// sequelize.queryInterface.addColumn('Discussions', 'organizationId', {
+			// 	type: Sequelize.UUID,
+			// }),
+			// sequelize.queryInterface.addColumn('Pubs', 'isPublic', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
+			// sequelize.queryInterface.addColumn('Pubs', 'isPublicDiscussions', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
+			// sequelize.queryInterface.addColumn('Pubs', 'isPublicReviews', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
+			// sequelize.queryInterface.addColumn('Pubs', 'viewHash', {
+			// 	type: Sequelize.STRING,
+			// }),
+			// sequelize.queryInterface.addColumn('Pubs', 'editHash', {
+			// 	type: Sequelize.STRING,
+			// }),
+		]);
+	})
+	.then(()=> {
+		return Promise.all([
+			// sequelize.queryInterface.changeColumn('Discussions', 'pubId', {
+			// 	type: Sequelize.UUID,
+			// }),
+			// sequelize.queryInterface.changeColumn('Discussions', 'communityId', {
+			// 	type: Sequelize.UUID,
+			// }),
+		]);
+	})
 
 	/* Need to add in dashboard world */
 	/*
-		Pub.publicPermissions
-		Collection.publicPermissions
-		Community.publicPermissions
-		Organization.publicPermissions
+		Collection.viewHash
+		Collection.editHash
+		Collection.avatar
+		Community.isPublic
+		Community.viewHash
+		Community.editHash
+		Community.organizationId
+		Discussion.isPublic (Need some table for Discussion/Review visibility)
+		Discussion.initBranchId
+		Discussion.collectionId
+		Discussion.organizationId
+		Pub.isPublic
+		Pub.isPublicDiscussions
+		Pub.isPublicReviews
+		Pub.viewHash
+		Pub.editHash
 	*/
-		
+
 	/* Can Deprecate in dashboard world */
 	/*
-		discussions' communityId
-		PubManagers
-		CommunityAdmins
-		BranchPermissions
+		Branch.publilcPermissions
+		Branch.pubManagerPermissions
+		Branch.communityAdminPermissions
+		Branch.viewHash
+		Branch.discussHash
+		Branch.editHash
+		BranchPermissions.*
+		CommunityAdmin.*
+		Discussion.branchId
+		Pub.isCommunityAdminManaged
+		PubManager.*
+	*/
+
+	/* Need to change in dashboard world */
+	/*
+		Discussion.pubId [allowNull: true]
+		Discussion.communityId [allowNull: true]
 
 	*/
+
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

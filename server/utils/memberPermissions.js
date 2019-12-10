@@ -1,14 +1,11 @@
 import { Op } from 'sequelize';
-import { Community, Collection, CollectionPub, Member, Organization, Pub } from '../models';
+import { Community, Collection, CollectionPub, Member, Pub } from '../models';
 
-export const getPermissionLevel = async ({ userId, targetId, targetType }) => {
+export const getMemberData = async (userId, targetId, targetType) => {
 	let pubId;
 	let collectionId;
 	let communityId;
 	let organizationId;
-	let publicPermissionLevel = -1;
-	const permissionLevels = ['view', 'discuss', 'edit', 'manage', 'admin'];
-
 	if (targetType === 'pub') {
 		const targetData = await Pub.findOne({
 			where: { id: targetId },
@@ -27,25 +24,11 @@ export const getPermissionLevel = async ({ userId, targetId, targetType }) => {
 				},
 			],
 		});
-		publicPermissionLevel = Math.max(
-			publicPermissionLevel,
-			permissionLevels.indexOf(targetData.publicPermissions),
-		);
+
 		pubId = targetId;
 		collectionId = { [Op.in]: targetData.collectionPubs.map((cp) => cp.collectionId) };
 		communityId = targetData.community.id;
 		organizationId = targetData.community.organizationId;
-		// whereQuery.push({ pubId: targetId });
-		// whereQuery.push({
-		// 	collectionId: { $in: targetData.collectionPubs.map((cp) => cp.collectionId) },
-		// });
-		// whereQuery.push({ communityId: targetData.community.id });
-		// whereQuery.push({ organizationId: targetData.community.organizationId });
-
-		// whereQuery.pubId = targetId;
-		// whereQuery.collectionId = { $in: targetData.collectionPubs.map((cp) => cp.collectionId) };
-		// whereQuery.communityId = targetData.community.id;
-		// whereQuery.organizationId = targetData.community.organizationId;
 	}
 	if (targetType === 'collection') {
 		const targetData = await Collection.findOne({
@@ -59,10 +42,7 @@ export const getPermissionLevel = async ({ userId, targetId, targetType }) => {
 				},
 			],
 		});
-		publicPermissionLevel = Math.max(
-			publicPermissionLevel,
-			permissionLevels.indexOf(targetData.publicPermissions),
-		);
+
 		collectionId = targetId;
 		communityId = targetData.community.id;
 		organizationId = targetData.community.organizationId;
@@ -72,22 +52,11 @@ export const getPermissionLevel = async ({ userId, targetId, targetType }) => {
 			where: { id: targetId },
 			attributes: ['id', 'organizationId'],
 		});
-		publicPermissionLevel = Math.max(
-			publicPermissionLevel,
-			permissionLevels.indexOf(targetData.publicPermissions),
-		);
+
 		communityId = targetId;
 		organizationId = targetData.organizationId;
 	}
 	if (targetType === 'organization') {
-		const targetData = await Organization.findOne({
-			where: { id: targetId },
-			attributes: ['id', 'organizationId'],
-		});
-		publicPermissionLevel = Math.max(
-			publicPermissionLevel,
-			permissionLevels.indexOf(targetData.publicPermissions),
-		);
 		organizationId = targetId;
 	}
 
@@ -103,17 +72,26 @@ export const getPermissionLevel = async ({ userId, targetId, targetType }) => {
 		orQuery.push({ organizationId: organizationId });
 	}
 
-	const memberships = await Member.findAll({
+	return Member.findAll({
 		where: {
 			userId: userId,
 			[Op.or]: orQuery,
 		},
 	});
+};
 
-	const permissionLevelIndex = memberships.reduce((prev, curr) => {
+export const getLevel = async (membersData) => {
+	const permissionLevels = ['view', 'edit', 'manage', 'admin'];
+	const permissionLevelIndex = membersData.reduce((prev, curr) => {
 		const currLevelIndex = permissionLevels.indexOf(curr.permissions);
 		return currLevelIndex > prev ? currLevelIndex : prev;
-	}, publicPermissionLevel);
+	}, -1);
 
 	return permissionLevelIndex > -1 ? permissionLevels[permissionLevelIndex] : null;
+};
+
+export const getMemberLevel = async ({ userId, targetId, targetType }) => {
+	const membersData = await getMemberData(userId, targetId, targetType);
+	const level = getLevel(membersData);
+	return level;
 };

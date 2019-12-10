@@ -6,6 +6,12 @@
 		flex-grow: 1;
 	}
 	.duqduq-warning {
+		position: fixed;
+		right: 10px;
+		bottom: 10px;
+		padding: 5px;
+		border-radius: 5px;
+		box-shadow: 0px 1px 8px black;
 		text-align: center;
 		color: white;
 		line-height: 30px;
@@ -44,7 +50,6 @@
 			height: $breadcrumbs-height;
 			top: $header-height;
 			margin-left: $side-menu-width;
-
 		}
 		.page-content {
 			padding-top: calc(16px + #{$header-height} + #{$breadcrumbs-height});
@@ -54,7 +59,6 @@
 			max-width: calc(1024px + #{$side-menu-width});
 			margin: 0 auto;
 			.dashboard-content-title {
-				
 			}
 		}
 	}

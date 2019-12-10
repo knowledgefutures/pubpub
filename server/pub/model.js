@@ -40,6 +40,11 @@ export default (sequelize, dataTypes) => {
 			isCommunityAdminManaged: { type: dataTypes.BOOLEAN },
 			downloads: { type: dataTypes.JSONB },
 			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
+			isPublic: { type: dataTypes.BOOLEAN },
+			isPublicDiscussions: { type: dataTypes.BOOLEAN },
+			isPublicReviews: { type: dataTypes.BOOLEAN },
+			viewHash: { type: dataTypes.STRING },
+			editHash: { type: dataTypes.STRING },
 
 			/* Set by Associations */
 			communityId: { type: dataTypes.UUID, allowNull: false },

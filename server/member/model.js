@@ -5,7 +5,7 @@ export default (sequelize, dataTypes) => {
 			id: sequelize.idType,
 			permissions: {
 				type: dataTypes.ENUM,
-				values: ['view', 'discuss', 'edit', 'manage', 'admin'],
+				values: ['view', 'edit', 'manage', 'admin'],
 				defaultValue: 'view',
 			},
 			isOwner: { type: dataTypes.BOOLEAN },

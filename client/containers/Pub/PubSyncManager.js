@@ -7,6 +7,8 @@ import { apiFetch, getRandomColor } from 'utils';
 import { initFirebase } from 'utils/firebaseClient';
 import { getPubPageTitle } from 'shared/utils/pubPageTitle';
 
+export const PubContext = React.createContext({});
+
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	children: PropTypes.func.isRequired,
@@ -332,13 +334,18 @@ class PubSyncManager extends React.Component {
 	}
 
 	render() {
-		return this.props.children({
+		const context = {
 			pubData: this.state.pubData,
 			collabData: this.state.collabData,
 			historyData: this.state.historyData,
 			firebaseBranchRef: this.state.firebaseBranchRef,
 			updateLocalData: this.updateLocalData,
-		});
+		};
+		return (
+			<PubContext.Provider value={context}>
+				{this.props.children(context)}
+			</PubContext.Provider>
+		);
 	}
 }
 

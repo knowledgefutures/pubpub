@@ -1,15 +1,28 @@
+import { getExportFormatDetails } from 'shared/export/formats';
+
 import { createStaticHtml } from './html';
 import { getPubMetadata } from './metadata';
 import { callPandoc } from './pandoc';
 import { getProsemirrorPubData } from './prosemirror';
-import { getFormatDetails, getTmpFileForExtension, uploadDocument, writeToFile } from './util';
+import {
+	getExportById,
+	getTmpFileForExtension,
+	uploadDocument,
+	writeToFile,
+	assignFileToExportById,
+} from './util';
 import { callPaged } from './paged';
 
-export const exportTask = async (pubId, branchId, format) => {
-	const { extension, pandocTarget, pagedTarget } = getFormatDetails(format);
+export const exportTask = async ({ exportId }, collectSubprocess) => {
+	const { pubId, branchId, format, historyKey } = await getExportById(exportId);
+	const { extension, pandocTarget, pagedTarget } = getExportFormatDetails(format);
 	const tmpFile = await getTmpFileForExtension(extension);
 	const pubMetadata = await getPubMetadata(pubId);
-	const { prosemirrorDoc, citations, footnotes } = await getProsemirrorPubData(pubId, branchId);
+	const { prosemirrorDoc, citations, footnotes } = await getProsemirrorPubData(
+		pubId,
+		branchId,
+		historyKey,
+	);
 	const staticHtml = await createStaticHtml(
 		{
 			prosemirrorDoc: prosemirrorDoc,
@@ -28,9 +41,11 @@ export const exportTask = async (pubId, branchId, format) => {
 			pandocTarget: pandocTarget,
 		});
 	} else if (pagedTarget) {
-		await callPaged(staticHtml, tmpFile);
+		await callPaged(staticHtml, tmpFile, collectSubprocess);
 	} else {
 		await writeToFile(staticHtml, tmpFile);
 	}
-	return uploadDocument(branchId, tmpFile, extension);
+	const url = await uploadDocument(branchId, tmpFile, extension);
+	await assignFileToExportById(exportId, url);
+	return { url: url };
 };

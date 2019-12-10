@@ -5,6 +5,7 @@ import {
 	sequelize,
 	Pub,
 	Branch,
+	Export,
 	Version,
 	PubManager,
 	Collaborator,

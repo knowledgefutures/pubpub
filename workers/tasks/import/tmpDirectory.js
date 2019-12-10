@@ -8,15 +8,38 @@ import { s3bucket } from './s3';
 
 tmp.setGracefulCleanup();
 
+const blockForS3File = (key) =>
+	new Promise((resolve, reject) => {
+		let attempts = 0;
+		const checkForFile = () => {
+			s3bucket
+				.headObject({ Key: key })
+				.promise()
+				.then(resolve)
+				.catch(() => {
+					if (attempts > 5) {
+						return reject();
+					}
+					attempts += 1;
+					return setTimeout(() => {
+						checkForFile();
+					}, 1000);
+				});
+		};
+		checkForFile();
+	});
+
 const streamS3UrlToFile = (sourceUrl, filePath) =>
 	new Promise(async (resolve, reject) => {
+		const key = sourceUrl.replace('https://assets.pubpub.org/', '');
+		await blockForS3File(key);
 		const writeStream = fs.createWriteStream(filePath);
 		s3bucket
-			.getObject({ Key: sourceUrl.replace('https://assets.pubpub.org/', '') })
+			.getObject({ Key: key })
 			.createReadStream()
-			.on('end', () => resolve(filePath))
+			.pipe(writeStream)
 			.on('error', (error) => reject(error))
-			.pipe(writeStream);
+			.on('close', () => resolve(filePath));
 	});
 
 export const buildTmpDirectory = async (sourceFiles) => {

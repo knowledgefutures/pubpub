@@ -17,31 +17,35 @@ if (isMainThread) {
 	process.exit(1);
 }
 
+const taskMap = {
+	export: exportTask,
+	import: importTask,
+	deletePageSearchData: deletePageSearchData,
+	setPageSearchData: setPageSearchData,
+	deletePubSearchData: deletePubSearchData,
+	setPubSearchData: setPubSearchData,
+	updateCommunityData: updateCommunityData,
+	updateUserData: updateUserData,
+};
+
 const main = async (taskData) => {
-	let taskPromise;
-	if (taskData.type === 'export') {
-		taskPromise = exportTask(
-			taskData.input.pubId,
-			taskData.input.branchId,
-			taskData.input.format,
-		);
-	} else if (taskData.type === 'import') {
-		taskPromise = importTask(taskData.input);
-	} else if (taskData.type === 'deletePageSearchData') {
-		taskPromise = deletePageSearchData(taskData.input);
-	} else if (taskData.type === 'setPageSearchData') {
-		taskPromise = setPageSearchData(taskData.input);
-	} else if (taskData.type === 'deletePubSearchData') {
-		taskPromise = deletePubSearchData(taskData.input);
-	} else if (taskData.type === 'setPubSearchData') {
-		taskPromise = setPubSearchData(taskData.input);
-	} else if (taskData.type === 'updateCommunityData') {
-		taskPromise = updateCommunityData(taskData.input);
-	} else if (taskData.type === 'updateUserData') {
-		taskPromise = updateUserData(taskData.input);
-	} else {
-		throw new Error('Invalid task type');
+	const { type, input } = taskData;
+	const subprocesses = [];
+	const taskFn = taskMap[type];
+
+	if (typeof taskFn !== 'function') {
+		throw new Error(`No task function available for task type ${type}`);
 	}
+
+	parentPort.on('message', (message) => {
+		if (message === 'yield') {
+			subprocesses.forEach((ps) => ps.kill());
+		}
+	});
+
+	const collectSubprocess = (ps) => subprocesses.push(ps);
+	const taskPromise = taskFn(input, collectSubprocess);
+
 	let taskResult;
 	try {
 		taskResult = await taskPromise;

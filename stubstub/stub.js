@@ -1,3 +1,4 @@
+/* global beforeAll, afterAll */
 import sinon from 'sinon';
 
 import { getEmptyDoc } from '@pubpub/editor/dist/utils';
@@ -21,8 +22,19 @@ export const stubModule = (module, functionNames) => {
 	};
 };
 
+export const stubOut = (module, functionNames, before = beforeAll, after = afterAll) => {
+	let restore;
+	before(() => {
+		restore = stubModule(module, functionNames).restore;
+	});
+	after(() => {
+		if (restore) {
+			restore();
+		}
+	});
+};
+
 export const stubFirebaseAdmin = () => {
-	/* global beforeAll, afterAll */
 	let stubs;
 
 	beforeAll(() => {

@@ -2,19 +2,8 @@ import fs from 'fs';
 import AWS from 'aws-sdk';
 import tmp from 'tmp-promise';
 
+import { Export } from '../../../server/models';
 import { generateHash } from '../../../server/utils';
-
-const formatTypes = {
-	html: { extension: 'html' },
-	pdf: { extension: 'pdf', pagedTarget: true },
-	docx: { pandocTarget: 'docx', extension: 'docx' },
-	epub: { pandocTarget: 'epub', extension: 'epub' },
-	markdown: { pandocTarget: 'markdown_strict', extension: 'md' },
-	odt: { pandocTarget: 'odt', extension: 'odt' },
-	plain: { pandocTarget: 'plain', extension: 'txt' },
-	jats: { pandocTarget: 'jats', extension: 'xml' },
-	tex: { pandocTarget: 'latex', extension: 'tex' },
-};
 
 tmp.setGracefulCleanup();
 
@@ -34,14 +23,12 @@ export const uploadDocument = (branchId, tmpFile, extension) => {
 			if (err) {
 				reject(err);
 			}
-			resolve({ url: `https://assets.pubpub.org/${key}` });
+			resolve(`https://assets.pubpub.org/${key}`);
 		});
 	});
 };
 
 export const getTmpFileForExtension = (extension) => tmp.file({ postfix: `.${extension}` });
-
-export const getFormatDetails = (key) => formatTypes[key];
 
 export const writeToFile = (html, file) => {
 	return new Promise((resolve, reject) => {
@@ -53,3 +40,8 @@ export const writeToFile = (html, file) => {
 		});
 	});
 };
+
+export const getExportById = (exportId) => Export.findOne({ where: { id: exportId } });
+
+export const assignFileToExportById = (exportId, fileUrl) =>
+	Export.update({ url: fileUrl }, { where: { id: exportId } });

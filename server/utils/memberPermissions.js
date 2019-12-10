@@ -43,9 +43,63 @@ export const getMemberData = async (scopeData, userId) => {
 };
 
 export const getPublicPermissions = (scopeData) => {
-	// TODO
-	return {};
+	const {
+		activeCommunity,
+		activeCollection,
+		inactiveCollections,
+		activePub,
+		activeTargetType,
+	} = scopeData;
+	const booleanOr = (precedent, value) => {
+		/* Don't inherit value from null */
+		return typeof value === 'boolean' ? value : precedent;
+	};
+	const getCollectionValue = (key) => {
+		return [...inactiveCollections, activeCollection]
+			.filter((item) => item)
+			.reduce((prev, curr) => {
+				return prev || curr[key];
+			}, null);
+	};
+
+	let isPublic = activeCommunity.isPublic || false;
+	let isPublicDiscussion = activeCommunity.isPublicDiscussion || false;
+	let isPublicReview = activeCommunity.isPublicReview || false;
+	if (activeTargetType === 'collection') {
+		isPublic = booleanOr(isPublic, activeCollection.isPublic);
+		isPublicDiscussion = booleanOr(isPublicDiscussion, activeCollection.isPublicDiscussion);
+		isPublicReview = booleanOr(isPublicReview, activeCollection.isPublicReview);
+	}
+	if (activeTargetType === 'pub') {
+		const collectionIsPublic = getCollectionValue('isPublic');
+		isPublic = booleanOr(isPublic, collectionIsPublic);
+		isPublic = booleanOr(isPublic, activePub.isPublic);
+
+		const collectionIsPublicDiscussion = getCollectionValue('isPublicDiscussion');
+		isPublicDiscussion = booleanOr(isPublicDiscussion, collectionIsPublicDiscussion);
+		isPublicDiscussion = booleanOr(isPublicDiscussion, activePub.isPublicDiscussion);
+
+		const collectionIsPublicReview = getCollectionValue('isPublicReview');
+		isPublicReview = booleanOr(isPublicReview, collectionIsPublicReview);
+		isPublicReview = booleanOr(isPublicReview, activePub.isPublicReview);
+	}
+	return {
+		isPublic: isPublic,
+		isPublicDiscussion: isPublicDiscussion,
+		isPublicReview: isPublicReview,
+	};
 };
+
+/* publicPermissions logic test structure */
+// const scopeda = {
+// 	activeCommunity: { isPublic: null },
+// 	activeCollection: { isPublic: false },
+// 	activePub: { isPublic: null },
+// 	activeTarget: { isPublic: null },
+// 	activeTargetType: 'pub',
+// 	inactiveCollections: [{ isPublic: true }, { isPublic: null }, { isPublic: null }],
+// };
+// console.log(getPublicPermissions(scopeda));
 
 export const getPermissionLevel = (memberData) => {
 	const permissionLevels = ['view', 'edit', 'manage', 'admin'];

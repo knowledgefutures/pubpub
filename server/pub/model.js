@@ -41,6 +41,7 @@ export default (sequelize, dataTypes) => {
 			downloads: { type: dataTypes.JSONB },
 			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
 			isPublic: { type: dataTypes.BOOLEAN },
+			isPublicEdit: { type: dataTypes.BOOLEAN },
 			isPublicDiscussions: { type: dataTypes.BOOLEAN },
 			isPublicReviews: { type: dataTypes.BOOLEAN },
 			viewHash: { type: dataTypes.STRING },

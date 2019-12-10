@@ -1,11 +1,15 @@
-/* eslint-disable */
 import { Sequelize, Op } from 'sequelize';
 import Color from 'color';
 import {
 	sequelize,
 	Pub,
+	Discussion,
 	Branch,
+	BranchPermission,
+	Member,
+	CommunityAdmin,
 	Export,
+	PubManagers,
 	Version,
 	PubManager,
 	Collaborator,
@@ -693,7 +697,19 @@ new Promise((resolve) => {
 			// sequelize.queryInterface.addColumn('Collections', 'avatar', {
 			// 	type: Sequelize.TEXT,
 			// }),
+			// sequelize.queryInterface.addColumn('Collections', 'isPublicDiscussions', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
+			// sequelize.queryInterface.addColumn('Collections', 'isPublicReviews', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
 			// sequelize.queryInterface.addColumn('Communities', 'isPublic', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
+			// sequelize.queryInterface.addColumn('Communities', 'isPublicDiscussions', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
+			// sequelize.queryInterface.addColumn('Communities', 'isPublicReviews', {
 			// 	type: Sequelize.BOOLEAN,
 			// }),
 			// sequelize.queryInterface.addColumn('Communities', 'viewHash', {
@@ -720,6 +736,9 @@ new Promise((resolve) => {
 			// sequelize.queryInterface.addColumn('Pubs', 'isPublic', {
 			// 	type: Sequelize.BOOLEAN,
 			// }),
+			// sequelize.queryInterface.addColumn('Pubs', 'isPublicEdit', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
 			// sequelize.queryInterface.addColumn('Pubs', 'isPublicDiscussions', {
 			// 	type: Sequelize.BOOLEAN,
 			// }),
@@ -734,7 +753,7 @@ new Promise((resolve) => {
 			// }),
 		]);
 	})
-	.then(()=> {
+	.then(() => {
 		return Promise.all([
 			// sequelize.queryInterface.changeColumn('Discussions', 'pubId', {
 			// 	type: Sequelize.UUID,
@@ -744,13 +763,218 @@ new Promise((resolve) => {
 			// }),
 		]);
 	})
-
+	.then(() => {
+		/* Migrate Collection hashes */
+		// return Collection.findAll({ attributes: ['id'] }).then((data) => {
+		// 	const updates = data.map((item) => {
+		// 		return Collection.update(
+		// 			{ viewHash: generateHash(8), editHash: generateHash(8) },
+		// 			{ where: { id: item.id } },
+		// 		);
+		// 	});
+		// 	return Promise.all(updates);
+		// });
+	})
+	.then(() => {
+		/* Migrate Community isPublic */
+		// return Community.findAll({ attributes: ['id'] }).then((data) => {
+		// 	const updates = data.map((item) => {
+		// 		return Community.update(
+		// 			{ isPublic: true },
+		// 			{ where: { id: item.id } },
+		// 		);
+		// 	});
+		// 	return Promise.all(updates);
+		// });
+	})
+	.then(() => {
+		/* Migrate Community hashes */
+		// return Community.findAll({ attributes: ['id'] }).then((data) => {
+		// 	const updates = data.map((item) => {
+		// 		return Community.update(
+		// 			{ viewHash: generateHash(8), editHash: generateHash(8) },
+		// 			{ where: { id: item.id } },
+		// 		);
+		// 	});
+		// 	return Promise.all(updates);
+		// });
+	})
+	.then(() => {
+		/* Migrate Discussion isPublic and initBranchId */
+		/* Discussions are public if the branch they were on */
+		/* was publicPermissions 'view' or 'edit'. If the branch they were on */
+		/* is not public, then isPublic is false, and the Members will be */
+		/* populated accordingly to allow access. PubManagers will go to Members with 'manage' */
+		/* Branch access folks will go to Members with 'edit' or 'view' - both with discussion ability */
+		// return Discussion.findAll({
+		// 	attributes: ['id', 'branchId'],
+		// 	include: [
+		// 		{
+		// 			model: Branch,
+		// 			as: 'branch',
+		// 			attributes: ['id', 'publicPermissions'],
+		// 			// required: true,
+		// 			// include: [{ model: BranchPermission, as: 'permissions' }],
+		// 		},
+		// 	],
+		// }).then((discussionData) => {
+		// 	const updates = discussionData.map((item) => {
+		// 		return Discussion.update(
+		// 			{
+		// 				isPublic: item.branch && item.branch.publicPermissions !== 'none',
+		// 				initBranchId: item.branchId,
+		// 			},
+		// 			{ where: { id: item.id } },
+		// 		);
+		// 	});
+		// 	return Promise.all(updates);
+		// });
+	})
+	.then(() => {
+		/* Migrate Pub isPublic  */
+		/* Pubs are public if their draft branch had publicPermissions !== 'none' */
+		/* Pubs have publicDiscussions if their public branch had publicPermissions === 'discuss' */
+		/* This will remove some edge case possibilities, such as #public: view, #draft: discuss, */
+		/* but that is not a permissions configuration we're allowing in the new model. */
+		// return Pub.findAll({
+		// 	attributes: ['id'],
+		// 	include: [
+		// 		{
+		// 			model: Branch,
+		// 			as: 'branches',
+		// 			attributes: ['id', 'publicPermissions', 'title'],
+		// 		},
+		// 	],
+		// }).then((pubData) => {
+		// 	const updates = pubData.map((item) => {
+		// 		const publicBranch = item.branches.find((br) => br.title === 'public') || {};
+		// 		const draftBranch = item.branches.find((br) => br.title === 'draft') || {};
+		// 		return Pub.update(
+		// 			{
+		// 				isPublic: draftBranch.publicPermissions !== 'none',
+		// 				isPublicDiscussions: publicBranch.publicPermissions === 'discuss',
+		// 			},
+		// 			{ where: { id: item.id } },
+		// 		);
+		// 	});
+		// 	return Promise.all(updates);
+		// });
+	})
+	.then(() => {
+		/* Migrate Pub hashes */
+		// return Pub.findAll({ attributes: ['id'] }).then((data) => {
+		// 	const updates = data.map((item) => {
+		// 		return Pub.update(
+		// 			{ viewHash: generateHash(8), editHash: generateHash(8) },
+		// 			{ where: { id: item.id } },
+		// 		);
+		// 	});
+		// 	return Promise.all(updates);
+		// });
+	})
+	.then(() => {
+		/* Migrate BranchPermissions and PubManagers */
+		/* Branch permissions turn into members with associated permissions access */
+		/* PubManagers turn into members with 'manage' permission */
+		// const getBranchPermissions = BranchPermission.findAll();
+		// const getPubManagers = PubManager.findAll();
+		// return Promise.all([getBranchPermissions, getPubManagers]).then(
+		// 	([branchPermissionsData, pubManagersData]) => {
+		// 		const newBranchMembers = branchPermissionsData.map((item) => {
+		// 			return {
+		// 				id: item.id,
+		// 				permissions: item.permissions,
+		// 				pubId: item.pubId,
+		// 				userId: item.userId,
+		// 				createdAt: item.createdAt,
+		// 				updatedAt: item.updatedAt,
+		// 			};
+		// 		});
+		// 		const didSetOwner = {};
+		// 		const newManagerMembers = pubManagersData
+		// 			.sort((foo, bar) => {
+		// 				if (foo.createdAt < bar.createdAt) {
+		// 					return -1;
+		// 				}
+		// 				if (foo.createdAt > bar.createdAt) {
+		// 					return 1;
+		// 				}
+		// 				return 0;
+		// 			})
+		// 			.map((item) => {
+		// 				const isOwner = !didSetOwner[item.pubId];
+		// 				didSetOwner[item.pubId] = true;
+		// 				return {
+		// 					id: item.id,
+		// 					permissions: 'manage',
+		// 					pubId: item.pubId,
+		// 					userId: item.userId,
+		// 					isOwner: isOwner,
+		// 					createdAt: item.createdAt,
+		// 					updatedAt: item.updatedAt,
+		// 				};
+		// 			});
+		// 		const newMembers = [...newBranchMembers, ...newManagerMembers];
+		// 		const newMembersObject = {};
+		// 		const permissionLevels = ['view', 'discuss', 'edit', 'manage'];
+		// 		newMembers.forEach((member) => {
+		// 			const index = `${member.userId}-${member.pubId}`;
+		// 			const existingPermissionLevel = newMembersObject[index]
+		// 				? permissionLevels.indexOf(newMembersObject[index].permissions)
+		// 				: -1;
+		// 			const currPermissionLevel = permissionLevels.indexOf(member.permissions);
+		// 			if (
+		// 				existingPermissionLevel === -1 ||
+		// 				currPermissionLevel > existingPermissionLevel
+		// 			) {
+		// 				newMembersObject[index] = member;
+		// 			}
+		// 		});
+		// 		const dedupedNewMembers = Object.values(newMembersObject);
+		// 		return Member.bulkCreate(dedupedNewMembers);
+		// 	},
+		// );
+	})
+	.then(() => {
+		/* Migrate CommunityAdmin */
+		// return CommunityAdmin.findAll().then((adminsData) => {
+		// 	const didSetOwner = {};
+		// 	const newManagerMembers = adminsData
+		// 		.sort((foo, bar) => {
+		// 			if (foo.createdAt < bar.createdAt) {
+		// 				return -1;
+		// 			}
+		// 			if (foo.createdAt > bar.createdAt) {
+		// 				return 1;
+		// 			}
+		// 			return 0;
+		// 		})
+		// 		.map((item) => {
+		// 			const isOwner = !didSetOwner[item.communityId];
+		// 			didSetOwner[item.communityId] = true;
+		// 			return {
+		// 				id: item.id,
+		// 				permissions: 'manage',
+		// 				communityId: item.communityId,
+		// 				userId: item.userId,
+		// 				isOwner: isOwner,
+		// 				createdAt: item.createdAt,
+		// 				updatedAt: item.updatedAt,
+		// 			};
+		// 		});
+		// 	return Member.bulkCreate(newManagerMembers);
+		// });
+	})
 	/* Need to add in dashboard world */
 	/*
 		Collection.viewHash
 		Collection.editHash
 		Collection.avatar
+		Collection.isPublicDiscussions
+		Collection.isPublicReviews
 		Community.isPublic
+		Community.isPublicDiscussions
+		Community.isPublicReviews
 		Community.viewHash
 		Community.editHash
 		Community.organizationId
@@ -763,11 +987,12 @@ new Promise((resolve) => {
 		Pub.isPublicReviews
 		Pub.viewHash
 		Pub.editHash
+		Member.*
 	*/
 
 	/* Can Deprecate in dashboard world */
 	/*
-		Branch.publilcPermissions
+		Branch.publicPermissions
 		Branch.pubManagerPermissions
 		Branch.communityAdminPermissions
 		Branch.viewHash

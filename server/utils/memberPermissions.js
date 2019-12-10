@@ -90,6 +90,9 @@ export const getLevel = async (membersData) => {
 	return permissionLevelIndex > -1 ? permissionLevels[permissionLevelIndex] : null;
 };
 
+/* TODO: We likely need something here that gets isPublic, isPublicDiscussion, isPublicReview */
+/* for the whole hierarchy */
+
 export const getMemberLevel = async ({ userId, targetId, targetType }) => {
 	const membersData = await getMemberData(userId, targetId, targetType);
 	const level = getLevel(membersData);

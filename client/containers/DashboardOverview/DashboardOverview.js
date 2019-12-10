@@ -24,11 +24,11 @@ const DashboardOverview = (props) => {
 				locationData={locationData}
 				isDashboard={true}
 			>
-				<ContentOverview
+				{/*<ContentOverview
 					communityData={communityData}
 					locationData={locationData}
 					loginData={loginData}
-				/>
+				/>*/}
 			</PageWrapper>
 		</div>
 	);

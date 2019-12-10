@@ -101,14 +101,7 @@ const PageWrapper = (props) => {
 
 				{showNav && <NavBar navItems={navItems} socialItems={socialItems} />}
 
-				{isDashboard && (
-					<div className="side-content">
-						<SideMenu communityData={communityData} locationData={locationData} />
-					</div>
-				)}
-				{isDashboard && (
-					<Breadcrumbs communityData={communityData} locationData={locationData} />
-				)}
+				
 				<div id="main-content" tabIndex="-1" className="page-content">
 					{children}
 				</div>

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, InputGroup } from '@blueprintjs/core';
 import fuzzysearch from 'fuzzysearch';
-import classNames from 'classnames';
 import { generatePlainAuthorString } from 'components/PubPreview/pubPreviewUtils';
 import { usePageContext } from 'utils/hooks';
 import { groupPubs } from 'utils/dashboard';

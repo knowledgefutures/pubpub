@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton } from '@blueprintjs/core';
-
-import classNames from 'classnames';
-
 import { usePageContext } from 'utils/hooks';
 
 require('./contentOverview.scss');

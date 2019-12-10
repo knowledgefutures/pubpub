@@ -165,7 +165,7 @@ const SideMenu = () => {
 						return !item.communityOnly || (!collectionSlug && !pubSlug);
 					})
 					.map((item) => {
-						const itemMode = item.title.toLowerCase().replace(/ /gi, '-')
+						const itemMode = item.title.toLowerCase().replace(/ /gi, '-');
 						const active = locationData.path.split('/').slice(-1)[0] === itemMode;
 						return (
 							<div

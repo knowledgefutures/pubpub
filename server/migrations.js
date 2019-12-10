@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Sequelize, Op } from 'sequelize';
 import Color from 'color';
 import {

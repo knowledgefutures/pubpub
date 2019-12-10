@@ -44,7 +44,7 @@ const PubManage = (props) => {
 									key={mode.text}
 									text={mode.text}
 									active={mode.active}
-									href={`/pub/${locationData.params.slug}/manage/${mode.path}`}
+									href={`/pub/${locationData.params.pubSlug}/manage/${mode.path}`}
 									intent={mode.danger ? Intent.DANGER : undefined}
 								/>
 							);

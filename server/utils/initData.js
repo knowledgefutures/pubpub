@@ -16,30 +16,23 @@ const getTargetType = (params) => {
 	return 'community';
 };
 
-export const getScopedData = async (locationData) => {
-	console.log('in getScoped');
+export const getScopedData = async (communityData, loginData, locationData) => {
 	const activeTargetType = getTargetType(locationData.params);
 	let activeTarget;
 	let activePub;
 	let activeCollection;
-	let inactiveCollections;
-	let activeCommunity;
+	let inactiveCollections = [];
+	const activeCommunity = communityData;
 	let activeOrganization;
 	if (activeTargetType === 'pub') {
 		activeTarget = await Pub.findOne({
 			where: { slug: locationData.params.pubSlug },
-			// attributes: ['id', 'communityId'],
 			include: [
 				{
 					model: CollectionPub,
 					as: 'collectionPubs',
 					required: false,
 					attributes: ['id', 'pubId', 'collectionId'],
-				},
-				{
-					model: Community,
-					as: 'community',
-					// attributes: ['id', 'organizationId'],
 				},
 			],
 		});
@@ -55,9 +48,15 @@ export const getScopedData = async (locationData) => {
 			}
 			return !isActive;
 		});
-		activeCommunity = activeTarget.community;
 	}
-	console.log('in 3');
+
+	if (activeTargetType === 'collection') {
+		activeTarget = await Collection.findOne({
+			where: { slug: locationData.params.collectionSlug },
+		});
+		activeCollection = activeTarget;
+	}
+
 	return {
 		activeTargetType: activeTargetType,
 		activeTarget: activeTarget,
@@ -178,66 +177,52 @@ export const getInitialData = async (req) => {
 
 	/* If basePubPub - return fixed data */
 	if (locationData.isBasePubPub) {
-		return new Promise((resolvePromise) => {
-			resolvePromise({
-				communityData: {
-					title: 'PubPub',
-					description: 'Collaborative Community Publishing',
-					favicon: `https://${locationData.hostname}/favicon.png`,
-					avatar: `https://${locationData.hostname}/static/logo.png`,
-					headerLogo:
-						locationData.path === '/'
-							? '/static/logoWhite.svg'
-							: '/static/logoBlack.svg',
-					hideHero: true,
-					accentColorLight: '#ffffff',
-					accentColorDark: '#112233',
-					headerColorType: 'light',
-					hideCreatePubButton: true,
-					headerLinks: [
-						{ title: 'About', url: '/about' },
-						{ title: 'Pricing', url: '/pricing' },
-						{ title: 'Search', url: '/search' },
-						{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },
-					],
-				},
-				loginData: loginData,
-				locationData: locationData,
-			});
-		});
+		return {
+			communityData: {
+				title: 'PubPub',
+				description: 'Collaborative Community Publishing',
+				favicon: `https://${locationData.hostname}/favicon.png`,
+				avatar: `https://${locationData.hostname}/static/logo.png`,
+				headerLogo:
+					locationData.path === '/' ? '/static/logoWhite.svg' : '/static/logoBlack.svg',
+				hideHero: true,
+				accentColorLight: '#ffffff',
+				accentColorDark: '#112233',
+				headerColorType: 'light',
+				hideCreatePubButton: true,
+				headerLinks: [
+					{ title: 'About', url: '/about' },
+					{ title: 'Pricing', url: '/pricing' },
+					{ title: 'Search', url: '/search' },
+					{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },
+				],
+			},
+			loginData: loginData,
+			locationData: locationData,
+		};
 	}
 
 	/* If we have a community to find, search, and then return */
-	return Promise.all([
-		getBaseCommunityData(locationData, whereQuery, user.id),
-		getScopedData(locationData),
-	]).then(async ([communityResult, scopedData]) => {
-		if (!communityResult) {
-			throw new Error('Community Not Found');
-		}
+	const communityData = await getBaseCommunityData(locationData, whereQuery, user.id);
+	if (!communityData) {
+		throw new Error('Community Not Found');
+	}
+	if (communityData.domain && whereQuery.subdomain && !locationData.isDuqDuq) {
+		throw new Error(`UseCustomDomain:${communityData.domain}`);
+	}
+	loginData.isAdmin = checkIfAdmin(communityData.admins, user.id);
+	if (req.headers.localhost) {
+		/* eslint-disable-next-line no-param-reassign */
+		communityData.domain = req.headers.localhost;
+	}
+	const scopedData = await getScopedData(communityData, loginData, locationData);
+	const scopedPermissions = await getScopedPermissions(scopedData, loginData.id);
 
-		if (communityResult.domain && whereQuery.subdomain && !locationData.isDuqDuq) {
-			throw new Error(`UseCustomDomain:${communityResult.domain}`);
-		}
-
-		// console.log(scopedData);
-		loginData.isAdmin = checkIfAdmin(communityResult.admins, user.id);
-
-		if (req.headers.localhost) {
-			/* eslint-disable-next-line no-param-reassign */
-			communityResult.domain = req.headers.localhost;
-		}
-
-		const scopedPermissions = await getScopedPermissions(scopedData, loginData.id);
-
-		const outputData = {
-			communityData: communityResult,
-			loginData: loginData,
-			locationData: locationData,
-			scopedData: scopedData,
-			scopedPermissions: scopedPermissions,
-		};
-
-		return outputData;
-	});
+	return {
+		communityData: communityData,
+		loginData: loginData,
+		locationData: locationData,
+		scopedData: scopedData,
+		scopedPermissions: scopedPermissions,
+	};
 };

@@ -17,26 +17,26 @@ import { findPub, lookupPubVersion } from '../utils/pubQueries';
 import { PubBranchNotVisibleError } from '../utils/formatPub';
 
 const getMode = (path, params) => {
-	const { slug, reviewShortId } = params;
-	if (path.indexOf(`/pub/${slug}/draft`) > -1) {
+	const { pubSlug, reviewShortId } = params;
+	if (path.indexOf(`/pub/${pubSlug}/draft`) > -1) {
 		return 'draft-redirect';
 	}
-	if (path.indexOf(`/pub/${slug}/merge/`) > -1) {
+	if (path.indexOf(`/pub/${pubSlug}/merge/`) > -1) {
 		return 'merge';
 	}
-	if (path.indexOf(`/pub/${slug}/reviews/new`) > -1) {
+	if (path.indexOf(`/pub/${pubSlug}/reviews/new`) > -1) {
 		return 'reviewCreate';
 	}
-	if (path.indexOf(`/pub/${slug}/reviews/${reviewShortId}`) > -1) {
+	if (path.indexOf(`/pub/${pubSlug}/reviews/${reviewShortId}`) > -1) {
 		return 'review';
 	}
-	if (path.indexOf(`/pub/${slug}/reviews`) > -1) {
+	if (path.indexOf(`/pub/${pubSlug}/reviews`) > -1) {
 		return 'reviews';
 	}
-	if (path.indexOf(`/pub/${slug}/manage`) > -1) {
+	if (path.indexOf(`/pub/${pubSlug}/manage`) > -1) {
 		return 'manage';
 	}
-	if (path.indexOf(`/pub/${slug}/branch/new`) > -1) {
+	if (path.indexOf(`/pub/${pubSlug}/branch/new`) > -1) {
 		return 'branchCreate';
 	}
 	return 'document';
@@ -44,18 +44,18 @@ const getMode = (path, params) => {
 
 app.get(
 	[
-		'/pub/:slug',
-		'/pub/:slug/draft',
-		'/pub/:slug/branch/new',
-		'/pub/:slug/branch/:branchShortId',
-		'/pub/:slug/branch/:branchShortId/:versionNumber',
-		'/pub/:slug/merge/:fromBranchShortId/:toBranchShortId',
-		'/pub/:slug/reviews/new/:fromBranchShortId/',
-		'/pub/:slug/reviews/new/:fromBranchShortId/:toBranchShortId',
-		'/pub/:slug/reviews',
-		'/pub/:slug/reviews/:reviewShortId',
-		'/pub/:slug/manage/',
-		'/pub/:slug/manage/:manageMode',
+		'/pub/:pubSlug',
+		'/pub/:pubSlug/draft',
+		'/pub/:pubSlug/branch/new',
+		'/pub/:pubSlug/branch/:branchShortId',
+		'/pub/:pubSlug/branch/:branchShortId/:versionNumber',
+		'/pub/:pubSlug/merge/:fromBranchShortId/:toBranchShortId',
+		'/pub/:pubSlug/reviews/new/:fromBranchShortId/',
+		'/pub/:pubSlug/reviews/new/:fromBranchShortId/:toBranchShortId',
+		'/pub/:pubSlug/reviews',
+		'/pub/:pubSlug/reviews/:reviewShortId',
+		'/pub/:pubSlug/manage/',
+		'/pub/:pubSlug/manage/:manageMode',
 	],
 	async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
@@ -69,13 +69,15 @@ app.get(
 				const versionLookup = await lookupPubVersion(req.query.version);
 				if (versionLookup) {
 					const { historyKey, shortId } = versionLookup;
-					return res.redirect(`/pub/${req.params.slug}/branch/${shortId}/${historyKey}`);
+					return res.redirect(
+						`/pub/${req.params.pubSlug}/branch/${shortId}/${historyKey}`,
+					);
 				}
 			}
 
 			const mode = getMode(req.path, req.params);
 			if (mode === 'draft-redirect') {
-				return res.redirect(`/pub/${req.params.slug}`);
+				return res.redirect(`/pub/${req.params.pubSlug}`);
 			}
 
 			const initialData = await getInitialData(req);
@@ -89,7 +91,7 @@ app.get(
 						req.params.branchShortId === undefined && e.availableBranches[0];
 					if (redirectBranch) {
 						const { shortId } = redirectBranch;
-						return res.redirect(`/pub/${req.params.slug}/branch/${shortId}/`);
+						return res.redirect(`/pub/${req.params.pubSlug}/branch/${shortId}/`);
 					}
 					throw new Error('Pub Not Found');
 				}
@@ -107,7 +109,7 @@ app.get(
 				if (!draftBranch || !draftBranch.canView) {
 					throw new Error('Pub Not Found');
 				}
-				return res.redirect(`/pub/${req.params.slug}/branch/${draftBranch.shortId}`);
+				return res.redirect(`/pub/${req.params.pubSlug}/branch/${draftBranch.shortId}`);
 			}
 
 			const firebaseToken = await getFirebaseToken(initialData.loginData.id || 'anon', {

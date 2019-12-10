@@ -697,6 +697,15 @@ new Promise((resolve) => {
 			// sequelize.queryInterface.addColumn('Collections', 'avatar', {
 			// 	type: Sequelize.TEXT,
 			// }),
+			// sequelize.queryInterface.addColumn('Collections', 'slug', {
+			// 	type: Sequelize.TEXT,
+			// 	unique: true,
+			// 	validate: {
+			// 		isLowercase: true,
+			// 		len: [1, 280],
+			// 		is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
+			// 	},
+			// }),
 			// sequelize.queryInterface.addColumn('Collections', 'isPublicDiscussions', {
 			// 	type: Sequelize.BOOLEAN,
 			// }),
@@ -774,6 +783,28 @@ new Promise((resolve) => {
 		// 	});
 		// 	return Promise.all(updates);
 		// });
+	})
+	.then(() => {
+		/* Migrate Collection slug */
+		// return Collection.findAll({ attributes: ['id'] })
+		// 	.then((data) => {
+		// 		const updates = data.map((item) => {
+		// 			return Collection.update({ slug: generateHash(8) }, { where: { id: item.id } });
+		// 		});
+		// 		return Promise.all(updates);
+		// 	})
+		// 	.then(() => {
+		// 		return sequelize.queryInterface.changeColumn('Collections', 'slug', {
+		// 			type: Sequelize.TEXT,
+		// 			unique: true,
+		// 			allowNull: false,
+		// 			validate: {
+		// 				isLowercase: true,
+		// 				len: [1, 280],
+		// 				is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
+		// 			},
+		// 		});
+		// 	});
 	})
 	.then(() => {
 		/* Migrate Community isPublic */
@@ -970,6 +1001,7 @@ new Promise((resolve) => {
 		Collection.viewHash
 		Collection.editHash
 		Collection.avatar
+		Collection.slug
 		Collection.isPublicDiscussions
 		Collection.isPublicReviews
 		Community.isPublic

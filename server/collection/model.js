@@ -4,6 +4,16 @@ export default (sequelize, dataTypes) => {
 		{
 			id: sequelize.idType,
 			title: { type: dataTypes.TEXT },
+			slug: {
+				type: dataTypes.TEXT,
+				unique: true,
+				allowNull: false,
+				validate: {
+					isLowercase: true,
+					len: [1, 280],
+					is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
+				},
+			},
 			avatar: { type: dataTypes.TEXT },
 			isRestricted: {
 				type: dataTypes.BOOLEAN,

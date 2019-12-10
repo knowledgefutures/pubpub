@@ -42,6 +42,9 @@ app.get(
 					// 	targetId: 'd2112c45-7188-490e-a8c2-28542097a749',
 					// 	targetType: 'pub',
 					// }),
+					'manage',
+					// Member.findAll() // associated with this full stack
+					// dashboard data, which will give the active elements at each scope, and active scope
 				]);
 			})
 			.then(([initialData, permissionLevel]) => {
@@ -51,6 +54,10 @@ app.get(
 					return string.charAt(0).toUpperCase() + string.slice(1);
 				};
 				// console.log(initialData.loginData.id, initialData.communityData.id);
+				const newInitialData = {
+					...initialData,
+					// membersData: 
+				}
 				return renderToNodeStream(
 					res,
 					<Html
@@ -62,7 +69,7 @@ app.get(
 							unlisted: true,
 						})}
 					>
-						<DashboardMembers {...initialData} />
+						<DashboardMembers {...newInitialData} />
 					</Html>,
 				);
 			})

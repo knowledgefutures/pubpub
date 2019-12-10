@@ -150,7 +150,7 @@ export const findPubQuery = (slug, communityId) =>
 	});
 
 export const findPub = (req, initialData, mode) => {
-	const getPubData = findPubQuery(req.params.slug.toLowerCase(), initialData.communityData.id);
+	const getPubData = findPubQuery(req.params.pubSlug.toLowerCase(), initialData.communityData.id);
 
 	const getCommunityAdminData = CommunityAdmin.findOne({
 		where: {

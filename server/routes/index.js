@@ -6,7 +6,8 @@ require('./dashboard'); // Route: ['/dashboard', '/dashboard/:mode', '/dashboard
 require('./pub'); // Route: ['/pub/:slug', '/pub/:slug/branch/:branchShortId', '/pub/:slug/:mode']
 require('./page'); // Route: ['/', '/:slug']
 require('./collection'); // Route: /collection/:id
-require('./dashboardOverviewContent'); // Route: ['/dash', '/dash/overview', '/dash/collection/:collectionSlug', '/dash/collection/:collectionSlug/overview']
+require('./dashboardOverview'); // Route: ['/dash', '/dash/overview', '/dash/collection/:collectionSlug', '/dash/collection/:collectionSlug/overview', '/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview']
+require('./dashboardMembers');
 
 /* Routes for PubPub */
 require('./communityCreate'); // Route: '/community/create'
@@ -28,10 +29,7 @@ require('./userCreate'); // Route: '/user/create/:hash'
 require('./user'); // Route: ['/user/:slug', '/user/:slug/:mode']
 require('./noMatch'); // Route: '/*'
 
-
-// dashboardOverviewContent
-// dashboardOverviewPub
-// dashboardOverviewOrganization
+// dashboardOverview
 // dashboardActivity
 // dashboardConversations
 // dashboardReviews

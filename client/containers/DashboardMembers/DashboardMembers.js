@@ -22,7 +22,7 @@ const DashboardMembers = (props) => {
 	if (locationData.params.collectionSlug) {
 		scope = 'Collection';
 	}
-	if (true || locationData.params.pubSlug) {
+	if (locationData.params.pubSlug) {
 		scope = 'Pub';
 	}
 

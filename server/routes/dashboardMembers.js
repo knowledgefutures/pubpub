@@ -1,6 +1,6 @@
 import React from 'react';
 import Promise from 'bluebird';
-import { DashboardOverviewContent } from 'containers';
+import { DashboardMembers } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -10,14 +10,15 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-import { getPermissionLevel } from '../utils/memberPermissions';
+// import { getPermissionLevel } from '../utils/memberPermissions';
 
 app.get(
 	[
-		'/dash',
-		'/dash/overview',
+		'/dash/members',
 		'/dash/collection/:collectionSlug',
-		'/dash/collection/:collectionSlug/overview',
+		'/dash/collection/:collectionSlug/members',
+		'/dash/pub/:pubSlug',
+		'/dash/pub/:pubSlug/members',
 
 		// '/dash/collection/:collectionSlug/:mode',
 		// '/dash/collection/:collectionSlug/:mode/:submode',
@@ -31,19 +32,16 @@ app.get(
 		if (!hostIsValid(req, 'community')) {
 			return next();
 		}
-		if (!req.path.endsWith('overview')) {
-			return res.redirect(`${req.path}/overview`);
-		}
 
 		return getInitialData(req)
 			.then((initialData) => {
 				return Promise.all([
 					initialData,
-					getPermissionLevel({
-						userId: initialData.loginData.id,
-						targetId: 'd2112c45-7188-490e-a8c2-28542097a749',
-						targetType: 'pub',
-					}),
+					// getPermissionLevel({
+					// 	userId: initialData.loginData.id,
+					// 	targetId: 'd2112c45-7188-490e-a8c2-28542097a749',
+					// 	targetType: 'pub',
+					// }),
 				]);
 			})
 			.then(([initialData, permissionLevel]) => {
@@ -56,7 +54,7 @@ app.get(
 				return renderToNodeStream(
 					res,
 					<Html
-						chunkName="DashboardOverviewContent"
+						chunkName="DashboardMembers"
 						initialData={initialData}
 						headerComponents={generateMetaComponents({
 							initialData: initialData,
@@ -64,7 +62,7 @@ app.get(
 							unlisted: true,
 						})}
 					>
-						<DashboardOverviewContent {...initialData} />
+						<DashboardMembers {...initialData} />
 					</Html>,
 				);
 			})

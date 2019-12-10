@@ -13,11 +13,11 @@ const propTypes = {
 	// pubData: PropTypes.array.isRequired,
 };
 
-const DashboardOverviewContent = (props) => {
+const DashboardOverview = (props) => {
 	const { communityData, locationData, loginData } = props;
 
 	return (
-		<div className="dashboard-overview-content-container">
+		<div className="dashboard-overview-container">
 			<PageWrapper
 				loginData={loginData}
 				communityData={communityData}
@@ -34,7 +34,7 @@ const DashboardOverviewContent = (props) => {
 	);
 };
 
-DashboardOverviewContent.propTypes = propTypes;
-export default DashboardOverviewContent;
+DashboardOverview.propTypes = propTypes;
+export default DashboardOverview;
 
-hydrateWrapper(DashboardOverviewContent);
+hydrateWrapper(DashboardOverview);

@@ -1,6 +1,16 @@
 import { Op } from 'sequelize';
 import queryString from 'query-string';
-import { Collection, Community, Page, User, Pub, CollectionPub } from '../models';
+import {
+	Collection,
+	Community,
+	Page,
+	User,
+	Pub,
+	CollectionPub,
+	Merge,
+	Review,
+	Discussion,
+} from '../models';
 import { getScopePermissions } from './memberPermissions';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
@@ -14,6 +24,102 @@ const getTargetType = (params) => {
 		return 'collection';
 	}
 	return 'community';
+};
+
+const countActiveThreads = (discussions) => {
+	const threadObject = {};
+	discussions.forEach((discussion) => {
+		const existingThread = threadObject[discussion.threadNumber];
+		if (!existingThread || (existingThread && existingThread === 'active')) {
+			threadObject[discussion.threadNumber] = discussion.isArchived ? 'archived' : 'active';
+		}
+	});
+	return Object.values(threadObject).reduce((prev, curr) => {
+		return curr === 'active' ? prev + 1 : prev;
+	}, 0);
+};
+
+export const getCounts = async (scopeData) => {
+	const { activeTarget, activeTargetType } = scopeData;
+	let discussionCount = 0;
+	let reviewCount = 0;
+	let mergeCount = 0;
+	const pubQueryOptions = {
+		attributes: ['id'],
+		include: [
+			{
+				model: Discussion,
+				as: 'discussions',
+				attributes: ['id', 'threadNumber', 'isArchived'],
+			},
+			{
+				model: Review,
+				as: 'reviews',
+				attributes: ['id'],
+			},
+			{
+				model: Merge,
+				as: 'merges',
+				attributes: ['id'],
+			},
+		],
+	};
+	if (activeTargetType === 'pub') {
+		const pubData = await Pub.findOne({
+			where: { id: activeTarget.id },
+			...pubQueryOptions,
+		});
+		discussionCount = countActiveThreads(pubData.discussions);
+		reviewCount = pubData.reviews.length;
+		mergeCount = pubData.merges.length;
+	}
+
+	if (activeTargetType === 'collection') {
+		const collectionData = await Collection.findOne({
+			where: { id: activeTarget.id },
+			attributes: ['id'],
+			include: [
+				{
+					model: CollectionPub,
+					as: 'collectionPubs',
+					include: [{ model: Pub, as: 'pub', ...pubQueryOptions }],
+				},
+			],
+		});
+		discussionCount = collectionData.collectionPubs.reduce((prev, curr) => {
+			return prev + countActiveThreads(curr.pub.discussions);
+		}, 0);
+		reviewCount = collectionData.collectionPubs.reduce((prev, curr) => {
+			return prev + curr.pub.reviews.length;
+		}, 0);
+
+		mergeCount = collectionData.collectionPubs.reduce((prev, curr) => {
+			return prev + curr.pub.merges.length;
+		}, 0);
+	}
+	if (activeTargetType === 'community') {
+		const communityCountData = await Community.findOne({
+			where: { id: activeTarget.id },
+			attributes: ['id'],
+			include: [{ model: Pub, as: 'pubs', ...pubQueryOptions }],
+		});
+		discussionCount = communityCountData.pubs.reduce((prev, curr) => {
+			return prev + countActiveThreads(curr.discussions);
+		}, 0);
+		reviewCount = communityCountData.pubs.reduce((prev, curr) => {
+			return prev + curr.reviews.length;
+		}, 0);
+
+		mergeCount = communityCountData.pubs.reduce((prev, curr) => {
+			return prev + curr.merges.length;
+		}, 0);
+	}
+
+	return {
+		discussionCount: discussionCount,
+		reviewCount: reviewCount,
+		mergeCount: mergeCount,
+	};
 };
 
 export const getScopeData = async (communityData, loginData, locationData) => {
@@ -146,7 +252,7 @@ export const getBaseCommunityData = (locationData, whereQuery, userId) => {
 	});
 };
 
-export const getInitialData = async (req) => {
+export const getInitialData = async (req, isDashboard) => {
 	const hostname = req.hostname;
 	const whereQuery =
 		hostname.indexOf('.pubpub.org') > -1
@@ -221,19 +327,21 @@ export const getInitialData = async (req) => {
 	}
 	const scopeData = await getScopeData(communityData, loginData, locationData);
 	const scopePermissions = await getScopePermissions(scopeData, loginData.id);
-	const scopeDataWithPermissions = {
+	const activeCounts = isDashboard ? await getCounts(scopeData) : {};
+	const enhancedScopeData = {
 		...scopeData,
 		activePermissions: {
 			...scopePermissions,
 			memberData: undefined,
 		},
 		memberData: scopePermissions.memberData,
+		activeCounts: activeCounts,
 	};
 
 	return {
 		communityData: communityData,
 		loginData: loginData,
 		locationData: locationData,
-		scopeData: scopeDataWithPermissions,
+		scopeData: enhancedScopeData,
 	};
 };

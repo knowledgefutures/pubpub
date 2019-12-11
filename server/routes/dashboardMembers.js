@@ -25,7 +25,7 @@ app.get(
 			return next();
 		}
 
-		return getInitialData(req)
+		return getInitialData(req, true)
 			.then((initialData) => {
 				return Promise.all([initialData, getMembersData(initialData)]);
 			})

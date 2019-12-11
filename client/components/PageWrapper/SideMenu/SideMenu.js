@@ -3,16 +3,14 @@ import classNames from 'classnames';
 import Color from 'color';
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
-// import { getDashUrl, getActiveDiscussions } from 'utils/dashboard';
 import { getDashUrl } from 'utils/dashboard';
 import ScopePicker from './ScopePicker';
 
 require('./sideMenu.scss');
 
 const SideMenu = () => {
-	const { locationData, communityData } = usePageContext();
-	// const discussions = getActiveDiscussions(communityData, locationData);
-	const discussions = [];
+	const { locationData, communityData, scopeData } = usePageContext();
+	const { activeCounts } = scopeData;
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
 
@@ -47,22 +45,22 @@ const SideMenu = () => {
 			communityOnly: true,
 		},
 		{
-			title: 'Conversations',
+			title: 'Discussions',
 			icon: 'chat2',
 			href: getDashUrl({
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
-				mode: 'conversations',
+				mode: 'discussions',
 				submode: 'list',
 			}),
-			count: discussions.length,
+			count: activeCounts.discussionCount,
 			children: [
 				{
 					title: 'List',
 					href: getDashUrl({
 						collectionSlug: collectionSlug,
 						pubSlug: pubSlug,
-						mode: 'conversations',
+						mode: 'discussions',
 						submode: 'list',
 					}),
 				},
@@ -71,7 +69,7 @@ const SideMenu = () => {
 					href: getDashUrl({
 						collectionSlug: collectionSlug,
 						pubSlug: pubSlug,
-						mode: 'conversations',
+						mode: 'discussions',
 						submode: 'labels',
 					}),
 				},
@@ -86,7 +84,7 @@ const SideMenu = () => {
 				mode: 'reviews',
 				submode: 'list',
 			}),
-			count: 5,
+			count: activeCounts.reviewCount,
 			children: [
 				{
 					title: 'List',
@@ -111,7 +109,7 @@ const SideMenu = () => {
 		{
 			title: 'Merges',
 			icon: 'git-pull',
-			count: 1,
+			count: activeCounts.mergeCount,
 			href: getDashUrl({
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,

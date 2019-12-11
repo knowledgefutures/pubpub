@@ -31,7 +31,7 @@ app.get(
 			return res.redirect(`${req.path}/overview${queryString}`);
 		}
 
-		return getInitialData(req)
+		return getInitialData(req, true)
 			.then((initialData) => {
 				return Promise.all([initialData, getOverviewData(initialData)]);
 			})

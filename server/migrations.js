@@ -707,13 +707,16 @@ new Promise((resolve) => {
 			// 		is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
 			// 	},
 			// }),
+			// sequelize.queryInterface.addColumn('Collections', 'isPublicBranches', {
+			// 	type: Sequelize.BOOLEAN,
+			// }),
 			// sequelize.queryInterface.addColumn('Collections', 'isPublicDiscussions', {
 			// 	type: Sequelize.BOOLEAN,
 			// }),
 			// sequelize.queryInterface.addColumn('Collections', 'isPublicReviews', {
 			// 	type: Sequelize.BOOLEAN,
 			// }),
-			// sequelize.queryInterface.addColumn('Communities', 'isPublic', {
+			// sequelize.queryInterface.addColumn('Communities', 'isPublicBranches', {
 			// 	type: Sequelize.BOOLEAN,
 			// }),
 			// sequelize.queryInterface.addColumn('Communities', 'isPublicDiscussions', {
@@ -743,7 +746,7 @@ new Promise((resolve) => {
 			// sequelize.queryInterface.addColumn('Discussions', 'organizationId', {
 			// 	type: Sequelize.UUID,
 			// }),
-			// sequelize.queryInterface.addColumn('Pubs', 'isPublic', {
+			// sequelize.queryInterface.addColumn('Pubs', 'isPublicBranches', {
 			// 	type: Sequelize.BOOLEAN,
 			// }),
 			// sequelize.queryInterface.addColumn('Pubs', 'isPublicEdit', {
@@ -808,11 +811,11 @@ new Promise((resolve) => {
 		// 	});
 	})
 	.then(() => {
-		/* Migrate Community isPublic */
+		/* Migrate Community isPublicX */
 		// return Community.findAll({ attributes: ['id'] }).then((data) => {
 		// 	const updates = data.map((item) => {
 		// 		return Community.update(
-		// 			{ isPublic: true },
+		// 			{ isPublicBranches: false, isPublicDiscussions: true, isPublicReviews: false },
 		// 			{ where: { id: item.id } },
 		// 		);
 		// 	});
@@ -883,7 +886,7 @@ new Promise((resolve) => {
 		// 		const draftBranch = item.branches.find((br) => br.title === 'draft') || {};
 		// 		return Pub.update(
 		// 			{
-		// 				isPublic: draftBranch.publicPermissions !== 'none',
+		// 				isPublicBranches: draftBranch.publicPermissions !== 'none',
 		// 				isPublicDiscussions: publicBranch.publicPermissions === 'discuss',
 		// 			},
 		// 			{ where: { id: item.id } },
@@ -1003,9 +1006,10 @@ new Promise((resolve) => {
 		Collection.editHash
 		Collection.avatar
 		Collection.slug
+		Collection.isPublicBranches
 		Collection.isPublicDiscussions
 		Collection.isPublicReviews
-		Community.isPublic
+		Community.isPublicBranches
 		Community.isPublicDiscussions
 		Community.isPublicReviews
 		Community.viewHash
@@ -1015,7 +1019,7 @@ new Promise((resolve) => {
 		Discussion.initBranchId
 		Discussion.collectionId
 		Discussion.organizationId
-		Pub.isPublic
+		Pub.isPublicBranches
 		Pub.isPublicDiscussions
 		Pub.isPublicReviews
 		Pub.viewHash

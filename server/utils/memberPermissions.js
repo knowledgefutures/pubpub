@@ -62,42 +62,42 @@ export const getPublicPermissions = (scopeData) => {
 			}, null);
 	};
 
-	let isPublic = activeCommunity.isPublic || false;
-	let isPublicDiscussion = activeCommunity.isPublicDiscussion || false;
-	let isPublicReview = activeCommunity.isPublicReview || false;
+	let isPublicBranches = activeCommunity.isPublicBranches || false;
+	let isPublicDiscussions = activeCommunity.isPublicDiscussions || false;
+	let isPublicReviews = activeCommunity.isPublicReviews || false;
 	if (activeTargetType === 'collection') {
-		isPublic = booleanOr(isPublic, activeCollection.isPublic);
-		isPublicDiscussion = booleanOr(isPublicDiscussion, activeCollection.isPublicDiscussion);
-		isPublicReview = booleanOr(isPublicReview, activeCollection.isPublicReview);
+		isPublicBranches = booleanOr(isPublicBranches, activeCollection.isPublicBranches);
+		isPublicDiscussions = booleanOr(isPublicDiscussions, activeCollection.isPublicDiscussions);
+		isPublicReviews = booleanOr(isPublicReviews, activeCollection.isPublicReviews);
 	}
 	if (activeTargetType === 'pub') {
-		const collectionIsPublic = getCollectionValue('isPublic');
-		isPublic = booleanOr(isPublic, collectionIsPublic);
-		isPublic = booleanOr(isPublic, activePub.isPublic);
+		const collectionIsPublicBranches = getCollectionValue('isPublicBranches');
+		isPublicBranches = booleanOr(isPublicBranches, collectionIsPublicBranches);
+		isPublicBranches = booleanOr(isPublicBranches, activePub.isPublicBranches);
 
-		const collectionIsPublicDiscussion = getCollectionValue('isPublicDiscussion');
-		isPublicDiscussion = booleanOr(isPublicDiscussion, collectionIsPublicDiscussion);
-		isPublicDiscussion = booleanOr(isPublicDiscussion, activePub.isPublicDiscussion);
+		const collectionIsPublicDiscussions = getCollectionValue('isPublicDiscussions');
+		isPublicDiscussions = booleanOr(isPublicDiscussions, collectionIsPublicDiscussions);
+		isPublicDiscussions = booleanOr(isPublicDiscussions, activePub.isPublicDiscussions);
 
-		const collectionIsPublicReview = getCollectionValue('isPublicReview');
-		isPublicReview = booleanOr(isPublicReview, collectionIsPublicReview);
-		isPublicReview = booleanOr(isPublicReview, activePub.isPublicReview);
+		const collectionIsPublicReviews = getCollectionValue('isPublicReviews');
+		isPublicReviews = booleanOr(isPublicReviews, collectionIsPublicReviews);
+		isPublicReviews = booleanOr(isPublicReviews, activePub.isPublicReviews);
 	}
 	return {
-		isPublic: isPublic,
-		isPublicDiscussion: isPublicDiscussion,
-		isPublicReview: isPublicReview,
+		isPublicBranches: isPublicBranches,
+		isPublicDiscussions: isPublicDiscussions,
+		isPublicReviews: isPublicReviews,
 	};
 };
 
 /* publicPermissions logic test structure */
 // const scopeda = {
-// 	activeCommunity: { isPublic: null },
-// 	activeCollection: { isPublic: false },
-// 	activePub: { isPublic: null },
-// 	activeTarget: { isPublic: null },
+// 	activeCommunity: { isPublicBranches: null },
+// 	activeCollection: { isPublicBranches: false },
+// 	activePub: { isPublicBranches: null },
+// 	activeTarget: { isPublicBranches: null },
 // 	activeTargetType: 'pub',
-// 	inactiveCollections: [{ isPublic: true }, { isPublic: null }, { isPublic: null }],
+// 	inactiveCollections: [{ isPublicBranches: true }, { isPublicBranches: null }, { isPublicBranches: null }],
 // };
 // console.log(getPublicPermissions(scopeda));
 
@@ -113,13 +113,15 @@ export const getPermissionLevel = (memberData) => {
 
 export const getScopePermissions = async (scopeData, userId) => {
 	const memberData = await getMemberData(scopeData, userId);
-	const { isPublic, isPublicDiscussion, isPublicReview } = getPublicPermissions(scopeData);
+	const { isPublicBranches, isPublicDiscussions, isPublicReviews } = getPublicPermissions(
+		scopeData,
+	);
 	const memberPermission = getPermissionLevel(memberData);
 
 	return {
-		isPublic: isPublic,
-		isPublicDiscussion: isPublicDiscussion,
-		isPublicReview: isPublicReview,
+		isPublicBranches: isPublicBranches,
+		isPublicDiscussions: isPublicDiscussions,
+		isPublicReviews: isPublicReviews,
 		memberPermission: memberPermission,
 		memberData: memberData,
 	};

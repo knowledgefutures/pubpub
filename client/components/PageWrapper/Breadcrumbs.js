@@ -11,8 +11,8 @@ const Breadcrumbs = () => {
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
 
-	const activeMode = locationData.params.mode || 'Overview';
-	const isParentMode = activeMode === 'conversations' || activeMode === 'reviews';
+	const activeMode = locationData.path.split('/').slice(-1)[0];
+	const isParentMode = activeMode === 'discussions' || activeMode === 'reviews';
 	const activeSubmode = locationData.params.submode;
 
 	let title = communityData.title;

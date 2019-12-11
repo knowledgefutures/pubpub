@@ -38,7 +38,7 @@
 	// 	line-height: 24px;
 	// 	min-height: 0px;
 	// }
-	.formatting-bar-component {
+	& > .formatting-bar-component {
 		flex: 1 1 auto;
 		min-width: 0;
 	}

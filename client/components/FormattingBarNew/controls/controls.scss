@@ -1,0 +1,39 @@
+@mixin controls-component {
+    display: flex;
+    height: 100%;
+    .section {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        .title {
+            margin-bottom: 15px;
+            user-select: none;
+        }
+        textarea {
+            flex-grow: 1;
+            resize: none;
+        }
+        .minimal-editor-component {
+            width: 100%;
+        }
+    }
+    textarea {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        width: 100%;
+        padding: 0.5em;
+        color: white;
+        box-sizing: border-box;
+    }
+}
+
+.controls-citation-component {
+    @include controls-component();
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 20px;
+    .structured-data {
+        font-family: monospace;
+    }
+}

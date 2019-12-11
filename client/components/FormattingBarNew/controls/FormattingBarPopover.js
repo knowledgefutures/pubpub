@@ -1,20 +1,17 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import { MinimalEditor } from 'components';
+
 import { Button } from '@blueprintjs/core';
-import { useFocusTrap } from '../../utils/useFocusTrap';
+import { useFocusTrap } from '../../../utils/useFocusTrap';
 
 const FormattingBarPopover = (props) => {
 	const { accentColor, button, children, onClose, isFullScreenWidth } = props;
-	const beforeCloseAction = useRef();
-	const [hasPendingChanges, setHasPendingChanges] = useState(false);
-
-	console.log('hasPendingChanges', hasPendingChanges);
-
-	const focusTrap = useFocusTrap({ clickOutsideDeactivates: !hasPendingChanges });
-
+	const focusTrap = useFocusTrap({ onClickOutside: (evt) => console.log('oof!', evt.target) });
+	const spokenTitle = button.ariaTitle || button.title;
 	return (
 		<div
 			className={classNames(
@@ -22,15 +19,14 @@ const FormattingBarPopover = (props) => {
 				isFullScreenWidth && 'full-screen-width',
 			)}
 			style={{ background: accentColor }}
-			ref={focusTrap.ref}
 		>
 			<div
 				tabIndex="0"
 				role="dialog"
 				className="inner"
-				aria-label={`Editing ${button.ariaTitle || button.title} options`}
+				aria-label={`Editing ${spokenTitle} options`}
 			>
-				{typeof children === 'function' ? children(setHasPendingChanges) : children}
+				{children}
 			</div>
 			<div className="close-button-container">
 				<Button minimal small icon="cross" aria-label="Close options" onClick={onClose} />

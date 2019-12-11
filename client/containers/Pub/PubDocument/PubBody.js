@@ -87,12 +87,13 @@ const PubBody = (props) => {
 			if (status === 'saving') {
 				setSavingTimeout = setTimeout(() => {
 					onComplete(nextStatus);
-				}, 250);
+				}, 50);
 			} else {
 				onComplete(nextStatus);
 				setLastSavedTime(Date.now());
 			}
 		}
+
 		/* If disconnected, only set state if the new status is 'connected' */
 		if (prevStatus === 'disconnected' && status === 'connected') {
 			onComplete(nextStatus);
@@ -206,11 +207,11 @@ const PubBody = (props) => {
 								firebaseRef: firebaseBranchRef,
 								clientData: props.collabData.localCollabUser,
 								initialDocKey: pubData.initialDocKey,
-								onStatusChange: debounce((status) => {
+								onStatusChange: (status) => {
 									getNextStatus(status, (nextStatus) => {
 										props.updateLocalData('collab', nextStatus);
 									});
-								}, 250),
+								},
 								onUpdateLatestKey: (latestKey) => {
 									props.updateLocalData('history', {
 										latestKey: latestKey,

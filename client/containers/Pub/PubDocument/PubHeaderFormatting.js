@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import stickybits from 'stickybits';
 
-import FormattingBar from 'components/FormattingBarNew/FormattingBar';
-import { nestDiscussionsToThreads } from 'containers/Pub/PubDocument/PubDiscussions/discussionUtils';
+import { FormattingBar, buttons } from 'components/FormattingBarNew';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
 
 require('./pubHeaderFormatting.scss');
@@ -35,10 +34,11 @@ const PubHeaderFormatting = (props) => {
 	return (
 		<div className="pub-draft-header-component">
 			<FormattingBar
+				buttons={buttons.fullButtonSet}
 				editorChangeObject={props.collabData.editorChangeObject || {}}
-				threads={nestDiscussionsToThreads(props.pubData.discussions)}
 				footnotes={pubData.footnotes}
 				citations={pubData.citations}
+				isFullScreenWidth={true}
 			/>
 			<div className="right-content">
 				<PubHeaderCollaborators collabData={props.collabData} />

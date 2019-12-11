@@ -14,9 +14,7 @@ const isDescendant = (parent, child) => {
 	return false;
 };
 
-const defaultOnClickOutside = () => {};
-
-export const useFocusTrap = ({ onClickOutside = defaultOnClickOutside, isActive = true } = {}) => {
+export const useFocusTrap = ({ clickOutsideDeactivates = false, isActive = true } = {}) => {
 	const [refElement, setRefElement] = useState(null);
 	const focusTrap = useRef(null);
 
@@ -30,28 +28,21 @@ export const useFocusTrap = ({ onClickOutside = defaultOnClickOutside, isActive 
 		}
 	};
 
-	const setupFocusTrap = () => {
+	useEffect(() => {
 		setFocusTrapActive(false);
 		if (refElement) {
 			focusTrap.current = createFocusTrap(refElement, {
 				escapeDeactivates: false,
-				clickOutsideDeactivates: true,
-				allowOutsideClick: (evt) => {
-					onClickOutside(evt);
-					return true;
-				},
+				clickOutsideDeactivates: clickOutsideDeactivates,
 			});
 			setFocusTrapActive(true);
 		}
 		return () => setFocusTrapActive(false);
-	};
+	}, [refElement, clickOutsideDeactivates]);
 
-	const pauseOrResumeFocusTrap = () => {
+	useEffect(() => {
 		setFocusTrapActive(isActive);
-	};
-
-	useEffect(setupFocusTrap, [refElement]);
-	useEffect(pauseOrResumeFocusTrap, [isActive]);
+	}, [isActive]);
 
 	return {
 		ref: setRefElement,

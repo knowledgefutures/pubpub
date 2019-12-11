@@ -1,4 +1,5 @@
 import TestControls from './controls/TestControls';
+import ControlsCitation from './controls/ControlsCitation';
 
 export const strong = {
 	key: 'strong',
@@ -72,6 +73,7 @@ export const citation = {
 	key: 'citation',
 	title: 'Citation',
 	icon: 'bookmark',
+	controls: ControlsCitation,
 };
 
 export const discussion = {

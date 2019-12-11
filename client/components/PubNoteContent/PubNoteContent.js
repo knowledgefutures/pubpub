@@ -17,8 +17,8 @@ const PubNoteContent = React.forwardRef((props, ref) => {
 	const { structured, unstructured } = props;
 	return (
 		<span ref={ref} className="pub-note-content-component">
-			<span dangerouslySetInnerHTML={{ __html: structured.split('\n').join('') }} />
-			<span dangerouslySetInnerHTML={{ __html: unstructured.split('\n').join('') }} />
+			<span dangerouslySetInnerHTML={{ __html: (structured || '').split('\n').join('') }} />
+			<span dangerouslySetInnerHTML={{ __html: (unstructured || '').split('\n').join('') }} />
 		</span>
 	);
 });

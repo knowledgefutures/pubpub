@@ -61,6 +61,7 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 				as="a"
 				disabled={disabled}
 				focusable
+				title={formattingItem.title}
 				aria-label={formattingItem.ariaTitle || formattingItem.title}
 				aria-pressed={formattingItem.isToggle ? isActive : undefined}
 				className={classNames(

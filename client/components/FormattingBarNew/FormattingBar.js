@@ -108,7 +108,7 @@ const FormattingBar = (props) => {
 	useEffect(() => {
 		const clickedOnNode = latestDomEvent && latestDomEvent.type === 'click';
 		setOpenedButton(clickedOnNode ? firstIndicatedItem : null);
-	}, [latestDomEvent, firstIndicatedItem, selectedNode]);
+	}, [latestDomEvent, firstIndicatedItem, popoverKey]);
 
 	const menuItemByKey = (key) => {
 		if (menuItems) {
@@ -191,11 +191,12 @@ const FormattingBar = (props) => {
 					onClose={handlePopoverClose}
 					isFullScreenWidth={isFullScreenWidth}
 				>
-					{(onPendingChanges) => (
+					{({ onPendingChanges, onClose }) => (
 						<openedButton.controls
 							updateNodeAttrs={updateNode}
 							nodeAttrs={selectedNode.attrs}
 							onPendingChanges={onPendingChanges}
+							onClose={onClose}
 						/>
 					)}
 				</FormattingBarPopover>

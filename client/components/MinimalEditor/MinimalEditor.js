@@ -53,6 +53,15 @@ const MinimalEditor = (props) => {
 		});
 	}, []);
 
+	const handleWrapperClick = () => {
+		if (changeObject) {
+			const { view } = changeObject;
+			if (!view.hasFocus()) {
+				view.focus();
+			}
+		}
+	};
+
 	return (
 		<div
 			className={classNames(
@@ -71,7 +80,8 @@ const MinimalEditor = (props) => {
 					isTranslucent={isTranslucent}
 				/>
 			)}
-			<div className="editor-wrapper">
+			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+			<div className="editor-wrapper" onClick={handleWrapperClick}>
 				<Editor
 					onBlur={onBlur}
 					initialContent={initialContent}

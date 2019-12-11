@@ -58,7 +58,6 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 				ref={ref}
 				{...restProps}
 				role="button"
-				as="a"
 				disabled={disabled}
 				focusable
 				title={formattingItem.title}
@@ -72,7 +71,10 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 					isSmall && 'bp3-small',
 					disabled && 'bp3-disabled',
 				)}
-				onClick={() => onClick(formattingItem)}
+				onClick={() => {
+					console.log('clicko');
+					onClick(formattingItem);
+				}}
 				data-accent-dark={accentColor}
 			>
 				<Icon icon={formattingItem.icon} iconSize={isSmall ? 12 : 16} />

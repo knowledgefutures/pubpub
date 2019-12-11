@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import { importHtml, getText } from '@pubpub/editor';
-import MinimalEditor from '../MinimalEditor/MinimalEditor';
-// import FormattingBar from 'components/FormattingBar/FormattingBar';
+import { DOMSerializer } from 'prosemirror-model';
+
+import { MinimalEditor } from 'components';
+import { buildSchema, getDocForHtmlString } from '@pubpub/editor';
 
 const propTypes = {
 	initialHtmlString: PropTypes.string.isRequired,
-	onChange: PropTypes.func.isRequired /* Return HTML string of content */,
+	onChange: PropTypes.func.isRequired, // Return HTML string of content
 	onBlur: PropTypes.func,
 	placeholder: PropTypes.string,
 };
@@ -16,36 +17,38 @@ const defaultProps = {
 	onBlur: () => {},
 };
 
-class SimpleEditor extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-		this.handleChange = this.handleChange.bind(this);
-		this.intializedWithHtmlInput = false;
+const schema = buildSchema();
+
+const SimpleEditor = (props) => {
+	const { onChange, onBlur, placeholder, initialHtmlString } = props;
+	const initialDoc = useRef(null);
+
+	if (!initialDoc.current) {
+		initialDoc.current = getDocForHtmlString(initialHtmlString, schema).toJSON();
 	}
 
-	handleChange({ text, view }) {
-		if (!this.intializedWithHtmlInput) {
-			this.intializedWithHtmlInput = true;
-			importHtml(view, this.props.initialHtmlString);
-		}
-		const innerHtml = text ? view.dom.innerHTML : '';
-		this.props.onChange(innerHtml);
-	}
+	const handleChange = ({ view }) => {
+		const htmlForNodes = [];
+		const serializer = DOMSerializer.fromSchema(view.state.schema);
+		view.state.doc.forEach((node) => {
+			htmlForNodes.push(serializer.serializeNode(node).outerHTML);
+		});
+		const htmlString = htmlForNodes.join('');
+		onChange(htmlString);
+	};
 
-	render() {
-		return (
-			<MinimalEditor
-				onChange={this.handleChange}
-				onBlur={this.props.onBlur}
-				placeholder={this.props.placeholder}
-				useFormattingBar={true}
-				isTranslucent={true}
-				constrainHeight={true}
-			/>
-		);
-	}
-}
+	return (
+		<MinimalEditor
+			onChange={handleChange}
+			onBlur={onBlur}
+			placeholder={placeholder}
+			initialContent={initialDoc.current}
+			useFormattingBar={true}
+			isTranslucent={true}
+			constrainHeight={true}
+		/>
+	);
+};
 
 SimpleEditor.propTypes = propTypes;
 SimpleEditor.defaultProps = defaultProps;

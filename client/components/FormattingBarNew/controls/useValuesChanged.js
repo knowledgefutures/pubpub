@@ -5,7 +5,10 @@ export const useValuesChanged = (values) => {
 	const originalValues = useRef(values);
 
 	useEffect(() => {
-		setHasChanged(values.some((value, index) => value !== originalValues.current[index]));
+		const hasChanges = values.some((value, index) => {
+			return value !== originalValues.current[index];
+		});
+		setHasChanged(hasChanges);
 	}, [values]);
 
 	return hasChanged;

@@ -8,12 +8,13 @@ import { useFocusTrap } from '../../utils/useFocusTrap';
 
 const FormattingBarPopover = (props) => {
 	const { accentColor, button, children, onClose, isFullScreenWidth } = props;
-	const beforeCloseAction = useRef();
 	const [hasPendingChanges, setHasPendingChanges] = useState(false);
-
-	console.log('hasPendingChanges', hasPendingChanges);
-
 	const focusTrap = useFocusTrap({ clickOutsideDeactivates: !hasPendingChanges });
+
+	const handleControlsClose = () => {
+		setHasPendingChanges(false);
+		onClose();
+	};
 
 	return (
 		<div
@@ -30,7 +31,12 @@ const FormattingBarPopover = (props) => {
 				className="inner"
 				aria-label={`Editing ${button.ariaTitle || button.title} options`}
 			>
-				{typeof children === 'function' ? children(setHasPendingChanges) : children}
+				{typeof children === 'function'
+					? children({
+							onPendingChanges: setHasPendingChanges,
+							onClose: handleControlsClose,
+					  })
+					: children}
 			</div>
 			<div className="close-button-container">
 				<Button minimal small icon="cross" aria-label="Close options" onClick={onClose} />

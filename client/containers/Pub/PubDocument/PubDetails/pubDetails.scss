@@ -99,7 +99,7 @@
 		.doi-and-button {
 			display: flex;
 			align-items: center;
-			&:hover {
+			&:hover, &:focus-within {
 				.click-to-copy {
 					opacity: 1;
 				}

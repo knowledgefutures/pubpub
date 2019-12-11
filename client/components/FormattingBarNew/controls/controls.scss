@@ -1,21 +1,47 @@
 @mixin controls-component {
     display: flex;
     height: 100%;
+    .controls-button-group {
+        margin-top: 9px;
+        & > *:not(:last-child) {
+            margin-right: 9px;
+        }
+    }
+    .controls-button {
+        padding: 8px;
+        border: 1px solid white;
+        color: white;
+        font: inherit;
+        cursor: pointer;
+        background: transparent;
+        font-weight: 600;
+        &:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+    }
     .section {
         display: flex;
         flex-direction: column;
         height: 100%;
         overflow: hidden;
         .title {
-            margin-bottom: 15px;
+            margin-bottom: 9px;
             user-select: none;
         }
         textarea {
             flex-grow: 1;
             resize: none;
+            overflow: hidden;
+            border-radius: 4px;
         }
         .minimal-editor-component {
             width: 100%;
+            overflow: hidden;
+            border-radius: 4px;
         }
     }
     textarea {
@@ -32,8 +58,21 @@
     @include controls-component();
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-column-gap: 20px;
+    grid-column-gap: 18px;
     .structured-data {
         font-family: monospace;
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    }
+    .preview {
+        .title {
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .pub-note-content-component {
+            overflow-y: scroll;
+            flex-grow: 1;
+        }
     }
 }

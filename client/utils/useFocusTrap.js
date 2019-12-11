@@ -33,6 +33,7 @@ export const useFocusTrap = ({ clickOutsideDeactivates = false, isActive = true 
 		if (refElement) {
 			focusTrap.current = createFocusTrap(refElement, {
 				escapeDeactivates: false,
+				returnFocusOnDeactivate: false,
 				clickOutsideDeactivates: clickOutsideDeactivates,
 			});
 			setFocusTrapActive(true);

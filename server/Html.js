@@ -16,6 +16,20 @@ const propTypes = {
 	headerComponents: PropTypes.array.isRequired,
 };
 
+const polyfills = [
+	'default',
+	'fetch',
+	'HTMLCanvasElement.prototype.toBlob',
+	'Number.isNaN',
+	'Object.assign',
+	'Object.entries',
+	'Object.values',
+	'Promise',
+	'requestIdleCallback',
+	'String.prototype.includes',
+	'URL',
+].join(',');
+
 const Html = (props) => {
 	const getPath = (chunkName, extension) => {
 		let manifestUrl = manifest
@@ -62,7 +76,7 @@ const Html = (props) => {
 				<div id="root">{props.children}</div>
 				<script
 					crossOrigin="anonymous"
-					src="https://polyfill.io/v3/polyfill.min.js?features=default,fetch,HTMLCanvasElement.prototype.toBlob,Object.entries,Object.values,URL,Promise,Object.assign,Number.isNaN,String.prototype.includes"
+					src={`https://polyfill.io/v3/polyfill.min.js?features=${polyfills}`}
 				/>
 				<script
 					id="initial-data"

@@ -1,5 +1,21 @@
 import TestControls from './controls/TestControls';
 import ControlsCitation from './controls/ControlsCitation';
+import ControlsLink from './controls/ControlsLink';
+
+const nodeControls = (component) => {
+	return {
+		component: component,
+		when: (changeObject) => !!changeObject.selectedNode,
+	};
+};
+
+const getPositionForBounds = (getBoundsFn) => (changeObject) => {
+	const bounds = getBoundsFn(changeObject);
+	return {
+		top: bounds.bottom + window.scrollY,
+		left: bounds.left,
+	};
+};
 
 export const strong = {
 	key: 'strong',
@@ -20,6 +36,11 @@ export const link = {
 	title: 'Link',
 	icon: 'link',
 	isToggle: true,
+	controls: {
+		component: ControlsLink,
+		when: (changeObject) => !!changeObject.activeLink,
+		position: getPositionForBounds((changeObject) => changeObject.activeLink.boundingBox),
+	},
 };
 
 export const bulletList = {
@@ -73,7 +94,7 @@ export const citation = {
 	key: 'citation',
 	title: 'Citation',
 	icon: 'bookmark',
-	controls: ControlsCitation,
+	controls: nodeControls(ControlsCitation),
 };
 
 export const discussion = {
@@ -87,7 +108,7 @@ export const equation = {
 	matchesNodes: ['equation', 'block_equation'],
 	title: 'Equation',
 	icon: 'function',
-	controls: TestControls,
+	controls: nodeControls(TestControls),
 };
 
 export const footnote = {

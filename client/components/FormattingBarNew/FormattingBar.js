@@ -9,10 +9,15 @@ import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
 import FormattingBarPopover from './FormattingBarPopover';
 
+import * as buttonDefinitions from './buttons';
+
 require('./formattingBar.scss');
 
 const propTypes = {
+	editorWrapperRef: PropTypes.object.isRequired,
 	editorChangeObject: PropTypes.shape({
+		latestDomEvent: PropTypes.object,
+		insertFunctions: PropTypes.object,
 		menuItems: PropTypes.arrayOf(PropTypes.shape({})),
 		view: PropTypes.shape({
 			focus: PropTypes.func,
@@ -34,6 +39,7 @@ const propTypes = {
 	showMedia: PropTypes.bool,
 	isSmall: PropTypes.bool,
 	isTranslucent: PropTypes.bool,
+	isFullScreenWidth: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -41,11 +47,13 @@ const defaultProps = {
 	showBlockTypes: true,
 	isTranslucent: false,
 	isSmall: false,
+	isFullScreenWidth: false,
 };
 
-const deriveIndicatedButton = (buttons, editorChangeObject) => {
-	const { selectedNode, selectionInTable } = editorChangeObject;
+const deriveIndicatedButtons = (buttons, editorChangeObject) => {
+	const { selectedNode, selectionInTable, activeLink } = editorChangeObject;
 	return [
+		activeLink && buttonDefinitions.link,
 		selectedNode &&
 			buttons.find(
 				(item) =>
@@ -57,6 +65,16 @@ const deriveIndicatedButton = (buttons, editorChangeObject) => {
 			),
 		selectionInTable && buttons.find((i) => i.key === 'table'),
 	].filter((x) => x);
+};
+
+const derivedOpenedControls = (openedButton, editorChangeObject) => {
+	if (openedButton && openedButton.controls) {
+		const { component, when } = openedButton.controls;
+		if (when(editorChangeObject)) {
+			return component;
+		}
+	}
+	return null;
 };
 
 const usePopoverKey = (latestDomEvent) => {
@@ -82,19 +100,13 @@ const FormattingBar = (props) => {
 	const {
 		buttons,
 		editorChangeObject,
+		editorWrapperRef,
 		showBlockTypes,
 		isSmall,
 		isTranslucent,
 		isFullScreenWidth,
 	} = props;
-	const {
-		menuItems,
-		selectedNode,
-		latestDomEvent,
-		insertFunctions,
-		view,
-		updateNode,
-	} = editorChangeObject;
+	const { menuItems, latestDomEvent, insertFunctions, view } = editorChangeObject;
 	const placementRef = useRef();
 	const [openedButton, setOpenedButton] = useState(null);
 	const {
@@ -102,8 +114,13 @@ const FormattingBar = (props) => {
 	} = usePageContext();
 	const toolbar = useToolbarState({ loop: true });
 	const popoverKey = usePopoverKey(latestDomEvent);
-	const indicatedItems = deriveIndicatedButton(buttons, editorChangeObject);
+	const indicatedItems = deriveIndicatedButtons(buttons, editorChangeObject);
+	const OpenedControls = derivedOpenedControls(openedButton, editorChangeObject);
 	const [firstIndicatedItem] = indicatedItems;
+	const floatingControlsPosition =
+		OpenedControls &&
+		openedButton.controls.position &&
+		openedButton.controls.position(editorChangeObject);
 
 	useEffect(() => {
 		const clickedOnNode = latestDomEvent && latestDomEvent.type === 'click';
@@ -163,19 +180,21 @@ const FormattingBar = (props) => {
 					if (!insertFunction && matchingMenuItem && !matchingMenuItem.canRun) {
 						return null;
 					}
-					const isActive = matchingMenuItem ? matchingMenuItem.isActive : false;
-					const isIndicated = indicatedItems.includes(button) && !isActive;
 					const isOpen = openedButton === button;
+					const isIndicated = indicatedItems.includes(button) && !isOpen;
+					const isActive =
+						!isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
 					return (
 						<ToolbarItem
 							{...toolbar}
 							as={FormattingBarButton}
 							key={button.key}
 							formattingItem={button}
-							disabled={indicatedItems.length > 0 && !isIndicated}
+							disabled={indicatedItems.length > 0 && !isIndicated && !isOpen}
 							isActive={isActive}
 							isIndicated={isIndicated && !isOpen}
 							isOpen={isOpen}
+							isDetached={isOpen && !!floatingControlsPosition}
 							isSmall={isSmall}
 							accentColor={accentColorDark}
 							onClick={() => handleButtonClick(button)}
@@ -183,18 +202,19 @@ const FormattingBar = (props) => {
 					);
 				})}
 			</Toolbar>
-			{openedButton && selectedNode && (
+			{OpenedControls && (
 				<FormattingBarPopover
 					key={popoverKey}
 					accentColor={accentColorDark}
 					button={openedButton}
 					onClose={handlePopoverClose}
 					isFullScreenWidth={isFullScreenWidth}
+					editorWrapperRef={editorWrapperRef}
+					floatingPosition={floatingControlsPosition}
 				>
 					{({ onPendingChanges, onClose }) => (
-						<openedButton.controls
-							updateNodeAttrs={updateNode}
-							nodeAttrs={selectedNode.attrs}
+						<OpenedControls
+							editorChangeObject={editorChangeObject}
 							onPendingChanges={onPendingChanges}
 							onClose={onClose}
 						/>

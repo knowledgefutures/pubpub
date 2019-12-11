@@ -76,3 +76,18 @@
         }
     }
 }
+
+.controls-link-component {
+    input {
+        width: 300px;
+        height: 24px;
+        padding: 0.5em;
+        border: none;
+        border-radius: 2px;
+        color: white;
+        background: rgba(255,255,255,0.2);
+    }
+    :last-child {
+        margin-right: 5px;
+    }
+}

@@ -27,7 +27,12 @@ const SimpleEditor = (props) => {
 		initialDoc.current = getDocForHtmlString(initialHtmlString, schema).toJSON();
 	}
 
-	const handleChange = ({ view }) => {
+	const handleChange = ({ view, text }) => {
+		if (text === '') {
+			// Don't report the empty doc as a single empty paragraph node.
+			onChange('');
+			return;
+		}
 		const htmlForNodes = [];
 		const serializer = DOMSerializer.fromSchema(view.state.schema);
 		view.state.doc.forEach((node) => {

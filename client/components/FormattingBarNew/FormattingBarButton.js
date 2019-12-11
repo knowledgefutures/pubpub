@@ -20,10 +20,19 @@ const propTypes = {
 	onClick: PropTypes.func.isRequired,
 };
 
-const getButtonStyle = (accentColor, isOpen) => {
-	if (isOpen) {
+const getOuterStyle = (accentColor, isOpen, isDetached) => {
+	if (isOpen && !isDetached) {
 		return {
 			color: 'white',
+			background: accentColor,
+		};
+	}
+	return {};
+};
+
+const getInnerStyle = (accentColor, isOpen, isDetached) => {
+	if (isOpen && isDetached) {
+		return {
 			background: accentColor,
 		};
 	}
@@ -42,6 +51,7 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 		formattingItem,
 		isActive,
 		isIndicated,
+		isDetached,
 		isOpen,
 		isSmall,
 		onClick,
@@ -51,8 +61,12 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 
 	return (
 		<span
-			className={classNames('formatting-bar-button', isOpen && 'open')}
-			style={getButtonStyle(accentColor, isOpen)}
+			className={classNames(
+				'formatting-bar-button',
+				isOpen && 'open',
+				isDetached && 'detached',
+			)}
+			style={getOuterStyle(accentColor, isOpen, isDetached)}
 		>
 			<Button
 				ref={ref}
@@ -71,11 +85,8 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 					isSmall && 'bp3-small',
 					disabled && 'bp3-disabled',
 				)}
-				onClick={() => {
-					console.log('clicko');
-					onClick(formattingItem);
-				}}
-				data-accent-dark={accentColor}
+				style={getInnerStyle(accentColor, isOpen, isDetached)}
+				onClick={() => onClick(formattingItem)}
 			>
 				<Icon icon={formattingItem.icon} iconSize={isSmall ? 12 : 16} />
 			</Button>

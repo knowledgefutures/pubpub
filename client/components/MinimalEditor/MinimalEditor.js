@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Editor, { getText, getJSON } from '@pubpub/editor';
@@ -38,6 +38,7 @@ const MinimalEditor = (props) => {
 	} = props;
 	const [changeObject, setChangeObject] = useState({});
 	const [FormattingBar, setFormattingBar] = useState(null);
+	const editorWrapperRef = useRef(null);
 
 	useEffect(() => {
 		if (focusOnLoad && changeObject.view) {
@@ -73,6 +74,7 @@ const MinimalEditor = (props) => {
 		>
 			{useFormattingBar && FormattingBar && (
 				<FormattingBar
+					editorWrapperRef={editorWrapperRef}
 					editorChangeObject={changeObject}
 					showBlockTypes={false}
 					showMedia={false}
@@ -81,7 +83,7 @@ const MinimalEditor = (props) => {
 				/>
 			)}
 			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-			<div className="editor-wrapper" onClick={handleWrapperClick}>
+			<div className="editor-wrapper" ref={editorWrapperRef} onClick={handleWrapperClick}>
 				<Editor
 					onBlur={onBlur}
 					initialContent={initialContent}

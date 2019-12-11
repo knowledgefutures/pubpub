@@ -1,13 +1,21 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 
 import { Button } from '@blueprintjs/core';
 import { useFocusTrap } from '../../utils/useFocusTrap';
 
 const FormattingBarPopover = (props) => {
-	const { accentColor, button, children, onClose, isFullScreenWidth } = props;
+	const {
+		accentColor,
+		button,
+		children,
+		onClose,
+		isFullScreenWidth,
+		floatingPosition,
+		editorWrapperRef,
+	} = props;
 	const [hasPendingChanges, setHasPendingChanges] = useState(false);
 	const focusTrap = useFocusTrap({ clickOutsideDeactivates: !hasPendingChanges });
 
@@ -16,17 +24,18 @@ const FormattingBarPopover = (props) => {
 		onClose();
 	};
 
-	return (
+	const popover = (
 		<div
 			className={classNames(
 				'formatting-bar-popover-component',
+				!!floatingPosition && 'floating',
 				isFullScreenWidth && 'full-screen-width',
 			)}
-			style={{ background: accentColor }}
+			tabIndex="-1"
+			style={{ background: accentColor, ...floatingPosition }}
 			ref={focusTrap.ref}
 		>
 			<div
-				tabIndex="0"
 				role="dialog"
 				className="inner"
 				aria-label={`Editing ${button.ariaTitle || button.title} options`}
@@ -43,6 +52,11 @@ const FormattingBarPopover = (props) => {
 			</div>
 		</div>
 	);
+
+	if (floatingPosition && editorWrapperRef.current) {
+		return ReactDOM.createPortal(popover, editorWrapperRef.current);
+	}
+	return popover;
 };
 
 export default FormattingBarPopover;

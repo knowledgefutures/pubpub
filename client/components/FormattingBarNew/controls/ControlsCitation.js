@@ -11,25 +11,33 @@ import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
 require('./controls.scss');
 
 const propTypes = {
-	updateNodeAttrs: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
 	onPendingChanges: PropTypes.func.isRequired,
-	nodeAttrs: PropTypes.shape({
-		count: PropTypes.number.isRequired,
-		unstructuredValue: PropTypes.string.isRequired,
-		value: PropTypes.string.isRequired,
-		html: PropTypes.string,
+	editorChangeObject: PropTypes.shape({
+		updateNode: PropTypes.func.isRequired,
+		selectedNode: PropTypes.shape({
+			attrs: PropTypes.shape({
+				count: PropTypes.number.isRequired,
+				unstructuredValue: PropTypes.string.isRequired,
+				value: PropTypes.string.isRequired,
+				html: PropTypes.string,
+			}),
+		}),
 	}).isRequired,
 };
 
 const ControlsCitation = (props) => {
-	const { updateNodeAttrs, nodeAttrs, onPendingChanges, onClose } = props;
+	const { editorChangeObject, onPendingChanges, onClose } = props;
+	const {
+		updateNode,
+		selectedNode: { attrs },
+	} = editorChangeObject;
 	const { citations = [] } = usePubData();
-	const existingCitation = citations[nodeAttrs.count - 1];
-	const [structuredValue, setStructuredValue] = useState(nodeAttrs.value);
+	const existingCitation = citations[attrs.count - 1];
+	const [structuredValue, setStructuredValue] = useState(attrs.value);
 	const [structuredHtml, setStructuredHtml] = useState(existingCitation && existingCitation.html);
 	const [revertedAt, setRevertedAt] = useState(Date.now());
-	const [unstructuredValue, setUnstructuredValue] = useState(nodeAttrs.unstructuredValue);
+	const [unstructuredValue, setUnstructuredValue] = useState(attrs.unstructuredValue);
 	const [debouncedStructuredValue] = useDebounce(structuredValue, 250);
 	const [debouncedUnstructuredValue] = useDebounce(unstructuredValue, 250);
 	const hasChanges = useValuesChanged([unstructuredValue, structuredValue]);
@@ -52,14 +60,14 @@ const ControlsCitation = (props) => {
 	useEffect(() => onPendingChanges(hasChanges), [hasChanges, onPendingChanges]);
 
 	const handleRevert = () => {
-		setStructuredValue(nodeAttrs.value);
-		setUnstructuredValue(nodeAttrs.unstructuredValue);
+		setStructuredValue(attrs.value);
+		setUnstructuredValue(attrs.unstructuredValue);
 		setStructuredHtml(existingCitation && existingCitation.html);
 		setRevertedAt(Date.now());
 	};
 
 	const handleUpdate = () => {
-		updateNodeAttrs({
+		updateNode({
 			value: structuredValue,
 			unstructuredValue: unstructuredValue,
 		});

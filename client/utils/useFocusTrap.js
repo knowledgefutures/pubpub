@@ -1,19 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import createFocusTrap from 'focus-trap';
 
-const clickHandlerOptions = { capture: true };
-
-const isDescendant = (parent, child) => {
-	let node = child;
-	while (node !== null) {
-		if (node === parent) {
-			return true;
-		}
-		node = node.parentElement;
-	}
-	return false;
-};
-
 export const useFocusTrap = ({ clickOutsideDeactivates = false, isActive = true } = {}) => {
 	const [refElement, setRefElement] = useState(null);
 	const focusTrap = useRef(null);
@@ -34,6 +21,7 @@ export const useFocusTrap = ({ clickOutsideDeactivates = false, isActive = true 
 			focusTrap.current = createFocusTrap(refElement, {
 				escapeDeactivates: false,
 				returnFocusOnDeactivate: false,
+				initialFocus: refElement,
 				clickOutsideDeactivates: clickOutsideDeactivates,
 			});
 			setFocusTrapActive(true);

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import stickybits from 'stickybits';
 
@@ -36,6 +36,7 @@ const PubHeaderFormatting = (props) => {
 			<FormattingBar
 				buttons={buttons.fullButtonSet}
 				editorChangeObject={props.collabData.editorChangeObject || {}}
+				editorWrapperRef={props.editorWrapperRef}
 				footnotes={pubData.footnotes}
 				citations={pubData.citations}
 				isFullScreenWidth={true}

@@ -95,11 +95,7 @@ const PageWrapper = (props) => {
 
 				<GdprBanner loginData={loginData} />
 
-				<Header
-					communityData={communityData}
-					locationData={locationData}
-					loginData={loginData}
-				/>
+				<Header />
 
 				{showNav && <NavBar navItems={navItems} socialItems={socialItems} />}
 

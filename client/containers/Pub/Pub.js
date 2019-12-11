@@ -20,6 +20,7 @@ const propTypes = {
 	communityData: communityDataProps.isRequired,
 	loginData: loginDataProps.isRequired,
 	locationData: locationDataProps.isRequired,
+	scopeData: locationDataProps.isRequired,
 	pubData: pubDataProps.isRequired,
 };
 
@@ -31,6 +32,7 @@ const Pub = (props) => {
 					locationData={props.locationData}
 					communityData={props.communityData}
 					loginData={props.loginData}
+					scopeData={props.scopeData}
 				>
 					<PubSyncManager
 						pubData={props.pubData}

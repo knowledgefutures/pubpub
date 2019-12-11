@@ -1,27 +1,16 @@
 import React from 'react';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
-import { Icon, MenuButton, ScopeDropdown } from 'components';
+import { Avatar, Icon, MenuItem } from 'components';
 
-require('./scopePicker.scss');
+require('./scopeDropdown.scss');
 
-const ScopePicker = () => {
+const ScopeDropdown = () => {
 	const { locationData, communityData, scopeData } = usePageContext();
 	const { activeCollection, activePub } = scopeData;
 
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
-
-	let currentScopeTitle = 'Community';
-	let icon = 'office';
-	if (activeCollection) {
-		currentScopeTitle = 'Collection';
-		icon = 'collection';
-	}
-	if (activePub) {
-		currentScopeTitle = 'Pub';
-		icon = 'pubDoc';
-	}
 
 	const scopes = [];
 	scopes.push({
@@ -56,29 +45,38 @@ const ScopePicker = () => {
 	}
 
 	return (
-		<div className="scope-picker-component">
-			<MenuButton
-				aria-label="Dashboard Menu"
-				buttonContent={
-					<React.Fragment>
-						<div className="top">{currentScopeTitle}</div>
-						<div className="bottom">Dashboard</div>
-					</React.Fragment>
-				}
-				buttonProps={{
-					icon: <Icon icon={icon} />,
-					className: 'scope-button',
-					fill: true,
-					minimal: true,
-					rightIcon: 'caret-down',
-				}}
-				placement="top-start"
-				className="scope-menu"
-			>
-				<ScopeDropdown />
-			</MenuButton>
+		<div className="scope-dropdown-component">
+			<div className="intro">Select Dashbord to view:</div>
+			<div className="scopes">
+				{scopes.map((scope, index) => {
+					return (
+						<MenuItem
+							href={scope.href}
+							key={scope.type}
+							text={
+								<div className={`scope-item item-${index}`}>
+									<div className="top">
+										<Icon icon={scope.icon} iconSize={10} />
+										{scope.type}
+									</div>
+									<div className="bottom">
+										<Avatar
+											avatar={scope.avatar}
+											initials={scope.title[0]}
+											communityData={communityData}
+											width={18}
+											isBlock={true}
+										/>
+										{scope.title}
+									</div>
+								</div>
+							}
+						/>
+					);
+				})}
+			</div>
 		</div>
 	);
 };
 
-export default ScopePicker;
+export default ScopeDropdown;

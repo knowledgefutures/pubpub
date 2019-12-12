@@ -132,6 +132,7 @@ const renderFrontMatterForHtml = ({
 	doi,
 	title,
 	communityTitle,
+	accentColor,
 	attributions,
 }) => {
 	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
@@ -143,7 +144,9 @@ const renderFrontMatterForHtml = ({
 	return (
 		<section className="cover">
 			<h3 className="community-and-collection">{communityAndCollectionString}</h3>
-			<h1 className="title">{title}</h1>
+			<h1 className="title" style={{ color: accentColor }}>
+				{title}
+			</h1>
 			{attributions.length > 0 && (
 				<div className="byline">
 					<h3>

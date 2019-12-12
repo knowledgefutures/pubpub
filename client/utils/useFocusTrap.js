@@ -1,7 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import createFocusTrap from 'focus-trap';
 
-export const useFocusTrap = ({ clickOutsideDeactivates = false, isActive = true } = {}) => {
+const noop = () => {};
+
+export const useFocusTrap = ({
+	allowOutsideClick = noop,
+	clickOutsideDeactivates = false,
+	isActive = true,
+} = {}) => {
 	const [refElement, setRefElement] = useState(null);
 	const focusTrap = useRef(null);
 
@@ -20,14 +26,14 @@ export const useFocusTrap = ({ clickOutsideDeactivates = false, isActive = true 
 		if (refElement) {
 			focusTrap.current = createFocusTrap(refElement, {
 				escapeDeactivates: false,
+				allowOutsideClick: allowOutsideClick,
 				returnFocusOnDeactivate: false,
-				initialFocus: refElement,
 				clickOutsideDeactivates: clickOutsideDeactivates,
 			});
 			setFocusTrapActive(true);
 		}
 		return () => setFocusTrapActive(false);
-	}, [refElement, clickOutsideDeactivates]);
+	}, [refElement, clickOutsideDeactivates, allowOutsideClick]);
 
 	useEffect(() => {
 		setFocusTrapActive(isActive);

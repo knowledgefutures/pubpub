@@ -14,28 +14,35 @@ const FormattingBarPopover = (props) => {
 		onClose,
 		isFullScreenWidth,
 		floatingPosition,
-		editorWrapperRef,
+		containerRef,
 	} = props;
 	const [hasPendingChanges, setHasPendingChanges] = useState(false);
-	const focusTrap = useFocusTrap({ clickOutsideDeactivates: !hasPendingChanges });
 
 	const handleControlsClose = () => {
 		setHasPendingChanges(false);
 		onClose();
 	};
 
+	const focusTrap = useFocusTrap({
+		clickOutsideDeactivates: !hasPendingChanges,
+		allowOutsideClick: () => {
+			handleControlsClose();
+			return false;
+		},
+	});
+
 	const popover = (
 		<div
 			className={classNames(
 				'formatting-bar-popover-component',
-				!!floatingPosition && 'floating',
+				!!floatingPosition && 'floating bp3-elevation-2',
 				isFullScreenWidth && 'full-screen-width',
 			)}
-			tabIndex="-1"
 			style={{ background: accentColor, ...floatingPosition }}
 			ref={focusTrap.ref}
 		>
 			<div
+				tabIndex="0"
 				role="dialog"
 				className="inner"
 				aria-label={`Editing ${button.ariaTitle || button.title} options`}
@@ -53,8 +60,8 @@ const FormattingBarPopover = (props) => {
 		</div>
 	);
 
-	if (floatingPosition && editorWrapperRef.current) {
-		return ReactDOM.createPortal(popover, editorWrapperRef.current);
+	if (floatingPosition && containerRef.current) {
+		return ReactDOM.createPortal(popover, containerRef.current);
 	}
 	return popover;
 };

@@ -17,7 +17,12 @@ const propTypes = {
 	isIndicated: PropTypes.bool.isRequired,
 	isOpen: PropTypes.bool.isRequired,
 	isSmall: PropTypes.bool.isRequired,
+	label: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+	label: null,
 };
 
 const getOuterStyle = (accentColor, isOpen, isDetached) => {
@@ -54,6 +59,7 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 		isDetached,
 		isOpen,
 		isSmall,
+		label,
 		onClick,
 		accentColor,
 		...restProps
@@ -65,6 +71,7 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 				'formatting-bar-button',
 				isOpen && 'open',
 				isDetached && 'detached',
+				!!label && 'has-label',
 			)}
 			style={getOuterStyle(accentColor, isOpen, isDetached)}
 		>
@@ -89,6 +96,7 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 				onClick={() => onClick(formattingItem)}
 			>
 				<Icon icon={formattingItem.icon} iconSize={isSmall ? 12 : 16} />
+				{label}
 			</Button>
 			{isIndicated && <div className="indicator" style={getIndicatorStyle(accentColor)} />}
 		</span>
@@ -96,4 +104,5 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 });
 
 FormattingBarButton.propTypes = propTypes;
+FormattingBarButton.defaultProps = defaultProps;
 export default FormattingBarButton;

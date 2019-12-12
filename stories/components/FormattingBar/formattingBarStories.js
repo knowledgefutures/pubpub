@@ -8,7 +8,6 @@ import { plainDoc, fullDoc } from 'data';
 
 class EditorUnit extends Component {
 	static propTypes = {
-		showMedia: PropTypes.bool.isRequired,
 		showBlockTypes: PropTypes.bool.isRequired,
 		isSmall: PropTypes.bool.isRequired,
 		buttons: PropTypes.array.isRequired,
@@ -35,7 +34,6 @@ class EditorUnit extends Component {
 					{this.state.editorChangeObject && (
 						<FormattingBar
 							editorChangeObject={this.state.editorChangeObject}
-							showMedia={this.props.showMedia}
 							showBlockTypes={this.props.showBlockTypes}
 							isSmall={this.props.isSmall}
 							buttons={this.props.buttons}
@@ -48,7 +46,7 @@ class EditorUnit extends Component {
 						onChange={(changeObject) => {
 							this.setState({ editorChangeObject: changeObject });
 						}}
-						initialContent={this.props.showMedia ? plainDoc : fullDoc}
+						initialContent={fullDoc}
 					/>
 				</div>
 			</div>
@@ -67,17 +65,7 @@ storiesOf('components/FormattingBar', module).add('default', () => (
 	<div style={wrapperStyle}>
 		<EditorUnit isSmall={false} buttons={buttons.fullButtonSet} />
 		<EditorUnit isSmall={true} buttons={buttons.fullButtonSet} />
-		<EditorUnit
-			showMedia={false}
-			showBlockTypes={true}
-			isSmall={true}
-			buttons={buttons.minimalButtonSet}
-		/>
-		<EditorUnit
-			showMedia={false}
-			showBlockTypes={false}
-			isSmall={true}
-			buttons={buttons.minimalButtonSet}
-		/>
+		<EditorUnit showBlockTypes={true} isSmall={true} buttons={buttons.minimalButtonSet} />
+		<EditorUnit showBlockTypes={false} isSmall={true} buttons={buttons.minimalButtonSet} />
 	</div>
 ));

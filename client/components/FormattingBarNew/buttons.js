@@ -1,19 +1,34 @@
 import TestControls from './controls/TestControls';
 import ControlsCitation from './controls/ControlsCitation';
 import ControlsLink from './controls/ControlsLink';
+import MediaButton from './FormattingBarMediaButton';
 
-const nodeControls = (component) => {
+const triggerOnClick = (changeObject) => {
+	const { latestDomEvent } = changeObject;
+	return latestDomEvent && latestDomEvent.type === 'click';
+};
+
+const nodeControls = (component, indicatedNodeType) => {
+	const indicatedTypes = Array.isArray(indicatedNodeType)
+		? indicatedNodeType
+		: [indicatedNodeType];
 	return {
 		component: component,
-		when: (changeObject) => !!changeObject.selectedNode,
+		trigger: triggerOnClick,
+		show: (editorChangeObject) => !!editorChangeObject.selectedNode,
+		indicate: (editorChangeObject) => {
+			const { selectedNode } = editorChangeObject;
+			return selectedNode && indicatedTypes.some((type) => type === selectedNode.type.name);
+		},
 	};
 };
 
-const getPositionForBounds = (getBoundsFn) => (changeObject) => {
+const getPositionForBounds = (getBoundsFn) => (changeObject, containerRef) => {
+	const wrapperBounds = containerRef.current.offsetParent.getBoundingClientRect();
 	const bounds = getBoundsFn(changeObject);
 	return {
-		top: bounds.bottom + window.scrollY,
-		left: bounds.left,
+		top: bounds.bottom - wrapperBounds.top,
+		left: bounds.left - wrapperBounds.left,
 	};
 };
 
@@ -38,7 +53,15 @@ export const link = {
 	isToggle: true,
 	controls: {
 		component: ControlsLink,
-		when: (changeObject) => !!changeObject.activeLink,
+		indicate: (changeObject) => !!changeObject.activeLink,
+		trigger: (changeObject) => {
+			const { latestDomEvent } = changeObject;
+			return (
+				(latestDomEvent && latestDomEvent.metaKey && latestDomEvent.key === 'k') ||
+				triggerOnClick(changeObject)
+			);
+		},
+		show: (changeObject) => !!changeObject.activeLink,
 		position: getPositionForBounds((changeObject) => changeObject.activeLink.boundingBox),
 	},
 };
@@ -94,7 +117,7 @@ export const citation = {
 	key: 'citation',
 	title: 'Citation',
 	icon: 'bookmark',
-	controls: nodeControls(ControlsCitation),
+	controls: nodeControls(ControlsCitation, 'citation'),
 };
 
 export const discussion = {
@@ -105,10 +128,9 @@ export const discussion = {
 
 export const equation = {
 	key: 'equation',
-	matchesNodes: ['equation', 'block_equation'],
 	title: 'Equation',
 	icon: 'function',
-	controls: nodeControls(TestControls),
+	controls: nodeControls(TestControls, ['equation', 'block_equation']),
 };
 
 export const footnote = {
@@ -127,6 +149,14 @@ export const table = {
 	key: 'table',
 	title: 'Table',
 	icon: 'th',
+};
+
+export const media = {
+	key: 'media',
+	title: 'Media',
+	icon: 'media',
+	component: MediaButton,
+	controls: nodeControls(ControlsCitation, ['image', 'video', 'audio', 'iframe']),
 };
 
 export const minimalButtonSet = [strong, em, link, equation];
@@ -148,4 +178,5 @@ export const fullButtonSet = [
 	footnote,
 	horizontalRule,
 	table,
+	media,
 ];

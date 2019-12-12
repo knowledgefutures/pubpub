@@ -27,7 +27,7 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        overflow: hidden;
+        overflow-y: hidden;
         .title {
             margin-bottom: 9px;
             user-select: none;
@@ -40,7 +40,7 @@
         }
         .minimal-editor-component {
             width: 100%;
-            overflow: hidden;
+            overflow-y: hidden;
             border-radius: 4px;
         }
     }
@@ -66,6 +66,9 @@
         }
     }
     .preview {
+        a {
+            color: white !important;
+        }
         .title {
             text-transform: uppercase;
             font-weight: 600;
@@ -78,6 +81,7 @@
 }
 
 .controls-link-component {
+    display: flex;
     input {
         width: 300px;
         height: 24px;
@@ -87,7 +91,7 @@
         color: white;
         background: rgba(255,255,255,0.2);
     }
-    :last-child {
+    & > * {
         margin-right: 5px;
     }
 }

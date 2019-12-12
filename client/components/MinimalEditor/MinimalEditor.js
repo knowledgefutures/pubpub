@@ -74,16 +74,16 @@ const MinimalEditor = (props) => {
 		>
 			{useFormattingBar && FormattingBar && (
 				<FormattingBar
-					editorWrapperRef={editorWrapperRef}
+					popoverContainerRef={editorWrapperRef}
 					editorChangeObject={changeObject}
 					showBlockTypes={false}
-					showMedia={false}
 					isSmall={true}
 					isTranslucent={isTranslucent}
 				/>
 			)}
 			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-			<div className="editor-wrapper" ref={editorWrapperRef} onClick={handleWrapperClick}>
+			<div className="editor-wrapper" onClick={handleWrapperClick}>
+				<div className="editor-wrapper-inner" ref={editorWrapperRef} />
 				<Editor
 					onBlur={onBlur}
 					initialContent={initialContent}

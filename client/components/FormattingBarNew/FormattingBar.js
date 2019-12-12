@@ -14,7 +14,7 @@ import * as buttonDefinitions from './buttons';
 require('./formattingBar.scss');
 
 const propTypes = {
-	editorWrapperRef: PropTypes.object.isRequired,
+	popoverContainerRef: PropTypes.object.isRequired,
 	editorChangeObject: PropTypes.shape({
 		latestDomEvent: PropTypes.object,
 		insertFunctions: PropTypes.object,
@@ -36,48 +36,19 @@ const propTypes = {
 		}),
 	).isRequired,
 	showBlockTypes: PropTypes.bool,
-	showMedia: PropTypes.bool,
 	isSmall: PropTypes.bool,
 	isTranslucent: PropTypes.bool,
 	isFullScreenWidth: PropTypes.bool,
 };
 
 const defaultProps = {
-	showMedia: true,
 	showBlockTypes: true,
 	isTranslucent: false,
 	isSmall: false,
 	isFullScreenWidth: false,
 };
 
-const deriveIndicatedButtons = (buttons, editorChangeObject) => {
-	const { selectedNode, selectionInTable, activeLink } = editorChangeObject;
-	return [
-		activeLink && buttonDefinitions.link,
-		selectedNode &&
-			buttons.find(
-				(item) =>
-					(item.matchesNodes &&
-						item.matchesNodes.some(
-							(nodeType) => nodeType === selectedNode.type.name,
-						)) ||
-					item.key === selectedNode.type.name,
-			),
-		selectionInTable && buttons.find((i) => i.key === 'table'),
-	].filter((x) => x);
-};
-
-const derivedOpenedControls = (openedButton, editorChangeObject) => {
-	if (openedButton && openedButton.controls) {
-		const { component, when } = openedButton.controls;
-		if (when(editorChangeObject)) {
-			return component;
-		}
-	}
-	return null;
-};
-
-const usePopoverKey = (latestDomEvent) => {
+const useControlsKey = (latestDomEvent) => {
 	const key = useRef(-1);
 	const previousDomEvent = useRef(null);
 
@@ -96,36 +67,69 @@ const usePopoverKey = (latestDomEvent) => {
 	return key.current;
 };
 
+const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) => {
+	const [openedButton, setOpenedButton] = useState(null);
+	const controlsKey = useControlsKey(editorChangeObject.latestDomEvent);
+
+	const indicatedButtons = buttons.filter(
+		(button) => button.controls && button.controls.indicate(editorChangeObject),
+	);
+
+	const indicatedButtonsString = indicatedButtons.map((button) => button.key).join('-');
+
+	const controlsComponent =
+		openedButton &&
+		openedButton.controls.show(editorChangeObject) &&
+		openedButton.controls.component;
+
+	const controlsPosition =
+		controlsComponent &&
+		openedButton.controls.position &&
+		openedButton.controls.position(editorChangeObject, popoverContainerRef);
+
+	useEffect(() => {
+		const openableIndicatedButton = indicatedButtons.find(
+			(button) => button.controls && button.controls.trigger(editorChangeObject),
+		);
+		if (!openedButton && openableIndicatedButton) {
+			setOpenedButton(openableIndicatedButton);
+		} else if (openedButton && !openableIndicatedButton) {
+			setOpenedButton(null);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [controlsKey, indicatedButtonsString]);
+
+	return {
+		indicatedButtons: indicatedButtons,
+		openedButton: openedButton,
+		setOpenedButton: setOpenedButton,
+		controlsPosition: controlsPosition,
+		controlsKey: controlsKey,
+		ControlsComponent: controlsComponent,
+	};
+};
+
 const FormattingBar = (props) => {
 	const {
 		buttons,
 		editorChangeObject,
-		editorWrapperRef,
+		popoverContainerRef,
 		showBlockTypes,
 		isSmall,
 		isTranslucent,
 		isFullScreenWidth,
 	} = props;
-	const { menuItems, latestDomEvent, insertFunctions, view } = editorChangeObject;
-	const placementRef = useRef();
-	const [openedButton, setOpenedButton] = useState(null);
-	const {
-		communityData: { accentColorDark },
-	} = usePageContext();
+	const { menuItems, insertFunctions, view } = editorChangeObject;
+	const { communityData } = usePageContext();
 	const toolbar = useToolbarState({ loop: true });
-	const popoverKey = usePopoverKey(latestDomEvent);
-	const indicatedItems = deriveIndicatedButtons(buttons, editorChangeObject);
-	const OpenedControls = derivedOpenedControls(openedButton, editorChangeObject);
-	const [firstIndicatedItem] = indicatedItems;
-	const floatingControlsPosition =
-		OpenedControls &&
-		openedButton.controls.position &&
-		openedButton.controls.position(editorChangeObject);
-
-	useEffect(() => {
-		const clickedOnNode = latestDomEvent && latestDomEvent.type === 'click';
-		setOpenedButton(clickedOnNode ? firstIndicatedItem : null);
-	}, [latestDomEvent, firstIndicatedItem, popoverKey]);
+	const {
+		indicatedButtons,
+		openedButton,
+		setOpenedButton,
+		controlsKey,
+		controlsPosition,
+		ControlsComponent,
+	} = useControlsState(props);
 
 	const menuItemByKey = (key) => {
 		if (menuItems) {
@@ -135,7 +139,7 @@ const FormattingBar = (props) => {
 	};
 
 	const handleButtonClick = (item) => {
-		if (indicatedItems.includes(item)) {
+		if (indicatedButtons.includes(item)) {
 			setOpenedButton(openedButton === item ? null : item);
 		} else {
 			const insertFunction = insertFunctions[item.key];
@@ -149,10 +153,6 @@ const FormattingBar = (props) => {
 		}
 	};
 
-	const handlePopoverClose = () => {
-		setOpenedButton(null);
-	};
-
 	return (
 		<div
 			className={classNames(
@@ -160,7 +160,6 @@ const FormattingBar = (props) => {
 				isSmall && 'small',
 				isTranslucent && 'translucent',
 			)}
-			ref={placementRef}
 		>
 			<Toolbar aria-label="Formatting toolbar" {...toolbar}>
 				{showBlockTypes && (
@@ -171,49 +170,51 @@ const FormattingBar = (props) => {
 							editorChangeObject={editorChangeObject}
 							{...toolbar}
 						/>
-						<div className="separator" as="div" />
+						<div className="separator" />
 					</>
 				)}
 				{buttons.map((button) => {
 					const matchingMenuItem = menuItemByKey(button.key);
 					const insertFunction = insertFunctions && insertFunctions[button.key];
-					if (!insertFunction && matchingMenuItem && !matchingMenuItem.canRun) {
-						return null;
-					}
+					const noFunction =
+						!insertFunction && matchingMenuItem && !matchingMenuItem.canRun;
 					const isOpen = openedButton === button;
-					const isIndicated = indicatedItems.includes(button) && !isOpen;
+					const isIndicated = indicatedButtons.includes(button) && !isOpen;
 					const isActive =
 						!isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
+					const isDisabled =
+						noFunction || (indicatedButtons.length > 0 && !isIndicated && !isOpen);
 					return (
 						<ToolbarItem
 							{...toolbar}
-							as={FormattingBarButton}
+							as={button.component || FormattingBarButton}
 							key={button.key}
 							formattingItem={button}
-							disabled={indicatedItems.length > 0 && !isIndicated && !isOpen}
+							disabled={isDisabled}
 							isActive={isActive}
 							isIndicated={isIndicated && !isOpen}
 							isOpen={isOpen}
-							isDetached={isOpen && !!floatingControlsPosition}
+							isDetached={isOpen && !!controlsPosition}
 							isSmall={isSmall}
-							accentColor={accentColorDark}
+							accentColor={communityData.accentColorDark}
 							onClick={() => handleButtonClick(button)}
+							editorChangeObject={editorChangeObject}
 						/>
 					);
 				})}
 			</Toolbar>
-			{OpenedControls && (
+			{ControlsComponent && (
 				<FormattingBarPopover
-					key={popoverKey}
-					accentColor={accentColorDark}
+					key={controlsKey}
+					accentColor={communityData.accentColorDark}
 					button={openedButton}
-					onClose={handlePopoverClose}
+					onClose={() => setOpenedButton(null)}
 					isFullScreenWidth={isFullScreenWidth}
-					editorWrapperRef={editorWrapperRef}
-					floatingPosition={floatingControlsPosition}
+					containerRef={popoverContainerRef}
+					floatingPosition={controlsPosition}
 				>
 					{({ onPendingChanges, onClose }) => (
-						<OpenedControls
+						<ControlsComponent
 							editorChangeObject={editorChangeObject}
 							onPendingChanges={onPendingChanges}
 							onClose={onClose}

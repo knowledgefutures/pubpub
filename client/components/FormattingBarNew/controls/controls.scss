@@ -90,6 +90,9 @@
         border-radius: 2px;
         color: white;
         background: rgba(255,255,255,0.2);
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.9);
+        }
     }
     & > * {
         margin-right: 5px;

@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 
 import { Button } from '@blueprintjs/core';
+import { useKey } from 'react-use';
 import { useFocusTrap } from '../../utils/useFocusTrap';
 
 const FormattingBarPopover = (props) => {
@@ -25,11 +26,9 @@ const FormattingBarPopover = (props) => {
 
 	const focusTrap = useFocusTrap({
 		clickOutsideDeactivates: !hasPendingChanges,
-		allowOutsideClick: () => {
-			handleControlsClose();
-			return false;
-		},
 	});
+
+	useKey('Escape', handleControlsClose);
 
 	const popover = (
 		<div

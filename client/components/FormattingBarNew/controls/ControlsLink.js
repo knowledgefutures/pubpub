@@ -25,6 +25,7 @@ const ControlsLink = (props) => {
 		<div className="controls-link-component">
 			<input
 				type="text"
+				placeholder="Enter a URL"
 				value={href}
 				onChange={(evt) => setHref(evt.target.value)}
 				onKeyPress={handleKeyPress}
@@ -33,7 +34,7 @@ const ControlsLink = (props) => {
 				small
 				minimal
 				title="Visit"
-				icon="arrow-top-right"
+				icon="share"
 				href={href}
 				target="_blank"
 			/>

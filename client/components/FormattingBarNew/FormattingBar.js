@@ -9,8 +9,6 @@ import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
 import FormattingBarPopover from './FormattingBarPopover';
 
-import * as buttonDefinitions from './buttons';
-
 require('./formattingBar.scss');
 
 const propTypes = {
@@ -149,8 +147,38 @@ const FormattingBar = (props) => {
 				view.focus();
 			} else if (menuItem) {
 				menuItem.run();
+				view.focus();
 			}
 		}
+	};
+
+	const renderButton = (button) => {
+		const matchingMenuItem = menuItemByKey(button.key);
+		const insertFunction = insertFunctions && insertFunctions[button.key];
+		const noFunction = !insertFunction && matchingMenuItem && !matchingMenuItem.canRun;
+		const isOpen = openedButton === button;
+		const isIndicated = indicatedButtons.includes(button) && !isOpen;
+		const isActive = !isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
+		const isDisabled = noFunction || (indicatedButtons.length > 0 && !isIndicated && !isOpen);
+		const maybeEditorChangeObject =
+			button.key === 'media' ? { editorChangeObject: editorChangeObject } : {};
+		return (
+			<ToolbarItem
+				{...toolbar}
+				as={button.component || FormattingBarButton}
+				key={button.key}
+				formattingItem={button}
+				disabled={isDisabled}
+				isActive={isActive}
+				isIndicated={isIndicated && !isOpen}
+				isOpen={isOpen}
+				isDetached={isOpen && !!controlsPosition}
+				isSmall={isSmall}
+				accentColor={communityData.accentColorDark}
+				onClick={() => handleButtonClick(button)}
+				{...maybeEditorChangeObject}
+			/>
+		);
 	};
 
 	return (
@@ -173,35 +201,7 @@ const FormattingBar = (props) => {
 						<div className="separator" />
 					</>
 				)}
-				{buttons.map((button) => {
-					const matchingMenuItem = menuItemByKey(button.key);
-					const insertFunction = insertFunctions && insertFunctions[button.key];
-					const noFunction =
-						!insertFunction && matchingMenuItem && !matchingMenuItem.canRun;
-					const isOpen = openedButton === button;
-					const isIndicated = indicatedButtons.includes(button) && !isOpen;
-					const isActive =
-						!isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
-					const isDisabled =
-						noFunction || (indicatedButtons.length > 0 && !isIndicated && !isOpen);
-					return (
-						<ToolbarItem
-							{...toolbar}
-							as={button.component || FormattingBarButton}
-							key={button.key}
-							formattingItem={button}
-							disabled={isDisabled}
-							isActive={isActive}
-							isIndicated={isIndicated && !isOpen}
-							isOpen={isOpen}
-							isDetached={isOpen && !!controlsPosition}
-							isSmall={isSmall}
-							accentColor={communityData.accentColorDark}
-							onClick={() => handleButtonClick(button)}
-							editorChangeObject={editorChangeObject}
-						/>
-					);
-				})}
+				{buttons.map(renderButton)}
 			</Toolbar>
 			{ControlsComponent && (
 				<FormattingBarPopover

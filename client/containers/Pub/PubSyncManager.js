@@ -81,6 +81,15 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 	return { setState: setState };
 };
 
+const extractLatestDomEvent = (collabData) =>
+	collabData && collabData.editorChangeObject && collabData.editorChangeObject.latestDomEvent;
+
+const collabShouldUpdateNow = (prevCollabData, nextCollabData) => {
+	const prevDomEvent = extractLatestDomEvent(prevCollabData);
+	const nextDomEvent = extractLatestDomEvent(nextCollabData);
+	return nextDomEvent && nextDomEvent !== prevDomEvent && nextDomEvent.type === 'click';
+};
+
 class PubSyncManager extends React.Component {
 	constructor(props) {
 		super(props);
@@ -271,14 +280,21 @@ class PubSyncManager extends React.Component {
 	}
 
 	updateCollabData(newCollabData) {
-		this.idleStateUpdater.setState((prevState) => {
+		const { collabData: prevCollabData } = this.state;
+		const shouldUpdateNow = false; // collabShouldUpdateNow(prevCollabData, newCollabData);
+		const stateUpdate = (prevState) => {
 			return {
 				collabData: {
 					...prevState.collabData,
 					...newCollabData,
 				},
 			};
-		});
+		};
+		if (shouldUpdateNow) {
+			this.setState(stateUpdate);
+		} else {
+			this.idleStateUpdater.setState(stateUpdate);
+		}
 	}
 
 	updateHistoryData(newHistoryData) {

@@ -14,7 +14,7 @@ const propTypes = {
 };
 
 const FormattingBarMediaButton = React.forwardRef((props, ref) => {
-	const { editorChangeObject, isSmall } = props;
+	const { editorChangeObject, isSmall, ...restProps } = props;
 	const [isModalOpen, setModalOpen] = useState(false);
 
 	const handleInsert = (insertType, insertData) => {
@@ -35,7 +35,8 @@ const FormattingBarMediaButton = React.forwardRef((props, ref) => {
 			</Overlay>
 			<div className="separator" />
 			<FormattingBarButton
-				{...props}
+				{...restProps}
+				isSmall={isSmall}
 				label="Media"
 				ref={ref}
 				onClick={() => setModalOpen(true)}

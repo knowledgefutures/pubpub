@@ -30,14 +30,7 @@ const ControlsLink = (props) => {
 				onChange={(evt) => setHref(evt.target.value)}
 				onKeyPress={handleKeyPress}
 			/>
-			<AnchorButton
-				small
-				minimal
-				title="Visit"
-				icon="share"
-				href={href}
-				target="_blank"
-			/>
+			<AnchorButton small minimal title="Visit" icon="share" href={href} target="_blank" />
 			<Button small minimal title="Remove" icon="disable" onClick={activeLink.removeLink} />
 		</div>
 	);

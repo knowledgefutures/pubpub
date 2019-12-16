@@ -85,7 +85,7 @@ const ControlsCitation = (props) => {
 					onChange={(evt) => setStructuredValue(evt.target.value)}
 				/>
 			</div>
-			<div className="section">
+			<div className="section hide-overflow">
 				<div className="title">Rich Text</div>
 				<SimpleEditor
 					key={revertedAt}

@@ -1,6 +1,7 @@
 import TestControls from './controls/TestControls';
 import ControlsCitation from './controls/ControlsCitation';
 import ControlsLink from './controls/ControlsLink';
+import ControlsMedia from './controls/ControlsMedia/ControlsMedia';
 import MediaButton from './FormattingBarMediaButton';
 
 const triggerOnClick = (changeObject) => {
@@ -156,7 +157,7 @@ export const media = {
 	title: 'Media',
 	icon: 'media',
 	component: MediaButton,
-	controls: nodeControls(ControlsCitation, ['image', 'video', 'audio', 'iframe']),
+	controls: nodeControls(ControlsMedia, ['image', 'video', 'audio', 'iframe']),
 };
 
 export const minimalButtonSet = [strong, em, link, equation];

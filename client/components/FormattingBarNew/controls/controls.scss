@@ -1,33 +1,56 @@
 @mixin controls-component {
     display: flex;
     height: 100%;
-    .controls-button-group {
-        margin-top: 9px;
-        & > *:not(:last-child) {
-            margin-right: 9px;
+
+    input[type='text'] {
+        border-radius: 2px;
+        color: white;
+        background: rgba(255, 255, 255, 0.2);
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.9);
         }
     }
-    .controls-button {
-        padding: 8px;
-        border: 1px solid white;
-        color: white;
-        font: inherit;
-        cursor: pointer;
-        background: transparent;
-        font-weight: 600;
-        &:hover:not(:disabled) {
+
+    .bp3-slider {
+        .bp3-slider-track {
             background: rgba(255, 255, 255, 0.2);
         }
-        &:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
+        .bp3-slider-progress:not(:last-child) {
+            background: white;
         }
     }
+
+    .bp3-spinner {
+        .bp3-spinner-track {
+            stroke: white;
+        }
+    }
+
+    textarea {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        width: 100%;
+        padding: 0.5em;
+        color: white;
+        box-sizing: border-box;
+    }
+
+    .minimal-editor-component {
+        width: 100%;
+        overflow-y: hidden;
+        border-radius: 4px;
+    }
+
     .section {
         display: flex;
         flex-direction: column;
         height: 100%;
-        overflow-y: hidden;
+        &.hide-overflow {
+            overflow-y: hidden;
+        }
+        & > *:not(:last-child) {
+            margin-bottom: 9px;
+        }
         .title {
             margin-bottom: 9px;
             user-select: none;
@@ -38,27 +61,40 @@
             overflow: hidden;
             border-radius: 4px;
         }
-        .minimal-editor-component {
-            width: 100%;
-            overflow-y: hidden;
-            border-radius: 4px;
+    }
+
+    .controls-button-group {
+        & > *:not(:last-child) {
+            margin-right: 9px;
+        }
+        .controls-button {
+            padding: 8px;
+            border: 1px solid white;
+            color: white;
+            font: inherit;
+            cursor: pointer;
+            background: transparent;
+            font-weight: 600;
+            &:hover:not(:disabled) {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            &:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
         }
     }
-    textarea {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        width: 100%;
-        padding: 0.5em;
-        color: white;
-        box-sizing: border-box;
-    }
+}
+
+@mixin controls-grid($template: repeat(3, 1fr)) {
+    display: grid;
+    grid-template-columns: $template;
+    grid-column-gap: 18px;
 }
 
 .controls-citation-component {
     @include controls-component();
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-column-gap: 18px;
+    @include controls-grid();
     .structured-data {
         font-family: monospace;
         &::placeholder {
@@ -82,19 +118,53 @@
 
 .controls-link-component {
     display: flex;
-    input {
-        width: 300px;
-        height: 24px;
-        padding: 0.5em;
-        border: none;
-        border-radius: 2px;
-        color: white;
-        background: rgba(255,255,255,0.2);
-        &::placeholder {
-            color: rgba(255, 255, 255, 0.9);
-        }
-    }
     & > * {
         margin-right: 5px;
+    }
+}
+
+.controls-media-component {
+    @include controls-component();
+    @include controls-grid(repeat(4, 1fr));
+
+    .slider-input-control {
+        display: flex;
+        align-items: center;
+        .bp3-input-group {
+            margin-left: 15px;
+            width: 45px;
+            display: flex;
+            align-items: center;
+        }
+        .left-label {
+            user-select: none;
+            width: 90px;
+        }
+        .right-label {
+            user-select: none;
+            margin-left: 3px;
+            width: 40px;
+        }
+    }
+
+    .alignment-control, .source-control {
+        display: flex;
+        align-items: center;
+        .left-label {
+            user-select: none;
+            margin-right: 9px;
+        }
+        .controls {
+            display: flex;
+            flex-grow: 1;
+        }
+    }
+
+    .source-control {
+        .controls {
+            .bp3-input-group {
+                width: 100%;
+            }
+        }
     }
 }

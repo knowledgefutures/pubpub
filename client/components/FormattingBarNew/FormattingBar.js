@@ -218,6 +218,7 @@ const FormattingBar = (props) => {
 							editorChangeObject={editorChangeObject}
 							onPendingChanges={onPendingChanges}
 							onClose={onClose}
+							isSmall={isSmall}
 						/>
 					)}
 				</FormattingBarPopover>

@@ -24,9 +24,9 @@ const FormattingBarPopover = (props) => {
 		onClose();
 	};
 
-	const focusTrap = useFocusTrap({
-		clickOutsideDeactivates: !hasPendingChanges,
-	});
+	// const focusTrap = useFocusTrap({
+	// 	clickOutsideDeactivates: !hasPendingChanges,
+	// });
 
 	useKey('Escape', handleControlsClose);
 
@@ -38,7 +38,6 @@ const FormattingBarPopover = (props) => {
 				isFullScreenWidth && 'full-screen-width',
 			)}
 			style={{ background: accentColor, ...floatingPosition }}
-			ref={focusTrap.ref}
 		>
 			<div
 				tabIndex="0"

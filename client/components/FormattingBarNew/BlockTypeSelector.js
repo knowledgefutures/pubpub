@@ -14,45 +14,22 @@ const propTypes = {
 const paragraphBlockType = {
 	key: 'paragraph',
 	title: 'Paragraph',
-	shortTitle: 'Para',
-	icon: 'git-merge',
 };
 
 const blockTypes = [
 	paragraphBlockType,
-	{ key: 'header1', title: 'Header 1', shortTitle: 'H1', icon: 'header-one' },
-	{ key: 'header2', title: 'Header 2', shortTitle: 'H2', icon: 'header-two' },
-	{ key: 'header3', title: 'Header 3', shortTitle: 'H3', icon: 'comparison' },
-	{
-		key: 'header4',
-		title: 'Header 4',
-		shortTitle: 'H4',
-		icon: 'comparison',
-		hideInMenu: true,
-	},
-	{
-		key: 'header5',
-		title: 'Header 5',
-		shortTitle: 'H5',
-		icon: 'comparison',
-		hideInMenu: true,
-	},
-	{
-		key: 'header6',
-		title: 'Header 6',
-		shortTitle: 'H6',
-		icon: 'comparison',
-		hideInMenu: true,
-	},
-	{ key: 'code_block', title: 'Code Block', shortTitle: 'Code', icon: 'code' },
+	{ key: 'header1', title: 'Header 1' },
+	{ key: 'header2', title: 'Header 2' },
+	{ key: 'header3', title: 'Header 3' },
+	{ key: 'header4', title: 'Header 4', hideInMenu: true },
+	{ key: 'header5', title: 'Header 5', hideInMenu: true },
+	{ key: 'header6', title: 'Header 6', hideInMenu: true },
+	{ key: 'code_block', title: 'Code Block' },
 ];
 
 const BlockTypeSelector = React.forwardRef((props, ref) => {
-	const {
-		editorChangeObject: { menuItems = [] },
-		isSmall,
-	} = props;
-	// eslint-disable-next-line react/prop-types
+	const { editorChangeObject, isSmall, ...restProps } = props;
+	const { menuItems = [] } = editorChangeObject;
 
 	// eslint-disable-next-line react/prop-types
 	const renderDisclosure = ({ ref: innerRef, ...disclosureProps }) => {
@@ -71,21 +48,20 @@ const BlockTypeSelector = React.forwardRef((props, ref) => {
 				disabled={!activeBlockType}
 				small={isSmall}
 			>
-				<span>
-					<span className="full-title">{effectiveBlockType.title}</span>
-					<span className="short-title">{effectiveBlockType.shortTitle}</span>
-				</span>
+				{effectiveBlockType.title}
 			</Button>
 		);
 	};
 
 	return (
 		<CommandMenu
+			className="block-type-selector-menu"
 			aria-label="Choose text formatting"
 			ref={ref}
 			commands={blockTypes.filter((type) => !type.hideInMenu)}
 			disclosure={renderDisclosure}
-			{...props}
+			editorChangeObject={editorChangeObject}
+			{...restProps}
 		/>
 	);
 });

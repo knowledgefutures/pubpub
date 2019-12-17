@@ -15,6 +15,7 @@ class EditorUnit extends Component {
 
 	constructor(props) {
 		super(props);
+		this.containerRef = React.createRef();
 		this.state = {
 			editorChangeObject: null,
 		};
@@ -37,10 +38,14 @@ class EditorUnit extends Component {
 							showBlockTypes={this.props.showBlockTypes}
 							isSmall={this.props.isSmall}
 							buttons={this.props.buttons}
+							popoverContainerRef={this.containerRef}
 						/>
 					)}
 				</div>
-				<div style={{ padding: '0.25em', height: '250px', overflow: 'scroll' }}>
+				<div
+					style={{ padding: '0.25em', height: '250px', overflow: 'scroll' }}
+					ref={this.containerRef}
+				>
 					<Editor
 						placeholder="hello"
 						onChange={(changeObject) => {

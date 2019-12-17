@@ -13,16 +13,20 @@ const propTypes = {
 		isToggle: PropTypes.bool,
 		icon: PropTypes.string.isRequired,
 	}).isRequired,
-	isActive: PropTypes.bool.isRequired,
-	isIndicated: PropTypes.bool.isRequired,
-	isOpen: PropTypes.bool.isRequired,
-	isSmall: PropTypes.bool.isRequired,
+	isActive: PropTypes.bool,
+	isIndicated: PropTypes.bool,
+	isOpen: PropTypes.bool,
+	isSmall: PropTypes.bool,
 	label: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
 	label: null,
+	isActive: false,
+	isIndicated: false,
+	isOpen: false,
+	isSmall: false,
 };
 
 const getOuterStyle = (accentColor, isOpen, isDetached) => {

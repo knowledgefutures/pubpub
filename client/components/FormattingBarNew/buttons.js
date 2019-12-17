@@ -148,7 +148,8 @@ export const table = {
 	icon: 'th',
 	controls: {
 		indicate: ({ selectionInTable }) => selectionInTable,
-		show: ({ selectionInTable }) => selectionInTable,
+		show: (editorChangeObject) =>
+			editorChangeObject.selectionInTable && triggerOnClick(editorChangeObject),
 		trigger: triggerOnClick,
 		position: getPositionForBounds((changeObject) => changeObject.selectionBoundingBox),
 		component: ControlsTable,

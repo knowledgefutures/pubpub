@@ -1,7 +1,6 @@
 /* eslint-disable react/no-danger */
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon } from '@blueprintjs/core';
 import { useDebounce } from 'use-debounce';
 
 import { renderLatexString } from 'utils';
@@ -12,7 +11,6 @@ import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
 require('./controls.scss');
 
 const propTypes = {
-	isSmall: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	onPendingChanges: PropTypes.func.isRequired,
 	editorChangeObject: PropTypes.shape({
@@ -35,7 +33,7 @@ const getSchemaDefinitionForNodeType = (editorChangeObject, nodeTypeName) => {
 };
 
 const ControlsEquation = (props) => {
-	const { editorChangeObject, onPendingChanges, onClose, isSmall } = props;
+	const { editorChangeObject, onPendingChanges, onClose } = props;
 	const { changeNode, selectedNode, updateNode } = editorChangeObject;
 	const {
 		commitChanges,
@@ -46,10 +44,19 @@ const ControlsEquation = (props) => {
 	} = useCommitAttrs(selectedNode.attrs, updateNode, onPendingChanges);
 	const { value, html } = pendingAttrs;
 	const [debouncedValue] = useDebounce(value, 250);
+	const hasMountedRef = useRef(false);
 	const isBlock = selectedNode.type.name === 'block_equation';
-	const iconSize = isSmall ? 12 : 16;
 
 	useEffect(() => {
+		// Avoid an initial call to the server's LaTeX renderer on mount
+		// We shouldn't need this anyway -- but moreover, it will sometimes produce HTML that is
+		// insubstantially different from that given in our Prosemirror schema definitions, making
+		// it appear as though there is a user-driven change to the node that needs to be committed
+		// or reverted.
+		if (!hasMountedRef.current) {
+			hasMountedRef.current = true;
+			return;
+		}
 		renderLatexString(debouncedValue, false, (nextHtml) => {
 			updateAttrs({ html: nextHtml });
 		});

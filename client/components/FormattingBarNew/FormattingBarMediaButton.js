@@ -10,11 +10,13 @@ const propTypes = {
 	editorChangeObject: PropTypes.shape({
 		insertFunctions: PropTypes.object,
 	}).isRequired,
+	isIndicated: PropTypes.bool.isRequired,
 	isSmall: PropTypes.bool.isRequired,
+	onClick: PropTypes.func.isRequired,
 };
 
 const FormattingBarMediaButton = React.forwardRef((props, ref) => {
-	const { editorChangeObject, isSmall, ...restProps } = props;
+	const { editorChangeObject, isSmall, onClick, isIndicated, ...restProps } = props;
 	const [isModalOpen, setModalOpen] = useState(false);
 
 	const handleInsert = (insertType, insertData) => {
@@ -36,10 +38,11 @@ const FormattingBarMediaButton = React.forwardRef((props, ref) => {
 			<div className="separator" />
 			<FormattingBarButton
 				{...restProps}
+				ref={ref}
+				isIndicated={isIndicated}
 				isSmall={isSmall}
 				label="Media"
-				ref={ref}
-				onClick={() => setModalOpen(true)}
+				onClick={isIndicated ? onClick : () => setModalOpen(true)}
 			/>
 		</>
 	);

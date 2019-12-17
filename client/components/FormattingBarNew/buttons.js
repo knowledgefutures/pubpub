@@ -1,7 +1,8 @@
+import ControlsEquation from './controls/ControlsEquation';
 import ControlsFootnoteCitation from './controls/ControlsFootnoteCitation';
 import ControlsLink from './controls/ControlsLink';
 import ControlsMedia from './controls/ControlsMedia/ControlsMedia';
-import ControlsEquation from './controls/ControlsEquation';
+import ControlsTable from './controls/ControlsTable';
 import MediaButton from './FormattingBarMediaButton';
 
 const triggerOnClick = (changeObject) => {
@@ -121,12 +122,6 @@ export const citation = {
 	controls: nodeControls(ControlsFootnoteCitation, 'citation'),
 };
 
-export const discussion = {
-	key: 'discussion',
-	title: 'Discussion Thread',
-	icon: 'chat',
-};
-
 export const equation = {
 	key: 'equation',
 	title: 'Equation',
@@ -151,6 +146,13 @@ export const table = {
 	key: 'table',
 	title: 'Table',
 	icon: 'th',
+	controls: {
+		indicate: ({ selectionInTable }) => selectionInTable,
+		show: ({ selectionInTable }) => selectionInTable,
+		trigger: triggerOnClick,
+		position: getPositionForBounds((changeObject) => changeObject.selectionBoundingBox),
+		component: ControlsTable,
+	},
 };
 
 export const media = {
@@ -178,7 +180,6 @@ export const fullButtonSet = [
 	equation,
 	citation,
 	footnote,
-	discussion,
 	table,
 	media,
 ];

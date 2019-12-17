@@ -2,16 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 
-import { Menu, MenuItem } from 'components/Menu';
+import CommandMenu from './CommandMenu';
 
 const propTypes = {
+	isSmall: PropTypes.bool.isRequired,
 	editorChangeObject: PropTypes.shape({
 		menuItems: PropTypes.arrayOf(PropTypes.shape({})),
-		view: PropTypes.shape({
-			focus: PropTypes.func,
-		}),
 	}).isRequired,
-	isSmall: PropTypes.bool.isRequired,
 };
 
 const paragraphBlockType = {
@@ -52,10 +49,10 @@ const blockTypes = [
 
 const BlockTypeSelector = React.forwardRef((props, ref) => {
 	const {
-		editorChangeObject: { menuItems = [], view: editorView },
+		editorChangeObject: { menuItems = [] },
 		isSmall,
-		...restProps
 	} = props;
+	// eslint-disable-next-line react/prop-types
 
 	// eslint-disable-next-line react/prop-types
 	const renderDisclosure = ({ ref: innerRef, ...disclosureProps }) => {
@@ -83,30 +80,15 @@ const BlockTypeSelector = React.forwardRef((props, ref) => {
 	};
 
 	return (
-		<Menu
+		<CommandMenu
 			aria-label="Choose text formatting"
 			ref={ref}
-			{...restProps}
+			commands={blockTypes.filter((type) => !type.hideInMenu)}
 			disclosure={renderDisclosure}
-		>
-			{blockTypes
-				.filter((blockType) => !blockType.hideInMenu)
-				.map((blockType) => {
-					const menuItem = menuItems.find((item) => item.title === blockType.key) || {};
-					return (
-						<MenuItem
-							key={blockType.key}
-							active={menuItem.isActive}
-							text={blockType.title}
-							onClick={() => {
-								menuItem.run();
-								editorView.focus();
-							}}
-						/>
-					);
-				})}
-		</Menu>
+			{...props}
+		/>
 	);
 });
+
 BlockTypeSelector.propTypes = propTypes;
 export default BlockTypeSelector;

@@ -89,7 +89,7 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 		const openableIndicatedButton = indicatedButtons.find(
 			(button) => button.controls && button.controls.trigger(editorChangeObject),
 		);
-		if (!openedButton && openableIndicatedButton) {
+		if (openableIndicatedButton) {
 			setOpenedButton(openableIndicatedButton);
 		} else if (openedButton && !openableIndicatedButton) {
 			setOpenedButton(null);
@@ -159,7 +159,6 @@ const FormattingBar = (props) => {
 		const isOpen = openedButton === button;
 		const isIndicated = indicatedButtons.includes(button) && !isOpen;
 		const isActive = !isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
-		const isDisabled = noFunction || (indicatedButtons.length > 0 && !isIndicated && !isOpen);
 		const maybeEditorChangeObject =
 			button.key === 'media' ? { editorChangeObject: editorChangeObject } : {};
 		return (
@@ -168,7 +167,7 @@ const FormattingBar = (props) => {
 				as={button.component || FormattingBarButton}
 				key={button.key}
 				formattingItem={button}
-				disabled={isDisabled}
+				disabled={noFunction}
 				isActive={isActive}
 				isIndicated={isIndicated && !isOpen}
 				isOpen={isOpen}

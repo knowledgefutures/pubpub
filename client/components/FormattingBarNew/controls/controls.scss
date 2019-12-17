@@ -1,9 +1,4 @@
-@mixin controls-component {
-    display: flex;
-    height: 100%;
-    max-width: 1600px;
-    margin: 0 auto;
-
+@mixin text-fields {
     input[type='text'] {
         border-radius: 2px;
         color: white;
@@ -12,6 +7,14 @@
             color: rgba(255, 255, 255, 0.9);
         }
     }
+}
+
+@mixin controls-component {
+    @include text-fields();
+    display: flex;
+    height: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
 
     .bp3-slider {
         .bp3-slider-track {
@@ -132,6 +135,7 @@
 }
 
 .controls-link-component {
+    @include text-fields();
     display: flex;
     & > * {
         margin-right: 5px;

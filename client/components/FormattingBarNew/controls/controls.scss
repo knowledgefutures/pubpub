@@ -1,6 +1,8 @@
 @mixin controls-component {
     display: flex;
     height: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
 
     input[type='text'] {
         border-radius: 2px;
@@ -54,12 +56,27 @@
         .title {
             margin-bottom: 9px;
             user-select: none;
+            text-transform: uppercase;
+            font-weight: 600;
         }
         textarea {
             flex-grow: 1;
             resize: none;
             overflow: hidden;
             border-radius: 4px;
+        }
+    }
+
+    .controls-row {
+        display: flex;
+        align-items: center;
+        .left-label {
+            user-select: none;
+            margin-right: 9px;
+        }
+        .controls {
+            display: flex;
+            flex-grow: 1;
         }
     }
 
@@ -95,6 +112,8 @@
 .controls-citation-component {
     @include controls-component();
     @include controls-grid();
+    height: 200px;
+
     .structured-data {
         font-family: monospace;
         &::placeholder {
@@ -104,10 +123,6 @@
     .preview {
         a {
             color: white !important;
-        }
-        .title {
-            text-transform: uppercase;
-            font-weight: 600;
         }
         .pub-note-content-component {
             overflow-y: scroll;
@@ -125,14 +140,16 @@
 
 .controls-media-component {
     @include controls-component();
-    @include controls-grid(repeat(4, 1fr));
+    @include controls-grid(1fr 2fr);
+    height: 180px;
+    max-width: 1200px;
 
     .slider-input-control {
         display: flex;
         align-items: center;
         .bp3-input-group {
             margin-left: 15px;
-            width: 45px;
+            width: 50px;
             display: flex;
             align-items: center;
         }
@@ -147,24 +164,23 @@
         }
     }
 
-    .alignment-control, .source-control {
-        display: flex;
-        align-items: center;
-        .left-label {
-            user-select: none;
-            margin-right: 9px;
-        }
-        .controls {
-            display: flex;
-            flex-grow: 1;
-        }
-    }
-
     .source-control {
         .controls {
             .bp3-input-group {
                 width: 100%;
             }
         }
+    }
+}
+
+.controls-equation-component {
+    @include controls-component();
+    @include controls-grid(1fr 1fr);
+    height: 160px;
+    max-width: 1200px;
+
+    .preview {
+        overflow-y: scroll;
+        flex-grow: 1;
     }
 }

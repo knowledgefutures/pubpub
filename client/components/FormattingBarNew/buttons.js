@@ -1,7 +1,7 @@
-import TestControls from './controls/TestControls';
-import ControlsCitation from './controls/ControlsCitation';
+import ControlsFootnoteCitation from './controls/ControlsFootnoteCitation';
 import ControlsLink from './controls/ControlsLink';
 import ControlsMedia from './controls/ControlsMedia/ControlsMedia';
+import ControlsEquation from './controls/ControlsEquation';
 import MediaButton from './FormattingBarMediaButton';
 
 const triggerOnClick = (changeObject) => {
@@ -118,7 +118,7 @@ export const citation = {
 	key: 'citation',
 	title: 'Citation',
 	icon: 'bookmark',
-	controls: nodeControls(ControlsCitation, 'citation'),
+	controls: nodeControls(ControlsFootnoteCitation, 'citation'),
 };
 
 export const discussion = {
@@ -131,13 +131,14 @@ export const equation = {
 	key: 'equation',
 	title: 'Equation',
 	icon: 'function',
-	controls: nodeControls(TestControls, ['equation', 'block_equation']),
+	controls: nodeControls(ControlsEquation, ['equation', 'block_equation']),
 };
 
 export const footnote = {
 	key: 'footnote',
 	title: 'Footnote',
 	icon: 'asterisk',
+	controls: nodeControls(ControlsFootnoteCitation, 'footnote'),
 };
 
 export const horizontalRule = {
@@ -173,11 +174,11 @@ export const fullButtonSet = [
 	subscript,
 	superscript,
 	strikethrough,
-	citation,
-	discussion,
-	equation,
-	footnote,
 	horizontalRule,
+	equation,
+	citation,
+	footnote,
+	discussion,
 	table,
 	media,
 ];

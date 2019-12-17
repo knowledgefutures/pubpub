@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
-import { Button, AnchorButton } from '@blueprintjs/core';
+import { Button, AnchorButton, InputGroup } from '@blueprintjs/core';
 
 const ControlsLink = (props) => {
 	const {
@@ -23,8 +23,7 @@ const ControlsLink = (props) => {
 
 	return (
 		<div className="controls-link-component">
-			<input
-				type="text"
+			<InputGroup
 				placeholder="Enter a URL"
 				value={href}
 				onChange={(evt) => setHref(evt.target.value)}

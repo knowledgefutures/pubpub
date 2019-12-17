@@ -64,7 +64,7 @@ const SourceControls = (props) => {
 	};
 
 	return (
-		<div className="source-control">
+		<div className="controls-row">
 			<div className="left-label">Source</div>
 			<div className="controls">
 				{!useUrlInput && (

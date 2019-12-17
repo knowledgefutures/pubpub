@@ -15,7 +15,7 @@ const alignOptions = [
 const AlignmentControl = (props) => {
 	const { isSmall, onChange, value } = props;
 	return (
-		<div className="alignment-control">
+		<div className="controls-row">
 			<div className="left-label">Alignment</div>
 			<div className="controls">
 				{alignOptions.map((item) => {

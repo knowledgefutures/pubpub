@@ -1,6 +1,7 @@
 @mixin white-buttons {
     .bp3-button,
     .bp3-button:hover {
+        color: white !important;
         .bp3-icon {
             color: white !important;
         }
@@ -123,7 +124,7 @@
         left: 0;
         top: 100%;
         width: 100%;
-        height: 200px;
+        min-height: 200px;
         padding: 18px;
         box-shadow: 0px 10px 5px -7px rgba(0, 0, 0, 0.3);
     }

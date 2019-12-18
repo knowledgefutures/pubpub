@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
-
 import { Button } from '@blueprintjs/core';
 import { useKey } from 'react-use';
+import { Dialog, useDialogState } from 'reakit';
+
 import { useFocusTrap } from '../../utils/useFocusTrap';
 
 const FormattingBarPopover = (props) => {
@@ -19,19 +20,24 @@ const FormattingBarPopover = (props) => {
 	} = props;
 	const [hasPendingChanges, setHasPendingChanges] = useState(false);
 
+	const dialog = useDialogState({ visible: true });
+
 	const handleControlsClose = () => {
 		setHasPendingChanges(false);
 		onClose();
 	};
 
-	// const focusTrap = useFocusTrap({
-	// 	clickOutsideDeactivates: !hasPendingChanges,
-	// });
-
 	useKey('Escape', handleControlsClose);
 
-	const popover = (
-		<div
+	const popoverNode = (
+		<Dialog
+			{...dialog}
+			aria-label={`Editing ${button.ariaTitle || button.title} options`}
+			modal={true}
+			hideOnEsc={false}
+			hideOnClickOutside={false}
+			unstable_autoFocusOnShow={true}
+			unstable_portal={false}
 			className={classNames(
 				'formatting-bar-popover-component',
 				!!floatingPosition && 'floating bp3-elevation-2',
@@ -39,12 +45,7 @@ const FormattingBarPopover = (props) => {
 			)}
 			style={{ background: accentColor, ...floatingPosition }}
 		>
-			<div
-				tabIndex="0"
-				role="dialog"
-				className="inner"
-				aria-label={`Editing ${button.ariaTitle || button.title} options`}
-			>
+			<div className="inner">
 				{typeof children === 'function'
 					? children({
 							onPendingChanges: setHasPendingChanges,
@@ -55,13 +56,13 @@ const FormattingBarPopover = (props) => {
 			<div className="close-button-container">
 				<Button minimal small icon="cross" aria-label="Close options" onClick={onClose} />
 			</div>
-		</div>
+		</Dialog>
 	);
 
 	if (floatingPosition && containerRef.current) {
-		return ReactDOM.createPortal(popover, containerRef.current);
+		return ReactDOM.createPortal(popoverNode, containerRef.current);
 	}
-	return popover;
+	return popoverNode;
 };
 
 export default FormattingBarPopover;

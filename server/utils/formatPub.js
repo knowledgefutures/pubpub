@@ -58,7 +58,7 @@ const formatBranches = ({
 		visibleBranches.includes(branchesWithAccessData[0])
 		? // Then return it
 		  branchesWithAccessData[0]
-		: // Otherwise, return an empty object. This will cause the caller to throw an error, triggering a
+		: // Otherwise, return null. This will cause the caller to throw an error, triggering a
 		  // redirect to one of the other visibleBranches
 		  {};
 	return { activeBranch: activeBranch, branches: visibleBranches };

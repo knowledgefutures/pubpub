@@ -31,39 +31,32 @@ const ControlsTable = (props) => {
 	const { menuItems = [], view } = editorChangeObject;
 	const toolbar = useToolbarState({ loop: true });
 
-	const renderDisclosure = (title) => ({ ref, ...disclosureProps }) => {
+	// eslint-disable-next-line react/prop-types
+	const renderDisclosure = ({ ref, ...disclosureProps }) => {
 		return (
 			<Button
 				minimal
 				className="block-type-selector-component"
 				rightIcon="caret-down"
 				elementRef={ref}
+				icon="th"
 				{...disclosureProps}
-			>
-				{title}
-			</Button>
+			/>
 		);
 	};
 
-	const handleButtonClick = (key) => {
-		const menuItem = menuItems.find((item) => item.title === key);
-		console.log(menuItems, key, menuItem);
-		if (menuItem) {
-			menuItem.run();
-			view.focus();
-		}
-	};
-
 	return (
-		<Toolbar {...toolbar} className="controls-table-component">
+		<Toolbar {...toolbar} className="controls-table-component" aria-label="Table options">
 			<ToolbarItem
+				aria-label="Table options"
 				as={CommandMenu}
-				disclosure={renderDisclosure('Row')}
-				commands={rowCommands}
+				disclosure={renderDisclosure}
+				commands={[...rowCommands, ...columnCommands, ...buttonCommands]}
 				editorChangeObject={editorChangeObject}
 				{...toolbar}
 			/>
-			<ToolbarItem
+			{/* <ToolbarItem
+				aria-label="Column options"
 				as={CommandMenu}
 				disclosure={renderDisclosure('Column')}
 				commands={columnCommands}
@@ -77,6 +70,7 @@ const ControlsTable = (props) => {
 				}
 				return (
 					<ToolbarItem
+						key={buttonCommand.key}
 						as={FormattingBarButton}
 						formattingItem={buttonCommand}
 						onClick={() => {
@@ -86,7 +80,7 @@ const ControlsTable = (props) => {
 						{...toolbar}
 					/>
 				);
-			})}
+			})} */}
 		</Toolbar>
 	);
 };

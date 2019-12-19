@@ -20,6 +20,7 @@ const polyfills = [
 	'default',
 	'fetch',
 	'HTMLCanvasElement.prototype.toBlob',
+	'Node.prototype.contains',
 	'Number.isNaN',
 	'Object.assign',
 	'Object.entries',

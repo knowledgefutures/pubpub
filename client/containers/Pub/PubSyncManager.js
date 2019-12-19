@@ -280,21 +280,14 @@ class PubSyncManager extends React.Component {
 	}
 
 	updateCollabData(newCollabData) {
-		const { collabData: prevCollabData } = this.state;
-		const shouldUpdateNow = false; // collabShouldUpdateNow(prevCollabData, newCollabData);
-		const stateUpdate = (prevState) => {
+		this.idleStateUpdater.setState((prevState) => {
 			return {
 				collabData: {
 					...prevState.collabData,
 					...newCollabData,
 				},
 			};
-		};
-		if (shouldUpdateNow) {
-			this.setState(stateUpdate);
-		} else {
-			this.idleStateUpdater.setState(stateUpdate);
-		}
+		});
 	}
 
 	updateHistoryData(newHistoryData) {

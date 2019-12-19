@@ -1,12 +1,14 @@
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 import { useKey } from 'react-use';
-import { Dialog, useDialogState } from 'reakit';
 
 import { useFocusTrap } from '../../utils/useFocusTrap';
+
+const renderPreventPointerEventsStyles = () => {
+	return <style>{` .pub-body-component > .editor { pointer-events: none }`}</style>;
+};
 
 const FormattingBarPopover = (props) => {
 	const {
@@ -17,34 +19,51 @@ const FormattingBarPopover = (props) => {
 		isFullScreenWidth,
 		floatingPosition,
 		containerRef,
+		focusOnMount,
 	} = props;
-	const [hasPendingChanges, setHasPendingChanges] = useState(false);
 
-	const dialog = useDialogState({ visible: true });
+	const [hasPendingChanges, setHasPendingChanges] = useState(false);
+	const [capturesFocus, setCapturesFocus] = useState(!floatingPosition || focusOnMount);
+
+	const handleClickOutside = () => {
+		if (!hasPendingChanges) {
+			onClose();
+		}
+	};
 
 	const handleControlsClose = () => {
 		setHasPendingChanges(false);
 		onClose();
 	};
 
+	const focusTrap = useFocusTrap({ isActive: capturesFocus, onClickOutside: handleClickOutside });
+
 	useKey('Escape', handleControlsClose);
 
-	const popoverNode = (
-		<Dialog
-			{...dialog}
+	useEffect(() => {
+		const options = { capture: true };
+		const handler = (evt) => {
+			if (evt.key === 'Tab' && !capturesFocus) {
+				evt.preventDefault();
+				setCapturesFocus(true);
+			}
+		};
+		document.addEventListener('keydown', handler, options);
+		return () => document.removeEventListener('keydown', handler, options);
+	}, [capturesFocus]);
+
+	const popover = (
+		<div
 			aria-label={`Editing ${button.ariaTitle || button.title} options`}
-			modal={true}
-			hideOnEsc={false}
-			hideOnClickOutside={false}
-			unstable_autoFocusOnShow={true}
-			unstable_portal={false}
 			className={classNames(
 				'formatting-bar-popover-component',
 				!!floatingPosition && 'floating bp3-elevation-2',
 				isFullScreenWidth && 'full-screen-width',
 			)}
 			style={{ background: accentColor, ...floatingPosition }}
+			ref={focusTrap.ref}
 		>
+			{capturesFocus && renderPreventPointerEventsStyles()}
 			<div className="inner">
 				{typeof children === 'function'
 					? children({
@@ -53,16 +72,24 @@ const FormattingBarPopover = (props) => {
 					  })
 					: children}
 			</div>
-			<div className="close-button-container">
-				<Button minimal small icon="cross" aria-label="Close options" onClick={onClose} />
-			</div>
-		</Dialog>
+			{!floatingPosition && (
+				<div className="close-button-container">
+					<Button
+						minimal
+						small
+						icon="cross"
+						aria-label="Close options"
+						onClick={onClose}
+					/>
+				</div>
+			)}
+		</div>
 	);
 
 	if (floatingPosition && containerRef.current) {
-		return ReactDOM.createPortal(popoverNode, containerRef.current);
+		return ReactDOM.createPortal(popover, containerRef.current);
 	}
-	return popoverNode;
+	return popover;
 };
 
 export default FormattingBarPopover;

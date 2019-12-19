@@ -6,7 +6,7 @@ import { Button } from 'reakit';
 import { Icon } from 'components';
 
 const propTypes = {
-	accentColor: PropTypes.string.isRequired,
+	accentColor: PropTypes.string,
 	formattingItem: PropTypes.shape({
 		ariaTitle: PropTypes.string,
 		title: PropTypes.string.isRequired,
@@ -22,6 +22,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+	accentColor: 'white',
 	label: null,
 	isActive: false,
 	isIndicated: false,

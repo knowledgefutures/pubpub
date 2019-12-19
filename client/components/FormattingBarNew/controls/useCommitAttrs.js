@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const noop = () => {};
 
@@ -20,6 +20,10 @@ export const useCommitAttrs = (baseAttrs, onCommit, onPendingChanges = noop) => 
 		onCommit(attrs);
 	};
 
+	const handleUpdateAttrs = (nextAttrs) => {
+		setAttrs((prevAttrs) => ({ ...prevAttrs, ...nextAttrs }));
+	};
+
 	useEffect(() => onPendingChanges(hasPendingChanges), [hasPendingChanges, onPendingChanges]);
 
 	return {
@@ -27,7 +31,7 @@ export const useCommitAttrs = (baseAttrs, onCommit, onPendingChanges = noop) => 
 		revertKey: revertKey,
 		hasPendingChanges: hasPendingChanges,
 		pendingAttrs: attrs,
-		updateAttrs: (next) => setAttrs({ ...attrs, ...next }),
+		updateAttrs: handleUpdateAttrs,
 		revertChanges: revertChanges,
 	};
 };

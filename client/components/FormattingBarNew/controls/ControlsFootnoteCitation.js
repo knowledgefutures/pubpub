@@ -61,7 +61,8 @@ const ControlsCitation = (props) => {
 	const { editorChangeObject, onPendingChanges, onClose } = props;
 	const { updateNode, selectedNode } = editorChangeObject;
 	const { citations = [] } = usePubData();
-	const existingCitation = citations[selectedNode.attrs.count - 1];
+	const isFootnote = selectedNode.type.name === 'footnote';
+	const existingCitation = !isFootnote && citations[selectedNode.attrs.count - 1];
 	const {
 		commitChanges,
 		revertChanges,
@@ -71,7 +72,6 @@ const ControlsCitation = (props) => {
 		pendingAttrs,
 	} = useCommitAttrs(selectedNode.attrs, updateNode, onPendingChanges);
 
-	const isFootnote = selectedNode.type.name === 'footnote';
 	const { structuredValue, unstructuredValue } = unwrapPendingAttrs(pendingAttrs, isFootnote);
 	const updateAttrs = wrapUpdateAttrs(rawUpdateAttrs, isFootnote);
 

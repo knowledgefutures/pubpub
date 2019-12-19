@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { DOMSerializer } from 'prosemirror-model';
 
@@ -27,20 +27,23 @@ const SimpleEditor = (props) => {
 		initialDoc.current = getDocForHtmlString(initialHtmlString, schema).toJSON();
 	}
 
-	const handleChange = ({ view, text }) => {
-		if (text === '') {
-			// Don't report the empty doc as a single empty paragraph node.
-			onChange('');
-			return;
-		}
-		const htmlForNodes = [];
-		const serializer = DOMSerializer.fromSchema(view.state.schema);
-		view.state.doc.forEach((node) => {
-			htmlForNodes.push(serializer.serializeNode(node).outerHTML);
-		});
-		const htmlString = htmlForNodes.join('');
-		onChange(htmlString);
-	};
+	const handleChange = useCallback(
+		({ view, text }) => {
+			if (text === '') {
+				// Don't report the empty doc as a single empty paragraph node.
+				onChange('');
+				return;
+			}
+			const htmlForNodes = [];
+			const serializer = DOMSerializer.fromSchema(view.state.schema);
+			view.state.doc.forEach((node) => {
+				htmlForNodes.push(serializer.serializeNode(node).outerHTML);
+			});
+			const htmlString = htmlForNodes.join('');
+			onChange(htmlString);
+		},
+		[onChange],
+	);
 
 	return (
 		<MinimalEditor

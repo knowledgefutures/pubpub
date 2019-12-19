@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
@@ -67,6 +67,7 @@ const useControlsKey = (latestDomEvent) => {
 
 const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) => {
 	const [openedButton, setOpenedButton] = useState(null);
+	const firstRenderRef = useRef(true);
 	const controlsKey = useControlsKey(editorChangeObject.latestDomEvent);
 
 	const indicatedButtons = buttons.filter(
@@ -89,13 +90,11 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 		const openableIndicatedButton = indicatedButtons.find(
 			(button) => button.controls && button.controls.trigger(editorChangeObject),
 		);
-		if (openableIndicatedButton) {
-			setOpenedButton(openableIndicatedButton);
-		} else if (openedButton && !openableIndicatedButton) {
-			setOpenedButton(null);
-		}
+		setOpenedButton(openableIndicatedButton);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [controlsKey, indicatedButtonsString]);
+
+	firstRenderRef.current = false;
 
 	return {
 		indicatedButtons: indicatedButtons,
@@ -152,6 +151,32 @@ const FormattingBar = (props) => {
 		}
 	};
 
+	useEffect(() => {
+		const options = { capture: true };
+		const handler = (evt) => {
+			if (evt.key === 'Enter') {
+				if (indicatedButtons.length === 1) {
+					const [openableButton] = indicatedButtons;
+					if (
+						openableButton &&
+						openableButton.controls &&
+						openableButton.controls.enterKeyTriggers
+					) {
+						evt.stopImmediatePropagation();
+						evt.preventDefault();
+						setOpenedButton(openableButton);
+					}
+				}
+			}
+		};
+		document.addEventListener('keydown', handler, options);
+		return () => document.removeEventListener('keydown', handler, options);
+	}, [indicatedButtons, setOpenedButton]);
+
+	const handlePopoverClose = useCallback(() => {
+		setOpenedButton(null);
+	}, [setOpenedButton]);
+
 	const renderButton = (button) => {
 		const matchingMenuItem = menuItemByKey(button.key);
 		const insertFunction = insertFunctions && insertFunctions[button.key];
@@ -159,6 +184,7 @@ const FormattingBar = (props) => {
 		const isOpen = openedButton === button;
 		const isIndicated = indicatedButtons.includes(button) && !isOpen;
 		const isActive = !isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
+		const isDisabled = noFunction || (openedButton && !isOpen && !isIndicated);
 		const maybeEditorChangeObject =
 			button.key === 'media' ? { editorChangeObject: editorChangeObject } : {};
 		return (
@@ -167,7 +193,7 @@ const FormattingBar = (props) => {
 				as={button.component || FormattingBarButton}
 				key={button.key}
 				formattingItem={button}
-				disabled={noFunction}
+				disabled={isDisabled}
 				isActive={isActive}
 				isIndicated={isIndicated && !isOpen}
 				isOpen={isOpen}
@@ -207,7 +233,7 @@ const FormattingBar = (props) => {
 					key={controlsKey}
 					accentColor={communityData.accentColorDark}
 					button={openedButton}
-					onClose={() => setOpenedButton(null)}
+					onClose={handlePopoverClose}
 					isFullScreenWidth={isFullScreenWidth}
 					containerRef={popoverContainerRef}
 					floatingPosition={controlsPosition}

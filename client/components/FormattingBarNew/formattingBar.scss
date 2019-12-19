@@ -21,15 +21,13 @@
     &:first-child {
         padding-left: 3px;
     }
-    .block-type-selector-component {
-        width: 125px;
-    }
     .formatting-bar-button {
         display: inline-block;
         position: relative;
         padding-top: 5px;
         padding-bottom: 5px;
         .bp3-button {
+            line-height: 1;
             min-width: auto;
             min-height: auto;
             padding: 5px 14px;
@@ -95,6 +93,11 @@
             height: 22px;
         }
     }
+    &:not(.small) {
+        .block-type-selector-menu {
+            width: 125px;
+        }
+    }
     &.translucent {
         .formatting-bar-button {
             color: white;
@@ -141,7 +144,7 @@
     .close-button-container {
         flex-shrink: 0;
     }
-    * {
-        outline-color: white;
+    *:focus {
+        outline: 2px solid white;
     }
 }

@@ -27,6 +27,16 @@ const nodeControls = (component, indicatedNodeType) => {
 		},
 	};
 };
+
+const showOrTriggerTable = (editorChangeObject) => {
+	const { selectionInTable, selection } = editorChangeObject;
+	return (
+		selectionInTable &&
+		triggerOnClick(editorChangeObject) &&
+		selection.anchor === selection.head
+	);
+};
+
 export const strong = {
 	key: 'strong',
 	title: 'Bold',
@@ -143,9 +153,8 @@ export const table = {
 	controls: {
 		trapFocusOnMount: false,
 		indicate: ({ selectionInTable }) => selectionInTable,
-		show: (editorChangeObject) =>
-			editorChangeObject.selectionInTable && triggerOnClick(editorChangeObject),
-		trigger: triggerOnClick,
+		show: showOrTriggerTable,
+		trigger: showOrTriggerTable,
 		position: positionNearSelection,
 		component: ControlsTable,
 	},

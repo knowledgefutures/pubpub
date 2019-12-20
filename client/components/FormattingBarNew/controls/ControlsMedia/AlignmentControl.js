@@ -19,7 +19,7 @@ const AlignmentControl = (props) => {
 	return (
 		<div className="controls-row">
 			<div className="left-label">Alignment</div>
-			<RadioGroup className="controls" aria-label="Figure alignment">
+			<RadioGroup className="controls" aria-label="Figure alignment" as="div">
 				{alignOptions.map((item) => {
 					return (
 						<Radio

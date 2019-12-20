@@ -140,6 +140,9 @@
     color: white;
     box-sizing: border-box;
     font-size: 14px;
+    &:focus {
+        box-shadow: none !important;
+    }
     &:not(.floating) {
         left: 0;
         top: 100%;
@@ -163,7 +166,7 @@
         flex-shrink: 0;
         padding-left: 5px
     }
-    *:focus {
+    *:focus:not(:disabled) {
         outline: none;
         box-shadow: inset 0px 0px 0px 1.5px white !important;
     }

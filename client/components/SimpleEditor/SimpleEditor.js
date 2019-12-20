@@ -1,9 +1,9 @@
 import React, { useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { DOMSerializer } from 'prosemirror-model';
+import { buildSchema, getDocForHtmlString, docIsEmpty } from '@pubpub/editor';
 
 import { MinimalEditor } from 'components';
-import { buildSchema, getDocForHtmlString } from '@pubpub/editor';
 
 const propTypes = {
 	initialHtmlString: PropTypes.string.isRequired,
@@ -17,30 +17,28 @@ const defaultProps = {
 	onBlur: () => {},
 };
 
-const schema = buildSchema();
+const editorSchema = buildSchema();
 
 const SimpleEditor = (props) => {
 	const { onChange, onBlur, placeholder, initialHtmlString } = props;
 	const initialDoc = useRef(null);
 
 	if (!initialDoc.current) {
-		initialDoc.current = getDocForHtmlString(initialHtmlString, schema).toJSON();
+		initialDoc.current = getDocForHtmlString(initialHtmlString, editorSchema).toJSON();
 	}
 
 	const handleChange = useCallback(
-		({ view, text }) => {
-			if (text === '') {
-				// Don't report the empty doc as a single empty paragraph node.
+		({ view }) => {
+			const { doc, schema } = view.state;
+			if (docIsEmpty(doc)) {
 				onChange('');
 				return;
 			}
-			const htmlForNodes = [];
-			const serializer = DOMSerializer.fromSchema(view.state.schema);
-			view.state.doc.forEach((node) => {
-				htmlForNodes.push(serializer.serializeNode(node).outerHTML);
-			});
-			const htmlString = htmlForNodes.join('');
-			onChange(htmlString);
+			const serializer = DOMSerializer.fromSchema(schema);
+			const domFragment = serializer.serializeFragment(doc.content);
+			const wrapper = document.createElement('div');
+			wrapper.appendChild(domFragment);
+			onChange(wrapper.innerHTML);
 		},
 		[onChange],
 	);

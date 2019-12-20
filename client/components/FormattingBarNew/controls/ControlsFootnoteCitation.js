@@ -74,7 +74,6 @@ const ControlsCitation = (props) => {
 
 	const { structuredValue, unstructuredValue } = unwrapPendingAttrs(pendingAttrs, isFootnote);
 	const updateAttrs = wrapUpdateAttrs(rawUpdateAttrs, isFootnote);
-
 	const [html, setHtml] = useState(existingCitation && existingCitation.html);
 	const [debouncedValue] = useDebounce(structuredValue, 250);
 	const showPreview = html || unstructuredValue;
@@ -120,7 +119,10 @@ const ControlsCitation = (props) => {
 			<SimpleEditor
 				key={revertKey}
 				initialHtmlString={unstructuredValue}
-				onChange={(htmlString) => updateAttrs({ unstructuredValue: htmlString })}
+				onChange={(htmlString) => {
+					console.log(htmlString);
+					updateAttrs({ unstructuredValue: htmlString });
+				}}
 			/>
 		</div>
 	);

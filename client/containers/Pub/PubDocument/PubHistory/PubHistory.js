@@ -39,7 +39,7 @@ const History = (props) => {
 
 	useEffect(() => {
 		stickyRef.current = stickybits('.pub-history-component', {
-			stickyBitStickyOffset: 39,
+			stickyBitStickyOffset: 37,
 			useStickyClasses: true,
 		});
 		return () => {

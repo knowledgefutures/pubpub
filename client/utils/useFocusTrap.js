@@ -26,7 +26,7 @@ const rememberScrollPosition = () => {
 
 // This implementation heavily inspired by the wonder-blocks focus trap:
 // https://github.com/Khan/wonder-blocks/blob/master/packages/wonder-blocks-modal/components/focus-trap.js
-export const useFocusTrap = ({ onClickOutside, isActive } = {}) => {
+export const useFocusTrap = ({ onAttemptClose, isActive } = {}) => {
 	const [rootElement, setRefElement] = useState(null);
 	const ignoreFocusChanges = useRef(false);
 	const lastNodeFocusedInModal = useRef(null);
@@ -134,13 +134,28 @@ export const useFocusTrap = ({ onClickOutside, isActive } = {}) => {
 	const handleGlobalClick = useCallback(
 		(evt) => {
 			const { target } = evt;
-			if (!rootElement.contains(target) && !isChildOfReakitPortal(target) && isActive) {
-				if (onClickOutside) {
-					onClickOutside(target);
+			if (
+				!rootElement ||
+				(!rootElement.contains(target) && !isChildOfReakitPortal(target) && isActive)
+			) {
+				if (onAttemptClose) {
+					onAttemptClose(evt);
 				}
 			}
 		},
-		[isActive, onClickOutside, rootElement],
+		[isActive, onAttemptClose, rootElement],
+	);
+
+	const handleKeyDown = useCallback(
+		(evt) => {
+			if (evt.key === 'Escape') {
+				if (onAttemptClose) {
+					evt.stopPropagation();
+					onAttemptClose(evt);
+				}
+			}
+		},
+		[onAttemptClose],
 	);
 
 	useEffect(() => {
@@ -152,6 +167,14 @@ export const useFocusTrap = ({ onClickOutside, isActive } = {}) => {
 		window.addEventListener('click', handleGlobalClick, true);
 		return () => window.removeEventListener('click', handleGlobalClick, true);
 	}, [handleGlobalClick]);
+
+	useEffect(() => {
+		if (rootElement) {
+			rootElement.addEventListener('keydown', handleKeyDown);
+			return () => rootElement.removeEventListener('keydown', handleKeyDown);
+		}
+		return () => {};
+	}, [handleKeyDown, rootElement]);
 
 	useEffect(() => {
 		if (rootElement && isActive) {

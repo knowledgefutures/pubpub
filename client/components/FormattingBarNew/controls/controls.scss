@@ -35,10 +35,6 @@
         }
     }
 
-    fieldset {
-        border: none;
-    }
-
     textarea {
         background: rgba(255, 255, 255, 0.2);
         border: none;
@@ -51,7 +47,11 @@
     .minimal-editor-component {
         width: 100%;
         overflow-y: hidden;
-        .editor {
+        .editor-wrapper:focus-within {
+            box-shadow: inset 0px 0px 0px 1.5px white !important;
+            border-top-color: transparent;
+        }
+        .editor, .editor:not(:disabled) {
             box-shadow: none !important;
         }
     }
@@ -73,7 +73,7 @@
         textarea {
             flex-grow: 1;
             resize: none;
-            overflow: hidden;
+            overflow: scroll;
         }
     }
 

@@ -26,18 +26,16 @@ const FormattingBarPopover = (props) => {
 	const [capturesFocus, setCapturesFocus] = useState(!floatingPosition || trapFocusOnMount);
 	const showCloseButton = trapFocusOnMount;
 
-	const handleClickOutside = useCallback(() => {
-		if (!hasPendingChanges) {
-			onClose();
-		}
-	}, [hasPendingChanges, onClose]);
+	const handleAttemptClose = useCallback(
+		(evt) => {
+			if (!hasPendingChanges || evt.key === 'Escape') {
+				onClose();
+			}
+		},
+		[hasPendingChanges, onClose],
+	);
 
-	const handleControlsClose = useCallback(() => {
-		setHasPendingChanges(false);
-		onClose();
-	}, [onClose]);
-
-	const focusTrap = useFocusTrap({ isActive: capturesFocus, onClickOutside: handleClickOutside });
+	const focusTrap = useFocusTrap({ isActive: capturesFocus, onAttemptClose: handleAttemptClose });
 
 	useEffect(() => {
 		const options = { capture: true };
@@ -50,18 +48,6 @@ const FormattingBarPopover = (props) => {
 		document.addEventListener('keydown', handler, options);
 		return () => document.removeEventListener('keydown', handler, options);
 	}, [capturesFocus]);
-
-	useEffect(() => {
-		const options = { capture: true };
-		const handler = (evt) => {
-			if (evt.key === 'Escape') {
-				evt.stopPropagation();
-				handleControlsClose();
-			}
-		};
-		document.addEventListener('keydown', handler, options);
-		return () => document.removeEventListener('keydown', handler, options);
-	}, [handleControlsClose]);
 
 	const popover = (
 		<div
@@ -79,7 +65,7 @@ const FormattingBarPopover = (props) => {
 				{typeof children === 'function'
 					? children({
 							onPendingChanges: setHasPendingChanges,
-							onClose: handleControlsClose,
+							onClose: onClose,
 					  })
 					: children}
 			</div>

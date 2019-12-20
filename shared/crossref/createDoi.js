@@ -1,7 +1,8 @@
 const PUBPUB_DOI_PREFIX = '10.21428';
 const MITP_DOI_PREFIX = '10.1162';
 const IASTATE_DOI_PREFIX = '10.31274';
-
+const APA_DOI_PREFIX = '10.3847';
+const MEDIASTUDIES_DOI_PREFIX = '10.32376';
 const splitId = (item) => item.id.split('-')[0];
 
 const choosePrefixForCommunity = (community) => {

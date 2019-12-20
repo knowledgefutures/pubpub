@@ -33,7 +33,7 @@ const showOrTriggerTable = (editorChangeObject) => {
 	return (
 		selectionInTable &&
 		triggerOnClick(editorChangeObject) &&
-		selection.anchor === selection.head
+		(selection.empty || selection.$anchorCell)
 	);
 };
 

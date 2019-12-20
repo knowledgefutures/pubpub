@@ -120,7 +120,6 @@ const ControlsCitation = (props) => {
 				key={revertKey}
 				initialHtmlString={unstructuredValue}
 				onChange={(htmlString) => {
-					console.log(htmlString);
 					updateAttrs({ unstructuredValue: htmlString });
 				}}
 			/>

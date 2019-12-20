@@ -88,7 +88,7 @@ const MinimalEditor = (props) => {
 					onBlur={onBlur}
 					initialContent={initialContent}
 					placeholder={placeholder}
-					handleScrollToSelection={() => true}
+					onScrollToSelection={() => true}
 					onChange={(editorChangeObject) => {
 						setChangeObject(editorChangeObject);
 						onChange({

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
@@ -19,26 +19,25 @@ const FormattingBarPopover = (props) => {
 		isFullScreenWidth,
 		floatingPosition,
 		containerRef,
-		focusOnMount,
+		trapFocusOnMount,
 	} = props;
 
 	const [hasPendingChanges, setHasPendingChanges] = useState(false);
-	const [capturesFocus, setCapturesFocus] = useState(!floatingPosition || focusOnMount);
+	const [capturesFocus, setCapturesFocus] = useState(!floatingPosition || trapFocusOnMount);
+	const showCloseButton = trapFocusOnMount;
 
-	const handleClickOutside = () => {
+	const handleClickOutside = useCallback(() => {
 		if (!hasPendingChanges) {
 			onClose();
 		}
-	};
+	}, [hasPendingChanges, onClose]);
 
-	const handleControlsClose = () => {
+	const handleControlsClose = useCallback(() => {
 		setHasPendingChanges(false);
 		onClose();
-	};
+	}, [onClose]);
 
 	const focusTrap = useFocusTrap({ isActive: capturesFocus, onClickOutside: handleClickOutside });
-
-	useKey('Escape', handleControlsClose);
 
 	useEffect(() => {
 		const options = { capture: true };
@@ -51,6 +50,18 @@ const FormattingBarPopover = (props) => {
 		document.addEventListener('keydown', handler, options);
 		return () => document.removeEventListener('keydown', handler, options);
 	}, [capturesFocus]);
+
+	useEffect(() => {
+		const options = { capture: true };
+		const handler = (evt) => {
+			if (evt.key === 'Escape') {
+				evt.stopPropagation();
+				handleControlsClose();
+			}
+		};
+		document.addEventListener('keydown', handler, options);
+		return () => document.removeEventListener('keydown', handler, options);
+	}, [handleControlsClose]);
 
 	const popover = (
 		<div
@@ -72,7 +83,7 @@ const FormattingBarPopover = (props) => {
 					  })
 					: children}
 			</div>
-			{!floatingPosition && (
+			{showCloseButton && (
 				<div className="close-button-container">
 					<Button
 						minimal

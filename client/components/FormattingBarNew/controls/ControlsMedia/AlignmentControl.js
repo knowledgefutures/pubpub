@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
+import { Radio, RadioGroup, useRadioState } from 'reakit';
 
 import { Icon } from 'components';
 
@@ -14,24 +15,33 @@ const alignOptions = [
 
 const AlignmentControl = (props) => {
 	const { isSmall, onChange, value } = props;
+	const radio = useRadioState();
 	return (
 		<div className="controls-row">
 			<div className="left-label">Alignment</div>
-			<div className="controls">
+			<RadioGroup className="controls" aria-label="Figure alignment">
 				{alignOptions.map((item) => {
 					return (
-						<Button
+						<Radio
+							{...radio}
 							aria-label={item.key}
-							aria-selected={value === item.key}
 							key={item.key}
-							icon={<Icon icon={item.icon} iconSize={isSmall ? 12 : 16} />}
-							minimal={true}
-							active={value === item.key}
+							checked={value === item.key}
 							onClick={() => onChange(item.key)}
-						/>
+						>
+							{({ ref, ...restRadioProps }) => (
+								<Button
+									elementRef={ref}
+									icon={<Icon icon={item.icon} iconSize={isSmall ? 12 : 16} />}
+									minimal={true}
+									active={value === item.key}
+									{...restRadioProps}
+								/>
+							)}
+						</Radio>
 					);
 				})}
-			</div>
+			</RadioGroup>
 		</div>
 	);
 };

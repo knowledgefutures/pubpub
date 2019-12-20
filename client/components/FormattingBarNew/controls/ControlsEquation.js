@@ -47,6 +47,8 @@ const ControlsEquation = (props) => {
 	const hasMountedRef = useRef(false);
 	const isBlock = selectedNode.type.name === 'block_equation';
 
+	console.log(selectedNode);
+
 	useEffect(() => {
 		// Avoid an initial call to the server's LaTeX renderer on mount
 		// We shouldn't need this anyway -- but moreover, it will sometimes produce HTML that is

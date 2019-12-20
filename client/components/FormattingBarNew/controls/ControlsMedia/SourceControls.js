@@ -38,6 +38,7 @@ const SourceControls = (props) => {
 					icon={<Icon icon="edit2" iconSize={iconSize} />}
 					minimal={true}
 					loading={isUploading}
+					aria-label="Upload new source file"
 				/>
 				<input
 					id={inputKey.current}
@@ -69,6 +70,7 @@ const SourceControls = (props) => {
 			<div className="controls">
 				{!useUrlInput && (
 					<AnchorButton
+						aria-label="Download source file"
 						icon={<Icon icon="download" iconSize={iconSize} />}
 						minimal={true}
 						href={attrs.url}

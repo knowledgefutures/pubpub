@@ -3,7 +3,16 @@ import PropTypes from 'prop-types';
 import { NumericInput, Slider } from '@blueprintjs/core';
 
 const SliderInputControl = (props) => {
-	const { disabled, leftLabel, maxValue, minValue, onChange, rightLabel, value } = props;
+	const {
+		disabled,
+		leftLabel,
+		maxValue,
+		minValue,
+		onChange,
+		rightLabel,
+		value,
+		'aria-label': ariaLabel,
+	} = props;
 
 	const sliderPositionToValue = (p) => {
 		return Math.round(minValue + (p / 100) * (maxValue - minValue));
@@ -34,6 +43,7 @@ const SliderInputControl = (props) => {
 				stepSize={10}
 				buttonPosition="none"
 				disabled={disabled}
+				aria-label={ariaLabel}
 				clampValueOnBlur={true}
 				onBlur={(evt) => {
 					const nextValue = parseInt(evt.target.value, 10);

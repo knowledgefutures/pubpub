@@ -8,6 +8,7 @@ import { usePageContext } from 'containers/Pub/pubHooks';
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
 import FormattingBarPopover from './FormattingBarPopover';
+import { positionNearSelection } from './positioning';
 
 require('./formattingBar.scss');
 
@@ -155,7 +156,7 @@ const FormattingBar = (props) => {
 		const options = { capture: true };
 		const handler = (evt) => {
 			if (evt.key === 'Enter') {
-				if (indicatedButtons.length === 1) {
+				if (indicatedButtons.length === 1 && !openedButton) {
 					const [openableButton] = indicatedButtons;
 					if (
 						openableButton &&
@@ -171,7 +172,7 @@ const FormattingBar = (props) => {
 		};
 		document.addEventListener('keydown', handler, options);
 		return () => document.removeEventListener('keydown', handler, options);
-	}, [indicatedButtons, setOpenedButton]);
+	}, [indicatedButtons, openedButton, setOpenedButton]);
 
 	const handlePopoverClose = useCallback(() => {
 		setOpenedButton(null);
@@ -200,7 +201,7 @@ const FormattingBar = (props) => {
 				isDetached={isOpen && !!controlsPosition}
 				isSmall={isSmall}
 				accentColor={communityData.accentColorDark}
-				onClick={() => handleButtonClick(button)}
+				onClick={(evt) => handleButtonClick(button, evt)}
 				{...maybeEditorChangeObject}
 			/>
 		);
@@ -214,7 +215,7 @@ const FormattingBar = (props) => {
 				isTranslucent && 'translucent',
 			)}
 		>
-			<Toolbar aria-label="Formatting toolbar" {...toolbar}>
+			<Toolbar aria-label="Formatting toolbar" className="toolbar" {...toolbar}>
 				{showBlockTypes && (
 					<>
 						<ToolbarItem
@@ -236,7 +237,12 @@ const FormattingBar = (props) => {
 					onClose={handlePopoverClose}
 					isFullScreenWidth={isFullScreenWidth}
 					containerRef={popoverContainerRef}
-					floatingPosition={controlsPosition}
+					floatingPosition={isFullScreenWidth ? controlsPosition : positionNearSelection}
+					trapFocusOnMount={
+						openedButton &&
+						openedButton.controls &&
+						openedButton.controls.trapFocusOnMount
+					}
 				>
 					{({ onPendingChanges, onClose }) => (
 						<ControlsComponent

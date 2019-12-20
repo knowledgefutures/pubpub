@@ -40,6 +40,7 @@ const ControlsMedia = (props) => {
 					maxValue={100}
 					leftLabel="Width"
 					rightLabel="%"
+					aria-label="Figure width (percentage)"
 					value={size}
 					disabled={align === 'full'}
 					onChange={(nextSize) => updateNode({ size: nextSize })}
@@ -48,6 +49,7 @@ const ControlsMedia = (props) => {
 					<SliderInputControl
 						minValue={150}
 						maxValue={800}
+						aria-label="Figure height (pixels)"
 						leftLabel="Height"
 						rightLabel="px"
 						value={height}

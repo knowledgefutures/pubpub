@@ -4,6 +4,7 @@ import ControlsLink from './controls/ControlsLink';
 import ControlsMedia from './controls/ControlsMedia/ControlsMedia';
 import ControlsTable from './controls/ControlsTable';
 import MediaButton from './FormattingBarMediaButton';
+import { positionNearSelection, positionNearLink } from './positioning';
 
 const triggerOnClick = (changeObject) => {
 	const { latestDomEvent } = changeObject;
@@ -16,6 +17,7 @@ const nodeControls = (component, indicatedNodeType) => {
 		: [indicatedNodeType];
 	return {
 		enterKeyTriggers: true,
+		trapFocusOnMount: true,
 		component: component,
 		trigger: triggerOnClick,
 		show: (editorChangeObject) => !!editorChangeObject.selectedNode,
@@ -25,16 +27,6 @@ const nodeControls = (component, indicatedNodeType) => {
 		},
 	};
 };
-
-const getPositionForBounds = (getBoundsFn) => (changeObject, containerRef) => {
-	const wrapperBounds = containerRef.current.offsetParent.getBoundingClientRect();
-	const bounds = getBoundsFn(changeObject);
-	return {
-		top: bounds.bottom - wrapperBounds.top,
-		left: bounds.left - wrapperBounds.left,
-	};
-};
-
 export const strong = {
 	key: 'strong',
 	title: 'Bold',
@@ -55,6 +47,7 @@ export const link = {
 	icon: 'link',
 	isToggle: true,
 	controls: {
+		trapFocusOnMount: false,
 		component: ControlsLink,
 		indicate: (changeObject) => !!changeObject.activeLink,
 		trigger: (changeObject) => {
@@ -65,7 +58,7 @@ export const link = {
 			);
 		},
 		show: (changeObject) => !!changeObject.activeLink,
-		position: getPositionForBounds((changeObject) => changeObject.activeLink.boundingBox),
+		position: positionNearLink,
 	},
 };
 
@@ -148,11 +141,12 @@ export const table = {
 	title: 'Table',
 	icon: 'th',
 	controls: {
+		trapFocusOnMount: false,
 		indicate: ({ selectionInTable }) => selectionInTable,
 		show: (editorChangeObject) =>
 			editorChangeObject.selectionInTable && triggerOnClick(editorChangeObject),
 		trigger: triggerOnClick,
-		position: getPositionForBounds((changeObject) => changeObject.selectionBoundingBox),
+		position: positionNearSelection,
 		component: ControlsTable,
 	},
 };

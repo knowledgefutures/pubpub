@@ -21,6 +21,11 @@
     &:first-child {
         padding-left: 3px;
     }
+    .toolbar {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: scroll;
+    }
     .formatting-bar-button {
         display: inline-block;
         position: relative;
@@ -131,7 +136,6 @@
     }
     &.floating {
         padding: 10px;
-        align-items: center;
         border-radius: 4px;
         z-index: 2;
     }

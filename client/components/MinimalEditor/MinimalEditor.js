@@ -8,7 +8,6 @@ require('./minimalEditor.scss');
 const propTypes = {
 	initialContent: PropTypes.object,
 	onChange: PropTypes.func,
-	onBlur: PropTypes.func,
 	useFormattingBar: PropTypes.bool,
 	focusOnLoad: PropTypes.bool,
 	placeholder: PropTypes.string,
@@ -18,7 +17,6 @@ const propTypes = {
 const defaultProps = {
 	initialContent: undefined,
 	onChange: () => {},
-	onBlur: () => {},
 	useFormattingBar: false,
 	focusOnLoad: false,
 	placeholder: undefined,
@@ -30,7 +28,6 @@ const MinimalEditor = (props) => {
 		initialContent,
 		constrainHeight,
 		onChange,
-		onBlur,
 		useFormattingBar,
 		focusOnLoad,
 		placeholder,
@@ -85,7 +82,6 @@ const MinimalEditor = (props) => {
 			<div className="editor-wrapper" onClick={handleWrapperClick}>
 				<div className="editor-wrapper-inner" ref={editorWrapperRef} />
 				<Editor
-					onBlur={onBlur}
 					initialContent={initialContent}
 					placeholder={placeholder}
 					onScrollToSelection={() => true}

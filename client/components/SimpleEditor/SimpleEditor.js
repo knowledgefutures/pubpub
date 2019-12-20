@@ -8,19 +8,17 @@ import { MinimalEditor } from 'components';
 const propTypes = {
 	initialHtmlString: PropTypes.string.isRequired,
 	onChange: PropTypes.func.isRequired, // Return HTML string of content
-	onBlur: PropTypes.func,
 	placeholder: PropTypes.string,
 };
 
 const defaultProps = {
 	placeholder: undefined,
-	onBlur: () => {},
 };
 
 const editorSchema = buildSchema();
 
 const SimpleEditor = (props) => {
-	const { onChange, onBlur, placeholder, initialHtmlString } = props;
+	const { onChange, placeholder, initialHtmlString } = props;
 	const initialDoc = useRef(null);
 
 	if (!initialDoc.current) {
@@ -46,7 +44,6 @@ const SimpleEditor = (props) => {
 	return (
 		<MinimalEditor
 			onChange={handleChange}
-			onBlur={onBlur}
 			placeholder={placeholder}
 			initialContent={initialDoc.current}
 			useFormattingBar={true}

@@ -24,6 +24,9 @@
         .bp3-slider-progress:not(:last-child) {
             background: white;
         }
+        .bp3-slider-handle:focus {
+            outline: 1.5px solid white;
+        }
     }
 
     .bp3-spinner {
@@ -48,6 +51,9 @@
     .minimal-editor-component {
         width: 100%;
         overflow-y: hidden;
+        .editor {
+            box-shadow: none !important;
+        }
     }
 
     .section {
@@ -101,11 +107,6 @@
             &:hover:not(:disabled) {
                 background: rgba(255, 255, 255, 0.2);
             }
-            &:focus, &:active {
-                outline: none;
-                padding: 7px;
-                border-width: 2px;
-            }
             &:disabled {
                 cursor: not-allowed;
                 opacity: 0.5;
@@ -119,7 +120,7 @@
     grid-template-columns: $template;
     grid-column-gap: 18px;
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 750px) {
         grid-template-columns: 100%;
         grid-row-gap: 9px;
         max-height: 600px;
@@ -150,7 +151,7 @@
 
 .controls-media-component {
     @include controls-component();
-    @include controls-grid(1fr 2fr);
+    @include controls-grid(minmax(300px, 1fr) 2fr);
     min-height: 180px;
     max-width: 1200px;
 
@@ -165,7 +166,8 @@
         }
         .left-label {
             user-select: none;
-            width: 90px;
+            width: 80px;
+            margin-right: 10px;
         }
         .right-label {
             user-select: none;

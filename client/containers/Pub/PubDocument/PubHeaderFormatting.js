@@ -16,7 +16,7 @@ const PubHeaderFormatting = (props) => {
 	const stickyInstanceRef = useRef(undefined);
 	useEffect(() => {
 		stickyInstanceRef.current = stickybits('.pub-draft-header-component', {
-			stickyBitStickyOffset: 35,
+			stickyBitStickyOffset: 39,
 			useStickyClasses: true,
 		});
 		return () => {

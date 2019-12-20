@@ -4,8 +4,6 @@ import classNames from 'classnames';
 
 import { Menu, MenuItem } from 'components/Menu';
 
-require('./commandMenu.scss');
-
 const propTypes = {
 	disclosure: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
 	className: PropTypes.string,

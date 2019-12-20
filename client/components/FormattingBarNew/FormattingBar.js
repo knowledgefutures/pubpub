@@ -237,7 +237,11 @@ const FormattingBar = (props) => {
 					onClose={handlePopoverClose}
 					isFullScreenWidth={isFullScreenWidth}
 					containerRef={popoverContainerRef}
-					floatingPosition={isFullScreenWidth ? controlsPosition : positionNearSelection}
+					floatingPosition={
+						isFullScreenWidth
+							? controlsPosition
+							: controlsPosition || positionNearSelection
+					}
 					trapFocusOnMount={
 						openedButton &&
 						openedButton.controls &&

@@ -14,15 +14,25 @@
     }
 }
 
+@mixin hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { 
+        display: none;
+    }
+}
+
 .formatting-bar-component {
     display: flex;
     max-width: 100%;
     position: relative;
-    &:first-child {
+    & > :first-child {
         padding-left: 3px;
     }
     .toolbar {
+        @include hide-scrollbar();
         display: flex;
+        align-items: center;
         flex-wrap: nowrap;
         overflow-x: scroll;
     }
@@ -32,6 +42,7 @@
         padding-top: 5px;
         padding-bottom: 5px;
         .bp3-button {
+            display: flex;
             line-height: 1;
             min-width: auto;
             min-height: auto;
@@ -87,6 +98,9 @@
     }
     &.small {
         line-height: 12px;
+        & > :first-child {
+            padding-left: 1px;
+        }
         .formatting-bar-button {
             padding-top: 2px;
             padding-bottom: 2px;
@@ -147,8 +161,10 @@
     }
     .close-button-container {
         flex-shrink: 0;
+        padding-left: 5px
     }
     *:focus {
-        outline: 2px solid white;
+        outline: none;
+        box-shadow: inset 0px 0px 0px 1.5px white !important;
     }
 }

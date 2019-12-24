@@ -15,6 +15,7 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
+	scopeData: PropTypes.object.isRequired,
 	pageData: PropTypes.object.isRequired,
 };
 
@@ -48,6 +49,7 @@ const Page = (props) => {
 				loginData={props.loginData}
 				communityData={props.communityData}
 				locationData={props.locationData}
+				scopeData={props.scopeData}
 			>
 				{layout.map((item, index) => {
 					const validType =

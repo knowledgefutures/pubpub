@@ -10,6 +10,7 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	loginData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
+	scopeData: PropTypes.object.isRequired,
 };
 
 const NoMatch = (props) => {
@@ -22,6 +23,7 @@ const NoMatch = (props) => {
 				loginData={props.loginData}
 				communityData={props.communityData}
 				locationData={props.locationData}
+				scopeData={props.scopeData}
 				hideFooter={true}
 				hideNav={props.locationData.isBasePubPub}
 			>

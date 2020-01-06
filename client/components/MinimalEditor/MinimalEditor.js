@@ -44,11 +44,19 @@ const MinimalEditor = (props) => {
 	}, [focusOnLoad, changeObject.view]);
 
 	useEffect(() => {
-		import('../FormattingBarNew').then((module) => {
-			setFormattingBar(() => (innerProps) => (
-				<module.FormattingBar {...innerProps} buttons={module.buttons.minimalButtonSet} />
-			));
-		});
+		// TODO(ian):
+		// We need to do a dynamic import here to get around the FormattingBar <-> MinimalEditor
+		// circular dependency. The use of require() is a hack to get around a bug that I suspect
+		// will be fixed in an upcoming version of Webpack:
+		// https://github.com/webpack/webpack/issues/10104
+		// eslint-disable-next-line global-require
+		Promise.resolve(require('../FormattingBarNew')).then(
+			({ buttons, FormattingBar: FormattingBarComponent }) => {
+				setFormattingBar(() => (innerProps) => (
+					<FormattingBarComponent {...innerProps} buttons={buttons.minimalButtonSet} />
+				));
+			},
+		);
 	}, []);
 
 	const handleWrapperClick = () => {

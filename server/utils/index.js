@@ -227,6 +227,7 @@ export const generateMetaComponents = ({
 	collection,
 	download,
 	textAbstract,
+	canonicalUrl,
 }) => {
 	const siteName = initialData.communityData.title;
 	const url = `https://${initialData.locationData.hostname}${initialData.locationData.path}`;
@@ -424,6 +425,10 @@ export const generateMetaComponents = ({
 			...outputComponents,
 			<meta key="un1" name="robots" content="noindex,nofollow" />,
 		];
+	}
+
+	if (canonicalUrl) {
+		outputComponents = [...outputComponents, <link rel="canonical" href={canonicalUrl} />];
 	}
 
 	outputComponents = [

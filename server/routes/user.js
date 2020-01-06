@@ -131,6 +131,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 						title: `${userDataJson.fullName} · PubPub`,
 						description: userDataJson.bio,
 						image: userDataJson.avatar,
+						canonicalUrl: `https://www.pubpub.org/user/${userDataJson.slug}`,
 					})}
 				>
 					<UserContainer {...newInitialData} />

@@ -136,11 +136,11 @@ export const useFocusTrap = ({ onAttemptClose, isActive } = {}) => {
 			const { target } = evt;
 			if (!rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target))) {
 				if (onAttemptClose) {
-					onAttemptClose(evt, isActive);
+					onAttemptClose(evt);
 				}
 			}
 		},
-		[isActive, onAttemptClose, rootElement],
+		[onAttemptClose, rootElement],
 	);
 
 	const handleKeyDown = useCallback(
@@ -161,8 +161,9 @@ export const useFocusTrap = ({ onAttemptClose, isActive } = {}) => {
 	}, [handleGlobalFocus]);
 
 	useEffect(() => {
-		window.addEventListener('click', handleGlobalClick, true);
-		return () => window.removeEventListener('click', handleGlobalClick, true);
+		const options = { capture: true };
+		window.addEventListener('mousedown', handleGlobalClick, options);
+		return () => window.removeEventListener('mousedown', handleGlobalClick, options);
 	}, [handleGlobalClick]);
 
 	useEffect(() => {
@@ -174,7 +175,7 @@ export const useFocusTrap = ({ onAttemptClose, isActive } = {}) => {
 	}, [handleKeyDown, rootElement]);
 
 	useEffect(() => {
-		if (rootElement && isActive) {
+		if (rootElement && isActive && !rootElement.contains(document.activeElement)) {
 			const previousTabIndex = rootElement.tabIndex;
 			rootElement.tabIndex = -1;
 			tryToFocus(rootElement);

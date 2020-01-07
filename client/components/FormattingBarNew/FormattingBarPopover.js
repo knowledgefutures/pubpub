@@ -2,14 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
-import { useKey } from 'react-use';
 
 import { useFocusTrap } from '../../utils/useFocusTrap';
 import { usePendingAttrs } from './usePendingAttrs';
-
-const renderPreventPointerEventsStyles = () => {
-	return <style>{` .pub-body-component > .editor { pointer-events: none }`}</style>;
-};
 
 const FormattingBarPopover = (props) => {
 	const {
@@ -24,17 +19,16 @@ const FormattingBarPopover = (props) => {
 		editorChangeObject,
 	} = props;
 
-	const { selectedNode, updateNode } = editorChangeObject;
 	const [capturesFocus, setCapturesFocus] = useState(trapFocusOnMount);
-	const pendingAttrs = usePendingAttrs(selectedNode.attrs, updateNode);
-	const { commitChanges } = pendingAttrs;
+	const pendingAttrs = usePendingAttrs(editorChangeObject);
 	const showCloseButton = !floatingPosition;
 
 	const handleClose = useCallback(() => {
-		console.log('committing changes');
-		commitChanges();
+		if (pendingAttrs) {
+			pendingAttrs.commitChanges();
+		}
 		onClose();
-	}, [commitChanges, onClose]);
+	}, [onClose, pendingAttrs]);
 
 	const focusTrap = useFocusTrap({ isActive: capturesFocus, onAttemptClose: handleClose });
 
@@ -61,7 +55,6 @@ const FormattingBarPopover = (props) => {
 			style={{ background: accentColor, ...floatingPosition }}
 			ref={focusTrap.ref}
 		>
-			{capturesFocus && renderPreventPointerEventsStyles()}
 			<div className="inner">
 				{typeof children === 'function'
 					? children({

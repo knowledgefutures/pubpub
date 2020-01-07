@@ -134,12 +134,9 @@ export const useFocusTrap = ({ onAttemptClose, isActive } = {}) => {
 	const handleGlobalClick = useCallback(
 		(evt) => {
 			const { target } = evt;
-			if (
-				!rootElement ||
-				(!rootElement.contains(target) && !isChildOfReakitPortal(target) && isActive)
-			) {
+			if (!rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target))) {
 				if (onAttemptClose) {
-					onAttemptClose(evt);
+					onAttemptClose(evt, isActive);
 				}
 			}
 		},

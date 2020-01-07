@@ -159,6 +159,9 @@
     &.full-screen-width:not(.floating) {
         width: 100vw;
     }
+    textarea, .minimal-editor-component {
+        border-radius: 4px;
+    }
     .inner {
         flex-grow: 1;
     }

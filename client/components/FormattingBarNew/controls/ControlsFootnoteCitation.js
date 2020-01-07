@@ -6,14 +6,12 @@ import { apiFetch } from 'utils';
 import { SimpleEditor, PubNoteContent } from 'components';
 import { usePubData } from 'containers/Pub/pubHooks';
 
-import { useCommitAttrs } from './useCommitAttrs';
 import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
 
 require('./controls.scss');
 
 const propTypes = {
 	onClose: PropTypes.func.isRequired,
-	onPendingChanges: PropTypes.func.isRequired,
 	editorChangeObject: PropTypes.shape({
 		updateNode: PropTypes.func.isRequired,
 		selectedNode: PropTypes.shape({
@@ -57,22 +55,14 @@ const wrapUpdateAttrs = (updateAttrs, isFootnote) => {
 	};
 };
 
-const ControlsCitation = (props) => {
-	const { editorChangeObject, onPendingChanges, onClose } = props;
-	const { updateNode, selectedNode } = editorChangeObject;
+const ControlsFootnoteCitation = (props) => {
+	const { editorChangeObject, onClose, pendingAttrs } = props;
+	const { selectedNode } = editorChangeObject;
 	const { citations = [] } = usePubData();
 	const isFootnote = selectedNode.type.name === 'footnote';
 	const existingCitation = !isFootnote && citations[selectedNode.attrs.count - 1];
-	const {
-		commitChanges,
-		revertChanges,
-		revertKey,
-		hasPendingChanges,
-		updateAttrs: rawUpdateAttrs,
-		pendingAttrs,
-	} = useCommitAttrs(selectedNode.attrs, updateNode, onPendingChanges);
-
-	const { structuredValue, unstructuredValue } = unwrapPendingAttrs(pendingAttrs, isFootnote);
+	const { commitChanges, hasPendingChanges, updateAttrs: rawUpdateAttrs, attrs } = pendingAttrs;
+	const { structuredValue, unstructuredValue } = unwrapPendingAttrs(attrs, isFootnote);
 	const updateAttrs = wrapUpdateAttrs(rawUpdateAttrs, isFootnote);
 	const [html, setHtml] = useState(existingCitation && existingCitation.html);
 	const [debouncedValue] = useDebounce(structuredValue, 250);
@@ -90,11 +80,6 @@ const ControlsCitation = (props) => {
 			}),
 		}).then(([result]) => setHtml(result.html));
 	}, [debouncedValue]);
-
-	const handleRevert = () => {
-		setHtml(existingCitation && existingCitation.html);
-		revertChanges();
-	};
 
 	const handleUpdate = () => {
 		commitChanges();
@@ -117,7 +102,6 @@ const ControlsCitation = (props) => {
 		<div className="section hide-overflow" key="unstructured">
 			<div className="title">Rich Text</div>
 			<SimpleEditor
-				key={revertKey}
 				initialHtmlString={unstructuredValue}
 				onChange={(htmlString) => {
 					updateAttrs({ unstructuredValue: htmlString });
@@ -138,9 +122,6 @@ const ControlsCitation = (props) => {
 					<div className="title">Preview</div>
 					<PubNoteContent structured={html} unstructured={unstructuredValue} />
 					<ControlsButtonGroup>
-						<ControlsButton disabled={!hasPendingChanges} onClick={handleRevert}>
-							Revert
-						</ControlsButton>
 						<ControlsButton disabled={!hasPendingChanges} onClick={handleUpdate}>
 							Update {selectedNode.type.name}
 						</ControlsButton>
@@ -151,5 +132,5 @@ const ControlsCitation = (props) => {
 	);
 };
 
-ControlsCitation.propTypes = propTypes;
-export default ControlsCitation;
+ControlsFootnoteCitation.propTypes = propTypes;
+export default ControlsFootnoteCitation;

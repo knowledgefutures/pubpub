@@ -231,6 +231,7 @@ const FormattingBar = (props) => {
 			</Toolbar>
 			{ControlsComponent && (
 				<FormattingBarPopover
+					editorChangeObject={editorChangeObject}
 					key={controlsKey}
 					accentColor={communityData.accentColorDark}
 					button={openedButton}
@@ -248,10 +249,10 @@ const FormattingBar = (props) => {
 						openedButton.controls.trapFocusOnMount
 					}
 				>
-					{({ onPendingChanges, onClose }) => (
+					{({ pendingAttrs, onClose }) => (
 						<ControlsComponent
 							editorChangeObject={editorChangeObject}
-							onPendingChanges={onPendingChanges}
+							pendingAttrs={pendingAttrs}
 							onClose={onClose}
 							isSmall={isSmall}
 						/>

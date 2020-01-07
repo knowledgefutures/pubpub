@@ -5,14 +5,12 @@ import { useDebounce } from 'use-debounce';
 
 import { renderLatexString } from 'utils';
 
-import { useCommitAttrs } from './useCommitAttrs';
 import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
 
 require('./controls.scss');
 
 const propTypes = {
 	onClose: PropTypes.func.isRequired,
-	onPendingChanges: PropTypes.func.isRequired,
 	editorChangeObject: PropTypes.shape({
 		changeNode: PropTypes.func.isRequired,
 		updateNode: PropTypes.func.isRequired,
@@ -33,16 +31,14 @@ const getSchemaDefinitionForNodeType = (editorChangeObject, nodeTypeName) => {
 };
 
 const ControlsEquation = (props) => {
-	const { editorChangeObject, onPendingChanges, onClose } = props;
-	const { changeNode, selectedNode, updateNode } = editorChangeObject;
+	const { editorChangeObject, pendingAttrs, onClose } = props;
+	const { changeNode, selectedNode } = editorChangeObject;
 	const {
 		commitChanges,
-		revertChanges,
 		hasPendingChanges,
 		updateAttrs,
-		pendingAttrs,
-	} = useCommitAttrs(selectedNode.attrs, updateNode, onPendingChanges);
-	const { value, html } = pendingAttrs;
+		attrs: { value, html },
+	} = pendingAttrs;
 	const [debouncedValue] = useDebounce(value, 250);
 	const hasMountedRef = useRef(false);
 	const isBlock = selectedNode.type.name === 'block_equation';
@@ -92,9 +88,6 @@ const ControlsEquation = (props) => {
 					<ControlsButtonGroup>
 						<ControlsButton onClick={handleChangeNodeType}>
 							Change to {isBlock ? 'inline' : 'block'}
-						</ControlsButton>
-						<ControlsButton disabled={!hasPendingChanges} onClick={revertChanges}>
-							Revert
 						</ControlsButton>
 						<ControlsButton disabled={!hasPendingChanges} onClick={handleUpdate}>
 							Update equation

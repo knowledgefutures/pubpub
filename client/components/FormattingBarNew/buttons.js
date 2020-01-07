@@ -17,7 +17,7 @@ const nodeControls = (component, indicatedNodeType) => {
 		: [indicatedNodeType];
 	return {
 		enterKeyTriggers: true,
-		trapFocusOnMount: true,
+		trapFocusOnMount: false,
 		component: component,
 		trigger: triggerOnClick,
 		show: (editorChangeObject) => !!editorChangeObject.selectedNode,

@@ -5,6 +5,7 @@ import { Button } from '@blueprintjs/core';
 import { useKey } from 'react-use';
 
 import { useFocusTrap } from '../../utils/useFocusTrap';
+import { usePendingAttrs } from './usePendingAttrs';
 
 const renderPreventPointerEventsStyles = () => {
 	return <style>{` .pub-body-component > .editor { pointer-events: none }`}</style>;
@@ -20,22 +21,22 @@ const FormattingBarPopover = (props) => {
 		floatingPosition,
 		containerRef,
 		trapFocusOnMount,
+		editorChangeObject,
 	} = props;
 
-	const [hasPendingChanges, setHasPendingChanges] = useState(false);
-	const [capturesFocus, setCapturesFocus] = useState(!floatingPosition || trapFocusOnMount);
-	const showCloseButton = trapFocusOnMount;
+	const { selectedNode, updateNode } = editorChangeObject;
+	const [capturesFocus, setCapturesFocus] = useState(trapFocusOnMount);
+	const pendingAttrs = usePendingAttrs(selectedNode.attrs, updateNode);
+	const { commitChanges } = pendingAttrs;
+	const showCloseButton = !floatingPosition;
 
-	const handleAttemptClose = useCallback(
-		(evt) => {
-			if (!hasPendingChanges || evt.key === 'Escape') {
-				onClose();
-			}
-		},
-		[hasPendingChanges, onClose],
-	);
+	const handleClose = useCallback(() => {
+		console.log('committing changes');
+		commitChanges();
+		onClose();
+	}, [commitChanges, onClose]);
 
-	const focusTrap = useFocusTrap({ isActive: capturesFocus, onAttemptClose: handleAttemptClose });
+	const focusTrap = useFocusTrap({ isActive: capturesFocus, onAttemptClose: handleClose });
 
 	useEffect(() => {
 		const options = { capture: true };
@@ -64,7 +65,7 @@ const FormattingBarPopover = (props) => {
 			<div className="inner">
 				{typeof children === 'function'
 					? children({
-							onPendingChanges: setHasPendingChanges,
+							pendingAttrs: pendingAttrs,
 							onClose: onClose,
 					  })
 					: children}
@@ -76,7 +77,7 @@ const FormattingBarPopover = (props) => {
 						small
 						icon="cross"
 						aria-label="Close options"
-						onClick={onClose}
+						onClick={handleClose}
 					/>
 				</div>
 			)}

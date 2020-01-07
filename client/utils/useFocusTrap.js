@@ -26,7 +26,7 @@ const rememberScrollPosition = () => {
 
 // This implementation heavily inspired by the wonder-blocks focus trap:
 // https://github.com/Khan/wonder-blocks/blob/master/packages/wonder-blocks-modal/components/focus-trap.js
-export const useFocusTrap = ({ onAttemptClose, isActive } = {}) => {
+export const useFocusTrap = ({ onMouseDownOutside, onEscapeKeyPressed, isActive } = {}) => {
 	const [rootElement, setRefElement] = useState(null);
 	const ignoreFocusChanges = useRef(false);
 	const lastNodeFocusedInModal = useRef(null);
@@ -131,28 +131,38 @@ export const useFocusTrap = ({ onAttemptClose, isActive } = {}) => {
 		[focusFirstElementIn, focusLastElementIn, isActive, rootElement],
 	);
 
+	const handleGlobalMouseDown = useCallback(
+		(evt) => {
+			const { target } = evt;
+			if (!rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target))) {
+				if (onMouseDownOutside) {
+					onMouseDownOutside(evt);
+				}
+			}
+		},
+		[onMouseDownOutside, rootElement],
+	);
+
 	const handleGlobalClick = useCallback(
 		(evt) => {
 			const { target } = evt;
 			if (!rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target))) {
-				if (onAttemptClose) {
-					onAttemptClose(evt);
-				}
+				//	evt.stopPropagation();
 			}
 		},
-		[onAttemptClose, rootElement],
+		[rootElement],
 	);
 
 	const handleKeyDown = useCallback(
 		(evt) => {
 			if (evt.key === 'Escape') {
-				if (onAttemptClose) {
+				if (onEscapeKeyPressed) {
 					evt.stopPropagation();
-					onAttemptClose(evt);
+					onEscapeKeyPressed(evt);
 				}
 			}
 		},
-		[onAttemptClose],
+		[onEscapeKeyPressed],
 	);
 
 	useEffect(() => {
@@ -162,8 +172,14 @@ export const useFocusTrap = ({ onAttemptClose, isActive } = {}) => {
 
 	useEffect(() => {
 		const options = { capture: true };
-		window.addEventListener('mousedown', handleGlobalClick, options);
-		return () => window.removeEventListener('mousedown', handleGlobalClick, options);
+		window.addEventListener('mousedown', handleGlobalMouseDown, options);
+		return () => window.removeEventListener('mousedown', handleGlobalMouseDown, options);
+	}, [handleGlobalMouseDown]);
+
+	useEffect(() => {
+		const options = { capture: true };
+		window.addEventListener('click', handleGlobalClick, options);
+		return () => window.removeEventListener('click', handleGlobalClick, options);
 	}, [handleGlobalClick]);
 
 	useEffect(() => {

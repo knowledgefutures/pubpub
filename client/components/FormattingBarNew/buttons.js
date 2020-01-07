@@ -8,7 +8,7 @@ import { positionNearSelection, positionNearLink } from './positioning';
 
 const triggerOnClick = (changeObject) => {
 	const { latestDomEvent } = changeObject;
-	return latestDomEvent && latestDomEvent.type === 'click';
+	return latestDomEvent && latestDomEvent.type === 'mousedown';
 };
 
 const nodeControls = (component, indicatedNodeType) => {

@@ -57,6 +57,13 @@ const useControlsKey = (latestDomEvent) => {
 			previousDomEvent.current.type === latestDomEvent.type &&
 			previousDomEvent.current.timeStamp === latestDomEvent.timeStamp;
 
+		console.log(
+			'domEventsEqual',
+			domEventsEqual,
+			previousDomEvent.current && previousDomEvent.current.type,
+			latestDomEvent.type,
+		);
+
 		if (!domEventsEqual) {
 			key.current += 1;
 		}
@@ -128,6 +135,8 @@ const FormattingBar = (props) => {
 		controlsPosition,
 		ControlsComponent,
 	} = useControlsState(props);
+
+	console.log('controlsKey', controlsKey);
 
 	const menuItemByKey = (key) => {
 		if (menuItems) {

@@ -80,16 +80,6 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 
 	return { setState: setState };
 };
-
-const extractLatestDomEvent = (collabData) =>
-	collabData && collabData.editorChangeObject && collabData.editorChangeObject.latestDomEvent;
-
-const collabShouldUpdateNow = (prevCollabData, nextCollabData) => {
-	const prevDomEvent = extractLatestDomEvent(prevCollabData);
-	const nextDomEvent = extractLatestDomEvent(nextCollabData);
-	return nextDomEvent && nextDomEvent !== prevDomEvent && nextDomEvent.type === 'click';
-};
-
 class PubSyncManager extends React.Component {
 	constructor(props) {
 		super(props);

@@ -23,14 +23,22 @@ const FormattingBarPopover = (props) => {
 	const pendingAttrs = usePendingAttrs(editorChangeObject);
 	const showCloseButton = !floatingPosition;
 
-	const handleClose = useCallback(() => {
+	const commitChanges = useCallback(() => {
 		if (pendingAttrs) {
 			pendingAttrs.commitChanges();
 		}
-		onClose();
-	}, [onClose, pendingAttrs]);
+	}, [pendingAttrs]);
 
-	const focusTrap = useFocusTrap({ isActive: capturesFocus, onAttemptClose: handleClose });
+	const handleClose = useCallback(() => {
+		commitChanges();
+		onClose();
+	}, [commitChanges, onClose]);
+
+	const focusTrap = useFocusTrap({
+		isActive: capturesFocus,
+		onMouseDownOutside: commitChanges,
+		onEscapeKeyPressed: handleClose,
+	});
 
 	useEffect(() => {
 		const options = { capture: true };
@@ -59,7 +67,7 @@ const FormattingBarPopover = (props) => {
 				{typeof children === 'function'
 					? children({
 							pendingAttrs: pendingAttrs,
-							onClose: onClose,
+							onClose: handleClose,
 					  })
 					: children}
 			</div>

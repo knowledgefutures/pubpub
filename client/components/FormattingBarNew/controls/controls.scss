@@ -130,7 +130,7 @@
 .controls-citation-component {
     @include controls-component();
     @include controls-grid();
-    min-height: 180px;
+    min-height: 200px;
 
     .structured-data {
         font-family: monospace;
@@ -152,7 +152,7 @@
 .controls-media-component {
     @include controls-component();
     @include controls-grid(minmax(300px, 1fr) 2fr);
-    min-height: 180px;
+    min-height: 200px;
     max-width: 1200px;
 
     .slider-input-control {
@@ -188,7 +188,7 @@
 .controls-equation-component {
     @include controls-component();
     @include controls-grid(1fr 1fr);
-    min-height: 180px;
+    min-height: 200px;
     max-width: 1200px;
 
     .preview {

@@ -12,7 +12,6 @@ export const usePendingAttrs = ({ selectedNode, updateNode }) => {
 	const hasPendingChanges = attrsHaveChanges(selectedNode.attrs, attrs);
 
 	const commitChanges = () => {
-		console.log('committing changes!', attrs);
 		updateNode(attrs);
 	};
 

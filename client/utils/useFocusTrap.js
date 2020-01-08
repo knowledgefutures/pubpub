@@ -26,7 +26,12 @@ const rememberScrollPosition = () => {
 
 // This implementation heavily inspired by the wonder-blocks focus trap:
 // https://github.com/Khan/wonder-blocks/blob/master/packages/wonder-blocks-modal/components/focus-trap.js
-export const useFocusTrap = ({ onMouseDownOutside, onEscapeKeyPressed, isActive } = {}) => {
+export const useFocusTrap = ({
+	onMouseDownOutside,
+	onEscapeKeyPressed,
+	onClickOutside,
+	isActive,
+} = {}) => {
 	const [rootElement, setRefElement] = useState(null);
 	const ignoreFocusChanges = useRef(false);
 	const lastNodeFocusedInModal = useRef(null);
@@ -147,10 +152,12 @@ export const useFocusTrap = ({ onMouseDownOutside, onEscapeKeyPressed, isActive 
 		(evt) => {
 			const { target } = evt;
 			if (!rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target))) {
-				//	evt.stopPropagation();
+				if (onClickOutside) {
+					onClickOutside(evt);
+				}
 			}
 		},
-		[rootElement],
+		[onClickOutside, rootElement],
 	);
 
 	const handleKeyDown = useCallback(

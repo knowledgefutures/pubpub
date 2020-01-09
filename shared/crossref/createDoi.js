@@ -6,7 +6,11 @@ const MEDIASTUDIES_DOI_PREFIX = '10.32376';
 const splitId = (item) => item.id.split('-')[0];
 
 const choosePrefixForCommunity = (community) => {
-	if (community.id === '99608f92-d70f-46c1-a72c-df272215f13e') {
+	if (
+		communityId === '99608f92-d70f-46c1-a72c-df272215f13e' //HDSR
+		||
+		communityId === '00c13b77-f067-4b53-8f11-c97aa4b024ff' //Projections
+	) {
 		return MITP_DOI_PREFIX;
 	}
 	if (community.id === '3d9ea6a4-25b9-42d3-8ceb-22459c649096') {

@@ -4,7 +4,7 @@ import { Pub } from 'containers';
 
 import { getPubPageContextTitle } from 'shared/utils/pubPageTitle';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
-import { getPDFDownload, getTextAbstract } from 'shared/pub/metadata';
+import { getPDFDownload, getTextAbstract, getGoogleScholarNotes } from 'shared/pub/metadata';
 import { chooseCollectionForPub } from '../../client/utils/collections';
 import Html from '../Html';
 import app from '../server';
@@ -153,6 +153,7 @@ app.get(
 						collection: chooseCollectionForPub(pubData, initialData.locationData),
 						download: getPDFDownload(pubData),
 						textAbstract: pubData.initialDoc ? getTextAbstract(pubData.initialDoc) : '',
+						notes: getGoogleScholarNotes(pubData.citations.concat(pubData.footnotes)),
 						// unlisted: isUnlistedDraft,
 					})}
 				>

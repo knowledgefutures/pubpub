@@ -5,6 +5,7 @@ import { Button } from '@blueprintjs/core';
 
 import { useFocusTrap } from '../../utils/useFocusTrap';
 import { usePendingAttrs } from './usePendingAttrs';
+import { setEditorSelectionFromClick } from './positioning';
 
 const FormattingBarPopover = (props) => {
 	const {
@@ -49,6 +50,7 @@ const FormattingBarPopover = (props) => {
 			evt.stopPropagation();
 			if (hasSeenMouseDownOutside.current) {
 				handleClose();
+				setEditorSelectionFromClick(editorChangeObject, evt);
 			}
 		},
 	});

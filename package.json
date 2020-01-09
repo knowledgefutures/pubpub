@@ -141,6 +141,7 @@
 		"popper.js": "^1.15.0",
 		"postcss-loader": "^3.0.0",
 		"prop-types": "^15.7.2",
+		"prosemirror-state": "^1.3.2",
 		"query-string": "^6.4.0",
 		"react": "^16.8.5",
 		"react-avatar-editor": "^11.0.6",

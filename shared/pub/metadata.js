@@ -58,38 +58,42 @@ const noteTypes = {
 };
 
 export const getGoogleScholarNotes = (notes) => {
-	return notes.reduce((unique, note) => {
-		const noteArray = [];
-		const noteType = note.json[0].type;
-		const noteTypeString = noteTypes[noteType] || 'journal';
+	return notes
+		.filter((note) => note.json !== '' && !note.error)
+		.reduce((unique, note) => {
+			const noteArray = [];
+			const noteType = note.json[0].type;
+			const noteTypeString = noteTypes[noteType] || 'journal';
 
-		Object.entries(note.json[0]).forEach(([key, value]) => {
-			switch (key) {
-				case 'title':
-					noteArray.push(`citation_title=${value}`);
-					break;
-				case 'author':
-					value.forEach((author) => {
-						noteArray.push(`citation_author=${author.given} ${author.family}`);
-					});
-					break;
-				case 'container-title':
-					noteArray.push(`citation_${noteTypeString}_title=${value}`);
-					break;
-				case 'issued':
-					noteArray.push(`citation_publication_date=${value['date-parts'][0].join('/')}`);
-					break;
-				case 'issue':
-				case 'volume':
-				case 'DOI':
-				case 'ISSN':
-				case 'ISBN':
-					noteArray.push(`citation_${key}=${value}`);
-					break;
-				default:
-					break;
-			}
-		});
-		return unique.includes(noteArray.join(';')) ? unique : [...unique, noteArray.join(';')];
-	}, []);
+			Object.entries(note.json[0]).forEach(([key, value]) => {
+				switch (key) {
+					case 'title':
+						noteArray.push(`citation_title=${value}`);
+						break;
+					case 'author':
+						value.forEach((author) => {
+							noteArray.push(`citation_author=${author.given} ${author.family}`);
+						});
+						break;
+					case 'container-title':
+						noteArray.push(`citation_${noteTypeString}_title=${value}`);
+						break;
+					case 'issued':
+						noteArray.push(
+							`citation_publication_date=${value['date-parts'][0].join('/')}`,
+						);
+						break;
+					case 'issue':
+					case 'volume':
+					case 'DOI':
+					case 'ISSN':
+					case 'ISBN':
+						noteArray.push(`citation_${key}=${value}`);
+						break;
+					default:
+						break;
+				}
+			});
+			return unique.includes(noteArray.join(';')) ? unique : [...unique, noteArray.join(';')];
+		}, []);
 };

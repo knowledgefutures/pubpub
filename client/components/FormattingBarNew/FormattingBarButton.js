@@ -94,7 +94,6 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 				className={classNames(
 					'bp3-button',
 					'bp3-minimal',
-					'formatting-bar-button',
 					isActive && 'bp3-active',
 					isSmall && 'bp3-small',
 					disabled && 'bp3-disabled',

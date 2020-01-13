@@ -1,23 +1,34 @@
 import { useState } from 'react';
 
-const attrsHaveChanges = (oldAttrs, newAttrs) => {
-	return Object.keys(newAttrs).some((key) => newAttrs[key] !== oldAttrs[key]);
+const attrsHaveChanges = (oldAttrs, newAttrs, keys) => {
+	return keys.some((key) => newAttrs[key] !== oldAttrs[key]);
 };
 
 export const usePendingAttrs = ({ selectedNode, updateNode }) => {
-	const [attrs, setAttrs] = useState({});
+	const [attrs, setAttrs] = useState(selectedNode && selectedNode.attrs);
+	const [pendingKeys, setPendingKeys] = useState([]);
 
 	if (!selectedNode) {
 		return null;
 	}
 
-	const hasPendingChanges = attrsHaveChanges(selectedNode.attrs, attrs);
+	const hasPendingChanges = attrsHaveChanges(selectedNode.attrs, attrs, pendingKeys);
 
 	const commitChanges = () => {
 		updateNode(attrs);
+		setPendingKeys([]);
 	};
 
 	const updateAttrs = (nextAttrs) => {
+		Object.keys(nextAttrs).forEach((possiblyNewKey) => {
+			const nextKeys = [];
+			if (!pendingKeys.includes(possiblyNewKey)) {
+				nextKeys.push(possiblyNewKey);
+			}
+			if (nextKeys.length > 0) {
+				setPendingKeys([...pendingKeys, ...nextKeys]);
+			}
+		});
 		setAttrs((prevAttrs) => ({ ...prevAttrs, ...nextAttrs }));
 	};
 

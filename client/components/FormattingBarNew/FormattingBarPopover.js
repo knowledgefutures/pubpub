@@ -21,7 +21,6 @@ const FormattingBarPopover = (props) => {
 	} = props;
 	const [capturesFocus, setCapturesFocus] = useState(trapFocusOnMount);
 	const pendingAttrs = usePendingAttrs(editorChangeObject);
-	const hasSeenMouseDownOutside = useRef(false);
 	const showCloseButton = !floatingPosition;
 
 	const commitChanges = useCallback(() => {
@@ -38,7 +37,6 @@ const FormattingBarPopover = (props) => {
 	const focusTrap = useFocusTrap({
 		isActive: capturesFocus,
 		onMouseDownOutside: (evt) => {
-			hasSeenMouseDownOutside.current = true;
 			evt.stopPropagation();
 			evt.preventDefault();
 		},
@@ -48,10 +46,8 @@ const FormattingBarPopover = (props) => {
 		},
 		onClickOutside: (evt) => {
 			evt.stopPropagation();
-			if (hasSeenMouseDownOutside.current) {
-				handleClose();
-				setEditorSelectionFromClick(editorChangeObject, evt);
-			}
+			handleClose();
+			setEditorSelectionFromClick(editorChangeObject, evt);
 		},
 	});
 

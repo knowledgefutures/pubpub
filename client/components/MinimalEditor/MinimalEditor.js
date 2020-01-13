@@ -41,7 +41,8 @@ const MinimalEditor = (props) => {
 		if (focusOnLoad && changeObject.view) {
 			changeObject.view.focus();
 		}
-	}, [focusOnLoad, changeObject.view]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		// TODO(ian):

@@ -51,7 +51,7 @@ const MinimalEditor = (props) => {
 		// will be fixed in an upcoming version of Webpack:
 		// https://github.com/webpack/webpack/issues/10104
 		// eslint-disable-next-line global-require
-		Promise.resolve(require('../FormattingBarNew')).then(
+		Promise.resolve(require('../FormattingBar')).then(
 			({ buttons, FormattingBar: FormattingBarComponent }) => {
 				setFormattingBar(() => (innerProps) => (
 					<FormattingBarComponent {...innerProps} buttons={buttons.minimalButtonSet} />

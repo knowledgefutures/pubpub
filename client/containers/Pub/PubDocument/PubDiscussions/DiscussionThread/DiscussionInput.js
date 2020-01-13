@@ -8,8 +8,10 @@ import Editor, {
 	getLocalHighlightText,
 } from '@pubpub/editor';
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
+
+import { Avatar } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import { Avatar, FormattingBar } from 'components';
+import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 import { apiFetch } from 'utils';
 
 const propTypes = {
@@ -139,7 +141,7 @@ const DiscussionInput = (props) => {
 							}}
 						/>
 					</div>
-					<FormattingBar
+					<FormattingBarLegacy
 						editorChangeObject={changeObject || {}}
 						showBlockTypes={false}
 						isSmall={true}

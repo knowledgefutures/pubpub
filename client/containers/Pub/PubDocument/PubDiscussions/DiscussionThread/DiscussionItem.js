@@ -5,7 +5,8 @@ import classNames from 'classnames';
 import Editor, { getText, getJSON } from '@pubpub/editor';
 import { Button, Intent, Tooltip } from '@blueprintjs/core';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import { Avatar, Icon, FormattingBar } from 'components';
+import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
+import { Avatar, Icon } from 'components';
 import { apiFetch } from 'utils';
 import LabelSelect from './LabelSelect';
 import DiscussionReanchor from './DiscussionReanchor';
@@ -195,7 +196,7 @@ const DiscussionItem = (props) => {
 				)}
 				{isEditing && (
 					<React.Fragment>
-						<FormattingBar
+						<FormattingBarLegacy
 							editorChangeObject={changeObject || {}}
 							showBlockTypes={false}
 							isSmall={true}

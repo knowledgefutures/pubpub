@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 
 import { usePageContext } from 'containers/Pub/pubHooks';
+import { useRefMap } from '../../utils/useRefMap';
 
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
@@ -119,6 +120,7 @@ const FormattingBar = (props) => {
 	} = props;
 	const { menuItems, insertFunctions, view } = editorChangeObject;
 	const { communityData } = usePageContext();
+	const buttonElementRefs = useRefMap();
 	const toolbar = useToolbarState({ loop: true });
 	const {
 		indicatedButtons,
@@ -174,6 +176,18 @@ const FormattingBar = (props) => {
 		return () => document.removeEventListener('keydown', handler, options);
 	}, [indicatedButtons, openedButton, setOpenedButton]);
 
+	useEffect(() => {
+		if (openedButton) {
+			const ref = buttonElementRefs.get(openedButton.key);
+			if (ref && ref.current && typeof ref.current.scrollIntoView === 'function') {
+				const buttonElement = ref.current;
+				const paddingPx = 5;
+				buttonElement.parentNode.scrollLeft = buttonElement.offsetLeft - paddingPx;
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [openedButton]);
+
 	const handlePopoverClose = useCallback(() => {
 		setOpenedButton(null);
 	}, [setOpenedButton]);
@@ -191,6 +205,7 @@ const FormattingBar = (props) => {
 		return (
 			<ToolbarItem
 				{...toolbar}
+				outerRef={buttonElementRefs.get(button.key)}
 				as={button.component || FormattingBarButton}
 				key={button.key}
 				formattingItem={button}

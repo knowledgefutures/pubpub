@@ -67,11 +67,13 @@ const FormattingBarButton = React.forwardRef((props, ref) => {
 		label,
 		onClick,
 		accentColor,
+		outerRef,
 		...restProps
 	} = props;
 
 	return (
 		<span
+			ref={outerRef}
 			className={classNames(
 				'formatting-bar-button',
 				isOpen && 'open',

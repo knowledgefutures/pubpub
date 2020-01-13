@@ -5,17 +5,19 @@ const attrsHaveChanges = (oldAttrs, newAttrs) => {
 };
 
 export const usePendingAttrs = ({ selectedNode, updateNode }) => {
-	const [attrs, setAttrs] = useState(selectedNode && selectedNode.attrs);
+	const [attrs, setAttrs] = useState({});
+
 	if (!selectedNode) {
 		return null;
 	}
+
 	const hasPendingChanges = attrsHaveChanges(selectedNode.attrs, attrs);
 
 	const commitChanges = () => {
 		updateNode(attrs);
 	};
 
-	const handleUpdateAttrs = (nextAttrs) => {
+	const updateAttrs = (nextAttrs) => {
 		setAttrs((prevAttrs) => ({ ...prevAttrs, ...nextAttrs }));
 	};
 
@@ -23,6 +25,6 @@ export const usePendingAttrs = ({ selectedNode, updateNode }) => {
 		commitChanges: commitChanges,
 		hasPendingChanges: hasPendingChanges,
 		attrs: attrs,
-		updateAttrs: handleUpdateAttrs,
+		updateAttrs: updateAttrs,
 	};
 };

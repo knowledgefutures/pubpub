@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import stickybits from 'stickybits';
 
-import { FormattingBar, buttons } from 'components/FormattingBarNew';
+import { FormattingBar, buttons } from 'components/FormattingBar';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
 
 require('./pubHeaderFormatting.scss');

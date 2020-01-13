@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { storiesOf } from '@storybook/react';
-import { FormattingBar, buttons } from 'components/FormattingBarNew';
+import { FormattingBar, buttons } from 'components/FormattingBar';
 
 import Editor from '@pubpub/editor';
 import { plainDoc, fullDoc } from 'data';

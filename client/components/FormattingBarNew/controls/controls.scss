@@ -191,6 +191,12 @@
     min-height: 200px;
     max-width: 1200px;
 
+    .latex {
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    }
+
     .preview {
         overflow-y: scroll;
         flex-grow: 1;

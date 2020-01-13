@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
@@ -19,6 +19,7 @@ const FormattingBarPopover = (props) => {
 		trapFocusOnMount,
 		editorChangeObject,
 	} = props;
+	const [initialEditorState] = useState(editorChangeObject.view.state);
 	const [capturesFocus, setCapturesFocus] = useState(trapFocusOnMount);
 	const pendingAttrs = usePendingAttrs(editorChangeObject);
 	const showCloseButton = !floatingPosition;
@@ -33,6 +34,10 @@ const FormattingBarPopover = (props) => {
 		commitChanges();
 		onClose();
 	}, [commitChanges, onClose]);
+
+	const restoreSelection = useCallback(() => {
+		
+	});
 
 	const focusTrap = useFocusTrap({
 		isActive: capturesFocus,

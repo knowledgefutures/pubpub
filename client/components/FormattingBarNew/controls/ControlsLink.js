@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDebounce } from 'use-debounce';
+import { cursor } from '@pubpub/editor';
 import { Button, AnchorButton, InputGroup } from '@blueprintjs/core';
 
 const ControlsLink = (props) => {
 	const {
-		editorChangeObject: { activeLink },
+		editorChangeObject: { activeLink, view },
 		onClose,
 	} = props;
 
@@ -21,10 +22,16 @@ const ControlsLink = (props) => {
 		}
 	}, []);
 
+	const restoreSelection = useCallback(() => {
+		view.focus();
+		cursor.moveToEndOfSelection(view);
+	}, [view]);
+
 	const handleKeyPress = (evt) => {
 		if (evt.key === 'Enter') {
 			activeLink.updateAttrs({ href: href });
 			onClose();
+			setTimeout(restoreSelection, 0);
 		}
 	};
 

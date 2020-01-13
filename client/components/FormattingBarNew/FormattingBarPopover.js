@@ -19,7 +19,6 @@ const FormattingBarPopover = (props) => {
 		trapFocusOnMount,
 		editorChangeObject,
 	} = props;
-	const [initialEditorState] = useState(editorChangeObject.view.state);
 	const [capturesFocus, setCapturesFocus] = useState(trapFocusOnMount);
 	const pendingAttrs = usePendingAttrs(editorChangeObject);
 	const showCloseButton = !floatingPosition;
@@ -34,10 +33,6 @@ const FormattingBarPopover = (props) => {
 		commitChanges();
 		onClose();
 	}, [commitChanges, onClose]);
-
-	const restoreSelection = useCallback(() => {
-		
-	});
 
 	const focusTrap = useFocusTrap({
 		isActive: capturesFocus,

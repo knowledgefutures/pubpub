@@ -16,6 +16,7 @@ const nodeControls = (component, indicatedNodeType) => {
 		? indicatedNodeType
 		: [indicatedNodeType];
 	return {
+		showCloseButton: true,
 		enterKeyTriggers: true,
 		trapFocusOnMount: false,
 		component: component,

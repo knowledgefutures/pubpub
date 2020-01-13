@@ -18,10 +18,10 @@ const FormattingBarPopover = (props) => {
 		containerRef,
 		trapFocusOnMount,
 		editorChangeObject,
+		showCloseButton,
 	} = props;
 	const [capturesFocus, setCapturesFocus] = useState(trapFocusOnMount);
 	const pendingAttrs = usePendingAttrs(editorChangeObject);
-	const showCloseButton = !floatingPosition;
 
 	const commitChanges = useCallback(() => {
 		if (pendingAttrs) {

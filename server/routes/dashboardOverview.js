@@ -1,6 +1,5 @@
 import React from 'react';
 import Promise from 'bluebird';
-import { DashboardOverview } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -36,23 +35,18 @@ app.get(
 				return Promise.all([initialData, getOverviewData(initialData)]);
 			})
 			.then(([initialData, overviewData]) => {
-				const inputData = {
-					...initialData,
-					overviewData: overviewData,
-				};
 				return renderToNodeStream(
 					res,
 					<Html
 						chunkName="DashboardOverview"
-						initialData={inputData}
+						initialData={initialData}
+						viewData={{ overviewData: overviewData }}
 						headerComponents={generateMetaComponents({
 							initialData: initialData,
 							title: `Overview · ${initialData.scopeData.activeTarget.title}`,
 							unlisted: true,
 						})}
-					>
-						<DashboardOverview {...inputData} />
-					</Html>,
+					/>,
 				);
 			})
 			.catch(handleErrors(req, res, next));

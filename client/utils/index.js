@@ -1,6 +1,7 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { remove as removeDiacritics } from 'diacritics';
 import { PageContext } from 'utils/hooks';
+import Icon from 'components/Icon/Icon';
 import { setIsProd, isProd } from './isProd';
 
 export { hydrateWrapper } from './hydrateWrapper';
@@ -441,4 +442,39 @@ export const getEmbedType = (input) => {
 		}
 		return prev;
 	}, null);
+};
+
+export const generateSocialItems = (communityData) => {
+	return [
+		{
+			id: 'si-0',
+			icon: <Icon icon="globe" />,
+			title: 'Website',
+			value: communityData.website,
+			url: communityData.website,
+		},
+		{
+			id: 'si-1',
+			icon: <Icon icon="twitter" />,
+			title: 'Twitter',
+			value: communityData.twitter,
+			url: `https://twitter.com/${communityData.twitter}`,
+		},
+		{
+			id: 'si-2',
+			icon: <Icon icon="facebook" />,
+			title: 'Facebook',
+			value: communityData.facebook,
+			url: `https://facebook.com/${communityData.facebook}`,
+		},
+		{
+			id: 'si-3',
+			icon: <Icon icon="envelope" />,
+			title: 'Contact',
+			value: communityData.email,
+			url: `mailto:${communityData.email}`,
+		},
+	].filter((item) => {
+		return item.value;
+	});
 };

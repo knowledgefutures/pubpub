@@ -1,33 +1,31 @@
 #user-create-container {
-	.page-content {
-		.container {
-			padding: 2em 0em;
+	.container {
+		padding: 2em 0em;
+	}
+	form {
+		margin-top: 40px;
+		font-size: 1.25em;
+	}
+	.bp3-non-ideal-state {
+		padding-top: 2em;
+		.success p {
+			font-size: 1em;
+			line-height: 1.5;
+			margin: 0px;
 		}
-		form {
-			margin-top: 40px;
-			font-size: 1.25em;
+	}
+	.bp3-button-group {
+		display: block;
+	}
+	.bp3-button.expandable .bp3-icon:first-child:last-child {
+		margin: 0px 5px 0px 0px;
+	}
+	.bp3-callout {
+		.bp3-label {
+			font-weight: bold;
 		}
-		.bp3-non-ideal-state {
-			padding-top: 2em;
-			.success p {
-				font-size: 1em;
-				line-height: 1.5;
-				margin: 0px;
-			}
-		}
-		.bp3-button-group {
-			display: block;
-		}
-		.bp3-button.expandable .bp3-icon:first-child:last-child {
-			margin: 0px 5px 0px 0px;
-		}
-		.bp3-callout {
-			.bp3-label {
-				font-weight: bold;
-			}
-			.notice {
-				font-size: 12px;
-			}
+		.notice {
+			font-size: 12px;
 		}
 	}
 }

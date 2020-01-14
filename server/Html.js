@@ -1,38 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import App from 'containers/App/App';
 
-let manifest;
-try {
-	/* eslint-disable-next-line global-require, import/no-unresolved */
-	manifest = require('../dist/manifest.json');
-} catch (err) {
-	// No Manifest file. Must be dev mode.
-}
+const manifest = require('../dist/manifest.json');
 
 const propTypes = {
-	children: PropTypes.node.isRequired,
 	chunkName: PropTypes.string.isRequired,
 	initialData: PropTypes.object.isRequired,
+	viewData: PropTypes.object,
 	headerComponents: PropTypes.array.isRequired,
+};
+
+const defaultProps = {
+	viewData: {},
 };
 
 const Html = (props) => {
 	const getPath = (chunkName, extension) => {
-		let manifestUrl = manifest
-			? `${manifest[`${chunkName}.${extension}`]}`
-			: `${chunkName}.${extension}`;
-
-		/* If we're on a hosted dev server, remove the static path */
-		/* Note that fonts will still be sourced from static.pubpub */
-		/* so if viewing those needs to be tested, the webpack config */
-		/* needs to change. */
-
-		/* TODO: Uncomment when v6 is live */
-		// if (!props.initialData.locationData.isPubPubProduction) {
-		manifestUrl = manifestUrl.replace('https://static.pubpub.org', '');
-		// }
-
-		return manifestUrl;
+		return `${manifest[`${chunkName}.${extension}`]}`;
 	};
 
 	return (
@@ -48,9 +33,8 @@ const Html = (props) => {
 					name="google-site-verification"
 					content="jmmJFnkSOeIEuS54adOzGMwc0kwpsa8wQ-L4GyPpPDg"
 				/>
-				<link rel="stylesheet" type="text/css" href={getPath('baseStyle', 'css')} />
 				<link rel="stylesheet" type="text/css" href={getPath('vendor', 'css')} />
-				<link rel="stylesheet" type="text/css" href={getPath(props.chunkName, 'css')} />
+				<link rel="stylesheet" type="text/css" href={getPath('main', 'css')} />
 				<link
 					rel="search"
 					type="application/opensearchdescription+xml"
@@ -59,7 +43,13 @@ const Html = (props) => {
 				/>
 			</head>
 			<body>
-				<div id="root">{props.children}</div>
+				<div id="root">
+					<App
+						initialData={props.initialData}
+						viewData={props.viewData}
+						chunkName={props.chunkName}
+					/>
+				</div>
 				<script
 					crossOrigin="anonymous"
 					src="https://polyfill.io/v3/polyfill.min.js?features=default,fetch,HTMLCanvasElement.prototype.toBlob,Object.entries,Object.values,URL,Promise,Object.assign,Number.isNaN,String.prototype.includes"
@@ -69,12 +59,23 @@ const Html = (props) => {
 					type="text/plain"
 					data-json={JSON.stringify(props.initialData)}
 				/>
+				<script
+					id="view-data"
+					type="text/plain"
+					data-json={JSON.stringify(props.viewData)}
+				/>
+				<script
+					id="chunk-name"
+					type="text/plain"
+					data-json={JSON.stringify(props.chunkName)}
+				/>
 				<script src={getPath('vendor', 'js')} />
-				<script src={getPath(props.chunkName, 'js')} />
+				<script src={getPath('main', 'js')} />
 			</body>
 		</html>
 	);
 };
 
 Html.propTypes = propTypes;
+Html.defaultProps = defaultProps;
 export default Html;

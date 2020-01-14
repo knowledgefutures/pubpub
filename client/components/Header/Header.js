@@ -205,19 +205,21 @@ const Header = () => {
 								text="Manage"
 							/>
 						) */}
-						<MenuButton
-							aria-label="Dashboard Menu"
-							placement="top-end"
-							menuStyle={{ zIndex: 20 }}
-							buttonProps={{
-								minimal: true,
-								large: true,
-								rightIcon: 'caret-down',
-							}}
-							buttonContent="Dashboard"
-						>
-							<ScopeDropdown />
-						</MenuButton>
+						{!isBasePubPub && (
+							<MenuButton
+								aria-label="Dashboard Menu"
+								placement="top-end"
+								menuStyle={{ zIndex: 20 }}
+								buttonProps={{
+									minimal: true,
+									large: true,
+									rightIcon: 'caret-down',
+								}}
+								buttonContent="Dashboard"
+							>
+								<ScopeDropdown />
+							</MenuButton>
+						)}
 						{loggedIn && (
 							<MenuButton
 								aria-label="User menu"

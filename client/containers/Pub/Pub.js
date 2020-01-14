@@ -1,7 +1,5 @@
 import React from 'react';
-import PageWrapper from 'components/PageWrapper/PageWrapper';
-import { hydrateWrapper } from 'utils';
-import { communityDataProps, locationDataProps, loginDataProps } from 'types/base';
+import { usePageContext } from 'utils/hooks';
 import { pubDataProps } from 'types/pub';
 import PubSyncManager from './PubSyncManager';
 import PubHeader from './PubHeader';
@@ -17,68 +15,52 @@ import { PubSuspendWhileTypingProvider, PubSuspendWhileTyping } from './PubSuspe
 require('./pub.scss');
 
 const propTypes = {
-	communityData: communityDataProps.isRequired,
-	loginData: loginDataProps.isRequired,
-	locationData: locationDataProps.isRequired,
-	scopeData: locationDataProps.isRequired,
 	pubData: pubDataProps.isRequired,
 };
 
 const Pub = (props) => {
+	const { locationData, loginData, communityData } = usePageContext();
 	return (
 		<PubSuspendWhileTypingProvider>
 			<div id="pub-container">
-				<PageWrapper
-					locationData={props.locationData}
-					communityData={props.communityData}
-					loginData={props.loginData}
-					scopeData={props.scopeData}
+				<PubSyncManager
+					pubData={props.pubData}
+					locationData={locationData}
+					communityData={communityData}
+					loginData={loginData}
 				>
-					<PubSyncManager
-						pubData={props.pubData}
-						locationData={props.locationData}
-						communityData={props.communityData}
-						loginData={props.loginData}
-					>
-						{({
-							pubData,
-							collabData,
-							firebaseBranchRef,
-							updateLocalData,
-							historyData,
-						}) => {
-							const mode = pubData.mode;
-							const modeProps = {
-								pubData: pubData,
-								collabData: collabData,
-								historyData: historyData,
-								firebaseBranchRef: firebaseBranchRef,
-								updateLocalData: updateLocalData,
-							};
-							return (
-								<React.Fragment>
-									<PubSuspendWhileTyping delay={1000}>
-										{() => (
-											<PubHeader
-												pubData={pubData}
-												updateLocalData={updateLocalData}
-												collabData={collabData}
-												historyData={historyData}
-											/>
-										)}
-									</PubSuspendWhileTyping>
-									{mode === 'document' && <PubDocument {...modeProps} />}
-									{mode === 'manage' && <PubManage {...modeProps} />}
-									{mode === 'merge' && <PubMerge {...modeProps} />}
-									{mode === 'review' && <PubReview {...modeProps} />}
-									{mode === 'reviews' && <PubReviews {...modeProps} />}
-									{mode === 'reviewCreate' && <PubReviewCreate {...modeProps} />}
-									{mode === 'branchCreate' && <PubBranchCreate {...modeProps} />}
-								</React.Fragment>
-							);
-						}}
-					</PubSyncManager>
-				</PageWrapper>
+					{({ pubData, collabData, firebaseBranchRef, updateLocalData, historyData }) => {
+						const mode = pubData.mode;
+						const modeProps = {
+							pubData: pubData,
+							collabData: collabData,
+							historyData: historyData,
+							firebaseBranchRef: firebaseBranchRef,
+							updateLocalData: updateLocalData,
+						};
+						return (
+							<React.Fragment>
+								<PubSuspendWhileTyping delay={1000}>
+									{() => (
+										<PubHeader
+											pubData={pubData}
+											updateLocalData={updateLocalData}
+											collabData={collabData}
+											historyData={historyData}
+										/>
+									)}
+								</PubSuspendWhileTyping>
+								{mode === 'document' && <PubDocument {...modeProps} />}
+								{mode === 'manage' && <PubManage {...modeProps} />}
+								{mode === 'merge' && <PubMerge {...modeProps} />}
+								{mode === 'review' && <PubReview {...modeProps} />}
+								{mode === 'reviews' && <PubReviews {...modeProps} />}
+								{mode === 'reviewCreate' && <PubReviewCreate {...modeProps} />}
+								{mode === 'branchCreate' && <PubBranchCreate {...modeProps} />}
+							</React.Fragment>
+						);
+					}}
+				</PubSyncManager>
 			</div>
 		</PubSuspendWhileTypingProvider>
 	);
@@ -86,5 +68,3 @@ const Pub = (props) => {
 
 Pub.propTypes = propTypes;
 export default Pub;
-
-hydrateWrapper(Pub);

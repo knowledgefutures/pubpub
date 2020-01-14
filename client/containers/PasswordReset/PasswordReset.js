@@ -1,194 +1,172 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 import { AnchorButton, Button, NonIdealState } from '@blueprintjs/core';
-import { GridWrapper, InputField, PageWrapper } from 'components';
-import { hydrateWrapper, apiFetch } from 'utils';
+import { GridWrapper, InputField } from 'components';
+import { apiFetch } from 'utils';
+import { usePageContext } from 'utils/hooks';
 
 require('./passwordReset.scss');
 
 const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	loginData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
 	passwordResetData: PropTypes.object.isRequired,
 };
 
-class PasswordReset extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			email: '',
-			password: '',
-			showConfirmation: false,
-		};
-		this.onEmailChange = this.onEmailChange.bind(this);
-		this.onPasswordChange = this.onPasswordChange.bind(this);
-		this.handlePostPasswordReset = this.handlePostPasswordReset.bind(this);
-		this.handlePutPasswordReset = this.handlePutPasswordReset.bind(this);
-	}
+const PasswordReset = (props) => {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [showConfirmation, setShowConfirmation] = useState(false);
+	const [postIsLoading, setPostIsLoading] = useState(false);
+	const [postError, setPostError] = useState(undefined);
+	const [putIsLoading, setPutIsLoading] = useState(false);
+	const [putError, setPutError] = useState(undefined);
+	const { passwordResetData } = props;
+	const { locationData } = usePageContext();
 
-	onEmailChange(evt) {
-		this.setState({ email: evt.target.value });
-	}
+	const onEmailChange = (evt) => {
+		setEmail(evt.target.value);
+	};
 
-	onPasswordChange(evt) {
-		this.setState({ password: evt.target.value });
-	}
+	const onPasswordChange = (evt) => {
+		setPassword(evt.target.value);
+	};
 
-	handlePostPasswordReset(evt) {
+	const handlePostPasswordReset = (evt) => {
 		evt.preventDefault();
+		setPostIsLoading(true);
 
-		this.setState({ postIsLoading: true });
 		return apiFetch('/api/password-reset', {
 			method: 'POST',
 			body: JSON.stringify({
-				email: this.state.email.toLowerCase(),
+				email: email.toLowerCase(),
 			}),
 		})
 			.then(() => {
-				this.setState({ postIsLoading: false, showConfirmation: true });
+				setPostIsLoading(false);
+				setShowConfirmation(true);
 			})
 			.catch(() => {
-				this.setState({ postIsLoading: false, postError: 'Error' });
+				setPostIsLoading(false);
+				setPostError('Error');
 			});
-	}
+	};
 
-	handlePutPasswordReset(evt) {
+	const handlePutPasswordReset = (evt) => {
 		evt.preventDefault();
+		setPutIsLoading(true);
 
-		this.setState({ putIsLoading: true });
 		return apiFetch('/api/password-reset', {
 			method: 'PUT',
 			body: JSON.stringify({
-				password: SHA3(this.state.password).toString(encHex),
-				slug: this.props.locationData.params.slug,
-				resetHash: this.props.locationData.params.resetHash,
+				password: SHA3(password).toString(encHex),
+				slug: locationData.params.slug,
+				resetHash: locationData.params.resetHash,
 			}),
 		})
 			.then(() => {
-				this.setState({ putIsLoading: false, showConfirmation: true });
+				setPutIsLoading(false);
+				setShowConfirmation(true);
 			})
 			.catch(() => {
-				this.setState({ putIsLoading: false, putError: 'Error' });
+				setPutIsLoading(false);
+				setPutError('Error');
 			});
-	}
+	};
+	const resetHash = locationData.params.resetHash;
 
-	render() {
-		const resetHash = this.props.locationData.params.resetHash;
-		return (
-			<div id="password-reset-container">
-				<PageWrapper
-					loginData={this.props.loginData}
-					communityData={this.props.communityData}
-					locationData={this.props.locationData}
-					hideNav={true}
-					hideFooter={true}
-				>
-					<GridWrapper containerClassName="small">
-						{!this.state.showConfirmation && !resetHash && <h1>Reset Password</h1>}
-						{!this.state.showConfirmation && !!resetHash && <h1>Set Password</h1>}
+	return (
+		<div id="password-reset-container">
+			<GridWrapper containerClassName="small">
+				{!showConfirmation && !resetHash && <h1>Reset Password</h1>}
+				{!showConfirmation && !!resetHash && <h1>Set Password</h1>}
 
-						{/* Show form to submit email */}
-						{!resetHash && !this.state.showConfirmation && (
-							<form onSubmit={this.handlePostPasswordReset}>
-								<p>
-									Enter your email and a link to reset your password will be sent
-									to you.
-								</p>
-								<InputField
-									label="Email"
-									type="email"
-									placeholder="example@email.com"
-									value={this.state.email}
-									onChange={this.onEmailChange}
-								/>
-								<InputField
-									error={this.state.postError && 'Error Resetting Password'}
-								>
-									<Button
-										name="create"
-										type="submit"
-										className="bp3-button bp3-intent-primary create-account-button"
-										onClick={this.handlePostPasswordReset}
-										text="Reset Password"
-										disabled={!this.state.email}
-										loading={this.state.postIsLoading}
-									/>
-								</InputField>
-							</form>
-						)}
-
-						{/* Show password reset request confirmation, with directions to check email  */}
-						{!resetHash && this.state.showConfirmation && (
-							<NonIdealState
-								description="Check your inbox for an email with a reset link"
-								title="Reset Password Email Sent"
-								visual="envelope"
+				{/* Show form to submit email */}
+				{!resetHash && !showConfirmation && (
+					<form onSubmit={handlePostPasswordReset}>
+						<p>
+							Enter your email and a link to reset your password will be sent to you.
+						</p>
+						<InputField
+							label="Email"
+							type="email"
+							placeholder="example@email.com"
+							value={email}
+							onChange={onEmailChange}
+						/>
+						<InputField error={postError && 'Error Resetting Password'}>
+							<Button
+								name="create"
+								type="submit"
+								className="bp3-button bp3-intent-primary create-account-button"
+								onClick={handlePostPasswordReset}
+								text="Reset Password"
+								disabled={!email}
+								loading={postIsLoading}
 							/>
-						)}
+						</InputField>
+					</form>
+				)}
 
-						{/* Show Error message if invalid hash */}
-						{resetHash && !this.props.passwordResetData.hashIsValid && (
-							<div className="bp3-callout bp3-intent-danger">
-								Invalid hash. Try{' '}
-								<a href="/password-reset">resetting your password</a> again.
-							</div>
-						)}
+				{/* Show password reset request confirmation, with directions to check email  */}
+				{!resetHash && showConfirmation && (
+					<NonIdealState
+						description="Check your inbox for an email with a reset link"
+						title="Reset Password Email Sent"
+						visual="envelope"
+					/>
+				)}
 
-						{/* Show form to submit new password */}
-						{resetHash &&
-							this.props.passwordResetData.hashIsValid &&
-							!this.state.showConfirmation && (
-								<form onSubmit={this.handlePutPasswordReset}>
-									<InputField
-										label="Password"
-										type="password"
-										value={this.state.password}
-										onChange={this.onPasswordChange}
-									/>
-									<InputField
-										error={this.state.putError && 'Error Resetting Password'}
-									>
-										<Button
-											name="create"
-											type="submit"
-											className="bp3-button bp3-intent-primary create-account-button"
-											onClick={this.handlePutPasswordReset}
-											text="Set New Password"
-											disabled={!this.state.password}
-											loading={this.state.putIsLoading}
-										/>
-									</InputField>
-								</form>
-							)}
+				{/* Show Error message if invalid hash */}
+				{resetHash && !passwordResetData.hashIsValid && (
+					<div className="bp3-callout bp3-intent-danger">
+						Invalid hash. Try <a href="/password-reset">resetting your password</a>{' '}
+						again.
+					</div>
+				)}
 
-						{/* Show confirmation of password reset. Link to Login */}
-						{resetHash &&
-							this.props.passwordResetData.hashIsValid &&
-							this.state.showConfirmation && (
-								<NonIdealState
-									description="Your password has been successfully changed."
-									title="Reset Password Successful"
-									visual="tick"
-									action={
-										<AnchorButton
-											href="/login"
-											className="bp3-intent-primary bp3-large"
-											text="Login with new password"
-										/>
-									}
-								/>
-							)}
-					</GridWrapper>
-				</PageWrapper>
-			</div>
-		);
-	}
-}
+				{/* Show form to submit new password */}
+				{resetHash && passwordResetData.hashIsValid && !showConfirmation && (
+					<form onSubmit={handlePutPasswordReset}>
+						<InputField
+							label="Password"
+							type="password"
+							value={password}
+							onChange={onPasswordChange}
+						/>
+						<InputField error={putError && 'Error Resetting Password'}>
+							<Button
+								name="create"
+								type="submit"
+								className="bp3-button bp3-intent-primary create-account-button"
+								onClick={handlePutPasswordReset}
+								text="Set New Password"
+								disabled={!password}
+								loading={putIsLoading}
+							/>
+						</InputField>
+					</form>
+				)}
+
+				{/* Show confirmation of password reset. Link to Login */}
+				{resetHash && passwordResetData.hashIsValid && showConfirmation && (
+					<NonIdealState
+						description="Your password has been successfully changed."
+						title="Reset Password Successful"
+						visual="tick"
+						action={
+							<AnchorButton
+								href="/login"
+								className="bp3-intent-primary bp3-large"
+								text="Login with new password"
+							/>
+						}
+					/>
+				)}
+			</GridWrapper>
+		</div>
+	);
+};
 
 PasswordReset.propTypes = propTypes;
 export default PasswordReset;
-
-hydrateWrapper(PasswordReset);

@@ -1,5 +1,4 @@
 import React from 'react';
-import { CommunityCreate } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -26,9 +25,7 @@ app.get('/community/create', (req, res, next) => {
 						initialData: initialData,
 						title: 'Create New Community · PubPub',
 					})}
-				>
-					<CommunityCreate {...initialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

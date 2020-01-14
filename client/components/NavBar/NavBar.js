@@ -1,23 +1,23 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import { GridWrapper } from 'components';
 import Icon from 'components/Icon/Icon';
 import { Menu, MenuItem } from 'components/Menu';
+import { populateNavigationIds, generateSocialItems } from 'utils';
+import { usePageContext } from 'utils/hooks';
 
 require('./navBar.scss');
 
-const propTypes = {
-	navItems: PropTypes.array.isRequired,
-	socialItems: PropTypes.array.isRequired,
-};
-
-const NavBar = function(props) {
+const NavBar = function() {
+	const { communityData } = usePageContext();
+	const pages = communityData.pages || [];
+	const navigation = communityData.navigation || [];
+	const navItems = populateNavigationIds(pages, navigation);
+	const socialItems = generateSocialItems(communityData);
 	return (
 		<nav className="nav-bar-component accent-background accent-color">
 			<GridWrapper>
 				<ul className="nav-list">
-					{props.navItems
+					{navItems
 						.filter((item) => {
 							return !!item;
 						})
@@ -61,9 +61,9 @@ const NavBar = function(props) {
 							);
 						})}
 				</ul>
-				{!!props.socialItems.length && (
+				{!!socialItems.length && (
 					<ul className="social-list">
-						{props.socialItems.map((item) => {
+						{socialItems.map((item) => {
 							return (
 								<a
 									href={item.url}
@@ -81,5 +81,4 @@ const NavBar = function(props) {
 	);
 };
 
-NavBar.propTypes = propTypes;
 export default NavBar;

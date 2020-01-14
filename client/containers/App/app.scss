@@ -1,4 +1,4 @@
-#page-wrapper-component {
+#app {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
@@ -35,7 +35,7 @@
 				width: calc(100% - 32px);
 			}
 		}
-		.side-content {
+		.side-menu-component {
 			width: $side-menu-width;
 			border-right: 1px solid #ddd;
 			position: fixed;

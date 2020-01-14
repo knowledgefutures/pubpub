@@ -27,7 +27,10 @@ export const hydrateWrapper = (Component) => {
 
 		const initialData = getClientInitialData();
 		setIsProd(initialData.locationData.isPubPubProduction);
-
+		const viewData = JSON.parse(document.getElementById('view-data').getAttribute('data-json'));
+		const chunkName = JSON.parse(
+			document.getElementById('chunk-name').getAttribute('data-json'),
+		);
 		if (!isLocalEnv(window)) {
 			setupKeen();
 			window.sentryIsActive = true;
@@ -38,6 +41,9 @@ export const hydrateWrapper = (Component) => {
 			});
 		}
 
-		hydrate(<Component {...initialData} />, document.getElementById('root'));
+		hydrate(
+			<Component initialData={initialData} viewData={viewData} chunkName={chunkName} />,
+			document.getElementById('root'),
+		);
 	}
 };

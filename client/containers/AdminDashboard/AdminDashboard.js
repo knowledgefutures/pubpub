@@ -1,16 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { PageWrapper, GridWrapper } from 'components';
-import { apiFetch, hydrateWrapper } from 'utils';
+import { GridWrapper } from 'components';
+import { apiFetch } from 'utils';
 import Chart from './Chart';
 
 require('./adminDashboard.scss');
-
-const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	loginData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
-};
 
 class AdminDashboard extends React.Component {
 	constructor(props) {
@@ -39,40 +32,23 @@ class AdminDashboard extends React.Component {
 	render() {
 		return (
 			<div id="dashboard-container">
-				<PageWrapper
-					loginData={this.props.loginData}
-					communityData={this.props.communityData}
-					locationData={this.props.locationData}
-					hideNav={true}
-					hideFooter={true}
-				>
-					<GridWrapper>
-						<h1>Admin Dashboard</h1>
-						{!this.state.isLoading && (
-							<div>
-								<Chart data={this.state.pubPubData.users} title="Users" />
-								<Chart
-									data={this.state.pubPubData.communities}
-									title="Communities"
-								/>
-								<Chart
-									data={this.state.pubPubData.discussions}
-									title="Discussions"
-								/>
-								<Chart
-									data={this.state.pubPubData.subscribers}
-									title="Newsletter Subscribers"
-								/>
-							</div>
-						)}
-					</GridWrapper>
-				</PageWrapper>
+				<GridWrapper>
+					<h1>Admin Dashboard</h1>
+					{!this.state.isLoading && (
+						<div>
+							<Chart data={this.state.pubPubData.users} title="Users" />
+							<Chart data={this.state.pubPubData.communities} title="Communities" />
+							<Chart data={this.state.pubPubData.discussions} title="Discussions" />
+							<Chart
+								data={this.state.pubPubData.subscribers}
+								title="Newsletter Subscribers"
+							/>
+						</div>
+					)}
+				</GridWrapper>
 			</div>
 		);
 	}
 }
 
-AdminDashboard.propTypes = propTypes;
 export default AdminDashboard;
-
-hydrateWrapper(AdminDashboard);

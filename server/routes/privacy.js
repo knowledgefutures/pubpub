@@ -1,5 +1,4 @@
 import React from 'react';
-import { Privacy } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
@@ -19,9 +18,7 @@ app.get('/privacy/:tab', (req, res, next) => {
 						title: `Privacy · ${initialData.communityData.title}`,
 						description: initialData.communityData.description,
 					})}
-				>
-					<Privacy {...initialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

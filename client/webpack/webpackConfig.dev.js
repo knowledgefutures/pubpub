@@ -1,28 +1,12 @@
 const { resolve } = require('path');
-const { readdirSync } = require('fs');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const autoprefixer = require('autoprefixer');
 
-const containerEntries = readdirSync(resolve(__dirname, '../containers'))
-	.filter((item) => {
-		if (item === '.DS_Store' || item === 'index.js') {
-			return false;
-		}
-		return true;
-	})
-	.reduce((prev, curr) => {
-		return {
-			...prev,
-			[curr]: resolve(__dirname, `../containers/${curr}/${curr}`),
-		};
-	}, {});
-
 module.exports = {
 	mode: 'development',
 	entry: {
-		...containerEntries,
-		baseStyle: resolve(__dirname, '../styles/base.scss'),
+		main: resolve(__dirname, `../containers/App/App.js`),
 	},
 	resolve: {
 		modules: [resolve(__dirname, '../'), 'node_modules'],
@@ -94,7 +78,9 @@ module.exports = {
 		new MiniCssExtractPlugin({
 			filename: '[name].css',
 		}),
-		new ManifestPlugin({ publicPath: '/dist/' }),
+		new ManifestPlugin({
+			publicPath: '/dist/',
+		}),
 	],
 	optimization: {
 		splitChunks: {

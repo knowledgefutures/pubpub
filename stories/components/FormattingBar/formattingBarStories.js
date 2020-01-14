@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react';
 import { FormattingBar, buttons } from 'components/FormattingBar';
 
 import Editor from '@pubpub/editor';
-import { plainDoc, fullDoc } from 'data';
+import { fullDoc } from 'data';
 
 class EditorUnit extends Component {
 	static propTypes = {

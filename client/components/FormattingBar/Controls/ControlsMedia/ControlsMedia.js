@@ -10,6 +10,7 @@ import SourceControls from './SourceControls';
 
 const propTypes = {
 	isSmall: PropTypes.bool.isRequired,
+	pendingAttrs: PropTypes.object.isRequired,
 	editorChangeObject: PropTypes.shape({
 		updateNode: PropTypes.func.isRequired,
 		selectedNode: PropTypes.shape({

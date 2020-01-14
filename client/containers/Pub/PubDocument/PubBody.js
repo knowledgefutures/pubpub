@@ -8,7 +8,6 @@ import Editor, { getJSON, getNotes } from '@pubpub/editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
-import debounce from 'debounce';
 
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
@@ -25,6 +24,7 @@ const propTypes = {
 	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
+	editorWrapperRef: PropTypes.any.isRequired,
 };
 const defaultProps = {
 	firebaseBranchRef: undefined,

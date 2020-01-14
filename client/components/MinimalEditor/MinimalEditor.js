@@ -6,21 +6,23 @@ import Editor, { getText, getJSON } from '@pubpub/editor';
 require('./minimalEditor.scss');
 
 const propTypes = {
-	initialContent: PropTypes.object,
-	onChange: PropTypes.func,
-	useFormattingBar: PropTypes.bool,
+	constrainHeight: PropTypes.bool,
 	focusOnLoad: PropTypes.bool,
-	placeholder: PropTypes.string,
+	initialContent: PropTypes.object,
 	isTranslucent: PropTypes.bool,
+	onChange: PropTypes.func,
+	placeholder: PropTypes.string,
+	useFormattingBar: PropTypes.bool,
 };
 
 const defaultProps = {
-	initialContent: undefined,
-	onChange: () => {},
-	useFormattingBar: false,
+	constrainHeight: false,
 	focusOnLoad: false,
-	placeholder: undefined,
+	initialContent: undefined,
 	isTranslucent: false,
+	onChange: () => {},
+	placeholder: undefined,
+	useFormattingBar: false,
 };
 
 const MinimalEditor = (props) => {

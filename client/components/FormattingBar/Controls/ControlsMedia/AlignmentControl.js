@@ -5,6 +5,12 @@ import { Radio, RadioGroup, useRadioState } from 'reakit';
 
 import { Icon } from 'components';
 
+const propTypes = {
+	onChange: PropTypes.func.isRequired,
+	isSmall: PropTypes.bool.isRequired,
+	value: PropTypes.string.isRequired,
+};
+
 const alignOptions = [
 	{ key: 'left', icon: 'align-left' },
 	{ key: 'center', icon: 'align-center' },
@@ -46,10 +52,5 @@ const AlignmentControl = (props) => {
 	);
 };
 
-AlignmentControl.propTypes = {
-	onChange: PropTypes.func.isRequired,
-	isSmall: PropTypes.bool.isRequired,
-	value: PropTypes.string.isRequired,
-};
-
+AlignmentControl.propTypes = propTypes;
 export default AlignmentControl;

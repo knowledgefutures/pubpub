@@ -6,6 +6,19 @@ import uuid from 'uuid';
 import { Icon } from 'components';
 import { s3Upload } from 'utils';
 
+const propTypes = {
+	updateNode: PropTypes.func.isRequired,
+	isSmall: PropTypes.bool.isRequired,
+	selectedNode: PropTypes.shape({
+		type: PropTypes.shape({
+			name: PropTypes.string.isRequired,
+		}).isRequired,
+		attrs: PropTypes.shape({
+			url: PropTypes.string.isRequired,
+		}),
+	}).isRequired,
+};
+
 const SourceControls = (props) => {
 	const { isSmall, selectedNode, updateNode } = props;
 	const { attrs } = selectedNode;
@@ -84,17 +97,5 @@ const SourceControls = (props) => {
 	);
 };
 
-SourceControls.propTypes = {
-	updateNode: PropTypes.func.isRequired,
-	isSmall: PropTypes.bool.isRequired,
-	selectedNode: PropTypes.shape({
-		type: PropTypes.shape({
-			name: PropTypes.string.isRequired,
-		}).isRequired,
-		attrs: PropTypes.shape({
-			url: PropTypes.string.isRequired,
-		}),
-	}).isRequired,
-};
-
+SourceControls.propTypes = propTypes;
 export default SourceControls;

@@ -1,8 +1,18 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 import { Button } from '@blueprintjs/core';
 
 import CommandMenu from '../CommandMenu';
+
+const propTypes = {
+	editorChangeObject: PropTypes.shape({
+		view: PropTypes.shape({
+			dom: PropTypes.object,
+		}),
+	}).isRequired,
+	onClose: PropTypes.func.isRequired,
+};
 
 const rowCommands = [
 	{ key: 'table-add-row-before', title: 'Add row before', icon: 'add-row-top' },
@@ -27,7 +37,7 @@ const buttonCommands = [
 
 const ControlsTable = (props) => {
 	const { editorChangeObject, onClose } = props;
-	const { menuItems = [], view } = editorChangeObject;
+	const { view } = editorChangeObject;
 	const toolbar = useToolbarState({ loop: true });
 
 	// eslint-disable-next-line react/prop-types
@@ -45,10 +55,9 @@ const ControlsTable = (props) => {
 	};
 
 	useEffect(() => {
-		const { view } = editorChangeObject;
 		view.dom.addEventListener('keydown', onClose);
 		return () => view.dom.removeEventListener('keydown', onClose);
-	}, [editorChangeObject, onClose]);
+	}, [view, onClose]);
 
 	return (
 		<Toolbar {...toolbar} className="controls-table-component" aria-label="Table options">
@@ -64,4 +73,5 @@ const ControlsTable = (props) => {
 	);
 };
 
+ControlsTable.propTypes = propTypes;
 export default ControlsTable;

@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { useDebounce } from 'use-debounce';
 import { cursor } from '@pubpub/editor';
 import { Button, AnchorButton, InputGroup } from '@blueprintjs/core';
+
+const propTypes = {
+	editorChangeObject: PropTypes.shape({
+		activeLink: PropTypes.object,
+		view: PropTypes.object,
+	}).isRequired,
+	onClose: PropTypes.func.isRequired,
+};
 
 const ControlsLink = (props) => {
 	const {
@@ -50,4 +59,5 @@ const ControlsLink = (props) => {
 	);
 };
 
+ControlsLink.propTypes = propTypes;
 export default ControlsLink;

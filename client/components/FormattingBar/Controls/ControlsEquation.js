@@ -11,6 +11,7 @@ require('./controls.scss');
 
 const propTypes = {
 	onClose: PropTypes.func.isRequired,
+	pendingAttrs: PropTypes.object.isRequired,
 	editorChangeObject: PropTypes.shape({
 		changeNode: PropTypes.func.isRequired,
 		updateNode: PropTypes.func.isRequired,

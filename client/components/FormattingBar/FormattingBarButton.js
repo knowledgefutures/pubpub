@@ -13,21 +13,27 @@ const propTypes = {
 		isToggle: PropTypes.bool,
 		icon: PropTypes.string.isRequired,
 	}).isRequired,
+	disabled: PropTypes.bool,
 	isActive: PropTypes.bool,
+	isDetached: PropTypes.bool,
 	isIndicated: PropTypes.bool,
 	isOpen: PropTypes.bool,
 	isSmall: PropTypes.bool,
 	label: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
+	outerRef: PropTypes.any,
 };
 
 const defaultProps = {
 	accentColor: 'white',
+	disabled: false,
 	label: null,
 	isActive: false,
 	isIndicated: false,
 	isOpen: false,
 	isSmall: false,
+	isDetached: false,
+	outerRef: undefined,
 };
 
 const getOuterStyle = (accentColor, isOpen, isDetached) => {

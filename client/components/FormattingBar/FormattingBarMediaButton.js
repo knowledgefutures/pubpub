@@ -12,6 +12,7 @@ const propTypes = {
 	}).isRequired,
 	isIndicated: PropTypes.bool.isRequired,
 	isSmall: PropTypes.bool.isRequired,
+	isOpen: PropTypes.bool.isRequired,
 	onClick: PropTypes.func.isRequired,
 };
 

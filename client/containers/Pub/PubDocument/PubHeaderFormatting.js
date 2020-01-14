@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import stickybits from 'stickybits';
 
@@ -10,6 +10,7 @@ require('./pubHeaderFormatting.scss');
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
+	editorWrapperRef: PropTypes.any.isRequired,
 };
 
 const PubHeaderFormatting = (props) => {

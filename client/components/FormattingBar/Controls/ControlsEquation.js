@@ -74,7 +74,7 @@ const ControlsEquation = (props) => {
 
 	return (
 		<div className="controls-equation-component">
-			<div className="section" key="structured">
+			<div className="section">
 				<textarea
 					className="latex"
 					placeholder="Enter LaTeX"
@@ -83,7 +83,7 @@ const ControlsEquation = (props) => {
 				/>
 			</div>
 			{html && (
-				<div className="section preview">
+				<div className="section">
 					<div className="title">Preview</div>
 					<div className="preview" dangerouslySetInnerHTML={{ __html: html }} />
 					<ControlsButtonGroup>

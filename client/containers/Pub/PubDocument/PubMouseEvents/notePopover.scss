@@ -1,3 +1,11 @@
 .note-popover-component {
 	max-width: 350px;	
+	.bp3-card {
+		padding: 10px;
+		.pub-note-content-component {
+			span > p:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
 }

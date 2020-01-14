@@ -24,6 +24,15 @@ const getDoiLogin = (communityId) => {
 	if (communityId === '3d9ea6a4-25b9-42d3-8ceb-22459c649096') {
 		return { login: IASTATE_DOI_LOGIN_ID, password: IASTATE_DOI_LOGIN_PASSWORD };
 	}
+	if (communityId === '25c2cfeb-dc5b-4dd7-9c82-19146688a931') {
+		return { login: AAS_DOI_LOGIN_ID, password: AAS_DOI_LOGIN_PASSWORD };
+	}
+	if (
+		communityId === '3f8575cb-cdf7-48bb-8985-f4eee1b6c624' ||
+		communityId === 'd895a0ea-f471-4730-9c4a-3d5de1733ccb'
+	) {
+		return { login: MEDIASTUDIES_DOI_LOGIN_ID, password: MEDIASTUDIES_DOI_LOGIN_PASSWORD };
+	}
 	return { login: DOI_LOGIN_ID, password: DOI_LOGIN_PASSWORD };
 	if (communityId === '25c2cfeb-dc5b-4dd7-9c82-19146688a931') {
 		return { login: AAS_DOI_LOGIN_ID, password: AAS_DOI_LOGIN_PASSWORD };

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { PageWrapper } from 'components';
-import { hydrateWrapper, getDefaultLayout, generateRenderLists } from 'utils';
+import { getDefaultLayout, generateRenderLists } from 'utils';
+import { usePageContext } from 'utils/hooks';
 import LayoutPubs from './LayoutPubs';
 import LayoutHtml from './LayoutHtml';
 import LayoutBanner from './LayoutBanner';
@@ -12,17 +12,14 @@ import LayoutPages from './LayoutPages';
 require('./page.scss');
 
 const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	loginData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
-	scopeData: PropTypes.object.isRequired,
 	pageData: PropTypes.object.isRequired,
 };
 
 const Page = (props) => {
+	const { locationData, communityData, loginData } = usePageContext();
 	const pageData = props.pageData;
-	const slug = props.locationData.params.slug;
-	const title = props.communityData.pages.reduce((prev, curr) => {
+	const slug = locationData.params.slug;
+	const title = communityData.pages.reduce((prev, curr) => {
 		if (curr.slug === '' && slug === undefined) {
 			return curr.title;
 		}
@@ -42,61 +39,52 @@ const Page = (props) => {
 			id="page-container"
 			className={classNames({
 				narrow: pageData.isNarrowWidth,
-				ultrawide: props.locationData.query.display === 'ultrawide',
+				ultrawide: locationData.query.display === 'ultrawide',
 			})}
 		>
-			<PageWrapper
-				loginData={props.loginData}
-				communityData={props.communityData}
-				locationData={props.locationData}
-				scopeData={props.scopeData}
-			>
-				{layout.map((item, index) => {
-					const validType =
-						['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
-					if (!validType) {
-						return null;
-					}
-					return (
-						<div key={`block-${item.id}`} className="component-wrapper">
-							{item.type === 'pubs' && (
-								<LayoutPubs
-									key={`item-${item.id}`}
-									content={item.content}
-									pubRenderList={pubRenderLists[index]}
-								/>
-							)}
-							{item.type === 'text' && (
-								<LayoutText key={`item-${item.id}`} content={item.content} />
-							)}
-							{item.type === 'html' && (
-								<LayoutHtml key={`item-${item.id}`} content={item.content} />
-							)}
-							{item.type === 'banner' && (
-								<LayoutBanner
-									key={`item-${item.id}`}
-									content={item.content}
-									communityData={props.communityData}
-									loginData={props.loginData}
-									locationData={props.locationData}
-								/>
-							)}
-							{item.type === 'pages' && (
-								<LayoutPages
-									key={`item-${item.id}`}
-									content={item.content}
-									pages={props.communityData.pages}
-								/>
-							)}
-						</div>
-					);
-				})}
-			</PageWrapper>
+			{layout.map((item, index) => {
+				const validType =
+					['pubs', 'text', 'html', 'banner', 'pages'].indexOf(item.type) > -1;
+				if (!validType) {
+					return null;
+				}
+				return (
+					<div key={`block-${item.id}`} className="component-wrapper">
+						{item.type === 'pubs' && (
+							<LayoutPubs
+								key={`item-${item.id}`}
+								content={item.content}
+								pubRenderList={pubRenderLists[index]}
+							/>
+						)}
+						{item.type === 'text' && (
+							<LayoutText key={`item-${item.id}`} content={item.content} />
+						)}
+						{item.type === 'html' && (
+							<LayoutHtml key={`item-${item.id}`} content={item.content} />
+						)}
+						{item.type === 'banner' && (
+							<LayoutBanner
+								key={`item-${item.id}`}
+								content={item.content}
+								communityData={communityData}
+								loginData={loginData}
+								locationData={locationData}
+							/>
+						)}
+						{item.type === 'pages' && (
+							<LayoutPages
+								key={`item-${item.id}`}
+								content={item.content}
+								pages={communityData.pages}
+							/>
+						)}
+					</div>
+				);
+			})}
 		</div>
 	);
 };
 
 Page.propTypes = propTypes;
 export default Page;
-
-hydrateWrapper(Page);

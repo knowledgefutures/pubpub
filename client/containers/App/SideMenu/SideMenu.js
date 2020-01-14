@@ -151,7 +151,7 @@ const SideMenu = () => {
 				dangerouslySetInnerHTML={{
 					__html: `
 						.menu.active:before { background: ${communityData.accentColorDark} }
-						.side-content { background: ${backgroundColor} }
+						.side-menu-component { background: ${backgroundColor} }
 					`,
 				}}
 			/>

@@ -1,385 +1,289 @@
-import React, { Component } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import algoliasearch from 'algoliasearch';
 import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
-import throttle from 'lodash.throttle';
-import { PageWrapper, Icon } from 'components';
-import {
-	hydrateWrapper,
-	getResizedUrl,
-	generatePubBackground,
-	generatePageBackground,
-} from 'utils';
+import { useThrottleFn } from 'react-use';
+import { Icon } from 'components';
+import { getResizedUrl, generatePubBackground, generatePageBackground } from 'utils';
+import { usePageContext } from 'utils/hooks';
 
 require('./search.scss');
 
 const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	loginData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
 	searchData: PropTypes.object.isRequired,
 };
 
-class Search extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			searchQuery: this.props.locationData.query.q || '',
-			searchResults: [],
-			isLoading: this.props.locationData.query.q || false,
-			page: this.props.locationData.query.page
-				? Number(this.props.locationData.query.page) - 1
-				: 0,
-			numPages: 0,
-			mode: this.props.locationData.query.mode || 'pubs',
-		};
-		this.handleSearchChange = this.handleSearchChange.bind(this);
-		this.handleSetPage = this.handleSetPage.bind(this);
-		this.setClient = this.setClient.bind(this);
-		this.setMode = this.setMode.bind(this);
-		this.throttledSearch = throttle(this.handleSearch, 1000, { leading: true, trailing: true });
-		this.inputRef = React.createRef();
+const Search = (props) => {
+	const { searchData } = props;
+	const { locationData, communityData } = usePageContext();
+	const [searchQuery, setSearchQuery] = useState('');
+	const [searchResults, setSearchResults] = useState([]);
+	const [isLoading, setIsLoading] = useState(locationData.query.q || false);
+	const [page, setPage] = useState(
+		locationData.query.page ? Number(locationData.query.page) - 1 : 0,
+	);
+	const [numPages, numPagesSetter] = useState(0);
+	const [mode, modeSetter] = useState(locationData.query.mode || 'pubs');
+	const inputRef = useRef(null);
+	const clientRef = useRef(undefined);
+	const indexRef = useRef(undefined);
 
-		this.client = undefined;
-		this.index = undefined;
-		this.setClient();
-	}
-
-	componentDidMount() {
-		this.inputRef.current.focus();
-		const val = this.inputRef.current.value;
-		this.inputRef.current.value = '';
-		this.inputRef.current.value = val;
-		const query = this.state.searchQuery;
-		if (query) {
-			this.setState({ isLoading: !!query, searchQuery: query }, () => {
-				const queryString = query ? `?q=${query}` : '';
-				const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-				const modeString =
-					this.state.mode !== 'pubs'
-						? `${queryString ? '&' : '?'}mode=${this.state.mode}`
-						: '';
-				window.history.replaceState(
-					{},
-					'',
-					`/search${queryString}${pageString}${modeString}`,
-				);
-				this.throttledSearch();
-			});
-		}
-	}
-
-	setClient() {
+	const setClient = () => {
 		const allowedModes = ['pubs', 'pages'];
-		if (allowedModes.indexOf(this.state.mode) > -1) {
+		if (allowedModes.indexOf(mode) > -1) {
 			let key;
-			if (this.state.mode === 'pubs') {
-				key = this.props.searchData.pubsSearchKey;
+			if (mode === 'pubs') {
+				key = searchData.pubsSearchKey;
 			}
-			if (this.state.mode === 'pages') {
-				key = this.props.searchData.pagesSearchKey;
+			if (mode === 'pages') {
+				key = searchData.pagesSearchKey;
 			}
-			this.client = algoliasearch(this.props.searchData.searchId, key);
-			this.index = this.client.initIndex(this.state.mode);
+			clientRef.current = algoliasearch(searchData.searchId, key);
+			indexRef.current = clientRef.current.initIndex(mode);
 		}
-	}
+	};
 
-	setMode(mode) {
-		if (mode !== this.state.mode) {
-			this.setState(
-				(prevState) => {
-					return {
-						mode: mode,
-						page: 0,
-						searchResults: [],
-						isLoading: !!prevState.searchQuery,
-					};
-				},
-				() => {
-					this.setClient();
-					const queryString = this.state.searchQuery
-						? `?q=${this.state.searchQuery}`
-						: '';
-					const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-					const modeString =
-						this.state.mode !== 'pubs'
-							? `${queryString ? '&' : '?'}mode=${this.state.mode}`
-							: '';
-					window.history.replaceState(
-						{},
-						'',
-						`/search${queryString}${pageString}${modeString}`,
-					);
-					this.throttledSearch();
-				},
-			);
-		}
-	}
-
-	handleSearchChange(evt) {
-		const query = evt.target.value;
-		this.setState({ isLoading: !!query, searchQuery: query, page: 0 }, () => {
-			const queryString = query ? `?q=${query}` : '';
-			const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-			const modeString =
-				this.state.mode !== 'pubs'
-					? `${queryString ? '&' : '?'}mode=${this.state.mode}`
-					: '';
-			window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
-			this.throttledSearch();
-		});
-	}
-
-	handleSetPage(pageIndex) {
-		this.setState(
-			(prevState) => {
-				return {
-					isLoading: pageIndex !== prevState.page,
-					page: pageIndex,
-					searchResults: [],
-				};
-			},
-			() => {
-				const queryString = this.state.searchQuery ? `?q=${this.state.searchQuery}` : '';
-				const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-				const modeString =
-					this.state.mode !== 'pubs'
-						? `${queryString ? '&' : '?'}mode=${this.state.mode}`
-						: '';
-				window.history.replaceState(
-					{},
-					'',
-					`/search${queryString}${pageString}${modeString}`,
-				);
-				window.scrollTo(0, 0);
-				this.throttledSearch();
-			},
-		);
-	}
-
-	handleSearch() {
-		if (this.state.searchQuery) {
-			this.index
+	const handleSearch = () => {
+		if (searchQuery) {
+			indexRef.current
 				.search({
-					query: this.state.searchQuery,
-					page: this.state.page,
+					query: searchQuery,
+					page: page,
 				})
 				.then((results) => {
-					this.setState({
-						isLoading: false,
-						searchResults: results.hits,
-						numPages: Math.min(results.nbPages, 10),
-					});
+					setIsLoading(false);
+					setSearchResults(results.hits);
+					numPagesSetter(Math.min(results.nbPages, 10));
 				});
 		}
-	}
+	};
 
-	render() {
-		// const searchData = this.props.searchData;
-		const pages = new Array(this.state.numPages).fill('');
-		const queryString = this.state.searchQuery ? `?q=${this.state.searchQuery}` : '';
-		const pageString = this.state.page ? `&page=${this.state.page + 1}` : '';
-		const modeString =
-			this.state.mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${this.state.mode}` : '';
-		const searchString = `/search${queryString}${pageString}${modeString}`;
-		return (
-			<div id="search-container">
-				<PageWrapper
-					loginData={this.props.loginData}
-					communityData={this.props.communityData}
-					locationData={this.props.locationData}
-					hideNav={this.props.locationData.isBasePubPub}
-					hideFooter={true}
-				>
-					<div className="container narrow">
-						<div className="row">
-							<div className="col-12">
-								<div className="search-header">
-									<h2>Search {this.props.communityData.title}</h2>
-									{!this.props.locationData.isBasePubPub && (
-										<a href={`https://www.pubpub.org${searchString}`}>
-											Search all PubPub Communities
-										</a>
-									)}
-								</div>
-								<InputGroup
-									placeholder="search..."
-									value={this.state.searchQuery}
-									onChange={this.handleSearchChange}
-									rightElement={this.state.isLoading && <Spinner size={35} />}
-									inputRef={this.inputRef}
-								/>
-							</div>
+	useThrottleFn(handleSearch, 1000, [searchQuery, page, mode]);
+	useEffect(() => {
+		setClient();
+		inputRef.current.focus();
+		const val = inputRef.current.value;
+		inputRef.current.value = '';
+		inputRef.current.value = val;
+		const query = locationData.query.q;
+		if (query) {
+			setIsLoading(!!query);
+			setSearchQuery(query);
+			const queryString = query ? `?q=${query}` : '';
+			const pageString = page ? `&page=${page + 1}` : '';
+			const modeString = mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${mode}` : '';
+			window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
+		}
+	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
+
+	const setMode = (nextMode) => {
+		if (nextMode !== mode) {
+			modeSetter(nextMode);
+			setPage(0);
+			setSearchResults([]);
+			setIsLoading(!!searchQuery);
+			setClient();
+			const queryString = searchQuery ? `?q=${searchQuery}` : '';
+			const pageString = page ? `&page=${page + 1}` : '';
+			const modeString = mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${mode}` : '';
+			window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
+		}
+	};
+
+	const handleSearchChange = (evt) => {
+		const query = evt.target.value;
+		setIsLoading(!!query);
+		setSearchQuery(query);
+		setPage(0);
+		const queryString = query ? `?q=${query}` : '';
+		const pageString = page ? `&page=${page + 1}` : '';
+		const modeString = mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${mode}` : '';
+		window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
+	};
+
+	const handleSetPage = (pageIndex) => {
+		setIsLoading(pageIndex !== page);
+		setPage(pageIndex);
+		setSearchResults([]);
+		const queryString = searchQuery ? `?q=${searchQuery}` : '';
+		const pageString = page ? `&page=${page + 1}` : '';
+		const modeString = mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${mode}` : '';
+		window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
+		window.scrollTo(0, 0);
+	};
+
+	const pages = new Array(numPages).fill('');
+	const queryString = searchQuery ? `?q=${searchQuery}` : '';
+	const pageString = page ? `&page=${page + 1}` : '';
+	const modeString = mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${mode}` : '';
+	const searchString = `/search${queryString}${pageString}${modeString}`;
+	return (
+		<div id="search-container">
+			<div className="container narrow">
+				<div className="row">
+					<div className="col-12">
+						<div className="search-header">
+							<h2>Search {communityData.title}</h2>
+							{!locationData.isBasePubPub && (
+								<a href={`https://www.pubpub.org${searchString}`}>
+									Search all PubPub Communities
+								</a>
+							)}
 						</div>
-						<div className="row">
-							<div className="col-12">
-								<Tabs
-									onChange={this.setMode}
-									selectedTabId={this.state.mode}
-									large={true}
-									animate={false}
-								>
-									<Tab id="pubs" title="Pubs" />
-									<Tab id="pages" title="Pages" />
-								</Tabs>
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-12">
-								{!this.state.searchResults.length &&
-									this.state.searchQuery &&
-									!this.state.isLoading && (
-										<NonIdealState title="No Results" visual="search" />
-									)}
-								{!!this.state.searchResults.length && (
-									<div>
-										{this.state.searchResults.map((item) => {
-											let link;
-											let bannerStyle;
-											let keyId;
-											let isPublic;
-											const resizedBannerImage = getResizedUrl(
-												item.avatar,
-												'fit-in',
-												'800x0',
-											);
-											const resizedCommunityLogo = getResizedUrl(
-												item.communityAvatar,
-												'fit-in',
-												'125x35',
-											);
+						<InputGroup
+							placeholder="search..."
+							value={searchQuery}
+							onChange={handleSearchChange}
+							rightElement={isLoading && <Spinner size={35} />}
+							inputRef={inputRef}
+						/>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-12">
+						<Tabs onChange={setMode} selectedTabId={mode} large={true} animate={false}>
+							<Tab id="pubs" title="Pubs" />
+							<Tab id="pages" title="Pages" />
+						</Tabs>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-12">
+						{!searchResults.length && searchQuery && !isLoading && (
+							<NonIdealState title="No Results" visual="search" />
+						)}
+						{!!searchResults.length && (
+							<div>
+								{searchResults.map((item) => {
+									let link;
+									let bannerStyle;
+									let keyId;
+									let isPublic;
+									const resizedBannerImage = getResizedUrl(
+										item.avatar,
+										'fit-in',
+										'800x0',
+									);
+									const resizedCommunityLogo = getResizedUrl(
+										item.communityAvatar,
+										'fit-in',
+										'125x35',
+									);
 
-											if (this.state.mode === 'pubs') {
-												link = `https://${item.communityDomain}/pub/${item.slug}`;
-												bannerStyle = item.avatar
-													? {
-															backgroundImage: `url("${resizedBannerImage}")`,
-													  }
-													: {
-															background: generatePubBackground(
-																item.title,
-															),
-													  };
-												keyId = item.pubId;
-												isPublic = item.branchIsPublic;
-											}
-											if (this.state.mode === 'pages') {
-												link = `https://${item.communityDomain}/${item.slug}`;
-												bannerStyle = item.avatar
-													? {
-															backgroundImage: `url("${resizedBannerImage}")`,
-													  }
-													: {
-															background: generatePageBackground(
-																item.title,
-															),
-													  };
-												keyId = item.pageId;
-												isPublic = item.isPublic;
-											}
+									if (mode === 'pubs') {
+										link = `https://${item.communityDomain}/pub/${item.slug}`;
+										bannerStyle = item.avatar
+											? {
+													backgroundImage: `url("${resizedBannerImage}")`,
+											  }
+											: {
+													background: generatePubBackground(item.title),
+											  };
+										keyId = item.pubId;
+										isPublic = item.branchIsPublic;
+									}
+									if (mode === 'pages') {
+										link = `https://${item.communityDomain}/${item.slug}`;
+										bannerStyle = item.avatar
+											? {
+													backgroundImage: `url("${resizedBannerImage}")`,
+											  }
+											: {
+													background: generatePageBackground(item.title),
+											  };
+										keyId = item.pageId;
+										isPublic = item.isPublic;
+									}
 
-											return (
-												<div
-													className={`result ${this.state.mode}`}
-													key={`result-${keyId}`}
-												>
-													<div>
-														<a href={link} alt={item.title}>
-															<div
-																className="banner-image"
-																style={bannerStyle}
-															/>
-														</a>
-													</div>
-													<div className="content">
-														<div className="title">
+									return (
+										<div className={`result ${mode}`} key={`result-${keyId}`}>
+											<div>
+												<a href={link} alt={item.title}>
+													<div
+														className="banner-image"
+														style={bannerStyle}
+													/>
+												</a>
+											</div>
+											<div className="content">
+												<div className="title">
+													<a
+														href={link}
+														alt={item.title}
+														className="pub-title"
+													>
+														{item.title}
+														{!isPublic && <Icon icon="lock2" />}
+													</a>
+													{locationData.isBasePubPub && (
+														<div className="community-title">
 															<a
-																href={link}
-																alt={item.title}
-																className="pub-title"
+																href={`https://${item.communityDomain}`}
+																alt={item.communityTitle}
+																style={{
+																	backgroundColor:
+																		item.communityColor,
+																	color: item.communityTextColor,
+																}}
 															>
-																{item.title}
-																{!isPublic && <Icon icon="lock2" />}
-															</a>
-															{this.props.locationData
-																.isBasePubPub && (
-																<div className="community-title">
-																	<a
-																		href={`https://${item.communityDomain}`}
-																		alt={item.communityTitle}
-																		style={{
-																			backgroundColor:
-																				item.communityColor,
-																			color:
-																				item.communityTextColor,
-																		}}
-																	>
-																		{resizedCommunityLogo && (
-																			<img
-																				alt={`${item.communityTitle} logo`}
-																				src={
-																					resizedCommunityLogo
-																				}
-																			/>
-																		)}
-																		{!resizedCommunityLogo && (
-																			<span>
-																				{
-																					item.communityTitle
-																				}
-																			</span>
-																		)}
-																	</a>
-																</div>
-															)}
-														</div>
-														{this.state.mode === 'pubs' && (
-															<div className="byline">
-																{dateFormat(
-																	item.branchCreatedAt,
-																	'mmm dd, yyyy',
+																{resizedCommunityLogo && (
+																	<img
+																		alt={`${item.communityTitle} logo`}
+																		src={resizedCommunityLogo}
+																	/>
 																)}
-																{item.byline && <span> · </span>}
-																{item.byline}
-															</div>
-														)}
-														<div className="description">
-															{item.description}
+																{!resizedCommunityLogo && (
+																	<span>
+																		{item.communityTitle}
+																	</span>
+																)}
+															</a>
 														</div>
-													</div>
+													)}
 												</div>
+												{mode === 'pubs' && (
+													<div className="byline">
+														{dateFormat(
+															item.branchCreatedAt,
+															'mmm dd, yyyy',
+														)}
+														{item.byline && <span> · </span>}
+														{item.byline}
+													</div>
+												)}
+												<div className="description">
+													{item.description}
+												</div>
+											</div>
+										</div>
+									);
+								})}
+								{numPages > 1 && (
+									<div className="bp3-button-group bp3-large">
+										{pages.map((pageItem, index) => {
+											const key = `page-button-${index}`;
+											return (
+												<Button
+													key={key}
+													text={index + 1}
+													active={index === pageItem}
+													onClick={() => {
+														handleSetPage(index);
+													}}
+												/>
 											);
 										})}
-										{this.state.numPages > 1 && (
-											<div className="bp3-button-group bp3-large">
-												{pages.map((page, index) => {
-													const key = `page-button-${index}`;
-													return (
-														<Button
-															key={key}
-															text={index + 1}
-															active={index === this.state.page}
-															onClick={() => {
-																this.handleSetPage(index);
-															}}
-														/>
-													);
-												})}
-											</div>
-										)}
 									</div>
 								)}
 							</div>
-						</div>
+						)}
 					</div>
-				</PageWrapper>
+				</div>
 			</div>
-		);
-	}
-}
+		</div>
+	);
+};
 
 Search.propTypes = propTypes;
 export default Search;
-
-hydrateWrapper(Search);

@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
 import React from 'react';
-import { Explore } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { Community } from '../models';
@@ -39,23 +38,18 @@ app.get('/explore', (req, res, next) => {
 
 	return Promise.all([getInitialData(req), getActiveCommunities])
 		.then(([initialData, activeCommunitiesData]) => {
-			const newInitialData = {
-				...initialData,
-				exploreData: { activeCommunities: activeCommunitiesData },
-			};
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="Explore"
-					initialData={newInitialData}
+					initialData={initialData}
+					viewData={{ exploreData: { activeCommunities: activeCommunitiesData } }}
 					headerComponents={generateMetaComponents({
-						initialData: newInitialData,
+						initialData: initialData,
 						title: 'Explore · PubPub',
 						description: 'Explore the active communities built on PubPub.',
 					})}
-				>
-					<Explore {...newInitialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

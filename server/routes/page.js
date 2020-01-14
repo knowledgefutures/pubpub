@@ -1,6 +1,5 @@
 import React from 'react';
 import Promise from 'bluebird';
-import { Page as PageContainer } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -36,18 +35,15 @@ app.get(['/', '/:slug'], (req, res, next) => {
 			return Promise.all([initialData, findPage(pageId, true, initialData)]);
 		})
 		.then(([initialData, pageData]) => {
-			const newInitialData = {
-				...initialData,
-				pageData: pageData,
-			};
 			const pageTitle = !pageData.slug
-				? newInitialData.communityData.title
-				: `${pageData.title} · ${newInitialData.communityData.title}`;
+				? initialData.communityData.title
+				: `${pageData.title} · ${initialData.communityData.title}`;
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="Page"
-					initialData={newInitialData}
+					initialData={initialData}
+					viewData={{ pageData: pageData }}
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
 						title: pageTitle,
@@ -55,9 +51,7 @@ app.get(['/', '/:slug'], (req, res, next) => {
 						image: pageData.avatar,
 						unlisted: !pageData.isPublic,
 					})}
-				>
-					<PageContainer {...newInitialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

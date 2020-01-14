@@ -1,5 +1,4 @@
 import React from 'react';
-import { Login } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
@@ -17,9 +16,7 @@ app.get('/login', (req, res, next) => {
 						title: `Login · ${initialData.communityData.title}`,
 						description: initialData.communityData.description,
 					})}
-				>
-					<Login {...initialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

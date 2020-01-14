@@ -1,12 +1,11 @@
 #community-create-container {
-	.page-content {
-		padding: 40px 0px;
-		background-repeat: repeat;
-		background-position: center center;
-		background-color: #f9fafb;
-		background-image: url('/static/loginbg.png');
-		min-height: calc(100vh - 56px);
-	}
+	padding: 40px 0px;
+	background-repeat: repeat;
+	background-position: center center;
+	background-color: #f9fafb;
+	background-image: url('/static/loginbg.png');
+	min-height: calc(100vh - 56px);
+
 	.container.small .col-12 {
 		padding: 2em;
 		background: white;
@@ -18,14 +17,6 @@
 		margin-top: 40px;
 		font-size: 1.25em;
 	}
-
-	// .page-content {
-	// 	padding-top: 2em;
-	// }
-	// form {
-	// 	margin-top: 40px;
-	// 	font-size: 1.25em;
-	// }
 	.bp3-non-ideal-state {
 		// margin-top: 20px;
 	}

@@ -18,14 +18,12 @@ $dashboard-surround-spacing: 2em;
 			display: flex;
 			flex-direction: column;
 			height: 100vh;
-			.page-content {
-				flex-grow: 1;
-				.dashboard-columns {
-					height: 100%;
-					margin-top: 0;
-					margin-bottom: 0;
-					padding-bottom: $dashboard-surround-spacing;
-				}
+			flex-grow: 1;
+			.dashboard-columns {
+				height: 100%;
+				margin-top: 0;
+				margin-bottom: 0;
+				padding-bottom: $dashboard-surround-spacing;
 			}
 		}
 	}

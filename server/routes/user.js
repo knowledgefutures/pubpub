@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
 import React from 'react';
-import { User as UserContainer } from 'containers';
 import { isPubPublic } from 'shared/pub/permissions';
 import { formatAndAuthenticatePub } from '../utils/formatPub';
 import Html from '../Html';
@@ -117,24 +116,19 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 				});
 			}
 
-			const newInitialData = {
-				...initialData,
-				userData: userDataJson,
-			};
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="User"
-					initialData={newInitialData}
+					initialData={initialData}
+					viewData={{ userData: userDataJson }}
 					headerComponents={generateMetaComponents({
-						initialData: newInitialData,
+						initialData: initialData,
 						title: `${userDataJson.fullName} · PubPub`,
 						description: userDataJson.bio,
 						image: userDataJson.avatar,
 					})}
-				>
-					<UserContainer {...newInitialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

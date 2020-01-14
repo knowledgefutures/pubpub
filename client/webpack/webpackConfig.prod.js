@@ -1,5 +1,4 @@
 const { resolve } = require('path');
-const { readdirSync } = require('fs');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
@@ -7,25 +6,10 @@ const TerserPlugin = require('terser-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-const containerEntries = readdirSync(resolve(__dirname, '../containers'))
-	.filter((item) => {
-		if (item === '.DS_Store' || item === 'index.js') {
-			return false;
-		}
-		return true;
-	})
-	.reduce((prev, curr) => {
-		return {
-			...prev,
-			[curr]: resolve(__dirname, `../containers/${curr}/${curr}`),
-		};
-	}, {});
-
 module.exports = {
 	mode: 'production',
 	entry: {
-		...containerEntries,
-		baseStyle: resolve(__dirname, '../styles/base.scss'),
+		main: resolve(__dirname, `../containers/App/App.js`),
 	},
 	resolve: {
 		modules: [resolve(__dirname, '../'), 'node_modules'],
@@ -92,7 +76,9 @@ module.exports = {
 		new MiniCssExtractPlugin({
 			filename: '[name].[contenthash].css',
 		}),
-		new ManifestPlugin({ publicPath: 'https://static.pubpub.org/dist/' }),
+		new ManifestPlugin({
+			publicPath: '/dist/',
+		}),
 	],
 	optimization: {
 		minimizer: [
@@ -104,7 +90,7 @@ module.exports = {
 			cacheGroups: {
 				vendors: {
 					// test: /[\\/]node_modules[\\/]/,
-					test: /([\\/]node_modules[\\/]|[\\/]components[\\/])/,
+					test: /([\\/]node_modules[\\/])/,
 					name: 'vendor',
 					chunks: 'all',
 					// minChunks: 2, // This was causing weird vendor.css issues where it wouldn't output.

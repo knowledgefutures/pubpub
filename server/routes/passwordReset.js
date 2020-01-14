@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
 import React from 'react';
-import { PasswordReset } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { User } from '../models';
@@ -24,22 +23,17 @@ app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next
 				hashIsValid = false;
 			}
 
-			const newInitialData = {
-				...initialData,
-				passwordResetData: { hashIsValid: hashIsValid },
-			};
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="PasswordReset"
-					initialData={newInitialData}
+					initialData={initialData}
+					viewData={{ passwordResetData: { hashIsValid: hashIsValid } }}
 					headerComponents={generateMetaComponents({
-						initialData: newInitialData,
+						initialData: initialData,
 						title: 'Password Reset',
 					})}
-				>
-					<PasswordReset {...newInitialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

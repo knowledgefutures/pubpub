@@ -1,7 +1,6 @@
 import Promise from 'bluebird';
 import React from 'react';
 import algoliasearch from 'algoliasearch';
-import { Search } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
@@ -50,27 +49,24 @@ app.get('/search', (req, res, next) => {
 			const pageSearchParams = {
 				filters: `${communityFilter}(isPublic:true${pageCommunityAccessFilterString})`,
 			};
-			const newInitialData = {
-				...initialData,
-				searchData: {
-					searchId: searchId,
-					pubsSearchKey: client.generateSecuredApiKey(searchKey, pubSearchParams),
-					pagesSearchKey: client.generateSecuredApiKey(searchKey, pageSearchParams),
-				},
+			const searchData = {
+				searchId: searchId,
+				pubsSearchKey: client.generateSecuredApiKey(searchKey, pubSearchParams),
+				pagesSearchKey: client.generateSecuredApiKey(searchKey, pageSearchParams),
 			};
+
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="Search"
-					initialData={newInitialData}
+					initialData={initialData}
+					viewData={{ searchData: searchData }}
 					headerComponents={generateMetaComponents({
-						initialData: newInitialData,
+						initialData: initialData,
 						title: `Search · ${initialData.communityData.title}`,
 						description: `Search for pubs in ${initialData.communityData.title}`,
 					})}
-				>
-					<Search {...newInitialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

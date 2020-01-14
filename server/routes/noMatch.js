@@ -1,5 +1,4 @@
 import React from 'react';
-import { NoMatch } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
@@ -18,9 +17,7 @@ app.get('/*', (req, res, next) => {
 						initialData: initialData,
 						title: `Not Found · ${initialData.communityData.title}`,
 					})}
-				>
-					<NoMatch {...initialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

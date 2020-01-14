@@ -65,7 +65,7 @@ export const Menu = (props) => {
 			<RK.Menu
 				aria-label={ariaLabel}
 				as="ul"
-				style={{ zIndex: 1, ...menuStyle }}
+				style={{ zIndex: 20, ...menuStyle }}
 				className={classNames(Classes.MENU, Classes.ELEVATION_1)}
 				unstable_portal={true}
 				{...menu}

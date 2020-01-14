@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 import { Button } from '@blueprintjs/core';
 
@@ -26,7 +26,7 @@ const buttonCommands = [
 ];
 
 const ControlsTable = (props) => {
-	const { editorChangeObject } = props;
+	const { editorChangeObject, onClose } = props;
 	const { menuItems = [], view } = editorChangeObject;
 	const toolbar = useToolbarState({ loop: true });
 
@@ -43,6 +43,12 @@ const ControlsTable = (props) => {
 			/>
 		);
 	};
+
+	useEffect(() => {
+		const { view } = editorChangeObject;
+		view.dom.addEventListener('keydown', onClose);
+		return () => view.dom.removeEventListener('keydown', onClose);
+	}, [editorChangeObject, onClose]);
 
 	return (
 		<Toolbar {...toolbar} className="controls-table-component" aria-label="Table options">

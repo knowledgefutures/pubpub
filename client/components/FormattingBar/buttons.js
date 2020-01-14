@@ -18,7 +18,7 @@ const nodeControls = (component, indicatedNodeType) => {
 	return {
 		showCloseButton: true,
 		enterKeyTriggers: true,
-		trapFocusOnMount: false,
+		captureFocusOnMount: false,
 		component: component,
 		trigger: triggerOnClick,
 		show: (editorChangeObject) => !!editorChangeObject.selectedNode,
@@ -58,7 +58,7 @@ export const link = {
 	icon: 'link',
 	isToggle: true,
 	controls: {
-		trapFocusOnMount: true,
+		captureFocusOnMount: true,
 		component: ControlsLink,
 		indicate: (changeObject) => !!changeObject.activeLink,
 		trigger: (changeObject) => {
@@ -152,7 +152,7 @@ export const table = {
 	title: 'Table',
 	icon: 'th',
 	controls: {
-		trapFocusOnMount: false,
+		captureFocusOnMount: false,
 		indicate: ({ selectionInTable }) => selectionInTable,
 		show: showOrTriggerTable,
 		trigger: showOrTriggerTable,

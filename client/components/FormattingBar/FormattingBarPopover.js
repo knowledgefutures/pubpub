@@ -16,11 +16,11 @@ const FormattingBarPopover = (props) => {
 		isFullScreenWidth,
 		floatingPosition,
 		containerRef,
-		trapFocusOnMount,
+		captureFocusOnMount,
 		editorChangeObject,
 		showCloseButton,
 	} = props;
-	const [capturesFocus, setCapturesFocus] = useState(trapFocusOnMount);
+	const [capturesFocus, setCapturesFocus] = useState(captureFocusOnMount);
 	const pendingAttrs = usePendingAttrs(editorChangeObject);
 
 	const commitChanges = useCallback(() => {

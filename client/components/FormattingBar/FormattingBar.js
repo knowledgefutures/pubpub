@@ -258,12 +258,10 @@ const FormattingBar = (props) => {
 							? controlsPosition
 							: controlsPosition || positionNearSelection
 					}
-					trapFocusOnMount={
-						isFullScreenWidth
-							? openedButton &&
-							  openedButton.controls &&
-							  openedButton.controls.trapFocusOnMount
-							: true
+					captureFocusOnMount={
+						openedButton &&
+						openedButton.controls &&
+						openedButton.controls.captureFocusOnMount
 					}
 					showCloseButton={
 						openedButton &&

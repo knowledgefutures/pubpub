@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
+import { setEditorSelectionFromClick } from '@pubpub/editor';
 
 import { useFocusTrap } from '../../utils/useFocusTrap';
 import { usePendingAttrs } from './usePendingAttrs';
-import { setEditorSelectionFromClick } from './positioning';
 
 const FormattingBarPopover = (props) => {
 	const {
@@ -47,7 +47,7 @@ const FormattingBarPopover = (props) => {
 		onClickOutside: (evt) => {
 			evt.stopPropagation();
 			handleClose();
-			setEditorSelectionFromClick(editorChangeObject, evt);
+			setEditorSelectionFromClick(editorChangeObject.view, evt);
 		},
 	});
 

@@ -15,7 +15,11 @@ export const usePendingAttrs = ({ selectedNode, updateNode }) => {
 	const hasPendingChanges = attrsHaveChanges(selectedNode.attrs, attrs, pendingKeys);
 
 	const commitChanges = () => {
-		updateNode(attrs);
+		const nextAttrs = {};
+		pendingKeys.forEach((key) => {
+			nextAttrs[key] = attrs[key];
+		});
+		updateNode(nextAttrs);
 		setPendingKeys([]);
 	};
 

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 
 import { usePageContext } from 'containers/Pub/pubHooks';
-import { useRefMap } from '../../utils/useRefMap';
+import { useRefMap } from 'utils/useRefMap';
 
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';

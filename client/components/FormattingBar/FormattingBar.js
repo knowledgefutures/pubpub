@@ -103,7 +103,6 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 		openedButton: openedButton,
 		setOpenedButton: setOpenedButton,
 		controlsPosition: controlsPosition,
-		controlsKey: controlsKey,
 		ControlsComponent: controlsComponent,
 	};
 };
@@ -126,7 +125,6 @@ const FormattingBar = (props) => {
 		indicatedButtons,
 		openedButton,
 		setOpenedButton,
-		controlsKey,
 		controlsPosition,
 		ControlsComponent,
 	} = useControlsState(props);
@@ -247,7 +245,6 @@ const FormattingBar = (props) => {
 			{ControlsComponent && (
 				<FormattingBarPopover
 					editorChangeObject={editorChangeObject}
-					key={controlsKey}
 					accentColor={communityData.accentColorDark}
 					button={openedButton}
 					onClose={handlePopoverClose}

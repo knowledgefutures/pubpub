@@ -24,6 +24,10 @@ const rememberScrollPosition = () => {
 	};
 };
 
+const isTargetOutsideOfRoot = (rootElement, target) => {
+	return !rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target));
+};
+
 // This implementation heavily inspired by the wonder-blocks focus trap:
 // https://github.com/Khan/wonder-blocks/blob/master/packages/wonder-blocks-modal/components/focus-trap.js
 export const useFocusTrap = ({
@@ -31,11 +35,13 @@ export const useFocusTrap = ({
 	onEscapeKeyPressed,
 	onClickOutside,
 	isActive,
+	restoreFocusTarget,
 } = {}) => {
 	const [rootElement, setRefElement] = useState(null);
 	const ignoreFocusChanges = useRef(false);
 	const lastNodeFocusedInModal = useRef(null);
 	const lastGoodScrollPosition = useRef(null);
+	const hasSeenMouseDownOutside = useRef(false);
 
 	const tryToFocus = useCallback((node) => {
 		if (node instanceof HTMLElement) {
@@ -139,7 +145,8 @@ export const useFocusTrap = ({
 	const handleGlobalMouseDown = useCallback(
 		(evt) => {
 			const { target } = evt;
-			if (!rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target))) {
+			if (isTargetOutsideOfRoot(rootElement, target)) {
+				hasSeenMouseDownOutside.current = true;
 				if (onMouseDownOutside) {
 					onMouseDownOutside(evt);
 				}
@@ -151,10 +158,12 @@ export const useFocusTrap = ({
 	const handleGlobalClick = useCallback(
 		(evt) => {
 			const { target } = evt;
-			if (!rootElement || (!rootElement.contains(target) && !isChildOfReakitPortal(target))) {
-				if (onClickOutside) {
-					onClickOutside(evt);
-				}
+			if (
+				isTargetOutsideOfRoot(rootElement, target) &&
+				onClickOutside &&
+				hasSeenMouseDownOutside.current
+			) {
+				onClickOutside(evt);
 			}
 		},
 		[onClickOutside, rootElement],
@@ -213,10 +222,10 @@ export const useFocusTrap = ({
 		const previouslyActiveElement = document.activeElement;
 		return () => {
 			const initialScrollPosition = rememberScrollPosition();
-			tryToFocus(previouslyActiveElement);
+			tryToFocus(restoreFocusTarget || previouslyActiveElement);
 			initialScrollPosition.restore();
 		};
-	}, [tryToFocus]);
+	}, [restoreFocusTarget, tryToFocus]);
 
 	return {
 		ref: setRefElement,

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
 import PropTypes from 'prop-types';
 import { useDebounce } from 'use-debounce';
 import { cursor } from '@pubpub/editor';

@@ -36,6 +36,7 @@ const FormattingBarPopover = (props) => {
 
 	const focusTrap = useFocusTrap({
 		isActive: capturesFocus,
+		restoreFocusTarget: editorChangeObject.view.dom,
 		onMouseDownOutside: (evt) => {
 			evt.stopPropagation();
 			evt.preventDefault();

@@ -8,6 +8,7 @@ import Editor, { getJSON, getNotes } from '@pubpub/editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
+import { debounce } from 'debounce';
 
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
@@ -93,7 +94,7 @@ const PubBody = (props) => {
 			if (status === 'saving') {
 				setSavingTimeout = setTimeout(() => {
 					onComplete(nextStatus);
-				}, 50);
+				}, 250);
 			} else {
 				onComplete(nextStatus);
 				setLastSavedTime(Date.now());
@@ -213,11 +214,11 @@ const PubBody = (props) => {
 								firebaseRef: firebaseBranchRef,
 								clientData: props.collabData.localCollabUser,
 								initialDocKey: pubData.initialDocKey,
-								onStatusChange: (status) => {
+								onStatusChange: debounce((status) => {
 									getNextStatus(status, (nextStatus) => {
 										props.updateLocalData('collab', nextStatus);
 									});
-								},
+								}, 250),
 								onUpdateLatestKey: (latestKey) => {
 									props.updateLocalData('history', {
 										latestKey: latestKey,

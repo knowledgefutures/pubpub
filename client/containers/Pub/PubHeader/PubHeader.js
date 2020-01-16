@@ -187,9 +187,6 @@ const PubHeader = (props) => {
 				});
 			},
 		},
-		// TODO(ian): re-enable these once we have something to put there
-		// { title: 'Metrics', icon: 'timeline-bar-chart', key: 'metrics' },
-		// { title: 'Discussions', icon: 'chat', key: 'discussions' },
 	];
 
 	const accentColor =
@@ -197,15 +194,6 @@ const PubHeader = (props) => {
 			? communityData.accentColorDark
 			: communityData.accentColorLight;
 	const headerStyleClassName = (isDocMode && pubData.headerStyle) || '';
-	// const submissionButtons = generateSubmissionButtons(pubData);
-
-	// const pubDate =
-	// 	(historyData && historyData.timestamps && historyData.timestamps[historyData.currentKey]) ||
-	// 	pubData.updatedAt;
-	// const pubDateString =
-	// 	historyData && historyData.outstandingRequests > 0
-	// 		? '...'
-	// 		: dateFormat(pubDate, 'mmm dd, yyyy');
 
 	const publicBranch =
 		pubData.branches.find((branch) => {
@@ -256,43 +244,6 @@ const PubHeader = (props) => {
 									</div>
 								</React.Fragment>
 							)}
-
-							{/* <div className="buttons">
-										{!pubData.isDraft &&
-											(pubData.isDraftViewer ||
-												pubData.isDraftEditor ||
-												pubData.isManager) && (
-												<a
-													className="bp3-button bp3-small"
-													href={`/pub/${pubData.slug}/draft`}
-												>
-													Go To Working Draft
-												</a>
-											)}
-										<button
-											className="bp3-button bp3-small"
-											type="button"
-											onClick={() => {
-												this.props.setOptionsMode(
-													pubData.isManager ? 'details' : 'attribution',
-												);
-											}}
-										>
-											Options
-										</button>
-
-										{pubData.isManager && (
-											<button
-												className="bp3-button bp3-small"
-												type="button"
-												onClick={() => {
-													this.props.setOptionsMode('sharing');
-												}}
-											>
-												Share
-											</button>
-										)}
-									</div> */}
 						</div>
 					)}
 					<h1 className={classNames({ small: !isDocMode })}>
@@ -377,33 +328,6 @@ const PubHeader = (props) => {
 					{isDocMode && (
 						<div className="actions-bar">
 							<div className="left">
-								{/* History Button */}
-
-								{/* <ActionButton
-									buttons={[
-										{
-											text: (
-												<div className="text-stack">
-													<span>History</span>
-													<span className="action-subtext">
-														{pubDateString}
-													</span>
-												</div>
-											),
-											rightIcon: 'history',
-											active: historyData.isViewingHistory,
-											onClick: () => {
-												updateLocalData('history', {
-													isViewingHistory: !historyData.isViewingHistory,
-												});
-											},
-											isWide: true,
-										},
-									]}
-									isSkewed={true}
-								/> */}
-
-								{/* Branches Button */}
 
 								<ActionButton
 									buttons={[
@@ -517,7 +441,6 @@ const PubHeader = (props) => {
 										/>
 									)}
 
-								{/* Submit for Review button */}
 								{!currentBranchIsPublicBranch && pubData.activeBranch.canManage && (
 									<ActionButton
 										buttons={[

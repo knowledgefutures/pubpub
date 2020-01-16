@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { setLocalHighlight } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
 import PubDetails from './PubDetails';
@@ -69,15 +68,11 @@ const PubDocument = (props) => {
 	return (
 		<div className="pub-document-component">
 			{!pubData.isStaticDoc && !isViewingHistory && (
-				<PubSuspendWhileTyping delay={1000}>
-					{() => (
-						<PubHeaderFormatting
-							pubData={pubData}
-							collabData={collabData}
-							editorWrapperRef={editorWrapperRef}
-						/>
-					)}
-				</PubSuspendWhileTyping>
+				<PubHeaderFormatting
+					pubData={pubData}
+					collabData={collabData}
+					editorWrapperRef={editorWrapperRef}
+				/>
 			)}
 			{isViewingHistory && <PubHistory {...props} />}
 			{!isViewingHistory && <PubDetails {...props} />}

@@ -13,7 +13,7 @@ export const extensionToPandocFormat = {
 	docx: 'docx',
 	epub: 'epub',
 	html: 'html',
-	md: 'markdown_strict',
+	md: 'markdown',
 	odt: 'odt',
 	txt: 'plain',
 	xml: 'jats',

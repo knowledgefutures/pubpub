@@ -96,7 +96,16 @@ const addHrefsToNotes = (nodes) =>
 		nodes,
 	);
 
-const blankIframes = (nodes) => addAttrsToNodes({ url: 'about:blank' }, ['iframe'], nodes);
+const blankIframes = (nodes) =>
+	addAttrsToNodes(
+		{
+			url:
+				'data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%20frameborder%3D%220%22%20style%3D%22background-color%3A%23ccc%3Bborder%3A0%3Btext-align%3Acenter%3B%22%3EVisit%20the%20web%20version%20of%20this%20article%20to%20view%20interactive%20content.%3C%2Fbody%3E%3C%2Fhtml%3E',
+			height: '50',
+		},
+		['iframe'],
+		nodes,
+	);
 
 const renderFrontMatterForPandoc = ({ updatedDateString, publishedDateString, doi }) => {
 	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
@@ -123,6 +132,7 @@ const renderFrontMatterForHtml = ({
 	doi,
 	title,
 	communityTitle,
+	accentColor,
 	attributions,
 }) => {
 	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
@@ -134,7 +144,9 @@ const renderFrontMatterForHtml = ({
 	return (
 		<section className="cover">
 			<h3 className="community-and-collection">{communityAndCollectionString}</h3>
-			<h1 className="title">{title}</h1>
+			<h1 className="title" style={{ color: accentColor }}>
+				{title}
+			</h1>
 			{attributions.length > 0 && (
 				<div className="byline">
 					<h3>

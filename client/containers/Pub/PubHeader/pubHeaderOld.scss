@@ -1,11 +1,9 @@
 @import 'styles/variables.scss';
 
-@mixin header-theme() {
-
+@mixin transparent-buttons {
 }
 
 .pub-header-component {
-    height: 384px;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -64,7 +62,9 @@
 			a:not(.bp3-button),
 			.bp3-tag,
 			.bp3-icon-standard:before,
-			.bp3-button:before {
+			.bp3-button:before,
+			.bp3-breadcrumb,
+			.bp3-breadcrumbs li:after {
 				color: white;
 			}
 			a.bp3-button {
@@ -260,7 +260,34 @@
 				margin-left: 22px;
 			}
 		}
-    }
+	}
+
+	// .tags-buttons-wrapper {
+	// 	display: flex;
+	// 	align-items: flex-start;
+	// 	padding-top: 5px;
+	// 	.tags {
+	// 		flex-shrink: 1;
+	// 		display: flex;
+	// 		align-items: flex-start;
+	// 		a {
+	// 			text-decoration: none;
+	// 		}
+	// 		.bp3-tag {
+	// 			margin: 6px 6px 0px 0px;
+	// 			padding: 4px 10px;
+	// 		}
+	// 	}
+	// 	.buttons {
+	// 		flex-grow: 1;
+	// 		text-align: right;
+	// 		position: relative;
+	// 		right: -10px;
+	// 	}
+	// 	button {
+	// 		margin-left: 1em;
+	// 	}
+	// }
 
 	h1 {
 		color: inherit;
@@ -323,8 +350,78 @@
 		font-family: $header-font;
 		letter-spacing: 0.5px;
 	}
+	// .details {
+	// 	font-style: italic;
+	// 	font-weight: 200;
+
+	// 	padding-top: 10px;
+	// 	.bp3-icon-standard {
+	// 		padding-right: 0.5em;
+	// 	}
+	// 	.detail-button {
+	// 		margin-right: 2em;
+	// 		display: inline-block;
+	// 		cursor: pointer;
+	// 		&:not(:last-of-type):after {
+	// 			content: '';
+	// 			position: relative;
+	// 			left: 1em;
+	// 			top: -0.25em;
+	// 			pointer-events: none;
+	// 			width: 2px;
+	// 			height: 2px;
+	// 			background: white;
+	// 			display: inline-block;
+	// 			border-radius: 2px;
+	// 		}
+	// 		text-decoration: none;
+	// 		&:hover {
+	// 			text-decoration: underline;
+	// 		}
+	// 	}
+	// 	.versions {
+	// 		.bp3-icon:first-child {
+	// 			margin-top: -5px;
+	// 			margin-right: 3px;
+	// 		}
+	// 		.bp3-icon:not(:first-child) {
+	// 			opacity: 0.6;
+	// 			margin-left: 3px;
+	// 		}
+	// 	}
+	// }
+	// &.mode {
+	// 	.buttons,
+	// 	.details,
+	// 	.authors,
+	// 	.description {
+	// 		display: none;
+	// 	}
+	// 	.wrapper {
+	// 		margin-bottom: 0px;
+	// 		padding-bottom: 10px;
+	// 	}
+	// 	h1 {
+	// 		padding: 20px 0px;
+	// 	}
+	// 	.bp3-breadcrumb {
+	// 		text-transform: capitalize;
+	// 	}
+	// }
 }
 
+.versions-popover {
+	color: red;
+	.bp3-icon {
+		margin-top: 0px;
+		margin-left: 5px;
+	}
+}
+
+.right-aligned-skewed {
+	position: relative;
+	right: 15px;
+}
 @media only screen and (max-width: 750px) {
 	.pub-header-component.new {
 		.tags-buttons-wrapper {

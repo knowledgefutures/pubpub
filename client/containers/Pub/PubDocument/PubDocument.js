@@ -75,7 +75,6 @@ const PubDocument = (props) => {
 				/>
 			)}
 			{isViewingHistory && <PubHistory {...props} />}
-			{!isViewingHistory && <PubDetails {...props} />}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
 					<PubBody

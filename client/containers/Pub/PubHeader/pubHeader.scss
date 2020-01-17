@@ -6,11 +6,6 @@
 
 .pub-header-component {
     height: 384px;
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-color: #f8f8f8;
-	border-bottom: 1px solid #d2d2d2;
 	position: relative;
 	z-index: 20;
 	&.js-is-sticky,
@@ -272,49 +267,16 @@
 		font-weight: 500;
 		letter-spacing: 1px;
 		font-family: $header-font;
-		&.small {
-			font-size: 24px;
-			padding: 15px 0px;
-			margin-bottom: -40px;
-			display: flex;
-			align-items: center;
-			.text-wrapper {
-				flex: 0 1 auto;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				display: inline-block;
-				text-decoration: none;
-				&:hover {
-					text-decoration: underline;
-				}
-			}
-			.breadcrumb {
-				font-family: $base-font;
-				margin-left: 0.5em;
-				padding-left: 0.5em;
-				display: inline-block;
-				&:before {
-					content: '›';
-					position: relative;
-					left: -0.5em;
-				}
-				a {
-					text-decoration: none;
-					&:hover {
-						text-decoration: underline;
-					}
-				}
-			}
-		}
-	}
+    }
+    
 	.description {
 		padding-top: 15px;
 		font-size: 16px;
 		line-height: 1.4;
 		font-family: $header-font;
 		font-weight: 400;
-	}
+    }
+    
 	.authors {
 		padding-top: 15px;
 		font-size: 18px;

@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
+import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import PubHeader from 'containers/Pub/PubHeader';
 import { pubData } from 'data';
@@ -15,33 +16,58 @@ const historyData = {
 	isViewingHistory: false,
 };
 
+const PubHeaderWrapper = (props) => {
+	const [localData, setLocalData] = useState({
+		pubData: props.pubData,
+		historyData: props.historyData,
+		collabData: props.collabData,
+	});
+
+	const updateLocalData = (type, value) => {
+		const currentLocalData = { ...localData };
+		if (type === 'pub') {
+			currentLocalData.pubData = { ...localData.pubData, ...value };
+		} else if (type === 'history') {
+			currentLocalData.pubData = { ...localData.historyData, ...value };
+		} else if (type === 'collab') {
+			currentLocalData.pubData = { ...localData.collabData, ...value };
+		}
+		setLocalData(currentLocalData);
+	};
+
+	return <PubHeader {...localData} updateLocalData={updateLocalData} />;
+};
+
 storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 	<div>
-		<PubHeader
+		<PubHeaderWrapper
 			collabData={{}}
 			pubData={{
 				...altPubData,
 			}}
 			historyData={historyData}
 		/>
-		<PubHeader
+		<PubHeaderWrapper
 			collabData={{}}
 			pubData={{
 				...altPubData,
+				description: null,
+				canManage: false,
 				useHeaderImage: false,
 			}}
 			historyData={historyData}
 		/>
-		<PubHeader
+		<PubHeaderWrapper
 			collabData={{}}
 			pubData={{
 				...altPubData,
+				description: null,
 				headerStyle: 'white-blocks',
 				avatar: 'https://i.imgur.com/s9Gj6o6.png',
 			}}
 			historyData={historyData}
 		/>
-		<PubHeader
+		<PubHeaderWrapper
 			collabData={{}}
 			pubData={{
 				...altPubData,
@@ -51,7 +77,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			historyData={historyData}
 		/>
 
-		<PubHeader
+		<PubHeaderWrapper
 			collabData={{}}
 			pubData={{
 				...altPubData,
@@ -59,7 +85,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			}}
 			historyData={historyData}
 		/>
-		<PubHeader
+		<PubHeaderWrapper
 			collabData={{}}
 			pubData={{
 				...altPubData,
@@ -68,7 +94,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			}}
 			historyData={historyData}
 		/>
-		<PubHeader
+		<PubHeaderWrapper
 			collabData={{}}
 			pubData={{
 				...altPubData,
@@ -78,7 +104,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			}}
 			historyData={historyData}
 		/>
-		<PubHeader
+		<PubHeaderWrapper
 			collabData={{}}
 			pubData={{
 				...altPubData,

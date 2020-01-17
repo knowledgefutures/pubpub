@@ -8,6 +8,10 @@ export const usePageContext = () => {
 	return useContext(PageContext);
 };
 
+export const usePubContext = () => {
+	return useContext(PubContext);
+};
+
 export const useCollab = () => {
 	const { collabData } = useContext(PubContext);
 	return collabData;

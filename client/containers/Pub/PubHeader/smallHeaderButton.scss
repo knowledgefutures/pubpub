@@ -1,0 +1,34 @@
+@import './themes.scss';
+
+.small-header-button-component {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    .label {
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-left: 9px;
+        font-size: 10px;
+    }
+    .icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        @include shadow-box;
+    }
+    &.label-left {
+        flex-direction: row-reverse;
+        .label {
+            margin-left: 0;
+            margin-right: 9px;
+        }
+    }
+    &:hover {
+        text-decoration: none;
+        .icon-container {
+            @include shadow-box-hover;
+        }
+    }
+}

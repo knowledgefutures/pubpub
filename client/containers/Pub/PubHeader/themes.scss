@@ -1,0 +1,21 @@
+@mixin shadow-box {
+    position: relative;
+    border-radius: 2px;
+    &::after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+        opacity: 0.5;
+        transition: opacity 0.1s ease-out;
+    }
+}
+
+@mixin shadow-box-hover {
+    border-radius: 2px;
+    &::after {
+        opacity: 1;
+    }
+}

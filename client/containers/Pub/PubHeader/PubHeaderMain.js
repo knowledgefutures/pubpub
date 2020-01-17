@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Byline from './Byline';
 import CollectionsBar from './CollectionsBar';
 import EditableHeaderText from './EditableHeaderText';
-import Byline from './Byline';
+import SmallHeaderButton from './SmallHeaderButton';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -23,24 +24,32 @@ const PubHeaderMain = (props) => {
 				<CollectionsBar pubData={pubData} updateLocalData={updateLocalData} />
 			</div>
 			<div className="middle">
-				<EditableHeaderText
-					text={title}
-					updateText={(text) => updateLocalData('pub', { title: text })}
-					canEdit={canManage}
-					className="title"
-					placeholder="Add a Pub title"
-				/>
-				{(canManage || description) && (
+				<div className="left">
 					<EditableHeaderText
-						text={description}
-						updateText={(text) => updateLocalData('pub', { description: text })}
+						text={title}
+						updateText={(text) => updateLocalData('pub', { title: text })}
 						canEdit={canManage}
-						tagName="h3"
-						className="description"
-						placeholder="Add a description for this Pub"
+						className="title"
+						placeholder="Add a Pub title"
 					/>
-				)}
-				<Byline pubData={pubData} />
+					{(canManage || description) && (
+						<EditableHeaderText
+							text={description}
+							updateText={(text) => updateLocalData('pub', { description: text })}
+							canEdit={canManage}
+							tagName="h3"
+							className="description"
+							placeholder="Add a description for this Pub"
+						/>
+					)}
+					<Byline pubData={pubData} />
+				</div>
+				<div className="right">
+					<SmallHeaderButton label="Pub settings" labelPosition="left" icon="cog" />
+					<SmallHeaderButton label="Share with..." labelPosition="left" icon="people" />
+					<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
+					<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
+				</div>
 			</div>
 		</div>
 	);

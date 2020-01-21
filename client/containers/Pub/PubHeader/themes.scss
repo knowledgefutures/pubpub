@@ -1,6 +1,7 @@
 @mixin shadow-box {
     position: relative;
     border-radius: 2px;
+    background: rgba(white, 0.1);
     &::after {
         content: '';
         position: absolute;

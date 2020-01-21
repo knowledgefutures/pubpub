@@ -1,268 +1,108 @@
 @import 'styles/variables.scss';
 
 .pub-header-main {
+    .top {
+        display: flex;
+        justify-content: space-between;
+        .basic-details {
+            display: flex;
+            flex-grow: 1;
+            align-items: center;
+            justify-content: space-between;
+            &:not(:first-child) {
+                margin-left: 20px;
+            }
+            .doi-pair {
+                & > :first-child {
+                    margin-right: 10px;
+                }
+                display: flex;
+                align-items: center;
+            }
+            .click-to-copy {
+                .bp3-button {
+                    color: inherit;
+                }
+            }
+            .details-button {
+                width: 120px;
+            }
+        }
+    }
+    .hairline {
+        width: 100%;
+        height: 1px;
+        background-color: white;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
     .middle {
         display: flex;
+        .left {
+            flex-grow: 1;
+            .authors {
+                a,
+                a:visited {
+                    color: white;
+                }
+            }
+        }
         .right {
             margin-top: 18px;
             flex-shrink: 0;
-            & > *:not(:last-child) {
-                margin-bottom: 10px;
+            width: 150px;
+            & > * {
+                width: 100%;
+                &:not(:last-child) {
+                    margin-bottom: 12px;
+                }
             }
         }
     }
 }
 
 .pub-header-component {
-    height: 384px;
+    min-height: 384px;
     position: relative;
     z-index: 20;
+    color: white;
+    background: #6e617d;
     &.js-is-sticky,
     &.js-is-stuck {
         .bottom-text {
             opacity: 1;
         }
     }
-    .bottom-text {
-        opacity: 0;
-        position: absolute;
-        bottom: 0px;
-        padding: 0em 1em;
-        line-height: 35px;
-        width: 100%;
-        transition: 0.2s linear opacity;
-        display: flex;
-        .bottom-title {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            flex: 1 1 auto;
-            font-family: $header-font;
-            font-size: 18px;
-            padding-right: 2em;
-        }
-        .bottom-buttons {
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            .dot {
-                padding: 0em 0.3em;
-                height: 24px;
-                line-height: 24px;
-                display: block;
-            }
-            svg {
-                fill: #454545;
-            }
-        }
-    }
-    .wrapper {
-        padding-bottom: 40px;
-        &.dim {
-            background-color: rgba(0, 0, 0, 0.5);
-            text-shadow: 0px 0px 2px black;
-            color: white;
-            .bp3-tag {
-                background-color: rgba(255, 255, 255, 0.1);
-            }
-            a:not(.bp3-button),
-            .bp3-tag,
-            .bp3-icon-standard:before,
-            .bp3-button:before {
-                color: white;
-            }
-            a.bp3-button {
-                text-shadow: 0px 0px 0px transparent;
-            }
-            .bp3-editable-text {
-                &:hover:before {
-                    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
-                        inset 0 0 0 1px rgba(247, 252, 255, 0.54);
-                    background-color: transparent;
-                }
-                &.bp3-editable-text-editing:before {
-                    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
-                        inset 0 0 0 1px rgba(247, 252, 255, 0.54);
-                    background-color: rgba(0, 0, 0, 0.35);
-                }
-                &.bp3-editable-text-placeholder > .bp3-editable-text-content,
-                ::placeholder {
-                    color: inherit;
-                    opacity: 0.75;
-                }
-            }
-            .themed-button-component {
-                .bp3-button {
-                    &.skinny {
-                        box-shadow: inset 7px 0 1px -7px rgba(255, 255, 255, 0.2);
-                    }
-                }
-                .text-stack {
-                    .subtext {
-                        color: #bbb;
-                    }
-                }
-            }
 
-            .bottom-text {
-                .bottom-buttons {
-                    .bp3-minimal,
-                    .bp3-minimal:hover {
-                        color: white;
-                    }
-                    svg {
-                        fill: #fff;
-                    }
-                }
-            }
-            .themed-button-component {
-                .bp3-button {
-                    background: rgba(255, 255, 255, 0.1);
-                    color: white;
-                    .bp3-icon {
-                        color: white;
-                    }
-                    &:hover {
-                        background: rgba(255, 255, 255, 0.2);
-                    }
-                    &:active,
-                    &.bp3-active {
-                        background: rgba(255, 255, 255, 0.3);
-                    }
-                }
-            }
-        }
-        &.white-blocks {
-            .bp3-tag {
-                background-color: white;
-            }
-
-            h1 {
-                font-weight: 400;
-            }
-            .text-wrapper,
-            .bp3-editable-text-content {
-                /* Ways of accomplishing this effect: */
-                /* https://css-tricks.com/multi-line-padded-text/ */
-                display: inline;
-                background: white;
-                padding: 2px 20px;
-                box-decoration-break: clone;
-                box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.1);
-            }
-            .themed-button-component {
-                box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-                .bp3-button {
-                    border: 0px solid white;
-                    box-shadow: 0px 0px transparent;
-                }
-            }
-            .bottom-text {
-                background-color: rgba(0, 0, 0, 0.5);
-                color: white;
-                .bottom-buttons {
-                    .bp3-minimal,
-                    .bp3-minimal:hover {
-                        color: white;
-                    }
-                    svg {
-                        fill: #fff;
-                    }
-                }
-            }
-        }
-        &.black-blocks {
-            .bp3-tag {
-                background-color: black;
-            }
-
-            .text-wrapper,
-            .bp3-editable-text-content {
-                /* Ways of accomplishing this effect: */
-                /* https://css-tricks.com/multi-line-padded-text/ */
-                display: inline;
-                background: black;
-                padding: 2px 20px;
-                box-decoration-break: clone;
-                box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.1);
-            }
-            h1 {
-                font-weight: 400;
-            }
-            h1,
-            .description {
-                color: white;
-            }
-            .themed-button-component {
-                box-shadow: 0px 2px 8px rgba(255, 255, 255, 0.1);
-                .bp3-button {
-                    background: #000;
-                    border: 1px solid #444;
-                    &:hover {
-                        background: #151515;
-                    }
-                    &:active {
-                        background: #333;
-                    }
-                    &.skinny {
-                        box-shadow: inset 7px 0 3px -7px rgba(255, 255, 255, 0.4);
-                    }
-                }
-                .text-stack {
-                    .subtext {
-                        color: #bbb;
-                    }
-                }
-            }
-            .bottom-text {
-                background-color: rgba(0, 0, 0, 0.5);
-                color: white;
-                .bottom-buttons {
-                    .bp3-minimal,
-                    .bp3-minimal:hover {
-                        color: white;
-                    }
-                    svg {
-                        fill: #fff;
-                    }
-                }
-            }
-        }
-    }
-    .top-bar,
-    .actions-bar {
-        display: flex;
-        .left,
-        .right {
-            display: flex;
-            align-items: center;
-        }
-        .left {
-            flex: 0 1 auto;
-        }
-        .right {
-            flex: 1 0 auto;
-            justify-content: flex-end;
-        }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: inherit;
     }
 
-    .top-bar {
-        padding-top: 20px;
-        .manager-button {
-            margin-left: 6px;
-        }
+    .pub-header-column {
+        margin-top: 13px;
+        margin-bottom: 26px;
     }
-    .actions-bar {
-        padding: 40px 0px 0px;
-        .left {
-            .action-button-component {
-                margin-right: 35px;
-            }
+
+    .bp3-editable-text {
+        &:hover:before {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
+                inset 0 0 0 1px rgba(247, 252, 255, 0.54);
+            background-color: transparent;
         }
-        .right {
-            .action-button-component {
-                margin-left: 22px;
-            }
+        &.bp3-editable-text-editing:before {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
+                inset 0 0 0 1px rgba(247, 252, 255, 0.54);
+            background-color: rgba(0, 0, 0, 0.35);
+        }
+        &.bp3-editable-text-placeholder > .bp3-editable-text-content,
+        ::placeholder {
+            color: inherit;
+            opacity: 0.75;
         }
     }
 
@@ -273,6 +113,10 @@
         line-height: 68px;
         font-weight: 500;
         font-family: $header-font;
+    }
+
+    h3 {
+        color: inherit;
     }
 
     .description {

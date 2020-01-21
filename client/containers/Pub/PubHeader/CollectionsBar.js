@@ -20,6 +20,11 @@ const CollectionsBar = (props) => {
 	const { pubData, updateLocalData } = props;
 	const { communityData, locationData } = useContext(PageContext);
 	const currentCollection = chooseCollectionForPub(pubData, locationData);
+
+	if (pubData.collectionPubs.length === 0) {
+		return null;
+	}
+
 	return (
 		<div className="collections-bar-component">
 			{currentCollection && (

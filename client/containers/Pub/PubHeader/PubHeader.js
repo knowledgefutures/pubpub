@@ -19,7 +19,7 @@ const PubHeader = (props) => {
 	const { pubData, updateLocalData } = props;
 	return (
 		<PubHeaderBackground className="pub-header-component" pubData={pubData} ref={headerRef}>
-			<GridWrapper containerClassName="pub">
+			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
 				<PubHeaderMain pubData={pubData} updateLocalData={updateLocalData} />
 			</GridWrapper>
 		</PubHeaderBackground>

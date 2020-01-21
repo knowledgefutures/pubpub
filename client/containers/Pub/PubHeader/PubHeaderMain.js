@@ -1,5 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import dateFormat from 'dateformat';
+
+import { ClickToCopyButton } from 'components';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
 
 import Byline from './Byline';
 import CollectionsBar from './CollectionsBar';
@@ -11,18 +15,47 @@ const propTypes = {
 		title: PropTypes.string.isRequired,
 		description: PropTypes.string,
 		canManage: PropTypes.bool.isRequired,
+		doi: PropTypes.string,
 	}).isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
 
 const PubHeaderMain = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { canManage, title, description } = pubData;
+	const { canManage, title, description, doi } = pubData;
+	const publishedAtString = dateFormat(getPubPublishedDate(pubData), 'mmm dd, yyyy');
+
 	return (
 		<div className="pub-header-main">
 			<div className="top">
 				<CollectionsBar pubData={pubData} updateLocalData={updateLocalData} />
+				<div className="basic-details">
+					<span className="doi-pair">
+						<b>Published on</b>
+						{publishedAtString}
+					</span>
+					{doi && (
+						<span className="doi-pair">
+							<b>DOI</b>
+							<ClickToCopyButton
+								copyString={`https://doi.org/${doi}`}
+								className="click-to-copy"
+								beforeCopyPrompt="Copy doi.org link"
+								icon={null}
+							>
+								{doi}
+							</ClickToCopyButton>
+						</span>
+					)}
+					<SmallHeaderButton
+						className="details-button"
+						label="Show details"
+						labelPosition="left"
+						icon="expand-all"
+					/>
+				</div>
 			</div>
+			<div className="hairline" />
 			<div className="middle">
 				<div className="left">
 					<EditableHeaderText

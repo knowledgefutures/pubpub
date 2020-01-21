@@ -8,6 +8,7 @@ import { Icon } from 'components';
 require('./smallHeaderButton.scss');
 
 const propTypes = {
+	className: PropTypes.string,
 	href: PropTypes.string,
 	label: PropTypes.string.isRequired,
 	labelPosition: PropTypes.oneOf(['left', 'right']).isRequired,
@@ -16,12 +17,13 @@ const propTypes = {
 };
 
 const defaultProps = {
-	onClick: null,
+	className: '',
 	href: null,
+	onClick: null,
 };
 
 const SmallHeaderButton = (props) => {
-	const { href, icon, label, labelPosition, onClick } = props;
+	const { className, href, icon, label, labelPosition, onClick } = props;
 	return (
 		<Button
 			as="a"
@@ -30,10 +32,11 @@ const SmallHeaderButton = (props) => {
 			className={classNames(
 				'small-header-button-component',
 				labelPosition === 'left' ? 'label-left' : 'label-right',
+				className,
 			)}
 		>
 			<div className="themed-box icon-container">
-				<Icon icon={icon} iconSize={11} />
+				<Icon icon={icon} iconSize={14} />
 			</div>
 			<div className="label">{label}</div>
 		</Button>

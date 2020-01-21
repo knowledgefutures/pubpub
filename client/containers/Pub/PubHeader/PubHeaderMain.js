@@ -6,9 +6,9 @@ import { ClickToCopyButton } from 'components';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 
 import Byline from './Byline';
-import CollectionsBar from './CollectionsBar';
 import EditableHeaderText from './EditableHeaderText';
 import SmallHeaderButton from './SmallHeaderButton';
+import CollectionsBar from './collections/CollectionsBar';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -30,12 +30,12 @@ const PubHeaderMain = (props) => {
 			<div className="top">
 				<CollectionsBar pubData={pubData} updateLocalData={updateLocalData} />
 				<div className="basic-details">
-					<span className="doi-pair">
+					<span className="metadata-pair">
 						<b>Published on</b>
 						{publishedAtString}
 					</span>
 					{doi && (
-						<span className="doi-pair">
+						<span className="metadata-pair doi-pair">
 							<b>DOI</b>
 							<ClickToCopyButton
 								copyString={`https://doi.org/${doi}`}

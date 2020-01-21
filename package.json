@@ -75,7 +75,7 @@
 		"@babel/preset-env": "^7.4.4",
 		"@babel/preset-react": "^7.0.0",
 		"@babel/register": "^7.4.4",
-		"@blueprintjs/core": "^3.17.1",
+		"@blueprintjs/core": "^3.23.0",
 		"@blueprintjs/icons": "^3.9.1",
 		"@blueprintjs/select": "^3.9.0",
 		"@pubpub/editor": "^7.2.0",

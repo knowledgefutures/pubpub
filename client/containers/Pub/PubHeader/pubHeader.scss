@@ -4,20 +4,32 @@
     .top {
         display: flex;
         justify-content: space-between;
+        overflow: hidden;
         .basic-details {
             display: flex;
-            flex-grow: 1;
+            flex-shrink: 0;
             align-items: center;
-            justify-content: space-between;
+            justify-content: right;
+            &:first-child {
+                width: 100%;
+            }
             &:not(:first-child) {
                 margin-left: 20px;
             }
-            .doi-pair {
+            & > *:not(:last-child) {
+                margin-right: 45px;
+            }
+            .metadata-pair {
                 & > :first-child {
                     margin-right: 10px;
                 }
                 display: flex;
                 align-items: center;
+            }
+            .doi-pair {
+                @media only screen and (max-width: 1000px) {
+                    display: none;
+                }
             }
             .click-to-copy {
                 .bp3-button {
@@ -107,16 +119,11 @@
     }
 
     h1 {
-        color: inherit;
         margin: 0;
         font-size: 48px;
         line-height: 68px;
         font-weight: 500;
         font-family: $header-font;
-    }
-
-    h3 {
-        color: inherit;
     }
 
     .description {

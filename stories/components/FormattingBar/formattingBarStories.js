@@ -1,22 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { storiesOf } from '@storybook/react';
-import { FormattingBar } from 'components';
+import { FormattingBar, buttons } from 'components/FormattingBar';
+
 import Editor from '@pubpub/editor';
-import { plainDoc, fullDoc } from 'data';
+import { fullDoc } from 'data';
 
 class EditorUnit extends Component {
 	static propTypes = {
-		hideMedia: PropTypes.bool.isRequired,
-		hideBlocktypes: PropTypes.bool.isRequired,
-		hideExtraFormatting: PropTypes.bool.isRequired,
+		showBlockTypes: PropTypes.bool.isRequired,
 		isSmall: PropTypes.bool.isRequired,
+		buttons: PropTypes.array.isRequired,
 	};
 
 	constructor(props) {
 		super(props);
+		this.containerRef = React.createRef();
 		this.state = {
-			editorChangeObject: {},
+			editorChangeObject: null,
 		};
 	}
 
@@ -31,21 +32,26 @@ class EditorUnit extends Component {
 		return (
 			<div style={editorStyle}>
 				<div style={{ background: '#F0F0F0', marginBottom: '0.5em' }}>
-					<FormattingBar
-						editorChangeObject={this.state.editorChangeObject}
-						hideMedia={this.props.hideMedia}
-						hideBlocktypes={this.props.hideBlocktypes}
-						hideExtraFormatting={this.props.hideExtraFormatting}
-						isSmall={this.props.isSmall}
-					/>
+					{this.state.editorChangeObject && (
+						<FormattingBar
+							editorChangeObject={this.state.editorChangeObject}
+							showBlockTypes={this.props.showBlockTypes}
+							isSmall={this.props.isSmall}
+							buttons={this.props.buttons}
+							popoverContainerRef={this.containerRef}
+						/>
+					)}
 				</div>
-				<div style={{ padding: '0.25em', height: '250px', overflow: 'scroll' }}>
+				<div
+					style={{ padding: '0.25em', height: '250px', overflow: 'scroll' }}
+					ref={this.containerRef}
+				>
 					<Editor
 						placeholder="hello"
 						onChange={(changeObject) => {
 							this.setState({ editorChangeObject: changeObject });
 						}}
-						initialContent={this.props.hideMedia ? plainDoc : fullDoc}
+						initialContent={fullDoc}
 					/>
 				</div>
 			</div>
@@ -62,29 +68,9 @@ const wrapperStyle = {
 
 storiesOf('components/FormattingBar', module).add('default', () => (
 	<div style={wrapperStyle}>
-		<EditorUnit
-			hideMedia={false}
-			hideBlocktypes={false}
-			hideExtraFormatting={false}
-			isSmall={false}
-		/>
-		<EditorUnit
-			hideMedia={false}
-			hideBlocktypes={false}
-			hideExtraFormatting={true}
-			isSmall={true}
-		/>
-		<EditorUnit
-			hideMedia={false}
-			hideBlocktypes={true}
-			hideExtraFormatting={true}
-			isSmall={true}
-		/>
-		<EditorUnit
-			hideMedia={true}
-			hideBlocktypes={true}
-			hideExtraFormatting={true}
-			isSmall={true}
-		/>
+		<EditorUnit isSmall={false} buttons={buttons.fullButtonSet} />
+		<EditorUnit isSmall={true} buttons={buttons.fullButtonSet} />
+		<EditorUnit showBlockTypes={true} isSmall={true} buttons={buttons.minimalButtonSet} />
+		<EditorUnit showBlockTypes={false} isSmall={true} buttons={buttons.minimalButtonSet} />
 	</div>
 ));

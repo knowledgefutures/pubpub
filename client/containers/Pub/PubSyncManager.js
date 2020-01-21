@@ -7,7 +7,13 @@ import { apiFetch, getRandomColor } from 'utils';
 import { initFirebase } from 'utils/firebaseClient';
 import { getPubPageTitle } from 'shared/utils/pubPageTitle';
 
-export const PubContext = React.createContext({});
+export const PubContext = React.createContext({
+	pubData: {},
+	collabData: {},
+	historyData: {},
+	firebaseBranchRef: null,
+	updateLocalData: null,
+});
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
@@ -42,6 +48,38 @@ const getLocalCollabUser = (pubData, loginData) => {
 	};
 };
 
+const idleStateUpdater = (boundSetState, timeout = 50) => {
+	let queue = [];
+	let idleCallback = null;
+
+	const setStateNow = () =>
+		boundSetState((prevState) => {
+			idleCallback = null;
+			let state = prevState;
+			const itemsInQueue = queue.length;
+			queue.forEach(([update, maybeCallback]) => {
+				const partial = typeof update === 'function' ? update(state) : update;
+				state = {
+					...state,
+					...partial,
+				};
+				if (maybeCallback) {
+					maybeCallback(state);
+				}
+			});
+			queue = queue.slice(itemsInQueue);
+			return state;
+		});
+
+	const setState = (...args) => {
+		queue.push(args);
+		if (!idleCallback) {
+			idleCallback = requestIdleCallback(setStateNow, { timeout: timeout });
+		}
+	};
+
+	return { setState: setState };
+};
 class PubSyncManager extends React.Component {
 	constructor(props) {
 		super(props);
@@ -62,6 +100,7 @@ class PubSyncManager extends React.Component {
 				isViewingHistory: false,
 			},
 		};
+		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));
 		this.syncRemoteCollabUsers = this.syncRemoteCollabUsers.bind(this);
 		this.syncMetadata = this.syncMetadata.bind(this);
 		this.syncDiscussionsContent = this.syncDiscussionsContent.bind(this);
@@ -139,7 +178,7 @@ class PubSyncManager extends React.Component {
 	}
 
 	syncDiscussionsContent(snapshot) {
-		this.setState((prevState) => {
+		this.idleStateUpdater.setState((prevState) => {
 			const val = snapshot.val();
 			if (val) {
 				const syncedDiscussions = Object.values(val);
@@ -186,7 +225,7 @@ class PubSyncManager extends React.Component {
 		/* Then, sync appropriate data to firebase. */
 		/* Other clients will receive updates which */
 		/* triggers the syncMetadata function. */
-		this.setState(
+		this.idleStateUpdater.setState(
 			(prevState) => {
 				const nextData =
 					typeof newPubData === 'function' ? newPubData(prevState.pubData) : newPubData;
@@ -231,7 +270,7 @@ class PubSyncManager extends React.Component {
 	}
 
 	updateCollabData(newCollabData) {
-		this.setState((prevState) => {
+		this.idleStateUpdater.setState((prevState) => {
 			return {
 				collabData: {
 					...prevState.collabData,
@@ -244,7 +283,7 @@ class PubSyncManager extends React.Component {
 	updateHistoryData(newHistoryData) {
 		const { pubData, locationData } = this.props;
 		const { historyData: prevHistoryData } = this.state;
-		this.setState(
+		this.idleStateUpdater.setState(
 			{
 				historyData: {
 					...prevHistoryData,

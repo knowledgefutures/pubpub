@@ -5,7 +5,6 @@
  * are some edge cases.
  */
 
-
 process.env.AWS_ACCESS_KEY_ID = '';
 process.env.AWS_SECRET_ACCESS_KEY = '';
 process.env.DOI_SUBMISSION_URL = '';
@@ -52,6 +51,10 @@ if (typeof document !== 'undefined') {
 
     // ProseMirror wants to use execCommand (probably for copy/paste)
     document.execCommand = () => true;
+}
+
+if (typeof window !== 'undefined') {
+    window.requestIdleCallback = () => {};
 }
 
 global.fetch = () => Promise.resolve();

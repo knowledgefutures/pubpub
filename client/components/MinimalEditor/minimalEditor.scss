@@ -1,9 +1,45 @@
+$border-style: 1px solid #ddd;
+
 .minimal-editor-component {
-	.editor-wrapper {
-		min-height: 75px;
-		border: 1px solid #ddd;
-		background: white;
-		border-radius: 2px;
-		padding: 0.5em;
-	}
+    .editor-wrapper {
+        min-height: 75px;
+        border: $border-style;
+        background: white;
+        border-radius: 2px;
+        padding: 0.5em;
+        cursor: text;
+    }
+    &.constrain-height {
+        height: 100%;
+        .editor-wrapper {
+            height: 100%;
+            overflow-y: scroll;
+        }
+        &.has-formatting-bar {
+            display: flex;
+            flex-direction: column;
+            .editor-wrapper {
+                flex-grow: 1;
+            }
+        }
+    }
+    &.translucent {
+		.editor-wrapper {
+			h1, h2, h3, h4, h5, h6, a {
+				color: white;
+			}
+		}
+        &.has-formatting-bar {
+            .editor-wrapper {
+                border: none;
+				border-top: $border-style;
+            }
+        }
+        background: rgba(255, 255, 255, 0.2);
+        .editor-wrapper {
+            background: none;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    }
 }

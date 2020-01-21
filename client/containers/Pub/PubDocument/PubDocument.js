@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { marksAtSelection, setLocalHighlight, cursor } from '@pubpub/editor';
+import { setLocalHighlight } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
-import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
-import PubLinkMenu from './PubLinkMenu';
 import PubDetails from './PubDetails';
 import PubFileImport from './PubFileImport';
 import PubHistory from './PubHistory';
@@ -32,43 +30,12 @@ const PubDocument = (props) => {
 	const { pubData, historyData, collabData, firebaseBranchRef, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
 	const { locationData } = useContext(PageContext);
-	const [linkPopupIsOpen, setLinkPopupIsOpen] = useState(false);
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
-	const [clickedMarks, setClickedMarks] = useState([]);
 	// const [tempId, setTempId] = useState(uuidv4());
 	const editorChangeObject = collabData.editorChangeObject;
 	const mainContentRef = useRef(null);
 	const sideContentRef = useRef(null);
-
-	/* Calculate whether the link popup should be open */
-	const activeLink = editorChangeObject.activeLink || {};
-	const selectionIsLink = !!activeLink.attrs;
-	const clickedOnLink = clickedMarks.indexOf('link') > -1;
-	const nextLinkPopupIsOpen = clickedOnLink || (linkPopupIsOpen && selectionIsLink);
-	if (nextLinkPopupIsOpen !== linkPopupIsOpen) {
-		setLinkPopupIsOpen(nextLinkPopupIsOpen);
-		setClickedMarks([]);
-	}
-
-	/* Manage link popup based on certain key events */
-	const handleKeyPressEvents = (evt) => {
-		if (linkPopupIsOpen && (evt.key === 'Escape' || evt.key === 'Enter')) {
-			evt.preventDefault();
-			setLinkPopupIsOpen(false);
-			cursor.moveToEndOfSelection(editorChangeObject.view);
-			editorChangeObject.view.focus();
-		}
-		if (evt.key === 'k' && evt.metaKey) {
-			setLinkPopupIsOpen(true);
-		}
-	};
-
-	useEffect(() => {
-		window.addEventListener('keydown', handleKeyPressEvents);
-		return () => {
-			window.removeEventListener('keydown', handleKeyPressEvents);
-		};
-	});
+	const editorWrapperRef = useRef(null);
 
 	useEffect(() => {
 		/* TODO: Clean up the hanlding of permalink generation and scrolling */
@@ -101,24 +68,23 @@ const PubDocument = (props) => {
 	return (
 		<div className="pub-document-component">
 			{!pubData.isStaticDoc && !isViewingHistory && (
-				<PubSuspendWhileTyping delay={1000}>
-					{() => <PubHeaderFormatting pubData={pubData} collabData={collabData} />}
-				</PubSuspendWhileTyping>
+				<PubHeaderFormatting
+					pubData={pubData}
+					collabData={collabData}
+					editorWrapperRef={editorWrapperRef}
+				/>
 			)}
 			{isViewingHistory && <PubHistory {...props} />}
 			{!isViewingHistory && <PubDetails {...props} />}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
 					<PubBody
+						editorWrapperRef={editorWrapperRef}
 						pubData={pubData}
 						collabData={collabData}
 						historyData={historyData}
 						firebaseBranchRef={firebaseBranchRef}
 						updateLocalData={updateLocalData}
-						onSingleClick={(view) => {
-							/* Used to trigger link popup when link mark clicked */
-							setClickedMarks(marksAtSelection(view));
-						}}
 					/>
 					{!isViewingHistory && pubData.canEditBranch && !pubData.isStaticDoc && (
 						<PubFileImport
@@ -126,17 +92,13 @@ const PubDocument = (props) => {
 							updateLocalData={updateLocalData}
 						/>
 					)}
-					{!linkPopupIsOpen && (editorFocused || !pubData.canEditBranch) && (
+					{(editorFocused || !pubData.canEditBranch) && (
 						<PubInlineMenu
 							pubData={pubData}
 							collabData={collabData}
 							historyData={historyData}
-							openLinkMenu={() => {
-								setLinkPopupIsOpen(true);
-							}}
 						/>
 					)}
-					{linkPopupIsOpen && <PubLinkMenu pubData={pubData} collabData={collabData} />}
 				</div>
 				<div className="side-content" ref={sideContentRef} />
 			</div>

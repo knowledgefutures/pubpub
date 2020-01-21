@@ -5,7 +5,7 @@ import { Button } from '@blueprintjs/core';
 
 import { GridWrapper } from 'components';
 import InputField from 'components/InputField/InputField';
-import FormattingBar from 'components/FormattingBar/FormattingBar';
+import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 import { getResizedUrl } from 'utils';
 
 const propTypes = {
@@ -78,7 +78,7 @@ class LayoutEditorText extends Component {
 						</div>
 					</InputField>
 					<div className="formatting-wrapper">
-						<FormattingBar editorChangeObject={this.state.editorChangeObject} />
+						<FormattingBarLegacy editorChangeObject={this.state.editorChangeObject} />
 					</div>
 				</div>
 

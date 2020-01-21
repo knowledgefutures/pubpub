@@ -226,6 +226,7 @@ export const createStaticHtml = async (
 				<title>{title}</title>
 				<meta charSet="utf-8" />
 				{!targetPandoc && (
+					// eslint-disable-next-line react/no-danger
 					<style type="text/css" dangerouslySetInnerHTML={{ __html: staticCss }} />
 				)}
 			</head>

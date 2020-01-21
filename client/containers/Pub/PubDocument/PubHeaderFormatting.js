@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import stickybits from 'stickybits';
 
-import { FormattingBar } from 'components';
-import { nestDiscussionsToThreads } from 'containers/Pub/PubDocument/PubDiscussions/discussionUtils';
+import { FormattingBar, buttons } from 'components/FormattingBar';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
 
 require('./pubHeaderFormatting.scss');
@@ -11,13 +10,14 @@ require('./pubHeaderFormatting.scss');
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
+	editorWrapperRef: PropTypes.any.isRequired,
 };
 
 const PubHeaderFormatting = (props) => {
 	const stickyInstanceRef = useRef(undefined);
 	useEffect(() => {
 		stickyInstanceRef.current = stickybits('.pub-draft-header-component', {
-			stickyBitStickyOffset: 35,
+			stickyBitStickyOffset: 37,
 			useStickyClasses: true,
 		});
 		return () => {
@@ -35,10 +35,12 @@ const PubHeaderFormatting = (props) => {
 	return (
 		<div className="pub-draft-header-component">
 			<FormattingBar
+				buttons={buttons.fullButtonSet}
 				editorChangeObject={props.collabData.editorChangeObject || {}}
-				threads={nestDiscussionsToThreads(props.pubData.discussions)}
+				popoverContainerRef={props.editorWrapperRef}
 				footnotes={pubData.footnotes}
 				citations={pubData.citations}
+				isFullScreenWidth={true}
 			/>
 			<div className="right-content">
 				<PubHeaderCollaborators collabData={props.collabData} />

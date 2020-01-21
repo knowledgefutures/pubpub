@@ -17,3 +17,8 @@ export const usePubHistory = () => {
 	const { historyData } = useContext(PubContext);
 	return historyData;
 };
+
+export const usePubData = () => {
+	const { pubData } = useContext(PubContext);
+	return pubData;
+};

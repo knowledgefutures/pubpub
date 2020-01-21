@@ -1,10 +1,8 @@
 .pub-draft-header-component {
 	z-index: 19;
-	min-height: 41px;
 	// .wrapper {
 	background: #f0f0f0;
 	border-bottom: 1px solid #d2d2d2;
-	padding: 0.5em 1em;
 	// &.fixed {
 	// 	position: fixed;
 	// 	top: 0;
@@ -40,13 +38,14 @@
 	// 	line-height: 24px;
 	// 	min-height: 0px;
 	// }
-	.formatting-bar-component {
+	& > .formatting-bar-component {
 		flex: 1 1 auto;
 		min-width: 0;
 	}
 	.right-content {
 		display: flex;
 		align-items: center;
+		padding-left: 5px;
 	}
 	.collab-status {
 		&.disconnected {

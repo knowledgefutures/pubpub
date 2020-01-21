@@ -1,395 +1,284 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import Icon from 'components/Icon/Icon';
-import {
-	OverflowList,
-	Boundary,
-	Button,
-	AnchorButton,
-	Classes,
-	Menu,
-	MenuItem,
-	Popover,
-	Position,
-	PopoverInteractionKind,
-} from '@blueprintjs/core';
-import { Overlay, DropdownButton } from 'components';
-import Controls from './Controls';
-import Media from './Media';
+import classNames from 'classnames';
+import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
+
+import { usePageContext } from 'containers/Pub/pubHooks';
+import { useRefMap } from 'utils/useRefMap';
+
+import BlockTypeSelector from './BlockTypeSelector';
+import FormattingBarButton from './FormattingBarButton';
+import FormattingBarPopover from './FormattingBarPopover';
+import { positionNearSelection } from './positioning';
 
 require('./formattingBar.scss');
 
 const propTypes = {
-	editorChangeObject: PropTypes.object.isRequired,
-	hideMedia: PropTypes.bool,
-	hideBlocktypes: PropTypes.bool,
-	hideExtraFormatting: PropTypes.bool,
+	popoverContainerRef: PropTypes.object.isRequired,
+	editorChangeObject: PropTypes.shape({
+		latestDomEvent: PropTypes.object,
+		insertFunctions: PropTypes.object,
+		menuItems: PropTypes.arrayOf(PropTypes.shape({})),
+		view: PropTypes.shape({
+			focus: PropTypes.func,
+		}),
+		selectedNode: PropTypes.shape({
+			attrs: PropTypes.object,
+		}),
+	}).isRequired,
+	buttons: PropTypes.arrayOf(
+		PropTypes.shape({
+			key: PropTypes.string.isRequired,
+			title: PropTypes.string.isRequired,
+			ariaTitle: PropTypes.string,
+			icon: PropTypes.string.isRequired,
+			isToggle: PropTypes.bool,
+		}),
+	).isRequired,
+	showBlockTypes: PropTypes.bool,
 	isSmall: PropTypes.bool,
-	threads: PropTypes.array,
-	footnotes: PropTypes.array,
-	citations: PropTypes.array,
+	isTranslucent: PropTypes.bool,
+	isFullScreenWidth: PropTypes.bool,
 };
 
 const defaultProps = {
-	hideMedia: false,
-	hideBlocktypes: false,
-	hideExtraFormatting: false,
+	showBlockTypes: true,
+	isTranslucent: false,
 	isSmall: false,
-	threads: [],
-	footnotes: [],
-	citations: [],
+	isFullScreenWidth: false,
 };
 
-class FormattingBar extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			mediaGalleryOpen: false,
-		};
-		this.closeMediaGallery = this.closeMediaGallery.bind(this);
-		this.handleInsert = this.handleInsert.bind(this);
-	}
+const useControlsKey = (latestDomEvent) => {
+	const key = useRef(-1);
+	const previousDomEvent = useRef(null);
 
-	closeMediaGallery() {
-		this.setState({ mediaGalleryOpen: false }, () => {
-			this.props.editorChangeObject.view.focus();
-		});
-	}
+	if (latestDomEvent) {
+		const domEventsEqual =
+			previousDomEvent.current &&
+			previousDomEvent.current.type === latestDomEvent.type &&
+			previousDomEvent.current.timeStamp === latestDomEvent.timeStamp;
 
-	handleInsert(insertType, insertData) {
-		const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
-		insertFunctions[insertType](insertData);
-		this.closeMediaGallery();
-	}
-
-	render() {
-		const menuItems = this.props.editorChangeObject.menuItems || [];
-		const menuItemsObject = menuItems.reduce((prev, curr) => {
-			return { ...prev, [curr.title]: curr };
-		}, {});
-
-		const blockTypeItems = [
-			{ key: 'paragraph', title: 'Paragraph', shortTitle: 'Para', icon: 'git-merge' },
-			{ key: 'header1', title: 'Header 1', shortTitle: 'H1', icon: 'header-one' },
-			{ key: 'header2', title: 'Header 2', shortTitle: 'H2', icon: 'header-two' },
-			{ key: 'header3', title: 'Header 3', shortTitle: 'H3', icon: 'comparison' },
-			{
-				key: 'header4',
-				title: 'Header 4',
-				shortTitle: 'H4',
-				icon: 'comparison',
-				hideInMenu: true,
-			},
-			{
-				key: 'header5',
-				title: 'Header 5',
-				shortTitle: 'H5',
-				icon: 'comparison',
-				hideInMenu: true,
-			},
-			{
-				key: 'header6',
-				title: 'Header 6',
-				shortTitle: 'H6',
-				icon: 'comparison',
-				hideInMenu: true,
-			},
-			{ key: 'code_block', title: 'Code Block', shortTitle: 'Code', icon: 'code' },
-		];
-
-		const formattingItems = [
-			{ key: 'strong', title: 'Bold', icon: 'bold', priority: true },
-			{ key: 'em', title: 'Italic', icon: 'italic', priority: true },
-			{ key: 'link', title: 'Link', icon: 'link', priority: true },
-			{ key: 'bullet-list', title: 'Bullet List', icon: 'list-ul' },
-			{ key: 'numbered-list', title: 'Numbered List', icon: 'list-ol' },
-			{ key: 'blockquote', title: 'Blockquote', icon: 'citation' },
-			{ key: 'code', title: 'Code', icon: 'code' },
-			{ key: 'subscript', title: 'Subscript', icon: 'subscript' },
-			{ key: 'superscript', title: 'Superscript', icon: 'superscript' },
-			{ key: 'strikethrough', title: 'Strikethrough', icon: 'strikethrough' },
-			{
-				key: 'expander',
-			} /* This is used so that there is always overflow, allowing the insertItems to be shown */,
-		].filter((item) => {
-			return !this.props.hideExtraFormatting || item.priority;
-		});
-
-		const insertItems = [
-			{ key: 'citation', title: 'Citation', icon: 'bookmark' },
-			{ key: 'citationList', title: 'Citation List', icon: 'numbered-list' },
-			{ key: 'discussion', title: 'Discussion Thread', icon: 'chat' },
-			{ key: 'equation', title: 'Equation', icon: 'function' },
-			{ key: 'footnote', title: 'Footnote', icon: 'asterisk' },
-			{ key: 'footnoteList', title: 'Footnote List', icon: 'numbered-list' },
-			{ key: 'horizontal_rule', title: 'Horizontal Line', icon: 'minus' },
-			{ key: 'table', title: 'Table', icon: 'th' },
-		].filter((item) => {
-			if (!this.props.threads.length && item.key === 'discussion') {
-				return false;
-			}
-			return !this.props.hideExtraFormatting;
-		});
-
-		const iconSize = this.props.isSmall ? 12 : 16;
-		const selectedNode = this.props.editorChangeObject.selectedNode || {};
-		const isTable = menuItems.reduce((prev, curr) => {
-			if (curr.title === 'table-delete') {
-				return true;
-			}
-			return prev;
-		}, false);
-		const activeLink = this.props.editorChangeObject.activeLink || {};
-		const showLink = !!activeLink.attrs;
-
-		const uncontrolledNodes = [
-			'paragraph',
-			'blockquote',
-			'horizontal_rule',
-			'heading',
-			'ordered_list',
-			'bullet_list',
-			'list_item',
-			'code_block',
-			'citationList',
-			'footnoteList',
-		];
-		const isUncontrolledNode =
-			selectedNode.type && uncontrolledNodes.indexOf(selectedNode.type.name) > -1;
-		const isBlockquote = selectedNode.type && selectedNode.type.name === 'blockquote';
-		const nodeSelected = !isUncontrolledNode && selectedNode.attrs;
-		const showBlockTypes = !this.props.hideBlocktypes && !nodeSelected && !isBlockquote;
-		const showFormatting = !nodeSelected;
-		const showExtraFormatting = showFormatting && !this.props.hideExtraFormatting;
-		const showTable = isTable && !nodeSelected;
-		const showMedia =
-			!nodeSelected && !this.props.hideMedia && !(this.props.isSmall && showLink);
-
-		const view = this.props.editorChangeObject.view || {};
-		if (!view.editable) {
-			return <div className="formatting-bar-component" />;
+		if (!domEventsEqual) {
+			key.current += 1;
 		}
-		return (
-			<div className={`formatting-bar-component ${this.props.isSmall ? 'small' : ''}`}>
-				{/* Block Types Dropdown */}
-				{showBlockTypes && (
-					<DropdownButton
-						label={blockTypeItems.reduce((prev, curr) => {
-							const menuItem = menuItemsObject[curr.key] || {};
-							if (menuItem.isActive) {
-								return (
-									<span>
-										<span className="full-title">{curr.title}</span>
-										<span className="short-title">{curr.shortTitle}</span>
-									</span>
-								);
-							}
-							return prev;
-						}, '')}
-						isMinimal={true}
-						usePortal={false}
-					>
-						<Menu>
-							{blockTypeItems
-								.filter((item) => {
-									return !item.hideInMenu;
-								})
-								.map((item) => {
-									const menuItem = menuItemsObject[item.key] || {};
-									return (
-										<MenuItem
-											key={item.key}
-											active={menuItem.isActive}
-											text={item.title}
-											onClick={() => {
-												menuItem.run();
-												this.props.editorChangeObject.view.focus();
-											}}
-										/>
-									);
-								})}
-						</Menu>
-					</DropdownButton>
-				)}
-
-				{showBlockTypes && <div className="separator" />}
-
-				{/* Formatting Options */}
-				{showFormatting && (
-					<OverflowList
-						className="formatting-list"
-						collapseFrom={Boundary.END}
-						observeParents={true}
-						items={formattingItems}
-						visibleItemRenderer={(item) => {
-							if (item.key === 'expander') {
-								return <div key={item.key} style={{ width: '100vw' }} />;
-							}
-
-							const insertFunctions =
-								this.props.editorChangeObject.insertFunctions || {};
-							const insertFunction = insertFunctions[item.key];
-							const menuItem = menuItemsObject[item.key] || {};
-							if (!menuItem.canRun && !insertFunction) {
-								return null;
-							}
-							if (item.key === 'link' && this.props.isSmall && showLink) {
-								return null;
-							}
-							const linkIsActive = item.key === 'link' && showLink;
-							return (
-								<Button
-									key={item.key}
-									aria-label={item.title}
-									icon={<Icon icon={item.icon} iconSize={iconSize} />}
-									active={menuItem.isActive || linkIsActive}
-									minimal={true}
-									onClick={() => {
-										if (insertFunction) {
-											insertFunction();
-											this.props.editorChangeObject.view.focus();
-										} else {
-											menuItem.run();
-										}
-									}}
-									onMouseDown={(evt) => {
-										evt.preventDefault();
-									}}
-								/>
-							);
-						}}
-						overflowRenderer={(items) => {
-							const allItems = [...items, ...insertItems];
-							return (
-								<Popover
-									content={
-										<Menu>
-											{allItems.map((item) => {
-												if (item.key === 'expander') {
-													return null;
-												}
-
-												const insertFunctions =
-													this.props.editorChangeObject.insertFunctions ||
-													{};
-												const insertFunction = insertFunctions[item.key];
-												const menuItem = menuItemsObject[item.key] || {};
-												if (!menuItem.canRun && !insertFunction) {
-													return null;
-												}
-												if (
-													item.key === 'link' &&
-													this.props.isSmall &&
-													showLink
-												) {
-													return null;
-												}
-
-												return (
-													<MenuItem
-														key={item.key}
-														text={item.title}
-														icon={<Icon icon={item.icon} />}
-														onClick={() => {
-															if (insertFunction) {
-																insertFunction();
-																this.props.editorChangeObject.view.focus();
-															} else {
-																menuItem.run();
-															}
-														}}
-													/>
-												);
-											})}
-										</Menu>
-									}
-									interactionKind={PopoverInteractionKind.CLICK}
-									position={Position.BOTTOM}
-									minimal={true}
-									transitionDuration={-1}
-								>
-									<Button
-										icon={<Icon icon="more" iconSize={iconSize} />}
-										minimal={true}
-									/>
-								</Popover>
-							);
-						}}
-					/>
-				)}
-
-				{showExtraFormatting && showMedia && <div className="separator" />}
-
-				{/* Media Button */}
-				{showMedia && (
-					<Button
-						icon={<Icon icon="media" iconSize={iconSize} />}
-						text="Media"
-						minimal={true}
-						onClick={() => {
-							this.setState({ mediaGalleryOpen: true });
-						}}
-						onMouseDown={(evt) => {
-							evt.preventDefault();
-						}}
-					/>
-				)}
-
-				{/* Node Options Blocks */}
-				{(nodeSelected || showTable) && (
-					<Controls
-						editorChangeObject={this.props.editorChangeObject}
-						threads={this.props.threads}
-						isSmall={this.props.isSmall}
-						footnotes={this.props.footnotes}
-						citations={this.props.citations}
-					/>
-				)}
-
-				{/* Link Formatting */}
-				{showLink && !this.props.isSmall && <div className="separator" />}
-				{showLink && (
-					<div className="link-formatting">
-						<input
-							placeholder="Enter URL"
-							className={`${Classes.INPUT} ${Classes.SMALL}`}
-							value={activeLink.attrs.href}
-							onChange={(evt) => {
-								activeLink.updateAttrs({ href: evt.target.value });
-							}}
-						/>
-						<AnchorButton
-							icon={<Icon icon="share" iconSize={iconSize} />}
-							href={activeLink.attrs.href}
-							target="_blank"
-							rel="noopener noreferrer"
-							minimal={true}
-							disabled={!activeLink.attrs.href}
-						/>
-						<Button
-							minimal={true}
-							icon={<Icon icon="delete" iconSize={iconSize} />}
-							onClick={activeLink.removeLink}
-						/>
-					</div>
-				)}
-
-				{/* Media Gallery Overlay */}
-				<Overlay
-					isOpen={this.state.mediaGalleryOpen}
-					onClose={this.closeMediaGallery}
-					maxWidth={750}
-				>
-					<Media
-						editorChangeObject={this.props.editorChangeObject}
-						onInsert={this.handleInsert}
-						isSmall={this.props.isSmall}
-					/>
-				</Overlay>
-			</div>
-		);
+		previousDomEvent.current = latestDomEvent;
 	}
-}
+
+	return key.current;
+};
+
+const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) => {
+	const [openedButton, setOpenedButton] = useState(null);
+	const firstRenderRef = useRef(true);
+	const controlsKey = useControlsKey(editorChangeObject.latestDomEvent);
+
+	const indicatedButtons = buttons.filter(
+		(button) => button.controls && button.controls.indicate(editorChangeObject),
+	);
+
+	const indicatedButtonsString = indicatedButtons.map((button) => button.key).join('-');
+
+	const controlsComponent =
+		openedButton &&
+		openedButton.controls.show(editorChangeObject) &&
+		openedButton.controls.component;
+
+	const controlsPosition =
+		controlsComponent &&
+		openedButton.controls.position &&
+		openedButton.controls.position(editorChangeObject, popoverContainerRef);
+
+	useEffect(() => {
+		const openableIndicatedButton = indicatedButtons.find(
+			(button) => button.controls && button.controls.trigger(editorChangeObject),
+		);
+		setOpenedButton(openableIndicatedButton);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [controlsKey, indicatedButtonsString]);
+
+	firstRenderRef.current = false;
+
+	return {
+		indicatedButtons: indicatedButtons,
+		openedButton: openedButton,
+		setOpenedButton: setOpenedButton,
+		controlsPosition: controlsPosition,
+		ControlsComponent: controlsComponent,
+	};
+};
+
+const FormattingBar = (props) => {
+	const {
+		buttons,
+		editorChangeObject,
+		popoverContainerRef,
+		showBlockTypes,
+		isSmall,
+		isTranslucent,
+		isFullScreenWidth,
+	} = props;
+	const { menuItems, insertFunctions, view } = editorChangeObject;
+	const { communityData } = usePageContext();
+	const buttonElementRefs = useRefMap();
+	const toolbar = useToolbarState({ loop: true });
+	const {
+		indicatedButtons,
+		openedButton,
+		setOpenedButton,
+		controlsPosition,
+		ControlsComponent,
+	} = useControlsState(props);
+
+	const menuItemByKey = (key) => {
+		if (menuItems) {
+			return menuItems.find((menuItem) => menuItem.title === key);
+		}
+		return null;
+	};
+
+	const handleButtonClick = (item) => {
+		if (indicatedButtons.includes(item)) {
+			setOpenedButton(openedButton === item ? null : item);
+		} else {
+			const insertFunction = insertFunctions[item.key];
+			const menuItem = menuItemByKey(item.key);
+			if (insertFunction) {
+				insertFunction();
+				view.focus();
+			} else if (menuItem) {
+				menuItem.run();
+				view.focus();
+			}
+		}
+	};
+
+	useEffect(() => {
+		const options = { capture: true };
+		const handler = (evt) => {
+			if (evt.key === 'Enter') {
+				if (indicatedButtons.length === 1 && !openedButton) {
+					const [openableButton] = indicatedButtons;
+					if (
+						openableButton &&
+						openableButton.controls &&
+						openableButton.controls.enterKeyTriggers
+					) {
+						evt.stopImmediatePropagation();
+						evt.preventDefault();
+						setOpenedButton(openableButton);
+					}
+				}
+			}
+		};
+		document.addEventListener('keydown', handler, options);
+		return () => document.removeEventListener('keydown', handler, options);
+	}, [indicatedButtons, openedButton, setOpenedButton]);
+
+	useEffect(() => {
+		if (openedButton) {
+			const ref = buttonElementRefs.get(openedButton.key);
+			if (ref && ref.current && typeof ref.current.scrollIntoView === 'function') {
+				const buttonElement = ref.current;
+				const paddingPx = 5;
+				buttonElement.parentNode.scrollLeft = buttonElement.offsetLeft - paddingPx;
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [openedButton]);
+
+	const handlePopoverClose = useCallback(() => {
+		setOpenedButton(null);
+	}, [setOpenedButton]);
+
+	const renderButton = (button) => {
+		const matchingMenuItem = menuItemByKey(button.key);
+		const insertFunction = insertFunctions && insertFunctions[button.key];
+		const noFunction = !insertFunction && matchingMenuItem && !matchingMenuItem.canRun;
+		const isOpen = openedButton === button;
+		const isIndicated = indicatedButtons.includes(button) && !isOpen;
+		const isActive = !isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
+		const isDisabled = noFunction || (openedButton && !isOpen && !isIndicated);
+		const maybeEditorChangeObject =
+			button.key === 'media' ? { editorChangeObject: editorChangeObject } : {};
+		return (
+			<ToolbarItem
+				{...toolbar}
+				outerRef={buttonElementRefs.get(button.key)}
+				as={button.component || FormattingBarButton}
+				key={button.key}
+				formattingItem={button}
+				disabled={isDisabled}
+				isActive={isActive}
+				isIndicated={isIndicated && !isOpen}
+				isOpen={isOpen}
+				isDetached={isOpen && !!controlsPosition}
+				isSmall={isSmall}
+				accentColor={communityData.accentColorDark}
+				onClick={(evt) => handleButtonClick(button, evt)}
+				{...maybeEditorChangeObject}
+			/>
+		);
+	};
+
+	return (
+		<div
+			className={classNames(
+				'formatting-bar-component',
+				isSmall && 'small',
+				isTranslucent && 'translucent',
+			)}
+		>
+			<Toolbar aria-label="Formatting toolbar" className="toolbar" {...toolbar}>
+				{showBlockTypes && (
+					<>
+						<ToolbarItem
+							as={BlockTypeSelector}
+							isSmall={isSmall}
+							editorChangeObject={editorChangeObject}
+							{...toolbar}
+						/>
+						<div className="separator" />
+					</>
+				)}
+				{buttons.map(renderButton)}
+			</Toolbar>
+			{ControlsComponent && (
+				<FormattingBarPopover
+					editorChangeObject={editorChangeObject}
+					accentColor={communityData.accentColorDark}
+					button={openedButton}
+					onClose={handlePopoverClose}
+					isFullScreenWidth={isFullScreenWidth}
+					containerRef={popoverContainerRef}
+					floatingPosition={
+						isFullScreenWidth
+							? controlsPosition
+							: controlsPosition || positionNearSelection
+					}
+					captureFocusOnMount={
+						openedButton &&
+						openedButton.controls &&
+						openedButton.controls.captureFocusOnMount
+					}
+					showCloseButton={
+						openedButton &&
+						openedButton.controls &&
+						openedButton.controls.showCloseButton
+					}
+				>
+					{({ pendingAttrs, onClose }) => (
+						<ControlsComponent
+							editorChangeObject={editorChangeObject}
+							pendingAttrs={pendingAttrs}
+							onClose={onClose}
+							isSmall={isSmall}
+						/>
+					)}
+				</FormattingBarPopover>
+			)}
+		</div>
+	);
+};
 
 FormattingBar.propTypes = propTypes;
 FormattingBar.defaultProps = defaultProps;

@@ -90,7 +90,7 @@ const PubHeader = (props) => {
 		setIsMounted(true);
 		const nextOffsetHeight = headerRef.current.offsetHeight;
 		const stickyInstance = stickybits('.pub-header-component', {
-			stickyBitStickyOffset: 35 - nextOffsetHeight,
+			stickyBitStickyOffset: 37 - nextOffsetHeight,
 			useStickyClasses: true,
 		});
 

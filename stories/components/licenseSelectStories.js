@@ -18,6 +18,6 @@ const LicenseSelectContainer = () => {
 	);
 };
 
-storiesOf('LicenseSelect', module).add('default', () => {
+storiesOf('components/LicenseSelect', module).add('default', () => {
 	return <LicenseSelectContainer />;
 });

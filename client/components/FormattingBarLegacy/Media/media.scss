@@ -1,0 +1,72 @@
+.formatting-bar_media-component {
+	display: flex;
+	height: 430px;
+	max-height: calc(100vh - 75px);
+	margin: -20px; /* To undo the padding of the overlay card */
+	.options {
+		flex: 0 0 auto;
+		border-right: 1px solid #ddd;
+		overflow: scroll;
+	}
+	.formatting-bar_media-component-content {
+		flex: 1 1 auto;
+		&.dropzone {
+			background-color: #f7f7f9;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			&.dropzone--isActive {
+				background-color: #e7e7e9;
+			}
+			.drag-message {
+				text-align: center;
+			}
+			.bp3-icon {
+				color: #666;
+				margin-bottom: 0.5em;
+			}
+			.drag-title {
+				color: #444;
+				font-weight: 800;
+				font-size: 24px;
+			}
+			.drag-details {
+				padding-top: 1em;
+				font-size: 16px;
+			}
+		}
+		.top-input {
+			display: flex;
+			border-bottom: 1px solid #ddd;
+			input {
+				box-shadow: none;
+			}
+		}
+		.preview-wrapper {
+			width: 100%;
+			height: calc(100% - 41px);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			&.scroll {
+				overflow: scroll;
+			}
+		}
+		iframe {
+			width: 90%;
+			height: 85%;
+			box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 2px 4px rgba(16, 22, 26, 0.2),
+				0 8px 24px rgba(16, 22, 26, 0.2);
+			&.short {
+				max-height: 150px;
+			}
+		}
+	}
+	.bp3-menu {
+		min-width: auto;
+	}
+	.bp3-menu-item {
+		padding-right: 1em;
+		align-items: center;
+	}
+}

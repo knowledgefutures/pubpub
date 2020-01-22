@@ -8,7 +8,7 @@ import Editor, { getJSON, getNotes } from '@pubpub/editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
-import debounce from 'debounce';
+import { debounce } from 'debounce';
 
 import { PageContext } from 'utils/hooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
@@ -25,7 +25,7 @@ const propTypes = {
 	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
-	onSingleClick: PropTypes.func.isRequired,
+	editorWrapperRef: PropTypes.any.isRequired,
 };
 const defaultProps = {
 	firebaseBranchRef: undefined,
@@ -42,7 +42,14 @@ const shouldSuppressEditorErrors = () => {
 };
 
 const PubBody = (props) => {
-	const { pubData, collabData, firebaseBranchRef, updateLocalData, historyData } = props;
+	const {
+		pubData,
+		collabData,
+		firebaseBranchRef,
+		updateLocalData,
+		historyData,
+		editorWrapperRef,
+	} = props;
 	const { communityData } = useContext(PageContext);
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
@@ -93,6 +100,7 @@ const PubBody = (props) => {
 				setLastSavedTime(Date.now());
 			}
 		}
+
 		/* If disconnected, only set state if the new status is 'connected' */
 		if (prevStatus === 'disconnected' && status === 'connected') {
 			onComplete(nextStatus);
@@ -150,7 +158,7 @@ const PubBody = (props) => {
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;
 	return (
-		<main className="pub-body-component">
+		<main className="pub-body-component" ref={editorWrapperRef}>
 			<style>
 				{`
 					.editor.ProseMirror h1#abstract:first-child {
@@ -221,7 +229,6 @@ const PubBody = (props) => {
 						: undefined
 				}
 				highlights={[]}
-				handleSingleClick={props.onSingleClick}
 			/>
 			{!!editorError && !shouldSuppressEditorErrors() && (
 				<Alert

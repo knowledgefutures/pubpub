@@ -21,6 +21,7 @@ const CitationsPreview = (props) => {
 			<div
 				className="citation-body"
 				ref={copyableCitationRef}
+				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={{
 					__html: pubData.citationData.pub.apa,
 				}}

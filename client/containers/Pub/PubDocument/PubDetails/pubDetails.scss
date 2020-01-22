@@ -67,17 +67,8 @@
 	justify-content: space-between;
 	&.expanded {
 		@include column;
-		&:after {
-			position: absolute;
-			left: -50vw;
-			right: -50vw;
-			height: 1px;
-			background: #aaa;
-			content: '';
-			bottom: 0;
-			z-index: 1;
-		}
 		padding-bottom: 10px;
+		border-bottom: 1px solid #d2d2d2;
 	}
 	.section {
 		display: flex;
@@ -99,7 +90,7 @@
 		.doi-and-button {
 			display: flex;
 			align-items: center;
-			&:hover {
+			&:hover, &:focus-within {
 				.click-to-copy {
 					opacity: 1;
 				}

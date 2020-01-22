@@ -1,4 +1,6 @@
-@import '~@pubpub/editor/src/styles/base.scss';
+/* Editor Base Without Figures As Of 12/2019 */
+
+@import './editorBase.scss';
 
 @import 'styles/variables.scss';
 @import 'containers/Pub/PubDocument/pubBody.scss';

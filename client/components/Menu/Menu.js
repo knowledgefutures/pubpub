@@ -32,7 +32,7 @@ const renderDisclosure = (disclosure, disclosureProps) => {
 	return React.cloneElement(disclosure, disclosureProps);
 };
 
-export const Menu = (props) => {
+export const Menu = React.forwardRef((props, ref) => {
 	const {
 		'aria-label': ariaLabel,
 		children,
@@ -42,6 +42,7 @@ export const Menu = (props) => {
 		gutter,
 		menuStyle,
 		className,
+		...restProps
 	} = props;
 
 	const menu = RK.useMenuState({
@@ -58,8 +59,10 @@ export const Menu = (props) => {
 	return (
 		<React.Fragment>
 			<RK.MenuDisclosure
+				ref={ref}
 				style={{ display: 'inline-block', WebkitAppearance: 'unset' }}
 				{...menu}
+				{...restProps}
 			>
 				{(disclosureProps) =>
 					renderDisclosure(disclosure, { ...disclosureProps, 'aria-label': ariaLabel })
@@ -68,7 +71,7 @@ export const Menu = (props) => {
 			<RK.Menu
 				aria-label={ariaLabel}
 				as="ul"
-				style={{ zIndex: 1, ...menuStyle }}
+				style={{ zIndex: 20, ...menuStyle }}
 				className={classNames(Classes.MENU, Classes.ELEVATION_1, className)}
 				unstable_portal={true}
 				{...menu}
@@ -79,7 +82,7 @@ export const Menu = (props) => {
 			</RK.Menu>
 		</React.Fragment>
 	);
-};
+});
 
 Menu.propTypes = propTypes;
 Menu.defaultProps = defaultProps;

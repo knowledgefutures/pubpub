@@ -1,6 +1,9 @@
 import React from 'react';
 import uuidValidate from 'uuid-validate';
 import { getPubPageContextTitle } from 'shared/utils/pubPageTitle';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { getPDFDownload, getTextAbstract, getGoogleScholarNotes } from 'shared/pub/metadata';
+import { chooseCollectionForPub } from '../../client/utils/collections';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -142,8 +145,15 @@ app.get(
 						description: pubData.description,
 						image: pubData.avatar,
 						attributions: pubData.attributions,
-						publishedAt: pubData.firstPublishedAt,
+						publishedAt: getPubPublishedDate(
+							pubData,
+							pubData.branches.find((br) => br.title === 'public'),
+						),
 						doi: pubData.doi,
+						collection: chooseCollectionForPub(pubData, initialData.locationData),
+						download: getPDFDownload(pubData),
+						textAbstract: pubData.initialDoc ? getTextAbstract(pubData.initialDoc) : '',
+						notes: getGoogleScholarNotes(pubData.citations.concat(pubData.footnotes)),
 						// unlisted: isUnlistedDraft,
 					})}
 				/>,

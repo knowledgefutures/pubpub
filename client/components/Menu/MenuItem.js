@@ -27,6 +27,7 @@ const sharedDefaultProps = {
 
 const DisplayMenuItem = React.forwardRef((props, ref) => {
 	const {
+		active,
 		children,
 		disabled,
 		href,

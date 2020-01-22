@@ -27,7 +27,6 @@ class ControlsCitation extends Component {
 
 	render() {
 		const hasRenderedContent = this.props.citations.length >= this.props.attrs.count;
-		/* countToIndex: Citation that renders as '1' is stored in 0th index of citations array */
 		const countToIndex = this.props.attrs.count - 1;
 		const renderContent = this.props.citations[countToIndex];
 		return (

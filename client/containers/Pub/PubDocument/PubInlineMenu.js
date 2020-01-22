@@ -39,6 +39,7 @@ const PubInlineMenu = (props) => {
 	if (
 		!collabData.editorChangeObject.selection ||
 		selection.empty ||
+		selection.$anchorCell ||
 		collabData.editorChangeObject.selectedNode
 	) {
 		return null;

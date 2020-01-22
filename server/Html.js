@@ -14,6 +14,20 @@ const propTypes = {
 const defaultProps = {
 	viewData: {},
 };
+const polyfills = [
+	'default',
+	'fetch',
+	'HTMLCanvasElement.prototype.toBlob',
+	'Node.prototype.contains',
+	'Number.isNaN',
+	'Object.assign',
+	'Object.entries',
+	'Object.values',
+	'Promise',
+	'requestIdleCallback',
+	'String.prototype.includes',
+	'URL',
+].join(',');
 
 const Html = (props) => {
 	const getPath = (chunkName, extension) => {
@@ -52,7 +66,7 @@ const Html = (props) => {
 				</div>
 				<script
 					crossOrigin="anonymous"
-					src="https://polyfill.io/v3/polyfill.min.js?features=default,fetch,HTMLCanvasElement.prototype.toBlob,Object.entries,Object.values,URL,Promise,Object.assign,Number.isNaN,String.prototype.includes"
+					src={`https://polyfill.io/v3/polyfill.min.js?features=${polyfills}`}
 				/>
 				<script
 					id="initial-data"

@@ -21,6 +21,7 @@
             }
             .metadata-pair {
                 & > :first-child {
+                    color: #CFCFCF;
                     margin-right: 10px;
                 }
                 display: flex;
@@ -44,7 +45,7 @@
     .hairline {
         width: 100%;
         height: 1px;
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0.2);
         margin-top: 10px;
         margin-bottom: 20px;
     }
@@ -129,16 +130,16 @@
     .description {
         padding-top: 15px;
         font-size: 18px;
-        line-height: 25px;
+        font-weight: normal;
         font-family: $header-font;
-        font-weight: 400;
+        color: #CFCFCF;
     }
 
     .authors {
         padding-top: 15px;
         font-size: 18px;
         font-style: italic;
-        font-weight: 400;
+        font-weight: normal;
         font-family: $header-font;
         letter-spacing: 0.5px;
     }

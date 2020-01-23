@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import { SketchPicker } from 'react-color';
+
+import { PageContext } from 'components/PageWrapper/PageWrapper';
 
 require('./colorInput.scss');
 
 const propTypes = {
 	value: PropTypes.string.isRequired,
-	presetColors: PropTypes.arrayOf(PropTypes.string),
 	onChange: PropTypes.func,
 	onChangeComplete: PropTypes.func,
 	children: PropTypes.func,
@@ -17,10 +18,9 @@ const defaultProps = {
 	onChange: undefined,
 	onChangeComplete: undefined,
 	children: undefined,
-	presetColors: undefined,
 };
 
-const defaultPresetColors = [
+const presetColors = [
 	'#c0392b',
 	'#d35400',
 	'#f39c12',
@@ -32,11 +32,16 @@ const defaultPresetColors = [
 ];
 
 const ColorInput = function(props) {
-	const presetColors = props.presetColors
-		? typeof props.presetColors === 'function'
-			? props.presetColors(defaultPresetColors)
-			: props.presetColors
-		: defaultPresetColors;
+	const { communityData } = useContext(PageContext);
+	const allPresetColors = communityData
+		? [
+				...presetColors,
+				communityData.accentColorDark,
+				communityData.accentColorLight,
+				'black',
+				'white',
+		  ]
+		: presetColors;
 	return (
 		<div className="color-input-component">
 			<Popover
@@ -45,8 +50,7 @@ const ColorInput = function(props) {
 						color={props.value}
 						onChange={props.onChange}
 						onChangeComplete={props.onChangeComplete}
-						disableAlpha={false}
-						presetColors={presetColors}
+						presetColors={allPresetColors}
 					/>
 				}
 				interactionKind={PopoverInteractionKind.CLICK}

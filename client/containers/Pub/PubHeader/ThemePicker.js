@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Color from 'color';
 import { Button } from 'reakit';
 import { Card } from '@blueprintjs/core';
 
@@ -11,15 +12,17 @@ require('./themePicker.scss');
 const propTypes = {};
 
 const TextStyleChoice = React.forwardRef(({ label, className, onClick, selected, style }, ref) => {
-	console.log(style);
 	return (
 		<Button
-			className={classNames('text-style-choice', selected && 'selected')}
+			className={classNames('text-style-choice')}
 			onClick={onClick}
 			ref={ref}
 			title={label}
 		>
-			<div className={classNames('example', className)} style={style || {}}>
+			<div
+				className={classNames('example', className, 'selectable', selected && 'selected')}
+				style={style || {}}
+			>
 				Aa
 			</div>
 			<div className="label">{label}</div>
@@ -27,15 +30,16 @@ const TextStyleChoice = React.forwardRef(({ label, className, onClick, selected,
 	);
 });
 
-const TintChoice = React.forwardRef(({ label, onClick, color, className, selected }, ref) => {
+const TintChoice = React.forwardRef(({ label, onClick, color, selected }, ref) => {
 	return (
-		<Button
-			className={classNames('tint-choice', selected && 'selected')}
-			onClick={onClick}
-			ref={ref}
-			title={label}
-		>
-			<div className={classNames('example', className)} style={{ backgroundColor: color }} />
+		<Button className="tint-choice" onClick={onClick} ref={ref} title={label}>
+			<div className="example">
+				<div className="transparency" />
+				<div
+					className={classNames('inner', 'selectable', selected && 'selected')}
+					style={{ backgroundColor: color }}
+				/>
+			</div>
 			<div className="label">{label}</div>
 		</Button>
 	);
@@ -65,13 +69,17 @@ const setBackgroundTypeColor = (backgroundType, hasColor) => {
 
 const ThemePicker = React.forwardRef((props, ref) => {
 	const { updateLocalData, pubData, communityData } = props;
-	const { headerBackgroundColor } = pubData;
-
-	console.log(headerBackgroundColor);
+	const { headerBackgroundColor, headerStyle } = pubData;
 
 	const updatePubBackgroundColor = (color) => {
 		updateLocalData('pub', {
 			headerBackgroundColor: color,
+		});
+	};
+
+	const updatePubHeaderStyle = (style) => {
+		updateLocalData('pub', {
+			headerStyle: style,
 		});
 	};
 
@@ -85,26 +93,22 @@ const ThemePicker = React.forwardRef((props, ref) => {
 				<div className="row">
 					<TintChoice
 						label="None"
-						className="transparency"
 						onClick={() => updatePubBackgroundColor(null)}
 						selected={!headerBackgroundColor}
 					/>
 					<TintChoice
 						label="Community accent color"
-						color={communityData.accentColorDark}
+						color={Color(communityData.accentColorDark).alpha(0.75)}
 						onClick={() => updatePubBackgroundColor('community')}
 						selected={headerBackgroundColor === 'community'}
 					/>
 					<ColorInput
 						value={headerBackgroundColor || 'black'}
-						presetColors={(rest) => [
-							...rest,
-							communityData.accentColorDark,
-							communityData.accentColorLight,
-							"black",
-							"white",
-						]}
-						onChange={(color) => updatePubBackgroundColor(color.hex)}
+						onChange={(color) => {
+							const hexWithAlpha =
+								color.hex + Math.round(color.rgb.a * 255).toString(16);
+							updatePubBackgroundColor(hexWithAlpha);
+						}}
 					>
 						{(color) => (
 							<TintChoice
@@ -128,6 +132,8 @@ const ThemePicker = React.forwardRef((props, ref) => {
 						style={{
 							backgroundColor: headerBackgroundColor,
 						}}
+						onClick={() => updatePubHeaderStyle('light')}
+						selected={!headerStyle || headerStyle === 'light'}
 					/>
 					<TextStyleChoice
 						label="Dark"
@@ -135,9 +141,21 @@ const ThemePicker = React.forwardRef((props, ref) => {
 						style={{
 							backgroundColor: headerBackgroundColor,
 						}}
+						onClick={() => updatePubHeaderStyle('dark')}
+						selected={headerStyle === 'dark'}
 					/>
-					<TextStyleChoice label="White Blocks" className="white-blocks" />
-					<TextStyleChoice label="Black Blocks" className="black-blocks" />
+					<TextStyleChoice
+						label="White Blocks"
+						className="white-blocks"
+						onClick={() => updatePubHeaderStyle('white-blocks')}
+						selected={headerStyle === 'white-blocks'}
+					/>
+					<TextStyleChoice
+						label="Black Blocks"
+						className="black-blocks"
+						onClick={() => updatePubHeaderStyle('black-blocks')}
+						selected={headerStyle === 'black-blocks'}
+					/>
 				</div>
 			</div>
 		</Card>

@@ -1,5 +1,22 @@
 .pub-header-background-component {
+    position: relative;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
+    overflow: hidden;
+    .background-element {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: -1;
+        &.background-image {
+            background-size: cover;
+            &.blur {
+                filter: blur(10px);
+            }
+        }
+        &.background-dark-tint {
+            background-color: rgba(black, 0.2);
+        }
+    }
 }

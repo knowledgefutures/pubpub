@@ -1,12 +1,17 @@
 @import './themes.scss';
 
 .small-header-button-component {
-    color: inherit;
     display: flex;
+    color: inherit;
     align-items: center;
     text-decoration: none;
+    user-select: none;
+    background: unset;
+    border: unset;
+    cursor: pointer;
     .label {
         text-transform: uppercase;
+        white-space: nowrap;
         letter-spacing: 0.05em;
         margin-left: 9px;
         font-size: 10px;
@@ -27,8 +32,10 @@
             margin-right: 9px;
         }
     }
-    &:hover {
-        color: inherit;
+    &:hover, &:focus {
+        .label {
+            text-decoration: underline;
+        }
         .icon-container {
             @include shadow-box-hover;
         }

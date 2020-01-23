@@ -16,11 +16,20 @@ const propTypes = {
 
 const PubHeader = (props) => {
 	const headerRef = useRef(null);
-	const { pubData, updateLocalData } = props;
+	const { pubData, communityData, updateLocalData } = props;
 	return (
-		<PubHeaderBackground className="pub-header-component" pubData={pubData} ref={headerRef}>
+		<PubHeaderBackground
+			className="pub-header-component"
+			pubData={pubData}
+			communityData={communityData}
+			ref={headerRef}
+		>
 			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
-				<PubHeaderMain pubData={pubData} updateLocalData={updateLocalData} />
+				<PubHeaderMain
+					pubData={pubData}
+					communityData={communityData}
+					updateLocalData={updateLocalData}
+				/>
 			</GridWrapper>
 		</PubHeaderBackground>
 	);

@@ -1,5 +1,9 @@
 @import 'styles/variables.scss';
 
+.pub-header-popover {
+    z-index: 21;
+}
+
 .pub-header-main {
     .top {
         display: flex;
@@ -79,7 +83,6 @@
     position: relative;
     z-index: 20;
     color: white;
-    background: #6e617d;
     &.js-is-sticky,
     &.js-is-stuck {
         .bottom-text {

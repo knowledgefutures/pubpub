@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import PubHeader from 'containers/Pub/PubHeader';
-import { pubData } from 'data';
+import { pubData, communityData } from 'data';
 
 const altPubData = {
 	...pubData,
@@ -50,6 +50,7 @@ const PubHeaderWrapper = (props) => {
 		pubData: props.pubData,
 		historyData: props.historyData,
 		collabData: props.collabData,
+		communityData: communityData,
 	});
 
 	const updateLocalData = (type, value) => {

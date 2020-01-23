@@ -22,12 +22,12 @@ const defaultProps = {
 	onClick: null,
 };
 
-const SmallHeaderButton = (props) => {
+const SmallHeaderButton = React.forwardRef((props, ref) => {
 	const { className, href, icon, label, labelPosition, onClick } = props;
 	return (
 		<Button
-			as="a"
 			href={href}
+			ref={ref}
 			onClick={onClick}
 			className={classNames(
 				'small-header-button-component',
@@ -41,7 +41,7 @@ const SmallHeaderButton = (props) => {
 			<div className="label">{label}</div>
 		</Button>
 	);
-};
+});
 
 SmallHeaderButton.propTypes = propTypes;
 SmallHeaderButton.defaultProps = defaultProps;

@@ -62,6 +62,7 @@ const Pub = (props) => {
 												updateLocalData={updateLocalData}
 												collabData={collabData}
 												historyData={historyData}
+												communityData={props.communityData}
 											/>
 										)}
 									</PubSuspendWhileTyping>

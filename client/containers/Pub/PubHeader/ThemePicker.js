@@ -5,30 +5,41 @@ import Color from 'color';
 import { Button } from 'reakit';
 import { Card } from '@blueprintjs/core';
 
-import { ColorInput } from 'components';
+import { ColorInput, ImageUpload } from 'components';
+import PubHeaderBackground from './PubHeaderBackground';
 
 require('./themePicker.scss');
 
 const propTypes = {};
 
-const TextStyleChoice = React.forwardRef(({ label, className, onClick, selected, style }, ref) => {
-	return (
-		<Button
-			className={classNames('text-style-choice')}
-			onClick={onClick}
-			ref={ref}
-			title={label}
-		>
-			<div
-				className={classNames('example', className, 'selectable', selected && 'selected')}
-				style={style || {}}
+const TextStyleChoice = React.forwardRef(
+	({ label, className, onClick, selected, style, pubData, communityData }, ref) => {
+		return (
+			<Button
+				className={classNames('text-style-choice')}
+				onClick={onClick}
+				ref={ref}
+				title={label}
 			>
-				Aa
-			</div>
-			<div className="label">{label}</div>
-		</Button>
-	);
-});
+				<PubHeaderBackground
+					pubData={pubData}
+					communityData={communityData}
+					blur={true}
+					className={classNames(
+						'example',
+						className,
+						'selectable',
+						selected && 'selected',
+					)}
+					style={style || {}}
+				>
+					<div className="example-text">Aa</div>
+				</PubHeaderBackground>
+				<div className="label">{label}</div>
+			</Button>
+		);
+	},
+);
 
 const TintChoice = React.forwardRef(({ label, onClick, color, selected }, ref) => {
 	return (
@@ -69,7 +80,7 @@ const setBackgroundTypeColor = (backgroundType, hasColor) => {
 
 const ThemePicker = React.forwardRef((props, ref) => {
 	const { updateLocalData, pubData, communityData } = props;
-	const { headerBackgroundColor, headerStyle } = pubData;
+	const { headerBackgroundColor, headerBackgroundImage, headerStyle } = pubData;
 
 	const updatePubBackgroundColor = (color) => {
 		updateLocalData('pub', {
@@ -83,14 +94,27 @@ const ThemePicker = React.forwardRef((props, ref) => {
 		});
 	};
 
+	const updatePubHeaderImage = (image) => {
+		updateLocalData('pub', {
+			headerBackgroundImage: image,
+		});
+	};
+
 	return (
 		<Card className="theme-picker-component" elevation={2}>
 			<div className="section">
 				<div className="title">Background image</div>
+				<ImageUpload
+					defaultImage={headerBackgroundImage}
+					onNewImage={updatePubHeaderImage}
+					width={150}
+					canClear={true}
+					helperText={<span>Suggested minimum dimensions: 1200px x 800px.</span>}
+				/>
 			</div>
 			<div className="section">
 				<div className="title">Background tint</div>
-				<div className="row">
+				<div className="section-row">
 					<TintChoice
 						label="None"
 						onClick={() => updatePubBackgroundColor(null)}
@@ -125,32 +149,34 @@ const ThemePicker = React.forwardRef((props, ref) => {
 			</div>
 			<div className="section">
 				<div className="title">Text style</div>
-				<div className="row">
+				<div className="section-row">
 					<TextStyleChoice
+						pubData={pubData}
+						communityData={communityData}
 						label="Light"
 						className="light"
-						style={{
-							backgroundColor: headerBackgroundColor,
-						}}
 						onClick={() => updatePubHeaderStyle('light')}
 						selected={!headerStyle || headerStyle === 'light'}
 					/>
 					<TextStyleChoice
+						pubData={pubData}
+						communityData={communityData}
 						label="Dark"
 						className="dark"
-						style={{
-							backgroundColor: headerBackgroundColor,
-						}}
 						onClick={() => updatePubHeaderStyle('dark')}
 						selected={headerStyle === 'dark'}
 					/>
 					<TextStyleChoice
+						pubData={pubData}
+						communityData={communityData}
 						label="White Blocks"
 						className="white-blocks"
 						onClick={() => updatePubHeaderStyle('white-blocks')}
 						selected={headerStyle === 'white-blocks'}
 					/>
 					<TextStyleChoice
+						pubData={pubData}
+						communityData={communityData}
 						label="Black Blocks"
 						className="black-blocks"
 						onClick={() => updatePubHeaderStyle('black-blocks')}

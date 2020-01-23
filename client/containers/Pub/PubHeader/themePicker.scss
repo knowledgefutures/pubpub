@@ -17,6 +17,7 @@ $light-blue: #48aff0;
         margin-top: 4px;
         font-size: 12px;
         max-width: 80px;
+        color: #6e6e6e;
         user-select: none;
     }
     .selectable {
@@ -34,15 +35,27 @@ $light-blue: #48aff0;
 
 .theme-picker-component {
     display: inline-block;
+    width: 280px;
+    color: black;
+    .image-upload-component {
+        .upload-button {
+            background: #EEE;
+            &:hover {
+                background: #DDD;
+            }
+        }
+        .helper-text {
+            width: 200px;
+        }
+    }
     .section {
         .title {
+            user-select: none;
             margin-bottom: 5px;
         }
-        .row {
+        .section-row {
             display: flex;
-            & > *:not(:last-child) {
-                margin-right: 10px;
-            }
+            justify-content: space-between;
         }
     }
     .tint-choice {
@@ -51,17 +64,17 @@ $light-blue: #48aff0;
         background: unset;
         .example {
             position: relative;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             cursor: pointer;
             .inner {
                 position: absolute;
                 width: 100%;
                 height: 100%;
-                border-radius: 50px;
+                border-radius: 60px;
             }
             .transparency {
-                border-radius: 50px;
+                border-radius: 60px;
                 position: absolute;
                 width: 100%;
                 height: 100%;
@@ -89,6 +102,12 @@ $light-blue: #48aff0;
             border: 1px solid rgba(black, 0.2);
             border-radius: 4px;
             font-size: 30px;
+            .background-element {
+                z-index: unset;
+            }
+            .example-text {
+                z-index: 1;
+            }
             &.light {
                 color: rgba(white, 0.9);
             }
@@ -96,12 +115,19 @@ $light-blue: #48aff0;
                 color: rgba(black, 0.9);
             }
             &.black-blocks {
+                .background-element {
+                    display: none;
+                }
                 color: white;
                 background: black;
                 border-color: black;
             }
             &.white-blocks {
+                .background-element {
+                    display: none;
+                }
                 color: black;
+                background-image: unset;
                 background: white;
                 border-color: black;
             }

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
+import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
 
 import { ClickToCopyButton } from 'components';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
@@ -9,6 +10,7 @@ import Byline from './Byline';
 import EditableHeaderText from './EditableHeaderText';
 import SmallHeaderButton from './SmallHeaderButton';
 import CollectionsBar from './collections/CollectionsBar';
+import ThemePicker from './ThemePicker';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -20,8 +22,30 @@ const propTypes = {
 	updateLocalData: PropTypes.func.isRequired,
 };
 
+const PopoverButton = (props) => {
+	const { component: Component, 'aria-label': ariaLabel, children, ...restProps } = props;
+	const popover = usePopoverState({ unstable_fixed: true, placement: 'bottom-end', gutter: 5 });
+	return (
+		<>
+			<PopoverDisclosure {...popover} {...children.props}>
+				{(disclosureProps) => {
+					return React.cloneElement(children, disclosureProps);
+				}}
+			</PopoverDisclosure>
+			<Popover
+				className="pub-header-popover"
+				unstable_portal={true}
+				tabIndex={0}
+				{...popover}
+			>
+				<Component {...restProps} />
+			</Popover>
+		</>
+	);
+};
+
 const PubHeaderMain = (props) => {
-	const { pubData, updateLocalData } = props;
+	const { pubData, updateLocalData, communityData } = props;
 	const { canManage, title, description, doi } = pubData;
 	const publishedAtString = dateFormat(getPubPublishedDate(pubData), 'mmm dd, yyyy');
 
@@ -82,6 +106,21 @@ const PubHeaderMain = (props) => {
 					<SmallHeaderButton label="Share with..." labelPosition="left" icon="people" />
 					<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
 					<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
+					{canManage && (
+						<PopoverButton
+							component={ThemePicker}
+							updateLocalData={updateLocalData}
+							pubData={pubData}
+							communityData={communityData}
+							aria-label="Pub header theme options"
+						>
+							<SmallHeaderButton
+								label="Edit theme"
+								labelPosition="left"
+								icon="clean"
+							/>
+						</PopoverButton>
+					)}
 				</div>
 			</div>
 		</div>

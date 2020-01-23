@@ -45,7 +45,7 @@ const ColorInput = function(props) {
 						color={props.value}
 						onChange={props.onChange}
 						onChangeComplete={props.onChangeComplete}
-						disableAlpha={true}
+						disableAlpha={false}
 						presetColors={presetColors}
 					/>
 				}

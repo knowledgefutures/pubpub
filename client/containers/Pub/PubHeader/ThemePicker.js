@@ -97,7 +97,13 @@ const ThemePicker = React.forwardRef((props, ref) => {
 					/>
 					<ColorInput
 						value={headerBackgroundColor || 'black'}
-						presetColors={(rest) => [...rest, communityData.accentColorDark]}
+						presetColors={(rest) => [
+							...rest,
+							communityData.accentColorDark,
+							communityData.accentColorLight,
+							"black",
+							"white",
+						]}
 						onChange={(color) => updatePubBackgroundColor(color.hex)}
 					>
 						{(color) => (

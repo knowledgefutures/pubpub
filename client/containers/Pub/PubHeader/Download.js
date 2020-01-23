@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon, Menu, MenuItem, Spinner, Tooltip } from '@blueprintjs/core';
+import { Button, Icon, Spinner, Tooltip } from '@blueprintjs/core';
 
+import { Menu, MenuItem } from 'components/Menu';
 import { apiFetch } from 'utils';
 import { pingTask } from 'utils/pingTask';
 import { getFormattedDownload } from './headerUtils';
@@ -11,6 +12,7 @@ require('./download.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 const formatTypes = [
@@ -28,7 +30,7 @@ const formatTypes = [
 const mustShowDownloadButton = () => navigator.userAgent.match(/iP(ad|hone|od)/i);
 
 const Download = (props) => {
-	const { pubData } = props;
+	const { pubData, children } = props;
 	const { downloads = [], activeBranch } = pubData;
 	const [isLoading, setIsLoading] = useState(false);
 	const [isError, setIsError] = useState(false);
@@ -103,74 +105,71 @@ const Download = (props) => {
 	]);
 
 	return (
-		<div className="pub-download-component">
-			<Menu>
-				{formattedDownload && (
-					<React.Fragment>
-						<li className="bp3-menu-header">
-							<h6 className="bp3-heading">Formatted Download</h6>
-						</li>
-						<MenuItem
-							shouldDismissPopover={false}
-							labelElement={<Icon icon="star" />}
-							className="formatted-button"
-							// intent={Intent.PRIMARY}
-							text={`Formatted ${formattedDownload.url
-								.split('.')
-								.pop()
-								.toUpperCase()}`}
-							loading={isLoading && selectedType.format === 'formatted'}
-							onClick={() => window.open(formattedDownload.url)}
-							rel="nofollow"
-						/>
-					</React.Fragment>
-				)}
-				<li className="bp3-menu-header">
-					<h6 className="bp3-heading">
-						{formattedDownload ? 'Auto Generated Download' : 'Download'}
-					</h6>
-				</li>
-				{formatTypes.map((type, i) => {
-					const shouldRenderButton = downloadUrl && selectedType.format === type.format;
-					return (
-						<MenuItem
-							// eslint-disable-next-line react/no-array-index-key
-							key={`${i}-${type.format}`}
-							shouldDismissPopover={false}
-							disabled={isLoading && selectedType.format !== type.format}
-							// loading={isLoading && selectedType.format === type.format}
-							labelElement={
-								<span>
-									{isLoading && selectedType.format === type.format && (
-										<Spinner size={Spinner.SIZE_SMALL} />
-									)}
-								</span>
-							}
-							onClick={() => handleStartDownload(type)}
-							rel="nofollow"
-							text={
-								<Tooltip
-									key={type.format}
-									isOpen={isError && selectedType.format === type.format}
-									content="There was a problem generating the file."
-								>
-									{shouldRenderButton ? (
-										<Button
-											icon="download"
-											onClick={() => download(downloadUrl)}
-										>
-											Download {type.title} file
-										</Button>
-									) : (
-										type.title
-									)}
-								</Tooltip>
-							}
-						/>
-					);
-				})}
-			</Menu>
-		</div>
+		<Menu
+			disclosure={children}
+			className="pub-download-component"
+			aria-label="Pub download formats"
+		>
+			{formattedDownload && (
+				<React.Fragment>
+					<li className="bp3-menu-header">
+						<h6 className="bp3-heading">Formatted Download</h6>
+					</li>
+					<MenuItem
+						dismissOnClick={false}
+						labelElement={<Icon icon="star" />}
+						className="formatted-button"
+						// intent={Intent.PRIMARY}
+						text={`Formatted ${formattedDownload.url
+							.split('.')
+							.pop()
+							.toUpperCase()}`}
+						loading={isLoading && selectedType.format === 'formatted'}
+						onClick={() => window.open(formattedDownload.url)}
+					/>
+				</React.Fragment>
+			)}
+			<li className="bp3-menu-header">
+				<h6 className="bp3-heading">
+					{formattedDownload ? 'Auto Generated Download' : 'Download'}
+				</h6>
+			</li>
+			{formatTypes.map((type, i) => {
+				const shouldRenderButton = downloadUrl && selectedType.format === type.format;
+				return (
+					<MenuItem
+						// eslint-disable-next-line react/no-array-index-key
+						key={`${i}-${type.format}`}
+						dismissOnClick={false}
+						disabled={isLoading && selectedType.format !== type.format}
+						// loading={isLoading && selectedType.format === type.format}
+						rightElement={
+							<span>
+								{isLoading && selectedType.format === type.format && (
+									<Spinner size={Spinner.SIZE_SMALL} />
+								)}
+							</span>
+						}
+						onClick={() => handleStartDownload(type)}
+						text={
+							<Tooltip
+								key={type.format}
+								isOpen={isError && selectedType.format === type.format}
+								content="There was a problem generating the file."
+							>
+								{shouldRenderButton ? (
+									<Button icon="download" onClick={() => download(downloadUrl)}>
+										Download {type.title} file
+									</Button>
+								) : (
+									type.title
+								)}
+							</Tooltip>
+						}
+					/>
+				);
+			})}
+		</Menu>
 	);
 };
 

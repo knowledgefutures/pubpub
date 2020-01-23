@@ -2,17 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
+import { Card } from '@blueprintjs/core';
 
 import { ClickToCopyButton } from 'components';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 
-import { Card } from '@blueprintjs/core';
 import Byline from './Byline';
+import CitationsPreview from './CitationsPreview';
+import CollectionsBar from './collections/CollectionsBar';
+import Download from './Download';
 import EditableHeaderText from './EditableHeaderText';
 import SmallHeaderButton from './SmallHeaderButton';
-import CollectionsBar from './collections/CollectionsBar';
 import ThemePicker from './ThemePicker';
-import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -108,7 +109,9 @@ const PubHeaderMain = (props) => {
 				<div className="right">
 					<SmallHeaderButton label="Pub settings" labelPosition="left" icon="cog" />
 					<SmallHeaderButton label="Share with..." labelPosition="left" icon="people" />
-					<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
+					<Download pubData={pubData}>
+						<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
+					</Download>
 					<PopoverButton
 						component={CitationsPreview}
 						pubData={pubData}

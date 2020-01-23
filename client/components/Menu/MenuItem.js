@@ -115,7 +115,7 @@ export const MenuItem = React.forwardRef((props, ref) => {
 			ref={ref}
 			{...parentMenu}
 			{...restProps}
-			onDismiss={dismissOnClick && dismissMenu}
+			onDismiss={dismissOnClick ? dismissMenu : null}
 		>
 			{text}
 		</RK.MenuItem>

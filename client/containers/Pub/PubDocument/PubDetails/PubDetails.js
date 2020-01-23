@@ -12,7 +12,7 @@ import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 import { getAllPubContributors } from 'utils/pubContributors';
 import CompactContributors from './CompactContributors';
 import Contributors from './Contributors';
-import CitationsPreview from './CitationsPreview';
+import CitationsPreview from '../../PubHeader/CitationsPreview';
 
 require('./pubDetails.scss');
 

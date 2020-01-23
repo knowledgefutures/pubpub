@@ -9,6 +9,7 @@ import { MenuContext } from './menuContext';
 const propTypes = {
 	'aria-label': PropTypes.string.isRequired,
 	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
 	disclosure: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
 	gutter: PropTypes.number,
 	menuStyle: PropTypes.shape({}),
@@ -17,6 +18,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+	className: '',
 	gutter: undefined,
 	menuStyle: {},
 	onDismiss: () => {},
@@ -34,6 +36,7 @@ export const Menu = React.forwardRef((props, ref) => {
 	const {
 		'aria-label': ariaLabel,
 		children,
+		className,
 		disclosure,
 		placement,
 		onDismiss,
@@ -69,7 +72,7 @@ export const Menu = React.forwardRef((props, ref) => {
 				aria-label={ariaLabel}
 				as="ul"
 				style={{ zIndex: 20, ...menuStyle }}
-				className={classNames(Classes.MENU, Classes.ELEVATION_1)}
+				className={classNames(Classes.MENU, Classes.ELEVATION_1, className)}
 				unstable_portal={true}
 				{...menu}
 			>

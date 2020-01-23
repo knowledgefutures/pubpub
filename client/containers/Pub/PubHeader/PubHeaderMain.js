@@ -6,11 +6,13 @@ import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
 import { ClickToCopyButton } from 'components';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 
+import { Card } from '@blueprintjs/core';
 import Byline from './Byline';
 import EditableHeaderText from './EditableHeaderText';
 import SmallHeaderButton from './SmallHeaderButton';
 import CollectionsBar from './collections/CollectionsBar';
 import ThemePicker from './ThemePicker';
+import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -38,7 +40,9 @@ const PopoverButton = (props) => {
 				tabIndex={0}
 				{...popover}
 			>
-				<Component {...restProps} />
+				<Card elevation={2}>
+					<Component {...restProps} />
+				</Card>
 			</Popover>
 		</>
 	);
@@ -105,7 +109,13 @@ const PubHeaderMain = (props) => {
 					<SmallHeaderButton label="Pub settings" labelPosition="left" icon="cog" />
 					<SmallHeaderButton label="Share with..." labelPosition="left" icon="people" />
 					<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
-					<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
+					<PopoverButton
+						component={CitationsPreview}
+						pubData={pubData}
+						aria-label="Cite this Pub"
+					>
+						<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
+					</PopoverButton>
 					{canManage && (
 						<PopoverButton
 							component={ThemePicker}

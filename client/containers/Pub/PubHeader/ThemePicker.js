@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Color from 'color';
 import { Button } from 'reakit';
-import { Card } from '@blueprintjs/core';
 
 import { ColorInput, ImageUpload } from 'components';
 import PubHeaderBackground from './PubHeaderBackground';
@@ -78,7 +77,7 @@ const setBackgroundTypeColor = (backgroundType, hasColor) => {
 	}
 };
 
-const ThemePicker = React.forwardRef((props, ref) => {
+const ThemePicker = (props) => {
 	const { updateLocalData, pubData, communityData } = props;
 	const { headerBackgroundColor, headerBackgroundImage, headerStyle } = pubData;
 
@@ -101,7 +100,7 @@ const ThemePicker = React.forwardRef((props, ref) => {
 	};
 
 	return (
-		<Card className="theme-picker-component" elevation={2}>
+		<div className="theme-picker-component">
 			<div className="section">
 				<div className="title">Background image</div>
 				<ImageUpload
@@ -184,9 +183,9 @@ const ThemePicker = React.forwardRef((props, ref) => {
 					/>
 				</div>
 			</div>
-		</Card>
+		</div>
 	);
-});
+};
 
 ThemePicker.propTypes = propTypes;
 export default ThemePicker;

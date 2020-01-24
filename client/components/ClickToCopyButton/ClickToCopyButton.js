@@ -55,7 +55,6 @@ const ClickToCopyButton = (props) => {
 			content={getTooltipText()}
 			onClosed={() => setHasCopied(false)}
 			className={className}
-			usePortal={false}
 		>
 			<Button minimal icon={icon} onClick={handleClick} position={tooltipPosition}>
 				{children}

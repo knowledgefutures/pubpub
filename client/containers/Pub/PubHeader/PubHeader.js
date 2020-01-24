@@ -5,8 +5,7 @@ import classNames from 'classnames';
 import { GridWrapper } from 'components';
 import { usePageContext } from '../pubHooks';
 
-import PubDetails from '../PubDetails';
-
+import PubDetails from './details';
 import PubHeaderBackground from './PubHeaderBackground';
 import PubHeaderMain from './PubHeaderMain';
 import SmallHeaderButton from './SmallHeaderButton';
@@ -38,14 +37,13 @@ const PubHeader = (props) => {
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState(null);
 
-	useEffect(() => {
-		setTimeout(() => {
-			if (!showingDetails && headerRef.current) {
-				const boundingRect = headerRef.current.getBoundingClientRect();
-				setFixedHeight(boundingRect.height);
-			}
-		});
-	}, [showingDetails]);
+	const toggleDetails = () => {
+		if (!showingDetails && headerRef.current) {
+			const boundingRect = headerRef.current.getBoundingClientRect();
+			setFixedHeight(boundingRect.height);
+		}
+		setShowingDetails(!showingDetails);
+	};
 
 	return (
 		<PubHeaderBackground
@@ -63,11 +61,8 @@ const PubHeader = (props) => {
 						updateLocalData={updateLocalData}
 					/>
 				)}
-				{showingDetails && <PubDetails pubData={pubData} />}
-				<ToggleDetailsButton
-					showingDetails={showingDetails}
-					onClick={() => setShowingDetails(!showingDetails)}
-				/>
+				{showingDetails && <PubDetails pubData={pubData} communityData={communityData} />}
+				<ToggleDetailsButton showingDetails={showingDetails} onClick={toggleDetails} />
 			</GridWrapper>
 		</PubHeaderBackground>
 	);

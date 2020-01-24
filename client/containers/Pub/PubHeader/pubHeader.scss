@@ -1,5 +1,9 @@
 @import 'styles/variables.scss';
 
+$header-margin-top: 13px;
+$header-margin-bottom: 26px;
+$header-margin-total: $header-margin-top + $header-margin-bottom;
+
 .pub-header-popover {
     z-index: 21;
 }
@@ -124,8 +128,16 @@
 
     .pub-header-column {
         position: relative;
-        margin-top: 13px;
-        margin-bottom: 26px;
+        margin-top: $header-margin-top;
+        margin-bottom: $header-margin-bottom;
+        height: calc(100% - #{$header-margin-total});
+    }
+
+    &.showing-details {
+        .pub-header-column {
+            height: calc(100% - #{$header-margin-top});
+            margin-bottom: 0;
+        }
     }
 
     .description {
@@ -166,7 +178,6 @@
     &.showing-details {
         .container,
         .container > .row,
-        .pub-header-column,
         .pub-details-component {
             height: 100%;
         }

@@ -1,0 +1,43 @@
+.pub-contributors_contributor-component {
+    display: flex;
+    margin-bottom: 20px;
+    .avatar-wrapper {
+        flex-shrink: 0;
+        z-index: 0;
+        a {
+            text-decoration: none;
+            display: block;
+        }
+    }
+    .details-wrapper {
+        flex-grow: 1;
+        padding-left: 7px;
+        width: calc(100% - 40px);
+        .name {
+            font-weight: 600;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            a,
+            a:hover,
+            a:visited {
+                color: inherit;
+            }
+        }
+    }
+    .affiliation {
+        color: #cfcfcf;
+        font-style: italic;
+        margin-top: 3px;
+        font-size: 12px;
+    }
+    .roles {
+        color: #cfcfcf;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-top: 3px;
+        font-size: 11px;
+    }
+}

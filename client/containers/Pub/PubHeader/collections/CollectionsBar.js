@@ -50,7 +50,10 @@ const CollectionsBar = (props) => {
 							a.collection.title.toLowerCase() - b.collection.title.toLowerCase(),
 					)}
 				visibleItemRenderer={({ collection }) => (
-					<CollectionsBarButton href={collectionUrl(communityData, collection)}>
+					<CollectionsBarButton
+						key={collection.id}
+						href={collectionUrl(communityData, collection)}
+					>
 						{collection.title}
 					</CollectionsBarButton>
 				)}

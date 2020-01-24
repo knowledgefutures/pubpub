@@ -1,22 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 
 import { pubDataProps } from 'types/pub';
+import { collectionUrl } from 'shared/utils/canonicalUrls';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
-import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
-
+import { ClickToCopyButton } from 'components';
 import { getAllPubContributors } from 'utils/pubContributors';
+import SmallHeaderButton from '../SmallHeaderButton';
+
+import CitationsPreview from '../CitationsPreview';
 import Contributors from './Contributors';
-import CitationsPreview from '../PubHeader/CitationsPreview';
 
 require('./pubDetails.scss');
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,
+	communityData: PropTypes.shape({}).isRequired,
 };
 
 const PubDetails = (props) => {
-	const { pubData } = props;
+	const { pubData, communityData } = props;
+	const { collectionPubs } = pubData;
 	const contributors = getAllPubContributors(pubData);
 
 	if (!contributors.length && !pubData.doi) {
@@ -49,19 +54,41 @@ const PubDetails = (props) => {
 				{pubData.doi && (
 					<React.Fragment>
 						<h6>DOI</h6>{' '}
-						<span className="doi-and-button">
+						<ClickToCopyButton
+							copyString={`https://doi.org/${pubData.doi}`}
+							className="click-to-copy"
+							beforeCopyPrompt="Copy doi.org link"
+						>
 							{pubData.doi}
-							<ClickToCopyButton
-								copyString={`https://doi.org/${pubData.doi}`}
-								className="click-to-copy"
-								beforeCopyPrompt="Copy doi.org link"
-							/>
-						</span>
+						</ClickToCopyButton>
 					</React.Fragment>
 				)}
 				<CitationsPreview pubData={pubData} />
 			</div>
-			<div className="section spacing-placeholder" />
+			<div className="section collections">
+				<h6>Appears in collections ({collectionPubs.length})</h6>
+				<div className="collection-list">
+					{collectionPubs.length === 0 && (
+						<i className="collection-list-entry">
+							This pub doesn't belong to any collections
+						</i>
+					)}
+					{collectionPubs.map((collectionPub) => {
+						const { collection } = collectionPub;
+						if (collection) {
+							return (
+								<a
+									className="collection-list-entry underline-on-hover"
+									href={collectionUrl(communityData, collection)}
+								>
+									{collection.title}
+								</a>
+							);
+						}
+						return null;
+					})}
+				</div>
+			</div>
 		</div>
 	);
 };

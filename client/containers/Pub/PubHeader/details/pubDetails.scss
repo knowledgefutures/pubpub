@@ -4,8 +4,8 @@
         align-items: flex-start !important;
         height: auto;
         h6 {
-			margin-bottom: 0;
-			flex-shrink: 0;
+            margin-bottom: 0;
+            flex-shrink: 0;
         }
     }
 }
@@ -39,12 +39,13 @@
     position: relative;
     display: flex;
     justify-content: space-between;
-    padding-bottom: 10px;
+
     .section {
         display: flex;
         align-items: center;
         max-width: 25%;
         min-width: 15%;
+        margin-top: 40px;
         h6 {
             margin: 0;
             margin-right: 10px;
@@ -52,42 +53,45 @@
             display: flex;
             align-items: center;
             line-height: initial;
-            color: #bcbcbc;
+            color: #cfcfcf;
             white-space: nowrap;
         }
-	}
-	.contributors .pub-contributors-component {
-		:first-child {
-			padding-top: 5px;
-		}
-		overflow: scroll;
-	}
-    .citation-and-doi {
-        .doi-and-button {
-            display: flex;
-            align-items: center;
-            &:hover,
-            &:focus-within {
-                .click-to-copy {
-                    opacity: 1;
-                }
-            }
-        }
-        .click-to-copy {
-            margin-left: 3px;
-            opacity: 0;
-            transition: 50ms ease-out opacity;
-        }
     }
+
+    .contributors .pub-contributors-component {
+        & > :first-child {
+            padding-top: 8px;
+        }
+        overflow: scroll;
+    }
+
+    .click-to-copy {
+        margin-left: -5px;
+    }
+
+    .bp3-button,
+    .bp3-button:hover,
+    .bp3-icon,
+    a {
+        color: inherit;
+    }
+
     .publication-dates {
         .full-height-date {
             height: 30px;
             line-height: 30px;
         }
     }
-    .spacing-placeholder {
-        width: 10%;
-        min-width: 100px;
-        flex-shrink: 1;
+
+    .collections {
+        .collection-list {
+            overflow: scroll;
+            .collection-list-entry {
+                display: block;
+                &:not(:last-child) {
+                    margin-bottom: 7px;
+                }
+            }
+        }
     }
 }

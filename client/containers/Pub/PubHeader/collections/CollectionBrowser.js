@@ -40,6 +40,7 @@ const CollectionBrowser = (props) => {
 		return (
 			<CollectionsBarButton
 				icon={bpDisplayIcon}
+				className="collection-browser-button"
 				rightIcon="caret-down"
 				ref={ref}
 				{...disclosureProps}

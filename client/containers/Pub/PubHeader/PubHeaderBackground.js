@@ -45,7 +45,6 @@ const PubHeaderBackground = React.forwardRef((props, ref) => {
 					style={{ backgroundColor: effectiveBackgroundColor }}
 				/>
 			)}
-			<div className="background-element background-dark-tint" />
 			{children}
 		</div>
 	);

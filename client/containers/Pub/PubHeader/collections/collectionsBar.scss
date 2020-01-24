@@ -6,5 +6,10 @@
     .collections-bar-button-component {
         margin-right: 6px;
     }
-
+    .collection-browser-button {
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 }

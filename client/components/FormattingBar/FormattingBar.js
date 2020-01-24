@@ -265,6 +265,11 @@ const FormattingBar = (props) => {
 						openedButton.controls &&
 						openedButton.controls.showCloseButton
 					}
+					disableClickProxying={
+						openedButton &&
+						openedButton.controls &&
+						openedButton.controls.disableClickProxying
+					}
 				>
 					{({ pendingAttrs, onClose }) => (
 						<ControlsComponent

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Color from 'color';
+import { calculateBackgroundColor } from './colors';
 
 require('./pubHeaderBackground.scss');
 
@@ -21,10 +21,10 @@ const defaultProps = {
 const PubHeaderBackground = React.forwardRef((props, ref) => {
 	const { children, className, pubData, communityData, blur } = props;
 	const { headerBackgroundColor, headerBackgroundImage } = pubData;
-	const effectiveBackgroundColor =
-		headerBackgroundColor && headerBackgroundColor === 'community'
-			? Color(communityData.accentColorDark).alpha(0.75)
-			: headerBackgroundColor;
+	const effectiveBackgroundColor = calculateBackgroundColor(
+		headerBackgroundColor,
+		communityData.accentColorDark,
+	);
 	return (
 		<div className={classNames('pub-header-background-component', className)} ref={ref}>
 			{headerBackgroundImage && (

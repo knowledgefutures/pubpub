@@ -6,6 +6,7 @@ import { Button } from 'reakit';
 
 import { ColorInput, ImageUpload } from 'components';
 import PubHeaderBackground from './PubHeaderBackground';
+import { calculateBackgroundColor } from './colors';
 
 require('./themePicker.scss');
 
@@ -121,16 +122,22 @@ const ThemePicker = (props) => {
 					/>
 					<TintChoice
 						label="Community accent color"
-						color={Color(communityData.accentColorDark).alpha(0.75)}
+						color={calculateBackgroundColor('community', communityData.accentColorDark)}
 						onClick={() => updatePubBackgroundColor('community')}
 						selected={headerBackgroundColor === 'community'}
+					/>
+					<TintChoice
+						label="Dark"
+						color={calculateBackgroundColor('dark')}
+						onClick={() => updatePubBackgroundColor('dark')}
+						selected={headerBackgroundColor === 'dark'}
 					/>
 					<ColorInput
 						value={headerBackgroundColor || 'black'}
 						onChange={(color) => {
-							const hexWithAlpha =
-								color.hex + Math.round(color.rgb.a * 255).toString(16);
-							updatePubBackgroundColor(hexWithAlpha);
+							const { r, g, b, a } = color.rgb;
+							const colorString = `rgba(${r},${g},${b},${a})`;
+							updatePubBackgroundColor(colorString);
 						}}
 					>
 						{(color) => (
@@ -139,7 +146,9 @@ const ThemePicker = (props) => {
 								className="light"
 								color={color}
 								selected={
-									headerBackgroundColor && headerBackgroundColor !== 'community'
+									headerBackgroundColor &&
+									headerBackgroundColor !== 'community' &&
+									headerBackgroundColor !== 'dark'
 								}
 							/>
 						)}

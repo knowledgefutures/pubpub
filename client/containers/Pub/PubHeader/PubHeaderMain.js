@@ -76,12 +76,7 @@ const PubHeaderMain = (props) => {
 							</ClickToCopyButton>
 						</span>
 					)}
-					<SmallHeaderButton
-						className="details-button"
-						label="Show details"
-						labelPosition="left"
-						icon="expand-all"
-					/>
+					<div className="show-details-placeholder" />
 				</div>
 			</div>
 			<div className="hairline" />

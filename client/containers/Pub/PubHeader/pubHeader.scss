@@ -24,7 +24,7 @@
             }
             .metadata-pair {
                 & > :first-child {
-                    color: #CFCFCF;
+                    color: #cfcfcf;
                     margin-right: 10px;
                 }
                 display: flex;
@@ -43,6 +43,9 @@
             .details-button {
                 width: 120px;
             }
+        }
+        .show-details-placeholder {
+            width: 120px;
         }
     }
     .hairline {
@@ -97,10 +100,49 @@
     h6 {
         color: inherit;
     }
+    h1 {
+        margin: 0;
+        font-size: 48px;
+        line-height: 68px;
+        font-weight: normal;
+        font-family: $header-font;
+    }
+
+    .details-button {
+        position: absolute;
+        top: 4px;
+        right: 0;
+        .icon-container {
+            transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        &.showing-details {
+            .icon-container {
+                transform: rotate(90deg);
+            }
+        }
+    }
 
     .pub-header-column {
+        position: relative;
         margin-top: 13px;
         margin-bottom: 26px;
+    }
+
+    .description {
+        padding-top: 15px;
+        font-size: 18px;
+        font-weight: normal;
+        font-family: $header-font;
+        color: #cfcfcf;
+    }
+
+    .authors {
+        padding-top: 15px;
+        font-size: 18px;
+        font-style: italic;
+        font-weight: normal;
+        font-family: $header-font;
+        letter-spacing: 0.5px;
     }
 
     .bp3-editable-text {
@@ -119,31 +161,6 @@
             color: inherit;
             opacity: 0.75;
         }
-    }
-
-    h1 {
-        margin: 0;
-        font-size: 48px;
-        line-height: 68px;
-        font-weight: normal;
-        font-family: $header-font;
-    }
-
-    .description {
-        padding-top: 15px;
-        font-size: 18px;
-        font-weight: normal;
-        font-family: $header-font;
-        color: #CFCFCF;
-    }
-
-    .authors {
-        padding-top: 15px;
-        font-size: 18px;
-        font-style: italic;
-        font-weight: normal;
-        font-family: $header-font;
-        letter-spacing: 0.5px;
     }
 }
 

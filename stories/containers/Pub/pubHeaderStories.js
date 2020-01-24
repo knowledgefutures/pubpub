@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import PubHeader from 'containers/Pub/PubHeader';
-import { pubData, communityData } from 'data';
+import { pubData, communityData, attributionsData } from 'data';
 
 const altPubData = {
 	...pubData,
@@ -75,6 +75,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			pubData={{
 				...altPubData,
 				collectionPubs: [...altPubData.collectionPubs, aPrimaryCollection],
+				attributions: [...altPubData.attributions, ...attributionsData],
 			}}
 			historyData={historyData}
 		/>

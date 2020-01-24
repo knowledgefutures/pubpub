@@ -5,7 +5,6 @@ import { pubDataProps } from 'types/pub';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
-import PubDetails from './PubDetails';
 import PubFileImport from './PubFileImport';
 import PubHistory from './PubHistory';
 import PubHeaderFormatting from './PubHeaderFormatting';

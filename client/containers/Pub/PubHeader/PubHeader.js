@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useLayoutEffect, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import { GridWrapper } from 'components';
 import { usePageContext } from '../pubHooks';
+
+import PubDetails from '../PubDetails';
 
 import PubHeaderBackground from './PubHeaderBackground';
 import PubHeaderMain from './PubHeaderMain';
@@ -34,18 +36,26 @@ const PubHeader = (props) => {
 	const headerRef = useRef(null);
 	const { pubData, communityData, updateLocalData } = props;
 	const [showingDetails, setShowingDetails] = useState(false);
+	const [fixedHeight, setFixedHeight] = useState(null);
+
+	useEffect(() => {
+		setTimeout(() => {
+			if (!showingDetails && headerRef.current) {
+				const boundingRect = headerRef.current.getBoundingClientRect();
+				setFixedHeight(boundingRect.height);
+			}
+		});
+	}, [showingDetails]);
+
 	return (
 		<PubHeaderBackground
-			className="pub-header-component"
+			className={classNames('pub-header-component', showingDetails && 'showing-details')}
 			pubData={pubData}
 			communityData={communityData}
 			ref={headerRef}
+			style={fixedHeight && showingDetails ? { height: fixedHeight } : {}}
 		>
 			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
-				<ToggleDetailsButton
-					showingDetails={showingDetails}
-					onClick={() => setShowingDetails(!showingDetails)}
-				/>
 				{!showingDetails && (
 					<PubHeaderMain
 						pubData={pubData}
@@ -53,6 +63,11 @@ const PubHeader = (props) => {
 						updateLocalData={updateLocalData}
 					/>
 				)}
+				{showingDetails && <PubDetails pubData={pubData} />}
+				<ToggleDetailsButton
+					showingDetails={showingDetails}
+					onClick={() => setShowingDetails(!showingDetails)}
+				/>
 			</GridWrapper>
 		</PubHeaderBackground>
 	);

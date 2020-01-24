@@ -162,6 +162,15 @@
             opacity: 0.75;
         }
     }
+
+    &.showing-details {
+        .container,
+        .container > .row,
+        .pub-header-column,
+        .pub-details-component {
+            height: 100%;
+        }
+    }
 }
 
 @media only screen and (max-width: 750px) {

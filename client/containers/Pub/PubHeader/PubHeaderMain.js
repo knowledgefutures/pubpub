@@ -49,11 +49,21 @@ const PopoverButton = (props) => {
 	);
 };
 
+const getPublishDateString = (pubData) => {
+	const publishedDate = getPubPublishedDate(
+		pubData,
+		pubData.branches.find((br) => br.title === 'public'),
+	);
+	if (publishedDate) {
+		dateFormat(publishedDate, 'mmm dd, yyyy');
+	}
+	return <i>Unpublished</i>;
+};
+
 const PubHeaderMain = (props) => {
 	const { pubData, updateLocalData, communityData } = props;
 	const { canManage, title, description, doi } = pubData;
-	const publishedAtString = dateFormat(getPubPublishedDate(pubData), 'mmm dd, yyyy');
-
+	const publishedAtString = getPublishDateString(pubData);
 	return (
 		<div className="pub-header-main">
 			<div className="top">

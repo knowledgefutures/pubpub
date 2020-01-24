@@ -1,6 +1,6 @@
 .pub-contributors_contributor-component {
 	display: flex;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 	font-size: 12px;
 	.avatar-wrapper {
 		flex-shrink: 0;
@@ -20,14 +20,21 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			a, a:hover, a:visited {
+				color: inherit;
+			}
 		}
 	}
 	.affiliation {
+		color: #CFCFCF;
 		font-style: italic;
-		margin-top: 0.5em;
+		margin-top: 3px;
 	}
 	.roles {
-		font-style: italic;
-		margin-top: 0.5em;
+		color: #CFCFCF;
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		margin-top: 3px;
 	}
 }

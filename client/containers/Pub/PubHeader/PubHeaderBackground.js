@@ -10,23 +10,29 @@ const propTypes = {
 	className: PropTypes.string,
 	pubData: PropTypes.shape({}).isRequired,
 	blur: PropTypes.bool,
+	style: PropTypes.object,
 };
 
 const defaultProps = {
 	className: '',
 	children: null,
 	blur: false,
+	style: {},
 };
 
 const PubHeaderBackground = React.forwardRef((props, ref) => {
-	const { children, className, pubData, communityData, blur } = props;
+	const { children, className, pubData, communityData, blur, style } = props;
 	const { headerBackgroundColor, headerBackgroundImage } = pubData;
 	const effectiveBackgroundColor = calculateBackgroundColor(
 		headerBackgroundColor,
 		communityData.accentColorDark,
 	);
 	return (
-		<div className={classNames('pub-header-background-component', className)} ref={ref}>
+		<div
+			className={classNames('pub-header-background-component', className)}
+			style={style}
+			ref={ref}
+		>
 			{headerBackgroundImage && (
 				<div
 					className={classNames('background-element', 'background-image', blur && 'blur')}

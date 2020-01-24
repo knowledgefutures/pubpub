@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import PubDetails from 'containers/Pub/PubDocument/PubDetails';
+import PubDetails from 'containers/Pub/PubDetails';
 import { pubData } from 'data';
 
 storiesOf('containers/Pub/PubDetails', module).add('default', () => (

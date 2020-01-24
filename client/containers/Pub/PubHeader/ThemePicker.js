@@ -100,6 +100,12 @@ const ThemePicker = (props) => {
 		});
 	};
 
+	const hasCustomBackgroundColor =
+		headerBackgroundColor &&
+		headerBackgroundColor !== 'community' &&
+		headerBackgroundColor !== 'dark' &&
+		headerBackgroundColor !== 'transparent';
+
 	return (
 		<div className="theme-picker-component">
 			<div className="section">
@@ -117,8 +123,8 @@ const ThemePicker = (props) => {
 				<div className="section-row">
 					<TintChoice
 						label="None"
-						onClick={() => updatePubBackgroundColor(null)}
-						selected={!headerBackgroundColor}
+						onClick={() => updatePubBackgroundColor('transparent')}
+						selected={!headerBackgroundColor || headerBackgroundColor === 'transparent'}
 					/>
 					<TintChoice
 						label="Community accent color"
@@ -133,7 +139,7 @@ const ThemePicker = (props) => {
 						selected={headerBackgroundColor === 'dark'}
 					/>
 					<ColorInput
-						value={headerBackgroundColor || 'black'}
+						value={hasCustomBackgroundColor ? headerBackgroundColor : 'black'}
 						onChange={(color) => {
 							const { r, g, b, a } = color.rgb;
 							const colorString = `rgba(${r},${g},${b},${a})`;
@@ -145,11 +151,7 @@ const ThemePicker = (props) => {
 								label="Custom"
 								className="light"
 								color={color}
-								selected={
-									headerBackgroundColor &&
-									headerBackgroundColor !== 'community' &&
-									headerBackgroundColor !== 'dark'
-								}
+								selected={hasCustomBackgroundColor}
 							/>
 						)}
 					</ColorInput>

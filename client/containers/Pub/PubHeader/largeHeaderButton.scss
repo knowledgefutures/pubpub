@@ -1,0 +1,12 @@
+@import './themes.scss';
+
+.large-header-button-component {
+    @include base-button;
+    @include shadow-box;
+    display: inline-flex;
+    height: 40px;
+    border-radius: 2px;
+    &:hover {
+        @include shadow-box-hover;
+    }
+}

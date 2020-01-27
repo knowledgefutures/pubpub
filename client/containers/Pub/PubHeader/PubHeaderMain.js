@@ -14,6 +14,7 @@ import Download from './Download';
 import EditableHeaderText from './EditableHeaderText';
 import SmallHeaderButton from './SmallHeaderButton';
 import ThemePicker from './ThemePicker';
+import LargeHeaderButton from './LargeHeaderButton';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -140,6 +141,9 @@ const PubHeaderMain = (props) => {
 						</PopoverButton>
 					)}
 				</div>
+			</div>
+			<div className="bottom">
+				<LargeHeaderButton />
 			</div>
 		</div>
 	);

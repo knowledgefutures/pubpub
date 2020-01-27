@@ -1,14 +1,8 @@
 @import './themes.scss';
 
 .small-header-button-component {
+    @include base-button;
     display: flex;
-    color: inherit;
-    align-items: center;
-    text-decoration: none;
-    user-select: none;
-    background: unset;
-    border: unset;
-    cursor: pointer;
     .label {
         text-transform: uppercase;
         white-space: nowrap;

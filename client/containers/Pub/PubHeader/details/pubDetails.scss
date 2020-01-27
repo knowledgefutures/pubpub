@@ -10,30 +10,6 @@
     }
 }
 
-@media only screen and (max-width: 1020px) {
-    .pub-details-component {
-        @include column;
-        flex-direction: column;
-        .section {
-            width: 100%;
-            max-width: none;
-        }
-        .pub-contributors-component {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-        }
-        & > *:last-child {
-            margin-bottom: 10px;
-        }
-    }
-}
-
-@media only screen and (max-width: 580px) {
-    .pub-contributors-component {
-        display: block !important;
-    }
-}
-
 .pub-details-component {
     @include column;
     position: relative;

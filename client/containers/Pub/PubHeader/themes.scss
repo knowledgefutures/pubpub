@@ -1,3 +1,13 @@
+@mixin base-button {
+    color: inherit;
+    align-items: center;
+    text-decoration: none;
+    user-select: none;
+    background: unset;
+    border: unset;
+    cursor: pointer;
+}
+
 @mixin shadow-box {
     position: relative;
     border-radius: 2px;

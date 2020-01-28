@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+
+import { getResizedUrl } from 'utils';
+
 import { calculateBackgroundColor } from './colors';
 
 require('./pubHeaderBackground.scss');
@@ -23,20 +26,29 @@ const defaultProps = {
 const PubHeaderBackground = React.forwardRef((props, ref) => {
 	const { children, className, pubData, communityData, blur, style } = props;
 	const { headerBackgroundColor, headerBackgroundImage } = pubData;
+
 	const effectiveBackgroundColor = calculateBackgroundColor(
 		headerBackgroundColor,
 		communityData.accentColorDark,
 	);
+
+	const effectiveHeaderBackgroundImage = getResizedUrl(
+		headerBackgroundImage,
+		'fit-in',
+		'1500x600',
+	);
+
 	return (
 		<div
 			className={classNames('pub-header-background-component', className)}
 			style={style}
 			ref={ref}
 		>
+			<div className="background-element background-white-layer" />
 			{headerBackgroundImage && (
 				<div
 					className={classNames('background-element', 'background-image', blur && 'blur')}
-					style={{ backgroundImage: `url('${headerBackgroundImage}')` }}
+					style={{ backgroundImage: `url('${effectiveHeaderBackgroundImage}')` }}
 				/>
 			)}
 			{effectiveBackgroundColor && (

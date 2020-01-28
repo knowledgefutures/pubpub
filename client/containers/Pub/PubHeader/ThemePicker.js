@@ -79,26 +79,23 @@ const setBackgroundTypeColor = (backgroundType, hasColor) => {
 };
 
 const ThemePicker = (props) => {
-	const { updateLocalData, pubData, communityData } = props;
+	const { updatePubData, pubData, communityData } = props;
 	const { headerBackgroundColor, headerBackgroundImage, headerStyle } = pubData;
 
-	const updatePubBackgroundColor = (color) => {
-		updateLocalData('pub', {
+	const updatePubBackgroundColor = (color) =>
+		updatePubData({
 			headerBackgroundColor: color,
 		});
-	};
 
-	const updatePubHeaderStyle = (style) => {
-		updateLocalData('pub', {
+	const updatePubHeaderStyle = (style) =>
+		updatePubData({
 			headerStyle: style,
 		});
-	};
 
-	const updatePubHeaderImage = (image) => {
-		updateLocalData('pub', {
+	const updatePubHeaderImage = (image) =>
+		updatePubData({
 			headerBackgroundImage: image,
 		});
-	};
 
 	const hasCustomBackgroundColor =
 		headerBackgroundColor &&

@@ -3,7 +3,7 @@
 
 $mobile-cutoff-width: 500px;
 $header-margin-top: 13px;
-$header-margin-bottom: 26px;
+$header-margin-bottom: 37px;
 $header-margin-total: $header-margin-top + $header-margin-bottom;
 
 @mixin mobile {
@@ -140,10 +140,17 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     position: relative;
     z-index: 20;
     color: white;
+
+    .pub-header-sticky-component {
+        opacity: 0;
+        visibility: hidden;
+    }
+
     &.js-is-sticky,
     &.js-is-stuck {
-        .bottom-text {
+        .pub-header-sticky-component {
             opacity: 1;
+            visibility: unset;
         }
     }
 
@@ -162,6 +169,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         line-height: 68px;
         font-weight: normal;
         font-family: $header-font;
+        box-decoration-break: clone;
         @include mobile {
             font-size: 32px;
             line-height: 36px;

@@ -13,6 +13,7 @@ import PubReviews from './PubReviews';
 import PubReview from './PubReview';
 import PubBranchCreate from './PubBranchCreate';
 import { PubSuspendWhileTypingProvider, PubSuspendWhileTyping } from './PubSuspendWhileTyping';
+import PubHeaderCompact from './PubHeader/PubHeaderCompact';
 
 require('./pub.scss');
 
@@ -24,6 +25,32 @@ const propTypes = {
 };
 
 const Pub = (props) => {
+	const renderHeader = (useFullHeader, modeProps) => {
+		const { collabData, historyData, pubData, updateLocalData } = modeProps;
+		if (useFullHeader) {
+			return (
+				<PubSuspendWhileTyping delay={1000}>
+					{() => (
+						<PubHeader
+							pubData={pubData}
+							updateLocalData={updateLocalData}
+							collabData={collabData}
+							historyData={historyData}
+							communityData={props.communityData}
+						/>
+					)}
+				</PubSuspendWhileTyping>
+			);
+		}
+		return (
+			<PubHeaderCompact
+				pubData={pubData}
+				locationData={props.locationData}
+				communityData={props.communityData}
+			/>
+		);
+	};
+
 	return (
 		<PubSuspendWhileTypingProvider>
 			<div id="pub-container">
@@ -55,17 +82,7 @@ const Pub = (props) => {
 							};
 							return (
 								<React.Fragment>
-									<PubSuspendWhileTyping delay={1000}>
-										{() => (
-											<PubHeader
-												pubData={pubData}
-												updateLocalData={updateLocalData}
-												collabData={collabData}
-												historyData={historyData}
-												communityData={props.communityData}
-											/>
-										)}
-									</PubSuspendWhileTyping>
+									{renderHeader(mode === 'document', modeProps)}
 									{mode === 'document' && <PubDocument {...modeProps} />}
 									{mode === 'manage' && <PubManage {...modeProps} />}
 									{mode === 'merge' && <PubMerge {...modeProps} />}

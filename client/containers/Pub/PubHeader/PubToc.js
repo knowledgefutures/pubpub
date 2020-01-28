@@ -1,13 +1,22 @@
 /* eslint-disable no-multi-assign */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Menu, MenuItem } from '@blueprintjs/core';
+import { Menu, MenuItem } from 'components/Menu';
 
 require('./pubToc.scss');
 
 const propTypes = {
-	pubData: PropTypes.object.isRequired,
-	headings: PropTypes.array.isRequired,
+	children: PropTypes.node.isRequired,
+	pubData: PropTypes.shape({
+		canEditBranch: PropTypes.bool,
+	}).isRequired,
+	headings: PropTypes.arrayOf(
+		PropTypes.shape({
+			title: PropTypes.string,
+			index: PropTypes.any,
+			href: PropTypes.string,
+		}),
+	).isRequired,
 	onSelect: PropTypes.func,
 };
 
@@ -16,39 +25,42 @@ const defaultProps = {
 };
 
 const PubToc = function(props) {
+	const { headings, children, pubData, onSelect } = props;
 	return (
-		<div className="pub-toc-component">
-			<Menu className="toc">
-				{props.headings.map((item) => {
-					return (
-						<MenuItem
-							key={item.index}
-							href={`#${item.href}`}
-							className={`level-${item.level}`}
-							onClick={(evt) => {
-								/* If editing, don't use anchor tags for nav since we have */
-								/* a fixed header bar. Plus, the URL with an anchor tag will behave */
-								/* unexpectedly on reload given the async loading of doc. Instead, */
-								/* manually scroll to the position and offset by fixed header height. */
-								if (props.onSelect) {
-									props.onSelect();
-								}
-								if (props.pubData.canEditBranch) {
-									evt.preventDefault();
-									document.getElementById(item.href).scrollIntoView();
-									const currentTop =
-										document.body.scrollTop ||
-										document.documentElement.scrollTop;
-									document.body.scrollTop = document.documentElement.scrollTop =
-										currentTop - 75;
-								}
-							}}
-							text={item.title}
-						/>
-					);
-				})}
-			</Menu>
-		</div>
+		<Menu
+			aria-label="Table of contents"
+			className="pub-toc-component"
+			disclosure={children}
+			placement="bottom-end"
+		>
+			{headings.map((heading) => {
+				return (
+					<MenuItem
+						key={heading.index}
+						href={`#${heading.href}`}
+						className={`level-${heading.level}`}
+						onClick={(evt) => {
+							/* If editing, don't use anchor tags for nav since we have */
+							/* a fixed header bar. Plus, the URL with an anchor tag will behave */
+							/* unexpectedly on reload given the async loading of doc. Instead, */
+							/* manually scroll to the position and offset by fixed header height. */
+							if (onSelect) {
+								onSelect();
+							}
+							if (pubData.canEditBranch) {
+								evt.preventDefault();
+								document.getElementById(heading.href).scrollIntoView();
+								const currentTop =
+									document.body.scrollTop || document.documentElement.scrollTop;
+								document.body.scrollTop = document.documentElement.scrollTop =
+									currentTop - 75;
+							}
+						}}
+						text={heading.title}
+					/>
+				);
+			})}
+		</Menu>
 	);
 };
 

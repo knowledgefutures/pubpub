@@ -8,6 +8,7 @@ import { MenuContext } from './menuContext';
 import { Menu } from './Menu';
 
 const sharedPropTypes = {
+	className: PropTypes.string,
 	disabled: PropTypes.bool,
 	href: PropTypes.string,
 	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
@@ -17,6 +18,7 @@ const sharedPropTypes = {
 };
 
 const sharedDefaultProps = {
+	className: '',
 	disabled: false,
 	href: null,
 	icon: null,
@@ -29,6 +31,7 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 	const {
 		active,
 		children,
+		className,
 		disabled,
 		href,
 		target,
@@ -65,6 +68,7 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 					Classes.MENU_ITEM,
 					disabled && Classes.DISABLED,
 					active && Classes.ACTIVE,
+					className,
 				)}
 			>
 				{icon && (typeof icon === 'string' ? <Icon icon={icon} /> : icon)}

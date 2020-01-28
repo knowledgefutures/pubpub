@@ -109,43 +109,5 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 			}}
 			historyData={historyData}
 		/>
-
-		<PubHeaderWrapper
-			collabData={{}}
-			pubData={{
-				...altPubData,
-				mode: 'manage',
-			}}
-			historyData={historyData}
-		/>
-		<PubHeaderWrapper
-			collabData={{}}
-			pubData={{
-				...altPubData,
-				useHeaderImage: false,
-				mode: 'manage',
-			}}
-			historyData={historyData}
-		/>
-		<PubHeaderWrapper
-			collabData={{}}
-			pubData={{
-				...altPubData,
-				headerStyle: 'white-blocks',
-				avatar: 'https://i.imgur.com/s9Gj6o6.png',
-				mode: 'manage',
-			}}
-			historyData={historyData}
-		/>
-		<PubHeaderWrapper
-			collabData={{}}
-			pubData={{
-				...altPubData,
-				headerStyle: 'black-blocks',
-				avatar: 'https://i.imgur.com/kts3zH1.jpg',
-				mode: 'manage',
-			}}
-			historyData={historyData}
-		/>
 	</div>
 ));

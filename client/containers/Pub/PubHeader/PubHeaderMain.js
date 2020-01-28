@@ -5,7 +5,7 @@ import dateFormat from 'dateformat';
 import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
 import { Card } from '@blueprintjs/core';
 
-import { ClickToCopyButton, Icon } from 'components';
+import { ClickToCopyButton } from 'components';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 
 import BranchSelectorButton from './BranchSelectorButton';

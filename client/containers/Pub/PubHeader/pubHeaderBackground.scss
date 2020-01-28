@@ -6,15 +6,15 @@
         height: 100%;
         position: absolute;
         z-index: -1;
+        &.background-white-layer {
+            background: white;
+        }
         &.background-image {
             background-size: cover;
             background-position: center;
             &.blur {
                 filter: blur(10px);
             }
-        }
-        &.background-dark-tint {
-            background-color: rgba(black, 0.2);
         }
     }
 }

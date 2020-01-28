@@ -10,22 +10,25 @@ require('./smallHeaderButton.scss');
 const propTypes = {
 	className: PropTypes.string,
 	href: PropTypes.string,
+	icon: PropTypes.string.isRequired,
 	label: PropTypes.string.isRequired,
 	labelPosition: PropTypes.oneOf(['left', 'right']).isRequired,
-	icon: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
+	tagName: PropTypes.string,
 };
 
 const defaultProps = {
 	className: '',
 	href: null,
 	onClick: null,
+	tagName: 'button',
 };
 
 const SmallHeaderButton = React.forwardRef((props, ref) => {
-	const { className, href, icon, label, labelPosition, onClick } = props;
+	const { className, href, icon, label, labelPosition, onClick, tagName } = props;
 	return (
 		<Button
+			as={tagName}
 			href={href}
 			ref={ref}
 			onClick={onClick}

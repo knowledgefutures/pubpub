@@ -31,7 +31,7 @@ const EditableHeaderText = (props) => {
 		useEditableTitle ? (
 			<EditableText
 				placeholder={placeholder}
-				onConfirm={updateText}
+				onConfirm={(newText) => updateText(newText.replace(/\n/g, ''))}
 				onChange={setIntermediateValue}
 				value={intermediateValue}
 				multiline={true}

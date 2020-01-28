@@ -102,8 +102,8 @@ const PubHeaderMain = (props) => {
 	const publishedAtString = getPublishDateString(pubData);
 	const publicBranch = pubData.branches.find((branch) => branch.title === 'public');
 	const onPublicBranch = activeBranch.title === 'public';
-	const canSubmitForReview = onPublicBranch && activeBranch.canManage;
-	const canPublish = onPublicBranch && activeBranch.canManage && publicBranch.canManage;
+	const canSubmitForReview = !onPublicBranch && activeBranch.canManage;
+	const canPublish = !onPublicBranch && activeBranch.canManage && publicBranch.canManage;
 
 	return (
 		<div className="pub-header-main">
@@ -190,7 +190,7 @@ const PubHeaderMain = (props) => {
 				/>
 				{canPublish && (
 					<LargeHeaderButton
-						href={getPublishUrl(pubData)}
+						href={getPublishUrl(pubData, publicBranch)}
 						label={{
 							top: 'Publish',
 							bottom: 'Merge into #public',
@@ -200,7 +200,7 @@ const PubHeaderMain = (props) => {
 				{canSubmitForReview && (
 					<LargeHeaderButton
 						tagName="a"
-						href={getReviewUrl(pubData)}
+						href={getReviewUrl(pubData, publicBranch)}
 						label={{
 							top: 'Submit for review',
 							bottom: 'to #public',

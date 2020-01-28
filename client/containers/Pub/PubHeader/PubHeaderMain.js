@@ -64,21 +64,47 @@ const getPublishDateString = (pubData) => {
 	return <i>Unpublished</i>;
 };
 
-const getTimeAgo = (pubData, historyData) => {
+const getHistoryButtonLabel = (pubData, historyData) => {
 	const updatedAtDate = getPubUpdatedDate({
 		pub: pubData,
 		branch: pubData.activeBranch,
 		historyData: historyData,
 	});
 	if (updatedAtDate) {
-		return <TimeAgo date={updatedAtDate} minPeriod={60} formatter=/>;
+		const now = Date.now();
+		const justNow = now - updatedAtDate < 60 * 1000;
+		const timeAgo = justNow ? 'just now' : <TimeAgo date={updatedAtDate} minPeriod={60} />;
+		return {
+			top: 'this branch last updated',
+			bottom: timeAgo,
+		};
 	}
+	return {
+		top: 'this branch created',
+		bottom: 'just now',
+	};
+};
+
+const getPublishUrl = (pubData, publicBranch) => {
+	const { slug, activeBranch } = pubData;
+	return `/pub/${slug}/merge/${activeBranch.shortId}/${publicBranch.shortId}`;
+};
+
+const getReviewUrl = (pubData, publicBranch) => {
+	const { slug, activeBranch } = pubData;
+	return `/pub/${slug}/reviews/new/${activeBranch.shortId}/${publicBranch.shortId}`;
 };
 
 const PubHeaderMain = (props) => {
 	const { pubData, updateLocalData, communityData, historyData } = props;
-	const { canManage, title, description, doi } = pubData;
+	const { canManage, title, description, doi, activeBranch } = pubData;
+
 	const publishedAtString = getPublishDateString(pubData);
+	const publicBranch = pubData.branches.find((branch) => branch.title === 'public');
+	const onPublicBranch = activeBranch.title === 'public';
+	const canSubmitForReview = onPublicBranch && activeBranch.canManage;
+	const canPublish = onPublicBranch && activeBranch.canManage && publicBranch.canManage;
+
 	return (
 		<div className="pub-header-main">
 			<div className="top">
@@ -160,11 +186,27 @@ const PubHeaderMain = (props) => {
 				<BranchSelectorButton pubData={pubData} />
 				<LargeHeaderButton
 					icon="history"
-					outerLabel={{
-						top: 'this branch last edited',
-						bottom: getTimeAgo(pubData, historyData),
-					}}
+					outerLabel={getHistoryButtonLabel(pubData, historyData)}
 				/>
+				{canPublish && (
+					<LargeHeaderButton
+						href={getPublishUrl(pubData)}
+						label={{
+							top: 'Publish',
+							bottom: 'Merge into #public',
+						}}
+					/>
+				)}
+				{canSubmitForReview && (
+					<LargeHeaderButton
+						tagName="a"
+						href={getReviewUrl(pubData)}
+						label={{
+							top: 'Submit for review',
+							bottom: 'to #public',
+						}}
+					/>
+				)}
 			</div>
 		</div>
 	);

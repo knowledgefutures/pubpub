@@ -6,7 +6,8 @@
 	a,
 	.dropdown {
 		margin-right: 2em;
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
 		height: 40px;
 		user-select: none;
 		cursor: pointer;

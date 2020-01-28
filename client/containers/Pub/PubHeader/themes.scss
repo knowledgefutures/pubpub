@@ -6,6 +6,10 @@
     background: unset;
     border: unset;
     cursor: pointer;
+    &:hover, &:active, &:visited {
+        text-decoration: none;
+        color: inherit;
+    }
 }
 
 @mixin shadow-box {

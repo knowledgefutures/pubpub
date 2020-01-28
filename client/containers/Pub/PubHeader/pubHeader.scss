@@ -20,6 +20,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     & > .top {
         display: flex;
         justify-content: space-between;
+        height: 30px;
         .collections-bar-component {
             @include mobile {
                 display: none;
@@ -240,6 +241,14 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         .pub-details-component {
             height: 100%;
         }
+    }
+}
+
+.pub-header-branch-selector-menu {
+    min-width: 100px;
+    .label {
+        font-weight: bold;
+        margin-bottom: 5px;
     }
 }
 

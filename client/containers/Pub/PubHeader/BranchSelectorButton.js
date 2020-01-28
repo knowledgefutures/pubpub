@@ -46,8 +46,12 @@ const BranchSelectorButton = (props) => {
 	);
 
 	return (
-		<Menu disclosure={renderDisclosure} aria-label="Select branch">
-			<b>Switch to...</b>
+		<Menu
+			disclosure={renderDisclosure}
+			aria-label="Select branch"
+			className="pub-header-branch-selector-menu"
+		>
+			<div className="label">Switch to...</div>
 			{branchesToShow.map((branch, index) => {
 				const branchUrlSuffix = index ? `branch/${branch.shortId}` : '';
 				return (

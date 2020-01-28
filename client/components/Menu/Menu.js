@@ -60,7 +60,7 @@ export const Menu = React.forwardRef((props, ref) => {
 		<React.Fragment>
 			<RK.MenuDisclosure
 				ref={ref}
-				style={{ display: 'inline-block', WebkitAppearance: 'unset' }}
+				style={{ display: 'inline-flex', WebkitAppearance: 'unset' }}
 				{...menu}
 				{...restProps}
 			>

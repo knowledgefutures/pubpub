@@ -9,17 +9,31 @@ require('./largeHeaderButton.scss');
 
 const propTypes = {};
 
+const defaultProps = {
+	icon: null,
+	tagName: 'button',
+};
+
 const LargeHeaderButton = React.forwardRef((props, ref) => {
-	const { icon, children, className, outerLabel, onClick } = props;
+	const { icon, label, className, outerLabel, onClick, tagName, ...restProps } = props;
+	const hasStackedLabel = typeof label === 'object' && label.top && label.bottom;
 	return (
 		<Button
+			as={tagName}
 			className={classNames('large-header-button-component', className)}
 			onClick={onClick}
 			ref={ref}
+			{...restProps}
 		>
-			<div className={classNames('button-box', !children && 'no-label')}>
-				{typeof icon === 'string' ? <Icon icon={icon} iconSize={18} /> : icon}
-				{children && <div className="label">{children}</div>}
+			<div className={classNames('button-box', !label && 'no-label')}>
+				{typeof icon === 'string' ? <Icon icon={icon} iconSize={22} /> : icon}
+				{label && !hasStackedLabel && <div className="label">{label}</div>}
+				{hasStackedLabel && (
+					<div className="stacked-label">
+						<div className="top">{label.top}</div>
+						<div className="bottom">{label.bottom}</div>
+					</div>
+				)}
 			</div>
 			{outerLabel && (
 				<div className="outer-label">
@@ -32,4 +46,5 @@ const LargeHeaderButton = React.forwardRef((props, ref) => {
 });
 
 LargeHeaderButton.propTypes = propTypes;
+LargeHeaderButton.defaultProps = defaultProps;
 export default LargeHeaderButton;

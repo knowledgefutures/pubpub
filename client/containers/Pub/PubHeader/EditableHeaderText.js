@@ -20,6 +20,7 @@ const defaultProps = {
 const EditableHeaderText = (props) => {
 	const { canEdit, className, placeholder, tagName, text, updateText } = props;
 	const [hasMounted, setHasMounted] = useState(false);
+	const [intermediateValue, setIntermediateValue] = useState(text);
 	const useEditableTitle = hasMounted && canEdit;
 
 	useEffect(() => setHasMounted(true), []);
@@ -30,8 +31,9 @@ const EditableHeaderText = (props) => {
 		useEditableTitle ? (
 			<EditableText
 				placeholder={placeholder}
-				onChange={updateText}
-				value={text}
+				onConfirm={updateText}
+				onChange={setIntermediateValue}
+				value={intermediateValue}
 				multiline={true}
 				confirmOnEnterKey={true}
 			/>

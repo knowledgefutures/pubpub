@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
 import dateFormat from 'dateformat';
 import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
 import { Card } from '@blueprintjs/core';
 
-import { ClickToCopyButton } from 'components';
+import { apiFetch } from 'utils';
+import { ClickToCopyButton, Overlay } from 'components';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 
 import BranchSelectorButton from './BranchSelectorButton';
@@ -15,15 +16,17 @@ import CollectionsBar from './collections/CollectionsBar';
 import Download from './Download';
 import EditableHeaderText from './EditableHeaderText';
 import LargeHeaderButton from './LargeHeaderButton';
+import SharePanel from './SharePanel';
 import SmallHeaderButton from './SmallHeaderButton';
 import ThemePicker from './ThemePicker';
 
 const propTypes = {
 	pubData: PropTypes.shape({
-		title: PropTypes.string.isRequired,
-		description: PropTypes.string,
 		canManage: PropTypes.bool.isRequired,
+		description: PropTypes.string,
 		doi: PropTypes.string,
+		slug: PropTypes.string,
+		title: PropTypes.string.isRequired,
 	}).isRequired,
 	historyData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -98,6 +101,20 @@ const getReviewUrl = (pubData, publicBranch) => {
 const PubHeaderMain = (props) => {
 	const { pubData, updateLocalData, communityData, historyData } = props;
 	const { canManage, title, description, doi, activeBranch } = pubData;
+	const [isShareOpen, setIsShareOpen] = useState(false);
+
+	const updateAndSavePubData = (newPubData) => {
+		const oldPubData = { ...pubData };
+		updateLocalData('pub', newPubData);
+		return apiFetch('/api/pubs', {
+			method: 'PUT',
+			body: JSON.stringify({
+				...newPubData,
+				pubId: pubData.id,
+				communityId: communityData.id,
+			}),
+		}).catch(() => updateLocalData('pub', oldPubData));
+	};
 
 	const publishedAtString = getPublishDateString(pubData);
 	const publicBranch = pubData.branches.find((branch) => branch.title === 'public');
@@ -106,7 +123,15 @@ const PubHeaderMain = (props) => {
 	const canPublish = !onPublicBranch && activeBranch.canManage && publicBranch.canManage;
 
 	return (
-		<div className="pub-header-main">
+		<div className="pub-header-main-component">
+			<Overlay
+				isOpen={isShareOpen}
+				onClose={() => {
+					setIsShareOpen(false);
+				}}
+			>
+				<SharePanel pubData={pubData} updateLocalData={updateLocalData} />
+			</Overlay>
 			<div className="top">
 				<CollectionsBar pubData={pubData} updateLocalData={updateLocalData} />
 				<div className="basic-details">
@@ -135,7 +160,7 @@ const PubHeaderMain = (props) => {
 				<div className="left">
 					<EditableHeaderText
 						text={title}
-						updateText={(text) => updateLocalData('pub', { title: text })}
+						updateText={(text) => updateAndSavePubData({ title: text })}
 						canEdit={canManage}
 						className="title"
 						placeholder="Add a Pub title"
@@ -143,7 +168,7 @@ const PubHeaderMain = (props) => {
 					{(canManage || description) && (
 						<EditableHeaderText
 							text={description}
-							updateText={(text) => updateLocalData('pub', { description: text })}
+							updateText={(text) => updateAndSavePubData({ description: text })}
 							canEdit={canManage}
 							tagName="h3"
 							className="description"
@@ -153,22 +178,10 @@ const PubHeaderMain = (props) => {
 					<Byline pubData={pubData} />
 				</div>
 				<div className="right">
-					<SmallHeaderButton label="Pub settings" labelPosition="left" icon="cog" />
-					<SmallHeaderButton label="Share with..." labelPosition="left" icon="people" />
-					<Download pubData={pubData}>
-						<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
-					</Download>
-					<PopoverButton
-						component={CitationsPreview}
-						pubData={pubData}
-						aria-label="Cite this Pub"
-					>
-						<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
-					</PopoverButton>
 					{canManage && (
 						<PopoverButton
 							component={ThemePicker}
-							updateLocalData={updateLocalData}
+							updatePubData={updateAndSavePubData}
 							pubData={pubData}
 							communityData={communityData}
 							aria-label="Pub header theme options"
@@ -180,6 +193,32 @@ const PubHeaderMain = (props) => {
 							/>
 						</PopoverButton>
 					)}
+					{canManage && (
+						<SmallHeaderButton
+							label="Pub settings"
+							labelPosition="left"
+							icon="cog"
+							tagName="a"
+							href={`/pub/${pubData.slug}/manage`}
+						/>
+					)}
+
+					<SmallHeaderButton
+						label="Share with..."
+						labelPosition="left"
+						icon="people"
+						onClick={() => setIsShareOpen(true)}
+					/>
+					<Download pubData={pubData}>
+						<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
+					</Download>
+					<PopoverButton
+						component={CitationsPreview}
+						pubData={pubData}
+						aria-label="Cite this Pub"
+					>
+						<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
+					</PopoverButton>
 				</div>
 			</div>
 			<div className="bottom">
@@ -187,6 +226,11 @@ const PubHeaderMain = (props) => {
 				<LargeHeaderButton
 					icon="history"
 					outerLabel={getHistoryButtonLabel(pubData, historyData)}
+					onClick={() =>
+						updateLocalData('history', {
+							isViewingHistory: !historyData.isViewingHistory,
+						})
+					}
 				/>
 				{canPublish && (
 					<LargeHeaderButton

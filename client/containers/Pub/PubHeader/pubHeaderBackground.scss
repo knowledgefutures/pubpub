@@ -1,8 +1,5 @@
 .pub-header-background-component {
     position: relative;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
     overflow: hidden;
     .background-element {
         width: 100%;
@@ -11,6 +8,7 @@
         z-index: -1;
         &.background-image {
             background-size: cover;
+            background-position: center;
             &.blur {
                 filter: blur(10px);
             }

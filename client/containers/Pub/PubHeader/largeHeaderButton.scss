@@ -2,11 +2,44 @@
 
 .large-header-button-component {
     @include base-button;
-    @include shadow-box;
     display: inline-flex;
-    height: 40px;
-    border-radius: 2px;
+    padding: 0;
     &:hover {
-        @include shadow-box-hover;
+        .button-box {
+            @include shadow-box-hover;
+        }
+    }
+    .button-box {
+        @include shadow-box;
+        display: flex;
+        align-items: center;
+        height: 40px;
+        border-radius: 2px;
+        padding-left: 12px;
+        padding-right: 12px;
+        &.no-label {
+            padding: 0;
+            width: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+        .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 10px;
+        }
+    }
+    .outer-label {
+        text-align: left;
+        margin-left: 10px;
+        .top {
+            color: $off-white;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        .bottom {
+            font-size: 16px;
+        }
     }
 }

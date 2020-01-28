@@ -12,6 +12,7 @@
     position: relative;
     border-radius: 2px;
     background: rgba(white, 0.1);
+    transition: background-color 0.1s ease-out;
     &::after {
         content: '';
         position: absolute;
@@ -26,7 +27,10 @@
 
 @mixin shadow-box-hover {
     border-radius: 2px;
+    background: rgba(white, 0.2);
     &::after {
         opacity: 1;
     }
 }
+
+$off-white: #cfcfcf;

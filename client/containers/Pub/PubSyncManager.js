@@ -97,6 +97,7 @@ class PubSyncManager extends React.Component {
 			historyData: {
 				...historyData,
 				outstandingRequests: 0,
+				latestKeyReceivedAt: null,
 				isViewingHistory: false,
 			},
 		};
@@ -282,82 +283,59 @@ class PubSyncManager extends React.Component {
 
 	updateHistoryData(newHistoryData) {
 		const { pubData, locationData } = this.props;
-		const { historyData: prevHistoryData } = this.state;
-		this.idleStateUpdater.setState(
-			{
-				historyData: {
-					...prevHistoryData,
-					...newHistoryData,
-				},
-			},
-			() => {
-				const { historyData: nextHistoryData } = this.state;
-				if (prevHistoryData.currentKey !== nextHistoryData.currentKey) {
-					// First, check to see whether we have an editorChangeObject corresponding to
-					// the most recent document. If so, we don't need to do a fetch from the server
-					// for this version, because we already have it stored locally.
-					const {
-						collabData: { editorChangeObject },
-					} = this.state;
-					const currentCollabDoc =
-						editorChangeObject &&
-						editorChangeObject.view &&
-						editorChangeObject.view.state &&
-						editorChangeObject.view.state.doc;
-					if (
-						nextHistoryData.currentKey === nextHistoryData.latestKey &&
-						currentCollabDoc
-					) {
-						this.setState(({ historyData }) => {
-							const nextTimestamp =
-								historyData.timestamps[nextHistoryData.currentKey] || Date.now();
-							return {
-								historyData: {
-									...historyData,
-									historyDoc: currentCollabDoc.toJSON(),
-									historyDocKey: `history-${nextHistoryData.currentKey}`,
-									timestamps: {
-										...historyData.timestamps,
-										[nextHistoryData.currentKey]: nextTimestamp,
-									},
+		const {
+			historyData: prevHistoryData,
+			collabData: { editorChangeObject },
+		} = this.state;
+		const now = Date.now();
+		const nextHistoryData = { ...prevHistoryData, ...newHistoryData };
+		const currentCollabDoc = editorChangeObject && editorChangeObject.view.state.doc;
+		if (currentCollabDoc && nextHistoryData.currentKey === nextHistoryData.latestKey) {
+			this.idleStateUpdater.setState(({ historyData }) => {
+				const nextTimestamp = historyData.timestamps[nextHistoryData.currentKey] || now;
+				return {
+					historyData: {
+						...historyData,
+						...newHistoryData,
+						historyDoc: currentCollabDoc.toJSON(),
+						historyDocKey: `history-${nextHistoryData.currentKey}`,
+						timestamps: {
+							...historyData.timestamps,
+							[nextHistoryData.currentKey]: nextTimestamp,
+						},
+					},
+				};
+			});
+		} else {
+			this.setState(
+				({ historyData }) => ({
+					historyData: {
+						...historyData,
+						outstandingRequests: historyData.outstandingRequests + 1,
+					},
+				}),
+				() =>
+					fetchVersionFromHistory(
+						pubData,
+						newHistoryData.currentKey,
+						locationData.query.access,
+					).then(({ content, historyData: { timestamps } }) => {
+						this.setState(({ historyData }) => ({
+							historyData: {
+								...historyData,
+								...newHistoryData,
+								historyDoc: content,
+								historyDocKey: `history-${nextHistoryData.currentKey}`,
+								outstandingRequests: historyData.outstandingRequests - 1,
+								timestamps: {
+									...historyData.timestamps,
+									...timestamps,
 								},
-							};
-						});
-					} else {
-						// The new state wants a document from somewhere in the history other than
-						// the most recent version. We'll have to fetch that with the API.
-						this.setState(
-							({ historyData }) => ({
-								historyData: {
-									...historyData,
-									outstandingRequests: historyData.outstandingRequests + 1,
-								},
-							}),
-							() =>
-								fetchVersionFromHistory(
-									pubData,
-									newHistoryData.currentKey,
-									locationData.query.access,
-								).then(({ content, historyData: { timestamps } }) => {
-									this.setState(({ historyData }) => ({
-										historyData: {
-											...historyData,
-											historyDoc: content,
-											historyDocKey: `history-${nextHistoryData.currentKey}`,
-											outstandingRequests:
-												historyData.outstandingRequests - 1,
-											timestamps: {
-												...historyData.timestamps,
-												...timestamps,
-											},
-										},
-									}));
-								}),
-						);
-					}
-				}
-			},
-		);
+							},
+						}));
+					}),
+			);
+		}
 	}
 
 	updateLocalData(type, data) {

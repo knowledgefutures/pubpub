@@ -1,20 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import TimeAgo from 'react-timeago';
 import dateFormat from 'dateformat';
 import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
 import { Card } from '@blueprintjs/core';
 
-import { ClickToCopyButton } from 'components';
-import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { ClickToCopyButton, Icon } from 'components';
+import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 
+import BranchSelectorButton from './BranchSelectorButton';
 import Byline from './Byline';
 import CitationsPreview from './CitationsPreview';
 import CollectionsBar from './collections/CollectionsBar';
 import Download from './Download';
 import EditableHeaderText from './EditableHeaderText';
+import LargeHeaderButton from './LargeHeaderButton';
 import SmallHeaderButton from './SmallHeaderButton';
 import ThemePicker from './ThemePicker';
-import LargeHeaderButton from './LargeHeaderButton';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -23,6 +25,7 @@ const propTypes = {
 		canManage: PropTypes.bool.isRequired,
 		doi: PropTypes.string,
 	}).isRequired,
+	historyData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
 
@@ -61,8 +64,19 @@ const getPublishDateString = (pubData) => {
 	return <i>Unpublished</i>;
 };
 
+const getTimeAgo = (pubData, historyData) => {
+	const updatedAtDate = getPubUpdatedDate({
+		pub: pubData,
+		branch: pubData.activeBranch,
+		historyData: historyData,
+	});
+	if (updatedAtDate) {
+		return <TimeAgo date={updatedAtDate} minPeriod={60} formatter=/>;
+	}
+};
+
 const PubHeaderMain = (props) => {
-	const { pubData, updateLocalData, communityData } = props;
+	const { pubData, updateLocalData, communityData, historyData } = props;
 	const { canManage, title, description, doi } = pubData;
 	const publishedAtString = getPublishDateString(pubData);
 	return (
@@ -143,7 +157,14 @@ const PubHeaderMain = (props) => {
 				</div>
 			</div>
 			<div className="bottom">
-				<LargeHeaderButton />
+				<BranchSelectorButton pubData={pubData} />
+				<LargeHeaderButton
+					icon="history"
+					outerLabel={{
+						top: 'this branch last edited',
+						bottom: getTimeAgo(pubData, historyData),
+					}}
+				/>
 			</div>
 		</div>
 	);

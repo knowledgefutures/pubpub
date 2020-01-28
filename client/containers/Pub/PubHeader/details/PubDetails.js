@@ -7,7 +7,6 @@ import { collectionUrl } from 'shared/utils/canonicalUrls';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 import { ClickToCopyButton } from 'components';
 import { getAllPubContributors } from 'utils/pubContributors';
-import SmallHeaderButton from '../SmallHeaderButton';
 
 import CitationsPreview from '../CitationsPreview';
 import Contributors from './Contributors';
@@ -30,7 +29,7 @@ const PubDetails = (props) => {
 
 	const publishedAt = getPubPublishedDate(pubData, pubData.activeBranch);
 	const publishedAtString = dateFormat(publishedAt, 'mmm dd, yyyy');
-	const updatedAt = getPubUpdatedDate(pubData, pubData.activeBranch);
+	const updatedAt = getPubUpdatedDate({ pub: pubData, branch: pubData.activeBranch });
 	const updatedAtString = dateFormat(updatedAt, 'mmm dd, yyyy');
 	const shouldShowUpdatedDate = updatedAt && updatedAt !== publishedAt;
 
@@ -70,7 +69,7 @@ const PubDetails = (props) => {
 				<div className="collection-list">
 					{collectionPubs.length === 0 && (
 						<i className="collection-list-entry">
-							This pub doesn't belong to any collections
+							This pub doesn't belong to any collections.
 						</i>
 					)}
 					{collectionPubs.map((collectionPub) => {

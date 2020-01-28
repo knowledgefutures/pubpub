@@ -7,13 +7,14 @@ const propTypes = {
 	className: PropTypes.string,
 	placeholder: PropTypes.string.isRequired,
 	tagName: PropTypes.string,
-	text: PropTypes.string.isRequired,
+	text: PropTypes.string,
 	updateText: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
 	className: '',
 	tagName: 'h1',
+	text: null,
 };
 
 const EditableHeaderText = (props) => {

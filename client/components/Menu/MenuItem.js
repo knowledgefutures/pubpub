@@ -61,7 +61,11 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 			<a
 				href={href}
 				target={target}
-				className={classNames(Classes.MENU_ITEM, disabled && Classes.DISABLED)}
+				className={classNames(
+					Classes.MENU_ITEM,
+					disabled && Classes.DISABLED,
+					active && Classes.ACTIVE,
+				)}
 			>
 				{icon && (typeof icon === 'string' ? <Icon icon={icon} /> : icon)}
 				<div className={classNames(Classes.TEXT_OVERFLOW_ELLIPSIS, Classes.FILL)}>

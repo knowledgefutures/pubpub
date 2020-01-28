@@ -1,17 +1,30 @@
 @import 'styles/variables.scss';
+@import './themes.scss';
 
+$mobile-cutoff-width: 500px;
 $header-margin-top: 13px;
 $header-margin-bottom: 26px;
 $header-margin-total: $header-margin-top + $header-margin-bottom;
+
+@mixin mobile {
+    @media only screen and (max-width: $mobile-cutoff-width) {
+        @content;
+    }
+}
 
 .pub-header-popover {
     z-index: 21;
 }
 
 .pub-header-main {
-    .top {
+    & > .top {
         display: flex;
         justify-content: space-between;
+        .collections-bar-component {
+            @include mobile {
+                display: none;
+            }
+        }
         .basic-details {
             display: flex;
             flex-shrink: 0;
@@ -20,17 +33,25 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
             &:first-child {
                 width: 100%;
             }
+            @include mobile {
+                width: 100%;
+                justify-content: left;
+            }
             &:not(:first-child) {
                 margin-left: 20px;
+                @include mobile() {
+                    margin-left: 0px;
+                }
             }
             & > *:not(:last-child) {
                 margin-right: 45px;
             }
             .metadata-pair {
                 & > :first-child {
-                    color: #cfcfcf;
+                    color: $off-white;
                     margin-right: 10px;
                 }
+                white-space: nowrap;
                 display: flex;
                 align-items: center;
             }
@@ -52,16 +73,19 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
             width: 120px;
         }
     }
-    .hairline {
+    & > .hairline {
         width: 100%;
         height: 1px;
         background-color: rgba(255, 255, 255, 0.2);
         margin-top: 10px;
         margin-bottom: 20px;
     }
-    .middle {
+    & > .middle {
         display: flex;
-        .left {
+        @include mobile {
+            flex-direction: column;
+        }
+        & > .left {
             flex-grow: 1;
             .authors {
                 a,
@@ -70,7 +94,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
                 }
             }
         }
-        .right {
+        & > .right {
             margin-top: 18px;
             flex-shrink: 0;
             width: 150px;
@@ -78,7 +102,33 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
                 width: 100%;
                 &:not(:last-child) {
                     margin-bottom: 12px;
+                    @include mobile {
+                        margin-bottom: 0;
+                    }
                 }
+            }
+            @include mobile {
+                display: flex;
+                .small-header-button-component {
+                    flex-direction: row;
+                    .label {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+    & > .bottom {
+        display: flex;
+        margin-top: 35px;
+        & > *:not(:last-child) {
+            margin-right: 30px;
+        }
+        .branch-selector-button {
+            .branch-icon-caret {
+                position: absolute;
+                top: 24px;
+                right: 8px;
             }
         }
     }
@@ -104,12 +154,17 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     h6 {
         color: inherit;
     }
+
     h1 {
         margin: 0;
         font-size: 48px;
         line-height: 68px;
         font-weight: normal;
         font-family: $header-font;
+        @include mobile {
+            font-size: 32px;
+            line-height: 36px;
+        }
     }
 
     .details-button {
@@ -117,12 +172,16 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         top: 4px;
         right: 0;
         .icon-container {
-            transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         &.showing-details {
             .icon-container {
                 transform: rotate(90deg);
             }
+        }
+        @include mobile {
+            top: -3px;
+            right: -8px;
         }
     }
 
@@ -145,7 +204,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         font-size: 18px;
         font-weight: normal;
         font-family: $header-font;
-        color: #cfcfcf;
+        color: $off-white;
     }
 
     .authors {

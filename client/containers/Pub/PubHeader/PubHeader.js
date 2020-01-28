@@ -14,6 +14,7 @@ require('./pubHeader.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
 
@@ -33,7 +34,7 @@ const ToggleDetailsButton = ({ showingDetails, onClick }) => {
 
 const PubHeader = (props) => {
 	const headerRef = useRef(null);
-	const { pubData, communityData, updateLocalData } = props;
+	const { pubData, communityData, historyData, updateLocalData } = props;
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState(null);
 
@@ -59,6 +60,7 @@ const PubHeader = (props) => {
 						pubData={pubData}
 						communityData={communityData}
 						updateLocalData={updateLocalData}
+						historyData={historyData}
 					/>
 				)}
 				{showingDetails && <PubDetails pubData={pubData} communityData={communityData} />}

@@ -26,7 +26,6 @@ setRedirect('bookbook.pubpub.org', '/pub/oki', 'https://wip.mitpress.mit.edu/pub
 setRedirect('bookbook.pubpub.org', '/oki', 'https://wip.mitpress.mit.edu/oki');
 setRedirect('kfg.mit.edu', '/', 'https://www.knowledgefutures.org');
 setRedirect('blog.pubpub.org', '/', 'https://notes.knowledgefutures.org');
-setRedirect('commonplace.pubpub.org', '/', 'https://commonplace.knowledgefutures.org');
 setRedirect('kfg.mit.edu', '/pub/3jhmyfk5', 'https://notes.knowledgefutures.org/pub/3jhmyfk5');
 setRedirect(
 	'commonplace.pubpub.org',

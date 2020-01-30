@@ -3,7 +3,7 @@ name: Bug Report
 about: Report a bug.
 title: ''
 labels: bug
-assignees: gabestein
+assignees:
 
 ---
 

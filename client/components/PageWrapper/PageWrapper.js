@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Header, Footer, GdprBanner, AccentStyle, NavBar, Icon, SkipLink } from 'components';
+import { AccentStyle, Footer, Header, Icon, LegalBanner, NavBar, SkipLink } from 'components';
 import { populateNavigationIds } from 'utils';
 
 require('./pageWrapper.scss');
@@ -97,7 +97,7 @@ const PageWrapper = (props) => {
 
 				<SkipLink targetId="main-content">Skip to main content</SkipLink>
 
-				<GdprBanner loginData={props.loginData} />
+				<LegalBanner loginData={props.loginData} />
 
 				<Header
 					communityData={props.communityData}

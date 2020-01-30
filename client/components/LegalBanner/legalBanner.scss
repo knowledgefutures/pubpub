@@ -1,0 +1,81 @@
+$viewport-padding: 10px;
+$small-viewport-cutoff: 720px;
+
+@mixin mobile {
+    @media screen and (max-width: $small-viewport-cutoff) {
+        @content;
+    }
+}
+
+.legal-banner-component {
+    position: fixed;
+    bottom: $viewport-padding;
+    right: $viewport-padding;
+    z-index: 9999;
+    background: #eee;
+    padding: 15px;
+    width: 500px;
+    max-width: calc(100vw - #{2 * $viewport-padding});
+    border-radius: 2px;
+    border: 3px #ddd solid;
+    font-size: 12px;
+    @include mobile {
+        padding: 10px;
+        font-size: 10px;
+    }
+    .logo {
+        display: none;
+        align-items: center;
+        @media screen and (max-width: $small-viewport-cutoff) {
+            align-items: unset;
+        }
+        img {
+            height: 50px;
+            display: block;
+        }
+        padding-right: 15px;
+    }
+    .notice {
+        .notice-steps {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            margin-bottom: 5px;
+            @include mobile {
+                font-size: 12px;
+            }
+            .step {
+                &.current {
+                    font-weight: bold;
+                }
+                &:not(:last-child)::after {
+                    content: '›';
+                    margin-left: 5px;
+                    margin-right: 5px;
+                }
+            }
+        }
+        flex-grow: 1;
+        color: black;
+        h3 {
+            color: inherit;
+        }
+        a,
+        a:visited,
+        a:hover {
+            color: inherit;
+        }
+    }
+    .legal-buttons {
+        .bp3-button {
+            padding: 0;
+            flex-shrink: 0;
+            min-width: 120px;
+        }
+        display: flex;
+        align-items: center;
+        & > *:not(:first-child) {
+            margin-left: 10px;
+        }
+    }
+}

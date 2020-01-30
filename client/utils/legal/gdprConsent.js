@@ -1,19 +1,14 @@
 import Cookies from 'js-cookie';
 
-import { apiFetch } from './apiFetch';
+import { apiFetch } from '../apiFetch';
+
+import { getCookieOptions } from './cookieOptions';
 
 const cookieKey = 'gdpr-consent';
 const persistSignupCookieKey = 'gdpr-consent-survives-login';
 
 const odiousCookies = ['keen'];
 const deleteOdiousCookies = () => odiousCookies.map((key) => Cookies.remove(key, { path: '' }));
-
-const getCookieOptions = () => ({
-	expires: 365 * 1000,
-	// If we're on pubpub.org or x.pubpub.org, make the cookie valid for [y.]pubpub.org
-	...(window.location.host.includes('pubpub.org') && { domain: '.pubpub.org' }),
-	...(window.location.host.includes('duqduq.org') && { domain: '.duqduq.org' }),
-});
 
 export const gdprCookiePersistsSignup = () => Cookies.get(persistSignupCookieKey) === 'yes';
 

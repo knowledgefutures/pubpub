@@ -6,7 +6,7 @@ import { Button, NonIdealState, Checkbox } from '@blueprintjs/core';
 
 import { GridWrapper, InputField, ImageUpload, PageWrapper, Icon } from 'components';
 import { hydrateWrapper, apiFetch } from 'utils';
-import { gdprCookiePersistsSignup, getGdprConsentElection } from 'utils/gdprConsent';
+import { gdprCookiePersistsSignup, getGdprConsentElection } from 'utils/legal/gdprConsent';
 
 require('./userCreate.scss');
 

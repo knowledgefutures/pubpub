@@ -117,6 +117,45 @@ const SubPreview = function(props) {
 				},
 			],
 		},
+		{
+			parentId: 'c871f9e0-37de-41eb-b8cf-8642f48c975e',
+			children: [
+				{
+					prefix: 'Commentary by:',
+					elements: [
+						{ text: 'Margo J. Anderson', href: '/pub/ofozx8tv' },
+						{ text: 'Thomas R. Belin', href: '/pub/5rdl7fyi' },
+						{ text: 'Ray Chambers', href: '/pub/n6sp95q1' },
+						{ text: 'Constance F. Citro', href: '/pub/ec742hpw' },
+						{ text: 'Reynolds Farley', href: '/pub/rosc6trb' },
+						{ text: 'Howard Hogan', href: '/pub/z4115tbw' },
+						{ text: 'Karen Kafadar', href: '/pub/pfji5iif' },
+						{ text: 'Dudley L. Poston, Jr.', href: '/pub/m0lpwb4x' },
+						{ text: 'Dennis Trewin', href: '/pub/4v4jnt6g' },
+					],
+				},
+				{
+					prefix: 'Rejoinder from:',
+					elements: [{ text: 'Teresa A. Sullivan', href: '/pub/3saxaqb8' }],
+				},
+			],
+		},
+		{
+			parentId: '6ed64b30-faeb-4c8c-98ca-7326b4d78815',
+			children: [
+				{
+					prefix: 'Commentary by:',
+					elements: [
+						{ text: 'Shawn Bushway', href: '/pub/dudgcmk3' },
+						{ text: 'Alexandra Chouldechova', href: '/pub/xlfiu7za' },
+						{ text: 'Sarah Desmaris', href: '/pub/60jfy7hm' },
+						{ text: 'Brandon L. Garrett', href: '/pub/p0wzaz31' },
+						{ text: 'Eugenie Jackson and Christina Mendoza', href: '/pub/hzwo7ax4/' },
+						{ text: 'Greg Ridgeway', href: '/pub/vu6rc1yv' },
+					],
+				},
+			],
+		},
 	];
 
 	const elementStyle = { color: communityData.accentColorDark };

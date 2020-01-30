@@ -21,6 +21,7 @@ export const getTextAbstract = (docJson) => {
 		firstChild &&
 		firstChild.type === 'heading' &&
 		firstChild.attrs.level === 1 &&
+		firstChild.content &&
 		firstChild.content.length > 0 &&
 		firstChild.content[0].text.toUpperCase() === 'abstract'.toUpperCase();
 	if (firstChildIsAbstractHeader && secondChild) {

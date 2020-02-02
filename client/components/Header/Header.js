@@ -7,7 +7,7 @@ import { usePageContext } from 'utils/hooks';
 require('./header.scss');
 
 const Header = () => {
-	const { locationData, communityData, loginData } = usePageContext();
+	const { locationData, communityData, loginData, scopeData } = usePageContext();
 	const [isLoading, setIsLoading] = useState(false);
 	const handleLogout = () => {
 		apiFetch('/api/logout').then(() => {
@@ -128,7 +128,7 @@ const Header = () => {
 	const backgroundStyle = calculateBackgroundStyle(hideHero);
 
 	const loggedIn = !!loginData.slug;
-	const isAdmin = loginData.isAdmin;
+	const isAdmin = scopeData.activePermissions.canAdminCommunity;
 	const isBasePubPub = locationData.isBasePubPub;
 	// const isPage =
 	// 	communityData.pages &&

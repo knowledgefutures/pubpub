@@ -149,6 +149,12 @@ getActivePermissions = async (scopeOptionsData, scopeMemberData) => {
 		const currLevelIndex = permissionLevels.indexOf(curr.permissions);
 		return currLevelIndex > prev ? currLevelIndex : prev;
 	}, -1);
+	const canAdminCommunity = scopeMemberData.reduce((prev, curr) => {
+		if (curr.communityId && curr.permissions === 'admin') {
+			return true;
+		}
+		return prev;
+	}, false);
 
 	const booleanOr = (precedent, value) => {
 		/* Don't inherit value from null */
@@ -192,6 +198,7 @@ getActivePermissions = async (scopeOptionsData, scopeMemberData) => {
 		canEdit: permissionLevelIndex > 0,
 		canManage: permissionLevelIndex > 1,
 		canAdmin: permissionLevelIndex > 2,
+		canAdminCommunity: canAdminCommunity,
 		...activeOptions,
 	};
 };

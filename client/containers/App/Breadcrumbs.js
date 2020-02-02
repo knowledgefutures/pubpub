@@ -7,7 +7,7 @@ require('./breadcrumbs.scss');
 
 const Breadcrumbs = () => {
 	const { locationData, communityData, scopeData } = usePageContext();
-	const { activePub, activeCollection } = scopeData;
+	const { activePub, activeCollection } = scopeData.elements;
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
 

@@ -12,7 +12,7 @@ const propTypes = {
 const ContentOverview = (props) => {
 	const { overviewData } = props;
 	const { scopeData } = usePageContext();
-	const { activePub } = scopeData;
+	const { activePub } = scopeData.elements;
 	return (
 		<div className="pub-overview-component">
 			<div className="dashboard-content-header">

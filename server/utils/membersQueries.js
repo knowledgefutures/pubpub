@@ -4,7 +4,7 @@ import { attributesPublicUser } from '.';
 import { buildOrQuery } from './scopeData';
 
 export const getMembersData = (initialData) => {
-	const orQuery = buildOrQuery(initialData.scopeData);
+	const orQuery = buildOrQuery(initialData.scopeData.elements);
 
 	return Member.findAll({
 		where: {

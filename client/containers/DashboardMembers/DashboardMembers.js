@@ -15,7 +15,7 @@ const propTypes = {
 const DashboardMembers = (props) => {
 	const { membersData } = props;
 	const { scopeData } = usePageContext();
-	const { activeTargetType } = scopeData;
+	const { activeTargetType } = scopeData.elements;
 	// let scope = 'Community';
 	// if (locationData.params.collectionSlug) {
 	// 	scope = 'Collection';

@@ -112,17 +112,39 @@ export const getCounts = async (scopeElements) => {
 	};
 };
 
-// TODO: This is deprecated and needs to be reconsidered
-const checkIfAdmin = (admins, userId) => {
-	return admins.reduce((prev, curr) => {
-		if (curr.id === userId) {
-			return true;
+const cleanCommunityData = (communityData, locationData, scopeData) => {
+	const cleanedData = { ...communityData };
+	const isCommunityAdmin = scopeData.activePermissions.canAdminCommunity;
+	const availablePages = {};
+	cleanedData.pages = cleanedData.pages.filter((item) => {
+		if (!scopeData && !item.isPublic && locationData.query.access !== item.viewHash) {
+			return false;
 		}
-		return prev;
-	}, false);
-};
 
-export const getBaseCommunityData = (locationData, whereQuery, userId) => {
+		availablePages[item.id] = {
+			id: item.id,
+			title: item.title,
+			slug: item.slug,
+		};
+		return true;
+	});
+
+	cleanedData.collections = cleanedData.collections.filter((item) => {
+		return isCommunityAdmin || item.isPublic;
+	});
+
+	cleanedData.collections = cleanedData.collections.map((collection) => {
+		if (!collection.pageId) {
+			return collection;
+		}
+		return {
+			...collection,
+			page: availablePages[collection.pageId],
+		};
+	});
+	return cleanedData;
+};
+const getBaseCommunityData = (locationData, whereQuery) => {
 	return Community.findOne({
 		where: whereQuery,
 		attributes: {
@@ -153,46 +175,12 @@ export const getBaseCommunityData = (locationData, whereQuery, userId) => {
 			return null;
 		}
 
-		const cleanedData = communityResult.toJSON();
-		const isAdmin = checkIfAdmin(cleanedData.admins, userId);
-
-		const availablePages = {};
-		cleanedData.pages = cleanedData.pages.filter((item) => {
-			if (!isAdmin && !item.isPublic && locationData.query.access !== item.viewHash) {
-				return false;
-			}
-
-			availablePages[item.id] = {
-				id: item.id,
-				title: item.title,
-				slug: item.slug,
-			};
-			return true;
-		});
-
-		cleanedData.collections = cleanedData.collections.filter((item) => {
-			return isAdmin || item.isPublic;
-		});
-
-		cleanedData.collections = cleanedData.collections.map((collection) => {
-			if (!collection.pageId) {
-				return collection;
-			}
-			return {
-				...collection,
-				page: availablePages[collection.pageId],
-			};
-		});
-		return cleanedData;
+		return communityResult.toJSON();
 	});
 };
 
 export const getInitialData = async (req, isDashboard) => {
 	const hostname = req.hostname;
-	const whereQuery =
-		hostname.indexOf('.pubpub.org') > -1
-			? { subdomain: hostname.replace('.pubpub.org', '') }
-			: { domain: hostname };
 
 	/* Gather user data */
 	const user = req.user || {};
@@ -248,7 +236,11 @@ export const getInitialData = async (req, isDashboard) => {
 	}
 
 	/* If we have a community to find, search, and then return */
-	const communityData = await getBaseCommunityData(locationData, whereQuery, user.id);
+	const whereQuery =
+		hostname.indexOf('.pubpub.org') > -1
+			? { subdomain: hostname.replace('.pubpub.org', '') }
+			: { domain: hostname };
+	const communityData = await getBaseCommunityData(locationData, whereQuery);
 	if (!communityData) {
 		throw new Error('Community Not Found');
 	}
@@ -271,8 +263,9 @@ export const getInitialData = async (req, isDashboard) => {
 		...scopeData,
 		activeCounts: activeCounts,
 	};
+	const cleanedCommunityData = cleanCommunityData(communityData, locationData, scopeData);
 	return {
-		communityData: communityData,
+		communityData: cleanedCommunityData,
 		loginData: loginData,
 		locationData: locationData,
 		scopeData: enhancedScopeData,

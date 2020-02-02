@@ -16,7 +16,7 @@ const propTypes = {
 const ContentOverview = (props) => {
 	const { overviewData } = props;
 	const { scopeData } = usePageContext();
-	const { activeCollection } = scopeData;
+	const { activeCollection } = scopeData.elements;
 	const collectionSlug = activeCollection && activeCollection.slug;
 	const { collections, pubs } = groupPubs(overviewData.pubs, overviewData.collections);
 	const rootPubs = activeCollection

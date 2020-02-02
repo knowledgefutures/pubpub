@@ -11,7 +11,7 @@ const propTypes = {
 const DashboardOverview = (props) => {
 	const { overviewData } = props;
 	const { scopeData } = usePageContext();
-	const { activeTargetType } = scopeData;
+	const { activeTargetType } = scopeData.elements;
 	const isContentList = activeTargetType === 'community' || activeTargetType === 'collection';
 	const isPub = activeTargetType === 'pub';
 

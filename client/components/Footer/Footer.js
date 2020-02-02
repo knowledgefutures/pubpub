@@ -19,7 +19,7 @@ const Footer = () => {
 	const [isLoadingSubscribe, setIsLoadingSubscribe] = useState(false);
 	const [isSubscribed, setIsSubscribed] = useState(false);
 	const [isConfirmed, setIsConfirmed] = useState(false);
-	const { locationData, communityData, loginData } = usePageContext();
+	const { locationData, communityData, scopeData } = usePageContext();
 	const links = locationData.isBasePubPub
 		? [
 				{ id: 1, title: 'Create your community', url: '/create/community' },
@@ -194,7 +194,7 @@ const Footer = () => {
 					<ul className="separated">
 						{links
 							.filter((item) => {
-								return !item.adminOnly || loginData.isAdmin;
+								return !item.adminOnly || scopeData.activePermissions.canAdminCommunity;
 							})
 							.map((link) => {
 								return (

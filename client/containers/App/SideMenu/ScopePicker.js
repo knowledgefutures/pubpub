@@ -7,7 +7,7 @@ require('./scopePicker.scss');
 
 const ScopePicker = () => {
 	const { locationData, communityData, scopeData } = usePageContext();
-	const { activeCollection, activePub } = scopeData;
+	const { activeCollection, activePub } = scopeData.elements;
 
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;

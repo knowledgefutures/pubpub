@@ -14,11 +14,11 @@ import { attributesPublicUser } from '.';
 
 export const getOverviewData = (initialData) => {
 	const scopeData = initialData.scopeData;
-	const { activeTargetType, activeTarget } = scopeData;
+	const { activeTargetType, activeTarget } = scopeData.elements;
 	/* This is a bit of a hack for now. We likely will want
 	more targeted and nuanced queries for each scope type. */
 	return Community.findOne({
-		where: { id: scopeData.activeCommunity.id },
+		where: { id: scopeData.elements.activeCommunity.id },
 		attributes: {
 			exclude: ['createdAt', 'updatedAt'],
 		},

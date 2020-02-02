@@ -11,22 +11,25 @@ import {
 	Review,
 	Discussion,
 } from '../models';
-import { getScopePermissions } from './memberPermissions';
+import { getScopeData } from './scopeData';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 
-const getTargetType = (params) => {
-	const { collectionSlug, pubSlug } = params;
-	if (pubSlug) {
-		return 'pub';
-	}
-	if (collectionSlug) {
-		return 'collection';
-	}
-	return 'community';
-};
+// const getTargetType = (params) => {
+// 	/* Return a string with the type of the currently */
+// 	/* active target given locationData params */
+// 	const { collectionSlug, pubSlug } = params;
+// 	if (pubSlug) {
+// 		return 'pub';
+// 	}
+// 	if (collectionSlug) {
+// 		return 'collection';
+// 	}
+// 	return 'community';
+// };
 
 const countActiveThreads = (discussions) => {
+	/* Return the number of non-archived threads from a list of discussions */
 	const threadObject = {};
 	discussions.forEach((discussion) => {
 		const existingThread = threadObject[discussion.threadNumber];
@@ -39,8 +42,9 @@ const countActiveThreads = (discussions) => {
 	}, 0);
 };
 
-export const getCounts = async (scopeData) => {
-	const { activeTarget, activeTargetType } = scopeData;
+export const getCounts = async (scopeElements) => {
+	/* Get counts for threads, reviews, and merges */
+	const { activeTarget, activeTargetType } = scopeElements;
 	let discussionCount = 0;
 	let reviewCount = 0;
 	let mergeCount = 0;
@@ -122,62 +126,63 @@ export const getCounts = async (scopeData) => {
 	};
 };
 
-export const getScopeData = async (communityData, loginData, locationData) => {
-	const activeTargetType = getTargetType(locationData.params);
-	let activeTarget;
-	let activePub;
-	let activeCollection;
-	let inactiveCollections = [];
-	const activeCommunity = communityData;
-	let activeOrganization;
-	if (activeTargetType === 'pub') {
-		activeTarget = await Pub.findOne({
-			where: { slug: locationData.params.pubSlug },
-			include: [
-				{
-					model: CollectionPub,
-					as: 'collectionPubs',
-					required: false,
-					attributes: ['id', 'pubId', 'collectionId'],
-				},
-			],
-		});
+// export const getScopeData = async (communityData, loginData, locationData) => {
+// 	const activeTargetType = getTargetType(locationData.params);
+// 	let activeTarget;
+// 	let activePub;
+// 	let activeCollection;
+// 	let inactiveCollections = [];
+// 	const activeCommunity = communityData;
+// 	let activeOrganization;
+// 	if (activeTargetType === 'pub') {
+// 		activeTarget = await Pub.findOne({
+// 			where: { slug: locationData.params.pubSlug },
+// 			include: [
+// 				{
+// 					model: CollectionPub,
+// 					as: 'collectionPubs',
+// 					required: false,
+// 					attributes: ['id', 'pubId', 'collectionId'],
+// 				},
+// 			],
+// 		});
 
-		activePub = activeTarget;
-		const collections = await Collection.findAll({
-			where: { id: { [Op.in]: activeTarget.collectionPubs.map((cp) => cp.collectionId) } },
-		});
-		inactiveCollections = collections.filter((collection) => {
-			const isActive = collection.slug === locationData.query.collectionSlug;
-			if (isActive) {
-				activeCollection = collection;
-			}
-			return !isActive;
-		});
-	}
+// 		activePub = activeTarget;
+// 		const collections = await Collection.findAll({
+// 			where: { id: { [Op.in]: activeTarget.collectionPubs.map((cp) => cp.collectionId) } },
+// 		});
+// 		inactiveCollections = collections.filter((collection) => {
+// 			const isActive = collection.slug === locationData.query.collectionSlug;
+// 			if (isActive) {
+// 				activeCollection = collection;
+// 			}
+// 			return !isActive;
+// 		});
+// 	}
 
-	if (activeTargetType === 'collection') {
-		activeTarget = await Collection.findOne({
-			where: { slug: locationData.params.collectionSlug },
-		});
-		activeCollection = activeTarget;
-	}
+// 	if (activeTargetType === 'collection') {
+// 		activeTarget = await Collection.findOne({
+// 			where: { slug: locationData.params.collectionSlug },
+// 		});
+// 		activeCollection = activeTarget;
+// 	}
 
-	if (activeTargetType === 'community') {
-		activeTarget = activeCommunity;
-	}
+// 	if (activeTargetType === 'community') {
+// 		activeTarget = activeCommunity;
+// 	}
 
-	return {
-		activeTargetType: activeTargetType,
-		activeTarget: activeTarget,
-		activePub: activePub,
-		activeCollection: activeCollection,
-		inactiveCollections: inactiveCollections,
-		activeCommunity: activeCommunity,
-		activeOrganization: activeOrganization,
-	};
-};
+// 	return {
+// 		activeTargetType: activeTargetType,
+// 		activeTarget: activeTarget,
+// 		activePub: activePub,
+// 		activeCollection: activeCollection,
+// 		inactiveCollections: inactiveCollections,
+// 		activeCommunity: activeCommunity,
+// 		activeOrganization: activeOrganization,
+// 	};
+// };
 
+// TODO: This is deprecated and needs to be reconsidered
 const checkIfAdmin = (admins, userId) => {
 	return admins.reduce((prev, curr) => {
 		if (curr.id === userId) {
@@ -320,24 +325,29 @@ export const getInitialData = async (req, isDashboard) => {
 	if (communityData.domain && whereQuery.subdomain && !locationData.isDuqDuq) {
 		throw new Error(`UseCustomDomain:${communityData.domain}`);
 	}
-	loginData.isAdmin = checkIfAdmin(communityData.admins, user.id);
+	// loginData.isAdmin = checkIfAdmin(communityData.admins, user.id);
 	if (req.headers.localhost) {
 		/* eslint-disable-next-line no-param-reassign */
 		communityData.domain = req.headers.localhost;
 	}
-	const scopeData = await getScopeData(communityData, loginData, locationData);
-	const scopePermissions = await getScopePermissions(scopeData, loginData.id);
-	const activeCounts = isDashboard ? await getCounts(scopeData) : {};
+	const scopeData = await getScopeData({
+		communityData: communityData,
+		pubSlug: locationData.params.pubSlug,
+		collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
+		loginId: loginData.id,
+	});
+	//  getScopeData(communityData, loginData, locationData);
+	// const scopePermissions = await getScopePermissions(scopeData, loginData.id);
+	const activeCounts = isDashboard ? await getCounts(scopeData.elements) : {};
 	const enhancedScopeData = {
 		...scopeData,
-		activePermissions: {
-			...scopePermissions,
-			memberData: undefined,
-		},
-		memberData: scopePermissions.memberData,
+		// activePermissions: {
+		// 	...scopePermissions,
+		// 	memberData: undefined,
+		// },
+		// memberData: scopePermissions.memberData,
 		activeCounts: activeCounts,
 	};
-
 	return {
 		communityData: communityData,
 		loginData: loginData,

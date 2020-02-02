@@ -30,7 +30,7 @@ const App = (props) => {
 		locationData: locationData,
 		scopeData: scopeData,
 	};
-
+	console.log(scopeData);
 	const showNav = !hideNav && !communityData.hideNav && !isDashboard;
 	const showFooter = !hideFooter && !isDashboard;
 	return (

@@ -37,7 +37,7 @@ app.get(
 						viewData={{ membersData: membersData }}
 						headerComponents={generateMetaComponents({
 							initialData: initialData,
-							title: `Members · ${initialData.scopeData.activeTarget.title}`,
+							title: `Members · ${initialData.scopeData.elements.activeTarget.title}`,
 							unlisted: true,
 						})}
 					/>,

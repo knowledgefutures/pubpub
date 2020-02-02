@@ -1,10 +1,10 @@
 import { Op } from 'sequelize';
 import { User, Member } from '../models';
 import { attributesPublicUser } from '.';
-import { buildMemberQueryOr } from './memberPermissions';
+import { buildOrQuery } from './scopeData';
 
 export const getMembersData = (initialData) => {
-	const orQuery = buildMemberQueryOr(initialData.scopeData);
+	const orQuery = buildOrQuery(initialData.scopeData);
 
 	return Member.findAll({
 		where: {

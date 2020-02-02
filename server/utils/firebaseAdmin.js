@@ -33,9 +33,9 @@ const getFirebaseApp = () => {
 	);
 };
 
-const firebaseApp = getFirebaseApp();
+// const firebaseApp = getFirebaseApp();
 
-const database = firebaseApp && firebaseApp.database();
+// const database = firebaseApp && firebaseApp.database();
 
 export const getBranchDoc = (pubId, branchId, historyKey, updateOutdatedCheckpoint) => {
 	const pubKey = `pub-${pubId}`;

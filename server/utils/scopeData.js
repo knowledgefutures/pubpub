@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { Collection, Community, Pub, CollectionPub, Member, ScopeOptions } from '../models';
+import { Collection, Community, Pub, CollectionPub, Member, ScopeOptions, Branch } from '../models';
 
 let getScopeElements;
 let getScopeOptionsData;
@@ -18,7 +18,9 @@ export const getScopeData = async (scopeInputs) => {
 			communityId, communityData,
 			collectionId, collectionSlug,
 			pubId, pubSlug,
+			accessHash,
 			loginId,
+
 		}
 	*/
 	const scopeElements = await getScopeElements(scopeInputs);
@@ -76,6 +78,11 @@ getScopeElements = async (scopeInputs) => {
 					as: 'collectionPubs',
 					required: false,
 					attributes: ['id', 'pubId', 'collectionId'],
+				},
+				{
+					model: Branch,
+					as: 'branches',
+					attributes: ['id', 'title'],
 				},
 			],
 		});
@@ -162,10 +169,21 @@ export const checkIfSuperAdmin = (userId) => {
 	return adminIds.includes(userId);
 };
 
-getActivePermissions = async (scopeInputs, scopeOptionsData, scopeMemberData) => {
+getActivePermissions = async (scopeInputs, scopeElements, scopeOptionsData, scopeMemberData) => {
 	const isSuperAdmin = checkIfSuperAdmin(scopeInputs.loginId);
 	const permissionLevels = ['view', 'edit', 'manage', 'admin'];
-	const defaultPermissionIndex = isSuperAdmin ? 3 : -1;
+	let defaultPermissionIndex = -1;
+	scopeElements.forEach((elem) => {
+		if (elem.viewHash === scopeInputs.accessHash) {
+			defaultPermissionIndex = 0;
+		}
+		if (elem.editHash === scopeInputs.accessHash) {
+			defaultPermissionIndex = 1;
+		}
+	});
+	if (isSuperAdmin) {
+		defaultPermissionIndex = 3;
+	}
 	const permissionLevelIndex = scopeMemberData.reduce((prev, curr) => {
 		const currLevelIndex = permissionLevels.indexOf(curr.permissions);
 		return currLevelIndex > prev ? currLevelIndex : prev;

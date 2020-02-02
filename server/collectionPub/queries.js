@@ -11,7 +11,18 @@ import {
 	BranchPermission,
 } from '../models';
 import { getCollectionPubsInCollection } from '../utils/collectionQueries';
-import { canUserSeePub } from '../pub/permissions';
+import { getBranchAccess } from '../branch/permissions';
+
+const canUserSeePub = (userId, pubData, isCommunityAdmin) =>
+	pubData.branches.some((branch) =>
+		getBranchAccess(
+			null,
+			branch,
+			userId,
+			isCommunityAdmin,
+			pubData.managers.some((manager) => manager.userId === userId),
+		),
+	);
 
 export const getCollectionPubs = async ({ collectionId, userId }) => {
 	// TODO(ian): Figure out a good two-way collection <=> pub association

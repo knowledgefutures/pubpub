@@ -1,16 +1,4 @@
 import { getScopeData } from '../utils/scopeData';
-import { getBranchAccess } from '../branch/permissions';
-
-export const canUserSeePub = (userId, pubData, isCommunityAdmin) =>
-	pubData.branches.some((branch) =>
-		getBranchAccess(
-			null,
-			branch,
-			userId,
-			isCommunityAdmin,
-			pubData.managers.some((manager) => manager.userId === userId),
-		),
-	);
 
 export const getPermissions = async ({ userId, communityId, pubId, licenseSlug }) => {
 	if (!userId || !communityId) {

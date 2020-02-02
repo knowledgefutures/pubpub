@@ -36,32 +36,32 @@ export const getBranchAccess = (accessHash, branchData, userId, isCommunityAdmin
 	};
 };
 
-export const getBranchAccessForUser = async ({ branchId, userId, accessHash }) => {
-	const branchData = await Branch.findOne({
-		where: { id: branchId },
-		include: [
-			{
-				model: BranchPermission,
-				as: 'permissions',
-				required: false,
-			},
-		],
-	});
-	const pubData = await Pub.findOne({ where: { id: branchData.pubId } });
-	const [pubManager, communityAdmin] = userId
-		? await Promise.all([
-				PubManager.findOne({
-					where: { userId: userId, pubId: branchData.pubId },
-					raw: true,
-				}),
-				CommunityAdmin.findOne({
-					where: { userId: userId, communityId: pubData.communityId },
-					raw: true,
-				}),
-		  ])
-		: [null, null];
-	return getBranchAccess(accessHash, branchData, userId, communityAdmin, pubManager);
-};
+// export const getBranchAccessForUser = async ({ branchId, userId, accessHash }) => {
+// 	const branchData = await Branch.findOne({
+// 		where: { id: branchId },
+// 		include: [
+// 			{
+// 				model: BranchPermission,
+// 				as: 'permissions',
+// 				required: false,
+// 			},
+// 		],
+// 	});
+// 	const pubData = await Pub.findOne({ where: { id: branchData.pubId } });
+// 	const [pubManager, communityAdmin] = userId
+// 		? await Promise.all([
+// 				PubManager.findOne({
+// 					where: { userId: userId, pubId: branchData.pubId },
+// 					raw: true,
+// 				}),
+// 				CommunityAdmin.findOne({
+// 					where: { userId: userId, communityId: pubData.communityId },
+// 					raw: true,
+// 				}),
+// 		  ])
+// 		: [null, null];
+// 	return getBranchAccess(accessHash, branchData, userId, communityAdmin, pubManager);
+// };
 
 export const getPermissions = ({ branchId, userId, pubId, communityId }) => {
 	if (!userId || !communityId || !pubId) {

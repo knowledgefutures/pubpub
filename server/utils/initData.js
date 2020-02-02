@@ -256,6 +256,7 @@ export const getInitialData = async (req, isDashboard) => {
 		communityData: communityData,
 		pubSlug: locationData.params.pubSlug,
 		collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
+		acessHash: locationData.query.access,
 		loginId: loginData.id,
 	});
 	const activeCounts = isDashboard ? await getCounts(scopeData.elements) : {};

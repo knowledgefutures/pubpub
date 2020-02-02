@@ -36,7 +36,7 @@ const Download = (props) => {
 	const [selectedType, setSelectedType] = useState(null);
 	const [downloadUrl, setDownloadUrl] = useState(null);
 	const { latestKey } = usePubHistory();
-	const { locationData } = usePageContext();
+	const { communityData, locationData } = usePageContext();
 	const formattedDownload = getFormattedDownload(downloads);
 
 	const download = (url) => {
@@ -78,6 +78,7 @@ const Download = (props) => {
 			body: JSON.stringify({
 				pubId: pubData.id,
 				branchId: activeBranch.id,
+				communityData: communityData.id,
 				format: selectedType.format,
 				historyKey: latestKey,
 				accessHash: locationData.query.access,

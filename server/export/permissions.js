@@ -12,7 +12,7 @@ export const getPermissions = async ({ branchId, userId, pubId, accessHash, comm
 			return true;
 		}
 		return prev;
-	}, false);
+	}, scopeData.activePermissions.isPublicBranches);
 
 	return {
 		create: scopeData.activePermissions.canView || isPublicBranch,

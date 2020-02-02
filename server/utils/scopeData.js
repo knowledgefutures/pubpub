@@ -28,6 +28,7 @@ export const getScopeData = async (scopeInputs) => {
 	const scopeMemberData = await getScopeMemberData(scopeInputs, scopeElements);
 	const activePermissions = await getActivePermissions(
 		scopeInputs,
+		scopeElements,
 		scopeOptionsData,
 		scopeMemberData,
 	);
@@ -173,14 +174,21 @@ getActivePermissions = async (scopeInputs, scopeElements, scopeOptionsData, scop
 	const isSuperAdmin = checkIfSuperAdmin(scopeInputs.loginId);
 	const permissionLevels = ['view', 'edit', 'manage', 'admin'];
 	let defaultPermissionIndex = -1;
-	scopeElements.forEach((elem) => {
-		if (elem.viewHash === scopeInputs.accessHash) {
-			defaultPermissionIndex = 0;
-		}
-		if (elem.editHash === scopeInputs.accessHash) {
-			defaultPermissionIndex = 1;
-		}
-	});
+	[
+		scopeElements.activePub,
+		scopeElements.activeCollection,
+		scopeElements.activeCommunity,
+		...scopeElements.inactiveCollections,
+	]
+		.filter((elem) => !!elem)
+		.forEach((elem) => {
+			if (elem.viewHash === scopeInputs.accessHash) {
+				defaultPermissionIndex = 0;
+			}
+			if (elem.editHash === scopeInputs.accessHash) {
+				defaultPermissionIndex = 1;
+			}
+		});
 	if (isSuperAdmin) {
 		defaultPermissionIndex = 3;
 	}

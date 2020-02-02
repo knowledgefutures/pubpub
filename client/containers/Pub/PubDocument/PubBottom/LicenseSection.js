@@ -16,7 +16,7 @@ const propTypes = {
 
 const LicenseSection = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData, scopeData } = useContext(PageContext);
 	const { link, full, short, version } = getLicenseBySlug(pubData.licenseSlug);
 
 	return (
@@ -33,7 +33,7 @@ const LicenseSection = (props) => {
 				</SectionBullets>
 			}
 			iconItems={({ iconColor }) => {
-				if (pubData.canManage) {
+				if (scopeData.activePermissions.canManage) {
 					return (
 						<LicenseSelect pubData={pubData} updateLocalData={updateLocalData}>
 							{({ isPersisting }) => (

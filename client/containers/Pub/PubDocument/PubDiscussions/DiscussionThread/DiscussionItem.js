@@ -38,7 +38,7 @@ const DiscussionItem = (props) => {
 		isRootThread,
 		isPreview,
 	} = props;
-	const { loginData, communityData, locationData } = useContext(PageContext);
+	const { loginData, communityData, locationData, scopeData } = useContext(PageContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState({});
 	const [isLoadingEdit, setIsLoadingEdit] = useState(false);
@@ -117,7 +117,7 @@ const DiscussionItem = (props) => {
 
 					<span className="actions">
 						{!isPreview &&
-							pubData.canManage &&
+							scopeData.activePermissions.canManage &&
 							isRootThread &&
 							firebaseBranchRef &&
 							loginData.id === 'b242f616-7aaa-479c-8ee5-3933dcf70859' && (
@@ -127,41 +127,49 @@ const DiscussionItem = (props) => {
 									firebaseBranchRef={firebaseBranchRef}
 								/>
 							)}
-						{!isPreview && (isDiscussionAuthor || pubData.canManage) && isRootThread && (
-							<React.Fragment>
-								<LabelSelect
-									availableLabels={pubData.labels || []}
-									labelsData={discussionData.labels || []}
-									onPutDiscussion={handlePutDiscussion}
-									canManagePub={pubData.canManage}
-									canManageThread={isDiscussionAuthor}
-								/>
-								<Tooltip
-									content={discussionData.isArchived ? 'Unarchive' : 'Archive'}
-								>
-									<Button
-										icon={
-											<Icon
-												icon={
-													discussionData.isArchived ? 'export' : 'import'
-												}
-												iconSize={12}
-											/>
-										}
-										minimal={true}
-										small={true}
-										loading={isLoadingArchive}
-										alt={discussionData.isArchived ? 'Unarchive' : 'Archive'}
-										onClick={() => {
-											setIsLoadingArchive(true);
-											handlePutDiscussion({
-												isArchived: !discussionData.isArchived,
-											});
-										}}
+						{!isPreview &&
+							(isDiscussionAuthor || scopeData.activePermissions.canManage) &&
+							isRootThread && (
+								<React.Fragment>
+									<LabelSelect
+										availableLabels={pubData.labels || []}
+										labelsData={discussionData.labels || []}
+										onPutDiscussion={handlePutDiscussion}
+										canManagePub={scopeData.activePermissions.canManage}
+										canManageThread={isDiscussionAuthor}
 									/>
-								</Tooltip>
-							</React.Fragment>
-						)}
+									<Tooltip
+										content={
+											discussionData.isArchived ? 'Unarchive' : 'Archive'
+										}
+									>
+										<Button
+											icon={
+												<Icon
+													icon={
+														discussionData.isArchived
+															? 'export'
+															: 'import'
+													}
+													iconSize={12}
+												/>
+											}
+											minimal={true}
+											small={true}
+											loading={isLoadingArchive}
+											alt={
+												discussionData.isArchived ? 'Unarchive' : 'Archive'
+											}
+											onClick={() => {
+												setIsLoadingArchive(true);
+												handlePutDiscussion({
+													isArchived: !discussionData.isArchived,
+												});
+											}}
+										/>
+									</Tooltip>
+								</React.Fragment>
+							)}
 						{!isPreview && isDiscussionAuthor && (
 							<Button
 								icon={isEditing ? undefined : <Icon icon="edit2" iconSize={12} />}

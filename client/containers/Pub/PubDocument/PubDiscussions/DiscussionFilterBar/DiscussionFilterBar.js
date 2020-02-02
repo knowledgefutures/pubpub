@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
 	Popover,
@@ -7,6 +7,7 @@ import {
 	NonIdealState,
 	Button,
 } from '@blueprintjs/core';
+import { PageContext } from 'utils/hooks';
 import { filterAndSortThreads } from '../discussionUtils';
 import SortList from '../../PubBottom/Discussions/SortList';
 import LabelFilter from '../../PubBottom/Discussions/LabelFilter';
@@ -15,14 +16,15 @@ require('./discussionFilterBar.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
-	communityData: PropTypes.object.isRequired,
+	// communityData: PropTypes.object.isRequired,
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	children: PropTypes.func.isRequired,
 };
 
 const DiscussionFilterBar = (props) => {
-	const { pubData, communityData, threadData, updateLocalData, children } = props;
+	const { pubData, threadData, updateLocalData, children } = props;
+	const { communityData, scopeData } = useContext(PageContext);
 	const [isArchivedMode, setIsArchivedMode] = useState(false);
 	const [sortMode, setSortMode] = useState('newestThread');
 	const [filteredLabels, setFilteredLabels] = useState([]);
@@ -75,7 +77,7 @@ const DiscussionFilterBar = (props) => {
 								communityData={communityData}
 								labelsData={pubData.labels || []}
 								selectedLabels={filteredLabels}
-								isManager={pubData.canManage}
+								isManager={scopeData.activePermissions.canManage}
 								onLabelSelect={(labelId) => {
 									const newFilteredLabels =
 										filteredLabels.indexOf(labelId) > -1

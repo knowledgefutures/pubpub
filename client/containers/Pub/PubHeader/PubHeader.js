@@ -74,7 +74,7 @@ const PubHeader = (props) => {
 		Do we require an accent color with the block styles? Or can they be simple white/black text?
 	*/
 	const { pubData, collabData, updateLocalData, historyData } = props;
-	const { communityData, locationData } = useContext(PageContext);
+	const { communityData, locationData, scopeData } = useContext(PageContext);
 	const headerRef = useRef(null);
 	const [title, setTitle] = useState(props.pubData.title);
 	const [isMounted, setIsMounted] = useState(false);
@@ -139,7 +139,7 @@ const PubHeader = (props) => {
 	}
 
 	// const isDocMode = pubData.mode === 'document';
-	const useEditableTitle = pubData.canManage && isMounted && isDocMode;
+	const useEditableTitle = scopeData.activePermissions.canManage && isMounted && isDocMode;
 	let pubTitle = pubData.title;
 	if (isEditingTitle) {
 		pubTitle = title;
@@ -236,7 +236,7 @@ const PubHeader = (props) => {
 									updateLocalData={updateLocalData}
 								/>
 							</div>
-							{pubData.canManage && (
+							{scopeData.activePermissions.canManage && (
 								<React.Fragment>
 									<div className="right">
 										<Button

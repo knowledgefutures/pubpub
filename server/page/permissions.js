@@ -1,35 +1,33 @@
-import { CommunityAdmin, Page } from '../models';
-import { checkIfSuperAdmin } from '../utils';
+import { Page } from '../models';
+import { getScopeData } from '../utils/scopeData';
 
-export const getPermissions = ({ userId, communityId, pageId }) => {
+export const getPermissions = async ({ userId, communityId, pageId }) => {
 	if (!userId) {
-		return new Promise((resolve) => {
-			resolve({});
-		});
+		return {};
 	}
-	const isSuperAdmin = checkIfSuperAdmin(userId);
-	return Promise.all([
-		CommunityAdmin.findOne({ where: { userId: userId, communityId: communityId } }),
-		Page.findOne({ where: { id: pageId, communityId: communityId } }),
-	]).then(([isCommunityAdmin, pageData]) => {
-		const isAuthenticated = isCommunityAdmin || isSuperAdmin;
-		if (!pageData) {
-			return { create: isAuthenticated };
-		}
-		const editProps = [
-			'title',
-			'slug',
-			'description',
-			'isPublic',
-			'layout',
-			'avatar',
-			'isNarrowWidth',
-		];
-
-		return {
-			create: isAuthenticated,
-			update: isAuthenticated && editProps,
-			destroy: isAuthenticated,
-		};
+	const scopeData = await getScopeData({
+		communityId: communityId,
+		loginId: userId,
 	});
+	const isAuthenticated = scopeData.activePermissions.canManage;
+	const pageData = await Page.findOne({ where: { id: pageId, communityId: communityId } });
+
+	if (!pageData) {
+		return { create: isAuthenticated };
+	}
+	const editProps = [
+		'title',
+		'slug',
+		'description',
+		'isPublic',
+		'layout',
+		'avatar',
+		'isNarrowWidth',
+	];
+
+	return {
+		create: isAuthenticated,
+		update: isAuthenticated && editProps,
+		destroy: isAuthenticated,
+	};
 };

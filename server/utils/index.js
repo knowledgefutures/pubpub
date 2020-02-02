@@ -7,10 +7,10 @@ import { remove as removeDiacritics } from 'diacritics';
 
 export { getInitialData } from './initData';
 
-export const checkIfSuperAdmin = (userId) => {
-	const adminIds = ['b242f616-7aaa-479c-8ee5-3933dcf70859'];
-	return adminIds.includes(userId);
-};
+// export const checkIfSuperAdmin = (userId) => {
+// 	const adminIds = ['b242f616-7aaa-479c-8ee5-3933dcf70859'];
+// 	return adminIds.includes(userId);
+// };
 
 export const attributesPublicUser = [
 	'id',

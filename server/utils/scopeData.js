@@ -18,7 +18,11 @@ export const getScopeData = async (scopeInputs) => {
 	const scopeElements = await getScopeElements(scopeInputs);
 	const scopeOptionsData = await getScopeOptionsData(scopeElements);
 	const scopeMemberData = await getScopeMemberData(scopeInputs, scopeElements);
-	const activePermissions = await getActivePermissions(scopeOptionsData, scopeMemberData);
+	const activePermissions = await getActivePermissions(
+		scopeInputs,
+		scopeOptionsData,
+		scopeMemberData,
+	);
 	return {
 		elements: scopeElements,
 		optionsData: scopeOptionsData,
@@ -55,7 +59,9 @@ getScopeElements = async (scopeInputs) => {
 	}
 
 	if (activeTargetType === 'pub') {
-		const query = pubId ? { id: pubId } : { slug: pubSlug };
+		const query = pubId
+			? { id: pubId, communityId: activeCommunity.id }
+			: { slug: pubSlug, communityId: activeCommunity.id };
 		activePub = await Pub.findOne({
 			where: query,
 			include: [
@@ -69,7 +75,7 @@ getScopeElements = async (scopeInputs) => {
 		});
 		activeTarget = activePub;
 		const collections = await Collection.findAll({
-			where: { id: { [Op.in]: activeTarget.collectionPubs.map((cp) => cp.collectionId) } },
+			where: { id: { [Op.in]: activePub.collectionPubs.map((cp) => cp.collectionId) } },
 		});
 		inactiveCollections = collections.filter((collection) => {
 			const isActive = collection.slug === collectionSlug;
@@ -81,7 +87,9 @@ getScopeElements = async (scopeInputs) => {
 	}
 
 	if (activeTargetType === 'collection') {
-		const query = collectionId ? { id: collectionId } : { slug: collectionSlug };
+		const query = collectionId
+			? { id: collectionId, communityId: activeCommunity.id }
+			: { slug: collectionSlug, communityId: activeCommunity.id };
 		activeCollection = await Collection.findOne({
 			where: query,
 		});
@@ -143,18 +151,25 @@ getScopeMemberData = async (scopeInputs, scopeElements) => {
 	});
 };
 
-getActivePermissions = async (scopeOptionsData, scopeMemberData) => {
+export const checkIfSuperAdmin = (userId) => {
+	const adminIds = ['b242f616-7aaa-479c-8ee5-3933dcf70859'];
+	return adminIds.includes(userId);
+};
+
+getActivePermissions = async (scopeInputs, scopeOptionsData, scopeMemberData) => {
+	const isSuperAdmin = checkIfSuperAdmin(scopeInputs.loginId);
 	const permissionLevels = ['view', 'edit', 'manage', 'admin'];
+	const defaultPermissionIndex = isSuperAdmin ? 3 : -1;
 	const permissionLevelIndex = scopeMemberData.reduce((prev, curr) => {
 		const currLevelIndex = permissionLevels.indexOf(curr.permissions);
 		return currLevelIndex > prev ? currLevelIndex : prev;
-	}, -1);
+	}, defaultPermissionIndex);
 	const canAdminCommunity = scopeMemberData.reduce((prev, curr) => {
 		if (curr.communityId && curr.permissions === 'admin') {
 			return true;
 		}
 		return prev;
-	}, false);
+	}, isSuperAdmin);
 
 	const booleanOr = (precedent, value) => {
 		/* Don't inherit value from null */

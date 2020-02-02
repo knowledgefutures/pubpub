@@ -1,27 +1,22 @@
-import { CommunityAdmin, Collection } from '../models';
-import { checkIfSuperAdmin } from '../utils';
+import { getScopeData } from '../utils/scopeData';
 
-export const getPermissions = ({ userId, communityId, collectionId }) => {
+export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	if (!userId) {
-		return new Promise((resolve) => {
-			resolve({});
-		});
+		return {};
 	}
-	const isSuperAdmin = checkIfSuperAdmin(userId);
-
-	return Promise.all([
-		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
-		Collection.findOne({ where: { id: collectionId, communityId: communityId } }),
-	]).then(([communityAdminData, collectionData]) => {
-		if (!collectionData) {
-			return {};
-		}
-		const editProps = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles', 'affiliation'];
-		const isAuthenticated = isSuperAdmin || communityAdminData;
-		return {
-			create: isAuthenticated,
-			update: isAuthenticated ? editProps : false,
-			destroy: isAuthenticated,
-		};
+	const scopeData = await getScopeData({
+		communityId: communityId,
+		collectionId: collectionId,
+		loginId: userId,
 	});
+	const isAuthenticated = scopeData.activePermissions.canManage;
+	if (!scopeData.elements.activeCollection) {
+		return {};
+	}
+	const editProps = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles', 'affiliation'];
+	return {
+		create: isAuthenticated,
+		update: isAuthenticated ? editProps : false,
+		destroy: isAuthenticated,
+	};
 };

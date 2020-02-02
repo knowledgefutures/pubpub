@@ -1,19 +1,16 @@
-import { CommunityAdmin } from '../models';
-import { checkIfSuperAdmin } from '../utils';
+import { getScopeData } from '../utils/scopeData';
 
-export const getPermissions = ({ userId, communityId }) => {
+export const getPermissions = async ({ userId, communityId }) => {
 	if (!userId) {
-		return new Promise((resolve) => {
-			resolve({});
-		});
+		return {};
 	}
-	const isSuperAdmin = checkIfSuperAdmin(userId);
-	return CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }).then(
-		(communityAdminData) => {
-			return {
-				create: isSuperAdmin || communityAdminData,
-				destroy: isSuperAdmin || communityAdminData,
-			};
-		},
-	);
+	const scopeData = await getScopeData({
+		communityId: communityId,
+		loginId: userId,
+	});
+
+	return {
+		create: scopeData.activePermissions.canAdmin,
+		destroy: scopeData.activePermissions.canAdmin,
+	};
 };

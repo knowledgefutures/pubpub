@@ -6,6 +6,12 @@ let getScopeOptionsData;
 let getScopeMemberData;
 let getActivePermissions;
 
+/* getScopeData can be called from either a route (e.g. to authenticate */
+/* whether a user has access to /pub/example), or it can be called from */
+/* an API route to verify a user's permissions. When called from a route */
+/* it is likely that communityData, collectionSlug, and pubSlug will be used. */
+/* When called from an API endpoint, it is likely that communityId, */
+/* collectionId, and pubId will be used. */
 export const getScopeData = async (scopeInputs) => {
 	/* scopeInputs = 
 		{

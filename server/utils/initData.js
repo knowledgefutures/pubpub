@@ -1,4 +1,3 @@
-import { Op } from 'sequelize';
 import queryString from 'query-string';
 import {
 	Collection,
@@ -14,19 +13,6 @@ import {
 import { getScopeData } from './scopeData';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
-
-// const getTargetType = (params) => {
-// 	/* Return a string with the type of the currently */
-// 	/* active target given locationData params */
-// 	const { collectionSlug, pubSlug } = params;
-// 	if (pubSlug) {
-// 		return 'pub';
-// 	}
-// 	if (collectionSlug) {
-// 		return 'collection';
-// 	}
-// 	return 'community';
-// };
 
 const countActiveThreads = (discussions) => {
 	/* Return the number of non-archived threads from a list of discussions */
@@ -125,62 +111,6 @@ export const getCounts = async (scopeElements) => {
 		mergeCount: mergeCount,
 	};
 };
-
-// export const getScopeData = async (communityData, loginData, locationData) => {
-// 	const activeTargetType = getTargetType(locationData.params);
-// 	let activeTarget;
-// 	let activePub;
-// 	let activeCollection;
-// 	let inactiveCollections = [];
-// 	const activeCommunity = communityData;
-// 	let activeOrganization;
-// 	if (activeTargetType === 'pub') {
-// 		activeTarget = await Pub.findOne({
-// 			where: { slug: locationData.params.pubSlug },
-// 			include: [
-// 				{
-// 					model: CollectionPub,
-// 					as: 'collectionPubs',
-// 					required: false,
-// 					attributes: ['id', 'pubId', 'collectionId'],
-// 				},
-// 			],
-// 		});
-
-// 		activePub = activeTarget;
-// 		const collections = await Collection.findAll({
-// 			where: { id: { [Op.in]: activeTarget.collectionPubs.map((cp) => cp.collectionId) } },
-// 		});
-// 		inactiveCollections = collections.filter((collection) => {
-// 			const isActive = collection.slug === locationData.query.collectionSlug;
-// 			if (isActive) {
-// 				activeCollection = collection;
-// 			}
-// 			return !isActive;
-// 		});
-// 	}
-
-// 	if (activeTargetType === 'collection') {
-// 		activeTarget = await Collection.findOne({
-// 			where: { slug: locationData.params.collectionSlug },
-// 		});
-// 		activeCollection = activeTarget;
-// 	}
-
-// 	if (activeTargetType === 'community') {
-// 		activeTarget = activeCommunity;
-// 	}
-
-// 	return {
-// 		activeTargetType: activeTargetType,
-// 		activeTarget: activeTarget,
-// 		activePub: activePub,
-// 		activeCollection: activeCollection,
-// 		inactiveCollections: inactiveCollections,
-// 		activeCommunity: activeCommunity,
-// 		activeOrganization: activeOrganization,
-// 	};
-// };
 
 // TODO: This is deprecated and needs to be reconsidered
 const checkIfAdmin = (admins, userId) => {
@@ -336,16 +266,9 @@ export const getInitialData = async (req, isDashboard) => {
 		collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
 		loginId: loginData.id,
 	});
-	//  getScopeData(communityData, loginData, locationData);
-	// const scopePermissions = await getScopePermissions(scopeData, loginData.id);
 	const activeCounts = isDashboard ? await getCounts(scopeData.elements) : {};
 	const enhancedScopeData = {
 		...scopeData,
-		// activePermissions: {
-		// 	...scopePermissions,
-		// 	memberData: undefined,
-		// },
-		// memberData: scopePermissions.memberData,
 		activeCounts: activeCounts,
 	};
 	return {

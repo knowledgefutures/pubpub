@@ -148,7 +148,7 @@ const SubPreview = function(props) {
 					elements: [
 						{ text: 'Shawn Bushway', href: '/pub/dudgcmk3' },
 						{ text: 'Alexandra Chouldechova', href: '/pub/xlfiu7za' },
-						{ text: 'Sarah Desmaris', href: '/pub/60jfy7hm' },
+						{ text: 'Sarah Desmarais', href: '/pub/60jfy7hm' },
 						{ text: 'Brandon L. Garrett', href: '/pub/p0wzaz31' },
 						{ text: 'Eugenie Jackson and Christina Mendoza', href: '/pub/hzwo7ax4/' },
 						{ text: 'Greg Ridgeway', href: '/pub/vu6rc1yv' },

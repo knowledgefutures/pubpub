@@ -35,7 +35,7 @@ const createPandocArgs = (pandocFormat, tmpDirPath) => {
 };
 
 const callPandoc = (files, args) => {
-	const proc = spawnSync('pandoc', [...files, ...args]);
+	const proc = spawnSync('pandoc', [...files, ...args], { maxBuffer: 1024 * 1024 * 25 });
 	const output = proc.stdout.toString();
 	const error = proc.stderr.toString();
 	return { output: output, error: error };

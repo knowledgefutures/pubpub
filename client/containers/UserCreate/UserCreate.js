@@ -264,7 +264,7 @@ class UserCreate extends Component {
 									onChange={this.onPasswordChange}
 								/>
 								<input
-									type="text"
+									type="password"
 									name="confirmPassword"
 									className="confirm-password"
 									tabIndex="-1"

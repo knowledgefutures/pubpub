@@ -18,6 +18,7 @@ class Signup extends Component {
 		super(props);
 		this.state = {
 			email: '',
+			confirmEmail: '',
 			isSuccessful: false,
 		};
 		this.onSignupSubmit = this.onSignupSubmit.bind(this);
@@ -32,6 +33,7 @@ class Signup extends Component {
 			method: 'POST',
 			body: JSON.stringify({
 				email: this.state.email.toLowerCase(),
+				confirmEmail: this.state.confirmEmail,
 				communityId: this.props.communityData.id,
 			}),
 		})
@@ -76,6 +78,16 @@ class Signup extends Component {
 										value={this.state.email}
 										onChange={this.onEmailChange}
 										error={this.state.postSignupError}
+									/>
+									<input
+										type="text"
+										className="confirm-email"
+										name="confirmEmail"
+										tabIndex="-1"
+										autoComplete="off"
+										onChange={(evt) =>
+											this.setState({ confirmEmail: evt.target.value })
+										}
 									/>
 									<Button
 										name="signup"

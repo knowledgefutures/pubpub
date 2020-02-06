@@ -7,6 +7,9 @@
 		background-image: url('/static/loginbg.png');
 		min-height: calc(100vh - 56px);
 	}
+	.confirm-email {
+		display: none !important;
+	}
 	.container.small .col-12 {
 		padding: 2em;
 		background: white;

@@ -37,6 +37,7 @@ class UserCreate extends Component {
 			twitter: '',
 			facebook: '',
 			googleScholar: '',
+			confirmPassword: '',
 		};
 		this.onCreateSubmit = this.onCreateSubmit.bind(this);
 		this.onSubscribedChange = this.onSubscribedChange.bind(this);
@@ -71,6 +72,7 @@ class UserCreate extends Component {
 				twitter: this.state.twitter,
 				facebook: this.state.facebook,
 				googleScholar: this.state.googleScholar,
+				confirmPassword: this.state.confirmPassword,
 				gdprConsent: gdprCookiePersistsSignup() ? getGdprConsentElection() : null,
 			}),
 		})
@@ -260,6 +262,16 @@ class UserCreate extends Component {
 									isRequired={true}
 									value={this.state.password}
 									onChange={this.onPasswordChange}
+								/>
+								<input
+									type="text"
+									name="confirmPassword"
+									className="confirm-password"
+									tabIndex="-1"
+									autoComplete="off"
+									onChange={(evt) =>
+										this.setState({ confirmPassword: evt.target.value })
+									}
 								/>
 								<ImageUpload
 									htmlFor="avatar-upload"

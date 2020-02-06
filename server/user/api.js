@@ -15,6 +15,9 @@ const getRequestIds = (req) => {
 
 app.post('/api/users', (req, res) => {
 	const requestIds = getRequestIds(req);
+	if (req.body.confirmPassword) {
+		throw new Error('Not Authorized');
+	}
 	getPermissions(requestIds)
 		.then((permissions) => {
 			if (!permissions.create) {

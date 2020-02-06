@@ -23,7 +23,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 			slug: req.params.slug.toLowerCase(),
 		},
 		attributes: {
-			exclude: ['salt', 'hash', 'email', 'createdAt', 'updatedAt'],
+			exclude: ['salt', 'hash', 'email', 'updatedAt'],
 		},
 		include: [
 			{
@@ -121,6 +121,9 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 				...initialData,
 				userData: userDataJson,
 			};
+
+			const isNewishUser = Date.now() - userData.createdAt.valueOf() < 1000 * 86400 * 30;
+
 			return renderToNodeStream(
 				res,
 				<Html
@@ -132,6 +135,7 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 						description: userDataJson.bio,
 						image: userDataJson.avatar,
 						canonicalUrl: `https://www.pubpub.org/user/${userDataJson.slug}`,
+						unlisted: isNewishUser,
 					})}
 				>
 					<UserContainer {...newInitialData} />

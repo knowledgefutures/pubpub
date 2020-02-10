@@ -52,7 +52,12 @@ const FormattingBarPopover = (props) => {
 			if (!disableClickProxying) {
 				evt.stopPropagation();
 				handleClose();
-				setEditorSelectionFromClick(editorChangeObject.view, evt);
+				try {
+					setEditorSelectionFromClick(editorChangeObject.view, evt);
+				} catch (_) {
+					// Sometimes the event doesn't correspond to a valid cursor position and
+					// Prosemirror complains...just let it slide.
+				}
 			}
 		},
 	});

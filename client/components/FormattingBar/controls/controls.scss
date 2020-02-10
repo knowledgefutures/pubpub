@@ -14,7 +14,7 @@
     display: flex;
     height: 100%;
     max-width: 1600px;
-    max-height: 300px;
+    height: 225px;
     margin: 0 auto;
 
     .bp3-slider {
@@ -131,7 +131,6 @@
 .controls-citation-component {
     @include controls-component();
     @include controls-grid();
-    min-height: 200px;
 
     .structured-data {
         font-family: monospace;
@@ -153,7 +152,6 @@
 .controls-media-component {
     @include controls-component();
     @include controls-grid(minmax(300px, 1fr) 2fr);
-    min-height: 200px;
     max-width: 1200px;
 
     .slider-input-control {
@@ -189,7 +187,6 @@
 .controls-equation-component {
     @include controls-component();
     @include controls-grid(1fr 1fr);
-    min-height: 200px;
     max-width: 1200px;
 
     .latex {

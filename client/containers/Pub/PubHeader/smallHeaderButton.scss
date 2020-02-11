@@ -17,7 +17,6 @@
         flex-shrink: 0;
         width: 24px;
         height: 24px;
-        @include shadow-box;
     }
     &.label-left {
         flex-direction: row-reverse;
@@ -29,9 +28,6 @@
     &:hover {
         .label {
             text-decoration: underline;
-        }
-        .icon-container {
-            @include shadow-box-hover;
         }
     }
 }

@@ -13,7 +13,7 @@ const Byline = (props) => {
 
 	return (
 		!!authors.length && (
-			<div className="authors">
+			<div className="byline pub-header-themed-secondary">
 				<span className="text-wrapper">
 					<span>by </span>
 					{authors.map((author, index) => {

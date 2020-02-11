@@ -14,6 +14,7 @@ const propTypes = {
 	pubData: PropTypes.shape({}).isRequired,
 	blur: PropTypes.bool,
 	style: PropTypes.object,
+	showTopBar: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -21,10 +22,18 @@ const defaultProps = {
 	children: null,
 	blur: false,
 	style: {},
+	showTopBar: false,
+};
+
+const getHeaderImageWidth = () => {
+	if (typeof window !== 'undefined') {
+		return window.innerWidth;
+	}
+	return 1500;
 };
 
 const PubHeaderBackground = React.forwardRef((props, ref) => {
-	const { children, className, pubData, communityData, blur, style } = props;
+	const { children, className, pubData, communityData, blur, style, showTopBar } = props;
 	const { headerBackgroundColor, headerBackgroundImage } = pubData;
 
 	const effectiveBackgroundColor = calculateBackgroundColor(
@@ -35,12 +44,16 @@ const PubHeaderBackground = React.forwardRef((props, ref) => {
 	const effectiveHeaderBackgroundImage = getResizedUrl(
 		headerBackgroundImage,
 		'fit-in',
-		'1500x600',
+		`${getHeaderImageWidth()}x600`,
 	);
 
 	return (
 		<div
-			className={classNames('pub-header-background-component', className)}
+			className={classNames(
+				'pub-header-background-component',
+				`pub-header-theme-${pubData.headerStyle}`,
+				className,
+			)}
 			style={style}
 			ref={ref}
 		>
@@ -57,6 +70,7 @@ const PubHeaderBackground = React.forwardRef((props, ref) => {
 					style={{ backgroundColor: effectiveBackgroundColor }}
 				/>
 			)}
+			{showTopBar && <div className="background-element background-top-bar" />}
 			{children}
 		</div>
 	);

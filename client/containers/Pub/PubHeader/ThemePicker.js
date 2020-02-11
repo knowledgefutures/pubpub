@@ -119,9 +119,10 @@ const ThemePicker = (props) => {
 				<div className="title">Background tint</div>
 				<div className="section-row">
 					<TintChoice
-						label="None"
-						onClick={() => updatePubBackgroundColor('transparent')}
-						selected={!headerBackgroundColor || headerBackgroundColor === 'transparent'}
+						label="Light"
+						color={calculateBackgroundColor('light')}
+						onClick={() => updatePubBackgroundColor('light')}
+						selected={headerBackgroundColor === 'light'}
 					/>
 					<TintChoice
 						label="Community accent color"

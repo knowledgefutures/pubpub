@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
 import dateFormat from 'dateformat';
@@ -136,12 +136,12 @@ const PubHeaderMain = (props) => {
 				<CollectionsBar pubData={pubData} updateLocalData={updateLocalData} />
 				<div className="basic-details">
 					<span className="metadata-pair">
-						<b>Published on</b>
+						<b className="pub-header-themed-secondary">Published on</b>
 						{publishedAtString}
 					</span>
 					{doi && (
 						<span className="metadata-pair doi-pair">
-							<b>DOI</b>
+							<b className="pub-header-themed-secondary">DOI</b>
 							<ClickToCopyButton
 								copyString={`https://doi.org/${doi}`}
 								className="click-to-copy"
@@ -171,7 +171,7 @@ const PubHeaderMain = (props) => {
 							updateText={(text) => updateAndSavePubData({ description: text })}
 							canEdit={canManage}
 							tagName="h3"
-							className="description"
+							className="description pub-header-themed-secondary"
 							placeholder="Add a description for this Pub"
 						/>
 					)}

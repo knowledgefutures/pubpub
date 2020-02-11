@@ -1,3 +1,5 @@
+@import './themes.scss';
+
 .pub-header-background-component {
     position: relative;
     overflow: hidden;
@@ -15,6 +17,9 @@
             &.blur {
                 filter: blur(10px);
             }
+        }
+        &.background-top-bar {
+            height: $top-bar-total-height;
         }
     }
 }

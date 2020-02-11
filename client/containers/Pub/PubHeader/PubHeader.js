@@ -21,6 +21,11 @@ const propTypes = {
 	historyData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
+	sticky: PropTypes.bool,
+};
+
+const defaultProps = {
+	sticky: true,
 };
 
 const useSticky = (headerElement) => {
@@ -58,11 +63,11 @@ const ToggleDetailsButton = ({ showingDetails, onClick }) => {
 
 const PubHeader = (props) => {
 	const headerRef = useRef(null);
-	const { collabData, communityData, historyData, pubData, updateLocalData } = props;
+	const { collabData, communityData, historyData, pubData, updateLocalData, sticky } = props;
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState(null);
 
-	useSticky(headerRef.current);
+	useSticky(sticky && headerRef.current);
 
 	const toggleDetails = () => {
 		if (!showingDetails && headerRef.current) {
@@ -79,6 +84,7 @@ const PubHeader = (props) => {
 			communityData={communityData}
 			ref={headerRef}
 			style={fixedHeight && showingDetails ? { height: fixedHeight } : {}}
+			showTopBar={true}
 		>
 			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
 				{!showingDetails && (
@@ -98,4 +104,5 @@ const PubHeader = (props) => {
 };
 
 PubHeader.propTypes = propTypes;
+PubHeader.defaultProps = defaultProps;
 export default PubHeader;

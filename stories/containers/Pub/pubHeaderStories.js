@@ -65,7 +65,7 @@ const PubHeaderWrapper = (props) => {
 		setLocalData(currentLocalData);
 	};
 
-	return <PubHeader {...localData} updateLocalData={updateLocalData} />;
+	return <PubHeader {...localData} updateLocalData={updateLocalData} sticky={false} />;
 };
 
 storiesOf('containers/Pub/PubHeader', module).add('default', () => (
@@ -85,7 +85,7 @@ storiesOf('containers/Pub/PubHeader', module).add('default', () => (
 				...altPubData,
 				description: null,
 				canManage: false,
-				useHeaderImage: false,
+				headerStyle: 'dark',
 			}}
 			historyData={historyData}
 		/>

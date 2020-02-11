@@ -35,7 +35,6 @@ class Details extends Component {
 			// useHeaderImage: props.pubData.useHeaderImage || false,
 
 			headerStyle: props.pubData.headerStyle,
-			headerBackgroundType: props.pubData.headerBackgroundType,
 			headerBackgroundImage: props.pubData.headerBackgroundImage,
 			headerPreviewKey: Math.random(),
 		};
@@ -44,9 +43,7 @@ class Details extends Component {
 		this.updateDescription = this.updateDescription.bind(this);
 		this.updateAvatar = this.updateAvatar.bind(this);
 		this.updateDownloads = this.updateDownloads.bind(this);
-		// this.updateUseHeaderImage = this.updateUseHeaderImage.bind(this);
 		this.updateHeaderStyle = this.updateHeaderStyle.bind(this);
-		// this.updateHeaderBackgroundType = this.updateHeaderBackgroundType.bind(this);
 		this.updateHeaderBackgroundImage = this.updateHeaderBackgroundImage.bind(this);
 		this.updateLicense = this.updateLicense.bind(this);
 
@@ -102,17 +99,9 @@ class Details extends Component {
 		});
 	}
 
-	// updateHeaderBackgroundType(val) {
-	// 	this.setState({
-	// 		hasUpdated: true,
-	// 		headerBackgroundType: val,
-	// 	});
-	// }
-
 	updateHeaderBackgroundImage(val) {
 		this.setState({
 			hasUpdated: true,
-			headerBackgroundType: val ? 'image' : 'color',
 			headerBackgroundImage: val,
 		});
 	}
@@ -164,7 +153,6 @@ class Details extends Component {
 			licenseSlug: this.state.licenseSlug,
 			// useHeaderImage: this.state.useHeaderImage,
 			headerStyle: this.state.headerStyle,
-			headerBackgroundType: this.state.headerBackgroundType,
 			headerBackgroundImage: this.state.headerBackgroundImage,
 		};
 

@@ -34,11 +34,12 @@ const SmallHeaderButton = React.forwardRef((props, ref) => {
 			onClick={onClick}
 			className={classNames(
 				'small-header-button-component',
+				'pub-header-themed-box-hover-target',
 				labelPosition === 'left' ? 'label-left' : 'label-right',
 				className,
 			)}
 		>
-			<div className="themed-box icon-container">
+			<div className="pub-header-themed-box icon-container">
 				<Icon icon={icon} iconSize={14} />
 			</div>
 			<div className="label">{label}</div>

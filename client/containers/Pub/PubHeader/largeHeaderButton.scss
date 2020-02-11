@@ -4,13 +4,7 @@
     @include base-button;
     display: inline-flex;
     padding: 0;
-    &:hover {
-        .button-box {
-            @include shadow-box-hover;
-        }
-    }
     .button-box {
-        @include shadow-box;
         display: flex;
         align-items: center;
         height: 44px;
@@ -44,7 +38,6 @@
                 margin-bottom: 2px;
             }
             .bottom {
-                color: $off-white;
                 font-size: 10px;
             }
         }
@@ -53,7 +46,6 @@
         text-align: left;
         margin-left: 10px;
         .top {
-            color: $off-white;
             font-size: 12px;
             margin-bottom: 1px;
         }

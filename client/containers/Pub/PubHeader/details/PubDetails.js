@@ -36,15 +36,19 @@ const PubDetails = (props) => {
 	return (
 		<div className="pub-details-component">
 			<div className="section contributors">
-				<h6>Contributors ({contributors.length})</h6>
+				<h6 className="pub-header-themed-secondary">
+					Contributors ({contributors.length})
+				</h6>
 				<Contributors contributors={contributors} />
 			</div>
 			<div className="section publication-dates">
-				<h6>{pubData.activeBranch.title === 'public' ? 'Published' : 'Created'}</h6>
+				<h6 className="pub-header-themed-secondary">
+					{pubData.activeBranch.title === 'public' ? 'Published' : 'Created'}
+				</h6>
 				<div className="full-height-date">{publishedAtString}</div>
 				{shouldShowUpdatedDate && (
 					<React.Fragment>
-						<h6>Updated</h6>
+						<h6 className="pub-header-themed-secondary">Updated</h6>
 						<div className="full-height-date">{updatedAtString}</div>
 					</React.Fragment>
 				)}
@@ -52,7 +56,7 @@ const PubDetails = (props) => {
 			<div className="section citation-and-doi">
 				{pubData.doi && (
 					<React.Fragment>
-						<h6>DOI</h6>{' '}
+						<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
 						<ClickToCopyButton
 							copyString={`https://doi.org/${pubData.doi}`}
 							className="click-to-copy"
@@ -65,7 +69,9 @@ const PubDetails = (props) => {
 				<CitationsPreview pubData={pubData} />
 			</div>
 			<div className="section collections">
-				<h6>Appears in collections ({collectionPubs.length})</h6>
+				<h6 className="pub-header-themed-secondary">
+					Appears in collections ({collectionPubs.length})
+				</h6>
 				<div className="collection-list">
 					{collectionPubs.length === 0 && (
 						<i className="collection-list-entry">

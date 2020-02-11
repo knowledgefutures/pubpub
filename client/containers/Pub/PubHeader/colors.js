@@ -9,5 +9,8 @@ export const calculateBackgroundColor = (headerBackgroundColor, accentColorDark)
 	if (headerBackgroundColor === 'dark') {
 		return 'rgba(0, 0, 0, 0.65)';
 	}
+	if (headerBackgroundColor === 'light') {
+		return 'rgba(0, 0, 0, 0.01)';
+	}
 	return headerBackgroundColor;
 };

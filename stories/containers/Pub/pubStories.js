@@ -47,7 +47,6 @@ storiesOf('containers/Pub', module)
 			pubData={{
 				...pubData,
 				mode: 'document',
-				headerBackgroundType: 'color',
 			}}
 		/>
 	))

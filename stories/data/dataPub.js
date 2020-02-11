@@ -6,7 +6,7 @@ export default {
 		'The first computing machines were so large they filled entire rooms. Today they are ubiquitous, built invisibly into our environments. While it is tempting to view this change within a predetermined space of progress, we can still shape the future on our own terms.',
 	avatar: 'https://assets.pubpub.org/9pi1c5c6/41554230047846.jpeg',
 	headerBackgroundColor: 'dark',
-	headerBackgroundType: 'image',
+	headerStyle: 'light',
 	headerBackgroundImage: 'https://assets.pubpub.org/eys4nqr0/11528828519590.jpg',
 	firstPublishedAt: '2019-04-22T03:43:24.218Z',
 	lastPublishedAt: '2019-04-22T03:43:24.218Z',

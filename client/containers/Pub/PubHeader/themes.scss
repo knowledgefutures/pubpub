@@ -120,11 +120,13 @@ $top-bar-total-height: 54px;
         background-color: transparent;
     }
     .background-top-bar {
-        background-color: rgba($background-color, 0.6);
+        background-color: $background-color;
+        box-shadow: $box-shadow;
     }
     &.showing-details {
         .background-top-bar {
             height: 100%;
+            background-color: rgba($background-color, 0.75);
         }
     }
 }

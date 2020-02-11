@@ -62,7 +62,7 @@ const getPublishDateString = (pubData) => {
 		pubData.branches.find((br) => br.title === 'public'),
 	);
 	if (publishedDate) {
-		dateFormat(publishedDate, 'mmm dd, yyyy');
+		return dateFormat(publishedDate, 'mmm dd, yyyy');
 	}
 	return <i>Unpublished</i>;
 };

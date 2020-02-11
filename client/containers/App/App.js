@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { hydrateWrapper } from 'utils';
 import classNames from 'classnames';
-import { Header, Footer, GdprBanner, AccentStyle, NavBar, SkipLink } from 'components';
+import { Header, Footer, LegalBanner, AccentStyle, NavBar, SkipLink } from 'components';
 import { PageContext } from 'utils/hooks';
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
@@ -40,7 +40,7 @@ const App = (props) => {
 					<div className="duqduq-warning">Development Environment</div>
 				)}
 				<SkipLink targetId="main-content">Skip to main content</SkipLink>
-				<GdprBanner loginData={loginData} />
+				<LegalBanner loginData={loginData} />
 				<Header />
 				{showNav && <NavBar />}
 				{isDashboard && (

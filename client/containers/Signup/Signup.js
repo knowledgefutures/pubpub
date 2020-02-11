@@ -12,6 +12,7 @@ const Signup = () => {
 	const [isSuccessful, setIsSuccessful] = useState(false);
 	const [postSignupIsLoading, setPostSignupIsLoading] = useState(false);
 	const [postSignupError, setPostSignupError] = useState(undefined);
+	const [confirmEmail, setConfirmEmail] = useState('');
 	const onSignupSubmit = (evt) => {
 		evt.preventDefault();
 		setPostSignupIsLoading(true);
@@ -21,6 +22,7 @@ const Signup = () => {
 			body: JSON.stringify({
 				email: email.toLowerCase(),
 				communityId: communityData.id,
+				confirmEmail: confirmEmail,
 			}),
 		})
 			.then(() => {
@@ -55,6 +57,14 @@ const Signup = () => {
 								value={email}
 								onChange={onEmailChange}
 								error={postSignupError}
+							/>
+							<input
+								type="text"
+								className="confirm-email"
+								name="confirmEmail"
+								tabIndex="-1"
+								autoComplete="off"
+								onChange={(evt) => setConfirmEmail(evt.target.value)}
 							/>
 							<Button
 								name="signup"

@@ -5,7 +5,7 @@ import encHex from 'crypto-js/enc-hex';
 import { Button, NonIdealState, Checkbox } from '@blueprintjs/core';
 import { GridWrapper, InputField, ImageUpload, Icon } from 'components';
 import { apiFetch } from 'utils';
-import { gdprCookiePersistsSignup, getGdprConsentElection } from 'utils/gdprConsent';
+import { gdprCookiePersistsSignup, getGdprConsentElection } from 'utils/legal/gdprConsent';
 
 require('./userCreate.scss');
 
@@ -38,6 +38,7 @@ const UserCreate = (props) => {
 	const [showTwitter, setShowTwitter] = useState(false);
 	const [showFacebook, setShowFacebook] = useState(false);
 	const [showGoogleScholar, setShowGoogleScholar] = useState(false);
+	const [confirmPassword, setConfirmPasword] = useState('');
 	const onCreateSubmit = (evt) => {
 		evt.preventDefault();
 		setPostUserIsLoading(true);
@@ -62,6 +63,7 @@ const UserCreate = (props) => {
 				twitter: twitter,
 				facebook: facebook,
 				googleScholar: googleScholar,
+				confirmPassword: confirmPassword,
 				gdprConsent: gdprCookiePersistsSignup() ? getGdprConsentElection() : null,
 			}),
 		})
@@ -237,6 +239,16 @@ const UserCreate = (props) => {
 							value={password}
 							onChange={onPasswordChange}
 						/>
+						<input
+							type="password"
+							name="confirmPassword"
+							className="confirm-password"
+							tabIndex="-1"
+							autoComplete="off"
+							onChange={(evt) =>
+								setConfirmPasword(evt.target.value)
+							}
+						/>
 						<ImageUpload
 							htmlFor="avatar-upload"
 							label="Avatar Image"
@@ -271,7 +283,6 @@ const UserCreate = (props) => {
 									/>
 								);
 							})}
-
 						{!!expandables.filter((item) => !item.isVisible).length && (
 							<InputField label="Add More">
 								<div className="bp3-button-group">

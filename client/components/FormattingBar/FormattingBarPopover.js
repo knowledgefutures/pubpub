@@ -17,6 +17,7 @@ const FormattingBarPopover = (props) => {
 		floatingPosition,
 		containerRef,
 		captureFocusOnMount,
+		disableClickProxying,
 		editorChangeObject,
 		showCloseButton,
 	} = props;
@@ -38,17 +39,26 @@ const FormattingBarPopover = (props) => {
 		isActive: capturesFocus,
 		restoreFocusTarget: editorChangeObject.view.dom,
 		onMouseDownOutside: (evt) => {
-			evt.stopPropagation();
-			evt.preventDefault();
+			if (!disableClickProxying) {
+				evt.stopPropagation();
+				evt.preventDefault();
+			}
 		},
 		onEscapeKeyPressed: (evt) => {
 			evt.stopPropagation();
 			handleClose();
 		},
 		onClickOutside: (evt) => {
-			evt.stopPropagation();
-			handleClose();
-			setEditorSelectionFromClick(editorChangeObject.view, evt);
+			if (!disableClickProxying) {
+				evt.stopPropagation();
+				handleClose();
+				try {
+					setEditorSelectionFromClick(editorChangeObject.view, evt);
+				} catch (_) {
+					// Sometimes the event doesn't correspond to a valid cursor position and
+					// Prosemirror complains...just let it slide.
+				}
+			}
 		},
 	});
 

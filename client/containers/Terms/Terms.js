@@ -10,92 +10,235 @@ const Terms = function() {
 				<GridWrapper containerClassName="narrow">
 					<h1>Terms of Service</h1>
 					<p>
-						PubPub is a project of students and researchers in the Media Laboratory at
-						Massachusetts Institute of Technology (“MIT”). PubPub is a tool and service
-						to write, publish, and read published work. PubPub is built to modernize
-						many of the old traditions of academic publishing which have led to
-						inefficiency, corruption, and the detriment of our pursuit of science.
+						PubPub is an end-to-end, open-source publishing platform developed at the
+						Massachusetts Institute of Technology (“MIT”) and operationalized under the
+						auspices of the Knowledge Futures Group (KFG). KFG, established in 2018, is
+						a community of technologists, information creators, and scholarly publishers
+						that is committed to addressing a core set of pressing and complex issues
+						within research-intensive institutions. PubPub’s goal is to develop open
+						tools, infrastructure, and transparent business models that will bend the
+						arc of knowledge creation and consumption toward equity and independence.
+						PubPub operates on servers located, administered, and maintained in the
+						United States in accordance with U.S. federal and state laws. PubPub
+						operates as a non-commercial, non-profit public interest publishing
+						platform.
 					</p>
 					<p>
-						PubPub reserves the right to change the terms of the Terms of Service
-						(&quot;TOS&quot;) or to modify its features at any time. The Site will post
-						changes to the terms of this User Agreement at {locationData.hostname}
-						/tos, and by accessing the Site after modifications to this User Agreement
-						have been posted, you agree to be bound by all the modified terms.
+						PubPub reserves the right to change the provisions of these Terms of Service
+						and to modify PubPub’s features at any time. The PubPub website will post
+						changes to these Terms of Service at{' '}
+						<a
+							href={`https://${props.locationData.hostname}/tos`}
+						>{`${props.locationData.hostname}/tos`}</a>
+						, and all registered users will receive email notification that changes have
+						been made. Posted changes will become effective automatically 15 days after
+						they are posted, except that if any amendments thereto are made after
+						posting, such amendments will become effective 15 days after they are made.
+						By accessing the PubPub website after modifications to these Terms of
+						Service have become effective, you agree to be bound by all the modified
+						terms. All references herein to “these Terms of Service” shall be construed
+						to include all modifications becoming effective at any time hereafter.
 					</p>
-					<h1>Acceptance of Terms</h1>
+					<p>
+						The terms “PubPub,” “we”, “us”, “our”, and other similar terms as used in
+						these Terms of Service include MIT and KFG as the owners and operators of
+						PubPub, and all of their agents, employees, contractors, and other
+						affiliated persons engaged in such activity.
+					</p>
+					<h2>Acceptance of Terms</h2>
 					<p>
 						By accessing content on the PubPub website (the “Site,” which includes all
-						pages within the pubpub.org host directory and subdomains, all pages hosted
-						on PubPub servers regardless of domain (including but not limited to Journal
-						pages), and all associated services),
+						pages within the pubpub.org host directory and subdomains, all pages and
+						other content hosted on PubPub servers regardless of domain, and all
+						associated services),
 					</p>
 					<ol>
 						<li>
-							You accept and agree to be bound by all of the terms of this TOS; and
+							You accept and agree to be bound by all of these Terms of Service; and
 						</li>
-						<li>
-							You affirm that you are either 17 years of age or older or, if you are
-							younger than 17, that your parent or legal guardian accepts these Terms
-							of Service on your behalf.
-						</li>
+						<li>You represent and warrant that you are 13 years of age or older.</li>
 					</ol>
 					<p>
-						You must be (a) 17 years or over or (b) a parent or guardian must accept on
-						your behalf these Terms of Service to access registration-only features on
-						this Site. If we discover or have any reason to suspect that you have not
-						met either of these conditions, then we reserve the right to suspend or
-						terminate your registration to this Site immediately and without notice.
+						If we discover or have any reason to suspect that you are under the age of
+						13, we will suspend or terminate your registration to this Site immediately
+						and without notice.
 					</p>
-					<h1>Use of the Site</h1>
+					<h2>Third-Party Publishers</h2>
 					<p>
-						For the purposes of this TOS, the term “Site Content” shall include all
-						content, features, and functionality posted to the Site by PubPub as well as
-						User-Generated Content.
+						The Site provides hosting services to other persons and organizations for
+						the publication of journals, books, or other curated content. Such persons
+						and entities are referred to in these Terms of Service as “Third-Party
+						Publishers.”
+					</p>
+					<h2>Communities</h2>
+					<p>
+						PubPub allows registered users to create a "Community", a publicly available
+						site on PubPub where common disciplinary interests aggregate around content
+						contributed by creators and readers. A Community may reside on the PubPub
+						domain or on a domain of the Community administrator's choice but displayed
+						from a PubPub server. You may submit your Content for inclusion in a
+						Community, but it is up to the Community’s administrator to decide whether
+						to include it. PubPub may display in your profile a list of your Content and
+						the Communities in which they appear. We may also send you a notification
+						each time a Community has elected to include your Content, if you have opted
+						in to receiving email from PubPub. The term “Community” as used herein will
+						include its administrators and contributors.
+					</p>
+					<h2>Use of the Site</h2>
+					<p>
+						For the purposes of these Terms of Service, the term “Site Content” shall
+						include all content, features, and functionality posted to the Site,
+						including journals, books, and other publications created by third parties
+						(“Third-Party Content”), all User-Generated Content, and all content at any
+						time transmitted through or by means of the Site.
 					</p>
 					<p>
-						Except where otherwise noted, Site Content is licensed under the Creative
-						Commons Attribution (CC-BY) 4.0 License and may be used under the terms of
-						that license or any later version of a Creative Commons Attribution License
-					</p>
-					<h1>Use of Third-Party Content</h1>
-					<p>
-						To the extent the Site incorporates the copyrighted material of
-						third-parties (“Third-Party Content”), you represent, warrant, and agree
-						that no Third-Party Content posted or otherwise shared by you on or through
-						any of the Site, violates or infringes upon the rights of any third-party,
-						including copyright, trademark, privacy, publicity, or other personal or
-						proprietary rights, breaches or conflicts with any obligation, such as a
-						confidentiality obligation, or contains libelous, defamatory, or otherwise
-						unlawful material.
+						Except where otherwise noted, Site Content is licensed under the{' '}
+						<a href="https://creativecommons.org/licenses/by/4.0/">
+							Creative Commons Attribution (CC-BY) 4.0 License
+						</a>{' '}
+						and may be used under the terms of that license or any later version of a
+						Creative Commons Attribution License.
 					</p>
 					<p>
-						MIT and PubPub do not warrant that any use of Third-Party Content will not
-						infringe the rights of the content owners.
+						You acknowledge that PubPub may establish general practices and limits
+						concerning use of the Site, including without limitation the maximum period
+						of time that content will be retained on the Site. You agree that we have no
+						responsibility or liability for the deletion or failure to store any
+						content. You further acknowledge that PubPub reserves the right to change
+						these general practices and limits at any time, in PubPub’s sole discretion.
+						PubPub will endeavor to give notice of any such change where required by
+						applicable law.
+					</p>
+					<h2>Third-Party Sites and Resources</h2>
+					<p>
+						The Site may provide or facilitate, or third parties may provide, links or
+						other access to other sites and resources on the Internet. We have no
+						control over such sites and resources, are not responsible for them, and do
+						not endorse them. You acknowledge and agree that we will not be responsible
+						or liable, directly or indirectly, for any damage or loss caused or alleged
+						to be caused by or in connection with your use of or reliance on any content
+						available on or through any such site or resource.
+					</p>
+					<h2>PubPub and Personal Information</h2>
+					<p>
+						PubPub defines Personal Information to be i) any information from or about
+						you that identifies you directly – such as your name, email address, device
+						identifier, photograph, and cookies or other automated information
+						collection technology that can be used to identify you – and ii) any
+						information that is associated with you and thus could potentially be used
+						to identify or reidentify you, including when combined with other
+						information from or about you. For the avoidance of doubt, PubPub defines
+						Personal Information broadly, and the definition includes “personal data”
+						and “special categories of personal data” as those terms are used in the EU
+						General Data Protection Regulation and “personal information” as used in the
+						California Consumer Protection Act.
 					</p>
 					<p>
-						If you believe that any content on the Site infringes your copyrights,
-						please{' '}
-						<a href="http://web.mit.edu/copyright/dmca-notices.html">click here</a> for
-						more information, including the email address for MIT’s DMCA agent, to whom
-						copyright infringement notifications should be sent.
+						Personal Information does not include information that has been aggregated,
+						excerpted, anonymized, or otherwise deidentified to the point at which an
+						individual can no longer be identified or reidentified using reasonable
+						efforts, technology, and resources (“Non-Personal Information”). Personal
+						Information also does not include contact information that is routinely made
+						available in a professional capacity to facilitate business and professional
+						communications, such as the information ordinarily found on a business card,
+						website profile, or CV, when used solely for purposes of professional and
+						business communications (“Business Contact Information”).
 					</p>
-					<h1>User-Generated Content</h1>
+					<p>
+						Except with respect to Personal Information that you post directly to the
+						Site in a manner that makes it visible to other users:
+					</p>
+					<ol>
+						<li>
+							PubPub collects the minimum amount of Personal Information necessary to
+							operate the Site, including with regard to registration, log-in
+							information, and the use of cookies and any other automated collection
+							technologies that facilitate operation, use, and security of the Site
+							(“Site Operations”). PubPub maintains Personal Information only as long
+							as is necessary for Site Operations and to comply with PubPub’s legal
+							and business obligations.
+						</li>
+						<li>
+							PubPub shares Personal Information with Third-Party Publishers only to
+							the extent necessary to permit each Third-Party Publisher to interact
+							with the individuals who access its own content on the Site and to
+							comply with each Third-Party Publishers’ legal and business obligations.
+						</li>
+						<li>
+							PubPub does not share Personal Information with third-party service
+							providers, or with employees or agents of MIT of KFG not directly
+							engaged in PubPub, except to the extent necessary for Site Operations
+							and to comply with their legal and business obligations. MIT and KFG
+							will not use, and third-party service providers are not authorized to
+							use, Personal Information they receive from PubPub for their own
+							marketing or other purposes not related to PubPub. PubPub retains
+							control over and responsibility for the Personal Information that it
+							shares with employees and agents of MIT and KFG, and with third-party
+							service providers.
+						</li>
+						<li>
+							PubPub is accessible to all interested entities and individuals who have
+							internet access. PubPub does not in any way target, market to, profile,
+							or otherwise track individuals within a particular jurisdiction.
+						</li>
+						<li>
+							PubPub maintains reasonable administrative, technical, and physical
+							controls to protect Personal Information against unauthorized access,
+							use, sharing, retention, and disposal.{' '}
+						</li>
+						<li>
+							PubPub operates the Site in accordance with all applicable U.S. privacy
+							and data security laws.
+						</li>
+						<li>
+							Users who no longer wish to have PubPub retain or use their Personal
+							Information can contact PubPub at{' '}
+							<a href="mailto:help@pubpub.org?subject=Personal%20Info%20Deletion%20Request">
+								help@pubpub.org
+							</a>
+							. PubPub will, to the extent feasible and consistent with Site
+							Operations, delete Personal Information upon request and notify
+							third-party service providers and relevant Third-Party Publishers of the
+							request.
+						</li>
+						<li>
+							To the extent that PubPub experiences suspected or actual unauthorized
+							access, use, or sharing of Personal Information, a compromise of the
+							Site or its accessibility, or a suspected or actual violation of these
+							Terms of Service, PubPub will promptly notify the affected Third-Party
+							Publishers and, to the extent appropriate and in accordance with
+							applicable law, affected users.
+						</li>
+						<li>
+							For additional information about PubPub’s collection, use, and sharing
+							of Personal Information, including questions about policies and
+							practices and requests regarding your Personal Information, please
+							contact us at{' '}
+							<a href="mailto:help@pubpub.org?subject=Personal%20Info%20Policy%20Question">
+								help@pubpub.org
+							</a>
+							.
+						</li>
+					</ol>
+					<h2>User-Generated Content</h2>
 					<p>
 						The Site includes features that support and publish User-Generated Content.
-						The term “User-Generated Content,” for purposes of this TOS, means any
-						copyrightable content that users submit to the Site. The Site may solicit
-						and publish User-Generated Content through its blog, video postings, and
-						chat features, among other forums. You shall not make use of these features:
+						The term “User-Generated Content,” for purposes of these Terms of Service,
+						means any content, whether or not copyrightable, that users submit to the
+						Site. The Site, Third Party Publishers, and Communities may solicit and
+						publish User-Generated Content through blogs, video postings, and chat
+						features, among other forums. You shall not make use of these features:
 					</p>
 					<ul>
 						<li>
 							To make comments that are threatening, knowingly false, or unlawful; or
-							to engage in personal attacks;
+							to engage in or promote harassment, hate, violence, discrimination or
+							personal attacks;
 						</li>
 						<li>
-							To impersonate any person or entity or create a false identity on the
-							Site;
+							To impersonate any person or entity or create a false identity (other
+							than a pseudonym) on the Site;
 						</li>
 						<li>
 							To harass, threaten, stalk, embarrass or cause distress, unwanted
@@ -109,13 +252,13 @@ const Terms = function() {
 						</li>
 						<li>
 							To post material that infringes a copyright, trademark or patent right,
-							trade secret or other legal right of any person, corporation or
-							institution;
+							trade secret or other legal right of any person or any corporation,
+							institution, or other entity;
 						</li>
 						<li>
 							To knowingly disseminate or transmit viruses, Trojan horses, worms,
-							defects, date bombs, time bombs, malware, spyware, or other items of a
-							destructive nature or any other malicious code or program;
+							defects, date bombs, time bombs, malware, ransomware, spyware, or other
+							items of a destructive nature or any other malicious code or program;
 						</li>
 						<li>
 							To knowingly carry out any action with the intent or effect of
@@ -126,159 +269,301 @@ const Terms = function() {
 						</li>
 					</ul>
 					<p>
-						By submitting User-Generated Content, you represent, warrant, and agree that
-						no User-Generated Content posted or otherwise shared by you on or through
-						any of the Site, violates or infringes upon the rights of any third-party,
-						including copyright, trademark, privacy, publicity, or other personal or
-						proprietary rights, breaches or conflicts with any obligation, such as a
-						confidentiality obligation, or contains libelous, defamatory, or otherwise
-						unlawful material.
+						You are responsible for any User-Generated Content you provide. By
+						submitting User-Generated Content, you represent and warrant to us and to
+						all Third-Party Publishers and Communities that such content:
+					</p>
+					<ul>
+						<li>
+							whether created by you or by other persons, does not breach or conflict
+							with any obligation, such as a confidentiality obligation or use
+							restriction, does not violate or infringe upon the rights of any third
+							party, including copyright, trademark, privacy, publicity, or other
+							personal or proprietary rights, and does not contain libelous,
+							defamatory, or otherwise unlawful material;
+						</li>
+						<li>
+							if created by you, is (i) automatically licensed under the Creative
+							Commons referred to above or any alternative Creative Commons license
+							you select at the time of submission, and may be used under the terms of
+							that license or any later version of that license, or (ii in the public
+							domain (such as Content that is not copyrightable, or Content you make
+							available under CC0);
+						</li>
+						<li>
+							if created by someone else and not in the public domain, (i) is
+							available under the Creative Commons license you select for the Content
+							or (ii) is Content that you are authorized by law (including but not
+							limited to the doctrine of fair use) to post on the Site, and in either
+							case, (iii) is prominently marked as being subject to third-party
+							copyright.
+						</li>
+					</ul>
+					<p>
+						All of your User-Generated Content must be appropriately marked with
+						licensing and attribution information.
 					</p>
 					<p>
-						You hereby agree that User-Generated Content: (a) is hereby licensed under
-						the Creative Commons Attribution (CC-BY) 4.0 License and may be used under
-						the terms of that license or any later version of a Creative Commons
-						Attribution License, or (b) is in the public domain (such as Content that is
-						not copyrightable or Content you make available under CC0), or (c) if not
-						owned by you, (i) is available under a Creative Commons Attribution 4.0
-						License or (ii) is a media file that is available under any Creative Commons
-						license or that you are authorized by law to post or share through any of
-						the Services, such as under the fair use doctrine, and that is prominently
-						marked as being subject to third-party copyright. All of Your Content must
-						be appropriately marked with licensing and attribution information.
+						You acknowledge that you will receive no compensation for the posting of
+						User-Generated content.
 					</p>
 					<p>
-						Upon publishing, an archive of the content will perpetually be available to
-						the public for reference.
+						If you post any Content that contains Personal Information – your own or
+						that of another individual – your posting is presumed to be voluntary and
+						authorized. Your posting of Personal Information and other content is at
+						your own risk. Neither we nor any Third Party Publisher or Community will
+						have any liability for any use or misuse by any other person of such
+						Personal Information, or any alleged alteration or distortion of such
+						Personal Information on the Site. If you wish to remove from the Site any
+						Personal Information that you have posted, or if you assert that Personal
+						Information you have posted has been distorted or altered in any way on the
+						Site, your sole remedy will be to request the removal of such Personal
+						Information, identified by you with particularity so that it may be easily
+						found, but we will not be liable for any failure to act on your request. To
+						make a removal request, contact us at{' '}
+						<a href="mailto:help@pubpub.org?subject=Content%20Removal%20Request">
+							help@pubpub.org
+						</a>
+						.
 					</p>
 					<p>
 						You acknowledge and accept that User-Generated Content posted to the Site
-						may be made available for the public to access, view, and use, subject to
-						the limited license set forth above (“Use of Site”).
+						may in our discretion be made available to the public on a perpetual basis
+						to use in accordance with these Terms of Use.
 					</p>
-					<p>
-						PubPub monitors User-Generated Content on the Site, and PubPub reserves the
-						right to modify, edit, or remove any of said content at its discretion,
-						without notice, and for any reason. PubPub may prescreen User-Generated
-						Content and may decide, in its discretion, without notice, and for any
-						reason, not to publish it. PubPub will not modify or edit any scholarly work
-						that you submit for posting on the Site, but PubPub may decide, in its
-						discretion, to withhold it from publication in its entirety. PubPub assumes
-						no liability for monitoring, modifying, removing, or declining to publish
-						User-Generated Content on this Service.
-					</p>
+					<p>We, and any Third-Party Publisher or Community,</p>
+					<ul>
+						<li>may monitor User-Generated Content on the Site,</li>
+						<li>
+							may modify, edit, or remove any of said content at our or their
+							discretion, without notice, and for any reason,
+						</li>
+						<li>
+							may prescreen User-Generated Content and may decide, in our or their
+							discretion, without notice, and for any reason, not to publish it,
+						</li>
+						<li>
+							will not modify or edit any scholarly work that you submit for posting
+							on the Site, but may decide, in our or their discretion, to withhold it
+							from publication in its entirety, and
+						</li>
+						<li>
+							will have no liability for monitoring, modifying, removing, or declining
+							to publish User-Generated Content on the Site.
+						</li>
+					</ul>
 					<p>
 						You acknowledge and accept that the views and opinions expressed by other
-						users on the Site are theirs alone and should not be ascribed to PubPub or
-						to MIT. User-Generated Content and Third-Party Content are the sole
-						responsibility of the users and third-parties, and their accuracy and
-						completeness are not endorsed or guaranteed by PubPub or MIT.
+						users on the Site are theirs alone and should not be ascribed to us.
+						User-Generated Content and Third-Party Content are the sole responsibility
+						of the users or third parties that created them, and their accuracy and
+						completeness are not endorsed or guaranteed by us. You understand that by
+						using the Site, you may be exposed to User-Generated Content that might be
+						offensive, harmful, inaccurate or otherwise inappropriate. Under no
+						circumstances will we or any Third-Party Publisher or Community be liable in
+						any way for any User-Generated Content, including, but not limited to, any
+						errors or omissions in any User-Generated Content, or any loss or damage of
+						any kind incurred as a result of the use of any User-Generated Content made
+						available via the Site or disseminated elsewhere.
 					</p>
-					<h1>Journals</h1>
+					<h2>Intellectual Property</h2>
 					<p>
-						PubPub allows registered users to create &quot;Journals&quot; that aggregate
-						their own and other users&apos; Pubs under a single page. A Journal may
-						reside on the PubPub domain or on a domain of the Journal
-						administrator&apos;s choice. In either case, the content displayed in the
-						Journal, including any Pubs, is displayed exclusively from a PubPub server.
-						A Journal administrator does not need the approval of a Pub&apos;s author in
-						order to include the Pub on his or her page. You may submit your Pub for
-						inclusion in a Journal, but it is up to the Journal&apos;s administrator to
-						decide whether to include it. PubPub displays in your profile a list of your
-						Pubs and the Journals in which they appear. We may also send you a
-						notification each time a Journal has elected to include your Pub, if you
-						have opted in to receiving email from PubPub.
+						You acknowledge and agree that Site Content may contain content protected by
+						copyright, trademark, or other proprietary rights and laws, and you agree to
+						respect and comply with such rights and laws.
 					</p>
-					<h1>Prohibited Uses of the Site</h1>
+					<p>
+						Without limitation of the foregoing, “MIT,” “Massachusetts Institute of
+						Technology,” “PubPub,” the PubPub logo, and the names of Third-Party
+						Publishers and their logos, are proprietary trademarks and service marks and
+						may not be used without the prior written consent of the holder of the name,
+						trademark, logo or insignia, which consent any holder may withhold in its
+						sole discretion. Nothing in these Terms of Service or the Site should be
+						construed as granting, by implication, estoppel, or otherwise, any license
+						or right to use any of trademarks, without prior written permission of the
+						holder in each instance. All goodwill generated from the use of trademarks
+						will inure to the exclusive benefit of the holder of such trademarks.
+					</p>
+					<p>
+						If you believe that any content on the Site infringes your copyright, please
+						click here for more information, including the email address for our DMCA
+						agent, to whom copyright infringement notifications should be sent. 
+					</p>
+					<h2>Prohibited Uses of the Site</h2>
 					<p>
 						You may not access or use the Site in any manner that could damage or
 						overburden any MIT server, or any network connected to any MIT server. You
 						may not use the Site in any manner that would interfere with any other
-						party’s use of the Site.
+						party’s use of the Site. If you are blocked by us from accessing the Site
+						(including by blocking your IP address), you agree not to implement any
+						measures to circumvent such blocking (e.g., by masking your IP address or
+						using a proxy IP address). Any use of the Site or the Site’s content other
+						than as specifically authorized herein is strictly prohibited.
 					</p>
-					<h1>Use of Names</h1>
-					<p>
-						You may not use MIT’s names, trademarks, logos, or insignia, or any version,
-						abbreviation or representation of them, in any advertising, publicity,
-						promotional materials or other public announcement without the prior written
-						consent of MIT’s Technology Licensing Office, which consent MIT may withhold
-						in its sole discretion.
-					</p>
-					<h1>Registration, Privacy, and Termination of Access</h1>
+					<h2>Registration and Termination of Access</h2>
 					<p>
 						Certain areas of the Site may require registration or may otherwise ask you
 						to provide information in order to participate. The decision to provide this
-						information is optional; however if you elect not to provide such
+						information is optional; however, if you elect not to provide such
 						information, you may not be able to access certain content, features, or
 						functionalities. When you register, you must provide information to PubPub
 						that is accurate, current and complete (excepting the use of a pseudonym).
-						The Site’s <a href="/privacy">Privacy Policy</a> governs the use of the
-						information you report. PubPub reserves the right to terminate the
-						registrations and otherwise deny Site access to any person for any reason.
-						The Site will not be liable for any loss or damage arising from your failure
-						to protect your password or account login information.
-					</p>
-					<h1>Disclaimer of Warranty / Limitation of Liability</h1>
-					<p>
-						Your use of the Site is at your sole risk. To the fullest extent permitted
-						by the law, MIT disclaims all warranties, express or implied, in connection
-						with the Site and your use thereof. MIT makes no warranties or
-						representations about the accuracy or completeness of the Site’s content
-						(including User-Generated Content and Third-Party Content) or the content of
-						any websites linked to this Site and assumes no liability or responsibility
-						for any (1) errors, mistakes, omissions, or inaccuracies in content; (2)
-						personal injury or property damage, of any nature whatsoever, resulting from
-						your access to and use of the Site; (3) unauthorized access to or use of
-						MIT’s secure servers and/or any and all personal information and/or
-						financial information stored therein; (4) interruption or cessation of
-						transmission to or from the Site; (5) bugs, viruses, Trojan horses, or the
-						like that may be transmitted to or through the Site by any third-party; and/
-						or (6) content or any loss or damage of any kind incurred as a result of the
-						use of any content posted, emailed, transmitted, or otherwise made available
-						via the Site. You assume all risk as to the quality, function, and
-						performance of the Site, and to all transactions you undertake on the Site,
-						including without limitation submission of any User-Generated Content.
+						You agree to immediately notify PubPub of any unauthorized use of your
+						password or any other breach of security. We will not be liable for any loss
+						or damage arising from your failure to protect your password or account
+						login information.
 					</p>
 					<p>
-						You agree that MIT will not be liable to you for any loss or damages, either
-						actual or consequential, arising out of or relating to these terms, or your
-						(or any third-party’s) use or inability to use the Site, or your placement
-						of User-Generated Content on the Site, or your reliance upon information
-						obtained from or through the Site, or your communications with other users
-						of the Site. In particular, MIT will have no liability for any
-						consequential, indirect, punitive, special or incidental damages, whether
-						foreseeable or unforeseeable, (including, but not limited to, claims for
-						defamation, errors, loss of data, or interruption in availability of data),
-						arising out of or relating to these terms, your use or inability to use a
-						site, your placement of content on the Site, your reliance upon information
-						obtained from or through a Site, or your communications with other users of
-						the Site, whether based in contract, tort, statutory or other law, except
-						only in the case of death or personal injury where and only to the extent
-						that applicable law requires such liability.
+						We reserve the right to terminate any registration and otherwise deny Site
+						access to any person for any reason. Any suspected fraudulent, abusive or
+						illegal activity that may be grounds for suspension or termination of your
+						account and/or use of the Site, may be referred to appropriate law
+						enforcement authorities. You agree that any termination of your account
+						and/or access to the Site under any provision of these Terms of Service may
+						be effected without prior notice, and acknowledge and agree that we may
+						immediately deactivate or delete all related information and/or bar any
+						further access to the Site. Further, you agree that we will not be liable to
+						you or any third party for any termination of your account and/or access to
+						the Site.
 					</p>
-					<h1>Idemnification</h1>
+					<h2>Disclaimer of Warranty / Limitation of Liability</h2>
 					<p>
-						You hereby indemnify, defend, and hold harmless MIT and its affiliates,
-						employees, faculty members, fellows, students, members of their governing
-						boards and agents (collectively, the “Indemnified Parties”) from and against
-						any and all liability and costs, including, without limitation, reasonable
-						attorneys’ fees, incurred by the Indemnified Parties in connection with any
-						claim arising out of (1) your posting of User-Generated Content; (2) any
-						breach by you or any user of your account of this TOS or the foregoing
-						representations, warranties and covenants; or (3) your or any user of your
-						account’s violation of applicable law. You shall cooperate as reasonably
-						required in the defense of any such claim. MIT reserves the right, at its
-						own expense, to assume the exclusive defense and control of any matter
-						subject to indemnification by you.
+						Your use of the Site is at your sole risk. TO THE FULLEST EXTENT PERMITTED
+						BY THE LAW, WE AND ALL THIRD-PARTY PUBLISHERS AND COMMUNITIES (COLLECTIVELY,
+						“THE DISCLAIMING PARTIES”) DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, IN
+						CONNECTION WITH THE SITE AND YOUR USE THEREOF, INCLUDING BUT NOT LIMITED TO
+						WARRANTIES AS TO THE ACCURACY OR COMPLETENESS OF SITE CONTENT AND WARRANTIES
+						OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, OR
+						NON-INFRINGEMENT. Without limitation of the foregoing, you assume all risk,
+						and the Disclaiming Parties shall have no liability or responsibility, for
+						any (1) errors, or omissions in Site Content; (2) personal injury, property
+						damage, or other personal or business loss, of any nature whatsoever,
+						resulting from your access to and use of the Site or Site Content; (3)
+						unauthorized access to or use by any third party of the Site or MIT’s secure
+						servers and/or any and all personal information and/or financial information
+						stored therein; (4) interruption or cessation of transmission to or from the
+						Site, or failure of the Site to meet any particular standard of quality,
+						function, or performance; (5) bugs, viruses, Trojan horses, or the like that
+						may be transmitted to or through the Site by any third party; and/or (6) any
+						use or misuse of your User-Generated Content by third parties (“Loss
+						Events”).
 					</p>
-					<h1>Contacting this Website</h1>
 					<p>
-						If you have any questions about this TOS or Privacy Policy, the practices of
-						the Site, or your dealings with this Site, you can contact the Editor at
-						pubpub@media.mit.edu .
+						You agree that the Disclaiming Parties will not be liable to you for any
+						loss or damages, either actual or consequential, arising out of or relating
+						to these terms, or your (or any third-party’s) use or inability to use the
+						Site, or your placement of User-Generated Content on the Site, or your
+						reliance upon information obtained from or through the Site, or your
+						communications with other users of the Site. The Disclaiming Parties will
+						have no liability for any consequential, indirect, punitive, special or
+						incidental damages, even if they have been advised of the possibility of
+						such damages (including, but not limited to, claims for defamation, errors,
+						loss of data, or interruption in availability of data), arising out of or
+						relating to your use of or inability to use the Site, or any other person’s
+						use of the Site, whether based in contract, tort, or other law, including
+						but not limited to injury or loss arising out of any Loss Event described
+						above.
 					</p>
-					<h1>Effective Date of Agreement</h1>
-					<p>This TOS is in effect as of the August 31, 2016.</p>
+					<h2>Indemnification</h2>
+					<p>
+						You will indemnify and defend us, each Third Party Publisher, each
+						Community, and each of our or their affiliates, employees, faculty members,
+						fellows, students, governing board members, contractors and agents
+						(collectively, the “Indemnified Parties”), and hold the Indemnified Parties
+						harmless, from and against any claim, and all related loss, damage, damage,
+						or expense, including without limitation reasonable attorneys’ fees,
+						incurred by Indemnified Parties, in connection (1) use of the Site; (2)
+						posting of User-Generated Content; (3) breach of these Terms of Service or
+						any representation or warranty made by you; or (4) violation of applicable
+						law, by you or by any person whom you authorize to use your PubPub account.
+					</p>
+					<p>
+						You shall cooperate as reasonably required in the defense of any such claim.
+						The Indemnified Parties shall have the right, at their own expense, to
+						assume the exclusive defense and control of any matter subject to
+						indemnification by you.
+					</p>
+					<h2>Third-Party Beneficiaries</h2>
+					<p>
+						All Third-Party Publishers and Communities are third-party beneficiaries of
+						these Terms of Service, to the extent their interests may appear, and may
+						enforce the provisions of these Terms of Service directly. Third-Party
+						Publishers and Communities may assign or transfer these Terms of Service, as
+						applicable to their relationship with you, without restriction, as part of
+						any assignment of any Community or Third-Party Content, in whole or in part,
+						to any other publisher or platform, and such Terms of Service will be
+						binding on and inure to the benefit of their successors and assigns.
+					</p>
+					<h2>General</h2>
+					<p>
+						These Terms of Service constitute the entire agreement between you and us
+						with respect to your use of the Site, superseding any prior agreements. The
+						section titles in these Terms of Service are for convenience only and have
+						no legal or contractual effect.
+					</p>
+					<p>
+						If PubPub should cease to operate, or if these Terms of Service are for any
+						reason discontinued, these Terms of Service will continue to apply to any
+						act or omission occurring while they were in force. Without limitation of
+						the foregoing, the provisions of the “Disclaimer of Warranty / Limitation of
+						Liability” and “Indemnification” sections hereof will survive any
+						termination of PubPub or of these Terms of Service.
+					</p>
+					<p>
+						These Terms of Service will be governed by the laws of the Commonwealth of
+						Massachusetts without regard to its conflicts of laws provisions. In the
+						case of any dispute arising out of these Terms of Service or your use of the
+						Site, the state and federal courts located within the Commonwealth of
+						Massachusetts will have exclusive jurisdiction, and you agree to submit to
+						the personal jurisdiction of such courts.
+					</p>
+					<p>
+						Any failure to exercise or enforce any right or provision of these Terms of
+						Service will not constitute a waiver of such right or provision. If any
+						provision of these Terms of Service is found by a court of competent
+						jurisdiction to be invalid, it shall be interpreted in such manner as to
+						have the broadest validity consistent with law, and the other provisions of
+						these Terms of Service shall remain in full force and effect.{' '}
+					</p>
+					<p>
+						You agree that regardless of any statute or law to the contrary, any claim
+						or cause of action by you arising out of or related to use of the Site or
+						these Terms of Service must be filed within one (1) year after such claim or
+						cause of action arose or be forever barred.{' '}
+					</p>
+					<p>
+						A printed version of this agreement and of any notice given in electronic
+						form will be admissible in judicial or administrative proceedings based upon
+						or relating to this agreement to the same extent and subject to the same
+						conditions as other business documents and records originally generated and
+						maintained in printed form.{' '}
+					</p>
+					<p>
+						These Terms of Service are personal to you and non-assignable, except that
+						they will be binding on any employer or other person or entity on whose
+						behalf you may use the Site, except to the extent inconsistent with any
+						direct agreement we may have with such person or entity. PubPub may assign
+						or transfer these Terms of Service and your agreement thereto, in whole or
+						in part, without restriction, as part of any assignment of PubPub in whole
+						or in part. These Terms of Service will be binding on, and inure to the
+						benefit of, our successors and assigns and your heirs and personal
+						representatives.
+					</p>
+					<h2>Questions and Comments</h2>
+					<p>
+						If you have any questions about these Terms of Service, our privacy
+						practices and work with Personal Information, the practices of the Site, or
+						your dealings with this Site, please contact{' '}
+						<a href="mailto:help@pubpub.org?subject=Terms%20Question">
+							help@pubpub.org
+						</a>
+						.
+					</p>
+					<h2>Effective Date of Agreement</h2>
+					<p>
+						The effective date of the current version of these Terms of Service is
+						January 30, 2020.
+					</p>
 				</GridWrapper>
 			</div>
 		</div>

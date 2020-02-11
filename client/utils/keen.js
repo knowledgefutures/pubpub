@@ -2,7 +2,7 @@ import KeenTracking from 'keen-tracking';
 
 import { isProd } from './isProd';
 import { getClientInitialData } from './initialData';
-import { getGdprConsentElection } from './gdprConsent';
+import { getGdprConsentElection } from './legal/gdprConsent';
 
 const keenEnvProd = {
 	projectId: '5b57a01ac9e77c0001eef181',

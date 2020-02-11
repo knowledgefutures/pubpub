@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton, Card, Switch } from '@blueprintjs/core';
-
 import { PageContext } from 'utils/hooks';
-import { getGdprConsentElection, updateGdprConsent } from 'utils/gdprConsent';
+import { getGdprConsentElection, updateGdprConsent } from 'utils/legal/gdprConsent';
 
 const propTypes = {
 	isLoggedIn: PropTypes.bool.isRequired,

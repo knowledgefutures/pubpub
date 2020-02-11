@@ -144,7 +144,7 @@ rules.transformToMark('Link', 'link', (link, { resource }) => {
 rules.fromPandoc('SmallCaps', pandocPassThroughTransformer);
 
 // Tell the transformer how to deal with typical content-level nodes
-rules.fromPandoc('(Str | Space)+', (pdNodes) => {
+rules.fromPandoc('(Str | Space | SoftBreak)+', (pdNodes) => {
 	return {
 		type: 'text',
 		text: textFromStrSpace(pdNodes),

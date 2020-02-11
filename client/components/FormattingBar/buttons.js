@@ -152,6 +152,7 @@ export const table = {
 	title: 'Table',
 	icon: 'th',
 	controls: {
+		disableClickProxying: true,
 		captureFocusOnMount: false,
 		indicate: ({ selectionInTable }) => selectionInTable,
 		show: showOrTriggerTable,

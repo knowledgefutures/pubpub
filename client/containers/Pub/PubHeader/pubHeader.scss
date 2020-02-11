@@ -76,9 +76,9 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     & > .hairline {
         width: 100%;
         height: 1px;
-        margin-bottom: 20px;
     }
     & > .middle {
+        margin-top: 20px;
         display: flex;
         @include mobile {
             flex-direction: column;

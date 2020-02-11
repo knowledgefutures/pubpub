@@ -35,63 +35,66 @@ const PubDetails = (props) => {
 
 	return (
 		<div className="pub-details-component">
-			<div className="section contributors">
-				<h6 className="pub-header-themed-secondary">
-					Contributors ({contributors.length})
-				</h6>
-				<Contributors contributors={contributors} />
-			</div>
-			<div className="section publication-dates">
-				<h6 className="pub-header-themed-secondary">
-					{pubData.activeBranch.title === 'public' ? 'Published' : 'Created'}
-				</h6>
-				<div className="full-height-date">{publishedAtString}</div>
-				{shouldShowUpdatedDate && (
-					<React.Fragment>
-						<h6 className="pub-header-themed-secondary">Updated</h6>
-						<div className="full-height-date">{updatedAtString}</div>
-					</React.Fragment>
-				)}
-			</div>
-			<div className="section citation-and-doi">
-				{pubData.doi && (
-					<React.Fragment>
-						<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
-						<ClickToCopyButton
-							copyString={`https://doi.org/${pubData.doi}`}
-							className="click-to-copy"
-							beforeCopyPrompt="Copy doi.org link"
-						>
-							{pubData.doi}
-						</ClickToCopyButton>
-					</React.Fragment>
-				)}
-				<CitationsPreview pubData={pubData} />
-			</div>
-			<div className="section collections">
-				<h6 className="pub-header-themed-secondary">
-					Appears in collections ({collectionPubs.length})
-				</h6>
-				<div className="collection-list">
-					{collectionPubs.length === 0 && (
-						<i className="collection-list-entry">
-							This pub doesn't belong to any collections.
-						</i>
+			<h3 className="pub-title">{pubData.title}</h3>
+			<div className="sections-wrapper">
+				<div className="section contributors">
+					<h6 className="pub-header-themed-secondary">
+						Contributors ({contributors.length})
+					</h6>
+					<Contributors contributors={contributors} />
+				</div>
+				<div className="section publication-dates">
+					<h6 className="pub-header-themed-secondary">
+						{pubData.activeBranch.title === 'public' ? 'Published' : 'Created'}
+					</h6>
+					<div className="full-height-date">{publishedAtString}</div>
+					{shouldShowUpdatedDate && (
+						<React.Fragment>
+							<h6 className="pub-header-themed-secondary">Updated</h6>
+							<div className="full-height-date">{updatedAtString}</div>
+						</React.Fragment>
 					)}
-					{collectionPubs.map((collectionPub) => {
-						const { collection } = collectionPub;
-						if (collection) {
-							return (
-								<a
-									className="collection-list-entry underline-on-hover"
-									href={collectionUrl(communityData, collection)}
-								>
-									{collection.title}
-								</a>
-							);
-						}
-						return null;
-					})}
+				</div>
+				<div className="section citation-and-doi">
+					{pubData.doi && (
+						<React.Fragment>
+							<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
+							<ClickToCopyButton
+								copyString={`https://doi.org/${pubData.doi}`}
+								className="click-to-copy"
+								beforeCopyPrompt="Copy doi.org link"
+							>
+								{pubData.doi}
+							</ClickToCopyButton>
+						</React.Fragment>
+					)}
+					<CitationsPreview pubData={pubData} />
+				</div>
+				<div className="section collections">
+					<h6 className="pub-header-themed-secondary">
+						Appears in collections ({collectionPubs.length})
+					</h6>
+					<div className="collection-list">
+						{collectionPubs.length === 0 && (
+							<i className="collection-list-entry">
+								This pub doesn't belong to any collections.
+							</i>
+						)}
+						{collectionPubs.map((collectionPub) => {
+							const { collection } = collectionPub;
+							if (collection) {
+								return (
+									<a
+										className="collection-list-entry underline-on-hover"
+										href={collectionUrl(communityData, collection)}
+									>
+										{collection.title}
+									</a>
+								);
+							}
+							return null;
+						})}
+					</div>
 				</div>
 			</div>
 		</div>

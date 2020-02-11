@@ -1,6 +1,6 @@
 $off-white: #cfcfcf;
 $off-black: #333;
-$top-bar-total-height: 54px;
+$top-bar-total-height: 56px;
 
 @mixin base-button {
     color: inherit;
@@ -57,6 +57,9 @@ $top-bar-total-height: 54px;
         &:hover {
             background: rgba($base-color, 0.2);
         }
+    }
+    &.pub-header-compact-component {
+        color: $base-color;
     }
 }
 
@@ -119,14 +122,15 @@ $top-bar-total-height: 54px;
     .hairline {
         background-color: transparent;
     }
-    .background-top-bar {
-        background-color: $background-color;
+    .background-safety-layer {
+        background-color: rgba($background-color, 0.75);
         box-shadow: $box-shadow;
     }
-    &.showing-details {
-        .background-top-bar {
+    &.showing-details,
+    &.js-is-sticky,
+    &.pub-header-compact-component {
+        .background-safety-layer {
             height: 100%;
-            background-color: rgba($background-color, 0.75);
         }
     }
 }

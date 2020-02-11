@@ -14,7 +14,7 @@ const propTypes = {
 	pubData: PropTypes.shape({}).isRequired,
 	blur: PropTypes.bool,
 	style: PropTypes.object,
-	showTopBar: PropTypes.bool,
+	showSafetyLayer: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -22,7 +22,7 @@ const defaultProps = {
 	children: null,
 	blur: false,
 	style: {},
-	showTopBar: false,
+	showSafetyLayer: false,
 };
 
 const getHeaderImageWidth = () => {
@@ -33,7 +33,7 @@ const getHeaderImageWidth = () => {
 };
 
 const PubHeaderBackground = React.forwardRef((props, ref) => {
-	const { children, className, pubData, communityData, blur, style, showTopBar } = props;
+	const { children, className, pubData, communityData, blur, style, showSafetyLayer } = props;
 	const { headerBackgroundColor, headerBackgroundImage } = pubData;
 
 	const effectiveBackgroundColor = calculateBackgroundColor(
@@ -70,7 +70,7 @@ const PubHeaderBackground = React.forwardRef((props, ref) => {
 					style={{ backgroundColor: effectiveBackgroundColor }}
 				/>
 			)}
-			{showTopBar && <div className="background-element background-top-bar" />}
+			{showSafetyLayer && <div className="background-element background-safety-layer" />}
 			{children}
 		</div>
 	);

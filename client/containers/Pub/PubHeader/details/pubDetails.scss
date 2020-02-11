@@ -1,70 +1,76 @@
-@mixin column {
-    .section {
-        flex-direction: column;
-        align-items: flex-start !important;
-        height: auto;
-        h6 {
-            margin-bottom: 0;
-            flex-shrink: 0;
-        }
-    }
-}
+@import '../themes.scss';
+@import 'styles/variables.scss';
 
 .pub-details-component {
-    @include column;
-    position: relative;
-    display: flex;
-    justify-content: space-between;
+    height: 100%;
 
-    .section {
+    .pub-title {
+        font-family: $header-font;
+        height: $top-bar-total-height;
+        line-height: $top-bar-total-height;
+        width: calc(100% - 120px);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-weight: normal;
+    }
+
+    .sections-wrapper {
+        position: relative;
+        height: calc(100% - #{$top-bar-total-height});
         display: flex;
-        align-items: center;
-        max-width: 25%;
-        min-width: 15%;
-        margin-top: 40px;
-        h6 {
-            margin: 0;
-            margin-right: 10px;
-            height: 30px;
+        justify-content: space-between;
+
+        .section {
             display: flex;
-            align-items: center;
-            line-height: initial;
-            white-space: nowrap;
+            flex-direction: column;
+            align-items: flex-start;
+            max-width: 25%;
+            min-width: 15%;
+            h6 {
+                margin: 0;
+                margin-right: 10px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                line-height: initial;
+                white-space: nowrap;
+            }
         }
-    }
 
-    .contributors .pub-contributors-component {
-        & > :first-child {
-            padding-top: 8px;
-        }
-        overflow: scroll;
-    }
-
-    .click-to-copy {
-        margin-left: -5px;
-    }
-
-    .bp3-button,
-    .bp3-button:hover,
-    .bp3-icon,
-    a {
-        color: inherit;
-    }
-
-    .publication-dates {
-        .full-height-date {
-            height: 30px;
-            line-height: 30px;
-        }
-    }
-
-    .collections {
-        .collection-list {
+        .contributors .pub-contributors-component {
+            & > :first-child {
+                padding-top: 8px;
+            }
             overflow: scroll;
-            .collection-list-entry {
-                display: block;
-                &:not(:last-child) {
-                    margin-bottom: 7px;
+        }
+
+        .click-to-copy {
+            margin-left: -5px;
+        }
+
+        .bp3-button,
+        .bp3-button:hover,
+        .bp3-icon,
+        a {
+            color: inherit;
+        }
+
+        .publication-dates {
+            .full-height-date {
+                height: 30px;
+                line-height: 30px;
+            }
+        }
+
+        .collections {
+            .collection-list {
+                overflow: scroll;
+                .collection-list-entry {
+                    display: block;
+                    &:not(:last-child) {
+                        margin-bottom: 7px;
+                    }
                 }
             }
         }

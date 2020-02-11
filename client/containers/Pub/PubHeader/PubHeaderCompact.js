@@ -25,6 +25,7 @@ const PubHeaderCompact = (props) => {
 			pubData={pubData}
 			communityData={communityData}
 			className="pub-header-compact-component"
+			showSafetyLayer={true}
 		>
 			<GridWrapper columnClassName="pub inner">
 				<a href={`/pub/${pubData.slug}`}>{pubData.title}</a>

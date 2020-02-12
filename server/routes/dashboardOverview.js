@@ -9,7 +9,7 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-import { getOverviewData } from '../utils/overviewQueries';
+import { getOverview, sanitizeOverview } from '../utils/queryHelpers';
 
 app.get(
 	[
@@ -32,15 +32,16 @@ app.get(
 
 		return getInitialData(req, true)
 			.then((initialData) => {
-				return Promise.all([initialData, getOverviewData(initialData)]);
+				return Promise.all([initialData, getOverview(initialData)]);
 			})
 			.then(([initialData, overviewData]) => {
+				const sanitizedOverviewData = sanitizeOverview(initialData, overviewData);
 				return renderToNodeStream(
 					res,
 					<Html
 						chunkName="DashboardOverview"
 						initialData={initialData}
-						viewData={{ overviewData: overviewData }}
+						viewData={{ overviewData: sanitizedOverviewData }}
 						headerComponents={generateMetaComponents({
 							initialData: initialData,
 							title: `Overview · ${initialData.scopeData.elements.activeTarget.title}`,

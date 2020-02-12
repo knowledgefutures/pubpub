@@ -15,18 +15,18 @@ export default (communityData, locationData, scopeData) => {
 		return true;
 	});
 
-	cleanedData.collections = cleanedData.collections.filter((item) => {
-		return isCommunityAdmin || item.isPublic;
-	});
-
-	cleanedData.collections = cleanedData.collections.map((collection) => {
-		if (!collection.pageId) {
-			return collection;
-		}
-		return {
-			...collection,
-			page: availablePages[collection.pageId],
-		};
-	});
+	cleanedData.collections = cleanedData.collections
+		.filter((item) => {
+			return isCommunityAdmin || item.isPublic;
+		})
+		.map((collection) => {
+			if (!collection.pageId) {
+				return collection;
+			}
+			return {
+				...collection,
+				page: availablePages[collection.pageId],
+			};
+		});
 	return cleanedData;
 };

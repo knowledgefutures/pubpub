@@ -18,17 +18,19 @@ export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) =
 		versionNumber,
 		true,
 	);
-	let setFirstKeyAt = () => {};
-	let setLatestKeyAt = () => {};
+	let setFirstKeyAt;
+	let setLatestKeyAt;
 	if (checkpointUpdates) {
 		const whereQuery = { where: { id: activeBranch.id } };
-		setFirstKeyAt = activeBranch.firstKeyAt
-			? () => {}
-			: Branch.update({ firstKeyAt: checkpointUpdates.firstKeyAt }, whereQuery);
-		setLatestKeyAt =
-			new Date(activeBranch.latestKeyAt) > checkpointUpdates.latestKeyAt
-				? () => {}
-				: Branch.update({ latestKeyAt: checkpointUpdates.latestKeyAt }, whereQuery);
+		if (activeBranch.firstKeyAt) {
+			setFirstKeyAt = Branch.update({ firstKeyAt: checkpointUpdates.firstKeyAt }, whereQuery);
+		}
+		if (new Date(activeBranch.latestKeyAt) > checkpointUpdates.latestKeyAt) {
+			setLatestKeyAt = Branch.update(
+				{ latestKeyAt: checkpointUpdates.latestKeyAt },
+				whereQuery,
+			);
+		}
 	}
 	await setFirstKeyAt;
 	await setLatestKeyAt;

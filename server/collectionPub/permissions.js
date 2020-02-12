@@ -1,10 +1,10 @@
-import { getScopeData } from '../utils/scopeData';
+import { getScope } from '../utils/queryHelpers';
 
 export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	if (!userId) {
 		return {};
 	}
-	const scopeData = await getScopeData({
+	const scopeData = await getScope({
 		communityId: communityId,
 		collectionId: collectionId,
 		loginId: userId,

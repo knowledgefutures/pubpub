@@ -1,4 +1,4 @@
-import { getScopeData } from '../utils/scopeData';
+import { getScope } from '../utils/queryHelpers';
 import { Discussion } from '../models';
 
 const userEditableFields = ['title', 'content', 'text', 'isArchived', 'highlights', 'labels'];
@@ -15,7 +15,7 @@ export const getPermissions = async ({
 		return {};
 	}
 
-	const scopeData = await getScopeData({
+	const scopeData = await getScope({
 		communityId: communityId,
 		collectionId: collectionId,
 		pubId: pubId,

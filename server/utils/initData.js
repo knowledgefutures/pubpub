@@ -1,157 +1,7 @@
 import queryString from 'query-string';
-import { splitThreads, getVisibileThreads } from 'utils';
-import {
-	Collection,
-	Community,
-	Page,
-	User,
-	Pub,
-	CollectionPub,
-	Thread,
-	ThreadUser,
-} from '../models';
-import { getScopeData } from './scopeData';
+import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
-
-const getCounts = async (scopeData, loginId) => {
-	/* Get counts for threads, reviews, and forks */
-	const { activeTarget, activeTargetType } = scopeData.elements;
-	let discussionCount = 0;
-	let reviewCount = 0;
-	let forkCount = 0;
-	let pubs = [];
-	const pubQueryOptions = {
-		attributes: ['id'],
-		include: [
-			{
-				model: Thread,
-				as: 'threads',
-				attributes: ['id', 'isClosed', 'visibility', 'forkId', 'reviewId'],
-				include: [
-					{
-						model: ThreadUser,
-						as: 'threadUsers',
-						attributes: ['id', 'userId', 'threadId'],
-					},
-				],
-			},
-		],
-	};
-	if (activeTargetType === 'pub') {
-		const pubData = await Pub.findOne({
-			where: { id: activeTarget.id },
-			...pubQueryOptions,
-		});
-		pubs = [pubData];
-	}
-
-	if (activeTargetType === 'collection') {
-		const collectionData = await Collection.findOne({
-			where: { id: activeTarget.id },
-			attributes: ['id'],
-			include: [
-				{
-					model: CollectionPub,
-					as: 'collectionPubs',
-					include: [{ model: Pub, as: 'pub', ...pubQueryOptions }],
-				},
-			],
-		});
-		pubs = collectionData.collectionPubs;
-	}
-	if (activeTargetType === 'community') {
-		const communityCountData = await Community.findOne({
-			where: { id: activeTarget.id },
-			attributes: ['id'],
-			include: [{ model: Pub, as: 'pubs', ...pubQueryOptions }],
-		});
-		pubs = communityCountData.pubs;
-	}
-	pubs.forEach((pub) => {
-		const openThreads = pub.threads.filter((thread) => {
-			return !thread.isClosed;
-		});
-		const visibleThreads = getVisibileThreads(openThreads, scopeData, loginId);
-		const { discussions, forks, reviews } = splitThreads(visibleThreads);
-		reviewCount += discussions.length;
-		forkCount += forks.length;
-		discussionCount += reviews.length;
-	});
-
-	return {
-		discussionCount: discussionCount,
-		forkCount: forkCount,
-		reviewCount: reviewCount,
-	};
-};
-
-const cleanCommunityData = (communityData, locationData, scopeData) => {
-	const cleanedData = { ...communityData };
-	const isCommunityAdmin = scopeData.activePermissions.canAdminCommunity;
-	const availablePages = {};
-	cleanedData.pages = cleanedData.pages.filter((item) => {
-		if (!scopeData && !item.isPublic && locationData.query.access !== item.viewHash) {
-			return false;
-		}
-
-		availablePages[item.id] = {
-			id: item.id,
-			title: item.title,
-			slug: item.slug,
-		};
-		return true;
-	});
-
-	cleanedData.collections = cleanedData.collections.filter((item) => {
-		return isCommunityAdmin || item.isPublic;
-	});
-
-	cleanedData.collections = cleanedData.collections.map((collection) => {
-		if (!collection.pageId) {
-			return collection;
-		}
-		return {
-			...collection,
-			page: availablePages[collection.pageId],
-		};
-	});
-	return cleanedData;
-};
-const getBaseCommunityData = (locationData, whereQuery) => {
-	return Community.findOne({
-		where: whereQuery,
-		attributes: {
-			exclude: ['createdAt', 'updatedAt'],
-		},
-		include: [
-			{
-				model: Page,
-				as: 'pages',
-				attributes: {
-					exclude: ['createdAt', 'updatedAt', 'communityId'],
-				},
-			},
-			{
-				model: User,
-				as: 'admins',
-				through: { attributes: [] },
-				attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
-			},
-			{
-				model: Collection,
-				as: 'collections',
-				separate: true,
-			},
-		],
-	}).then((communityResult) => {
-		if (!communityResult) {
-			return null;
-		}
-
-		return communityResult.toJSON();
-	});
-};
 
 export const getInitialData = async (req, isDashboard) => {
 	const hostname = req.hostname;
@@ -214,35 +64,27 @@ export const getInitialData = async (req, isDashboard) => {
 		hostname.indexOf('.pubpub.org') > -1
 			? { subdomain: hostname.replace('.pubpub.org', '') }
 			: { domain: hostname };
-	const communityData = await getBaseCommunityData(locationData, whereQuery);
-	if (!communityData) {
-		throw new Error('Community Not Found');
-	}
+	const communityData = await getCommunity(locationData, whereQuery);
 	if (communityData.domain && whereQuery.subdomain && !locationData.isDuqDuq) {
 		throw new Error(`UseCustomDomain:${communityData.domain}`);
 	}
-	// loginData.isAdmin = checkIfAdmin(communityData.admins, user.id);
 	if (req.headers.localhost) {
 		/* eslint-disable-next-line no-param-reassign */
 		communityData.domain = req.headers.localhost;
 	}
-	const scopeData = await getScopeData({
+	const scopeData = await getScope({
 		communityData: communityData,
 		pubSlug: locationData.params.pubSlug,
 		collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
 		acessHash: locationData.query.access,
 		loginId: loginData.id,
+		isDashboard: isDashboard,
 	});
-	const activeCounts = isDashboard ? await getCounts(scopeData, loginData.id) : {};
-	const enhancedScopeData = {
-		...scopeData,
-		activeCounts: activeCounts,
-	};
-	const cleanedCommunityData = cleanCommunityData(communityData, locationData, scopeData);
+	const cleanedCommunityData = sanitizeCommunity(communityData, locationData, scopeData);
 	return {
 		communityData: cleanedCommunityData,
 		loginData: loginData,
 		locationData: locationData,
-		scopeData: enhancedScopeData,
+		scopeData: scopeData,
 	};
 };

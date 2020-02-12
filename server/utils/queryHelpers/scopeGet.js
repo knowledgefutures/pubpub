@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { splitThreads } from 'utils';
 import {
 	Collection,
 	Community,
@@ -7,12 +8,15 @@ import {
 	Member,
 	PublicPermissions,
 	Branch,
-} from '../models';
+} from '../../models';
+import buildPubOptions from './pubOptions';
+import sanitizeThreads from './threadsSanitize';
 
 let getScopeElements;
 let getPublicPermissionsData;
 let getScopeMemberData;
 let getActivePermissions;
+let getActiveCounts;
 
 /* getScopeData can be called from either a route (e.g. to authenticate */
 /* whether a user has access to /pub/example), or it can be called from */
@@ -20,7 +24,7 @@ let getActivePermissions;
 /* it is likely that communityData, collectionSlug, and pubSlug will be used. */
 /* When called from an API endpoint, it is likely that communityId, */
 /* collectionId, and pubId will be used. */
-export const getScopeData = async (scopeInputs) => {
+export default async (scopeInputs) => {
 	/* scopeInputs = 
 		{
 			communityId, communityData,
@@ -28,7 +32,7 @@ export const getScopeData = async (scopeInputs) => {
 			pubId, pubSlug,
 			accessHash,
 			loginId,
-
+			isDashboard,
 		}
 	*/
 	const scopeElements = await getScopeElements(scopeInputs);
@@ -40,11 +44,13 @@ export const getScopeData = async (scopeInputs) => {
 		publicPermissionsData,
 		scopeMemberData,
 	);
+	const activeCounts = await getActiveCounts(scopeInputs, scopeElements, activePermissions);
 	return {
 		elements: scopeElements,
 		optionsData: publicPermissionsData,
 		memberData: scopeMemberData,
 		activePermissions: activePermissions,
+		activeCounts: activeCounts,
 	};
 };
 
@@ -266,5 +272,66 @@ getActivePermissions = async (
 		canAdmin: permissionLevelIndex > 2,
 		canAdminCommunity: canAdminCommunity,
 		...activePublicPermissions,
+	};
+};
+
+getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
+	/* Get counts for threads, reviews, and forks */
+	const { loginId, isDashboard } = scopeInputs;
+	if (isDashboard) {
+		return {};
+	}
+
+	const { activeTarget, activeTargetType } = scopeElements;
+	let discussionCount = 0;
+	let reviewCount = 0;
+	let forkCount = 0;
+	let pubs = [];
+	const pubQueryOptions = buildPubOptions({ isAuth: true });
+	if (activeTargetType === 'pub') {
+		const pubData = await Pub.findOne({
+			where: { id: activeTarget.id },
+			...pubQueryOptions,
+		});
+		pubs = [pubData];
+	}
+
+	if (activeTargetType === 'collection') {
+		const collectionData = await Collection.findOne({
+			where: { id: activeTarget.id },
+			attributes: ['id'],
+			include: [
+				{
+					model: CollectionPub,
+					as: 'collectionPubs',
+					include: [{ model: Pub, as: 'pub', ...pubQueryOptions }],
+				},
+			],
+		});
+		pubs = collectionData.collectionPubs;
+	}
+	if (activeTargetType === 'community') {
+		const communityCountData = await Community.findOne({
+			where: { id: activeTarget.id },
+			attributes: ['id'],
+			include: [{ model: Pub, as: 'pubs', ...pubQueryOptions }],
+		});
+		pubs = communityCountData.pubs;
+	}
+	pubs.forEach((pub) => {
+		const openThreads = pub.threads.filter((thread) => {
+			return !thread.isClosed;
+		});
+		const visibleThreads = sanitizeThreads(openThreads, activePermissions.canView, loginId);
+		const { discussions, forks, reviews } = splitThreads(visibleThreads);
+		reviewCount += discussions.length;
+		forkCount += forks.length;
+		discussionCount += reviews.length;
+	});
+
+	return {
+		discussionCount: discussionCount,
+		forkCount: forkCount,
+		reviewCount: reviewCount,
 	};
 };

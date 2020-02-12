@@ -46,7 +46,7 @@ const getMode = (path, params) => {
 app.get(
 	[
 		'/pub/:pubSlug',
-		'/pub/:pubSlug/draft',
+		// '/pub/:pubSlug/draft',
 		'/pub/:pubSlug/branch/new',
 		'/pub/:pubSlug/branch/:branchShortId',
 		'/pub/:pubSlug/branch/:branchShortId/:versionNumber',

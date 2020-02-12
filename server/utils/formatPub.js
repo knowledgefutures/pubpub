@@ -1,5 +1,5 @@
 import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
-import { splitThreads, getVisibileThreads } from 'utils';
+import { splitThreads, getVisibleThreads } from 'utils';
 // import { getBranchAccess } from '../branch/permissions';
 // import { checkIfSuperAdmin } from '.';
 
@@ -100,13 +100,13 @@ const filterCollectionPubs = ({ collectionPubs = [] }, canAdminCommunity) =>
 		return item.collection.isPublic || canAdminCommunity;
 	});
 
-const filterThreads = (threads, scopeData, loginData) => {
-	return threads.filter((thread) => {
-		const { canView } = scopeData.activePermissions;
-		const hasPrivateAccess = null; // TODO thread.reviewers.find(loginId), thread.permissions.find(loginId)
-		return hasPrivateAccess || canView || thread.visibility === 'public';
-	});
-};
+// const filterThreads = (threads, scopeData, loginData) => {
+// 	return threads.filter((thread) => {
+// 		const { canView } = scopeData.activePermissions;
+// 		const hasPrivateAccess = null; // TODO thread.reviewers.find(loginId), thread.permissions.find(loginId)
+// 		return hasPrivateAccess || canView || thread.visibility === 'public';
+// 	});
+// };
 export const formatAndAuthenticatePub = (
 	// { pub, loginData, communityAdminData, accessHash, branchShortId, versionNumber },
 	{ pub, loginId, scopeData, branchShortId, versionNumber },
@@ -150,7 +150,7 @@ export const formatAndAuthenticatePub = (
 	// const publicBranch = pub.branches.find((br) => br.title === 'public');
 	// const hasPublicBranch = branches.some((br) => br.title === 'public');
 	// const branchesWithPublic = hasPublicBranch ? branches : [publicBranch, ...branches];
-	const filteredThreads = getVisibileThreads(pub.threads, scopeData, loginId);
+	const filteredThreads = getVisibleThreads(pub.threads, scopeData, loginId);
 	const { discussions, forks, reviews } = splitThreads(filteredThreads);
 	return {
 		...pub,

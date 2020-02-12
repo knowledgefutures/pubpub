@@ -64,6 +64,7 @@ export default (sequelize, dataTypes) => {
 						// Merge,
 						PubVersion,
 						// Review,
+						Release,
 						Thread,
 					} = models;
 					Pub.hasMany(PubAttribution, {
@@ -99,6 +100,11 @@ export default (sequelize, dataTypes) => {
 					Pub.hasMany(Branch, {
 						onDelete: 'CASCADE',
 						as: 'branches',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(Release, {
+						onDelete: 'CASCADE',
+						as: 'releases',
 						foreignKey: 'pubId',
 					});
 					// Pub.hasMany(Merge, {

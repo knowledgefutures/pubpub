@@ -1,32 +1,12 @@
-/* eslint-disable import/prefer-default-export */
 import { buildSchema, jsonToNode, getNotes } from '@pubpub/editor';
-
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
-import {
-	Branch,
-	BranchPermission,
-	Collection,
-	CollectionAttribution,
-	CollectionPub,
-	Discussion,
-	Export,
-	Page,
-	Pub,
-	PubAttribution,
-	PubManager,
-	PubVersion,
-	Review,
-	ReviewEvent,
-	Thread,
-	ThreadUser,
-	User,
-} from '../models';
+import { Branch, Pub, PubVersion } from '../models';
 import { generateCiteHtmls } from '../editor/queries';
 
-import { attributesPublicUser } from '.';
 import { generateCitationHTML } from './citations';
 import { getBranchDoc } from './firebaseAdmin';
 import { formatAndAuthenticatePub } from './formatPub';
+import { buildPubOptions } from './queryHelpers';
 
 export const findPubQuery = (slug, communityId) =>
 	Pub.findOne({
@@ -34,133 +14,135 @@ export const findPubQuery = (slug, communityId) =>
 			slug: slug,
 			communityId: communityId,
 		},
-		include: [
-			{
-				model: PubManager,
-				as: 'managers',
-				separate: true,
-				include: [
-					{
-						model: User,
-						as: 'user',
-						attributes: attributesPublicUser,
-					},
-				],
-			},
-			{
-				model: PubAttribution,
-				as: 'attributions',
-				required: false,
-				separate: true,
-				include: [
-					{
-						model: User,
-						as: 'user',
-						required: false,
-						attributes: attributesPublicUser,
-					},
-				],
-			},
-			{
-				model: CollectionPub,
-				as: 'collectionPubs',
-				required: false,
-				separate: true,
-				include: [
-					{
-						model: Collection,
-						as: 'collection',
-						include: [
-							{
-								model: Page,
-								as: 'page',
-								required: false,
-								attributes: ['id', 'title', 'slug'],
-							},
-							{
-								model: CollectionAttribution,
-								as: 'attributions',
-								include: [
-									{
-										model: User,
-										as: 'user',
-									},
-								],
-							},
-						],
-					},
-				],
-			},
-			{
-				required: false,
-				separate: true,
-				model: Thread,
-				as: 'threads',
-				include: [
-					{
-						model: User,
-						as: 'author',
-						attributes: attributesPublicUser,
-					},
-					{
-						model: ThreadUser,
-						as: 'threadUsers',
-						include: [
-							{
-								model: User,
-								as: 'author',
-								attributes: attributesPublicUser,
-							},
-						],
-					},
-				],
-			},
-			{
-				// separate: true,
-				model: Branch,
-				as: 'branches',
-				required: true,
-				include: [
-					{
-						model: BranchPermission,
-						as: 'permissions',
-						separate: true,
-						required: false,
-						include: [
-							{
-								model: User,
-								as: 'user',
-								attributes: attributesPublicUser,
-							},
-						],
-					},
-					{
-						model: Export,
-						as: 'exports',
-					},
-				],
-			},
-			// {
-			// 	model: Review,
-			// 	as: 'reviews',
-			// 	include: [
-			// 		{
-			// 			model: ReviewEvent,
-			// 			as: 'reviewEvents',
-			// 			required: false,
-			// 			include: [
-			// 				{
-			// 					model: User,
-			// 					as: 'user',
-			// 					attributes: attributesPublicUser,
-			// 				},
-			// 			],
-			// 		},
-			// 	],
-			// },
-		],
+		...buildPubOptions(false, true),
+		// include: [
+		// 	{
+		// 		model: PubManager,
+		// 		as: 'managers',
+		// 		separate: true,
+		// 		include: [
+		// 			{
+		// 				model: User,
+		// 				as: 'user',
+		// 				attributes: attributesPublicUser,
+		// 			},
+		// 		],
+		// 	},
+		// 	{
+		// 		model: PubAttribution,
+		// 		as: 'attributions',
+		// 		required: false,
+		// 		separate: true,
+		// 		include: [
+		// 			{
+		// 				model: User,
+		// 				as: 'user',
+		// 				required: false,
+		// 				attributes: attributesPublicUser,
+		// 			},
+		// 		],
+		// 	},
+		// 	{
+		// 		model: CollectionPub,
+		// 		as: 'collectionPubs',
+		// 		required: false,
+		// 		separate: true,
+		// 		include: [
+		// 			{
+		// 				model: Collection,
+		// 				as: 'collection',
+		// 				include: [
+		// 					{
+		// 						model: Page,
+		// 						as: 'page',
+		// 						required: false,
+		// 						attributes: ['id', 'title', 'slug'],
+		// 					},
+		// 					{
+		// 						model: CollectionAttribution,
+		// 						as: 'attributions',
+		// 						include: [
+		// 							{
+		// 								model: User,
+		// 								as: 'user',
+		// 							},
+		// 						],
+		// 					},
+		// 				],
+		// 			},
+		// 		],
+		// 	},
+		// 	{
+		// 		required: false,
+		// 		separate: true,
+		// 		model: Thread,
+		// 		as: 'threads',
+		// 		include: [
+		// 			{
+		// 				model: User,
+		// 				as: 'author',
+		// 				attributes: attributesPublicUser,
+		// 			},
+		// 			{
+		// 				model: ThreadUser,
+		// 				as: 'threadUsers',
+		// 				include: [
+		// 					{
+		// 						model: User,
+		// 						as: 'author',
+		// 						attributes: attributesPublicUser,
+		// 					},
+		// 				],
+		// 			},
+		// 		],
+		// 	},
+		// 	{
+		// 		// separate: true,
+		// 		model: Branch,
+		// 		as: 'branches',
+		// 		required: true,
+		// 		include: [
+		// 			{
+		// 				model: BranchPermission,
+		// 				as: 'permissions',
+		// 				separate: true,
+		// 				required: false,
+		// 				include: [
+		// 					{
+		// 						model: User,
+		// 						as: 'user',
+		// 						attributes: attributesPublicUser,
+		// 					},
+		// 				],
+		// 			},
+		// 			{
+		// 				model: Export,
+		// 				as: 'exports',
+		// 			},
+		// 		],
+		// 	},
+		// 	// {
+		// 	// 	model: Review,
+		// 	// 	as: 'reviews',
+		// 	// 	include: [
+		// 	// 		{
+		// 	// 			model: ReviewEvent,
+		// 	// 			as: 'reviewEvents',
+		// 	// 			required: false,
+		// 	// 			include: [
+		// 	// 				{
+		// 	// 					model: User,
+		// 	// 					as: 'user',
+		// 	// 					attributes: attributesPublicUser,
+		// 	// 				},
+		// 	// 			],
+		// 	// 		},
+		// 	// 	],
+		// 	// },
+		// ],
 	});
 
+// getPubFromRoute(req, communityId, getThreads)
 export const findPub = (req, initialData, mode) => {
 	return findPubQuery(req.params.pubSlug.toLowerCase(), initialData.communityData.id)
 		.then((pubData) => {
@@ -262,10 +244,11 @@ export const findPub = (req, initialData, mode) => {
 				...formattedPubData,
 				footnotes: footnotesData,
 				citations: citationsData,
+				citationData: citationHtml,
 				initialDoc: content,
 				initialDocKey: mostRecentRemoteKey,
 				historyData: historyData,
-				citationData: citationHtml,
+				
 			};
 
 			/* When getFirebaseDoc stores a checkpoint update, it also returns */

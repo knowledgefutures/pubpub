@@ -197,23 +197,6 @@ export const splitThreads = (threads) => {
 	};
 };
 
-export const getVisibileThreads = (threads, scopeData, loginId) => {
-	return threads.filter((thread) => {
-		if (thread.visibility === 'public') {
-			return true;
-		}
-		if (thread.visibility === 'members') {
-			return scopeData.activePermissions.canView;
-		}
-		if (thread.visibility === 'private') {
-			return thread.threadUsers.find((threadUser) => {
-				return threadUser.userId === loginId;
-			});
-		}
-		return false;
-	});
-};
-
 export function checkForAsset(url) {
 	let checkCount = 0;
 	const maxCheckCount = 10;

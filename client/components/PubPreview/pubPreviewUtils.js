@@ -28,7 +28,7 @@ export const generateAuthorString = (pubData) => {
 			const prefix = index === authors.length - 1 && index !== 0 ? ' and ' : '';
 			const user = author.user || {};
 			return (
-				<span key={`author-${user.id}`}>
+				<span key={`author-${author.id}`}>
 					{prefix}
 					{user.fullName}
 					{separator}

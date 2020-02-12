@@ -76,18 +76,8 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 		],
 	});
 
-	return getInitialData(req)
-		.then((initialData) => {
-			const communityAdminQuery = CommunityAdmin.findOne({
-				where: {
-					userId: initialData.loginData.id,
-					communityId: initialData.communityData.id || null,
-				},
-			});
-			return Promise.all([initialData, getUserData, communityAdminQuery]);
-		})
-
-		.then(([initialData, userData, communityAdminData]) => {
+	return Promise.all([getInitialData(req), getUserData])
+		.then(([initialData, userData]) => {
 			if (!userData) {
 				throw new Error('User Not Found');
 			}
@@ -106,13 +96,13 @@ app.get(['/user/:slug', '/user/:slug/:mode'], (req, res, next) => {
 								...attribution.pub,
 								attributions: [{ ...attribution, user: userDataJson }],
 							},
-							loginData: initialData.loginData,
-							communityAdminData: communityAdminData,
+							loginId: initialData.loginData.id,
+							scopeData: initialData.scopeData,
 							req: { query: {}, params: {} },
 						},
 						false,
 					);
-					return formattedPub && isPubPublic(formattedPub);
+					return formattedPub && isPubPublic(formattedPub, initialData.scopeData);
 				});
 			}
 

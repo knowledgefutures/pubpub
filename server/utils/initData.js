@@ -1,13 +1,22 @@
 import queryString from 'query-string';
-import { splitThreads } from 'utils';
-import { Collection, Community, Page, User, Pub, CollectionPub, Thread } from '../models';
+import { splitThreads, getVisibileThreads } from 'utils';
+import {
+	Collection,
+	Community,
+	Page,
+	User,
+	Pub,
+	CollectionPub,
+	Thread,
+	ThreadUser,
+} from '../models';
 import { getScopeData } from './scopeData';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 
-export const getCounts = async (scopeElements) => {
+const getCounts = async (scopeData, loginId) => {
 	/* Get counts for threads, reviews, and forks */
-	const { activeTarget, activeTargetType } = scopeElements;
+	const { activeTarget, activeTargetType } = scopeData.elements;
 	let discussionCount = 0;
 	let reviewCount = 0;
 	let forkCount = 0;
@@ -18,7 +27,14 @@ export const getCounts = async (scopeElements) => {
 			{
 				model: Thread,
 				as: 'threads',
-				attributes: ['id', 'isClosed', 'forkId', 'reviewId'],
+				attributes: ['id', 'isClosed', 'visibility', 'forkId', 'reviewId'],
+				include: [
+					{
+						model: ThreadUser,
+						as: 'threadUsers',
+						attributes: ['id', 'userId', 'threadId'],
+					},
+				],
 			},
 		],
 	};
@@ -56,7 +72,8 @@ export const getCounts = async (scopeElements) => {
 		const openThreads = pub.threads.filter((thread) => {
 			return !thread.isClosed;
 		});
-		const { discussions, forks, reviews } = splitThreads(openThreads);
+		const visibleThreads = getVisibileThreads(openThreads, scopeData, loginId);
+		const { discussions, forks, reviews } = splitThreads(visibleThreads);
 		reviewCount += discussions.length;
 		forkCount += forks.length;
 		discussionCount += reviews.length;
@@ -216,7 +233,7 @@ export const getInitialData = async (req, isDashboard) => {
 		acessHash: locationData.query.access,
 		loginId: loginData.id,
 	});
-	const activeCounts = isDashboard ? await getCounts(scopeData.elements) : {};
+	const activeCounts = isDashboard ? await getCounts(scopeData, loginData.id) : {};
 	const enhancedScopeData = {
 		...scopeData,
 		activeCounts: activeCounts,

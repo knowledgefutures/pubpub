@@ -8,7 +8,6 @@ import {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
-	CommunityAdmin,
 	Discussion,
 	Export,
 	Page,
@@ -18,6 +17,8 @@ import {
 	PubVersion,
 	Review,
 	ReviewEvent,
+	Thread,
+	ThreadUser,
 	User,
 } from '../models';
 import { generateCiteHtmls } from '../editor/queries';
@@ -93,13 +94,24 @@ export const findPubQuery = (slug, communityId) =>
 			{
 				required: false,
 				separate: true,
-				model: Discussion,
-				as: 'discussions',
+				model: Thread,
+				as: 'threads',
 				include: [
 					{
 						model: User,
 						as: 'author',
 						attributes: attributesPublicUser,
+					},
+					{
+						model: ThreadUser,
+						as: 'threadUsers',
+						include: [
+							{
+								model: User,
+								as: 'author',
+								attributes: attributesPublicUser,
+							},
+						],
 					},
 				],
 			},
@@ -128,38 +140,30 @@ export const findPubQuery = (slug, communityId) =>
 					},
 				],
 			},
-			{
-				model: Review,
-				as: 'reviews',
-				include: [
-					{
-						model: ReviewEvent,
-						as: 'reviewEvents',
-						required: false,
-						include: [
-							{
-								model: User,
-								as: 'user',
-								attributes: attributesPublicUser,
-							},
-						],
-					},
-				],
-			},
+			// {
+			// 	model: Review,
+			// 	as: 'reviews',
+			// 	include: [
+			// 		{
+			// 			model: ReviewEvent,
+			// 			as: 'reviewEvents',
+			// 			required: false,
+			// 			include: [
+			// 				{
+			// 					model: User,
+			// 					as: 'user',
+			// 					attributes: attributesPublicUser,
+			// 				},
+			// 			],
+			// 		},
+			// 	],
+			// },
 		],
 	});
 
 export const findPub = (req, initialData, mode) => {
-	const getPubData = findPubQuery(req.params.pubSlug.toLowerCase(), initialData.communityData.id);
-
-	const getCommunityAdminData = CommunityAdmin.findOne({
-		where: {
-			userId: initialData.loginData.id,
-			communityId: initialData.communityData.id,
-		},
-	});
-	return Promise.all([getPubData, getCommunityAdminData])
-		.then(([pubData, communityAdminData]) => {
+	return findPubQuery(req.params.pubSlug.toLowerCase(), initialData.communityData.id)
+		.then((pubData) => {
 			if (!pubData) {
 				throw new Error('Pub Not Found');
 			}
@@ -168,8 +172,8 @@ export const findPub = (req, initialData, mode) => {
 			const formattedPubData = formatAndAuthenticatePub(
 				{
 					pub: pubDataJson,
-					loginData: initialData.loginData,
-					communityAdminData: communityAdminData,
+					loginId: initialData.loginData.id,
+					scopeData: initialData.scopeData,
 					accessHash: req.query.access,
 					branchShortId: req.params.branchShortId,
 					versionNumber: req.params.versionNumber,

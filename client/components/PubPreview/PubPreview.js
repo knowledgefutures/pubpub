@@ -38,7 +38,7 @@ const defaultProps = {
 
 const PubPreview = function(props) {
 	const { pubData, size, communityData, customPubUrl } = props;
-	const { communityData: localCommunityData } = useContext(PageContext);
+	const { communityData: localCommunityData, scopeData } = useContext(PageContext);
 	const resizedHeaderLogo =
 		props.communityData && getResizedUrl(props.communityData.headerLogo, 'fit-in', '125x35');
 	const attributions = pubData.attributions || [];
@@ -47,7 +47,7 @@ const PubPreview = function(props) {
 	});
 
 	const publishedDate = getPubPublishedDate(pubData);
-	const isPrivate = !isPubPublic(pubData);
+	const isPrivate = !isPubPublic(pubData, scopeData);
 	const showBannerImage = ['large', 'medium'].includes(size);
 	const showUpperByline = !!authors.length && !props.hideByline && ['minimal'].includes(size);
 	const showLowerByline =

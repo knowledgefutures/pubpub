@@ -36,7 +36,7 @@ export default (sequelize, dataTypes) => {
 			],
 			classMethods: {
 				associate: (models) => {
-					const { Thread, Community, Collection, Pub, User } = models;
+					const { Thread, ThreadUser, Community, Collection, Pub, User } = models;
 					Thread.belongsTo(Community, {
 						onDelete: 'CASCADE',
 						as: 'community',
@@ -56,6 +56,11 @@ export default (sequelize, dataTypes) => {
 						onDelete: 'CASCADE',
 						as: 'author',
 						foreignKey: 'userId',
+					});
+					Thread.hasMany(ThreadUser, {
+						onDelete: 'CASCADE',
+						as: 'threadUsers',
+						foreignKey: 'threadId',
 					});
 				},
 			},

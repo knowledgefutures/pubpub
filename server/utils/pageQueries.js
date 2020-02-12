@@ -20,12 +20,6 @@ export const findPage = (pageId, useIncludes, initialData) => {
 	const pageQuery = Page.findOne({
 		where: { id: pageId },
 	});
-	const communityAdminQuery = CommunityAdmin.findOne({
-		where: {
-			userId: initialData.loginData.id,
-			communityId: initialData.communityData.id,
-		},
-	});
 	const pubsQuery =
 		useIncludes &&
 		Pub.findAll({
@@ -64,11 +58,11 @@ export const findPage = (pageId, useIncludes, initialData) => {
 						},
 					],
 				},
-				{
-					model: Review,
-					as: 'reviews',
-					separate: true,
-				},
+				// {
+				// 	model: Review,
+				// 	as: 'reviews',
+				// 	separate: true,
+				// },
 				{
 					model: CollectionPub,
 					as: 'collectionPubs',
@@ -83,27 +77,25 @@ export const findPage = (pageId, useIncludes, initialData) => {
 				},
 			],
 		});
-	return Promise.all([pageQuery, communityAdminQuery, pubsQuery]).then(
-		([pageData, communityAdminData, pubsData]) => {
-			const formattedPubsData = pubsData
-				.map((pubData) => {
-					return formatAndAuthenticatePub(
-						{
-							pub: pubData.toJSON(),
-							loginData: initialData.loginData,
-							communityAdminData: communityAdminData,
-							req: { query: {}, params: {} },
-						},
-						false,
-					);
-				})
-				.filter((formattedPub) => {
-					return formattedPub;
-				});
-			return {
-				...pageData.toJSON(),
-				pubs: formattedPubsData,
-			};
-		},
-	);
+	return Promise.all([pageQuery, pubsQuery]).then(([pageData, pubsData]) => {
+		const formattedPubsData = pubsData
+			.map((pubData) => {
+				return formatAndAuthenticatePub(
+					{
+						pub: pubData.toJSON(),
+						loginId: initialData.loginData.id,
+						scopeData: initialData.scopeData,
+						req: { query: {}, params: {} },
+					},
+					false,
+				);
+			})
+			.filter((formattedPub) => {
+				return formattedPub;
+			});
+		return {
+			...pageData.toJSON(),
+			pubs: formattedPubsData,
+		};
+	});
 };

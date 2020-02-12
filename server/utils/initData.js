@@ -1,56 +1,23 @@
 import queryString from 'query-string';
-import {
-	Collection,
-	Community,
-	Page,
-	User,
-	Pub,
-	CollectionPub,
-	Merge,
-	Review,
-	Discussion,
-} from '../models';
+import { Collection, Community, Page, User, Pub, CollectionPub, Thread } from '../models';
 import { getScopeData } from './scopeData';
 
 const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 
-const countActiveThreads = (discussions) => {
-	/* Return the number of non-archived threads from a list of discussions */
-	const threadObject = {};
-	discussions.forEach((discussion) => {
-		const existingThread = threadObject[discussion.threadNumber];
-		if (!existingThread || (existingThread && existingThread === 'active')) {
-			threadObject[discussion.threadNumber] = discussion.isArchived ? 'archived' : 'active';
-		}
-	});
-	return Object.values(threadObject).reduce((prev, curr) => {
-		return curr === 'active' ? prev + 1 : prev;
-	}, 0);
-};
-
 export const getCounts = async (scopeElements) => {
-	/* Get counts for threads, reviews, and merges */
+	/* Get counts for threads, reviews, and forks */
 	const { activeTarget, activeTargetType } = scopeElements;
 	let discussionCount = 0;
 	let reviewCount = 0;
-	let mergeCount = 0;
+	let forkCount = 0;
+	let pubs = [];
 	const pubQueryOptions = {
 		attributes: ['id'],
 		include: [
 			{
-				model: Discussion,
-				as: 'discussions',
-				attributes: ['id', 'threadNumber', 'isArchived'],
-			},
-			{
-				model: Review,
-				as: 'reviews',
-				attributes: ['id'],
-			},
-			{
-				model: Merge,
-				as: 'merges',
-				attributes: ['id'],
+				model: Thread,
+				as: 'threads',
+				attributes: ['id', 'isClosed', 'forkId', 'reviewId'],
 			},
 		],
 	};
@@ -59,9 +26,7 @@ export const getCounts = async (scopeElements) => {
 			where: { id: activeTarget.id },
 			...pubQueryOptions,
 		});
-		discussionCount = countActiveThreads(pubData.discussions);
-		reviewCount = pubData.reviews.length;
-		mergeCount = pubData.merges.length;
+		pubs = [pubData];
 	}
 
 	if (activeTargetType === 'collection') {
@@ -76,16 +41,7 @@ export const getCounts = async (scopeElements) => {
 				},
 			],
 		});
-		discussionCount = collectionData.collectionPubs.reduce((prev, curr) => {
-			return prev + countActiveThreads(curr.pub.discussions);
-		}, 0);
-		reviewCount = collectionData.collectionPubs.reduce((prev, curr) => {
-			return prev + curr.pub.reviews.length;
-		}, 0);
-
-		mergeCount = collectionData.collectionPubs.reduce((prev, curr) => {
-			return prev + curr.pub.merges.length;
-		}, 0);
+		pubs = collectionData.collectionPubs;
 	}
 	if (activeTargetType === 'community') {
 		const communityCountData = await Community.findOne({
@@ -93,22 +49,28 @@ export const getCounts = async (scopeElements) => {
 			attributes: ['id'],
 			include: [{ model: Pub, as: 'pubs', ...pubQueryOptions }],
 		});
-		discussionCount = communityCountData.pubs.reduce((prev, curr) => {
-			return prev + countActiveThreads(curr.discussions);
-		}, 0);
-		reviewCount = communityCountData.pubs.reduce((prev, curr) => {
-			return prev + curr.reviews.length;
-		}, 0);
-
-		mergeCount = communityCountData.pubs.reduce((prev, curr) => {
-			return prev + curr.merges.length;
-		}, 0);
+		pubs = communityCountData.pubs;
 	}
+	pubs.forEach((pub) => {
+		pub.threads
+			.filter((thread) => {
+				return !thread.isClosed;
+			})
+			.forEach((thread) => {
+				if (thread.reviewId) {
+					reviewCount += 1;
+				} else if (thread.forkId) {
+					forkCount += 1;
+				} else {
+					discussionCount += 1;
+				}
+			});
+	});
 
 	return {
 		discussionCount: discussionCount,
+		forkCount: forkCount,
 		reviewCount: reviewCount,
-		mergeCount: mergeCount,
 	};
 };
 

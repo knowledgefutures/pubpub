@@ -59,11 +59,12 @@ export default (sequelize, dataTypes) => {
 						PubManager,
 						CollectionPub,
 						Community,
-						Discussion,
+						// Discussion,
 						Branch,
-						Merge,
+						// Merge,
 						PubVersion,
-						Review,
+						// Review,
+						Thread,
 					} = models;
 					Pub.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
@@ -85,9 +86,14 @@ export default (sequelize, dataTypes) => {
 						as: 'community',
 						foreignKey: 'communityId',
 					});
-					Pub.hasMany(Discussion, {
+					// Pub.hasMany(Discussion, {
+					// 	onDelete: 'CASCADE',
+					// 	as: 'discussions',
+					// 	foreignKey: 'pubId',
+					// });
+					Pub.hasMany(Thread, {
 						onDelete: 'CASCADE',
-						as: 'discussions',
+						as: 'threads',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(Branch, {
@@ -95,21 +101,21 @@ export default (sequelize, dataTypes) => {
 						as: 'branches',
 						foreignKey: 'pubId',
 					});
-					Pub.hasMany(Merge, {
-						onDelete: 'CASCADE',
-						as: 'merges',
-						foreignKey: 'pubId',
-					});
+					// Pub.hasMany(Merge, {
+					// 	onDelete: 'CASCADE',
+					// 	as: 'merges',
+					// 	foreignKey: 'pubId',
+					// });
 					Pub.hasMany(PubVersion, {
 						onDelete: 'CASCADE',
 						as: 'pubVersions',
 						foreignKey: 'pubId',
 					});
-					Pub.hasMany(Review, {
-						onDelete: 'CASCADE',
-						as: 'reviews',
-						foreignKey: 'pubId',
-					});
+					// Pub.hasMany(Review, {
+					// 	onDelete: 'CASCADE',
+					// 	as: 'reviews',
+					// 	foreignKey: 'pubId',
+					// });
 				},
 			},
 		},

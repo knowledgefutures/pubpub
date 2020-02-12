@@ -49,9 +49,10 @@ export const PubAttribution = sequelize.import('./pubAttribution/model.js');
 export const PubManager = sequelize.import('./pubManager/model.js');
 export const PubVersion = sequelize.import('./pubVersion/model.js');
 export const PublicPermissions = sequelize.import('./publicPermissions/model.js');
-export const Signup = sequelize.import('./signup/model.js');
 export const Review = sequelize.import('./review/model.js');
 export const ReviewEvent = sequelize.import('./reviewEvent/model.js');
+export const Signup = sequelize.import('./signup/model.js');
+export const Thread = sequelize.import('./thread/model.js');
 export const User = sequelize.import('./user/model.js');
 export const WorkerTask = sequelize.import('./workerTask/model.js');
 

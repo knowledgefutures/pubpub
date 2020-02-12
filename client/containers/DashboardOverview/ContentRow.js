@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { Tag, Intent } from '@blueprintjs/core';
 import { Icon } from 'components';
 import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
+import { splitThreads } from 'utils';
 import { getDashUrl } from 'utils/dashboard';
 
 require('./contentRow.scss');
@@ -24,20 +25,20 @@ const ContentRow = (props) => {
 	const slug = content.slug || content.title.toLowerCase().replace(/ /gi, '-');
 	const collectionReviews = isCollection
 		? content.pubs.reduce((prev, curr) => {
-				return prev + curr.reviews.length;
+				return prev + splitThreads(curr.threads).reviews.length;
 		  }, 0)
-		: content.reviews.length;
+		: splitThreads(content.threads).reviews.length;
 	const collectionConversations = isCollection
 		? content.pubs.reduce((prev, curr) => {
-				return prev + curr.discussions.length;
+				return prev + splitThreads(curr.threads).discussions.length;
 		  }, 0)
-		: content.discussions.length;
-	const collectionMerges = isCollection
+		: splitThreads(content.threads).discussions.length;
+	const collectionForks = isCollection
 		? content.pubs.reduce((prev, curr) => {
-				const merges = curr.merges || [];
-				return prev + merges.length;
+				const forks = splitThreads(curr.threads).forks || [];
+				return prev + forks.length;
 		  }, 0)
-		: content.merges.length;
+		: splitThreads(content.threads).forks.length;
 
 	return (
 		<React.Fragment>
@@ -87,7 +88,7 @@ const ContentRow = (props) => {
 					</div>
 					<div className="merges">
 						<Icon icon="git-pull" iconSize={14} />
-						{collectionMerges}
+						{collectionForks}
 						{Math.random() < 0.3 && (
 							<Tag minimal intent={Intent.SUCCESS}>
 								{collectionReviews}

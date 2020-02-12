@@ -1,4 +1,5 @@
 import queryString from 'query-string';
+import { splitThreads } from 'utils';
 import { Collection, Community, Page, User, Pub, CollectionPub, Thread } from '../models';
 import { getScopeData } from './scopeData';
 
@@ -52,19 +53,13 @@ export const getCounts = async (scopeElements) => {
 		pubs = communityCountData.pubs;
 	}
 	pubs.forEach((pub) => {
-		pub.threads
-			.filter((thread) => {
-				return !thread.isClosed;
-			})
-			.forEach((thread) => {
-				if (thread.reviewId) {
-					reviewCount += 1;
-				} else if (thread.forkId) {
-					forkCount += 1;
-				} else {
-					discussionCount += 1;
-				}
-			});
+		const openThreads = pub.threads.filter((thread) => {
+			return !thread.isClosed;
+		});
+		const { discussions, forks, reviews } = splitThreads(openThreads);
+		reviewCount += discussions.length;
+		forkCount += forks.length;
+		discussionCount += reviews.length;
 	});
 
 	return {

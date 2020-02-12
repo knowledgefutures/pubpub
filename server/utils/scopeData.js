@@ -1,8 +1,16 @@
 import { Op } from 'sequelize';
-import { Collection, Community, Pub, CollectionPub, Member, ScopeOptions, Branch } from '../models';
+import {
+	Collection,
+	Community,
+	Pub,
+	CollectionPub,
+	Member,
+	PublicPermissions,
+	Branch,
+} from '../models';
 
 let getScopeElements;
-let getScopeOptionsData;
+let getPublicPermissionsData;
 let getScopeMemberData;
 let getActivePermissions;
 
@@ -24,17 +32,17 @@ export const getScopeData = async (scopeInputs) => {
 		}
 	*/
 	const scopeElements = await getScopeElements(scopeInputs);
-	const scopeOptionsData = await getScopeOptionsData(scopeElements);
+	const publicPermissionsData = await getPublicPermissionsData(scopeElements);
 	const scopeMemberData = await getScopeMemberData(scopeInputs, scopeElements);
 	const activePermissions = await getActivePermissions(
 		scopeInputs,
 		scopeElements,
-		scopeOptionsData,
+		publicPermissionsData,
 		scopeMemberData,
 	);
 	return {
 		elements: scopeElements,
-		optionsData: scopeOptionsData,
+		optionsData: publicPermissionsData,
 		memberData: scopeMemberData,
 		activePermissions: activePermissions,
 	};
@@ -145,9 +153,9 @@ export const buildOrQuery = (scopeElements) => {
 	return orQuery;
 };
 
-getScopeOptionsData = async (scopeElements) => {
+getPublicPermissionsData = async (scopeElements) => {
 	const orQuery = buildOrQuery(scopeElements);
-	return ScopeOptions.findAll({
+	return PublicPermissions.findAll({
 		where: {
 			[Op.or]: orQuery,
 		},
@@ -170,7 +178,12 @@ export const checkIfSuperAdmin = (userId) => {
 	return adminIds.includes(userId);
 };
 
-getActivePermissions = async (scopeInputs, scopeElements, scopeOptionsData, scopeMemberData) => {
+getActivePermissions = async (
+	scopeInputs,
+	scopeElements,
+	publicPermissionsData,
+	scopeMemberData,
+) => {
 	const isSuperAdmin = checkIfSuperAdmin(scopeInputs.loginId);
 	const permissionLevels = ['view', 'edit', 'manage', 'admin'];
 	let defaultPermissionIndex = -1;
@@ -209,11 +222,13 @@ getActivePermissions = async (scopeInputs, scopeElements, scopeOptionsData, scop
 	};
 
 	const initialOptions = {
-		isPublicBranches: null,
-		isPublicDiscussions: null,
-		isPublicReviews: null,
+		canCreateForks: null,
+		canCreateReviews: null,
+		canCreateDiscussions: null,
+		canViewDraft: null,
+		canEditDraft: null,
 	};
-	const activeOptions = scopeOptionsData
+	const activePublicPermissions = publicPermissionsData
 		.sort((foo, bar) => {
 			/* Sort the optionsData so that the options assocaited with */
 			/* the community come first, collections come next, and pub comes last */
@@ -239,6 +254,10 @@ getActivePermissions = async (scopeInputs, scopeElements, scopeOptionsData, scop
 			return next;
 		}, initialOptions);
 
+	/* If canEditDraft is true, canViewDraft must also be true */
+	activePublicPermissions.canViewDraft =
+		activePublicPermissions.canViewDraft || activePublicPermissions.canEditDraft;
+
 	return {
 		activePermission: permissionLevelIndex > -1 ? permissionLevels[permissionLevelIndex] : null,
 		canView: permissionLevelIndex > -1,
@@ -246,6 +265,6 @@ getActivePermissions = async (scopeInputs, scopeElements, scopeOptionsData, scop
 		canManage: permissionLevelIndex > 1,
 		canAdmin: permissionLevelIndex > 2,
 		canAdminCommunity: canAdminCommunity,
-		...activeOptions,
+		...activePublicPermissions,
 	};
 };

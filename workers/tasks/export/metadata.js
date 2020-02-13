@@ -41,7 +41,7 @@ export const getPubMetadata = async (pubId) => {
 		],
 	});
 	const publishedDate = getPubPublishedDate(pubData);
-	const updatedDate = getPubUpdatedDate(pubData);
+	const updatedDate = getPubUpdatedDate({ pub: pubData });
 	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
 	return {

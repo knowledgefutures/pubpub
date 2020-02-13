@@ -23,13 +23,8 @@ export default (sequelize, dataTypes) => {
 			avatar: { type: dataTypes.TEXT },
 			headerStyle: {
 				type: dataTypes.ENUM,
-				values: ['white-blocks', 'black-blocks'],
+				values: ['white-blocks', 'black-blocks', 'dark', 'light'],
 				defaultValue: null,
-			},
-			headerBackgroundType: {
-				type: dataTypes.ENUM,
-				values: ['color', 'image'],
-				defaultValue: 'color',
 			},
 			headerBackgroundColor: { type: dataTypes.STRING },
 			headerBackgroundImage: { type: dataTypes.TEXT },

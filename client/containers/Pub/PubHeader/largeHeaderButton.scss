@@ -1,0 +1,56 @@
+@import './themes.scss';
+
+.large-header-button-component {
+    @include base-button;
+    display: inline-flex;
+    padding: 0;
+    .button-box {
+        display: flex;
+        align-items: center;
+        height: 44px;
+        border-radius: 2px;
+        padding-left: 12px;
+        padding-right: 12px;
+        &.no-label {
+            padding: 0;
+            width: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+        &:not(.no-label) {
+            min-width: 185px;
+        }
+        .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            &:not(:first-child) {
+                margin-left: 10px;
+            }
+        }
+        .stacked-label {
+            text-align: left;
+            &:not(:first-child) {
+                margin-left: 10px;
+            }
+            .top {
+                font-size: 14px;
+                margin-bottom: 2px;
+            }
+            .bottom {
+                font-size: 10px;
+            }
+        }
+    }
+    .outer-label {
+        text-align: left;
+        margin-left: 10px;
+        .top {
+            font-size: 12px;
+            margin-bottom: 1px;
+        }
+        .bottom {
+            font-size: 16px;
+        }
+    }
+}

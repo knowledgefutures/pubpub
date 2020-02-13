@@ -8,6 +8,7 @@ import { MenuContext } from './menuContext';
 import { Menu } from './Menu';
 
 const sharedPropTypes = {
+	className: PropTypes.string,
 	disabled: PropTypes.bool,
 	href: PropTypes.string,
 	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
@@ -17,6 +18,7 @@ const sharedPropTypes = {
 };
 
 const sharedDefaultProps = {
+	className: '',
 	disabled: false,
 	href: null,
 	icon: null,
@@ -29,6 +31,7 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 	const {
 		active,
 		children,
+		className,
 		disabled,
 		href,
 		target,
@@ -61,7 +64,12 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 			<a
 				href={href}
 				target={target}
-				className={classNames(Classes.MENU_ITEM, disabled && Classes.DISABLED)}
+				className={classNames(
+					Classes.MENU_ITEM,
+					disabled && Classes.DISABLED,
+					active && Classes.ACTIVE,
+					className,
+				)}
 			>
 				{icon && (typeof icon === 'string' ? <Icon icon={icon} /> : icon)}
 				<div className={classNames(Classes.TEXT_OVERFLOW_ELLIPSIS, Classes.FILL)}>
@@ -115,7 +123,7 @@ export const MenuItem = React.forwardRef((props, ref) => {
 			ref={ref}
 			{...parentMenu}
 			{...restProps}
-			onDismiss={dismissOnClick && dismissMenu}
+			onDismiss={dismissOnClick ? dismissMenu : null}
 		>
 			{text}
 		</RK.MenuItem>

@@ -5,7 +5,6 @@ import { pubDataProps } from 'types/pub';
 import { PageContext } from 'utils/hooks';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
-import PubDetails from './PubDetails';
 import PubFileImport from './PubFileImport';
 import PubHistory from './PubHistory';
 import PubHeaderFormatting from './PubHeaderFormatting';
@@ -75,7 +74,6 @@ const PubDocument = (props) => {
 				/>
 			)}
 			{isViewingHistory && <PubHistory {...props} />}
-			{!isViewingHistory && <PubDetails {...props} />}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
 					<PubBody

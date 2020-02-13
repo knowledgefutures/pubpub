@@ -21,7 +21,14 @@ export const getPubPublishedDate = (pub, branch = null) => {
 	return null;
 };
 
-export const getPubUpdatedDate = (pub, branch = null) => {
+export const getPubUpdatedDate = ({ pub, branch = null, historyData = null }) => {
+	if (historyData) {
+		const { timestamps, latestKey } = historyData;
+		if (timestamps && typeof latestKey === 'number') {
+			const latestTimestamp = timestamps[latestKey];
+			return new Date(latestTimestamp);
+		}
+	}
 	const selectedBranch = selectBranch(pub, branch);
 	if (selectedBranch) {
 		if (selectedBranch.latestKeyAt) {

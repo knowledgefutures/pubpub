@@ -79,7 +79,7 @@ const History = (props) => {
 
 	return (
 		<div className="pub-history-component">
-			<GridWrapper containerClassName="pub pu">
+			<GridWrapper containerClassName="pub">
 				<div className="pub-history-inner">
 					{isLoading && <Spinner size={25} />}
 					{nothingToShow && 'This branch has no past versions.'}

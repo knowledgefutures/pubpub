@@ -1,0 +1,156 @@
+$off-white: #cfcfcf;
+$off-black: #333;
+$top-bar-total-height: 56px;
+
+@mixin base-button {
+    color: inherit;
+    align-items: center;
+    text-decoration: none;
+    user-select: none;
+    background: unset;
+    border: unset;
+    padding: 0;
+    cursor: pointer;
+    &:hover,
+    &:active,
+    &:visited {
+        text-decoration: none;
+        color: inherit;
+    }
+}
+
+@mixin shadow-box {
+    position: relative;
+    border-radius: 2px;
+    transition: background-color 0.1s ease-out;
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        opacity: 0.5;
+        transition: opacity 0.1s ease-out;
+    }
+}
+
+@mixin shadow-box-hover {
+    border-radius: 2px;
+    &::after {
+        opacity: 1;
+    }
+}
+
+@mixin color-theme($base-color, $secondary-color) {
+    color: $base-color;
+    .pub-header-themed-secondary {
+        color: $secondary-color;
+    }
+    .hairline {
+        background-color: rgba($base-color, 0.2);
+    }
+    .collections-bar-button-component {
+        border-color: rgba($base-color, 0.2);
+        &:hover {
+            background: rgba($base-color, 0.2);
+        }
+    }
+    &.pub-header-compact-component {
+        color: $base-color;
+    }
+}
+
+@mixin translucent-box-theme($base-color, $use-shadows) {
+    .pub-header-themed-box {
+        background: rgba($base-color, 0.1);
+        @if $use-shadows {
+            @include shadow-box();
+        }
+    }
+    .pub-header-themed-box-hover-target {
+        &:hover {
+            .pub-header-themed-box {
+                background: rgba($base-color, 0.2);
+                @if $use-shadows {
+                    @include shadow-box-hover();
+                }
+            }
+        }
+    }
+}
+
+@mixin blocks-button($background-color, $box-shadow) {
+    background-color: rgba($background-color, 0.6);
+    box-shadow: $box-shadow;
+    .pub-header-themed-box {
+        background-color: $background-color;
+    }
+    &:hover {
+        background-color: rgba($background-color, 0.75);
+    }
+}
+
+@mixin blocks-box-theme($background-color) {
+    $box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.1);
+    .text-wrapper,
+    .bp3-editable-text-content {
+        /* Ways of accomplishing this effect: */
+        /* https://css-tricks.com/multi-line-padded-text/ */
+        display: inline;
+        background: $background-color;
+        padding: 2px 20px;
+        box-decoration-break: clone;
+        box-shadow: $box-shadow;
+    }
+    .pub-header-themed-box {
+        border-radius: 0;
+    }
+    .large-header-button-component {
+        @include blocks-button($background-color, $box-shadow);
+        .outer-label {
+            margin-right: 20px;
+        }
+    }
+    .right {
+        .small-header-button-component {
+            @include blocks-button($background-color, $box-shadow);
+        }
+    }
+    .hairline {
+        background-color: transparent;
+    }
+    .background-safety-layer {
+        background-color: rgba($background-color, 0.75);
+        box-shadow: $box-shadow;
+    }
+    &.showing-details,
+    &.js-is-sticky,
+    &.pub-header-compact-component {
+        .background-safety-layer {
+            height: 100%;
+        }
+    }
+}
+
+.pub-header-theme-light {
+    @include color-theme(white, $off-white);
+    @include translucent-box-theme(white, true);
+}
+
+.pub-header-theme-dark {
+    @include color-theme(black, $off-black);
+    @include translucent-box-theme(black, true);
+}
+
+.pub-header-theme-white-blocks {
+    @include color-theme(black, $off-black);
+    @include blocks-box-theme(white);
+}
+
+.pub-header-theme-black-blocks {
+    @include color-theme(white, $off-white);
+    @include blocks-box-theme(black);
+}

@@ -864,6 +864,9 @@ new Promise((resolve) => {
 		// 	});
 		// 	return Promise.all(updates);
 		// });
+		// .then(() => {
+		// 	// Handle addition of Export model and Branch.exports field
+		// 	return sequelize.sync();
 	})
 	.then(() => {
 		/* Migrate Pub isPublic  */
@@ -1048,7 +1051,12 @@ new Promise((resolve) => {
 		Discussion.communityId [allowNull: true]
 
 	*/
-
+	.then(() => {
+		sequelize.queryInterface.changeColumn('Pubs', 'headerStyle', {
+			type: Sequelize.ENUM('white-blocks', 'black-blocks', 'dark', 'light'),
+			allowNull: false
+		});
+	})
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

@@ -1,6 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { usePageContext } from 'utils/hooks';
-import { pubDataProps } from 'types/pub';
+
 import PubSyncManager from './PubSyncManager';
 import PubHeader from './PubHeader';
 import PubDocument from './PubDocument';
@@ -11,15 +13,43 @@ import PubReviews from './PubReviews';
 import PubReview from './PubReview';
 import PubBranchCreate from './PubBranchCreate';
 import { PubSuspendWhileTypingProvider, PubSuspendWhileTyping } from './PubSuspendWhileTyping';
+import PubHeaderCompact from './PubHeader/PubHeaderCompact';
 
 require('./pub.scss');
 
 const propTypes = {
-	pubData: pubDataProps.isRequired,
+	pubData: PropTypes.object.isRequired,
 };
 
 const Pub = (props) => {
-	const { locationData, loginData, communityData } = usePageContext();
+	const { loginData, locationData, communityData } = usePageContext();
+
+	const renderHeader = (useFullHeader, modeProps) => {
+		const { collabData, historyData, pubData, updateLocalData } = modeProps;
+		if (useFullHeader) {
+			return (
+				<PubSuspendWhileTyping delay={1000}>
+					{() => (
+						<PubHeader
+							pubData={pubData}
+							updateLocalData={updateLocalData}
+							collabData={collabData}
+							historyData={historyData}
+							communityData={communityData}
+						/>
+					)}
+				</PubSuspendWhileTyping>
+			);
+		}
+		return (
+			<PubHeaderCompact
+				pubData={pubData}
+				locationData={locationData}
+				communityData={communityData}
+			/>
+		);
+	};
+
 	return (
 		<PubSuspendWhileTypingProvider>
 			<div id="pub-container">
@@ -40,16 +70,7 @@ const Pub = (props) => {
 						};
 						return (
 							<React.Fragment>
-								<PubSuspendWhileTyping delay={1000}>
-									{() => (
-										<PubHeader
-											pubData={pubData}
-											updateLocalData={updateLocalData}
-											collabData={collabData}
-											historyData={historyData}
-										/>
-									)}
-								</PubSuspendWhileTyping>
+								{renderHeader(mode === 'document', modeProps)}
 								{mode === 'document' && <PubDocument {...modeProps} />}
 								{mode === 'manage' && <PubManage {...modeProps} />}
 								{mode === 'merge' && <PubMerge {...modeProps} />}

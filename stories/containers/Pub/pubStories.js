@@ -46,8 +46,8 @@ storiesOf('containers/Pub', module)
 			locationData={locationData}
 			pubData={{
 				...pubData,
+				headerBackgroundImage: null,
 				mode: 'document',
-				headerBackgroundType: 'color',
 			}}
 		/>
 	))

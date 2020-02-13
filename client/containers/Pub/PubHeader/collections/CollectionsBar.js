@@ -1,13 +1,15 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, MenuItem, OverflowList, Popover, Position, Tag } from '@blueprintjs/core';
+import { OverflowList } from '@blueprintjs/core';
 
 import { pubDataProps } from 'types/pub';
 import { chooseCollectionForPub } from 'utils/collections';
 import { collectionUrl } from 'shared/utils/canonicalUrls';
 import { PageContext } from 'utils/hooks';
+import { Menu, MenuItem } from 'components/Menu';
 
 import CollectionBrowser from './CollectionBrowser';
+import CollectionsBarButton from './CollectionsBarButton';
 
 require('./collectionsBar.scss');
 
@@ -20,11 +22,15 @@ const CollectionsBar = (props) => {
 	const { pubData, updateLocalData } = props;
 	const { communityData, locationData } = useContext(PageContext);
 	const currentCollection = chooseCollectionForPub(pubData, locationData);
+
+	if (pubData.collectionPubs.length === 0) {
+		return null;
+	}
+
 	return (
 		<div className="collections-bar-component">
 			{currentCollection && (
 				<CollectionBrowser
-					className="themed-button-component"
 					collection={currentCollection}
 					currentPub={pubData}
 					updateLocalData={updateLocalData}
@@ -44,40 +50,42 @@ const CollectionsBar = (props) => {
 							a.collection.title.toLowerCase() - b.collection.title.toLowerCase(),
 					)}
 				visibleItemRenderer={({ collection }) => (
-					<a
+					<CollectionsBarButton
 						key={collection.id}
-						className="header-collection"
 						href={collectionUrl(communityData, collection)}
 					>
-						<Tag>{collection.title}</Tag>
-					</a>
+						{collection.title}
+					</CollectionsBarButton>
 				)}
-				overflowRenderer={(collectionPubs) => (
-					<Popover
-						minimal
-						modifiers={{
-							preventOverflow: { enabled: false },
-							hide: { enabled: false },
-						}}
-						position={Position.BOTTOM_RIGHT}
-						className="header-collection"
-						content={
-							<Menu>
-								{collectionPubs.map(({ collection }) => (
-									<MenuItem
-										key={collection.id}
-										text={collection.title}
-										href={collectionUrl(communityData, collection)}
-									/>
-								))}
-							</Menu>
-						}
-					>
-						<Tag icon="more" className="overflow-tag" interactive={true}>
-							{collectionPubs.length} more
-						</Tag>
-					</Popover>
-				)}
+				overflowRenderer={(overflowCollections) => {
+					const containsAllCollections =
+						overflowCollections.length === pubData.collectionPubs.length;
+					const icon = containsAllCollections ? null : 'more';
+					const rightIcon = containsAllCollections ? 'caret-down' : null;
+					const label = containsAllCollections
+						? overflowCollections.length === 1
+							? 'collection'
+							: 'collections'
+						: 'more';
+					return (
+						<Menu
+							aria-label={overflowCollections.length + ' ' + label}
+							disclosure={
+								<CollectionsBarButton icon={icon} rightIcon={rightIcon}>
+									{overflowCollections.length} {label}
+								</CollectionsBarButton>
+							}
+						>
+							{overflowCollections.map(({ collection }) => (
+								<MenuItem
+									key={collection.id}
+									text={collection.title}
+									href={collectionUrl(communityData, collection)}
+								/>
+							))}
+						</Menu>
+					);
+				}}
 			/>
 		</div>
 	);

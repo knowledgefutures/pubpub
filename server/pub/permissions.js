@@ -23,7 +23,6 @@ export const getPermissions = async ({ userId, communityId, pubId, licenseSlug }
 		'description',
 		'avatar',
 		'headerStyle',
-		'headerBackgroundType',
 		'headerBackgroundColor',
 		'headerBackgroundImage',
 		'isCommunityAdminManaged',

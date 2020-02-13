@@ -9,20 +9,20 @@ import { MenuContext } from './menuContext';
 const propTypes = {
 	'aria-label': PropTypes.string.isRequired,
 	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
 	disclosure: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
 	gutter: PropTypes.number,
 	menuStyle: PropTypes.shape({}),
 	onDismiss: PropTypes.func,
 	placement: PropTypes.string,
-	className: PropTypes.string,
 };
 
 const defaultProps = {
+	className: '',
 	gutter: undefined,
 	menuStyle: {},
 	onDismiss: () => {},
 	placement: undefined,
-	className: undefined,
 };
 
 const renderDisclosure = (disclosure, disclosureProps) => {
@@ -36,12 +36,12 @@ export const Menu = React.forwardRef((props, ref) => {
 	const {
 		'aria-label': ariaLabel,
 		children,
+		className,
 		disclosure,
 		placement,
 		onDismiss,
 		gutter,
 		menuStyle,
-		className,
 		...restProps
 	} = props;
 
@@ -60,7 +60,7 @@ export const Menu = React.forwardRef((props, ref) => {
 		<React.Fragment>
 			<RK.MenuDisclosure
 				ref={ref}
-				style={{ display: 'inline-block', WebkitAppearance: 'unset' }}
+				style={{ display: 'inline-flex', WebkitAppearance: 'unset' }}
 				{...menu}
 				{...restProps}
 			>

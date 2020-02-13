@@ -93,7 +93,6 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
             }
         }
         & > .right {
-            margin-top: 18px;
             margin-left: 30px;
             flex-shrink: 0;
             width: 120px;
@@ -210,6 +209,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
 
     .description {
         padding-top: 15px;
+        margin: 0;
         font-size: 18px;
         font-weight: normal;
         font-family: $header-font;
@@ -217,6 +217,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
 
     .byline {
         padding-top: 15px;
+        margin: 0;
         font-size: 18px;
         font-style: italic;
         font-weight: normal;

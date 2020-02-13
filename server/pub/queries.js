@@ -30,6 +30,8 @@ export const createPub = (inputValues, userData) => {
 		isCommunityAdminManaged: true,
 		// draftEditHash: generateHash(8),
 		// draftViewHash: generateHash(8),
+		headerBackgroundColor: 'light',
+		headerStyle: 'dark',
 	})
 		.then((newPub) => {
 			const createPubManager = PubManager.create({

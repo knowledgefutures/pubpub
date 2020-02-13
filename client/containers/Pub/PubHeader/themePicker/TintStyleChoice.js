@@ -6,11 +6,12 @@ import { Button } from 'reakit';
 const propTypes = {
 	color: PropTypes.string.isRequired,
 	label: PropTypes.node.isRequired,
-	onClick: PropTypes.func.isRequired,
+	onClick: PropTypes.func,
 	selected: PropTypes.bool,
 };
 
 const defaultProps = {
+	onClick: null,
 	selected: false,
 };
 

@@ -21,6 +21,7 @@ const PopoverButton = (props) => {
 				}}
 			</PopoverDisclosure>
 			<Popover
+				aria-label={ariaLabel}
 				className="pub-header-popover"
 				unstable_portal={true}
 				tabIndex={0}

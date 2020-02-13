@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { getResizedUrl } from 'utils';
-
 import { calculateBackgroundColor } from './colors';
 
 require('./pubHeaderBackground.scss');
@@ -32,13 +30,6 @@ const defaultProps = {
 	showSafetyLayer: false,
 };
 
-const getHeaderImageWidth = () => {
-	if (typeof window !== 'undefined') {
-		return window.innerWidth;
-	}
-	return 1500;
-};
-
 const PubHeaderBackground = React.forwardRef((props, ref) => {
 	const { children, className, pubData, communityData, blur, style, showSafetyLayer } = props;
 	const { headerBackgroundColor, headerBackgroundImage } = pubData;
@@ -46,12 +37,6 @@ const PubHeaderBackground = React.forwardRef((props, ref) => {
 	const effectiveBackgroundColor = calculateBackgroundColor(
 		headerBackgroundColor,
 		communityData.accentColorDark,
-	);
-
-	const effectiveHeaderBackgroundImage = getResizedUrl(
-		headerBackgroundImage,
-		'fit-in',
-		`${getHeaderImageWidth()}x600`,
 	);
 
 	return (
@@ -68,7 +53,7 @@ const PubHeaderBackground = React.forwardRef((props, ref) => {
 			{headerBackgroundImage && (
 				<div
 					className={classNames('background-element', 'background-image', blur && 'blur')}
-					style={{ backgroundImage: `url('${effectiveHeaderBackgroundImage}')` }}
+					style={{ backgroundImage: `url('${headerBackgroundImage}')` }}
 				/>
 			)}
 			{effectiveBackgroundColor && (

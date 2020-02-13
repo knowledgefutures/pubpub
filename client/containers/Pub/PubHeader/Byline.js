@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { getAllPubContributors } from 'utils/pubContributors';
 
 const propTypes = {
-	pubData: PropTypes.shape({}),
+	pubData: PropTypes.shape({}).isRequired,
 };
 
 const Byline = (props) => {

@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
 import dateFormat from 'dateformat';
-import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
-import { Card } from '@blueprintjs/core';
 
 import { apiFetch } from 'utils';
 import { ClickToCopyButton, Overlay } from 'components';
@@ -16,44 +14,27 @@ import CollectionsBar from './collections/CollectionsBar';
 import Download from './Download';
 import EditableHeaderText from './EditableHeaderText';
 import LargeHeaderButton from './LargeHeaderButton';
+import PopoverButton from './PopoverButton';
 import SharePanel from './SharePanel';
 import SmallHeaderButton from './SmallHeaderButton';
-import ThemePicker from './ThemePicker';
+import ThemePicker from './themePicker/ThemePicker';
 
 const propTypes = {
 	pubData: PropTypes.shape({
+		activeBranch: PropTypes.object.isRequired,
+		branches: PropTypes.array.isRequired,
 		canManage: PropTypes.bool.isRequired,
 		description: PropTypes.string,
 		doi: PropTypes.string,
-		slug: PropTypes.string,
+		id: PropTypes.string.isRequired,
+		slug: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
+	}).isRequired,
+	communityData: PropTypes.shape({
+		id: PropTypes.string,
 	}).isRequired,
 	historyData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
-};
-
-const PopoverButton = (props) => {
-	const { component: Component, 'aria-label': ariaLabel, children, ...restProps } = props;
-	const popover = usePopoverState({ unstable_fixed: true, placement: 'bottom-end', gutter: 5 });
-	return (
-		<>
-			<PopoverDisclosure {...popover} {...children.props}>
-				{(disclosureProps) => {
-					return React.cloneElement(children, disclosureProps);
-				}}
-			</PopoverDisclosure>
-			<Popover
-				className="pub-header-popover"
-				unstable_portal={true}
-				tabIndex={0}
-				{...popover}
-			>
-				<Card elevation={2}>
-					<Component {...restProps} />
-				</Card>
-			</Popover>
-		</>
-	);
 };
 
 const getPublishDateString = (pubData) => {

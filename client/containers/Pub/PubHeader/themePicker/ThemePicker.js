@@ -1,81 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import Color from 'color';
-import { Button } from 'reakit';
 
 import { ColorInput, ImageUpload } from 'components';
-import PubHeaderBackground from './PubHeaderBackground';
-import { calculateBackgroundColor } from './colors';
+import { calculateBackgroundColor } from '../colors';
+
+import TextStyleChoice from './TextStyleChoice';
+import TintStyleChoice from './TintStyleChoice';
 
 require('./themePicker.scss');
 
-const propTypes = {};
-
-const TextStyleChoice = React.forwardRef(
-	({ label, className, onClick, selected, style, pubData, communityData }, ref) => {
-		return (
-			<Button
-				className={classNames('text-style-choice')}
-				onClick={onClick}
-				ref={ref}
-				title={label}
-			>
-				<PubHeaderBackground
-					pubData={pubData}
-					communityData={communityData}
-					blur={true}
-					className={classNames(
-						'example',
-						className,
-						'selectable',
-						selected && 'selected',
-					)}
-					style={style || {}}
-				>
-					<div className="example-text">Aa</div>
-				</PubHeaderBackground>
-				<div className="label">{label}</div>
-			</Button>
-		);
-	},
-);
-
-const TintChoice = React.forwardRef(({ label, onClick, color, selected }, ref) => {
-	return (
-		<Button className="tint-choice" onClick={onClick} ref={ref} title={label}>
-			<div className="example">
-				<div className="transparency" />
-				<div
-					className={classNames('inner', 'selectable', selected && 'selected')}
-					style={{ backgroundColor: color }}
-				/>
-			</div>
-			<div className="label">{label}</div>
-		</Button>
-	);
-});
-
-const setBackgroundTypeImage = (backgroundType, hasImage) => {
-	switch (backgroundType) {
-		case 'color':
-		case 'color-and-image':
-			return hasImage ? 'color-and-image' : 'color';
-		case 'image':
-		default:
-			return hasImage ? 'image' : null;
-	}
-};
-
-const setBackgroundTypeColor = (backgroundType, hasColor) => {
-	switch (backgroundType) {
-		case 'image':
-		case 'color-and-image':
-			return hasColor ? 'color-and-image' : 'image';
-		case 'color':
-		default:
-			return hasColor ? 'color' : null;
-	}
+const propTypes = {
+	updatePubData: PropTypes.func.isRequired,
+	pubData: PropTypes.object.isRequired,
+	communityData: PropTypes.shape({
+		accentColorDark: PropTypes.string,
+	}).isRequired,
 };
 
 const ThemePicker = (props) => {
@@ -118,19 +57,19 @@ const ThemePicker = (props) => {
 			<div className="section">
 				<div className="title">Background tint</div>
 				<div className="section-row">
-					<TintChoice
+					<TintStyleChoice
 						label="Light"
 						color={calculateBackgroundColor('light')}
 						onClick={() => updatePubBackgroundColor('light')}
 						selected={headerBackgroundColor === 'light'}
 					/>
-					<TintChoice
+					<TintStyleChoice
 						label="Community accent color"
 						color={calculateBackgroundColor('community', communityData.accentColorDark)}
 						onClick={() => updatePubBackgroundColor('community')}
 						selected={headerBackgroundColor === 'community'}
 					/>
-					<TintChoice
+					<TintStyleChoice
 						label="Dark"
 						color={calculateBackgroundColor('dark')}
 						onClick={() => updatePubBackgroundColor('dark')}
@@ -145,7 +84,7 @@ const ThemePicker = (props) => {
 						}}
 					>
 						{(color) => (
-							<TintChoice
+							<TintStyleChoice
 								label="Custom"
 								className="light"
 								color={color}

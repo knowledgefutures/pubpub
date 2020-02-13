@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@blueprintjs/core';
 
@@ -14,7 +14,6 @@ import CollectionsBarButton from './CollectionsBarButton';
 require('./collectionBrowser.scss');
 
 const propTypes = {
-	className: PropTypes.string,
 	collection: PropTypes.shape({
 		id: PropTypes.string,
 		kind: PropTypes.string,
@@ -22,10 +21,6 @@ const propTypes = {
 	}).isRequired,
 	currentPub: pubDataProps.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
-};
-
-const defaultProps = {
-	className: '',
 };
 
 const CollectionBrowser = (props) => {
@@ -91,5 +86,4 @@ const CollectionBrowser = (props) => {
 };
 
 CollectionBrowser.propTypes = propTypes;
-CollectionBrowser.defaultProps = defaultProps;
 export default CollectionBrowser;

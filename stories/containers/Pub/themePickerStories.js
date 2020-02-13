@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
-import ThemePicker from 'containers/Pub/PubHeader/ThemePicker';
+import ThemePicker from 'containers/Pub/PubHeader/themePicker/ThemePicker';
 import { pubData, communityData } from 'data';
 
 const ThemePickerWrapper = (props) => {

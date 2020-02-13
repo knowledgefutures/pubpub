@@ -7,11 +7,24 @@ import { Icon } from 'components';
 
 require('./largeHeaderButton.scss');
 
-const propTypes = {};
+const propTypes = {
+	icon: PropTypes.string,
+	label: PropTypes.node,
+	tagName: PropTypes.string,
+	className: PropTypes.string,
+	onClick: PropTypes.func.isRequired,
+	outerLabel: PropTypes.shape({
+		top: PropTypes.node,
+		bottom: PropTypes.node,
+	}),
+};
 
 const defaultProps = {
 	icon: null,
+	label: null,
+	className: '',
 	tagName: 'button',
+	outerLabel: null,
 };
 
 const LargeHeaderButton = React.forwardRef((props, ref) => {

@@ -11,7 +11,14 @@ require('./pubHeaderBackground.scss');
 const propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
-	pubData: PropTypes.shape({}).isRequired,
+	communityData: PropTypes.shape({
+		accentColorDark: PropTypes.string,
+	}).isRequired,
+	pubData: PropTypes.shape({
+		headerBackgroundColor: PropTypes.string,
+		headerBackgroundImage: PropTypes.string,
+		headerStyle: PropTypes.string,
+	}).isRequired,
 	blur: PropTypes.bool,
 	style: PropTypes.object,
 	showSafetyLayer: PropTypes.bool,

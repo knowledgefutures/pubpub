@@ -7,10 +7,25 @@ import { Icon } from 'components';
 
 require('./collectionsBarButton.scss');
 
-const propTypes = {};
+const propTypes = {
+	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
+	href: PropTypes.string,
+	icon: PropTypes.string,
+	onClick: PropTypes.func,
+	rightIcon: PropTypes.string,
+};
+
+const defaultProps = {
+	className: '',
+	href: null,
+	icon: null,
+	onClick: null,
+	rightIcon: null,
+};
 
 const CollectionsBarButton = React.forwardRef((props, ref) => {
-	const { onClick, className, href, children, icon, rightIcon, ...restProps } = props;
+	const { children, className, href, icon, onClick, rightIcon, ...restProps } = props;
 	return (
 		<Button
 			{...restProps}
@@ -36,4 +51,5 @@ const CollectionsBarButton = React.forwardRef((props, ref) => {
 });
 
 CollectionsBarButton.propTypes = propTypes;
+CollectionsBarButton.defaultProps = defaultProps;
 export default CollectionsBarButton;

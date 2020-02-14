@@ -140,6 +140,7 @@ const DiscussionsSection = (props) => {
 				<PubDiscussions
 					{...props}
 					filterThreads={createThreadFilter(searchTerm)}
+					searchTerm={searchTerm}
 					showBottomInput={pubData.canDiscussBranch && !isSearching && !isBrowsingArchive}
 				/>
 			)}

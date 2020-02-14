@@ -55,5 +55,7 @@
 			min-height: 17px;
 		}
 	}
-
+	.overflow-listing:not(:last-child) {
+		margin-bottom: 1.5em;
+	}
 }

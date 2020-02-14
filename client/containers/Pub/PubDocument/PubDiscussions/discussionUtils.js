@@ -127,6 +127,15 @@ export const nestDiscussionsToThreads = function(discussions) {
 		});
 };
 
+export const discussionMatchesSearchTerm = (discussion, searchTerm) => {
+	if (!searchTerm) {
+		return false;
+	}
+	return [discussion.text, discussion.author.fullName]
+		.map((x) => x.toLowerCase())
+		.some((entry) => entry.toLowerCase().includes(searchTerm.toLowerCase()));
+};
+
 export const filterAndSortThreads = (
 	threads,
 	isArchivedList,
@@ -153,11 +162,7 @@ export const filterAndSortThreads = (
 			if (!searchTerm) {
 				return true;
 			}
-			return items.some((discussion) => {
-				return [discussion.text, discussion.author.fullName]
-					.map((x) => x.toLowerCase())
-					.some((entry) => entry.toLowerCase().includes(searchTerm.toLowerCase()));
-			});
+			return items.some((discussion) => discussionMatchesSearchTerm(discussion, searchTerm));
 		})
 		.filter((items) => {
 			if (showAnchoredDiscussions) {

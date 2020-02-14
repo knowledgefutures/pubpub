@@ -7,6 +7,7 @@ import { PageContext } from 'components/PageWrapper/PageWrapper';
 import DiscussionItem from './DiscussionItem';
 import DiscussionInput from './DiscussionInput';
 import LabelList from './LabelList';
+import { discussionMatchesSearchTerm } from '../discussionUtils';
 
 require('./discussionThread.scss');
 
@@ -17,18 +18,78 @@ const propTypes = {
 	threadData: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	canPreview: PropTypes.bool,
+	searchTerm: PropTypes.string,
 };
 
 const defaultProps = {
 	firebaseBranchRef: undefined,
 	canPreview: false,
+	searchTerm: null,
 };
 
 const DiscussionThread = (props) => {
-	const { pubData, threadData, canPreview } = props;
+	const { pubData, threadData, canPreview, searchTerm } = props;
 	const { communityData } = useContext(PageContext);
 	const [previewExpanded, setPreviewExpanded] = useState(false);
 	const isPreview = canPreview && !previewExpanded;
+
+	const renderPreviewDiscussionsAndOverflow = (discussions, minShown) => {
+		let shownDiscussionsCount = 0;
+		let pendingHiddenCount = 0;
+		const elements = [];
+
+		const flushPendingCount = () => {
+			if (pendingHiddenCount > 0) {
+				elements.push(
+					<div className="overflow-listing"> + {pendingHiddenCount} more...</div>,
+				);
+			}
+			pendingHiddenCount = 0;
+		};
+
+		discussions.forEach((discussion, index) => {
+			const isRootThread = index === 0;
+			const meetsMinimum = shownDiscussionsCount < minShown;
+			const matchesSearch = discussionMatchesSearchTerm(discussion, searchTerm);
+			const isPreviewDiscussion = isRootThread || !matchesSearch;
+			if (isRootThread || meetsMinimum || matchesSearch) {
+				++shownDiscussionsCount;
+				flushPendingCount();
+				elements.push(
+					<DiscussionItem
+						key={discussion.id}
+						discussionData={discussion}
+						isPreview={isPreviewDiscussion}
+						isRootThread={isRootThread}
+						{...props}
+					/>,
+				);
+			} else {
+				++pendingHiddenCount;
+			}
+		});
+
+		flushPendingCount();
+		return elements;
+	};
+
+	const renderDiscussions = () => {
+		const filteredDiscussions = threadData.filter((discussion) => discussion.threadNumber);
+		if (isPreview) {
+			return renderPreviewDiscussionsAndOverflow(filteredDiscussions, 2);
+		}
+		return filteredDiscussions.map((item, index) => {
+			return (
+				<DiscussionItem
+					key={item.id}
+					discussionData={item}
+					isPreview={isPreview}
+					isRootThread={index === 0}
+					{...props}
+				/>
+			);
+		});
+	};
 
 	return (
 		<div
@@ -70,23 +131,7 @@ const DiscussionThread = (props) => {
 					{threadData[0].initAnchorText.suffix}
 				</div>
 			)}
-			{threadData
-				.filter((item) => item.threadNumber)
-				.filter((item, index) => {
-					return !isPreview || index < 2;
-				})
-				.map((item, index) => {
-					return (
-						<DiscussionItem
-							key={item.id}
-							discussionData={item}
-							isPreview={isPreview}
-							isRootThread={index === 0}
-							{...props}
-						/>
-					);
-				})}
-			{isPreview && threadData.length > 2 && <span> + {threadData.length - 2} more...</span>}
+			{renderDiscussions()}
 			{!isPreview && pubData.canDiscussBranch && (
 				<DiscussionInput key={threadData.length} {...props} />
 			)}

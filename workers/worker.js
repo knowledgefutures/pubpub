@@ -9,8 +9,8 @@ const {
 	updateCommunityData,
 	updateUserData,
 } = require('./tasks/search');
-const { importTask } = require('./tasks/import');
 const { exportTask } = require('./tasks/export');
+const { importTask } = require('./tasks/import');
 
 if (isMainThread) {
 	// Don't run outside of a thread spawned by worker_threads in queue.js

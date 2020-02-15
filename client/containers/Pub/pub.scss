@@ -72,8 +72,3 @@ $breakout-simplify-cutoff: $compact-cutoff-width / (1 - 2 * $pub-margin-fraction
         }
 	}
 }
-
-.page-content {
-    display: flex;
-    flex-direction: column;
-}

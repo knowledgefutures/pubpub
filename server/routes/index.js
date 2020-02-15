@@ -3,7 +3,7 @@ require('./redirects'); // Redirect needed v3 routes;
 /* Routes for Communities */
 require('./dashboard'); // Route: ['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug']
 // require('./dash'); // Route: '/'
-require('./pub'); // Route: ['/pub/:slug', '/pub/:slug/branch/:branchShortId', '/pub/:slug/:mode']
+// require('./pub'); // Route: ['/pub/:slug', '/pub/:slug/branch/:branchShortId', '/pub/:slug/:mode']
 require('./pubDocument');
 require('./collection'); // Route: /collection/:id
 require('./dashboardOverview'); // Route: ['/dash', '/dash/overview', '/dash/collection/:collectionSlug', '/dash/collection/:collectionSlug/overview', '/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview']

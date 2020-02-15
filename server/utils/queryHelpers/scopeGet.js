@@ -319,7 +319,7 @@ getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 		pubs = communityCountData.pubs;
 	}
 	pubs.forEach((pub) => {
-		const openThreads = pub.threads.filter((thread) => {
+		const openThreads = (pub.threads || []).filter((thread) => {
 			return !thread.isClosed;
 		});
 		const visibleThreads = sanitizeThreads(openThreads, activePermissions.canView, loginId);

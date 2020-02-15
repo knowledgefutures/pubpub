@@ -60,7 +60,7 @@ const Pub = (props) => {
 					loginData={loginData}
 				>
 					{({ pubData, collabData, firebaseBranchRef, updateLocalData, historyData }) => {
-						const mode = pubData.mode;
+						// const mode = pubData.mode;
 						const modeProps = {
 							pubData: pubData,
 							collabData: collabData,
@@ -70,14 +70,14 @@ const Pub = (props) => {
 						};
 						return (
 							<React.Fragment>
-								{renderHeader(mode === 'document', modeProps)}
-								{mode === 'document' && <PubDocument {...modeProps} />}
-								{mode === 'manage' && <PubManage {...modeProps} />}
+								{renderHeader(true, modeProps)}
+								<PubDocument {...modeProps} />
+								{/* mode === 'manage' && <PubManage {...modeProps} />}
 								{mode === 'merge' && <PubMerge {...modeProps} />}
 								{mode === 'review' && <PubReview {...modeProps} />}
 								{mode === 'reviews' && <PubReviews {...modeProps} />}
 								{mode === 'reviewCreate' && <PubReviewCreate {...modeProps} />}
-								{mode === 'branchCreate' && <PubBranchCreate {...modeProps} />}
+								{mode === 'branchCreate' && <PubBranchCreate {...modeProps} /> */}
 							</React.Fragment>
 						);
 					}}

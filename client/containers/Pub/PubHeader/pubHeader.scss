@@ -242,11 +242,11 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         }
     }
 
-    .container,
-    .container > .row,
-    .pub-details-component {
-        height: 100%;
-    }
+    // .container,
+    // .container > .row,
+    // .pub-details-component {
+    //     height: 100%;
+    // }
 }
 
 .pub-header-branch-selector-menu {

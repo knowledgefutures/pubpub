@@ -4,6 +4,7 @@ import TimeAgo from 'react-timeago';
 import dateFormat from 'dateformat';
 
 import { apiFetch } from 'utils';
+import { usePageContext } from 'utils/hooks';
 import { ClickToCopyButton, Overlay } from 'components';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 
@@ -23,15 +24,11 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		activeBranch: PropTypes.object.isRequired,
 		branches: PropTypes.array.isRequired,
-		canManage: PropTypes.bool.isRequired,
 		description: PropTypes.string,
 		doi: PropTypes.string,
 		id: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
-	}).isRequired,
-	communityData: PropTypes.shape({
-		id: PropTypes.string,
 	}).isRequired,
 	historyData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -80,8 +77,9 @@ const getReviewUrl = (pubData, publicBranch) => {
 };
 
 const PubHeaderMain = (props) => {
-	const { pubData, updateLocalData, communityData, historyData } = props;
-	const { canManage, title, description, doi, activeBranch } = pubData;
+	const { pubData, updateLocalData, historyData } = props;
+	const { title, description, doi, activeBranch } = pubData;
+	const { communityData, scopeData } = usePageContext();
 	const [isShareOpen, setIsShareOpen] = useState(false);
 
 	const updateAndSavePubData = (newPubData) => {
@@ -97,11 +95,13 @@ const PubHeaderMain = (props) => {
 		}).catch(() => updateLocalData('pub', oldPubData));
 	};
 
+	const { canManage, canAdmin } = scopeData.activePermissions;
+
 	const publishedAtString = getPublishDateString(pubData);
 	const publicBranch = pubData.branches.find((branch) => branch.title === 'public');
 	const onPublicBranch = activeBranch.title === 'public';
-	const canSubmitForReview = !onPublicBranch && activeBranch.canManage;
-	const canPublish = !onPublicBranch && activeBranch.canManage && publicBranch.canManage;
+	const canSubmitForReview = !onPublicBranch && canManage;
+	const canPublish = !onPublicBranch && canAdmin;
 
 	return (
 		<div className="pub-header-main-component">

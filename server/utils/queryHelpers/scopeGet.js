@@ -91,7 +91,6 @@ getScopeElements = async (scopeInputs) => {
 				{
 					model: CollectionPub,
 					as: 'collectionPubs',
-					required: false,
 					attributes: ['id', 'pubId', 'collectionId'],
 				},
 				{
@@ -102,8 +101,13 @@ getScopeElements = async (scopeInputs) => {
 			],
 		});
 		activeTarget = activePub;
+		if (!activePub) {
+			throw new Error('Pub Not Found');
+		}
 		const collections = await Collection.findAll({
-			where: { id: { [Op.in]: activePub.collectionPubs.map((cp) => cp.collectionId) } },
+			where: {
+				id: { [Op.in]: (activePub.collectionPubs || []).map((cp) => cp.collectionId) },
+			},
 		});
 		inactiveCollections = collections.filter((collection) => {
 			const isActive = collection.slug === collectionSlug;

@@ -90,7 +90,6 @@ const PubHeader = (props) => {
 				{!showingDetails && (
 					<PubHeaderMain
 						pubData={pubData}
-						communityData={communityData}
 						updateLocalData={updateLocalData}
 						historyData={historyData}
 					/>

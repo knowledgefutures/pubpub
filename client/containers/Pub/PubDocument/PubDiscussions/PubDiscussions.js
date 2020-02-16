@@ -22,11 +22,13 @@ const propTypes = {
 	sideContentRef: PropTypes.object.isRequired,
 	mainContentRef: PropTypes.object.isRequired,
 	showBottomInput: PropTypes.bool.isRequired,
+	searchTerm: PropTypes.string,
 };
 
 const defaultProps = {
 	firebaseBranchRef: undefined,
 	filterThreads: () => [],
+	searchTerm: null,
 };
 
 const PubDiscussions = (props) => {
@@ -38,6 +40,7 @@ const PubDiscussions = (props) => {
 		updateLocalData,
 		mainContentRef,
 		sideContentRef,
+		searchTerm,
 		showBottomInput,
 	} = props;
 	const { communityData } = useContext(PageContext);
@@ -124,6 +127,7 @@ const PubDiscussions = (props) => {
 							threadData={thread}
 							updateLocalData={updateLocalData}
 							canPreview={true}
+							searchTerm={searchTerm}
 						/>
 					);
 				})}

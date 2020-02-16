@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { getAllPubContributors } from 'utils/pubContributors';
 
 const propTypes = {
-	pubData: PropTypes.shape({}),
+	pubData: PropTypes.shape({}).isRequired,
 };
 
 const Byline = (props) => {
@@ -13,7 +13,7 @@ const Byline = (props) => {
 
 	return (
 		!!authors.length && (
-			<div className="byline pub-header-themed-secondary">
+			<div className="byline">
 				<span className="text-wrapper">
 					<span>by </span>
 					{authors.map((author, index) => {

@@ -1,6 +1,11 @@
+$top-bar-total-height: 54px;
+
 $off-white: #cfcfcf;
 $off-black: #333;
-$top-bar-total-height: 56px;
+
+$blueprint-style-btn-background: #f8f8f8 linear-gradient(to bottom, rgba(white, 0.8), rgba(white, 0));
+$blueprint-style-btn-background-hover: #f0f0f0 linear-gradient(to bottom, rgba(white, 0.8), rgba(white, 0));
+$blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px 0 rgba(16, 22, 26, 0.1);
 
 @mixin base-button {
     color: inherit;
@@ -19,26 +24,24 @@ $top-bar-total-height: 56px;
     }
 }
 
-@mixin shadow-box {
+@mixin shadow-box($box-shadow) {
     position: relative;
-    border-radius: 2px;
     transition: background-color 0.1s ease-out;
     &::after {
         content: '';
         position: absolute;
+        pointer-events: none;
         left: 0;
         top: 0;
-        z-index: -1;
         width: 100%;
         height: 100%;
-        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0.5;
+        box-shadow: $box-shadow;
+        border-radius: inherit;
         transition: opacity 0.1s ease-out;
     }
 }
 
 @mixin shadow-box-hover {
-    border-radius: 2px;
     &::after {
         opacity: 1;
     }
@@ -63,33 +66,32 @@ $top-bar-total-height: 56px;
     }
 }
 
-@mixin translucent-box-theme($base-color, $use-shadows) {
+@mixin simple-box-theme($background, $hover-background, $box-shadow) {
     .pub-header-themed-box {
-        background: rgba($base-color, 0.1);
-        @if $use-shadows {
-            @include shadow-box();
-        }
+        background: $background;
+        @include shadow-box($box-shadow);
     }
     .pub-header-themed-box-hover-target {
         &:hover {
             .pub-header-themed-box {
-                background: rgba($base-color, 0.2);
-                @if $use-shadows {
-                    @include shadow-box-hover();
-                }
+                background: $hover-background;
+                @include shadow-box-hover();
             }
         }
     }
 }
 
+@mixin translucent-box-theme($base-color, $box-shadow) {
+    @include simple-box-theme(rgba($base-color, 0.2), rgba($base-color, 0.3), $box-shadow);
+}
+
 @mixin blocks-button($background-color, $box-shadow) {
-    background-color: rgba($background-color, 0.6);
+    background-color: rgba($background-color, 1);
+    transition: 0.2s background-color ease-out;
     box-shadow: $box-shadow;
-    .pub-header-themed-box {
-        background-color: $background-color;
-    }
+    padding: 2px;
     &:hover {
-        background-color: rgba($background-color, 0.75);
+        background-color: rgba($background-color, 0.8);
     }
 }
 
@@ -100,7 +102,7 @@ $top-bar-total-height: 56px;
         /* Ways of accomplishing this effect: */
         /* https://css-tricks.com/multi-line-padded-text/ */
         display: inline;
-        background: $background-color;
+        background: rgba($background-color, 1);
         padding: 2px 20px;
         box-decoration-break: clone;
         box-shadow: $box-shadow;
@@ -108,10 +110,21 @@ $top-bar-total-height: 56px;
     .pub-header-themed-box {
         border-radius: 0;
     }
+    .small-header-button-component {
+        border-radius: 2px;
+    }
     .large-header-button-component {
+        border-radius: 2px;
+        overflow: hidden;
         @include blocks-button($background-color, $box-shadow);
         .outer-label {
             margin-right: 20px;
+        }
+    }
+    .middle {
+        .description,
+        .byline {
+            margin-bottom: 0;
         }
     }
     .right {
@@ -123,7 +136,8 @@ $top-bar-total-height: 56px;
         background-color: transparent;
     }
     .background-safety-layer {
-        background-color: rgba($background-color, 0.75);
+        background-color: rgba($background-color, 0.5);
+        backdrop-filter: blur(20px);
         box-shadow: $box-shadow;
     }
     &.showing-details,
@@ -136,13 +150,18 @@ $top-bar-total-height: 56px;
 }
 
 .pub-header-theme-light {
+    $box-shadow: 0px 0px 8px rgba(black, 0.05);
     @include color-theme(white, $off-white);
-    @include translucent-box-theme(white, true);
+    @include translucent-box-theme(white, $box-shadow);
 }
 
 .pub-header-theme-dark {
     @include color-theme(black, $off-black);
-    @include translucent-box-theme(black, true);
+    @include simple-box-theme(
+        $blueprint-style-btn-background,
+        $blueprint-style-btn-background-hover,
+        $blueprint-style-btn-shadow
+    );
 }
 
 .pub-header-theme-white-blocks {
@@ -151,6 +170,6 @@ $top-bar-total-height: 56px;
 }
 
 .pub-header-theme-black-blocks {
-    @include color-theme(white, $off-white);
+    @include color-theme(white, white);
     @include blocks-box-theme(black);
 }

@@ -215,6 +215,7 @@ const PubHeaderMain = (props) => {
 				/>
 				{canPublish && (
 					<LargeHeaderButton
+						tagName="a"
 						href={getPublishUrl(pubData, publicBranch)}
 						label={{
 							top: 'Publish',

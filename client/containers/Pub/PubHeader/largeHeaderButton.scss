@@ -6,6 +6,7 @@
     padding: 0;
     .button-box {
         display: flex;
+        flex-shrink: 0;
         align-items: center;
         height: 44px;
         border-radius: 2px;
@@ -34,10 +35,11 @@
                 margin-left: 10px;
             }
             .top {
+                white-space: nowrap;
                 font-size: 14px;
-                margin-bottom: 2px;
             }
             .bottom {
+                white-space: nowrap;
                 font-size: 10px;
             }
         }

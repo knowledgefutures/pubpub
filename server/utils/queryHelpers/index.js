@@ -3,6 +3,7 @@
 /* and authentication) is best done in a single consistent location. */
 export { default as sanitizeCommunity } from './communitySanitize';
 export { default as getCommunity } from './communityGet';
+export { default as getPage } from './pageGet';
 export { default as getPub } from './pubGet';
 export { default as sanitizePub } from './pubSanitize';
 export { default as getOverview } from './overviewGet';

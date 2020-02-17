@@ -13,8 +13,8 @@ require('./dashboardForks');
 require('./dashboardImpact');
 require('./dashboardMembers');
 require('./dashboardOverview');
+require('./dashboardPages');
 require('./dashboardReviews');
-require('./dashboardSite');
 require('./dashboardSettings');
 
 /* Routes for PubPub */

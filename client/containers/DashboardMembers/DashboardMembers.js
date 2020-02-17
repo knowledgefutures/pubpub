@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { ControlGroup, InputGroup, Button, Intent } from '@blueprintjs/core';
 import { SettingsSection } from 'components';
 import { usePageContext } from 'utils/hooks';
+import { capitalize } from 'utils';
 import MemberRow from './MemberRow';
 import InheritedBlock from './InheritedBlock';
 
@@ -16,13 +17,6 @@ const DashboardMembers = (props) => {
 	const { membersData } = props;
 	const { scopeData } = usePageContext();
 	const { activeTargetType } = scopeData.elements;
-	// let scope = 'Community';
-	// if (locationData.params.collectionSlug) {
-	// 	scope = 'Collection';
-	// }
-	// if (locationData.params.pubSlug) {
-	// 	scope = 'Pub';
-	// }
 
 	const membersByType = {
 		pub: membersData.members.filter((mb) => mb.pubId),
@@ -38,7 +32,9 @@ const DashboardMembers = (props) => {
 
 	return (
 		<div className="dashboard-members-container">
-			<h2 className="dashboard-content-header">Members</h2>
+			<h2 className="dashboard-content-header">
+				{capitalize(scopeData.elements.activeTargetType)} Members
+			</h2>
 
 			<SettingsSection title="Add Member">
 				<ControlGroup>

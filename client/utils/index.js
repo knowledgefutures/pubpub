@@ -10,6 +10,8 @@ if (typeof window === 'undefined') {
 	setIsProd(process.env.PUBPUB_PRODUCTION);
 }
 
+export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
 export const getFirebaseConfig = function() {
 	return {
 		apiKey: 'AIzaSyCVBq7I9ddJpHhs-DzVEEdM09-VqTVex1g',

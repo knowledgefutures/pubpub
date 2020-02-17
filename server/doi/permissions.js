@@ -13,7 +13,7 @@ export const getPermissions = async ({ pubId, collectionId, userId, communityId 
 	});
 
 	return {
-		pub: scopeData.activePermissions.isAdmin,
-		collection: scopeData.activePermissions.isAdmin,
+		pub: scopeData.activePermissions.canAdminCommunity,
+		collection: scopeData.activePermissions.canAdminCommunity,
 	};
 };

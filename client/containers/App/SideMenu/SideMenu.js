@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import Color from 'color';
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
+import { getDashUrl, getDashboardModes } from 'utils/dashboard';
 import ScopePicker from './ScopePicker';
 
 require('./sideMenu.scss');
@@ -37,12 +37,12 @@ const SideMenu = () => {
 			}),
 		},
 		{
-			title: 'Site',
+			title: 'Pages',
 			icon: 'page-layout',
 			href: getDashUrl({
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
-				mode: 'site',
+				mode: 'pages',
 			}),
 			communityOnly: true,
 			manageRequired: true,
@@ -172,8 +172,9 @@ const SideMenu = () => {
 						return scopeIsValid && permissionIsValid;
 					})
 					.map((item) => {
+						const { mode } = getDashboardModes(locationData);
 						const itemMode = item.title.toLowerCase().replace(/ /gi, '-');
-						const active = locationData.path.split('/').slice(-1)[0] === itemMode;
+						const active = mode === itemMode;
 						return (
 							<div
 								key={item.title}

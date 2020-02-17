@@ -8,25 +8,25 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-// import { getSite } from '../utils/queryHelpers';
+// import { getPages } from '../utils/queryHelpers';
 
-app.get(['/dash/site'], async (req, res, next) => {
+app.get(['/dash/pages', '/dash/pages/:subMode'], async (req, res, next) => {
 	try {
 		if (!hostIsValid(req, 'community')) {
 			return next();
 		}
 		const initialData = await getInitialData(req, true);
-		// const siteData = await getSite(initialData);
-		const siteData = {};
+		// const pagesData = await getPages(initialData);
+		const pagesData = {};
 		return renderToNodeStream(
 			res,
 			<Html
-				chunkName="DashboardSite"
+				chunkName="DashboardPages"
 				initialData={initialData}
-				viewData={{ siteData: siteData }}
+				viewData={{ pagesData: pagesData }}
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
-					title: `Site · ${initialData.scopeData.elements.activeTarget.title}`,
+					title: `Pages · ${initialData.scopeData.elements.activeTarget.title}`,
 					unlisted: true,
 				})}
 			/>,

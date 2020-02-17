@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
+import { getDashUrl, getDashboardModes } from 'utils/dashboard';
 
 require('./breadcrumbs.scss');
 
@@ -10,10 +10,10 @@ const Breadcrumbs = () => {
 	const { activePub, activeCollection } = scopeData.elements;
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
-
-	const activeMode = locationData.path.split('/').slice(-1)[0];
-	const isParentMode = activeMode === 'discussions' || activeMode === 'reviews';
-	const activeSubmode = locationData.params.submode;
+	const { mode, subMode } = getDashboardModes(locationData);
+	// console.log(locationData.path.split('/'), locationData.path.split('/').slice(-1))
+	// const modesWithSubmodes = ['discussions', 'reviews', 'pages'];
+	// const isParentMode = modesWithSubmodes.includes(activeMode);
 
 	let title = communityData.title;
 	let avatar = communityData.avatar;
@@ -71,7 +71,7 @@ const Breadcrumbs = () => {
 							</a>
 						</React.Fragment>
 					)}
-					{activeMode && (
+					{mode && (
 						<React.Fragment>
 							<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
 							<a
@@ -79,16 +79,16 @@ const Breadcrumbs = () => {
 								href={getDashUrl({
 									collectionSlug: collectionSlug,
 									pubSlug: pubSlug,
-									mode: activeMode,
-									submode: isParentMode ? 'list' : undefined,
+									mode: mode,
+									// submode: isParentMode ? 'list' : undefined,
 								})}
 							>
 								<div className="top" />
-								<div className="bottom capitalize">{activeMode}</div>
+								<div className="bottom capitalize">{mode}</div>
 							</a>
 						</React.Fragment>
 					)}
-					{activeSubmode && (
+					{subMode && (
 						<React.Fragment>
 							<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
 							<a
@@ -96,11 +96,11 @@ const Breadcrumbs = () => {
 								href={getDashUrl({
 									collectionSlug: collectionSlug,
 									pubSlug: pubSlug,
-									mode: activeMode,
-									submode: activeSubmode,
+									mode: mode,
+									submode: subMode,
 								})}
 							>
-								<div className="capitalize">{activeSubmode}</div>
+								<div className="capitalize">{subMode}</div>
 							</a>
 						</React.Fragment>
 					)}

@@ -38,3 +38,13 @@ export const groupPubs = (pubs, collections) => {
 		pubs: basePubs,
 	};
 };
+
+export const getDashboardModes = (locationData) => {
+	const activeSubMode = locationData.params.subMode;
+	const activeModeSlice = activeSubMode ? -2 : -1;
+	const activeMode = locationData.path.split('/').slice(activeModeSlice)[0];
+	return {
+		mode: activeMode,
+		subMode: activeSubMode,
+	};
+};

@@ -9,7 +9,7 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-import { getMembersData } from '../utils/membersQueries';
+import { getMembers } from '../utils/queryHelpers';
 
 app.get(
 	[
@@ -26,7 +26,7 @@ app.get(
 
 		return getInitialData(req, true)
 			.then((initialData) => {
-				return Promise.all([initialData, getMembersData(initialData)]);
+				return Promise.all([initialData, getMembers(initialData)]);
 			})
 			.then(([initialData, membersData]) => {
 				return renderToNodeStream(

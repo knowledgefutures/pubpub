@@ -16,14 +16,9 @@ const propTypes = {
 const User = (props) => {
 	const { userData } = props;
 	const { locationData, communityData, loginData } = usePageContext();
-	const pubs =
-		userData.attributions
-			.map((attribution) => {
-				return attribution.pub;
-			})
-			.filter((pub) => {
-				return pub;
-			}) || [];
+	const pubs = (userData.attributions || []).map((attribution) => {
+		return attribution.pub;
+	});
 
 	const selfProfile = loginData.id && userData.id === loginData.id;
 	const mode = locationData.params.mode;

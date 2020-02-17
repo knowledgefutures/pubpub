@@ -1,9 +1,9 @@
 import { Op } from 'sequelize';
-import { User, Member } from '../models';
-import { attributesPublicUser } from '.';
-import { buildOrQuery } from './queryHelpers/scopeGet';
+import { User, Member } from '../../models';
+import { attributesPublicUser } from '..';
+import { buildOrQuery } from './scopeGet';
 
-export const getMembersData = (initialData) => {
+export default (initialData) => {
 	const orQuery = buildOrQuery(initialData.scopeData.elements);
 
 	return Member.findAll({

@@ -1,8 +1,6 @@
 export { default as About } from './About/About';
 export { default as AdminDashboard } from './AdminDashboard/AdminDashboard';
 export { default as CommunityCreate } from './CommunityCreate/CommunityCreate';
-export { default as Dashboard } from './Dashboard/Dashboard';
-// export { default as Dash } from './Dash/Dash';
 export { default as DashboardOverview } from './DashboardOverview/DashboardOverview';
 export { default as DashboardMembers } from './DashboardMembers/DashboardMembers';
 export { default as Explore } from './Explore/Explore';

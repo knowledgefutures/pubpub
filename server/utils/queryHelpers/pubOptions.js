@@ -3,6 +3,7 @@ import {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
+	Community,
 	Export,
 	Page,
 	PubAttribution,
@@ -13,7 +14,7 @@ import {
 } from '../../models';
 import { attributesPublicUser } from '..';
 
-export default ({ isAuth, isPreview, getCollections }) => {
+export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 	/* Initialize values assuming all inputs are false. */
 	/* Then, iterate over each input and adjust */
 	/* variables as needed */
@@ -55,6 +56,7 @@ export default ({ isAuth, isPreview, getCollections }) => {
 		},
 	];
 	let collectionPubs = [];
+	let community = [];
 	let threadAuthor = [
 		{
 			model: User,
@@ -78,6 +80,7 @@ export default ({ isAuth, isPreview, getCollections }) => {
 			'labels',
 			'avatar',
 			'doi',
+			'communityId',
 			'createdAt',
 		];
 		pubBranches = [];
@@ -126,6 +129,24 @@ export default ({ isAuth, isPreview, getCollections }) => {
 			},
 		];
 	}
+	if (getCommunity) {
+		community = [
+			{
+				model: Community,
+				as: 'community',
+				attributes: [
+					'id',
+					'subdomain',
+					'domain',
+					'title',
+					'accentColorLight',
+					'accentColorDark',
+					'headerLogo',
+					'headerColorType',
+				],
+			},
+		];
+	}
 	return {
 		attributes: pubAttributes,
 		include: [
@@ -147,6 +168,7 @@ export default ({ isAuth, isPreview, getCollections }) => {
 				],
 			},
 			...collectionPubs,
+			...community,
 		],
 	};
 };

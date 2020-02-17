@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { setLocalHighlight } from '@pubpub/editor';
 import { pubDataProps } from 'types/pub';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
 import PubFileImport from './PubFileImport';
@@ -28,7 +28,7 @@ const defaultProps = {
 const PubDocument = (props) => {
 	const { pubData, historyData, collabData, firebaseBranchRef, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
-	const { locationData } = useContext(PageContext);
+	const { locationData } = usePageContext();
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	// const [tempId, setTempId] = useState(uuidv4());
 	const editorChangeObject = collabData.editorChangeObject;

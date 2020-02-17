@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import stickybits from 'stickybits';
 
 import { GridWrapper } from 'components';
+import { usePageContext } from 'utils/hooks';
 
 import PubDetails from './details';
 import PubHeaderBackground from './PubHeaderBackground';
@@ -17,7 +18,6 @@ const stickyHeight = 37;
 
 const propTypes = {
 	collabData: PropTypes.object.isRequired,
-	communityData: PropTypes.object.isRequired,
 	historyData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -63,7 +63,8 @@ const ToggleDetailsButton = ({ showingDetails, onClick }) => {
 
 const PubHeader = (props) => {
 	const headerRef = useRef(null);
-	const { collabData, communityData, historyData, pubData, updateLocalData, sticky } = props;
+	const { collabData, historyData, pubData, updateLocalData, sticky } = props;
+	const { communityData } = usePageContext();
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState(null);
 

@@ -51,29 +51,39 @@ const SideMenu = () => {
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
 				mode: 'discussions',
-				submode: 'list',
+				// submode: 'list',
 			}),
 			count: activeCounts.discussionCount,
-			children: [
-				{
-					title: 'List',
-					href: getDashUrl({
-						collectionSlug: collectionSlug,
-						pubSlug: pubSlug,
-						mode: 'discussions',
-						submode: 'list',
-					}),
-				},
-				{
-					title: 'Labels',
-					href: getDashUrl({
-						collectionSlug: collectionSlug,
-						pubSlug: pubSlug,
-						mode: 'discussions',
-						submode: 'labels',
-					}),
-				},
-			],
+			// children: [
+			// 	{
+			// 		title: 'List',
+			// 		href: getDashUrl({
+			// 			collectionSlug: collectionSlug,
+			// 			pubSlug: pubSlug,
+			// 			mode: 'discussions',
+			// 			submode: 'list',
+			// 		}),
+			// 	},
+			// 	{
+			// 		title: 'Labels',
+			// 		href: getDashUrl({
+			// 			collectionSlug: collectionSlug,
+			// 			pubSlug: pubSlug,
+			// 			mode: 'discussions',
+			// 			submode: 'labels',
+			// 		}),
+			// 	},
+			// ],
+		},
+		{
+			title: 'Forks',
+			icon: 'git-branch',
+			count: activeCounts.mergeCount,
+			href: getDashUrl({
+				collectionSlug: collectionSlug,
+				pubSlug: pubSlug,
+				mode: 'forks',
+			}),
 		},
 		{
 			title: 'Reviews',
@@ -82,39 +92,29 @@ const SideMenu = () => {
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
 				mode: 'reviews',
-				submode: 'list',
+				// submode: 'list',
 			}),
 			count: activeCounts.reviewCount,
-			children: [
-				{
-					title: 'List',
-					href: getDashUrl({
-						collectionSlug: collectionSlug,
-						pubSlug: pubSlug,
-						mode: 'reviews',
-						submode: 'list',
-					}),
-				},
-				{
-					title: 'Templates',
-					href: getDashUrl({
-						collectionSlug: collectionSlug,
-						pubSlug: pubSlug,
-						mode: 'reviews',
-						submode: 'templates',
-					}),
-				},
-			],
-		},
-		{
-			title: 'Merges',
-			icon: 'git-pull',
-			count: activeCounts.mergeCount,
-			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
-				mode: 'merge-requests',
-			}),
+			// children: [
+			// 	{
+			// 		title: 'List',
+			// 		href: getDashUrl({
+			// 			collectionSlug: collectionSlug,
+			// 			pubSlug: pubSlug,
+			// 			mode: 'reviews',
+			// 			submode: 'list',
+			// 		}),
+			// 	},
+			// 	{
+			// 		title: 'Templates',
+			// 		href: getDashUrl({
+			// 			collectionSlug: collectionSlug,
+			// 			pubSlug: pubSlug,
+			// 			mode: 'reviews',
+			// 			submode: 'templates',
+			// 		}),
+			// 	},
+			// ],
 		},
 		{
 			title: 'Impact',
@@ -186,7 +186,7 @@ const SideMenu = () => {
 										</span>
 									)}
 								</a>
-								{active &&
+								{/* active &&
 									item.children &&
 									item.children.map((child) => {
 										const childActive =
@@ -204,7 +204,7 @@ const SideMenu = () => {
 												{child.title}
 											</a>
 										);
-									})}
+									}) */}
 							</div>
 						);
 					})}

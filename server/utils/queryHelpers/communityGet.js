@@ -10,6 +10,7 @@ export default (locationData, whereQuery) => {
 			{
 				model: Page,
 				as: 'pages',
+				separate: true,
 				attributes: {
 					exclude: ['createdAt', 'updatedAt', 'communityId'],
 				},

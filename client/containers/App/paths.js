@@ -2,8 +2,15 @@ import {
 	About,
 	AdminDashboard,
 	CommunityCreate,
+	DashboardActivity,
+	DashboardDiscussions,
+	DashboardForks,
+	DashboardImpact,
 	DashboardMembers,
 	DashboardOverview,
+	DashboardReviews,
+	DashboardSite,
+	DashboardSettings,
 	Explore,
 	Landing,
 	Login,
@@ -36,12 +43,40 @@ export default (viewData, locationData, chunkName) => {
 			hideNav: true,
 			hideFooter: true,
 		},
+		DashboardActivity: {
+			ActiveComponent: DashboardActivity,
+			isDashboard: true,
+		},
+		DashboardDiscussions: {
+			ActiveComponent: DashboardDiscussions,
+			isDashboard: true,
+		},
+		DashboardForks: {
+			ActiveComponent: DashboardForks,
+			isDashboard: true,
+		},
+		DashboardImpact: {
+			ActiveComponent: DashboardImpact,
+			isDashboard: true,
+		},
 		DashboardMembers: {
 			ActiveComponent: DashboardMembers,
 			isDashboard: true,
 		},
 		DashboardOverview: {
 			ActiveComponent: DashboardOverview,
+			isDashboard: true,
+		},
+		DashboardReviews: {
+			ActiveComponent: DashboardReviews,
+			isDashboard: true,
+		},
+		DashboardSite: {
+			ActiveComponent: DashboardSite,
+			isDashboard: true,
+		},
+		DashboardSettings: {
+			ActiveComponent: DashboardSettings,
 			isDashboard: true,
 		},
 		Explore: {

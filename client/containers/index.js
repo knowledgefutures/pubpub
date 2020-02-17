@@ -1,8 +1,15 @@
 export { default as About } from './About/About';
 export { default as AdminDashboard } from './AdminDashboard/AdminDashboard';
 export { default as CommunityCreate } from './CommunityCreate/CommunityCreate';
-export { default as DashboardOverview } from './DashboardOverview/DashboardOverview';
+export { default as DashboardActivity } from './DashboardActivity/DashboardActivity';
+export { default as DashboardDiscussions } from './DashboardDiscussions/DashboardDiscussions';
+export { default as DashboardForks } from './DashboardForks/DashboardForks';
+export { default as DashboardImpact } from './DashboardImpact/DashboardImpact';
 export { default as DashboardMembers } from './DashboardMembers/DashboardMembers';
+export { default as DashboardOverview } from './DashboardOverview/DashboardOverview';
+export { default as DashboardReviews } from './DashboardReviews/DashboardReviews';
+export { default as DashboardSite } from './DashboardSite/DashboardSite';
+export { default as DashboardSettings } from './DashboardSettings/DashboardSettings';
 export { default as Explore } from './Explore/Explore';
 export { default as Landing } from './Landing/Landing';
 export { default as Login } from './Login/Login';

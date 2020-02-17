@@ -7,8 +7,15 @@ require('./pubRedirects');
 // require('./pub'); // Route: ['/pub/:slug', '/pub/:slug/branch/:branchShortId', '/pub/:slug/:mode']
 require('./pubDocument');
 require('./collection'); // Route: /collection/:id
-require('./dashboardOverview'); // Route: ['/dash', '/dash/overview', '/dash/collection/:collectionSlug', '/dash/collection/:collectionSlug/overview', '/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview']
+require('./dashboardActivity');
+require('./dashboardDiscussions');
+require('./dashboardForks');
+require('./dashboardImpact');
 require('./dashboardMembers');
+require('./dashboardOverview');
+require('./dashboardReviews');
+require('./dashboardSite');
+require('./dashboardSettings');
 
 /* Routes for PubPub */
 require('./communityCreate'); // Route: '/community/create'

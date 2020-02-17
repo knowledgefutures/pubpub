@@ -8,26 +8,31 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-import { getMembers } from '../utils/queryHelpers';
+// import { getDiscussions } from '../utils/queryHelpers';
 
 app.get(
-	['/dash/members', '/dash/collection/:collectionSlug/members', '/dash/pub/:pubSlug/members'],
+	[
+		'/dash/discussions',
+		'/dash/collection/:collectionSlug/discussions',
+		'/dash/pub/:pubSlug/discussions',
+	],
 	async (req, res, next) => {
 		try {
 			if (!hostIsValid(req, 'community')) {
 				return next();
 			}
 			const initialData = await getInitialData(req, true);
-			const membersData = await getMembers(initialData);
+			// const discussionsData = await getDiscussions(initialData);
+			const discussionsData = {};
 			return renderToNodeStream(
 				res,
 				<Html
-					chunkName="DashboardMembers"
+					chunkName="DashboardDiscussions"
 					initialData={initialData}
-					viewData={{ membersData: membersData }}
+					viewData={{ discussionsData: discussionsData }}
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
-						title: `Members · ${initialData.scopeData.elements.activeTarget.title}`,
+						title: `Discussions · ${initialData.scopeData.elements.activeTarget.title}`,
 						unlisted: true,
 					})}
 				/>,

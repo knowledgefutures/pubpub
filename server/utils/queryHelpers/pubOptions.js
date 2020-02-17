@@ -23,13 +23,11 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 		{
 			model: PubAttribution,
 			as: 'attributions',
-			required: false,
 			separate: true,
 			include: [
 				{
 					model: User,
 					as: 'user',
-					required: false,
 					attributes: attributesPublicUser,
 				},
 			],
@@ -52,7 +50,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 		{
 			model: Release,
 			as: 'releases',
-			required: false,
 		},
 	];
 	let collectionPubs = [];
@@ -100,7 +97,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			{
 				model: CollectionPub,
 				as: 'collectionPubs',
-				required: false,
 				separate: true,
 				include: [
 					{
@@ -110,7 +106,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 							{
 								model: Page,
 								as: 'page',
-								required: false,
 								attributes: ['id', 'title', 'slug'],
 							},
 							{
@@ -155,7 +150,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			...pubReleases,
 			{
 				separate: true,
-				required: false,
 				model: Thread,
 				as: 'threads',
 				include: [

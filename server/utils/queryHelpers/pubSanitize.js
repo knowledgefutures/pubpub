@@ -12,7 +12,7 @@ export default (pub, initialData, versionNumber) => {
 		return null;
 	}
 
-	const filteredThreads = sanitizeThreads(pub.threads, canView, loginData.id);
+	const filteredThreads = sanitizeThreads(pub.threads, scopeData.activePermissions, loginData.id);
 	const { discussions, forks, reviews } = splitThreads(filteredThreads);
 	const filteredCollectionPubs = pub.collectionPubs
 		? pub.collectionPubs.filter((item) => {

@@ -4,6 +4,7 @@ import {
 	CollectionAttribution,
 	CollectionPub,
 	Community,
+	Comment,
 	Export,
 	Page,
 	PubAttribution,
@@ -61,6 +62,7 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			attributes: attributesPublicUser,
 		},
 	];
+	let threadComments = [{ model: Comment, as: 'comments' }];
 	let threadUserInclude = [
 		{
 			model: User,
@@ -82,6 +84,7 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 		];
 		pubBranches = [];
 		threadAuthor = [];
+		threadComments = [];
 		threadUserInclude = [];
 	}
 	if (isAuth) {
@@ -90,6 +93,7 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 		pubReleases = [];
 		pubAttributions = [];
 		threadAuthor = [];
+		threadComments = [];
 		threadUserInclude = [];
 	}
 	if (getCollections) {
@@ -154,6 +158,7 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 				as: 'threads',
 				include: [
 					...threadAuthor,
+					...threadComments,
 					{
 						model: ThreadUser,
 						as: 'threadUsers',

@@ -1,4 +1,5 @@
-export default (threads, canView, loginId) => {
+export default (threads, activePermissions, loginId) => {
+	const { canView, canAdmin } = activePermissions;
 	return threads.filter((thread) => {
 		if (thread.visibility === 'public') {
 			return true;
@@ -7,9 +8,12 @@ export default (threads, canView, loginId) => {
 			return canView;
 		}
 		if (thread.visibility === 'private') {
-			return thread.threadUsers.find((threadUser) => {
-				return threadUser.userId === loginId;
-			});
+			return (
+				canAdmin ||
+				thread.threadUsers.find((threadUser) => {
+					return threadUser.userId === loginId;
+				})
+			);
 		}
 		return false;
 	});

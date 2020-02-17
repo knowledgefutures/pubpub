@@ -10,7 +10,9 @@ require('./sideMenu.scss');
 
 const SideMenu = () => {
 	const { locationData, communityData, scopeData } = usePageContext();
-	const { activeCounts } = scopeData;
+	const { activeCounts, activePermissions, elements } = scopeData;
+	const { canManage } = activePermissions;
+	const { activeTargetType } = elements;
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
 
@@ -43,17 +45,18 @@ const SideMenu = () => {
 				mode: 'site',
 			}),
 			communityOnly: true,
+			manageRequired: true,
 		},
 		{
 			title: 'Discussions',
 			icon: 'chat2',
+			count: activeCounts.discussionCount,
 			href: getDashUrl({
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
 				mode: 'discussions',
 				// submode: 'list',
 			}),
-			count: activeCounts.discussionCount,
 			// children: [
 			// 	{
 			// 		title: 'List',
@@ -78,7 +81,7 @@ const SideMenu = () => {
 		{
 			title: 'Forks',
 			icon: 'git-branch',
-			count: activeCounts.mergeCount,
+			count: activeCounts.forkCount,
 			href: getDashUrl({
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
@@ -88,13 +91,13 @@ const SideMenu = () => {
 		{
 			title: 'Reviews',
 			icon: 'social-media',
+			count: activeCounts.reviewCount,
 			href: getDashUrl({
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
 				mode: 'reviews',
 				// submode: 'list',
 			}),
-			count: activeCounts.reviewCount,
 			// children: [
 			// 	{
 			// 		title: 'List',
@@ -133,6 +136,7 @@ const SideMenu = () => {
 				pubSlug: pubSlug,
 				mode: 'members',
 			}),
+			manageRequired: true,
 		},
 		{
 			title: 'Settings',
@@ -142,12 +146,14 @@ const SideMenu = () => {
 				pubSlug: pubSlug,
 				mode: 'settings',
 			}),
+			manageRequired: true,
 		},
 	];
 
 	return (
 		<div className="side-menu-component">
 			<style
+				/* eslint-disable-next-line react/no-danger */
 				dangerouslySetInnerHTML={{
 					__html: `
 						.menu.active:before { background: ${communityData.accentColorDark} }
@@ -160,7 +166,10 @@ const SideMenu = () => {
 			<div className="content">
 				{contentItems
 					.filter((item) => {
-						return !item.communityOnly || (!collectionSlug && !pubSlug);
+						const scopeIsValid =
+							activeTargetType === 'community' || !item.communityOnly;
+						const permissionIsValid = canManage || !item.manageRequired;
+						return scopeIsValid && permissionIsValid;
 					})
 					.map((item) => {
 						const itemMode = item.title.toLowerCase().replace(/ /gi, '-');

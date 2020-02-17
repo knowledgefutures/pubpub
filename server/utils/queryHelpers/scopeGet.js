@@ -282,7 +282,7 @@ getActivePermissions = async (
 getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 	/* Get counts for threads, reviews, and forks */
 	const { loginId, isDashboard } = scopeInputs;
-	if (isDashboard) {
+	if (!isDashboard) {
 		return {};
 	}
 
@@ -312,7 +312,7 @@ getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 				},
 			],
 		});
-		pubs = collectionData.collectionPubs;
+		pubs = collectionData.collectionPubs.map((cp) => cp.pub);
 	}
 	if (activeTargetType === 'community') {
 		const communityCountData = await Community.findOne({
@@ -326,11 +326,11 @@ getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 		const openThreads = (pub.threads || []).filter((thread) => {
 			return !thread.isClosed;
 		});
-		const visibleThreads = sanitizeThreads(openThreads, activePermissions.canView, loginId);
+		const visibleThreads = sanitizeThreads(openThreads, activePermissions, loginId);
 		const { discussions, forks, reviews } = splitThreads(visibleThreads);
-		reviewCount += discussions.length;
+		discussionCount += discussions.length;
 		forkCount += forks.length;
-		discussionCount += reviews.length;
+		reviewCount += reviews.length;
 	});
 
 	return {

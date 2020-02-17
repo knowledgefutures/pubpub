@@ -21,14 +21,27 @@ import {
 	CollectionAttribution,
 	Page,
 	Tag,
+	Thread,
+	ThreadComment,
 	PubTag,
 	Community,
 	WorkerTask,
 } from './models';
-import { generateHash } from './utils';
+// import { generateHash } from './utils';
 import mudder from 'mudder';
 
 console.log('Beginning Migration');
+
+const generateHash = (length) => {
+	const tokenLength = length || 32;
+	const possible = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+	let hash = '';
+	for (let index = 0; index < tokenLength; index += 1) {
+		hash += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return hash;
+};
 
 new Promise((resolve) => {
 	return resolve();
@@ -1052,10 +1065,9 @@ new Promise((resolve) => {
 
 	*/
 	.then(() => {
-
-	// .then(() => {
-	// 	// Handle addition of Export model and Branch.exports field
-	// 	return sequelize.sync();
+		// .then(() => {
+		// 	// Handle addition of Export model and Branch.exports field
+		// 	return sequelize.sync();
 	})
 	.then(async () => {
 		// sequelize.queryInterface.changeColumn('Pubs', 'headerStyle', {
@@ -1067,6 +1079,63 @@ new Promise((resolve) => {
 		// await Pub.update({headerBackgroundColor: 'light'}, {where: {}});
 		// // Any pubs without a header style will get set to "dark".
 		// await Pub.update({headerStyle: "dark"}, {where: {headerStyle: null}});
+	})
+	.then(() => {
+		/* Migrate To Releases*/
+	})
+	.then(async () => {
+		/* Migrate Discussions to Threads*/
+		const discusssionsData = await Discussion.findAll();
+		const groupedDiscussions = {};
+		discusssionsData.forEach((discussion) => {
+			const key = `${discussion.pubId}-${discussion.threadNumber}`;
+			const nextGroup = groupedDiscussions[key] || [];
+			nextGroup.push(discussion);
+			nextGroup.sort((foo, bar) => {
+				if (foo.createdAt < bar.createdAt) {
+					return -1;
+				}
+				if (foo.createdAt > bar.createdAt) {
+					return 1;
+				}
+				return 0;
+			});
+			groupedDiscussions[key] = nextGroup;
+		});
+
+		const threads = [];
+		let comments = [];
+		Object.values(groupedDiscussions).forEach((group) => {
+			const header = group[0];
+			const newThread = {
+				id: header.id,
+				title: header.title,
+				number: header.threadNumber,
+				isClosed: header.isArchived,
+				labels: header.labels,
+				// visibility: TODO: calculate based on branch
+				initBranchId: header.branchId,
+				// initBranchKey TODO: find in firebase?
+				// highlightAnchor
+				// highlightHead
+				userId: header.userId,
+				pubId: header.pubId,
+			};
+			const newComments = group.map((item) => {
+				return {
+					text: item.text,
+					content: item.content,
+					userId: item.userId,
+					threadId: header.id,
+				};
+			});
+			threads.push(newThread);
+			comments = [...comments, ...newComments];
+		});
+		// console.log(threads.length, comments.length);
+		// await Thread.bulkCreate(threads);
+		// console.log('Created Threads');
+		await ThreadComment.bulkCreate(comments);
 
 	})
 	.catch((err) => {

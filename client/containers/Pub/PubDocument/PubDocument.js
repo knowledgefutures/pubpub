@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { setLocalHighlight } from '@pubpub/editor';
-import { pubDataProps } from 'types/pub';
 import { usePageContext } from 'utils/hooks';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
@@ -14,7 +13,7 @@ import PubMouseEvents from './PubMouseEvents';
 require('./pubDocument.scss');
 
 const propTypes = {
-	pubData: pubDataProps.isRequired,
+	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
@@ -28,7 +27,8 @@ const defaultProps = {
 const PubDocument = (props) => {
 	const { pubData, historyData, collabData, firebaseBranchRef, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
-	const { locationData } = usePageContext();
+	const { locationData, scopeData } = usePageContext();
+	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	// const [tempId, setTempId] = useState(uuidv4());
 	const editorChangeObject = collabData.editorChangeObject;
@@ -84,13 +84,13 @@ const PubDocument = (props) => {
 						firebaseBranchRef={firebaseBranchRef}
 						updateLocalData={updateLocalData}
 					/>
-					{!isViewingHistory && pubData.canEditBranch && !pubData.isStaticDoc && (
+					{!isViewingHistory && (canEdit || canEditDraft) && !pubData.isStaticDoc && (
 						<PubFileImport
 							editorChangeObject={collabData.editorChangeObject}
 							updateLocalData={updateLocalData}
 						/>
 					)}
-					{(editorFocused || !pubData.canEditBranch) && (
+					{(editorFocused || !(canEdit || canEditDraft)) && (
 						<PubInlineMenu
 							pubData={pubData}
 							collabData={collabData}

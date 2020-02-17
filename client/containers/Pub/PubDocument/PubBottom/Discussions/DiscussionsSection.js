@@ -35,6 +35,7 @@ const DiscussionsSection = (props) => {
 	const { pubData, updateLocalData } = props;
 	const { discussions } = pubData;
 	const { communityData, scopeData } = useContext(PageContext);
+	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
 	const [isBrowsingArchive, setIsBrowsingArchive] = useState(false);
 	const [isShowingAnchoredComments, setShowingAnchoredComments] = useState(true);
 	const [sortMode, setSortMode] = useState('newestThread');
@@ -80,7 +81,7 @@ const DiscussionsSection = (props) => {
 								communityData={communityData}
 								labelsData={pubData.labels || []}
 								selectedLabels={filteredLabels}
-								isManager={scopeData.activePermissions.canManage}
+								isManager={canManage}
 								onBrowseArchive={setIsBrowsingArchive}
 								isBrowsingArchive={isBrowsingArchive}
 								onShowAnchoredComments={setShowingAnchoredComments}
@@ -141,7 +142,9 @@ const DiscussionsSection = (props) => {
 					{...props}
 					filterThreads={createThreadFilter(searchTerm)}
 					searchTerm={searchTerm}
-					showBottomInput={pubData.canDiscussBranch && !isSearching && !isBrowsingArchive}
+					showBottomInput={
+						(canView || canCreateDiscussions) && !isSearching && !isBrowsingArchive
+					}
 				/>
 			)}
 		</PubBottomSection>

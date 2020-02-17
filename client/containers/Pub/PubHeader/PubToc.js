@@ -2,14 +2,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Menu, MenuItem } from 'components/Menu';
+import { usePageContext } from 'utils/hooks';
 
 require('./pubToc.scss');
 
 const propTypes = {
 	children: PropTypes.node.isRequired,
-	pubData: PropTypes.shape({
-		canEditBranch: PropTypes.bool,
-	}).isRequired,
+	// pubData: PropTypes.shape({
+	// 	canEditBranch: PropTypes.bool,
+	// }).isRequired,
 	headings: PropTypes.arrayOf(
 		PropTypes.shape({
 			title: PropTypes.string,
@@ -25,7 +26,9 @@ const defaultProps = {
 };
 
 const PubToc = function(props) {
-	const { headings, children, pubData, onSelect } = props;
+	const { headings, children, onSelect } = props;
+	const { scopeData } = usePageContext();
+	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	return (
 		<Menu
 			aria-label="Table of contents"
@@ -47,7 +50,7 @@ const PubToc = function(props) {
 							if (onSelect) {
 								onSelect();
 							}
-							if (pubData.canEditBranch) {
+							if (canEdit || canEditDraft) {
 								evt.preventDefault();
 								document.getElementById(heading.href).scrollIntoView();
 								const currentTop =

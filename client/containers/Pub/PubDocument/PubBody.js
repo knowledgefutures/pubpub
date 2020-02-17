@@ -10,7 +10,7 @@ import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
 import { debounce } from 'debounce';
 
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 
 import discussionSchema from './DiscussionAddon/discussionSchema';
@@ -50,7 +50,8 @@ const PubBody = (props) => {
 		historyData,
 		editorWrapperRef,
 	} = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData, scopeData } = usePageContext();
+	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
@@ -153,7 +154,7 @@ const PubBody = (props) => {
 	const editorKey = editorKeyHistory || editorKeyCollab;
 	const isHistoryDoc = isViewingHistory && historyData.historyDoc;
 	const useCollaborativeOptions = !pubData.isStaticDoc && !isHistoryDoc;
-	const isReadOnly = !!(pubData.isStaticDoc || !pubData.canEditBranch || isViewingHistory);
+	const isReadOnly = !!(pubData.isStaticDoc || !(canEdit || canEditDraft) || isViewingHistory);
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;

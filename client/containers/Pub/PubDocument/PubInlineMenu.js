@@ -32,7 +32,8 @@ const shouldOpenBelowSelection = () => {
 
 const PubInlineMenu = (props) => {
 	const { pubData, collabData, historyData } = props;
-	const { locationData, communityData } = useContext(PageContext);
+	const { locationData, communityData, scopeData } = useContext(PageContext);
+	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const selection = collabData.editorChangeObject.selection || {};
 	const selectionBoundingBox = collabData.editorChangeObject.selectionBoundingBox || {};
 
@@ -66,7 +67,7 @@ const PubInlineMenu = (props) => {
 		{ key: 'em', icon: <Icon icon="italic" /> },
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
-	const isReadOnly = pubData.isStaticDoc || !pubData.canEditBranch;
+	const isReadOnly = pubData.isStaticDoc || !(canEdit || canEditDraft);
 	// TODO: Make discussions disable-able
 	// if (isReadOnly && !pubData.publicDiscussions) {
 	// 	return null;

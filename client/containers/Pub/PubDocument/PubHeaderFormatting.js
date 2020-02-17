@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import stickybits from 'stickybits';
-
+import { usePageContext } from 'utils/hooks';
 import { FormattingBar, buttons } from 'components/FormattingBar';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
 
@@ -28,7 +28,9 @@ const PubHeaderFormatting = (props) => {
 	}, []);
 
 	const { pubData, collabData } = props;
-	if (!pubData.canEditBranch) {
+	const { scopeData } = usePageContext();
+	const { canEdit, canEditDraft } = scopeData.activePermissions;
+	if (!canEdit || !canEditDraft) {
 		return null;
 	}
 

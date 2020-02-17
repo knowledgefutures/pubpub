@@ -38,7 +38,7 @@ const PubHeaderSticky = (props) => {
 			<div className="sticky-buttons">
 				{headings.length > 0 && (
 					<React.Fragment>
-						<PubToc pubData={pubData} headings={headings}>
+						<PubToc headings={headings}>
 							{({ ref, ...disclosureProps }) => (
 								<Button minimal={true} {...disclosureProps} elementRef={ref}>
 									Contents

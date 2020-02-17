@@ -4,12 +4,12 @@ import {
 	CollectionAttribution,
 	CollectionPub,
 	Community,
-	Comment,
 	Export,
 	Page,
 	PubAttribution,
 	Release,
 	Thread,
+	ThreadComment,
 	ThreadUser,
 	User,
 } from '../../models';
@@ -62,7 +62,7 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			attributes: attributesPublicUser,
 		},
 	];
-	let threadComments = [{ model: Comment, as: 'comments' }];
+	let threadComments = [{ model: ThreadComment, as: 'comments' }];
 	let threadUserInclude = [
 		{
 			model: User,

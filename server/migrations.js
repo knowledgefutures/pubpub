@@ -1085,58 +1085,61 @@ new Promise((resolve) => {
 	})
 	.then(async () => {
 		/* Migrate Discussions to Threads*/
-		const discusssionsData = await Discussion.findAll();
-		const groupedDiscussions = {};
-		discusssionsData.forEach((discussion) => {
-			const key = `${discussion.pubId}-${discussion.threadNumber}`;
-			const nextGroup = groupedDiscussions[key] || [];
-			nextGroup.push(discussion);
-			nextGroup.sort((foo, bar) => {
-				if (foo.createdAt < bar.createdAt) {
-					return -1;
-				}
-				if (foo.createdAt > bar.createdAt) {
-					return 1;
-				}
-				return 0;
-			});
-			groupedDiscussions[key] = nextGroup;
-		});
+		// const discusssionsData = await Discussion.findAll();
+		// const groupedDiscussions = {};
+		// discusssionsData.forEach((discussion) => {
+		// 	const key = `${discussion.pubId}-${discussion.threadNumber}`;
+		// 	const nextGroup = groupedDiscussions[key] || [];
+		// 	nextGroup.push(discussion);
+		// 	nextGroup.sort((foo, bar) => {
+		// 		if (foo.createdAt < bar.createdAt) {
+		// 			return -1;
+		// 		}
+		// 		if (foo.createdAt > bar.createdAt) {
+		// 			return 1;
+		// 		}
+		// 		return 0;
+		// 	});
+		// 	groupedDiscussions[key] = nextGroup;
+		// });
 
-		const threads = [];
-		let comments = [];
-		Object.values(groupedDiscussions).forEach((group) => {
-			const header = group[0];
-			const newThread = {
-				id: header.id,
-				title: header.title,
-				number: header.threadNumber,
-				isClosed: header.isArchived,
-				labels: header.labels,
-				// visibility: TODO: calculate based on branch
-				initBranchId: header.branchId,
-				// initBranchKey TODO: find in firebase?
-				// highlightAnchor
-				// highlightHead
-				userId: header.userId,
-				pubId: header.pubId,
-			};
-			const newComments = group.map((item) => {
-				return {
-					text: item.text,
-					content: item.content,
-					userId: item.userId,
-					threadId: header.id,
-				};
-			});
-			threads.push(newThread);
-			comments = [...comments, ...newComments];
-		});
-		// console.log(threads.length, comments.length);
+		// const threads = [];
+		// let comments = [];
+		// Object.values(groupedDiscussions).forEach((group) => {
+		// 	const header = group[0];
+		// 	const newThread = {
+		// 		id: header.id,
+		// 		title: header.title,
+		// 		number: header.threadNumber,
+		// 		isClosed: header.isArchived,
+		// 		labels: header.labels,
+		// 		// visibility: TODO: calculate based on branch
+		// 		initBranchId: header.branchId,
+		// 		// initBranchKey TODO: find in firebase?
+		// 		// highlightAnchor
+		// 		// highlightHead
+		// 		userId: header.userId,
+		// 		pubId: header.pubId,
+		// 	};
+		// 	const newComments = group.map((item) => {
+		// 		return {
+		// 			text: item.text,
+		// 			content: item.content,
+		// 			userId: item.userId,
+		// 			threadId: header.id,
+		// 		};
+		// 	});
+		// 	threads.push(newThread);
+		// 	comments = [...comments, ...newComments];
+		// });
 		// await Thread.bulkCreate(threads);
 		// console.log('Created Threads');
-		await ThreadComment.bulkCreate(comments);
+		// await ThreadComment.bulkCreate(comments);
 
+	})
+	.then(async () => {
+		const mergesData = Merge.findAll();
+		// Are all publish events captured by merges? 
 	})
 	.catch((err) => {
 		console.log('Error with Migration', err);

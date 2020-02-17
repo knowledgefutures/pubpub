@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 
@@ -6,7 +6,7 @@ import { getResizedUrl } from 'utils';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 import { isPubPublic } from 'shared/pub/permissions';
 import { pubUrl, communityUrl } from 'shared/utils/canonicalUrls';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import { Avatar, Icon } from 'components';
 
 import PubPreviewImage from './PubPreviewImage';
@@ -38,7 +38,7 @@ const defaultProps = {
 
 const PubPreview = function(props) {
 	const { pubData, size, communityData, customPubUrl } = props;
-	const { communityData: localCommunityData, scopeData } = useContext(PageContext);
+	const { communityData: localCommunityData, scopeData } = usePageContext();
 	const resizedHeaderLogo =
 		props.communityData && getResizedUrl(props.communityData.headerLogo, 'fit-in', '125x35');
 	const attributions = pubData.attributions || [];

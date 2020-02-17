@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Button, Intent, Tag } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, InputField, Icon, MinimalEditor } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'utils';
 
 require('./pubMerge.scss');
@@ -13,7 +13,7 @@ const propTypes = {
 
 const PubMerge = (props) => {
 	const { pubData } = props;
-	const { locationData, communityData } = useContext(PageContext);
+	const { locationData, communityData } = usePageContext();
 	const [isLoading, setIsLoading] = useState(false);
 	const [noteData, setNoteData] = useState({});
 	const sourceBranch = pubData.branches.find((branch) => {

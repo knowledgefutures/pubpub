@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 import Notes, { notePropType } from './Notes';
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
@@ -19,7 +19,7 @@ const defaultProps = {
 const SearchableNoteSection = (props) => {
 	const { items, nodeType, viewNode, ...restProps } = props;
 	const numberedItems = items.map((item, index) => ({ ...item, number: index + 1 }));
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 
 	const targetNoteElement = (fn) =>
 		viewNode &&

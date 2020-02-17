@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Intent, Tag, Tabs, Tab, Callout } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, Icon, InputField, MinimalEditor } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'utils';
 import ReviewEvent from './ReviewEvent';
 
@@ -16,7 +16,7 @@ const propTypes = {
 
 const PubReview = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { communityData, locationData } = useContext(PageContext);
+	const { communityData, locationData } = usePageContext();
 	const [isLoading, setIsLoading] = useState(undefined);
 	const [isLoadingCreateComment, setIsLoadingCreateComment] = useState(false);
 	const [currentTab, setCurrentTab] = useState('details');

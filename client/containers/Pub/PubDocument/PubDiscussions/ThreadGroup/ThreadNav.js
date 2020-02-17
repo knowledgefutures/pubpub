@@ -4,7 +4,7 @@ import Color from 'color';
 import { Button, Popover, Menu, MenuItem } from '@blueprintjs/core';
 
 import { Icon } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 import ThreadBubble from './ThreadBubble';
 
@@ -67,7 +67,7 @@ const ThreadNav = (props) => {
 		setExpanded,
 	} = props;
 
-	const { communityData, loginData } = useContext(PageContext);
+	const { communityData, loginData } = usePageContext();
 	const [isOverflowHovered, setOverflowHovered] = useState(false);
 	const [isOverflowShown, setOverflowShown] = useState(false);
 

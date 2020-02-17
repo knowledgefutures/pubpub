@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { LicenseSelect } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import { getLicenseBySlug } from 'shared/license';
 
 import PubBottomSection, { SectionBullets, AccentedIconButton } from './PubBottomSection';
@@ -16,7 +16,7 @@ const propTypes = {
 
 const LicenseSection = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { communityData, scopeData } = useContext(PageContext);
+	const { communityData, scopeData } = usePageContext();
 	const { link, full, short, version } = getLicenseBySlug(pubData.licenseSlug);
 
 	return (

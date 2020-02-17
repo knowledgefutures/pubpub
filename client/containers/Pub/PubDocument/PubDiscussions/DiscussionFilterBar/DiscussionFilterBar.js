@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
 	Popover,
@@ -7,7 +7,7 @@ import {
 	NonIdealState,
 	Button,
 } from '@blueprintjs/core';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import { filterAndSortThreads } from '../discussionUtils';
 import SortList from '../../PubBottom/Discussions/SortList';
 import LabelFilter from '../../PubBottom/Discussions/LabelFilter';
@@ -24,7 +24,7 @@ const propTypes = {
 
 const DiscussionFilterBar = (props) => {
 	const { pubData, threadData, updateLocalData, children } = props;
-	const { communityData, scopeData } = useContext(PageContext);
+	const { communityData, scopeData } = usePageContext();
 	const [isArchivedMode, setIsArchivedMode] = useState(false);
 	const [sortMode, setSortMode] = useState('newestThread');
 	const [filteredLabels, setFilteredLabels] = useState([]);

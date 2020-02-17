@@ -12,7 +12,7 @@ import {
 	DropdownButton,
 } from 'components';
 import { apiFetch } from 'utils';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 require('./permissions.scss');
 
@@ -29,7 +29,7 @@ const defaultProps = {
 
 const Permissions = (props) => {
 	const { pubData, branchData, updateLocalData, setIsLoading } = props;
-	const { communityData, locationData, loginData } = useContext(PageContext);
+	const { communityData, locationData, loginData } = usePageContext();
 	const tooltipTimeout = useRef(null);
 	const [showTooltip, setShowTooltip] = useState(false);
 	const [copied, copyToClipboard] = useCopyToClipboard();

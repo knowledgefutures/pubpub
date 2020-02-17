@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import dateFormat from 'dateformat';
 import { Button } from '@blueprintjs/core';
@@ -6,7 +6,7 @@ import { Button } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 import { Icon, GridWrapper } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 
 import { getAllPubContributors } from 'utils/pubContributors';
@@ -24,7 +24,7 @@ const PubDetails = (props) => {
 	const { pubData } = props;
 	const contributors = getAllPubContributors(pubData);
 	const [isExpanded, setIsExpanded] = useState(false);
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 
 	const showThirdColumn = !!(pubData.doi || isExpanded);
 

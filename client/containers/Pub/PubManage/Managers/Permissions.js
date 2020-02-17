@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Checkbox } from '@blueprintjs/core';
 import { Icon, Avatar, SharingCard, UserAutocomplete } from 'components';
 import { apiFetch } from 'utils';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 require('./permissions.scss');
 
@@ -19,7 +19,7 @@ const defaultProps = {
 
 const Permissions = (props) => {
 	const { pubData, updateLocalData, setIsLoading } = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 
 	const handlePubUpdate = (pubUpdates) => {
 		setIsLoading(true);

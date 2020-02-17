@@ -1,6 +1,5 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { remove as removeDiacritics } from 'diacritics';
-import { PageContext } from 'utils/hooks';
 import Icon from 'components/Icon/Icon';
 import { setIsProd, isProd } from './isProd';
 
@@ -10,10 +9,6 @@ export { apiFetch } from './apiFetch';
 if (typeof window === 'undefined') {
 	setIsProd(process.env.PUBPUB_PRODUCTION);
 }
-
-export const usePageContext = () => {
-	return useContext(PageContext);
-};
 
 export const getFirebaseConfig = function() {
 	return {

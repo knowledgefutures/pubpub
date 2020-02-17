@@ -30,7 +30,7 @@ const PubHeaderFormatting = (props) => {
 	const { pubData, collabData } = props;
 	const { scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
-	if (!canEdit || !canEditDraft) {
+	if (!(canEdit || canEditDraft)) {
 		return null;
 	}
 

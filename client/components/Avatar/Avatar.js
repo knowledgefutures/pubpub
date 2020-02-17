@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { getResizedUrl } from 'utils';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 require('./avatar.scss');
 
@@ -41,7 +41,7 @@ const Avatar = function(props) {
 		isBlock,
 		className,
 	} = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 
 	const avatarStyle = {
 		width: width,

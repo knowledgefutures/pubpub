@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 import { Icon } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import DiscussionItem from './DiscussionItem';
 import DiscussionInput from './DiscussionInput';
 import LabelList from './LabelList';
@@ -29,7 +29,7 @@ const defaultProps = {
 
 const DiscussionThread = (props) => {
 	const { pubData, threadData, canPreview, searchTerm } = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 	const [previewExpanded, setPreviewExpanded] = useState(false);
 	const isPreview = canPreview && !previewExpanded;
 

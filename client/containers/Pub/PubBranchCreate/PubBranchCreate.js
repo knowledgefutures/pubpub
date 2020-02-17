@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import { MenuItem, Button, Position, Intent } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import { pubDataProps } from 'types/pub';
@@ -22,7 +22,7 @@ const propTypes = {
 
 const PubBranchCreate = (props) => {
 	const { pubData } = props;
-	const { locationData, communityData } = useContext(PageContext);
+	const { locationData, communityData } = usePageContext();
 	const [selectedBranch, setSelectedBranch] = useState(
 		pubData.branches.reduce((prev, curr) => {
 			if (curr.shortId === Number(locationData.query.init)) {

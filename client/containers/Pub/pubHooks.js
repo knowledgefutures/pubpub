@@ -1,12 +1,5 @@
 import { useContext } from 'react';
-
-// TODO(ian): Move this here?
-// import { PageContext } from 'utils/hooks';
 import { PubContext } from './PubSyncManager';
-
-// export const usePageContext = () => {
-// 	return useContext(PageContext);
-// };
 
 export const usePubContext = () => {
 	return useContext(PubContext);

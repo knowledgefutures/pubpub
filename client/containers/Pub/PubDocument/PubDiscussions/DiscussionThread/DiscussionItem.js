@@ -4,7 +4,7 @@ import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
 import Editor, { getText, getJSON } from '@pubpub/editor';
 import { Button, Intent, Tooltip } from '@blueprintjs/core';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 import { Avatar, Icon } from 'components';
 import { apiFetch } from 'utils';
@@ -38,7 +38,7 @@ const DiscussionItem = (props) => {
 		isRootThread,
 		isPreview,
 	} = props;
-	const { loginData, communityData, locationData, scopeData } = useContext(PageContext);
+	const { loginData, communityData, locationData, scopeData } = usePageContext();
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState({});
 	const [isLoadingEdit, setIsLoadingEdit] = useState(false);

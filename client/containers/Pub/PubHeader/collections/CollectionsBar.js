@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { OverflowList } from '@blueprintjs/core';
 
 import { pubDataProps } from 'types/pub';
 import { chooseCollectionForPub } from 'utils/collections';
 import { collectionUrl } from 'shared/utils/canonicalUrls';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import { Menu, MenuItem } from 'components/Menu';
 
 import CollectionBrowser from './CollectionBrowser';
@@ -20,7 +20,7 @@ const propTypes = {
 
 const CollectionsBar = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { communityData, locationData } = useContext(PageContext);
+	const { communityData, locationData } = usePageContext();
 	const currentCollection = chooseCollectionForPub(pubData, locationData);
 
 	if (pubData.collectionPubs.length === 0) {

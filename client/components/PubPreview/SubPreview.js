@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 require('./subPreview.scss');
 
@@ -13,7 +13,7 @@ const propTypes = {
 /* more capability to link pubs into relationships */
 const SubPreview = function(props) {
 	const { pubData, size } = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 	if (size !== 'minimal') {
 		return null;
 	}

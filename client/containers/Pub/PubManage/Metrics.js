@@ -5,7 +5,7 @@ import { ComposableMap, ZoomableGroup, Geographies, Geography } from 'react-simp
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
 import { Spinner, Tab, Tabs } from '@blueprintjs/core';
 import KeenAnalysis from 'keen-analysis';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 require('./metrics.scss');
 
@@ -25,7 +25,7 @@ const Metrics = (props) => {
 	const [countryData, setCountryData] = useState({});
 	const [toolTipData, setToolTipData] = useState(undefined);
 	const [totalVisits, setTotalVisits] = useState(undefined);
-	const { locationData } = useContext(PageContext);
+	const { locationData } = usePageContext();
 	useEffectOnce(() => {
 		fetch('https://assets.pubpub.org/_site/world-50m.json')
 			.then((response) => {

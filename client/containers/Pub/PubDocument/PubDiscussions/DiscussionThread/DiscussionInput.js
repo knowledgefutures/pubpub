@@ -9,7 +9,7 @@ import Editor, {
 } from '@pubpub/editor';
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 import { Avatar } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 import { apiFetch } from 'utils';
 
@@ -36,7 +36,7 @@ const getPlaceholderText = (isNewThread, isPubBottomInput) => {
 
 const DiscussionInput = (props) => {
 	const { pubData, collabData, updateLocalData, threadData, isPubBottomInput } = props;
-	const { loginData, locationData, communityData } = useContext(PageContext);
+	const { loginData, locationData, communityData } = usePageContext();
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState({});
 	const [isLoading, setIsLoading] = useState(false);

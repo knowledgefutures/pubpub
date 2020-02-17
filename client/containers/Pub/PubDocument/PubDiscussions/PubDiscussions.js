@@ -1,9 +1,9 @@
-import React, { useEffect, useContext, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { dispatchEmptyTransaction } from '@pubpub/editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 import { NonIdealState } from '@blueprintjs/core';
 import ThreadGroup from './ThreadGroup';
@@ -43,7 +43,7 @@ const PubDiscussions = (props) => {
 		searchTerm,
 		showBottomInput,
 	} = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const { width: windowWidth } = useWindowSize();
 

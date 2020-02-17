@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Menu, MenuItem, Intent } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 import Attribution from './Attribution';
 import Collections from './Collections';
 import Details from './Details';
@@ -21,7 +21,7 @@ const propTypes = {
 };
 
 const PubManage = (props) => {
-	const { locationData, communityData, loginData } = useContext(PageContext);
+	const { locationData, communityData, loginData } = usePageContext();
 	const manageMode = locationData.params.manageMode || 'details';
 	const modes = [
 		{ text: 'Details', active: manageMode === 'details', path: '' },

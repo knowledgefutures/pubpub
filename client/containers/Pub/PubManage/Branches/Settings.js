@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { InputField } from 'components';
 import { apiFetch, slugifyString } from 'utils';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
@@ -17,7 +17,7 @@ const defaultProps = {
 
 const Branches = (props) => {
 	const { pubData, branchData, updateLocalData, setIsLoading } = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 
 	const handleBranchUpdate = (branchUpdates) => {
 		setIsLoading(true);

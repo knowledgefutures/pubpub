@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Menu, MenuItem } from '@blueprintjs/core';
 import { Icon } from 'components';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 require('./social.scss');
 
@@ -13,7 +13,7 @@ const propTypes = {
 };
 
 const Social = (props) => {
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 	const pubData = props.pubData;
 	const communityHostname = communityData.domain || `${communityData.subdomain}.pubpub.org`;
 	const pubLink = `https://${communityHostname}/pub/${pubData.slug}/${

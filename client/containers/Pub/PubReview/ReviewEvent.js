@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
 import { AnchorButton } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { Avatar } from 'components';
 import Editor from '@pubpub/editor';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 require('./reviewEvent.scss');
 
@@ -16,7 +16,7 @@ const propTypes = {
 
 const ReviewEvent = (props) => {
 	const { pubData, eventData } = props;
-	const { locationData } = useContext(PageContext);
+	const { locationData } = usePageContext();
 	const activeReview = pubData.reviews.find((review) => {
 		return review.shortId === Number(locationData.params.reviewShortId);
 	});

@@ -1,10 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
 
 import { licenses, getLicenseBySlug } from 'shared/license';
 import { apiFetch } from 'utils';
-import { PageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
 
 require('./licenseSelect.scss');
 
@@ -28,7 +28,7 @@ const defaultProps = {
 const LicenseSelect = (props) => {
 	const { children, onSelect, persistSelections, pubData, updateLocalData } = props;
 	const [isPersisting, setIsPersisting] = useState(false);
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 
 	const currentLicense = getLicenseBySlug(pubData.licenseSlug);
 

@@ -64,7 +64,9 @@ export const getInitialData = async (req, isDashboard) => {
 		hostname.indexOf('.pubpub.org') > -1
 			? { subdomain: hostname.replace('.pubpub.org', '') }
 			: { domain: hostname };
+	console.time('getCommunity');
 	const communityData = await getCommunity(locationData, whereQuery);
+	console.timeEnd('getCommunity');
 	if (communityData.domain && whereQuery.subdomain && !locationData.isDuqDuq) {
 		throw new Error(`UseCustomDomain:${communityData.domain}`);
 	}
@@ -72,6 +74,7 @@ export const getInitialData = async (req, isDashboard) => {
 		/* eslint-disable-next-line no-param-reassign */
 		communityData.domain = req.headers.localhost;
 	}
+	console.time('getScope');
 	const scopeData = await getScope({
 		communityData: communityData,
 		pubSlug: locationData.params.pubSlug,
@@ -80,7 +83,10 @@ export const getInitialData = async (req, isDashboard) => {
 		loginId: loginData.id,
 		isDashboard: isDashboard,
 	});
+	console.timeEnd('getScope');
+	console.time('sanitizeComm');
 	const cleanedCommunityData = sanitizeCommunity(communityData, locationData, scopeData);
+	console.timeEnd('sanitizeComm');
 	return {
 		communityData: cleanedCommunityData,
 		loginData: loginData,

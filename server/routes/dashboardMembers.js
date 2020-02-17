@@ -20,15 +20,21 @@ app.get(
 		'/dash/pub/:pubSlug/members',
 	],
 	(req, res, next) => {
+		console.log('---------');
+		console.time('total');
 		if (!hostIsValid(req, 'community')) {
 			return next();
 		}
-
+		console.time('intial');
 		return getInitialData(req, true)
 			.then((initialData) => {
+				console.timeEnd('intial');
+				console.time('members');
 				return Promise.all([initialData, getMembers(initialData)]);
 			})
 			.then(([initialData, membersData]) => {
+				console.timeEnd('members');
+				console.timeEnd('total');
 				return renderToNodeStream(
 					res,
 					<Html

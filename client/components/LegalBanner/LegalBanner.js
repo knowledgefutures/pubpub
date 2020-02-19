@@ -113,9 +113,11 @@ const LegalBanner = (props) => {
 	const renderNoticeSteps = () => {
 		return (
 			<div className="notice-steps">
-				{allBannersToShow.map((banner) => {
+				{allBannersToShow.map((banner, index) => {
 					return (
 						<div
+							// eslint-disable-next-line react/no-array-index-key
+							key={index}
 							className={classNames(
 								'step',
 								banners.indexOf(banner) === bannerIndex && 'current',

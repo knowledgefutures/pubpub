@@ -58,7 +58,8 @@ export const link = {
 	icon: 'link',
 	isToggle: true,
 	controls: {
-		captureFocusOnMount: true,
+		disableClickProxying: true,
+		captureFocusOnMount: false,
 		component: ControlsLink,
 		indicate: (changeObject) => !!changeObject.activeLink,
 		trigger: (changeObject) => {

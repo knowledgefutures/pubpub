@@ -10,7 +10,7 @@ const init = async () => {
 		// await headerCols();
 		// await dashCols();
 		// await discToThreads();
-		await buildReleases();
+		// await buildReleases();
 	} catch (err) {
 		console.log('Error with Migration', err);
 	} finally {

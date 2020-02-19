@@ -2,6 +2,7 @@
 import headerCols from './headerCols';
 import dashCols from './dashCols';
 import discToThreads from './discToThreads';
+import reviewsToThreads from './reviewsToThreads';
 import buildReleases from './buildReleases';
 
 const init = async () => {
@@ -10,6 +11,7 @@ const init = async () => {
 		// await headerCols();
 		// await dashCols();
 		// await discToThreads();
+		// await reviewsToThreads();
 		// await buildReleases();
 	} catch (err) {
 		console.log('Error with Migration', err);

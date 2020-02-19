@@ -1,4 +1,8 @@
 export default (sequelize, dataTypes) => {
+	/* shortId, isClosed, mergeId, pubId, sourceBranch, destBranch */
+	/* can be deleted once dashboard goes live */
+	/* We need a migration plan for ReviewEvents. Does it make sense */
+	/* to generalize that to ThreadEvents? */
 	return sequelize.define(
 		'Review',
 		{

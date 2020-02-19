@@ -32,18 +32,22 @@ app.get(
 		try {
 			const initialData = await getInitialData(req);
 			const { canView, canViewDraft } = initialData.scopeData.activePermissions;
-			const isRelease = req.path.indexOf(`/pub/${req.pubSlug}/release`) > -1;
+			const isRelease = req.path.indexOf(`/pub/${req.params.pubSlug}/release`) > -1;
 			const branchType = isRelease ? 'public' : 'draft';
-			if (!isRelease && !canView && !canViewDraft) {
+			const validVersionNumber = req.params.versionNumber
+				? Number(req.params.versionNumber) > 0
+				: true;
+			if ((!isRelease && !canView && !canViewDraft) || !validVersionNumber) {
 				throw new Error('Pub Not Found');
 			}
 
 			let pubData = await getPub(req.params.pubSlug, initialData.communityData.id);
-			pubData = sanitizePub(pubData, initialData, req.params.versionNumber);
+			pubData = sanitizePub(pubData, initialData, !!req.params.versionNumber);
 			if (!pubData) {
 				throw new Error('Pub Not Found');
 			}
-			pubData = await enrichPubFirebaseDoc(pubData, req.params.versionNumber, branchType);
+			/* historyKey is 0-indexed in firebase. versionNumber is 1-indexed for UI purposes. */
+			pubData = await enrichPubFirebaseDoc(pubData, req.params.versionNumber - 1, branchType);
 			pubData = await enrichPubFirebaseToken(pubData, initialData);
 			pubData = await enrichPubCitations(pubData, initialData);
 

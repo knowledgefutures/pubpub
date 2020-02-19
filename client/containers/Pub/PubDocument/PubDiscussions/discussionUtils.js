@@ -98,6 +98,7 @@ export const groupThreadsByLine = (decorations, threads) => {
 };
 
 export const nestDiscussionsToThreads = function(discussions) {
+	return [];
 	const maxThreadNumber = discussions.reduce((prev, curr) => {
 		if (curr.threadNumber > prev) {
 			return curr.threadNumber;

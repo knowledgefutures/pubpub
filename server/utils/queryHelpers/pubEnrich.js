@@ -5,7 +5,7 @@ import { Branch } from '../../models';
 import { generateCiteHtmls } from '../../editor/queries';
 import { generateCitationHTML } from '../citations';
 
-export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) => {
+export const enrichPubFirebaseDoc = async (pubData, historyKey, branchType) => {
 	const activeBranch = pubData.branches.find((branch) => {
 		return branch.title === branchType;
 	});
@@ -15,7 +15,7 @@ export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) =
 	const { content, historyData, mostRecentRemoteKey, checkpointUpdates } = await getBranchDoc(
 		pubData.id,
 		activeBranch.id,
-		versionNumber,
+		historyKey,
 		true,
 	);
 	let setFirstKeyAt;

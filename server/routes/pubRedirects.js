@@ -91,13 +91,17 @@ app.get(
 				throw new Error('Pub Not Found');
 			}
 
+			/* The + 1 in the two redirects below is because /branch/2/key routes */
+			/* were 0-indexed to align the the keyable index. versionNumbers in URLs */
+			/* are now 1-indexed for better human-readability. Firebase keyables */
+			/* remain 0-indexed. */
 			if (activeBranch.title === 'public' && pubData.releases && pubData.releases.length) {
 				return versionNumber
-					? res.redirect(`${prefix}/release/${versionNumber}`)
+					? res.redirect(`${prefix}/release/${Number(versionNumber) + 1}`)
 					: res.redirect(`${prefix}/release/${pubData.releases.length}`);
 			}
 			return versionNumber
-				? res.redirect(`${prefix}/draft/${versionNumber}`)
+				? res.redirect(`${prefix}/draft/${Number(versionNumber) + 1}`)
 				: res.redirect(`${prefix}/draft`);
 		} catch (err) {
 			return handleErrors(req, res, next)(err);

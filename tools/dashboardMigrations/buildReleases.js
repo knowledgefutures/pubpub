@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 import { Branch, Release, Merge, PubVersion, Pub } from '../../server/models';
 
+// TODO: There are a set of pubs (e.g. designandscience) that have changes written on their merge branch.
+// As such, there is not an associated Merge of PubVersion object. We will need to go through firebase,
+// find all such pubs, move changes into merges, increment the counter, and create releases.
+
 export default async () => {
 	const publicBranches = await Branch.findAll({
 		where: { title: 'public' },

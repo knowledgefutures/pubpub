@@ -7,7 +7,7 @@ const getPipedPubIds = require('../util/getPipedPubIds');
 require('../../../server/config.js');
 
 const serviceAccount = JSON.parse(
-	Buffer.from(process.env.V6_FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
+	Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
 );
 
 const firebaseApp =

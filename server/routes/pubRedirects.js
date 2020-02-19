@@ -92,7 +92,7 @@ app.get(
 			}
 
 			/* The + 1 in the two redirects below is because /branch/2/key routes */
-			/* were 0-indexed to align the the keyable index. versionNumbers in URLs */
+			/* were 0-indexed to align the the keyable index. historyNumber in URLs */
 			/* are now 1-indexed for better human-readability. Firebase keyables */
 			/* remain 0-indexed. */
 			if (activeBranch.title === 'public' && pubData.releases && pubData.releases.length) {

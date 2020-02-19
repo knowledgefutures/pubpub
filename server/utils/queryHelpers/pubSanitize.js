@@ -2,7 +2,7 @@ import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { splitThreads } from 'utils';
 import sanitizeThreads from './threadsSanitize';
 
-export default (pub, initialData, hasVersionNumber) => {
+export default (pub, initialData, hasHistoryNumber) => {
 	const { loginData, scopeData } = initialData;
 	const { canView, canViewDraft, canAdminCommunity } = scopeData.activePermissions;
 
@@ -26,6 +26,6 @@ export default (pub, initialData, hasVersionNumber) => {
 		forks: forks,
 		reviews: reviews,
 		collectionPubs: filteredCollectionPubs,
-		isStaticDoc: hasVersionNumber,
+		isStaticDoc: hasHistoryNumber,
 	};
 };

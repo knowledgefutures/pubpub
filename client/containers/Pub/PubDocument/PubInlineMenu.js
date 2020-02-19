@@ -99,7 +99,7 @@ const PubInlineMenu = (props) => {
 						/>
 					);
 				})}
-			{pubData.canDiscussBranch && !locationData.params.versionNumber && (
+			{pubData.canDiscussBranch && !locationData.params.historyNumber && (
 				<Button
 					minimal={true}
 					icon={<Icon icon="chat" />}

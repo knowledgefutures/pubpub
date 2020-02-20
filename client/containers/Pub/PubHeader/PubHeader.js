@@ -1,11 +1,9 @@
 /* eslint-disable react/no-danger */
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import useWindowSize from 'react-use/lib/useWindowSize';
 // import dateFormat from 'dateformat';
 
 import classNames from 'classnames';
-import stickybits from 'stickybits';
 import { getJSON } from '@pubpub/editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import {
@@ -19,9 +17,13 @@ import {
 	MenuDivider,
 	Popover,
 } from '@blueprintjs/core';
+
 import { GridWrapper, Overlay, Icon } from 'components';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { useSticky } from 'utils/useSticky';
+import { getAllPubContributors } from 'utils/pubContributors';
 import CitationsPreview from '../PubDocument/PubDetails/CitationsPreview';
+
 import PubToc from './PubToc';
 import Download from './Download';
 import Social from './Social';
@@ -30,7 +32,6 @@ import SharePanel from './SharePanel';
 import styleGenerator from './styleGenerator';
 import { generateHeaderBreadcrumbs, getTocHeadings } from './headerUtils';
 import CollectionsBar from './CollectionsBar';
-import { getAllPubContributors } from '../../../utils/pubContributors';
 
 require('./pubHeader.scss');
 
@@ -80,24 +81,15 @@ const PubHeader = (props) => {
 	const [isMounted, setIsMounted] = useState(false);
 	const [isEditingTitle, setIsEditingTitle] = useState(false);
 	const [isShareOpen, setIsShareOpen] = useState(false);
-	const { width: windowWidth } = useWindowSize();
 	const isDocMode = pubData.mode === 'document';
 
-	useEffect(() => {
-		if (!isDocMode) {
-			return () => {};
-		}
-		setIsMounted(true);
-		const nextOffsetHeight = headerRef.current.offsetHeight;
-		const stickyInstance = stickybits('.pub-header-component', {
-			stickyBitStickyOffset: 37 - nextOffsetHeight,
-			useStickyClasses: true,
-		});
+	useEffect(() => setIsMounted(true), []);
 
-		return () => {
-			stickyInstance.cleanup();
-		};
-	}, [pubData, windowWidth, isDocMode]);
+	useSticky({
+		isActive: isDocMode && headerRef.current,
+		selector: '.pub-header-component',
+		offset: headerRef.current ? 37 - headerRef.current.offsetHeight : 0,
+	});
 
 	const handleTitleSave = (newTitle) => {
 		return apiFetch('/api/pubs', {

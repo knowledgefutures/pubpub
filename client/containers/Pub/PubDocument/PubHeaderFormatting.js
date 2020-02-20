@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import stickybits from 'stickybits';
 
+import { useSticky } from 'utils/useSticky';
 import { FormattingBar, buttons } from 'components/FormattingBar';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
 
@@ -14,18 +14,10 @@ const propTypes = {
 };
 
 const PubHeaderFormatting = (props) => {
-	const stickyInstanceRef = useRef(undefined);
-	useEffect(() => {
-		stickyInstanceRef.current = stickybits('.pub-draft-header-component', {
-			stickyBitStickyOffset: 37,
-			useStickyClasses: true,
-		});
-		return () => {
-			if (stickyInstanceRef.current) {
-				stickyInstanceRef.current.cleanup();
-			}
-		};
-	}, []);
+	useSticky({
+		selector: '.pub-draft-header-component',
+		offset: 37,
+	});
 
 	const { pubData, collabData } = props;
 	if (!pubData.canEditBranch) {

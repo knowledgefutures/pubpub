@@ -294,6 +294,7 @@ const PubBody = (props) => {
 								key={embedId}
 								pubData={pubData}
 								collabData={collabData}
+								historyData={historyData}
 								firebaseBranchRef={firebaseBranchRef}
 								threadData={activeThread}
 								updateLocalData={updateLocalData}

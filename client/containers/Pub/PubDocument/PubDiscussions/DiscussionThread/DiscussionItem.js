@@ -49,22 +49,43 @@ const DiscussionItem = (props) => {
 			method: 'PUT',
 			body: JSON.stringify({
 				...discussionUpdates,
-				discussHash: locationData.query.access,
-				discussionId: discussionData.id,
+				accessHash: locationData.query.access,
+				threadId: discussionData.threadId,
+				threadCommentId: discussionData.id,
 				pubId: pubData.id,
-				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,
 			}),
 		}).then((updatedDiscussionData) => {
 			updateLocalData('pub', {
 				discussions: pubData.discussions.map((discussion) => {
-					if (discussion.id !== discussionData.id) {
-						return discussion;
+					if (discussion.id !== discussionData.threadId) {
+						return {
+							...discussion,
+							...updatedDiscussionData, // Hack to get thread edits in place
+							comments: discussion.comments.map((comment) => {
+								if (comment.id === discussionData.id) {
+									return updatedDiscussionData;
+								}
+								return comment;
+							}),
+						};
 					}
-					return {
-						...discussion,
-						...updatedDiscussionData,
-					};
+					return discussion;
+				}),
+				threads: pubData.threads.map((thread) => {
+					if (thread.id !== discussionData.threadId) {
+						return {
+							...thread,
+							...updatedDiscussionData, // Hack to get thread edits in place
+							comments: thread.comments.map((comment) => {
+								if (comment.id === discussionData.id) {
+									return updatedDiscussionData;
+								}
+								return comment;
+							}),
+						};
+					}
+					return thread;
 				}),
 			});
 		});
@@ -139,15 +160,13 @@ const DiscussionItem = (props) => {
 										canManageThread={isDiscussionAuthor}
 									/>
 									<Tooltip
-										content={
-											discussionData.isArchived ? 'Unarchive' : 'Archive'
-										}
+										content={discussionData.isClosed ? 'Unarchive' : 'Archive'}
 									>
 										<Button
 											icon={
 												<Icon
 													icon={
-														discussionData.isArchived
+														discussionData.isClosed
 															? 'export'
 															: 'import'
 													}
@@ -157,13 +176,11 @@ const DiscussionItem = (props) => {
 											minimal={true}
 											small={true}
 											loading={isLoadingArchive}
-											alt={
-												discussionData.isArchived ? 'Unarchive' : 'Archive'
-											}
+											alt={discussionData.isClosed ? 'Unarchive' : 'Archive'}
 											onClick={() => {
 												setIsLoadingArchive(true);
 												handlePutDiscussion({
-													isArchived: !discussionData.isArchived,
+													isClosed: !discussionData.isClosed,
 												});
 											}}
 										/>

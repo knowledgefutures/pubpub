@@ -13,10 +13,6 @@ export default (sequelize, dataTypes) => {
 				values: ['private', 'members', 'public'],
 				defaultValue: 'private',
 			},
-			initBranchId: { type: dataTypes.UUID },
-			initBranchKey: { type: dataTypes.INTEGER },
-			highlightAnchor: { type: dataTypes.INTEGER },
-			highlightHead: { type: dataTypes.INTEGER },
 
 			/* Set by Associations */
 			userId: { type: dataTypes.UUID, allowNull: false },
@@ -37,6 +33,7 @@ export default (sequelize, dataTypes) => {
 			classMethods: {
 				associate: (models) => {
 					const {
+						ThreadAnchor,
 						ThreadComment,
 						Thread,
 						ThreadUser,
@@ -73,6 +70,11 @@ export default (sequelize, dataTypes) => {
 					Thread.hasMany(ThreadComment, {
 						onDelete: 'CASCADE',
 						as: 'comments',
+						foreignKey: 'threadId',
+					});
+					Thread.hasOne(ThreadAnchor, {
+						onDelete: 'CASCADE',
+						as: 'anchor',
 						foreignKey: 'threadId',
 					});
 				},

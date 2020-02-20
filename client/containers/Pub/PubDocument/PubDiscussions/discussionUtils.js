@@ -59,7 +59,7 @@ export const groupThreadsByLine = (decorations, threads) => {
 							'local-highlight lh-',
 							'',
 						);
-						return [{ id: newDiscussionId }];
+						return { id: newDiscussionId, comments: [] };
 					}
 					const id = decoration.attrs.class.replace('discussion-range d-', '');
 					const decorationThread = threads.find((thread) => {

@@ -9,12 +9,13 @@ import { NonIdealState } from '@blueprintjs/core';
 import ThreadGroup from './ThreadGroup';
 import DiscussionThread from './DiscussionThread';
 import DiscussionInput from './DiscussionThread/DiscussionInput';
-import { groupThreadsByLine, nestDiscussionsToThreads } from './discussionUtils';
+import { groupThreadsByLine } from './discussionUtils';
 
 require('./pubDiscussions.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	filterThreads: PropTypes.func,
@@ -42,6 +43,7 @@ const PubDiscussions = (props) => {
 		sideContentRef,
 		searchTerm,
 		showBottomInput,
+		historyData,
 	} = props;
 	const { communityData, scopeData } = usePageContext();
 	const { canView, canCreateDiscussions } = scopeData;
@@ -76,6 +78,7 @@ const PubDiscussions = (props) => {
 					key={group.mountClassName}
 					pubData={pubData}
 					collabData={collabData}
+					historyData={historyData}
 					firebaseBranchRef={firebaseBranchRef}
 					threads={group.threads}
 					mountClassName={group.mountClassName}
@@ -107,6 +110,7 @@ const PubDiscussions = (props) => {
 					<DiscussionInput
 						pubData={pubData}
 						collabData={collabData}
+						historyData={historyData}
 						updateLocalData={updateLocalData}
 						threadData={[{ id: undefined }]}
 						isPubBottomInput={true}
@@ -126,6 +130,7 @@ const PubDiscussions = (props) => {
 							key={thread.id}
 							pubData={pubData}
 							collabData={collabData}
+							historyData={historyData}
 							firebaseBranchRef={firebaseBranchRef}
 							threadData={thread}
 							updateLocalData={updateLocalData}

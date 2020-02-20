@@ -54,6 +54,7 @@ export const Review = sequelize.import('./review/model.js');
 export const ReviewEvent = sequelize.import('./reviewEvent/model.js');
 export const Signup = sequelize.import('./signup/model.js');
 export const Thread = sequelize.import('./thread/model.js');
+export const ThreadAnchor = sequelize.import('./threadAnchor/model.js');
 export const ThreadComment = sequelize.import('./threadComment/model.js');
 export const ThreadUser = sequelize.import('./threadUser/model.js');
 export const User = sequelize.import('./user/model.js');

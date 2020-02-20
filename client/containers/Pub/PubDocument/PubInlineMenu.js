@@ -32,8 +32,8 @@ const shouldOpenBelowSelection = () => {
 
 const PubInlineMenu = (props) => {
 	const { pubData, collabData, historyData } = props;
-	const { locationData, communityData, scopeData } = usePageContext();
-	const { canEdit, canEditDraft } = scopeData.activePermissions;
+	const { communityData, scopeData } = usePageContext();
+	const { canView, canCreateDiscussions } = scopeData.activePermissions;
 	const selection = collabData.editorChangeObject.selection || {};
 	const selectionBoundingBox = collabData.editorChangeObject.selectionBoundingBox || {};
 
@@ -99,7 +99,7 @@ const PubInlineMenu = (props) => {
 						/>
 					);
 				})}
-			{pubData.canDiscussBranch && !locationData.params.historyNumber && (
+			{(canView || canCreateDiscussions) && !pubData.isHistoricalDoc && (
 				<Button
 					minimal={true}
 					icon={<Icon icon="chat" />}

@@ -17,6 +17,7 @@ const propTypes = {
 		footnotes: PropTypes.arrayOf(notePropType).isRequired,
 	}).isRequired,
 	collabData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,

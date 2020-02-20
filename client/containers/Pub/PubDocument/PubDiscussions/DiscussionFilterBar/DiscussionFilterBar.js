@@ -25,6 +25,7 @@ const propTypes = {
 const DiscussionFilterBar = (props) => {
 	const { pubData, threadData, updateLocalData, children } = props;
 	const { communityData, scopeData } = usePageContext();
+	const { canView, canCreateDiscussion } = scopeData.activePermissions
 	const [isArchivedMode, setIsArchivedMode] = useState(false);
 	const [sortMode, setSortMode] = useState('newestThread');
 	const [filteredLabels, setFilteredLabels] = useState([]);
@@ -134,7 +135,7 @@ const DiscussionFilterBar = (props) => {
 							: 'No Discussions on this Branch yet'
 					}
 					description={
-						filtersActive || !pubData.canDiscussBranch
+						filtersActive || !(canView || canCreateDiscussion)
 							? ''
 							: 'Highlight text above to create a new Discussion'
 					}

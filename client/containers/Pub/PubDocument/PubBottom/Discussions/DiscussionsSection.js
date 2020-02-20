@@ -21,6 +21,7 @@ const propTypes = {
 		canDiscussBranch: PropTypes.bool,
 	}).isRequired,
 	collabData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,

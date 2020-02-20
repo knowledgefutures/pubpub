@@ -9,6 +9,7 @@ require('./threadGroup.scss');
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object.isRequired,
 	threads: PropTypes.array.isRequired,
 	mountClassName: PropTypes.string.isRequired,
@@ -23,6 +24,7 @@ const ThreadGroup = (props) => {
 	const {
 		pubData,
 		collabData,
+		historyData,
 		firebaseBranchRef,
 		updateLocalData,
 		threads,
@@ -86,7 +88,6 @@ const ThreadGroup = (props) => {
 	const activeThreadData = threads.find((thread) => {
 		return thread.id === activeThread;
 	});
-
 	const style = {
 		left: sideRect.left - mainRect.left,
 		width: sideRect.width,
@@ -116,6 +117,7 @@ const ThreadGroup = (props) => {
 				<DiscussionThread
 					pubData={pubData}
 					collabData={collabData}
+					historyData={historyData}
 					firebaseBranchRef={firebaseBranchRef}
 					threadData={activeThreadData}
 					updateLocalData={updateLocalData}

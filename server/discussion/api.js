@@ -7,11 +7,13 @@ const getRequestIds = (req) => {
 	const user = req.user || {};
 	return {
 		userId: user.id,
-		discussionId: req.body.discussionId || null,
+		threadId: req.body.threadId || null,
+		threadCommentId: req.body.threadCommentId || null,
 		pubId: req.body.pubId,
+		collectionId: req.body.collectionId,
 		communityId: req.body.communityId,
 		branchId: req.body.branchId,
-		discussHash: req.body.discussHash,
+		accessHash: req.body.accessHash,
 	};
 };
 

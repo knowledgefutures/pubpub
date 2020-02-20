@@ -29,7 +29,8 @@ const defaultProps = {
 
 const DiscussionThread = (props) => {
 	const { pubData, threadData, canPreview, searchTerm } = props;
-	const { communityData } = usePageContext();
+	const { communityData, scopeData } = usePageContext();
+	const { canView, canCreateDiscussion } = scopeData.activePermissions;
 	const [previewExpanded, setPreviewExpanded] = useState(false);
 	const isPreview = canPreview && !previewExpanded;
 
@@ -129,15 +130,15 @@ const DiscussionThread = (props) => {
 			)}
 			<LabelList pubData={pubData} threadData={threadData} />
 
-			{!isPreview && threadData.threadAnchor && (
+			{!isPreview && threadData.anchor && (
 				<div className="anchor-text">
-					{threadData.threadAnchor.prefix}
-					<span className="exact">{threadData.threadAnchor.exact}</span>
-					{threadData.threadAnchor.suffix}
+					{threadData.anchor.prefix}
+					<span className="exact">{threadData.anchor.exact}</span>
+					{threadData.anchor.suffix}
 				</div>
 			)}
 			{renderDiscussions()}
-			{!isPreview && pubData.canDiscussBranch && (
+			{!isPreview && (canView || canCreateDiscussion) && (
 				<DiscussionInput key={threadData.comments.length} {...props} />
 			)}
 		</div>

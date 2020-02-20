@@ -43,7 +43,8 @@ const PubDiscussions = (props) => {
 		searchTerm,
 		showBottomInput,
 	} = props;
-	const { communityData } = usePageContext();
+	const { communityData, scopeData } = usePageContext();
+	const { canView, canCreateDiscussions } = scopeData;
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const { width: windowWidth } = useWindowSize();
 
@@ -55,7 +56,8 @@ const PubDiscussions = (props) => {
 		}
 		/* eslint-disable-next-line react-hooks/exhaustive-deps */
 	}, [windowWidth]);
-	const threads = nestDiscussionsToThreads(pubData.discussions);
+	// const threads = nestDiscussionsToThreads(pubData.discussions);
+	const threads = pubData.discussions;
 	const groupsByLine = groupThreadsByLine(decorations, threads);
 	const prevNewDiscussionIds = useRef([]);
 	const prevConvertedDiscussionIds = useRef([]);
@@ -92,10 +94,11 @@ const PubDiscussions = (props) => {
 		const filteredThreads = filterThreads(threads);
 		const emptyMessage =
 			threads.filter(
-				(th) => th[0] && th[0].branchId === pubData.activeBranch.id && !th[0].isArchived,
+				// (th) => th[0] && th[0].branchId === pubData.activeBranch.id && !th[0].isArchived,
+				(th) => th && !th.isClosed,
 			).length > 0
 				? 'No matching comments (some are hidden by filters)'
-				: pubData.canDiscuss
+				: canView || canCreateDiscussions
 				? ' Why not start the discussion?'
 				: '';
 		return (
@@ -120,7 +123,7 @@ const PubDiscussions = (props) => {
 				{filteredThreads.map((thread) => {
 					return (
 						<DiscussionThread
-							key={thread[0].id}
+							key={thread.id}
 							pubData={pubData}
 							collabData={collabData}
 							firebaseBranchRef={firebaseBranchRef}

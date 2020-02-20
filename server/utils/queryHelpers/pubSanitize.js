@@ -2,9 +2,15 @@ import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { splitThreads } from 'utils';
 import sanitizeThreads from './threadsSanitize';
 
-export default (pub, initialData, hasHistoryNumber) => {
+export default (pub, initialData, historyNumber, isRelease) => {
 	const { loginData, scopeData } = initialData;
-	const { canView, canViewDraft, canAdminCommunity } = scopeData.activePermissions;
+	const {
+		canView,
+		canViewDraft,
+		canEdit,
+		canEditDraft,
+		canAdminCommunity,
+	} = scopeData.activePermissions;
 
 	/* If there are no releases and the user does not have view access, they don't have access to the pub. */
 	/* Returning null will cause a 404 error to be returned. */
@@ -19,6 +25,7 @@ export default (pub, initialData, hasHistoryNumber) => {
 				return item.collection.isPublic || canAdminCommunity;
 		  })
 		: [];
+	const isHistoricalDoc = historyNumber && historyNumber < pub.releases.length;
 	return {
 		...pub,
 		attributions: pub.attributions.map(ensureUserForAttribution),
@@ -26,6 +33,7 @@ export default (pub, initialData, hasHistoryNumber) => {
 		forks: forks,
 		reviews: reviews,
 		collectionPubs: filteredCollectionPubs,
-		isStaticDoc: hasHistoryNumber,
+		isHistoricalDoc: isHistoricalDoc,
+		isReadOnly: isHistoricalDoc || isRelease || !(canEdit || canEditDraft),
 	};
 };

@@ -67,14 +67,14 @@ const PubInlineMenu = (props) => {
 		{ key: 'em', icon: <Icon icon="italic" /> },
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
-	const isReadOnly = pubData.isStaticDoc || !(canEdit || canEditDraft);
+	// const isReadOnly = pubData.isStaticDoc || !(canEdit || canEditDraft);
 	// TODO: Make discussions disable-able
 	// if (isReadOnly && !pubData.publicDiscussions) {
 	// 	return null;
 	// }
 	return (
 		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
-			{!isReadOnly &&
+			{!pubData.isReadOnly &&
 				formattingItems.map((item) => {
 					if (!menuItemsObject[item.key]) {
 						return null;

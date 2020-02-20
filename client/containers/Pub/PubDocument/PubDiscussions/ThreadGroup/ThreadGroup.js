@@ -42,10 +42,10 @@ const ThreadGroup = (props) => {
 	useEffect(() => {
 		/* We want to set the activeThread to any newly opened new discussion */
 		const justCreatedDiscussionId = threads.reduce((prev, curr) => {
-			const isNewDiscussion = !curr[0].threadNumber;
-			const alreadyKnowAboutNewDiscussion = prevNewDiscussionIds.current.includes(curr[0].id);
+			const isNewDiscussion = !curr.number;
+			const alreadyKnowAboutNewDiscussion = prevNewDiscussionIds.current.includes(curr.id);
 			if (isNewDiscussion && !alreadyKnowAboutNewDiscussion) {
-				return curr[0].id;
+				return curr.id;
 			}
 			return prev;
 		}, undefined);
@@ -54,17 +54,17 @@ const ThreadGroup = (props) => {
 			setActiveThread(justCreatedDiscussionId);
 		}
 		const justConvertedDiscussionId = threads.reduce((prev, curr) => {
-			const isNewDiscussion = !curr[0].threadNumber;
-			const alreadyKnowAboutNewDiscussion = prevNewDiscussionIds.current.includes(curr[0].id);
+			const isNewDiscussion = !curr.number;
+			const alreadyKnowAboutNewDiscussion = prevNewDiscussionIds.current.includes(curr.id);
 			const alreadyKnowAboutConvertedDiscussion = prevConvertedDiscussionIds.current.includes(
-				curr[0].id,
+				curr.id,
 			);
 			if (
 				!isNewDiscussion &&
 				alreadyKnowAboutNewDiscussion &&
 				!alreadyKnowAboutConvertedDiscussion
 			) {
-				return curr[0].id;
+				return curr.id;
 			}
 			return prev;
 		}, undefined);
@@ -84,7 +84,7 @@ const ThreadGroup = (props) => {
 	/* When a highlight is removed (i.e. a new one is Cancelled) */
 	/* and was the activeThread, we need to clear */
 	const activeThreadData = threads.find((thread) => {
-		return thread[0].id === activeThread;
+		return thread.id === activeThread;
 	});
 
 	const style = {

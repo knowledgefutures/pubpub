@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Editor, {
 	getText,
@@ -42,7 +42,7 @@ const DiscussionInput = (props) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [didFocus, setDidFocus] = useState(false);
 	const [editorKey, setEditorKey] = useState(Date.now());
-	const isNewThread = !threadData[0].threadNumber;
+	const isNewThread = !threadData.number;
 	useEffect(() => {
 		if (!isPubBottomInput && (isNewThread || didFocus) && changeObject.view) {
 			changeObject.view.focus();
@@ -51,7 +51,7 @@ const DiscussionInput = (props) => {
 
 	const handlePostDiscussion = () => {
 		setIsLoading(true);
-		const initAnchorText = getLocalHighlightText(pubView, threadData[0].id);
+		const initAnchorText = getLocalHighlightText(pubView, threadData.id);
 		return apiFetch('/api/discussions', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -113,7 +113,7 @@ const DiscussionInput = (props) => {
 							text="Cancel"
 							small={true}
 							onClick={() => {
-								removeLocalHighlight(pubView, threadData[0].id);
+								removeLocalHighlight(pubView, threadData.id);
 							}}
 						/>
 					)}
@@ -162,7 +162,7 @@ const DiscussionInput = (props) => {
 							text="Cancel"
 							small={true}
 							onClick={() => {
-								removeLocalHighlight(pubView, threadData[0].id);
+								removeLocalHighlight(pubView, threadData.id);
 							}}
 						/>
 					)}

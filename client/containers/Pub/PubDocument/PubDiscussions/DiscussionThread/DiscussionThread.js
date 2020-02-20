@@ -15,7 +15,7 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
-	threadData: PropTypes.array.isRequired,
+	threadData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	canPreview: PropTypes.bool,
 	searchTerm: PropTypes.string,
@@ -38,10 +38,13 @@ const DiscussionThread = (props) => {
 		let pendingHiddenCount = 0;
 		const elements = [];
 
-		const flushPendingCount = () => {
+		const flushPendingCount = (discussionId) => {
 			if (pendingHiddenCount > 0) {
 				elements.push(
-					<div className="overflow-listing"> + {pendingHiddenCount} more...</div>,
+					<div key={discussionId} className="overflow-listing">
+						{' '}
+						+ {pendingHiddenCount} more...
+					</div>,
 				);
 			}
 			pendingHiddenCount = 0;
@@ -54,7 +57,7 @@ const DiscussionThread = (props) => {
 			const isPreviewDiscussion = isRootThread || !matchesSearch;
 			if (isRootThread || meetsMinimum || matchesSearch) {
 				++shownDiscussionsCount;
-				flushPendingCount();
+				flushPendingCount(discussion.id);
 				elements.push(
 					<DiscussionItem
 						key={discussion.id}
@@ -69,12 +72,13 @@ const DiscussionThread = (props) => {
 			}
 		});
 
-		flushPendingCount();
+		flushPendingCount('root');
 		return elements;
 	};
 
 	const renderDiscussions = () => {
-		const filteredDiscussions = threadData.filter((discussion) => discussion.threadNumber);
+		// const filteredDiscussions = threadData.filter((discussion) => discussion.threadNumber);
+		const filteredDiscussions = threadData.comments;
 		if (isPreview) {
 			return renderPreviewDiscussionsAndOverflow(filteredDiscussions, 2);
 		}
@@ -124,16 +128,17 @@ const DiscussionThread = (props) => {
 				/>
 			)}
 			<LabelList pubData={pubData} threadData={threadData} />
-			{!isPreview && threadData[0].initAnchorText && threadData[0].initAnchorText.exact && (
+
+			{!isPreview && threadData.threadAnchor && (
 				<div className="anchor-text">
-					{threadData[0].initAnchorText.prefix}
-					<span className="exact">{threadData[0].initAnchorText.exact}</span>
-					{threadData[0].initAnchorText.suffix}
+					{threadData.threadAnchor.prefix}
+					<span className="exact">{threadData.threadAnchor.exact}</span>
+					{threadData.threadAnchor.suffix}
 				</div>
 			)}
 			{renderDiscussions()}
 			{!isPreview && pubData.canDiscussBranch && (
-				<DiscussionInput key={threadData.length} {...props} />
+				<DiscussionInput key={threadData.comments.length} {...props} />
 			)}
 		</div>
 	);

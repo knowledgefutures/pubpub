@@ -42,7 +42,7 @@ app.get(
 			}
 
 			let pubData = await getPub(req.params.pubSlug, initialData.communityData.id);
-			pubData = sanitizePub(pubData, initialData, !!req.params.historyNumber);
+			pubData = sanitizePub(pubData, initialData, req.params.historyNumber, isRelease);
 			if (!pubData) {
 				throw new Error('Pub Not Found');
 			}

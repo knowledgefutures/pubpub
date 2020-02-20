@@ -7,7 +7,7 @@ import { usePageContext } from 'utils/hooks';
 require('./pubToc.scss');
 
 const propTypes = {
-	children: PropTypes.node.isRequired,
+	children: PropTypes.func.isRequired,
 	// pubData: PropTypes.shape({
 	// 	canEditBranch: PropTypes.bool,
 	// }).isRequired,

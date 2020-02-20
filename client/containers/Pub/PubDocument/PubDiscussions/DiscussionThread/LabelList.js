@@ -5,7 +5,7 @@ require('./labelList.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
-	threadData: PropTypes.array.isRequired,
+	threadData: PropTypes.object.isRequired,
 };
 
 const LabelList = (props) => {
@@ -15,7 +15,7 @@ const LabelList = (props) => {
 	pubLabels.forEach((label) => {
 		labelsById[label.id] = label;
 	});
-	const discussionLabels = threadData[0].labels || [];
+	const discussionLabels = threadData.labels || [];
 	if (!discussionLabels.length) {
 		return null;
 	}

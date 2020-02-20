@@ -24,37 +24,17 @@ export default (sequelize, dataTypes) => {
 			// organizationId: { type: dataTypes.UUID },
 			// branchId: { type: dataTypes.UUID }, // Should be allowNull: false after migration
 		},
-		// {
-		// 	indexes: [
-		// 		{ fields: ['userId'], method: 'BTREE' },
-		// 		{ fields: ['pubId'], method: 'BTREE' },
-		// 		{ fields: ['communityId'], method: 'BTREE' },
-		// 	],
-		// 	classMethods: {
-		// 		associate: (models) => {
-		// 			const { Discussion, Community, Pub, User, Branch } = models;
-		// 			Discussion.belongsTo(Community, {
-		// 				onDelete: 'CASCADE',
-		// 				as: 'community',
-		// 				foreignKey: 'communityId',
-		// 			});
-		// 			Discussion.belongsTo(Pub, {
-		// 				onDelete: 'CASCADE',
-		// 				as: 'pub',
-		// 				foreignKey: 'pubId',
-		// 			});
-		// 			Discussion.belongsTo(User, {
-		// 				onDelete: 'CASCADE',
-		// 				as: 'author',
-		// 				foreignKey: 'userId',
-		// 			});
-		// 			Discussion.belongsTo(Branch, {
-		// 				onDelete: 'CASCADE',
-		// 				as: 'branch',
-		// 				foreignKey: 'branchId',
-		// 			});
-		// 		},
-		// 	},
-		// },
+		{
+			classMethods: {
+				associate: (models) => {
+					const { ThreadComment, User } = models;
+					ThreadComment.belongsTo(User, {
+						onDelete: 'CASCADE',
+						as: 'author',
+						foreignKey: 'userId',
+					});
+				},
+			},
+		},
 	);
 };

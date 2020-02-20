@@ -152,9 +152,8 @@ const PubBody = (props) => {
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;
-	const isHistoryDoc = isViewingHistory && historyData.historyDoc;
-	const useCollaborativeOptions = !pubData.isStaticDoc && !isHistoryDoc;
-	const isReadOnly = !!(pubData.isStaticDoc || !(canEdit || canEditDraft) || isViewingHistory);
+	const isHistoricalDoc = pubData.isHistoricalDoc || isViewingHistory;
+	const isReadOnly = pubData.isReadOnly || isViewingHistory;
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;
@@ -190,12 +189,12 @@ const PubBody = (props) => {
 						},
 					},
 				}}
-				placeholder={pubData.isStaticDoc ? undefined : 'Begin writing here...'}
+				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}
 				isReadOnly={isReadOnly}
 				onKeyPress={markLastInput}
 				onChange={(editorChangeObject) => {
-					if (!isHistoryDoc) {
+					if (!isHistoricalDoc) {
 						updateLocalData('collab', { editorChangeObject: editorChangeObject });
 					}
 				}}
@@ -210,7 +209,7 @@ const PubBody = (props) => {
 					}
 				}}
 				collaborativeOptions={
-					useCollaborativeOptions
+					!isHistoricalDoc
 						? {
 								firebaseRef: firebaseBranchRef,
 								clientData: props.collabData.localCollabUser,
@@ -281,13 +280,9 @@ const PubBody = (props) => {
 				}
 
 				const threadNumber = embedDiscussions.current[embedId].threadNumber;
-				const threads = nestDiscussionsToThreads(pubData.discussions);
-				const activeThread = threads.reduce((prev, curr) => {
-					if (curr[0].threadNumber === threadNumber) {
-						return curr;
-					}
-					return prev;
-				}, undefined);
+				// const threads = nestDiscussionsToThreads(pubData.discussions);
+				const threads = pubData.discussions;
+				const activeThread = threads.find((thread) => thread.number === threadNumber)
 
 				return ReactDOM.createPortal(
 					<React.Fragment>

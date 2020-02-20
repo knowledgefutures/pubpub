@@ -62,7 +62,19 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			attributes: attributesPublicUser,
 		},
 	];
-	let threadComments = [{ model: ThreadComment, as: 'comments' }];
+	let threadComments = [
+		{
+			model: ThreadComment,
+			as: 'comments',
+			include: [
+				{
+					model: User,
+					as: 'author',
+					attributes: attributesPublicUser,
+				},
+			],
+		},
+	];
 	let threadUserInclude = [
 		{
 			model: User,

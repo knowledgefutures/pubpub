@@ -26,7 +26,7 @@ const defaultProps = {
 };
 
 const getLabelForThread = (thread) =>
-	thread
+	thread.comments
 		.map((discussion) => discussion.author.fullName)
 		.filter((name, index, array) => array.indexOf(name) === index)
 		.join(', ');
@@ -39,14 +39,16 @@ const makeBubbleRenderer = ({
 	activeThread,
 	getHandlersForThread,
 }) => (thread) => {
-	const isActive = activeThreadHover === thread[0].id || activeThread === thread[0].id;
-	const hasWrittenInThread = thread.some((discussion) => discussion.userId === loginData.id);
-	const bubbleCount = thread[0].threadNumber && thread.length;
-	const label = threads.length === 1 && thread[0].threadNumber && getLabelForThread(threads[0]);
+	const isActive = activeThreadHover === thread.id || activeThread === thread.id;
+	const hasWrittenInThread = thread.comments.some(
+		(threadComment) => threadComment.userId === loginData.id,
+	);
+	const bubbleCount = thread.number && thread.comments.length;
+	const label = thread.number && getLabelForThread(threads[0]);
 	return (
 		<ThreadBubble
 			{...getHandlersForThread(thread)}
-			key={thread[0].id}
+			key={thread.id}
 			color={communityData.accentColorDark}
 			count={bubbleCount}
 			isActive={isActive}
@@ -85,13 +87,13 @@ const ThreadNav = (props) => {
 
 	const getHandlersForThread = (thread) => ({
 		onMouseEnter: () => {
-			setActiveThreadHover(thread[0].id);
+			setActiveThreadHover(thread.id);
 		},
 		onMouseLeave: () => {
 			setActiveThreadHover(undefined);
 		},
 		onClick: () => {
-			const setId = activeThread === thread[0].id ? undefined : thread[0].id;
+			const setId = activeThread === thread.id ? undefined : thread.id;
 			setActiveThread(setId);
 		},
 	});
@@ -136,10 +138,12 @@ const ThreadNav = (props) => {
 				>
 					<ThreadBubble
 						isActive={
-							isOverflowHovered ||
-							isOverflowShown ||
-							(activeThread &&
-								overflowThreads.some((thread) => thread.id === activeThread.id))
+							!!isOverflowHovered ||
+							!!isOverflowShown ||
+							!!(
+								activeThread &&
+								overflowThreads.some((thread) => thread.id === activeThread.id)
+							)
 						}
 						onMouseEnter={() => setOverflowHovered(true)}
 						onMouseLeave={() => setOverflowHovered(false)}
@@ -147,7 +151,9 @@ const ThreadNav = (props) => {
 						color={communityData.accentColorDark}
 						count={<Icon icon="more" iconSize={10} className="overflow-icon" />}
 						showDot={overflowThreads.some((thread) =>
-							thread.some((discussion) => discussion.userId === loginData.id),
+							thread.comments.some(
+								(discussion) => discussion.userId === loginData.id,
+							),
 						)}
 					/>
 				</Popover>
@@ -161,13 +167,13 @@ const ThreadNav = (props) => {
 						icon={<Icon icon="caret-left" color={communityData.accentColorDark} />}
 						onClick={() => {
 							const currIndex = threads.reduce((prev, curr, index) => {
-								if (activeThread === curr[0].id) {
+								if (activeThread === curr.id) {
 									return index;
 								}
 								return prev;
 							}, 0);
 							const leftId =
-								threads[(threads.length + currIndex - 1) % threads.length][0].id;
+								threads[(threads.length + currIndex - 1) % threads.length].id;
 							setActiveThread(leftId);
 						}}
 					/>
@@ -178,13 +184,13 @@ const ThreadNav = (props) => {
 						icon={<Icon icon="caret-right" color={communityData.accentColorDark} />}
 						onClick={() => {
 							const currIndex = threads.reduce((prev, curr, index) => {
-								if (activeThread === curr[0].id) {
+								if (activeThread === curr.id) {
 									return index;
 								}
 								return prev;
 							}, 0);
 							const leftId =
-								threads[(threads.length + currIndex + 1) % threads.length][0].id;
+								threads[(threads.length + currIndex + 1) % threads.length].id;
 							setActiveThread(leftId);
 						}}
 					/>

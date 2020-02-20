@@ -63,10 +63,10 @@ const PubDocument = (props) => {
 		setDiscussionsShown(!isViewingHistory);
 	}, [isViewingHistory]);
 
-	const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
+	// const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			{!pubData.isStaticDoc && !isViewingHistory && (
+			{!pubData.isReadOnly && !isViewingHistory && (
 				<PubHeaderFormatting
 					pubData={pubData}
 					collabData={collabData}
@@ -84,13 +84,13 @@ const PubDocument = (props) => {
 						firebaseBranchRef={firebaseBranchRef}
 						updateLocalData={updateLocalData}
 					/>
-					{!isViewingHistory && (canEdit || canEditDraft) && !pubData.isStaticDoc && (
+					{!isViewingHistory && (canEdit || canEditDraft) && !pubData.isReadOnly && (
 						<PubFileImport
 							editorChangeObject={collabData.editorChangeObject}
 							updateLocalData={updateLocalData}
 						/>
 					)}
-					{(editorFocused || !(canEdit || canEditDraft)) && (
+					{!pubData.isHistoricalDoc && (
 						<PubInlineMenu
 							pubData={pubData}
 							collabData={collabData}

@@ -45,12 +45,21 @@ export default async (scopeInputs) => {
 		scopeMemberData,
 	);
 	const activeCounts = await getActiveCounts(scopeInputs, scopeElements, activePermissions);
+
 	return {
 		elements: scopeElements,
 		optionsData: publicPermissionsData,
 		memberData: scopeMemberData,
 		activePermissions: activePermissions,
 		activeCounts: activeCounts,
+	};
+};
+
+const getActiveIds = ({ activePub, activeCollection, activeCommunity }) => {
+	return {
+		pubId: activePub && activePub.id,
+		collectionId: activeCollection && activeCollection.id,
+		communityId: activeCommunity.id,
 	};
 };
 
@@ -134,9 +143,15 @@ getScopeElements = async (scopeInputs) => {
 
 	return {
 		activeTargetType: activeTargetType,
+		activeTargetName: activeTargetType.charAt(0).toUpperCase() + activeTargetType.slice(1),
 		activeTarget: activeTarget,
 		activePub: activePub,
 		activeCollection: activeCollection,
+		activeIds: getActiveIds({
+			activePub: activePub,
+			activeCollection: activeCollection,
+			activeCommunity: activeCommunity,
+		}),
 		inactiveCollections: inactiveCollections,
 		activeCommunity: activeCommunity,
 	};
@@ -219,12 +234,15 @@ getActivePermissions = async (
 		const currLevelIndex = permissionLevels.indexOf(curr.permissions);
 		return currLevelIndex > prev ? currLevelIndex : prev;
 	}, defaultPermissionIndex);
-	const canAdminCommunity = scopeMemberData.reduce((prev, curr) => {
-		if (curr.communityId && curr.permissions === 'admin') {
-			return true;
-		}
-		return prev;
-	}, isSuperAdmin);
+
+	const canAdminCommunity =
+		isSuperAdmin ||
+		scopeMemberData.find((member) => member.communityId && member.permissions === 'admin');
+
+	const canManageCommunity =
+		isSuperAdmin ||
+		canAdminCommunity ||
+		scopeMemberData.find((member) => member.communityId && member.permissions === 'manage');
 
 	const booleanOr = (precedent, value) => {
 		/* Don't inherit value from null */
@@ -275,6 +293,7 @@ getActivePermissions = async (
 		canManage: permissionLevelIndex > 1,
 		canAdmin: permissionLevelIndex > 2,
 		canAdminCommunity: canAdminCommunity,
+		canManageCommunity: canManageCommunity,
 		...activePublicPermissions,
 	};
 };

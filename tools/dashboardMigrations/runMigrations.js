@@ -9,7 +9,7 @@ const init = async () => {
 	try {
 		console.log('Beginning Migration');
 		// await headerCols();
-		// await dashCols();
+		await dashCols();
 		// await discToThreads();
 		// await reviewsToThreads();
 		// await buildReleases();

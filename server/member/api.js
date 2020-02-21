@@ -1,0 +1,78 @@
+import app, { wrap } from '../server';
+import { ForbiddenError } from '../errors';
+
+import { getPermissions } from './permissions';
+import { createMember, destroyMember } from './queries';
+
+const getRequestIds = (req) => {
+	const user = req.user || {};
+	const { pubId, collectionId, communityId } = req.body;
+	return {
+		pubId: pubId,
+		collectionId: collectionId,
+		communityId: communityId,
+		actorId: user.id,
+	};
+};
+
+const chooseTargetFromRequestIds = ({ pubId, collectionId, communityId }) => {
+	if (pubId) {
+		return { pubId: pubId };
+	}
+	if (collectionId) {
+		return { collectionId: collectionId };
+	}
+	if (communityId) {
+		return { communityId: communityId };
+	}
+	return {};
+};
+
+app.post(
+	'/api/members',
+	wrap(async (req, res) => {
+		const { pubId, collectionId, communityId, actorId } = getRequestIds(req);
+		const { targetUserId, value } = req.body;
+		const permissions = await getPermissions({
+			actorId: actorId,
+			pubId: pubId,
+			communityId: communityId,
+			collectionId: collectionId,
+		});
+		if (!permissions.create) {
+			throw new ForbiddenError();
+		}
+		const member = await createMember({
+			value: value,
+			target: {
+				userId: targetUserId,
+				...chooseTargetFromRequestIds({
+					pubId: pubId,
+					collectionId: collectionId,
+					communityId: communityId,
+				}),
+			},
+		});
+		return res.status(201).json(member);
+	}),
+);
+
+app.delete(
+	'/api/members',
+	wrap(async (req, res) => {
+		const { pubId, collectionId, communityId, actorId } = getRequestIds(req);
+		const { id } = req.body;
+		const permissions = await getPermissions({
+			actorId: actorId,
+			pubId: pubId,
+			communityId: communityId,
+			collectionId: collectionId,
+			memberId: id,
+		});
+		if (!permissions.destroy) {
+			throw new ForbiddenError();
+		}
+		await destroyMember({ memberId: id });
+		return res.status(201).json(id);
+	}),
+);

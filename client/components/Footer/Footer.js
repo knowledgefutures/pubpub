@@ -194,7 +194,9 @@ const Footer = () => {
 					<ul className="separated">
 						{links
 							.filter((item) => {
-								return !item.adminOnly || scopeData.activePermissions.canAdminCommunity;
+								return (
+									!item.adminOnly || scopeData.activePermissions.canAdminCommunity
+								);
 							})
 							.map((link) => {
 								return (

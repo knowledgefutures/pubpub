@@ -24,6 +24,99 @@ const generateHash = (length) => {
 };
 
 export default async () => {
+	/* Migrate BranchPermissions and PubManagers */
+	/* Branch permissions turn into members with associated permissions access */
+	/* PubManagers turn into members with 'manage' permission */
+	const getBranchPermissions = BranchPermission.findAll();
+	const getPubManagers = PubManager.findAll();
+	await Promise.all([getBranchPermissions, getPubManagers]).then(
+		([branchPermissionsData, pubManagersData]) => {
+			const newBranchMembers = branchPermissionsData.map((item) => {
+				return {
+					id: item.id,
+					permissions: item.permissions,
+					pubId: item.pubId,
+					userId: item.userId,
+					createdAt: item.createdAt,
+					updatedAt: item.updatedAt,
+				};
+			});
+			const didSetOwner = {};
+			const newManagerMembers = pubManagersData
+				.sort((foo, bar) => {
+					if (foo.createdAt < bar.createdAt) {
+						return -1;
+					}
+					if (foo.createdAt > bar.createdAt) {
+						return 1;
+					}
+					return 0;
+				})
+				.map((item) => {
+					const isOwner = !didSetOwner[item.pubId];
+					didSetOwner[item.pubId] = true;
+					return {
+						id: item.id,
+						permissions: 'manage',
+						pubId: item.pubId,
+						userId: item.userId,
+						isOwner: isOwner,
+						createdAt: item.createdAt,
+						updatedAt: item.updatedAt,
+					};
+				});
+			const newMembers = [...newBranchMembers, ...newManagerMembers];
+			const newMembersObject = {};
+			const permissionLevels = ['view', 'discuss', 'edit', 'manage'];
+			newMembers.forEach((member) => {
+				const index = `${member.userId}-${member.pubId}`;
+				const existingPermissionLevel = newMembersObject[index]
+					? permissionLevels.indexOf(newMembersObject[index].permissions)
+					: -1;
+				const currPermissionLevel = permissionLevels.indexOf(member.permissions);
+				if (
+					existingPermissionLevel === -1 ||
+					currPermissionLevel > existingPermissionLevel
+				) {
+					newMembersObject[index] = member;
+				}
+			});
+			const dedupedNewMembers = Object.values(newMembersObject);
+			return Member.bulkCreate(dedupedNewMembers);
+		},
+	);
+
+	/* Migrate CommunityAdmin */
+	await CommunityAdmin.findAll().then((adminsData) => {
+		const didSetOwner = {};
+		const newManagerMembers = adminsData
+			.sort((foo, bar) => {
+				if (foo.createdAt < bar.createdAt) {
+					return -1;
+				}
+				if (foo.createdAt > bar.createdAt) {
+					return 1;
+				}
+				return 0;
+			})
+			.map((item) => {
+				const isOwner = !didSetOwner[item.communityId];
+				didSetOwner[item.communityId] = true;
+				return {
+					id: item.id,
+					permissions: 'manage',
+					communityId: item.communityId,
+					userId: item.userId,
+					isOwner: isOwner,
+					createdAt: item.createdAt,
+					updatedAt: item.updatedAt,
+				};
+			});
+		return Member.bulkCreate(newManagerMembers);
+	});
+
+	return;
+
 	await Promise.all([
 		sequelize.queryInterface.addColumn('Collections', 'viewHash', {
 			type: Sequelize.STRING,
@@ -232,97 +325,6 @@ export default async () => {
 			);
 		});
 		return Promise.all(updates);
-	});
-
-	/* Migrate BranchPermissions and PubManagers */
-	/* Branch permissions turn into members with associated permissions access */
-	/* PubManagers turn into members with 'manage' permission */
-	const getBranchPermissions = BranchPermission.findAll();
-	const getPubManagers = PubManager.findAll();
-	await Promise.all([getBranchPermissions, getPubManagers]).then(
-		([branchPermissionsData, pubManagersData]) => {
-			const newBranchMembers = branchPermissionsData.map((item) => {
-				return {
-					id: item.id,
-					permissions: item.permissions,
-					pubId: item.pubId,
-					userId: item.userId,
-					createdAt: item.createdAt,
-					updatedAt: item.updatedAt,
-				};
-			});
-			const didSetOwner = {};
-			const newManagerMembers = pubManagersData
-				.sort((foo, bar) => {
-					if (foo.createdAt < bar.createdAt) {
-						return -1;
-					}
-					if (foo.createdAt > bar.createdAt) {
-						return 1;
-					}
-					return 0;
-				})
-				.map((item) => {
-					const isOwner = !didSetOwner[item.pubId];
-					didSetOwner[item.pubId] = true;
-					return {
-						id: item.id,
-						permissions: 'manage',
-						pubId: item.pubId,
-						userId: item.userId,
-						isOwner: isOwner,
-						createdAt: item.createdAt,
-						updatedAt: item.updatedAt,
-					};
-				});
-			const newMembers = [...newBranchMembers, ...newManagerMembers];
-			const newMembersObject = {};
-			const permissionLevels = ['view', 'discuss', 'edit', 'manage'];
-			newMembers.forEach((member) => {
-				const index = `${member.userId}-${member.pubId}`;
-				const existingPermissionLevel = newMembersObject[index]
-					? permissionLevels.indexOf(newMembersObject[index].permissions)
-					: -1;
-				const currPermissionLevel = permissionLevels.indexOf(member.permissions);
-				if (
-					existingPermissionLevel === -1 ||
-					currPermissionLevel > existingPermissionLevel
-				) {
-					newMembersObject[index] = member;
-				}
-			});
-			const dedupedNewMembers = Object.values(newMembersObject);
-			return Member.bulkCreate(dedupedNewMembers);
-		},
-	);
-
-	/* Migrate CommunityAdmin */
-	await CommunityAdmin.findAll().then((adminsData) => {
-		const didSetOwner = {};
-		const newManagerMembers = adminsData
-			.sort((foo, bar) => {
-				if (foo.createdAt < bar.createdAt) {
-					return -1;
-				}
-				if (foo.createdAt > bar.createdAt) {
-					return 1;
-				}
-				return 0;
-			})
-			.map((item) => {
-				const isOwner = !didSetOwner[item.communityId];
-				didSetOwner[item.communityId] = true;
-				return {
-					id: item.id,
-					permissions: 'manage',
-					communityId: item.communityId,
-					userId: item.userId,
-					isOwner: isOwner,
-					createdAt: item.createdAt,
-					updatedAt: item.updatedAt,
-				};
-			});
-		return Member.bulkCreate(newManagerMembers);
 	});
 };
 

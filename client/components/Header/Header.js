@@ -209,6 +209,29 @@ class Header extends Component {
 							)}
 						</div>
 						<div className="buttons-wrapper">
+							{isBasePubPub && (
+								<>
+									<AnchorButton
+										href="/pricing"
+										minimal={true}
+										large={true}
+										text="Pricing"
+									/>
+									<AnchorButton
+										href="/search"
+										minimal={true}
+										large={true}
+										text="Search"
+										className="hide-on-mobile"
+									/>
+									<AnchorButton
+										href="/about"
+										minimal={true}
+										large={true}
+										text="About"
+									/>
+								</>
+							)}
 							{!isBasePubPub &&
 								loggedIn &&
 								(!this.props.communityData.hideCreatePubButton || isAdmin) && (

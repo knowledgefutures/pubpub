@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AccentStyle, Footer, Header, Icon, LegalBanner, NavBar, SkipLink } from 'components';
-import { populateNavigationIds } from 'utils';
+import { AccentStyle, Footer, Header, LegalBanner, NavBar, SkipLink } from 'components';
+import { populateNavigationIds, populateSocialItems } from 'utils';
 
 require('./pageWrapper.scss');
 
@@ -30,38 +30,7 @@ const PageWrapper = (props) => {
 	const pages = communityData.pages || [];
 	const navigation = communityData.navigation || [];
 	const navItems = populateNavigationIds(pages, navigation);
-	const socialItems = [
-		{
-			id: 'si-0',
-			icon: <Icon icon="globe" />,
-			title: 'Website',
-			value: communityData.website,
-			url: communityData.website,
-		},
-		{
-			id: 'si-1',
-			icon: <Icon icon="twitter" />,
-			title: 'Twitter',
-			value: communityData.twitter,
-			url: `https://twitter.com/${communityData.twitter}`,
-		},
-		{
-			id: 'si-2',
-			icon: <Icon icon="facebook" />,
-			title: 'Facebook',
-			value: communityData.facebook,
-			url: `https://facebook.com/${communityData.facebook}`,
-		},
-		{
-			id: 'si-3',
-			icon: <Icon icon="envelope" />,
-			title: 'Contact',
-			value: communityData.email,
-			url: `mailto:${communityData.email}`,
-		},
-	].filter((item) => {
-		return item.value;
-	});
+	const socialItems = populateSocialItems(communityData);
 
 	const pageContextProps = {
 		communityData: props.communityData,

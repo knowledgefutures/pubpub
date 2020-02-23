@@ -65,7 +65,7 @@ const banners = [
 					which features and content on PubPub are receiving traffic.{' '}
 					<b>We don't sell this data or share it with anyone else</b>, and we don't use
 					third-party processors who aggregate and sell data. Visit your{' '}
-					<a href="/privacy/settings">privacy settings</a> to learn more.
+					<a href="/legal/settings">privacy settings</a> to learn more.
 				</p>
 			);
 		},

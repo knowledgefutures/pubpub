@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { MenuItem, Position } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
+import Icon from 'components/Icon/Icon';
 import { generateHash } from 'utils';
 
 require('./pageAutocomplete.scss');
@@ -91,12 +92,12 @@ class PageAutocomplete extends Component {
 					items={this.state.items}
 					inputProps={{
 						placeholder: this.props.placeholder,
+						rightElement: <Icon icon="caret-down" />,
+						small: true,
 					}}
 					query={this.state.value}
 					onQueryChange={this.filterItems}
-					inputValueRenderer={(item) => {
-						return item.title;
-					}}
+					inputValueRenderer={() => {}}
 					itemRenderer={(item = {}, { handleClick, modifiers }) => {
 						return (
 							<li key={item.id || 'empty-user-create'}>

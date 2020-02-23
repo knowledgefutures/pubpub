@@ -271,7 +271,7 @@ class Header extends Component {
 											</React.Fragment>
 										}
 									/>
-									<MenuItem href="/privacy/settings" text="Privacy settings" />
+									<MenuItem href="/legal/settings" text="Privacy settings" />
 									<MenuItem onClick={this.handleLogout} text="Logout" />
 								</MenuButton>
 							)}

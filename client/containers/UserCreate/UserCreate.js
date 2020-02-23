@@ -346,7 +346,7 @@ class UserCreate extends Component {
 											newsletters. We never share your data with anyone, and
 											you can unsubscribe using the link at the bottom of
 											every email. Learn more by visiting your&nbsp;
-											<a href="/privacy">privacy settings</a>.
+											<a href="/legal/privacy">privacy settings</a>.
 										</em>
 									</p>
 								</InputField>

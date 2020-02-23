@@ -1,24 +1,29 @@
 import React from 'react';
-import { Terms } from 'containers';
+import { Legal } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
 
-app.get('/tos', (req, res, next) => {
+app.get('/privacy', (_, res) => res.redirect('/legal/privacy'));
+app.get('/privacy/policy', (_, res) => res.redirect('/legal/privacy'));
+app.get('/tos', (_, res) => res.redirect('/legal/terms'));
+app.get('/legal', (_, res) => res.redirect('/legal/terms'));
+
+app.get('/legal/:tab', (req, res, next) => {
 	return getInitialData(req)
 		.then((initialData) => {
 			return renderToNodeStream(
 				res,
 				<Html
-					chunkName="Terms"
+					chunkName="Legal"
 					initialData={initialData}
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
-						title: `Terms of Service · ${initialData.communityData.title}`,
+						title: `Legal · ${initialData.communityData.title}`,
 						description: initialData.communityData.description,
 					})}
 				>
-					<Terms {...initialData} />
+					<Legal {...initialData} />
 				</Html>,
 			);
 		})

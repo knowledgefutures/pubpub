@@ -43,6 +43,10 @@ export const getPermissions = ({ userId, communityId }) => {
 				'heroPrimaryButton',
 				'heroSecondaryButton',
 				'heroAlign',
+				'navLinks',
+				'footerLinks',
+				'footerTitle',
+				'footerImage',
 			];
 
 			const canUpdate = isSuperAdmin || communityAdminData;

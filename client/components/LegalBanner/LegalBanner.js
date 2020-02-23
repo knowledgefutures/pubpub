@@ -46,7 +46,7 @@ const banners = [
 					<Button
 						large
 						onClick={() => {
-							window.open('https://www.pubpub.org/tos', '_blank');
+							window.open('https://www.pubpub.org/legal/terms', '_blank');
 						}}
 					>
 						See terms

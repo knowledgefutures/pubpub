@@ -14,6 +14,7 @@ const propTypes = {
 	menuStyle: PropTypes.shape({}),
 	onDismiss: PropTypes.func,
 	placement: PropTypes.string,
+	className: PropTypes.string,
 };
 
 const defaultProps = {
@@ -21,6 +22,7 @@ const defaultProps = {
 	menuStyle: {},
 	onDismiss: () => {},
 	placement: undefined,
+	className: '',
 };
 
 const renderDisclosure = (disclosure, disclosureProps) => {
@@ -39,6 +41,7 @@ export const Menu = React.forwardRef((props, ref) => {
 		onDismiss,
 		gutter,
 		menuStyle,
+		className,
 		...restProps
 	} = props;
 
@@ -69,7 +72,7 @@ export const Menu = React.forwardRef((props, ref) => {
 				aria-label={ariaLabel}
 				as="ul"
 				style={{ zIndex: 20, ...menuStyle }}
-				className={classNames(Classes.MENU, Classes.ELEVATION_1)}
+				className={classNames(Classes.MENU, Classes.ELEVATION_1, className)}
 				unstable_portal={true}
 				{...menu}
 			>

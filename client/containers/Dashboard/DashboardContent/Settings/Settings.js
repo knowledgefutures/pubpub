@@ -755,7 +755,10 @@ class Settings extends Component {
 						small
 						style={{ margin: '-10px 0px 20px' }}
 						text="Use Header Logo"
-						disabled={this.state.footerImage === this.state.headerLogo}
+						disabled={
+							!this.state.headerLogo ||
+							this.state.footerImage === this.state.headerLogo
+						}
 						onClick={() => {
 							this.setState((prevState) => {
 								return {

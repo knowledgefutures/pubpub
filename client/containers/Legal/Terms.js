@@ -26,14 +26,17 @@ const Terms = function(props) {
 				PubPub reserves the right to change the provisions of these Terms of Service and to
 				modify PubPub’s features at any time. The PubPub website will post changes to these
 				Terms of Service at{' '}
-				<a href={`https://${props.hostname}/tos`}>{`${props.hostname}/tos`}</a>, and all
-				registered users will receive email notification that changes have been made. Posted
-				changes will become effective automatically 15 days after they are posted, except
-				that if any amendments thereto are made after posting, such amendments will become
-				effective 15 days after they are made. By accessing the PubPub website after
-				modifications to these Terms of Service have become effective, you agree to be bound
-				by all the modified terms. All references herein to “these Terms of Service” shall
-				be construed to include all modifications becoming effective at any time hereafter.
+				<a
+					href={`https://${props.hostname}/legal/terms`}
+				>{`${props.hostname}/legal/terms`}</a>
+				, and all registered users will receive email notification that changes have been
+				made. Posted changes will become effective automatically 15 days after they are
+				posted, except that if any amendments thereto are made after posting, such
+				amendments will become effective 15 days after they are made. By accessing the
+				PubPub website after modifications to these Terms of Service have become effective,
+				you agree to be bound by all the modified terms. All references herein to “these
+				Terms of Service” shall be construed to include all modifications becoming effective
+				at any time hereafter.
 			</p>
 			<p>
 				The terms “PubPub,” “we”, “us”, “our”, and other similar terms as used in these

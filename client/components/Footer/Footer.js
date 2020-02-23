@@ -29,10 +29,10 @@ const Footer = (props) => {
 	const [isConfirmed, setIsConfirmed] = useState(false);
 	const links = isBasePubPub
 		? [
-				{ id: 1, title: 'Create your community', url: '/create/community' },
-				{ id: 2, title: 'Login', url: '/login' },
-				{ id: 3, title: 'Signup', url: '/signup' },
-				{ id: 4, title: 'Legal', url: '/legal' },
+				{ id: 1, title: 'Create your community', href: '/create/community' },
+				{ id: 2, title: 'Login', href: '/login' },
+				{ id: 3, title: 'Signup', href: '/signup' },
+				{ id: 4, title: 'Legal', href: '/legal' },
 				// { id: 6, title: 'Help', url: 'https://meta.pubpub.org/help' },
 		  ]
 		: populateNavigationIds(

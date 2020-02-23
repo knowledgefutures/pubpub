@@ -23,9 +23,10 @@
 		}
 		.main-content {
 			display: flex;
+			justify-content: space-between;
 			white-space: nowrap;
 			.logo-wrapper {
-				flex: 1 1 auto;
+				flex: 0 0 auto;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				a {

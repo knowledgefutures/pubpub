@@ -90,7 +90,7 @@ export const populateNavigationIds = function(collections, navigation) {
 					...item,
 					children: item.children
 						.map((child) => {
-							return collectionsObject[child];
+							return typeof child === 'string' ? collectionsObject[child] : child;
 						})
 						.filter((child) => {
 							return !!child;

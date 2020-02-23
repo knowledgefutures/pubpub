@@ -57,6 +57,9 @@ $leftColumnWidth: 20%;
 /***** Top Nav ****/
 .header-component {
 	color: #111;
+	&.bp3-dark a.bp3-button:hover {
+		color: #111;
+	}
 }
 
 #landing-container .page-content {

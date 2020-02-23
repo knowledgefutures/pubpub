@@ -32,21 +32,30 @@ const NavBar = function(props) {
 												<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
 											</li>
 										}
+										className="nav-bar-popover"
 										key={`nav-item-${item.id}`}
 									>
-										{item.children.map((subitem, index) => (
-											<MenuItem
-												// eslint-disable-next-line react/no-array-index-key
-												key={index}
-												href={`/${subitem.slug}`}
-												icon={
-													!subitem.isPublic && (
-														<Icon icon="lock2" iconSize={14} />
-													)
-												}
-												text={subitem.title}
-											/>
-										))}
+										{item.children.map((subitem, index) => {
+											return (
+												<MenuItem
+													// eslint-disable-next-line react/no-array-index-key
+													key={index}
+													href={subitem.href || `/${subitem.slug}`}
+													icon={
+														subitem.slug &&
+														!subitem.isPublic && (
+															<Icon icon="lock2" iconSize={14} />
+														)
+													}
+													rightElement={
+														subitem.href && (
+															<Icon icon="share" iconSize={14} />
+														)
+													}
+													text={subitem.title}
+												/>
+											);
+										})}
 									</Menu>
 								);
 							}

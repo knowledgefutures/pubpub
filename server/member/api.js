@@ -2,7 +2,7 @@ import app, { wrap } from '../server';
 import { ForbiddenError } from '../errors';
 
 import { getPermissions } from './permissions';
-import { createMember, destroyMember } from './queries';
+import { createMember, updateMember, destroyMember } from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -52,6 +52,29 @@ app.post(
 					communityId: communityId,
 				}),
 			},
+		});
+		return res.status(201).json(member);
+	}),
+);
+
+app.put(
+	'/api/members',
+	wrap(async (req, res) => {
+		const { pubId, collectionId, communityId, actorId } = getRequestIds(req);
+		const { value, id } = req.body;
+		const permissions = await getPermissions({
+			actorId: actorId,
+			pubId: pubId,
+			communityId: communityId,
+			collectionId: collectionId,
+			memberId: id,
+		});
+		if (!permissions.create) {
+			throw new ForbiddenError();
+		}
+		const member = await updateMember({
+			value: value,
+			memberId: id,
 		});
 		return res.status(201).json(member);
 	}),

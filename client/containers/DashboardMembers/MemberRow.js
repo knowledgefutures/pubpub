@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
-import { Select } from '@blueprintjs/select';
-import { Position, MenuItem, Button, Tag } from '@blueprintjs/core';
+import { Button, Tag } from '@blueprintjs/core';
+
 import { Avatar } from 'components';
+import { MenuButton, MenuItem } from 'components/Menu';
 
 require('./memberRow.scss');
 
@@ -22,37 +23,32 @@ const defaultProps = {
 	onDelete: null,
 };
 
+const permissionValues = ['view', 'edit', 'manage', 'admin'];
+
 const MemberRow = (props) => {
 	const { memberData, isInvitation, isReadOnly, onDelete, onUpdate } = props;
 	const user = memberData.user || { fullName: memberData.email, initials: '@' };
 
+	const handleSetPermissions = (permissions) =>
+		onUpdate(memberData, { permissions: permissions });
+
 	const renderControls = () => {
 		const permissionSelector = onUpdate && (
-			<Select
+			<MenuButton
+				aria-label="Select member permissions"
 				className="permission-select"
-				activeItem={memberData.permissions}
-				items={['view', 'edit', 'manage', 'admin']}
-				filterable={false}
-				popoverProps={{ minimal: true, position: Position.BOTTOM_RIGHT }}
-				onItemSelect={(item) => {
-					console.log('selected', item);
-				}}
-				itemRenderer={(item, rendererProps) => {
-					return (
-						<MenuItem
-							key={item}
-							text={<span className="capitalize">{item}</span>}
-							active={rendererProps.modifiers.active}
-							onClick={rendererProps.handleClick}
-						/>
-					);
-				}}
+				buttonProps={{ rightIcon: 'caret-down', minimal: true }}
+				buttonContent={<>Can {memberData.permissions}</>}
 			>
-				<Button
-					text={<span className="capitalize">{memberData.permissions}</span>}
-					rightIcon="caret-down"
-				/>
-			</Select>
+				{permissionValues.map((value) => (
+					<MenuItem
+						key={value}
+						text={<span className="capitalize">{value}</span>}
+						active={memberData.permissions === value}
+						onClick={() => handleSetPermissions(value)}
+					/>
+				))}
+			</MenuButton>
 		);
 
 		const deleteButton = onDelete && (
@@ -87,8 +83,8 @@ const MemberRow = (props) => {
 			</div>
 			{!isReadOnly && renderControls()}
 			{isReadOnly && (
-				<Tag minimal large className="capitalize">
-					{memberData.permissions}
+				<Tag minimal large>
+					Can {memberData.permissions}
 				</Tag>
 			)}
 		</div>

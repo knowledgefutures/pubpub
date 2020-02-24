@@ -25,6 +25,17 @@ const membersReducer = (state, action) => {
 				: [...members, member];
 		return { ...state, members: nextMembers };
 	}
+	if (action.type === 'update-member') {
+		return {
+			...state,
+			members: members.map((currentMember) => {
+				if (currentMember.id === action.member.id) {
+					return action.member;
+				}
+				return currentMember;
+			}),
+		};
+	}
 	if (action.type === 'remove-member') {
 		return {
 			...state,
@@ -37,7 +48,10 @@ const membersReducer = (state, action) => {
 const DashboardMembers = (props) => {
 	const [membersData, dispatchToMembers] = useReducer(membersReducer, props.membersData);
 	const { scopeData } = usePageContext();
-	const { activeTargetType } = scopeData.elements;
+	const {
+		elements: { activeTargetType },
+		activePermissions: { canManage },
+	} = scopeData;
 
 	const membersByType = {
 		pub: membersData.members.filter((mb) => mb.pubId),
@@ -65,6 +79,20 @@ const DashboardMembers = (props) => {
 				},
 			}),
 		}).then((member) => dispatchToMembers({ type: 'add-member', member: member }));
+	};
+
+	const handleUpdateMember = (member, update) => {
+		const existingValue = { ...member };
+		const newValue = { ...member, ...update };
+		dispatchToMembers({ type: 'update-member', member: newValue });
+		apiFetch('/api/members', {
+			method: 'PUT',
+			body: JSON.stringify({
+				...scopeData.elements.activeIds,
+				id: member.id,
+				value: update,
+			}),
+		}).catch(() => dispatchToMembers({ type: 'update-member', member: existingValue }));
 	};
 
 	const handleRemoveMember = (member) => {
@@ -112,6 +140,8 @@ const DashboardMembers = (props) => {
 					return (
 						<MemberRow
 							memberData={member}
+							isReadOnly={!canManage}
+							onUpdate={handleUpdateMember}
 							onDelete={handleRemoveMember}
 							key={member.id}
 						/>

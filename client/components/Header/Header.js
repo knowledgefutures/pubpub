@@ -211,6 +211,7 @@ const Header = () => {
 								placement="top-end"
 								menuStyle={{ zIndex: 20 }}
 								buttonProps={{
+									className: 'header-dashboard-button',
 									minimal: true,
 									large: true,
 									rightIcon: 'caret-down',

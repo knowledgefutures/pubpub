@@ -8,8 +8,6 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 require('./dragDropListing.scss');
 
-const DND_TYPE = 'collection-editor-entry';
-
 const propTypes = {
 	className: PropTypes.string,
 	droppableId: PropTypes.string.isRequired,
@@ -53,7 +51,7 @@ const DragDropListing = (props) => {
 					{items.map((item, index) => {
 						const id = itemId(item);
 						return (
-							<Draggable draggableId={id} index={index} type={DND_TYPE} key={id}>
+							<Draggable draggableId={id} index={index} type={droppableType} key={id}>
 								{(draggableProvided, snapshot) => {
 									const {
 										innerRef,

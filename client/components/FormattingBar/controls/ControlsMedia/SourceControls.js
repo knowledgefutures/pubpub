@@ -58,7 +58,7 @@ const SourceControls = (props) => {
 					style={{ display: 'none' }}
 					name="image"
 					type="file"
-					accept="image/png, image/jpeg, image/gif"
+					accept="image/png, image/jpeg, image/gif, image/svg+xml"
 					onChange={handleStartUpload}
 					className="file-input"
 				/>

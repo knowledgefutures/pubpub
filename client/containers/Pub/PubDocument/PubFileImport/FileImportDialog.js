@@ -107,7 +107,7 @@ const FileImportDialog = ({ editorChangeObject, updateLocalData, isOpen, onClose
 				</li>
 				<li>
 					Supports all image formats, though you may wish to convert your images to a
-					format with wide browser support (.jpeg, .jpg, .png, or .gif).
+					format with wide browser support (.jpeg, .jpg, .png, .svg, or .gif).
 				</li>
 			</ul>
 		);

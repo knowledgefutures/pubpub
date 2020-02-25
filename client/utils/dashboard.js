@@ -18,7 +18,7 @@ export const getDashUrl = ({ collectionSlug, pubSlug, mode, submode }) => {
 	return `${baseHref}${modeString}${submodeString}${baseQuery}`;
 };
 
-export const groupPubs = (pubs, collections) => {
+export const groupPubs = ({ pubs, collections }) => {
 	const groupedCollections = {};
 	const basePubs = [];
 	pubs.forEach((pub) => {

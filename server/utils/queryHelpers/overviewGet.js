@@ -1,4 +1,11 @@
-import { User, Collection, Pub, Community, CollectionAttribution } from '../../models';
+import {
+	User,
+	Collection,
+	Pub,
+	Community,
+	CollectionAttribution,
+	CollectionPub,
+} from '../../models';
 import { attributesPublicUser } from '..';
 import buildPubOptions from './pubOptions';
 
@@ -29,6 +36,11 @@ export default async (initialData) => {
 								attributes: attributesPublicUser,
 							},
 						],
+					},
+					{
+						model: CollectionPub,
+						as: 'collectionPubs',
+						order: [['rank', 'ASC']],
 					},
 				],
 			},

@@ -1,80 +1,120 @@
 @import 'styles/variables.scss';
-.content-row-component {
-	display: block;
-	text-decoration: none;
-	margin-top: 1.5em;
-	margin-bottom: -1.5em;
-	padding: 1.5em 0em;
-	border-top: 1px solid #ddd;
-	&:hover {
-		background: #f9f9f9;
-		text-decoration: none;
-	}
-	.top {
-		display: flex;
-		align-items: flex-start;
-		.title {
-			flex: 1 1 auto;
 
-			.header {
-				font-weight: 500;
-				font-size: 16px;
-				font-family: $header-font;
-			}
-			.authors {
-				font-style: italic;
-			}
-		}
-		.arrow {
-			width: 26px;
-			flex: 0 0 auto;
-			opacity: 0.5;
-			margin: -20px 0px;
-			padding: 20px 0px;
-			&.opened {
-				.bp3-icon {
-					transform: rotate(90deg);
-				}
-			}
-			&:hover {
-				opacity: 1;
-			}
-		}
-		.icon {
-			padding-right: 10px;
-		}
-		.pubs,
-		.conversations,
-		.merges,
-		.reviews {
-			width: 90px;
-			flex: 0 0 auto;
+$hover-background: #f9f9f9;
+
+.content-row-component {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    padding: 1.5em 0em;
+    background: white;
+    border-top: 1px solid #ddd;
+    cursor: default;
+    &.is-dragging {
+        border: none;
+        border-radius: 4px;
+    }
+    &.minimal {
+        padding: 0.5em;
+        &:first-child {
+            border-top: none;
+        }
+    }
+    &.selected {
+        background: darken($hover-background, 10%);
+        &:hover {
+            background: darken($hover-background, 15%);
+        }
+    }
+    &:hover {
+        background: $hover-background;
+        text-decoration: none;
+    }
+    .drag-handle {
+        position: absolute;
+        left: 0;
+        cursor: grab;
+        z-index: 1;
+        .bp3-icon {
+            pointer-events: none;
+        }
+    }
+    .top {
+        display: flex;
+        align-items: flex-start;
+        .title {
+            flex: 1 1 auto;
+            .header {
+                font-weight: 500;
+                font-size: 16px;
+                font-family: $header-font;
+            }
+            .authors-and-label {
+                font-style: italic;
+            }
+            .extras {
+                color: #999;
+                a {
+                    color: inherit;
+                }
+            }
+        }
+        .arrow {
+            width: 26px;
+            flex: 0 0 auto;
+            opacity: 0.5;
+            margin: -20px 0px;
+            padding: 20px 0px;
+            &.opened {
+                .bp3-icon {
+                    transform: rotate(90deg);
+                }
+            }
+            &:hover {
+                opacity: 1;
+            }
+        }
+        .icon {
+            padding-right: 10px;
+        }
+        .pubs,
+        .conversations,
+        .merges,
+        .reviews {
+            width: 90px;
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            .bp3-icon {
+                margin-right: 5px;
+            }
+            .bp3-tag {
+                margin-left: 2px;
+            }
+        }
+        .controls {
+            margin-top: -2px;
+			margin-right: 6px;
 			display: flex;
-			align-items: center;
-			.bp3-icon {
-				margin-right: 5px;
-			}
-			.bp3-tag {
-				margin-left: 2px;
-			}
-		}
-	}
-	.bp3-icon {
-		opacity: 0.5;
-	}
+			flex-wrap: nowrap;
+        }
+    }
+    .bp3-icon {
+        opacity: 0.5;
+    }
 }
 
 .child-rows {
-	position: relative;
-	margin-left: 32px;
-	&:before {
-		content: '';
-		position: absolute;
-		background: #eee;
-		width: 2px;
-		z-index: -1;
-		top: -1.5em;
-		bottom: 1.5em;
-		left: -24px;
-	}
+    position: relative;
+    margin-left: 32px;
+    &:before {
+        content: '';
+        position: absolute;
+        background: #eee;
+        width: 2px;
+        z-index: -1;
+        top: -1.5em;
+        bottom: 1.5em;
+        left: -24px;
+    }
 }

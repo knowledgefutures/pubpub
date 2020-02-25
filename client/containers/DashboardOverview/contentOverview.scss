@@ -1,10 +1,12 @@
 .content-overview-component {
+	.bp3-non-ideal-state {
+		height: 400px;
+	}
 	.filter-bar {
 		display: flex;
 		width: 100%;
 		justify-content: space-between;
 		margin-top: 60px;
-		margin-bottom: -21px;
 		.left {
 			border-bottom: 2px solid #333;
 			font-weight: 500;

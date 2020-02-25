@@ -74,23 +74,20 @@ export const createCollectionPub = (inputValues) => {
 			pubLevelPeers.filter((peer) => peer.collection.kind !== 'tag').length === 0 &&
 			collection.kind !== 'tag' &&
 			collection.isPublic;
-		// If a rank wasn't provided, move the CollectionPub to the end of the collection
+		// If a rank wasn't provided, move the CollectionPub to the top or bottom of the collection
 		let setRank = inputValues.rank;
 		if (!setRank) {
 			const ranks = collectionLevelPeers.map((cp) => cp.rank).filter((r) => r);
 			// eslint-disable-next-line no-param-reassign
-			setRank = findRank(ranks, ranks.length);
+			const targetIndex = inputValues.moveToTop ? 0 : ranks.length;
+			setRank = findRank(ranks, targetIndex);
 		}
-		return CollectionPub.create(
-			{
-				collectionId: inputValues.collectionId,
-				pubId: inputValues.pubId,
-				rank: setRank,
-				isPrimary: isPrimary,
-			},
-			/* Unclear why this is included */
-			{ returning: true },
-		);
+		return CollectionPub.create({
+			collectionId: inputValues.collectionId,
+			pubId: inputValues.pubId,
+			rank: setRank,
+			isPrimary: isPrimary,
+		});
 	});
 };
 

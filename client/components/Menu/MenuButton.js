@@ -5,13 +5,14 @@ import { Button } from '@blueprintjs/core';
 import { Menu } from './Menu';
 
 const propTypes = {
-	buttonContent: PropTypes.node.isRequired,
+	buttonContent: PropTypes.node,
 	buttonProps: PropTypes.shape({}),
 	children: PropTypes.node.isRequired,
 };
 
 const defaultProps = {
 	buttonProps: {},
+	buttonContent: null,
 };
 
 export const MenuButton = (props) => {

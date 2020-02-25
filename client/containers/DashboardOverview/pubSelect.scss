@@ -1,0 +1,24 @@
+.pub-select-popover {
+    .bp3-popover-content > .pub-select-ui {
+        width: 400px;
+        max-height: 400px;
+        display: flex;
+        flex-direction: column;
+        .bp3-input-group {
+            z-index: 1;
+        }
+        .bp3-menu {
+            flex-grow: 1;
+            overflow: auto;
+            min-height: 0;
+            padding: 0;
+        }
+    }
+    .empty-list {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-style: italic;
+    }
+}

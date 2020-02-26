@@ -154,11 +154,12 @@ const CommunitySettings = () => {
 			}),
 		})
 			.then((result) => {
-				if (window.location.host.indexOf('localhost') > -1) {
-					return window.location.href = `http://${window.location.host}${locationData.path}`;
-				}
 				const hostname = result.domain || `${result.subdomain}.pubpub.org`;
-				return window.location.href = `https://${hostname}${locationData.path}`;
+				const origin =
+					window.location.host.indexOf('localhost') > -1
+						? `http://${window.location.host}`
+						: `https://${hostname}`;
+				window.location.href = `${origin}${locationData.path}`;
 			})
 			.catch((err) => {
 				console.error(err);

@@ -52,6 +52,12 @@ export default (sequelize, dataTypes) => {
 			heroAlign: { type: dataTypes.TEXT },
 			navigation: { type: dataTypes.JSONB },
 			hideNav: { type: dataTypes.BOOLEAN },
+
+			navLinks: { type: dataTypes.JSONB },
+			footerLinks: { type: dataTypes.JSONB },
+			footerTitle: { type: dataTypes.TEXT },
+			footerImage: { type: dataTypes.TEXT },
+
 			website: { type: dataTypes.TEXT },
 			facebook: { type: dataTypes.TEXT },
 			twitter: { type: dataTypes.TEXT },

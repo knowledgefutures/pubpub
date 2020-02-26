@@ -57,10 +57,14 @@
 		// font-weight: 500;
 		.bp3-icon {
 			font-size: 14px;
-			padding-right: 0.15em;
+			margin-left: 0.25em;
 			position: relative;
 			top: -2px;
 		}
+	}
+	.external-icon {
+		opacity: 0.7;
+		padding-left: 5px;
 	}
 }
 .nav-bar-popover {
@@ -69,6 +73,10 @@
 		padding-right: 0.15em;
 		position: relative;
 		top: -1px;
+	}
+	.bp3-icon-share {
+		padding: 3px;
+		opacity: 0.7;
 	}
 }
 

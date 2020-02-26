@@ -698,6 +698,26 @@ new Promise((resolve) => {
 	// 		defaultValue: false,
 	// 	});
 	// })
+	// .then(() => {
+	// 	// Handle addition of Export model and Branch.exports field
+	// 	return sequelize.sync();
+	// })
+	// .then(() => {
+	// 	return Promise.all([
+	// 		sequelize.queryInterface.addColumn('Communities', 'navLinks', {
+	// 			type: Sequelize.JSONB,
+	// 		}),
+	// 		sequelize.queryInterface.addColumn('Communities', 'footerLinks', {
+	// 			type: Sequelize.JSONB,
+	// 		}),
+	// 		sequelize.queryInterface.addColumn('Communities', 'footerTitle', {
+	// 			type: Sequelize.TEXT,
+	// 		}),
+	// 		sequelize.queryInterface.addColumn('Communities', 'footerImage', {
+	// 			type: Sequelize.TEXT,
+	// 		}),
+	// 	]);
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

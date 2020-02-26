@@ -1,9 +1,9 @@
-#privacy-container {
-    .privacy-columns {
+#legal-container {
+    .legal-columns {
         max-width: 900px;
     }
 
-    .privacy-settings {
+    .legal-settings {
         .bp3-card {
             margin-bottom: 15px;
         }
@@ -12,8 +12,8 @@
 
 @media only screen and (min-width: 750px) {
     @supports (display: grid) {
-        #privacy-container {
-            .privacy-columns {
+        #legal-container {
+            .legal-columns {
 				display: grid;
 				grid-template-columns: 150px 1fr;
 				grid-template-areas: 'side main';

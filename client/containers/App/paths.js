@@ -18,11 +18,10 @@ import {
 	Page,
 	PasswordReset,
 	Pricing,
-	Privacy,
+	Legal,
 	Pub,
 	Search,
 	Signup,
-	Terms,
 	User,
 	UserCreate,
 } from 'containers';
@@ -110,8 +109,8 @@ export default (viewData, locationData, chunkName) => {
 			hideNav: true,
 			hideFooter: true,
 		},
-		Privacy: {
-			ActiveComponent: Privacy,
+		Legal: {
+			ActiveComponent: Legal,
 			hideNav: locationData.isBasePubPub,
 		},
 		Pub: {
@@ -126,10 +125,6 @@ export default (viewData, locationData, chunkName) => {
 			ActiveComponent: Signup,
 			hideNav: true,
 			hideFooter: true,
-		},
-		Terms: {
-			ActiveComponent: Terms,
-			hideNav: locationData.isBasePubPub,
 		},
 		User: {
 			ActiveComponent: User,

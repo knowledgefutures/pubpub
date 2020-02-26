@@ -9,9 +9,17 @@ import {
 	InputField,
 	SettingsSection,
 	CollectionMultiSelect,
+	NavBar,
+	Footer,
 } from 'components';
-import { populateNavigationIds, apiFetch, slugifyString } from 'utils';
-import NavDrag from './NavDrag/NavDrag';
+import {
+	populateNavigationIds,
+	apiFetch,
+	slugifyString,
+	populateSocialItems,
+	defaultFooterLinks,
+} from 'utils';
+import NavBuilder from './NavBuilder';
 
 require('./settings.scss');
 
@@ -83,6 +91,11 @@ class Settings extends Component {
 			heroSecondaryButton: props.communityData.heroSecondaryButton || {},
 			heroAlign: props.communityData.heroAlign || 'left',
 
+			/* Footer */
+			footerLinks: props.communityData.footerLinks,
+			footerTitle: props.communityData.footerTitle,
+			footerImage: props.communityData.footerImage,
+
 			/* Social */
 			website: props.communityData.website || '',
 			twitter: props.communityData.twitter || '',
@@ -134,9 +147,7 @@ class Settings extends Component {
 	render() {
 		const pages = this.props.communityData.pages || [];
 		const navigation = this.props.communityData.navigation || [];
-		const initialNav = populateNavigationIds(pages, navigation);
 		const heroTextColor = this.state.heroTextColor || this.props.communityData.accentTextColor;
-
 		return (
 			<div className="dashboard-content_settings-component">
 				<div className="content-buttons">
@@ -390,12 +401,24 @@ class Settings extends Component {
 					</InputField>
 					<div className={this.state.hideNav ? 'disable-block' : ''}>
 						<InputField label="Navigation">
-							<NavDrag
-								initialNav={initialNav}
+							<NavBuilder
+								initialNav={navigation}
+								prefix={[navigation[0]]}
 								pages={pages}
 								onChange={(val) => {
 									this.setState({ navigation: val });
 								}}
+							/>
+						</InputField>
+						<InputField label="Preview">
+							<NavBar
+								navItems={populateNavigationIds(pages, this.state.navigation)}
+								socialItems={populateSocialItems({
+									website: this.state.website,
+									twitter: this.state.twitter,
+									facebook: this.state.facebook,
+									email: this.state.email,
+								})}
 							/>
 						</InputField>
 					</div>
@@ -703,6 +726,78 @@ class Settings extends Component {
 							this.setState({ email: evt.target.value });
 						}}
 					/>
+				</SettingsSection>
+				<SettingsSection title="Footer">
+					<InputField
+						label="Footer Title"
+						type="text"
+						value={this.state.footerTitle || ''}
+						// helperText={`https://facebook.com/${this.state.facebook}`}
+						onChange={(evt) => {
+							this.setState({ footerTitle: evt.target.value });
+						}}
+						placeholder={this.props.communityData.title}
+					/>
+					<ImageUpload
+						key={this.state.footerImageKey}
+						htmlFor="footer-logo-upload"
+						label="Footer Logo"
+						defaultImage={this.state.footerImage}
+						height={80}
+						width={150}
+						onNewImage={(val) => {
+							this.setState({ footerImage: val });
+						}}
+						useAccentBackground={true}
+						canClear={true}
+					/>
+					<Button
+						small
+						style={{ margin: '-10px 0px 20px' }}
+						text="Use Header Logo"
+						disabled={
+							!this.state.headerLogo ||
+							this.state.footerImage === this.state.headerLogo
+						}
+						onClick={() => {
+							this.setState((prevState) => {
+								return {
+									footerImage: prevState.headerLogo,
+									footerImageKey: Math.random(),
+								};
+							});
+						}}
+					/>
+
+					<InputField label="Footer Links">
+						<NavBuilder
+							initialNav={this.props.communityData.footerLinks || defaultFooterLinks}
+							suffix={defaultFooterLinks}
+							pages={pages}
+							onChange={(val) => {
+								this.setState({ footerLinks: val });
+							}}
+							disableDropdown={true}
+						/>
+					</InputField>
+					<InputField label="Preview">
+						<Footer
+							isAdmin={false}
+							isBasePubPub={false}
+							communityData={{
+								...this.props.communityData,
+								footerLinks: this.state.footerLinks,
+								footerTitle: this.state.footerTitle,
+								footerImage: this.state.footerImage,
+							}}
+							socialItems={populateSocialItems({
+								website: this.state.website,
+								twitter: this.state.twitter,
+								facebook: this.state.facebook,
+								email: this.state.email,
+							})}
+						/>
+					</InputField>
 				</SettingsSection>
 				<SettingsSection title="Export & Delete">
 					<Card>

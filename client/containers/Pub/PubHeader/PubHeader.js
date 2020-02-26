@@ -1,10 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import stickybits from 'stickybits';
-
 import { GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';
+import { useSticky } from 'utils/useSticky';
 
 import PubDetails from './details';
 import PubHeaderBackground from './PubHeaderBackground';
@@ -13,8 +12,6 @@ import SmallHeaderButton from './SmallHeaderButton';
 import PubHeaderSticky from './PubHeaderSticky';
 
 require('./pubHeader.scss');
-
-const stickyHeight = 37;
 
 const propTypes = {
 	collabData: PropTypes.object.isRequired,
@@ -26,24 +23,6 @@ const propTypes = {
 
 const defaultProps = {
 	sticky: true,
-};
-
-const useSticky = (headerElement) => {
-	useEffect(() => {
-		if (!headerElement) {
-			return () => {};
-		}
-
-		const nextOffsetHeight = headerElement.offsetHeight;
-		const stickyInstance = stickybits('.pub-header-component', {
-			stickyBitStickyOffset: stickyHeight - nextOffsetHeight,
-			useStickyClasses: true,
-		});
-
-		return () => {
-			stickyInstance.cleanup();
-		};
-	}, [headerElement]);
 };
 
 // eslint-disable-next-line react/prop-types
@@ -68,7 +47,11 @@ const PubHeader = (props) => {
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState(null);
 
-	useSticky(sticky && headerRef.current);
+	useSticky({
+		isActive: sticky && headerRef.current,
+		selector: '.pub-header-component',
+		offset: headerRef.current ? 37 - headerRef.current.offsetHeight : 0,
+	});
 
 	const toggleDetails = () => {
 		if (!showingDetails && headerRef.current) {

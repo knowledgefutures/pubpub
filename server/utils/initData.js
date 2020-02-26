@@ -41,7 +41,7 @@ export const getInitialData = async (req, isDashboard) => {
 				favicon: `https://${locationData.hostname}/favicon.png`,
 				avatar: `https://${locationData.hostname}/static/logo.png`,
 				headerLogo:
-					locationData.path === '/' ? '/static/logoWhite.svg' : '/static/logoBlack.svg',
+					locationData.path === '/' ? '/static/logo.png' : '/static/logoBlack.svg',
 				hideHero: true,
 				accentColorLight: '#ffffff',
 				accentColorDark: '#112233',
@@ -56,6 +56,7 @@ export const getInitialData = async (req, isDashboard) => {
 			},
 			loginData: loginData,
 			locationData: locationData,
+			scopeData: { activePermissions: {} },
 		};
 	}
 

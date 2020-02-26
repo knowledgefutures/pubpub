@@ -4,6 +4,7 @@ export const getPermissions = async ({ userId, communityId }) => {
 	if (!userId) {
 		return {};
 	}
+
 	const scopeData = await getScope({
 		communityId: communityId,
 		loginId: userId,
@@ -41,6 +42,10 @@ export const getPermissions = async ({ userId, communityId }) => {
 		'heroPrimaryButton',
 		'heroSecondaryButton',
 		'heroAlign',
+		'navLinks',
+		'footerLinks',
+		'footerTitle',
+		'footerImage',
 	];
 
 	const canUpdate = scopeData.activePermissions.canManage;

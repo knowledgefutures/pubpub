@@ -1,18 +1,26 @@
 import React from 'react';
-import { GridWrapper } from 'components';
-import Icon from 'components/Icon/Icon';
+import PropTypes from 'prop-types';
+import { GridWrapper, Icon } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
-import { populateNavigationIds, generateSocialItems } from 'utils';
+import { populateNavigationIds, populateSocialItems } from 'utils';
 import { usePageContext } from 'utils/hooks';
 
 require('./navBar.scss');
 
-const NavBar = function() {
-	const { communityData } = usePageContext();
+const propTypes = {
+	previewContext: PropTypes.object,
+};
+
+const defaultProps = {
+	previewContext: undefined,
+};
+
+const NavBar = function(props) {
+	const { communityData } = usePageContext(props.previewContext);
 	const pages = communityData.pages || [];
 	const navigation = communityData.navigation || [];
 	const navItems = populateNavigationIds(pages, navigation);
-	const socialItems = generateSocialItems(communityData);
+	const socialItems = populateSocialItems(communityData);
 	return (
 		<nav className="nav-bar-component accent-background accent-color">
 			<GridWrapper>
@@ -22,42 +30,67 @@ const NavBar = function() {
 							return !!item;
 						})
 						.map((item) => {
-							/* Return Simple Link */
-							if (!item.children) {
+							/* Return Dropdown */
+							if (item.children) {
 								return (
-									<a href={`/${item.slug}`} key={`nav-item-${item.id}`}>
+									<Menu
+										aria-label={item.title}
+										disclosure={
+											<li className="dropdown">
+												{item.title}
+												<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
+											</li>
+										}
+										className="nav-bar-popover"
+										key={`nav-item-${item.id}`}
+									>
+										{item.children.map((subitem, index) => {
+											return (
+												<MenuItem
+													// eslint-disable-next-line react/no-array-index-key
+													key={index}
+													href={subitem.href || `/${subitem.slug}`}
+													icon={
+														subitem.slug &&
+														!subitem.isPublic && (
+															<Icon icon="lock2" iconSize={14} />
+														)
+													}
+													rightElement={
+														subitem.href && (
+															<Icon icon="share" iconSize={14} />
+														)
+													}
+													text={subitem.title}
+												/>
+											);
+										})}
+									</Menu>
+								);
+							}
+							/* Return Custom Link */
+							if (typeof item.href === 'string') {
+								return (
+									<a href={item.href} key={`nav-item-${item.id}`}>
 										<li>
-											{!item.isPublic && <Icon icon="lock2" iconSize={14} />}
 											{item.title}
+											<Icon
+												icon="share"
+												iconSize={11}
+												className="external-icon"
+											/>
 										</li>
 									</a>
 								);
 							}
-							/* Return Dropdown */
+							/* Return Simple Link */
 							return (
-								<Menu
-									aria-label={item.title}
-									disclosure={
-										<li className="dropdown">
-											{item.title}
-											<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
-										</li>
-									}
-								>
-									{item.children.map((subitem, index) => (
-										<MenuItem
-											// eslint-disable-next-line react/no-array-index-key
-											key={index}
-											href={`/${subitem.slug}`}
-											icon={
-												!subitem.isPublic && (
-													<Icon icon="lock2" iconSize={14} />
-												)
-											}
-											text={subitem.title}
-										/>
-									))}
-								</Menu>
+								<a href={`/${item.slug}`} key={`nav-item-${item.id}`}>
+									<li>
+										{!item.isPublic && <Icon icon="lock2" iconSize={14} />}
+										{item.title}
+									</li>
+								</a>
 							);
 						})}
 				</ul>
@@ -70,7 +103,9 @@ const NavBar = function() {
 									key={`social-item-${item.id}`}
 									aria-label={item.title}
 								>
-									<li>{item.icon}</li>
+									<li>
+										<Icon icon={item.icon} />
+									</li>
 								</a>
 							);
 						})}
@@ -81,4 +116,6 @@ const NavBar = function() {
 	);
 };
 
+NavBar.propTypes = propTypes;
+NavBar.defaultProps = defaultProps;
 export default NavBar;

@@ -27,10 +27,10 @@ const ControlsLink = (props) => {
 	useEffect(() => activeLink.updateAttrs({ href: debouncedHref }), [debouncedHref]);
 
 	useEffect(() => {
-		if (inputRef.current && typeof inputRef.current.focus === 'function') {
+		if (inputRef.current && typeof inputRef.current.focus === 'function' && !href) {
 			inputRef.current.focus();
 		}
-	}, []);
+	}, [href]);
 
 	const restoreSelection = useCallback(() => {
 		view.focus();

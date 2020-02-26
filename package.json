@@ -143,7 +143,7 @@
 		"query-string": "^6.4.0",
 		"react": "^16.8.5",
 		"react-avatar-editor": "^11.0.6",
-		"react-beautiful-dnd": "^11.0.1",
+		"react-beautiful-dnd": "^12.2.0",
 		"react-color": "^2.17.2",
 		"react-dom": "^16.8.5",
 		"react-dropzone": "^10.1.4",

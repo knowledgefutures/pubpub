@@ -1,67 +1,53 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import { Footer, AccentStyle, Icon } from 'components';
+import { AccentStyle, Footer } from 'components';
+import { populateSocialItems } from 'utils';
 import { communityData } from 'data';
 
 const wrapperStyle = { margin: '1em 0em' };
 
-const customSocialItems = [
-	{
-		id: 'si-0',
-		icon: <Icon icon="vimeo" />,
-		title: 'Website',
-		value: 'custom',
-		url: 'https://vimeo.com/custom',
-	},
-	{
-		id: 'si-1',
-		icon: <Icon icon="soundcloud" />,
-		title: 'Check out my SoundCloud',
-		value: 'custom',
-		url: 'https://twitter.com/custom',
-	},
-	{
-		id: 'si-2',
-		icon: <Icon icon="spotify" />,
-		title: 'Facebook',
-		value: 'custom',
-		url: 'https://facebook.com/}',
-	},
-];
+const socialItems = populateSocialItems({
+	website: communityData.website,
+	twitter: communityData.twitter,
+	facebook: communityData.facebook,
+	email: communityData.email,
+});
 
 storiesOf('components/Footer', module)
-	.add('Dark', () => (
-		<div>
-			<AccentStyle communityData={communityData} isNavHidden={false} />
+	.add('Dark', () => {
+		return (
+			<div>
+				<AccentStyle communityData={communityData} isNavHidden={false} />
 
-			<div style={wrapperStyle}>
-				<Footer
-					isAdmin={true}
-					isBasePubPub={false}
-					socialItems={customSocialItems}
-					communityData={communityData}
-				/>
-			</div>
+				<div style={wrapperStyle}>
+					<Footer
+						isAdmin={true}
+						isBasePubPub={false}
+						socialItems={socialItems}
+						communityData={communityData}
+					/>
+				</div>
 
-			<div style={wrapperStyle}>
-				<Footer
-					isAdmin={false}
-					isBasePubPub={false}
-					socialItems={customSocialItems}
-					communityData={communityData}
-				/>
-			</div>
+				<div style={wrapperStyle}>
+					<Footer
+						isAdmin={false}
+						isBasePubPub={false}
+						socialItems={socialItems}
+						communityData={communityData}
+					/>
+				</div>
 
-			<div style={wrapperStyle}>
-				<Footer
-					isAdmin={false}
-					isBasePubPub={true}
-					communityData={communityData}
-					socialItems={customSocialItems}
-				/>
+				<div style={wrapperStyle}>
+					<Footer
+						isAdmin={false}
+						isBasePubPub={true}
+						communityData={communityData}
+						socialItems={socialItems}
+					/>
+				</div>
 			</div>
-		</div>
-	))
+		);
+	})
 	.add('Light', () => (
 		<div>
 			<AccentStyle communityData={communityData} isNavHidden={false} />
@@ -69,7 +55,7 @@ storiesOf('components/Footer', module)
 				<Footer
 					isAdmin={true}
 					isBasePubPub={false}
-					socialItems={customSocialItems}
+					socialItems={socialItems}
 					communityData={communityData}
 				/>
 			</div>

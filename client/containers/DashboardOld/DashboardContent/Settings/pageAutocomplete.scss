@@ -1,0 +1,25 @@
+.page-autocomplete-component {
+	.input {
+		width: 100%;
+	}
+	.bp3-popover-target {
+		width: 100%;
+	}
+	.bp3-input-action {
+		padding: 0px 5px;
+		opacity: 0.6;
+	}
+}
+.page-autocomplete-popover {
+	.autocomplete-name {
+		padding: 0em 1em;
+	}
+	.bp3-menu-item {
+		display: flex;
+		align-content: center;
+		align-items: center;
+	}
+	.new-title {
+		padding-right: 0.5em;
+	}
+}

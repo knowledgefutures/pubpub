@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Button, AnchorButton, Intent } from '@blueprintjs/core';
 import { GridWrapper, Avatar, ScopeDropdown, MenuButton, MenuItem } from 'components';
 import { apiFetch, getResizedUrl } from 'utils';
@@ -6,8 +8,18 @@ import { usePageContext } from 'utils/hooks';
 
 require('./header.scss');
 
-const Header = () => {
-	const { locationData, communityData, loginData, scopeData } = usePageContext();
+const propTypes = {
+	previewContext: PropTypes.object,
+};
+
+const defaultProps = {
+	previewContext: undefined,
+};
+
+const Header = (props) => {
+	const { locationData, communityData, loginData, scopeData } = usePageContext(
+		props.previewContext,
+	);
 	const [isLoading, setIsLoading] = useState(false);
 	const handleLogout = () => {
 		apiFetch('/api/logout').then(() => {
@@ -150,9 +162,17 @@ const Header = () => {
 	}`;
 	const heroPrimaryButton = communityData.heroPrimaryButton || {};
 	const heroSecondaryButton = communityData.heroSecondaryButton || {};
+	const isPreview = !!props.previewContext;
 
 	return (
-		<header className={`header-component ${componentClasses}`} style={backgroundStyle}>
+		<header
+			className={classNames([
+				'header-component',
+				componentClasses,
+				isPreview ? 'preview' : '',
+			])}
+			style={backgroundStyle}
+		>
 			<div className={mainClasses}>
 				<GridWrapper columnClassName="main-content">
 					<div className="logo-wrapper">
@@ -172,6 +192,29 @@ const Header = () => {
 						)}
 					</div>
 					<div className="buttons-wrapper">
+						{isBasePubPub && (
+							<React.Fragment>
+								<AnchorButton
+									href="/pricing"
+									minimal={true}
+									large={true}
+									text="Pricing"
+								/>
+								<AnchorButton
+									href="/search"
+									minimal={true}
+									large={true}
+									text="Search"
+									className="hide-on-mobile"
+								/>
+								<AnchorButton
+									href="/about"
+									minimal={true}
+									large={true}
+									text="About"
+								/>
+							</React.Fragment>
+						)}
 						{!isBasePubPub &&
 							loggedIn &&
 							(!communityData.hideCreatePubButton || isAdmin) && (
@@ -311,4 +354,6 @@ const Header = () => {
 	);
 };
 
+Header.propTypes = propTypes;
+Header.defaultProps = defaultProps;
 export default Header;

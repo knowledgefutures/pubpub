@@ -129,7 +129,7 @@ class ControlsImage extends Component {
 									id={this.randKey}
 									name="image"
 									type="file"
-									accept="image/png, image/jpeg, image/gif"
+									accept="image/png, image/jpeg, image/gif, image/svg+xml"
 									onChange={this.handleImageSelect}
 									className="file-input"
 								/>

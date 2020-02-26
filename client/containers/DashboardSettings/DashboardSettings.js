@@ -1,22 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { usePageContext } from 'utils/hooks';
+import CommunitySettings from './CommunitySettings';
+import CollectionSettings from './CollectionSettings';
+import PubSettings from './PubSettings';
 
 require('./dashboardSettings.scss');
 
-const propTypes = {};
-
-const DashboardSettings = (props) => {
+const DashboardSettings = () => {
 	const { scopeData } = usePageContext();
 
+	const settingsComponents = {
+		community: <CommunitySettings />,
+		collection: <CollectionSettings />,
+		pub: <PubSettings />,
+	};
 	return (
 		<div className="dashboard-settings-container">
-			<h2 className="dashboard-content-header">
-				{scopeData.elements.activeTargetName} Settings
-			</h2>
+			{settingsComponents[scopeData.elements.activeTargetType]}
 		</div>
 	);
 };
 
-DashboardSettings.propTypes = propTypes;
 export default DashboardSettings;

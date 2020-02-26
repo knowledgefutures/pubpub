@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { GridWrapper, Icon } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
 import { populateNavigationIds, populateSocialItems } from 'utils';
@@ -6,8 +7,16 @@ import { usePageContext } from 'utils/hooks';
 
 require('./navBar.scss');
 
-const NavBar = function() {
-	const { communityData } = usePageContext();
+const propTypes = {
+	previewContext: PropTypes.object,
+};
+
+const defaultProps = {
+	previewContext: undefined,
+};
+
+const NavBar = function(props) {
+	const { communityData } = usePageContext(props.previewContext);
 	const pages = communityData.pages || [];
 	const navigation = communityData.navigation || [];
 	const navItems = populateNavigationIds(pages, navigation);
@@ -107,4 +116,6 @@ const NavBar = function() {
 	);
 };
 
+NavBar.propTypes = propTypes;
+NavBar.defaultProps = defaultProps;
 export default NavBar;

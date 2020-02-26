@@ -4,6 +4,9 @@
     background-position: center center;
     z-index: 2;
     position: relative;
+    &.preview {
+        z-index: 0;
+    }
     &.bp3-dark {
         a {
             color: #fff;

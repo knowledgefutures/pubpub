@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
 	Button,
 	InputGroup,
@@ -14,12 +15,20 @@ import { usePageContext } from 'utils/hooks';
 
 require('./footer.scss');
 
-const Footer = () => {
+const propTypes = {
+	previewContext: PropTypes.object,
+};
+
+const defaultProps = {
+	previewContext: undefined,
+};
+
+const Footer = (props) => {
 	const [email, setEmail] = useState('');
 	const [isLoadingSubscribe, setIsLoadingSubscribe] = useState(false);
 	const [isSubscribed, setIsSubscribed] = useState(false);
 	const [isConfirmed, setIsConfirmed] = useState(false);
-	const { locationData, communityData, scopeData } = usePageContext();
+	const { locationData, communityData, scopeData } = usePageContext(props.previewContext);
 	const { isBasePubPub } = locationData;
 	const links = isBasePubPub
 		? [
@@ -256,4 +265,6 @@ const Footer = () => {
 	);
 };
 
+Footer.propTypes = propTypes;
+Footer.defaultProps = defaultProps;
 export default Footer;

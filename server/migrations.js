@@ -718,6 +718,13 @@ new Promise((resolve) => {
 	// 		}),
 	// 	]);
 	// })
+	// .then(() => {
+	// 	return Promise.all([
+	// 		sequelize.queryInterface.addColumn('Pubs', 'pubStyleId', {
+	// 			type: Sequelize.UUID,
+	// 		}),
+	// 	]);
+	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);
 	})

@@ -21,7 +21,7 @@
 		$breadcrumbs-height: 73px;
 		$header-height: 56px;
 		display: block;
-		.header-component {
+		.header-component:not(.preview) {
 			position: fixed;
 			width: 100%;
 			.container {

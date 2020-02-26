@@ -14,7 +14,9 @@ const DashboardActivity = (props) => {
 
 	return (
 		<div className="dashboard-activity-container">
-			<h2 className="dashboard-content-header">Activity</h2>
+			<div className="dashboard-content-header">
+				<div className="name">Activity</div>
+			</div>
 		</div>
 	);
 };

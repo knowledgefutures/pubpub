@@ -1,77 +1,87 @@
 #app {
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
-	.page-content {
-		flex-grow: 1;
-	}
-	.duqduq-warning {
-		position: fixed;
-		right: 10px;
-		bottom: 10px;
-		padding: 5px;
-		border-radius: 4px;
-		text-align: center;
-		color: white;
-		line-height: 30px;
-		background: #C23030;
-	}
-	&.dashboard {
-		$side-menu-width: 235px;
-		$breadcrumbs-height: 73px;
-		$header-height: 56px;
-		display: block;
-		.header-component {
-			position: fixed;
-			width: 100%;
-			.container {
-				max-width: 100%;
-				width: 100%;
-			}
-			.col-12 {
-				margin-left: 16px;
-				margin-right: 16px;
-				width: calc(100% - 32px);
-			}
-		}
-		.side-menu-component {
-			width: $side-menu-width;
-			border-right: 1px solid #ddd;
-			position: fixed;
-			height: calc(100vh - #{$header-height});
-			top: $header-height;
-			overflow: scroll;
-		}
-		.breadcrumbs-component {
-			width: calc(100vw - #{$side-menu-width});
-			border-bottom: 1px solid #ddd;
-			position: fixed;
-			height: $breadcrumbs-height;
-			top: $header-height;
-			margin-left: $side-menu-width;
-		}
-		.page-content {
-			padding-top: calc(16px + #{$header-height} + #{$breadcrumbs-height});
-			padding-left: calc(16px + #{$side-menu-width});
-			padding-right: 16px;
-			padding-bottom: 16px;
-			max-width: calc(1024px + #{$side-menu-width});
-			margin: 0 auto;
-			.dashboard-content-header {
-				display: flex;
-				align-items: flex-start;
-				.name {
-					font-weight: 600;
-					font-size: 24px;
-					flex: 1 1 auto;
-				}
-				.buttons {
-					flex: 0 0 auto;
-					.bp3-button {
-						margin-left: 1em;
-					}
-				}
-			}
-		}
-	}
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    .page-content {
+        flex-grow: 1;
+    }
+    .duqduq-warning {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        padding: 5px;
+        border-radius: 4px;
+        text-align: center;
+        color: white;
+        line-height: 30px;
+        background: #c23030;
+    }
+    &.dashboard {
+        $side-menu-width: 235px;
+        $breadcrumbs-height: 73px;
+        $header-height: 56px;
+        display: block;
+        .header-component {
+            position: fixed;
+            width: 100%;
+            .container {
+                max-width: 100%;
+                width: 100%;
+            }
+            .col-12 {
+                margin-left: 16px;
+                margin-right: 16px;
+                width: calc(100% - 32px);
+            }
+        }
+        .side-menu-component {
+            width: $side-menu-width;
+            border-right: 1px solid #ddd;
+            position: fixed;
+            height: calc(100vh - #{$header-height});
+            top: $header-height;
+            overflow: scroll;
+        }
+        .breadcrumbs-component {
+            width: calc(100vw - #{$side-menu-width});
+            border-bottom: 1px solid #ddd;
+            position: fixed;
+            height: $breadcrumbs-height;
+            top: $header-height;
+            margin-left: $side-menu-width;
+        }
+        .page-content {
+            padding-top: calc(16px + #{$header-height} + #{$breadcrumbs-height});
+            padding-left: calc(16px + #{$side-menu-width});
+            padding-right: 16px;
+            padding-bottom: 16px;
+            max-width: calc(1024px + #{$side-menu-width});
+            margin: 0 auto;
+            .dashboard-content-header {
+                display: flex;
+                align-items: flex-start;
+                .dashboard-header-left {
+                    .title {
+                        font-weight: 600;
+                        font-size: 24px;
+                    }
+                    .details {
+						font-size: 14px;
+						color: #666;
+                    }
+                    flex: 1 1 auto;
+                }
+                .dashboard-header-right {
+                    flex: 0 0 auto;
+                    .bp3-button {
+                        margin-left: 1em;
+                    }
+                    .bp3-button-group .bp3-button {
+						z-index: unset;
+                        margin-left: auto;
+                    }
+                }
+            }
+        }
+    }
 }

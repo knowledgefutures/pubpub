@@ -1,71 +1,54 @@
 import { useState } from 'react';
 
 import findRank from 'shared/utils/findRank';
-import { apiFetch } from 'utils';
 
-const apiRoot = '/api/collectionPubs';
-
-const findRankForSelection = (selections, index) =>
+const findRankForCollectionPub = (collectionPubs, index) =>
 	findRank(
-		selections.map((s) => s.rank),
+		collectionPubs.map((s) => s.rank),
 		index,
 	);
 
-const apiAddCollectionPub = ({ pubId, collectionId, communityId }) =>
-	apiFetch(apiRoot, {
-		method: 'POST',
-		body: JSON.stringify({
-			pubId: pubId,
-			collectionId: collectionId,
-			communityId: communityId,
-			moveToTop: true,
-		}),
-	});
+const setupCollectionPubs = (overviewData, collection) => {
+	const { pubs, collections } = overviewData;
+	const { collectionPubs } = collections.find((col) => col.id === collection.id);
+	return collectionPubs
+		.map((collectionPub) => {
+			const pub = pubs.find((somePub) => somePub.id === collectionPub.pubId);
+			if (pub) {
+				return {
+					...collectionPub,
+					pub: pub,
+				};
+			}
+			return null;
+		})
+		.filter((x) => x)
+		.sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));
+};
 
-const apiUpdateCollectionPub = ({ collectionId, communityId, id, update }) =>
-	apiFetch(apiRoot, {
-		method: 'PUT',
-		body: JSON.stringify({
-			...update,
-			id: id,
-			collectionId: collectionId,
-			communityId: communityId,
-		}),
-	});
+const setupCollection = (collection, community, overviewData) => {
+	const { pages } = community;
+	const page = pages.find((pg) => pg.id === collection.pageId);
+	const collectionPubs = setupCollectionPubs(overviewData, collection);
+	return {
+		...collection,
+		page: page,
+		collectionPubs: collectionPubs,
+	};
+};
 
-const apiRemoveCollectionPub = ({ communityId, collectionId, id }) =>
-	apiFetch(apiRoot, {
-		method: 'DELETE',
-		body: JSON.stringify({
-			id: id,
-			collectionId: collectionId,
-			communityId: communityId,
-		}),
-	});
-
-const apiSetCollectionPubPrimary = ({ communityId, collectionId, id, isPrimary }) =>
-	apiFetch(`${apiRoot}/setPrimary`, {
-		method: 'PUT',
-		body: JSON.stringify({
-			isPrimary: isPrimary,
-			id: id,
-			communityId: communityId,
-			collectionId: collectionId,
-		}),
-	});
-
-export const useCollectionPubs = ({
+const useCollectionPubs = ({
 	initialCollectionPubs,
 	collectionId,
 	communityId,
-	promiseWrapper,
+	promiseWrapper = (x) => x,
 }) => {
 	const [collectionPubs, setCollectionPubs] = useState(initialCollectionPubs);
 
 	const reorderCollectionPubs = (sourceIndex, destinationIndex) => {
 		const nextCollectionPubs = [...collectionPubs];
 		const [removed] = nextCollectionPubs.splice(sourceIndex, 1);
-		const newRank = findRankForSelection(nextCollectionPubs, destinationIndex);
+		const newRank = findRankForCollectionPub(nextCollectionPubs, destinationIndex);
 		const updatedValue = {
 			...removed,
 			rank: newRank,
@@ -162,4 +145,20 @@ export const useCollectionPubs = ({
 		setCollectionPubContextHint: setCollectionPubContextHint,
 		setCollectionPubIsPrimary: setCollectionPubIsPrimary,
 	};
+};
+
+export const useCollectionState = ({
+	collection,
+	community,
+	overviewData,
+	promiseWrapper = (x) => x,
+}) => {
+	const [collectionState] = useState(() => setupCollection(collection, community, overviewData));
+	const collectionPubsState = useCollectionPubs({
+		initialCollectionPubs: collectionState.collectionPubs,
+		collectionId: collection.id,
+		communityId: community.id,
+		promiseWrapper: promiseWrapper,
+	});
+	return collectionPubsState;
 };

@@ -19,6 +19,7 @@ export { default as ImageUpload } from './ImageUpload/ImageUpload';
 export { default as InputField } from './InputField/InputField';
 export { default as LegalBanner } from './LegalBanner/LegalBanner';
 export { default as LicenseSelect } from './LicenseSelect/LicenseSelect';
+export { default as LinkedPageSelect } from './LinkedPageSelect/LinkedPageSelect';
 export { MenuButton, Menu, MenuItem } from './Menu';
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
 export { default as NavBar } from './NavBar/NavBar';

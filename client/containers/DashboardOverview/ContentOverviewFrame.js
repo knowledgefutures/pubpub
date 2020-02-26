@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, InputGroup } from '@blueprintjs/core';
+import { InputGroup } from '@blueprintjs/core';
+
+import DashboardFrame from '../App/DashboardFrame';
 
 const propTypes = {
-	buttons: PropTypes.node,
+	controls: PropTypes.node.isRequired,
 	children: PropTypes.node.isRequired,
+	details: PropTypes.node,
 	contentLabel: PropTypes.string.isRequired,
 	filterAndSort: PropTypes.shape({
 		setFilterText: PropTypes.func,
@@ -13,11 +16,11 @@ const propTypes = {
 };
 
 const defaultProps = {
-	buttons: null,
+	details: null,
 };
 
 const ContentOverviewFrame = (props) => {
-	const { contentLabel, buttons, children, filterAndSort } = props;
+	const { contentLabel, controls, children, details, filterAndSort } = props;
 	const { setFilterText, filterText } = filterAndSort;
 
 	const renderFilterAndSortControls = () => {
@@ -34,20 +37,18 @@ const ContentOverviewFrame = (props) => {
 	};
 
 	return (
-		<div className="content-overview-component">
-			<div className="dashboard-content-header">
-				<div className="name">Overview</div>
-				<div className="buttons">
-					{buttons}
-					<Button text="New Pub" />
-				</div>
-			</div>
+		<DashboardFrame
+			className="content-overview-component"
+			title="Overview"
+			details={details}
+			controls={controls}
+		>
 			<div className="filter-bar">
 				<div className="left">{contentLabel}</div>
 				<div className="right">{renderFilterAndSortControls()}</div>
 			</div>
 			<div className="content">{children}</div>
-		</div>
+		</DashboardFrame>
 	);
 };
 

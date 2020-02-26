@@ -5,6 +5,7 @@ import { ControlGroup, Button, Intent } from '@blueprintjs/core';
 import { SettingsSection, UserAutocomplete } from 'components';
 import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
+import DashboardFrame from '../App/DashboardFrame';
 
 import MemberRow from './MemberRow';
 import InheritedBlock from './InheritedBlock';
@@ -110,11 +111,10 @@ const DashboardMembers = (props) => {
 	};
 
 	return (
-		<div className="dashboard-members-container">
-			<h2 className="dashboard-content-header">
-				{scopeData.elements.activeTargetName} Members
-			</h2>
-
+		<DashboardFrame
+			className="dashboard-members-container"
+			title={`${scopeData.elements.activeTargetName} Members`}
+		>
 			<SettingsSection title="Add Member">
 				<ControlGroup>
 					<UserAutocomplete
@@ -162,7 +162,7 @@ const DashboardMembers = (props) => {
 					)}
 				</SettingsSection>
 			)}
-		</div>
+		</DashboardFrame>
 	);
 };
 

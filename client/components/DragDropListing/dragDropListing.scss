@@ -4,8 +4,6 @@
     flex-grow: 1;
     overflow-y: scroll;
     .empty-state-container {
-        width: 100%;
-        height: 100%;
         &:first-child {
             padding-top: 75px;
         }

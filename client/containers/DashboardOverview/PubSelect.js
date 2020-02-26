@@ -55,6 +55,7 @@ const PubSelect = (props) => {
 	const queryListRenderer = (qlProps) => {
 		return (
 			<Popover
+				minimal
 				popoverClassName="pub-select-popover"
 				position={position}
 				content={renderPopoverContent(qlProps)}

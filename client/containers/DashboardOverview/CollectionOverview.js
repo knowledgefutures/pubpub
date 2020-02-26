@@ -1,17 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import dateFormat from 'dateformat';
+import { Button, ButtonGroup, NonIdealState } from '@blueprintjs/core';
 import { DragDropContext } from 'react-beautiful-dnd';
 
-import { DragDropListing } from 'components';
+import { DragDropListing, LinkedPageSelect } from 'components';
 import { MenuButton, MenuItem, MenuItemDivider } from 'components/Menu';
+import { capitalize } from 'utils';
 import { usePageContext } from 'utils/hooks';
 import { getSchemaForKind } from 'shared/collections/schemas';
 
 import ContentRow from './ContentRow';
 import ContentOverviewFrame from './ContentOverviewFrame';
 import { fuzzyMatchPub } from './util';
-import { useCollectionPubs } from './collections';
+import { useCollectionState } from './collectionState';
 import { useFilterAndSort } from './filterAndSort';
 import PubSelect from './PubSelect';
 
@@ -22,26 +24,6 @@ const propTypes = {
 const handleDragDrop = ({ dragResult, reorderCollectionPubs }) => {
 	const { source, destination } = dragResult;
 	reorderCollectionPubs(source.index, destination.index);
-};
-
-const setupCollectionPubs = (overviewData, activeCollection) => {
-	const { pubs, collections } = overviewData;
-	const { collectionPubs } = collections.find(
-		(collection) => collection.id === activeCollection.id,
-	);
-	return collectionPubs
-		.map((collectionPub) => {
-			const pub = pubs.find((somePub) => somePub.id === collectionPub.pubId);
-			if (pub) {
-				return {
-					...collectionPub,
-					pub: pub,
-				};
-			}
-			return null;
-		})
-		.filter((x) => x)
-		.sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));
 };
 
 const CollectionOverview = (props) => {
@@ -56,10 +38,10 @@ const CollectionOverview = (props) => {
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
 		addCollectionPub,
-	} = useCollectionPubs({
-		initialCollectionPubs: () => setupCollectionPubs(overviewData, activeCollection),
-		communityId: activeCommunity.id,
-		collectionId: activeCollection.id,
+	} = useCollectionState({
+		community: activeCommunity,
+		collection: activeCollection,
+		overviewData: overviewData,
 	});
 
 	const filterAndSort = useFilterAndSort();
@@ -126,13 +108,42 @@ const CollectionOverview = (props) => {
 
 	const renderButtons = () => {
 		return (
-			<PubSelect
-				pubs={overviewData.pubs}
-				usedPubIds={collectionPubs.map((cp) => cp.pubId)}
-				onSelectPub={addCollectionPub}
-			>
-				<Button>Add Pubs</Button>
-			</PubSelect>
+			<ButtonGroup>
+				<LinkedPageSelect
+					selfContained={true}
+					communityData={activeCommunity}
+					collection={activeCollection}
+					onSelectPage={() => {}}
+				/>
+				<PubSelect
+					pubs={overviewData.pubs}
+					usedPubIds={collectionPubs.map((cp) => cp.pubId)}
+					onSelectPub={addCollectionPub}
+				>
+					<Button icon="plus">Add Pubs</Button>
+				</PubSelect>
+				<Button icon="edit" text="New Pub" />
+			</ButtonGroup>
+		);
+	};
+
+	const renderDetails = () => {
+		const { createdAt } = activeCollection;
+		const label = capitalize(collectionSchema.label.singular);
+		const createdOnString = dateFormat(createdAt, 'mmmm dd, yyyy');
+		return `${label} • Created on ${createdOnString}`;
+	};
+
+	const renderEmptyState = () => {
+		if (collectionPubs.length > 0) {
+			return <NonIdealState icon="search" title="No matching Pubs to show." />;
+		}
+		return (
+			<NonIdealState
+				icon={collectionSchema.bpDisplayIcon}
+				title={`This ${collectionSchema.label.singular} doesn't contain any pubs yet!`}
+				description="Choose 'Add Pubs' from above to add some."
+			/>
 		);
 	};
 
@@ -140,7 +151,8 @@ const CollectionOverview = (props) => {
 		<ContentOverviewFrame
 			contentLabel="Pubs"
 			filterAndSort={filterAndSort}
-			buttons={renderButtons()}
+			controls={renderButtons()}
+			details={renderDetails()}
 		>
 			<DragDropContext
 				onDragEnd={(dragResult) =>
@@ -154,6 +166,7 @@ const CollectionOverview = (props) => {
 					itemId={(collectionPub) => collectionPub.pubId}
 					items={filteredCollectionPubs}
 					renderItem={renderCollectionPub}
+					renderEmptyState={renderEmptyState}
 					droppableId="collectionsListing"
 					droppableType="COLLECTION_PUB"
 					withDragHandles={true}

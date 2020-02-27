@@ -25,7 +25,6 @@ export default (locationData, whereQuery) => {
 		if (!communityResult) {
 			throw new Error('Community Not Found');
 		}
-
 		return communityResult.toJSON();
 	});
 };

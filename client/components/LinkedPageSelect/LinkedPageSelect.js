@@ -37,7 +37,7 @@ const LinkedPageSelect = (props) => {
 			if (selfContained) {
 				return (
 					<>
-						<b>Linked to page:</b> {collection.page.title}
+						<em>Page:</em> {collection.page.title}
 					</>
 				);
 			}
@@ -60,7 +60,7 @@ const LinkedPageSelect = (props) => {
 					return fuzzysearch(query.toLowerCase(), page.title.toLowerCase());
 				});
 			}}
-			onItemSelect={(page) => onSelectPage(page.id)}
+			onItemSelect={(page) => onSelectPage(page.id === null ? null : page)}
 			popoverProps={{ popoverClassName: 'bp3-minimal' }}
 		>
 			{targetElement || (

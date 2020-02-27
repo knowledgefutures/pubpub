@@ -29,23 +29,24 @@ const handleDragDrop = ({ dragResult, reorderCollectionPubs }) => {
 const CollectionOverview = (props) => {
 	const { overviewData } = props;
 	const { scopeData } = usePageContext();
-	const { activeCollection, activeCommunity } = scopeData.elements;
+	const { activeCommunity } = scopeData.elements;
 
 	const {
-		collectionPubs,
+		collection,
 		reorderCollectionPubs,
 		setCollectionPubContextHint,
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
 		addCollectionPub,
+		linkCollectionToPage,
 	} = useCollectionState({
-		community: activeCommunity,
-		collection: activeCollection,
+		scopeData: scopeData,
 		overviewData: overviewData,
 	});
 
+	const { collectionPubs } = collection;
 	const filterAndSort = useFilterAndSort();
-	const collectionSchema = getSchemaForKind(activeCollection.kind);
+	const collectionSchema = getSchemaForKind(collection.kind);
 
 	const filteredCollectionPubs = collectionPubs.filter(({ pub }) =>
 		fuzzyMatchPub(pub, filterAndSort.filterText),
@@ -112,8 +113,8 @@ const CollectionOverview = (props) => {
 				<LinkedPageSelect
 					selfContained={true}
 					communityData={activeCommunity}
-					collection={activeCollection}
-					onSelectPage={() => {}}
+					collection={collection}
+					onSelectPage={linkCollectionToPage}
 				/>
 				<PubSelect
 					pubs={overviewData.pubs}
@@ -128,7 +129,7 @@ const CollectionOverview = (props) => {
 	};
 
 	const renderDetails = () => {
-		const { createdAt } = activeCollection;
+		const { createdAt } = collection;
 		const label = capitalize(collectionSchema.label.singular);
 		const createdOnString = dateFormat(createdAt, 'mmmm dd, yyyy');
 		return `${label} • Created on ${createdOnString}`;

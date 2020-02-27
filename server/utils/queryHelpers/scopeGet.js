@@ -11,6 +11,7 @@ import {
 } from '../../models';
 import buildPubOptions from './pubOptions';
 import sanitizeThreads from './threadsSanitize';
+import { ensureSerialized } from './util';
 
 let getScopeElements;
 let getPublicPermissionsData;
@@ -133,6 +134,8 @@ getScopeElements = async (scopeInputs) => {
 			: { slug: collectionSlug, communityId: activeCommunity.id };
 		activeCollection = await Collection.findOne({
 			where: query,
+			raw: true,
+			// nest: true,
 		});
 		activeTarget = activeCollection;
 	}
@@ -141,7 +144,7 @@ getScopeElements = async (scopeInputs) => {
 		activeTarget = activeCommunity;
 	}
 
-	return {
+	return ensureSerialized({
 		activeTargetType: activeTargetType,
 		activeTargetName: activeTargetType.charAt(0).toUpperCase() + activeTargetType.slice(1),
 		activeTarget: activeTarget,
@@ -154,7 +157,7 @@ getScopeElements = async (scopeInputs) => {
 		}),
 		inactiveCollections: inactiveCollections,
 		activeCommunity: activeCommunity,
-	};
+	});
 };
 
 export const buildOrQuery = (scopeElements) => {

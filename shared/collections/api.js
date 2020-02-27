@@ -1,14 +1,9 @@
-const findRankForSelection = (selections, index) =>
-	findRank(
-		selections.map((s) => s.rank),
-		index,
-    );
-    
-    import { apiFetch } from 'utils';
+import { apiFetch } from 'utils';
 
+const collectionPubsRoot = '/api/collectionPubs';
 
-const apiAddCollectionPub = ({ pubId, collectionId, communityId }) =>
-	apiFetch(apiRoot, {
+export const addCollectionPub = ({ pubId, collectionId, communityId }) =>
+	apiFetch(collectionPubsRoot, {
 		method: 'POST',
 		body: JSON.stringify({
 			pubId: pubId,
@@ -18,8 +13,8 @@ const apiAddCollectionPub = ({ pubId, collectionId, communityId }) =>
 		}),
 	});
 
-const apiUpdateCollectionPub = ({ collectionId, communityId, id, update }) =>
-	apiFetch(apiRoot, {
+export const updateCollectionPub = ({ collectionId, communityId, id, update }) =>
+	apiFetch(collectionPubsRoot, {
 		method: 'PUT',
 		body: JSON.stringify({
 			...update,
@@ -29,8 +24,8 @@ const apiUpdateCollectionPub = ({ collectionId, communityId, id, update }) =>
 		}),
 	});
 
-const apiRemoveCollectionPub = ({ communityId, collectionId, id }) =>
-	apiFetch(apiRoot, {
+export const removeCollectionPub = ({ communityId, collectionId, id }) =>
+	apiFetch(collectionPubsRoot, {
 		method: 'DELETE',
 		body: JSON.stringify({
 			id: id,
@@ -39,8 +34,8 @@ const apiRemoveCollectionPub = ({ communityId, collectionId, id }) =>
 		}),
 	});
 
-const apiSetCollectionPubPrimary = ({ communityId, collectionId, id, isPrimary }) =>
-	apiFetch(`${apiRoot}/setPrimary`, {
+export const setCollectionPubPrimary = ({ communityId, collectionId, id, isPrimary }) =>
+	apiFetch(`${collectionPubsRoot}/setPrimary`, {
 		method: 'PUT',
 		body: JSON.stringify({
 			isPrimary: isPrimary,
@@ -50,20 +45,12 @@ const apiSetCollectionPubPrimary = ({ communityId, collectionId, id, isPrimary }
 		}),
 	});
 
-const setupCollectionPubs = (overviewData, collection) => {
-	const { pubs, collections } = overviewData;
-	const { collectionPubs } = collections.find((col) => col.id === collection.id);
-	return collectionPubs
-		.map((collectionPub) => {
-			const pub = pubs.find((somePub) => somePub.id === collectionPub.pubId);
-			if (pub) {
-				return {
-					...collectionPub,
-					pub: pub,
-				};
-			}
-			return null;
-		})
-		.filter((x) => x)
-		.sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));
-};
+export const updateCollection = ({ communityId, collectionId, updatedCollection }) =>
+	apiFetch('/api/collections', {
+		method: 'PUT',
+		body: JSON.stringify({
+			...updatedCollection,
+			id: collectionId,
+			communityId: communityId,
+		}),
+	});

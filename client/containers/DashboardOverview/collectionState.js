@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
+import * as api from 'shared/collections/api';
 import findRank from 'shared/utils/findRank';
 
-const findRankForCollectionPub = (collectionPubs, index) =>
+const findRankForSelection = (selections, index) =>
 	findRank(
-		collectionPubs.map((s) => s.rank),
+		selections.map((s) => s.rank),
 		index,
 	);
 
@@ -26,36 +27,25 @@ const setupCollectionPubs = (overviewData, collection) => {
 		.sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));
 };
 
-const setupCollection = (collection, community, overviewData) => {
-	const { pages } = community;
-	const page = pages.find((pg) => pg.id === collection.pageId);
-	const collectionPubs = setupCollectionPubs(overviewData, collection);
-	return {
-		...collection,
-		page: page,
-		collectionPubs: collectionPubs,
-	};
-};
-
-const useCollectionPubs = ({
+export const useCollectionPubs = ({
 	initialCollectionPubs,
 	collectionId,
 	communityId,
-	promiseWrapper = (x) => x,
+	promiseWrapper,
 }) => {
 	const [collectionPubs, setCollectionPubs] = useState(initialCollectionPubs);
 
 	const reorderCollectionPubs = (sourceIndex, destinationIndex) => {
 		const nextCollectionPubs = [...collectionPubs];
 		const [removed] = nextCollectionPubs.splice(sourceIndex, 1);
-		const newRank = findRankForCollectionPub(nextCollectionPubs, destinationIndex);
+		const newRank = findRankForSelection(nextCollectionPubs, destinationIndex);
 		const updatedValue = {
 			...removed,
 			rank: newRank,
 		};
 		nextCollectionPubs.splice(destinationIndex, 0, updatedValue);
 		promiseWrapper(
-			apiUpdateCollectionPub({
+			api.updateCollectionPub({
 				collectionId: collectionId,
 				communityId: communityId,
 				id: updatedValue.id,
@@ -78,7 +68,7 @@ const useCollectionPubs = ({
 
 	const removeCollectionPub = (collectionPub) => {
 		promiseWrapper(
-			apiRemoveCollectionPub({
+			api.removeCollectionPub({
 				collectionId: collectionId,
 				communityId: communityId,
 				id: collectionPub.id,
@@ -89,7 +79,7 @@ const useCollectionPubs = ({
 
 	const setCollectionPubContextHint = (collectionPub, contextHint) => {
 		promiseWrapper(
-			apiUpdateCollectionPub({
+			api.updateCollectionPub({
 				collectionId: collectionId,
 				communityId: communityId,
 				id: collectionPub.id,
@@ -101,7 +91,7 @@ const useCollectionPubs = ({
 
 	const setCollectionPubIsPrimary = (collectionPub, isPrimary) => {
 		promiseWrapper(
-			apiSetCollectionPubPrimary({
+			api.setCollectionPubPrimary({
 				collectionId: collectionId,
 				communityId: communityId,
 				id: collectionPub.id,
@@ -118,21 +108,23 @@ const useCollectionPubs = ({
 			pub: pub,
 		};
 		promiseWrapper(
-			apiAddCollectionPub({
-				collectionId: collectionId,
-				communityId: communityId,
-				pubId: pub.id,
-			}).then((collectionPub) => {
-				const fullCollectionPub = { ...collectionPub, ...newCollectionPub };
-				setCollectionPubs((newestCollectionPubs) =>
-					newestCollectionPubs.map((cp) => {
-						if (cp.pubId === fullCollectionPub.pubId) {
-							return fullCollectionPub;
-						}
-						return cp;
-					}),
-				);
-			}),
+			api
+				.addCollectionPub({
+					collectionId: collectionId,
+					communityId: communityId,
+					pubId: pub.id,
+				})
+				.then((collectionPub) => {
+					const fullCollectionPub = { ...collectionPub, ...newCollectionPub };
+					setCollectionPubs((newestCollectionPubs) =>
+						newestCollectionPubs.map((cp) => {
+							if (cp.pubId === fullCollectionPub.pubId) {
+								return fullCollectionPub;
+							}
+							return cp;
+						}),
+					);
+				}),
 		);
 		setCollectionPubs([newCollectionPub, ...collectionPubs]);
 	};
@@ -148,17 +140,38 @@ const useCollectionPubs = ({
 };
 
 export const useCollectionState = ({
-	collection,
-	community,
+	scopeData: {
+		elements: { activeCommunity, activeCollection },
+	},
 	overviewData,
-	promiseWrapper = (x) => x,
+	promiseWrapper = () => {},
 }) => {
-	const [collectionState] = useState(() => setupCollection(collection, community, overviewData));
-	const collectionPubsState = useCollectionPubs({
-		initialCollectionPubs: collectionState.collectionPubs,
+	const [collection, setCollection] = useState(activeCollection);
+
+	const { collectionPubs, ...collectionPubsActions } = useCollectionPubs({
+		initialCollectionPubs: setupCollectionPubs(overviewData, activeCollection),
+		communityId: activeCommunity.id,
 		collectionId: collection.id,
-		communityId: community.id,
 		promiseWrapper: promiseWrapper,
 	});
-	return collectionPubsState;
+
+	const linkCollectionToPage = (page) => {
+		setCollection({ ...collection, pageId: page && page.id, page: page });
+		promiseWrapper(
+			api.updateCollection({
+				communityId: activeCommunity.id,
+				collectionId: collection.id,
+				updatedCollection: { pageId: page && page.id },
+			}),
+		);
+	};
+
+	return {
+		...collectionPubsActions,
+		linkCollectionToPage: linkCollectionToPage,
+		collection: {
+			...collection,
+			collectionPubs: collectionPubs,
+		},
+	};
 };

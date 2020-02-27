@@ -2,6 +2,14 @@
 	.bp3-non-ideal-state {
 		height: 400px;
 	}
+	.linked-page-select-button {
+		max-width: 300px;
+		.bp3-button-text {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
 	.filter-bar {
 		display: flex;
 		width: 100%;

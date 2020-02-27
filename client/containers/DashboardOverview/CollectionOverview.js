@@ -39,12 +39,13 @@ const CollectionOverview = (props) => {
 		removeCollectionPub,
 		addCollectionPub,
 		linkCollectionToPage,
+		setCollectionPublic,
 	} = useCollectionState({
 		scopeData: scopeData,
 		overviewData: overviewData,
 	});
 
-	const { collectionPubs } = collection;
+	const { collectionPubs, isPublic } = collection;
 	const filterAndSort = useFilterAndSort();
 	const collectionSchema = getSchemaForKind(collection.kind);
 
@@ -109,22 +110,42 @@ const CollectionOverview = (props) => {
 
 	const renderButtons = () => {
 		return (
-			<ButtonGroup>
-				<LinkedPageSelect
-					selfContained={true}
-					communityData={activeCommunity}
-					collection={collection}
-					onSelectPage={linkCollectionToPage}
-				/>
-				<PubSelect
-					pubs={overviewData.pubs}
-					usedPubIds={collectionPubs.map((cp) => cp.pubId)}
-					onSelectPub={addCollectionPub}
-				>
-					<Button icon="plus">Add Pubs</Button>
-				</PubSelect>
+			<>
+				<ButtonGroup>
+					<MenuButton
+						buttonContent={isPublic ? 'Public' : 'Private'}
+						buttonProps={{
+							icon: isPublic ? 'globe' : 'lock2',
+							rightIcon: 'caret-down',
+						}}
+					>
+						<MenuItem
+							icon={isPublic ? 'tick' : 'blank'}
+							text="Public"
+							onClick={() => setCollectionPublic(true)}
+						/>
+						<MenuItem
+							icon={isPublic ? 'blank' : 'tick'}
+							text="Private"
+							onClick={() => setCollectionPublic(false)}
+						/>
+					</MenuButton>
+					<LinkedPageSelect
+						selfContained={true}
+						communityData={activeCommunity}
+						collection={collection}
+						onSelectPage={linkCollectionToPage}
+					/>
+					<PubSelect
+						pubs={overviewData.pubs}
+						usedPubIds={collectionPubs.map((cp) => cp.pubId)}
+						onSelectPub={addCollectionPub}
+					>
+						<Button icon="plus">Add Pubs</Button>
+					</PubSelect>
+				</ButtonGroup>
 				<Button icon="edit" text="New Pub" />
-			</ButtonGroup>
+			</>
 		);
 	};
 

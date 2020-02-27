@@ -27,6 +27,11 @@ const setupCollectionPubs = (overviewData, collection) => {
 		.sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));
 };
 
+const setupCollection = (collection, community) => {
+	const page = community.pages.find((pg) => pg.id === collection.pageId);
+	return { ...collection, page: page };
+};
+
 export const useCollectionPubs = ({
 	initialCollectionPubs,
 	collectionId,
@@ -146,7 +151,9 @@ export const useCollectionState = ({
 	overviewData,
 	promiseWrapper = () => {},
 }) => {
-	const [collection, setCollection] = useState(activeCollection);
+	const [collection, setCollection] = useState(
+		setupCollection(activeCollection, activeCommunity),
+	);
 
 	const { collectionPubs, ...collectionPubsActions } = useCollectionPubs({
 		initialCollectionPubs: setupCollectionPubs(overviewData, activeCollection),
@@ -166,9 +173,21 @@ export const useCollectionState = ({
 		);
 	};
 
+	const setCollectionPublic = (isPublic) => {
+		setCollection({ ...collection, isPublic: isPublic });
+		promiseWrapper(
+			api.updateCollection({
+				communityId: activeCommunity.id,
+				collectionId: collection.id,
+				updatedCollection: { isPublic: isPublic },
+			}),
+		);
+	};
+
 	return {
 		...collectionPubsActions,
 		linkCollectionToPage: linkCollectionToPage,
+		setCollectionPublic: setCollectionPublic,
 		collection: {
 			...collection,
 			collectionPubs: collectionPubs,

@@ -182,7 +182,7 @@ const Landing = (props) => {
 								<a href="https://www.knowledgefutures.org">
 									<strong>Knowledge Futures Group</strong>
 								</a>
-								,  we’re committed to making PubPub open and easily accessible to a
+								, we’re committed to making PubPub open and easily accessible to a
 								wide range of groups. That means we’re committed to providing a free
 								version of PubPub forever, releasing open-source code, and operating
 								under non-profit, sustainable, researcher-friendly business models.

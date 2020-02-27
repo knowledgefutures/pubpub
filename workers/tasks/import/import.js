@@ -28,14 +28,17 @@ const createPandocArgs = (pandocFormat, tmpDirPath) => {
 		dataRoot && [`--data-dir=${dataRoot}`],
 		['-f', pandocFormat],
 		['-t', 'json'],
-		shouldExtractMedia && [`--extract-media=${tmpDirPath}`],
+		shouldExtractMedia && [`--extract-media=${path.join(tmpDirPath, 'media')}`],
 	]
 		.filter((x) => x)
 		.reduce((acc, next) => [...acc, ...next], []);
 };
 
-const callPandoc = (files, args) => {
-	const proc = spawnSync('pandoc', [...files, ...args], { maxBuffer: 1024 * 1024 * 25 });
+const callPandoc = (tmpDirPath, files, args) => {
+	const proc = spawnSync('pandoc', [...files, ...args], {
+		maxBuffer: 1024 * 1024 * 25,
+		cwd: tmpDirPath,
+	});
 	const output = proc.stdout.toString();
 	const error = proc.stderr.toString();
 	return { output: output, error: error };
@@ -108,6 +111,7 @@ const importFiles = async ({ sourceFiles }) => {
 	let pandocError;
 	try {
 		const pandocResult = callPandoc(
+			tmpDir.path,
 			[document, ...supplements].map((file) => getTmpPathByLocalPath(file.localPath)),
 			createPandocArgs(pandocFormat, tmpDir.path),
 		);

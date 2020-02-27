@@ -10,14 +10,26 @@ const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
 const getKey = (folderName, fileExtension) =>
 	`${folderName}/${Math.floor(Math.random() * 8)}${new Date().getTime()}.${fileExtension}`;
 
+function getFullPathsInDir(dir) {
+	let paths = [];
+	fs.readdirSync(dir).forEach((file) => {
+		const fullPath = path.join(dir, file);
+		if (fs.lstatSync(fullPath).isDirectory()) {
+			paths = paths.concat(getFullPathsInDir(fullPath));
+		} else {
+			paths.push(fullPath);
+		}
+	});
+	return paths;
+}
+
 export const uploadExtractedMedia = async (tmpDir, mediaDirName = 'media') => {
 	const mediaPath = path.join(tmpDir.path, mediaDirName);
 	if (!fs.existsSync(mediaPath)) {
 		return [];
 	}
 	return Promise.all(
-		fs.readdirSync(mediaPath).map((fileName) => {
-			const filePath = path.join(mediaPath, fileName);
+		getFullPathsInDir(mediaPath).map((filePath) => {
 			const folderName = isPubPubProduction ? generateHash(8) : '_testing';
 			const key = getKey(folderName, extensionFor(filePath));
 			const params = {

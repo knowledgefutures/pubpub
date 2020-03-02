@@ -6,17 +6,19 @@ import PubSettings from './PubSettings';
 
 require('./dashboardSettings.scss');
 
+const settingsComponents = {
+	community: CommunitySettings,
+	collection: CollectionSettings,
+	pub: PubSettings,
+};
+
 const DashboardSettings = () => {
 	const { scopeData } = usePageContext();
+	const SettingsComponent = settingsComponents[scopeData.elements.activeTargetType];
 
-	const settingsComponents = {
-		community: <CommunitySettings />,
-		collection: <CollectionSettings />,
-		pub: <PubSettings />,
-	};
 	return (
 		<div className="dashboard-settings-container">
-			{settingsComponents[scopeData.elements.activeTargetType]}
+			<SettingsComponent />
 		</div>
 	);
 };

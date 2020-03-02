@@ -54,3 +54,12 @@ export const updateCollection = ({ communityId, collectionId, updatedCollection 
 			communityId: communityId,
 		}),
 	});
+
+export const deleteCollection = ({ communityId, collectionId }) =>
+	apiFetch('/api/collections', {
+		method: 'DELETE',
+		body: JSON.stringify({
+			id: collectionId,
+			communityId: communityId,
+		}),
+	});

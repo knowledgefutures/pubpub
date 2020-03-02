@@ -6,5 +6,5 @@ export default PropTypes.shape({
 	isRestricted: PropTypes.bool.isRequired,
 	isPublic: PropTypes.bool.isRequired,
 	pageId: PropTypes.string.isRequired,
-	metadata: PropTypes.string,
+	metadata: PropTypes.object,
 });

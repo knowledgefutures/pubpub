@@ -1,17 +1,19 @@
 import { Op } from 'sequelize';
 import { splitThreads } from 'utils';
 import {
-	Collection,
-	Community,
-	Pub,
-	CollectionPub,
-	Member,
-	PublicPermissions,
 	Branch,
+	Collection,
+	CollectionPub,
+	Community,
+	Member,
+	Pub,
+	PublicPermissions,
 } from '../../models';
+
 import buildPubOptions from './pubOptions';
 import sanitizeThreads from './threadsSanitize';
 import { ensureSerialized } from './util';
+import { getCollection } from './collectionGet';
 
 let getScopeElements;
 let getPublicPermissionsData;
@@ -129,13 +131,10 @@ getScopeElements = async (scopeInputs) => {
 	}
 
 	if (activeTargetType === 'collection') {
-		const query = collectionId
-			? { id: collectionId, communityId: activeCommunity.id }
-			: { slug: collectionSlug, communityId: activeCommunity.id };
-		activeCollection = await Collection.findOne({
-			where: query,
-			raw: true,
-			// nest: true,
+		activeCollection = await getCollection({
+			collectionSlug: collectionSlug,
+			collectionId: collectionId,
+			communityId: activeCommunity.id,
 		});
 		activeTarget = activeCollection;
 	}

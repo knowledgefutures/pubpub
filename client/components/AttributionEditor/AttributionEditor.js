@@ -18,12 +18,13 @@ const propTypes = {
 	attributions: PropTypes.arrayOf(attributionType).isRequired,
 	identifyingProps: PropTypes.shape({}).isRequired,
 	onUpdateAttributions: PropTypes.func.isRequired,
-	onPersistStateChange: PropTypes.func.isRequired,
+	onPersistStateChange: PropTypes.func,
 	listOnBylineText: PropTypes.string,
 };
 
 const defaultProps = {
 	listOnBylineText: 'List on byline',
+	onPersistStateChange: () => {},
 };
 
 class AttributionEditor extends Component {

@@ -1,42 +1,45 @@
-/* eslint-disable jsx-a11y/label-has-for */ import React from 'react';
+/* eslint-disable jsx-a11y/label-has-for */
+import React from 'react';
 import PropTypes from 'prop-types';
 
 require('./inputField.scss');
 
 const propTypes = {
-	label: PropTypes.string,
-	placeholder: PropTypes.string,
-	isRequired: PropTypes.bool,
-	isDisabled: PropTypes.bool,
-	isTextarea: PropTypes.bool,
-	helperText: PropTypes.node,
-	error: PropTypes.string,
-	value: PropTypes.string,
-	type: PropTypes.string,
 	autocomplete: PropTypes.string,
-	wrapperClassName: PropTypes.string,
-	inputRef: PropTypes.object,
-	onChange: PropTypes.func,
-	onBlur: PropTypes.func,
 	children: PropTypes.node,
+	defaultValue: PropTypes.string,
+	error: PropTypes.string,
+	helperText: PropTypes.node,
+	inputRef: PropTypes.object,
+	isDisabled: PropTypes.bool,
+	isRequired: PropTypes.bool,
+	isTextarea: PropTypes.bool,
+	label: PropTypes.string,
+	onBlur: PropTypes.func,
+	onChange: PropTypes.func,
+	placeholder: PropTypes.string,
+	type: PropTypes.string,
+	value: PropTypes.string,
+	wrapperClassName: PropTypes.string,
 };
 
 const defaultProps = {
-	label: undefined,
-	placeholder: undefined,
-	isRequired: false,
-	isDisabled: false,
-	isTextarea: false,
-	helperText: '',
-	error: undefined,
-	value: undefined,
-	type: 'text',
 	autocomplete: undefined,
-	wrapperClassName: '',
-	inputRef: undefined,
-	onChange: undefined,
-	onBlur: undefined,
 	children: undefined,
+	defaultValue: undefined,
+	error: undefined,
+	helperText: '',
+	inputRef: undefined,
+	isDisabled: false,
+	isRequired: false,
+	isTextarea: false,
+	label: undefined,
+	onBlur: undefined,
+	onChange: undefined,
+	placeholder: undefined,
+	type: 'text',
+	value: undefined,
+	wrapperClassName: '',
 };
 
 const InputField = function(props) {
@@ -62,6 +65,7 @@ const InputField = function(props) {
 							disabled={props.isDisabled}
 							placeholder={props.placeholder}
 							value={props.value}
+							defaultValue={props.defaultValue}
 							onChange={props.onChange}
 							onBlur={props.onBlur}
 							type={props.type}
@@ -77,6 +81,7 @@ const InputField = function(props) {
 							disabled={props.isDisabled}
 							placeholder={props.placeholder}
 							value={props.value}
+							defaultValue={props.defaultValue}
 							onChange={props.onChange}
 							onBlur={props.onBlur}
 							type={props.type}

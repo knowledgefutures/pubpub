@@ -9,6 +9,7 @@ import { PageContext } from 'utils/hooks';
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
 import getPaths from './paths';
+import { usePageState } from './usePageState';
 
 require('../../styles/base.scss');
 require('./app.scss');
@@ -21,16 +22,11 @@ const propTypes = {
 
 const App = (props) => {
 	const { chunkName, initialData, viewData } = props;
-	const { loginData, communityData, locationData, scopeData } = initialData;
+	const pageContextProps = usePageState(initialData);
+	const { communityData, loginData, locationData } = pageContextProps;
+
 	const pathObject = getPaths(viewData, locationData, chunkName);
 	const { ActiveComponent, hideNav, hideFooter, isDashboard } = pathObject;
-
-	const pageContextProps = {
-		communityData: communityData,
-		loginData: loginData,
-		locationData: locationData,
-		scopeData: scopeData,
-	};
 
 	// Our debugging lifeline
 	if (typeof window !== 'undefined') {

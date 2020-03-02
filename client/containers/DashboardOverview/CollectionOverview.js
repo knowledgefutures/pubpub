@@ -13,7 +13,7 @@ import { getSchemaForKind } from 'shared/collections/schemas';
 import ContentRow from './ContentRow';
 import ContentOverviewFrame from './ContentOverviewFrame';
 import { fuzzyMatchPub } from './util';
-import { useCollectionState } from './collectionState';
+import { useCollectionState, useCollectionPubs } from './collectionState';
 import { useFilterAndSort } from './filterAndSort';
 import PubSelect from './PubSelect';
 
@@ -30,22 +30,19 @@ const CollectionOverview = (props) => {
 	const { overviewData } = props;
 	const { scopeData } = usePageContext();
 	const { activeCommunity } = scopeData.elements;
+	const { canManage } = scopeData.activePermissions;
+	const { collection, updateCollection } = useCollectionState(scopeData);
 
 	const {
-		collection,
+		collectionPubs,
 		reorderCollectionPubs,
 		setCollectionPubContextHint,
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
 		addCollectionPub,
-		linkCollectionToPage,
-		setCollectionPublic,
-	} = useCollectionState({
-		scopeData: scopeData,
-		overviewData: overviewData,
-	});
+	} = useCollectionPubs({ scopeData: scopeData, overviewData: overviewData });
 
-	const { collectionPubs, isPublic } = collection;
+	const { isPublic } = collection;
 	const filterAndSort = useFilterAndSort();
 	const collectionSchema = getSchemaForKind(collection.kind);
 
@@ -103,16 +100,17 @@ const CollectionOverview = (props) => {
 				content={collectionPub.pub}
 				dragHandleProps={dragHandleProps}
 				isDragging={isDragging}
-				controls={renderCollectionPubControls(collectionPub)}
+				controls={canManage && renderCollectionPubControls(collectionPub)}
 			/>
 		);
 	};
 
-	const renderButtons = () => {
+	const renderControls = () => {
 		return (
 			<>
 				<ButtonGroup>
 					<MenuButton
+						aria-label="Set collection public or private"
 						buttonContent={isPublic ? 'Public' : 'Private'}
 						buttonProps={{
 							icon: isPublic ? 'globe' : 'lock2',
@@ -122,19 +120,19 @@ const CollectionOverview = (props) => {
 						<MenuItem
 							icon={isPublic ? 'tick' : 'blank'}
 							text="Public"
-							onClick={() => setCollectionPublic(true)}
+							onClick={() => updateCollection({ isPublic: true })}
 						/>
 						<MenuItem
 							icon={isPublic ? 'blank' : 'tick'}
 							text="Private"
-							onClick={() => setCollectionPublic(false)}
+							onClick={() => updateCollection({ isPublic: false })}
 						/>
 					</MenuButton>
 					<LinkedPageSelect
 						selfContained={true}
 						communityData={activeCommunity}
 						collection={collection}
-						onSelectPage={linkCollectionToPage}
+						onSelectPage={(page) => updateCollection({ pageId: page.id })}
 					/>
 					<PubSelect
 						pubs={overviewData.pubs}
@@ -173,7 +171,7 @@ const CollectionOverview = (props) => {
 		<ContentOverviewFrame
 			contentLabel="Pubs"
 			filterAndSort={filterAndSort}
-			controls={renderButtons()}
+			controls={canManage && renderControls()}
 			details={renderDetails()}
 		>
 			<DragDropContext
@@ -185,13 +183,14 @@ const CollectionOverview = (props) => {
 				}
 			>
 				<DragDropListing
+					disabled={!canManage}
 					itemId={(collectionPub) => collectionPub.pubId}
 					items={filteredCollectionPubs}
 					renderItem={renderCollectionPub}
 					renderEmptyState={renderEmptyState}
 					droppableId="collectionsListing"
 					droppableType="COLLECTION_PUB"
-					withDragHandles={true}
+					withDragHandles={canManage}
 				/>
 			</DragDropContext>
 		</ContentOverviewFrame>

@@ -4,12 +4,20 @@ import { Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
-import collectionType from 'types/collection';
-import communityType from 'types/community';
-
 const propTypes = {
-	collection: collectionType.isRequired,
-	communityData: communityType.isRequired,
+	collection: PropTypes.shape({
+		page: PropTypes.shape({
+			title: PropTypes.string,
+		}),
+	}).isRequired,
+	communityData: PropTypes.shape({
+		pages: PropTypes.arrayOf(
+			PropTypes.shape({
+				title: PropTypes.string,
+				id: PropTypes.string,
+			}),
+		),
+	}).isRequired,
 	onSelectPage: PropTypes.func.isRequired,
 	targetElement: PropTypes.node,
 	minimal: PropTypes.bool,

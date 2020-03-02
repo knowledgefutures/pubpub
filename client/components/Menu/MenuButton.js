@@ -26,10 +26,10 @@ const getIconProp = (icon) => {
 };
 
 export const MenuButton = (props) => {
-	const { buttonContent, children, ...restProps } = props;
+	const { buttonContent, children, buttonProps, ...restProps } = props;
 
-	const buttonProps = {
-		...props.buttonProps,
+	const buttonPropsWithIcon = {
+		...buttonProps,
 		icon: getIconProp(props.buttonProps.icon),
 	};
 
@@ -38,7 +38,7 @@ export const MenuButton = (props) => {
 			disclosure={({ ref, ...restDisclosureProps }) => (
 				<Button
 					children={buttonContent}
-					{...buttonProps}
+					{...buttonPropsWithIcon}
 					{...restDisclosureProps}
 					elementRef={ref}
 				/>

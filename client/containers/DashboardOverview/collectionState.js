@@ -1,7 +1,9 @@
 import { useState } from 'react';
 
+import { usePendingChanges, usePageContext } from 'utils/hooks';
 import * as api from 'shared/collections/api';
 import findRank from 'shared/utils/findRank';
+import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 
 const findRankForSelection = (selections, index) =>
 	findRank(
@@ -9,7 +11,7 @@ const findRankForSelection = (selections, index) =>
 		index,
 	);
 
-const setupCollectionPubs = (overviewData, collection) => {
+const linkCollectionPubs = (overviewData, collection) => {
 	const { pubs, collections } = overviewData;
 	const { collectionPubs } = collections.find((col) => col.id === collection.id);
 	return collectionPubs
@@ -27,18 +29,26 @@ const setupCollectionPubs = (overviewData, collection) => {
 		.sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));
 };
 
-const setupCollection = (collection, community) => {
+const linkCollection = (collection, community) => {
 	const page = community.pages.find((pg) => pg.id === collection.pageId);
-	return { ...collection, page: page };
+	const attributions = collection.attributions.map(ensureUserForAttribution);
+	return { ...collection, page: page, attributions: attributions };
 };
 
 export const useCollectionPubs = ({
-	initialCollectionPubs,
-	collectionId,
-	communityId,
-	promiseWrapper,
+	overviewData,
+	scopeData: {
+		elements: { activeCommunity, activeCollection },
+	},
 }) => {
-	const [collectionPubs, setCollectionPubs] = useState(initialCollectionPubs);
+	const { pendingPromise } = usePendingChanges();
+
+	const [collectionPubs, setCollectionPubs] = useState(
+		linkCollectionPubs(overviewData, activeCollection),
+	);
+
+	const communityId = activeCommunity.id;
+	const collectionId = activeCollection.id;
 
 	const reorderCollectionPubs = (sourceIndex, destinationIndex) => {
 		const nextCollectionPubs = [...collectionPubs];
@@ -49,7 +59,7 @@ export const useCollectionPubs = ({
 			rank: newRank,
 		};
 		nextCollectionPubs.splice(destinationIndex, 0, updatedValue);
-		promiseWrapper(
+		pendingPromise(
 			api.updateCollectionPub({
 				collectionId: collectionId,
 				communityId: communityId,
@@ -72,7 +82,7 @@ export const useCollectionPubs = ({
 	};
 
 	const removeCollectionPub = (collectionPub) => {
-		promiseWrapper(
+		pendingPromise(
 			api.removeCollectionPub({
 				collectionId: collectionId,
 				communityId: communityId,
@@ -83,7 +93,7 @@ export const useCollectionPubs = ({
 	};
 
 	const setCollectionPubContextHint = (collectionPub, contextHint) => {
-		promiseWrapper(
+		pendingPromise(
 			api.updateCollectionPub({
 				collectionId: collectionId,
 				communityId: communityId,
@@ -95,7 +105,7 @@ export const useCollectionPubs = ({
 	};
 
 	const setCollectionPubIsPrimary = (collectionPub, isPrimary) => {
-		promiseWrapper(
+		pendingPromise(
 			api.setCollectionPubPrimary({
 				collectionId: collectionId,
 				communityId: communityId,
@@ -112,7 +122,7 @@ export const useCollectionPubs = ({
 			pubId: pub.id,
 			pub: pub,
 		};
-		promiseWrapper(
+		pendingPromise(
 			api
 				.addCollectionPub({
 					collectionId: collectionId,
@@ -144,53 +154,39 @@ export const useCollectionPubs = ({
 	};
 };
 
-export const useCollectionState = ({
-	scopeData: {
+export const useCollectionState = (scopeData) => {
+	const {
 		elements: { activeCommunity, activeCollection },
-	},
-	overviewData,
-	promiseWrapper = () => {},
-}) => {
-	const [collection, setCollection] = useState(
-		setupCollection(activeCollection, activeCommunity),
-	);
+	} = scopeData;
 
-	const { collectionPubs, ...collectionPubsActions } = useCollectionPubs({
-		initialCollectionPubs: setupCollectionPubs(overviewData, activeCollection),
-		communityId: activeCommunity.id,
-		collectionId: collection.id,
-		promiseWrapper: promiseWrapper,
-	});
+	const pageContext = usePageContext();
+	const { pendingPromise } = usePendingChanges();
 
-	const linkCollectionToPage = (page) => {
-		setCollection({ ...collection, pageId: page && page.id, page: page });
-		promiseWrapper(
+	const [collection, setCollection] = useState(linkCollection(activeCollection, activeCommunity));
+
+	const updateCollection = (update) => {
+		setCollection(linkCollection({ ...collection, ...update }, activeCommunity));
+		pendingPromise(
 			api.updateCollection({
 				communityId: activeCommunity.id,
 				collectionId: collection.id,
-				updatedCollection: { pageId: page && page.id },
+				updatedCollection: update,
 			}),
-		);
+		).then(() => pageContext.updateCollection(update));
 	};
 
-	const setCollectionPublic = (isPublic) => {
-		setCollection({ ...collection, isPublic: isPublic });
-		promiseWrapper(
-			api.updateCollection({
+	const deleteCollection = () => {
+		pendingPromise(
+			api.deleteCollection({
 				communityId: activeCommunity.id,
 				collectionId: collection.id,
-				updatedCollection: { isPublic: isPublic },
 			}),
 		);
 	};
 
 	return {
-		...collectionPubsActions,
-		linkCollectionToPage: linkCollectionToPage,
-		setCollectionPublic: setCollectionPublic,
-		collection: {
-			...collection,
-			collectionPubs: collectionPubs,
-		},
+		collection: collection,
+		updateCollection: updateCollection,
+		deleteCollection: deleteCollection,
 	};
 };

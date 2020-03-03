@@ -7,6 +7,16 @@ $hover-background: #f9f9f9;
         border: none;
         border-radius: 4px;
     }
+
+    &.minimal {
+        .inner {
+            padding: 0.5em 1em;
+            .arrow {
+                display: none;
+            }
+        }
+    }
+
     .drag-handle {
         position: absolute;
         left: 0;
@@ -16,6 +26,7 @@ $hover-background: #f9f9f9;
             pointer-events: none;
         }
     }
+
     .counts {
         display: flex;
         .pubs,
@@ -34,6 +45,7 @@ $hover-background: #f9f9f9;
             }
         }
     }
+
     .controls {
         margin-top: -2px;
         margin-right: 6px;

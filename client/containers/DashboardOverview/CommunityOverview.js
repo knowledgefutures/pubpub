@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { DashboardRowListing } from 'components';
 import { groupPubs } from '../../utils/dashboard';
-
 import { fuzzyMatchCollection, fuzzyMatchPub } from './util';
 import { useFilterAndSort } from './filterAndSort';
 import ContentRow from './ContentRow';
@@ -43,9 +43,11 @@ const CommunityOverview = (props) => {
 
 	return (
 		<ContentOverviewFrame contentLabel="Pubs and Collections" filterAndSort={filterAndSort}>
-			{filteredItems.map((item) => (
-				<ContentRow content={item} key={item.id} />
-			))}
+			<DashboardRowListing>
+				{filteredItems.map((item) => (
+					<ContentRow content={item} key={item.id} />
+				))}
+			</DashboardRowListing>
 		</ContentOverviewFrame>
 	);
 };

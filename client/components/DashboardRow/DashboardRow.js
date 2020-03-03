@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { Button } from 'reakit';
 
 import { Icon } from 'components';
+import DashboardRowListing from './DashboardRowListing';
 
 require('./dashboardRow.scss');
 
@@ -53,15 +54,16 @@ const DashboardRow = (props) => {
 	const [showChildren, setShowChildren] = useState(false);
 	const showArrow = React.Children.count(children) > 0;
 	return (
-		<Button
-			as="a"
-			href={href}
-			onClick={onClick}
+		<div
 			className={classNames('dashboard-row-component', className, selected && 'selected')}
+			aria-expanded={showChildren}
+			role="listitem"
 		>
-			{handle}
 			<div className="inner">
-				<div
+				<Button
+					aria-label={
+						showChildren ? 'Hide collection children' : 'Show collection children'
+					}
 					className={classNames({
 						arrow: true,
 						active: showArrow,
@@ -77,20 +79,27 @@ const DashboardRow = (props) => {
 					}}
 				>
 					{showArrow && <Icon icon="caret-right" />}
-				</div>
-				<div className="icon">
-					<Icon icon={icon} iconSize={14} />
-				</div>
+				</Button>
 				<div className="left">
-					<div className="title">{title}</div>
-					<div className="subtitle">{subtitle}</div>
+					<div className="icon-and-title-container">
+						{handle}
+						<div className="icon">
+							<Icon icon={icon} iconSize={14} />
+						</div>
+						<a className="title-and-subtitle" href={href} onClick={onClick}>
+							<div className="title">{title}</div>
+							<div className="subtitle">{subtitle}</div>
+						</a>
+					</div>
 				</div>
 				<div className="right" onClick={preventNavigate}>
 					{rightSideElements}
 				</div>
 			</div>
-			{showChildren && <div className="child-rows">{children}</div>}
-		</Button>
+			{showChildren && (
+				<DashboardRowListing className="child-rows">{children}</DashboardRowListing>
+			)}
+		</div>
 	);
 };
 

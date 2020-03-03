@@ -112,22 +112,22 @@ const ContentRow = (props) => {
 		return (
 			<div className="counts">
 				{isCollection && (
-					<div className="pubs">
+					<div className="pubs" aria-label={`${content.pubs.length} pubs`}>
 						<Icon icon="pubDoc" iconSize={14} />
-						{content.pubs.length}
+						<span aria-hidden="true">{content.pubs.length}</span>
 					</div>
 				)}
-				<div className="conversations">
+				<div className="conversations" aria-label={`${countConversations} conversations`}>
 					<Icon icon="chat2" iconSize={14} />
-					{countConversations}
+					<span aria-hidden="true">{countConversations}</span>
 				</div>
-				<div className="merges">
+				<div className="merges" aria-label={`${countForks} forks`}>
 					<Icon icon="git-pull" iconSize={14} />
-					{countForks}
+					<span aria-hidden="true">{countForks}</span>
 				</div>
-				<div className="reviews">
+				<div className="reviews" aria-label={`${countReviews} reviews`}>
 					<Icon icon="social-media" iconSize={14} />
-					{countReviews}
+					<span aria-hidden="true">{countReviews}</span>
 				</div>
 			</div>
 		);
@@ -149,7 +149,6 @@ const ContentRow = (props) => {
 				'content-row-component',
 				isDragging && 'is-dragging bp3-elevation-2',
 				minimal && 'minimal',
-				selected && 'selected',
 			)}
 			href={href}
 			handle={renderHandle()}

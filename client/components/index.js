@@ -7,6 +7,7 @@ export { default as ClickToCopyButton } from './ClickToCopyButton/ClickToCopyBut
 export { default as CommunityPreview } from './CommunityPreview/CommunityPreview';
 export { default as ConfirmDialog } from './ConfirmDialog/ConfirmDialog';
 export { default as DashboardRow } from './DashboardRow/DashboardRow';
+export { default as DashboardRowListing } from './DashboardRow/DashboardRowListing';
 export { default as DragDropListing } from './DragDropListing/DragDropListing';
 export { default as DropdownButton } from './DropdownButton/DropdownButton';
 export { default as FileUploadButton } from './FileUploadButton/FileUploadButton';

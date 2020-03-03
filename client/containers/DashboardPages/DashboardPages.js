@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from '@blueprintjs/core';
+
 import { usePageContext } from 'utils/hooks';
+import DashboardFrame from '../App/DashboardFrame';
 
 require('./dashboardPages.scss');
 
@@ -10,29 +13,20 @@ const propTypes = {
 
 const DashboardPages = (props) => {
 	const { pagesData } = props;
-	const { locationData, communityData, scopeData } = usePageContext();
+	const {
+		locationData: { params: subMode },
+		communityData,
+		scopeData,
+	} = usePageContext();
 
-	const activePage = communityData.pages.find((page) => {
-		return locationData.params.subMode === (page.slug || 'home');
-	});
+	const activePage = communityData.pages.find((page) => subMode === (page.slug || 'home'));
 	const title = activePage ? activePage.title : 'Pages';
-	return (
-		<div className="dashboard-pages-container">
-			<h2 className="dashboard-content-header">{title}</h2>
-			{!activePage && (
-				<ul>
-					{communityData.pages.map((page) => {
-						return (
-							<li key={page.id}>
-								<a href={`/dash/pages/${page.slug || 'home'}`}>{page.title}</a>
-							</li>
-						);
-					})}
-				</ul>
-			)}
-			{activePage && <div>Put PageEdit tools here</div>}
-		</div>
-	);
+
+	const renderControls = () => {
+		return <Button icon="plus">New Page</Button>;
+	};
+
+	return <DashboardFrame title={title} controls={renderControls()} />;
 };
 
 DashboardPages.propTypes = propTypes;

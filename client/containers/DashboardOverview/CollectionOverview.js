@@ -84,6 +84,7 @@ const CollectionOverview = (props) => {
 					small
 					minimal
 					icon="cross"
+					aria-label="Remove this Pub from collection"
 					onClick={() => removeCollectionPub(collectionPub)}
 				/>
 			</>

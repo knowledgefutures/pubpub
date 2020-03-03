@@ -193,7 +193,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         }
     }
 
-    .pub-header-column {
+    .row > .pub-header-column {
         position: relative;
         margin-top: $header-margin-top;
         margin-bottom: $header-margin-bottom;

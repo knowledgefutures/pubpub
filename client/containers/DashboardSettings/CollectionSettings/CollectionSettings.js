@@ -39,6 +39,7 @@ const CollectionSettings = () => {
 					<AttributionEditor
 						apiRoute="/api/collectionAttributions"
 						canEdit={true}
+						hasEmptyState={false}
 						attributions={collection.attributions}
 						listOnBylineText="List on Pub byline"
 						identifyingProps={{

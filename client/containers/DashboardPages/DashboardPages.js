@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import dateFormat from 'dateformat';
-import { Button, AnchorButton } from '@blueprintjs/core';
+import { AnchorButton, Button } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
 import { DashboardFrame, DashboardRowListing, DashboardRow, Icon } from 'components';
+
+import CreatePageDialog from './CreatePageDialog';
 
 require('./dashboardPages.scss');
 
@@ -12,16 +14,22 @@ const propTypes = {};
 const sortPages = (pages) => pages.sort((a, b) => (a.title > b.title ? 1 : -1));
 
 const DashboardPages = () => {
-	const {
-		locationData: { params: subMode },
-		communityData,
-	} = usePageContext();
-
-	const activePage = communityData.pages.find((page) => subMode === (page.slug || 'home'));
-	const title = activePage ? activePage.title : 'Pages';
+	const { locationData, communityData } = usePageContext();
+	const [isCreatingPage, setCreatingPage] = useState(false);
 
 	const renderControls = () => {
-		return <Button icon="plus">New Page</Button>;
+		return (
+			<>
+				<Button icon="plus" onClick={() => setCreatingPage(true)}>
+					New Page
+				</Button>
+				<CreatePageDialog
+					isOpen={isCreatingPage}
+					communityData={communityData}
+					hostname={locationData.hostname}
+				/>
+			</>
+		);
 	};
 
 	const renderPageItem = (page) => {
@@ -51,7 +59,7 @@ const DashboardPages = () => {
 	return (
 		<DashboardFrame
 			className="dashboard-pages-container"
-			title={title}
+			title="Pages"
 			controls={renderControls()}
 		>
 			<DashboardRowListing>

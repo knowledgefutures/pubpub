@@ -35,7 +35,11 @@ class LayoutEditor extends Component {
 	}
 
 	componentDidMount() {
-		this.stickyInstance = stickybits('.block-header');
+		this.stickyInstance = stickybits('.block-header', {
+			// TODO(ian): this is a magic number to make this work "for now" --
+			// it's the combined height of the global header and dashboard breadcrumbs
+			stickyBitStickyOffset: 73 + 56,
+		});
 	}
 
 	componentWillUnmount() {

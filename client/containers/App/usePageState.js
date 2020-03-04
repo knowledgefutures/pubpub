@@ -12,6 +12,10 @@ export const usePageState = ({
 	const [scopeData, setScopeData] = useState(initialScopeData);
 
 	const updateCommunity = (next) => {
+		if (typeof next === 'function') {
+			// eslint-disable-next-line no-param-reassign
+			next = next(communityData);
+		}
 		setCommunityData((current) => ({ ...current, ...next }));
 		if (scopeData.elements.activeCommunity) {
 			const nextCommunity = {

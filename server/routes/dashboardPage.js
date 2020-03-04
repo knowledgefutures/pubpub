@@ -8,21 +8,21 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-// import { getPages } from '../utils/queryHelpers';
+import { getPage } from '../utils/queryHelpers';
 
-app.get(['/dash/pages'], async (req, res, next) => {
+app.get(['/dash/pages/:subMode'], async (req, res, next) => {
 	try {
 		if (!hostIsValid(req, 'community')) {
 			return next();
 		}
 		const initialData = await getInitialData(req, true);
-		// const pagesData = await getPages(initialData);
+		const pageData = await getPage({ slug: req.params.subMode }, initialData);
 		return renderToNodeStream(
 			res,
 			<Html
-				chunkName="DashboardPages"
+				chunkName="DashboardPage"
 				initialData={initialData}
-				viewData={{}}
+				viewData={{ pageData: pageData }}
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
 					title: `Pages · ${initialData.scopeData.elements.activeTarget.title}`,

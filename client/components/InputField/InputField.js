@@ -14,7 +14,7 @@ const propTypes = {
 	isDisabled: PropTypes.bool,
 	isRequired: PropTypes.bool,
 	isTextarea: PropTypes.bool,
-	label: PropTypes.string,
+	label: PropTypes.node,
 	onBlur: PropTypes.func,
 	onChange: PropTypes.func,
 	placeholder: PropTypes.string,

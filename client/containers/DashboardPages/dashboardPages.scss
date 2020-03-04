@@ -1,3 +1,11 @@
 .dashboard-pages-container {
-	
+    .privacy-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        width: 80px;
+        .bp3-icon {
+            margin-right: 4px;
+        }
+    }
 }

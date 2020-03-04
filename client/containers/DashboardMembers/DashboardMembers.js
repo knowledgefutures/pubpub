@@ -2,10 +2,9 @@ import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { ControlGroup, Button, Intent } from '@blueprintjs/core';
 
-import { SettingsSection, UserAutocomplete } from 'components';
+import { DashboardFrame, SettingsSection, UserAutocomplete } from 'components';
 import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
-import DashboardFrame from '../App/DashboardFrame';
 
 import MemberRow from './MemberRow';
 import InheritedBlock from './InheritedBlock';

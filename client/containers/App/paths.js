@@ -10,6 +10,7 @@ import {
 	DashboardOverview,
 	DashboardReviews,
 	DashboardPages,
+	DashboardPage,
 	DashboardSettings,
 	Explore,
 	Landing,
@@ -68,6 +69,10 @@ export default (viewData, locationData, chunkName) => {
 		},
 		DashboardPages: {
 			ActiveComponent: DashboardPages,
+			isDashboard: true,
+		},
+		DashboardPage: {
+			ActiveComponent: DashboardPage,
 			isDashboard: true,
 		},
 		DashboardReviews: {

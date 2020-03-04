@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { InputGroup } from '@blueprintjs/core';
 
-import DashboardFrame from '../App/DashboardFrame';
+import { DashboardFrame } from 'components';
 
 const propTypes = {
 	controls: PropTypes.node.isRequired,

@@ -1,11 +1,10 @@
 import React from 'react';
 
 import { usePageContext } from 'utils/hooks';
-import { AttributionEditor, SettingsSection } from 'components';
+import { AttributionEditor, DashboardFrame, SettingsSection } from 'components';
 
 // TODO(ian): this should probably be moved somewhere else, but not sure where yet
 import { useCollectionState } from '../../DashboardOverview/collectionState';
-import DashboardFrame from '../../App/DashboardFrame';
 
 import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';

@@ -1,22 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import dateFormat from 'dateformat';
+import { Button, AnchorButton } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
-import DashboardFrame from '../App/DashboardFrame';
+import { DashboardFrame, DashboardRowListing, DashboardRow, Icon } from 'components';
 
 require('./dashboardPages.scss');
 
-const propTypes = {
-	pagesData: PropTypes.object.isRequired,
-};
+const propTypes = {};
 
-const DashboardPages = (props) => {
-	const { pagesData } = props;
+const sortPages = (pages) => pages.sort((a, b) => (a.title > b.title ? 1 : -1));
+
+const DashboardPages = () => {
 	const {
 		locationData: { params: subMode },
 		communityData,
-		scopeData,
 	} = usePageContext();
 
 	const activePage = communityData.pages.find((page) => subMode === (page.slug || 'home'));
@@ -26,7 +24,41 @@ const DashboardPages = (props) => {
 		return <Button icon="plus">New Page</Button>;
 	};
 
-	return <DashboardFrame title={title} controls={renderControls()} />;
+	const renderPageItem = (page) => {
+		const createdAtString = dateFormat(page.createdAt, 'mmm dd, yyyy');
+		const rightSide = (
+			<>
+				<AnchorButton icon="share" minimal href={`/${page.slug || 'home'}`}>
+					Visit page
+				</AnchorButton>
+				<div className="privacy-indicator">
+					<Icon icon={page.isPublic ? 'globe' : 'lock'} iconSize={14} />
+					{page.isPublic ? 'Public' : 'Private'}
+				</div>
+			</>
+		);
+		return (
+			<DashboardRow
+				icon="page-layout"
+				href={`/dash/pages/${page.slug || 'home'}`}
+				title={page.title}
+				subtitle={`Created on ${createdAtString}`}
+				rightSideElements={rightSide}
+			/>
+		);
+	};
+
+	return (
+		<DashboardFrame
+			className="dashboard-pages-container"
+			title={title}
+			controls={renderControls()}
+		>
+			<DashboardRowListing>
+				{sortPages(communityData.pages).map(renderPageItem)}
+			</DashboardRowListing>
+		</DashboardFrame>
+	);
 };
 
 DashboardPages.propTypes = propTypes;

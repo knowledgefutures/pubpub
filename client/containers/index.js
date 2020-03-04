@@ -7,6 +7,7 @@ export { default as DashboardForks } from './DashboardForks/DashboardForks';
 export { default as DashboardImpact } from './DashboardImpact/DashboardImpact';
 export { default as DashboardMembers } from './DashboardMembers/DashboardMembers';
 export { default as DashboardOverview } from './DashboardOverview/DashboardOverview';
+export { default as DashboardPage } from './DashboardPage/DashboardPage';
 export { default as DashboardPages } from './DashboardPages/DashboardPages';
 export { default as DashboardReviews } from './DashboardReviews/DashboardReviews';
 export { default as DashboardSettings } from './DashboardSettings/DashboardSettings';

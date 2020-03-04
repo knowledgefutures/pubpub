@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -31,11 +30,6 @@ const defaultProps = {
 	rightSideElements: null,
 	selected: false,
 	subtitle: null,
-};
-
-const preventNavigate = (evt) => {
-	evt.stopPropagation();
-	evt.preventDefault();
 };
 
 const DashboardRow = (props) => {
@@ -86,15 +80,18 @@ const DashboardRow = (props) => {
 						<div className="icon">
 							<Icon icon={icon} iconSize={14} />
 						</div>
-						<a className="title-and-subtitle" href={href} onClick={onClick}>
+						<a
+							className="title-and-subtitle"
+							href={href}
+							onClick={onClick}
+							draggable="false"
+						>
 							<div className="title">{title}</div>
 							<div className="subtitle">{subtitle}</div>
 						</a>
 					</div>
 				</div>
-				<div className="right" onClick={preventNavigate}>
-					{rightSideElements}
-				</div>
+				<div className="right">{rightSideElements}</div>
 			</div>
 			{showChildren && (
 				<DashboardRowListing className="child-rows">{children}</DashboardRowListing>

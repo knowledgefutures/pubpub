@@ -1,6 +1,4 @@
-import React from 'react';
 import { remove as removeDiacritics } from 'diacritics';
-import Icon from 'components/Icon/Icon';
 import { setIsProd, isProd } from './isProd';
 
 export { hydrateWrapper } from './hydrateWrapper';

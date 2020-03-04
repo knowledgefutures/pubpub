@@ -1,0 +1,19 @@
+.layout-editor-insert-component {
+	text-align: center;
+	position: relative;
+	.center-line {
+		z-index: -1;
+		background-color: #f0f0f0;
+		width: 100%;
+		height: 2px;
+		position: absolute;
+		left: 0;
+		top: calc(50% - 1px);
+	}
+	.bp3-menu {
+		h6 svg {
+			float: right;
+			opacity: 0.5;
+		}
+	}
+}

@@ -6,6 +6,7 @@ export { default as ColorInput } from './ColorInput/ColorInput';
 export { default as ClickToCopyButton } from './ClickToCopyButton/ClickToCopyButton';
 export { default as CommunityPreview } from './CommunityPreview/CommunityPreview';
 export { default as ConfirmDialog } from './ConfirmDialog/ConfirmDialog';
+export { default as DashboardFrame } from './DashboardFrame/DashboardFrame'
 export { default as DashboardRow } from './DashboardRow/DashboardRow';
 export { default as DashboardRowListing } from './DashboardRow/DashboardRowListing';
 export { default as DragDropListing } from './DragDropListing/DragDropListing';

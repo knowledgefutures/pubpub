@@ -2,9 +2,13 @@ import { Page, Pub } from '../../models';
 import buildPubOptions from './pubOptions';
 import sanitizePub from './pubSanitize';
 
-export default async (pageId, initialData) => {
+export default async ({ id, slug }, initialData) => {
+	const whereClause = {
+		...(id && { id: id }),
+		...(slug && { slug: slug }),
+	};
 	const pageQuery = Page.findOne({
-		where: { id: pageId },
+		where: whereClause,
 	});
 	const pubsQuery = Pub.findAll({
 		where: { communityId: initialData.communityData.id },

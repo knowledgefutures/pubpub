@@ -12,7 +12,7 @@ export default (locationData, whereQuery) => {
 				as: 'pages',
 				separate: true,
 				attributes: {
-					exclude: ['createdAt', 'updatedAt', 'communityId'],
+					exclude: ['updatedAt', 'communityId'],
 				},
 			},
 			{

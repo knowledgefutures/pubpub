@@ -30,7 +30,7 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 		if (!pageId) {
 			throw new Error('Page Not Found');
 		}
-		const pageData = await getPage(pageId, initialData);
+		const pageData = await getPage({ id: pageId }, initialData);
 		const pageTitle = !pageData.slug
 			? initialData.communityData.title
 			: `${pageData.title} · ${initialData.communityData.title}`;

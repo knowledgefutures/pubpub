@@ -5,7 +5,7 @@ import dateFormat from 'dateformat';
 
 import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
-import { ClickToCopyButton, Overlay } from 'components';
+import { ClickToCopyButton, Overlay, PubThemePicker } from 'components';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 
 import BranchSelectorButton from './BranchSelectorButton';
@@ -18,7 +18,6 @@ import LargeHeaderButton from './LargeHeaderButton';
 import PopoverButton from './PopoverButton';
 import SharePanel from './SharePanel';
 import SmallHeaderButton from './SmallHeaderButton';
-import ThemePicker from './themePicker/ThemePicker';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -161,7 +160,7 @@ const PubHeaderMain = (props) => {
 				<div className="right">
 					{canManage && (
 						<PopoverButton
-							component={ThemePicker}
+							component={PubThemePicker}
 							updatePubData={updateAndSavePubData}
 							pubData={pubData}
 							communityData={communityData}

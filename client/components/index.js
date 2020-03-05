@@ -6,7 +6,7 @@ export { default as ColorInput } from './ColorInput/ColorInput';
 export { default as ClickToCopyButton } from './ClickToCopyButton/ClickToCopyButton';
 export { default as CommunityPreview } from './CommunityPreview/CommunityPreview';
 export { default as ConfirmDialog } from './ConfirmDialog/ConfirmDialog';
-export { default as DashboardFrame } from './DashboardFrame/DashboardFrame'
+export { default as DashboardFrame } from './DashboardFrame/DashboardFrame';
 export { default as DashboardRow } from './DashboardRow/DashboardRow';
 export { default as DashboardRowListing } from './DashboardRow/DashboardRowListing';
 export { default as DragDropListing } from './DragDropListing/DragDropListing';
@@ -39,4 +39,5 @@ export { default as SimpleEditor } from './SimpleEditor/SimpleEditor';
 export { default as SimpleNotesList } from './SimpleNotesList/SimpleNotesList';
 export { default as SkipLink } from './SkipLink/SkipLink';
 export { default as TabToShow } from './TabToShow/TabToShow';
+export { default as PubThemePicker } from './PubThemePicker/PubThemePicker';
 export { default as UserAutocomplete } from './UserAutocomplete/UserAutocomplete';

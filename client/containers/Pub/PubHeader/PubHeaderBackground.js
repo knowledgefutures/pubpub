@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { calculateBackgroundColor } from './colors';
+import { calculateBackgroundColor } from 'utils/colors';
 
 require('./pubHeaderBackground.scss');
 

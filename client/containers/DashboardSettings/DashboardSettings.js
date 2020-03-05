@@ -12,13 +12,13 @@ const settingsComponents = {
 	pub: PubSettings,
 };
 
-const DashboardSettings = () => {
+const DashboardSettings = (props) => {
 	const { scopeData } = usePageContext();
 	const SettingsComponent = settingsComponents[scopeData.elements.activeTargetType];
 
 	return (
 		<div className="dashboard-settings-container">
-			<SettingsComponent />
+			<SettingsComponent {...props} />
 		</div>
 	);
 };

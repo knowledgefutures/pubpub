@@ -1,31 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-	Button,
-	ButtonGroup,
-	Divider,
-	Menu,
-	MenuItem,
-	Popover,
-	Position,
-	Spinner,
-	NonIdealState,
-} from '@blueprintjs/core';
+import { Button, ButtonGroup, Divider, Menu, MenuItem, Popover, Position } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
 import { getSchemaForKind } from 'shared/collections/schemas';
-import { apiFetch } from 'utils';
-import { getDashUrl } from 'utils/dashboard';
 import { Icon } from 'components';
+import { apiFetch } from 'utils';
 
 require('./collections.scss');
 
 const propTypes = {
+	canCreateCollections: PropTypes.bool.isRequired,
 	communityData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
-	updateLocalData: PropTypes.func.isRequired,
-	loginData: PropTypes.object.isRequired,
+	updatePubData: PropTypes.func.isRequired,
+	promiseWrapper: PropTypes.func.isRequired,
 };
 
 class Collections extends Component {
@@ -35,12 +25,12 @@ class Collections extends Component {
 			/* We store collectionPubs in state of this component so we can do immediate */
 			/* updates and save in the background without jumpy effects */
 			collectionPubs: this.props.pubData.collectionPubs,
-			isLoading: false,
 		};
 		this.inputRef = undefined;
 		this.getFilteredCollections = this.getFilteredCollections.bind(this);
 		this.handleCollectionPubAdd = this.handleCollectionPubAdd.bind(this);
 		this.handleCollectionPubDelete = this.handleCollectionPubDelete.bind(this);
+		this.apiFetch = this.apiFetch.bind(this);
 	}
 
 	getFilteredCollections(query, existingCollectionPubs) {
@@ -68,26 +58,18 @@ class Collections extends Component {
 			});
 
 		return filteredDefaultCollections;
+	}
 
-		// const addNewCollectionOption = defaultCollections.reduce((prev, curr) => {
-		// 	if (curr.title.toLowerCase() === query.toLowerCase()) {
-		// 		return false;
-		// 	}
-		// 	return prev;
-		// }, true);
-		// const newCollectionOption =
-		// 	query && addNewCollectionOption ? [{ title: query.trim() }] : [];
-
-		// const outputCollections = [...newCollectionOption, ...filteredDefaultCollections];
-		// return outputCollections;
+	apiFetch(...args) {
+		const { promiseWrapper } = this.props;
+		return promiseWrapper(apiFetch(...args));
 	}
 
 	handleCollectionPubAdd(collection) {
 		this.inputRef.focus();
-		this.setState({ isLoading: true });
 		const firstCreateCollectionPromise = collection.id
 			? Promise.resolve(collection)
-			: apiFetch('/api/collections', {
+			: this.apiFetch('/api/collections', {
 					method: 'POST',
 					body: JSON.stringify({
 						title: collection.title.trim(),
@@ -97,7 +79,7 @@ class Collections extends Component {
 			  });
 		return firstCreateCollectionPromise
 			.then((collectionWithId) =>
-				apiFetch('/api/collectionPubs', {
+				this.apiFetch('/api/collectionPubs', {
 					method: 'POST',
 					body: JSON.stringify({
 						collectionId: collectionWithId.id,
@@ -109,12 +91,11 @@ class Collections extends Component {
 			.then((result) => {
 				this.setState((prevState) => {
 					const newCollectionPubs = [...prevState.collectionPubs, result];
-					this.props.updateLocalData('pub', {
+					this.props.updatePubData({
 						collectionPubs: newCollectionPubs,
 					});
 					return { collectionPubs: newCollectionPubs };
 				});
-				this.setState({ isLoading: false });
 			});
 	}
 
@@ -124,10 +105,10 @@ class Collections extends Component {
 				const newCollectionPubs = prevState.collectionPubs.filter((item) => {
 					return item.id !== collectionPub.id;
 				});
-				return { collectionPubs: newCollectionPubs, isLoading: true };
+				return { collectionPubs: newCollectionPubs };
 			},
 			() => {
-				apiFetch('/api/collectionPubs', {
+				this.apiFetch('/api/collectionPubs', {
 					method: 'DELETE',
 					body: JSON.stringify({
 						id: collectionPub.id,
@@ -135,17 +116,16 @@ class Collections extends Component {
 						collectionId: collectionPub.collectionId,
 					}),
 				}).then(() => {
-					this.props.updateLocalData('pub', {
+					this.props.updatePubData({
 						collectionPubs: this.state.collectionPubs,
 					});
-					this.setState({ isLoading: false });
 				});
 			},
 		);
 	}
 
 	handleCollectionPubSetPrimary(collectionPub, setPrimary = true) {
-		const { communityData, updateLocalData } = this.props;
+		const { communityData, updatePubData } = this.props;
 		const isPrimary = (item) => {
 			if (setPrimary) {
 				return item.id === collectionPub.id;
@@ -154,14 +134,13 @@ class Collections extends Component {
 		};
 		this.setState(
 			(state) => ({
-				isLoading: true,
 				collectionPubs: state.collectionPubs.map((item) => ({
 					...item,
 					isPrimary: isPrimary(item),
 				})),
 			}),
 			() =>
-				apiFetch('/api/collectionPubs/setPrimary', {
+				this.apiFetch('/api/collectionPubs/setPrimary', {
 					method: 'PUT',
 					body: JSON.stringify({
 						isPrimary: setPrimary,
@@ -170,10 +149,9 @@ class Collections extends Component {
 						collectionId: collectionPub.collectionId,
 					}),
 				}).then(() => {
-					updateLocalData('pub', {
+					updatePubData({
 						collectionPubs: this.state.collectionPubs,
 					});
-					this.setState({ isLoading: false });
 				}),
 		);
 	}
@@ -307,34 +285,21 @@ class Collections extends Component {
 	}
 
 	render() {
-		const { isLoading } = this.state;
 		return (
-			<div className="pub-manage_collections-component">
-				{isLoading && (
-					<div className="save-wrapper">
-						<Spinner size={Spinner.SIZE_SMALL} /> Saving...
-					</div>
-				)}
-				<h2>Collections</h2>
+			<div className="pub-settings-container_collections-component">
 				<p>
 					A pub can belong to many collections. You can choose here which (non-tag)
 					collection acts as its <em>primary collection</em>, and appears as part of the
 					pub&apos;s citations and DOI deposit information.
 				</p>
-				{this.props.loginData.isAdmin && (
+				{this.props.canCreateCollections && (
 					<p>
 						Collections can be created and edited in the{' '}
-						<a href={getDashUrl({ mode: 'overview' })}>Community overview</a>.
+						<a href="/dashboard/collections">community Manage dashboard</a>.
 					</p>
 				)}
 				{this.renderAddCollection()}
 				{this.renderCollections()}
-				{!this.state.collectionPubs.length && (
-					<NonIdealState
-						icon="widget"
-						title="This pub does not yet belong to any collections"
-					/>
-				)}
 			</div>
 		);
 	}

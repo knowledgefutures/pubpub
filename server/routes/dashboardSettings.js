@@ -8,7 +8,15 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-// import { getSettings } from '../utils/queryHelpers';
+import { getPub, sanitizePub } from '../utils/queryHelpers';
+
+const getSettingsData = async (pubSlug, initialData) => {
+	if (pubSlug) {
+		const pubData = await getPub(pubSlug, initialData.communityData.id);
+		return { pubData: sanitizePub(pubData, initialData) };
+	}
+	return {};
+};
 
 app.get(
 	['/dash/settings', '/dash/collection/:collectionSlug/settings', '/dash/pub/:pubSlug/settings'],
@@ -18,8 +26,7 @@ app.get(
 				return next();
 			}
 			const initialData = await getInitialData(req, true);
-			// const settingsData = await getSettings(initialData);
-			const settingsData = {};
+			const settingsData = await getSettingsData(req.params.pubSlug, initialData);
 			return renderToNodeStream(
 				res,
 				<Html

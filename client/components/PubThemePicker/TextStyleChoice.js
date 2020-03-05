@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
-import PubHeaderBackground from '../PubHeaderBackground';
+import PubHeaderBackground from 'containers/Pub/PubHeader/PubHeaderBackground';
 
 const propTypes = {
 	className: PropTypes.string,

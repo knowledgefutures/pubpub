@@ -1,0 +1,49 @@
+.pub-settings-container_collections-component {
+	.collections-wrapper {
+		margin-top: 1em;
+		max-height: 50vh;
+		overflow: scroll;
+		.bp3-tag {
+			margin-right: 0.5em;
+			margin-bottom: 0.5em;
+		}
+		.bp3-icon {
+			margin-right: 0.25em;
+		}
+	}
+	.collection-row {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		padding: 5px;
+		.title {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			.lock-icon {
+				margin-left: 4px;
+			}
+		}
+		.is-primary-notice {
+			margin-left: 4px;
+		}
+		.buttons {
+			margin-right: 10px;
+		}
+	}
+	.bp3-non-ideal-state {
+		margin-top: 2em;
+	}
+}
+
+.collections-autocomplete-popover {
+	.autocomplete-name {
+		display: flex;
+		align-items: center;
+		position: relative;
+		padding: 0px 10px;
+		.lock-icon {
+			margin-left: 4px;
+		}
+	}
+}

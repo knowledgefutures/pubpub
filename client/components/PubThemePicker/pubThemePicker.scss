@@ -1,17 +1,21 @@
 $grid-color: #ccc;
 $dark-blue: #137cbd;
 $light-blue: #48aff0;
+$padding: 4px;
+$border-radius: 3px;
 
 @mixin selectable {
     cursor: pointer;
     display: flex;
+    flex-basis: 0;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: 4px;
+    padding: $padding;
     border-radius: 4px;
     .example {
-        border: 3px solid transparent;
+        margin-left: #{0 - $border-radius};
+        border: $border-radius solid transparent;
     }
     .label {
         margin-top: 4px;
@@ -39,9 +43,9 @@ $light-blue: #48aff0;
     color: black;
     .image-upload-component {
         .upload-button {
-            background: #EEE;
+            background: #eee;
             &:hover {
-                background: #DDD;
+                background: #ddd;
             }
         }
         .helper-text {
@@ -56,6 +60,12 @@ $light-blue: #48aff0;
         .section-row {
             display: flex;
             justify-content: space-between;
+            & > :first-child {
+                margin-left: #{0 - $padding};
+            }
+        }
+        & > :last-child {
+            margin-bottom: 15px;
         }
     }
     .tint-choice {

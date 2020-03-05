@@ -21,11 +21,13 @@ const propTypes = {
 	onPersistStateChange: PropTypes.func,
 	listOnBylineText: PropTypes.string,
 	hasEmptyState: PropTypes.bool,
+	promiseWrapper: PropTypes.func,
 };
 
 const defaultProps = {
 	listOnBylineText: 'List on byline',
 	onPersistStateChange: () => {},
+	promiseWrapper: (x) => x,
 	hasEmptyState: true,
 };
 
@@ -39,14 +41,16 @@ class AttributionEditor extends Component {
 	}
 
 	persistAttribution(data, method) {
-		const { apiRoute, identifyingProps } = this.props;
-		return apiFetch(apiRoute, {
-			method: method,
-			body: JSON.stringify({
-				...data,
-				...identifyingProps,
+		const { apiRoute, identifyingProps, promiseWrapper } = this.props;
+		return promiseWrapper(
+			apiFetch(apiRoute, {
+				method: method,
+				body: JSON.stringify({
+					...data,
+					...identifyingProps,
+				}),
 			}),
-		});
+		);
 	}
 
 	handleAttributionAdd(user) {

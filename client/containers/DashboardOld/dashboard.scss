@@ -19,6 +19,7 @@ $dashboard-surround-spacing: 2em;
 			flex-direction: column;
 			height: 100vh;
 			.page-content {
+				outline: none;
 				flex-grow: 1;
 				.dashboard-columns {
 					height: 100%;

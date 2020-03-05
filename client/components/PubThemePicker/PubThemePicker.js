@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from '@blueprintjs/core';
 
 import { ColorInput, ImageUpload } from 'components';
-import { calculateBackgroundColor } from '../colors';
+import { calculateBackgroundColor } from 'utils/colors';
 
 import TextStyleChoice from './TextStyleChoice';
 import TintStyleChoice from './TintStyleChoice';
 
-require('./themePicker.scss');
+require('./pubThemePicker.scss');
 
 const propTypes = {
 	updatePubData: PropTypes.func.isRequired,
@@ -19,7 +20,7 @@ const propTypes = {
 
 const ThemePicker = (props) => {
 	const { updatePubData, pubData, communityData } = props;
-	const { headerBackgroundColor, headerBackgroundImage, headerStyle } = pubData;
+	const { avatar, headerBackgroundColor, headerBackgroundImage, headerStyle } = pubData;
 
 	const updatePubBackgroundColor = (color) =>
 		updatePubData({
@@ -47,12 +48,19 @@ const ThemePicker = (props) => {
 			<div className="section">
 				<div className="title">Background image</div>
 				<ImageUpload
+					key={headerBackgroundImage}
 					defaultImage={headerBackgroundImage}
 					onNewImage={updatePubHeaderImage}
 					width={150}
 					canClear={true}
 					helperText={<span>Suggested minimum dimensions: 1200px x 800px.</span>}
 				/>
+				<Button
+					disabled={avatar === headerBackgroundImage}
+					onClick={() => updatePubHeaderImage(avatar)}
+				>
+					Use preview image in header
+				</Button>
 			</div>
 			<div className="section">
 				<div className="title">Background tint</div>

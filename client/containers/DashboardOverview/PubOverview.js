@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton } from '@blueprintjs/core';
+
+import { DashboardFrame, SettingsSection } from 'components';
 import { usePageContext } from 'utils/hooks';
 
 require('./contentOverview.scss');
@@ -9,19 +11,14 @@ const propTypes = {
 	overviewData: PropTypes.object.isRequired,
 };
 
-const ContentOverview = (props) => {
+const PubOverview = (props) => {
 	const { overviewData } = props;
 	const { scopeData } = usePageContext();
 	const { activePub } = scopeData.elements;
 	return (
-		<div className="pub-overview-component">
-			<div className="dashboard-content-header">
-				<div className="name">Overview</div>
-				<div className="buttons">
-					<AnchorButton text="Go to Pub" href={`/pub/${activePub.slug}`} />
-				</div>
-			</div>
-		</div>
+		<DashboardFrame className="pub-overview-component" title="Overview">
+			<SettingsSection title="Pub title" />
+		</DashboardFrame>
 	);
 };
 

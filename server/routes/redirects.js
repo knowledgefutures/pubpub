@@ -41,6 +41,7 @@ app.use((req, res, next) => {
 			'/community-reports-listing': 'https://baas.aas.org/community-reports',
 			'/community/ten-years-of-astronomy-scientific-and-cultural-impact/':
 				'https://baas.aas.org/pub/2019i0203',
+			'/community/ten-years-of-dot-astronomy/': 'https://baas.aas.org/pub/2019i0203',
 			'/community/women-in-astronomy-in-a-post-gre-world/':
 				'https://baas.aas.org/pub/2019i0204',
 			'/meeting-abstracts-listing': 'https://baas.aas.org/abstracts',

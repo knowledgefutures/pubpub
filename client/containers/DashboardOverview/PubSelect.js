@@ -37,14 +37,12 @@ const PubSelect = (props) => {
 		const { handleKeyDown, handleKeyUp, handleQueryChange, itemList } = qlProps;
 		return (
 			// eslint-disable-next-line jsx-a11y/no-static-element-interactions
-			<div className="pub-select-ui" onKeyDown={handleKeyUp} onKeyUp={handleKeyUp}>
+			<div className="pub-select-ui" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
 				<InputGroup
 					inputRef={(input) => input && input.focus()}
 					placeholder="Search for Pubs"
 					leftIcon="search"
 					onChange={handleQueryChange}
-					onKeyDown={handleKeyDown}
-					onKeyUp={handleKeyUp}
 				/>
 				{itemList}
 			</div>

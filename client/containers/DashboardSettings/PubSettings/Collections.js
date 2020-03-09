@@ -5,6 +5,7 @@ import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
 import { getSchemaForKind } from 'shared/collections/schemas';
+import { getDashUrl } from 'utils/dashboard';
 import { Icon } from 'components';
 import { apiFetch } from 'utils';
 
@@ -294,8 +295,8 @@ class Collections extends Component {
 				</p>
 				{this.props.canCreateCollections && (
 					<p>
-						Collections can be created and edited in the{' '}
-						<a href="/dashboard/collections">community Manage dashboard</a>.
+						Visit the <a href={getDashUrl({ mode: 'overview' })}>Community overview</a>{' '}
+						to create collections.
 					</p>
 				)}
 				{this.renderAddCollection()}

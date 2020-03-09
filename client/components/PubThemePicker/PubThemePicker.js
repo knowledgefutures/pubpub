@@ -41,7 +41,7 @@ const ThemePicker = (props) => {
 		headerBackgroundColor &&
 		headerBackgroundColor !== 'community' &&
 		headerBackgroundColor !== 'dark' &&
-		headerBackgroundColor !== 'transparent';
+		headerBackgroundColor !== 'light';
 
 	return (
 		<div className="theme-picker-component">

@@ -19,6 +19,7 @@ import {
 import DownloadChooser from './DownloadChooser';
 import DeletePub from './DeletePub';
 import Collections from './Collections';
+import Doi from './Doi';
 
 const propTypes = {
 	settingsData: PropTypes.shape({
@@ -31,7 +32,7 @@ const PubSettings = (props) => {
 	const { scopeData } = usePageContext();
 	const {
 		elements: { activeCommunity },
-		activePermissions: { canManageCommunity, canManage },
+		activePermissions: { canManageCommunity, canAdminCommunity, canManage },
 	} = scopeData;
 	const [persistedPubData, setPersistedPubData] = useState(settingsData.pubData);
 	const [pendingPubData, setPendingPubData] = useState({});
@@ -94,7 +95,7 @@ const PubSettings = (props) => {
 	const renderDetails = () => {
 		return (
 			<>
-				<SettingsSection title="Pub">
+				<SettingsSection title="Details">
 					<InputField
 						label="Title"
 						value={pubData.title}
@@ -129,19 +130,24 @@ const PubSettings = (props) => {
 						width={150}
 						helperText="Suggested minimum dimensions: 1200px x 800px."
 					/>
-					<InputField label="License">
-						<LicenseSelect
-							persistSelections={false}
-							pubData={pubData}
-							onSelect={(license) => updatePubData({ licenseSlug: license.slug })}
-						>
-							{({ title, icon }) => (
-								<Button icon={icon} text={title} rightIcon="caret-down" />
-							)}
-						</LicenseSelect>
-					</InputField>
 				</SettingsSection>
 			</>
+		);
+	};
+
+	const renderLicense = () => {
+		return (
+			<SettingsSection title="License">
+				<LicenseSelect
+					persistSelections={false}
+					pubData={pubData}
+					onSelect={(license) => updatePubData({ licenseSlug: license.slug })}
+				>
+					{({ title, icon }) => (
+						<Button icon={icon} text={title} rightIcon="caret-down" />
+					)}
+				</LicenseSelect>
+			</SettingsSection>
 		);
 	};
 
@@ -152,6 +158,19 @@ const PubSettings = (props) => {
 					updatePubData={updatePubData}
 					pubData={pubData}
 					communityData={activeCommunity}
+				/>
+			</SettingsSection>
+		);
+	};
+
+	const renderDoi = () => {
+		return (
+			<SettingsSection title="DOI">
+				<Doi
+					pubData={pubData}
+					communityData={activeCommunity}
+					updatePubData={updatePersistedPubData}
+					canIssueDoi={canAdminCommunity}
 				/>
 			</SettingsSection>
 		);
@@ -219,7 +238,9 @@ const PubSettings = (props) => {
 			controls={renderControls()}
 		>
 			{renderDetails()}
+			{renderLicense()}
 			{renderTheme()}
+			{renderDoi()}
 			{renderAttributions()}
 			{renderFormattedDownload()}
 			{renderCollections()}

@@ -17,7 +17,7 @@ const CitationsPreview = (props) => {
 
 	return (
 		<div className="citations-preview-component">
-			<h6>Cite as</h6>
+			<h6 className="pub-header-themed-secondary">Cite as</h6>
 			<div
 				className="citation-body"
 				ref={copyableCitationRef}

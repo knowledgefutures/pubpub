@@ -4,18 +4,25 @@ import PropTypes from 'prop-types';
 import { getAllPubContributors } from 'utils/pubContributors';
 
 const propTypes = {
+	emptyState: PropTypes.node,
 	pubData: PropTypes.shape({}).isRequired,
+	showTheWordBy: PropTypes.bool,
+};
+
+const defaultProps = {
+	emptyState: null,
+	showTheWordBy: true,
 };
 
 const Byline = (props) => {
-	const { pubData } = props;
+	const { pubData, emptyState, showTheWordBy } = props;
 	const authors = getAllPubContributors(pubData, true);
 
-	return (
-		!!authors.length && (
-			<div className="byline">
+	if (authors.length > 0) {
+		return (
+			<div className="byline-component byline">
 				<span className="text-wrapper">
-					<span>by </span>
+					{showTheWordBy && <span>by </span>}
 					{authors.map((author, index) => {
 						const separator =
 							index === authors.length - 1 || authors.length === 2 ? '' : ', ';
@@ -42,9 +49,11 @@ const Byline = (props) => {
 					})}
 				</span>
 			</div>
-		)
-	);
+		);
+	}
+	return emptyState;
 };
 
 Byline.propTypes = propTypes;
+Byline.defaultProps = defaultProps;
 export default Byline;

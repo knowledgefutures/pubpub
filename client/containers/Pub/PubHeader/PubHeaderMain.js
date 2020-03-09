@@ -5,11 +5,10 @@ import dateFormat from 'dateformat';
 
 import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
-import { ClickToCopyButton, Overlay, PubThemePicker } from 'components';
+import { Byline, ClickToCopyButton, Overlay, PubThemePicker } from 'components';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 
 import BranchSelectorButton from './BranchSelectorButton';
-import Byline from './Byline';
 import CitationsPreview from './CitationsPreview';
 import CollectionsBar from './collections/CollectionsBar';
 import Download from './Download';

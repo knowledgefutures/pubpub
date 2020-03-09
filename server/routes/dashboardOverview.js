@@ -17,8 +17,6 @@ app.get(
 		'/dash/overview',
 		'/dash/collection/:collectionSlug',
 		'/dash/collection/:collectionSlug/overview',
-		'/dash/pub/:pubSlug',
-		'/dash/pub/:pubSlug/overview',
 	],
 	(req, res, next) => {
 		if (!hostIsValid(req, 'community')) {

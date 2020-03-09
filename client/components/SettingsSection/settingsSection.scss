@@ -11,7 +11,7 @@
 	@supports (display: grid) {
 		.settings-section-component {
 			display: grid;
-			grid-template-columns: 100px 1fr;
+			grid-template-columns: 140px 1fr;
 			grid-template-areas: 'title content';
 			grid-column-gap: 4%;
 			.title {

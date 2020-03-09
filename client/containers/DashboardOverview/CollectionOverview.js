@@ -102,6 +102,7 @@ const CollectionOverview = (props) => {
 				dragHandleProps={dragHandleProps}
 				isDragging={isDragging}
 				controls={canManage && renderCollectionPubControls(collectionPub)}
+				parentSlug={collection.slug}
 			/>
 		);
 	};

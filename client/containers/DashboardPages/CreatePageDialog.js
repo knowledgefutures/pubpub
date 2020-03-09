@@ -12,6 +12,7 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	hostname: PropTypes.string.isRequired,
 	isOpen: PropTypes.bool.isRequired,
+	onClose: PropTypes.func.isRequired,
 };
 
 class CreatePageDialog extends Component {
@@ -84,6 +85,7 @@ class CreatePageDialog extends Component {
 		return (
 			<Dialog
 				isOpen={this.props.isOpen}
+				onClose={this.props.onClose}
 				title="Create New Page"
 				className="create-page-dialog-component"
 				icon="page-layout"

@@ -55,12 +55,11 @@ const ThemePicker = (props) => {
 					canClear={true}
 					helperText={<span>Suggested minimum dimensions: 1200px x 800px.</span>}
 				/>
-				<Button
-					disabled={avatar === headerBackgroundImage}
-					onClick={() => updatePubHeaderImage(avatar)}
-				>
-					Use preview image in header
-				</Button>
+				{avatar !== headerBackgroundImage && (
+					<Button onClick={() => updatePubHeaderImage(avatar)}>
+						Use preview image in header
+					</Button>
+				)}
 			</div>
 			<div className="section">
 				<div className="title">Background tint</div>

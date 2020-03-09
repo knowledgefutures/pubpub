@@ -24,6 +24,7 @@ const DashboardPages = () => {
 					New Page
 				</Button>
 				<CreatePageDialog
+					onClose={() => setCreatingPage(false)}
 					isOpen={isCreatingPage}
 					communityData={communityData}
 					hostname={locationData.hostname}
@@ -47,6 +48,7 @@ const DashboardPages = () => {
 		);
 		return (
 			<DashboardRow
+				key={page.id}
 				icon="page-layout"
 				href={`/dash/pages/${page.slug || 'home'}`}
 				title={page.title}

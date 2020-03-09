@@ -13,6 +13,7 @@ require('./dashboardForks');
 require('./dashboardImpact');
 require('./dashboardMembers');
 require('./dashboardOverview');
+require('./dashboardPubOverview');
 require('./dashboardPage');
 require('./dashboardPages');
 require('./dashboardReviews');

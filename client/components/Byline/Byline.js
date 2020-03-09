@@ -7,16 +7,18 @@ const propTypes = {
 	emptyState: PropTypes.node,
 	pubData: PropTypes.shape({}).isRequired,
 	showTheWordBy: PropTypes.bool,
+	showOnlyBylineContributors: PropTypes.bool,
 };
 
 const defaultProps = {
 	emptyState: null,
 	showTheWordBy: true,
+	showOnlyBylineContributors: true,
 };
 
 const Byline = (props) => {
-	const { pubData, emptyState, showTheWordBy } = props;
-	const authors = getAllPubContributors(pubData, true);
+	const { pubData, emptyState, showTheWordBy, showOnlyBylineContributors } = props;
+	const authors = getAllPubContributors(pubData, showOnlyBylineContributors);
 
 	if (authors.length > 0) {
 		return (

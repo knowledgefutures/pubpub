@@ -33,6 +33,7 @@ const PubOverview = (props) => {
 			<Byline
 				pubData={pubData}
 				showTheWordBy={false}
+				showOnlyBylineContributors={false}
 				emptyState={<i>This Pub has no listed contributors yet.</i>}
 			/>
 		);

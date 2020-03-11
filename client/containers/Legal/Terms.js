@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Button, Dialog, Classes } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
 
 const propTypes = {
@@ -6,6 +7,11 @@ const propTypes = {
 };
 
 const Terms = function(props) {
+	const [isOpen, setOpen] = useState(false);
+	const toggleOverlay = (e) => {
+		e.preventDefault();
+		setOpen(!isOpen);
+	};
 	return (
 		<div>
 			<h2>Terms of Service</h2>
@@ -365,9 +371,36 @@ const Terms = function(props) {
 				trademarks will inure to the exclusive benefit of the holder of such trademarks.
 			</p>
 			<p>
-				If you believe that any content on the Site infringes your copyright, please click
-				here for more information, including the email address for our DMCA agent, to whom
-				copyright infringement notifications should be sent. 
+				If you believe that any content on the Site infringes your copyright, please{' '}
+				<Button
+					minimal={true}
+					onClick={toggleOverlay}
+					style={{
+						margin: 0,
+						padding: 0,
+						textDecoration: 'underline',
+						verticalAlign: 'baseline',
+						minHeight: 'inherit',
+					}}
+				>
+					click here for more information
+				</Button>
+				<Dialog isOpen={isOpen} onClose={toggleOverlay} title="DMCA Agent Information">
+					<p className={Classes.DIALOG_BODY}>
+						PubPub DMCA Agent
+						<br />
+						c/o Yarn Labs, Inc.
+						<br />
+						245 Main street
+						<br />
+						Floor 2<br />
+						Cambridge, MA 02142
+						<br />
+						Email: <a href="mailto:dmca@pubpub.org">dmca@pubpub.org</a>
+					</p>
+				</Dialog>
+				, including the email address for our DMCA agent, to whom copyright infringement
+				notifications should be sent. 
 			</p>
 			<h3>Prohibited Uses of the Site</h3>
 			<p>

@@ -8,6 +8,7 @@ import { buildTmpDirectory } from './tmpDirectory';
 import { extractBibliographyItems } from './bibliography';
 import { uploadExtractedMedia } from './extractedMedia';
 import { extensionFor } from './util';
+import { runExperimentalTransforms } from './experimental/experimentalTransforms';
 
 export const extensionToPandocFormat = {
 	docx: 'docx',
@@ -94,7 +95,7 @@ const createTransformResourceGetter = (getUrlByLocalPath, getBibliographyItemByI
 	return resource;
 };
 
-const importFiles = async ({ sourceFiles }) => {
+const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
 	const document = sourceFiles.find((file) => file.label === 'document');
 	const bibliography = sourceFiles.find((file) => file.label === 'bibliography');
 	const supplements = sourceFiles.filter((file) => file.label === 'supplement');
@@ -125,7 +126,7 @@ const importFiles = async ({ sourceFiles }) => {
 		);
 	}
 	const extractedMedia = await uploadExtractedMedia(tmpDir);
-	const pandocAst = parsePandocJson(pandocRawAst);
+	const pandocAst = runExperimentalTransforms(parsePandocJson(pandocRawAst), importerFlags);
 	const getBibliographyItemById = extractBibliographyItems(
 		bibliography && getTmpPathByLocalPath(bibliography.localPath),
 	);
@@ -144,8 +145,8 @@ const importFiles = async ({ sourceFiles }) => {
 	return { doc: prosemirrorDoc, warnings: warnings };
 };
 
-export const importTask = ({ sourceFiles }) =>
-	importFiles({ sourceFiles: sourceFiles }).catch((error) => ({
+export const importTask = ({ sourceFiles, importerFlags }) =>
+	importFiles({ sourceFiles: sourceFiles, importerFlags: importerFlags }).catch((error) => ({
 		error: {
 			message: error.toString(),
 			stack: error.stack.toString(),

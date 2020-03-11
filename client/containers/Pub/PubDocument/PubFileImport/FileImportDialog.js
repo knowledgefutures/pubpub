@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
+import { useKeyPressEvent } from 'react-use';
+
 import {
 	Button,
 	ButtonGroup,
 	Callout,
 	Classes,
 	Drawer,
+	Menu,
+	MenuItem,
 	NonIdealState,
+	Popover,
 	Spinner,
 	Tooltip,
 } from '@blueprintjs/core';
@@ -33,6 +38,7 @@ const propTypes = {
 	onClosed: PropTypes.func.isRequired,
 };
 
+const importerFlagNames = ['extractEndnotes'];
 const documentExtensions = Object.keys(extensionToPandocFormat).map((ext) => `.${ext}`);
 const bibliographyExtensions = bibliographyFormats.map((ext) => `.${ext}`);
 
@@ -52,10 +58,18 @@ const FileImportDialog = ({ editorChangeObject, updateLocalData, isOpen, onClose
 	const [importResult, setImportResult] = useState({});
 	const [isImporting, setIsImporting] = useState(false);
 	const [lastImportedFiles, setLastImportedFiles] = useState('');
+	const [importerFlags, setImporterFlags] = useState({});
+	const [isNerdModeShown, setIsNerdModeShown] = useState(false);
 	const importedFilesMatchCurrentFiles =
 		!!importResult && lastImportedFiles === getFingerprintOfImportedFiles(currentFiles);
 	const isImportDisabled = !hasDocumentToImport || incompleteUploads.length > 0 || isImporting;
 	const { doc, warnings = [], error } = importResult;
+
+	useKeyPressEvent('/', (evt) => {
+		if (evt.metaKey) {
+			setIsNerdModeShown(true);
+		}
+	});
 
 	const handleFinishImport = () => {
 		importDocToEditor(editorChangeObject.view, doc, updateLocalData);
@@ -68,6 +82,7 @@ const FileImportDialog = ({ editorChangeObject, updateLocalData, isOpen, onClose
 			method: 'POST',
 			body: JSON.stringify({
 				sourceFiles: currentFiles,
+				importerFlags: importerFlags,
 				useNewImporter: true,
 			}),
 		})
@@ -193,6 +208,47 @@ const FileImportDialog = ({ editorChangeObject, updateLocalData, isOpen, onClose
 		return null;
 	};
 
+	const renderNerdMode = () => {
+		if (!isNerdModeShown) {
+			return null;
+		}
+		return (
+			<Popover
+				minimal
+				content={
+					<Menu>
+						<MenuItem
+							onClick={handleStartImportTask}
+							icon="refresh"
+							text="Force retry import"
+						/>
+						<li className="bp3-menu-header">
+							<h6 className="bp3-heading">Experimental flags</h6>
+						</li>
+						{importerFlagNames.map((flag) => {
+							const isSelected = !!importerFlags[flag];
+							const onToggleFlagSelected = () =>
+								setImporterFlags((currentFlags) => ({
+									...currentFlags,
+									[flag]: !isSelected,
+								}));
+							return (
+								<MenuItem
+									key={flag}
+									icon={isSelected ? 'tick' : 'blank'}
+									onClick={onToggleFlagSelected}
+									text={flag}
+								/>
+							);
+						})}
+					</Menu>
+				}
+			>
+				<Button icon="flame">Extras</Button>
+			</Popover>
+		);
+	};
+
 	return (
 		<Drawer
 			className="file-import-dialog-component"
@@ -264,6 +320,7 @@ const FileImportDialog = ({ editorChangeObject, updateLocalData, isOpen, onClose
 				</div>
 			</div>
 			<div className={classNames(Classes.DRAWER_FOOTER, 'dialog-footer')}>
+				{renderNerdMode()}
 				<Button onClick={onClose}>Cancel</Button>
 				{(!doc || !importedFilesMatchCurrentFiles) && (
 					<Button

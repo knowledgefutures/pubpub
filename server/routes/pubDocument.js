@@ -20,11 +20,7 @@ import {
 } from '../utils/queryHelpers';
 
 app.get(
-	[
-		'/pub/:pubSlug/draft',
-		'/pub/:pubSlug/draft/:historyNumber',
-		'/pub/:pubSlug/release/:historyNumber',
-	],
+	['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey', '/pub/:pubSlug/release/:historyKey'],
 	async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {
 			return next();
@@ -34,20 +30,23 @@ app.get(
 			const { canView, canViewDraft } = initialData.scopeData.activePermissions;
 			const isRelease = req.path.indexOf(`/pub/${req.params.pubSlug}/release`) > -1;
 			const branchType = isRelease ? 'public' : 'draft';
-			const validHistoryNumber = req.params.historyNumber
-				? Number(req.params.historyNumber) > 0
-				: true;
-			if ((!isRelease && !canView && !canViewDraft) || !validHistoryNumber) {
+			const hasHistoryKey = req.params.historyKey !== undefined;
+			const historyKeyInt = parseInt(req.params.historyKey, 10);
+			const isHistoryKeyInvalid = hasHistoryKey && Number.isNaN(historyKeyInt);
+			if ((!isRelease && !canView && !canViewDraft) || isHistoryKeyInvalid) {
 				throw new Error('Pub Not Found');
 			}
-
 			let pubData = await getPub(req.params.pubSlug, initialData.communityData.id);
-			pubData = sanitizePub(pubData, initialData, req.params.historyNumber, isRelease);
+			pubData = sanitizePub(pubData, initialData, historyKeyInt, isRelease);
 			if (!pubData) {
 				throw new Error('Pub Not Found');
 			}
-			/* versionNumber is 0-indexed in firebase. historyNumber is 1-indexed for UI purposes. */
-			pubData = await enrichPubFirebaseDoc(pubData, req.params.historyNumber - 1, branchType);
+			/* versionNumber is 0-indexed in firebase. historyKey is 1-indexed for UI purposes. */
+			pubData = await enrichPubFirebaseDoc(
+				pubData,
+				hasHistoryKey ? historyKeyInt - 1 : null,
+				branchType,
+			);
 			pubData = await enrichPubFirebaseToken(pubData, initialData);
 			pubData = await enrichPubCitations(pubData, initialData);
 

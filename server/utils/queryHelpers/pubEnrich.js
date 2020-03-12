@@ -12,7 +12,7 @@ export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) =
 	if (!activeBranch) {
 		throw new Error('Pub Not Found');
 	}
-	const { content, historyData, mostRecentRemoteKey, checkpointUpdates } = await getBranchDoc(
+	const { doc, historyData, mostRecentRemoteKey, checkpointUpdates } = await getBranchDoc(
 		pubData.id,
 		activeBranch.id,
 		versionNumber,
@@ -38,7 +38,7 @@ export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) =
 	return {
 		...pubData,
 		activeBranch: activeBranch,
-		initialDoc: content,
+		initialDoc: doc,
 		initialDocKey: mostRecentRemoteKey,
 		historyData: historyData,
 	};

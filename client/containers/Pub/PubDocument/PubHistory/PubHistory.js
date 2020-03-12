@@ -23,7 +23,26 @@ const propTypes = {
 	updateLocalData: PropTypes.func.isRequired,
 };
 
-const History = (props) => {
+const labelDateFormat = (date, withTime) =>
+	dateFormat(date, 'mmm dd, yyyy' + (withTime ? ' HH:MM' : ''));
+
+const interpolateLabelDateForStep = (step, timestamps) => {
+	// The keys are integers so Object.keys should return them in ascending order
+	const keys = Object.keys(timestamps);
+	const firstKeyIndexAfterStep = keys.findIndex((key) => key > step);
+	if (firstKeyIndexAfterStep > 0) {
+		const firstKeyAfterStep = keys[firstKeyIndexAfterStep];
+		const lastKeyBeforeStep = keys[firstKeyIndexAfterStep - 1];
+		const firstDateAfterStep = new Date(timestamps[firstKeyAfterStep]);
+		const lastDateBeforeStep = new Date(timestamps[lastKeyBeforeStep]);
+		if (lastDateBeforeStep.toDateString() === firstDateAfterStep.toDateString()) {
+			return firstDateAfterStep;
+		}
+	}
+	return null;
+};
+
+const PubHistory = (props) => {
 	const {
 		pubData,
 		historyData: { timestamps, latestKey, currentKey },
@@ -62,17 +81,15 @@ const History = (props) => {
 	useDebounce(() => updateLocalData('history', { currentKey: value }), 100, [value]);
 
 	const renderLabel = (step) => {
-		const labelDateFormat = (date, withTime) =>
-			dateFormat(date, 'mmm dd, yyyy' + (withTime ? ' HH:MM' : ''));
-		const timestamp = timestamps[step];
 		if (step === 0) {
-			return labelDateFormat(pubData.createdAt);
+			return labelDateFormat(pubData.createdAt, true);
 		}
-		if (step === latestKey) {
-			return labelDateFormat(timestamp);
+		if (timestamps[step]) {
+			return labelDateFormat(timestamps[step], true);
 		}
-		if (timestamp) {
-			return labelDateFormat(timestamp);
+		const interpolatedDate = interpolateLabelDateForStep(step, timestamps);
+		if (interpolatedDate) {
+			return labelDateFormat(interpolatedDate, false);
 		}
 		return '...';
 	};
@@ -112,5 +129,5 @@ const History = (props) => {
 	);
 };
 
-History.propTypes = propTypes;
-export default History;
+PubHistory.propTypes = propTypes;
+export default PubHistory;

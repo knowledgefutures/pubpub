@@ -7,12 +7,12 @@ import { apiFetch, slugifyString } from 'utils';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import {
-	AttributionEditor,
 	DashboardFrame,
 	SettingsSection,
 	ImageUpload,
 	InputField,
 	LicenseSelect,
+	PubAttributionEditor,
 	PubThemePicker,
 } from 'components';
 
@@ -179,19 +179,11 @@ const PubSettings = (props) => {
 	const renderAttributions = () => {
 		return (
 			<SettingsSection title="Attributions">
-				<AttributionEditor
-					apiRoute="/api/pubAttributions"
-					identifyingProps={{
-						communityId: activeCommunity.id,
-						pubId: pubData.id,
-					}}
-					attributions={pubData.attributions}
-					canEdit={canManage}
+				<PubAttributionEditor
+					pubData={pubData}
 					communityData={activeCommunity}
-					onUpdateAttributions={(attributions) =>
-						updatePersistedPubData({ attributions: attributions })
-					}
-					promiseWrapper={pendingPromise}
+					updatePubData={updatePersistedPubData}
+					canEdit={canManage}
 				/>
 			</SettingsSection>
 		);

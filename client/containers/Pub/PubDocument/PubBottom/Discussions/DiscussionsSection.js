@@ -135,14 +135,15 @@ const DiscussionsSection = (props) => {
 			searchPlaceholder="Search comments..."
 		>
 			{({ searchTerm, isSearching }) => (
-				<PubDiscussions
-					{...props}
-					filterThreads={createThreadFilter(searchTerm)}
-					searchTerm={searchTerm}
-					showBottomInput={
-						(canView || canCreateDiscussions) && !isSearching && !isBrowsingArchive
-					}
-				/>
+				null
+				// <PubDiscussions
+				// 	{...props}
+				// 	filterThreads={createThreadFilter(searchTerm)}
+				// 	searchTerm={searchTerm}
+				// 	showBottomInput={
+				// 		(canView || canCreateDiscussions) && !isSearching && !isBrowsingArchive
+				// 	}
+				// />
 			)}
 		</PubBottomSection>
 	);

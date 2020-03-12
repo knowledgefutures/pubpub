@@ -1,13 +1,18 @@
 import firebaseAdmin from 'firebase-admin';
+
 import {
 	buildSchema,
 	getFirebaseDoc,
+	getLatestKeyAndTimestamp,
+	getFirstKeyAndTimestamp,
 	createBranch,
 	mergeBranch,
 	restoreDiscussionMaps,
 } from '@pubpub/editor';
-import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
-import { getFirebaseConfig } from 'utils';
+
+// These relative import statements are useful for letting us use this file in node scripts.
+import discussionSchema from '../../shared/editor/discussionSchema';
+import { getFirebaseConfig } from '../../shared/editor/firebaseConfig';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {
@@ -34,19 +39,40 @@ const getFirebaseApp = () => {
 };
 
 const firebaseApp = getFirebaseApp();
-
 const database = firebaseApp && firebaseApp.database();
+export const editorSchema = buildSchema({ ...discussionSchema }, {});
 
-export const getBranchDoc = (pubId, branchId, historyKey, updateOutdatedCheckpoint) => {
-	const pubKey = `pub-${pubId}`;
-	const branchKey = `branch-${branchId}`;
-	const firebaseRef = database.ref(`${pubKey}/${branchKey}`);
-	const editorSchema = buildSchema({ ...discussionSchema }, {});
-	return getFirebaseDoc(firebaseRef, editorSchema, historyKey, updateOutdatedCheckpoint);
-	// return restoreDiscussionMaps(firebaseRef, editorSchema, true).then(() => {
-	// 	console.log('Finished with restoreDiscussionMaps');
-	// 	return getFirebaseDoc(firebaseRef, editorSchema, historyKey, true);
-	// });
+export const getBranchRef = (pubId, branchId) => {
+	return database.ref(`pub-${pubId}/branch-${branchId}`);
+};
+
+export const getBranchDoc = async (pubId, branchId, historyKey, updateOutdatedCheckpoint) => {
+	const branchRef = getBranchRef(pubId, branchId);
+
+	const [
+		{ doc, key: currentKey, timestamp: currentTimestamp, checkpointMap },
+		{ timestamp: firstTimestamp, key: firstKey },
+		{ timestamp: latestTimestamp, key: latestKey },
+	] = await Promise.all([
+		getFirebaseDoc(branchRef, editorSchema, historyKey, updateOutdatedCheckpoint),
+		getFirstKeyAndTimestamp(branchRef),
+		getLatestKeyAndTimestamp(branchRef),
+	]);
+
+	return {
+		doc: doc,
+		mostRecentRemoteKey: currentKey,
+		historyData: {
+			timestamps: {
+				...checkpointMap,
+				[firstKey]: firstTimestamp,
+				[currentKey]: currentTimestamp,
+				[latestKey]: latestTimestamp,
+			},
+			currentKey: currentKey,
+			latestKey: latestKey,
+		},
+	};
 };
 
 export const getFirebaseToken = (clientId, clientData) => {
@@ -54,24 +80,15 @@ export const getFirebaseToken = (clientId, clientData) => {
 };
 
 export const createFirebaseBranch = (pubId, baseBranchId, newBranchId) => {
-	const pubKey = `pub-${pubId}`;
-	const baseBranchKey = `branch-${baseBranchId}`;
-	const newBranchKey = `branch-${newBranchId}`;
-
-	const baseFirebaseRef = database.ref(`${pubKey}/${baseBranchKey}`);
-	const newFirebaseRef = database.ref(`${pubKey}/${newBranchKey}`);
+	const baseFirebaseRef = getBranchRef(pubId, baseBranchId);
+	const newFirebaseRef = getBranchRef(pubId, newBranchId);
 	return createBranch(baseFirebaseRef, newFirebaseRef);
 };
 
 export const mergeFirebaseBranch = (pubId, sourceBranchId, destinationBranchId) => {
-	const pubKey = `pub-${pubId}`;
-	const sourceBranchKey = `branch-${sourceBranchId}`;
-	const destinationBranchKey = `branch-${destinationBranchId}`;
-
-	const sourceFirebaseRef = database.ref(`${pubKey}/${sourceBranchKey}`);
-	const destinationFirebaseRef = database.ref(`${pubKey}/${destinationBranchKey}`);
+	const sourceFirebaseRef = getBranchRef(pubId, sourceBranchId);
+	const destinationFirebaseRef = getBranchRef(pubId, destinationBranchId);
 	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef).then(() => {
-		const editorSchema = buildSchema({ ...discussionSchema }, {});
 		return restoreDiscussionMaps(destinationFirebaseRef, editorSchema, true);
 	});
 };

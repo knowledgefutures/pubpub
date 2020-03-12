@@ -5,11 +5,11 @@ import { getBranchDoc } from '../../../server/utils/firebaseAdmin';
 import { generateCiteHtmls } from '../../../server/editor/queries';
 
 export const getProsemirrorPubData = async (pubId, branchId, historyKey) => {
-	const { content: prosemirrorDoc } = await getBranchDoc(pubId, branchId, historyKey);
+	const { doc: docJson } = await getBranchDoc(pubId, branchId, historyKey);
 	const schema = buildSchema(discussionSchema);
-	const doc = jsonToNode(prosemirrorDoc, schema);
+	const doc = jsonToNode(docJson, schema);
 	const { footnotes: rawFootnotes, citations: rawCitations } = getNotes(doc);
 	const footnotes = await generateCiteHtmls(rawFootnotes);
 	const citations = await generateCiteHtmls(rawCitations);
-	return { prosemirrorDoc: prosemirrorDoc, footnotes: footnotes, citations: citations };
+	return { prosemirrorDoc: docJson, footnotes: footnotes, citations: citations };
 };

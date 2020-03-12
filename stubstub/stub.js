@@ -39,14 +39,13 @@ export const stubFirebaseAdmin = () => {
 
 	beforeAll(() => {
 		const getBranchDocStub = sinon.stub(firebaseAdmin, 'getBranchDoc').returns({
-			content: getEmptyDoc(),
+			doc: getEmptyDoc(),
 			mostRecentRemoteKey: 0,
 			historyData: {
 				timestamps: {},
 				currentKey: 0,
 				latestKey: 0,
 			},
-			checkpointUpdates: undefined,
 		});
 		const getFirebaseTokenStub = sinon.stub(firebaseAdmin, 'getFirebaseToken').returns('');
 		const createFirebaseBranchStub = sinon

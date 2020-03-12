@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'utils/useSticky';
-
 import PubDetails from './details';
 import PubHeaderBackground from './PubHeaderBackground';
 import PubHeaderMain from './PubHeaderMain';

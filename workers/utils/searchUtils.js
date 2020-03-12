@@ -191,9 +191,9 @@ export const getPubSearchData = (pubIds) => {
 						return getBranchDoc(branchData.pubId, branchData.branchId);
 					})
 					.then((branchDocData) => {
-						const { content } = branchDocData;
-						if (content) {
-							jsonToTextChunks(content).forEach((textChunk) => {
+						const { doc } = branchDocData;
+						if (doc) {
+							jsonToTextChunks(doc).forEach((textChunk) => {
 								dataToSync.push({
 									...branchData,
 									branchContent: textChunk,

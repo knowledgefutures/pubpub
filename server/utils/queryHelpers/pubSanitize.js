@@ -2,7 +2,7 @@ import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { splitThreads } from 'utils';
 import sanitizeThreads from './threadsSanitize';
 
-export default (pub, initialData, historyNumber, isRelease) => {
+export default (pub, initialData, historyKey, isRelease) => {
 	const { loginData, scopeData } = initialData;
 	const {
 		canView,
@@ -25,7 +25,7 @@ export default (pub, initialData, historyNumber, isRelease) => {
 				return item.collection.isPublic || canAdminCommunity;
 		  })
 		: [];
-	const isHistoricalDoc = historyNumber && historyNumber < pub.releases.length;
+	const isHistoricalDoc = historyKey && historyKey < pub.releases.length;
 	return {
 		...pub,
 		attributions: pub.attributions.map(ensureUserForAttribution),

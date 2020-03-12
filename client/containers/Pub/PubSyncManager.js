@@ -319,12 +319,12 @@ class PubSyncManager extends React.Component {
 						pubData,
 						newHistoryData.currentKey,
 						locationData.query.access,
-					).then(({ content, historyData: { timestamps } }) => {
+					).then(({ doc, historyData: { timestamps } }) => {
 						this.setState(({ historyData }) => ({
 							historyData: {
 								...historyData,
 								...newHistoryData,
-								historyDoc: content,
+								historyDoc: doc,
 								historyDocKey: `history-${nextHistoryData.currentKey}`,
 								outstandingRequests: historyData.outstandingRequests - 1,
 								timestamps: {

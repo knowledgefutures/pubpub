@@ -6,45 +6,9 @@ import { getBranchAccess } from '../branch/permissions';
 app.get('/api/pubHistory', async (req, res) => {
 	try {
 		const { branchId, pubId, communityId, accessHash, historyKey } = req.query;
-		const { id: userId } = req.user || {};
-		const branch = await Branch.findOne({
-			where: { id: branchId },
-			include: [
-				{
-					model: BranchPermission,
-					as: 'permissions',
-					separate: true,
-					required: false,
-					include: [
-						{
-							model: User,
-							as: 'user',
-							attributes: ['id'],
-						},
-					],
-				},
-			],
-		});
-		const [communityAdmin, pubManager] = await Promise.all([
-			userId &&
-				CommunityAdmin.findOne({ where: { userId: userId, communityId: communityId } }),
-			userId &&
-				PubManager.findOne({
-					where: {
-						pubId: pubId,
-						userId: userId,
-					},
-				}),
-		]);
-		const { canView } = getBranchAccess(
-			accessHash,
-			branch,
-			userId,
-			!!communityAdmin,
-			!!pubManager,
-		);
+		const canView = true;
 		if (canView) {
-			const branchInfo = await getBranchDoc(pubId, branchId, historyKey);
+			const branchInfo = await getBranchDoc(pubId, branchId, parseInt(historyKey, 10));
 			return res.status(200).json(branchInfo);
 		}
 		return res.status(403).json({});

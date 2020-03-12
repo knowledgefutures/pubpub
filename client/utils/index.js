@@ -1,4 +1,5 @@
 import { remove as removeDiacritics } from 'diacritics';
+
 import { setIsProd, isProd } from './isProd';
 
 export { hydrateWrapper } from './hydrateWrapper';
@@ -9,19 +10,6 @@ if (typeof window === 'undefined') {
 }
 
 export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-export const getFirebaseConfig = function() {
-	return {
-		apiKey: 'AIzaSyCVBq7I9ddJpHhs-DzVEEdM09-VqTVex1g',
-		authDomain: 'pubpub-v6.firebaseapp.com',
-		projectId: 'pubpub-v6',
-		storageBucket: 'pubpub-v6.appspot.com',
-		messagingSenderId: '503345633278',
-		databaseURL: isProd()
-			? 'https://pubpub-v6-prod.firebaseio.com'
-			: 'https://pubpub-v6-dev.firebaseio.com',
-	};
-};
 
 export const getResizedUrl = function(url, type, dimensions) {
 	if (!url || url.indexOf('https://assets.pubpub.org/') === -1) {

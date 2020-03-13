@@ -139,6 +139,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     min-height: 384px;
     position: relative;
     z-index: 20;
+    border-bottom: 1px solid #d2d2d2;
 
     .pub-header-sticky-component {
         opacity: 0;
@@ -242,12 +243,6 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
             opacity: 0.75;
         }
     }
-
-    // .container,
-    // .container > .row,
-    // .pub-details-component {
-    //     height: 100%;
-    // }
 }
 
 .pub-header-branch-selector-menu {

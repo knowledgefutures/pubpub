@@ -8,8 +8,8 @@ import buildReleases from './buildReleases';
 const init = async () => {
 	try {
 		console.log('Beginning Migration');
-		// await headerCols();
-		await dashCols();
+		await headerCols();
+		// await dashCols();
 		// await discToThreads();
 		// await reviewsToThreads();
 		// await buildReleases();

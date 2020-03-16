@@ -37,5 +37,5 @@ export const useSticky = ({ selector, offset = 0, isActive = true }) => {
 		return () => {};
 	}, [isActive, offset, selector]);
 
-	useOrFakeResizeObserver(() => stickyInstanceRef.current.update());
+	useOrFakeResizeObserver(() => stickyInstanceRef.current && stickyInstanceRef.current.update());
 };

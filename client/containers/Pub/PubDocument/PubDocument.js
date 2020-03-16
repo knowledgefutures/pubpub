@@ -9,6 +9,7 @@ import PubHistory from './PubHistory';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubBottom from './PubBottom/PubBottom';
 import PubMouseEvents from './PubMouseEvents';
+import PubHistoricalNotice from './PubHistory/PubHistoricalNotice';
 
 require('./pubDocument.scss');
 
@@ -76,6 +77,9 @@ const PubDocument = (props) => {
 			{isViewingHistory && <PubHistory {...props} />}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
+					{pubData.isHistoricalDoc && pubData.isRelease && (
+						<PubHistoricalNotice pubData={pubData} />
+					)}
 					<PubBody
 						editorWrapperRef={editorWrapperRef}
 						pubData={pubData}

@@ -5,6 +5,17 @@ const selectBranch = (pub, branch) => {
 	return branch || pub.branches.find((br) => br.title === 'public');
 };
 
+export const getPubLatestReleasedDate = (pub) => {
+	if (pub.releases.length === 0) {
+		return null;
+	}
+	return pub.releases
+		.map((release) => new Date(release.createdAt))
+		.reduce((latestDate, date) => {
+			return date > latestDate ? date : latestDate;
+		});
+};
+
 export const getPubPublishedDate = (pub, branch = null) => {
 	const selectedBranch = selectBranch(pub, branch);
 	if (selectedBranch) {

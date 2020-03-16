@@ -2,9 +2,16 @@ import dateFormat from 'dateformat';
 
 export const formatDate = (
 	date,
-	{ includeTime = false, includePreposition = false, use12HourDate = true } = {},
+	{
+		includeTime = false,
+		includeDate = true,
+		includePreposition = false,
+		use12HourDate = true,
+	} = {},
 ) => {
-	const formattedDate = (includePreposition ? 'on ' : '') + dateFormat(date, 'mmm dd, yyyy');
+	const formattedDate = includeDate
+		? (includePreposition ? 'on ' : '') + dateFormat(date, 'mmm dd, yyyy')
+		: '';
 	if (includeTime) {
 		const formattedTime =
 			(includePreposition ? 'at ' : '') +

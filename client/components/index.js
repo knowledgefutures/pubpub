@@ -35,6 +35,7 @@ export { default as PermissionsDropdown } from './PermissionsDropdown/Permission
 export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttributionEditor';
 export { default as PubPreview } from './PubPreview/PubPreview';
 export { default as PubNoteContent } from './PubNoteContent/PubNoteContent';
+export { default as PubHistoryViewer } from './PubHistoryViewer/PubHistoryViewer';
 export { default as ScopeDropdown } from './ScopeDropdown/ScopeDropdown';
 export { default as SettingsSection } from './SettingsSection/SettingsSection';
 export { default as SharingCard } from './SharingCard/SharingCard';

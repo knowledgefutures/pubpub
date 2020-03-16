@@ -22,7 +22,10 @@ const statusMessage = (pub, branch, success, created) => {
 
 const getAllPubsWithBranches = () => {
 	return Pub.findAll({
-		where: { communityId: 'fb61f6aa-de65-4dbe-929d-9f48dd82e941' },
+		where: {
+			id: '95e12aa6-2043-46dd-8c2d-2c58242136d1',
+			communityId: '97a10bb3-d6e7-46ec-8b75-d6a681d716be',
+		},
 		attributes: ['id', 'slug', 'title'],
 		include: [
 			{
@@ -147,7 +150,7 @@ const backfillCheckpointsForPub = (pub) => {
 const main = async () => {
 	const allPubs = await getAllPubsWithBranches();
 	console.log('got pubs');
-	await Promise.map(allPubs, backfillCheckpointsForPub, { concurrency: 100 });
+	await Promise.map(allPubs, backfillCheckpointsForPub, { concurrency: 10 });
 	console.log('done.');
 };
 

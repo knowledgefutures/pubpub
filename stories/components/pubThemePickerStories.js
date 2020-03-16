@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
-import ThemePicker from 'containers/Pub/PubHeader/themePicker/ThemePicker';
+import { PubThemePicker } from 'components';
 import { pubData, communityData } from 'data';
 
 const ThemePickerWrapper = (props) => {
@@ -18,9 +18,9 @@ const ThemePickerWrapper = (props) => {
 		setLocalData(currentLocalData);
 	};
 
-	return <ThemePicker {...restProps} {...localData} updateLocalData={updateLocalData} />;
+	return <PubThemePicker {...restProps} {...localData} updateLocalData={updateLocalData} />;
 };
 
-storiesOf('containers/Pub/PubHeader', module).add('themePicker', () => (
+storiesOf('components/PubThemePicker', module).add('default', () => (
 	<ThemePickerWrapper communityData={communityData} pubData={pubData} />
 ));

@@ -6,7 +6,7 @@ import { useCopyToClipboard } from 'react-use';
 const propTypes = {
 	afterCopyPrompt: PropTypes.string,
 	beforeCopyPrompt: PropTypes.string,
-	children: PropTypes.node,
+	children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
 	className: PropTypes.string,
 	copyString: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
 	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
@@ -50,16 +50,24 @@ const ClickToCopyButton = (props) => {
 		return beforeCopyPrompt;
 	};
 
+	const renderChildren = () => {
+		if (typeof children === 'function') {
+			return children(handleClick);
+		}
+		return (
+			<Button minimal icon={icon} onClick={handleClick} position={tooltipPosition}>
+				{children}
+			</Button>
+		);
+	};
+
 	return (
 		<Tooltip
 			content={getTooltipText()}
 			onClosed={() => setHasCopied(false)}
 			className={className}
-		>
-			<Button minimal icon={icon} onClick={handleClick} position={tooltipPosition}>
-				{children}
-			</Button>
-		</Tooltip>
+			children={renderChildren()}
+		/>
 	);
 };
 

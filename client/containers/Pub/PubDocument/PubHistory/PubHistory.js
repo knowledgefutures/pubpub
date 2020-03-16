@@ -72,14 +72,7 @@ const PubHistory = (props) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		if (value === undefined && currentKey) {
-			setValue(currentKey);
-		}
-	}, [currentKey, value]);
-
-	useDebounce(() => updateLocalData('history', { currentKey: value }), 100, [value]);
-
+p
 	const renderLabel = (step) => {
 		if (step === 0) {
 			return labelDateFormat(pubData.createdAt, true);

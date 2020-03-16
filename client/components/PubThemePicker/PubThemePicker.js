@@ -10,6 +10,11 @@ import TintStyleChoice from './TintStyleChoice';
 
 require('./pubThemePicker.scss');
 
+// Preload background image for tint picker
+if (typeof Image !== 'undefined') {
+	new Image().url = '/static/transparency.png';
+}
+
 const propTypes = {
 	updatePubData: PropTypes.func.isRequired,
 	pubData: PropTypes.object.isRequired,

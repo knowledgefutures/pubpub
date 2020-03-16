@@ -5,7 +5,8 @@ import dateFormat from 'dateformat';
 
 import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
-import { Byline, ClickToCopyButton, Overlay, PubThemePicker } from 'components';
+import { Byline, ClickToCopyButton, Overlay, PubThemePicker, PubHistoryViewer } from 'components';
+import { pubUrl } from 'shared/utils/canonicalUrls';
 import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 
 import BranchSelectorButton from './BranchSelectorButton';
@@ -24,6 +25,7 @@ const propTypes = {
 		branches: PropTypes.array.isRequired,
 		description: PropTypes.string,
 		doi: PropTypes.string,
+		isRelease: PropTypes.bool,
 		id: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
@@ -93,7 +95,7 @@ const PubHeaderMain = (props) => {
 		}).catch(() => updateLocalData('pub', oldPubData));
 	};
 
-	const { canManage, canAdmin } = scopeData.activePermissions;
+	const { canManage, canAdmin, canEdit } = scopeData.activePermissions;
 
 	const publishedAtString = getPublishDateString(pubData);
 	const publicBranch = pubData.branches.find((branch) => branch.title === 'public');
@@ -101,16 +103,8 @@ const PubHeaderMain = (props) => {
 	const canSubmitForReview = !onPublicBranch && canManage;
 	const canPublish = !onPublicBranch && canAdmin;
 
-	return (
-		<div className="pub-header-main-component">
-			<Overlay
-				isOpen={isShareOpen}
-				onClose={() => {
-					setIsShareOpen(false);
-				}}
-			>
-				<SharePanel pubData={pubData} updateLocalData={updateLocalData} />
-			</Overlay>
+	const renderTop = () => {
+		return (
 			<div className="top">
 				<CollectionsBar pubData={pubData} updateLocalData={updateLocalData} />
 				<div className="basic-details">
@@ -134,7 +128,11 @@ const PubHeaderMain = (props) => {
 					<div className="show-details-placeholder" />
 				</div>
 			</div>
-			<div className="hairline" />
+		);
+	};
+
+	const renderMiddle = () => {
+		return (
 			<div className="middle">
 				<div className="left">
 					<EditableHeaderText
@@ -200,7 +198,23 @@ const PubHeaderMain = (props) => {
 					</PopoverButton>
 				</div>
 			</div>
-			<div className="bottom">
+		);
+	};
+
+	const renderReleaseBottomButtons = () => {
+		return (
+			<>
+				{canEdit && (
+					<LargeHeaderButton
+						icon="edit"
+						tagName="a"
+						href={pubUrl(communityData, pubData, { isDraft: true })}
+						outerLabel={{
+							top: 'edit this Pub',
+							bottom: 'go to draft',
+						}}
+					/>
+				)}
 				<BranchSelectorButton pubData={pubData} />
 				<LargeHeaderButton
 					icon="history"
@@ -231,7 +245,46 @@ const PubHeaderMain = (props) => {
 						}}
 					/>
 				)}
+			</>
+		);
+	};
+
+	const renderDraftBottomButtons = () => {
+		return (
+			<LargeHeaderButton
+				icon="history"
+				outerLabel={getHistoryButtonLabel(pubData, historyData)}
+				onClick={() =>
+					updateLocalData('history', {
+						isViewingHistory: !historyData.isViewingHistory,
+					})
+				}
+			/>
+		);
+	};
+
+	const renderBottom = () => {
+		return (
+			<div className="bottom">
+				{pubData.isRelease ? renderReleaseBottomButtons() : renderDraftBottomButtons()}
 			</div>
+		);
+	};
+
+	return (
+		<div className="pub-header-main-component">
+			<Overlay
+				isOpen={isShareOpen}
+				onClose={() => {
+					setIsShareOpen(false);
+				}}
+			>
+				<SharePanel pubData={pubData} updateLocalData={updateLocalData} />
+			</Overlay>
+			{renderTop()}
+			<div className="hairline" />
+			{renderMiddle()}
+			{renderBottom()}
 		</div>
 	);
 };

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { setLocalHighlight } from '@pubpub/editor';
+
 import { usePageContext } from 'utils/hooks';
+import { PubHistoryViewer } from 'components';
+
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
 import PubFileImport from './PubFileImport';
@@ -74,10 +77,9 @@ const PubDocument = (props) => {
 					editorWrapperRef={editorWrapperRef}
 				/>
 			)}
-			{isViewingHistory && <PubHistory {...props} />}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
-					{pubData.isHistoricalDoc && pubData.isRelease && (
+					{!!(pubData.isHistoricalDoc && pubData.isRelease) && (
 						<PubHistoricalNotice pubData={pubData} />
 					)}
 					<PubBody
@@ -103,6 +105,13 @@ const PubDocument = (props) => {
 					)}
 				</div>
 				<div className="side-content" ref={sideContentRef} />
+				{isViewingHistory && (
+					<PubHistoryViewer
+						updateHistoryData={(next) => updateLocalData('history', next)}
+						historyData={historyData}
+						pubData={pubData}
+					/>
+				)}
 			</div>
 			<PubBottom
 				pubData={pubData}

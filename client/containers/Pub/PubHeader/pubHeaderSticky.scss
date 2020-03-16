@@ -10,10 +10,6 @@
     display: flex;
     color: inherit;
 
-    .bp3-button, .bp3-icon {
-        color: inherit;
-    }
-
     .sticky-title {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -28,6 +24,11 @@
         white-space: nowrap;
         display: flex;
         align-items: center;
+
+        .bp3-button,
+        .bp3-icon {
+            color: inherit;
+        }
 
         .dot {
             padding: 0em 0.3em;

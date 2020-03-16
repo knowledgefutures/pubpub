@@ -1,0 +1,46 @@
+.pub-history-viewer-component {
+    display: flex;
+    flex-direction: column;
+    max-height: 400px;
+    max-width: 400px;
+
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 30;
+
+    .playback-button-group {
+        margin: 0 auto;
+        margin-bottom: 5px;
+    }
+
+    .bp3-slider {
+        margin-bottom: 40px;
+        .bp3-slider-label {
+            white-space: nowrap;
+        }
+        .bp3-slider-axis {
+            & > .bp3-slider-label {
+                transform: translate(0, 20px);
+                &:first-child {
+                    left: 0;
+                }
+                &:last-child {
+                    right: 0;
+                    left: unset !important;
+                }
+                .date-and-time > .time {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    ul.bp3-menu {
+        position: relative;
+        overflow: scroll;
+        border-radius: 4px;
+        background: darken(white, 4%);
+        border: 4px solid darken(white, 4%);
+    }
+}

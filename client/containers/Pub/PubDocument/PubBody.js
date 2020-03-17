@@ -152,7 +152,6 @@ const PubBody = (props) => {
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;
-	const isHistoricalDoc = pubData.isHistoricalDoc || isViewingHistory;
 	const isReadOnly = pubData.isReadOnly || isViewingHistory;
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
@@ -194,7 +193,7 @@ const PubBody = (props) => {
 				isReadOnly={isReadOnly}
 				onKeyPress={markLastInput}
 				onChange={(editorChangeObject) => {
-					if (!isHistoricalDoc) {
+					if (!isViewingHistory) {
 						updateLocalData('collab', { editorChangeObject: editorChangeObject });
 					}
 				}}
@@ -209,7 +208,7 @@ const PubBody = (props) => {
 					}
 				}}
 				collaborativeOptions={
-					!isHistoricalDoc
+					!isViewingHistory
 						? {
 								firebaseRef: firebaseBranchRef,
 								clientData: props.collabData.localCollabUser,
@@ -282,7 +281,7 @@ const PubBody = (props) => {
 				const threadNumber = embedDiscussions.current[embedId].threadNumber;
 				// const threads = nestDiscussionsToThreads(pubData.discussions);
 				const threads = pubData.discussions;
-				const activeThread = threads.find((thread) => thread.number === threadNumber)
+				const activeThread = threads.find((thread) => thread.number === threadNumber);
 
 				return ReactDOM.createPortal(
 					<React.Fragment>

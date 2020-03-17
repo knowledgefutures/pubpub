@@ -99,7 +99,7 @@ const PubInlineMenu = (props) => {
 						/>
 					);
 				})}
-			{(canView || canCreateDiscussions) && !pubData.isHistoricalDoc && (
+			{(canView || canCreateDiscussions) && (
 				<Button
 					minimal={true}
 					icon={<Icon icon="chat" />}

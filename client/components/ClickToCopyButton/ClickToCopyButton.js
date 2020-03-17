@@ -11,6 +11,7 @@ const propTypes = {
 	copyString: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
 	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 	tooltipPosition: PropTypes.string,
+	usePortal: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -20,6 +21,7 @@ const defaultProps = {
 	children: null,
 	className: '',
 	tooltipPosition: Position.TOP,
+	usePortal: true,
 };
 
 const ClickToCopyButton = (props) => {
@@ -31,6 +33,7 @@ const ClickToCopyButton = (props) => {
 		copyString,
 		icon,
 		tooltipPosition,
+		usePortal,
 	} = props;
 	const [hasCopied, setHasCopied] = useState(false);
 	const [copyState, copyToClipboard] = useCopyToClipboard();
@@ -63,6 +66,7 @@ const ClickToCopyButton = (props) => {
 
 	return (
 		<Tooltip
+			usePortal={usePortal}
 			content={getTooltipText()}
 			onClosed={() => setHasCopied(false)}
 			className={className}

@@ -1,17 +1,27 @@
 .pub-history-viewer-component {
     display: flex;
+    position: relative;
     flex-direction: column;
-    max-height: 400px;
+    max-height: 600px;
     max-width: 400px;
+    margin-top: 25px;
 
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 30;
+    h4 {
+        margin-bottom: 0;
+    }
+
+    .top-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 
     .playback-button-group {
-        margin: 0 auto;
+        display: flex;
         margin-bottom: 5px;
+        .bp3-popover-wrapper {
+            flex: unset;
+        }
     }
 
     .bp3-slider {

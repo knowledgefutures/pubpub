@@ -335,6 +335,7 @@ const StatefulPubHistoryWrapper = () => {
 			pubData={pubData}
 			historyData={historyData}
 			updateHistoryData={updateHistoryData}
+			onClose={() => {}}
 		/>
 	);
 };

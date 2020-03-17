@@ -33,7 +33,6 @@ export default (pub, initialData, historyKey, isRelease) => {
 				return item.collection.isPublic || canAdminCommunity;
 		  })
 		: [];
-	const isHistoricalDoc = historyKey && historyKey < pub.releases.length;
 
 	return {
 		...pub,
@@ -42,8 +41,7 @@ export default (pub, initialData, historyKey, isRelease) => {
 		forks: forks,
 		reviews: reviews,
 		collectionPubs: filteredCollectionPubs,
-		isHistoricalDoc: isHistoricalDoc,
-		isReadOnly: isHistoricalDoc || isRelease || !(canEdit || canEditDraft),
+		isReadOnly: isRelease || !(canEdit || canEditDraft),
 		isRelease: isRelease,
 		releases: sortedReleases,
 		currentReleaseIndex: currentReleaseIndex,

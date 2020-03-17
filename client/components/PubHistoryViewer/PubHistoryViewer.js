@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useDebounce } from 'react-use';
-import { Button, ButtonGroup, Card, Menu, MenuItem, Slider } from '@blueprintjs/core';
+import { Button, ButtonGroup, Menu, MenuItem, Slider } from '@blueprintjs/core';
 
 import { formatDate } from 'shared/utils/dates';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import { ClickToCopyButton } from 'components';
 import { usePageContext } from 'utils/hooks';
+import { useSticky } from 'utils/useSticky';
 
 require('./pubHistoryViewer.scss');
 
@@ -16,6 +16,7 @@ const propTypes = {
 		currentKey: PropTypes.number,
 		latestKey: PropTypes.number,
 	}).isRequired,
+	onClose: PropTypes.func.isRequired,
 	pubData: PropTypes.shape({
 		createdAt: PropTypes.string.isRequired,
 		releases: PropTypes.arrayOf(
@@ -28,26 +29,31 @@ const propTypes = {
 };
 const defaultProps = {};
 
-const dateTimestamps = (timestamps, minIntervalMs = 1000 * 60 * 30) => {
+const bucketTimestamp = (timestamp, intervalMs) => {
+	return Math.floor(timestamp / intervalMs);
+};
+
+const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 	const buckets = [];
-	let currentBucket = [];
-	let currentStartTimestamp = null;
+	let currentBucketItems = [];
+	let currentBucketValue = null;
 	const keys = Object.keys(timestamps);
 	for (let idx = 0; idx < keys.length; ++idx) {
 		const historyKey = parseInt(keys[idx], 10);
 		const timestamp = timestamps[historyKey];
-		if (!currentStartTimestamp) {
-			currentStartTimestamp = timestamp;
+		const bucketValue = bucketTimestamp(timestamp, intervalMs);
+		if (!currentBucketValue) {
+			currentBucketValue = bucketValue;
 		}
-		if (timestamp - currentStartTimestamp > minIntervalMs) {
-			buckets.push(currentBucket);
-			currentBucket = [[historyKey, timestamp]];
-			currentStartTimestamp = timestamp;
+		if (bucketValue !== currentBucketValue) {
+			buckets.push(currentBucketItems);
+			currentBucketItems = [[historyKey, timestamp]];
+			currentBucketValue = bucketValue;
 		} else {
-			currentBucket.push([historyKey, timestamp]);
+			currentBucketItems.push([historyKey, timestamp]);
 		}
 	}
-	buckets.push(currentBucket);
+	buckets.push(currentBucketItems);
 	return buckets
 		.filter((bucket) => bucket.length > 0)
 		.map((bucket) => {
@@ -95,7 +101,7 @@ const getDateForHistoryKey = (historyKey, timestamps) => {
 };
 
 const PubHistoryViewer = (props) => {
-	const { historyData, pubData, updateHistoryData } = props;
+	const { historyData, pubData, updateHistoryData, onClose } = props;
 	const { timestamps, latestKey, currentKey } = historyData;
 	const { releases } = pubData;
 	const { communityData } = usePageContext();
@@ -113,6 +119,11 @@ const PubHistoryViewer = (props) => {
 		...edits,
 		...datedReleases,
 	].sort((a, b) => (a.date > b.date ? 1 : -1));
+
+	useSticky({
+		selector: '.pub-history-viewer-component',
+		offset: 37 + 25,
+	});
 
 	useEffect(() => {
 		setSliderValue(currentKey);
@@ -134,8 +145,6 @@ const PubHistoryViewer = (props) => {
 		}
 	}, [currentKey]);
 
-	useDebounce(() => updateHistoryData({ currentKey: sliderValue }), 100, [sliderValue]);
-
 	const canChangeCurrentKeyBy = (step) => {
 		const proposedKey = currentKey + step;
 		return proposedKey >= 0 && proposedKey <= latestKey;
@@ -156,12 +165,12 @@ const PubHistoryViewer = (props) => {
 				</span>
 			);
 		}
-		return 'loading date...';
+		return 'Release slider to load';
 	};
 
 	const renderMenuItemForEntry = (entry) => {
 		const { date } = entry;
-		const key = entry.type + '__' + formatDate(date, { includeTime: true });
+		const key = entry.type + '_' + date.valueOf().toString();
 		if (entry.type === 'edits') {
 			const {
 				range: [startKey, endKey],
@@ -203,7 +212,14 @@ const PubHistoryViewer = (props) => {
 				includeDate: false,
 				includePreposition: true,
 			});
-			return <MenuItem text={`Created ${dateString}`} disabled={true} icon="clean" />;
+			return (
+				<MenuItem
+					key="created"
+					text={`Created ${dateString}`}
+					disabled={true}
+					icon="clean"
+				/>
+			);
 		}
 		return null;
 	};
@@ -218,22 +234,30 @@ const PubHistoryViewer = (props) => {
 		);
 		const menuItems = dateEntries.map(renderMenuItemForEntry);
 		return (
-			<>
+			<div key={dateString}>
 				{header}
 				{menuItems}
-			</>
+			</div>
 		);
 	};
 
 	return (
-		<Card className="pub-history-viewer-component" elevation={2}>
+		<div className="pub-history-viewer-component">
+			<div className="top-line">
+				<div className="title-and-spinner">
+					<h4>Pub History</h4>
+				</div>
+				<Button minimal small icon="cross" onClick={onClose} className="close-button" />
+			</div>
 			<ButtonGroup className="playback-button-group">
 				<Button
+					minimal
 					icon="double-chevron-left"
 					disabled={!canChangeCurrentKeyBy(-50)}
 					onClick={() => changeCurrentKeyBy(-50)}
 				/>
 				<Button
+					minimal
 					icon="chevron-left"
 					disabled={!canChangeCurrentKeyBy(-1)}
 					onClick={() => changeCurrentKeyBy(-1)}
@@ -246,17 +270,19 @@ const PubHistoryViewer = (props) => {
 					beforeCopyPrompt="Copy link to this point in history"
 				>
 					{(handleClick) => (
-						<Button icon="link" onClick={handleClick}>
+						<Button minimal icon="link" onClick={handleClick}>
 							Link here
 						</Button>
 					)}
 				</ClickToCopyButton>
 				<Button
+					minimal
 					icon="chevron-right"
 					disabled={!canChangeCurrentKeyBy(1)}
 					onClick={() => changeCurrentKeyBy(1)}
 				/>
 				<Button
+					minimal
 					icon="double-chevron-right"
 					disabled={!canChangeCurrentKeyBy(50)}
 					onClick={() => changeCurrentKeyBy(50)}
@@ -270,13 +296,14 @@ const PubHistoryViewer = (props) => {
 				labelStepSize={latestKey}
 				value={sliderValue}
 				onChange={setSliderValue}
+				onRelease={(value) => updateHistoryData({ currentKey: value })}
 			/>
 			<Menu>
 				{bucketByDate(entries).map(([dateString, dateEntries]) =>
 					renderDateEntries(dateString, dateEntries),
 				)}
 			</Menu>
-		</Card>
+		</div>
 	);
 };
 

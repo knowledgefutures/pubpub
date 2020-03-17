@@ -31,14 +31,15 @@ const defaultProps = {
 const PubDocument = (props) => {
 	const { pubData, historyData, collabData, firebaseBranchRef, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
+	const { editorChangeObject } = collabData;
 	const { locationData, scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
-	// const [tempId, setTempId] = useState(uuidv4());
-	const editorChangeObject = collabData.editorChangeObject;
 	const mainContentRef = useRef(null);
 	const sideContentRef = useRef(null);
 	const editorWrapperRef = useRef(null);
+
+	const updateHistoryData = (next) => updateLocalData('history', next);
 
 	useEffect(() => {
 		/* TODO: Clean up the hanlding of permalink generation and scrolling */
@@ -70,18 +71,21 @@ const PubDocument = (props) => {
 	// const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			{!pubData.isReadOnly && !isViewingHistory && (
+			{!pubData.isReadOnly && (
 				<PubHeaderFormatting
 					pubData={pubData}
 					collabData={collabData}
 					editorWrapperRef={editorWrapperRef}
+					disabled={isViewingHistory}
 				/>
 			)}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
-					{!!(pubData.isHistoricalDoc && pubData.isRelease) && (
-						<PubHistoricalNotice pubData={pubData} />
-					)}
+					<PubHistoricalNotice
+						pubData={pubData}
+						historyData={historyData}
+						updateHistoryData={updateHistoryData}
+					/>
 					<PubBody
 						editorWrapperRef={editorWrapperRef}
 						pubData={pubData}
@@ -96,7 +100,7 @@ const PubDocument = (props) => {
 							updateLocalData={updateLocalData}
 						/>
 					)}
-					{!pubData.isHistoricalDoc && (
+					{!isViewingHistory && (
 						<PubInlineMenu
 							pubData={pubData}
 							collabData={collabData}
@@ -104,14 +108,16 @@ const PubDocument = (props) => {
 						/>
 					)}
 				</div>
-				<div className="side-content" ref={sideContentRef} />
-				{isViewingHistory && (
-					<PubHistoryViewer
-						updateHistoryData={(next) => updateLocalData('history', next)}
-						historyData={historyData}
-						pubData={pubData}
-					/>
-				)}
+				<div className="side-content" ref={sideContentRef}>
+					{isViewingHistory && (
+						<PubHistoryViewer
+							updateHistoryData={updateHistoryData}
+							historyData={historyData}
+							pubData={pubData}
+							onClose={() => updateLocalData('history', { isViewingHistory: false })}
+						/>
+					)}
+				</div>
 			</div>
 			<PubBottom
 				pubData={pubData}

@@ -84,6 +84,8 @@ class PubSyncManager extends React.Component {
 	constructor(props) {
 		super(props);
 		const { historyData } = this.props.pubData;
+		const isViewingHistory = historyData.currentKey !== historyData.latestKey;
+		const isShowingInitialHistoryWarning = isViewingHistory;
 		this.state = {
 			firebaseRootRef: undefined,
 			firebaseBranchRef: undefined,
@@ -98,7 +100,8 @@ class PubSyncManager extends React.Component {
 				...historyData,
 				outstandingRequests: 0,
 				latestKeyReceivedAt: null,
-				isViewingHistory: false,
+				isViewingHistory: isViewingHistory,
+				isShowingInitialHistoryWarning: isShowingInitialHistoryWarning,
 			},
 		};
 		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));
@@ -289,7 +292,8 @@ class PubSyncManager extends React.Component {
 		} = this.state;
 		const now = Date.now();
 		const nextHistoryData = { ...prevHistoryData, ...newHistoryData };
-		const currentCollabDoc = editorChangeObject && editorChangeObject.view.state.doc;
+		const currentCollabDoc =
+			editorChangeObject && editorChangeObject.view && editorChangeObject.view.state.doc;
 		if (currentCollabDoc && nextHistoryData.currentKey === nextHistoryData.latestKey) {
 			this.idleStateUpdater.setState(({ historyData }) => {
 				const nextTimestamp = historyData.timestamps[nextHistoryData.currentKey] || now;

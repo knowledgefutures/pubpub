@@ -16,8 +16,28 @@
         justify-content: space-between;
     }
 
+    .title-and-spinner {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        .bp3-spinner {
+            opacity: 0;
+            transition: 0.1s ease-out opacity;
+            margin-left: 5px;
+        }
+    }
+
+    &.loading {
+        .title-and-spinner {
+            .bp3-spinner {
+                opacity: 1;
+            }
+        }
+    }
+
     .playback-button-group {
         display: flex;
+        justify-content: space-evenly;
         margin-bottom: 5px;
         .bp3-popover-wrapper {
             flex: unset;

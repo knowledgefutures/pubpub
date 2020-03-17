@@ -8,6 +8,7 @@ import { Icon } from 'components';
 require('./largeHeaderButton.scss');
 
 const propTypes = {
+	disabled: PropTypes.bool,
 	icon: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
 	label: PropTypes.oneOfType([
 		PropTypes.shape({
@@ -26,6 +27,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+	disabled: false,
 	icon: null,
 	label: undefined,
 	className: '',
@@ -35,10 +37,11 @@ const defaultProps = {
 };
 
 const LargeHeaderButton = React.forwardRef((props, ref) => {
-	const { icon, label, className, outerLabel, onClick, tagName, ...restProps } = props;
+	const { icon, disabled, label, className, outerLabel, onClick, tagName, ...restProps } = props;
 	const hasStackedLabel = typeof label === 'object' && label.top && label.bottom;
 	return (
 		<Button
+			disabled={disabled}
 			as={tagName}
 			className={classNames(
 				'large-header-button-component',

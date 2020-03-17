@@ -4,6 +4,12 @@
     @include base-button;
     display: inline-flex;
     padding: 0;
+    
+    &:disabled {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
     .button-box {
         display: flex;
         flex-shrink: 0;

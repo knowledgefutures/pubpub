@@ -254,6 +254,7 @@ const PubHeaderMain = (props) => {
 			<LargeHeaderButton
 				icon="history"
 				outerLabel={getHistoryButtonLabel(pubData, historyData)}
+				disabled={historyData.loadedIntoHistory}
 				onClick={() =>
 					updateLocalData('history', {
 						isViewingHistory: !historyData.isViewingHistory,

@@ -85,7 +85,6 @@ class PubSyncManager extends React.Component {
 		super(props);
 		const { historyData } = this.props.pubData;
 		const isViewingHistory = historyData.currentKey !== historyData.latestKey;
-		const isShowingInitialHistoryWarning = isViewingHistory;
 		this.state = {
 			firebaseRootRef: undefined,
 			firebaseBranchRef: undefined,
@@ -101,7 +100,8 @@ class PubSyncManager extends React.Component {
 				outstandingRequests: 0,
 				latestKeyReceivedAt: null,
 				isViewingHistory: isViewingHistory,
-				isShowingInitialHistoryWarning: isShowingInitialHistoryWarning,
+				loadedIntoHistory: isViewingHistory,
+				historyDocKey: `history-${historyData.currentKey}`,
 			},
 		};
 		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));

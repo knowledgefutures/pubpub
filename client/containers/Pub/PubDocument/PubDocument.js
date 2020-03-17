@@ -81,11 +81,7 @@ const PubDocument = (props) => {
 			)}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
-					<PubHistoricalNotice
-						pubData={pubData}
-						historyData={historyData}
-						updateHistoryData={updateHistoryData}
-					/>
+					<PubHistoricalNotice pubData={pubData} historyData={historyData} />
 					<PubBody
 						editorWrapperRef={editorWrapperRef}
 						pubData={pubData}
@@ -109,7 +105,7 @@ const PubDocument = (props) => {
 					)}
 				</div>
 				<div className="side-content" ref={sideContentRef}>
-					{isViewingHistory && (
+					{isViewingHistory && !pubData.isRelease && (
 						<PubHistoryViewer
 							updateHistoryData={updateHistoryData}
 							historyData={historyData}

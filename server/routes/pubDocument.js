@@ -19,65 +19,110 @@ import {
 	enrichPubCitations,
 } from '../utils/queryHelpers';
 
-app.get(
-	['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey', '/pub/:pubSlug/release/:historyKey'],
-	async (req, res, next) => {
-		if (!hostIsValid(req, 'community')) {
-			return next();
-		}
-		try {
-			const initialData = await getInitialData(req);
-			const { canView, canViewDraft } = initialData.scopeData.activePermissions;
-			const isRelease = req.path.indexOf(`/pub/${req.params.pubSlug}/release`) > -1;
-			const branchType = isRelease ? 'public' : 'draft';
-			const hasHistoryKey = req.params.historyKey !== undefined;
-			const historyKeyInt = parseInt(req.params.historyKey, 10);
-			const isHistoryKeyInvalid = hasHistoryKey && Number.isNaN(historyKeyInt);
-			if ((!isRelease && !canView && !canViewDraft) || isHistoryKeyInvalid) {
-				throw new Error('Pub Not Found');
-			}
-			let pubData = await getPub(req.params.pubSlug, initialData.communityData.id);
-			pubData = sanitizePub(pubData, initialData, historyKeyInt, isRelease);
-			if (!pubData) {
-				throw new Error('Pub Not Found');
-			}
-			/* versionNumber is 0-indexed in firebase. historyKey is 1-indexed for UI purposes. */
-			pubData = await enrichPubFirebaseDoc(
-				pubData,
-				hasHistoryKey ? historyKeyInt - 1 : null,
-				branchType,
-			);
-			pubData = await enrichPubFirebaseToken(pubData, initialData);
-			pubData = await enrichPubCitations(pubData, initialData);
+const renderPubDocument = (res, pubData, initialData) => {
+	return renderToNodeStream(
+		res,
+		<Html
+			chunkName="Pub"
+			initialData={initialData}
+			viewData={{ pubData: pubData }}
+			headerComponents={generateMetaComponents({
+				initialData: initialData,
+				title: pubData.title,
+				contextTitle: getPubPageContextTitle(pubData, initialData.communityData),
+				description: pubData.description,
+				image: pubData.avatar,
+				attributions: pubData.attributions,
+				publishedAt: pubData.originallyPublishedAt || pubData.firstPublishedAt,
+				doi: pubData.doi,
+				collection: chooseCollectionForPub(pubData, initialData.locationData),
+				download: getPDFDownload(pubData),
+				textAbstract: pubData.initialDoc ? getTextAbstract(pubData.initialDoc) : '',
+				notes: getGoogleScholarNotes(pubData.citations.concat(pubData.footnotes)),
+				unlisted: !pubData.isRelease,
+			})}
+		/>,
+	);
+};
 
-			/* We calculate titleWithContext in generateMetaComponents. Since we will use */
-			/* titleWithContext in other locations (e.g. search), we should eventually */
-			/* write a helper function that generates these parameters. */
-			return renderToNodeStream(
-				res,
-				<Html
-					chunkName="Pub"
-					initialData={initialData}
-					viewData={{ pubData: pubData }}
-					headerComponents={generateMetaComponents({
-						initialData: initialData,
-						title: pubData.title,
-						contextTitle: getPubPageContextTitle(pubData, initialData.communityData),
-						description: pubData.description,
-						image: pubData.avatar,
-						attributions: pubData.attributions,
-						publishedAt: pubData.originallyPublishedAt || pubData.firstPublishedAt,
-						doi: pubData.doi,
-						collection: chooseCollectionForPub(pubData, initialData.locationData),
-						download: getPDFDownload(pubData),
-						textAbstract: pubData.initialDoc ? getTextAbstract(pubData.initialDoc) : '',
-						notes: getGoogleScholarNotes(pubData.citations.concat(pubData.footnotes)),
-						unlisted: !isRelease,
-					})}
-				/>,
-			);
-		} catch (err) {
-			return handleErrors(req, res, next)(err);
+const throwPubNotFoundError = () => {
+	throw new Error('Pub not found');
+};
+
+const getEnrichedAndSanitizedPubData = async ({
+	pubSlug,
+	historyKey,
+	initialData,
+	branchType,
+	releaseNumber,
+}) => {
+	let pubData = await getPub(pubSlug, initialData.communityData.id);
+	if (!pubData) {
+		throwPubNotFoundError();
+	}
+	pubData = await sanitizePub(pubData, initialData, releaseNumber);
+	if (!pubData) {
+		throwPubNotFoundError();
+	}
+	pubData = await enrichPubFirebaseDoc(pubData, historyKey, branchType);
+	pubData = await enrichPubFirebaseToken(pubData, initialData);
+	pubData = await enrichPubCitations(pubData, initialData);
+	return pubData;
+};
+
+app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
+	if (!hostIsValid(req, 'community')) {
+		return next();
+	}
+	try {
+		const { releaseNumber: releaseNumberString, pubSlug } = req.params;
+		const initialData = await getInitialData(req);
+		const releaseNumber = parseInt(releaseNumberString, 10);
+		const { canView } = initialData.scopeData.activePermissions;
+
+		if (!canView || Number.isNaN(releaseNumber)) {
+			throwPubNotFoundError();
 		}
-	},
-);
+
+		const pubData = await getEnrichedAndSanitizedPubData({
+			pubSlug: pubSlug,
+			historyKey: releaseNumber - 1,
+			releaseNumber: releaseNumber,
+			branchType: 'public',
+			initialData: initialData,
+		});
+
+		return renderPubDocument(res, pubData, initialData);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+app.get(['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'], async (req, res, next) => {
+	if (!hostIsValid(req, 'community')) {
+		return next();
+	}
+	try {
+		const initialData = await getInitialData(req);
+		const { historyKey: historyKeyString, pubSlug } = req.params;
+		const { canViewDraft, canView } = initialData.scopeData.activePermissions;
+		const hasHistoryKey = historyKeyString !== undefined;
+		const historyKey = parseInt(historyKeyString, 10);
+		const isHistoryKeyInvalid = hasHistoryKey && Number.isNaN(historyKey);
+
+		if ((!canViewDraft && !canView) || isHistoryKeyInvalid) {
+			throwPubNotFoundError();
+		}
+
+		const pubData = await getEnrichedAndSanitizedPubData({
+			pubSlug: pubSlug,
+			historyKey: hasHistoryKey ? historyKey : null,
+			branchType: 'draft',
+			initialData: initialData,
+		});
+
+		return renderPubDocument(res, pubData, initialData);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});

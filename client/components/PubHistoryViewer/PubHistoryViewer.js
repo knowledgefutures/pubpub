@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Menu, MenuItem, Slider } from '@blueprintjs/core';
+import classNames from 'classnames';
+import { Button, ButtonGroup, Menu, MenuItem, Slider, Spinner } from '@blueprintjs/core';
 
 import { formatDate } from 'shared/utils/dates';
 import { pubUrl } from 'shared/utils/canonicalUrls';
@@ -15,6 +16,7 @@ const propTypes = {
 		timestamps: PropTypes.object,
 		currentKey: PropTypes.number,
 		latestKey: PropTypes.number,
+		outstandingRequests: PropTypes.number,
 	}).isRequired,
 	onClose: PropTypes.func.isRequired,
 	pubData: PropTypes.shape({
@@ -102,12 +104,19 @@ const getDateForHistoryKey = (historyKey, timestamps) => {
 
 const PubHistoryViewer = (props) => {
 	const { historyData, pubData, updateHistoryData, onClose } = props;
-	const { timestamps, latestKey, currentKey } = historyData;
+	const {
+		timestamps,
+		latestKey,
+		currentKey,
+		outstandingRequests,
+		loadedIntoHistory,
+	} = historyData;
 	const { releases } = pubData;
 	const { communityData } = usePageContext();
 	const [sliderValue, setSliderValue] = useState(currentKey);
 	const historyScrollRef = useRef(null);
 	const hasScrolledRef = useRef(null);
+	const isLoadingHistory = outstandingRequests > 0;
 
 	historyScrollRef.current = null;
 
@@ -165,7 +174,7 @@ const PubHistoryViewer = (props) => {
 				</span>
 			);
 		}
-		return 'Release slider to load';
+		return isLoadingHistory ? 'Loading...' : 'Release slider to load';
 	};
 
 	const renderMenuItemForEntry = (entry) => {
@@ -242,12 +251,15 @@ const PubHistoryViewer = (props) => {
 	};
 
 	return (
-		<div className="pub-history-viewer-component">
+		<div className={classNames('pub-history-viewer-component', isLoadingHistory && 'loading')}>
 			<div className="top-line">
 				<div className="title-and-spinner">
 					<h4>Pub History</h4>
+					<Spinner size={16} />
 				</div>
-				<Button minimal small icon="cross" onClick={onClose} className="close-button" />
+				{!loadedIntoHistory && (
+					<Button minimal small icon="cross" onClick={onClose} className="close-button" />
+				)}
 			</div>
 			<ButtonGroup className="playback-button-group">
 				<Button

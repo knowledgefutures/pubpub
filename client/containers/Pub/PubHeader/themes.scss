@@ -24,6 +24,12 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
     }
 }
 
+@mixin active-box($highlight) {
+    &.active {
+        border: 2px solid $highlight;
+    }
+}
+
 @mixin shadow-box($box-shadow) {
     position: relative;
     transition: background-color 0.1s ease-out;
@@ -66,10 +72,11 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
     }
 }
 
-@mixin simple-box-theme($background, $hover-background, $box-shadow) {
+@mixin simple-box-theme($background, $highlight, $hover-background, $box-shadow) {
     .pub-header-themed-box {
         background: $background;
         @include shadow-box($box-shadow);
+        @include active-box($highlight);
     }
     .pub-header-themed-box-hover-target {
         &:hover {
@@ -82,7 +89,7 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
 }
 
 @mixin translucent-box-theme($base-color, $box-shadow) {
-    @include simple-box-theme(rgba($base-color, 0.2), rgba($base-color, 0.3), $box-shadow);
+    @include simple-box-theme(rgba($base-color, 0.2), $base-color, rgba($base-color, 0.3), $box-shadow);
 }
 
 @mixin blocks-button($background-color, $box-shadow) {
@@ -159,6 +166,7 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
     @include color-theme(black, $off-black);
     @include simple-box-theme(
         $blueprint-style-btn-background,
+        black,
         $blueprint-style-btn-background-hover,
         $blueprint-style-btn-shadow
     );

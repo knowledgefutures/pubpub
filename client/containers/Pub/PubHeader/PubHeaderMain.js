@@ -255,6 +255,7 @@ const PubHeaderMain = (props) => {
 				)}
 				<LargeHeaderButton
 					icon="history"
+					active={historyData.isViewingHistory}
 					outerLabel={getHistoryButtonLabelForTimestamp(
 						latestTimestamp,
 						'draft last updated',

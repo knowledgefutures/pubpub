@@ -8,6 +8,7 @@ import { Icon } from 'components';
 require('./largeHeaderButton.scss');
 
 const propTypes = {
+	active: PropTypes.bool,
 	className: PropTypes.string,
 	disabled: PropTypes.bool,
 	icon: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
@@ -28,6 +29,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+	active: false,
 	className: '',
 	disabled: false,
 	icon: null,
@@ -40,6 +42,7 @@ const defaultProps = {
 
 const LargeHeaderButton = React.forwardRef((props, ref) => {
 	const {
+		active,
 		className,
 		disabled,
 		icon,
@@ -65,7 +68,12 @@ const LargeHeaderButton = React.forwardRef((props, ref) => {
 			{...restProps}
 		>
 			<div
-				className={classNames('button-box', 'pub-header-themed-box', !label && 'no-label')}
+				className={classNames(
+					'button-box',
+					'pub-header-themed-box',
+					!label && 'no-label',
+					active && 'active',
+				)}
 			>
 				{typeof icon === 'string' ? <Icon icon={icon} iconSize={22} /> : icon}
 				{showCaret && <Icon icon="caret-down" className="caret" iconSize={10} />}

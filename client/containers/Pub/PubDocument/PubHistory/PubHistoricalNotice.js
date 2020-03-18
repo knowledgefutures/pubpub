@@ -15,7 +15,7 @@ const propTypes = {
 		isRelease: PropTypes.bool,
 		releases: PropTypes.arrayOf(
 			PropTypes.shape({
-				createdAt: PropTypes.string,
+				createdAt: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
 			}),
 		).isRequired,
 	}).isRequired,

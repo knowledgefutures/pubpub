@@ -49,7 +49,9 @@ app.use((req, res, next) => {
 			'/news/lifetimes-of-astronomical-papers/': 'https://baas.aas.org/pub/2019i0207',
 			'/news-listing': 'https://baas.aas.org/news',
 			'/news/principles-of-editing/': 'https://baas.aas.org/pub/2019i0201',
+			'/obituaries/': 'https://baas.aas.org/obituaries',
 			'/obituaries-listing': 'https://baas.aas.org/obituaries',
+			'/obituaries-listing/': 'https://baas.aas.org/obituaries',
 		},
 	};
 

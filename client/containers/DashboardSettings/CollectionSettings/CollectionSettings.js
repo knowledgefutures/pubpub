@@ -4,7 +4,7 @@ import { usePageContext } from 'utils/hooks';
 import { AttributionEditor, DashboardFrame, SettingsSection } from 'components';
 
 // TODO(ian): this should probably be moved somewhere else, but not sure where yet
-import { useCollectionState } from '../../DashboardOverview/collectionState';
+import { useCollectionState } from '../../DashboardOverview/CollectionOverview/collectionState';
 
 import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';

@@ -197,7 +197,8 @@ const FormattingBar = (props) => {
 		const isOpen = openedButton === button;
 		const isIndicated = indicatedButtons.includes(button) && !isOpen;
 		const isActive = !isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
-		const isDisabled = noFunction || (openedButton && !isOpen && !isIndicated);
+		const isDisabled =
+			noFunction || (openedButton && !isOpen && !isIndicated && !controlsPosition);
 		const maybeEditorChangeObject =
 			button.key === 'media' ? { editorChangeObject: editorChangeObject } : {};
 		return (

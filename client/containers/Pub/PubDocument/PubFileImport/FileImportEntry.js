@@ -92,7 +92,7 @@ const FileImportEntry = (props) => {
 
 	return (
 		<div className="file-import-entry">
-			<div className="file-title">
+			<div className="file-title" title={localPath}>
 				<span className="start" aria-label={localPath}>
 					<span aria-hidden="true">{displayTitleStart}</span>
 				</span>

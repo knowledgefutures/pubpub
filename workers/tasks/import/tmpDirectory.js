@@ -44,7 +44,8 @@ const streamS3UrlToFile = (sourceUrl, filePath) =>
 
 export const buildTmpDirectory = async (sourceFiles) => {
 	const filesMap = new Map();
-	const tmpDir = await tmp.dir();
+	const tmpDirPossiblySymlinked = await tmp.dir();
+	const tmpDir = fs.opendirSync(fs.realpathSync(tmpDirPossiblySymlinked.path));
 	await Promise.all(
 		sourceFiles.map(async (sourceFile) => {
 			const { url, localPath } = sourceFile;

@@ -57,8 +57,11 @@ $drop-area-bkg: rgba(138, 155, 168, .15);
         text-align: right;
     }
     .dialog-footer {
-        .bp3-button:not(:last-child) {
+        .bp3-button {
             margin-right: 10px;
+        }
+        & > :last-child {
+            margin-right: 0;
         }
     }
 }

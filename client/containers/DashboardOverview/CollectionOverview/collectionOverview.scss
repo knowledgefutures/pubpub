@@ -1,0 +1,10 @@
+.content-overview-component {
+	.linked-page-select-button {
+		max-width: 250px;
+		.bp3-button-text {
+			white-space: nowrap;
+			overflow-x: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+}

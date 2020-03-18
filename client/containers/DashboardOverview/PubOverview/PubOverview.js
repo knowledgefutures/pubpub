@@ -2,16 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 import TimeAgo from 'react-timeago';
-import { Button } from 'reakit';
 
 import { Byline, DashboardFrame, SettingsSection } from 'components';
-import { usePageContext } from 'utils/hooks';
 import { getAllPubContributors } from 'utils/pubContributors';
 
-require('./contentOverview.scss');
-
 const propTypes = {
-	pubData: PropTypes.object.isRequired,
+	overviewData: PropTypes.object.isRequired,
 };
 
 const PubOverview = (props) => {

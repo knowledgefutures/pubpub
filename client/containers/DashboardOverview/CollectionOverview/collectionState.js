@@ -35,18 +35,15 @@ const linkCollection = (collection, community) => {
 	return { ...collection, page: page, attributions: attributions };
 };
 
-export const useCollectionPubs = ({
-	overviewData,
-	scopeData: {
+export const useCollectionPubs = (scopeData, overviewData) => {
+	const {
 		elements: { activeCommunity, activeCollection },
-	},
-}) => {
+	} = scopeData;
 	const { pendingPromise } = usePendingChanges();
 
 	const [collectionPubs, setCollectionPubs] = useState(
 		linkCollectionPubs(overviewData, activeCollection),
 	);
-
 	const communityId = activeCommunity.id;
 	const collectionId = activeCollection.id;
 

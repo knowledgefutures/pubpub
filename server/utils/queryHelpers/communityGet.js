@@ -3,9 +3,6 @@ import { Collection, Community, Page } from '../../models';
 export default (locationData, whereQuery) => {
 	return Community.findOne({
 		where: whereQuery,
-		attributes: {
-			exclude: ['createdAt', 'updatedAt'],
-		},
 		include: [
 			{
 				model: Page,

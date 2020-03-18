@@ -122,16 +122,6 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         & > *:not(:last-child) {
             margin-right: 30px;
         }
-        .branch-selector-button {
-            .button-box {
-                position: relative;
-            }
-            .branch-icon-caret {
-                position: absolute;
-                top: 24px;
-                right: 8px;
-            }
-        }
     }
 }
 

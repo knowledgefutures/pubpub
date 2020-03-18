@@ -27,6 +27,11 @@
         &:not(.no-label) {
             min-width: 185px;
         }
+        .caret {
+            position: absolute;
+            top: 30px;
+            right: 3px;
+        }
         .label {
             font-size: 12px;
             text-transform: uppercase;

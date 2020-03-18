@@ -17,6 +17,7 @@ const propTypes = {
 		currentKey: PropTypes.number,
 		latestKey: PropTypes.number,
 		outstandingRequests: PropTypes.number,
+		loadedIntoHistory: PropTypes.bool,
 	}).isRequired,
 	onClose: PropTypes.func.isRequired,
 	pubData: PropTypes.shape({

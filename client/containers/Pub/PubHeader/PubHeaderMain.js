@@ -5,11 +5,12 @@ import dateFormat from 'dateformat';
 
 import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
-import { Byline, ClickToCopyButton, Overlay, PubThemePicker, PubHistoryViewer } from 'components';
+import { Byline, ClickToCopyButton, Overlay, PubThemePicker } from 'components';
+import { Menu, MenuItem } from 'components/Menu';
 import { pubUrl } from 'shared/utils/canonicalUrls';
-import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { formatDate } from 'shared/utils/dates';
 
-import BranchSelectorButton from './BranchSelectorButton';
 import CitationsPreview from './CitationsPreview';
 import CollectionsBar from './collections/CollectionsBar';
 import Download from './Download';
@@ -29,6 +30,8 @@ const propTypes = {
 		id: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
+		releases: PropTypes.arrayOf(PropTypes.shape({ createdAt: PropTypes.string })).isRequired,
+		releaseNumber: PropTypes.number,
 	}).isRequired,
 	historyData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -45,23 +48,18 @@ const getPublishDateString = (pubData) => {
 	return <i>Unpublished</i>;
 };
 
-const getHistoryButtonLabel = (pubData, historyData) => {
-	const updatedAtDate = getPubUpdatedDate({
-		pub: pubData,
-		branch: pubData.activeBranch,
-		historyData: historyData,
-	});
-	if (updatedAtDate) {
+const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) => {
+	if (timestamp) {
 		const now = Date.now();
-		const justNow = now - updatedAtDate < 60 * 1000;
-		const timeAgo = justNow ? 'just now' : <TimeAgo date={updatedAtDate} minPeriod={60} />;
+		const justNow = now - timestamp < 60 * 1000;
+		const timeAgo = justNow ? 'just now' : <TimeAgo date={timestamp} minPeriod={60} />;
 		return {
-			top: 'this branch last updated',
+			top: label,
 			bottom: timeAgo,
 		};
 	}
 	return {
-		top: 'this branch created',
+		top: noTimestampLabel,
 		bottom: 'just now',
 	};
 };
@@ -78,7 +76,7 @@ const getReviewUrl = (pubData, publicBranch) => {
 
 const PubHeaderMain = (props) => {
 	const { pubData, updateLocalData, historyData } = props;
-	const { title, description, doi, activeBranch } = pubData;
+	const { title, description, doi } = pubData;
 	const { communityData, scopeData } = usePageContext();
 	const [isShareOpen, setIsShareOpen] = useState(false);
 
@@ -95,13 +93,8 @@ const PubHeaderMain = (props) => {
 		}).catch(() => updateLocalData('pub', oldPubData));
 	};
 
-	const { canManage, canAdmin, canEdit } = scopeData.activePermissions;
-
+	const { canManage, canEdit } = scopeData.activePermissions;
 	const publishedAtString = getPublishDateString(pubData);
-	const publicBranch = pubData.branches.find((branch) => branch.title === 'public');
-	const onPublicBranch = activeBranch.title === 'public';
-	const canSubmitForReview = !onPublicBranch && canManage;
-	const canPublish = !onPublicBranch && canAdmin;
 
 	const renderTop = () => {
 		return (
@@ -202,6 +195,8 @@ const PubHeaderMain = (props) => {
 	};
 
 	const renderReleaseBottomButtons = () => {
+		const { releases, releaseNumber } = pubData;
+		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
 			<>
 				{canEdit && (
@@ -215,52 +210,64 @@ const PubHeaderMain = (props) => {
 						}}
 					/>
 				)}
-				<BranchSelectorButton pubData={pubData} />
+				<Menu
+					aria-label="Choose a historical release of this Pub"
+					disclosure={
+						<LargeHeaderButton
+							icon="history"
+							showCaret={true}
+							outerLabel={getHistoryButtonLabelForTimestamp(
+								latestReleaseTimestamp,
+								'last released',
+							)}
+						/>
+					}
+				>
+					{releases
+						.map((release, index) => (
+							<MenuItem
+								active={index === releaseNumber - 1}
+								icon={index === releaseNumber - 1 ? 'tick' : 'document-open'}
+								href={pubUrl(communityData, pubData, { releaseNumber: index + 1 })}
+								text={formatDate(release.createdAt, { includeTime: true })}
+							/>
+						))
+						.reverse()}
+				</Menu>
+			</>
+		);
+	};
+
+	const renderDraftBottomButtons = () => {
+		const { releases } = pubData;
+		const { latestKey, timestamps } = historyData;
+		const latestTimestamp = timestamps[latestKey];
+		const hasRelease = releases.length > 0;
+		return (
+			<>
+				{hasRelease && (
+					<LargeHeaderButton
+						icon="document-open"
+						tagName="a"
+						href={pubUrl(communityData, pubData)}
+						outerLabel={{ bottom: 'view latest release', top: 'see published version' }}
+					/>
+				)}
 				<LargeHeaderButton
 					icon="history"
-					outerLabel={getHistoryButtonLabel(pubData, historyData)}
+					outerLabel={getHistoryButtonLabelForTimestamp(
+						latestTimestamp,
+						'draft last updated',
+						'draft created',
+					)}
+					disabled={historyData.loadedIntoHistory}
 					onClick={() =>
 						updateLocalData('history', {
 							isViewingHistory: !historyData.isViewingHistory,
 						})
 					}
 				/>
-				{canPublish && (
-					<LargeHeaderButton
-						tagName="a"
-						href={getPublishUrl(pubData, publicBranch)}
-						label={{
-							top: 'Publish',
-							bottom: 'Merge into #public',
-						}}
-					/>
-				)}
-				{canSubmitForReview && (
-					<LargeHeaderButton
-						tagName="a"
-						href={getReviewUrl(pubData, publicBranch)}
-						label={{
-							top: 'Submit for review',
-							bottom: 'to #public',
-						}}
-					/>
-				)}
 			</>
-		);
-	};
-
-	const renderDraftBottomButtons = () => {
-		return (
-			<LargeHeaderButton
-				icon="history"
-				outerLabel={getHistoryButtonLabel(pubData, historyData)}
-				disabled={historyData.loadedIntoHistory}
-				onClick={() =>
-					updateLocalData('history', {
-						isViewingHistory: !historyData.isViewingHistory,
-					})
-				}
-			/>
 		);
 	};
 

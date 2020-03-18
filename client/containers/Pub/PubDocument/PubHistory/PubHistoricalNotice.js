@@ -62,7 +62,7 @@ const PubHistoricalNotice = (props) => {
 		const includeTime = datesAreSameCalendarDate(currentDate, latestDate);
 		return (
 			<p>
-				You're viewing a the draft of this Pub as it appeared{' '}
+				You're viewing a draft of this Pub as it appeared{' '}
 				{formatDate(currentDate, { includeTime: includeTime, includePreposition: true })}.
 				It was most recently updated{' '}
 				{formatDate(latestDate, {

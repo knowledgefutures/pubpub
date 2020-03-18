@@ -118,6 +118,7 @@ const PubHistoryViewer = (props) => {
 	const historyScrollRef = useRef(null);
 	const hasScrolledRef = useRef(null);
 	const isLoadingHistory = outstandingRequests > 0;
+	const hasMeaningfulHistory = latestKey >= 1;
 
 	historyScrollRef.current = null;
 
@@ -190,7 +191,7 @@ const PubHistoryViewer = (props) => {
 			return (
 				<MenuItem
 					text={dateString}
-					icon={containsCurrentKey ? 'chevron-right' : 'flag'}
+					icon={containsCurrentKey ? 'chevron-right' : 'blank'}
 					key={key}
 					onClick={() => updateHistoryData({ currentKey: startKey })}
 					active={containsCurrentKey}
@@ -262,55 +263,59 @@ const PubHistoryViewer = (props) => {
 					<Button minimal small icon="cross" onClick={onClose} className="close-button" />
 				)}
 			</div>
-			<ButtonGroup className="playback-button-group">
-				<Button
-					minimal
-					icon="double-chevron-left"
-					disabled={!canChangeCurrentKeyBy(-50)}
-					onClick={() => changeCurrentKeyBy(-50)}
+			{hasMeaningfulHistory && (
+				<ButtonGroup className="playback-button-group">
+					<Button
+						minimal
+						icon="double-chevron-left"
+						disabled={!canChangeCurrentKeyBy(-50)}
+						onClick={() => changeCurrentKeyBy(-50)}
+					/>
+					<Button
+						minimal
+						icon="chevron-left"
+						disabled={!canChangeCurrentKeyBy(-1)}
+						onClick={() => changeCurrentKeyBy(-1)}
+					/>
+					<ClickToCopyButton
+						copyString={pubUrl(communityData, pubData, {
+							isDraft: true,
+							historyKey: currentKey.toString(),
+						})}
+						beforeCopyPrompt="Copy link to this point in history"
+					>
+						{(handleClick) => (
+							<Button minimal icon="link" onClick={handleClick}>
+								Link here
+							</Button>
+						)}
+					</ClickToCopyButton>
+					<Button
+						minimal
+						icon="chevron-right"
+						disabled={!canChangeCurrentKeyBy(1)}
+						onClick={() => changeCurrentKeyBy(1)}
+					/>
+					<Button
+						minimal
+						icon="double-chevron-right"
+						disabled={!canChangeCurrentKeyBy(50)}
+						onClick={() => changeCurrentKeyBy(50)}
+					/>
+				</ButtonGroup>
+			)}
+			{hasMeaningfulHistory && (
+				<Slider
+					min={0}
+					max={latestKey}
+					stepSize={1}
+					labelRenderer={renderSliderLabel}
+					labelStepSize={latestKey}
+					value={sliderValue}
+					onChange={setSliderValue}
+					onRelease={(value) => updateHistoryData({ currentKey: value })}
 				/>
-				<Button
-					minimal
-					icon="chevron-left"
-					disabled={!canChangeCurrentKeyBy(-1)}
-					onClick={() => changeCurrentKeyBy(-1)}
-				/>
-				<ClickToCopyButton
-					copyString={pubUrl(communityData, pubData, {
-						isDraft: true,
-						historyKey: currentKey.toString(),
-					})}
-					beforeCopyPrompt="Copy link to this point in history"
-				>
-					{(handleClick) => (
-						<Button minimal icon="link" onClick={handleClick}>
-							Link here
-						</Button>
-					)}
-				</ClickToCopyButton>
-				<Button
-					minimal
-					icon="chevron-right"
-					disabled={!canChangeCurrentKeyBy(1)}
-					onClick={() => changeCurrentKeyBy(1)}
-				/>
-				<Button
-					minimal
-					icon="double-chevron-right"
-					disabled={!canChangeCurrentKeyBy(50)}
-					onClick={() => changeCurrentKeyBy(50)}
-				/>
-			</ButtonGroup>
-			<Slider
-				min={0}
-				max={latestKey}
-				stepSize={1}
-				labelRenderer={renderSliderLabel}
-				labelStepSize={latestKey}
-				value={sliderValue}
-				onChange={setSliderValue}
-				onRelease={(value) => updateHistoryData({ currentKey: value })}
-			/>
+			)}
 			<Menu>
 				{bucketByDate(entries).map(([dateString, dateEntries]) =>
 					renderDateEntries(dateString, dateEntries),

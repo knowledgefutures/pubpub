@@ -14,12 +14,12 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 5px;
     }
 
     .title-and-spinner {
         display: flex;
         align-items: center;
-        margin-bottom: 5px;
         .bp3-spinner {
             opacity: 0;
             transition: 0.1s ease-out opacity;

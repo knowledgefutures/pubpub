@@ -297,6 +297,11 @@ class PubSyncManager extends React.Component {
 		if (currentCollabDoc && nextHistoryData.currentKey === nextHistoryData.latestKey) {
 			this.idleStateUpdater.setState(({ historyData }) => {
 				const nextTimestamp = historyData.timestamps[nextHistoryData.currentKey] || now;
+				// Don't add -1 (indicating a lack of entries) as a timestamp
+				const timestampUpdate =
+					nextHistoryData.currentKey >= 0
+						? { [nextHistoryData.currentKey]: nextTimestamp }
+						: {};
 				return {
 					historyData: {
 						...historyData,
@@ -305,7 +310,7 @@ class PubSyncManager extends React.Component {
 						historyDocKey: `history-${nextHistoryData.currentKey}`,
 						timestamps: {
 							...historyData.timestamps,
-							[nextHistoryData.currentKey]: nextTimestamp,
+							...timestampUpdate,
 						},
 					},
 				};

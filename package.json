@@ -129,6 +129,7 @@
 		"mini-css-extract-plugin": "^0.7.0",
 		"mudder": "^1.0.4",
 		"newrelic": "^5.7.0",
+		"no-slash": "^1.2.15",
 		"node-pandoc": "^0.3.0",
 		"node-sass": "^4.13.0",
 		"nodemon": "^1.18.10",

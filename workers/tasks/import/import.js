@@ -8,6 +8,7 @@ import { buildTmpDirectory } from './tmpDirectory';
 import { extractBibliographyItems } from './bibliography';
 import { uploadExtractedMedia } from './extractedMedia';
 import { extensionFor } from './util';
+import { runExperimentalTransforms } from './experimental/experimentalTransforms';
 
 export const extensionToPandocFormat = {
 	docx: 'docx',
@@ -28,14 +29,17 @@ const createPandocArgs = (pandocFormat, tmpDirPath) => {
 		dataRoot && [`--data-dir=${dataRoot}`],
 		['-f', pandocFormat],
 		['-t', 'json'],
-		shouldExtractMedia && [`--extract-media=${tmpDirPath}`],
+		shouldExtractMedia && [`--extract-media=${path.join(tmpDirPath, 'media')}`],
 	]
 		.filter((x) => x)
 		.reduce((acc, next) => [...acc, ...next], []);
 };
 
-const callPandoc = (files, args) => {
-	const proc = spawnSync('pandoc', [...files, ...args], { maxBuffer: 1024 * 1024 * 25 });
+const callPandoc = (tmpDirPath, files, args) => {
+	const proc = spawnSync('pandoc', [...files, ...args], {
+		maxBuffer: 1024 * 1024 * 25,
+		cwd: tmpDirPath,
+	});
 	const output = proc.stdout.toString();
 	const error = proc.stderr.toString();
 	return { output: output, error: error };
@@ -91,7 +95,7 @@ const createTransformResourceGetter = (getUrlByLocalPath, getBibliographyItemByI
 	return resource;
 };
 
-const importFiles = async ({ sourceFiles }) => {
+const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
 	const document = sourceFiles.find((file) => file.label === 'document');
 	const bibliography = sourceFiles.find((file) => file.label === 'bibliography');
 	const supplements = sourceFiles.filter((file) => file.label === 'supplement');
@@ -108,6 +112,7 @@ const importFiles = async ({ sourceFiles }) => {
 	let pandocError;
 	try {
 		const pandocResult = callPandoc(
+			tmpDir.path,
 			[document, ...supplements].map((file) => getTmpPathByLocalPath(file.localPath)),
 			createPandocArgs(pandocFormat, tmpDir.path),
 		);
@@ -121,7 +126,7 @@ const importFiles = async ({ sourceFiles }) => {
 		);
 	}
 	const extractedMedia = await uploadExtractedMedia(tmpDir);
-	const pandocAst = parsePandocJson(pandocRawAst);
+	const pandocAst = runExperimentalTransforms(parsePandocJson(pandocRawAst), importerFlags);
 	const getBibliographyItemById = extractBibliographyItems(
 		bibliography && getTmpPathByLocalPath(bibliography.localPath),
 	);
@@ -140,8 +145,8 @@ const importFiles = async ({ sourceFiles }) => {
 	return { doc: prosemirrorDoc, warnings: warnings };
 };
 
-export const importTask = ({ sourceFiles }) =>
-	importFiles({ sourceFiles: sourceFiles }).catch((error) => ({
+export const importTask = ({ sourceFiles, importerFlags }) =>
+	importFiles({ sourceFiles: sourceFiles, importerFlags: importerFlags }).catch((error) => ({
 		error: {
 			message: error.toString(),
 			stack: error.stack.toString(),

@@ -5,6 +5,7 @@ import cors from 'cors';
 import compression from 'compression';
 import enforce from 'express-sslify';
 import Module from 'module';
+import noSlash from 'no-slash';
 import passport from 'passport';
 import * as Sentry from '@sentry/node';
 import { sequelize, User } from './models';
@@ -47,6 +48,7 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(Sentry.Handlers.requestHandler({ user: ['id', 'slug'] }));
 	app.use(enforce.HTTPS({ trustProtoHeader: true }));
 }
+app.use(noSlash());
 app.use(compression());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));

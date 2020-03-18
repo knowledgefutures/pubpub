@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Button } from 'reakit';
+import dateFormat from 'dateformat';
 
-import { Icon, DashboardRow } from 'components';
+import { Icon } from 'components';
 import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
 import { splitThreads } from 'utils';
 import { getDashUrl } from 'utils/dashboard';
 
-require('./contentRow.scss');
+require('./overviewRow.scss');
 
 const propTypes = {
+	children: PropTypes.node,
 	content: PropTypes.object.isRequired,
 	controls: PropTypes.node,
 	dragHandleProps: PropTypes.object,
@@ -18,10 +21,10 @@ const propTypes = {
 	minimal: PropTypes.bool,
 	onClick: PropTypes.func,
 	parentSlug: PropTypes.string,
-	selected: PropTypes.bool,
 };
 
 const defaultProps = {
+	children: null,
 	controls: null,
 	dragHandleProps: null,
 	isDragging: false,
@@ -29,7 +32,6 @@ const defaultProps = {
 	onClick: null,
 	parentSlug: undefined,
 	minimal: false,
-	selected: false,
 };
 
 const getCounts = (isCollection, content) => {
@@ -66,7 +68,7 @@ const getHref = (isCollection, slug, parentSlug) => {
 	});
 };
 
-const ContentRow = (props) => {
+const OverviewRow = (props) => {
 	const {
 		content,
 		controls,
@@ -76,14 +78,16 @@ const ContentRow = (props) => {
 		onClick,
 		parentSlug,
 		minimal,
-		selected,
+		children,
 	} = props;
 	const isCollection = content.pubs;
 	const authorString = generateAuthorString(content);
 	const hasAuthors = content.attributions && content.attributions.some((a) => a.isAuthor);
 	const slug = content.slug || content.title.toLowerCase().replace(/ /gi, '-');
 	const href = !onClick && getHref(isCollection, slug, parentSlug);
-	const { countConversations, countForks, countReviews } = getCounts(isCollection, content);
+	const { countConversations, countReviews } = getCounts(isCollection, content);
+	const [showChildren, setShowChildren] = useState(false);
+	const showArrow = React.Children.count(children) > 0;
 
 	const renderHandle = () => {
 		return (
@@ -97,81 +101,81 @@ const ContentRow = (props) => {
 
 	const renderSubtitle = () => {
 		return (
-			<>
+			<React.Fragment>
 				{label}
 				{label && hasAuthors && ' • '}
 				{authorString}
-			</>
+			</React.Fragment>
 		);
 	};
 
-	const renderCounts = () => {
-		if (minimal) {
-			return null;
-		}
-		return (
-			<div className="counts">
-				{isCollection && (
-					<div className="pubs" aria-label={`${content.pubs.length} pubs`}>
-						<Icon icon="pubDoc" iconSize={14} />
-						<span aria-hidden="true">{content.pubs.length}</span>
-					</div>
-				)}
-				<div className="conversations" aria-label={`${countConversations} conversations`}>
-					<Icon icon="chat2" iconSize={14} />
-					<span aria-hidden="true">{countConversations}</span>
-				</div>
-				<div className="merges" aria-label={`${countForks} forks`}>
-					<Icon icon="git-pull" iconSize={14} />
-					<span aria-hidden="true">{countForks}</span>
-				</div>
-				<div className="reviews" aria-label={`${countReviews} reviews`}>
-					<Icon icon="social-media" iconSize={14} />
-					<span aria-hidden="true">{countReviews}</span>
-				</div>
-			</div>
-		);
-	};
-
-	const renderRightSide = () => {
-		return (
-			<>
-				{renderCounts()}
-				{controls && <div className="controls">{controls}</div>}
-			</>
-		);
+	const renderInitialRelease = (item) => {
+		const releases = item.releases || [];
+		const firstRelease = releases.reduce((prev, curr) => {
+			if (!prev) {
+				return curr.createdAt;
+			}
+			return prev < curr.createdAt ? prev : curr.createdAt;
+		}, null);
+		return firstRelease ? dateFormat(firstRelease, 'mmm dd, yyyy') : '-';
 	};
 
 	return (
-		<DashboardRow
-			onClick={onClick}
+		<div
 			className={classNames(
-				'content-row-component',
+				'overview-row-component',
 				isDragging && 'is-dragging bp3-elevation-2',
 				minimal && 'minimal',
 			)}
-			href={href}
-			handle={renderHandle()}
-			title={content.title}
-			subtitle={renderSubtitle()}
-			rightSideElements={renderRightSide()}
-			icon={isCollection ? 'collection' : 'pubDoc'}
-			selected={selected}
+			aria-expanded={showChildren}
+			role={isCollection ? 'listitem' : undefined}
 		>
-			{isCollection &&
-				content.pubs.map((pub) => {
-					return (
-						<ContentRow
-							key={`${content.id}-${pub.id}`}
-							content={pub}
-							parentSlug={slug}
-						/>
-					);
-				})}
-		</DashboardRow>
+			<div className="inner">
+				<div className="handle">
+					{isCollection ? (
+						<Button
+							aria-label={
+								showChildren
+									? 'Hide collection children'
+									: 'Show collection children'
+							}
+							className={classNames({
+								arrow: true,
+								active: showArrow,
+								opened: showChildren,
+							})}
+							tabIndex={showArrow ? 0 : -1}
+							onClick={(evt) => {
+								if (showArrow) {
+									evt.preventDefault();
+									setShowChildren(!showChildren);
+								}
+							}}
+						>
+							{showArrow && <Icon icon="caret-right" />}
+						</Button>
+					) : (
+						renderHandle()
+					)}
+				</div>
+				<div className="type">
+					<Icon icon={isCollection ? 'collection' : 'pubDoc'} iconSize={14} />
+				</div>
+				<a className="title" href={href} onClick={onClick} draggable="false">
+					<div className="item-title">{content.title}</div>
+					<div className="subtitle">{renderSubtitle()}</div>
+				</a>
+				<div className="pubs">{isCollection ? content.pubs.length : '-'}</div>
+				<div className="released">{renderInitialRelease(content)}</div>
+				<div className="discussions">{countConversations}</div>
+				<div className="reviews">{countReviews}</div>
+				<div className="pub-options">{controls}</div>
+			</div>
+			{showChildren && <div className="child-rows">{children}</div>}
+		</div>
 	);
 };
 
-ContentRow.propTypes = propTypes;
-ContentRow.defaultProps = defaultProps;
-export default ContentRow;
+OverviewRow.propTypes = propTypes;
+OverviewRow.defaultProps = defaultProps;
+export default OverviewRow;

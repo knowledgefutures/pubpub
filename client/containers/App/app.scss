@@ -58,35 +58,6 @@
             padding-bottom: 16px;
             max-width: calc(1024px + #{$side-menu-width});
             margin: 0 auto;
-            .dashboard-content-header {
-                display: flex;
-                align-items: flex-start;
-                margin-bottom: 20px;
-                .dashboard-header-left {
-                    .title {
-                        font-weight: 600;
-                        font-size: 24px;
-                    }
-                    .details {
-                        font-size: 14px;
-                        color: #666;
-                    }
-                    flex: 1 1 auto;
-                }
-                .dashboard-header-right {
-                    flex: 0 0 auto;
-                    .controls {
-                        display: flex;
-                    }
-                    .bp3-button {
-                        margin-left: 1em;
-                    }
-                    .bp3-button-group .bp3-button {
-                        z-index: unset;
-                        margin-left: auto;
-                    }
-                }
-            }
         }
     }
 }

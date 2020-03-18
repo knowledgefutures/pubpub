@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Popover, InputGroup } from '@blueprintjs/core';
+import classNames from 'classnames';
+import { Popover, InputGroup, MenuItem } from '@blueprintjs/core';
 import { QueryList } from '@blueprintjs/select';
 
-import { fuzzyMatchPub } from './util';
-import ContentRow from './ContentRow';
+import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
+
+import { fuzzyMatchPub } from '../util';
 
 require('./pubSelect.scss');
 
@@ -23,16 +25,22 @@ const defaultProps = {
 const PubSelect = (props) => {
 	const { children, position, pubs, onSelectPub, usedPubIds } = props;
 
-	const renderPubItem = (pub, { handleClick, modifiers: { active } }) => (
-		<ContentRow
-			content={pub}
-			key={pub.id}
-			minimal={true}
-			selected={active}
-			onClick={handleClick}
-		/>
-	);
-
+	const renderPubItem = (pub, { handleClick, modifiers: { active } }) => {
+		const authorString = generateAuthorString(pub);
+		return (
+			<MenuItem
+				className={classNames({ item: true, active: active })}
+				key={pub.id}
+				onClick={handleClick}
+				text={
+					<React.Fragment>
+						<div className="title">{pub.title}</div>
+						<div className="subtitle">{authorString}</div>
+					</React.Fragment>
+				}
+			/>
+		);
+	};
 	const renderPopoverContent = (qlProps) => {
 		const { handleKeyDown, handleKeyUp, handleQueryChange, itemList } = qlProps;
 		return (

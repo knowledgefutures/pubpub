@@ -309,6 +309,7 @@ class PubSyncManager extends React.Component {
 						historyDoc: currentCollabDoc.toJSON(),
 						historyDocKey: `history-${nextHistoryData.currentKey}`,
 						timestamps: {
+							[-1]: new Date(pubData.createdAt).valueOf(),
 							...historyData.timestamps,
 							...timestampUpdate,
 						},

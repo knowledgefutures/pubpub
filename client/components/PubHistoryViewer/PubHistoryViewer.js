@@ -40,9 +40,11 @@ const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 	const buckets = [];
 	let currentBucketItems = [];
 	let currentBucketValue = null;
-	const keys = Object.keys(timestamps);
+	const keys = Object.keys(timestamps)
+		.map((key) => parseInt(key, 10))
+		.sort((a, b) => a - b);
 	for (let idx = 0; idx < keys.length; ++idx) {
-		const historyKey = parseInt(keys[idx], 10);
+		const historyKey = keys[idx];
 		const timestamp = timestamps[historyKey];
 		const bucketValue = bucketTimestamp(timestamp, intervalMs);
 		if (!currentBucketValue) {
@@ -118,7 +120,7 @@ const PubHistoryViewer = (props) => {
 	const historyScrollRef = useRef(null);
 	const hasScrolledRef = useRef(null);
 	const isLoadingHistory = outstandingRequests > 0;
-	const hasMeaningfulHistory = latestKey >= 1;
+	const hasMeaningfulHistory = latestKey >= 0;
 
 	historyScrollRef.current = null;
 
@@ -137,7 +139,7 @@ const PubHistoryViewer = (props) => {
 	});
 
 	useEffect(() => {
-		setSliderValue(currentKey);
+		setSliderValue(currentKey + 1);
 	}, [currentKey]);
 
 	useEffect(() => {
@@ -165,7 +167,8 @@ const PubHistoryViewer = (props) => {
 		updateHistoryData({ currentKey: currentKey + step });
 	};
 
-	const renderSliderLabel = (historyKey) => {
+	const renderSliderLabel = (sliderVal) => {
+		const historyKey = sliderVal - 1;
 		const dateForStep = getDateForHistoryKey(historyKey, timestamps);
 		if (dateForStep) {
 			const date = formatDate(dateForStep);
@@ -190,8 +193,8 @@ const PubHistoryViewer = (props) => {
 			const dateString = formatDate(date, { includeTime: true, includeDate: false });
 			return (
 				<MenuItem
+					icon="blank"
 					text={dateString}
-					icon={containsCurrentKey ? 'chevron-right' : 'blank'}
 					key={key}
 					onClick={() => updateHistoryData({ currentKey: startKey })}
 					active={containsCurrentKey}
@@ -307,13 +310,13 @@ const PubHistoryViewer = (props) => {
 			{hasMeaningfulHistory && (
 				<Slider
 					min={0}
-					max={latestKey}
+					max={latestKey + 1}
 					stepSize={1}
 					labelRenderer={renderSliderLabel}
-					labelStepSize={latestKey}
+					labelStepSize={latestKey + 1}
 					value={sliderValue}
 					onChange={setSliderValue}
-					onRelease={(value) => updateHistoryData({ currentKey: value })}
+					onRelease={(value) => updateHistoryData({ currentKey: value - 1 })}
 				/>
 			)}
 			<Menu>

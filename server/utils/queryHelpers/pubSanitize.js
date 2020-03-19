@@ -18,7 +18,7 @@ export default (pubData, initialData, releaseNumber) => {
 		return null;
 	}
 
-	const isRelease = releaseNumber || releaseNumber === 0;
+	const isRelease = !!(releaseNumber || releaseNumber === 0);
 
 	// TODO(ian): completely unsure why we can't just the `order` parameter within the `include`
 	// object for the query made above, but it doesn't seem to work.

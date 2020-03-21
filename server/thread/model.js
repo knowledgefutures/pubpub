@@ -72,6 +72,7 @@ export default (sequelize, dataTypes) => {
 						as: 'comments',
 						foreignKey: 'threadId',
 					});
+					/* Should ThreadAnchor live on the ThreadModel via anchorId? */
 					Thread.hasOne(ThreadAnchor, {
 						onDelete: 'CASCADE',
 						as: 'anchor',

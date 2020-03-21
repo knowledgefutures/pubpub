@@ -221,7 +221,9 @@ const Footer = (props) => {
 							.map((link) => {
 								return (
 									<li key={`footer-item-${link.id}`}>
-										<a href={link.href || `/${link.slug}`}>{link.title}</a>
+										<a className="link" href={link.href || `/${link.slug}`}>
+											{link.title}
+										</a>
 									</li>
 								);
 							})}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Menu, MenuItem, Slider } from '@blueprintjs/core';
+import classNames from 'classnames';
+import { Button, ButtonGroup, Menu, MenuItem, Slider, Spinner } from '@blueprintjs/core';
 
 import { formatDate } from 'shared/utils/dates';
 import { pubUrl } from 'shared/utils/canonicalUrls';
@@ -15,6 +16,8 @@ const propTypes = {
 		timestamps: PropTypes.object,
 		currentKey: PropTypes.number,
 		latestKey: PropTypes.number,
+		outstandingRequests: PropTypes.number,
+		loadedIntoHistory: PropTypes.bool,
 	}).isRequired,
 	onClose: PropTypes.func.isRequired,
 	pubData: PropTypes.shape({
@@ -37,9 +40,11 @@ const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 	const buckets = [];
 	let currentBucketItems = [];
 	let currentBucketValue = null;
-	const keys = Object.keys(timestamps);
+	const keys = Object.keys(timestamps)
+		.map((key) => parseInt(key, 10))
+		.sort((a, b) => a - b);
 	for (let idx = 0; idx < keys.length; ++idx) {
-		const historyKey = parseInt(keys[idx], 10);
+		const historyKey = keys[idx];
 		const timestamp = timestamps[historyKey];
 		const bucketValue = bucketTimestamp(timestamp, intervalMs);
 		if (!currentBucketValue) {
@@ -102,12 +107,20 @@ const getDateForHistoryKey = (historyKey, timestamps) => {
 
 const PubHistoryViewer = (props) => {
 	const { historyData, pubData, updateHistoryData, onClose } = props;
-	const { timestamps, latestKey, currentKey } = historyData;
+	const {
+		timestamps,
+		latestKey,
+		currentKey,
+		outstandingRequests,
+		loadedIntoHistory,
+	} = historyData;
 	const { releases } = pubData;
 	const { communityData } = usePageContext();
 	const [sliderValue, setSliderValue] = useState(currentKey);
 	const historyScrollRef = useRef(null);
 	const hasScrolledRef = useRef(null);
+	const isLoadingHistory = outstandingRequests > 0;
+	const hasMeaningfulHistory = latestKey >= 0;
 
 	historyScrollRef.current = null;
 
@@ -126,7 +139,7 @@ const PubHistoryViewer = (props) => {
 	});
 
 	useEffect(() => {
-		setSliderValue(currentKey);
+		setSliderValue(currentKey + 1);
 	}, [currentKey]);
 
 	useEffect(() => {
@@ -154,7 +167,8 @@ const PubHistoryViewer = (props) => {
 		updateHistoryData({ currentKey: currentKey + step });
 	};
 
-	const renderSliderLabel = (historyKey) => {
+	const renderSliderLabel = (sliderVal) => {
+		const historyKey = sliderVal - 1;
 		const dateForStep = getDateForHistoryKey(historyKey, timestamps);
 		if (dateForStep) {
 			const date = formatDate(dateForStep);
@@ -165,7 +179,7 @@ const PubHistoryViewer = (props) => {
 				</span>
 			);
 		}
-		return 'Release slider to load';
+		return isLoadingHistory ? 'Loading...' : 'Release slider to load';
 	};
 
 	const renderMenuItemForEntry = (entry) => {
@@ -179,8 +193,8 @@ const PubHistoryViewer = (props) => {
 			const dateString = formatDate(date, { includeTime: true, includeDate: false });
 			return (
 				<MenuItem
+					icon="blank"
 					text={dateString}
-					icon={containsCurrentKey ? 'chevron-right' : 'flag'}
 					key={key}
 					onClick={() => updateHistoryData({ currentKey: startKey })}
 					active={containsCurrentKey}
@@ -242,62 +256,69 @@ const PubHistoryViewer = (props) => {
 	};
 
 	return (
-		<div className="pub-history-viewer-component">
+		<div className={classNames('pub-history-viewer-component', isLoadingHistory && 'loading')}>
 			<div className="top-line">
 				<div className="title-and-spinner">
 					<h4>Pub History</h4>
+					<Spinner size={16} />
 				</div>
-				<Button minimal small icon="cross" onClick={onClose} className="close-button" />
+				{!loadedIntoHistory && (
+					<Button minimal small icon="cross" onClick={onClose} className="close-button" />
+				)}
 			</div>
-			<ButtonGroup className="playback-button-group">
-				<Button
-					minimal
-					icon="double-chevron-left"
-					disabled={!canChangeCurrentKeyBy(-50)}
-					onClick={() => changeCurrentKeyBy(-50)}
+			{hasMeaningfulHistory && (
+				<ButtonGroup className="playback-button-group">
+					<Button
+						minimal
+						icon="double-chevron-left"
+						disabled={!canChangeCurrentKeyBy(-50)}
+						onClick={() => changeCurrentKeyBy(-50)}
+					/>
+					<Button
+						minimal
+						icon="chevron-left"
+						disabled={!canChangeCurrentKeyBy(-1)}
+						onClick={() => changeCurrentKeyBy(-1)}
+					/>
+					<ClickToCopyButton
+						copyString={pubUrl(communityData, pubData, {
+							isDraft: true,
+							historyKey: currentKey.toString(),
+						})}
+						beforeCopyPrompt="Copy link to this point in history"
+					>
+						{(handleClick) => (
+							<Button minimal icon="link" onClick={handleClick}>
+								Link here
+							</Button>
+						)}
+					</ClickToCopyButton>
+					<Button
+						minimal
+						icon="chevron-right"
+						disabled={!canChangeCurrentKeyBy(1)}
+						onClick={() => changeCurrentKeyBy(1)}
+					/>
+					<Button
+						minimal
+						icon="double-chevron-right"
+						disabled={!canChangeCurrentKeyBy(50)}
+						onClick={() => changeCurrentKeyBy(50)}
+					/>
+				</ButtonGroup>
+			)}
+			{hasMeaningfulHistory && (
+				<Slider
+					min={0}
+					max={latestKey + 1}
+					stepSize={1}
+					labelRenderer={renderSliderLabel}
+					labelStepSize={latestKey + 1}
+					value={sliderValue}
+					onChange={setSliderValue}
+					onRelease={(value) => updateHistoryData({ currentKey: value - 1 })}
 				/>
-				<Button
-					minimal
-					icon="chevron-left"
-					disabled={!canChangeCurrentKeyBy(-1)}
-					onClick={() => changeCurrentKeyBy(-1)}
-				/>
-				<ClickToCopyButton
-					copyString={pubUrl(communityData, pubData, {
-						isDraft: true,
-						historyKey: currentKey.toString(),
-					})}
-					beforeCopyPrompt="Copy link to this point in history"
-				>
-					{(handleClick) => (
-						<Button minimal icon="link" onClick={handleClick}>
-							Link here
-						</Button>
-					)}
-				</ClickToCopyButton>
-				<Button
-					minimal
-					icon="chevron-right"
-					disabled={!canChangeCurrentKeyBy(1)}
-					onClick={() => changeCurrentKeyBy(1)}
-				/>
-				<Button
-					minimal
-					icon="double-chevron-right"
-					disabled={!canChangeCurrentKeyBy(50)}
-					onClick={() => changeCurrentKeyBy(50)}
-				/>
-			</ButtonGroup>
-			<Slider
-				min={0}
-				max={latestKey}
-				stepSize={1}
-				labelRenderer={renderSliderLabel}
-				labelStepSize={latestKey}
-				value={sliderValue}
-				onChange={setSliderValue}
-				onRelease={(value) => updateHistoryData({ currentKey: value })}
-			/>
+			)}
 			<Menu>
 				{bucketByDate(entries).map(([dateString, dateEntries]) =>
 					renderDateEntries(dateString, dateEntries),

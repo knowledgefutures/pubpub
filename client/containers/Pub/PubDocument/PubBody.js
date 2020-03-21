@@ -241,7 +241,7 @@ const PubBody = (props) => {
 					onCancel={showErrorTime ? downloadBackup : undefined}
 					className="pub-body-alert"
 				>
-					<h5>Uh oh! An error has occured in the editor.</h5>
+					<h5>An error has occured in the editor.</h5>
 					<p>We've logged the error and will look into the cause right away.</p>
 					{showErrorTime && (
 						<React.Fragment>

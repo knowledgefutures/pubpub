@@ -2,7 +2,7 @@ import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { splitThreads } from 'utils';
 import sanitizeThreads from './threadsSanitize';
 
-export default (pub, initialData, historyKey, isRelease) => {
+export default (pubData, initialData, releaseNumber) => {
 	const { loginData, scopeData } = initialData;
 	const {
 		canView,
@@ -14,29 +14,34 @@ export default (pub, initialData, historyKey, isRelease) => {
 
 	/* If there are no releases and the user does not have view access, they don't have access to the pub. */
 	/* Returning null will cause a 404 error to be returned. */
-	if (!pub.releases.length && !canView && !canViewDraft) {
+	if (!pubData.releases.length && !canView && !canViewDraft) {
 		return null;
 	}
 
+	const isRelease = !!(releaseNumber || releaseNumber === 0);
+
 	// TODO(ian): completely unsure why we can't just the `order` parameter within the `include`
 	// object for the query made above, but it doesn't seem to work.
-	const sortedReleases = pub.releases
+	const sortedReleases = pubData.releases
 		.concat()
 		.sort((a, b) => (new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1));
-	const currentReleaseIndex =
-		isRelease && pub.releases.findIndex((release) => release.branchKey === historyKey);
 
-	const filteredThreads = sanitizeThreads(pub.threads, scopeData.activePermissions, loginData.id);
+	const filteredThreads = sanitizeThreads(
+		pubData.threads,
+		scopeData.activePermissions,
+		loginData.id,
+	);
+
 	const { discussions, forks, reviews } = splitThreads(filteredThreads);
-	const filteredCollectionPubs = pub.collectionPubs
-		? pub.collectionPubs.filter((item) => {
+	const filteredCollectionPubs = pubData.collectionPubs
+		? pubData.collectionPubs.filter((item) => {
 				return item.collection.isPublic || canAdminCommunity;
 		  })
 		: [];
 
 	return {
-		...pub,
-		attributions: pub.attributions.map(ensureUserForAttribution),
+		...pubData,
+		attributions: pubData.attributions.map(ensureUserForAttribution),
 		discussions: discussions,
 		forks: forks,
 		reviews: reviews,
@@ -44,6 +49,6 @@ export default (pub, initialData, historyKey, isRelease) => {
 		isReadOnly: isRelease || !(canEdit || canEditDraft),
 		isRelease: isRelease,
 		releases: sortedReleases,
-		currentReleaseIndex: currentReleaseIndex,
+		releaseNumber: releaseNumber,
 	};
 };

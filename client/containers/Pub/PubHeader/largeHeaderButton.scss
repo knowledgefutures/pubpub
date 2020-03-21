@@ -4,6 +4,12 @@
     @include base-button;
     display: inline-flex;
     padding: 0;
+    
+    &:disabled {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
     .button-box {
         display: flex;
         flex-shrink: 0;
@@ -20,6 +26,11 @@
         }
         &:not(.no-label) {
             min-width: 185px;
+        }
+        .caret {
+            position: absolute;
+            top: 30px;
+            right: 3px;
         }
         .label {
             font-size: 12px;
@@ -44,6 +55,7 @@
             }
         }
     }
+
     .outer-label {
         text-align: left;
         margin-left: 10px;

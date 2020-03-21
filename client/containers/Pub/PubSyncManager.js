@@ -85,7 +85,6 @@ class PubSyncManager extends React.Component {
 		super(props);
 		const { historyData } = this.props.pubData;
 		const isViewingHistory = historyData.currentKey !== historyData.latestKey;
-		const isShowingInitialHistoryWarning = isViewingHistory;
 		this.state = {
 			firebaseRootRef: undefined,
 			firebaseBranchRef: undefined,
@@ -101,7 +100,8 @@ class PubSyncManager extends React.Component {
 				outstandingRequests: 0,
 				latestKeyReceivedAt: null,
 				isViewingHistory: isViewingHistory,
-				isShowingInitialHistoryWarning: isShowingInitialHistoryWarning,
+				loadedIntoHistory: isViewingHistory,
+				historyDocKey: `history-${historyData.currentKey}`,
 			},
 		};
 		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));
@@ -297,6 +297,11 @@ class PubSyncManager extends React.Component {
 		if (currentCollabDoc && nextHistoryData.currentKey === nextHistoryData.latestKey) {
 			this.idleStateUpdater.setState(({ historyData }) => {
 				const nextTimestamp = historyData.timestamps[nextHistoryData.currentKey] || now;
+				// Don't add -1 (indicating a lack of entries) as a timestamp
+				const timestampUpdate =
+					nextHistoryData.currentKey >= 0
+						? { [nextHistoryData.currentKey]: nextTimestamp }
+						: {};
 				return {
 					historyData: {
 						...historyData,
@@ -304,8 +309,9 @@ class PubSyncManager extends React.Component {
 						historyDoc: currentCollabDoc.toJSON(),
 						historyDocKey: `history-${nextHistoryData.currentKey}`,
 						timestamps: {
+							[-1]: new Date(pubData.createdAt).valueOf(),
 							...historyData.timestamps,
-							[nextHistoryData.currentKey]: nextTimestamp,
+							...timestampUpdate,
 						},
 					},
 				};

@@ -46,6 +46,13 @@ export const getBranchRef = (pubId, branchId) => {
 	return database.ref(`pub-${pubId}/branch-${branchId}`);
 };
 
+const maybeAddKeyTimestampPair = (key, timestamp) => {
+	if (typeof key === 'number' && key >= 0) {
+		return { [key]: timestamp };
+	}
+	return null;
+};
+
 export const getBranchDoc = async (pubId, branchId, historyKey, updateOutdatedCheckpoint) => {
 	const branchRef = getBranchRef(pubId, branchId);
 
@@ -65,9 +72,9 @@ export const getBranchDoc = async (pubId, branchId, historyKey, updateOutdatedCh
 		historyData: {
 			timestamps: {
 				...checkpointMap,
-				[firstKey]: firstTimestamp,
-				[currentKey]: currentTimestamp,
-				[latestKey]: latestTimestamp,
+				...maybeAddKeyTimestampPair(firstKey, firstTimestamp),
+				...maybeAddKeyTimestampPair(currentKey, currentTimestamp),
+				...maybeAddKeyTimestampPair(latestKey, latestTimestamp),
 			},
 			currentKey: currentKey,
 			latestKey: latestKey,

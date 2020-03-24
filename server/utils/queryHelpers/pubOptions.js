@@ -16,7 +16,6 @@ import {
 	Thread,
 	ThreadEvent,
 	ThreadComment,
-	// ThreadUser,
 	User,
 } from '../../models';
 import { attributesPublicUser } from '..';
@@ -99,13 +98,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			],
 		},
 	];
-	// let visibilityUserInclude = [
-	// 	{
-	// 		model: User,
-	// 		as: 'users',
-	// 		attributes: attributesPublicUser,
-	// 	},
-	// ];
 	if (isPreview) {
 		pubAttributes = [
 			'id',
@@ -122,7 +114,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 		author = [];
 		thread = [];
 		anchor = [];
-		// visibilityUserInclude = [];
 	}
 	if (isAuth) {
 		pubAttributes = ['id'];
@@ -132,7 +123,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 		author = [];
 		thread = [];
 		anchor = [];
-		// visibilityUserInclude = [];
 	}
 	if (getCollections) {
 		collectionPubs = [
@@ -184,15 +174,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			},
 		];
 	}
-	// const threadInclude = [
-	// 	// ...threadAuthor,
-	// 	...threadComments,
-	// 	{
-	// 		model: ThreadUser,
-	// 		as: 'threadUsers',
-	// 		include: threadUserInclude,
-	// 	},
-	// ];
 	const visibility = [
 		{
 			model: Visibility,
@@ -212,12 +193,6 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			...pubAttributions,
 			...pubBranches,
 			...pubReleases,
-			// {
-			// 	separate: true,
-			// 	model: Thread,
-			// 	as: 'threads',
-			// 	include: threadInclude,
-			// },
 			{
 				separate: true,
 				model: DiscussionNew,

@@ -6,7 +6,6 @@ import dateFormat from 'dateformat';
 
 import { Icon } from 'components';
 import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
-// import { splitThreads } from 'utils';
 import { getDashUrl } from 'utils/dashboard';
 
 require('./overviewRow.scss');

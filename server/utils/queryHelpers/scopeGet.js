@@ -1,5 +1,4 @@
 import { Op } from 'sequelize';
-// import { splitThreads } from 'utils';
 import {
 	Branch,
 	Collection,
@@ -11,7 +10,6 @@ import {
 } from '../../models';
 
 import buildPubOptions from './pubOptions';
-// import sanitizeThreads from './threadsSanitize';
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeForks from './forksSanitize';
 import sanitizeReviews from './reviewsSanitize';
@@ -347,11 +345,6 @@ getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 		pubs = communityCountData.pubs;
 	}
 	pubs.forEach((pub) => {
-		// const openThreads = (pub.threads || []).filter((thread) => {
-		// 	return !thread.isClosed;
-		// });
-		// const visibleThreads = sanitizeThreads(openThreads, activePermissions, loginId);
-		// const { discussions, forks, reviews } = splitThreads(visibleThreads);
 		const openDiscussions = pub.discussions.filter((item) => !item.isClosed);
 		const discussions = sanitizeDiscussions(openDiscussions, activePermissions, loginId);
 

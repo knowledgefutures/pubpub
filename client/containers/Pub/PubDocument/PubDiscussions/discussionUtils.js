@@ -177,7 +177,7 @@ export const filterAndSortThreads = (
 				// 	(items[0].highlights === null ||
 				// 		(Array.isArray(items[0].highlights) && items[0].highlights.length === 0))
 				// );
-				return !thread.threadAnchor || showAnchoredDiscussions;
+				return !thread.anchor || showAnchoredDiscussions;
 			})
 			.filter((thread) => {
 				// const threadLabels = items.reduce((prev, curr) => {
@@ -251,29 +251,17 @@ export const filterAndSortThreads = (
 					return 1;
 				}
 				/* Most Replies */
-				if (
-					sortMode === 'mostReplies' &&
-					foo.comments.length > bar.comments.length
-				) {
+				if (sortMode === 'mostReplies' && foo.comments.length > bar.comments.length) {
 					return -1;
 				}
-				if (
-					sortMode === 'mostReplies' &&
-					foo.comments.length < bar.comments.length
-				) {
+				if (sortMode === 'mostReplies' && foo.comments.length < bar.comments.length) {
 					return 1;
 				}
 				/* Least Replies */
-				if (
-					sortMode === 'leastReplies' &&
-					foo.comments.length < bar.comments.length
-				) {
+				if (sortMode === 'leastReplies' && foo.comments.length < bar.comments.length) {
 					return -1;
 				}
-				if (
-					sortMode === 'leastReplies' &&
-					foo.comments.length > bar.comments.length
-				) {
+				if (sortMode === 'leastReplies' && foo.comments.length > bar.comments.length) {
 					return 1;
 				}
 				return 0;

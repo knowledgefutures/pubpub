@@ -8,10 +8,15 @@ import {
 	Page,
 	PubAttribution,
 	Release,
+	DiscussionNew,
+	ReviewNew,
+	Fork,
+	Anchor,
+	Visibility,
 	Thread,
-	ThreadAnchor,
+	ThreadEvent,
 	ThreadComment,
-	ThreadUser,
+	// ThreadUser,
 	User,
 } from '../../models';
 import { attributesPublicUser } from '..';
@@ -56,34 +61,51 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 	];
 	let collectionPubs = [];
 	let community = [];
-	let threadAuthor = [
+	let anchor = [{ model: Anchor, as: 'anchor' }];
+	let author = [
 		{
 			model: User,
 			as: 'author',
 			attributes: attributesPublicUser,
 		},
 	];
-	let threadComments = [
+	let thread = [
 		{
-			model: ThreadComment,
-			as: 'comments',
+			model: Thread,
+			as: 'thread',
 			include: [
 				{
-					model: User,
-					as: 'author',
-					attributes: attributesPublicUser,
+					model: ThreadComment,
+					as: 'comments',
+					include: [
+						{
+							model: User,
+							as: 'author',
+							attributes: attributesPublicUser,
+						},
+					],
+				},
+				{
+					model: ThreadEvent,
+					as: 'events',
+					include: [
+						{
+							model: User,
+							as: 'user',
+							attributes: attributesPublicUser,
+						},
+					],
 				},
 			],
 		},
 	];
-	let threadAnchor = [{ model: ThreadAnchor, as: 'anchor' }];
-	let threadUserInclude = [
-		{
-			model: User,
-			as: 'user',
-			attributes: attributesPublicUser,
-		},
-	];
+	// let visibilityUserInclude = [
+	// 	{
+	// 		model: User,
+	// 		as: 'users',
+	// 		attributes: attributesPublicUser,
+	// 	},
+	// ];
 	if (isPreview) {
 		pubAttributes = [
 			'id',
@@ -97,20 +119,20 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			'createdAt',
 		];
 		pubBranches = [];
-		threadAuthor = [];
-		threadComments = [];
-		threadAnchor = [];
-		threadUserInclude = [];
+		author = [];
+		thread = [];
+		anchor = [];
+		// visibilityUserInclude = [];
 	}
 	if (isAuth) {
 		pubAttributes = ['id'];
 		pubBranches = [];
 		pubReleases = [];
 		pubAttributions = [];
-		threadAuthor = [];
-		threadComments = [];
-		threadAnchor = [];
-		threadUserInclude = [];
+		author = [];
+		thread = [];
+		anchor = [];
+		// visibilityUserInclude = [];
 	}
 	if (getCollections) {
 		collectionPubs = [
@@ -162,26 +184,57 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			},
 		];
 	}
+	// const threadInclude = [
+	// 	// ...threadAuthor,
+	// 	...threadComments,
+	// 	{
+	// 		model: ThreadUser,
+	// 		as: 'threadUsers',
+	// 		include: threadUserInclude,
+	// 	},
+	// ];
+	const visibility = [
+		{
+			model: Visibility,
+			as: 'visibility',
+			include: [
+				{
+					model: User,
+					as: 'users',
+					attributes: attributesPublicUser,
+				},
+			],
+		},
+	];
 	return {
 		attributes: pubAttributes,
 		include: [
 			...pubAttributions,
 			...pubBranches,
 			...pubReleases,
+			// {
+			// 	separate: true,
+			// 	model: Thread,
+			// 	as: 'threads',
+			// 	include: threadInclude,
+			// },
 			{
 				separate: true,
-				model: Thread,
-				as: 'threads',
-				include: [
-					...threadAuthor,
-					...threadComments,
-					...threadAnchor,
-					{
-						model: ThreadUser,
-						as: 'threadUsers',
-						include: threadUserInclude,
-					},
-				],
+				model: DiscussionNew,
+				as: 'discussions',
+				include: [...author, ...anchor, ...visibility, ...thread],
+			},
+			{
+				separate: true,
+				model: Fork,
+				as: 'forks',
+				include: [...author, ...visibility, ...thread],
+			},
+			{
+				separate: true,
+				model: ReviewNew,
+				as: 'reviews',
+				include: [...author, ...visibility, ...thread],
 			},
 			...collectionPubs,
 			...community,

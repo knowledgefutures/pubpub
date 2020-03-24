@@ -6,7 +6,7 @@ import dateFormat from 'dateformat';
 
 import { Icon } from 'components';
 import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
-import { splitThreads } from 'utils';
+// import { splitThreads } from 'utils';
 import { getDashUrl } from 'utils/dashboard';
 
 require('./overviewRow.scss');
@@ -37,22 +37,22 @@ const defaultProps = {
 const getCounts = (isCollection, content) => {
 	const countReviews = isCollection
 		? content.pubs.reduce((prev, curr) => {
-				return prev + splitThreads(curr.threads).reviews.length;
+				return prev + curr.reviews.filter((it) => it.status !== 'closed').length;
 		  }, 0)
-		: splitThreads(content.threads).reviews.length;
+		: content.reviews.filter((it) => it.status !== 'closed').length;
 
 	const countConversations = isCollection
 		? content.pubs.reduce((prev, curr) => {
-				return prev + splitThreads(curr.threads).discussions.length;
+				return prev + curr.discussions.filter((it) => !it.isClosed).length;
 		  }, 0)
-		: splitThreads(content.threads).discussions.length;
+		: content.discussions.filter((it) => !it.isClosed).length;
 
 	const countForks = isCollection
 		? content.pubs.reduce((prev, curr) => {
-				const forks = splitThreads(curr.threads).forks || [];
-				return prev + forks.length;
+				const forks = curr.forks || [];
+				return prev + forks.filter((it) => !it.isClosed).length;
 		  }, 0)
-		: splitThreads(content.threads).forks.length;
+		: content.forks.filter((it) => !it.isClosed).length;
 
 	return {
 		countReviews: countReviews,

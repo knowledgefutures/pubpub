@@ -3,13 +3,14 @@ import { Community, Pub, Release, Branch } from '../models';
 import { hostIsValid, handleErrors } from '../utils';
 
 const getParams = (req) => {
+	const hostname = req.isDuqDuq
+		? `https://${req.hostname.replace('pubpub.org', 'duqduq.org')}`
+		: `https://${req.hostname}`;
 	return {
 		slug: req.params.slug.toLowerCase(),
 		versionNumber: req.params.versionNumber,
 		manageMode: req.params.manageMode,
-		domain: req.headers.localhost
-			? `http://${req.headers.localhost}`
-			: `https://${req.hostname}`,
+		domain: req.headers.localhost ? `http://${req.headers.localhost}` : hostname,
 	};
 };
 

@@ -1,3 +1,4 @@
+import Promise from 'bluebird';
 import { Sequelize } from 'sequelize';
 import {
 	sequelize,
@@ -10,6 +11,7 @@ import {
 	PubManager,
 	Collection,
 	Community,
+	User,
 } from '../../server/models';
 
 const generateHash = (length) => {
@@ -29,8 +31,11 @@ export default async () => {
 	/* PubManagers turn into members with 'manage' permission */
 	const getBranchPermissions = BranchPermission.findAll();
 	const getPubManagers = PubManager.findAll();
-	await Promise.all([getBranchPermissions, getPubManagers]).then(
-		([branchPermissionsData, pubManagersData]) => {
+	const getUsers = User.findAll({ attributes: ['id'] });
+	await Promise.all([getBranchPermissions, getPubManagers, getUsers]).then(
+		([branchPermissionsData, pubManagersData, usersData]) => {
+			const userSet = new Set();
+			usersData.forEach((user) => userSet.add(user.id));
 			const newBranchMembers = branchPermissionsData.map((item) => {
 				return {
 					id: item.id,
@@ -65,7 +70,9 @@ export default async () => {
 						updatedAt: item.updatedAt,
 					};
 				});
-			const newMembers = [...newBranchMembers, ...newManagerMembers];
+			const newMembers = [...newBranchMembers, ...newManagerMembers].filter((member) => {
+				return userSet.has(member.id);
+			});
 			const newMembersObject = {};
 			const permissionLevels = ['view', 'discuss', 'edit', 'manage'];
 			newMembers.forEach((member) => {
@@ -115,8 +122,6 @@ export default async () => {
 		return Member.bulkCreate(newManagerMembers);
 	});
 
-	return;
-
 	await Promise.all([
 		sequelize.queryInterface.addColumn('Collections', 'viewHash', {
 			type: Sequelize.STRING,
@@ -136,33 +141,33 @@ export default async () => {
 				is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
 			},
 		}),
-		sequelize.queryInterface.addColumn('Collections', 'isPublicBranches', {
-			type: Sequelize.BOOLEAN,
-		}),
-		sequelize.queryInterface.addColumn('Collections', 'isPublicDiscussions', {
-			type: Sequelize.BOOLEAN,
-		}),
-		sequelize.queryInterface.addColumn('Collections', 'isPublicReviews', {
-			type: Sequelize.BOOLEAN,
-		}),
-		sequelize.queryInterface.addColumn('Communities', 'isPublicBranches', {
-			type: Sequelize.BOOLEAN,
-		}),
-		sequelize.queryInterface.addColumn('Communities', 'isPublicDiscussions', {
-			type: Sequelize.BOOLEAN,
-		}),
-		sequelize.queryInterface.addColumn('Communities', 'isPublicReviews', {
-			type: Sequelize.BOOLEAN,
-		}),
+		// sequelize.queryInterface.addColumn('Collections', 'isPublicBranches', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
+		// sequelize.queryInterface.addColumn('Collections', 'isPublicDiscussions', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
+		// sequelize.queryInterface.addColumn('Collections', 'isPublicReviews', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
+		// sequelize.queryInterface.addColumn('Communities', 'isPublicBranches', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
+		// sequelize.queryInterface.addColumn('Communities', 'isPublicDiscussions', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
+		// sequelize.queryInterface.addColumn('Communities', 'isPublicReviews', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
 		sequelize.queryInterface.addColumn('Communities', 'viewHash', {
 			type: Sequelize.STRING,
 		}),
 		sequelize.queryInterface.addColumn('Communities', 'editHash', {
 			type: Sequelize.STRING,
 		}),
-		sequelize.queryInterface.addColumn('Communities', 'organizationId', {
-			type: Sequelize.UUID,
-		}),
+		// sequelize.queryInterface.addColumn('Communities', 'organizationId', {
+		// 	type: Sequelize.UUID,
+		// }),
 		sequelize.queryInterface.addColumn('Discussions', 'isPublic', {
 			type: Sequelize.BOOLEAN,
 		}),
@@ -175,18 +180,18 @@ export default async () => {
 		sequelize.queryInterface.addColumn('Discussions', 'organizationId', {
 			type: Sequelize.UUID,
 		}),
-		sequelize.queryInterface.addColumn('Pubs', 'isPublicBranches', {
-			type: Sequelize.BOOLEAN,
-		}),
-		sequelize.queryInterface.addColumn('Pubs', 'isPublicEdit', {
-			type: Sequelize.BOOLEAN,
-		}),
-		sequelize.queryInterface.addColumn('Pubs', 'isPublicDiscussions', {
-			type: Sequelize.BOOLEAN,
-		}),
-		sequelize.queryInterface.addColumn('Pubs', 'isPublicReviews', {
-			type: Sequelize.BOOLEAN,
-		}),
+		// sequelize.queryInterface.addColumn('Pubs', 'isPublicBranches', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
+		// sequelize.queryInterface.addColumn('Pubs', 'isPublicEdit', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
+		// sequelize.queryInterface.addColumn('Pubs', 'isPublicDiscussions', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
+		// sequelize.queryInterface.addColumn('Pubs', 'isPublicReviews', {
+		// 	type: Sequelize.BOOLEAN,
+		// }),
 		sequelize.queryInterface.addColumn('Pubs', 'viewHash', {
 			type: Sequelize.STRING,
 		}),
@@ -213,7 +218,6 @@ export default async () => {
 		});
 		return Promise.all(updates);
 	});
-
 	/* Migrate Collection slug */
 	await Collection.findAll({ attributes: ['id'] })
 		.then((data) => {
@@ -234,7 +238,6 @@ export default async () => {
 				},
 			});
 		});
-
 	/* Migrate Community isPublicX */
 	await Community.findAll({ attributes: ['id'] }).then((data) => {
 		const updates = data.map((item) => {
@@ -245,7 +248,6 @@ export default async () => {
 		});
 		return Promise.all(updates);
 	});
-
 	/* Migrate Community hashes */
 	await Community.findAll({ attributes: ['id'] }).then((data) => {
 		const updates = data.map((item) => {
@@ -256,7 +258,6 @@ export default async () => {
 		});
 		return Promise.all(updates);
 	});
-
 	/* Migrate Discussion isPublic and initBranchId */
 	/* Discussions are public if the branch they were on */
 	/* was publicPermissions 'view' or 'edit'. If the branch they were on */
@@ -275,18 +276,30 @@ export default async () => {
 			},
 		],
 	}).then((discussionData) => {
-		const updates = discussionData.map((item) => {
-			return Discussion.update(
-				{
-					isPublic: item.branch && item.branch.publicPermissions !== 'none',
-					initBranchId: item.branchId,
-				},
-				{ where: { id: item.id } },
-			);
-		});
-		return Promise.all(updates);
+		return Promise.map(
+			discussionData,
+			(item) => {
+				return Discussion.update(
+					{
+						isPublic: item.branch && item.branch.publicPermissions !== 'none',
+						// initBranchId: item.branchId,
+					},
+					{ where: { id: item.id } },
+				);
+			},
+			{ concurrency: 1 },
+		);
+		// const updates = discussionData.map((item) => {
+		// 	return Discussion.update(
+		// 		{
+		// 			isPublic: item.branch && item.branch.publicPermissions !== 'none',
+		// 			initBranchId: item.branchId,
+		// 		},
+		// 		{ where: { id: item.id } },
+		// 	);
+		// });
+		// return Promise.all(updates);
 	});
-
 	/* Migrate Pub isPublic  */
 	/* Pubs are public if their draft branch had publicPermissions !== 'none' */
 	/* Pubs have publicDiscussions if their public branch had publicPermissions === 'discuss' */
@@ -315,7 +328,6 @@ export default async () => {
 		});
 		return Promise.all(updates);
 	});
-
 	/* Migrate Pub hashes */
 	await Pub.findAll({ attributes: ['id'] }).then((data) => {
 		const updates = data.map((item) => {

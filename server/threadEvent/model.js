@@ -1,10 +1,10 @@
 export default (sequelize, dataTypes) => {
 	return sequelize.define(
-		'ThreadComment',
+		'ThreadEvent',
 		{
 			id: sequelize.idType,
-			text: { type: dataTypes.TEXT },
-			content: { type: dataTypes.JSONB },
+			type: { type: dataTypes.STRING },
+			data: { type: dataTypes.JSONB },
 			/* Set by Associations */
 			userId: { type: dataTypes.UUID, allowNull: false },
 			threadId: { type: dataTypes.UUID, allowNull: false },
@@ -12,10 +12,10 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { ThreadComment, User } = models;
-					ThreadComment.belongsTo(User, {
+					const { User, ThreadEvent } = models;
+					ThreadEvent.belongsTo(User, {
 						onDelete: 'CASCADE',
-						as: 'author',
+						as: 'user',
 						foreignKey: 'userId',
 					});
 				},

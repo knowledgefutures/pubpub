@@ -60,7 +60,10 @@ export default (sequelize, dataTypes) => {
 						PubVersion,
 						// Review,
 						Release,
-						Thread,
+						// Thread,
+						DiscussionNew,
+						Fork,
+						ReviewNew,
 					} = models;
 					Pub.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
@@ -87,9 +90,24 @@ export default (sequelize, dataTypes) => {
 					// 	as: 'discussions',
 					// 	foreignKey: 'pubId',
 					// });
-					Pub.hasMany(Thread, {
+					// Pub.hasMany(Thread, {
+					// 	onDelete: 'CASCADE',
+					// 	as: 'threads',
+					// 	foreignKey: 'pubId',
+					// });
+					Pub.hasMany(DiscussionNew, {
 						onDelete: 'CASCADE',
-						as: 'threads',
+						as: 'discussions',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(Fork, {
+						onDelete: 'CASCADE',
+						as: 'forks',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(ReviewNew, {
+						onDelete: 'CASCADE',
+						as: 'reviews',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(Branch, {

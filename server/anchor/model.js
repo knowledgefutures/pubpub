@@ -1,5 +1,5 @@
 export default (sequelize, dataTypes) => {
-	return sequelize.define('ThreadAnchor', {
+	return sequelize.define('Anchor', {
 		id: sequelize.idType,
 		prefix: { type: dataTypes.TEXT },
 		exact: { type: dataTypes.TEXT },
@@ -8,7 +8,5 @@ export default (sequelize, dataTypes) => {
 		to: { type: dataTypes.INTEGER },
 		branchKey: { type: dataTypes.INTEGER },
 		branchId: { type: dataTypes.UUID },
-		/* Set by Associations */
-		threadId: { type: dataTypes.UUID, allowNull: false },
 	});
 };

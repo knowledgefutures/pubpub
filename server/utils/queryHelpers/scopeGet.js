@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { splitThreads } from 'utils';
+// import { splitThreads } from 'utils';
 import {
 	Branch,
 	Collection,
@@ -11,7 +11,10 @@ import {
 } from '../../models';
 
 import buildPubOptions from './pubOptions';
-import sanitizeThreads from './threadsSanitize';
+// import sanitizeThreads from './threadsSanitize';
+import sanitizeDiscussions from './discussionsSanitize';
+import sanitizeForks from './forksSanitize';
+import sanitizeReviews from './reviewsSanitize';
 import { ensureSerialized } from './util';
 import { getCollection } from './collectionGet';
 
@@ -344,11 +347,20 @@ getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 		pubs = communityCountData.pubs;
 	}
 	pubs.forEach((pub) => {
-		const openThreads = (pub.threads || []).filter((thread) => {
-			return !thread.isClosed;
-		});
-		const visibleThreads = sanitizeThreads(openThreads, activePermissions, loginId);
-		const { discussions, forks, reviews } = splitThreads(visibleThreads);
+		// const openThreads = (pub.threads || []).filter((thread) => {
+		// 	return !thread.isClosed;
+		// });
+		// const visibleThreads = sanitizeThreads(openThreads, activePermissions, loginId);
+		// const { discussions, forks, reviews } = splitThreads(visibleThreads);
+		const openDiscussions = pub.discussions.filter((item) => !item.isClosed);
+		const discussions = sanitizeDiscussions(openDiscussions, activePermissions, loginId);
+
+		const openForks = pub.forks.filter((item) => !item.isClosed);
+		const forks = sanitizeForks(openForks, activePermissions, loginId);
+
+		const openReviews = pub.reviews.filter((item) => item.status !== 'closed');
+		const reviews = sanitizeReviews(openReviews, activePermissions, loginId);
+
 		discussionCount += discussions.length;
 		forkCount += forks.length;
 		reviewCount += reviews.length;

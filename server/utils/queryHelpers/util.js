@@ -14,3 +14,24 @@ export const ensureSerialized = (item) => {
 	}
 	return item;
 };
+
+export const sanitizeOnVisibility = (objectsWithVisibility, activePermissions, loginId) => {
+	const { canView, canAdmin } = activePermissions;
+	return objectsWithVisibility.filter((item) => {
+		if (item.visibility.access === 'public') {
+			return true;
+		}
+		if (item.visibility.access === 'members') {
+			return canView;
+		}
+		if (item.visibility.access === 'private') {
+			return (
+				canAdmin ||
+				item.visibility.users.find((user) => {
+					return user.id === loginId;
+				})
+			);
+		}
+		return false;
+	});
+};

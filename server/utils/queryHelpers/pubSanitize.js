@@ -1,16 +1,14 @@
 import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
-import { splitThreads } from 'utils';
-import sanitizeThreads from './threadsSanitize';
+// import { splitThreads } from 'utils';
+// import sanitizeThreads from './threadsSanitize';
+import sanitizeDiscussions from './discussionsSanitize';
+import sanitizeForks from './forksSanitize';
+import sanitizeReviews from './reviewsSanitize';
 
 export default (pubData, initialData, releaseNumber) => {
 	const { loginData, scopeData } = initialData;
-	const {
-		canView,
-		canViewDraft,
-		canEdit,
-		canEditDraft,
-		canAdminCommunity,
-	} = scopeData.activePermissions;
+	const { activePermissions } = scopeData;
+	const { canView, canViewDraft, canEdit, canEditDraft, canAdminCommunity } = activePermissions;
 
 	/* If there are no releases and the user does not have view access, they don't have access to the pub. */
 	/* Returning null will cause a 404 error to be returned. */
@@ -26,13 +24,16 @@ export default (pubData, initialData, releaseNumber) => {
 		.concat()
 		.sort((a, b) => (new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1));
 
-	const filteredThreads = sanitizeThreads(
-		pubData.threads,
-		scopeData.activePermissions,
-		loginData.id,
-	);
+	const discussions = sanitizeDiscussions(pubData.discussions, activePermissions, loginData.id);
+	const forks = sanitizeForks(pubData.forks, activePermissions, loginData.id);
+	const reviews = sanitizeReviews(pubData.reviews, activePermissions, loginData.id);
+	// const filteredThreads = sanitizeThreads(
+	// 	pubData.threads,
+	// 	scopeData.activePermissions,
+	// 	loginData.id,
+	// );
 
-	const { discussions, forks, reviews } = splitThreads(filteredThreads);
+	// const { discussions, forks, reviews } = splitThreads(filteredThreads);
 	const filteredCollectionPubs = pubData.collectionPubs
 		? pubData.collectionPubs.filter((item) => {
 				return item.collection.isPublic || canAdminCommunity;

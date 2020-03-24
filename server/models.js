@@ -12,7 +12,9 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	pool: {
 		max: process.env.SEQUELIZE_MAX_CONNECTIONS
 			? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)
-			: 5,
+			: 5, // Some migrations require this number to be 150
+		// idle: 20000,
+		// acquire: 20000,
 	},
 });
 
@@ -53,10 +55,21 @@ export const Release = sequelize.import('./release/model.js');
 export const Review = sequelize.import('./review/model.js');
 export const ReviewEvent = sequelize.import('./reviewEvent/model.js');
 export const Signup = sequelize.import('./signup/model.js');
+// export const Thread = sequelize.import('./thread/model.js');
+// export const ThreadAnchor = sequelize.import('./threadAnchor/model.js');
+// export const ThreadComment = sequelize.import('./threadComment/model.js');
+// export const ThreadUser = sequelize.import('./threadUser/model.js');
+
+export const DiscussionNew = sequelize.import('./discussion/modelNew.js');
+export const Anchor = sequelize.import('./anchor/model.js');
+export const ReviewNew = sequelize.import('./review/modelNew.js');
+export const Fork = sequelize.import('./fork/model.js');
 export const Thread = sequelize.import('./thread/model.js');
-export const ThreadAnchor = sequelize.import('./threadAnchor/model.js');
 export const ThreadComment = sequelize.import('./threadComment/model.js');
-export const ThreadUser = sequelize.import('./threadUser/model.js');
+export const ThreadEvent = sequelize.import('./threadEvent/model.js');
+export const Visibility = sequelize.import('./visibility/model.js');
+export const VisibilityUser = sequelize.import('./visibilityUser/model.js');
+
 export const User = sequelize.import('./user/model.js');
 export const WorkerTask = sequelize.import('./workerTask/model.js');
 

@@ -202,25 +202,25 @@ export function renderLatexString(value, isBlock, callback) {
 		});
 }
 
-export const splitThreads = (threads) => {
-	const discussions = [];
-	const forks = [];
-	const reviews = [];
-	threads.forEach((thread) => {
-		if (thread.reviewId) {
-			reviews.push(thread);
-		} else if (thread.forkId) {
-			forks.push(thread);
-		} else {
-			discussions.push(thread);
-		}
-	});
-	return {
-		discussions: discussions,
-		forks: forks,
-		reviews: reviews,
-	};
-};
+// export const splitThreads = (threads) => {
+// 	const discussions = [];
+// 	const forks = [];
+// 	const reviews = [];
+// 	threads.forEach((thread) => {
+// 		if (thread.reviewId) {
+// 			reviews.push(thread);
+// 		} else if (thread.forkId) {
+// 			forks.push(thread);
+// 		} else {
+// 			discussions.push(thread);
+// 		}
+// 	});
+// 	return {
+// 		discussions: discussions,
+// 		forks: forks,
+// 		reviews: reviews,
+// 	};
+// };
 
 export function checkForAsset(url) {
 	let checkCount = 0;

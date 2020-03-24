@@ -149,7 +149,7 @@ rules.fromPandoc('(Str | Space | SoftBreak)+', (pdNodes) => {
 	if (text.length > 0) {
 		return {
 			type: 'text',
-			text: textFromStrSpace(pdNodes),
+			text: text,
 		};
 	}
 	return [];

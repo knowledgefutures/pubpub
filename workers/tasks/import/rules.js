@@ -145,10 +145,14 @@ rules.fromPandoc('SmallCaps', pandocPassThroughTransformer);
 
 // Tell the transformer how to deal with typical content-level nodes
 rules.fromPandoc('(Str | Space | SoftBreak)+', (pdNodes) => {
-	return {
-		type: 'text',
-		text: textFromStrSpace(pdNodes),
-	};
+	const text = textFromStrSpace(pdNodes);
+	if (text.length > 0) {
+		return {
+			type: 'text',
+			text: textFromStrSpace(pdNodes),
+		};
+	}
+	return [];
 });
 
 // Tell the transformer how to turn Prosemirror text back into Pandoc

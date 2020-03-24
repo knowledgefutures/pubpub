@@ -82,7 +82,7 @@ describe('/pub', () => {
 	it('200s for a user seeking to visit the draft branch, when they have permission', async () => {
 		const agent = await login(pubManager);
 		await agent
-			.get(`/pub/${pub.slug}/branch/${draftBranch.shortId}/`)
+			.get(`/pub/${pub.slug}/branch/${draftBranch.shortId}`)
 			.set('Host', host)
 			.expect(200);
 	});
@@ -90,7 +90,7 @@ describe('/pub', () => {
 	it('200s for a user seeking to visit another branch, when they have permission', async () => {
 		const agent = await login(userA);
 		await agent
-			.get(`/pub/${pub.slug}/branch/${branchA.shortId}/`)
+			.get(`/pub/${pub.slug}/branch/${branchA.shortId}`)
 			.set('Host', host)
 			.expect(200);
 	});

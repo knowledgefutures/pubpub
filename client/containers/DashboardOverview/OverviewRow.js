@@ -82,7 +82,7 @@ const OverviewRow = (props) => {
 	const isCollection = content.pubs;
 	const authorString = generateAuthorString(content);
 	const hasAuthors = content.attributions && content.attributions.some((a) => a.isAuthor);
-	const slug = content.slug || content.title.toLowerCase().replace(/ /gi, '-');
+	const slug = content.slug || (content.title || '').toLowerCase().replace(/ /gi, '-');
 	const href = !onClick && getHref(isCollection, slug, parentSlug);
 	const { countConversations, countReviews } = getCounts(isCollection, content);
 	const [showChildren, setShowChildren] = useState(false);

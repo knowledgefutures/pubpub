@@ -1,6 +1,6 @@
 @import 'styles/variables.scss';
 
-.discussion-item-component {
+.thread-comment-component {
 	display: flex;
 	&:not(:last-child):not(.input) {
 		margin-bottom: 1em;

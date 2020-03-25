@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from '@blueprintjs/core';
 
-require('./threadBubble.scss');
+require('./discussionBubble.scss');
 
 const propTypes = {
 	color: PropTypes.string.isRequired,
@@ -23,7 +23,7 @@ const defaultProps = {
 	onMouseLeave: null,
 };
 
-const ThreadBubble = (props) => {
+const DiscussionBubble = (props) => {
 	const { color, count, isActive, label, onClick, onMouseEnter, onMouseLeave, showDot } = props;
 	const accentStyleBubble = {
 		border: `1px solid ${color}`,
@@ -36,7 +36,7 @@ const ThreadBubble = (props) => {
 	const bubbleStyle = isActive ? accentStyleBubbleActive : accentStyleBubble;
 	return (
 		<span
-			className="thread-bubble-component"
+			className="discussion-bubble-component"
 			role="button"
 			tabIndex={0}
 			onMouseEnter={onMouseEnter}
@@ -59,6 +59,6 @@ const ThreadBubble = (props) => {
 	);
 };
 
-ThreadBubble.propTypes = propTypes;
-ThreadBubble.defaultProps = defaultProps;
-export default ThreadBubble;
+DiscussionBubble.propTypes = propTypes;
+DiscussionBubble.defaultProps = defaultProps;
+export default DiscussionBubble;

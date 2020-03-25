@@ -8,7 +8,7 @@ import PubDiscussions from '../../PubDiscussions/PubDiscussions';
 import PubBottomSection, { SectionBullets, AccentedIconButton } from '../PubBottomSection';
 import SortList from './SortList';
 import FilterMenu from './FilterMenu';
-import { filterAndSortThreads } from '../../PubDiscussions/discussionUtils';
+import { filterAndSortDiscussions } from '../../PubDiscussions/discussionUtils';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -111,8 +111,8 @@ const DiscussionsSection = (props) => {
 		return null;
 	};
 
-	const createThreadFilter = (searchTerm) => (threads) => {
-		const res = filterAndSortThreads(
+	const createDiscussionFilter = (searchTerm) => (threads) => {
+		const res = filterAndSortDiscussions(
 			threads,
 			isBrowsingArchive,
 			sortMode,
@@ -135,15 +135,14 @@ const DiscussionsSection = (props) => {
 			searchPlaceholder="Search comments..."
 		>
 			{({ searchTerm, isSearching }) => (
-				null
-				// <PubDiscussions
-				// 	{...props}
-				// 	filterThreads={createThreadFilter(searchTerm)}
-				// 	searchTerm={searchTerm}
-				// 	showBottomInput={
-				// 		(canView || canCreateDiscussions) && !isSearching && !isBrowsingArchive
-				// 	}
-				// />
+				<PubDiscussions
+					{...props}
+					filterDiscussions={createDiscussionFilter(searchTerm)}
+					searchTerm={searchTerm}
+					showBottomInput={
+						(canView || canCreateDiscussions) && !isSearching && !isBrowsingArchive
+					}
+				/>
 			)}
 		</PubBottomSection>
 	);

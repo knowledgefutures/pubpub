@@ -1,42 +1,27 @@
 import { getScope } from '../utils/queryHelpers';
-import { ThreadComment } from '../models';
+import { DiscussionNew } from '../models';
 
-const userEditableFields = ['title', 'content', 'text', 'isClosed', 'highlights', 'labels'];
+const userEditableFields = ['title', 'isClosed', 'labels'];
 
-export const getPermissions = async ({
-	// branchId,
-	// threadId,
-	threadCommentId,
-	userId,
-	pubId,
-	collectionId,
-	communityId,
-	accessHash,
-}) => {
+export const getPermissions = async ({ discussionId, userId, pubId, communityId, accessHash }) => {
 	if (!userId) {
 		return {};
 	}
 
 	const scopeData = await getScope({
 		communityId: communityId,
-		collectionId: collectionId,
 		pubId: pubId,
 		loginId: userId,
 		accessHash: accessHash,
 	});
+	const discussionData = await DiscussionNew.findOne({
+		where: { id: discussionId },
+	});
 
-	let commentItem;
-	if (threadCommentId) {
-		commentItem = await ThreadComment.findOne({
-			where: { id: threadCommentId },
-			raw: true,
-		});
-	}
-
-	const userCreatedComment = commentItem && commentItem.userId === userId;
+	const userCreatedDiscussion = discussionData && discussionData.userId === userId;
 	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
 	return {
 		create: canView || canCreateDiscussions,
-		update: (canAdmin || !!userCreatedComment) && userEditableFields,
+		update: (canAdmin || !!userCreatedDiscussion) && userEditableFields,
 	};
 };

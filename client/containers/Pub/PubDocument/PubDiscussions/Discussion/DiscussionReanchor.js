@@ -22,7 +22,7 @@ const DiscussionReanchor = (props) => {
 		setIsActive(false);
 	};
 
-	const initAnchorText = discussionData.initAnchorText || {};
+	const anchor = discussionData.anchor || {};
 	return (
 		<React.Fragment>
 			<Button
@@ -37,9 +37,9 @@ const DiscussionReanchor = (props) => {
 					<Card className="discussion-reanchor-component">
 						<p>Make a highlight in the document and then click "Re-anchor".</p>
 						<p>
-							{initAnchorText.prefix}
-							<em style={{ fontWeight: 'bold' }}>{initAnchorText.exact}</em>
-							{initAnchorText.suffix}
+							{anchor.prefix}
+							<em style={{ fontWeight: 'bold' }}>{anchor.exact}</em>
+							{anchor.suffix}
 						</p>
 						<ButtonGroup>
 							<Button onClick={() => setIsActive(false)} style={{ marginRight: 10 }}>

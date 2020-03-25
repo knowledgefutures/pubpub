@@ -27,15 +27,15 @@ const SideMenu = () => {
 			icon: 'home2',
 			href: getDashUrl({ collectionSlug: collectionSlug, pubSlug: pubSlug }),
 		},
-		{
-			title: 'Activity',
-			icon: 'trending-up',
-			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
-				mode: 'activity',
-			}),
-		},
+		// {
+		// 	title: 'Activity',
+		// 	icon: 'trending-up',
+		// 	href: getDashUrl({
+		// 		collectionSlug: collectionSlug,
+		// 		pubSlug: pubSlug,
+		// 		mode: 'activity',
+		// 	}),
+		// },
 		{
 			title: 'Pages',
 			icon: 'page-layout',
@@ -47,47 +47,47 @@ const SideMenu = () => {
 			communityOnly: true,
 			manageRequired: true,
 		},
-		{
-			title: 'Discussions',
-			icon: 'chat2',
-			count: activeCounts.discussionCount,
-			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
-				mode: 'discussions',
-				// submode: 'list',
-			}),
-			// children: [
-			// 	{
-			// 		title: 'List',
-			// 		href: getDashUrl({
-			// 			collectionSlug: collectionSlug,
-			// 			pubSlug: pubSlug,
-			// 			mode: 'discussions',
-			// 			submode: 'list',
-			// 		}),
-			// 	},
-			// 	{
-			// 		title: 'Labels',
-			// 		href: getDashUrl({
-			// 			collectionSlug: collectionSlug,
-			// 			pubSlug: pubSlug,
-			// 			mode: 'discussions',
-			// 			submode: 'labels',
-			// 		}),
-			// 	},
-			// ],
-		},
-		{
-			title: 'Forks',
-			icon: 'git-branch',
-			count: activeCounts.forkCount,
-			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
-				mode: 'forks',
-			}),
-		},
+		// {
+		// 	title: 'Discussions',
+		// 	icon: 'chat2',
+		// 	count: activeCounts.discussionCount,
+		// 	href: getDashUrl({
+		// 		collectionSlug: collectionSlug,
+		// 		pubSlug: pubSlug,
+		// 		mode: 'discussions',
+		// 		// submode: 'list',
+		// 	}),
+		// 	// children: [
+		// 	// 	{
+		// 	// 		title: 'List',
+		// 	// 		href: getDashUrl({
+		// 	// 			collectionSlug: collectionSlug,
+		// 	// 			pubSlug: pubSlug,
+		// 	// 			mode: 'discussions',
+		// 	// 			submode: 'list',
+		// 	// 		}),
+		// 	// 	},
+		// 	// 	{
+		// 	// 		title: 'Labels',
+		// 	// 		href: getDashUrl({
+		// 	// 			collectionSlug: collectionSlug,
+		// 	// 			pubSlug: pubSlug,
+		// 	// 			mode: 'discussions',
+		// 	// 			submode: 'labels',
+		// 	// 		}),
+		// 	// 	},
+		// 	// ],
+		// },
+		// {
+		// 	title: 'Forks',
+		// 	icon: 'git-branch',
+		// 	count: activeCounts.forkCount,
+		// 	href: getDashUrl({
+		// 		collectionSlug: collectionSlug,
+		// 		pubSlug: pubSlug,
+		// 		mode: 'forks',
+		// 	}),
+		// },
 		{
 			title: 'Reviews',
 			icon: 'social-media',
@@ -119,15 +119,15 @@ const SideMenu = () => {
 			// 	},
 			// ],
 		},
-		{
-			title: 'Impact',
-			icon: 'dashboard',
-			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
-				mode: 'impact',
-			}),
-		},
+		// {
+		// 	title: 'Impact',
+		// 	icon: 'dashboard',
+		// 	href: getDashUrl({
+		// 		collectionSlug: collectionSlug,
+		// 		pubSlug: pubSlug,
+		// 		mode: 'impact',
+		// 	}),
+		// },
 		{
 			title: 'Members',
 			icon: 'people',

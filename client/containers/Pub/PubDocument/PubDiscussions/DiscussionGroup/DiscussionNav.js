@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Color from 'color';
 import { Button, Popover, Menu, MenuItem } from '@blueprintjs/core';
@@ -6,12 +6,12 @@ import { Button, Popover, Menu, MenuItem } from '@blueprintjs/core';
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
 
-import ThreadBubble from './ThreadBubble';
+import DiscussionBubble from './DiscussionBubble';
 
-require('./threadNav.scss');
+require('./discussionNav.scss');
 
 const propTypes = {
-	threads: PropTypes.array.isRequired,
+	discussions: PropTypes.array.isRequired,
 	activeThreadHover: PropTypes.string,
 	setActiveThreadHover: PropTypes.func.isRequired,
 	activeThread: PropTypes.string,
@@ -25,30 +25,30 @@ const defaultProps = {
 	activeThread: undefined,
 };
 
-const getLabelForThread = (thread) =>
-	thread.comments
-		.map((discussion) => discussion.author.fullName)
+const getLabelForDiscussion = (discussion) =>
+	discussion.thread.comments
+		.map((comment) => comment.author.fullName)
 		.filter((name, index, array) => array.indexOf(name) === index)
 		.join(', ');
 
 const makeBubbleRenderer = ({
-	threads,
+	discussions,
 	loginData,
 	communityData,
 	activeThreadHover,
 	activeThread,
-	getHandlersForThread,
-}) => (thread) => {
-	const isActive = activeThreadHover === thread.id || activeThread === thread.id;
-	const hasWrittenInThread = thread.comments.some(
+	getHandlersForDiscussion,
+}) => (discussion) => {
+	const isActive = activeThreadHover === discussion.id || activeThread === discussion.id;
+	const hasWrittenInThread = discussion.thread.comments.some(
 		(threadComment) => threadComment.userId === loginData.id,
 	);
-	const bubbleCount = thread.number && thread.comments.length;
-	const label = thread.number && getLabelForThread(threads[0]);
+	const bubbleCount = discussion.number && discussion.thread.comments.length;
+	const label = discussion.number && getLabelForDiscussion(discussions[0]);
 	return (
-		<ThreadBubble
-			{...getHandlersForThread(thread)}
-			key={thread.id}
+		<DiscussionBubble
+			{...getHandlersForDiscussion(discussion)}
+			key={discussion.id}
 			color={communityData.accentColorDark}
 			count={bubbleCount}
 			isActive={isActive}
@@ -58,9 +58,9 @@ const makeBubbleRenderer = ({
 	);
 };
 
-const ThreadNav = (props) => {
+const DiscussionNav = (props) => {
 	const {
-		threads,
+		discussions,
 		activeThreadHover,
 		activeThread,
 		setActiveThread,
@@ -85,34 +85,34 @@ const ThreadNav = (props) => {
 		.rgb()
 		.string();
 
-	const getHandlersForThread = (thread) => ({
+	const getHandlersForDiscussion = (discussion) => ({
 		onMouseEnter: () => {
-			setActiveThreadHover(thread.id);
+			setActiveThreadHover(discussion.id);
 		},
 		onMouseLeave: () => {
 			setActiveThreadHover(undefined);
 		},
 		onClick: () => {
-			const setId = activeThread === thread.id ? undefined : thread.id;
+			const setId = activeThread === discussion.id ? undefined : discussion.id;
 			setActiveThread(setId);
 		},
 	});
 
 	const bubbleRenderer = makeBubbleRenderer({
-		threads: threads,
+		discussions: discussions,
 		loginData: loginData,
 		communityData: communityData,
 		activeThreadHover: activeThreadHover,
 		activeThread: activeThread,
-		getHandlersForThread: getHandlersForThread,
+		getHandlersForDiscussion: getHandlersForDiscussion,
 	});
 
 	const maxBubblesBeforeOverflow = 7;
-	const bubbleThreads = threads.slice(0, maxBubblesBeforeOverflow);
-	const overflowThreads = threads.slice(maxBubblesBeforeOverflow);
+	const bubbleThreads = discussions.slice(0, maxBubblesBeforeOverflow);
+	const overflowThreads = discussions.slice(maxBubblesBeforeOverflow);
 
 	return (
-		<span className="thread-nav-component" style={accentStyle}>
+		<span className="discussion-nav-component" style={accentStyle}>
 			<style>{`.d-${activeThreadHover}, .lh-${activeThreadHover} { background-color: rgba(0, 0, 0, 0.2) !important; }`}</style>
 			<style>{`.d-${activeThread}, .lh-${activeThread} { background-color: ${fadedAccentColorDark} !important; }`}</style>
 			{bubbleThreads.map(bubbleRenderer)}
@@ -126,17 +126,17 @@ const ThreadNav = (props) => {
 						<Menu>
 							{overflowThreads.map((thread, index) => (
 								<MenuItem
-									{...getHandlersForThread(thread)}
+									{...getHandlersForDiscussion(thread)}
 									// eslint-disable-next-line react/no-array-index-key
 									key={index}
 									icon={bubbleRenderer(thread)}
-									text={getLabelForThread(thread)}
+									text={getLabelForDiscussion(thread)}
 								/>
 							))}
 						</Menu>
 					}
 				>
-					<ThreadBubble
+					<DiscussionBubble
 						isActive={
 							!!isOverflowHovered ||
 							!!isOverflowShown ||
@@ -151,14 +151,14 @@ const ThreadNav = (props) => {
 						color={communityData.accentColorDark}
 						count={<Icon icon="more" iconSize={10} className="overflow-icon" />}
 						showDot={overflowThreads.some((thread) =>
-							thread.comments.some(
+							thread.thread.comments.some(
 								(discussion) => discussion.userId === loginData.id,
 							),
 						)}
 					/>
 				</Popover>
 			)}
-			{activeThread && threads.length > 1 && (
+			{activeThread && discussions.length > 1 && (
 				<React.Fragment>
 					<Button
 						minimal={true}
@@ -166,14 +166,16 @@ const ThreadNav = (props) => {
 						className="caret-button"
 						icon={<Icon icon="caret-left" color={communityData.accentColorDark} />}
 						onClick={() => {
-							const currIndex = threads.reduce((prev, curr, index) => {
+							const currIndex = discussions.reduce((prev, curr, index) => {
 								if (activeThread === curr.id) {
 									return index;
 								}
 								return prev;
 							}, 0);
 							const leftId =
-								threads[(threads.length + currIndex - 1) % threads.length].id;
+								discussions[
+									(discussions.length + currIndex - 1) % discussions.length
+								].id;
 							setActiveThread(leftId);
 						}}
 					/>
@@ -183,14 +185,16 @@ const ThreadNav = (props) => {
 						className="caret-button"
 						icon={<Icon icon="caret-right" color={communityData.accentColorDark} />}
 						onClick={() => {
-							const currIndex = threads.reduce((prev, curr, index) => {
+							const currIndex = discussions.reduce((prev, curr, index) => {
 								if (activeThread === curr.id) {
 									return index;
 								}
 								return prev;
 							}, 0);
 							const leftId =
-								threads[(threads.length + currIndex + 1) % threads.length].id;
+								discussions[
+									(discussions.length + currIndex + 1) % discussions.length
+								].id;
 							setActiveThread(leftId);
 						}}
 					/>
@@ -229,6 +233,6 @@ const ThreadNav = (props) => {
 	);
 };
 
-ThreadNav.propTypes = propTypes;
-ThreadNav.defaultProps = defaultProps;
-export default ThreadNav;
+DiscussionNav.propTypes = propTypes;
+DiscussionNav.defaultProps = defaultProps;
+export default DiscussionNav;

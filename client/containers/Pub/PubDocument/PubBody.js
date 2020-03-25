@@ -15,7 +15,7 @@ import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 
 import discussionSchema from './DiscussionAddon/discussionSchema';
 import { nestDiscussionsToThreads } from './PubDiscussions/discussionUtils';
-import DiscussionThread from './PubDiscussions/DiscussionThread';
+import Discussion from './PubDiscussions/Discussion';
 
 require('./pubBody.scss');
 
@@ -278,24 +278,24 @@ const PubBody = (props) => {
 					return null;
 				}
 
-				const threadNumber = embedDiscussions.current[embedId].threadNumber;
+				const number = embedDiscussions.current[embedId].number;
 				// const threads = nestDiscussionsToThreads(pubData.discussions);
-				const threads = pubData.discussions;
-				const activeThread = threads.find((thread) => thread.number === threadNumber);
+				// const threads = pubData.discussions;
+				const activeDiscussion = pubData.discussions.find((disc) => disc.number === number);
 
 				return ReactDOM.createPortal(
 					<React.Fragment>
-						{!activeThread && (
+						{!activeDiscussion && (
 							<Card>Please select a discussion from the formatting bar.</Card>
 						)}
-						{activeThread && (
-							<DiscussionThread
+						{activeDiscussion && (
+							<Discussion
 								key={embedId}
 								pubData={pubData}
 								collabData={collabData}
 								historyData={historyData}
 								firebaseBranchRef={firebaseBranchRef}
-								threadData={activeThread}
+								discussionData={activeDiscussion}
 								updateLocalData={updateLocalData}
 								canPreview={true}
 							/>

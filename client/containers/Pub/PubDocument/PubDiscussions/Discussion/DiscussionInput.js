@@ -17,7 +17,7 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
-	threadData: PropTypes.object.isRequired,
+	discussionData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	isPubBottomInput: PropTypes.bool,
 	historyData: PropTypes.object.isRequired,
@@ -40,7 +40,7 @@ const DiscussionInput = (props) => {
 		pubData,
 		collabData,
 		updateLocalData,
-		threadData,
+		discussionData,
 		isPubBottomInput,
 		historyData,
 	} = props;
@@ -50,23 +50,57 @@ const DiscussionInput = (props) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [didFocus, setDidFocus] = useState(false);
 	const [editorKey, setEditorKey] = useState(Date.now());
-	const isNewThread = !threadData.number;
+	const isNewThread = !discussionData.number;
 	useEffect(() => {
 		if (!isPubBottomInput && (isNewThread || didFocus) && changeObject.view) {
 			changeObject.view.focus();
 		}
 	}, [isNewThread, changeObject.view, didFocus, isPubBottomInput]);
 
-	const handlePostDiscussion = () => {
+	const handlePostThreadComment = async () => {
 		setIsLoading(true);
-		const initAnchorData = getLocalHighlightText(pubView, threadData.id);
-		return apiFetch('/api/discussions', {
+		const outputData = await apiFetch('/api/threadComment', {
 			method: 'POST',
 			body: JSON.stringify({
 				accessHash: locationData.query.access,
-				threadId: isNewThread ? threadData.id : undefined,
-				// discussionId: isNewThread ? threadData[0].id : undefined,
-				// threadNumber: isNewThread ? undefined : threadData[0].threadNumber,
+				discussionId: discussionData.id,
+				threadId: discussionData.thread.id,
+				pubId: pubData.id,
+				communityId: communityData.id,
+				content: getJSON(changeObject.view),
+				text: getText(changeObject.view) || '',
+			}),
+		});
+
+		updateLocalData('pub', {
+			discussions: pubData.discussions.map((disc) => {
+				if (disc.thread.id === outputData.threadId) {
+					return {
+						...disc,
+						thread: {
+							...disc.thread,
+							comments: [...disc.thread.comments, outputData],
+						},
+					};
+				}
+				return disc;
+			}),
+		});
+
+		if (isPubBottomInput) {
+			setIsLoading(false);
+			setEditorKey(Date.now());
+		}
+	};
+
+	const handlePostDiscussion = async () => {
+		setIsLoading(true);
+		const initAnchorData = getLocalHighlightText(pubView, discussionData.id);
+		const outputData = await apiFetch('/api/discussions', {
+			method: 'POST',
+			body: JSON.stringify({
+				accessHash: locationData.query.access,
+				discussionId: discussionData.id,
 				pubId: pubData.id,
 				branchId: pubData.activeBranch.id,
 				branchKey: historyData.currentKey,
@@ -75,54 +109,24 @@ const DiscussionInput = (props) => {
 				text: getText(changeObject.view) || '',
 				initAnchorData: initAnchorData,
 			}),
-		})
-			.then((outputData) => {
-				if (!isNewThread) {
-					return Promise.all([outputData, null]);
-				}
-				const convertHighlight = props.firebaseBranchRef
-					? convertLocalHighlightToDiscussion(
-							pubView,
-							threadData.id,
-							props.firebaseBranchRef,
-					  )
-					: () => {};
-				return Promise.all([null, outputData, convertHighlight]);
-			})
-			.then(([[newComment, newThread]]) => {
-				if (newThread) {
-					updateLocalData('pub', {
-						discussions: [...pubData.discussions, newThread],
-						threads: [...pubData.threads, newThread],
-					});
-				}
-				if (!newThread) {
-					updateLocalData('pub', {
-						discussions: pubData.discussions.map((disc) => {
-							if (disc.id === newComment.threadId) {
-								return {
-									...disc,
-									comments: [...disc.comments, newComment],
-								};
-							}
-							return disc;
-						}),
-						threads: pubData.threads.map((thread) => {
-							if (thread.id === newComment.threadId) {
-								return {
-									...thread,
-									comments: [...thread.comments, newComment],
-								};
-							}
-							return thread;
-						}),
-					});
-				}
-				if (isPubBottomInput) {
-					setIsLoading(false);
-					setEditorKey(Date.now());
-				}
-			});
+		});
+
+		if (props.firebaseBranchRef) {
+			await convertLocalHighlightToDiscussion(
+				pubView,
+				discussionData.id,
+				props.firebaseBranchRef,
+			);
+		}
+
+		updateLocalData('pub', {
+			discussions: [...pubData.discussions, outputData],
+		});
+
+		if (isPubBottomInput) {
+			setIsLoading(false);
+			setEditorKey(Date.now());
+		}
 	};
 
 	const isLoggedIn = loginData.id;
@@ -130,7 +134,7 @@ const DiscussionInput = (props) => {
 		locationData.queryString.length > 1 ? locationData.queryString : ''
 	}`;
 	return (
-		<div className="discussion-item-component input">
+		<div className="thread-comment-component input">
 			<div className="avatar-wrapper">
 				<Avatar width={18} initials={loginData.intials} avatar={loginData.avatar} />
 			</div>
@@ -148,7 +152,7 @@ const DiscussionInput = (props) => {
 							text="Cancel"
 							small={true}
 							onClick={() => {
-								removeLocalHighlight(pubView, threadData.id);
+								removeLocalHighlight(pubView, discussionData.id);
 							}}
 						/>
 					)}
@@ -188,7 +192,7 @@ const DiscussionInput = (props) => {
 						text={isNewThread ? 'Post Discussion' : 'Post Reply'}
 						loading={isLoading}
 						disabled={!getText(changeObject.view)}
-						onClick={handlePostDiscussion}
+						onClick={isNewThread ? handlePostDiscussion : handlePostThreadComment}
 						small={true}
 					/>
 					{isNewThread && !isPubBottomInput && (
@@ -197,7 +201,7 @@ const DiscussionInput = (props) => {
 							text="Cancel"
 							small={true}
 							onClick={() => {
-								removeLocalHighlight(pubView, threadData.id);
+								removeLocalHighlight(pubView, discussionData.id);
 							}}
 						/>
 					)}

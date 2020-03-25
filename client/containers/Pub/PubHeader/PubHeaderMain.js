@@ -196,7 +196,7 @@ const PubHeaderMain = (props) => {
 		const { releases, releaseNumber } = pubData;
 		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
-			<>
+			<React.Fragment>
 				{canEdit && (
 					<LargeHeaderButton
 						icon="edit"
@@ -232,7 +232,7 @@ const PubHeaderMain = (props) => {
 						))
 						.reverse()}
 				</Menu>
-			</>
+			</React.Fragment>
 		);
 	};
 
@@ -242,7 +242,7 @@ const PubHeaderMain = (props) => {
 		const latestTimestamp = timestamps[latestKey];
 		const hasRelease = releases.length > 0;
 		return (
-			<>
+			<React.Fragment>
 				{hasRelease && (
 					<LargeHeaderButton
 						icon="document-open"
@@ -266,7 +266,7 @@ const PubHeaderMain = (props) => {
 						})
 					}
 				/>
-			</>
+			</React.Fragment>
 		);
 	};
 

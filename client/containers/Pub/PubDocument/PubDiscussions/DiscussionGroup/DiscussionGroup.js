@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import ThreadNav from './ThreadNav';
-import DiscussionThread from '../DiscussionThread';
+import DiscussionNav from './DiscussionNav';
+import Discussion from '../Discussion';
 
-require('./threadGroup.scss');
+require('./discussionGroup.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object.isRequired,
-	threads: PropTypes.array.isRequired,
+	discussions: PropTypes.array.isRequired,
 	mountClassName: PropTypes.string.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
@@ -20,14 +20,14 @@ const propTypes = {
 	prevConvertedDiscussionIds: PropTypes.object.isRequired,
 };
 
-const ThreadGroup = (props) => {
+const DiscussionGroup = (props) => {
 	const {
 		pubData,
 		collabData,
 		historyData,
 		firebaseBranchRef,
 		updateLocalData,
-		threads,
+		discussions,
 		sideContentRef,
 		mainContentRef,
 		mountClassName,
@@ -43,7 +43,7 @@ const ThreadGroup = (props) => {
 
 	useEffect(() => {
 		/* We want to set the activeThread to any newly opened new discussion */
-		const justCreatedDiscussionId = threads.reduce((prev, curr) => {
+		const justCreatedDiscussionId = discussions.reduce((prev, curr) => {
 			const isNewDiscussion = !curr.number;
 			const alreadyKnowAboutNewDiscussion = prevNewDiscussionIds.current.includes(curr.id);
 			if (isNewDiscussion && !alreadyKnowAboutNewDiscussion) {
@@ -55,7 +55,7 @@ const ThreadGroup = (props) => {
 			prevNewDiscussionIds.current.push(justCreatedDiscussionId);
 			setActiveThread(justCreatedDiscussionId);
 		}
-		const justConvertedDiscussionId = threads.reduce((prev, curr) => {
+		const justConvertedDiscussionId = discussions.reduce((prev, curr) => {
 			const isNewDiscussion = !curr.number;
 			const alreadyKnowAboutNewDiscussion = prevNewDiscussionIds.current.includes(curr.id);
 			const alreadyKnowAboutConvertedDiscussion = prevConvertedDiscussionIds.current.includes(
@@ -74,7 +74,7 @@ const ThreadGroup = (props) => {
 			prevConvertedDiscussionIds.current.push(justConvertedDiscussionId);
 			setActiveThread(justConvertedDiscussionId);
 		}
-	}, [prevNewDiscussionIds, prevConvertedDiscussionIds, threads]);
+	}, [prevNewDiscussionIds, prevConvertedDiscussionIds, discussions]);
 
 	useEffect(() => {
 		/* This effect is due to a Chrome rendering bug that causes */
@@ -85,7 +85,7 @@ const ThreadGroup = (props) => {
 
 	/* When a highlight is removed (i.e. a new one is Cancelled) */
 	/* and was the activeThread, we need to clear */
-	const activeThreadData = threads.find((thread) => {
+	const activeDiscussionData = discussions.find((thread) => {
 		return thread.id === activeThread;
 	});
 	const style = {
@@ -96,16 +96,16 @@ const ThreadGroup = (props) => {
 	return (
 		<span
 			className={classNames({
-				'thread-group-component': true,
+				'discussion-group-component': true,
 				active: activeThread,
 				expanded: isExpanded && activeThread,
 			})}
 			style={style}
 			tabIndex={-1}
 		>
-			<ThreadNav
+			<DiscussionNav
 				key={isExpanded && activeThread}
-				threads={threads}
+				discussions={discussions}
 				activeThreadHover={activeThreadHover}
 				setActiveThreadHover={setActiveThreadHover}
 				activeThread={activeThread}
@@ -113,13 +113,13 @@ const ThreadGroup = (props) => {
 				isExpanded={isExpanded}
 				setExpanded={setExpanded}
 			/>
-			{activeThreadData && (
-				<DiscussionThread
+			{activeDiscussionData && (
+				<Discussion
 					pubData={pubData}
 					collabData={collabData}
 					historyData={historyData}
 					firebaseBranchRef={firebaseBranchRef}
-					threadData={activeThreadData}
+					discussionData={activeDiscussionData}
 					updateLocalData={updateLocalData}
 				/>
 			)}
@@ -127,5 +127,5 @@ const ThreadGroup = (props) => {
 	);
 };
 
-ThreadGroup.propTypes = propTypes;
-export default ThreadGroup;
+DiscussionGroup.propTypes = propTypes;
+export default DiscussionGroup;

@@ -37,17 +37,6 @@ const propTypes = {
 	updateLocalData: PropTypes.func.isRequired,
 };
 
-const getPublishDateString = (pubData) => {
-	const publishedDate = getPubPublishedDate(
-		pubData,
-		pubData.branches.find((br) => br.title === 'public'),
-	);
-	if (publishedDate) {
-		return dateFormat(publishedDate, 'mmm dd, yyyy');
-	}
-	return <i>Unpublished</i>;
-};
-
 const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) => {
 	if (timestamp) {
 		const now = Date.now();
@@ -94,7 +83,10 @@ const PubHeaderMain = (props) => {
 	};
 
 	const { canManage, canEdit } = scopeData.activePermissions;
-	const publishedAtString = getPublishDateString(pubData);
+	const publishedDate = getPubPublishedDate(
+		pubData,
+		pubData.branches.find((br) => br.title === 'public'),
+	);
 
 	const renderTop = () => {
 		return (
@@ -102,8 +94,14 @@ const PubHeaderMain = (props) => {
 				<CollectionsBar pubData={pubData} updateLocalData={updateLocalData} />
 				<div className="basic-details">
 					<span className="metadata-pair">
-						<b className="pub-header-themed-secondary">Published on</b>
-						{publishedAtString}
+						{publishedDate && (
+							<b className="pub-header-themed-secondary">Published on</b>
+						)}
+						{publishedDate ? (
+							dateFormat(publishedDate, 'mmm dd, yyyy')
+						) : (
+							<i>Unpublished</i>
+						)}
 					</span>
 					{doi && (
 						<span className="metadata-pair doi-pair">

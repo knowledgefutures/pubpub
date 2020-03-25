@@ -268,7 +268,18 @@ class PubSyncManager extends React.Component {
 				if (this.state.firebaseRootRef && hasUpdates) {
 					this.state.firebaseRootRef.child('metadata').update(firebaseSyncData);
 				}
-				document.title = getPubPageTitle(this.state.pubData, this.props.communityData);
+				if (typeof newPubData.title === 'string') {
+					document.title = getPubPageTitle(
+						/* this.state.pubData does not always have the newest title. */
+						/* My guess is that there are cases where idleStateUpdater */
+						/* causes a delay such that this callback is called before */
+						/* before the updateState event has completed. This seems */
+						/* counterintuitiveand may require us to rethink whether a  */
+						/* callback on idleStateUpdater is appropriate. */
+						{ ...this.state.pubData, title: newPubData.title },
+						this.props.communityData,
+					);
+				}
 			},
 		);
 	}

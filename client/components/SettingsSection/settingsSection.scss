@@ -12,14 +12,17 @@
 			display: grid;
 			grid-template-columns: 140px 1fr;
 			grid-template-areas: 'title content';
-			grid-column-gap: 4%;
+			grid-column-gap: 9%;
+			padding-top: 20px;
 			.title {
-				text-align: right;
+				text-align: left;
 				grid-area: title;
 			}
 			.content {
 				grid-area: content;
 				min-width: 0px;
+				font-size: 16px;
+				font-weight: 300;
 			}
 		}
 	}

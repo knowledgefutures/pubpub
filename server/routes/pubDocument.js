@@ -78,9 +78,7 @@ app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
 		const { releaseNumber: releaseNumberString, pubSlug } = req.params;
 		const initialData = await getInitialData(req);
 		const releaseNumber = parseInt(releaseNumberString, 10);
-		const { canView } = initialData.scopeData.activePermissions;
-
-		if (!canView || Number.isNaN(releaseNumber)) {
+		if (Number.isNaN(releaseNumber)) {
 			throwPubNotFoundError();
 		}
 

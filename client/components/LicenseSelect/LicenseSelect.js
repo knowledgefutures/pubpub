@@ -1,10 +1,12 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
+import dateFormat from 'dateformat';
 
 import { licenses, getLicenseBySlug } from 'shared/license';
 import { apiFetch } from 'utils';
 import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
 
 require('./licenseSelect.scss');
 
@@ -13,6 +15,7 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		id: PropTypes.string,
 		licenseSlug: PropTypes.string,
+		collectionPubs: PropTypes.object,
 	}).isRequired,
 	onSelect: PropTypes.func,
 	updateLocalData: PropTypes.func,
@@ -31,7 +34,21 @@ const LicenseSelect = (props) => {
 	const { communityData } = useContext(PageContext);
 
 	const currentLicense = getLicenseBySlug(pubData.licenseSlug);
-
+	const primaryCollectionPub = pubData.collectionPubs.find((cp) => cp.isPrimary);
+	const collectionPubDate = primaryCollectionPub
+		? primaryCollectionPub.collection.metadata.copyrightYear ||
+		  primaryCollectionPub.collection.metadata.date ||
+		  primaryCollectionPub.collection.metadata.publicationDate
+		: null;
+	const pubCopyrightDate =
+		dateFormat(collectionPubDate, 'yyyy') || dateFormat(getPubPublishedDate(pubData), 'yyyy');
+	let pubPublisher = communityData.title;
+	if (communityData.id === '78810858-8c4a-4435-a669-6bb176b61d40') {
+		pubPublisher = 'Massachusetts Institute of Technology';
+	}
+	if (currentLicense.slug === 'copyright') {
+		currentLicense.full = `Copyright © ${pubCopyrightDate} ${pubPublisher}. All rights reserved.`;
+	}
 	const selectLicense = (license) => {
 		onSelect(license);
 		if (persistSelections) {
@@ -70,18 +87,28 @@ const LicenseSelect = (props) => {
 								<div>
 									<div className="title">
 										{license.short}{' '}
-										<a
-											href={license.link}
-											className="link"
-											onClick={(e) => e.stopPropagation()}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											Learn more
-											<Icon iconSize={12} icon="share" />
-										</a>
+										{license.link && (
+											<a
+												href={license.link}
+												className="link"
+												onClick={(e) => e.stopPropagation()}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												Learn more
+												<Icon iconSize={12} icon="share" />
+											</a>
+										)}
 									</div>
-									<div className="full">{license.full}</div>
+									{license.slug === 'copyright' && (
+										<div className="full">
+											Copyright © {pubCopyrightDate} {pubPublisher}. All
+											rights reserved.
+										</div>
+									)}
+									{license.slug !== 'copyright' && (
+										<div className="full">{license.full}</div>
+									)}
 								</div>
 							}
 							icon={renderIcon(license)}

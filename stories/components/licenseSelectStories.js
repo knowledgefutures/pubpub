@@ -9,7 +9,7 @@ const LicenseSelectContainer = () => {
 	return (
 		<LicenseSelect
 			updateLocalData={(pubData) => setCurrentLicense(pubData.licenseSlug)}
-			pubData={{ id: '', licenseSlug: currentLicense, collectionPubs: [] }}
+			pubData={{ id: '', licenseSlug: currentLicense }}
 		>
 			{({ title, icon, loading }) => (
 				<Button icon={icon} text={title} rightIcon={loading && <Spinner size={5} />} />

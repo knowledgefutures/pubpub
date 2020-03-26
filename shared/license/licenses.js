@@ -37,14 +37,6 @@ export const licenses = [
 		link: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
 		requiresPremium: true,
 	},
-	{
-		slug: 'copyright',
-		full: 'Copyright © All rights reserved.',
-		short: 'Copyright',
-		version: null,
-		link: null,
-		requiresPremium: true,
-	},
 ];
 
 export const getLicenseBySlug = (slug = 'cc-by') => {

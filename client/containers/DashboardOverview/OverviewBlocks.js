@@ -6,20 +6,25 @@ require('./overviewBlocks.scss');
 
 const propTypes = {
 	pubs: PropTypes.array.isRequired,
+	collections: PropTypes.array.isRequired,
 };
 
 const OverviewBlocks = (props) => {
-	const { pubs } = props;
+	const { pubs, collections } = props;
 
 	const countItems = (type) => {
 		if (type === 'pubs') {
 			return pubs.length;
+		}
+		if (type === 'collections') {
+			return collections.length;
 		}
 		return pubs.reduce((count, pub) => {
 			return count + pub[type].length;
 		}, 0);
 	};
 	const types = [
+		{ type: 'collections', icon: 'collection' },
 		{ type: 'pubs', icon: 'pubDoc' },
 		{ type: 'discussions', icon: 'chat' },
 		{ type: 'forks', icon: 'git-branch' },

@@ -29,7 +29,7 @@ const CommunityOverview = (props) => {
 			details={<span>Created on {dateFormat(communityData.createdAt, 'mmmm dd, yyyy')}</span>}
 			controls={<CommunityControls />}
 		>
-			<OverviewBlocks pubs={overviewData.pubs} />
+			<OverviewBlocks collections={collections} pubs={overviewData.pubs} />
 			<OverviewTable
 				title="Pubs & Collections"
 				collectionList={collections}

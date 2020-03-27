@@ -115,7 +115,7 @@ const DashboardMembers = (props) => {
 			title={`${scopeData.elements.activeTargetName} Members`}
 		>
 			<SettingsSection title="Add Member">
-				<ControlGroup>
+				<ControlGroup className="add-member-controls">
 					<UserAutocomplete
 						onSelect={handleAddUser}
 						usedUserIds={localMembers.map((member) => member.userId)}

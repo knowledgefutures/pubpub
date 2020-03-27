@@ -58,7 +58,7 @@ const ThemePicker = (props) => {
 					onNewImage={updatePubHeaderImage}
 					width={150}
 					canClear={true}
-					helperText={<span>Suggested minimum dimensions: 1200px x 800px.</span>}
+					helperText={<span>Suggested minimum dimensions: <br />1200px x 800px</span>}
 				/>
 				{avatar !== headerBackgroundImage && (
 					<Button onClick={() => updatePubHeaderImage(avatar)}>

@@ -23,6 +23,26 @@
 				min-width: 0px;
 				font-size: 16px;
 				font-weight: 300;
+				.bp3-form-group {
+					margin: 0 0 20px;
+					.bp3-label {
+						margin-bottom: 3px;
+					}
+				}
+				.bp3-icon-info-sign {
+					padding-left: 5px;
+					padding-bottom: 3px;
+					opacity: 0.5;
+				}
+				.bp3-callout {
+					font-size: 16px;
+				}
+				.empty-state-container {
+					padding-top: 50px;
+					.bp3-non-ideal-state {
+						align-items: flex-start;
+					}
+				}
 			}
 		}
 	}

@@ -52,7 +52,7 @@ const Avatar = function(props) {
 		fontSize: isBlock ? Math.floor(width / 1.5) : Math.floor(width / 2.5),
 		backgroundColor: communityData.accentColorDark,
 		zIndex: instanceNumber ? -1 * instanceNumber : 'initial',
-		borderRadius: isBlock ? '3px' : '50%',
+		borderRadius: isBlock ? '2px' : '50%',
 	};
 
 	const imageSize = width <= 50 ? '50x50' : '250x250';

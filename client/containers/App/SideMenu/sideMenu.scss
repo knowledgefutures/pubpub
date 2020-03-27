@@ -21,28 +21,33 @@
                 left: 0px;
                 top: 0px;
                 bottom: 0px;
-                width: 4px;
+                width: 6px;
             }
         }
         .content-title,
         .child {
             text-decoration: none;
-            padding: 8px 16px;
+            padding: 20px;
+            padding-left: 50px;
             display: block;
-            font-size: 14px;
-            line-height: 45px;
-            letter-spacing: 1.5px;
+            font-size: 16px;
+            font-weight: 300;
             display: flex;
             align-items: center;
+            letter-spacing: 0.5px;
             &.active:not(.has-children) {
-                background: rgba(200, 200, 200, 0.2);
+                background: rgba(255, 255, 255, 1);
+                font-weight: 600;
+                .side-icon {
+                    opacity: 1;
+                }
             }
             &:hover {
                 background: #e6e6e6;
             }
             .side-icon {
                 opacity: 0.5;
-                padding-right: 12px;
+                padding-right: 15px;
             }
         }
         .side-text {
@@ -54,7 +59,7 @@
             font-size: 12px;
             font-style: normal;
             font-weight: 400;
-            border-radius: 5px;
+            border-radius: 2px;
             min-width: 19px;
             height: 21px;
             display: flex;

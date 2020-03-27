@@ -1,22 +1,24 @@
 .breadcrumbs-component {
 	min-height: 40px;
 	padding: 16px;
+	padding-left: 55px;
 	z-index: 10;
 	position: relative;
 	background: #fff;
 	.avatar-component {
 		float: left;
 		margin-right: 15px;
+		margin-top: 5px;
 	}
 	.titles {
-		margin-top: -5px;
 	}
 	.title {
 		font-size: 24px;
+		font-weight: 500;
 		line-height: 30px;
 		width: calc(100% - 15px - 40px);
 		margin-bottom: 1px;
-		letter-spacing: 0.5px;
+		letter-spacing: 0.6px;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
@@ -24,6 +26,8 @@
 	.crumbs {
 		display: flex;
 		align-items: center;
+		padding-top: 2px;
+		padding-left: 1px;
 		.crumb {
 			display: block;
 			text-decoration: none;

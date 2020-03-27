@@ -1,8 +1,9 @@
 .scope-picker-component {
 	border-bottom: 1px solid #ddd;
 	.scope-button {
-		height: 72px;
-		padding: 16px;
+		height: 84px;
+		padding: 20px;
+		padding-left: 50px;
 		letter-spacing: 0.5px;
 		display: flex !important;
 		:first-child.bp3-icon {
@@ -12,15 +13,15 @@
 			flex: 1 1 auto;
 			padding-left: 8px;
 		}
-
 		.top {
-			font-size: 20px;
-			text-transform: uppercase;
+			font-size: 24px;
+			font-weight: 500;
 		}
 		.bottom {
 			font-size: 12px;
 			text-transform: uppercase;
-			font-weight: 200;
+			font-weight: 300;
+			padding-top: 2px;
 		}
 	}
 }

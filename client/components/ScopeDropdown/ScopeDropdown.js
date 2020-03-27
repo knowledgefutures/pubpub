@@ -46,7 +46,7 @@ const ScopeDropdown = () => {
 
 	return (
 		<div className="scope-dropdown-component">
-			<div className="intro">Select Dashboard to view:</div>
+			<div className="intro">Select Scope:</div>
 			<div className="scopes">
 				{scopes.map((scope, index) => {
 					return (

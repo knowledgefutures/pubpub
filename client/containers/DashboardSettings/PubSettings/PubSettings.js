@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useBeforeUnload } from 'react-use';
-import { Button } from '@blueprintjs/core';
+import { Button, Tooltip } from '@blueprintjs/core';
 
 import { apiFetch, slugifyString } from 'utils';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import {
+	Icon,
 	DashboardFrame,
 	SettingsSection,
 	ImageUpload,
@@ -124,11 +125,25 @@ const PubSettings = (props) => {
 					/>
 					<ImageUpload
 						htmlFor="avatar-upload"
-						label="Preview Image"
+						label={
+							<span>
+								Preview Image
+								<Tooltip
+									content={
+										<span>
+											Image to be associated with this pub when it is shown in <br />other pages as part a preview link or in a listing of pubs.
+										</span>
+									}
+									tooltipClassName="bp3-dark"
+								>
+									<Icon icon="info-sign" />
+								</Tooltip>
+							</span>
+						}
 						defaultImage={pubData.avatar}
 						onNewImage={(value) => updatePubData({ avatar: value })}
 						width={150}
-						helperText="Suggested minimum dimensions: 1200px x 800px."
+						helperText={<span>Suggested minimum dimensions: <br />1200px x 800px</span>}
 					/>
 				</SettingsSection>
 			</>

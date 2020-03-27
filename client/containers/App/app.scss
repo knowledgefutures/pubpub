@@ -18,8 +18,8 @@
         background: #c23030;
     }
     &.dashboard {
-        $side-menu-width: 235px;
-        $breadcrumbs-height: 73px;
+        $side-menu-width: 292px;
+        $breadcrumbs-height: 85px;
         $header-height: 56px;
         display: block;
         .header-component:not(.preview) {
@@ -37,10 +37,10 @@
         }
         .side-menu-component {
             width: $side-menu-width;
-            border-right: 1px solid #ddd;
             position: fixed;
             height: calc(100vh - #{$header-height});
             top: $header-height;
+            border-right: 1px solid #ddd;
             overflow: scroll;
         }
         .breadcrumbs-component {
@@ -52,8 +52,8 @@
             margin-left: $side-menu-width;
         }
         .page-content {
-            padding-top: calc(16px + #{$header-height} + #{$breadcrumbs-height});
-            padding-left: calc(16px + #{$side-menu-width});
+            padding-top: calc(25px + #{$header-height} + #{$breadcrumbs-height});
+            padding-left: calc(#{$side-menu-width} - 8px);
             padding-right: 16px;
             padding-bottom: 16px;
             max-width: calc(1024px + #{$side-menu-width});

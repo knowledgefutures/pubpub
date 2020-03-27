@@ -45,7 +45,7 @@ const CollectionOverview = (props) => {
 			title="Overview"
 			details={
 				<span>
-					{label} • Created on {dateFormat(activeCollection.createdAt, 'mmmm dd, yyyy')}
+					This • {label} • collection was created on <i>{dateFormat(activeCollection.createdAt, 'mmmm dd, yyyy')}</i> and now contains:
 				</span>
 			}
 			controls={
@@ -60,7 +60,7 @@ const CollectionOverview = (props) => {
 		>
 			<OverviewBlocks pubs={pubList} />
 			<OverviewTable
-				title="Pubs"
+				title="Pubs in this collection"
 				generateLabel={(item) => {
 					const contextHint = collectionSchema.contextHints.find(
 						(ch) => ch.value === item.contextHint,

@@ -26,7 +26,7 @@ const CommunityOverview = (props) => {
 		<DashboardFrame
 			className="community-overview-component"
 			title="Overview"
-			details={<span>Created on {dateFormat(communityData.createdAt, 'mmmm dd, yyyy')}</span>}
+			details={<span>This community was created on <i>{dateFormat(communityData.createdAt, 'mmmm dd, yyyy')}</i> and now contains:</span>}
 			controls={<CommunityControls />}
 		>
 			<OverviewBlocks pubs={overviewData.pubs} />

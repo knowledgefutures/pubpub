@@ -247,7 +247,7 @@ class Details extends Component {
 						defaultImage={this.state.avatar}
 						onNewImage={this.updateAvatar}
 						width={150}
-						helperText="Suggested minimum dimensions: 1200px x 800px."
+						helperText={<span>Suggested minimum dimensions: <br />1200px x 800px</span>}
 					/>
 					<InputField label="License">
 						<LicenseSelect
@@ -297,7 +297,7 @@ class Details extends Component {
 						canClear={true}
 						helperText={
 							<span>
-								<span>Suggested minimum dimensions: 1200px x 800px.</span>
+								<span>Suggested minimum dimensions: <br />1200px x 800px</span>
 								{this.state.avatar &&
 									this.state.avatar !== this.state.headerBackgroundImage && (
 										<Button

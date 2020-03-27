@@ -70,7 +70,7 @@ const OverviewTable = (props) => {
 	const filteredItems = [...filterCollections(), ...filterPubs()];
 	useSticky({
 		selector: '.top-sticky',
-		offset: 129,
+		offset: 141,
 	});
 	return (
 		<div className="overview-table-component">

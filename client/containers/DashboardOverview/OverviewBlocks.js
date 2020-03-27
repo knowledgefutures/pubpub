@@ -6,7 +6,11 @@ require('./overviewBlocks.scss');
 
 const propTypes = {
 	pubs: PropTypes.array.isRequired,
-	collections: PropTypes.array.isRequired,
+	collections: PropTypes.array,
+};
+
+const defaultProps = {
+	collections: undefined,
 };
 
 const OverviewBlocks = (props) => {
@@ -32,16 +36,24 @@ const OverviewBlocks = (props) => {
 	];
 	return (
 		<div className="overview-blocks-component">
-			{types.map((item) => {
-				return (
-					<div className="overview-block" key={item.type}>
-						<Icon icon={item.icon} iconSize={18} />
-						<div className="text">
-							<span className="count">{countItems(item.type)}</span> {item.type}
-						</div>
-					</div>
-				);
-			})}
+			{types
+				.filter((item) => {
+					return item.type !== 'collections' || collections;
+				})
+				.map((item, index) => {
+					return (
+						<React.Fragment>
+							{index > 0 && <div className="blip">•</div>}
+							<div className="overview-block" key={item.type}>
+								<Icon icon={item.icon} iconSize={18} />
+								<div className="text">
+									<span className="count">{countItems(item.type)}</span>{' '}
+									{item.type}
+								</div>
+							</div>
+						</React.Fragment>
+					);
+				})}
 		</div>
 	);
 };

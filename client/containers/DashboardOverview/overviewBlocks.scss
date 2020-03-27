@@ -1,6 +1,7 @@
 .overview-blocks-component {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	margin: 20px 0px 30px;
 	padding: 20px;
 	background: #f7f7f7;
@@ -22,5 +23,8 @@
 			font-size: 14px;
 			text-transform: uppercase;
 		}
+	}
+	.blip {
+		opacity: 0.4;
 	}
 }

@@ -59,4 +59,5 @@ const OverviewBlocks = (props) => {
 };
 
 OverviewBlocks.propTypes = propTypes;
+OverviewBlocks.defaultProps = defaultProps;
 export default OverviewBlocks;

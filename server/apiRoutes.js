@@ -22,6 +22,7 @@ require('./pub/api');
 require('./pubAttribution/api');
 require('./pubHistory/api');
 require('./pubManager/api');
+require('./release/api');
 require('./review/api');
 require('./reviewEvent/api');
 require('./rss/api');

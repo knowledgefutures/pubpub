@@ -5,7 +5,14 @@ import dateFormat from 'dateformat';
 
 import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
-import { Byline, ClickToCopyButton, Overlay, PubThemePicker } from 'components';
+import {
+	Byline,
+	ClickToCopyButton,
+	DialogLauncher,
+	Overlay,
+	PubReleaseDialog,
+	PubThemePicker,
+} from 'components';
 import { Menu, MenuItem } from 'components/Menu';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
@@ -30,7 +37,9 @@ const propTypes = {
 		id: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
-		releases: PropTypes.arrayOf(PropTypes.shape({ createdAt: PropTypes.string })).isRequired,
+		releases: PropTypes.arrayOf(
+			PropTypes.shape({ createdAt: PropTypes.string, sourceBranchKey: PropTypes.number }),
+		).isRequired,
 		releaseNumber: PropTypes.number,
 	}).isRequired,
 	historyData: PropTypes.object.isRequired,
@@ -69,6 +78,12 @@ const PubHeaderMain = (props) => {
 	const { communityData, scopeData } = usePageContext();
 	const [isShareOpen, setIsShareOpen] = useState(false);
 
+	const { canManage, canEdit, canAdmin } = scopeData.activePermissions;
+	const publishedDate = getPubPublishedDate(
+		pubData,
+		pubData.branches.find((br) => br.title === 'public'),
+	);
+
 	const updateAndSavePubData = (newPubData) => {
 		const oldPubData = { ...pubData };
 		updateLocalData('pub', newPubData);
@@ -81,12 +96,6 @@ const PubHeaderMain = (props) => {
 			}),
 		}).catch(() => updateLocalData('pub', oldPubData));
 	};
-
-	const { canManage, canEdit } = scopeData.activePermissions;
-	const publishedDate = getPubPublishedDate(
-		pubData,
-		pubData.branches.find((br) => br.title === 'public'),
-	);
 
 	const renderTop = () => {
 		return (
@@ -224,6 +233,7 @@ const PubHeaderMain = (props) => {
 					{releases
 						.map((release, index) => (
 							<MenuItem
+								key={release.id}
 								active={index === releaseNumber - 1}
 								icon={index === releaseNumber - 1 ? 'tick' : 'document-open'}
 								href={pubUrl(communityData, pubData, { releaseNumber: index + 1 })}
@@ -239,18 +249,14 @@ const PubHeaderMain = (props) => {
 	const renderDraftBottomButtons = () => {
 		const { releases } = pubData;
 		const { latestKey, timestamps } = historyData;
+		const latestRelease = releases[releases.length - 1];
 		const latestTimestamp = timestamps[latestKey];
-		const hasRelease = releases.length > 0;
+		const canRelease =
+			!latestRelease ||
+			typeof latestRelease.sourceBranchKey !== 'number' ||
+			latestRelease.sourceBranchKey < latestKey;
 		return (
 			<React.Fragment>
-				{hasRelease && (
-					<LargeHeaderButton
-						icon="document-open"
-						tagName="a"
-						href={pubUrl(communityData, pubData)}
-						outerLabel={{ bottom: 'view latest release', top: 'see published version' }}
-					/>
-				)}
 				<LargeHeaderButton
 					icon="history"
 					active={historyData.isViewingHistory}
@@ -266,6 +272,37 @@ const PubHeaderMain = (props) => {
 						})
 					}
 				/>
+				{!!latestRelease && (
+					<LargeHeaderButton
+						icon="document-open"
+						tagName="a"
+						href={pubUrl(communityData, pubData)}
+						outerLabel={{ bottom: 'view latest release', top: 'see published version' }}
+					/>
+				)}
+				{canAdmin && (
+					<DialogLauncher
+						renderLauncherElement={({ openDialog }) => (
+							<LargeHeaderButton
+								disabled={!canRelease}
+								icon="globe"
+								onClick={openDialog}
+								label={{ bottom: 'create a release', top: 'publish this Pub' }}
+							/>
+						)}
+					>
+						{({ isOpen, onClose, key }) => (
+							<PubReleaseDialog
+								key={key}
+								isOpen={isOpen}
+								onClose={onClose}
+								pubData={pubData}
+								historyData={historyData}
+								updatePubData={(newPubData) => updateLocalData('pub', newPubData)}
+							/>
+						)}
+					</DialogLauncher>
+				)}
 			</React.Fragment>
 		);
 	};

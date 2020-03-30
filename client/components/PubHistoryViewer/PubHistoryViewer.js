@@ -215,7 +215,7 @@ const PubHistoryViewer = (props) => {
 					intent="success"
 					icon="document-open"
 					key={key}
-					href={pubUrl(communityData, pubData, { releaseNumber: release.branchKey })}
+					href={pubUrl(communityData, pubData, { releaseNumber: release.branchKey + 1 })}
 					target="_blank"
 				/>
 			);

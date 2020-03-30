@@ -95,8 +95,9 @@ export const createFirebaseBranch = (pubId, baseBranchId, newBranchId) => {
 export const mergeFirebaseBranch = (pubId, sourceBranchId, destinationBranchId) => {
 	const sourceFirebaseRef = getBranchRef(pubId, sourceBranchId);
 	const destinationFirebaseRef = getBranchRef(pubId, destinationBranchId);
-	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef).then(() => {
-		return restoreDiscussionMaps(destinationFirebaseRef, editorSchema, true);
+	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef).then(async (res) => {
+		await restoreDiscussionMaps(destinationFirebaseRef, editorSchema, true);
+		return res;
 	});
 };
 

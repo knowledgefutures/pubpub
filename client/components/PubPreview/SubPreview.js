@@ -154,6 +154,15 @@ const SubPreview = function(props) {
 						{ text: 'Greg Ridgeway', href: '/pub/vu6rc1yv' },
 					],
 				},
+				{
+					prefix: 'Rejoinder from:',
+					elements: [
+						{
+							text: 'Cynthia Rudin, Caroline Wang, and Beau Coker',
+							href: '/pub/8jy98s9q/',
+						},
+					],
+				},
 			],
 		},
 	];

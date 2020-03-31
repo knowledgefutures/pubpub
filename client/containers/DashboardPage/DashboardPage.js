@@ -111,8 +111,8 @@ const DashboardPages = (props) => {
 	const renderControls = () => {
 		const canPersistChanges = hasPendingChanges && title && (slug || !persistedPageData.slug);
 		return (
-			<>
-				<AnchorButton icon="share" href={`/${slug || 'home'}`}>
+			<React.Fragment>
+				<AnchorButton icon="share" href={`/${slug}`}>
 					Visit page
 				</AnchorButton>
 				<Button
@@ -123,7 +123,7 @@ const DashboardPages = (props) => {
 					loading={isPersisting}
 					onClick={handleSaveChanges}
 				/>
-			</>
+			</React.Fragment>
 		);
 	};
 
@@ -244,7 +244,7 @@ const DashboardPages = (props) => {
 	return (
 		<DashboardFrame
 			className="dashboard-page-container"
-			title={'Editing page: ' + persistedPageData.title}
+			title={'Pages: ' + persistedPageData.title}
 			controls={renderControls()}
 		>
 			{renderDetailsEditor()}

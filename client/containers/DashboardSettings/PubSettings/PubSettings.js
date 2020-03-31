@@ -41,7 +41,7 @@ const PubSettings = (props) => {
 	const { pendingPromise } = usePendingChanges();
 
 	const hasPendingChanges = Object.keys(pendingPubData).length > 0;
-	const pubData = { ...persistedPubData, ...pendingPubData };
+	const pubData = { ...persistedPubData, ...pendingPubData, description: '' };
 
 	useBeforeUnload(
 		hasPendingChanges,
@@ -95,7 +95,7 @@ const PubSettings = (props) => {
 
 	const renderDetails = () => {
 		return (
-			<>
+			<React.Fragment>
 				<SettingsSection title="Details">
 					<InputField
 						label="Title"
@@ -131,7 +131,10 @@ const PubSettings = (props) => {
 								<Tooltip
 									content={
 										<span>
-											Image to be associated with this pub when it is shown in <br />other pages as part a preview link or in a listing of pubs.
+											Image to be associated with this pub when it is shown in{' '}
+											<br />
+											other pages as part a preview link or in a listing of
+											pubs.
 										</span>
 									}
 									tooltipClassName="bp3-dark"
@@ -143,10 +146,15 @@ const PubSettings = (props) => {
 						defaultImage={pubData.avatar}
 						onNewImage={(value) => updatePubData({ avatar: value })}
 						width={150}
-						helperText={<span>Suggested minimum dimensions: <br />1200px x 800px</span>}
+						helperText={
+							<span>
+								Suggested minimum dimensions: <br />
+								1200px x 800px
+							</span>
+						}
 					/>
 				</SettingsSection>
-			</>
+			</React.Fragment>
 		);
 	};
 

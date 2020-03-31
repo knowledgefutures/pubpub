@@ -132,6 +132,12 @@ const Landing = () => {
 	});
 	return (
 		<div id="landing-container">
+			<style>{`
+				.header-component.bp3-dark a.bp3-button,
+				.header-component.bp3-dark a.bp3-button:hover {
+					color: #111;
+				}
+			`}</style>
 			{/* BEGIN Jumbotron */}
 			<div id="jumbotron">
 				{/* BEGIN Jumbotron Content */}

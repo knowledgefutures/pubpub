@@ -19,9 +19,9 @@ const DashboardPages = () => {
 
 	const renderControls = () => {
 		return (
-			<>
+			<React.Fragment>
 				<Button icon="plus" onClick={() => setCreatingPage(true)}>
-					New Page
+					Create Page
 				</Button>
 				<CreatePageDialog
 					onClose={() => setCreatingPage(false)}
@@ -29,22 +29,22 @@ const DashboardPages = () => {
 					communityData={communityData}
 					hostname={locationData.hostname}
 				/>
-			</>
+			</React.Fragment>
 		);
 	};
 
 	const renderPageItem = (page) => {
 		const createdAtString = dateFormat(page.createdAt, 'mmm dd, yyyy');
 		const rightSide = (
-			<>
-				<AnchorButton icon="share" minimal href={`/${page.slug || 'home'}`}>
+			<React.Fragment>
+				<AnchorButton icon="share" minimal href={`/${page.slug}`}>
 					Visit page
 				</AnchorButton>
 				<div className="privacy-indicator">
 					<Icon icon={page.isPublic ? 'globe' : 'lock'} iconSize={14} />
 					{page.isPublic ? 'Public' : 'Private'}
 				</div>
-			</>
+			</React.Fragment>
 		);
 		return (
 			<DashboardRow

@@ -42,7 +42,7 @@
             height: calc(100vh - #{$header-height});
             top: $header-height;
             border-right: 1px solid #ddd;
-            overflow: scroll;
+            overflow: auto;
         }
         .breadcrumbs-component {
             width: calc(100vw - #{$side-menu-width});
@@ -54,14 +54,14 @@
             .breadcrumbs-content {
                 width: 100%;
                 max-width: calc(1200px + 100px);
-                padding: 16px 16px 16px 50px;
+                padding: 16px 50px;
             }
         }
         #main-content {
             width: calc(100vw - #{$side-menu-width});
             max-width: calc(1200px + 100px);
             margin-left: $side-menu-width;
-            padding: 16px 16px 16px 50px;
+            padding: 16px 50px;
             padding-top: calc(25px + #{$header-height} + #{$breadcrumbs-height});
         }
     }

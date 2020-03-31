@@ -6,10 +6,10 @@
 		background: #f0f0f0;
 	}
 	&.is-dragging {
-        border: none;
-        border-radius: 4px;
-        background: #f0f0f0;
-    }
+		border: none;
+		border-radius: 4px;
+		background: #f0f0f0;
+	}
 	&.list-header,
 	.inner {
 		display: flex;
@@ -55,19 +55,26 @@
 	.title {
 		flex: 1 1 auto;
 		padding: 0em 1em;
-		text-decoration: none;
 		text-align: left;
 		.item-title {
 			font-size: 16px;
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		.title-button {
+			font-style: italic;
+			opacity: 0.8;
+			margin-left: 10px;
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 		.subtitle {
 			font-style: italic;
 			opacity: 0.8;
-		}
-		&:hover {
-			.item-title {
-				text-decoration: underline;
-			}
 		}
 	}
 	.pubs {
@@ -89,7 +96,7 @@
 		padding: 12px 0px;
 		margin-top: 12px;
 		background: #eee;
-		box-shadow: inset 0px 11px 3px -10px #CCC, inset 0px -11px 3px -10px #CCC;
+		box-shadow: inset 0px 11px 3px -10px #ccc, inset 0px -11px 3px -10px #ccc;
 		margin-bottom: -12px;
 		.overview-row-component:hover {
 			background: #e4e4e4;

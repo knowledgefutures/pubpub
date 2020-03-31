@@ -18,7 +18,6 @@ const propTypes = {
 	isDragging: PropTypes.bool,
 	label: PropTypes.node,
 	minimal: PropTypes.bool,
-	onClick: PropTypes.func,
 	parentSlug: PropTypes.string,
 };
 
@@ -28,7 +27,6 @@ const defaultProps = {
 	dragHandleProps: null,
 	isDragging: false,
 	label: null,
-	onClick: null,
 	parentSlug: undefined,
 	minimal: false,
 };
@@ -74,7 +72,6 @@ const OverviewRow = (props) => {
 		dragHandleProps,
 		isDragging,
 		label,
-		onClick,
 		parentSlug,
 		minimal,
 		children,
@@ -83,7 +80,7 @@ const OverviewRow = (props) => {
 	const authorString = generateAuthorString(content);
 	const hasAuthors = content.attributions && content.attributions.some((a) => a.isAuthor);
 	const slug = content.slug || (content.title || '').toLowerCase().replace(/ /gi, '-');
-	const href = !onClick && getHref(isCollection, slug, parentSlug);
+	const href = getHref(isCollection, slug, parentSlug);
 	const { countConversations, countReviews } = getCounts(isCollection, content);
 	const [showChildren, setShowChildren] = useState(false);
 	const showArrow = React.Children.count(children) > 0;
@@ -160,10 +157,17 @@ const OverviewRow = (props) => {
 				<div className="type">
 					<Icon icon={isCollection ? 'collection' : 'pubDoc'} iconSize={14} />
 				</div>
-				<a className="title" href={href} onClick={onClick} draggable="false">
-					<div className="item-title">{content.title}</div>
+				<div className="title" draggable="false">
+					<a className="item-title" href={href}>
+						{content.title}
+					</a>
+					{!isCollection && (
+						<a className="title-button" href={href.replace('/dash', '')}>
+							Go to Pub
+						</a>
+					)}
 					<div className="subtitle">{renderSubtitle()}</div>
-				</a>
+				</div>
 				<div className="pubs">{isCollection ? content.pubs.length : '-'}</div>
 				<div className="released">{renderInitialRelease(content)}</div>
 				<div className="discussions">{countConversations}</div>

@@ -122,7 +122,7 @@ const CommunityCreate = () => {
 									}}
 								/>
 							</InputField>
-							<InputField error={createError}>
+							<InputField error={createError && 'Error Creating Community'}>
 								<Button
 									name="create"
 									type="submit"

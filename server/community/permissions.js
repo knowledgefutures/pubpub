@@ -5,6 +5,11 @@ export const getPermissions = async ({ userId, communityId }) => {
 		return {};
 	}
 
+	if (!communityId) {
+		return {
+			create: true,
+		};
+	}
 	const scopeData = await getScope({
 		communityId: communityId,
 		loginId: userId,

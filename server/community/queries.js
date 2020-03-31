@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4';
-import { Community, Page, CommunityAdmin } from '../models';
+import { Community, Page, Member } from '../models';
 import { generateHash, slugifyString } from '../utils';
 import { subscribeUser } from '../utils/mailchimp';
 import { alertNewCommunity } from '../utils/webhooks';
@@ -73,9 +73,10 @@ export const createCommunity = (inputValues, userData) => {
 		.then(() => {
 			subscribeUser(userData.email, 'be26e45660', ['Community Admins']);
 			alertNewCommunity(inputValues.title, subdomain, userData.fullName, userData.email);
-			return CommunityAdmin.create({
+			return Member.create({
 				communityId: newCommunityId,
 				userId: userData.id,
+				permissions: 'admin',
 			});
 		})
 		.then(() => {

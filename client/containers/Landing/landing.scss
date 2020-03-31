@@ -55,9 +55,9 @@ $leftColumnWidth: 20%;
 }
 
 /***** Top Nav ****/
-.header-component {
+.header-component.bp3-dark a.bp3-button {
 	color: #111;
-	&.bp3-dark a.bp3-button:hover {
+	&:hover {
 		color: #111;
 	}
 }

@@ -1,0 +1,20 @@
+.create-collection-dialog-component {
+	.kind-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+	.kind-button {
+		width: 49%;
+		margin-bottom: 8px;
+		padding: 10px;
+		.title {
+			text-transform: capitalize;
+			font-weight: bold;
+		}
+		.bp3-icon {
+			position: relative;
+			top: -13px;
+		}
+	}
+}

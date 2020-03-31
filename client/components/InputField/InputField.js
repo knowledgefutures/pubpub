@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 require('./inputField.scss');
 
@@ -45,9 +46,12 @@ const defaultProps = {
 const InputField = function(props) {
 	return (
 		<div
-			className={`input-field-component bp3-form-group ${
-				props.error ? 'bp3-intent-danger' : ''
-			} ${props.wrapperClassName}`}
+			className={classNames(
+				'input-field-component',
+				'bp3-form-group',
+				props.wrapperClassName,
+				props.error ? 'bp3-intent-danger' : '',
+			)}
 		>
 			<label className="bp3-label" htmlFor={`input-${props.label}`}>
 				{props.label}

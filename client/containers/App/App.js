@@ -54,7 +54,7 @@ const App = (props) => {
 							<Breadcrumbs />
 						</React.Fragment>
 					)}
-					<div id="main-content" tabIndex="-1" className="page-content">
+					<div id="main-content" tabIndex="-1">
 						<ActiveComponent {...viewData} />
 					</div>
 					{showFooter && <Footer />}

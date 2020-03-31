@@ -12,7 +12,7 @@
 			display: grid;
 			grid-template-columns: 140px 1fr;
 			grid-template-areas: 'title content';
-			grid-column-gap: 9%;
+			grid-column-gap: 75px;
 			padding-top: 20px;
 			.title {
 				text-align: left;

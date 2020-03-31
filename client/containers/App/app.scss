@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    .page-content {
+    #main-content {
         outline: none;
         flex-grow: 1;
     }
@@ -19,7 +19,7 @@
         z-index: 99999;
     }
     &.dashboard {
-        $side-menu-width: 292px;
+        $side-menu-width: 260px;
         $breadcrumbs-height: 85px;
         $header-height: 56px;
         display: block;
@@ -46,19 +46,23 @@
         }
         .breadcrumbs-component {
             width: calc(100vw - #{$side-menu-width});
+            margin-left: $side-menu-width;
             border-bottom: 1px solid #ddd;
             position: fixed;
             height: $breadcrumbs-height;
             top: $header-height;
-            margin-left: $side-menu-width;
+            .breadcrumbs-content {
+                width: 100%;
+                max-width: calc(1200px + 100px);
+                padding: 16px 16px 16px 50px;
+            }
         }
-        .page-content {
+        #main-content {
+            width: calc(100vw - #{$side-menu-width});
+            max-width: calc(1200px + 100px);
+            margin-left: $side-menu-width;
+            padding: 16px 16px 16px 50px;
             padding-top: calc(25px + #{$header-height} + #{$breadcrumbs-height});
-            padding-left: calc(#{$side-menu-width} - 8px);
-            padding-right: 16px;
-            padding-bottom: 16px;
-            max-width: calc(1024px + #{$side-menu-width});
-            margin: 0 auto;
         }
     }
 }

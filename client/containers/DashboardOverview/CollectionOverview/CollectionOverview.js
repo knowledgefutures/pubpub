@@ -45,7 +45,9 @@ const CollectionOverview = (props) => {
 			title="Overview"
 			details={
 				<span>
-					This • {label} • collection was created on <i>{dateFormat(activeCollection.createdAt, 'mmmm dd, yyyy')}</i> and now contains:
+					This • {label} • collection was created on
+					<i>{dateFormat(activeCollection.createdAt, 'mmmm dd, yyyy')}</i> and now
+					contains:
 				</span>
 			}
 			controls={

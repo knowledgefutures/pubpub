@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 
 import { LinkedPageSelect } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
-import { apiFetch } from 'utils';
 
 import PubSelect from './PubSelect';
 
@@ -19,29 +18,10 @@ const propTypes = {
 
 const CollectionControls = (props) => {
 	const { overviewData, collection, updateCollection, collectionPubs, addCollectionPub } = props;
-	const { scopeData, communityData } = usePageContext();
+	const { scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
 	const { activeCommunity } = scopeData.elements;
 	const { isPublic } = collection;
-	const [newPubIsLoading, setNewPubIsLoading] = useState(false);
-
-	const handleCreatePub = () => {
-		setNewPubIsLoading(true);
-		return apiFetch('/api/pubs', {
-			method: 'POST',
-			body: JSON.stringify({
-				communityId: communityData.id,
-				defaultCollectionIds: [collection.id],
-			}),
-		})
-			.then((newPub) => {
-				window.location.href = `/pub/${newPub.slug}`;
-			})
-			.catch((err) => {
-				console.error(err);
-				setNewPubIsLoading(false);
-			});
-	};
 
 	if (!canManage) {
 		return null;
@@ -82,12 +62,6 @@ const CollectionControls = (props) => {
 					<Button icon="plus">Add Pubs</Button>
 				</PubSelect>
 			</ButtonGroup>
-			<Button
-				icon="edit"
-				text="New Pub"
-				onClick={handleCreatePub}
-				loading={newPubIsLoading}
-			/>
 		</React.Fragment>
 	);
 };

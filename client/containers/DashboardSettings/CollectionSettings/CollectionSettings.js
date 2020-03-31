@@ -15,7 +15,7 @@ const CollectionSettings = () => {
 	const { collection, updateCollection, deleteCollection } = useCollectionState(scopeData);
 
 	return (
-		<DashboardFrame className="collection-settings-component" title="Collection Settings">
+		<DashboardFrame className="collection-settings-component" title="Settings">
 			<SettingsSection title="Details">
 				<CollectionDetailsEditor
 					collection={collection}

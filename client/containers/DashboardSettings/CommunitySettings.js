@@ -186,7 +186,7 @@ const CommunitySettings = () => {
 					/>
 				</InputField>
 			</div>
-			<h2 className="dashboard-content-header">Community Settings</h2>
+			<h2 className="dashboard-content-header">Settings</h2>
 			<SettingsSection title="Details">
 				<InputField
 					label="Title"

@@ -42,9 +42,9 @@ const OverviewBlocks = (props) => {
 				})
 				.map((item, index) => {
 					return (
-						<React.Fragment>
+						<React.Fragment key={item.type}>
 							{index > 0 && <div className="blip">•</div>}
-							<div className="overview-block" key={item.type}>
+							<div className="overview-block">
 								<Icon icon={item.icon} iconSize={18} />
 								<div className="text">
 									<span className="count">{countItems(item.type)}</span>{' '}

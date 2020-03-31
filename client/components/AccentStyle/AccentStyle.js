@@ -29,11 +29,11 @@ const AccentStyle = function(props) {
 				.rgb()
 				.string(),
 			minimal: Color(inputColor)
-				.fade(0.8)
+				.fade(0.9)
 				.rgb()
 				.string(),
 			minimalAction: Color(inputColor)
-				.fade(0.7)
+				.fade(0.8)
 				.rgb()
 				.string(),
 		};

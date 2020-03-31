@@ -8,7 +8,7 @@ const orderedContributors = (contributors) =>
 		return b.createdAt - a.createdAt;
 	});
 
-export const getAllPubContributors = (pubData, onlyBylineContributors = false) => {
+export const getAllPubContributors = (pubData, hideAuthors = false, hideContributors = false) => {
 	const primaryCollectionPub =
 		pubData.collectionPubs && pubData.collectionPubs.find((cp) => cp.isPrimary);
 	const primaryCollection = primaryCollectionPub && primaryCollectionPub.collection;
@@ -16,9 +16,15 @@ export const getAllPubContributors = (pubData, onlyBylineContributors = false) =
 		.concat(orderedContributors((primaryCollection && primaryCollection.attributions) || []))
 		.map(ensureUserForAttribution);
 
-	const outputContributors = onlyBylineContributors
-		? contributors.filter((attribution) => attribution.isAuthor)
-		: contributors;
+	const outputContributors = contributors.filter((attribution) => {
+		if (hideAuthors && attribution.isAuthor) {
+			return false;
+		}
+		if (hideContributors && !attribution.isAuthor) {
+			return false;
+		}
+		return true;
+	});
 
 	const uniqueAuthorIds = [];
 	return outputContributors.filter((attribution) => {

@@ -1,0 +1,50 @@
+@import 'styles/variables.scss';
+
+.pub-overview-component {
+	font-size: 16px;
+	.pub-header-background-component {
+		z-index: 1;
+	}
+	.header-content {
+		padding: 26px;
+		font-style: 18px;
+		h1.title {
+			// line-height: 1em;
+			// font-weight: 500;
+			// font-family: $header-font;
+			// letter-spacing: 1px;
+			font-size: 28px;
+			line-height: 1.2;
+		}
+	}
+	.edit {
+		opacity: 0.8;
+		margin-bottom: 1em;
+	}
+	.blocks {
+		display: flex;
+		justify-content: space-between;
+		
+		margin: 40px 0px;
+		.block {
+			// flex: 1 1 0;
+			min-width: 20%;
+		}
+		.block-title {
+			font-weight: 600;
+		}
+	}
+	.list {
+		margin: 40px 0px;
+		.list-title {
+			font-weight: 600;
+			margin-bottom: 12px
+		}
+		.list-content {
+			border-radius: 4px;
+			background: #F7F7F7;
+			border: 1px solid #DDD;
+			padding: 25px;
+		}
+	}
+}

@@ -6,6 +6,7 @@ export default async ({ id, slug }, initialData) => {
 	const whereClause = {
 		...(id && { id: id }),
 		...(slug && { slug: slug }),
+		communityId: initialData.communityData.id,
 	};
 	const pageQuery = Page.findOne({
 		where: whereClause,

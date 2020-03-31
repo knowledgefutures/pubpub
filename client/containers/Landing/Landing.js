@@ -152,36 +152,36 @@ const Landing = () => {
 						</div>
 					</div>
 				</div>
-				{/* END Jumbotron */}
-				{/* BEGIN Main; content */}
-				<div id="main">
-					{/* BEGIN Mission Block */}
-					<div id="mission">
-						<div className="container restricted-width">
-							<div>
-								<h3>Mission</h3>
-							</div>
-							<div>
-								As part of the{' '}
-								<a href="https://www.knowledgefutures.org">
-									<strong>Knowledge Futures Group</strong>
-								</a>
-								, we’re committed to making PubPub open and easily accessible to a
-								wide range of groups. That means we’re committed to providing a free
-								version of PubPub forever, releasing open-source code, and operating
-								under non-profit, sustainable, researcher-friendly business models.
-							</div>
-							<div>
-								<h3>Open Source</h3>
-							</div>
-							<div>
-								<a className="git" href="https://github.com/pubpub/pubpub">
-									<Icon icon="git-repo" /> pubpub
-								</a>
-								<a className="git" href="https://github.com/pubpub/pubpub-editor">
-									<Icon icon="git-repo" /> pubpub-editor
-								</a>
-							</div>
+			</div>
+			{/* END Jumbotron */}
+			{/* BEGIN Main; content */}
+			<div id="main">
+				{/* BEGIN Mission Block */}
+				<div id="mission">
+					<div className="container restricted-width">
+						<div>
+							<h3>Mission</h3>
+						</div>
+						<div>
+							As part of the{' '}
+							<a href="https://www.knowledgefutures.org">
+								<strong>Knowledge Futures Group</strong>
+							</a>
+							, we’re committed to making PubPub open and easily accessible to a wide
+							range of groups. That means we’re committed to providing a free version
+							of PubPub forever, releasing open-source code, and operating under
+							non-profit, sustainable, researcher-friendly business models.
+						</div>
+						<div>
+							<h3>Open Source</h3>
+						</div>
+						<div>
+							<a className="git" href="https://github.com/pubpub/pubpub">
+								<Icon icon="git-repo" /> pubpub
+							</a>
+							<a className="git" href="https://github.com/pubpub/pubpub-editor">
+								<Icon icon="git-repo" /> pubpub-editor
+							</a>
 						</div>
 					</div>
 				</div>

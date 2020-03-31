@@ -16,6 +16,7 @@
         color: white;
         line-height: 30px;
         background: #c23030;
+        z-index: 99999;
     }
     &.dashboard {
         $side-menu-width: 292px;

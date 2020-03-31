@@ -8,5 +8,7 @@ export default (sequelize, dataTypes) => {
 		pubId: { type: dataTypes.UUID, allowNull: false },
 		branchId: { type: dataTypes.UUID, allowNull: false },
 		userId: { type: dataTypes.UUID, allowNull: false },
+		sourceBranchId: { type: dataTypes.UUID },
+		sourceBranchKey: { type: dataTypes.INTEGER },
 	});
 };

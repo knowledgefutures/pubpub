@@ -14,10 +14,22 @@ const defaultProps = {
 const DialogLauncher = (props) => {
 	const { children, renderLauncherElement, renderChildrenWhenClosed } = props;
 	const [isOpen, setIsOpen] = useState(false);
+	const [uniqueInstanceKey, setUniqueInstanceKey] = useState(Date.now());
+
+	const handleOpenDialog = () => {
+		setIsOpen(true);
+		setUniqueInstanceKey(Date.now());
+	};
+
 	return (
 		<>
-			{renderLauncherElement({ open: () => setIsOpen(true) })}
-			{(isOpen || renderChildrenWhenClosed) && children({ onClose: () => setIsOpen(false) })}
+			{renderLauncherElement({ openDialog: handleOpenDialog })}
+			{(isOpen || renderChildrenWhenClosed) &&
+				children({
+					key: uniqueInstanceKey,
+					isOpen: isOpen,
+					onClose: () => setIsOpen(false),
+				})}
 		</>
 	);
 };

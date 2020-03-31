@@ -26,6 +26,7 @@ import {
 	PubTag,
 	Community,
 	WorkerTask,
+	Release,
 } from './models';
 // import { generateHash } from './utils';
 import mudder from 'mudder';

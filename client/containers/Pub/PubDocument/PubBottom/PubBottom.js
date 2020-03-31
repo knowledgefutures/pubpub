@@ -73,7 +73,7 @@ const PubBottom = (props) => {
 							/>
 						)}
 						<LicenseSection pubData={pubData} updateLocalData={updateLocalData} />
-						{showDiscussions && <DiscussionsSection {...props} />}
+						{/* {showDiscussions && <DiscussionsSection {...props} />} */}
 					</div>
 				</div>
 			)}

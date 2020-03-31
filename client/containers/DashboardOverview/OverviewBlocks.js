@@ -41,14 +41,16 @@ const OverviewBlocks = (props) => {
 					return item.type !== 'collections' || collections;
 				})
 				.map((item, index) => {
+					const itemCount = countItems(item.type);
+					const itemName =
+						itemCount === 1 ? item.type.slice(0, item.type.length - 1) : item.type;
 					return (
 						<React.Fragment key={item.type}>
 							{index > 0 && <div className="blip">•</div>}
 							<div className="overview-block">
 								<Icon icon={item.icon} iconSize={18} />
 								<div className="text">
-									<span className="count">{countItems(item.type)}</span>{' '}
-									{item.type}
+									<span className="count">{itemCount}</span> {itemName}
 								</div>
 							</div>
 						</React.Fragment>

@@ -21,7 +21,7 @@ const DashboardPages = () => {
 		return (
 			<React.Fragment>
 				<Button icon="plus" onClick={() => setCreatingPage(true)}>
-					New Page
+					Create Page
 				</Button>
 				<CreatePageDialog
 					onClose={() => setCreatingPage(false)}

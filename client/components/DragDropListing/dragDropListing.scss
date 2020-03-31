@@ -5,7 +5,7 @@
     overflow-y: scroll;
     .empty-state-container {
         &:first-child {
-            padding-top: 75px;
+            padding: 75px 0px;
         }
     }
 }

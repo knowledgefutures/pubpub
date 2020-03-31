@@ -106,7 +106,10 @@ const OverviewRow = (props) => {
 	};
 
 	const renderInitialRelease = (item) => {
-		const releases = item.releases || [];
+		if (!item.releases) {
+			return '';
+		}
+		const releases = item.releases;
 		const firstRelease = releases.reduce((prev, curr) => {
 			if (!prev) {
 				return curr.createdAt;
@@ -168,7 +171,7 @@ const OverviewRow = (props) => {
 					)}
 					<div className="subtitle">{renderSubtitle()}</div>
 				</div>
-				<div className="pubs">{isCollection ? content.pubs.length : '-'}</div>
+				<div className="pubs">{isCollection ? content.pubs.length : ''}</div>
 				<div className="released">{renderInitialRelease(content)}</div>
 				<div className="discussions">{countConversations}</div>
 				<div className="reviews">{countReviews}</div>

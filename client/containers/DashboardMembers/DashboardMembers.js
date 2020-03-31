@@ -110,10 +110,7 @@ const DashboardMembers = (props) => {
 	};
 
 	return (
-		<DashboardFrame
-			className="dashboard-members-container"
-			title={`${scopeData.elements.activeTargetName} Members`}
-		>
+		<DashboardFrame className="dashboard-members-container" title="Members">
 			<SettingsSection title="Add Member">
 				<ControlGroup className="add-member-controls">
 					<UserAutocomplete

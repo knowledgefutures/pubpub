@@ -8,7 +8,12 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-import { getPub, enrichPubFirebaseDoc } from '../utils/queryHelpers';
+import {
+	getPub,
+	enrichPubFirebaseDoc,
+	sanitizePub,
+	enrichPubCitations,
+} from '../utils/queryHelpers';
 
 app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, next) => {
 	try {
@@ -24,13 +29,15 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 		const initialData = await getInitialData(req, true);
 		const barePubData = await getPub(req.params.pubSlug, initialData.communityData.id);
 		const pubData = await enrichPubFirebaseDoc(barePubData, null, 'draft');
+		const sanitizedPub = await sanitizePub(pubData, initialData);
+		const enrichedPub = await enrichPubCitations(sanitizedPub, initialData);
 
 		return renderToNodeStream(
 			res,
 			<Html
 				chunkName="DashboardOverview"
 				initialData={initialData}
-				viewData={{ pubData: pubData }}
+				viewData={{ pubData: enrichedPub }}
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
 					title: `Overview · ${initialData.scopeData.elements.activeTarget.title}`,

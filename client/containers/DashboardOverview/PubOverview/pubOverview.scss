@@ -4,15 +4,19 @@
 	font-size: 16px;
 	.pub-header-background-component {
 		z-index: 1;
+		border-bottom: 0px solid black;
+	}
+	.block a,
+	.list-row a {
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 	.header-content {
 		padding: 26px;
 		font-style: 18px;
 		h1.title {
-			// line-height: 1em;
-			// font-weight: 500;
-			// font-family: $header-font;
-			// letter-spacing: 1px;
 			font-size: 28px;
 			line-height: 1.2;
 		}
@@ -20,15 +24,16 @@
 	.edit {
 		opacity: 0.8;
 		margin-bottom: 1em;
+		font-weight: 400;
 	}
 	.blocks {
 		display: flex;
 		justify-content: space-between;
-		
+
 		margin: 40px 0px;
 		.block {
-			// flex: 1 1 0;
-			min-width: 20%;
+			flex: 1 1 0;
+			max-width: 48%;
 		}
 		.block-title {
 			font-weight: 600;
@@ -38,13 +43,44 @@
 		margin: 40px 0px;
 		.list-title {
 			font-weight: 600;
-			margin-bottom: 12px
+			margin-bottom: 12px;
 		}
 		.list-content {
 			border-radius: 4px;
-			background: #F7F7F7;
-			border: 1px solid #DDD;
-			padding: 25px;
+			background: #f7f7f7;
+			border: 1px solid #ddd;
+			padding: 10px;
 		}
+		.bp3-non-ideal-state {
+			margin: 2em 0em;
+		}
+		.attribution-item {
+			&:hover,
+			&:active {
+				background: transparent;
+			}
+			cursor: default;
+		}
+		.list-row {
+			display: flex;
+			padding: 5px;
+			border-radius: 2px;
+			.number {
+				font-weight: bold;
+				margin-right: 1em;
+			}
+			.title {
+				margin-right: 2em;
+			}
+			.note {
+				opacity: 0.8;
+			}
+			.bp3-tag {
+				margin-right: 0.5em;
+			}
+		}
+	}
+	.citations-preview-component {
+		max-width: none;
 	}
 }

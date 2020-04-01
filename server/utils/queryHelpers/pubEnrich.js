@@ -75,7 +75,6 @@ export const enrichPubCitations = async (pubData, initialData) => {
 	const footnotesData = await generateCiteHtmls(footnotesRaw);
 	const citationsData = await generateCiteHtmls(citationsRaw);
 	const citationHtml = await generateCitationHTML(pubData, initialData.communityData);
-
 	return {
 		...pubData,
 		footnotes: footnotesData,

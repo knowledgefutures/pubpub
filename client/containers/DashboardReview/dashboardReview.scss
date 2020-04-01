@@ -1,3 +1,14 @@
 .dashboard-review-container {
-	
+	.bp3-tag {
+		text-transform: capitalize;
+		&.open {
+			background: #d1ffd6;
+		}
+		&.closed {
+			background: #ffd1d1;
+		}
+		&.completed {
+			background: #e8d1ff;
+		}
+	}
 }

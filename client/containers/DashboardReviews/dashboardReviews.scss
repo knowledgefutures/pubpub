@@ -1,3 +1,49 @@
 .dashboard-reviews-container {
-	
+	.list-content {
+		border-radius: 4px;
+		background: #f7f7f7;
+		border: 1px solid #ddd;
+		padding: 10px;
+		.bp3-tag {
+			text-transform: capitalize;
+			&.open {
+				background: #d1ffd6;
+			}
+			&.closed {
+				background: #ffd1d1;
+			}
+			&.completed {
+				background: #e8d1ff;
+			}
+		}
+	}
+	.bp3-non-ideal-state {
+		margin: 2em 0em;
+	}
+
+	.attribution-item {
+		&:hover,
+		&:active {
+			background: transparent;
+		}
+		cursor: default;
+	}
+	.list-row {
+		display: flex;
+		padding: 5px;
+		border-radius: 2px;
+		.number {
+			font-weight: bold;
+			margin-right: 1em;
+		}
+		.title {
+			margin-right: 2em;
+		}
+		.note {
+			opacity: 0.8;
+		}
+		.bp3-tag {
+			margin-right: 0.5em;
+		}
+	}
 }

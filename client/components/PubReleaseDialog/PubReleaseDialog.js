@@ -94,7 +94,7 @@ const PubReleaseDialog = (props) => {
 		if (createdRelease) {
 			return (
 				<Callout intent="success" title="Created release!">
-					This Pub is now visible for the world to see.
+					Your Release was succesfully created!
 				</Callout>
 			);
 		}
@@ -108,7 +108,7 @@ const PubReleaseDialog = (props) => {
 					Cancel
 				</Button>
 				<Button loading={isCreatingRelease} intent="primary" onClick={handleCreateRelease}>
-					Release
+					Create Release
 				</Button>
 			</React.Fragment>
 		);
@@ -127,7 +127,7 @@ const PubReleaseDialog = (props) => {
 
 	return (
 		<Dialog
-			title="Release this Pub"
+			title="Publish"
 			onClose={onClose}
 			isOpen={isOpen}
 			className="pub-release-dialog-component"
@@ -135,7 +135,10 @@ const PubReleaseDialog = (props) => {
 			<div className={Classes.DIALOG_BODY}>
 				{!createdRelease && (
 					<React.Fragment>
-						<p>You're about to release this Pub, making it visible to everyone.</p>
+						<p>
+							To publish this pub, you can create a Release that will be publicly
+							visible.
+						</p>
 						{latestRelease && renderLatestReleaseInfo(latestRelease)}
 						<MinimalEditor
 							onChange={(data) => {

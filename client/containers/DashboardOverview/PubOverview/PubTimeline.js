@@ -1,9 +1,9 @@
 /* eslint-disable react/no-danger */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AnchorButton, Button } from '@blueprintjs/core';
+import { AnchorButton, Button, Classes, Popover } from '@blueprintjs/core';
 
-import { Timeline, TimelineItem, TimelineCondenser } from 'components';
+import { Icon, Timeline, TimelineItem, TimelineCondenser } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { formatDate } from 'shared/utils/dates';
 import { pubUrl } from 'shared/utils/canonicalUrls';
@@ -31,15 +31,16 @@ const PubTimeline = (props) => {
 	const latestRelease = releases[releases.length - 1];
 
 	const draftBranch = pubData.branches.find((br) => br.title === 'draft');
-	const draftLastEditedDate = draftBranch.latestKeyAt;
+	const hasDraftContent = draftBranch.latestKeyAt;
 
-	const draftLastEditedNotice = draftLastEditedDate
-		? `Last edited ${formatDate(draftLastEditedDate, { includeTime: true })}`
-		: 'Get started by editing the Pub draft';
+	const draftLastEditedNotice = hasDraftContent
+		? `Last edited ${formatDate(hasDraftContent, { includeTime: true })}`
+		: 'Get started by editing the Pub draft.';
 
 	const draftItem = (canEdit || canEditDraft) && (
 		<TimelineItem
 			large
+			hollow={!hasDraftContent}
 			icon="edit"
 			title="Pub draft"
 			subtitle={draftLastEditedNotice}
@@ -71,11 +72,42 @@ const PubTimeline = (props) => {
 				controls={
 					canManage &&
 					release.noteText && (
-						<details>
-							<summary>See release notes</summary>
-							<div dangerouslySetInnerHTML={{ __html: release.noteText }} />
+						<details className="release-note">
+							<summary>Release notes</summary>
+							<div
+								className="content"
+								dangerouslySetInnerHTML={{ __html: release.noteText }}
+							/>
 						</details>
 					)
+				}
+			/>
+		);
+	};
+
+	const renderNoReleasesItem = () => {
+		const popoverContent = (
+			<div>
+				A Release is a snapshot of a Pub that's visible to the public. Visit the Pub draft
+				and click the <Icon icon="globe" iconSize={12} /> Publish button in the header to
+				create a release.
+			</div>
+		);
+
+		return (
+			<TimelineItem
+				hollow
+				large
+				icon="document-open"
+				title={<i>No releases yet</i>}
+				subtitle="Create a Release to share this Pub with the world."
+				controls={
+					<Popover
+						content={popoverContent}
+						popoverClassName={Classes.POPOVER_CONTENT_SIZING}
+					>
+						<Button outlined>Learn more</Button>
+					</Popover>
 				}
 			/>
 		);
@@ -94,16 +126,7 @@ const PubTimeline = (props) => {
 			</TimelineCondenser>
 			{latestRelease && renderReleaseItem(latestRelease, releases.length, true)}
 			{draftItem}
-			{releases.length === 0 && (
-				<TimelineItem
-					hollow
-					large
-					icon="document-open"
-					title={<i>No releases yet</i>}
-					subtitle="Create a release to share this Pub with the world."
-					controls={<Button outlined>Learn more</Button>}
-				/>
-			)}
+			{releases.length === 0 && hasDraftContent && renderNoReleasesItem()}
 		</Timeline>
 	);
 };

@@ -22,12 +22,13 @@ const propTypes = {
 const PubOverview = (props) => {
 	const { pubData } = props;
 	const { communityData } = usePageContext();
+	const { title, description } = pubData;
 
-	const renderSection = (title, text) => {
+	const renderSection = (sectionTitle, sectionText) => {
 		return (
 			<div className="section">
-				<div className="section-header">{title}</div>
-				{text}
+				<div className="section-header">{sectionTitle}</div>
+				{sectionText}
 			</div>
 		);
 	};
@@ -46,7 +47,7 @@ const PubOverview = (props) => {
 		);
 	};
 
-	const renderCollectionsWithOverflow = (maxShown) => {
+	const renderCollections = () => {
 		const { collectionPubs } = pubData;
 		if (collectionPubs.length === 0) {
 			return null;
@@ -70,7 +71,7 @@ const PubOverview = (props) => {
 		);
 	};
 
-	const renderReviewsWithOverflow = (maxShown) => {
+	const renderReviews = () => {
 		return (
 			<div className="section list">
 				<div className="section-header">Reviews</div>
@@ -166,21 +167,21 @@ const PubOverview = (props) => {
 				safetyLayer="full-height"
 			>
 				<div className="header-content">
-					<h1 className="title">{pubData.title}</h1>
-					<div className="description">{pubData.description}</div>
+					<h1 className="title">{title}</h1>
+					{description && <div className="description">{description}</div>}
 					{renderPubDates()}
 				</div>
 			</PubHeaderBackground>
-			<div className="below-header">
+			<div className="columns">
 				<div className="column">
 					{renderSection(
 						'Cite As',
 						<CitationsPreview pubData={pubData} showHeader={false} />,
 					)}
 					{pubData.doi && renderSection('DOI', pubData.doi)}
-					{renderCollectionsWithOverflow(3)}
-					{renderReviewsWithOverflow(3)}
 					{renderAttribution()}
+					{renderCollections()}
+					{renderReviews()}
 				</div>
 				<div className="column">
 					<PubTimeline pubData={pubData} />

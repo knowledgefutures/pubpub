@@ -12,28 +12,21 @@ export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) =
 	if (!activeBranch) {
 		throw new Error('Pub Not Found');
 	}
-	const { doc, historyData, mostRecentRemoteKey, checkpointUpdates } = await getBranchDoc(
-		pubData.id,
-		activeBranch.id,
-		versionNumber,
-		true,
-	);
-	let setFirstKeyAt;
-	let setLatestKeyAt;
-	if (checkpointUpdates) {
-		const whereQuery = { where: { id: activeBranch.id } };
-		if (activeBranch.firstKeyAt) {
-			setFirstKeyAt = Branch.update({ firstKeyAt: checkpointUpdates.firstKeyAt }, whereQuery);
-		}
-		if (new Date(activeBranch.latestKeyAt) > checkpointUpdates.latestKeyAt) {
-			setLatestKeyAt = Branch.update(
-				{ latestKeyAt: checkpointUpdates.latestKeyAt },
-				whereQuery,
-			);
-		}
+	const {
+		doc,
+		historyData,
+		mostRecentRemoteKey,
+		firstTimestamp,
+		latestTimestamp,
+	} = await getBranchDoc(pubData.id, activeBranch.id, versionNumber, true);
+
+	if (firstTimestamp || latestTimestamp) {
+		const update = {
+			...(firstTimestamp && { firstKeyAt: new Date(firstTimestamp) }),
+			...(latestTimestamp && { latestKeyAt: new Date(latestTimestamp) }),
+		};
+		await Branch.update(update, { where: { id: activeBranch.id } });
 	}
-	await setFirstKeyAt;
-	await setLatestKeyAt;
 
 	return {
 		...pubData,

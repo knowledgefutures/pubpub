@@ -69,6 +69,8 @@ export const getBranchDoc = async (pubId, branchId, historyKey, updateOutdatedCh
 	return {
 		doc: doc,
 		mostRecentRemoteKey: currentKey,
+		firstTimestamp: firstTimestamp,
+		latestTimestamp: latestTimestamp,
 		historyData: {
 			timestamps: {
 				...checkpointMap,

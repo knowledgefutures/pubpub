@@ -6,4 +6,14 @@
             text-decoration: underline;
         }
     }
+
+    .release-note {
+        summary {
+            margin-bottom: 5px;
+        }
+        .content {
+            font-size: 0.9em;
+            font-style: italic;
+        }
+    }
 }

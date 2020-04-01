@@ -1,5 +1,7 @@
 @import 'styles/variables.scss';
 
+$outer-padding: 26px;
+
 .pub-overview-component {
 	font-size: 16px;
 
@@ -7,6 +9,15 @@
 		z-index: 1;
 		border-radius: 4px;
 		border-bottom: none;
+		box-shadow: 0px 2.5px 5px 0px rgba(0, 0, 0, 0.1);
+	}
+
+	.header-content {
+		padding: $outer-padding;
+		h1.title {
+			font-size: 28px;
+			line-height: 1.2;
+		}
 	}
 
 	.pub-dates {
@@ -29,10 +40,6 @@
 		}
 	}
 
-	.below-header {
-		margin-top: 2em;
-	}
-
 	.section {
 		margin-bottom: 2em;
 		.section-header {
@@ -48,19 +55,20 @@
 		}
 	}
 
-	.header-content {
-		padding: 26px;
-		font-style: 18px;
-		h1.title {
-			font-size: 28px;
-			line-height: 1.2;
-		}
+	.columns {
+		margin-top: 2em;
+		display: grid;
+		grid-template-columns: 3fr 2fr;
+		column-gap: 50px;
 	}
 
-	.below-header {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		column-gap: 50px;
+	.column {
+		&:first-child {
+			padding-left: $outer-padding;
+		}
+		&:last-child {
+			padding-right: $outer-padding;
+		}
 	}
 
 	.section-header {

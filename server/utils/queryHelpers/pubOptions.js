@@ -12,13 +12,10 @@ import {
 	ReviewNew,
 	Fork,
 	Anchor,
-	Visibility,
-	Thread,
-	ThreadEvent,
-	ThreadComment,
 	User,
 } from '../../models';
 import { attributesPublicUser } from '..';
+import { baseAuthor, baseThread, baseVisibility } from './util';
 
 export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 	/* Initialize values assuming all inputs are false. */
@@ -61,43 +58,8 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 	let collectionPubs = [];
 	let community = [];
 	let anchor = [{ model: Anchor, as: 'anchor' }];
-	let author = [
-		{
-			model: User,
-			as: 'author',
-			attributes: attributesPublicUser,
-		},
-	];
-	let thread = [
-		{
-			model: Thread,
-			as: 'thread',
-			include: [
-				{
-					model: ThreadComment,
-					as: 'comments',
-					include: [
-						{
-							model: User,
-							as: 'author',
-							attributes: attributesPublicUser,
-						},
-					],
-				},
-				{
-					model: ThreadEvent,
-					as: 'events',
-					include: [
-						{
-							model: User,
-							as: 'user',
-							attributes: attributesPublicUser,
-						},
-					],
-				},
-			],
-		},
-	];
+	let author = baseAuthor;
+	let thread = baseThread;
 	if (isPreview) {
 		pubAttributes = [
 			'id',
@@ -174,19 +136,7 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			},
 		];
 	}
-	const visibility = [
-		{
-			model: Visibility,
-			as: 'visibility',
-			include: [
-				{
-					model: User,
-					as: 'users',
-					attributes: attributesPublicUser,
-				},
-			],
-		},
-	];
+	const visibility = baseVisibility;
 	return {
 		attributes: pubAttributes,
 		include: [

@@ -16,6 +16,7 @@ require('./dashboardOverview');
 require('./dashboardPubOverview');
 require('./dashboardPage');
 require('./dashboardPages');
+require('./dashboardReview');
 require('./dashboardReviews');
 require('./dashboardSettings');
 

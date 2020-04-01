@@ -1,51 +1,58 @@
-import { Review } from '../models';
+import uuidv4 from 'uuid/v4';
+import { Thread, Visibility, ReviewNew } from '../models';
 import {
-	createCreatedReviewEvent,
-	createClosedReviewEvent,
-	createCompletedReviewEvent,
-	createCommentReviewEvent,
-} from '../reviewEvent/queries';
+	createCreatedThreadEvent,
+	createClosedThreadEvent,
+	createCompletedThreadEvent,
+} from '../threadEvent/queries';
+import { createThreadComment } from '../threadComment/queries';
 
-export const createReview = (inputValues, userData) => {
-	return Review.findAll({
+export const createReview = async (inputValues, userData) => {
+	const reviews = await ReviewNew.findAll({
 		where: {
 			pubId: inputValues.pubId,
 		},
-		attributes: ['id', 'pubId', 'shortId'],
-	}).then((reviews) => {
-		const maxShortId = reviews.reduce((prev, curr) => {
-			if (curr.shortId > prev) {
-				return curr.shortId;
-			}
-			return prev;
-		}, 0);
-		return Review.create({
-			shortId: maxShortId + 1,
-			pubId: inputValues.pubId,
-			sourceBranchId: inputValues.sourceBranchId,
-			destinationBranchId: inputValues.destinationBranchId,
-		})
-			.then((reviewData) => {
-				const reviewEvents = [
-					createCreatedReviewEvent(userData, reviewData.pubId, reviewData.id),
-				];
-				if (inputValues.text) {
-					reviewEvents.push(
-						createCommentReviewEvent(
-							userData,
-							reviewData.pubId,
-							reviewData.id,
-							inputValues.content,
-							inputValues.text,
-						),
-					);
-				}
-				return Promise.all([reviewData, ...reviewEvents]);
-			})
-			.then(([reviewData]) => {
-				return reviewData;
-			});
+		attributes: ['id', 'pubId', 'number'],
+		raw: true,
 	});
+
+	const maxNumber = reviews.reduce((prev, curr) => {
+		if (Number(curr.number) > prev) {
+			return Number(curr.number);
+		}
+		return prev;
+	}, 0);
+	const threadId = uuidv4();
+	const visibilityId = uuidv4();
+	await Promise.all([
+		Visibility.create({
+			id: visibilityId,
+			access: 'members',
+		}),
+		Thread.create({
+			id: threadId,
+		}),
+	]);
+
+	const reviewData = await ReviewNew.create({
+		title: 'Publication Request',
+		number: maxNumber + 1,
+		releaseRequested: inputValues.releaseRequested,
+		threadId: threadId,
+		visibilityId: visibilityId,
+		userId: userData.id,
+		pubId: inputValues.pubId,
+	});
+
+	await createCreatedThreadEvent(userData, threadId);
+	if (inputValues.text) {
+		await createThreadComment(
+			{ threadId: threadId, content: inputValues.content, text: inputValues.text },
+			userData,
+		);
+	}
+
+	return reviewData;
 };
 
 export const updateReview = (inputValues, updatePermissions, userData) => {
@@ -57,7 +64,7 @@ export const updateReview = (inputValues, updatePermissions, userData) => {
 		}
 	});
 
-	return Review.update(filteredValues, {
+	return ReviewNew.update(filteredValues, {
 		where: { id: inputValues.reviewId },
 		returning: true,
 	})
@@ -68,17 +75,14 @@ export const updateReview = (inputValues, updatePermissions, userData) => {
 
 			const nextValues = updatedReview[1][0].get();
 			const prevValues = updatedReview[1][0].previous();
-			const wasClosed = !prevValues.isClosed && nextValues.isClosed;
-			const wasCompleted = !prevValues.isCompleted && nextValues.isCompleted;
-			if (wasClosed && !wasCompleted) {
-				return createClosedReviewEvent(userData, inputValues.pubId, inputValues.reviewId);
+			const wasClosed = prevValues.status !== 'closed' && nextValues.status === 'closed';
+			const wasCompleted =
+				prevValues.status !== 'completed' && nextValues.status === 'completed';
+			if (wasClosed) {
+				return createClosedThreadEvent(userData, updatedReview.threadId);
 			}
 			if (wasCompleted) {
-				return createCompletedReviewEvent(
-					userData,
-					inputValues.pubId,
-					inputValues.reviewId,
-				);
+				return createCompletedThreadEvent(userData, updatedReview.threadId);
 			}
 			return null;
 		})
@@ -88,7 +92,7 @@ export const updateReview = (inputValues, updatePermissions, userData) => {
 };
 
 export const destroyReview = (inputValues) => {
-	return Review.destroy({
+	return ReviewNew.destroy({
 		where: { id: inputValues.reviewId },
 	});
 };

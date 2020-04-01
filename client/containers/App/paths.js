@@ -8,6 +8,7 @@ import {
 	DashboardImpact,
 	DashboardMembers,
 	DashboardOverview,
+	DashboardReview,
 	DashboardReviews,
 	DashboardPages,
 	DashboardPage,
@@ -77,6 +78,10 @@ export default (viewData, locationData, chunkName) => {
 		},
 		DashboardReviews: {
 			ActiveComponent: DashboardReviews,
+			isDashboard: true,
+		},
+		DashboardReview: {
+			ActiveComponent: DashboardReview,
 			isDashboard: true,
 		},
 		DashboardSettings: {

@@ -11,6 +11,7 @@ import {
 	DialogLauncher,
 	Overlay,
 	PubReleaseDialog,
+	PubReleaseReviewDialog,
 	PubThemePicker,
 } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
@@ -293,6 +294,33 @@ const PubHeaderMain = (props) => {
 					>
 						{({ isOpen, onClose, key }) => (
 							<PubReleaseDialog
+								key={key}
+								isOpen={isOpen}
+								onClose={onClose}
+								pubData={pubData}
+								historyData={historyData}
+								updatePubData={(newPubData) => updateLocalData('pub', newPubData)}
+							/>
+						)}
+					</DialogLauncher>
+				)}
+				{/*{!canAdmin && (*/}
+				{canAdmin && (
+					<DialogLauncher
+						renderLauncherElement={({ openDialog }) => (
+							<LargeHeaderButton
+								disabled={!canRelease}
+								icon="social-media"
+								onClick={openDialog}
+								label={{
+									bottom: 'Create a Release Review',
+									top: 'Request Publication',
+								}}
+							/>
+						)}
+					>
+						{({ isOpen, onClose, key }) => (
+							<PubReleaseReviewDialog
 								key={key}
 								isOpen={isOpen}
 								onClose={onClose}

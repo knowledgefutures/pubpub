@@ -9,6 +9,7 @@ export { default as DashboardMembers } from './DashboardMembers/DashboardMembers
 export { default as DashboardOverview } from './DashboardOverview/DashboardOverview';
 export { default as DashboardPage } from './DashboardPage/DashboardPage';
 export { default as DashboardPages } from './DashboardPages/DashboardPages';
+export { default as DashboardReview } from './DashboardReview/DashboardReview';
 export { default as DashboardReviews } from './DashboardReviews/DashboardReviews';
 export { default as DashboardSettings } from './DashboardSettings/DashboardSettings';
 export { default as Explore } from './Explore/Explore';

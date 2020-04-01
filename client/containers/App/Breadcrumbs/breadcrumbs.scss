@@ -52,6 +52,9 @@
 					overflow: hidden;
 				}
 			}
+			&.no-shrink {
+				flex: 0 0 auto;
+			}
 			&:hover {
 				text-decoration: underline;
 			}

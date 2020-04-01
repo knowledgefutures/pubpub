@@ -117,7 +117,11 @@ const PubOverview = (props) => {
 													'mmm dd, yyyy - HH:MM',
 												)}
 											</div>
-											<div className="note">{review.status}</div>
+											<div className="note">
+												<Tag minimal className={review.status}>
+													{review.status}
+												</Tag>
+											</div>
 										</div>
 									}
 								/>
@@ -178,6 +182,7 @@ const PubOverview = (props) => {
 						.sort((a, b) => a.order - b.order)
 						.map((attribution) => {
 							const { initials, fullName, avatar, slug } = attribution.user;
+							const roles = attribution.roles || [];
 							return (
 								<MenuItem
 									className="attribution-item"
@@ -198,7 +203,7 @@ const PubOverview = (props) => {
 													<i>{attribution.affiliation}</i>
 												</div>
 												<div>
-													{attribution.roles.map((role) => {
+													{roles.map((role) => {
 														return <Tag minimal>{role}</Tag>;
 													})}
 												</div>

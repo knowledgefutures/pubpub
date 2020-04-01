@@ -54,6 +54,18 @@
 		.bp3-non-ideal-state {
 			margin: 2em 0em;
 		}
+		.bp3-tag {
+			text-transform: capitalize;
+			&.open {
+				background: #d1ffd6;
+			}
+			&.closed {
+				background: #ffd1d1;
+			}
+			&.completed {
+				background: #e8d1ff;
+			}
+		}
 		.attribution-item {
 			&:hover,
 			&:active {

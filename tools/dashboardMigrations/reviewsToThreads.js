@@ -74,6 +74,8 @@ export default async () => {
 				visibilityId: visibilityId,
 				userId: creatorId,
 				pubId: review.pubId,
+				createdAt: review.createdAt,
+				updatedAt: review.updatedAt,
 			};
 			const newVisibility = {
 				id: visibilityId,

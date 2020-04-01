@@ -19,7 +19,7 @@ const propTypes = {
 	}).isRequired,
 	blur: PropTypes.bool,
 	style: PropTypes.object,
-	showSafetyLayer: PropTypes.bool,
+	safetyLayer: PropTypes.oneOf(['enabled', 'full-height']),
 };
 
 const defaultProps = {
@@ -27,11 +27,11 @@ const defaultProps = {
 	children: null,
 	blur: false,
 	style: {},
-	showSafetyLayer: false,
+	safetyLayer: null,
 };
 
 const PubHeaderBackground = React.forwardRef((props, ref) => {
-	const { children, className, pubData, communityData, blur, style, showSafetyLayer } = props;
+	const { children, className, pubData, communityData, blur, style, safetyLayer } = props;
 	const { headerBackgroundColor, headerBackgroundImage } = pubData;
 
 	const effectiveBackgroundColor = calculateBackgroundColor(
@@ -62,7 +62,15 @@ const PubHeaderBackground = React.forwardRef((props, ref) => {
 					style={{ backgroundColor: effectiveBackgroundColor }}
 				/>
 			)}
-			{showSafetyLayer && <div className="background-element background-safety-layer" />}
+			{!!safetyLayer && (
+				<div
+					className={classNames(
+						'background-element',
+						'background-safety-layer',
+						safetyLayer === 'full-height' && 'full-height',
+					)}
+				/>
+			)}
 			{children}
 		</div>
 	);

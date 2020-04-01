@@ -8,7 +8,6 @@ import { PubHistoryViewer } from 'components';
 import PubBody from './PubBody';
 import PubInlineMenu from './PubInlineMenu';
 import PubFileImport from './PubFileImport';
-import PubHistory from './PubHistory';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubBottom from './PubBottom/PubBottom';
 import PubMouseEvents from './PubMouseEvents';

@@ -1,0 +1,9 @@
+.pub-timeline-component {
+    .release-link {
+        text-decoration: none;
+        &:hover,
+        &:focus {
+            text-decoration: underline;
+        }
+    }
+}

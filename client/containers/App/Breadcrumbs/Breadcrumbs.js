@@ -92,7 +92,9 @@ const Breadcrumbs = () => {
 					isBlock={true}
 				/>
 				<div className="titles">
-					<div className="title">{title}</div>
+					<div className="title" title={title}>
+						{title}
+					</div>
 					<div className="crumbs">
 						<a className="crumb truncate" href={getDashUrl({})}>
 							<Icon icon="office" iconSize={10} />

@@ -12,7 +12,7 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		canManage: PropTypes.bool,
 		licenseSlug: PropTypes.string,
-		collectionPubs: PropTypes.object,
+		collectionPubs: PropTypes.array,
 	}).isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };

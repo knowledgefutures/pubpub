@@ -16,18 +16,23 @@ export const getPubLatestReleasedDate = (pub) => {
 		});
 };
 
-export const getPubPublishedDate = (pub, branch = null) => {
-	const selectedBranch = selectBranch(pub, branch);
-	if (selectedBranch) {
-		if (pub.branches && !pub.branches.some((br) => br.id === selectedBranch.id)) {
-			throw new Error(`Branch ${selectedBranch.id} not a member of pub ${pub.id}!`);
-		}
-		if (selectedBranch.firstKeyAt) {
-			return new Date(selectedBranch.firstKeyAt);
-		}
-		if (selectedBranch.latestKeyAt) {
-			return new Date(selectedBranch.latestKeyAt);
-		}
+export const getPubPublishedDate = (pub) => {
+	const { releases } = pub;
+	if (releases.length > 0) {
+		const [firstRelease] = releases;
+		return new Date(firstRelease.createdAt);
+	}
+	return null;
+};
+
+export const getPubLatestReleaseDate = (pub, { excludeFirstRelease = false } = {}) => {
+	const { releases } = pub;
+	if (releases.length === 1 && excludeFirstRelease) {
+		return null;
+	}
+	const latestRelease = releases[releases.length - 1];
+	if (latestRelease) {
+		return new Date(latestRelease.createdAt);
 	}
 	return null;
 };

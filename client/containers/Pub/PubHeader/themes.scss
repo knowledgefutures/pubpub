@@ -152,10 +152,11 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
         background-color: rgba($background-color, 0.5);
         backdrop-filter: blur(20px);
         box-shadow: $box-shadow;
+        &.full-height {
+            height: 100%;
+        }
     }
-    &.showing-details,
-    &.js-is-sticky,
-    &.pub-header-compact-component {
+    &.js-is-sticky {
         .background-safety-layer {
             height: 100%;
         }

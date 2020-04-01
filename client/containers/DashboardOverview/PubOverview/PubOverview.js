@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
-import TimeAgo from 'react-timeago';
 import { Menu, MenuItem, NonIdealState, Tag } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
-import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { getPubPublishedDate, getPubLatestReleaseDate } from 'shared/pub/pubDates';
+import { formatDate } from 'shared/utils/dates';
+
 import PubHeaderBackground from 'containers/Pub/PubHeader/PubHeaderBackground';
 import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
 import { Avatar, DashboardFrame } from 'components';
+
+import PubTimeline from './PubTimeline';
 
 require('./pubOverview.scss');
 
@@ -20,89 +23,63 @@ const PubOverview = (props) => {
 	const { pubData } = props;
 	const { communityData } = usePageContext();
 
-	const renderUpdatedTime = () => {
-		const { latestKeyAt: latestKeyAtSring } = pubData.activeBranch;
-		const latestKeyAt = new Date(latestKeyAtSring);
-		if (new Date().toDateString() === latestKeyAt.toDateString()) {
-			return <TimeAgo date={latestKeyAt} minPeriod={60} />;
-		}
-		return dateFormat(latestKeyAtSring, 'mmm dd, yyyy');
-	};
-	const publishedDate = getPubPublishedDate(
-		pubData,
-		pubData.branches.find((br) => br.title === 'public'),
-	);
-
-	const renderBlock = (title, text) => {
+	const renderSection = (title, text) => {
 		return (
-			<div className="block">
-				<div className="block-title">{title}</div>
-				<div className="block-text">{text}</div>
+			<div className="section">
+				<div className="section-header">{title}</div>
+				{text}
 			</div>
 		);
 	};
 
-	return (
-		<DashboardFrame className="pub-overview-component" title="Overview">
-			<PubHeaderBackground
-				className="pub-header-component"
-				pubData={pubData}
-				communityData={communityData}
-				showSafetyLayer={true}
-			>
-				<div className="header-content">
-					<h1 className="title">{pubData.title}</h1>
-					<div className="edit">Edit Title</div>
-					<div className="description">{pubData.description}</div>
-					<div className="edit">Edit Description</div>
+	const renderPubDates = () => {
+		const publishedDate = getPubPublishedDate(pubData);
+		const latestReleaseDate = getPubLatestReleaseDate(pubData, { excludeFirstRelease: true });
+		const publishedOnString = publishedDate ? formatDate(publishedDate) : <i>Unpublished</i>;
+		return (
+			<div className="pub-dates">
+				{renderSection('Created on', formatDate(pubData.createdAt))}
+				{renderSection('Published on', publishedOnString)}
+				{latestReleaseDate &&
+					renderSection('Last released on', formatDate(latestReleaseDate))}
+			</div>
+		);
+	};
+
+	const renderCollectionsWithOverflow = (maxShown) => {
+		const { collectionPubs } = pubData;
+		if (collectionPubs.length === 0) {
+			return null;
+		}
+		return (
+			<div className="collections section">
+				<div className="section-header">
+					Appears in collections ({collectionPubs.length})
 				</div>
-			</PubHeaderBackground>
-			<div className="edit">Edit Theme</div>
-			<div className="blocks">
-				{renderBlock('Created on', dateFormat(pubData.createdAt, 'mmm dd, yyyy'))}
-				{renderBlock('Updated on', renderUpdatedTime())}
-				{renderBlock(
-					'Published on',
-					publishedDate ? dateFormat(publishedDate, 'mmm dd, yyyy') : 'Unpublished',
-				)}
-				{renderBlock('DOI', pubData.doi || '-')}
+				{pubData.collectionPubs.map((cp, index) => {
+					return (
+						<span key={cp.id}>
+							<a href={`/dash/collection/${cp.collection.slug}`}>
+								{cp.collection.title}
+							</a>
+							{index !== pubData.collectionPubs.length - 1 && <span>, </span>}
+						</span>
+					);
+				})}
 			</div>
-			<div className="blocks">
-				{renderBlock(
-					`Appears in ${pubData.collectionPubs.length} Collection${
-						pubData.collectionPubs.length === 1 ? '' : 's'
-					}`,
-					<React.Fragment>
-						{pubData.collectionPubs.map((cp, index) => {
-							return (
-								<span key={cp.id}>
-									<a href={`/dash/collection/${cp.collection.slug}`}>
-										{cp.collection.title}
-									</a>
-									{index !== pubData.collectionPubs.length - 1 && <span>, </span>}
-								</span>
-							);
-						})}
-					</React.Fragment>,
-				)}
-				{renderBlock('Cite As', <CitationsPreview pubData={pubData} showHeader={false} />)}
-			</div>
-			<div className="list">
-				<div className="list-title">Reviews</div>
+		);
+	};
+
+	const renderReviewsWithOverflow = (maxShown) => {
+		return (
+			<div className="section list">
+				<div className="section-header">Reviews</div>
 				<Menu className="list-content">
 					{!pubData.reviews.length && (
 						<NonIdealState title="No Reviews Yet" icon="social-media" />
 					)}
 					{pubData.reviews
-						.sort((foo, bar) => {
-							if (foo.createdAt < bar.createdAt) {
-								return 1;
-							}
-							if (foo.createdAt > bar.createdAt) {
-								return -1;
-							}
-							return 0;
-						})
+						.sort((a, b) => a.createdAt - b.createdAt)
 						.map((review, index) => {
 							const reviewNum = pubData.reviews.length - index;
 							return (
@@ -129,51 +106,13 @@ const PubOverview = (props) => {
 						})}
 				</Menu>
 			</div>
-			<div className="list">
-				<div className="list-title">Releases</div>
-				<Menu className="list-content">
-					{!pubData.releases.length && (
-						<NonIdealState
-							title="This Pub is unpublished and has no Releases"
-							icon="circle"
-						/>
-					)}
-					{pubData.releases
-						.sort((foo, bar) => {
-							if (foo.createdAt < bar.createdAt) {
-								return 1;
-							}
-							if (foo.createdAt > bar.createdAt) {
-								return -1;
-							}
-							return 0;
-						})
-						.map((release, index) => {
-							const releaseNum = pubData.releases.length - index;
-							return (
-								<MenuItem
-									href={`/pub/${pubData.slug}/release/${releaseNum}`}
-									text={
-										<div className="list-row">
-											<div className="number">#{releaseNum}</div>
-											<div className="title">
-												{dateFormat(
-													release.createdAt,
-													'mmm dd, yyyy - HH:MM',
-												)}
-											</div>
-											<div className="note">{release.noteText}</div>
-										</div>
-									}
-								/>
-							);
-						})}
-				</Menu>
-			</div>
-			<div className="list">
-				<div className="list-title">
-					Attribution <span className="edit"> Edit Attributions</span>
-				</div>
+		);
+	};
+
+	const renderAttribution = () => {
+		return (
+			<div className="section list">
+				<div className="section-header">Attribution</div>
 				<Menu className="list-content">
 					{!pubData.attributions.length && (
 						<NonIdealState title="No attributions on this pub" icon="person" />
@@ -214,6 +153,38 @@ const PubOverview = (props) => {
 							);
 						})}
 				</Menu>
+			</div>
+		);
+	};
+
+	return (
+		<DashboardFrame className="pub-overview-component" title="Overview">
+			<PubHeaderBackground
+				className="pub-header-component"
+				pubData={pubData}
+				communityData={communityData}
+				safetyLayer="full-height"
+			>
+				<div className="header-content">
+					<h1 className="title">{pubData.title}</h1>
+					<div className="description">{pubData.description}</div>
+					{renderPubDates()}
+				</div>
+			</PubHeaderBackground>
+			<div className="below-header">
+				<div className="column">
+					{renderSection(
+						'Cite As',
+						<CitationsPreview pubData={pubData} showHeader={false} />,
+					)}
+					{pubData.doi && renderSection('DOI', pubData.doi)}
+					{renderCollectionsWithOverflow(3)}
+					{renderReviewsWithOverflow(3)}
+					{renderAttribution()}
+				</div>
+				<div className="column">
+					<PubTimeline pubData={pubData} />
+				</div>
 			</div>
 		</DashboardFrame>
 	);

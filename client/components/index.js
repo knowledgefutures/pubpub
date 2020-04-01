@@ -45,5 +45,6 @@ export { default as SimpleEditor } from './SimpleEditor/SimpleEditor';
 export { default as SimpleNotesList } from './SimpleNotesList/SimpleNotesList';
 export { default as SkipLink } from './SkipLink/SkipLink';
 export { default as TabToShow } from './TabToShow/TabToShow';
+export { Timeline, TimelineCondenser, TimelineItem } from './Timeline';
 export { default as PubThemePicker } from './PubThemePicker/PubThemePicker';
 export { default as UserAutocomplete } from './UserAutocomplete/UserAutocomplete';

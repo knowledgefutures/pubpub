@@ -15,7 +15,7 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		id: PropTypes.string,
 		licenseSlug: PropTypes.string,
-		collectionPubs: PropTypes.object,
+		collectionPubs: PropTypes.array,
 	}).isRequired,
 	onSelect: PropTypes.func,
 	updateLocalData: PropTypes.func,

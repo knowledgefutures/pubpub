@@ -67,7 +67,7 @@ const PubHeader = (props) => {
 			communityData={communityData}
 			ref={headerRef}
 			style={fixedHeight && showingDetails ? { height: fixedHeight } : {}}
-			showSafetyLayer={true}
+			safetyLayer={showingDetails ? 'full-height' : 'enabled'}
 		>
 			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
 				{!showingDetails && (

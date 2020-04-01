@@ -1,13 +1,7 @@
 import { getScope } from '../utils/queryHelpers';
 
-export const getPermissions = async ({
-	userId,
-	communityId,
-	pubId,
-	sourceBranchId,
-	destinationBranchId,
-}) => {
-	if (!userId || !communityId || !pubId || !sourceBranchId || !destinationBranchId) {
+export const getPermissions = async ({ userId, communityId, pubId }) => {
+	if (!userId || !communityId || !pubId) {
 		return {};
 	}
 	const scopeData = await getScope({
@@ -19,19 +13,6 @@ export const getPermissions = async ({
 	if (!scopeData.elements.activePub) {
 		return {};
 	}
-	let sourceBranchExists = false;
-	let destinationBranchExists = false;
-	scopeData.elements.activePub.branches.forEach((branch) => {
-		if (branch.id === sourceBranchId) {
-			sourceBranchExists = true;
-		}
-		if (branch.id === destinationBranchId) {
-			destinationBranchExists = true;
-		}
-	});
-	if (!sourceBranchExists || !destinationBranchExists) {
-		return {};
-	}
 
 	/* TODO: We need some concept of 'Review Owner' for reviews with no */
 	/* destinationBranch. Who is the one administrating the review, if not */
@@ -39,7 +20,7 @@ export const getPermissions = async ({
 	const { canManage, isPublicReviews } = scopeData.activePermissions;
 	let editProps = [];
 	if (canManage) {
-		editProps = ['isClosed', 'isCompleted'];
+		editProps = ['title', 'status', 'labels', 'releaseRequested'];
 	}
 
 	return {

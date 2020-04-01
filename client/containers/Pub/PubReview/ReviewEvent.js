@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
-import { AnchorButton } from '@blueprintjs/core';
+// import { AnchorButton } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { Avatar } from 'components';
 import Editor from '@pubpub/editor';
-import { usePageContext } from 'utils/hooks';
+// import { usePageContext } from 'utils/hooks';
 
 require('./reviewEvent.scss');
 
@@ -15,17 +15,17 @@ const propTypes = {
 };
 
 const ReviewEvent = (props) => {
-	const { pubData, eventData } = props;
-	const { locationData } = usePageContext();
-	const activeReview = pubData.reviews.find((review) => {
-		return review.shortId === Number(locationData.params.reviewShortId);
-	});
-	const sourceBranch = pubData.branches.find((branch) => {
-		return branch.id === activeReview.sourceBranchId;
-	});
-	const destinationBranch = pubData.branches.find((branch) => {
-		return branch.id === activeReview.destinationBranchId;
-	});
+	const { eventData } = props;
+	// const { locationData } = usePageContext();
+	// const activeReview = pubData.reviews.find((review) => {
+	// 	return review.shortId === Number(locationData.params.reviewShortId);
+	// });
+	// const sourceBranch = pubData.branches.find((branch) => {
+	// 	return branch.id === activeReview.sourceBranchId;
+	// });
+	// const destinationBranch = pubData.branches.find((branch) => {
+	// 	return branch.id === activeReview.destinationBranchId;
+	// });
 
 	const time = (
 		<TimeAgo
@@ -43,12 +43,13 @@ const ReviewEvent = (props) => {
 			date={eventData.createdAt}
 		/>
 	);
+	const user = eventData.user || eventData.author;
 	return (
 		<div className="review-event-component">
-			<Avatar width={30} initials={eventData.user.initials} avatar={eventData.user.avatar} />
+			<Avatar width={30} initials={user.initials} avatar={user.avatar} />
 			<div className="event-content">
-				<a className="user" href={`/user/${eventData.user.slug}`}>
-					{eventData.user.fullName}
+				<a className="user" href={`/user/${user.slug}`}>
+					{user.fullName}
 				</a>
 				{eventData.type === 'status' && eventData.data.statusChange === 'created' && (
 					<span> created this review {time}</span>
@@ -59,7 +60,7 @@ const ReviewEvent = (props) => {
 				{eventData.type === 'status' && eventData.data.statusChange === 'completed' && (
 					<span> marked this review complete {time}</span>
 				)}
-				{eventData.type === 'status' && eventData.data.statusChange === 'merged' && (
+				{/* eventData.type === 'status' && eventData.data.statusChange === 'merged' && (
 					<span>
 						{' '}
 						merged #{sourceBranch.title} into #{destinationBranch.title} {time}
@@ -73,11 +74,11 @@ const ReviewEvent = (props) => {
 							small={true}
 						/>
 					</div>
-				)}
-				{eventData.type === 'comment' && <span> commented {time}</span>}
-				{eventData.type === 'comment' && (
+				) */}
+				{eventData.content && <span> commented {time}</span>}
+				{eventData.content && (
 					<div className="comment-wrapper">
-						<Editor initialContent={eventData.data.content} isReadOnly={true} />
+						<Editor initialContent={eventData.content} isReadOnly={true} />
 					</div>
 				)}
 			</div>

@@ -12,3 +12,5 @@ export { default as getOverview } from './overviewGet';
 export { default as sanitizeOverview } from './overviewSanitize';
 export { default as getScope } from './scopeGet';
 export { default as getUser } from './userGet';
+export { default as getReview } from './reviewGet';
+export { default as sanitizeReviews } from './reviewsSanitize';

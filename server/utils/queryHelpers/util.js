@@ -1,3 +1,6 @@
+import { User, Thread, ThreadComment, ThreadEvent, Visibility } from '../../models';
+import { attributesPublicUser } from '..';
+
 export const ensureSerialized = (item) => {
 	if (Array.isArray(item)) {
 		return item.map(ensureSerialized);
@@ -35,3 +38,54 @@ export const sanitizeOnVisibility = (objectsWithVisibility, activePermissions, l
 		return false;
 	});
 };
+
+export const baseAuthor = [
+	{
+		model: User,
+		as: 'author',
+		attributes: attributesPublicUser,
+	},
+];
+export const baseThread = [
+	{
+		model: Thread,
+		as: 'thread',
+		include: [
+			{
+				model: ThreadComment,
+				as: 'comments',
+				include: [
+					{
+						model: User,
+						as: 'author',
+						attributes: attributesPublicUser,
+					},
+				],
+			},
+			{
+				model: ThreadEvent,
+				as: 'events',
+				include: [
+					{
+						model: User,
+						as: 'user',
+						attributes: attributesPublicUser,
+					},
+				],
+			},
+		],
+	},
+];
+export const baseVisibility = [
+	{
+		model: Visibility,
+		as: 'visibility',
+		include: [
+			{
+				model: User,
+				as: 'users',
+				attributes: attributesPublicUser,
+			},
+		],
+	},
+];

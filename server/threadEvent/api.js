@@ -1,6 +1,6 @@
 import app from '../server';
 import { getPermissions } from './permissions';
-import { createReview, updateReview, destroyReview } from './queries';
+import { createThreadEvent, updateThreadEvent, destroyThreadEvent } from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -8,59 +8,59 @@ const getRequestIds = (req) => {
 		userId: user.id,
 		communityId: req.body.communityId,
 		pubId: req.body.pubId,
-		reviewId: req.body.reviewId || null,
+		threadId: req.body.threadId,
+		threadEventId: req.body.threadEventId || null,
 	};
 };
 
-app.post('/api/reviews', (req, res) => {
+app.post('/api/threadEvents', (req, res) => {
 	const requestIds = getRequestIds(req);
 	getPermissions(requestIds)
 		.then((permissions) => {
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			return createReview(req.body, req.user);
+			return createThreadEvent(req.body, req.user);
 		})
-		.then((newReview) => {
-			return res.status(201).json(newReview);
+		.then((newThreadEvent) => {
+			return res.status(201).json(newThreadEvent);
 		})
 		.catch((err) => {
-			console.error('Error in postReview: ', err);
+			console.error('Error in postThreadEvent: ', err);
 			return res.status(500).json(err.message);
 		});
 });
 
-app.put('/api/reviews', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
+app.put('/api/threadEvents', (req, res) => {
+	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.update) {
 				throw new Error('Not Authorized');
 			}
-			return updateReview(req.body, permissions.update, req.user);
+			return updateThreadEvent(req.body, permissions.update);
 		})
-		.then((updateResult) => {
-			return res.status(201).json(updateResult);
+		.then((updatedThreadEventValues) => {
+			return res.status(201).json(updatedThreadEventValues);
 		})
 		.catch((err) => {
-			console.error('Error in putReview: ', err);
+			console.error('Error in putThreadEvent: ', err);
 			return res.status(500).json(err.message);
 		});
 });
 
-app.delete('/api/reviews', (req, res) => {
+app.delete('/api/threadEvents', (req, res) => {
 	getPermissions(getRequestIds(req))
 		.then((permissions) => {
 			if (!permissions.destroy) {
 				throw new Error('Not Authorized');
 			}
-			return destroyReview(req.body);
+			return destroyThreadEvent(req.body);
 		})
 		.then(() => {
-			return res.status(201).json(req.body.reviewId);
+			return res.status(201).json(req.body.threadEventId);
 		})
 		.catch((err) => {
-			console.error('Error in deleteReview: ', err);
+			console.error('Error in deleteThreadEvent: ', err);
 			return res.status(500).json(err.message);
 		});
 });

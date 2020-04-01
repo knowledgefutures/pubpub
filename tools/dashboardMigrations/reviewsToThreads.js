@@ -69,7 +69,7 @@ export default async () => {
 				title: `Review #${review.shortId}`,
 				number: review.shortId,
 				status: status,
-				branchId: review.sourceBranchId,
+				// branchId: review.sourceBranchId,
 				threadId: threadId,
 				visibilityId: visibilityId,
 				userId: creatorId,

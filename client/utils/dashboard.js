@@ -43,6 +43,9 @@ export const getDashboardModes = (locationData) => {
 	const activeSubMode = locationData.params.subMode;
 	const activeModeSlice = activeSubMode ? -2 : -1;
 	const activeMode = locationData.path.split('/').slice(activeModeSlice)[0];
+	if (locationData.params.reviewNumber) {
+		return { mode: 'Reviews', subMode: locationData.params.reviewNumber };
+	}
 	return {
 		mode: activeMode,
 		subMode: activeSubMode,

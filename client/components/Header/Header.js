@@ -221,7 +221,7 @@ const Header = (props) => {
 								<Button
 									large={true}
 									minimal={true}
-									text="New Pub"
+									text="Create Pub"
 									onClick={handleCreatePub}
 									loading={isLoading}
 								/>

@@ -287,7 +287,7 @@ const PubHeaderMain = (props) => {
 								disabled={!canRelease}
 								icon="globe"
 								onClick={openDialog}
-								label={{ bottom: 'create a release', top: 'publish this Pub' }}
+								label={{ bottom: 'Create a Release', top: 'Publish' }}
 							/>
 						)}
 					>

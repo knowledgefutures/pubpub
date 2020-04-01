@@ -22,7 +22,7 @@ const DialogLauncher = (props) => {
 	};
 
 	return (
-		<>
+		<React.Fragment>
 			{renderLauncherElement({ openDialog: handleOpenDialog })}
 			{(isOpen || renderChildrenWhenClosed) &&
 				children({
@@ -30,7 +30,7 @@ const DialogLauncher = (props) => {
 					isOpen: isOpen,
 					onClose: () => setIsOpen(false),
 				})}
-		</>
+		</React.Fragment>
 	);
 };
 

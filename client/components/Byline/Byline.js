@@ -6,25 +6,27 @@ import { getAllPubContributors } from 'utils/pubContributors';
 const propTypes = {
 	emptyState: PropTypes.node,
 	pubData: PropTypes.shape({}).isRequired,
-	showTheWordBy: PropTypes.bool,
-	showOnlyBylineContributors: PropTypes.bool,
+	bylinePrefix: PropTypes.string,
+	hideAuthors: PropTypes.bool,
+	hideContributors: PropTypes.bool,
 };
 
 const defaultProps = {
 	emptyState: null,
-	showTheWordBy: true,
-	showOnlyBylineContributors: true,
+	bylinePrefix: 'by',
+	hideAuthors: false,
+	hideContributors: true,
 };
 
 const Byline = (props) => {
-	const { pubData, emptyState, showTheWordBy, showOnlyBylineContributors } = props;
-	const authors = getAllPubContributors(pubData, showOnlyBylineContributors);
+	const { pubData, emptyState, bylinePrefix, hideAuthors, hideContributors } = props;
+	const authors = getAllPubContributors(pubData, hideAuthors, hideContributors);
 
 	if (authors.length > 0) {
 		return (
 			<div className="byline-component byline">
 				<span className="text-wrapper">
-					{showTheWordBy && <span>by </span>}
+					{bylinePrefix && <span>{bylinePrefix} </span>}
 					{authors.map((author, index) => {
 						const separator =
 							index === authors.length - 1 || authors.length === 2 ? '' : ', ';

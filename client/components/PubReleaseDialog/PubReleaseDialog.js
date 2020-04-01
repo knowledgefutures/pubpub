@@ -103,30 +103,25 @@ const PubReleaseDialog = (props) => {
 
 	const renderPreReleaseButtons = () => {
 		return (
-			<>
+			<React.Fragment>
 				<Button disabled={isCreatingRelease} onClick={onClose}>
 					Cancel
 				</Button>
 				<Button loading={isCreatingRelease} intent="primary" onClick={handleCreateRelease}>
 					Release
 				</Button>
-			</>
+			</React.Fragment>
 		);
 	};
 
 	const renderPostReleaseButtons = () => {
 		return (
-			<>
+			<React.Fragment>
 				<Button onClick={onClose}>Close</Button>
-				<AnchorButton
-					icon="share"
-					intent="primary"
-					href={pubUrl(communityData, pubData)}
-					target="_blank"
-				>
-					View release
+				<AnchorButton intent="primary" href={pubUrl(communityData, pubData)}>
+					Go to Release
 				</AnchorButton>
-			</>
+			</React.Fragment>
 		);
 	};
 
@@ -139,7 +134,7 @@ const PubReleaseDialog = (props) => {
 		>
 			<div className={Classes.DIALOG_BODY}>
 				{!createdRelease && (
-					<>
+					<React.Fragment>
 						<p>You're about to release this Pub, making it visible to everyone.</p>
 						{latestRelease && renderLatestReleaseInfo(latestRelease)}
 						<MinimalEditor
@@ -147,9 +142,9 @@ const PubReleaseDialog = (props) => {
 								setNoteData(data);
 							}}
 							focusOnLoad={true}
-							placeholder="Add a note describing this release. It will remain private."
+							placeholder="Add a note describing this release."
 						/>
-					</>
+					</React.Fragment>
 				)}
 				{renderReleaseResult()}
 			</div>

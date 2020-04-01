@@ -138,8 +138,7 @@ const Breadcrumbs = () => {
 										// submode: isParentMode ? 'list' : undefined,
 									})}
 								>
-									<div className="top" />
-									<div className="bottom capitalize">{mode}</div>
+									<div className="capitalize no-shrink">{mode}</div>
 								</a>
 							</React.Fragment>
 						)}
@@ -147,7 +146,7 @@ const Breadcrumbs = () => {
 							<React.Fragment>
 								<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
 								<a
-									className="crumb"
+									className="crumb no-shrink"
 									href={getDashUrl({
 										collectionSlug: collectionSlug,
 										pubSlug: pubSlug,

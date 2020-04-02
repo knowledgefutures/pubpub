@@ -172,14 +172,13 @@ export const useCollectionState = (scopeData) => {
 		).then(() => pageContext.updateCollection(update));
 	};
 
-	const deleteCollection = () => {
+	const deleteCollection = () =>
 		pendingPromise(
 			api.deleteCollection({
 				communityId: activeCommunity.id,
 				collectionId: collection.id,
 			}),
 		);
-	};
 
 	return {
 		collection: collection,

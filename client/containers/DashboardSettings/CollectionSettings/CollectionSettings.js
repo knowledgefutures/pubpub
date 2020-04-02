@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { usePageContext } from 'utils/hooks';
+import { getDashUrl } from 'utils/dashboard';
 import { AttributionEditor, DashboardFrame, SettingsSection } from 'components';
 
 // TODO(ian): this should probably be moved somewhere else, but not sure where yet
@@ -21,7 +22,11 @@ const CollectionSettings = () => {
 					collection={collection}
 					communityData={activeCommunity}
 					onUpdateCollection={updateCollection}
-					onDeleteCollection={deleteCollection}
+					onDeleteCollection={() =>
+						deleteCollection().then(() => {
+							window.location.href = getDashUrl({});
+						})
+					}
 				/>
 			</SettingsSection>
 			{collection.kind !== 'tag' && (

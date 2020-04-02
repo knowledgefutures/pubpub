@@ -55,7 +55,7 @@ export const createReview = async (inputValues, userData) => {
 	return reviewData;
 };
 
-export const updateReview = (inputValues, updatePermissions, userData) => {
+export const updateReview = async (inputValues, updatePermissions, userData) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -64,6 +64,10 @@ export const updateReview = (inputValues, updatePermissions, userData) => {
 		}
 	});
 
+	const previousReview = ReviewNew.findOne({
+		where: { id: inputValues.reviewId },
+		attributes: ['id', 'status'],
+	});
 	return ReviewNew.update(filteredValues, {
 		where: { id: inputValues.reviewId },
 		returning: true,
@@ -72,22 +76,20 @@ export const updateReview = (inputValues, updatePermissions, userData) => {
 			if (!updatedReview[0]) {
 				return {};
 			}
-
 			const nextValues = updatedReview[1][0].get();
-			const prevValues = updatedReview[1][0].previous();
-			const wasClosed = prevValues.status !== 'closed' && nextValues.status === 'closed';
-			const wasCompleted =
-				prevValues.status !== 'completed' && nextValues.status === 'completed';
+			const prevStatus = previousReview.status;
+			const wasClosed = prevStatus !== 'closed' && nextValues.status === 'closed';
+			const wasCompleted = prevStatus !== 'completed' && nextValues.status === 'completed';
 			if (wasClosed) {
-				return createClosedThreadEvent(userData, updatedReview.threadId);
+				return Promise.all[createClosedThreadEvent(userData, nextValues.threadId)];
 			}
 			if (wasCompleted) {
-				return createCompletedThreadEvent(userData, updatedReview.threadId);
+				return Promise.all[createCompletedThreadEvent(userData, nextValues.threadId)];
 			}
-			return null;
+			return [];
 		})
-		.then((newReviewEvent) => {
-			return { updatedValues: filteredValues, newReviewEvents: [newReviewEvent] };
+		.then((newReviewEvents) => {
+			return { updatedValues: filteredValues, newReviewEvents: newReviewEvents };
 		});
 };
 

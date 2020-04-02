@@ -87,7 +87,7 @@ class Team extends Component {
 
 							<div className="content">
 								<div className="name">
-									<a href={`/user/${admin.slug}`} className="underline-on-hover">
+									<a href={`/user/${admin.slug}`} className="hoverline">
 										{admin.fullName}
 									</a>
 								</div>

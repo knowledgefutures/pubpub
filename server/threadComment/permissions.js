@@ -1,11 +1,11 @@
 import { getScope } from '../utils/queryHelpers';
-import { DiscussionNew, Thread, ThreadComment } from '../models';
+import { DiscussionNew, Thread, ThreadComment, ReviewNew } from '../models';
 
 const userEditableFields = ['text', 'content'];
 
 export const getPermissions = async ({
 	userId,
-	discussionId,
+	parentId,
 	threadId,
 	threadCommentId,
 	pubId,
@@ -23,9 +23,14 @@ export const getPermissions = async ({
 		accessHash: accessHash,
 	});
 	const discussionData = await DiscussionNew.findOne({
-		where: { id: discussionId, threadId: threadId },
+		where: { id: parentId, threadId: threadId },
 	});
-	if (!discussionData || discussionData.pubId !== pubId) {
+	const reviewData = await ReviewNew.findOne({
+		where: { id: parentId, threadId: threadId },
+	});
+	const isRealDiscussion = discussionData && discussionData.pubId === pubId;
+	const isRealReview = reviewData && reviewData.pubId === pubId;
+	if (!isRealDiscussion && !isRealReview) {
 		return {};
 	}
 	const threadData = await Thread.findOne({

@@ -37,7 +37,7 @@ const ThreadComment = (props) => {
 			body: JSON.stringify({
 				...threadCommentUpdates,
 				accessHash: locationData.query.access,
-				discussionId: discussionData.id,
+				parentId: discussionData.id,
 				threadId: discussionData.threadId,
 				threadCommentId: threadCommentData.id,
 				pubId: pubData.id,

@@ -36,7 +36,7 @@ const Byline = (props) => {
 							return (
 								<span key={`author-${user.id}`}>
 									{prefix}
-									<a href={`/user/${user.slug}`} className="underline-on-hover">
+									<a href={`/user/${user.slug}`} className="hoverline">
 										{user.fullName}
 									</a>
 									{separator}

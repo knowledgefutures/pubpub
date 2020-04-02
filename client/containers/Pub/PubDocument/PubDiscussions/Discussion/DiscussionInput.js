@@ -63,7 +63,7 @@ const DiscussionInput = (props) => {
 			method: 'POST',
 			body: JSON.stringify({
 				accessHash: locationData.query.access,
-				discussionId: discussionData.id,
+				parentId: discussionData.id,
 				threadId: discussionData.thread.id,
 				pubId: pubData.id,
 				communityId: communityData.id,

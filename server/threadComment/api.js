@@ -7,7 +7,7 @@ const getRequestIds = (req) => {
 	const user = req.user || {};
 	return {
 		userId: user.id,
-		discussionId: req.body.discussionId,
+		parentId: req.body.parentId,
 		threadId: req.body.threadId,
 		threadCommentId: req.body.threadCommentId || null,
 		pubId: req.body.pubId,

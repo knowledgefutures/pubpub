@@ -304,8 +304,7 @@ const PubHeaderMain = (props) => {
 						)}
 					</DialogLauncher>
 				)}
-				{/*{!canAdmin && (*/}
-				{canAdmin && (
+				{!canAdmin && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<LargeHeaderButton

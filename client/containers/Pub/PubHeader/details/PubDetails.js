@@ -85,7 +85,7 @@ const PubDetails = (props) => {
 							if (collection) {
 								return (
 									<a
-										className="collection-list-entry underline-on-hover"
+										className="collection-list-entry hoverline"
 										href={collectionUrl(communityData, collection)}
 									>
 										{collection.title}

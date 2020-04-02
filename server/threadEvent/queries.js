@@ -89,12 +89,12 @@ export const createMergedEvent = (userData, threadId) => {
 	);
 };
 
-export const createReleasedEvent = (userData, threadId) => {
+export const createReleasedEvent = (userData, threadId, releaseNumber) => {
 	return createThreadEvent(
 		{
 			threadId: threadId,
 			type: 'status',
-			data: { statusChange: 'released' },
+			data: { statusChange: 'released', releaseNumber: releaseNumber },
 		},
 		userData,
 	);

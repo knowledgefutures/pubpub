@@ -20,7 +20,7 @@ const Contributor = function(props) {
 	);
 
 	const nameElement = user.slug ? (
-		<a href={`/user/${user.slug}`} className="underline-on-hover">
+		<a href={`/user/${user.slug}`} className="hoverline">
 			{user.fullName}
 		</a>
 	) : (

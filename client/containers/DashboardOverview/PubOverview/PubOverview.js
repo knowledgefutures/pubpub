@@ -113,48 +113,37 @@ const PubOverview = (props) => {
 
 	const renderAttribution = () => {
 		return (
-			<div className="section list">
+			<div className="section">
 				<div className="section-header">Attribution</div>
-				<Menu className="list-content">
-					{!pubData.attributions.length && (
-						<NonIdealState title="No attributions on this pub" icon="person" />
-					)}
-					{pubData.attributions
-						.sort((a, b) => a.order - b.order)
-						.map((attribution) => {
-							const { initials, fullName, avatar, slug } = attribution.user;
-							const roles = attribution.roles || [];
-							return (
-								<MenuItem
-									className="attribution-item"
-									text={
-										<div className="list-row">
-											<div className="number">
-												<Avatar
-													width={25}
-													initials={initials}
-													avatar={avatar}
-												/>
-											</div>
-											<div>
-												<div>
-													<a href={`/user/${slug}`}>{fullName}</a>
-												</div>
-												<div>
-													<i>{attribution.affiliation}</i>
-												</div>
-												<div>
-													{roles.map((role) => {
-														return <Tag minimal>{role}</Tag>;
-													})}
-												</div>
-											</div>
-										</div>
-									}
-								/>
-							);
-						})}
-				</Menu>
+				{!pubData.attributions.length && (
+					<NonIdealState title="No attributions on this pub" icon="person" />
+				)}
+				{pubData.attributions
+					.sort((a, b) => a.order - b.order)
+					.map((attribution) => {
+						const { initials, fullName, avatar, slug } = attribution.user;
+						const roles = attribution.roles || [];
+						return (
+							<div className="attribution-row">
+								<Avatar width={25} initials={initials} avatar={avatar} />
+								<div className="details">
+									<div className="name">
+										<a href={`/user/${slug}`}>{fullName}</a>
+									</div>
+									<div className="affiliation">{attribution.affiliation}</div>
+									<div className="roles">
+										{roles.map((role) => {
+											return (
+												<Tag className="role" minimal>
+													{role}
+												</Tag>
+											);
+										})}
+									</div>
+								</div>
+							</div>
+						);
+					})}
 			</div>
 		);
 	};

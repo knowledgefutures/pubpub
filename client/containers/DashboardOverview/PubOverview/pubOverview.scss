@@ -4,6 +4,7 @@ $outer-padding: 26px;
 
 .pub-overview-component {
 	font-size: 16px;
+	font-weight: 300;
 
 	.pub-header-background-component {
 		z-index: 1;
@@ -28,9 +29,15 @@ $outer-padding: 26px;
 			display: flex;
 			.section-header {
 				margin-right: 0.75em;
+				margin-bottom: 0;
 			}
 			margin-right: 100px;
 			margin-bottom: 0;
+		}
+		@media screen and (max-width: 1400px) {
+			.section {
+				margin-right: 50px;
+			}
 		}
 		@media screen and (max-width: 1000px) {
 			flex-direction: column;
@@ -43,7 +50,7 @@ $outer-padding: 26px;
 	.section {
 		margin-bottom: 2em;
 		.section-header {
-			margin-bottom: 0.5em;
+			margin-bottom: 1em;
 		}
 	}
 
@@ -73,6 +80,25 @@ $outer-padding: 26px;
 
 	.section-header {
 		font-weight: 600;
+	}
+
+	.attribution-row {
+		display: flex;
+		margin-bottom: 1em;
+		.details {
+			margin-left: 10px;
+			& > :not(:last-child) {
+				margin-bottom: 3px;
+			}
+		}
+		.affiliation {
+			font-style: italic;
+		}
+		.roles {
+			.role:not(:last-child) {
+				margin-right: 5px;
+			}
+		}
 	}
 
 	.list {

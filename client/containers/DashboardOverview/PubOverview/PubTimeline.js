@@ -115,18 +115,20 @@ const PubTimeline = (props) => {
 
 	return (
 		<Timeline className="pub-timeline-component" accentColor={communityData.accentColorDark}>
+			{releases.length === 0 && hasDraftContent && renderNoReleasesItem()}
+			{draftItem}
+			{latestRelease && renderReleaseItem(latestRelease, releases.length, true)}
+			<TimelineCondenser shownItemsLimit={4}>
+				{olderReleases
+					.map((release, index) => renderReleaseItem(release, index + 1))
+					.reverse()}
+			</TimelineCondenser>
 			<TimelineItem
 				large
 				title="Pub created"
 				subtitle={formatDate(pubData.createdAt, { includeTime: true })}
 				icon="clean"
 			/>
-			<TimelineCondenser shownItemsLimit={4}>
-				{olderReleases.map((release, index) => renderReleaseItem(release, index + 1))}
-			</TimelineCondenser>
-			{latestRelease && renderReleaseItem(latestRelease, releases.length, true)}
-			{draftItem}
-			{releases.length === 0 && hasDraftContent && renderNoReleasesItem()}
 		</Timeline>
 	);
 };

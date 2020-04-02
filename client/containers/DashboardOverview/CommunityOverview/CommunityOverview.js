@@ -7,7 +7,6 @@ import { groupPubs } from 'utils/dashboard';
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
 
-import CommunityControls from './CommunityControls';
 import OverviewBlocks from '../OverviewBlocks';
 import OverviewTable from '../OverviewTable';
 
@@ -29,10 +28,9 @@ const CommunityOverview = (props) => {
 			details={
 				<span>
 					This community was created on{' '}
-					<i>{dateFormat(communityData.createdAt, 'mmmm dd, yyyy')}</i> and now contains:
+					<i>{dateFormat(communityData.createdAt, 'mmmm dd, yyyy')}</i> and contains:
 				</span>
 			}
-			controls={<CommunityControls />}
 		>
 			<OverviewBlocks collections={collections} pubs={overviewData.pubs} />
 			<OverviewTable

@@ -1,7 +1,10 @@
 .citations-modal-component {
-    width: 50vw;
-    max-width: 800px;
-    min-width: 500px;
+	&.bp3-dialog {
+		// specificity hack
+		width: 50vw;
+	}
+	max-width: 1200px;
+	min-width: 500px;
 	.style-wrapper {
 		display: flex;
 		margin-bottom: 4em;

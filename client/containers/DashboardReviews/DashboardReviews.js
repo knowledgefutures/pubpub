@@ -71,7 +71,9 @@ const DashboardReviews = (props) => {
 											href={reviewUrl}
 											text={
 												<div className="list-row">
-													<div className="number">R{review.number}</div>
+													<div className="number">
+														R{review.number}: {review.title}
+													</div>
 													<div className="title">
 														{dateFormat(
 															review.createdAt,

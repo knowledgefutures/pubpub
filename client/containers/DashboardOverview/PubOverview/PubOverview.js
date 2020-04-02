@@ -81,14 +81,15 @@ const PubOverview = (props) => {
 					)}
 					{pubData.reviews
 						.sort((a, b) => a.createdAt - b.createdAt)
-						.map((review, index) => {
-							const reviewNum = pubData.reviews.length - index;
+						.map((review) => {
 							return (
 								<MenuItem
-									href={`/dash/pub/${pubData.slug}/reviews/${reviewNum}`}
+									href={`/dash/pub/${pubData.slug}/reviews/${review.number}`}
 									text={
 										<div className="list-row">
-											<div className="number">R{reviewNum}</div>
+											<div className="number">
+												R{review.number}: {review.title}
+											</div>
 											<div className="title">
 												{dateFormat(
 													review.createdAt,

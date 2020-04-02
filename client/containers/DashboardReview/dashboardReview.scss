@@ -1,6 +1,13 @@
 .dashboard-review-container {
+	.details a{
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 	.bp3-tag {
 		text-transform: capitalize;
+		margin-right: 1em;
 		&.open {
 			background: #d1ffd6;
 		}

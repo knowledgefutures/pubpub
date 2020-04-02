@@ -1,4 +1,14 @@
 .dashboard-reviews-container {
+	.pub-title {
+		font-weight: 600;
+		font-size: 16px;
+		margin: 25px 0px 10px;
+		display: inline-block;
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 	.list-content {
 		border-radius: 4px;
 		background: #f7f7f7;

@@ -55,7 +55,7 @@ const SideMenu = () => {
 		// 		collectionSlug: collectionSlug,
 		// 		pubSlug: pubSlug,
 		// 		mode: 'discussions',
-		// 		// submode: 'list',
+		// 		// subMode: 'list',
 		// 	}),
 		// 	// children: [
 		// 	// 	{
@@ -64,7 +64,7 @@ const SideMenu = () => {
 		// 	// 			collectionSlug: collectionSlug,
 		// 	// 			pubSlug: pubSlug,
 		// 	// 			mode: 'discussions',
-		// 	// 			submode: 'list',
+		// 	// 			subMode: 'list',
 		// 	// 		}),
 		// 	// 	},
 		// 	// 	{
@@ -73,7 +73,7 @@ const SideMenu = () => {
 		// 	// 			collectionSlug: collectionSlug,
 		// 	// 			pubSlug: pubSlug,
 		// 	// 			mode: 'discussions',
-		// 	// 			submode: 'labels',
+		// 	// 			subMode: 'labels',
 		// 	// 		}),
 		// 	// 	},
 		// 	// ],
@@ -96,7 +96,7 @@ const SideMenu = () => {
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
 				mode: 'reviews',
-				// submode: 'list',
+				// subMode: 'list',
 			}),
 			// children: [
 			// 	{
@@ -105,7 +105,7 @@ const SideMenu = () => {
 			// 			collectionSlug: collectionSlug,
 			// 			pubSlug: pubSlug,
 			// 			mode: 'reviews',
-			// 			submode: 'list',
+			// 			subMode: 'list',
 			// 		}),
 			// 	},
 			// 	{
@@ -114,7 +114,7 @@ const SideMenu = () => {
 			// 			collectionSlug: collectionSlug,
 			// 			pubSlug: pubSlug,
 			// 			mode: 'reviews',
-			// 			submode: 'templates',
+			// 			subMode: 'templates',
 			// 		}),
 			// 	},
 			// ],

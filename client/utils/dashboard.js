@@ -1,4 +1,4 @@
-export const getDashUrl = ({ collectionSlug, pubSlug, mode, submode }) => {
+export const getDashUrl = ({ collectionSlug, pubSlug, mode, subMode }) => {
 	let baseHref = '/dash';
 	if (collectionSlug) {
 		baseHref = `/dash/collection/${collectionSlug}`;
@@ -13,9 +13,13 @@ export const getDashUrl = ({ collectionSlug, pubSlug, mode, submode }) => {
 	}
 
 	const modeString = mode ? `/${mode.toLowerCase().replace(/ /gi, '-')}` : '';
-	const submodeString = submode ? `/${submode.toLowerCase().replace(/ /gi, '-')}` : '';
+	const subModeString = subMode
+		? `/${String(subMode)
+				.toLowerCase()
+				.replace(/ /gi, '-')}`
+		: '';
 
-	return `${baseHref}${modeString}${submodeString}${baseQuery}`;
+	return `${baseHref}${modeString}${subModeString}${baseQuery}`;
 };
 
 export const groupPubs = ({ pubs, collections }) => {

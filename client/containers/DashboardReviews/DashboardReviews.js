@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Menu, MenuItem, NonIdealState, Tag } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
 import { DashboardFrame } from 'components';
-// import { usePageContext } from 'utils/hooks';
+import { usePageContext } from 'utils/hooks';
+import { getDashUrl } from 'utils/dashboard';
 
 require('./dashboardReviews.scss');
 
@@ -13,55 +14,84 @@ const propTypes = {
 
 const DashboardReviews = (props) => {
 	const { overviewData } = props;
-	// const { scopeData } = usePageContext();
-	// const pubSlug = scopeData.elements.activePub.slug;
-	const allReviews = overviewData.pubs.reduce((prev, curr) => {
-		return [...prev, ...curr.reviews];
-	}, []);
-	const pubsById = {};
-	overviewData.pubs.forEach((pub) => {
-		pubsById[pub.id] = pub;
+	const { scopeData } = usePageContext();
+	const { activeCollection, activeTargetType } = scopeData.elements;
+	const pubsWithReviews = overviewData.pubs.filter((pub) => {
+		if (activeTargetType === 'collection') {
+			const pubInCollection = !!pub.collectionPubs.find((cp) => {
+				return cp.collectionId === activeCollection.id;
+			});
+			if (!pubInCollection) {
+				return false;
+			}
+		}
+		return pub.reviews.length;
 	});
-	// console.log(allReviews);
 	return (
 		<DashboardFrame className="dashboard-reviews-container" title="Reviews">
-			<Menu className="list-content">
-				{!allReviews.length && <NonIdealState title="No Reviews Yet" icon="social-media" />}
-				{allReviews
-					.sort((foo, bar) => {
-						if (foo.createdAt < bar.createdAt) {
-							return 1;
-						}
-						if (foo.createdAt > bar.createdAt) {
-							return -1;
-						}
-						return 0;
-					})
-					.map((review) => {
-						return (
-							<MenuItem
-								href={`/dash/pub/${pubsById[review.pubId].slug}/reviews/${
-									review.number
-								}`}
-								text={
-									<div className="list-row">
-										<div className="number">
-											R{review.number}[{pubsById[review.pubId].title}]
-										</div>
-										<div className="title">
-											{dateFormat(review.createdAt, 'mmm dd, yyyy - HH:MM')}
-										</div>
-										<div className="note">
-											<Tag minimal className={review.status}>
-												{review.status}
-											</Tag>
-										</div>
-									</div>
-								}
-							/>
-						);
-					})}
-			</Menu>
+			{!pubsWithReviews.length && (
+				<Menu className="list-content">
+					<NonIdealState title="No Reviews Yet" icon="social-media" />
+				</Menu>
+			)}
+			{pubsWithReviews.map((pub) => {
+				const pubUrl = getDashUrl({
+					collectionSlug: activeCollection ? activeCollection.slug : undefined,
+					pubSlug: pub.slug,
+				});
+				return (
+					<React.Fragment key={pub.id}>
+						{activeTargetType !== 'pub' && (
+							<a className="pub-title" href={pubUrl}>
+								{pub.title}
+							</a>
+						)}
+						<Menu className="list-content">
+							{pub.reviews
+								.sort((foo, bar) => {
+									if (foo.createdAt < bar.createdAt) {
+										return 1;
+									}
+									if (foo.createdAt > bar.createdAt) {
+										return -1;
+									}
+									return 0;
+								})
+								.map((review) => {
+									const reviewUrl = getDashUrl({
+										collectionSlug: activeCollection
+											? activeCollection.slug
+											: undefined,
+										pubSlug: pub.slug,
+										mode: 'reviews',
+										subMode: review.number,
+									});
+									return (
+										<MenuItem
+											href={reviewUrl}
+											text={
+												<div className="list-row">
+													<div className="number">R{review.number}</div>
+													<div className="title">
+														{dateFormat(
+															review.createdAt,
+															'mmm dd, yyyy - HH:MM',
+														)}
+													</div>
+													<div className="note">
+														<Tag minimal className={review.status}>
+															{review.status}
+														</Tag>
+													</div>
+												</div>
+											}
+										/>
+									);
+								})}
+						</Menu>
+					</React.Fragment>
+				);
+			})}
 		</DashboardFrame>
 	);
 };

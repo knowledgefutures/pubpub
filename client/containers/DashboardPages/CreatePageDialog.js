@@ -73,7 +73,7 @@ class CreatePageDialog extends Component {
 			}),
 		})
 			.then((newPageResult) => {
-				window.location.href = getDashUrl({ mode: 'pages', submode: newPageResult.slug });
+				window.location.href = getDashUrl({ mode: 'pages', subMode: newPageResult.slug });
 			})
 			.catch((err) => {
 				console.error(err);

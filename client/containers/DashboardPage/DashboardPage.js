@@ -98,7 +98,7 @@ const DashboardPages = (props) => {
 				if (updatedValues.slug && locationData.params.slug !== updatedValues.slug) {
 					window.location.href = getDashUrl({
 						mode: 'pages',
-						submode: updatedValues.slug,
+						subMode: updatedValues.slug,
 					});
 				}
 			})

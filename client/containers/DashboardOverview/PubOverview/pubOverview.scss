@@ -117,14 +117,19 @@ $outer-padding: 26px;
 		}
 		.bp3-tag {
 			text-transform: capitalize;
+			&.open,
+			&.closed,
+			&.completed {
+				color: white;
+			}
 			&.open {
-				background: #d1ffd6;
+				background: #238c2c;
 			}
 			&.closed {
-				background: #ffd1d1;
+				background: #c23030;
 			}
 			&.completed {
-				background: #e8d1ff;
+				background: #a854a8;
 			}
 		}
 		.attribution-item {

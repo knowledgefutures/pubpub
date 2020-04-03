@@ -15,6 +15,7 @@ const propTypes = {
 const DashboardReview = (props) => {
 	const [localReviewData, setLocalReviewData] = useState(props.reviewData);
 	const [isClosing, setIsClosing] = useState(false);
+	const [isReleasing, setIsReleasing] = useState(false);
 	const { loginData, scopeData, communityData } = usePageContext();
 	const { author, status, thread, releaseRequested } = localReviewData;
 	const { canAdmin } = scopeData.activePermissions;
@@ -43,13 +44,25 @@ const DashboardReview = (props) => {
 		});
 	};
 	const createRelease = async () => {
-		/* Has to call to a new route that will
-			1) get firebase history Key
-			2) Create release
-			3) Create release and completed threadEvents
-
-			Likely POST api/reviews/release
-		*/
+		setIsReleasing(true);
+		const result = await apiFetch('/api/reviews/release', {
+			method: 'POST',
+			body: JSON.stringify({
+				threadId: localReviewData.threadId,
+				reviewId: localReviewData.id,
+				pubId: localReviewData.pubId,
+				communityId: communityData.id,
+			}),
+		});
+		setLocalReviewData({
+			...localReviewData,
+			status: 'completed',
+			thread: {
+				...localReviewData.thread,
+				events: [...localReviewData.thread.events, ...result.reviewEvents],
+			},
+		});
+		setIsReleasing(false);
 	};
 
 	const isAuthor = loginData && loginData.id === author.id;
@@ -98,7 +111,12 @@ const DashboardReview = (props) => {
 					{author.fullName} has requested that a Release be published from the Draft. If
 					this review is satisfactory, you can create the Release here directly.{' '}
 					<div style={{ marginTop: '1em' }}>
-						<Button text="Create Release from Draft" intent={Intent.PRIMARY} onClick={createRelease}/>
+						<Button
+							text="Create Release from Draft"
+							intent={Intent.PRIMARY}
+							onClick={createRelease}
+							loading={isReleasing}
+						/>
 					</div>
 				</Callout>
 			)}

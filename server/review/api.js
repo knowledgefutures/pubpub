@@ -1,6 +1,6 @@
 import app from '../server';
 import { getPermissions } from './permissions';
-import { createReview, updateReview, destroyReview } from './queries';
+import { createReview, createReviewRelease, updateReview, destroyReview } from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -23,6 +23,24 @@ app.post('/api/reviews', (req, res) => {
 		})
 		.then((newReview) => {
 			return res.status(201).json(newReview);
+		})
+		.catch((err) => {
+			console.error('Error in postReview: ', err);
+			return res.status(500).json(err.message);
+		});
+});
+
+app.post('/api/reviews/release', (req, res) => {
+	const requestIds = getRequestIds(req);
+	getPermissions(requestIds)
+		.then((permissions) => {
+			if (!permissions.createRelease) {
+				throw new Error('Not Authorized');
+			}
+			return createReviewRelease(req.body, req.user);
+		})
+		.then((reviewReleaseData) => {
+			return res.status(201).json(reviewReleaseData);
 		})
 		.catch((err) => {
 			console.error('Error in postReview: ', err);

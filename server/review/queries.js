@@ -1,11 +1,14 @@
 import uuidv4 from 'uuid/v4';
-import { Thread, Visibility, ReviewNew } from '../models';
+import { Branch, Thread, Visibility, ReviewNew, Pub } from '../models';
 import {
 	createCreatedThreadEvent,
 	createClosedThreadEvent,
 	createCompletedThreadEvent,
+	createReleasedEvent,
 } from '../threadEvent/queries';
+import { createRelease } from '../release/queries';
 import { createThreadComment } from '../threadComment/queries';
+import { getLatestKey } from '../utils/firebaseAdmin';
 
 export const createReview = async (inputValues, userData) => {
 	const reviews = await ReviewNew.findAll({
@@ -53,6 +56,44 @@ export const createReview = async (inputValues, userData) => {
 	}
 
 	return reviewData;
+};
+
+export const createReviewRelease = async (inputValues, userData) => {
+	const [branchData, pubData] = await Promise.all([
+		Branch.findOne({
+			where: { pubId: inputValues.pubId, title: 'draft' },
+		}),
+		Pub.findOne({
+			where: { id: inputValues.pubId },
+			attributes: ['id', 'slug'],
+		}),
+	]);
+	const latestKey = await getLatestKey(inputValues.pubId, branchData.id);
+	const updateResult = await ReviewNew.update(
+		{ status: 'completed' },
+		{
+			where: { pubId: inputValues.pubId, threadId: inputValues.threadId },
+		},
+	);
+	if (!updateResult[0]) {
+		throw new Error('Invalid pubId or threadId');
+	}
+
+	const release = await createRelease({
+		userId: userData.id,
+		pubId: inputValues.pubId,
+		draftKey: latestKey,
+	});
+	const releasedEvent = await createReleasedEvent(
+		userData,
+		inputValues.threadId,
+		pubData.slug,
+		release.branchKey + 1,
+	);
+	const completedEvent = await createCompletedThreadEvent(userData, inputValues.threadId);
+	const reviewEvents = [releasedEvent, completedEvent];
+
+	return { release: release, reviewEvents: reviewEvents };
 };
 
 export const updateReview = async (inputValues, updatePermissions, userData) => {

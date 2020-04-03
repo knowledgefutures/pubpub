@@ -1,5 +1,5 @@
 .dashboard-review-container {
-	.details a{
+	.details a {
 		text-decoration: none;
 		&:hover {
 			text-decoration: underline;
@@ -8,14 +8,19 @@
 	.bp3-tag.bp3-minimal {
 		text-transform: capitalize;
 		margin-right: 1em;
+		&.open,
+		&.closed,
+		&.completed {
+			color: white;
+		}
 		&.open {
-			background: #d1ffd6;
+			background: #238c2c;
 		}
 		&.closed {
-			background: #ffd1d1;
+			background: #c23030;
 		}
 		&.completed {
-			background: #e8d1ff;
+			background: #a854a8;
 		}
 	}
 }

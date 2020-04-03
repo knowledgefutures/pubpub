@@ -145,6 +145,7 @@ describe('/api/collectionPubs', () => {
 				id: second.id,
 				collectionId: book.id,
 				isPrimary: true,
+				pubId: pub.id,
 				communityId: community.id,
 			})
 			.expect(200);
@@ -158,6 +159,7 @@ describe('/api/collectionPubs', () => {
 				id: second.id,
 				collectionId: book.id,
 				isPrimary: false,
+				pubId: pub.id,
 				communityId: community.id,
 			})
 			.expect(200);
@@ -178,6 +180,7 @@ describe('/api/collectionPubs', () => {
 				id: collectionPub.id,
 				collectionId: issue.id,
 				communityId: community.id,
+				pubId: pub.id,
 				rank: 'zzz',
 				contextHint: 'boo',
 			})
@@ -199,6 +202,7 @@ describe('/api/collectionPubs', () => {
 			.send({
 				id: collectionPub.id,
 				collectionId: issue.id,
+				pubId: pub.id,
 				communityId: community.id,
 			})
 			.expect(200);

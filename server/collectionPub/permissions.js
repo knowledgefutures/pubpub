@@ -1,7 +1,7 @@
-import { CommunityAdmin, Collection } from '../models';
+import { CommunityAdmin, Collection, PubManager } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 
-export const getPermissions = ({ userId, communityId, collectionId }) => {
+export const getPermissions = ({ userId, pubId, communityId, collectionId }) => {
 	if (!userId) {
 		return new Promise((resolve) => {
 			resolve({});
@@ -11,11 +11,12 @@ export const getPermissions = ({ userId, communityId, collectionId }) => {
 	return Promise.all([
 		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
 		Collection.findOne({ where: { id: collectionId, communityId: communityId } }),
-	]).then(([communityAdminData, collectionData]) => {
+		PubManager.findOne({ where: { pubId: pubId, userId: userId } }),
+	]).then(([communityAdminData, collectionData, pubManagerData]) => {
 		if (!collectionData) {
 			return {};
 		}
-		const isAuthenticated = isSuperAdmin || communityAdminData;
+		const isAuthenticated = isSuperAdmin || communityAdminData || pubManagerData;
 		return {
 			create: isAuthenticated,
 			update: isAuthenticated ? ['rank', 'contextHint'] : false,

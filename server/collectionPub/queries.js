@@ -91,13 +91,13 @@ export const createCollectionPub = (inputValues) => {
 	});
 };
 
-export const setPrimaryCollectionPub = (inputValues) => {
+export const setPrimaryCollectionPub = ({ collectionPubId, isPrimary }) => {
 	return CollectionPub.findOne({
-		where: { id: inputValues.collectionPubId },
+		where: { id: collectionPubId },
 		include: [{ model: Collection, as: 'collection' }],
 	}).then((collectionPub) => {
 		return (
-			(!inputValues.collectionPubId || collectionPub.collection.isPublic) &&
+			(!collectionPubId || collectionPub.collection.isPublic) &&
 			sequelize.transaction((txn) => {
 				return CollectionPub.update(
 					{ isPrimary: false },
@@ -105,14 +105,14 @@ export const setPrimaryCollectionPub = (inputValues) => {
 						transaction: txn,
 						where: {
 							pubId: collectionPub.pubId,
-							id: { [Op.ne]: inputValues.collectionPubId },
+							id: { [Op.ne]: collectionPubId },
 						},
 					},
 				).then(() => {
 					return CollectionPub.update(
-						{ isPrimary: inputValues.isPrimary },
+						{ isPrimary: isPrimary },
 						{
-							where: { id: inputValues.collectionPubId },
+							where: { id: collectionPubId },
 							returning: true,
 							transaction: txn,
 						},
@@ -134,7 +134,6 @@ export const updateCollectionPub = (inputValues, updatePermissions) => {
 
 	return CollectionPub.update(filteredValues, {
 		where: { id: inputValues.collectionPubId },
-		/* Unclear why this is included */
 		returning: true,
 	}).then(() => {
 		return filteredValues;

@@ -46,13 +46,14 @@ app.post(
 app.put(
 	'/api/collectionPubs/setPrimary',
 	wrap(async (req, res) => {
+		const { isPrimary } = req.body;
 		const requestIds = getRequestIds(req);
 		const permissions = await getPermissions(requestIds);
 		if (!permissions.create) {
 			throw new ForbiddenError();
 		}
 		const updated = await setPrimaryCollectionPub({
-			...req.body,
+			isPrimary: isPrimary,
 			collectionPubId: req.body.id,
 		});
 		return res.status(200).json(updated);

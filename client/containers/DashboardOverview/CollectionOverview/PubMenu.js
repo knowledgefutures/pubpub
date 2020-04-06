@@ -8,6 +8,7 @@ import { MenuButton, MenuItem, MenuItemDivider } from 'components/Menu';
 
 const propTypes = {
 	collectionPub: PropTypes.object.isRequired,
+	isCollectionPublic: PropTypes.bool.isRequired,
 	setCollectionPubContextHint: PropTypes.func.isRequired,
 	setCollectionPubIsPrimary: PropTypes.func.isRequired,
 	removeCollectionPub: PropTypes.func.isRequired,
@@ -16,6 +17,7 @@ const propTypes = {
 const PubMenu = (props) => {
 	const {
 		collectionPub,
+		isCollectionPublic,
 		setCollectionPubContextHint,
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
@@ -39,14 +41,18 @@ const PubMenu = (props) => {
 				}}
 				placement="bottom-end"
 			>
-				<MenuItem
-					text="Use as primary collection"
-					icon={collectionPub.isPrimary ? 'tick' : 'blank'}
-					onClick={() =>
-						setCollectionPubIsPrimary(collectionPub, !collectionPub.isPrimary)
-					}
-				/>
-				<MenuItemDivider />
+				{isCollectionPublic && (
+					<>
+						<MenuItem
+							text="Use as primary collection"
+							icon={collectionPub.isPrimary ? 'tick' : 'blank'}
+							onClick={() =>
+								setCollectionPubIsPrimary(collectionPub, !collectionPub.isPrimary)
+							}
+						/>
+						<MenuItemDivider />
+					</>
+				)}
 				<MenuItem
 					text={<i>(No label)</i>}
 					icon={!collectionPub.contextHint ? 'tick' : 'blank'}

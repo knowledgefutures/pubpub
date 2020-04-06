@@ -84,6 +84,12 @@ export const getBranchDoc = async (pubId, branchId, historyKey, updateOutdatedCh
 	};
 };
 
+export const getLatestKey = async (pubId, branchId) => {
+	const branchRef = getBranchRef(pubId, branchId);
+	const { key } = await getLatestKeyAndTimestamp(branchRef);
+	return key;
+};
+
 export const getFirebaseToken = (clientId, clientData) => {
 	return firebaseAdmin.auth(firebaseApp).createCustomToken(clientId, clientData);
 };

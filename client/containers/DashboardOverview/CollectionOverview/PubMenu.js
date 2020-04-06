@@ -7,8 +7,11 @@ import { getSchemaForKind } from 'shared/collections/schemas';
 import { MenuButton, MenuItem, MenuItemDivider } from 'components/Menu';
 
 const propTypes = {
+	collection: PropTypes.shape({
+		isPublic: PropTypes.bool,
+		kind: PropTypes.string,
+	}).isRequired,
 	collectionPub: PropTypes.object.isRequired,
-	isCollectionPublic: PropTypes.bool.isRequired,
 	setCollectionPubContextHint: PropTypes.func.isRequired,
 	setCollectionPubIsPrimary: PropTypes.func.isRequired,
 	removeCollectionPub: PropTypes.func.isRequired,
@@ -17,7 +20,7 @@ const propTypes = {
 const PubMenu = (props) => {
 	const {
 		collectionPub,
-		isCollectionPublic,
+		collection,
 		setCollectionPubContextHint,
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
@@ -26,6 +29,7 @@ const PubMenu = (props) => {
 	const { canManage } = scopeData.activePermissions;
 	const { activeCollection } = scopeData.elements;
 	const collectionSchema = getSchemaForKind(activeCollection.kind);
+	const canSetCollectionAsPrimary = collection.isPublic && collection.kind !== 'tag';
 
 	if (!canManage) {
 		return null;
@@ -41,7 +45,7 @@ const PubMenu = (props) => {
 				}}
 				placement="bottom-end"
 			>
-				{isCollectionPublic && (
+				{canSetCollectionAsPrimary && (
 					<>
 						<MenuItem
 							text="Use as primary collection"

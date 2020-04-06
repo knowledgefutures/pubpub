@@ -56,7 +56,7 @@ const CollectionOverview = (props) => {
 		}
 		return (
 			<PubMenu
-				isCollectionPublic={collection.isPublic}
+				collection={collection}
 				collectionPub={collectionPub}
 				setCollectionPubContextHint={setCollectionPubContextHint}
 				setCollectionPubIsPrimary={setCollectionPubIsPrimary}

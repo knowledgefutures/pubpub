@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useEffectOnce } from 'react-use';
 import { ComposableMap, ZoomableGroup, Geographies, Geography } from 'react-simple-maps';
@@ -44,10 +44,10 @@ const Metrics = (props) => {
 			});
 
 		keenClient = new KeenAnalysis({
-			projectId: locationData.isPubPubProduction
+			projectId: locationData.isProd
 				? '5b57a01ac9e77c0001eef181'
 				: '5b5791b9c9e77c000175ca3b',
-			readKey: locationData.isPubPubProduction
+			readKey: locationData.isProd
 				? '5CF12741FA41DC030D092D2B6D247344B3C25183E9862A598D452F59B346BC5CD667E1C2B2DA03CFDE17339312D3880BC20C1051DAA146CAFF2ABA684FCE5B4B8985FF9C9EEC4406C3D851F0E81D67B33E65431FB39963378B9A8D8925B9C081'
 				: 'E4C526BC021F960D2C84AB1521E8D1D3F0D1089292947A27880D43F83997554C5F95F34DD9E16A18B5F5FC0809A415AF4A2E74AAF9379B51520924BF2B692598FF80D751E8E6EC63F3B931432DF394799EFC0E0E6C100ED64C1E628873E9D16C',
 		});
@@ -61,9 +61,7 @@ const Metrics = (props) => {
 			.query({
 				analysis_type: 'count',
 				event_collection: 'pageviews',
-				cache: locationData.isPubPubProduction
-					? { maxAge: 10 * 60 * 1000 } /* 10 minutes */
-					: false,
+				cache: locationData.isProd ? { maxAge: 10 * 60 * 1000 } /* 10 minutes */ : false,
 				filters: [
 					{
 						property_name: 'pubpub.pubId',

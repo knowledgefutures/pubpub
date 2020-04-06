@@ -1,6 +1,7 @@
 import KeenTracking from 'keen-tracking';
 
-import { isProd } from './isProd';
+import { isProd } from 'shared/utils/environment';
+
 import { getClientInitialData } from './initialData';
 import { getGdprConsentElection } from './legal/gdprConsent';
 

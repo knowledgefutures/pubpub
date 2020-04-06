@@ -3,7 +3,7 @@ import 'firebase/auth';
 import 'firebase/database';
 
 import { getFirebaseConfig } from 'shared/editor/firebaseConfig';
-import { isProd } from 'utils/isProd';
+import { isProd } from 'shared/utils/environment';
 
 export const initFirebase = (rootKey, authToken) => {
 	const firebaseAppName = `App-${rootKey}`;

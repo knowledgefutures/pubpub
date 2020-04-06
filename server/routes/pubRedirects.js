@@ -1,9 +1,11 @@
+import { isDuqDuq } from 'shared/utils/environment';
+
 import app from '../server';
 import { Community, Pub, Release, Branch } from '../models';
 import { hostIsValid, handleErrors } from '../utils';
 
 const getParams = (req) => {
-	const hostname = req.isDuqDuq
+	const hostname = isDuqDuq()
 		? `https://${req.hostname.replace('pubpub.org', 'duqduq.org')}`
 		: `https://${req.hostname}`;
 	return {

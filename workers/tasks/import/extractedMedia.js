@@ -5,7 +5,7 @@ import { generateHash } from '../../../server/utils';
 import { extensionFor } from './util';
 import { s3bucket } from './s3';
 
-const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
+const isProd = !!process.env.PUBPUB_PRODUCTION;
 
 const getKey = (folderName, fileExtension) =>
 	`${folderName}/${Math.floor(Math.random() * 8)}${new Date().getTime()}.${fileExtension}`;
@@ -30,7 +30,7 @@ export const uploadExtractedMedia = async (tmpDir, mediaDirName = 'media') => {
 	}
 	return Promise.all(
 		getFullPathsInDir(mediaPath).map((filePath) => {
-			const folderName = isPubPubProduction ? generateHash(8) : '_testing';
+			const folderName = isProd ? generateHash(8) : '_testing';
 			const key = getKey(folderName, extensionFor(filePath));
 			const params = {
 				Key: key,

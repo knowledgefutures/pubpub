@@ -3,9 +3,9 @@ import * as Sentry from '@sentry/browser';
 import { hydrate } from 'react-dom';
 import { FocusStyleManager } from '@blueprintjs/core';
 
+import { setEnvironment } from 'shared/utils/environment';
 import { getClientInitialData } from './initialData';
 import { setupKeen } from './keen';
-import { setIsProd } from './isProd';
 
 const isStorybookEnv = (windowObj) =>
 	windowObj.location.origin === 'http://localhost:9001' || windowObj.STORYBOOK_ENV === 'react';
@@ -14,6 +14,10 @@ const isLocalEnv = (windowObj) => windowObj.location.origin.indexOf('localhost:'
 
 export const hydrateWrapper = (Component) => {
 	if (typeof window !== 'undefined' && !isStorybookEnv(window)) {
+		const initialData = getClientInitialData();
+		const { isProd, isDuqDuq } = initialData.locationData;
+		setEnvironment(isProd, isDuqDuq);
+
 		FocusStyleManager.onlyShowFocusOnTabs();
 
 		/* Remove any leftover service workers from last PubPub instance */
@@ -25,8 +29,6 @@ export const hydrateWrapper = (Component) => {
 			});
 		}
 
-		const initialData = getClientInitialData();
-		setIsProd(initialData.locationData.isPubPubProduction);
 		const viewData = JSON.parse(document.getElementById('view-data').getAttribute('data-json'));
 		const chunkName = JSON.parse(
 			document.getElementById('chunk-name').getAttribute('data-json'),

@@ -8,8 +8,13 @@ import Module from 'module';
 import noSlash from 'no-slash';
 import passport from 'passport';
 import * as Sentry from '@sentry/node';
+
+import { setEnvironment } from 'shared/utils/environment';
+
 import { sequelize, User } from './models';
 import { HTTPStatusError } from './errors';
+
+setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
 
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
 // return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.
@@ -140,7 +145,6 @@ app.use((req, res, next) => {
 	}
 	if (req.hostname.indexOf('duqduq.org') > -1) {
 		req.headers.host = req.hostname.replace('duqduq.org', 'pubpub.org');
-		req.isDuqDuq = true;
 	}
 	next();
 });

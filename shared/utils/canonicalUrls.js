@@ -1,6 +1,7 @@
 /**
  * Utilities for providing canonical URLs for different entities
  */
+import { isDuqDuq } from 'shared/utils/environment';
 
 export const communityUrl = (community) => {
 	if (community.domain) {
@@ -9,7 +10,8 @@ export const communityUrl = (community) => {
 		}
 		return `https://${community.domain}`;
 	}
-	return `https://${community.subdomain}.pubpub.org`;
+	const domain = isDuqDuq() ? 'duqduq.org' : 'pubpub.org';
+	return `https://${community.subdomain}.${domain}`;
 };
 
 export const collectionUrl = (community, collection) =>

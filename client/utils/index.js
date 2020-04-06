@@ -1,13 +1,9 @@
 import { remove as removeDiacritics } from 'diacritics';
 
-import { setIsProd, isProd } from './isProd';
+import { isProd } from 'shared/utils/environment';
 
 export { hydrateWrapper } from './hydrateWrapper';
 export { apiFetch } from './apiFetch';
-
-if (typeof window === 'undefined') {
-	setIsProd(process.env.PUBPUB_PRODUCTION);
-}
 
 export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 

@@ -6,13 +6,13 @@
 	}
 }
 
-@media only screen and (min-width: 750px) {
+@media only screen and (min-width: 1250px) {
 	@supports (display: grid) {
 		.settings-section-component {
 			display: grid;
 			grid-template-columns: 140px 1fr;
 			grid-template-areas: 'title content';
-			grid-column-gap: 75px;
+			column-gap: 75px;
 			padding-top: 20px;
 			.title {
 				text-align: left;

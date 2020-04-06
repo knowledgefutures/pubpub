@@ -4,14 +4,16 @@
 import { isDuqDuq } from 'shared/utils/environment';
 
 export const communityUrl = (community) => {
+	if (isDuqDuq()) {
+		return `https://${community.subdomain}.duqduq.org`;
+	}
 	if (community.domain) {
 		if (community.domain.includes('localhost:')) {
 			return `http://${community.domain}`;
 		}
 		return `https://${community.domain}`;
 	}
-	const domain = isDuqDuq() ? 'duqduq.org' : 'pubpub.org';
-	return `https://${community.subdomain}.${domain}`;
+	return `https://${community.subdomain}.pubpub.org`;
 };
 
 export const collectionUrl = (community, collection) =>

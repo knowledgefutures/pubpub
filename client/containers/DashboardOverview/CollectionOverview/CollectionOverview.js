@@ -20,6 +20,14 @@ const propTypes = {
 	overviewData: PropTypes.object.isRequired,
 };
 
+const collectionPubsByPubId = (collectionPubs) => {
+	const res = {};
+	collectionPubs.forEach((cp) => {
+		res[cp.pubId] = cp;
+	});
+	return res;
+};
+
 const CollectionOverview = (props) => {
 	const { overviewData } = props;
 	const { scopeData } = usePageContext();
@@ -37,7 +45,25 @@ const CollectionOverview = (props) => {
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
 	} = useCollectionPubs(scopeData, overviewData);
+
 	const pubList = collectionPubs.map((cp) => cp.pub);
+	const byPubId = collectionPubsByPubId(collectionPubs);
+
+	const renderRowControls = (pub) => {
+		const collectionPub = byPubId[pub.id];
+		if (!collectionPub) {
+			return null;
+		}
+		return (
+			<PubMenu
+				collection={collection}
+				collectionPub={collectionPub}
+				setCollectionPubContextHint={setCollectionPubContextHint}
+				setCollectionPubIsPrimary={setCollectionPubIsPrimary}
+				removeCollectionPub={removeCollectionPub}
+			/>
+		);
+	};
 
 	return (
 		<DashboardFrame
@@ -71,14 +97,7 @@ const CollectionOverview = (props) => {
 				}}
 				pubList={pubList}
 				onReorder={canManage ? reorderCollectionPubs : undefined}
-				rowControls={(collectionPub) => (
-					<PubMenu
-						collectionPub={collectionPub}
-						setCollectionPubContextHint={setCollectionPubContextHint}
-						setCollectionPubIsPrimary={setCollectionPubIsPrimary}
-						removeCollectionPub={removeCollectionPub}
-					/>
-				)}
+				rowControls={renderRowControls}
 				emptyState={
 					<NonIdealState
 						icon={collectionSchema.bpDisplayIcon}

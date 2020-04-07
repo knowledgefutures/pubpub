@@ -1,7 +1,8 @@
 import queryString from 'query-string';
-import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 
-const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
+import { isProd, isDuqDuq } from 'shared/utils/environment';
+
+import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 
 export const getInitialData = async (req, isDashboard) => {
 	const hostname = req.hostname;
@@ -28,8 +29,8 @@ export const getInitialData = async (req, isDashboard) => {
 		query: req.query,
 		queryString: req.query ? `?${queryString.stringify(req.query)}` : '',
 		isBasePubPub: hostname === 'www.pubpub.org',
-		isPubPubProduction: isPubPubProduction,
-		isDuqDuq: req.isDuqDuq,
+		isProd: isProd(),
+		isDuqDuq: isDuqDuq(),
 	};
 
 	/* If basePubPub - return fixed data */

@@ -57,6 +57,7 @@ const PubTimeline = (props) => {
 			<TimelineItem
 				large={isLatest}
 				icon="document-open"
+				key={release.id}
 				title={
 					<a
 						className="release-link"

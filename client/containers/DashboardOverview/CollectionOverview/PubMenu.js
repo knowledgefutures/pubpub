@@ -7,6 +7,10 @@ import { getSchemaForKind } from 'shared/collections/schemas';
 import { MenuButton, MenuItem, MenuItemDivider } from 'components/Menu';
 
 const propTypes = {
+	collection: PropTypes.shape({
+		isPublic: PropTypes.bool,
+		kind: PropTypes.string,
+	}).isRequired,
 	collectionPub: PropTypes.object.isRequired,
 	setCollectionPubContextHint: PropTypes.func.isRequired,
 	setCollectionPubIsPrimary: PropTypes.func.isRequired,
@@ -16,6 +20,7 @@ const propTypes = {
 const PubMenu = (props) => {
 	const {
 		collectionPub,
+		collection,
 		setCollectionPubContextHint,
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
@@ -24,6 +29,7 @@ const PubMenu = (props) => {
 	const { canManage } = scopeData.activePermissions;
 	const { activeCollection } = scopeData.elements;
 	const collectionSchema = getSchemaForKind(activeCollection.kind);
+	const canSetCollectionAsPrimary = collection.isPublic && collection.kind !== 'tag';
 
 	if (!canManage) {
 		return null;
@@ -39,14 +45,18 @@ const PubMenu = (props) => {
 				}}
 				placement="bottom-end"
 			>
-				<MenuItem
-					text="Use as primary collection"
-					icon={collectionPub.isPrimary ? 'tick' : 'blank'}
-					onClick={() =>
-						setCollectionPubIsPrimary(collectionPub, !collectionPub.isPrimary)
-					}
-				/>
-				<MenuItemDivider />
+				{canSetCollectionAsPrimary && (
+					<>
+						<MenuItem
+							text="Use as primary collection"
+							icon={collectionPub.isPrimary ? 'tick' : 'blank'}
+							onClick={() =>
+								setCollectionPubIsPrimary(collectionPub, !collectionPub.isPrimary)
+							}
+						/>
+						<MenuItemDivider />
+					</>
+				)}
 				<MenuItem
 					text={<i>(No label)</i>}
 					icon={!collectionPub.contextHint ? 'tick' : 'blank'}

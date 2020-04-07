@@ -1,8 +1,12 @@
 /**
  * Utilities for providing canonical URLs for different entities
  */
+import { isDuqDuq } from 'shared/utils/environment';
 
 export const communityUrl = (community) => {
+	if (isDuqDuq()) {
+		return `https://${community.subdomain}.duqduq.org`;
+	}
 	if (community.domain) {
 		if (community.domain.includes('localhost:')) {
 			return `http://${community.domain}`;

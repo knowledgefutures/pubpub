@@ -17,6 +17,7 @@ export const TimelineCondenser = (props) => {
 		return [
 			...childrenArr.slice(0, shownItemsLimit),
 			<TimelineItem
+				key="__timeline-condenser-expand-element__"
 				hollow
 				icon="expand-all"
 				title={<i>{childrenArr.length - shownItemsLimit} more hidden</i>}

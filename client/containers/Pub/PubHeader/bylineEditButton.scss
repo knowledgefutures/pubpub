@@ -1,0 +1,36 @@
+@import './themes.scss';
+
+.byline-edit-button-component {
+    @include base-button;
+    margin-left: 4px;
+    font-style: inherit;
+
+    .box-style {
+        padding: 4px 10px;
+        border-radius: 25px;
+        font-style: normal;
+        font-size: 0.8em;
+    }
+
+    .inline-style {
+        text-decoration: underline;
+    }
+}
+
+.pub-header-theme-black-blocks,
+.pub-header-theme-white-blocks {
+    .byline-edit-button-component {
+        .box-style {
+            display: none;
+        }
+    }
+}
+
+.pub-header-theme-dark,
+.pub-header-theme-light {
+    .byline-edit-button-component {
+        .inline-style {
+            display: none;
+        }
+    }
+}

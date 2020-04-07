@@ -10,6 +10,7 @@ import {
 	ClickToCopyButton,
 	DialogLauncher,
 	Overlay,
+	PubAttributionDialog,
 	PubReleaseDialog,
 	PubReleaseReviewDialog,
 	PubThemePicker,
@@ -19,6 +20,7 @@ import { pubUrl } from 'shared/utils/canonicalUrls';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 import { formatDate } from 'shared/utils/dates';
 
+import BylineEditButton from './BylineEditButton';
 import CitationsPreview from './CitationsPreview';
 import CollectionsBar from './collections/CollectionsBar';
 import Download from './Download';
@@ -63,16 +65,6 @@ const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) =
 	};
 };
 
-const getPublishUrl = (pubData, publicBranch) => {
-	const { slug, activeBranch } = pubData;
-	return `/pub/${slug}/merge/${activeBranch.shortId}/${publicBranch.shortId}`;
-};
-
-const getReviewUrl = (pubData, publicBranch) => {
-	const { slug, activeBranch } = pubData;
-	return `/pub/${slug}/reviews/new/${activeBranch.shortId}/${publicBranch.shortId}`;
-};
-
 const PubHeaderMain = (props) => {
 	const { pubData, updateLocalData, historyData } = props;
 	const { title, description, doi } = pubData;
@@ -85,9 +77,13 @@ const PubHeaderMain = (props) => {
 		pubData.branches.find((br) => br.title === 'public'),
 	);
 
+	const updatePubData = (newPubData) => {
+		return updateLocalData('pub', newPubData, { isImmediate: true });
+	};
+
 	const updateAndSavePubData = (newPubData) => {
 		const oldPubData = { ...pubData };
-		updateLocalData('pub', newPubData);
+		updatePubData(newPubData);
 		return apiFetch('/api/pubs', {
 			method: 'PUT',
 			body: JSON.stringify({
@@ -132,6 +128,33 @@ const PubHeaderMain = (props) => {
 		);
 	};
 
+	const renderBylineEditor = () => {
+		if (!canManage) {
+			return null;
+		}
+		return (
+			<>
+				{' '}
+				<DialogLauncher
+					renderLauncherElement={({ openDialog }) => (
+						<BylineEditButton onClick={openDialog} />
+					)}
+				>
+					{({ isOpen, onClose }) => (
+						<PubAttributionDialog
+							canEdit={true}
+							isOpen={isOpen}
+							onClose={onClose}
+							pubData={pubData}
+							communityData={communityData}
+							updatePubData={updatePubData}
+						/>
+					)}
+				</DialogLauncher>
+			</>
+		);
+	};
+
 	const renderMiddle = () => {
 		return (
 			<div className="middle">
@@ -153,7 +176,7 @@ const PubHeaderMain = (props) => {
 							placeholder="Add a description for this Pub"
 						/>
 					)}
-					<Byline pubData={pubData} />
+					<Byline pubData={pubData} renderSuffix={renderBylineEditor} />
 				</div>
 				<div className="right">
 					{canManage && (
@@ -299,7 +322,7 @@ const PubHeaderMain = (props) => {
 								onClose={onClose}
 								pubData={pubData}
 								historyData={historyData}
-								updatePubData={(newPubData) => updateLocalData('pub', newPubData)}
+								updatePubData={updatePubData}
 							/>
 						)}
 					</DialogLauncher>

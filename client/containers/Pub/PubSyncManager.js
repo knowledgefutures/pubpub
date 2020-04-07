@@ -78,7 +78,23 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 		}
 	};
 
-	return { setState: setState };
+	const immediately = (isImmediate = true) => {
+		return {
+			setState: (...args) => {
+				if (isImmediate) {
+					queue.push(args);
+					setStateNow();
+				} else {
+					setState(...args);
+				}
+			},
+		};
+	};
+
+	return {
+		setState: setState,
+		immediately: immediately,
+	};
 };
 class PubSyncManager extends React.Component {
 	constructor(props) {
@@ -224,12 +240,12 @@ class PubSyncManager extends React.Component {
 		}
 	}
 
-	updatePubData(newPubData) {
+	updatePubData(newPubData, isImmediate = false) {
 		/* First, set the local state. */
 		/* Then, sync appropriate data to firebase. */
 		/* Other clients will receive updates which */
 		/* triggers the syncMetadata function. */
-		this.idleStateUpdater.setState(
+		this.idleStateUpdater.immediately(isImmediate).setState(
 			(prevState) => {
 				const nextData =
 					typeof newPubData === 'function' ? newPubData(prevState.pubData) : newPubData;
@@ -359,9 +375,9 @@ class PubSyncManager extends React.Component {
 		}
 	}
 
-	updateLocalData(type, data) {
+	updateLocalData(type, data, { isImmediate = false } = {}) {
 		if (type === 'pub') {
-			this.updatePubData(data);
+			this.updatePubData(data, isImmediate);
 		}
 		if (type === 'collab') {
 			this.updateCollabData(data);

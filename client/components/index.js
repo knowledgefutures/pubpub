@@ -32,6 +32,7 @@ export { default as OrderPicker } from './OrderPicker/OrderPicker';
 export { default as Overlay } from './Overlay/Overlay';
 export { default as PagePreview } from './PagePreview/PagePreview';
 export { default as PermissionsDropdown } from './PermissionsDropdown/PermissionsDropdown';
+export { default as PubAttributionDialog } from './PubAttributionEditor/PubAttributionDialog';
 export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttributionEditor';
 export { default as PubPreview } from './PubPreview/PubPreview';
 export { default as PubNoteContent } from './PubNoteContent/PubNoteContent';

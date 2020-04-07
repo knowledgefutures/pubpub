@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-import { Checkbox, Icon, InputGroup, Position } from '@blueprintjs/core';
+import { Button, Checkbox, Icon, InputGroup, Position } from '@blueprintjs/core';
 import { MultiSelect } from '@blueprintjs/select';
 
 import Avatar from 'components/Avatar/Avatar';
@@ -157,13 +156,12 @@ const AttributionRow = (props) => {
 						)}
 					</div>
 					{canEdit && (
-						<button
-							className="bp3-button bp3-minimal"
-							type="button"
+						<Button
+							icon="small-cross"
+							small
+							minimal
 							onClick={() => onAttributionDelete(id)}
-						>
-							<span className="bp3-icon-standard bp3-icon-small-cross" />
-						</button>
+						/>
 					)}
 				</div>
 				<div className="bottom-content">

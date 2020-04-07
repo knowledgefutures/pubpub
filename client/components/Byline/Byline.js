@@ -9,6 +9,7 @@ const propTypes = {
 	bylinePrefix: PropTypes.string,
 	hideAuthors: PropTypes.bool,
 	hideContributors: PropTypes.bool,
+	renderSuffix: PropTypes.func,
 };
 
 const defaultProps = {
@@ -16,10 +17,18 @@ const defaultProps = {
 	bylinePrefix: 'by',
 	hideAuthors: false,
 	hideContributors: true,
+	renderSuffix: () => null,
 };
 
 const Byline = (props) => {
-	const { pubData, emptyState, bylinePrefix, hideAuthors, hideContributors } = props;
+	const {
+		pubData,
+		emptyState,
+		bylinePrefix,
+		hideAuthors,
+		hideContributors,
+		renderSuffix,
+	} = props;
 	const authors = getAllPubContributors(pubData, hideAuthors, hideContributors);
 
 	if (authors.length > 0) {
@@ -51,6 +60,7 @@ const Byline = (props) => {
 							</span>
 						);
 					})}
+					{renderSuffix()}
 				</span>
 			</div>
 		);

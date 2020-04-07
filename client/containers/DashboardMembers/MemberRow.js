@@ -24,14 +24,80 @@ const defaultProps = {
 	onDelete: null,
 };
 
-const permissionValues = ['view', 'edit', 'manage', 'admin'];
+const permissionTypes = [
+	{
+		key: 'view',
+		description: {
+			pub: ['View Pub when unpublished', 'View member-only Discussions and Reviews'],
+			collection: ['View all unpublished Pubs', 'View member-only Discussions and Reviews'],
+			community: ['View all unpublished Pubs', 'View member-only Discussions and Reviews'],
+		},
+	},
+	{
+		key: 'edit',
+		description: {
+			pub: ['Edit Pub draft', 'All View permissions'],
+			collection: ['Edit Pub drafts', 'All View permissions'],
+			community: ['Edit Pub drafts', 'All View permissions'],
+		},
+	},
+	{
+		key: 'manage',
+		description: {
+			pub: ['Manage Pub settings', 'All Edit permissions'],
+			collection: [
+				'Manage Pub settings',
+				'Manage Collection settings',
+				'Create new Pubs in this Collection',
+				'All Edit permissions',
+			],
+			community: [
+				'Manage Pub settings',
+				'Manage Collection settings',
+				'Manage Community settings',
+				'Create new Pubs',
+				'Create new Collections',
+				'All Edit permissions',
+			],
+		},
+	},
+	{
+		key: 'admin',
+		description: {
+			pub: [
+				'Create Releases',
+				'See all Discussions and Reviews',
+				'Delete Pub',
+				'All Manage permissions',
+			],
+			collection: [
+				'Create Pub Releases',
+				'See all Discussions and Reviews',
+				'Delete Pubs',
+				'Delete Collection',
+				'All Manage permissions',
+			],
+			community: [
+				'Create Pub Releases',
+				'See all Discussions and Reviews',
+				'Assign DOIs',
+				'Delete Pubs',
+				'Delete Collections',
+				'Delete Community',
+				'All Manage permissions',
+			],
+		},
+	},
+];
 
 const MemberRow = (props) => {
 	const { memberData, isInvitation, isReadOnly, onDelete, onUpdate } = props;
 	const user = memberData.user || { fullName: memberData.email, initials: '@' };
 	const { scopeData } = usePageContext();
+	const { activeTargetType } = scopeData.elements;
 	const { canAdmin } = scopeData.activePermissions;
 	const outOfPermissionRange = !canAdmin && memberData.permissions === 'admin';
+
 	const handleSetPermissions = (permissions) =>
 		onUpdate(memberData, { permissions: permissions });
 
@@ -39,19 +105,43 @@ const MemberRow = (props) => {
 		const permissionSelector = onUpdate && (
 			<MenuButton
 				aria-label="Select member permissions"
-				className="permission-select"
-				buttonProps={{ rightIcon: 'caret-down', minimal: true }}
-				buttonContent={`Can ${memberData.permissions}`}
+				className="member-permission-select"
+				placement="bottom-end"
+				buttonProps={{
+					className: 'permission-button',
+					rightIcon: 'caret-down',
+					outlined: true,
+				}}
+				buttonContent={`${memberData.permissions}`}
 			>
-				{permissionValues.map((value) => (
-					<MenuItem
-						key={value}
-						text={<span className="capitalize">{value}</span>}
-						active={memberData.permissions === value}
-						onClick={() => handleSetPermissions(value)}
-						disabled={!canAdmin && value === 'admin'}
-					/>
-				))}
+				{permissionTypes.map((type) => {
+					const { key, description } = type;
+					return (
+						<MenuItem
+							key={key}
+							text={
+								<div>
+									<div className="capitalize">
+										<b>{key}</b>
+									</div>
+									<div className="description">
+										{description[activeTargetType].map((item, index) => {
+											return (
+												<span>
+													{index !== 0 && ', '}
+													{item}
+												</span>
+											);
+										})}
+									</div>
+								</div>
+							}
+							active={memberData.permissions === key}
+							onClick={() => handleSetPermissions(key)}
+							disabled={!canAdmin && key === 'admin'}
+						/>
+					);
+				})}
 			</MenuButton>
 		);
 

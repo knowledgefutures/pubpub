@@ -20,4 +20,18 @@
 	.added {
 		flex: 1 1 auto;
 	}
+	.permission-button {
+		width: 100px;
+		text-transform: capitalize;
+		justify-content: space-between;
+	}
+}
+
+.member-permission-select {
+	.description {
+		padding-left: 15px;
+		width: 400px;
+		white-space: normal;
+		opacity: 0.8;
+	}
 }

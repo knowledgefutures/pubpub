@@ -23,7 +23,7 @@ export const createPub = (inputValues, userData) => {
 	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;
 
 	return Pub.create({
-		title: `New Pub on ${dateString}`,
+		title: `Untitled Pub on ${dateString}`,
 		slug: newPubSlug,
 		communityId: inputValues.communityId,
 		// draftPermissions: 'private',

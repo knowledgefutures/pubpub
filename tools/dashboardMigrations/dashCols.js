@@ -111,7 +111,7 @@ export default async () => {
 				didSetOwner[item.communityId] = true;
 				return {
 					id: item.id,
-					permissions: 'manage',
+					permissions: 'admin',
 					communityId: item.communityId,
 					userId: item.userId,
 					isOwner: isOwner,

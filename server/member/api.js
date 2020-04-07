@@ -38,6 +38,7 @@ app.post(
 			pubId: pubId,
 			communityId: communityId,
 			collectionId: collectionId,
+			value: value,
 		});
 		if (!permissions.create) {
 			throw new ForbiddenError();
@@ -68,8 +69,9 @@ app.put(
 			communityId: communityId,
 			collectionId: collectionId,
 			memberId: id,
+			value: value,
 		});
-		if (!permissions.create) {
+		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
 		const member = await updateMember({
@@ -84,13 +86,14 @@ app.delete(
 	'/api/members',
 	wrap(async (req, res) => {
 		const { pubId, collectionId, communityId, actorId } = getRequestIds(req);
-		const { id } = req.body;
+		const { value, id } = req.body;
 		const permissions = await getPermissions({
 			actorId: actorId,
 			pubId: pubId,
 			communityId: communityId,
 			collectionId: collectionId,
 			memberId: id,
+			value: value,
 		});
 		if (!permissions.destroy) {
 			throw new ForbiddenError();

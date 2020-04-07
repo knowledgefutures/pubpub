@@ -1,25 +1,32 @@
 import { getScope, getMemberDataById } from '../utils/queryHelpers';
 
-const getMemberBelongsToScope = async (scopeData, memberId) => {
+const getMemberPermission = async (scopeData, memberId) => {
 	if (memberId) {
 		const {
 			elements: { activeIds, activeTargetType },
 		} = scopeData;
 		const member = await getMemberDataById(memberId, false);
 		if (activeTargetType === 'community' && member.communityId === activeIds.communityId) {
-			return true;
+			return member.permissions;
 		}
 		if (activeTargetType === 'collection' && member.collectionId === activeIds.collectionId) {
-			return true;
+			return member.permissions;
 		}
 		if (activeTargetType === 'pub' && member.pubId === activeIds.pubId) {
-			return true;
+			return member.permissions;
 		}
 	}
 	return false;
 };
 
-export const getPermissions = async ({ actorId, pubId, communityId, collectionId, memberId }) => {
+export const getPermissions = async ({
+	actorId,
+	pubId,
+	communityId,
+	collectionId,
+	memberId,
+	value: { permissions },
+}) => {
 	if (!actorId) {
 		return {};
 	}
@@ -31,12 +38,15 @@ export const getPermissions = async ({ actorId, pubId, communityId, collectionId
 		loginId: actorId,
 	});
 
+	const canAdminScope = scopeData.activePermissions.canAdmin;
 	const canManageScope = scopeData.activePermissions.canManage;
-	const memberBelongsToScope = getMemberBelongsToScope(scopeData, memberId);
+	const prevMemberPermission = await getMemberPermission(scopeData, memberId);
+	const isUpdatingToAdmin = permissions === 'admin';
+	const isUpdatingAdmin = prevMemberPermission === 'admin';
 
 	return {
-		create: canManageScope,
-		update: canManageScope && memberBelongsToScope,
-		destroy: canManageScope && memberBelongsToScope,
+		create: canAdminScope || (canManageScope && !isUpdatingToAdmin),
+		update: canAdminScope || (canManageScope && !isUpdatingToAdmin && !isUpdatingAdmin),
+		destroy: canAdminScope || (canManageScope && !isUpdatingAdmin),
 	};
 };

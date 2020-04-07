@@ -5,6 +5,7 @@ import { Button, Tag } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
+import { usePageContext } from 'utils/hooks';
 
 require('./memberRow.scss');
 
@@ -28,7 +29,9 @@ const permissionValues = ['view', 'edit', 'manage', 'admin'];
 const MemberRow = (props) => {
 	const { memberData, isInvitation, isReadOnly, onDelete, onUpdate } = props;
 	const user = memberData.user || { fullName: memberData.email, initials: '@' };
-
+	const { scopeData } = usePageContext();
+	const { canAdmin } = scopeData.activePermissions;
+	const outOfPermissionRange = !canAdmin && memberData.permissions === 'admin';
 	const handleSetPermissions = (permissions) =>
 		onUpdate(memberData, { permissions: permissions });
 
@@ -38,7 +41,7 @@ const MemberRow = (props) => {
 				aria-label="Select member permissions"
 				className="permission-select"
 				buttonProps={{ rightIcon: 'caret-down', minimal: true }}
-				buttonContent={<>Can {memberData.permissions}</>}
+				buttonContent={`Can ${memberData.permissions}`}
 			>
 				{permissionValues.map((value) => (
 					<MenuItem
@@ -46,20 +49,26 @@ const MemberRow = (props) => {
 						text={<span className="capitalize">{value}</span>}
 						active={memberData.permissions === value}
 						onClick={() => handleSetPermissions(value)}
+						disabled={!canAdmin && value === 'admin'}
 					/>
 				))}
 			</MenuButton>
 		);
 
 		const deleteButton = onDelete && (
-			<Button minimal icon="cross" onClick={() => onDelete(memberData)} />
+			<Button
+				minimal
+				icon="cross"
+				onClick={() => onDelete(memberData)}
+				disable={outOfPermissionRange}
+			/>
 		);
 
 		return (
-			<>
+			<React.Fragment>
 				{permissionSelector}
 				{deleteButton}
-			</>
+			</React.Fragment>
 		);
 	};
 
@@ -81,8 +90,8 @@ const MemberRow = (props) => {
 				{isInvitation ? 'Invited' : 'Added'}{' '}
 				{dateFormat(memberData.createdAt, 'mmm dd, yyyy')}
 			</div>
-			{!isReadOnly && renderControls()}
-			{isReadOnly && (
+			{!(isReadOnly || outOfPermissionRange) && renderControls()}
+			{(isReadOnly || outOfPermissionRange) && (
 				<Tag minimal large>
 					Can {memberData.permissions}
 				</Tag>

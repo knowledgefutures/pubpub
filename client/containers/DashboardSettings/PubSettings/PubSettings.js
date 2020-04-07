@@ -143,6 +143,8 @@ const PubSettings = (props) => {
 								</Tooltip>
 							</span>
 						}
+						canClear={true}
+						key={pubData.avatar}
 						defaultImage={pubData.avatar}
 						onNewImage={(value) => updatePubData({ avatar: value })}
 						width={150}
@@ -153,6 +155,12 @@ const PubSettings = (props) => {
 							</span>
 						}
 					/>
+					<Button
+						disabled={pubData.avatar === pubData.headerBackgroundImage}
+						onClick={() => updatePubData({ avatar: pubData.headerBackgroundImage })}
+					>
+						Use header image as preview
+					</Button>
 				</SettingsSection>
 			</React.Fragment>
 		);

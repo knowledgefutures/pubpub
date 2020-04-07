@@ -302,13 +302,14 @@ export const handleErrors = (req, res, next) => {
 		if (
 			err.message === 'Page Not Found' ||
 			err.message === 'Pub Not Found' ||
+			err.message === 'Review Not Found' ||
 			err.message === 'User Not Admin' ||
 			err.message === 'User Not Found'
 		) {
 			return next();
 		}
 		console.error('Err', err);
-		return res.status(500).json('Error');
+		return res.status(500).sendFile(resolve(__dirname, '../errorPages/error.html'));
 	};
 };
 

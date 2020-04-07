@@ -1,0 +1,56 @@
+.member-permission-picker-component {
+	display: flex;
+	button.picker-column {
+		background: transparent;
+		width: 70px;
+		cursor: pointer;
+		border: 0px;
+		border-radius: 3px;
+		padding: 0px;
+		&.disabled {
+			cursor: not-allowed;
+		}
+		&:not(.disabled):hover {
+			box-shadow: inset 0px 0px 0px 1px #ddd;
+			background: rgba(200,200,200, 0.1);
+		}
+		&:not(.disabled):active {
+			background: rgba(200,200,200, 0.15);
+		}
+		&.active {
+			box-shadow: inset 0px 0px 0px 1px #ccc;
+			background: rgba(200,200,200, 0.2);
+		}
+	}
+	.header-row {
+		padding: 5px;
+		height: 65px;
+		font-weight: 600;
+		text-transform: capitalize;
+	}
+	.bp3-icon {
+		border-radius: 16px;
+		margin-top: 10px;
+	}
+	.row {
+		font-size: 16px;
+		height: 26px;
+		line-height: 26px;
+		position: relative;
+		&:nth-child(odd):before {
+			content: "";
+			position: absolute;
+			z-index: -1;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			background: #f7f7f7;
+		}
+		&.title-row {
+			padding-right: 20px;
+			font-size: 14px;
+			color: #555;
+		}
+	}
+}

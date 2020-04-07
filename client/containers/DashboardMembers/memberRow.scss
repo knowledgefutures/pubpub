@@ -20,4 +20,13 @@
 	.added {
 		flex: 1 1 auto;
 	}
+	.permission-button {
+		width: 100px;
+		text-transform: capitalize;
+		justify-content: space-between;
+	}
+}
+
+.bp3-menu.member-permission-select {
+	padding: 1em;
 }

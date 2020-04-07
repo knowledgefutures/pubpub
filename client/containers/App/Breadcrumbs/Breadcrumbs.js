@@ -11,6 +11,7 @@ require('./breadcrumbs.scss');
 const Breadcrumbs = () => {
 	const { locationData, communityData, scopeData } = usePageContext();
 	const { activeTargetType, activePub, activeCollection } = scopeData.elements;
+	const { activePermission } = scopeData.activePermissions;
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
 	const { mode, subMode } = getDashboardModes(locationData);
@@ -57,16 +58,19 @@ const Breadcrumbs = () => {
 				onClick: () => {
 					setNewCollectionIsOpen(true);
 				},
+				minPermissions: 'manage',
 			},
 			{
 				text: 'Create Pub',
 				onClick: handleCreatePub,
+				minPermissions: 'manage',
 			},
 		],
 		collection: [
 			{
 				text: 'Create Pub',
 				onClick: handleCreatePub,
+				minPermissions: 'manage',
 			},
 		],
 		pub: [
@@ -163,23 +167,34 @@ const Breadcrumbs = () => {
 					</div>
 				</div>
 				<div className="breadcrumb-actions">
-					{actions[activeTargetType].map((action) => {
-						const buttonsProps = {
-							key: action.text,
-							text: action.text,
-							intent: Intent.PRIMARY,
-							onClick: action.onClick,
-							href: action.href,
-							loading: action.text === 'Create Pub' && newPubIsLoading,
-							disabled: action.text !== 'Create Pub' && newPubIsLoading,
-							outlined: true,
-						};
-						return buttonsProps.href ? (
-							<AnchorButton {...buttonsProps} />
-						) : (
-							<Button {...buttonsProps} />
-						);
-					})}
+					{actions[activeTargetType]
+						.filter((action) => {
+							const permissionValues = ['view', 'edit', 'manage', 'admin'];
+							const activePermissionIndex = permissionValues.indexOf(
+								activePermission,
+							);
+							const minPermissionsIndex = permissionValues.indexOf(
+								action.minPermissions,
+							);
+							return activePermissionIndex >= minPermissionsIndex;
+						})
+						.map((action) => {
+							const buttonsProps = {
+								key: action.text,
+								text: action.text,
+								intent: Intent.PRIMARY,
+								onClick: action.onClick,
+								href: action.href,
+								loading: action.text === 'Create Pub' && newPubIsLoading,
+								disabled: action.text !== 'Create Pub' && newPubIsLoading,
+								outlined: true,
+							};
+							return buttonsProps.href ? (
+								<AnchorButton {...buttonsProps} />
+							) : (
+								<Button {...buttonsProps} />
+							);
+						})}
 				</div>
 			</div>
 			<CreateCollectionDialog

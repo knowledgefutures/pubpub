@@ -308,7 +308,7 @@ export const handleErrors = (req, res, next) => {
 			return next();
 		}
 		console.error('Err', err);
-		return res.status(500).json('Error');
+		return res.status(500).sendFile(resolve(__dirname, '../errorPages/error.html'));
 	};
 };
 

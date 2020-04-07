@@ -302,6 +302,7 @@ export const handleErrors = (req, res, next) => {
 		if (
 			err.message === 'Page Not Found' ||
 			err.message === 'Pub Not Found' ||
+			err.message === 'Review Not Found' ||
 			err.message === 'User Not Admin' ||
 			err.message === 'User Not Found'
 		) {

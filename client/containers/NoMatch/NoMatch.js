@@ -1,5 +1,5 @@
 import React from 'react';
-import { NonIdealState } from '@blueprintjs/core';
+import { NonIdealState, AnchorButton, Intent } from '@blueprintjs/core';
 import { usePageContext } from 'utils/hooks';
 
 require('./noMatch.scss');
@@ -22,12 +22,12 @@ const NoMatch = () => {
 				}
 				action={
 					loginData.id ? null : ( // TODO: eventually, put a search box here.
-						<a
+						<AnchorButton
+							intent={Intent.PRIMARY}
+							outlined
 							href={`/login${redirectString}`}
-							className="bp3-button bp3-large bp3-intent-primary"
-						>
-							Login
-						</a>
+							text="Login"
+						/>
 					)
 				}
 			/>

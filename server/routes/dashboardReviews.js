@@ -8,7 +8,7 @@ import {
 	handleErrors,
 	generateMetaComponents,
 } from '../utils';
-import { getOverview } from '../utils/queryHelpers';
+import { getOverview, sanitizeOverview } from '../utils/queryHelpers';
 
 app.get(
 	['/dash/reviews', '/dash/collection/:collectionSlug/reviews', '/dash/pub/:pubSlug/reviews'],
@@ -19,12 +19,13 @@ app.get(
 			}
 			const initialData = await getInitialData(req, true);
 			const overviewData = await getOverview(initialData);
+			const sanitizedOverviewData = await sanitizeOverview(initialData, overviewData);
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="DashboardReviews"
 					initialData={initialData}
-					viewData={{ overviewData: overviewData }}
+					viewData={{ overviewData: sanitizedOverviewData }}
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
 						title: `Reviews · ${initialData.scopeData.elements.activeTarget.title}`,

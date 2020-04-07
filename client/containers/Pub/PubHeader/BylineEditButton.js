@@ -15,7 +15,7 @@ const BylineEditButton = (props) => {
 			<div className="box-style pub-header-themed-box pub-header-themed-box-hover-target">
 				edit
 			</div>
-			<div className="inline-style">(Edit)</div>
+			<div className="inline-style">{' • '}Edit</div>
 		</Button>
 	);
 };

@@ -3,17 +3,12 @@
 .byline-edit-button-component {
     @include base-button;
     margin-left: 4px;
-    font-style: inherit;
 
     .box-style {
         padding: 4px 10px;
         border-radius: 25px;
         font-style: normal;
         font-size: 0.8em;
-    }
-
-    .inline-style {
-        text-decoration: underline;
     }
 }
 

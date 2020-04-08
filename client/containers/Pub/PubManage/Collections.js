@@ -131,6 +131,7 @@ class Collections extends Component {
 					method: 'DELETE',
 					body: JSON.stringify({
 						id: collectionPub.id,
+						pubId: this.props.pubData.id,
 						communityId: this.props.communityData.id,
 						collectionId: collectionPub.collectionId,
 					}),
@@ -166,6 +167,7 @@ class Collections extends Component {
 					body: JSON.stringify({
 						isPrimary: setPrimary,
 						id: collectionPub.id,
+						pubId: this.props.pubData.id,
 						communityId: communityData.id,
 						collectionId: collectionPub.collectionId,
 					}),

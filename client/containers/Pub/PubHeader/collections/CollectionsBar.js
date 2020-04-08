@@ -53,6 +53,7 @@ const CollectionsBar = (props) => {
 					<CollectionsBarButton
 						key={collection.id}
 						href={collectionUrl(communityData, collection)}
+						as="a"
 					>
 						{collection.title}
 					</CollectionsBarButton>

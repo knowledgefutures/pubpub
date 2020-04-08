@@ -53,12 +53,12 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
         color: $secondary-color;
     }
     .hairline {
-        background-color: rgba($base-color, 0.2);
+        background-color: rgba($base-color, alpha($base-color) * 0.2);
     }
     .collections-bar-button-component {
-        border-color: rgba($base-color, 0.2);
+        border-color: rgba($base-color, alpha($base-color) * 0.2);
         &:hover {
-            background: rgba($base-color, 0.2);
+            background: rgba($base-color, alpha($base-color) * 0.2);
         }
     }
     &.pub-header-compact-component {
@@ -90,20 +90,20 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
 
 @mixin translucent-box-theme($base-color, $box-shadow, $weight: 1) {
     @include simple-box-theme(
-        rgba($base-color, 0.2 * $weight),
+        rgba($base-color, 0.2 * alpha($base-color) * $weight),
         $base-color,
-        rgba($base-color, 0.3 * $weight),
+        rgba($base-color, 0.3 * alpha($base-color) * $weight),
         $box-shadow
     );
 }
 
 @mixin blocks-button($background-color, $box-shadow, $highlight) {
-    background-color: rgba($background-color, 1);
+    background-color: $background-color;
     transition: 0.2s background-color ease-out;
     box-shadow: $box-shadow;
     padding: 2px;
     &:hover {
-        background-color: rgba($background-color, 0.8);
+        background-color: rgba($background-color, alpha($background-color) * 0.8);
     }
     .pub-header-themed-box.active {
         background-color: $highlight;
@@ -174,9 +174,36 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
 }
 
 .pub-header-theme-dark {
-    $box-shadow: 0px 0px 8px rgba(black, 0.05);
+    $accent: rgba(black, 0.2);
+    $hover-background: rgba(black, 0.1);
+
+    @mixin when-hovered {
+        background: $hover-background;
+        @include shadow-box(0px 0px 0px 1px $hover-background);
+        &.active {
+            box-shadow: none;
+        }
+        @include shadow-box-hover();
+    }
+
+    .pub-header-themed-box {
+        $box-shadow: 0px 0px 0px 1px $accent;
+        @include shadow-box($box-shadow);
+        &.active {
+            @include shadow-box(0px 0px 0px 3px $accent);
+        }
+    }
+    .pub-header-themed-box-hover-target {
+        &:hover {
+            .pub-header-themed-box {
+                @include when-hovered;
+            }
+        }
+    }
+    .pub-header-themed-box-hover-target.pub-header-themed-box:hover {
+        @include when-hovered;
+    }
     @include color-theme(#222, $off-black);
-    @include translucent-box-theme(black, $box-shadow, 0.5);
 }
 
 .pub-header-theme-white-blocks {

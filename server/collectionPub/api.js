@@ -13,7 +13,7 @@ const getRequestIds = (req, argsFrom = req.body) => {
 	const user = req.user || {};
 	return {
 		userId: user.id,
-		pubId: argsFrom.pubId,
+		pubId: argsFrom.pubId || null,
 		collectionId: argsFrom.collectionId,
 		communityId: argsFrom.communityId,
 	};

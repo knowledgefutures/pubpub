@@ -1,6 +1,7 @@
 /* eslint-disable no-multi-assign */
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Menu, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
 
@@ -8,9 +9,6 @@ require('./pubToc.scss');
 
 const propTypes = {
 	children: PropTypes.func.isRequired,
-	// pubData: PropTypes.shape({
-	// 	canEditBranch: PropTypes.bool,
-	// }).isRequired,
 	headings: PropTypes.arrayOf(
 		PropTypes.shape({
 			title: PropTypes.string,
@@ -25,7 +23,7 @@ const defaultProps = {
 	onSelect: null,
 };
 
-const PubToc = function(props) {
+const PubToc = (props) => {
 	const { headings, children, onSelect } = props;
 	const { scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;

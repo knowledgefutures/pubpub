@@ -1,14 +1,26 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { getJSON } from '@pubpub/editor';
+
 import { GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'utils/useSticky';
+
+import { getTocHeadings } from './headerUtils';
 import PubDetails from './details';
 import PubHeaderBackground from './PubHeaderBackground';
 import PubHeaderMain from './PubHeaderMain';
 import SmallHeaderButton from './SmallHeaderButton';
 import PubHeaderSticky from './PubHeaderSticky';
+
+const getPubHeadings = (pubData, collabData) => {
+	let docJson = pubData.initialDoc;
+	if (collabData.editorChangeObject && collabData.editorChangeObject.view) {
+		docJson = getJSON(collabData.editorChangeObject.view);
+	}
+	return docJson ? getTocHeadings(docJson) : [];
+};
 
 require('./pubHeader.scss');
 
@@ -45,6 +57,7 @@ const PubHeader = (props) => {
 	const { communityData } = usePageContext();
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState(null);
+	const pubHeadings = getPubHeadings(pubData, collabData);
 
 	useSticky({
 		isActive: sticky && headerRef.current,
@@ -75,12 +88,13 @@ const PubHeader = (props) => {
 						pubData={pubData}
 						updateLocalData={updateLocalData}
 						historyData={historyData}
+						pubHeadings={pubHeadings}
 					/>
 				)}
 				{showingDetails && <PubDetails pubData={pubData} communityData={communityData} />}
 				<ToggleDetailsButton showingDetails={showingDetails} onClick={toggleDetails} />
 			</GridWrapper>
-			<PubHeaderSticky pubData={pubData} collabData={collabData} />
+			<PubHeaderSticky pubData={pubData} collabData={collabData} pubHeadings={pubHeadings} />
 		</PubHeaderBackground>
 	);
 };

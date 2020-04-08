@@ -29,6 +29,7 @@ import LargeHeaderButton from './LargeHeaderButton';
 import PopoverButton from './PopoverButton';
 import Social from './Social';
 import SmallHeaderButton from './SmallHeaderButton';
+import PubToc from './PubToc';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -48,6 +49,7 @@ const propTypes = {
 		).isRequired,
 		releaseNumber: PropTypes.number,
 	}).isRequired,
+	pubHeadings: PropTypes.array.isRequired,
 	historyData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
@@ -69,7 +71,7 @@ const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) =
 };
 
 const PubHeaderMain = (props) => {
-	const { pubData, updateLocalData, historyData } = props;
+	const { pubData, updateLocalData, historyData, pubHeadings } = props;
 	const { title, description, doi, membersData } = pubData;
 	const { communityData, scopeData } = usePageContext();
 
@@ -238,6 +240,15 @@ const PubHeaderMain = (props) => {
 					<Social pubData={pubData}>
 						<SmallHeaderButton label="Share" labelPosition="left" icon="share2" />
 					</Social>
+					{pubHeadings.length > 0 && (
+						<PubToc headings={pubHeadings}>
+							<SmallHeaderButton
+								label="Table of Contents"
+								labelPosition="left"
+								icon="toc"
+							/>
+						</PubToc>
+					)}
 				</div>
 			</div>
 		);

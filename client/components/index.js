@@ -25,6 +25,8 @@ export { default as InputField } from './InputField/InputField';
 export { default as LegalBanner } from './LegalBanner/LegalBanner';
 export { default as LicenseSelect } from './LicenseSelect/LicenseSelect';
 export { default as LinkedPageSelect } from './LinkedPageSelect/LinkedPageSelect';
+export { default as MemberRow } from './Members/MemberRow';
+export { default as InheritedMembersBlock } from './Members/InheritedMembersBlock';
 export { MenuButton, Menu, MenuItem } from './Menu';
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
 export { default as NavBar } from './NavBar/NavBar';

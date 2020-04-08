@@ -25,7 +25,7 @@ export const getPermissions = async ({
 	communityId,
 	collectionId,
 	memberId,
-	value: { permissions },
+	value: { permissions } = {},
 }) => {
 	if (!actorId) {
 		return {};

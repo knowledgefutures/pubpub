@@ -2,12 +2,15 @@ import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { ControlGroup, Button, Intent } from '@blueprintjs/core';
 
-import { DashboardFrame, SettingsSection, UserAutocomplete } from 'components';
-import { apiFetch } from 'utils';
+import {
+	DashboardFrame,
+	SettingsSection,
+	UserAutocomplete,
+	MemberRow,
+	InheritedMembersBlock,
+} from 'components';
 import { usePageContext } from 'utils/hooks';
-
-import MemberRow from './MemberRow';
-import InheritedBlock from './InheritedBlock';
+import { useMembersState } from 'utils/members/useMembers';
 
 require('./dashboardMembers.scss');
 
@@ -46,7 +49,8 @@ const membersReducer = (state, action) => {
 };
 
 const DashboardMembers = (props) => {
-	const [membersData, dispatchToMembers] = useReducer(membersReducer, props.membersData);
+	const { membersData } = props;
+	const { members, addMember, updateMember, removeMember } = useMembersState(membersData.members);
 	const { scopeData } = usePageContext();
 	const {
 		elements: { activeTargetType },
@@ -54,10 +58,10 @@ const DashboardMembers = (props) => {
 	} = scopeData;
 
 	const membersByType = {
-		pub: membersData.members.filter((mb) => mb.pubId),
-		collection: membersData.members.filter((mb) => mb.collectionId),
-		community: membersData.members.filter((mb) => mb.communityId),
-		organization: membersData.members.filter((mb) => mb.organizationId),
+		pub: members.filter((mb) => mb.pubId),
+		collection: members.filter((mb) => mb.collectionId),
+		community: members.filter((mb) => mb.communityId),
+		organization: members.filter((mb) => mb.organizationId),
 	};
 
 	const localMembers = membersByType[activeTargetType];
@@ -68,53 +72,12 @@ const DashboardMembers = (props) => {
 		(membersByType.community.length && activeTargetType !== 'community') ||
 		(membersByType.organization.length && activeTargetType !== 'organization');
 
-	const handleAddUser = (user) => {
-		apiFetch('/api/members', {
-			method: 'POST',
-			body: JSON.stringify({
-				...scopeData.elements.activeIds,
-				targetUserId: user.id,
-				value: {
-					permissions: 'view',
-				},
-			}),
-		}).then((member) => dispatchToMembers({ type: 'add-member', member: member }));
-	};
-
-	const handleUpdateMember = (member, update) => {
-		const existingValue = { ...member };
-		const newValue = { ...member, ...update };
-		dispatchToMembers({ type: 'update-member', member: newValue });
-		apiFetch('/api/members', {
-			method: 'PUT',
-			body: JSON.stringify({
-				...scopeData.elements.activeIds,
-				id: member.id,
-				value: update,
-			}),
-		}).catch(() => dispatchToMembers({ type: 'update-member', member: existingValue }));
-	};
-
-	const handleRemoveMember = (member) => {
-		const memberIndex = membersData.members.indexOf(member);
-		dispatchToMembers({ type: 'remove-member', member: member });
-		apiFetch('/api/members', {
-			method: 'DELETE',
-			body: JSON.stringify({
-				...scopeData.elements.activeIds,
-				id: member.id,
-			}),
-		}).catch(() =>
-			dispatchToMembers({ type: 'add-member', member: member, index: memberIndex }),
-		);
-	};
-
 	return (
 		<DashboardFrame className="dashboard-members-container" title="Members">
 			<SettingsSection title="Add Member">
 				<ControlGroup className="add-member-controls">
 					<UserAutocomplete
-						onSelect={handleAddUser}
+						onSelect={addMember}
 						usedUserIds={localMembers.map((member) => member.userId)}
 					/>
 					<Button large text="Add" intent={Intent.PRIMARY} />
@@ -137,8 +100,8 @@ const DashboardMembers = (props) => {
 						<MemberRow
 							memberData={member}
 							isReadOnly={!canManage}
-							onUpdate={handleUpdateMember}
-							onDelete={handleRemoveMember}
+							onUpdate={updateMember}
+							onDelete={removeMember}
 							key={member.id}
 						/>
 					);
@@ -148,13 +111,22 @@ const DashboardMembers = (props) => {
 			{!!hasInheritedMembers && (
 				<SettingsSection title="Inherited Members">
 					{!!membersByType.collection.length && activeTargetType !== 'collection' && (
-						<InheritedBlock members={membersByType.collection} scope="Collection" />
+						<InheritedMembersBlock
+							members={membersByType.collection}
+							scope="Collection"
+						/>
 					)}
 					{!!membersByType.community.length && activeTargetType !== 'community' && (
-						<InheritedBlock members={membersByType.community} scope="Community" />
+						<InheritedMembersBlock
+							members={membersByType.community}
+							scope="Community"
+						/>
 					)}
 					{!!membersByType.organization.length && activeTargetType !== 'organization' && (
-						<InheritedBlock members={membersByType.organization} scope="Organization" />
+						<InheritedMembersBlock
+							members={membersByType.organization}
+							scope="Organization"
+						/>
 					)}
 				</SettingsSection>
 			)}

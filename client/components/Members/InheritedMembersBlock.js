@@ -8,7 +8,7 @@ import { getDashUrl } from 'utils/dashboard';
 
 import MemberRow from './MemberRow';
 
-require('./inheritedBlock.scss');
+require('./inheritedMembersBlock.scss');
 
 const propTypes = {
 	members: PropTypes.array.isRequired,

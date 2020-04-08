@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { usePendingChanges, usePageContext } from 'utils/hooks';
-import * as api from 'shared/collections/api';
+import * as api from 'utils/collections/api';
 import findRank from 'shared/utils/findRank';
 import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 

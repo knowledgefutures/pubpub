@@ -4,7 +4,7 @@ import dateFormat from 'dateformat';
 import { Button, Tag } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
-import { MenuButton, MenuItem } from 'components/Menu';
+import { MenuButton } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
 
 import MemberPermissionPicker from './MemberPermissionPicker';

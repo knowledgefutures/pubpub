@@ -20,7 +20,7 @@ const defaultProps = {
 	},
 };
 
-const priveleges = {
+const privileges = {
 	pub: [
 		{ title: 'View Pub when unpublished', activeAt: 'view' },
 		{ title: 'View member-only Discussions and Reviews', activeAt: 'view' },
@@ -63,7 +63,7 @@ const priveleges = {
 const MemberPermissionPicker = (props) => {
 	const { activeTargetType, activePermission, onSelect, canAdmin } = props;
 	const { communityData } = usePageContext();
-	const activePriveleges = priveleges[activeTargetType];
+	const activePriveleges = privileges[activeTargetType];
 	const permissionValues = ['view', 'edit', 'manage', 'admin'];
 	return (
 		<div className="member-permission-picker-component">

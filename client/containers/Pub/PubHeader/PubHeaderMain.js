@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
 import dateFormat from 'dateformat';
@@ -9,7 +9,7 @@ import {
 	Byline,
 	ClickToCopyButton,
 	DialogLauncher,
-	Overlay,
+	MembersDialog,
 	PubAttributionDialog,
 	PubReleaseDialog,
 	PubReleaseReviewDialog,
@@ -27,7 +27,6 @@ import Download from './Download';
 import EditableHeaderText from './EditableHeaderText';
 import LargeHeaderButton from './LargeHeaderButton';
 import PopoverButton from './PopoverButton';
-import SharePanel from './SharePanel';
 import SmallHeaderButton from './SmallHeaderButton';
 
 const propTypes = {
@@ -40,6 +39,9 @@ const propTypes = {
 		id: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
+		membersData: PropTypes.shape({
+			members: PropTypes.array,
+		}).isRequired,
 		releases: PropTypes.arrayOf(
 			PropTypes.shape({ createdAt: PropTypes.string, sourceBranchKey: PropTypes.number }),
 		).isRequired,
@@ -67,9 +69,8 @@ const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) =
 
 const PubHeaderMain = (props) => {
 	const { pubData, updateLocalData, historyData } = props;
-	const { title, description, doi } = pubData;
+	const { title, description, doi, membersData } = pubData;
 	const { communityData, scopeData } = usePageContext();
-	const [isShareOpen, setIsShareOpen] = useState(false);
 
 	const { canManage, canEdit, canAdmin } = scopeData.activePermissions;
 	const publishedDate = getPubPublishedDate(
@@ -203,13 +204,26 @@ const PubHeaderMain = (props) => {
 							href={`/pub/${pubData.slug}/manage`}
 						/>
 					)}
-
-					<SmallHeaderButton
-						label="Share with..."
-						labelPosition="left"
-						icon="people"
-						onClick={() => setIsShareOpen(true)}
-					/>
+					{membersData && (
+						<DialogLauncher
+							renderLauncherElement={({ openDialog }) => (
+								<SmallHeaderButton
+									label="Members"
+									labelPosition="left"
+									icon="people"
+									onClick={openDialog}
+								/>
+							)}
+						>
+							{({ isOpen, onClose }) => (
+								<MembersDialog
+									isOpen={isOpen}
+									onClose={onClose}
+									members={membersData.members}
+								/>
+							)}
+						</DialogLauncher>
+					)}
 					<Download pubData={pubData}>
 						<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
 					</Download>
@@ -367,14 +381,6 @@ const PubHeaderMain = (props) => {
 
 	return (
 		<div className="pub-header-main-component">
-			<Overlay
-				isOpen={isShareOpen}
-				onClose={() => {
-					setIsShareOpen(false);
-				}}
-			>
-				<SharePanel pubData={pubData} updateLocalData={updateLocalData} />
-			</Overlay>
 			{renderTop()}
 			<div className="hairline" />
 			{renderMiddle()}

@@ -41,7 +41,8 @@ const PubSettings = (props) => {
 	const { pendingPromise } = usePendingChanges();
 
 	const hasPendingChanges = Object.keys(pendingPubData).length > 0;
-	const pubData = { ...persistedPubData, ...pendingPubData, description: '' };
+	const pubData = { ...persistedPubData, ...pendingPubData };
+	const description = pubData.description || '';
 
 	useBeforeUnload(
 		hasPendingChanges,
@@ -115,7 +116,7 @@ const PubSettings = (props) => {
 						placeholder="Enter description"
 						helperText={`${pubData.description.length}/280 characters`}
 						isTextarea={true}
-						value={pubData.description}
+						value={description}
 						onChange={(evt) =>
 							updatePubData({
 								description: evt.target.value.substring(0, 280).replace(/\n/g, ' '),

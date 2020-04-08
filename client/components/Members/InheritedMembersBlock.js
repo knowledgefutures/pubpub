@@ -43,12 +43,13 @@ const InheritedBlock = (props) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const { scopeData: currentScopeData } = usePageContext();
 	return (
-		<div className="inherited-block-component">
+		<div className="inherited-members-block-component">
 			<div className="top">
 				<div className="scope">
 					{scope} Members with access: {members.length}
 				</div>
 				<Button
+					outlined
 					small
 					text={isOpen ? 'Hide Details' : 'Show Details'}
 					onClick={() => {

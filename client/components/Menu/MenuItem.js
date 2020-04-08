@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Icon, Classes } from '@blueprintjs/core';
 import * as RK from 'reakit/Menu';
 
-import { MenuContext } from './menuContext';
+import { MenuContext } from './menuContexts';
 import { Menu } from './Menu';
 
 const sharedPropTypes = {

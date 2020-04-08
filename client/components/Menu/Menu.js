@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Classes } from '@blueprintjs/core';
 import * as RK from 'reakit/Menu';
 
-import { MenuContext } from './menuContext';
+import { MenuContext, MenuConfigContext } from './menuContexts';
 
 const propTypes = {
 	'aria-label': PropTypes.string.isRequired,
@@ -45,6 +45,8 @@ export const Menu = React.forwardRef((props, ref) => {
 		...restProps
 	} = props;
 
+	const menuConfig = useContext(MenuConfigContext);
+
 	const menu = RK.useMenuState({
 		placement: placement,
 		gutter: gutter,
@@ -73,7 +75,7 @@ export const Menu = React.forwardRef((props, ref) => {
 				as="ul"
 				style={{ zIndex: 20, ...menuStyle }}
 				className={classNames(Classes.MENU, Classes.ELEVATION_1, className)}
-				unstable_portal={true}
+				unstable_portal={menuConfig.usePortal}
 				{...menu}
 			>
 				<MenuContext.Provider value={{ parentMenu: menu, dismissMenu: handleDismiss }}>

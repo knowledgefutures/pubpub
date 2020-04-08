@@ -3,19 +3,26 @@ import { useState } from 'react';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import * as api from 'utils/members/api';
 
-export const useMembers = ({ members, setMembers }) => {
+export const useMembers = ({ members, updateMembers }) => {
 	const { scopeData } = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 	const scopeIds = scopeData.elements.activeIds;
 
+	const membersByType = {
+		pub: members.filter((mb) => mb.pubId),
+		collection: members.filter((mb) => mb.collectionId),
+		community: members.filter((mb) => mb.communityId),
+		organization: members.filter((mb) => mb.organizationId),
+	};
+
 	const addMember = (user) => {
 		pendingPromise(api.addMember({ scopeIds: scopeIds, user: user })).then((member) =>
-			setMembers([...members, member]),
+			updateMembers([member, ...members]),
 		);
 	};
 
 	const updateMember = (member, update) => {
-		setMembers(
+		updateMembers(
 			members.map((m) => {
 				if (m.id === member.id) {
 					return { ...m, ...update };
@@ -26,7 +33,7 @@ export const useMembers = ({ members, setMembers }) => {
 		pendingPromise(
 			api.updateMember({ member: member, update: update, scopeIds: scopeIds }),
 		).catch(() => {
-			setMembers(
+			updateMembers(
 				members.map((m) => {
 					if (m.id === member.id) {
 						return member;
@@ -39,17 +46,22 @@ export const useMembers = ({ members, setMembers }) => {
 
 	const removeMember = async (member) => {
 		const previousMembers = [...members];
-		setMembers(members.filter((m) => m.id !== member.id));
+		updateMembers(members.filter((m) => m.id !== member.id));
 		pendingPromise(api.removeMember({ member: member, scopeIds: scopeIds })).catch(() =>
-			setMembers(previousMembers),
+			updateMembers(previousMembers),
 		);
 	};
 
-	return { addMember: addMember, updateMember: updateMember, removeMember: removeMember };
+	return {
+		addMember: addMember,
+		updateMember: updateMember,
+		removeMember: removeMember,
+		membersByType: membersByType,
+	};
 };
 
-export const useMembersState = (initialMembers) => {
+export const useMembersState = ({ initialMembers }) => {
 	const [members, setMembers] = useState(initialMembers);
-	const actions = useMembers({ members: members, setMembers: setMembers });
+	const actions = useMembers({ members: members, updateMembers: setMembers });
 	return { ...actions, members: members };
 };

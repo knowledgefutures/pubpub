@@ -63,15 +63,19 @@ const privileges = {
 const MemberPermissionPicker = (props) => {
 	const { activeTargetType, activePermission, onSelect, canAdmin } = props;
 	const { communityData } = usePageContext();
-	const activePriveleges = privileges[activeTargetType];
+	const activePrivileges = privileges[activeTargetType];
 	const permissionValues = ['view', 'edit', 'manage', 'admin'];
 	return (
 		<div className="member-permission-picker-component">
 			<style>{`.active .header-row .bp3-icon { background: ${communityData.accentColorDark}}`}</style>
 			<div className="picker-column">
 				<div className="header-row" />
-				{activePriveleges.map((item) => {
-					return <div className="row title-row">{item.title}</div>;
+				{activePrivileges.map((item) => {
+					return (
+						<div className="row title-row" key={item.title}>
+							{item.title}
+						</div>
+					);
 				})}
 			</div>
 			{permissionValues.map((value, index) => {
@@ -84,6 +88,7 @@ const MemberPermissionPicker = (props) => {
 							isActive && 'active',
 							isDisabled && 'disabled',
 						)}
+						key={value}
 						disabled={isDisabled}
 						type="button"
 						onClick={() => {
@@ -94,7 +99,7 @@ const MemberPermissionPicker = (props) => {
 							<div>{value}</div>
 							{isActive && <Icon icon="small-tick" color="#fff" />}
 						</div>
-						{activePriveleges.map((item) => {
+						{activePrivileges.map((item) => {
 							const isEnabled = permissionValues.indexOf(item.activeAt) < index + 1;
 							return <div className="row">{isEnabled ? '•' : ''}</div>;
 						})}

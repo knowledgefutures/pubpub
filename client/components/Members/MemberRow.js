@@ -151,7 +151,7 @@ const MemberRow = (props) => {
 				minimal
 				icon="cross"
 				onClick={() => onDelete(memberData)}
-				disable={outOfPermissionRange}
+				disabled={outOfPermissionRange}
 			/>
 		);
 

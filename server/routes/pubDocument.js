@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { getPubPageContextTitle } from 'shared/utils/pubPageTitle';
 import { getPDFDownload, getTextAbstract, getGoogleScholarNotes } from 'shared/pub/metadata';
 import { chooseCollectionForPub } from '../../client/utils/collections';
 import Html from '../Html';
 import app from '../server';
+import { HTTPStatusError } from '../errors';
 import {
 	hostIsValid,
 	renderToNodeStream,
@@ -13,6 +15,7 @@ import {
 } from '../utils';
 import {
 	getPub,
+	getMembers,
 	sanitizePub,
 	enrichPubFirebaseDoc,
 	enrichPubFirebaseToken,
@@ -46,7 +49,7 @@ const renderPubDocument = (res, pubData, initialData) => {
 };
 
 const throwPubNotFoundError = () => {
-	throw new Error('Pub not found');
+	throw new HTTPStatusError(404);
 };
 
 const getEnrichedAndSanitizedPubData = async ({
@@ -112,12 +115,18 @@ app.get(['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'], async (req, 
 			throwPubNotFoundError();
 		}
 
-		const pubData = await getEnrichedAndSanitizedPubData({
-			pubSlug: pubSlug,
-			historyKey: hasHistoryKey ? historyKey : null,
-			branchType: 'draft',
-			initialData: initialData,
-		});
+		const pubData = await Promise.all([
+			getEnrichedAndSanitizedPubData({
+				pubSlug: pubSlug,
+				historyKey: hasHistoryKey ? historyKey : null,
+				branchType: 'draft',
+				initialData: initialData,
+			}),
+			getMembers(initialData),
+		]).then(([enrichedPubData, membersData]) => ({
+			...enrichedPubData,
+			membersData: membersData,
+		}));
 
 		return renderPubDocument(res, pubData, initialData);
 	} catch (err) {

@@ -104,6 +104,7 @@ const Download = (props) => {
 		activeBranch.id,
 		latestKey,
 		locationData.query.access,
+		communityData.id,
 	]);
 
 	return (

@@ -27,6 +27,7 @@ import Download from './Download';
 import EditableHeaderText from './EditableHeaderText';
 import LargeHeaderButton from './LargeHeaderButton';
 import PopoverButton from './PopoverButton';
+import Social from './Social';
 import SmallHeaderButton from './SmallHeaderButton';
 
 const propTypes = {
@@ -234,6 +235,9 @@ const PubHeaderMain = (props) => {
 					>
 						<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
 					</PopoverButton>
+					<Social pubData={pubData}>
+						<SmallHeaderButton label="Share" labelPosition="left" icon="share2" />
+					</Social>
 				</div>
 			</div>
 		);

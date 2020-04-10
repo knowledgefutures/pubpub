@@ -145,7 +145,7 @@ const PubReleaseDialog = (props) => {
 								setNoteData(data);
 							}}
 							focusOnLoad={true}
-							placeholder="Add a note describing this release."
+							placeholder="Add a (publicly-visible) note describing this release."
 						/>
 					</React.Fragment>
 				)}

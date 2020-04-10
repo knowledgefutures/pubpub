@@ -238,7 +238,7 @@ const PubHeaderMain = (props) => {
 						<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
 					</PopoverButton>
 					<Social pubData={pubData}>
-						<SmallHeaderButton label="Share" labelPosition="left" icon="share2" />
+						<SmallHeaderButton label="Social" labelPosition="left" icon="share2" />
 					</Social>
 					{pubHeadings.length > 0 && (
 						<PubToc headings={pubHeadings}>

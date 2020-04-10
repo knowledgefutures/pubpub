@@ -10,6 +10,7 @@ const propTypes = {
 	className: PropTypes.string,
 	copyString: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
 	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+	minimal: PropTypes.bool,
 	tooltipPosition: PropTypes.string,
 	usePortal: PropTypes.bool,
 };
@@ -17,9 +18,10 @@ const propTypes = {
 const defaultProps = {
 	afterCopyPrompt: 'Copied!',
 	beforeCopyPrompt: null,
-	icon: 'link',
 	children: null,
 	className: '',
+	icon: 'link',
+	minimal: true,
 	tooltipPosition: Position.TOP,
 	usePortal: true,
 };
@@ -32,6 +34,7 @@ const ClickToCopyButton = (props) => {
 		className,
 		copyString,
 		icon,
+		minimal,
 		tooltipPosition,
 		usePortal,
 	} = props;
@@ -58,7 +61,7 @@ const ClickToCopyButton = (props) => {
 			return children(handleClick);
 		}
 		return (
-			<Button minimal icon={icon} onClick={handleClick} position={tooltipPosition}>
+			<Button minimal={minimal} icon={icon} onClick={handleClick} position={tooltipPosition}>
 				{children}
 			</Button>
 		);

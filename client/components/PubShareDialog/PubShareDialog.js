@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { Button, Classes, ControlGroup, Dialog } from '@blueprintjs/core';
+import { Button, Classes, ControlGroup, Dialog, Divider, InputGroup } from '@blueprintjs/core';
 
 import {
+	ClickToCopyButton,
 	UserAutocomplete,
 	MemberRow,
 	InheritedMembersBlock,
@@ -12,11 +12,21 @@ import {
 } from 'components';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { useMembersState } from 'utils/members/useMembers';
+import { pubUrl } from 'shared/utils/canonicalUrls';
 
-require('./membersDialog.scss');
+require('./pubShareDialog.scss');
 
-const propTypes = {};
-const defaultProps = {};
+const propTypes = {
+	isOpen: PropTypes.bool.isRequired,
+	onClose: PropTypes.func.isRequired,
+	pubData: PropTypes.shape({
+		editHash: PropTypes.string,
+		viewHash: PropTypes.string,
+		membersData: PropTypes.shape({
+			members: PropTypes.arrayOf(PropTypes.shape({})),
+		}),
+	}).isRequired,
+};
 
 const getHelperText = (activeTargetName, activeTargetType, canModifyMembers) => {
 	if (canModifyMembers) {
@@ -30,15 +40,55 @@ const getHelperText = (activeTargetName, activeTargetType, canModifyMembers) => 
 	return `Members can collaborate on this ${activeTargetName}${containingPubsString}`;
 };
 
-const MembersDialogInner = (props) => {
-	const { members, scopeData } = props;
+const AccessHashOptions = (props) => {
+	const { pubData } = props;
+	const { communityData } = usePageContext();
+	const { viewHash, editHash } = pubData;
+
+	const renderHashRow = (label, hash) => {
+		const url = pubUrl(communityData, pubData, { accessHash: hash });
+		return (
+			<ControlGroup className="hash-row">
+				<ClickToCopyButton minimal={false} copyString={url}>
+					Copy {label} URL
+				</ClickToCopyButton>
+				<InputGroup className="display-url" value={url} fill />
+			</ControlGroup>
+		);
+	};
+
+	return (
+		<div className="access-hash-options">
+			<p>
+				You can grant visitors permission to view or edit the draft of this pub by sharing a
+				URL.
+			</p>
+			{viewHash && renderHashRow('View', viewHash)}
+			{editHash && renderHashRow('Edit', editHash)}
+		</div>
+	);
+};
+
+AccessHashOptions.propTypes = {
+	pubData: PropTypes.shape({
+		editHash: PropTypes.string,
+		viewHash: PropTypes.string,
+	}).isRequired,
+};
+
+const MembersOptions = (props) => {
+	const {
+		pubData: {
+			membersData: { members },
+		},
+	} = props;
+	const { pendingCount } = usePendingChanges();
+	const { scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
 	const { activeTargetName, activeTargetType } = scopeData.elements;
-	const { pendingCount } = usePendingChanges();
 	const { membersByType, addMember, updateMember, removeMember } = useMembersState({
 		initialMembers: members,
 	});
-
 	const localMembers = membersByType[activeTargetType];
 
 	return (
@@ -79,32 +129,57 @@ const MembersDialogInner = (props) => {
 	);
 };
 
-const MembersDialog = (props) => {
-	const { isOpen, onClose, members } = props;
-	const { scopeData } = usePageContext();
+MembersOptions.propTypes = {
+	pubData: PropTypes.shape({
+		membersData: PropTypes.shape({
+			members: PropTypes.arrayOf(PropTypes.shape({})),
+		}),
+	}).isRequired,
+};
 
-	const {
-		elements: { activeTargetName },
-	} = scopeData;
+const PubShareDialog = (props) => {
+	const { isOpen, onClose, pubData } = props;
+	const { viewHash, editHash } = pubData;
+	const hasHash = !!(viewHash || editHash);
+
+	const renderInner = () => {
+		return (
+			<>
+				<div className="pane">
+					<h6 className="pane-title">Members</h6>
+					<div className="pane-content">
+						<MembersOptions pubData={pubData} />
+					</div>
+				</div>
+				{hasHash && (
+					<>
+						<Divider />
+						<div className="pane">
+							<h6 className="pane-title">Share a URL</h6>
+							<AccessHashOptions pubData={pubData} />
+						</div>
+					</>
+				)}
+			</>
+		);
+	};
 
 	return (
 		<Dialog
-			title={`${activeTargetName} Members`}
-			className="members-dialog-component"
+			lazy={true}
+			title="Share Pub"
+			className="pub-share-dialog-component"
 			isOpen={isOpen}
 			onClose={onClose}
 		>
 			<MenuConfigProvider config={{ usePortal: false }}>
 				<PendingChangesProvider>
-					<div className={Classes.DIALOG_BODY}>
-						<MembersDialogInner scopeData={scopeData} members={members} />
-					</div>
+					<div className={Classes.DIALOG_BODY}>{renderInner()}</div>
 				</PendingChangesProvider>
 			</MenuConfigProvider>
 		</Dialog>
 	);
 };
 
-MembersDialog.propTypes = propTypes;
-MembersDialog.defaultProps = defaultProps;
-export default MembersDialog;
+PubShareDialog.propTypes = propTypes;
+export default PubShareDialog;

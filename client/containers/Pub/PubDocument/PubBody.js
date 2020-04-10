@@ -14,7 +14,6 @@ import { usePageContext } from 'utils/hooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 
 import discussionSchema from './DiscussionAddon/discussionSchema';
-import { nestDiscussionsToThreads } from './PubDiscussions/discussionUtils';
 import Discussion from './PubDiscussions/Discussion';
 
 require('./pubBody.scss');
@@ -50,8 +49,7 @@ const PubBody = (props) => {
 		historyData,
 		editorWrapperRef,
 	} = props;
-	const { communityData, scopeData } = usePageContext();
-	const { canEdit, canEditDraft } = scopeData.activePermissions;
+	const { communityData } = usePageContext();
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});

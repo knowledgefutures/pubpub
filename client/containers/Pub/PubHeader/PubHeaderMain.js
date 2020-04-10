@@ -9,11 +9,11 @@ import {
 	Byline,
 	ClickToCopyButton,
 	DialogLauncher,
-	MembersDialog,
 	PubAttributionDialog,
 	PubReleaseDialog,
 	PubReleaseReviewDialog,
 	PubThemePicker,
+	PubShareDialog,
 } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
 import { pubUrl } from 'shared/utils/canonicalUrls';
@@ -211,7 +211,7 @@ const PubHeaderMain = (props) => {
 						<DialogLauncher
 							renderLauncherElement={({ openDialog }) => (
 								<SmallHeaderButton
-									label="Members"
+									label="Members & Sharing"
 									labelPosition="left"
 									icon="people"
 									onClick={openDialog}
@@ -219,10 +219,10 @@ const PubHeaderMain = (props) => {
 							)}
 						>
 							{({ isOpen, onClose }) => (
-								<MembersDialog
+								<PubShareDialog
 									isOpen={isOpen}
 									onClose={onClose}
-									members={membersData.members}
+									pubData={pubData}
 								/>
 							)}
 						</DialogLauncher>

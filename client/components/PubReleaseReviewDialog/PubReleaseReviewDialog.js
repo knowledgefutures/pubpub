@@ -102,6 +102,7 @@ const PubReleaseReviewDialog = (props) => {
 
 	return (
 		<Dialog
+			lazy={true}
 			title="Request Publication"
 			onClose={onClose}
 			isOpen={isOpen}

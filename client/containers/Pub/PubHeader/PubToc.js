@@ -8,7 +8,7 @@ import { usePageContext } from 'utils/hooks';
 require('./pubToc.scss');
 
 const propTypes = {
-	children: PropTypes.func.isRequired,
+	children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
 	headings: PropTypes.arrayOf(
 		PropTypes.shape({
 			title: PropTypes.string,

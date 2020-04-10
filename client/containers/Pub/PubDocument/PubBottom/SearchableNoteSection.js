@@ -22,8 +22,11 @@ const SearchableNoteSection = (props) => {
 	const { communityData } = usePageContext();
 
 	const targetNoteElement = (fn) =>
-		viewNode &&
-		viewNode.querySelector(`*[data-node-type="${nodeType}"][data-count="${fn.number}"]`);
+		// TODO(ian): find a principled way to extract viewNode from Editor even when it doesn't
+		// dispatch an editorChangeObject (like when it's been loaded into history.)
+		(viewNode || document.body).querySelector(
+			`*[data-node-type="${nodeType}"][data-count="${fn.number}"]`,
+		);
 
 	return (
 		<PubBottomSection

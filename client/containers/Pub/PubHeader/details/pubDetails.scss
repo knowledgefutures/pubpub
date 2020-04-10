@@ -43,7 +43,7 @@
             & > :first-child {
                 padding-top: 8px;
             }
-            overflow: scroll;
+            overflow: auto;
         }
 
         .click-to-copy {
@@ -66,7 +66,7 @@
 
         .collections {
             .collection-list {
-                overflow: scroll;
+                overflow: auto;
                 .collection-list-entry {
                     display: block;
                     &:not(:last-child) {

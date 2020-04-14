@@ -69,9 +69,10 @@ const CollectionOverview = (props) => {
 		<DashboardFrame
 			className="collection-overview-component"
 			title="Overview"
+			icon={collectionSchema.bpDisplayIcon}
 			details={
 				<span>
-					This • {label} • collection was created on{' '}
+					This collection is a {label}. It was created on{' '}
 					<i>{dateFormat(activeCollection.createdAt, 'mmmm dd, yyyy')}</i> and now
 					contains:
 				</span>

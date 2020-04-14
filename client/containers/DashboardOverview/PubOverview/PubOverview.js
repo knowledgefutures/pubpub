@@ -121,6 +121,7 @@ const PubOverview = (props) => {
 				{pubData.attributions
 					.sort((a, b) => a.order - b.order)
 					.map((attribution) => {
+						const { affiliation } = attribution;
 						const { initials, fullName, avatar, slug } = attribution.user;
 						const roles = attribution.roles || [];
 						return (
@@ -130,16 +131,20 @@ const PubOverview = (props) => {
 									<div className="name">
 										<a href={`/user/${slug}`}>{fullName}</a>
 									</div>
-									<div className="affiliation">{attribution.affiliation}</div>
-									<div className="roles">
-										{roles.map((role) => {
-											return (
-												<Tag className="role" minimal>
-													{role}
-												</Tag>
-											);
-										})}
-									</div>
+									{affiliation && (
+										<div className="affiliation">{affiliation}</div>
+									)}
+									{roles.length > 0 && (
+										<div className="roles">
+											{roles.map((role) => {
+												return (
+													<Tag className="role" minimal>
+														{role}
+													</Tag>
+												);
+											})}
+										</div>
+									)}
 								</div>
 							</div>
 						);

@@ -85,6 +85,9 @@ $outer-padding: 26px;
 	.attribution-row {
 		display: flex;
 		margin-bottom: 1em;
+		.name {
+			line-height: 25px;
+		}
 		.details {
 			margin-left: 10px;
 			& > :not(:last-child) {

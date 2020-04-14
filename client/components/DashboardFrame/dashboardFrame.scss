@@ -4,6 +4,8 @@
     margin-bottom: 20px;
     .dashboard-header-left {
         .title {
+            display: flex;
+            align-items: center;
             .target-type {
                 font-weight: 400;
                 text-transform: capitalize;

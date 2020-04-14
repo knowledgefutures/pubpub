@@ -2,24 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { usePageContext } from 'utils/hooks';
 
+import { Icon } from 'components';
+
 require('./dashboardFrame.scss');
 
 const propTypes = {
-	className: PropTypes.string,
 	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
 	controls: PropTypes.node,
-	title: PropTypes.node,
 	details: PropTypes.node,
+	icon: PropTypes.string,
+	title: PropTypes.node,
 };
 const defaultProps = {
 	className: '',
-	title: undefined,
-	details: null,
 	controls: null,
+	details: null,
+	icon: null,
+	title: undefined,
 };
 
 const DashboardFrame = (props) => {
-	const { className, children, controls, details, title } = props;
+	const { className, children, controls, details, icon, title } = props;
 	const { scopeData } = usePageContext();
 	const {
 		elements: { activeTargetType },
@@ -30,7 +34,10 @@ const DashboardFrame = (props) => {
 			<div className="dashboard-content-header">
 				<div className="dashboard-header-left">
 					<div className="title">
-						<span className="target-type">{activeTargetType}</span> {title}
+						{icon && <Icon icon={icon} iconSize={24} />}
+						&nbsp;
+						<span className="target-type">{activeTargetType}</span>&nbsp;
+						{title}
 					</div>
 					{details && <div className="details">{details}</div>}
 				</div>

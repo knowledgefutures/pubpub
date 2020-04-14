@@ -113,14 +113,12 @@ const PubInlineMenu = (props) => {
 			<ClickToCopyButton
 				className="click-to-copy"
 				icon="clipboard"
-				copyString={
-					pubUrl(
-						communityData,
-						pubData,
-						pubData.activeBranch.shortId,
-						historyData.currentKey,
-					) + `?from=${selection.from}&to=${selection.to}`
-				}
+				copyString={pubUrl(communityData, pubData, {
+					isDraft: !pubData.isRelease,
+					releaseNumber: pubData.releaseNumber,
+					historyKey: historyData.currentKey,
+					query: { from: selection.from, to: selection.to },
+				})}
 				beforeCopyPrompt="Copy a permalink"
 			/>
 		</div>

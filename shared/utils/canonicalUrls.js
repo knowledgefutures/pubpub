@@ -21,30 +21,19 @@ export const communityUrl = (community) => {
 export const collectionUrl = (community, collection) =>
 	`${communityUrl(community)}/collection/${collection.id.slice(0, 8)}`;
 
-export const pubUrl = (community, pub, ...restArgs) => {
+export const pubUrl = (community, pub, options = {}) => {
 	let baseUrl = `${communityUrl(community)}/pub/${pub.slug}`;
-	if (restArgs.length === 1) {
-		const [{ isDraft, historyKey, releaseNumber, accessHash }] = restArgs;
-		if (isDraft) {
-			const appendedHistoryKey = historyKey !== undefined ? `/${historyKey}` : '';
-			baseUrl = `${baseUrl}/draft${appendedHistoryKey}`;
-		}
-		if (releaseNumber !== undefined) {
-			baseUrl = `${baseUrl}/release/${releaseNumber}`;
-		}
-		return queryString.stringifyUrl(
-			{ url: baseUrl, query: { access: accessHash } },
-			{ skipNull: true },
-		);
+	const { isDraft, historyKey, releaseNumber, accessHash, query } = options;
+	if (isDraft) {
+		const appendedHistoryKey = historyKey !== undefined ? `/${historyKey}` : '';
+		baseUrl = `${baseUrl}/draft${appendedHistoryKey}`;
+	} else if (releaseNumber !== undefined) {
+		baseUrl = `${baseUrl}/release/${releaseNumber}`;
 	}
-	// TODO(ian): this entire fallback condition should be removed with Releases.
-	const [branchShortId = null, versionInBranch = null] = restArgs;
-	if (branchShortId) {
-		return (
-			baseUrl + `/branch/${branchShortId}` + (versionInBranch ? `/${versionInBranch}` : '')
-		);
-	}
-	return baseUrl;
+	return queryString.stringifyUrl(
+		{ url: baseUrl, query: { access: accessHash, ...query } },
+		{ skipNull: true },
+	);
 };
 
 export const doiUrl = (doi) => `https://doi.org/${doi}`;

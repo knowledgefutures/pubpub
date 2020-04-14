@@ -1,13 +1,12 @@
 import { getScope } from '../utils/queryHelpers';
 
-export const getPermissions = async ({ userId, pubId, communityId, collectionId }) => {
+export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	if (!userId) {
 		return {};
 	}
 	const scopeData = await getScope({
 		communityId: communityId,
 		collectionId: collectionId,
-		pubId: pubId,
 		loginId: userId,
 	});
 	const isAuthenticated = scopeData.activePermissions.canManage;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 import { Button, Tag } from '@blueprintjs/core';
@@ -7,6 +7,8 @@ import { Avatar } from 'components';
 import { MenuButton } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
 
+import { permissionValues } from './permissionValues';
+import SelfDestructiveActionDialog from './SelfDestructiveActionDialog';
 import MemberPermissionPicker from './MemberPermissionPicker';
 
 require('./memberRow.scss');
@@ -14,6 +16,7 @@ require('./memberRow.scss');
 const propTypes = {
 	memberData: PropTypes.object.isRequired,
 	isInvitation: PropTypes.bool,
+	isOnlyMemberInScope: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 	onUpdate: PropTypes.func,
 	onDelete: PropTypes.func,
@@ -21,6 +24,7 @@ const propTypes = {
 
 const defaultProps = {
 	isInvitation: false,
+	isOnlyMemberInScope: false,
 	isReadOnly: false,
 	onUpdate: null,
 	onDelete: null,
@@ -114,15 +118,54 @@ const defaultProps = {
 // // - delete pubs
 
 const MemberRow = (props) => {
-	const { memberData, isInvitation, isReadOnly, onDelete, onUpdate } = props;
-	const user = memberData.user || { fullName: memberData.email, initials: '@' };
-	const { scopeData } = usePageContext();
+	const { memberData, isInvitation, isReadOnly, isOnlyMemberInScope, onDelete, onUpdate } = props;
+	const { scopeData, loginData } = usePageContext();
+	const [selfDestructiveAction, setSelfDestructiveAction] = useState(null);
 	const { activeTargetType } = scopeData.elements;
 	const { canAdmin } = scopeData.activePermissions;
-	const outOfPermissionRange = !canAdmin && memberData.permissions === 'admin';
 
-	const handleSetPermissions = (permissions) =>
+	const outOfPermissionRange = !canAdmin && memberData.permissions === 'admin';
+	const user = memberData.user || { fullName: memberData.email, initials: '@' };
+	const isSelfUser = user.id && loginData.id === user.id;
+	const isOnlyMemberInCommunity = activeTargetType === 'community' && isOnlyMemberInScope;
+
+	const setMemberPermissions = (permissions) =>
 		onUpdate(memberData, { permissions: permissions });
+
+	const deleteMember = () => onDelete(memberData);
+
+	const commitSelfDestructiveAction = () => {
+		if (selfDestructiveAction) {
+			Promise.resolve(selfDestructiveAction.onConfirm()).then(() => window.location.reload());
+		}
+	};
+
+	const cancelSelfDestructiveAction = () => setSelfDestructiveAction(null);
+
+	const handlePermissionsChange = (permissions) => {
+		const isDemotion =
+			permissionValues.indexOf(permissions) <
+			permissionValues.indexOf(memberData.permissions);
+		if (isSelfUser && isDemotion) {
+			setSelfDestructiveAction({
+				dialogType: 'demote',
+				onConfirm: () => setMemberPermissions(permissions),
+			});
+		} else {
+			setMemberPermissions(permissions);
+		}
+	};
+
+	const handleDeleteClick = () => {
+		if (isSelfUser) {
+			setSelfDestructiveAction({
+				dialogType: 'delete',
+				onConfirm: deleteMember,
+			});
+		} else {
+			deleteMember();
+		}
+	};
 
 	const renderControls = () => {
 		const permissionSelector = onUpdate && (
@@ -141,16 +184,16 @@ const MemberRow = (props) => {
 					activeTargetType={activeTargetType}
 					canAdmin={canAdmin}
 					activePermission={memberData.permissions}
-					onSelect={handleSetPermissions}
+					onSelect={handlePermissionsChange}
 				/>
 			</MenuButton>
 		);
 
-		const deleteButton = onDelete && (
+		const deleteButton = onDelete && !isOnlyMemberInCommunity && (
 			<Button
 				minimal
 				icon="cross"
-				onClick={() => onDelete(memberData)}
+				onClick={handleDeleteClick}
 				disabled={outOfPermissionRange}
 			/>
 		);
@@ -165,6 +208,15 @@ const MemberRow = (props) => {
 
 	return (
 		<div className="member-row-component">
+			{selfDestructiveAction && (
+				<SelfDestructiveActionDialog
+					key={`self-destructive-${selfDestructiveAction.dialogType}`}
+					isOpen={true}
+					dialogType={selfDestructiveAction.dialogType}
+					onConfirm={commitSelfDestructiveAction}
+					onCancel={cancelSelfDestructiveAction}
+				/>
+			)}
 			<Avatar
 				className={isInvitation ? 'invitation' : ''}
 				initials={user.initials}

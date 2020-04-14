@@ -16,7 +16,7 @@ export const useMembers = ({ members, updateMembers }) => {
 	};
 
 	const addMember = (user) => {
-		pendingPromise(api.addMember({ scopeIds: scopeIds, user: user })).then((member) =>
+		return pendingPromise(api.addMember({ scopeIds: scopeIds, user: user })).then((member) =>
 			updateMembers([member, ...members]),
 		);
 	};
@@ -30,7 +30,7 @@ export const useMembers = ({ members, updateMembers }) => {
 				return m;
 			}),
 		);
-		pendingPromise(
+		return pendingPromise(
 			api.updateMember({ member: member, update: update, scopeIds: scopeIds }),
 		).catch(() => {
 			updateMembers(
@@ -47,7 +47,7 @@ export const useMembers = ({ members, updateMembers }) => {
 	const removeMember = async (member) => {
 		const previousMembers = [...members];
 		updateMembers(members.filter((m) => m.id !== member.id));
-		pendingPromise(api.removeMember({ member: member, scopeIds: scopeIds })).catch(() =>
+		return pendingPromise(api.removeMember({ member: member, scopeIds: scopeIds })).catch(() =>
 			updateMembers(previousMembers),
 		);
 	};

@@ -108,6 +108,7 @@ const MembersOptions = (props) => {
 					return (
 						<MemberRow
 							memberData={member}
+							isOnlyMemberInScope={membersByType[activeTargetType].length === 1}
 							isReadOnly={!canManage}
 							onUpdate={updateMember}
 							onDelete={removeMember}

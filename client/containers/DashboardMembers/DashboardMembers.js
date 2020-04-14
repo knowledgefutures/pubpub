@@ -67,6 +67,7 @@ const DashboardMembers = (props) => {
 						<MemberRow
 							memberData={member}
 							isReadOnly={!canManage}
+							isOnlyMemberInScope={membersByType[activeTargetType].length === 1}
 							onUpdate={updateMember}
 							onDelete={removeMember}
 							key={member.id}

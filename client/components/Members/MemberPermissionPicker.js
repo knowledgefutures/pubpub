@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
+
+import { permissionValues } from './permissionValues';
 
 require('./memberPermissionPicker.scss');
 
@@ -64,7 +67,6 @@ const MemberPermissionPicker = (props) => {
 	const { activeTargetType, activePermission, onSelect, canAdmin } = props;
 	const { communityData } = usePageContext();
 	const activePrivileges = privileges[activeTargetType];
-	const permissionValues = ['view', 'edit', 'manage', 'admin'];
 	return (
 		<div className="member-permission-picker-component">
 			<style>{`.active .header-row .bp3-icon { background: ${communityData.accentColorDark}}`}</style>
@@ -91,9 +93,7 @@ const MemberPermissionPicker = (props) => {
 						key={value}
 						disabled={isDisabled}
 						type="button"
-						onClick={() => {
-							onSelect(value);
-						}}
+						onClick={() => onSelect(value)}
 					>
 						<div className="header-row">
 							<div>{value}</div>

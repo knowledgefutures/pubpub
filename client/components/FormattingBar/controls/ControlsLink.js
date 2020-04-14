@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-
 import PropTypes from 'prop-types';
 import { useDebounce } from 'use-debounce';
-import { cursor } from '@pubpub/editor';
+import { moveToEndOfSelection } from '@pubpub/editor';
 import { Button, AnchorButton, InputGroup } from '@blueprintjs/core';
 
 const propTypes = {
@@ -34,7 +33,7 @@ const ControlsLink = (props) => {
 
 	const restoreSelection = useCallback(() => {
 		view.focus();
-		cursor.moveToEndOfSelection(view);
+		moveToEndOfSelection(view);
 	}, [view]);
 
 	const handleKeyPress = (evt) => {

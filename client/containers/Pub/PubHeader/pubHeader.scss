@@ -1,23 +1,11 @@
 @import 'styles/variables.scss';
 @import './themes.scss';
 
-$mobile-cutoff-width: 500px;
-$smaller-screen-cutoff-width: 1000px;
 $header-margin-top: 0px;
 $header-margin-bottom: 26px;
+$header-margin-bottom-mobile: 13px;
 $header-margin-total: $header-margin-top + $header-margin-bottom;
-
-@mixin mobile {
-    @media only screen and (max-width: $mobile-cutoff-width) {
-        @content;
-    }
-}
-
-@mixin smaller-screen {
-    @media only screen and (max-width: $smaller-screen-cutoff-width) {
-        @content;
-    }
-}
+$header-margin-total-mobile: $header-margin-top + $header-margin-bottom-mobile;
 
 .pub-header-popover {
     z-index: 21;
@@ -25,24 +13,24 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
 
 .pub-header-main-component {
     display: grid;
-    grid-template-rows: 54px auto auto;
+
+    grid-template-rows: $top-bar-total-height auto auto;
     grid-template-columns: 1fr 120px;
     grid-template-areas:
         'top top'
-        'left right'
+        'middle-left middle-right'
         'bottom bottom';
 
     .pub-header-top-area {
         grid-area: top;
         display: flex;
         justify-content: space-between;
-        height: $top-bar-total-height;
 
         .basic-details {
             display: flex;
             flex-shrink: 0;
             align-items: center;
-            justify-content: right;
+            justify-content: flex-end;
             &:first-child {
                 width: 100%;
             }
@@ -80,7 +68,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     }
 
     .title-group-component {
-        grid-area: left;
+        grid-area: middle-left;
         padding-top: 20px;
         .byline {
             a,
@@ -91,7 +79,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     }
 
     .utility-buttons-component {
-        grid-area: right;
+        grid-area: middle-right;
         padding-top: 20px;
         & > * {
             width: 100%;
@@ -107,6 +95,57 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         margin-top: 35px;
         & > *:not(:last-child) {
             margin-right: 30px;
+        }
+    }
+
+    @include mobile {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            'top top'
+            'middle middle'
+            'bottom-left bottom-right';
+
+        .pub-header-top-area {
+            grid-area: top;
+
+            &.has-bottom-hairline {
+                border-bottom: none;
+            }
+            .show-details-placeholder {
+                display: none;
+            }
+            .basic-details {
+                display: none;
+            }
+        }
+
+        .title-group-component {
+            grid-area: middle;
+            padding-top: 0;
+        }
+
+        .draft-release-buttons-component {
+            display: none;
+            grid-area: bottom-left;
+        }
+
+        .utility-buttons-component {
+            display: flex;
+            justify-content: flex-end;
+            grid-area: bottom-right;
+            .small-header-button-component {
+                flex-basis: 0;
+                .label {
+                    display: none;
+                }
+            }
+            .cite-button {
+                display: none;
+            }
+            & > :not(:last-child) {
+                margin-bottom: 0;
+                margin-right: 5px;
+            }
         }
     }
 }
@@ -144,13 +183,12 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     h1 {
         margin: 0;
         font-size: 48px;
-        line-height: 68px;
+        line-height: 1.618em;
         font-weight: normal;
         font-family: $header-font;
         box-decoration-break: clone;
         @include smaller-screen {
             font-size: 32px;
-            line-height: 36px;
         }
     }
 
@@ -173,7 +211,6 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         position: relative;
         margin-top: $header-margin-top;
         margin-bottom: $header-margin-bottom;
-        height: calc(100% - #{$header-margin-total});
     }
 
     &.showing-details {
@@ -201,6 +238,19 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         letter-spacing: 0.5px;
     }
 
+    @include mobile {
+        h1 {
+            font-size: 30px;
+        }
+        .description {
+            font-size: 14px;
+        }
+        .byline {
+            font-size: 12px;
+            letter-spacing: unset;
+        }
+    }
+
     .bp3-editable-text {
         &:hover:before {
             box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
@@ -216,6 +266,12 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         ::placeholder {
             color: inherit;
             opacity: 0.75;
+        }
+    }
+
+    @include mobile {
+        .details-button {
+            display: none;
         }
     }
 }

@@ -11,13 +11,14 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		title: PropTypes.string,
 		description: PropTypes.string,
+		isRelease: PropTypes.bool,
 	}).isRequired,
 	updatePubData: PropTypes.func.isRequired,
 };
 
 const TitleGroup = (props) => {
 	const { pubData, updatePubData } = props;
-	const { title, description } = pubData;
+	const { title, description, isRelease } = pubData;
 	const { communityData, scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
 
@@ -53,7 +54,7 @@ const TitleGroup = (props) => {
 			<EditableHeaderText
 				text={title}
 				updateText={(text) => updatePubData({ title: text })}
-				canEdit={canManage}
+				canEdit={canManage && !isRelease}
 				className="title"
 				placeholder="Add a Pub title"
 			/>
@@ -61,13 +62,13 @@ const TitleGroup = (props) => {
 				<EditableHeaderText
 					text={description}
 					updateText={(text) => updatePubData({ description: text })}
-					canEdit={canManage}
+					canEdit={canManage && !isRelease}
 					tagName="h3"
 					className="description pub-header-themed-secondary"
 					placeholder="Add a description for this Pub"
 				/>
 			)}
-			<Byline pubData={pubData} renderSuffix={renderBylineEditor} />
+			<Byline pubData={pubData} renderSuffix={!isRelease && renderBylineEditor} />
 		</div>
 	);
 };

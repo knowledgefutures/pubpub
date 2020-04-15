@@ -28,13 +28,13 @@ const defaultProps = {
 };
 
 const UtilityButtons = (props) => {
-	const { pubData, updatePubData, pubHeadings, isRelease, showTocButton } = props;
-	const { membersData } = pubData;
+	const { pubData, updatePubData, pubHeadings, showTocButton } = props;
+	const { membersData, isRelease } = pubData;
 	const { communityData, scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
 	return (
 		<div className="utility-buttons-component">
-			{canManage && (
+			{canManage && !isRelease && (
 				<PopoverButton
 					component={PubThemePicker}
 					updatePubData={updatePubData}
@@ -78,7 +78,12 @@ const UtilityButtons = (props) => {
 				pubData={pubData}
 				aria-label="Cite this Pub"
 			>
-				<SmallHeaderButton label="Cite" labelPosition="left" icon="cite" />
+				<SmallHeaderButton
+					label="Cite"
+					className="cite-button"
+					labelPosition="left"
+					icon="cite"
+				/>
 			</PopoverButton>
 			{isRelease && (
 				<Social pubData={pubData}>

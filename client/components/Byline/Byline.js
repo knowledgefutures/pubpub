@@ -60,7 +60,7 @@ const Byline = (props) => {
 							</span>
 						);
 					})}
-					{renderSuffix()}
+					{renderSuffix && renderSuffix()}
 				</span>
 			</div>
 		);

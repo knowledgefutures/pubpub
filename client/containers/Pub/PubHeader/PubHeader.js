@@ -10,7 +10,7 @@ import { useSticky } from 'utils/useSticky';
 import { getTocHeadings } from './headerUtils';
 import PubDetails from './details';
 import PubHeaderBackground from './PubHeaderBackground';
-import PubHeaderMain from './PubHeaderMain';
+import PubHeaderContent from './PubHeaderContent';
 import SmallHeaderButton from './SmallHeaderButton';
 import PubHeaderSticky from './PubHeaderSticky';
 
@@ -84,7 +84,7 @@ const PubHeader = (props) => {
 		>
 			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
 				{!showingDetails && (
-					<PubHeaderMain
+					<PubHeaderContent
 						pubData={pubData}
 						updateLocalData={updateLocalData}
 						historyData={historyData}

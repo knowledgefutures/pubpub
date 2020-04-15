@@ -52,8 +52,8 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
     .pub-header-themed-secondary {
         color: $secondary-color;
     }
-    .hairline {
-        background-color: rgba($base-color, alpha($base-color) * 0.2);
+    .has-bottom-hairline {
+        border-bottom: 1px solid rgba($base-color, alpha($base-color) * 0.2);
     }
     .collections-bar-button-component {
         border-color: rgba($base-color, alpha($base-color) * 0.2);
@@ -150,8 +150,8 @@ $blueprint-style-btn-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2), inset 0 -1px
             @include blocks-button($background-color, $box-shadow, $highlight);
         }
     }
-    .hairline {
-        background-color: transparent;
+    .has-bottom-hairline {
+        border-bottom: 1px solid transparent;
     }
     .background-safety-layer {
         background-color: rgba($background-color, 0.5);

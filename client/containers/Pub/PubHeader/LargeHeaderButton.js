@@ -20,10 +20,13 @@ const propTypes = {
 		PropTypes.node,
 	]),
 	onClick: PropTypes.func,
-	outerLabel: PropTypes.shape({
-		top: PropTypes.node,
-		bottom: PropTypes.node,
-	}),
+	outerLabel: PropTypes.oneOfType([
+		PropTypes.shape({
+			top: PropTypes.node,
+			bottom: PropTypes.node,
+		}),
+		PropTypes.node,
+	]),
 	showCaret: PropTypes.bool,
 	tagName: PropTypes.string,
 };
@@ -54,6 +57,8 @@ const LargeHeaderButton = React.forwardRef((props, ref) => {
 		...restProps
 	} = props;
 	const hasStackedLabel = typeof label === 'object' && label.top && label.bottom;
+	const hasStackedOuterLabel =
+		typeof outerLabel === 'object' && outerLabel.top && outerLabel.bottom;
 	return (
 		<Button
 			disabled={disabled}
@@ -85,7 +90,8 @@ const LargeHeaderButton = React.forwardRef((props, ref) => {
 					</div>
 				)}
 			</div>
-			{outerLabel && (
+			{outerLabel && !hasStackedOuterLabel && <div className="outer-label">{outerLabel}</div>}
+			{hasStackedOuterLabel && (
 				<div className="outer-label">
 					<div className="top pub-header-themed-secondary">{outerLabel.top}</div>
 					<div className="bottom">{outerLabel.bottom}</div>

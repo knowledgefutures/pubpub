@@ -40,7 +40,7 @@ const PubTimeline = (props) => {
 	const draftItem = (canEdit || canEditDraft) && (
 		<TimelineItem
 			large
-			hollow={!hasDraftContent}
+			hollow={hasDraftContent}
 			icon="edit"
 			title="Pub draft"
 			subtitle={draftLastEditedNotice}
@@ -55,6 +55,7 @@ const PubTimeline = (props) => {
 	const renderReleaseItem = (release, number, isLatest = false) => {
 		return (
 			<TimelineItem
+				hollow
 				large={isLatest}
 				icon="document-open"
 				key={release.id}
@@ -97,7 +98,6 @@ const PubTimeline = (props) => {
 
 		return (
 			<TimelineItem
-				hollow
 				large
 				icon="document-open"
 				title={<i>No releases yet</i>}
@@ -125,6 +125,7 @@ const PubTimeline = (props) => {
 					.reverse()}
 			</TimelineCondenser>
 			<TimelineItem
+				hollow
 				large
 				title="Pub created"
 				subtitle={formatDate(pubData.createdAt, { includeTime: true })}

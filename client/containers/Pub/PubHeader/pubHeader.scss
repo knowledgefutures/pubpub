@@ -2,12 +2,19 @@
 @import './themes.scss';
 
 $mobile-cutoff-width: 500px;
+$smaller-screen-cutoff-width: 1000px;
 $header-margin-top: 0px;
 $header-margin-bottom: 26px;
 $header-margin-total: $header-margin-top + $header-margin-bottom;
 
 @mixin mobile {
     @media only screen and (max-width: $mobile-cutoff-width) {
+        @content;
+    }
+}
+
+@mixin smaller-screen {
+    @media only screen and (max-width: $smaller-screen-cutoff-width) {
         @content;
     }
 }
@@ -34,15 +41,8 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
             &:first-child {
                 width: 100%;
             }
-            @include mobile {
-                width: 100%;
-                justify-content: left;
-            }
             &:not(:first-child) {
                 margin-left: 20px;
-                @include mobile() {
-                    margin-left: 0px;
-                }
             }
             & > *:not(:last-child) {
                 margin-right: 45px;
@@ -80,9 +80,6 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
     & > .middle {
         margin-top: 20px;
         display: flex;
-        @include mobile {
-            flex-direction: column;
-        }
         & > .left {
             flex-grow: 1;
             .byline {
@@ -102,15 +99,6 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
                     margin-bottom: 12px;
                     @include mobile {
                         margin-bottom: 0;
-                    }
-                }
-            }
-            @include mobile {
-                display: flex;
-                .small-header-button-component {
-                    flex-direction: row;
-                    .label {
-                        display: none;
                     }
                 }
             }
@@ -162,7 +150,7 @@ $header-margin-total: $header-margin-top + $header-margin-bottom;
         font-weight: normal;
         font-family: $header-font;
         box-decoration-break: clone;
-        @include mobile {
+        @include smaller-screen() {
             font-size: 32px;
             line-height: 36px;
         }

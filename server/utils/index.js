@@ -5,6 +5,8 @@ import { resolve } from 'path';
 import amqplib from 'amqplib';
 import { remove as removeDiacritics } from 'diacritics';
 
+import { HTTPStatusError } from '../errors';
+
 export { getInitialData } from './initData';
 
 // export const checkIfSuperAdmin = (userId) => {
@@ -299,6 +301,13 @@ export const handleErrors = (req, res, next) => {
 			const customDomain = err.message.split(':')[1];
 			return res.redirect(`https://${customDomain}${req.originalUrl}`);
 		}
+
+		if (err instanceof HTTPStatusError) {
+			if (err.inRange(400)) {
+				return next();
+			}
+		}
+
 		if (
 			err.message === 'Page Not Found' ||
 			err.message === 'Pub Not Found' ||

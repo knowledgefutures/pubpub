@@ -5,7 +5,7 @@ import { getPDFDownload, getTextAbstract, getGoogleScholarNotes } from 'shared/p
 import { chooseCollectionForPub } from '../../client/utils/collections';
 import Html from '../Html';
 import app from '../server';
-import { HTTPStatusError } from '../errors';
+import { NotFoundError, ForbiddenError } from '../errors';
 import {
 	hostIsValid,
 	renderToNodeStream,
@@ -48,10 +48,6 @@ const renderPubDocument = (res, pubData, initialData) => {
 	);
 };
 
-const throwPubNotFoundError = () => {
-	throw new HTTPStatusError(404);
-};
-
 const getEnrichedAndSanitizedPubData = async ({
 	pubSlug,
 	historyKey,
@@ -61,11 +57,11 @@ const getEnrichedAndSanitizedPubData = async ({
 }) => {
 	let pubData = await getPub(pubSlug, initialData.communityData.id);
 	if (!pubData) {
-		throwPubNotFoundError();
+		throw new ForbiddenError();
 	}
 	pubData = await sanitizePub(pubData, initialData, releaseNumber);
 	if (!pubData) {
-		throwPubNotFoundError();
+		throw new ForbiddenError();
 	}
 	pubData = await enrichPubFirebaseDoc(pubData, historyKey, branchType);
 	pubData = await enrichPubFirebaseToken(pubData, initialData);
@@ -82,7 +78,7 @@ app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
 		const initialData = await getInitialData(req);
 		const releaseNumber = parseInt(releaseNumberString, 10);
 		if (Number.isNaN(releaseNumber)) {
-			throwPubNotFoundError();
+			throw new NotFoundError();
 		}
 
 		const pubData = await getEnrichedAndSanitizedPubData({
@@ -111,8 +107,12 @@ app.get(['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'], async (req, 
 		const historyKey = parseInt(historyKeyString, 10);
 		const isHistoryKeyInvalid = hasHistoryKey && Number.isNaN(historyKey);
 
-		if ((!canViewDraft && !canView) || isHistoryKeyInvalid) {
-			throwPubNotFoundError();
+		if (isHistoryKeyInvalid) {
+			throw new NotFoundError();
+		}
+
+		if (!canViewDraft && !canView) {
+			throw new NotFoundError();
 		}
 
 		const pubData = await Promise.all([

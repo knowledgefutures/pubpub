@@ -127,7 +127,6 @@ const MemberRow = (props) => {
 	const outOfPermissionRange = !canAdmin && memberData.permissions === 'admin';
 	const user = memberData.user || { fullName: memberData.email, initials: '@' };
 	const isSelfUser = user.id && loginData.id === user.id;
-	const isOnlyMemberInCommunity = activeTargetType === 'community' && isOnlyMemberInScope;
 
 	const setMemberPermissions = (permissions) =>
 		onUpdate(memberData, { permissions: permissions });
@@ -189,7 +188,7 @@ const MemberRow = (props) => {
 			</MenuButton>
 		);
 
-		const deleteButton = onDelete && !isOnlyMemberInCommunity && (
+		const deleteButton = onDelete && !isOnlyMemberInScope && (
 			<Button
 				minimal
 				icon="cross"

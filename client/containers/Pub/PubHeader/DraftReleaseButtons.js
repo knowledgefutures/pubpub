@@ -66,6 +66,7 @@ const DraftReleaseButtons = (props) => {
 					<ResponsiveHeaderButton
 						outerLabel="Contents"
 						simpleLabel="Contents"
+						labelPosition="right"
 						icon="toc"
 					/>
 				</PubToc>

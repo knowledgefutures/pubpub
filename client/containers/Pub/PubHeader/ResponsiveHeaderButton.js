@@ -11,17 +11,20 @@ const propTypes = {
 	simpleLabel: PropTypes.node,
 	showCaret: PropTypes.bool,
 	outerLabel: PropTypes.any,
+	labelPosition: PropTypes.string,
 };
 
 const defaultProps = {
 	simpleLabel: undefined,
 	showCaret: false,
 	outerLabel: undefined,
+	labelPosition: undefined,
 };
 
 const ResponsiveHeaderButton = React.forwardRef((props, ref) => {
-	const { outerLabel, showCaret, simpleLabel, ...sharedProps } = props;
+	const { labelPosition, outerLabel, showCaret, simpleLabel, ...sharedProps } = props;
 	const largeOnlyProps = { outerLabel: outerLabel, showCaret: showCaret };
+	const smallOnlyProps = { labelPosition: labelPosition };
 
 	const { viewportWidth } = useViewport();
 
@@ -38,7 +41,7 @@ const ResponsiveHeaderButton = React.forwardRef((props, ref) => {
 			/>
 		);
 	}
-	return <SmallHeaderButton {...sharedProps} label={simpleLabel} ref={ref} />;
+	return <SmallHeaderButton {...sharedProps} {...smallOnlyProps} label={simpleLabel} ref={ref} />;
 });
 
 ResponsiveHeaderButton.propTypes = propTypes;

@@ -71,7 +71,7 @@ const TitleGroup = (props) => {
 					placeholder="Add a description for this Pub"
 				/>
 			)}
-			<Byline pubData={pubData} renderSuffix={!isRelease && renderBylineEditor} />
+			<Byline pubData={pubData} renderSuffix={() => !isRelease && renderBylineEditor()} />
 			{publishedDate && (
 				<div className="published-date">
 					<span className="pub-header-themed-secondary">Published on</span>

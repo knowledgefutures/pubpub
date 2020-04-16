@@ -95,7 +95,7 @@ const PubHeaderContent = (props) => {
 			<DraftReleaseButtons
 				pubData={pubData}
 				historyData={historyData}
-				updatePubdata={updatePubData}
+				updatePubData={updatePubData}
 				updateHistoryData={updateHistoryData}
 				pubHeadings={pubHeadings}
 				showTocButton={isRelease}

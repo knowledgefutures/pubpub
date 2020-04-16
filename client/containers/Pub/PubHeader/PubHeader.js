@@ -6,8 +6,10 @@ import { getJSON } from '@pubpub/editor';
 import { GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'utils/useSticky';
+import { useViewport } from 'utils/useViewport';
 
 import { getTocHeadings } from './headerUtils';
+import { mobileViewportCutoff } from './constants';
 import PubDetails from './details';
 import PubHeaderBackground from './PubHeaderBackground';
 import PubHeaderContent from './PubHeaderContent';
@@ -57,7 +59,10 @@ const PubHeader = (props) => {
 	const { communityData } = usePageContext();
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState(null);
+	const { viewportWidth } = useViewport();
+
 	const pubHeadings = getPubHeadings(pubData, collabData);
+	const isMobile = viewportWidth <= mobileViewportCutoff;
 
 	useSticky({
 		isActive: sticky && headerRef.current,
@@ -68,7 +73,15 @@ const PubHeader = (props) => {
 	const toggleDetails = () => {
 		if (!showingDetails && headerRef.current) {
 			const boundingRect = headerRef.current.getBoundingClientRect();
-			setFixedHeight(boundingRect.height);
+			if (isMobile) {
+				// Fill the viewport with details
+				// +1px to take care of that pesky bottom border
+				const { top: bodyTop } = document.body.getBoundingClientRect();
+				setFixedHeight(1 + window.innerHeight - (boundingRect.top - bodyTop));
+			} else {
+				// Fix the height of the details to that of the main header content
+				setFixedHeight(boundingRect.height);
+			}
 		}
 		setShowingDetails(!showingDetails);
 	};
@@ -82,6 +95,8 @@ const PubHeader = (props) => {
 			style={fixedHeight && showingDetails ? { height: fixedHeight } : {}}
 			safetyLayer={showingDetails ? 'full-height' : 'enabled'}
 		>
+			{/* Hackity hack: don't let the body scroll while the details are scrolling */}
+			{isMobile && showingDetails && <style>{`body { overflow: hidden }`}</style>}
 			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
 				{!showingDetails && (
 					<PubHeaderContent
@@ -89,9 +104,16 @@ const PubHeader = (props) => {
 						updateLocalData={updateLocalData}
 						historyData={historyData}
 						pubHeadings={pubHeadings}
+						onShowHeaderDetails={toggleDetails}
 					/>
 				)}
-				{showingDetails && <PubDetails pubData={pubData} communityData={communityData} />}
+				{showingDetails && (
+					<PubDetails
+						pubData={pubData}
+						communityData={communityData}
+						onCloseHeaderDetails={toggleDetails}
+					/>
+				)}
 				<ToggleDetailsButton showingDetails={showingDetails} onClick={toggleDetails} />
 			</GridWrapper>
 			<PubHeaderSticky pubData={pubData} collabData={collabData} pubHeadings={pubHeadings} />

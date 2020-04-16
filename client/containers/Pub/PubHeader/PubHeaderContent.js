@@ -13,18 +13,19 @@ import TitleGroup from './TitleGroup';
 import UtilityButtons from './UtilityButtons';
 
 const propTypes = {
+	historyData: PropTypes.object.isRequired,
+	onShowHeaderDetails: PropTypes.func.isRequired,
 	pubData: PropTypes.shape({
 		doi: PropTypes.string,
 		isRelease: PropTypes.bool,
 		id: PropTypes.string.isRequired,
 	}).isRequired,
 	pubHeadings: PropTypes.array.isRequired,
-	historyData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
 
 const PubHeaderContent = (props) => {
-	const { historyData, pubData, pubHeadings, updateLocalData } = props;
+	const { historyData, onShowHeaderDetails, pubData, pubHeadings, updateLocalData } = props;
 	const { doi, isRelease } = pubData;
 	const { communityData } = usePageContext();
 	const publishedDate = getPubPublishedDate(pubData);
@@ -89,6 +90,7 @@ const PubHeaderContent = (props) => {
 				updatePubData={updateAndSavePubData}
 				pubHeadings={pubHeadings}
 				showTocButton={!isRelease}
+				onShowHeaderDetails={onShowHeaderDetails}
 			/>
 			<DraftReleaseButtons
 				pubData={pubData}

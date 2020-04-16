@@ -219,6 +219,9 @@ $mobile-bottom-buttons-spacing: 10px;
                     margin-bottom: 12px;
                 }
             }
+            .show-header-details-button {
+                display: none;
+            }
         }
 
         .draft-release-buttons-component {
@@ -308,6 +311,9 @@ $mobile-bottom-buttons-spacing: 10px;
                 }
                 .members-button {
                     display: none;
+                }
+                .show-header-details-button {
+                    display: flex;
                 }
                 & > :not(:last-child) {
                     margin-bottom: 0;

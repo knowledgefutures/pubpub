@@ -45,7 +45,12 @@ const CitationsPreview = (props) => {
 				>
 					Copy
 				</ClickToCopyButton>
-				<Button icon="more" minimal onClick={() => setCitationModalOpen(true)}>
+				<Button
+					className="more-cite-options-button"
+					icon="more"
+					minimal
+					onClick={() => setCitationModalOpen(true)}
+				>
 					More Cite Options
 				</Button>
 			</ButtonGroup>

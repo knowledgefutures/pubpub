@@ -1,6 +1,13 @@
+@import '../themes.scss';
+
 .pub-contributors_contributor-component {
     display: flex;
     margin-bottom: 20px;
+
+    @include mobile {
+        margin-bottom: 10px;
+    }
+
     .avatar-wrapper {
         flex-shrink: 0;
         z-index: 0;
@@ -23,6 +30,9 @@
             a:hover,
             a:visited {
                 color: inherit;
+            }
+            &:first-child:last-child {
+                line-height: 30px; // Center w.r.t. avatar
             }
         }
     }

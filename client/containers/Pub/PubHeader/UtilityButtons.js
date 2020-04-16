@@ -13,6 +13,7 @@ import SmallHeaderButton from './SmallHeaderButton';
 import Social from './Social';
 
 const propTypes = {
+	onShowHeaderDetails: PropTypes.func.isRequired,
 	pubData: PropTypes.shape({
 		membersData: PropTypes.shape({}),
 		slug: PropTypes.string,
@@ -28,12 +29,17 @@ const defaultProps = {
 };
 
 const UtilityButtons = (props) => {
-	const { pubData, updatePubData, pubHeadings, showTocButton } = props;
+	const { onShowHeaderDetails, pubData, pubHeadings, showTocButton, updatePubData } = props;
 	const { membersData, isRelease } = pubData;
 	const { communityData, scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
 	return (
 		<div className="utility-buttons-component">
+			<SmallHeaderButton
+				className="show-header-details-button"
+				icon="info-sign"
+				onClick={onShowHeaderDetails}
+			/>
 			{canManage && !isRelease && (
 				<PopoverButton
 					component={PubThemePicker}

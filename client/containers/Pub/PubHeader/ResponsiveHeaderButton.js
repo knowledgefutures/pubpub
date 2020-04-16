@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 
 import { useViewport } from 'utils/useViewport';
 
+import { mobileViewportCutoff } from './constants';
 import LargeHeaderButton from './LargeHeaderButton';
 import SmallHeaderButton from './SmallHeaderButton';
-
-// Keep this in sync with $mobile-viewport-cutoff in the styles
-const mobileViewportCutoff = 750;
 
 const propTypes = {
 	simpleLabel: PropTypes.node,

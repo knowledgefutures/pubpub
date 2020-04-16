@@ -192,6 +192,24 @@ $off-black: #333;
     $box-shadow: 0px 0px 8px rgba(black, 0.05);
     @include color-theme(white, $off-white);
     @include translucent-box-theme(white, $box-shadow);
+
+    .bp3-editable-text {
+        &:hover:before {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
+                inset 0 0 0 1px rgba(247, 252, 255, 0.54);
+            background-color: transparent;
+        }
+        &.bp3-editable-text-editing:before {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
+                inset 0 0 0 1px rgba(247, 252, 255, 0.54);
+            background-color: rgba(0, 0, 0, 0.35);
+        }
+        &.bp3-editable-text-placeholder > .bp3-editable-text-content,
+        ::placeholder {
+            color: inherit;
+            opacity: 0.75;
+        }
+    }
 }
 
 .pub-header-theme-dark {
@@ -200,12 +218,12 @@ $off-black: #333;
 
     @mixin when-hovered {
         background: $hover-background;
-        border: 1.5px solid $hover-background;
+        border: 1px solid $hover-background;
         @include shadow-box-hover();
     }
 
     .pub-header-themed-box {
-        border: 1.5px solid $accent;
+        border: 1px solid $accent;
         box-sizing: border-box;
         &.active {
             border: 3px solid $accent;

@@ -160,8 +160,12 @@ $off-black: #333;
     .byline {
         margin-bottom: 0;
     }
-    .title-group-component .published-date {
+    &.pub-header-component .pub-header-content-component .title-group-component .published-date {
+        display: inline-flex;
         justify-content: flex-start;
+        & > :first-child {
+            margin-right: 1em;
+        }
     }
     .small-header-button-component:not(.details-button) {
         @include blocks-button($background-color, $box-shadow, $highlight);

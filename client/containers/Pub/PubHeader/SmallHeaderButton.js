@@ -12,8 +12,8 @@ const propTypes = {
 	disabled: PropTypes.bool,
 	href: PropTypes.string,
 	icon: PropTypes.string.isRequired,
-	label: PropTypes.string.isRequired,
-	labelPosition: PropTypes.oneOf(['left', 'right']).isRequired,
+	label: PropTypes.string,
+	labelPosition: PropTypes.oneOf(['left', 'right']),
 	onClick: PropTypes.func,
 	tagName: PropTypes.string,
 };
@@ -22,8 +22,10 @@ const defaultProps = {
 	className: '',
 	disabled: false,
 	href: null,
+	label: null,
 	onClick: null,
 	tagName: 'button',
+	labelPosition: 'left',
 };
 
 const SmallHeaderButton = React.forwardRef((props, ref) => {

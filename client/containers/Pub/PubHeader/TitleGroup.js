@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import { Byline, DialogLauncher, PubAttributionDialog } from 'components';
 import { usePageContext } from 'utils/hooks';
+import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { formatDate } from 'shared/utils/dates';
 
 import BylineEditButton from './BylineEditButton';
 import EditableHeaderText from './EditableHeaderText';
@@ -21,6 +23,7 @@ const TitleGroup = (props) => {
 	const { title, description, isRelease } = pubData;
 	const { communityData, scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
+	const publishedDate = getPubPublishedDate(pubData);
 
 	const renderBylineEditor = () => {
 		if (!canManage) {
@@ -69,6 +72,12 @@ const TitleGroup = (props) => {
 				/>
 			)}
 			<Byline pubData={pubData} renderSuffix={!isRelease && renderBylineEditor} />
+			{publishedDate && (
+				<div className="published-date">
+					<span className="pub-header-themed-secondary">Published on</span>
+					<span>{formatDate(publishedDate)}</span>
+				</div>
+			)}
 		</div>
 	);
 };

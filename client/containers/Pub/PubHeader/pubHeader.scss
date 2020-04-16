@@ -6,150 +6,13 @@ $header-margin-bottom: 26px;
 $header-margin-bottom-mobile: 13px;
 $header-margin-total: $header-margin-top + $header-margin-bottom;
 $header-margin-total-mobile: $header-margin-top + $header-margin-bottom-mobile;
+$title-elements-spacing: 15px;
+$mobile-bottom-buttons-padding-top: 15px;
+$mobile-bottom-buttons-spacing: 10px;
 
 .pub-header-popover {
     z-index: 21;
 }
-
-.pub-header-main-component {
-    display: grid;
-
-    grid-template-rows: $top-bar-total-height auto auto;
-    grid-template-columns: 1fr 120px;
-    grid-template-areas:
-        'top top'
-        'middle-left middle-right'
-        'bottom bottom';
-
-    .pub-header-top-area {
-        grid-area: top;
-        display: flex;
-        justify-content: space-between;
-
-        .basic-details {
-            display: flex;
-            flex-shrink: 0;
-            align-items: center;
-            justify-content: flex-end;
-            &:first-child {
-                width: 100%;
-            }
-            &:not(:first-child) {
-                margin-left: 20px;
-            }
-            & > *:not(:last-child) {
-                margin-right: 45px;
-            }
-            .metadata-pair {
-                & > :first-child {
-                    margin-right: 10px;
-                }
-                white-space: nowrap;
-                display: flex;
-                align-items: center;
-            }
-            .doi-pair {
-                @media only screen and (max-width: 1000px) {
-                    display: none;
-                }
-            }
-            .click-to-copy {
-                .bp3-button {
-                    color: inherit;
-                }
-            }
-            .details-button {
-                width: 120px;
-            }
-        }
-        .show-details-placeholder {
-            width: 120px;
-        }
-    }
-
-    .title-group-component {
-        grid-area: middle-left;
-        padding-top: 20px;
-        .byline {
-            a,
-            a:visited {
-                color: inherit !important;
-            }
-        }
-    }
-
-    .utility-buttons-component {
-        grid-area: middle-right;
-        padding-top: 20px;
-        & > * {
-            width: 100%;
-            &:not(:last-child) {
-                margin-bottom: 12px;
-            }
-        }
-    }
-
-    .draft-release-buttons-component {
-        grid-area: bottom;
-        display: flex;
-        margin-top: 35px;
-        & > *:not(:last-child) {
-            margin-right: 30px;
-        }
-    }
-
-    @include mobile {
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-            'top top'
-            'middle middle'
-            'bottom-left bottom-right';
-
-        .pub-header-top-area {
-            grid-area: top;
-
-            &.has-bottom-hairline {
-                border-bottom: none;
-            }
-            .show-details-placeholder {
-                display: none;
-            }
-            .basic-details {
-                display: none;
-            }
-        }
-
-        .title-group-component {
-            grid-area: middle;
-            padding-top: 0;
-        }
-
-        .draft-release-buttons-component {
-            display: none;
-            grid-area: bottom-left;
-        }
-
-        .utility-buttons-component {
-            display: flex;
-            justify-content: flex-end;
-            grid-area: bottom-right;
-            .small-header-button-component {
-                flex-basis: 0;
-                .label {
-                    display: none;
-                }
-            }
-            .cite-button {
-                display: none;
-            }
-            & > :not(:last-child) {
-                margin-bottom: 0;
-                margin-right: 5px;
-            }
-        }
-    }
-}
-
 .pub-header-component {
     position: relative;
     z-index: 20;
@@ -211,6 +74,9 @@ $header-margin-total-mobile: $header-margin-top + $header-margin-bottom-mobile;
         position: relative;
         margin-top: $header-margin-top;
         margin-bottom: $header-margin-bottom;
+        @include mobile {
+            margin-bottom: $header-margin-bottom-mobile;
+        }
     }
 
     &.showing-details {
@@ -221,7 +87,7 @@ $header-margin-total-mobile: $header-margin-top + $header-margin-bottom-mobile;
     }
 
     .description {
-        padding-top: 15px;
+        padding-top: $title-elements-spacing;
         margin: 0;
         font-size: 18px;
         font-weight: normal;
@@ -229,7 +95,7 @@ $header-margin-total-mobile: $header-margin-top + $header-margin-bottom-mobile;
     }
 
     .byline {
-        padding-top: 15px;
+        padding-top: $title-elements-spacing;
         margin: 0;
         font-size: 18px;
         font-style: italic;
@@ -240,14 +106,17 @@ $header-margin-total-mobile: $header-margin-top + $header-margin-bottom-mobile;
 
     @include mobile {
         h1 {
-            font-size: 30px;
+            font-size: 24px;
         }
         .description {
             font-size: 14px;
         }
         .byline {
-            font-size: 12px;
+            font-size: 14px;
             letter-spacing: unset;
+        }
+        .details-button {
+            display: none;
         }
     }
 
@@ -269,9 +138,180 @@ $header-margin-total-mobile: $header-margin-top + $header-margin-bottom-mobile;
         }
     }
 
+    .pub-header-content-component {
+        display: grid;
+        grid-template-rows: $top-bar-total-height auto auto;
+        grid-template-columns: 1fr 120px;
+        grid-template-areas:
+            'top top'
+            'middle-left middle-right'
+            'bottom bottom';
+
+        .pub-header-top-area {
+            grid-area: top;
+            display: flex;
+            justify-content: space-between;
+
+            .basic-details {
+                display: flex;
+                flex-shrink: 0;
+                align-items: center;
+                justify-content: flex-end;
+                &:first-child {
+                    width: 100%;
+                }
+                &:not(:first-child) {
+                    margin-left: 20px;
+                }
+                & > *:not(:last-child) {
+                    margin-right: 45px;
+                }
+                .metadata-pair {
+                    & > :first-child {
+                        margin-right: 10px;
+                    }
+                    white-space: nowrap;
+                    display: flex;
+                    align-items: center;
+                }
+                .doi-pair {
+                    @media only screen and (max-width: 1000px) {
+                        display: none;
+                    }
+                }
+                .click-to-copy {
+                    .bp3-button {
+                        color: inherit;
+                    }
+                }
+                .details-button {
+                    width: 120px;
+                }
+            }
+            .show-details-placeholder {
+                width: 120px;
+            }
+        }
+
+        .title-group-component {
+            grid-area: middle-left;
+            padding-top: 20px;
+            .byline {
+                a,
+                a:visited {
+                    color: inherit !important;
+                }
+            }
+            .published-date {
+                margin-top: $title-elements-spacing;
+                display: none;
+            }
+        }
+
+        .utility-buttons-component {
+            grid-area: middle-right;
+            padding-top: 20px;
+            & > * {
+                width: 100%;
+                &:not(:last-child) {
+                    margin-bottom: 12px;
+                }
+            }
+        }
+
+        .draft-release-buttons-component {
+            grid-area: bottom;
+            display: flex;
+            margin-top: 35px;
+            & > *:not(:last-child) {
+                margin-right: 30px;
+            }
+        }
+    }
+
     @include mobile {
-        .details-button {
-            display: none;
+        &:not(.pub-header-theme-white-blocks):not(.pub-header-theme-black-blocks) {
+            .title-group-component {
+                padding-top: 0;
+            }
+
+            .small-header-button-component .icon-container {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        .pub-header-content-component {
+            grid-template-rows: min-content auto auto;
+            grid-template-columns: 1fr 1fr;
+            grid-template-areas:
+                'top top'
+                'middle middle'
+                'bottom-left bottom-right';
+
+            .pub-header-top-area {
+                grid-area: top;
+                height: unset;
+                padding-top: 12px;
+                padding-bottom: 10px;
+
+                &.has-bottom-hairline {
+                    border-bottom: none;
+                }
+                .show-details-placeholder {
+                    display: none;
+                }
+                .basic-details {
+                    display: none;
+                }
+                .collections-bar-button-component {
+                    font-size: 12px;
+                }
+            }
+
+            .title-group-component {
+                grid-area: middle;
+                .published-date {
+                    display: flex;
+                    justify-content: space-between;
+                }
+            }
+
+            .draft-release-buttons-component {
+                grid-area: bottom-left;
+                margin-top: 0;
+                padding-top: $mobile-bottom-buttons-padding-top;
+                & > :not(:last-child) {
+                    margin-right: $mobile-bottom-buttons-spacing;
+                }
+                .draft-history-button {
+                    display: none;
+                }
+            }
+
+            .utility-buttons-component {
+                display: flex;
+                justify-content: flex-end;
+                grid-area: bottom-right;
+                padding-top: $mobile-bottom-buttons-padding-top;
+
+                .small-header-button-component {
+                    flex-basis: 0;
+                    .label {
+                        display: none;
+                    }
+                }
+                .cite-button {
+                    display: none;
+                }
+                .members-button {
+                    display: none;
+                }
+                & > :not(:last-child) {
+                    margin-bottom: 0;
+                    margin-right: $mobile-bottom-buttons-spacing;
+                }
+            }
         }
     }
 }

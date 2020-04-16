@@ -61,6 +61,7 @@ const UtilityButtons = (props) => {
 							label="Sharing"
 							labelPosition="left"
 							icon="people"
+							className="members-button"
 							onClick={openDialog}
 						/>
 					)}

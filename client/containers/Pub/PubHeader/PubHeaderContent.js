@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import dateFormat from 'dateformat';
 
-import { apiFetch } from 'utils';
-import { usePageContext } from 'utils/hooks';
-import { ClickToCopyButton } from 'components';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { formatDate } from 'shared/utils/dates';
+import { ClickToCopyButton } from 'components';
+import { usePageContext } from 'utils/hooks';
+import { apiFetch } from 'utils';
 
 import CollectionsBar from './collections/CollectionsBar';
 import DraftReleaseButtons from './DraftReleaseButtons';
@@ -59,11 +59,7 @@ const PubHeaderContent = (props) => {
 						{publishedDate && (
 							<b className="pub-header-themed-secondary">Published on</b>
 						)}
-						{publishedDate ? (
-							dateFormat(publishedDate, 'mmm dd, yyyy')
-						) : (
-							<i>Unpublished</i>
-						)}
+						{publishedDate ? formatDate(publishedDate) : <i>Unpublished</i>}
 					</span>
 					{doi && (
 						<span className="metadata-pair doi-pair">
@@ -85,7 +81,7 @@ const PubHeaderContent = (props) => {
 	};
 
 	return (
-		<div className="pub-header-main-component">
+		<div className="pub-header-content-component">
 			{renderTop()}
 			<TitleGroup pubData={pubData} updatePubData={updateAndSavePubData} />
 			<UtilityButtons

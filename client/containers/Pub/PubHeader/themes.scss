@@ -127,7 +127,8 @@ $off-black: #333;
 @mixin blocks-box-theme($background-color, $highlight) {
     $box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.1);
     .text-wrapper,
-    .bp3-editable-text-content {
+    .bp3-editable-text-content,
+    .title-group-component .published-date {
         /* Ways of accomplishing this effect: */
         /* https://css-tricks.com/multi-line-padded-text/ */
         display: inline;
@@ -135,6 +136,9 @@ $off-black: #333;
         padding: 2px 20px;
         box-decoration-break: clone;
         box-shadow: $box-shadow;
+        @include mobile {
+            padding: 2px 10px;
+        }
     }
     .pub-header-themed-box {
         border-radius: 0;
@@ -147,14 +151,18 @@ $off-black: #333;
         overflow: hidden;
         @include blocks-button($background-color, $box-shadow, $highlight);
         .outer-label {
-            margin-right: 20px;
+            margin-left: 0;
+            margin-right: 15px;
         }
     }
     .description,
     .byline {
         margin-bottom: 0;
     }
-    .small-header-button-component {
+    .title-group-component .published-date {
+        justify-content: flex-start;
+    }
+    .small-header-button-component:not(.details-button) {
         @include blocks-button($background-color, $box-shadow, $highlight);
     }
     .has-bottom-hairline {
@@ -187,18 +195,15 @@ $off-black: #333;
 
     @mixin when-hovered {
         background: $hover-background;
-        @include shadow-box(0px 0px 0px 1px $hover-background);
-        &.active {
-            box-shadow: none;
-        }
+        border: 1.5px solid $hover-background;
         @include shadow-box-hover();
     }
 
     .pub-header-themed-box {
-        $box-shadow: 0px 0px 0px 1px $accent;
-        @include shadow-box($box-shadow);
+        border: 1.5px solid $accent;
+        box-sizing: border-box;
         &.active {
-            @include shadow-box(0px 0px 0px 3px $accent);
+            border: 3px solid $accent;
         }
     }
     .pub-header-themed-box-hover-target {

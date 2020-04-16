@@ -56,9 +56,8 @@ const LargeHeaderButton = React.forwardRef((props, ref) => {
 		tagName,
 		...restProps
 	} = props;
-	const hasStackedLabel = typeof label === 'object' && label.top && label.bottom;
-	const hasStackedOuterLabel =
-		typeof outerLabel === 'object' && outerLabel.top && outerLabel.bottom;
+	const hasStackedLabel = label && label.top && label.bottom;
+	const hasStackedOuterLabel = outerLabel && outerLabel.top && outerLabel.bottom;
 	return (
 		<Button
 			disabled={disabled}

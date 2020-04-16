@@ -8,7 +8,7 @@ import { Menu, MenuItem } from 'components/Menu';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import { formatDate } from 'shared/utils/dates';
 
-import LargeHeaderButton from './LargeHeaderButton';
+import ResponsiveHeaderButton from './ResponsiveHeaderButton';
 import PubToc from './PubToc';
 
 const propTypes = {
@@ -63,7 +63,11 @@ const DraftReleaseButtons = (props) => {
 		if (pubHeadings.length > 0 && showTocButton) {
 			return (
 				<PubToc headings={pubHeadings} placement="bottom-start">
-					<LargeHeaderButton outerLabel="Contents" icon="toc" />
+					<ResponsiveHeaderButton
+						outerLabel="Contents"
+						simpleLabel="Contents"
+						icon="toc"
+					/>
 				</PubToc>
 			);
 		}
@@ -76,7 +80,7 @@ const DraftReleaseButtons = (props) => {
 		return (
 			<>
 				{canEdit && (
-					<LargeHeaderButton
+					<ResponsiveHeaderButton
 						icon="edit"
 						tagName="a"
 						href={pubUrl(communityData, pubData, { isDraft: true })}
@@ -89,7 +93,7 @@ const DraftReleaseButtons = (props) => {
 				<Menu
 					aria-label="Choose a historical release of this Pub"
 					disclosure={
-						<LargeHeaderButton
+						<ResponsiveHeaderButton
 							icon="history"
 							showCaret={true}
 							outerLabel={getHistoryButtonLabelForTimestamp(
@@ -127,8 +131,9 @@ const DraftReleaseButtons = (props) => {
 			latestRelease.sourceBranchKey < latestKey;
 		return (
 			<>
-				<LargeHeaderButton
+				<ResponsiveHeaderButton
 					icon="history"
+					className="draft-history-button"
 					active={historyData.isViewingHistory}
 					outerLabel={getHistoryButtonLabelForTimestamp(
 						latestTimestamp,
@@ -143,8 +148,8 @@ const DraftReleaseButtons = (props) => {
 					}
 				/>
 				{!!latestRelease && (
-					<LargeHeaderButton
-						icon="document-open"
+					<ResponsiveHeaderButton
+						icon="globe"
 						tagName="a"
 						href={pubUrl(communityData, pubData)}
 						outerLabel={{ bottom: 'view latest release', top: 'see published version' }}
@@ -153,9 +158,9 @@ const DraftReleaseButtons = (props) => {
 				{canAdmin && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
-							<LargeHeaderButton
+							<ResponsiveHeaderButton
 								disabled={!canRelease}
-								icon="globe"
+								icon="document-open"
 								onClick={openDialog}
 								label={{ bottom: 'Create a Release', top: 'Publish' }}
 							/>
@@ -176,7 +181,7 @@ const DraftReleaseButtons = (props) => {
 				{!canAdmin && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
-							<LargeHeaderButton
+							<ResponsiveHeaderButton
 								disabled={!canRelease}
 								icon="social-media"
 								onClick={openDialog}

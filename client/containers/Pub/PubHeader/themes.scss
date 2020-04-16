@@ -1,5 +1,5 @@
-$mobile-cutoff-width: 500px;
-$smaller-screen-cutoff-width: 1000px;
+$mobile-viewport-cutoff: 750px;
+$smaller-viewport-cutoff: 1000px;
 
 $top-bar-total-height: 54px;
 
@@ -7,13 +7,13 @@ $off-white: #cfcfcf;
 $off-black: #333;
 
 @mixin mobile {
-    @media only screen and (max-width: $mobile-cutoff-width) {
+    @media only screen and (max-width: $mobile-viewport-cutoff) {
         @content;
     }
 }
 
-@mixin smaller-screen {
-    @media only screen and (max-width: $smaller-screen-cutoff-width) {
+@mixin smaller-viewport {
+    @media only screen and (max-width: $smaller-viewport-cutoff) {
         @content;
     }
 }

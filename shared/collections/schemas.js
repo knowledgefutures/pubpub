@@ -119,5 +119,5 @@ export const getSchemaForKind = (kind) => {
 	if (result) {
 		return result;
 	}
-	throw new Error(`No collection schema of kind ${kind} has been defined`);
+	return null;
 };

@@ -25,7 +25,7 @@ $mobile-bottom-buttons-spacing: 10px;
 
     &.js-is-sticky,
     &.js-is-stuck {
-        .pub-header-main-component {
+        .pub-header-content-component {
             opacity: 0;
         }
         .pub-header-sticky-component {
@@ -46,11 +46,11 @@ $mobile-bottom-buttons-spacing: 10px;
     h1 {
         margin: 0;
         font-size: 48px;
-        line-height: 1.618em;
+        line-height: 1.5em;
         font-weight: normal;
         font-family: $header-font;
         box-decoration-break: clone;
-        @include smaller-screen {
+        @include smaller-viewport {
             font-size: 32px;
         }
     }
@@ -139,6 +139,7 @@ $mobile-bottom-buttons-spacing: 10px;
     }
 
     .pub-header-content-component {
+        overflow: hidden;
         display: grid;
         grid-template-rows: $top-bar-total-height auto auto;
         grid-template-columns: 1fr 120px;
@@ -148,6 +149,7 @@ $mobile-bottom-buttons-spacing: 10px;
             'bottom bottom';
 
         .pub-header-top-area {
+            overflow: hidden;
             grid-area: top;
             display: flex;
             justify-content: space-between;

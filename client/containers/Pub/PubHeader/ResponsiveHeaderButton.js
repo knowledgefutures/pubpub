@@ -6,6 +6,9 @@ import { useViewport } from 'utils/useViewport';
 import LargeHeaderButton from './LargeHeaderButton';
 import SmallHeaderButton from './SmallHeaderButton';
 
+// Keep this in sync with $mobile-viewport-cutoff in the styles
+const mobileViewportCutoff = 750;
+
 const propTypes = {
 	simpleLabel: PropTypes.node,
 	showCaret: PropTypes.bool,
@@ -27,7 +30,7 @@ const ResponsiveHeaderButton = React.forwardRef((props, ref) => {
 	if (viewportWidth === null) {
 		return null;
 	}
-	if (viewportWidth > 500) {
+	if (viewportWidth > mobileViewportCutoff) {
 		return (
 			<LargeHeaderButton
 				{...sharedProps}

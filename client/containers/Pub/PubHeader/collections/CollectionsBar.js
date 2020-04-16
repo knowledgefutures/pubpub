@@ -5,6 +5,7 @@ import { OverflowList } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { chooseCollectionForPub } from 'utils/collections';
 import { collectionUrl } from 'shared/utils/canonicalUrls';
+import { getSchemaForKind } from 'shared/collections/schemas';
 import { usePageContext } from 'utils/hooks';
 import { Menu, MenuItem } from 'components/Menu';
 
@@ -70,6 +71,7 @@ const CollectionsBar = (props) => {
 						: 'more';
 					return (
 						<Menu
+							placement="bottom-end"
 							aria-label={overflowCollections.length + ' ' + label}
 							disclosure={
 								<CollectionsBarButton icon={icon} rightIcon={rightIcon}>
@@ -77,13 +79,17 @@ const CollectionsBar = (props) => {
 								</CollectionsBarButton>
 							}
 						>
-							{overflowCollections.map(({ collection }) => (
-								<MenuItem
-									key={collection.id}
-									text={collection.title}
-									href={collectionUrl(communityData, collection)}
-								/>
-							))}
+							{overflowCollections.map(({ collection }) => {
+								const schema = getSchemaForKind(collection.kind);
+								return (
+									<MenuItem
+										icon={schema && schema.bpDisplayIcon}
+										key={collection.id}
+										text={collection.title}
+										href={collectionUrl(communityData, collection)}
+									/>
+								);
+							})}
 						</Menu>
 					);
 				}}

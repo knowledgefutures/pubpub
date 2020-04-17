@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Icon, Classes } from '@blueprintjs/core';
+import { Classes } from '@blueprintjs/core';
 import * as RK from 'reakit/Menu';
+
+import { Icon } from 'components';
 
 import { MenuContext } from './menuContexts';
 import { Menu } from './Menu';
@@ -15,6 +17,7 @@ const sharedPropTypes = {
 	onClick: PropTypes.func,
 	rightElement: PropTypes.node,
 	target: PropTypes.string,
+	textClassName: PropTypes.string,
 };
 
 const sharedDefaultProps = {
@@ -25,6 +28,7 @@ const sharedDefaultProps = {
 	onClick: null,
 	rightElement: null,
 	target: '_self',
+	textClassName: '',
 };
 
 const DisplayMenuItem = React.forwardRef((props, ref) => {
@@ -33,13 +37,14 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 		children,
 		className,
 		disabled,
-		href,
-		target,
-		icon,
 		hasSubmenu,
+		href,
+		icon,
 		onClick,
 		onDismiss,
 		rightElement,
+		target,
+		textClassName,
 		...restProps
 	} = props;
 
@@ -72,7 +77,13 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 				)}
 			>
 				{icon && (typeof icon === 'string' ? <Icon icon={icon} /> : icon)}
-				<div className={classNames(Classes.TEXT_OVERFLOW_ELLIPSIS, Classes.FILL)}>
+				<div
+					className={classNames(
+						Classes.TEXT_OVERFLOW_ELLIPSIS,
+						Classes.FILL,
+						textClassName,
+					)}
+				>
 					{children}
 				</div>
 				{label && <span className={Classes.MENU_ITEM_LABEL}>{label}</span>}

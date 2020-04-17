@@ -1,5 +1,6 @@
-import { isDuqDuq } from 'shared/utils/environment';
+import queryString from 'query-string';
 
+import { isDuqDuq } from 'shared/utils/environment';
 import app from '../server';
 import { Community, Pub, Release, Branch } from '../models';
 import { hostIsValid, handleErrors } from '../utils';
@@ -56,10 +57,14 @@ app.get('/pub/:slug', async (req, res, next) => {
 		if (!pubData) {
 			throw new Error('Pub Not Found');
 		}
-		if (pubData.releases && pubData.releases.length) {
-			return res.redirect(`${prefix}/release/${pubData.releases.length}`);
-		}
-		return res.redirect(`${prefix}/draft`);
+
+		const baseUrl =
+			pubData.releases && pubData.releases.length
+				? `${prefix}/release/${pubData.releases.length}`
+				: `${prefix}/draft`;
+
+		const redirectUrl = queryString.stringifyUrl({ url: baseUrl, query: req.query });
+		return res.redirect(redirectUrl);
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

@@ -3,6 +3,7 @@
 .small-header-button-component {
     @include base-button;
     display: flex;
+
     .label {
         text-transform: uppercase;
         white-space: nowrap;
@@ -10,6 +11,7 @@
         margin-left: 9px;
         font-size: 10px;
     }
+
     .icon-container {
         display: flex;
         align-items: center;
@@ -19,6 +21,7 @@
         width: 24px;
         height: 24px;
     }
+
     &.label-left {
         flex-direction: row-reverse;
         .label {
@@ -26,6 +29,12 @@
             margin-right: 9px;
         }
     }
+
+    &:disabled {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
     &:hover {
         .label {
             text-decoration: underline;

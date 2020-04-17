@@ -44,7 +44,7 @@ const Social = (props) => {
 	const links = getLinksForPub(pubData.title, pubUrl(communityData, pubData));
 
 	return (
-		<Menu disclosure={children} aria-label="Social sharing options">
+		<Menu disclosure={children} placement="bottom-end" aria-label="Social sharing options">
 			{links.map((link) => {
 				return (
 					<MenuItem

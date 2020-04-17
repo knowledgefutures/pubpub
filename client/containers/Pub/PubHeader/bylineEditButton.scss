@@ -24,6 +24,9 @@
 .pub-header-theme-light {
     .byline-edit-button-component {
         vertical-align: top;
+        @include mobile {
+            vertical-align: middle;
+        }
         .inline-style {
             display: none;
         }

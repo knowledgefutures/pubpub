@@ -8,6 +8,7 @@ import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 import { ClickToCopyButton } from 'components';
 import { getAllPubContributors } from 'utils/pubContributors';
 
+import SmallHeaderButton from '../SmallHeaderButton';
 import CitationsPreview from '../CitationsPreview';
 import Contributors from './Contributors';
 
@@ -15,11 +16,12 @@ require('./pubDetails.scss');
 
 const propTypes = {
 	pubData: pubDataProps.isRequired,
+	onCloseHeaderDetails: PropTypes.func.isRequired,
 	communityData: PropTypes.shape({}).isRequired,
 };
 
 const PubDetails = (props) => {
-	const { pubData, communityData } = props;
+	const { communityData, onCloseHeaderDetails, pubData } = props;
 	const { collectionPubs } = pubData;
 	const contributors = getAllPubContributors(pubData);
 
@@ -36,6 +38,11 @@ const PubDetails = (props) => {
 	return (
 		<div className="pub-details-component">
 			<h3 className="pub-title">{pubData.title}</h3>
+			<SmallHeaderButton
+				className="mobile-close-details-button"
+				onClick={onCloseHeaderDetails}
+				icon="cross"
+			/>
 			<div className="sections-wrapper">
 				<div className="section contributors">
 					<h6 className="pub-header-themed-secondary">

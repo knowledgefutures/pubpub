@@ -37,13 +37,13 @@ const CollectionsBarButton = React.forwardRef((props, ref) => {
 		>
 			{icon && (
 				<span className="left-icon-container">
-					<Icon icon={icon} />
+					<Icon icon={icon} iconSize={14} />
 				</span>
 			)}
 			{children}
 			{rightIcon && (
 				<span className="right-icon-container">
-					<Icon icon={rightIcon} />
+					<Icon icon={rightIcon} iconSize={14} />
 				</span>
 			)}
 		</Button>

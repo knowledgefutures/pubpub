@@ -112,6 +112,7 @@ const Download = (props) => {
 			disclosure={children}
 			className="pub-download-component"
 			aria-label="Pub download formats"
+			placement="bottom-end"
 		>
 			{formattedDownload && (
 				<React.Fragment>

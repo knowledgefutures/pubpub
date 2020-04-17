@@ -17,14 +17,16 @@ const propTypes = {
 		}),
 	).isRequired,
 	onSelect: PropTypes.func,
+	placement: PropTypes.string,
 };
 
 const defaultProps = {
 	onSelect: null,
+	placement: 'bottom-end',
 };
 
 const PubToc = (props) => {
-	const { headings, children, onSelect } = props;
+	const { headings, children, onSelect, placement } = props;
 	const { scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	return (
@@ -32,7 +34,7 @@ const PubToc = (props) => {
 			aria-label="Table of contents"
 			className="pub-toc-component"
 			disclosure={children}
-			placement="bottom-end"
+			placement={placement}
 		>
 			{headings.map((heading) => {
 				return (

@@ -1,63 +1,26 @@
 import { Op } from 'sequelize';
+
 import findRank from 'shared/utils/findRank';
-import {
-	Collection,
-	CollectionPub,
-	sequelize,
-	Pub,
-	Branch,
-	CommunityAdmin,
-	PubManager,
-	BranchPermission,
-} from '../models';
+import { Collection, CollectionPub, sequelize } from '../models';
 import { getCollectionPubsInCollection } from '../utils/collectionQueries';
-import { getBranchAccess } from '../branch/permissions';
+import { getScope, getOverview, sanitizeOverview } from '../utils/queryHelpers';
 
-const canUserSeePub = (userId, pubData, isCommunityAdmin) =>
-	pubData.branches.some((branch) =>
-		getBranchAccess(
-			null,
-			branch,
-			userId,
-			isCommunityAdmin,
-			pubData.managers.some((manager) => manager.userId === userId),
-		),
-	);
-
-export const getCollectionPubs = async ({ collectionId, userId }) => {
-	// TODO(ian): Figure out a good two-way collection <=> pub association
-	// so we can do all of this with a single query.
-	const [{ communityId }, collectionPubs] = await Promise.all([
-		Collection.findOne({ where: { id: collectionId }, attributes: ['communityId'] }),
-		CollectionPub.findAll({
-			where: { collectionId: collectionId },
-			attributes: ['pubId', 'rank'],
-			order: [['rank', 'ASC']],
-		}),
-	]);
-	const pubRanks = {};
-	collectionPubs.forEach((cp) => {
-		pubRanks[cp.pubId] = cp.rank;
+export const getCollectionPubs = async ({ communityId, collectionId, userId }) => {
+	const scopeData = await getScope({
+		communityId: communityId,
+		collectionId: collectionId,
+		loginId: userId,
 	});
-	const [communityAdmin, pubs] = await Promise.all([
-		userId && CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
-		Pub.findAll({
-			where: { id: { [Op.in]: collectionPubs.map((cp) => cp.pubId) } },
-			include: [
-				{
-					model: Branch,
-					as: 'branches',
-					include: [{ model: BranchPermission, as: 'permissions' }],
-				},
-				{ model: PubManager, as: 'managers' },
-			],
-		}),
-	]);
-	return pubs
-		.filter((pubData) => canUserSeePub(userId, pubData, !!communityAdmin))
-		.sort((a, b) => {
-			return pubRanks[a.id] > pubRanks[b.id] ? 1 : -1;
-		});
+	const overviewData = await getOverview({ scopeData: scopeData });
+	const { pubs, collections } = sanitizeOverview(
+		{ loginData: { id: userId }, scopeData: scopeData },
+		overviewData,
+	);
+	const collection = collections.find((col) => col.id === collectionId);
+	if (collection) {
+		return collection.collectionPubs.map((cp) => pubs.find((pub) => pub.id === cp.pubId));
+	}
+	return [];
 };
 
 export const createCollectionPub = ({ collectionId, pubId, rank, moveToTop = false }) => {

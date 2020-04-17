@@ -7,6 +7,7 @@ import { createReadingParamUrl, useCollectionPubs } from 'utils/collections';
 import { pubDataProps } from 'types/pub';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import { getSchemaForKind } from 'shared/collections/schemas';
+import { Byline } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
 
 import CollectionsBarButton from './CollectionsBarButton';
@@ -75,9 +76,14 @@ const CollectionBrowser = (props) => {
 						active={currentPub.id === pub.id}
 						href={readingPubUrl(pub)}
 						textClassName="menu-item-text"
-						icon="dot"
+						icon="pubDoc"
 						key={pub.id}
-						text={pub.title}
+						text={
+							<>
+								<div className="title">{pub.title}</div>
+								<Byline pubData={pub} />
+							</>
+						}
 						multiline={true}
 					/>
 				))}

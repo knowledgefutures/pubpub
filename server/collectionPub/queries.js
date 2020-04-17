@@ -18,7 +18,9 @@ export const getCollectionPubs = async ({ communityId, collectionId, userId }) =
 	);
 	const collection = collections.find((col) => col.id === collectionId);
 	if (collection) {
-		return collection.collectionPubs.map((cp) => pubs.find((pub) => pub.id === cp.pubId));
+		return collection.collectionPubs
+			.map((cp) => pubs.find((pub) => pub.id === cp.pubId))
+			.filter((x) => x);
 	}
 	return [];
 };

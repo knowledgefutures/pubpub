@@ -22,7 +22,7 @@ const propTypes = {
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
 	mainContentRef: PropTypes.object.isRequired,
-	showBottomInput: PropTypes.bool.isRequired,
+	showBottomInput: PropTypes.bool,
 	searchTerm: PropTypes.string,
 };
 
@@ -30,6 +30,7 @@ const defaultProps = {
 	firebaseBranchRef: undefined,
 	filterDiscussions: () => [],
 	searchTerm: null,
+	showBottomInput: false,
 };
 
 const PubDiscussions = (props) => {

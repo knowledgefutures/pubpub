@@ -53,14 +53,6 @@ const CollectionBrowser = (props) => {
 			disclosure={renderDisclosure}
 			aria-label="Browse this collection"
 		>
-			{error && (
-				<MenuItem
-					disabled
-					className="loading-menu-item"
-					textClassName="menu-item-text"
-					text="Error loading Pubs"
-				/>
-			)}
 			{collection.pageId && (
 				<>
 					<MenuItem
@@ -95,9 +87,16 @@ const CollectionBrowser = (props) => {
 								<Byline pubData={pub} linkToUsers={false} />
 							</>
 						}
-						multiline={true}
 					/>
 				))}
+			{error && (
+				<MenuItem
+					disabled
+					className="loading-menu-item"
+					textClassName="menu-item-text"
+					text="Error loading Pubs"
+				/>
+			)}
 		</Menu>
 	);
 };

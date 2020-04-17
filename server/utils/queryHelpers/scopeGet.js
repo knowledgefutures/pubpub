@@ -192,6 +192,9 @@ getPublicPermissionsData = async (scopeElements) => {
 
 getScopeMemberData = async (scopeInputs, scopeElements) => {
 	const { loginId } = scopeInputs;
+	if (!loginId) {
+		return [];
+	}
 	const orQuery = buildOrQuery(scopeElements);
 	return Member.findAll({
 		where: {

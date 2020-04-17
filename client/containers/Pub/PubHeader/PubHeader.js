@@ -78,6 +78,7 @@ const PubHeader = (props) => {
 				window.scrollTo(0, 0);
 				const boundingRect = headerRef.current.getBoundingClientRect();
 				setFixedHeight(1 + window.innerHeight - boundingRect.top);
+				setShowingDetails(true);
 			} else {
 				// Fix the height of the details to that of the main header content
 				const boundingRect = headerRef.current.getBoundingClientRect();
@@ -97,7 +98,6 @@ const PubHeader = (props) => {
 			safetyLayer={showingDetails ? 'full-height' : 'enabled'}
 		>
 			{/* Hackity hack: don't let the body scroll while the details are scrolling */}
-			{isMobile && showingDetails && <style>{`body { overflow: hidden }`}</style>}
 			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
 				{!showingDetails && (
 					<PubHeaderContent

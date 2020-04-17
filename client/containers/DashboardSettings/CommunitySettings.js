@@ -19,6 +19,9 @@ import {
 	populateSocialItems,
 	defaultFooterLinks,
 } from 'utils';
+import { getDashUrl } from 'utils/dashboard';
+import { communityUrl } from 'shared/utils/canonicalUrls';
+import { isDevelopment } from 'shared/utils/environment';
 import NavBuilder from './NavBuilder';
 
 const CommunitySettings = () => {
@@ -153,13 +156,14 @@ const CommunitySettings = () => {
 				communityId: activeCommunity.id,
 			}),
 		})
-			.then((result) => {
-				const hostname = result.domain || `${result.subdomain}.pubpub.org`;
-				const origin =
-					window.location.host.indexOf('localhost') > -1
-						? `http://${window.location.host}`
-						: `https://${hostname}`;
-				window.location.href = `${origin}${locationData.path}`;
+			.then((nextCommunityData) => {
+				if (isDevelopment()) {
+					window.location.reload();
+				} else {
+					const communityPart = communityUrl(nextCommunityData);
+					const dashPart = getDashUrl({ mode: 'settings' });
+					window.location.href = communityPart + dashPart;
+				}
 			})
 			.catch((err) => {
 				console.error(err);

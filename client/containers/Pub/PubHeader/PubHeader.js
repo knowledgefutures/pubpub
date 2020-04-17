@@ -98,6 +98,7 @@ const PubHeader = (props) => {
 			safetyLayer={showingDetails ? 'full-height' : 'enabled'}
 		>
 			{/* Hackity hack: don't let the body scroll while the details are scrolling */}
+			{isMobile && showingDetails && <style>{`body { overflow: hidden }`}</style>}
 			<GridWrapper containerClassName="pub" columnClassName="pub-header-column">
 				{!showingDetails && (
 					<PubHeaderContent

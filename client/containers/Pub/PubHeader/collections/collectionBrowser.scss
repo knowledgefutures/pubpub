@@ -1,7 +1,6 @@
 @import 'styles/variables.scss';
 
 .collection-browser-component_menu {
-    // padding: 0;
     border-left: 0;
     border-right: 0;
     overflow-y: scroll;
@@ -10,11 +9,14 @@
     max-width: 80vw;
     width: 400px;
 
+    li:last-child:not(:first-child) {
+        padding-bottom: 5px;
+    }
+
     .loading-menu-item {
         height: 100%;
-        .bp3-spinner {
-            margin-left: 5px;
-        }
+        display: flex;
+        align-items: center;
     }
 
     .menu-item-text {

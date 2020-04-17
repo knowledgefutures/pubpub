@@ -5,10 +5,10 @@ import { Spinner } from '@blueprintjs/core';
 import { usePageContext } from 'utils/hooks';
 import { createReadingParamUrl, useCollectionPubs } from 'utils/collections';
 import { pubDataProps } from 'types/pub';
-import { pubUrl } from 'shared/utils/canonicalUrls';
+import { pubUrl, collectionUrl } from 'shared/utils/canonicalUrls';
 import { getSchemaForKind } from 'shared/collections/schemas';
 import { Byline } from 'components';
-import { Menu, MenuItem } from 'components/Menu';
+import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
 
 import CollectionsBarButton from './CollectionsBarButton';
 
@@ -19,6 +19,7 @@ const propTypes = {
 		id: PropTypes.string,
 		kind: PropTypes.string,
 		title: PropTypes.string,
+		pageId: PropTypes.string,
 	}).isRequired,
 	currentPub: pubDataProps.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -27,7 +28,7 @@ const propTypes = {
 const CollectionBrowser = (props) => {
 	const { collection, currentPub, updateLocalData } = props;
 	const { communityData } = usePageContext();
-	const { pubs, isLoading, error } = useCollectionPubs(updateLocalData, collection);
+	const { pubs, error, isLoading } = useCollectionPubs(updateLocalData, collection);
 	const { bpDisplayIcon } = getSchemaForKind(collection.kind);
 	const readingPubUrl = (pub) => createReadingParamUrl(pubUrl(communityData, pub), collection);
 
@@ -57,8 +58,18 @@ const CollectionBrowser = (props) => {
 					disabled
 					className="loading-menu-item"
 					textClassName="menu-item-text"
-					text="Error loading pubs"
+					text="Error loading Pubs"
 				/>
+			)}
+			{collection.pageId && (
+				<>
+					<MenuItem
+						icon="collection"
+						text={collection.title}
+						href={collectionUrl(communityData, collection)}
+					/>
+					<MenuItemDivider />
+				</>
 			)}
 			{isLoading && (
 				<MenuItem
@@ -81,7 +92,7 @@ const CollectionBrowser = (props) => {
 						text={
 							<>
 								<div className="title">{pub.title}</div>
-								<Byline pubData={pub} />
+								<Byline pubData={pub} linkToUsers={false} />
 							</>
 						}
 						multiline={true}

@@ -72,14 +72,15 @@ const PubHeader = (props) => {
 
 	const toggleDetails = () => {
 		if (!showingDetails && headerRef.current) {
-			const boundingRect = headerRef.current.getBoundingClientRect();
 			if (isMobile) {
 				// Fill the viewport with details
 				// +1px to take care of that pesky bottom border
-				const { top: bodyTop } = document.body.getBoundingClientRect();
-				setFixedHeight(1 + window.innerHeight - (boundingRect.top - bodyTop));
+				window.scrollTo(0, 0);
+				const boundingRect = headerRef.current.getBoundingClientRect();
+				setFixedHeight(1 + window.innerHeight - boundingRect.top);
 			} else {
 				// Fix the height of the details to that of the main header content
+				const boundingRect = headerRef.current.getBoundingClientRect();
 				setFixedHeight(boundingRect.height);
 			}
 		}

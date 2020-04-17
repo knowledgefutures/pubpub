@@ -235,26 +235,13 @@ const Header = (props) => {
 								className="hide-on-mobile"
 							/>
 						)}
-						{/* isAdmin && (
-							<AnchorButton
-								minimal={true}
-								large={true}
-								href={
-									isPage
-										? `/dashboard/pages/${locationData.params
-												.slug || ''}`
-										: '/dashboard'
-								}
-								text="Manage"
-							/>
-						) */}
 						{!isBasePubPub && (
 							<MenuButton
 								aria-label="Dashboard Menu"
 								placement="top-end"
 								menuStyle={{ zIndex: 20 }}
 								buttonProps={{
-									className: 'header-dashboard-button',
+									className: 'header-dashboard-button hide-on-mobile',
 									minimal: true,
 									large: true,
 									rightIcon: 'caret-down',

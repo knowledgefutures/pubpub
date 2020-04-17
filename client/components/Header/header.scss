@@ -132,7 +132,7 @@
 @media only screen and (max-width: 720px) {
     .header-component {
         .hide-on-mobile {
-            display: none;
+            display: none !important;
         }
         .hero {
             text-align: center;

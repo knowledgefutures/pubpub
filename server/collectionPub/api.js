@@ -23,12 +23,8 @@ const getRequestIds = (req, argsFrom = req.body) => {
 app.get(
 	'/api/collectionPubs',
 	wrap(async (req, res) => {
-		try {
-			const collectionPubs = await getCollectionPubs(getRequestIds(req, req.query));
-			return res.status(201).json(collectionPubs);
-		} catch (err) {
-			return res.status(500).json(err);
-		}
+		const collectionPubs = await getCollectionPubs(getRequestIds(req, req.query));
+		return res.status(201).json(collectionPubs);
 	}),
 );
 

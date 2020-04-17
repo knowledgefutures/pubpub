@@ -9,9 +9,12 @@ import {
 import { attributesPublicUser } from '..';
 import buildPubOptions from './pubOptions';
 
-export default async (initialData) => {
-	const scopeData = initialData.scopeData;
+export default async (
+	{ scopeData },
+	{ collectionOptions: { includeAttribution = true } = {} } = {},
+) => {
 	const { activeTargetType, activeTarget } = scopeData.elements;
+
 	/* This is a bit of a hack for now. We likely will want
 	more targeted and nuanced queries for each scope type. */
 	const communityData = await Community.findOne({
@@ -26,7 +29,7 @@ export default async (initialData) => {
 				as: 'collections',
 				separate: true,
 				include: [
-					{
+					includeAttribution && {
 						model: CollectionAttribution,
 						as: 'attributions',
 						include: [
@@ -42,7 +45,7 @@ export default async (initialData) => {
 						as: 'collectionPubs',
 						order: [['rank', 'ASC']],
 					},
-				],
+				].filter((x) => x),
 			},
 			{
 				model: Pub,

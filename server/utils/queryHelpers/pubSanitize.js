@@ -1,6 +1,4 @@
 import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
-// import { splitThreads } from 'utils';
-// import sanitizeThreads from './threadsSanitize';
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeForks from './forksSanitize';
 import sanitizeReviews from './reviewsSanitize';
@@ -27,13 +25,7 @@ export default (pubData, initialData, releaseNumber) => {
 	const discussions = sanitizeDiscussions(pubData.discussions, activePermissions, loginData.id);
 	const forks = sanitizeForks(pubData.forks, activePermissions, loginData.id);
 	const reviews = sanitizeReviews(pubData.reviews, activePermissions, loginData.id);
-	// const filteredThreads = sanitizeThreads(
-	// 	pubData.threads,
-	// 	scopeData.activePermissions,
-	// 	loginData.id,
-	// );
 
-	// const { discussions, forks, reviews } = splitThreads(filteredThreads);
 	const filteredCollectionPubs = pubData.collectionPubs
 		? pubData.collectionPubs.filter((item) => {
 				return item.collection.isPublic || canAdminCommunity;

@@ -65,8 +65,8 @@ export const enrichPubCitations = async (pubData, initialData) => {
 		? getNotes(jsonToNode(initialDoc, buildSchema({ ...discussionSchema }, {})))
 		: { footnotes: [], citations: [] };
 
-	const footnotesData = await generateCiteHtmls(footnotesRaw);
-	const citationsData = await generateCiteHtmls(citationsRaw);
+	const footnotesData = await generateCiteHtmls(footnotesRaw, 'harvard');
+	const citationsData = await generateCiteHtmls(citationsRaw, 'harvard');
 	const citationHtml = await generateCitationHTML(pubData, initialData.communityData);
 	return {
 		...pubData,

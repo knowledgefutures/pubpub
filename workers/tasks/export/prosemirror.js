@@ -9,7 +9,7 @@ export const getProsemirrorPubData = async (pubId, branchId, historyKey) => {
 	const schema = buildSchema(discussionSchema);
 	const doc = jsonToNode(docJson, schema);
 	const { footnotes: rawFootnotes, citations: rawCitations } = getNotes(doc);
-	const footnotes = await generateCiteHtmls(rawFootnotes);
-	const citations = await generateCiteHtmls(rawCitations);
+	const footnotes = await generateCiteHtmls(rawFootnotes, 'harvard');
+	const citations = await generateCiteHtmls(rawCitations, 'harvard');
 	return { prosemirrorDoc: docJson, footnotes: footnotes, citations: citations };
 };

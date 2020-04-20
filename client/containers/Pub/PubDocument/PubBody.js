@@ -4,7 +4,7 @@ import { useBeforeUnload } from 'react-use';
 import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 import { Card, Alert } from '@blueprintjs/core';
-import Editor, { getJSON, getNotes } from '@pubpub/editor';
+import Editor, { getJSON, getNotes, dispatchEmptyTransaction } from '@pubpub/editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
@@ -53,6 +53,7 @@ const PubBody = (props) => {
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
+	const citationsRef = useRef(pubData.citations);
 
 	const memoizeNoteContent = (items) => {
 		return items.reduce((prev, curr) => {
@@ -117,7 +118,7 @@ const PubBody = (props) => {
 				lastFootnotesMemo.current = footnotesKey;
 				return apiFetch('/api/editor/citation-format', {
 					method: 'POST',
-					body: JSON.stringify({ data: footnotes }),
+					body: JSON.stringify({ data: footnotes, citationStyle: 'harvard' }),
 				})
 					.then((result) => {
 						updateLocalData('pub', { footnotes: result });
@@ -131,10 +132,12 @@ const PubBody = (props) => {
 				lastCitationsMemo.current = citationsKey;
 				return apiFetch('/api/editor/citation-format', {
 					method: 'POST',
-					body: JSON.stringify({ data: citations }),
+					body: JSON.stringify({ data: citations, citationStyle: 'harvard' }),
 				})
 					.then((result) => {
 						updateLocalData('pub', { citations: result });
+						citationsRef.current = result;
+						dispatchEmptyTransaction(collabData.editorChangeObject.view);
 					})
 					.catch((err) => {
 						console.error(err);
@@ -147,6 +150,7 @@ const PubBody = (props) => {
 			updateFootnotesAndCitations(collabData.editorChangeObject.view.state.doc);
 		}
 	}, [collabData.editorChangeObject, updateLocalData]);
+
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;
@@ -226,6 +230,8 @@ const PubBody = (props) => {
 						: undefined
 				}
 				highlights={[]}
+				citationsRef={citationsRef}
+				citationInlineStyle="inlineAuthor"
 			/>
 			{!!editorError && !shouldSuppressEditorErrors() && (
 				<Alert

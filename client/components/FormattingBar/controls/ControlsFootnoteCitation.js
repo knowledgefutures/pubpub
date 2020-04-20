@@ -78,6 +78,7 @@ const ControlsFootnoteCitation = (props) => {
 						structuredValue: debouncedValue,
 					},
 				],
+				citationStyle: 'harvard',
 			}),
 		}).then(([result]) => setHtml(result.html));
 	}, [debouncedValue]);

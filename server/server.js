@@ -33,10 +33,11 @@ export const wrap = (routeHandlerFn) => (...args) => {
 
 /* Since we are server-rendering components, we 	*/
 /* need to ensure we don't require things intended 	*/
-/* for webpack. Namely, .scss files 				*/
+/* for webpack. Namely, .scss files			 		*/
 const originalRequire = Module.prototype.require;
 Module.prototype.require = function(...args) {
-	if (args[0].indexOf('.scss') > -1) {
+	const skippedExtensions = ['scss'];
+	if (skippedExtensions.includes(args[0].split('.').pop())) {
 		return () => {};
 	}
 	return originalRequire.apply(this, args);

@@ -189,6 +189,10 @@ const PubBody = (props) => {
 							delete embedDiscussions.current[embedId];
 						},
 					},
+					citation: {
+						citationsRef: citationsRef,
+						citationInlineStyle: 'inlineAuthor',
+					},
 				}}
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}

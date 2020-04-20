@@ -59,7 +59,7 @@ export const generateCiteHtmls = async (inputVals, citationStyle = 'apa') => {
 				json: '',
 				inlineAuthorYear: '',
 				inlineAuthor: '',
-				inlineLabel: labelHash,
+				inlineLabel: `(${labelHash})`,
 			};
 		}
 		const json = citeObject.format('data', { format: 'object' });

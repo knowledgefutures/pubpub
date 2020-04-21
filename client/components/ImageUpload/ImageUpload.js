@@ -9,31 +9,35 @@ import { s3Upload } from 'utils';
 require('./imageUpload.scss');
 
 const propTypes = {
+	canClear: PropTypes.bool,
+	children: PropTypes.node,
 	defaultImage: PropTypes.string,
-	useCrop: PropTypes.bool,
-	width: PropTypes.number,
 	height: PropTypes.number,
-	label: PropTypes.node,
-	isRequired: PropTypes.bool,
 	helperText: PropTypes.node,
 	htmlFor: PropTypes.string,
+	isRequired: PropTypes.bool,
+	label: PropTypes.node,
 	onNewImage: PropTypes.func,
-	canClear: PropTypes.bool,
+	onImageSelect: PropTypes.func,
 	useAccentBackground: PropTypes.bool,
+	useCrop: PropTypes.bool,
+	width: PropTypes.number,
 };
 
 const defaultProps = {
+	canClear: false,
+	children: null,
 	defaultImage: undefined,
-	useCrop: false,
-	width: 75,
 	height: 75,
-	label: undefined,
-	isRequired: false,
 	helperText: undefined,
 	htmlFor: String(new Date().getTime()),
+	isRequired: false,
+	label: undefined,
 	onNewImage: () => {},
-	canClear: false,
+	onImageSelect: () => {},
 	useAccentBackground: false,
+	useCrop: false,
+	width: 75,
 };
 
 class ImageUpload extends Component {
@@ -44,12 +48,14 @@ class ImageUpload extends Component {
 			imageBlob: this.props.defaultImage,
 			uploading: false,
 		};
+		this.inputRef = React.createRef();
 		this.onUploadFinish = this.onUploadFinish.bind(this);
 		this.onCropUploaded = this.onCropUploaded.bind(this);
 		this.setBlob = this.setBlob.bind(this);
 		this.handleImageSelect = this.handleImageSelect.bind(this);
 		this.clearImage = this.clearImage.bind(this);
 		this.cancelImageUpload = this.cancelImageUpload.bind(this);
+		this.openFileDialog = this.openFileDialog.bind(this);
 	}
 
 	onUploadFinish(evt, index, type, filename) {
@@ -77,17 +83,26 @@ class ImageUpload extends Component {
 		reader.readAsDataURL(image);
 	}
 
-	handleImageSelect(evt) {
-		if (evt.target.files.length && this.props.useCrop) {
-			this.setState({ imageFile: evt.target.files[0] });
+	openFileDialog() {
+		const { current: inputElement } = this.inputRef;
+		if (inputElement) {
+			inputElement.click();
 		}
+	}
 
-		if (evt.target.files.length && !this.props.useCrop) {
-			s3Upload(evt.target.files[0], () => {}, this.onUploadFinish, 0);
-			this.setState({
-				uploading: true,
-			});
-			this.setBlob(evt.target.files[0]);
+	handleImageSelect(evt) {
+		const { onImageSelect, useCrop } = this.props;
+		const { files } = evt.target;
+		if (files.length > 0) {
+			const [imageFile] = files;
+			if (useCrop) {
+				this.setState({ imageFile: imageFile });
+			} else {
+				s3Upload(imageFile, () => {}, this.onUploadFinish, 0);
+				this.setState({ uploading: true });
+				this.setBlob(imageFile);
+			}
+			onImageSelect(imageFile);
 		}
 	}
 
@@ -108,7 +123,21 @@ class ImageUpload extends Component {
 		this.props.onNewImage(null);
 	}
 
-	render() {
+	renderInput() {
+		return (
+			<input
+				ref={this.inputRef}
+				id={`input-${this.props.htmlFor}`}
+				name="logo image"
+				type="file"
+				accept="image/png, image/jpeg"
+				style={{ display: 'none' }}
+				onChange={this.handleImageSelect}
+			/>
+		);
+	}
+
+	renderDefaultPicker() {
 		const buttonStyle = {
 			width: `${this.props.width}px`,
 			height: `${this.props.height}px`,
@@ -119,6 +148,8 @@ class ImageUpload extends Component {
 		};
 		return (
 			<div className="image-upload-component">
+				{/* This label's target is properly nested, but rendered by renderInput() */}
+				{/* eslint-disable-next-line jsx-a11y/label-has-for */}
 				<label htmlFor={`input-${this.props.htmlFor}`}>
 					{this.props.label}
 					{this.props.isRequired && (
@@ -165,16 +196,9 @@ class ImageUpload extends Component {
 							/>
 						)}
 					</div>
-					<input
-						id={`input-${this.props.htmlFor}`}
-						name="logo image"
-						type="file"
-						accept="image/png, image/jpeg"
-						onChange={this.handleImageSelect}
-					/>
+					{this.renderInput()}
 				</label>
 				<div className="helper-text">{this.props.helperText}</div>
-
 				<Overlay
 					maxWidth={300}
 					isOpen={!!this.state.imageFile}
@@ -188,6 +212,24 @@ class ImageUpload extends Component {
 				</Overlay>
 			</div>
 		);
+	}
+
+	render() {
+		const { children } = this.props;
+
+		if (children) {
+			return (
+				<>
+					{this.renderInput()}
+					{children({
+						selectImage: this.openFileDialog,
+						clearImage: this.clearImage,
+					})}
+				</>
+			);
+		}
+
+		return this.renderDefaultPicker();
 	}
 }
 

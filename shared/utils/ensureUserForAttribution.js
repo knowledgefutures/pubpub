@@ -7,6 +7,7 @@ export default (attribution) => {
 	if (!attribution.user) {
 		// eslint-disable-next-line no-param-reassign
 		attribution.user = {
+			isShadowUser: true,
 			id: attribution.id,
 			initials: attribution.name[0],
 			fullName: attribution.name,

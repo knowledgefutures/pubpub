@@ -29,39 +29,19 @@ class UserAutocomplete extends Component {
 			queryValue: '',
 		};
 		this.inputRef = undefined;
-		this.filterItems = this.filterItems.bind(this);
 		this.handleSelect = this.handleSelect.bind(this);
 	}
 
-	filterItems(query) {
-		if (!query) {
-			this.setState({ queryValue: query });
-			return [];
-		}
-		if (query !== this.state.queryValue) {
-			this.setState({ queryValue: query });
-			apiFetch(`/api/search/users?q=${query}`)
-				.then((result) => {
-					const appendedResult =
-						this.props.allowCustomUser && query
-							? [
-									{
-										name: query,
-									},
-									...result,
-							  ]
-							: result;
-					this.setState({
-						items: appendedResult.filter((item) => {
-							return this.props.usedUserIds.indexOf(item.id) === -1;
-						}),
-					});
-				})
-				.catch((error) => {
-					console.error(error);
+	componentDidUpdate(_, prevState) {
+		const { queryValue } = this.state;
+		if (queryValue !== prevState.queryValue) {
+			apiFetch(`/api/search/users?q=${queryValue}`).then((result) => {
+				const { usedUserIds } = this.props;
+				this.setState({
+					items: result.filter((item) => !usedUserIds.includes(item.id)),
 				});
+			});
 		}
-		return this.state.items;
 	}
 
 	handleSelect(data) {
@@ -70,11 +50,20 @@ class UserAutocomplete extends Component {
 	}
 
 	render() {
+		const { allowCustomUser } = this.props;
+		const { queryValue, items } = this.state;
+
+		const suggestableItems = queryValue
+			? allowCustomUser
+				? [{ name: queryValue }, ...items]
+				: items
+			: [];
+
 		return (
 			<div className="user-autocomplete-component">
 				<Suggest
 					className="input"
-					items={this.state.items}
+					items={suggestableItems}
 					inputProps={{
 						placeholder: this.props.placeholder,
 						large: true,
@@ -82,10 +71,10 @@ class UserAutocomplete extends Component {
 							this.inputRef = ref;
 						},
 					}}
-					itemListPredicate={this.filterItems}
 					inputValueRenderer={() => {
 						return '';
 					}}
+					onQueryChange={(query) => this.setState({ queryValue: query.trim() })}
 					itemRenderer={(item, { handleClick, modifiers }) => {
 						return (
 							<li key={item.id || 'empty-user-create'}>

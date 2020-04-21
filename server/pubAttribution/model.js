@@ -10,7 +10,7 @@ export default (sequelize, dataTypes) => {
 			isAuthor: { type: dataTypes.BOOLEAN },
 			roles: { type: dataTypes.JSONB },
 			affiliation: { type: dataTypes.TEXT },
-
+			orcid: { type: dataTypes.STRING },
 			/* Set by Associations */
 			userId: { type: dataTypes.UUID },
 			pubId: { type: dataTypes.UUID, allowNull: false },

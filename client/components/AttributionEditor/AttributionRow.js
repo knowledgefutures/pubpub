@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Button, Icon, Tag } from '@blueprintjs/core';
 
-import { Checkbox, Icon, InputGroup, Position } from '@blueprintjs/core';
-import { MultiSelect } from '@blueprintjs/select';
-
-import Avatar from 'components/Avatar/Avatar';
+import { Avatar } from 'components';
 import attributionType from 'types/attribution';
 
-import { getFilteredRoles } from './roles';
+import AttributionDetailControls from './AttributionDetailControls';
+import EditableAvatar from './EditableAvatar';
 
 const propTypes = {
 	attribution: attributionType.isRequired,
@@ -25,126 +24,57 @@ const defaultProps = {
 	isDragging: false,
 };
 
-const AttributionDetailControls = (props) => {
-	const { attribution, onAttributionUpdate, roles, listOnBylineText } = props;
-	const { affiliation, id, isAuthor } = attribution;
-	return (
-		<div className="detail-controls">
-			<Checkbox
-				checked={isAuthor}
-				onChange={(evt) =>
-					onAttributionUpdate({
-						id: id,
-						isAuthor: evt.target.checked,
-					})
-				}
-			>
-				{listOnBylineText}
-			</Checkbox>
-			<MultiSelect
-				className="roles"
-				items={roles}
-				itemListPredicate={getFilteredRoles}
-				itemRenderer={(item, { handleClick, modifiers }) => {
-					return (
-						<li key={item}>
-							<button
-								type="button"
-								tabIndex={-1}
-								onClick={handleClick}
-								className={
-									modifiers.active ? 'bp3-menu-item bp3-active' : 'bp3-menu-item'
-								}
-							>
-								{item}
-							</button>
-						</li>
-					);
-				}}
-				selectedItems={roles}
-				tagRenderer={(item) => {
-					return <span>{item}</span>;
-				}}
-				tagInputProps={{
-					onRemove: (evt, roleIndex) => {
-						const newRoles = roles.filter((_, filterIndex) => {
-							return filterIndex !== roleIndex;
-						});
-						onAttributionUpdate({
-							id: id,
-							roles: newRoles,
-						});
-					},
-					placeholder: 'Add roles...',
-					tagProps: {
-						className: 'bp3-minimal bp3-intent-primary',
-					},
-					inputProps: {
-						placeholder: 'Add roles...',
-					},
-				}}
-				resetOnSelect={true}
-				onItemSelect={(newRole) => {
-					const existingRoles = roles;
-					const newRoles = [...existingRoles, newRole];
-					onAttributionUpdate({
-						id: id,
-						roles: newRoles,
-					});
-				}}
-				noResults={<div className="bp3-menu-item">No Matching Roles</div>}
-				popoverProps={{
-					popoverClassName: 'bp3-minimal',
-					position: Position.BOTTOM_LEFT,
-					modifiers: {
-						preventOverflow: {
-							enabled: false,
-						},
-						hide: {
-							enabled: false,
-						},
-						flip: {
-							enabled: false,
-						},
-					},
-				}}
-			/>
-			<InputGroup
-				className="affiliation"
-				placeholder="Affiliation"
-				defaultValue={affiliation}
-				onKeyDown={(evt) => {
-					if (evt.key === 'Enter') {
-						evt.currentTarget.blur();
-					}
-				}}
-				onBlur={(evt) =>
-					onAttributionUpdate({
-						id: id,
-						affiliation: evt.target.value.trim(),
-					})
-				}
-			/>
-		</div>
-	);
-};
-
-AttributionDetailControls.propTypes = { ...propTypes, roles: PropTypes.array.isRequired };
-
 const AttributionRow = (props) => {
-	const { attribution, canEdit, dragHandleProps, isDragging, onAttributionDelete } = props;
+	const {
+		attribution,
+		canEdit,
+		dragHandleProps,
+		isDragging,
+		onAttributionUpdate,
+		onAttributionDelete,
+	} = props;
 	const { user, id, isAuthor } = attribution;
 	const roles = attribution.roles || [];
+
+	// TODO(ian): This is a set of heuristics that should be replaced with a more reliable mechanism
+	// for telling whether an attribution is a "shadow", meaning it isn't associated with a PubPub
+	// account. Our long-running hack has been to augment these attribution objects with a fake
+	// user property, but we almost certainly ought to do something else.
+	const isShadowAttribution =
+		!attribution.user ||
+		attribution.user.isShadowUser ||
+		attribution.user.id === attribution.id;
+
+	const renderAvatar = () => {
+		if (isShadowAttribution && canEdit) {
+			return (
+				<EditableAvatar
+					width={50}
+					attribution={attribution}
+					onUpdateAvatar={(avatar) => onAttributionUpdate({ id: id, avatar: avatar })}
+				/>
+			);
+		}
+		return <Avatar width={50} userInitials={user.initials} userAvatar={user.avatar} />;
+	};
+
 	return (
 		<div className={classNames('attribution-row', isDragging && 'is-dragging')}>
+			{canEdit && (
+				<Button
+					small
+					minimal
+					className="delete-button"
+					onClick={() => onAttributionDelete(id)}
+					icon="small-cross"
+				/>
+			)}
 			{dragHandleProps && (
 				<div {...dragHandleProps} className="drag-handle">
 					<Icon icon="drag-handle-vertical" />
 				</div>
 			)}
-			<div className="avatar-wrapper">
-				<Avatar width={50} userInitials={user.initials} userAvatar={user.avatar} />
-			</div>
+			<div className="avatar-wrapper">{renderAvatar()}</div>
 			<div className="content">
 				<div className="top-content">
 					<div className="name">
@@ -156,15 +86,6 @@ const AttributionRow = (props) => {
 							<span>{user.fullName}</span>
 						)}
 					</div>
-					{canEdit && (
-						<button
-							className="bp3-button bp3-minimal"
-							type="button"
-							onClick={() => onAttributionDelete(id)}
-						>
-							<span className="bp3-icon-standard bp3-icon-small-cross" />
-						</button>
-					)}
 				</div>
 				<div className="bottom-content">
 					{!canEdit && isAuthor && (
@@ -179,12 +100,18 @@ const AttributionRow = (props) => {
 					{!canEdit &&
 						roles.map((item) => {
 							return (
-								<span key={item} className="bp3-tag bp3-minimal bp3-intent-primary">
+								<Tag key={item} minimal intent="primary">
 									{item}
-								</span>
+								</Tag>
 							);
 						})}
-					{canEdit && <AttributionDetailControls {...props} roles={roles} />}
+					{canEdit && (
+						<AttributionDetailControls
+							{...props}
+							roles={roles}
+							isShadowAttribution={isShadowAttribution}
+						/>
+					)}
 				</div>
 			</div>
 		</div>

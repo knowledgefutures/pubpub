@@ -1,6 +1,8 @@
 import { Pub, PubManager, CommunityAdmin } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 
+const editProps = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles', 'affiliation', 'orcid'];
+
 export const getPermissions = ({ userId, communityId, pubId }) => {
 	if (!userId) {
 		return new Promise((resolve) => {
@@ -36,15 +38,7 @@ export const getPermissions = ({ userId, communityId, pubId }) => {
 				isSuperAdmin ||
 				(communityAdminData && pubData.isCommunityAdminManaged) ||
 				pubManagerData;
-			const editProps = [
-				'name',
-				'avatar',
-				'title',
-				'order',
-				'isAuthor',
-				'roles',
-				'affiliation',
-			];
+
 			return {
 				create: authenticated,
 				update: authenticated ? editProps : false,

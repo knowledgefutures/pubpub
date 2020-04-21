@@ -1,6 +1,8 @@
 import { CommunityAdmin, Collection } from '../models';
 import { checkIfSuperAdmin } from '../utils';
 
+const editProps = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles', 'affiliation', 'orcid'];
+
 export const getPermissions = ({ userId, communityId, collectionId }) => {
 	if (!userId) {
 		return new Promise((resolve) => {
@@ -16,7 +18,6 @@ export const getPermissions = ({ userId, communityId, collectionId }) => {
 		if (!collectionData) {
 			return {};
 		}
-		const editProps = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles', 'affiliation'];
 		const isAuthenticated = isSuperAdmin || communityAdminData;
 		return {
 			create: isAuthenticated,

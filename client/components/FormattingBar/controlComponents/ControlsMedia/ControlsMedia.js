@@ -46,7 +46,7 @@ const ControlsMedia = (props) => {
 		<div className="controls-media-component">
 			<div className="section">
 				<SliderInputControl
-					minValue={20}
+					minValue={1}
 					maxValue={100}
 					leftLabel="Width"
 					rightLabel="%"

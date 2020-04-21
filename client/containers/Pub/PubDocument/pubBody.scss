@@ -126,6 +126,9 @@
 			font-family: $base-font;
 		}
 	}
+	iframe {
+		border: 0px solid transparent;
+	}
 	*:first-child:not(.discussion-thread) {
 		margin-top: 0em;
 	}

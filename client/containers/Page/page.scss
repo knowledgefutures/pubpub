@@ -55,6 +55,9 @@
 			font-size: 18px;
 			line-height: 1.6;
 		}
+		iframe {
+			border: 0px solid transparent;
+		}
 	}
 	.component-wrapper:last-of-type {
 		margin-bottom: 8em;

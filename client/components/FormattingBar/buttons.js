@@ -1,8 +1,8 @@
-import ControlsEquation from './controls/ControlsEquation';
-import ControlsFootnoteCitation from './controls/ControlsFootnoteCitation';
-import ControlsLink from './controls/ControlsLink';
-import ControlsMedia from './controls/ControlsMedia/ControlsMedia';
-import ControlsTable from './controls/ControlsTable';
+import ControlsEquation from './controlComponents/ControlsEquation';
+import ControlsFootnoteCitation from './controlComponents/ControlsFootnoteCitation';
+import ControlsLink from './controlComponents/ControlsLink';
+import ControlsMedia from './controlComponents/ControlsMedia/ControlsMedia';
+import ControlsTable from './controlComponents/ControlsTable';
 import MediaButton from './FormattingBarMediaButton';
 import { positionNearSelection, positionNearLink } from './positioning';
 

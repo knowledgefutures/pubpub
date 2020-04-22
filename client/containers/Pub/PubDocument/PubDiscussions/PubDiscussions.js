@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import { dispatchEmptyTransaction } from '@pubpub/editor';
+import { dispatchEmptyTransaction } from 'components/Editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { usePageContext } from 'utils/hooks';
 

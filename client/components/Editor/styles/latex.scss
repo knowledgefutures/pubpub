@@ -1,0 +1,15 @@
+@import '~katex/dist/katex';
+
+[data-node-type='math-inline'] {
+    font-size: 0.9em;
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+}
+
+[data-node-type='math-block'] {
+    font-size: 20px;
+    display: block;
+    text-align: center;
+    max-width: 100%;
+}

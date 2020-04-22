@@ -1,5 +1,5 @@
 import { buildRuleset, commonTransformers, transformUtil } from '@pubpub/prosemirror-pandoc';
-import { defaultNodes, defaultMarks } from '@pubpub/editor/dist/schemas';
+import { defaultNodes, defaultMarks } from 'components/Editor/schemas';
 
 import * as katex from 'katex';
 

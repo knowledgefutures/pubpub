@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Editor, { getJSON } from '@pubpub/editor';
+import Editor, { getJSON } from 'components/Editor';
 import { Button } from '@blueprintjs/core';
 
 import { GridWrapper } from 'components';

@@ -1,4 +1,4 @@
-import { importDocJson, getNotes } from '@pubpub/editor';
+import { importDocJson, getNotes } from 'components/Editor';
 
 export const importDocToEditor = (prosemirrorView, docJson, updateLocalData) => {
 	const doc = importDocJson(prosemirrorView, docJson);

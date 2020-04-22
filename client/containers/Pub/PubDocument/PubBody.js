@@ -4,15 +4,15 @@ import { useBeforeUnload } from 'react-use';
 import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 import { Card, Alert } from '@blueprintjs/core';
-import Editor, { getJSON, getNotes, dispatchEmptyTransaction } from '@pubpub/editor';
+
+import Editor, { getJSON, getNotes, dispatchEmptyTransaction } from 'components/Editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
 import { debounce } from 'debounce';
-
 import { usePageContext } from 'utils/hooks';
-import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 
+import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 import discussionSchema from './DiscussionAddon/discussionSchema';
 import Discussion from './PubDiscussions/Discussion';
 

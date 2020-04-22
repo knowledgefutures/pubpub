@@ -1,4 +1,4 @@
-import { buildSchema, jsonToNode, getNotes } from '@pubpub/editor';
+import { buildSchema, jsonToNode, getNotes } from 'components/Editor';
 
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
 import { getBranchDoc } from '../../../server/utils/firebaseAdmin';

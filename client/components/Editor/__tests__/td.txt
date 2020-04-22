@@ -1,0 +1,3 @@
+- Discuss pubpub tech decisions with Ian & Gabe (discussions, diffs most important, formatting bars)
+- CNI in December?
+- 

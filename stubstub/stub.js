@@ -1,7 +1,7 @@
 /* global beforeAll, afterAll */
 import sinon from 'sinon';
 
-import { getEmptyDoc } from '@pubpub/editor/dist/utils';
+import { getEmptyDoc } from 'components/Editor';
 import * as firebaseAdmin from '../server/utils/firebaseAdmin';
 
 export const stubModule = (module, functionNames) => {

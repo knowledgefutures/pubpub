@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
-import Editor, { getText, getJSON } from '@pubpub/editor';
+import Editor, { getText, getJSON } from 'components/Editor';
 import { Button, Intent } from '@blueprintjs/core';
 import { usePageContext } from 'utils/hooks';
 import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';

@@ -4,7 +4,7 @@ import TimeAgo from 'react-timeago';
 // import { AnchorButton } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { Avatar } from 'components';
-import Editor from '@pubpub/editor';
+import Editor from 'components/Editor';
 // import { usePageContext } from 'utils/hooks';
 
 require('./reviewEvent.scss');

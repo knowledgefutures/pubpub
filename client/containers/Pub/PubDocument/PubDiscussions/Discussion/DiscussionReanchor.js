@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { reanchorDiscussion } from '@pubpub/editor';
+import { reanchorDiscussion } from 'components/Editor';
 import { Button, ButtonGroup, Card, Icon } from '@blueprintjs/core';
 
 require('./discussionReanchor.scss');

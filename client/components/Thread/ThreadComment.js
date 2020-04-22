@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Avatar } from 'components';
 import TimeAgo from 'react-timeago';
 import { timeAgoBaseProps } from 'utils';
-import Editor from '@pubpub/editor';
+import Editor from 'components/Editor';
 
 require('./threadComment.scss');
 

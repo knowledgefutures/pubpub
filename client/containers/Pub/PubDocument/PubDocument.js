@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { setLocalHighlight } from '@pubpub/editor';
+import { setLocalHighlight } from 'components/Editor';
 
 import { usePageContext } from 'utils/hooks';
 import { PubHistoryViewer } from 'components';

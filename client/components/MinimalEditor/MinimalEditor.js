@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Editor, { getText, getJSON } from '@pubpub/editor';
+import Editor, { getText, getJSON } from 'components/Editor';
 
 require('./minimalEditor.scss');
 

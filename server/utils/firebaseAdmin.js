@@ -8,7 +8,7 @@ import {
 	createBranch,
 	mergeBranch,
 	restoreDiscussionMaps,
-} from '@pubpub/editor';
+} from 'components/Editor';
 
 // These relative import statements are useful for letting us use this file in node scripts.
 import discussionSchema from '../../shared/editor/discussionSchema';

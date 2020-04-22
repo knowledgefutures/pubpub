@@ -6,7 +6,7 @@ import Editor, {
 	removeLocalHighlight,
 	convertLocalHighlightToDiscussion,
 	getLocalHighlightText,
-} from '@pubpub/editor';
+} from 'components/Editor';
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 import { Avatar } from 'components';
 import { usePageContext } from 'utils/hooks';

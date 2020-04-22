@@ -5,7 +5,7 @@ import { Avatar } from 'components';
 import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'utils';
-import Editor, { getText, getJSON } from '@pubpub/editor';
+import Editor, { getText, getJSON } from 'components/Editor';
 
 require('./threadInput.scss');
 

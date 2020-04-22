@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 import { Button } from '@blueprintjs/core';
-import { setLocalHighlight, cursor } from '@pubpub/editor';
+import { setLocalHighlight, moveToEndOfSelection } from 'components/Editor';
 
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import Icon from 'components/Icon/Icon';
@@ -106,7 +106,7 @@ const PubInlineMenu = (props) => {
 					onClick={() => {
 						const view = collabData.editorChangeObject.view;
 						setLocalHighlight(view, selection.from, selection.to, uuidv4());
-						cursor.moveToEndOfSelection(collabData.editorChangeObject.view);
+						moveToEndOfSelection(collabData.editorChangeObject.view);
 					}}
 				/>
 			)}

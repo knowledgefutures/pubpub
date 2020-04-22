@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const Promise = require('bluebird');
 const firebaseAdmin = require('firebase-admin');
-const { buildSchema, restoreDiscussionMaps } = require('@pubpub/editor');
+const { buildSchema, restoreDiscussionMaps } = require('components/Editor');
 const discussionSchema = require('./simpleDiscussionSchema').default;
 const getPipedPubIds = require('../util/getPipedPubIds');
 require('../../../server/config.js');

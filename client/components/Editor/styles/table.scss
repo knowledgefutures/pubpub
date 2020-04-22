@@ -1,0 +1,26 @@
+table {
+	margin: 0;
+	max-width: 100%;
+}
+th, td {
+	min-width: 1em;
+	border: 1px solid #ddd;
+	padding: 3px 5px;
+}
+/* This clunky table, tableWrapper thing is because */
+/* isReadOnly removes the wrapping div, so margins don't */
+/* collapse as expected in all situations. */
+table {
+	margin: 1em 0;
+}
+.tableWrapper {
+	margin: 1em 0;
+	table {
+		margin: 0em;
+	}
+}
+th {
+	font-weight: bold;
+	text-align: left;
+	background-color: #F0F0F4;
+}

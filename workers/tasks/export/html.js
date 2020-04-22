@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { renderStatic, buildSchema } from '@pubpub/editor';
+import { renderStatic, buildSchema } from 'components/Editor';
 
 import { SimpleNotesList } from 'components';
 

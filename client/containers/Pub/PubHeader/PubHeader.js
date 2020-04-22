@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { getJSON } from '@pubpub/editor';
+import { getJSON } from 'components/Editor';
 
 import { GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';

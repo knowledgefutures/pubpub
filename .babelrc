@@ -2,13 +2,14 @@
   "presets": ["@babel/preset-env", "@babel/preset-react"],
   "plugins": [
     "@babel/plugin-transform-runtime",
+    "@babel/plugin-proposal-export-default-from",
   ],
   "env": {
     "test": {
       "plugins": [
         "macros",
         "require-context-hook",
-        "@babel/plugin-proposal-class-properties"
+        "@babel/plugin-proposal-class-properties",
       ]
     }
   }

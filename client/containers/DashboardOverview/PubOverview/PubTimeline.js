@@ -31,7 +31,7 @@ const PubTimeline = (props) => {
 	const latestRelease = releases[releases.length - 1];
 
 	const draftBranch = pubData.branches.find((br) => br.title === 'draft');
-	const hasDraftContent = draftBranch.latestKeyAt;
+	const hasDraftContent = !!draftBranch.latestKeyAt;
 
 	const draftLastEditedNotice = hasDraftContent
 		? `Last edited ${formatDate(hasDraftContent, { includeTime: true })}`

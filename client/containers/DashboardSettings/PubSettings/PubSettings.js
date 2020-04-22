@@ -115,7 +115,7 @@ const PubSettings = (props) => {
 					<InputField
 						label="Description"
 						placeholder="Enter description"
-						helperText={`${pubData.description.length}/280 characters`}
+						helperText={`${(pubData.description || '').length}/280 characters`}
 						isTextarea={true}
 						value={description}
 						onChange={(evt) =>

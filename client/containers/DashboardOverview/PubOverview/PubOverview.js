@@ -84,6 +84,7 @@ const PubOverview = (props) => {
 						.map((review) => {
 							return (
 								<MenuItem
+									key={review.id}
 									href={`/dash/pub/${pubData.slug}/reviews/${review.number}`}
 									text={
 										<div className="list-row">

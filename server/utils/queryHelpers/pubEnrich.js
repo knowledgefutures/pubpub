@@ -60,13 +60,13 @@ export const enrichPubFirebaseToken = async (pubData, initialData) => {
 };
 
 export const enrichPubCitations = async (pubData, initialData) => {
-	const { initialDoc } = pubData;
+	const { initialDoc, citationStyle } = pubData;
 	const { footnotes: footnotesRaw, citations: citationsRaw } = initialDoc
 		? getNotes(jsonToNode(initialDoc, buildSchema({ ...discussionSchema }, {})))
 		: { footnotes: [], citations: [] };
 
-	const footnotesData = await generateCiteHtmls(footnotesRaw, 'harvard');
-	const citationsData = await generateCiteHtmls(citationsRaw, 'harvard');
+	const footnotesData = await generateCiteHtmls(footnotesRaw, citationStyle);
+	const citationsData = await generateCiteHtmls(citationsRaw, citationStyle);
 	const citationHtml = await generateCitationHTML(pubData, initialData.communityData);
 	return {
 		...pubData,

@@ -203,7 +203,7 @@ const renderFrontMatterForHtml = ({
 };
 
 export const createStaticHtml = async (
-	{ prosemirrorDoc, pubMetadata, citations, footnotes },
+	{ prosemirrorDoc, pubMetadata, citations, footnotes, citationInlineStyle },
 	targetPandoc,
 	targetPaged,
 ) => {
@@ -218,7 +218,20 @@ export const createStaticHtml = async (
 		.filter((x) => x)
 		.reduce((nodes, fn) => fn(nodes), prosemirrorDoc.content);
 
-	const docContent = renderStatic(buildSchema(), renderableNodes, {});
+	const docContent = renderStatic(
+		buildSchema(
+			{},
+			{},
+			{
+				citation: {
+					citationsRef: { current: citations },
+					citationInlineStyle: citationInlineStyle,
+				},
+			},
+		),
+		renderableNodes,
+		{},
+	);
 
 	return ReactDOMServer.renderToStaticMarkup(
 		<html lang="en">

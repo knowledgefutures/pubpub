@@ -31,6 +31,8 @@ export const getPermissions = async ({ userId, communityId, pubId, licenseSlug }
 		'labels',
 		'downloads',
 		'licenseSlug',
+		'citationStyle',
+		'citationInlineStyle',
 	];
 	/* TODO: There are open questions about who should */
 	/* be able to delete pubs. Does a PubManager have the */

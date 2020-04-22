@@ -10,6 +10,7 @@ import {
 	Pub,
 	PubAttribution,
 	User,
+	Release,
 } from '../../../server/models';
 
 export const getPubMetadata = async (pubId) => {
@@ -38,6 +39,10 @@ export const getPubMetadata = async (pubId) => {
 					},
 				],
 			},
+			{
+				model: Release,
+				as: 'releases',
+			},
 		],
 	});
 	const publishedDate = getPubPublishedDate(pubData);
@@ -60,5 +65,7 @@ export const getPubMetadata = async (pubId) => {
 			.sort((a, b) => a.order - b.order)
 			.filter((attr) => attr.isAuthor)
 			.map((attr) => ensureUserForAttribution(attr)),
+		citationStyle: pubData.citationStyle,
+		citationInlineStyle: pubData.citationInlineStyle,
 	};
 };

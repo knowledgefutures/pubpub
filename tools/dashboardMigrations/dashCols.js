@@ -198,6 +198,14 @@ export default async () => {
 		sequelize.queryInterface.addColumn('Pubs', 'editHash', {
 			type: Sequelize.STRING,
 		}),
+		sequelize.queryInterface.addColumn('Pubs', 'citationStyle', {
+			type: Sequelize.STRING,
+			defaultValue: 'apa',
+		}),
+		sequelize.queryInterface.addColumn('Pubs', 'citationInlineStyle', {
+			type: Sequelize.STRING,
+			defaultValue: 'count',
+		}),
 	]);
 	await Promise.all([
 		sequelize.queryInterface.changeColumn('Discussions', 'pubId', {

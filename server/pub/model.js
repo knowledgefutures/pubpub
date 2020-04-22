@@ -35,6 +35,8 @@ export default (sequelize, dataTypes) => {
 			isCommunityAdminManaged: { type: dataTypes.BOOLEAN },
 			downloads: { type: dataTypes.JSONB },
 			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
+			citationStyle: { type: dataTypes.TEXT, defaultValue: 'apa' },
+			citationInlineStyle: { type: dataTypes.TEXT, defaultValue: 'count' },
 			// isPublicBranches: { type: dataTypes.BOOLEAN },
 			// isPublicDiscussions: { type: dataTypes.BOOLEAN },
 			// isPublicReviews: { type: dataTypes.BOOLEAN },

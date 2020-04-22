@@ -80,7 +80,7 @@ const Download = (props) => {
 			body: JSON.stringify({
 				pubId: pubData.id,
 				branchId: activeBranch.id,
-				communityData: communityData.id,
+				communityId: communityData.id,
 				format: selectedType.format,
 				historyKey: latestKey,
 				accessHash: locationData.query.access,

@@ -118,7 +118,7 @@ const PubBody = (props) => {
 				lastFootnotesMemo.current = footnotesKey;
 				return apiFetch('/api/editor/citation-format', {
 					method: 'POST',
-					body: JSON.stringify({ data: footnotes, citationStyle: 'harvard' }),
+					body: JSON.stringify({ data: footnotes, citationStyle: pubData.citationStyle }),
 				})
 					.then((result) => {
 						updateLocalData('pub', { footnotes: result });
@@ -132,7 +132,7 @@ const PubBody = (props) => {
 				lastCitationsMemo.current = citationsKey;
 				return apiFetch('/api/editor/citation-format', {
 					method: 'POST',
-					body: JSON.stringify({ data: citations, citationStyle: 'harvard' }),
+					body: JSON.stringify({ data: citations, citationStyle: pubData.citationStyle }),
 				})
 					.then((result) => {
 						updateLocalData('pub', { citations: result });
@@ -149,7 +149,7 @@ const PubBody = (props) => {
 		if (collabData.editorChangeObject && collabData.editorChangeObject.view) {
 			updateFootnotesAndCitations(collabData.editorChangeObject.view.state.doc);
 		}
-	}, [collabData.editorChangeObject, updateLocalData]);
+	}, [collabData.editorChangeObject, updateLocalData, pubData.citationStyle]);
 
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
@@ -191,7 +191,7 @@ const PubBody = (props) => {
 					},
 					citation: {
 						citationsRef: citationsRef,
-						citationInlineStyle: 'inlineAuthor',
+						citationInlineStyle: pubData.citationInlineStyle,
 					},
 				}}
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
@@ -235,7 +235,7 @@ const PubBody = (props) => {
 				}
 				highlights={[]}
 				citationsRef={citationsRef}
-				citationInlineStyle="inlineAuthor"
+				citationInlineStyle={pubData.citationInlineStyle}
 			/>
 			{!!editorError && !shouldSuppressEditorErrors() && (
 				<Alert

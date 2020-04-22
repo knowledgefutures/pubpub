@@ -21,6 +21,7 @@ import DownloadChooser from './DownloadChooser';
 import DeletePub from './DeletePub';
 import Collections from './Collections';
 import Doi from './Doi';
+import CitationChooser from './CitationChooser';
 
 const propTypes = {
 	settingsData: PropTypes.shape({
@@ -195,6 +196,18 @@ const PubSettings = (props) => {
 		);
 	};
 
+	const renderCitationChooser = () => {
+		return (
+			<SettingsSection title="Citation Style">
+				<CitationChooser
+					pubData={pubData}
+					communityId={activeCommunity.id}
+					onSetCitations={(citationUpdate) => updatePersistedPubData(citationUpdate)}
+				/>
+			</SettingsSection>
+		);
+	};
+
 	const renderDoi = () => {
 		return (
 			<SettingsSection title="DOI">
@@ -264,6 +277,7 @@ const PubSettings = (props) => {
 			{renderDetails()}
 			{renderLicense()}
 			{renderTheme()}
+			{renderCitationChooser()}
 			{renderDoi()}
 			{renderAttributions()}
 			{renderFormattedDownload()}

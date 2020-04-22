@@ -22,6 +22,7 @@ export const exportTask = async ({ exportId }, collectSubprocess) => {
 		pubId,
 		branchId,
 		historyKey,
+		pubMetadata.citationStyle,
 	);
 	const staticHtml = await createStaticHtml(
 		{
@@ -29,6 +30,7 @@ export const exportTask = async ({ exportId }, collectSubprocess) => {
 			pubMetadata: pubMetadata,
 			citations: citations,
 			footnotes: footnotes,
+			citationInlineStyle: pubMetadata.citationInlineStyle,
 		},
 		pandocTarget,
 		pagedTarget,

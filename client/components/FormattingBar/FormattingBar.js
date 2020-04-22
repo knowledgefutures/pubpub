@@ -39,6 +39,7 @@ const propTypes = {
 	isSmall: PropTypes.bool,
 	isTranslucent: PropTypes.bool,
 	isFullScreenWidth: PropTypes.bool,
+	citationStyle: PropTypes.string,
 };
 
 const defaultProps = {
@@ -46,6 +47,7 @@ const defaultProps = {
 	isTranslucent: false,
 	isSmall: false,
 	isFullScreenWidth: false,
+	citationStyle: 'apa',
 };
 
 const useControlsKey = (latestDomEvent) => {
@@ -116,6 +118,7 @@ const FormattingBar = (props) => {
 		isSmall,
 		isTranslucent,
 		isFullScreenWidth,
+		citationStyle,
 	} = props;
 	const { menuItems, insertFunctions, view } = editorChangeObject;
 	const { communityData } = usePageContext();
@@ -231,7 +234,7 @@ const FormattingBar = (props) => {
 		>
 			<Toolbar aria-label="Formatting toolbar" className="toolbar" {...toolbar}>
 				{showBlockTypes && (
-					<>
+					<React.Fragment>
 						<ToolbarItem
 							as={BlockTypeSelector}
 							isSmall={isSmall}
@@ -239,7 +242,7 @@ const FormattingBar = (props) => {
 							{...toolbar}
 						/>
 						<div className="separator" />
-					</>
+					</React.Fragment>
 				)}
 				{buttons.map(renderButton)}
 			</Toolbar>
@@ -278,6 +281,7 @@ const FormattingBar = (props) => {
 							pendingAttrs={pendingAttrs}
 							onClose={onClose}
 							isSmall={isSmall}
+							citationStyle={citationStyle}
 						/>
 					)}
 				</FormattingBarPopover>

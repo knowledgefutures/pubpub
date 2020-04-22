@@ -5,11 +5,8 @@ import crypto from 'crypto';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
-const config = Cite.plugins.config.get('@csl');
+/* ['apa', 'harvard', 'vancouver'] built-in to citation-js */
 const styles = [
-	// { name: 'apa', path: Built-in to citation-js },
-	// { name: 'harvard', path: Built-in to citation-js },
-	// { name: 'vancouver', path: Built-in to citation-js },
 	{ name: 'acm-siggraph', path: './citeStyles/acm-siggraph.csl' },
 	{ name: 'american-anthro', path: './citeStyles/american-anthropological-association.csl' },
 	{ name: 'cell', path: './citeStyles/cell.csl' },
@@ -18,6 +15,7 @@ const styles = [
 	{ name: 'frontiers', path: './citeStyles/frontiers.csl' },
 	{ name: 'mla', path: './citeStyles/modern-language-association.csl' },
 ];
+const config = Cite.plugins.config.get('@csl');
 styles.forEach((style) => {
 	const fileString = fs.readFileSync(path.join(__dirname, style.path), { encoding: 'utf8' });
 	config.templates.add(style.name, fileString);
@@ -41,9 +39,11 @@ export const generateCiteHtmls = async (inputVals, citationStyle = 'apa') => {
 				...input,
 				html: 'Error',
 				json: 'Error',
-				inlineAuthorYear: '(Error)',
-				inlineAuthor: '(Error)',
-				inlineLabel: '(Error)',
+				inline: {
+					authorYear: '(Error)',
+					author: '(Error)',
+					label: '(Error)',
+				},
 				error: true,
 			};
 		}
@@ -57,23 +57,27 @@ export const generateCiteHtmls = async (inputVals, citationStyle = 'apa') => {
 				...input,
 				html: '',
 				json: '',
-				inlineAuthorYear: '',
-				inlineAuthor: '',
-				inlineLabel: `(${labelHash})`,
+				inline: {
+					authorYear: '',
+					author: '',
+					label: `(${labelHash})`,
+				},
 			};
 		}
 		const json = citeObject.format('data', { format: 'object' });
-		const inlineAuthorYear = citeObject.format('citation', { template: 'apa', format: 'text' });
+		const authorYear = citeObject.format('citation', { template: 'apa', format: 'text' });
 		return {
 			...input,
 			html: citeObject.format('bibliography', { template: citationStyle, format: 'html' }),
 			json: json,
-			inlineAuthorYear: inlineAuthorYear,
-			inlineAuthor: `${inlineAuthorYear
-				.split(',')
-				.slice(0, -1)
-				.join('')})`,
-			inlineLabel: `(${json[0]['citation-label'] || labelHash})`,
+			inline: {
+				authorYear: authorYear,
+				author: `${authorYear
+					.split(',')
+					.slice(0, -1)
+					.join('')})`,
+				label: `(${json[0]['citation-label'] || labelHash})`,
+			},
 		};
 	});
 	return outputsObjects;

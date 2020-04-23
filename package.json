@@ -162,7 +162,7 @@
 		"react-timeago": "^4.4.0",
 		"react-transition-group": "^4.0.0",
 		"react-use": "^14.1.1",
-		"reakit": "^1.0.0-beta.14",
+		"reakit": "1.0.0-beta.14",
 		"rebound": "^0.1.0",
 		"recharts": "^1.5.0",
 		"request": "^2.88.0",

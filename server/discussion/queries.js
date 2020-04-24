@@ -150,7 +150,7 @@ export const updateDiscussion = (inputValues, updatePermissions) => {
 		where: { id: inputValues.discussionId },
 	}).then(async () => {
 		const discussionWithUser = await findDiscussionWithUser(inputValues.discussionId);
-		updateFirebaseDiscussion(discussionWithUser.toJSON());
+		updateFirebaseDiscussion(discussionWithUser.toJSON(), inputValues.branchId);
 		return {
 			...filteredValues,
 			id: inputValues.discussionId,

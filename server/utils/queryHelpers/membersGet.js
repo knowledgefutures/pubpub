@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import { User, Member } from '../../models';
-import { attributesPublicUser } from '..';
+import { attributesPublicUser } from '../attributesPublicUser';
 import { buildOrQuery } from './scopeGet';
 
 const membersQueryShared = {

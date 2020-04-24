@@ -1,4 +1,4 @@
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser } from '../utils/attributesPublicUser';
 import { ReviewEvent } from '../models';
 
 export const createReviewEvent = (inputValues, userData) => {

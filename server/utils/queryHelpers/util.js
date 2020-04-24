@@ -1,5 +1,5 @@
+import { attributesPublicUser } from '../attributesPublicUser';
 import { User, Thread, ThreadComment, ThreadEvent, Visibility } from '../../models';
-import { attributesPublicUser } from '..';
 
 export const ensureSerialized = (item) => {
 	if (Array.isArray(item)) {

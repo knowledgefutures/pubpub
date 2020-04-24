@@ -14,7 +14,7 @@ import {
 	Anchor,
 	User,
 } from '../../models';
-import { attributesPublicUser } from '..';
+import { attributesPublicUser } from '../attributesPublicUser';
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
 export default ({ isAuth, isPreview, getCollections, getCommunity }) => {

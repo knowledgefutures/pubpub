@@ -1,4 +1,4 @@
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser } from '../utils/attributesPublicUser';
 import { User, ThreadComment } from '../models';
 
 const findThreadCommentWithUser = (id) =>

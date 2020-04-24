@@ -6,7 +6,7 @@ import {
 	CollectionAttribution,
 	CollectionPub,
 } from '../../models';
-import { attributesPublicUser } from '..';
+import { attributesPublicUser } from '../attributesPublicUser';
 import buildPubOptions from './pubOptions';
 
 export default async (

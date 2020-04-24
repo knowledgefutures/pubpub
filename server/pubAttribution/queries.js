@@ -1,5 +1,5 @@
 import { PubAttribution, User } from '../models';
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser } from '../utils/attributesPublicUser';
 
 export const createPubAttribution = (inputValues) => {
 	return PubAttribution.create({

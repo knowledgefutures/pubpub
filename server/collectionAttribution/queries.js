@@ -1,5 +1,5 @@
 import { CollectionAttribution, User } from '../models';
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser } from '../utils/attributesPublicUser';
 
 export const createCollectionAttribution = (inputValues) => {
 	return CollectionAttribution.create({

@@ -1,5 +1,5 @@
 import { BranchPermission, User } from '../models';
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser } from '../utils/attributesPublicUser';
 
 export const createBranchPermission = ({ userId, pubId, branchId, permissions = 'view' }) => {
 	return BranchPermission.create({

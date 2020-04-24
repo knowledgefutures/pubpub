@@ -1,4 +1,4 @@
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser } from '../utils/attributesPublicUser';
 import { ThreadEvent } from '../models';
 
 export const createThreadEvent = (inputValues, userData) => {

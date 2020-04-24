@@ -9,22 +9,6 @@ import { HTTPStatusError } from '../errors';
 
 export { getInitialData } from './initData';
 
-// export const checkIfSuperAdmin = (userId) => {
-// 	const adminIds = ['b242f616-7aaa-479c-8ee5-3933dcf70859'];
-// 	return adminIds.includes(userId);
-// };
-
-export const attributesPublicUser = [
-	'id',
-	'firstName',
-	'lastName',
-	'fullName',
-	'avatar',
-	'slug',
-	'initials',
-	'title',
-];
-
 export const slugifyString = (input) => {
 	if (typeof input !== 'string') {
 		console.error('input is not a valid string');

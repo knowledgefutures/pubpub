@@ -1,5 +1,5 @@
 import { PubManager, User } from '../models';
-import { attributesPublicUser } from '../utils';
+import { attributesPublicUser } from '../utils/attributesPublicUser';
 import { setPubSearchData } from '../utils/search';
 
 export const createPubManager = (inputValues) => {

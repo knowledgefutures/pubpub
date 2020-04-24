@@ -134,7 +134,7 @@ export const createDiscussion = async (inputValues, user) => {
 		pubId: inputValues.pubId,
 	});
 	const discussionWithUser = await findDiscussionWithUser(newDiscussion.id);
-	updateFirebaseDiscussion(discussionWithUser.toJSON());
+	updateFirebaseDiscussion(discussionWithUser.toJSON(), inputValues.branchId);
 	return discussionWithUser;
 };
 

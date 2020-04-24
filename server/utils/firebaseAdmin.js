@@ -109,8 +109,8 @@ export const mergeFirebaseBranch = (pubId, sourceBranchId, destinationBranchId) 
 	});
 };
 
-export const updateFirebaseDiscussion = async (discussion) => {
-	const { branchId, pubId, id: discussionId } = discussion;
+export const updateFirebaseDiscussion = async (discussion, branchId) => {
+	const { pubId, id: discussionId } = discussion;
 	const branchKey = `pub-${pubId}/branch-${branchId}`;
 	const discussionsRef = database.ref(`${branchKey}/discussionsContentLive`);
 	const existingDiscussion = await discussionsRef

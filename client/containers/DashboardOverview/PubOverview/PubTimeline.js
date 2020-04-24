@@ -23,7 +23,7 @@ const PubTimeline = (props) => {
 	const {
 		communityData,
 		scopeData: {
-			activePermissions: { canEdit, canEditDraft, canManage },
+			activePermissions: { canView, canViewDraft, canManage },
 		},
 	} = usePageContext();
 	const { releases } = pubData;
@@ -37,7 +37,7 @@ const PubTimeline = (props) => {
 		? `Last edited ${formatDate(hasDraftContent, { includeTime: true })}`
 		: 'Get started by editing the Pub draft.';
 
-	const draftItem = (canEdit || canEditDraft) && (
+	const draftItem = (canView || canViewDraft) && (
 		<TimelineItem
 			large
 			hollow={hasDraftContent}

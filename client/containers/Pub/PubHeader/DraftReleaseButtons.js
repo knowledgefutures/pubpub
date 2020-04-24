@@ -56,7 +56,7 @@ const DraftReleaseButtons = (props) => {
 		showTocButton,
 	} = props;
 	const { communityData, scopeData } = usePageContext();
-	const { canEdit, canAdmin } = scopeData.activePermissions;
+	const { canView, canViewDraft, canAdmin } = scopeData.activePermissions;
 	const { isRelease } = pubData;
 
 	const renderTocButton = () => {
@@ -80,7 +80,7 @@ const DraftReleaseButtons = (props) => {
 		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
 			<>
-				{canEdit && (
+				{(canView || canViewDraft) && (
 					<ResponsiveHeaderButton
 						icon="edit"
 						tagName="a"

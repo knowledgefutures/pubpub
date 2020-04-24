@@ -59,7 +59,8 @@ builders.Pub = async (args) => {
 	return Pub.findOne({ where: { id: pubId }, include: [{ model: Branch, as: 'branches' }] });
 };
 
-builders.Collection = createCollection;
+builders.Collection = ({ title = 'Collection ' + uuid.v4(), kind = 'issue', ...restArgs }) =>
+	createCollection({ title: title, kind: kind, ...restArgs });
 
 builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 	const getTargetArgs = () => {

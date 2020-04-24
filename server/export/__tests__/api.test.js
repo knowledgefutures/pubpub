@@ -31,10 +31,10 @@ stubOut(serverUtils, 'addWorkerTask');
 
 const makeExportQuery = (
 	historyKey,
-	{ branchName = 'draft', format = 'pdf', accessHash = null } = {},
+	{ branchTitle = 'draft', format = 'pdf', accessHash = null } = {},
 ) => {
 	const { community, pub } = models;
-	const branch = pub.branches.find((br) => br.title === branchName);
+	const branch = pub.branches.find((br) => br.title === branchTitle);
 	return {
 		communityId: community.id,
 		pubId: pub.id,
@@ -62,7 +62,7 @@ it('Creates an export of #draft for a user with a valid access hash', async () =
 		.expect(201);
 });
 
-it('Creates an export of #draft for the pub manager', async () => {
+it('Creates an export of #draft for a pub viewer', async () => {
 	const { pubViewer } = models;
 	const agent = await login(pubViewer);
 	await agent
@@ -75,7 +75,7 @@ it('Creates an export of #public for anyone', async () => {
 	const agent = await login();
 	await agent
 		.post('/api/export')
-		.send(makeExportQuery(0, { branchName: 'public' }))
+		.send(makeExportQuery(0, { branchTitle: 'public' }))
 		.expect(201);
 });
 

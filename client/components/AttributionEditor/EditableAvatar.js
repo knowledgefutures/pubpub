@@ -49,7 +49,13 @@ const EditableAvatar = (props) => {
 					onClick={selectImage}
 				>
 					<Avatar width={width} userInitials={user.initials} userAvatar={avatar} />
-					<div className={classNames('hover-overlay', !avatar && 'no-image')}>
+					<div
+						className={classNames(
+							'hover-overlay',
+							!avatar && 'no-image',
+							isLoading && 'is-loading',
+						)}
+					>
 						{isLoading && <Spinner size={width / 2} />}
 						{!isLoading && <Icon icon="add" iconSize={width / 2.25} />}
 					</div>

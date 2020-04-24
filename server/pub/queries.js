@@ -18,6 +18,8 @@ export const createPub = async (
 		communityId: communityId,
 		headerBackgroundColor: 'light',
 		headerStyle: 'dark',
+		viewHash: generateHash(8),
+		editHash: generateHash(8),
 		...restArgs,
 	});
 

@@ -3,6 +3,15 @@ import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeForks from './forksSanitize';
 import sanitizeReviews from './reviewsSanitize';
 
+const sanitizeHashes = (pubData, activePermissions) => {
+	const { editHash, viewHash } = pubData;
+	const { canView, canViewDraft, canEdit, canEditDraft } = activePermissions;
+	return {
+		viewHash: canView || canViewDraft ? viewHash : null,
+		editHash: canEdit || canEditDraft ? editHash : null,
+	};
+};
+
 export default (pubData, initialData, releaseNumber) => {
 	const { loginData, scopeData } = initialData;
 	const { activePermissions } = scopeData;
@@ -34,6 +43,7 @@ export default (pubData, initialData, releaseNumber) => {
 
 	return {
 		...pubData,
+		...sanitizeHashes(pubData, activePermissions),
 		attributions: pubData.attributions.map(ensureUserForAttribution),
 		discussions: discussions,
 		forks: forks,

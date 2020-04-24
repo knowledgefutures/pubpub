@@ -6,7 +6,6 @@ export default (sequelize, dataTypes) => {
 			title: { type: dataTypes.TEXT },
 			slug: {
 				type: dataTypes.TEXT,
-				unique: true,
 				allowNull: false,
 				validate: {
 					isLowercase: true,
@@ -19,9 +18,6 @@ export default (sequelize, dataTypes) => {
 				type: dataTypes.BOOLEAN,
 			} /* Restricted collections can only be set by Community Admins */,
 			isPublic: { type: dataTypes.BOOLEAN } /* Only visible to community admins */,
-			// isPublicBranches: { type: dataTypes.BOOLEAN },
-			// isPublicDiscussions: { type: dataTypes.BOOLEAN },
-			// isPublicReviews: { type: dataTypes.BOOLEAN },
 			viewHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
 			metadata: { type: dataTypes.JSONB },

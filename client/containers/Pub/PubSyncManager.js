@@ -266,7 +266,6 @@ class PubSyncManager extends React.Component {
 					'description',
 					'doi',
 					'downloads',
-					'isCommunityAdminManaged',
 					'labels',
 					'managers',
 					'reviews',

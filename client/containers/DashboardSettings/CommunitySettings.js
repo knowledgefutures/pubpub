@@ -12,20 +12,14 @@ import {
 	NavBar,
 	Footer,
 } from 'components';
-import {
-	populateNavigationIds,
-	apiFetch,
-	slugifyString,
-	populateSocialItems,
-	defaultFooterLinks,
-} from 'utils';
+import { apiFetch, slugifyString, defaultFooterLinks } from 'utils';
 import { getDashUrl } from 'utils/dashboard';
 import { communityUrl } from 'shared/utils/canonicalUrls';
 import { isDevelopment } from 'shared/utils/environment';
 import NavBuilder from './NavBuilder';
 
 const CommunitySettings = () => {
-	const { scopeData, locationData } = usePageContext();
+	const { scopeData } = usePageContext();
 	const { activeCommunity } = scopeData.elements;
 
 	/* Export & Delete Mailto Props */

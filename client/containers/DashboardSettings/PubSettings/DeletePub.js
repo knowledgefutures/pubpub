@@ -48,7 +48,9 @@ class DeletePub extends Component {
 	render() {
 		return (
 			<div className="bp3-callout bp3-intent-danger">
-				<p><b>Deleting a Pub is permanent - it cannot be undone.</b></p>
+				<p>
+					<b>Deleting a Pub is permanent - it cannot be undone.</b>
+				</p>
 				<p>
 					This will permanantely delete the pub <b>{this.props.pubData.title}</b>, its
 					discussions, branches, and associated metadata.

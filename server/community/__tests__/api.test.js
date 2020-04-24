@@ -2,28 +2,41 @@
 import sinon from 'sinon';
 import uuid from 'uuid';
 
-import { makeUser, makeCommunity, setup, teardown, login } from '../../../stubstub';
-import { Community } from '../../models';
+import { setup, teardown, login, modelize } from 'stubstub';
 
-import * as mailchimp from '../../utils/mailchimp';
-import * as webhooks from '../../utils/webhooks';
+import { Community } from 'server/models';
+import * as mailchimp from 'server/utils/mailchimp';
+import * as webhooks from 'server/utils/webhooks';
 
 let mailchimpStub;
 let slackStub;
-let existingCommunity;
-let someOtherCommunity;
+
+const models = modelize`
+	Community existingCommunity {
+		Member {
+			permissions: "admin"
+			User admin {}
+		}
+	}
+	Community someOtherCommunity {
+		Member {
+			permissions: "admin"
+			User someOtherAdmin {}
+		}
+	}
+	User willCreateCommunity {}
+`;
 
 setup(beforeAll, async () => {
 	mailchimpStub = sinon.stub(mailchimp, 'subscribeUser');
 	slackStub = sinon.stub(webhooks, 'alertNewCommunity');
-	existingCommunity = await makeCommunity();
-	someOtherCommunity = await makeCommunity();
+	await models.resolve();
 });
 
 describe('/api/communities', () => {
 	it('creates a community', async () => {
-		const user = await makeUser();
-		const agent = await login(user);
+		const { willCreateCommunity } = models;
+		const agent = await login(willCreateCommunity);
 		const subdomain = 'burn-book-' + uuid.v4();
 		const { body: url } = await agent
 			.post('/api/communities')
@@ -50,10 +63,8 @@ describe('/api/communities', () => {
 	});
 
 	it('does not allow admins of other communities to update fields on a community', async () => {
-		const {
-			community: { id: communityId, title: oldTitle },
-		} = existingCommunity;
-		const { admin: someOtherAdmin } = someOtherCommunity;
+		const { existingCommunity, someOtherAdmin } = models;
+		const { title: oldTitle, id: communityId } = existingCommunity;
 		const agent = await login(someOtherAdmin);
 		await agent
 			.put('/api/communities')
@@ -67,19 +78,19 @@ describe('/api/communities', () => {
 	});
 
 	it('allows community admins to update reasonable fields on the community', async () => {
-		const { admin, community } = existingCommunity;
+		const { admin, existingCommunity } = models;
 		const agent = await login(admin);
 		await agent
 			.put('/api/communities')
 			.send({
-				communityId: community.id,
+				communityId: existingCommunity.id,
 				// We expect this field to be updated...
 				title: 'Journal of Trying To Lose Three Pounds',
 				// ...but not this one!
 				isFeatured: true,
 			})
 			.expect(200);
-		const communityNow = await Community.findOne({ where: { id: community.id } });
+		const communityNow = await Community.findOne({ where: { id: existingCommunity.id } });
 		expect(communityNow.title).toEqual('Journal of Trying To Lose Three Pounds');
 		expect(communityNow.isFeatured).not.toBeTruthy();
 	});

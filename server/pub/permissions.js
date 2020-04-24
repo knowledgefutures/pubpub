@@ -25,8 +25,6 @@ export const getPermissions = async ({ userId, communityId, pubId, licenseSlug }
 		'headerStyle',
 		'headerBackgroundColor',
 		'headerBackgroundImage',
-		'isCommunityAdminManaged',
-		'communityAdminDraftPermissions',
 		'draftPermissions',
 		'labels',
 		'downloads',
@@ -34,9 +32,6 @@ export const getPermissions = async ({ userId, communityId, pubId, licenseSlug }
 		'citationStyle',
 		'citationInlineStyle',
 	];
-	/* TODO: There are open questions about who should */
-	/* be able to delete pubs. Does a PubManager have the */
-	/* power to delete a pub and everyone else's branches? */
 	return {
 		create: true,
 		update: canManage ? editProps : false,

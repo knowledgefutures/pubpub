@@ -1,15 +1,6 @@
 import stopword from 'stopword';
 import stopWordList from './stopwords';
-import {
-	Pub,
-	Community,
-	Branch,
-	BranchPermission,
-	PubAttribution,
-	User,
-	PubManager,
-	Page,
-} from '../../server/models';
+import { Pub, Community, Branch, PubAttribution, User, Page } from '../../server/models';
 import { getBranchDoc } from '../../server/utils/firebaseAdmin';
 
 const lengthInUtf8Bytes = (str) => {
@@ -86,19 +77,6 @@ export const getPubSearchData = (pubIds) => {
 				model: Branch,
 				as: 'branches',
 				required: true,
-				include: [
-					{
-						model: BranchPermission,
-						as: 'permissions',
-						separate: true,
-						required: false,
-					},
-				],
-			},
-			{
-				model: PubManager,
-				as: 'managers',
-				separate: true,
 			},
 		],
 	})

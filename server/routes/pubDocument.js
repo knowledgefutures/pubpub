@@ -56,10 +56,6 @@ const getEnrichedAndSanitizedPubData = async ({
 	releaseNumber,
 }) => {
 	let pubData = await getPub(pubSlug, initialData.communityData.id);
-	console.log(
-		'got pubData and...',
-		pubData.discussions.map((d) => d.thread.comments.map((c) => c.author)),
-	);
 	if (!pubData) {
 		throw new ForbiddenError();
 	}

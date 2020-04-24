@@ -1,23 +1,30 @@
 /* global describe, it, expect, beforeAll, afterAll */
+import { setup, teardown, login, modelize } from 'stubstub';
 
-import { makeCommunity, setup, teardown, login } from '../../../stubstub';
-import { createCollection } from '../../collection/queries';
-import { createPage } from '../../page/queries';
-
-let testCommunity;
+const models = modelize`
+	Community {
+		Collection noLinkedPageCollection {
+			kind: "issue"
+			title: "Issue One"
+		}
+		Collection linkedPageCollection {
+			kind: "issue"
+			title: "Issue Two"
+			page: Page linkedPage {
+				title: "Issue Two"
+				slug: "issue-two"
+			}
+		}
+	}
+`;
 
 setup(beforeAll, async () => {
-	testCommunity = await makeCommunity();
+	await models.resolve();
 });
 
 describe('/collection', () => {
 	it('redirects to a search when a Collection does not have a linked Page', async () => {
-		const { community } = testCommunity;
-		const collection = await createCollection({
-			communityId: community.id,
-			kind: 'issue',
-			title: 'The Book of Tests',
-		});
+		const { noLinkedPageCollection: collection } = models;
 		const agent = await login();
 		const { headers } = await agent
 			.get('/collection/' + collection.id.slice(0, 8))
@@ -27,20 +34,7 @@ describe('/collection', () => {
 	});
 
 	it('redirects to the linked Page for a Collection, when it exists', async () => {
-		const { community } = testCommunity;
-		const collection = await createCollection({
-			communityId: community.id,
-			kind: 'issue',
-			title: 'The Book of Tests',
-		});
-		const page = await createPage({
-			communityId: community.id,
-			title: 'The Page of Tests',
-			description: 'I sure hope this works!',
-			slug: 'test-page',
-		});
-		collection.pageId = page.id;
-		await collection.save();
+		const { linkedPageCollection: collection, linkedPage: page } = models;
 		const agent = await login();
 		const { headers } = await agent
 			.get('/collection/' + collection.id.slice(0, 8))

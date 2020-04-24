@@ -1,11 +1,9 @@
 import app from '../server';
 import { getBranchDoc } from '../utils/firebaseAdmin';
-import { Branch, BranchPermission, User, CommunityAdmin, PubManager } from '../models';
-import { getBranchAccess } from '../branch/permissions';
 
 app.get('/api/pubHistory', async (req, res) => {
 	try {
-		const { branchId, pubId, communityId, accessHash, historyKey } = req.query;
+		const { branchId, pubId, historyKey } = req.query;
 		const canView = true;
 		if (canView) {
 			const branchInfo = await getBranchDoc(pubId, branchId, parseInt(historyKey, 10));

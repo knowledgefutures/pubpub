@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
 import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
-import Editor from '../src/index';
-import { editorWrapperStyle, initFirebase, clientData } from './_utilities';
-import initialContent from './initialDocs/plainDoc';
+
+import Editor from 'components/Editor';
 import {
 	convertLocalHighlightToDiscussion,
 	moveSelectionToEnd,
@@ -12,7 +11,10 @@ import {
 	moveToStartOfSelection,
 	removeLocalHighlight,
 	setLocalHighlight,
-} from '../src/utils';
+} from 'components/Editor/utils';
+
+import { editorWrapperStyle, initFirebase, clientData } from './_utilities';
+import initialContent from './initialDocs/plainDoc';
 
 const cursorCommands = {
 	moveSelectionToStart: moveSelectionToStart,

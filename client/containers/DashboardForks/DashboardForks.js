@@ -12,6 +12,9 @@ const DashboardForks = (props) => {
 	const { forksData } = props;
 	const { scopeData } = usePageContext();
 
+	void forksData;
+	void scopeData;
+
 	return (
 		<div className="dashboard-forks-container">
 			<h2 className="dashboard-content-header">Forks</h2>

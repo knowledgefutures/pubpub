@@ -13,8 +13,10 @@
         },
         "alias": {
             "map": [
+                ["stubstub", "./stubstub"],
                 ["shared", "./shared"],
-                ["data", "./stories/data"]
+                ["data", "./stories/data"],
+                ["server", "./server"]
             ],
             "extensions": [".js"]
         }
@@ -38,6 +40,7 @@
         "prettier/prettier": "error",
         "no-plusplus": 0,
         "no-tabs": 0,
+        "no-void": 0,
         "operator-linebreak": 0,
         "prefer-template": 0,
         "react/destructuring-assignment": 0,

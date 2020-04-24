@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import { discussionsData as discussions, discussionLabels as labels } from 'data';
+import { discussionsData } from 'data';
 import PubBottom from 'containers/Pub/PubDocument/PubBottom/PubBottom';
 
 const citations = [
@@ -43,8 +43,8 @@ const footnotes = [
 const pubData = {
 	footnotes: footnotes,
 	citations: citations,
-	discussions: discussions,
-	labels: labels,
+	discussions: discussionsData,
+	labels: null,
 	canManage: false,
 	canDiscussBranch: true,
 	activeBranch: {

@@ -14,14 +14,15 @@ export const getPermissions = async ({ discussionId, userId, pubId, communityId,
 		loginId: userId,
 		accessHash: accessHash,
 	});
+
 	const discussionData = await DiscussionNew.findOne({
-		where: { id: discussionId },
+		where: { id: discussionId, pubId: pubId },
 	});
 
-	const userCreatedDiscussion = discussionData && discussionData.userId === userId;
 	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
+
 	return {
 		create: canView || canCreateDiscussions,
-		update: (canAdmin || !!userCreatedDiscussion) && userEditableFields,
+		update: canAdmin && discussionData && userEditableFields,
 	};
 };

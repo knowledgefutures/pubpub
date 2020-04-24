@@ -6,12 +6,6 @@ import { usePageContext } from 'utils/hooks';
 import PubSyncManager from './PubSyncManager';
 import PubHeader from './PubHeader';
 import PubDocument from './PubDocument';
-// import PubMerge from './PubMerge';
-// import PubManage from './PubManage';
-// import PubReviewCreate from './PubReviewCreate';
-// import PubReviews from './PubReviews';
-// import PubReview from './PubReview';
-// import PubBranchCreate from './PubBranchCreate';
 import { PubSuspendWhileTypingProvider, PubSuspendWhileTyping } from './PubSuspendWhileTyping';
 
 require('./pub.scss');

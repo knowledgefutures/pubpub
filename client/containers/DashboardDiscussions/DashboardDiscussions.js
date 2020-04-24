@@ -12,6 +12,9 @@ const DashboardDiscussions = (props) => {
 	const { discussionsData } = props;
 	const { scopeData } = usePageContext();
 
+	void discussionsData;
+	void scopeData;
+
 	return (
 		<div className="dashboard-discussions-container">
 			<h2 className="dashboard-content-header">Discussions</h2>

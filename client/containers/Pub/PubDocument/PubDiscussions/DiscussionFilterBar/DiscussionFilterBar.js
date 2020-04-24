@@ -8,7 +8,6 @@ import {
 	Button,
 } from '@blueprintjs/core';
 import { usePageContext } from 'utils/hooks';
-import { filterAndSortThreads } from '../discussionUtils';
 import SortList from '../../PubBottom/Discussions/SortList';
 import LabelFilter from '../../PubBottom/Discussions/LabelFilter';
 
@@ -25,11 +24,14 @@ const propTypes = {
 const DiscussionFilterBar = (props) => {
 	const { pubData, threadData, updateLocalData, children } = props;
 	const { communityData, scopeData } = usePageContext();
-	const { canView, canCreateDiscussion } = scopeData.activePermissions
+	const { canView, canCreateDiscussion } = scopeData.activePermissions;
 	const [isArchivedMode, setIsArchivedMode] = useState(false);
 	const [sortMode, setSortMode] = useState('newestThread');
 	const [filteredLabels, setFilteredLabels] = useState([]);
 
+	// TODO(ian, tomorrow): figure out where this function went
+
+	// eslint-disable-next-line
 	const activeThreads = filterAndSortThreads(
 		threadData,
 		false,
@@ -37,6 +39,8 @@ const DiscussionFilterBar = (props) => {
 		filteredLabels,
 		pubData.activeBranch.id,
 	);
+
+	// eslint-disable-next-line
 	const archivedThreads = filterAndSortThreads(
 		threadData,
 		true,
@@ -44,6 +48,7 @@ const DiscussionFilterBar = (props) => {
 		filteredLabels,
 		pubData.activeBranch.id,
 	);
+
 	const filtersActive = !!filteredLabels.length;
 	const threadsToRender = isArchivedMode ? archivedThreads : activeThreads;
 

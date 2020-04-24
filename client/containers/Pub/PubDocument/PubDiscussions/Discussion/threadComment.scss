@@ -6,6 +6,11 @@
 		margin-bottom: 1em;
 		border-bottom: 1px solid #f0f0f7;
 	}
+	&.is-preview {
+		.content-wrapper {
+			margin-bottom: 0;
+		}
+	}
 	.avatar-wrapper {
 		margin-right: 0.5em;
 	}

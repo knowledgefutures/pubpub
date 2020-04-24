@@ -6,12 +6,12 @@ import { usePageContext } from 'utils/hooks';
 import { PubHistoryViewer } from 'components';
 
 import PubBody from './PubBody';
-import PubInlineMenu from './PubInlineMenu';
+import PubBottom from './PubBottom/PubBottom';
 import PubFileImport from './PubFileImport';
 import PubHeaderFormatting from './PubHeaderFormatting';
-import PubBottom from './PubBottom/PubBottom';
+import PubHistoricalNotice from './PubHistoricalNotice';
+import PubInlineMenu from './PubInlineMenu';
 import PubMouseEvents from './PubMouseEvents';
-import PubHistoricalNotice from './PubHistory/PubHistoricalNotice';
 
 require('./pubDocument.scss');
 

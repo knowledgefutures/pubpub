@@ -68,7 +68,7 @@ const ThreadComment = (props) => {
 
 	const isAuthor = loginData.id === threadCommentData.userId;
 	return (
-		<div className="thread-comment-component">
+		<div className={classNames('thread-comment-component', isPreview && 'is-preview')}>
 			<div className="avatar-wrapper">
 				<Avatar
 					width={18}

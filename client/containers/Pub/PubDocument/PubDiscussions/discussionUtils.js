@@ -139,150 +139,121 @@ export const discussionMatchesSearchTerm = (discussion, searchTerm) => {
 
 export const filterAndSortDiscussions = (
 	discussions,
-	isArchivedList,
+	isClosedList,
 	sortMode,
 	filteredLabels,
 	activeBranchId,
 	searchTerm = null,
 	showAnchoredDiscussions = true,
 ) => {
-	return (
-		discussions
-			.filter((discussion) => {
-				// const discussionIsArchived = items.reduce((prev, curr) => {
-				// 	if (curr.isClosed) {
-				// 		return true;
-				// 	}
-				// 	return prev;
-				// }, false);
-				return isArchivedList ? discussion.isClosed : !discussion.isClosed;
-			})
-			// .filter((items) => {
-			// 	return items[0].branchId === activeBranchId;
-			// })
-			.filter((discussion) => {
-				if (!searchTerm) {
-					return true;
+	return discussions
+		.filter((discussion) => (isClosedList ? discussion.isClosed : !discussion.isClosed))
+		.filter((discussion) => {
+			if (!searchTerm) {
+				return true;
+			}
+			return discussion.thread.comments.some((threadComment) =>
+				discussionMatchesSearchTerm(threadComment, searchTerm),
+			);
+		})
+		.filter((discussion) => !discussion.anchor || showAnchoredDiscussions)
+		.filter((discussion) => {
+			/* Some discussionsContentLive data coming from firebase has not been refactored. */
+			/* We should either delete all discussionContentLive on migration, or keep this */
+			/* filter indefinitely. */
+			return discussion.thread;
+		})
+		.filter((discussion) => {
+			if (filteredLabels.length === 0) {
+				return true;
+			}
+			const hasNecessaryLabel = filteredLabels.reduce((prev, curr) => {
+				if (discussion.labels.indexOf(curr) === -1) {
+					return false;
 				}
-				return discussion.thread.comments.some((threadComment) =>
-					discussionMatchesSearchTerm(threadComment, searchTerm),
-				);
-			})
-			.filter((discussion) => {
-				// if (showAnchoredDiscussions) {
-				// 	return true;
-				// }
-				// return (
-				// 	items[0] &&
-				// 	(items[0].highlights === null ||
-				// 		(Array.isArray(items[0].highlights) && items[0].highlights.length === 0))
-				// );
-				return !discussion.anchor || showAnchoredDiscussions;
-			})
-			.filter((discussion) => {
-				/* Some discussionsContentLive data coming from firebase has not been refactored. */
-				/* We should either delete all discussionContentLive on migration, or keep this */
-				/* filter indefinitely. */
-				return discussion.thread;
-			})
-			.filter((discussion) => {
-				// const threadLabels = items.reduce((prev, curr) => {
-				// 	if (curr.labels && curr.labels.length) {
-				// 		return curr.labels;
-				// 	}
-				// 	return prev;
-				// }, []);
-				if (filteredLabels.length === 0) {
-					return true;
+				return prev;
+			}, true);
+			return hasNecessaryLabel;
+		})
+		.sort((foo, bar) => {
+			/* Newest Thread */
+			if (sortMode === 'newestThread' && foo.number > bar.number) {
+				return -1;
+			}
+			if (sortMode === 'newestThread' && foo.number < bar.number) {
+				return 1;
+			}
+			/* Oldest Thread */
+			if (sortMode === 'oldestThread' && foo.number < bar.number) {
+				return -1;
+			}
+			if (sortMode === 'oldestThread' && foo.number > bar.number) {
+				return 1;
+			}
+			/* Newest Reply */
+			const fooNewestReply = foo.thread.comments.reduce((prev, curr) => {
+				if (curr.createdAt > prev) {
+					return curr.createdAt;
 				}
-				const hasNecessaryLabel = filteredLabels.reduce((prev, curr) => {
-					if (discussion.labels.indexOf(curr) === -1) {
-						return false;
-					}
-					return prev;
-				}, true);
-				return hasNecessaryLabel;
-			})
-			.sort((foo, bar) => {
-				/* Newest Thread */
-				if (sortMode === 'newestThread' && foo.number > bar.number) {
-					return -1;
+				return prev;
+			}, '0000-02-01T22:21:19.608Z');
+			const barNewestReply = bar.thread.comments.reduce((prev, curr) => {
+				if (curr.createdAt > prev) {
+					return curr.createdAt;
 				}
-				if (sortMode === 'newestThread' && foo.number < bar.number) {
-					return 1;
+				return prev;
+			}, '0000-02-01T22:21:19.608Z');
+			if (sortMode === 'newestReply' && fooNewestReply > barNewestReply) {
+				return -1;
+			}
+			if (sortMode === 'newestReply' && fooNewestReply < barNewestReply) {
+				return 1;
+			}
+			/* Oldest Reply */
+			const fooOldestReply = foo.thread.comments.reduce((prev, curr) => {
+				if (curr.createdAt < prev) {
+					return curr.createdAt;
 				}
-				/* Oldest Thread */
-				if (sortMode === 'oldestThread' && foo.number < bar.number) {
-					return -1;
+				return prev;
+			}, '9999-02-01T22:21:19.608Z');
+			const barOldestReply = bar.thread.comments.reduce((prev, curr) => {
+				if (curr.createdAt < prev) {
+					return curr.createdAt;
 				}
-				if (sortMode === 'oldestThread' && foo.number > bar.number) {
-					return 1;
-				}
-				/* Newest Reply */
-				const fooNewestReply = foo.thread.comments.reduce((prev, curr) => {
-					if (curr.createdAt > prev) {
-						return curr.createdAt;
-					}
-					return prev;
-				}, '0000-02-01T22:21:19.608Z');
-				const barNewestReply = bar.thread.comments.reduce((prev, curr) => {
-					if (curr.createdAt > prev) {
-						return curr.createdAt;
-					}
-					return prev;
-				}, '0000-02-01T22:21:19.608Z');
-				if (sortMode === 'newestReply' && fooNewestReply > barNewestReply) {
-					return -1;
-				}
-				if (sortMode === 'newestReply' && fooNewestReply < barNewestReply) {
-					return 1;
-				}
-				/* Oldest Reply */
-				const fooOldestReply = foo.thread.comments.reduce((prev, curr) => {
-					if (curr.createdAt < prev) {
-						return curr.createdAt;
-					}
-					return prev;
-				}, '9999-02-01T22:21:19.608Z');
-				const barOldestReply = bar.thread.comments.reduce((prev, curr) => {
-					if (curr.createdAt < prev) {
-						return curr.createdAt;
-					}
-					return prev;
-				}, '9999-02-01T22:21:19.608Z');
-				if (sortMode === 'oldestReply' && fooOldestReply < barOldestReply) {
-					return -1;
-				}
-				if (sortMode === 'oldestReply' && fooOldestReply > barOldestReply) {
-					return 1;
-				}
-				/* Most Replies */
-				if (
-					sortMode === 'mostReplies' &&
-					foo.thread.comments.length > bar.thread.comments.length
-				) {
-					return -1;
-				}
-				if (
-					sortMode === 'mostReplies' &&
-					foo.thread.comments.length < bar.thread.comments.length
-				) {
-					return 1;
-				}
-				/* Least Replies */
-				if (
-					sortMode === 'leastReplies' &&
-					foo.thread.comments.length < bar.thread.comments.length
-				) {
-					return -1;
-				}
-				if (
-					sortMode === 'leastReplies' &&
-					foo.thread.comments.length > bar.thread.comments.length
-				) {
-					return 1;
-				}
-				return 0;
-			})
-	);
+				return prev;
+			}, '9999-02-01T22:21:19.608Z');
+			if (sortMode === 'oldestReply' && fooOldestReply < barOldestReply) {
+				return -1;
+			}
+			if (sortMode === 'oldestReply' && fooOldestReply > barOldestReply) {
+				return 1;
+			}
+			/* Most Replies */
+			if (
+				sortMode === 'mostReplies' &&
+				foo.thread.comments.length > bar.thread.comments.length
+			) {
+				return -1;
+			}
+			if (
+				sortMode === 'mostReplies' &&
+				foo.thread.comments.length < bar.thread.comments.length
+			) {
+				return 1;
+			}
+			/* Least Replies */
+			if (
+				sortMode === 'leastReplies' &&
+				foo.thread.comments.length < bar.thread.comments.length
+			) {
+				return -1;
+			}
+			if (
+				sortMode === 'leastReplies' &&
+				foo.thread.comments.length > bar.thread.comments.length
+			) {
+				return 1;
+			}
+			return 0;
+		});
 };

@@ -2,20 +2,20 @@ import { normalizeMetadataToKind } from 'shared/collections/metadata';
 import { slugifyString, generateHash } from 'utils';
 import { Collection, CollectionPub, Community } from '../models';
 
-export const createCollection = (inputValues) => {
-	return Community.findOne({ where: { id: inputValues.communityId } }).then((community) => {
-		const title = inputValues.title.trim();
+export const createCollection = ({ communityId, title, kind, pageId = null }) => {
+	return Community.findOne({ where: { id: communityId } }).then((community) => {
 		const collection = {
-			title: title,
+			title: title.trim(),
 			slug: slugifyString(title),
 			isRestricted: true,
 			isPublic: true,
 			viewHash: generateHash(8),
 			editHash: generateHash(8),
-			communityId: inputValues.communityId,
-			kind: inputValues.kind,
+			communityId: communityId,
+			pageId: pageId,
+			kind: kind,
 		};
-		const metadata = normalizeMetadataToKind({}, inputValues.kind, {
+		const metadata = normalizeMetadataToKind({}, kind, {
 			community: community,
 			collection: collection,
 		});

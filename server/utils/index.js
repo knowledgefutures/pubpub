@@ -3,23 +3,11 @@ import ReactDOMServer from 'react-dom/server';
 import * as ReactBeautifulDnD from 'react-beautiful-dnd';
 import { resolve } from 'path';
 import amqplib from 'amqplib';
-import { remove as removeDiacritics } from 'diacritics';
 
 import { HTTPStatusError } from '../errors';
 
 export { getInitialData } from './initData';
-
-export const slugifyString = (input) => {
-	if (typeof input !== 'string') {
-		console.error('input is not a valid string');
-		return '';
-	}
-
-	return removeDiacritics(input)
-		.replace(/ /g, '-')
-		.replace(/[^a-zA-Z0-9-]/gi, '')
-		.toLowerCase();
-};
+export { slugifyString, generateHash } from './strings';
 
 export const hostIsValid = (req, access) => {
 	const isBasePubPub = req.hostname === 'www.pubpub.org';
@@ -306,17 +294,6 @@ export const handleErrors = (req, res, next) => {
 	};
 };
 
-export function generateHash(length) {
-	const tokenLength = length || 32;
-	const possible = 'abcdefghijklmnopqrstuvwxyz0123456789';
-
-	let hash = '';
-	for (let index = 0; index < tokenLength; index += 1) {
-		hash += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return hash;
-}
-
 /* Worker Queue Tasks */
 const queueName = 'pubpubTaskQueue';
 let openChannel;
@@ -330,9 +307,15 @@ const setOpenChannel = () => {
 		});
 	});
 };
-setOpenChannel();
+
+if (process.env.NODE_ENV !== 'test') {
+	setOpenChannel();
+}
 
 export function addWorkerTask(message) {
+	if (process.env.NODE_ENV === 'test') {
+		return null;
+	}
 	if (!openChannel) {
 		setOpenChannel();
 	}

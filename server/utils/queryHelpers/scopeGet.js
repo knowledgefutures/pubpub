@@ -7,6 +7,7 @@ import {
 	Member,
 	Pub,
 	PublicPermissions,
+	Release,
 } from '../../models';
 
 import buildPubOptions from './pubOptions';
@@ -110,6 +111,11 @@ getScopeElements = async (scopeInputs) => {
 					model: Branch,
 					as: 'branches',
 					attributes: ['id', 'title'],
+				},
+				{
+					model: Release,
+					as: 'releases',
+					attributes: ['id'],
 				},
 			],
 		});
@@ -215,27 +221,26 @@ getActivePermissions = async (
 	publicPermissionsData,
 	scopeMemberData,
 ) => {
+	const { activePub, activeCollection, activeCommunity, inactiveCollections } = scopeElements;
 	const isSuperAdmin = checkIfSuperAdmin(scopeInputs.loginId);
 	const permissionLevels = ['view', 'edit', 'manage', 'admin'];
 	let defaultPermissionIndex = -1;
-	[
-		scopeElements.activePub,
-		scopeElements.activeCollection,
-		scopeElements.activeCommunity,
-		...scopeElements.inactiveCollections,
-	]
+
+	[activePub, activeCollection, activeCommunity, ...inactiveCollections]
 		.filter((elem) => !!elem)
 		.forEach((elem) => {
-			if (elem.viewHash === scopeInputs.accessHash) {
+			if (elem.viewHash && elem.viewHash === scopeInputs.accessHash) {
 				defaultPermissionIndex = 0;
 			}
-			if (elem.editHash === scopeInputs.accessHash) {
+			if (elem.editHash && elem.editHash === scopeInputs.accessHash) {
 				defaultPermissionIndex = 1;
 			}
 		});
+
 	if (isSuperAdmin) {
 		defaultPermissionIndex = 3;
 	}
+
 	const permissionLevelIndex = scopeMemberData.reduce((prev, curr) => {
 		const currLevelIndex = permissionLevels.indexOf(curr.permissions);
 		return currLevelIndex > prev ? currLevelIndex : prev;
@@ -255,13 +260,16 @@ getActivePermissions = async (
 		return typeof value === 'boolean' ? value : precedent;
 	};
 
+	const canCreateDiscussionsOnRelease = activePub && activePub.releases.length > 0;
+
 	const initialOptions = {
 		canCreateForks: null,
 		canCreateReviews: null,
-		canCreateDiscussions: null,
+		canCreateDiscussions: canCreateDiscussionsOnRelease,
 		canViewDraft: null,
 		canEditDraft: null,
 	};
+
 	const activePublicPermissions = publicPermissionsData
 		.sort((foo, bar) => {
 			/* Sort the optionsData so that the options assocaited with */

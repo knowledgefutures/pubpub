@@ -12,6 +12,9 @@ const DashboardActivity = (props) => {
 	const { activityData } = props;
 	const { scopeData } = usePageContext();
 
+	void activityData;
+	void scopeData;
+
 	return (
 		<div className="dashboard-activity-container">
 			<div className="dashboard-content-header">

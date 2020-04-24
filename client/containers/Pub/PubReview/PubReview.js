@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Intent, Tag, Tabs, Tab, Callout } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';

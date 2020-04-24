@@ -5,6 +5,9 @@ import { pubData } from 'data';
 
 storiesOf('containers/Pub/PubDetails', module).add('default', () => (
 	<PubDetails
+		communityData={{
+			subdomain: 'pfffft',
+		}}
 		pubData={{
 			...pubData,
 			attributions: [

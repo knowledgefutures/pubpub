@@ -15,7 +15,6 @@ export default {
 	doi: '10.21428/eea8ec7d.4c3a0515',
 	labels: null,
 	canManage: true,
-	isCommunityAdminManaged: true,
 	review: null,
 	downloads: null,
 	licenseSlug: 'cc-by',
@@ -24,6 +23,12 @@ export default {
 	updatedAt: '2019-04-30T15:23:17.211Z',
 	footnotes: [],
 	citations: [],
+	releases: [],
+	historyData: {
+		currentKey: -1,
+		latestKey: -1,
+		timestamps: [],
+	},
 	reviews: [
 		{
 			id: '2f2cce19-dde0-4a47-8e49-a5105cb27d83',
@@ -228,9 +233,7 @@ export default {
 			description: null,
 			submissionAlias: null,
 			order: 0,
-			communityAdminPermissions: 'none',
 			publicPermissions: 'view',
-			pubManagerPermissions: 'view',
 			permissions: [
 				{
 					id: '00ed4bc1-a408-4725-87f4-b07a41b2cfb5',
@@ -265,9 +268,7 @@ export default {
 			description: null,
 			submissionAlias: 'Submit for Review',
 			order: 1,
-			communityAdminPermissions: 'none',
 			publicPermissions: 'view',
-			pubManagerPermissions: 'view',
 			permissions: [],
 			isActive: false,
 			viewHash: 'cat2',
@@ -426,7 +427,6 @@ export default {
 		description: null,
 		submissionAlias: null,
 		order: 0,
-		communityAdminPermissions: 'none',
 		publicPermissions: 'edit',
 		permissions: [],
 		isActive: true,

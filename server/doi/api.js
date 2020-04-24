@@ -1,5 +1,5 @@
 import app, { wrap } from '../server';
-import { setDoiData } from './handler';
+import { setDoiData } from './queries';
 import { getPermissions } from './permissions';
 import { ForbiddenError } from '../errors';
 

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Intent, Tag } from '@blueprintjs/core';
 import { pubDataProps } from 'types/pub';
 import { GridWrapper, InputField, Icon, MinimalEditor } from 'components';

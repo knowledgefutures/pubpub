@@ -1,9 +1,5 @@
 import fuzzysearch from 'fuzzysearch';
 
-const sortOn = (array, fn) => {
-	return array.sort((a, b) => fn(a) - fn(b));
-};
-
 const authorsNamesFromPub = (pub) => pub.attributions.map((attr) => attr.name).filter((x) => x);
 
 export const fuzzyMatchCollection = (collection, filterText) => {

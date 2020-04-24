@@ -1,7 +1,7 @@
 export default (collection, initialData) => {
 	/* Collection access is granted when */
 	/* 1. it is public collection, or */
-	/* 2. the user is a communityAdmin, or */
+	/* 2. the user is a community admin, or */
 	/* 3. the user has explicit permissions on the collection */
 
 	const { activePermissions, memberData } = initialData.scopeData;

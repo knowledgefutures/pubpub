@@ -32,7 +32,6 @@ export default (sequelize, dataTypes) => {
 			lastPublishedAt: { type: dataTypes.DATE },
 			doi: { type: dataTypes.TEXT },
 			labels: { type: dataTypes.JSONB },
-			isCommunityAdminManaged: { type: dataTypes.BOOLEAN },
 			downloads: { type: dataTypes.JSONB },
 			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
 			citationStyle: { type: dataTypes.TEXT, defaultValue: 'apa' },
@@ -53,7 +52,6 @@ export default (sequelize, dataTypes) => {
 					const {
 						Pub,
 						PubAttribution,
-						PubManager,
 						CollectionPub,
 						Community,
 						// Discussion,
@@ -70,11 +68,6 @@ export default (sequelize, dataTypes) => {
 					Pub.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
 						as: 'attributions',
-						foreignKey: 'pubId',
-					});
-					Pub.hasMany(PubManager, {
-						onDelete: 'CASCADE',
-						as: 'managers',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(CollectionPub, {

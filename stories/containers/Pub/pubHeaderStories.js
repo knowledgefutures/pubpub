@@ -43,6 +43,9 @@ const aPrimaryCollection = {
 
 const historyData = {
 	isViewingHistory: false,
+	currentKey: -1,
+	latestKey: -1,
+	timestamps: [],
 };
 
 const PubHeaderWrapper = (props) => {

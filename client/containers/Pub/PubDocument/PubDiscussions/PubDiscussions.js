@@ -98,10 +98,7 @@ const PubDiscussions = (props) => {
 	const renderBottomDiscussions = () => {
 		const filteredDiscussions = filterDiscussions(discussions);
 		const emptyMessage =
-			discussions.filter(
-				// (th) => th[0] && th[0].branchId === pubData.activeBranch.id && !th[0].isArchived,
-				(th) => th && !th.isClosed,
-			).length > 0
+			discussions.filter((th) => th && !th.isClosed).length > 0
 				? 'No matching comments (some are hidden by filters)'
 				: canView || canCreateDiscussions
 				? ' Why not start the discussion?'

@@ -1,19 +1,33 @@
 import { getScope } from '../utils/queryHelpers';
+import { Release } from '../models';
+
+const pubExistsAndIsMissingReleases = async (pubId) => {
+	if (!pubId) {
+		return false;
+	}
+	const releases = await Release.findAll({ where: { pubId: pubId } });
+	return releases.length === 0;
+};
 
 export const getPermissions = async ({ pubId, collectionId, userId, communityId }) => {
 	if (!userId) {
 		return {};
 	}
 
-	const scopeData = await getScope({
+	const {
+		activePermissions: { canAdminCommunity },
+		elements: { activePub },
+	} = await getScope({
 		communityId: communityId,
 		collectionId: collectionId,
 		pubId: pubId,
 		loginId: userId,
 	});
 
+	const missingReleases = await pubExistsAndIsMissingReleases(activePub && activePub.id);
+
 	return {
-		pub: scopeData.activePermissions.canAdminCommunity,
-		collection: scopeData.activePermissions.canAdminCommunity,
+		pub: canAdminCommunity && !missingReleases,
+		collection: canAdminCommunity,
 	};
 };

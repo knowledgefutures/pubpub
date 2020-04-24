@@ -12,6 +12,9 @@ const DashboardImpact = (props) => {
 	const { impactData } = props;
 	const { scopeData } = usePageContext();
 
+	void impactData;
+	void scopeData;
+
 	return (
 		<div className="dashboard-impact-container">
 			<h2 className="dashboard-content-header">Impact</h2>

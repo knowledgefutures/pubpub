@@ -128,6 +128,7 @@ const Editor = (props) => {
 			},
 		});
 		props.onChange(getChangeObject(view));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	/* Before createEditor is called from componentDidMount, we */

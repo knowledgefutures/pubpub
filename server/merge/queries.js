@@ -1,6 +1,5 @@
 import { Merge, Review, Branch } from '../models';
 import { mergeFirebaseBranch } from '../utils/firebaseAdmin';
-import { createMergedReviewEvent } from '../reviewEvent/queries';
 import { createBranchExports } from '../export/queries';
 
 export const createMerge = (inputValues, userData) => {
@@ -47,10 +46,7 @@ export const createMerge = (inputValues, userData) => {
 					where: { id: inputValues.reviewId || null },
 				},
 			);
-			const createMergeEvent = inputValues.reviewId
-				? createMergedReviewEvent(userData, inputValues.pubId, inputValues.reviewId)
-				: undefined;
-			return Promise.all([newMergeData, createMergeEvent, updateReview]);
+			return Promise.all([newMergeData, updateReview]);
 		})
 		.then(async ([newMergeData, newReviewEvent]) => {
 			await createBranchExports(inputValues.pubId, inputValues.destinationBranchId);

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton, Card, Switch } from '@blueprintjs/core';
 import { usePageContext } from 'utils/hooks';

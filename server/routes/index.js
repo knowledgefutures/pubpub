@@ -2,9 +2,6 @@ require('./redirects'); // Redirect needed v3 routes;
 require('./pubRedirects');
 
 /* Routes for Communities */
-// require('./dashboard'); // Route: ['/dashboard', '/dashboard/:mode', '/dashboard/:mode/:slug']
-// require('./dash'); // Route: '/'
-// require('./pub'); // Route: ['/pub/:slug', '/pub/:slug/branch/:branchShortId', '/pub/:slug/:mode']
 require('./pubDocument');
 require('./collection'); // Route: /collection/:id
 require('./dashboardActivity');
@@ -39,12 +36,3 @@ require('./userCreate'); // Route: '/user/create/:hash'
 require('./user'); // Route: ['/user/:slug', '/user/:slug/:mode']
 require('./page'); // Route: ['/', '/:slug']
 require('./noMatch'); // Route: '/*'
-
-// dashboardOverview
-// dashboardActivity
-// dashboardConversations
-// dashboardReviews
-// dashboardMembers
-// dashboardMetrics
-// dashboardSettings
-// dashboardSite

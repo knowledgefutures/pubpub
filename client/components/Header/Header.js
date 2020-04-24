@@ -140,19 +140,8 @@ const Header = (props) => {
 	const backgroundStyle = calculateBackgroundStyle(hideHero);
 
 	const loggedIn = !!loginData.slug;
-	const isAdmin = scopeData.activePermissions.canAdminCommunity;
+	const canManage = scopeData.activePermissions.canManageCommunity;
 	const isBasePubPub = locationData.isBasePubPub;
-	// const isPage =
-	// 	communityData.pages &&
-	// 	communityData.pages.reduce((prev, curr) => {
-	// 		if (
-	// 			curr.slug === locationData.params.slug ||
-	// 			(!curr.slug && locationData.path === '/')
-	// 		) {
-	// 			return true;
-	// 		}
-	// 		return prev;
-	// 	}, false);
 
 	const resizedHeaderLogo = getResizedUrl(communityData.headerLogo, 'fit-in', '0x50');
 	const resizedHeroLogo = getResizedUrl(communityData.heroLogo, 'fit-in', '0x200');
@@ -217,7 +206,7 @@ const Header = (props) => {
 						)}
 						{!isBasePubPub &&
 							loggedIn &&
-							(!communityData.hideCreatePubButton || isAdmin) && (
+							(!communityData.hideCreatePubButton || canManage) && (
 								<Button
 									large={true}
 									minimal={true}

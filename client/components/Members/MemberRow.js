@@ -124,6 +124,7 @@ const MemberRow = (props) => {
 	const { activeTargetType } = scopeData.elements;
 	const { canAdmin } = scopeData.activePermissions;
 
+	const isOnlyMemberInCommunity = isOnlyMemberInScope && activeTargetType === 'community';
 	const outOfPermissionRange = !canAdmin && memberData.permissions === 'admin';
 	const user = memberData.user || { fullName: memberData.email, initials: '@' };
 	const isSelfUser = user.id && loginData.id === user.id;
@@ -188,7 +189,7 @@ const MemberRow = (props) => {
 			</MenuButton>
 		);
 
-		const deleteButton = onDelete && !isOnlyMemberInScope && (
+		const deleteButton = onDelete && !isOnlyMemberInCommunity && (
 			<Button
 				minimal
 				icon="cross"

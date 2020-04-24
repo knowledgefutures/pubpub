@@ -140,9 +140,7 @@ const PubPreview = function(props) {
 								Published: {dateFormat(publishedDate, 'mmm dd, yyyy')}
 							</span>
 						) : (
-							<span className="date">
-								Unpublished
-							</span>
+							<span className="date">Unpublished</span>
 						)}
 					</div>
 				)}

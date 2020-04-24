@@ -55,9 +55,14 @@ const DraftReleaseButtons = (props) => {
 		updatePubData,
 		showTocButton,
 	} = props;
-	const { communityData, scopeData } = usePageContext();
+	const {
+		communityData,
+		scopeData,
+		loginData: { id: userId },
+	} = usePageContext();
 	const { canView, canViewDraft, canAdmin } = scopeData.activePermissions;
 	const { isRelease } = pubData;
+	const canRequestReview = !canAdmin && !!userId;
 
 	const renderTocButton = () => {
 		if (pubHeadings.length > 0 && showTocButton) {
@@ -179,7 +184,7 @@ const DraftReleaseButtons = (props) => {
 						)}
 					</DialogLauncher>
 				)}
-				{!canAdmin && (
+				{canRequestReview && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton

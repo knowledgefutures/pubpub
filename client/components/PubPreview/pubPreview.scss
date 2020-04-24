@@ -36,21 +36,51 @@
 	}
 	&.large-preview {
 		height: 350px;
-
+		margin-bottom: 1em;
 		.banner-image {
-			width: 65%;
+			width: 55%;
 			height: 100%;
 			float: left;
 			border-right: 1px solid #f0f0f0;
 		}
 		.content {
 			float: left;
-			width: 35%;
+			width: 44%;
 			height: 100%;
+			padding-left: 1.5em;
+		}
+
+		.title-wrapper {
+			padding: 5px 5px 10px 5px;
+			&:hover {
+				text-decoration: underline;
+			}
+			.pub-title {
+				font-weight: 400;
+				font-size: 24px;
+				line-height: 1.33 !important;
+			}
+		}
+		.authors {
+			font-style: italic;
+			font-weight: 400;
+			font-size: 16px;
+			line-height: 1.25;
+			padding-bottom: 5px;
+			padding-left: 5px;
+		}
+		.date-details {
+			margin-top: 10px;
+			padding-left: 5px;
+		}
+		.description {
+			font-size: 14px;
+			padding-left: 5px;
 		}
 	}
 	&.medium-preview {
 		height: 225px;
+		margin-bottom: 1em;
 		.banner-image {
 			width: 35%;
 			height: 100%;
@@ -61,11 +91,32 @@
 			float: left;
 			width: 65%;
 			height: 100%;
+		}
+		.title-wrapper {
+			padding: 0px 5px 5px 5px;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		.authors {
+			padding-left: 5px;
+		}
+		.date-details {
+			margin-top: 15px;
+			padding-left: 5px;
+		}
+		.description {
+			padding-left: 5px;
+			padding-top: 15px;
 		}
 	}
 	&.small-preview {
 		box-shadow: 0px 0px 0px transparent;
 		border: 0px solid transparent;
+		border-left: 1px solid #e0e0e0;
+		border-radius: 0px;
+		padding-left: 20px;
+		margin-bottom: 1em;
 		.banner-image {
 			display: none;
 		}
@@ -75,14 +126,32 @@
 				display: none;
 			}
 		}
+		.title-wrapper {
+			padding: 5px 0px 2px;
+			&:hover {
+				text-decoration: underline;
+			}
+			.pub-title {
+				font-weight: 400;
+				font-size: 22px;
+				line-height: 1.33 !important;
+			}
+		}
 		.description {
 			padding-top: 5px;
+		}
+		.date-details {
+			margin-top: 10px;
+		}
+		.author-avatars {
+			padding-left: 0px;
 		}
 	}
 	&.minimal-preview {
 		box-shadow: 0px 0px 0px transparent;
 		border: 0px solid transparent;
 		border-left: 1px solid #e0e0e0;
+		border-radius: 0px;
 		padding-left: 20px;
 		font-size: 16px;
 		margin-bottom: 1em;
@@ -96,6 +165,7 @@
 			font-style: italic;
 			font-weight: 300;
 			font-size: 14px;
+			line-height: 1.3;
 		}
 		.title-wrapper {
 			padding: 5px 0px 2px;
@@ -105,13 +175,14 @@
 			.pub-title {
 				font-weight: 400;
 				font-size: 18px;
-				line-height: 1.2 !important;
+				line-height: 1.33 !important;
 			}
 		}
 		.description {
 			padding-top: 3px;
 			font-size: 12px;
 			opacity: 0.75;
+			line-height: 1.4;
 		}
 	}
 	.title-wrapper {
@@ -120,13 +191,13 @@
 			'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
 	}
 	.pub-title {
-		line-height: 1em;
+		line-height: 1.25 !important;
 		display: inline;
-		font-weight: 800;
+		font-weight: 400;
 	}
 	.authors {
 		font-size: 14px;
-		line-height: 16px;
+		line-height: 1.3;
 		font-style: italic;
 		color: #555;
 		padding-bottom: 2px;
@@ -136,16 +207,28 @@
 		line-height: 20px;
 		overflow: hidden;
 		height: 20px;
-		font-style: italic;
 		color: #555;
+		margin-top: 5px;
 		.date {
 			padding-right: 1em;
 			vertical-align: middle;
+			font-style: italic;
+			color: #000;
 		}
 		.draft-link {
 			font-style: normal;
 			margin-left: 2em;
 		}
+	}
+	.author-avatars {
+		font-size: 14px;
+		line-height: 20px;
+		overflow: hidden;
+		height: 20px;
+		font-style: italic;
+		color: #555;
+		margin-top: 5px;
+		padding-left: 5px;
 		.avatar-component {
 			vertical-align: top;
 		}
@@ -155,9 +238,10 @@
 		vertical-align: baseline;
 	}
 	.description {
-		padding-top: 15px;
-		font-size: 16px;
-		line-height: 18px;
+		padding-top: 10px;
+		font-size: 14px;
+		opacity: 0.75;
+		line-height: 1.3;
 	}
 	.community-banner {
 		padding: 3px 5px;

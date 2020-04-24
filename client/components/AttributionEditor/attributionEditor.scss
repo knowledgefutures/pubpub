@@ -10,13 +10,19 @@
 		.drag-handle {
 			width: 20px;
 			padding-top: 18px; /* Hand-aligned to center of avatar bubble */
-            display: flex;
-            justify-content: center;
-        }
+			display: flex;
+			justify-content: center;
+		}
 		display: flex;
 		padding: 1em 0;
 		width: 100%;
+		position: relative;
 		border-bottom: 1px solid #ccc;
+		.delete-button {
+			position: absolute;
+			top: 4px;
+			right: 4px;
+		}
 		.content {
 			flex-shrink: 1;
 			flex-grow: 1;
@@ -49,10 +55,6 @@
 			& > *:not(:last-child) {
 				margin-right: 20px;
 			}
-			.affiliation {
-				min-width: 100px;
-				width: 35%;
-			}
 			.roles {
 				width: 45%;
 			}
@@ -60,6 +62,18 @@
 			.roles > :first-child {
 				width: 100%;
 			}
+			.right-details {
+				min-width: 100px;
+				width: 35%;
+				& > :not(:last-child) {
+					margin-bottom: 10px;
+				}
+			}
+		}
+		.orcid-editor {
+			font-size: 0.9em;
+			font-weight: normal;
+			margin-left: 1em;
 		}
 	}
 }

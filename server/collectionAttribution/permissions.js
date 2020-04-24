@@ -1,5 +1,16 @@
 import { getScope } from '../utils/queryHelpers';
 
+const editableFields = [
+	'affiliation',
+	'avatar',
+	'isAuthor',
+	'name',
+	'orcid',
+	'order',
+	'roles',
+	'title',
+];
+
 export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	if (!userId) {
 		return {};
@@ -13,10 +24,9 @@ export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	if (!scopeData.elements.activeCollection) {
 		return {};
 	}
-	const editProps = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles', 'affiliation'];
 	return {
 		create: isAuthenticated,
-		update: isAuthenticated ? editProps : false,
+		update: isAuthenticated ? editableFields : false,
 		destroy: isAuthenticated,
 	};
 };

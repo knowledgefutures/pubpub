@@ -723,6 +723,14 @@ new Promise((resolve) => {
 	// 			type: Sequelize.UUID,
 	// 		}),
 	// 	]);
+	// .then(() => {
+	// 	return Promise.all(['PubAttributions', 'CollectionAttributions'].map(tableName => 
+	// 		sequelize.queryInterface.addColumn(
+	// 			tableName,
+	// 			'orcid',
+	// 			{ type: Sequelize.STRING }
+	// 		)
+	// 	));
 	// })
 	.catch((err) => {
 		console.log('Error with Migration', err);

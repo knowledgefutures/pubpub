@@ -6,6 +6,7 @@ import { FocusStyleManager } from '@blueprintjs/core';
 import { setEnvironment } from 'shared/utils/environment';
 import { getClientInitialData } from './initialData';
 import { setupKeen } from './keen';
+import { setupHeap } from './heap';
 
 const isStorybookEnv = (windowObj) =>
 	windowObj.location.origin === 'http://localhost:9001' || windowObj.STORYBOOK_ENV === 'react';
@@ -35,6 +36,7 @@ export const hydrateWrapper = (Component) => {
 		);
 		if (!isLocalEnv(window)) {
 			setupKeen();
+			setupHeap(initialData);
 			window.sentryIsActive = true;
 			Sentry.init({ dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439' });
 			Sentry.setUser({

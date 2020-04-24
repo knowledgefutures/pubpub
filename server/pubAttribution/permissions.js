@@ -1,6 +1,15 @@
 import { getScope } from '../utils/queryHelpers';
 
-const editableFields = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles', 'affiliation'];
+const editableFields = [
+	'affiliation',
+	'avatar',
+	'isAuthor',
+	'name',
+	'orcid',
+	'order',
+	'roles',
+	'title',
+];
 
 export const getPermissions = async ({ userId, communityId, pubId }) => {
 	if (!userId) {

@@ -7,8 +7,12 @@ import { getCookieOptions } from './cookieOptions';
 const cookieKey = 'gdpr-consent';
 const persistSignupCookieKey = 'gdpr-consent-survives-login';
 
-const odiousCookies = ['keen'];
-const deleteOdiousCookies = () => odiousCookies.map((key) => Cookies.remove(key, { path: '' }));
+const odiousCookies = ['keen', 'heap'];
+const deleteOdiousCookies = () => {
+	window.heap.resetIdentity();
+	window.heap.clearEventProperties();
+	odiousCookies.map((key) => Cookies.remove(key, { path: '' }));
+};
 
 export const gdprCookiePersistsSignup = () => Cookies.get(persistSignupCookieKey) === 'yes';
 
@@ -36,6 +40,9 @@ export const updateGdprConsent = (loginData, doesUserConsent) => {
 	Cookies.set(cookieKey, doesUserConsent ? 'accept' : 'decline', cookieOptions);
 	Cookies.set(persistSignupCookieKey, 'yes', cookieOptions);
 	if (!doesUserConsent) {
+		if (!loggedIn) {
+			window.heap.identify(Math.random());
+		}
 		deleteOdiousCookies();
 	}
 	if (loggedIn) {

@@ -91,20 +91,22 @@ const PrivacyPolicy = function() {
 				users. Any such internal analytics will be conducted on an anonymized set of
 				user-generated content.
 			</p>
-			<h3>Keen</h3>
+			<h3>Keen & Heap</h3>
 			<p>
-				We use Keen software to perform Site usage analytics. Keen collects anonymous
-				information from users to help us track Site usage and referrals from other
-				websites. These data are used primarily to optimize the website experience for our
-				visitors, but we may use the data as well to assist us in our marketing of the Site.
+				We use Keen and Heap software to perform Site usage analytics. Keen and Heap collect
+				anonymous information from users to help us track Site usage and referrals from
+				other websites. These data are used primarily to optimize the website experience for
+				our visitors, but we may use the data as well to assist us in our marketing of the
+				Site.
 			</p>
 			<p>
-				Information collected and processed by Keen include the user’s IP address, network
-				location, and geographic location. Keen acquires all its information directly from
-				the user, by installing a cookie (see below) on JavaScribp3-enabled computers. The
-				Site does not share any information it collects with Keen, and Keen does not collect
-				any personal identifying information such as names, contact information, social
-				security numbers or financial information.
+				Information collected and processed by Keen and Heap include the user’s IP address,
+				network location, and geographic location. Keen and Heap acquires all its
+				information directly from the user, by installing a cookie (see below) on
+				JavaScript-enabled computers. The Site does not share any information it collects
+				with Keen and Heap, and Keen and Heap do not collect any personal identifying
+				information such as names, contact information, social security numbers or financial
+				information.
 			</p>
 			<h3>Cookies</h3>
 			<p>

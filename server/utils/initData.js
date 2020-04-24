@@ -78,10 +78,11 @@ export const getInitialData = async (req, isDashboard) => {
 		communityData: communityData,
 		pubSlug: locationData.params.pubSlug,
 		collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
-		acessHash: locationData.query.access,
+		accessHash: locationData.query.access,
 		loginId: loginData.id,
 		isDashboard: isDashboard,
 	});
+
 	const cleanedCommunityData = sanitizeCommunity(communityData, locationData, scopeData);
 	return {
 		communityData: cleanedCommunityData,

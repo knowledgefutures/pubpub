@@ -174,7 +174,7 @@ const SubPreview = function(props) {
 						{
 							text:
 								'Kathleen Gregory, Paul Groth, Andrea Scharnhorst, and Sally Wyatt',
-							href: 'pub/3howud7k',
+							href: '/pub/3howud7k/',
 						},
 					],
 				},

@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
 export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	logging: false,
-	dialectOptions: { ssl: useSSL },
+	dialectOptions: { ssl: useSSL ? { rejectUnauthorized: false } : false },
 	pool: {
 		max: process.env.SEQUELIZE_MAX_CONNECTIONS
 			? parseInt(process.env.SEQUELIZE_MAX_CONNECTIONS, 10)

@@ -121,7 +121,6 @@ $mobile-bottom-buttons-spacing: 10px;
     }
 
     .pub-header-content-component {
-        overflow: hidden;
         display: grid;
         grid-template-rows: $top-bar-total-height auto auto;
         grid-template-columns: 1fr 120px;

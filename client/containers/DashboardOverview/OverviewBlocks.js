@@ -31,7 +31,7 @@ const OverviewBlocks = (props) => {
 		{ type: 'collections', icon: 'collection' },
 		{ type: 'pubs', icon: 'pubDoc' },
 		{ type: 'discussions', icon: 'chat' },
-		{ type: 'forks', icon: 'git-branch' },
+		// { type: 'forks', icon: 'git-branch' },
 		{ type: 'reviews', icon: 'social-media' },
 	];
 	return (

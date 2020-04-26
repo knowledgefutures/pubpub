@@ -165,6 +165,15 @@ const SubPreview = function(props) {
 				},
 			],
 		},
+		{
+			parentId: 'e38165eb-ef5f-463e-9ddc-e7ae48a9a4aa',
+			children: [
+				{
+					prefix: '',
+					elements: [{ text: 'Supplementary Materials', href: '/pub/3howud7k/'}],
+				},
+			],
+		},
 	];
 
 	const elementStyle = { color: communityData.accentColorDark };

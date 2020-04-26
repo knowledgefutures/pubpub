@@ -2,10 +2,9 @@ import { Page, Pub } from '../../models';
 import buildPubOptions from './pubOptions';
 import sanitizePub from './pubSanitize';
 
-export default async ({ id, slug }, initialData) => {
+export default async (idOrSlugObject, initialData) => {
 	const whereClause = {
-		...(id && { id: id }),
-		...(slug && { slug: slug }),
+		...idOrSlugObject,
 		communityId: initialData.communityData.id,
 	};
 	const pageQuery = Page.findOne({

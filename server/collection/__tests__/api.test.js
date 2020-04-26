@@ -46,7 +46,7 @@ it('creates a new collection', async () => {
 	expect(communityId).toEqual(community.id);
 	expect(title).toEqual('My test collection');
 	expect(kind).toEqual('issue');
-	expect(isPublic).toEqual(true);
+	expect(isPublic).toEqual(false);
 });
 
 it('does not allow admins of another community to create a collection', async () => {
@@ -116,6 +116,7 @@ it('unsets a collectionPub as primary when its collection is made private', asyn
 		kind: 'issue',
 		title: 'The Book of Tests',
 	});
+	await Collection.update({ isPublic: true }, { where: { id: issue.id } });
 	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
 	expect(collectionPub.isPrimary).toEqual(true);
 	const agent = await login(admin);

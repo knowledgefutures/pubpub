@@ -8,7 +8,7 @@ export const createCollection = ({ communityId, title, kind, pageId = null }) =>
 			title: title.trim(),
 			slug: slugifyString(title),
 			isRestricted: true,
-			isPublic: true,
+			isPublic: false,
 			viewHash: generateHash(8),
 			editHash: generateHash(8),
 			communityId: communityId,

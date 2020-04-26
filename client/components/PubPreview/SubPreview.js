@@ -170,7 +170,7 @@ const SubPreview = function(props) {
 			children: [
 				{
 					prefix: '',
-					elements: [{ text: 'Supplementary Materials', href: '/pub/3howud7k/'}],
+					elements: [{ text: 'Supplementary Materials', href: '/pub/3howud7k/' }],
 				},
 			],
 		},

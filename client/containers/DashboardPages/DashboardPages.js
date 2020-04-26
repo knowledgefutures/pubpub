@@ -37,7 +37,14 @@ const DashboardPages = () => {
 		const createdAtString = dateFormat(page.createdAt, 'mmm dd, yyyy');
 		const rightSide = (
 			<React.Fragment>
-				<AnchorButton icon="share" minimal href={`/${page.slug}`}>
+				<AnchorButton
+					icon={<Icon icon="edit2" />}
+					outlined
+					href={`/dash/pages/${page.slug || 'home'}`}
+				>
+					Edit page
+				</AnchorButton>
+				<AnchorButton icon="share" outlined href={`/${page.slug}`}>
 					Visit page
 				</AnchorButton>
 				<div className="privacy-indicator">
@@ -50,7 +57,6 @@ const DashboardPages = () => {
 			<DashboardRow
 				key={page.id}
 				icon="page-layout"
-				href={`/dash/pages/${page.slug || 'home'}`}
 				title={page.title}
 				subtitle={`Created on ${createdAtString}`}
 				rightSideElements={rightSide}

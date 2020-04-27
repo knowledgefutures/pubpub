@@ -20,7 +20,7 @@ const DashboardPages = () => {
 	const renderControls = () => {
 		return (
 			<React.Fragment>
-				<Button icon="plus" onClick={() => setCreatingPage(true)}>
+				<Button icon="plus" onClick={() => setCreatingPage(true)} outlined>
 					Create Page
 				</Button>
 				<CreatePageDialog
@@ -57,6 +57,7 @@ const DashboardPages = () => {
 			<DashboardRow
 				key={page.id}
 				icon="page-layout"
+				className="page-row"
 				title={page.title}
 				subtitle={`Created on ${createdAtString}`}
 				rightSideElements={rightSide}

@@ -17,7 +17,7 @@ export default async () => {
 			// migrate those pubs to the 'dark' header background color. If there's no background image,
 			// we default to the 'light' header that mimics the current vanilla pub style, with black
 			// text and an off-white background.
-			const headerBackgroundColor = hasHeaderImage ? 'dark' : 'light';
+			const headerBackgroundColor = hasHeaderImage && !hasBlocksStyle ? 'dark' : 'light';
 			// Keep any existing header styles, and pick 'light' or 'dark' otherwise to match with
 			// existing background images.
 			const headerStyle = hasBlocksStyle

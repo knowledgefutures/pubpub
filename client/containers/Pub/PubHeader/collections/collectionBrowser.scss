@@ -9,10 +9,6 @@
     max-width: 80vw;
     width: 400px;
 
-    li:last-child:not(:first-child) {
-        padding-bottom: 5px;
-    }
-
     .loading-menu-item {
         height: 100%;
         display: flex;

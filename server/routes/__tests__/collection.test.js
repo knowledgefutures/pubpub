@@ -6,12 +6,12 @@ const models = modelize`
 		Collection noLinkedPageCollection {
 			kind: "issue"
 			title: "Issue One"
-			isPublic: "true"
+			isPublic: true
 		}
 		Collection linkedPageCollection {
 			kind: "issue"
 			title: "Issue Two"
-			isPublic: "true"
+			isPublic: true
 			page: Page linkedPage {
 				title: "Issue Two"
 				slug: "issue-two"

@@ -20,7 +20,7 @@ const models = modelize`
 		Collection issue {
 			title: "My test issue"
 			kind: "issue"
-			isPublic: "true"
+			isPublic: true
 			Member {
 				permissions: "manage"
 				User collectionManager {}
@@ -29,7 +29,7 @@ const models = modelize`
 		Collection book {
 			title: "Listen. I am a book."
 			kind: "book"
-			isPublic: "true"
+			isPublic: true
 		}
 		Collection tag {
 			title: "Just a tag innit"

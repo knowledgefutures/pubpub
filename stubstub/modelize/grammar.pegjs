@@ -35,7 +35,7 @@ KeyValuePair = _ key:(StringLiteral / Identifier) _ ":" _ value:Expr _ {
 	return {type: "keyValuePair", key: resolveIdentifier(key), value}; 
 }
 
-Expr = ModelBlock / Identifier / Literal / Parameter;
+Expr = ModelBlock / Literal / Identifier / Parameter;
 
 Parameter = "$" id:Identifier {
 	return {type: "parameter", value: resolveIdentifier(id)}

@@ -7,4 +7,5 @@ export const attributesPublicUser = [
 	'slug',
 	'initials',
 	'title',
+	'orcid',
 ];

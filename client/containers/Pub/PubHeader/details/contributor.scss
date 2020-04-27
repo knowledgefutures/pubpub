@@ -36,11 +36,23 @@
             }
         }
     }
+
+    .orcid {
+        display: flex;
+        align-items: center;
+        margin-top: 3px;
+        font-size: 12px;
+        .bp3-icon {
+            margin-right: 3px;
+        }
+    }
+
     .affiliation {
         font-style: italic;
         margin-top: 3px;
         font-size: 12px;
     }
+
     .roles {
         font-size: 11px;
         text-transform: uppercase;

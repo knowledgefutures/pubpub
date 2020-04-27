@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Avatar from 'components/Avatar/Avatar';
+
+import { Avatar, Icon } from 'components';
 
 require('./contributor.scss');
 
@@ -41,6 +42,18 @@ const Contributor = function(props) {
 			<div className="avatar-wrapper">{avatarElement}</div>
 			<div className="details-wrapper">
 				<div className="name">{nameElement}</div>
+				{user.orcid && (
+					<div className="pub-header-themed-secondary orcid">
+						<Icon icon="orcid" />
+						<a
+							href={`https://orcid.org/${user.orcid}`}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{user.orcid}
+						</a>
+					</div>
+				)}
 				{affiliation && (
 					<div className="affiliation pub-header-themed-secondary">{affiliation}</div>
 				)}

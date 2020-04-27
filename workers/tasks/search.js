@@ -22,7 +22,7 @@ export const setPageSearchData = (pageId) => {
 			return getPageSearchData([pageId]);
 		})
 		.then((pageSyncData) => {
-			return pagesIndex.addObjects(pageSyncData);
+			return pagesIndex.saveObjects(pageSyncData, { autoGenerateObjectIDIfNotExist: true });
 		})
 		.catch((err) => {
 			console.error('Error setting Page search data: ', err);
@@ -45,7 +45,7 @@ export const setPubSearchData = (pubId) => {
 			return getPubSearchData([pubId]);
 		})
 		.then((pubSyncData) => {
-			return pubsIndex.addObjects(pubSyncData);
+			return pubsIndex.saveObjects(pubSyncData, { autoGenerateObjectIDIfNotExist: true });
 		})
 		.catch((err) => {
 			console.error('Error setting Pub search data: ', err);

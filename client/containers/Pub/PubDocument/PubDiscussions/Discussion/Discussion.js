@@ -41,7 +41,7 @@ const Discussion = (props) => {
 		firebaseBranchRef,
 	} = props;
 	const { communityData, scopeData, loginData, locationData } = usePageContext();
-	const { canView, canCreateDiscussion } = scopeData.activePermissions;
+	const { canAdmin, canView, canCreateDiscussion } = scopeData.activePermissions;
 	const [previewExpanded, setPreviewExpanded] = useState(false);
 	const [isLoadingArchive, setIsLoadingArchive] = useState(false);
 	const isPreview = canPreview && !previewExpanded;
@@ -174,7 +174,7 @@ const Discussion = (props) => {
 				</div>
 			)}
 			{!isPreview &&
-				scopeData.activePermissions.canManage &&
+				canAdmin &&
 				firebaseBranchRef &&
 				loginData.id === 'b242f616-7aaa-479c-8ee5-3933dcf70859' && (
 					<DiscussionReanchor
@@ -183,13 +183,13 @@ const Discussion = (props) => {
 						firebaseBranchRef={firebaseBranchRef}
 					/>
 				)}
-			{!isPreview && (isDiscussionAuthor || scopeData.activePermissions.canManage) && (
+			{!isPreview && (isDiscussionAuthor || canAdmin) && (
 				<React.Fragment>
 					<LabelSelect
 						availableLabels={pubData.labels || []}
 						labelsData={discussionData.labels || []}
 						onPutDiscussion={handlePutDiscussion}
-						canManagePub={scopeData.activePermissions.canManage}
+						canManagePub={canAdmin}
 						canManageThread={isDiscussionAuthor}
 					/>
 					<Tooltip content={discussionData.isClosed ? 'Unarchive' : 'Archive'}>

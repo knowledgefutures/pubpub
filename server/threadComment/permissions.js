@@ -59,25 +59,20 @@ export const getPermissions = async ({
 			ThreadComment.findOne({ where: { id: threadCommentId, threadId: threadId } }),
 	]);
 
-	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
+	const { canView, canAdmin } = scopeData.activePermissions;
 	const notAssociatedWithModel = !reviewData && !discussionData;
 	const invalidThreadCommentId = threadCommentId && !threadCommentData;
 	const invalidThread = !threadData;
-	const canInteractWithParent = canUserInteractWithParent(discussionData || reviewData, canView);
 
-	if (
-		notAssociatedWithModel ||
-		invalidThreadCommentId ||
-		invalidThread ||
-		canInteractWithParent
-	) {
+	if (notAssociatedWithModel || invalidThreadCommentId || invalidThread) {
 		return {};
 	}
 
+	const canInteractWithParent = canUserInteractWithParent(discussionData || reviewData, canView);
 	const userCreatedComment = threadCommentData && threadCommentData.userId === userId;
 
 	return {
-		create: !threadData.isLocked && (canView || canCreateDiscussions),
+		create: !threadData.isLocked && (canView || canInteractWithParent),
 		update: (canAdmin || !!userCreatedComment) && userEditableFields,
 	};
 };

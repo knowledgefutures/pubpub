@@ -37,7 +37,7 @@ export const updateThreadComment = (inputValues, updatePermissions) => {
 	});
 	return ThreadComment.update(filteredValues, {
 		where: { id: inputValues.threadCommentId },
-	}).then(async () => {
+	}).then(() => {
 		return {
 			...filteredValues,
 			id: inputValues.threadCommentId,

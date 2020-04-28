@@ -114,7 +114,7 @@ const backfillCheckpointsForBranch = async (pubId, branchId) => {
 	]);
 	const allKeyables = { ...changes.val(), ...merges.val() };
 	const keyablesLength = Object.keys(allKeyables).length;
-	if (keyablesLength) > 10000 {
+	if (keyablesLength > 10000) {
 		throw new Error(`Too many keyables: ${keyablesLength}`);
 	}
 	const existingCheckpoints = checkpoints.val() || {};

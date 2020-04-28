@@ -13,10 +13,13 @@ import { Pub, Branch } from '../../server/models';
 
 const overwriteExisting = true;
 const checkpointInterval = 100;
+let completed = 0;
 
 const statusMessage = (pub, branch, success, created) => {
-	const emoji = created ? '✨' : success ? '🥚' : '😱';
-	console.log(`${emoji} [${pub.slug}.${branch.title}] ${pub.title}`);
+	if (!created && !success) {
+		const emoji = created ? '✨' : success ? '🥚' : '😱';
+		console.log(`${emoji} [${pub.slug}.${branch.title}] ${pub.title}`);
+	}
 };
 
 const getAllPubsWithBranches = () => {
@@ -110,6 +113,10 @@ const backfillCheckpointsForBranch = async (pubId, branchId) => {
 			.once('value'),
 	]);
 	const allKeyables = { ...changes.val(), ...merges.val() };
+	const keyablesLength = Object.keys(allKeyables).length;
+	if (keyablesLength) > 10000 {
+		throw new Error(`Too many keyables: ${keyablesLength}`);
+	}
 	const existingCheckpoints = checkpoints.val() || {};
 	const existingCheckpointMap = checkpointMap.val() || {};
 	const {
@@ -129,11 +136,17 @@ const backfillCheckpointsForBranch = async (pubId, branchId) => {
 	return hasCreatedNewCheckpoints;
 };
 
-const backfillCheckpointsForPub = (pub) => {
+const backfillCheckpointsForPub = (pub, index, arrayLength) => {
 	return Promise.all(
 		pub.branches.map((branch) =>
 			backfillCheckpointsForBranch(pub.id, branch.id)
 				.then((createdCheckpoints) => statusMessage(pub, branch, true, createdCheckpoints))
+				.then(() => {
+					completed += 1;
+					if (completed % 100 === 0) {
+						console.log(`Completed ${completed} of ${arrayLength}`);
+					}
+				})
 				.catch((err) => {
 					statusMessage(pub, branch, false);
 					console.error(err);

@@ -19,7 +19,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Review, Branch } = models;
+					const { Review, ReviewEvent, Branch } = models;
 					Review.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'sourceBranch',
@@ -29,6 +29,11 @@ export default (sequelize, dataTypes) => {
 						onDelete: 'CASCADE',
 						as: 'destinationBranch',
 						foreignKey: 'destinationBranchId',
+					});
+					Review.hasMany(ReviewEvent, {
+						onDelete: 'CASCADE',
+						as: 'reviewEvents',
+						foreignKey: 'reviewId',
 					});
 				},
 			},

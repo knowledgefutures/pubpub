@@ -73,7 +73,7 @@ export default async () => {
 			currentList.push(pvm);
 			pvmByPub[pvm.pubId] = currentList;
 		});
-	console.log(uniquePubs.size, Object.keys(pvmByPub).length, 'Should be equal');
+	// console.log(uniquePubs.size, Object.keys(pvmByPub).length, 'Should be equal');
 
 	const newReleases = Object.values(pvmByPub).reduce((prev, curr) => {
 		const newObjects = curr

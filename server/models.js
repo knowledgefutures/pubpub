@@ -34,21 +34,26 @@ sequelize.idType = {
 /* Import and create all models. */
 /* Also export them to make them available to other modules */
 export const Branch = sequelize.import('./branch/model.js');
+export const BranchPermission = sequelize.import('./branchPermission/model.js');
 export const Collection = sequelize.import('./collection/model.js');
 export const CollectionAttribution = sequelize.import('./collectionAttribution/model.js');
 export const CollectionPub = sequelize.import('./collectionPub/model.js');
 export const Community = sequelize.import('./community/model.js');
+export const CommunityAdmin = sequelize.import('./communityAdmin/model.js');
 export const Discussion = sequelize.import('./discussion/model.js');
 export const Export = sequelize.import('./export/model.js');
 export const Member = sequelize.import('./member/model.js');
+export const Merge = sequelize.import('./merge/model.js');
 export const Organization = sequelize.import('./organization/model.js');
 export const Page = sequelize.import('./page/model.js');
 export const Pub = sequelize.import('./pub/model.js');
 export const PubAttribution = sequelize.import('./pubAttribution/model.js');
+export const PubManager = sequelize.import('./pubManager/model.js');
 export const PubVersion = sequelize.import('./pubVersion/model.js');
 export const PublicPermissions = sequelize.import('./publicPermissions/model.js');
 export const Release = sequelize.import('./release/model.js');
 export const Review = sequelize.import('./review/model.js');
+export const ReviewEvent = sequelize.import('./reviewEvent/model.js');
 export const Signup = sequelize.import('./signup/model.js');
 // export const Thread = sequelize.import('./thread/model.js');
 // export const ThreadAnchor = sequelize.import('./threadAnchor/model.js');

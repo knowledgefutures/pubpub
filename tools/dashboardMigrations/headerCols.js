@@ -6,7 +6,7 @@ export default async () => {
 	// 	type: Sequelize.ENUM('white-blocks', 'black-blocks', 'dark', 'light'),
 	// });
 	// await sequelize.queryInterface.removeColumn('Pubs', 'headerBackgroundType');
-	const pubs = await Pub.findAll();
+	const pubs = await Pub.findAll({attributes: ['id', 'headerStyle', 'headerBackgroundImage']});
 	return Promise.all(
 		pubs.map((pub) => {
 			const hasHeaderImage = !!pub.headerBackgroundImage;

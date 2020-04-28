@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { usePageContext } from 'utils/hooks';
-// import ReviewEvent from 'containers/Pub/PubReview/ReviewEvent';
 import ThreadComment from './ThreadComment';
 import ThreadEvent from './ThreadEvent';
 

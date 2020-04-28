@@ -3,7 +3,14 @@ import { DiscussionNew } from '../models';
 
 const userEditableFields = ['title', 'isClosed', 'labels'];
 
-export const getPermissions = async ({ discussionId, userId, pubId, communityId, accessHash }) => {
+export const getPermissions = async ({
+	discussionId,
+	userId,
+	pubId,
+	communityId,
+	accessHash,
+	visibilityAccess,
+}) => {
 	if (!userId) {
 		return {};
 	}
@@ -20,9 +27,8 @@ export const getPermissions = async ({ discussionId, userId, pubId, communityId,
 	});
 
 	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
-
 	return {
-		create: canView || canCreateDiscussions,
+		create: canView || (canCreateDiscussions && visibilityAccess !== 'members'),
 		update: canAdmin && discussionData && userEditableFields,
 	};
 };

@@ -145,6 +145,6 @@ const backfillCheckpointsForPub = (pub) => {
 export default async () => {
 	const allPubs = await getAllPubsWithBranches();
 	console.log('Backfill: got pubs');
-	await Promise.map(allPubs, backfillCheckpointsForPub, { concurrency: 10 });
+	await Promise.map(allPubs, backfillCheckpointsForPub, { concurrency: 100 });
 	console.log('Backfill: done.');
 };

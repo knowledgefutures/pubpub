@@ -9,6 +9,7 @@ const sourceFirebaseUrl = 'https://pubpub-v6-prod.firebaseio.com';
 const destFirebaseUrl = 'https://pubpub-v6-dev.firebaseio.com';
 
 console.log('Starting Firebase sync');
+console.time('Firebase SyncTime');
 Pub.findAll({
 	// where: {
 	// 	id: {
@@ -56,7 +57,7 @@ Pub.findAll({
 						console.log(err);
 					});
 			},
-			{ concurrency: 15 },
+			{ concurrency: 100 },
 		);
 	})
 	.catch((err) => {
@@ -64,5 +65,6 @@ Pub.findAll({
 	})
 	.finally(() => {
 		console.log('Finishing Firebase Sync');
+		console.timeEnd('Firebase SyncTime');
 		process.exit();
 	});

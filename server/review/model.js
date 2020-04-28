@@ -19,12 +19,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Review, Branch, Merge } = models;
-					Review.belongsTo(Merge, {
-						onDelete: 'CASCADE',
-						as: 'merge',
-						foreignKey: 'mergeId',
-					});
+					const { Review, Branch } = models;
 					Review.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'sourceBranch',

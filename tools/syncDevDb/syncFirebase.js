@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import Promise from 'bluebird';
 // import { Op } from 'sequelize';
-import { Pub } from './models';
+import { Pub } from '../../server/models';
 
 const createFirebaseClient = require('../5to6/util/createFirebaseClient');
 

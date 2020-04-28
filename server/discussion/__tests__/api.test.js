@@ -53,6 +53,7 @@ const makeDiscussion = ({
 	pub,
 	discussionId,
 	threadNumber,
+	visibilityAccess,
 	title = 'Uhh yeah a title',
 	content = 'Some test content',
 	initAnchorText = 'Some anchor text',
@@ -67,6 +68,7 @@ const makeDiscussion = ({
 		pubId: pub.id,
 		communityId: community.id,
 		threadNumber: threadNumber,
+		visibilityAccess: visibilityAccess,
 		...whateverElse,
 	};
 };
@@ -76,16 +78,16 @@ it('forbids logged-out visitors from making discussions on released pubs', async
 	const agent = await login();
 	await agent
 		.post('/api/discussions')
-		.send(makeDiscussion({ pub: releasePub, text: 'Hello world!' }))
+		.send(makeDiscussion({ pub: releasePub, text: 'Hello world!', visibilityAccess: 'public' }))
 		.expect(403);
 });
 
-it('forbids logged-in visitors from adding discussions to unreleased pubs', async () => {
+it('forbids guests from making comments with visibilityAccess=members', async () => {
 	const { draftPub, guest } = models;
 	const agent = await login(guest);
 	await agent
 		.post('/api/discussions')
-		.send(makeDiscussion({ pub: draftPub, text: 'Hello world!' }))
+		.send(makeDiscussion({ pub: draftPub, text: 'Hello world!', visibilityAccess: 'members' }))
 		.expect(403);
 });
 
@@ -97,7 +99,7 @@ it('creates a database entry and updates Firebase', async () => {
 		body: { id: discussionId },
 	} = await agent
 		.post('/api/discussions')
-		.send(makeDiscussion({ pub: releasePub, text: 'Hello world!' }))
+		.send(makeDiscussion({ pub: releasePub, text: 'Hello world!', visibilityAccess: 'public' }))
 		.expect(201);
 
 	const discussion = await Discussion.findOne({ where: { id: discussionId } });
@@ -122,6 +124,7 @@ it('respects client-created discussion IDs', async () => {
 				pub: releasePub,
 				discussionId: discussionId,
 				text: 'Hello world!',
+				visibilityAccess: 'public',
 			}),
 		)
 		.expect(201);
@@ -139,6 +142,7 @@ it('increments thread numbers correctly', async () => {
 			makeDiscussion({
 				pub: releasePub,
 				text: "Like if you're watching this in 2019!",
+				visibilityAccess: 'public',
 			}),
 		)
 		.expect(201);
@@ -150,6 +154,7 @@ it('increments thread numbers correctly', async () => {
 			makeDiscussion({
 				pub: releasePub,
 				text: "Like if you're watching this in 2020!",
+				visibilityAccess: 'public',
 			}),
 		)
 		.expect(201);
@@ -164,6 +169,7 @@ it('lets only users with canAdmin permissions on a Pub close a discussion', asyn
 			makeDiscussion({
 				pub: releasePub,
 				text: 'some text',
+				visibilityAccess: 'public',
 			}),
 			communityAdmin,
 		);
@@ -175,6 +181,7 @@ it('lets only users with canAdmin permissions on a Pub close a discussion', asyn
 					pub: releasePub,
 					discussionId: discussion.id,
 					isClosed: true,
+					visibilityAccess: 'public',
 				}),
 			)
 			.expect(expectSuccess ? 200 : 403);

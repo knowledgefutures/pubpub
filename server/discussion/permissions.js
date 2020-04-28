@@ -11,7 +11,7 @@ export const getPermissions = async ({
 	accessHash,
 	visibilityAccess,
 }) => {
-	if (!userId) {
+	if (!userId || !visibilityAccess) {
 		return {};
 	}
 

@@ -78,7 +78,7 @@ app.put(
 			value: value,
 			memberId: id,
 		});
-		return res.status(201).json(member);
+		return res.status(200).json(member);
 	}),
 );
 
@@ -99,6 +99,6 @@ app.delete(
 			throw new ForbiddenError();
 		}
 		await destroyMember({ memberId: id });
-		return res.status(201).json(id);
+		return res.status(200).json(id);
 	}),
 );

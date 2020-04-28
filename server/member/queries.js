@@ -29,8 +29,10 @@ export const createMember = async ({
 	return getMemberDataById(memberId);
 };
 
-export const updateMember = ({ memberId, value: { permissions } }) => {
-	return Member.update({ permissions: permissions }, { where: { id: memberId } });
+export const updateMember = async ({ memberId, value: { permissions } }) => {
+	const existingMember = await Member.findOne({ where: { id: memberId } });
+	await existingMember.update({ permissions: permissions });
+	return existingMember;
 };
 
 export const destroyMember = ({ memberId }) => {

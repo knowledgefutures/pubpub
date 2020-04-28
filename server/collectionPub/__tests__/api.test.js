@@ -20,6 +20,7 @@ const models = modelize`
 		Collection issue {
 			title: "My test issue"
 			kind: "issue"
+			isPublic: true
 			Member {
 				permissions: "manage"
 				User collectionManager {}
@@ -28,6 +29,7 @@ const models = modelize`
 		Collection book {
 			title: "Listen. I am a book."
 			kind: "book"
+			isPublic: true
 		}
 		Collection tag {
 			title: "Just a tag innit"
@@ -105,7 +107,7 @@ it('handles ranks correctly', async () => {
 	expect(secondCollectionPub.rank).toEqual('q');
 });
 
-it('makes a non-tag collectionPub primary when it is the first non-tag collection for a pub', async () => {
+it('makes a non-tag collectionPub primary when it is the first public non-tag collection for a pub', async () => {
 	const { community, admin, pub, book, tag } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
 	const agent = await login(admin);

@@ -1,4 +1,4 @@
-/* global it, expect, beforeAll, afterAll, beforeEach, afterEach */
+/* global it, expect, beforeAll, afterAll, afterEach */
 import uuid from 'uuid';
 
 import { setup, teardown, login, stub, modelize } from 'stubstub';
@@ -45,10 +45,6 @@ setup(beforeAll, async () => {
 	await models.resolve();
 });
 
-beforeEach(() => {
-	firebaseStub = stub(firebaseAdmin, 'updateFirebaseDiscussion');
-});
-
 afterEach(() => {
 	firebaseStub.restore();
 });
@@ -82,7 +78,6 @@ it('forbids logged-out visitors from making discussions on released pubs', async
 		.post('/api/discussions')
 		.send(makeDiscussion({ pub: releasePub, text: 'Hello world!' }))
 		.expect(403);
-	expect(firebaseStub.stubs.updateFirebaseDiscussion.called).toEqual(false);
 });
 
 it('forbids logged-in visitors from adding discussions to unreleased pubs', async () => {
@@ -92,7 +87,6 @@ it('forbids logged-in visitors from adding discussions to unreleased pubs', asyn
 		.post('/api/discussions')
 		.send(makeDiscussion({ pub: draftPub, text: 'Hello world!' }))
 		.expect(403);
-	expect(firebaseStub.stubs.updateFirebaseDiscussion.called).toEqual(false);
 });
 
 it('creates a database entry and updates Firebase', async () => {
@@ -112,7 +106,6 @@ it('creates a database entry and updates Firebase', async () => {
 		include: [{ model: ThreadComment, as: 'comments' }],
 	});
 
-	expect(firebaseStub.stubs.updateFirebaseDiscussion.called).toEqual(true);
 	expect(relatedThread.comments[0].text).toEqual('Hello world!');
 });
 

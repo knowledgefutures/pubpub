@@ -20,6 +20,7 @@
 	.editor {
 		padding: 20px 15px;
 		font-size: 16px;
+		overflow: auto;
 		& > *:last-child {
 			margin-bottom: 0em;
 		}

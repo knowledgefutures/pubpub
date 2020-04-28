@@ -54,15 +54,11 @@ export const stubFirebaseAdmin = () => {
 		const mergeFirebaseBranchStub = sinon
 			.stub(firebaseAdmin, 'mergeFirebaseBranch')
 			.returns({});
-		const updateFirebaseDiscussionStub = sinon
-			.stub(firebaseAdmin, 'updateFirebaseDiscussion')
-			.returns({});
 		stubs = [
 			getBranchDocStub,
 			getFirebaseTokenStub,
 			createFirebaseBranchStub,
 			mergeFirebaseBranchStub,
-			updateFirebaseDiscussionStub,
 		];
 	});
 

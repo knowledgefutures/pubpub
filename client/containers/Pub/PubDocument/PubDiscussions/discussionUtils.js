@@ -158,12 +158,6 @@ export const filterAndSortDiscussions = (
 		})
 		.filter((discussion) => !discussion.anchor || showAnchoredDiscussions)
 		.filter((discussion) => {
-			/* Some discussionsContentLive data coming from firebase has not been refactored. */
-			/* We should either delete all discussionContentLive on migration, or keep this */
-			/* filter indefinitely. */
-			return discussion.thread;
-		})
-		.filter((discussion) => {
 			if (filteredLabels.length === 0) {
 				return true;
 			}

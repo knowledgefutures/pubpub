@@ -1,4 +1,5 @@
 import React from 'react';
+import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 
 export const generateAuthorString = (pubData) => {
 	if (!pubData.attributions) {
@@ -41,9 +42,9 @@ export const generatePlainAuthorString = (pubData) => {
 	if (!pubData.attributions) {
 		return '';
 	}
-	const authors = pubData.attributions.filter((attribution) => {
-		return attribution.isAuthor;
-	});
+	const authors = pubData.attributions
+		.filter((attribution) => attribution.isAuthor)
+		.map(ensureUserForAttribution);
 	return authors
 		.sort((foo, bar) => {
 			if (foo.order < bar.order) {

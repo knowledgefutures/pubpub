@@ -144,10 +144,6 @@ class PubSyncManager extends React.Component {
 						.on('child_changed', this.syncMetadata);
 
 					this.state.firebaseBranchRef
-						.child('discussionsContentLive')
-						.on('value', this.syncDiscussionsContent);
-
-					this.state.firebaseBranchRef
 						.child('cursors')
 						.on('value', this.syncRemoteCollabUsers);
 
@@ -166,11 +162,6 @@ class PubSyncManager extends React.Component {
 	componentWillUnmount() {
 		if (this.state.firebaseRootRef) {
 			this.state.firebaseRootRef.child('metadata').off('child_changed', this.syncMetadata);
-		}
-		if (this.state.firebaseBranchRef) {
-			this.state.firebaseBranchRef
-				.child('discussionsContentLive')
-				.off('child_changed', this.syncDiscussionsContent);
 		}
 	}
 

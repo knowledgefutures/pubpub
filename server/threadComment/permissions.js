@@ -1,7 +1,30 @@
 import { getScope } from '../utils/queryHelpers';
-import { DiscussionNew, Thread, ThreadComment, ReviewNew } from '../models';
+import { DiscussionNew, Thread, ThreadComment, ReviewNew, Visibility } from '../models';
 
 const userEditableFields = ['text', 'content'];
+
+const getMatchingDiscussion = (id, threadId, pubId) =>
+	DiscussionNew.findOne({
+		where: { id: id, threadId: threadId, pubId: pubId },
+		include: [{ model: Visibility, as: 'visibility' }],
+	});
+
+const getMatchingReview = (id, threadId, pubId) =>
+	ReviewNew.findOne({
+		where: { id: id, threadId: threadId, pubId: pubId },
+		include: [{ model: Visibility, as: 'visibility' }],
+	});
+
+const canUserInteractWithParent = (parent, canView) => {
+	const { visibility } = parent;
+	if (visibility.access === 'public') {
+		return true;
+	}
+	if (visibility.access === 'members') {
+		return canView;
+	}
+	return false;
+};
 
 export const getPermissions = async ({
 	userId,
@@ -16,32 +39,43 @@ export const getPermissions = async ({
 		return {};
 	}
 
-	const scopeData = await getScope({
-		communityId: communityId,
-		pubId: pubId,
-		loginId: userId,
-		accessHash: accessHash,
-	});
-	const discussionData = await DiscussionNew.findOne({
-		where: { id: parentId, threadId: threadId },
-	});
-	const reviewData = await ReviewNew.findOne({
-		where: { id: parentId, threadId: threadId },
-	});
-	const isRealDiscussion = discussionData && discussionData.pubId === pubId;
-	const isRealReview = reviewData && reviewData.pubId === pubId;
-	if (!isRealDiscussion && !isRealReview) {
+	const [
+		scopeData,
+		discussionData,
+		reviewData,
+		threadData,
+		threadCommentData,
+	] = await Promise.all([
+		getScope({
+			communityId: communityId,
+			pubId: pubId,
+			loginId: userId,
+			accessHash: accessHash,
+		}),
+		getMatchingDiscussion(parentId, threadId, pubId),
+		getMatchingReview(parentId, threadId, pubId),
+		Thread.findOne({ where: { id: threadId } }),
+		threadCommentId &&
+			ThreadComment.findOne({ where: { id: threadCommentId, threadId: threadId } }),
+	]);
+
+	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
+	const notAssociatedWithModel = !reviewData && !discussionData;
+	const invalidThreadCommentId = threadCommentId && !threadCommentData;
+	const invalidThread = !threadData;
+	const canInteractWithParent = canUserInteractWithParent(discussionData || reviewData, canView);
+
+	if (
+		notAssociatedWithModel ||
+		invalidThreadCommentId ||
+		invalidThread ||
+		canInteractWithParent
+	) {
 		return {};
 	}
-	const threadData = await Thread.findOne({
-		where: { id: threadId },
-	});
-	const threadCommentData = await ThreadComment.findOne({
-		where: { id: threadCommentId },
-	});
 
 	const userCreatedComment = threadCommentData && threadCommentData.userId === userId;
-	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
+
 	return {
 		create: !threadData.isLocked && (canView || canCreateDiscussions),
 		update: (canAdmin || !!userCreatedComment) && userEditableFields,

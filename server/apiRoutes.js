@@ -11,7 +11,6 @@ require('./import/api');
 require('./logout/api');
 require('./login/api');
 require('./member/api');
-require('./merge/api');
 require('./openSearch/api');
 require('./page/api');
 require('./passwordReset/api');

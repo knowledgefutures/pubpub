@@ -1,5 +1,4 @@
 /* eslint-disable no-console, no-restricted-syntax, import/first */
-import '../../server/config';
 
 import registerIgnoredStyles from 'ignore-styles';
 import Promise from 'bluebird';
@@ -22,10 +21,6 @@ const statusMessage = (pub, branch, success, created) => {
 
 const getAllPubsWithBranches = () => {
 	return Pub.findAll({
-		where: {
-			id: '95e12aa6-2043-46dd-8c2d-2c58242136d1',
-			communityId: '97a10bb3-d6e7-46ec-8b75-d6a681d716be',
-		},
 		attributes: ['id', 'slug', 'title'],
 		include: [
 			{
@@ -147,11 +142,9 @@ const backfillCheckpointsForPub = (pub) => {
 	);
 };
 
-const main = async () => {
+export default async () => {
 	const allPubs = await getAllPubsWithBranches();
-	console.log('got pubs');
+	console.log('Backfill: got pubs');
 	await Promise.map(allPubs, backfillCheckpointsForPub, { concurrency: 10 });
-	console.log('done.');
+	console.log('Backfill: done.');
 };
-
-main();

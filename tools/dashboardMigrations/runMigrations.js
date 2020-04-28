@@ -4,21 +4,24 @@ import dashCols from './dashCols';
 import discToThreads from './discToThreads';
 import reviewsToThreads from './reviewsToThreads';
 import buildReleases from './buildReleases';
+import backfillCheckpoints from './backfillCheckpoints';
 
 const init = async () => {
 	console.time('Migration RunTime');
 	try {
 		console.log('Beginning Migration');
-		await dashCols();
-		console.log('Finished dashCols');
-		await headerCols();
-		console.log('Finished headerCols');
-		await buildReleases();
-		console.log('Finished buildReleases');
-		await discToThreads();
-		console.log('Finished discToThreads');
-		await reviewsToThreads();
-		console.log('Finished reviewsToThreads');
+		// await dashCols();
+		// console.log('Finished dashCols');
+		// await headerCols();
+		// console.log('Finished headerCols');
+		// await buildReleases();
+		// console.log('Finished buildReleases');
+		// await discToThreads();
+		// console.log('Finished discToThreads');
+		// await reviewsToThreads();
+		// console.log('Finished reviewsToThreads');
+		await backfillCheckpoints();
+		console.log('Finished backfillCheckpoints');
 	} catch (err) {
 		console.log('Error with Migration', err);
 	} finally {

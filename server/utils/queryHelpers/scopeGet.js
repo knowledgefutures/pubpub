@@ -260,12 +260,10 @@ getActivePermissions = async (
 		return typeof value === 'boolean' ? value : precedent;
 	};
 
-	const canCreateDiscussionsOnRelease = activePub && activePub.releases.length > 0;
-
 	const initialOptions = {
 		canCreateForks: null,
 		canCreateReviews: null,
-		canCreateDiscussions: canCreateDiscussionsOnRelease,
+		canCreateDiscussions: true,
 		canViewDraft: null,
 		canEditDraft: null,
 	};

@@ -41,7 +41,7 @@ const Discussion = (props) => {
 		firebaseBranchRef,
 	} = props;
 	const { communityData, scopeData, loginData, locationData } = usePageContext();
-	const { canAdmin, canView, canCreateDiscussion } = scopeData.activePermissions;
+	const { canAdmin, canView, canCreateDiscussions } = scopeData.activePermissions;
 	const [previewExpanded, setPreviewExpanded] = useState(false);
 	const [isLoadingArchive, setIsLoadingArchive] = useState(false);
 	const isPreview = canPreview && !previewExpanded;
@@ -215,7 +215,7 @@ const Discussion = (props) => {
 				</React.Fragment>
 			)}
 			{renderDiscussions()}
-			{!isPreview && (canView || canCreateDiscussion) && (
+			{!isPreview && (canView || canCreateDiscussions) && (
 				<DiscussionInput key={discussionData.thread.comments.length} {...props} />
 			)}
 		</div>

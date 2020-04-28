@@ -149,7 +149,7 @@ const backfillCheckpointsForPub = (pub, index, arrayLength) => {
 				})
 				.catch((err) => {
 					statusMessage(pub, branch, false);
-					console.error(err);
+					console.error(err.message);
 				}),
 		),
 	);

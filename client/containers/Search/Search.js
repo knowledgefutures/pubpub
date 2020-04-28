@@ -47,8 +47,7 @@ const Search = (props) => {
 	const handleSearch = () => {
 		if (searchQuery) {
 			indexRef.current
-				.search({
-					query: searchQuery,
+				.search(searchQuery, {
 					page: page,
 				})
 				.then((results) => {

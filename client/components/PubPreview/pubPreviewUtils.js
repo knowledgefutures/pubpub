@@ -41,9 +41,22 @@ export const generatePlainAuthorString = (pubData) => {
 	if (!pubData.attributions) {
 		return '';
 	}
-	const authors = pubData.attributions.filter((attribution) => {
-		return attribution.isAuthor;
-	});
+	const authors = pubData.attributions
+		.filter((attribution) => {
+			return attribution.isAuthor;
+		})
+		.map((attribution) => {
+			if (attribution.user) {
+				return attribution;
+			}
+			return {
+				...attribution,
+				user: {
+					id: attribution.id,
+					fullName: attribution.name,
+				},
+			};
+		});
 	return authors
 		.sort((foo, bar) => {
 			if (foo.order < bar.order) {

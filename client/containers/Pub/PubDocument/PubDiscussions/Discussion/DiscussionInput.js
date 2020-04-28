@@ -108,6 +108,7 @@ const DiscussionInput = (props) => {
 				content: getJSON(changeObject.view),
 				text: getText(changeObject.view) || '',
 				initAnchorData: initAnchorData,
+				visibilityAccess: pubData.isRelease ? 'public' : 'members',
 			}),
 		});
 

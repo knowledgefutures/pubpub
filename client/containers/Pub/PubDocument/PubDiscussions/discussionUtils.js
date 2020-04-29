@@ -1,4 +1,4 @@
-export const groupThreadsByLine = (decorations, threads) => {
+export const groupDiscussionsByLine = (decorations, discussions) => {
 	const sortedDecorations = decorations.sort((foo, bar) => {
 		if (foo.boundingBox.bottom < bar.boundingBox.bottom) {
 			return -1;
@@ -42,7 +42,7 @@ export const groupThreadsByLine = (decorations, threads) => {
 			return 0;
 		})
 		.forEach((bottomKey) => {
-			const conatainedThreads = discussionBottoms[bottomKey]
+			const containedDiscussions = discussionBottoms[bottomKey]
 				.sort((foo, bar) => {
 					if (foo.boundingBox.left < bar.boundingBox.left) {
 						return -1;
@@ -59,16 +59,16 @@ export const groupThreadsByLine = (decorations, threads) => {
 							'local-highlight lh-',
 							'',
 						);
-						return [{ id: newDiscussionId }];
+						return { id: newDiscussionId, thread: { comments: [] } };
 					}
 					const id = decoration.attrs.class.replace('discussion-range d-', '');
-					const decorationThread = threads.find((thread) => {
-						return thread[0].id === id;
+					const decorationDiscussion = discussions.find((discussion) => {
+						return discussion.id === id;
 					});
-					return decorationThread;
+					return decorationDiscussion;
 				})
-				.filter((thread) => {
-					return thread && !thread[0].isArchived;
+				.filter((discussion) => {
+					return discussion && !discussion.isClosed;
 				});
 
 			/* Find the right-most id, and use that as the mount point */
@@ -91,41 +91,42 @@ export const groupThreadsByLine = (decorations, threads) => {
 			groupings.push({
 				key: bottomKey,
 				mountClassName: mountClassName,
-				threads: conatainedThreads,
+				discussions: containedDiscussions,
 			});
 		});
 	return groupings;
 };
 
-export const nestDiscussionsToThreads = function(discussions) {
-	const maxThreadNumber = discussions.reduce((prev, curr) => {
-		if (curr.threadNumber > prev) {
-			return curr.threadNumber;
-		}
-		return prev;
-	}, 0);
+// export const nestDiscussionsToThreads = function(discussions) {
+// 	return [];
+// 	const maxThreadNumber = discussions.reduce((prev, curr) => {
+// 		if (curr.threadNumber > prev) {
+// 			return curr.threadNumber;
+// 		}
+// 		return prev;
+// 	}, 0);
 
-	const tempThreads = new Array(maxThreadNumber).fill([]);
-	discussions.forEach((item) => {
-		tempThreads[item.threadNumber - 1] = [...tempThreads[item.threadNumber - 1], item];
-	});
+// 	const tempThreads = new Array(maxThreadNumber).fill([]);
+// 	discussions.forEach((item) => {
+// 		tempThreads[item.threadNumber - 1] = [...tempThreads[item.threadNumber - 1], item];
+// 	});
 
-	return tempThreads
-		.filter((thread) => {
-			return thread.length;
-		})
-		.map((thread) => {
-			return thread.sort((foo, bar) => {
-				if (foo.createdAt > bar.createdAt) {
-					return 1;
-				}
-				if (foo.createdAt < bar.createdAt) {
-					return -1;
-				}
-				return 0;
-			});
-		});
-};
+// 	return tempThreads
+// 		.filter((thread) => {
+// 			return thread.length;
+// 		})
+// 		.map((thread) => {
+// 			return thread.sort((foo, bar) => {
+// 				if (foo.createdAt > bar.createdAt) {
+// 					return 1;
+// 				}
+// 				if (foo.createdAt < bar.createdAt) {
+// 					return -1;
+// 				}
+// 				return 0;
+// 			});
+// 		});
+// };
 
 export const discussionMatchesSearchTerm = (discussion, searchTerm) => {
 	if (!searchTerm) {
@@ -136,56 +137,32 @@ export const discussionMatchesSearchTerm = (discussion, searchTerm) => {
 		.some((entry) => entry.toLowerCase().includes(searchTerm.toLowerCase()));
 };
 
-export const filterAndSortThreads = (
-	threads,
-	isArchivedList,
+export const filterAndSortDiscussions = (
+	discussions,
+	isClosedList,
 	sortMode,
 	filteredLabels,
 	activeBranchId,
 	searchTerm = null,
 	showAnchoredDiscussions = true,
 ) => {
-	return threads
-		.filter((items) => {
-			const threadIsArchived = items.reduce((prev, curr) => {
-				if (curr.isArchived) {
-					return true;
-				}
-				return prev;
-			}, false);
-			return isArchivedList ? threadIsArchived : !threadIsArchived;
-		})
-		.filter((items) => {
-			return items[0].branchId === activeBranchId;
-		})
-		.filter((items) => {
+	return discussions
+		.filter((discussion) => (isClosedList ? discussion.isClosed : !discussion.isClosed))
+		.filter((discussion) => {
 			if (!searchTerm) {
 				return true;
 			}
-			return items.some((discussion) => discussionMatchesSearchTerm(discussion, searchTerm));
-		})
-		.filter((items) => {
-			if (showAnchoredDiscussions) {
-				return true;
-			}
-			return (
-				items[0] &&
-				(items[0].highlights === null ||
-					(Array.isArray(items[0].highlights) && items[0].highlights.length === 0))
+			return discussion.thread.comments.some((threadComment) =>
+				discussionMatchesSearchTerm(threadComment, searchTerm),
 			);
 		})
-		.filter((items) => {
-			const threadLabels = items.reduce((prev, curr) => {
-				if (curr.labels && curr.labels.length) {
-					return curr.labels;
-				}
-				return prev;
-			}, []);
+		.filter((discussion) => !discussion.anchor || showAnchoredDiscussions)
+		.filter((discussion) => {
 			if (filteredLabels.length === 0) {
 				return true;
 			}
 			const hasNecessaryLabel = filteredLabels.reduce((prev, curr) => {
-				if (threadLabels.indexOf(curr) === -1) {
+				if (discussion.labels.indexOf(curr) === -1) {
 					return false;
 				}
 				return prev;
@@ -194,27 +171,27 @@ export const filterAndSortThreads = (
 		})
 		.sort((foo, bar) => {
 			/* Newest Thread */
-			if (sortMode === 'newestThread' && foo[0].threadNumber > bar[0].threadNumber) {
+			if (sortMode === 'newestThread' && foo.number > bar.number) {
 				return -1;
 			}
-			if (sortMode === 'newestThread' && foo[0].threadNumber < bar[0].threadNumber) {
+			if (sortMode === 'newestThread' && foo.number < bar.number) {
 				return 1;
 			}
 			/* Oldest Thread */
-			if (sortMode === 'oldestThread' && foo[0].threadNumber < bar[0].threadNumber) {
+			if (sortMode === 'oldestThread' && foo.number < bar.number) {
 				return -1;
 			}
-			if (sortMode === 'oldestThread' && foo[0].threadNumber > bar[0].threadNumber) {
+			if (sortMode === 'oldestThread' && foo.number > bar.number) {
 				return 1;
 			}
 			/* Newest Reply */
-			const fooNewestReply = foo.reduce((prev, curr) => {
+			const fooNewestReply = foo.thread.comments.reduce((prev, curr) => {
 				if (curr.createdAt > prev) {
 					return curr.createdAt;
 				}
 				return prev;
 			}, '0000-02-01T22:21:19.608Z');
-			const barNewestReply = bar.reduce((prev, curr) => {
+			const barNewestReply = bar.thread.comments.reduce((prev, curr) => {
 				if (curr.createdAt > prev) {
 					return curr.createdAt;
 				}
@@ -227,13 +204,13 @@ export const filterAndSortThreads = (
 				return 1;
 			}
 			/* Oldest Reply */
-			const fooOldestReply = foo.reduce((prev, curr) => {
+			const fooOldestReply = foo.thread.comments.reduce((prev, curr) => {
 				if (curr.createdAt < prev) {
 					return curr.createdAt;
 				}
 				return prev;
 			}, '9999-02-01T22:21:19.608Z');
-			const barOldestReply = bar.reduce((prev, curr) => {
+			const barOldestReply = bar.thread.comments.reduce((prev, curr) => {
 				if (curr.createdAt < prev) {
 					return curr.createdAt;
 				}
@@ -246,17 +223,29 @@ export const filterAndSortThreads = (
 				return 1;
 			}
 			/* Most Replies */
-			if (sortMode === 'mostReplies' && foo.length > bar.length) {
+			if (
+				sortMode === 'mostReplies' &&
+				foo.thread.comments.length > bar.thread.comments.length
+			) {
 				return -1;
 			}
-			if (sortMode === 'mostReplies' && foo.length < bar.length) {
+			if (
+				sortMode === 'mostReplies' &&
+				foo.thread.comments.length < bar.thread.comments.length
+			) {
 				return 1;
 			}
 			/* Least Replies */
-			if (sortMode === 'leastReplies' && foo.length < bar.length) {
+			if (
+				sortMode === 'leastReplies' &&
+				foo.thread.comments.length < bar.thread.comments.length
+			) {
 				return -1;
 			}
-			if (sortMode === 'leastReplies' && foo.length > bar.length) {
+			if (
+				sortMode === 'leastReplies' &&
+				foo.thread.comments.length > bar.thread.comments.length
+			) {
 				return 1;
 			}
 			return 0;

@@ -48,7 +48,7 @@ const EditableAvatar = (props) => {
 					style={{ borderRadius: width / 2 }}
 					onClick={selectImage}
 				>
-					<Avatar width={width} userInitials={user.initials} userAvatar={avatar} />
+					<Avatar width={width} initials={user.initials} avatar={avatar} />
 					<div
 						className={classNames(
 							'hover-overlay',

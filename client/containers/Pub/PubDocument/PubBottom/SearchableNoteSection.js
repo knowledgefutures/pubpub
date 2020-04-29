@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { usePageContext } from 'utils/hooks';
 
 import Notes, { notePropType } from './Notes';
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
@@ -19,11 +19,14 @@ const defaultProps = {
 const SearchableNoteSection = (props) => {
 	const { items, nodeType, viewNode, ...restProps } = props;
 	const numberedItems = items.map((item, index) => ({ ...item, number: index + 1 }));
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 
 	const targetNoteElement = (fn) =>
-		viewNode &&
-		viewNode.querySelector(`*[data-node-type="${nodeType}"][data-count="${fn.number}"]`);
+		// TODO(ian): find a principled way to extract viewNode from Editor even when it doesn't
+		// dispatch an editorChangeObject (like when it's been loaded into history.)
+		(viewNode || document.body).querySelector(
+			`*[data-node-type="${nodeType}"][data-count="${fn.number}"]`,
+		);
 
 	return (
 		<PubBottomSection

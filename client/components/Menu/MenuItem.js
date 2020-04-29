@@ -1,42 +1,50 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Icon, Classes } from '@blueprintjs/core';
+import { Classes } from '@blueprintjs/core';
 import * as RK from 'reakit/Menu';
 
-import { MenuContext } from './menuContext';
+import { Icon } from 'components';
+
+import { MenuContext } from './menuContexts';
 import { Menu } from './Menu';
 
 const sharedPropTypes = {
+	className: PropTypes.string,
 	disabled: PropTypes.bool,
 	href: PropTypes.string,
 	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 	onClick: PropTypes.func,
 	rightElement: PropTypes.node,
 	target: PropTypes.string,
+	textClassName: PropTypes.string,
 };
 
 const sharedDefaultProps = {
+	className: '',
 	disabled: false,
 	href: null,
 	icon: null,
 	onClick: null,
 	rightElement: null,
 	target: '_self',
+	textClassName: '',
 };
 
 const DisplayMenuItem = React.forwardRef((props, ref) => {
 	const {
 		active,
 		children,
+		className,
 		disabled,
-		href,
-		target,
-		icon,
 		hasSubmenu,
+		href,
+		icon,
 		onClick,
 		onDismiss,
 		rightElement,
+		target,
+		textClassName,
 		...restProps
 	} = props;
 
@@ -61,10 +69,21 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 			<a
 				href={href}
 				target={target}
-				className={classNames(Classes.MENU_ITEM, disabled && Classes.DISABLED)}
+				className={classNames(
+					Classes.MENU_ITEM,
+					disabled && Classes.DISABLED,
+					active && Classes.ACTIVE,
+					className,
+				)}
 			>
 				{icon && (typeof icon === 'string' ? <Icon icon={icon} /> : icon)}
-				<div className={classNames(Classes.TEXT_OVERFLOW_ELLIPSIS, Classes.FILL)}>
+				<div
+					className={classNames(
+						Classes.TEXT_OVERFLOW_ELLIPSIS,
+						Classes.FILL,
+						textClassName,
+					)}
+				>
 					{children}
 				</div>
 				{label && <span className={Classes.MENU_ITEM_LABEL}>{label}</span>}
@@ -115,7 +134,7 @@ export const MenuItem = React.forwardRef((props, ref) => {
 			ref={ref}
 			{...parentMenu}
 			{...restProps}
-			onDismiss={dismissOnClick && dismissMenu}
+			onDismiss={dismissOnClick ? dismissMenu : null}
 		>
 			{text}
 		</RK.MenuItem>

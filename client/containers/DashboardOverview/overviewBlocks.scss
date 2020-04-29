@@ -1,0 +1,29 @@
+.overview-blocks-component {
+	display: flex;
+	align-items: center;
+	margin-top: 1em;
+	margin-bottom: 2em;
+	.overview-block {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 25px;
+		.bp3-icon {
+			opacity: 0.3;
+			margin-right: 1em;
+		}
+		.text {
+			.count {
+				font-size: 18px;
+				font-weight: 500;
+			}
+
+			font-size: 14px;
+			text-transform: uppercase;
+		}
+	}
+	.blip {
+		opacity: 0.4;
+		margin: 0px 20px;
+	}
+}

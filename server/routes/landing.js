@@ -1,5 +1,4 @@
 import React from 'react';
-import { Landing } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -27,9 +26,7 @@ app.get('/', (req, res, next) => {
 						title: 'PubPub · Community Publishing',
 						description: initialData.communityData.description,
 					})}
-				>
-					<Landing {...initialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

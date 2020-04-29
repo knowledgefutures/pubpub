@@ -1,47 +1,38 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Button, AnchorButton, Intent } from '@blueprintjs/core';
-
-import { GridWrapper } from 'components';
-import { MenuButton, MenuItem } from 'components/Menu';
-import Avatar from 'components/Avatar/Avatar';
+import { GridWrapper, Avatar, ScopeDropdown, MenuButton, MenuItem } from 'components';
 import { apiFetch, getResizedUrl } from 'utils';
+import { usePageContext } from 'utils/hooks';
 
 require('./header.scss');
 
 const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
-	loginData: PropTypes.object.isRequired,
+	previewContext: PropTypes.object,
 };
 
-class Header extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			isLoading: false,
-		};
-		this.handleLogout = this.handleLogout.bind(this);
-		this.handleCreatePub = this.handleCreatePub.bind(this);
-		this.calculateComponentClasses = this.calculateComponentClasses.bind(this);
-		this.calculateMainClasses = this.calculateMainClasses.bind(this);
-		this.calculateHeroClasses = this.calculateHeroClasses.bind(this);
-		this.calculateBackgroundStyle = this.calculateBackgroundStyle.bind(this);
-	}
+const defaultProps = {
+	previewContext: undefined,
+};
 
-	handleLogout() {
+const Header = (props) => {
+	const { locationData, communityData, loginData, scopeData } = usePageContext(
+		props.previewContext,
+	);
+	const [isLoading, setIsLoading] = useState(false);
+	const handleLogout = () => {
 		apiFetch('/api/logout').then(() => {
 			window.location.href = '/';
 		});
-	}
-
-	handleCreatePub() {
-		this.setState({ isLoading: true });
+	};
+	const handleCreatePub = () => {
+		setIsLoading(true);
 		return apiFetch('/api/pubs', {
 			method: 'POST',
 			body: JSON.stringify({
-				communityId: this.props.communityData.id,
-				defaultCollectionIds: this.props.communityData.defaultPubCollections || [],
+				communityId: communityData.id,
+				defaultCollectionIds: communityData.defaultPubCollections || [],
 			}),
 		})
 			.then((newPub) => {
@@ -49,22 +40,21 @@ class Header extends Component {
 			})
 			.catch((err) => {
 				console.error(err);
-				this.setState({ isLoading: false });
+				setIsLoading(false);
 			});
-	}
+	};
 
-	calculateComponentClasses(hideHero) {
+	const calculateComponentClasses = (hideHero) => {
 		let dynamicComponentClasses = '';
 
-		const isLanding = this.props.locationData.path === '/';
-		const isBasePubPub = this.props.locationData.isBasePubPub;
+		const isLanding = locationData.path === '/';
+		const isBasePubPub = locationData.isBasePubPub;
 		const backgroundColorChange =
-			this.props.communityData.heroBackgroundColor &&
-			this.props.communityData.accentColorDark !==
-				this.props.communityData.heroBackgroundColor;
+			communityData.heroBackgroundColor &&
+			communityData.accentColorDark !== communityData.heroBackgroundColor;
 		const textColorChange =
-			this.props.communityData.heroTextColor &&
-			this.props.communityData.accentTextColor !== this.props.communityData.heroTextColor;
+			communityData.heroTextColor &&
+			communityData.accentTextColor !== communityData.heroTextColor;
 
 		if ((!isBasePubPub && !backgroundColorChange) || !isLanding) {
 			dynamicComponentClasses += ' accent-background';
@@ -72,178 +62,133 @@ class Header extends Component {
 		if ((!isBasePubPub && !textColorChange) || (!isBasePubPub && !isLanding)) {
 			dynamicComponentClasses += ' accent-color';
 		}
-		if (isBasePubPub && this.props.locationData.path === '/') {
+		if (isBasePubPub && locationData.path === '/') {
 			dynamicComponentClasses += ' bp3-dark';
 		}
 		if (hideHero) {
 			return dynamicComponentClasses;
 		}
-		const heroTextColor =
-			this.props.communityData.heroTextColor || this.props.communityData.accentTextColor;
+		const heroTextColor = communityData.heroTextColor || communityData.accentTextColor;
 		if (heroTextColor === '#FFFFFF') {
 			dynamicComponentClasses += ' bp3-dark';
 		}
 		return dynamicComponentClasses;
-	}
+	};
 
-	calculateMainClasses(hideHero) {
+	const calculateMainClasses = (hideHero) => {
 		let dynamicMainClasses = 'main';
 		if (hideHero) {
 			return dynamicMainClasses;
 		}
 		if (
-			!this.props.communityData.hideHero &&
-			this.props.communityData.useHeaderGradient &&
-			this.props.communityData.heroBackgroundImage
+			!communityData.hideHero &&
+			communityData.useHeaderGradient &&
+			communityData.heroBackgroundImage
 		) {
 			dynamicMainClasses += ' gradient bp3-dark';
 		}
 		return dynamicMainClasses;
-	}
+	};
 
-	calculateHeroClasses(hideHero) {
+	const calculateHeroClasses = (hideHero) => {
 		let dynamicHeroClasses = 'hero';
 		if (hideHero) {
 			return dynamicHeroClasses;
 		}
-		if (this.props.communityData.heroAlign === 'center') {
+		if (communityData.heroAlign === 'center') {
 			dynamicHeroClasses += ' centered';
 		}
 		return dynamicHeroClasses;
-	}
+	};
 
-	calculateBackgroundStyle(hideHero) {
+	const calculateBackgroundStyle = (hideHero) => {
 		const backgroundStyle = {};
-		if (this.props.locationData.isBasePubPub) {
+		if (locationData.isBasePubPub) {
 			backgroundStyle.boxShadow =
-				this.props.locationData.path === '/'
+				locationData.path === '/'
 					? ''
 					: '0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0), 0 1px 1px rgba(16, 22, 26, 0.2)';
-			backgroundStyle.backgroundColor = this.props.locationData.path === '/' ? '' : '#f7f7f9';
+			backgroundStyle.backgroundColor = locationData.path === '/' ? '' : '#f7f7f9';
 		}
 
 		if (hideHero) {
 			return backgroundStyle;
 		}
 
-		if (this.props.communityData.heroBackgroundImage) {
+		if (communityData.heroBackgroundImage) {
 			const resizedBackgroundImage = getResizedUrl(
-				this.props.communityData.heroBackgroundImage,
+				communityData.heroBackgroundImage,
 				'fit-in',
 				'1500x600',
 			);
 			backgroundStyle.backgroundImage = `url("${resizedBackgroundImage}")`;
 		}
 		const heroBackgroundColor =
-			this.props.communityData.heroBackgroundColor ||
-			this.props.communityData.accentColorDark;
+			communityData.heroBackgroundColor || communityData.accentColorDark;
 		if (heroBackgroundColor) {
-			backgroundStyle.backgroundColor = this.props.communityData.heroBackgroundColor;
+			backgroundStyle.backgroundColor = communityData.heroBackgroundColor;
 		}
 
 		return backgroundStyle;
-	}
+	};
 
-	render() {
-		const hideHero = this.props.locationData.path !== '/' || this.props.communityData.hideHero;
-		const hideHeaderLogo = !hideHero && this.props.communityData.hideHeaderLogo;
-		const componentClasses = this.calculateComponentClasses(hideHero);
-		const mainClasses = this.calculateMainClasses(hideHero);
-		const heroClasses = this.calculateHeroClasses(hideHero);
-		const backgroundStyle = this.calculateBackgroundStyle(hideHero);
+	const hideHero = locationData.path !== '/' || communityData.hideHero;
+	const hideHeaderLogo = !hideHero && communityData.hideHeaderLogo;
+	const componentClasses = calculateComponentClasses(hideHero);
+	const mainClasses = calculateMainClasses(hideHero);
+	const heroClasses = calculateHeroClasses(hideHero);
+	const backgroundStyle = calculateBackgroundStyle(hideHero);
 
-		const loggedIn = !!this.props.loginData.slug;
-		const isAdmin = this.props.loginData.isAdmin;
-		const isBasePubPub = this.props.locationData.isBasePubPub;
-		const isPage =
-			this.props.communityData.pages &&
-			this.props.communityData.pages.reduce((prev, curr) => {
-				if (
-					curr.slug === this.props.locationData.params.slug ||
-					(!curr.slug && this.props.locationData.path === '/')
-				) {
-					return true;
-				}
-				return prev;
-			}, false);
+	const loggedIn = !!loginData.slug;
+	const canManage = scopeData.activePermissions.canManageCommunity;
+	const isBasePubPub = locationData.isBasePubPub;
 
-		const resizedHeaderLogo = getResizedUrl(
-			this.props.communityData.headerLogo,
-			'fit-in',
-			'0x50',
-		);
-		const resizedHeroLogo = getResizedUrl(this.props.communityData.heroLogo, 'fit-in', '0x200');
-		const resizedHeroImage = getResizedUrl(
-			this.props.communityData.heroImage,
-			'fit-in',
-			'600x0',
-		);
-		const redirectString = `?redirect=${this.props.locationData.path}${
-			this.props.locationData.queryString.length > 1
-				? this.props.locationData.queryString
-				: ''
-		}`;
-		const heroPrimaryButton = this.props.communityData.heroPrimaryButton || {};
-		const heroSecondaryButton = this.props.communityData.heroSecondaryButton || {};
+	const resizedHeaderLogo = getResizedUrl(communityData.headerLogo, 'fit-in', '0x50');
+	const resizedHeroLogo = getResizedUrl(communityData.heroLogo, 'fit-in', '0x200');
+	const resizedHeroImage = getResizedUrl(communityData.heroImage, 'fit-in', '600x0');
+	const redirectString = `?redirect=${locationData.path}${
+		locationData.queryString.length > 1 ? locationData.queryString : ''
+	}`;
+	const heroPrimaryButton = communityData.heroPrimaryButton || {};
+	const heroSecondaryButton = communityData.heroSecondaryButton || {};
+	const isPreview = !!props.previewContext;
 
-		return (
-			<header className={`header-component ${componentClasses}`} style={backgroundStyle}>
-				<div className={mainClasses}>
-					<GridWrapper columnClassName="main-content">
-						<div className="logo-wrapper">
-							{!hideHeaderLogo && (
-								<a href="/" aria-label={this.props.communityData.title}>
-									{this.props.communityData.headerLogo && (
-										<React.Fragment>
-											<img
-												alt=""
-												style={isBasePubPub ? { padding: '1px 0px' } : {}}
-												src={resizedHeaderLogo}
-											/>
-										</React.Fragment>
-									)}
-									{!this.props.communityData.headerLogo && (
-										<span>{this.props.communityData.title}</span>
-									)}
-								</a>
-							)}
-						</div>
-						<div className="buttons-wrapper">
-							{isBasePubPub && (
-								<>
-									<AnchorButton
-										href="/pricing"
-										minimal={true}
-										large={true}
-										text="Pricing"
-									/>
-									<AnchorButton
-										href="/search"
-										minimal={true}
-										large={true}
-										text="Search"
-										className="hide-on-mobile"
-									/>
-									<AnchorButton
-										href="/about"
-										minimal={true}
-										large={true}
-										text="About"
-									/>
-								</>
-							)}
-							{!isBasePubPub &&
-								loggedIn &&
-								(!this.props.communityData.hideCreatePubButton || isAdmin) && (
-									<Button
-										large={true}
-										minimal={true}
-										text="New Pub"
-										onClick={this.handleCreatePub}
-										loading={this.state.isLoading}
-									/>
+	return (
+		<header
+			className={classNames([
+				'header-component',
+				componentClasses,
+				isPreview ? 'preview' : '',
+			])}
+			style={backgroundStyle}
+		>
+			<div className={mainClasses}>
+				<GridWrapper columnClassName="main-content">
+					<div className="logo-wrapper">
+						{!hideHeaderLogo && (
+							<a href="/" aria-label={communityData.title}>
+								{communityData.headerLogo && (
+									<React.Fragment>
+										<img
+											alt=""
+											style={isBasePubPub ? { padding: '1px 0px' } : {}}
+											src={resizedHeaderLogo}
+										/>
+									</React.Fragment>
 								)}
-							{!isBasePubPub && (
+								{!communityData.headerLogo && <span>{communityData.title}</span>}
+							</a>
+						)}
+					</div>
+					<div className="buttons-wrapper">
+						{isBasePubPub && (
+							<React.Fragment>
+								<AnchorButton
+									href="/pricing"
+									minimal={true}
+									large={true}
+									text="Pricing"
+								/>
 								<AnchorButton
 									href="/search"
 									minimal={true}
@@ -251,118 +196,140 @@ class Header extends Component {
 									text="Search"
 									className="hide-on-mobile"
 								/>
-							)}
-							{isAdmin && (
 								<AnchorButton
+									href="/about"
 									minimal={true}
 									large={true}
-									href={
-										isPage
-											? `/dashboard/pages/${this.props.locationData.params
-													.slug || ''}`
-											: '/dashboard'
-									}
-									text="Manage"
+									text="About"
+								/>
+							</React.Fragment>
+						)}
+						{!isBasePubPub &&
+							loggedIn &&
+							(!communityData.hideCreatePubButton || canManage) && (
+								<Button
+									large={true}
+									minimal={true}
+									text="Create Pub"
+									onClick={handleCreatePub}
+									loading={isLoading}
 								/>
 							)}
-							{loggedIn && (
-								<MenuButton
-									aria-label="User menu"
-									placement="auto-end"
-									// The z-index of the PubHeaderFormatting is 19
-									menuStyle={{ zIndex: 20 }}
-									buttonProps={{
-										minimal: true,
-										large: true,
-									}}
-									buttonContent={
-										<Avatar
-											userInitials={this.props.loginData.initials}
-											userAvatar={this.props.loginData.avatar}
-											width={30}
-										/>
-									}
-								>
-									<MenuItem
-										href={`/user/${this.props.loginData.slug}`}
-										text={
-											<React.Fragment>
-												{this.props.loginData.fullName}
-												<span className="subtext" style={{ marginLeft: 4 }}>
-													View Profile
-												</span>
-											</React.Fragment>
-										}
+						{!isBasePubPub && (
+							<AnchorButton
+								href="/search"
+								minimal={true}
+								large={true}
+								text="Search"
+								className="hide-on-mobile"
+							/>
+						)}
+						{!isBasePubPub && (
+							<MenuButton
+								aria-label="Dashboard Menu"
+								placement="top-end"
+								menuStyle={{ zIndex: 20 }}
+								buttonProps={{
+									className: 'header-dashboard-button hide-on-mobile',
+									minimal: true,
+									large: true,
+									rightIcon: 'caret-down',
+								}}
+								buttonContent="Dashboard"
+							>
+								<ScopeDropdown />
+							</MenuButton>
+						)}
+						{loggedIn && (
+							<MenuButton
+								aria-label="User menu"
+								placement="top-end"
+								// The z-index of the PubHeaderFormatting is 19
+								menuStyle={{ zIndex: 20 }}
+								buttonProps={{
+									minimal: true,
+									large: true,
+								}}
+								buttonContent={
+									<Avatar
+										initials={loginData.initials}
+										avatar={loginData.avatar}
+										width={30}
 									/>
-									<MenuItem href="/legal/settings" text="Privacy settings" />
-									<MenuItem onClick={this.handleLogout} text="Logout" />
-								</MenuButton>
-							)}
-							{!loggedIn && (
-								<AnchorButton
-									large={true}
-									minimal={true}
-									text="Login or Signup"
-									href={`/login${redirectString}`}
+								}
+							>
+								<MenuItem
+									href={`/user/${loginData.slug}`}
+									text={
+										<React.Fragment>
+											{loginData.fullName}
+											<span className="subtext" style={{ marginLeft: 4 }}>
+												View Profile
+											</span>
+										</React.Fragment>
+									}
 								/>
+								<MenuItem href="/privacy/settings" text="Privacy settings" />
+								<MenuItem onClick={handleLogout} text="Logout" />
+							</MenuButton>
+						)}
+						{!loggedIn && (
+							<AnchorButton
+								large={true}
+								minimal={true}
+								text="Login or Signup"
+								href={`/login${redirectString}`}
+							/>
+						)}
+					</div>
+				</GridWrapper>
+			</div>
+			{!hideHero && (
+				<div className={heroClasses}>
+					<GridWrapper columnClassName="hero-content">
+						<div className="hero-copy">
+							{communityData.heroLogo && (
+								<div className="hero-logo">
+									<img alt={communityData.title} src={resizedHeroLogo} />
+								</div>
 							)}
+							{communityData.heroTitle && (
+								<div className="hero-title">{communityData.heroTitle}</div>
+							)}
+							{communityData.heroText && (
+								<div className="hero-text">{communityData.heroText}</div>
+							)}
+							<div className="hero-button">
+								{heroPrimaryButton.title && (
+									<AnchorButton
+										intent={Intent.PRIMARY}
+										large={true}
+										text={heroPrimaryButton.title}
+										href={heroPrimaryButton.url}
+									/>
+								)}
+								{heroSecondaryButton.title && (
+									<AnchorButton
+										large={true}
+										minimal={true}
+										text={heroSecondaryButton.title}
+										href={heroSecondaryButton.url}
+									/>
+								)}
+							</div>
 						</div>
+						{communityData.heroImage && (
+							<div className="hero-image">
+								<img alt="Community banner" src={resizedHeroImage} />
+							</div>
+						)}
 					</GridWrapper>
 				</div>
-				{!hideHero && (
-					<div className={heroClasses}>
-						<GridWrapper columnClassName="hero-content">
-							<div className="hero-copy">
-								{this.props.communityData.heroLogo && (
-									<div className="hero-logo">
-										<img
-											alt={this.props.communityData.title}
-											src={resizedHeroLogo}
-										/>
-									</div>
-								)}
-								{this.props.communityData.heroTitle && (
-									<div className="hero-title">
-										{this.props.communityData.heroTitle}
-									</div>
-								)}
-								{this.props.communityData.heroText && (
-									<div className="hero-text">
-										{this.props.communityData.heroText}
-									</div>
-								)}
-								<div className="hero-button">
-									{heroPrimaryButton.title && (
-										<AnchorButton
-											intent={Intent.PRIMARY}
-											large={true}
-											text={heroPrimaryButton.title}
-											href={heroPrimaryButton.url}
-										/>
-									)}
-									{heroSecondaryButton.title && (
-										<AnchorButton
-											large={true}
-											minimal={true}
-											text={heroSecondaryButton.title}
-											href={heroSecondaryButton.url}
-										/>
-									)}
-								</div>
-							</div>
-							{this.props.communityData.heroImage && (
-								<div className="hero-image">
-									<img alt="Community banner" src={resizedHeroImage} />
-								</div>
-							)}
-						</GridWrapper>
-					</div>
-				)}
-			</header>
-		);
-	}
-}
+			)}
+		</header>
+	);
+};
 
-// Header.defaultProps = defaultProps;
 Header.propTypes = propTypes;
+Header.defaultProps = defaultProps;
 export default Header;

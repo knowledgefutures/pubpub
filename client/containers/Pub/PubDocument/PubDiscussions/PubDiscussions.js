@@ -1,34 +1,36 @@
-import React, { useEffect, useContext, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import { dispatchEmptyTransaction } from '@pubpub/editor';
+import { dispatchEmptyTransaction } from 'components/Editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { usePageContext } from 'utils/hooks';
 
 import { NonIdealState } from '@blueprintjs/core';
-import ThreadGroup from './ThreadGroup';
-import DiscussionThread from './DiscussionThread';
-import DiscussionInput from './DiscussionThread/DiscussionInput';
-import { groupThreadsByLine, nestDiscussionsToThreads } from './discussionUtils';
+import DiscussionGroup from './DiscussionGroup';
+import Discussion from './Discussion';
+import DiscussionInput from './Discussion/DiscussionInput';
+import { groupDiscussionsByLine } from './discussionUtils';
 
 require('./pubDiscussions.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
-	filterThreads: PropTypes.func,
+	filterDiscussions: PropTypes.func,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
 	mainContentRef: PropTypes.object.isRequired,
-	showBottomInput: PropTypes.bool.isRequired,
+	showBottomInput: PropTypes.bool,
 	searchTerm: PropTypes.string,
 };
 
 const defaultProps = {
 	firebaseBranchRef: undefined,
-	filterThreads: () => [],
+	filterDiscussions: () => [],
 	searchTerm: null,
+	showBottomInput: false,
 };
 
 const PubDiscussions = (props) => {
@@ -36,14 +38,16 @@ const PubDiscussions = (props) => {
 		collabData,
 		pubData,
 		firebaseBranchRef,
-		filterThreads,
+		filterDiscussions,
 		updateLocalData,
 		mainContentRef,
 		sideContentRef,
 		searchTerm,
 		showBottomInput,
+		historyData,
 	} = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData, scopeData } = usePageContext();
+	const { canView, canCreateDiscussions } = scopeData;
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const { width: windowWidth } = useWindowSize();
 
@@ -55,12 +59,14 @@ const PubDiscussions = (props) => {
 		}
 		/* eslint-disable-next-line react-hooks/exhaustive-deps */
 	}, [windowWidth]);
-	const threads = nestDiscussionsToThreads(pubData.discussions);
-	const groupsByLine = groupThreadsByLine(decorations, threads);
+	// const threads = nestDiscussionsToThreads(pubData.discussions);
+	const { discussions } = pubData;
+	const groupsByLine = groupDiscussionsByLine(decorations, discussions);
 	const prevNewDiscussionIds = useRef([]);
 	const prevConvertedDiscussionIds = useRef([]);
 
 	const renderSideDiscussions = () => {
+		// return null;
 		return groupsByLine.map((group) => {
 			const mountElement = document.getElementsByClassName(group.mountClassName)[0];
 			if (!mountElement) {
@@ -70,12 +76,13 @@ const PubDiscussions = (props) => {
 			// console.log('mountElement', mountElement);
 			// console.log(group)
 			return ReactDOM.createPortal(
-				<ThreadGroup
+				<DiscussionGroup
 					key={group.mountClassName}
 					pubData={pubData}
 					collabData={collabData}
+					historyData={historyData}
 					firebaseBranchRef={firebaseBranchRef}
-					threads={group.threads}
+					discussions={group.discussions}
 					mountClassName={group.mountClassName}
 					updateLocalData={updateLocalData}
 					sideContentRef={sideContentRef}
@@ -89,13 +96,11 @@ const PubDiscussions = (props) => {
 	};
 
 	const renderBottomDiscussions = () => {
-		const filteredThreads = filterThreads(threads);
+		const filteredDiscussions = filterDiscussions(discussions);
 		const emptyMessage =
-			threads.filter(
-				(th) => th[0] && th[0].branchId === pubData.activeBranch.id && !th[0].isArchived,
-			).length > 0
+			discussions.filter((th) => th && !th.isClosed).length > 0
 				? 'No matching comments (some are hidden by filters)'
-				: pubData.canDiscuss
+				: canView || canCreateDiscussions
 				? ' Why not start the discussion?'
 				: '';
 		return (
@@ -104,12 +109,13 @@ const PubDiscussions = (props) => {
 					<DiscussionInput
 						pubData={pubData}
 						collabData={collabData}
+						historyData={historyData}
 						updateLocalData={updateLocalData}
-						threadData={[{ id: undefined }]}
+						discussionData={{ id: undefined }}
 						isPubBottomInput={true}
 					/>
 				)}
-				{filteredThreads.length === 0 && (
+				{filteredDiscussions.length === 0 && (
 					<NonIdealState
 						className="empty-state"
 						icon="comment"
@@ -117,14 +123,15 @@ const PubDiscussions = (props) => {
 						description={emptyMessage}
 					/>
 				)}
-				{filteredThreads.map((thread) => {
+				{filteredDiscussions.map((discussion) => {
 					return (
-						<DiscussionThread
-							key={thread[0].id}
+						<Discussion
+							key={discussion.id}
 							pubData={pubData}
 							collabData={collabData}
+							historyData={historyData}
 							firebaseBranchRef={firebaseBranchRef}
-							threadData={thread}
+							discussionData={discussion}
 							updateLocalData={updateLocalData}
 							canPreview={true}
 							searchTerm={searchTerm}

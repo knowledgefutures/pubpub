@@ -1,0 +1,31 @@
+@import './fileicon.scss';
+
+[data-node-type='file'] {
+	width: 65%;
+	.details {
+		display: flex;
+		align-items: center;
+		text-align: left;
+		.extension {
+			text-transform: uppercase;
+			font-family: 'Courier', monospace;
+			font-weight: 600;
+			font-size: 1.5em;
+		}
+		.file-name {
+			flex-grow: 1;
+			flex-shrink: 1;
+			margin: 0em 1em;
+			a {
+				color: inherit;
+				&:hover {
+					cursor: pointer;
+					text-decoration: underline !important;
+				}
+			}
+		}
+		.file-size {
+			margin: 0em 1em;
+		}
+	}
+}

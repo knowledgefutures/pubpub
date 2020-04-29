@@ -1,0 +1,105 @@
+.overview-row-component {
+	font-size: 14px;
+	text-align: center;
+	padding: 12px 0px;
+	&:not(.list-header):hover {
+		background: #f0f0f0;
+	}
+	&.is-dragging {
+		border: none;
+		border-radius: 4px;
+		background: #f0f0f0;
+	}
+	&.list-header,
+	.inner {
+		display: flex;
+		& > * {
+			flex: 0 0 auto;
+		}
+	}
+	&.list-header {
+		text-transform: uppercase;
+		opacity: 0.6;
+		font-size: 12px;
+		padding-top: 15px;
+	}
+	.handle {
+		width: 30px;
+		.arrow {
+			cursor: pointer;
+			background: none;
+			border: none;
+			height: 100%;
+			border-radius: 2px;
+			opacity: 0.5;
+			.bp3-icon {
+				margin-top: -1px;
+			}
+			&.opened {
+				.bp3-icon {
+					transform: rotate(90deg);
+				}
+			}
+			&:hover {
+				opacity: 1;
+			}
+		}
+	}
+	.type {
+		width: 50px;
+		.bp3-icon {
+			opacity: 0.8;
+			padding-top: 4px;
+		}
+	}
+	.title {
+		flex: 1 1 auto;
+		padding: 0em 1em;
+		text-align: left;
+		.item-title {
+			font-size: 16px;
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		.title-button {
+			font-style: italic;
+			opacity: 0.8;
+			margin-left: 10px;
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		.subtitle {
+			font-style: italic;
+			opacity: 0.8;
+		}
+	}
+	.pubs {
+		width: 50px;
+	}
+	.released {
+		width: 115px;
+	}
+	.discussions {
+		width: 100px;
+	}
+	.reviews {
+		width: 100px;
+	}
+	.pub-options {
+		width: 100px;
+	}
+	.child-rows {
+		padding: 12px 0px;
+		margin-top: 12px;
+		background: #eee;
+		box-shadow: inset 0px 11px 3px -10px #ccc, inset 0px -11px 3px -10px #ccc;
+		margin-bottom: -12px;
+		.overview-row-component:hover {
+			background: #e4e4e4;
+		}
+	}
+}

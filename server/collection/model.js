@@ -4,15 +4,22 @@ export default (sequelize, dataTypes) => {
 		{
 			id: sequelize.idType,
 			title: { type: dataTypes.TEXT },
+			slug: {
+				type: dataTypes.TEXT,
+				allowNull: false,
+				validate: {
+					isLowercase: true,
+					len: [1, 280],
+					is: /^[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
+				},
+			},
+			avatar: { type: dataTypes.TEXT },
 			isRestricted: {
 				type: dataTypes.BOOLEAN,
 			} /* Restricted collections can only be set by Community Admins */,
 			isPublic: { type: dataTypes.BOOLEAN } /* Only visible to community admins */,
-
-			/* Set by Associations */
-			pageId: { type: dataTypes.UUID } /* Used to link a collection to a specific page */,
-			communityId: { type: dataTypes.UUID },
-
+			viewHash: { type: dataTypes.STRING },
+			editHash: { type: dataTypes.STRING },
 			metadata: { type: dataTypes.JSONB },
 			kind: { type: dataTypes.TEXT },
 			doi: { type: dataTypes.TEXT },
@@ -20,6 +27,10 @@ export default (sequelize, dataTypes) => {
 				type: dataTypes.ENUM('none', 'minimal', 'medium', 'choose-best'),
 				defaultValue: 'choose-best',
 			},
+
+			/* Set by Associations */
+			pageId: { type: dataTypes.UUID } /* Used to link a collection to a specific page */,
+			communityId: { type: dataTypes.UUID },
 		},
 		{
 			classMethods: {

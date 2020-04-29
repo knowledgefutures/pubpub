@@ -1,0 +1,27 @@
+.dashboard-settings-container {
+	h2 {
+		margin-bottom: 1em;
+	}
+	.settings-section-component {
+		margin-top: 3em;
+	}
+	.content-buttons {
+		float: right;
+		button {
+			margin-left: 1em;
+		}
+	}
+	.row-wrapper {
+		display: flex;
+		.input-field-component:not(:first-of-type) {
+			margin-left: 10px;
+		}
+	}
+	.disable-block {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+	.bp3-card {
+		margin-bottom: 15px;
+	}
+}

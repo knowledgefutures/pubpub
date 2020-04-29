@@ -112,8 +112,8 @@ class DiscussionAutocomplete extends Component {
 									<div className="avatar-wrapper">
 										<Avatar
 											width={20}
-											userInitials={discussion.author.intials}
-											userAvatar={discussion.author.avatar}
+											initials={discussion.author.intials}
+											avatar={discussion.author.avatar}
 										/>
 									</div>
 

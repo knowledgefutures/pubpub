@@ -1,54 +1,102 @@
-import { Review } from '../models';
+import uuidv4 from 'uuid/v4';
+import { Branch, Thread, Visibility, ReviewNew, Pub } from '../models';
 import {
-	createCreatedReviewEvent,
-	createClosedReviewEvent,
-	createCompletedReviewEvent,
-	createCommentReviewEvent,
-} from '../reviewEvent/queries';
+	createCreatedThreadEvent,
+	createClosedThreadEvent,
+	createCompletedThreadEvent,
+	createReleasedEvent,
+} from '../threadEvent/queries';
+import { createRelease } from '../release/queries';
+import { createThreadComment } from '../threadComment/queries';
+import { getLatestKey } from '../utils/firebaseAdmin';
 
-export const createReview = (inputValues, userData) => {
-	return Review.findAll({
+export const createReview = async (inputValues, userData) => {
+	const reviews = await ReviewNew.findAll({
 		where: {
 			pubId: inputValues.pubId,
 		},
-		attributes: ['id', 'pubId', 'shortId'],
-	}).then((reviews) => {
-		const maxShortId = reviews.reduce((prev, curr) => {
-			if (curr.shortId > prev) {
-				return curr.shortId;
-			}
-			return prev;
-		}, 0);
-		return Review.create({
-			shortId: maxShortId + 1,
-			pubId: inputValues.pubId,
-			sourceBranchId: inputValues.sourceBranchId,
-			destinationBranchId: inputValues.destinationBranchId,
-		})
-			.then((reviewData) => {
-				const reviewEvents = [
-					createCreatedReviewEvent(userData, reviewData.pubId, reviewData.id),
-				];
-				if (inputValues.text) {
-					reviewEvents.push(
-						createCommentReviewEvent(
-							userData,
-							reviewData.pubId,
-							reviewData.id,
-							inputValues.content,
-							inputValues.text,
-						),
-					);
-				}
-				return Promise.all([reviewData, ...reviewEvents]);
-			})
-			.then(([reviewData]) => {
-				return reviewData;
-			});
+		attributes: ['id', 'pubId', 'number'],
+		raw: true,
 	});
+
+	const maxNumber = reviews.reduce((prev, curr) => {
+		if (Number(curr.number) > prev) {
+			return Number(curr.number);
+		}
+		return prev;
+	}, 0);
+	const threadId = uuidv4();
+	const visibilityId = uuidv4();
+	await Promise.all([
+		Visibility.create({
+			id: visibilityId,
+			access: 'members',
+		}),
+		Thread.create({
+			id: threadId,
+		}),
+	]);
+
+	const reviewData = await ReviewNew.create({
+		title: 'Publication Request',
+		number: maxNumber + 1,
+		releaseRequested: inputValues.releaseRequested,
+		threadId: threadId,
+		visibilityId: visibilityId,
+		userId: userData.id,
+		pubId: inputValues.pubId,
+	});
+
+	await createCreatedThreadEvent(userData, threadId);
+	if (inputValues.text) {
+		await createThreadComment(
+			{ threadId: threadId, content: inputValues.content, text: inputValues.text },
+			userData,
+		);
+	}
+
+	return reviewData;
 };
 
-export const updateReview = (inputValues, updatePermissions, userData) => {
+export const createReviewRelease = async (inputValues, userData) => {
+	const [branchData, pubData] = await Promise.all([
+		Branch.findOne({
+			where: { pubId: inputValues.pubId, title: 'draft' },
+		}),
+		Pub.findOne({
+			where: { id: inputValues.pubId },
+			attributes: ['id', 'slug'],
+		}),
+	]);
+	const latestKey = await getLatestKey(inputValues.pubId, branchData.id);
+	const updateResult = await ReviewNew.update(
+		{ status: 'completed' },
+		{
+			where: { pubId: inputValues.pubId, threadId: inputValues.threadId },
+		},
+	);
+	if (!updateResult[0]) {
+		throw new Error('Invalid pubId or threadId');
+	}
+
+	const release = await createRelease({
+		userId: userData.id,
+		pubId: inputValues.pubId,
+		draftKey: latestKey,
+	});
+	const releasedEvent = await createReleasedEvent(
+		userData,
+		inputValues.threadId,
+		pubData.slug,
+		release.branchKey + 1,
+	);
+	const completedEvent = await createCompletedThreadEvent(userData, inputValues.threadId);
+	const reviewEvents = [releasedEvent, completedEvent];
+
+	return { release: release, reviewEvents: reviewEvents };
+};
+
+export const updateReview = async (inputValues, updatePermissions, userData) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -57,7 +105,11 @@ export const updateReview = (inputValues, updatePermissions, userData) => {
 		}
 	});
 
-	return Review.update(filteredValues, {
+	const previousReview = ReviewNew.findOne({
+		where: { id: inputValues.reviewId },
+		attributes: ['id', 'status'],
+	});
+	return ReviewNew.update(filteredValues, {
 		where: { id: inputValues.reviewId },
 		returning: true,
 	})
@@ -65,30 +117,25 @@ export const updateReview = (inputValues, updatePermissions, userData) => {
 			if (!updatedReview[0]) {
 				return {};
 			}
-
 			const nextValues = updatedReview[1][0].get();
-			const prevValues = updatedReview[1][0].previous();
-			const wasClosed = !prevValues.isClosed && nextValues.isClosed;
-			const wasCompleted = !prevValues.isCompleted && nextValues.isCompleted;
-			if (wasClosed && !wasCompleted) {
-				return createClosedReviewEvent(userData, inputValues.pubId, inputValues.reviewId);
+			const prevStatus = previousReview.status;
+			const wasClosed = prevStatus !== 'closed' && nextValues.status === 'closed';
+			const wasCompleted = prevStatus !== 'completed' && nextValues.status === 'completed';
+			if (wasClosed) {
+				return Promise.all[createClosedThreadEvent(userData, nextValues.threadId)];
 			}
 			if (wasCompleted) {
-				return createCompletedReviewEvent(
-					userData,
-					inputValues.pubId,
-					inputValues.reviewId,
-				);
+				return Promise.all[createCompletedThreadEvent(userData, nextValues.threadId)];
 			}
-			return null;
+			return [];
 		})
-		.then((newReviewEvent) => {
-			return { updatedValues: filteredValues, newReviewEvents: [newReviewEvent] };
+		.then((newReviewEvents) => {
+			return { updatedValues: filteredValues, newReviewEvents: newReviewEvents };
 		});
 };
 
 export const destroyReview = (inputValues) => {
-	return Review.destroy({
+	return ReviewNew.destroy({
 		where: { id: inputValues.reviewId },
 	});
 };

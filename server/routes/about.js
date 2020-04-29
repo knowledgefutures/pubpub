@@ -1,5 +1,4 @@
 import React from 'react';
-import { About } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -26,9 +25,7 @@ app.get('/about', (req, res, next) => {
 						initialData: initialData,
 						title: 'About PubPub',
 					})}
-				>
-					<About {...initialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

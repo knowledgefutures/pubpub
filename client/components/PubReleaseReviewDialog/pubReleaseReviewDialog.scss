@@ -1,0 +1,9 @@
+.pub-release-review-dialog-component {
+    .minimal-editor-component {
+        height: 150px;
+        overflow: auto;
+        .editor-wrapper {
+            min-height: 100%;
+        }
+    }
+}

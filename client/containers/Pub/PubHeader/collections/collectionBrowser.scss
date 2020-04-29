@@ -1,0 +1,32 @@
+@import 'styles/variables.scss';
+
+.collection-browser-component_menu {
+    border-left: 0;
+    border-right: 0;
+    overflow-y: scroll;
+    max-height: 50vh;
+    min-height: 50px;
+    max-width: 80vw;
+    width: 400px;
+
+    .loading-menu-item {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .menu-item-text {
+        white-space: normal;
+        .title {
+            font-family: $header-font;
+            font-weight: 500;
+        }
+    }
+
+    .pub-preview {
+        width: 50px;
+        min-height: 50px;
+        height: 100%;
+        background-size: cover;
+    }
+}

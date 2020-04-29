@@ -1,0 +1,6 @@
+.create-page-dialog-component {
+	// Specificity hack
+    &.bp3-dialog {
+        padding-bottom: 0px;
+    }
+}

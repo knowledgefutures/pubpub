@@ -1,0 +1,34 @@
+@import './themes.scss';
+
+.byline-edit-button-component {
+    @include base-button;
+    margin-left: 4px;
+    .box-style {
+        padding: 4px 10px;
+        border-radius: 25px;
+        font-style: normal;
+        font-size: 0.8em;
+    }
+}
+
+.pub-header-theme-black-blocks,
+.pub-header-theme-white-blocks {
+    .byline-edit-button-component {
+        .box-style {
+            display: none;
+        }
+    }
+}
+
+.pub-header-theme-dark,
+.pub-header-theme-light {
+    .byline-edit-button-component {
+        vertical-align: top;
+        @include mobile {
+            vertical-align: middle;
+        }
+        .inline-style {
+            display: none;
+        }
+    }
+}

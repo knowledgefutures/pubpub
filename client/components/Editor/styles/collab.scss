@@ -1,0 +1,96 @@
+.collab-cursor {
+	position: relative;
+	font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue", sans-serif;
+	color: white;
+	user-select: none;
+	vertical-align: top;
+	.inner-bar {
+		position: absolute;
+		height: calc(1em + 5px);
+		width: 2px;
+		background-color: rgba(0, 25, 150, 1.0);
+		bottom: 0px;
+		left: 0;
+		.inner-circle-small {
+			position: absolute;
+			height: 8px;
+			width: 8px;
+			border-radius: 8px;
+			background-color: rgba(0, 25, 150, 1.0);
+			bottom: calc(100% + 0px);
+			left: -3px;
+		}
+		.hover-wrapper {
+			transform: scale(0.4);
+			opacity: 0;
+			transform-origin: bottom left;
+			transition: .1s 0.3s linear transform, 0s 0.4s linear opacity;
+			display: block;
+			position: absolute;
+			bottom: 100%;
+			pointer-events: none;
+			z-index: 1;
+			.inner-circle-big {
+				position: absolute;
+				height: 24px;
+				width: 24px;
+				border-radius: 24px;
+				background-color: rgba(0, 25, 150, 1.0);
+				bottom: 0px;
+				left: -11px;
+			}
+			.initials:after {
+				display: block;
+				position: absolute;
+				width: 20px;
+				height: 20px;
+				bottom: 2px;
+				left: -9px;
+				font-size: 12px;
+				font-weight: bold;
+				line-height: 20px;
+				text-align: center;
+				z-index: 4;
+				white-space: nowrap;
+				user-select: none;
+			}
+			.name:after {
+				position: absolute;
+				display: block;
+				padding: 2px 12px;
+				border-radius: 2px;
+				color: white;
+				background-color: #777;
+				font-size: 12px;
+				line-height: 16px;
+				font-weight: 400;
+				bottom: 2px;
+				left: 6px;
+				white-space: nowrap;
+				z-index: 3;
+				user-select: none;
+			}
+			.image:after {
+				position: absolute;
+				bottom: 2px;
+				left: -9px;
+				z-index: 5;
+				border-radius: 10px;
+				width: 20px;
+				height: 20px;
+				background-size: cover;
+				content: "";
+			    max-width: none;
+			    margin-top: 0px;
+			}
+		}
+	}
+
+	&:hover {
+		.hover-wrapper {
+			opacity: 1;
+			transform: scale(1);
+			transition: .1s linear transform, 0s 0s linear opacity;
+		}
+	}
+}

@@ -10,23 +10,26 @@ import {
 } from '@blueprintjs/core';
 import { GridWrapper } from 'components';
 import Icon from 'components/Icon/Icon';
-import { populateNavigationIds, apiFetch, defaultFooterLinks } from 'utils';
+import { populateNavigationIds, apiFetch, defaultFooterLinks, populateSocialItems } from 'utils';
+import { usePageContext } from 'utils/hooks';
 
 require('./footer.scss');
 
 const propTypes = {
-	isBasePubPub: PropTypes.bool.isRequired,
-	isAdmin: PropTypes.bool.isRequired,
-	communityData: PropTypes.object.isRequired,
-	socialItems: PropTypes.array.isRequired,
+	previewContext: PropTypes.object,
+};
+
+const defaultProps = {
+	previewContext: undefined,
 };
 
 const Footer = (props) => {
-	const { isBasePubPub, isAdmin, communityData, socialItems } = props;
 	const [email, setEmail] = useState('');
 	const [isLoadingSubscribe, setIsLoadingSubscribe] = useState(false);
 	const [isSubscribed, setIsSubscribed] = useState(false);
 	const [isConfirmed, setIsConfirmed] = useState(false);
+	const { locationData, communityData, scopeData } = usePageContext(props.previewContext);
+	const { isBasePubPub } = locationData;
 	const links = isBasePubPub
 		? [
 				{ id: 1, title: 'Create your community', href: '/create/community' },
@@ -92,7 +95,7 @@ const Footer = (props) => {
 					url: 'mailto:hello@pubpub.org?subject=Contact',
 				},
 		  ]
-		: socialItems;
+		: populateSocialItems(communityData);
 	return (
 		<div className={`footer-component ${wrapperClasses}`}>
 			<GridWrapper>
@@ -213,12 +216,14 @@ const Footer = (props) => {
 					<ul className="separated">
 						{links
 							.filter((item) => {
-								return !item.adminOnly || isAdmin;
+								return !item.adminOnly || scopeData.activePermissions.isAdmin;
 							})
 							.map((link) => {
 								return (
 									<li key={`footer-item-${link.id}`}>
-										<a href={link.href || `/${link.slug}`}>{link.title}</a>
+										<a className="link" href={link.href || `/${link.slug}`}>
+											{link.title}
+										</a>
 									</li>
 								);
 							})}
@@ -263,4 +268,5 @@ const Footer = (props) => {
 };
 
 Footer.propTypes = propTypes;
+Footer.defaultProps = defaultProps;
 export default Footer;

@@ -1,0 +1,29 @@
+.collections-bar-button-component {
+    cursor: pointer;
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    color: inherit;
+    height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    user-select: none;
+    white-space: nowrap;
+    background-color: transparent;
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: transparent;
+    }
+    &:focus {
+        border-width: 3px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    .right-icon-container {
+        padding-left: 6px;
+    }
+    .left-icon-container {
+        padding-right: 6px;
+    }
+}

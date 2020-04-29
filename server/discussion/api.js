@@ -10,8 +10,8 @@ const getRequestIds = (req) => {
 		discussionId: req.body.discussionId || null,
 		pubId: req.body.pubId,
 		communityId: req.body.communityId,
-		branchId: req.body.branchId,
-		discussHash: req.body.discussHash,
+		accessHash: req.body.accessHash,
+		visibilityAccess: req.body.visibilityAccess,
 	};
 };
 

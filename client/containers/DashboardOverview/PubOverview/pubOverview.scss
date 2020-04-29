@@ -1,0 +1,167 @@
+@import 'styles/variables.scss';
+
+$outer-padding: 26px;
+
+.pub-overview-component {
+	font-size: 16px;
+	font-weight: 300;
+
+	.pub-header-background-component {
+		z-index: 1;
+		border-radius: 4px;
+		border-bottom: none;
+		box-shadow: 0px 2.5px 5px 0px rgba(0, 0, 0, 0.1);
+	}
+
+	.header-content {
+		padding: $outer-padding;
+		h1.title {
+			font-size: 28px;
+			line-height: 1.2;
+		}
+	}
+
+	.pub-dates {
+		margin-top: 1em;
+		font-family: unset;
+		display: flex;
+		.section {
+			display: flex;
+			.section-header {
+				margin-right: 0.75em;
+				margin-bottom: 0;
+			}
+			margin-right: 100px;
+			margin-bottom: 0;
+		}
+		@media screen and (max-width: 1400px) {
+			.section {
+				margin-right: 50px;
+			}
+		}
+		@media screen and (max-width: 1000px) {
+			flex-direction: column;
+			.section {
+				margin-bottom: 0.25em;
+			}
+		}
+	}
+
+	.section {
+		margin-bottom: 2em;
+		.section-header {
+			margin-bottom: 1em;
+		}
+	}
+
+	.section a,
+	.list-row a {
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.columns {
+		margin-top: 2em;
+		display: grid;
+		grid-template-columns: 3fr 2fr;
+		column-gap: 50px;
+	}
+
+	.column {
+		&:first-child {
+			padding-left: $outer-padding;
+		}
+		&:last-child {
+			padding-right: $outer-padding;
+		}
+	}
+
+	.section-header {
+		font-weight: 600;
+	}
+
+	.attribution-row {
+		display: flex;
+		margin-bottom: 1em;
+		.name {
+			line-height: 25px;
+		}
+		.details {
+			margin-left: 10px;
+			& > :not(:last-child) {
+				margin-bottom: 3px;
+			}
+		}
+		.affiliation {
+			font-style: italic;
+		}
+		.roles {
+			.role:not(:last-child) {
+				margin-right: 5px;
+			}
+		}
+	}
+
+	.list {
+		.list-title {
+			font-weight: 600;
+			margin-bottom: 12px;
+		}
+		.list-content {
+			border-radius: 4px;
+			background: #f7f7f7;
+			border: 1px solid #ddd;
+			padding: 10px;
+		}
+		.bp3-non-ideal-state {
+			margin: 2em 0em;
+		}
+		.bp3-tag {
+			text-transform: capitalize;
+			&.open,
+			&.closed,
+			&.completed {
+				color: white;
+			}
+			&.open {
+				background: #238c2c;
+			}
+			&.closed {
+				background: #c23030;
+			}
+			&.completed {
+				background: #a854a8;
+			}
+		}
+		.attribution-item {
+			&:hover,
+			&:active {
+				background: transparent;
+			}
+			cursor: default;
+		}
+		.list-row {
+			display: flex;
+			padding: 5px;
+			border-radius: 2px;
+			.number {
+				font-weight: bold;
+				margin-right: 1em;
+			}
+			.title {
+				margin-right: 2em;
+			}
+			.note {
+				opacity: 0.8;
+			}
+			.bp3-tag {
+				margin-right: 0.5em;
+			}
+		}
+	}
+	.citations-preview-component {
+		max-width: none;
+	}
+}

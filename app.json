@@ -1,7 +1,12 @@
 {
-  "environments": {
-    "test": {
-      "addons": ["heroku-postgresql:in-dyno"]
-    }
-  }
+	"env": {
+		"ERROR_PAGE_URL": {
+			"value": "https://s3.amazonaws.com/assets.pubpub.org/_site/error.html"
+		}
+	},
+	"environments": {
+		"test": {
+			"addons": ["heroku-postgresql:in-dyno"]
+		}
+	}
 }

@@ -1,22 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { GridWrapper, Icon } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
+import { populateNavigationIds, populateSocialItems } from 'utils';
+import { usePageContext } from 'utils/hooks';
 
 require('./navBar.scss');
 
 const propTypes = {
-	navItems: PropTypes.array.isRequired,
-	socialItems: PropTypes.array.isRequired,
+	previewContext: PropTypes.object,
+};
+
+const defaultProps = {
+	previewContext: undefined,
 };
 
 const NavBar = function(props) {
+	const { communityData } = usePageContext(props.previewContext);
+	const pages = communityData.pages || [];
+	const navigation = communityData.navigation || [];
+	const navItems = populateNavigationIds(pages, navigation);
+	const socialItems = populateSocialItems(communityData);
 	return (
 		<nav className="nav-bar-component accent-background accent-color">
 			<GridWrapper>
 				<ul className="nav-list">
-					{props.navItems
+					{navItems
 						.filter((item) => {
 							return !!item;
 						})
@@ -85,9 +94,9 @@ const NavBar = function(props) {
 							);
 						})}
 				</ul>
-				{!!props.socialItems.length && (
+				{!!socialItems.length && (
 					<ul className="social-list">
-						{props.socialItems.map((item) => {
+						{socialItems.map((item) => {
 							return (
 								<a
 									href={item.url}
@@ -108,4 +117,5 @@ const NavBar = function(props) {
 };
 
 NavBar.propTypes = propTypes;
+NavBar.defaultProps = defaultProps;
 export default NavBar;

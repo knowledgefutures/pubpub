@@ -1,0 +1,71 @@
+.pub-share-dialog-component.bp3-dialog {
+    width: 1000px;
+    max-width: 90vw;
+    max-height: 90vh;
+
+    .bp3-dialog-body {
+        display: flex;
+        overflow: hidden;
+        margin: 10px;
+    }
+
+    .pane {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        flex-basis: 50%;
+        padding: 10px;
+        .pane-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 4px;
+        }
+        .pane-content {
+            overflow: auto;
+        }
+        &:first-child:last-child {
+            flex-basis: 100%;
+        }
+    }
+
+    .hash-row {
+        margin-bottom: 10px;
+        .bp3-button {
+            width: 150px;
+        }
+    }
+
+    .user-autocomplete-component {
+        flex-shrink: 1;
+    }
+
+    .members-container {
+        display: flex;
+        flex-direction: column;
+        max-height: 500px;
+        margin-top: 1em;
+        overflow: auto;
+    }
+
+    .member-row-component {
+        margin-top: 0.75em;
+        padding-top: 0.75em;
+        margin-bottom: 0em;
+        padding-bottom: 0em;
+    }
+
+    .inherited-members-block-component {
+        outline: none;
+        background: none;
+        margin-top: 2em;
+    }
+
+    @media screen and (max-width: 800px) {
+        .bp3-dialog-body {
+            flex-direction: column-reverse;
+            .pane {
+                flex-basis: unset;
+            }
+        }
+    }
+}

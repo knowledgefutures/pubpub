@@ -1,0 +1,77 @@
+@import 'styles/variables.scss';
+
+.thread-comment-component {
+	display: flex;
+	&:not(:last-child):not(.input) {
+		margin-bottom: 1em;
+		border-bottom: 1px solid #f0f0f7;
+	}
+	&.is-preview {
+		.content-wrapper {
+			margin-bottom: 0;
+		}
+	}
+	.avatar-wrapper {
+		margin-right: 0.5em;
+	}
+	.content-wrapper {
+		flex: 1 1 auto;
+		min-width: 0;
+		margin-bottom: 1em;
+	}
+	.preview-text {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font-style: 14px;
+	}
+	.discussion-body-wrapper {
+		.editor.ProseMirror {
+			min-height: 0px;
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			p,
+			li {
+				font-family: $base-font;
+				line-height: 1.3;
+			}
+		}
+		&.editable {
+			.editor {
+				min-height: 75px;
+				border: 1px solid #ddd;
+				background: white;
+				border-radius: 2px;
+				padding: 0.5em;
+				margin-bottom: 0.5em;
+				.prosemirror-placeholder {
+					white-space: unset;
+					width: unset;
+				}
+			}
+		}
+	}
+	.simple-input {
+		background: #f4f4f7;
+		border-radius: 2px;
+		border: 0px solid white;
+		padding: 0.5em;
+		width: 100%;
+		font-style: italic;
+	}
+	.formatting-bar-component {
+		margin: -0.5em 0em 0.5em;
+	}
+	.discussion-primary-button,
+	.discussion-cancel-button {
+		margin-bottom: 1em;
+		white-space: nowrap;
+		&:not(:last-child) {
+			margin-right: 1em;
+		}
+	}
+}

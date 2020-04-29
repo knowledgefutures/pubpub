@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 import { Button } from '@blueprintjs/core';
-import { setLocalHighlight, cursor } from '@pubpub/editor';
+import { setLocalHighlight, moveToEndOfSelection } from 'components/Editor';
 
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import Icon from 'components/Icon/Icon';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { usePageContext } from 'utils/hooks';
 
 require('./pubInlineMenu.scss');
 
@@ -32,7 +32,8 @@ const shouldOpenBelowSelection = () => {
 
 const PubInlineMenu = (props) => {
 	const { pubData, collabData, historyData } = props;
-	const { locationData, communityData } = useContext(PageContext);
+	const { communityData, scopeData } = usePageContext();
+	const { canView, canCreateDiscussions } = scopeData.activePermissions;
 	const selection = collabData.editorChangeObject.selection || {};
 	const selectionBoundingBox = collabData.editorChangeObject.selectionBoundingBox || {};
 
@@ -66,14 +67,14 @@ const PubInlineMenu = (props) => {
 		{ key: 'em', icon: <Icon icon="italic" /> },
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
-	const isReadOnly = pubData.isStaticDoc || !pubData.canEditBranch;
+	// const isReadOnly = pubData.isStaticDoc || !(canEdit || canEditDraft);
 	// TODO: Make discussions disable-able
 	// if (isReadOnly && !pubData.publicDiscussions) {
 	// 	return null;
 	// }
 	return (
 		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
-			{!isReadOnly &&
+			{!pubData.isReadOnly &&
 				formattingItems.map((item) => {
 					if (!menuItemsObject[item.key]) {
 						return null;
@@ -98,28 +99,26 @@ const PubInlineMenu = (props) => {
 						/>
 					);
 				})}
-			{pubData.canDiscussBranch && !locationData.params.versionNumber && (
+			{(canView || canCreateDiscussions) && (
 				<Button
 					minimal={true}
 					icon={<Icon icon="chat" />}
 					onClick={() => {
 						const view = collabData.editorChangeObject.view;
 						setLocalHighlight(view, selection.from, selection.to, uuidv4());
-						cursor.moveToEndOfSelection(collabData.editorChangeObject.view);
+						moveToEndOfSelection(collabData.editorChangeObject.view);
 					}}
 				/>
 			)}
 			<ClickToCopyButton
 				className="click-to-copy"
 				icon="clipboard"
-				copyString={
-					pubUrl(
-						communityData,
-						pubData,
-						pubData.activeBranch.shortId,
-						historyData.currentKey,
-					) + `?from=${selection.from}&to=${selection.to}`
-				}
+				copyString={pubUrl(communityData, pubData, {
+					isDraft: !pubData.isRelease,
+					releaseNumber: pubData.releaseNumber,
+					historyKey: historyData.currentKey,
+					query: { from: selection.from, to: selection.to },
+				})}
 				beforeCopyPrompt="Copy a permalink"
 			/>
 		</div>

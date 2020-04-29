@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
 
 import { licenses, getLicenseBySlug } from 'shared/license';
 import { apiFetch } from 'utils';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { usePageContext } from 'utils/hooks';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 
 require('./licenseSelect.scss');
@@ -15,7 +15,7 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		id: PropTypes.string,
 		licenseSlug: PropTypes.string,
-		collectionPubs: PropTypes.object,
+		collectionPubs: PropTypes.array,
 	}).isRequired,
 	onSelect: PropTypes.func,
 	updateLocalData: PropTypes.func,
@@ -31,7 +31,7 @@ const defaultProps = {
 const LicenseSelect = (props) => {
 	const { children, onSelect, persistSelections, pubData, updateLocalData } = props;
 	const [isPersisting, setIsPersisting] = useState(false);
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 
 	const currentLicense = getLicenseBySlug(pubData.licenseSlug);
 	const primaryCollectionPub = pubData.collectionPubs.find((cp) => cp.isPrimary);

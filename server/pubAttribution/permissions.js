@@ -1,49 +1,32 @@
-import { Pub, PubManager, CommunityAdmin } from '../models';
-import { checkIfSuperAdmin } from '../utils';
+import { getScope } from '../utils/queryHelpers';
 
-const editProps = ['name', 'avatar', 'title', 'order', 'isAuthor', 'roles', 'affiliation', 'orcid'];
+const editableFields = [
+	'affiliation',
+	'avatar',
+	'isAuthor',
+	'name',
+	'orcid',
+	'order',
+	'roles',
+	'title',
+];
 
-export const getPermissions = ({ userId, communityId, pubId }) => {
+export const getPermissions = async ({ userId, communityId, pubId }) => {
 	if (!userId) {
-		return new Promise((resolve) => {
-			resolve({});
-		});
+		return {};
 	}
-	const isSuperAdmin = checkIfSuperAdmin(userId);
-	const findCommunityAdmin = CommunityAdmin.findOne({
-		where: {
-			communityId: communityId,
-			userId: userId,
-		},
-	});
-	const findPubManager = PubManager.findOne({
-		where: {
-			pubId: pubId,
-			userId: userId,
-		},
-	});
-	const findPub = Pub.findOne({
-		where: {
-			id: pubId,
-			communityId: communityId,
-		},
-		attributes: ['id', 'communityId', 'isCommunityAdminManaged'],
-	});
-	return Promise.all([findCommunityAdmin, findPubManager, findPub]).then(
-		([communityAdminData, pubManagerData, pubData]) => {
-			if (!pubData) {
-				return {};
-			}
-			const authenticated =
-				isSuperAdmin ||
-				(communityAdminData && pubData.isCommunityAdminManaged) ||
-				pubManagerData;
 
-			return {
-				create: authenticated,
-				update: authenticated ? editProps : false,
-				destroy: authenticated,
-			};
-		},
-	);
+	const {
+		activePermissions: { canManage },
+	} = await getScope({
+		communityId: communityId,
+		pubId: pubId,
+		loginId: userId,
+	});
+
+	return {
+		create: canManage,
+		update: canManage ? editableFields : false,
+		destroy: canManage,
+	};
 };

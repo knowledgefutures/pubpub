@@ -1,12 +1,10 @@
 #login-container {
-	.page-content {
-		padding: 40px 0px;
-		background-repeat: repeat;
-		background-position: center center;
-		background-color: #f9fafb;
-		background-image: url('/static/loginbg.png');
-		min-height: calc(100vh - 56px);
-	}
+	padding: 40px 0px;
+	background-repeat: repeat;
+	background-position: center center;
+	background-color: #f9fafb;
+	background-image: url('/static/loginbg.png');
+	min-height: calc(100vh - 56px);
 	.container.small .col-12 {
 		padding: 2em;
 		background: white;

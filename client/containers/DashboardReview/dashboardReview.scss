@@ -1,0 +1,26 @@
+.dashboard-review-container {
+	.details a {
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+	.bp3-tag.bp3-minimal {
+		text-transform: capitalize;
+		margin-right: 1em;
+		&.open,
+		&.closed,
+		&.completed {
+			color: white;
+		}
+		&.open {
+			background: #238c2c;
+		}
+		&.closed {
+			background: #c23030;
+		}
+		&.completed {
+			background: #a854a8;
+		}
+	}
+}

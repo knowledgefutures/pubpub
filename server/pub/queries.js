@@ -1,98 +1,67 @@
-import uuidv4 from 'uuid/v4';
-import { Pub, PubManager, PubAttribution, CollectionPub, Branch } from '../models';
-import { generateHash, slugifyString } from '../utils';
+import { Pub, PubAttribution, CollectionPub, Branch } from '../models';
+import { generateHash, slugifyString } from '../utils/strings';
 import { setPubSearchData, deletePubSearchData } from '../utils/search';
 
-export const createPub = (inputValues, userData) => {
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+export const createPub = async (
+	{ communityId, defaultCollectionIds = [], ...restArgs },
+	userId,
+) => {
 	const newPubSlug = generateHash(8);
-	const months = [
-		'Jan',
-		'Feb',
-		'Mar',
-		'Apr',
-		'May',
-		'Jun',
-		'Jul',
-		'Aug',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dec',
-	];
 	const date = new Date();
 	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;
 
-	return Pub.create({
-		title: `New Pub on ${dateString}`,
+	const newPub = await Pub.create({
+		title: `Untitled Pub on ${dateString}`,
 		slug: newPubSlug,
-		communityId: inputValues.communityId,
-		// draftPermissions: 'private',
-		isCommunityAdminManaged: true,
-		// draftEditHash: generateHash(8),
-		// draftViewHash: generateHash(8),
-	})
-		.then((newPub) => {
-			const createPubManager = PubManager.create({
-				userId: userData.id,
-				pubId: newPub.id,
-			});
-			const createPubAttribution = PubAttribution.create({
-				userId: userData.id,
-				pubId: newPub.id,
-				isAuthor: true,
-				order: 0.5,
-			});
+		communityId: communityId,
+		headerBackgroundColor: 'light',
+		headerStyle: 'dark',
+		viewHash: generateHash(8),
+		editHash: generateHash(8),
+		...restArgs,
+	});
 
-			const draftBranchId = uuidv4();
-			const publicBranchId = uuidv4();
-			const createPublicBranch = Branch.create({
-				id: publicBranchId,
-				shortId: 1,
-				title: 'public',
-				order: 0.01,
-				viewHash: generateHash(8),
-				discussHash: generateHash(8),
-				editHash: generateHash(8),
-				publicPermissions: 'discuss',
-				pubManagerPermissions: 'discuss',
-				communityAdminPermissions: 'manage',
-				pubId: newPub.id,
-			});
-			const createDraftBranch = Branch.create({
-				id: draftBranchId,
-				shortId: 2,
-				title: 'draft',
-				order: 0.9,
-				viewHash: generateHash(8),
-				discussHash: generateHash(8),
-				editHash: generateHash(8),
-				publicPermissions: 'none',
-				pubManagerPermissions: 'manage',
-				communityAdminPermissions: 'manage',
-				pubId: newPub.id,
-			});
-			const defaultCollectionIds = inputValues.defaultCollectionIds || [];
-			const newCollectionPubObjects = defaultCollectionIds.map((collectionId) => {
-				return {
-					kind: 'tag',
-					pubId: newPub.id,
-					collectionId: collectionId,
-				};
-			});
-			const createCollectionPubs = CollectionPub.bulkCreate(newCollectionPubObjects);
-			return Promise.all([
-				newPub,
-				createPubManager,
-				createPubAttribution,
-				createCollectionPubs,
-				createPublicBranch,
-				createDraftBranch,
-			]);
-		})
-		.then(([newPub]) => {
-			setPubSearchData(newPub.id);
-			return newPub;
+	const createPubAttribution =
+		userId &&
+		PubAttribution.create({
+			userId: userId,
+			pubId: newPub.id,
+			isAuthor: true,
+			order: 0.5,
 		});
+
+	const createPublicBranch = Branch.create({
+		shortId: 1,
+		title: 'public',
+		pubId: newPub.id,
+	});
+
+	const createDraftBranch = Branch.create({
+		shortId: 2,
+		title: 'draft',
+		pubId: newPub.id,
+	});
+
+	const createCollectionPubs = CollectionPub.bulkCreate(
+		defaultCollectionIds.map((collectionId) => {
+			return {
+				pubId: newPub.id,
+				collectionId: collectionId,
+			};
+		}),
+	);
+
+	await Promise.all([
+		createPubAttribution,
+		createCollectionPubs,
+		createPublicBranch,
+		createDraftBranch,
+	]);
+
+	setPubSearchData(newPub.id);
+	return newPub;
 };
 
 export const updatePub = (inputValues, updatePermissions) => {

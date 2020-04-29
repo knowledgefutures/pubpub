@@ -55,7 +55,7 @@ const AttributionRow = (props) => {
 				/>
 			);
 		}
-		return <Avatar width={50} userInitials={user.initials} userAvatar={user.avatar} />;
+		return <Avatar width={50} initials={user.initials} avatar={user.avatar} />;
 	};
 
 	return (
@@ -79,7 +79,7 @@ const AttributionRow = (props) => {
 				<div className="top-content">
 					<div className="name">
 						{user.slug ? (
-							<a href={`/user/${user.slug}`} className="underline-on-hover">
+							<a href={`/user/${user.slug}`} className="hoverline">
 								{user.fullName}
 							</a>
 						) : (

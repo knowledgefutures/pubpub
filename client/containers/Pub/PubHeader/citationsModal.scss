@@ -1,0 +1,50 @@
+.citations-modal-component {
+	&.bp3-dialog {
+		// specificity hack
+		width: 50vw;
+	}
+	max-width: 1200px;
+	min-width: 500px;
+	.style-wrapper {
+		display: flex;
+		margin-bottom: 4em;
+		&:last-of-type {
+			margin-bottom: 0em;
+		}
+		.style-title {
+			width: calc(100px + 3em);
+			flex-shrink: 0;
+			opacity: 0.7;
+			text-align: right;
+			padding-right: 3em;
+		}
+		.style-content {
+			flex-grow: 1;
+			flex-shrink: 1;
+		}
+		.bibtex {
+			white-space: pre-wrap;
+			font-family: 'Courier', monospace;
+			tab-size: 4;
+		}
+		.csl-left-margin {
+			display: none;
+		}
+	}
+}
+
+.cite-tooltip {
+	max-width: 250px;
+}
+
+@media only screen and (max-width: 720px) {
+	.citations-modal-component {
+		.style-wrapper {
+			display: block;
+			.style-title {
+				width: auto;
+				text-align: left;
+			}
+		}
+	}
+}

@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { setLocalHighlight } from '@pubpub/editor';
-import { pubDataProps } from 'types/pub';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { setLocalHighlight } from 'components/Editor';
+
+import { usePageContext } from 'utils/hooks';
+import { PubHistoryViewer } from 'components';
+
 import PubBody from './PubBody';
-import PubInlineMenu from './PubInlineMenu';
-import PubDetails from './PubDetails';
-import PubFileImport from './PubFileImport';
-import PubHistory from './PubHistory';
-import PubHeaderFormatting from './PubHeaderFormatting';
 import PubBottom from './PubBottom/PubBottom';
+import PubFileImport from './PubFileImport';
+import PubHeaderFormatting from './PubHeaderFormatting';
+import PubHistoricalNotice from './PubHistoricalNotice';
+import PubInlineMenu from './PubInlineMenu';
 import PubMouseEvents from './PubMouseEvents';
 
 require('./pubDocument.scss');
 
 const propTypes = {
-	pubData: pubDataProps.isRequired,
+	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
@@ -29,13 +30,15 @@ const defaultProps = {
 const PubDocument = (props) => {
 	const { pubData, historyData, collabData, firebaseBranchRef, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
-	const { locationData } = useContext(PageContext);
+	const { editorChangeObject } = collabData;
+	const { locationData, scopeData } = usePageContext();
+	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
-	// const [tempId, setTempId] = useState(uuidv4());
-	const editorChangeObject = collabData.editorChangeObject;
 	const mainContentRef = useRef(null);
 	const sideContentRef = useRef(null);
 	const editorWrapperRef = useRef(null);
+
+	const updateHistoryData = (next) => updateLocalData('history', next);
 
 	useEffect(() => {
 		/* TODO: Clean up the hanlding of permalink generation and scrolling */
@@ -64,20 +67,20 @@ const PubDocument = (props) => {
 		setDiscussionsShown(!isViewingHistory);
 	}, [isViewingHistory]);
 
-	const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
+	// const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			{!pubData.isStaticDoc && !isViewingHistory && (
+			{!pubData.isReadOnly && (
 				<PubHeaderFormatting
 					pubData={pubData}
 					collabData={collabData}
 					editorWrapperRef={editorWrapperRef}
+					disabled={isViewingHistory}
 				/>
 			)}
-			{isViewingHistory && <PubHistory {...props} />}
-			{!isViewingHistory && <PubDetails {...props} />}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
+					<PubHistoricalNotice pubData={pubData} historyData={historyData} />
 					<PubBody
 						editorWrapperRef={editorWrapperRef}
 						pubData={pubData}
@@ -86,13 +89,13 @@ const PubDocument = (props) => {
 						firebaseBranchRef={firebaseBranchRef}
 						updateLocalData={updateLocalData}
 					/>
-					{!isViewingHistory && pubData.canEditBranch && !pubData.isStaticDoc && (
+					{!isViewingHistory && (canEdit || canEditDraft) && !pubData.isReadOnly && (
 						<PubFileImport
 							editorChangeObject={collabData.editorChangeObject}
 							updateLocalData={updateLocalData}
 						/>
 					)}
-					{(editorFocused || !pubData.canEditBranch) && (
+					{!isViewingHistory && (
 						<PubInlineMenu
 							pubData={pubData}
 							collabData={collabData}
@@ -100,11 +103,21 @@ const PubDocument = (props) => {
 						/>
 					)}
 				</div>
-				<div className="side-content" ref={sideContentRef} />
+				<div className="side-content" ref={sideContentRef}>
+					{isViewingHistory && !pubData.isRelease && (
+						<PubHistoryViewer
+							updateHistoryData={updateHistoryData}
+							historyData={historyData}
+							pubData={pubData}
+							onClose={() => updateLocalData('history', { isViewingHistory: false })}
+						/>
+					)}
+				</div>
 			</div>
 			<PubBottom
 				pubData={pubData}
 				collabData={collabData}
+				historyData={historyData}
 				firebaseBranchRef={firebaseBranchRef}
 				updateLocalData={updateLocalData}
 				sideContentRef={sideContentRef}

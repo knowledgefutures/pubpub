@@ -1,27 +1,22 @@
-import { CommunityAdmin, Collection, PubManager } from '../models';
-import { checkIfSuperAdmin } from '../utils';
+import { getScope } from '../utils/queryHelpers';
 
-export const getPermissions = ({ userId, pubId, communityId, collectionId }) => {
+export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	if (!userId) {
-		return new Promise((resolve) => {
-			resolve({});
-		});
+		return {};
 	}
-	const isSuperAdmin = checkIfSuperAdmin(userId);
-	return Promise.all([
-		CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
-		Collection.findOne({ where: { id: collectionId, communityId: communityId } }),
-		PubManager.findOne({ where: { pubId: pubId, userId: userId } }),
-	]).then(([communityAdminData, collectionData, pubManagerData]) => {
-		if (!collectionData) {
-			return {};
-		}
-		const isAuthenticated = isSuperAdmin || communityAdminData || pubManagerData;
-		return {
-			create: isAuthenticated,
-			update: isAuthenticated ? ['rank', 'contextHint'] : false,
-			setPrimary: isAuthenticated,
-			destroy: isAuthenticated,
-		};
+	const scopeData = await getScope({
+		communityId: communityId,
+		collectionId: collectionId,
+		loginId: userId,
 	});
+	const isAuthenticated = scopeData.activePermissions.canManage;
+	if (!scopeData.elements.activeCollection) {
+		return {};
+	}
+	return {
+		create: isAuthenticated,
+		update: isAuthenticated ? ['rank', 'contextHint'] : false,
+		setPrimary: isAuthenticated,
+		destroy: isAuthenticated,
+	};
 };

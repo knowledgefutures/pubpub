@@ -1,95 +1,68 @@
 import { Op } from 'sequelize';
-import findRank from 'shared/utils/findRank';
-import {
-	Collection,
-	CollectionPub,
-	sequelize,
-	Pub,
-	Branch,
-	CommunityAdmin,
-	PubManager,
-	BranchPermission,
-} from '../models';
-import { getCollectionPubsInCollection } from '../utils/collectionQueries';
-import { canUserSeePub } from '../pub/permissions';
 
-export const getCollectionPubs = async ({ collectionId, userId }) => {
-	// TODO(ian): Figure out a good two-way collection <=> pub association
-	// so we can do all of this with a single query.
-	const [{ communityId }, collectionPubs] = await Promise.all([
-		Collection.findOne({ where: { id: collectionId }, attributes: ['communityId'] }),
-		CollectionPub.findAll({
-			where: { collectionId: collectionId },
-			attributes: ['pubId', 'rank'],
-			order: [['rank', 'ASC']],
-		}),
-	]);
-	const pubRanks = {};
-	collectionPubs.forEach((cp) => {
-		pubRanks[cp.pubId] = cp.rank;
+import findRank from 'shared/utils/findRank';
+import { Collection, CollectionPub, sequelize } from '../models';
+import { getCollectionPubsInCollection } from '../utils/collectionQueries';
+import { getScope, getOverview, sanitizeOverview } from '../utils/queryHelpers';
+
+export const getCollectionPubs = async ({ communityId, collectionId, userId }) => {
+	const scopeData = await getScope({
+		communityId: communityId,
+		collectionId: collectionId,
+		loginId: userId,
 	});
-	const [communityAdmin, pubs] = await Promise.all([
-		userId && CommunityAdmin.findOne({ where: { communityId: communityId, userId: userId } }),
-		Pub.findAll({
-			where: { id: { [Op.in]: collectionPubs.map((cp) => cp.pubId) } },
-			include: [
-				{
-					model: Branch,
-					as: 'branches',
-					include: [{ model: BranchPermission, as: 'permissions' }],
-				},
-				{ model: PubManager, as: 'managers' },
-			],
-		}),
-	]);
-	return pubs
-		.filter((pubData) => canUserSeePub(userId, pubData, !!communityAdmin))
-		.sort((a, b) => {
-			return pubRanks[a.id] > pubRanks[b.id] ? 1 : -1;
-		});
+	const overviewData = await getOverview({ scopeData: scopeData });
+	const { pubs, collections } = sanitizeOverview(
+		{ loginData: { id: userId }, scopeData: scopeData },
+		overviewData,
+	);
+	const collection = collections.find((col) => col.id === collectionId);
+	if (collection) {
+		return collection.collectionPubs
+			.map((cp) => pubs.find((pub) => pub.id === cp.pubId))
+			.filter((x) => x);
+	}
+	return [];
 };
 
-export const createCollectionPub = (inputValues) => {
+export const createCollectionPub = ({ collectionId, pubId, rank, moveToTop = false }) => {
 	return Promise.all([
-		Collection.findOne({ where: { id: inputValues.collectionId } }),
+		Collection.findOne({ where: { id: collectionId } }),
 		CollectionPub.findAll({
-			where: { pubId: inputValues.pubId },
+			where: { pubId: pubId },
 			include: [{ model: Collection, as: 'collection' }],
 		}),
-		getCollectionPubsInCollection(inputValues.collectionId),
+		getCollectionPubsInCollection(collectionId),
 	]).then(([collection, pubLevelPeers, collectionLevelPeers]) => {
 		// If this is the first non-tag collection in the bunch, make it the primary one
 		const isPrimary =
 			pubLevelPeers.filter((peer) => peer.collection.kind !== 'tag').length === 0 &&
 			collection.kind !== 'tag' &&
 			collection.isPublic;
-		// If a rank wasn't provided, move the CollectionPub to the end of the collection
-		let setRank = inputValues.rank;
+		// If a rank wasn't provided, move the CollectionPub to the top or bottom of the collection
+		let setRank = rank;
 		if (!setRank) {
 			const ranks = collectionLevelPeers.map((cp) => cp.rank).filter((r) => r);
 			// eslint-disable-next-line no-param-reassign
-			setRank = findRank(ranks, ranks.length);
+			const targetIndex = moveToTop ? 0 : ranks.length;
+			setRank = findRank(ranks, targetIndex);
 		}
-		return CollectionPub.create(
-			{
-				collectionId: inputValues.collectionId,
-				pubId: inputValues.pubId,
-				rank: setRank,
-				isPrimary: isPrimary,
-			},
-			/* Unclear why this is included */
-			{ returning: true },
-		);
+		return CollectionPub.create({
+			collectionId: collectionId,
+			pubId: pubId,
+			rank: setRank,
+			isPrimary: isPrimary,
+		});
 	});
 };
 
-export const setPrimaryCollectionPub = (inputValues) => {
+export const setPrimaryCollectionPub = ({ collectionPubId, isPrimary }) => {
 	return CollectionPub.findOne({
-		where: { id: inputValues.collectionPubId },
+		where: { id: collectionPubId },
 		include: [{ model: Collection, as: 'collection' }],
 	}).then((collectionPub) => {
 		return (
-			(!inputValues.collectionPubId || collectionPub.collection.isPublic) &&
+			(!collectionPubId || collectionPub.collection.isPublic) &&
 			sequelize.transaction((txn) => {
 				return CollectionPub.update(
 					{ isPrimary: false },
@@ -97,14 +70,14 @@ export const setPrimaryCollectionPub = (inputValues) => {
 						transaction: txn,
 						where: {
 							pubId: collectionPub.pubId,
-							id: { [Op.ne]: inputValues.collectionPubId },
+							id: { [Op.ne]: collectionPubId },
 						},
 					},
 				).then(() => {
 					return CollectionPub.update(
-						{ isPrimary: inputValues.isPrimary },
+						{ isPrimary: isPrimary },
 						{
-							where: { id: inputValues.collectionPubId },
+							where: { id: collectionPubId },
 							returning: true,
 							transaction: txn,
 						},
@@ -115,7 +88,7 @@ export const setPrimaryCollectionPub = (inputValues) => {
 	});
 };
 
-export const updateCollectionPub = (inputValues, updatePermissions) => {
+export const updateCollectionPub = ({ collectionPubId, ...inputValues }, updatePermissions) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -125,16 +98,15 @@ export const updateCollectionPub = (inputValues, updatePermissions) => {
 	});
 
 	return CollectionPub.update(filteredValues, {
-		where: { id: inputValues.collectionPubId },
-		/* Unclear why this is included */
+		where: { id: collectionPubId },
 		returning: true,
 	}).then(() => {
 		return filteredValues;
 	});
 };
 
-export const destroyCollectionPub = (inputValues) => {
+export const destroyCollectionPub = ({ collectionPubId }) => {
 	return CollectionPub.destroy({
-		where: { id: inputValues.collectionPubId },
+		where: { id: collectionPubId },
 	});
 };

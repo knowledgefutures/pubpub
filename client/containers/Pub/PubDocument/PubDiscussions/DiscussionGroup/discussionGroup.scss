@@ -1,0 +1,67 @@
+@import 'styles/variables.scss';
+@import '../../../pub.scss';
+
+@mixin expanded {
+	position: relative;
+	padding: 1em 0em;
+	display: inline-block;
+	left: 0 !important;
+	width: 100% !important;
+	&:before {
+		left: -21px;
+	}
+	&:after {
+		content: "";
+		position: absolute;
+		top: 0px;
+		bottom: 0;
+		right: -21px;
+		background: #E5E5E5;
+		width: 1px;
+	}
+}
+
+.discussion-group-component {
+	font-family: $base-font;
+	position: absolute;
+	&.active {
+		background: white;
+		z-index: 1;
+		border-right: 10px solid white;
+		box-sizing: content-box;
+		& > * {
+			box-sizing: border-box;
+		}
+		&:before {
+			content: "";
+			position: absolute;
+			top: 0px;
+			bottom: 0;
+			left: -20px;
+			border-left: 1px solid #E5E5E5;
+			background: white;
+			width: 20px;
+		}
+	}
+	&.expanded {
+		@include expanded;
+	}
+	@include pub-compact-view {
+		.expand-button {
+			display: none;
+		}
+		.names {
+			display: none;
+		}
+		&.active {
+			@include expanded;
+		}
+		&:not(.active) {
+			overflow: hidden;
+			.bubble-wrapper {
+				position: relative;
+				left: 3px;
+			}
+		}
+	}
+}

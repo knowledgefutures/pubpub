@@ -18,12 +18,17 @@ const propTypes = {
 	attributions: PropTypes.arrayOf(attributionType).isRequired,
 	identifyingProps: PropTypes.shape({}).isRequired,
 	onUpdateAttributions: PropTypes.func.isRequired,
-	onPersistStateChange: PropTypes.func.isRequired,
+	onPersistStateChange: PropTypes.func,
 	listOnBylineText: PropTypes.string,
+	hasEmptyState: PropTypes.bool,
+	promiseWrapper: PropTypes.func,
 };
 
 const defaultProps = {
 	listOnBylineText: 'List on byline',
+	onPersistStateChange: () => {},
+	promiseWrapper: (x) => x,
+	hasEmptyState: true,
 };
 
 class AttributionEditor extends Component {
@@ -36,14 +41,16 @@ class AttributionEditor extends Component {
 	}
 
 	persistAttribution(data, method) {
-		const { apiRoute, identifyingProps } = this.props;
-		return apiFetch(apiRoute, {
-			method: method,
-			body: JSON.stringify({
-				...data,
-				...identifyingProps,
+		const { apiRoute, identifyingProps, promiseWrapper } = this.props;
+		return promiseWrapper(
+			apiFetch(apiRoute, {
+				method: method,
+				body: JSON.stringify({
+					...data,
+					...identifyingProps,
+				}),
 			}),
-		});
+		);
 	}
 
 	handleAttributionAdd(user) {
@@ -145,7 +152,7 @@ class AttributionEditor extends Component {
 	}
 
 	render() {
-		const { attributions, canEdit, listOnBylineText } = this.props;
+		const { attributions, canEdit, listOnBylineText, hasEmptyState } = this.props;
 		const sortedAttributions = attributions.sort((a, b) => a.order - b.order);
 		return (
 			<div className="attribution-editor-component">
@@ -179,13 +186,15 @@ class AttributionEditor extends Component {
 										listOnBylineText={listOnBylineText}
 									/>
 								)}
-								renderEmptyState={() => (
-									<NonIdealState
-										icon="person"
-										title="No attribution yet!"
-										description="Start typing a person's name above to add attribution."
-									/>
-								)}
+								renderEmptyState={() =>
+									hasEmptyState && (
+										<NonIdealState
+											icon="person"
+											title="No attribution yet!"
+											description="Start typing a person's name above to add attribution."
+										/>
+									)
+								}
 							/>
 						</DragDropContext>
 					</React.Fragment>

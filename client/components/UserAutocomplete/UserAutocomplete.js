@@ -8,17 +8,17 @@ import { apiFetch } from 'utils';
 require('./userAutocomplete.scss');
 
 const propTypes = {
+	allowCustomUser: PropTypes.bool,
 	onSelect: PropTypes.func,
 	placeholder: PropTypes.string,
 	usedUserIds: PropTypes.array,
-	allowCustomUser: PropTypes.bool,
 };
 
 const defaultProps = {
+	allowCustomUser: false,
 	onSelect: () => {},
 	placeholder: 'Search for users...',
 	usedUserIds: [],
-	allowCustomUser: false,
 };
 
 class UserAutocomplete extends Component {
@@ -90,8 +90,8 @@ class UserAutocomplete extends Component {
 								>
 									{item.fullName && (
 										<Avatar
-											userInitials={item.initials}
-											userAvatar={item.avatar}
+											initials={item.initials}
+											avatar={item.avatar}
 											width={25}
 										/>
 									)}

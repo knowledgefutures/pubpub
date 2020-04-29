@@ -8,21 +8,6 @@ export default (sequelize, dataTypes) => {
 			description: { type: dataTypes.TEXT },
 			submissionAlias: { type: dataTypes.TEXT },
 			order: { type: dataTypes.DOUBLE },
-			publicPermissions: {
-				type: dataTypes.ENUM,
-				values: ['none', 'view', 'discuss', 'edit'],
-				defaultValue: 'none',
-			},
-			pubManagerPermissions: {
-				type: dataTypes.ENUM,
-				values: ['none', 'view', 'discuss', 'edit', 'manage'],
-				defaultValue: 'none',
-			},
-			communityAdminPermissions: {
-				type: dataTypes.ENUM,
-				values: ['none', 'view', 'discuss', 'edit', 'manage'],
-				defaultValue: 'none',
-			},
 			viewHash: { type: dataTypes.STRING },
 			discussHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
@@ -34,12 +19,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Branch, BranchPermission, Export } = models;
-					Branch.hasMany(BranchPermission, {
-						onDelete: 'CASCADE',
-						as: 'permissions',
-						foreignKey: 'branchId',
-					});
+					const { Branch, Export } = models;
 					Branch.hasMany(Export, {
 						onDelete: 'CASCADE',
 						as: 'exports',

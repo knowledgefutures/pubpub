@@ -15,14 +15,14 @@ let records = 0;
 const findAndIndexPubs = (pubIds) => {
 	return getPubSearchData(pubIds).then((pubSyncData) => {
 		records += pubSyncData.length;
-		return pubsIndex.addObjects(pubSyncData);
+		return pubsIndex.saveObjects(pubSyncData, { autoGenerateObjectIDIfNotExist: true });
 	});
 };
 
 const findAndIndexPages = (pageIds) => {
 	return getPageSearchData(pageIds).then((pageSyncData) => {
 		records += pageSyncData.length;
-		return pagesIndex.addObjects(pageSyncData);
+		return pagesIndex.saveObjects(pageSyncData, { autoGenerateObjectIDIfNotExist: true });
 	});
 };
 
@@ -32,7 +32,7 @@ new Promise((resolve) => {
 })
 	.then(() => {
 		return pubsIndex.setSettings({
-			unretrievableAttributes: ['branchAdminAccessId', 'branchAccessIds', 'branchContent'],
+			unretrievableAttributes: ['branchAccessIds', 'branchContent'],
 			searchableAttributes: [
 				'title',
 				'description',
@@ -49,14 +49,13 @@ new Promise((resolve) => {
 				'filterOnly(communityId)',
 				'filterOnly(branchIsPublic)',
 				'filterOnly(branchAccessIds)',
-				'filterOnly(branchAdminAccessId)',
 			],
 		});
 	})
 	.then(() => {
 		return Pub.findAll({
 			attributes: ['id'],
-			// limit: 100,
+			// limit: 10,
 			where: {
 				id: { [Op.ne]: '5dea7a72-330d-4fbf-8a88-c4723e201b39' },
 			},
@@ -78,7 +77,7 @@ new Promise((resolve) => {
 	})
 	.then(() => {
 		return pagesIndex.setSettings({
-			unretrievableAttributes: ['content'],
+			unretrievableAttributes: ['pageAccessIds', 'content'],
 			searchableAttributes: [
 				'title',
 				'description',
@@ -93,13 +92,14 @@ new Promise((resolve) => {
 				'filterOnly(isPublic)',
 				'filterOnly(pageId)',
 				'filterOnly(communityId)',
+				'filterOnly(pageAccessIds)',
 			],
 		});
 	})
 	.then(() => {
 		return Page.findAll({
 			attributes: ['id'],
-			// limit: 100,
+			// limit: 10,
 		});
 	})
 	.then((pageIds) => {

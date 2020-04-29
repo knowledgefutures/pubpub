@@ -1,40 +1,33 @@
-import { PubManager, CommunityAdmin, Pub, Collection } from '../models';
-import { checkIfSuperAdmin } from '../utils';
+import { getScope } from '../utils/queryHelpers';
+import { Release } from '../models';
 
-export const getPermissions = ({ pubId, collectionId, userId, communityId }) => {
-	if (!userId) {
-		return new Promise((resolve) => {
-			resolve({});
-		});
+const pubExistsAndIsMissingReleases = async (pubId) => {
+	if (!pubId) {
+		return false;
 	}
-	const isSuperAdmin = checkIfSuperAdmin(userId);
+	const releases = await Release.findAll({ where: { pubId: pubId } });
+	return releases.length === 0;
+};
 
-	const findPubManager = PubManager.findOne({
-		where: { userId: userId, pubId: pubId },
-		raw: true,
+export const getPermissions = async ({ pubId, collectionId, userId, communityId }) => {
+	if (!userId) {
+		return {};
+	}
+
+	const {
+		activePermissions: { canAdminCommunity },
+		elements: { activePub },
+	} = await getScope({
+		communityId: communityId,
+		collectionId: collectionId,
+		pubId: pubId,
+		loginId: userId,
 	});
 
-	const findCommunityAdmin = CommunityAdmin.findOne({
-		where: { userId: userId, communityId: communityId },
-		raw: true,
-	});
+	const missingReleases = await pubExistsAndIsMissingReleases(activePub && activePub.id);
 
-	const findPub = Pub.findOne({
-		where: { id: pubId, communityId: communityId },
-		raw: true,
-	});
-
-	const findCollection = Collection.findOne({
-		where: { id: collectionId, communityId: communityId },
-		raw: true,
-	});
-
-	return Promise.all([findPubManager, findCommunityAdmin, findPub, findCollection]).then(
-		([isPubManager, isCommunityAdmin, pubInCommunity, collectionInCommunity]) => {
-			return {
-				pub: isSuperAdmin || (isCommunityAdmin && pubInCommunity) || isPubManager,
-				collection: isSuperAdmin || (isCommunityAdmin && collectionInCommunity),
-			};
-		},
-	);
+	return {
+		pub: canAdminCommunity && !missingReleases,
+		collection: canAdminCommunity,
+	};
 };

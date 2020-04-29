@@ -63,7 +63,6 @@
 		letter-spacing: 0.01rem;
 		font-weight: 400;
 		font-style: normal;
-		font-size: 1em;
 		line-height: 1.7;
 		letter-spacing: -0.003em;
 		margin: 0em 0em 1em;
@@ -71,8 +70,10 @@
 	}
 	li {
 		margin: 0em;
+		font-size: 16px;
 		p {
 			margin: 0;
+			font-size: 20px;
 		}
 	}
 	ul,
@@ -93,7 +94,7 @@
 		box-shadow: none;
 		white-space: pre;
 		overflow: hidden;
-		overflow-x: scroll;
+		overflow-x: auto;
 		code {
 			white-space: pre;
 			background-color: transparent;
@@ -142,7 +143,7 @@
 	font-feature-settings: 'liga' on;
 	font-size: 20px;
 	min-height: 300px;
-	margin-top: 20px;
+	margin-top: 25px;
 	.editor.ProseMirror {
 		min-height: 150px;
 		@include pub-body-styles();

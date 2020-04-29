@@ -1,5 +1,4 @@
 import React from 'react';
-import { Pricing } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -26,9 +25,7 @@ app.get('/pricing', (req, res, next) => {
 						initialData: initialData,
 						title: 'Pricing · PubPub',
 					})}
-				>
-					<Pricing {...initialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

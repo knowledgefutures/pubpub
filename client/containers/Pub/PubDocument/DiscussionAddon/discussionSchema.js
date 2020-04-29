@@ -1,6 +1,3 @@
-import React from 'react';
-import DiscussionEmbed from './DiscussionEmbed';
-
 export default {
 	discussion: {
 		atom: true,
@@ -64,17 +61,6 @@ export default {
 			getHandleQuotePermalink: () => {
 				return undefined;
 			},
-		},
-		toStatic: (node, options, isSelected, isEditable /* editorProps, children */) => {
-			return (
-				<DiscussionEmbed
-					key={node.currIndex}
-					attrs={node.attrs}
-					options={options}
-					isSelected={isSelected}
-					isEditable={isEditable}
-				/>
-			);
 		},
 	},
 };

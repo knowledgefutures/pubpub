@@ -4,18 +4,17 @@ import { useBeforeUnload } from 'react-use';
 import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 import { Card, Alert } from '@blueprintjs/core';
-import Editor, { getJSON, getNotes } from '@pubpub/editor';
+
+import Editor, { getJSON, getNotes, dispatchEmptyTransaction } from 'components/Editor';
 import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
 import { debounce } from 'debounce';
+import { usePageContext } from 'utils/hooks';
 
-import { PageContext } from 'components/PageWrapper/PageWrapper';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
-
 import discussionSchema from './DiscussionAddon/discussionSchema';
-import { nestDiscussionsToThreads } from './PubDiscussions/discussionUtils';
-import DiscussionThread from './PubDiscussions/DiscussionThread';
+import Discussion from './PubDiscussions/Discussion';
 
 require('./pubBody.scss');
 
@@ -50,10 +49,11 @@ const PubBody = (props) => {
 		historyData,
 		editorWrapperRef,
 	} = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData } = usePageContext();
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
+	const citationsRef = useRef(pubData.citations);
 
 	const memoizeNoteContent = (items) => {
 		return items.reduce((prev, curr) => {
@@ -118,7 +118,7 @@ const PubBody = (props) => {
 				lastFootnotesMemo.current = footnotesKey;
 				return apiFetch('/api/editor/citation-format', {
 					method: 'POST',
-					body: JSON.stringify({ data: footnotes }),
+					body: JSON.stringify({ data: footnotes, citationStyle: pubData.citationStyle }),
 				})
 					.then((result) => {
 						updateLocalData('pub', { footnotes: result });
@@ -132,10 +132,12 @@ const PubBody = (props) => {
 				lastCitationsMemo.current = citationsKey;
 				return apiFetch('/api/editor/citation-format', {
 					method: 'POST',
-					body: JSON.stringify({ data: citations }),
+					body: JSON.stringify({ data: citations, citationStyle: pubData.citationStyle }),
 				})
 					.then((result) => {
 						updateLocalData('pub', { citations: result });
+						citationsRef.current = result;
+						dispatchEmptyTransaction(collabData.editorChangeObject.view);
 					})
 					.catch((err) => {
 						console.error(err);
@@ -147,13 +149,12 @@ const PubBody = (props) => {
 		if (collabData.editorChangeObject && collabData.editorChangeObject.view) {
 			updateFootnotesAndCitations(collabData.editorChangeObject.view.state.doc);
 		}
-	}, [collabData.editorChangeObject, updateLocalData]);
+	}, [collabData.editorChangeObject, updateLocalData, pubData.citationStyle]);
+
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;
-	const isHistoryDoc = isViewingHistory && historyData.historyDoc;
-	const useCollaborativeOptions = !pubData.isStaticDoc && !isHistoryDoc;
-	const isReadOnly = !!(pubData.isStaticDoc || !pubData.canEditBranch || isViewingHistory);
+	const isReadOnly = pubData.isReadOnly || isViewingHistory;
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;
@@ -188,13 +189,17 @@ const PubBody = (props) => {
 							delete embedDiscussions.current[embedId];
 						},
 					},
+					citation: {
+						citationsRef: citationsRef,
+						citationInlineStyle: pubData.citationInlineStyle,
+					},
 				}}
-				placeholder={pubData.isStaticDoc ? undefined : 'Begin writing here...'}
+				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}
 				isReadOnly={isReadOnly}
 				onKeyPress={markLastInput}
 				onChange={(editorChangeObject) => {
-					if (!isHistoryDoc) {
+					if (!isViewingHistory) {
 						updateLocalData('collab', { editorChangeObject: editorChangeObject });
 					}
 				}}
@@ -209,7 +214,7 @@ const PubBody = (props) => {
 					}
 				}}
 				collaborativeOptions={
-					useCollaborativeOptions
+					!isViewingHistory
 						? {
 								firebaseRef: firebaseBranchRef,
 								clientData: props.collabData.localCollabUser,
@@ -229,6 +234,8 @@ const PubBody = (props) => {
 						: undefined
 				}
 				highlights={[]}
+				citationsRef={citationsRef}
+				citationInlineStyle={pubData.citationInlineStyle}
 			/>
 			{!!editorError && !shouldSuppressEditorErrors() && (
 				<Alert
@@ -242,7 +249,7 @@ const PubBody = (props) => {
 					onCancel={showErrorTime ? downloadBackup : undefined}
 					className="pub-body-alert"
 				>
-					<h5>Uh oh! An error has occured in the editor.</h5>
+					<h5>An error has occured in the editor.</h5>
 					<p>We've logged the error and will look into the cause right away.</p>
 					{showErrorTime && (
 						<React.Fragment>
@@ -279,27 +286,24 @@ const PubBody = (props) => {
 					return null;
 				}
 
-				const threadNumber = embedDiscussions.current[embedId].threadNumber;
-				const threads = nestDiscussionsToThreads(pubData.discussions);
-				const activeThread = threads.reduce((prev, curr) => {
-					if (curr[0].threadNumber === threadNumber) {
-						return curr;
-					}
-					return prev;
-				}, undefined);
+				const number = embedDiscussions.current[embedId].number;
+				// const threads = nestDiscussionsToThreads(pubData.discussions);
+				// const threads = pubData.discussions;
+				const activeDiscussion = pubData.discussions.find((disc) => disc.number === number);
 
 				return ReactDOM.createPortal(
 					<React.Fragment>
-						{!activeThread && (
+						{!activeDiscussion && (
 							<Card>Please select a discussion from the formatting bar.</Card>
 						)}
-						{activeThread && (
-							<DiscussionThread
+						{activeDiscussion && (
+							<Discussion
 								key={embedId}
 								pubData={pubData}
 								collabData={collabData}
+								historyData={historyData}
 								firebaseBranchRef={firebaseBranchRef}
-								threadData={activeThread}
+								discussionData={activeDiscussion}
 								updateLocalData={updateLocalData}
 								canPreview={true}
 							/>

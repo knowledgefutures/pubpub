@@ -5,7 +5,7 @@ import Color from 'color';
 import uuidv4 from 'uuid/v4';
 import Promise from 'bluebird';
 import firebaseAdmin from 'firebase-admin';
-import { createBranch } from '@pubpub/editor';
+import { createBranch } from 'components/Editor';
 import {
 	DiscussionChannel as v5_DiscussionChannel,
 	DiscussionChannelParticipant as v5_DiscussionChannelParticipant,

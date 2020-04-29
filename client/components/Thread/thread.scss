@@ -1,0 +1,17 @@
+.thread-component {
+	position: relative;
+	&:before {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 24px;
+		width: 2px;
+		background: #ccc;
+		z-index: -1;
+	}
+	.thread-comment2-component,
+	.thread-event-component {
+		margin: 2em 0em;
+	}
+}

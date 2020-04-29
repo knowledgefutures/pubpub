@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import Promise from 'bluebird';
 // import { Op } from 'sequelize';
-import { Pub } from './models';
+import { Pub } from '../../server/models';
 
 const createFirebaseClient = require('../5to6/util/createFirebaseClient');
 
@@ -9,6 +9,7 @@ const sourceFirebaseUrl = 'https://pubpub-v6-prod.firebaseio.com';
 const destFirebaseUrl = 'https://pubpub-v6-dev.firebaseio.com';
 
 console.log('Starting Firebase sync');
+console.time('Firebase SyncTime');
 Pub.findAll({
 	// where: {
 	// 	id: {
@@ -17,6 +18,9 @@ Pub.findAll({
 	// 			'278d35fb-1a99-458e-bae1-ee980ec0fc8f',
 	// 			'20a01e90-7e49-4f66-9343-97f6d3065a92',
 	// 			'28ed5513-39e4-4c8a-9b89-62f7e9c2264c',
+	// 			'5aa9cf41-4291-4c00-9673-8366919d993b',
+	// 			'47f01edf-bd47-448a-983a-5f2e102a775e',
+	// 			'45de0904-7a9e-4515-8fc0-2c8c8f881f1a',
 	// 		],
 	// 	},
 	// },
@@ -56,7 +60,7 @@ Pub.findAll({
 						console.log(err);
 					});
 			},
-			{ concurrency: 15 },
+			{ concurrency: 100 },
 		);
 	})
 	.catch((err) => {
@@ -64,5 +68,6 @@ Pub.findAll({
 	})
 	.finally(() => {
 		console.log('Finishing Firebase Sync');
+		console.timeEnd('Firebase SyncTime');
 		process.exit();
 	});

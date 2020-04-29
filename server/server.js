@@ -8,8 +8,13 @@ import Module from 'module';
 import noSlash from 'no-slash';
 import passport from 'passport';
 import * as Sentry from '@sentry/node';
+
+import { setEnvironment } from 'shared/utils/environment';
+
 import { sequelize, User } from './models';
 import { HTTPStatusError } from './errors';
+
+setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
 
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
 // return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.
@@ -28,10 +33,11 @@ export const wrap = (routeHandlerFn) => (...args) => {
 
 /* Since we are server-rendering components, we 	*/
 /* need to ensure we don't require things intended 	*/
-/* for webpack. Namely, .scss files 				*/
+/* for webpack. Namely, .scss files			 		*/
 const originalRequire = Module.prototype.require;
 Module.prototype.require = function(...args) {
-	if (args[0].indexOf('.scss') > -1) {
+	const skippedExtensions = ['scss'];
+	if (skippedExtensions.includes(args[0].split('.').pop())) {
 		return () => {};
 	}
 	return originalRequire.apply(this, args);
@@ -129,7 +135,7 @@ app.use((req, res, next) => {
 	if (req.headers.communityhostname) {
 		req.headers.host = req.headers.communityhostname;
 	}
-	if (req.hostname.indexOf('localhost') > -1) {
+	if (process.env.PUBPUB_LOCAL_COMMUNITY || req.hostname.indexOf('localhost') > -1) {
 		req.headers.localhost = req.headers.host;
 		if (process.env.PUBPUB_LOCAL_COMMUNITY) {
 			const subdomain = process.env.PUBPUB_LOCAL_COMMUNITY;
@@ -140,7 +146,6 @@ app.use((req, res, next) => {
 	}
 	if (req.hostname.indexOf('duqduq.org') > -1) {
 		req.headers.host = req.hostname.replace('duqduq.org', 'pubpub.org');
-		req.isDuqDuq = true;
 	}
 	next();
 });

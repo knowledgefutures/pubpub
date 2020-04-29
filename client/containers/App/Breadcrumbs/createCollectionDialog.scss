@@ -1,0 +1,53 @@
+$element-spacing: 10px;
+
+.create-collection-dialog-component {
+	.dialog-card {
+		width: 80vw;
+		max-width: 1200px;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.collection-title-input {
+		flex-grow: 1;
+	}
+
+	.error-callout {
+		margin-top: $element-spacing;
+	}
+
+	.kind-buttons {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		margin-top: $element-spacing;
+		column-gap: $element-spacing;
+		row-gap: $element-spacing;
+		padding: 0;
+		border: none;
+		@media screen and (max-width: 1200px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.kind-button {
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
+		padding: 15px;
+		overflow: hidden;
+		.bp3-icon {
+			margin-top: 2px;
+		}
+		.text {
+			margin-left: 5px;
+			flex-shrink: 1;
+			.title {
+				text-transform: capitalize;
+				font-weight: bold;
+				font-size: 1.2em;
+				margin-bottom: 5px;
+			}
+		}
+	}
+}

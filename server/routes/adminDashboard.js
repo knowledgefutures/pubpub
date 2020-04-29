@@ -1,5 +1,4 @@
 import React from 'react';
-import { AdminDashboard } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import {
@@ -37,9 +36,7 @@ app.get('/admin', (req, res, next) => {
 						title: `Admin Dashboard · ${initialData.communityData.title}`,
 						description: initialData.communityData.description,
 					})}
-				>
-					<AdminDashboard {...initialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

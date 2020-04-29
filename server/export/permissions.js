@@ -1,12 +1,21 @@
-import { getBranchAccessForUser } from '../branch/permissions';
+import { getScope } from '../utils/queryHelpers';
 
-export const getPermissions = async ({ branchId, userId, accessHash }) => {
-	const branchAccess = await getBranchAccessForUser({
-		branchId: branchId,
-		userId: userId,
+export const getPermissions = async ({ branchId, userId, pubId, accessHash, communityId }) => {
+	const {
+		elements: { activePub },
+		activePermissions: { canView },
+	} = await getScope({
+		communityId: communityId,
+		pubId: pubId,
+		loginId: userId,
 		accessHash: accessHash,
 	});
+
+	const isPublicBranch = activePub.branches.some(
+		(branch) => branch.id === branchId && branch.title === 'public',
+	);
+
 	return {
-		create: branchAccess.canView,
+		create: canView || isPublicBranch,
 	};
 };

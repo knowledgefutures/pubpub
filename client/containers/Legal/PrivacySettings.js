@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton, Card, Switch } from '@blueprintjs/core';
-
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { usePageContext } from 'utils/hooks';
 import { getGdprConsentElection, updateGdprConsent } from 'utils/legal/gdprConsent';
 
 const propTypes = {
@@ -25,7 +24,7 @@ I understand that this action may be irreversible.
 `;
 
 const ThirdPartyAnalyticsCard = () => {
-	const { loginData } = useContext(PageContext);
+	const { loginData } = usePageContext();
 	const [hasUsedToggle, setHasUsedToggle] = useState(false);
 	const [isEnabled, setIsEnabled] = useState(null);
 

@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 const Promise = require('bluebird');
 const firebaseAdmin = require('firebase-admin');
-const { buildSchema, restoreDiscussionMaps } = require('@pubpub/editor');
+const { buildSchema, restoreDiscussionMaps } = require('components/Editor');
 const discussionSchema = require('./simpleDiscussionSchema').default;
 const getPipedPubIds = require('../util/getPipedPubIds');
 require('../../../server/config.js');
 
 const serviceAccount = JSON.parse(
-	Buffer.from(process.env.V6_FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
+	Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
 );
 
 const firebaseApp =

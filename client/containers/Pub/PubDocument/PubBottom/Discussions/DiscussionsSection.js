@@ -1,14 +1,14 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Popover, Position } from '@blueprintjs/core';
 
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { usePageContext } from 'utils/hooks';
 
 import PubDiscussions from '../../PubDiscussions/PubDiscussions';
 import PubBottomSection, { SectionBullets, AccentedIconButton } from '../PubBottomSection';
 import SortList from './SortList';
 import FilterMenu from './FilterMenu';
-import { filterAndSortThreads } from '../../PubDiscussions/discussionUtils';
+import { filterAndSortDiscussions } from '../../PubDiscussions/discussionUtils';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -21,6 +21,7 @@ const propTypes = {
 		canDiscussBranch: PropTypes.bool,
 	}).isRequired,
 	collabData: PropTypes.object.isRequired,
+	historyData: PropTypes.object.isRequired,
 	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
@@ -34,19 +35,16 @@ const defaultProps = {
 const DiscussionsSection = (props) => {
 	const { pubData, updateLocalData } = props;
 	const { discussions } = pubData;
-	const { communityData } = useContext(PageContext);
+	const { communityData, scopeData } = usePageContext();
+	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
 	const [isBrowsingArchive, setIsBrowsingArchive] = useState(false);
 	const [isShowingAnchoredComments, setShowingAnchoredComments] = useState(true);
 	const [sortMode, setSortMode] = useState('newestThread');
 	const [filteredLabels, setFilteredLabels] = useState([]);
 
-	const nonArchivedDiscussions = discussions.filter(
-		(ds) => !ds.isArchived && ds.branchId === pubData.activeBranch.id,
-	);
+	const nonClosedDiscussions = discussions.filter((ds) => !ds.isClosed);
 
-	const renderCenterItems = () => (
-		<SectionBullets>{nonArchivedDiscussions.length}</SectionBullets>
-	);
+	const renderCenterItems = () => <SectionBullets>{nonClosedDiscussions.length}</SectionBullets>;
 
 	// eslint-disable-next-line react/prop-types
 	const renderIconItems = ({ isExpanded, iconColor }) => {
@@ -80,7 +78,7 @@ const DiscussionsSection = (props) => {
 								communityData={communityData}
 								labelsData={pubData.labels || []}
 								selectedLabels={filteredLabels}
-								isManager={pubData.canManage}
+								isManager={canManage}
 								onBrowseArchive={setIsBrowsingArchive}
 								isBrowsingArchive={isBrowsingArchive}
 								onShowAnchoredComments={setShowingAnchoredComments}
@@ -113,8 +111,8 @@ const DiscussionsSection = (props) => {
 		return null;
 	};
 
-	const createThreadFilter = (searchTerm) => (threads) => {
-		const res = filterAndSortThreads(
+	const createDiscussionFilter = (searchTerm) => (threads) => {
+		const res = filterAndSortDiscussions(
 			threads,
 			isBrowsingArchive,
 			sortMode,
@@ -139,9 +137,11 @@ const DiscussionsSection = (props) => {
 			{({ searchTerm, isSearching }) => (
 				<PubDiscussions
 					{...props}
-					filterThreads={createThreadFilter(searchTerm)}
+					filterDiscussions={createDiscussionFilter(searchTerm)}
 					searchTerm={searchTerm}
-					showBottomInput={pubData.canDiscussBranch && !isSearching && !isBrowsingArchive}
+					showBottomInput={
+						(canView || canCreateDiscussions) && !isSearching && !isBrowsingArchive
+					}
 				/>
 			)}
 		</PubBottomSection>

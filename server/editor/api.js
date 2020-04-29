@@ -4,7 +4,7 @@ import app from '../server';
 import { generateCiteHtmls } from './queries';
 
 app.post('/api/editor/citation-format', (req, res) => {
-	generateCiteHtmls(req.body.data)
+	generateCiteHtmls(req.body.data, req.body.citationStyle)
 		.then((output) => {
 			return res.status(201).json(output);
 		})

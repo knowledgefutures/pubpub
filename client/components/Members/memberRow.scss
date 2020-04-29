@@ -1,0 +1,32 @@
+.member-row-component {
+	display: flex;
+	align-items: center;
+	&:not(:first-of-type) {
+		margin-top: 2em;
+		padding-top: 2em;
+		border-top: 1px solid #e0e0e0;
+	}
+	.invitation {
+		opacity: 0.5;
+	}
+	.member-name {
+		padding: 0em 1em;
+		font-weight: bold;
+	}
+	.added,
+	.pending-tag {
+		margin-right: 2em;
+	}
+	.added {
+		flex: 1 1 auto;
+	}
+	.permission-button {
+		width: 100px;
+		text-transform: capitalize;
+		justify-content: space-between;
+	}
+}
+
+.bp3-menu.member-permission-select {
+	padding: 1em;
+}

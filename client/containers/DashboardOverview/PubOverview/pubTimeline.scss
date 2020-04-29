@@ -1,0 +1,19 @@
+.pub-timeline-component {
+    .release-link {
+        text-decoration: none;
+        &:hover,
+        &:focus {
+            text-decoration: underline;
+        }
+    }
+
+    .release-note {
+        font-size: 0.9em;
+        summary {
+            margin-bottom: 5px;
+        }
+        .content {
+            font-style: italic;
+        }
+    }
+}

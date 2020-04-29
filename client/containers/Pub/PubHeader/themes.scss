@@ -1,0 +1,253 @@
+$mobile-viewport-cutoff: 750px;
+$smaller-viewport-cutoff: 1000px;
+
+$top-bar-total-height: 54px;
+$top-bar-total-height-mobile: 45px;
+
+$off-white: #cfcfcf;
+$off-black: #333;
+
+@mixin mobile {
+    @media only screen and (max-width: $mobile-viewport-cutoff) {
+        @content;
+    }
+}
+
+@mixin smaller-viewport {
+    @media only screen and (max-width: $smaller-viewport-cutoff) {
+        @content;
+    }
+}
+
+@mixin base-button {
+    color: inherit;
+    align-items: center;
+    text-decoration: none;
+    user-select: none;
+    background: unset;
+    border: unset;
+    padding: 0;
+    cursor: pointer;
+    &:hover,
+    &:active,
+    &:visited {
+        text-decoration: none;
+        color: inherit;
+    }
+}
+
+@mixin shadow-box($box-shadow) {
+    position: relative;
+    transition: background-color 0.1s ease-out;
+    &::after {
+        content: '';
+        position: absolute;
+        pointer-events: none;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow: $box-shadow;
+        border-radius: inherit;
+        transition: opacity 0.1s ease-out;
+    }
+}
+
+@mixin shadow-box-hover {
+    &::after {
+        opacity: 1;
+    }
+}
+
+@mixin color-theme($base-color, $secondary-color) {
+    color: $base-color;
+    .pub-header-themed-secondary {
+        color: $secondary-color;
+    }
+    .has-bottom-hairline {
+        border-bottom: 1px solid rgba($base-color, alpha($base-color) * 0.2);
+    }
+    .collections-bar-button-component {
+        border-color: rgba($base-color, alpha($base-color) * 0.2);
+        &:hover {
+            color: $base-color;
+            background: rgba($base-color, alpha($base-color) * 0.2);
+        }
+    }
+    &.pub-header-compact-component {
+        color: $base-color;
+    }
+}
+
+@mixin simple-box-theme($background, $highlight, $hover-background, $box-shadow) {
+    .pub-header-themed-box {
+        background: $background;
+        @include shadow-box($box-shadow);
+        &.active {
+            border: 2px solid $highlight;
+        }
+    }
+    .pub-header-themed-box-hover-target {
+        &:hover {
+            .pub-header-themed-box {
+                background: $hover-background;
+                @include shadow-box-hover();
+            }
+        }
+    }
+    .pub-header-themed-box-hover-target.pub-header-themed-box:hover {
+        background: $hover-background;
+        @include shadow-box-hover();
+    }
+}
+
+@mixin translucent-box-theme($base-color, $box-shadow, $weight: 1) {
+    @include simple-box-theme(
+        rgba($base-color, 0.2 * alpha($base-color) * $weight),
+        $base-color,
+        rgba($base-color, 0.3 * alpha($base-color) * $weight),
+        $box-shadow
+    );
+}
+
+@mixin blocks-button($background-color, $box-shadow, $highlight) {
+    background-color: $background-color;
+    transition: 0.2s background-color ease-out;
+    box-shadow: $box-shadow;
+    padding: 2px;
+    &:hover {
+        background-color: rgba($background-color, alpha($background-color) * 0.8);
+    }
+    .pub-header-themed-box.active {
+        background-color: $highlight;
+        color: $background-color;
+        border-radius: 2px;
+    }
+}
+
+@mixin blocks-box-theme($background-color, $highlight) {
+    $box-shadow: 4px 6px 9px -4px rgba(0, 0, 0, 0.1);
+    .text-wrapper,
+    .bp3-editable-text-content,
+    .title-group-component .published-date {
+        /* Ways of accomplishing this effect: */
+        /* https://css-tricks.com/multi-line-padded-text/ */
+        display: inline;
+        background: rgba($background-color, 1);
+        padding: 2px 20px;
+        box-decoration-break: clone;
+        box-shadow: $box-shadow;
+        @include mobile {
+            padding: 2px 10px;
+        }
+    }
+    .pub-header-themed-box {
+        border-radius: 0;
+    }
+    .small-header-button-component {
+        border-radius: 2px;
+    }
+    .large-header-button-component {
+        border-radius: 2px;
+        overflow: hidden;
+        @include blocks-button($background-color, $box-shadow, $highlight);
+        .outer-label {
+            margin-left: 0;
+            margin-right: 15px;
+        }
+    }
+    .description,
+    .byline {
+        margin-bottom: 0;
+    }
+    &.pub-header-component .pub-header-content-component .title-group-component .published-date {
+        display: inline-flex;
+        justify-content: flex-start;
+        & > :first-child {
+            margin-right: 1em;
+        }
+    }
+    .small-header-button-component:not(.details-button) {
+        @include blocks-button($background-color, $box-shadow, $highlight);
+    }
+    .has-bottom-hairline {
+        border-bottom: 1px solid transparent;
+    }
+    .background-safety-layer {
+        background-color: rgba($background-color, 0.5);
+        backdrop-filter: blur(20px);
+        box-shadow: $box-shadow;
+        &.full-height {
+            height: 100%;
+        }
+    }
+    &.js-is-sticky {
+        .background-safety-layer {
+            height: 100%;
+        }
+    }
+}
+
+.pub-header-theme-light {
+    $box-shadow: 0px 0px 8px rgba(black, 0.05);
+    @include color-theme(white, $off-white);
+    @include translucent-box-theme(white, $box-shadow);
+
+    .bp3-editable-text {
+        &:hover:before {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
+                inset 0 0 0 1px rgba(247, 252, 255, 0.54);
+            background-color: transparent;
+        }
+        &.bp3-editable-text-editing:before {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgb(255, 255, 255),
+                inset 0 0 0 1px rgba(247, 252, 255, 0.54);
+            background-color: rgba(0, 0, 0, 0.35);
+        }
+        &.bp3-editable-text-placeholder > .bp3-editable-text-content,
+        ::placeholder {
+            color: inherit;
+            opacity: 0.75;
+        }
+    }
+}
+
+.pub-header-theme-dark {
+    $accent: rgba(black, 0.2);
+    $hover-background: rgba(black, 0.1);
+
+    @mixin when-hovered {
+        background: $hover-background;
+        border: 1px solid $hover-background;
+        @include shadow-box-hover();
+    }
+
+    .pub-header-themed-box {
+        border: 1px solid $accent;
+        box-sizing: border-box;
+        &.active {
+            border: 3px solid $accent;
+        }
+    }
+    .pub-header-themed-box-hover-target {
+        &:hover {
+            .pub-header-themed-box {
+                @include when-hovered;
+            }
+        }
+    }
+    .pub-header-themed-box-hover-target.pub-header-themed-box:hover {
+        @include when-hovered;
+    }
+    @include color-theme(#222, $off-black);
+}
+
+.pub-header-theme-white-blocks {
+    @include color-theme(black, $off-black);
+    @include blocks-box-theme(white, black);
+}
+
+.pub-header-theme-black-blocks {
+    @include color-theme(white, white);
+    @include blocks-box-theme(black, white);
+}

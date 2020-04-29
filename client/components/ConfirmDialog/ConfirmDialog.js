@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { Button, Classes, Dialog } from '@blueprintjs/core';
 
 const propTypes = {
-	children: PropTypes.node.isRequired,
+	children: PropTypes.func.isRequired,
 	cancelLabel: PropTypes.string,
 	confirmLabel: PropTypes.string.isRequired,
 	intent: PropTypes.string,

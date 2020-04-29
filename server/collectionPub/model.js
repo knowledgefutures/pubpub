@@ -27,11 +27,16 @@ export default (sequelize, dataTypes) => {
 			],
 			classMethods: {
 				associate: (models) => {
-					const { CollectionPub, Collection } = models;
+					const { CollectionPub, Collection, Pub } = models;
 					CollectionPub.belongsTo(Collection, {
 						onDelete: 'CASCADE',
 						as: 'collection',
 						foreignKey: 'collectionId',
+					});
+					CollectionPub.belongsTo(Pub, {
+						onDelete: 'CASCADE',
+						as: 'pub',
+						foreignKey: 'pubId',
 					});
 				},
 			},

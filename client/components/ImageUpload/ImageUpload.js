@@ -155,13 +155,15 @@ class ImageUpload extends Component {
 					{this.props.isRequired && (
 						<span className="bp3-text-muted required-text"> (required)</span>
 					)}
-					<br />
+					{this.props.label && <br />}
 
 					{(this.state.uploading || !this.state.imageBlob) && (
 						<AnchorButton
 							className="upload-button bp3-minimal"
 							style={buttonStyle}
 							loading={this.state.uploading}
+							title="Upload new header image"
+							aria-label="Upload new header image"
 							icon="media"
 						/>
 					)}
@@ -177,7 +179,12 @@ class ImageUpload extends Component {
 
 					<div className="image-options">
 						{!this.state.uploading && this.state.imageBlob && (
-							<AnchorButton className="bp3-minimal" icon={<Icon icon="edit2" />} />
+							<AnchorButton
+								className="bp3-minimal"
+								title="Upload new header image"
+								aria-label="Upload new header image"
+								icon={<Icon icon="edit2" />}
+							/>
 						)}
 						{!this.state.uploading && this.state.imageBlob && (
 							<AnchorButton
@@ -185,6 +192,8 @@ class ImageUpload extends Component {
 								href={this.state.imageBlob}
 								target="_blank"
 								icon="download"
+								title="Download header image"
+								aria-label="Download header image"
 								download
 							/>
 						)}
@@ -192,6 +201,8 @@ class ImageUpload extends Component {
 							<AnchorButton
 								className="bp3-minimal bp3-intent-danger"
 								icon="trash"
+								title="Remove header image"
+								aria-label="Remove header image"
 								onClick={this.clearImage}
 							/>
 						)}

@@ -13,11 +13,15 @@ export default (sequelize, dataTypes) => {
 			isArchived: { type: dataTypes.BOOLEAN },
 			labels: { type: dataTypes.JSONB },
 			initAnchorText: { type: dataTypes.JSONB },
+			isPublic: { type: dataTypes.BOOLEAN },
+			initBranchId: { type: dataTypes.UUID },
 
 			/* Set by Associations */
 			userId: { type: dataTypes.UUID, allowNull: false },
-			pubId: { type: dataTypes.UUID, allowNull: false },
-			communityId: { type: dataTypes.UUID, allowNull: false },
+			pubId: { type: dataTypes.UUID },
+			collectionId: { type: dataTypes.UUID },
+			communityId: { type: dataTypes.UUID },
+			organizationId: { type: dataTypes.UUID },
 			branchId: { type: dataTypes.UUID }, // Should be allowNull: false after migration
 		},
 		{

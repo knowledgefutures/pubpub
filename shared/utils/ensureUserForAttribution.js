@@ -4,20 +4,24 @@
  * TODO(ian): I think we should move towards doing this normalization in the database.
  */
 export default (attribution) => {
-	if (!attribution.user) {
+	if (!attribution.user || attribution.user.id === attribution.id) {
 		// eslint-disable-next-line no-param-reassign
-		attribution.user = {
-			isShadowUser: true,
-			id: attribution.id,
-			initials: attribution.name[0],
-			fullName: attribution.name,
-			firstName: attribution.name.split(' ')[0],
-			lastName: attribution.name
-				.split(' ')
-				.slice(1, attribution.name.split(' ').length)
-				.join(' '),
-			avatar: attribution.avatar,
-			title: attribution.title,
+		return {
+			...attribution,
+			user: {
+				isShadowUser: true,
+				id: attribution.id,
+				initials: attribution.name[0],
+				fullName: attribution.name,
+				firstName: attribution.name.split(' ')[0],
+				lastName: attribution.name
+					.split(' ')
+					.slice(1, attribution.name.split(' ').length)
+					.join(' '),
+				avatar: attribution.avatar,
+				title: attribution.title,
+				orcid: attribution.orcid,
+			},
 		};
 	}
 	return attribution;

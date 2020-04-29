@@ -1,0 +1,28 @@
+.thread-comment2-component {
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	background: white;
+	.header {
+		font-size: 14px;
+		display: flex;
+		align-items: center;
+		width: 100%;
+		background: #f0f0f0;
+		border-bottom: 1px solid #ccc;
+		padding: 5px 10px;
+		.avatar-component {
+			margin-right: 1em;
+		}
+		.comment-title {
+			flex: 1 1 auto;
+		}
+	}
+	.editor {
+		padding: 20px 15px;
+		font-size: 16px;
+		overflow: auto;
+		& > *:last-child {
+			margin-bottom: 0em;
+		}
+	}
+}

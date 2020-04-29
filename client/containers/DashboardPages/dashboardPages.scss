@@ -1,0 +1,19 @@
+.dashboard-pages-container {
+	.title-and-subtitle {
+		cursor: default;
+	}
+	.page-row {
+		.bp3-button {
+			margin-right: 1em;
+		}
+		.privacy-indicator {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			width: 80px;
+			.bp3-icon {
+				margin-right: 4px;
+			}
+		}
+	}
+}

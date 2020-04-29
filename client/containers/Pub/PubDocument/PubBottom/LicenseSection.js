@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { LicenseSelect } from 'components';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { usePageContext } from 'utils/hooks';
 import { getLicenseBySlug } from 'shared/license';
 import dateFormat from 'dateformat';
 
@@ -12,14 +12,14 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		canManage: PropTypes.bool,
 		licenseSlug: PropTypes.string,
-		collectionPubs: PropTypes.object,
+		collectionPubs: PropTypes.array,
 	}).isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 };
 
 const LicenseSection = (props) => {
 	const { pubData, updateLocalData } = props;
-	const { communityData } = useContext(PageContext);
+	const { communityData, scopeData } = usePageContext();
 	const { link, full, short, version, slug } = getLicenseBySlug(pubData.licenseSlug);
 	const primaryCollectionPub = pubData.collectionPubs.find((cp) => cp.isPrimary);
 	const collectionPubDate = primaryCollectionPub
@@ -41,7 +41,7 @@ const LicenseSection = (props) => {
 			className="pub-bottom-license"
 			title="License"
 			centerItems={
-				<>
+				<React.Fragment>
 					{slug === 'copyright' && (
 						<SectionBullets>
 							<span>
@@ -57,10 +57,10 @@ const LicenseSection = (props) => {
 							</a>
 						</SectionBullets>
 					)}
-				</>
+				</React.Fragment>
 			}
 			iconItems={({ iconColor }) => {
-				if (pubData.canManage) {
+				if (scopeData.activePermissions.canManage) {
 					return (
 						<LicenseSelect pubData={pubData} updateLocalData={updateLocalData}>
 							{({ isPersisting }) => (

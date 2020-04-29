@@ -10,6 +10,7 @@ import {
 	Pub,
 	PubAttribution,
 	User,
+	Release,
 } from '../../../server/models';
 
 export const getPubMetadata = async (pubId) => {
@@ -38,10 +39,14 @@ export const getPubMetadata = async (pubId) => {
 					},
 				],
 			},
+			{
+				model: Release,
+				as: 'releases',
+			},
 		],
 	});
 	const publishedDate = getPubPublishedDate(pubData);
-	const updatedDate = getPubUpdatedDate(pubData);
+	const updatedDate = getPubUpdatedDate({ pub: pubData });
 	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
 	return {
@@ -60,5 +65,7 @@ export const getPubMetadata = async (pubId) => {
 			.sort((a, b) => a.order - b.order)
 			.filter((attr) => attr.isAuthor)
 			.map((attr) => ensureUserForAttribution(attr)),
+		citationStyle: pubData.citationStyle,
+		citationInlineStyle: pubData.citationInlineStyle,
 	};
 };

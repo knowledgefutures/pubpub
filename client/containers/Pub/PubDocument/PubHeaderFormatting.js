@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
+import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'utils/useSticky';
 import { FormattingBar, buttons } from 'components/FormattingBar';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
@@ -11,27 +13,33 @@ const propTypes = {
 	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	editorWrapperRef: PropTypes.any.isRequired,
+	disabled: PropTypes.bool.isRequired,
 };
 
 const PubHeaderFormatting = (props) => {
+	const { pubData, collabData, disabled } = props;
+	const { scopeData } = usePageContext();
+	const { canEdit, canEditDraft } = scopeData.activePermissions;
+
 	useSticky({
 		selector: '.pub-draft-header-component',
+		isActive: !disabled,
 		offset: 37,
 	});
 
-	const { pubData, collabData } = props;
-	if (!pubData.canEditBranch) {
+	if (!(canEdit || canEditDraft)) {
 		return null;
 	}
 
 	return (
-		<div className="pub-draft-header-component">
+		<div className={classNames('pub-draft-header-component', disabled && 'disabled')}>
 			<FormattingBar
 				buttons={buttons.fullButtonSet}
 				editorChangeObject={props.collabData.editorChangeObject || {}}
 				popoverContainerRef={props.editorWrapperRef}
 				footnotes={pubData.footnotes}
 				citations={pubData.citations}
+				citationStyle={pubData.citationStyle}
 				isFullScreenWidth={true}
 			/>
 			<div className="right-content">

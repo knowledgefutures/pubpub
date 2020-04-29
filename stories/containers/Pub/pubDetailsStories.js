@@ -1,10 +1,13 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import PubDetails from 'containers/Pub/PubDocument/PubDetails';
+import PubDetails from 'containers/Pub/PubHeader/details';
 import { pubData } from 'data';
 
 storiesOf('containers/Pub/PubDetails', module).add('default', () => (
 	<PubDetails
+		communityData={{
+			subdomain: 'pfffft',
+		}}
 		pubData={{
 			...pubData,
 			attributions: [

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { apiFetch } from 'utils';
+import { usePageContext } from 'utils/hooks';
 
 const readingCollectionParam = 'readingCollection';
 
@@ -9,6 +10,9 @@ const getCollectionFromReadingParam = (queryObj, collections) => {
 		collection.id.startsWith(queryObj[readingCollectionParam]),
 	);
 };
+
+const fetchCollectionPubs = ({ collectionId, communityId }) =>
+	apiFetch(`/api/collectionPubs?collectionId=${collectionId}&communityId=${communityId}`);
 
 export const getNeighborsInCollectionPub = (pubs, currentPub) => {
 	if (!pubs) {
@@ -41,6 +45,7 @@ export const useCollectionPubs = (updateLocalData, collection) => {
 	const [error, setError] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [pubs, setPubs] = useState(collection && collection.pubs);
+	const { communityData } = usePageContext();
 
 	const updatePubs = (nextPubs) => {
 		setPubs(nextPubs);
@@ -68,7 +73,7 @@ export const useCollectionPubs = (updateLocalData, collection) => {
 		if (Array.isArray(collection.pubs)) {
 			setIsLoading(false);
 		}
-		apiFetch(`/api/collectionPubs?collectionId=${collection.id}`)
+		fetchCollectionPubs({ collectionId: collection.id, communityId: communityData.id })
 			.then((res) => {
 				updatePubs(res);
 				setIsLoading(false);

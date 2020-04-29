@@ -1,0 +1,81 @@
+$full-size-bubble: 40px;
+$small-bubble-diameter: 24px;
+$large-bubble-diameter: 40px;
+$small-bubble-diameter-diff: $full-size-bubble - $small-bubble-diameter;
+$descender-height: 25px;
+$descender-separation: 5px;
+$label-padding-bottom: 10px;
+$controls-margin: 5px;
+
+.timeline-item-component {
+    .inner {
+        display: flex;
+        .left {
+            display: flex;
+            flex-direction: column;
+            .bubble {
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: #{$small-bubble-diameter-diff / 2};
+                margin-right: #{$small-bubble-diameter-diff / 2};
+                margin-top: 0;
+                width: $small-bubble-diameter;
+                height: $small-bubble-diameter;
+                border-radius: #{$small-bubble-diameter / 2};
+                .bp3-icon {
+                    color: inherit;
+                }
+            }
+            .descender {
+                margin-top: $descender-separation;
+                margin-bottom: $descender-separation;
+                padding-bottom: $descender-height;
+                flex-grow: 1;
+                width: 2px;
+                margin-left: #{$large-bubble-diameter / 2 - 1};
+                background: #ddd;
+            }
+        }
+        .right {
+            padding-top: calc(#{$small-bubble-diameter / 2} - 1em);
+            margin-left: 10px;
+            padding-bottom: $label-padding-bottom;
+            .title {
+                font-weight: bold;
+            }
+            .subtitle {
+                font-style: italic;
+                font-size: 0.9em;
+            }
+            .controls {
+                margin-top: $controls-margin;
+                margin-bottom: $controls-margin;
+            }
+        }
+    }
+
+    &:last-child {
+        .descender {
+            display: none;
+        }
+    }
+
+    &.large {
+        .inner .left .bubble {
+            margin: 0;
+            width: $large-bubble-diameter;
+            height: $large-bubble-diameter;
+            border-radius: #{$large-bubble-diameter / 2};
+        }
+    }
+
+    &.hollow {
+        .inner .left .bubble {
+            background: none;
+            border-width: 2px;
+            border-style: solid;
+        }
+    }
+}

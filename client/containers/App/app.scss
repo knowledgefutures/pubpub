@@ -1,0 +1,68 @@
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    #main-content {
+        outline: none;
+        flex-grow: 1;
+    }
+    .duqduq-warning {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        padding: 5px;
+        border-radius: 4px;
+        text-align: center;
+        color: white;
+        line-height: 30px;
+        background: #c23030;
+        z-index: 99999;
+    }
+    &.dashboard {
+        $side-menu-width: 260px;
+        $breadcrumbs-height: 85px;
+        $header-height: 56px;
+        display: block;
+        .header-component:not(.preview) {
+            position: fixed;
+            width: 100%;
+            .container {
+                max-width: 100%;
+                width: 100%;
+            }
+            .col-12 {
+                margin-left: 16px;
+                margin-right: 16px;
+                width: calc(100% - 32px);
+            }
+        }
+        .side-menu-component {
+            width: $side-menu-width;
+            position: fixed;
+            height: calc(100vh - #{$header-height});
+            top: $header-height;
+            border-right: 1px solid #ddd;
+            overflow: auto;
+        }
+        .breadcrumbs-component {
+            width: calc(100vw - #{$side-menu-width});
+            margin-left: $side-menu-width;
+            border-bottom: 1px solid #ddd;
+            position: fixed;
+            height: $breadcrumbs-height;
+            top: $header-height;
+            .breadcrumbs-content {
+                width: 100%;
+                max-width: calc(1200px + 100px);
+                padding: 16px 50px;
+            }
+        }
+        #main-content {
+            width: calc(100vw - #{$side-menu-width});
+            max-width: calc(1200px + 100px);
+            margin-left: $side-menu-width;
+            padding: 16px 50px;
+            padding-top: calc(25px + #{$header-height} + #{$breadcrumbs-height});
+        }
+    }
+}

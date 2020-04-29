@@ -1,0 +1,19 @@
+.discussion-nav-component {
+	display: flex;
+	align-items: center;
+	height: 1.7em;
+	margin-left: 3px;
+	.caret-button {
+		min-width: 14px;
+	}
+	.expand-icon {
+		transform: rotate(45deg);
+	}
+	.close-wrapper {
+		display: flex;
+		margin-left: auto;
+	}
+	.overflow-icon {
+		padding-top: 3px;
+	}
+}

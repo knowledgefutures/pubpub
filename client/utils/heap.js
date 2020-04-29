@@ -1,4 +1,5 @@
-import { isProd } from './isProd';
+import { isProd } from 'shared/utils/environment';
+
 import { getGdprConsentElection } from './legal/gdprConsent';
 
 export const setupHeap = (initialData) => {

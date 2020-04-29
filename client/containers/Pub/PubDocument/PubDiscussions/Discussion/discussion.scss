@@ -1,0 +1,61 @@
+@import 'styles/variables.scss';
+.discussion-component {
+	position: relative;
+	z-index: 1;
+	background: white;
+	padding: 1em 0em;
+	font-size: 14px;
+	.collapse-button {
+		position: absolute;
+		top: 0;
+		right: 0;
+		.bp3-icon {
+			transform: rotate(45deg);
+		}
+	}
+	.anchor-text {
+		padding: 0.25em;
+		background: #f0f0f7;
+		font-family: $body-font;
+		margin: -0.25em 0em 1em;
+		color: #888;
+		line-height: 1.3;
+		.exact {
+			color: #000;
+		}
+	}
+	.item-header {
+		display: flex;
+		align-items: center;
+		line-height: 1em;
+		margin-bottom: 0.25em;
+		font-size: 13px;
+		.name {
+			font-weight: 600;
+			margin-right: 1em;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			min-height: 17px;
+			flex: 0 0 auto;
+		}
+		.time {
+			margin-right: 1em;
+			color: #888;
+			flex: 1 1 auto;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			min-height: 17px;
+		}
+		.actions {
+			white-space: nowrap;
+		}
+		.bp3-button {
+			min-height: 17px;
+		}
+	}
+	.overflow-listing:not(:last-child) {
+		margin-bottom: 1.5em;
+	}
+}

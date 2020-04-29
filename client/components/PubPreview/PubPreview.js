@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 
@@ -6,7 +6,7 @@ import { getResizedUrl } from 'utils';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
 import { isPubPublic } from 'shared/pub/permissions';
 import { pubUrl, communityUrl } from 'shared/utils/canonicalUrls';
-import { PageContext } from 'components/PageWrapper/PageWrapper';
+import { usePageContext } from 'utils/hooks';
 import { Avatar, Icon } from 'components';
 
 import PubPreviewImage from './PubPreviewImage';
@@ -38,7 +38,7 @@ const defaultProps = {
 
 const PubPreview = function(props) {
 	const { pubData, size, communityData, customPubUrl } = props;
-	const { communityData: localCommunityData } = useContext(PageContext);
+	const { communityData: localCommunityData, scopeData } = usePageContext();
 	const resizedHeaderLogo =
 		props.communityData && getResizedUrl(props.communityData.headerLogo, 'fit-in', '125x35');
 	const attributions = pubData.attributions || [];
@@ -47,7 +47,7 @@ const PubPreview = function(props) {
 	});
 
 	const publishedDate = getPubPublishedDate(pubData);
-	const isPrivate = !isPubPublic(pubData);
+	const isPrivate = !isPubPublic(pubData, scopeData);
 	const showBannerImage = ['large', 'medium'].includes(size);
 	const showUpperByline = !!authors.length && !props.hideByline && ['minimal'].includes(size);
 	const showLowerByline =
@@ -122,8 +122,8 @@ const PubPreview = function(props) {
 									<Avatar
 										key={`avatar-${collaborator.id}`}
 										instanceNumber={index}
-										userInitials={collaborator.user.initials}
-										userAvatar={collaborator.user.avatar}
+										initials={collaborator.user.initials}
+										avatar={collaborator.user.avatar}
 										borderColor="rgba(255, 255, 255, 1.0)"
 										width={20}
 										doesOverlap={true}

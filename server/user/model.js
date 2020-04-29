@@ -57,12 +57,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Community, PubAttribution, Discussion } = models;
-					User.belongsToMany(Community, {
-						as: 'communities',
-						through: 'CommunityAdmin',
-						foreignKey: 'userId',
-					});
+					const { PubAttribution, Discussion } = models;
 					User.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
 						as: 'attributions',

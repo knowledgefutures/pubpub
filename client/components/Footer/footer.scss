@@ -68,6 +68,9 @@
 				display: inline-block;
 				padding: 0em 0.75em;
 			}
+			.link:hover {
+				text-decoration: underline;
+			}
 		}
 		li {
 			display: inline-block;

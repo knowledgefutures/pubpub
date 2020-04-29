@@ -64,17 +64,22 @@ export default (sequelize, dataTypes) => {
 			email: { type: dataTypes.TEXT },
 			issn: { type: dataTypes.TEXT },
 			isFeatured: { type: dataTypes.BOOLEAN },
+			viewHash: { type: dataTypes.STRING },
+			editHash: { type: dataTypes.STRING },
 			premiumLicenseFlag: { type: dataTypes.BOOLEAN, defaultValue: false },
 			defaultPubCollections: { type: dataTypes.JSONB },
+
+			/* Set by Associations */
+			organizationId: { type: dataTypes.UUID },
 		},
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Community, User, Collection, Discussion, Page, Pub } = models;
-					Community.belongsToMany(User, {
-						as: 'admins',
-						through: 'CommunityAdmin',
-						foreignKey: 'communityId',
+					const { Community, Organization, Collection, Discussion, Page, Pub } = models;
+					Community.belongsTo(Organization, {
+						onDelete: 'CASCADE',
+						as: 'organization',
+						foreignKey: 'organizationId',
 					});
 					Community.hasMany(Collection, {
 						onDelete: 'CASCADE',

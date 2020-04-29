@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
 import React from 'react';
-import { UserCreate } from 'containers';
 import Html from '../Html';
 import app from '../server';
 import { Signup } from '../models';
@@ -14,23 +13,18 @@ app.get('/user/create/:hash', (req, res, next) => {
 
 	return Promise.all([getInitialData(req), getSignup])
 		.then(([initialData, signupData]) => {
-			const newInitialData = {
-				...initialData,
-				signupData: signupData || { hashError: true },
-			};
 			return renderToNodeStream(
 				res,
 				<Html
 					chunkName="UserCreate"
-					initialData={newInitialData}
+					initialData={initialData}
+					viewData={{ signupData: signupData || { hashError: true } }}
 					headerComponents={generateMetaComponents({
-						initialData: newInitialData,
-						title: `Create New user · ${newInitialData.communityData.title}`,
+						initialData: initialData,
+						title: `Create New user · ${initialData.communityData.title}`,
 						unlisted: true,
 					})}
-				>
-					<UserCreate {...newInitialData} />
-				</Html>,
+				/>,
 			);
 		})
 		.catch(handleErrors(req, res, next));

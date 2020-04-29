@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Editor from '@pubpub/editor';
+import Editor from 'components/Editor';
 
 import { GridWrapper } from 'components';
 import { getResizedUrl } from 'utils';

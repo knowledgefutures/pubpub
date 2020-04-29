@@ -1,59 +1,34 @@
-import { Discussion, Pub, CommunityAdmin, PubManager, Branch, BranchPermission } from '../models';
-import { getBranchAccess } from '../branch/permissions';
+import { getScope } from '../utils/queryHelpers';
+import { DiscussionNew } from '../models';
 
-const userEditableFields = ['title', 'content', 'text', 'isArchived', 'highlights', 'labels'];
+const userEditableFields = ['title', 'isClosed', 'labels'];
 
 export const getPermissions = async ({
-	branchId,
 	discussionId,
-	pubId,
 	userId,
+	pubId,
 	communityId,
-	discussHash,
+	accessHash,
+	visibilityAccess,
 }) => {
-	if (!userId) {
+	if (!userId || !visibilityAccess) {
 		return {};
 	}
 
-	const [discussionOnBranch, branch, pub, pubManager, communityAdmin] = await Promise.all([
-		discussionId &&
-			Discussion.findOne({
-				where: { id: discussionId, branchId: branchId },
-				raw: true,
-			}),
-		Branch.findOne({
-			where: { id: branchId, pubId: pubId },
-			include: [
-				{
-					model: BranchPermission,
-					as: 'permissions',
-					required: false,
-				},
-			],
-		}),
-		Pub.findOne({ where: { id: pubId, communityId: communityId }, raw: true }),
-		PubManager.findOne({
-			where: { userId: userId, pubId: pubId },
-			raw: true,
-		}),
-		CommunityAdmin.findOne({
-			where: { userId: userId, communityId: communityId },
-			raw: true,
-		}),
-	]);
+	const scopeData = await getScope({
+		communityId: communityId,
+		pubId: pubId,
+		loginId: userId,
+		accessHash: accessHash,
+	});
 
-	const { canManage, canDiscuss } = await getBranchAccess(
-		discussHash,
-		branch,
-		userId,
-		pub && communityAdmin,
-		pub && pubManager,
-	);
+	const discussionData = await DiscussionNew.findOne({
+		where: { id: discussionId, pubId: pubId },
+	});
 
-	const userCreatedDiscussion = discussionOnBranch && discussionOnBranch.userId === userId;
-
+	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
 	return {
-		create: canDiscuss,
-		update: (canManage || !!userCreatedDiscussion) && userEditableFields,
+		create: canView || (canCreateDiscussions && visibilityAccess !== 'members'),
+		update: canAdmin && discussionData && userEditableFields,
 	};
 };

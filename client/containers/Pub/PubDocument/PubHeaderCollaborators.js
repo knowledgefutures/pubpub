@@ -59,10 +59,10 @@ const PubHeaderCollaborators = (props) => {
 						<div className="avatar-wrapper" key={`present-avatar-${collaborator.id}`}>
 							<Tooltip content={collaborator.name} tooltipClassName="bp3-dark">
 								<Avatar
-									/* Cast userInitials to string since
+									/* Cast initials to string since
 									the anonymous Avatar is a int count */
-									userInitials={String(collaborator.initials)}
-									userAvatar={collaborator.image}
+									initials={String(collaborator.initials)}
+									avatar={collaborator.image}
 									borderColor={collaborator.cursorColor}
 									borderWidth="2px"
 									width={24}

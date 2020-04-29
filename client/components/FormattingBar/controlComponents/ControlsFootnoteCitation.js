@@ -27,6 +27,7 @@ const propTypes = {
 			}),
 		}),
 	}).isRequired,
+	citationStyle: PropTypes.string.isRequired,
 };
 
 const unwrapPendingAttrs = (pendingAttrs, isFootnote) => {
@@ -57,7 +58,7 @@ const wrapUpdateAttrs = (updateAttrs, isFootnote) => {
 };
 
 const ControlsFootnoteCitation = (props) => {
-	const { editorChangeObject, onClose, pendingAttrs } = props;
+	const { editorChangeObject, onClose, pendingAttrs, citationStyle } = props;
 	const { selectedNode } = editorChangeObject;
 	const { citations = [] } = usePubData();
 	const isFootnote = selectedNode.type.name === 'footnote';
@@ -78,9 +79,10 @@ const ControlsFootnoteCitation = (props) => {
 						structuredValue: debouncedValue,
 					},
 				],
+				citationStyle: citationStyle,
 			}),
 		}).then(([result]) => setHtml(result.html));
-	}, [debouncedValue]);
+	}, [debouncedValue, citationStyle]);
 
 	const handleUpdate = () => {
 		commitChanges();

@@ -1,0 +1,47 @@
+figure {
+	text-align: center;
+	margin: 1em auto;
+
+	& > * {
+		width: 100%;
+		pointer-events: none;
+	}
+	&.ProseMirror-selectednode > * {
+		pointer-events: auto;
+	}
+
+	&[data-align='left'] {
+		float: left;
+		margin: 0.5em 1.5em 0.5em 0em;
+	}
+	&[data-align='right'] {
+		float: right;
+		margin: 0.5em 0em 0.5em 1.5em;
+	}
+	@for $i from 1 through 100 {
+		&[data-size='#{$i}'] {
+			width: percentage($i/100);
+		}
+	}
+	&[data-align='full'] {
+		width: 100%;
+	}
+
+	figcaption {
+		opacity: 0.75;
+		padding: 2px 0px 5px;
+	}
+}
+
+.ProseMirror.read-only {
+	figure > * {
+		pointer-events: auto;
+	}
+}
+
+@media only screen and (max-width: 720px) {
+	figure {
+		float: none !important;
+		width: 100% !important;
+	}
+}

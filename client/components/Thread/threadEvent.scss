@@ -1,0 +1,26 @@
+.thread-event-component {
+	display: flex;
+	align-items: center;
+	.avatar-component {
+		margin: 0em 1em;
+	}
+	.status-block {
+		display: flex;
+		margin: 0px 13px 0px 13px;
+		justify-content: center;
+		align-items: center;
+		width: 24px;
+		height: 24px;
+		border-radius: 5px;
+		color: white;
+		&.open {
+			background: #238c2c;
+		}
+		&.closed {
+			background: #c23030;
+		}
+		&.completed {
+			background: #a854a8;
+		}
+	}
+}

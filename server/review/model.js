@@ -1,4 +1,8 @@
 export default (sequelize, dataTypes) => {
+	/* shortId, isClosed, mergeId, pubId, sourceBranch, destBranch */
+	/* can be deleted once dashboard goes live */
+	/* We need a migration plan for ReviewEvents. Does it make sense */
+	/* to generalize that to ThreadEvents? */
 	return sequelize.define(
 		'Review',
 		{
@@ -15,12 +19,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Review, Branch, Merge, ReviewEvent } = models;
-					Review.belongsTo(Merge, {
-						onDelete: 'CASCADE',
-						as: 'merge',
-						foreignKey: 'mergeId',
-					});
+					const { Review, ReviewEvent, Branch } = models;
 					Review.belongsTo(Branch, {
 						onDelete: 'CASCADE',
 						as: 'sourceBranch',

@@ -29,6 +29,10 @@ const AccentStyle = function(props) {
 				.rgb()
 				.string(),
 			minimal: Color(inputColor)
+				.fade(0.9)
+				.rgb()
+				.string(),
+			minimalAction: Color(inputColor)
 				.fade(0.8)
 				.rgb()
 				.string(),
@@ -40,6 +44,7 @@ const AccentStyle = function(props) {
 		hover: baseHover,
 		action: baseAction,
 		minimal: baseMinimal,
+		minimalAction: baseMinimalAction,
 	} = generateColors(accentColorDark);
 
 	const headerAccentColor = generateColors(
@@ -65,9 +70,15 @@ const AccentStyle = function(props) {
 			.accent-color.header-component, .accent-color.nav-bar-component, .accent-color.footer-component, .accent-color.nav-item { color: ${
 				useHeaderTextAccent ? navAccentColor : headerAccentColor.text
 			}; }
-			.bp3-button.bp3-intent-primary { background-color: ${baseAction}; color: ${baseText}; }
-			.bp3-button.bp3-intent-primary:hover:not(.bp3-disabled) { background-color: ${baseHover}; color: ${baseText}; }
-			.bp3-button.bp3-intent-primary:active:not(.bp3-disabled), .bp3-button.bp3-intent-primary.bp3-active:not(.bp3-disabled) { background-color: ${baseColor}; color: ${baseText}; }
+			.bp3-button.bp3-intent-primary:not(.bp3-outlined) { background-color: ${baseAction}; color: ${baseText}; }
+			.bp3-button.bp3-intent-primary:not(.bp3-outlined):hover:not(.bp3-disabled) { background-color: ${baseHover}; color: ${baseText}; }
+			.bp3-button.bp3-intent-primary:not(.bp3-outlined):active:not(.bp3-disabled), .bp3-button.bp3-intent-primary.bp3-active:not(.bp3-disabled) { background-color: ${baseColor}; color: ${baseText}; }
+
+			.bp3-button.bp3-intent-primary.bp3-outlined { border-color: ${baseColor}; color: ${baseColor}; }
+			.bp3-button.bp3-intent-primary.bp3-outlined:hover:not(.bp3-disabled) { background-color: ${baseMinimal}; color: ${baseColor}; }
+			.bp3-button.bp3-intent-primary.bp3-outlined:active:not(.bp3-disabled), .bp3-button.bp3-intent-primary.bp3-active:not(.bp3-disabled) { background-color: ${baseMinimalAction}; color: ${baseColor}; }
+
+
 			.bp3-tag.bp3-intent-primary { background: ${baseColor}; color: ${baseText}; }
 			.bp3-tag.bp3-minimal.bp3-intent-primary { background-color: ${baseMinimal}; color: inherit; }
 			.accent-color .bp3-button:not([class*="bp3-intent-"]), .accent-color .bp3-button[class*="bp3-icon-"]::before { color: inherit; }

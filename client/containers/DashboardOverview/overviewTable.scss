@@ -1,0 +1,36 @@
+.overview-table-component {
+	.table-title {
+		font-weight: 500;
+		font-size: 16px;
+		text-transform: uppercase;
+		margin-bottom: 10px;
+	}	
+	.top-sticky {
+		background: #f7f7f7;
+		z-index: 2;
+		box-shadow: 0 4px 2px -2px transparent;
+		transition: .2s linear box-shadow;
+		&.js-is-sticky {
+			box-shadow: 0 3px 2px -2px #ddd;
+		}
+	}
+	.list {
+		background: #f7f7f7;
+		border-bottom: 1px solid #ddd;
+		// border-top: 0px solid #ddd;
+		.overview-row-component {
+			border-left: 1px solid #ddd;
+			border-right: 1px solid #ddd;
+		}
+		&.collection-list {
+			.pubs {
+				display: none;
+			}
+		}
+		&:not(.collection-list) {
+			.pub-options {
+				display: none;
+			}
+		}
+	}
+}

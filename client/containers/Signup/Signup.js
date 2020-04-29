@@ -1,142 +1,114 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { Button, NonIdealState } from '@blueprintjs/core';
-
-import { GridWrapper, InputField, PageWrapper } from 'components';
-import { hydrateWrapper, apiFetch } from 'utils';
+import { GridWrapper, InputField } from 'components';
+import { apiFetch } from 'utils';
+import { usePageContext } from 'utils/hooks';
 
 require('./signup.scss');
 
-const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	loginData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
-};
-
-class Signup extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			email: '',
-			confirmEmail: '',
-			isSuccessful: false,
-		};
-		this.onSignupSubmit = this.onSignupSubmit.bind(this);
-		this.onEmailChange = this.onEmailChange.bind(this);
-	}
-
-	onSignupSubmit(evt) {
+const Signup = () => {
+	const { locationData, communityData } = usePageContext();
+	const [email, setEmail] = useState('');
+	const [isSuccessful, setIsSuccessful] = useState(false);
+	const [postSignupIsLoading, setPostSignupIsLoading] = useState(false);
+	const [postSignupError, setPostSignupError] = useState(undefined);
+	const [confirmEmail, setConfirmEmail] = useState('');
+	const onSignupSubmit = (evt) => {
 		evt.preventDefault();
-
-		this.setState({ postSignupIsLoading: true, postSignupError: undefined });
+		setPostSignupIsLoading(true);
+		postSignupError(undefined);
 		return apiFetch('/api/signup', {
 			method: 'POST',
 			body: JSON.stringify({
-				email: this.state.email.toLowerCase(),
-				confirmEmail: this.state.confirmEmail,
-				communityId: this.props.communityData.id,
+				email: email.toLowerCase(),
+				communityId: communityData.id,
+				confirmEmail: confirmEmail,
 			}),
 		})
 			.then(() => {
-				this.setState({ postSignupIsLoading: false, isSuccessful: true });
+				setPostSignupIsLoading(false);
+				setIsSuccessful(true);
 			})
 			.catch((err) => {
-				this.setState({ postSignupIsLoading: false, postSignupError: err });
+				setPostSignupIsLoading(false);
+				setPostSignupError(err);
 			});
-	}
-
-	onEmailChange(evt) {
-		this.setState({ email: evt.target.value });
-	}
-
-	render() {
-		return (
-			<div id="signup-container">
-				<PageWrapper
-					loginData={this.props.loginData}
-					communityData={this.props.communityData}
-					locationData={this.props.locationData}
-					hideNav={true}
-					hideFooter={true}
-				>
-					<GridWrapper containerClassName="small">
-						{!this.state.isSuccessful && (
-							<div>
-								<h1>Signup</h1>
-								{!this.props.locationData.isBasePubPub && (
-									<p>
-										Signup to create a{' '}
-										<a href="https://www.pubpub.org">PubPub</a> account, which
-										will work on <b>{this.props.communityData.title}</b> and all
-										other PubPub communities.
-									</p>
-								)}
-								<form onSubmit={this.onSignupSubmit}>
-									<InputField
-										label="Email"
-										placeholder="example@email.com"
-										value={this.state.email}
-										onChange={this.onEmailChange}
-										error={this.state.postSignupError}
-									/>
-									<input
-										type="text"
-										className="confirm-email"
-										name="confirmEmail"
-										tabIndex="-1"
-										autoComplete="off"
-										onChange={(evt) =>
-											this.setState({ confirmEmail: evt.target.value })
-										}
-									/>
-									<Button
-										name="signup"
-										type="submit"
-										className="bp3-button bp3-intent-primary"
-										onClick={this.onSignupSubmit}
-										text="Signup"
-										disabled={!this.state.email}
-										loading={this.state.postSignupIsLoading}
-									/>
-								</form>
-								<a href="/login" className="switch-message">
-									Already have a PubPub account? Click to Login
-								</a>
-							</div>
+	};
+	const onEmailChange = (evt) => {
+		setEmail(evt.target.value);
+	};
+	return (
+		<div id="signup-container">
+			<GridWrapper containerClassName="small">
+				{!isSuccessful && (
+					<div>
+						<h1>Signup</h1>
+						{!locationData.isBasePubPub && (
+							<p>
+								Signup to create a <a href="https://www.pubpub.org">PubPub</a>{' '}
+								account, which will work on <b>{communityData.title}</b> and all
+								other PubPub communities.
+							</p>
 						)}
-
-						{this.state.isSuccessful && (
-							<NonIdealState
-								title="Signup Successful"
-								description={
-									<div className="success">
-										<p>
-											An email has been sent to <b>{this.state.email}</b>
-										</p>
-										<p>Follow the link in that email to create your account.</p>
-									</div>
-								}
-								visual="tick-circle"
-								action={
-									<Button
-										name="resendEmail"
-										type="button"
-										className="bp3-button"
-										onClick={this.onSignupSubmit}
-										text="Resend Email"
-										loading={this.state.postSignupIsLoading}
-									/>
-								}
+						<form onSubmit={onSignupSubmit}>
+							<InputField
+								label="Email"
+								placeholder="example@email.com"
+								value={email}
+								onChange={onEmailChange}
+								error={postSignupError}
 							/>
-						)}
-					</GridWrapper>
-				</PageWrapper>
-			</div>
-		);
-	}
-}
+							<input
+								type="text"
+								className="confirm-email"
+								name="confirmEmail"
+								tabIndex="-1"
+								autoComplete="off"
+								onChange={(evt) => setConfirmEmail(evt.target.value)}
+							/>
+							<Button
+								name="signup"
+								type="submit"
+								className="bp3-button bp3-intent-primary"
+								onClick={onSignupSubmit}
+								text="Signup"
+								disabled={!email}
+								loading={postSignupIsLoading}
+							/>
+						</form>
+						<a href="/login" className="switch-message">
+							Already have a PubPub account? Click to Login
+						</a>
+					</div>
+				)}
 
-Signup.propTypes = propTypes;
+				{isSuccessful && (
+					<NonIdealState
+						title="Signup Successful"
+						description={
+							<div className="success">
+								<p>
+									An email has been sent to <b>{email}</b>
+								</p>
+								<p>Follow the link in that email to create your account.</p>
+							</div>
+						}
+						visual="tick-circle"
+						action={
+							<Button
+								name="resendEmail"
+								type="button"
+								className="bp3-button"
+								onClick={onSignupSubmit}
+								text="Resend Email"
+								loading={postSignupIsLoading}
+							/>
+						}
+					/>
+				)}
+			</GridWrapper>
+		</div>
+	);
+};
+
 export default Signup;
-
-hydrateWrapper(Signup);

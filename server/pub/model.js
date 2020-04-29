@@ -23,13 +23,8 @@ export default (sequelize, dataTypes) => {
 			avatar: { type: dataTypes.TEXT },
 			headerStyle: {
 				type: dataTypes.ENUM,
-				values: ['white-blocks', 'black-blocks'],
+				values: ['white-blocks', 'black-blocks', 'dark', 'light'],
 				defaultValue: null,
-			},
-			headerBackgroundType: {
-				type: dataTypes.ENUM,
-				values: ['color', 'image'],
-				defaultValue: 'color',
 			},
 			headerBackgroundColor: { type: dataTypes.STRING },
 			headerBackgroundImage: { type: dataTypes.TEXT },
@@ -37,9 +32,15 @@ export default (sequelize, dataTypes) => {
 			lastPublishedAt: { type: dataTypes.DATE },
 			doi: { type: dataTypes.TEXT },
 			labels: { type: dataTypes.JSONB },
-			isCommunityAdminManaged: { type: dataTypes.BOOLEAN },
 			downloads: { type: dataTypes.JSONB },
 			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
+			citationStyle: { type: dataTypes.TEXT, defaultValue: 'apa' },
+			citationInlineStyle: { type: dataTypes.TEXT, defaultValue: 'count' },
+			// isPublicBranches: { type: dataTypes.BOOLEAN },
+			// isPublicDiscussions: { type: dataTypes.BOOLEAN },
+			// isPublicReviews: { type: dataTypes.BOOLEAN },
+			viewHash: { type: dataTypes.STRING },
+			editHash: { type: dataTypes.STRING },
 
 			/* Set by Associations */
 			communityId: { type: dataTypes.UUID, allowNull: false },
@@ -51,23 +52,22 @@ export default (sequelize, dataTypes) => {
 					const {
 						Pub,
 						PubAttribution,
-						PubManager,
 						CollectionPub,
 						Community,
-						Discussion,
+						// Discussion,
 						Branch,
-						Merge,
+						// Merge,
 						PubVersion,
-						Review,
+						// Review,
+						Release,
+						// Thread,
+						DiscussionNew,
+						Fork,
+						ReviewNew,
 					} = models;
 					Pub.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
 						as: 'attributions',
-						foreignKey: 'pubId',
-					});
-					Pub.hasMany(PubManager, {
-						onDelete: 'CASCADE',
-						as: 'managers',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(CollectionPub, {
@@ -80,9 +80,29 @@ export default (sequelize, dataTypes) => {
 						as: 'community',
 						foreignKey: 'communityId',
 					});
-					Pub.hasMany(Discussion, {
+					// Pub.hasMany(Discussion, {
+					// 	onDelete: 'CASCADE',
+					// 	as: 'discussions',
+					// 	foreignKey: 'pubId',
+					// });
+					// Pub.hasMany(Thread, {
+					// 	onDelete: 'CASCADE',
+					// 	as: 'threads',
+					// 	foreignKey: 'pubId',
+					// });
+					Pub.hasMany(DiscussionNew, {
 						onDelete: 'CASCADE',
 						as: 'discussions',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(Fork, {
+						onDelete: 'CASCADE',
+						as: 'forks',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(ReviewNew, {
+						onDelete: 'CASCADE',
+						as: 'reviews',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(Branch, {
@@ -90,21 +110,26 @@ export default (sequelize, dataTypes) => {
 						as: 'branches',
 						foreignKey: 'pubId',
 					});
-					Pub.hasMany(Merge, {
+					Pub.hasMany(Release, {
 						onDelete: 'CASCADE',
-						as: 'merges',
+						as: 'releases',
 						foreignKey: 'pubId',
 					});
+					// Pub.hasMany(Merge, {
+					// 	onDelete: 'CASCADE',
+					// 	as: 'merges',
+					// 	foreignKey: 'pubId',
+					// });
 					Pub.hasMany(PubVersion, {
 						onDelete: 'CASCADE',
 						as: 'pubVersions',
 						foreignKey: 'pubId',
 					});
-					Pub.hasMany(Review, {
-						onDelete: 'CASCADE',
-						as: 'reviews',
-						foreignKey: 'pubId',
-					});
+					// Pub.hasMany(Review, {
+					// 	onDelete: 'CASCADE',
+					// 	as: 'reviews',
+					// 	foreignKey: 'pubId',
+					// });
 				},
 			},
 		},

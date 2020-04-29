@@ -14,7 +14,7 @@ $drop-area-bkg: rgba(138, 155, 168, .15);
     .drop-area-container {
         width: 100%;
     }
-    .file-drop-area {
+    .bp3-button.file-drop-area {
         @include fix-button();
         height: 150px;
         background: $drop-area-bkg;
@@ -30,7 +30,7 @@ $drop-area-bkg: rgba(138, 155, 168, .15);
             }
         }
     }
-    .directory-drop-area {
+    .bp3-button.directory-drop-area {
         @include fix-button();
         height: 40px;
     }

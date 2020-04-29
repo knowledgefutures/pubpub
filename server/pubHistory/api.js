@@ -1,54 +1,36 @@
-import app from '../server';
+import app, { wrap } from '../server';
 import { getBranchDoc } from '../utils/firebaseAdmin';
-import { Branch, BranchPermission, User, CommunityAdmin, PubManager } from '../models';
-import { getBranchAccess } from '../branch/permissions';
 
-app.get('/api/pubHistory', async (req, res) => {
-	try {
-		const { branchId, pubId, communityId, accessHash, historyKey } = req.query;
-		const { id: userId } = req.user || {};
-		const branch = await Branch.findOne({
-			where: { id: branchId },
-			include: [
-				{
-					model: BranchPermission,
-					as: 'permissions',
-					separate: true,
-					required: false,
-					include: [
-						{
-							model: User,
-							as: 'user',
-							attributes: ['id'],
-						},
-					],
-				},
-			],
+import { getPermissions } from './permissions';
+
+const getRequestIds = (req) => {
+	const user = req.user || {};
+	const { pubId, communityId, branchId, historyKey, accessHash } = req.query;
+	return {
+		userId: user.id,
+		pubId: pubId,
+		communityId: communityId,
+		branchId: branchId,
+		historyKey: historyKey,
+		accessHash: accessHash,
+	};
+};
+
+app.get(
+	'/api/pubHistory',
+	wrap(async (req, res) => {
+		const { branchId, pubId, communityId, historyKey, accessHash, userId } = getRequestIds(req);
+		const { canCreateExport } = await getPermissions({
+			userId: userId,
+			communityId: communityId,
+			pubId: pubId,
+			branchId: branchId,
+			accessHash: accessHash,
 		});
-		const [communityAdmin, pubManager] = await Promise.all([
-			userId &&
-				CommunityAdmin.findOne({ where: { userId: userId, communityId: communityId } }),
-			userId &&
-				PubManager.findOne({
-					where: {
-						pubId: pubId,
-						userId: userId,
-					},
-				}),
-		]);
-		const { canView } = getBranchAccess(
-			accessHash,
-			branch,
-			userId,
-			!!communityAdmin,
-			!!pubManager,
-		);
-		if (canView) {
-			const branchInfo = await getBranchDoc(pubId, branchId, historyKey);
+		if (canCreateExport) {
+			const branchInfo = await getBranchDoc(pubId, branchId, parseInt(historyKey, 10));
 			return res.status(200).json(branchInfo);
 		}
 		return res.status(403).json({});
-	} catch (error) {
-		return res.status(500).json({ error: error });
-	}
-});
+	}),
+);

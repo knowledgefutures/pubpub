@@ -20,13 +20,7 @@ app.post(
 		if (!permissions.create) {
 			throw new ForbiddenError();
 		}
-		const newCollection = await createCollection(
-			{
-				...req.body,
-				collectionId: req.body.id,
-			},
-			req.user,
-		);
+		const newCollection = await createCollection(req.body, req.user);
 		return res.status(201).json(newCollection);
 	}),
 );

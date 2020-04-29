@@ -1,0 +1,40 @@
+@import 'styles/variables.scss';
+
+.pub-header-sticky-component {
+    position: absolute;
+    bottom: 0px;
+    padding: 0em 1em;
+    line-height: 37px;
+    width: 100%;
+    transition: 0.2s linear opacity;
+    display: flex;
+    color: inherit;
+
+    .sticky-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1 1 auto;
+        font-family: $header-font;
+        font-size: 18px;
+        padding-right: 2em;
+    }
+
+    .sticky-buttons {
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+
+        .bp3-button,
+        .bp3-icon {
+            color: inherit;
+        }
+
+        .dot {
+            padding: 0em 0.3em;
+            height: 24px;
+            line-height: 24px;
+            display: block;
+        }
+    }
+}

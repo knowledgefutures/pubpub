@@ -78,12 +78,29 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 		}
 	};
 
-	return { setState: setState };
+	const immediately = (isImmediate = true) => {
+		return {
+			setState: (...args) => {
+				if (isImmediate) {
+					queue.push(args);
+					setStateNow();
+				} else {
+					setState(...args);
+				}
+			},
+		};
+	};
+
+	return {
+		setState: setState,
+		immediately: immediately,
+	};
 };
 class PubSyncManager extends React.Component {
 	constructor(props) {
 		super(props);
 		const { historyData } = this.props.pubData;
+		const isViewingHistory = historyData.currentKey !== historyData.latestKey;
 		this.state = {
 			firebaseRootRef: undefined,
 			firebaseBranchRef: undefined,
@@ -97,7 +114,10 @@ class PubSyncManager extends React.Component {
 			historyData: {
 				...historyData,
 				outstandingRequests: 0,
-				isViewingHistory: false,
+				latestKeyReceivedAt: null,
+				isViewingHistory: isViewingHistory,
+				loadedIntoHistory: isViewingHistory,
+				historyDocKey: `history-${historyData.currentKey}`,
 			},
 		};
 		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));
@@ -124,10 +144,6 @@ class PubSyncManager extends React.Component {
 						.on('child_changed', this.syncMetadata);
 
 					this.state.firebaseBranchRef
-						.child('discussionsContentLive')
-						.on('value', this.syncDiscussionsContent);
-
-					this.state.firebaseBranchRef
 						.child('cursors')
 						.on('value', this.syncRemoteCollabUsers);
 
@@ -146,11 +162,6 @@ class PubSyncManager extends React.Component {
 	componentWillUnmount() {
 		if (this.state.firebaseRootRef) {
 			this.state.firebaseRootRef.child('metadata').off('child_changed', this.syncMetadata);
-		}
-		if (this.state.firebaseBranchRef) {
-			this.state.firebaseBranchRef
-				.child('discussionsContentLive')
-				.off('child_changed', this.syncDiscussionsContent);
 		}
 	}
 
@@ -220,12 +231,12 @@ class PubSyncManager extends React.Component {
 		}
 	}
 
-	updatePubData(newPubData) {
+	updatePubData(newPubData, isImmediate = false) {
 		/* First, set the local state. */
 		/* Then, sync appropriate data to firebase. */
 		/* Other clients will receive updates which */
 		/* triggers the syncMetadata function. */
-		this.idleStateUpdater.setState(
+		this.idleStateUpdater.immediately(isImmediate).setState(
 			(prevState) => {
 				const nextData =
 					typeof newPubData === 'function' ? newPubData(prevState.pubData) : newPubData;
@@ -246,7 +257,6 @@ class PubSyncManager extends React.Component {
 					'description',
 					'doi',
 					'downloads',
-					'isCommunityAdminManaged',
 					'labels',
 					'managers',
 					'reviews',
@@ -264,7 +274,18 @@ class PubSyncManager extends React.Component {
 				if (this.state.firebaseRootRef && hasUpdates) {
 					this.state.firebaseRootRef.child('metadata').update(firebaseSyncData);
 				}
-				document.title = getPubPageTitle(this.state.pubData, this.props.communityData);
+				if (typeof newPubData.title === 'string') {
+					document.title = getPubPageTitle(
+						/* this.state.pubData does not always have the newest title. */
+						/* My guess is that there are cases where idleStateUpdater */
+						/* causes a delay such that this callback is called before */
+						/* before the updateState event has completed. This seems */
+						/* counterintuitiveand may require us to rethink whether a  */
+						/* callback on idleStateUpdater is appropriate. */
+						{ ...this.state.pubData, title: newPubData.title },
+						this.props.communityData,
+					);
+				}
 			},
 		);
 	}
@@ -282,87 +303,71 @@ class PubSyncManager extends React.Component {
 
 	updateHistoryData(newHistoryData) {
 		const { pubData, locationData } = this.props;
-		const { historyData: prevHistoryData } = this.state;
-		this.idleStateUpdater.setState(
-			{
-				historyData: {
-					...prevHistoryData,
-					...newHistoryData,
-				},
-			},
-			() => {
-				const { historyData: nextHistoryData } = this.state;
-				if (prevHistoryData.currentKey !== nextHistoryData.currentKey) {
-					// First, check to see whether we have an editorChangeObject corresponding to
-					// the most recent document. If so, we don't need to do a fetch from the server
-					// for this version, because we already have it stored locally.
-					const {
-						collabData: { editorChangeObject },
-					} = this.state;
-					const currentCollabDoc =
-						editorChangeObject &&
-						editorChangeObject.view &&
-						editorChangeObject.view.state &&
-						editorChangeObject.view.state.doc;
-					if (
-						nextHistoryData.currentKey === nextHistoryData.latestKey &&
-						currentCollabDoc
-					) {
-						this.setState(({ historyData }) => {
-							const nextTimestamp =
-								historyData.timestamps[nextHistoryData.currentKey] || Date.now();
-							return {
-								historyData: {
-									...historyData,
-									historyDoc: currentCollabDoc.toJSON(),
-									historyDocKey: `history-${nextHistoryData.currentKey}`,
-									timestamps: {
-										...historyData.timestamps,
-										[nextHistoryData.currentKey]: nextTimestamp,
-									},
+		const {
+			historyData: prevHistoryData,
+			collabData: { editorChangeObject },
+		} = this.state;
+		const now = Date.now();
+		const nextHistoryData = { ...prevHistoryData, ...newHistoryData };
+		const currentCollabDoc =
+			editorChangeObject && editorChangeObject.view && editorChangeObject.view.state.doc;
+		if (currentCollabDoc && nextHistoryData.currentKey === nextHistoryData.latestKey) {
+			this.idleStateUpdater.setState(({ historyData }) => {
+				const nextTimestamp = historyData.timestamps[nextHistoryData.currentKey] || now;
+				// Don't add -1 (indicating a lack of entries) as a timestamp
+				const timestampUpdate =
+					nextHistoryData.currentKey >= 0
+						? { [nextHistoryData.currentKey]: nextTimestamp }
+						: {};
+				return {
+					historyData: {
+						...historyData,
+						...newHistoryData,
+						historyDoc: currentCollabDoc.toJSON(),
+						historyDocKey: `history-${nextHistoryData.currentKey}`,
+						timestamps: {
+							[-1]: new Date(pubData.createdAt).valueOf(),
+							...historyData.timestamps,
+							...timestampUpdate,
+						},
+					},
+				};
+			});
+		} else {
+			this.setState(
+				({ historyData }) => ({
+					historyData: {
+						...historyData,
+						outstandingRequests: historyData.outstandingRequests + 1,
+					},
+				}),
+				() =>
+					fetchVersionFromHistory(
+						pubData,
+						newHistoryData.currentKey,
+						locationData.query.access,
+					).then(({ doc, historyData: { timestamps } }) => {
+						this.setState(({ historyData }) => ({
+							historyData: {
+								...historyData,
+								...newHistoryData,
+								historyDoc: doc,
+								historyDocKey: `history-${nextHistoryData.currentKey}`,
+								outstandingRequests: historyData.outstandingRequests - 1,
+								timestamps: {
+									...historyData.timestamps,
+									...timestamps,
 								},
-							};
-						});
-					} else {
-						// The new state wants a document from somewhere in the history other than
-						// the most recent version. We'll have to fetch that with the API.
-						this.setState(
-							({ historyData }) => ({
-								historyData: {
-									...historyData,
-									outstandingRequests: historyData.outstandingRequests + 1,
-								},
-							}),
-							() =>
-								fetchVersionFromHistory(
-									pubData,
-									newHistoryData.currentKey,
-									locationData.query.access,
-								).then(({ content, historyData: { timestamps } }) => {
-									this.setState(({ historyData }) => ({
-										historyData: {
-											...historyData,
-											historyDoc: content,
-											historyDocKey: `history-${nextHistoryData.currentKey}`,
-											outstandingRequests:
-												historyData.outstandingRequests - 1,
-											timestamps: {
-												...historyData.timestamps,
-												...timestamps,
-											},
-										},
-									}));
-								}),
-						);
-					}
-				}
-			},
-		);
+							},
+						}));
+					}),
+			);
+		}
 	}
 
-	updateLocalData(type, data) {
+	updateLocalData(type, data, { isImmediate = false } = {}) {
 		if (type === 'pub') {
-			this.updatePubData(data);
+			this.updatePubData(data, isImmediate);
 		}
 		if (type === 'collab') {
 			this.updateCollabData(data);

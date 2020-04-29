@@ -16,10 +16,14 @@ app.post('/api/pubs', (req, res) => {
 	const requestIds = getRequestIds(req);
 	getPermissions(requestIds)
 		.then((permissions) => {
+			const { communityId, defaultCollectionIds } = req.body;
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			return createPub(req.body, req.user);
+			return createPub(
+				{ communityId: communityId, defaultCollectionIds: defaultCollectionIds },
+				requestIds.userId,
+			);
 		})
 		.then((newPub) => {
 			return res.status(201).json(newPub);

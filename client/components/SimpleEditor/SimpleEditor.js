@@ -1,7 +1,7 @@
 import React, { useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { DOMSerializer } from 'prosemirror-model';
-import { buildSchema, getDocForHtmlString, docIsEmpty } from '@pubpub/editor';
+import { buildSchema, getDocForHtmlString, docIsEmpty } from 'components/Editor';
 
 import { MinimalEditor } from 'components';
 

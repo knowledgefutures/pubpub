@@ -1,25 +1,11 @@
 import { remove as removeDiacritics } from 'diacritics';
-import { setIsProd, isProd } from './isProd';
+
+import { isProd } from 'shared/utils/environment';
 
 export { hydrateWrapper } from './hydrateWrapper';
 export { apiFetch } from './apiFetch';
 
-if (typeof window === 'undefined') {
-	setIsProd(process.env.PUBPUB_PRODUCTION);
-}
-
-export const getFirebaseConfig = function() {
-	return {
-		apiKey: 'AIzaSyCVBq7I9ddJpHhs-DzVEEdM09-VqTVex1g',
-		authDomain: 'pubpub-v6.firebaseapp.com',
-		projectId: 'pubpub-v6',
-		storageBucket: 'pubpub-v6.appspot.com',
-		messagingSenderId: '503345633278',
-		databaseURL: isProd()
-			? 'https://pubpub-v6-prod.firebaseio.com'
-			: 'https://pubpub-v6-dev.firebaseio.com',
-	};
-};
+export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 export const getResizedUrl = function(url, type, dimensions) {
 	if (!url || url.indexOf('https://assets.pubpub.org/') === -1) {
@@ -136,6 +122,20 @@ export const slugifyString = (input) => {
 		.toLowerCase();
 };
 
+export const timeAgoBaseProps = {
+	minPeriod: 60,
+	formatter: (value, unit, suffix) => {
+		if (unit === 'second') {
+			return 'just now';
+		}
+		let newUnit = unit;
+		if (value > 1) {
+			newUnit += 's';
+		}
+		return `${value} ${newUnit} ${suffix}`;
+	},
+};
+
 export function getDefaultLayout() {
 	// if (isPage) {
 	// 	return [
@@ -211,6 +211,26 @@ export function renderLatexString(value, isBlock, callback) {
 			callback(error);
 		});
 }
+
+// export const splitThreads = (threads) => {
+// 	const discussions = [];
+// 	const forks = [];
+// 	const reviews = [];
+// 	threads.forEach((thread) => {
+// 		if (thread.reviewId) {
+// 			reviews.push(thread);
+// 		} else if (thread.forkId) {
+// 			forks.push(thread);
+// 		} else {
+// 			discussions.push(thread);
+// 		}
+// 	});
+// 	return {
+// 		discussions: discussions,
+// 		forks: forks,
+// 		reviews: reviews,
+// 	};
+// };
 
 export function checkForAsset(url) {
 	let checkCount = 0;
@@ -344,8 +364,11 @@ export function generatePageBackground(pageTitle) {
 export function generateRenderLists(layout, pubs) {
 	/* Sort pubs by activeBranch date */
 	const allPubs = pubs.sort((foo, bar) => {
-		const fooDate = foo.activeBranch.firstKeyAt || foo.createdAt;
-		const barDate = bar.activeBranch.firstKeyAt || bar.createdAt;
+		// const fooDate = foo.activeBranch.firstKeyAt || foo.createdAt;
+		// const barDate = bar.activeBranch.firstKeyAt || bar.createdAt;
+		// TODO: Does this still sort newest properly. May have to implement release dates
+		const fooDate = foo.createdAt;
+		const barDate = bar.createdAt;
 		if (fooDate < barDate) {
 			return 1;
 		}

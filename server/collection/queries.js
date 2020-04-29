@@ -1,16 +1,21 @@
 import { normalizeMetadataToKind } from 'shared/collections/metadata';
+import { slugifyString, generateHash } from 'utils';
 import { Collection, CollectionPub, Community } from '../models';
 
-export const createCollection = (inputValues) => {
-	return Community.findOne({ where: { id: inputValues.communityId } }).then((community) => {
+export const createCollection = ({ communityId, title, kind, pageId = null, isPublic = false }) => {
+	return Community.findOne({ where: { id: communityId } }).then((community) => {
 		const collection = {
-			title: inputValues.title.trim(),
+			title: title.trim(),
+			slug: slugifyString(title),
 			isRestricted: true,
-			isPublic: true,
-			communityId: inputValues.communityId,
-			kind: inputValues.kind,
+			isPublic: isPublic,
+			viewHash: generateHash(8),
+			editHash: generateHash(8),
+			communityId: communityId,
+			pageId: pageId,
+			kind: kind,
 		};
-		const metadata = normalizeMetadataToKind({}, inputValues.kind, {
+		const metadata = normalizeMetadataToKind({}, kind, {
 			community: community,
 			collection: collection,
 		});

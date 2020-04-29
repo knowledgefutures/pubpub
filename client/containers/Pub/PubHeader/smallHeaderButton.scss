@@ -1,0 +1,43 @@
+@import './themes.scss';
+
+.small-header-button-component {
+    @include base-button;
+    display: flex;
+
+    .label {
+        text-transform: uppercase;
+        white-space: nowrap;
+        letter-spacing: 0.25px;
+        margin-left: 9px;
+        font-size: 10px;
+    }
+
+    .icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 2px;
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+    }
+
+    &.label-left {
+        flex-direction: row-reverse;
+        .label {
+            margin-left: 0;
+            margin-right: 9px;
+        }
+    }
+
+    &:disabled {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
+    &:hover {
+        .label {
+            text-decoration: underline;
+        }
+    }
+}

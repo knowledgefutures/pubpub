@@ -1,0 +1,15 @@
+.collections-bar-component {
+    display: flex;
+    align-items: center;    
+    flex-shrink: 1;
+    overflow: hidden;
+    .collections-bar-button-component {
+        margin-right: 6px;
+    }
+    .collection-browser-button {
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}

@@ -5,7 +5,8 @@ export default {
 	description:
 		'The first computing machines were so large they filled entire rooms. Today they are ubiquitous, built invisibly into our environments. While it is tempting to view this change within a predetermined space of progress, we can still shape the future on our own terms.',
 	avatar: 'https://assets.pubpub.org/9pi1c5c6/41554230047846.jpeg',
-	headerBackgroundType: 'image',
+	headerBackgroundColor: 'dark',
+	headerStyle: 'light',
 	headerBackgroundImage: 'https://assets.pubpub.org/eys4nqr0/11528828519590.jpg',
 	firstPublishedAt: '2019-04-22T03:43:24.218Z',
 	lastPublishedAt: '2019-04-22T03:43:24.218Z',
@@ -14,7 +15,6 @@ export default {
 	doi: '10.21428/eea8ec7d.4c3a0515',
 	labels: null,
 	canManage: true,
-	isCommunityAdminManaged: true,
 	review: null,
 	downloads: null,
 	licenseSlug: 'cc-by',
@@ -23,6 +23,12 @@ export default {
 	updatedAt: '2019-04-30T15:23:17.211Z',
 	footnotes: [],
 	citations: [],
+	releases: [],
+	historyData: {
+		currentKey: -1,
+		latestKey: -1,
+		timestamps: [],
+	},
 	reviews: [
 		{
 			id: '2f2cce19-dde0-4a47-8e49-a5105cb27d83',
@@ -227,9 +233,7 @@ export default {
 			description: null,
 			submissionAlias: null,
 			order: 0,
-			communityAdminPermissions: 'none',
 			publicPermissions: 'view',
-			pubManagerPermissions: 'view',
 			permissions: [
 				{
 					id: '00ed4bc1-a408-4725-87f4-b07a41b2cfb5',
@@ -264,9 +268,7 @@ export default {
 			description: null,
 			submissionAlias: 'Submit for Review',
 			order: 1,
-			communityAdminPermissions: 'none',
 			publicPermissions: 'view',
-			pubManagerPermissions: 'view',
 			permissions: [],
 			isActive: false,
 			viewHash: 'cat2',
@@ -425,7 +427,6 @@ export default {
 		description: null,
 		submissionAlias: null,
 		order: 0,
-		communityAdminPermissions: 'none',
 		publicPermissions: 'edit',
 		permissions: [],
 		isActive: true,

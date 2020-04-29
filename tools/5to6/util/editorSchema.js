@@ -1,4 +1,4 @@
-const { buildSchema } = require('@pubpub/editor');
+const { buildSchema } = require('components/Editor');
 
 const discussionSchema = {
 	discussion: {

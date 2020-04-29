@@ -4,8 +4,11 @@ import Color from 'color';
 import {
 	sequelize,
 	Pub,
+	Discussion,
 	Branch,
+	Member,
 	Export,
+	PubManagers,
 	Version,
 	PubManager,
 	Collaborator,
@@ -16,14 +19,28 @@ import {
 	CollectionAttribution,
 	Page,
 	Tag,
+	Thread,
+	ThreadComment,
 	PubTag,
 	Community,
 	WorkerTask,
+	Release,
 } from './models';
-import { generateHash } from './utils';
+// import { generateHash } from './utils';
 import mudder from 'mudder';
 
 console.log('Beginning Migration');
+
+const generateHash = (length) => {
+	const tokenLength = length || 32;
+	const possible = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+	let hash = '';
+	for (let index = 0; index < tokenLength; index += 1) {
+		hash += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return hash;
+};
 
 new Promise((resolve) => {
 	return resolve();
@@ -701,11 +718,17 @@ new Promise((resolve) => {
 	// 	]);
 	// })
 	// .then(() => {
+	// 	return Promise.all([
+	// 		sequelize.queryInterface.addColumn('Pubs', 'pubStyleId', {
+	// 			type: Sequelize.UUID,
+	// 		}),
+	// 	]);
+	// .then(() => {
 	// 	return Promise.all(['PubAttributions', 'CollectionAttributions'].map(tableName => 
 	// 		sequelize.queryInterface.addColumn(
 	// 			tableName,
 	// 			'orcid',
-	// 			{ type: Sequelize.STRING}
+	// 			{ type: Sequelize.STRING }
 	// 		)
 	// 	));
 	// })

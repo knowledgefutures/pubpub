@@ -1,17 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Icon, PageWrapper } from 'components';
-import { hydrateWrapper } from 'utils';
+import { Icon } from 'components';
 
 require('./landing.scss');
 
-const propTypes = {
-	communityData: PropTypes.object.isRequired,
-	loginData: PropTypes.object.isRequired,
-	locationData: PropTypes.object.isRequired,
-};
-
-const Landing = (props) => {
+const Landing = () => {
 	const features = [
 		{
 			icon: 'badge',
@@ -140,229 +132,223 @@ const Landing = (props) => {
 	});
 	return (
 		<div id="landing-container">
-			<PageWrapper
-				loginData={props.loginData}
-				communityData={props.communityData}
-				locationData={props.locationData}
-				hideNav={true}
-			>
-				{/* BEGIN Jumbotron */}
-				<div id="jumbotron">
-					{/* BEGIN Jumbotron Content */}
+			<style>{`
+				.header-component.bp3-dark a.bp3-button,
+				.header-component.bp3-dark a.bp3-button:hover {
+					color: #111;
+				}
+			`}</style>
+			{/* BEGIN Jumbotron */}
+			<div id="jumbotron">
+				{/* BEGIN Jumbotron Content */}
+				<div className="container">
+					<div className="row content">
+						<div className="col-4">
+							<h1>PubPub</h1>
+							<p className="subtitle">
+								The open-source, privacy-respecting, all-in-one collaborative
+								publishing platform for communities small and large.
+							</p>
+							<h2>Manage, evolve & perfect your publishing process</h2>
+							<div className="buttons">
+								<a href="/community/create" className="custom-button black">
+									Create your community
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* END Jumbotron */}
+			{/* BEGIN Main; content */}
+			<div id="main">
+				{/* BEGIN Mission Block */}
+				<div id="mission">
+					<div className="container restricted-width">
+						<div>
+							<h3>Mission</h3>
+						</div>
+						<div>
+							As part of the{' '}
+							<a href="https://www.knowledgefutures.org">
+								<strong>Knowledge Futures Group</strong>
+							</a>
+							, we’re committed to making PubPub open and easily accessible to a wide
+							range of groups. That means we’re committed to providing a free version
+							of PubPub forever, releasing open-source code, and operating under
+							non-profit, sustainable, researcher-friendly business models.
+						</div>
+						<div>
+							<h3>Open Source</h3>
+						</div>
+						<div>
+							<a className="git" href="https://github.com/pubpub/pubpub">
+								<Icon icon="git-repo" /> pubpub
+							</a>
+							<a className="git" href="https://github.com/pubpub/pubpub-editor">
+								<Icon icon="git-repo" /> pubpub-editor
+							</a>
+						</div>
+					</div>
+				</div>
+				{/* END Mission Block */}
+				{/* BEGIN Features Block */}
+				<div id="features">
+					<div className="container key">
+						<div>
+							<h3>Key Features</h3>
+						</div>
+					</div>
+					<div className="container reverse">
+						<div>
+							<h4>Collaborate & edit with co-authors in real time</h4>
+							<img
+								src="/static/landing/authoring.png"
+								alt="Screenshot of a PubPub editor interface with multiple users editing at the same time."
+							/>
+						</div>
+						<div>
+							<p className="feature-number">01</p>
+							<ul>
+								<li key="01-01">Keep everyone in the loop</li>
+								{/* <li key="01-02">Collaborate in real-time</li> */}
+								<li key="01-03">Assign roles on-the-fly</li>
+							</ul>
+						</div>
+						<div>
+							<h4>Import your work from any source</h4>
+							<img
+								src="/static/landing/importing.png"
+								alt="You can see multiple users editing at the same time."
+							/>
+						</div>
+						<div>
+							<p className="feature-number">02</p>
+							<ul>
+								<li key="02-01">Easy multi-file imports</li>
+								<li key="02-02">Complex-content friendly</li>
+								<li key="02-03">Markdown, Word, and LaTeX</li>
+							</ul>
+						</div>
+						<div>
+							<h4>Embed rich multimedia in your publication</h4>
+							<img
+								src="/static/landing/multimedia.png"
+								alt="You can see multiple users editing at the same time."
+							/>
+						</div>
+						<div>
+							<p className="feature-number">03</p>
+							<ul>
+								<li key="03-01">Data visualizations</li>
+								<li key="03-02">Images, videos, and math</li>
+								<li key="03-03">Code, interactives, and more</li>
+							</ul>
+						</div>
+						<div className="other-features">
+							<h3>Other Features</h3>
+						</div>
+						<div className="feature-grid">{featureGrid}</div>
+					</div>
+				</div>
+				{/* END Features Block */}
+				{/* BEGIN Case Study Block */}
+				<div id="case-study">
 					<div className="container">
-						<div className="row content">
-							<div className="col-4">
-								<h1>PubPub</h1>
-								<p className="subtitle">
-									The open-source, privacy-respecting, all-in-one collaborative
-									publishing platform for communities small and large.
-								</p>
-								<h2>Manage, evolve & perfect your publishing process</h2>
-								<div className="buttons">
-									<a href="/community/create" className="custom-button black">
-										Create your community
-									</a>
-								</div>
+						<div>
+							<h3>Case Study</h3>
+						</div>
+						<div>
+							<div className="logo">
+								<img
+									src="/static/landing/mitp_light.png"
+									alt="the Mit Press colophon, designed by Muriel Cooper in 1964"
+								/>
+							</div>
+							<p>
+								Learn how <strong>the MIT Press</strong> uses PubPub for
+								collaborative community review on projects like{' '}
+								<a href="https://bookbook.pubpub.org/data-feminism">
+									Data Feminism
+								</a>
+								, <a href="https://thegooddrone.pubpub.org">The Good Drone</a>, and{' '}
+								<a href="https://bookbook.pubpub.org/annotation">Annotation</a>.
+							</p>
+							<div className="buttons">
+								<a
+									href="https://notes.knowledgefutures.org/pub/ek9zpak0"
+									className="custom-button light"
+								>
+									Read more
+								</a>
 							</div>
 						</div>
 					</div>
-					{/* END Jumbotron Content */}
 				</div>
-				{/* END Jumbotron */}
-				{/* BEGIN Main; content */}
-				<div id="main">
-					{/* BEGIN Mission Block */}
-					<div id="mission">
-						<div className="container restricted-width">
-							<div>
-								<h3>Mission</h3>
-							</div>
-							<div>
-								As part of the{' '}
-								<a href="https://www.knowledgefutures.org">
-									<strong>Knowledge Futures Group</strong>
-								</a>
-								, we’re committed to making PubPub open and easily accessible to a
-								wide range of groups. That means we’re committed to providing a free
-								version of PubPub forever, releasing open-source code, and operating
-								under non-profit, sustainable, researcher-friendly business models.
-							</div>
-							<div>
-								<h3>Open Source</h3>
-							</div>
-							<div>
-								<a className="git" href="https://github.com/pubpub/pubpub">
-									<Icon icon="git-repo" /> pubpub
-								</a>
-								<a className="git" href="https://github.com/pubpub/pubpub-editor">
-									<Icon icon="git-repo" /> pubpub-editor
+				{/* END Case Study Block */}
+				{/* BEGIN Communities Block */}
+				<div id="communities">
+					<div className="container">
+						<div>
+							<h3>Communities</h3>
+						</div>
+						<div>
+							<p>
+								Communities are publishing groups focused on a particular topic,
+								theme, or expertise. They can be a university press or a single
+								monograph; they can be a journal, research group, or conference. You
+								can start your community or browse any of the existing PubPub
+								communities today.
+							</p>
+							<div className="community-grid">{communityGrid}</div>
+							<div className="buttons">
+								<a href="/explore" className="custom-button">
+									Explore all communities
 								</a>
 							</div>
 						</div>
 					</div>
-					{/* END Mission Block */}
-					{/* BEGIN Features Block */}
-					<div id="features">
-						<div className="container key">
-							<div>
-								<h3>Key Features</h3>
-							</div>
-						</div>
-						<div className="container reverse">
-							<div>
-								<h4>Collaborate & edit with co-authors in real time</h4>
-								<img
-									src="/static/landing/authoring.png"
-									alt="Screenshot of a PubPub editor interface with multiple users editing at the same time."
-								/>
-							</div>
-							<div>
-								<p className="feature-number">01</p>
-								<ul>
-									<li key="01-01">Keep everyone in the loop</li>
-									{/* <li key="01-02">Collaborate in real-time</li> */}
-									<li key="01-03">Assign roles on-the-fly</li>
-								</ul>
-							</div>
-							<div>
-								<h4>Import your work from any source</h4>
-								<img
-									src="/static/landing/importing.png"
-									alt="You can see multiple users editing at the same time."
-								/>
-							</div>
-							<div>
-								<p className="feature-number">02</p>
-								<ul>
-									<li key="02-01">Easy multi-file imports</li>
-									<li key="02-02">Complex-content friendly</li>
-									<li key="02-03">Markdown, Word, and LaTeX</li>
-								</ul>
-							</div>
-							<div>
-								<h4>Embed rich multimedia in your publication</h4>
-								<img
-									src="/static/landing/multimedia.png"
-									alt="You can see multiple users editing at the same time."
-								/>
-							</div>
-							<div>
-								<p className="feature-number">03</p>
-								<ul>
-									<li key="03-01">Data visualizations</li>
-									<li key="03-02">Images, videos, and math</li>
-									<li key="03-03">Code, interactives, and more</li>
-								</ul>
-							</div>
-							<div className="other-features">
-								<h3>Other Features</h3>
-							</div>
-							<div className="feature-grid">{featureGrid}</div>
-						</div>
-					</div>
-					{/* END Features Block */}
-					{/* BEGIN Case Study Block */}
-					<div id="case-study">
-						<div className="container">
-							<div>
-								<h3>Case Study</h3>
-							</div>
-							<div>
-								<div className="logo">
-									<img
-										src="/static/landing/mitp_light.png"
-										alt="the Mit Press colophon, designed by Muriel Cooper in 1964"
-									/>
-								</div>
-								<p>
-									Learn how <strong>the MIT Press</strong> uses PubPub for
-									collaborative community review on projects like{' '}
-									<a href="https://bookbook.pubpub.org/data-feminism">
-										Data Feminism
-									</a>
-									, <a href="https://thegooddrone.pubpub.org">The Good Drone</a>,
-									and{' '}
-									<a href="https://bookbook.pubpub.org/annotation">Annotation</a>.
-								</p>
-								<div className="buttons">
-									<a
-										href="https://notes.knowledgefutures.org/pub/ek9zpak0"
-										className="custom-button light"
-									>
-										Read more
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-					{/* END Case Study Block */}
-					{/* BEGIN Communities Block */}
-					<div id="communities">
-						<div className="container">
-							<div>
-								<h3>Communities</h3>
-							</div>
-							<div>
-								<p>
-									Communities are publishing groups focused on a particular topic,
-									theme, or expertise. They can be a university press or a single
-									monograph; they can be a journal, research group, or conference.
-									You can start your community or browse any of the existing
-									PubPub communities today.
-								</p>
-								<div className="community-grid">{communityGrid}</div>
-								<div className="buttons">
-									<a href="/explore" className="custom-button">
-										Explore all communities
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-					{/* END Communities Block */}
-					{/* BEGIN Create Block */}
-					<div id="create">
-						<div className="container restricted-width">
-							<div>
-								<h3>Create</h3>
-							</div>
-							<div>
-								<h4>Start experimenting today</h4>
-								<div className="buttons">
-									<a href="/community/create" className="custom-button">
-										Create your community
-									</a>
-								</div>
-								<p className="disclaimer">
-									* A community can be your individual space to create content, or
-									you can invite others to collaborate with you!
-								</p>
-							</div>
-						</div>
-					</div>
-					{/* END Create Block */}
-					{/* BEGIN Pitch Block */}
-					<div id="pitch">
-						<div className="container restricted-width reverse">
-							<div>
-								<p>
-									With PubPub, one tool supports your entire content workflow from
-									drafting to review, publication, and reader engagement. Work
-									efficiently, flexibly, and collaboratively to better support
-									knowledge creation and dissemination.
-								</p>
-							</div>
-						</div>
-					</div>
-					{/* END Create Block */}
 				</div>
-				{/* END Main content */}
-			</PageWrapper>
+				{/* END Communities Block */}
+				{/* BEGIN Create Block */}
+				<div id="create">
+					<div className="container restricted-width">
+						<div>
+							<h3>Create</h3>
+						</div>
+						<div>
+							<h4>Start experimenting today</h4>
+							<div className="buttons">
+								<a href="/community/create" className="custom-button">
+									Create your community
+								</a>
+							</div>
+							<p className="disclaimer">
+								* A community can be your individual space to create content, or you
+								can invite others to collaborate with you!
+							</p>
+						</div>
+					</div>
+				</div>
+				{/* END Create Block */}
+				{/* BEGIN Pitch Block */}
+				<div id="pitch">
+					<div className="container restricted-width reverse">
+						<div>
+							<p>
+								With PubPub, one tool supports your entire content workflow from
+								drafting to review, publication, and reader engagement. Work
+								efficiently, flexibly, and collaboratively to better support
+								knowledge creation and dissemination.
+							</p>
+						</div>
+					</div>
+				</div>
+				{/* END Create Block */}
+			</div>
+			{/* END Main content */}
 		</div>
 	);
 };
 
-Landing.propTypes = propTypes;
 export default Landing;
-
-hydrateWrapper(Landing);

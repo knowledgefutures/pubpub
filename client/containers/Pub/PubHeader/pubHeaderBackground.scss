@@ -1,0 +1,25 @@
+@import './themes.scss';
+
+.pub-header-background-component {
+    position: relative;
+    overflow: hidden;
+    .background-element {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: -1;
+        &.background-white-layer {
+            background: white;
+        }
+        &.background-image {
+            background-size: cover;
+            background-position: center;
+            &.blur {
+                filter: blur(10px);
+            }
+        }
+        &.background-safety-layer {
+            height: $top-bar-total-height;
+        }
+    }
+}

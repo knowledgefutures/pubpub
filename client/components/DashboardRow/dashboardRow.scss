@@ -1,0 +1,107 @@
+@import 'styles/variables.scss';
+
+$hover-background: #f9f9f9;
+
+.dashboard-row-component {
+    position: relative;
+
+    &.selected {
+        .inner {
+            background: darken($hover-background, 10%);
+            &:hover {
+                background: darken($hover-background, 15%);
+            }
+        }
+    }
+
+    .inner {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: white;
+        border-top: 1px solid #ddd;
+        min-height: 70px;
+
+        &:hover {
+            background: $hover-background;
+            text-decoration: none;
+        }
+
+        .arrow {
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            text-align: left;
+            width: 26px;
+            flex: 0 0 auto;
+            .bp3-icon {
+                opacity: 0.5;
+                margin-top: -1px;
+            }
+            &.opened {
+                .bp3-icon {
+                    transform: rotate(90deg);
+                }
+            }
+            &:hover {
+                opacity: 1;
+            }
+        }
+        .left {
+            display: flex;
+            align-items: center;
+            flex: 1 1 auto;
+            .icon-and-title-container {
+                display: flex;
+                width: 100%;
+                .icon {
+                    padding-right: 10px;
+                    margin-top: 2px;
+                }
+                .title-and-subtitle {
+                    width: 100%;
+                    text-decoration: none;
+                }
+                .title {
+                    font-weight: 500;
+                    font-size: 16px;
+                    line-height: 1em;
+                    margin-bottom: 2px;
+                }
+                .subtitle {
+                    font-style: italic;
+                }
+            }
+        }
+
+        .right {
+            height: max-content;
+            display: flex;
+            flex-wrap: nowrap;
+            margin-right: 6px;
+        }
+
+        .bp3-icon {
+            opacity: 0.5;
+        }
+    }
+
+    .child-rows {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        margin-left: 32px;
+        list-style: none;
+        &:before {
+            content: '';
+            position: absolute;
+            background: #eee;
+            width: 2px;
+            z-index: -1;
+            top: -1.5em;
+            bottom: 1.5em;
+            left: -26px;
+        }
+    }
+}

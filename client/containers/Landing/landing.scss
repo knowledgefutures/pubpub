@@ -1,8 +1,3 @@
-/*** Global PubPub Header Overrides ***/
-.header-component {
-	z-index: 10;
-}
-
 /**** Variables and Mixins ****/
 $textColorLight: #fff9e9;
 $textColorDark: #2c3654;
@@ -54,15 +49,7 @@ $leftColumnWidth: 20%;
 	}
 }
 
-/***** Top Nav ****/
-.header-component {
-	color: #111;
-	&.bp3-dark a.bp3-button:hover {
-		color: #111;
-	}
-}
-
-#landing-container .page-content {
+#landing-container {
 	/***** Globals *****/
 	font-family: upgrade, sans-serif;
 	font-weight: 300;
@@ -454,7 +441,7 @@ $leftColumnWidth: 20%;
 
 /**** Tablets ****/
 @media only screen and (max-width: 1100px) {
-	#landing-container .page-content {
+	#landing-container {
 		#jumbotron {
 			&:before {
 				background-size: 50%;
@@ -466,7 +453,7 @@ $leftColumnWidth: 20%;
 
 /***** Mobile *****/
 @media only screen and (max-width: 720px) {
-	#landing-container .page-content {
+	#landing-container {
 		#jumbotron {
 			&:before {
 				opacity: 0.1;
@@ -584,26 +571,3 @@ $leftColumnWidth: 20%;
 		}
 	}
 }
-
-/***** Nav *****/
-// nav {
-// 	display: flex;
-// 	align-items: center;
-// 	img {
-// 		height: 35px;
-// 		display: block;
-// 		margin-right: 0.5em;
-// 	}
-// 	.title {
-// 		font-family: 'Raleway', sans-serif;
-// 		font-size: 32px;
-// 	}
-// 	.spacer {
-// 		flex-grow: 1;
-// 		flex-shrink: 1;
-// 	}
-// 	.link, .separator {
-// 		margin-left: 1em;
-// 		color: inherit;
-// 	}
-// }

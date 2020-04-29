@@ -7,16 +7,20 @@ require('components/Avatar/avatar.scss');
 const wrapperStyle = { padding: '1em', display: 'flex', alignItems: 'flex-end' };
 
 const plain = {
-	userInitials: 'MF',
+	initials: 'MF',
+};
+
+const plainBlock = {
+	initials: 'M',
 };
 
 const image = {
-	userAvatar: 'https://assets.pubpub.org/mflaxicd/11505393046254.jpg',
+	avatar: 'https://assets.pubpub.org/mflaxicd/11505393046254.jpg',
 	width: 50,
 };
 
 const border = {
-	userAvatar: 'https://assets.pubpub.org/mflaxicd/11505393046254.jpg',
+	avatar: 'https://assets.pubpub.org/mflaxicd/11505393046254.jpg',
 	borderColor: 'red',
 };
 
@@ -39,6 +43,20 @@ storiesOf('components/Avatar', module).add('default', () => (
 		<div style={wrapperStyle}>
 			{sizes.map((size) => {
 				return <Avatar key={`border-${size}`} {...border} width={size} />;
+			})}
+		</div>
+
+		<div style={wrapperStyle}>
+			{sizes.map((size) => {
+				return (
+					<Avatar key={`border-${size}`} {...plainBlock} width={size} isBlock={true} />
+				);
+			})}
+		</div>
+
+		<div style={wrapperStyle}>
+			{sizes.map((size) => {
+				return <Avatar key={`border-${size}`} {...image} width={size} isBlock={true} />;
 			})}
 		</div>
 

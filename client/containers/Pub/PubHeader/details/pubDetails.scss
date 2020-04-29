@@ -1,0 +1,148 @@
+@import '../themes.scss';
+@import 'styles/variables.scss';
+
+.pub-details-component {
+    height: 100%;
+
+    @include mobile {
+        .more-cite-options-button {
+            display: none;
+        }
+    }
+
+    .pub-title {
+        font-family: $header-font;
+        height: $top-bar-total-height;
+        line-height: $top-bar-total-height;
+        margin-top: 2px;
+        width: calc(100% - 120px);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-weight: normal;
+
+        @include mobile {
+            margin: 0;
+            font-size: 14px;
+            width: calc(100% - 40px);
+            height: $top-bar-total-height-mobile;
+            line-height: $top-bar-total-height-mobile;
+        }
+    }
+
+    .mobile-close-details-button {
+        display: none;
+        position: absolute;
+        top: 7px; // Hand-tuned to appear centered w.r.t title
+        right: 0;
+
+        @include mobile {
+            display: unset;
+        }
+    }
+
+    .sections-wrapper {
+        position: relative;
+        height: calc(100% - #{$top-bar-total-height});
+        display: flex;
+        justify-content: space-between;
+
+        @include mobile {
+            display: block;
+            height: calc(100% - #{$top-bar-total-height-mobile});
+            overflow-y: auto;
+
+            & > :last-child {
+                padding-bottom: 20px;
+            }
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            max-width: 25%;
+            min-width: 15%;
+
+            h6 {
+                margin: 0;
+                margin-right: 10px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                line-height: initial;
+                white-space: nowrap;
+
+                @include mobile {
+                    height: auto;
+                    margin: 0;
+                    padding-top: 25px;
+                    padding-bottom: 5px;
+                }
+            }
+
+            @include mobile {
+                width: 100%;
+                max-width: initial;
+                min-width: initial;
+            }
+        }
+
+        .contributors {
+            .pub-contributors-component {
+                & > :first-child {
+                    padding-top: 8px;
+                }
+                overflow: auto;
+
+                @include mobile {
+                    overflow: unset;
+                }
+            }
+
+            @include mobile {
+                h6 {
+                    padding-top: 0 !important;
+                }
+            }
+        }
+
+        .click-to-copy {
+            margin-left: -5px;
+        }
+
+        .bp3-button,
+        .bp3-button:hover,
+        .bp3-icon,
+        a {
+            color: inherit;
+        }
+
+        .publication-dates {
+            .full-height-date {
+                height: 30px;
+                line-height: 30px;
+                @include mobile {
+                    height: unset;
+                    line-height: unset;
+                }
+            }
+        }
+
+        .collections {
+            .collection-list {
+                overflow: auto;
+                .collection-list-entry {
+                    display: block;
+                    &:not(:last-child) {
+                        margin-bottom: 7px;
+                    }
+                }
+
+                @include mobile {
+                    overflow: unset;
+                }
+            }
+        }
+    }
+}

@@ -2,40 +2,12 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import * as ReactBeautifulDnD from 'react-beautiful-dnd';
 import { resolve } from 'path';
-import queryString from 'query-string';
 import amqplib from 'amqplib';
-import { remove as removeDiacritics } from 'diacritics';
-import { Collection, Community, Page, User } from '../models';
 
-const isPubPubProduction = !!process.env.PUBPUB_PRODUCTION;
+import { HTTPStatusError } from '../errors';
 
-export const checkIfSuperAdmin = (userId) => {
-	const adminIds = ['b242f616-7aaa-479c-8ee5-3933dcf70859'];
-	return adminIds.includes(userId);
-};
-
-export const attributesPublicUser = [
-	'id',
-	'firstName',
-	'lastName',
-	'fullName',
-	'avatar',
-	'slug',
-	'initials',
-	'title',
-];
-
-export const slugifyString = (input) => {
-	if (typeof input !== 'string') {
-		console.error('input is not a valid string');
-		return '';
-	}
-
-	return removeDiacritics(input)
-		.replace(/ /g, '-')
-		.replace(/[^a-zA-Z0-9-]/gi, '')
-		.toLowerCase();
-};
+export { getInitialData } from './initData';
+export { slugifyString, generateHash } from './strings';
 
 export const hostIsValid = (req, access) => {
 	const isBasePubPub = req.hostname === 'www.pubpub.org';
@@ -52,164 +24,6 @@ export const renderToNodeStream = (res, reactElement) => {
 	res.setHeader('content-type', 'text/html');
 	ReactBeautifulDnD.resetServerContext();
 	return ReactDOMServer.renderToNodeStream(reactElement).pipe(res);
-};
-
-export const getInitialData = (req) => {
-	const hostname = req.hostname;
-	const whereQuery =
-		hostname.indexOf('.pubpub.org') > -1
-			? { subdomain: hostname.replace('.pubpub.org', '') }
-			: { domain: hostname };
-
-	/* Gather user data */
-	const user = req.user || {};
-	const loginData = {
-		id: user.id || null,
-		initials: user.initials,
-		slug: user.slug,
-		fullName: user.fullName,
-		firstName: user.firstName,
-		lastName: user.lastName,
-		avatar: user.avatar,
-		title: user.title,
-		gdprConsent: user.gdprConsent,
-	};
-
-	/* Gather location data */
-	const locationData = {
-		hostname: req.hostname,
-		path: req.path,
-		params: req.params,
-		query: req.query,
-		queryString: req.query ? `?${queryString.stringify(req.query)}` : '',
-		isBasePubPub: hostname === 'www.pubpub.org',
-		isPubPubProduction: isPubPubProduction,
-		isDuqDuq: req.isDuqDuq,
-	};
-
-	/* If basePubPub - return fixed data */
-	if (locationData.isBasePubPub) {
-		return new Promise((resolvePromise) => {
-			resolvePromise({
-				communityData: {
-					title: 'PubPub',
-					description: 'Collaborative Community Publishing',
-					favicon: `https://${locationData.hostname}/favicon.png`,
-					avatar: `https://${locationData.hostname}/static/logo.png`,
-					headerLogo:
-						locationData.path === '/' ? '/static/logo.png' : '/static/logoBlack.svg',
-					hideHero: true,
-					accentColorLight: '#ffffff',
-					accentColorDark: '#112233',
-					headerColorType: 'light',
-					hideCreatePubButton: true,
-					headerLinks: [
-						{ title: 'About', url: '/about' },
-						{ title: 'Pricing', url: '/pricing' },
-						{ title: 'Search', url: '/search' },
-						{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },
-					],
-				},
-				loginData: loginData,
-				locationData: locationData,
-			});
-		});
-	}
-
-	/* If we have a community to find, search, and then return */
-	return Community.findOne({
-		where: whereQuery,
-		attributes: {
-			exclude: ['createdAt', 'updatedAt'],
-		},
-		include: [
-			// {
-			// 	model: Collection,
-			// 	as: 'collections',
-			// 	attributes: {
-			// 		exclude: ['createdAt', 'updatedAt', 'communityId']
-			// 	},
-			// },
-			{
-				model: Page,
-				as: 'pages',
-				attributes: {
-					exclude: ['createdAt', 'updatedAt', 'communityId'],
-				},
-			},
-			{
-				model: User,
-				as: 'admins',
-				through: { attributes: [] },
-				attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
-			},
-			{
-				model: Collection,
-				as: 'collections',
-				separate: true,
-			},
-		],
-	}).then((communityResult) => {
-		if (!communityResult) {
-			throw new Error('Community Not Found');
-		}
-
-		if (communityResult.domain && whereQuery.subdomain && !locationData.isDuqDuq) {
-			throw new Error(`UseCustomDomain:${communityResult.domain}`);
-		}
-		const communityData = communityResult.toJSON();
-
-		loginData.isAdmin = communityData.admins.reduce((prev, curr) => {
-			if (curr.id === user.id) {
-				return true;
-			}
-			return prev;
-		}, false);
-
-		const availablePages = {};
-		communityData.pages = communityData.pages.filter((item) => {
-			if (
-				!loginData.isAdmin &&
-				!item.isPublic &&
-				locationData.query.access !== item.viewHash
-			) {
-				return false;
-			}
-
-			availablePages[item.id] = {
-				id: item.id,
-				title: item.title,
-				slug: item.slug,
-			};
-			return true;
-		});
-
-		communityData.collections = communityData.collections.filter((item) => {
-			return loginData.isAdmin || item.isPublic;
-		});
-
-		communityData.collections = communityData.collections.map((collection) => {
-			if (!collection.pageId) {
-				return collection;
-			}
-			return {
-				...collection,
-				page: availablePages[collection.pageId],
-			};
-		});
-
-		if (req.headers.localhost) {
-			communityData.domain = req.headers.localhost;
-		}
-
-		const outputData = {
-			communityData: communityData,
-			loginData: loginData,
-			locationData: locationData,
-		};
-
-		return outputData;
-	});
 };
 
 export const generateMetaComponents = ({
@@ -459,29 +273,26 @@ export const handleErrors = (req, res, next) => {
 			const customDomain = err.message.split(':')[1];
 			return res.redirect(`https://${customDomain}${req.originalUrl}`);
 		}
+
+		if (err instanceof HTTPStatusError) {
+			if (err.inRange(400)) {
+				return next();
+			}
+		}
+
 		if (
 			err.message === 'Page Not Found' ||
 			err.message === 'Pub Not Found' ||
+			err.message === 'Review Not Found' ||
 			err.message === 'User Not Admin' ||
 			err.message === 'User Not Found'
 		) {
 			return next();
 		}
 		console.error('Err', err);
-		return res.status(500).json('Error');
+		return res.status(500).sendFile(resolve(__dirname, '../errorPages/error.html'));
 	};
 };
-
-export function generateHash(length) {
-	const tokenLength = length || 32;
-	const possible = 'abcdefghijklmnopqrstuvwxyz0123456789';
-
-	let hash = '';
-	for (let index = 0; index < tokenLength; index += 1) {
-		hash += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return hash;
-}
 
 /* Worker Queue Tasks */
 const queueName = 'pubpubTaskQueue';
@@ -496,9 +307,15 @@ const setOpenChannel = () => {
 		});
 	});
 };
-setOpenChannel();
+
+if (process.env.NODE_ENV !== 'test') {
+	setOpenChannel();
+}
 
 export function addWorkerTask(message) {
+	if (process.env.NODE_ENV === 'test') {
+		return null;
+	}
 	if (!openChannel) {
 		setOpenChannel();
 	}

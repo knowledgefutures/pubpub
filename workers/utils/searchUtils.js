@@ -124,16 +124,22 @@ export const getPubSearchData = async (pubIds) => {
 	const dataToSync = [];
 	for (let index = 0; index < branchesToSync.length; index++) {
 		const branchData = branchesToSync[index];
-		// eslint-disable-next-line no-await-in-loop
-		const branchDocData = await getBranchDoc(branchData.pubId, branchData.branchId);
-		const { doc } = branchDocData;
-		if (doc) {
-			jsonToTextChunks(doc).forEach((textChunk) => {
-				dataToSync.push({
-					...branchData,
-					branchContent: textChunk,
+		try {
+			// eslint-disable-next-line no-await-in-loop
+			const branchDocData = await getBranchDoc(branchData.pubId, branchData.branchId);
+			const { doc } = branchDocData;
+			if (doc) {
+				jsonToTextChunks(doc).forEach((textChunk) => {
+					dataToSync.push({
+						...branchData,
+						branchContent: textChunk,
+					});
 				});
-			});
+			}
+		} catch (err) {
+			console.error(
+				`Error with pub:${branchData.pubId} branch:${branchData.branchId}. ${err.message}`,
+			);
 		}
 	}
 	return dataToSync;

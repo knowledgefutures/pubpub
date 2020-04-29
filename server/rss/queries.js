@@ -1,6 +1,6 @@
 import RSS from 'rss';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
-import { Community, Pub, User, PubAttribution, Branch } from '../models';
+import { Community, Pub, User, PubAttribution, Release } from '../models';
 
 export const getCommunityRss = (hostname) => {
 	const whereQuery =
@@ -51,8 +51,8 @@ export const getCommunityRss = (hostname) => {
 						],
 					},
 					{
-						model: Branch,
-						as: 'branches',
+						model: Release,
+						as: 'releases',
 					},
 				],
 			},
@@ -75,7 +75,6 @@ export const getCommunityRss = (hostname) => {
 			pubDate: new Date(),
 			ttl: '60',
 		});
-
 		communityData.pubs
 			.map((pub) => {
 				const pubJSON = pub.toJSON();

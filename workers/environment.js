@@ -12,3 +12,7 @@ Module.prototype.require = function(...args) {
 };
 
 require('@babel/register');
+
+const { setEnvironment } = require('../shared/utils/environment');
+
+setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);

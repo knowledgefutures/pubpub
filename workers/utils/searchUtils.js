@@ -122,26 +122,27 @@ export const getPubSearchData = async (pubIds) => {
 	}
 
 	const dataToSync = [];
-	for (let index = 0; index < branchesToSync.length; index++) {
-		const branchData = branchesToSync[index];
-		try {
-			// eslint-disable-next-line no-await-in-loop
-			const branchDocData = await getBranchDoc(branchData.pubId, branchData.branchId);
-			const { doc } = branchDocData;
-			if (doc) {
-				jsonToTextChunks(doc).forEach((textChunk) => {
-					dataToSync.push({
-						...branchData,
-						branchContent: textChunk,
-					});
+	const branchDocDataList = await Promise.all(
+		branchesToSync.map((branchData) => {
+			return getBranchDoc(branchData.pubId, branchData.branchId).catch((err) => {
+				console.error(
+					`Error with pub:${branchData.pubId} branch:${branchData.branchId}. ${err.message}`,
+				);
+				return null;
+			});
+		}),
+	);
+	branchesToSync.forEach((branchData, index) => {
+		const branchDocData = branchDocDataList[index];
+		if (branchDocData && branchDocData.doc) {
+			jsonToTextChunks(branchDocData.doc).forEach((textChunk) => {
+				dataToSync.push({
+					...branchData,
+					branchContent: textChunk,
 				});
-			}
-		} catch (err) {
-			console.error(
-				`Error with pub:${branchData.pubId} branch:${branchData.branchId}. ${err.message}`,
-			);
+			});
 		}
-	}
+	});
 	return dataToSync;
 };
 

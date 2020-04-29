@@ -65,7 +65,7 @@ new Promise((resolve) => {
 		const smallArrays = [];
 		while (pubIds.length) {
 			smallArrays.push(
-				pubIds.splice(0, 25).map((item) => {
+				pubIds.splice(0, 100).map((item) => {
 					return item.id;
 				}),
 			);
@@ -106,7 +106,7 @@ new Promise((resolve) => {
 		const smallArrays = [];
 		while (pageIds.length) {
 			smallArrays.push(
-				pageIds.splice(0, 25).map((item) => {
+				pageIds.splice(0, 100).map((item) => {
 					return item.id;
 				}),
 			);

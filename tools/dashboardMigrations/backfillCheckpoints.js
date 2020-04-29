@@ -1,4 +1,6 @@
 /* eslint-disable no-console, no-restricted-syntax, import/first */
+import { setEnvironment } from '../../shared/utils/environment';
+setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
 
 import registerIgnoredStyles from 'ignore-styles';
 import Promise from 'bluebird';
@@ -7,7 +9,6 @@ import { Step } from 'prosemirror-transform';
 import { Node } from 'prosemirror-model';
 
 registerIgnoredStyles(['.scss']);
-
 import { getBranchRef, editorSchema } from '../../server/utils/firebaseAdmin';
 import { Pub, Branch } from '../../server/models';
 
@@ -155,9 +156,11 @@ const backfillCheckpointsForPub = (pub, index, arrayLength) => {
 	);
 };
 
-export default async () => {
+const main = async () => {
 	const allPubs = await getAllPubsWithBranches();
 	console.log('Backfill: got pubs');
 	await Promise.map(allPubs, backfillCheckpointsForPub, { concurrency: 100 });
 	console.log('Backfill: done.');
 };
+
+main();

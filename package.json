@@ -20,6 +20,7 @@
 		"pretty": "prettier --write '**/*.js'",
 		"migrate": "node initMigrations.js",
 		"migrate-dash": "NODE_PATH=./client:./ node -r esm --max-old-space-size=12000 ./tools/dashboardMigrations/initDashMigrations.js",
+		"migrate-backfill": "NODE_PATH=./client:./ node -r esm --max-old-space-size=12000 ./tools/dashboardMigrations/initBackfillCheckpoints.js",
 		"install-git-hooks": "rm -f ./.git/hooks/* && cp ./.githooks/* ./.git/hooks && chmod +x ./.git/hooks/*",
 		"postinstall": "npm run build-prod",
 		"search-sync": "NODE_PATH=./client:./ node searchSync/init.js",

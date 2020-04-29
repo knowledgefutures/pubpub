@@ -9,19 +9,21 @@ import {
 	ThreadComment,
 	Visibility,
 } from '../../server/models';
+import { getFirebaseConfig } from '../../shared/editor/firebaseConfig';
 
 const firebaseAdmin = require('firebase-admin');
 
 const serviceAccount = JSON.parse(
 	Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
 );
+console.log(`DiscToThread using ${getFirebaseConfig().databaseURL}`);
 const firebaseApp =
 	firebaseAdmin.apps.length > 0
 		? firebaseAdmin.apps[0]
 		: firebaseAdmin.initializeApp(
 				{
 					credential: firebaseAdmin.credential.cert(serviceAccount),
-					databaseURL: 'https://pubpub-v6-dev.firebaseio.com',
+					databaseURL: getFirebaseConfig().databaseURL,
 				},
 				'firebase-pub-new',
 		  );

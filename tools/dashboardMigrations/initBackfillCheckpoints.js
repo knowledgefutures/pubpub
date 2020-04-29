@@ -2,4 +2,4 @@ require('@babel/register');
 if (process.env.NODE_ENV !== 'production') {
 	require('../../server/config.js');
 }
-require('./runMigrations.js');
+require('./backfillCheckpoints.js');

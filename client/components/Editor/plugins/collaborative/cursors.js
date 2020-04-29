@@ -126,6 +126,9 @@ export default (schema, props, collabDocPluginKey) => {
 				};
 			},
 			apply: (transaction, pluginState, prevEditorState, editorState) => {
+				if (props.isReadOnly) {
+					return pluginState;
+				}
 				const { localClientId, localClientData } = collabDocPluginKey.getState(editorState);
 				/* Remove Stale Cursors */
 				pluginState.cursorDecorations.find().forEach((decoration) => {

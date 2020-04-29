@@ -16,21 +16,22 @@ const firebaseAdmin = require('firebase-admin');
 const serviceAccount = JSON.parse(
 	Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
 );
-console.log(`DiscToThread using ${getFirebaseConfig().databaseURL}`);
-const firebaseApp =
-	firebaseAdmin.apps.length > 0
-		? firebaseAdmin.apps[0]
-		: firebaseAdmin.initializeApp(
-				{
-					credential: firebaseAdmin.credential.cert(serviceAccount),
-					databaseURL: getFirebaseConfig().databaseURL,
-				},
-				'firebase-pub-new',
-		  );
-const database = firebaseApp.database();
 
 /* Takes 25 minutes to run */
 export default async () => {
+	console.log(`DiscToThread using ${getFirebaseConfig().databaseURL}`);
+	const firebaseApp =
+		firebaseAdmin.apps.length > 0
+			? firebaseAdmin.apps[0]
+			: firebaseAdmin.initializeApp(
+					{
+						credential: firebaseAdmin.credential.cert(serviceAccount),
+						databaseURL: getFirebaseConfig().databaseURL,
+					},
+					'firebase-pub-new',
+			  );
+	const database = firebaseApp.database();
+
 	/* Migrate Discussions to Threads */
 	const discusssionsData = await Discussion.findAll({});
 	const branchData = await Branch.findAll({});

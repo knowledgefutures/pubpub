@@ -1,14 +1,12 @@
 /* eslint-disable no-console, no-unused-vars */
 import { setEnvironment } from '../../shared/utils/environment';
-setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
-
 import headerCols from './headerCols';
 import dashCols from './dashCols';
 import discToThreads from './discToThreads';
 import reviewsToThreads from './reviewsToThreads';
 import buildReleases from './buildReleases';
 
-
+setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
 
 const init = async () => {
 	console.time('Migration RunTime');

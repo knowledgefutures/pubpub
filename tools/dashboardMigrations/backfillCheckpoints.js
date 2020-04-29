@@ -1,7 +1,4 @@
 /* eslint-disable no-console, no-restricted-syntax, import/first */
-import { setEnvironment } from '../../shared/utils/environment';
-setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
-
 import registerIgnoredStyles from 'ignore-styles';
 import Promise from 'bluebird';
 import { uncompressStepJSON, compressStateJSON } from 'prosemirror-compress-pubpub';

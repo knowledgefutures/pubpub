@@ -29,6 +29,8 @@ const getFirebaseApp = () => {
 	const serviceAccount = JSON.parse(
 		Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
 	);
+	/* eslint-disable-next-line no-console */
+	console.log(`Firebase App will use: ${getFirebaseConfig().databaseURL}`);
 	return firebaseAdmin.initializeApp(
 		{
 			credential: firebaseAdmin.credential.cert(serviceAccount),

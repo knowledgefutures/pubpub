@@ -16,7 +16,7 @@ const Signup = () => {
 	const onSignupSubmit = (evt) => {
 		evt.preventDefault();
 		setPostSignupIsLoading(true);
-		postSignupError(undefined);
+		setPostSignupError(undefined);
 		return apiFetch('/api/signup', {
 			method: 'POST',
 			body: JSON.stringify({

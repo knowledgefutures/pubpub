@@ -1,9 +1,9 @@
 export default (communityData, locationData, scopeData) => {
 	const cleanedData = { ...communityData };
-	const isAdminForCommunity = scopeData.activePermissions.canAdminCommunity;
+	const { canManageCommunity } = scopeData.activePermissions;
 	const availablePages = {};
 	cleanedData.pages = cleanedData.pages.filter((item) => {
-		if (!scopeData && !item.isPublic && locationData.query.access !== item.viewHash) {
+		if (!canManageCommunity && !item.isPublic && locationData.query.access !== item.viewHash) {
 			return false;
 		}
 
@@ -17,7 +17,7 @@ export default (communityData, locationData, scopeData) => {
 
 	cleanedData.collections = cleanedData.collections
 		.filter((item) => {
-			return isAdminForCommunity || item.isPublic;
+			return canManageCommunity || item.isPublic;
 		})
 		.map((collection) => {
 			if (!collection.pageId) {

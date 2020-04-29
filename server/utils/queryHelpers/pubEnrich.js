@@ -48,7 +48,7 @@ export const enrichPubFirebaseToken = async (pubData, initialData) => {
 	const firebaseToken = await getFirebaseToken(initialData.loginData.id || 'anon', {
 		branchId: `branch-${pubData.activeBranch.id}`,
 		canEditBranch: canEdit || canEditDraft,
-		canViewBranch: canView || canViewDraft,
+		canViewBranch: canView || canViewDraft || pubData.isRelease,
 		canManage: canManage,
 		userId: initialData.loginData.id,
 	});

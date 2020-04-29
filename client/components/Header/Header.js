@@ -269,7 +269,7 @@ const Header = (props) => {
 										</React.Fragment>
 									}
 								/>
-								<MenuItem href="/privacy/settings" text="Privacy settings" />
+								<MenuItem href="/legal/settings" text="Privacy settings" />
 								<MenuItem onClick={handleLogout} text="Logout" />
 							</MenuButton>
 						)}

@@ -6,6 +6,7 @@ import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponent
 
 app.get('/privacy', (_, res) => res.redirect('/legal/privacy'));
 app.get('/privacy/policy', (_, res) => res.redirect('/legal/privacy'));
+app.get('/privacy/settings', (_, res) => res.redirect('/legal/settings'));
 app.get('/tos', (_, res) => res.redirect('/legal/terms'));
 app.get('/legal', (_, res) => res.redirect('/legal/terms'));
 

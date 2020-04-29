@@ -10,10 +10,3 @@ Module.prototype.require = function(...args) {
 	}
 	return originalRequire.apply(this, args);
 };
-
-require('@babel/register');
-const setEnvironment = require('../shared/utils/environment').setEnvironment;
-
-setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
-
-require('./searchSync.js');

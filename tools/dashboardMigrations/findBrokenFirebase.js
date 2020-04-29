@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Branch, Release, Merge, PubVersion, Pub } from '../../server/models';
+import { Branch } from '../../server/models';
 
 const firebaseAdmin = require('firebase-admin');
 require('../../server/config.js');
@@ -115,6 +115,7 @@ export default async () => {
 		const changesRef = database.ref(
 			`pub-${publicBranches[i].pubId}/branch-${publicBranches[i].id}/changes`,
 		);
+		/* eslint-disable-next-line no-await-in-loop */
 		const data = await changesRef.once('value');
 		const val = data.val();
 		if (val) {
@@ -126,9 +127,17 @@ export default async () => {
 			// console.log(val);
 			// const realSteps = .filter((step) => !!step);
 			if (Object.values(val)[0].cId.indexOf('b242f616-7aaa-479c-8ee5-3933dcf70859') > -1) {
-				console.log(`${publicBranches[i].pubId} has ${Object.values(val).length} changes. Needs migration`);
+				console.log(
+					`${publicBranches[i].pubId} has ${
+						Object.values(val).length
+					} changes. Needs migration`,
+				);
 			} else {
-				console.log(`${publicBranches[i].pubId} has ${Object.values(val).length} changes. Can delete ${Object.values(val)[0].cId}`);
+				console.log(
+					`${publicBranches[i].pubId} has ${
+						Object.values(val).length
+					} changes. Can delete ${Object.values(val)[0].cId}`,
+				);
 			}
 		}
 	}

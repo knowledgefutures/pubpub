@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Pub, Branch } from '../../server/models';
+import { Pub, Branch } from '../server/models';
 
 const fixPubBranchOrders = async (pub) => {
 	console.log('Fixing pub id', pub.id);

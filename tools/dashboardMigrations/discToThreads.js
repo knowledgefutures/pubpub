@@ -122,6 +122,7 @@ export default async () => {
 			`pub-${header.pubId}/branch-${header.branchId}/discussions/${header.id}`,
 		);
 
+		/* eslint-disable-next-line no-await-in-loop */
 		const firebaseHighlightSnapshot = await discussionRef.once('value');
 		const firebaseHighlight = firebaseHighlightSnapshot.val() || {};
 		const firebaseFrom =

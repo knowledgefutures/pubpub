@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import compression from 'compression';
 import enforce from 'express-sslify';
-import Module from 'module';
 import noSlash from 'no-slash';
 import passport from 'passport';
 import * as Sentry from '@sentry/node';
@@ -15,6 +14,7 @@ import { sequelize, User } from './models';
 import { HTTPStatusError } from './errors';
 
 setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
+require('shared/utils/serverModuleOverwrite');
 
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
 // return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.
@@ -31,17 +31,6 @@ export const wrap = (routeHandlerFn) => (...args) => {
 	});
 };
 
-/* Since we are server-rendering components, we 	*/
-/* need to ensure we don't require things intended 	*/
-/* for webpack. Namely, .scss files			 		*/
-const originalRequire = Module.prototype.require;
-Module.prototype.require = function(...args) {
-	const skippedExtensions = ['scss'];
-	if (skippedExtensions.includes(args[0].split('.').pop())) {
-		return () => {};
-	}
-	return originalRequire.apply(this, args);
-};
 /* ---------------------- */
 /* Initialize express app */
 /* ---------------------- */

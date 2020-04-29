@@ -1,12 +1,13 @@
-import { Sequelize } from 'sequelize';
-import { sequelize, Pub } from '../../server/models';
+// import { Sequelize } from 'sequelize';
+// import { sequelize, Pub } from '../../server/models';
+import { Pub } from '../../server/models';
 
 export default async () => {
 	// await sequelize.queryInterface.changeColumn('Pubs', 'headerStyle', {
 	// 	type: Sequelize.ENUM('white-blocks', 'black-blocks', 'dark', 'light'),
 	// });
 	// await sequelize.queryInterface.removeColumn('Pubs', 'headerBackgroundType');
-	const pubs = await Pub.findAll({attributes: ['id', 'headerStyle', 'headerBackgroundImage']});
+	const pubs = await Pub.findAll({ attributes: ['id', 'headerStyle', 'headerBackgroundImage'] });
 	return Promise.all(
 		pubs.map((pub) => {
 			const hasHeaderImage = !!pub.headerBackgroundImage;

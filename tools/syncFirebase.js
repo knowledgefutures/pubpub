@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import Promise from 'bluebird';
 // import { Op } from 'sequelize';
-import { Pub } from '../../server/models';
+import { Pub } from '../server/models';
 
-const createFirebaseClient = require('../5to6/util/createFirebaseClient');
+const createFirebaseClient = require('./5to6/util/createFirebaseClient');
 
 const sourceFirebaseUrl = 'https://pubpub-v6-prod.firebaseio.com';
 const destFirebaseUrl = 'https://pubpub-v6-dev.firebaseio.com';

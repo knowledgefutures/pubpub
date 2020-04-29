@@ -82,7 +82,7 @@ app.get(
 			const prefix = `${domain}/pub/${slug}`;
 			const pubData = await Pub.findOne({
 				where: { slug: slug },
-				attributes: ['id'],
+				attributes: ['id', 'slug', 'viewHash', 'editHash'],
 				include: [
 					{ model: Branch, as: 'branches' },
 					{ model: Release, as: 'releases' },
@@ -99,6 +99,14 @@ app.get(
 				throw new Error('Pub Not Found');
 			}
 
+			const accessHash = req.query.access;
+			let accessHashString = '';
+			if (accessHash === activeBranch.viewHash || accessHash === activeBranch.discussHash) {
+				accessHashString = `?access=${pubData.viewHash}`;
+			}
+			if (accessHash === activeBranch.editHash) {
+				accessHashString = `?access=${pubData.editHash}`;
+			}
 			/* The + 1 in the two redirects below is because /branch/2/key routes */
 			/* were 0-indexed to align the the keyable index. historyNumber in URLs */
 			/* are now 1-indexed for better human-readability. Firebase keyables */
@@ -109,8 +117,8 @@ app.get(
 					: res.redirect(`${prefix}/release/${pubData.releases.length}`);
 			}
 			return versionNumber
-				? res.redirect(`${prefix}/draft/${Number(versionNumber) + 1}`)
-				: res.redirect(`${prefix}/draft`);
+				? res.redirect(`${prefix}/draft/${Number(versionNumber) + 1}${accessHashString}`)
+				: res.redirect(`${prefix}/draft${accessHashString}`);
 		} catch (err) {
 			return handleErrors(req, res, next)(err);
 		}

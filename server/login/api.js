@@ -13,7 +13,6 @@ app.post('/api/login', (req, res, next) => {
 			return resolve(user);
 		})(req, res, next);
 	});
-
 	return authenticate
 		.then((user) => {
 			/* If authentication succeeded, we have a user */
@@ -43,7 +42,7 @@ app.post('/api/login', (req, res, next) => {
 				throw new Error('Invalid password');
 			}
 
-			/* If the login failed, but the email exiss, and the digest
+			/* If the login failed, but the email exists, and the digest
 			is not sha512, we need to check for valid legacy hashes */
 			const pubpubSha1HashRaw = crypto.pbkdf2Sync(
 				req.body.password,
@@ -67,7 +66,7 @@ app.post('/api/login', (req, res, next) => {
 
 			const isLegacyValid = isPubPubSha1Valid || isfrankenbookValid;
 			if (!isLegacyValid) {
-				throw new Error('Invalid Password');
+				throw new Error('Invalid password');
 			}
 
 			/* If isLegacyValid, we need to update user to sha512 */
@@ -105,7 +104,11 @@ app.post('/api/login', (req, res, next) => {
 				return res.status(201).json('success');
 			});
 		})
-		.catch(() => {
-			return res.status(500).json('Login attempt failed');
+		.catch((err) => {
+			const unaunthenticatedValues = ['Invalid password', 'Invalid email'];
+			if (unaunthenticatedValues.includes(err.message)) {
+				return res.status(401).json('Login attempt failed');
+			}
+			return res.status(500).json(err.message);
 		});
 });

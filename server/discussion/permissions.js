@@ -11,7 +11,7 @@ export const getPermissions = async ({
 	accessHash,
 	visibilityAccess,
 }) => {
-	if (!userId || !visibilityAccess) {
+	if (!userId) {
 		return {};
 	}
 
@@ -27,8 +27,10 @@ export const getPermissions = async ({
 	});
 
 	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
+	const nonMembersVisibility = visibilityAccess && visibilityAccess !== 'members';
+
 	return {
-		create: canView || (canCreateDiscussions && visibilityAccess !== 'members'),
+		create: canView || (canCreateDiscussions && nonMembersVisibility),
 		update: canAdmin && discussionData && userEditableFields,
 	};
 };

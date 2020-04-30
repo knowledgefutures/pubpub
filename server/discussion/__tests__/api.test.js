@@ -181,7 +181,6 @@ it('lets only users with canAdmin permissions on a Pub close a discussion', asyn
 					pub: releasePub,
 					discussionId: discussion.id,
 					isClosed: true,
-					visibilityAccess: 'public',
 				}),
 			)
 			.expect(expectSuccess ? 200 : 403);

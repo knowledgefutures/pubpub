@@ -17,6 +17,7 @@ require('../shared/utils/environment').setEnvironment(
 
 const command = process.argv[2];
 const commandFiles = {
+	backfillCheckpoints: './backfillCheckpoints.js',
 	checkpointBackfill: './dashboardMigrations/backfillCheckpoints.js',
 	migrateDash: './dashboardMigrations/runMigrations.js',
 	migrationsDeprecated: 'migrationsDeprecated.js',

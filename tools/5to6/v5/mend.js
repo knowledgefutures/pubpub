@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax */
-require('ignore-styles');
 const { storage } = require('../setup');
 const { getChangesForPub } = require('./changes');
 const reconstructDocument = require('./reconstructDocument');

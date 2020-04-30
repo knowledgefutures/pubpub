@@ -1,23 +1,21 @@
 /* eslint-disable no-console, no-restricted-syntax, import/first */
-import registerIgnoredStyles from 'ignore-styles';
 import Promise from 'bluebird';
+import Slowdance from 'slowdance';
 import { uncompressStepJSON, compressStateJSON } from 'prosemirror-compress-pubpub';
 import { Step } from 'prosemirror-transform';
 import { Node } from 'prosemirror-model';
 
-registerIgnoredStyles(['.scss']);
-import { getBranchRef, editorSchema } from '../../server/utils/firebaseAdmin';
-import { Pub, Branch } from '../../server/models';
+import { getBranchRef, editorSchema } from 'server/utils/firebaseAdmin';
+import { Pub, Branch } from 'server/models';
 
 const overwriteExisting = true;
 const checkpointInterval = 100;
-let completed = 0;
+const slowdance = new Slowdance({ onExit: () => process.exit() });
 
-const statusMessage = (pub, branch, success, created) => {
-	if (!created && !success) {
-		const emoji = created ? '✨' : success ? '🥚' : '😱';
-		console.log(`${emoji} [${pub.slug}.${branch.title}] ${pub.title}`);
-	}
+const pubSlugBlacklist = [];
+
+const statusMessage = (success, created) => {
+	return created ? '✨' : success ? '🥚' : '😱';
 };
 
 const getAllPubsWithBranches = () => {
@@ -96,68 +94,76 @@ const createCheckpointsFromKeyables = (keyables, existingCheckpointKeys) => {
 	}, initialState);
 };
 
-const backfillCheckpointsForBranch = async (pubId, branchId) => {
-	const branchRef = getBranchRef(pubId, branchId);
-	const [checkpoints, checkpointMap, changes, merges] = await Promise.all([
-		branchRef.child('checkpoints').once('value'),
-		branchRef.child('checkpointMap').once('value'),
-		branchRef
-			.child('changes')
-			.orderByKey()
-			.once('value'),
-		branchRef
-			.child('merges')
-			.orderByKey()
-			.once('value'),
-	]);
-	const allKeyables = { ...changes.val(), ...merges.val() };
-	const keyablesLength = Object.keys(allKeyables).length;
-	if (keyablesLength > 10000) {
-		throw new Error(`Too many keyables: ${keyablesLength}`);
-	}
-	const existingCheckpoints = checkpoints.val() || {};
-	const existingCheckpointMap = checkpointMap.val() || {};
-	const {
-		checkpoints: newCheckpoints,
-		checkpointMap: newCheckpointMap,
-	} = createCheckpointsFromKeyables(
-		allKeyables,
-		overwriteExisting ? [] : Object.keys(existingCheckpoints),
-	);
-	const hasCreatedNewCheckpoints = Object.keys(newCheckpoints).length > 0;
-	if (hasCreatedNewCheckpoints) {
-		await Promise.all([
-			branchRef.child('checkpoints').set({ ...existingCheckpoints, ...newCheckpoints }),
-			branchRef.child('checkpointMap').set({ ...existingCheckpointMap, ...newCheckpointMap }),
-		]);
-	}
-	return hasCreatedNewCheckpoints;
-};
+const backfillCheckpointsForBranch = async (pubId, branchId) =>
+	new Promise(async (resolve, reject) => {
+		setTimeout(() => reject(new Error('Timed out')), 60 * 1000);
+		try {
+			const branchRef = getBranchRef(pubId, branchId);
+			const [checkpoints, checkpointMap, changes, merges] = await Promise.all([
+				branchRef.child('checkpoints').once('value'),
+				branchRef.child('checkpointMap').once('value'),
+				branchRef
+					.child('changes')
+					.orderByKey()
+					.once('value'),
+				branchRef
+					.child('merges')
+					.orderByKey()
+					.once('value'),
+			]);
+			const allKeyables = { ...changes.val(), ...merges.val() };
+			const keyablesLength = Object.keys(allKeyables).length;
+			if (keyablesLength > 10000) {
+				throw new Error(`Too many keyables: ${keyablesLength}`);
+			}
+			const existingCheckpoints = checkpoints.val() || {};
+			const existingCheckpointMap = checkpointMap.val() || {};
+			const {
+				checkpoints: newCheckpoints,
+				checkpointMap: newCheckpointMap,
+			} = createCheckpointsFromKeyables(
+				allKeyables,
+				overwriteExisting ? [] : Object.keys(existingCheckpoints),
+			);
+			const hasCreatedNewCheckpoints = Object.keys(newCheckpoints).length > 0;
+			if (hasCreatedNewCheckpoints) {
+				await Promise.all([
+					branchRef
+						.child('checkpoints')
+						.set({ ...existingCheckpoints, ...newCheckpoints }),
+					branchRef
+						.child('checkpointMap')
+						.set({ ...existingCheckpointMap, ...newCheckpointMap }),
+				]);
+			}
+			resolve(hasCreatedNewCheckpoints);
+		} catch (err) {
+			reject(err);
+		}
+	});
 
-const backfillCheckpointsForPub = (pub, index, arrayLength) => {
+const backfillCheckpointsForPub = (pub) => {
+	if (pubSlugBlacklist.includes(pub.slug)) {
+		return null;
+	}
 	return Promise.all(
 		pub.branches.map((branch) =>
-			backfillCheckpointsForBranch(pub.id, branch.id)
-				.then((createdCheckpoints) => statusMessage(pub, branch, true, createdCheckpoints))
-				.then(() => {
-					completed += 1;
-					if (completed % 100 === 0) {
-						console.log(`Completed ${completed} of ${arrayLength}`);
-					}
-				})
-				.catch((err) => {
-					statusMessage(pub, branch, false);
-					console.error(err.message);
-				}),
+			slowdance
+				.wrapPromise(
+					backfillCheckpointsForBranch(pub.id, branch.id).then((createdCheckpoints) =>
+						statusMessage(true, createdCheckpoints),
+					),
+					{ label: `[${pub.slug}.${branch.title}] ${pub.title}` },
+				)
+				.catch(() => {}),
 		),
 	);
 };
 
 const main = async () => {
+	slowdance.start();
 	const allPubs = await getAllPubsWithBranches();
-	console.log('Backfill: got pubs');
-	await Promise.map(allPubs, backfillCheckpointsForPub, { concurrency: 100 });
-	console.log('Backfill: done.');
+	await Promise.map(allPubs, backfillCheckpointsForPub, { concurrency: 5 });
 };
 
 main();

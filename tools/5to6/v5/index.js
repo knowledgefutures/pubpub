@@ -1,7 +1,5 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
-require('ignore-styles');
-
 const Promise = require('bluebird');
 const { storage } = require('../setup');
 // const { queryPubUpdatedTimes } = require('./queryPub');

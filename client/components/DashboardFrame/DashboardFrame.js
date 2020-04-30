@@ -34,8 +34,12 @@ const DashboardFrame = (props) => {
 			<div className="dashboard-content-header">
 				<div className="dashboard-header-left">
 					<div className="title">
-						{icon && <Icon icon={icon} iconSize={24} />}
-						&nbsp;
+						{icon && (
+							<React.Fragment>
+								<Icon icon={icon} iconSize={24} />
+								&nbsp;
+							</React.Fragment>
+						)}
 						<span className="target-type">{activeTargetType}</span>&nbsp;
 						{title}
 					</div>

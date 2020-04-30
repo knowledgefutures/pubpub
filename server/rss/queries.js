@@ -59,7 +59,7 @@ export const getCommunityRss = (hostname) => {
 		],
 	}).then((communityData) => {
 		if (!communityData) {
-			throw new Error('No communityData');
+			throw new Error('Community Not Found');
 		}
 		const communityUrl = communityData.domain
 			? `https://${communityData.domain}`

@@ -71,7 +71,7 @@ export default async () => {
 					};
 				});
 			const newMembers = [...newBranchMembers, ...newManagerMembers].filter((member) => {
-				return userSet.has(member.id);
+				return userSet.has(member.userId);
 			});
 			const newMembersObject = {};
 			const permissionLevels = ['view', 'discuss', 'edit', 'manage'];

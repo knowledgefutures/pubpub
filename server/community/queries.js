@@ -53,6 +53,7 @@ export const createCommunity = (inputValues, userData) => {
 				accentColorLight: inputValues.accentColorLight,
 				accentColorDark: inputValues.accentColorDark,
 				navigation: [homePageId],
+				hideCreatePubButton: true,
 			});
 		})
 		.then(() => {

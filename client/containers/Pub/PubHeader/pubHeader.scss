@@ -216,11 +216,11 @@ $mobile-bottom-buttons-spacing: 10px;
     }
 
     @include mobile {
-        &:not(.pub-header-theme-white-blocks):not(.pub-header-theme-black-blocks) {
-            .title-group-component {
-                padding-top: 0;
-            }
+        .background-safety-layer:not(.full-height) {
+            display: none;
+        }
 
+        @include not-in-blocks-theme {
             .small-header-button-component .icon-container {
                 width: 30px;
                 height: 30px;
@@ -256,6 +256,7 @@ $mobile-bottom-buttons-spacing: 10px;
             }
 
             .title-group-component {
+                padding: 0;
                 grid-area: middle;
                 .published-date {
                     display: flex;

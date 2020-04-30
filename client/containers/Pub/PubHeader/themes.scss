@@ -251,3 +251,16 @@ $off-black: #333;
     @include color-theme(white, white);
     @include blocks-box-theme(black, white);
 }
+
+@mixin in-blocks-theme {
+    &.pub-header-theme-white-blocks,
+    &.pub-header-theme-black-blocks {
+        @content;
+    }
+}
+
+@mixin not-in-blocks-theme {
+    &:not(.pub-header-theme-white-blocks):not(.pub-header-theme-black-blocks) {
+        @content;
+    }
+}

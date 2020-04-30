@@ -77,9 +77,6 @@ const UtilityButtons = (props) => {
 					)}
 				</DialogLauncher>
 			)}
-			<Download pubData={pubData}>
-				<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
-			</Download>
 			<PopoverButton
 				component={CitationsPreview}
 				pubData={pubData}
@@ -97,6 +94,9 @@ const UtilityButtons = (props) => {
 					<SmallHeaderButton label="Social" labelPosition="left" icon="share2" />
 				</Social>
 			)}
+			<Download pubData={pubData}>
+				<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
+			</Download>
 			{pubHeadings.length > 0 && showTocButton && (
 				<PubToc headings={pubHeadings}>
 					<SmallHeaderButton label="Contents" labelPosition="left" icon="toc" />

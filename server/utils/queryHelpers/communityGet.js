@@ -1,4 +1,4 @@
-import { Collection, Community, Page } from '../../models';
+import { Collection, Community, Page, Member } from '../../models';
 
 export default (locationData, whereQuery) => {
 	return Community.findOne({
@@ -16,6 +16,12 @@ export default (locationData, whereQuery) => {
 				model: Collection,
 				as: 'collections',
 				separate: true,
+				include: [
+					{
+						model: Member,
+						as: 'members',
+					},
+				],
 			},
 		],
 	}).then((communityResult) => {

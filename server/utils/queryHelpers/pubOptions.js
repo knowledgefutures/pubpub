@@ -13,11 +13,12 @@ import {
 	Fork,
 	Anchor,
 	User,
+	Member,
 } from '../../models';
 import { attributesPublicUser } from '../attributesPublicUser';
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
-export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
+export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity }) => {
 	/* Initialize values assuming all inputs are false. */
 	/* Then, iterate over each input and adjust */
 	/* variables as needed */
@@ -49,6 +50,7 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			],
 		},
 	];
+	let pubMembers = [];
 	let pubReleases = [
 		{
 			model: Release,
@@ -86,6 +88,14 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 		thread = [];
 		anchor = [];
 	}
+	if (getMembers) {
+		pubMembers = [
+			{
+				model: Member,
+				as: 'members',
+			},
+		];
+	}
 	if (getCollections) {
 		collectionPubs = [
 			{
@@ -101,6 +111,10 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 								model: Page,
 								as: 'page',
 								attributes: ['id', 'title', 'slug'],
+							},
+							{
+								model: Member,
+								as: 'members',
 							},
 							{
 								model: CollectionAttribution,
@@ -143,6 +157,7 @@ export default ({ isAuth, isPreview, getCollections, getCommunity }) => {
 			...pubAttributions,
 			...pubBranches,
 			...pubReleases,
+			...pubMembers,
 			{
 				separate: true,
 				model: DiscussionNew,

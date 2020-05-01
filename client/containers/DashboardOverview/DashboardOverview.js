@@ -8,11 +8,16 @@ const DashboardOverview = (props) => {
 	const { scopeData } = usePageContext();
 	const { activeTargetType } = scopeData.elements;
 	const overviewTypes = {
-		community: <CommunityOverview {...props} />,
-		collection: <CollectionOverview {...props} />,
-		pub: <PubOverview {...props} />,
+		community: CommunityOverview,
+		collection: CollectionOverview,
+		pub: PubOverview,
 	};
-	return <div className="dashboard-overview-container">{overviewTypes[activeTargetType]}</div>;
+	const ActiveComponent = overviewTypes[activeTargetType];
+	return (
+		<div className="dashboard-overview-container">
+			<ActiveComponent {...props} />
+		</div>
+	);
 };
 
 export default DashboardOverview;

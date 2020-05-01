@@ -52,7 +52,7 @@ export default async (
 				where: activeTargetType === 'pub' ? { id: activeTarget.id } : {},
 				as: 'pubs',
 				separate: true,
-				...buildPubOptions({ isPreview: true, getCollections: true }),
+				...buildPubOptions({ isPreview: true, getMembers: true, getCollections: true }),
 			},
 		],
 	});

@@ -12,7 +12,7 @@ export default async (idOrSlugObject, initialData) => {
 	});
 	const pubsQuery = Pub.findAll({
 		where: { communityId: initialData.communityData.id },
-		...buildPubOptions({ isPreview: true, getCollections: true }),
+		...buildPubOptions({ isPreview: true, getMembers: true, getCollections: true }),
 	});
 	const [pageData, pubsData] = await Promise.all([pageQuery, pubsQuery]);
 	const sanitizedPubs = pubsData

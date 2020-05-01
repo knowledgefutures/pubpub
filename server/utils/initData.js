@@ -83,7 +83,12 @@ export const getInitialData = async (req, isDashboard) => {
 		isDashboard: isDashboard,
 	});
 
-	const cleanedCommunityData = sanitizeCommunity(communityData, locationData, scopeData);
+	const cleanedCommunityData = sanitizeCommunity(
+		communityData,
+		locationData,
+		loginData,
+		scopeData,
+	);
 	return {
 		communityData: cleanedCommunityData,
 		loginData: loginData,

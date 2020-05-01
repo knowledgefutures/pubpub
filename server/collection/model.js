@@ -35,7 +35,13 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Collection, CollectionAttribution, Page, CollectionPub } = models;
+					const {
+						Collection,
+						CollectionAttribution,
+						Page,
+						CollectionPub,
+						Member,
+					} = models;
 					Collection.hasMany(CollectionAttribution, {
 						onDelete: 'CASCADE',
 						as: 'attributions',
@@ -43,6 +49,10 @@ export default (sequelize, dataTypes) => {
 					});
 					Collection.hasMany(CollectionPub, {
 						as: 'collectionPubs',
+						foreignKey: 'collectionId',
+					});
+					Collection.hasMany(Member, {
+						as: 'members',
 						foreignKey: 'collectionId',
 					});
 					Collection.belongsTo(Page, { as: 'page', foreignKey: 'pageId' });

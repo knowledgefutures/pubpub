@@ -1,14 +1,10 @@
 export default (collection, initialData) => {
-	/* Collection access is granted when */
-	/* 1. it is public collection, or */
-	/* 2. the user is a community admin, or */
-	/* 3. the user has explicit permissions on the collection */
-
-	const { activePermissions, memberData } = initialData.scopeData;
-	const { canAdminCommunity } = activePermissions;
-	const hasCollectionAccess = memberData.find((member) => {
-		return member.collectionId === collection.id;
+	/* Collections are included in all communityData in initialData */
+	/* communitySanitize implements collection filtering, so this */
+	/* function simply needs to check if that collection exists */
+	/* within initialData.communityData */
+	const hasAccess = initialData.communityData.collections.some((cl) => {
+		return cl.id === collection.id;
 	});
-	const hasAccess = canAdminCommunity || !!hasCollectionAccess || collection.isPublic;
 	return hasAccess ? collection : null;
 };

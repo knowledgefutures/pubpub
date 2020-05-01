@@ -8,7 +8,7 @@ export default async (slug, communityId) => {
 			slug: sanitizedSlug,
 			communityId: communityId,
 		},
-		...buildPubOptions({ getCollections: true }),
+		...buildPubOptions({ getMembers: true, getCollections: true }),
 	});
 
 	if (!pubData) {

@@ -20,7 +20,12 @@ export default async (slug, initialData) => {
 					{
 						model: Pub,
 						as: 'pub',
-						...buildPubOptions({ isPreview: true, getCommunity: true }),
+						...buildPubOptions({
+							isPreview: true,
+							getMembers: true,
+							getCommunity: true,
+							getCollections: true,
+						}),
 					},
 				],
 			},

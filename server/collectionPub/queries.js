@@ -1,30 +1,52 @@
 import { Op } from 'sequelize';
 
 import findRank from 'shared/utils/findRank';
-import { Collection, CollectionPub, sequelize } from '../models';
+import {
+	sequelize,
+	Collection,
+	CollectionPub,
+	Member,
+	Pub,
+	PubAttribution,
+	Release,
+	User,
+} from '../models';
 import { getCollectionPubsInCollection } from '../utils/collectionQueries';
-import { getScope, getOverview, sanitizeOverview } from '../utils/queryHelpers';
+import { attributesPublicUser } from '../utils/attributesPublicUser';
 
-export const getCollectionPubs = async ({ communityId, collectionId, userId }) => {
-	const scopeData = await getScope({
-		communityId: communityId,
-		collectionId: collectionId,
-		loginId: userId,
+export const getPubsInCollection = async ({ communityId, collectionId, userId }) => {
+	const collectionPubsQuery = CollectionPub.findAll({
+		where: { collectionId: collectionId },
+		order: [['rank', 'ASC']],
+		include: [
+			{
+				model: Pub,
+				as: 'pub',
+				include: [
+					{ model: Release, as: 'releases', attributes: ['id'] },
+					{
+						model: PubAttribution,
+						as: 'attributions',
+						include: [{ model: User, as: 'user', attributes: attributesPublicUser }],
+					},
+				],
+			},
+		],
 	});
-	const overviewData = await getOverview({ scopeData: scopeData });
-	const { pubs, collections } = sanitizeOverview(
-		{ loginData: { id: userId }, scopeData: scopeData },
-		overviewData,
-	);
-	const collection = collections.find((col) => col.id === collectionId);
-	if (collection) {
-		return collection.collectionPubs
-			.concat()
-			.sort((a, b) => (a.rank > b.rank ? 1 : -1))
-			.map((cp) => pubs.find((pub) => pub.id === cp.pubId))
-			.filter((x) => x);
-	}
-	return [];
+	const membersQuery = userId ? Member.findAll({ where: { userId: userId } }) : [];
+	const [collectionPubs, members] = await Promise.all([collectionPubsQuery, membersQuery]);
+	const isCommunityMember = members.some((member) => member.communityId === communityId);
+	const isCollectionMember = members.some((member) => member.collectionId === collectionId);
+
+	return collectionPubs
+		.map((cp) => cp.pub)
+		.filter(
+			(pub) =>
+				isCommunityMember ||
+				isCollectionMember ||
+				members.some((m) => m.pubId === pub.id) ||
+				pub.releases.length > 0,
+		);
 };
 
 export const createCollectionPub = ({ collectionId, pubId, rank, moveToTop = false }) => {

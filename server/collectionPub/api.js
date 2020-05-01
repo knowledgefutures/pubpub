@@ -6,7 +6,7 @@ import {
 	updateCollectionPub,
 	setPrimaryCollectionPub,
 	destroyCollectionPub,
-	getCollectionPubs,
+	getPubsInCollection,
 } from './queries';
 
 const getRequestIds = (req, argsFrom = req.body) => {
@@ -23,8 +23,8 @@ const getRequestIds = (req, argsFrom = req.body) => {
 app.get(
 	'/api/collectionPubs',
 	wrap(async (req, res) => {
-		const collectionPubs = await getCollectionPubs(getRequestIds(req, req.query));
-		return res.status(201).json(collectionPubs);
+		const pubsInCollection = await getPubsInCollection(getRequestIds(req, req.query));
+		return res.status(200).json(pubsInCollection);
 	}),
 );
 

@@ -35,6 +35,34 @@ const models = modelize`
 			title: "Just a tag innit"
 			kind: "tag"
 		}
+		Collection hasPubs {
+			Member {
+				permissions: "view"
+				User hasPubsMember {}
+			}
+			isPublic: true
+			CollectionPub {
+				rank: "a"
+				Pub pub1 {
+					Release {}
+				}
+			}
+			CollectionPub {
+				rank: "b"
+				Pub pub2 {
+					Release {}
+				}
+			}
+			CollectionPub {
+				rank: "c"
+				Pub unreleasedPub {
+					Member {
+						permissions: "view"
+						User unreleasePubMember {}
+					}
+				}
+			}
+		}
 	}
 	Community {
 		Member {
@@ -46,6 +74,39 @@ const models = modelize`
 
 setup(beforeAll, async () => {
 	await models.resolve();
+});
+
+it('gets a list of pubs in a collection', async () => {
+	const { community, hasPubs, pub1, pub2 } = models;
+	const agent = await login();
+	const { body: pubs } = await agent
+		.get('/api/collectionPubs')
+		.query({ collectionId: hasPubs.id, communityId: community.id })
+		.expect(200);
+	expect(pubs.map((pub) => pub.id)).toEqual([pub1.id, pub2.id]);
+});
+
+it('lists unreleases Pubs for users with relevant membership', async () => {
+	const {
+		admin,
+		community,
+		hasPubs,
+		hasPubsMember,
+		pub1,
+		pub2,
+		unreleasedPub,
+		unreleasePubMember,
+	} = models;
+	await Promise.all(
+		[unreleasePubMember, hasPubsMember, admin].map(async (member) => {
+			const agent = await login(member);
+			const { body: pubs } = await agent
+				.get('/api/collectionPubs')
+				.query({ collectionId: hasPubs.id, communityId: community.id })
+				.expect(200);
+			expect(pubs.map((pub) => pub.id)).toEqual([pub1.id, pub2.id, unreleasedPub.id]);
+		}),
+	);
 });
 
 it('creates a collectionPub and sets its rank', async () => {

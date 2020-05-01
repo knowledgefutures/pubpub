@@ -23,6 +23,7 @@ const TitleGroup = (props) => {
 	const { title, description, isRelease } = pubData;
 	const { communityData, scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
+	const canModify = canManage && !isRelease;
 	const publishedDate = getPubPublishedDate(pubData);
 
 	const renderBylineEditor = () => {
@@ -57,15 +58,15 @@ const TitleGroup = (props) => {
 			<EditableHeaderText
 				text={title}
 				updateText={(text) => updatePubData({ title: text })}
-				canEdit={canManage && !isRelease}
+				canEdit={canModify}
 				className="title"
 				placeholder="Add a Pub title"
 			/>
-			{(canManage || description) && (
+			{(canModify || description) && (
 				<EditableHeaderText
 					text={description}
 					updateText={(text) => updatePubData({ description: text })}
-					canEdit={canManage && !isRelease}
+					canEdit={canModify}
 					tagName="h3"
 					className="description pub-header-themed-secondary"
 					placeholder="Add a description for this Pub"

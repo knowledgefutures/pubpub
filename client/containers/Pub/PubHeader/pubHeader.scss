@@ -120,6 +120,12 @@ $mobile-bottom-buttons-spacing: 10px;
         }
     }
 
+    @include in-blocks-theme {
+        .pub-header-content-component {
+            column-gap: 20px;
+        }
+    }
+
     .pub-header-content-component {
         display: grid;
         grid-template-rows: $top-bar-total-height auto auto;

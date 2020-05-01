@@ -300,9 +300,7 @@ const PubBody = (props) => {
 							<Discussion
 								key={embedId}
 								pubData={pubData}
-								collabData={collabData}
 								historyData={historyData}
-								firebaseBranchRef={firebaseBranchRef}
 								discussionData={activeDiscussion}
 								updateLocalData={updateLocalData}
 								canPreview={true}

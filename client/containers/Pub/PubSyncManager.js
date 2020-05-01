@@ -9,7 +9,7 @@ import { getPubPageTitle } from 'shared/utils/pubPageTitle';
 
 export const PubContext = React.createContext({
 	pubData: {},
-	collabData: {},
+	collabData: { editorChangeObject: {} },
 	historyData: {},
 	firebaseBranchRef: null,
 	updateLocalData: null,

@@ -8,9 +8,7 @@ require('./discussionGroup.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
-	collabData: PropTypes.object.isRequired,
 	historyData: PropTypes.object.isRequired,
-	firebaseBranchRef: PropTypes.object.isRequired,
 	discussions: PropTypes.array.isRequired,
 	mountClassName: PropTypes.string.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -23,9 +21,7 @@ const propTypes = {
 const DiscussionGroup = (props) => {
 	const {
 		pubData,
-		collabData,
 		historyData,
-		firebaseBranchRef,
 		updateLocalData,
 		discussions,
 		sideContentRef,
@@ -116,9 +112,7 @@ const DiscussionGroup = (props) => {
 			{activeDiscussionData && (
 				<Discussion
 					pubData={pubData}
-					collabData={collabData}
 					historyData={historyData}
-					firebaseBranchRef={firebaseBranchRef}
 					discussionData={activeDiscussionData}
 					updateLocalData={updateLocalData}
 				/>

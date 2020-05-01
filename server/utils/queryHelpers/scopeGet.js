@@ -261,6 +261,7 @@ getActivePermissions = async (
 	};
 
 	const initialOptions = {
+		isSuperAdmin: isSuperAdmin,
 		canCreateForks: null,
 		canCreateReviews: null,
 		canCreateDiscussions: true,

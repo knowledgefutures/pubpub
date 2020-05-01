@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import { dispatchEmptyTransaction } from 'components/Editor';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import { usePageContext } from 'utils/hooks';
-
+import { dispatchEmptyTransaction } from 'components/Editor';
 import { NonIdealState } from '@blueprintjs/core';
+
+import { usePageContext } from 'utils/hooks';
+import { usePubContext } from '../../pubHooks';
+
 import DiscussionGroup from './DiscussionGroup';
 import Discussion from './Discussion';
 import DiscussionInput from './Discussion/DiscussionInput';
@@ -14,20 +16,15 @@ import { groupDiscussionsByLine } from './discussionUtils';
 require('./pubDiscussions.scss');
 
 const propTypes = {
-	pubData: PropTypes.object.isRequired,
-	historyData: PropTypes.object.isRequired,
-	collabData: PropTypes.object.isRequired,
-	firebaseBranchRef: PropTypes.object,
 	filterDiscussions: PropTypes.func,
-	updateLocalData: PropTypes.func.isRequired,
-	sideContentRef: PropTypes.object.isRequired,
 	mainContentRef: PropTypes.object.isRequired,
-	showBottomInput: PropTypes.bool,
+	pubData: PropTypes.object.isRequired,
 	searchTerm: PropTypes.string,
+	showBottomInput: PropTypes.bool,
+	sideContentRef: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
-	firebaseBranchRef: undefined,
 	filterDiscussions: () => [],
 	searchTerm: null,
 	showBottomInput: false,
@@ -35,53 +32,44 @@ const defaultProps = {
 
 const PubDiscussions = (props) => {
 	const {
-		collabData,
 		pubData,
-		firebaseBranchRef,
 		filterDiscussions,
-		updateLocalData,
 		mainContentRef,
 		sideContentRef,
 		searchTerm,
 		showBottomInput,
-		historyData,
 	} = props;
-	const { communityData, scopeData } = usePageContext();
-	const { canView, canCreateDiscussions } = scopeData;
-	const decorations = collabData.editorChangeObject.decorations || [];
-	const { width: windowWidth } = useWindowSize();
 
-	useEffect(() => {
-		/* This effect will cause boundingBoxes to */
-		/* recalculate on window resize. */
-		if (collabData.editorChangeObject.view) {
-			dispatchEmptyTransaction(collabData.editorChangeObject.view);
-		}
-		/* eslint-disable-next-line react-hooks/exhaustive-deps */
-	}, [windowWidth]);
-	// const threads = nestDiscussionsToThreads(pubData.discussions);
-	const { discussions } = pubData;
-	const groupsByLine = groupDiscussionsByLine(decorations, discussions);
+	const { collabData, updateLocalData, historyData } = usePubContext();
+	const { communityData, scopeData } = usePageContext();
+	const { width: windowWidth } = useWindowSize();
 	const prevNewDiscussionIds = useRef([]);
 	const prevConvertedDiscussionIds = useRef([]);
 
+	const { discussions } = pubData;
+	const { canView, canCreateDiscussions } = scopeData;
+	const decorations = collabData.editorChangeObject.decorations || [];
+	const groupsByLine = groupDiscussionsByLine(decorations, discussions);
+
+	useEffect(() => {
+		// This effect will cause boundingBoxes to recalculate on window resize.
+		if (collabData.editorChangeObject.view) {
+			dispatchEmptyTransaction(collabData.editorChangeObject.view);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [windowWidth]);
+
 	const renderSideDiscussions = () => {
-		// return null;
 		return groupsByLine.map((group) => {
 			const mountElement = document.getElementsByClassName(group.mountClassName)[0];
 			if (!mountElement) {
 				return null;
 			}
-			// console.log('about to render portal');
-			// console.log('mountElement', mountElement);
-			// console.log(group)
 			return ReactDOM.createPortal(
 				<DiscussionGroup
 					key={group.mountClassName}
 					pubData={pubData}
-					collabData={collabData}
 					historyData={historyData}
-					firebaseBranchRef={firebaseBranchRef}
 					discussions={group.discussions}
 					mountClassName={group.mountClassName}
 					updateLocalData={updateLocalData}
@@ -108,8 +96,6 @@ const PubDiscussions = (props) => {
 				{showBottomInput && (
 					<DiscussionInput
 						pubData={pubData}
-						collabData={collabData}
-						historyData={historyData}
 						updateLocalData={updateLocalData}
 						discussionData={{ id: undefined }}
 						isPubBottomInput={true}
@@ -128,9 +114,6 @@ const PubDiscussions = (props) => {
 						<Discussion
 							key={discussion.id}
 							pubData={pubData}
-							collabData={collabData}
-							historyData={historyData}
-							firebaseBranchRef={firebaseBranchRef}
 							discussionData={discussion}
 							updateLocalData={updateLocalData}
 							canPreview={true}

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { AnchorButton, Button, Intent } from '@blueprintjs/core';
+
 import Editor, {
 	getText,
 	getJSON,
@@ -7,24 +9,20 @@ import Editor, {
 	convertLocalHighlightToDiscussion,
 	getLocalHighlightText,
 } from 'components/Editor';
-import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 import { Avatar } from 'components';
-import { usePageContext } from 'utils/hooks';
-import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 import { apiFetch } from 'utils';
+import { usePageContext } from 'utils/hooks';
+import { usePubContext } from 'containers/Pub/pubHooks';
+import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
-	collabData: PropTypes.object.isRequired,
-	firebaseBranchRef: PropTypes.object,
-	discussionData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
+	discussionData: PropTypes.object.isRequired,
 	isPubBottomInput: PropTypes.bool,
-	historyData: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
-	firebaseBranchRef: undefined,
 	isPubBottomInput: false,
 };
 
@@ -36,14 +34,8 @@ const getPlaceholderText = (isNewThread, isPubBottomInput) => {
 };
 
 const DiscussionInput = (props) => {
-	const {
-		pubData,
-		collabData,
-		updateLocalData,
-		discussionData,
-		isPubBottomInput,
-		historyData,
-	} = props;
+	const { discussionData, isPubBottomInput, pubData, updateLocalData } = props;
+	const { historyData, collabData, firebaseBranchRef } = usePubContext();
 	const { loginData, locationData, communityData } = usePageContext();
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState({});
@@ -112,14 +104,6 @@ const DiscussionInput = (props) => {
 			}),
 		});
 
-		if (props.firebaseBranchRef) {
-			await convertLocalHighlightToDiscussion(
-				pubView,
-				discussionData.id,
-				props.firebaseBranchRef,
-			);
-		}
-
 		updateLocalData('pub', {
 			discussions: [...pubData.discussions, outputData],
 		});
@@ -127,6 +111,8 @@ const DiscussionInput = (props) => {
 		if (isPubBottomInput) {
 			setIsLoading(false);
 			setEditorKey(Date.now());
+		} else if (firebaseBranchRef) {
+			await convertLocalHighlightToDiscussion(pubView, discussionData.id, firebaseBranchRef);
 		}
 	};
 

@@ -20,20 +20,13 @@ const propTypes = {
 		canManage: PropTypes.bool,
 		canDiscussBranch: PropTypes.bool,
 	}).isRequired,
-	collabData: PropTypes.object.isRequired,
-	historyData: PropTypes.object.isRequired,
-	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
 	mainContentRef: PropTypes.object.isRequired,
 };
 
-const defaultProps = {
-	firebaseBranchRef: undefined,
-};
-
 const DiscussionsSection = (props) => {
-	const { pubData, updateLocalData } = props;
+	const { pubData, updateLocalData, sideContentRef, mainContentRef } = props;
 	const { discussions } = pubData;
 	const { communityData, scopeData } = usePageContext();
 	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
@@ -136,7 +129,9 @@ const DiscussionsSection = (props) => {
 		>
 			{({ searchTerm, isSearching }) => (
 				<PubDiscussions
-					{...props}
+					sideContentRef={sideContentRef}
+					mainContentRef={mainContentRef}
+					pubData={pubData}
 					filterDiscussions={createDiscussionFilter(searchTerm)}
 					searchTerm={searchTerm}
 					showBottomInput={
@@ -149,5 +144,4 @@ const DiscussionsSection = (props) => {
 };
 
 DiscussionsSection.propTypes = propTypes;
-DiscussionsSection.defaultProps = defaultProps;
 export default DiscussionsSection;

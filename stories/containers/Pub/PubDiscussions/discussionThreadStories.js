@@ -6,9 +6,5 @@ import { pubData, discussionsData } from 'data';
 const [singleDiscussion] = discussionsData;
 
 storiesOf('containers/Pub/PubDiscussions/Discussion', module).add('default', () => (
-	<Discussion
-		discussionData={singleDiscussion}
-		pubData={pubData}
-		collabData={{ editorChangeObject: {} }}
-	/>
+	<Discussion discussionData={singleDiscussion} pubData={pubData} />
 ));

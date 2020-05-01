@@ -5,9 +5,28 @@ import { setup, teardown, login, stub, modelize } from 'stubstub';
 
 import { DiscussionNew as Discussion, Thread, ThreadComment } from 'server/models';
 import * as firebaseAdmin from 'server/utils/firebaseAdmin';
-import { createDiscussion } from 'server/discussion/queries';
 
 let firebaseStub;
+
+const alreadyAppliedManagedLabel = {
+	title: 'I have already been applied',
+	publicApply: false,
+	id: uuid.v4(),
+};
+
+const couldApplyManagedLabel = {
+	title: 'You need to be an admin to apply me',
+	publicApply: false,
+	id: uuid.v4(),
+};
+
+const publicLabel = {
+	title: 'Authors can apply this label to their own discussions',
+	publicApply: true,
+	id: uuid.v4(),
+};
+
+const pubLabels = [alreadyAppliedManagedLabel, couldApplyManagedLabel, publicLabel];
 
 const models = modelize`
 	Community community {
@@ -26,7 +45,7 @@ const models = modelize`
 			}
 		}
 		Pub releasePub {
-			Release {}
+			labels: ${pubLabels}
 			Member {
 				permissions: "admin"
 				User releasePubAdmin {}
@@ -34,6 +53,19 @@ const models = modelize`
 			Member {
 				permissions: "manage"
 				User releasePubManager {}
+			}
+			Member {
+				permissions: "view"
+				User releasePubViewer {}
+			}
+			DiscussionNew existingDiscussion {
+				Visibility {
+					access: "public"
+				}
+				Thread {}
+				User discussionCreator {}
+				number: 1
+				labels: ${[alreadyAppliedManagedLabel.id]}
 			}
 		}
 	}
@@ -161,35 +193,216 @@ it('increments thread numbers correctly', async () => {
 	expect(nextThreadNumber).toEqual(threadNumber + 1);
 });
 
-it('lets only users with canAdmin permissions on a Pub close a discussion', async () => {
-	const { releasePub, communityAdmin, releasePubAdmin, releasePubManager } = models;
+it('does not let random members update discussions', async () => {
+	const { releasePubViewer, releasePub, existingDiscussion } = models;
+	const agent = await login(releasePubViewer);
 
-	const testAgainstUser = async (user, expectSuccess) => {
-		const discussion = await createDiscussion(
+	await agent
+		.put('/api/discussions')
+		.send(
 			makeDiscussion({
 				pub: releasePub,
-				text: 'some text',
-				visibilityAccess: 'public',
+				discussionId: existingDiscussion.id,
+				isClosed: true,
 			}),
-			communityAdmin,
-		);
-		const agent = await login(user);
-		await agent
-			.put('/api/discussions')
-			.send(
-				makeDiscussion({
-					pub: releasePub,
-					discussionId: discussion.id,
-					isClosed: true,
-				}),
-			)
-			.expect(expectSuccess ? 200 : 403);
-		const discussionNow = await Discussion.findOne({ where: { id: discussion.id } });
-		expect(!!discussionNow.isClosed).toEqual(expectSuccess);
-	};
+		)
+		.expect(403);
 
-	await testAgainstUser(releasePubManager, false);
-	await testAgainstUser(releasePubAdmin, true);
+	await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				labels: [alreadyAppliedManagedLabel.id, publicLabel.id],
+			}),
+		)
+		.expect(403);
+
+	await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				title: 'Hahahahahahahaha',
+			}),
+		)
+		.expect(403);
+});
+
+it('lets users change the titles of their discussions', async () => {
+	const { discussionCreator, releasePub, existingDiscussion } = models;
+	const agent = await login(discussionCreator);
+
+	const { body: discussion } = await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				title: 'Different now',
+			}),
+		)
+		.expect(200);
+
+	expect(discussion.title).toEqual('Different now');
+});
+
+it('lets users close their discussions, but not re-open them', async () => {
+	const { discussionCreator, releasePub, existingDiscussion } = models;
+	const agent = await login(discussionCreator);
+
+	const { body: discussion } = await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				isClosed: true,
+			}),
+		)
+		.expect(200);
+
+	expect(discussion.isClosed).toEqual(true);
+
+	await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				isClosed: false,
+			}),
+		)
+		.expect(403);
+});
+
+it('lets admins close and open discussions at will', async () => {
+	const { releasePubAdmin, releasePub, existingDiscussion } = models;
+	const agent = await login(releasePubAdmin);
+
+	const { body: discussion } = await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				isClosed: false,
+			}),
+		)
+		.expect(200);
+
+	expect(discussion.isClosed).toEqual(false);
+
+	const { body: discussionAgain } = await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				isClosed: true,
+			}),
+		)
+		.expect(200);
+
+	expect(discussionAgain.isClosed).toEqual(true);
+});
+
+it('lets users apply public labels to their discussions', async () => {
+	const { discussionCreator, releasePub, existingDiscussion } = models;
+	const agent = await login(discussionCreator);
+	const targetLabels = [alreadyAppliedManagedLabel.id, publicLabel.id];
+
+	const { body: discussion } = await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				labels: targetLabels,
+			}),
+		)
+		.expect(200);
+
+	expect(discussion.labels).toEqual(targetLabels);
+});
+
+it('forbids users from applying managed labels to their discussions', async () => {
+	const { discussionCreator, releasePub, existingDiscussion } = models;
+	const agent = await login(discussionCreator);
+	const targetLabels = [alreadyAppliedManagedLabel.id, couldApplyManagedLabel.id];
+
+	await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				labels: targetLabels,
+			}),
+		)
+		.expect(403);
+});
+
+it('lets admins apply managed labels to discussions', async () => {
+	const { releasePubAdmin, releasePub, existingDiscussion } = models;
+	const agent = await login(releasePubAdmin);
+	const targetLabels = [alreadyAppliedManagedLabel.id, couldApplyManagedLabel.id];
+
+	const { body: discussion } = await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				labels: targetLabels,
+			}),
+		)
+		.expect(200);
+
+	expect(discussion.labels).toEqual(targetLabels);
+});
+
+it('forbids users from removing managed labels from their discussions', async () => {
+	const { discussionCreator, releasePub, existingDiscussion } = models;
+	const agent = await login(discussionCreator);
+
+	const discussionCurrently = await Discussion.findOne({ where: { id: existingDiscussion.id } });
+	expect(discussionCurrently.labels.includes(alreadyAppliedManagedLabel.id));
+
+	await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				labels: [],
+			}),
+		)
+		.expect(403);
+});
+
+it('lets admins remove managed labels from discussions', async () => {
+	const { releasePubAdmin, releasePub, existingDiscussion } = models;
+	const agent = await login(releasePubAdmin);
+	const targetLabels = [];
+
+	const discussionCurrently = await Discussion.findOne({ where: { id: existingDiscussion.id } });
+	expect(discussionCurrently.labels.includes(alreadyAppliedManagedLabel.id));
+
+	const { body: discussion } = await agent
+		.put('/api/discussions')
+		.send(
+			makeDiscussion({
+				pub: releasePub,
+				discussionId: existingDiscussion.id,
+				labels: targetLabels,
+			}),
+		)
+		.expect(200);
+
+	expect(discussion.labels).toEqual(targetLabels);
 });
 
 teardown(afterAll, () => {

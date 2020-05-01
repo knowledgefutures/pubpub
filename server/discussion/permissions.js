@@ -1,10 +1,7 @@
 import { getScope } from '../utils/queryHelpers';
 import { DiscussionNew } from '../models';
 
-const userEditableFields = ['title', 'isClosed', 'labels'];
-
-export const getPermissions = async ({
-	discussionId,
+export const getCreatePermission = async ({
 	userId,
 	pubId,
 	communityId,
@@ -12,7 +9,7 @@ export const getPermissions = async ({
 	visibilityAccess,
 }) => {
 	if (!userId) {
-		return {};
+		return false;
 	}
 
 	const scopeData = await getScope({
@@ -22,15 +19,36 @@ export const getPermissions = async ({
 		accessHash: accessHash,
 	});
 
+	const { canView, canCreateDiscussions } = scopeData.activePermissions;
+	const nonMembersVisibility = visibilityAccess && visibilityAccess !== 'members';
+	return canView || (canCreateDiscussions && nonMembersVisibility);
+};
+
+export const getUpdatePermissions = async ({ discussionId, userId, pubId, communityId }) => {
+	if (!userId) {
+		return {};
+	}
+
+	const {
+		activePermissions: { canAdmin },
+	} = await getScope({
+		communityId: communityId,
+		pubId: pubId,
+		loginId: userId,
+	});
+
 	const discussionData = await DiscussionNew.findOne({
 		where: { id: discussionId, pubId: pubId },
 	});
 
-	const { canView, canAdmin, canCreateDiscussions } = scopeData.activePermissions;
-	const nonMembersVisibility = visibilityAccess && visibilityAccess !== 'members';
+	const isAuthor = discussionData.userId === userId;
+	const hasBasicPermissions = isAuthor || canAdmin;
 
 	return {
-		create: canView || (canCreateDiscussions && nonMembersVisibility),
-		update: canAdmin && discussionData && userEditableFields,
+		canTitle: hasBasicPermissions,
+		canApplyPublicLabels: hasBasicPermissions,
+		canApplyManagedLabels: canAdmin,
+		canClose: hasBasicPermissions,
+		canReopen: canAdmin,
 	};
 };

@@ -11,6 +11,9 @@
 			&:not(:last-child) {
 				border-bottom: 0px solid transparent;
 			}
+			&.has-manage-tools {
+				padding: 1em;
+			}
 			&.preview {
 				padding: 1em;
 				cursor: pointer;

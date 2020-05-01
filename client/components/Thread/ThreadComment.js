@@ -13,7 +13,8 @@ const propTypes = {
 };
 
 const ThreadComment = (props) => {
-	const { author, content, createdAt } = props.commentData;
+	const { commentData } = props;
+	const { author, content, createdAt } = commentData;
 
 	/* The classname thread-comment2 can have the number removed once */
 	/* Discussions/ThreadComment is deprecated */
@@ -27,7 +28,6 @@ const ThreadComment = (props) => {
 					</a>{' '}
 					said <TimeAgo {...timeAgoBaseProps} date={createdAt} />
 				</div>
-				{/* <div>Options</div> */}
 			</div>
 			<div className="content">
 				<Editor initialContent={content} isReadOnly={true} />

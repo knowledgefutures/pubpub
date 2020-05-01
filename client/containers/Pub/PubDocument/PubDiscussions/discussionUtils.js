@@ -162,7 +162,7 @@ export const filterAndSortDiscussions = (
 				return true;
 			}
 			const hasNecessaryLabel = filteredLabels.reduce((prev, curr) => {
-				if (discussion.labels.indexOf(curr) === -1) {
+				if (!discussion.labels || discussion.labels.indexOf(curr) === -1) {
 					return false;
 				}
 				return prev;

@@ -117,8 +117,6 @@ const PubDocument = (props) => {
 			<PubBottom
 				pubData={pubData}
 				collabData={collabData}
-				historyData={historyData}
-				firebaseBranchRef={firebaseBranchRef}
 				updateLocalData={updateLocalData}
 				sideContentRef={sideContentRef}
 				mainContentRef={mainContentRef}

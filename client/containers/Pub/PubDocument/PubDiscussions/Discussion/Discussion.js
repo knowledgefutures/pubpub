@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Button, Tooltip } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
+
 import { Icon } from 'components';
 import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
-import ThreadComment from './ThreadComment';
+
+import { discussionMatchesSearchTerm } from '../discussionUtils';
 import DiscussionInput from './DiscussionInput';
 import LabelList from './LabelList';
-import LabelSelect from './LabelSelect';
-import DiscussionReanchor from './DiscussionReanchor';
-import { discussionMatchesSearchTerm } from '../discussionUtils';
+import ManageTools from './ManageTools';
+import ThreadComment from './ThreadComment';
 
 require('./discussion.scss');
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,
-	collabData: PropTypes.object.isRequired,
-	firebaseBranchRef: PropTypes.object,
 	discussionData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
 	canPreview: PropTypes.bool,
@@ -25,26 +24,19 @@ const propTypes = {
 };
 
 const defaultProps = {
-	firebaseBranchRef: undefined,
 	canPreview: false,
 	searchTerm: null,
 };
 
 const Discussion = (props) => {
-	const {
-		pubData,
-		discussionData,
-		canPreview,
-		searchTerm,
-		updateLocalData,
-		collabData,
-		firebaseBranchRef,
-	} = props;
-	const { communityData, scopeData, loginData, locationData } = usePageContext();
-	const { canAdmin, canView, canCreateDiscussions } = scopeData.activePermissions;
+	const { pubData, discussionData, canPreview, searchTerm, updateLocalData } = props;
+	const { communityData, scopeData, locationData, loginData } = usePageContext();
+	const { canView, canCreateDiscussions, canAdmin } = scopeData.activePermissions;
 	const [previewExpanded, setPreviewExpanded] = useState(false);
-	const [isLoadingArchive, setIsLoadingArchive] = useState(false);
 	const isPreview = canPreview && !previewExpanded;
+	const canReply = canView || canCreateDiscussions;
+	const isDiscussionAuthor = loginData.id === discussionData.userId;
+	const showManageTools = canAdmin || (isDiscussionAuthor && !discussionData.isClosed);
 
 	const renderPreviewDiscussionsAndOverflow = (threadComments, minShown) => {
 		let shownDiscussionsCount = 0;
@@ -74,10 +66,11 @@ const Discussion = (props) => {
 				elements.push(
 					<ThreadComment
 						key={threadComment.id}
-						threadCommentData={threadComment}
+						discussionData={discussionData}
 						isPreview={isPreviewDiscussion}
-						// isRootThread={isRootThread}
-						{...props}
+						updateLocalData={updateLocalData}
+						threadCommentData={threadComment}
+						pubData={pubData}
 					/>,
 				);
 			} else {
@@ -89,25 +82,7 @@ const Discussion = (props) => {
 		return elements;
 	};
 
-	const renderDiscussions = () => {
-		// const filteredDiscussions = threadData.filter((discussion) => discussion.threadNumber);
-		const filteredThreadComments = discussionData.thread.comments;
-		if (isPreview) {
-			return renderPreviewDiscussionsAndOverflow(filteredThreadComments, 2);
-		}
-		return filteredThreadComments.map((item) => {
-			return (
-				<ThreadComment
-					key={item.id}
-					threadCommentData={item}
-					isPreview={isPreview}
-					// isRootThread={index === 0}
-					{...props}
-				/>
-			);
-		});
-	};
-	const handlePutDiscussion = (discussionUpdates) => {
+	const handleUpdateDiscussion = (discussionUpdates) => {
 		return apiFetch('/api/discussions', {
 			method: 'PUT',
 			body: JSON.stringify({
@@ -132,7 +107,55 @@ const Discussion = (props) => {
 			});
 		});
 	};
-	const isDiscussionAuthor = loginData.id === discussionData.userId;
+
+	const renderAnchorText = () => {
+		const { anchor } = discussionData;
+		if (anchor) {
+			const { prefix, suffix, exact } = anchor;
+			return (
+				<div className="anchor-text">
+					{prefix}
+					<span className="exact">{exact}</span>
+					{suffix}
+				</div>
+			);
+		}
+		return null;
+	};
+
+	const renderDiscussions = () => {
+		const filteredThreadComments = discussionData.thread.comments;
+		if (isPreview) {
+			return renderPreviewDiscussionsAndOverflow(filteredThreadComments, 2);
+		}
+		return filteredThreadComments.map((item) => {
+			return (
+				<ThreadComment
+					key={item.id}
+					discussionData={discussionData}
+					updateLocalData={updateLocalData}
+					threadCommentData={item}
+					isPreview={isPreview}
+					pubData={pubData}
+				/>
+			);
+		});
+	};
+
+	const renderInput = () => {
+		if (!canReply) {
+			return null;
+		}
+		return (
+			<DiscussionInput
+				key={discussionData.thread.comments.length}
+				pubData={pubData}
+				updateLocalData={updateLocalData}
+				discussionData={discussionData}
+			/>
+		);
+	};
+
 	return (
 		<div
 			tabIndex={-1}
@@ -141,6 +164,7 @@ const Discussion = (props) => {
 				'discussion-component',
 				isPreview && 'preview',
 				previewExpanded && 'expanded-preview',
+				showManageTools && 'has-manage-tools',
 			)}
 			onClick={() => {
 				if (isPreview) {
@@ -153,6 +177,7 @@ const Discussion = (props) => {
 					minimal
 					small
 					className="collapse-button"
+					onClick={() => setPreviewExpanded(false)}
 					icon={
 						<Icon
 							icon="collapse-all"
@@ -160,64 +185,23 @@ const Discussion = (props) => {
 							color={communityData.accentColorDark}
 						/>
 					}
-					onClick={() => {
-						setPreviewExpanded(false);
-					}}
 				/>
 			)}
 			<LabelList pubData={pubData} discussionData={discussionData} />
-			{!isPreview && discussionData.anchor && (
-				<div className="anchor-text">
-					{discussionData.anchor.prefix}
-					<span className="exact">{discussionData.anchor.exact}</span>
-					{discussionData.anchor.suffix}
-				</div>
-			)}
-			{!isPreview &&
-				canAdmin &&
-				firebaseBranchRef &&
-				loginData.id === 'b242f616-7aaa-479c-8ee5-3933dcf70859' && (
-					<DiscussionReanchor
-						discussionData={discussionData}
-						collabData={collabData}
-						firebaseBranchRef={firebaseBranchRef}
-					/>
-				)}
-			{!isPreview && (isDiscussionAuthor || canAdmin) && (
-				<React.Fragment>
-					<LabelSelect
-						availableLabels={pubData.labels || []}
-						labelsData={discussionData.labels || []}
-						onPutDiscussion={handlePutDiscussion}
-						canManagePub={canAdmin}
-						canManageThread={isDiscussionAuthor}
-					/>
-					<Tooltip content={discussionData.isClosed ? 'Unarchive' : 'Archive'}>
-						<Button
-							icon={
-								<Icon
-									icon={discussionData.isClosed ? 'export' : 'import'}
-									iconSize={12}
-								/>
-							}
-							minimal={true}
-							small={true}
-							loading={isLoadingArchive}
-							alt={discussionData.isClosed ? 'Unarchive' : 'Archive'}
-							onClick={() => {
-								setIsLoadingArchive(true);
-								handlePutDiscussion({
-									isClosed: !discussionData.isClosed,
-								});
-							}}
+			{!isPreview && (
+				<>
+					{showManageTools && (
+						<ManageTools
+							pubData={pubData}
+							discussionData={discussionData}
+							onUpdateDiscussion={handleUpdateDiscussion}
 						/>
-					</Tooltip>
-				</React.Fragment>
+					)}
+					{renderAnchorText()}
+				</>
 			)}
 			{renderDiscussions()}
-			{!isPreview && (canView || canCreateDiscussions) && (
-				<DiscussionInput key={discussionData.thread.comments.length} {...props} />
-			)}
+			{!isPreview && renderInput()}
 		</div>
 	);
 };

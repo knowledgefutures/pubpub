@@ -16,7 +16,6 @@ const propTypes = {
 	threadCommentData: PropTypes.object.isRequired,
 	pubData: PropTypes.object.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
-
 	isPreview: PropTypes.bool,
 };
 

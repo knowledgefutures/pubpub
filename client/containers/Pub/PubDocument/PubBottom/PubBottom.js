@@ -17,8 +17,6 @@ const propTypes = {
 		footnotes: PropTypes.arrayOf(notePropType).isRequired,
 	}).isRequired,
 	collabData: PropTypes.object.isRequired,
-	historyData: PropTypes.object.isRequired,
-	firebaseBranchRef: PropTypes.object,
 	updateLocalData: PropTypes.func.isRequired,
 	sideContentRef: PropTypes.object.isRequired,
 	mainContentRef: PropTypes.object.isRequired,
@@ -26,7 +24,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-	firebaseBranchRef: undefined,
 	showDiscussions: true,
 };
 
@@ -36,6 +33,8 @@ const PubBottom = (props) => {
 		pubData,
 		showDiscussions,
 		updateLocalData,
+		sideContentRef,
+		mainContentRef,
 	} = props;
 
 	const { citations = [], footnotes = [] } = pubData;
@@ -73,7 +72,14 @@ const PubBottom = (props) => {
 							/>
 						)}
 						<LicenseSection pubData={pubData} updateLocalData={updateLocalData} />
-						{showDiscussions && <DiscussionsSection {...props} />}
+						{showDiscussions && (
+							<DiscussionsSection
+								pubData={pubData}
+								updateLocalData={updateLocalData}
+								sideContentRef={sideContentRef}
+								mainContentRef={mainContentRef}
+							/>
+						)}
 					</div>
 				</div>
 			)}

@@ -1,4 +1,6 @@
-import { attributesPublicUser } from '../utils/attributesPublicUser';
+/* eslint-disable no-restricted-syntax */
+import { ForbiddenError } from 'server/errors';
+import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 import {
 	User,
 	DiscussionNew,
@@ -6,8 +8,9 @@ import {
 	Thread,
 	ThreadComment,
 	ThreadEvent,
+	Pub,
 	Visibility,
-} from '../models';
+} from 'server/models';
 
 const findDiscussionWithUser = (id) =>
 	DiscussionNew.findOne({
@@ -137,20 +140,66 @@ export const createDiscussion = async (inputValues, user) => {
 	return discussionWithUser;
 };
 
-export const updateDiscussion = (inputValues, updatePermissions) => {
-	// Filter to only allow certain fields to be updated
-	const filteredValues = {};
-	Object.keys(inputValues).forEach((key) => {
-		if (updatePermissions.includes(key)) {
-			filteredValues[key] = inputValues[key];
+export const updateDiscussion = async (values, permissions) => {
+	const { discussionId, pubId } = values;
+	const {
+		canTitle,
+		canApplyPublicLabels,
+		canApplyManagedLabels,
+		canClose,
+		canReopen,
+	} = permissions;
+	const updatedValues = {};
+
+	const [discussion, pub] = await Promise.all([
+		DiscussionNew.findOne({ where: { id: discussionId } }),
+		Pub.findOne({ where: { id: pubId }, attributes: ['id', 'labels'] }),
+	]);
+
+	if ('title' in values) {
+		if (canTitle) {
+			updatedValues.title = values.title;
+		} else {
+			throw new ForbiddenError();
 		}
-	});
-	return DiscussionNew.update(filteredValues, {
-		where: { id: inputValues.discussionId },
-	}).then(async () => {
-		return {
-			...filteredValues,
-			id: inputValues.discussionId,
-		};
-	});
+	}
+
+	if ('isClosed' in values) {
+		const canModifyClosed = values.isClosed ? canClose : canReopen;
+		if (canModifyClosed) {
+			updatedValues.isClosed = values.isClosed;
+		} else {
+			throw new ForbiddenError();
+		}
+	}
+
+	if ('labels' in values) {
+		const labels = [];
+		const existingLabels = discussion.labels || [];
+		const hasRemovedManagedLabels = existingLabels.some((labelId) => {
+			const labelDefinition = pub.labels.find((label) => label.id === labelId);
+			const missingFromUpdate = !values.labels.includes(labelId);
+			return labelDefinition && !labelDefinition.publicApply && missingFromUpdate;
+		});
+		if (hasRemovedManagedLabels && !canApplyManagedLabels) {
+			throw new ForbiddenError();
+		}
+		for (const labelId of values.labels) {
+			const isExistingLabel = existingLabels.includes(labelId);
+			const labelDefinition = pub.labels.find((label) => label.id === labelId);
+			if (labelDefinition) {
+				const { publicApply } = labelDefinition;
+				const canLabel = publicApply ? canApplyPublicLabels : canApplyManagedLabels;
+				if (isExistingLabel || canLabel) {
+					labels.push(labelId);
+				} else {
+					throw new ForbiddenError();
+				}
+			}
+		}
+		updatedValues.labels = labels;
+	}
+
+	await discussion.update(updatedValues);
+	return discussion;
 };

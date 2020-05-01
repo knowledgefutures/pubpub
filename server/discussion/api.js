@@ -1,5 +1,5 @@
 import app, { wrap } from '../server';
-import { getPermissions } from './permissions';
+import { getCreatePermission, getUpdatePermissions } from './permissions';
 import { createDiscussion, updateDiscussion } from './queries';
 import { ForbiddenError } from '../errors';
 
@@ -19,8 +19,8 @@ app.post(
 	'/api/discussions',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);
-		const permissions = await getPermissions(requestIds);
-		if (!permissions.create) {
+		const canCreate = await getCreatePermission(requestIds);
+		if (!canCreate) {
 			throw new ForbiddenError();
 		}
 		const newDiscussion = await createDiscussion(req.body, req.user);
@@ -32,11 +32,8 @@ app.put(
 	'/api/discussions',
 	wrap(async (req, res) => {
 		const requestIds = getRequestIds(req);
-		const permissions = await getPermissions(requestIds);
-		if (!permissions.update) {
-			throw new ForbiddenError();
-		}
-		const updatedValues = await updateDiscussion(req.body, permissions.update);
+		const permissions = await getUpdatePermissions(requestIds);
+		const updatedValues = await updateDiscussion(req.body, permissions);
 		return res.status(200).json(updatedValues);
 	}),
 );

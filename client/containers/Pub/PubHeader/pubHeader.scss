@@ -123,6 +123,9 @@ $mobile-bottom-buttons-spacing: 10px;
     @include in-blocks-theme {
         .pub-header-content-component {
             column-gap: 20px;
+            .title-group-component {
+                margin-right: 20px;
+            }
         }
     }
 

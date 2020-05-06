@@ -16,7 +16,14 @@ export const getPubLatestReleasedDate = (pub) => {
 		});
 };
 
+export const getPubCreatedDate = (pub) => {
+	return pub.createdAt;
+};
+
 export const getPubPublishedDate = (pub) => {
+	if (pub.customPublishedAt) {
+		return pub.customPublishedAt;
+	}
 	const { releases } = pub;
 	if (releases.length > 0) {
 		const [firstRelease] = releases;

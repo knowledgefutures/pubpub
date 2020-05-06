@@ -237,7 +237,8 @@ const Search = (props) => {
 												{mode === 'pubs' && (
 													<div className="byline">
 														{dateFormat(
-															item.branchCreatedAt,
+															item.customPublishedAt ||
+																item.branchCreatedAt,
 															'mmm dd, yyyy',
 														)}
 														{item.byline && <span> · </span>}

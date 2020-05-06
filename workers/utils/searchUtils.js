@@ -102,6 +102,7 @@ export const getPubSearchData = async (pubIds) => {
 				avatar: pub.avatar,
 				description: pub.description,
 				byline: authorByline ? `by ${authorByline}` : '',
+				customPublishedAt: pub.customPublishedAt,
 				communityId: pub.community.id,
 				communityDomain: pub.community.domain || `${pub.community.subdomain}.pubpub.org`,
 				communityTitle: pub.community.title,

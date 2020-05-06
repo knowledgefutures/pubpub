@@ -25,6 +25,7 @@ export const getCommunityRss = (hostname) => {
 					'description',
 					'avatar',
 					'communityId',
+					'customPublishedAt',
 					'createdAt',
 				],
 				separate: true,

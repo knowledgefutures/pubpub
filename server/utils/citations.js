@@ -67,7 +67,6 @@ export const generateCitationHTML = async (pubData, communityData) => {
 	};
 	const pubCiteObject = await Cite.async({
 		...commonData,
-		id: pubData.id,
 		DOI: pubData.doi,
 		ISSN: pubData.doi ? communityData.issn : null,
 		issued: pubIssuedDate && [getDatePartsObject(pubIssuedDate)],

@@ -5,22 +5,22 @@
  */
 export default (attribution) => {
 	if (!attribution.user || attribution.user.id === attribution.id) {
-		// eslint-disable-next-line no-param-reassign
+		const { id, name, avatar, title, orcid } = attribution;
 		return {
 			...attribution,
 			user: {
 				isShadowUser: true,
-				id: attribution.id,
-				initials: attribution.name[0],
-				fullName: attribution.name,
-				firstName: attribution.name.split(' ')[0],
-				lastName: attribution.name
+				id: id,
+				initials: name[0],
+				fullName: name,
+				firstName: name
 					.split(' ')
-					.slice(1, attribution.name.split(' ').length)
+					.slice(0, -1)
 					.join(' '),
-				avatar: attribution.avatar,
-				title: attribution.title,
-				orcid: attribution.orcid,
+				lastName: name.split(' ').pop(),
+				avatar: avatar,
+				title: title,
+				orcid: orcid,
 			},
 		};
 	}

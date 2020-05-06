@@ -17,7 +17,7 @@ const propTypes = {
 const Search = (props) => {
 	const { searchData } = props;
 	const { locationData, communityData } = usePageContext();
-	const [searchQuery, setSearchQuery] = useState('');
+	const [searchQuery, setSearchQuery] = useState(locationData.query.q);
 	const [searchResults, setSearchResults] = useState([]);
 	const [isLoading, setIsLoading] = useState(locationData.query.q || false);
 	const [page, setPage] = useState(
@@ -58,24 +58,17 @@ const Search = (props) => {
 		}
 	};
 
-	useThrottleFn(handleSearch, 1000, [searchQuery, page, mode]);
 	useEffect(() => {
 		setClient();
 		inputRef.current.focus();
+		/* This inputRef manipulation is to ensure that the cursor starts */
+		/* at the end of the text in the search input */
 		const val = inputRef.current.value;
 		inputRef.current.value = '';
 		inputRef.current.value = val;
-		const query = locationData.query.q;
-		if (query) {
-			setIsLoading(!!query);
-			setSearchQuery(query);
-			const queryString = query ? `?q=${query}` : '';
-			const pageString = page ? `&page=${page + 1}` : '';
-			const modeString = mode !== 'pubs' ? `${queryString ? '&' : '?'}mode=${mode}` : '';
-			window.history.replaceState({}, '', `/search${queryString}${pageString}${modeString}`);
-		}
 	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
+	useThrottleFn(handleSearch, 1000, [searchQuery, page, mode]);
 	const setMode = (nextMode) => {
 		if (nextMode !== mode) {
 			modeSetter(nextMode);

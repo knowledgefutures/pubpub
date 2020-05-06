@@ -21,15 +21,10 @@ const propTypes = {
 	}).isRequired,
 	pubHeadings: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 	updatePubData: PropTypes.func.isRequired,
-	showTocButton: PropTypes.bool,
-};
-
-const defaultProps = {
-	showTocButton: true,
 };
 
 const UtilityButtons = (props) => {
-	const { onShowHeaderDetails, pubData, pubHeadings, showTocButton, updatePubData } = props;
+	const { onShowHeaderDetails, pubData, pubHeadings, updatePubData } = props;
 	const { membersData, isRelease } = pubData;
 	const { communityData, scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
@@ -97,7 +92,7 @@ const UtilityButtons = (props) => {
 			<Download pubData={pubData}>
 				<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
 			</Download>
-			{pubHeadings.length > 0 && showTocButton && (
+			{pubHeadings.length > 0 && (
 				<PubToc headings={pubHeadings}>
 					<SmallHeaderButton label="Contents" labelPosition="left" icon="toc" />
 				</PubToc>
@@ -107,5 +102,4 @@ const UtilityButtons = (props) => {
 };
 
 UtilityButtons.propTypes = propTypes;
-UtilityButtons.defaultProps = defaultProps;
 export default UtilityButtons;

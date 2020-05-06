@@ -260,11 +260,16 @@ getActivePermissions = async (
 		return typeof value === 'boolean' ? value : precedent;
 	};
 
+	/* TODO: canCreateDiscussions should eventually pull values from PublicPermissions, */
+	/* but until those are implemented, we have a simple hard-coded value */
+	const communitiesWithoutPublicComments = ['25c2cfeb-dc5b-4dd7-9c82-19146688a931'];
+	const canCreateDiscussions = !communitiesWithoutPublicComments.includes(activeCommunity.id);
+
 	const initialOptions = {
 		isSuperAdmin: isSuperAdmin,
 		canCreateForks: null,
 		canCreateReviews: null,
-		canCreateDiscussions: true,
+		canCreateDiscussions: canCreateDiscussions,
 		canViewDraft: null,
 		canEditDraft: null,
 	};

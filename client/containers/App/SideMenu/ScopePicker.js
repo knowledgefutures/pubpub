@@ -72,7 +72,7 @@ const ScopePicker = () => {
 					minimal: true,
 					rightIcon: 'caret-down',
 				}}
-				placement="top-start"
+				placement="bottom-end"
 				className="scope-menu"
 			>
 				<ScopeDropdown />

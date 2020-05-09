@@ -1,4 +1,4 @@
-import { Pub, PubAttribution, CollectionPub, Branch } from '../models';
+import { Pub, PubAttribution, CollectionPub, Branch, Member } from '../models';
 import { generateHash, slugifyString } from '../utils/strings';
 import { setPubSearchData, deletePubSearchData } from '../utils/search';
 
@@ -23,14 +23,19 @@ export const createPub = async (
 		...restArgs,
 	});
 
-	const createPubAttribution =
-		userId &&
-		PubAttribution.create({
-			userId: userId,
-			pubId: newPub.id,
-			isAuthor: true,
-			order: 0.5,
-		});
+	const createPubAttribution = PubAttribution.create({
+		userId: userId,
+		pubId: newPub.id,
+		isAuthor: true,
+		order: 0.5,
+	});
+
+	const createMember = Member.create({
+		userId: userId,
+		pubId: newPub.id,
+		permissions: 'manage',
+		isOwner: true /* TODO: I don't believe isOwner is fully implemented yet, so we should not rely on it. */,
+	});
 
 	const createPublicBranch = Branch.create({
 		shortId: 1,
@@ -58,6 +63,7 @@ export const createPub = async (
 		createCollectionPubs,
 		createPublicBranch,
 		createDraftBranch,
+		createMember,
 	]);
 
 	setPubSearchData(newPub.id);

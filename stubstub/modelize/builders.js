@@ -55,7 +55,8 @@ builders.Community = async (args = {}) => {
 };
 
 builders.Pub = async (args) => {
-	const { id: pubId } = await createPub(args);
+	const pubCreator = await builders.User();
+	const { id: pubId } = await createPub(args, pubCreator.id);
 	return Pub.findOne({ where: { id: pubId }, include: [{ model: Branch, as: 'branches' }] });
 };
 

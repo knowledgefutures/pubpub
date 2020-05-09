@@ -37,6 +37,26 @@ app.get('/api/editor/embed', (req, res) => {
 	const oembedUrl = oembedUrls[type];
 
 	if (!oembedUrl) {
+		if (type === 'github') {
+			const githubParts = input.split('/');
+			// GitHub API requests require a user agent: https://developer.github.com/v3/#user-agent-required
+			return request(`https://api.github.com/gists/${githubParts[githubParts.length - 1]}`, {
+				json: true,
+				headers: {
+					'User-Agent': 'pubpub',
+				},
+			})
+				.then((result) => {
+					return res.status(200).json({
+						title: `${result.description}`,
+						html: `<html><head></head><body><style type="text/css">.gist-file .gist-data {max-height: 730px;}</style><script src="${result.html_url}.js"></script></body></html>`,
+					});
+				})
+				.catch((err) => {
+					console.warn(err);
+					return res.status(500).json(err);
+				});
+		}
 		return res.status(400).json('Type not supported');
 	}
 

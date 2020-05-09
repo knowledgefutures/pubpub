@@ -13,6 +13,7 @@ import MediaYoutube from './MediaYoutube';
 import MediaCodepen from './MediaCodepen';
 import MediaVimeo from './MediaVimeo';
 import MediaSoundcloud from './MediaSoundcloud';
+import MediaGithub from './MediaGithub';
 
 require('./media.scss');
 
@@ -50,6 +51,7 @@ class Media extends Component {
 			{ text: 'Codepen', icon: 'codepen' },
 			{ text: 'Vimeo', icon: 'vimeo' },
 			{ text: 'SoundCloud', icon: 'soundcloud' },
+			{ text: 'GitHub Gist', icon: 'github' },
 		];
 		const activeItem = this.state.activeItem;
 		const componentProps = {
@@ -105,6 +107,7 @@ class Media extends Component {
 				{activeItem === 'Codepen' && <MediaCodepen {...componentProps} />}
 				{activeItem === 'Vimeo' && <MediaVimeo {...componentProps} />}
 				{activeItem === 'SoundCloud' && <MediaSoundcloud {...componentProps} />}
+				{activeItem === 'GitHub Gist' && <MediaGithub {...componentProps} />}
 			</div>
 		);
 	}

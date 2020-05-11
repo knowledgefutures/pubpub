@@ -5,6 +5,7 @@ import { Button, Tooltip } from '@blueprintjs/core';
 
 import { apiFetch, slugifyString } from 'utils';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
+import { getDashUrl } from 'utils/dashboard';
 import { pubUrl } from 'shared/utils/canonicalUrls';
 import {
 	Icon,
@@ -71,9 +72,16 @@ const PubSettings = (props) => {
 			}),
 		)
 			.then(() => {
+				const nextPubData = { ...persistedPubData, ...pendingPubData };
 				setPendingPubData({});
 				setIsPersisting(false);
-				setPersistedPubData({ ...persistedPubData, ...pendingPubData });
+				setPersistedPubData(nextPubData);
+				if (persistedPubData.slug !== nextPubData.slug) {
+					window.location.href = getDashUrl({
+						pubSlug: nextPubData.slug,
+						mode: 'settings',
+					});
+				}
 			})
 			.catch((err) => {
 				console.error(err);

@@ -54,6 +54,7 @@ export const getInitialData = async (req, isDashboard) => {
 					{ title: 'Search', url: '/search' },
 					{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },
 				],
+				collections: [],
 			},
 			loginData: loginData,
 			locationData: locationData,

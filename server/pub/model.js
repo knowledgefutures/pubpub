@@ -30,6 +30,7 @@ export default (sequelize, dataTypes) => {
 			headerBackgroundImage: { type: dataTypes.TEXT },
 			firstPublishedAt: { type: dataTypes.DATE },
 			lastPublishedAt: { type: dataTypes.DATE },
+			customPublishedAt: { type: dataTypes.DATE },
 			doi: { type: dataTypes.TEXT },
 			labels: { type: dataTypes.JSONB },
 			downloads: { type: dataTypes.JSONB },

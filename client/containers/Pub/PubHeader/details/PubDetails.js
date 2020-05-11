@@ -4,9 +4,10 @@ import dateFormat from 'dateformat';
 
 import { pubDataProps } from 'types/pub';
 import { collectionUrl } from 'shared/utils/canonicalUrls';
-import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
+import { getPubPublishedDate, getPubUpdatedDate, getPubCreatedDate } from 'shared/pub/pubDates';
 import { ClickToCopyButton } from 'components';
 import { getAllPubContributors } from 'utils/pubContributors';
+import { usePageContext } from 'utils/hooks';
 
 import SmallHeaderButton from '../SmallHeaderButton';
 import CitationsPreview from '../CitationsPreview';
@@ -24,15 +25,16 @@ const PubDetails = (props) => {
 	const { communityData, onCloseHeaderDetails, pubData } = props;
 	const { collectionPubs } = pubData;
 	const contributors = getAllPubContributors(pubData);
+	const { scopeData } = usePageContext();
+	const { canView } = scopeData.activePermissions;
 
 	if (!contributors.length && !pubData.doi) {
 		return null;
 	}
 
-	const publishedAt = getPubPublishedDate(pubData, pubData.activeBranch);
-	const publishedAtString = dateFormat(publishedAt, 'mmm dd, yyyy');
+	const createdAt = getPubCreatedDate(pubData);
+	const publishedAt = getPubPublishedDate(pubData);
 	const updatedAt = getPubUpdatedDate({ pub: pubData, branch: pubData.activeBranch });
-	const updatedAtString = dateFormat(updatedAt, 'mmm dd, yyyy');
 	const shouldShowUpdatedDate = updatedAt && updatedAt !== publishedAt;
 
 	return (
@@ -51,14 +53,24 @@ const PubDetails = (props) => {
 					<Contributors contributors={contributors} />
 				</div>
 				<div className="section publication-dates">
-					<h6 className="pub-header-themed-secondary">
-						{pubData.activeBranch.title === 'public' ? 'Published' : 'Created'}
-					</h6>
-					<div className="full-height-date">{publishedAtString}</div>
+					{canView && (
+						<React.Fragment>
+							<h6 className="pub-header-themed-secondary">Created</h6>
+							<div className="full-height-date">
+								{dateFormat(createdAt, 'mmm dd, yyyy')}
+							</div>
+						</React.Fragment>
+					)}
+					<h6 className="pub-header-themed-secondary">Published</h6>
+					<div className="full-height-date">
+						{publishedAt ? dateFormat(publishedAt, 'mmm dd, yyyy') : <i>Unpublished</i>}
+					</div>
 					{shouldShowUpdatedDate && (
 						<React.Fragment>
 							<h6 className="pub-header-themed-secondary">Updated</h6>
-							<div className="full-height-date">{updatedAtString}</div>
+							<div className="full-height-date">
+								{dateFormat(updatedAt, 'mmm dd, yyyy')}
+							</div>
 						</React.Fragment>
 					)}
 				</div>

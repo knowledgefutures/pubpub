@@ -145,7 +145,7 @@ export const getFirebaseDoc = async (
 		const step = Step.fromJSON(prosemirrorSchema, stepJson);
 		const { failed, doc } = step.apply(intermediateDoc);
 		if (failed) {
-			console.error(`Failed with: {failed}`);
+			console.error(`Failed with: ${failed}`);
 		}
 		return doc;
 	}, Node.fromJSON(prosemirrorSchema, checkpointDocJson));

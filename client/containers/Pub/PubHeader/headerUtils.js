@@ -79,6 +79,7 @@ export const getTocHeadings = (docJson) => {
 					textContent &&
 					textContent
 						.replace(/[^a-zA-Z0-9-\s]/gi, '')
+						.replace(/^\d+\W+/gi, '')
 						.replace(/\s+/gi, ' ')
 						.trim()
 						.toLowerCase()

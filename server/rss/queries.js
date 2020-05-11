@@ -1,5 +1,6 @@
 import RSS from 'rss';
 import { getPubPublishedDate } from 'shared/pub/pubDates';
+import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { Community, Pub, User, PubAttribution, Release } from '../models';
 
 export const getCommunityRss = (hostname) => {
@@ -24,6 +25,7 @@ export const getCommunityRss = (hostname) => {
 					'description',
 					'avatar',
 					'communityId',
+					'customPublishedAt',
 					'createdAt',
 				],
 				separate: true,
@@ -102,21 +104,7 @@ export const getCommunityRss = (hostname) => {
 						if (attribution.user) {
 							return attribution;
 						}
-						return {
-							...attribution,
-							user: {
-								id: attribution.id,
-								initials: attribution.name[0],
-								fullName: attribution.name,
-								firstName: attribution.name.split(' ')[0],
-								lastName: attribution.name
-									.split(' ')
-									.slice(1, attribution.name.split(' ').length)
-									.join(' '),
-								avatar: attribution.avatar,
-								title: attribution.title,
-							},
-						};
+						return ensureUserForAttribution(attribution);
 					})
 					.filter((item) => {
 						return item.isAuthor;

@@ -1,3 +1,4 @@
+import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { PubAttribution, User } from '../models';
 import { attributesPublicUser } from '../utils/attributesPublicUser';
 
@@ -18,24 +19,11 @@ export const createPubAttribution = (inputValues) => {
 			});
 		})
 		.then((populatedPubAttribution) => {
+			const populatedPubAttributionJson = populatedPubAttribution.toJSON();
 			if (populatedPubAttribution.user) {
-				return populatedPubAttribution.toJSON();
+				return populatedPubAttributionJson;
 			}
-			return {
-				...populatedPubAttribution.toJSON(),
-				user: {
-					id: populatedPubAttribution.id,
-					initials: populatedPubAttribution.name[0],
-					fullName: populatedPubAttribution.name,
-					firstName: populatedPubAttribution.name.split(' ')[0],
-					lastName: populatedPubAttribution.name
-						.split(' ')
-						.slice(1, populatedPubAttribution.name.split(' ').length)
-						.join(' '),
-					avatar: populatedPubAttribution.avatar,
-					title: populatedPubAttribution.title,
-				},
-			};
+			return ensureUserForAttribution(populatedPubAttributionJson);
 		});
 };
 

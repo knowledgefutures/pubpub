@@ -10,7 +10,7 @@ const propTypes = {
 	// isSmall: PropTypes.bool.isRequired,
 };
 
-class MediaYoutube extends Component {
+class MediaGithub extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -25,7 +25,7 @@ class MediaYoutube extends Component {
 
 	handleInput(url) {
 		const input = getIframeSrc(url) || url;
-		const isValid = isHttpsUri(input) && getEmbedType(input) === 'youtube';
+		const isValid = isHttpsUri(input) && getEmbedType(input) === 'github';
 		this.setState(
 			{
 				input: input,
@@ -39,7 +39,7 @@ class MediaYoutube extends Component {
 				const queryParams = `?type=${getEmbedType(input)}&input=${input}`;
 				return apiFetch(`/api/editor/embed${queryParams}`).then((result) => {
 					this.setState({
-						embedUrl: getIframeSrc(result.html),
+						embedUrl: `data:text/html;charset=utf-8,${result.html}`,
 						embedTitle: result.title,
 					});
 				});
@@ -52,6 +52,7 @@ class MediaYoutube extends Component {
 			url: this.state.embedUrl,
 			caption: this.state.embedTitle,
 			align: 'full',
+			height: 800,
 		});
 	}
 
@@ -61,7 +62,7 @@ class MediaYoutube extends Component {
 				<InputGroup
 					className="top-input"
 					fill={true}
-					placeholder="Enter YouTube URL"
+					placeholder="Enter GitHub Gist URL"
 					large={true}
 					value={this.state.input}
 					onChange={(evt) => {
@@ -85,14 +86,14 @@ class MediaYoutube extends Component {
 				{!this.state.isValid && (
 					<div className="preview-wrapper">
 						<NonIdealState
-							title="Paste a YouTube URL above"
-							icon={<Icon icon="youtube" iconSize={60} useColor={true} />}
+							title="Paste a GitHub Gist URL above"
+							icon={<Icon icon="github" iconSize={60} useColor={true} />}
 							action={
 								<Button
 									text="Load Sample URL"
 									onClick={() => {
 										this.handleInput(
-											'https://www.youtube.com/watch?v=k5Q6-hh49mU',
+											'https://gist.github.com/gabestein/16fd6244f88625c0ea02e044a22d4ac5',
 										);
 									}}
 								/>
@@ -105,5 +106,5 @@ class MediaYoutube extends Component {
 	}
 }
 
-MediaYoutube.propTypes = propTypes;
-export default MediaYoutube;
+MediaGithub.propTypes = propTypes;
+export default MediaGithub;

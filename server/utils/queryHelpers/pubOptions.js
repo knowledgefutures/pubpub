@@ -72,6 +72,7 @@ export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity })
 			'avatar',
 			'doi',
 			'communityId',
+			'customPublishedAt',
 			'createdAt',
 		];
 		pubBranches = [];

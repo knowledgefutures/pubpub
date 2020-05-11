@@ -485,6 +485,7 @@ export const getEmbedType = (input) => {
 		codepen: ['https://codepen.io'],
 		vimeo: ['https://vimeo.com', 'https://player.vimeo.com'],
 		soundcloud: ['https://soundcloud.com'],
+		github: ['https://gist.github.com'],
 	};
 
 	return Object.keys(urls).reduce((prev, curr) => {

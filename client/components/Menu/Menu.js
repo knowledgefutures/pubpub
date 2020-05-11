@@ -51,6 +51,7 @@ export const Menu = React.forwardRef((props, ref) => {
 		placement: placement,
 		gutter: gutter,
 		unstable_preventOverflow: false,
+		unstable_flip: false,
 	});
 
 	const handleDismiss = () => {

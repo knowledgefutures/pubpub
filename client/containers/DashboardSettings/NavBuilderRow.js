@@ -39,6 +39,9 @@ const NavBuilderRow = (props) => {
 		isStatic,
 	} = props;
 	const data = typeof item === 'string' ? pages.find((page) => page.id === item) : item;
+	if (!data) {
+		return null;
+	}
 	let type = 'page';
 	if (typeof data.href === 'string' && !isStatic) {
 		type = 'link';

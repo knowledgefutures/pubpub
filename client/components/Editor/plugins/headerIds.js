@@ -11,6 +11,7 @@ export default () => {
 				if (node.type.name === 'heading') {
 					const newId = node.textContent
 						.replace(/[^a-zA-Z0-9-\s]/gi, '')
+						.replace(/^\d+\W+/gi, '')
 						.replace(/\s+/gi, ' ')
 						.trim()
 						.toLowerCase()

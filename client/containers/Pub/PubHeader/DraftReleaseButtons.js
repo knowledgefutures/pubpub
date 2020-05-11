@@ -9,7 +9,6 @@ import { pubUrl } from 'shared/utils/canonicalUrls';
 import { formatDate } from 'shared/utils/dates';
 
 import ResponsiveHeaderButton from './ResponsiveHeaderButton';
-import PubToc from './PubToc';
 
 const propTypes = {
 	pubData: PropTypes.shape({
@@ -22,12 +21,6 @@ const propTypes = {
 	historyData: PropTypes.object.isRequired,
 	updatePubData: PropTypes.func.isRequired,
 	updateHistoryData: PropTypes.func.isRequired,
-	pubHeadings: PropTypes.array.isRequired,
-	showTocButton: PropTypes.bool,
-};
-
-const defaultProps = {
-	showTocButton: false,
 };
 
 const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) => {
@@ -47,14 +40,7 @@ const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) =
 };
 
 const DraftReleaseButtons = (props) => {
-	const {
-		historyData,
-		pubData,
-		pubHeadings,
-		updateHistoryData,
-		updatePubData,
-		showTocButton,
-	} = props;
+	const { historyData, pubData, updateHistoryData, updatePubData } = props;
 	const {
 		communityData,
 		scopeData,
@@ -64,27 +50,11 @@ const DraftReleaseButtons = (props) => {
 	const { isRelease } = pubData;
 	const canRequestReview = !canAdmin && !!userId;
 
-	const renderTocButton = () => {
-		if (pubHeadings.length > 0 && showTocButton) {
-			return (
-				<PubToc headings={pubHeadings} placement="bottom-start">
-					<ResponsiveHeaderButton
-						outerLabel="Contents"
-						simpleLabel="Contents"
-						labelPosition="right"
-						icon="toc"
-					/>
-				</PubToc>
-			);
-		}
-		return null;
-	};
-
 	const renderForRelease = () => {
 		const { releases, releaseNumber } = pubData;
 		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
-			<>
+			<React.Fragment>
 				{(canView || canViewDraft) && (
 					<ResponsiveHeaderButton
 						icon="edit"
@@ -121,8 +91,7 @@ const DraftReleaseButtons = (props) => {
 						))
 						.reverse()}
 				</Menu>
-				{renderTocButton()}
-			</>
+			</React.Fragment>
 		);
 	};
 
@@ -136,7 +105,7 @@ const DraftReleaseButtons = (props) => {
 			typeof latestRelease.sourceBranchKey !== 'number' ||
 			latestRelease.sourceBranchKey < latestKey;
 		return (
-			<>
+			<React.Fragment>
 				<ResponsiveHeaderButton
 					icon="history"
 					className="draft-history-button"
@@ -210,8 +179,7 @@ const DraftReleaseButtons = (props) => {
 						)}
 					</DialogLauncher>
 				)}
-				{renderTocButton()}
-			</>
+			</React.Fragment>
 		);
 	};
 
@@ -223,5 +191,4 @@ const DraftReleaseButtons = (props) => {
 };
 
 DraftReleaseButtons.propTypes = propTypes;
-DraftReleaseButtons.defaultProps = defaultProps;
 export default DraftReleaseButtons;

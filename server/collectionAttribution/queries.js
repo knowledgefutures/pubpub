@@ -1,3 +1,4 @@
+import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { CollectionAttribution, User } from '../models';
 import { attributesPublicUser } from '../utils/attributesPublicUser';
 
@@ -18,24 +19,12 @@ export const createCollectionAttribution = (inputValues) => {
 			});
 		})
 		.then((populatedCollectionAttribution) => {
+			const populatedCollectionAttributionJson = populatedCollectionAttribution.toJSON();
 			if (populatedCollectionAttribution.user) {
-				return populatedCollectionAttribution.toJSON();
+				return populatedCollectionAttributionJson;
 			}
-			return {
-				...populatedCollectionAttribution.toJSON(),
-				user: {
-					id: populatedCollectionAttribution.id,
-					initials: populatedCollectionAttribution.name[0],
-					fullName: populatedCollectionAttribution.name,
-					firstName: populatedCollectionAttribution.name.split(' ')[0],
-					lastName: populatedCollectionAttribution.name
-						.split(' ')
-						.slice(1, populatedCollectionAttribution.name.split(' ').length)
-						.join(' '),
-					avatar: populatedCollectionAttribution.avatar,
-					title: populatedCollectionAttribution.title,
-				},
-			};
+
+			return ensureUserForAttribution(populatedCollectionAttributionJson);
 		});
 };
 

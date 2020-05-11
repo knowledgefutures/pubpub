@@ -227,7 +227,7 @@ const Header = (props) => {
 						{!isBasePubPub && (
 							<MenuButton
 								aria-label="Dashboard Menu"
-								placement="top-end"
+								placement="bottom-end"
 								menuStyle={{ zIndex: 20 }}
 								buttonProps={{
 									className: 'header-dashboard-button hide-on-mobile',
@@ -243,7 +243,7 @@ const Header = (props) => {
 						{loggedIn && (
 							<MenuButton
 								aria-label="User menu"
-								placement="top-end"
+								placement="bottom-end"
 								// The z-index of the PubHeaderFormatting is 19
 								menuStyle={{ zIndex: 20 }}
 								buttonProps={{

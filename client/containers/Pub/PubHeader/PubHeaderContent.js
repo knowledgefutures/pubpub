@@ -16,9 +16,8 @@ const propTypes = {
 	historyData: PropTypes.object.isRequired,
 	onShowHeaderDetails: PropTypes.func.isRequired,
 	pubData: PropTypes.shape({
-		doi: PropTypes.string,
-		isRelease: PropTypes.bool,
 		id: PropTypes.string.isRequired,
+		doi: PropTypes.string,
 	}).isRequired,
 	pubHeadings: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -26,7 +25,7 @@ const propTypes = {
 
 const PubHeaderContent = (props) => {
 	const { historyData, onShowHeaderDetails, pubData, pubHeadings, updateLocalData } = props;
-	const { doi, isRelease } = pubData;
+	const { doi } = pubData;
 	const { communityData } = usePageContext();
 	const publishedDate = getPubPublishedDate(pubData);
 
@@ -89,7 +88,6 @@ const PubHeaderContent = (props) => {
 				pubData={pubData}
 				updatePubData={updateAndSavePubData}
 				pubHeadings={pubHeadings}
-				showTocButton={!isRelease}
 				onShowHeaderDetails={onShowHeaderDetails}
 			/>
 			<DraftReleaseButtons
@@ -97,8 +95,6 @@ const PubHeaderContent = (props) => {
 				historyData={historyData}
 				updatePubData={updatePubData}
 				updateHistoryData={updateHistoryData}
-				pubHeadings={pubHeadings}
-				showTocButton={isRelease}
 			/>
 		</div>
 	);

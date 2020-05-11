@@ -1,15 +1,9 @@
 ---
 name: Feature Request
-about: Log a feature request.
+about: Have an idea for something new? Tell us about it.
 title: ''
 labels: feature request
-assignees:
-
----
-
-_We use GitHub Issues for tracking active code development. If you have general questions or feedback about PubPub, we invite you to use our [Discourse forum](https://discourse.knowledgefutures.org)._
-
-### Required
+assignees: ''
 
 ---
 
@@ -17,14 +11,14 @@ _We use GitHub Issues for tracking active code development. If you have general 
 
 **What would this feature help you accomplish, and why is that important to you?**
 
-**What's the URL to your PubPub community?**
-
-### Optional
+**Have you considered any alternative solutions or features?**
 
 ---
 
+**Any attachments or reference images? (Drag them here)**
+
 **Are there any other products or services that do this well?**
 
-**Any attachments or reference images? (Drag them here)**
+**What's the URL to your PubPub community?**
 
 **Who requested this? (If not you)***

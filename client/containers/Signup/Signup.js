@@ -63,7 +63,7 @@ const Signup = () => {
 								className="confirm-email"
 								name="confirmEmail"
 								tabIndex="-1"
-								autoComplete="off"
+								autoComplete="new-user-street-address"
 								onChange={(evt) => setConfirmEmail(evt.target.value)}
 							/>
 							<Button

@@ -59,7 +59,7 @@ const Signup = () => {
 								error={postSignupError}
 							/>
 							<input
-								type="text"
+								type="search"
 								className="confirm-email"
 								name="confirmEmail"
 								tabIndex="-1"

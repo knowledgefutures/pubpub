@@ -75,15 +75,7 @@ export const getTocHeadings = (docJson) => {
 			return {
 				title: textContent,
 				level: item.attrs.level,
-				href:
-					textContent &&
-					textContent
-						.replace(/[^a-zA-Z0-9-\s]/gi, '')
-						.replace(/^\d+\W+/gi, '')
-						.replace(/\s+/gi, ' ')
-						.trim()
-						.toLowerCase()
-						.replace(/\s/gi, '-'),
+				href: item.attrs.fixedId || item.attrs.id,
 				index: index,
 			};
 		})

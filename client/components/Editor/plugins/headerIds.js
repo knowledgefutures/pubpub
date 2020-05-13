@@ -16,7 +16,7 @@ export default () => {
 						.trim()
 						.toLowerCase()
 						.replace(/\s/gi, '-');
-					if (node.attrs.id !== newId) {
+					if (!node.attrs.fixedId && node.attrs.id !== newId) {
 						changedId = true;
 						transaction.setNodeMarkup(offset, node.type, {
 							...node.attrs,

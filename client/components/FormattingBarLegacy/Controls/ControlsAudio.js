@@ -128,7 +128,7 @@ class ControlsAudio extends Component {
 									id={this.randKey}
 									name="audio"
 									type="file"
-									accept="audio/mp3, audio/ogg, audio/wav"
+									accept="audio/mpeg, audio/ogg, audio/wav"
 									onChange={this.handleAudioSelect}
 									className="file-input"
 								/>

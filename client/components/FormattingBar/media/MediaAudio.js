@@ -46,7 +46,7 @@ class MediaAudio extends Component {
 
 	render() {
 		return (
-			<Dropzone onDrop={this.onDrop} accept="audio/mp3, audio/ogg, audio/wav">
+			<Dropzone onDrop={this.onDrop} accept="audio/mpeg, audio/ogg, audio/wav">
 				{({ getRootProps, getInputProps, isDragActive }) => {
 					return (
 						<div

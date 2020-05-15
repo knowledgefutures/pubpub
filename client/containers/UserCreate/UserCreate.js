@@ -244,7 +244,7 @@ const UserCreate = (props) => {
 							name="confirmPassword"
 							className="confirm-password"
 							tabIndex="-1"
-							autoComplete="off"
+							autoComplete="new-user-street-address"
 							onChange={(evt) => setConfirmPasword(evt.target.value)}
 						/>
 						<ImageUpload

@@ -2,9 +2,6 @@ import app from '../server';
 import { createSignup } from './queries';
 
 app.post('/api/signup', (req, res) => {
-	if (req.body.confirmEmail) {
-		throw new Error('Not Authorized');
-	}
 	return createSignup(req.body, req.hostname)
 		.then(() => {
 			return res.status(201).json(true);

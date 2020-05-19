@@ -117,11 +117,33 @@ section.cover {
         }
     }
 
+    // Manually resize main text elements to make them more palatable for print
+    $print-body-text-size: 14px;
+    .pub-body-component .editor.Prosemirror {
+        p, li, li p {
+            font-size: $print-body-text-size;
+        }
+        h1 {
+            font-size: $print-body-text-size * 1.4;
+        }
+        h2 {
+            font-size: $print-body-text-size * 1.3;
+        }
+        h3 {
+            font-size: $print-body-text-size * 1.2;
+        }
+        h4, h5, h6, [data-node-type='math-block'] {
+            font-size: $print-body-text-size * 1.1;
+        }
+    }
+
     /* Avoid being the last element on the page */
     h1,
     h2,
     h3,
-    h4 {
+    h4,
+    h5,
+    h6 {
         break-after: avoid;
     }
 
@@ -186,7 +208,6 @@ section.cover {
     }
 
     [data-node-type='math-block'] {
-        font-size: 16px;
         break-inside: avoid;
     }
 

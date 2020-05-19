@@ -13,6 +13,15 @@ import {
 	Release,
 } from '../../../server/models';
 
+const getPrimaryCollectionMetadata = (collectionPubs) => {
+	const primaryCollection = collectionPubs.find((cp) => cp.isPrimary);
+	if (primaryCollection && primaryCollection.collection) {
+		const { metadata, title } = primaryCollection.collection;
+		return { primaryCollectionMetadata: metadata, primaryCollectionTitle: title };
+	}
+	return null;
+};
+
 export const getPubMetadata = async (pubId) => {
 	const pubData = await Pub.findOne({
 		where: { id: pubId },
@@ -52,14 +61,11 @@ export const getPubMetadata = async (pubId) => {
 	return {
 		title: pubData.title,
 		doi: pubData.doi,
+		licenseSlug: pubData.licenseSlug,
 		publishedDateString: publishedDateString,
 		updatedDateString: updatedDateString,
 		communityTitle: pubData.community.title,
 		accentColor: pubData.community.accentColorDark,
-		primaryCollectionTitle: [pubData.collectionPubs.find((cp) => cp.isPrimary)]
-			.filter((x) => x)
-			.map((cp) => cp.collection.title)
-			.pop(),
 		attributions: pubData.attributions
 			.concat()
 			.sort((a, b) => a.order - b.order)
@@ -67,5 +73,6 @@ export const getPubMetadata = async (pubId) => {
 			.map((attr) => ensureUserForAttribution(attr)),
 		citationStyle: pubData.citationStyle,
 		citationInlineStyle: pubData.citationInlineStyle,
+		...getPrimaryCollectionMetadata(pubData.collectionPubs),
 	};
 };

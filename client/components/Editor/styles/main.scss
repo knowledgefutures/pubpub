@@ -1,0 +1,47 @@
+&:focus {
+    outline: none !important;
+}
+.prosemirror-placeholder {
+    opacity: 0.5;
+    white-space: nowrap;
+    position: relative;
+    &:after {
+        position: absolute;
+        top: 0;
+        content: attr(data-content);
+    }
+}
+
+.ProseMirror-selectednode {
+    outline: 2px solid #bbbdc0;
+}
+&.read-only {
+    .ProseMirror-selectednode {
+        outline: 0px solid #bbbdc0;
+    }
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+}
+span.footnote {
+    vertical-align: super;
+    font-size: 0.85em;
+}
+span.citation {
+    font-weight: bold;
+}
+
+table {
+    /* Prosemirror requires white-space: pre-wrap, but it's overriden by the quirks.css */
+    /* built-in that Firefox provides, breaking the editor. */
+    /* See https://github.com/ProseMirror/prosemirror/issues/651#issuecomment-313436150 */
+    white-space: pre-wrap !important;
+}

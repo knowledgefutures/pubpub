@@ -6,6 +6,7 @@ import ReactDOMServer from 'react-dom/server';
 import { renderStatic, buildSchema } from 'components/Editor';
 
 import { SimpleNotesList } from 'components';
+import { getLicenseBySlug } from 'shared/license';
 
 const nonExportableNodeTypes = ['discussion'];
 const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/';
@@ -107,10 +108,11 @@ const blankIframes = (nodes) =>
 		nodes,
 	);
 
-const renderFrontMatterForPandoc = ({ updatedDateString, publishedDateString, doi }) => {
+const renderSharedDetails = ({ updatedDateString, publishedDateString, doi, licenseSlug }) => {
 	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
+	const license = getLicenseBySlug(licenseSlug);
 	return (
-		<React.Fragment>
+		<>
 			{showUpdatedDate && (
 				<div>
 					<strong>Updated on:</strong> {updatedDateString}
@@ -121,7 +123,44 @@ const renderFrontMatterForPandoc = ({ updatedDateString, publishedDateString, do
 					<strong>DOI:</strong> {doi}
 				</div>
 			)}
-		</React.Fragment>
+			{license && (
+				<div>
+					<strong>License:</strong>{' '}
+					<a href={license.link}>
+						{license.full} ({license.slug.toUpperCase()} {license.version})
+					</a>
+				</div>
+			)}
+		</>
+	);
+};
+
+const renderFrontMatterForPandoc = (
+	{
+		updatedDateString,
+		publishedDateString,
+		communityTitle,
+		primaryCollectionTitle,
+		doi,
+		licenseSlug,
+	},
+	targetPandoc,
+) => {
+	const pandocFormatsWithoutTemplate = ['docx', 'plain', 'odt'];
+	const communityAndCollectionString =
+		communityTitle + (primaryCollectionTitle ? bullet + primaryCollectionTitle : '');
+	return (
+		<>
+			{pandocFormatsWithoutTemplate.includes(targetPandoc) && (
+				<h3>{communityAndCollectionString}</h3>
+			)}
+			{renderSharedDetails({
+				updatedDateString: updatedDateString,
+				publishedDateString: publishedDateString,
+				doi: doi,
+				licenseSlug: licenseSlug,
+			})}
+		</>
 	);
 };
 
@@ -134,8 +173,8 @@ const renderFrontMatterForHtml = ({
 	communityTitle,
 	accentColor,
 	attributions,
+	licenseSlug,
 }) => {
-	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
 	const affiliations = [
 		...new Set(attributions.map((attr) => attr.affiliation).filter((x) => x)),
 	];
@@ -187,16 +226,12 @@ const renderFrontMatterForHtml = ({
 						<strong>Published on: </strong> {publishedDateString}
 					</div>
 				)}
-				{showUpdatedDate && (
-					<div>
-						<strong>Updated on:</strong> {updatedDateString}
-					</div>
-				)}
-				{doi && (
-					<div>
-						<strong>DOI:</strong> {doi}
-					</div>
-				)}
+				{renderSharedDetails({
+					updatedDateString: updatedDateString,
+					publishedDateString: publishedDateString,
+					doi: doi,
+					licenseSlug: licenseSlug,
+				})}
 			</div>
 		</section>
 	);
@@ -245,7 +280,7 @@ export const createStaticHtml = async (
 			</head>
 			<body>
 				{targetPandoc
-					? renderFrontMatterForPandoc(pubMetadata)
+					? renderFrontMatterForPandoc(pubMetadata, targetPandoc)
 					: renderFrontMatterForHtml(pubMetadata)}
 				<div className="pub-body-component">
 					<div className="editor Prosemirror">

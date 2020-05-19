@@ -1,19 +1,37 @@
-/* Editor Base Without Figures As Of 12/2019 */
+/* Imports the equivalent of components/Editor/styles/base.scss,
+but without the media query mixin, which breaks PagedJS-cli:
+https://gitlab.pagedmedia.org/tools/pagedjs-cli/issues/11 */
+@import '~prosemirror-view/style/prosemirror';
+@import '~prosemirror-gapcursor/style/gapcursor';
+@import '~prosemirror-tables/style/tables';
 
-@import './editorBase.scss';
+@import 'components/Editor/styles/latex.scss';
 
+.editor {
+    @import 'components/Editor/styles/main.scss';
+    @import 'components/Editor/styles/collab.scss';
+    @import 'components/Editor/styles/figure.scss';
+    @import 'components/Editor/styles/file.scss';
+    @import 'components/Editor/styles/table.scss';
+}
+
+/* Import some global variables and styles, including fonts */
 @import 'styles/variables.scss';
 @import 'containers/Pub/PubDocument/pubBody.scss';
 
 @import url('https://use.typekit.net/kmi0tdo.css');
 
+/* Paged-specific overrides */
 .csl-bib-body,
 .csl-entry {
     display: inline;
 }
 
 .pub-body-component {
-    margin-top: 0 !important;
+    // override bullet sizing for PDFs
+    .editor.ProseMirror li p {
+            font-size: inherit;
+        }
     .editor.ProseMirror .pub-notes ol > li {
         list-style-position: inside;
         margin: inherit;
@@ -73,6 +91,7 @@ section.cover {
         }
     }
 }
+
 
 @media print {
     /* Baseline page styles */

@@ -19,6 +19,8 @@ const polyfills = [
 	'fetch',
 	'HTMLCanvasElement.prototype.toBlob',
 	'Node.prototype.contains',
+	'Array.prototype.find',
+	'Array.from',
 	'Number.isNaN',
 	'Object.assign',
 	'Object.entries',

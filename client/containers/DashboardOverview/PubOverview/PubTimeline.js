@@ -34,7 +34,7 @@ const PubTimeline = (props) => {
 	const hasDraftContent = !!draftBranch.latestKeyAt;
 
 	const draftLastEditedNotice = hasDraftContent
-		? `Last edited ${formatDate(hasDraftContent, { includeTime: true })}`
+		? `Last edited ${formatDate(draftBranch.latestKeyAt, { includeTime: true })}`
 		: 'Get started by editing the Pub draft.';
 
 	const draftItem = (canView || canViewDraft) && (

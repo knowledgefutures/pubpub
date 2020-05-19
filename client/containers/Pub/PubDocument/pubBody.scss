@@ -70,10 +70,14 @@
 	}
 	li {
 		margin: 0em;
-		font-size: 16px;
 		p {
 			margin: 0;
 			font-size: 20px;
+		}
+	}
+	ul {
+		li {
+			font-size: 16px;
 		}
 	}
 	ul,

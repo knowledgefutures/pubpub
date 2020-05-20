@@ -1,5 +1,7 @@
 @import 'styles/variables.scss';
 
+$pub-body-font-size: 20px;
+
 @mixin pub-body-styles {
 	h1#abstract:first-child {
 		text-transform: uppercase;
@@ -68,18 +70,23 @@
 		margin: 0em 0em 1em;
 		word-break: break-word;
 	}
+
 	li {
 		margin: 0em;
-		p {
+		& > p {
 			margin: 0;
-			font-size: 20px;
 		}
 	}
+
 	ul {
-		li {
+		& > li {
 			font-size: 16px;
+			& > p {
+				font-size: $pub-body-font-size;
+			}
 		}
 	}
+
 	ul,
 	ol {
 		padding-left: 1em;
@@ -145,7 +152,7 @@
 	-moz-osx-font-smoothing: grayscale;
 	-moz-font-feature-settings: 'liga' on;
 	font-feature-settings: 'liga' on;
-	font-size: 20px;
+	font-size: $pub-body-font-size;
 	min-height: 300px;
 	margin-top: 25px;
 	.editor.ProseMirror {
@@ -166,15 +173,6 @@
 	.permanent {
 		background-color: #ffc940;
 	}
-
-	// .local-highlight {
-	// 	background-color: rgba(0, 0, 0, 0.2);
-	// }
-	// .pubpub-simple-editor {
-	// 	p {
-	// 		margin-bottom: 0em;
-	// 	}
-	// }
 }
 
 .pub-body-alert {

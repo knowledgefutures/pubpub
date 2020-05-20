@@ -1,3 +1,5 @@
+import { getCitationInlineLabel } from '../utils/citation';
+
 export default {
 	citation: {
 		atom: true,
@@ -6,6 +8,7 @@ export default {
 			unstructuredValue: { default: '' },
 			count: { default: 0 },
 			label: { default: '' },
+			customLabel: { default: '' },
 		},
 		parseDOM: [
 			{
@@ -24,8 +27,7 @@ export default {
 			},
 		],
 		toDOM: (node) => {
-			const { href, id, count } = node.attrs;
-
+			const { href, id, count, customLabel } = node.attrs;
 			const { citationsRef, citationInlineStyle } = node.type.spec.defaultOptions;
 			/*	There is a two-fold approach here. toDOM will render the
 				citations from citationsRef so that server-side and PDF rendering will function as
@@ -36,10 +38,12 @@ export default {
 				from the citationInlineStyling, which may have been changed more recently than the firebase
 				steps were stored.
 			*/
-			const labelString =
-				(citationsRef.current[count - 1] &&
-					citationsRef.current[count - 1].inline[citationInlineStyle]) ||
-				`[${count}]`;
+			const labelString = getCitationInlineLabel(
+				count,
+				customLabel,
+				citationInlineStyle,
+				citationsRef.current[count - 1],
+			);
 			return [
 				href ? 'a' : 'span',
 				{

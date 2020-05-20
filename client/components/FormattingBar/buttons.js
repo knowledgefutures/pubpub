@@ -1,5 +1,5 @@
 import ControlsEquation from './controlComponents/ControlsEquation';
-import ControlsFootnoteCitation from './controlComponents/ControlsFootnoteCitation';
+import ControlsFootnoteCitation from './controlComponents/ControlsFootnoteCitation/ControlsFootnoteCitation';
 import ControlsLink from './controlComponents/ControlsLink';
 import ControlsMedia from './controlComponents/ControlsMedia/ControlsMedia';
 import ControlsTable from './controlComponents/ControlsTable';

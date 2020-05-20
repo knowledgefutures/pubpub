@@ -9,13 +9,24 @@
     }
 }
 
+@mixin small-screen {
+    @media screen and (max-width: 750px) {
+        @content;
+    }
+}
+
 @mixin controls-component {
-    @include text-fields();
     display: flex;
     height: 100%;
     max-width: 1600px;
     height: 225px;
     margin: 0 auto;
+    
+    @include text-fields();
+
+    @include small-screen {
+        height: unset;
+    }
 
     .bp3-slider {
         .bp3-slider-track {
@@ -51,7 +62,8 @@
             box-shadow: inset 0px 0px 0px 1.5px white !important;
             border-top-color: transparent;
         }
-        .editor, .editor:not(:disabled) {
+        .editor,
+        .editor:not(:disabled) {
             box-shadow: none !important;
         }
     }
@@ -121,7 +133,7 @@
     grid-template-columns: $template;
     grid-column-gap: 18px;
 
-    @media screen and (max-width: 750px) {
+    @include small-screen {
         grid-template-columns: 100%;
         grid-row-gap: 9px;
         max-height: 600px;
@@ -144,6 +156,17 @@
         }
         .pub-note-content-component {
             overflow-y: scroll;
+            flex-grow: 1;
+        }
+    }
+    .inline-label-editor-component {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        .bp3-button.label-type-menu {
+            margin-right: 5px;
+        }
+        .bp3-input-group {
             flex-grow: 1;
         }
     }

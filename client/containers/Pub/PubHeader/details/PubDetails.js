@@ -28,10 +28,6 @@ const PubDetails = (props) => {
 	const { scopeData } = usePageContext();
 	const { canView } = scopeData.activePermissions;
 
-	if (!contributors.length && !pubData.doi) {
-		return null;
-	}
-
 	const createdAt = getPubCreatedDate(pubData);
 	const publishedAt = getPubPublishedDate(pubData);
 	const updatedAt = getPubUpdatedDate({ pub: pubData, branch: pubData.activeBranch });

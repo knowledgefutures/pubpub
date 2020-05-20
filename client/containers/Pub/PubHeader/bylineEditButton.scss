@@ -3,7 +3,11 @@
 .byline-edit-button-component {
     @include base-button;
     margin-left: 4px;
-    .box-style {
+    vertical-align: bottom;
+    @include mobile {
+        vertical-align: middle;
+    }
+    .icon-box {
         padding: 4px 10px;
         border-radius: 25px;
         font-style: normal;
@@ -14,21 +18,9 @@
 .pub-header-theme-black-blocks,
 .pub-header-theme-white-blocks {
     .byline-edit-button-component {
-        .box-style {
-            display: none;
-        }
-    }
-}
-
-.pub-header-theme-dark,
-.pub-header-theme-light {
-    .byline-edit-button-component {
-        vertical-align: top;
-        @include mobile {
-            vertical-align: middle;
-        }
-        .inline-style {
-            display: none;
+        vertical-align: middle;
+        .icon-box {
+            padding: 0;
         }
     }
 }

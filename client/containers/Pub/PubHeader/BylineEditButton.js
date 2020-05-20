@@ -13,11 +13,10 @@ const propTypes = {
 const BylineEditButton = (props) => {
 	const { onClick } = props;
 	return (
-		<Button className="byline-edit-button-component" onClick={onClick}>
-			<div className="box-style pub-header-themed-box pub-header-themed-box-hover-target">
+		<Button className="byline-edit-button-component" onClick={onClick} aria-label="Edit byline">
+			<div className="icon-box pub-header-themed-box pub-header-themed-box-hover-target">
 				<Icon icon="edit2" iconSize={14} />
 			</div>
-			<div className="inline-style">{' • '} Edit</div>
 		</Button>
 	);
 };

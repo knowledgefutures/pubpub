@@ -8,6 +8,7 @@ export const createPubAttribution = (inputValues) => {
 		pubId: inputValues.pubId,
 		name: inputValues.name,
 		order: inputValues.order,
+		isAuthor: inputValues.isAuthor,
 	})
 		.then((newAttribution) => {
 			return PubAttribution.findOne({

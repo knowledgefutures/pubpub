@@ -16,7 +16,7 @@ const PubAttributionDialog = (props) => {
 	return (
 		<Dialog
 			className="pub-attribution-dialog-component"
-			title="Edit Pub attribution"
+			title="Edit Pub contributors"
 			isOpen={isOpen}
 			onClose={onClose}
 		>

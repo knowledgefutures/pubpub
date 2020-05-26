@@ -18,7 +18,7 @@ export const extensionToPandocFormat = {
 	html: 'html',
 	md: 'markdown',
 	odt: 'odt',
-	txt: 'plain',
+	txt: 'markdown_strict',
 	xml: 'jats',
 	tex: 'latex',
 };

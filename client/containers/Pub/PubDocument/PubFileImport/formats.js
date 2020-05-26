@@ -4,7 +4,7 @@ export const extensionToPandocFormat = {
 	html: 'html',
 	md: 'markdown_strict',
 	odt: 'odt',
-	txt: 'plain',
+	txt: 'markdown_strict',
 	xml: 'jats',
 	tex: 'latex',
 };

@@ -38,7 +38,7 @@ const propTypes = {
 	onClosed: PropTypes.func.isRequired,
 };
 
-const importerFlagNames = ['extractEndnotes'];
+const importerFlagNames = ['extractEndnotes', 'keepStraightQuotes'];
 const documentExtensions = Object.keys(extensionToPandocFormat).map((ext) => `.${ext}`);
 const bibliographyExtensions = bibliographyFormats.map((ext) => `.${ext}`);
 

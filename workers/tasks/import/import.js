@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import path from 'path';
 import { spawnSync } from 'child_process';
-import { parsePandocJson, fromPandoc } from '@pubpub/prosemirror-pandoc';
+import { parsePandocJson, fromPandoc, setPandocApiVersion } from '@pubpub/prosemirror-pandoc';
 
 import pandocRules from './rules';
 import { buildTmpDirectory } from './tmpDirectory';
@@ -9,6 +9,8 @@ import { extractBibliographyItems } from './bibliography';
 import { uploadExtractedMedia } from './extractedMedia';
 import { extensionFor } from './util';
 import { runExperimentalTransforms } from './experimental/experimentalTransforms';
+
+setPandocApiVersion([1, 20]);
 
 export const extensionToPandocFormat = {
 	docx: 'docx',
@@ -141,6 +143,7 @@ const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
 			getBibliographyItemById,
 			warnings,
 		),
+		useSmartQuotes: !importerFlags.keepStraightQuotes,
 	}).asNode();
 	return { doc: prosemirrorDoc, warnings: warnings };
 };

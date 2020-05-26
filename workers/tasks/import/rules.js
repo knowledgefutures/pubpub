@@ -18,6 +18,7 @@ const {
 	listTransformer,
 	nullTransformer,
 	pandocPassThroughTransformer,
+	pandocQuotedTransformer,
 	tableTransformer,
 } = commonTransformers;
 
@@ -164,7 +165,9 @@ rules.fromPandoc('SoftBreak', nullTransformer);
 
 // Stuff we don't have equivalents for
 rules.fromPandoc('Span', pandocPassThroughTransformer);
-rules.fromPandoc('Quoted', pandocPassThroughTransformer);
+
+// Pandoc insists that text in quotes is actually its own node type
+rules.fromPandoc('Quoted', pandocQuotedTransformer);
 
 rules.fromPandoc('RawBlock', (node) => {
 	return {

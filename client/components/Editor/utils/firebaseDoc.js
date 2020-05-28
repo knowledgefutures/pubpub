@@ -35,7 +35,7 @@ const getMostRecentDocJson = async (firebaseRef, checkpointMap, versionNumber = 
 	if (checkpoint) {
 		const { k: keyString } = checkpoint;
 		const key = parseInt(keyString, 10);
-		if (key <= versionNumber) {
+		if (!hasVersionNumber || key <= versionNumber) {
 			const { doc } = uncompressStateJSON(checkpoint);
 			return { doc: doc, key: key };
 		}

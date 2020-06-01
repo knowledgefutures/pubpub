@@ -1,9 +1,10 @@
 import { extractEndnotesTransformer } from './extractEndnotes';
+import { inlineMetaContent } from './inlineMetaContent';
 
 const getTransformersForFlags = ({ extractEndnotes }) => {
-	return [extractEndnotes && extractEndnotesTransformer].filter((x) => x);
+	return [inlineMetaContent, extractEndnotes && extractEndnotesTransformer].filter((x) => x);
 };
 
-export const runExperimentalTransforms = (pandocAst, transformFlags) => {
+export const runTransforms = (pandocAst, transformFlags) => {
 	return getTransformersForFlags(transformFlags).reduce((ast, fn) => fn(ast), pandocAst);
 };

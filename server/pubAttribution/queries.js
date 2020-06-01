@@ -2,13 +2,15 @@ import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
 import { PubAttribution, User } from '../models';
 import { attributesPublicUser } from '../utils/attributesPublicUser';
 
-export const createPubAttribution = (inputValues) => {
+export const getPubAttributions = (pubId) => PubAttribution.findAll({ where: { id: pubId } });
+
+export const createPubAttribution = ({ userId, pubId, name, order, isAuthor }) => {
 	return PubAttribution.create({
-		userId: inputValues.userId,
-		pubId: inputValues.pubId,
-		name: inputValues.name,
-		order: inputValues.order,
-		isAuthor: inputValues.isAuthor,
+		userId: userId,
+		pubId: pubId,
+		name: name,
+		order: order,
+		isAuthor: isAuthor,
 	})
 		.then((newAttribution) => {
 			return PubAttribution.findOne({

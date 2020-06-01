@@ -24,6 +24,7 @@ const EditableHeaderText = (props) => {
 	const useEditableTitle = hasMounted && canEdit;
 
 	useEffect(() => setHasMounted(true), []);
+	useEffect(() => setIntermediateValue(text), [text]);
 
 	return React.createElement(
 		tagName,

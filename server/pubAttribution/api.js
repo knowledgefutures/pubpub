@@ -1,6 +1,13 @@
-import app from '../server';
+import app, { wrap } from '../server';
 import { getPermissions } from './permissions';
-import { createPubAttribution, updatePubAttribution, destroyPubAttribution } from './queries';
+import { ForbiddenError } from '../errors';
+
+import {
+	createPubAttribution,
+	updatePubAttribution,
+	destroyPubAttribution,
+	getPubAttributions,
+} from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -11,10 +18,46 @@ const getRequestIds = (req) => {
 		pubAttributionId: req.body.id,
 	};
 };
-/* Note: we typically use values like pubAttributionId on API requests */
-/* here, id is sent up, so there is a little bit of kludge to make */
-/* the other interfaces consistent. I didn't fully understand AttributionEditor */
-/* so I didn't make the downstream change, which would be the right solution. */
+
+app.post(
+	'/api/pubAttributions/batch',
+	wrap(async (req, res) => {
+		const { attributions } = req.body;
+		const requestIds = getRequestIds(req);
+		const permissions = await getPermissions(requestIds);
+
+		if (!permissions.create) {
+			throw new ForbiddenError();
+		}
+
+		const existingAttributions = await getPubAttributions(requestIds.pubId);
+		const orderingBase = existingAttributions.length
+			? existingAttributions.concat().pop().order
+			: 1;
+
+		const newAttributions = await Promise.all(
+			attributions
+				.filter(
+					(attr) =>
+						!existingAttributions.some(
+							(existingAttr) => existingAttr.userId === attr.userId,
+						),
+				)
+				.map((attr, index, { length }) =>
+					createPubAttribution({
+						pubId: requestIds.pubId,
+						order: orderingBase / 2 ** (length - index),
+						...attr,
+					}),
+				),
+		);
+
+		return res
+			.status(201)
+			.json([...existingAttributions, ...newAttributions].sort((a, b) => a.order - b.order));
+	}),
+);
+
 app.post('/api/pubAttributions', (req, res) => {
 	getPermissions(getRequestIds(req))
 		.then((permissions) => {

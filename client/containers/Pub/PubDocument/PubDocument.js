@@ -92,7 +92,7 @@ const PubDocument = (props) => {
 					{!isViewingHistory && (canEdit || canEditDraft) && !pubData.isReadOnly && (
 						<PubFileImport
 							editorChangeObject={collabData.editorChangeObject}
-							updateLocalData={updateLocalData}
+							updatePubData={(data) => updateLocalData('pub', data)}
 						/>
 					)}
 					{!isViewingHistory && (

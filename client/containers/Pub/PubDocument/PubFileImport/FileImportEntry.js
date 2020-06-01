@@ -44,7 +44,7 @@ const FileImportEntry = (props) => {
 			);
 		}
 		if (state === 'waiting') {
-			return 'Ready to upload';
+			return 'Preparing to upload';
 		}
 		return (
 			<React.Fragment>
@@ -70,18 +70,21 @@ const FileImportEntry = (props) => {
 						{['none', ...potentialLabels].map((potentialLabel) => {
 							const text = potentialLabel === 'none' ? <i>(none)</i> : potentialLabel;
 							return (
-								<MenuItem text={text} onClick={() => onLabelFile(potentialLabel)} />
+								<MenuItem
+									key={text}
+									text={text}
+									onClick={() => onLabelFile(potentialLabel)}
+								/>
 							);
 						})}
 					</Menu>
 				}
 			>
-				{hasLabel && (
+				{hasLabel ? (
 					<Tag interactive intent="success">
 						{label}
 					</Tag>
-				)}
-				{!hasLabel && (
+				) : (
 					<Tag interactive icon="locate">
 						use as...
 					</Tag>

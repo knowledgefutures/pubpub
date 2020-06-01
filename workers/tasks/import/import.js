@@ -8,7 +8,8 @@ import { buildTmpDirectory } from './tmpDirectory';
 import { extractBibliographyItems } from './bibliography';
 import { uploadExtractedMedia } from './extractedMedia';
 import { extensionFor } from './util';
-import { runExperimentalTransforms } from './experimental/experimentalTransforms';
+import { runTransforms } from './transforms/runTransforms';
+import { getProposedMetadata } from './metadata';
 
 setPandocApiVersion([1, 20]);
 
@@ -128,7 +129,7 @@ const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
 		);
 	}
 	const extractedMedia = await uploadExtractedMedia(tmpDir);
-	const pandocAst = runExperimentalTransforms(parsePandocJson(pandocRawAst), importerFlags);
+	const pandocAst = runTransforms(parsePandocJson(pandocRawAst), importerFlags);
 	const getBibliographyItemById = extractBibliographyItems(
 		bibliography && getTmpPathByLocalPath(bibliography.localPath),
 	);
@@ -145,7 +146,8 @@ const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
 		),
 		useSmartQuotes: !importerFlags.keepStraightQuotes,
 	}).asNode();
-	return { doc: prosemirrorDoc, warnings: warnings };
+	const proposedMetadata = await getProposedMetadata(pandocAst.meta);
+	return { doc: prosemirrorDoc, warnings: warnings, proposedMetadata: proposedMetadata };
 };
 
 export const importTask = ({ sourceFiles, importerFlags }) =>

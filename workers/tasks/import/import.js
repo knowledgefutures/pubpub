@@ -98,10 +98,17 @@ const createTransformResourceGetter = (getUrlByLocalPath, getBibliographyItemByI
 	return resource;
 };
 
+const categorizeSourceFiles = (sourceFiles) => {
+	return {
+		document: sourceFiles.find((file) => file.label === 'document'),
+		bibliography: sourceFiles.find((file) => file.label === 'bibliography'),
+		supplements: sourceFiles.filter((file) => file.label === 'supplement'),
+	};
+};
+
 const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
-	const document = sourceFiles.find((file) => file.label === 'document');
-	const bibliography = sourceFiles.find((file) => file.label === 'bibliography');
-	const supplements = sourceFiles.filter((file) => file.label === 'supplement');
+	const { keepStraightQuotes, skipJatsBibExtraction } = importerFlags;
+	const { document, bibliography, supplements } = categorizeSourceFiles(sourceFiles);
 	if (!document) {
 		throw new Error('No target document specified.');
 	}
@@ -130,9 +137,10 @@ const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
 	}
 	const extractedMedia = await uploadExtractedMedia(tmpDir);
 	const pandocAst = runTransforms(parsePandocJson(pandocRawAst), importerFlags);
-	const getBibliographyItemById = extractBibliographyItems(
-		bibliography && getTmpPathByLocalPath(bibliography.localPath),
-	);
+	const getBibliographyItemById = await extractBibliographyItems({
+		bibliographyTmpPath: bibliography && getTmpPathByLocalPath(bibliography.localPath),
+		documentTmpPath: !skipJatsBibExtraction && getTmpPathByLocalPath(document.localPath),
+	});
 	const getUrlByLocalPath = createUrlGetter(
 		[...sourceFiles, ...extractedMedia],
 		document.localPath,
@@ -144,7 +152,7 @@ const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
 			getBibliographyItemById,
 			warnings,
 		),
-		useSmartQuotes: !importerFlags.keepStraightQuotes,
+		useSmartQuotes: !keepStraightQuotes,
 	}).asNode();
 	const proposedMetadata = await getProposedMetadata(pandocAst.meta);
 	return { doc: prosemirrorDoc, warnings: warnings, proposedMetadata: proposedMetadata };

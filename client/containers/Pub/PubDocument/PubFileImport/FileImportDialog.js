@@ -40,7 +40,7 @@ const propTypes = {
 	onClosed: PropTypes.func.isRequired,
 };
 
-const importerFlagNames = ['extractEndnotes', 'keepStraightQuotes'];
+const importerFlagNames = ['extractEndnotes', 'keepStraightQuotes', 'skipJatsBibExtraction'];
 const documentExtensions = Object.keys(extensionToPandocFormat).map((ext) => `.${ext}`);
 const bibliographyExtensions = bibliographyFormats.map((ext) => `.${ext}`);
 

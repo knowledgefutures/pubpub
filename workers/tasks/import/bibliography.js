@@ -1,5 +1,11 @@
-import { spawnSync } from 'child_process';
+import { spawnSync, execSync } from 'child_process';
 import Cite from 'citation-js';
+import path from 'path';
+
+import { getTmpFileForExtension } from '../export/util';
+import { extensionFor } from './util';
+
+const jatsToBibTransformerPath = path.join(__dirname, 'xslt', 'jats-to-bib.xsl');
 
 export const extractRefBlocks = (pandocAst) => {
 	const refsBlock = pandocAst.blocks.find(
@@ -36,9 +42,19 @@ const extractUsingPandocCiteproc = (bibliographyTmpPath) => {
 	});
 };
 
-export const extractBibliographyItems = (bibliographyTmpPath) => {
+const getBibPathFromXslTransform = async (documentTmpPath) => {
+	const { path: bibFilePath } = await getTmpFileForExtension('bib');
+	execSync(`xsltproc --novalid -o ${bibFilePath} ${jatsToBibTransformerPath} ${documentTmpPath}`);
+	return bibFilePath;
+};
+
+export const extractBibliographyItems = async ({ bibliographyTmpPath, documentTmpPath }) => {
 	if (bibliographyTmpPath) {
 		return extractUsingPandocCiteproc(bibliographyTmpPath);
+	}
+	if (documentTmpPath && extensionFor(documentTmpPath) === 'xml') {
+		const generatedBibPath = await getBibPathFromXslTransform(documentTmpPath);
+		return extractUsingPandocCiteproc(generatedBibPath);
 	}
 	return () => null;
 };

@@ -115,7 +115,7 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }) => {
 		<div className="proposed-attribution">
 			<Avatar
 				width={20}
-				initials={matchedUser ? matchedUser.initials : getPartsOfFullName(name)}
+				initials={matchedUser ? matchedUser.initials : getPartsOfFullName(name).initials}
 				avatar={matchedUser && matchedUser.avatar}
 			/>
 			<div className={classNames('name', ignored && 'ignored')}>{renderName()}</div>

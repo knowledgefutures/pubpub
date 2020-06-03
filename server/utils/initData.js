@@ -31,7 +31,7 @@ export const getInitialData = async (req, isDashboard) => {
 		isBasePubPub: hostname === 'www.pubpub.org',
 		isProd: isProd(),
 		isDuqDuq: isDuqDuq(),
-		release: getAppCommit(),
+		appCommit: getAppCommit(),
 	};
 
 	/* If basePubPub - return fixed data */

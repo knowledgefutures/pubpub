@@ -22,6 +22,7 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		editHash: PropTypes.string,
 		viewHash: PropTypes.string,
+		isRelease: PropTypes.bool,
 		membersData: PropTypes.shape({
 			members: PropTypes.arrayOf(PropTypes.shape({})),
 		}),
@@ -43,10 +44,13 @@ const getHelperText = (activeTargetName, activeTargetType, canModifyMembers) => 
 const AccessHashOptions = (props) => {
 	const { pubData } = props;
 	const { communityData } = usePageContext();
-	const { viewHash, editHash } = pubData;
+	const { viewHash, editHash, isRelease } = pubData;
 
 	const renderHashRow = (label, hash) => {
-		const url = pubUrl(communityData, pubData, { accessHash: hash });
+		const url = pubUrl(communityData, pubData, {
+			accessHash: hash,
+			isDraft: !isRelease,
+		});
 		return (
 			<ControlGroup className="hash-row">
 				<ClickToCopyButton minimal={false} copyString={url}>
@@ -73,6 +77,7 @@ AccessHashOptions.propTypes = {
 	pubData: PropTypes.shape({
 		editHash: PropTypes.string,
 		viewHash: PropTypes.string,
+		isRelease: PropTypes.bool,
 	}).isRequired,
 };
 
@@ -92,7 +97,7 @@ const MembersOptions = (props) => {
 	const localMembers = membersByType[activeTargetType];
 
 	return (
-		<>
+		<React.Fragment>
 			<p>{getHelperText(activeTargetName, activeTargetType, canManage)}</p>
 			{canManage && (
 				<ControlGroup className="add-member-controls">
@@ -126,7 +131,7 @@ const MembersOptions = (props) => {
 			{!!membersByType.organization.length && activeTargetType !== 'organization' && (
 				<InheritedMembersBlock members={membersByType.organization} scope="Organization" />
 			)}
-		</>
+		</React.Fragment>
 	);
 };
 
@@ -145,7 +150,7 @@ const PubShareDialog = (props) => {
 
 	const renderInner = () => {
 		return (
-			<>
+			<React.Fragment>
 				<div className="pane">
 					<h6 className="pane-title">Members</h6>
 					<div className="pane-content">
@@ -153,15 +158,15 @@ const PubShareDialog = (props) => {
 					</div>
 				</div>
 				{hasHash && (
-					<>
+					<React.Fragment>
 						<Divider />
 						<div className="pane">
 							<h6 className="pane-title">Share a URL</h6>
 							<AccessHashOptions pubData={pubData} />
 						</div>
-					</>
+					</React.Fragment>
 				)}
-			</>
+			</React.Fragment>
 		);
 	};
 

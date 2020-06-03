@@ -1,4 +1,5 @@
 let environment;
+let appCommit;
 
 const PRODUCTION = 'production';
 const DUQDUQ = 'duqduq';
@@ -24,4 +25,11 @@ export const isDuqDuq = () => {
 
 export const isDevelopment = () => {
 	return environment === DEVELOPMENT;
+};
+
+export const setAppCommit = (appCommitHash) => {
+	appCommit = appCommitHash;
+};
+export const getAppCommit = () => {
+	return appCommit;
 };

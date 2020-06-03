@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/browser';
 import { hydrate } from 'react-dom';
 import { FocusStyleManager } from '@blueprintjs/core';
 
-import { setEnvironment } from 'shared/utils/environment';
+import { setEnvironment, setAppCommit } from 'shared/utils/environment';
 import { getClientInitialData } from './initialData';
 import { setupKeen } from './keen';
 import { setupHeap } from './heap';
@@ -16,8 +16,9 @@ const isLocalEnv = (windowObj) => windowObj.location.origin.indexOf('localhost:'
 export const hydrateWrapper = (Component) => {
 	if (typeof window !== 'undefined' && !isStorybookEnv(window)) {
 		const initialData = getClientInitialData();
-		const { isProd, isDuqDuq } = initialData.locationData;
+		const { isProd, isDuqDuq, appCommit } = initialData.locationData;
 		setEnvironment(isProd, isDuqDuq);
+		setAppCommit(appCommit);
 
 		FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -41,6 +42,7 @@ export const hydrateWrapper = (Component) => {
 			Sentry.init({
 				dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
 				environment: isProd ? 'prod' : 'dev',
+				release: appCommit,
 			});
 			Sentry.setUser({
 				id: initialData.loginData.id,

@@ -6,6 +6,7 @@ import { Worker } from 'worker_threads';
 import amqplib from 'amqplib';
 import * as Sentry from '@sentry/node';
 
+import { isProd, getAppCommit } from '../shared/utils/environment';
 import { WorkerTask } from '../server/models';
 
 const maxWorkerTimeSeconds = 120;
@@ -14,6 +15,13 @@ let currentWorkerThreads = 0;
 
 if (process.env.NODE_ENV !== 'production') {
 	require('../server/config.js');
+}
+if (process.env.NODE_ENV === 'production') {
+	Sentry.init({
+		dsn: 'https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439',
+		environment: isProd() ? 'prod' : 'dev',
+		release: getAppCommit(),
+	});
 }
 
 // Every worker task should be run exactly once, but we keep an attemptCount field in the database

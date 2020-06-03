@@ -19,7 +19,7 @@ const Landing = () => {
 			icon: 'comment',
 			title: 'Discussions & Annotations',
 			desc:
-				'Host public and private discussions with your readers and community, whether their in your classroom or across the world.',
+				'Host public and private discussions with your readers and community, whether in your classroom or across the world.',
 		},
 		{
 			icon: 'page-layout',
@@ -30,7 +30,7 @@ const Landing = () => {
 			icon: 'book',
 			title: 'Collection Metadata',
 			desc:
-				'Including article & collection-level metadata for easier organization of content and improved discovery.',
+				'Include article & collection-level metadata for easier organization of content and improved discovery.',
 		},
 		{
 			icon: 'changes',

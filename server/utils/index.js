@@ -291,10 +291,12 @@ export const handleErrors = (req, res, next) => {
 			return next();
 		}
 		console.error('Err', err);
-		Sentry.configureScope((scope) => {
-			scope.setTag('error_source', 'server_error_handler');
-		});
-		Sentry.captureException(err);
+		if (process.env.NODE_ENV === 'production') {
+			Sentry.configureScope((scope) => {
+				scope.setTag('error_source', 'server_error_handler');
+			});
+			Sentry.captureException(err);
+		}
 		return res.status(500).sendFile(resolve(__dirname, '../errorPages/error.html'));
 	};
 };

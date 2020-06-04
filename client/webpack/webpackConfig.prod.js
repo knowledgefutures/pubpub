@@ -32,7 +32,7 @@ module.exports = {
 			},
 			{
 				test: /\.(js|jsx)$/,
-				include: [resolve(__dirname, '../')],
+				include: [resolve(__dirname, '../'), resolve(__dirname, '../../shared')],
 				use: 'babel-loader',
 			},
 			{

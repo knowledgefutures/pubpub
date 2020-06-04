@@ -20,7 +20,6 @@ const propTypes = {
 	nodeOptions: PropTypes.object,
 	collaborativeOptions: PropTypes.object,
 	onChange: PropTypes.func,
-	onKeyPress: PropTypes.func,
 	onError: PropTypes.func,
 	onScrollToSelection: PropTypes.func,
 	initialContent: PropTypes.object,
@@ -40,7 +39,6 @@ const defaultProps = {
 	collaborativeOptions: {},
 	onChange: () => {},
 	onError: () => {},
-	onKeyPress: () => {},
 	onScrollToSelection: undefined,
 	initialContent: { type: 'doc', attrs: { meta: {} }, content: [{ type: 'paragraph' }] },
 	placeholder: '',
@@ -103,7 +101,6 @@ const Editor = (props) => {
 						return true;
 					},
 				}),
-				handleKeyPress: props.onKeyPress,
 				handleClickOn: props.handleSingleClick,
 				handleDoubleClickOn: props.handleDoubleClick,
 				handleScrollToSelection: props.onScrollToSelection,

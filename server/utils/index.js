@@ -3,6 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import * as ReactBeautifulDnD from 'react-beautiful-dnd';
 import { resolve } from 'path';
 import amqplib from 'amqplib';
+import * as Sentry from '@sentry/node';
 
 import { HTTPStatusError } from '../errors';
 
@@ -290,6 +291,10 @@ export const handleErrors = (req, res, next) => {
 			return next();
 		}
 		console.error('Err', err);
+		Sentry.configureScope((scope) => {
+			scope.setTag('error_source', 'server_error_handler');
+		});
+		Sentry.captureException(err);
 		return res.status(500).sendFile(resolve(__dirname, '../errorPages/error.html'));
 	};
 };

@@ -131,7 +131,7 @@ const getPandocAst = ({ documentPath, supplementPaths, tmpDirPath, importerFlags
 	let pandocError;
 	try {
 		const pandocResult = callPandoc(
-			tmpDirPath,
+			path.dirname(documentPath),
 			[documentPath, ...supplementPaths],
 			createPandocArgs(pandocFormat, tmpDirPath),
 		);

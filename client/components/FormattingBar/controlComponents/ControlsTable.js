@@ -67,6 +67,7 @@ const ControlsTable = (props) => {
 				disclosure={renderDisclosure}
 				commands={[rowCommands, columnCommands, buttonCommands]}
 				editorChangeObject={editorChangeObject}
+				markActiveItems={false}
 				{...toolbar}
 			/>
 		</Toolbar>

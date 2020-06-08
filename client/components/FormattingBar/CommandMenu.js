@@ -22,10 +22,12 @@ const propTypes = {
 	commands: PropTypes.arrayOf(
 		PropTypes.oneOfType([commandPropType, PropTypes.arrayOf(commandPropType)]),
 	).isRequired,
+	markActiveItems: PropTypes.bool,
 };
 
 const defaultProps = {
 	className: '',
+	markActiveItems: true,
 };
 
 const CommandMenu = React.forwardRef((props, ref) => {
@@ -34,6 +36,7 @@ const CommandMenu = React.forwardRef((props, ref) => {
 		className,
 		commands,
 		disclosure,
+		markActiveItems,
 		...restProps
 	} = props;
 
@@ -45,7 +48,7 @@ const CommandMenu = React.forwardRef((props, ref) => {
 		return (
 			<MenuItem
 				key={command.key}
-				active={menuItem.isActive}
+				active={markActiveItems && menuItem.isActive}
 				text={command.title}
 				icon={command.icon}
 				onClick={() => {

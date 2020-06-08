@@ -10,6 +10,11 @@ const propTypes = {
 	// isSmall: PropTypes.bool.isRequired,
 };
 
+const sampleUrl =
+	process.env.NODE_ENV === 'production'
+		? 'https://www.youtube.com/watch?v=k5Q6-hh49mU'
+		: 'https://www.youtube.com/watch?v=PL9iMPx9CpQ';
+
 class MediaYoutube extends Component {
 	constructor(props) {
 		super(props);
@@ -91,9 +96,7 @@ class MediaYoutube extends Component {
 								<Button
 									text="Load Sample URL"
 									onClick={() => {
-										this.handleInput(
-											'https://www.youtube.com/watch?v=k5Q6-hh49mU',
-										);
+										this.handleInput(sampleUrl);
 									}}
 								/>
 							}

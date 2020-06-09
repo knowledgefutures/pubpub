@@ -14,6 +14,7 @@ export default (attribution) => {
 				isShadowUser: true,
 				id: id,
 				initials: initials,
+				fullName: name,
 				firstName: firstName,
 				lastName: lastName,
 				avatar: avatar,

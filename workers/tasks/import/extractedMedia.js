@@ -1,14 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-import { generateHash } from '../../../server/utils';
-import { extensionFor } from './util';
-import { s3bucket } from './s3';
-
-const isProd = !!process.env.PUBPUB_PRODUCTION;
-
-const getKey = (folderName, fileExtension) =>
-	`${folderName}/${Math.floor(Math.random() * 8)}${new Date().getTime()}.${fileExtension}`;
+import { uploadFileToS3 } from './s3';
+import { convertFileTypeIfNecessary } from './images';
 
 function getFullPathsInDir(dir) {
 	let paths = [];
@@ -23,28 +17,16 @@ function getFullPathsInDir(dir) {
 	return paths;
 }
 
-export const uploadExtractedMedia = async (tmpDir, mediaDirName = 'media') => {
-	const mediaPath = path.join(tmpDir.path, mediaDirName);
+export const uploadExtractedMedia = async (tmpDirPath, mediaDirName = 'media') => {
+	const mediaPath = path.join(tmpDirPath, mediaDirName);
 	if (!fs.existsSync(mediaPath)) {
 		return [];
 	}
 	return Promise.all(
-		getFullPathsInDir(mediaPath).map((filePath) => {
-			const folderName = isProd ? generateHash(8) : '_testing';
-			const key = getKey(folderName, extensionFor(filePath));
-			const params = {
-				Key: key,
-				Body: fs.createReadStream(filePath),
-				ACL: 'public-read',
-			};
-			return new Promise((resolve, reject) => {
-				s3bucket.upload(params, (err) => {
-					if (err) {
-						reject(err);
-					}
-					resolve({ url: key, localPath: filePath });
-				});
-			});
+		getFullPathsInDir(mediaPath).map(async (unconvertedFilePath) => {
+			const filePath = await convertFileTypeIfNecessary(unconvertedFilePath);
+			const url = await uploadFileToS3(filePath);
+			return { url: url, localPath: unconvertedFilePath };
 		}),
 	);
 };

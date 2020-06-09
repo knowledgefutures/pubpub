@@ -4,6 +4,7 @@ import {
 	parsePandocJson,
 	transformUtil,
 } from '@pubpub/prosemirror-pandoc';
+import { exec as execWithCallback } from 'child_process';
 
 const { flatten } = transformUtil;
 
@@ -62,3 +63,13 @@ export const extensionFor = (filePath) =>
 		.split('.')
 		.pop()
 		.toLowerCase();
+
+export const exec = (command) =>
+	new Promise((resolve, reject) =>
+		execWithCallback(command, (err, res) => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve(res);
+		}),
+	);

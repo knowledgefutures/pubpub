@@ -4,12 +4,13 @@ import { spawnSync } from 'child_process';
 import { parsePandocJson, fromPandoc, setPandocApiVersion } from '@pubpub/prosemirror-pandoc';
 
 import pandocRules from './rules';
-import { buildTmpDirectory } from './tmpDirectory';
+import { downloadAndConvertFiles } from './download';
 import { extractBibliographyItems } from './bibliography';
 import { uploadExtractedMedia } from './extractedMedia';
 import { extensionFor } from './util';
 import { runTransforms } from './transforms/runTransforms';
 import { getProposedMetadata } from './metadata';
+import { getTmpDirectoryPath } from './tmpDirectory';
 
 setPandocApiVersion([1, 20]);
 
@@ -55,10 +56,18 @@ const createUrlGetter = (sourceFiles, documentLocalPath) => (resourcePath) => {
 			return url;
 		}
 	}
-	// First, try to find a file in the uploads with the same relative path
+	// Then, try to find a file in the uploads with the same relative path
 	const documentContainer = path.dirname(documentLocalPath);
 	for (const { localPath, url } of sourceFiles) {
-		if (resourcePath === path.relative(documentContainer, localPath)) {
+		const relativePathWithExtension = path.relative(documentContainer, localPath);
+		const relativePathSansExtension = relativePathWithExtension
+			.split('.')
+			.slice(0, -1)
+			.join('.');
+		if (
+			resourcePath === relativePathWithExtension ||
+			resourcePath === relativePathSansExtension
+		) {
 			return url;
 		}
 	}
@@ -99,32 +108,32 @@ const createTransformResourceGetter = (getUrlByLocalPath, getBibliographyItemByI
 };
 
 const categorizeSourceFiles = (sourceFiles) => {
-	return {
-		document: sourceFiles.find((file) => file.label === 'document'),
-		bibliography: sourceFiles.find((file) => file.label === 'bibliography'),
-		supplements: sourceFiles.filter((file) => file.label === 'supplement'),
-	};
-};
-
-const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
-	const { keepStraightQuotes, skipJatsBibExtraction } = importerFlags;
-	const { document, bibliography, supplements } = categorizeSourceFiles(sourceFiles);
+	const document = sourceFiles.find((file) => file.label === 'document');
+	const bibliography = sourceFiles.find((file) => file.label === 'bibliography');
+	const supplements = sourceFiles.filter((file) => file.label === 'supplement');
 	if (!document) {
 		throw new Error('No target document specified.');
 	}
-	const extension = extensionFor(document.localPath);
+	return {
+		document: document,
+		bibliography: bibliography,
+		supplements: supplements,
+	};
+};
+
+const getPandocAst = ({ documentPath, supplementPaths, tmpDirPath, importerFlags }) => {
+	const extension = extensionFor(documentPath);
 	const pandocFormat = extensionToPandocFormat[extension];
 	if (!pandocFormat) {
 		throw new Error(`Cannot find Pandoc format for .${extension} file.`);
 	}
-	const { tmpDir, getTmpPathByLocalPath } = await buildTmpDirectory(sourceFiles);
 	let pandocRawAst;
 	let pandocError;
 	try {
 		const pandocResult = callPandoc(
-			tmpDir.path,
-			[document, ...supplements].map((file) => getTmpPathByLocalPath(file.localPath)),
-			createPandocArgs(pandocFormat, tmpDir.path),
+			tmpDirPath,
+			[documentPath, ...supplementPaths],
+			createPandocArgs(pandocFormat, tmpDirPath),
 		);
 		pandocError = pandocResult.error;
 		pandocRawAst = JSON.parse(pandocResult.output);
@@ -135,11 +144,24 @@ const importFiles = async ({ sourceFiles, importerFlags = {} }) => {
 			)} failed. Pandoc says: ${pandocError}`,
 		);
 	}
-	const extractedMedia = await uploadExtractedMedia(tmpDir);
-	const pandocAst = runTransforms(parsePandocJson(pandocRawAst), importerFlags);
+	return runTransforms(parsePandocJson(pandocRawAst), importerFlags);
+};
+
+const importFiles = async ({ sourceFiles: clientSourceFiles, importerFlags = {} }) => {
+	const { keepStraightQuotes, skipJatsBibExtraction } = importerFlags;
+	const tmpDirPath = await getTmpDirectoryPath();
+	const sourceFiles = await downloadAndConvertFiles(clientSourceFiles, tmpDirPath);
+	const { document, bibliography, supplements } = categorizeSourceFiles(sourceFiles);
+	const pandocAst = getPandocAst({
+		documentPath: document.tmpPath,
+		supplementPaths: supplements.map((s) => s.tmpPath),
+		tmpDirPath: tmpDirPath,
+		importerFlags: importerFlags,
+	});
+	const extractedMedia = await uploadExtractedMedia(tmpDirPath);
 	const getBibliographyItemById = await extractBibliographyItems({
-		bibliographyTmpPath: bibliography && getTmpPathByLocalPath(bibliography.localPath),
-		documentTmpPath: !skipJatsBibExtraction && getTmpPathByLocalPath(document.localPath),
+		bibliographyTmpPath: bibliography && bibliography.tmpPath,
+		documentTmpPath: !skipJatsBibExtraction && document.tmpPath,
 	});
 	const getUrlByLocalPath = createUrlGetter(
 		[...sourceFiles, ...extractedMedia],

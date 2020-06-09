@@ -23,7 +23,7 @@ import { apiFetch } from 'utils';
 import { pingTask } from 'utils/pingTask';
 
 import { useFileManager } from './useFileManager';
-import { extensionToPandocFormat, bibliographyFormats } from './formats';
+import { extensionToPandocFormat, bibliographyFormats, extensionFor } from './formats';
 import { importDocToEditor } from './importDocToEditor';
 import FileImportEntry from './FileImportEntry';
 import MetadataEditor from './MetadataEditor';
@@ -44,7 +44,12 @@ const importerFlagNames = ['extractEndnotes', 'keepStraightQuotes', 'skipJatsBib
 const documentExtensions = Object.keys(extensionToPandocFormat).map((ext) => `.${ext}`);
 const bibliographyExtensions = bibliographyFormats.map((ext) => `.${ext}`);
 
-const acceptedFileTypes = [...documentExtensions, ...bibliographyExtensions, 'image/*'].join(',');
+const acceptedFileTypes = [
+	...documentExtensions,
+	...bibliographyExtensions,
+	'image/*',
+	'application/pdf',
+].join(',');
 
 const getFingerprintOfImportedFiles = (currentFiles) =>
 	currentFiles
@@ -154,7 +159,7 @@ const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, 
 		);
 	};
 
-	const renderImportResult = () => {
+	const renderImportMessage = () => {
 		if (error) {
 			return (
 				<Callout className="import-result" title="Import error" intent="danger">
@@ -180,7 +185,7 @@ const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, 
 				return (
 					<Callout
 						aria-live="assertive"
-						className="import-result"
+						className="import-message"
 						title="Import warnings"
 						intent="warning"
 					>
@@ -218,10 +223,26 @@ const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, 
 			return (
 				<Callout
 					aria-live="polite"
-					className="import-result"
+					className="import-message"
 					title="Import succeeded"
 					intent="success"
 				/>
+			);
+		}
+		if (
+			currentFiles.length > 0 &&
+			currentFiles.every((file) => extensionFor(file.localPath) === 'pdf')
+		) {
+			return (
+				<Callout
+					aria-live="polite"
+					className="import-message"
+					title="PDFs are supported as images only"
+					intent="primary"
+				>
+					PubPub does not import text content from PDFs; they may only be imported as
+					images referenced from another document.
+				</Callout>
 			);
 		}
 		return null;
@@ -398,7 +419,7 @@ const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, 
 				<div className={Classes.DRAWER_BODY}>
 					<div className={Classes.DIALOG_BODY}>
 						{!hasProposedMetadata && renderDropArea()}
-						{!isImporting && renderImportResult()}
+						{!isImporting && renderImportMessage()}
 						{!hasProposedMetadata && renderFileListing()}
 						{hasProposedMetadata && renderMetadataEditor()}
 					</div>

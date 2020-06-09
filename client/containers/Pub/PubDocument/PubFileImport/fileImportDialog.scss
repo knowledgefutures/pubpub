@@ -44,13 +44,16 @@ $drop-area-bkg: rgba(138, 155, 168, .15);
         align-items: center;
         justify-content: center;
     }
-    .import-result {
+    .import-message {
         margin-top: 10px;
         pre {
             overflow-y: scroll;
         }
     }
     .files-listing {
+        margin-top: 10px;
+    }
+    .metadata-info {
         margin-top: 10px;
     }
     .bp3-drawer-footer {

@@ -5,6 +5,8 @@ import queryString from 'query-string';
 
 import { isDuqDuq } from 'shared/utils/environment';
 
+export const profileUrl = (userSlug) => `/user/${userSlug}`;
+
 export const communityUrl = (community) => {
 	if (isDuqDuq()) {
 		return `https://${community.subdomain}.duqduq.org`;

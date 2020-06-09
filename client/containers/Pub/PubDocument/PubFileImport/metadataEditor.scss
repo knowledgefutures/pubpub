@@ -1,0 +1,27 @@
+.metadata-editor-component {
+    .field-entry {
+        margin-bottom: 10px;
+    }
+    .proposed-attribution {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+        .avatar-component {
+            margin-right: 4px;
+        }
+        .name {
+            flex-grow: 1;
+            &.ignored {
+                text-decoration: line-through;
+            }
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .matched-users-avatars {
+            margin-right: 12px;
+        }
+    }
+}

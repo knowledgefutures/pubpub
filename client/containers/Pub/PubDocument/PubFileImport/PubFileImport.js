@@ -11,7 +11,7 @@ const propTypes = {
 	editorChangeObject: PropTypes.shape({
 		view: PropTypes.shape({ state: PropTypes.shape({ doc: PropTypes.shape({}) }) }),
 	}).isRequired,
-	updateLocalData: PropTypes.func.isRequired,
+	updatePubData: PropTypes.func.isRequired,
 };
 
 const PubFileImport = (props) => {

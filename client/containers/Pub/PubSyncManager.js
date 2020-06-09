@@ -384,6 +384,7 @@ class PubSyncManager extends React.Component {
 			historyData: this.state.historyData,
 			firebaseBranchRef: this.state.firebaseBranchRef,
 			updateLocalData: this.updateLocalData,
+			updatePubData: this.updatePubData,
 		};
 		return (
 			<PubContext.Provider value={context}>

@@ -1,1 +1,12 @@
+# Pandoc is central to the Pub import and export features
 https://github.com/jgm/pandoc/releases/download/2.9.2.1/pandoc-2.9.2.1-1-amd64.deb
+
+# xsltproc is ued to extract bibliographies from XML (JATS) files on import
+xsltproc
+
+# poppler-utils contains pdftoppm, which we use to import PDF graphics as web-friendy images
+:repo:deb http://cz.archive.ubuntu.com/ubuntu bionic main universe
+poppler-utils
+
+# imagemagick is used to convert other images to web-friendly formats
+imagemagick

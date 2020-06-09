@@ -1,15 +1,15 @@
 import { Op } from 'sequelize';
 import { User } from '../models';
 
-export const getSearchUsers = (inputValues) => {
+export const getSearchUsers = (searchString, limit = 5) => {
 	return User.findAll({
 		where: {
 			[Op.or]: [
-				{ fullName: { [Op.iLike]: `%${inputValues.q}%` } },
-				{ slug: { [Op.iLike]: `%${inputValues.q}%` } },
+				{ fullName: { [Op.iLike]: `%${searchString}%` } },
+				{ slug: { [Op.iLike]: `%${searchString}%` } },
 			],
 		},
 		attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
-		limit: 5,
+		limit: limit,
 	});
 };

@@ -9,7 +9,7 @@ export const createCommunity = (inputValues, userData) => {
 	const newCommunityId = uuidv4();
 	const homePageId = uuidv4();
 	const subdomain = slugifyString(inputValues.subdomain);
-	const subdomainBlacklist = [
+	const forbiddenSubdomains = [
 		'v1',
 		'v2',
 		'v3',
@@ -28,7 +28,7 @@ export const createCommunity = (inputValues, userData) => {
 		'testing',
 		'test',
 	];
-	if (subdomainBlacklist.indexOf(subdomain) > -1) {
+	if (forbiddenSubdomains.indexOf(subdomain) > -1) {
 		throw new Error('URL already used');
 	}
 	return Community.findOne({

@@ -12,7 +12,7 @@ const overwriteExisting = true;
 const checkpointInterval = 100;
 const slowdance = new Slowdance({ onExit: () => process.exit() });
 
-const pubSlugBlacklist = [];
+const skipPubIdsList = [];
 
 const statusMessage = (success, created) => {
 	return created ? '✨' : success ? '🥚' : '😱';
@@ -143,7 +143,7 @@ const backfillCheckpointsForBranch = async (pubId, branchId) =>
 	});
 
 const backfillCheckpointsForPub = (pub) => {
-	if (pubSlugBlacklist.includes(pub.slug)) {
+	if (skipPubIdsList.includes(pub.slug)) {
 		return null;
 	}
 	return Promise.all(

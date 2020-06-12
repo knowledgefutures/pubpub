@@ -135,13 +135,13 @@ const mapVersionsToChangeIndices = (versions, intermediateDocStates, draftBranch
 					return null;
 				})
 				.filter((x) => x)[0];
-			const splitBlacklist = [
+			const skipSplitIds = [
 				'1936d637-7d7a-456b-9a0c-51e166450df3',
 				'20253ff8-785c-4653-a642-83fc61ed4140',
 				'23e35a84-c412-432f-a925-f0bd3614876f',
 				'37acf165-8b30-4ff3-8fda-bd385010fbda',
 			];
-			if (matchWithinChange && !splitBlacklist.includes(version.pubId)) {
+			if (matchWithinChange && !skipSplitIds.includes(version.pubId)) {
 				const splitResult = splitIntermediateDocStates(
 					intermediateDocStates,
 					matchWithinChange.state,

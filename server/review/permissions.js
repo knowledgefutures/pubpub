@@ -14,17 +14,15 @@ export const getPermissions = async ({ userId, communityId, pubId }) => {
 		return {};
 	}
 
-	/* TODO: We need some concept of 'Review Owner' for reviews with no */
-	/* destinationBranch. Who is the one administrating the review, if not */
-	/* the destination branch owner? Perhaps the review creator? */
-	const { canManage, isPublicReviews, canAdmin } = scopeData.activePermissions;
+	const { canAdmin, canCreateReviews, canManage } = scopeData.activePermissions;
+
 	let editProps = [];
 	if (canManage) {
 		editProps = ['title', 'status', 'labels', 'releaseRequested'];
 	}
 
 	return {
-		create: canManage || isPublicReviews,
+		create: canCreateReviews,
 		createRelease: canAdmin,
 		update: editProps,
 		destroy: canManage,

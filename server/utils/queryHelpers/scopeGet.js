@@ -304,15 +304,18 @@ getActivePermissions = async (
 	activePublicPermissions.canViewDraft =
 		activePublicPermissions.canViewDraft || activePublicPermissions.canEditDraft;
 
+	const canEdit = permissionLevelIndex > 0;
+
 	return {
 		activePermission: permissionLevelIndex > -1 ? permissionLevels[permissionLevelIndex] : null,
 		canView: permissionLevelIndex > -1,
-		canEdit: permissionLevelIndex > 0,
+		canEdit: canEdit,
 		canManage: permissionLevelIndex > 1,
 		canAdmin: permissionLevelIndex > 2,
 		canAdminCommunity: canAdminCommunity,
 		canManageCommunity: canManageCommunity,
 		...activePublicPermissions,
+		canCreateReviews: canEdit || activePublicPermissions.canCreateReviews,
 	};
 };
 

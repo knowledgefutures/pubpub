@@ -1,4 +1,4 @@
-import { getScope } from '../utils/queryHelpers';
+import { getScope } from 'server/utils/queryHelpers';
 
 export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	if (!userId) {

@@ -1,4 +1,4 @@
-import { subscribeUser } from '../utils/mailchimp';
+import { subscribeUser } from 'server/utils/mailchimp';
 
 export const subscribeToMailchimp = (inputValues) => {
 	const email = inputValues.email;

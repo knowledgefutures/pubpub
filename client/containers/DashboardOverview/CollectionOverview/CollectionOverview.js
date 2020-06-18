@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 import { NonIdealState } from '@blueprintjs/core';
 
-import { getSchemaForKind } from 'shared/collections/schemas';
-import { capitalize } from 'utils';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { capitalize } from 'utils/strings';
 import { usePageContext } from 'utils/hooks';
 import { DashboardFrame } from 'components';
 

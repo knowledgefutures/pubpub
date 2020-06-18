@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
-import { apiFetch } from 'utils';
+
 import { InputField } from 'components';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./citationChooser.scss');
 

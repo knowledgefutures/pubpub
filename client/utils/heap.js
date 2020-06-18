@@ -1,4 +1,4 @@
-import { isProd } from 'shared/utils/environment';
+import { isProd } from 'utils/environment';
 
 import { getGdprConsentElection } from './legal/gdprConsent';
 

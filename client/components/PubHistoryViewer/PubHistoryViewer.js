@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, ButtonGroup, Menu, MenuItem, Slider, Spinner } from '@blueprintjs/core';
 
-import { formatDate } from 'shared/utils/dates';
-import { pubUrl } from 'shared/utils/canonicalUrls';
 import { ClickToCopyButton } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { useSticky } from 'utils/useSticky';
+import { useSticky } from 'client/utils/useSticky';
+import { formatDate } from 'utils/dates';
+import { pubUrl } from 'utils/canonicalUrls';
 
 require('./pubHistoryViewer.scss');
 

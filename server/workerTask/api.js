@@ -1,4 +1,5 @@
-import app from '../server';
+import app from 'server/server';
+
 import { getWorkerTask } from './queries';
 
 app.get('/api/workerTasks', (req, res) => {

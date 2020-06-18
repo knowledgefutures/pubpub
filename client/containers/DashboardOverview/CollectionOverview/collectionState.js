@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 import { usePendingChanges, usePageContext } from 'utils/hooks';
-import * as api from 'utils/collections/api';
-import findRank from 'shared/utils/findRank';
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
+import * as api from 'client/utils/collections/api';
+import findRank from 'utils/findRank';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 
 const findRankForSelection = (selections, index) =>
 	findRank(

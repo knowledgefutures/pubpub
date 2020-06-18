@@ -1,5 +1,5 @@
-import { getScope } from '../utils/queryHelpers';
-import { DiscussionNew } from '../models';
+import { DiscussionNew } from 'server/models';
+import { getScope } from 'server/utils/queryHelpers';
 
 export const getCreatePermission = async ({
 	userId,

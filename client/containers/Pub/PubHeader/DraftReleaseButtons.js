@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TimeAgo from 'react-timeago';
 
-import { usePageContext } from 'utils/hooks';
 import { DialogLauncher, PubReleaseDialog, PubReleaseReviewDialog } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
-import { pubUrl } from 'shared/utils/canonicalUrls';
-import { formatDate } from 'shared/utils/dates';
+import { pubUrl } from 'utils/canonicalUrls';
+import { formatDate } from 'utils/dates';
+import { usePageContext } from 'utils/hooks';
 
 import ResponsiveHeaderButton from './ResponsiveHeaderButton';
 

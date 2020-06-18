@@ -8,7 +8,7 @@ import {
 	Pub,
 	PublicPermissions,
 	Release,
-} from '../../models';
+} from 'server/models';
 
 import buildPubOptions from './pubOptions';
 import sanitizeDiscussions from './discussionsSanitize';

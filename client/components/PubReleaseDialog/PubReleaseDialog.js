@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { AnchorButton, Button, Callout, Classes, Dialog, Icon } from '@blueprintjs/core';
 
 import { MinimalEditor } from 'components';
-import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
-import { formatDate } from 'shared/utils/dates';
-import { pubUrl } from 'shared/utils/canonicalUrls';
+import { formatDate } from 'utils/dates';
+import { pubUrl } from 'utils/canonicalUrls';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./pubReleaseDialog.scss');
 

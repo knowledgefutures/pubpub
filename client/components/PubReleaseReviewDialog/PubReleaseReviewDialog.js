@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { AnchorButton, Button, Callout, Classes, Dialog } from '@blueprintjs/core';
 
 import { MinimalEditor } from 'components';
-import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./pubReleaseReviewDialog.scss');
 

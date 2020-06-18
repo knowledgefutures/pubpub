@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDebounce } from 'use-debounce';
 
-import { renderLatexString } from 'utils';
+import { renderLatexString } from 'client/utils/editor';
 
 import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
 

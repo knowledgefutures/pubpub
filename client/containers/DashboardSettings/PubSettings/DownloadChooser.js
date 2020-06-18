@@ -4,8 +4,8 @@ import dateFormat from 'dateformat';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 
 import { FileUploadButton } from 'components';
-import { apiFetch } from 'utils';
 import { getFormattedDownload } from 'containers/Pub/PubHeader/headerUtils';
+import { apiFetch } from 'client/utils/apiFetch';
 
 const propTypes = {
 	pubData: PropTypes.shape({

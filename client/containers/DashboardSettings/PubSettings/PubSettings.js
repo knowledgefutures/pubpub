@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import { useBeforeUnload } from 'react-use';
 import { Button, Tooltip } from '@blueprintjs/core';
 
-import { apiFetch, slugifyString } from 'utils';
-import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { getDashUrl } from 'utils/dashboard';
-import { pubUrl } from 'shared/utils/canonicalUrls';
 import {
 	Icon,
 	DashboardFrame,
@@ -17,6 +13,11 @@ import {
 	PubAttributionEditor,
 	PubThemePicker,
 } from 'components';
+import { apiFetch } from 'client/utils/apiFetch';
+import { slugifyString } from 'utils/strings';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
+import { getDashUrl } from 'utils/dashboard';
+import { pubUrl } from 'utils/canonicalUrls';
 
 import DownloadChooser from './DownloadChooser';
 import DeletePub from './DeletePub';

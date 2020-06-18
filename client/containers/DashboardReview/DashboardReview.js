@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Tag, Callout, Intent } from '@blueprintjs/core';
 import TimeAgo from 'react-timeago';
+
 import { DashboardFrame, Thread, ThreadInput } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { timeAgoBaseProps, apiFetch } from 'utils';
+import { timeAgoBaseProps } from 'utils/dates';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./dashboardReview.scss');
 

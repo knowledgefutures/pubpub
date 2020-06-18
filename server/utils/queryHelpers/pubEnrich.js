@@ -1,9 +1,9 @@
 import { buildSchema, jsonToNode, getNotes } from 'components/Editor';
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
-import { getBranchDoc, getFirebaseToken } from '../firebaseAdmin';
-import { Branch } from '../../models';
-import { generateCiteHtmls } from '../../editor/queries';
-import { generateCitationHTML } from '../citations';
+import { Branch } from 'server/models';
+import { generateCiteHtmls } from 'server/editor/queries';
+import { generateCitationHTML } from 'server/utils/citations';
+import { getBranchDoc, getFirebaseToken } from 'server/utils/firebaseAdmin';
 
 export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) => {
 	const activeBranch = pubData.branches.find((branch) => {

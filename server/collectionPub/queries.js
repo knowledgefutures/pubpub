@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 
-import findRank from 'shared/utils/findRank';
+import findRank from 'utils/findRank';
 import {
 	sequelize,
 	Collection,
@@ -10,9 +10,9 @@ import {
 	PubAttribution,
 	Release,
 	User,
-} from '../models';
-import { getCollectionPubsInCollection } from '../utils/collectionQueries';
-import { attributesPublicUser } from '../utils/attributesPublicUser';
+} from 'server/models';
+import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
+import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 
 export const getPubsInCollection = async ({ communityId, collectionId, userId }) => {
 	const collectionPubsQuery = CollectionPub.findAll({

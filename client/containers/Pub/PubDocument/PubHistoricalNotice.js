@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton, Callout } from '@blueprintjs/core';
 
-import { formatDate, datesAreSameCalendarDate } from 'shared/utils/dates';
-import { getPubLatestReleasedDate } from 'shared/pub/pubDates';
-import { pubUrl } from 'shared/utils/canonicalUrls';
+import { formatDate, datesAreSameCalendarDate } from 'utils/dates';
+import { getPubLatestReleasedDate } from 'utils/pub/pubDates';
+import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 
 require('./pubHistoricalNotice.scss');

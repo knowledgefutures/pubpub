@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 import { AnchorButton, Button, NonIdealState } from '@blueprintjs/core';
+
 import { GridWrapper, InputField } from 'components';
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
 require('./passwordReset.scss');

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, FormGroup } from '@blueprintjs/core';
-import { apiFetch } from 'utils';
-import { getSchemaForKind } from 'shared/collections/schemas';
+
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./doi.scss');
 

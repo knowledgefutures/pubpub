@@ -4,9 +4,8 @@ import dateFormat from 'dateformat';
 import { Menu, MenuItem, NonIdealState, Tag } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
-import { getPubPublishedDate, getPubLatestReleaseDate } from 'shared/pub/pubDates';
-import { formatDate } from 'shared/utils/dates';
-
+import { getPubPublishedDate, getPubLatestReleaseDate } from 'utils/pub/pubDates';
+import { formatDate } from 'utils/dates';
 import PubHeaderBackground from 'containers/Pub/PubHeader/PubHeaderBackground';
 import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
 import { Avatar, DashboardFrame } from 'components';

@@ -1,7 +1,8 @@
 /* global it, expect, beforeAll, afterAll */
 import { setup, teardown, login, modelize } from 'stubstub';
+import { CollectionAttribution } from 'server/models';
+
 import { createCollectionAttribution } from '../queries';
-import { CollectionAttribution } from '../../models';
 
 const models = modelize`
 	Community community {

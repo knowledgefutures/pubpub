@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getResizedUrl, generatePageBackground } from 'utils';
+
+import { getResizedUrl } from 'utils/images';
+import { generatePageBackground } from 'utils/pages';
 
 require('./pagePreview.scss');
 

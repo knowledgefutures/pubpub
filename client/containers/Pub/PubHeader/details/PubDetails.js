@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 
 import { pubDataProps } from 'types/pub';
-import { collectionUrl } from 'shared/utils/canonicalUrls';
-import { getPubPublishedDate, getPubUpdatedDate, getPubCreatedDate } from 'shared/pub/pubDates';
+import { collectionUrl } from 'utils/canonicalUrls';
+import { getPubPublishedDate, getPubUpdatedDate, getPubCreatedDate } from 'utils/pub/pubDates';
 import { ClickToCopyButton } from 'components';
 import { getAllPubContributors } from 'utils/pubContributors';
 import { usePageContext } from 'utils/hooks';

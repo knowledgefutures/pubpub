@@ -1,4 +1,4 @@
-import { Collection, Community, Page, Member } from '../../models';
+import { Collection, Community, Page, Member } from 'server/models';
 
 export default (locationData, whereQuery) => {
 	return Community.findOne({

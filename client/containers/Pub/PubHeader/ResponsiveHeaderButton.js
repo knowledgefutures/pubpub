@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { useViewport } from 'utils/useViewport';
+import { useViewport } from 'client/utils/useViewport';
 
 import { mobileViewportCutoff } from './constants';
 import LargeHeaderButton from './LargeHeaderButton';

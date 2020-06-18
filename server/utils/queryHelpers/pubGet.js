@@ -1,4 +1,5 @@
-import { Pub } from '../../models';
+import { Pub } from 'server/models';
+
 import buildPubOptions from './pubOptions';
 
 export default async (slug, communityId) => {

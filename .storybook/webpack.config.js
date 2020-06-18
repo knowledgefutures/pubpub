@@ -35,8 +35,11 @@ module.exports = ({ config }) => {
 	});
 
 	config.resolve.modules = [resolve(__dirname, '../client'), 'node_modules'];
-	config.resolve.alias['shared'] = resolve(__dirname, '../shared');
-	config.resolve.alias['data'] = resolve(__dirname, '../stories/data');
+	config.resolve.alias['client'] = resolve(__dirname, '../client');
+	config.resolve.alias['components'] = resolve(__dirname, '../client/components');
+	config.resolve.alias['containers'] = resolve(__dirname, '../client/containers');
+	config.resolve.alias['server'] = resolve(__dirname, '../server');
+	config.resolve.alias['utils'] = resolve(__dirname, '../utils');
 	config.node = {
 		...config.node,
 		fs: "empty",

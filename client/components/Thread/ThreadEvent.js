@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { usePageContext } from 'utils/hooks';
-import { Avatar, Icon } from 'components';
 import TimeAgo from 'react-timeago';
-import { timeAgoBaseProps } from 'utils';
+
+import { Avatar, Icon } from 'components';
+import { usePageContext } from 'utils/hooks';
+import { timeAgoBaseProps } from 'utils/dates';
 
 require('./threadEvent.scss');
 

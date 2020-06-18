@@ -6,9 +6,9 @@ import { RadioGroup, Radio, useRadioState } from 'reakit/Radio';
 
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { apiFetch } from 'utils';
 import { getDashUrl } from 'utils/dashboard';
-import { getSchemaForKind } from 'shared/collections/schemas';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./createCollectionDialog.scss');
 

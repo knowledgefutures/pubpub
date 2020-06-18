@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton } from '@blueprintjs/core';
+
 import Overlay from 'components/Overlay/Overlay';
 import ImageCropper from 'components/ImageCropper/ImageCropper';
 import Icon from 'components/Icon/Icon';
-import { s3Upload } from 'utils';
+import { s3Upload } from 'client/utils/upload';
 
 require('./imageUpload.scss');
 

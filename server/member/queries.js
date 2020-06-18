@@ -1,5 +1,5 @@
-import { Member } from '../models';
-import { getMemberDataById } from '../utils/queryHelpers';
+import { Member } from 'server/models';
+import { getMemberDataById } from 'server/utils/queryHelpers';
 
 const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }) => {
 	if ([pubId, communityId, collectionId].filter((x) => x).length !== 1) {

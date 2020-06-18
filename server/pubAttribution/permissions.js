@@ -1,4 +1,4 @@
-import { getScope } from '../utils/queryHelpers';
+import { getScope } from 'server/utils/queryHelpers';
 
 const editableFields = [
 	'affiliation',

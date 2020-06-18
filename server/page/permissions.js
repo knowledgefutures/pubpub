@@ -1,5 +1,5 @@
-import { Page } from '../models';
-import { getScope } from '../utils/queryHelpers';
+import { Page } from 'server/models';
+import { getScope } from 'server/utils/queryHelpers';
 
 export const getPermissions = async ({ userId, communityId, pageId }) => {
 	if (!userId) {

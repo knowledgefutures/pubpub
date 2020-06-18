@@ -1,4 +1,4 @@
-import { getScope, getMemberDataById } from '../utils/queryHelpers';
+import { getScope, getMemberDataById } from 'server/utils/queryHelpers';
 
 const getMemberPermission = async (scopeData, memberId) => {
 	if (memberId) {

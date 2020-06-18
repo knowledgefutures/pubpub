@@ -1,15 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { pubDataProps } from 'types/pub';
+import { pubUrl } from 'utils/canonicalUrls';
+import { usePageContext } from 'utils/hooks';
 import {
 	chooseCollectionForPub,
 	createReadingParamUrl,
 	getNeighborsInCollectionPub,
 	useCollectionPubs,
-} from 'utils/collections';
-import { pubDataProps } from 'types/pub';
-import { pubUrl } from 'shared/utils/canonicalUrls';
-import { usePageContext } from 'utils/hooks';
+} from 'client/utils/collections';
+
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
 
 const propTypes = {

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
-import { renderLatexString } from 'utils';
+
 import Icon from 'components/Icon/Icon';
+import { renderLatexString } from 'client/utils/editor';
 
 const propTypes = {
 	attrs: PropTypes.object.isRequired,

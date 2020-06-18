@@ -2,8 +2,8 @@ import fs from 'fs';
 import AWS from 'aws-sdk';
 import tmp from 'tmp-promise';
 
-import { Export } from '../../../server/models';
-import { generateHash } from '../../../server/utils';
+import { Export } from 'server/models';
+import { generateHash } from 'utils/hashes';
 
 tmp.setGracefulCleanup();
 

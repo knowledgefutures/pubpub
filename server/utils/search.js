@@ -1,5 +1,5 @@
-import { addWorkerTask } from '.';
-import { WorkerTask } from '../models';
+import { addWorkerTask } from 'server/utils/workers';
+import { WorkerTask } from 'server/models';
 
 const generateTask = (type, input) => {
 	return WorkerTask.create({

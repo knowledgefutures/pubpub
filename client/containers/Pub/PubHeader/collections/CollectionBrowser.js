@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@blueprintjs/core';
 
-import { usePageContext } from 'utils/hooks';
-import { createReadingParamUrl, useCollectionPubs } from 'utils/collections';
-import { pubDataProps } from 'types/pub';
-import { pubUrl, collectionUrl } from 'shared/utils/canonicalUrls';
-import { getSchemaForKind } from 'shared/collections/schemas';
 import { Byline } from 'components';
 import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
+import { pubDataProps } from 'types/pub';
+import { usePageContext } from 'utils/hooks';
+import { createReadingParamUrl, useCollectionPubs } from 'client/utils/collections';
+import { pubUrl, collectionUrl } from 'utils/canonicalUrls';
+import { getSchemaForKind } from 'utils/collections/schemas';
 
 import CollectionsBarButton from './CollectionsBarButton';
 

@@ -1,8 +1,11 @@
 import React from 'react';
+
 import { Legal } from 'containers';
-import Html from '../Html';
-import app from '../server';
-import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
+import Html from 'server/Html';
+import app from 'server/server';
+import { handleErrors } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
 app.get('/privacy', (_, res) => res.redirect('/legal/privacy'));
 app.get('/privacy/policy', (_, res) => res.redirect('/legal/privacy'));

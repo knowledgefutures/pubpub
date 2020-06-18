@@ -1,5 +1,5 @@
-import app, { wrap } from '../server';
-import { ForbiddenError } from '../errors';
+import app, { wrap } from 'server/server';
+import { ForbiddenError } from 'server/utils/errors';
 
 import { getPermissions } from './permissions';
 import { createRelease } from './queries';

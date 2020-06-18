@@ -4,8 +4,11 @@ import algoliasearch from 'algoliasearch';
 import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
 import { useThrottleFn } from 'react-use';
+
 import { Icon } from 'components';
-import { getResizedUrl, generatePubBackground, generatePageBackground } from 'utils';
+import { getResizedUrl } from 'utils/images';
+import { generatePageBackground } from 'utils/pages';
+import { generatePubBackground } from 'utils/pubs';
 import { usePageContext } from 'utils/hooks';
 
 require('./search.scss');

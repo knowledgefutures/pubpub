@@ -1,9 +1,10 @@
 import queryString from 'query-string';
 
-import { isDuqDuq } from 'shared/utils/environment';
-import app from '../server';
-import { Community, Pub, Release, Branch } from '../models';
-import { hostIsValid, handleErrors } from '../utils';
+import { isDuqDuq } from 'utils/environment';
+import app from 'server/server';
+import { Community, Pub, Release, Branch } from 'server/models';
+import { handleErrors } from 'server/utils/errors';
+import { hostIsValid } from 'server/utils/routes';
 
 const getParams = (req) => {
 	const hostname = isDuqDuq()

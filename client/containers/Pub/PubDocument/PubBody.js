@@ -1,15 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { useBeforeUnload } from 'react-use';
 import PropTypes from 'prop-types';
+import { useBeforeUnload } from 'react-use';
 import * as Sentry from '@sentry/browser';
 import { Card, Alert } from '@blueprintjs/core';
-
-import Editor, { getJSON, getNotes, dispatchEmptyTransaction } from 'components/Editor';
-import { apiFetch, getResizedUrl } from 'utils';
 import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
 import { debounce } from 'debounce';
+
+import Editor, { getJSON, getNotes, dispatchEmptyTransaction } from 'components/Editor';
+import { getResizedUrl } from 'utils/images';
+import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
 import discussionSchema from './DiscussionAddon/discussionSchema';

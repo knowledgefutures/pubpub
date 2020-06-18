@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 
-import { getResizedUrl } from 'utils';
-import { getPubPublishedDate } from 'shared/pub/pubDates';
-import { isPubPublic } from 'shared/pub/permissions';
-import { pubUrl, communityUrl } from 'shared/utils/canonicalUrls';
+import { getResizedUrl } from 'utils/images';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { isPubPublic } from 'utils/pub/permissions';
+import { pubUrl, communityUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 import { Avatar, Icon } from 'components';
 

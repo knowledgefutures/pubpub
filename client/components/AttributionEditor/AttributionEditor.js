@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 
 import attributionType from 'types/attribution';
 import UserAutocomplete from 'components/UserAutocomplete/UserAutocomplete';

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import { Byline, DialogLauncher, PubAttributionDialog } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { getPubPublishedDate } from 'shared/pub/pubDates';
-import { formatDate } from 'shared/utils/dates';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { formatDate } from 'utils/dates';
 
 import BylineEditButton from './BylineEditButton';
 import EditableHeaderText from './EditableHeaderText';

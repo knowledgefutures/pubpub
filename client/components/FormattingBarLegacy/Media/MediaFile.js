@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { Spinner } from '@blueprintjs/core';
 import Dropzone from 'react-dropzone';
 import filesize from 'filesize';
+
 import Icon from 'components/Icon/Icon';
-import { s3Upload } from 'utils';
+import { s3Upload } from 'client/utils/upload';
 
 const propTypes = {
 	onInsert: PropTypes.func.isRequired,

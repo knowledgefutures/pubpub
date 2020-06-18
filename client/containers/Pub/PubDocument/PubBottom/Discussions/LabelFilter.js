@@ -8,9 +8,10 @@ import {
 	Position,
 	Tooltip,
 } from '@blueprintjs/core';
-import Icon from 'components/Icon/Icon';
 import uuidv4 from 'uuid/v4';
-import { apiFetch } from 'utils';
+
+import Icon from 'components/Icon/Icon';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./labelFilter.scss');
 

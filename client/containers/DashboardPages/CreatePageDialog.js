@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { Button, Classes, Dialog } from '@blueprintjs/core';
 
 import InputField from 'components/InputField/InputField';
-import { apiFetch, slugifyString } from 'utils';
+import { slugifyString } from 'utils/strings';
 import { getDashUrl } from 'utils/dashboard';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./createPageDialog.scss');
 

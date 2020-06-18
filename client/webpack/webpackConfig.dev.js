@@ -11,7 +11,11 @@ module.exports = {
 	resolve: {
 		modules: [resolve(__dirname, '../'), 'node_modules'],
 		alias: {
-			shared: resolve(__dirname, '../../shared'),
+			client: resolve(__dirname, '../../client'),
+			components: resolve(__dirname, '../../client/components'),
+			containers: resolve(__dirname, '../../client/containers'),
+			server: resolve(__dirname, '../../server'),
+			utils: resolve(__dirname, '../../utils'),
 		},
 	},
 	devtool: '#eval',
@@ -40,7 +44,7 @@ module.exports = {
 			},
 			{
 				test: /\.(js|jsx)$/,
-				include: [resolve(__dirname, '../'), resolve(__dirname, '../../shared')],
+				include: [resolve(__dirname, '../'), resolve(__dirname, '../../utils')],
 				use: 'babel-loader',
 			},
 			{

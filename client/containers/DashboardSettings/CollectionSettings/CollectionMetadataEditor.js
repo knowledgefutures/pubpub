@@ -6,11 +6,11 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Button, FormGroup, InputGroup, NonIdealState, ButtonGroup } from '@blueprintjs/core';
 
-import collectionType from 'types/collection';
-import { apiFetch } from 'utils';
-import { enumerateMetadataFields, normalizeMetadataToKind } from 'shared/collections/metadata';
-import { getSchemaForKind } from 'shared/collections/schemas';
 import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
+import collectionType from 'types/collection';
+import { enumerateMetadataFields, normalizeMetadataToKind } from 'utils/collections/metadata';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./collectionMetadataEditor.scss');
 

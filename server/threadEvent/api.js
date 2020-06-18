@@ -1,4 +1,5 @@
-import app from '../server';
+import app from 'server/server';
+
 import { getPermissions } from './permissions';
 import { createThreadEvent, updateThreadEvent, destroyThreadEvent } from './queries';
 

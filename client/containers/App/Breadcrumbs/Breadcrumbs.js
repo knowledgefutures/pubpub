@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
+
 import { Avatar, Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl, getDashboardModes } from 'utils/dashboard';
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
+
 import CreateCollectionDialog from './CreateCollectionDialog';
 
 require('./breadcrumbs.scss');

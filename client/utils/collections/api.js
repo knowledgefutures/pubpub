@@ -1,4 +1,4 @@
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 
 const collectionPubsRoot = '/api/collectionPubs';
 

@@ -1,4 +1,4 @@
-import app from '../server';
+import app from 'server/server';
 
 app.use((req, res, next) => {
 	const redirectHosts = {

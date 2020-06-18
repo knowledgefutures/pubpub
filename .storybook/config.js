@@ -3,7 +3,7 @@ import requireContext from 'require-context.macro';
 import { addDecorator, addParameters, configure } from '@storybook/react';
 import { configureViewport } from '@storybook/addon-viewport';
 import { FocusStyleManager } from '@blueprintjs/core';
-import { communityData, locationData, loginData, scopeData } from 'data';
+import { communityData, locationData, loginData, scopeData } from 'utils/storybook/data';
 import { PageContext } from 'utils/hooks';
 
 FocusStyleManager.onlyShowFocusOnTabs();
@@ -12,7 +12,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
 require('styles/base.scss');
 
 /* Require stories */
-const req = requireContext('../stories/', true, /Stories\.js$/);
+const req = requireContext('../client', true, /Stories\.js$/);
 function loadStories() {
 	req.keys().forEach(req);
 }

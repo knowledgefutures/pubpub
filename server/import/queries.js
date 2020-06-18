@@ -1,5 +1,5 @@
-import { WorkerTask } from '../models';
-import { addWorkerTask } from '../utils';
+import { WorkerTask } from 'server/models';
+import { addWorkerTask } from 'server/utils/workers';
 
 export const createImport = async ({ sourceFiles, importerFlags }) => {
 	const input = { sourceFiles: sourceFiles, importerFlags: importerFlags };

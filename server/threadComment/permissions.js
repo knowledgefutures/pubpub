@@ -1,5 +1,5 @@
-import { getScope } from '../utils/queryHelpers';
-import { DiscussionNew, Thread, ThreadComment, ReviewNew, Visibility } from '../models';
+import { DiscussionNew, Thread, ThreadComment, ReviewNew, Visibility } from 'server/models';
+import { getScope } from 'server/utils/queryHelpers';
 
 const userEditableFields = ['text', 'content'];
 

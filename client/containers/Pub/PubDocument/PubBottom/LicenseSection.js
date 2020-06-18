@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { LicenseSelect } from 'components';
-import { usePageContext } from 'utils/hooks';
-import { getLicenseBySlug } from 'shared/license';
 import dateFormat from 'dateformat';
 
-import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { LicenseSelect } from 'components';
+import { usePageContext } from 'utils/hooks';
+import { getLicenseBySlug } from 'utils/licenses';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
+
 import PubBottomSection, { SectionBullets, AccentedIconButton } from './PubBottomSection';
 
 const propTypes = {

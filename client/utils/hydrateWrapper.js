@@ -3,7 +3,8 @@ import * as Sentry from '@sentry/browser';
 import { hydrate } from 'react-dom';
 import { FocusStyleManager } from '@blueprintjs/core';
 
-import { setEnvironment, setAppCommit } from 'shared/utils/environment';
+import { setEnvironment, setAppCommit } from 'utils/environment';
+
 import { getClientInitialData } from './initialData';
 import { setupKeen } from './keen';
 import { setupHeap } from './heap';

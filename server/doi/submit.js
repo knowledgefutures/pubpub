@@ -2,7 +2,7 @@ import { Readable } from 'stream';
 import request from 'request-promise';
 import xmlbuilder from 'xmlbuilder';
 
-import { getDoiOverrideByCommunityId } from 'shared/crossref/communities';
+import { getDoiOverrideByCommunityId } from 'utils/crossref/communities';
 
 const getDoiLogin = (communityId) => {
 	const doiOverride = getDoiOverrideByCommunityId(communityId);

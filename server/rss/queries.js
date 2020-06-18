@@ -1,7 +1,8 @@
 import RSS from 'rss';
-import { getPubPublishedDate } from 'shared/pub/pubDates';
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
-import { Community, Pub, User, PubAttribution, Release } from '../models';
+
+import { getPubPublishedDate } from 'utils/pub/pubDates';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { Community, Pub, User, PubAttribution, Release } from 'server/models';
 
 export const getCommunityRss = (hostname) => {
 	const whereQuery =

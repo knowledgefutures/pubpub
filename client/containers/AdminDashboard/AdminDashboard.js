@@ -1,6 +1,8 @@
 import React from 'react';
+
 import { GridWrapper } from 'components';
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
+
 import Chart from './Chart';
 
 require('./adminDashboard.scss');

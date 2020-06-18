@@ -1,5 +1,5 @@
 import React from 'react';
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 
 export const generateAuthorString = (pubData) => {
 	if (!pubData.attributions) {

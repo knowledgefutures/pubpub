@@ -2,12 +2,11 @@
 import path from 'path';
 // eslint-disable-next-line import/no-unresolved
 import { Worker } from 'worker_threads';
-
 import amqplib from 'amqplib';
 import * as Sentry from '@sentry/node';
 
-import { isProd, getAppCommit } from '../shared/utils/environment';
-import { WorkerTask } from '../server/models';
+import { isProd, getAppCommit } from 'utils/environment';
+import { WorkerTask } from 'server/models';
 
 const maxWorkerTimeSeconds = 120;
 const maxWorkerThreads = 5;

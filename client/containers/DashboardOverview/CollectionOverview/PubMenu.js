@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
-import { getSchemaForKind } from 'shared/collections/schemas';
+import { getSchemaForKind } from 'utils/collections/schemas';
 import { MenuButton, MenuItem, MenuItemDivider } from 'components/Menu';
 
 const propTypes = {

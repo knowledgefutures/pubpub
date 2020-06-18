@@ -1,8 +1,9 @@
 import KeenAnalysis from 'keen-analysis';
-import app from '../server';
-import { getInitialData } from '../utils';
-import { sequelize } from '../models';
-import { getListGrowth } from '../utils/mailchimp';
+
+import app from 'server/server';
+import { getInitialData } from 'server/utils/initData';
+import { sequelize } from 'server/models';
+import { getListGrowth } from 'server/utils/mailchimp';
 
 const processQueryData = function(baseObj, activeObj) {
 	baseObj.forEach((o, i) => {

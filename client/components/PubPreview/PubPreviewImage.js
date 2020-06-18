@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { getResizedUrl, generatePubBackground } from 'utils';
+import { getResizedUrl } from 'utils/images';
+import { generatePubBackground } from 'utils/pubs';
 
 const propTypes = {
 	className: PropTypes.string,

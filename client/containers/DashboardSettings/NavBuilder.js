@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { generateHash } from 'utils';
 import { Button } from '@blueprintjs/core';
+
+import { generateHash } from 'utils/hashes';
+
 import PageAutocomplete from './PageAutocomplete';
 import NavBuilderList from './NavBuilderList';
 import NavBuilderRow from './NavBuilderRow';

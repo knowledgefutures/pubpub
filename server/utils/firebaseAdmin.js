@@ -9,10 +9,8 @@ import {
 	mergeBranch,
 	restoreDiscussionMaps,
 } from 'components/Editor';
-
-// These relative import statements are useful for letting us use this file in node scripts.
-import discussionSchema from '../../shared/editor/discussionSchema';
-import { getFirebaseConfig } from '../../shared/editor/firebaseConfig';
+import discussionSchema from 'utils/editor/discussionSchema';
+import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {

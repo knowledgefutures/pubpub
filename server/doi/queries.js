@@ -1,4 +1,4 @@
-import createDeposit from 'shared/crossref/createDeposit';
+import createDeposit from 'utils/crossref/createDeposit';
 import {
 	Collection,
 	CollectionAttribution,
@@ -8,7 +8,8 @@ import {
 	PubAttribution,
 	Release,
 	User,
-} from '../models';
+} from 'server/models';
+
 import { submitDoiData } from './submit';
 
 const collectionIncludes = [

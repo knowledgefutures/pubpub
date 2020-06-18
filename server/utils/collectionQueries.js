@@ -1,5 +1,5 @@
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
-import { User, CollectionAttribution, CollectionPub } from '../models';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { User, CollectionAttribution, CollectionPub } from 'server/models';
 
 export const getCollectionAttributions = (collectionId) =>
 	CollectionAttribution.findAll({

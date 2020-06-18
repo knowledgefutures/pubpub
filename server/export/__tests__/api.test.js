@@ -2,7 +2,7 @@
 import { setup, teardown, login, stubOut, modelize } from 'stubstub';
 
 import { Export, WorkerTask } from 'server/models';
-import * as serverUtils from 'server/utils';
+import * as workerUtils from 'server/utils/workers';
 
 const models = modelize`
 	Community community {
@@ -27,7 +27,7 @@ afterEach(async () => {
 
 teardown(afterAll);
 
-stubOut(serverUtils, 'addWorkerTask');
+stubOut(workerUtils, 'addWorkerTask');
 
 const makeExportQuery = (
 	historyKey,

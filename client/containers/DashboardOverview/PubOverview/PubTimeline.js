@@ -5,8 +5,8 @@ import { AnchorButton, Button, Classes, Popover } from '@blueprintjs/core';
 
 import { Icon, Timeline, TimelineItem, TimelineCondenser } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { formatDate } from 'shared/utils/dates';
-import { pubUrl } from 'shared/utils/canonicalUrls';
+import { formatDate } from 'utils/dates';
+import { pubUrl } from 'utils/canonicalUrls';
 
 require('./pubTimeline.scss');
 

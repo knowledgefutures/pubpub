@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { getDefaultLayout, generateRenderLists } from 'utils';
+
+import { getDefaultLayout, generateRenderLists } from 'utils/pages';
 import { usePageContext } from 'utils/hooks';
+
 import LayoutPubs from './LayoutPubs';
 import LayoutHtml from './LayoutHtml';
 import LayoutBanner from './LayoutBanner';

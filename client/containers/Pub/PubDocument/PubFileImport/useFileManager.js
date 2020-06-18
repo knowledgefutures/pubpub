@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { s3Upload } from 'utils';
+import { s3Upload } from 'client/utils/upload';
 
 import { exclusiveFileLabels, labelFiles } from './formats';
 

@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import queryString from 'query-string';
 
 import { loginDataProps } from 'types/base';
-import { apiFetch, getRandomColor } from 'utils';
-import { initFirebase } from 'utils/firebaseClient';
-import { getPubPageTitle } from 'shared/utils/pubPageTitle';
+import { getRandomColor } from 'utils/colors';
+import { getPubPageTitle } from 'utils/pubPageTitle';
+import { initFirebase } from 'client/utils/firebaseClient';
+import { apiFetch } from 'client/utils/apiFetch';
 
 export const PubContext = React.createContext({
 	pubData: {},

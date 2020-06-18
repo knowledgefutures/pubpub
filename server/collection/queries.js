@@ -1,6 +1,7 @@
-import { normalizeMetadataToKind } from 'shared/collections/metadata';
-import { slugifyString, generateHash } from 'utils';
-import { Collection, CollectionPub, Community } from '../models';
+import { Collection, CollectionPub, Community } from 'server/models';
+import { normalizeMetadataToKind } from 'utils/collections/metadata';
+import { slugifyString } from 'utils/strings';
+import { generateHash } from 'utils/hashes';
 
 export const createCollection = ({ communityId, title, kind, pageId = null, isPublic = false }) => {
 	return Community.findOne({ where: { id: communityId } }).then((community) => {

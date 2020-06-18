@@ -1,4 +1,5 @@
-import { Page, Pub } from '../../models';
+import { Page, Pub } from 'server/models';
+
 import buildPubOptions from './pubOptions';
 import sanitizePub from './pubSanitize';
 

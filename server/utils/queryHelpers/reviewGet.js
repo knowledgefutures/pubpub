@@ -1,4 +1,5 @@
-import { Pub, ReviewNew } from '../../models';
+import { Pub, ReviewNew } from 'server/models';
+
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
 export default async (pubSlug, reviewNumber, communityId) => {

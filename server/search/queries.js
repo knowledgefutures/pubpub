@@ -1,5 +1,6 @@
 import { Op } from 'sequelize';
-import { User } from '../models';
+
+import { User } from 'server/models';
 
 export const getSearchUsers = (searchString, limit = 5) => {
 	return User.findAll({

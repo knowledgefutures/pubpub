@@ -5,8 +5,9 @@ import {
 	Community,
 	CollectionAttribution,
 	CollectionPub,
-} from '../../models';
-import { attributesPublicUser } from '../attributesPublicUser';
+} from 'server/models';
+import { attributesPublicUser } from 'server/utils/attributesPublicUser';
+
 import buildPubOptions from './pubOptions';
 
 export default async (

@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { InputGroup, Button, Intent, NonIdealState } from '@blueprintjs/core';
 import { isHttpsUri } from 'valid-url';
-import { apiFetch, getIframeSrc, getEmbedType } from 'utils';
 import Icon from 'components/Icon/Icon';
+import { apiFetch } from 'client/utils/apiFetch';
+import { getIframeSrc, getEmbedType } from 'client/utils/editor';
 
 const propTypes = {
 	onInsert: PropTypes.func.isRequired,

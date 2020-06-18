@@ -1,5 +1,5 @@
-import { Signup } from '../models';
-import { checkIfSuperAdmin } from '../utils/queryHelpers/scopeGet';
+import { Signup } from 'server/models';
+import { checkIfSuperAdmin } from 'server/utils/queryHelpers/scopeGet';
 
 export const getPermissions = async ({ userId, submittedUserId, email, hash }) => {
 	const isSuperAdmin = checkIfSuperAdmin(userId);

@@ -5,8 +5,8 @@ import { getJSON } from 'components/Editor';
 
 import { GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { useSticky } from 'utils/useSticky';
-import { useViewport } from 'utils/useViewport';
+import { useSticky } from 'client/utils/useSticky';
+import { useViewport } from 'client/utils/useViewport';
 
 import { getTocHeadings } from './headerUtils';
 import { mobileViewportCutoff } from './constants';

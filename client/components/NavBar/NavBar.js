@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { GridWrapper, Icon } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
-import { populateNavigationIds, populateSocialItems } from 'utils';
+import { populateNavigationIds, populateSocialItems } from 'utils/community';
 import { usePageContext } from 'utils/hooks';
 
 require('./navBar.scss');

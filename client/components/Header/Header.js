@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, AnchorButton, Intent } from '@blueprintjs/core';
+
 import { GridWrapper, Avatar, ScopeDropdown, MenuButton, MenuItem } from 'components';
-import { apiFetch, getResizedUrl } from 'utils';
 import { usePageContext } from 'utils/hooks';
+import { getResizedUrl } from 'utils/images';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./header.scss');
 

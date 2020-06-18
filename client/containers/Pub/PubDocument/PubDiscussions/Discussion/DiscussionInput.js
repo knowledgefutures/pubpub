@@ -10,10 +10,10 @@ import Editor, {
 	getLocalHighlightText,
 } from 'components/Editor';
 import { Avatar } from 'components';
-import { apiFetch } from 'utils';
-import { usePageContext } from 'utils/hooks';
-import { usePubContext } from 'containers/Pub/pubHooks';
 import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
+import { usePageContext } from 'utils/hooks';
+import { apiFetch } from 'client/utils/apiFetch';
+import { usePubContext } from 'containers/Pub/pubHooks';
 
 const propTypes = {
 	pubData: PropTypes.object.isRequired,

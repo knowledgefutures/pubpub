@@ -1,5 +1,5 @@
-import { attributesPublicUser } from '../utils/attributesPublicUser';
-import { User, ThreadComment } from '../models';
+import { User, ThreadComment } from 'server/models';
+import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 
 const findThreadCommentWithUser = (id) =>
 	ThreadComment.findOne({

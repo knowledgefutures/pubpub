@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Icon, Menu, MenuItem } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { pubUrl } from 'shared/utils/canonicalUrls';
+import { pubUrl } from 'utils/canonicalUrls';
 
 const propTypes = {
 	children: PropTypes.node.isRequired,

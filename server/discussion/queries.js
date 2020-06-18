@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { ForbiddenError } from 'server/errors';
+import { ForbiddenError } from 'server/utils/errors';
 import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 import {
 	User,

@@ -3,7 +3,7 @@ import fs from 'fs';
 import nodePandoc from 'node-pandoc';
 import YAML from 'yaml';
 
-import { getLicenseBySlug } from 'shared/license';
+import { getLicenseBySlug } from 'utils/licenses';
 import { getTmpFileForExtension } from './util';
 
 const getTemplatePath = (pandocTarget) => {

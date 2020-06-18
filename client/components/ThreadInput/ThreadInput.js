@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
+
 import { Avatar } from 'components';
+import Editor, { getText, getJSON } from 'components/Editor';
 import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 import { usePageContext } from 'utils/hooks';
-import { apiFetch } from 'utils';
-import Editor, { getText, getJSON } from 'components/Editor';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./threadInput.scss');
 

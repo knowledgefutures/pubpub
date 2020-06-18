@@ -1,4 +1,4 @@
-import { Collection, CollectionAttribution, User } from '../../models';
+import { Collection, CollectionAttribution, User } from 'server/models';
 
 export const getCollection = async ({
 	communityId,

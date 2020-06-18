@@ -1,18 +1,14 @@
 import React from 'react';
 
-import { getPubPageContextTitle } from 'shared/utils/pubPageTitle';
-import { getPDFDownload, getTextAbstract, getGoogleScholarNotes } from 'shared/pub/metadata';
-import { chooseCollectionForPub } from '../../client/utils/collections';
-import Html from '../Html';
-import app from '../server';
-import { NotFoundError, ForbiddenError } from '../errors';
-import {
-	hostIsValid,
-	renderToNodeStream,
-	getInitialData,
-	handleErrors,
-	generateMetaComponents,
-} from '../utils';
+import { getPubPageContextTitle } from 'utils/pubPageTitle';
+import { getPDFDownload, getTextAbstract, getGoogleScholarNotes } from 'utils/pub/metadata';
+import { chooseCollectionForPub } from 'client/utils/collections';
+import Html from 'server/Html';
+import app from 'server/server';
+import { handleErrors, NotFoundError, ForbiddenError } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+import { hostIsValid } from 'server/utils/routes';
+import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import {
 	getPub,
 	getMembers,
@@ -20,7 +16,7 @@ import {
 	enrichPubFirebaseDoc,
 	enrichPubFirebaseToken,
 	enrichPubCitations,
-} from '../utils/queryHelpers';
+} from 'server/utils/queryHelpers';
 
 const renderPubDocument = (res, pubData, initialData) => {
 	return renderToNodeStream(

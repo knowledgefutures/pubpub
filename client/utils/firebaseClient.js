@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 
-import { getFirebaseConfig } from 'shared/editor/firebaseConfig';
+import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 
 export const initFirebase = async (rootKey, authToken) => {
 	const firebaseAppName = `App-${rootKey}`;

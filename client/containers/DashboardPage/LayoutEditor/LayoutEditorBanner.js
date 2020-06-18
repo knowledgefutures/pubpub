@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Color from 'color';
 import { ButtonGroup, Button } from '@blueprintjs/core';
+
 import CollectionMultiSelect from 'components/CollectionMultiSelect/CollectionMultiSelect';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import ColorInput from 'components/ColorInput/ColorInput';
-import { getResizedUrl } from 'utils';
+import { getResizedUrl } from 'utils/images';
 
 require('./layoutEditorBanner.scss');
 

@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 import stickybits from 'stickybits';
-import { generateHash, generateRenderLists } from 'utils';
+
+import { generateHash } from 'utils/hashes';
+import { generateRenderLists } from 'utils/pages';
+
 import LayoutEditorInsert from './LayoutEditorInsert';
 import LayoutEditorPubs from './LayoutEditorPubs';
 import LayoutEditorPages from './LayoutEditorPages';

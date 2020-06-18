@@ -1,8 +1,9 @@
 import Promise from 'bluebird';
 import passport from 'passport';
 import crypto from 'crypto';
-import app from '../server';
-import { User } from '../models';
+
+import app from 'server/server';
+import { User } from 'server/models';
 
 app.post('/api/login', (req, res, next) => {
 	const authenticate = new Promise((resolve, reject) => {

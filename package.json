@@ -205,11 +205,10 @@
 		"moduleDirectories": [
 			"node_modules",
 			"<rootDir>",
-			"<rootDir>/client",
-			"<rootDir>/stories"
+			"<rootDir>/client"
 		],
 		"moduleNameMapper": {
-			"\\.[s]?css$": "<rootDir>/stories/styleMock.js"
+			"\\.[s]?css$": "<rootDir>/utils/storybook/styleMock.js"
 		},
 		"globalSetup": "<rootDir>/stubstub/global/setup.js",
 		"globalTeardown": "<rootDir>/stubstub/global/teardown.js",
@@ -218,7 +217,7 @@
 			"<rootDir>/.jest/setup-env.js"
 		],
 		"testPathIgnorePatterns": [
-			"<rootDir>/shared/crossref/__tests__/data"
+			"<rootDir>/utils/crossref/__tests__/data"
 		]
 	}
 }

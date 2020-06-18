@@ -1,4 +1,4 @@
-import { getExportFormatDetails } from 'shared/export/formats';
+import { getExportFormatDetails } from 'utils/export/formats';
 
 import { createStaticHtml } from './html';
 import { getPubMetadata } from './metadata';

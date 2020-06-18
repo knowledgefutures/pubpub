@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { getPubPublishedDate } from 'shared/pub/pubDates';
-import { formatDate } from 'shared/utils/dates';
 import { ClickToCopyButton } from 'components';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 
 import CollectionsBar from './collections/CollectionsBar';
 import DraftReleaseButtons from './DraftReleaseButtons';

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Editor, { getJSON } from 'components/Editor';
 import { Button } from '@blueprintjs/core';
 
 import { GridWrapper } from 'components';
+import Editor, { getJSON } from 'components/Editor';
 import InputField from 'components/InputField/InputField';
 import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
-import { getResizedUrl } from 'utils';
+import { getResizedUrl } from 'utils/images';
 
 const propTypes = {
 	onChange: PropTypes.func.isRequired,

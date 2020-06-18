@@ -13,10 +13,14 @@
         },
         "alias": {
             "map": [
-                ["stubstub", "./stubstub"],
+                ["client", "./client"],
+                ["containers", "./client/containers"],
+                ["components", "./client/components"],
+                ["server", "./server"],
                 ["shared", "./shared"],
                 ["data", "./stories/data"],
-                ["server", "./server"]
+                ["stubstub", "./stubstub"],
+                ["utils", "./utils"]
             ],
             "extensions": [".js"]
         }

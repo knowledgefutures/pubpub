@@ -1,5 +1,5 @@
-import app, { wrap } from '../server';
-import { getBranchDoc } from '../utils/firebaseAdmin';
+import app, { wrap } from 'server/server';
+import { getBranchDoc } from 'server/utils/firebaseAdmin';
 
 import { getPermissions } from './permissions';
 

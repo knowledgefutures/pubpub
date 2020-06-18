@@ -1,5 +1,5 @@
-import { getScope } from '../utils/queryHelpers';
-import { Release } from '../models';
+import { Release } from 'server/models';
+import { getScope } from 'server/utils/queryHelpers';
 
 const pubExistsAndIsMissingReleases = async (pubId) => {
 	if (!pubId) {

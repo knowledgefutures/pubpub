@@ -1,4 +1,5 @@
-import app from '../server';
+import app from 'server/server';
+
 import { getPermissions } from './permissions';
 import { createPage, updatePage, destroyPage } from './queries';
 

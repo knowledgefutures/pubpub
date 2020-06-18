@@ -1,6 +1,6 @@
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
-import { CollectionAttribution, User } from '../models';
-import { attributesPublicUser } from '../utils/attributesPublicUser';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { CollectionAttribution, User } from 'server/models';
+import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 
 export const createCollectionAttribution = (inputValues) => {
 	return CollectionAttribution.create({

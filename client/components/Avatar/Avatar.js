@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { getResizedUrl } from 'utils';
+import { getResizedUrl } from 'utils/images';
 import { usePageContext } from 'utils/hooks';
 
 require('./avatar.scss');

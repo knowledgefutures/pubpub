@@ -1,7 +1,7 @@
-import { getPubPublishedDate, getPubUpdatedDate } from 'shared/pub/pubDates';
 import dateFormat from 'dateformat';
 
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
 import {
 	Branch,
 	Collection,
@@ -11,7 +11,7 @@ import {
 	PubAttribution,
 	User,
 	Release,
-} from '../../../server/models';
+} from 'server/models';
 
 const getPrimaryCollectionMetadata = (collectionPubs) => {
 	const primaryCollection = collectionPubs.find((cp) => cp.isPrimary);

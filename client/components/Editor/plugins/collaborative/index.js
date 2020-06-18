@@ -1,6 +1,8 @@
 import { PluginKey } from 'prosemirror-state';
 import { collab } from 'prosemirror-collab';
-import { generateHash } from '../../utils';
+
+import { generateHash } from 'utils/hashes';
+
 import buildDocument from './document';
 import buildDiscussions from './discussions';
 import buildCursors from './cursors';

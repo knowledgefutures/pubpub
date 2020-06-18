@@ -1,4 +1,5 @@
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeForks from './forksSanitize';
 import sanitizeReviews from './reviewsSanitize';

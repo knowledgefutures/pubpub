@@ -1,6 +1,7 @@
-import app, { wrap } from '../server';
+import app, { wrap } from 'server/server';
+import { ForbiddenError } from 'server/utils/errors';
+
 import { getPermissions } from './permissions';
-import { ForbiddenError } from '../errors';
 import {
 	createCollectionPub,
 	updateCollectionPub,

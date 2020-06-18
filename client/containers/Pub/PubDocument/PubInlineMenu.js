@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 import { Button } from '@blueprintjs/core';
-import { setLocalHighlight, moveToEndOfSelection } from 'components/Editor';
 
-import { pubUrl } from 'shared/utils/canonicalUrls';
+import { setLocalHighlight, moveToEndOfSelection } from 'components/Editor';
 import Icon from 'components/Icon/Icon';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 import { usePageContext } from 'utils/hooks';
+import { pubUrl } from 'utils/canonicalUrls';
 
 require('./pubInlineMenu.scss');
 

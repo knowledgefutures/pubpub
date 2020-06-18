@@ -11,8 +11,8 @@ import {
 	PendingChangesProvider,
 } from 'components';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
-import { useMembersState } from 'utils/members/useMembers';
-import { pubUrl } from 'shared/utils/canonicalUrls';
+import { useMembersState } from 'client/utils/members/useMembers';
+import { pubUrl } from 'utils/canonicalUrls';
 
 require('./pubShareDialog.scss');
 

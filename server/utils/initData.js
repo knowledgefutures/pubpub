@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 
-import { isProd, isDuqDuq, getAppCommit } from 'shared/utils/environment';
+import { isProd, isDuqDuq, getAppCommit } from 'utils/environment';
 
 import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 

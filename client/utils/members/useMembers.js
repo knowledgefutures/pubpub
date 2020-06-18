@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { usePageContext, usePendingChanges } from 'utils/hooks';
-import * as api from 'utils/members/api';
+import * as api from 'client/utils/members/api';
 
 export const useMembers = ({ members, updateMembers }) => {
 	const { scopeData } = usePageContext();

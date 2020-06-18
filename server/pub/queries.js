@@ -1,6 +1,7 @@
-import { Pub, PubAttribution, CollectionPub, Branch, Member } from '../models';
-import { generateHash, slugifyString } from '../utils/strings';
-import { setPubSearchData, deletePubSearchData } from '../utils/search';
+import { Pub, PubAttribution, CollectionPub, Branch, Member } from 'server/models';
+import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
+import { slugifyString } from 'utils/strings';
+import { generateHash } from 'utils/hashes';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

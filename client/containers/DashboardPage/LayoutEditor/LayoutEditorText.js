@@ -6,7 +6,7 @@ import { Button } from '@blueprintjs/core';
 import { GridWrapper } from 'components';
 import InputField from 'components/InputField/InputField';
 import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
-import { getResizedUrl } from 'utils';
+import { getResizedUrl } from 'utils/images';
 
 const propTypes = {
 	onChange: PropTypes.func.isRequired,

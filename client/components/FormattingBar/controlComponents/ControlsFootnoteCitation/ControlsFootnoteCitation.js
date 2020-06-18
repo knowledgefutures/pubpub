@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDebounce } from 'use-debounce';
 
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 import { SimpleEditor, PubNoteContent } from 'components';
 import { getCitationInlineLabel } from 'components/Editor/utils/citation';
 import { usePubData } from 'containers/Pub/pubHooks';

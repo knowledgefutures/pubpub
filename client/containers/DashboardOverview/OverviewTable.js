@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import { DragDropListing } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { useSticky } from 'utils/useSticky';
+import { useSticky } from 'client/utils/useSticky';
 
 import { fuzzyMatchCollection, fuzzyMatchPub } from './util';
 import OverviewRow from './OverviewRow';

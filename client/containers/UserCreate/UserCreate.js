@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 import { Button, NonIdealState, Checkbox } from '@blueprintjs/core';
+
 import { GridWrapper, InputField, ImageUpload, Icon } from 'components';
-import { apiFetch } from 'utils';
-import { gdprCookiePersistsSignup, getGdprConsentElection } from 'utils/legal/gdprConsent';
+import { apiFetch } from 'client/utils/apiFetch';
+import { gdprCookiePersistsSignup, getGdprConsentElection } from 'client/utils/legal/gdprConsent';
 
 require('./userCreate.scss');
 

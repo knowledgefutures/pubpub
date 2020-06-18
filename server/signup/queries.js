@@ -1,6 +1,6 @@
-import { generateHash } from '../utils';
-import { sequelize, Signup, User } from '../models';
-import { sendSignupEmail } from '../utils/email';
+import { generateHash } from 'utils/hashes';
+import { sequelize, Signup, User } from 'server/models';
+import { sendSignupEmail } from 'server/utils/email';
 
 export const createSignup = (inputValues, hostname) => {
 	const email = inputValues.email.toLowerCase().trim();

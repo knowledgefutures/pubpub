@@ -1,4 +1,5 @@
-import { Pub, PubAttribution, User } from '../../models';
+import { Pub, PubAttribution, User } from 'server/models';
+
 import buildPubOptions from './pubOptions';
 import sanitizePub from './pubSanitize';
 

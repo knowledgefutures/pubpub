@@ -1,9 +1,10 @@
 import { Op } from 'sequelize';
 import Promise from 'bluebird';
-import { User, Signup } from '../models';
-import { slugifyString } from '../utils';
-import { subscribeUser } from '../utils/mailchimp';
-import { updateUserData } from '../utils/search';
+
+import { User, Signup } from 'server/models';
+import { slugifyString } from 'utils/strings';
+import { subscribeUser } from 'server/utils/mailchimp';
+import { updateUserData } from 'server/utils/search';
 
 export const createUser = (inputValues) => {
 	const email = inputValues.email.toLowerCase().trim();

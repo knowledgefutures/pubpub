@@ -4,10 +4,10 @@ import { Button, ButtonGroup, Divider, Menu, MenuItem, Popover, Position } from 
 import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
-import { getSchemaForKind } from 'shared/collections/schemas';
-import { getDashUrl } from 'utils/dashboard';
 import { Icon } from 'components';
-import { apiFetch } from 'utils';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { getDashUrl } from 'utils/dashboard';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./collections.scss');
 

@@ -6,7 +6,7 @@ import ReactDOMServer from 'react-dom/server';
 import { renderStatic, buildSchema } from 'components/Editor';
 
 import { SimpleNotesList } from 'components';
-import { getLicenseBySlug } from 'shared/license';
+import { getLicenseBySlug } from 'utils/licenses';
 
 const nonExportableNodeTypes = ['discussion'];
 const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/';

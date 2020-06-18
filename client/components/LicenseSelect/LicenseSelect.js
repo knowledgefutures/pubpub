@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
 
-import { licenses, getLicenseBySlug } from 'shared/license';
-import { apiFetch } from 'utils';
+import { licenses, getLicenseBySlug } from 'utils/licenses';
 import { usePageContext } from 'utils/hooks';
-import { getPubPublishedDate } from 'shared/pub/pubDates';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./licenseSelect.scss');
 

@@ -1,6 +1,6 @@
-import ensureUserForAttribution from 'shared/utils/ensureUserForAttribution';
-import { PubAttribution, User } from '../models';
-import { attributesPublicUser } from '../utils/attributesPublicUser';
+import { PubAttribution, User } from 'server/models';
+import { attributesPublicUser } from 'server/utils/attributesPublicUser';
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 
 export const getPubAttributions = (pubId) => PubAttribution.findAll({ where: { id: pubId } });
 

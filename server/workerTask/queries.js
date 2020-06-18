@@ -1,4 +1,4 @@
-import { WorkerTask } from '../models';
+import { WorkerTask } from 'server/models';
 
 export const getWorkerTask = (inputValues) => {
 	return WorkerTask.findOne({

@@ -5,7 +5,7 @@ import { Button, Callout, Intent } from '@blueprintjs/core';
 import { GridWrapper } from 'components';
 import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./userEdit.scss');
 

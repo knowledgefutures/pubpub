@@ -1,4 +1,5 @@
-import app from '../server';
+import app from 'server/server';
+
 import { getUploadPolicy } from './queries';
 
 app.get('/api/uploadPolicy', (req, res) => {

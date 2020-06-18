@@ -1,7 +1,9 @@
-import { Page, Community } from '../models';
+import { Page, Community } from 'server/models';
+import { setPageSearchData, deletePageSearchData } from 'server/utils/search';
+import { slugifyString } from 'utils/strings';
+import { generateHash } from 'utils/hashes';
+
 import { sanitizePageHtml } from './sanitizePageHtml';
-import { generateHash, slugifyString } from '../utils';
-import { setPageSearchData, deletePageSearchData } from '../utils/search';
 
 export const createPage = (inputValues) => {
 	return Page.create({

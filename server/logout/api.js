@@ -1,4 +1,4 @@
-import app from '../server';
+import app from 'server/server';
 
 app.get('/api/logout', (req, res) => {
 	res.cookie('gdpr-consent-survives-login', 'no');

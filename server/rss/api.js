@@ -1,5 +1,6 @@
-import app from '../server';
-import { handleErrors } from '../utils';
+import app from 'server/server';
+import { handleErrors } from 'server/utils/errors';
+
 import { getCommunityRss } from './queries';
 
 app.get('/rss.xml', (req, res, next) => {

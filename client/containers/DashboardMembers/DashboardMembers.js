@@ -10,7 +10,7 @@ import {
 	InheritedMembersBlock,
 } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { useMembersState } from 'utils/members/useMembers';
+import { useMembersState } from 'client/utils/members/useMembers';
 
 require('./dashboardMembers.scss');
 

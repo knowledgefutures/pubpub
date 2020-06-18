@@ -1,5 +1,8 @@
 import uuidv4 from 'uuid/v4';
-import { Branch, Thread, Visibility, ReviewNew, Pub } from '../models';
+
+import { Branch, Thread, Visibility, ReviewNew, Pub } from 'server/models';
+import { getLatestKey } from 'server/utils/firebaseAdmin';
+
 import {
 	createCreatedThreadEvent,
 	createClosedThreadEvent,
@@ -8,7 +11,6 @@ import {
 } from '../threadEvent/queries';
 import { createRelease } from '../release/queries';
 import { createThreadComment } from '../threadComment/queries';
-import { getLatestKey } from '../utils/firebaseAdmin';
 
 export const createReview = async (inputValues, userData) => {
 	const reviews = await ReviewNew.findAll({

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import { usePageContext } from 'utils/hooks';
-import { useSticky } from 'utils/useSticky';
+import { useSticky } from 'client/utils/useSticky';
 import { FormattingBar, buttons } from 'components/FormattingBar';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
 

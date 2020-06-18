@@ -1,9 +1,11 @@
 import uuidv4 from 'uuid/v4';
-import { Community, Page, Member } from '../models';
-import { generateHash, slugifyString } from '../utils';
-import { subscribeUser } from '../utils/mailchimp';
-import { alertNewCommunity } from '../utils/webhooks';
-import { updateCommunityData } from '../utils/search';
+
+import { Community, Page, Member } from 'server/models';
+import { slugifyString } from 'utils/strings';
+import { generateHash } from 'utils/hashes';
+import { subscribeUser } from 'server/utils/mailchimp';
+import { alertNewCommunity } from 'server/utils/webhooks';
+import { updateCommunityData } from 'server/utils/search';
 
 export const createCommunity = (inputValues, userData) => {
 	const newCommunityId = uuidv4();

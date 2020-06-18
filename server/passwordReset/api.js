@@ -1,4 +1,5 @@
-import app from '../server';
+import app from 'server/server';
+
 import { createPasswordReset, updatePasswordReset } from './queries';
 
 app.post('/api/password-reset', (req, res) => {

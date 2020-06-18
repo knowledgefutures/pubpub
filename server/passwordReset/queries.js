@@ -1,7 +1,8 @@
 import Promise from 'bluebird';
-import { User } from '../models';
-import { generateHash } from '../utils';
-import { sendPasswordResetEmail } from '../utils/email';
+
+import { User } from 'server/models';
+import { generateHash } from 'utils/hashes';
+import { sendPasswordResetEmail } from 'server/utils/email';
 
 export const createPasswordReset = (inputValues, user, hostname) => {
 	const email = inputValues.email;

@@ -1,8 +1,8 @@
 import fs from 'fs';
 import AWS from 'aws-sdk';
 
-import { isProd } from 'shared/utils/environment';
-import { generateHash } from 'server/utils';
+import { isProd } from 'utils/environment';
+import { generateHash } from 'utils/hashes';
 
 import { extensionFor } from './util';
 

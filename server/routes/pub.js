@@ -1,11 +1,11 @@
 // import React from 'react';
 // import uuidValidate from 'uuid-validate';
-// import { getPubPageContextTitle } from 'shared/utils/pubPageTitle';
+// import { getPubPageContextTitle } from 'utils/pubPageTitle';
 // import { getPubPublishedDate } from 'shared/pub/pubDates';
 // import { getPDFDownload, getTextAbstract, getGoogleScholarNotes } from 'shared/pub/metadata';
 // import { chooseCollectionForPub } from '../../client/utils/collections';
-// import Html from '../Html';
-// import app from '../server';
+// import Html from 'server/Html';
+// import app from 'server/server';
 // import {
 // 	hostIsValid,
 // 	renderToNodeStream,

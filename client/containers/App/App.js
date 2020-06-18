@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider as RKProvider } from 'reakit';
-
-import { hydrateWrapper } from 'utils';
 import classNames from 'classnames';
+
 import { Header, Footer, LegalBanner, AccentStyle, NavBar, SkipLink } from 'components';
 import { PageContext } from 'utils/hooks';
+import { hydrateWrapper } from 'client/utils/hydrateWrapper';
+
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
 import getPaths from './paths';

@@ -13,7 +13,7 @@ Module.prototype.require = function(...args) {
 
 require('@babel/register');
 
-const { setEnvironment, setAppCommit } = require('../shared/utils/environment');
+const { setEnvironment, setAppCommit } = require('utils/environment');
 
 setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
 setAppCommit(process.env.HEROKU_SLUG_COMMIT);

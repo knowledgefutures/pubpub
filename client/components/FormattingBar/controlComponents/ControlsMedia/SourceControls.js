@@ -4,7 +4,7 @@ import { AnchorButton, InputGroup } from '@blueprintjs/core';
 import uuid from 'uuid';
 
 import { Icon } from 'components';
-import { s3Upload } from 'utils';
+import { s3Upload } from 'client/utils/upload';
 
 const propTypes = {
 	updateNode: PropTypes.func.isRequired,

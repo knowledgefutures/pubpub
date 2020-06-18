@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { MenuItem, Position } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
-import Avatar from 'components/Avatar/Avatar';
-import { apiFetch } from 'utils';
+
+import { Avatar } from 'components';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./userAutocomplete.scss');
 

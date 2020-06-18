@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Editor from 'components/Editor';
 
 import { GridWrapper } from 'components';
-import { getResizedUrl } from 'utils';
+import { getResizedUrl } from 'utils/images';
 
 const propTypes = {
 	content: PropTypes.object.isRequired,

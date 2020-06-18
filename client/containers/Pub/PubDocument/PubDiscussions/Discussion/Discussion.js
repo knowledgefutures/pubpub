@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
 import { Icon } from 'components';
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
 import { discussionMatchesSearchTerm } from '../discussionUtils';

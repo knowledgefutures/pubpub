@@ -1,14 +1,12 @@
 import React from 'react';
-import Html from '../Html';
-import app from '../server';
-import {
-	hostIsValid,
-	renderToNodeStream,
-	getInitialData,
-	handleErrors,
-	generateMetaComponents,
-} from '../utils';
-import { getReview, sanitizeReviews } from '../utils/queryHelpers';
+
+import Html from 'server/Html';
+import app from 'server/server';
+import { handleErrors } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+import { hostIsValid } from 'server/utils/routes';
+import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { getReview, sanitizeReviews } from 'server/utils/queryHelpers';
 
 app.get(['/dash/pub/:pubSlug/reviews/:reviewNumber'], async (req, res, next) => {
 	try {

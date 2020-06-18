@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Slider, AnchorButton, ButtonGroup, Button } from '@blueprintjs/core';
+
 import SimpleEditor from 'components/SimpleEditor/SimpleEditor';
 import Icon from 'components/Icon/Icon';
-import { s3Upload } from 'utils';
+import { s3Upload } from 'client/utils/upload';
 
 const propTypes = {
 	attrs: PropTypes.object.isRequired,

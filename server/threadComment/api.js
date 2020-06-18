@@ -1,7 +1,8 @@
-import app, { wrap } from '../server';
+import app, { wrap } from 'server/server';
+import { ForbiddenError } from 'server/utils/errors';
+
 import { getPermissions } from './permissions';
 import { createThreadComment, updateThreadComment } from './queries';
-import { ForbiddenError } from '../errors';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};

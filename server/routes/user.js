@@ -1,8 +1,11 @@
 import React from 'react';
-import Html from '../Html';
-import app from '../server';
-import { getUser } from '../utils/queryHelpers';
-import { renderToNodeStream, getInitialData, handleErrors, generateMetaComponents } from '../utils';
+
+import Html from 'server/Html';
+import app from 'server/server';
+import { getUser } from 'server/utils/queryHelpers';
+import { handleErrors } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
 app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 	try {

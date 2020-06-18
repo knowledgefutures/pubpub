@@ -1,6 +1,8 @@
 import katex from 'katex';
 import request from 'request-promise';
-import app from '../server';
+
+import app from 'server/server';
+
 import { generateCiteHtmls } from './queries';
 
 app.post('/api/editor/citation-format', (req, res) => {

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 
 import { InputField } from 'components';
-import { apiFetch } from 'utils';
 import { getDashUrl } from 'utils/dashboard';
+import { apiFetch } from 'client/utils/apiFetch';
 
 const propTypes = {
 	communityData: PropTypes.object.isRequired,

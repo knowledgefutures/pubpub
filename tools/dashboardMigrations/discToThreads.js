@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import uuidv4 from 'uuid/v4';
+
 import {
 	Anchor,
 	Branch,
@@ -8,8 +9,8 @@ import {
 	Thread,
 	ThreadComment,
 	Visibility,
-} from '../../server/models';
-import { getFirebaseConfig } from '../../shared/editor/firebaseConfig';
+} from 'server/models';
+import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 
 const firebaseAdmin = require('firebase-admin');
 

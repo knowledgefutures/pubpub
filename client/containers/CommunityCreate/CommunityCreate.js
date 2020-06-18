@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Button, NonIdealState } from '@blueprintjs/core';
+
 import { ColorInput, GridWrapper, InputField, ImageUpload } from 'components';
-import { apiFetch, slugifyString } from 'utils';
+import { slugifyString } from 'utils/strings';
 import { usePageContext } from 'utils/hooks';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./communityCreate.scss');
 

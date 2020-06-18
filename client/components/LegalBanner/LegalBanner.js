@@ -4,8 +4,8 @@ import classNames from 'classnames';
 import { useEffectOnce } from 'react-use';
 import { Button } from '@blueprintjs/core';
 
-import { shouldShowTosUpdate, markTosUpdateSeen } from 'utils/legal/tosUpdate';
-import { shouldShowGdprBanner, updateGdprConsent } from 'utils/legal/gdprConsent';
+import { shouldShowTosUpdate, markTosUpdateSeen } from 'client/utils/legal/tosUpdate';
+import { shouldShowGdprBanner, updateGdprConsent } from 'client/utils/legal/gdprConsent';
 
 require('./legalBanner.scss');
 

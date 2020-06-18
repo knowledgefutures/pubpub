@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePageContext } from 'utils/hooks';
 import { ButtonGroup, Button, Tooltip, Switch, Card, AnchorButton } from '@blueprintjs/core';
+
 import {
 	Icon,
 	Header,
@@ -12,10 +13,13 @@ import {
 	NavBar,
 	Footer,
 } from 'components';
-import { apiFetch, slugifyString, defaultFooterLinks } from 'utils';
+import { slugifyString } from 'utils/strings';
+import { defaultFooterLinks } from 'utils/community';
 import { getDashUrl } from 'utils/dashboard';
-import { communityUrl } from 'shared/utils/canonicalUrls';
-import { isDevelopment } from 'shared/utils/environment';
+import { communityUrl } from 'utils/canonicalUrls';
+import { isDevelopment } from 'utils/environment';
+import { apiFetch } from 'client/utils/apiFetch';
+
 import NavBuilder from './NavBuilder';
 
 const CommunitySettings = () => {

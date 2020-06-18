@@ -1,15 +1,13 @@
 import Promise from 'bluebird';
 import React from 'react';
-import Html from '../Html';
-import app from '../server';
-import { Community } from '../models';
-import {
-	hostIsValid,
-	renderToNodeStream,
-	getInitialData,
-	handleErrors,
-	generateMetaComponents,
-} from '../utils';
+
+import Html from 'server/Html';
+import app from 'server/server';
+import { Community } from 'server/models';
+import { handleErrors } from 'server/utils/errors';
+import { getInitialData } from 'server/utils/initData';
+import { hostIsValid } from 'server/utils/routes';
+import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
 app.get('/explore', (req, res, next) => {
 	if (!hostIsValid(req, 'pubpub')) {

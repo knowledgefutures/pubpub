@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button, NonIdealState } from '@blueprintjs/core';
+
 import { GridWrapper, InputField } from 'components';
-import { apiFetch } from 'utils';
 import { usePageContext } from 'utils/hooks';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./signup.scss');
 

@@ -8,10 +8,12 @@ import {
 	Popover,
 	PopoverInteractionKind,
 } from '@blueprintjs/core';
+
 import { GridWrapper } from 'components';
 import Icon from 'components/Icon/Icon';
-import { populateNavigationIds, apiFetch, defaultFooterLinks, populateSocialItems } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
+import { populateNavigationIds, defaultFooterLinks, populateSocialItems } from 'utils/community';
 
 require('./footer.scss');
 

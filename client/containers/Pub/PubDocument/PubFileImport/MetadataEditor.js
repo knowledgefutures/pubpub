@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Checkbox, InputGroup, TextArea } from '@blueprintjs/core';
 
-import { apiFetch } from 'utils';
-import { usePageContext } from 'utils/hooks';
 import { Avatar } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
-import { profileUrl } from 'shared/utils/canonicalUrls';
-import { getPartsOfFullName } from 'shared/utils/names';
+import { usePageContext } from 'utils/hooks';
+import { profileUrl } from 'utils/canonicalUrls';
+import { getPartsOfFullName } from 'utils/names';
+import { apiFetch } from 'client/utils/apiFetch';
+
 import { usePubContext } from '../../pubHooks';
 
 require('./metadataEditor.scss');

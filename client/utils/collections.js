@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-import { apiFetch } from 'utils';
+import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
 const readingCollectionParam = 'readingCollection';

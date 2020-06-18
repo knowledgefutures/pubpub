@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { usePageContext } from 'utils/hooks';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 import { AnchorButton, Button, NonIdealState } from '@blueprintjs/core';
+
 import { Avatar, GridWrapper, InputField } from 'components';
-import { apiFetch } from 'utils';
+import { usePageContext } from 'utils/hooks';
+import { apiFetch } from 'client/utils/apiFetch';
 
 require('./login.scss');
 

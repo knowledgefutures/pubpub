@@ -2,10 +2,17 @@ table {
 	margin: 0;
 	max-width: 100%;
 }
-th, td {
+th,
+td {
 	min-width: 1em;
 	border: 1px solid #ddd;
 	padding: 3px 5px;
+
+	/* Two :last-of-type as a selector specificity hack */
+	/* :last-child does not work here because the table plugin inserts nodes when resizing */
+	& > p:last-of-type:last-of-type {
+		margin-bottom: 0;
+	}
 }
 /* This clunky table, tableWrapper thing is because */
 /* isReadOnly removes the wrapping div, so margins don't */
@@ -22,5 +29,5 @@ table {
 th {
 	font-weight: bold;
 	text-align: left;
-	background-color: #F0F0F4;
+	background-color: #f0f0f4;
 }

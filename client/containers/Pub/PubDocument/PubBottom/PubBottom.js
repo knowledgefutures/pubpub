@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { PubSuspendWhileTyping } from '../../PubSuspendWhileTyping';
+
 import { notePropType } from './Notes';
 import LicenseSection from './LicenseSection';
 import SearchableNoteSection from './SearchableNoteSection';
@@ -38,46 +40,50 @@ const PubBottom = (props) => {
 	const { citations = [], footnotes = [] } = pubData;
 
 	return (
-		<div className="pub-bottom-component">
-			<div className="inner">
-				<ReadNextSection pubData={pubData} updateLocalData={updateLocalData} />
-				{footnotes.length > 0 && (
-					<SearchableNoteSection
-						title="Footnotes"
-						items={footnotes}
-						nodeType="footnote"
-						searchPlaceholder="Search footnotes..."
-						viewNode={
-							editorChangeObject &&
-							editorChangeObject.view &&
-							editorChangeObject.view.dom
-						}
-					/>
-				)}
-				{citations.length > 0 && (
-					<SearchableNoteSection
-						title="Citations"
-						items={citations}
-						nodeType="citation"
-						searchPlaceholder="Search citations..."
-						viewNode={
-							editorChangeObject &&
-							editorChangeObject.view &&
-							editorChangeObject.view.dom
-						}
-					/>
-				)}
-				<LicenseSection pubData={pubData} updateLocalData={updateLocalData} />
-				{showDiscussions && (
-					<DiscussionsSection
-						pubData={pubData}
-						updateLocalData={updateLocalData}
-						sideContentRef={sideContentRef}
-						mainContentRef={mainContentRef}
-					/>
-				)}
-			</div>
-		</div>
+		<PubSuspendWhileTyping delay={1000}>
+			{() => (
+				<div className="pub-bottom-component">
+					<div className="inner">
+						<ReadNextSection pubData={pubData} updateLocalData={updateLocalData} />
+						{footnotes.length > 0 && (
+							<SearchableNoteSection
+								title="Footnotes"
+								items={footnotes}
+								nodeType="footnote"
+								searchPlaceholder="Search footnotes..."
+								viewNode={
+									editorChangeObject &&
+									editorChangeObject.view &&
+									editorChangeObject.view.dom
+								}
+							/>
+						)}
+						{citations.length > 0 && (
+							<SearchableNoteSection
+								title="Citations"
+								items={citations}
+								nodeType="citation"
+								searchPlaceholder="Search citations..."
+								viewNode={
+									editorChangeObject &&
+									editorChangeObject.view &&
+									editorChangeObject.view.dom
+								}
+							/>
+						)}
+						<LicenseSection pubData={pubData} updateLocalData={updateLocalData} />
+						{showDiscussions && (
+							<DiscussionsSection
+								pubData={pubData}
+								updateLocalData={updateLocalData}
+								sideContentRef={sideContentRef}
+								mainContentRef={mainContentRef}
+							/>
+						)}
+					</div>
+				</div>
+			)}
+		</PubSuspendWhileTyping>
 	);
 };
 

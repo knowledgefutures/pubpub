@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import algoliasearch from 'algoliasearch';
 import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprintjs/core';
 import dateFormat from 'dateformat';
-import { useThrottleFn } from 'react-use';
 
 import { Icon } from 'components';
 import { getResizedUrl } from 'utils/images';
 import { generatePageBackground } from 'utils/pages';
 import { generatePubBackground } from 'utils/pubs';
-import { usePageContext } from 'utils/hooks';
+import { usePageContext, useThrottled } from 'utils/hooks';
 
 require('./search.scss');
 
@@ -20,7 +19,7 @@ const propTypes = {
 const Search = (props) => {
 	const { searchData } = props;
 	const { locationData, communityData } = usePageContext();
-	const [searchQuery, setSearchQuery] = useState(locationData.query.q);
+	const [searchQuery, setSearchQuery] = useState(locationData.query.q || '');
 	const [searchResults, setSearchResults] = useState([]);
 	const [isLoading, setIsLoading] = useState(locationData.query.q || false);
 	const [page, setPage] = useState(
@@ -28,6 +27,7 @@ const Search = (props) => {
 	);
 	const [numPages, numPagesSetter] = useState(0);
 	const [mode, modeSetter] = useState(locationData.query.mode || 'pubs');
+	const throttledSearchQuery = useThrottled(searchQuery, 1000, { leading: false });
 	const inputRef = useRef(null);
 	const clientRef = useRef(undefined);
 	const indexRef = useRef(undefined);
@@ -48,9 +48,9 @@ const Search = (props) => {
 	};
 
 	const handleSearch = () => {
-		if (searchQuery) {
+		if (throttledSearchQuery.length > 0) {
 			indexRef.current
-				.search(searchQuery, {
+				.search(throttledSearchQuery, {
 					page: page,
 				})
 				.then((results) => {
@@ -71,7 +71,8 @@ const Search = (props) => {
 		inputRef.current.value = val;
 	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
-	useThrottleFn(handleSearch, 1000, [searchQuery, page, mode]);
+	useEffect(handleSearch, [throttledSearchQuery]);
+
 	const setMode = (nextMode) => {
 		if (nextMode !== mode) {
 			modeSetter(nextMode);

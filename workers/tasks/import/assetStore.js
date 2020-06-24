@@ -9,15 +9,22 @@ import { extensionFor } from './util';
 AWS.config.setPromisesDependency(Promise);
 const s3bucket = new AWS.S3({ params: { Bucket: 'assets.pubpub.org' } });
 
-const getUrlKeyForFile = (folderName, fileExtension) =>
-	`${folderName}/${Math.floor(Math.random() * 8)}${new Date().getTime()}.${fileExtension}`;
+export const getUrlForAssetKey = (assetKey) => `https://assets.pubpub.org/${assetKey}`;
 
-const blockForS3File = (key) =>
+export const generateAssetKeyForFile = (filePath) => {
+	const fileExtension = extensionFor(filePath);
+	const folderName = isProd() ? generateHash(8) : '_testing';
+	const randomness = Math.floor(Math.random() * 8);
+	const now = new Date().getTime();
+	return `${folderName}/${randomness}${now}.${fileExtension}`;
+};
+
+const blockForAssetFile = (assetKey) =>
 	new Promise((resolve, reject) => {
 		let attempts = 0;
 		const checkForFile = () => {
 			s3bucket
-				.headObject({ Key: key })
+				.headObject({ Key: assetKey })
 				.promise()
 				.then(resolve)
 				.catch(() => {
@@ -33,24 +40,22 @@ const blockForS3File = (key) =>
 		checkForFile();
 	});
 
-export const downloadFileFromS3 = (sourceUrl, filePath) =>
+export const downloadFileFromAssetStore = (assetKey, filePath) =>
 	new Promise(async (resolve, reject) => {
-		const key = sourceUrl.replace('https://assets.pubpub.org/', '');
-		await blockForS3File(key);
+		await blockForAssetFile(assetKey);
 		const writeStream = fs.createWriteStream(filePath);
 		s3bucket
-			.getObject({ Key: key })
+			.getObject({ Key: assetKey })
 			.createReadStream()
 			.pipe(writeStream)
 			.on('error', (error) => reject(error))
 			.on('close', () => resolve(filePath));
 	});
 
-export const uploadFileToS3 = (filePath) => {
-	const folderName = isProd() ? generateHash(8) : '_testing';
-	const key = getUrlKeyForFile(folderName, extensionFor(filePath));
+export const uploadFileToAssetStore = (filePath, givenAssetKey) => {
+	const assetKey = givenAssetKey || generateAssetKeyForFile(filePath);
 	const params = {
-		Key: key,
+		Key: assetKey,
 		Body: fs.createReadStream(filePath),
 		ACL: 'public-read',
 	};
@@ -59,7 +64,7 @@ export const uploadFileToS3 = (filePath) => {
 			if (err) {
 				reject(err);
 			}
-			resolve(key);
+			resolve(assetKey);
 		});
 	});
 };

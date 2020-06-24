@@ -24,19 +24,23 @@ export const createPub = async (
 		...restArgs,
 	});
 
-	const createPubAttribution = PubAttribution.create({
-		userId: userId,
-		pubId: newPub.id,
-		isAuthor: true,
-		order: 0.5,
-	});
+	const createPubAttribution =
+		userId &&
+		PubAttribution.create({
+			userId: userId,
+			pubId: newPub.id,
+			isAuthor: true,
+			order: 0.5,
+		});
 
-	const createMember = Member.create({
-		userId: userId,
-		pubId: newPub.id,
-		permissions: 'manage',
-		isOwner: true /* TODO: I don't believe isOwner is fully implemented yet, so we should not rely on it. */,
-	});
+	const createMember =
+		userId &&
+		Member.create({
+			userId: userId,
+			pubId: newPub.id,
+			permissions: 'manage',
+			isOwner: true /* TODO: I don't believe isOwner is fully implemented yet, so we should not rely on it. */,
+		});
 
 	const createPublicBranch = Branch.create({
 		shortId: 1,
@@ -59,13 +63,15 @@ export const createPub = async (
 		}),
 	);
 
-	await Promise.all([
-		createPubAttribution,
-		createCollectionPubs,
-		createPublicBranch,
-		createDraftBranch,
-		createMember,
-	]);
+	await Promise.all(
+		[
+			createPubAttribution,
+			createCollectionPubs,
+			createPublicBranch,
+			createDraftBranch,
+			createMember,
+		].filter((x) => x),
+	);
 
 	setPubSearchData(newPub.id);
 	return newPub;

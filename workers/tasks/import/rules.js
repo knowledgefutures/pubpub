@@ -169,15 +169,24 @@ rules.fromPandoc('Span', pandocPassThroughTransformer);
 // Pandoc insists that text in quotes is actually its own node type
 rules.fromPandoc('Quoted', pandocQuotedTransformer);
 
-rules.fromPandoc('RawBlock', (node) => {
+rules.fromPandoc('RawBlock', (node, { transform }) => {
+	const { format, content } = node;
+	if (format === 'html') {
+		const pandocAst = htmlStringToPandocBlocks(content);
+		return transform(pandocAst).asArray();
+	}
 	return {
 		type: 'paragraph',
-		content: [{ type: 'text', text: node.content }],
+		content: [{ type: 'text', text: content }],
 	};
 });
 
-rules.fromPandoc('RawInline', (node) => {
+rules.fromPandoc('RawInline', (node, { transform }) => {
 	const { format, content } = node;
+	if (format === 'html') {
+		const pandocAst = htmlStringToPandocInline(content);
+		return transform(pandocAst);
+	}
 	if (format === 'tex') {
 		return {
 			type: 'equation',

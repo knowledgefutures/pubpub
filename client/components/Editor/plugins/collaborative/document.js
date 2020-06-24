@@ -1,10 +1,9 @@
 import { Plugin } from 'prosemirror-state';
 import { receiveTransaction, sendableSteps } from 'prosemirror-collab';
 import { Step } from 'prosemirror-transform';
-import { compressStepJSON, uncompressStepJSON } from 'prosemirror-compress-pubpub';
-import uuidv4 from 'uuid/v4';
+import { uncompressStepJSON } from 'prosemirror-compress-pubpub';
 
-import { storeCheckpoint, firebaseTimestamp } from '../../utils';
+import { storeCheckpoint, createFirebaseChange } from '../../utils';
 
 /*
 Rough pipeline:
@@ -65,13 +64,11 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 						/* https://firebase.google.com/docs/reference/js/firebase.database.Reference#transactionupdate:-function */
 						return undefined;
 					}
-					return {
-						id: uuidv4(), // Keyable Id
-						cId: localClientId, // Client Id
-						bId: ref.key.replace('branch-', ''), // Origin Branch Id
-						s: sendable.steps.map((step) => compressStepJSON(step.toJSON())),
-						t: firebaseTimestamp,
-					};
+					return createFirebaseChange(
+						sendable.steps,
+						ref.key.replace('branch-', ''),
+						localClientId,
+					);
 				},
 				null,
 				false,

@@ -15,6 +15,7 @@ require('utils/environment').setEnvironment(process.env.PUBPUB_PRODUCTION, proce
 const command = process.argv[2];
 const commandFiles = {
 	backfillCheckpoints: './backfillCheckpoints.js',
+	bulkimport: '../workers/tasks/import/bulk/cli.js',
 	checkpointBackfill: './dashboardMigrations/backfillCheckpoints.js',
 	migrateDash: './dashboardMigrations/runMigrations.js',
 	migrationsDeprecated: './migrationsDeprecated.js',

@@ -23,23 +23,16 @@ export const extractRefBlocks = (pandocAst) => {
 	return { pandocAst: pandocAst, refBlocks: null };
 };
 
-const createIdToCiteGetter = (array, processEntry) => {
-	const map = new Map();
-	array.forEach((entry) => {
-		const [key, value] = processEntry(entry);
-		map.set(key, value);
-	});
-	return (id) => map.get(id);
-};
-
 const extractUsingPandocCiteproc = (bibliographyTmpPath) => {
 	const proc = spawnSync('pandoc-citeproc', ['-j', bibliographyTmpPath]);
 	const output = proc.stdout.toString();
 	const cslJson = JSON.parse(output);
-	return createIdToCiteGetter(cslJson, (entry) => {
-		const structuredValue = Cite.get.bibtex.text([entry]);
-		return [entry.id, { structuredValue: structuredValue }];
-	});
+	return Object.fromEntries(
+		cslJson.map((entry) => {
+			const structuredValue = Cite.get.bibtex.text([entry]);
+			return [entry.id, { structuredValue: structuredValue }];
+		}),
+	);
 };
 
 const getBibPathFromXslTransform = async (documentTmpPath) => {
@@ -48,13 +41,13 @@ const getBibPathFromXslTransform = async (documentTmpPath) => {
 	return bibFilePath;
 };
 
-export const extractBibliographyItems = async ({ bibliographyTmpPath, documentTmpPath }) => {
-	if (bibliographyTmpPath) {
-		return extractUsingPandocCiteproc(bibliographyTmpPath);
+export const extractBibliographyItems = async ({ bibliography, document, extractBibFromJats }) => {
+	if (bibliography) {
+		return extractUsingPandocCiteproc(bibliography.tmpPath);
 	}
-	if (documentTmpPath && extensionFor(documentTmpPath) === 'xml') {
-		const generatedBibPath = await getBibPathFromXslTransform(documentTmpPath);
+	if (document && extensionFor(document.tmpPath) === 'xml' && extractBibFromJats) {
+		const generatedBibPath = await getBibPathFromXslTransform(document.tmpPath);
 		return extractUsingPandocCiteproc(generatedBibPath);
 	}
-	return () => null;
+	return {};
 };

@@ -49,7 +49,13 @@ export const getPubsInCollection = async ({ communityId, collectionId, userId })
 		);
 };
 
-export const createCollectionPub = ({ collectionId, pubId, rank, moveToTop = false }) => {
+export const createCollectionPub = ({
+	collectionId,
+	pubId,
+	rank,
+	isPrimary: forceIsPrimary,
+	moveToTop = false,
+}) => {
 	return Promise.all([
 		Collection.findOne({ where: { id: collectionId } }),
 		CollectionPub.findAll({
@@ -75,7 +81,7 @@ export const createCollectionPub = ({ collectionId, pubId, rank, moveToTop = fal
 			collectionId: collectionId,
 			pubId: pubId,
 			rank: setRank,
-			isPrimary: isPrimary,
+			isPrimary: forceIsPrimary || isPrimary,
 		});
 	});
 };

@@ -3,11 +3,12 @@ import uuidv4 from 'uuid/v4';
 import { Community, Page, Member } from 'server/models';
 import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
+import { isProd } from 'utils/environment';
 import { subscribeUser } from 'server/utils/mailchimp';
 import { alertNewCommunity } from 'server/utils/webhooks';
 import { updateCommunityData } from 'server/utils/search';
 
-export const createCommunity = (inputValues, userData) => {
+export const createCommunity = (inputValues, userData, alertAndSubscribe = true) => {
 	const newCommunityId = uuidv4();
 	const homePageId = uuidv4();
 	const subdomain = slugifyString(inputValues.subdomain);
@@ -74,8 +75,10 @@ export const createCommunity = (inputValues, userData) => {
 			return Page.create(newpage);
 		})
 		.then(() => {
-			subscribeUser(userData.email, 'be26e45660', ['Community Admins']);
-			alertNewCommunity(inputValues.title, subdomain, userData.fullName, userData.email);
+			if (alertAndSubscribe && isProd()) {
+				subscribeUser(userData.email, 'be26e45660', ['Community Admins']);
+				alertNewCommunity(inputValues.title, subdomain, userData.fullName, userData.email);
+			}
 			return Member.create({
 				communityId: newCommunityId,
 				userId: userData.id,

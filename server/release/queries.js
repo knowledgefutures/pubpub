@@ -1,5 +1,5 @@
 import { Release, Branch } from 'server/models';
-import { mergeFirebaseBranch } from 'server/utils/firebaseAdmin';
+import { mergeFirebaseBranch, getLatestKey } from 'server/utils/firebaseAdmin';
 
 export const createRelease = async ({ userId, pubId, draftKey, noteContent, noteText }) => {
 	const pubBranches = await Branch.findAll({ where: { pubId: pubId } });
@@ -8,6 +8,11 @@ export const createRelease = async ({ userId, pubId, draftKey, noteContent, note
 
 	if (!draftBranch || !publicBranch) {
 		throw new Error('Cannot create a release on a Pub without a draft and public branch.');
+	}
+
+	if (!draftKey) {
+		// eslint-disable-next-line no-param-reassign
+		draftKey = await getLatestKey(pubId, draftBranch.id);
 	}
 
 	const existingRelease = await Release.findOne({

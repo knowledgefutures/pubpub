@@ -33,8 +33,8 @@ const getBounds = (ranks, index) => {
 	return ranks.slice(index - 1, index + 1);
 };
 
-export default (ranks, index) => {
+export default (ranks, index, count = 1) => {
 	const [above, below] = getBounds(ranks, index);
-	const [result] = mudder.base36.mudder(above, below, 1);
+	const [result] = mudder.base36.mudder(above, below, count);
 	return result;
 };

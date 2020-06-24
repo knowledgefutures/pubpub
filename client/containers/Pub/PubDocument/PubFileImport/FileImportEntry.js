@@ -15,7 +15,7 @@ import { getPotentialLabelsForFile } from './formats';
 
 const propTypes = {
 	file: PropTypes.shape({
-		localPath: PropTypes.string,
+		clientPath: PropTypes.string,
 		state: PropTypes.string,
 		loaded: PropTypes.number,
 		total: PropTypes.number,
@@ -29,10 +29,10 @@ require('./fileImportEntry.scss');
 
 const FileImportEntry = (props) => {
 	const { file, onDelete, onLabelFile } = props;
-	const { loaded, total, state, localPath, label } = file;
-	const displayTitleBreak = Math.max(localPath.length - 5, 0);
-	const displayTitleStart = localPath.slice(0, displayTitleBreak);
-	const displayTitleEnd = localPath.slice(displayTitleBreak);
+	const { loaded, total, state, clientPath, label } = file;
+	const displayTitleBreak = Math.max(clientPath.length - 5, 0);
+	const displayTitleStart = clientPath.slice(0, displayTitleBreak);
+	const displayTitleEnd = clientPath.slice(displayTitleBreak);
 
 	const renderProgressContent = () => {
 		if (state === 'complete') {
@@ -95,8 +95,8 @@ const FileImportEntry = (props) => {
 
 	return (
 		<div className="file-import-entry">
-			<div className="file-title" title={localPath}>
-				<span className="start" aria-label={localPath}>
+			<div className="file-title" title={clientPath}>
+				<span className="start" aria-label={clientPath}>
 					<span aria-hidden="true">{displayTitleStart}</span>
 				</span>
 				<span className="end" aria-hidden="true">

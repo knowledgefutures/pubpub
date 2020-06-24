@@ -49,17 +49,17 @@ export const useFileManager = () => {
 	const onProgress = (fileId) => ({ loaded, total }) =>
 		updateFileById(fileId, { state: 'uploading', loaded: loaded, total: total });
 
-	const onComplete = (fileId) => (_, __, ___, url) =>
-		updateFileById(fileId, { state: 'complete', url: url });
+	const onComplete = (fileId) => (_, __, ___, assetKey) =>
+		updateFileById(fileId, { state: 'complete', assetKey: assetKey });
 
 	const addFile = (file) => {
 		const fileId = fileIdCounter;
-		const localPath = file.path || file.name;
+		const clientPath = file.path || file.name;
 		fileIdCounter += 1;
 		s3Upload(file, onProgress(fileId), onComplete(fileId));
 		setFiles((currentFiles) => [
 			...currentFiles,
-			{ id: fileId, state: 'waiting', localPath: localPath },
+			{ id: fileId, state: 'waiting', clientPath: clientPath },
 		]);
 	};
 

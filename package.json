@@ -134,6 +134,7 @@
 		"popper.js": "^1.15.0",
 		"postcss-loader": "^3.0.0",
 		"prettier": "^1.19.1",
+		"prompt": "^1.0.0",
 		"prop-types": "^15.7.2",
 		"prosemirror-collab": "^1.2.2",
 		"prosemirror-commands": "^1.1.4",

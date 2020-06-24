@@ -1,10 +1,12 @@
+import path from 'path';
+import fs from 'fs-extra';
+import { exec as execWithCallback } from 'child_process';
 import {
 	callPandoc,
 	emitPandocJson,
 	parsePandocJson,
 	transformUtil,
 } from '@pubpub/prosemirror-pandoc';
-import { exec as execWithCallback } from 'child_process';
 
 const { flatten } = transformUtil;
 
@@ -73,3 +75,16 @@ export const exec = (command) =>
 			return resolve(res);
 		}),
 	);
+
+export const getFullPathsInDir = (dir) => {
+	let paths = [];
+	fs.readdirSync(dir).forEach((file) => {
+		const fullPath = path.join(dir, file);
+		if (fs.lstatSync(fullPath).isDirectory()) {
+			paths = paths.concat(getFullPathsInDir(fullPath));
+		} else {
+			paths.push(fullPath);
+		}
+	});
+	return paths;
+};

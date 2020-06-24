@@ -1,4 +1,5 @@
-import { compressStateJSON } from 'prosemirror-compress-pubpub';
+import uuid from 'uuid';
+import { compressStateJSON, compressStepJSON } from 'prosemirror-compress-pubpub';
 
 export const firebaseTimestamp = { '.sv': 'timestamp' };
 
@@ -32,4 +33,14 @@ export const flattenKeyables = (keyables) => {
 			}
 			return [...arr, keyables[intKey]];
 		}, []);
+};
+
+export const createFirebaseChange = (steps, branchId, clientId) => {
+	return {
+		id: uuid.v4(), // Keyable Id
+		cId: clientId, // Client Id
+		bId: branchId, // Origin Branch Id
+		s: steps.map((step) => compressStepJSON(step.toJSON())),
+		t: firebaseTimestamp,
+	};
 };

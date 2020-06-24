@@ -6,7 +6,16 @@ Collaborative Community Publishing
 
 ```
 npm install
+
 ```
+
+To run locally on a Mac, use [Homebrew](https://brew.sh/) to install a handful of dependencies:
+
+```
+brew install pandoc poppler
+```
+
+(See `Aptfile` for a list of equivalent Debian packages to install)
 
 ## To Run Dev Mode
 

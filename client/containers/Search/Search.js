@@ -27,7 +27,7 @@ const Search = (props) => {
 	);
 	const [numPages, numPagesSetter] = useState(0);
 	const [mode, modeSetter] = useState(locationData.query.mode || 'pubs');
-	const throttledSearchQuery = useThrottled(searchQuery, 1000, { leading: false });
+	const throttledSearchQuery = useThrottled(searchQuery, 1000, false);
 	const inputRef = useRef(null);
 	const clientRef = useRef(undefined);
 	const indexRef = useRef(undefined);

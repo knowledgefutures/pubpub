@@ -16,7 +16,7 @@ export const usePendingChanges = () => {
 	return useContext(PendingChanges);
 };
 
-export const useThrottled = (value, timeout, { leading, trailing } = {}) => {
+export const useThrottled = (value, timeout, leading = true, trailing = true) => {
 	const [throttledValue, setThrottledValue] = useState(value);
 	const throttledSetState = useMemo(
 		() => throttle(setThrottledValue, timeout, { leading: leading, trailing: trailing }),

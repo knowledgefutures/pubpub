@@ -6,6 +6,7 @@
 	.col-12 {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 	}
 	.bp3-input-group {
 		margin-top: 0.25em;
@@ -38,12 +39,12 @@
 		.footer-image {
 			max-height: 75px;
 			max-width: 250px;
-			width: 100%;
 		}
 	}
 	.right {
 		text-align: right;
 		flex: 1 1 auto;
+		width: 100%;
 		max-width: 500px;
 		.footer-title {
 			font-size: 18px;

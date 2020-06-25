@@ -1,4 +1,4 @@
-import { renderHtmlChildren } from '../utils/render';
+import { renderHtmlChildren } from '../utils/renderHtml';
 
 export default {
 	audio: {
@@ -25,7 +25,7 @@ export default {
 				},
 			},
 		],
-		toDOM: (node) => {
+		toDOM: (node, { isReact } = {}) => {
 			return [
 				'figure',
 				{
@@ -42,7 +42,7 @@ export default {
 						alt: node.attrs.caption,
 					},
 				],
-				['figcaption', {}, renderHtmlChildren(node, node.attrs.caption, 'div')],
+				['figcaption', {}, renderHtmlChildren(isReact, node.attrs.caption, 'div')],
 			];
 		},
 		inline: false,

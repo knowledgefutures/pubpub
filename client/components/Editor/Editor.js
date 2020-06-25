@@ -51,11 +51,14 @@ const defaultProps = {
 	citationInlineStyle: 'count',
 };
 
-const StaticDoc = React.memo(({ schema, content }) => renderStatic(schema, content));
+const StaticDoc = React.memo(({ schema, doc }) => renderStatic(schema, doc));
 
 StaticDoc.propTypes = {
 	schema: PropTypes.object.isRequired,
-	content: PropTypes.array.isRequired,
+	doc: PropTypes.shape({
+		type: PropTypes.string,
+		content: PropTypes.arrayOf(PropTypes.object),
+	}).isRequired,
 };
 
 const Editor = (props) => {
@@ -141,7 +144,7 @@ const Editor = (props) => {
 			ref={editorRef}
 			className={`editor ProseMirror ${props.isReadOnly ? 'read-only' : ''}`}
 		>
-			<StaticDoc schema={schema.current} content={props.initialContent.content} />
+			<StaticDoc schema={schema.current} doc={props.initialContent} />
 		</div>
 	);
 };

@@ -23,9 +23,7 @@ export const baseNodes = {
 			},
 		],
 		toDOM: (node) => {
-			/* On server rendering, the placeholder <br /> tag is not inserted. */
-			/* The following check ensures spacing is maintained when server rendering */
-			const isEmpty = Array.isArray(node.content) && !node.content.length;
+			const isEmpty = !node.content || (Array.isArray(node.content) && !node.content.length);
 			const children = isEmpty ? ['br'] : 0;
 			return ['p', { class: node.attrs.class }, children];
 		},
@@ -42,7 +40,7 @@ export const baseNodes = {
 	horizontal_rule: {
 		group: 'block',
 		parseDOM: [{ tag: 'hr' }],
-		selectable: false,
+		selectable: true,
 		toDOM: () => {
 			return ['div', ['hr']];
 		},

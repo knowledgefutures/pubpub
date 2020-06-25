@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { renderHtmlChildren } from '../utils/render';
+import { renderHtmlChildren } from '../utils/renderHtml';
 
 export default {
 	equation: {
@@ -25,8 +25,8 @@ export default {
 				},
 			},
 		],
-		toDOM: (node) => {
-			if (node.attrs.renderForPandoc) {
+		toDOM: (node, { isReact, isForPandoc } = {}) => {
+			if (isForPandoc) {
 				return (
 					<script
 						type="math/tex"
@@ -41,7 +41,7 @@ export default {
 					'data-node-type': 'math-inline',
 					'data-value': node.attrs.value,
 				},
-				renderHtmlChildren(node, node.attrs.html),
+				renderHtmlChildren(isReact, node.attrs.html),
 			];
 		},
 		inline: true,
@@ -82,7 +82,7 @@ export default {
 				},
 			},
 		],
-		toDOM: (node) => {
+		toDOM: (node, { isReact } = {}) => {
 			if (node.attrs.renderForPandoc) {
 				return (
 					<script
@@ -98,7 +98,7 @@ export default {
 					'data-node-type': 'math-block',
 					'data-value': node.attrs.value,
 				},
-				renderHtmlChildren(node, node.attrs.html),
+				renderHtmlChildren(isReact, node.attrs.html),
 			];
 		},
 

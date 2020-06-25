@@ -1,0 +1,33 @@
+.render-test {
+	padding-bottom: 1em;
+	margin-bottom: 1em;
+	border-bottom: 1px solid #ccc;
+	.grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-column-gap: 20px;
+		grid-row-gap: 20px;
+		width: 100%;
+	}
+
+	.editor {
+		border: 1px solid #f0f0f0;
+		border-radius: 2px;
+	}
+	.html {
+		font-family: monospace;
+		white-space: pre;
+		padding: 1em;
+		overflow-x: scroll;
+		font-size: 12px;
+		.Difference > del {
+		  background-color: rgba(255, 0, 0, 0.2);
+		  text-decoration: none;
+		}
+
+		.Difference > ins {
+		  background-color: rgba(0, 255, 0,0.2);
+		  text-decoration: none;
+		}
+	}
+}

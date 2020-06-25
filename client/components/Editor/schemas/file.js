@@ -1,4 +1,4 @@
-import { renderHtmlChildren } from '../utils/render';
+import { renderHtmlChildren } from '../utils/renderHtml';
 
 const getExtension = (attrs) => {
 	const { fileName, url } = attrs;
@@ -36,7 +36,7 @@ export default {
 				},
 			},
 		],
-		toDOM: (node) => {
+		toDOM: (node, { isReact } = {}) => {
 			const attrs = node.attrs;
 			const extension = getExtension(attrs);
 			return [
@@ -89,7 +89,7 @@ export default {
 						},
 					],
 				],
-				['figcaption', {}, renderHtmlChildren(node, node.attrs.caption, 'div')],
+				['figcaption', {}, renderHtmlChildren(isReact, node.attrs.caption, 'div')],
 			];
 		},
 		inline: false,

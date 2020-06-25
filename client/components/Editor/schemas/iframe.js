@@ -1,4 +1,4 @@
-import { renderHtmlChildren } from '../utils/render';
+import { renderHtmlChildren } from '../utils/renderHtml';
 
 export default {
 	iframe: {
@@ -27,7 +27,7 @@ export default {
 				},
 			},
 		],
-		toDOM: (node) => {
+		toDOM: (node, { isReact } = {}) => {
 			return [
 				'figure',
 				{
@@ -43,7 +43,7 @@ export default {
 						height: node.attrs.height,
 					},
 				],
-				['figcaption', {}, renderHtmlChildren(node, node.attrs.caption, 'div')],
+				['figcaption', {}, renderHtmlChildren(isReact, node.attrs.caption, 'div')],
 			];
 		},
 		inline: false,

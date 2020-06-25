@@ -75,9 +75,6 @@ const addAttrsToNodes = (newAttrs, matchNodeTypes, nodes) =>
 		return node;
 	});
 
-const renderEquationsAsScripts = (nodes) =>
-	addAttrsToNodes({ renderForPandoc: true }, ['equation', 'block_equation'], nodes);
-
 const addHrefsToNotes = (nodes) =>
 	addAttrsToNodes(
 		(node) => {
@@ -249,7 +246,6 @@ export const createStaticHtml = async (
 
 	const renderableNodes = [
 		filterNonExportableNodes,
-		targetPandoc && renderEquationsAsScripts,
 		!targetPandoc && addHrefsToNotes,
 		targetPaged && blankIframes,
 	]
@@ -267,8 +263,8 @@ export const createStaticHtml = async (
 				},
 			},
 		),
-		renderableNodes,
-		{},
+		{ type: 'doc', content: renderableNodes },
+		{ isForPandoc: targetPandoc },
 	);
 
 	return ReactDOMServer.renderToStaticMarkup(

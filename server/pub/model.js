@@ -34,6 +34,7 @@ export default (sequelize, dataTypes) => {
 			doi: { type: dataTypes.TEXT },
 			labels: { type: dataTypes.JSONB },
 			downloads: { type: dataTypes.JSONB },
+			metadata: { type: dataTypes.JSONB },
 			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
 			citationStyle: { type: dataTypes.TEXT, defaultValue: 'apa' },
 			citationInlineStyle: { type: dataTypes.TEXT, defaultValue: 'count' },

@@ -21,7 +21,7 @@ import { pathMatchesPattern } from '../paths';
 import { runMacrosOnSourceFiles } from '../macros';
 import { getAttributionAttributes, cloneWithKeys } from './util';
 
-const pubAttributesFromMetadata = ['title', 'description', 'slug', 'customPublishedAt'];
+const pubAttributesFromMetadata = ['title', 'description', 'slug', 'customPublishedAt', 'metadata'];
 const pubAttributesFromDirective = [
 	'title',
 	'description',
@@ -214,23 +214,63 @@ const labelGatheredSourceFiles = (sourceFiles, directive) => {
 	return labelledFiles;
 };
 
-const createPreambleFiles = async (directive) => {
-	const { preamble, pandocMetadata } = directive;
-	let pandocMetadataFile;
-	let preambleFile;
-	if (pandocMetadata) {
-		const metadata = YAML.stringify(pandocMetadata);
-		const contents = `---\n${metadata}\n---`;
-		const { path: tmpPath } = await tmp.file();
-		await fs.writeFile(tmpPath, contents);
-		pandocMetadataFile = { tmpPath: tmpPath, label: 'preamble' };
+const getDocumentAndMaybeYamlPreamble = async (document, directive) => {
+	const { extractMetadataFromDocument } = directive;
+	const isMarkdown = document.tmpPath.endsWith('.md');
+	if (!isMarkdown && extractMetadataFromDocument) {
+		const documentContent = (await fs.readFile(document.tmpPath)).toString();
+		const match = documentContent.match(/---([\s\S]*?)---/);
+		if (match) {
+			const [block, extractedPandocYamlString] = match;
+			const documentWithoutBlock = documentContent.replace(block, '');
+			const { path: nextDocumentPath } = await tmp.file({
+				postfix: `.${extensionFor(document.tmpPath)}`,
+			});
+			await fs.writeFile(nextDocumentPath, documentWithoutBlock);
+			return {
+				document: {
+					label: 'document',
+					tmpPath: nextDocumentPath,
+					clientPath: nextDocumentPath,
+				},
+				extractedPandocYamlString: extractedPandocYamlString,
+			};
+		}
 	}
+	return { document: document };
+};
+
+const createPandocMetadataFile = async (directive, extractedPandocYamlString) => {
+	const { pandocMetadata } = directive;
+	const yamlString = pandocMetadata ? YAML.stringify(pandocMetadata) : extractedPandocYamlString;
+	if (yamlString) {
+		const { path: tmpPath } = await tmp.file({ postfix: '.yaml' });
+		await fs.writeFile(tmpPath, yamlString);
+		return { tmpPath: tmpPath, label: 'metadata' };
+	}
+	return null;
+};
+
+const createPreambleFile = async (directive) => {
+	const { preamble } = directive;
 	if (preamble) {
 		const { path: tmpPath } = await tmp.file();
 		await fs.writeFile(tmpPath, preamble);
-		preambleFile = { tmpPath: tmpPath, label: 'preamble' };
+		return { tmpPath: tmpPath, label: 'preamble' };
 	}
-	return [pandocMetadataFile, preambleFile].filter((x) => x);
+	return null;
+};
+
+const createPreambleFiles = async (directive, sourceFiles) => {
+	const document = sourceFiles.find((sf) => sf.label === 'document');
+	const notDocument = sourceFiles.filter((sf) => sf !== document);
+	const {
+		document: nextDocument,
+		extractedPandocYamlString,
+	} = await getDocumentAndMaybeYamlPreamble(document, directive);
+	const pandocMetadataFile = await createPandocMetadataFile(directive, extractedPandocYamlString);
+	const preambleFile = await createPreambleFile(directive);
+	return [preambleFile, pandocMetadataFile, nextDocument, ...notDocument].filter((x) => x);
 };
 
 const getImportableFiles = async (directive, targetPath) => {
@@ -245,12 +285,11 @@ const getImportableFiles = async (directive, targetPath) => {
 	);
 	const gatheredSourceFiles = [...localFiles, ...nonLocalFiles];
 	const sourceFiles = labelGatheredSourceFiles(gatheredSourceFiles, directive);
-	const preambleFiles = await createPreambleFiles(directive);
-	const combinedFiles = [...preambleFiles, ...sourceFiles];
+	const sourceFilesWithPreambles = await createPreambleFiles(directive, sourceFiles);
 	if (macros) {
-		return runMacrosOnSourceFiles(combinedFiles, macros);
+		return runMacrosOnSourceFiles(sourceFilesWithPreambles, macros);
 	}
-	return combinedFiles;
+	return sourceFilesWithPreambles;
 };
 
 const writeDocumentToPubDraft = async (pubId, document) => {

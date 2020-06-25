@@ -19,12 +19,13 @@ setPandocApiVersion([1, 20]);
 
 const dataRoot = process.env.NODE_ENV === 'production' ? '/app/.apt/usr/share/pandoc/data ' : '';
 
-const createPandocArgs = (pandocFormat, tmpDirPath) => {
+const createPandocArgs = (pandocFormat, tmpDirPath, metadataPath) => {
 	const shouldExtractMedia = ['odt', 'docx', 'epub'].includes(pandocFormat);
 	return [
 		dataRoot && [`--data-dir=${dataRoot}`],
 		['-f', pandocFormat],
 		['-t', 'json'],
+		metadataPath && [`--metadata-file=${metadataPath}`],
 		shouldExtractMedia && [`--extract-media=${path.join(tmpDirPath, 'media')}`],
 	]
 		.filter((x) => x)
@@ -44,6 +45,7 @@ const callPandoc = (tmpDirPath, files, args) => {
 export const categorizeSourceFiles = (sourceFiles) => {
 	const preambles = sourceFiles.filter((file) => file.label === 'preamble');
 	const document = sourceFiles.find((file) => file.label === 'document');
+	const metadata = sourceFiles.find((file) => file.label === 'metadata');
 	const bibliography = sourceFiles.find((file) => file.label === 'bibliography');
 	const supplements = sourceFiles.filter((file) => file.label === 'supplement');
 	if (!document) {
@@ -54,6 +56,7 @@ export const categorizeSourceFiles = (sourceFiles) => {
 		document: document,
 		bibliography: bibliography,
 		supplements: supplements,
+		metadata: metadata,
 	};
 };
 
@@ -61,6 +64,7 @@ const getPandocAst = ({
 	documentPath,
 	preamblePaths,
 	supplementPaths,
+	metadataPath,
 	tmpDirPath,
 	importerFlags,
 }) => {
@@ -75,7 +79,7 @@ const getPandocAst = ({
 		const pandocResult = callPandoc(
 			path.dirname(documentPath),
 			[...preamblePaths, documentPath, ...supplementPaths],
-			createPandocArgs(pandocFormat, tmpDirPath),
+			createPandocArgs(pandocFormat, tmpDirPath, metadataPath),
 		);
 		pandocError = pandocResult.error;
 		pandocRawAst = JSON.parse(pandocResult.output);
@@ -91,9 +95,12 @@ const getPandocAst = ({
 
 export const importFiles = async ({ sourceFiles, tmpDirPath, importerFlags = {} }) => {
 	const { keepStraightQuotes, skipJatsBibExtraction } = importerFlags;
-	const { preambles, document, bibliography, supplements } = categorizeSourceFiles(sourceFiles);
+	const { preambles, document, bibliography, supplements, metadata } = categorizeSourceFiles(
+		sourceFiles,
+	);
 	const pandocAst = getPandocAst({
 		documentPath: document.tmpPath,
+		metadataPath: metadata && metadata.tmpPath,
 		preamblePaths: preambles.map((p) => p.tmpPath),
 		supplementPaths: supplements.map((s) => s.tmpPath),
 		tmpDirPath: tmpDirPath,

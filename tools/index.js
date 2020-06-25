@@ -20,9 +20,11 @@ const commandFiles = {
 	migrateDash: './dashboardMigrations/runMigrations.js',
 	migrationsDeprecated: './migrationsDeprecated.js',
 	migration2020_05_06: './migration2020_05_06.js',
+	migration2020_06_24: './migration2020_06_24.js',
 	searchSync: './searchSync.js',
 	switchBranchOrders: './switchBranchOrders.js',
 	syncDevFirebase: './syncFirebase.js',
+	syncDbSchema: './syncDbSchema.js',
 };
 
 const activeCommandFile = commandFiles[command];

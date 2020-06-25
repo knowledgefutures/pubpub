@@ -374,6 +374,8 @@ This can be helpful for mocking out some complicated TeX commands that Pandoc do
 
 **`pandocMetadata: object`**: an arbitrary object that will be written as YAML to a separate file and given to the Pandoc import process as a metadata block.
 
+**`extractMetadataFromDocument: boolean`**: extract metadata from delimited YAML metadata block in _any_ document, even if it isn't a Markdown file.
+
 **`importerFlags: string[]`**: flags passed to the importer (the same ones available from the `Meta+/` "nerd mode" menu in the single-Pub importer).
 
 **`macros: {

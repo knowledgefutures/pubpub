@@ -232,9 +232,9 @@ When you need to bring extra files into the Pub import that are not inside of it
 
 ```yaml
 resolve:
-    ../path/to/images:
+    - ../path/to/images:
         into: images/
-    ../../path/to/specific/file.tex:
+    - ../../path/to/specific/file.tex:
         as: other-file.tex
         label: preamble # (or any other label, optional)
 ```
@@ -245,8 +245,8 @@ This can be very helpful if you're dealing with TeX bundles which give reference
 
 ```yaml
 resolve:
-    ../../wp-content:
-        into: http://my-site.com/wp-content/
+    - ../../wp-content:
+      into: http://my-site.com/wp-content/
 ```
 
 **Important:** paths given to `resolve` are relative to the file or directory matched by the directive, not to the file in which the directive is written._ For instance, given the following structure:
@@ -268,7 +268,7 @@ We would turn `my-first-post.md` into a Pub as follows:
 children:
     posts/my-first-post.md:
         resolve:
-            ../images:
+            - ../images:
                 into: images/
 ```
 
@@ -361,7 +361,7 @@ This can be helpful for mocking out some complicated TeX commands that Pandoc do
 
 **`resolve: {
     [relativePath: string]: {as: string} | {into: string} & {label?: string}
-}`**: [see more](#the-resolve-option)
+}[]`**: [see more](#the-resolve-option)
 
 **`labels: {
     document?: string,
@@ -534,7 +534,7 @@ children:
   posts/*.html:
     type: pub
     resolve:
-      ../resources:
+      - ../resources:
         into: resources
 ```
 
@@ -551,7 +551,7 @@ children:
   posts/*.html:
     type: pub
     resolve:
-      ../resources:
+      - ../resources:
         into: https://best-exam-dumps-2020-here.info/resources/
 ```
 
@@ -613,7 +613,7 @@ children:
         type: pub
         ...
         resolve:
-            ../footnote-definitions.tex:
+            - ../footnote-definitions.tex:
                 as: _.tex
                 label: preamble
         preamble: |
@@ -647,7 +647,7 @@ children:
         type: pub
         title: Chapter One: The Way Things Are
         resolve:
-            ../footnote-definitions.tex:
+            - ../footnote-definitions.tex:
                 as: _.tex
                 label: preamble
         preamble: |
@@ -656,7 +656,7 @@ children:
         type: pub
         title: Chapter One: The Way Things Ought to Be
         resolve:
-            ../footnote-definitions.tex:
+            - ../footnote-definitions.tex:
                 as: _.tex
                 label: preamble
         preamble: |
@@ -675,7 +675,7 @@ children:
         type: pub
         partial: true
         resolve:
-            ../footnote-definitions.tex:
+            - ../footnote-definitions.tex:
                 as: _.tex
                 label: preamble
         preamble: |

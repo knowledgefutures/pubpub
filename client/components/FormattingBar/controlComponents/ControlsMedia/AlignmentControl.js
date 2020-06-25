@@ -40,6 +40,7 @@ const AlignmentControl = (props) => {
 									elementRef={ref}
 									icon={<Icon icon={item.icon} iconSize={isSmall ? 12 : 16} />}
 									minimal={true}
+									aria-label={item.key}
 									active={value === item.key}
 									{...restRadioProps}
 								/>

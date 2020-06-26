@@ -1,9 +1,18 @@
 import { buildSchema, jsonToNode, getNotes } from 'components/Editor';
 import discussionSchema from 'containers/Pub/PubDocument/DiscussionAddon/discussionSchema';
-import { Branch } from 'server/models';
+import { Branch, Doc } from 'server/models';
 import { generateCiteHtmls } from 'server/editor/queries';
 import { generateCitationHTML } from 'server/utils/citations';
 import { getBranchDoc, getFirebaseToken } from 'server/utils/firebaseAdmin';
+
+const getDocContentForBranch = async (pubData, branchData, versionNumber) => {
+	const { maintenanceDocId } = branchData;
+	if (maintenanceDocId) {
+		const doc = await Doc.findOne({ where: { id: maintenanceDocId } });
+		return doc.content;
+	}
+	return getBranchDoc(pubData.id, branchData.id, versionNumber, true);
+};
 
 export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) => {
 	const activeBranch = pubData.branches.find((branch) => {
@@ -12,13 +21,14 @@ export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) =
 	if (!activeBranch) {
 		throw new Error('Pub Not Found');
 	}
+
 	const {
 		doc,
 		historyData,
 		mostRecentRemoteKey,
 		firstTimestamp,
 		latestTimestamp,
-	} = await getBranchDoc(pubData.id, activeBranch.id, versionNumber, true);
+	} = await getDocContentForBranch(pubData, activeBranch, versionNumber);
 
 	if (firstTimestamp || latestTimestamp) {
 		const update = {
@@ -30,6 +40,7 @@ export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) =
 
 	return {
 		...pubData,
+		isInMaintenanceMode: !!activeBranch.maintenanceDocId,
 		activeBranch: activeBranch,
 		initialDoc: doc,
 		initialDocKey: mostRecentRemoteKey,

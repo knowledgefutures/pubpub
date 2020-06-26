@@ -155,7 +155,7 @@ const PubBody = (props) => {
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;
-	const isReadOnly = pubData.isReadOnly || isViewingHistory;
+	const isReadOnly = pubData.isReadOnly || pubData.isInMaintenanceMode || isViewingHistory;
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;

@@ -42,6 +42,10 @@ const firebaseApp = getFirebaseApp();
 const database = firebaseApp && firebaseApp.database();
 export const editorSchema = buildSchema({ ...discussionSchema }, {});
 
+export const getPubRef = (pubId) => {
+	return database.ref(`pub-${pubId}`);
+};
+
 export const getBranchRef = (pubId, branchId) => {
 	return database.ref(`pub-${pubId}/branch-${branchId}`);
 };

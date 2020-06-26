@@ -18,6 +18,7 @@ const propTypes = {
 	pubData: PropTypes.shape({
 		id: PropTypes.string.isRequired,
 		doi: PropTypes.string,
+		isInMaintenanceMode: PropTypes.bool,
 	}).isRequired,
 	pubHeadings: PropTypes.array.isRequired,
 	updateLocalData: PropTypes.func.isRequired,
@@ -25,7 +26,7 @@ const propTypes = {
 
 const PubHeaderContent = (props) => {
 	const { historyData, onShowHeaderDetails, pubData, pubHeadings, updateLocalData } = props;
-	const { doi } = pubData;
+	const { doi, isInMaintenanceMode } = pubData;
 	const { communityData } = usePageContext();
 	const publishedDate = getPubPublishedDate(pubData);
 
@@ -90,12 +91,14 @@ const PubHeaderContent = (props) => {
 				pubHeadings={pubHeadings}
 				onShowHeaderDetails={onShowHeaderDetails}
 			/>
-			<DraftReleaseButtons
-				pubData={pubData}
-				historyData={historyData}
-				updatePubData={updatePubData}
-				updateHistoryData={updateHistoryData}
-			/>
+			{!isInMaintenanceMode && (
+				<DraftReleaseButtons
+					pubData={pubData}
+					historyData={historyData}
+					updatePubData={updatePubData}
+					updateHistoryData={updateHistoryData}
+				/>
+			)}
 		</div>
 	);
 };

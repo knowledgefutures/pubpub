@@ -12,6 +12,7 @@ import PubHeaderFormatting from './PubHeaderFormatting';
 import PubHistoricalNotice from './PubHistoricalNotice';
 import PubInlineMenu from './PubInlineMenu';
 import PubMouseEvents from './PubMouseEvents';
+import PubMaintenanceNotice from './PubMaintenanceNotice';
 
 require('./pubDocument.scss');
 
@@ -80,6 +81,7 @@ const PubDocument = (props) => {
 			)}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
+					<PubMaintenanceNotice pubData={pubData} />
 					<PubHistoricalNotice pubData={pubData} historyData={historyData} />
 					<PubBody
 						editorWrapperRef={editorWrapperRef}

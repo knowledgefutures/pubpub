@@ -15,6 +15,7 @@ export default (sequelize, dataTypes) => {
 			latestKeyAt: { type: dataTypes.DATE },
 			/* Set by Associations */
 			pubId: { type: dataTypes.UUID, allowNull: false },
+			maintenanceDocId: { type: dataTypes.UUID },
 		},
 		{
 			classMethods: {

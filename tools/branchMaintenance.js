@@ -27,7 +27,7 @@ const main = async () => {
 		await branch.update({ maintenanceDocId: null });
 	} else {
 		console.log('Downloading branch doc...');
-		const content = await getBranchDoc(pub.id, branch.id);
+		const { doc: content } = await getBranchDoc(pub.id, branch.id);
 		console.log('Updating database...');
 		const doc = await Doc.create({ content: content });
 		await branch.update({ maintenanceDocId: doc.id });

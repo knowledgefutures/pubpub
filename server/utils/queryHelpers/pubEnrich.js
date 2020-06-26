@@ -9,7 +9,15 @@ const getDocContentForBranch = async (pubData, branchData, versionNumber) => {
 	const { maintenanceDocId } = branchData;
 	if (maintenanceDocId) {
 		const doc = await Doc.findOne({ where: { id: maintenanceDocId } });
-		return doc.content;
+		return {
+			doc: doc.content,
+			historyData: {
+				timestamps: {},
+				currentKey: -1,
+				latestKey: -1,
+			},
+			mostRecentRemoteKey: -1,
+		};
 	}
 	return getBranchDoc(pubData.id, branchData.id, versionNumber, true);
 };

@@ -15,19 +15,20 @@ require('utils/environment').setEnvironment(process.env.PUBPUB_PRODUCTION, proce
 const command = process.argv[2];
 const commandFiles = {
 	backfillCheckpoints: './backfillCheckpoints.js',
-	bulkimport: '../workers/tasks/import/bulk/cli.js',
 	branchMaintenance: './branchMaintenance.js',
+	bulkimport: '../workers/tasks/import/bulk/cli.js',
 	checkpointBackfill: './dashboardMigrations/backfillCheckpoints.js',
-	migrateDash: './dashboardMigrations/runMigrations.js',
-	migrationsDeprecated: './migrationsDeprecated.js',
+	firebaseDownload: './firebaseDownload.js',
+	flattenBranchHistory: './flattenBranchHistory.js',
 	migrate: './migrate.js',
+	migrateDash: './dashboardMigrations/runMigrations.js',
 	migration2020_05_06: './migration2020_05_06.js',
 	migration2020_06_24: './migration2020_06_24.js',
+	migrationsDeprecated: './migrationsDeprecated.js',
 	searchSync: './searchSync.js',
 	switchBranchOrders: './switchBranchOrders.js',
-	syncDevFirebase: './syncFirebase.js',
 	syncDbSchema: './syncDbSchema.js',
-	firebaseDownload: './firebaseDownload.js',
+	syncDevFirebase: './syncFirebase.js',
 };
 
 const activeCommandFile = commandFiles[command];

@@ -5,6 +5,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { Sequelize } from 'sequelize';
 
+import { isProd } from 'utils/environment';
 import { sequelize } from 'server/models';
 import * as models from 'server/models';
 
@@ -24,7 +25,7 @@ const findMigrationPath = async () => {
 };
 
 const getDatabaseName = () => {
-	return process.env.PUBPUB_PRODUCTION === 'true' ? 'prod' : 'dev';
+	return isProd() ? 'prod' : 'dev';
 };
 
 const main = async () => {

@@ -1,27 +1,16 @@
 /* eslint-disable no-console */
-import { Branch, Pub, Doc } from 'server/models';
+import { Doc } from 'server/models';
 import { getBranchDoc } from 'server/utils/firebaseAdmin';
+
+import { lookupBranch, lookupPub } from './utils/lookup';
 
 const {
 	argv: { pubId, pubSlug, branch: branchTitle = 'draft', remove },
 } = require('yargs');
 
 const main = async () => {
-	const pub = await Pub.findOne({
-		where: {
-			...(pubId && { id: pubId }),
-			...(pubSlug && { slug: pubSlug }),
-		},
-	});
-	if (!pub) {
-		throw new Error('No matching Pub found');
-	}
-	const branch = await Branch.findOne({
-		where: { pubId: pub.id, title: branchTitle },
-	});
-	if (!branch) {
-		throw new Error(`No branch by name ${branchTitle} for Pub ${pub.slug}.`);
-	}
+	const pub = await lookupPub({ id: pubId, slug: pubSlug });
+	const branch = await lookupBranch({ pubId: pub.id, branchTitle: branchTitle });
 	if (remove) {
 		console.log('Removing maintenance doc...');
 		await branch.update({ maintenanceDocId: null });

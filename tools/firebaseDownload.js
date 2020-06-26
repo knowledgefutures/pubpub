@@ -1,30 +1,18 @@
 /* eslint-disable no-console */
 import fs from 'fs-extra';
 
-import { Branch, Pub } from 'server/models';
 import { getBranchDoc, getPubRef } from 'server/utils/firebaseAdmin';
+
+import { lookupBranch, lookupPub } from './utils/lookup';
 
 const {
 	argv: { pubId, pubSlug, branch: branchTitle = 'draft', output, doc: downloadDoc },
 } = require('yargs');
 
 const main = async () => {
-	const pub = await Pub.findOne({
-		where: {
-			...(pubId && { id: pubId }),
-			...(pubSlug && { slug: pubSlug }),
-		},
-	});
-	if (!pub) {
-		throw new Error(`No matching Pub found.`);
-	}
+	const pub = await lookupPub({ id: pubId, slug: pubSlug });
 	if (downloadDoc) {
-		const branch = await Branch.findOne({
-			where: { pubId: pub.id, title: branchTitle },
-		});
-		if (!branch) {
-			throw new Error(`No branch by name ${branchTitle} for Pub ${pub.slug}.`);
-		}
+		const branch = await lookupBranch({ pubId: pub.id, branchTitle: branchTitle });
 		console.log('Loading doc...');
 		const branchDoc = await getBranchDoc(pub.id, branch.id);
 		console.log('Stringifying doc...');

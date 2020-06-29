@@ -8,8 +8,10 @@ export default (attribution) => {
 	if (!attribution.user || attribution.user.id === attribution.id) {
 		const { id, name, avatar, title, orcid } = attribution;
 		const { firstName, lastName, initials } = getPartsOfFullName(name);
+		const spreadableAttribution =
+			typeof attribution.toJSON === 'function' ? attribution.toJSON() : attribution;
 		return {
-			...attribution,
+			...spreadableAttribution,
 			user: {
 				isShadowUser: true,
 				id: id,

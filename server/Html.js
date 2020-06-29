@@ -29,6 +29,7 @@ const polyfills = [
 	'requestIdleCallback',
 	'String.prototype.includes',
 	'URL',
+	'URLSearchParams',
 ].join(',');
 
 const Html = (props) => {

@@ -1,7 +1,15 @@
 import { Release, Branch } from 'server/models';
 import { mergeFirebaseBranch, getLatestKey } from 'server/utils/firebaseAdmin';
+import { updateVisibilityForDiscussions } from '../discussion/queries';
 
-export const createRelease = async ({ userId, pubId, draftKey, noteContent, noteText }) => {
+export const createRelease = async ({
+	userId,
+	pubId,
+	draftKey,
+	noteContent,
+	noteText,
+	makeDraftDiscussionsPublic,
+}) => {
 	const pubBranches = await Branch.findAll({ where: { pubId: pubId } });
 	const draftBranch = pubBranches.find((branch) => branch.title === 'draft');
 	const publicBranch = pubBranches.find((branch) => branch.title === 'public');
@@ -27,7 +35,12 @@ export const createRelease = async ({ userId, pubId, draftKey, noteContent, note
 		throw new Error("Can't make a duplicate release");
 	}
 
-	const mergeResult = await mergeFirebaseBranch(pubId, draftBranch.id, publicBranch.id);
+	const mergeResult = await mergeFirebaseBranch(
+		pubId,
+		draftBranch.id,
+		publicBranch.id,
+		makeDraftDiscussionsPublic,
+	);
 
 	if (!mergeResult) {
 		throw new Error('Firebase branches were not merged.');
@@ -45,6 +58,10 @@ export const createRelease = async ({ userId, pubId, draftKey, noteContent, note
 		userId: userId,
 		pubId: pubId,
 	});
+
+	if (makeDraftDiscussionsPublic) {
+		await updateVisibilityForDiscussions({ pubId: pubId }, { access: 'public' });
+	}
 
 	return newRelease.toJSON();
 };

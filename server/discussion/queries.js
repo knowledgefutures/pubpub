@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-syntax */
+import { Op } from 'sequelize';
 import { ForbiddenError } from 'server/utils/errors';
 import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 import {
@@ -202,4 +203,10 @@ export const updateDiscussion = async (values, permissions) => {
 
 	await discussion.update(updatedValues);
 	return discussion;
+};
+
+export const updateVisibilityForDiscussions = async (discussionsWhereQuery, visibilityUpdate) => {
+	const discussions = await DiscussionNew.findAll({ where: discussionsWhereQuery });
+	const visibilityIds = discussions.map((d) => d.visibilityId);
+	await Visibility.update(visibilityUpdate, { where: { id: { [Op.in]: visibilityIds } } });
 };

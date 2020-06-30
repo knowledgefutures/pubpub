@@ -59,6 +59,8 @@ export const mergeBranch = (sourceFirebaseRef, destinationFirebaseRef) => {
 				.child('merges')
 				.child(nextMergeKey)
 				.set(Object.values(changesSnapshotVal));
-			return Promise.all([setLastMergeKey, appendMerge]);
+			return Promise.all([setLastMergeKey, appendMerge]).then(() => {
+				return { mergeKey: nextMergeKey };
+			});
 		});
 };

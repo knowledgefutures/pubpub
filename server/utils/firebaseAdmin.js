@@ -11,6 +11,7 @@ import {
 } from 'components/Editor';
 import discussionSchema from 'utils/editor/discussionSchema';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
+import { copyDiscussionMapsToBranch } from '../../client/components/Editor/utils/discussions';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {
@@ -104,11 +105,20 @@ export const createFirebaseBranch = (pubId, baseBranchId, newBranchId) => {
 	return createBranch(baseFirebaseRef, newFirebaseRef);
 };
 
-export const mergeFirebaseBranch = (pubId, sourceBranchId, destinationBranchId) => {
+export const mergeFirebaseBranch = (
+	pubId,
+	sourceBranchId,
+	destinationBranchId,
+	copyDiscussionMaps = false,
+) => {
 	const sourceFirebaseRef = getBranchRef(pubId, sourceBranchId);
 	const destinationFirebaseRef = getBranchRef(pubId, destinationBranchId);
-	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef).then(async (res) => {
+	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef).then(async (mergeResult) => {
+		const { mergeKey } = mergeResult;
 		await restoreDiscussionMaps(destinationFirebaseRef, editorSchema, true);
-		return res;
+		if (copyDiscussionMaps) {
+			await copyDiscussionMapsToBranch(sourceFirebaseRef, destinationFirebaseRef, mergeKey);
+		}
+		return mergeResult;
 	});
 };

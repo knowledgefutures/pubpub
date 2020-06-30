@@ -15,7 +15,7 @@ const main = async () => {
 		`Really delete and re-create the latest exports for ${pub.slug}.${branch.title}?`,
 		{ throwIfNo: true },
 	);
-	await Export.destroy({ where: { pubId: pub.id, branchId: branch.id } });
+	await Export.destroy({ where: { branchId: branch.id } });
 	await createBranchExports(pub.id, branch.id);
 	// eslint-disable-next-line no-console
 	console.log('Worker tasks created.');

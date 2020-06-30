@@ -119,15 +119,15 @@ const SideMenu = () => {
 			// 	},
 			// ],
 		},
-		// {
-		// 	title: 'Impact',
-		// 	icon: 'dashboard',
-		// 	href: getDashUrl({
-		// 		collectionSlug: collectionSlug,
-		// 		pubSlug: pubSlug,
-		// 		mode: 'impact',
-		// 	}),
-		// },
+		{
+			title: 'Impact',
+			icon: 'dashboard',
+			href: getDashUrl({
+				collectionSlug: collectionSlug,
+				pubSlug: pubSlug,
+				mode: 'impact',
+			}),
+		},
 		{
 			title: 'Members',
 			icon: 'people',

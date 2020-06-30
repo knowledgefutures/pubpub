@@ -1,3 +1,32 @@
 .dashboard-impact-container {
-	
+	section {
+		margin-top: 50px;
+	}
+	.absolute-header {
+		position: relative;
+		z-index: 2;
+		align-items: baseline;
+		display: inline-block;
+	}
+	.warning-button {
+		margin: 0px 0px 5px;
+	}
+	iframe.metabase {
+		width: 100%;
+		z-index: 1;
+		position: relative;
+		top: -75px;
+	}
+	@media only screen and (max-width: 1125px) {
+		iframe.metabase {
+			top: 0px;
+		}
+	}
+}
+
+.impact-warning-tooltip {
+	max-width: 400px;
+	a, a:hover {
+		color: inherit;
+	}
 }

@@ -6,7 +6,7 @@ import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-// import { getImpact } from 'server/utils/queryHelpers';
+import { generateMetabaseToken } from 'server/utils/metabase';
 
 app.get(
 	['/dash/impact', '/dash/collection/:collectionSlug/impact', '/dash/pub/:pubSlug/impact'],
@@ -16,8 +16,15 @@ app.get(
 				return next();
 			}
 			const initialData = await getInitialData(req, true);
-			// const impactData = await getImpact(initialData);
-			const impactData = {};
+			const { activeTargetType, activeTarget } = initialData.scopeData.elements;
+			const impactData = {
+				baseToken: generateMetabaseToken(activeTargetType, activeTarget.id, 'base'),
+				benchmarkToken: generateMetabaseToken(
+					activeTargetType,
+					activeTarget.id,
+					'benchmark',
+				),
+			};
 			return renderToNodeStream(
 				res,
 				<Html

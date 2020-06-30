@@ -14,6 +14,7 @@ const styles = [
 	{ name: 'elife', path: './citeStyles/elife.csl' },
 	{ name: 'frontiers', path: './citeStyles/frontiers.csl' },
 	{ name: 'mla', path: './citeStyles/modern-language-association.csl' },
+	{ name: 'apa-7', path: './citeStyles/apa-7.csl' },
 ];
 const config = Cite.plugins.config.get('@csl');
 styles.forEach((style) => {
@@ -69,7 +70,10 @@ export const generateCiteHtmls = async (inputVals, citationStyle = 'apa') => {
 			};
 		}
 		const json = citeObject.format('data', { format: 'object' });
-		const authorYear = citeObject.format('citation', { template: 'apa', format: 'text' });
+		const authorYear = citeObject.format('citation', {
+			template: citationStyle === 'apa-7' ? 'apa-7' : 'apa',
+			format: 'text',
+		});
 		return {
 			...input,
 			html: citeObject.format('bibliography', { template: citationStyle, format: 'html' }),

@@ -20,7 +20,10 @@ const InlineLabelEditor = (props) => {
 		onUpdateCustomLabel('');
 	};
 
-	const handleSelectCustom = () => setUsingCustomLabel(true);
+	const handleSelectCustom = () => {
+		if (!customLabel) onUpdateCustomLabel(defaultLabel);
+		setUsingCustomLabel(true);
+	};
 
 	return (
 		<ControlGroup className="inline-label-editor-component">

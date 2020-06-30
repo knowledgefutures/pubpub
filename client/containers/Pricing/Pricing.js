@@ -11,10 +11,12 @@ const Pricing = () => {
 			<GridWrapper>
 				<h1>Pricing</h1>
 				<p className="description">
-					PubPub's goal is to provide a high-quality, open-source, institution-owned,
-					hosted alternative to commercial publishing software. We offer a Free tier with
-					no user or publishing limits, as well as an Organization tier for those who need
-					more advanced features (or just want to support our mission).
+					PubPub's goal is to provide an affordable, high-quality, open-source,
+					institution-led, hosted alternative to commercial publishing software. We offer
+					a Free tier with no user or publishing limits, as well as a Pro tier for
+					individual communities who need more advanced features (or just want to support
+					our mission), and an Organization tier for those who need to manage multiple
+					communities.
 				</p>
 				<div className="pricing-tiers">
 					<div className="option bp3-card bp3-elevation-1">
@@ -30,8 +32,9 @@ const Pricing = () => {
 							<li>Unlimited publications</li>
 							<li>Unlimited users</li>
 							<li>Custom site design</li>
+							<li>Publish with any Creative Commons license</li>
 							<li>
-								Up to 25 free DOIs per year ($1 after, or free if you have a
+								Up to 10 free DOIs per year ($1 after, or free if you have a
 								crossref membership)
 							</li>
 							<li>
@@ -53,24 +56,22 @@ const Pricing = () => {
 						</a>
 					</div>
 					<div className="option bp3-card bp3-elevation-1">
-						<h2>Organization</h2>
-						<p className="subtitle">For communities with advanced needs.</p>
+						<h2>Pro</h2>
+						<p className="subtitle">For individual communities with advanced needs.</p>
 						<p className="pricing">
-							Flat Yearly Fee Per{' '}
+							Monthly or Yearly Fee Per{' '}
 							<Popover
 								interactionKind={PopoverInteractionKind.HOVER}
 								popoverClassName="bp3-popover-content-sizing"
 							>
-								<em>Active Community</em>
+								<em>Seat</em>
 								<div>
 									<p>
-										Active years are calculated as any year in which one or more
-										new Pubs have been added to the Community. In non-active
-										years, communities are hosted for free. Organization plans
-										include a 3-month grace period before ‘active’ status is
-										calculated, allowing organizations to experiment and create
-										short-lived communities for events and conferences at no
-										additional cost.
+										Seats are calculated as the number of users added to the
+										Member tab at the Community or Collection level with
+										permissions of edit or above. View-only Members and Members
+										added to single Pubs (often used for authors or reviews) are
+										free.
 									</p>
 								</div>
 							</Popover>
@@ -78,25 +79,62 @@ const Pricing = () => {
 						<ul className="features">
 							<li>Everything in the free version, plus:</li>
 							<li>Use your own custom domain name</li>
-							<li>Custom PDF export design</li>
+							<li>Publish with custom licenses</li>
+							<li>
+								Up to 25 free DOIs per year ($1 each after, or free if you have a
+								crossref membership).
+							</li>
+							<li>Initial community setup support</li>
+							<li>Priority email support</li>
+						</ul>
+						<a
+							href="mailto:partnerships@pubpub.org?subject=PubPub%20Pro%20Inquiry"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="bp3-button bp3-large bp3-intent-primary"
+						>
+							Get In Touch
+						</a>
+					</div>
+					<div className="option bp3-card bp3-elevation-1">
+						<h2>Organization</h2>
+						<p className="subtitle">For managing multiple communities.</p>
+						<p className="pricing">
+							Monthly or Yearly Fee Per{' '}
+							<Popover
+								interactionKind={PopoverInteractionKind.HOVER}
+								popoverClassName="bp3-popover-content-sizing"
+							>
+								<em>Seat</em>
+								<div>
+									<p>
+										Seats are calculated as the number of users added to the
+										Member tab at the Community or Collection level with
+										permissions of edit or above. View-only Members and Members
+										added to single Pubs (often used for authors or reviews) are
+										free. Members are only counted once across the entire
+										organization, no matter how many communities they belong to.
+									</p>
+								</div>
+							</Popover>
+						</p>
+						<ul className="features">
+							<li>Everything in the Pro version, plus:</li>
+							<li>Unlimited Communities</li>
 							<li>
 								Organization Dashboard for managing users, branding, and settings
 								across multiple Communities
 							</li>
 							<li>
 								Organization Landing Page for displaying all of the content and
-								Communities in your organization
+								Communities in your Organization
 							</li>
 							<li>
-								3-month grace period for new Communities for experiments and
-								short-lived conferences and events.
-							</li>
-							<li>
-								Up to 100 free DOIs per community per year ($1 each after, or free
-								if you have a crossref membership).
+								Up to 50 free DOIs per year ($1 each after, or free if you have a
+								crossref membership).
 							</li>
 							<li>Initial organization setup support</li>
-							<li>Priority email support</li>
+							<li>Dedicated email support</li>
 						</ul>
 						<a
 							href="mailto:partnerships@pubpub.org?subject=PubPub%20Org%20Inquiry"
@@ -110,11 +148,11 @@ const Pricing = () => {
 				</div>
 				<div className="pricing-footer">
 					<p className="description">
-						Need advanced features, but unsure you can afford PubPub Organization? We
-						offer substantial discounts for small, mission-driven communities.
-						information,{' '}
+						Need advanced features, but unsure you can afford PubPub Pro or
+						Organization? We offer substantial discounts for small, mission-driven
+						communities. For more information,{' '}
 						<a href="mailto:partnerships@pubpub.org?subject=Discounts">
-							please reach out
+							please reach out and tell us about your work and needs
 						</a>
 						.
 					</p>

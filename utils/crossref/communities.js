@@ -5,6 +5,7 @@ const MITP_DOI_PREFIX = '10.1162';
 const IASTATE_DOI_PREFIX = '10.31274';
 const AAS_DOI_PREFIX = '10.3847';
 const MEDIASTUDIES_DOI_PREFIX = '10.32376';
+const RS_DOI_PREFIX = '10.46470';
 
 export const communityDoiOverrides = [
 	{
@@ -37,6 +38,13 @@ export const communityDoiOverrides = [
 		],
 		prefix: MEDIASTUDIES_DOI_PREFIX,
 		key: 'MEDIASTUDIES',
+	},
+	{
+		communityIds: [
+			'03d8ffbd-bc68-45ce-b453-6f10b8ca3476', // https://rs-ojict.pubpub.org/
+		],
+		prefix: RS_DOI_PREFIX,
+		key: 'RS',
 	},
 ];
 

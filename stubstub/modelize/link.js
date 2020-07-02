@@ -172,16 +172,28 @@ const buildGraphFromDefinitions = (modelDefinitions) => {
 		graph.setEdge(from.id, to.id, association);
 	};
 
-	const visitDefinition = (modelDefinition, parentDefinitions) => {
+	const visitDefinition = (
+		modelDefinition,
+		parentDefinitions,
+		alreadyFoundImmediateParentEdge = false,
+	) => {
 		const { id, referencedDefinitions } = modelDefinition;
+		const parentCount = parentDefinitions.length;
 		graph.setNode(id, modelDefinition);
-
 		for (const parentDefinition of parentDefinitions) {
-			const edge = getEdgeBetweenDefinitions(parentDefinition, modelDefinition, null, false);
-			if (edge) {
-				const { from, to, association } = edge;
-				if (!graph.edge(from, to)) {
-					addEdge(from, to, association);
+			const isImmediateParent = parentDefinition === parentDefinitions[parentCount - 1];
+			if (!alreadyFoundImmediateParentEdge || !isImmediateParent) {
+				const edge = getEdgeBetweenDefinitions(
+					parentDefinition,
+					modelDefinition,
+					null,
+					false,
+				);
+				if (edge) {
+					const { from, to, association } = edge;
+					if (!graph.edge(from, to)) {
+						addEdge(from, to, association);
+					}
 				}
 			}
 		}
@@ -192,7 +204,7 @@ const buildGraphFromDefinitions = (modelDefinitions) => {
 				const { from, to, association } = edge;
 				addEdge(from, to, association);
 			}
-			visitDefinition(innerDefinition, [...parentDefinitions, modelDefinition]);
+			visitDefinition(innerDefinition, [...parentDefinitions, modelDefinition], !!edge);
 		}
 	};
 

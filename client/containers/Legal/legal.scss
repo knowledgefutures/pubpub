@@ -1,3 +1,5 @@
+@import 'styles/variables.scss';
+
 #legal-container {
     .legal-columns {
         max-width: 900px;
@@ -8,18 +10,37 @@
             margin-bottom: 15px;
         }
     }
+    .main-content {
+        font-family: serif;
+        h2,
+        h3 {
+            line-height: 1em;
+            letter-spacing: 1px;
+            margin: 2em 0em 0.5em;
+            &:first-of-type {
+                margin-top: 0em;
+            }
+        }
+        p,
+        li {
+            font-style: normal;
+            font-size: 16px;
+            line-height: 1.3;
+            margin-bottom: 1em;
+        }
+    }
 }
 
 @media only screen and (min-width: 750px) {
     @supports (display: grid) {
         #legal-container {
             .legal-columns {
-				display: grid;
-				grid-template-columns: 150px 1fr;
-				grid-template-areas: 'side main';
-				grid-column-gap: 4%;
-				margin-top: 2em;
-			}
+                display: grid;
+                grid-template-columns: 150px 1fr;
+                grid-template-areas: 'side main';
+                grid-column-gap: 4%;
+                margin-top: 2em;
+            }
             .side-content {
                 grid-area: side;
             }

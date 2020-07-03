@@ -1,12 +1,11 @@
 import {
-	User,
 	Collection,
 	Pub,
 	Community,
 	CollectionAttribution,
 	CollectionPub,
+	includeUserModel,
 } from 'server/models';
-import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 
 import buildPubOptions from './pubOptions';
 
@@ -33,13 +32,7 @@ export default async (
 					includeAttribution && {
 						model: CollectionAttribution,
 						as: 'attributions',
-						include: [
-							{
-								model: User,
-								as: 'user',
-								attributes: attributesPublicUser,
-							},
-						],
+						include: [includeUserModel({ as: 'user' })],
 					},
 					{
 						model: CollectionPub,

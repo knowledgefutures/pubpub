@@ -1,5 +1,5 @@
 import { ThreadEvent } from 'server/models';
-import { attributesPublicUser } from 'server/utils/attributesPublicUser';
+import { attributesPublicUser } from 'server/utils/queryHelpers/includeUserModel';
 
 export const createThreadEvent = (inputValues, userData) => {
 	return ThreadEvent.create({

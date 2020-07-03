@@ -1,4 +1,4 @@
-import { Collection, CollectionAttribution, User } from 'server/models';
+import { Collection, CollectionAttribution, includeUserModel } from 'server/models';
 
 export const getCollection = async ({
 	communityId,
@@ -14,7 +14,7 @@ export const getCollection = async ({
 			{
 				model: CollectionAttribution,
 				as: 'attributions',
-				include: [{ model: User, as: 'user' }],
+				include: [includeUserModel({ as: 'user' })],
 			},
 		],
 	});

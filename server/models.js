@@ -1,5 +1,6 @@
 /* eslint-disable global-require */
 import Sequelize from 'sequelize';
+import { createIncludeUserModel } from './utils/queryHelpers/includeUserModel';
 
 if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 	require('./config.js');
@@ -73,6 +74,8 @@ export const VisibilityUser = sequelize.import('./visibilityUser/model.js');
 
 export const User = sequelize.import('./user/model.js');
 export const WorkerTask = sequelize.import('./workerTask/model.js');
+
+export const includeUserModel = createIncludeUserModel(User);
 
 /* Create associations for models that have associate function */
 Object.values(sequelize.models).forEach((model) => {

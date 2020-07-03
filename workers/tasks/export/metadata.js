@@ -9,8 +9,8 @@ import {
 	Community,
 	Pub,
 	PubAttribution,
-	User,
 	Release,
+	includeUserModel,
 } from 'server/models';
 
 const getPrimaryCollectionMetadata = (collectionPubs) => {
@@ -41,12 +41,7 @@ export const getPubMetadata = async (pubId) => {
 			{
 				model: PubAttribution,
 				as: 'attributions',
-				include: [
-					{
-						model: User,
-						as: 'user',
-					},
-				],
+				include: [includeUserModel({ as: 'user' })],
 			},
 			{
 				model: Release,

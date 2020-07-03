@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Op } from 'sequelize';
-import { Pub, Discussion, User } from '../../server/models';
+import { Pub, Discussion, includeUserModel } from '../../server/models';
 
 console.log('Beginning Export');
 
@@ -41,13 +41,7 @@ new Promise((resolve) => {
 						'initAnchorText',
 						'createdAt',
 					],
-					include: [
-						{
-							model: User,
-							as: 'author',
-							attributes: ['fullName', 'avatar'],
-						},
-					],
+					include: [includeUserModel({ as: 'author' })],
 				},
 			],
 		}).then((pubData) => {

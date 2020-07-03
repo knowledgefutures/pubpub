@@ -1,6 +1,5 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { CollectionAttribution, User } from 'server/models';
-import { attributesPublicUser } from 'server/utils/attributesPublicUser';
+import { CollectionAttribution, includeUserModel } from 'server/models';
 
 export const createCollectionAttribution = (inputValues) => {
 	return CollectionAttribution.create({
@@ -13,9 +12,7 @@ export const createCollectionAttribution = (inputValues) => {
 			return CollectionAttribution.findOne({
 				where: { id: newAttribution.id },
 				attributes: { exclude: ['updatedAt'] },
-				include: [
-					{ model: User, as: 'user', required: false, attributes: attributesPublicUser },
-				],
+				include: [includeUserModel({ required: false, as: 'user' })],
 			});
 		})
 		.then((populatedCollectionAttribution) => {

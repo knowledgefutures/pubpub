@@ -1,18 +1,15 @@
 import { Op } from 'sequelize';
 
-import { User, Member } from 'server/models';
-import { attributesPublicUser } from 'server/utils/attributesPublicUser';
+import { Member, includeUserModel } from 'server/models';
 
 import { buildOrQuery } from './scopeGet';
 
 const membersQueryShared = {
 	include: [
-		{
-			model: User,
+		includeUserModel({
 			as: 'user',
 			required: false,
-			attributes: attributesPublicUser,
-		},
+		}),
 	],
 };
 

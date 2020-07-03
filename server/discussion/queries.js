@@ -1,9 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { Op } from 'sequelize';
 import { ForbiddenError } from 'server/utils/errors';
-import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 import {
-	User,
 	DiscussionNew,
 	Anchor,
 	Thread,
@@ -11,6 +9,7 @@ import {
 	ThreadEvent,
 	Pub,
 	Visibility,
+	includeUserModel,
 } from 'server/models';
 
 const findDiscussionWithUser = (id) =>
@@ -19,22 +18,12 @@ const findDiscussionWithUser = (id) =>
 			id: id,
 		},
 		include: [
-			{
-				model: User,
-				as: 'author',
-				attributes: attributesPublicUser,
-			},
+			includeUserModel({ as: 'author' }),
 			{ model: Anchor, as: 'anchor' },
 			{
 				model: Visibility,
 				as: 'visibility',
-				include: [
-					{
-						model: User,
-						as: 'users',
-						attributes: attributesPublicUser,
-					},
-				],
+				include: [includeUserModel({ as: 'users' })],
 			},
 			{
 				model: Thread,
@@ -43,24 +32,12 @@ const findDiscussionWithUser = (id) =>
 					{
 						model: ThreadComment,
 						as: 'comments',
-						include: [
-							{
-								model: User,
-								as: 'author',
-								attributes: attributesPublicUser,
-							},
-						],
+						include: [includeUserModel({ as: 'author' })],
 					},
 					{
 						model: ThreadEvent,
 						as: 'events',
-						include: [
-							{
-								model: User,
-								as: 'user',
-								attributes: attributesPublicUser,
-							},
-						],
+						include: [includeUserModel({ as: 'user' })],
 					},
 				],
 			},

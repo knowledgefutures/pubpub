@@ -27,6 +27,7 @@ Pub.findAll({
 		{
 			model: PubManager,
 			as: 'managers',
+			// eslint-disable-next-line pubpub-rules/no-user-model
 			include: [{ model: User, as: 'user', attributes: ['fullName', 'email'] }],
 		},
 	],

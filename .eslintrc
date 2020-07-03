@@ -1,6 +1,6 @@
 {
     "extends": ["airbnb", "prettier"],
-    "plugins": ["react", "import", "prettier", "react-hooks"],
+    "plugins": ["react", "import", "prettier", "react-hooks", "pubpub-rules"],
     "parser": "babel-eslint",
     "env": {
         "browser": true,
@@ -46,6 +46,7 @@
         "no-tabs": 0,
         "no-void": 0,
         "operator-linebreak": 0,
+        "pubpub-rules/no-user-model": 2,
         "prefer-template": 0,
         "react/destructuring-assignment": 0,
         "react/forbid-prop-types": 0,

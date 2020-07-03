@@ -2,7 +2,7 @@ import RSS from 'rss';
 
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { Community, Pub, User, PubAttribution, Release } from 'server/models';
+import { Community, Pub, PubAttribution, Release, includeUserModel } from 'server/models';
 
 export const getCommunityRss = (hostname) => {
 	const whereQuery =
@@ -36,21 +36,10 @@ export const getCommunityRss = (hostname) => {
 						as: 'attributions',
 						required: false,
 						include: [
-							{
-								model: User,
+							includeUserModel({
 								as: 'user',
 								required: false,
-								attributes: [
-									'id',
-									'firstName',
-									'lastName',
-									'fullName',
-									'avatar',
-									'slug',
-									'initials',
-									'title',
-								],
-							},
+							}),
 						],
 					},
 					{

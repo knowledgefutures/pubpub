@@ -12,10 +12,9 @@ import {
 	ReviewNew,
 	Fork,
 	Anchor,
-	User,
 	Member,
+	includeUserModel,
 } from 'server/models';
-import { attributesPublicUser } from 'server/utils/attributesPublicUser';
 
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
@@ -29,13 +28,7 @@ export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity })
 			model: PubAttribution,
 			as: 'attributions',
 			separate: true,
-			include: [
-				{
-					model: User,
-					as: 'user',
-					attributes: attributesPublicUser,
-				},
-			],
+			include: [includeUserModel({ as: 'user' })],
 		},
 	];
 	let pubBranches = [
@@ -121,12 +114,7 @@ export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity })
 							{
 								model: CollectionAttribution,
 								as: 'attributions',
-								include: [
-									{
-										model: User,
-										as: 'user',
-									},
-								],
+								include: [includeUserModel({ as: 'user' })],
 							},
 						],
 					},

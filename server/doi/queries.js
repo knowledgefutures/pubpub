@@ -7,7 +7,7 @@ import {
 	Pub,
 	PubAttribution,
 	Release,
-	User,
+	includeUserModel,
 } from 'server/models';
 
 import { submitDoiData } from './submit';
@@ -16,23 +16,7 @@ const collectionIncludes = [
 	{
 		model: CollectionAttribution,
 		as: 'attributions',
-		include: [
-			{
-				model: User,
-				as: 'user',
-				required: false,
-				attributes: [
-					'id',
-					'firstName',
-					'lastName',
-					'fullName',
-					'avatar',
-					'slug',
-					'initials',
-					'title',
-				],
-			},
-		],
+		include: [includeUserModel({ as: 'user', required: false })],
 	},
 ];
 
@@ -59,22 +43,7 @@ const findPub = (pubId) =>
 			{
 				model: PubAttribution,
 				as: 'attributions',
-				include: [
-					{
-						model: User,
-						as: 'user',
-						attributes: [
-							'id',
-							'firstName',
-							'lastName',
-							'fullName',
-							'avatar',
-							'slug',
-							'initials',
-							'title',
-						],
-					},
-				],
+				include: [includeUserModel({ as: 'user' })],
 			},
 		],
 	});

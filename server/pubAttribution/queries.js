@@ -1,5 +1,4 @@
-import { PubAttribution, User } from 'server/models';
-import { attributesPublicUser } from 'server/utils/attributesPublicUser';
+import { PubAttribution, includeUserModel } from 'server/models';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 
 export const getPubAttributions = (pubId) => PubAttribution.findAll({ where: { id: pubId } });
@@ -16,9 +15,7 @@ export const createPubAttribution = ({ userId, pubId, name, order, isAuthor }) =
 			return PubAttribution.findOne({
 				where: { id: newAttribution.id },
 				attributes: { exclude: ['updatedAt'] },
-				include: [
-					{ model: User, as: 'user', required: false, attributes: attributesPublicUser },
-				],
+				include: [includeUserModel({ as: 'user', required: false })],
 			});
 		})
 		.then((populatedPubAttribution) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Byline, DialogLauncher, PubAttributionDialog } from 'components';
+import { PubByline, DialogLauncher, PubAttributionDialog } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
@@ -79,7 +79,7 @@ const TitleGroup = (props) => {
 					placeholder="Add a description for this Pub"
 				/>
 			)}
-			<Byline
+			<PubByline
 				pubData={pubData}
 				renderSuffix={() => !isRelease && renderBylineEditor()}
 				renderEmptyState={renderBylineEmptyState}

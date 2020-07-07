@@ -170,7 +170,7 @@ const extractDirectives = (matchingPath, directivePath, directive, directiveCoun
 		Object.entries(directive.children).forEach(([matchingSubPath, subdirective]) => {
 			directives.push(
 				...extractDirectives(
-					`${matchingPath}/${matchingSubPath}`,
+					path.join(matchingPath, matchingSubPath),
 					directivePath,
 					subdirective,
 					directiveCounter,

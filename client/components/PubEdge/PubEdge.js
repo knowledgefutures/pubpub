@@ -27,7 +27,7 @@ const PubEdge = (props) => {
 	const publishedAt = formatDate(publicationDate);
 
 	return (
-		<article className="pub-edge-component">
+		<a className="pub-edge-component" href={url}>
 			<div className="top">
 				{avatar && (
 					<div className="top-left">
@@ -57,7 +57,7 @@ const PubEdge = (props) => {
 				<hr />
 				<p>{description}</p>
 			</details>
-		</article>
+		</a>
 	);
 };
 

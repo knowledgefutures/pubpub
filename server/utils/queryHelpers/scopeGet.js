@@ -14,7 +14,7 @@ import buildPubOptions from './pubOptions';
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeForks from './forksSanitize';
 import sanitizeReviews from './reviewsSanitize';
-import { ensureSerialized } from './util';
+import { ensureSerialized, stripFalsyIdsFromQuery } from './util';
 import { getCollection } from './collectionGet';
 
 let getScopeElements;
@@ -89,18 +89,19 @@ getScopeElements = async (scopeInputs) => {
 		activeTargetType = 'collection';
 	}
 
-	if (!activeCommunity) {
+	if (!activeCommunity && communityId) {
 		activeCommunity = await Community.findOne({
 			where: { id: communityId },
 		});
 	}
 
 	if (activeTargetType === 'pub') {
-		const query = pubId
-			? { id: pubId, communityId: activeCommunity.id }
-			: { slug: pubSlug, communityId: activeCommunity.id };
 		activePub = await Pub.findOne({
-			where: query,
+			where: stripFalsyIdsFromQuery({
+				communityId: activeCommunity && activeCommunity.id,
+				slug: pubSlug,
+				id: pubId,
+			}),
 			include: [
 				{
 					model: CollectionPub,
@@ -141,9 +142,15 @@ getScopeElements = async (scopeInputs) => {
 		activeCollection = await getCollection({
 			collectionSlug: collectionSlug,
 			collectionId: collectionId,
-			communityId: activeCommunity.id,
+			communityId: activeCommunity && activeCommunity.id,
 		});
 		activeTarget = activeCollection;
+	}
+
+	if (!activeCommunity && activeTarget) {
+		activeCommunity = await Community.findOne({
+			where: { id: activeTarget.communityId },
+		});
 	}
 
 	if (activeTargetType === 'community') {

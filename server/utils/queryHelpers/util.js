@@ -1,5 +1,9 @@
 import { Thread, ThreadComment, ThreadEvent, Visibility, includeUserModel } from 'server/models';
 
+export const stripFalsyIdsFromQuery = (whereQueryObject) => {
+	return Object.fromEntries(Object.entries(whereQueryObject).filter((entry) => entry[1]));
+};
+
 export const ensureSerialized = (item) => {
 	if (Array.isArray(item)) {
 		return item.map(ensureSerialized);

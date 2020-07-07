@@ -15,6 +15,7 @@ require('./openSearch/api');
 require('./page/api');
 require('./passwordReset/api');
 require('./pub/api');
+require('./pubEdge/api');
 require('./pubAttribution/api');
 require('./pubHistory/api');
 require('./release/api');

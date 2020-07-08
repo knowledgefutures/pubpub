@@ -40,7 +40,7 @@ const PubEdgeListingCard = (props) => {
 	);
 
 	return (
-		<div className="pub-edge-listing-card-component">
+		<div className="pub-edge-listing-card-component" style={{ borderColor: accentColor }}>
 			{children}
 			<div className="relationship">
 				{showIcon && (

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Checkbox, Popover, Radio } from '@blueprintjs/core';
+import { Button, ButtonGroup, Checkbox, Icon, Popover, Radio } from '@blueprintjs/core';
 
 import { toTitleCase, joinOxford } from 'utils/strings';
 
@@ -83,14 +83,20 @@ const PubEdgeListingControls = (props) => {
 			<ButtonGroup minimal>
 				{mode === Mode.Carousel && (
 					<>
-						<Button icon="circle-arrow-left" onClick={onBackClick} minimal small />
-						<Button icon="circle-arrow-right" onClick={onNextClick} minimal small />
+						<Button onClick={onBackClick} minimal small>
+							<Icon icon="circle-arrow-left" color={accentColor} />
+						</Button>
+						<Button onClick={onNextClick} minimal small>
+							<Icon icon="circle-arrow-right" color={accentColor} />
+						</Button>
 					</>
 				)}
 
 				{showFilterMenu && (
 					<Popover content={menu} minimal>
-						<Button icon="filter" minimal small />
+						<Button color={accentColor} minimal small>
+							<Icon icon="filter" color={accentColor} />
+						</Button>
 					</Popover>
 				)}
 			</ButtonGroup>

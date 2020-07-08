@@ -18,7 +18,7 @@ export const pubEdgeType = PropTypes.shape({
 		doi: PropTypes.string,
 		description: PropTypes.string,
 		avatar: PropTypes.string,
-		publicationDate: PropTypes.string,
+		publicationDate: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	}),
 	targetPub: PropTypes.shape({
 		title: PropTypes.string,

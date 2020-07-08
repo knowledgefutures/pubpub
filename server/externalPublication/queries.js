@@ -3,7 +3,7 @@ import { ExternalPublication } from 'server/models';
 export const createExternalPublication = ({
 	title,
 	url,
-	byline = null,
+	contributors = null,
 	doi = null,
 	description = null,
 	avatar = null,
@@ -12,7 +12,7 @@ export const createExternalPublication = ({
 	return ExternalPublication.create({
 		title: title,
 		url: url,
-		byline: byline,
+		contributors: contributors,
 		doi: doi,
 		description: description,
 		avatar: avatar,

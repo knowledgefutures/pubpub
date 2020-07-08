@@ -1,3 +1,5 @@
+import { toTitleCase } from 'utils/strings';
+
 export const relationTypeDefinitions = {
 	comment: {
 		label: 'comment',
@@ -36,4 +38,13 @@ export const relationTypeDefinitions = {
 	},
 };
 
+const createRelationTypeEnum = () => {
+	const res = {};
+	Object.entries(relationTypeDefinitions).forEach(([key]) => {
+		res[toTitleCase(key)] = key;
+	});
+	return res;
+};
+
 export const relationTypes = Object.keys(relationTypeDefinitions);
+export const RelationType = createRelationTypeEnum();

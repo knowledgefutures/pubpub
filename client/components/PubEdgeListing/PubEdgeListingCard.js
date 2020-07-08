@@ -1,8 +1,9 @@
 import { Icon } from '@blueprintjs/core';
-import React from 'react';
+import classNames from 'classnames';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { toTitleCase } from 'utils/strings';
+import { relationTypeDefinitions } from 'utils/pubEdge/relations';
 import { PubEdge } from 'components';
 
 import { pubEdgeType } from '../PubEdge/constants';
@@ -13,36 +14,45 @@ const propTypes = {
 	accentColor: PropTypes.string.isRequired,
 	children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
 	pubEdge: pubEdgeType.isRequired,
-	pubTitle: PropTypes.string,
 	showIcon: PropTypes.bool,
 };
 
 const defaultProps = {
 	children: [],
-	pubTitle: '',
 	showIcon: false,
 };
 
 const PubEdgeListingCard = (props) => {
-	const { accentColor, children, pubEdge, pubTitle, showIcon } = props;
-	const relationshipName = toTitleCase(pubEdge.relationType);
-	const relationshipTitle = pubEdge.pubIsParent ? (
-		<>
-			<span>This Pub is a </span>
-			<span className="relationship-name">{relationshipName}</span> on:
-		</>
-	) : (
-		<>
-			<span>Another </span>
-			<span className="relationship-name">{relationshipName}</span> of:
-			<span className="pub-title"> {pubTitle}</span>
-		</>
+	const { accentColor, children, pubEdge, showIcon } = props;
+	const {
+		pubIsParent,
+		relationType,
+		externalPublication: { url },
+	} = pubEdge;
+	const handleClick = useCallback(
+		(e) => {
+			if (e.type === 'click' || e.key === 'Enter') {
+				window.open(url, '_top');
+			}
+		},
+		[url],
 	);
+	const relationTypeDefinition = relationTypeDefinitions[relationType];
+	const relationString = pubIsParent
+		? relationTypeDefinition.childRelationString
+		: relationTypeDefinition.parentRelationString;
 
 	return (
-		<div className="pub-edge-listing-card-component" style={{ borderColor: accentColor }}>
+		<div
+			className="pub-edge-listing-card-component"
+			style={{ borderColor: accentColor }}
+			onClick={handleClick}
+			onKeyDown={handleClick}
+			role="link"
+			tabIndex="0"
+		>
 			{children}
-			<div className="relationship">
+			<div className={classNames('relationship', showIcon && 'show-icon')}>
 				{showIcon && (
 					<Icon
 						icon="key-enter"
@@ -51,7 +61,7 @@ const PubEdgeListingCard = (props) => {
 						className="drop-return"
 					/>
 				)}
-				{relationshipTitle}
+				This Pub {relationString}
 			</div>
 			<PubEdge pubEdge={pubEdge} />
 		</div>

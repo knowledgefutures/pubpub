@@ -2,23 +2,28 @@
 
 .pub-edge-listing-card-component {
 	border-color: #a1a1a1;
+	border-radius: 3px;
 	border-style: solid;
 	border-width: 1px;
-	border-radius: 3px;
+	cursor: pointer;
+	filter: grayscale(100%);
 	margin-bottom: 24px;
 	position: relative;
-
-	filter: grayscale(100%);
 	transition: filter 100ms linear;
 
 	&:hover,
-	&:active {
+	&:active,
+	&:focus {
 		filter: grayscale(0%);
+
+		h4 {
+			text-decoration: underline;
+		}
 	}
 
 	> .relationship {
 		@include bleed-top-border();
-		left: calc(24px - 8px);
+		left: 24px;
 
 		.relationship-name {
 			border-bottom: 1px dotted;
@@ -35,5 +40,9 @@
 			bottom: 3px;
 			transform: rotateY(180deg);
 		}
+	}
+
+	> .relationship.show-icon {
+		left: 4px;
 	}
 }

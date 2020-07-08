@@ -57,11 +57,13 @@ const PubEdge = (props) => {
 	const { pubEdge } = props;
 	const [open, setOpen] = useState(false);
 	const { communityData } = usePageContext();
-
 	const handleToggleDescriptionClick = useCallback(
 		(e) => {
-			e.preventDefault();
-			setOpen(!open);
+			if (e.type === 'click' || e.key === 'Enter') {
+				e.preventDefault();
+				e.stopPropagation();
+				setOpen(!open);
+			}
 		},
 		[open],
 	);
@@ -74,7 +76,7 @@ const PubEdge = (props) => {
 	const publishedAt = formatDate(publicationDate);
 
 	return (
-		<a className="pub-edge-component" href={url}>
+		<article className="pub-edge-component">
 			<div className="top">
 				{avatar && (
 					<div className="top-left">
@@ -86,13 +88,18 @@ const PubEdge = (props) => {
 					<Byline contributors={contributors} />
 					<ul className="metadata">
 						<li>
-							<Button as="a" onClick={handleToggleDescriptionClick}>
+							<Button
+								as="a"
+								onClick={handleToggleDescriptionClick}
+								onKeyDown={handleToggleDescriptionClick}
+								tabIndex="0"
+							>
 								{open ? 'Hide Description' : 'Show Description'}
 							</Button>
 						</li>
 						<li>Published on {publishedAt}</li>
 						<li>
-							<a href={url} alt={url}>
+							<a href={url} alt={title} tabIndex="0">
 								{url}
 							</a>
 						</li>
@@ -104,7 +111,7 @@ const PubEdge = (props) => {
 				<hr />
 				<p>{description}</p>
 			</details>
-		</a>
+		</article>
 	);
 };
 

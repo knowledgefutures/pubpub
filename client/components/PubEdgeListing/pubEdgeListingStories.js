@@ -55,9 +55,9 @@ const pubEdges = [
 			avatar: 'https://assets.pubpub.org/1wuh04pc/41586276667772.jpg',
 			url: 'https://cursor.pubpub.org/pub/nielsen-christoffersen-liturgy/release/2',
 			publicationDate: Date.now(),
+			description:
+				"The Corona-virus has implications for the Christian church as a liturgical community. From within a Danish context, this article explores some possibilities and pitfalls of continuing to celebrate the Lord's Supper during this time of crisis.",
 		},
-		description:
-			"The Corona-virus has implications for the Christian church as a liturgical community. From within a Danish context, this article explores some possibilities and pitfalls of continuing to celebrate the Lord's Supper during this time of crisis.",
 		relationType: RelationType.Review,
 		pubIsParent: false,
 	},

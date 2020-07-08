@@ -7,15 +7,9 @@
 	text-decoration: none;
 	padding: 24px 32px 18px;
 
-	&:hover,
-	&:active {
-		text-decoration: none;
-	}
-
 	h4 {
 		font-size: 1.6em;
 		font-weight: 400;
-
 		letter-spacing: 1px;
 		margin-bottom: 8px;
 	}
@@ -104,7 +98,8 @@
 			text-decoration: none;
 
 			&:hover,
-			&:active {
+			&:active,
+			&:focus {
 				text-decoration: underline;
 			}
 		}
@@ -123,10 +118,6 @@
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				width: 100%;
-			}
-
-			li:first-child {
-				order: 3;
 			}
 		}
 	}

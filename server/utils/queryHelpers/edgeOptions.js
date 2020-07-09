@@ -7,7 +7,7 @@ import {
 	Release,
 } from 'server/models';
 
-const getOptionsForIncludedPub = ({ includeCommunity }) => {
+export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 	return [
 		includeCommunity && { model: Community, as: 'community' },
 		{ model: Release, as: 'releases' },

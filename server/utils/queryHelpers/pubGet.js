@@ -2,14 +2,14 @@ import { Pub } from 'server/models';
 
 import buildPubOptions from './pubOptions';
 
-export default async (slug, communityId) => {
+export default async (slug, communityId, options = {}) => {
 	const sanitizedSlug = slug.toLowerCase();
 	const pubData = await Pub.findOne({
 		where: {
 			slug: sanitizedSlug,
 			communityId: communityId,
 		},
-		...buildPubOptions({ getMembers: true, getCollections: true }),
+		...buildPubOptions({ getMembers: true, getCollections: true, ...options }),
 	});
 
 	if (!pubData) {

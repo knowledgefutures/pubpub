@@ -6,17 +6,13 @@ export const getParentsAndChildrenForPub = ({
 	const parents = [];
 	const children = [];
 	outboundEdges.forEach((edge) => {
-		const { targetPub, targetExternalPublication, pubIsParent, relationType } = edge;
-		(pubIsParent ? children : parents).push({
-			relationType: relationType,
-			...(targetPub && { pub: targetPub }),
-			...(targetExternalPublication && { externalPublication: targetExternalPublication }),
-		});
+		const { pubIsParent } = edge;
+		(pubIsParent ? children : parents).push(edge);
 	});
 	inboundEdges.forEach((edge) => {
-		const { pub, pubIsParent, approvedByTarget, relationType } = edge;
+		const { pubIsParent, approvedByTarget } = edge;
 		if (approvedByTarget || allowUnapprovedRelationships) {
-			(pubIsParent ? parents : children).push({ relationType: relationType, pub: pub });
+			(pubIsParent ? parents : children).push(edge);
 		}
 	});
 	return { parents: parents, children: children };

@@ -16,7 +16,7 @@ app.get(
 				return next();
 			}
 			const initialData = await getInitialData(req, true);
-			const overviewData = await getOverview(initialData);
+			const overviewData = await getOverview(initialData.scopeData.elements);
 			const sanitizedOverviewData = await sanitizeOverview(initialData, overviewData);
 			return renderToNodeStream(
 				res,

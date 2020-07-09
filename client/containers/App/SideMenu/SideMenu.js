@@ -44,7 +44,7 @@ const SideMenu = () => {
 				pubSlug: pubSlug,
 				mode: 'pages',
 			}),
-			communityOnly: true,
+			validScopes: ['community'],
 			manageRequired: true,
 		},
 		// {
@@ -120,6 +120,16 @@ const SideMenu = () => {
 			// ],
 		},
 		{
+			title: 'Connections',
+			icon: 'layout-auto',
+			href: getDashUrl({
+				collectionSlug: collectionSlug,
+				pubSlug: pubSlug,
+				mode: 'connections',
+			}),
+			validScopes: ['pub'],
+		},
+		{
 			title: 'Impact',
 			icon: 'dashboard',
 			href: getDashUrl({
@@ -166,9 +176,9 @@ const SideMenu = () => {
 			<div className="content">
 				{contentItems
 					.filter((item) => {
-						const scopeIsValid =
-							activeTargetType === 'community' || !item.communityOnly;
-						const permissionIsValid = canManage || !item.manageRequired;
+						const { validScopes, manageRequired } = item;
+						const scopeIsValid = !validScopes || validScopes.includes(activeTargetType);
+						const permissionIsValid = canManage || !manageRequired;
 						return scopeIsValid && permissionIsValid;
 					})
 					.map((item) => {

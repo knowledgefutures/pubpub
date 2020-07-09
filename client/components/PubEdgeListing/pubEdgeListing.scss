@@ -1,5 +1,3 @@
-@import './mixins.scss';
-
 .pub-edge-listing-component {
 	display: flex;
 	flex-direction: column;
@@ -16,16 +14,9 @@
 		}
 	}
 
-	.isolated-controls {
-		@include bleed-top-border();
-		align-items: center;
-		display: flex;
-		right: 4px;
-	}
-
-	@media screen and (max-width: 720px) {
-		font-size: 12px;
-	}
+    @media screen and (max-width: 720px) {
+        font-size: 12px;
+    }
 }
 
 .pub-edge-listing-counter-component {

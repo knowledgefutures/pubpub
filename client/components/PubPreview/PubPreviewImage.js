@@ -23,7 +23,7 @@ const PubPreviewImage = (props) => {
 		pubData.avatar || !pubData.slug
 			? { backgroundImage: `url("${resizedImage}")` }
 			: { background: generatePubBackground(pubData.title) };
-	return <div className={classNames('pub-preview-image', className)} style={style} />;
+	return <div className={classNames('pub-preview-image-component', className)} style={style} />;
 };
 
 PubPreviewImage.propTypes = propTypes;

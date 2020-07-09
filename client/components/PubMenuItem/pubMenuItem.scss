@@ -1,0 +1,22 @@
+.pub-menu-item-component {
+    display: flex;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    &.active,
+    &:hover {
+        background: #f0f0f0;
+    }
+    .pub-preview-image-component {
+        width: 50px;
+        height: 50px;
+    }
+    .inner {
+        width: 100%;
+        .title {
+            font-weight: 500;
+        }
+        .subtitle {
+            font-style: italic;
+        }
+    }
+}

@@ -1,31 +1,44 @@
-@import './mixins.scss';
-
 .pub-edge-listing-card-component {
 	border-color: #a1a1a1;
 	border-radius: 3px;
 	border-style: solid;
 	border-width: 1px;
 	cursor: pointer;
-	filter: grayscale(100%);
 	margin-bottom: 24px;
 	position: relative;
 	transition: filter 100ms linear;
 
-	&:hover,
-	&:active,
-	&:focus {
-		filter: grayscale(0%);
-
-		h4 {
-			text-decoration: underline;
+	&.in-pub-body {
+		filter: grayscale(100%);
+		&:hover,
+		&:active,
+		&:focus {
+			filter: grayscale(0%);
+		}
+		> .controls {
+			right: 4px;
 		}
 	}
 
-	> .relationship {
-		@include bleed-top-border();
-		left: 24px;
+	> .relation,
+	> .controls {
+		background-color: #fff;
+		padding: 0 8px;
+		position: absolute;
+		top: 0;
+		transform: translateY(-50%);
+	}
 
-		.relationship-name {
+	> .controls {
+		align-items: center;
+		display: flex;
+		right: 24px;
+	}
+
+	> .relation {
+		left: calc(24px - 8px);
+
+		.relation-name {
 			border-bottom: 1px dotted;
 			font-weight: 600;
 		}
@@ -42,7 +55,7 @@
 		}
 	}
 
-	> .relationship.show-icon {
+	> .relation.show-icon {
 		left: 4px;
 	}
 }

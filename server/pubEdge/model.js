@@ -2,6 +2,7 @@ export default (sequelize, dataTypes) => {
 	return sequelize.define(
 		'PubEdge',
 		{
+			id: sequelize.idType,
 			pubId: { type: dataTypes.UUID, allowNull: false },
 			targetExternalPublication: { type: dataTypes.UUID, allowNull: true },
 			targetPubId: { type: dataTypes.UUID, allowNull: true },

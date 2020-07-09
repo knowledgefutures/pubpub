@@ -19,4 +19,6 @@ const pubEdge = {
 	pubIsParent: true,
 };
 
-storiesOf('components/PubEdge', module).add('default', () => <PubEdge pubEdge={pubEdge} />);
+storiesOf('components/PubEdge', module).add('default', () => (
+	<PubEdge pubEdge={pubEdge} viewingFromTarget={false} />
+));

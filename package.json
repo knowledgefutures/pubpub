@@ -107,6 +107,7 @@
 		"hasbin": "^1.2.3",
 		"iframe-resizer-react": "^1.0.4",
 		"install": "^0.12.2",
+		"is-url": "^1.2.4",
 		"jest": "^24.5.0",
 		"js-beautify": "^1.11.0",
 		"js-cookie": "^2.2.0",

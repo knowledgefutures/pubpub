@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 
-import findRank from 'utils/findRank';
+import { findRank } from 'utils/rank';
 import {
 	sequelize,
 	Collection,

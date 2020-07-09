@@ -1,58 +1,82 @@
 import { Icon } from '@blueprintjs/core';
 import classNames from 'classnames';
-import React, { useCallback } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import { relationTypeDefinitions } from 'utils/pubEdge/relations';
 import { PubEdge } from 'components';
+import { toTitleCase } from 'utils/strings';
+import { usePageContext } from 'utils/hooks';
+import { relationTypeDefinitions } from 'utils/pubEdge';
 
 import { pubEdgeType } from '../PubEdge/constants';
 
 require('./pubEdgeListingCard.scss');
 
 const propTypes = {
-	accentColor: PropTypes.string.isRequired,
-	children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
+	accentColor: PropTypes.string,
+	children: PropTypes.node,
 	pubEdge: pubEdgeType.isRequired,
+	pubTitle: PropTypes.string,
 	showIcon: PropTypes.bool,
+	viewingFromSibling: PropTypes.bool,
 };
 
 const defaultProps = {
+	accentColor: null,
 	children: [],
+	pubTitle: null,
 	showIcon: false,
+	viewingFromSibling: false,
 };
 
 const PubEdgeListingCard = (props) => {
-	const { accentColor, children, pubEdge, showIcon } = props;
-	const {
-		pubIsParent,
-		relationType,
-		externalPublication: { url },
-	} = pubEdge;
-	const handleClick = useCallback(
-		(e) => {
-			if (e.type === 'click' || e.key === 'Enter') {
-				window.open(url, '_top');
+	const { accentColor, children, pubEdge, pubTitle, showIcon, viewingFromSibling } = props;
+	const { communityData } = usePageContext();
+	// If `pub` is defined on the edge, that probably means we queried it as an inboundEdge
+	// and we're looking at it from the perspective of the target Pub, rather than the Pub
+	// that created the edge.
+	const viewingFromTarget = !!pubEdge.pub;
+
+	const renderRelation = () => {
+		const { relationType, pubIsParent } = pubEdge;
+		const viewingFromParent =
+			!viewingFromSibling && viewingFromTarget ? !pubIsParent : pubIsParent;
+		const relationDefinition = relationTypeDefinitions[relationType];
+		if (relationDefinition) {
+			const { article, preposition, name } = relationDefinition;
+			const relationName = <span className="relation-name">{name}</span>;
+			const pubTitleNode = pubTitle && <span className="pub-title">{pubTitle}</span>;
+			if (viewingFromSibling) {
+				return (
+					<>
+						Another {relationName} of {pubTitleNode || 'this Pub'}
+					</>
+				);
 			}
-		},
-		[url],
-	);
-	const relationTypeDefinition = relationTypeDefinitions[relationType];
-	const relationString = pubIsParent
-		? relationTypeDefinition.childRelationString
-		: relationTypeDefinition.parentRelationString;
+			if (viewingFromParent) {
+				return (
+					<>
+						{toTitleCase(article)} {relationName} {preposition}{' '}
+						{pubTitleNode || 'this Pub'}
+					</>
+				);
+			}
+			return (
+				<>
+					{pubTitleNode || 'This Pub'} is {article} {relationName} {preposition}
+				</>
+			);
+		}
+		return null;
+	};
 
 	return (
 		<div
 			className="pub-edge-listing-card-component"
-			style={{ borderColor: accentColor }}
-			onClick={handleClick}
-			onKeyDown={handleClick}
-			role="link"
-			tabIndex="0"
+			style={{ borderColor: accentColor || communityData.accentColorDark }}
 		>
-			{children}
-			<div className={classNames('relationship', showIcon && 'show-icon')}>
+			{children && <div className="controls">{children}</div>}
+			<div className={classNames('relation', showIcon && 'show-icon')}>
 				{showIcon && (
 					<Icon
 						icon="key-enter"
@@ -61,9 +85,9 @@ const PubEdgeListingCard = (props) => {
 						className="drop-return"
 					/>
 				)}
-				This Pub {relationString}
+				{renderRelation()}
 			</div>
-			<PubEdge pubEdge={pubEdge} />
+			<PubEdge pubEdge={pubEdge} viewingFromTarget={viewingFromTarget} />
 		</div>
 	);
 };

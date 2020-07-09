@@ -33,8 +33,17 @@ const getBounds = (ranks, index) => {
 	return ranks.slice(index - 1, index + 1);
 };
 
-export default (ranks, index, count = 1) => {
+export const findRank = (ranks, index, count = 1) => {
 	const [above, below] = getBounds(ranks, index);
 	const [result] = mudder.base36.mudder(above, below, count);
 	return result;
 };
+
+export const findRankInRankedList = (rankedList, index) =>
+	findRank(
+		rankedList.map((s) => s.rank),
+		index,
+	);
+
+export const sortByRank = (array) =>
+	array.concat().sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));

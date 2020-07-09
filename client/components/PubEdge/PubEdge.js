@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'reakit/Button';
 
 import { Byline } from 'components';
@@ -13,22 +14,31 @@ require('./pubEdge.scss');
 
 export const propTypes = {
 	pubEdge: pubEdgeType.isRequired,
+	viewingFromTarget: PropTypes.bool.isRequired,
 };
 
-const getValuesFromPubEdge = (pubEdge, communityData) => {
-	const { externalPublication, targetPub } = pubEdge;
-	if (targetPub) {
-		const { title, description, attributions, avatar } = targetPub;
-		const url =
-			communityData.id === targetPub.communityId
-				? pubUrl(communityData, targetPub)
-				: pubShortUrl(targetPub);
+const getUrlForPub = (pubData, communityData) => {
+	if (communityData.id === pubData.communityId) {
+		return pubUrl(communityData, pubData);
+	}
+	if (pubData.community) {
+		return pubUrl(pubData.communityId, pubData);
+	}
+	return pubShortUrl(pubData);
+};
+
+const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
+	const { externalPublication, targetPub, pub } = pubEdge;
+	const displayedPub = viewingFromTarget ? pub : targetPub;
+	if (displayedPub) {
+		const { title, description, attributions, avatar } = displayedPub;
+		const url = getUrlForPub(displayedPub, communityData);
 		return {
 			contributors: attributions,
 			title: title,
 			description: description,
 			avatar: avatar,
-			publicationDate: getPubPublishedDate(targetPub),
+			publicationDate: getPubPublishedDate(displayedPub),
 			url: url,
 		};
 	}
@@ -54,9 +64,18 @@ const getValuesFromPubEdge = (pubEdge, communityData) => {
 };
 
 const PubEdge = (props) => {
-	const { pubEdge } = props;
+	const { pubEdge, viewingFromTarget } = props;
 	const [open, setOpen] = useState(false);
 	const { communityData } = usePageContext();
+
+	const { avatar, contributors, description, publicationDate, title, url } = getValuesFromPubEdge(
+		pubEdge,
+		communityData,
+		viewingFromTarget,
+	);
+
+	const publishedAt = formatDate(publicationDate);
+
 	const handleToggleDescriptionClick = useCallback(
 		(e) => {
 			if (e.type === 'click' || e.key === 'Enter') {
@@ -67,13 +86,6 @@ const PubEdge = (props) => {
 		},
 		[open],
 	);
-
-	const { avatar, contributors, description, publicationDate, title, url } = getValuesFromPubEdge(
-		pubEdge,
-		communityData,
-	);
-
-	const publishedAt = formatDate(publicationDate);
 
 	return (
 		<article className="pub-edge-component">
@@ -87,16 +99,18 @@ const PubEdge = (props) => {
 					<h4>{title}</h4>
 					<Byline contributors={contributors} />
 					<ul className="metadata">
-						<li>
-							<Button
-								as="a"
-								onClick={handleToggleDescriptionClick}
-								onKeyDown={handleToggleDescriptionClick}
-								tabIndex="0"
-							>
-								{open ? 'Hide Description' : 'Show Description'}
-							</Button>
-						</li>
+						{description && (
+							<li>
+								<Button
+									as="a"
+									onClick={handleToggleDescriptionClick}
+									onKeyDown={handleToggleDescriptionClick}
+									tabIndex="0"
+								>
+									{open ? 'Hide Description' : 'Show Description'}
+								</Button>
+							</li>
+						)}
 						<li>Published on {publishedAt}</li>
 						<li>
 							<a href={url} alt={title} tabIndex="0">

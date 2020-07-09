@@ -5,7 +5,6 @@ export default (sequelize, dataTypes) => {
 		contributors: { type: dataTypes.JSONB },
 		doi: { type: dataTypes.TEXT },
 		description: { type: dataTypes.TEXT },
-		descriptionContent: { type: dataTypes.JSONB },
 		avatar: { type: dataTypes.TEXT },
 		publicationDate: { type: dataTypes.DATE },
 	});

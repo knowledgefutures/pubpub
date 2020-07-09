@@ -6,6 +6,7 @@ require('./pubDocument');
 require('./collection'); // Route: /collection/:id
 require('./dashboardActivity');
 require('./dashboardDiscussions');
+require('./dashboardEdges');
 require('./dashboardForks');
 require('./dashboardImpact');
 require('./dashboardMembers');

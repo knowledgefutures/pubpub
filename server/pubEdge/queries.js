@@ -1,6 +1,7 @@
 import { PubEdge } from 'server/models';
+import { getPubEdgeIncludes } from 'server/utils/queryHelpers/edgeOptions';
 import { createExternalPublication } from 'server/externalPublication/queries';
-import findRank from 'utils/findRank';
+import { findRank } from 'utils/rank';
 
 const findRankForNewPubEdge = async (pubId, moveToTop) => {
 	const otherEdgesFromPub = await PubEdge.findAll({ where: { pubId: pubId } });
@@ -29,7 +30,7 @@ export const createPubEdge = async ({
 		getExternalPublicationId(externalPublication),
 		findRankForNewPubEdge(pubId, moveToTop),
 	]);
-	return PubEdge.create({
+	const newEdge = await PubEdge.create({
 		pubId: pubId,
 		rank: rank,
 		relationType: relationType,
@@ -37,6 +38,10 @@ export const createPubEdge = async ({
 		targetPubId: targetPubId,
 		approvedByTarget: approvedByTarget,
 		externalPublicationId: externalPublicationId,
+	});
+	return PubEdge.findOne({
+		where: { id: newEdge.id },
+		include: getPubEdgeIncludes({ includeTargetPub: true }),
 	});
 };
 

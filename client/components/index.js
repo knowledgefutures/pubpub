@@ -40,8 +40,10 @@ export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttri
 export { default as PubByline } from './PubByline/PubByline';
 export { default as PubEdge } from './PubEdge/PubEdge';
 export { default as PubEdgeListing } from './PubEdgeListing/PubEdgeListing';
+export { default as PubEdgeListingCard } from './PubEdgeListing/PubEdgeListingCard';
 export { default as PubHistoryViewer } from './PubHistoryViewer/PubHistoryViewer';
 export { default as PubNoteContent } from './PubNoteContent/PubNoteContent';
+export { default as PubMenuItem } from './PubMenuItem/PubMenuItem';
 export { default as PubPreview } from './PubPreview/PubPreview';
 export { default as PubReleaseDialog } from './PubReleaseDialog/PubReleaseDialog';
 export { default as PubReleaseReviewDialog } from './PubReleaseReviewDialog/PubReleaseReviewDialog';

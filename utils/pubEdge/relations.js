@@ -2,39 +2,49 @@ import { toTitleCase } from 'utils/strings';
 
 export const relationTypeDefinitions = {
 	comment: {
-		label: 'comment',
-		childRelationString: 'is a comment on',
-		parentRelationString: 'is commented on by',
+		name: 'Comment',
+		article: 'a',
+		preposition: 'on',
+	},
+	commentary: {
+		name: 'Commentary',
+		article: 'a',
+		preposition: 'on',
 	},
 	preprint: {
-		label: 'preprint',
-		childRelationString: 'is a preprint of',
-		parentRelationString: 'has preprint',
+		name: 'Preprint',
+		article: 'a',
+		preposition: 'of',
+	},
+	rejoinder: {
+		name: 'Rejoinder',
+		article: 'a',
+		preposition: 'to',
 	},
 	reply: {
-		label: 'reply',
-		childRelationString: 'is a reply to',
-		parentRelationString: 'is replied to by',
+		name: 'Reply',
+		article: 'a',
+		preposition: 'to',
 	},
 	review: {
-		label: 'review',
-		childRelationString: 'is a review of',
-		parentRelationString: 'is reviewed by',
+		name: 'Review',
+		article: 'a',
+		preposition: 'of',
 	},
 	supplement: {
-		label: 'supplement',
-		childRelationString: 'is a supplement to',
-		parentRelationString: 'is supplemented by',
+		name: 'Supplement',
+		article: 'a',
+		preposition: 'of',
 	},
 	translation: {
-		label: 'translation',
-		childRelationString: 'is a translation of',
-		parentRelationString: 'is translated to another language in',
+		name: 'Translation',
+		article: 'a',
+		preposition: 'of',
 	},
 	version: {
-		label: 'version',
-		childRelationString: 'is a version of',
-		parentRelationString: 'has another version in',
+		name: 'Version',
+		article: 'a',
+		preposition: 'of',
 	},
 };
 

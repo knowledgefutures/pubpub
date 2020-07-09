@@ -111,7 +111,7 @@ const PubEdgeListing = (props) => {
 					accentColor={accentColor}
 					showIcon={isolated}
 				>
-					{isolated && <div className="isolated-controls">{controls}</div>}
+					{isolated && controls}
 				</PubEdgeListingCard>
 			) : (
 				pubEdges.map((pubEdge) => (

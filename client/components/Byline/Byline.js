@@ -5,7 +5,7 @@ export const propTypes = {
 	contributors: PropTypes.oneOfType([
 		// Array of authors (e.g. from pub data)
 		PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.shape({})])),
-		// Byline (e.g. from ForeignPublication)
+		// Byline (e.g. from ExternalPublication)
 		PropTypes.string,
 	]).isRequired,
 	bylinePrefix: PropTypes.string,

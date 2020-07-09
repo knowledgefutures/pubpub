@@ -94,7 +94,7 @@ it('lets a manager create a PubEdge to an external publication', async () => {
 		title: 'I am in another journal',
 		url: 'https://somewhere.else',
 		description: "It's not even on PubPub",
-		byline: 'What are we going to do??',
+		contributors: 'What are we going to do??',
 		doi: '10.1000/abcd.1234',
 	};
 	const { body: resultingEdge } = await agent

@@ -7,6 +7,26 @@
 	text-decoration: none;
 	padding: 24px 32px 18px;
 
+	a {
+		text-decoration: none;
+	}
+
+	&.acts-like-link {
+		cursor: pointer;
+		&:hover,
+		&:focus {
+			h4 a {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	&:not(.acts-like-link) {
+		h4 a:hover {
+			text-decoration: underline;
+		}
+	}
+
 	h4 {
 		font-size: 1.6em;
 		font-weight: 400;

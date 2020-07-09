@@ -110,6 +110,7 @@ const PubEdgeListing = (props) => {
 					pubEdge={active}
 					accentColor={accentColor}
 					showIcon={isolated}
+					inPubBody
 				>
 					{isolated && controls}
 				</PubEdgeListingCard>
@@ -120,6 +121,7 @@ const PubEdgeListing = (props) => {
 						pubTitle={pubTitle}
 						pubEdge={pubEdge}
 						accentColor={accentColor}
+						inPubBody
 					/>
 				))
 			);

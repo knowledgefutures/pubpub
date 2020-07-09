@@ -15,6 +15,7 @@ require('./pubEdgeListingCard.scss');
 const propTypes = {
 	accentColor: PropTypes.string,
 	children: PropTypes.node,
+	inPubBody: PropTypes.bool,
 	pubEdge: pubEdgeType.isRequired,
 	pubTitle: PropTypes.string,
 	showIcon: PropTypes.bool,
@@ -24,13 +25,22 @@ const propTypes = {
 const defaultProps = {
 	accentColor: null,
 	children: [],
+	inPubBody: false,
 	pubTitle: null,
 	showIcon: false,
 	viewingFromSibling: false,
 };
 
 const PubEdgeListingCard = (props) => {
-	const { accentColor, children, pubEdge, pubTitle, showIcon, viewingFromSibling } = props;
+	const {
+		accentColor,
+		children,
+		inPubBody,
+		pubEdge,
+		pubTitle,
+		showIcon,
+		viewingFromSibling,
+	} = props;
 	const { communityData } = usePageContext();
 	// If `pub` is defined on the edge, that probably means we queried it as an inboundEdge
 	// and we're looking at it from the perspective of the target Pub, rather than the Pub
@@ -72,7 +82,7 @@ const PubEdgeListingCard = (props) => {
 
 	return (
 		<div
-			className="pub-edge-listing-card-component"
+			className={classNames('pub-edge-listing-card-component', inPubBody && 'in-pub-body')}
 			style={{ borderColor: accentColor || communityData.accentColorDark }}
 		>
 			{children && <div className="controls">{children}</div>}
@@ -87,7 +97,11 @@ const PubEdgeListingCard = (props) => {
 				)}
 				{renderRelation()}
 			</div>
-			<PubEdge pubEdge={pubEdge} viewingFromTarget={viewingFromTarget} />
+			<PubEdge
+				pubEdge={pubEdge}
+				viewingFromTarget={viewingFromTarget}
+				actsLikeLink={inPubBody}
+			/>
 		</div>
 	);
 };

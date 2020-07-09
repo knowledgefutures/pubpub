@@ -19,6 +19,6 @@ const pubEdge = {
 	pubIsParent: true,
 };
 
-storiesOf('components/PubEdge', module).add('default', () => (
-	<PubEdge pubEdge={pubEdge} viewingFromTarget={false} />
-));
+storiesOf('components/PubEdge', module)
+	.add('default', () => <PubEdge pubEdge={pubEdge} />)
+	.add('actsLikeLink', () => <PubEdge pubEdge={pubEdge} actsLikeLink={true} />);

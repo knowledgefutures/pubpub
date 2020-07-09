@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Button } from 'reakit/Button';
 
 import { Byline } from 'components';
@@ -13,8 +14,14 @@ import { pubEdgeType } from './constants';
 require('./pubEdge.scss');
 
 export const propTypes = {
+	actsLikeLink: PropTypes.bool,
 	pubEdge: pubEdgeType.isRequired,
-	viewingFromTarget: PropTypes.bool.isRequired,
+	viewingFromTarget: PropTypes.bool,
+};
+
+const defaultProps = {
+	actsLikeLink: false,
+	viewingFromTarget: false,
 };
 
 const getUrlForPub = (pubData, communityData) => {
@@ -64,7 +71,7 @@ const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 };
 
 const PubEdge = (props) => {
-	const { pubEdge, viewingFromTarget } = props;
+	const { actsLikeLink, pubEdge, viewingFromTarget } = props;
 	const [open, setOpen] = useState(false);
 	const { communityData } = usePageContext();
 
@@ -87,16 +94,46 @@ const PubEdge = (props) => {
 		[open],
 	);
 
+	const handleClick = useCallback(
+		(e) => {
+			if (e.type === 'click' || e.key === 'Enter') {
+				window.open(url, '_top');
+			}
+		},
+		[url],
+	);
+
+	const linkLikeProps = actsLikeLink && {
+		onClick: handleClick,
+		onKeyDown: handleClick,
+		role: 'link',
+		tabIndex: '0',
+	};
+
+	const maybeLink = (element, restProps = {}) => {
+		if (actsLikeLink) {
+			return element;
+		}
+		return (
+			<a href={url} {...restProps}>
+				{element}
+			</a>
+		);
+	};
+
 	return (
-		<article className="pub-edge-component">
+		<article
+			className={classNames('pub-edge-component', actsLikeLink && 'acts-like-link')}
+			{...linkLikeProps}
+		>
 			<div className="top">
 				{avatar && (
 					<div className="top-left">
-						<img src={avatar} alt="" />
+						{maybeLink(<img src={avatar} alt="" />, { tabIndex: '-1' })}
 					</div>
 				)}
 				<div className="top-right">
-					<h4>{title}</h4>
+					<h4>{maybeLink(title)}</h4>
 					<Byline contributors={contributors} />
 					<ul className="metadata">
 						{description && (
@@ -130,4 +167,5 @@ const PubEdge = (props) => {
 };
 
 PubEdge.propTypes = propTypes;
+PubEdge.defaultProps = defaultProps;
 export default PubEdge;

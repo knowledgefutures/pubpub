@@ -5,6 +5,8 @@ import { Suggest } from '@blueprintjs/select';
 import isUrl from 'is-url';
 
 import { PubMenuItem } from 'components';
+import { apiFetch } from 'client/utils/apiFetch';
+import { isDoi } from 'utils/crossref/parseDoi';
 import { useThrottled } from 'utils/hooks';
 import { fuzzyMatchPub } from 'utils/fuzzyMatch';
 
@@ -32,6 +34,17 @@ const suggestPopoverProps = {
 	usePortal: false,
 };
 
+const indeterminateMenuItem = (
+	<PubMenuItem
+		key="indeterminate"
+		title={'X'.repeat(50)}
+		contributors={['ABC', 'XYZ']}
+		isSkeleton={true}
+		showImage={true}
+		disabled={true}
+	/>
+);
+
 const renderInputValue = () => '';
 
 const NewEdgeInput = (props) => {
@@ -41,8 +54,17 @@ const NewEdgeInput = (props) => {
 	const throttledQueryValue = useThrottled(queryValue, 250, true, true);
 
 	useEffect(() => {
-		if (isUrl(throttledQueryValue)) {
-			setSuggestedItems([]);
+		if (isUrl(throttledQueryValue) || isDoi(throttledQueryValue)) {
+			setSuggestedItems([{ indeterminate: true }]);
+			apiFetch
+				.get(`/api/pubEdgeProposal?object=${encodeURIComponent(throttledQueryValue)}`)
+				.then((res) => {
+					if (res) {
+						setSuggestedItems([res]);
+					} else {
+						setSuggestedItems([{ createNewFromUrl: throttledQueryValue }]);
+					}
+				});
 		} else if (throttledQueryValue) {
 			setSuggestedItems(
 				availablePubs
@@ -51,7 +73,7 @@ const NewEdgeInput = (props) => {
 							fuzzyMatchPub(pub, throttledQueryValue) && !usedPubIds.includes(pub.id),
 					)
 					.slice(0, 5)
-					.map((pub) => ({ type: 'pub', pub: pub })),
+					.map((pub) => ({ targetPub: pub })),
 			);
 		} else {
 			setSuggestedItems([]);
@@ -59,14 +81,43 @@ const NewEdgeInput = (props) => {
 	}, [availablePubs, throttledQueryValue, usedPubIds]);
 
 	const renderItem = (item, { handleClick, modifiers }) => {
-		const { type, pub } = item;
-		if (type === 'pub') {
+		const { externalPublication, targetPub, indeterminate, createNewFromUrl } = item;
+		if (indeterminate) {
+			return indeterminateMenuItem;
+		}
+		if (targetPub) {
 			return (
 				<PubMenuItem
-					pubData={pub}
+					key={targetPub.title}
+					title={targetPub.title}
+					contributors={targetPub.attributions}
+					image={targetPub.avatar}
 					active={modifiers.active}
 					onClick={handleClick}
 					showImage={true}
+				/>
+			);
+		}
+		if (externalPublication) {
+			const { title, contributors, avatar } = externalPublication;
+			return (
+				<PubMenuItem
+					key={title || 'external-publication'}
+					title={title || 'Title not found'}
+					contributors={contributors}
+					image={avatar}
+					onClick={handleClick}
+					showImage={!!avatar}
+					active={modifiers.active}
+				/>
+			);
+		}
+		if (createNewFromUrl) {
+			return (
+				<MenuItem
+					key="from-url"
+					onClick={handleClick}
+					text="Create a connection for this URL"
 				/>
 			);
 		}

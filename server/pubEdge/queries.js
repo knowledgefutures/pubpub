@@ -1,12 +1,11 @@
 import { PubEdge } from 'server/models';
 import { getPubEdgeIncludes } from 'server/utils/queryHelpers/edgeOptions';
 import { createExternalPublication } from 'server/externalPublication/queries';
-import { findRank } from 'utils/rank';
+import { findRankInRankedList } from 'utils/rank';
 
 const findRankForNewPubEdge = async (pubId, moveToTop) => {
 	const otherEdgesFromPub = await PubEdge.findAll({ where: { pubId: pubId } });
-	const ranks = otherEdgesFromPub.map((edge) => edge.rank);
-	return findRank(ranks, moveToTop ? 0 : ranks.length);
+	return findRankInRankedList(otherEdgesFromPub, moveToTop ? 0 : otherEdgesFromPub.length);
 };
 
 const getExternalPublicationId = async (maybeAttrs) => {
@@ -24,7 +23,7 @@ export const createPubEdge = async ({
 	externalPublication = null,
 	targetPubId = null,
 	approvedByTarget = false,
-	moveToTop = false,
+	moveToTop = true,
 }) => {
 	const [externalPublicationId, rank] = await Promise.all([
 		getExternalPublicationId(externalPublication),

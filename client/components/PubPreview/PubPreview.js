@@ -7,9 +7,8 @@ import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { isPubPublic } from 'utils/pub/permissions';
 import { pubUrl, communityUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
-import { Avatar, Icon } from 'components';
+import { Avatar, Icon, PreviewImage } from 'components';
 
-import PubPreviewImage from './PubPreviewImage';
 import SubPreview from './SubPreview';
 import { generateAuthorString } from './pubPreviewUtils';
 
@@ -61,7 +60,11 @@ const PubPreview = function(props) {
 		<div className={`pub-preview-component ${size}-preview`}>
 			{showBannerImage && (
 				<a href={pubLink} alt={pubData.title}>
-					<PubPreviewImage pubData={pubData} className="banner-image" />
+					<PreviewImage
+						src={pubData.avatar}
+						title={pubData.title}
+						className="banner-image"
+					/>
 				</a>
 			)}
 			<div className="content">

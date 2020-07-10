@@ -99,11 +99,13 @@ export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity, g
 			{
 				model: PubEdge,
 				as: 'outboundEdges',
+				separate: true,
 				include: getPubEdgeIncludes({ includeTargetPub: true }),
 			},
 			{
 				model: PubEdge,
 				as: 'inboundEdges',
+				separate: true,
 				include: getPubEdgeIncludes({ includePub: true }),
 			},
 		];

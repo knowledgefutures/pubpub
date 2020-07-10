@@ -81,7 +81,11 @@ const DashboardEdges = (props) => {
 							<NonIdealState
 								icon="layout-auto"
 								title="No connections yet"
-								description="Start typing above to add a new connection."
+								description={
+									canManageEdges
+										? 'Start typing above to add a new connection.'
+										: 'Connections created from this Pub will appear here.'
+								}
 							/>
 						)
 					}

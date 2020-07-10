@@ -13,7 +13,6 @@
 		font-weight: 400;
 		letter-spacing: 1px;
 		margin-bottom: 8px;
-		line-height: 21px;
 		a {
 			text-decoration: none;
 		}
@@ -146,6 +145,10 @@
 		}
 	}
 
+	.title-container {
+		line-height: 21px;
+	}
+
 	details {
 		hr {
 			border: none;
@@ -170,12 +173,8 @@
 }
 
 .pub-edge-editor-component {
-	.title-container {
-		margin-bottom: 4px;
-	}
-
 	.byline-container {
-		margin-bottom: 4px;
+		margin-bottom: 8px;
 	}
 
 	.editable-date {

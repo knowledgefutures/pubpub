@@ -124,7 +124,7 @@ const PubEdge = (props) => {
 
 	return (
 		<PubEdgeLayout
-			outerElementProps={linkLikeProps}
+			outerElementProps={linkLikeProps || {}}
 			className={classNames('pub-edge-component', actsLikeLink && 'acts-like-link')}
 			topLeftElement={avatar && maybeLink(<img src={avatar} alt="" />, { tabIndex: '-1' })}
 			titleElement={maybeLink(title)}

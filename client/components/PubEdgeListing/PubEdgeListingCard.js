@@ -17,6 +17,7 @@ const propTypes = {
 	children: PropTypes.node,
 	inPubBody: PropTypes.bool,
 	pubEdge: pubEdgeType.isRequired,
+	pubEdgeElement: PropTypes.node,
 	pubTitle: PropTypes.string,
 	showIcon: PropTypes.bool,
 	viewingFromSibling: PropTypes.bool,
@@ -26,6 +27,7 @@ const defaultProps = {
 	accentColor: null,
 	children: [],
 	inPubBody: false,
+	pubEdgeElement: null,
 	pubTitle: null,
 	showIcon: false,
 	viewingFromSibling: false,
@@ -37,6 +39,7 @@ const PubEdgeListingCard = (props) => {
 		children,
 		inPubBody,
 		pubEdge,
+		pubEdgeElement,
 		pubTitle,
 		showIcon,
 		viewingFromSibling,
@@ -97,11 +100,13 @@ const PubEdgeListingCard = (props) => {
 				)}
 				{renderRelation()}
 			</div>
-			<PubEdge
-				pubEdge={pubEdge}
-				viewingFromTarget={viewingFromTarget}
-				actsLikeLink={inPubBody}
-			/>
+			{pubEdgeElement || (
+				<PubEdge
+					pubEdge={pubEdge}
+					viewingFromTarget={viewingFromTarget}
+					actsLikeLink={inPubBody}
+				/>
+			)}
 		</div>
 	);
 };

@@ -24,7 +24,15 @@ const PubSelect = (props) => {
 	const { children, position, pubs, onSelectPub, usedPubIds } = props;
 
 	const renderPubItem = (pub, { handleClick, modifiers: { active } }) => {
-		return <PubMenuItem key={pub.id} onClick={handleClick} pubData={pub} active={active} />;
+		return (
+			<PubMenuItem
+				key={pub.id}
+				onClick={handleClick}
+				title={pub.title}
+				contributors={pub.attributions}
+				active={active}
+			/>
+		);
 	};
 	const renderPopoverContent = (qlProps) => {
 		const { handleKeyDown, handleKeyUp, handleQueryChange, itemList } = qlProps;

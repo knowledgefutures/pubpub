@@ -11,11 +11,12 @@ const propTypes = {
 	metadataElements: PropTypes.arrayOf(PropTypes.node).isRequired,
 	outerElementProps: PropTypes.object,
 	titleElement: PropTypes.node.isRequired,
-	topLeftElement: PropTypes.node.isRequired,
+	topLeftElement: PropTypes.node,
 };
 
 const defaultProps = {
 	outerElementProps: {},
+	topLeftElement: null,
 };
 
 const PubEdgeLayout = (props) => {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Callout, Divider } from '@blueprintjs/core';
 
-import { PubEdgeListingCard } from 'components';
+import { PubEdgeListingCard, PubEdgeEditor } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePendingChanges } from 'utils/hooks';
@@ -37,12 +37,22 @@ const createCandidateEdge = (resource, relationType = RelationType.Reply) => {
 	};
 };
 
+const stripMarkupFromString = (string) => {
+	if (string) {
+		const div = document.createElement('div');
+		div.innerHTML = string;
+		return div.innerText;
+	}
+	return string;
+};
+
 const NewEdgeEditor = (props) => {
 	const { availablePubs, onChangeCreatingState, onCreateNewEdge, pubData, usedPubIds } = props;
 	const [newEdge, setNewEdge] = useState(null);
 	const [isCreatingEdge, setIsCreatingEdge] = useState(false);
 	const [errorCreatingEdge, setErrorCreatingEdge] = useState(null);
 	const { pendingPromise } = usePendingChanges();
+
 	const currentRelationName =
 		newEdge &&
 		relationTypeDefinitions[newEdge.relationType] &&
@@ -51,9 +61,27 @@ const NewEdgeEditor = (props) => {
 	useEffect(() => onChangeCreatingState(!!newEdge), [newEdge, onChangeCreatingState]);
 
 	const handleSelectItem = (item) => {
-		const { type, pub } = item;
-		if (type === 'pub') {
-			setNewEdge(createCandidateEdge({ targetPub: pub, targetPubId: pub.id }));
+		const { targetPub, externalPublication, createNewFromUrl } = item;
+		if (targetPub) {
+			setNewEdge(createCandidateEdge({ targetPub: targetPub, targetPubId: targetPub.id }));
+		} else if (externalPublication) {
+			setNewEdge(
+				createCandidateEdge({
+					externalPublication: {
+						...externalPublication,
+						description: stripMarkupFromString(externalPublication.description),
+					},
+				}),
+			);
+		} else if (createNewFromUrl) {
+			setNewEdge(
+				createCandidateEdge({
+					externalPublication: {
+						url: createNewFromUrl,
+						contributors: [],
+					},
+				}),
+			);
 		}
 	};
 
@@ -94,9 +122,27 @@ const NewEdgeEditor = (props) => {
 	};
 
 	const renderNewEdgeControls = () => {
+		const { externalPublication, targetPub } = newEdge;
+		const canCreateEdge = targetPub || (externalPublication && externalPublication.title);
 		return (
 			<div className="new-edge-controls">
-				<PubEdgeListingCard pubEdge={newEdge} pubTitle={pubData.title} />
+				<PubEdgeListingCard
+					pubEdge={newEdge}
+					pubTitle={pubData.title}
+					pubEdgeElement={
+						externalPublication && (
+							<PubEdgeEditor
+								externalPublication={externalPublication}
+								onUpdateExternalPublication={(update) =>
+									setNewEdge({
+										...newEdge,
+										externalPublication: { ...externalPublication, ...update },
+									})
+								}
+							/>
+						)
+					}
+				/>
 				{errorCreatingEdge && (
 					<Callout intent="warning" className="error-callout">
 						There was an error creating this Pub connection.
@@ -132,7 +178,12 @@ const NewEdgeEditor = (props) => {
 					<Button className="cancel-button" onClick={() => setNewEdge(null)}>
 						Cancel
 					</Button>
-					<Button intent="primary" onClick={handleCreateEdge} loading={isCreatingEdge}>
+					<Button
+						intent="primary"
+						onClick={handleCreateEdge}
+						loading={isCreatingEdge}
+						disabled={!canCreateEdge}
+					>
 						Add connection
 					</Button>
 				</div>

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+
 export const propTypes = {
 	contributors: PropTypes.oneOfType([
 		// Array of authors (e.g. from pub data)
@@ -48,7 +50,7 @@ const Byline = (props) => {
 							);
 						}
 
-						const user = author.user;
+						const { user } = ensureUserForAttribution(author);
 
 						if (user.slug && linkToUsers) {
 							return (

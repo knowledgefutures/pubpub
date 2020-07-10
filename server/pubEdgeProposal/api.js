@@ -9,8 +9,7 @@ app.get(
 	wrap(async (req, res) => {
 		const { object } = req.query;
 		const url = parseUrl(object);
-
-		let edge;
+		let edge = null;
 
 		if (url) {
 			const pub = await getPubDataFromUrl(url);
@@ -28,6 +27,6 @@ app.get(
 			edge = await createPubEdgeProposalFromCrossrefDoi(object);
 		}
 
-		return edge ? res.status(200).json(edge) : res.status(404);
+		return res.status(200).json(edge);
 	}),
 );

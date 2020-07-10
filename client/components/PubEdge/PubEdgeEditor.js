@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { EditableText, TagInput, InputGroup } from '@blueprintjs/core';
+import { Button as RKButton } from 'reakit/Button';
 import dateFormat from 'dateformat';
 
 import { externalPublicationType } from './constants';
@@ -23,19 +24,56 @@ const PubEdgeEditor = (props) => {
 		dateFormat(publicationDate, 'yyyy-mm-dd'),
 	);
 
+	useEffect(() => {
+		if (publicationDate) {
+			setPublicationDateString(dateFormat(publicationDate, 'yyyy-mm-dd'));
+		}
+	}, [publicationDate]);
+
 	const handlePublicationDateChange = (evt) => {
 		const nextDateString = evt.target.value;
-		setPublicationDateString(nextDateString);
-		onUpdateExternalPublication({ publicationDate: new Date(nextDateString).toString() });
+		onUpdateExternalPublication({
+			publicationDate: nextDateString ? new Date(nextDateString).toString() : null,
+		});
+	};
+
+	const renderPublicationDate = () => {
+		if (publicationDate) {
+			return (
+				<>
+					Published on{' '}
+					<InputGroup
+						small
+						className="editable-date"
+						type="date"
+						value={publicationDateString}
+						onChange={handlePublicationDateChange}
+					/>
+				</>
+			);
+		}
+		const addPublicationDate = () =>
+			onUpdateExternalPublication({ publicationDate: new Date() });
+		return (
+			<RKButton
+				as="a"
+				tabIndex="0"
+				onKeyDown={(evt) => evt.key === 'Enter' && addPublicationDate()}
+				onClick={addPublicationDate}
+			>
+				Add publication date
+			</RKButton>
+		);
 	};
 
 	return (
 		<PubEdgeLayout
 			className="pub-edge-editor-component"
-			topLeftElement={<img src={avatar} alt="" />}
+			topLeftElement={avatar && <img src={avatar} alt="" />}
 			titleElement={
 				<EditableText
 					placeholder="Add a title for this publication"
+					multiline
 					value={title}
 					onChange={(value) => onUpdateExternalPublication({ title: value })}
 				/>
@@ -48,16 +86,7 @@ const PubEdgeEditor = (props) => {
 				/>
 			}
 			metadataElements={[
-				<>
-					Published on{' '}
-					<InputGroup
-						small
-						className="editable-date"
-						type="date"
-						value={publicationDateString}
-						onChange={handlePublicationDateChange}
-					/>
-				</>,
+				renderPublicationDate(),
 				<a href={url} alt={title}>
 					{url}
 				</a>,

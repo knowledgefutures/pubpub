@@ -39,6 +39,7 @@ export { default as PubAttributionDialog } from './PubAttributionEditor/PubAttri
 export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttributionEditor';
 export { default as PubByline } from './PubByline/PubByline';
 export { default as PubEdge } from './PubEdge/PubEdge';
+export { default as PubEdgeEditor } from './PubEdge/PubEdgeEditor';
 export { default as PubEdgeListing } from './PubEdgeListing/PubEdgeListing';
 export { default as PubEdgeListingCard } from './PubEdgeListing/PubEdgeListingCard';
 export { default as PubHistoryViewer } from './PubHistoryViewer/PubHistoryViewer';

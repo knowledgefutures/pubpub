@@ -10,6 +10,7 @@ import { pubUrl, pubShortUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 import { pubEdgeType } from './constants';
+import PubEdgeLayout from './PubEdgeLayout';
 
 require('./pubEdge.scss');
 
@@ -122,47 +123,36 @@ const PubEdge = (props) => {
 	};
 
 	return (
-		<article
+		<PubEdgeLayout
+			outerElementProps={linkLikeProps}
 			className={classNames('pub-edge-component', actsLikeLink && 'acts-like-link')}
-			{...linkLikeProps}
-		>
-			<div className="top">
-				{avatar && (
-					<div className="top-left">
-						{maybeLink(<img src={avatar} alt="" />, { tabIndex: '-1' })}
-					</div>
-				)}
-				<div className="top-right">
-					<h4>{maybeLink(title)}</h4>
-					<Byline contributors={contributors} />
-					<ul className="metadata">
-						{description && (
-							<li>
-								<Button
-									as="a"
-									onClick={handleToggleDescriptionClick}
-									onKeyDown={handleToggleDescriptionClick}
-									tabIndex="0"
-								>
-									{open ? 'Hide Description' : 'Show Description'}
-								</Button>
-							</li>
-						)}
-						<li>Published on {publishedAt}</li>
-						<li>
-							<a href={url} alt={title} tabIndex="0">
-								{url}
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-			<details open={open}>
-				<summary>Description</summary>
-				<hr />
-				<p>{description}</p>
-			</details>
-		</article>
+			topLeftElement={avatar && maybeLink(<img src={avatar} alt="" />, { tabIndex: '-1' })}
+			titleElement={maybeLink(title)}
+			bylineElement={<Byline contributors={contributors} />}
+			metadataElements={[
+				description && (
+					<Button
+						as="a"
+						onClick={handleToggleDescriptionClick}
+						onKeyDown={handleToggleDescriptionClick}
+						tabIndex="0"
+					>
+						{open ? 'Hide Description' : 'Show Description'}
+					</Button>
+				),
+				<>Published on {publishedAt}</>,
+				<a href={url} alt={title} tabIndex="0">
+					{url}
+				</a>,
+			]}
+			detailsElement={
+				<details open={open}>
+					<summary>Description</summary>
+					<hr />
+					<p>{description}</p>
+				</details>
+			}
+		/>
 	);
 };
 

@@ -1,37 +1,22 @@
 @import 'styles/variables.scss';
 
-.pub-edge-component {
+.pub-edge-layout {
 	display: flex;
 	flex-direction: column;
 	font-family: $header-font;
 	text-decoration: none;
 	padding: 24px 32px 18px;
+	max-width: 1200px;
 
-	a {
-		text-decoration: none;
-	}
-
-	&.acts-like-link {
-		cursor: pointer;
-		&:hover,
-		&:focus {
-			h4 a {
-				text-decoration: underline;
-			}
-		}
-	}
-
-	&:not(.acts-like-link) {
-		h4 a:hover {
-			text-decoration: underline;
-		}
-	}
-
-	h4 {
+	.title-container {
 		font-size: 1.6em;
 		font-weight: 400;
 		letter-spacing: 1px;
 		margin-bottom: 8px;
+		line-height: 21px;
+		a {
+			text-decoration: none;
+		}
 	}
 
 	.top {
@@ -62,7 +47,7 @@
 			width: 100%;
 		}
 
-		.byline {
+		.byline-container {
 			font-style: italic;
 		}
 
@@ -82,7 +67,7 @@
 				flex: 1 0 auto;
 			}
 
-			.byline {
+			.byline-container {
 				margin-bottom: 12px;
 			}
 		}
@@ -96,6 +81,8 @@
 		padding: 0;
 
 		li {
+			display: flex;
+			align-items: center;
 			flex: 0 0 auto;
 			font-family: $base-font;
 			font-size: 0.8em;
@@ -116,7 +103,6 @@
 
 		a {
 			text-decoration: none;
-
 			&:hover,
 			&:active,
 			&:focus {
@@ -141,6 +127,24 @@
 			}
 		}
 	}
+}
+
+.pub-edge-component {
+	&.acts-like-link {
+		cursor: pointer;
+		&:hover,
+		&:focus {
+			.title-container {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	&:not(.acts-like-link) {
+		.title-container a:hover {
+			text-decoration: underline;
+		}
+	}
 
 	details {
 		hr {
@@ -162,5 +166,28 @@
 			margin: 0em 0em 1em;
 			word-break: break-word;
 		}
+	}
+}
+
+.pub-edge-editor-component {
+	.title-container {
+		margin-bottom: 4px;
+	}
+
+	.byline-container {
+		margin-bottom: 4px;
+	}
+
+	.editable-date {
+		display: inline;
+		margin-left: 4px;
+		margin-right: 4px;
+		.bp3-input {
+			font-size: 1em;
+		}
+	}
+
+	.editable-details {
+		margin-top: 8px;
 	}
 }

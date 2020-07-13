@@ -7,7 +7,69 @@ import { RelationType } from 'utils/pubEdge';
 
 import { Filter } from './constants';
 
-const pubEdges = [
+const somePub = {
+	title: 'Scripture as Interface. A Hermeneutical Reflection on a Concept based in Media Theory',
+	avatar: 'https://assets.pubpub.org/nlgqoo6x/51572618306498.png',
+	releases: [
+		{
+			id: '52ebe6a2-ff74-4537-8ce8-c7999f1fbd55',
+			createdAt: '2019-11-10T11:17:24.978Z',
+			updatedAt: '2019-11-10T11:17:24.980Z',
+		},
+	],
+	attributions: [
+		{
+			id: 'd8742882-bb84-4b69-a8d2-cb8ce7b115e5',
+			name: null,
+			avatar: null,
+			title: null,
+			order: 0.5,
+			isAuthor: true,
+			roles: null,
+			affiliation: null,
+			orcid: null,
+			userId: '8fda605d-eaee-4820-83a3-d1e18499a8a9',
+			pubId: 'be520569-5dd6-4e49-8866-a31cd54b5e3c',
+			createdAt: '2019-10-22T09:53:13.102Z',
+			updatedAt: '2019-10-22T09:53:13.102Z',
+			user: {
+				id: '8fda605d-eaee-4820-83a3-d1e18499a8a9',
+				firstName: 'Frederike',
+				lastName: 'van Oorschot',
+				fullName: 'Frederike van Oorschot',
+				avatar: 'https://assets.pubpub.org/y7pvxkw3/11571046154113.jpg',
+				slug: 'frederike-van-oorschot',
+				initials: 'Fv',
+				title: '',
+				orcid: '',
+			},
+		},
+	],
+};
+
+const inboundEdges = [
+	{
+		pubIsParent: true,
+		relationType: RelationType.Comment,
+		pub: somePub,
+	},
+];
+
+const outboundEdges = [
+	{
+		externalPublication: {
+			title:
+				'Auferstehung ja, aber nur schrittweise und mit Maske – Zum Comeback eines theologischen Begriffs während der SARS-CoV-2-Pandemie?',
+			contributors: ['Emilia Handke', 'Dennis Bock'],
+			avatar: 'https://assets.pubpub.org/dwkdjbj2/11586205211852.jpg',
+			url: 'https://cursor.pubpub.org/pub/handke-bock-auferstehung/release/1',
+			publicationDate: Date.now(),
+			description:
+				'Während wir das ganze Jahr über von politischen und literarischen #Auferstehungen vergessener Demokraten und Schriftsteller lesen können, sind es solche Tweets und Hashtags, die wir jetzt, kurz vor Ostern und inmitten der Corona-Pandemie, bei Twitter wie scheinbar selbstverständlich finden können. Auferstehung ist ein Begriff, der auch – und gerade – dann im säkularen Kontext Verwendung findet, wenn es um die Beschreibung einschneidender und krisenhafter Erlebnisse geht. Die pandemische Ausbreitung der Atemwegserkrankung COVID-19 durch das Coronavirus SARS-CoV-2 ist zweifelsohne ein vielgestaltiger krisenhafter Prozess, dessen gesundheitliche, politische, wirtschaftliche und gesellschaftliche Auswirkungen uns noch lange beschäftigen werden.',
+		},
+		relationType: RelationType.Comment,
+		pubIsParent: true,
+	},
 	{
 		externalPublication: {
 			title: 'Wunden verbinden',
@@ -34,20 +96,9 @@ const pubEdges = [
 		relationType: RelationType.Comment,
 		pubIsParent: true,
 	},
-	{
-		externalPublication: {
-			title:
-				'Auferstehung ja, aber nur schrittweise und mit Maske – Zum Comeback eines theologischen Begriffs während der SARS-CoV-2-Pandemie?',
-			contributors: ['Emilia Handke', 'Dennis Bock'],
-			avatar: 'https://assets.pubpub.org/dwkdjbj2/11586205211852.jpg',
-			url: 'https://cursor.pubpub.org/pub/handke-bock-auferstehung/release/1',
-			publicationDate: Date.now(),
-			description:
-				'Während wir das ganze Jahr über von politischen und literarischen #Auferstehungen vergessener Demokraten und Schriftsteller lesen können, sind es solche Tweets und Hashtags, die wir jetzt, kurz vor Ostern und inmitten der Corona-Pandemie, bei Twitter wie scheinbar selbstverständlich finden können. Auferstehung ist ein Begriff, der auch – und gerade – dann im säkularen Kontext Verwendung findet, wenn es um die Beschreibung einschneidender und krisenhafter Erlebnisse geht. Die pandemische Ausbreitung der Atemwegserkrankung COVID-19 durch das Coronavirus SARS-CoV-2 ist zweifelsohne ein vielgestaltiger krisenhafter Prozess, dessen gesundheitliche, politische, wirtschaftliche und gesellschaftliche Auswirkungen uns noch lange beschäftigen werden.',
-		},
-		relationType: RelationType.Comment,
-		pubIsParent: true,
-	},
+];
+
+const siblingEdges = [
 	{
 		externalPublication: {
 			title: 'Liturgical Struggles in the Corona-Crisis',
@@ -59,9 +110,18 @@ const pubEdges = [
 				"The Corona-virus has implications for the Christian church as a liturgical community. From within a Danish context, this article explores some possibilities and pitfalls of continuing to celebrate the Lord's Supper during this time of crisis.",
 		},
 		relationType: RelationType.Review,
-		pubIsParent: false,
+		pubIsParent: true,
+		pub: somePub,
 	},
 ];
+
+const pubData = {
+	title:
+		'The Porous Mask. A Theological Reflection on Concepts of Personhood and Personal Agency in the Digital Age',
+	inboundEdges: inboundEdges,
+	outboundEdges: outboundEdges,
+	siblingEdges: siblingEdges,
+};
 
 const StoryContainer = (props) => <div style={{ padding: 24 }}>{props.children}</div>;
 
@@ -69,7 +129,7 @@ storiesOf('components/PubEdgeListing', module).add('header', () => (
 	<StoryContainer>
 		<PubEdgeListing
 			accentColor="#A22E37"
-			pubEdges={pubEdges}
+			pubData={pubData}
 			initialFilters={[Filter.Parent]}
 			isolated
 		/>
@@ -81,7 +141,7 @@ storiesOf('components/PubEdgeListing', module).add('footer', () => (
 		<PubEdgeListing
 			accentColor="#A22E37"
 			pubTitle="Fear and Anxiety in Corona Isolation"
-			pubEdges={pubEdges}
+			pubData={pubData}
 		/>
 	</StoryContainer>
 ));

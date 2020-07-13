@@ -1,5 +1,6 @@
 import { NonIdealState } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
 
 import { Filter, Mode, allFilters } from './constants';
@@ -12,44 +13,122 @@ require('./pubEdgeListing.scss');
 
 const propTypes = {
 	accentColor: PropTypes.string.isRequired,
+	className: PropTypes.string,
+	hideIfNoInitialMatches: PropTypes.bool,
 	isolated: PropTypes.bool,
-	pubTitle: PropTypes.string,
-	pubEdges: PropTypes.arrayOf(pubEdgeType).isRequired,
+	pubData: PropTypes.shape({
+		inboundEdges: PropTypes.shape(pubEdgeType).isRequired,
+		outboundEdges: PropTypes.shape(pubEdgeType).isRequired,
+		siblingEdges: PropTypes.shape(pubEdgeType).isRequired,
+		title: PropTypes.string,
+	}).isRequired,
 	initialMode: PropTypes.string,
 	initialFilters: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
+	className: '',
+	hideIfNoInitialMatches: true,
 	isolated: false,
-	pubTitle: '',
 	initialMode: Mode.Carousel,
 	initialFilters: [Filter.Child],
 };
 
-const filterPubEdges = (filters, pubEdges) =>
-	pubEdges.filter((pubEdge) => {
-		let result = false;
+const collateAndFilterPubEdges = (filters, pubData) => {
+	const { inboundEdges, outboundEdges, siblingEdges } = pubData;
+	const includeParents = filters.includes(Filter.Parent);
+	const includeChildren = filters.includes(Filter.Child);
+	const includeSiblings = filters.includes(Filter.Sibling);
+	const filteredPubEdges = [];
+	const parentEdgeValues = [];
+	const childEdgeValues = [];
+	const siblingEdgeValues = [];
 
-		if (filters.indexOf(Filter.Parent) > -1) {
-			result = result || pubEdge.pubIsParent;
+	outboundEdges.forEach((edge) => {
+		const { pubIsParent } = edge;
+		const included = pubIsParent ? includeChildren : includeParents;
+		const edgeValue = {
+			isSibling: false,
+			isInboundEdge: false,
+			edge: edge,
+			pubTitle: null,
+		};
+		if (included) {
+			filteredPubEdges.push(edgeValue);
 		}
-
-		if (filters.indexOf(Filter.Child) > -1) {
-			result = result || !pubEdge.pubIsParent;
+		if (pubIsParent) {
+			childEdgeValues.push(edgeValue);
+		} else {
+			parentEdgeValues.push(edgeValue);
 		}
-
-		return result;
 	});
 
+	inboundEdges.forEach((edge) => {
+		const { pubIsParent } = edge;
+		const included = pubIsParent ? includeParents : includeChildren;
+		const edgeValue = {
+			isSibling: false,
+			isInboundEdge: true,
+			edge: edge,
+			pubTitle: null,
+		};
+		if (included) {
+			filteredPubEdges.push(edgeValue);
+		}
+		if (pubIsParent) {
+			parentEdgeValues.push(edgeValue);
+		} else {
+			childEdgeValues.push(edgeValue);
+		}
+	});
+
+	siblingEdges.forEach((edge) => {
+		const { pubIsParent, pub, targetPub } = edge;
+		const edgeValue = {
+			isSibling: true,
+			isInboundEdge: false,
+			edge: edge,
+			pubTitle: pubIsParent ? pub.title : targetPub.title,
+		};
+		siblingEdgeValues.push(edgeValue);
+		if (includeSiblings) {
+			filteredPubEdges.push(edgeValue);
+		}
+	});
+
+	return {
+		filteredPubEdgeValues: filteredPubEdges,
+		collatedPubEdgeValues: [...parentEdgeValues, ...childEdgeValues, ...siblingEdgeValues],
+	};
+};
+
 const PubEdgeListing = (props) => {
-	const { accentColor, initialMode, initialFilters, isolated, pubEdges, pubTitle } = props;
+	const {
+		accentColor,
+		className,
+		hideIfNoInitialMatches,
+		initialMode,
+		initialFilters,
+		isolated,
+		pubData,
+	} = props;
 	const [index, setIndex] = useState(0);
 	const [mode, setMode] = useState(initialMode);
 	const [filters, setFilters] = useState(initialFilters);
-	const filteredPubEdges = filterPubEdges(filters, pubEdges);
-	const { [index]: active, length } = filteredPubEdges;
+
+	const { filteredPubEdgeValues, collatedPubEdgeValues } = collateAndFilterPubEdges(
+		filters,
+		pubData,
+	);
+
+	const [initiallyRenderEmpty] = useState(
+		hideIfNoInitialMatches && filteredPubEdgeValues.length === 0,
+	);
+	const { [index]: activeEdgeValue, length } = filteredPubEdgeValues;
+
 	const next = useCallback(() => setIndex((i) => (i + 1) % length), [length]);
 	const back = useCallback(() => setIndex((i) => (i - 1 + length) % length), [length]);
+
 	const onFilterToggle = useCallback(
 		(filter) =>
 			setFilters((currentFilters) => {
@@ -66,6 +145,7 @@ const PubEdgeListing = (props) => {
 			}),
 		[],
 	);
+
 	const onAllFilterToggle = useCallback(
 		() =>
 			setFilters((currentFilters) =>
@@ -74,7 +154,9 @@ const PubEdgeListing = (props) => {
 		[],
 	);
 
-	const showControls = pubEdges.length > 1 && (!isolated || filteredPubEdges.length > 1);
+	const showControls =
+		collatedPubEdgeValues.length > 1 && (!isolated || filteredPubEdgeValues.length > 1);
+
 	const controls = showControls && (
 		<>
 			<PubEdgeListingCounter index={index} count={length} />
@@ -102,39 +184,48 @@ const PubEdgeListing = (props) => {
 			)
 		);
 	};
+
 	const renderCards = () => {
 		const cards =
-			mode === Mode.Carousel ? (
-				<PubEdgeListingCard
-					pubTitle={pubTitle}
-					pubEdge={active}
-					accentColor={accentColor}
-					showIcon={isolated}
-					inPubBody
-				>
-					{isolated && controls}
-				</PubEdgeListingCard>
-			) : (
-				pubEdges.map((pubEdge) => (
-					<PubEdgeListingCard
-						key={pubEdge.url}
-						pubTitle={pubTitle}
-						pubEdge={pubEdge}
-						accentColor={accentColor}
-						inPubBody
-					/>
-				))
-			);
+			mode === Mode.Carousel
+				? activeEdgeValue && (
+						<PubEdgeListingCard
+							pubTitle={activeEdgeValue.pubTitle}
+							pubEdge={activeEdgeValue.edge}
+							accentColor={accentColor}
+							showIcon={isolated}
+							viewingFromSibling={activeEdgeValue.isSibling}
+							isInboundEdge={activeEdgeValue.isInboundEdge}
+							inPubBody
+						>
+							{isolated && controls}
+						</PubEdgeListingCard>
+				  )
+				: filteredPubEdgeValues.map(({ isInboundEdge, edge, isSibling, pubTitle }) => (
+						<PubEdgeListingCard
+							key={edge.url}
+							pubTitle={pubTitle}
+							pubEdge={edge}
+							accentColor={accentColor}
+							viewingFromSibling={isSibling}
+							isInboundEdge={isInboundEdge}
+							inPubBody
+						/>
+				  ));
 
-		return !isolated && (!active || filteredPubEdges.length === 0) ? (
+		return !isolated && (!activeEdgeValue || filteredPubEdgeValues.length === 0) ? (
 			<NonIdealState title="No Results" icon="search" />
 		) : (
 			cards
 		);
 	};
 
+	if (initiallyRenderEmpty) {
+		return null;
+	}
+
 	return (
-		<div className="pub-edge-listing-component">
+		<div className={classNames('pub-edge-listing-component', className)}>
 			{renderContent()}
 			{renderCards()}
 		</div>

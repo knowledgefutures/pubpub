@@ -76,6 +76,7 @@ const DashboardEdges = (props) => {
 					pubEdges={outboundEdges}
 					onReorderEdges={canManageEdges && reorderOutboundEdges}
 					onRemoveEdge={canManageEdges && removeOutboundEdge}
+					isInbound={false}
 					renderEmptyState={() =>
 						showOutboundEmptyState && (
 							<NonIdealState
@@ -99,6 +100,7 @@ const DashboardEdges = (props) => {
 			<DashboardEdgesListing
 				pubEdges={inboundEdges}
 				onUpdateEdgeApproval={canManageEdges && updateInboundEdgeApproval}
+				isInbound={true}
 				renderEmptyState={() => (
 					<NonIdealState
 						icon="layout-auto"

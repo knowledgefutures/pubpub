@@ -1,5 +1,5 @@
 import { PubEdge } from 'server/models';
-import { getPubEdgeIncludes } from 'server/utils/queryHelpers/edgeOptions';
+import { getPubEdgeIncludes } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { createExternalPublication } from 'server/externalPublication/queries';
 import { findRankInRankedList } from 'utils/rank';
 

@@ -17,7 +17,7 @@ import {
 	includeUserModel,
 } from 'server/models';
 
-import { getPubEdgeIncludes } from './edgeOptions';
+import { getPubEdgeIncludes } from './pubEdgeOptions';
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
 export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity, getEdges }) => {

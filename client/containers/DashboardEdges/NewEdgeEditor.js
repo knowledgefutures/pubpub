@@ -127,6 +127,7 @@ const NewEdgeEditor = (props) => {
 		return (
 			<div className="new-edge-controls">
 				<PubEdgeListingCard
+					isInboundEdge={false}
 					pubEdge={newEdge}
 					pubTitle={pubData.title}
 					pubEdgeElement={

@@ -6,7 +6,12 @@ export { default as getCommunity } from './communityGet';
 export { default as getMembers, getMemberDataById } from './membersGet';
 export { default as getPage } from './pageGet';
 export { default as getPub } from './pubGet';
-export { enrichPubFirebaseDoc, enrichPubFirebaseToken, enrichPubCitations } from './pubEnrich';
+export {
+	enrichPubFirebaseDoc,
+	enrichPubFirebaseToken,
+	enrichPubCitations,
+	enrichAndSanitizePubEdges,
+} from './pubEnrich';
 export { default as sanitizePub } from './pubSanitize';
 export { default as getOverview } from './overviewGet';
 export { default as sanitizeOverview } from './overviewSanitize';

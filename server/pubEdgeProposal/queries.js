@@ -5,8 +5,8 @@ import fetch from 'node-fetch';
 import { parseUrl } from 'utils/urls';
 import { assignNotNull } from 'utils/objects';
 import { Community, Pub } from 'server/models';
+import { getOptionsForIncludedPub } from 'server/utils/queryHelpers/pubEdgeOptions';
 import { pubEdgeQueries, runQueries } from 'server/utils/scrape';
-import { getOptionsForIncludedPub } from 'server/utils/queryHelpers/edgeOptions';
 
 const ensureFullUrlForExternalPublication = (externalPublication, responseUrl) => {
 	if (externalPublication.url && /^\//.test(externalPublication.url)) {

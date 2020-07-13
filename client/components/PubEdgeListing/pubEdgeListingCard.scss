@@ -17,6 +17,9 @@
 		> .controls {
 			right: 4px;
 		}
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	> .relation,

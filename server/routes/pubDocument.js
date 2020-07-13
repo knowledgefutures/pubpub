@@ -16,6 +16,7 @@ import {
 	enrichPubFirebaseDoc,
 	enrichPubFirebaseToken,
 	enrichPubCitations,
+	enrichAndSanitizePubEdges,
 } from 'server/utils/queryHelpers';
 
 const renderPubDocument = (res, pubData, initialData) => {
@@ -62,6 +63,7 @@ const getEnrichedAndSanitizedPubData = async ({
 	pubData = await enrichPubFirebaseDoc(pubData, historyKey, branchType);
 	pubData = await enrichPubFirebaseToken(pubData, initialData);
 	pubData = await enrichPubCitations(pubData, initialData);
+	pubData = await enrichAndSanitizePubEdges(pubData, initialData);
 	return pubData;
 };
 

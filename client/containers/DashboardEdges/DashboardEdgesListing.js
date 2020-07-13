@@ -10,6 +10,7 @@ const propTypes = {
 	onRemoveEdge: PropTypes.func,
 	onReorderEdges: PropTypes.func,
 	onUpdateEdgeApproval: PropTypes.func,
+	isInbound: PropTypes.bool.isRequired,
 	pubEdges: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 	renderEmptyState: PropTypes.func.isRequired,
 };
@@ -38,6 +39,7 @@ const renderRemoveEdgeButton = (callback) => {
 
 const DashboardEdgesListing = (props) => {
 	const {
+		isInbound,
 		onRemoveEdge,
 		onReorderEdges,
 		onUpdateEdgeApproval,
@@ -68,7 +70,7 @@ const DashboardEdgesListing = (props) => {
 						<Icon icon="drag-handle-vertical" />
 					</div>
 				)}
-				<PubEdgeListingCard pubEdge={pubEdge} accentColor="#ccc">
+				<PubEdgeListingCard pubEdge={pubEdge} isInboundEdge={isInbound} accentColor="#ccc">
 					{onRemoveEdge && renderRemoveEdgeButton(() => onRemoveEdge(pubEdge))}
 					{onUpdateEdgeApproval && (
 						<Switch

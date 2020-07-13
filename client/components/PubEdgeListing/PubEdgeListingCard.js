@@ -16,6 +16,7 @@ const propTypes = {
 	accentColor: PropTypes.string,
 	children: PropTypes.node,
 	inPubBody: PropTypes.bool,
+	isInboundEdge: PropTypes.bool.isRequired,
 	pubEdge: pubEdgeType.isRequired,
 	pubEdgeElement: PropTypes.node,
 	pubTitle: PropTypes.string,
@@ -33,11 +34,25 @@ const defaultProps = {
 	viewingFromSibling: false,
 };
 
+const getIsViewingFromTarget = (pubEdge, viewingFromSibling, isInboundEdge) => {
+	const { pubIsParent } = pubEdge;
+	if (viewingFromSibling) {
+		// If the `pub` in the edge relationship is the parent, then the `targetPub` is the child.
+		// We want this edge to display the child -- in other words, we want to view from the
+		// `targetPub` towards the `pub` only if the `pub` is the child.
+		return !pubIsParent;
+	}
+	// If this edge is inbound, that means another Pub (relative to our vantage point) created it,
+	// which is to say that we're viewing it from the target.
+	return isInboundEdge;
+};
+
 const PubEdgeListingCard = (props) => {
 	const {
 		accentColor,
 		children,
 		inPubBody,
+		isInboundEdge,
 		pubEdge,
 		pubEdgeElement,
 		pubTitle,
@@ -45,10 +60,7 @@ const PubEdgeListingCard = (props) => {
 		viewingFromSibling,
 	} = props;
 	const { communityData } = usePageContext();
-	// If `pub` is defined on the edge, that probably means we queried it as an inboundEdge
-	// and we're looking at it from the perspective of the target Pub, rather than the Pub
-	// that created the edge.
-	const viewingFromTarget = !!pubEdge.pub;
+	const viewingFromTarget = getIsViewingFromTarget(pubEdge, viewingFromSibling, isInboundEdge);
 
 	const renderRelation = () => {
 		const { relationType, pubIsParent } = pubEdge;
@@ -58,14 +70,19 @@ const PubEdgeListingCard = (props) => {
 		if (relationDefinition) {
 			const { article, preposition, name } = relationDefinition;
 			const relationName = <span className="relation-name">{name}</span>;
-			const pubTitleNode = pubTitle && <span className="pub-title">{pubTitle}</span>;
 			if (viewingFromSibling) {
+				const titlePart = pubTitle && (
+					<>
+						{preposition} <span className="pub-title">{pubTitle}</span>
+					</>
+				);
 				return (
 					<>
-						Another {relationName} of {pubTitleNode || 'this Pub'}
+						Another {relationName} {titlePart}
 					</>
 				);
 			}
+			const pubTitleNode = pubTitle && <span className="pub-title">{pubTitle}</span>;
 			if (viewingFromParent) {
 				return (
 					<>

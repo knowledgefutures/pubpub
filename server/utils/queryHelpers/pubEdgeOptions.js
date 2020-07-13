@@ -1,5 +1,6 @@
 import {
 	Community,
+	CollectionPub,
 	ExternalPublication,
 	includeUserModel,
 	Pub,
@@ -10,7 +11,14 @@ import {
 export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 	return [
 		includeCommunity && { model: Community, as: 'community' },
-		{ model: Release, as: 'releases' },
+		{
+			model: CollectionPub,
+			as: 'collectionPubs',
+		},
+		{
+			model: Release,
+			as: 'releases',
+		},
 		{
 			model: PubAttribution,
 			as: 'attributions',

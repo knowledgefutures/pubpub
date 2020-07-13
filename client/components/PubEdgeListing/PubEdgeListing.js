@@ -178,7 +178,7 @@ const PubEdgeListing = (props) => {
 		return (
 			!isolated && (
 				<div className="top">
-					<h5 style={{ color: accentColor }}>Related Pubs</h5>
+					<h5 style={{ color: accentColor }}>Connections</h5>
 					{controls}
 				</div>
 			)

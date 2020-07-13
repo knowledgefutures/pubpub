@@ -129,7 +129,6 @@ const NewEdgeEditor = (props) => {
 				<PubEdgeListingCard
 					isInboundEdge={false}
 					pubEdge={newEdge}
-					pubTitle={pubData.title}
 					pubEdgeElement={
 						externalPublication && (
 							<PubEdgeEditor

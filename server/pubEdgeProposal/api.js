@@ -2,7 +2,11 @@ import app, { wrap } from 'server/server';
 import { parseUrl } from 'utils/urls';
 import { isDoi, extractDoiFromOrgUrl } from 'utils/crossref/parseDoi';
 
-import { getPubDataFromUrl, createPubEdgeProposalFromCrossrefDoi } from './queries';
+import {
+	createPubEdgeProposalFromArbitraryUrl,
+	createPubEdgeProposalFromCrossrefDoi,
+	getPubDataFromUrl,
+} from './queries';
 
 app.get(
 	'/api/pubEdgeProposal',
@@ -21,6 +25,8 @@ app.get(
 
 				if (doi) {
 					edge = await createPubEdgeProposalFromCrossrefDoi(doi);
+				} else {
+					edge = await createPubEdgeProposalFromArbitraryUrl(url);
 				}
 			}
 		} else if (isDoi(object)) {

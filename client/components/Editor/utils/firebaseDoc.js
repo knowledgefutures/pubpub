@@ -3,7 +3,7 @@ import { Step } from 'prosemirror-transform';
 import { uncompressStateJSON, uncompressStepJSON } from 'prosemirror-compress-pubpub';
 
 import { getEmptyDoc } from './doc';
-import { flattenKeyables, storeCheckpoint } from './firebase';
+import { flattenKeyables } from './firebase';
 
 const getMostRecentDocJson = async (firebaseRef, checkpointMap, versionNumber = null) => {
 	const hasVersionNumber = !!versionNumber || versionNumber === 0;
@@ -92,12 +92,7 @@ const getStepsJsonFromChanges = (changes) => {
 		.reduce((a, b) => [...a, ...b], []);
 };
 
-export const getFirebaseDoc = async (
-	firebaseRef,
-	prosemirrorSchema,
-	versionNumber = null,
-	updateOutdatedCheckpoint = false,
-) => {
+export const getFirebaseDoc = async (firebaseRef, prosemirrorSchema, versionNumber = null) => {
 	const checkpointMapSnapshot = await firebaseRef.child('checkpointMap').once('value');
 	const checkpointMap = checkpointMapSnapshot.val();
 
@@ -150,14 +145,9 @@ export const getFirebaseDoc = async (
 		return doc;
 	}, Node.fromJSON(prosemirrorSchema, checkpointDocJson));
 
-	// TODO(ian): Feels like we should not be doing this as a side effect.
-	const isCheckpointOutdated = !!stepsJson.length;
-	if (isCheckpointOutdated && !versionNumber && updateOutdatedCheckpoint) {
-		storeCheckpoint(firebaseRef, currentDoc, currentKey);
-	}
-
 	return {
 		doc: currentDoc.toJSON(),
+		docIsFromCheckpoint: stepsJson.length === 0,
 		key: currentKey,
 		timestamp: currentTimestamp,
 		checkpointMap: checkpointMap,

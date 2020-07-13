@@ -1,4 +1,5 @@
-import { flattenKeyables } from './firebase';
+import { flattenKeyables, storeCheckpoint } from './firebase';
+import { getFirebaseDoc } from './firebaseDoc';
 
 export const createBranch = (baseFirebaseRef, newFirebaseRef, versionNumber) => {
 	const getChanges = baseFirebaseRef
@@ -25,42 +26,43 @@ export const createBranch = (baseFirebaseRef, newFirebaseRef, versionNumber) => 
 	});
 };
 
-export const mergeBranch = (sourceFirebaseRef, destinationFirebaseRef) => {
-	/* TODO-BRANCH At the moment, this merge simply appends new changes in a merge */
-	/* It does not properly handle 'commonAncestor' or any similar */
-	/* concept which would be needed for multi-direction merging */
-	/* or multi-branch merge trees */
-	return destinationFirebaseRef
+export const mergeBranch = async (sourceFirebaseRef, destinationFirebaseRef, prosemirrorSchema) => {
+	const mergesSnapshot = await destinationFirebaseRef
 		.child('merges')
 		.orderByKey()
 		.startAt(String(0))
-		.once('value')
-		.then((mergesSnapshot) => {
-			const mergesSnapshotVal = mergesSnapshot.val() || {};
-			const numKeyables = Object.values(mergesSnapshotVal).reduce((prev, curr) => {
-				return prev + curr.length;
-			}, 0);
-			const nextMergeKey = Object.values(mergesSnapshotVal).length;
-			const getSourceChanges = sourceFirebaseRef
-				.child('changes')
-				.orderByKey()
-				.startAt(String(numKeyables))
-				.once('value');
-			return Promise.all([getSourceChanges, nextMergeKey]);
-		})
-		.then(([changesSnapshot, nextMergeKey]) => {
-			const changesSnapshotVal = changesSnapshot.val() || {};
-			if (!Object.values(changesSnapshotVal).length) {
-				/* If there are no new changes to add into a merge, simply return */
-				return null;
-			}
-			const setLastMergeKey = destinationFirebaseRef.child('lastMergeKey').set(nextMergeKey);
-			const appendMerge = destinationFirebaseRef
-				.child('merges')
-				.child(nextMergeKey)
-				.set(Object.values(changesSnapshotVal));
-			return Promise.all([setLastMergeKey, appendMerge]).then(() => {
-				return { mergeKey: nextMergeKey };
-			});
-		});
+		.once('value');
+
+	const mergesSnapshotVal = mergesSnapshot.val() || {};
+	const numKeyables = Object.values(mergesSnapshotVal).reduce(
+		(count, merge) => count + merge.length,
+		0,
+	);
+	const nextMergeKey = Object.values(mergesSnapshotVal).length;
+	const changesSnapshot = await sourceFirebaseRef
+		.child('changes')
+		.orderByKey()
+		.startAt(String(numKeyables))
+		.once('value');
+	const changesSnapshotVal = changesSnapshot.val();
+
+	const hasChanges = changesSnapshotVal && Object.values(changesSnapshotVal).length;
+	if (!hasChanges) {
+		return null;
+	}
+
+	const setLastMergeKey = destinationFirebaseRef.child('lastMergeKey').set(nextMergeKey);
+	const appendMerge = destinationFirebaseRef
+		.child('merges')
+		.child(nextMergeKey)
+		.set(Object.values(changesSnapshotVal));
+	await Promise.all([setLastMergeKey, appendMerge]);
+
+	const sourceKey = Object.keys(changesSnapshotVal)
+		.map((key) => parseInt(key, 10))
+		.reduce((a, b) => Math.max(a, b), -1);
+	const { doc } = await getFirebaseDoc(sourceFirebaseRef, prosemirrorSchema, sourceKey);
+	await storeCheckpoint(destinationFirebaseRef, doc, nextMergeKey);
+
+	return { mergeKey: nextMergeKey };
 };

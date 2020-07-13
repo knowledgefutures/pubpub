@@ -3,15 +3,15 @@ import { compressStateJSON, compressStepJSON } from 'prosemirror-compress-pubpub
 
 export const firebaseTimestamp = { '.sv': 'timestamp' };
 
-export const storeCheckpoint = async (firebaseRef, docNode, keyNumber) => {
+export const storeCheckpoint = async (firebaseRef, docJson, keyNumber) => {
 	const checkpoint = {
-		d: compressStateJSON({ doc: docNode.toJSON() }).d,
+		d: compressStateJSON({ doc: docJson }).d,
 		k: keyNumber,
 		t: firebaseTimestamp,
 	};
 	await Promise.all([
-		firebaseRef.child('checkpoint').set(checkpoint),
 		firebaseRef.child(`checkpoints/${keyNumber}`).set(checkpoint),
+		firebaseRef.child('checkpoint').set(checkpoint),
 		firebaseRef.child(`checkpointMap/${keyNumber}`).set(firebaseTimestamp),
 	]);
 };

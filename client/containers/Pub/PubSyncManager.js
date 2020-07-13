@@ -128,6 +128,10 @@ class PubSyncManager extends React.Component {
 		this.updatePubData = this.updatePubData.bind(this);
 		this.updateCollabData = this.updateCollabData.bind(this);
 		this.updateLocalData = this.updateLocalData.bind(this);
+		if (typeof window !== 'undefined') {
+			// eslint-disable-next-line no-underscore-dangle
+			window.__pubId__ = this.props.pubData.id;
+		}
 	}
 
 	componentDidMount() {

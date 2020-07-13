@@ -28,7 +28,11 @@ const DashboardReviews = (props) => {
 		return pub.reviews.length;
 	});
 	return (
-		<DashboardFrame className="dashboard-reviews-container" title="Reviews">
+		<DashboardFrame
+			className="dashboard-reviews-container"
+			title="Reviews"
+			details="Reviews allow members of your Community to request feedback on their Pubs and release them to the world."
+		>
 			{!pubsWithReviews.length && (
 				<Menu className="list-content">
 					<NonIdealState title="No Reviews Yet" icon="social-media" />

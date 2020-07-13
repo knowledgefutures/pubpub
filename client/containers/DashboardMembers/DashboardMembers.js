@@ -25,7 +25,7 @@ const DashboardMembers = (props) => {
 	});
 	const { scopeData } = usePageContext();
 	const {
-		elements: { activeTargetType },
+		elements: { activeTargetType, activeTargetName },
 		activePermissions: { canManage },
 	} = scopeData;
 
@@ -38,7 +38,11 @@ const DashboardMembers = (props) => {
 		(membersByType.organization.length && activeTargetType !== 'organization');
 
 	return (
-		<DashboardFrame className="dashboard-members-container" title="Members">
+		<DashboardFrame
+			className="dashboard-members-container"
+			title="Members"
+			details={`Invite and manage collaborators on this ${activeTargetName}.`}
+		>
 			{canManage && (
 				<SettingsSection title="Add Member">
 					<ControlGroup className="add-member-controls">

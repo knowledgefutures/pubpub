@@ -69,6 +69,7 @@ const DashboardPages = () => {
 		<DashboardFrame
 			className="dashboard-pages-container"
 			title="Pages"
+			details="Create and manage Pages to give stucture to your Community."
 			controls={renderControls()}
 		>
 			<DashboardRowListing>

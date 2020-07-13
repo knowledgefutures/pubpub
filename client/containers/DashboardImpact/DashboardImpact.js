@@ -11,6 +11,8 @@ import {
 } from '@blueprintjs/core';
 import IframeResizer from 'iframe-resizer-react';
 
+import { DashboardFrame } from 'components';
+
 require('./dashboardImpact.scss');
 
 const propTypes = {
@@ -22,7 +24,7 @@ const DashboardImpact = (props) => {
 	const { baseToken, benchmarkToken } = impactData;
 	const { scopeData } = usePageContext();
 	const {
-		elements: { activeTargetType, activeTarget },
+		elements: { activeTargetType, activeTargetName, activeTarget },
 		activePermissions: { canView },
 	} = scopeData;
 	const displayDataWarning = activeTarget.createdAt < '2020-04-29';
@@ -34,8 +36,11 @@ const DashboardImpact = (props) => {
 		return width < 960 ? 45 : 61;
 	};
 	return (
-		<div className="dashboard-impact-container">
-			<h2 className="dashboard-content-header">Impact</h2>
+		<DashboardFrame
+			title="Impact"
+			className="dashboard-impact-container"
+			details={`Learn more about who your ${activeTargetName} is reaching.`}
+		>
 			<section>
 				<h3 id="historical_benchmark" className="absolute-header">
 					Analytics
@@ -141,7 +146,7 @@ const DashboardImpact = (props) => {
 					</React.Fragment>
 				)}
 			</section>
-		</div>
+		</DashboardFrame>
 	);
 };
 

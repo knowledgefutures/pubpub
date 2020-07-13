@@ -122,10 +122,12 @@ export const enrichAndSanitizePubEdges = async (pubData, initialData) => {
 				{
 					pubIsParent: false,
 					targetPubId: { [Op.in]: parentPubIds },
+					approvedByTarget: true,
 				},
 				{
 					pubIsParent: true,
 					pubId: { [Op.in]: parentPubIds },
+					approvedByTarget: true,
 				},
 			],
 		},

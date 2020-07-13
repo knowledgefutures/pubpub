@@ -29,7 +29,7 @@ app.get(
 			const initialData = await getInitialData(req, true);
 			const [overviewData, pubData] = await Promise.all([
 				getOverviewForEdges(initialData),
-				getPub(pubSlug, initialData.communityData.id),
+				getPub(pubSlug, initialData.communityData.id, { getEdges: 'all' }),
 			]);
 			return renderToNodeStream(
 				res,

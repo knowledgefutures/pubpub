@@ -20,7 +20,22 @@ const ensureFullUrlForExternalPublication = (externalPublication, responseUrl) =
 };
 
 export const createPubEdgeProposalFromCrossrefDoi = async (doi) => {
+	const externalPublication = await createExternalPublicationFromCrossrefDoi(doi);
+
+	return externalPublication
+		? {
+				externalPublication: externalPublication,
+		  }
+		: null;
+};
+
+export const createExternalPublicationFromCrossrefDoi = async (doi) => {
 	const response = await fetch(`https://api.crossref.org/works/${doi}`);
+
+	if (!response.ok) {
+		return null;
+	}
+
 	const { message } = await response.json();
 	const {
 		abstract,
@@ -32,32 +47,23 @@ export const createPubEdgeProposalFromCrossrefDoi = async (doi) => {
 		'published-print': publishedPrint,
 	} = message;
 	const contributors = author ? author.map(({ given, family }) => `${given} ${family}`) : [];
-	const dateParts = (publishedOnline || publishedPrint)['date-parts'];
-	const publicationDate = new Date(dateParts);
+
+	let publicationDate = null;
+
+	const date = publishedOnline || publishedPrint;
+
+	if (date) {
+		publicationDate = new Date(date['date-parts']);
+	}
 
 	return {
-		externalPublication: {
-			avatar: null,
-			contributors: contributors,
-			description: abstract,
-			doi: DOI,
-			publicationDate: publicationDate,
-			title: Array.isArray(title) ? title[0] : title,
-			url: URL,
-		},
-	};
-};
-
-const mergeProposalWithCrossrefProposal = async (edge, doi) => {
-	const proposalFromDoi = await createPubEdgeProposalFromCrossrefDoi(doi);
-
-	return {
-		...edge,
-		externalPublication: assignNotNull(
-			{},
-			edge.externalPublication,
-			proposalFromDoi.externalPublication,
-		),
+		avatar: null,
+		contributors: contributors,
+		description: abstract,
+		doi: DOI,
+		publicationDate: publicationDate,
+		title: Array.isArray(title) ? title[0] : title,
+		url: URL,
 	};
 };
 
@@ -87,20 +93,38 @@ export const createExternalPublicationFromMicrodata = ($) => {
 
 export const createPubEdgeProposalFromArbitraryUrl = async (url) => {
 	const response = await fetch(url);
+
+	if (!response.ok) {
+		return null;
+	}
+
 	const $ = cheerio.load(await response.text());
 	const externalPublicationFromSelectors = runQueries($, pubEdgeQueries);
 	const externalPublicationFromMicrodata = createExternalPublicationFromMicrodata($);
-	const externalPublication = assignNotNull(
+
+	let externalPublication = assignNotNull(
 		{},
 		externalPublicationFromMicrodata,
 		externalPublicationFromSelectors,
 	);
-	const edge = {
-		externalPublication: ensureFullUrlForExternalPublication(externalPublication, response.url),
-	};
+
 	const { doi } = externalPublication;
 
-	return doi ? mergeProposalWithCrossrefProposal(edge, doi) : edge;
+	if (doi) {
+		const externalPublicationFromCrossrefDoi = await createExternalPublicationFromCrossrefDoi(
+			doi,
+		);
+
+		externalPublication = assignNotNull(
+			{},
+			externalPublicationFromCrossrefDoi,
+			externalPublication,
+		);
+	}
+
+	return {
+		externalPublication: ensureFullUrlForExternalPublication(externalPublication, response.url),
+	};
 };
 
 export const getPubDataFromUrl = async (url) => {

@@ -13,6 +13,7 @@ app.get(
 	wrap(async (req, res) => {
 		const { object } = req.query;
 		const url = parseUrl(object);
+
 		let edge = null;
 
 		if (url) {

@@ -20,7 +20,6 @@ const propTypes = {
 		inboundEdges: PropTypes.shape(pubEdgeType).isRequired,
 		outboundEdges: PropTypes.shape(pubEdgeType).isRequired,
 		siblingEdges: PropTypes.shape(pubEdgeType).isRequired,
-		title: PropTypes.string,
 	}).isRequired,
 	initialMode: PropTypes.string,
 	initialFilters: PropTypes.arrayOf(PropTypes.string),
@@ -190,7 +189,6 @@ const PubEdgeListing = (props) => {
 			mode === Mode.Carousel
 				? activeEdgeValue && (
 						<PubEdgeListingCard
-							pubTitle={activeEdgeValue.pubTitle}
 							pubEdge={activeEdgeValue.edge}
 							accentColor={accentColor}
 							showIcon={isolated}
@@ -201,10 +199,9 @@ const PubEdgeListing = (props) => {
 							{isolated && controls}
 						</PubEdgeListingCard>
 				  )
-				: filteredPubEdgeValues.map(({ isInboundEdge, edge, isSibling, pubTitle }) => (
+				: filteredPubEdgeValues.map(({ isInboundEdge, edge, isSibling }) => (
 						<PubEdgeListingCard
 							key={edge.url}
-							pubTitle={pubTitle}
 							pubEdge={edge}
 							accentColor={accentColor}
 							viewingFromSibling={isSibling}

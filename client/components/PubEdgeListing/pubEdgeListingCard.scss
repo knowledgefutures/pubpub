@@ -5,18 +5,25 @@
 	border-width: 1px;
 	margin-bottom: 24px;
 	position: relative;
-	transition: filter 100ms linear;
+	transition: all 100ms linear;
 
 	&.in-pub-body {
-		filter: grayscale(100%);
+		> * {
+			filter: grayscale(100%);
+		}
+
 		&:hover,
 		&:active,
 		&:focus {
-			filter: grayscale(0%);
+			> * {
+				filter: grayscale(0%);
+			}
 		}
+
 		> .controls {
 			right: 4px;
 		}
+
 		&:last-child {
 			margin-bottom: 0;
 		}
@@ -39,9 +46,9 @@
 
 	> .relation {
 		left: calc(24px - 8px);
+		filter: grayscale(0%);
 
 		.relation-name {
-			border-bottom: 1px dotted;
 			font-weight: 600;
 		}
 
@@ -52,7 +59,7 @@
 		.drop-return {
 			margin-right: 4px;
 			position: relative;
-			bottom: 3px;
+			bottom: px;
 			transform: rotateY(180deg);
 		}
 	}

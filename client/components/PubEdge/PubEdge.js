@@ -109,41 +109,52 @@ const PubEdge = (props) => {
 		onKeyDown: handleClick,
 		role: 'link',
 		tabIndex: '0',
+		alt: title,
 	};
 
 	const maybeLink = (element, restProps = {}) => {
 		if (actsLikeLink) {
-			return element;
+			return (
+				<span {...restProps} className={classNames(restProps.className, 'link')}>
+					{element}
+				</span>
+			);
 		}
-		return (
-			<a href={url} {...restProps}>
-				{element}
-			</a>
-		);
+
+		return <a href={url}>{element}</a>;
 	};
 
-	return (
+	const maybeWrapWithLink = (element, restProps = {}) => {
+		if (actsLikeLink) {
+			return (
+				<a href={url} {...restProps}>
+					{element}
+				</a>
+			);
+		}
+
+		return <div {...restProps}>{element}</div>;
+	};
+
+	return maybeWrapWithLink(
 		<PubEdgeLayout
-			outerElementProps={linkLikeProps || {}}
-			className={classNames('pub-edge-component', actsLikeLink && 'acts-like-link')}
 			topLeftElement={avatar && maybeLink(<img src={avatar} alt="" />, { tabIndex: '-1' })}
-			titleElement={maybeLink(title)}
+			titleElement={maybeLink(title, linkLikeProps)}
 			bylineElement={<Byline contributors={contributors} />}
 			metadataElements={[
 				description && (
 					<Button
-						as="a"
+						as={actsLikeLink ? 'span' : 'a'}
 						onClick={handleToggleDescriptionClick}
 						onKeyDown={handleToggleDescriptionClick}
 						tabIndex="0"
+						className="link"
 					>
 						{open ? 'Hide Description' : 'Show Description'}
 					</Button>
 				),
 				<>Published on {publishedAt}</>,
-				<a href={url} alt={title} tabIndex="0">
-					{url}
-				</a>,
+				maybeLink(url, linkLikeProps),
 			]}
 			detailsElement={
 				<details open={open}>
@@ -152,7 +163,8 @@ const PubEdge = (props) => {
 					<p>{description}</p>
 				</details>
 			}
-		/>
+		/>,
+		{ className: classNames('pub-edge-component', actsLikeLink && 'acts-like-link') },
 	);
 };
 

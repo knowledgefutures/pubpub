@@ -9,7 +9,7 @@
 	max-width: 1200px;
 
 	.title-container {
-		font-size: 1.6em;
+		font-size: 18px;
 		font-weight: 400;
 		letter-spacing: 1px;
 		margin-bottom: 8px;
@@ -76,15 +76,15 @@
 		display: flex;
 		flex-wrap: wrap;
 		list-style-type: none;
-		margin: 0;
+		margin: 5px 0 0 0;
 		padding: 0;
 
 		li {
 			display: flex;
 			align-items: center;
 			flex: 0 0 auto;
-			font-family: $base-font;
-			font-size: 0.8em;
+			font-family: $header-font;
+			font-size: 12px;
 			font-weight: 300;
 		}
 
@@ -129,6 +129,24 @@
 }
 
 .pub-edge-component {
+	display: flex;
+
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		text-decoration: none;
+	}
+
+	.link {
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
+	}
+
 	&.acts-like-link {
 		cursor: pointer;
 		&:hover,
@@ -146,7 +164,7 @@
 	}
 
 	.title-container {
-		line-height: 21px;
+		line-height: 24px;
 	}
 
 	details {

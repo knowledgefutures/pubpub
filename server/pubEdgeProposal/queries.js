@@ -19,16 +19,6 @@ const ensureFullUrlForExternalPublication = (externalPublication, responseUrl) =
 	return externalPublication;
 };
 
-export const createPubEdgeProposalFromCrossrefDoi = async (doi) => {
-	const externalPublication = await createExternalPublicationFromCrossrefDoi(doi);
-
-	return externalPublication
-		? {
-				externalPublication: externalPublication,
-		  }
-		: null;
-};
-
 export const createExternalPublicationFromCrossrefDoi = async (doi) => {
 	const response = await fetch(`https://api.crossref.org/works/${doi}`);
 
@@ -65,6 +55,16 @@ export const createExternalPublicationFromCrossrefDoi = async (doi) => {
 		title: Array.isArray(title) ? title[0] : title,
 		url: URL,
 	};
+};
+
+export const createPubEdgeProposalFromCrossrefDoi = async (doi) => {
+	const externalPublication = await createExternalPublicationFromCrossrefDoi(doi);
+
+	return externalPublication
+		? {
+				externalPublication: externalPublication,
+		  }
+		: null;
 };
 
 export const createExternalPublicationFromMicrodata = ($) => {

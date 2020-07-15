@@ -1,6 +1,6 @@
 import { Icon } from '@blueprintjs/core';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import { PubEdge } from 'components';
@@ -61,6 +61,10 @@ const PubEdgeListingCard = (props) => {
 	} = props;
 	const { communityData } = usePageContext();
 	const viewingFromTarget = getIsViewingFromTarget(pubEdge, viewingFromSibling, isInboundEdge);
+	const [hover, setHover] = useState(false);
+	const handleMouseEnter = useCallback(() => setHover(true), []);
+	const handleMouseLeave = useCallback(() => setHover(false), []);
+	const style = hover ? { borderColor: accentColor || communityData.accentColorDark } : {};
 
 	const renderRelation = () => {
 		const { relationType, pubIsParent } = pubEdge;
@@ -103,7 +107,11 @@ const PubEdgeListingCard = (props) => {
 	return (
 		<div
 			className={classNames('pub-edge-listing-card-component', inPubBody && 'in-pub-body')}
-			style={{ borderColor: accentColor || communityData.accentColorDark }}
+			style={style}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
+			onFocus={handleMouseEnter}
+			onBlur={handleMouseLeave}
 		>
 			{children && <div className="controls">{children}</div>}
 			<div className={classNames('relation', showIcon && 'show-icon')}>

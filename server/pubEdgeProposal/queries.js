@@ -9,14 +9,15 @@ import { getOptionsForIncludedPub } from 'server/utils/queryHelpers/pubEdgeOptio
 import { pubEdgeQueries, runQueries } from 'server/utils/scrape';
 
 const ensureFullUrlForExternalPublication = (externalPublication, responseUrl) => {
+	const { origin } = parseUrl(responseUrl);
+
 	if (externalPublication.url && /^\//.test(externalPublication.url)) {
-		const { origin } = parseUrl(responseUrl);
 		const url = new URL(externalPublication.url, origin);
 
 		return { ...externalPublication, url: url };
+	} else {
+		return { ...externalPublication, url: responseUrl.toString() };
 	}
-
-	return externalPublication;
 };
 
 export const createExternalPublicationFromCrossrefDoi = async (doi) => {

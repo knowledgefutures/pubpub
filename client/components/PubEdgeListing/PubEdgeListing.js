@@ -154,6 +154,7 @@ const PubEdgeListing = (props) => {
 		[],
 	);
 
+	const disableCarouselControls = filteredPubEdgeValues.length === 1;
 	const showControls =
 		collatedPubEdgeValues.length > 1 && (!isolated || filteredPubEdgeValues.length > 1);
 
@@ -162,14 +163,15 @@ const PubEdgeListing = (props) => {
 			<PubEdgeListingCounter index={index} count={length} />
 			<PubEdgeListingControls
 				accentColor={accentColor}
+				carouselControlsDisabled={disableCarouselControls}
 				filters={filters}
 				mode={mode}
-				showFilterMenu={!isolated}
-				onBackClick={back}
-				onNextClick={next}
-				onFilterToggle={onFilterToggle}
 				onAllFilterToggle={onAllFilterToggle}
+				onBackClick={back}
+				onFilterToggle={onFilterToggle}
 				onModeChange={setMode}
+				onNextClick={next}
+				showFilterMenu={!isolated}
 			/>
 		</>
 	);

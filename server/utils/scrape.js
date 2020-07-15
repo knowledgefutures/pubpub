@@ -59,8 +59,8 @@ const queryDocument = (config, $) => {
 export const pubEdgeQueries = {
 	avatar: [
 		// OGP
-		'meta[property*="og:image:secure_url" i]',
-		'meta[property*="og:image" i]',
+		'meta[property="og:image:secure_url"]',
+		'meta[property="og:image"]',
 		// Twitter
 		'meta[name*="twitter:image" i]',
 		// Best guess
@@ -73,14 +73,14 @@ export const pubEdgeQueries = {
 			multiple: true,
 		},
 		// Highwire/Google Scholar
-		{ selector: 'meta[name*="citation_author" i]', multiple: true },
+		{ selector: 'meta[name="citation_author"]', multiple: true },
 		// OGP
-		{ selector: 'meta[property*="article:author" i]', multiple: true },
+		{ selector: 'meta[property="article:author"]', multiple: true },
 		// Web standard
-		{ selector: 'meta[name*="author" i]', multiple: true },
+		{ selector: 'meta[name="author"]', multiple: true },
 		// Best guess
 		{
-			selector: '[rel*="author" i], .author',
+			selector: '[rel="author"], .author',
 			multiple: true,
 		},
 	],
@@ -88,17 +88,17 @@ export const pubEdgeQueries = {
 		// DC
 		{ selector: 'meta[name*="dc.identifier" i]', process: doiProcessor },
 		// Highwire/Google Scholar
-		{ selector: 'meta[name*="citation_doi" i]', process: doiProcessor },
+		{ selector: 'meta[name="citation_doi"]', process: doiProcessor },
 		// Prism
-		{ selector: 'meta[name*="prism.doi" i]', process: doiProcessor },
+		{ selector: 'meta[name="prism.doi"]', process: doiProcessor },
 		// Web standard
-		{ selector: 'meta[name*="doi" i]', process: doiProcessor },
+		{ selector: 'meta[name="doi"]', process: doiProcessor },
 	],
 	url: [
 		// Highwire/Google Scholar
-		'meta[name*="citation_public_url" i]',
+		'meta[name="citation_public_url"]',
 		// OG
-		'meta[property*="og:url" i]',
+		'meta[property="og:url"]',
 		// Web standard
 		{ selector: 'link[rel="canonical"]', process: ($el) => $el.attr('href') },
 	],
@@ -106,12 +106,12 @@ export const pubEdgeQueries = {
 		// DC
 		{ selector: 'meta[name*="dc.date" i]', process: dateProcessor },
 		// Highwire/Google Scholar
-		{ selector: 'meta[name*="citation_publication_date" i]', process: dateProcessor },
+		{ selector: 'meta[name="citation_publication_date"]', process: dateProcessor },
 		// OGP
-		{ selector: 'meta[property*="article:published_time" i]', process: dateProcessor },
+		{ selector: 'meta[property="article:published_time"]', process: dateProcessor },
 		// Prism
 		{
-			selector: 'meta[name*="prism.publicationDate" i]',
+			selector: 'meta[name="prism.publicationDate"]',
 			process: dateProcessor,
 		},
 		// Best guess
@@ -124,21 +124,21 @@ export const pubEdgeQueries = {
 		// DC
 		'meta[name*="dc.title" i]',
 		// Highwire/Google Scholar
-		'meta[name*="citation_title" i]',
+		'meta[name="citation_title"]',
 		// OGP
-		'meta[property*="og:title" i]',
+		'meta[property="og:title"]',
 		// Web standard
 		'title',
 	],
 	description: [
 		// Break our convention here a little by searching for an abstract first
-		'meta[name*="citation_abstract" i]',
+		'meta[name="citation_abstract"]',
 		// DC
 		'meta[name*="dc.description" i]',
 		// OGP
-		'meta[property*="og:description" i]',
+		'meta[property="og:description"]',
 		// Web standard
-		'meta[name*="description" i]',
+		'meta[name="description"]',
 	],
 };
 

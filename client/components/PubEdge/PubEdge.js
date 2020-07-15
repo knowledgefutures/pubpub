@@ -109,13 +109,12 @@ const PubEdge = (props) => {
 		onKeyDown: handleClick,
 		role: 'link',
 		tabIndex: '0',
-		alt: title,
 	};
 
 	const maybeLink = (element, restProps = {}) => {
 		if (actsLikeLink) {
 			return (
-				<span {...restProps} className={classNames(restProps.className, 'link')}>
+				<span {...restProps} className="link">
 					{element}
 				</span>
 			);

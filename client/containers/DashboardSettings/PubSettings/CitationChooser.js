@@ -41,7 +41,7 @@ const CitationChooser = (props) => {
 		{ key: 'apa-7', title: 'APA 7th Edition' },
 		{ key: 'cell', title: 'Cell' },
 		{ key: 'chicago', title: 'Chicago' },
-		{ key: 'harvard', title: 'Havard' },
+		{ key: 'harvard', title: 'Harvard' },
 		{ key: 'elife', title: 'ELife' },
 		{ key: 'frontiers', title: 'Frontiers' },
 		{ key: 'mla', title: 'MLA' },

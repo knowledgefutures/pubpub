@@ -196,18 +196,20 @@ const PubEdgeListing = (props) => {
 							showIcon={isolated}
 							viewingFromSibling={activeEdgeValue.isSibling}
 							isInboundEdge={activeEdgeValue.isInboundEdge}
+							pubTitle={activeEdgeValue.pubTitle}
 							inPubBody
 						>
 							{isolated && controls}
 						</PubEdgeListingCard>
 				  )
-				: filteredPubEdgeValues.map(({ isInboundEdge, edge, isSibling }) => (
+				: filteredPubEdgeValues.map(({ isInboundEdge, edge, isSibling, pubTitle }) => (
 						<PubEdgeListingCard
 							key={edge.url}
 							pubEdge={edge}
 							accentColor={accentColor}
 							viewingFromSibling={isSibling}
 							isInboundEdge={isInboundEdge}
+							pubTitle={pubTitle}
 							inPubBody
 						/>
 				  ));

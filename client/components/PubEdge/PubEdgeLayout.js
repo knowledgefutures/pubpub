@@ -15,6 +15,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+	className: null,
 	outerElementProps: {},
 	topLeftElement: null,
 };

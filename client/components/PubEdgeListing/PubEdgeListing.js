@@ -113,7 +113,7 @@ const PubEdgeListing = (props) => {
 		isolated,
 		pubData,
 	} = props;
-	let [index, setIndex] = useState(0);
+	const [index, setIndex] = useState(0);
 	const [mode, setMode] = useState(initialMode);
 	const [filters, setFilters] = useState(initialFilters);
 

@@ -1,8 +1,19 @@
-export const defaultProcessor = ($el) => $el.attr('content') || $el.text().trim();
-export const defaultMultipleProcessor = ($el, $) =>
-	$el.toArray().map((el) => defaultProcessor($(el)));
+const defaultProcessor = ($el) => $el.attr('content') || $el.text().trim();
+const defaultMultipleProcessor = ($el, $) => $el.toArray().map((el) => defaultProcessor($(el)));
 
-export const queryDocument = (config, $) => {
+const doiProcessor = ($el) => {
+	const doi = defaultProcessor($el);
+
+	if (!doi) {
+		return null;
+	}
+
+	return doi.replace(/^doi:/g, '');
+};
+
+const dateProcessor = ($el) => new Date(defaultProcessor($el));
+
+const queryDocument = (config, $) => {
 	let result;
 
 	// Execute queries in order
@@ -44,53 +55,90 @@ export const queryDocument = (config, $) => {
 	return result || null;
 };
 
+// In general, the order of preference is DC > highwire/google scholar > OGP > web standards > best guess
 export const pubEdgeQueries = {
 	avatar: [
+		// OGP
 		'meta[property="og:image:secure_url"]',
 		'meta[property="og:image"]',
-		'meta[name="twitter:image"]',
+		// Twitter
+		'meta[name*="twitter:image" i]',
+		// Best guess
 		{ selector: 'article img, .abstract img', process: ($el) => $el.attr('src') },
 	],
 	contributors: [
-		{ selector: 'meta[name="author"]', multiple: true },
-		{ selector: 'meta[property="article:author"]', multiple: true },
+		// DC
 		{
-			selector: 'meta[name="dc.creator"]',
+			selector: 'meta[name*="dc.creator" i]',
 			multiple: true,
 		},
+		// Highwire/Google Scholar
+		{ selector: 'meta[name="citation_author"]', multiple: true },
+		// OGP
+		{ selector: 'meta[property="article:author"]', multiple: true },
+		// Web standard
+		{ selector: 'meta[name="author"]', multiple: true },
+		// Best guess
 		{
 			selector: '[rel="author"], .author',
 			multiple: true,
 		},
 	],
 	doi: [
-		'meta[name="doi"]',
-		{
-			selector: 'meta[name="prism.doi"], meta[name="dc.identifier"]',
-			process: ($el) => $el.attr('content').split('doi:')[1] || null,
-		},
+		// DC
+		{ selector: 'meta[name*="dc.identifier" i]', process: doiProcessor },
+		// Highwire/Google Scholar
+		{ selector: 'meta[name="citation_doi"]', process: doiProcessor },
+		// Prism
+		{ selector: 'meta[name="prism.doi"]', process: doiProcessor },
+		// Web standard
+		{ selector: 'meta[name="doi"]', process: doiProcessor },
 	],
-	url: ['meta[property="og:url"]'],
+	url: [
+		// Highwire/Google Scholar
+		'meta[name="citation_public_url"]',
+		// OG
+		'meta[property="og:url"]',
+		// Web standard
+		{ selector: 'link[rel="canonical"]', process: ($el) => $el.attr('href') },
+	],
 	publicationDate: [
+		// DC
+		{ selector: 'meta[name*="dc.date" i]', process: dateProcessor },
+		// Highwire/Google Scholar
+		{ selector: 'meta[name="citation_publication_date"]', process: dateProcessor },
+		// OGP
+		{ selector: 'meta[property="article:published_time"]', process: dateProcessor },
+		// Prism
 		{
-			selector:
-				'meta[property="article:published_time"], meta[name="dc.date"], meta[name="prism.publicationDate"]',
-			process: ($el) => new Date(defaultProcessor($el)),
+			selector: 'meta[name="prism.publicationDate"]',
+			process: dateProcessor,
 		},
+		// Best guess
 		{
-			selector: 'time',
-			process: ($el) => new Date($el.attr('datetime')),
-		},
-		{
-			selector: 'time, .date',
-			process: ($el) => new Date(defaultProcessor($el)),
+			selector: 'article time, article .date',
+			process: ($el) => new Date(dateProcessor($el) || $el.attr('datetime')),
 		},
 	],
-	title: ['meta[property="og:title"]', 'meta[name="dc.title"]'],
+	title: [
+		// DC
+		'meta[name*="dc.title" i]',
+		// Highwire/Google Scholar
+		'meta[name="citation_title"]',
+		// OGP
+		'meta[property="og:title"]',
+		// Web standard
+		'title',
+	],
 	description: [
-		'meta[name="description"]',
+		// Break our convention here a little by searching for an abstract first
+		'meta[name="citation_abstract"]',
+		// DC
+		'meta[name*="dc.description" i]',
+		// OGP
 		'meta[property="og:description"]',
-		'meta[name="dc.description"]',
+		// Web standard
+		'meta[name="description"]',
 	],
 };
 

@@ -18,15 +18,18 @@ const propTypes = {
 	onModeChange: PropTypes.func.isRequired,
 	onFilterToggle: PropTypes.func.isRequired,
 	onAllFilterToggle: PropTypes.func.isRequired,
+	carouselControlsDisabled: PropTypes.bool,
 };
 
 const defaultProps = {
 	showFilterMenu: false,
+	carouselControlsDisabled: false,
 };
 
 const PubEdgeListingControls = (props) => {
 	const {
 		accentColor,
+		carouselControlsDisabled,
 		filters,
 		mode,
 		showFilterMenu,
@@ -75,6 +78,8 @@ const PubEdgeListingControls = (props) => {
 		</div>
 	);
 
+	const carouselControlColor = carouselControlsDisabled ? '#a1a1a1' : accentColor;
+
 	return (
 		<nav className="pub-edge-listing-controls-component">
 			<span className="filters">
@@ -83,11 +88,21 @@ const PubEdgeListingControls = (props) => {
 			<ButtonGroup minimal>
 				{mode === Mode.Carousel && (
 					<>
-						<Button onClick={onBackClick} minimal small>
-							<Icon icon="circle-arrow-left" color={accentColor} />
+						<Button
+							onClick={onBackClick}
+							minimal
+							small
+							disabled={carouselControlsDisabled}
+						>
+							<Icon icon="circle-arrow-left" color={carouselControlColor} />
 						</Button>
-						<Button onClick={onNextClick} minimal small>
-							<Icon icon="circle-arrow-right" color={accentColor} />
+						<Button
+							onClick={onNextClick}
+							minimal
+							small
+							disabled={carouselControlsDisabled}
+						>
+							<Icon icon="circle-arrow-right" color={carouselControlColor} />
 						</Button>
 					</>
 				)}

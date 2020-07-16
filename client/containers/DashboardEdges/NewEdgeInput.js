@@ -127,7 +127,7 @@ const NewEdgeInput = (props) => {
 			items={suggestedItems}
 			inputProps={{
 				large: true,
-				placeholder: 'Search to add Pubs from this Community, or enter a URL',
+				placeholder: 'Search to add Pubs from this Community, or enter a URL or DOI',
 			}}
 			inputValueRenderer={renderInputValue}
 			onQueryChange={(query) => setQueryValue(query.trim())}

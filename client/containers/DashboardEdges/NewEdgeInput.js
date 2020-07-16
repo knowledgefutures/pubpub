@@ -81,7 +81,7 @@ const NewEdgeInput = (props) => {
 	}, [availablePubs, throttledQueryValue, usedPubIds]);
 
 	const renderItem = (item, { handleClick, modifiers }) => {
-		const { externalPublication, targetPub, indeterminate, createNewFromUrl } = item;
+		const { externalPublication, targetPub, indeterminate } = item;
 		if (indeterminate) {
 			return indeterminateMenuItem;
 		}
@@ -98,12 +98,12 @@ const NewEdgeInput = (props) => {
 				/>
 			);
 		}
-		if (externalPublication) {
+		if (externalPublication && externalPublication.title) {
 			const { title, contributors, avatar } = externalPublication;
 			return (
 				<PubMenuItem
-					key={title || 'external-publication'}
-					title={title || 'Title not found'}
+					key={title}
+					title={title}
 					contributors={contributors}
 					image={avatar}
 					onClick={handleClick}
@@ -112,16 +112,13 @@ const NewEdgeInput = (props) => {
 				/>
 			);
 		}
-		if (createNewFromUrl) {
-			return (
-				<MenuItem
-					key="from-url"
-					onClick={handleClick}
-					text="Create a connection for this URL"
-				/>
-			);
-		}
-		return null;
+		return (
+			<MenuItem
+				key="from-url"
+				onClick={handleClick}
+				text="Create a connection for this URL"
+			/>
+		);
 	};
 
 	return (

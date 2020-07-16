@@ -96,7 +96,9 @@ const main = async () => {
 			yes: yes,
 			dryRun: dryRun,
 		});
-		await writePlanToFile(receipt, plan);
+		if (plan) {
+			await writePlanToFile(receipt, plan);
+		}
 	}
 	if (discard) {
 		if (!receipt) {

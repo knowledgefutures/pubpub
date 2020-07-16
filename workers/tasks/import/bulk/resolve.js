@@ -71,7 +71,9 @@ export const resolveImportPlan = async ({ importPlan, actor, parents }) => {
 			resolvedValues.push(resolved);
 			currentParents = { ...currentParents, ...nextParents };
 		} catch (error) {
-			resolvedValues.push({ resolved: {}, error: error });
+			// eslint-disable-next-line no-console
+			console.log(error.stack);
+			resolvedValues.push({ resolved: {}, error: error && error.stack });
 		}
 	}
 

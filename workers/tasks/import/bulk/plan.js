@@ -326,7 +326,11 @@ export const getCreatedItemsFromPlan = (importPlan) => {
 					communities.push(community);
 				}
 				if (collection) {
-					collections.push(collection);
+					if (Array.isArray(collection)) {
+						collections.push(...collection);
+					} else {
+						collections.push(collection);
+					}
 				}
 				if (pub) {
 					pubs.push(pub);

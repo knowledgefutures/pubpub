@@ -3,14 +3,16 @@ import fs from 'fs-extra';
 import path from 'path';
 import YAML from 'yaml';
 import tmp from 'tmp-promise';
+import { Op } from 'sequelize';
 import { Node, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
 
 import { buildSchema, createFirebaseChange } from 'components/Editor/utils';
 import { getBranchRef } from 'server/utils/firebaseAdmin';
 import { createPub as createPubQuery } from 'server/pub/queries';
+import { createCollection } from 'server/collection/queries';
 import { createCollectionPub } from 'server/collectionPub/queries';
-import { Branch, PubAttribution } from 'server/models';
+import { Branch, Collection, PubAttribution } from 'server/models';
 import { extensionToPandocFormat, bibliographyFormats } from 'utils/import/formats';
 
 import { getFullPathsInDir, extensionFor } from '../../util';
@@ -23,16 +25,18 @@ import { getAttributionAttributes, cloneWithKeys } from './util';
 
 const pubAttributesFromMetadata = ['title', 'description', 'slug', 'customPublishedAt', 'metadata'];
 const pubAttributesFromDirective = [
-	'title',
-	'description',
-	'slug',
-	'headerStyle',
-	'headerBackgroundColor',
-	'customPublishedAt',
-	'doi',
-	'licenseSlug',
-	'citationStyle',
+	'avatar',
 	'citationInlineStyle',
+	'citationStyle',
+	'customPublishedAt',
+	'description',
+	'doi',
+	'headerBackgroundColor',
+	'headerBackgroundImage',
+	'headerStyle',
+	'licenseSlug',
+	'slug',
+	'title',
 ];
 const documentExtensions = Object.keys(extensionToPandocFormat);
 const documentSchema = buildSchema();
@@ -60,10 +64,16 @@ const createPubAttributions = async (pub, proposedMetadata, directive) => {
 	const sources = getSourcesForAttributeStrategy(directive);
 	let attributionsAttrs = [];
 	if (sources.import) {
-		const matchedProposedAttributions = proposedAttributions.map(({ name, users }) => {
-			const matchedUser = users.find((user) => matchSlugsToAttributions.includes(user.slug));
-			const userId = matchedUser && matchedUser.id;
-			return { name: name, userId: userId };
+		const matchedProposedAttributions = proposedAttributions.map((proposedAttr) => {
+			const { name, users } = proposedAttr;
+			if (users) {
+				const matchedUser = users.find((user) =>
+					matchSlugsToAttributions.includes(user.slug),
+				);
+				const userId = matchedUser && matchedUser.id;
+				return { name: name, userId: userId };
+			}
+			return proposedAttr;
 		});
 		attributionsAttrs = [...attributionsAttrs, ...matchedProposedAttributions];
 	}
@@ -82,35 +92,77 @@ const createPubAttributions = async (pub, proposedMetadata, directive) => {
 	);
 };
 
-const resolveAndUploadLocalFile = async (pathLike, sourceFiles) => {
-	const sourceFile = sourceFiles.find((sf) => pathMatchesPattern(sf.clientPath, pathLike));
-	if (sourceFile) {
-		const assetKey = await uploadFileToAssetStore(sourceFile.tmpPath);
-		return getUrlForAssetKey(assetKey);
+const resolveDirectiveValue = async (value, context) => {
+	const { $sourceFile, $metadata } = value;
+	const { sourceFiles, rawMetadata } = context;
+	if ($sourceFile) {
+		const pathLike = await resolveDirectiveValue($sourceFile, context);
+		if (pathLike) {
+			const sourceFile = sourceFiles.find((sf) =>
+				pathMatchesPattern(sf.clientPath, pathLike),
+			);
+			if (sourceFile) {
+				const assetKey = await uploadFileToAssetStore(sourceFile.tmpPath);
+				return getUrlForAssetKey(assetKey);
+			}
+		}
+		console.warn(`warning: cannot find sourceFile matching ${pathLike}`);
+		return null;
 	}
-	console.warn(`warning: cannot find sourceFile matching ${pathLike}`);
-	return null;
+	if ($metadata) {
+		const key = await resolveDirectiveValue($metadata, context);
+		return rawMetadata[key];
+	}
+	return value;
 };
 
-const resolveUploadablePubAttributes = async (directive, sourceFiles) => {
-	const { avatar, headerBackgroundImage } = directive;
-	return {
-		avatar: avatar && (await resolveAndUploadLocalFile(avatar, sourceFiles)),
-		headerBackgroundImage:
-			headerBackgroundImage &&
-			(await resolveAndUploadLocalFile(headerBackgroundImage, sourceFiles)),
-	};
+const resolveDirectiveValues = async (directive, sourceFiles, rawMetadata) => {
+	const resolvedDirective = {};
+	const context = { sourceFiles: sourceFiles, rawMetadata: rawMetadata };
+	await Promise.all(
+		Object.entries(directive).map(async ([key, value]) => {
+			const resolvedValue = await resolveDirectiveValue(value, context);
+			resolvedDirective[key] = resolvedValue;
+		}),
+	);
+	return resolvedDirective;
 };
 
-const createPub = async ({ communityId, directive, proposedMetadata, resolvedAttributes }) => {
+const createPub = async ({ communityId, directive, proposedMetadata }) => {
 	const sources = getSourcesForAttributeStrategy(directive);
 	const attributes = {
 		communityId: communityId,
 		...(sources.import && cloneWithKeys(proposedMetadata, pubAttributesFromMetadata)),
 		...(sources.directive && cloneWithKeys(directive, pubAttributesFromDirective)),
-		...resolvedAttributes,
 	};
 	return createPubQuery(attributes);
+};
+
+const createPubTags = async (directive, pubId, communityId) => {
+	const { tags } = directive;
+	if (tags) {
+		return Promise.all(
+			tags.map(async (tagName) => {
+				const existingCollection = await Collection.findOne({
+					where: {
+						title: {
+							[Op.iLike]: tagName,
+						},
+					},
+				});
+				const tag =
+					existingCollection ||
+					(await createCollection({
+						communityId: communityId,
+						title: tagName,
+						kind: 'tag',
+					}));
+				await createCollectionPub({ collectionId: tag.id, pubId: pubId });
+				return existingCollection ? null : tag;
+			}),
+		).then((createdTags) => createdTags.filter((x) => x));
+	}
+	return [];
 };
 
 const gatherLocalSourceFilesForPub = async (targetPath, isTargetDirectory) => {
@@ -123,9 +175,9 @@ const gatherLocalSourceFilesForPub = async (targetPath, isTargetDirectory) => {
 };
 
 const gatherNonLocalSourceFilesForPub = async (targetPath, isTargetDirectory, directive) => {
-	const { resolve: sources } = directive;
+	const { resolve: sourcesToResolve } = directive;
 
-	if (!sources) {
+	if (!sourcesToResolve) {
 		return [];
 	}
 
@@ -146,10 +198,26 @@ const gatherNonLocalSourceFilesForPub = async (targetPath, isTargetDirectory, di
 		return { relativePathToEntrypoint: relativePathToEntrypoint, options: options };
 	};
 
+	const safeStat = async (fullPathToEntrypoint, swallowError) => {
+		try {
+			const stat = await fs.stat(fullPathToEntrypoint);
+			return stat;
+		} catch (err) {
+			if (swallowError) {
+				return null;
+			}
+			throw err;
+		}
+	};
+
 	const resolveEntry = async (entry) => {
 		const { relativePathToEntrypoint, options } = getRelativePathAndOptions(entry);
 		const fullPathToEntrypoint = path.join(fullPathToTargetDirectory, relativePathToEntrypoint);
-		const stat = await fs.stat(fullPathToEntrypoint);
+		const stat = await safeStat(fullPathToEntrypoint, options.ignoreIfMissing);
+
+		if (!stat) {
+			return [];
+		}
 
 		const resolveFile = (fullPathToFile) => {
 			const { as, into, label } = options;
@@ -169,7 +237,7 @@ const gatherNonLocalSourceFilesForPub = async (targetPath, isTargetDirectory, di
 		return [resolveFile(fullPathToEntrypoint)];
 	};
 
-	return Promise.all(sources.map(resolveEntry)).then((arr) =>
+	return Promise.all(sourcesToResolve.map(resolveEntry)).then((arr) =>
 		arr.reduce((a, b) => [...a, ...b], []),
 	);
 };
@@ -309,27 +377,34 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 	const { importerFlags = {} } = directive;
 	const sourceFiles = await getImportableFiles(directive, targetPath);
 	const tmpDir = await tmp.dir();
-	const { doc, warnings, proposedMetadata } = await importFiles({
+	const { doc, warnings, proposedMetadata, rawMetadata } = await importFiles({
 		tmpDirPath: tmpDir.path,
 		sourceFiles: sourceFiles,
 		importerFlags: importerFlags,
+		provideRawMetadata: true,
 	});
-	const resolvedAttributes = await resolveUploadablePubAttributes(directive, sourceFiles);
+
+	const resolvedDirective = await resolveDirectiveValues(directive, sourceFiles, rawMetadata);
+
 	const pub = await createPub({
 		communityId: community.id,
-		directive: directive,
+		directive: resolvedDirective,
 		proposedMetadata: proposedMetadata,
-		resolvedAttributes: resolvedAttributes,
 	});
-	await createPubAttributions(pub, proposedMetadata, directive);
+
+	await createPubAttributions(pub, proposedMetadata, resolvedDirective);
 	await writeDocumentToPubDraft(pub.id, doc);
+
+	const createdTags = await createPubTags(resolvedDirective, pub.id, community.id);
 	if (collection) {
 		await createCollectionPub({ collectionId: collection.id, pubId: pub.id, isPrimary: true });
 	}
+
 	// eslint-disable-next-line no-console
 	console.log('created Pub:', pub.title);
 	return {
 		pub: pub,
+		collection: createdTags,
 		warnings: warnings,
 		created: true,
 	};

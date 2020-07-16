@@ -11,7 +11,7 @@ import { extractBibliographyItems } from './bibliography';
 import { uploadExtractedMedia } from './extractedMedia';
 import { extensionFor } from './util';
 import { runTransforms } from './transforms/runTransforms';
-import { getProposedMetadata } from './metadata';
+import { getProposedMetadata, getRawMetadata } from './metadata';
 import { getTmpDirectoryPath } from './tmpDirectory';
 import { createResourceTransformer } from './resources';
 
@@ -93,7 +93,12 @@ const getPandocAst = ({
 	return runTransforms(parsePandocJson(pandocRawAst), importerFlags);
 };
 
-export const importFiles = async ({ sourceFiles, tmpDirPath, importerFlags = {} }) => {
+export const importFiles = async ({
+	sourceFiles,
+	tmpDirPath,
+	provideRawMetadata = false,
+	importerFlags = {},
+}) => {
 	const { keepStraightQuotes, skipJatsBibExtraction } = importerFlags;
 	const { preambles, document, bibliography, supplements, metadata } = categorizeSourceFiles(
 		sourceFiles,
@@ -131,6 +136,7 @@ export const importFiles = async ({ sourceFiles, tmpDirPath, importerFlags = {} 
 		doc: prosemirrorDoc,
 		warnings: resourceTransformer.getWarnings(),
 		proposedMetadata: proposedMetadata,
+		...(provideRawMetadata && { rawMetadata: getRawMetadata(pandocAst.meta) }),
 	};
 };
 

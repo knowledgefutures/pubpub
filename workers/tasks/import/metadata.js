@@ -8,7 +8,7 @@ const getAuthorsArray = (author) => {
 	if (author.type === 'MetaList') {
 		return author.content;
 	}
-	if (author.type === 'MetaInlines') {
+	if (author.type === 'MetaInlines' || author.type === 'MetaMap') {
 		return [author];
 	}
 	return null;
@@ -48,4 +48,10 @@ export const getProposedMetadata = async (meta) => {
 		customPublishedAt: date && getDateStringFromMetaValue(date),
 		metadata: pubMetadata !== undefined && metaValueToJsonSerializable(pubMetadata),
 	});
+};
+
+export const getRawMetadata = (meta) => {
+	return Object.fromEntries(
+		Object.entries(meta).map(([key, value]) => [key, metaValueToJsonSerializable(value)]),
+	);
 };

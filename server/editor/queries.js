@@ -37,56 +37,62 @@ export const generateCiteHtmls = async (inputVals, citationStyle = 'apa') => {
 		}),
 	);
 
-	const outputsObjects = inputVals.map((input, index) => {
-		const citeObject = citeObjects[index];
-		if (citeObject === 'error') {
+	const outputsObjects = inputVals
+		.map((input, index) => {
+			const citeObject = citeObjects[index];
+			if (citeObject === 'error') {
+				return {
+					...input,
+					html: 'Error',
+					json: 'Error',
+					inline: {
+						authorYear: '(Error)',
+						author: '(Error)',
+						label: '(Error)',
+					},
+					error: true,
+				};
+			}
+			const labelHash = crypto
+				.createHash('md5')
+				.update(JSON.stringify(input))
+				.digest('base64')
+				.substring(0, 10);
+			if (!citeObject) {
+				return {
+					...input,
+					html: '',
+					json: '',
+					inline: {
+						authorYear: '',
+						author: '',
+						label: `(${labelHash})`,
+					},
+				};
+			}
+			const json = citeObject.format('data', { format: 'object' });
+			const authorYear = citeObject.format('citation', {
+				template: citationStyle === 'apa-7' ? 'apa-7' : 'apa',
+				format: 'text',
+			});
+			const citeObjectLabel = json[0] ? json[0]['citation-label'] : undefined;
 			return {
 				...input,
-				html: 'Error',
-				json: 'Error',
+				html: citeObject.format('bibliography', {
+					template: citationStyle,
+					format: 'html',
+				}),
+				json: json,
 				inline: {
-					authorYear: '(Error)',
-					author: '(Error)',
-					label: '(Error)',
-				},
-				error: true,
-			};
-		}
-		const labelHash = crypto
-			.createHash('md5')
-			.update(JSON.stringify(input))
-			.digest('base64')
-			.substring(0, 10);
-		if (!citeObject) {
-			return {
-				...input,
-				html: '',
-				json: '',
-				inline: {
-					authorYear: '',
-					author: '',
-					label: `(${labelHash})`,
+					authorYear: authorYear,
+					author: `${authorYear
+						.split(',')
+						.slice(0, -1)
+						.join('')})`,
+					label: `(${citeObjectLabel || labelHash})`,
 				},
 			};
-		}
-		const json = citeObject.format('data', { format: 'object' });
-		const authorYear = citeObject.format('citation', {
-			template: citationStyle === 'apa-7' ? 'apa-7' : 'apa',
-			format: 'text',
-		});
-		return {
-			...input,
-			html: citeObject.format('bibliography', { template: citationStyle, format: 'html' }),
-			json: json,
-			inline: {
-				authorYear: authorYear,
-				author: `${authorYear
-					.split(',')
-					.slice(0, -1)
-					.join('')})`,
-				label: `(${json[0]['citation-label'] || labelHash})`,
-			},
-		};
-	});
+		})
+		.filter((output) => !!output);
 	return outputsObjects;
 };

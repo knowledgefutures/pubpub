@@ -60,7 +60,7 @@ const noteTypes = {
 
 export const getGoogleScholarNotes = (notes) => {
 	return notes
-		.filter((note) => note.json !== '' && !note.error)
+		.filter((note) => note.json !== '' && !!note.json[0] && !note.error)
 		.reduce((unique, note) => {
 			const noteArray = [];
 			const noteType = note.json[0].type;

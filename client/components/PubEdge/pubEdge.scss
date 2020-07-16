@@ -21,7 +21,6 @@
 	.top {
 		display: flex;
 		flex-direction: row;
-		flex-wrap: wrap;
 		min-height: 90px;
 
 		.top-left {
@@ -40,7 +39,7 @@
 
 		.top-right {
 			display: flex;
-			flex: 1 1 470px;
+			flex: 1 1;
 			flex-direction: column;
 			justify-content: space-evenly;
 			width: 100%;

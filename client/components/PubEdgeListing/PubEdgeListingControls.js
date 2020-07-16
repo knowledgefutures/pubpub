@@ -92,6 +92,7 @@ const PubEdgeListingControls = (props) => {
 							onClick={onBackClick}
 							minimal
 							small
+							aria-label="Previous connection"
 							disabled={carouselControlsDisabled}
 						>
 							<Icon icon="circle-arrow-left" color={carouselControlColor} />
@@ -100,6 +101,7 @@ const PubEdgeListingControls = (props) => {
 							onClick={onNextClick}
 							minimal
 							small
+							aria-label="Next connection"
 							disabled={carouselControlsDisabled}
 						>
 							<Icon icon="circle-arrow-right" color={carouselControlColor} />
@@ -109,7 +111,12 @@ const PubEdgeListingControls = (props) => {
 
 				{showFilterMenu && (
 					<Popover content={menu} minimal>
-						<Button color={accentColor} minimal small>
+						<Button
+							color={accentColor}
+							minimal
+							small
+							aria-label="Show filtering options"
+						>
 							<Icon icon="filter" color={accentColor} />
 						</Button>
 					</Popover>

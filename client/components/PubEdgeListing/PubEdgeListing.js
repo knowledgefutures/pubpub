@@ -39,65 +39,69 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 	const includeChildren = filters.includes(Filter.Child);
 	const includeSiblings = filters.includes(Filter.Sibling);
 	const filteredPubEdges = [];
-	const parentEdgeValues = [];
-	const childEdgeValues = [];
-	const siblingEdgeValues = [];
+	const parentEdgesInContext = [];
+	const childEdgesInContext = [];
+	const siblingEdgesInContext = [];
 
 	outboundEdges.forEach((edge) => {
 		const { pubIsParent } = edge;
 		const included = pubIsParent ? includeChildren : includeParents;
-		const edgeValue = {
+		const edgeInContext = {
 			isSibling: false,
 			isInboundEdge: false,
 			edge: edge,
 			pubTitle: null,
 		};
 		if (included) {
-			filteredPubEdges.push(edgeValue);
+			filteredPubEdges.push(edgeInContext);
 		}
 		if (pubIsParent) {
-			childEdgeValues.push(edgeValue);
+			childEdgesInContext.push(edgeInContext);
 		} else {
-			parentEdgeValues.push(edgeValue);
+			parentEdgesInContext.push(edgeInContext);
 		}
 	});
 
 	inboundEdges.forEach((edge) => {
 		const { pubIsParent } = edge;
 		const included = pubIsParent ? includeParents : includeChildren;
-		const edgeValue = {
+		const edgeInContext = {
 			isSibling: false,
 			isInboundEdge: true,
 			edge: edge,
 			pubTitle: null,
 		};
 		if (included) {
-			filteredPubEdges.push(edgeValue);
+			filteredPubEdges.push(edgeInContext);
 		}
 		if (pubIsParent) {
-			parentEdgeValues.push(edgeValue);
+			parentEdgesInContext.push(edgeInContext);
 		} else {
-			childEdgeValues.push(edgeValue);
+			childEdgesInContext.push(edgeInContext);
 		}
 	});
 
 	siblingEdges.forEach((edge) => {
 		const { pubIsParent, pub, targetPub } = edge;
-		const edgeValue = {
+		const edgeInContext = {
 			isSibling: true,
 			isInboundEdge: false,
 			edge: edge,
 			pubTitle: pubIsParent ? pub.title : targetPub.title,
 		};
-		siblingEdgeValues.push(edgeValue);
+		siblingEdgesInContext.push(edgeInContext);
 		if (includeSiblings) {
-			filteredPubEdges.push(edgeValue);
+			filteredPubEdges.push(edgeInContext);
 		}
 	});
 
 	return {
-		filteredPubEdgeValues: filteredPubEdges,
-		collatedPubEdgeValues: [...parentEdgeValues, ...childEdgeValues, ...siblingEdgeValues],
+		filteredPubEdgesInContext: filteredPubEdges,
+		collatedPubEdgesInContext: [
+			...parentEdgesInContext,
+			...childEdgesInContext,
+			...siblingEdgesInContext,
+		],
 	};
 };
 
@@ -115,15 +119,15 @@ const PubEdgeListing = (props) => {
 	const [mode, setMode] = useState(initialMode);
 	const [filters, setFilters] = useState(initialFilters);
 
-	const { filteredPubEdgeValues, collatedPubEdgeValues } = collateAndFilterPubEdges(
+	const { filteredPubEdgesInContext, collatedPubEdgesInContext } = collateAndFilterPubEdges(
 		filters,
 		pubData,
 	);
 
 	const [initiallyRenderEmpty] = useState(
-		hideIfNoInitialMatches && filteredPubEdgeValues.length === 0,
+		hideIfNoInitialMatches && filteredPubEdgesInContext.length === 0,
 	);
-	const { [index]: activeEdgeValue, length } = filteredPubEdgeValues;
+	const { [index]: activeEdgeInContext, length } = filteredPubEdgesInContext;
 
 	const next = useCallback(() => setIndex((i) => (i + 1) % length), [length]);
 	const back = useCallback(() => setIndex((i) => (i - 1 + length) % length), [length]);
@@ -153,9 +157,9 @@ const PubEdgeListing = (props) => {
 		[],
 	);
 
-	const disableCarouselControls = filteredPubEdgeValues.length === 1;
+	const disableCarouselControls = filteredPubEdgesInContext.length === 1;
 	const showControls =
-		collatedPubEdgeValues.length > 1 && (!isolated || filteredPubEdgeValues.length > 1);
+		collatedPubEdgesInContext.length > 1 && (!isolated || filteredPubEdgesInContext.length > 1);
 
 	const controls = showControls && (
 		<>
@@ -189,20 +193,20 @@ const PubEdgeListing = (props) => {
 	const renderCards = () => {
 		const cards =
 			mode === Mode.Carousel
-				? activeEdgeValue && (
+				? activeEdgeInContext && (
 						<PubEdgeListingCard
-							pubEdge={activeEdgeValue.edge}
+							pubEdge={activeEdgeInContext.edge}
 							accentColor={accentColor}
 							showIcon={isolated}
-							viewingFromSibling={activeEdgeValue.isSibling}
-							isInboundEdge={activeEdgeValue.isInboundEdge}
-							pubTitle={activeEdgeValue.pubTitle}
+							viewingFromSibling={activeEdgeInContext.isSibling}
+							isInboundEdge={activeEdgeInContext.isInboundEdge}
+							pubTitle={activeEdgeInContext.pubTitle}
 							inPubBody
 						>
 							{isolated && controls}
 						</PubEdgeListingCard>
 				  )
-				: filteredPubEdgeValues.map(({ isInboundEdge, edge, isSibling, pubTitle }) => (
+				: filteredPubEdgesInContext.map(({ isInboundEdge, edge, isSibling, pubTitle }) => (
 						<PubEdgeListingCard
 							key={edge.url}
 							pubEdge={edge}
@@ -214,7 +218,7 @@ const PubEdgeListing = (props) => {
 						/>
 				  ));
 
-		return !isolated && (!activeEdgeValue || filteredPubEdgeValues.length === 0) ? (
+		return !isolated && (!activeEdgeInContext || filteredPubEdgesInContext.length === 0) ? (
 			<NonIdealState title="No Results" icon="search" />
 		) : (
 			cards

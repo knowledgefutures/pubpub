@@ -16,6 +16,8 @@ require('./page/api');
 require('./passwordReset/api');
 require('./pub/api');
 require('./pubAttribution/api');
+require('./pubEdge/api');
+require('./pubEdgeProposal/api');
 require('./pubHistory/api');
 require('./release/api');
 require('./review/api');

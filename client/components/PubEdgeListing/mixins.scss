@@ -1,0 +1,7 @@
+@mixin bleed-top-border() {
+	background-color: #fff;
+	padding: 0 8px;
+	position: absolute;
+	top: 0;
+	transform: translateY(-50%);
+}

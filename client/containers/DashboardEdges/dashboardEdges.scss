@@ -1,0 +1,26 @@
+.dashboard-edges-container {
+    .dashboard-edges-listing-component {
+        margin-top: 24px;
+        overflow-y: unset;
+    }
+    .dashboard-edge-listing-item {
+        display: flex;
+        &.is-dragging {
+            background: white;
+        }
+        &.not-approved {
+            .pub-edge-component {
+                opacity: 0.5;
+            }
+        }
+        .pub-edge-component {
+            transition: 100ms opacity ease-in-out;
+        }
+        .pub-edge-listing-card-component {
+            flex-grow: 1;
+        }
+        .parent-approval-switch {
+            margin: 0;
+        }
+    }
+}

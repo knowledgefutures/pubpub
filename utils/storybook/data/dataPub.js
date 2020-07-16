@@ -29,6 +29,53 @@ export default {
 		latestKey: -1,
 		timestamps: [],
 	},
+	inboundEdges: [
+		{
+			pubIsParent: true,
+			relationType: 'comment',
+			pub:  {
+				title: 'Scripture as Interface. A Hermeneutical Reflection on a Concept based in Media Theory',
+				avatar: 'https://assets.pubpub.org/nlgqoo6x/51572618306498.png',
+				releases: [
+					{
+						id: '52ebe6a2-ff74-4537-8ce8-c7999f1fbd55',
+						createdAt: '2019-11-10T11:17:24.978Z',
+						updatedAt: '2019-11-10T11:17:24.980Z',
+					},
+				],
+				attributions: [
+					{
+						id: 'd8742882-bb84-4b69-a8d2-cb8ce7b115e5',
+						name: null,
+						avatar: null,
+						title: null,
+						order: 0.5,
+						isAuthor: true,
+						roles: null,
+						affiliation: null,
+						orcid: null,
+						userId: '8fda605d-eaee-4820-83a3-d1e18499a8a9',
+						pubId: 'be520569-5dd6-4e49-8866-a31cd54b5e3c',
+						createdAt: '2019-10-22T09:53:13.102Z',
+						updatedAt: '2019-10-22T09:53:13.102Z',
+						user: {
+							id: '8fda605d-eaee-4820-83a3-d1e18499a8a9',
+							firstName: 'Frederike',
+							lastName: 'van Oorschot',
+							fullName: 'Frederike van Oorschot',
+							avatar: 'https://assets.pubpub.org/y7pvxkw3/11571046154113.jpg',
+							slug: 'frederike-van-oorschot',
+							initials: 'Fv',
+							title: '',
+							orcid: '',
+						},
+					},
+				],
+			},
+		},
+	],
+	siblingEdges: [],
+	outboundEdges: [],
 	reviews: [
 		{
 			id: '2f2cce19-dde0-4a47-8e49-a5105cb27d83',

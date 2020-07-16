@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@blueprintjs/core';
 
-import { Byline } from 'components';
+import { PubByline } from 'components';
 import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
 import { pubDataProps } from 'types/pub';
 import { usePageContext } from 'utils/hooks';
@@ -84,7 +84,7 @@ const CollectionBrowser = (props) => {
 						text={
 							<>
 								<div className="title">{pub.title}</div>
-								<Byline pubData={pub} linkToUsers={false} />
+								<PubByline pubData={pub} linkToUsers={false} />
 							</>
 						}
 					/>

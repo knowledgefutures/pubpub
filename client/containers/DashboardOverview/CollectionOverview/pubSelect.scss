@@ -21,19 +21,4 @@
         justify-content: center;
         font-style: italic;
     }
-    .item {
-        padding: 1em;
-        border-bottom: 1px solid #eee;
-        cursor: pointer;
-        &.active, &:hover {
-            background: #f0f0f0;
-        }
-        .title {
-            font-weight: 500;
-        }
-        .subtitle {
-            font-style: italic;
-        }
-    }
-
 }

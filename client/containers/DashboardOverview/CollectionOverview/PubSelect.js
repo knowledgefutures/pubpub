@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { Popover, InputGroup, MenuItem } from '@blueprintjs/core';
+import { Popover, InputGroup } from '@blueprintjs/core';
 import { QueryList } from '@blueprintjs/select';
 
-import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
-
-import { fuzzyMatchPub } from '../util';
+import { PubMenuItem } from 'components';
+import { fuzzyMatchPub } from 'utils/fuzzyMatch';
 
 require('./pubSelect.scss');
 
@@ -26,18 +24,13 @@ const PubSelect = (props) => {
 	const { children, position, pubs, onSelectPub, usedPubIds } = props;
 
 	const renderPubItem = (pub, { handleClick, modifiers: { active } }) => {
-		const authorString = generateAuthorString(pub);
 		return (
-			<MenuItem
-				className={classNames({ item: true, active: active })}
+			<PubMenuItem
 				key={pub.id}
 				onClick={handleClick}
-				text={
-					<React.Fragment>
-						<div className="title">{pub.title}</div>
-						<div className="subtitle">{authorString}</div>
-					</React.Fragment>
-				}
+				title={pub.title}
+				contributors={pub.attributions}
+				active={active}
 			/>
 		);
 	};

@@ -28,7 +28,7 @@ app.get(
 
 		return getInitialData(req, true)
 			.then((initialData) => {
-				return Promise.all([initialData, getOverview(initialData)]);
+				return Promise.all([initialData, getOverview(initialData.scopeData.elements)]);
 			})
 			.then(([initialData, overviewData]) => {
 				const sanitizedOverviewData = sanitizeOverview(initialData, overviewData);

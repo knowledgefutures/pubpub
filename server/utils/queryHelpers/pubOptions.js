@@ -7,6 +7,7 @@ import {
 	Export,
 	Page,
 	PubAttribution,
+	PubEdge,
 	Release,
 	DiscussionNew,
 	ReviewNew,
@@ -16,9 +17,18 @@ import {
 	includeUserModel,
 } from 'server/models';
 
+import { getPubEdgeIncludes } from './pubEdgeOptions';
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
-export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity }) => {
+export default ({
+	isAuth,
+	isPreview,
+	getCollections,
+	getMembers,
+	getCommunity,
+	getEdges = 'approved-only',
+}) => {
+	const allowUnapprovedEdges = getEdges === 'all';
 	/* Initialize values assuming all inputs are false. */
 	/* Then, iterate over each input and adjust */
 	/* variables as needed */
@@ -45,6 +55,7 @@ export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity })
 		},
 	];
 	let pubMembers = [];
+	let pubEdges = [];
 	let pubReleases = [
 		{
 			model: Release,
@@ -88,6 +99,23 @@ export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity })
 			{
 				model: Member,
 				as: 'members',
+			},
+		];
+	}
+	if (getEdges) {
+		pubEdges = [
+			{
+				model: PubEdge,
+				as: 'outboundEdges',
+				separate: true,
+				include: getPubEdgeIncludes({ includeTargetPub: true }),
+			},
+			{
+				model: PubEdge,
+				as: 'inboundEdges',
+				separate: true,
+				include: getPubEdgeIncludes({ includePub: true }),
+				where: !allowUnapprovedEdges && { approvedByTarget: true },
 			},
 		];
 	}
@@ -148,6 +176,7 @@ export default ({ isAuth, isPreview, getCollections, getMembers, getCommunity })
 			...pubBranches,
 			...pubReleases,
 			...pubMembers,
+			...pubEdges,
 			{
 				separate: true,
 				model: DiscussionNew,

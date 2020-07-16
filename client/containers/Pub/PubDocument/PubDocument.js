@@ -4,6 +4,7 @@ import { setLocalHighlight } from 'components/Editor';
 
 import { usePageContext } from 'utils/hooks';
 import { PubHistoryViewer } from 'components';
+import { PubEdgeListing, Filter as PubEdgeFilter } from 'components/PubEdgeListing';
 
 import PubBody from './PubBody';
 import PubBottom from './PubBottom/PubBottom';
@@ -32,7 +33,7 @@ const PubDocument = (props) => {
 	const { pubData, historyData, collabData, firebaseBranchRef, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
 	const { editorChangeObject } = collabData;
-	const { locationData, scopeData } = usePageContext();
+	const { communityData, locationData, scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	const mainContentRef = useRef(null);
@@ -83,6 +84,13 @@ const PubDocument = (props) => {
 				<div className="main-content" ref={mainContentRef}>
 					<PubMaintenanceNotice pubData={pubData} />
 					<PubHistoricalNotice pubData={pubData} historyData={historyData} />
+					<PubEdgeListing
+						className="top-pub-edges"
+						pubData={pubData}
+						accentColor={communityData.accentColorDark}
+						initialFilters={[PubEdgeFilter.Parent]}
+						isolated
+					/>
 					<PubBody
 						editorWrapperRef={editorWrapperRef}
 						pubData={pubData}
@@ -104,6 +112,12 @@ const PubDocument = (props) => {
 							historyData={historyData}
 						/>
 					)}
+					<PubEdgeListing
+						className="bottom-pub-edges"
+						pubData={pubData}
+						accentColor={communityData.accentColorDark}
+						initialFilters={[PubEdgeFilter.Child, PubEdgeFilter.Sibling]}
+					/>
 				</div>
 				<div className="side-content" ref={sideContentRef}>
 					{isViewingHistory && !pubData.isRelease && (

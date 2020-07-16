@@ -4,6 +4,7 @@ import {
 	CommunityCreate,
 	DashboardActivity,
 	DashboardDiscussions,
+	DashboardEdges,
 	DashboardForks,
 	DashboardImpact,
 	DashboardMembers,
@@ -50,6 +51,10 @@ export default (viewData, locationData, chunkName) => {
 		},
 		DashboardDiscussions: {
 			ActiveComponent: DashboardDiscussions,
+			isDashboard: true,
+		},
+		DashboardEdges: {
+			ActiveComponent: DashboardEdges,
 			isDashboard: true,
 		},
 		DashboardForks: {

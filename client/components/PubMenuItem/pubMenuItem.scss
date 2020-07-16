@@ -1,0 +1,38 @@
+.pub-menu-item-component.bp3-menu-item {
+    display: flex;
+    cursor: pointer;
+    max-width: 600px;
+
+    &.is-skeleton {
+        .subtitle {
+            width: 75%;
+            margin-top: 5px;
+        }
+    }
+
+    &:not(:last-child) {
+        border-bottom: 1px solid #eee;
+    }
+
+    &.active,
+    &:hover {
+        background: #f0f0f0;
+    }
+
+    .preview-image-component {
+        width: 50px;
+        height: 50px;
+    }
+
+    .inner {
+        width: 100%;
+        flex-shrink: 1;
+
+        .title {
+            font-weight: 500;
+        }
+        .subtitle {
+            font-style: italic;
+        }
+    }
+}

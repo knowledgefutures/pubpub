@@ -1,0 +1,70 @@
+.pub-edge-listing-card-component {
+	border-color: #a1a1a1;
+	border-radius: 3px;
+	border-style: solid;
+	border-width: 1px;
+	margin-bottom: 24px;
+	position: relative;
+	transition: all 100ms linear;
+
+	&.in-pub-body {
+		> * {
+			filter: grayscale(100%);
+		}
+
+		&:hover,
+		&:active,
+		&:focus {
+			> * {
+				filter: grayscale(0%);
+			}
+		}
+
+		> .controls {
+			right: 4px;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	> .relation,
+	> .controls {
+		background-color: #fff;
+		padding: 0 8px;
+		position: absolute;
+		top: 0;
+		transform: translateY(-50%);
+	}
+
+	> .controls {
+		align-items: center;
+		display: flex;
+		right: 24px;
+	}
+
+	> .relation {
+		left: calc(24px - 8px);
+		filter: grayscale(0%);
+
+		.relation-name {
+			font-weight: 600;
+		}
+
+		.pub-title {
+			font-style: italic;
+		}
+
+		.drop-return {
+			margin-right: 4px;
+			position: relative;
+			bottom: px;
+			transform: rotateY(180deg);
+		}
+	}
+
+	> .relation.show-icon {
+		left: 4px;
+	}
+}

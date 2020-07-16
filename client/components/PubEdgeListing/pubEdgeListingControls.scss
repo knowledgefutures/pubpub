@@ -1,0 +1,38 @@
+.pub-edge-listing-controls-component {
+    align-items: center;
+    display: flex;
+    overflow: hidden;
+
+    > .filters {
+        margin-right: 4px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+.pub-edge-listing-controls-component-menu {
+    font-size: 12px;
+    padding: 1em;
+
+    h6 {
+        font-size: 1em;
+        font-weight: normal;
+    }
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .bp3-control-indicator {
+        width: 14px;
+        height: 14px;
+
+        &:before {
+            width: 14px;
+            height: 14px;
+        }
+    }
+}

@@ -2,31 +2,26 @@ import { useState } from 'react';
 
 import { usePendingChanges, usePageContext } from 'utils/hooks';
 import * as api from 'client/utils/collections/api';
-import findRank from 'utils/findRank';
+import { findRankInRankedList, sortByRank } from 'utils/rank';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-
-const findRankForSelection = (selections, index) =>
-	findRank(
-		selections.map((s) => s.rank),
-		index,
-	);
 
 const linkCollectionPubs = (overviewData, collection) => {
 	const { pubs, collections } = overviewData;
 	const { collectionPubs } = collections.find((col) => col.id === collection.id);
-	return collectionPubs
-		.map((collectionPub) => {
-			const pub = pubs.find((somePub) => somePub.id === collectionPub.pubId);
-			if (pub) {
-				return {
-					...collectionPub,
-					pub: pub,
-				};
-			}
-			return null;
-		})
-		.filter((x) => x)
-		.sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));
+	return sortByRank(
+		collectionPubs
+			.map((collectionPub) => {
+				const pub = pubs.find((somePub) => somePub.id === collectionPub.pubId);
+				if (pub) {
+					return {
+						...collectionPub,
+						pub: pub,
+					};
+				}
+				return null;
+			})
+			.filter((x) => x),
+	);
 };
 
 const linkCollection = (collection, community) => {
@@ -50,7 +45,7 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	const reorderCollectionPubs = (sourceIndex, destinationIndex) => {
 		const nextCollectionPubs = [...collectionPubs];
 		const [removed] = nextCollectionPubs.splice(sourceIndex, 1);
-		const newRank = findRankForSelection(nextCollectionPubs, destinationIndex);
+		const newRank = findRankInRankedList(nextCollectionPubs, destinationIndex);
 		const updatedValue = {
 			...removed,
 			rank: newRank,

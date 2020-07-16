@@ -17,9 +17,9 @@ const propTypes = {
 	hideIfNoInitialMatches: PropTypes.bool,
 	isolated: PropTypes.bool,
 	pubData: PropTypes.shape({
-		inboundEdges: PropTypes.shape(pubEdgeType).isRequired,
-		outboundEdges: PropTypes.shape(pubEdgeType).isRequired,
-		siblingEdges: PropTypes.shape(pubEdgeType).isRequired,
+		inboundEdges: PropTypes.arrayOf(pubEdgeType).isRequired,
+		outboundEdges: PropTypes.arrayOf(pubEdgeType).isRequired,
+		siblingEdges: PropTypes.arrayOf(pubEdgeType).isRequired,
 	}).isRequired,
 	initialMode: PropTypes.string,
 	initialFilters: PropTypes.arrayOf(PropTypes.string),
@@ -50,7 +50,6 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 			isSibling: false,
 			isInboundEdge: false,
 			edge: edge,
-			pubTitle: null,
 		};
 		if (included) {
 			filteredPubEdges.push(edgeInContext);
@@ -69,7 +68,6 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 			isSibling: false,
 			isInboundEdge: true,
 			edge: edge,
-			pubTitle: null,
 		};
 		if (included) {
 			filteredPubEdges.push(edgeInContext);
@@ -87,7 +85,7 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 			isSibling: true,
 			isInboundEdge: false,
 			edge: edge,
-			pubTitle: pubIsParent ? pub.title : targetPub.title,
+			parentPub: pubIsParent ? pub : targetPub,
 		};
 		siblingEdgesInContext.push(edgeInContext);
 		if (includeSiblings) {
@@ -167,7 +165,7 @@ const PubEdgeListing = (props) => {
 			<PubEdgeListingControls
 				accentColor={accentColor}
 				carouselControlsDisabled={disableCarouselControls}
-				single={filteredPubEdgeValues.length === 1}
+				single={filteredPubEdgesInContext.length === 1}
 				filters={filters}
 				mode={mode}
 				onAllFilterToggle={onAllFilterToggle}
@@ -197,24 +195,24 @@ const PubEdgeListing = (props) => {
 				? activeEdgeInContext && (
 						<PubEdgeListingCard
 							pubEdge={activeEdgeInContext.edge}
+							parentPub={activeEdgeInContext.parentPub}
 							accentColor={accentColor}
 							showIcon={isolated}
 							viewingFromSibling={activeEdgeInContext.isSibling}
 							isInboundEdge={activeEdgeInContext.isInboundEdge}
-							pubTitle={activeEdgeInContext.pubTitle}
 							inPubBody
 						>
 							{isolated && controls}
 						</PubEdgeListingCard>
 				  )
-				: filteredPubEdgesInContext.map(({ isInboundEdge, edge, isSibling, pubTitle }) => (
+				: filteredPubEdgesInContext.map(({ isInboundEdge, edge, isSibling }) => (
 						<PubEdgeListingCard
 							key={edge.url}
 							pubEdge={edge}
+							parentPub={activeEdgeInContext.parentPub}
 							accentColor={accentColor}
 							viewingFromSibling={isSibling}
 							isInboundEdge={isInboundEdge}
-							pubTitle={pubTitle}
 							inPubBody
 						/>
 				  ));

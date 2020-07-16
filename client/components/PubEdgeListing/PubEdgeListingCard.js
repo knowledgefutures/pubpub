@@ -18,9 +18,11 @@ const propTypes = {
 	children: PropTypes.node,
 	inPubBody: PropTypes.bool,
 	isInboundEdge: PropTypes.bool.isRequired,
+	parentPub: PropTypes.shape({
+		title: PropTypes.string,
+	}),
 	pubEdge: pubEdgeType.isRequired,
 	pubEdgeElement: PropTypes.node,
-	pubTitle: PropTypes.string,
 	showIcon: PropTypes.bool,
 	viewingFromSibling: PropTypes.bool,
 };
@@ -29,8 +31,8 @@ const defaultProps = {
 	accentColor: null,
 	children: [],
 	inPubBody: false,
+	parentPub: null,
 	pubEdgeElement: null,
-	pubTitle: null,
 	showIcon: false,
 	viewingFromSibling: false,
 };
@@ -56,7 +58,7 @@ const PubEdgeListingCard = (props) => {
 		isInboundEdge,
 		pubEdge,
 		pubEdgeElement,
-		pubTitle,
+		parentPub,
 		showIcon,
 		viewingFromSibling,
 	} = props;
@@ -68,19 +70,21 @@ const PubEdgeListingCard = (props) => {
 	const style = hover ? { borderColor: accentColor || communityData.accentColorDark } : {};
 
 	const renderRelation = () => {
-		const { relationType, pubIsParent, pub, targetPub } = pubEdge;
+		const { relationType, pubIsParent } = pubEdge;
 		const viewingFromParent =
 			!viewingFromSibling && viewingFromTarget ? !pubIsParent : pubIsParent;
 		const relationDefinition = relationTypeDefinitions[relationType];
+
 		if (relationDefinition) {
 			const { article, preposition, name } = relationDefinition;
 			const relationName = <span className="relation-name">{name}</span>;
+
 			if (viewingFromSibling) {
-				const titlePart = pubTitle && (
+				const titlePart = parentPub && (
 					<>
 						{preposition}{' '}
-						<a className="pub-title" href={pubShortUrl(pubIsParent ? pub : targetPub)}>
-							{pubTitle}
+						<a className="pub-title" href={pubShortUrl(parentPub)}>
+							{parentPub.title}
 						</a>
 					</>
 				);
@@ -90,7 +94,9 @@ const PubEdgeListingCard = (props) => {
 					</>
 				);
 			}
-			const pubTitleNode = pubTitle && <span className="pub-title">{pubTitle}</span>;
+
+			const pubTitleNode = parentPub && <span className="pub-title">{parentPub.title}</span>;
+
 			if (viewingFromParent) {
 				return (
 					<>
@@ -99,12 +105,14 @@ const PubEdgeListingCard = (props) => {
 					</>
 				);
 			}
+
 			return (
 				<>
 					{pubTitleNode || 'This Pub'} is {article} {relationName} {preposition}
 				</>
 			);
 		}
+
 		return null;
 	};
 

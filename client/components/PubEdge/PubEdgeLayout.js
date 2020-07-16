@@ -6,7 +6,7 @@ require('./pubEdge.scss');
 
 const propTypes = {
 	bylineElement: PropTypes.node.isRequired,
-	className: PropTypes.string.isRequired,
+	className: PropTypes.string,
 	detailsElement: PropTypes.node.isRequired,
 	metadataElements: PropTypes.arrayOf(PropTypes.node).isRequired,
 	outerElementProps: PropTypes.object,

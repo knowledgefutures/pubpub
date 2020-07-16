@@ -115,7 +115,7 @@ const PubEdgeListing = (props) => {
 		isolated,
 		pubData,
 	} = props;
-	const [index, setIndex] = useState(0);
+	let [index, setIndex] = useState(0);
 	const [mode, setMode] = useState(initialMode);
 	const [filters, setFilters] = useState(initialFilters);
 
@@ -132,30 +132,30 @@ const PubEdgeListing = (props) => {
 	const next = useCallback(() => setIndex((i) => (i + 1) % length), [length]);
 	const back = useCallback(() => setIndex((i) => (i - 1 + length) % length), [length]);
 
-	const onFilterToggle = useCallback(
-		(filter) =>
-			setFilters((currentFilters) => {
-				const filterIndex = currentFilters.indexOf(filter);
+	const onFilterToggle = useCallback((filter) => {
+		setFilters((currentFilters) => {
+			const filterIndex = currentFilters.indexOf(filter);
 
-				if (filterIndex > -1) {
-					setFilters([
-						...currentFilters.slice(0, filterIndex),
-						...currentFilters.slice(filterIndex + 1),
-					]);
-				} else {
-					setFilters([...currentFilters, filter]);
-				}
-			}),
-		[],
-	);
+			if (filterIndex > -1) {
+				setFilters([
+					...currentFilters.slice(0, filterIndex),
+					...currentFilters.slice(filterIndex + 1),
+				]);
+			} else {
+				setFilters([...currentFilters, filter]);
+			}
+		});
 
-	const onAllFilterToggle = useCallback(
-		() =>
-			setFilters((currentFilters) =>
-				currentFilters.length === Object.keys(Filter).length ? [] : allFilters,
-			),
-		[],
-	);
+		setIndex(0);
+	}, []);
+
+	const onAllFilterToggle = useCallback(() => {
+		setFilters((currentFilters) =>
+			currentFilters.length === Object.keys(Filter).length ? [] : allFilters,
+		);
+
+		setIndex(0);
+	}, []);
 
 	const disableCarouselControls = filteredPubEdgesInContext.length === 1;
 	const showControls =
@@ -167,6 +167,7 @@ const PubEdgeListing = (props) => {
 			<PubEdgeListingControls
 				accentColor={accentColor}
 				carouselControlsDisabled={disableCarouselControls}
+				single={filteredPubEdgeValues.length === 1}
 				filters={filters}
 				mode={mode}
 				onAllFilterToggle={onAllFilterToggle}

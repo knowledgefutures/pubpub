@@ -10,20 +10,22 @@ require('./pubEdgeListingControls.scss');
 
 const propTypes = {
 	accentColor: PropTypes.string.isRequired,
+	carouselControlsDisabled: PropTypes.bool,
 	filters: PropTypes.arrayOf(PropTypes.string).isRequired,
 	mode: PropTypes.string.isRequired,
-	showFilterMenu: PropTypes.bool,
-	onNextClick: PropTypes.func.isRequired,
-	onBackClick: PropTypes.func.isRequired,
-	onModeChange: PropTypes.func.isRequired,
-	onFilterToggle: PropTypes.func.isRequired,
 	onAllFilterToggle: PropTypes.func.isRequired,
-	carouselControlsDisabled: PropTypes.bool,
+	onBackClick: PropTypes.func.isRequired,
+	onFilterToggle: PropTypes.func.isRequired,
+	onModeChange: PropTypes.func.isRequired,
+	onNextClick: PropTypes.func.isRequired,
+	showFilterMenu: PropTypes.bool,
+	single: PropTypes.bool,
 };
 
 const defaultProps = {
-	showFilterMenu: false,
 	carouselControlsDisabled: false,
+	showFilterMenu: false,
+	single: false,
 };
 
 const PubEdgeListingControls = (props) => {
@@ -33,6 +35,7 @@ const PubEdgeListingControls = (props) => {
 		filters,
 		mode,
 		showFilterMenu,
+		single,
 		onNextClick,
 		onBackClick,
 		onModeChange,
@@ -83,7 +86,11 @@ const PubEdgeListingControls = (props) => {
 	return (
 		<nav className="pub-edge-listing-controls-component">
 			<span className="filters">
-				{filters.length > 0 && joinOxford(filters.map(filterToPlural))}
+				{single && filters.length === 1
+					? // Show "1 of 1 parent" in the case of one filter selected
+					  // AND consumer has indicated a single item via `single` prop
+					  filters[0]
+					: filters.length > 0 && joinOxford(filters.map(filterToPlural))}
 			</span>
 			<ButtonGroup minimal>
 				{mode === Mode.Carousel && (

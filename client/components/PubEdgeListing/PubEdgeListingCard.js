@@ -7,6 +7,7 @@ import { PubEdge } from 'components';
 import { toTitleCase } from 'utils/strings';
 import { usePageContext } from 'utils/hooks';
 import { relationTypeDefinitions } from 'utils/pubEdge';
+import { pubShortUrl } from 'utils/canonicalUrls';
 
 import { pubEdgeType } from '../PubEdge/constants';
 
@@ -67,7 +68,7 @@ const PubEdgeListingCard = (props) => {
 	const style = hover ? { borderColor: accentColor || communityData.accentColorDark } : {};
 
 	const renderRelation = () => {
-		const { relationType, pubIsParent } = pubEdge;
+		const { relationType, pubIsParent, pub, targetPub } = pubEdge;
 		const viewingFromParent =
 			!viewingFromSibling && viewingFromTarget ? !pubIsParent : pubIsParent;
 		const relationDefinition = relationTypeDefinitions[relationType];
@@ -77,7 +78,10 @@ const PubEdgeListingCard = (props) => {
 			if (viewingFromSibling) {
 				const titlePart = pubTitle && (
 					<>
-						{preposition} <span className="pub-title">{pubTitle}</span>
+						{preposition}{' '}
+						<a className="pub-title" href={pubShortUrl(pubIsParent ? pub : targetPub)}>
+							{pubTitle}
+						</a>
 					</>
 				);
 				return (

@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Button } from 'reakit/Button';
 
 import { Byline } from 'components';
 import { usePageContext } from 'utils/hooks';

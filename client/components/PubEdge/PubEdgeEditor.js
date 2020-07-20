@@ -4,8 +4,6 @@ import { EditableText, TagInput, InputGroup } from '@blueprintjs/core';
 import { Button as RKButton } from 'reakit/Button';
 import dateFormat from 'dateformat';
 
-import { usePageContext } from 'utils/hooks';
-
 import { externalPublicationType } from './constants';
 import PubEdgeLayout from './PubEdgeLayout';
 import PubEdgePlaceholderThumbnail from './PubEdgePlaceholderThumbnail';

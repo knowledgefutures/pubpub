@@ -11,16 +11,19 @@ import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 import { pubEdgeType } from './constants';
 import PubEdgeLayout from './PubEdgeLayout';
+import PubEdgePlaceholderThumbnail from './PubEdgePlaceholderThumbnail';
 
 require('./pubEdge.scss');
 
 export const propTypes = {
+	accentColor: PropTypes.string,
 	actsLikeLink: PropTypes.bool,
 	pubEdge: pubEdgeType.isRequired,
 	viewingFromTarget: PropTypes.bool,
 };
 
 const defaultProps = {
+	accentColor: '#ddd',
 	actsLikeLink: false,
 	viewingFromTarget: false,
 };
@@ -42,11 +45,11 @@ const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 		const { title, description, attributions, avatar } = displayedPub;
 		const url = getUrlForPub(displayedPub, communityData);
 		return {
-			contributors: attributions,
-			title: title,
-			description: description,
 			avatar: avatar,
+			contributors: attributions,
+			description: description,
 			publicationDate: getPubPublishedDate(displayedPub),
+			title: title,
 			url: url,
 		};
 	}
@@ -60,22 +63,22 @@ const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 			publicationDate,
 		} = externalPublication;
 		return {
-			title: title,
-			description: description,
-			contributors: contributors,
 			avatar: avatar,
-			url: url,
+			contributors: contributors,
+			description: description,
 			publicationDate: publicationDate,
+			title: title,
+			url: url,
 		};
 	}
 	return {};
 };
 
 const PubEdge = (props) => {
-	const { actsLikeLink, pubEdge, viewingFromTarget } = props;
+	const { accentColor, actsLikeLink, pubEdge, viewingFromTarget } = props;
 	const [open, setOpen] = useState(false);
 	const { communityData } = usePageContext();
-
+	const hasExternalPublication = Boolean(pubEdge.externalPublication);
 	const { avatar, contributors, description, publicationDate, title, url } = getValuesFromPubEdge(
 		pubEdge,
 		communityData,
@@ -137,7 +140,17 @@ const PubEdge = (props) => {
 
 	return maybeWrapWithLink(
 		<PubEdgeLayout
-			topLeftElement={avatar && maybeLink(<img src={avatar} alt="" />, { tabIndex: '-1' })}
+			topLeftElement={maybeLink(
+				avatar ? (
+					<img src={avatar} alt={title} />
+				) : (
+					<PubEdgePlaceholderThumbnail
+						color={accentColor}
+						external={hasExternalPublication}
+					/>
+				),
+				{ tabIndex: '-1' },
+			)}
 			titleElement={maybeLink(title, linkLikeProps)}
 			bylineElement={<Byline contributors={contributors} />}
 			metadataElements={[

@@ -3,13 +3,13 @@
 	border-radius: 3px;
 	border-style: solid;
 	border-width: 1px;
-	margin-bottom: 24px;
+	margin-bottom: 30px;
 	position: relative;
-	transition: all 100ms linear;
-
+	transition: all 60ms linear;
 	&.in-pub-body {
 		> * {
 			filter: grayscale(100%);
+			transition: all 60ms linear;
 		}
 
 		&:hover,

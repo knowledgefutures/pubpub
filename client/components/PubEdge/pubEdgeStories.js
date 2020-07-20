@@ -19,6 +19,14 @@ const pubEdge = {
 	pubIsParent: true,
 };
 
+const pubEdgeWithoutAvatar = {
+	...pubEdge,
+	externalPublication: {
+		...pubEdge.externalPublication,
+		avatar: null,
+	},
+};
+
 const StatefulPreviewWrapper = () => {
 	const [externalPublication, setExternalPublication] = useState(pubEdge.externalPublication);
 	return (
@@ -33,6 +41,11 @@ const StatefulPreviewWrapper = () => {
 
 storiesOf('components/PubEdge', module)
 	.add('default', () => <PubEdge pubEdge={pubEdge} />)
-	.add('actsLikeLink', () => <PubEdge pubEdge={pubEdge} actsLikeLink={true} />);
+	.add('actsLikeLink', () => <PubEdge pubEdge={pubEdge} actsLikeLink={true} />)
+	.add('no avatar', () => (
+		<>
+			<PubEdge pubEdge={pubEdgeWithoutAvatar} />
+		</>
+	));
 
 storiesOf('components/PubEdgeEditor', module).add('default', () => <StatefulPreviewWrapper />);

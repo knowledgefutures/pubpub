@@ -9,7 +9,7 @@ import { Filter } from './constants';
 
 const somePub = {
 	title: 'Scripture as Interface. A Hermeneutical Reflection on a Concept based in Media Theory',
-	avatar: 'https://assets.pubpub.org/nlgqoo6x/51572618306498.png',
+	avatar: null,
 	releases: [
 		{
 			id: '52ebe6a2-ff74-4537-8ce8-c7999f1fbd55',
@@ -74,7 +74,7 @@ const outboundEdges = [
 		externalPublication: {
 			title: 'Wunden verbinden',
 			contributors: ['Hildegund Keul'],
-			avatar: 'https://assets.pubpub.org/qsjyoz1y/61586620971745.png',
+			avatar: null,
 			url: 'https://cursor.pubpub.org/pub/keul-wunden/release/2',
 			publicationDate: Date.now(),
 			description:

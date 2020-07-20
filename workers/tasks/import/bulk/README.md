@@ -63,6 +63,8 @@ Any Communities, Collections, and Pubs created will be immediately visible onlin
 npm run tools bulkimport -- --actor=pubpub-user-slug --receipt /path/to/receipt --publish
 ```
 
+You can choose whether to create Pub exports (which you may not want during testing) using the `--create-exports` flag, which defaults to `true`.
+
 If you want to discard all _created_ objects (preserving those that were targeted by directives but not created by them), then run:
 
 ```
@@ -156,7 +158,7 @@ slug: this-one-already-exists
 type: community
 create: true
 title: My New Community
-description: Pretty cool, no? # optional
+description: "Pretty cool, no?" # optional
 subdomain: my-new-community # optional
 ```
 
@@ -711,7 +713,7 @@ We could simply accept the fact that `cruft.tex` will create a Pub, or we could 
 children:
     chapters/chapter-one.tex:
         type: pub
-        title: Chapter One: The Way Things Are
+        title: "Chapter One: The Way Things Are"
         resolve:
             - ../footnote-definitions.tex:
                 as: _.tex
@@ -720,7 +722,7 @@ children:
             \newcommand{\emc2}{$E = mc^2$}
     chapters/chapter-two.tex:
         type: pub
-        title: Chapter One: The Way Things Ought to Be
+        title: "Chapter Two: The Way Things Ought to Be"
         resolve:
             - ../footnote-definitions.tex:
                 as: _.tex

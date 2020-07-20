@@ -4,28 +4,45 @@ import sinon from 'sinon';
 import { getEmptyDoc } from 'components/Editor';
 import * as firebaseAdmin from '../server/utils/firebaseAdmin';
 
-export const stubModule = (module, functionNames) => {
-	if (!Array.isArray(functionNames)) {
-		// eslint-disable-next-line no-param-reassign
-		functionNames = [functionNames];
+const stubManyFunctions = (module, stubEntries) =>
+	Object.fromEntries(
+		stubEntries.map(([key, value]) => {
+			const stub = sinon.stub(module, key);
+			if (value) {
+				stub.callsFake(value);
+			}
+			return [key, stub];
+		}),
+	);
+
+const getStubEntries = (functions) => {
+	if (typeof functions === 'object') {
+		if (Array.isArray(functions)) {
+			return functions.map((fn) => [fn, null]);
+		}
+		return Object.entries(functions);
 	}
-	const stubsArr = [];
-	const stubs = {};
-	functionNames.forEach((name) => {
-		const stub = sinon.stub(module, name);
-		stubsArr.push(stub);
-		stubs[name] = stub;
-	});
+	return [[functions, null]];
+};
+
+export const stubModule = (module, functions) => {
+	const stubEntries = getStubEntries(functions);
+	const stubs = stubManyFunctions(module, stubEntries);
 	return {
 		stubs: stubs,
-		restore: () => stubsArr.forEach((stub) => stub.restore()),
+		restore: () => Object.values(stubs).forEach((stub) => stub.restore()),
 	};
 };
 
-export const stubOut = (module, functionNames, before = beforeAll, after = afterAll) => {
+export const stubOut = (module, functions, before = beforeAll, after = afterAll) => {
+	if (typeof module === 'string') {
+		// lol,
+		// eslint-disable-next-line
+		module = require(module);
+	}
 	let restore;
 	before(() => {
-		restore = stubModule(module, functionNames).restore;
+		restore = stubModule(module, functions).restore;
 	});
 	after(() => {
 		if (restore) {

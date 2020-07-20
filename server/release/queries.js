@@ -1,6 +1,7 @@
 import { Release, Branch } from 'server/models';
 import { mergeFirebaseBranch, getLatestKey } from 'server/utils/firebaseAdmin';
-import { updateVisibilityForDiscussions } from '../discussion/queries';
+import { updateVisibilityForDiscussions } from 'server/discussion/queries';
+import { createBranchExports } from 'server/export/queries';
 
 export const createRelease = async ({
 	userId,
@@ -9,6 +10,7 @@ export const createRelease = async ({
 	noteContent,
 	noteText,
 	makeDraftDiscussionsPublic,
+	createExports = true,
 }) => {
 	const pubBranches = await Branch.findAll({ where: { pubId: pubId } });
 	const draftBranch = pubBranches.find((branch) => branch.title === 'draft');
@@ -18,7 +20,7 @@ export const createRelease = async ({
 		throw new Error('Cannot create a release on a Pub without a draft and public branch.');
 	}
 
-	if (!draftKey) {
+	if (!draftKey && draftKey !== 0) {
 		// eslint-disable-next-line no-param-reassign
 		draftKey = await getLatestKey(pubId, draftBranch.id);
 	}
@@ -58,6 +60,10 @@ export const createRelease = async ({
 		userId: userId,
 		pubId: pubId,
 	});
+
+	if (createExports) {
+		await createBranchExports(pubId, publicBranch.id);
+	}
 
 	if (makeDraftDiscussionsPublic) {
 		await updateVisibilityForDiscussions({ pubId: pubId }, { access: 'public' });

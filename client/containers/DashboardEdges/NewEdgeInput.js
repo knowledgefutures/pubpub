@@ -42,6 +42,7 @@ const indeterminateMenuItem = (
 		isSkeleton={true}
 		showImage={true}
 		disabled={true}
+		onClick={() => {}}
 	/>
 );
 

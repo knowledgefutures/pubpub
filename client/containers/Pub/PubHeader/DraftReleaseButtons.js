@@ -39,6 +39,14 @@ const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) =
 	};
 };
 
+const getCanCreateRelease = (latestRelease, latestKey) => {
+	if (latestRelease) {
+		const { sourceBranchKey } = latestRelease;
+		return typeof sourceBranchKey !== 'number' || sourceBranchKey < latestKey;
+	}
+	return latestKey !== -1;
+};
+
 const DraftReleaseButtons = (props) => {
 	const { historyData, pubData, updateHistoryData, updatePubData } = props;
 	const { communityData, scopeData } = usePageContext();
@@ -95,10 +103,7 @@ const DraftReleaseButtons = (props) => {
 		const { latestKey, timestamps } = historyData;
 		const latestRelease = releases[releases.length - 1];
 		const latestTimestamp = timestamps[latestKey];
-		const canRelease =
-			!latestRelease ||
-			typeof latestRelease.sourceBranchKey !== 'number' ||
-			latestRelease.sourceBranchKey < latestKey;
+		const canRelease = getCanCreateRelease(latestRelease, latestKey);
 		return (
 			<React.Fragment>
 				<ResponsiveHeaderButton

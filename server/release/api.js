@@ -8,20 +8,20 @@ const getRequestValues = (req) => {
 	const user = req.user || {};
 	const {
 		communityId,
-		pubId,
 		draftKey,
-		noteText,
-		noteContent,
 		makeDraftDiscussionsPublic,
+		noteContent,
+		noteText,
+		pubId,
 	} = req.body;
 	return {
-		userId: user.id,
 		communityId: communityId,
-		pubId: pubId,
 		draftKey: draftKey,
-		noteText: noteText,
-		noteContent: noteContent,
 		makeDraftDiscussionsPublic: makeDraftDiscussionsPublic,
+		noteContent: noteContent,
+		noteText: noteText,
+		pubId: pubId,
+		userId: user.id,
 	};
 };
 
@@ -29,13 +29,13 @@ app.post(
 	'/api/releases',
 	wrap(async (req, res) => {
 		const {
-			userId,
 			communityId,
-			pubId,
 			draftKey,
-			noteText,
-			noteContent,
 			makeDraftDiscussionsPublic,
+			noteContent,
+			noteText,
+			pubId,
+			userId,
 		} = getRequestValues(req);
 		const permissions = await getPermissions({
 			userId: userId,
@@ -56,6 +56,6 @@ app.post(
 			makeDraftDiscussionsPublic: makeDraftDiscussionsPublic,
 		});
 
-		return res.status(201).json({ release: release });
+		return res.status(201).json(release);
 	}),
 );

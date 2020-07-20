@@ -68,7 +68,7 @@ const PubReleaseDialog = (props) => {
 			draftKey: historyData.latestKey,
 			makeDraftDiscussionsPublic: makeDraftDiscussionsPublic,
 		})
-			.then(({ release }) => {
+			.then((release) => {
 				setReleleaseError(null);
 				setCreatedRelease(release);
 				setIsCreatingRelease(false);

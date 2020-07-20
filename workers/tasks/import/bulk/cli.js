@@ -45,6 +45,11 @@ const {
 	.option('yes', {
 		description: 'Skip confirmation prompts (at your own peril)',
 		type: 'boolean',
+	})
+	.options('create-exports', {
+		description: 'Create Pub exports during the publish stage',
+		type: 'boolen',
+		default: true,
 	});
 
 export const getActor = async (userSlug) => {
@@ -72,7 +77,16 @@ const writePlanToFile = async (path, plan) => {
 };
 
 const main = async () => {
-	const { actor: actorSlug, community, yes, dryRun, discard, publish, receipt } = args;
+	const {
+		actor: actorSlug,
+		community,
+		createExports,
+		discard,
+		dryRun,
+		publish,
+		receipt,
+		yes,
+	} = args;
 	const actor = await getActor(actorSlug);
 	const shouldImport = !discard && !publish;
 	if (shouldImport) {
@@ -115,7 +129,13 @@ const main = async () => {
 			);
 		}
 		const plan = await readPlanFromFile(receipt);
-		await publishBulkImportPlan({ plan: plan, yes: yes, dryRun: dryRun, actor: actor });
+		await publishBulkImportPlan({
+			plan: plan,
+			yes: yes,
+			dryRun: dryRun,
+			actor: actor,
+			createExports: createExports,
+		});
 	}
 };
 

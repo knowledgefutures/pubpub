@@ -4,7 +4,7 @@ import { createRelease } from 'server/release/queries';
 import { printImportPlan, getCreatedItemsFromPlan } from './plan';
 import { promptOkay } from './prompt';
 
-export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun }) => {
+export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun, createExports }) => {
 	printImportPlan(plan, { verb: 'publish' });
 	if (dryRun) {
 		return;
@@ -15,7 +15,9 @@ export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun }) => {
 	});
 	const { collections, pubs } = getCreatedItemsFromPlan(plan);
 	await Promise.all([
-		...pubs.map((pub) => createRelease({ userId: actor.id, pubId: pub.id })),
+		...pubs.map((pub) =>
+			createRelease({ userId: actor.id, pubId: pub.id, createExports: createExports }),
+		),
 		...collections.map((collection) =>
 			Collection.update({ isPublic: true }, { where: { id: collection.id } }),
 		),

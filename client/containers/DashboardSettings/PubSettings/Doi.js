@@ -27,9 +27,10 @@ class Doi extends Component {
 	handleAssignDoi() {
 		const { communityData, pubData, updatePubData } = this.props;
 		this.setState({ isLoading: true });
-		return apiFetch('/api/doi/pub', {
+		return apiFetch('/api/doi', {
 			method: 'POST',
 			body: JSON.stringify({
+				target: 'pub',
 				pubId: pubData.id,
 				communityId: communityData.id,
 			}),

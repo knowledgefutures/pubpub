@@ -63,9 +63,10 @@ class CollectionMetadataEditor extends React.Component {
 	handleGetDoiClick() {
 		const { communityData, collection, onUpdateCollection } = this.props;
 		this.setState({ isGettingDoi: true });
-		return apiFetch('/api/doi/collection', {
+		return apiFetch('/api/doi', {
 			method: 'POST',
 			body: JSON.stringify({
+				target: 'collection',
 				collectionId: collection.id,
 				communityId: communityData.id,
 			}),

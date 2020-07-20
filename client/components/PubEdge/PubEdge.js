@@ -95,18 +95,18 @@ const PubEdge = (props) => {
 		[open],
 	);
 
-	const handleClick = useCallback(
+	const handleLinkClick = useCallback(
 		(e) => {
 			if (e.type === 'click' || e.key === 'Enter') {
-				window.open(url, '_top');
+				window.open(url, e.metaKey ? '_blank' : '_self');
 			}
 		},
 		[url],
 	);
 
 	const linkLikeProps = actsLikeLink && {
-		onClick: handleClick,
-		onKeyDown: handleClick,
+		onClick: handleLinkClick,
+		onKeyDown: handleLinkClick,
 		role: 'link',
 		tabIndex: '0',
 	};
@@ -142,15 +142,15 @@ const PubEdge = (props) => {
 			bylineElement={<Byline contributors={contributors} />}
 			metadataElements={[
 				description && (
-					<Button
-						as={actsLikeLink ? 'span' : 'a'}
+					<span
 						onClick={handleToggleDescriptionClick}
 						onKeyDown={handleToggleDescriptionClick}
 						tabIndex="0"
 						className="link"
+						role="button"
 					>
 						{open ? 'Hide Description' : 'Show Description'}
-					</Button>
+					</span>
 				),
 				<>Published on {publishedAt}</>,
 				maybeLink(url, linkLikeProps),

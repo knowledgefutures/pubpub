@@ -29,7 +29,7 @@ https://gitlab.pagedmedia.org/tools/pagedjs-cli/issues/11 */
 
 .pub-body-component {
     // override bullet sizing for PDFs
-    .editor.ProseMirror li p {
+    .editor.ProseMirror li p, .editor.ProseMirror ul > li > p {
             font-size: inherit;
         }
     .editor.ProseMirror .pub-notes ol > li {
@@ -116,11 +116,13 @@ section.cover {
             content: counter(page);
         }
     }
-
+    /* These never actually took effect because I didn't capitalize prosemirror
+    And I can't test it now because for some reason the dev queue isn't working.
+    So commenting out for now until I can test them.
     // Manually resize main text elements to make them more palatable for print
     $print-body-text-size: 14px;
-    .pub-body-component .editor.Prosemirror {
-        p, li, li p {
+    .pub-body-component .editor.ProseMirror {
+        p, li, li p, ul > li > p {
             font-size: $print-body-text-size;
         }
         h1 {
@@ -136,7 +138,7 @@ section.cover {
             font-size: $print-body-text-size * 1.1;
         }
     }
-
+    */
     /* Avoid being the last element on the page */
     h1,
     h2,

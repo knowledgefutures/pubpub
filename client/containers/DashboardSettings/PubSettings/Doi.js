@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, FormGroup } from '@blueprintjs/core';
+import { FormGroup } from '@blueprintjs/core';
 
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { apiFetch } from 'client/utils/apiFetch';
+
+import { AssignDoi } from 'components';
 
 require('./doi.scss');
 
@@ -18,30 +19,15 @@ class Doi extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isLoading: false,
 			justSetDoi: false,
 		};
-		this.handleAssignDoi = this.handleAssignDoi.bind(this);
+		this.handleDeposit = this.handleDeposit.bind(this);
 	}
 
-	handleAssignDoi() {
-		const { communityData, pubData, updatePubData } = this.props;
-		this.setState({ isLoading: true });
-		return apiFetch('/api/doi', {
-			method: 'POST',
-			body: JSON.stringify({
-				target: 'pub',
-				pubId: pubData.id,
-				communityId: communityData.id,
-			}),
-		})
-			.then(({ dois: { pub: pubDoi } }) => {
-				updatePubData({ doi: pubDoi });
-				this.setState({ isLoading: false, justSetDoi: true });
-			})
-			.catch(() => {
-				this.setState({ isLoading: false });
-			});
+	handleDeposit(doi) {
+		const { updatePubData } = this.props;
+		this.setState({ justSetDoi: true });
+		updatePubData({ doi: doi });
 	}
 
 	renderCollectionContextMessage() {
@@ -106,12 +92,14 @@ class Doi extends Component {
 			pubData: { doi },
 			canIssueDoi,
 		} = this.props;
-		const { isLoading, justSetDoi } = this.state;
+		const { justSetDoi } = this.state;
+
 		return (
 			<div className="pub-settings-container_doi-component">
 				{this.renderStatusMessage()}
 				{this.renderCollectionContextMessage()}
 				{this.renderDoi()}
+
 				<FormGroup
 					helperText={
 						doi &&
@@ -124,14 +112,13 @@ class Doi extends Component {
 						)
 					}
 				>
-					<Button
-						text={
-							justSetDoi ? 'Submitted!' : doi ? 'Resubmit DOI deposit' : 'Assign DOI'
-						}
-						loading={isLoading}
-						onClick={this.handleAssignDoi}
-						disabled={!canIssueDoi || justSetDoi}
-						icon={justSetDoi && 'tick'}
+					<AssignDoi
+						communityData={this.props.communityData}
+						disabled={!canIssueDoi}
+						onDeposit={this.handleDeposit}
+						pubData={this.props.pubData}
+						doi={doi}
+						target="pub"
 					/>
 				</FormGroup>
 			</div>

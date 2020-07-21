@@ -1,22 +1,6 @@
 import { addWorkerTask } from 'server/utils/workers';
-import { WorkerTask } from 'server/models';
 
-const generateTask = (type, input) => {
-	return WorkerTask.create({
-		isProcessing: true,
-		type: type,
-		input: input,
-	}).then((workerTaskData) => {
-		const sendMessage = addWorkerTask(
-			JSON.stringify({
-				id: workerTaskData.id,
-				type: workerTaskData.type,
-				input: workerTaskData.input,
-			}),
-		);
-		return sendMessage;
-	});
-};
+const generateTask = (type, input) => addWorkerTask({ type: type, input: input });
 
 export const deletePageSearchData = (pageId) => {
 	generateTask('deletePageSearchData', pageId);

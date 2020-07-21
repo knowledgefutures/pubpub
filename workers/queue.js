@@ -6,6 +6,7 @@ import amqplib from 'amqplib';
 import * as Sentry from '@sentry/node';
 
 import { isProd, getAppCommit } from 'utils/environment';
+import { TaskPriority, taskQueueName } from 'utils/workers';
 import { WorkerTask } from 'server/models';
 
 const maxWorkerTimeSeconds = 120;
@@ -118,13 +119,16 @@ amqplib
 			conn.close();
 		});
 		return conn.createConfirmChannel().then((ch) => {
-			let ok = ch.assertQueue('pubpubTaskQueue', { durable: true });
+			let ok = ch.assertQueue(taskQueueName, {
+				durable: true,
+				maxPriority: TaskPriority.Highest,
+			});
 			ok = ok.then(() => {
 				ch.prefetch(maxWorkerThreads);
 			});
 			ok = ok.then(() => {
-				ch.consume('pubpubTaskQueue', processTask(ch), { noAck: false });
-				console.log(' [*] Waiting for messages. To exit press CTRL+C');
+				ch.consume(taskQueueName, processTask(ch), { noAck: false });
+				console.log(` [*] Waiting for messages on ${taskQueueName}. To exit press CTRL+C`);
 			});
 			return ok;
 		});

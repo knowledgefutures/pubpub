@@ -7,5 +7,6 @@ export default (sequelize, dataTypes) => {
 		attemptCount: { type: dataTypes.INTEGER },
 		error: { type: dataTypes.JSONB },
 		output: { type: dataTypes.JSONB },
+		priority: { type: dataTypes.INTEGER },
 	});
 };

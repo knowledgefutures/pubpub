@@ -1,19 +1,8 @@
-import { WorkerTask } from 'server/models';
 import { addWorkerTask } from 'server/utils/workers';
 
 export const createImport = async ({ sourceFiles, importerFlags }) => {
-	const input = { sourceFiles: sourceFiles, importerFlags: importerFlags };
-	const workerTask = await WorkerTask.create({
-		isProcessing: true,
+	return addWorkerTask({
 		type: 'import',
-		input: input,
+		input: { sourceFiles: sourceFiles, importerFlags: importerFlags },
 	});
-	await addWorkerTask(
-		JSON.stringify({
-			id: workerTask.id,
-			type: workerTask.type,
-			input: input,
-		}),
-	);
-	return workerTask;
 };

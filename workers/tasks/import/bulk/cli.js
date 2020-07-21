@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 
 import { User } from 'server/models';
+import { TaskPriority } from 'utils/workers';
 
 import { runBulkImportFromDirectory } from './import';
 import { discardBulkImportPlan } from './discard';
@@ -76,6 +77,10 @@ const writePlanToFile = async (path, plan) => {
 	return fs.writeFile(path, JSON.stringify(plan));
 };
 
+const setLowWorkerPriority = () => {
+	process.env.DEFAULT_QUEUE_TASK_PRIORITY = TaskPriority.Low;
+};
+
 const main = async () => {
 	const {
 		actor: actorSlug,
@@ -87,6 +92,7 @@ const main = async () => {
 		receipt,
 		yes,
 	} = args;
+	setLowWorkerPriority();
 	const actor = await getActor(actorSlug);
 	const shouldImport = !discard && !publish;
 	if (shouldImport) {

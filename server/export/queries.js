@@ -16,6 +16,7 @@ export const getOrStartExportTask = async ({ pubId, branchId, format, historyKey
 		},
 		include: [{ model: WorkerTask, as: 'workerTask' }],
 	});
+
 	if (existingExport) {
 		const { url, workerTask } = existingExport;
 		if (url) {
@@ -26,6 +27,7 @@ export const getOrStartExportTask = async ({ pubId, branchId, format, historyKey
 			return { taskId: workerTask.id };
 		}
 	}
+
 	const theExport =
 		existingExport ||
 		(await Export.create({
@@ -34,19 +36,12 @@ export const getOrStartExportTask = async ({ pubId, branchId, format, historyKey
 			format: format,
 			historyKey: historyKey,
 		}));
-	const taskInput = { exportId: theExport.id };
-	const task = await WorkerTask.create({
-		isProcessing: true,
+
+	const task = await addWorkerTask({
 		type: 'export',
-		input: taskInput,
+		input: { exportId: theExport.id },
 	});
-	await addWorkerTask(
-		JSON.stringify({
-			id: task.id,
-			type: task.type,
-			input: taskInput,
-		}),
-	);
+
 	await theExport.update({ workerTaskId: task.id });
 	return { taskId: task.id };
 };

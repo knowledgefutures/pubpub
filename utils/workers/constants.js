@@ -1,3 +1,5 @@
+import { isDevelopment } from 'utils/environment';
+
 export const TaskPriority = {
 	Highest: 20,
 	High: 15,
@@ -10,4 +12,7 @@ export const TaskPriority = {
 // a new queue. Once this code is in production and running on both the web and worker dynos,
 // a queue with this name will be created automatically. You'll need to visit the RabbitMQ
 // control panel, move all unfinished tasks into the new queue, and then delete the old one.
-export const taskQueueName = process.env.PUBPUB_LOCAL_TASK_QUEUE || 'pubpubTaskQueue-2020-07-20';
+const prodTaskQueueName = 'pubpubTaskQueue-2020-07-20';
+const localTaskQueueName = isDevelopment() && process.env.PUBPUB_LOCAL_TASK_QUEUE;
+
+export const taskQueueName = localTaskQueueName || prodTaskQueueName;

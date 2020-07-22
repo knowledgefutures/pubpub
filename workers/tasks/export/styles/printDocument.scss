@@ -28,21 +28,26 @@ https://gitlab.pagedmedia.org/tools/pagedjs-cli/issues/11 */
 }
 
 .pub-body-component {
-    // override bullet sizing for PDFs
-    .editor.ProseMirror li p, .editor.ProseMirror ul > li > p {
-            font-size: inherit;
+    .editor.ProseMirror {
+        ol,
+        ul {
+            p {
+                // override bullet sizing for PDFs
+                font-size: inherit;
+            }
         }
-    .editor.ProseMirror .pub-notes ol > li {
-        list-style-position: inside;
-        margin: inherit;
-        &:target {
-            background: cornsilk;
-        }
-        p:last-child {
-            display: inline;
-        }
-        .return-link {
-            font-size: 0.75em;
+        .pub-notes ol > li {
+            list-style-position: inside;
+            margin: inherit;
+            &:target {
+                background: cornsilk;
+            }
+            p:last-child {
+                display: inline;
+            }
+            .return-link {
+                font-size: 0.75em;
+            }
         }
     }
 }
@@ -91,7 +96,6 @@ section.cover {
         }
     }
 }
-
 
 @media print {
     /* Baseline page styles */
@@ -161,7 +165,8 @@ section.cover {
         display: flex;
         flex-direction: column;
         max-height: 800px;
-        img, video {
+        img,
+        video {
             break-inside: avoid;
             width: 100%;
             min-height: 0;

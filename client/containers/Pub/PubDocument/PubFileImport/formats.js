@@ -15,6 +15,7 @@ export const getPotentialLabelsForFile = (file) => {
 	return [
 		isDoc && 'document',
 		isDoc && 'supplement',
+		isDoc && 'preamble',
 		bibliographyFormats.includes(extensionFor(file.clientPath)) && 'bibliography',
 	].filter((x) => x);
 };

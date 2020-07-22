@@ -85,9 +85,7 @@ const getPandocAst = ({
 		pandocRawAst = JSON.parse(pandocResult.output);
 	} catch (err) {
 		throw new Error(
-			`Conversion from ${path.basename(
-				document.clientPath,
-			)} failed. Pandoc says: ${pandocError}`,
+			`Conversion from ${path.basename(documentPath)} failed. Pandoc says: ${pandocError}`,
 		);
 	}
 	return runTransforms(parsePandocJson(pandocRawAst), importerFlags);

@@ -12,3 +12,4 @@ dist
 .node-version
 .vscode
 workers/tasks/export/styles/printDocument.css
+.pubpub_repl_history*

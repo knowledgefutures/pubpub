@@ -30,6 +30,7 @@ const commandFiles = {
 	switchBranchOrders: './switchBranchOrders.js',
 	syncDbSchema: './syncDbSchema.js',
 	syncDevFirebase: './syncFirebase.js',
+	devshell: './devshell.js',
 };
 
 const activeCommandFile = commandFiles[command];

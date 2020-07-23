@@ -53,31 +53,18 @@ export const setPubSearchData = (pubId) => {
 };
 
 export const updateCommunityData = (communityId) => {
-	const getObjectIds = (index) => {
-		return new Promise((resolve, reject) => {
-			const browser = index.browseAll('', {
-				filters: `communityId:${communityId}`,
-				attributesToRetrieve: ['objectId'],
-			});
-			let objectIds = [];
-
-			browser.on('result', (content) => {
-				objectIds = objectIds.concat(
-					content.hits.map((hit) => {
-						return hit.objectID;
-					}),
-				);
-			});
-
-			browser.on('end', () => {
-				resolve(objectIds);
-			});
-
-			browser.on('error', (err) => {
-				reject(err);
-			});
+	const getObjectIds = async (index) => {
+		let hits = [];
+		await index.browseObjects({
+			filters: `communityId:${communityId}`,
+			attributesToRetrieve: ['objectId'],
+			batch: (batch) => {
+				hits = hits.concat(batch);
+			},
 		});
+		return hits.map((hit) => hit.objectID);
 	};
+
 	const findCommunityData = Community.findOne({
 		where: {
 			id: communityId,

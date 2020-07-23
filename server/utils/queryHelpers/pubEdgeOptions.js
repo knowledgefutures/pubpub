@@ -20,8 +20,10 @@ export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 			as: 'releases',
 		},
 		{
+			separate: true,
 			model: PubAttribution,
 			as: 'attributions',
+			order: [['order', 'ASC']],
 			include: [includeUserModel({ as: 'user' })],
 		},
 	].filter((x) => x);

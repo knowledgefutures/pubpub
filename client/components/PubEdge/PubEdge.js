@@ -37,6 +37,15 @@ const getUrlForPub = (pubData, communityData) => {
 	return pubShortUrl(pubData);
 };
 
+const getHostnameForUrl = (url) => {
+	try {
+		const parsedUrl = new URL(url);
+		return parsedUrl.hostname;
+	} catch (_) {
+		return url;
+	}
+};
+
 const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 	const { externalPublication, targetPub, pub } = pubEdge;
 	const displayedPub = viewingFromTarget ? pub : targetPub;
@@ -151,7 +160,7 @@ const PubEdge = (props) => {
 				{ tabIndex: '-1' },
 			)}
 			titleElement={maybeLink(title, linkLikeProps)}
-			bylineElement={<Byline contributors={contributors} />}
+			bylineElement={contributors.length > 0 && <Byline contributors={contributors} />}
 			metadataElements={[
 				description && (
 					<span
@@ -165,7 +174,7 @@ const PubEdge = (props) => {
 					</span>
 				),
 				<>Published on {publishedAt}</>,
-				maybeLink(url, linkLikeProps),
+				maybeLink(getHostnameForUrl(url), linkLikeProps),
 			]}
 			detailsElement={
 				<details open={open}>

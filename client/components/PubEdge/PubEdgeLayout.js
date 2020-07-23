@@ -36,7 +36,7 @@ const PubEdgeLayout = (props) => {
 				{topLeftElement && <div className="top-left">{topLeftElement}</div>}
 				<div className="top-right">
 					<div className="title-container">{titleElement}</div>
-					<div className="byline-container">{bylineElement}</div>
+					{bylineElement && <div className="byline-container">{bylineElement}</div>}
 					<ul className="metadata">
 						{metadataElements
 							.map(

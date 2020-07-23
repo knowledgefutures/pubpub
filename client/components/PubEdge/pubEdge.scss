@@ -12,7 +12,6 @@
 		font-size: 18px;
 		font-weight: 400;
 		letter-spacing: 1px;
-		margin-bottom: 8px;
 		a {
 			text-decoration: none;
 		}
@@ -41,8 +40,15 @@
 			display: flex;
 			flex: 1 1 0;
 			flex-direction: column;
-			justify-content: space-evenly;
 			width: 100%;
+
+			.title-container {
+				margin-bottom: 8px;
+			}
+
+			.byline-container + .metadata {
+				margin-top: 5px;
+			}
 		}
 
 		.byline-container {
@@ -75,7 +81,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		list-style-type: none;
-		margin: 5px 0 0 0;
+		margin: 0;
 		padding: 0;
 
 		li {
@@ -97,6 +103,10 @@
 		li:not(:last-child):after {
 			content: '\00B7';
 			margin: 4px;
+		}
+
+		.link {
+			white-space: normal;
 		}
 
 		a {

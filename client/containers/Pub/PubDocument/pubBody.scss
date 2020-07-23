@@ -1,6 +1,6 @@
 @import 'styles/variables.scss';
 
-$pub-body-font-size: 20px;
+$pub-body-font-size: if(variable-exists('PUBPUB_PRINT'), 14px, 20px);
 
 @mixin pub-body-styles {
 	h1#abstract:first-child {
@@ -27,29 +27,23 @@ $pub-body-font-size: 20px;
 		letter-spacing: 1px;
 	}
 	h1 {
-		// font-size: 1.5em;
-		font-size: 28px;
+		font-size: 1.4em;
 		font-weight: 600;
 	}
 	h2 {
-		// font-size: 1.25em;
-		font-size: 26px;
+		font-size: 1.3em;
 	}
 	h3 {
-		// font-size: 1.1em;
-		font-size: 24px;
+		font-size: 1.2em;
 	}
 	h4 {
-		// font-size: 1.1em;
-		font-size: 22px;
+		font-size: 1.1em;
 	}
 	h5 {
-		// font-size: 1em;
-		font-size: 20px;
+		font-size: 1em;
 	}
 	h6 {
-		// font-size: 0.875em;
-		font-size: 18px;
+		font-size: 0.9em;
 	}
 	* + h1,
 	* + h2,
@@ -80,9 +74,10 @@ $pub-body-font-size: 20px;
 
 	ul {
 		& > li {
-			font-size: 16px;
-			& > p {
-				font-size: $pub-body-font-size;
+			font-size: 0.8em;
+			& > * {
+				// Relative to above (0.8 * 1.25 = 1)
+				font-size: 1.25em
 			}
 		}
 	}
@@ -115,7 +110,7 @@ $pub-body-font-size: 20px;
 	code {
 		background-color: rgba(27, 31, 35, 0.06);
 		border-radius: 2px;
-		font-size: 16px;
+		font-size: 0.8em;
 		margin: 0;
 		padding: 0.2em 0.4em;
 	}
@@ -128,7 +123,7 @@ $pub-body-font-size: 20px;
 	}
 	figure,
 	.file {
-		font-size: 15px;
+		font-size: 0.75em;
 	}
 	figcaption {
 		font-size: 0.9em;
@@ -158,9 +153,6 @@ $pub-body-font-size: 20px;
 	.editor.ProseMirror {
 		min-height: 150px;
 		@include pub-body-styles();
-		.insert-popup {
-			font-size: 15px;
-		}
 	}
 	.bp3-callout.working-draft {
 		display: flex;

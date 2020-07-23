@@ -15,6 +15,7 @@ const footnotePrefix = 'fn';
 const bullet = ' • ';
 
 const createCss = () => {
+	const entrypoint = path.join(__dirname, 'styles', 'printDocument.scss');
 	const cssPath = path.join(__dirname, 'styles', 'printDocument.css');
 	// HACK(ian): We use node-sass to build a CSS bundle that is used by our HTML/PDF exports.
 	// Unfortunately, the export task runs in a thread managed by the worker_threads API, which
@@ -24,9 +25,11 @@ const createCss = () => {
 		const nodeSass = require('node-sass');
 		const nodeModulesPath = path.join(process.env.PWD, 'node_modules');
 		const clientPath = path.join(process.env.PWD, 'client');
+		const entrypointContents = fs.readFileSync(entrypoint).toString();
+		const data = '$PUBPUB_PRINT: true;\n' + entrypointContents;
 		const css = nodeSass
 			.renderSync({
-				file: path.join(__dirname, 'styles', 'printDocument.scss'),
+				data: data,
 				includePaths: [nodeModulesPath, clientPath],
 				importer: (url) => {
 					if (url.startsWith('~')) {
@@ -125,7 +128,7 @@ const renderSharedDetails = ({ updatedDateString, publishedDateString, doi, lice
 			)}
 			{license && (
 				<div>
-					<strong>License:</strong>{' '}
+					<strong>License:</strong>&nbsp;
 					<a href={license.link}>
 						{license.full} ({license.slug.toUpperCase()} {license.version})
 					</a>

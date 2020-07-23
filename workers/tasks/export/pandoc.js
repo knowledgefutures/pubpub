@@ -6,8 +6,13 @@ import YAML from 'yaml';
 import { getLicenseBySlug } from 'utils/licenses';
 import { getTmpFileForExtension } from './util';
 
+const formatToTemplateExtension = {
+	epub: 'epub3',
+};
+
 const getTemplatePath = (pandocTarget) => {
-	return path.join(__dirname, 'templates', `default.${pandocTarget}`);
+	const targetExtension = formatToTemplateExtension[pandocTarget] || pandocTarget;
+	return path.join(__dirname, 'templates', `default.${targetExtension}`);
 };
 
 const createPandocArgs = (pandocTarget, tmpFile, metadataFile) => {

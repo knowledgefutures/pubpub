@@ -93,6 +93,7 @@ const PubEdge = (props) => {
 		viewingFromTarget,
 	);
 
+	const detailsElementId = `edge-details-${pubEdge.id}`;
 	const publishedAt = formatDate(publicationDate);
 
 	const handleToggleDescriptionClick = useCallback(
@@ -106,32 +107,20 @@ const PubEdge = (props) => {
 		[open],
 	);
 
-	const handleLinkClick = useCallback(
-		(e) => {
-			if (e.type === 'click' || e.key === 'Enter') {
-				window.open(url, e.metaKey ? '_blank' : '_self');
-			}
-		},
-		[url],
-	);
-
-	const linkLikeProps = actsLikeLink && {
-		onClick: handleLinkClick,
-		onKeyDown: handleLinkClick,
-		role: 'link',
-		tabIndex: '0',
-	};
-
 	const maybeLink = (element, restProps = {}) => {
 		if (actsLikeLink) {
 			return (
-				<span {...restProps} className="link">
+				<span className="link" {...restProps}>
 					{element}
 				</span>
 			);
 		}
 
-		return <a href={url}>{element}</a>;
+		return (
+			<a href={url} {...restProps}>
+				{element}
+			</a>
+		);
 	};
 
 	const maybeWrapWithLink = (element, restProps = {}) => {
@@ -142,7 +131,6 @@ const PubEdge = (props) => {
 				</a>
 			);
 		}
-
 		return <div {...restProps}>{element}</div>;
 	};
 
@@ -159,7 +147,7 @@ const PubEdge = (props) => {
 				),
 				{ tabIndex: '-1' },
 			)}
-			titleElement={maybeLink(title, linkLikeProps)}
+			titleElement={maybeLink(title)}
 			bylineElement={contributors.length > 0 && <Byline contributors={contributors} />}
 			metadataElements={[
 				description && (
@@ -167,17 +155,19 @@ const PubEdge = (props) => {
 						onClick={handleToggleDescriptionClick}
 						onKeyDown={handleToggleDescriptionClick}
 						tabIndex="0"
-						className="link"
+						className="link description-toggle"
 						role="button"
+						aria-controls={detailsElementId}
+						aria-expanded={open}
 					>
 						{open ? 'Hide Description' : 'Show Description'}
 					</span>
 				),
 				<>Published on {publishedAt}</>,
-				maybeLink(getHostnameForUrl(url), linkLikeProps),
+				<span className="location">{getHostnameForUrl(url)}</span>,
 			]}
 			detailsElement={
-				<details open={open}>
+				<details open={open} id={detailsElementId}>
 					<summary>Description</summary>
 					<hr />
 					<p>{description}</p>

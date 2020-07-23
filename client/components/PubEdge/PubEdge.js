@@ -54,7 +54,7 @@ const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 		const url = getUrlForPub(displayedPub, communityData);
 		return {
 			avatar: avatar,
-			contributors: attributions,
+			contributors: attributions || [],
 			description: description,
 			publicationDate: getPubPublishedDate(displayedPub),
 			title: title,
@@ -72,7 +72,7 @@ const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 		} = externalPublication;
 		return {
 			avatar: avatar,
-			contributors: contributors,
+			contributors: contributors || '',
 			description: description,
 			publicationDate: publicationDate,
 			title: title,

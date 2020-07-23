@@ -134,6 +134,7 @@ const PubEdgeListingCard = (props) => {
 						color={accentColor}
 						iconSize={14}
 						className="drop-return"
+						alt=""
 					/>
 				)}
 				{renderRelation()}

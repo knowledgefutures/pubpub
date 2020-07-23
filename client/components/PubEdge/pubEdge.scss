@@ -105,14 +105,17 @@
 			margin: 4px;
 		}
 
-		.link {
+		.location {
 			white-space: normal;
+		}
+
+		.description-toggle {
+			user-select: none;
 		}
 
 		a {
 			text-decoration: none;
 			&:hover,
-			&:active,
 			&:focus {
 				text-decoration: underline;
 			}

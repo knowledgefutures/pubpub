@@ -2,6 +2,7 @@
 import sinon from 'sinon';
 
 import { setup, teardown, login, modelize } from 'stubstub';
+import { CrossrefDepositRecord } from 'server/models';
 
 import * as submit from '../submit';
 
@@ -98,7 +99,7 @@ it('forbids issuing a DOI to a Pub without a release', async () => {
 		.expect(403);
 });
 
-it('lets community admins create a DOI for pubs in their community', async () => {
+it.only('lets community admins create a DOI for pubs in their community', async () => {
 	const { communityAdmin, community, pub } = models;
 	const expectedPubDoi = `10.21428/${community.id.slice(0, 8)}.${pub.id.slice(0, 8)}`;
 	const agent = await login(communityAdmin);
@@ -109,8 +110,14 @@ it('lets community admins create a DOI for pubs in their community', async () =>
 		.send({ target: 'pub', pubId: pub.id, communityId: community.id })
 		.expect(201);
 
+	await pub.reload();
+
+	const depositRecord = await CrossrefDepositRecord.findOne({
+		where: { id: pub.crossrefDepositRecordId },
+	});
+
 	expect(dois.pub).toEqual(expectedPubDoi);
-	expect(doiStub.called).toEqual(true);
+	expect(depositRecord.depositJson.deposit).toEqual(doiStub.firstCall.args[0]);
 });
 
 it('lets community admins preview a DOI for pubs in their community', async () => {
@@ -143,8 +150,14 @@ it('lets community admins create a DOI for collections in their community', asyn
 		.send({ target: 'collection', collectionId: collection.id, communityId: community.id })
 		.expect(201);
 
+	await collection.reload();
+
+	const depositRecord = await CrossrefDepositRecord.findOne({
+		where: { id: collection.crossrefDepositRecordId },
+	});
+
 	expect(dois.collection).toEqual(expectedCollectionDoi);
-	expect(doiStub.called).toEqual(true);
+	expect(depositRecord.depositJson.deposit).toEqual(doiStub.firstCall.args[0]);
 });
 
 it('lets community admins preview a DOI for collections in their community', async () => {

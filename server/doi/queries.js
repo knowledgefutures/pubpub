@@ -9,6 +9,10 @@ import {
 	Release,
 	includeUserModel,
 } from 'server/models';
+import {
+	createCrossrefDepositRecord,
+	updateCrossrefDepositRecord,
+} from 'server/crossrefDepositRecord/queries';
 
 import { submitDoiData } from './submit';
 
@@ -54,6 +58,37 @@ const findCommunity = (communityId) =>
 		attributes: ['id', 'title', 'issn', 'domain', 'subdomain'],
 	});
 
+const persistCrossrefDepositRecord = async (ids, depositJson) => {
+	const { collectionId, pubId } = ids;
+	const targetModel = pubId
+		? await Pub.findOne({
+				where: {
+					id: pubId,
+				},
+		  })
+		: await Collection.findOne({
+				where: {
+					id: collectionId,
+				},
+		  });
+	const { crossrefDepositRecordId } = targetModel;
+
+	if (crossrefDepositRecordId) {
+		return updateCrossrefDepositRecord({
+			crossrefDepositRecordId: crossrefDepositRecordId,
+			depositJson: depositJson,
+		});
+	} else {
+		const crossrefDepositRecord = await createCrossrefDepositRecord({ depositJson });
+
+		await targetModel.update({
+			crossrefDepositRecordId: crossrefDepositRecord.id,
+		});
+	}
+
+	return targetModel;
+};
+
 const persistDoiData = (ids, dois) => {
 	const { collectionId, pubId } = ids;
 	const { collection: collectionDoi, pub: pubDoi } = dois;
@@ -90,10 +125,17 @@ export const setDoiData = ({ communityId, collectionId, pubId }, doiTarget) =>
 	getDoiData(
 		{ communityId: communityId, collectionId: collectionId, pubId: pubId },
 		doiTarget,
-	).then(({ deposit, timestamp, dois }) =>
-		submitDoiData(deposit, timestamp, communityId)
-			.then(() => persistDoiData({ collectionId: collectionId, pubId: pubId }, dois))
+	).then((depositJson) => {
+		const ids = { collectionId: collectionId, pubId: pubId };
+		const { deposit, timestamp, dois } = depositJson;
+		return submitDoiData(deposit, timestamp, communityId)
+			.then(() =>
+				Promise.all([
+					persistDoiData(ids, dois),
+					persistCrossrefDepositRecord(ids, depositJson),
+				]),
+			)
 			.then(() => {
 				return { deposit: deposit, dois: dois };
-			}),
-	);
+			});
+	});

@@ -24,7 +24,7 @@ const previewOrDepositDoi = async (req, options = { deposit: false }) => {
 		throw new ForbiddenError();
 	}
 
-	const doiJson = await (deposit ? setDoiData : getDoiData)(
+	const depositJson = await (deposit ? setDoiData : getDoiData)(
 		{
 			communityId: communityId,
 			collectionId: collectionId,
@@ -33,26 +33,26 @@ const previewOrDepositDoi = async (req, options = { deposit: false }) => {
 		target,
 	);
 
-	return doiJson;
+	return depositJson;
 };
 
 app.post(
 	'/api/doi',
 	wrap(async (req, res) => {
-		const doiJson = await previewOrDepositDoi(req, { deposit: true });
+		const depositJson = await previewOrDepositDoi(req, { deposit: true });
 
-		return res.status(201).json(doiJson);
+		return res.status(201).json(depositJson);
 	}),
 );
 
 app.get(
 	'/api/doiPreview',
 	wrap(async (req, res) => {
-		const doiJson = await previewOrDepositDoi(req);
-		const depositXml = xmlbuilder.create(doiJson, { headless: true }).end({ pretty: true });
+		const depositJson = await previewOrDepositDoi(req);
+		const depositXml = xmlbuilder.create(depositJson, { headless: true }).end({ pretty: true });
 
 		return res.status(201).json({
-			depositJson: doiJson,
+			depositJson: depositJson,
 			depositXml: depositXml,
 		});
 	}),

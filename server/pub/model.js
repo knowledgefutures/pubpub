@@ -52,18 +52,19 @@ export default (sequelize, dataTypes) => {
 			classMethods: {
 				associate: (models) => {
 					const {
+						Branch,
+						CollectionPub,
+						Community,
+						CrossrefDepositRecord,
+						DiscussionNew,
+						Fork,
+						Member,
 						Pub,
 						PubAttribution,
 						PubEdge,
-						CollectionPub,
-						Community,
-						Branch,
 						PubVersion,
 						Release,
-						DiscussionNew,
-						Fork,
 						ReviewNew,
-						Member,
 					} = models;
 					Pub.hasMany(PubAttribution, {
 						onDelete: 'CASCADE',
@@ -124,6 +125,11 @@ export default (sequelize, dataTypes) => {
 						onDelete: 'CASCADE',
 						as: 'inboundEdges',
 						foreignKey: 'targetPubId',
+					});
+					Pub.belongsTo(CrossrefDepositRecord, {
+						onDelete: 'CASCADE',
+						as: 'crossrefDepositRecord',
+						foreignKey: 'crossrefDepositRecordId',
 					});
 				},
 			},

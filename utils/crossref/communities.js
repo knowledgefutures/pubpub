@@ -8,6 +8,15 @@ const MEDIASTUDIES_DOI_PREFIX = '10.32376';
 const RS_DOI_PREFIX = '10.46470';
 const JOTE_DOI_PREFIX = '10.36850';
 
+export const managedDoiPrefixes = [
+	PUBPUB_DOI_PREFIX,
+	MITP_DOI_PREFIX,
+	IASTATE_DOI_PREFIX,
+	AAS_DOI_PREFIX,
+	MEDIASTUDIES_DOI_PREFIX,
+	RS_DOI_PREFIX,
+];
+
 export const communityDoiOverrides = [
 	{
 		communityIds: [

@@ -14,7 +14,7 @@ const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	disabled: PropTypes.bool,
 	pubData: PropTypes.object.isRequired,
-	doi: PropTypes.string,
+	hasExistingDeposit: PropTypes.bool,
 	target: PropTypes.string.isRequired,
 	onDeposit: PropTypes.func,
 	onPreview: PropTypes.func,
@@ -23,7 +23,7 @@ const propTypes = {
 
 const defaultProps = {
 	disabled: false,
-	doi: null,
+	hasExistingDeposit: false,
 	onPreview: noop,
 	onDeposit: noop,
 	onError: noop,
@@ -53,8 +53,8 @@ const buttonTextByState = {
 	[AssignDoiState.Deposited]: 'DOI Deposited',
 };
 
-const getButtonText = (state, doi) => {
-	if (state === AssignDoiState.Initial && doi) {
+const getButtonText = (state, hasExistingDeposit) => {
+	if (state === AssignDoiState.Initial && hasExistingDeposit) {
 		return 'Resubmit DOI deposit';
 	}
 
@@ -121,7 +121,16 @@ const initialState = {
 };
 
 function AssignDoi(props) {
-	const { communityData, disabled, doi, pubData, onPreview, onDeposit, onError, target } = props;
+	const {
+		communityData,
+		disabled,
+		hasExistingDeposit,
+		pubData,
+		onPreview,
+		onDeposit,
+		onError,
+		target,
+	} = props;
 	const [{ state, result }, dispatch] = useReducer(reducer, initialState);
 	const fetchPreview = useCallback(async () => {
 		dispatch({ type: AssignDoiActionType.FetchPreview });
@@ -184,7 +193,7 @@ function AssignDoi(props) {
 		<div className="assign-doi-component">
 			<Button
 				disabled={disabled || !action}
-				text={getButtonText(state, doi)}
+				text={getButtonText(state, hasExistingDeposit)}
 				loading={state === AssignDoiState.Previewing || state === AssignDoiState.Depositing}
 				onClick={action}
 				icon={state === AssignDoiState.Deposited && 'tick'}

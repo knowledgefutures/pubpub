@@ -5,6 +5,7 @@ import * as katex from 'katex';
 
 import {
 	pandocInlineToHtmlString,
+	pandocInlineToPlain,
 	htmlStringToPandocInline,
 	pandocBlocksToHtmlString,
 	htmlStringToPandocBlocks,
@@ -269,6 +270,7 @@ rules.transform('Cite', 'citation', {
 					structuredValue: structuredValue,
 					unstructuredValue: unstructuredValue,
 					count: 1 + count('Cite'),
+					customLabel: pandocInlineToPlain(node.content) || '',
 				},
 			};
 		});

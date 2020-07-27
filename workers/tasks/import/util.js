@@ -13,6 +13,9 @@ const { flatten } = transformUtil;
 const getHtmlStringForPandocDoc = (document) =>
 	callPandoc(JSON.stringify(emitPandocJson(document)), 'json', 'html').trim();
 
+const getPlainForPandocDoc = (document) =>
+	callPandoc(JSON.stringify(emitPandocJson(document)), 'json', 'plain').trim();
+
 const getPandocDocForHtmlString = (htmlString) =>
 	parsePandocJson(JSON.parse(callPandoc(htmlString, 'html', 'json')));
 
@@ -26,6 +29,18 @@ export const pandocInlineToHtmlString = (nodes) => {
 		meta: {},
 	};
 	return getHtmlStringForPandocDoc(doc);
+};
+
+export const pandocInlineToPlain = (nodes) => {
+	if (nodes.length === 0) {
+		return '';
+	}
+	const doc = {
+		type: 'Doc',
+		blocks: [{ type: 'Para', content: nodes }],
+		meta: {},
+	};
+	return getPlainForPandocDoc(doc);
 };
 
 export const pandocBlocksToHtmlString = (blocks) => {

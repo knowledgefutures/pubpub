@@ -31,6 +31,7 @@ class LayoutEditorPubs extends Component {
 		this.changePubId = this.changePubId.bind(this);
 		this.setHideByline = this.setHideByline.bind(this);
 		this.setHideDescription = this.setHideDescription.bind(this);
+		this.setHideEdges = this.setHideEdges.bind(this);
 		this.setHideDates = this.setHideDates.bind(this);
 		this.setHideContributors = this.setHideContributors.bind(this);
 		this.setPubIds = this.setPubIds.bind(this);
@@ -97,6 +98,13 @@ class LayoutEditorPubs extends Component {
 		this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			hideContributors: !evt.target.checked,
+		});
+	}
+
+	setHideEdges(evt) {
+		this.props.onChange(this.props.layoutIndex, {
+			...this.props.content,
+			hideEdges: !evt.target.checked,
 		});
 	}
 
@@ -361,6 +369,11 @@ class LayoutEditorPubs extends Component {
 							disabled={pubPreviewType === 'minimal'}
 							label="Contributors"
 						/>
+						<Checkbox
+							checked={!this.props.content.hideEdges}
+							onChange={this.setHideEdges}
+							label="Connections"
+						/>
 					</InputField>
 				</div>
 
@@ -400,6 +413,7 @@ class LayoutEditorPubs extends Component {
 											hideDescription={this.props.content.hideDescription}
 											hideDates={this.props.content.hideDates}
 											hideContributors={this.props.content.hideContributors}
+											hideEdges={this.props.content.hideEdges}
 										/>
 									</div>
 
@@ -411,6 +425,7 @@ class LayoutEditorPubs extends Component {
 												hideByline={this.props.content.hideByline}
 												hideDescription={this.props.content.hideDescription}
 												hideDates={this.props.content.hideDates}
+												hideEdges={this.props.content.hideEdges}
 												hideContributors={
 													this.props.content.hideContributors
 												}

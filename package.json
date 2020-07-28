@@ -41,6 +41,7 @@
 		"@pubpub/prosemirror-pandoc": "^0.6.1",
 		"@sentry/browser": "^5.5.0",
 		"@sentry/node": "^5.5.0",
+		"@storybook/addon-knobs": "^5.3.19",
 		"@storybook/addon-storyshots": "^5.0.11",
 		"@storybook/addon-viewport": "^5.0.11",
 		"@storybook/react": "^5.0.11",

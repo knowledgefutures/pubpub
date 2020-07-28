@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { Byline } from 'components';
-import { getAllPubContributors } from 'utils/pubContributors';
+import { getAllPubContributors } from 'utils/pub/contributors';
 import { propTypes as bylinePropTypes } from '../Byline/Byline';
 
 const { contributors, ...bylinePropTypesWithoutContributors } = bylinePropTypes;

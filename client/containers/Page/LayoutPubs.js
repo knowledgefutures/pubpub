@@ -58,6 +58,7 @@ const LayoutPubs = function(props) {
 										hideByline={props.content.hideByline}
 										hideDescription={props.content.hideDescription}
 										hideDates={props.content.hideDates}
+										hideEdges={props.content.hideEdges}
 										hideContributors={props.content.hideContributors}
 									/>
 								</div>
@@ -70,6 +71,7 @@ const LayoutPubs = function(props) {
 											hideByline={props.content.hideByline}
 											hideDescription={props.content.hideDescription}
 											hideDates={props.content.hideDates}
+											hideEdges={props.content.hideEdges}
 											hideContributors={props.content.hideContributors}
 										/>
 									</div>

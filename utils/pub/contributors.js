@@ -1,7 +1,8 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { joinOxford } from 'utils/strings';
 
-const orderedContributors = (contributors) =>
-	contributors.concat().sort((a, b) => {
+const orderedContributors = (maybeContributors) =>
+	(maybeContributors || []).concat().sort((a, b) => {
 		if (a.order !== b.order) {
 			return a.order - b.order;
 		}
@@ -9,12 +10,14 @@ const orderedContributors = (contributors) =>
 	});
 
 export const getAllPubContributors = (pubData, hideAuthors = false, hideContributors = false) => {
-	const primaryCollectionPub =
-		pubData.collectionPubs && pubData.collectionPubs.find((cp) => cp.isPrimary);
+	const { collectionPubs } = pubData;
+	const primaryCollectionPub = collectionPubs && collectionPubs.find((cp) => cp.isPrimary);
 	const primaryCollection = primaryCollectionPub && primaryCollectionPub.collection;
-	const contributors = orderedContributors(pubData.attributions)
-		.concat(orderedContributors((primaryCollection && primaryCollection.attributions) || []))
-		.map(ensureUserForAttribution);
+
+	const contributors = [
+		...orderedContributors(pubData.attributions),
+		...orderedContributors(primaryCollection && primaryCollection.attributions),
+	].map(ensureUserForAttribution);
 
 	const outputContributors = contributors.filter((attribution) => {
 		if (hideAuthors && attribution.isAuthor) {
@@ -34,4 +37,9 @@ export const getAllPubContributors = (pubData, hideAuthors = false, hideContribu
 		uniqueAuthorIds.push(attribution.user.id);
 		return true;
 	});
+};
+
+export const getAuthorString = (pub) => {
+	const contributors = getAllPubContributors(pub, false, true);
+	return joinOxford(contributors.map((c) => c.user.fullName));
 };

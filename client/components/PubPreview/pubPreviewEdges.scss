@@ -1,0 +1,36 @@
+.pub-preview-edges-component {
+    .hairline {
+        width: 100%;
+        margin: 10px 0;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .heading,
+    .heading > .icon-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .heading {
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        .icon-container {
+            width: 20px;
+        }
+    }
+
+    .listing {
+        margin-left: 20px;
+        .edge-list {
+            margin-bottom: 5px;
+        }
+    }
+
+    .byline-component {
+        display: inline;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+}

@@ -8,6 +8,7 @@ export const relationTypeDefinitions = {
 	},
 	commentary: {
 		name: 'Commentary',
+		plural: 'Commentaries',
 		article: 'a',
 		preposition: 'on',
 	},
@@ -23,6 +24,7 @@ export const relationTypeDefinitions = {
 	},
 	reply: {
 		name: 'Reply',
+		plural: 'Replies',
 		article: 'a',
 		preposition: 'to',
 	},
@@ -54,6 +56,18 @@ const createRelationTypeEnum = () => {
 		res[toTitleCase(key)] = key;
 	});
 	return res;
+};
+
+export const getRelationTypeName = (relationType, isPlural) => {
+	const definition = relationTypeDefinitions[relationType];
+	if (definition) {
+		const { name, plural } = definition;
+		if (isPlural) {
+			return plural || `${name}s`;
+		}
+		return name;
+	}
+	return null;
 };
 
 export const relationTypes = Object.keys(relationTypeDefinitions);

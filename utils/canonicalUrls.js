@@ -42,4 +42,11 @@ export const pubUrl = (community, pub, options = {}) => {
 	);
 };
 
+export const bestPubUrl = ({ pubData, communityData }, options = {}) => {
+	if (communityData) {
+		return pubUrl(communityData, pubData, options);
+	}
+	return pubShortUrl(pubData);
+};
+
 export const doiUrl = (doi) => `https://doi.org/${doi}`;

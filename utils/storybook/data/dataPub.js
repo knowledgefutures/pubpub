@@ -31,9 +31,9 @@ export default {
 	},
 	inboundEdges: [
 		{
-			pubIsParent: true,
+			pubIsParent: false,
 			relationType: 'comment',
-			pub:  {
+			pub: {
 				title: 'Scripture as Interface. A Hermeneutical Reflection on a Concept based in Media Theory',
 				avatar: 'https://assets.pubpub.org/nlgqoo6x/51572618306498.png',
 				releases: [
@@ -75,7 +75,169 @@ export default {
 		},
 	],
 	siblingEdges: [],
-	outboundEdges: [],
+	outboundEdges: [{
+		pubIsParent: true,
+		relationType: 'reply',
+		targetPub: {
+			"id": "deab8c67-3a10-4450-bf0a-8010964728a0",
+			"slug": "gerstenberger-und-zarnow-kontroversgesprach-2019",
+			"title": "Kontroversgespräch „Identität“",
+			"description": "Notwendig essentialisierend oder weiterhin mit Erschließungskraft ausgestattet? Individuell oder kollektiv? Verwirrende Unklarheit oder begrifflicher Schnittpunkt unterschiedlicher Diskussionslinien? Ausschluss, Differenz, Identitätspolitik? Eine Begriffs-Diskussion",
+			"avatar": "https://assets.pubpub.org/x33z9t4j/71557600837447.jpg",
+			"headerStyle": "light",
+			"headerBackgroundColor": "dark",
+			"headerBackgroundImage": "https://assets.pubpub.org/x33z9t4j/71557600837447.jpg",
+			"firstPublishedAt": "2019-05-11T19:00:51.287Z",
+			"lastPublishedAt": "2019-07-09T01:58:46.730Z",
+			"customPublishedAt": null,
+			"doi": "10.21428/fb61f6aa.deab8c67",
+			"labels": null,
+			"releases": [
+				{
+					"id": "587927e1-7ba8-4d15-b56d-a4bb4aeb10a9",
+					"noteContent": null,
+					"noteText": null,
+					"branchKey": 0,
+					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
+					"branchId": "96133f80-f9cb-40cb-8aea-40b90cf1ddad",
+					"userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
+					"sourceBranchId": null,
+					"sourceBranchKey": null,
+					"createdAt": "2019-05-11T19:00:57.792Z",
+					"updatedAt": "2019-05-11T19:00:57.792Z"
+				},
+				{
+					"id": "57ffea4c-d845-44c4-8c9b-31277cbfc0a4",
+					"noteContent": null,
+					"noteText": null,
+					"branchKey": 1,
+					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
+					"branchId": "96133f80-f9cb-40cb-8aea-40b90cf1ddad",
+					"userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
+					"sourceBranchId": null,
+					"sourceBranchKey": null,
+					"createdAt": "2019-07-09T01:58:46.756Z",
+					"updatedAt": "2019-07-09T01:58:46.756Z"
+				}
+			],
+			"attributions": [
+				{
+					"id": "7e2c8723-2adb-4bff-9905-8850c775f237",
+					"name": null,
+					"avatar": null,
+					"title": null,
+					"order": 0.015625,
+					"isAuthor": true,
+					"roles": [
+						"Interviewee"
+					],
+					"affiliation": null,
+					"orcid": null,
+					"userId": "1ff99d28-423a-4ae3-9932-ec89b1c58c54",
+					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
+					"createdAt": "2019-06-17T08:28:46.572Z",
+					"updatedAt": "2019-07-09T01:57:47.628Z",
+					"user": {
+						"id": "1ff99d28-423a-4ae3-9932-ec89b1c58c54",
+						"firstName": "Christopher",
+						"lastName": "Zarnow",
+						"fullName": "Christopher Zarnow",
+						"avatar": null,
+						"slug": "christopher-zarnow",
+						"initials": "CZ",
+						"title": "",
+						"orcid": ""
+					}
+				},
+				{
+					"id": "b61f2540-79bb-4ad8-894c-fff790e5aabd",
+					"name": null,
+					"avatar": null,
+					"title": null,
+					"order": 0.03125,
+					"isAuthor": true,
+					"roles": [
+						"Interviewee"
+					],
+					"affiliation": null,
+					"orcid": null,
+					"userId": "f8f16159-952c-407f-806c-4809a7382d91",
+					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
+					"createdAt": "2019-05-06T19:25:02.526Z",
+					"updatedAt": "2019-07-09T01:57:52.727Z",
+					"user": {
+						"id": "f8f16159-952c-407f-806c-4809a7382d91",
+						"firstName": "Debora",
+						"lastName": "Gerstenberger",
+						"fullName": "Debora Gerstenberger",
+						"avatar": null,
+						"slug": "debora-gerstenberger",
+						"initials": "DG",
+						"title": "Prof. Dr.",
+						"orcid": ""
+					}
+				},
+				{
+					"id": "094e418a-0984-4144-9c55-a7a36bd423df",
+					"name": null,
+					"avatar": null,
+					"title": null,
+					"order": 0.0625,
+					"isAuthor": true,
+					"roles": [
+						"Investigation",
+						"Interviewer"
+					],
+					"affiliation": null,
+					"orcid": null,
+					"userId": "076c570c-eb9b-489c-a013-49b3d8be4ee7",
+					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
+					"createdAt": "2019-05-11T18:06:13.676Z",
+					"updatedAt": "2019-07-09T01:58:03.440Z",
+					"user": {
+						"id": "076c570c-eb9b-489c-a013-49b3d8be4ee7",
+						"firstName": "Kerstin",
+						"lastName": "Menzel",
+						"fullName": "Kerstin Menzel",
+						"avatar": "https://assets.pubpub.org/h7z4zgxe/61535746400298.jpg",
+						"slug": "kerstin-menzel",
+						"initials": "KM",
+						"title": "",
+						"orcid": ""
+					}
+				},
+				{
+					"id": "c94e9617-ee09-45da-966d-586eb0c44370",
+					"name": "Daniel Lenski",
+					"avatar": null,
+					"title": null,
+					"order": 0.125,
+					"isAuthor": true,
+					"roles": [
+						"Investigation",
+						"Interviewer"
+					],
+					"affiliation": null,
+					"orcid": null,
+					"userId": null,
+					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
+					"createdAt": "2019-05-10T14:34:27.962Z",
+					"updatedAt": "2019-07-09T01:58:00.849Z",
+					"user": {
+						"isShadowUser": true,
+						"id": "c94e9617-ee09-45da-966d-586eb0c44370",
+						"initials": "D",
+						"fullName": "Daniel Lenski",
+						"firstName": "Daniel Lenski",
+						"lastName": "",
+						"avatar": null,
+						"title": null,
+						"orcid": null
+					}
+				}
+			],
+		}
+	}],
 	reviews: [
 		{
 			id: '2f2cce19-dde0-4a47-8e49-a5105cb27d83',
@@ -403,6 +565,30 @@ export default {
 				lastName: 'Dubberly',
 				avatar: null,
 				title: null,
+			},
+		},
+		{
+			id: '4675bc3e-7828-4203-9581-06e4efdf329b',
+			name: null,
+			avatar: null,
+			title: null,
+			order: 0.9,
+			isAuthor: true,
+			roles: null,
+			affiliation: 'Springfield A&M',
+			userId: '6ddd7a7b-c542-4127-b403-33a67eb40ff3',
+			pubId: '1519656b-cc26-43ad-83f2-dbf5b828a8c7',
+			createdAt: '2019-04-11T18:39:11.942Z',
+			updatedAt: '2019-04-11T18:39:13.832Z',
+			user: {
+				id: '6ddd7a7b-c542-4127-b403-33a67eb40ff3',
+				firstName: 'Ian',
+				lastName: 'Reynolds',
+				fullName: 'Ian Reynolds',
+				avatar: 'https://assets.pubpub.org/_testing/11551830401338.jpg',
+				slug: 'ian-reynolds',
+				initials: 'IR',
+				title: '',
 			},
 		},
 	],

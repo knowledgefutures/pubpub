@@ -1,0 +1,40 @@
+.expand-button-component {
+    position: absolute;
+    bottom: -1em;
+    z-index: 1;
+    width: 100%;
+    height: 30px;
+    padding-bottom: 1em;
+    cursor: pointer;
+    .relative-container {
+        height: 100%;
+        position: relative;
+        .icon-container {
+            position: absolute;
+            box-sizing: border-box;
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            left: calc(50% - 15px);
+            bottom: -15px;
+        }
+    }
+    &:hover {
+        .icon-container {
+            display: flex;
+        }
+    }
+}
+
+html:not(.bp3-focus-disabled) {
+    .expand-button-component:focus {
+        .icon-container {
+            display: flex;
+        }
+    }
+}

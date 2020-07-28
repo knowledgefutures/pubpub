@@ -4,8 +4,7 @@ import classNames from 'classnames';
 import { Button } from 'reakit';
 import dateFormat from 'dateformat';
 
-import { Icon } from 'components';
-import { generateAuthorString } from 'components/PubPreview/pubPreviewUtils';
+import { Icon, PubByline } from 'components';
 import { getDashUrl } from 'utils/dashboard';
 
 require('./overviewRow.scss');
@@ -77,7 +76,6 @@ const OverviewRow = (props) => {
 		children,
 	} = props;
 	const isCollection = content.pubs;
-	const authorString = generateAuthorString(content);
 	const hasAuthors = content.attributions && content.attributions.some((a) => a.isAuthor);
 	const slug = content.slug || (content.title || '').toLowerCase().replace(/ /gi, '-');
 	const href = getHref(isCollection, slug, parentSlug);
@@ -100,7 +98,7 @@ const OverviewRow = (props) => {
 			<React.Fragment>
 				{label}
 				{label && hasAuthors && ' • '}
-				{authorString}
+				<PubByline pubData={content} linkToAuthors={false} bylinePrefix={null} />
 			</React.Fragment>
 		);
 	};

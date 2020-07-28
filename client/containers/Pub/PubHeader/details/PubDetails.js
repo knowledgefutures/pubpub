@@ -6,7 +6,7 @@ import { pubDataProps } from 'types/pub';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate, getPubUpdatedDate, getPubCreatedDate } from 'utils/pub/pubDates';
 import { ClickToCopyButton } from 'components';
-import { getAllPubContributors } from 'utils/pubContributors';
+import { getAllPubContributors } from 'utils/pub/contributors';
 import { usePageContext } from 'utils/hooks';
 
 import SmallHeaderButton from '../SmallHeaderButton';

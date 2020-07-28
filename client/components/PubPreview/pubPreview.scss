@@ -2,31 +2,43 @@
 	width: 100%;
 	border: 1px solid rgba(0, 0, 0, 0.1);
 	border-radius: 2px;
+	display: flex;
 	position: relative;
 	a {
 		text-decoration: none;
 	}
-	.banner-image {
-		background-size: cover;
-		background-repeat: no-repeat;
-		background-position: center center;
-		background-color: #f0f0f0;
+	.preview-image-wrapper {
+		.preview-image-component {
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-color: #f0f0f0;
+			height: 100%;
+		}
+	}
+	.content-wrapper {
+		position: relative;
 	}
 	.content {
+		overflow: hidden;
 		padding: 1em;
 		vertical-align: top;
 		position: relative;
-		overflow: hidden;
-		&:after {
-			content: '';
-			display: block;
-			background: white;
-			background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95), white);
-			width: 100%;
-			height: 1em;
-			position: absolute;
-			bottom: 0em;
-			left: 0;
+		height: 100%;
+	}
+	&:not(.expanded) {
+		.content {
+			&:after {
+				content: '';
+				display: block;
+				background: white;
+				background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95), white);
+				width: 100%;
+				height: 1em;
+				position: absolute;
+				bottom: 0em;
+				left: 0;
+			}
 		}
 	}
 	&:after {
@@ -35,21 +47,19 @@
 		display: table;
 	}
 	&.large-preview {
-		height: 350px;
+		min-height: 350px;
+		&:not(.expanded) {
+			height: 350px;
+		}
 		margin-bottom: 1em;
-		.banner-image {
+		.preview-image-wrapper {
 			width: 55%;
-			height: 100%;
-			float: left;
 			border-right: 1px solid #f0f0f0;
 		}
-		.content {
-			float: left;
+		.content-wrapper {
 			width: 44%;
-			height: 100%;
 			padding-left: 1.5em;
 		}
-
 		.title-wrapper {
 			padding: 5px 5px 10px 5px;
 			&:hover {
@@ -77,20 +87,24 @@
 			font-size: 14px;
 			padding-left: 5px;
 		}
+		.pub-preview-edges-component {
+			font-size: 14px;
+			margin-bottom: 5px;
+			padding-left: 5px;
+		}
 	}
 	&.medium-preview {
-		height: 225px;
+		min-height: 225px;
+		&:not(.expanded) {
+			height: 225px;
+		}
 		margin-bottom: 1em;
-		.banner-image {
+		.preview-image-wrapper {
 			width: 35%;
-			height: 100%;
-			float: left;
 			border-right: 1px solid #f0f0f0;
 		}
-		.content {
-			float: left;
+		.content-wrapper {
 			width: 65%;
-			height: 100%;
 		}
 		.title-wrapper {
 			padding: 0px 5px 5px 5px;
@@ -109,6 +123,10 @@
 			padding-left: 5px;
 			padding-top: 15px;
 		}
+		.pub-preview-edges-component {
+			padding-left: 5px;
+			margin-bottom: 5px;
+		}
 	}
 	&.small-preview {
 		box-shadow: 0px 0px 0px transparent;
@@ -117,7 +135,7 @@
 		border-radius: 0px;
 		padding-left: 20px;
 		margin-bottom: 1em;
-		.banner-image {
+		.preview-image-wrapper {
 			display: none;
 		}
 		.content {
@@ -178,17 +196,20 @@
 				line-height: 1.33 !important;
 			}
 		}
-		.description {
+		.description,
+		.pub-preview-edges-component {
 			padding-top: 3px;
 			font-size: 12px;
-			opacity: 0.75;
 			line-height: 1.4;
+		}
+		.description {
+			opacity: 0.75;
 		}
 	}
 	.title-wrapper {
 		padding-bottom: 5px;
-		font-family: multi-display, -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-			'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+		font-family: multi-display, -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+			'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
 	}
 	.pub-title {
 		line-height: 1.25 !important;
@@ -233,7 +254,7 @@
 			vertical-align: top;
 		}
 	}
-	.bp3-icon {
+	.lock-icon {
 		margin-left: 0.25em;
 		vertical-align: baseline;
 	}
@@ -257,23 +278,21 @@
 @media only screen and (max-width: 720px) {
 	/* Used to be 45em */
 	.pub-preview-component {
+		flex-direction: column;
 		&.large-preview,
 		&.medium-preview {
 			height: auto;
-			.banner-image {
+			.preview-image-wrapper {
 				width: 100%;
 				height: 200px;
-				float: none;
 				border-right: 0px solid #f0f0f0;
 				border-bottom: 1px solid #f0f0f0;
 			}
-			.content {
-				float: none;
+			.content-wrapper {
 				width: 100%;
 				height: auto;
 			}
 			.community-banner {
-				float: none;
 				margin: 0px 0px 10px;
 				display: block;
 			}

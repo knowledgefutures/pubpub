@@ -1,0 +1,15 @@
+.many-authors-byline-component {
+    .top-byline {
+        display: inline;
+        a {
+            color: inherit;
+            &:hover,
+            &:focus {
+                text-decoration: underline;
+            }
+        }
+    }
+    .bottom-byline {
+        margin: 5px 0;
+    }
+}

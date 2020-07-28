@@ -1,16 +1,11 @@
 import stopword from 'stopword';
+
+import { Pub, Community, Branch, PubAttribution, Page, includeUserModel } from 'server/models';
+import { getBranchDoc } from 'server/utils/firebaseAdmin';
+import { getScope, getMembers } from 'server/utils/queryHelpers';
+import { getAuthorString } from 'utils/pub/contributors';
+
 import stopWordList from './stopwords';
-import {
-	Pub,
-	Community,
-	Branch,
-	PubAttribution,
-	Page,
-	includeUserModel,
-} from '../../server/models';
-import { getBranchDoc } from '../../server/utils/firebaseAdmin';
-import { getScope, getMembers } from '../../server/utils/queryHelpers';
-import { generatePlainAuthorString } from '../../client/components/PubPreview/pubPreviewUtils';
 
 const lengthInUtf8Bytes = (str) => {
 	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -85,7 +80,7 @@ export const getPubSearchData = async (pubIds) => {
 	const branchesToSync = [];
 	for (let index = 0; index < pubs.length; index++) {
 		const pub = pubs[index].toJSON();
-		const authorByline = generatePlainAuthorString(pub);
+		const authorByline = getAuthorString(pub);
 		// eslint-disable-next-line no-await-in-loop
 		const scopeData = await getScope({ pubId: pub.id, communityId: pub.community.id });
 		// eslint-disable-next-line no-await-in-loop

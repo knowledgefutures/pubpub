@@ -111,8 +111,6 @@ export const generateMetaComponents = ({
 		}
 	}
 
-	/* Assumes the first PDF download is the canonical one, which is true right now
-	but in the future we may want to support multiple download URLs for various purposes. */
 	if (download) {
 		outputComponents = [
 			...outputComponents,

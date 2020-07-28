@@ -2,11 +2,15 @@ export const getPDFDownload = (pub) => {
 	const downloads = pub.downloads;
 	const exports = pub.activeBranch.exports;
 	if (downloads) {
-		const matchingDownload = downloads.find((dl) => dl.url.endsWith('.pdf'));
+		const matchingDownload = downloads
+			.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+			.find((dl) => dl.url.endsWith('.pdf'));
 		if (matchingDownload) return matchingDownload;
 	}
 	if (exports) {
-		const matchingExport = exports.find((exportFile) => exportFile.format === 'pdf');
+		const matchingExport = exports
+			.sort((a, b) => (a.historyKey < b.historyKey ? 1 : -1))
+			.find((exportFile) => exportFile.format === 'pdf');
 		if (matchingExport) return matchingExport;
 	}
 	return false;

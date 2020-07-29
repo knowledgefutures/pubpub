@@ -21,16 +21,14 @@ export const toTitleCase = (str) =>
 
 const strConcat = (...strings) => strings.reduce((acc, str) => acc + str, '');
 
-export const joinOxford = (items, { joiner = strConcat, empty = '', ampersand = false } = {}) => {
+export const joinOxford = (items, { joiner = strConcat, ampersand = false } = {}) => {
 	const twoAnd = ampersand ? ' & ' : ' and ';
 	const manyAnd = ampersand ? ' & ' : ', and ';
-	return items.reduce(
-		(acc, item, index) =>
-			joiner(
-				acc,
-				items.length === 2 ? twoAnd : index === items.length - 1 ? manyAnd : ', ',
-				item,
-			),
-		empty,
+	return items.reduce((acc, item, index) =>
+		joiner(
+			acc,
+			items.length === 2 ? twoAnd : index === items.length - 1 ? manyAnd : ', ',
+			item,
+		),
 	);
 };

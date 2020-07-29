@@ -377,7 +377,7 @@ const CommunitySettings = () => {
 					/>
 				</InputField>
 				<InputField
-					label="Default 'New Pub' Collection"
+					label="Default 'Create Pub' Collections"
 					wrapperClassName={hideCreatePubButton ? 'disable-block' : ''}
 				>
 					<CollectionMultiSelect

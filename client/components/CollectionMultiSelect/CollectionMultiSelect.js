@@ -26,6 +26,7 @@ const CollectionMultiSelect = function(props) {
 
 	return (
 		<MultiSelect
+			className="collection-multi-select-component"
 			items={Object.keys(collectionsById)}
 			itemPredicate={(query, item) => {
 				const existingCollectionIds = props.selectedCollectionIds || [];

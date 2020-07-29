@@ -1,7 +1,8 @@
 
 import chalk from 'chalk';
 
-import {isProd} from 'utils/environment';
+import { isProd } from 'utils/environment';
+import { addWorkerTask } from 'server/utils/workers';
 import * as tasks from 'workers/tasks';
 import * as models from 'server/models';
 
@@ -30,7 +31,7 @@ const generateFindFunctions = () => {
     return Object.fromEntries(
         ["Collection", "Community", "Pub", "User"].map(modelName => {
             const Model = models[modelName];
-            const fn = (whereQuery) => Model.findOne({where: whereQuery});
+            const fn = (whereQuery) => Model.findOne({ where: whereQuery });
             return [`find${modelName}`, fn];
         })
     );
@@ -50,6 +51,7 @@ const context = {
     ...generateFindFunctions(),
     clear,
     scope,
+    addWorkerTask,
 };
 
 module.exports = {

@@ -36,7 +36,7 @@ export const relationTypeDefinitions = {
 	supplement: {
 		name: 'Supplement',
 		article: 'a',
-		preposition: 'of',
+		preposition: 'to',
 	},
 	translation: {
 		name: 'Translation',

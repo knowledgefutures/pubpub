@@ -9,6 +9,7 @@ import { pubUrl, pubShortUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 import { pubEdgeType } from './constants';
+import { getHostnameForUrl } from './util';
 import PubEdgeLayout from './PubEdgeLayout';
 import PubEdgePlaceholderThumbnail from './PubEdgePlaceholderThumbnail';
 
@@ -37,26 +38,18 @@ const getUrlForPub = (pubData, communityData) => {
 	return pubShortUrl(pubData);
 };
 
-const getHostnameForUrl = (url) => {
-	try {
-		const parsedUrl = new URL(url);
-		return parsedUrl.hostname;
-	} catch (_) {
-		return url;
-	}
-};
-
 const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 	const { externalPublication, targetPub, pub } = pubEdge;
 	const displayedPub = viewingFromTarget ? pub : targetPub;
 	if (displayedPub) {
 		const { title, description, attributions, avatar } = displayedPub;
 		const url = getUrlForPub(displayedPub, communityData);
+		const publishedDate = getPubPublishedDate(displayedPub);
 		return {
 			avatar: avatar,
 			contributors: attributions || [],
 			description: description,
-			publicationDate: getPubPublishedDate(displayedPub),
+			publishedAt: publishedDate && formatDate(publishedDate),
 			title: title,
 			url: url,
 		};
@@ -74,7 +67,7 @@ const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 			avatar: avatar,
 			contributors: contributors || '',
 			description: description,
-			publicationDate: publicationDate,
+			publishedAt: publicationDate && formatDate(publicationDate, { inUTCTime: true }),
 			title: title,
 			url: url,
 		};
@@ -87,14 +80,13 @@ const PubEdge = (props) => {
 	const [open, setOpen] = useState(false);
 	const { communityData } = usePageContext();
 	const hasExternalPublication = Boolean(pubEdge.externalPublication);
-	const { avatar, contributors, description, publicationDate, title, url } = getValuesFromPubEdge(
+	const { avatar, contributors, description, publishedAt, title, url } = getValuesFromPubEdge(
 		pubEdge,
 		communityData,
 		viewingFromTarget,
 	);
 
 	const detailsElementId = `edge-details-${pubEdge.id}`;
-	const publishedAt = formatDate(publicationDate);
 
 	const handleToggleDescriptionClick = useCallback(
 		(e) => {
@@ -163,7 +155,7 @@ const PubEdge = (props) => {
 						{open ? 'Hide Description' : 'Show Description'}
 					</span>
 				),
-				<>Published on {publishedAt}</>,
+				publishedAt && <>Published on {publishedAt}</>,
 				<span className="location">{getHostnameForUrl(url)}</span>,
 			]}
 			detailsElement={

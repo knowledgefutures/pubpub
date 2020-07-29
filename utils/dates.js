@@ -7,10 +7,12 @@ export const formatDate = (
 		includeDate = true,
 		includePreposition = false,
 		use12HourDate = true,
+		inUTCTime = false,
 	} = {},
 ) => {
+	const formatMask = `${inUTCTime ? 'UTC:' : ''}mmm dd, yyyy`;
 	const formattedDate = includeDate
-		? (includePreposition ? 'on ' : '') + dateFormat(date, 'mmm dd, yyyy')
+		? (includePreposition ? 'on ' : '') + dateFormat(date, formatMask)
 		: '';
 	if (includeTime) {
 		const formattedTime =

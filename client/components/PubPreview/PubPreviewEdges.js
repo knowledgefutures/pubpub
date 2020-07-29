@@ -105,7 +105,7 @@ const PubPreviewEdges = (props) => {
 			</div>
 			<div className="listing">
 				{Object.keys(categorizedEdges)
-					.sort((a, b) => a - b)
+					.sort()
 					.map((relationType) => {
 						const pluralName = getRelationTypeName(relationType, true);
 						const edges = categorizedEdges[relationType];

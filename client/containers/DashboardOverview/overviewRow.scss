@@ -25,11 +25,11 @@
 	}
 	.handle {
 		width: 30px;
+		display: flex;
 		.arrow {
 			cursor: pointer;
 			background: none;
 			border: none;
-			height: 100%;
 			border-radius: 2px;
 			opacity: 0.5;
 			.bp3-icon {

@@ -281,7 +281,10 @@
 		flex-direction: column;
 		&.large-preview,
 		&.medium-preview {
-			height: auto;
+			// Specificity hack
+			&:not(.expanded) {
+				height: auto;
+			}
 			.preview-image-wrapper {
 				width: 100%;
 				height: 200px;

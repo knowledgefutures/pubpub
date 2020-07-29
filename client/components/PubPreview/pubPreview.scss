@@ -24,7 +24,7 @@
 		padding: 1em;
 		vertical-align: top;
 		position: relative;
-		height: 100%;
+		max-height: 100%;
 	}
 	&:not(.expanded) {
 		.content {

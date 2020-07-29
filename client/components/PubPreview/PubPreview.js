@@ -74,7 +74,8 @@ const PubPreview = (props) => {
 	const showContributors = !hideContributors && ['large', 'medium', 'small'].includes(size);
 	const showDescription = pubData.description && !hideDescription;
 	const showExpandButton = canExpand && ['large', 'medium'].includes(size);
-	const pubLink = customPubUrl || bestPubUrl({ pubData: pubData, communityData: communityData });
+	const pubLink =
+		customPubUrl || bestPubUrl({ pubData: pubData, communityData: localCommunityData });
 
 	const renderByline = () => (
 		<ManyAuthorsByline

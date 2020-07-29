@@ -80,12 +80,13 @@ const Byline = (props) => {
 			const remainingCount = contributors.length - namedContributors.length;
 			return joinOxford(
 				[...namedContributors.map(renderContributor), renderTruncation(remainingCount)],
-				{ joiner: joinAndFlattenArrays, ampersand: ampersand },
+				{ joiner: joinAndFlattenArrays, ampersand: ampersand, empty: [] },
 			);
 		}
 		return joinOxford(contributors.map(renderContributor), {
 			joiner: joinAndFlattenArrays,
 			ampersand: ampersand,
+			empty: [],
 		});
 	};
 

@@ -16,6 +16,31 @@ const isBook = (doiBatch) => 'book' in doiBatch.body;
 const isJournal = (doiBatch) => 'journal' in doiBatch.body;
 const isConference = (doiBatch) => 'conference' in doiBatch.body;
 
+const renderRelations = (relatedItems) => {
+	return (
+		<dl>
+			{relatedItems.map(
+				({
+					'rel:inter_work_relation': interWorkRelation,
+					'rel:intra_work_relation': intraWorkRelation,
+				}) => {
+					const { '#text': identifier, '@relationship-type': relationshipType } =
+						interWorkRelation || intraWorkRelation;
+
+					return (
+						<React.Fragment key={identifier}>
+							<dt>Relationship Type</dt>
+							<dd>{relationshipType}</dd>
+							<dt>Identifier</dt>
+							<dd>{identifier}</dd>
+						</React.Fragment>
+					);
+				},
+			)}
+		</dl>
+	);
+};
+
 const renderTitles = (titles) => {
 	return (
 		<>
@@ -65,7 +90,12 @@ const renderArticlePreview = (doi_batch) => {
 	const {
 		body: {
 			journal: {
-				journal_article: { titles, publication_date, contributors },
+				journal_article: {
+					titles,
+					publication_date,
+					contributors,
+					'rel:program': { related_item: relatedItems },
+				},
 				journal_metadata: {
 					full_title: journalFullTitle,
 					doi_data: { doi: journalDoi },
@@ -89,6 +119,8 @@ const renderArticlePreview = (doi_batch) => {
 				<dt>DOI</dt>
 				<dd>{journalDoi}</dd>
 			</dl>
+			<h6>Relationships</h6>
+			{relProgram && renderRelations(relatedItems)}
 		</>
 	);
 };
@@ -107,6 +139,7 @@ const renderBookPreview = (doi_batch) => {
 					titles: contentTitles,
 					contributors,
 					publication_date: contentPublicationDate,
+					'rel:program': { related_item: relatedItems },
 				},
 			},
 		},
@@ -128,6 +161,8 @@ const renderBookPreview = (doi_batch) => {
 				{renderContributors(contributors)}
 				{renderPublicationDate(contentPublicationDate)}
 			</dl>
+			<h6>Relationships</h6>
+			{relProgram && renderRelations(relatedItems)}
 		</>
 	);
 };
@@ -136,7 +171,11 @@ const renderConferencePreview = (doi_batch) => {
 	const {
 		body: {
 			conference: {
-				conference_paper: { contributors, titles: paperTitles },
+				conference_paper: {
+					contributors,
+					titles: paperTitles,
+					'rel:program': { related_item: relatedItems },
+				},
 				event_metadata: {
 					conference_name,
 					conference_date: { '#text': conferenceDate },
@@ -167,6 +206,8 @@ const renderConferencePreview = (doi_batch) => {
 				{renderPublicationDate(publication_date)}
 				{renderPublisher(publisher)}
 			</dl>
+			<h6>Relationships</h6>
+			{relProgram && renderRelations(relatedItems)}
 		</>
 	);
 };

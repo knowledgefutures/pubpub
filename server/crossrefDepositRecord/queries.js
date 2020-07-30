@@ -2,7 +2,7 @@ import { CrossrefDepositRecord } from 'server/models';
 
 export const createCrossrefDepositRecord = ({ depositJson }) => {
 	return CrossrefDepositRecord.create({
-		depositJson,
+		depositJson: depositJson,
 	});
 };
 

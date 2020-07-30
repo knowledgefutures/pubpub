@@ -5,10 +5,9 @@ import {
 	CollectionPub,
 	Community,
 	Pub,
-	PubAttribution,
-	Release,
 	includeUserModel,
 } from 'server/models';
+import buildPubOptions from 'server/utils/queryHelpers/pubOptions';
 import {
 	createCrossrefDepositRecord,
 	updateCrossrefDepositRecord,
@@ -42,14 +41,11 @@ const findCollection = (collectionId) =>
 const findPub = (pubId) =>
 	Pub.findOne({
 		where: { id: pubId },
-		include: [
-			{ model: Release, as: 'releases' },
-			{
-				model: PubAttribution,
-				as: 'attributions',
-				include: [includeUserModel({ as: 'user' })],
+		...buildPubOptions({
+			getEdgesOptions: {
+				includeCommunityForPubs: true,
 			},
-		],
+		}),
 	});
 
 const findCommunity = (communityId) =>
@@ -78,13 +74,13 @@ const persistCrossrefDepositRecord = async (ids, depositJson) => {
 			crossrefDepositRecordId: crossrefDepositRecordId,
 			depositJson: depositJson,
 		});
-	} else {
-		const crossrefDepositRecord = await createCrossrefDepositRecord({ depositJson });
-
-		await targetModel.update({
-			crossrefDepositRecordId: crossrefDepositRecord.id,
-		});
 	}
+
+	const crossrefDepositRecord = await createCrossrefDepositRecord({ depositJson: depositJson });
+
+	await targetModel.update({
+		crossrefDepositRecordId: crossrefDepositRecord.id,
+	});
 
 	return targetModel;
 };

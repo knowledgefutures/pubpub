@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Op } from 'sequelize';
 
 import { managedDoiPrefixes } from 'utils/crossref/communities';
@@ -33,9 +34,9 @@ async function runForModel(model) {
 
 	const depositRecords = await CrossrefDepositRecord.bulkCreate(models.map(() => ({})));
 
-	const updates = models.map((model, i) => {
+	const updates = models.map(({ dataValues }, i) => {
 		return {
-			...model.dataValues,
+			...dataValues,
 			crossrefDepositRecordId: depositRecords[i].id,
 		};
 	});

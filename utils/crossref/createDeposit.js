@@ -3,7 +3,6 @@
  * get converted to equivalent XML downstream.
  */
 import doiBatch from './schema/doiBatch';
-
 import renderBook from './render/book';
 import renderConference from './render/conference';
 import renderJournal from './render/journal';
@@ -12,6 +11,7 @@ import getCollectionDoi from '../collections/getCollectionDoi';
 
 const renderBody = (context) => {
 	const { collection } = context;
+
 	if (collection) {
 		if (collection.kind === 'book') {
 			return renderBook(context);

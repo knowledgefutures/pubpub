@@ -54,7 +54,7 @@ const getDois = (context, doiTarget) => {
 	dois.pub =
 		pub &&
 		(doiTarget === 'pub'
-			? createDoi({ community: community, collection: collection, target: pub })
+			? pub.doi || createDoi({ community: community, collection: collection, target: pub })
 			: pub.doi);
 	dois.collection =
 		collection &&

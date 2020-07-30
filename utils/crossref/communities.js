@@ -1,6 +1,6 @@
 // Some overrides for specific communities.
 // TODO(ian): Handle this with the database instead.
-const PUBPUB_DOI_PREFIX = '10.21428';
+export const PUBPUB_DOI_PREFIX = '10.21428';
 const MITP_DOI_PREFIX = '10.1162';
 const IASTATE_DOI_PREFIX = '10.31274';
 const AAS_DOI_PREFIX = '10.3847';

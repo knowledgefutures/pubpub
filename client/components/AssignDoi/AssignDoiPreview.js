@@ -7,6 +7,7 @@ import { formatDate } from 'utils/dates';
 require('./assignDoiPreview.scss');
 
 const propTypes = {
+	doi: PropTypes.string.isRequired,
 	depositJson: PropTypes.object.isRequired,
 	depositXml: PropTypes.string.isRequired,
 };
@@ -215,9 +216,12 @@ const renderConferencePreview = (doi_batch) => {
 function AssignDoiPreview(props) {
 	const [selectedTab, setSelectedTab] = useState('preview');
 	const {
-		deposit: { doi_batch },
-		dois: { community: communityDoi, pub: pubDoi },
-	} = props.depositJson;
+		doi,
+		depositJson: {
+			deposit: { doi_batch },
+			dois: { community: communityDoi, pub: pubDoi },
+		},
+	} = props;
 
 	const renderPreviewTab = () => {
 		return (
@@ -227,7 +231,7 @@ function AssignDoiPreview(props) {
 					<dt>Community</dt>
 					<dd>{communityDoi}</dd>
 					<dt>Pub</dt>
-					<dd>{pubDoi}</dd>
+					<dd>{doi || pubDoi}</dd>
 				</dl>
 				{isJournal(doi_batch) && renderArticlePreview(doi_batch)}
 				{isBook(doi_batch) && renderBookPreview(doi_batch)}

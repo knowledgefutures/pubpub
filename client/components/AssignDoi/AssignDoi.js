@@ -13,20 +13,20 @@ const noop = () => {};
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	disabled: PropTypes.bool,
-	pubData: PropTypes.object.isRequired,
 	hasExistingDeposit: PropTypes.bool,
-	target: PropTypes.string.isRequired,
 	onDeposit: PropTypes.func,
-	onPreview: PropTypes.func,
 	onError: PropTypes.func,
+	onPreview: PropTypes.func,
+	pubData: PropTypes.object.isRequired,
+	target: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
 	disabled: false,
 	hasExistingDeposit: false,
-	onPreview: noop,
 	onDeposit: noop,
 	onError: noop,
+	onPreview: noop,
 };
 
 const AssignDoiState = {
@@ -46,7 +46,7 @@ const AssignDoiActionType = {
 };
 
 const buttonTextByState = {
-	[AssignDoiState.Initial]: 'Assign DOI',
+	[AssignDoiState.Initial]: 'Preview Deposit',
 	[AssignDoiState.Previewing]: 'Getting Preview',
 	[AssignDoiState.Previewed]: 'Submit Deposit',
 	[AssignDoiState.Depositing]: 'Depositing',
@@ -204,7 +204,7 @@ function AssignDoi(props) {
 						Review the information below, then use the button above to submit the
 						deposit to Crossref.
 					</p>
-					<AssignDoiPreview {...result} />
+					<AssignDoiPreview {...result} doi={pubData.doi} />
 				</>
 			)}
 		</div>

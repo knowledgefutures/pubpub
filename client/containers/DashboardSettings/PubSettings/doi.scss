@@ -1,9 +1,35 @@
+@import 'styles/variables.scss';
+
 .pub-settings-container_doi-component {
 	a.doi-link {
 		font-family: 'Courier', monospace;
 	}
 
-	.bp3-input-group {
-		flex-basis: 324px;
+	> .doi {
+		max-width: 416px;
+
+		.bp3-input-group {
+			font-family: 'Courier', monospace;
+			font-size: 14px;
+			margin-bottom: 12px;
+
+			line-height: 30px;
+			height: 30px;
+
+			::placeholder {
+				font-family: $base-font;
+			}
+
+			.doi-prefix {
+				display: flex;
+				margin-left: 5px;
+				line-height: 31px;
+				height: 30px;
+			}
+		}
+
+		.bp3-button {
+			margin-right: 8px;
+		}
 	}
 }

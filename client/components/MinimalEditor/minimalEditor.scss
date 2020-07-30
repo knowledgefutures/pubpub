@@ -13,7 +13,7 @@ $border-style: 1px solid #ddd;
         height: 100%;
         .editor-wrapper {
             height: 100%;
-            overflow-y: scroll;
+            overflow-y: auto;
         }
         &.has-formatting-bar {
             display: flex;

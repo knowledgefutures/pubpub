@@ -85,7 +85,7 @@
         textarea {
             flex-grow: 1;
             resize: none;
-            overflow: scroll;
+            overflow: auto;
         }
     }
 
@@ -155,7 +155,7 @@
             color: white !important;
         }
         .pub-note-content-component {
-            overflow-y: scroll;
+            overflow-y: auto;
             flex-grow: 1;
         }
     }
@@ -219,7 +219,7 @@
     }
 
     .preview {
-        overflow-y: scroll;
+        overflow-y: auto;
         flex-grow: 1;
     }
 }

@@ -6,7 +6,7 @@
 	.options {
 		flex: 0 0 auto;
 		border-right: 1px solid #ddd;
-		overflow: scroll;
+		overflow: auto;
 	}
 	.formatting-bar_media-component-content {
 		flex: 1 1 auto;
@@ -48,9 +48,6 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			&.scroll {
-				overflow: scroll;
-			}
 		}
 		iframe {
 			width: 90%;

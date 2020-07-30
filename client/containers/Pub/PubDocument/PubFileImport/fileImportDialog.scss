@@ -47,7 +47,7 @@ $drop-area-bkg: rgba(138, 155, 168, .15);
     .import-message {
         margin-top: 10px;
         pre {
-            overflow-y: scroll;
+            overflow-y: auto;
         }
     }
     .files-listing {

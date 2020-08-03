@@ -6,11 +6,16 @@ import doiBatch from './schema/doiBatch';
 import renderBook from './render/book';
 import renderConference from './render/conference';
 import renderJournal from './render/journal';
+import renderPreprint from './render/preprint';
 import createDoi from './createDoi';
 import getCollectionDoi from '../collections/getCollectionDoi';
 
 const renderBody = (context) => {
-	const { collection } = context;
+	const { collection, globals } = context;
+
+	if (globals.contentVersion === 'preprint') {
+		return renderPreprint(context);
+	}
 
 	if (collection) {
 		if (collection.kind === 'book') {
@@ -66,7 +71,7 @@ const getDois = (context, doiTarget) => {
 
 export default (context, doiTarget, dateForTimestamp) => {
 	checkDepositAssertions(context, doiTarget);
-	const { community } = context;
+	const { community, contentVersion } = context;
 	const timestamp = (dateForTimestamp || new Date()).getTime();
 	const doiBatchId = `${timestamp}_${community.id.slice(0, 8)}`;
 	const dois = getDois(context, doiTarget);
@@ -77,6 +82,7 @@ export default (context, doiTarget, dateForTimestamp) => {
 				globals: {
 					dois: dois,
 					timestamp: timestamp,
+					contentVersion: contentVersion,
 				},
 			}),
 			doiBatchId: doiBatchId,

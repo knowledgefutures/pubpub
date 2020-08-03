@@ -4,6 +4,7 @@ import {
 	CollectionAttribution,
 	CollectionPub,
 	Community,
+	CrossrefDepositRecord,
 	Export,
 	Page,
 	PubAttribution,
@@ -198,6 +199,10 @@ export default ({
 				model: ReviewNew,
 				as: 'reviews',
 				include: [...author, ...visibility, ...thread],
+			},
+			{
+				model: CrossrefDepositRecord,
+				as: 'crossrefDepositRecord',
 			},
 			...collectionPubs,
 			...community,

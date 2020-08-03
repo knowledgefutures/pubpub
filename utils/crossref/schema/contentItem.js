@@ -12,6 +12,7 @@ export default ({
 	timestamp,
 	title,
 	relatedItems,
+	contentVersion,
 }) => {
 	return {
 		content_item: {
@@ -23,7 +24,7 @@ export default ({
 			},
 			...date('publication_date', publicationDate),
 			...(relatedItems.length > 0 && relations(relatedItems)),
-			...doiData(doi, timestamp, resourceUrl),
+			...doiData(doi, timestamp, resourceUrl, contentVersion),
 		},
 	};
 };

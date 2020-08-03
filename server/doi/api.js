@@ -5,10 +5,9 @@ import xmlbuilder from 'xmlbuilder';
 import { getDoiData, setDoiData } from './queries';
 import { getPermissions } from './permissions';
 
-const previewOrDepositDoi = async (req, options = { deposit: false }) => {
+const previewOrDepositDoi = async (user, body, options = { deposit: false }) => {
 	const { deposit } = options;
-	const user = req.user || {};
-	const { target, communityId, collectionId, pubId } = deposit ? req.body : req.query;
+	const { target, communityId, collectionId, pubId, contentVersion } = body;
 	const requestIds = {
 		userId: user.id,
 		communityId: communityId,
@@ -29,6 +28,7 @@ const previewOrDepositDoi = async (req, options = { deposit: false }) => {
 			communityId: communityId,
 			collectionId: collectionId,
 			pubId: pubId,
+			contentVersion: contentVersion,
 		},
 		target,
 	);
@@ -39,7 +39,7 @@ const previewOrDepositDoi = async (req, options = { deposit: false }) => {
 app.post(
 	'/api/doi',
 	wrap(async (req, res) => {
-		const depositJson = await previewOrDepositDoi(req, { deposit: true });
+		const depositJson = await previewOrDepositDoi(req.user || {}, req.body, { deposit: true });
 
 		return res.status(201).json(depositJson);
 	}),
@@ -48,7 +48,7 @@ app.post(
 app.get(
 	'/api/doiPreview',
 	wrap(async (req, res) => {
-		const depositJson = await previewOrDepositDoi(req);
+		const depositJson = await previewOrDepositDoi(req.user || {}, req.query);
 		const depositXml = xmlbuilder.create(depositJson, { headless: true }).end({ pretty: true });
 
 		return res.status(201).json({

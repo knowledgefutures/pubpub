@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, ControlGroup, Button, InputGroup } from '@blueprintjs/core';
+import { FormGroup, Button, InputGroup } from '@blueprintjs/core';
 
 import {
 	choosePrefixByCommunityId,
@@ -252,7 +252,6 @@ class Doi extends Component {
 						communityData={this.props.communityData}
 						onDeposit={this.handleDeposit}
 						pubData={this.props.pubData}
-						hasExistingDeposit={hasExistingDeposit}
 						target="pub"
 					/>
 				</FormGroup>

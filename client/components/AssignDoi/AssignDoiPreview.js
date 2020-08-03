@@ -3,42 +3,57 @@ import PropTypes from 'prop-types';
 import { Tab, Tabs } from '@blueprintjs/core';
 
 import { formatDate } from 'utils/dates';
+import {
+	getDepositBody,
+	getDepositRecordContentVersion,
+	isPreprint,
+	isBook,
+	isJournal,
+	isConference,
+} from 'utils/crossref/parseDeposit';
 
 require('./assignDoiPreview.scss');
 
 const propTypes = {
-	doi: PropTypes.string.isRequired,
-	depositJson: PropTypes.object.isRequired,
-	depositXml: PropTypes.string.isRequired,
+	crossrefDepositRecord: PropTypes.object.isRequired,
 };
 const defaultProps = {};
 
-const isBook = (doiBatch) => 'book' in doiBatch.body;
-const isJournal = (doiBatch) => 'journal' in doiBatch.body;
-const isConference = (doiBatch) => 'conference' in doiBatch.body;
+const renderRelationships = (program) => {
+	if (!program) {
+		return null;
+	}
 
-const renderRelations = (relatedItems) => {
+	const { 'rel:related_item': relatedItems } = program;
+
+	if (relatedItems.length === 0) {
+		return null;
+	}
+
 	return (
-		<dl>
-			{relatedItems.map(
-				({
-					'rel:inter_work_relation': interWorkRelation,
-					'rel:intra_work_relation': intraWorkRelation,
-				}) => {
-					const { '#text': identifier, '@relationship-type': relationshipType } =
-						interWorkRelation || intraWorkRelation;
+		<>
+			<h6>Relationships</h6>
+			<dl>
+				{relatedItems.map(
+					({
+						'rel:inter_work_relation': interWorkRelation,
+						'rel:intra_work_relation': intraWorkRelation,
+					}) => {
+						const { '#text': identifier, '@relationship-type': relationshipType } =
+							interWorkRelation || intraWorkRelation;
 
-					return (
-						<React.Fragment key={identifier}>
-							<dt>Relationship Type</dt>
-							<dd>{relationshipType}</dd>
-							<dt>Identifier</dt>
-							<dd>{identifier}</dd>
-						</React.Fragment>
-					);
-				},
-			)}
-		</dl>
+						return (
+							<React.Fragment key={identifier}>
+								<dt>Relationship Type</dt>
+								<dd>{relationshipType}</dd>
+								<dt>Identifier</dt>
+								<dd>{identifier}</dd>
+							</React.Fragment>
+						);
+					},
+				)}
+			</dl>
+		</>
 	);
 };
 
@@ -60,12 +75,12 @@ const renderPublisher = (publisher) => {
 	);
 };
 
-const renderPublicationDate = (publication_date) => {
+const renderPublicationDate = (publication_date, title = 'Publication Date') => {
 	const { day, month, year } = publication_date;
 
 	return (
 		<>
-			<dt>Publication Date</dt>
+			<dt>{title}</dt>
 			<dd>{formatDate(new Date([month, day, year]))}</dd>
 		</>
 	);
@@ -87,23 +102,21 @@ const renderContributors = (contributors) => {
 	);
 };
 
-const renderArticlePreview = (doi_batch) => {
+const renderArticlePreview = (body) => {
 	const {
-		body: {
-			journal: {
-				journal_article: {
-					titles,
-					publication_date,
-					contributors,
-					'rel:program': { related_item: relatedItems },
-				},
-				journal_metadata: {
-					full_title: journalFullTitle,
-					doi_data: { doi: journalDoi },
-				},
+		journal: {
+			journal_article: {
+				titles,
+				publication_date,
+				contributors,
+				'rel:program': relationships,
+			},
+			journal_metadata: {
+				full_title: journalFullTitle,
+				doi_data: { doi: journalDoi },
 			},
 		},
-	} = doi_batch;
+	} = body;
 
 	return (
 		<>
@@ -120,31 +133,28 @@ const renderArticlePreview = (doi_batch) => {
 				<dt>DOI</dt>
 				<dd>{journalDoi}</dd>
 			</dl>
-			<h6>Relationships</h6>
-			{relProgram && renderRelations(relatedItems)}
+			{renderRelationships(relationships)}
 		</>
 	);
 };
 
-const renderBookPreview = (doi_batch) => {
+const renderBookPreview = (body) => {
 	const {
-		body: {
-			book: {
-				book_metadata: {
-					titles: bookTitles,
-					edition_number,
-					publisher,
-					publication_date: bookPublicationDate,
-				},
-				content_item: {
-					titles: contentTitles,
-					contributors,
-					publication_date: contentPublicationDate,
-					'rel:program': { related_item: relatedItems },
-				},
+		book: {
+			book_metadata: {
+				titles: bookTitles,
+				edition_number,
+				publisher,
+				publication_date: bookPublicationDate,
+			},
+			content_item: {
+				titles: contentTitles,
+				contributors,
+				publication_date: contentPublicationDate,
+				'rel:program': relationships,
 			},
 		},
-	} = doi_batch;
+	} = body;
 
 	return (
 		<>
@@ -162,35 +172,28 @@ const renderBookPreview = (doi_batch) => {
 				{renderContributors(contributors)}
 				{renderPublicationDate(contentPublicationDate)}
 			</dl>
-			<h6>Relationships</h6>
-			{relProgram && renderRelations(relatedItems)}
+			{renderRelationships(relationships)}
 		</>
 	);
 };
 
-const renderConferencePreview = (doi_batch) => {
+const renderConferencePreview = (body) => {
 	const {
-		body: {
-			conference: {
-				conference_paper: {
-					contributors,
-					titles: paperTitles,
-					'rel:program': { related_item: relatedItems },
-				},
-				event_metadata: {
-					conference_name,
-					conference_date: { '#text': conferenceDate },
-				},
-				proceedings_metadata: { proceedings_title, publication_date, publisher },
+		conference: {
+			conference_paper: { contributors, titles, 'rel:program': relationships },
+			event_metadata: {
+				conference_name,
+				conference_date: { '#text': conferenceDate },
 			},
+			proceedings_metadata: { proceedings_title, publication_date, publisher },
 		},
-	} = doi_batch;
+	} = body;
 
 	return (
 		<>
 			<h6>Conference Paper</h6>
 			<dl>
-				{renderTitles(paperTitles)}
+				{renderTitles(titles)}
 				{renderContributors(contributors)}
 			</dl>
 			<h6>Event Metadata</h6>
@@ -207,21 +210,41 @@ const renderConferencePreview = (doi_batch) => {
 				{renderPublicationDate(publication_date)}
 				{renderPublisher(publisher)}
 			</dl>
-			<h6>Relationships</h6>
-			{relProgram && renderRelations(relatedItems)}
+			{renderRelationships(relationships)}
+		</>
+	);
+};
+
+const renderPreprintPreview = (body) => {
+	const {
+		posted_content: { contributors, titles, 'rel:program': relationships, posted_date },
+	} = body;
+
+	return (
+		<>
+			<h6>Preprint</h6>
+			<dl>
+				{renderTitles(titles)}
+				{renderContributors(contributors)}
+				{renderPublicationDate(posted_date, 'Posted Date')}
+			</dl>
+			{renderRelationships(relationships)}
 		</>
 	);
 };
 
 function AssignDoiPreview(props) {
 	const [selectedTab, setSelectedTab] = useState('preview');
+	const { crossrefDepositRecord } = props;
+	const body = getDepositBody(crossrefDepositRecord);
 	const {
 		doi,
 		depositJson: {
-			deposit: { doi_batch },
 			dois: { community: communityDoi, pub: pubDoi },
 		},
-	} = props;
+		depositXml,
+	} = crossrefDepositRecord;
+	const contentVersion = getDepositRecordContentVersion(crossrefDepositRecord);
 
 	const renderPreviewTab = () => {
 		return (
@@ -232,10 +255,17 @@ function AssignDoiPreview(props) {
 					<dd>{communityDoi}</dd>
 					<dt>Pub</dt>
 					<dd>{doi || pubDoi}</dd>
+					{contentVersion && contentVersion !== 'none' && (
+						<>
+							<dt>Content Version</dt>
+							<dd>{contentVersion}</dd>
+						</>
+					)}
 				</dl>
-				{isJournal(doi_batch) && renderArticlePreview(doi_batch)}
-				{isBook(doi_batch) && renderBookPreview(doi_batch)}
-				{isConference(doi_batch) && renderConferencePreview(doi_batch)}
+				{isJournal(crossrefDepositRecord) && renderArticlePreview(body)}
+				{isBook(crossrefDepositRecord) && renderBookPreview(body)}
+				{isConference(crossrefDepositRecord) && renderConferencePreview(body)}
+				{isPreprint(crossrefDepositRecord) && renderPreprintPreview(body)}
 			</>
 		);
 	};
@@ -247,7 +277,7 @@ function AssignDoiPreview(props) {
 			className="assign-doi-preview-component"
 		>
 			<Tab id="preview" title="Preview" panel={renderPreviewTab()} />
-			<Tab id="xml" title="XML" panel={<pre>{props.depositXml}</pre>} />
+			<Tab id="xml" title="XML" panel={<pre>{depositXml}</pre>} />
 		</Tabs>
 	);
 }

@@ -1,7 +1,14 @@
-import React, { useCallback, useReducer } from 'react';
+import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@blueprintjs/core';
+import { Button, MenuItem } from '@blueprintjs/core';
+import { Select } from '@blueprintjs/select';
 
+import { InputField } from 'components';
+import {
+	getDepositRecordContentVersion,
+	setDepositRecordContentVersion,
+	isPreprint,
+} from 'utils/crossref/parseDeposit';
 import { apiFetch } from 'client/utils/apiFetch';
 
 import AssignDoiPreview from './AssignDoiPreview';
@@ -13,7 +20,6 @@ const noop = () => {};
 const propTypes = {
 	communityData: PropTypes.object.isRequired,
 	disabled: PropTypes.bool,
-	hasExistingDeposit: PropTypes.bool,
 	onDeposit: PropTypes.func,
 	onError: PropTypes.func,
 	onPreview: PropTypes.func,
@@ -23,13 +29,12 @@ const propTypes = {
 
 const defaultProps = {
 	disabled: false,
-	hasExistingDeposit: false,
 	onDeposit: noop,
 	onError: noop,
 	onPreview: noop,
 };
 
-const AssignDoiState = {
+const AssignDoiStatus = {
 	Initial: 'initial',
 	Previewing: 'previewing',
 	Previewed: 'previewed',
@@ -40,73 +45,99 @@ const AssignDoiState = {
 const AssignDoiActionType = {
 	FetchPreview: 'fetch_preview',
 	FetchPreviewSuccess: 'fetch_preview_success',
+	UpdateContentVersion: 'update_content_version',
 	FetchDeposit: 'fetch_deposit',
 	FetchDepositSuccess: 'fetch_deposit_success',
 	Error: 'error',
 };
 
-const buttonTextByState = {
-	[AssignDoiState.Initial]: 'Preview Deposit',
-	[AssignDoiState.Previewing]: 'Getting Preview',
-	[AssignDoiState.Previewed]: 'Submit Deposit',
-	[AssignDoiState.Depositing]: 'Depositing',
-	[AssignDoiState.Deposited]: 'DOI Deposited',
+const buttonTextByStatus = {
+	[AssignDoiStatus.Initial]: 'Preview Deposit',
+	[AssignDoiStatus.Previewing]: 'Getting Preview',
+	[AssignDoiStatus.Previewed]: 'Submit Deposit',
+	[AssignDoiStatus.Depositing]: 'Depositing',
+	[AssignDoiStatus.Deposited]: 'DOI Deposited',
 };
 
-const getButtonText = (state, hasExistingDeposit) => {
-	if (state === AssignDoiState.Initial && hasExistingDeposit) {
+const getButtonText = (status, deposit) => {
+	if (status === AssignDoiStatus.Initial && deposit) {
 		return 'Resubmit DOI deposit';
 	}
 
-	return buttonTextByState[state];
+	return buttonTextByStatus[status];
 };
 
 export function reducer(state, action) {
 	switch (action.type) {
 		case AssignDoiActionType.FetchPreview:
-			if (!(state.state === AssignDoiState.Initial || state.state === AssignDoiState.Error)) {
+			if (
+				!(
+					state.status === AssignDoiStatus.Initial ||
+					state.status === AssignDoiStatus.Error ||
+					// re-fetch preview
+					state.status === AssignDoiStatus.Previewed
+				)
+			) {
 				return state;
 			}
 
 			return {
-				state: AssignDoiState.Previewing,
+				status: AssignDoiStatus.Previewing,
 				result: null,
 				error: null,
 			};
 		case AssignDoiActionType.FetchPreviewSuccess:
-			if (state.state !== AssignDoiState.Previewing) {
+			if (state.status !== AssignDoiStatus.Previewing) {
 				return state;
 			}
 
 			return {
-				state: AssignDoiState.Previewed,
+				status: AssignDoiStatus.Previewed,
 				result: action.payload,
 				error: null,
 			};
+		case AssignDoiActionType.UpdateContentVersion:
+			if (state.status !== AssignDoiStatus.Previewed) {
+				return state;
+			}
+
+			const result = { ...state.result };
+
+			// Not totally necessary here to create a full deep copy of the
+			// object since we're not using a change detection algorithm
+			// like `react-redux`, but this is technically a "Bad Practice":
+			setDepositRecordContentVersion(
+				result,
+				action.payload === 'none' ? null : action.payload,
+			);
+
+			return {
+				...state,
+				status: AssignDoiStatus.Previewed,
+				result: result,
+			};
 		case AssignDoiActionType.FetchDeposit:
-			if (state.state !== AssignDoiState.Previewed) {
+			if (state.status !== AssignDoiStatus.Previewed) {
 				return state;
 			}
 
 			return {
-				state: AssignDoiState.Depositing,
-				result: null,
+				status: AssignDoiStatus.Depositing,
 				error: null,
 			};
 		case AssignDoiActionType.FetchDepositSuccess:
-			if (state.state !== AssignDoiState.Depositing) {
+			if (state.status !== AssignDoiStatus.Depositing) {
 				return state;
 			}
 
 			return {
-				state: AssignDoiState.Deposited,
+				status: AssignDoiStatus.Deposited,
 				result: action.payload,
 				error: null,
 			};
 		case AssignDoiActionType.Error:
 			return {
-				state: AssignDoiState.Initial,
-				result: null,
+				status: AssignDoiStatus.Initial,
 				error: action.payload,
 			};
 		default:
@@ -115,24 +146,38 @@ export function reducer(state, action) {
 }
 
 const initialState = {
-	state: AssignDoiState.Initial,
+	status: AssignDoiStatus.Initial,
 	preview: null,
 	result: null,
+	error: null,
 };
 
+const contentVersionItems = [
+	{ title: '(None)', key: 'none' },
+	{ title: 'Preprint', key: 'preprint' },
+	{ title: 'Advance Manuscript', key: 'am' },
+	{ title: 'Version of Record', key: 'vor' },
+];
+
 function AssignDoi(props) {
-	const {
-		communityData,
-		disabled,
-		hasExistingDeposit,
-		pubData,
-		onPreview,
-		onDeposit,
-		onError,
-		target,
-	} = props;
-	const [{ state, result }, dispatch] = useReducer(reducer, initialState);
-	const fetchPreview = useCallback(async () => {
+	const { communityData, disabled, pubData, onPreview, onDeposit, onError, target } = props;
+	const [{ status, result, error }, dispatch] = useReducer(reducer, initialState);
+
+	// Extract the content version from current result (i.e. preview).
+	let contentVersion = getDepositRecordContentVersion(result);
+
+	// Assume preprint if no content version is present and body consists of posted_content.
+	if (!contentVersion && isPreprint(result || pubData.crossrefDepositRecord)) {
+		contentVersion = 'preprint';
+	}
+
+	// Default to "(None)" if no content version can be inferred.
+	const activeContentVersionKey = contentVersion || 'none';
+	const activeContentVersionItem = contentVersionItems.find(
+		(item) => item.key === activeContentVersionKey,
+	);
+
+	const fetchPreview = async (nextContentVersion = contentVersion) => {
 		dispatch({ type: AssignDoiActionType.FetchPreview });
 
 		try {
@@ -140,6 +185,9 @@ function AssignDoi(props) {
 				target: target,
 				pubId: pubData.id,
 				communityId: communityData.id,
+				// Ensure we don't send &contentVersion=null in the case of null or
+				// undefined content version.
+				...(nextContentVersion && { contentVersion: nextContentVersion }),
 			});
 			const preview = await apiFetch(`/api/doiPreview?${params.toString()}`);
 
@@ -149,12 +197,13 @@ function AssignDoi(props) {
 				type: AssignDoiActionType.FetchPreviewSuccess,
 				payload: preview,
 			});
-		} catch (error) {
-			dispatch({ type: AssignDoiActionType.Error, payload: error.message });
-			onError(error);
+		} catch (err) {
+			dispatch({ type: AssignDoiActionType.Error, payload: err.message });
+			onError(err);
 		}
-	}, [communityData, pubData, target, onPreview, onError]);
-	const fetchDeposit = useCallback(async () => {
+	};
+
+	const fetchDeposit = async () => {
 		dispatch({ type: AssignDoiActionType.FetchDeposit });
 
 		try {
@@ -162,49 +211,90 @@ function AssignDoi(props) {
 				target: target,
 				pubId: pubData.id,
 				communityId: communityData.id,
+				...(contentVersion && { contentVersion: contentVersion }),
 			});
 			const response = await apiFetch('/api/doi', {
 				method: 'POST',
 				body: body,
 			});
-			const targetDoi = response.dois[target];
-
 			dispatch({
 				type: AssignDoiActionType.FetchDepositSuccess,
-				payload: targetDoi,
+				payload: { depositJson: response },
 			});
 
-			onDeposit(targetDoi);
-		} catch (error) {
-			dispatch({ type: AssignDoiActionType.Error, payload: error.message });
-			onError(error);
+			onDeposit(response.dois[target]);
+		} catch (err) {
+			dispatch({ type: AssignDoiActionType.Error, payload: err.message });
+			onError(err);
 		}
-	}, [communityData, pubData, target, onDeposit, onError]);
+	};
 
-	let action;
+	const handlePreviewClick = () => fetchPreview();
+	const handleDepositClick = () => fetchDeposit();
+	const handleItemSelect = (item) => {
+		const { key: nextContentVersion } = item;
 
-	if (state === AssignDoiState.Initial) {
-		action = fetchPreview;
-	} else if (state === AssignDoiState.Previewed) {
-		action = fetchDeposit;
+		dispatch({
+			type: AssignDoiActionType.UpdateContentVersion,
+			payload: nextContentVersion,
+		});
+
+		// Immediately load preview with next content version.
+		fetchPreview(nextContentVersion);
+	};
+
+	let handleButtonClick;
+
+	if (status === AssignDoiStatus.Initial) {
+		handleButtonClick = handlePreviewClick;
+	} else if (status === AssignDoiStatus.Previewed) {
+		handleButtonClick = handleDepositClick;
 	}
 
 	return (
 		<div className="assign-doi-component">
-			<Button
-				disabled={disabled || !action}
-				text={getButtonText(state, hasExistingDeposit)}
-				loading={state === AssignDoiState.Previewing || state === AssignDoiState.Depositing}
-				onClick={action}
-				icon={state === AssignDoiState.Deposited && 'tick'}
-			/>
-			{state === AssignDoiState.Previewed && (
+			<InputField error={error && 'There was an error depositing the work.'}>
+				<Button
+					disabled={disabled || !handleButtonClick}
+					text={getButtonText(status, pubData.crossrefDepositRecord)}
+					loading={
+						status === AssignDoiStatus.Previewing ||
+						status === AssignDoiStatus.Depositing
+					}
+					onClick={handleButtonClick}
+					icon={status === AssignDoiStatus.Deposited && 'tick'}
+				/>
+			</InputField>
+			{status === AssignDoiStatus.Previewed && (
+				<InputField label="Content Version">
+					<Select
+						items={contentVersionItems}
+						itemRenderer={(item, { handleClick }) => (
+							<MenuItem
+								key={item.key}
+								active={item === activeContentVersionItem}
+								onClick={handleClick}
+								text={<span>{item.title}</span>}
+							/>
+						)}
+						onItemSelect={handleItemSelect}
+						filterable={false}
+						popoverProps={{ minimal: true }}
+					>
+						<Button
+							text={<span>{activeContentVersionItem.title}</span>}
+							rightIcon="caret-down"
+						/>
+					</Select>
+				</InputField>
+			)}
+			{status === AssignDoiStatus.Previewed && (
 				<>
 					<p>
-						Review the information below, then use the button above to submit the
-						deposit to Crossref.
+						Review the information below, then click the "Submit Deposit" button to
+						submit the deposit to Crossref.
 					</p>
-					<AssignDoiPreview {...result} doi={pubData.doi} />
+					<AssignDoiPreview crossrefDepositRecord={result} />
 				</>
 			)}
 		</div>

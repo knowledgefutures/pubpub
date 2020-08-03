@@ -98,7 +98,7 @@ const persistDoiData = (ids, dois) => {
 	return Promise.all(updates);
 };
 
-export const getDoiData = ({ communityId, collectionId, pubId }, doiTarget) =>
+export const getDoiData = ({ communityId, collectionId, pubId, contentVersion }, doiTarget) =>
 	Promise.all([
 		findCommunity(communityId),
 		collectionId && findCollection(collectionId),
@@ -112,14 +112,20 @@ export const getDoiData = ({ communityId, collectionId, pubId }, doiTarget) =>
 				collection: resolvedCollection,
 				community: community,
 				pub: pub,
+				contentVersion: contentVersion,
 			},
 			doiTarget,
 		);
 	});
 
-export const setDoiData = ({ communityId, collectionId, pubId }, doiTarget) =>
+export const setDoiData = ({ communityId, collectionId, pubId, contentVersion }, doiTarget) =>
 	getDoiData(
-		{ communityId: communityId, collectionId: collectionId, pubId: pubId },
+		{
+			communityId: communityId,
+			collectionId: collectionId,
+			pubId: pubId,
+			contentVersion: contentVersion,
+		},
 		doiTarget,
 	).then((depositJson) => {
 		const ids = { collectionId: collectionId, pubId: pubId };

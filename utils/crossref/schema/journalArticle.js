@@ -11,6 +11,7 @@ export default ({
 	timestamp,
 	title,
 	relatedItems,
+	contentVersion,
 }) => {
 	return {
 		journal_article: {
@@ -22,7 +23,7 @@ export default ({
 			...contributors(attributions),
 			...date('publication_date', publicationDate),
 			...(relatedItems.length > 0 && relations(relatedItems)),
-			...doiData(doi, timestamp, resourceUrl),
+			...doiData(doi, timestamp, resourceUrl, contentVersion),
 		},
 	};
 };

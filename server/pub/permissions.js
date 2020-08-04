@@ -31,6 +31,7 @@ export const getPermissions = async ({ userId, communityId, pubId, licenseSlug }
 		'licenseSlug',
 		'citationStyle',
 		'citationInlineStyle',
+		'customPublishedAt',
 	];
 	return {
 		create: true,

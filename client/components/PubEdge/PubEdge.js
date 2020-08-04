@@ -67,7 +67,7 @@ const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 			avatar: avatar,
 			contributors: contributors || '',
 			description: description,
-			publishedAt: publicationDate && formatDate(publicationDate, { inUTCTime: true }),
+			publishedAt: publicationDate && formatDate(publicationDate, { inUtcTime: true }),
 			title: title,
 			url: url,
 		};

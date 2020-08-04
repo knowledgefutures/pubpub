@@ -1,3 +1,5 @@
+import { getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
+
 const selectBranch = (pub, branch) => {
 	if (!branch && !pub.branches) {
 		return null;
@@ -22,7 +24,10 @@ export const getPubCreatedDate = (pub) => {
 
 export const getPubPublishedDate = (pub) => {
 	if (pub.customPublishedAt) {
-		return pub.customPublishedAt;
+		// This is a date string representing a time at midnight UTC for a given date.
+		// Unfortunately, that represents a time during the previous day in the Western hemisphere,
+		// which will cause this to improperly render the previous day.
+		return getLocalDateMatchingUtcCalendarDate(pub.customPublishedAt);
 	}
 	const { releases } = pub;
 	if (releases.length > 0) {

@@ -10,6 +10,7 @@ export { default as ConfirmDialog } from './ConfirmDialog/ConfirmDialog';
 export { default as DashboardFrame } from './DashboardFrame/DashboardFrame';
 export { default as DashboardRow } from './DashboardRow/DashboardRow';
 export { default as DashboardRowListing } from './DashboardRow/DashboardRowListing';
+export { default as DatePicker } from './DatePicker/DatePicker';
 export { default as DialogLauncher } from './DialogLauncher/DialogLauncher';
 export { default as DragDropListing } from './DragDropListing/DragDropListing';
 export { default as DropdownButton } from './DropdownButton/DropdownButton';

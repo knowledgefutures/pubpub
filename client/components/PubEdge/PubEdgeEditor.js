@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { EditableText, TagInput, InputGroup } from '@blueprintjs/core';
+import { EditableText, TagInput } from '@blueprintjs/core';
 import { Button as RKButton } from 'reakit/Button';
+
+import { DatePicker } from 'components';
 
 import { externalPublicationType } from './constants';
 import { getHostnameForUrl } from './util';
@@ -21,47 +23,25 @@ const PubEdgeEditor = (props) => {
 		onUpdateExternalPublication,
 	} = props;
 
-	const dateInputRef = useRef();
-
-	useEffect(() => {
-		const { current: dateInput } = dateInputRef;
-		if (publicationDate && dateInput) {
-			dateInput.valueAsDate = new Date(publicationDate);
-		}
-	}, [publicationDate]);
-
-	const handlePublicationDateChange = (evt) => {
-		const { valueAsDate, value } = evt.target;
-		if (valueAsDate) {
-			const nextPublicationDate = valueAsDate.toUTCString();
-			onUpdateExternalPublication({ publicationDate: nextPublicationDate });
-		} else {
-			const nextPublicationDate = new Date(value);
-			if (!Number.isNaN(nextPublicationDate.valueOf())) {
-				onUpdateExternalPublication({ publicationDate: nextPublicationDate });
-			}
-		}
-	};
-
 	const renderPublicationDate = () => {
 		if (publicationDate) {
 			return (
 				<>
 					Published on{' '}
-					<InputGroup
+					<DatePicker
 						small
 						className="editable-date"
-						type="date"
-						inputRef={dateInputRef}
-						onChange={handlePublicationDateChange}
-						placeholder="YYYY-MM-DD"
+						onSelectDate={(date) =>
+							onUpdateExternalPublication({ publicationDate: date })
+						}
+						date={publicationDate}
 					/>
 				</>
 			);
 		}
 
 		const addPublicationDate = () =>
-			onUpdateExternalPublication({ publicationDate: new Date().toUTCString() });
+			onUpdateExternalPublication({ publicationDate: new Date() });
 
 		return (
 			<RKButton

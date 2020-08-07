@@ -47,7 +47,7 @@ export const communityDoiOverrides = [
 		prefix: RS_DOI_PREFIX,
 		key: 'RS',
 	},
-		{
+	{
 		communityIds: [
 			'27d9a5c8-30f3-44bd-971f-181388d53323', // https://jtrialerror.pubpub.org/
 		],

@@ -35,7 +35,7 @@ const getChildEdges = (pubData) => {
 	const { inboundEdges, outboundEdges } = pubData;
 	return [
 		...inboundEdges.filter((edge) => {
-			if (edge.targetIsParent) {
+			if (!edge.pubIsParent) {
 				const { pub: sourcePub } = edge;
 				if (sourcePub) {
 					return sourcePub.communityId === pubData.communityId;
@@ -43,7 +43,7 @@ const getChildEdges = (pubData) => {
 			}
 			return false;
 		}),
-		...outboundEdges.filter((edge) => !edge.targetIsParent),
+		...outboundEdges.filter((edge) => edge.pubIsParent && edge.targetPub),
 	];
 };
 

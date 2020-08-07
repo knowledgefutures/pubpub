@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+_Before filing your bug report, please search existing issues to make sure a similar one doesn't already exist. If one does, please leave a comment or reaction in support of the issue rather than creating a new one._
+
 **What went wrong, step-by-step?**
 1.
 2.

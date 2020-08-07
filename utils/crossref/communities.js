@@ -6,6 +6,7 @@ const IASTATE_DOI_PREFIX = '10.31274';
 const AAS_DOI_PREFIX = '10.3847';
 const MEDIASTUDIES_DOI_PREFIX = '10.32376';
 const RS_DOI_PREFIX = '10.46470';
+const JOTE_DOI_PREFIX = '10.36850';
 
 export const communityDoiOverrides = [
 	{
@@ -45,6 +46,13 @@ export const communityDoiOverrides = [
 		],
 		prefix: RS_DOI_PREFIX,
 		key: 'RS',
+	},
+		{
+		communityIds: [
+			'27d9a5c8-30f3-44bd-971f-181388d53323', // https://jtrialerror.pubpub.org/
+		],
+		prefix: JOTE_DOI_PREFIX,
+		key: 'JOTE',
 	},
 ];
 

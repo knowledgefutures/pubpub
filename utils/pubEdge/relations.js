@@ -90,3 +90,30 @@ export const getRelationTypeName = (relationType, isPlural) => {
 
 export const relationTypes = Object.keys(relationTypeDefinitions);
 export const RelationType = createRelationTypeEnum();
+
+const findParentEdge = (pubEdges, relationTypes, inbound) => {
+	for (let i = 0; i < pubEdges.length; i++) {
+		const pubEdge = pubEdges[i];
+		const { pubIsParent, relationType } = pubEdge;
+
+		if (inbound ? pubIsParent : !pubIsParent) {
+			for (let j = 0; j < relationTypes.length; j++) {
+				if (relationType === relationTypes[j]) {
+					return pubEdge;
+				}
+			}
+		}
+	}
+
+	return null;
+};
+
+export const findParentEdgeByRelationTypes = (pub, relationTypes) => {
+	const { inboundEdges, outboundEdges } = pub;
+
+	return (
+		findParentEdge(inboundEdges, relationTypes, true) ||
+		findParentEdge(outboundEdges, relationTypes) ||
+		null
+	);
+};

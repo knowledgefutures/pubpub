@@ -1,13 +1,20 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Button, MenuItem } from '@blueprintjs/core';
-import { Select } from '@blueprintjs/select';
+import { Button, Callout } from '@blueprintjs/core';
+import pickBy from 'lodash.pickby';
 
-import { InputField } from 'components';
+import { InputField, Menu, MenuItem, DropdownButton, MenuButton } from 'components';
 import {
 	getDepositRecordContentVersion,
 	setDepositRecordContentVersion,
-	isPreprint,
+	getDepositRecordReviewType,
+	setDepositRecordReviewType,
+	getDepositRecordReviewRecommendation,
+	setDepositRecordReviewRecommendation,
+	isPreprintDeposit,
+	isPeerReviewDeposit,
+	isStandaloneComponentDeposit,
+	getDepositTypeTitle,
 } from 'utils/crossref/parseDeposit';
 import { apiFetch } from 'client/utils/apiFetch';
 
@@ -46,13 +53,15 @@ const AssignDoiActionType = {
 	FetchPreview: 'fetch_preview',
 	FetchPreviewSuccess: 'fetch_preview_success',
 	UpdateContentVersion: 'update_content_version',
+	UpdateReviewType: 'update_review_type',
+	UpdateReviewRecommendation: 'update_review_recommendation',
 	FetchDeposit: 'fetch_deposit',
 	FetchDepositSuccess: 'fetch_deposit_success',
 	Error: 'error',
 };
 
 const buttonTextByStatus = {
-	[AssignDoiStatus.Initial]: 'Preview Deposit',
+	[AssignDoiStatus.Initial]: 'Deposit to Crossref',
 	[AssignDoiStatus.Previewing]: 'Getting Preview',
 	[AssignDoiStatus.Previewed]: 'Submit Deposit',
 	[AssignDoiStatus.Depositing]: 'Depositing',
@@ -82,8 +91,8 @@ export function reducer(state, action) {
 			}
 
 			return {
+				...state,
 				status: AssignDoiStatus.Previewing,
-				result: null,
 				error: null,
 			};
 		case AssignDoiActionType.FetchPreviewSuccess:
@@ -92,36 +101,63 @@ export function reducer(state, action) {
 			}
 
 			return {
+				...state,
 				status: AssignDoiStatus.Previewed,
-				result: action.payload,
+				crossrefDepositRecord: action.payload,
 				error: null,
 			};
-		case AssignDoiActionType.UpdateContentVersion:
+		case AssignDoiActionType.UpdateContentVersion: {
 			if (state.status !== AssignDoiStatus.Previewed) {
 				return state;
 			}
 
-			const result = { ...state.result };
+			const crossrefDepositRecord = { ...state.crossrefDepositRecord };
 
 			// Not totally necessary here to create a full deep copy of the
 			// object since we're not using a change detection algorithm
 			// like `react-redux`, but this is technically a "Bad Practice":
-			setDepositRecordContentVersion(
-				result,
-				action.payload === 'none' ? null : action.payload,
-			);
+			setDepositRecordContentVersion(crossrefDepositRecord, action.payload);
 
 			return {
 				...state,
-				status: AssignDoiStatus.Previewed,
-				result: result,
+				crossrefDepositRecord: crossrefDepositRecord,
 			};
+		}
+		case AssignDoiActionType.UpdateReviewType: {
+			if (state.status !== AssignDoiStatus.Previewed) {
+				return state;
+			}
+
+			const crossrefDepositRecord = { ...state.crossrefDepositRecord };
+
+			setDepositRecordReviewType(crossrefDepositRecord, action.payload);
+
+			return {
+				...state,
+				crossrefDepositRecord: crossrefDepositRecord,
+			};
+		}
+		case AssignDoiActionType.UpdateReviewRecommendation: {
+			if (state.status !== AssignDoiStatus.Previewed) {
+				return state;
+			}
+
+			const crossrefDepositRecord = { ...state.crossrefDepositRecord };
+
+			setDepositRecordReviewRecommendation(crossrefDepositRecord, action.payload);
+
+			return {
+				...state,
+				crossrefDepositRecord: crossrefDepositRecord,
+			};
+		}
 		case AssignDoiActionType.FetchDeposit:
 			if (state.status !== AssignDoiStatus.Previewed) {
 				return state;
 			}
 
 			return {
+				...state,
 				status: AssignDoiStatus.Depositing,
 				error: null,
 			};
@@ -131,12 +167,14 @@ export function reducer(state, action) {
 			}
 
 			return {
+				...state,
 				status: AssignDoiStatus.Deposited,
-				result: action.payload,
+				crossrefDepositRecord: action.payload,
 				error: null,
 			};
 		case AssignDoiActionType.Error:
 			return {
+				...state,
 				status: AssignDoiStatus.Initial,
 				error: action.payload,
 			};
@@ -148,7 +186,7 @@ export function reducer(state, action) {
 const initialState = {
 	status: AssignDoiStatus.Initial,
 	preview: null,
-	result: null,
+	crossrefDepositRecord: null,
 	error: null,
 };
 
@@ -159,36 +197,79 @@ const contentVersionItems = [
 	{ title: 'Version of Record', key: 'vor' },
 ];
 
+const reviewTypeItems = [
+	{ title: '(None)', key: 'none' },
+	{ title: 'Referee Report', key: 'referee-report' },
+	{ title: 'Editor Report', key: 'editor-report' },
+	{ title: 'Author Comment', key: 'author-comment' },
+	{ title: 'Community Comment', key: 'community-comment' },
+	{ title: 'Manuscript', key: 'manuscript' },
+	{ title: 'Aggregate', key: 'aggregate' },
+	{ title: 'Recommendation', key: 'recommendation' },
+];
+
+const reviewRecommendationItems = [
+	{ title: '(None)', key: 'none' },
+	{ title: 'Major Revision', key: 'major-revision' },
+	{ title: 'Minor Revision', key: 'minor-revision' },
+	{ title: 'Reject', key: 'reject' },
+	{ title: 'Reject with Resubmit', key: 'reject-with-resubmit' },
+	{ title: 'Accept', key: 'accept' },
+	{ title: 'Accept with Reservation', key: 'accept-with-reservation' },
+];
+
+const pickNonNullValues = (obj) => pickBy(obj, (value) => value !== null && value !== undefined);
+
 function AssignDoi(props) {
 	const { communityData, disabled, pubData, onPreview, onDeposit, onError, target } = props;
-	const [{ status, result, error }, dispatch] = useReducer(reducer, initialState);
+	const [state, dispatch] = useReducer(reducer, {
+		...initialState,
+		crossrefDepositRecord: pubData.crossrefDepositRecord,
+	});
+	const { status, crossrefDepositRecord, error } = state;
 
-	// Extract the content version from current result (i.e. preview).
-	let contentVersion = getDepositRecordContentVersion(result);
+	const reviewType = getDepositRecordReviewType(crossrefDepositRecord);
+	const reviewRecommendation = getDepositRecordReviewRecommendation(crossrefDepositRecord);
+
+	let contentVersion = getDepositRecordContentVersion(crossrefDepositRecord);
 
 	// Assume preprint if no content version is present and body consists of posted_content.
-	if (!contentVersion && isPreprint(result || pubData.crossrefDepositRecord)) {
+	if (!contentVersion && isPreprintDeposit(crossrefDepositRecord)) {
 		contentVersion = 'preprint';
 	}
 
-	// Default to "(None)" if no content version can be inferred.
 	const activeContentVersionKey = contentVersion || 'none';
 	const activeContentVersionItem = contentVersionItems.find(
 		(item) => item.key === activeContentVersionKey,
 	);
 
-	const fetchPreview = async (nextContentVersion = contentVersion) => {
+	const activeReviewTypeKey = reviewType || 'none';
+	const activeReviewTypeItem = reviewTypeItems.find((item) => item.key === activeReviewTypeKey);
+
+	const activeReviewRecommendationKey = reviewRecommendation || 'none';
+	const activeReviewRecommendationItem = reviewRecommendationItems.find(
+		(item) => item.key === activeReviewRecommendationKey,
+	);
+
+	const requestBody = {
+		target: target,
+		pubId: pubData.id,
+		communityId: communityData.id,
+		contentVersion: contentVersion,
+		reviewType: reviewType,
+		reviewRecommendation: reviewRecommendation,
+	};
+
+	const fetchPreview = async (nextParams) => {
 		dispatch({ type: AssignDoiActionType.FetchPreview });
 
 		try {
-			const params = new URLSearchParams({
-				target: target,
-				pubId: pubData.id,
-				communityId: communityData.id,
-				// Ensure we don't send &contentVersion=null in the case of null or
-				// undefined content version.
-				...(nextContentVersion && { contentVersion: nextContentVersion }),
-			});
+			const params = new URLSearchParams(
+				pickNonNullValues({
+					...requestBody,
+					...nextParams,
+				}),
+			);
 			const preview = await apiFetch(`/api/doiPreview?${params.toString()}`);
 
 			onPreview(preview);
@@ -207,12 +288,7 @@ function AssignDoi(props) {
 		dispatch({ type: AssignDoiActionType.FetchDeposit });
 
 		try {
-			const body = JSON.stringify({
-				target: target,
-				pubId: pubData.id,
-				communityId: communityData.id,
-				...(contentVersion && { contentVersion: contentVersion }),
-			});
+			const body = JSON.stringify(pickNonNullValues(requestBody));
 			const response = await apiFetch('/api/doi', {
 				method: 'POST',
 				body: body,
@@ -231,8 +307,8 @@ function AssignDoi(props) {
 
 	const handlePreviewClick = () => fetchPreview();
 	const handleDepositClick = () => fetchDeposit();
-	const handleItemSelect = (item) => {
-		const { key: nextContentVersion } = item;
+	const handleContentVersionItemSelect = ({ key }) => {
+		const nextContentVersion = key === 'none' ? null : key;
 
 		dispatch({
 			type: AssignDoiActionType.UpdateContentVersion,
@@ -240,7 +316,29 @@ function AssignDoi(props) {
 		});
 
 		// Immediately load preview with next content version.
-		fetchPreview(nextContentVersion);
+		fetchPreview({ contentVersion: nextContentVersion });
+	};
+	const handleReviewTypeItemSelect = ({ key }) => {
+		const nextReviewType = key === 'none' ? null : key;
+
+		dispatch({
+			type: AssignDoiActionType.UpdateReviewType,
+			payload: nextReviewType,
+		});
+
+		// Immediately load preview with next review type.
+		fetchPreview({ reviewType: nextReviewType });
+	};
+	const handleReviewRecommendationItemSelect = ({ key }) => {
+		const nextReviewRecommendation = key === 'none' ? null : key;
+
+		dispatch({
+			type: AssignDoiActionType.UpdateReviewRecommendation,
+			payload: nextReviewRecommendation,
+		});
+
+		// Immediately load preview with next review recommendation.
+		fetchPreview({ reviewRecommendation: nextReviewRecommendation });
 	};
 
 	let handleButtonClick;
@@ -251,8 +349,90 @@ function AssignDoi(props) {
 		handleButtonClick = handleDepositClick;
 	}
 
+	const priorPubDoi = useRef(pubData.doi);
+
+	// Re-load the preview when the Pub's DOI changes.
+	useEffect(() => {
+		if (priorPubDoi.current !== pubData.doi && status === AssignDoiStatus.Previewed) {
+			fetchPreview();
+		}
+		priorPubDoi.current = pubData.doi;
+	}, [pubData.doi, status]);
+
 	return (
 		<div className="assign-doi-component">
+			{(status === AssignDoiStatus.Previewed || status === AssignDoiStatus.Previewing) && (
+				<>
+					<Callout intent="primary" title="Review Deposit">
+						This work is being deposited as a{' '}
+						<strong>{getDepositTypeTitle(crossrefDepositRecord) || '...'}</strong> based
+						on its Connections, primary collection, or selected Content Version. Review
+						the information below, then click the "Submit Deposit" button to submit the
+						deposit to Crossref.
+					</Callout>
+
+					{!isStandaloneComponentDeposit(crossrefDepositRecord) && (
+						<InputField label="Content Version">
+							<MenuButton
+								buttonContent={activeContentVersionItem.title}
+								buttonProps={{ rightIcon: 'caret-down' }}
+								aria-label="content-version"
+							>
+								{contentVersionItems.map((item) => (
+									<MenuItem
+										key={item.key}
+										active={item === activeContentVersionItem}
+										onClick={() => handleContentVersionItemSelect(item)}
+										text={item.title}
+									/>
+								))}
+							</MenuButton>
+						</InputField>
+					)}
+
+					{isPeerReviewDeposit(crossrefDepositRecord) && (
+						<div className="dropdowns">
+							<InputField label="Review Type">
+								<MenuButton
+									buttonContent={activeReviewTypeItem.title}
+									buttonProps={{ rightIcon: 'caret-down' }}
+									aria-label="review-type"
+								>
+									{reviewTypeItems.map((item) => (
+										<MenuItem
+											key={item.key}
+											active={item === activeReviewTypeItem}
+											onClick={() => handleReviewTypeItemSelect(item)}
+											text={<span>{item.title}</span>}
+										/>
+									))}
+								</MenuButton>
+							</InputField>
+							<InputField label="Review Recommendation">
+								<MenuButton
+									buttonContent={activeReviewRecommendationItem.title}
+									buttonProps={{ rightIcon: 'caret-down' }}
+									aria-label="review-type"
+								>
+									{reviewRecommendationItems.map((item) => (
+										<MenuItem
+											key={item.key}
+											active={item === activeReviewRecommendationItem}
+											onClick={() =>
+												handleReviewRecommendationItemSelect(item)
+											}
+											text={<span>{item.title}</span>}
+										/>
+									))}
+								</MenuButton>
+							</InputField>
+						</div>
+					)}
+				</>
+			)}
+			{status === AssignDoiStatus.Previewed && (
+				<AssignDoiPreview crossrefDepositRecord={crossrefDepositRecord} />
+			)}
 			<InputField error={error && 'There was an error depositing the work.'}>
 				<Button
 					disabled={disabled || !handleButtonClick}
@@ -265,38 +445,6 @@ function AssignDoi(props) {
 					icon={status === AssignDoiStatus.Deposited && 'tick'}
 				/>
 			</InputField>
-			{status === AssignDoiStatus.Previewed && (
-				<InputField label="Content Version">
-					<Select
-						items={contentVersionItems}
-						itemRenderer={(item, { handleClick }) => (
-							<MenuItem
-								key={item.key}
-								active={item === activeContentVersionItem}
-								onClick={handleClick}
-								text={<span>{item.title}</span>}
-							/>
-						)}
-						onItemSelect={handleItemSelect}
-						filterable={false}
-						popoverProps={{ minimal: true }}
-					>
-						<Button
-							text={<span>{activeContentVersionItem.title}</span>}
-							rightIcon="caret-down"
-						/>
-					</Select>
-				</InputField>
-			)}
-			{status === AssignDoiStatus.Previewed && (
-				<>
-					<p>
-						Review the information below, then click the "Submit Deposit" button to
-						submit the deposit to Crossref.
-					</p>
-					<AssignDoiPreview crossrefDepositRecord={result} />
-				</>
-			)}
 		</div>
 	);
 }

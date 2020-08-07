@@ -6,10 +6,12 @@ import { formatDate } from 'utils/dates';
 import {
 	getDepositBody,
 	getDepositRecordContentVersion,
-	isPreprint,
-	isBook,
-	isJournal,
-	isConference,
+	isPreprintDeposit,
+	isBookDeposit,
+	isJournalDeposit,
+	isConferenceDeposit,
+	isPeerReviewDeposit,
+	isStandaloneComponentDeposit,
 } from 'utils/crossref/parseDeposit';
 
 require('./assignDoiPreview.scss');
@@ -233,6 +235,69 @@ const renderPreprintPreview = (body) => {
 	);
 };
 
+const renderPeerReviewPreview = (body) => {
+	const {
+		peer_review: {
+			'@type': type,
+			'@recommendation': recommendation,
+			contributors,
+			titles,
+			'rel:program': relationships,
+			review_date,
+		},
+	} = body;
+
+	return (
+		<>
+			<h6>Peer Review</h6>
+			<dl>
+				{renderTitles(titles)}
+				{renderContributors(contributors)}
+				{renderPublicationDate(review_date, 'Review Date')}
+				{type && (
+					<>
+						<dt>Review Type</dt>
+						<dd>{type}</dd>
+					</>
+				)}
+				{recommendation && (
+					<>
+						<dt>Review Recommendation</dt>
+						<dd>{recommendation}</dd>
+					</>
+				)}
+			</dl>
+			{renderRelationships(relationships)}
+		</>
+	);
+};
+
+const renderSupplementPreview = (body) => {
+	const {
+		sa_component: {
+			['@parent_doi']: parentDoi,
+			component_list: {
+				component: { contributors, titles, publication_date },
+			},
+		},
+	} = body;
+
+	return (
+		<>
+			<h6>Standalone Component</h6>
+			<dl>
+				<dt>Parent DOI</dt>
+				<dd>{parentDoi}</dd>
+				<dt>Parent Relation</dt>
+				<dd>isPartOf</dd>
+				{renderTitles(titles)}
+				{renderContributors(contributors)}
+				{renderPublicationDate(publication_date)}
+			</dl>
+		</>
+	);
+};
+
 function AssignDoiPreview(props) {
 	const [selectedTab, setSelectedTab] = useState('preview');
 	const { crossrefDepositRecord } = props;
@@ -262,10 +327,13 @@ function AssignDoiPreview(props) {
 						</>
 					)}
 				</dl>
-				{isJournal(crossrefDepositRecord) && renderArticlePreview(body)}
-				{isBook(crossrefDepositRecord) && renderBookPreview(body)}
-				{isConference(crossrefDepositRecord) && renderConferencePreview(body)}
-				{isPreprint(crossrefDepositRecord) && renderPreprintPreview(body)}
+				{isJournalDeposit(crossrefDepositRecord) && renderArticlePreview(body)}
+				{isBookDeposit(crossrefDepositRecord) && renderBookPreview(body)}
+				{isConferenceDeposit(crossrefDepositRecord) && renderConferencePreview(body)}
+				{isPreprintDeposit(crossrefDepositRecord) && renderPreprintPreview(body)}
+				{isPeerReviewDeposit(crossrefDepositRecord) && renderPeerReviewPreview(body)}
+				{isStandaloneComponentDeposit(crossrefDepositRecord) &&
+					renderSupplementPreview(body)}
 			</>
 		);
 	};

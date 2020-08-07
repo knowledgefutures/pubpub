@@ -121,6 +121,7 @@
 		"keyboardjs": "^2.5.1",
 		"local-repl": "^4.0.0",
 		"lodash.mergewith": "^4.6.2",
+		"lodash.pickby": "^4.6.0",
 		"lodash.throttle": "^4.1.1",
 		"mailgun.js": "^2.0.1",
 		"mini-css-extract-plugin": "^0.7.0",

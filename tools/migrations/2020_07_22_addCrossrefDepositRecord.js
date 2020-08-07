@@ -6,7 +6,6 @@ module.exports = async ({ Sequelize, sequelize }) => {
 			model: 'CrossrefDepositRecords',
 			key: 'id',
 		},
-		onDelete: 'CASCADE',
 	});
 	await sequelize.queryInterface.addColumn('Collections', 'crossrefDepositRecordId', {
 		type: Sequelize.UUID,
@@ -15,6 +14,5 @@ module.exports = async ({ Sequelize, sequelize }) => {
 			model: 'CrossrefDepositRecords',
 			key: 'id',
 		},
-		onDelete: 'CASCADE',
 	});
 };

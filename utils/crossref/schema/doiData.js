@@ -11,7 +11,7 @@ export default (doi, timestamp, resource, contentVersion) => {
 			timestamp: timestamp,
 			resource: {
 				'#text': resource,
-				'@content_version': contentVersion,
+				...(contentVersion && { '@content_version': contentVersion }),
 			},
 		},
 	};

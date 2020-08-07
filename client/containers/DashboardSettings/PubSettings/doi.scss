@@ -5,6 +5,14 @@
 		font-family: 'Courier', monospace;
 	}
 
+	.bp3-callout {
+		margin-bottom: 20px;
+
+		&:not(:first-child) {
+			margin-top: 20px;
+		}
+	}
+
 	> .doi {
 		max-width: 416px;
 

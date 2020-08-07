@@ -127,7 +127,6 @@ export default (sequelize, dataTypes) => {
 						foreignKey: 'targetPubId',
 					});
 					Pub.belongsTo(CrossrefDepositRecord, {
-						onDelete: 'CASCADE',
 						as: 'crossrefDepositRecord',
 						foreignKey: 'crossrefDepositRecordId',
 					});

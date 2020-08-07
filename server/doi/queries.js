@@ -44,6 +44,9 @@ const findPub = (pubId) =>
 		where: { id: pubId },
 		...buildPubOptions({
 			getEdgesOptions: {
+				// Include Pub for both inbound and outbound pub connections
+				// since we do a lot of downstream processing with pubEdges.
+				includePub: true,
 				includeCommunityForPubs: true,
 			},
 		}),

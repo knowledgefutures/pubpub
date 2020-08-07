@@ -44,7 +44,7 @@ export default ({ globals, community }) => (pub) => {
 	const { title, inboundEdges, outboundEdges } = pub;
 	const publicationDate = getPubPublishedDate(pub);
 	const relatedItems = outboundEdges
-		.map(getEdgeCrossrefRelationship)
+		.map((pubEdge) => getEdgeCrossrefRelationship(pubEdge))
 		.concat(inboundEdges.map((pubEdge) => getEdgeCrossrefRelationship(pubEdge, true)));
 
 	return {

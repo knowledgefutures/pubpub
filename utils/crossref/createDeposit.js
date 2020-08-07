@@ -92,26 +92,30 @@ const assertParentPubHasDoi = (parentPub) => {
 const getPubDoiPart = (context, doiTarget) => {
 	const { pub, collection, community, pubEdge } = context;
 
+	if (!pub) {
+		return {};
+	}
+
 	let doi;
 
 	if (doiTarget !== 'pub') {
 		doi = pub.doi;
-	} else {
+	} else if (pubEdge && pubEdge.relationType === RelationType.Supplement) {
 		// Create component DOIs for supplementary material.
-		if (pubEdge && pubEdge.relationType === RelationType.Supplement) {
-			const parentPub = pubEdge.pubIsParent ? pubEdge.pub : pubEdge.targetPub;
-			assertParentPubHasDoi(parentPub);
-			doi = createComponentDoi(parentPub, pubEdge);
-		} else {
-			doi =
-				pub.doi ||
-				createDoi({
-					community: community,
-					collection: collection,
-					target: pub,
-					pubEdge: pubEdge,
-				});
-		}
+		const parentPub = pubEdge.pubIsParent ? pubEdge.pub : pubEdge.targetPub;
+
+		assertParentPubHasDoi(parentPub);
+
+		doi = createComponentDoi(parentPub, pub);
+	} else {
+		doi =
+			pub.doi ||
+			createDoi({
+				community: community,
+				collection: collection,
+				target: pub,
+				pubEdge: pubEdge,
+			});
 	}
 
 	return { pub: doi };
@@ -141,6 +145,22 @@ export const getDois = (context, doiTarget) => {
 	return dois;
 };
 
+const filterForMutuallyApprovedEdges = (pubEdges) => {
+	let i = 0;
+
+	while (i < pubEdges.length) {
+		const { approvedByTarget, relationType } = pubEdges[i];
+		if (
+			(relationType === RelationType.Supplement || relationType === RelationType.Preprint) &&
+			!approvedByTarget
+		) {
+			pubEdges.splice(i, 1);
+		} else {
+			i++;
+		}
+	}
+};
+
 export default (context, doiTarget, dateForTimestamp) => {
 	checkDepositAssertions(context, doiTarget);
 
@@ -151,7 +171,14 @@ export default (context, doiTarget, dateForTimestamp) => {
 	let pubEdge;
 
 	if (pub) {
+		// Remove unapproved PubEdges for RelationTypes that require bidirectional
+		// approval.
+		filterForMutuallyApprovedEdges(pub.inboundEdges);
+		filterForMutuallyApprovedEdges(pub.outboundEdges);
+
+		// Find the primary relationship (in order of Preprint > Supplement > Review).
 		pubEdge = findParentEdgeByRelationTypes(pub, [
+			pub,
 			RelationType.Preprint,
 			RelationType.Supplement,
 			RelationType.Review,

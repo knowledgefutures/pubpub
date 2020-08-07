@@ -275,7 +275,7 @@ const renderPeerReviewPreview = (body) => {
 const renderSupplementPreview = (body) => {
 	const {
 		sa_component: {
-			['@parent_doi']: parentDoi,
+			'@parent_doi': parentDoi,
 			component_list: {
 				component: { contributors, titles, publication_date },
 			},

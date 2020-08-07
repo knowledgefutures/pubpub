@@ -86,13 +86,15 @@ export const getDepositRecordReviewType = (depositRecord) => {
 	return body.peer_review['@type'];
 };
 
-export const setDepositRecordReviewType = (depositRecord, reviewType) => {
+// eslint-disable-next-line consistent-return
+export function setDepositRecordReviewType(depositRecord, reviewType) {
 	if (!depositRecord) {
 		return null;
 	}
 
+	// eslint-disable-next-line no-param-reassign
 	depositRecord.depositJson.deposit.doi_batch.body.peer_review['@type'] = reviewType;
-};
+}
 
 export const getDepositRecordReviewRecommendation = (depositRecord) => {
 	if (!depositRecord) {
@@ -114,15 +116,17 @@ export const getDepositRecordReviewRecommendation = (depositRecord) => {
 	return body.peer_review['@recommendation'];
 };
 
-export const setDepositRecordReviewRecommendation = (depositRecord, recommendation) => {
+// eslint-disable-next-line consistent-return
+export function setDepositRecordReviewRecommendation(depositRecord, recommendation) {
 	if (!depositRecord) {
 		return null;
 	}
 
+	// eslint-disable-next-line no-param-reassign
 	depositRecord.depositJson.deposit.doi_batch.body.peer_review[
 		'@recommendation'
 	] = recommendation;
-};
+}
 
 export const getDepositBody = (crossrefDepositRecord) =>
 	crossrefDepositRecord.depositJson.deposit.doi_batch.body;
@@ -151,6 +155,7 @@ export const getDepositTypeTitle = (crossrefDepositRecord) => {
 			return 'Peer Review';
 		case isStandaloneComponentDeposit(crossrefDepositRecord):
 			return 'Supplement';
+		default:
+			return '';
 	}
-	return '';
 };

@@ -91,14 +91,14 @@ export const getRelationTypeName = (relationType, isPlural) => {
 export const relationTypes = Object.keys(relationTypeDefinitions);
 export const RelationType = createRelationTypeEnum();
 
-const findParentEdge = (pubEdges, relationTypes, inbound) => {
+const findParentEdge = (pubEdges, validRelationTypes, inbound) => {
 	for (let i = 0; i < pubEdges.length; i++) {
 		const pubEdge = pubEdges[i];
 		const { pubIsParent, relationType } = pubEdge;
 
 		if (inbound ? pubIsParent : !pubIsParent) {
-			for (let j = 0; j < relationTypes.length; j++) {
-				if (relationType === relationTypes[j]) {
+			for (let j = 0; j < validRelationTypes.length; j++) {
+				if (relationType === validRelationTypes[j]) {
 					return pubEdge;
 				}
 			}
@@ -108,12 +108,12 @@ const findParentEdge = (pubEdges, relationTypes, inbound) => {
 	return null;
 };
 
-export const findParentEdgeByRelationTypes = (pub, relationTypes) => {
+export const findParentEdgeByRelationTypes = (pub, validRelationTypes) => {
 	const { inboundEdges, outboundEdges } = pub;
 
 	return (
-		findParentEdge(inboundEdges, relationTypes, true) ||
-		findParentEdge(outboundEdges, relationTypes) ||
+		findParentEdge(inboundEdges, validRelationTypes, true) ||
+		findParentEdge(outboundEdges, validRelationTypes) ||
 		null
 	);
 };

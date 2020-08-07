@@ -88,7 +88,10 @@ app.get(
 		await assertUserAuthenticated(target, requestIds);
 
 		return res.status(200).json({
-			dois: await generateDoi({ communityId, collectionId, pubId }, target),
+			dois: await generateDoi(
+				{ communityId: communityId, collectionId: collectionId, pubId: pubId },
+				target,
+			),
 		});
 	}),
 );

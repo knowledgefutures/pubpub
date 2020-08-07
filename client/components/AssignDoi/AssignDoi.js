@@ -1,9 +1,9 @@
-import React, { useReducer, useEffect, useRef } from 'react';
+import React, { useCallback, useReducer, useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Callout } from '@blueprintjs/core';
 import pickBy from 'lodash.pickby';
 
-import { InputField, Menu, MenuItem, DropdownButton, MenuButton } from 'components';
+import { InputField, MenuItem, MenuButton } from 'components';
 import {
 	getDepositRecordContentVersion,
 	setDepositRecordContentVersion,
@@ -251,38 +251,44 @@ function AssignDoi(props) {
 		(item) => item.key === activeReviewRecommendationKey,
 	);
 
-	const requestBody = {
-		target: target,
-		pubId: pubData.id,
-		communityId: communityData.id,
-		contentVersion: contentVersion,
-		reviewType: reviewType,
-		reviewRecommendation: reviewRecommendation,
-	};
+	const requestBody = useMemo(
+		() => ({
+			target: target,
+			pubId: pubData.id,
+			communityId: communityData.id,
+			contentVersion: contentVersion,
+			reviewType: reviewType,
+			reviewRecommendation: reviewRecommendation,
+		}),
+		[target, pubData, communityData, contentVersion, reviewType, reviewRecommendation],
+	);
 
-	const fetchPreview = async (nextParams) => {
-		dispatch({ type: AssignDoiActionType.FetchPreview });
+	const fetchPreview = useCallback(
+		async (nextParams) => {
+			dispatch({ type: AssignDoiActionType.FetchPreview });
 
-		try {
-			const params = new URLSearchParams(
-				pickNonNullValues({
-					...requestBody,
-					...nextParams,
-				}),
-			);
-			const preview = await apiFetch(`/api/doiPreview?${params.toString()}`);
+			try {
+				const params = new URLSearchParams(
+					pickNonNullValues({
+						...requestBody,
+						...nextParams,
+					}),
+				);
+				const preview = await apiFetch(`/api/doiPreview?${params.toString()}`);
 
-			onPreview(preview);
+				onPreview(preview);
 
-			dispatch({
-				type: AssignDoiActionType.FetchPreviewSuccess,
-				payload: preview,
-			});
-		} catch (err) {
-			dispatch({ type: AssignDoiActionType.Error, payload: err.message });
-			onError(err);
-		}
-	};
+				dispatch({
+					type: AssignDoiActionType.FetchPreviewSuccess,
+					payload: preview,
+				});
+			} catch (err) {
+				dispatch({ type: AssignDoiActionType.Error, payload: err.message });
+				onError(err);
+			}
+		},
+		[requestBody, onPreview, onError],
+	);
 
 	const fetchDeposit = async () => {
 		dispatch({ type: AssignDoiActionType.FetchDeposit });
@@ -357,7 +363,7 @@ function AssignDoi(props) {
 			fetchPreview();
 		}
 		priorPubDoi.current = pubData.doi;
-	}, [pubData.doi, status]);
+	}, [pubData.doi, status, fetchPreview]);
 
 	return (
 		<div className="assign-doi-component">

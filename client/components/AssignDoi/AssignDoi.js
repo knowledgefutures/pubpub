@@ -203,7 +203,6 @@ const reviewTypeItems = [
 	{ title: 'Editor Report', key: 'editor-report' },
 	{ title: 'Author Comment', key: 'author-comment' },
 	{ title: 'Community Comment', key: 'community-comment' },
-	{ title: 'Manuscript', key: 'manuscript' },
 	{ title: 'Aggregate', key: 'aggregate' },
 	{ title: 'Recommendation', key: 'recommendation' },
 ];

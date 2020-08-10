@@ -10,6 +10,7 @@ import {
 import { apiFetch } from 'client/utils/apiFetch';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { isDoi } from 'utils/crossref/parseDoi';
+import { getDepositTypeTitle } from 'utils/crossref/parseDeposit';
 import { RelationType, findParentEdgeByRelationTypes } from 'utils/pubEdge/relations';
 
 import { AssignDoi } from 'components';
@@ -35,6 +36,7 @@ class Doi extends Component {
 
 		this.state = {
 			doiSuffix: extractDoiSuffix(props.pubData.doi || '', props.communityData),
+			initialPreview: null,
 			error: false,
 			justSetDoi: false,
 			deleting: false,
@@ -47,6 +49,19 @@ class Doi extends Component {
 		this.handleUpdateDoiClick = this.handleUpdateDoiClick.bind(this);
 		this.handleGenerateDoiClick = this.handleGenerateDoiClick.bind(this);
 		this.handleDeleteDoiClick = this.handleDeleteDoiClick.bind(this);
+	}
+
+	componentDidMount() {
+		const params = new URLSearchParams({
+			target: 'pub',
+			pubId: this.props.pubData.id,
+			communityId: this.props.communityData.id,
+		});
+		apiFetch(`/api/doiPreview?${params.toString()}`).then((result) =>
+			this.setState({
+				initialPreview: result,
+			}),
+		);
 	}
 
 	getDoiPrefix() {
@@ -91,11 +106,19 @@ class Doi extends Component {
 	}
 
 	disabledDueToParentWithoutDoi() {
-		const supplementTo = this.findSupplementTo();
-		return (
-			supplementTo &&
-			!(supplementTo.pubIsParent ? supplementTo.pub : supplementTo.targetPub).doi
-		);
+		const { pubData } = this.props;
+		const parent = findParentEdgeByRelationTypes(pubData, [
+			RelationType.Supplement,
+			RelationType.Review,
+			RelationType.Rejoinder,
+			RelationType.Preprint,
+		]);
+
+		if (!parent || parent.externalPublication) {
+			return false;
+		}
+
+		return parent && !(parent.pubIsParent ? parent.pub : parent.targetPub).doi;
 	}
 
 	disabledDueToNoReleases() {
@@ -319,10 +342,11 @@ class Doi extends Component {
 						)
 					}
 				>
-					{this.disabledDueToParentWithoutDoi() && (
+					{this.disabledDueToParentWithoutDoi() && this.state.initialPreview && (
 						<Callout intent="warning">
 							This Pub cannot be deposited to Crossref because it is a{' '}
-							<strong>Supplement</strong> and its parent Pub does not have a DOI.
+							<strong>{getDepositTypeTitle(this.state.initialPreview)}</strong> and
+							its parent Pub has not been deposited.
 						</Callout>
 					)}
 					{this.disabledDueToNoReleases() && (

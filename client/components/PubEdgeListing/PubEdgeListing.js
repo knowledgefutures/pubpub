@@ -29,7 +29,7 @@ const defaultProps = {
 	className: '',
 	hideIfNoInitialMatches: true,
 	isolated: false,
-	initialMode: Mode.Carousel,
+	initialMode: Mode.List,
 	initialFilters: [Filter.Child],
 };
 

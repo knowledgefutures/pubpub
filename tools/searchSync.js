@@ -26,32 +26,33 @@ const findAndIndexPages = (pageIds) => {
 	});
 };
 
+const syncPubs = async () => {
+	console.log('syncing Pubs');
+	const pubIds = await Pub.findAll({
+		attributes: ['id'],
+	});
+	const smallArrays = [];
+	while (pubIds.length) {
+		smallArrays.push(
+			pubIds.splice(0, 100).map((item) => {
+				return item.id;
+			}),
+		);
+	}
+	await Promise.each(smallArrays, (idArray, index) => {
+		console.log('Starting pub batch ', index + 1, ' of ', smallArrays.length);
+		return findAndIndexPubs(idArray);
+	});
+};
+
+const syncPages = async () => {
+	
+}
+
 new Promise((resolve) => {
 	return resolve();
 	// return reject('Fail-safe reject');
 })
-	.then(() => {
-		return pubsIndex.setSettings({
-			unretrievableAttributes: ['branchAccessIds', 'branchContent'],
-			searchableAttributes: [
-				'title',
-				'description',
-				'slug',
-				'byline',
-				'branchContent',
-				'communityTitle',
-				'communityDomain',
-			],
-			distinct: true,
-			attributeForDistinct: 'pubId',
-			attributesForFaceting: [
-				'filterOnly(pubId)',
-				'filterOnly(communityId)',
-				'filterOnly(branchIsPublic)',
-				'filterOnly(branchAccessIds)',
-			],
-		});
-	})
 	.then(() => {
 		return Pub.findAll({
 			attributes: ['id'],

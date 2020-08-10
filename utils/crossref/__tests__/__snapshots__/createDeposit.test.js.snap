@@ -1,5 +1,87 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`createDeposit applies content version to the content version attribute of the resource element 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "journal": Object {
+          "journal_article": Object {
+            "@publication_type": "full_text",
+            "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+            "contributors": Object {
+              "person_name": Array [
+                Object {
+                  "@contributor_role": "author",
+                  "@sequence": "first",
+                  "affiliation": "Springfield A&M",
+                  "given_name": "Ian",
+                  "surname": "Reynolds",
+                },
+                Object {
+                  "@contributor_role": "reader",
+                  "@sequence": "additional",
+                  "given_name": "Kevin",
+                  "surname": "Bentham",
+                },
+              ],
+            },
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d.1519656b",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+                "@content_version": "am",
+              },
+              "timestamp": 1555009335577,
+            },
+            "publication_date": Object {
+              "@media_type": "online",
+              "day": "01",
+              "month": "03",
+              "year": "2019",
+            },
+            "titles": Object {
+              "title": "In Which Ian Makes A Pub",
+            },
+          },
+          "journal_metadata": Object {
+            "@language": "en",
+            "abbrev_title": "PubPub Dev",
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org",
+              },
+              "timestamp": 1555009335577,
+            },
+            "full_title": "PubPub Dev",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
 exports[`createDeposit creates a deposit for a book 1`] = `
 Object {
   "deposit": Object {
@@ -44,7 +126,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "an_utterly_fake_doi",
-              "resource": "https://test.com",
+              "resource": Object {
+                "#text": "https://test.com",
+              },
               "timestamp": 1555009335577,
             },
             "edition_number": "3",
@@ -67,7 +151,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -78,7 +162,6 @@ Object {
   "dois": Object {
     "collection": "an_utterly_fake_doi",
     "community": "10.21428/eea8ec7d",
-    "pub": undefined,
   },
   "timestamp": 1555009335577,
 }
@@ -128,7 +211,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "an_utterly_fake_doi",
-              "resource": "https://test.com",
+              "resource": Object {
+                "#text": "https://test.com",
+              },
               "timestamp": 1555009335577,
             },
             "edition_number": "3",
@@ -151,7 +236,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -162,7 +247,6 @@ Object {
   "dois": Object {
     "collection": "an_utterly_fake_doi",
     "community": "10.21428/eea8ec7d",
-    "pub": undefined,
   },
   "timestamp": 1555009335577,
 }
@@ -220,7 +304,9 @@ Object {
           "proceedings_metadata": Object {
             "doi_data": Object {
               "doi": "yes_it_is_a_conference_doi",
-              "resource": "https://dev.pubpub.org/collection/4c3a0515",
+              "resource": Object {
+                "#text": "https://dev.pubpub.org/collection/4c3a0515",
+              },
               "timestamp": 1555009335577,
             },
             "noisbn": Object {
@@ -242,7 +328,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -253,7 +339,6 @@ Object {
   "dois": Object {
     "collection": "yes_it_is_a_conference_doi",
     "community": "10.21428/eea8ec7d",
-    "pub": undefined,
   },
   "timestamp": 1555009335577,
 }
@@ -311,7 +396,9 @@ Object {
           "proceedings_metadata": Object {
             "doi_data": Object {
               "doi": "yes_it_is_a_conference_doi",
-              "resource": "https://dev.pubpub.org/collection/4c3a0515",
+              "resource": Object {
+                "#text": "https://dev.pubpub.org/collection/4c3a0515",
+              },
               "timestamp": 1555009335577,
             },
             "noisbn": Object {
@@ -333,7 +420,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -344,7 +431,6 @@ Object {
   "dois": Object {
     "collection": "yes_it_is_a_conference_doi",
     "community": "10.21428/eea8ec7d",
-    "pub": undefined,
   },
   "timestamp": 1555009335577,
 }
@@ -362,6 +448,7 @@ Object {
         "journal": Object {
           "journal_article": Object {
             "@publication_type": "full_text",
+            "@xmlns:rel": "http://www.crossref.org/relations.xsd",
             "contributors": Object {
               "person_name": Array [
                 Object {
@@ -381,7 +468,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d.1519656b",
-              "resource": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              },
               "timestamp": 1555009335577,
             },
             "publication_date": Object {
@@ -399,7 +488,9 @@ Object {
             "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
-              "resource": "https://frankdev.pubpub.org",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org",
+              },
               "timestamp": 1555009335577,
             },
             "full_title": "PubPub Dev",
@@ -409,7 +500,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -470,7 +561,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "an_utterly_fake_doi",
-              "resource": "https://test.com",
+              "resource": Object {
+                "#text": "https://test.com",
+              },
               "timestamp": 1555009335577,
             },
             "edition_number": "3",
@@ -490,6 +583,7 @@ Object {
           },
           "content_item": Object {
             "@component_type": "chapter",
+            "@xmlns:rel": "http://www.crossref.org/relations.xsd",
             "contributors": Object {
               "person_name": Array [
                 Object {
@@ -509,7 +603,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d.1519656b",
-              "resource": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              },
               "timestamp": 1555009335577,
             },
             "publication_date": Object {
@@ -527,7 +623,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -555,6 +651,7 @@ Object {
       "body": Object {
         "conference": Object {
           "conference_paper": Object {
+            "@xmlns:rel": "http://www.crossref.org/relations.xsd",
             "contributors": Object {
               "person_name": Array [
                 Object {
@@ -574,7 +671,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d.1519656b",
-              "resource": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              },
               "timestamp": 1555009335577,
             },
             "titles": Object {
@@ -623,7 +722,9 @@ Object {
           "proceedings_metadata": Object {
             "doi_data": Object {
               "doi": "yes_it_is_a_conference_doi",
-              "resource": "https://dev.pubpub.org/collection/4c3a0515",
+              "resource": Object {
+                "#text": "https://dev.pubpub.org/collection/4c3a0515",
+              },
               "timestamp": 1555009335577,
             },
             "noisbn": Object {
@@ -645,7 +746,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -674,6 +775,7 @@ Object {
         "journal": Object {
           "journal_article": Object {
             "@publication_type": "full_text",
+            "@xmlns:rel": "http://www.crossref.org/relations.xsd",
             "contributors": Object {
               "person_name": Array [
                 Object {
@@ -693,7 +795,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d.1519656b",
-              "resource": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              },
               "timestamp": 1555009335577,
             },
             "publication_date": Object {
@@ -739,7 +843,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d.e281f63f",
-              "resource": "https://dev.pubpub.org/collection/e281f63f",
+              "resource": Object {
+                "#text": "https://dev.pubpub.org/collection/e281f63f",
+              },
               "timestamp": 1555009335577,
             },
             "issue": "5",
@@ -761,7 +867,9 @@ Object {
             "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
-              "resource": "https://frankdev.pubpub.org",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org",
+              },
               "timestamp": 1555009335577,
             },
             "full_title": "PubPub Dev",
@@ -771,7 +879,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -831,7 +939,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d.e281f63f",
-              "resource": "https://dev.pubpub.org/collection/e281f63f",
+              "resource": Object {
+                "#text": "https://dev.pubpub.org/collection/e281f63f",
+              },
               "timestamp": 1555009335577,
             },
             "issue": "5",
@@ -853,7 +963,9 @@ Object {
             "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
-              "resource": "https://frankdev.pubpub.org",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org",
+              },
               "timestamp": 1555009335577,
             },
             "full_title": "PubPub Dev",
@@ -863,7 +975,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -874,7 +986,6 @@ Object {
   "dois": Object {
     "collection": "10.21428/eea8ec7d.e281f63f",
     "community": "10.21428/eea8ec7d",
-    "pub": undefined,
   },
   "timestamp": 1555009335577,
 }
@@ -923,7 +1034,9 @@ Object {
             },
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d.e281f63f",
-              "resource": "https://dev.pubpub.org/collection/e281f63f",
+              "resource": Object {
+                "#text": "https://dev.pubpub.org/collection/e281f63f",
+              },
               "timestamp": 1555009335577,
             },
             "issue": "5",
@@ -945,7 +1058,9 @@ Object {
             "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
-              "resource": "https://frankdev.pubpub.org",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org",
+              },
               "timestamp": 1555009335577,
             },
             "full_title": "PubPub Dev",
@@ -955,7 +1070,7 @@ Object {
       "head": Object {
         "depositor": Object {
           "depositor_name": "PubPub",
-          "email_address": "pubpub@media.mit.edu",
+          "email_address": "crossref@pubpub.org",
         },
         "doi_batch_id": "1555009335577_eea8ec7d",
         "registrant": "PubPub",
@@ -966,7 +1081,741 @@ Object {
   "dois": Object {
     "collection": "10.21428/eea8ec7d.e281f63f",
     "community": "10.21428/eea8ec7d",
-    "pub": undefined,
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates a journal_article deposit for a pub with a hasReview connection 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "journal": Object {
+          "journal_article": Object {
+            "@publication_type": "full_text",
+            "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+            "contributors": Object {
+              "person_name": Array [
+                Object {
+                  "@contributor_role": "author",
+                  "@sequence": "first",
+                  "affiliation": "Springfield A&M",
+                  "given_name": "Ian",
+                  "surname": "Reynolds",
+                },
+                Object {
+                  "@contributor_role": "reader",
+                  "@sequence": "additional",
+                  "given_name": "Kevin",
+                  "surname": "Bentham",
+                },
+              ],
+            },
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d.1519656b",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              },
+              "timestamp": 1555009335577,
+            },
+            "publication_date": Object {
+              "@media_type": "online",
+              "day": "01",
+              "month": "03",
+              "year": "2019",
+            },
+            "rel:program": Object {
+              "@name": "relations",
+              "rel:related_item": Array [
+                Object {
+                  "rel:inter_work_relation": Object {
+                    "#text": "some-doi",
+                    "@identifier-type": "doi",
+                    "@relationship-type": "hasReview",
+                  },
+                },
+              ],
+            },
+            "titles": Object {
+              "title": "In Which Ian Makes A Pub",
+            },
+          },
+          "journal_metadata": Object {
+            "@language": "en",
+            "abbrev_title": "PubPub Dev",
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org",
+              },
+              "timestamp": 1555009335577,
+            },
+            "full_title": "PubPub Dev",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates a journal_article deposit for a pub with a hasSupplement connection 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "journal": Object {
+          "journal_article": Object {
+            "@publication_type": "full_text",
+            "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+            "contributors": Object {
+              "person_name": Array [
+                Object {
+                  "@contributor_role": "author",
+                  "@sequence": "first",
+                  "affiliation": "Springfield A&M",
+                  "given_name": "Ian",
+                  "surname": "Reynolds",
+                },
+                Object {
+                  "@contributor_role": "reader",
+                  "@sequence": "additional",
+                  "given_name": "Kevin",
+                  "surname": "Bentham",
+                },
+              ],
+            },
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d.1519656b",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              },
+              "timestamp": 1555009335577,
+            },
+            "publication_date": Object {
+              "@media_type": "online",
+              "day": "01",
+              "month": "03",
+              "year": "2019",
+            },
+            "rel:program": Object {
+              "@name": "relations",
+              "rel:related_item": Array [
+                Object {
+                  "rel:inter_work_relation": Object {
+                    "#text": "some-doi",
+                    "@identifier-type": "doi",
+                    "@relationship-type": "isSupplementedBy",
+                  },
+                },
+              ],
+            },
+            "titles": Object {
+              "title": "In Which Ian Makes A Pub",
+            },
+          },
+          "journal_metadata": Object {
+            "@language": "en",
+            "abbrev_title": "PubPub Dev",
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org",
+              },
+              "timestamp": 1555009335577,
+            },
+            "full_title": "PubPub Dev",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates a peer_review deposit for a pub with an isReviewOf connection 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "peer_review": Object {
+          "@language": "en",
+          "@recommendation": "bar",
+          "@type": "foo",
+          "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+          "contributors": Object {
+            "person_name": Array [
+              Object {
+                "@contributor_role": "author",
+                "@sequence": "first",
+                "affiliation": "Springfield A&M",
+                "given_name": "Ian",
+                "surname": "Reynolds",
+              },
+              Object {
+                "@contributor_role": "reader",
+                "@sequence": "additional",
+                "given_name": "Kevin",
+                "surname": "Bentham",
+              },
+            ],
+          },
+          "doi_data": Object {
+            "doi": "10.21428/eea8ec7d.1519656b",
+            "resource": Object {
+              "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+            },
+            "timestamp": 1555009335577,
+          },
+          "rel:program": Object {
+            "@name": "relations",
+            "rel:related_item": Array [
+              Object {
+                "rel:inter_work_relation": Object {
+                  "#text": "some-doi",
+                  "@identifier-type": "doi",
+                  "@relationship-type": "isReviewOf",
+                },
+              },
+            ],
+          },
+          "review_date": Object {
+            "day": "01",
+            "month": "03",
+            "year": "2019",
+          },
+          "titles": Object {
+            "title": "In Which Ian Makes A Pub",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates a posted_content deposit for a pub when contentVersion is "preprint" 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "posted_content": Object {
+          "@language": "en",
+          "@type": "preprint",
+          "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+          "contributors": Object {
+            "person_name": Array [
+              Object {
+                "@contributor_role": "author",
+                "@sequence": "first",
+                "affiliation": "Springfield A&M",
+                "given_name": "Ian",
+                "surname": "Reynolds",
+              },
+              Object {
+                "@contributor_role": "reader",
+                "@sequence": "additional",
+                "given_name": "Kevin",
+                "surname": "Bentham",
+              },
+            ],
+          },
+          "doi_data": Object {
+            "doi": "10.21428/eea8ec7d.1519656b",
+            "resource": Object {
+              "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+            },
+            "timestamp": 1555009335577,
+          },
+          "posted_date": Object {
+            "@media_type": "print",
+            "day": "01",
+            "month": "03",
+            "year": "2019",
+          },
+          "titles": Object {
+            "title": "In Which Ian Makes A Pub",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates a posted_content deposit for a pub with a hasPreprint connection 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "journal": Object {
+          "journal_article": Object {
+            "@publication_type": "full_text",
+            "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+            "contributors": Object {
+              "person_name": Array [
+                Object {
+                  "@contributor_role": "author",
+                  "@sequence": "first",
+                  "affiliation": "Springfield A&M",
+                  "given_name": "Ian",
+                  "surname": "Reynolds",
+                },
+                Object {
+                  "@contributor_role": "reader",
+                  "@sequence": "additional",
+                  "given_name": "Kevin",
+                  "surname": "Bentham",
+                },
+              ],
+            },
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d.1519656b",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+              },
+              "timestamp": 1555009335577,
+            },
+            "publication_date": Object {
+              "@media_type": "online",
+              "day": "01",
+              "month": "03",
+              "year": "2019",
+            },
+            "rel:program": Object {
+              "@name": "relations",
+              "rel:related_item": Array [
+                Object {
+                  "rel:intra_work_relation": Object {
+                    "#text": "some-doi",
+                    "@identifier-type": "doi",
+                    "@relationship-type": "hasPreprint",
+                  },
+                },
+              ],
+            },
+            "titles": Object {
+              "title": "In Which Ian Makes A Pub",
+            },
+          },
+          "journal_metadata": Object {
+            "@language": "en",
+            "abbrev_title": "PubPub Dev",
+            "doi_data": Object {
+              "doi": "10.21428/eea8ec7d",
+              "resource": Object {
+                "#text": "https://frankdev.pubpub.org",
+              },
+              "timestamp": 1555009335577,
+            },
+            "full_title": "PubPub Dev",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates a posted_content deposit for a pub with an isPreprintOf connection 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "posted_content": Object {
+          "@language": "en",
+          "@type": "preprint",
+          "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+          "contributors": Object {
+            "person_name": Array [
+              Object {
+                "@contributor_role": "author",
+                "@sequence": "first",
+                "affiliation": "Springfield A&M",
+                "given_name": "Ian",
+                "surname": "Reynolds",
+              },
+              Object {
+                "@contributor_role": "reader",
+                "@sequence": "additional",
+                "given_name": "Kevin",
+                "surname": "Bentham",
+              },
+            ],
+          },
+          "doi_data": Object {
+            "doi": "10.21428/eea8ec7d.1519656b",
+            "resource": Object {
+              "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+            },
+            "timestamp": 1555009335577,
+          },
+          "posted_date": Object {
+            "@media_type": "print",
+            "day": "01",
+            "month": "03",
+            "year": "2019",
+          },
+          "rel:program": Object {
+            "@name": "relations",
+            "rel:related_item": Array [
+              Object {
+                "rel:intra_work_relation": Object {
+                  "#text": "some-doi",
+                  "@identifier-type": "doi",
+                  "@relationship-type": "isPreprintOf",
+                },
+              },
+            ],
+          },
+          "titles": Object {
+            "title": "In Which Ian Makes A Pub",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates a sa_component deposit for a pub with a isSupplementTo connection 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "sa_component": Object {
+          "@parent_doi": "some-doi",
+          "component_list": Object {
+            "component": Object {
+              "@language": "en",
+              "@parent_relation": "isPartOf",
+              "contributors": Object {
+                "person_name": Array [
+                  Object {
+                    "@contributor_role": "author",
+                    "@sequence": "first",
+                    "affiliation": "Springfield A&M",
+                    "given_name": "Ian",
+                    "surname": "Reynolds",
+                  },
+                  Object {
+                    "@contributor_role": "reader",
+                    "@sequence": "additional",
+                    "given_name": "Kevin",
+                    "surname": "Bentham",
+                  },
+                ],
+              },
+              "doi_data": Object {
+                "doi": "some-doi/1519656b",
+                "resource": Object {
+                  "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+                },
+                "timestamp": 1555009335577,
+              },
+              "publication_date": Object {
+                "@media_type": "print",
+                "day": "01",
+                "month": "03",
+                "year": "2019",
+              },
+              "titles": Object {
+                "title": "In Which Ian Makes A Pub",
+              },
+            },
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "some-doi/1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates relationships where the resource is a DOI 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "peer_review": Object {
+          "@language": "en",
+          "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+          "contributors": Object {
+            "person_name": Array [
+              Object {
+                "@contributor_role": "author",
+                "@sequence": "first",
+                "affiliation": "Springfield A&M",
+                "given_name": "Ian",
+                "surname": "Reynolds",
+              },
+              Object {
+                "@contributor_role": "reader",
+                "@sequence": "additional",
+                "given_name": "Kevin",
+                "surname": "Bentham",
+              },
+            ],
+          },
+          "doi_data": Object {
+            "doi": "10.21428/eea8ec7d.1519656b",
+            "resource": Object {
+              "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+            },
+            "timestamp": 1555009335577,
+          },
+          "rel:program": Object {
+            "@name": "relations",
+            "rel:related_item": Array [
+              Object {
+                "rel:inter_work_relation": Object {
+                  "#text": "some-doi",
+                  "@identifier-type": "doi",
+                  "@relationship-type": "isReviewOf",
+                },
+              },
+            ],
+          },
+          "review_date": Object {
+            "day": "01",
+            "month": "03",
+            "year": "2019",
+          },
+          "titles": Object {
+            "title": "In Which Ian Makes A Pub",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
+  },
+  "timestamp": 1555009335577,
+}
+`;
+
+exports[`createDeposit creates relationships where the resource is a URL 1`] = `
+Object {
+  "deposit": Object {
+    "doi_batch": Object {
+      "@version": "4.4.1",
+      "@xmlns": "http://www.crossref.org/schema/4.4.1",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@xsi:schemaLocation": "http://www.crossref.org/schema/4.4.1 http://www.crossref.org/schema/deposit/crossref4.4.1.xsd",
+      "body": Object {
+        "peer_review": Object {
+          "@language": "en",
+          "@xmlns:rel": "http://www.crossref.org/relations.xsd",
+          "contributors": Object {
+            "person_name": Array [
+              Object {
+                "@contributor_role": "author",
+                "@sequence": "first",
+                "affiliation": "Springfield A&M",
+                "given_name": "Ian",
+                "surname": "Reynolds",
+              },
+              Object {
+                "@contributor_role": "reader",
+                "@sequence": "additional",
+                "given_name": "Kevin",
+                "surname": "Bentham",
+              },
+            ],
+          },
+          "doi_data": Object {
+            "doi": "10.21428/eea8ec7d.1519656b",
+            "resource": Object {
+              "#text": "https://frankdev.pubpub.org/pub/h2muzdpv",
+            },
+            "timestamp": 1555009335577,
+          },
+          "rel:program": Object {
+            "@name": "relations",
+            "rel:related_item": Array [
+              Object {
+                "rel:inter_work_relation": Object {
+                  "#text": "https://foo.pubpub.org/pub/has-review",
+                  "@identifier-type": "uri",
+                  "@relationship-type": "isReviewOf",
+                },
+              },
+            ],
+          },
+          "review_date": Object {
+            "day": "01",
+            "month": "03",
+            "year": "2019",
+          },
+          "titles": Object {
+            "title": "In Which Ian Makes A Pub",
+          },
+        },
+      },
+      "head": Object {
+        "depositor": Object {
+          "depositor_name": "PubPub",
+          "email_address": "crossref@pubpub.org",
+        },
+        "doi_batch_id": "1555009335577_eea8ec7d",
+        "registrant": "PubPub",
+        "timestamp": 1555009335577,
+      },
+    },
+  },
+  "dois": Object {
+    "collection": undefined,
+    "community": "10.21428/eea8ec7d",
+    "pub": "10.21428/eea8ec7d.1519656b",
   },
   "timestamp": 1555009335577,
 }

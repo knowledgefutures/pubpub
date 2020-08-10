@@ -1,0 +1,14 @@
+.assign-doi-component {
+	> p {
+		margin: 0 0 12px 0;
+	}
+
+	.dropdowns {
+		display: flex;
+
+		// Added .bp3-form-group to increase selector specificity.
+		> .bp3-form-group.input-field-component {
+			margin-right: 36px;
+		}
+	}
+}

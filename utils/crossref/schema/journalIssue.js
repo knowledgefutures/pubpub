@@ -2,7 +2,17 @@ import date from './helpers/date';
 import contributors from './contributors';
 import doiData from './doiData';
 
-export default ({ title, attributions, volume, issue, publicationDate, doi, timestamp, url }) => ({
+export default ({
+	title,
+	attributions,
+	volume,
+	issue,
+	publicationDate,
+	doi,
+	timestamp,
+	url,
+	contentVersion,
+}) => ({
 	journal_issue: {
 		...contributors(attributions),
 		titles: {
@@ -17,6 +27,6 @@ export default ({ title, attributions, volume, issue, publicationDate, doi, time
 			  }
 			: {}),
 		issue: issue,
-		...doiData(doi, timestamp, url),
+		...doiData(doi, timestamp, url, contentVersion),
 	},
 });

@@ -1,7 +1,7 @@
 /**
  * Renders a doi_data
  */
-export default (doi, timestamp, resource) => {
+export default (doi, timestamp, resource, contentVersion) => {
 	if (!doi) {
 		return {};
 	}
@@ -9,7 +9,10 @@ export default (doi, timestamp, resource) => {
 		doi_data: {
 			doi: doi,
 			timestamp: timestamp,
-			resource: resource,
+			resource: {
+				'#text': resource,
+				...(contentVersion && { '@content_version': contentVersion }),
+			},
 		},
 	};
 };

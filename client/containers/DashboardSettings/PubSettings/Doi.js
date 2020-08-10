@@ -1,9 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, FormGroup } from '@blueprintjs/core';
+import { FormGroup, Button, InputGroup, Callout } from '@blueprintjs/core';
 
-import { getSchemaForKind } from 'utils/collections/schemas';
+import {
+	choosePrefixByCommunityId,
+	managedDoiPrefixes,
+	PUBPUB_DOI_PREFIX,
+} from 'utils/crossref/communities';
 import { apiFetch } from 'client/utils/apiFetch';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { isDoi } from 'utils/crossref/parseDoi';
+import { getDepositTypeTitle } from 'utils/crossref/parseDeposit';
+import { RelationType, findParentEdgeByRelationTypes } from 'utils/pubEdge/relations';
+
+import { AssignDoi } from 'components';
 
 require('./doi.scss');
 
@@ -14,33 +24,229 @@ const propTypes = {
 	updatePubData: PropTypes.func.isRequired,
 };
 
+const extractDoiSuffix = (doi, community) => {
+	const prefix = choosePrefixByCommunityId(community.id);
+
+	return doi.replace(`${prefix}/`, '');
+};
+
 class Doi extends Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			isLoading: false,
+			doiSuffix: extractDoiSuffix(props.pubData.doi || '', props.communityData),
+			initialPreview: null,
+			error: false,
 			justSetDoi: false,
+			deleting: false,
+			generating: false,
+			success: false,
+			updating: false,
 		};
-		this.handleAssignDoi = this.handleAssignDoi.bind(this);
+
+		this.handleDeposit = this.handleDeposit.bind(this);
+		this.handleUpdateDoiClick = this.handleUpdateDoiClick.bind(this);
+		this.handleGenerateDoiClick = this.handleGenerateDoiClick.bind(this);
+		this.handleDeleteDoiClick = this.handleDeleteDoiClick.bind(this);
 	}
 
-	handleAssignDoi() {
-		const { communityData, pubData, updatePubData } = this.props;
-		this.setState({ isLoading: true });
-		return apiFetch('/api/doi/pub', {
-			method: 'POST',
-			body: JSON.stringify({
-				pubId: pubData.id,
-				communityId: communityData.id,
+	componentDidMount() {
+		const params = new URLSearchParams({
+			target: 'pub',
+			pubId: this.props.pubData.id,
+			communityId: this.props.communityData.id,
+		});
+		apiFetch(`/api/doiPreview?${params.toString()}`).then((result) =>
+			this.setState({
+				initialPreview: result,
 			}),
-		})
-			.then(({ dois: { pub: pubDoi } }) => {
-				updatePubData({ doi: pubDoi });
-				this.setState({ isLoading: false, justSetDoi: true });
-			})
-			.catch(() => {
-				this.setState({ isLoading: false });
+		);
+	}
+
+	getDoiPrefix() {
+		return choosePrefixByCommunityId(this.props.communityData.id);
+	}
+
+	getFullDoi() {
+		return `${this.getDoiPrefix()}/${this.state.doiSuffix}`;
+	}
+
+	getHelperText(invalidDoi) {
+		const { success, error } = this.state;
+		let helperText = '';
+
+		if (invalidDoi) {
+			helperText = 'Invalid DOI';
+		} else if (error) {
+			helperText = 'There was a problem updating the DOI';
+		} else if (success) {
+			helperText = 'DOI updated succesfully!';
+		}
+
+		return helperText;
+	}
+
+	getIntent(invalidDoi) {
+		const { success, error } = this.state;
+		let intent = 'none';
+
+		if (invalidDoi || error) {
+			intent = 'danger';
+		} else if (success) {
+			intent = 'success';
+		}
+
+		return intent;
+	}
+
+	findSupplementTo() {
+		const { pubData } = this.props;
+		return findParentEdgeByRelationTypes(pubData, [RelationType.Supplement]);
+	}
+
+	disabledDueToParentWithoutDoi() {
+		const { pubData } = this.props;
+		const parent = findParentEdgeByRelationTypes(pubData, [
+			RelationType.Supplement,
+			RelationType.Review,
+			RelationType.Rejoinder,
+			RelationType.Preprint,
+		]);
+
+		if (!parent || parent.externalPublication) {
+			return false;
+		}
+
+		return parent && !(parent.pubIsParent ? parent.pub : parent.targetPub).doi;
+	}
+
+	disabledDueToNoReleases() {
+		const { pubData } = this.props;
+		return pubData.releases.length === 0;
+	}
+
+	handleDeposit(doi) {
+		const { updatePubData } = this.props;
+
+		this.setState({ justSetDoi: true });
+		updatePubData({ doi: doi });
+	}
+
+	async updateDoi(doi, pendingStateKey, fallback) {
+		const { updating, deleting } = this.state;
+		const { communityData, pubData, updatePubData } = this.props;
+
+		if (updating || deleting) {
+			return;
+		}
+
+		this.setState({
+			[pendingStateKey]: true,
+			error: false,
+			success: false,
+		});
+
+		try {
+			const response = await apiFetch('/api/pubs', {
+				method: 'PUT',
+				body: JSON.stringify({
+					doi: doi,
+					pubId: pubData.id,
+					communityId: communityData.id,
+				}),
 			});
+			this.setState({
+				[pendingStateKey]: false,
+				doiSuffix: extractDoiSuffix(response.doi, communityData),
+				error: false,
+				success: true,
+			});
+			updatePubData({ doi: response.doi });
+		} catch (err) {
+			this.setState({
+				[pendingStateKey]: false,
+				doiSuffix: fallback,
+				error: true,
+				success: false,
+			});
+		}
+	}
+
+	async handleDeleteDoiClick() {
+		this.updateDoi('', 'deleting', this.state.doiSuffix);
+	}
+
+	async handleGenerateDoiClick() {
+		const { updating, deleting, generating } = this.state;
+		const { communityData, pubData } = this.props;
+
+		if (updating || deleting || generating) {
+			return;
+		}
+
+		this.setState({
+			generating: true,
+			error: false,
+			success: false,
+		});
+
+		try {
+			const params = new URLSearchParams({
+				target: 'pub',
+				communityId: communityData.id,
+				pubId: pubData.id,
+			});
+
+			// Fetch a DOI preview which contains a newly generated DOI.
+			const response = await apiFetch(`/api/generateDoi?${params.toString()}`);
+
+			this.setState({
+				generating: false,
+				doiSuffix: extractDoiSuffix(response.dois.pub, communityData),
+				error: false,
+				success: false,
+			});
+		} catch (err) {
+			this.setState({
+				generating: false,
+				error: true,
+				success: false,
+			});
+		}
+	}
+
+	async handleUpdateDoiClick() {
+		const { pubData, communityData } = this.props;
+		const doi = this.getFullDoi();
+		const currentDoiSuffix = extractDoiSuffix(pubData.doi || '', communityData);
+		this.updateDoi(doi, 'updating', currentDoiSuffix);
+	}
+
+	isDoiEditableWithoutRelations() {
+		const { canIssueDoi, pubData } = this.props;
+		const { justSetDoi } = this.state;
+		const doiPrefix = this.getDoiPrefix();
+
+		// The DOI is editable if
+		return (
+			// user has the correct permissions
+			canIssueDoi &&
+			// a deposit has not been submitted yet for this work
+			!(justSetDoi || pubData.crossrefDepositRecordId) &&
+			// the Pub is not a supplement to another work
+			// and the community has a custom, hardcoded DOI prefix
+			managedDoiPrefixes.includes(doiPrefix) &&
+			doiPrefix !== PUBPUB_DOI_PREFIX
+		);
+	}
+
+	isDoiEditable() {
+		return (
+			this.isDoiEditableWithoutRelations() &&
+			// the Pub is not a supplement to another work
+			!this.findSupplementTo()
+		);
 	}
 
 	renderCollectionContextMessage() {
@@ -67,74 +273,164 @@ class Doi extends Component {
 	renderStatusMessage() {
 		const { pubData } = this.props;
 		const { justSetDoi } = this.state;
-		if (!pubData.doi) {
-			return <p>A DOI can be registered for each Pub by admins of this community.</p>;
-		}
+
 		if (justSetDoi) {
 			return (
-				<React.Fragment>
+				<Callout intent="success" title="Success!">
 					<p>Successfully submitted a DOI registration for this pub.</p>
 					<p>
 						Registration may take a few hours to complete in Crossref&apos;s system. If
 						DOI URLs do not work immediately, the registration is likely still
 						processing.
 					</p>
-				</React.Fragment>
+				</Callout>
 			);
 		}
-		return <p>DOIs have been registered for this pub.</p>;
+
+		return (
+			<>
+				{!pubData.doi && <p>A DOI can be set for each Pub by admins of this community.</p>}
+				{pubData.crossrefDepositRecordId && <p>This Pub has been deposited to Crossref.</p>}
+				{this.isDoiEditableWithoutRelations() && this.findSupplementTo() && (
+					<Callout intent="warning">
+						The DOI for this Pub is not editable because it is a{' '}
+						<strong>Supplement</strong> to another Pub.
+					</Callout>
+				)}
+			</>
+		);
+	}
+
+	renderContent() {
+		const { pubData, canIssueDoi } = this.props;
+		const { justSetDoi } = this.state;
+
+		if (!canIssueDoi) {
+			return (
+				<>
+					{this.renderStatusMessage()}
+					{this.renderDoi()}
+				</>
+			);
+		}
+
+		return (
+			<>
+				{this.renderStatusMessage()}
+				{this.renderCollectionContextMessage()}
+				{this.renderDoi()}
+
+				<FormGroup
+					helperText={
+						pubData.doi &&
+						!justSetDoi && (
+							<>
+								If you&apos;ve changed aspects of this pub and wish to update its
+								DOI deposit, you can do so here. In the future, PubPub will resubmit
+								such changes automatically.{' '}
+								{this.isDoiEditable() && (
+									<>
+										{' '}
+										PubPub will automatically assign a DOI if the suffix is left
+										blank. Please note that{' '}
+										<strong>
+											once submit, the DOI will no longer be editable.
+										</strong>
+									</>
+								)}
+							</>
+						)
+					}
+				>
+					{this.disabledDueToParentWithoutDoi() && this.state.initialPreview && (
+						<Callout intent="warning">
+							This Pub cannot be deposited to Crossref because it is a{' '}
+							<strong>{getDepositTypeTitle(this.state.initialPreview)}</strong> and
+							its parent Pub has not been deposited.
+						</Callout>
+					)}
+					{this.disabledDueToNoReleases() && (
+						<Callout intent="warning">
+							This Pub cannot be deposited to Crossref because it has no published
+							releases.
+						</Callout>
+					)}
+					<AssignDoi
+						communityData={this.props.communityData}
+						onDeposit={this.handleDeposit}
+						pubData={this.props.pubData}
+						target="pub"
+						disabled={
+							this.disabledDueToParentWithoutDoi() || this.disabledDueToNoReleases()
+						}
+					/>
+				</FormGroup>
+			</>
+		);
 	}
 
 	renderDoi() {
 		const { pubData } = this.props;
-		if (!pubData.doi) {
-			return null;
+		const { doiSuffix, updating, generating, deleting } = this.state;
+		const fullDoi = this.getFullDoi();
+		const invalidDoi = doiSuffix && !isDoi(fullDoi);
+		const intent = this.getIntent(invalidDoi);
+		const helperText = this.getHelperText(invalidDoi);
+
+		if (this.isDoiEditable()) {
+			return (
+				<FormGroup
+					helperText={helperText}
+					intent={intent}
+					className="doi"
+					label="DOI Suffix"
+				>
+					<InputGroup
+						placeholder="Enter a DOI suffix..."
+						value={doiSuffix}
+						onChange={(e) => this.setState({ doiSuffix: e.target.value })}
+						leftElement={<span className="doi-prefix">{this.getDoiPrefix()}/</span>}
+						style={{ zIndex: 0 }}
+					/>
+					<Button
+						disabled={!doiSuffix || invalidDoi || deleting || generating}
+						text="Update"
+						loading={updating}
+						onClick={this.handleUpdateDoiClick}
+					/>
+					<Button
+						disabled={invalidDoi || deleting || updating}
+						text="Generate"
+						loading={generating}
+						onClick={this.handleGenerateDoiClick}
+					/>
+					<Button
+						disabled={!pubData.doi || invalidDoi || updating || generating}
+						text="Delete"
+						loading={deleting}
+						onClick={this.handleDeleteDoiClick}
+						intent="danger"
+					/>
+				</FormGroup>
+			);
 		}
+
 		return (
-			<p>
-				Pub DOI:{' '}
-				<a className="doi-link" href={`https://doi.org/${pubData.doi}`}>
-					{pubData.doi}
-				</a>
-			</p>
+			<>
+				{pubData.doi && (
+					<p>
+						Pub DOI:{' '}
+						<a className="doi-link" href={`https://doi.org/${pubData.doi}`}>
+							{pubData.doi}
+						</a>
+					</p>
+				)}
+			</>
 		);
 	}
 
 	render() {
-		const {
-			pubData: { doi },
-			canIssueDoi,
-		} = this.props;
-		const { isLoading, justSetDoi } = this.state;
-		return (
-			<div className="pub-settings-container_doi-component">
-				{this.renderStatusMessage()}
-				{this.renderCollectionContextMessage()}
-				{this.renderDoi()}
-				<FormGroup
-					helperText={
-						doi &&
-						!justSetDoi && (
-							<React.Fragment>
-								If you&apos;ve changed aspects of this pub and wish to update its
-								DOI deposit, you can do so here. In the future, PubPub will resubmit
-								such changes automatically.
-							</React.Fragment>
-						)
-					}
-				>
-					<Button
-						text={
-							justSetDoi ? 'Submitted!' : doi ? 'Resubmit DOI deposit' : 'Assign DOI'
-						}
-						loading={isLoading}
-						onClick={this.handleAssignDoi}
-						disabled={!canIssueDoi || justSetDoi}
-						icon={justSetDoi && 'tick'}
-					/>
-				</FormGroup>
-			</div>
-		);
+		return <div className="pub-settings-container_doi-component">{this.renderContent()}</div>;
 	}
 }
 

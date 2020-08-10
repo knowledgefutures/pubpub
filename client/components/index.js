@@ -1,4 +1,5 @@
 export { default as AccentStyle } from './AccentStyle/AccentStyle';
+export { default as AssignDoi } from './AssignDoi/AssignDoi';
 export { default as AttributionEditor } from './AttributionEditor/AttributionEditor';
 export { default as Avatar } from './Avatar/Avatar';
 export { default as Byline } from './Byline/Byline';

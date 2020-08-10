@@ -35,7 +35,7 @@ const getChildEdges = (pubData) => {
 	const { inboundEdges, outboundEdges } = pubData;
 	return [
 		...inboundEdges.filter((edge) => {
-			if (edge.targetIsParent) {
+			if (!edge.pubIsParent) {
 				const { pub: sourcePub } = edge;
 				if (sourcePub) {
 					return sourcePub.communityId === pubData.communityId;
@@ -43,7 +43,7 @@ const getChildEdges = (pubData) => {
 			}
 			return false;
 		}),
-		...outboundEdges.filter((edge) => !edge.targetIsParent),
+		...outboundEdges.filter((edge) => edge.pubIsParent && edge.targetPub),
 	];
 };
 
@@ -58,7 +58,7 @@ const getEdgesByRelationType = (edges) => {
 };
 
 const renderEdgeLink = (edge) => {
-	const { targetIsParent, targetPub, pub, externalPublication } = edge;
+	const { pubIsParent, targetPub, pub, externalPublication } = edge;
 	if (externalPublication) {
 		const { contributors, title, url } = externalPublication;
 		return (
@@ -71,7 +71,7 @@ const renderEdgeLink = (edge) => {
 			</a>
 		);
 	}
-	const childPub = targetIsParent ? pub : targetPub;
+	const childPub = pubIsParent ? targetPub : pub;
 	return (
 		<a href={pubShortUrl(childPub)} key={edge.id} className="edge-link">
 			<PubByline

@@ -69,7 +69,7 @@ export const getInitialData = async (req, isDashboard) => {
 			? { subdomain: hostname.replace('.pubpub.org', '') }
 			: { domain: hostname };
 	const communityData = await getCommunity(locationData, whereQuery);
-	if (communityData.domain && whereQuery.subdomain && isProd()) {
+	if (communityData.domain && whereQuery.subdomain && process.env.NODE_ENV === 'production') {
 		throw new Error(`UseCustomDomain:${communityData.domain}`);
 	}
 	if (req.headers.localhost) {

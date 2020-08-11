@@ -37,7 +37,7 @@ export const getDoiData = ({ doi_batch: { body } }) => {
 };
 
 export const getDepositRecordContentVersion = (depositRecord) => {
-	if (!depositRecord) {
+	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 
@@ -54,6 +54,10 @@ export const getDepositRecordContentVersion = (depositRecord) => {
 };
 
 export const setDepositRecordContentVersion = (depositRecord, contentVersion) => {
+	if (!depositRecord || !depositRecord.depositJson) {
+		return null;
+	}
+
 	const {
 		depositJson: { deposit },
 	} = depositRecord;
@@ -67,7 +71,7 @@ export const setDepositRecordContentVersion = (depositRecord, contentVersion) =>
 };
 
 export const getDepositRecordReviewType = (depositRecord) => {
-	if (!depositRecord) {
+	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 
@@ -88,7 +92,7 @@ export const getDepositRecordReviewType = (depositRecord) => {
 
 // eslint-disable-next-line consistent-return
 export function setDepositRecordReviewType(depositRecord, reviewType) {
-	if (!depositRecord) {
+	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 
@@ -97,7 +101,7 @@ export function setDepositRecordReviewType(depositRecord, reviewType) {
 }
 
 export const getDepositRecordReviewRecommendation = (depositRecord) => {
-	if (!depositRecord) {
+	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 
@@ -118,7 +122,7 @@ export const getDepositRecordReviewRecommendation = (depositRecord) => {
 
 // eslint-disable-next-line consistent-return
 export function setDepositRecordReviewRecommendation(depositRecord, recommendation) {
-	if (!depositRecord) {
+	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 
@@ -128,11 +132,18 @@ export function setDepositRecordReviewRecommendation(depositRecord, recommendati
 	] = recommendation;
 }
 
-export const getDepositBody = (crossrefDepositRecord) =>
-	crossrefDepositRecord.depositJson.deposit.doi_batch.body;
+export const getDepositBody = (depositRecord) => {
+	if (!depositRecord || !depositRecord.depositJson) {
+		return null;
+	}
 
-const createIsDeposit = (key) => (crossrefDepositRecord) =>
-	crossrefDepositRecord && key in getDepositBody(crossrefDepositRecord);
+	return depositRecord.depositJson.deposit.doi_batch.body;
+};
+
+const createIsDeposit = (key) => (crossrefDepositRecord) => {
+	const body = getDepositBody(crossrefDepositRecord);
+	return crossrefDepositRecord && body && key in body;
+};
 
 export const isBookDeposit = createIsDeposit('book');
 export const isJournalDeposit = createIsDeposit('journal');

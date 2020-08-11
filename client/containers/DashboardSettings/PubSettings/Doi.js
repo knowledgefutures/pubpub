@@ -10,8 +10,11 @@ import {
 import { apiFetch } from 'client/utils/apiFetch';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { isDoi } from 'utils/crossref/parseDoi';
-import { getDepositTypeTitle } from 'utils/crossref/parseDeposit';
-import { RelationType, findParentEdgeByRelationTypes } from 'utils/pubEdge/relations';
+import {
+	RelationType,
+	findParentEdgeByRelationTypes,
+	relationTypeDefinitions,
+} from 'utils/pubEdge/relations';
 
 import { AssignDoi } from 'components';
 
@@ -36,7 +39,6 @@ class Doi extends Component {
 
 		this.state = {
 			doiSuffix: extractDoiSuffix(props.pubData.doi || '', props.communityData),
-			initialPreview: null,
 			error: false,
 			justSetDoi: false,
 			deleting: false,
@@ -49,19 +51,6 @@ class Doi extends Component {
 		this.handleUpdateDoiClick = this.handleUpdateDoiClick.bind(this);
 		this.handleGenerateDoiClick = this.handleGenerateDoiClick.bind(this);
 		this.handleDeleteDoiClick = this.handleDeleteDoiClick.bind(this);
-	}
-
-	componentDidMount() {
-		const params = new URLSearchParams({
-			target: 'pub',
-			pubId: this.props.pubData.id,
-			communityId: this.props.communityData.id,
-		});
-		apiFetch(`/api/doiPreview?${params.toString()}`).then((result) =>
-			this.setState({
-				initialPreview: result,
-			}),
-		);
 	}
 
 	getDoiPrefix() {
@@ -105,20 +94,50 @@ class Doi extends Component {
 		return findParentEdgeByRelationTypes(pubData, [RelationType.Supplement]);
 	}
 
-	disabledDueToParentWithoutDoi() {
+	findParentPubEdge() {
 		const { pubData } = this.props;
-		const parent = findParentEdgeByRelationTypes(pubData, [
+		const parentEdge = findParentEdgeByRelationTypes(pubData, [
 			RelationType.Supplement,
 			RelationType.Review,
 			RelationType.Rejoinder,
 			RelationType.Preprint,
 		]);
 
-		if (!parent || parent.externalPublication) {
+		if (!parentEdge || parentEdge.externalPublication) {
+			return null;
+		}
+
+		return parentEdge;
+	}
+
+	disabledDueToParentWithoutDoi() {
+		const parentEdge = this.findParentPubEdge();
+
+		if (!parentEdge) {
 			return false;
 		}
 
-		return parent && !(parent.pubIsParent ? parent.pub : parent.targetPub).doi;
+		const parentPub = parentEdge.pubIsParent ? parentEdge.pub : parentEdge.targetPub;
+
+		return parentPub && !parentPub.doi;
+	}
+
+	renderParentEdgeRelation() {
+		const parentPubEdge = this.findParentPubEdge();
+
+		if (!parentPubEdge) {
+			return null;
+		}
+
+		const relationDefinition = relationTypeDefinitions[parentPubEdge.relationType];
+		const { article, preposition, name } = relationDefinition;
+		const relationString = (
+			<>
+				{article} <strong>{name}</strong> {preposition}
+			</>
+		);
+
+		return relationString;
 	}
 
 	disabledDueToNoReleases() {
@@ -342,11 +361,11 @@ class Doi extends Component {
 						)
 					}
 				>
-					{this.disabledDueToParentWithoutDoi() && this.state.initialPreview && (
+					{this.disabledDueToParentWithoutDoi() && (
 						<Callout intent="warning">
-							This Pub cannot be deposited to Crossref because it is a{' '}
-							<strong>{getDepositTypeTitle(this.state.initialPreview)}</strong> and
-							its parent Pub has not been deposited.
+							This Pub cannot be deposited to Crossref because it is{' '}
+							{this.renderParentEdgeRelation()} its parent Pub, and its parent Pub
+							does not have a DOI.
 						</Callout>
 					)}
 					{this.disabledDueToNoReleases() && (

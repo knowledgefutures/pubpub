@@ -2,8 +2,8 @@ import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 import xmlbuilder from 'xmlbuilder';
 
-import { getDoiData, setDoiData, generateDoi } from './queries';
 import { parentToSupplementNeedsDoiError } from 'utils/crossref/createDeposit';
+import { getDoiData, setDoiData, generateDoi } from './queries';
 import { getPermissions } from './permissions';
 
 const assertUserAuthenticated = async (target, requestIds) => {
@@ -59,14 +59,14 @@ app.post(
 			const depositJson = await previewOrDepositDoi(req.user || {}, req.body, {
 				deposit: true,
 			});
-
 			return res.status(201).json(depositJson);
-		} catch (e) {
-			if (e === parentToSupplementNeedsDoiError) {
+		} catch (err) {
+			if (err === parentToSupplementNeedsDoiError) {
 				return res.status(400).json({
-					error: e.message,
+					error: err.message,
 				});
 			}
+			throw err;
 		}
 	}),
 );
@@ -84,12 +84,13 @@ app.get(
 				depositJson: depositJson,
 				depositXml: depositXml,
 			});
-		} catch (e) {
-			if (e === parentToSupplementNeedsDoiError) {
+		} catch (err) {
+			if (err === parentToSupplementNeedsDoiError) {
 				return res.status(400).json({
-					error: e.message,
+					error: err.message,
 				});
 			}
+			throw err;
 		}
 	}),
 );

@@ -55,7 +55,7 @@ export const getDepositRecordContentVersion = (depositRecord) => {
 
 export const setDepositRecordContentVersion = (depositRecord, contentVersion) => {
 	if (!depositRecord || !depositRecord.depositJson) {
-		return null;
+		return;
 	}
 
 	const {

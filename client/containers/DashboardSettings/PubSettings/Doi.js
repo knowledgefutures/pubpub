@@ -122,24 +122,6 @@ class Doi extends Component {
 		return parentPub && !parentPub.doi;
 	}
 
-	renderParentEdgeRelation() {
-		const parentPubEdge = this.findParentPubEdge();
-
-		if (!parentPubEdge) {
-			return null;
-		}
-
-		const relationDefinition = relationTypeDefinitions[parentPubEdge.relationType];
-		const { article, preposition, name } = relationDefinition;
-		const relationString = (
-			<>
-				{article} <strong>{name}</strong> {preposition}
-			</>
-		);
-
-		return relationString;
-	}
-
 	disabledDueToNoReleases() {
 		const { pubData } = this.props;
 		return pubData.releases.length === 0;
@@ -266,6 +248,24 @@ class Doi extends Component {
 			// the Pub is not a supplement to another work
 			!this.findSupplementTo()
 		);
+	}
+
+	renderParentEdgeRelation() {
+		const parentPubEdge = this.findParentPubEdge();
+
+		if (!parentPubEdge) {
+			return null;
+		}
+
+		const relationDefinition = relationTypeDefinitions[parentPubEdge.relationType];
+		const { article, preposition, name } = relationDefinition;
+		const relationString = (
+			<>
+				{article} <strong>{name}</strong> {preposition}
+			</>
+		);
+
+		return relationString;
 	}
 
 	renderCollectionContextMessage() {

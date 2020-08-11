@@ -37,7 +37,7 @@ export const getDoiData = ({ doi_batch: { body } }) => {
 };
 
 export const getDepositRecordContentVersion = (depositRecord) => {
-	if (!depositRecord) {
+	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 
@@ -54,6 +54,10 @@ export const getDepositRecordContentVersion = (depositRecord) => {
 };
 
 export const setDepositRecordContentVersion = (depositRecord, contentVersion) => {
+	if (!depositRecord || !depositRecord.depositJson) {
+		return null;
+	}
+
 	const {
 		depositJson: { deposit },
 	} = depositRecord;
@@ -97,7 +101,7 @@ export function setDepositRecordReviewType(depositRecord, reviewType) {
 }
 
 export const getDepositRecordReviewRecommendation = (depositRecord) => {
-	if (!depositRecord) {
+	if (!depositRecord || !depositRecord.depositJson) {
 		return null;
 	}
 

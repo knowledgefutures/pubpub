@@ -3,6 +3,7 @@ import { ForbiddenError } from 'server/utils/errors';
 import xmlbuilder from 'xmlbuilder';
 
 import { getDoiData, setDoiData, generateDoi } from './queries';
+import { parentToSupplementNeedsDoiError } from 'utils/crossref/createDeposit';
 import { getPermissions } from './permissions';
 
 const assertUserAuthenticated = async (target, requestIds) => {
@@ -54,22 +55,42 @@ const previewOrDepositDoi = async (user, body, options = { deposit: false }) => 
 app.post(
 	'/api/doi',
 	wrap(async (req, res) => {
-		const depositJson = await previewOrDepositDoi(req.user || {}, req.body, { deposit: true });
+		try {
+			const depositJson = await previewOrDepositDoi(req.user || {}, req.body, {
+				deposit: true,
+			});
 
-		return res.status(201).json(depositJson);
+			return res.status(201).json(depositJson);
+		} catch (e) {
+			if (e === parentToSupplementNeedsDoiError) {
+				return res.status(400).json({
+					error: e.message,
+				});
+			}
+		}
 	}),
 );
 
 app.get(
 	'/api/doiPreview',
 	wrap(async (req, res) => {
-		const depositJson = await previewOrDepositDoi(req.user || {}, req.query);
-		const depositXml = xmlbuilder.create(depositJson, { headless: true }).end({ pretty: true });
+		try {
+			const depositJson = await previewOrDepositDoi(req.user || {}, req.query);
+			const depositXml = xmlbuilder
+				.create(depositJson, { headless: true })
+				.end({ pretty: true });
 
-		return res.status(200).json({
-			depositJson: depositJson,
-			depositXml: depositXml,
-		});
+			return res.status(200).json({
+				depositJson: depositJson,
+				depositXml: depositXml,
+			});
+		} catch (e) {
+			if (e === parentToSupplementNeedsDoiError) {
+				return res.status(400).json({
+					error: e.message,
+				});
+			}
+		}
 	}),
 );
 

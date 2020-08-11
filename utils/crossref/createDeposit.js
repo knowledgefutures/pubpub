@@ -14,6 +14,10 @@ import renderSupplement from './render/supplement';
 import createDoi, { createComponentDoi } from './createDoi';
 import getCollectionDoi from '../collections/getCollectionDoi';
 
+export const parentToSupplementNeedsDoiError = new Error(
+	'Parent Pub must have DOI when creating a DOI for a Supplement, Review, or Preprint.',
+);
+
 const renderBody = (context) => {
 	const { collection, pub, pubEdge } = context;
 
@@ -81,9 +85,9 @@ const checkDepositAssertions = (context, doiTarget) => {
 	}
 };
 
-const assertParentPubHasDoi = (parentPub) => {
+const assertParentToSupplementHasDoi = (parentPub) => {
 	if (!parentPub.doi) {
-		throw new Error('Parent Pub must have DOI when creating a DOI for a Supplement.');
+		throw parentToSupplementNeedsDoiError;
 	}
 
 	return true;
@@ -101,10 +105,9 @@ const getPubDoiPart = (context, doiTarget) => {
 	if (doiTarget !== 'pub') {
 		doi = pub.doi;
 	} else if (pubEdge && pubEdge.relationType === RelationType.Supplement) {
-		// Create component DOIs for supplementary material.
 		const parentPub = pubEdge.pubIsParent ? pubEdge.pub : pubEdge.targetPub;
 
-		assertParentPubHasDoi(parentPub);
+		assertParentToSupplementHasDoi(parentPub);
 
 		doi = createComponentDoi(parentPub, pub);
 	} else {
@@ -178,7 +181,6 @@ export default (context, doiTarget, dateForTimestamp) => {
 
 		// Find the primary relationship (in order of Preprint > Supplement > Review).
 		pubEdge = findParentEdgeByRelationTypes(pub, [
-			pub,
 			RelationType.Preprint,
 			RelationType.Supplement,
 			RelationType.Review,

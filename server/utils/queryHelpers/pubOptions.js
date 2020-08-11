@@ -114,6 +114,7 @@ export default ({
 					...getEdgesOptions,
 					includeTargetPub: true,
 				}),
+				order: [['rank', 'ASC']],
 			},
 			{
 				model: PubEdge,
@@ -121,6 +122,7 @@ export default ({
 				separate: true,
 				include: getPubEdgeIncludes({ ...getEdgesOptions, includePub: true }),
 				where: !allowUnapprovedEdges && { approvedByTarget: true },
+				order: [['rank', 'ASC']],
 			},
 		];
 	}

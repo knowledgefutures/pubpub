@@ -1,3 +1,4 @@
+import { sortByRank } from 'utils/rank';
 import { toTitleCase } from 'utils/strings';
 
 export const relationTypeDefinitions = {
@@ -92,8 +93,10 @@ export const relationTypes = Object.keys(relationTypeDefinitions);
 export const RelationType = createRelationTypeEnum();
 
 const findParentEdge = (pubEdges, validRelationTypes, inbound) => {
-	for (let i = 0; i < pubEdges.length; i++) {
-		const pubEdge = pubEdges[i];
+	const sortedPubEdges = sortByRank(pubEdges);
+
+	for (let i = 0; i < sortedPubEdges.length; i++) {
+		const pubEdge = sortedPubEdges[i];
 		const { pubIsParent, relationType } = pubEdge;
 
 		if (inbound ? pubIsParent : !pubIsParent) {

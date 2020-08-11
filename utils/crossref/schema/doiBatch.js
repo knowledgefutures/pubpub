@@ -9,7 +9,7 @@ const SCHEMA_METADATA = {
 const HEAD_METADATA = {
 	depositor: {
 		depositor_name: 'PubPub',
-		email_address: 'pubpub@media.mit.edu',
+		email_address: 'crossref@pubpub.org',
 	},
 	registrant: 'PubPub',
 };

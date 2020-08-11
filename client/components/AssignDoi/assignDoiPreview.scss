@@ -1,0 +1,46 @@
+.assign-doi-preview-component {
+	margin: 12px 0;
+	padding: 12px;
+	border: 1px dashed #ccc;
+	border-radius: 3px;
+	font-size: 0.9em;
+
+	dl {
+		display: inline-grid;
+		grid-template-columns: auto auto;
+		margin: 0;
+
+		&:not(:last-child) {
+			margin: 0 0 18px 0;
+		}
+
+		> dt {
+			padding: 4px;
+			word-break: break-word;
+			color: #777;
+			text-align: right;
+		}
+
+		> dd {
+			padding: 4px;
+			margin: 0;
+
+			ul {
+				margin: 0;
+				padding: 0;
+				list-style-type: none;
+			}
+		}
+	}
+
+	pre {
+		font-family: 'Courier', monospace;
+		font-size: 12px;
+		max-height: 300px;
+		overflow: auto;
+		font-size: inherit;
+		background-color: #f1f1f1;
+		padding: 8px 12px;
+		margin: 0;
+	}
+}

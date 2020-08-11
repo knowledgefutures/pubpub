@@ -1,12 +1,21 @@
 // Some overrides for specific communities.
 // TODO(ian): Handle this with the database instead.
-const PUBPUB_DOI_PREFIX = '10.21428';
+export const PUBPUB_DOI_PREFIX = '10.21428';
 const MITP_DOI_PREFIX = '10.1162';
 const IASTATE_DOI_PREFIX = '10.31274';
 const AAS_DOI_PREFIX = '10.3847';
 const MEDIASTUDIES_DOI_PREFIX = '10.32376';
 const RS_DOI_PREFIX = '10.46470';
 const JOTE_DOI_PREFIX = '10.36850';
+
+export const managedDoiPrefixes = [
+	PUBPUB_DOI_PREFIX,
+	MITP_DOI_PREFIX,
+	IASTATE_DOI_PREFIX,
+	AAS_DOI_PREFIX,
+	MEDIASTUDIES_DOI_PREFIX,
+	RS_DOI_PREFIX,
+];
 
 export const communityDoiOverrides = [
 	{

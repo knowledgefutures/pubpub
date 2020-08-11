@@ -19,13 +19,16 @@ const transformMetadata = (metadata, kind, timestamp) =>
 	});
 
 export default ({ globals, community }) => (collection) => {
+	const { timestamp, dois, contentVersion } = globals;
 	const { title, metadata, attributions } = collection;
+
 	return {
 		url: collectionUrl(community, collection),
 		...transformMetadata(metadata, collection.kind, globals.timestamp),
 		title: title,
-		timestamp: globals.timestamp,
+		timestamp: timestamp,
 		attributions: transformAttributions(attributions),
-		doi: globals.dois.collection,
+		doi: dois.collection,
+		contentVersion: contentVersion,
 	};
 };

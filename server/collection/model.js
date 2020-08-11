@@ -38,9 +38,10 @@ export default (sequelize, dataTypes) => {
 					const {
 						Collection,
 						CollectionAttribution,
-						Page,
 						CollectionPub,
+						CrossrefDepositRecord,
 						Member,
+						Page,
 					} = models;
 					Collection.hasMany(CollectionAttribution, {
 						onDelete: 'CASCADE',
@@ -56,6 +57,11 @@ export default (sequelize, dataTypes) => {
 						foreignKey: 'collectionId',
 					});
 					Collection.belongsTo(Page, { as: 'page', foreignKey: 'pageId' });
+					Collection.belongsTo(CrossrefDepositRecord, {
+						onDelete: 'CASCADE',
+						as: 'crossrefDepositRecord',
+						foreignKey: 'crossrefDepositRecordId',
+					});
 				},
 			},
 		},

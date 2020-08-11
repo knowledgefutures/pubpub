@@ -1,14 +1,18 @@
-import createDeposit from 'utils/crossref/createDeposit';
+import createDeposit, { getDois } from 'utils/crossref/createDeposit';
+
 import {
 	Collection,
 	CollectionAttribution,
 	CollectionPub,
 	Community,
 	Pub,
-	PubAttribution,
-	Release,
 	includeUserModel,
 } from 'server/models';
+import buildPubOptions from 'server/utils/queryHelpers/pubOptions';
+import {
+	createCrossrefDepositRecord,
+	updateCrossrefDepositRecord,
+} from 'server/crossrefDepositRecord/queries';
 
 import { submitDoiData } from './submit';
 
@@ -38,14 +42,14 @@ const findCollection = (collectionId) =>
 const findPub = (pubId) =>
 	Pub.findOne({
 		where: { id: pubId },
-		include: [
-			{ model: Release, as: 'releases' },
-			{
-				model: PubAttribution,
-				as: 'attributions',
-				include: [includeUserModel({ as: 'user' })],
+		...buildPubOptions({
+			getEdgesOptions: {
+				// Include Pub for both inbound and outbound pub connections
+				// since we do a lot of downstream processing with pubEdges.
+				includePub: true,
+				includeCommunityForPubs: true,
 			},
-		],
+		}),
 	});
 
 const findCommunity = (communityId) =>
@@ -53,6 +57,37 @@ const findCommunity = (communityId) =>
 		where: { id: communityId },
 		attributes: ['id', 'title', 'issn', 'domain', 'subdomain'],
 	});
+
+const persistCrossrefDepositRecord = async (ids, depositJson) => {
+	const { collectionId, pubId } = ids;
+	const targetModel = pubId
+		? await Pub.findOne({
+				where: {
+					id: pubId,
+				},
+		  })
+		: await Collection.findOne({
+				where: {
+					id: collectionId,
+				},
+		  });
+	const { crossrefDepositRecordId } = targetModel;
+
+	if (crossrefDepositRecordId) {
+		return updateCrossrefDepositRecord({
+			crossrefDepositRecordId: crossrefDepositRecordId,
+			depositJson: depositJson,
+		});
+	}
+
+	const crossrefDepositRecord = await createCrossrefDepositRecord({ depositJson: depositJson });
+
+	await targetModel.update({
+		crossrefDepositRecordId: crossrefDepositRecord.id,
+	});
+
+	return targetModel;
+};
 
 const persistDoiData = (ids, dois) => {
 	const { collectionId, pubId } = ids;
@@ -67,7 +102,10 @@ const persistDoiData = (ids, dois) => {
 	return Promise.all(updates);
 };
 
-export const getDoiData = ({ communityId, collectionId, pubId }, doiTarget) =>
+export const getDoiData = (
+	{ communityId, collectionId, pubId, contentVersion, reviewType, reviewRecommendation },
+	doiTarget,
+) =>
 	Promise.all([
 		findCommunity(communityId),
 		collectionId && findCollection(collectionId),
@@ -81,19 +119,56 @@ export const getDoiData = ({ communityId, collectionId, pubId }, doiTarget) =>
 				collection: resolvedCollection,
 				community: community,
 				pub: pub,
+				contentVersion: contentVersion,
+				reviewType: reviewType,
+				reviewRecommendation: reviewRecommendation,
 			},
 			doiTarget,
 		);
 	});
 
-export const setDoiData = ({ communityId, collectionId, pubId }, doiTarget) =>
+export const setDoiData = (
+	{ communityId, collectionId, pubId, contentVersion, reviewType, reviewRecommendation },
+	doiTarget,
+) =>
 	getDoiData(
-		{ communityId: communityId, collectionId: collectionId, pubId: pubId },
+		{
+			communityId: communityId,
+			collectionId: collectionId,
+			pubId: pubId,
+			contentVersion: contentVersion,
+			reviewType: reviewType,
+			reviewRecommendation: reviewRecommendation,
+		},
 		doiTarget,
-	).then(({ deposit, timestamp, dois }) =>
-		submitDoiData(deposit, timestamp, communityId)
-			.then(() => persistDoiData({ collectionId: collectionId, pubId: pubId }, dois))
+	).then((depositJson) => {
+		const ids = { collectionId: collectionId, pubId: pubId };
+		const { deposit, timestamp, dois } = depositJson;
+		return submitDoiData(deposit, timestamp, communityId)
+			.then(() =>
+				Promise.all([
+					persistDoiData(ids, dois),
+					persistCrossrefDepositRecord(ids, depositJson),
+				]),
+			)
 			.then(() => {
 				return { deposit: deposit, dois: dois };
-			}),
+			});
+	});
+
+export const generateDoi = async ({ communityId, collectionId, pubId }, target) => {
+	const [community, collection, pub] = await Promise.all([
+		findCommunity(communityId),
+		collectionId && findCollection(collectionId),
+		pubId && findPub(pubId),
+	]);
+
+	return getDois(
+		{
+			pub: pub,
+			community: community,
+			collection: collection,
+		},
+		target,
 	);
+};

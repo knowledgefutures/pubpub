@@ -23,6 +23,7 @@ export const communityDoiOverrides = [
 			'99608f92-d70f-46c1-a72c-df272215f13e', // HDSR
 			'00c13b77-f067-4b53-8f11-c97aa4b024ff', // Projections
 			'ba67f642-710c-4dec-a683-471946cc5783', // WIP
+			'2e3983f5-6090-4b15-ac21-3d753c77ca39', // RRC19
 		],
 		prefix: MITP_DOI_PREFIX,
 		key: 'MITP',

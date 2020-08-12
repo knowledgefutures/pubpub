@@ -442,4 +442,6 @@ export default {
 				'<div class="csl-bib-body"><div class="csl-entry">@incollection{Reynolds2019In,<ul style="list-style-type:none"><li>booktitle={Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line},</li><li>doi={10.21428/eea8ec7d.1519656b},</li><li>note={https://dev.pubpub.org/pub/h2muzdpv},</li><li>title={In Which Ian Makes A Pub},</li><li>url={https://dev.pubpub.org/pub/h2muzdpv},</li><li>author={Reynolds, Ian},</li><li>date={2019-04-08},</li><li>year=2019,</li><li>month=4,</li><li>day=8,</li></ul>}</div></div>',
 		},
 	},
+	inboundEdges: [],
+	outboundEdges: [],
 };

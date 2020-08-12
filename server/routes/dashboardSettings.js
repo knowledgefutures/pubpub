@@ -10,7 +10,7 @@ import { getPub, sanitizePub } from 'server/utils/queryHelpers';
 
 const getSettingsData = async (pubSlug, initialData) => {
 	if (pubSlug) {
-		const pubData = await getPub(pubSlug, initialData.communityData.id);
+		const pubData = await getPub(pubSlug, initialData.communityData.id, { getEdges: 'all' });
 		return { pubData: sanitizePub(pubData, initialData) };
 	}
 	return {};

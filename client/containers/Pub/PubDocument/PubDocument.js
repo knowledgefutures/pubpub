@@ -4,7 +4,11 @@ import { setLocalHighlight } from 'components/Editor';
 
 import { usePageContext } from 'utils/hooks';
 import { PubHistoryViewer } from 'components';
-import { PubEdgeListing, Filter as PubEdgeFilter } from 'components/PubEdgeListing';
+import {
+	PubEdgeListing,
+	Filter as PubEdgeFilter,
+	Mode as PubEdgeMode,
+} from 'components/PubEdgeListing';
 
 import PubBody from './PubBody';
 import PubBottom from './PubBottom/PubBottom';
@@ -117,6 +121,7 @@ const PubDocument = (props) => {
 						pubData={pubData}
 						accentColor={communityData.accentColorDark}
 						initialFilters={[PubEdgeFilter.Child, PubEdgeFilter.Sibling]}
+						initialMode={PubEdgeMode.List}
 					/>
 				</div>
 				<div className="side-content" ref={sideContentRef}>

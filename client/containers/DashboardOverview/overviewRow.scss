@@ -26,6 +26,7 @@
 	.handle {
 		width: 30px;
 		display: flex;
+		justify-content: center;
 		.arrow {
 			cursor: pointer;
 			background: none;
@@ -43,6 +44,9 @@
 			&:hover {
 				opacity: 1;
 			}
+		}
+		.drag-handle {
+			transform: translateY(2px);
 		}
 	}
 	.type {

@@ -6,7 +6,10 @@ const orderedContributors = (maybeContributors) =>
 		if (a.order !== b.order) {
 			return a.order - b.order;
 		}
-		return b.createdAt - a.createdAt;
+		if (a.createdAt && b.createdAt && b.createdAt !== a.createdAt) {
+			return b.createdAt.toString() > a.createdAt.toString() ? 1 : -1;
+		}
+		return 0;
 	});
 
 export const getAllPubContributors = (pubData, hideAuthors = false, hideContributors = false) => {

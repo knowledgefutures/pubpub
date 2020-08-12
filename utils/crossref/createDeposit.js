@@ -1,17 +1,54 @@
+import { RelationType, findParentEdgeByRelationTypes } from 'utils/pubEdge/relations';
+
 /**
  * Code that builds a submission that we can send to Crossref. We build JSON here, and let that
  * get converted to equivalent XML downstream.
  */
 import doiBatch from './schema/doiBatch';
-
 import renderBook from './render/book';
 import renderConference from './render/conference';
 import renderJournal from './render/journal';
-import createDoi from './createDoi';
+import renderReview from './render/review';
+import renderPreprint from './render/preprint';
+import renderSupplement from './render/supplement';
+import createDoi, { createComponentDoi } from './createDoi';
 import getCollectionDoi from '../collections/getCollectionDoi';
 
+export const parentToSupplementNeedsDoiError = new Error(
+	'Parent Pub must have DOI when creating a DOI for a Supplement, Review, or Preprint.',
+);
+
 const renderBody = (context) => {
-	const { collection } = context;
+	const { collection, pub, pubEdge } = context;
+
+	if (context.contentVersion === 'preprint') {
+		return renderPreprint(context);
+	}
+
+	if (pubEdge) {
+		const { relationType } = pubEdge;
+
+		if (relationType === RelationType.Preprint) {
+			return renderPreprint(context);
+		}
+
+		if (relationType === RelationType.Supplement) {
+			return renderSupplement({
+				...context,
+				parentDoi:
+					pub.id === pubEdge.targetPubId
+						? // inbound edge, use parent pub doi
+						  pubEdge.pub.doi
+						: // outbound edge, use target pub doi
+						  pubEdge.targetPub.doi,
+			});
+		}
+
+		if (relationType === RelationType.Review || relationType === RelationType.Rejoinder) {
+			return renderReview(context);
+		}
+	}
+
 	if (collection) {
 		if (collection.kind === 'book') {
 			return renderBook(context);
@@ -20,6 +57,7 @@ const renderBody = (context) => {
 			return renderConference(context);
 		}
 	}
+
 	return renderJournal(context);
 };
 
@@ -47,36 +85,124 @@ const checkDepositAssertions = (context, doiTarget) => {
 	}
 };
 
-const getDois = (context, doiTarget) => {
-	const { pub, collection, community } = context;
-	const dois = {};
-	dois.community = createDoi({ community: community });
-	dois.pub =
-		pub &&
-		(doiTarget === 'pub'
-			? createDoi({ community: community, collection: collection, target: pub })
-			: pub.doi);
-	dois.collection =
+const assertParentToSupplementHasDoi = (parentPub) => {
+	if (!parentPub.doi) {
+		throw parentToSupplementNeedsDoiError;
+	}
+
+	return true;
+};
+
+const getPubDoiPart = (context, doiTarget) => {
+	const { pub, collection, community, pubEdge } = context;
+
+	if (!pub) {
+		return {};
+	}
+
+	let doi;
+
+	if (doiTarget !== 'pub') {
+		doi = pub.doi;
+	} else if (pubEdge && pubEdge.relationType === RelationType.Supplement) {
+		const parentPub = pubEdge.pubIsParent ? pubEdge.pub : pubEdge.targetPub;
+
+		assertParentToSupplementHasDoi(parentPub);
+
+		doi = createComponentDoi(parentPub, pub);
+	} else {
+		doi =
+			pub.doi ||
+			createDoi({
+				community: community,
+				collection: collection,
+				target: pub,
+				pubEdge: pubEdge,
+			});
+	}
+
+	return { pub: doi };
+};
+
+const getCollectionDoiPart = (context, doiTarget) => {
+	const { collection, community } = context;
+	const doi =
 		collection &&
 		(getCollectionDoi(collection) ||
 			(doiTarget === 'collection' &&
 				createDoi({ community: community, target: collection })));
+
+	return {
+		collection: doi,
+	};
+};
+
+export const getDois = (context, doiTarget) => {
+	const { community } = context;
+	const dois = {
+		community: createDoi({ community: community }),
+		...getPubDoiPart(context, doiTarget),
+		...getCollectionDoiPart(context, doiTarget),
+	};
+
 	return dois;
+};
+
+const filterForMutuallyApprovedEdges = (pubEdges) => {
+	let i = 0;
+
+	while (i < pubEdges.length) {
+		const { approvedByTarget, relationType } = pubEdges[i];
+		if (
+			(relationType === RelationType.Supplement || relationType === RelationType.Preprint) &&
+			!approvedByTarget
+		) {
+			pubEdges.splice(i, 1);
+		} else {
+			i++;
+		}
+	}
 };
 
 export default (context, doiTarget, dateForTimestamp) => {
 	checkDepositAssertions(context, doiTarget);
-	const { community } = context;
+
+	const { community, pub, contentVersion, reviewType, reviewRecommendation } = context;
 	const timestamp = (dateForTimestamp || new Date()).getTime();
 	const doiBatchId = `${timestamp}_${community.id.slice(0, 8)}`;
-	const dois = getDois(context, doiTarget);
+
+	let pubEdge;
+
+	if (pub) {
+		// Remove unapproved PubEdges for RelationTypes that require bidirectional
+		// approval.
+		filterForMutuallyApprovedEdges(pub.inboundEdges);
+		filterForMutuallyApprovedEdges(pub.outboundEdges);
+
+		// Find the primary relationship (in order of Preprint > Supplement > Review).
+		pubEdge = findParentEdgeByRelationTypes(pub, [
+			RelationType.Preprint,
+			RelationType.Supplement,
+			RelationType.Review,
+			RelationType.Rejoinder,
+		]);
+	}
+
+	const contextWithPubEdge = { ...context, pubEdge: pubEdge };
+	const dois = getDois(
+		pubEdge && pubEdge.relationType === RelationType.Supplement ? contextWithPubEdge : context,
+		doiTarget,
+	);
 	const deposit = removeEmptyKeys(
 		doiBatch({
 			body: renderBody({
-				...context,
+				...contextWithPubEdge,
 				globals: {
 					dois: dois,
 					timestamp: timestamp,
+					contentVersion: contentVersion,
+					reviewType: reviewType,
+					reviewRecommendation: reviewRecommendation,
 				},
 			}),
 			doiBatchId: doiBatchId,

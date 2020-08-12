@@ -17,6 +17,7 @@ export default ({
 	timestamp,
 	title,
 	url,
+	contentVersion,
 }) => ({
 	conference: {
 		...contributors(attributions),
@@ -34,7 +35,7 @@ export default ({
 			...publisher(),
 			...renderDate('publication_date', date),
 			...isbn(null, 'archive_volume'),
-			...doiData(doi, timestamp, url),
+			...doiData(doi, timestamp, url, contentVersion),
 		},
 		...children,
 	},

@@ -4,6 +4,7 @@ import {
 	CollectionAttribution,
 	CollectionPub,
 	Community,
+	CrossrefDepositRecord,
 	Export,
 	Page,
 	PubAttribution,
@@ -27,6 +28,7 @@ export default ({
 	getMembers,
 	getCommunity,
 	getEdges = 'approved-only',
+	getEdgesOptions,
 }) => {
 	const allowUnapprovedEdges = getEdges === 'all';
 	/* Initialize values assuming all inputs are false. */
@@ -108,14 +110,19 @@ export default ({
 				model: PubEdge,
 				as: 'outboundEdges',
 				separate: true,
-				include: getPubEdgeIncludes({ includeTargetPub: true }),
+				include: getPubEdgeIncludes({
+					...getEdgesOptions,
+					includeTargetPub: true,
+				}),
+				order: [['rank', 'ASC']],
 			},
 			{
 				model: PubEdge,
 				as: 'inboundEdges',
 				separate: true,
-				include: getPubEdgeIncludes({ includePub: true }),
+				include: getPubEdgeIncludes({ ...getEdgesOptions, includePub: true }),
 				where: !allowUnapprovedEdges && { approvedByTarget: true },
+				order: [['rank', 'ASC']],
 			},
 		];
 	}
@@ -194,6 +201,10 @@ export default ({
 				model: ReviewNew,
 				as: 'reviews',
 				include: [...author, ...visibility, ...thread],
+			},
+			{
+				model: CrossrefDepositRecord,
+				as: 'crossrefDepositRecord',
 			},
 			...collectionPubs,
 			...community,

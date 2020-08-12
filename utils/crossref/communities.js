@@ -1,6 +1,6 @@
 // Some overrides for specific communities.
 // TODO(ian): Handle this with the database instead.
-const PUBPUB_DOI_PREFIX = '10.21428';
+export const PUBPUB_DOI_PREFIX = '10.21428';
 const MITP_DOI_PREFIX = '10.1162';
 const IASTATE_DOI_PREFIX = '10.31274';
 const AAS_DOI_PREFIX = '10.3847';
@@ -8,12 +8,22 @@ const MEDIASTUDIES_DOI_PREFIX = '10.32376';
 const RS_DOI_PREFIX = '10.46470';
 const JOTE_DOI_PREFIX = '10.36850';
 
+export const managedDoiPrefixes = [
+	PUBPUB_DOI_PREFIX,
+	MITP_DOI_PREFIX,
+	IASTATE_DOI_PREFIX,
+	AAS_DOI_PREFIX,
+	MEDIASTUDIES_DOI_PREFIX,
+	RS_DOI_PREFIX,
+];
+
 export const communityDoiOverrides = [
 	{
 		communityIds: [
 			'99608f92-d70f-46c1-a72c-df272215f13e', // HDSR
 			'00c13b77-f067-4b53-8f11-c97aa4b024ff', // Projections
 			'ba67f642-710c-4dec-a683-471946cc5783', // WIP
+			'2e3983f5-6090-4b15-ac21-3d753c77ca39', // RRC19
 		],
 		prefix: MITP_DOI_PREFIX,
 		key: 'MITP',

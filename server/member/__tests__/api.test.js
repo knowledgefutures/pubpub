@@ -43,6 +43,7 @@ const models = modelize`
                 User iCannotCreateAPubViewer {}
             }
             CollectionPub {
+				rank: "h"
                 Pub pub {
                     Member pubAdminMember {
                         permissions: "admin"

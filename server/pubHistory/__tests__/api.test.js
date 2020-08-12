@@ -14,6 +14,7 @@ const models = modelize`
                 User collectionMember {}
             }
             CollectionPub {
+				rank: "h"
                 Pub pub {
 					viewHash: "blah-blah-blah"
                     Release {}

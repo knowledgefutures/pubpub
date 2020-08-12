@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import algoliasearch from 'algoliasearch';
 
 import { Pub, Page } from '../server/models';
+import { deletePubSearchData } from '../workers/tasks/search';
 import { getPubSearchData, getPageSearchData } from '../workers/utils/searchUtils';
 
 const concurrency = 1;
@@ -12,10 +13,12 @@ const pagesIndex = client.initIndex('pages');
 
 console.log('Beginning search sync');
 
-const findAndIndexPubs = (pubIds) =>
+const findAndIndexPubs = async (pubIds) => {
+	await Promise.each(pubIds, deletePubSearchData, { concurrency: 20 });
 	getPubSearchData(pubIds).then((pubSyncData) =>
 		pubsIndex.saveObjects(pubSyncData, { autoGenerateObjectIDIfNotExist: true }),
 	);
+};
 
 const findAndIndexPages = (pageIds) =>
 	getPageSearchData(pageIds).then((pageSyncData) =>
@@ -43,7 +46,7 @@ const syncPubs = async () => {
 	await Promise.map(
 		pubBatches,
 		(idArray, index) => {
-			console.log(`Syncing Pub batch ${index + 1} of ${pubBatches.length}`);
+			console.log(`syncing Pub batch ${index + 1} of ${pubBatches.length}`);
 			return findAndIndexPubs(idArray).catch((err) => console.error('Sync error', err));
 		},
 		{ concurrency: concurrency },
@@ -58,7 +61,7 @@ const syncPages = async () => {
 	return Promise.map(
 		pageBatches,
 		(idArray, index) => {
-			console.log(`Syncing Page batch ${index + 1} of ${pageBatches.length}`);
+			console.log(`syncing Page batch ${index + 1} of ${pageBatches.length}`);
 			return findAndIndexPages(idArray);
 		},
 		{ concurrency: concurrency },

@@ -42,6 +42,10 @@ export const findRank = (ranks, index, count = 1) => {
 	return result;
 };
 
+export const generateRanks = (count) => {
+	return mudder.base36.mudder(BOTTOM, TOP, count);
+};
+
 export const findRankInRankedList = (rankedList, index) =>
 	findRank(
 		sortByRank(rankedList).map((s) => s.rank),

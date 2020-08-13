@@ -27,6 +27,7 @@ const commandFiles = {
 	migration2020_06_24: './migration2020_06_24.js',
 	migrationsDeprecated: './migrationsDeprecated.js',
 	rerunExport: './rerunExport.js',
+	rerankCollections: './rerankCollections.js',
 	searchSync: './searchSync.js',
 	switchBranchOrders: './switchBranchOrders.js',
 	syncDbSchema: './syncDbSchema.js',

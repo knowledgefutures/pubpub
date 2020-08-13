@@ -6,7 +6,7 @@ export default (sequelize, dataTypes) => {
 			pubId: { type: dataTypes.UUID, allowNull: false },
 			collectionId: { type: dataTypes.UUID, allowNull: false },
 			contextHint: { type: dataTypes.TEXT },
-			rank: { type: dataTypes.TEXT },
+			rank: { type: dataTypes.TEXT, allowNull: false },
 			isPrimary: { type: dataTypes.BOOLEAN, defaultValue: false, allowNull: false },
 		},
 		{

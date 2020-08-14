@@ -9,6 +9,10 @@ const createChannel = async () => {
 	const connection = await amqplib.connect(process.env.CLOUDAMQP_URL);
 	const channel = await connection.createConfirmChannel();
 	await channel.assertQueue(taskQueueName, { durable: true, maxPriority: TaskPriority.Highest });
+	channel.on('close', (err) => {
+		console.error('Worker channel closed:', err);
+		openChannelPromise = null;
+	});
 	return channel;
 };
 

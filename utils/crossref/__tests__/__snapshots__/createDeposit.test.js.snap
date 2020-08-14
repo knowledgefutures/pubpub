@@ -50,7 +50,6 @@ Object {
           },
           "journal_metadata": Object {
             "@language": "en",
-            "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
               "resource": Object {
@@ -485,7 +484,6 @@ Object {
           },
           "journal_metadata": Object {
             "@language": "en",
-            "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
               "resource": Object {
@@ -864,7 +862,6 @@ Object {
           },
           "journal_metadata": Object {
             "@language": "en",
-            "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
               "resource": Object {
@@ -960,7 +957,6 @@ Object {
           },
           "journal_metadata": Object {
             "@language": "en",
-            "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
               "resource": Object {
@@ -1055,7 +1051,6 @@ Object {
           },
           "journal_metadata": Object {
             "@language": "en",
-            "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
               "resource": Object {
@@ -1147,7 +1142,6 @@ Object {
           },
           "journal_metadata": Object {
             "@language": "en",
-            "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
               "resource": Object {
@@ -1240,7 +1234,6 @@ Object {
           },
           "journal_metadata": Object {
             "@language": "en",
-            "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
               "resource": Object {
@@ -1481,7 +1474,6 @@ Object {
           },
           "journal_metadata": Object {
             "@language": "en",
-            "abbrev_title": "PubPub Dev",
             "doi_data": Object {
               "doi": "10.21428/eea8ec7d",
               "resource": Object {

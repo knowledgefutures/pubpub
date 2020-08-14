@@ -5,7 +5,6 @@ export default ({ title, issn, language, children, doi, timestamp, url, contentV
 		journal_metadata: {
 			'@language': language,
 			full_title: title,
-			abbrev_title: title,
 			...(issn ? { '@media_type': 'electronic', '#text': issn } : {}),
 			...doiData(doi, timestamp, url, contentVersion),
 		},

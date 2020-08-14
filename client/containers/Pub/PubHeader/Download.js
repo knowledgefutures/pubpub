@@ -86,18 +86,22 @@ const Download = (props) => {
 				historyKey: latestKey,
 				accessHash: locationData.query.access,
 			}),
-		}).then(({ taskId, url }) => {
-			if (url) {
-				downloadOrShowButton(url);
-			} else if (taskId) {
-				pingTask(taskId, 1500)
-					.then(({ url: laterUrl }) => downloadOrShowButton(laterUrl))
-					.catch(() => {
-						setIsError(true);
-						setIsLoading(false);
-					});
-			}
-		});
+		})
+			.then(({ taskId, url }) => {
+				if (url) {
+					downloadOrShowButton(url);
+				}
+				if (taskId) {
+					return pingTask(taskId, 1500).then(({ url: laterUrl }) =>
+						downloadOrShowButton(laterUrl),
+					);
+				}
+				return null;
+			})
+			.catch(() => {
+				setIsError(true);
+				setIsLoading(false);
+			});
 	}, [
 		isLoading,
 		selectedType,

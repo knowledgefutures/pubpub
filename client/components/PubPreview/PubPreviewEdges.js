@@ -16,7 +16,7 @@ const pubEdgeShape = PropTypes.shape({
 	externalPublication: PropTypes.object,
 	pub: referencedPubShape,
 	pubId: PropTypes.string,
-	relationType: PropTypes.bool,
+	relationType: PropTypes.string,
 	targetPub: referencedPubShape,
 	targetPubId: PropTypes.string,
 });

@@ -9,6 +9,8 @@ assignees: ''
 
 _Before filing your enhancement, please search existing issues to make sure a similar one doesn't already exist. If one does, please leave a comment or reaction in support of the issue rather than creating a new one._
 
+_To fill out the request, please leave the below headers (**) in tact, and fill out each section. If a section isn't applicable, leave it blank or write n/a under it. Please do not delete any template sections._
+
 **What's your enhancement request?**
 
 **What would this enhancement help you accomplish?**

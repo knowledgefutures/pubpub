@@ -2,7 +2,7 @@
  * Used to defer the rendering of expensive components while user is typing into a pub. This reduces
  * the amount of paint time after a keypress, which lends to a more responsive editing experience :)
  */
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 export const PubSuspendWhileTypingContext = React.createContext({
@@ -11,24 +11,29 @@ export const PubSuspendWhileTypingContext = React.createContext({
 });
 
 export const PubSuspendWhileTypingProvider = (props) => {
-	const [lastInputTime, setLastInputTime] = useState(null);
-	const getTimeRemainingtoUpdate = (delay, currentTime) => {
+	const lastInputTime = useRef(null);
+
+	const getTimeRemainingToUpdate = useCallback((delay, currentTime) => {
 		// Return 0 if a <PubSuspendWhileTyping> with delay={delay} should re-render at currentTime,
 		// otherwise provide a time when we expect the component can re-render, assuming there are
 		// no more keypresses.
-		if (!lastInputTime) {
+		if (!lastInputTime.current) {
 			return 0;
 		}
-		const timeSinceLastInput = currentTime - lastInputTime;
+		const timeSinceLastInput = currentTime - lastInputTime.current;
 		return Math.max(0, delay - timeSinceLastInput);
-	};
+	}, []);
+
+	const markLastInput = useCallback(() => {
+		lastInputTime.current = Date.now();
+	}, []);
+
+	const value = useMemo(() => {
+		return { markLastInput: markLastInput, getTimeRemainingToUpdate: getTimeRemainingToUpdate };
+	}, [getTimeRemainingToUpdate, markLastInput]);
+
 	return (
-		<PubSuspendWhileTypingContext.Provider
-			value={{
-				markLastInput: () => setLastInputTime(Date.now()),
-				getTimeRemainingToUpdate: getTimeRemainingtoUpdate,
-			}}
-		>
+		<PubSuspendWhileTypingContext.Provider value={value}>
 			{props.children}
 		</PubSuspendWhileTypingContext.Provider>
 	);
@@ -46,11 +51,11 @@ export const PubSuspendWhileTyping = (props) => {
 	const timeRemainingToUpdate = getTimeRemainingToUpdate(delay, Date.now());
 	const shouldUpdate = timeRemainingToUpdate === 0;
 
-	const maybeClearTimeout = () => {
+	const maybeClearTimeout = useCallback(() => {
 		if (checkAgainRef.current) {
 			clearTimeout(checkAgainRef.current);
 		}
-	};
+	}, []);
 
 	// Every render, if we should not update this render, then we set a timeout to check after
 	// the time specified by getTimeRemainingToUpdate.
@@ -64,7 +69,7 @@ export const PubSuspendWhileTyping = (props) => {
 				timeRemainingToUpdate,
 			);
 		}
-	}, [setForceUpdate, shouldUpdate, timeRemainingToUpdate]);
+	}, [maybeClearTimeout, setForceUpdate, shouldUpdate, timeRemainingToUpdate]);
 
 	// Cleanup any timeout when unmounting
 	useEffect(() => maybeClearTimeout);

@@ -89,6 +89,10 @@ const renderPublicationDate = (publication_date, title = 'Publication Date') => 
 };
 
 const renderContributors = (contributors) => {
+	if (!contributors) {
+		return null;
+	}
+
 	const contributorNames = contributors.person_name.map(
 		(contributor) =>
 			`${contributor.given_name} ${contributor.surname} (${contributor['@contributor_role']})`,

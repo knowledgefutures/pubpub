@@ -1,5 +1,6 @@
-import { Pub, PubAttribution, CollectionPub, Branch, Member } from 'server/models';
+import { Pub, PubAttribution, Branch, Member } from 'server/models';
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
+import { createCollectionPub } from 'server/collectionPub/queries';
 import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
 
@@ -54,13 +55,8 @@ export const createPub = async (
 		pubId: newPub.id,
 	});
 
-	const createCollectionPubs = CollectionPub.bulkCreate(
-		defaultCollectionIds.map((collectionId) => {
-			return {
-				pubId: newPub.id,
-				collectionId: collectionId,
-			};
-		}),
+	const createCollectionPubs = defaultCollectionIds.map((collectionId) =>
+		createCollectionPub({ collectionId: collectionId, pubId: newPub.id }),
 	);
 
 	await Promise.all(

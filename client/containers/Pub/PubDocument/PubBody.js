@@ -176,8 +176,9 @@ const PubBody = (props) => {
 				}}
 				nodeOptions={{
 					image: {
-						onResizeUrl: (url) => {
-							return getResizedUrl(url, 'fit-in', '800x0');
+						onResizeUrl: (url, align) => {
+							const width = align === 'breakout' ? 1920 : 800;
+							return getResizedUrl(url, 'fit-in', `${width}x0`);
 						},
 					},
 					discussion: {

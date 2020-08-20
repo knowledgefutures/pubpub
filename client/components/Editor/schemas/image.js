@@ -38,7 +38,7 @@ export default {
 				[
 					'img',
 					{
-						src: resizeFunc(node.attrs.url),
+						src: resizeFunc(node.attrs.url, node.attrs.align),
 						alt: node.attrs.caption,
 					},
 				],

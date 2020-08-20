@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getPageSearchData produces the expected data for a Page 1`] = `
+Array [
+  Object {
+    "avatar": "page.png",
+    "communityDomain": "tc1.pubpub.org",
+    "communityTitle": "Test Community",
+    "description": "You can put text or Pubs on me",
+    "slug": "test-page",
+    "title": "I am a test page",
+  },
+]
+`;
+
+exports[`getPubSearchData produces the expected data for a long Pub 1`] = `
+Array [
+  Object {
+    "avatar": "long.png",
+    "branchIsPublic": true,
+    "branchShortId": 1,
+    "byline": "by First Author, Second Author, and Test Testington",
+    "communityDomain": "tc1.pubpub.org",
+    "communityTitle": "Test Community",
+    "description": "I am very lengthy",
+    "slug": "a-long-pub",
+    "title": "A Long Pub",
+  },
+  Object {
+    "avatar": "long.png",
+    "branchIsPublic": false,
+    "branchShortId": 2,
+    "byline": "by First Author, Second Author, and Test Testington",
+    "communityDomain": "tc1.pubpub.org",
+    "communityTitle": "Test Community",
+    "description": "I am very lengthy",
+    "slug": "a-long-pub",
+    "title": "A Long Pub",
+  },
+]
+`;
+
+exports[`getPubSearchData produces the expected data for a short Pub 1`] = `
+Array [
+  Object {
+    "avatar": "short.png",
+    "branchIsPublic": true,
+    "branchShortId": 1,
+    "byline": "by Test Testington",
+    "communityDomain": "tc1.pubpub.org",
+    "communityTitle": "Test Community",
+    "description": "I am very brief",
+    "slug": "a-short-pub",
+    "title": "A Short Pub",
+  },
+  Object {
+    "avatar": "short.png",
+    "branchIsPublic": false,
+    "branchShortId": 2,
+    "byline": "by Test Testington",
+    "communityDomain": "tc1.pubpub.org",
+    "communityTitle": "Test Community",
+    "description": "I am very brief",
+    "slug": "a-short-pub",
+    "title": "A Short Pub",
+  },
+]
+`;

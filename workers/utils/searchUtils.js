@@ -73,6 +73,8 @@ export const getPubSearchData = async (pubIds) => {
 				model: Branch,
 				as: 'branches',
 				required: true,
+				separate: true,
+				order: [['shortId', 'ASC']],
 			},
 		],
 	});

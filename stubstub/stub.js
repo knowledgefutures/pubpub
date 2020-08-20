@@ -26,6 +26,11 @@ const getStubEntries = (functions) => {
 };
 
 export const stubModule = (module, functions) => {
+	if (typeof module === 'string') {
+		// lol,
+		// eslint-disable-next-line
+		module = require(module);
+	}
 	const stubEntries = getStubEntries(functions);
 	const stubs = stubManyFunctions(module, stubEntries);
 	return {
@@ -35,11 +40,6 @@ export const stubModule = (module, functions) => {
 };
 
 export const stubOut = (module, functions, before = beforeAll, after = afterAll) => {
-	if (typeof module === 'string') {
-		// lol,
-		// eslint-disable-next-line
-		module = require(module);
-	}
 	let restore;
 	before(() => {
 		restore = stubModule(module, functions).restore;

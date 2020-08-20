@@ -50,3 +50,5 @@ export const bestPubUrl = ({ pubData, communityData }, options = {}) => {
 };
 
 export const doiUrl = (doi) => `https://doi.org/${doi}`;
+
+export const pageUrl = (community, page) => `${communityUrl(community)}/${page.slug}`;

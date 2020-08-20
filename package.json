@@ -186,6 +186,7 @@
 		"sass-loader": "^7.1.0",
 		"sequelize": "^5.12.2",
 		"sinon": "^7.3.2",
+		"sitemap": "^6.2.0",
 		"slowdance": "0.0.2",
 		"stickybits": "^3.6.5",
 		"stopword": "^0.2.1",

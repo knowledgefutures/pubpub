@@ -36,4 +36,6 @@ require('./passwordReset'); // Route: ['/password-reset', '/password-reset/:rese
 require('./userCreate'); // Route: '/user/create/:hash'
 require('./user'); // Route: ['/user/:slug', '/user/:slug/:mode']
 require('./page'); // Route: ['/', '/:slug']
+require('./sitemap'); // Route: /sitemap-*.xml
+require('./robots'); // Route: /robots.txt
 require('./noMatch'); // Route: '/*'

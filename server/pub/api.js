@@ -1,74 +1,66 @@
-import app from 'server/server';
+import app, { wrap } from 'server/server';
+import { ForbiddenError } from 'server/utils/errors';
 
-import { getPermissions } from './permissions';
+import { canCreatePub, getUpdatablePubFields, canDestroyPub } from './permissions';
 import { createPub, updatePub, destroyPub } from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
+	const { communityId, collectionId, pubId, licenseSlug } = req.body;
 	return {
 		userId: user.id,
-		communityId: req.body.communityId,
-		pubId: req.body.pubId || null,
-		licenseSlug: req.body.licenseSlug,
+		communityId: communityId,
+		collectionId: collectionId,
+		pubId: pubId,
+		licenseSlug: licenseSlug,
 	};
 };
 
-app.post('/api/pubs', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
-		.then((permissions) => {
-			const { communityId, defaultCollectionIds } = req.body;
-			if (!permissions.create) {
-				throw new Error('Not Authorized');
-			}
-			return createPub(
-				{ communityId: communityId, defaultCollectionIds: defaultCollectionIds },
-				requestIds.userId,
+app.post(
+	'/api/pubs',
+	wrap(async (req, res) => {
+		const { userId, collectionId, communityId } = getRequestIds(req);
+		const canCreate = await canCreatePub({
+			userId: userId,
+			collectionId: collectionId,
+			communityId: communityId,
+		});
+		if (canCreate) {
+			const newPub = await createPub(
+				{ communityId: communityId, collectionId: collectionId },
+				userId,
 			);
-		})
-		.then((newPub) => {
 			return res.status(201).json(newPub);
-		})
-		.catch((err) => {
-			console.error('Error in postPub: ', err);
-			const statusCode = err.message === 'Not Authorized' ? 401 : 500;
-			return res.status(statusCode).json(err.message);
-		});
-});
+		}
+		throw new ForbiddenError();
+	}),
+);
 
-app.put('/api/pubs', (req, res) => {
-	const requestIds = getRequestIds(req);
-	getPermissions(requestIds)
-		.then((permissions) => {
-			if (!permissions.update) {
-				throw new Error('Not Authorized');
-			}
-			return updatePub(req.body, permissions.update);
-		})
-		.then((updateResult) => {
-			return res.status(201).json(updateResult);
-		})
-		.catch((err) => {
-			console.error('Error in putPub: ', err);
-			const statusCode = err.message === 'Not Authorized' ? 401 : 500;
-			return res.status(statusCode).json(err.message);
+app.put(
+	'/api/pubs',
+	wrap(async (req, res) => {
+		const { userId, pubId, licenseSlug } = getRequestIds(req);
+		const updatableFields = await getUpdatablePubFields({
+			userId: userId,
+			pubId: pubId,
+			licenseSlug: licenseSlug,
 		});
-});
-
-app.delete('/api/pubs', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.destroy) {
-				throw new Error('Not Authorized');
-			}
-			return destroyPub(req.body);
-		})
-		.then(() => {
-			return res.status(201).json(req.body.pubId);
-		})
-		.catch((err) => {
-			console.error('Error in deletePub: ', err);
-			const statusCode = err.message === 'Not Authorized' ? 401 : 500;
-			return res.status(statusCode).json(err.message);
-		});
-});
+		if (updatableFields) {
+			const updateResult = await updatePub(req.body, updatableFields);
+			return res.status(200).json(updateResult);
+		}
+		throw new ForbiddenError();
+	}),
+);
+app.delete(
+	'/api/pubs',
+	wrap(async (req, res) => {
+		const { userId, pubId } = getRequestIds(req);
+		const canDestroy = await canDestroyPub({ userId: userId, pubId: pubId });
+		if (canDestroy) {
+			await destroyPub(pubId);
+			return res.status(200).json({});
+		}
+		throw new ForbiddenError();
+	}),
+);

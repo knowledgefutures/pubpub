@@ -81,7 +81,7 @@ app.delete(
 		});
 		if (canDestroyEdge) {
 			await destroyPubEdge(pubEdgeId);
-			return res.status(200).end();
+			return res.status(200).json({});
 		}
 		throw new ForbiddenError();
 	}),

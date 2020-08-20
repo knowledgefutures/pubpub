@@ -30,13 +30,8 @@ const Header = (props) => {
 	};
 	const handleCreatePub = () => {
 		setIsLoading(true);
-		return apiFetch('/api/pubs', {
-			method: 'POST',
-			body: JSON.stringify({
-				communityId: communityData.id,
-				defaultCollectionIds: communityData.defaultPubCollections || [],
-			}),
-		})
+		return apiFetch
+			.post('/api/pubs', { communityId: communityData.id })
 			.then((newPub) => {
 				window.location.href = `/pub/${newPub.slug}`;
 			})

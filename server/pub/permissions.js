@@ -1,47 +1,63 @@
 import { getScope } from 'server/utils/queryHelpers';
 
-export const getPermissions = async ({ userId, communityId, pubId, licenseSlug }) => {
-	if (!userId || !communityId) {
-		return {};
-	}
+const managerUpdatableFields = [
+	'avatar',
+	'citationInlineStyle',
+	'citationStyle',
+	'customPublishedAt',
+	'description',
+	'downloads',
+	'draftPermissions',
+	'headerBackgroundColor',
+	'headerBackgroundImage',
+	'headerStyle',
+	'labels',
+	'licenseSlug',
+	'slug',
+	'title',
+];
 
-	const scopeData = await getScope({
-		communityId: communityId,
-		pubId: pubId,
-		loginId: userId,
-	});
+const adminUpdatableFields = ['doi'];
 
-	const validLicenseSlug =
+const isValidLicenseSlugForCommunity = (community, licenseSlug) => {
+	return (
 		!licenseSlug ||
-		scopeData.elements.activeCommunity.premiumLicenseFlag ||
+		community.premiumLicenseFlag ||
 		licenseSlug === 'cc-by' ||
-		licenseSlug === 'cc-0';
-	const canManage = validLicenseSlug && scopeData.activePermissions.canManage;
-	const canAdmin = validLicenseSlug && scopeData.activePermissions.canAdmin;
-	const editProps = [
-		'slug',
-		'title',
-		'description',
-		'avatar',
-		'headerStyle',
-		'headerBackgroundColor',
-		'headerBackgroundImage',
-		'draftPermissions',
-		'labels',
-		'downloads',
-		'licenseSlug',
-		'citationStyle',
-		'citationInlineStyle',
-		'customPublishedAt',
-	];
+		licenseSlug === 'cc-0'
+	);
+};
 
-	if (canAdmin) {
-		editProps.push('doi');
+export const canCreatePub = async ({ userId, communityId, collectionId }) => {
+	const {
+		activePermissions: { canManage },
+	} = await getScope({ communityId: communityId, collectionId: collectionId, loginId: userId });
+	return canManage;
+};
+
+export const getUpdatablePubFields = async ({ userId, pubId, licenseSlug }) => {
+	const {
+		elements: { activeCommunity },
+		activePermissions: { canManage, canAdmin },
+	} = await getScope({ pubId: pubId, loginId: userId });
+
+	if (!isValidLicenseSlugForCommunity(activeCommunity, licenseSlug)) {
+		return null;
 	}
 
-	return {
-		create: true,
-		update: canManage ? editProps : false,
-		destroy: canManage,
-	};
+	if (canManage) {
+		if (canAdmin) {
+			return [...managerUpdatableFields, ...adminUpdatableFields];
+		}
+		return managerUpdatableFields;
+	}
+
+	return null;
+};
+
+export const canDestroyPub = async ({ userId, pubId }) => {
+	const {
+		activePermissions: { canManage },
+	} = await getScope({ pubId: pubId, loginId: userId });
+	return canManage;
 };

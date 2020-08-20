@@ -10,6 +10,7 @@ export const createCollection = ({
 	pageId = null,
 	doi = null,
 	isPublic = false,
+	id = null,
 }) => {
 	return Community.findOne({ where: { id: communityId } }).then((community) => {
 		const collection = {
@@ -23,6 +24,7 @@ export const createCollection = ({
 			pageId: pageId,
 			doi: doi,
 			kind: kind,
+			...(id && { id: id }),
 		};
 		const metadata = normalizeMetadataToKind({}, kind, {
 			community: community,

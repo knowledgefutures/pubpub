@@ -1,4 +1,4 @@
-import { Pub, PubAttribution, Branch, Member } from 'server/models';
+import { Collection, Community, Pub, PubAttribution, Branch, Member } from 'server/models';
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { slugifyString } from 'utils/strings';
@@ -6,13 +6,11 @@ import { generateHash } from 'utils/hashes';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export const createPub = async (
-	{ communityId, defaultCollectionIds = [], ...restArgs },
-	userId,
-) => {
+export const createPub = async ({ communityId, collectionId, ...restArgs }, userId) => {
 	const newPubSlug = generateHash(8);
 	const date = new Date();
 	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;
+	const { defaultPubCollections } = await Community.findOne({ where: { id: communityId } });
 
 	const newPub = await Pub.create({
 		title: `Untitled Pub on ${dateString}`,
@@ -55,8 +53,21 @@ export const createPub = async (
 		pubId: newPub.id,
 	});
 
-	const createCollectionPubs = defaultCollectionIds.map((collectionId) =>
-		createCollectionPub({ collectionId: collectionId, pubId: newPub.id }),
+	const createCollectionPubs = Promise.all(
+		[...(defaultPubCollections || []), collectionId]
+			.filter((x) => x)
+			.map(async (collectionIdToAdd) => {
+				// defaultPubCollections isn't constrained by the database in any way and might contain IDs
+				// of collections that don't exist, so unfortunately we have to do an existence check here.
+				const collection = await Collection.findOne({ where: { id: collectionIdToAdd } });
+				if (collection) {
+					return createCollectionPub({
+						collectionId: collectionIdToAdd,
+						pubId: newPub.id,
+					});
+				}
+				return null;
+			}),
 	);
 
 	await Promise.all(
@@ -93,11 +104,11 @@ export const updatePub = (inputValues, updatePermissions) => {
 	});
 };
 
-export const destroyPub = (inputValues) => {
+export const destroyPub = (pubId) => {
 	return Pub.destroy({
-		where: { id: inputValues.pubId },
+		where: { id: pubId },
 	}).then(() => {
-		deletePubSearchData(inputValues.pubId);
+		deletePubSearchData(pubId);
 		return true;
 	});
 };

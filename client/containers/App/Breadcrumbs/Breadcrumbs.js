@@ -37,13 +37,11 @@ const Breadcrumbs = () => {
 
 	const handleCreatePub = () => {
 		setNewPubIsLoading(true);
-		return apiFetch('/api/pubs', {
-			method: 'POST',
-			body: JSON.stringify({
+		return apiFetch
+			.post('/api/pubs', {
 				communityId: communityData.id,
-				defaultCollectionIds: activeCollection ? [activeCollection.id] : [],
-			}),
-		})
+				collectionId: activeCollection && activeCollection.id,
+			})
 			.then((newPub) => {
 				window.location.href = `/pub/${newPub.slug}`;
 			})

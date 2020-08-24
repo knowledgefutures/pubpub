@@ -8,6 +8,7 @@ import { getPlugins } from './plugins';
 import { collabDocPluginKey } from './plugins/collaborative';
 import { getChangeObject } from './plugins/onChange';
 import { renderStatic, buildSchema } from './utils';
+import nodeViews from './views';
 
 require('./styles/base.scss');
 
@@ -95,6 +96,7 @@ const Editor = (props) => {
 			{ mount: editorRef.current },
 			{
 				state: state,
+				nodeViews: nodeViews,
 				editable: (editorState) => {
 					const collaborativePluginState = collabDocPluginKey.getState(editorState) || {};
 					if (

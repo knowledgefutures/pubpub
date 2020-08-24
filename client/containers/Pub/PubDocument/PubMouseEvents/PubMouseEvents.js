@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { PubNoteContent } from 'components';
-import NotePopover from './NotePopover';
+
 import HeaderPopover from './HeaderPopover';
 
 const propTypes = {
-	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	locationData: PropTypes.object.isRequired,
 	historyData: PropTypes.object.isRequired,
@@ -14,7 +12,6 @@ const propTypes = {
 
 /* Specify the types of elems we want events for */
 const mouseElemTypes = [
-	{ key: 'note', querySelector: '.pub-body-component .footnote, .pub-body-component .citation' },
 	{
 		key: 'header',
 		querySelector: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map(
@@ -24,7 +21,7 @@ const mouseElemTypes = [
 ];
 
 const PubMouseEvents = (props) => {
-	const { pubData, collabData, historyData, mainContentRef, locationData } = props;
+	const { collabData, historyData, mainContentRef, locationData } = props;
 	const timeouts = useRef({});
 	const [hoverElems, hoverElemsDispatch] = useReducer((state, action) => {
 		return {
@@ -80,31 +77,8 @@ const PubMouseEvents = (props) => {
 			});
 		};
 	}, [mouseEventHandlers, collabData.editorChangeObject.isCollabLoaded, historyData.currentKey]);
-	const activeInlineFootnote =
-		hoverElems.note &&
-		hoverElems.note.getAttribute('data-node-type') === 'footnote' &&
-		pubData.footnotes[Number(hoverElems.note.getAttribute('data-count')) - 1];
-	const activeInlineCitation =
-		hoverElems.note &&
-		hoverElems.note.getAttribute('data-node-type') === 'citation' &&
-		pubData.citations[Number(hoverElems.note.getAttribute('data-count')) - 1];
-	const activeInlineData = activeInlineFootnote || activeInlineCitation || {};
 	return (
 		<div className="pub-mouse-events-component">
-			{hoverElems.note && (
-				<NotePopover
-					elem={hoverElems.note}
-					mainContentRef={mainContentRef}
-					timeouts={timeouts}
-					mouseLeave={mouseEventHandlers.note.leaveHandler}
-					content={
-						<PubNoteContent
-							structured={activeInlineData.html}
-							unstructured={activeInlineData.unstructuredValue}
-						/>
-					}
-				/>
-			)}
 			{hoverElems.header && (
 				<HeaderPopover
 					locationData={locationData}

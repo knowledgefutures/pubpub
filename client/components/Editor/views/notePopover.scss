@@ -1,0 +1,10 @@
+.note-popover-component {
+    color: black;
+    background: white;
+    font-size: 14px;
+    max-width: 350px;
+    padding: 10px;
+    p:last-child {
+        margin-bottom: 0;
+    }
+}

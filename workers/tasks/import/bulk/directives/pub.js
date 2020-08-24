@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import YAML from 'yaml';
 import tmp from 'tmp-promise';
+import filesize from 'filesize';
 import { Op } from 'sequelize';
 import { Node, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
@@ -31,6 +32,7 @@ const pubAttributesFromDirective = [
 	'customPublishedAt',
 	'description',
 	'doi',
+	'downloads',
 	'headerBackgroundColor',
 	'headerBackgroundImage',
 	'headerStyle',
@@ -93,17 +95,32 @@ const createPubAttributions = async (pub, proposedMetadata, directive) => {
 };
 
 const resolveDirectiveValue = async (value, context) => {
-	const { $sourceFile, $metadata } = value;
-	const { sourceFiles, rawMetadata } = context;
+	const { $fileSize, $sourceFile, $metadata } = value;
+	const { sourceFiles, rawMetadata, assetUrlForTmpPath } = context;
+	if ($fileSize) {
+		const pathLike = await resolveDirectiveValue($fileSize, context);
+		const sourceFile = sourceFiles.find(
+			(sf) => sf.clientPath && pathMatchesPattern(sf.clientPath, pathLike),
+		);
+		const stat = await fs.stat(sourceFile.tmpPath);
+		return filesize(stat.size);
+	}
 	if ($sourceFile) {
 		const pathLike = await resolveDirectiveValue($sourceFile, context);
 		if (pathLike) {
-			const sourceFile = sourceFiles.find((sf) =>
-				pathMatchesPattern(sf.clientPath, pathLike),
+			const sourceFile = sourceFiles.find(
+				(sf) => sf.clientPath && pathMatchesPattern(sf.clientPath, pathLike),
 			);
 			if (sourceFile) {
-				const assetKey = await uploadFileToAssetStore(sourceFile.tmpPath);
-				return getUrlForAssetKey(assetKey);
+				const { tmpPath } = sourceFile;
+				const existingAssetUrl = assetUrlForTmpPath[tmpPath];
+				if (existingAssetUrl) {
+					return existingAssetUrl;
+				}
+				const assetKey = await uploadFileToAssetStore(tmpPath);
+				const url = getUrlForAssetKey(assetKey);
+				assetUrlForTmpPath[tmpPath] = url;
+				return url;
 			}
 		}
 		console.warn(`warning: cannot find sourceFile matching ${pathLike}`);
@@ -113,12 +130,24 @@ const resolveDirectiveValue = async (value, context) => {
 		const key = await resolveDirectiveValue($metadata, context);
 		return rawMetadata[key];
 	}
+	if (Array.isArray(value)) {
+		return Promise.all(value.map((innerValue) => resolveDirectiveValue(innerValue, context)));
+	}
+	if (value && typeof value === 'object') {
+		const res = {};
+		await Promise.all(
+			Object.entries(value).map(async ([key, innerValue]) => {
+				res[key] = await resolveDirectiveValue(innerValue, context);
+			}),
+		);
+		return res;
+	}
 	return value;
 };
 
 const resolveDirectiveValues = async (directive, sourceFiles, rawMetadata) => {
 	const resolvedDirective = {};
-	const context = { sourceFiles: sourceFiles, rawMetadata: rawMetadata };
+	const context = { sourceFiles: sourceFiles, rawMetadata: rawMetadata, assetUrlForTmpPath: {} };
 	await Promise.all(
 		Object.entries(directive).map(async ([key, value]) => {
 			const resolvedValue = await resolveDirectiveValue(value, context);
@@ -360,6 +389,13 @@ const getImportableFiles = async (directive, targetPath) => {
 	return sourceFilesWithPreambles;
 };
 
+const addFileNodeToDocument = (document, fileNodeAttrs) => {
+	return {
+		...document,
+		content: [...document.content, { type: 'file', attrs: fileNodeAttrs }],
+	};
+};
+
 const writeDocumentToPubDraft = async (pubId, document) => {
 	const draftBranch = await Branch.findOne({ where: { pubId: pubId, title: 'draft' } });
 	const branchRef = getBranchRef(pubId, draftBranch.id);
@@ -377,22 +413,29 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 	const { importerFlags = {} } = directive;
 	const sourceFiles = await getImportableFiles(directive, targetPath);
 	const tmpDir = await tmp.dir();
-	const { doc, warnings, proposedMetadata, rawMetadata } = await importFiles({
+	const importResult = await importFiles({
 		tmpDirPath: tmpDir.path,
 		sourceFiles: sourceFiles,
 		importerFlags: importerFlags,
 		provideRawMetadata: true,
 	});
+	const { warnings, proposedMetadata, rawMetadata } = importResult;
+	let { doc } = importResult;
 
 	const resolvedDirective = await resolveDirectiveValues(directive, sourceFiles, rawMetadata);
+	const { inlineFile } = resolvedDirective;
 
 	const pub = await createPub({
 		communityId: community.id,
 		directive: resolvedDirective,
 		proposedMetadata: proposedMetadata,
 	});
-
 	await createPubAttributions(pub, proposedMetadata, resolvedDirective);
+
+	if (inlineFile) {
+		doc = addFileNodeToDocument(doc, inlineFile);
+	}
+
 	await writeDocumentToPubDraft(pub.id, doc);
 
 	const createdTags = await createPubTags(resolvedDirective, pub.id, community.id);

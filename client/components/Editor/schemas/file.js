@@ -1,5 +1,16 @@
 import { renderHtmlChildren } from '../utils/render';
 
+const getExtension = (attrs) => {
+	const { fileName, url } = attrs;
+	if (url && url.includes('.')) {
+		return url.split('.').pop();
+	}
+	if (fileName && fileName.includes('.')) {
+		return fileName.split('.').pop();
+	}
+	return '';
+};
+
 export default {
 	file: {
 		atom: true,
@@ -27,7 +38,7 @@ export default {
 		],
 		toDOM: (node) => {
 			const attrs = node.attrs;
-			const extension = attrs.fileName ? attrs.fileName.split('.').pop() : '';
+			const extension = getExtension(attrs);
 			return [
 				'figure',
 				{

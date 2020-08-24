@@ -1,9 +1,11 @@
 import { getExportFormatDetails } from 'utils/export/formats';
+import { getBranchDoc } from 'server/utils/firebaseAdmin';
 
-import { createStaticHtml } from './html';
+import { renderStaticHtml } from './html';
 import { getPubMetadata } from './metadata';
+import { getNotesData } from './notes';
+import { callPaged } from './paged';
 import { callPandoc } from './pandoc';
-import { getProsemirrorPubData } from './prosemirror';
 import {
 	getExportById,
 	getTmpFileForExtension,
@@ -11,30 +13,21 @@ import {
 	writeToFile,
 	assignFileToExportById,
 } from './util';
-import { callPaged } from './paged';
 
 export const exportTask = async ({ exportId }, collectSubprocess) => {
 	const { pubId, branchId, format, historyKey } = await getExportById(exportId);
 	const { extension, pandocTarget, pagedTarget } = getExportFormatDetails(format);
 	const tmpFile = await getTmpFileForExtension(extension);
 	const pubMetadata = await getPubMetadata(pubId);
-	const { prosemirrorDoc, citations, footnotes } = await getProsemirrorPubData(
-		pubId,
-		branchId,
-		historyKey,
-		pubMetadata.citationStyle,
-	);
-	const staticHtml = await createStaticHtml(
-		{
-			prosemirrorDoc: prosemirrorDoc,
-			pubMetadata: pubMetadata,
-			citations: citations,
-			footnotes: footnotes,
-			citationInlineStyle: pubMetadata.citationInlineStyle,
-		},
-		pandocTarget,
-		pagedTarget,
-	);
+	const { doc: pubDoc } = await getBranchDoc(pubId, branchId, historyKey);
+	const notesData = await getNotesData(pubMetadata, pubDoc);
+	const staticHtml = await renderStaticHtml({
+		pubDoc: pubDoc,
+		notesData: notesData,
+		pubMetadata: pubMetadata,
+		targetPandoc: !!pandocTarget,
+		targetPaged: !!pagedTarget,
+	});
 	if (pandocTarget) {
 		await callPandoc({
 			staticHtml: staticHtml,

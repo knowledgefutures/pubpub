@@ -3,15 +3,16 @@ import path from 'path';
 import fs from 'fs';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { renderStatic, buildSchema } from 'components/Editor';
 
-import { SimpleNotesList } from 'components';
+import { renderStatic } from 'components/Editor';
+import { editorSchema } from 'server/utils/firebaseAdmin';
 import { getLicenseBySlug } from 'utils/licenses';
+
+import SimpleNotesList from './SimpleNotesList';
+import { digestCitation } from './util';
 
 const nonExportableNodeTypes = ['discussion'];
 const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/';
-const citationPrefix = 'cite';
-const footnotePrefix = 'fn';
 const bullet = ' • ';
 
 const createCss = () => {
@@ -75,20 +76,41 @@ const addAttrsToNodes = (newAttrs, matchNodeTypes, nodes) =>
 		return node;
 	});
 
-const addHrefsToNotes = (nodes) =>
-	addAttrsToNodes(
+const getCitationLinkage = (unstructuredValue, structuredValue) => {
+	const digest = digestCitation(unstructuredValue, structuredValue);
+	return {
+		inlineElementId: `citation-${digest}-inline`,
+		bottomElementId: `citation-${digest}-bottom`,
+	};
+};
+
+const getFootnoteLinkage = (index) => {
+	return {
+		inlineElementId: `fn-${index}-inline`,
+		bottomElementId: `fn-${index}-bottom`,
+	};
+};
+
+const addHrefsToNotes = (nodes) => {
+	let footnoteIndex = -1;
+	return addAttrsToNodes(
 		(node) => {
-			const { count } = node.attrs;
 			if (node.type === 'citation') {
+				const { inlineElementId, bottomElementId } = getCitationLinkage(
+					node.attrs.unstructuredValue,
+					node.attrs.value,
+				);
 				return {
-					href: `#${citationPrefix}-${count}`,
-					id: `${citationPrefix}-${count}-return`,
+					href: `#${bottomElementId}`,
+					id: inlineElementId,
 				};
 			}
 			if (node.type === 'footnote') {
+				footnoteIndex++;
+				const { inlineElementId, bottomElementId } = getFootnoteLinkage(footnoteIndex);
 				return {
-					href: `#${footnotePrefix}-${count}`,
-					id: `${footnotePrefix}-${count}-return`,
+					href: `#${bottomElementId}`,
+					id: inlineElementId,
 				};
 			}
 			return {};
@@ -96,6 +118,7 @@ const addHrefsToNotes = (nodes) =>
 		['citation', 'footnote'],
 		nodes,
 	);
+};
 
 const blankIframes = (nodes) =>
 	addAttrsToNodes(
@@ -237,35 +260,29 @@ const renderFrontMatterForHtml = ({
 	);
 };
 
-export const createStaticHtml = async (
-	{ prosemirrorDoc, pubMetadata, citations, footnotes, citationInlineStyle },
+export const renderStaticHtml = async ({
+	pubDoc,
+	pubMetadata,
 	targetPandoc,
 	targetPaged,
-) => {
+	notesData,
+}) => {
 	const { title } = pubMetadata;
-
+	const { footnotes, citations, citationManager } = notesData;
 	const renderableNodes = [
 		filterNonExportableNodes,
 		!targetPandoc && addHrefsToNotes,
 		targetPaged && blankIframes,
 	]
 		.filter((x) => x)
-		.reduce((nodes, fn) => fn(nodes), prosemirrorDoc.content);
+		.reduce((nodes, fn) => fn(nodes), pubDoc.content);
 
-	const docContent = renderStatic(
-		buildSchema(
-			{},
-			{},
-			{
-				citation: {
-					citationsRef: { current: citations },
-					citationInlineStyle: citationInlineStyle,
-				},
-			},
-		),
-		{ type: 'doc', content: renderableNodes },
-		{ isForPandoc: targetPandoc },
-	);
+	const docContent = renderStatic({
+		schema: editorSchema,
+		doc: { type: 'doc', content: renderableNodes },
+		context: { isForPandoc: targetPandoc },
+		citationManager: citationManager,
+	});
 
 	return ReactDOMServer.renderToStaticMarkup(
 		<html lang="en">
@@ -288,12 +305,14 @@ export const createStaticHtml = async (
 							<SimpleNotesList
 								title="Footnotes"
 								notes={footnotes}
-								prefix={footnotePrefix}
+								getLinkage={(_, index) => getFootnoteLinkage(index)}
 							/>
 							<SimpleNotesList
 								title="Citations"
 								notes={citations}
-								prefix={citationPrefix}
+								getLinkage={(note) =>
+									getCitationLinkage(note.unstructuredValue, note.structuredValue)
+								}
 							/>
 						</div>
 					</div>

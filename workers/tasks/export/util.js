@@ -1,6 +1,7 @@
 import fs from 'fs';
 import AWS from 'aws-sdk';
 import tmp from 'tmp-promise';
+import crypto from 'crypto';
 
 import { Export } from 'server/models';
 import { generateHash } from 'utils/hashes';
@@ -45,3 +46,11 @@ export const getExportById = (exportId) => Export.findOne({ where: { id: exportI
 
 export const assignFileToExportById = (exportId, fileUrl) =>
 	Export.update({ url: fileUrl }, { where: { id: exportId } });
+
+export const digestCitation = (unstructuredValue, structuredValue) =>
+	crypto
+		.createHash('md5')
+		.update(unstructuredValue)
+		.update(structuredValue)
+		.digest('base64')
+		.substring(0, 10);

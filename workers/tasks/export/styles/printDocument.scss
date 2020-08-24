@@ -36,6 +36,10 @@ https://gitlab.pagedmedia.org/tools/pagedjs-cli/issues/11 */
         }
         p:last-child {
             display: inline;
+            &:before {
+                display: inline;
+                content: ' ';
+            }
         }
         .return-link {
             font-size: 0.75em;

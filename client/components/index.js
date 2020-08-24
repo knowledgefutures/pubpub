@@ -57,7 +57,6 @@ export { default as ScopeDropdown } from './ScopeDropdown/ScopeDropdown';
 export { default as SettingsSection } from './SettingsSection/SettingsSection';
 export { default as SharingCard } from './SharingCard/SharingCard';
 export { default as SimpleEditor } from './SimpleEditor/SimpleEditor';
-export { default as SimpleNotesList } from './SimpleNotesList/SimpleNotesList';
 export { default as SkipLink } from './SkipLink/SkipLink';
 export { default as TabToShow } from './TabToShow/TabToShow';
 export { default as Thread } from './Thread/Thread';

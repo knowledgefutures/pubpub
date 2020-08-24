@@ -1,5 +1,5 @@
 export const getNotes = (doc) => {
-	const citationCounts = {}; /* counts is an object with items of the following form. { citationHtml: { count: citationCount, value: citationValue } } */
+	const citationCounts = {};
 	const footnoteItems = [];
 	const citationItems = [];
 

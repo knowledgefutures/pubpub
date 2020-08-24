@@ -1,9 +1,10 @@
-export const getCitationInlineLabel = (count, customLabel, citationInlineStyle, citationData) => {
+export const getCitationInlineLabel = (citationNode) => {
+	const { count, citation, customLabel } = citationNode.attrs;
 	if (customLabel) {
 		return customLabel;
 	}
-	if (citationData && citationData.inline && citationData.inline[citationInlineStyle]) {
-		return citationData.inline[citationInlineStyle];
+	if (citation && citation.inline) {
+		return citation.inline;
 	}
 	return `[${count}]`;
 };

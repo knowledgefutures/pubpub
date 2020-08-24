@@ -13,6 +13,8 @@
 import React from 'react';
 import css from 'css';
 import camelCaseCss from 'camelcase-css';
+import { Node } from 'prosemirror-model';
+import { getReactedDoc } from '@pubpub/prosemirror-reactive';
 
 const parseStyleToObject = (style) => {
 	try {
@@ -107,7 +109,7 @@ const normalizeAttrsForSpec = (attrs, spec) => {
 	if (spec.attrs) {
 		const keptAttrs = {};
 		Object.keys(attrs).forEach((key) => {
-			if (spec.attrs[key]) {
+			if (spec.attrs[key] || (spec.reactiveAttrs && spec.reactiveAttrs[key])) {
 				keptAttrs[key] = attrs[key];
 			}
 		});
@@ -136,8 +138,17 @@ const createOutputSpecFromNode = (node, schema, context) => {
 	return marks ? wrapOutputSpecInMarks(outputSpec, marks, schema) : outputSpec;
 };
 
-export const renderStatic = (schema, doc, context = {}) => {
-	return doc.content.map((node, index) => {
+export const getReactedDocFromJson = (doc, schema, citationManager) => {
+	const hydratedDoc = Node.fromJSON(schema, doc);
+	const reactedDoc = getReactedDoc(hydratedDoc, {
+		documentState: { citationManager: citationManager },
+	});
+	return reactedDoc.toJSON();
+};
+
+export const renderStatic = ({ schema, doc, reactedDoc, citationManager, context = {} }) => {
+	const finalDoc = reactedDoc || getReactedDocFromJson(doc, schema, citationManager);
+	return finalDoc.content.map((node, index) => {
 		const outputSpec = createOutputSpecFromNode(node, schema, context);
 		return createReactFromOutputSpec(outputSpec, index);
 	});

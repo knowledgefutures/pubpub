@@ -16,6 +16,8 @@ import {
 	toggleHeaderColumn,
 	toggleHeaderCell,
 } from 'prosemirror-tables';
+import { getReactedCopyOfNode } from '@pubpub/prosemirror-reactive';
+
 import { collabDocPluginKey } from './collaborative';
 import { domEventsPluginKey } from './domEvents';
 // import { collaborativePluginKey } from './plugins/collaborative';
@@ -535,12 +537,7 @@ const changeNode = (isNode, editorView) => {
 		return undefined;
 	}
 	return (nodeType, attrs, content) => {
-		const newNode = nodeType.create(
-			{
-				...attrs,
-			},
-			content,
-		);
+		const newNode = nodeType.create({ ...attrs }, content);
 		const start = editorView.state.selection.from;
 		const end = editorView.state.selection.to;
 		const transaction = editorView.state.tr.replaceRangeWith(start, end, newNode);
@@ -552,6 +549,12 @@ const changeNode = (isNode, editorView) => {
 		/* simply result in losing focus. */
 	};
 };
+
+const getSelectedNode = (editorState) => {
+	const node = editorState.selection.node;
+	return getReactedCopyOfNode(node, editorState) || node;
+};
+
 export const getChangeObject = (editorView) => {
 	const isNode = !!editorView.state.selection.node;
 	const collaborativePluginState = collabDocPluginKey.getState(editorView.state) || {};
@@ -580,7 +583,7 @@ export const getChangeObject = (editorView) => {
 		/* The text, prefix, and suffix of the current selection */
 		selectedText: getSelectedText(editorView),
 		/* If the active selection is of a NodeView, provide the selected node. */
-		selectedNode: isNode ? editorView.state.selection.node : undefined,
+		selectedNode: isNode ? getSelectedNode(editorView.state) : undefined,
 		/* If the active selection is of a NodeView, provide a function to update the selected node. */
 		/* The updateNode function expects an object of attrs as its sole input */
 		updateNode: updateAttrs(isNode, editorView),

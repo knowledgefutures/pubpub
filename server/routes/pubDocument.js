@@ -28,18 +28,18 @@ const renderPubDocument = (res, pubData, initialData) => {
 			initialData={initialData}
 			viewData={{ pubData: pubData }}
 			headerComponents={generateMetaComponents({
-				initialData: initialData,
-				title: pubData.title,
+				attributions: pubData.attributions,
+				collection: chooseCollectionForPub(pubData, initialData.locationData),
 				contextTitle: getPubPageContextTitle(pubData, initialData.communityData),
 				description: pubData.description,
-				image: pubData.avatar,
-				attributions: pubData.attributions,
-				publishedAt: getPubPublishedDate(pubData),
 				doi: pubData.doi,
-				collection: chooseCollectionForPub(pubData, initialData.locationData),
 				download: getPDFDownload(pubData),
+				image: pubData.avatar,
+				initialData: initialData,
+				notes: getGoogleScholarNotes(Object.values(pubData.initialStructuredCitations)),
+				publishedAt: getPubPublishedDate(pubData),
 				textAbstract: pubData.initialDoc ? getTextAbstract(pubData.initialDoc) : '',
-				notes: getGoogleScholarNotes(pubData.citations.concat(pubData.footnotes)),
+				title: pubData.title,
 				unlisted: !pubData.isRelease,
 			})}
 		/>,

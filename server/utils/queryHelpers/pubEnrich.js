@@ -1,9 +1,8 @@
 import { Op } from 'sequelize';
 
-import { jsonToNode, getNotes } from 'components/Editor';
+import { jsonToNode } from 'client/components/Editor/utils/doc';
 import { Branch, Doc, PubEdge } from 'server/models';
-import { generateCiteHtmls } from 'server/editor/queries';
-import { generateCitationHTML } from 'server/utils/citations';
+import { generateCitationHtml, getStructuredCitationsForPub } from 'server/utils/citations';
 import { getBranchDoc, getFirebaseToken, editorSchema } from 'server/utils/firebaseAdmin';
 
 import { sanitizePubEdge } from './sanitizePubEdge';
@@ -82,18 +81,14 @@ export const enrichPubFirebaseToken = async (pubData, initialData) => {
 };
 
 export const enrichPubCitations = async (pubData, initialData) => {
-	const { initialDoc, citationStyle } = pubData;
-	const { footnotes: footnotesRaw, citations: citationsRaw } = initialDoc
-		? getNotes(jsonToNode(initialDoc, editorSchema))
-		: { footnotes: [], citations: [] };
+	const [initialStructuredCitations, citationHtml] = await Promise.all([
+		getStructuredCitationsForPub(pubData, jsonToNode(pubData.initialDoc, editorSchema)),
+		generateCitationHtml(pubData, initialData.communityData),
+	]);
 
-	const footnotesData = await generateCiteHtmls(footnotesRaw, citationStyle);
-	const citationsData = await generateCiteHtmls(citationsRaw, citationStyle);
-	const citationHtml = await generateCitationHTML(pubData, initialData.communityData);
 	return {
 		...pubData,
-		footnotes: footnotesData,
-		citations: citationsData,
+		initialStructuredCitations: initialStructuredCitations,
 		citationData: citationHtml,
 	};
 };

@@ -6,6 +6,7 @@ export const getNotes = (doc) => {
 	doc.nodesBetween(0, doc.nodeSize - 2, (node) => {
 		if (node.type.name === 'footnote') {
 			footnoteItems.push({
+				id: node.attrs.id,
 				structuredValue: node.attrs.structuredValue,
 				unstructuredValue: node.attrs.value,
 			});
@@ -16,6 +17,7 @@ export const getNotes = (doc) => {
 			if (!existingCount) {
 				citationCounts[key] = true;
 				citationItems.push({
+					id: node.attrs.id,
 					structuredValue: node.attrs.value,
 					unstructuredValue: node.attrs.unstructuredValue,
 				});

@@ -42,6 +42,7 @@
         "object-curly-newline": 0,
         "prefer-destructuring": [2, { "object": false, "array": false }],
         "prettier/prettier": "error",
+        "no-underscore-dangle": 0,
         "no-plusplus": 0,
         "no-tabs": 0,
         "no-void": 0,

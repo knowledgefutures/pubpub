@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import { loginDataProps } from 'types/base';
 import { getRandomColor } from 'utils/colors';
 import { getPubPageTitle } from 'utils/pubPageTitle';
+import { CitationManager } from 'client/utils/citations/citationManager';
 import { initFirebase } from 'client/utils/firebaseClient';
 import { apiFetch } from 'client/utils/apiFetch';
 
@@ -100,8 +101,10 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 class PubSyncManager extends React.Component {
 	constructor(props) {
 		super(props);
-		const { historyData } = this.props.pubData;
+		const { pubData } = this.props;
+		const { historyData } = pubData;
 		const isViewingHistory = historyData.currentKey !== historyData.latestKey;
+
 		this.state = {
 			firebaseRootRef: undefined,
 			firebaseBranchRef: undefined,
@@ -109,7 +112,7 @@ class PubSyncManager extends React.Component {
 			collabData: {
 				editorChangeObject: {},
 				status: 'connecting',
-				localCollabUser: getLocalCollabUser(this.props.pubData, this.props.loginData),
+				localCollabUser: getLocalCollabUser(pubData, this.props.loginData),
 				remoteCollabUsers: [],
 			},
 			historyData: {
@@ -120,6 +123,11 @@ class PubSyncManager extends React.Component {
 				loadedIntoHistory: isViewingHistory,
 				historyDocKey: `history-${historyData.currentKey}`,
 			},
+			citationManager: new CitationManager(
+				pubData.citationStyle,
+				pubData.citationInlineStyle,
+				pubData.initialStructuredCitations,
+			),
 		};
 		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));
 		this.syncRemoteCollabUsers = this.syncRemoteCollabUsers.bind(this);
@@ -387,6 +395,7 @@ class PubSyncManager extends React.Component {
 			pubData: this.state.pubData,
 			collabData: this.state.collabData,
 			historyData: this.state.historyData,
+			citationManager: this.state.citationManager,
 			firebaseBranchRef: this.state.firebaseBranchRef,
 			updateLocalData: this.updateLocalData,
 			updatePubData: this.updatePubData,

@@ -10,14 +10,13 @@ import PubHeaderCollaborators from './PubHeaderCollaborators';
 require('./pubHeaderFormatting.scss');
 
 const propTypes = {
-	pubData: PropTypes.object.isRequired,
 	collabData: PropTypes.object.isRequired,
 	editorWrapperRef: PropTypes.any.isRequired,
 	disabled: PropTypes.bool.isRequired,
 };
 
 const PubHeaderFormatting = (props) => {
-	const { pubData, collabData, disabled } = props;
+	const { collabData, disabled } = props;
 	const { scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 
@@ -37,9 +36,6 @@ const PubHeaderFormatting = (props) => {
 				buttons={buttons.fullButtonSet}
 				editorChangeObject={props.collabData.editorChangeObject || {}}
 				popoverContainerRef={props.editorWrapperRef}
-				footnotes={pubData.footnotes}
-				citations={pubData.citations}
-				citationStyle={pubData.citationStyle}
 				isFullScreenWidth={true}
 			/>
 			<div className="right-content">

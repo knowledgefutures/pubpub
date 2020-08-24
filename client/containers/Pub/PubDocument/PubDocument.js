@@ -16,8 +16,9 @@ import PubFileImport from './PubFileImport';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubHistoricalNotice from './PubHistoricalNotice';
 import PubInlineMenu from './PubInlineMenu';
-import PubMouseEvents from './PubMouseEvents';
+// import PubMouseEvents from './PubMouseEvents';
 import PubMaintenanceNotice from './PubMaintenanceNotice';
+import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
 
 require('./pubDocument.scss');
 
@@ -78,7 +79,6 @@ const PubDocument = (props) => {
 		<div className="pub-document-component">
 			{!pubData.isReadOnly && (
 				<PubHeaderFormatting
-					pubData={pubData}
 					collabData={collabData}
 					editorWrapperRef={editorWrapperRef}
 					disabled={isViewingHistory}
@@ -135,21 +135,25 @@ const PubDocument = (props) => {
 					)}
 				</div>
 			</div>
-			<PubBottom
-				pubData={pubData}
-				collabData={collabData}
-				updateLocalData={updateLocalData}
-				sideContentRef={sideContentRef}
-				mainContentRef={mainContentRef}
-				showDiscussions={areDiscussionsShown}
-			/>
-			<PubMouseEvents
+			<PubSuspendWhileTyping delay={1000}>
+				{() => (
+					<PubBottom
+						pubData={pubData}
+						collabData={collabData}
+						updateLocalData={updateLocalData}
+						sideContentRef={sideContentRef}
+						mainContentRef={mainContentRef}
+						showDiscussions={areDiscussionsShown}
+					/>
+				)}
+			</PubSuspendWhileTyping>
+			{/* <PubMouseEvents
 				pubData={pubData}
 				collabData={collabData}
 				locationData={locationData}
 				historyData={historyData}
 				mainContentRef={mainContentRef}
-			/>
+			/> */}
 		</div>
 	);
 };

@@ -2,17 +2,13 @@ import katex from 'katex';
 import request from 'request-promise';
 
 import app from 'server/server';
-
-import { generateCiteHtmls } from './queries';
+import { getStructuredCitations } from 'server/utils/citations';
 
 app.post('/api/editor/citation-format', (req, res) => {
-	generateCiteHtmls(req.body.data, req.body.citationStyle)
-		.then((output) => {
-			return res.status(201).json(output);
-		})
-		.catch((err) => {
-			return res.status(500).json(err);
-		});
+	const { structuredValues, citationStyle, inlineStyle } = req.body;
+	return getStructuredCitations(structuredValues, citationStyle, inlineStyle)
+		.then((output) => res.status(200).json(output))
+		.catch((err) => res.status(500).json(err));
 });
 
 app.post('/api/editor/latex-render', (req, res) => {
@@ -21,7 +17,7 @@ app.post('/api/editor/latex-render', (req, res) => {
 			displayMode: req.body.isBlock,
 			throwOnError: false,
 		});
-		return res.status(201).json(renderedHTML);
+		return res.status(200).json(renderedHTML);
 	} catch (err) {
 		return res.status(201).json('<div class="pub-latex-error">Error rendering equation</div>');
 	}

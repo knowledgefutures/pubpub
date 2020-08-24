@@ -6,7 +6,7 @@ import { MenuButton, MenuItem } from 'components/Menu';
 
 const propTypes = {
 	customLabel: PropTypes.string.isRequired,
-	defaultLabel: PropTypes.func.isRequired,
+	defaultLabel: PropTypes.string.isRequired,
 	onUpdateCustomLabel: PropTypes.func.isRequired,
 };
 

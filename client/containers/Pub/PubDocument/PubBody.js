@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState, useEffect } from 'react';
+import React, { useRef, useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { useBeforeUnload } from 'react-use';
@@ -8,11 +8,11 @@ import TimeAgo from 'react-timeago';
 import { saveAs } from 'file-saver';
 import { debounce } from 'debounce';
 
-import Editor, { getJSON, getNotes, dispatchEmptyTransaction } from 'components/Editor';
+import Editor, { getJSON } from 'components/Editor';
 import { getResizedUrl } from 'utils/images';
-import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
+import { usePubContext } from '../pubHooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 import discussionSchema from './DiscussionAddon/discussionSchema';
 import Discussion from './PubDiscussions/Discussion';
@@ -51,22 +51,14 @@ const PubBody = (props) => {
 		editorWrapperRef,
 	} = props;
 	const { communityData } = usePageContext();
+	const { citationManager } = usePubContext();
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
-	const citationsRef = useRef(pubData.citations);
-
-	const memoizeNoteContent = (items) => {
-		return items.reduce((prev, curr) => {
-			return prev + curr.structuredValue + curr.unstructuredValue;
-		}, '');
-	};
-
-	const lastFootnotesMemo = useRef(memoizeNoteContent(pubData.footnotes));
-	const lastCitationsMemo = useRef(memoizeNoteContent(pubData.citations));
 	const [editorError, setEditorError] = useState(null);
 	const [editorErrorTime, setEditorErrorTime] = useState(null);
 	const [lastSavedTime, setLastSavedTime] = useState(null);
+
 	prevStatusRef.current = collabData.status;
 	useBeforeUnload(
 		(collabData.status === 'saving' || collabData.status === 'disconnected') && !editorError,
@@ -108,50 +100,6 @@ const PubBody = (props) => {
 		}
 	};
 
-	useEffect(() => {
-		const updateFootnotesAndCitations = (doc) => {
-			const { footnotes, citations } = getNotes(doc);
-			const footnotesKey = memoizeNoteContent(footnotes);
-			const citationsKey = memoizeNoteContent(citations);
-
-			if (footnotesKey !== lastFootnotesMemo.current) {
-				/* TODO: We should debounce these calls */
-				lastFootnotesMemo.current = footnotesKey;
-				return apiFetch('/api/editor/citation-format', {
-					method: 'POST',
-					body: JSON.stringify({ data: footnotes, citationStyle: pubData.citationStyle }),
-				})
-					.then((result) => {
-						updateLocalData('pub', { footnotes: result });
-					})
-					.catch((err) => {
-						console.error(err);
-						Sentry.captureException(err);
-					});
-			}
-			if (citationsKey !== lastCitationsMemo.current) {
-				lastCitationsMemo.current = citationsKey;
-				return apiFetch('/api/editor/citation-format', {
-					method: 'POST',
-					body: JSON.stringify({ data: citations, citationStyle: pubData.citationStyle }),
-				})
-					.then((result) => {
-						updateLocalData('pub', { citations: result });
-						citationsRef.current = result;
-						dispatchEmptyTransaction(collabData.editorChangeObject.view);
-					})
-					.catch((err) => {
-						console.error(err);
-						Sentry.captureException(err);
-					});
-			}
-			return null;
-		};
-		if (collabData.editorChangeObject && collabData.editorChangeObject.view) {
-			updateFootnotesAndCitations(collabData.editorChangeObject.view.state.doc);
-		}
-	}, [collabData.editorChangeObject, updateLocalData, pubData.citationStyle]);
-
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;
@@ -160,6 +108,7 @@ const PubBody = (props) => {
 	const loadCollaborativeOptions = !isViewingHistory && !pubData.isInMaintenanceMode;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;
+
 	return (
 		<main className="pub-body-component" ref={editorWrapperRef}>
 			<style>
@@ -192,11 +141,8 @@ const PubBody = (props) => {
 							delete embedDiscussions.current[embedId];
 						},
 					},
-					citation: {
-						citationsRef: citationsRef,
-						citationInlineStyle: pubData.citationInlineStyle,
-					},
 				}}
+				citationManager={citationManager}
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}
 				isReadOnly={isReadOnly}
@@ -237,8 +183,6 @@ const PubBody = (props) => {
 						: undefined
 				}
 				highlights={[]}
-				citationsRef={citationsRef}
-				citationInlineStyle={pubData.citationInlineStyle}
 			/>
 			{!!editorError && !shouldSuppressEditorErrors() && (
 				<Alert

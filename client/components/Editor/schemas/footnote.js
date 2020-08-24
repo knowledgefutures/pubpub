@@ -1,10 +1,19 @@
+import { counter } from './reactive/counter';
+import { structuredCitation } from './reactive/structuredCitation';
+
 export default {
 	footnote: {
 		atom: true,
+		reactive: true,
 		attrs: {
+			id: { default: null },
+			href: { default: null },
 			value: { default: '' },
 			structuredValue: { default: '' },
-			count: { default: 0 },
+		},
+		reactiveAttrs: {
+			count: counter('footnote'),
+			citation: structuredCitation('structuredValue'),
 		},
 		parseDOM: [
 			{
@@ -16,25 +25,23 @@ export default {
 					return {
 						value: node.getAttribute('data-value') || '',
 						structuredValue: node.getAttribute('data-structured-value') || '',
-						count: Number(node.getAttribute('data-count')) || 0,
 					};
 				},
 			},
 		],
 		toDOM: (node) => {
-			const { href, id } = node.attrs;
+			const { href, id, count, value, structuredValue } = node.attrs;
 			return [
 				href ? 'a' : 'span',
 				{
 					...(href && { href: href }),
 					...(id && { id: id }),
 					'data-node-type': 'footnote',
-					'data-value': node.attrs.value,
-					'date-structured-value': node.attrs.structuredValue,
-					'data-count': node.attrs.count,
+					'data-value': value,
+					'date-structured-value': structuredValue,
 					class: 'footnote',
 				},
-				String(node.attrs.count),
+				String(count),
 			];
 		},
 		inline: true,

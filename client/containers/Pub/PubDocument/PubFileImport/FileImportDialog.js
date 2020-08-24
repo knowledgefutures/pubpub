@@ -24,16 +24,12 @@ import { pingTask } from 'client/utils/pingTask';
 
 import { useFileManager } from './useFileManager';
 import { extensionFor } from './formats';
-import { importDocToEditor } from './importDocToEditor';
 import FileImportEntry from './FileImportEntry';
 import MetadataEditor from './MetadataEditor';
 
 require('./fileImportDialog.scss');
 
 const propTypes = {
-	editorChangeObject: PropTypes.shape({
-		view: PropTypes.shape({}),
-	}).isRequired,
 	updatePubData: PropTypes.func.isRequired,
 	isOpen: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
@@ -57,7 +53,7 @@ const getFingerprintOfImportedFiles = (currentFiles) =>
 		.sort((a, b) => a - b)
 		.join('___');
 
-const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, onClosed }) => {
+const FileImportDialog = ({ updatePubData, isOpen, onClose, onClosed }) => {
 	const { addFile, getFiles, deleteFileById, labelFileById } = useFileManager();
 	const currentFiles = getFiles();
 	const incompleteUploads = currentFiles.filter((file) => file.state !== 'complete');
@@ -95,7 +91,6 @@ const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, 
 		if (metadataUpdater) {
 			await metadataUpdater();
 		}
-		importDocToEditor(editorChangeObject.view, doc, updatePubData);
 		onClose();
 	};
 

@@ -21,13 +21,6 @@ const SearchableNoteSection = (props) => {
 	const numberedItems = items.map((item, index) => ({ ...item, number: index + 1 }));
 	const { communityData } = usePageContext();
 
-	const targetNoteElement = (fn) =>
-		// TODO(ian): find a principled way to extract viewNode from Editor even when it doesn't
-		// dispatch an editorChangeObject (like when it's been loaded into history.)
-		(viewNode || document.body).querySelector(
-			`*[data-node-type="${nodeType}"][data-count="${fn.number}"]`,
-		);
-
 	return (
 		<PubBottomSection
 			accentColor={communityData.accentColorDark}
@@ -38,7 +31,6 @@ const SearchableNoteSection = (props) => {
 			{({ searchTerm }) => (
 				<Notes
 					accentColor={communityData.accentColorDark}
-					targetNoteElement={targetNoteElement}
 					notes={numberedItems.filter(
 						(fn) =>
 							!searchTerm ||

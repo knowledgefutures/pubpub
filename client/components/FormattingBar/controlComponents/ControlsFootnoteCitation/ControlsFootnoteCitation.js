@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDebounce } from 'use-debounce';
 
-import { apiFetch } from 'client/utils/apiFetch';
 import { SimpleEditor, PubNoteContent } from 'components';
 import { getCitationInlineLabel } from 'components/Editor/utils/citation';
-import { usePubData } from 'containers/Pub/pubHooks';
+import { usePubContext } from 'containers/Pub/pubHooks';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import InlineLabelEditor from './InlineLabelEditor';
@@ -27,14 +26,13 @@ const propTypes = {
 				}),
 			}),
 			attrs: PropTypes.shape({
-				count: PropTypes.number.isRequired,
+				count: PropTypes.number,
 				unstructuredValue: PropTypes.string.isRequired,
 				value: PropTypes.string.isRequired,
 				html: PropTypes.string,
 			}),
 		}),
 	}).isRequired,
-	citationStyle: PropTypes.string.isRequired,
 };
 
 const unwrapPendingAttrs = (pendingAttrs, isFootnote) => {
@@ -68,36 +66,25 @@ const wrapUpdateAttrs = (updateAttrs, isFootnote) => {
 };
 
 const ControlsFootnoteCitation = (props) => {
-	const { editorChangeObject, onClose, pendingAttrs, citationStyle } = props;
+	const { editorChangeObject, onClose, pendingAttrs } = props;
 	const { selectedNode } = editorChangeObject;
-	const { count } = selectedNode.attrs;
-	const { citations = [] } = usePubData();
+	const { citationManager } = usePubContext();
 	const isFootnote = selectedNode.type.name === 'footnote';
-	const existingCitation = !isFootnote && citations[count - 1];
 	const { commitChanges, hasPendingChanges, updateAttrs: rawUpdateAttrs, attrs } = pendingAttrs;
 	const { structuredValue, unstructuredValue, customLabel } = unwrapPendingAttrs(
 		attrs,
 		isFootnote,
 	);
 	const updateAttrs = wrapUpdateAttrs(rawUpdateAttrs, isFootnote);
-	const [citation, setCitation] = useState(existingCitation);
+	const [citation, setCitation] = useState(citationManager.getSync(structuredValue));
 	const [debouncedValue] = useDebounce(structuredValue, 250);
 	const html = citation && citation.html;
 	const showPreview = html || unstructuredValue;
 
 	useEffect(() => {
-		apiFetch('/api/editor/citation-format', {
-			method: 'POST',
-			body: JSON.stringify({
-				data: [
-					{
-						structuredValue: debouncedValue,
-					},
-				],
-				citationStyle: citationStyle,
-			}),
-		}).then(([result]) => setCitation(result));
-	}, [debouncedValue, citationStyle]);
+		const unsubscribe = citationManager.subscribe(debouncedValue, setCitation);
+		return unsubscribe;
+	}, [debouncedValue, citationManager]);
 
 	const handleUpdate = () => {
 		commitChanges();
@@ -137,12 +124,10 @@ const ControlsFootnoteCitation = (props) => {
 			return null;
 		}
 
-		const defaultLabel = getCitationInlineLabel(
-			count,
-			null,
-			selectedNode.type.spec.defaultOptions.citationInlineStyle,
-			citation,
-		);
+		const defaultLabel = getCitationInlineLabel({
+			...selectedNode,
+			attrs: { ...selectedNode.attrs, citation: citation, customLabel: customLabel },
+		});
 
 		return (
 			<>

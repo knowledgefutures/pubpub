@@ -10,7 +10,7 @@
 	},
 	"main": "init.js",
 	"scripts": {
-		"api-dev": "NODE_PATH=./client:./ node init.js --watch ./server --watch ./utils --watch ./client",
+		"api-dev": "NODE_PATH=./client:./ node init.js --watch ./server --watch ./utils --watch ./client --watch ./node_modules/@pubpub",
 		"api-prod": "NODE_PATH=./client:./ node init.js",
 		"build-dev": "webpack --config ./client/webpack/webpackConfig.dev.js --watch",
 		"build-dev-once": "rm -rf ./dist && webpack --config ./client/webpack/webpackConfig.dev.js",
@@ -39,6 +39,7 @@
 		"@blueprintjs/icons": "^3.14.0",
 		"@blueprintjs/select": "^3.12.0",
 		"@pubpub/prosemirror-pandoc": "^0.6.1",
+		"@pubpub/prosemirror-reactive": "^0.1.0",
 		"@sentry/browser": "^5.5.0",
 		"@sentry/node": "^5.5.0",
 		"@storybook/addon-knobs": "^5.3.19",

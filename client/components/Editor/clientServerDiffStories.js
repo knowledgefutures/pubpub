@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { storiesOf } from '@storybook/react';
 import beautify from 'js-beautify';
@@ -15,11 +15,15 @@ import { renderStatic } from './utils/renderStatic';
 require('./clientServerDiffStories.scss');
 
 const ServerEditor = (props) => {
+	const rendered = useRef();
 	const schema = buildSchema();
 	const serverHtml = ReactDOMServer.renderToStaticMarkup(
-		renderStatic(schema, props.initialContent),
+		renderStatic({ schema: schema, doc: props.initialContent }),
 	);
-	props.onChange(serverHtml);
+	if (!rendered.current) {
+		rendered.current = true;
+		props.onChange(serverHtml);
+	}
 	/* eslint-disable-next-line react/no-danger */
 	return <div className="editor ProseMirror" dangerouslySetInnerHTML={{ __html: serverHtml }} />;
 };

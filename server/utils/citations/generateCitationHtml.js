@@ -34,7 +34,7 @@ const getCollectionLevelData = (primaryCollectionPub) => {
 	};
 };
 
-export const generateCitationHTML = async (pubData, communityData) => {
+export const generateCitationHtml = async (pubData, communityData) => {
 	// TODO: We need to set the updated times properly, which are likely stored in firebase.
 	const pubIssuedDate = getPubPublishedDate(pubData);
 	const pubLink = pubUrl(communityData, pubData);

@@ -26,12 +26,14 @@ const models = modelize`
             avatar: "long.png"
             PubAttribution {
                 isAuthor: false
+                order: 0.3
                 User {
                     slug: "test3"
                 }
             }
             PubAttribution {
                 isAuthor: true
+                order: 0.2
                 User {
                     firstName: "First"
                     lastName: "Author"
@@ -41,6 +43,7 @@ const models = modelize`
             }
             PubAttribution {
                 isAuthor: true
+                order: 0.1
                 User {
                     firstName: "First"
                     lastName: "Author"

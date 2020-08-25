@@ -171,13 +171,6 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 					? keys.map((k) => Number(k)).reduce((a, b) => Math.max(a, b), 0)
 					: mostRecentRemoteKey;
 
-				/* Update the prosemirror view with new doc */
-				/* TODO: I do not think we need this for any situations */
-				/* Delete when confirmed */
-				// const newState = view.state;
-				// newState.doc = Node.fromJSON(schema, props.initialContent);
-				// view.updateState(newState);
-
 				const trans = receiveTransaction(view.state, allSteps, allStepClientIds);
 				view.dispatch(trans);
 				onUpdateLatestKey(mostRecentRemoteKey);

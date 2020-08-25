@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { keydownHandler } from 'prosemirror-keymap';
+import { addTemporaryIdsToDoc } from '@pubpub/prosemirror-reactive';
 
 import { getPlugins } from './plugins';
 import { collabDocPluginKey } from './plugins/collaborative';
@@ -15,16 +16,20 @@ require('./styles/base.scss');
 const propTypes = {
 	citationManager: PropTypes.object,
 	/* Object of custom nodes. To remove default node, override. For example, { image: null, header: null } */
+	// eslint-disable-next-line react/no-unused-prop-types
 	customNodes: PropTypes.object,
+	// eslint-disable-next-line react/no-unused-prop-types
 	customMarks: PropTypes.object,
 	/* All customPlugins values should be a function, which is passed schema and props - and returns a Plugin */
 	customPlugins: PropTypes.object,
 	collaborativeOptions: PropTypes.object,
 	handleDoubleClick: PropTypes.func,
 	handleSingleClick: PropTypes.func,
+	// eslint-disable-next-line react/no-unused-prop-types
 	initialContent: PropTypes.object,
 	isReadOnly: PropTypes.bool,
 	/* An object with nodeName keys and values of objects of overriding options. For example: nodeOptions = { image: { linkToSrc: false } } */
+	// eslint-disable-next-line react/no-unused-prop-types
 	nodeOptions: PropTypes.object,
 	onChange: PropTypes.func,
 	onError: PropTypes.func,
@@ -51,40 +56,43 @@ const defaultProps = {
 	placeholder: '',
 };
 
-const StaticDoc = React.memo(({ schema, doc, citationManager }) =>
-	renderStatic({ schema: schema, doc: doc, citationManager: citationManager }),
-);
-
-StaticDoc.propTypes = {
-	citationManager: PropTypes.object,
-	schema: PropTypes.object.isRequired,
-	doc: PropTypes.shape({
-		type: PropTypes.string,
-		content: PropTypes.arrayOf(PropTypes.object),
-	}).isRequired,
-};
-
-StaticDoc.defaultProps = {
-	citationManager: null,
+const getInitialArguments = (props) => {
+	const {
+		citationManager,
+		customMarks,
+		customNodes,
+		initialContent,
+		isReadOnly,
+		nodeOptions,
+	} = props;
+	const schema = buildSchema(customNodes, customMarks, nodeOptions);
+	const hydratedDoc = schema.nodeFromJSON(initialContent);
+	const initialDoc = isReadOnly ? addTemporaryIdsToDoc(hydratedDoc) : hydratedDoc;
+	const staticContent = renderStatic({
+		schema: schema,
+		doc: props.initialContent,
+		citationManager: citationManager,
+	});
+	return { schema: schema, initialDoc: initialDoc, staticContent: staticContent };
 };
 
 const Editor = (props) => {
 	const editorRef = useRef();
-	const schema = useRef(null);
+	const initialArguments = useRef(null);
 
-	if (schema.current === null) {
-		schema.current = buildSchema(props.customNodes, props.customMarks, props.nodeOptions);
+	if (initialArguments.current === null) {
+		initialArguments.current = getInitialArguments(props);
 	}
 
 	useEffect(() => {
+		const { initialDoc, schema } = initialArguments.current;
 		const state = EditorState.create({
-			doc: schema.current.nodeFromJSON(props.initialContent),
-			schema: schema.current,
-			plugins: getPlugins(schema.current, {
+			doc: initialDoc,
+			schema: schema,
+			plugins: getPlugins(schema, {
 				citationManager: props.citationManager,
 				collaborativeOptions: props.collaborativeOptions,
 				customPlugins: props.customPlugins,
-				initialContent: props.initialContent,
 				isReadOnly: props.isReadOnly,
 				onChange: props.onChange,
 				onError: props.onError,
@@ -151,11 +159,7 @@ const Editor = (props) => {
 			ref={editorRef}
 			className={`editor ProseMirror ${props.isReadOnly ? 'read-only' : ''}`}
 		>
-			<StaticDoc
-				schema={schema.current}
-				doc={props.initialContent}
-				citationManager={props.citationManager}
-			/>
+			{initialArguments.current.staticContent}
 		</div>
 	);
 };

@@ -5,7 +5,7 @@ export const structuredCitation = (structuredAttr) => {
 		const { [structuredAttr]: value, customLabel } = node.attrs;
 		const { useEffect, useState, useDocumentState } = this;
 		const { citationManager } = useDocumentState();
-		const shouldDeriveCitation = citationManager && !customLabel;
+		const shouldDeriveCitation = !!citationManager;
 
 		const [citation, setCitation] = useState(
 			() => shouldDeriveCitation && citationManager.getSync(value),

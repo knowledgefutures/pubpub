@@ -39,7 +39,7 @@ class CitationManagerEntry {
 }
 
 export class CitationManager {
-	constructor(citationStyle, inlineStyle, initialEntries) {
+	constructor(citationStyle, inlineStyle, initialEntries = {}) {
 		this.citationStyle = citationStyle;
 		this.inlineStyle = inlineStyle;
 		this.entries = {};

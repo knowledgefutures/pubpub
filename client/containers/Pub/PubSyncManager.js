@@ -15,6 +15,7 @@ export const PubContext = React.createContext({
 	historyData: {},
 	firebaseBranchRef: null,
 	updateLocalData: null,
+	citationManager: new CitationManager(),
 });
 
 const propTypes = {

@@ -51,6 +51,7 @@
 		"autoprefixer": "^9.5.0",
 		"aws-sdk": "^2.444.0",
 		"babel-eslint": "^10.0.1",
+		"babel-jest": "^25.5.1",
 		"babel-loader": "^8.0.5",
 		"babel-plugin-macros": "^2.5.0",
 		"babel-plugin-require-context-hook": "^1.0.0",
@@ -110,7 +111,7 @@
 		"iframe-resizer-react": "^1.0.4",
 		"install": "^0.12.2",
 		"is-url": "^1.2.4",
-		"jest": "^24.5.0",
+		"jest": "^25.5.4",
 		"js-beautify": "^1.11.0",
 		"js-cookie": "^2.2.0",
 		"json-stable-stringify": "^1.0.1",
@@ -213,25 +214,5 @@
 	},
 	"engines": {
 		"node": "12.13.0"
-	},
-	"jest": {
-		"testEnvironment": "node",
-		"moduleDirectories": [
-			"node_modules",
-			"<rootDir>",
-			"<rootDir>/client"
-		],
-		"moduleNameMapper": {
-			"\\.[s]?css$": "<rootDir>/utils/storybook/styleMock.js"
-		},
-		"globalSetup": "<rootDir>/stubstub/global/setup.js",
-		"globalTeardown": "<rootDir>/stubstub/global/teardown.js",
-		"setupFiles": [
-			"<rootDir>/.jest/register-context.js",
-			"<rootDir>/.jest/setup-env.js"
-		],
-		"testPathIgnorePatterns": [
-			"<rootDir>/utils/crossref/__tests__/data"
-		]
 	}
 }

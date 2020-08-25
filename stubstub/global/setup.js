@@ -1,5 +1,9 @@
 /* eslint-disable no-console */
+import esm from 'esm';
+
 import { setupTestDatabase, startTestDatabaseServer, initTestDatabase } from '../testDatabase';
+
+const esmRequire = esm(module);
 
 export default async () => {
 	if (process.env.NODE_ENV !== 'test') {
@@ -11,7 +15,6 @@ export default async () => {
 		global.testDbServerProcess = await startTestDatabaseServer();
 		process.env.DATABASE_URL = await setupTestDatabase();
 	}
-	// eslint-disable-next-line global-require
-	const { sequelize } = require('esm')(module)('../../server/models.js');
+	const { sequelize } = esmRequire('../../server/models.js');
 	await sequelize.sync({ force: false });
 };

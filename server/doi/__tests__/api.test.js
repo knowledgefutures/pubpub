@@ -99,7 +99,7 @@ it('forbids issuing a DOI to a Pub without a release', async () => {
 		.expect(403);
 });
 
-it.only('lets community admins create a DOI for pubs in their community', async () => {
+it('lets community admins create a DOI for pubs in their community', async () => {
 	const { communityAdmin, community, pub } = models;
 	const expectedPubDoi = `10.21428/${community.id.slice(0, 8)}.${pub.id.slice(0, 8)}`;
 	const agent = await login(communityAdmin);
@@ -131,7 +131,7 @@ it('lets community admins preview a DOI for pubs in their community', async () =
 	} = await agent
 		.get('/api/doiPreview')
 		.query({ target: 'pub', pubId: pub.id, communityId: community.id })
-		.expect(201);
+		.expect(200);
 
 	expect(previewDois.pub).toEqual(expectedPubDoi);
 });
@@ -174,7 +174,7 @@ it('lets community admins preview a DOI for collections in their community', asy
 	} = await agent
 		.get('/api/doiPreview')
 		.query({ target: 'collection', collectionId: collection.id, communityId: community.id })
-		.expect(201);
+		.expect(200);
 
 	expect(previewDois.collection).toEqual(expectedCollectionDoi);
 });

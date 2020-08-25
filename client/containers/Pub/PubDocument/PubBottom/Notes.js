@@ -19,6 +19,15 @@ const propTypes = {
 	notes: PropTypes.arrayOf(notePropType).isRequired,
 };
 
+const scrollToNode = (node) => {
+	if (node) {
+		node.scrollIntoView();
+		const currentTop = document.body.scrollTop || document.documentElement.scrollTop;
+		document.body.scrollTop = currentTop - 75;
+		document.documentElement.scrollTop = currentTop - 75;
+	}
+};
+
 const findLastElementChild = (node) => {
 	let child = node;
 	// eslint-disable-next-line no-constant-condition
@@ -68,14 +77,20 @@ const Note = (props) => {
 				/>
 				{returnLinkTarget &&
 					ReactDOM.createPortal(
-						<a aria-label="Jump back to source" href={`#${note.id}`}>
+						<span
+							role="button"
+							aria-label="Jump back to source"
+							tabIndex="0"
+							style={{ cursor: 'pointer' }}
+							onClick={() => scrollToNode(document.getElementById(note.id))}
+						>
 							<Icon
 								className="jump-back-icon"
 								icon="return"
 								color={accentColor}
 								iconSize={10}
 							/>
-						</a>,
+						</span>,
 						returnLinkTarget,
 					)}
 			</div>

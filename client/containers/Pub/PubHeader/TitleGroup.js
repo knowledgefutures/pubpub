@@ -77,6 +77,7 @@ const TitleGroup = (props) => {
 					tagName="h3"
 					className="description pub-header-themed-secondary"
 					placeholder="Add a description for this Pub"
+					maxLength={280}
 				/>
 			)}
 			<PubByline

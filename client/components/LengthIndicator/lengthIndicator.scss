@@ -1,0 +1,11 @@
+@import '~@blueprintjs/core/src/common/_variables.scss';
+
+.length-indicator-component {
+	font-size: 16px;
+	color: #666;
+	display: block;
+
+	&.at-max-length {
+		color: $red3;
+	}
+}

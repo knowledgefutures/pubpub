@@ -25,6 +25,7 @@ export { default as ImageCropper } from './ImageCropper/ImageCropper';
 export { default as ImageUpload } from './ImageUpload/ImageUpload';
 export { default as InputField } from './InputField/InputField';
 export { default as LegalBanner } from './LegalBanner/LegalBanner';
+export { default as LengthIndicator } from './LengthIndicator/LengthIndicator';
 export { default as LicenseSelect } from './LicenseSelect/LicenseSelect';
 export { default as LinkedPageSelect } from './LinkedPageSelect/LinkedPageSelect';
 export { default as InheritedMembersBlock } from './Members/InheritedMembersBlock';

@@ -26,7 +26,12 @@ const getIdsTransactionForState = (editorState, transactions = []) => {
 	const possibleChangesForPastedNodes = {};
 	editorState.doc.descendants((node, pos) => {
 		const nodeTypeHasId = node.type.spec.attrs && node.type.spec.attrs.id;
-		if (node.attrs.id && node.type.name !== 'header') {
+
+		if (node.type.name === 'heading') {
+			return;
+		}
+
+		if (node.attrs.id) {
 			const hasSeenNodeId = seenIds.has(node.attrs.id);
 			if (inPasteRange(pos, transactions)) {
 				if (hasSeenNodeId) {

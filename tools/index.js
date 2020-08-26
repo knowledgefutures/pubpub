@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
 	require('server/config.js');
 }
 
-require('@babel/register');
+require('@babel/register')({ extensions: ['.js', '.jsx', '.ts', '.tsx'] });
 require('server/utils/serverModuleOverwrite');
 require('utils/environment').setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
 

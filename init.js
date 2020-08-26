@@ -3,7 +3,7 @@ const {
 	argv: { watch },
 } = require('yargs');
 const throng = require('throng');
-require('@babel/register');
+require('@babel/register')({ extensions: ['.js', '.jsx', '.ts', '.tsx'] });
 
 const watchables = watch && (Array.isArray(watch) ? watch : [watch]).filter((x) => x);
 

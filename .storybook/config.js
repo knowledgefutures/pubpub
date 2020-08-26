@@ -12,7 +12,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
 require('styles/base.scss');
 
 /* Require stories */
-const req = requireContext('../client', true, /Stories\.js$/);
+const req = requireContext('../client', true, /Stories\.tsx?$/);
 function loadStories() {
 	req.keys().forEach(req);
 }

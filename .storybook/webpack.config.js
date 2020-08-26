@@ -3,6 +3,8 @@ const { resolve } = require('path');
 const autoprefixer = require('autoprefixer');
 
 module.exports = ({ config }) => {
+	config.resolve.extensions.push('.ts', '.tsx');
+	config.module.rules[0].test = /\.(mjs|jsx?|tsx?)$/;
 	config.module.rules.push({
 		test: /\.scss$/,
 		use: [
@@ -13,19 +15,20 @@ module.exports = ({ config }) => {
 				options: { ident: 'postcss', plugins: [autoprefixer({})] },
 			},
 			{ loader: 'resolve-url-loader' },
-			{ loader: 'sass-loader',
+			{
+				loader: 'sass-loader',
 				options: {
 					sourceMap: true,
 					sourceMapContents: false,
-					includePaths: [resolve(__dirname, '../client')]
-				}
+					includePaths: [resolve(__dirname, '../client')],
+				},
 			}, // compiles Sass to CSS
 		],
 	});
 	config.module.rules.push({
 		test: /\.mjs$/,
 		include: /node_modules/,
-		type: "javascript/auto"
+		type: 'javascript/auto',
 	});
 	config.module.rules.push({
 		test: /\.(ttf|eot|svg|woff|woff2)$/,
@@ -42,7 +45,7 @@ module.exports = ({ config }) => {
 	config.resolve.alias['utils'] = resolve(__dirname, '../utils');
 	config.node = {
 		...config.node,
-		fs: "empty",
+		fs: 'empty',
 	};
 	return config;
 };

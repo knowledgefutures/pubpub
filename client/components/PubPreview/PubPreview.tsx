@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import dateFormat from 'dateformat';
 
@@ -91,7 +91,7 @@ const PubPreview = (props: Props) => {
 		/>
 	);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		const { current: contentEl } = contentRef;
 		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 		if (contentEl && contentEl.scrollHeight - contentEl.clientHeight > 0) {

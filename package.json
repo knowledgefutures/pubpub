@@ -199,6 +199,7 @@
 		"supertest-as-promised": "^4.0.2",
 		"supertest": "^4.0.2",
 		"terser-webpack-plugin": "^1.2.3",
+		"throng": "^4.0.0",
 		"tmp-promise": "^2.0.1",
 		"unidecode": "^0.1.8",
 		"use-debounce": "^3.3.0",

@@ -1,4 +1,11 @@
-export const getDashUrl = ({ collectionSlug, pubSlug, mode, subMode }) => {
+type GetDashUrlOptions = {
+	pubSlug?: string;
+	collectionSlug?: string;
+	mode?: string;
+	subMode?: string;
+};
+
+export const getDashUrl = ({ collectionSlug, pubSlug, mode, subMode }: GetDashUrlOptions) => {
 	let baseHref = '/dash';
 	if (collectionSlug) {
 		baseHref = `/dash/collection/${collectionSlug}`;
@@ -24,7 +31,7 @@ export const getDashUrl = ({ collectionSlug, pubSlug, mode, subMode }) => {
 
 export const groupPubs = ({ pubs, collections }) => {
 	const groupedCollections = {};
-	const basePubs = [];
+	const basePubs: unknown[] = [];
 	pubs.forEach((pub) => {
 		if (!pub.collectionPubs.length) {
 			basePubs.push(pub);

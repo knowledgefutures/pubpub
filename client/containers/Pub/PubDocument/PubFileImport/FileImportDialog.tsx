@@ -20,6 +20,7 @@ import { MenuConfigProvider } from 'components/Menu';
 import { extensionToPandocFormat, bibliographyFormats } from 'utils/import/formats';
 import { apiFetch } from 'client/utils/apiFetch';
 import { pingTask } from 'client/utils/pingTask';
+import { importDocJson, getNotes } from 'components/Editor'; 
 
 import { useFileManager } from './useFileManager';
 import { extensionFor } from './formats';
@@ -33,6 +34,7 @@ type Props = {
 	isOpen: boolean;
 	onClose: (...args: any[]) => any;
 	onClosed: (...args: any[]) => any;
+	editorChangeObject: any;
 };
 
 const importerFlagNames = ['extractEndnotes', 'keepStraightQuotes', 'skipJatsBibExtraction'];
@@ -52,7 +54,7 @@ const getFingerprintOfImportedFiles = (currentFiles) =>
 		.sort((a, b) => a - b)
 		.join('___');
 
-const FileImportDialog = ({ updatePubData, isOpen, onClose, onClosed }: Props) => {
+const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, onClosed }: Props) => {
 	const { addFile, getFiles, deleteFileById, labelFileById } = useFileManager();
 	const currentFiles = getFiles();
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'state' does not exist on type 'never'.
@@ -94,6 +96,7 @@ const FileImportDialog = ({ updatePubData, isOpen, onClose, onClosed }: Props) =
 			// @ts-expect-error ts-migrate(2721) FIXME: Cannot invoke an object which is possibly 'null'.
 			await metadataUpdater();
 		}
+		await importDocJson(editorChangeObject.view, doc);
 		onClose();
 	};
 

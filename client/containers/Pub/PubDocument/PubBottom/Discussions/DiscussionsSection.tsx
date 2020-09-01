@@ -124,7 +124,6 @@ const DiscussionsSection = (props: Props) => {
 	};
 
 	return (
-		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<PubBottomSection
 			accentColor={communityData.accentColorDark}
 			isSearchable={true}
@@ -136,8 +135,6 @@ const DiscussionsSection = (props: Props) => {
 			defaultExpanded={true}
 			searchPlaceholder="Search comments..."
 		>
-			{/* @ts-expect-error ts-migrate(2578) FIXME: Unused '@ts-expect-error' directive. */}
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Type '({ searchTerm, isSearching }: { searchTerm: ... Remove this comment to see the full error message */}
 			{({ searchTerm, isSearching }) => (
 				<PubDiscussions
 					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.

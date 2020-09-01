@@ -15,30 +15,30 @@ import { usePubContext } from '../../pubHooks';
 require('./metadataEditor.scss');
 
 type attributionShape = {
-    name?: string;
-    users?: {}[];
+	name?: string;
+	users?: {}[];
 };
 
 // @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
 const attributionShape: PropTypes.Requireable<attributionShape> = PropTypes.shape({
-    name: PropTypes.string,
-    users: PropTypes.arrayOf(PropTypes.shape({})),
+	name: PropTypes.string,
+	users: PropTypes.arrayOf(PropTypes.shape({})),
 });
 
 type MetadataEditorProps = {
-    onSetMetadataUpdater: (...args: any[]) => any;
-    proposedMetadata: {
-        attributions?: attributionShape[];
-    };
+	onSetMetadataUpdater: (...args: any[]) => any;
+	proposedMetadata: {
+		attributions?: attributionShape[];
+	};
 };
 
 type ProposedAttributionProps = {
-    attribution: attributionShape;
-    onUpdateAttribution: (...args: any[]) => any;
+	attribution: attributionShape;
+	onUpdateAttribution: (...args: any[]) => any;
 };
 
 const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttributionProps) => {
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'matchedUser' does not exist on type 'att... Remove this comment to see the full error message
+	// @ts-expect-error ts-migrate(2339) FIXME: Property 'matchedUser' does not exist on type 'att... Remove this comment to see the full error message
 	const { name, users, matchedUser, ignored } = attribution;
 
 	const handleToggleIgnored = () => {
@@ -66,7 +66,7 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttri
 			<MenuButton
 				aria-label="Match to PubPub user"
 				buttonProps={{
-// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 					minimal: true,
 					small: true,
 					rightIcon: 'chevron-down',
@@ -75,7 +75,7 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttri
 							{users.slice(0, 3).map((user) => (
 								<Avatar
 									width={20}
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'avatar' does not exist on type '{}'.
+									// @ts-expect-error ts-migrate(2339) FIXME: Property 'avatar' does not exist on type '{}'.
 									avatar={user.avatar}
 									borderColor="white"
 									doesOverlap={true}
@@ -84,17 +84,17 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttri
 						</span>
 					),
 				}}
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
 				buttonContent={`${users.length} matching ${users.length === 1 ? 'user' : 'users'}`}
 				placement="bottom-end"
 			>
 				{users.map((user) => (
 					<MenuItem
-// @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 						text={user.fullName}
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'avatar' does not exist on type '{}'.
+						// @ts-expect-error ts-migrate(2339) FIXME: Property 'avatar' does not exist on type '{}'.
 						icon={<Avatar width={20} avatar={user.avatar} initials={user.initials} />}
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
+						// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
 						key={user.id}
 						onClick={() => onUpdateAttribution({ matchedUser: user })}
 					/>
@@ -150,7 +150,7 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 	const { onSetMetadataUpdater, proposedMetadata } = props;
 	const [metadata, setMetadata] = useState(proposedMetadata);
 	const { communityData } = usePageContext();
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'updatePubData' does not exist on type '{... Remove this comment to see the full error message
+	// @ts-expect-error ts-migrate(2339) FIXME: Property 'updatePubData' does not exist on type '{... Remove this comment to see the full error message
 	const { pubData, updatePubData } = usePubContext();
 	const [ignoredFields, setIgnoredFields] = useState({});
 	const { attributions, ...pubFields } = metadata;
@@ -169,9 +169,9 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 				}
 			});
 			if (Object.keys(updatedPubData).length > 0) {
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'put' does not exist on type '(path: any,... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2339) FIXME: Property 'put' does not exist on type '(path: any,... Remove this comment to see the full error message
 				await apiFetch.put('/api/pubs', {
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
+					// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
 					pubId: pubData.id,
 					communityId: communityData.id,
 					...updatedPubData,
@@ -183,9 +183,9 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 		const persistPubAttributions = async () => {
 			if (attributions) {
 				const newAttributions = attributions
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'ignored' does not exist on type 'attribu... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2339) FIXME: Property 'ignored' does not exist on type 'attribu... Remove this comment to see the full error message
 					.filter((attr) => !attr.ignored)
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'matchedUser' does not exist on type 'att... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2339) FIXME: Property 'matchedUser' does not exist on type 'att... Remove this comment to see the full error message
 					.map(({ name, matchedUser }) => {
 						return {
 							name: name,
@@ -194,10 +194,10 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 						};
 					});
 				if (newAttributions.length > 0) {
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
 					const updatedAttributions = await apiFetch.post('/api/pubAttributions/batch', {
 						communityId: communityData.id,
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
+						// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
 						pubId: pubData.id,
 						attributions: newAttributions,
 					});
@@ -213,9 +213,9 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 	}, [ignoredFields, metadata]);
 
 	const handleUpdateAttribution = (attrIndex, nextValue) => {
-// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 		const nextAttributions = attributions.concat();
-// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 		nextAttributions.splice(attrIndex, 1, { ...attributions[attrIndex], ...nextValue });
 		setMetadata({
 			...metadata,

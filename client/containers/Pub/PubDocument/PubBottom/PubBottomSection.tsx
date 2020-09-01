@@ -21,7 +21,7 @@ type OwnPubBottomSectionProps = {
 const defaultProps = {
 	accentColor: 'black',
 	centerItems: [],
-	children: null,
+	children: null as React.ReactNode,
 	className: '',
 	defaultExpanded: false,
 	iconItems: () => null,

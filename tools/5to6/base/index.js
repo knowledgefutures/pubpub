@@ -1,4 +1,4 @@
-require('../../../server/config.js');
+require('../../../server/config');
 require('@babel/register');
 // require('./baseMigration.js');
 require('./inplaceMigration.js');

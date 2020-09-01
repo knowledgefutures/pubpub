@@ -1,3 +1,4 @@
 dist/*
 utils/storybook/data*
 migrate/*
+node_modules

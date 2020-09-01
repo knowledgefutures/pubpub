@@ -7,6 +7,6 @@ Module.prototype.require = function(...args) {
 	}
 	return originalRequire.apply(this, args);
 };
-require('../../../server/config.js');
+require('../../../server/config');
 require('@babel/register');
 require('./process.js');

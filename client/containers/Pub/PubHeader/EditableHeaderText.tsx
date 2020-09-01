@@ -10,7 +10,7 @@ export type EditableHeaderTextProps = {
 	tagName?: string;
 	text?: string;
 	updateText: (...args: any[]) => any;
-	maxLength: number;
+	maxLength?: number;
 };
 
 const EditableHeaderText = (props: EditableHeaderTextProps) => {

@@ -29,7 +29,7 @@ import {
 
 const createFirebaseClient = require('../5to6/util/createFirebaseClient');
 
-require('../../server/config.js');
+require('../../server/config');
 
 const sourceFirebaseUrl = 'https://pubpub-v6-dev.firebaseio.com';
 const destFirebaseUrl = 'https://pubpub-v6-prod.firebaseio.com';

@@ -4,7 +4,7 @@ const firebaseAdmin = require('firebase-admin');
 const { buildSchema, restoreDiscussionMaps } = require('components/Editor');
 const discussionSchema = require('./simpleDiscussionSchema').default;
 const getPipedPubIds = require('../util/getPipedPubIds');
-require('../../../server/config.js');
+require('../../../server/config');
 
 const serviceAccount = JSON.parse(
 	Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),

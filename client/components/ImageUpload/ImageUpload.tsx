@@ -9,6 +9,7 @@ import { s3Upload } from 'client/utils/upload';
 require('./imageUpload.scss');
 
 type OwnProps = {
+	children: (...args: any[]) => any;
 	canClear?: boolean;
 	defaultImage?: string;
 	height?: number;
@@ -25,7 +26,7 @@ type OwnProps = {
 
 const defaultProps = {
 	canClear: false,
-	children: null,
+	children: (() => {}) as (...args: any[]) => any,
 	defaultImage: undefined,
 	height: 75,
 	helperText: undefined,
@@ -242,7 +243,6 @@ class ImageUpload extends Component<Props, State> {
 			return (
 				<>
 					{this.renderInput()}
-					{/* @ts-expect-error ts-migrate(2721) FIXME: Cannot invoke an object which is possibly 'null'. */}
 					{children({
 						selectImage: this.openFileDialog,
 						clearImage: this.clearImage,

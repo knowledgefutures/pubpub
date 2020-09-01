@@ -4,7 +4,7 @@ const firebaseAdmin = require('firebase-admin');
 const { buildSchema, restoreDiscussionMaps } = require('components/Editor');
 const { Pub, Branch, BranchPermission, Discussion } = require('../../../server/models');
 const discussionSchema = require('./simpleDiscussionSchema').default;
-require('../../../server/config.js');
+require('../../../server/config');
 
 const serviceAccount = JSON.parse(
 	Buffer.from(process.env.V6_FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
@@ -96,7 +96,7 @@ Pub.findAll({
 			// 				};
 			// 				newDiscussionsData[dataKey] = newData;
 			// 			} else {
-			// 				newDiscussionsData[dataKey] = data;	
+			// 				newDiscussionsData[dataKey] = data;
 			// 			}
 			// 		});
 			// 		// console.log(newDiscussionsData);
@@ -119,7 +119,6 @@ Pub.findAll({
 
 			// return getMaxDraftKey
 			// 	.then((maxDraftKey) => {
-					
 
 			// 		const getDiscussions = draftBranchRef
 			// 			.child('discussions')
@@ -148,12 +147,11 @@ Pub.findAll({
 			// 				};
 			// 				newDiscussionsData[dataKey] = newData;
 			// 			} else {
-			// 				newDiscussionsData[dataKey] = data;	
+			// 				newDiscussionsData[dataKey] = data;
 			// 			}
 			// 		});
 			// 		return draftBranchRef.child('discussions').set(newDiscussionsData);
 			// 	});
-
 
 			/* v2 code -------------- */
 			// const getPublicMerges = publicBranchRef
@@ -200,7 +198,7 @@ Pub.findAll({
 			// 				};
 			// 				newDiscussionsData[dataKey] = newData;
 			// 			} else {
-			// 				newDiscussionsData[dataKey] = data;	
+			// 				newDiscussionsData[dataKey] = data;
 			// 			}
 			// 		});
 			// 		return draftBranchRef.child('discussions').set(newDiscussionsData);

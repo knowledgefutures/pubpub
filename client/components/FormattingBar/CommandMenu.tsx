@@ -5,16 +5,16 @@ import classNames from 'classnames';
 import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
 
 type commandPropType = {
-    key: string;
-    title: string;
-    icon?: string;
+	key: string;
+	title: string;
+	icon?: string;
 };
 
 // @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
 const commandPropType: PropTypes.Requireable<commandPropType> = PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    icon: PropTypes.string,
+	key: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	icon: PropTypes.string,
 });
 
 const propTypes = {
@@ -39,15 +39,15 @@ const defaultProps = {
 
 const CommandMenu = React.forwardRef((props, ref) => {
 	const {
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'editorChangeObject' does not exist on ty... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'editorChangeObject' does not exist on ty... Remove this comment to see the full error message
 		editorChangeObject: { menuItems = [], view: editorView },
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'className' does not exist on type '{ chi... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'className' does not exist on type '{ chi... Remove this comment to see the full error message
 		className,
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'commands' does not exist on type '{ chil... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'commands' does not exist on type '{ chil... Remove this comment to see the full error message
 		commands,
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'disclosure' does not exist on type '{ ch... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'disclosure' does not exist on type '{ ch... Remove this comment to see the full error message
 		disclosure,
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'markActiveItems' does not exist on type ... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'markActiveItems' does not exist on type ... Remove this comment to see the full error message
 		markActiveItems,
 		...restProps
 	} = props;
@@ -60,7 +60,7 @@ const CommandMenu = React.forwardRef((props, ref) => {
 		return (
 			<MenuItem
 				key={command.key}
-// @ts-expect-error ts-migrate(2322) FIXME: Property 'active' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2322) FIXME: Property 'active' does not exist on type 'Intrinsi... Remove this comment to see the full error message
 				active={markActiveItems && menuItem.isActive}
 				text={command.title}
 				icon={command.icon}
@@ -80,7 +80,7 @@ const CommandMenu = React.forwardRef((props, ref) => {
 	};
 
 	return (
-// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		<Menu
 			ref={ref}
 			{...restProps}

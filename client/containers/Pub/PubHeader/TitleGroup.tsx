@@ -63,30 +63,19 @@ const TitleGroup = (props: Props) => {
 	return (
 		<div className="title-group-component">
 			<EditableHeaderText
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'never'... Remove this comment to see the full error message
 				text={title}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(text: any) => any' is not assignable to typ... Remove this comment to see the full error message
 				updateText={(text) => updatePubData({ title: text })}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				canEdit={canModify}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				className="title"
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				placeholder="Add a Pub title"
 			/>
 			{(canModify || description) && (
 				<EditableHeaderText
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'never'... Remove this comment to see the full error message
 					text={description}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(text: any) => any' is not assignable to typ... Remove this comment to see the full error message
 					updateText={(text) => updatePubData({ description: text })}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 					canEdit={canModify}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 					tagName="h3"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 					className="description pub-header-themed-secondary"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 					placeholder="Add a description for this Pub"
 					maxLength={280}
 				/>

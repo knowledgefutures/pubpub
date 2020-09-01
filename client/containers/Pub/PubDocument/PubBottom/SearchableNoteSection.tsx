@@ -23,7 +23,6 @@ const SearchableNoteSection = (props: Props) => {
 	const { communityData } = usePageContext();
 
 	return (
-		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<PubBottomSection
 			accentColor={communityData.accentColorDark}
 			isSearchable={true}
@@ -31,8 +30,6 @@ const SearchableNoteSection = (props: Props) => {
 			centerItems={<SectionBullets>{items.length}</SectionBullets>}
 			{...restProps}
 		>
-			{/* @ts-expect-error ts-migrate(2578) FIXME: Unused '@ts-expect-error' directive. */}
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Type '({ searchTerm }: { searchTerm: any; }) => El... Remove this comment to see the full error message */}
 			{({ searchTerm }) => (
 				<Notes
 					accentColor={communityData.accentColorDark}

@@ -11,8 +11,8 @@ import {
 } from 'components/Editor';
 import discussionSchema from 'utils/editor/discussionSchema';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
-import { copyDiscussionMapsToBranch } from '../../client/components/Editor/utils/discussions';
-import { storeCheckpoint } from '../../client/components/Editor/utils';
+import { copyDiscussionMapsToBranch } from 'client/components/Editor/utils/discussions';
+import { storeCheckpoint } from 'client/components/Editor/utils';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {

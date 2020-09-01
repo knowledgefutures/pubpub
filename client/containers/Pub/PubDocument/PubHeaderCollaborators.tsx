@@ -5,28 +5,28 @@ import { Tooltip } from '@blueprintjs/core';
 import { Avatar } from 'components';
 
 type collaboratorType = {
-    cursorColor?: string;
-    id?: string;
-    image?: string;
-    initials?: string;
-    name?: string;
+	cursorColor?: string;
+	id?: string;
+	image?: string;
+	initials?: string;
+	name?: string;
 };
 
 // @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
 const collaboratorType: PropTypes.Requireable<collaboratorType> = PropTypes.shape({
-    cursorColor: PropTypes.string,
-    id: PropTypes.string,
-    image: PropTypes.string,
-    initials: PropTypes.string,
-    name: PropTypes.string,
+	cursorColor: PropTypes.string,
+	id: PropTypes.string,
+	image: PropTypes.string,
+	initials: PropTypes.string,
+	name: PropTypes.string,
 });
 
 type Props = {
-    collabData: {
-        localCollabUser?: collaboratorType;
-        collaborators?: collaboratorType[];
-        remoteCollabUsers?: any[];
-    };
+	collabData: {
+		localCollabUser?: collaboratorType;
+		collaborators?: collaboratorType[];
+		remoteCollabUsers?: any[];
+	};
 };
 
 const getUniqueCollaborators = (collaborators, isAnonymous) => {
@@ -44,7 +44,7 @@ const getUniqueCollaborators = (collaborators, isAnonymous) => {
 		) - (isAnonymous ? 1 : 0),
 	);
 	if (numAnonymous) {
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'anon' does not exist on type '{}'.
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'anon' does not exist on type '{}'.
 		uniqueCollaborators.anon = {
 			backgroundColor: 'rgba(96,96,96, 0.2)',
 			cursorColor: 'rgba(96,96,96, 1.0)',
@@ -58,7 +58,7 @@ const getUniqueCollaborators = (collaborators, isAnonymous) => {
 
 const PubHeaderCollaborators = (props: Props) => {
 	const { remoteCollabUsers, localCollabUser } = props.collabData;
-// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const uniqueCollaborators = getUniqueCollaborators(remoteCollabUsers, !localCollabUser.id);
 	return (
 		<div>
@@ -68,7 +68,7 @@ const PubHeaderCollaborators = (props: Props) => {
 				.map((collaborator) => {
 					return (
 						<div className="avatar-wrapper" key={`present-avatar-${collaborator.id}`}>
-{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message */}
+							{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message */}
 							<Tooltip content={collaborator.name} tooltipClassName="bp3-dark">
 								<Avatar
 									/* Cast initials to string since

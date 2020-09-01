@@ -234,7 +234,7 @@ const renderFrontMatterForHtml = ({
 						<h5>
 							{affiliations.map((aff, index) => (
 								<span className="affiliation" key={index}>
-									{<sup>{index + 1}</sup>}
+									<sup>{index + 1}</sup>
 									{aff}
 									{index < affiliations.length - 1 && ', '}
 								</span>

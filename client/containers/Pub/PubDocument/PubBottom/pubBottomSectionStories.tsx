@@ -13,8 +13,6 @@ storiesOf('containers/Pub/PubDocument/PubBottom/PubBottomSection', module).add('
 			</PubBottomSection>
 			{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'never'. */}
 			<PubBottomSection title="References" centerItems={[867, 5309]} isSearchable={true}>
-				{/* @ts-expect-error ts-migrate(2578) FIXME: Unused '@ts-expect-error' directive. */}
-				{/* @ts-expect-error ts-migrate(2322) FIXME: Type '({ searchTerm }: { searchTerm: any; }) => st... Remove this comment to see the full error message */}
 				{({ searchTerm }) =>
 					searchTerm === null ? 'Try searching' : `This is the search term: ${searchTerm}`
 				}

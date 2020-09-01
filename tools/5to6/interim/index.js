@@ -1,3 +1,3 @@
-require('../../../server/config.js');
+require('../../../server/config');
 require('@babel/register');
 require('./interimMigration.js');

@@ -1,4 +1,4 @@
-require('../../server/config.js');
+require('../../server/config');
 const makeStorage = require('./storage');
 
 const useProd = false;

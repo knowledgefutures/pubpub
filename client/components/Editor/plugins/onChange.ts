@@ -133,127 +133,109 @@ const getMenuItems = (editorView) => {
 	const formattingItems = [
 		{
 			title: 'paragraph',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleBlockType.bind(this, schema.nodes.paragraph, {}, false),
+			run: toggleBlockType.bind(window, schema.nodes.paragraph, {}, false),
 			canRun: toggleBlockType(schema.nodes.paragraph, {}, true),
 			isActive: schema.nodes.paragraph && blockTypeIsActive(schema.nodes.paragraph, {}),
 		},
 		{
 			title: 'header1',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleBlockType.bind(this, schema.nodes.heading, { level: 1 }, false),
+			run: toggleBlockType.bind(window, schema.nodes.heading, { level: 1 }, false),
 			canRun: toggleBlockType(schema.nodes.heading, { level: 1 }, true),
 			isActive: schema.nodes.heading && blockTypeIsActive(schema.nodes.heading, { level: 1 }),
 		},
 		{
 			title: 'header2',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleBlockType.bind(this, schema.nodes.heading, { level: 2 }, false),
+			run: toggleBlockType.bind(window, schema.nodes.heading, { level: 2 }, false),
 			canRun: toggleBlockType(schema.nodes.heading, { level: 2 }, true),
 			isActive: schema.nodes.heading && blockTypeIsActive(schema.nodes.heading, { level: 2 }),
 		},
 		{
 			title: 'header3',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleBlockType.bind(this, schema.nodes.heading, { level: 3 }, false),
+			run: toggleBlockType.bind(window, schema.nodes.heading, { level: 3 }, false),
 			canRun: toggleBlockType(schema.nodes.heading, { level: 3 }, true),
 			isActive: schema.nodes.heading && blockTypeIsActive(schema.nodes.heading, { level: 3 }),
 		},
 		{
 			title: 'header4',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleBlockType.bind(this, schema.nodes.heading, { level: 4 }, false),
+			run: toggleBlockType.bind(window, schema.nodes.heading, { level: 4 }, false),
 			canRun: toggleBlockType(schema.nodes.heading, { level: 4 }, true),
 			isActive: schema.nodes.heading && blockTypeIsActive(schema.nodes.heading, { level: 4 }),
 		},
 		{
 			title: 'header5',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleBlockType.bind(this, schema.nodes.heading, { level: 5 }, false),
+			run: toggleBlockType.bind(window, schema.nodes.heading, { level: 5 }, false),
 			canRun: toggleBlockType(schema.nodes.heading, { level: 5 }, true),
 			isActive: schema.nodes.heading && blockTypeIsActive(schema.nodes.heading, { level: 5 }),
 		},
 		{
 			title: 'header6',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleBlockType.bind(this, schema.nodes.heading, { level: 6 }, false),
+			run: toggleBlockType.bind(window, schema.nodes.heading, { level: 6 }, false),
 			canRun: toggleBlockType(schema.nodes.heading, { level: 6 }, true),
 			isActive: schema.nodes.heading && blockTypeIsActive(schema.nodes.heading, { level: 6 }),
 		},
 		{
 			title: 'code_block',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleBlockType.bind(this, schema.nodes.code_block, {}, false),
+			run: toggleBlockType.bind(window, schema.nodes.code_block, {}, false),
 			canRun: toggleBlockType(schema.nodes.code_block, {}, true),
 			isActive: schema.nodes.code_block && blockTypeIsActive(schema.nodes.code_block, {}),
 		},
 		{
 			title: 'strong',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: applyToggleMark.bind(this, schema.marks.strong, {}, false),
+			run: applyToggleMark.bind(window, schema.marks.strong, {}, false),
 			canRun: applyToggleMark(schema.marks.strong, {}, true),
 			isActive: schema.marks.strong && markIsActive(schema.marks.strong),
 		},
 		{
 			title: 'em',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: applyToggleMark.bind(this, schema.marks.em, {}, false),
+			run: applyToggleMark.bind(window, schema.marks.em, {}, false),
 			canRun: applyToggleMark(schema.marks.em, {}, true),
 			isActive: schema.marks.em && markIsActive(schema.marks.em),
 		},
 		{
 			title: 'code',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: applyToggleMark.bind(this, schema.marks.code, {}, false),
+			run: applyToggleMark.bind(window, schema.marks.code, {}, false),
 			canRun: applyToggleMark(schema.marks.code, {}, true),
 			isActive: schema.marks.code && markIsActive(schema.marks.code),
 		},
 		{
 			title: 'subscript',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: applyToggleMark.bind(this, schema.marks.sub, {}, false),
+			run: applyToggleMark.bind(window, schema.marks.sub, {}, false),
 			canRun: applyToggleMark(schema.marks.sub, {}, true),
 			isActive: schema.marks.sub && markIsActive(schema.marks.sub),
 		},
 		{
 			title: 'superscript',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: applyToggleMark.bind(this, schema.marks.sup, {}, false),
+			run: applyToggleMark.bind(window, schema.marks.sup, {}, false),
 			canRun: applyToggleMark(schema.marks.sup, {}, true),
 			isActive: schema.marks.sup && markIsActive(schema.marks.sup),
 		},
 		{
 			title: 'strikethrough',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: applyToggleMark.bind(this, schema.marks.strike, {}, false),
+			run: applyToggleMark.bind(window, schema.marks.strike, {}, false),
 			canRun: applyToggleMark(schema.marks.strike, {}, true),
 			isActive: schema.marks.strike && markIsActive(schema.marks.strike),
 		},
 		{
 			title: 'blockquote',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleWrap.bind(this, schema.nodes.blockquote, false),
+			run: toggleWrap.bind(window, schema.nodes.blockquote, false),
 			canRun: toggleWrap(schema.nodes.blockquote, true),
 			isActive: schema.nodes.blockquote && blockTypeIsActive(schema.nodes.blockquote),
 		},
 		{
 			title: 'bullet-list',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleWrapList.bind(this, schema.nodes.bullet_list, false),
+			run: toggleWrapList.bind(window, schema.nodes.bullet_list, false),
 			canRun: toggleWrapList(schema.nodes.bullet_list, true),
 			isActive: schema.nodes.bullet_list && blockTypeIsActive(schema.nodes.bullet_list),
 		},
 		{
 			title: 'numbered-list',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: toggleWrapList.bind(this, schema.nodes.ordered_list, false),
+			run: toggleWrapList.bind(window, schema.nodes.ordered_list, false),
 			canRun: toggleWrapList(schema.nodes.ordered_list, true),
 			isActive: schema.nodes.ordered_list && blockTypeIsActive(schema.nodes.ordered_list),
 		},
 		{
 			title: 'link',
-			// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-			run: applyToggleMark.bind(this, schema.marks.link, {}, false),
+			run: applyToggleMark.bind(window, schema.marks.link, {}, false),
 			canRun: applyToggleMark(schema.marks.link, {}, true),
 			isActive: schema.marks.link && markIsActive(schema.marks.link),
 		},
@@ -264,99 +246,75 @@ const getMenuItems = (editorView) => {
 			: [
 					{
 						title: 'table-delete',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: deleteTable.bind(this, editorView.state, editorView.dispatch),
+						run: deleteTable.bind(window, editorView.state, editorView.dispatch),
 						canRun: deleteTable(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: deleteTable.bind(this, editorView.state),
+						isActive: deleteTable.bind(window, editorView.state),
 					},
 					{
 						title: 'table-merge-cells',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: mergeCells.bind(this, editorView.state, editorView.dispatch),
+						run: mergeCells.bind(window, editorView.state, editorView.dispatch),
 						canRun: mergeCells(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: mergeCells.bind(this, editorView.state),
+						isActive: mergeCells.bind(window, editorView.state),
 					},
 					{
 						title: 'table-split-cell',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: splitCell.bind(this, editorView.state, editorView.dispatch),
+						run: splitCell.bind(window, editorView.state, editorView.dispatch),
 						canRun: splitCell(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: splitCell.bind(this, editorView.state),
+						isActive: splitCell.bind(window, editorView.state),
 					},
 					{
 						title: 'table-add-row-before',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: addRowBefore.bind(this, editorView.state, editorView.dispatch),
+						run: addRowBefore.bind(window, editorView.state, editorView.dispatch),
 						canRun: addRowBefore(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: addRowBefore.bind(this, editorView.state),
+						isActive: addRowBefore.bind(window, editorView.state),
 					},
 					{
 						title: 'table-add-row-after',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: addRowAfter.bind(this, editorView.state, editorView.dispatch),
+						run: addRowAfter.bind(window, editorView.state, editorView.dispatch),
 						canRun: addRowAfter(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: addRowAfter.bind(this, editorView.state),
+						isActive: addRowAfter.bind(window, editorView.state),
 					},
 					{
 						title: 'table-delete-row',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: deleteRow.bind(this, editorView.state, editorView.dispatch),
+						run: deleteRow.bind(window, editorView.state, editorView.dispatch),
 						canRun: deleteRow(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: deleteRow.bind(this, editorView.state),
+						isActive: deleteRow.bind(window, editorView.state),
 					},
 					{
 						title: 'table-add-column-before',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: addColumnBefore.bind(this, editorView.state, editorView.dispatch),
+						run: addColumnBefore.bind(window, editorView.state, editorView.dispatch),
 						canRun: addColumnBefore(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: addColumnBefore.bind(this, editorView.state),
+						isActive: addColumnBefore.bind(window, editorView.state),
 					},
 					{
 						title: 'table-add-column-after',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: addColumnAfter.bind(this, editorView.state, editorView.dispatch),
+						run: addColumnAfter.bind(window, editorView.state, editorView.dispatch),
 						canRun: addColumnAfter(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: addColumnAfter.bind(this, editorView.state),
+						isActive: addColumnAfter.bind(window, editorView.state),
 					},
 					{
 						title: 'table-delete-column',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: deleteColumn.bind(this, editorView.state, editorView.dispatch),
+						run: deleteColumn.bind(window, editorView.state, editorView.dispatch),
 						canRun: deleteColumn(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: deleteColumn.bind(this, editorView.state),
+						isActive: deleteColumn.bind(window, editorView.state),
 					},
 					{
 						title: 'table-toggle-header-row',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: toggleHeaderRow.bind(this, editorView.state, editorView.dispatch),
+						run: toggleHeaderRow.bind(window, editorView.state, editorView.dispatch),
 						canRun: toggleHeaderRow(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: toggleHeaderRow.bind(this, editorView.state),
+						isActive: toggleHeaderRow.bind(window, editorView.state),
 					},
 					{
 						title: 'table-toggle-header-column',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: toggleHeaderColumn.bind(this, editorView.state, editorView.dispatch),
+						run: toggleHeaderColumn.bind(window, editorView.state, editorView.dispatch),
 						canRun: toggleHeaderColumn(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: toggleHeaderColumn.bind(this, editorView.state),
+						isActive: toggleHeaderColumn.bind(window, editorView.state),
 					},
 					{
 						title: 'table-toggle-header-cell',
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						run: toggleHeaderCell.bind(this, editorView.state, editorView.dispatch),
+						run: toggleHeaderCell.bind(window, editorView.state, editorView.dispatch),
 						canRun: toggleHeaderCell(editorView.state),
-						// @ts-expect-error ts-migrate(7041) FIXME: The containing arrow function captures the global ... Remove this comment to see the full error message
-						isActive: toggleHeaderCell.bind(this, editorView.state),
+						isActive: toggleHeaderCell.bind(window, editorView.state),
 					},
 			  ];
 

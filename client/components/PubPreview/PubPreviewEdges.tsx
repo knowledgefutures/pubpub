@@ -9,39 +9,39 @@ import { getRelationTypeName } from 'utils/pubEdge/relations';
 require('./pubPreviewEdges.scss');
 
 type referencedPubShape = {
-    attributions?: any[];
+	attributions?: any[];
 };
 
 // @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'any[] | und... Remove this comment to see the full error message
 const referencedPubShape: PropTypes.Requireable<referencedPubShape> = PropTypes.shape({
-    attributions: PropTypes.array,
+	attributions: PropTypes.array,
 });
 
 type pubEdgeShape = {
-    externalPublication?: any;
-    pub?: referencedPubShape;
-    pubId?: string;
-    relationType?: string;
-    targetPub?: referencedPubShape;
-    targetPubId?: string;
+	externalPublication?: any;
+	pub?: referencedPubShape;
+	pubId?: string;
+	relationType?: string;
+	targetPub?: referencedPubShape;
+	targetPubId?: string;
 };
 
 // @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'referencedP... Remove this comment to see the full error message
 const pubEdgeShape: PropTypes.Requireable<pubEdgeShape> = PropTypes.shape({
-    externalPublication: PropTypes.object,
-    pub: referencedPubShape,
-    pubId: PropTypes.string,
-    relationType: PropTypes.string,
-    targetPub: referencedPubShape,
-    targetPubId: PropTypes.string,
+	externalPublication: PropTypes.object,
+	pub: referencedPubShape,
+	pubId: PropTypes.string,
+	relationType: PropTypes.string,
+	targetPub: referencedPubShape,
+	targetPubId: PropTypes.string,
 });
 
 type Props = {
-    accentColor: string;
-    pubData: {
-        inboundEdges?: pubEdgeShape[];
-        outboundEdges?: pubEdgeShape[];
-    };
+	accentColor: string;
+	pubData: {
+		inboundEdges?: pubEdgeShape[];
+		outboundEdges?: pubEdgeShape[];
+	};
 };
 
 const sharedBylineProps = { bylinePrefix: null, truncateAt: 1, ampersand: true };
@@ -80,9 +80,9 @@ const renderEdgeLink = (edge) => {
 			<a href={url} key={edge.id} className="edge-link">
 				<Byline
 					{...sharedBylineProps}
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 					contributors={contributors}
-// @ts-expect-error ts-migrate(2322) FIXME: Type '() => any' is not assignable to type 'never'... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2322) FIXME: Type '() => any' is not assignable to type 'never'... Remove this comment to see the full error message
 					renderEmptyState={() => title}
 				/>
 			</a>
@@ -91,7 +91,7 @@ const renderEdgeLink = (edge) => {
 	const childPub = pubIsParent ? targetPub : pub;
 	return (
 		<a href={pubShortUrl(childPub)} key={edge.id} className="edge-link">
-{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message */}
+			{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message */}
 			<PubByline
 				{...sharedBylineProps}
 				pubData={childPub}

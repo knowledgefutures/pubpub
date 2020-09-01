@@ -57,7 +57,6 @@ const getCounts = (isCollection, content) => {
 };
 
 const getHref = (isCollection, slug, parentSlug) => {
-	// @ts-expect-error ts-migrate(2345) FIXME: Type '{ collectionSlug: any; pubSlug: any; }' is m... Remove this comment to see the full error message
 	return getDashUrl({
 		collectionSlug: isCollection ? slug : parentSlug,
 		pubSlug: isCollection ? undefined : slug,

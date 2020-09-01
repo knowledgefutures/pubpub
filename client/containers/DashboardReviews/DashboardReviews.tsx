@@ -42,7 +42,6 @@ const DashboardReviews = (props: Props) => {
 				</Menu>
 			)}
 			{pubsWithReviews.map((pub) => {
-				// @ts-expect-error ts-migrate(2345) FIXME: Type '{ collectionSlug: any; pubSlug: any; }' is m... Remove this comment to see the full error message
 				const pubUrl = getDashUrl({
 					collectionSlug: activeCollection ? activeCollection.slug : undefined,
 					pubSlug: pub.slug,

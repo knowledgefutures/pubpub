@@ -39,7 +39,6 @@ class DeletePub extends Component<Props, State> {
 			}),
 		})
 			.then(() => {
-				// @ts-expect-error ts-migrate(2345) FIXME: Type '{ mode: string; }' is missing the following ... Remove this comment to see the full error message
 				window.location.href = getDashUrl({ mode: 'overview' });
 			})
 			.catch(() => {

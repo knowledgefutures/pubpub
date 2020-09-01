@@ -78,7 +78,6 @@ const PubSettings = (props: Props) => {
 				setIsPersisting(false);
 				setPersistedPubData(nextPubData);
 				if (persistedPubData.slug !== nextPubData.slug) {
-					// @ts-expect-error ts-migrate(2345) FIXME: Type '{ pubSlug: any; mode: string; }' is missing ... Remove this comment to see the full error message
 					window.location.href = getDashUrl({
 						pubSlug: nextPubData.slug,
 						mode: 'settings',

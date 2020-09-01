@@ -55,7 +55,6 @@ const CreateCollectionDialog = (props: Props) => {
 			}),
 		})
 			.then((newCollection) => {
-				// @ts-expect-error ts-migrate(2345) FIXME: Type '{ collectionSlug: any; }' is missing the fol... Remove this comment to see the full error message
 				window.location.href = getDashUrl({ collectionSlug: newCollection.slug });
 			})
 			.catch((err) => {

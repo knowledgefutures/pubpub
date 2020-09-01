@@ -159,7 +159,6 @@ const CommunitySettings = () => {
 					window.location.reload();
 				} else {
 					const communityPart = communityUrl(nextCommunityData);
-					// @ts-expect-error ts-migrate(2345) FIXME: Type '{ mode: string; }' is missing the following ... Remove this comment to see the full error message
 					const dashPart = getDashUrl({ mode: 'settings' });
 					window.location.href = communityPart + dashPart;
 				}

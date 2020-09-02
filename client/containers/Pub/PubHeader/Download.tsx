@@ -145,7 +145,7 @@ const Download = (props: Props) => {
 			)}
 			<li className="bp3-menu-header">
 				<h6 className="bp3-heading">
-					{formattedDownload ? 'Auto Generated Download' : 'Download'}
+					Auto Generated Download
 				</h6>
 			</li>
 			{formatTypes.map((type, i) => {

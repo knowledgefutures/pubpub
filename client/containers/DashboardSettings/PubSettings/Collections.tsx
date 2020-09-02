@@ -302,7 +302,6 @@ class Collections extends Component<Props, State> {
 				</p>
 				{this.props.canCreateCollections && (
 					<p>
-						{/* @ts-expect-error ts-migrate(2345) FIXME: Type '{ mode: string; }' is missing the following ... Remove this comment to see the full error message */}
 						Visit the <a href={getDashUrl({ mode: 'overview' })}>Community overview</a>{' '}
 						to create collections.
 					</p>

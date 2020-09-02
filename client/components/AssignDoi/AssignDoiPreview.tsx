@@ -82,8 +82,7 @@ const renderPublicationDate = (publication_date, title = 'Publication Date') => 
 	return (
 		<>
 			<dt>{title}</dt>
-			{/* @ts-expect-error ts-migrate(2769) FIXME: Type 'any[]' is not assignable to type 'string'. */}
-			<dd>{formatDate(new Date([month, day, year]))}</dd>
+			<dd>{formatDate(`${year}-${month}-${day}`, { inUtcTime: true })}</dd>
 		</>
 	);
 };

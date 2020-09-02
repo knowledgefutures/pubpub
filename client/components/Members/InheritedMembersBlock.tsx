@@ -30,7 +30,6 @@ const renderExplanationForScope = (scope, currentScopeData) => {
 		return (
 			<>
 				{users} You can manage this list of members from the{' '}
-				{/* @ts-expect-error ts-migrate(2345) FIXME: Type '{ mode: string; }' is missing the following ... Remove this comment to see the full error message */}
 				<a href={getDashUrl({ mode: 'members' })}>Community members tab.</a>
 			</>
 		);

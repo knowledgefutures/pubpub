@@ -107,7 +107,6 @@ const DashboardPages = (props: Props) => {
 					}),
 				}));
 				if (updatedValues.slug && locationData.params.slug !== updatedValues.slug) {
-					// @ts-expect-error ts-migrate(2345) FIXME: Type '{ mode: string; subMode: any; }' is missing ... Remove this comment to see the full error message
 					window.location.href = getDashUrl({
 						mode: 'pages',
 						subMode: updatedValues.slug,

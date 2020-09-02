@@ -55,7 +55,6 @@ const UtilityButtons = (props: Props) => {
 					labelPosition="left"
 					icon="cog"
 					tagName="a"
-					// @ts-expect-error ts-migrate(2345) FIXME: Type '{ pubSlug: string | undefined; mode: string;... Remove this comment to see the full error message
 					href={getDashUrl({ pubSlug: pubData.slug, mode: 'settings' })}
 				/>
 			)}

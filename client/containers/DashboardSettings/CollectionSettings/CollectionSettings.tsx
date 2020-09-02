@@ -25,7 +25,6 @@ const CollectionSettings = () => {
 					onUpdateCollection={updateCollection}
 					onDeleteCollection={() =>
 						deleteCollection().then(() => {
-							// @ts-expect-error ts-migrate(2345) FIXME: Type '{}' is missing the following properties from... Remove this comment to see the full error message
 							window.location.href = getDashUrl({});
 						})
 					}

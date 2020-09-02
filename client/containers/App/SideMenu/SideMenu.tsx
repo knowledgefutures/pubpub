@@ -91,7 +91,7 @@ const SideMenu = () => {
 		{
 			title: 'Reviews',
 			icon: 'social-media',
-			count: activeCounts.reviewCount,
+			count: activeCounts.reviewCount > 0 ? activeCounts.reviewCount : undefined,
 			href: getDashUrl({
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,

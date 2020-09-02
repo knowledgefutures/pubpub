@@ -38,11 +38,10 @@ const DashboardReviews = (props: Props) => {
 		>
 			{!pubsWithReviews.length && (
 				<Menu className="list-content">
-					<NonIdealState title="No Reviews Yet" icon="social-media" />
+					<NonIdealState title="This Pub has not been reviewed using PubPub" icon="social-media" />
 				</Menu>
 			)}
 			{pubsWithReviews.map((pub) => {
-				// @ts-expect-error ts-migrate(2345) FIXME: Type '{ collectionSlug: any; pubSlug: any; }' is m... Remove this comment to see the full error message
 				const pubUrl = getDashUrl({
 					collectionSlug: activeCollection ? activeCollection.slug : undefined,
 					pubSlug: pub.slug,

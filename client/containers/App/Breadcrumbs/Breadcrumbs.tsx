@@ -104,7 +104,6 @@ const Breadcrumbs = () => {
 						{title}
 					</div>
 					<div className="crumbs">
-						{/* @ts-expect-error ts-migrate(2345) FIXME: Type '{}' is missing the following properties from... Remove this comment to see the full error message */}
 						<a className="crumb truncate" href={getDashUrl({})}>
 							<Icon icon="office" iconSize={10} />
 							<span className="bottom-text">{communityData.title}</span>
@@ -114,7 +113,6 @@ const Breadcrumbs = () => {
 								<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
 								<a
 									className="crumb truncate"
-									// @ts-expect-error ts-migrate(2345) FIXME: Type '{ collectionSlug: any; }' is missing the fol... Remove this comment to see the full error message
 									href={getDashUrl({ collectionSlug: collectionSlug })}
 								>
 									<Icon icon="collection" iconSize={10} />
@@ -128,7 +126,6 @@ const Breadcrumbs = () => {
 								<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
 								<a
 									className="crumb truncate"
-									// @ts-expect-error ts-migrate(2345) FIXME: Type '{ collectionSlug: any; pubSlug: any; }' is m... Remove this comment to see the full error message
 									href={getDashUrl({
 										collectionSlug: collectionSlug,
 										pubSlug: pubSlug,
@@ -144,7 +141,6 @@ const Breadcrumbs = () => {
 								<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
 								<a
 									className="crumb capitalize no-shrink"
-									// @ts-expect-error ts-migrate(2345) FIXME: Property 'subMode' is missing in type '{ collectio... Remove this comment to see the full error message
 									href={getDashUrl({
 										collectionSlug: collectionSlug,
 										pubSlug: pubSlug,

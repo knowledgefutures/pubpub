@@ -295,6 +295,14 @@ export const renderStaticHtml = async ({
 				)}
 			</head>
 			<body>
+				{targetPandoc && (
+					<p>
+						<strong>Notice:</strong> This file is an auto-generated download and, as
+						such, might include minor display or rendering errors. For the version of
+						record, please visit the HTML version or download the PDF.
+						<hr />
+					</p>
+				)}
 				{targetPandoc
 					? renderFrontMatterForPandoc(pubMetadata, targetPandoc)
 					: renderFrontMatterForHtml(pubMetadata)}

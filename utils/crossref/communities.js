@@ -7,6 +7,7 @@ const AAS_DOI_PREFIX = '10.3847';
 const MEDIASTUDIES_DOI_PREFIX = '10.32376';
 const RS_DOI_PREFIX = '10.46470';
 const JOTE_DOI_PREFIX = '10.36850';
+const APA_DOI_PREFIX = '10.1037';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,
@@ -15,6 +16,7 @@ export const managedDoiPrefixes = [
 	AAS_DOI_PREFIX,
 	MEDIASTUDIES_DOI_PREFIX,
 	RS_DOI_PREFIX,
+	APA_DOI_PREFIX,
 ];
 
 export const communityDoiOverrides = [
@@ -63,6 +65,13 @@ export const communityDoiOverrides = [
 		],
 		prefix: JOTE_DOI_PREFIX,
 		key: 'JOTE',
+	},
+	{
+		communityIds: [
+			'700f6ff1-4acc-4ca4-b740-8d04d89fea9e', // https://tmb.pubpub.org/
+		],
+		prefix: APA_DOI_PREFIX,
+		key: 'APA',
 	},
 ];
 

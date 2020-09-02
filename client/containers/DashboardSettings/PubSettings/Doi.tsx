@@ -67,11 +67,11 @@ class Doi extends Component<Props, State> {
 		let helperText = '';
 
 		if (invalidDoi) {
-			helperText = 'Invalid DOI';
+			helperText = 'Invalid DOI suffix';
 		} else if (error) {
-			helperText = 'There was a problem updating the DOI';
+			helperText = 'There was a problem updating the DOI suffix';
 		} else if (success) {
-			helperText = 'DOI updated succesfully!';
+			helperText = 'DOI suffix updated succesfully on PubPub. To take effect, the DOI must be submitted to Crossref.';
 		}
 
 		return helperText;
@@ -283,9 +283,9 @@ class Doi extends Component<Props, State> {
 			return (
 				<p>
 					{/* @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'. */}
-					This pub will be cited as a member of the {schema.label.singular},{' '}
+					This Pub will be cited as a member of the {schema.label.singular},{' '}
 					<b>{collection.title}</b>. You can change this by updating the{' '}
-					<em>primary collection</em> of the pub from the Collections tab.
+					<em>primary collection</em> of the Pub from the Collections tab.
 				</p>
 			);
 		}
@@ -299,7 +299,7 @@ class Doi extends Component<Props, State> {
 		if (justSetDoi) {
 			return (
 				<Callout intent="success" title="Success!">
-					<p>Successfully submitted a DOI registration for this pub.</p>
+					<p>Successfully submitted a DOI registration for this Pub.</p>
 					<p>
 						Registration may take a few hours to complete in Crossref&apos;s system. If
 						DOI URLs do not work immediately, the registration is likely still
@@ -356,7 +356,7 @@ class Doi extends Component<Props, State> {
 										PubPub will automatically assign a DOI if the suffix is left
 										blank. Please note that{' '}
 										<strong>
-											once submit, the DOI will no longer be editable.
+											once submitted, the DOI will no longer be editable.
 										</strong>
 									</>
 								)}
@@ -418,13 +418,13 @@ class Doi extends Component<Props, State> {
 					/>
 					<Button
 						disabled={!doiSuffix || invalidDoi || deleting || generating}
-						text="Update"
+						text="Update Suffix"
 						loading={updating}
 						onClick={this.handleUpdateDoiClick}
 					/>
 					<Button
 						disabled={invalidDoi || deleting || updating}
-						text="Generate"
+						text="Generate Suffix"
 						loading={generating}
 						onClick={this.handleGenerateDoiClick}
 					/>

@@ -9,7 +9,7 @@ import { s3Upload } from 'client/utils/upload';
 require('./imageUpload.scss');
 
 type OwnProps = {
-	children: (...args: any[]) => any;
+	children: null | ((...args: any[]) => any);
 	canClear?: boolean;
 	defaultImage?: string;
 	height?: number;
@@ -26,7 +26,7 @@ type OwnProps = {
 
 const defaultProps = {
 	canClear: false,
-	children: (() => {}) as (...args: any[]) => any,
+	children: null as null | ((...args: any[]) => any),
 	defaultImage: undefined,
 	height: 75,
 	helperText: undefined,

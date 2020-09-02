@@ -38,7 +38,7 @@ export const createPub = async ({ communityId, collectionId, ...restArgs }, user
 			userId: userId,
 			pubId: newPub.id,
 			permissions: 'manage',
-			isOwner: true /* TODO: I don't believe isOwner is fully implemented yet, so we should not rely on it. */,
+			isOwner: true,
 		});
 
 	const createPublicBranch = Branch.create({

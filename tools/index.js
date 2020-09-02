@@ -33,6 +33,7 @@ const commandFiles = {
 	syncDbSchema: './syncDbSchema.js',
 	syncDevFirebase: './syncFirebase.js',
 	devshell: './devshell.js',
+	clone: './clone.js',
 };
 
 const activeCommandFile = commandFiles[command];

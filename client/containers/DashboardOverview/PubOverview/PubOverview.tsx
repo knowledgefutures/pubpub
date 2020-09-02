@@ -74,9 +74,6 @@ const PubOverview = (props: Props) => {
 			<div className="section list">
 				<div className="section-header">Reviews</div>
 				<Menu className="list-content">
-					{!pubData.reviews.length && (
-						<NonIdealState title="No Reviews Yet" icon="social-media" />
-					)}
 					{pubData.reviews
 						.sort((a, b) => a.createdAt - b.createdAt)
 						.map((review) => {
@@ -114,9 +111,6 @@ const PubOverview = (props: Props) => {
 		return (
 			<div className="section">
 				<div className="section-header">Attribution</div>
-				{!pubData.attributions.length && (
-					<NonIdealState title="No attributions on this pub" icon="person" />
-				)}
 				{pubData.attributions
 					.sort((a, b) => a.order - b.order)
 					.map((attribution) => {
@@ -177,7 +171,7 @@ const PubOverview = (props: Props) => {
 					{pubData.doi && renderSection('DOI', pubData.doi)}
 					{renderAttribution()}
 					{renderCollections()}
-					{renderReviews()}
+					{!!pubData.reviews.length && renderReviews()}
 				</div>
 				<div className="column">
 					<PubTimeline pubData={pubData} />

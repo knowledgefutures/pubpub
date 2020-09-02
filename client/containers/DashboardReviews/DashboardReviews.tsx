@@ -38,7 +38,7 @@ const DashboardReviews = (props: Props) => {
 		>
 			{!pubsWithReviews.length && (
 				<Menu className="list-content">
-					<NonIdealState title="No Reviews Yet" icon="social-media" />
+					<NonIdealState title="This Pub has not been reviewed using PubPub" icon="social-media" />
 				</Menu>
 			)}
 			{pubsWithReviews.map((pub) => {

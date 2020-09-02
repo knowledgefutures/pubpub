@@ -60,8 +60,8 @@ const AssignDoiActionType = {
 };
 
 const buttonTextByStatus = {
-	[AssignDoiStatus.Initial]: 'Deposit to Crossref',
-	[AssignDoiStatus.Previewing]: 'Getting Preview',
+	[AssignDoiStatus.Initial]: 'Preview Deposit',
+	[AssignDoiStatus.Previewing]: 'Generating Preview',
 	[AssignDoiStatus.Previewed]: 'Submit Deposit',
 	[AssignDoiStatus.Depositing]: 'Depositing',
 	[AssignDoiStatus.Deposited]: 'DOI Deposited',
@@ -69,7 +69,10 @@ const buttonTextByStatus = {
 
 const getButtonText = (status, deposit) => {
 	if (status === AssignDoiStatus.Initial && deposit) {
-		return 'Resubmit DOI deposit';
+		return 'Update & Preview Deposit';
+	}
+	if (status === AssignDoiStatus.Previewed && deposit) {
+		return 'Re-Submit Deposit';
 	}
 
 	return buttonTextByStatus[status];

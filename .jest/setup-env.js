@@ -19,6 +19,7 @@ process.env.CLOUDAMQP_URL = '';
 process.env.ALGOLIA_ID = 'ooo';
 process.env.ALGOLIA_KEY = 'ooo';
 process.env.ALGOLIA_SEARCH_KEY = 'ooo';
+process.env.JWT_SIGNING_SECRET = 'shhhhhh';
 
 if (typeof document !== 'undefined') {
     require("mutationobserver-shim");

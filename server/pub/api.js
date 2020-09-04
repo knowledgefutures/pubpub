@@ -6,11 +6,12 @@ import { createPub, updatePub, destroyPub } from './queries';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
-	const { communityId, collectionId, pubId, licenseSlug } = req.body;
+	const { communityId, collectionId, pubId, licenseSlug, createPubToken } = req.body;
 	return {
 		userId: user.id,
 		communityId: communityId,
 		collectionId: collectionId,
+		createPubToken: createPubToken,
 		pubId: pubId,
 		licenseSlug: licenseSlug,
 	};
@@ -19,15 +20,16 @@ const getRequestIds = (req) => {
 app.post(
 	'/api/pubs',
 	wrap(async (req, res) => {
-		const { userId, collectionId, communityId } = getRequestIds(req);
-		const canCreate = await canCreatePub({
+		const { userId, collectionId, communityId, createPubToken } = getRequestIds(req);
+		const { create, collectionIds } = await canCreatePub({
 			userId: userId,
 			collectionId: collectionId,
 			communityId: communityId,
+			createPubToken: createPubToken,
 		});
-		if (canCreate) {
+		if (create) {
 			const newPub = await createPub(
-				{ communityId: communityId, collectionId: collectionId },
+				{ communityId: communityId, collectionIds: collectionIds },
 				userId,
 			);
 			return res.status(201).json(newPub);

@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 
 import { CollectionPub, Pub, Page } from 'server/models';
+import { issueCreatePubToken } from 'server/pub/tokens';
 
 import buildPubOptions from './pubOptions';
 import sanitizePub from './pubSanitize';
@@ -80,11 +81,39 @@ const getPubsForPageLayout = async (layout, initialData) => {
 	}
 
 	const pubsPerBlock = await Promise.all(
-		layout
+		(layout || [])
 			.filter((block) => block.type === 'pubs')
 			.map((block) => getPubsForPageBlock(block.content, initialData)),
 	);
 	return pubsPerBlock.reduce((acc, next) => [...acc, ...next], []);
+};
+
+const enrichLayoutWithPubTokens = (layout, initialData) => {
+	const { loginData, communityData } = initialData;
+	const userId = loginData && loginData.id;
+	if (layout && userId) {
+		return layout.map((block) => {
+			const { type, content } = block;
+			if (type === 'banner') {
+				const { buttonType, defaultCollectionIds } = content;
+				if (buttonType === 'create-pub') {
+					return {
+						...block,
+						content: {
+							...content,
+							createPubToken: issueCreatePubToken({
+								userId: userId,
+								communityId: communityData.id,
+								createInCollectionIds: defaultCollectionIds,
+							}),
+						},
+					};
+				}
+			}
+			return block;
+		});
+	}
+	return layout;
 };
 
 export default async (idOrSlugObject, initialData) => {
@@ -99,6 +128,7 @@ export default async (idOrSlugObject, initialData) => {
 
 	return {
 		...pageData.toJSON(),
+		layout: enrichLayoutWithPubTokens(pageData.layout, initialData),
 		pubs: pubsData,
 	};
 };

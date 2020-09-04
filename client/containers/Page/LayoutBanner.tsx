@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Color from 'color';
-import { AnchorButton } from '@blueprintjs/core';
+import { AnchorButton, Tooltip } from '@blueprintjs/core';
 
 import { getResizedUrl } from 'utils/images';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -16,59 +16,44 @@ type Props = {
 
 type State = any;
 
+const createPubFailureText = "Error creating a new Pub. You may want to refresh the page and try again.";
+
 class LayoutBanner extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
 			isLoading: false,
+			buttonError: null,
 		};
 		this.createPub = this.createPub.bind(this);
 	}
 
 	createPub() {
-		this.setState({ isLoading: true });
+		const { communityData, content } = this.props;
+		this.setState({ isLoading: true, buttonError: null });
 		return apiFetch('/api/pubs', {
 			method: 'POST',
 			body: JSON.stringify({
-				communityId: this.props.communityData.id,
-				defaultCollectionIds: this.props.content.defaultCollectionIds,
+				communityId: communityData.id,
+				createPubToken: content.createPubToken,
 			}),
 		})
 			.then((newPub) => {
 				window.location.href = `/pub/${newPub.slug}`;
+				this.setState({ isLoading: false });
 			})
 			.catch((err) => {
 				console.error(err);
-				this.setState({ isLoading: false });
+				this.setState({ isLoading: false, buttonError: createPubFailureText });
 			});
 	}
 
-	render() {
-		const backgroundImageCss = this.props.content.backgroundImage
-			? `url("${getResizedUrl(this.props.content.backgroundImage, 'fit-in', '1500x600')}")`
-			: undefined;
+	renderButton() {
+		const { buttonError } = this.state;
 
-		const wrapperStyle = {
-			textAlign: this.props.content.align || 'left',
-		};
-		const textStyle = {
-			color:
-				this.props.content.backgroundImage ||
-				!Color(this.props.content.backgroundColor).isLight()
-					? '#FFFFFF'
-					: '#000000',
-			lineHeight: '1em',
-			fontSize: this.props.content.backgroundHeight === 'narrow' ? '18px' : '28px',
-		};
-
-		const backgroundStyle = {
-			backgroundColor: this.props.content.backgroundColor,
-			backgroundImage: backgroundImageCss,
-			minHeight: this.props.content.backgroundHeight === 'narrow' ? '60px' : '200px',
-			display: 'flex',
-			alignItems: 'center',
-			maxWidth: 'none',
-		};
+		if (!this.props.content.showButton) {
+			return null;
+		}
 
 		const buttonType =
 			this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
@@ -84,6 +69,50 @@ class LayoutBanner extends Component<Props, State> {
 				!this.props.loginData.id &&
 				`/login?redirect=${this.props.locationData.path}`) ||
 			(buttonType === 'signup' && '/signup');
+
+		const button = (
+			<AnchorButton
+				className="bp3-large"
+				onClick={
+					buttonType === 'create-pub' &&
+					this.props.loginData.id &&
+					this.createPub
+				}
+				loading={this.state.isLoading}
+				text={buttonText}
+				href={buttonUrl}
+			/>
+		);
+
+		return buttonError ? <Tooltip content={buttonError} defaultIsOpen={true}>{button}</Tooltip> : button;
+	}
+
+	render() {
+		const backgroundImageCss = this.props.content.backgroundImage
+			? `url("${getResizedUrl(this.props.content.backgroundImage, 'fit-in', '1500x600')}")`
+			: undefined;
+
+		const wrapperStyle = {
+			textAlign: this.props.content.align || 'left',
+		};
+		const textStyle = {
+			color:
+				this.props.content.backgroundImage ||
+					!Color(this.props.content.backgroundColor).isLight()
+					? '#FFFFFF'
+					: '#000000',
+			lineHeight: '1em',
+			fontSize: this.props.content.backgroundHeight === 'narrow' ? '18px' : '28px',
+		};
+
+		const backgroundStyle = {
+			backgroundColor: this.props.content.backgroundColor,
+			backgroundImage: backgroundImageCss,
+			minHeight: this.props.content.backgroundHeight === 'narrow' ? '60px' : '200px',
+			display: 'flex',
+			alignItems: 'center',
+			maxWidth: 'none',
+		};
 
 		return (
 			<div className="layout-banner-component">
@@ -112,19 +141,7 @@ class LayoutBanner extends Component<Props, State> {
 								{this.props.content.text && (
 									<h2 style={textStyle}>{this.props.content.text}</h2>
 								)}
-								{this.props.content.showButton && (
-									<AnchorButton
-										className="bp3-large"
-										onClick={
-											buttonType === 'create-pub' &&
-											this.props.loginData.id &&
-											this.createPub
-										}
-										loading={this.state.isLoading}
-										text={buttonText}
-										href={buttonUrl}
-									/>
-								)}
+								{this.renderButton()}
 							</div>
 						</div>
 					</div>

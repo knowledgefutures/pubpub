@@ -4,12 +4,14 @@ import uuid from 'uuid/v4';
 
 import { setup, teardown, login, modelize } from 'stubstub';
 import { CollectionPub, Pub } from 'server/models';
+import { issueCreatePubToken } from '../tokens';
 
 const defaultCollectionId = uuid();
 
 const models = modelize`
 	Community community {
-        defaultPubCollections: ${[defaultCollectionId]}
+		defaultPubCollections: ${[defaultCollectionId]}
+		hideCreatePubButton: true
         Member {
             permissions: "manage"
             User communityManager {}
@@ -39,7 +41,9 @@ const models = modelize`
         }
         Collection defaultCollection {
             id: ${defaultCollectionId}
-        }
+		}
+		Collection c1 {}
+		Collection c2 {}
         Pub destroyThisPub {
             Member {
                 permissions: "manage"
@@ -52,26 +56,93 @@ const models = modelize`
         }
         Pub alsoDestroyThisPub {}
     }
-    Community {
+    Community nefariousCommunity {
         Collection nefariousCollection {
             Member {
                 permissions: "manage"
                 User nefariousUser {}
             }
-        }
-    }
+		}
+	}
+	Community permissiveCommunity {}
+	User randomUser {}
+	User anotherRandomUser {}
 `;
 
 setup(beforeAll, async () => {
 	await models.resolve();
 });
 
-it('does not allow random visitors to create a Pub', async () => {
+it('does not allow logged-out visitors to create a Pub', async () => {
 	const { community } = models;
 	const agent = await login();
 	await agent
 		.post('/api/pubs')
 		.send({ communityId: community.id })
+		.expect(403);
+});
+
+it('does not allow random users to create a Pub', async () => {
+	const { community, randomUser } = models;
+	const agent = await login(randomUser);
+	await agent
+		.post('/api/pubs')
+		.send({ communityId: community.id })
+		.expect(403);
+});
+
+it('lets random users create a Pub in communities with hideCreatePubButton=false', async () => {
+	const { permissiveCommunity, randomUser } = models;
+	const agent = await login(randomUser);
+	await agent
+		.post('/api/pubs')
+		.send({ communityId: permissiveCommunity.id })
+		.expect(201);
+});
+
+it('lets random users create a Pub with a valid createPub token', async () => {
+	const { community, randomUser, c1, c2, defaultCollection } = models;
+	const token = issueCreatePubToken({
+		userId: randomUser.id,
+		communityId: community.id,
+		createInCollectionIds: [c1.id, c2.id],
+	});
+	const agent = await login(randomUser);
+	const { body: pub } = await agent
+		.post('/api/pubs')
+		.send({
+			communityId: community.id,
+			createPubToken: token,
+		})
+		.expect(201);
+	const collectionPubs = await CollectionPub.findAll({ where: { pubId: pub.id } });
+	expect(collectionPubs.map((cp) => cp.collectionId).sort()).toEqual(
+		[c1.id, c2.id, defaultCollection.id].sort(),
+	);
+});
+
+it('does not accept createPub tokens from other users or communities', async () => {
+	const { community, nefariousCommunity, randomUser, anotherRandomUser } = models;
+	const token = issueCreatePubToken({
+		userId: randomUser.id,
+		communityId: nefariousCommunity.id,
+		createInCollectionIds: [],
+	});
+	const agent = await login(randomUser);
+	await agent
+		.post('/api/pubs')
+		.send({
+			communityId: community.id,
+			createPubToken: token,
+		})
+		.expect(403);
+	const anotherAgent = await login(anotherRandomUser);
+	await anotherAgent
+		.post('/api/pubs')
+		.send({
+			communityId: nefariousCommunity.id,
+			createPubToken: token,
+		})
 		.expect(403);
 });
 

@@ -56,7 +56,11 @@ const walkAst = (ast, parameters) => {
 					const referencedId = value.value;
 					resolveIdentifiersCallbacks.push(() => {
 						const modelDefinition = lookupModelDefinitionByBoundId(referencedId);
-						referencedDefinitions.push({ key: key, modelDefinition: modelDefinition });
+						referencedDefinitions.push({
+							key: key,
+							shallow: true,
+							modelDefinition: modelDefinition,
+						});
 					});
 				} else {
 					properties[key] = resolveParameterOrLiteral(value);
@@ -67,7 +71,11 @@ const walkAst = (ast, parameters) => {
 		identifiers.forEach((identifier) =>
 			resolveIdentifiersCallbacks.push(() => {
 				const modelDefinition = lookupModelDefinitionByBoundId(identifier.value);
-				referencedDefinitions.push({ implicit: true, modelDefinition: modelDefinition });
+				referencedDefinitions.push({
+					implicit: true,
+					shallow: true,
+					modelDefinition: modelDefinition,
+				});
 			}),
 		);
 
@@ -198,13 +206,15 @@ const buildGraphFromDefinitions = (modelDefinitions) => {
 			}
 		}
 
-		for (const { key, modelDefinition: innerDefinition } of referencedDefinitions) {
+		for (const { key, modelDefinition: innerDefinition, shallow } of referencedDefinitions) {
 			const edge = getEdgeBetweenDefinitions(modelDefinition, innerDefinition, key, true);
 			if (edge) {
 				const { from, to, association } = edge;
 				addEdge(from, to, association);
 			}
-			visitDefinition(innerDefinition, [...parentDefinitions, modelDefinition], !!edge);
+			if (!shallow) {
+				visitDefinition(innerDefinition, [...parentDefinitions, modelDefinition], !!edge);
+			}
 		}
 	};
 

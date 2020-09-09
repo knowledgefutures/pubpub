@@ -50,7 +50,6 @@ const CollectionBrowser = (props: Props) => {
 	};
 
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		<Menu
 			className="collection-browser-component_menu"
 			disclosure={renderDisclosure}
@@ -59,7 +58,6 @@ const CollectionBrowser = (props: Props) => {
 			{collection.pageId && (
 				<>
 					<MenuItem
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'icon' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 						icon="collection"
 						text={collection.title}
 						href={collectionUrl(communityData, collection)}
@@ -69,7 +67,6 @@ const CollectionBrowser = (props: Props) => {
 			)}
 			{isLoading && (
 				<MenuItem
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'disabled' does not exist on type 'Intrin... Remove this comment to see the full error message
 					disabled
 					className="loading-menu-item"
 					textClassName="menu-item-text"
@@ -81,7 +78,6 @@ const CollectionBrowser = (props: Props) => {
 				!isLoading &&
 				pubs.map((pub) => (
 					<MenuItem
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'active' does not exist on type 'Intrinsi... Remove this comment to see the full error message
 						active={currentPub.id === pub.id}
 						href={readingPubUrl(pub)}
 						textClassName="menu-item-text"
@@ -97,7 +93,6 @@ const CollectionBrowser = (props: Props) => {
 				))}
 			{error && (
 				<MenuItem
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'disabled' does not exist on type 'Intrin... Remove this comment to see the full error message
 					disabled
 					className="loading-menu-item"
 					textClassName="menu-item-text"

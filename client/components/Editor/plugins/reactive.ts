@@ -5,6 +5,10 @@ export default (schema, props) => {
 		schema: schema,
 		documentState: {
 			citationManager: props.citationManager,
+			blockNames: {
+				image: 'Figure',
+				video: 'Video',
+			},
 		},
 	});
 };

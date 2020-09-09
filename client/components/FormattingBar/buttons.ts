@@ -1,6 +1,8 @@
 import ControlsEquation from './controlComponents/ControlsEquation';
 import ControlsFootnoteCitation from './controlComponents/ControlsFootnoteCitation/ControlsFootnoteCitation';
 import ControlsLink from './controlComponents/ControlsLink';
+import ControlsReference from './controlComponents/ControlsReference';
+
 import ControlsMedia from './controlComponents/ControlsMedia/ControlsMedia';
 import ControlsTable from './controlComponents/ControlsTable';
 import MediaButton from './FormattingBarMediaButton';
@@ -11,7 +13,7 @@ const triggerOnClick = (changeObject) => {
 	return latestDomEvent && latestDomEvent.type === 'click';
 };
 
-const nodeControls = (component, indicatedNodeType) => {
+const nodeControls = (component, indicatedNodeType, restOptions?) => {
 	const indicatedTypes = Array.isArray(indicatedNodeType)
 		? indicatedNodeType
 		: [indicatedNodeType];
@@ -26,6 +28,7 @@ const nodeControls = (component, indicatedNodeType) => {
 			const { selectedNode } = editorChangeObject;
 			return selectedNode && indicatedTypes.some((type) => type === selectedNode.type.name);
 		},
+		...restOptions,
 	};
 };
 
@@ -126,6 +129,16 @@ export const citation = {
 	controls: nodeControls(ControlsFootnoteCitation, 'citation'),
 };
 
+export const reference = {
+	key: 'reference',
+	title: 'Reference',
+	icon: 'chevron-right',
+	controls: nodeControls(ControlsReference, 'reference', {
+		position: positionNearSelection,
+		showCloseButton: false,
+	}),
+};
+
 export const equation = {
 	key: 'equation',
 	title: 'Equation',
@@ -185,6 +198,7 @@ export const fullButtonSet = [
 	horizontalRule,
 	equation,
 	citation,
+	reference,
 	footnote,
 	table,
 	media,

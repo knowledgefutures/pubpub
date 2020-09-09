@@ -36,9 +36,7 @@ const InlineLabelEditor = (props: Props) => {
 				}}
 				buttonContent={buttonLabel}
 			>
-				{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message */}
 				<MenuItem text="Pub default" onClick={handleSelectDefault} />
-				{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message */}
 				<MenuItem text="Custom" onClick={handleSelectCustom} />
 			</MenuButton>
 			<InputGroup

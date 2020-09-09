@@ -15,6 +15,7 @@ export default {
 	file: {
 		atom: true,
 		attrs: {
+			id: { default: null },
 			url: { default: null },
 			fileName: { default: null },
 			fileSize: { default: null },
@@ -28,6 +29,7 @@ export default {
 						return false;
 					}
 					return {
+						id: node.getAttribute('id') || null,
 						url: node.getAttribute('data-url') || null,
 						fileName: node.getAttribute('data-file-name') || null,
 						fileSize: node.getAttribute('data-file-size') || null,
@@ -43,6 +45,7 @@ export default {
 			return [
 				'figure',
 				{
+					...(node.attrs.id && { id: node.attrs.id }),
 					'data-node-type': 'file',
 					'data-url': node.attrs.url,
 					'data-file-name': node.attrs.fileName,

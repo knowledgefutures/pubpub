@@ -60,7 +60,6 @@ const CommandMenu = React.forwardRef((props, ref) => {
 		return (
 			<MenuItem
 				key={command.key}
-				// @ts-expect-error ts-migrate(2322) FIXME: Property 'active' does not exist on type 'Intrinsi... Remove this comment to see the full error message
 				active={markActiveItems && menuItem.isActive}
 				text={command.title}
 				icon={command.icon}

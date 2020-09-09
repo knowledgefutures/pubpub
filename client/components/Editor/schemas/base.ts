@@ -7,17 +7,20 @@ export const baseNodes = {
 	},
 	paragraph: {
 		selectable: false,
+		// reactive: true,
 		content: 'inline*',
 		group: 'block',
 		attrs: {
+			id: { default: null },
 			class: { default: null },
 		},
 		parseDOM: [
 			{
 				tag: 'p',
-				getAttrs: (dom) => {
+				getAttrs: (node) => {
 					return {
-						class: dom.getAttribute('class'),
+						id: node.getAttribute('id') || null,
+						class: node.getAttribute('class'),
 					};
 				},
 			},
@@ -25,16 +28,32 @@ export const baseNodes = {
 		toDOM: (node) => {
 			const isEmpty = !node.content || (Array.isArray(node.content) && !node.content.length);
 			const children = isEmpty ? ['br'] : 0;
-			return ['p', { class: node.attrs.class }, children];
+			return [
+				'p',
+				{ ...(node.attrs.id && { id: node.attrs.id }), class: node.attrs.class },
+				children,
+			];
 		},
 	},
 	blockquote: {
 		content: 'block+',
 		group: 'block',
+		attrs: {
+			id: { default: null },
+		},
 		selectable: false,
-		parseDOM: [{ tag: 'blockquote' }],
-		toDOM: () => {
-			return ['blockquote', 0];
+		parseDOM: [
+			{
+				tag: 'blockquote',
+				getAttrs: (node) => {
+					return {
+						id: node.getAttribute('id') || null,
+					};
+				},
+			},
+		],
+		toDOM: (node) => {
+			return ['blockquote', { ...(node.attrs.id && { id: node.attrs.id }) }, 0];
 		},
 	},
 	horizontal_rule: {
@@ -107,27 +126,52 @@ export const baseNodes = {
 	ordered_list: {
 		content: 'list_item+',
 		group: 'block',
-		attrs: { order: { default: 1 } },
+		attrs: {
+			id: { default: null },
+			order: { default: 1 },
+		},
 		selectable: false,
 		parseDOM: [
 			{
 				tag: 'ol',
-				getAttrs: (dom) => {
-					return { order: dom.hasAttribute('start') ? +dom.getAttribute('start') : 1 };
+				getAttrs: (node) => {
+					return {
+						id: node.getAttribute('id') || null,
+						order: node.hasAttribute('start') ? +node.getAttribute('start') : 1,
+					};
 				},
 			},
 		],
 		toDOM: (node) => {
-			return ['ol', { start: node.attrs.order === 1 ? null : node.attrs.order }, 0];
+			return [
+				'ol',
+				{
+					...(node.attrs.id && { id: node.attrs.id }),
+					start: node.attrs.order === 1 ? null : node.attrs.order,
+				},
+				0,
+			];
 		},
 	},
 	bullet_list: {
 		content: 'list_item+',
 		group: 'block',
+		attrs: {
+			id: { default: null },
+		},
 		selectable: false,
-		parseDOM: [{ tag: 'ul' }],
-		toDOM: () => {
-			return ['ul', 0];
+		parseDOM: [
+			{
+				tag: 'ul',
+				getAttrs: (node) => {
+					return {
+						id: node.getAttribute('id') || null,
+					};
+				},
+			},
+		],
+		toDOM: (node) => {
+			return ['ul', { ...(node.attrs.id && { id: node.attrs.id }) }, 0];
 		},
 	},
 	list_item: {
@@ -142,11 +186,24 @@ export const baseNodes = {
 	code_block: {
 		content: 'text*',
 		group: 'block',
+		attrs: {
+			id: { default: null },
+		},
 		code: true,
 		selectable: false,
-		parseDOM: [{ tag: 'pre', preserveWhitespace: 'full' }],
-		toDOM: () => {
-			return ['pre', ['code', 0]];
+		parseDOM: [
+			{
+				tag: 'pre',
+				getAttrs: (node) => {
+					return {
+						id: node.getAttribute('id') || null,
+					};
+				},
+				preserveWhitespace: 'full',
+			},
+		],
+		toDOM: (node) => {
+			return ['pre', { ...(node.attrs.id && { id: node.attrs.id }) }, ['code', 0]];
 		},
 	},
 	text: {
@@ -211,6 +268,9 @@ export const baseMarks = {
 			{
 				tag: 'a[href]',
 				getAttrs: (dom) => {
+					if (dom.getAttribute('data-node-type') === 'reference') {
+						return false;
+					}
 					return {
 						href: dom.getAttribute('href'),
 						title: dom.getAttribute('title'),

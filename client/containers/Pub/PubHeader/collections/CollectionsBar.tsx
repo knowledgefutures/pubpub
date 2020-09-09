@@ -71,7 +71,6 @@ const CollectionsBar = (props: Props) => {
 							: 'collections'
 						: 'more';
 					return (
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 						<Menu
 							placement="bottom-end"
 							aria-label={overflowCollections.length + ' ' + label}
@@ -87,7 +86,6 @@ const CollectionsBar = (props: Props) => {
 								const schema = getSchemaForKind(collection.kind);
 								return (
 									<MenuItem
-										// @ts-expect-error ts-migrate(2322) FIXME: Property 'icon' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 										icon={schema && schema.bpDisplayIcon}
 										key={collection.id}
 										text={collection.title}

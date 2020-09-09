@@ -115,7 +115,6 @@ const Download = (props: Props) => {
 	]);
 
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		<Menu
 			disclosure={children}
 			className="pub-download-component"
@@ -128,7 +127,6 @@ const Download = (props: Props) => {
 						<h6 className="bp3-heading">Formatted Download</h6>
 					</li>
 					<MenuItem
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'dismissOnClick' does not exist on type '... Remove this comment to see the full error message
 						dismissOnClick={false}
 						labelElement={<Icon icon="star" />}
 						className="formatted-button"
@@ -155,7 +153,6 @@ const Download = (props: Props) => {
 					<MenuItem
 						// eslint-disable-next-line react/no-array-index-key
 						key={`${i}-${type.format}`}
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'dismissOnClick' does not exist on type '... Remove this comment to see the full error message
 						dismissOnClick={false}
 						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 						disabled={isLoading && selectedType.format !== type.format}

@@ -143,7 +143,13 @@ const createOutputSpecFromNode = (node, schema, context) => {
 export const getReactedDocFromJson = (doc, schema, citationManager) => {
 	const hydratedDoc = Node.fromJSON(schema, doc);
 	const reactedDoc = getReactedDoc(hydratedDoc, {
-		documentState: { citationManager: citationManager },
+		documentState: {
+			citationManager: citationManager,
+			blockNames: {
+				image: 'Figure',
+				video: 'Video',
+			},
+		},
 	});
 	return reactedDoc.toJSON();
 };

@@ -1,20 +1,20 @@
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Classes } from '@blueprintjs/core';
 import * as RK from 'reakit/Menu';
 
 import { MenuContext, MenuConfigContext } from './menuContexts';
+import { Placement } from 'popper.js';
 
-const propTypes = {
-	'aria-label': PropTypes.string.isRequired,
-	children: PropTypes.node.isRequired,
-	className: PropTypes.string,
-	disclosure: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
-	gutter: PropTypes.number,
-	menuStyle: PropTypes.shape({}),
-	onDismiss: PropTypes.func,
-	placement: PropTypes.string,
+export type MenuProps = {
+	'aria-label': string;
+	children: React.ReactNode;
+	className?: string;
+	disclosure: ((disclosureProps: RK.MenuDisclosureProps) => React.ReactNode) | React.ReactNode;
+	gutter?: number;
+	menuStyle?: object;
+	onDismiss?: () => unknown;
+	placement?: Placement;
 };
 
 const defaultProps = {
@@ -32,22 +32,15 @@ const renderDisclosure = (disclosure, disclosureProps) => {
 	return React.cloneElement(disclosure, disclosureProps);
 };
 
-export const Menu = React.forwardRef((props, ref) => {
+export const Menu = React.forwardRef((props: MenuProps, ref) => {
 	const {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'aria-label' does not exist on type '{ ch... Remove this comment to see the full error message
 		'aria-label': ariaLabel,
 		children,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'className' does not exist on type '{ chi... Remove this comment to see the full error message
 		className,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'disclosure' does not exist on type '{ ch... Remove this comment to see the full error message
 		disclosure,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'placement' does not exist on type '{ chi... Remove this comment to see the full error message
 		placement,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'onDismiss' does not exist on type '{ chi... Remove this comment to see the full error message
 		onDismiss,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'gutter' does not exist on type '{ childr... Remove this comment to see the full error message
 		gutter,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'menuStyle' does not exist on type '{ chi... Remove this comment to see the full error message
 		menuStyle,
 		...restProps
 	} = props;
@@ -63,7 +56,7 @@ export const Menu = React.forwardRef((props, ref) => {
 
 	const handleDismiss = () => {
 		menu.hide();
-		onDismiss();
+		onDismiss && onDismiss();
 	};
 
 	return (
@@ -96,7 +89,4 @@ export const Menu = React.forwardRef((props, ref) => {
 	);
 });
 
-// @ts-expect-error ts-migrate(2559) FIXME: Type '{ 'aria-label': Validator<string>; children:... Remove this comment to see the full error message
-Menu.propTypes = propTypes;
-// @ts-expect-error ts-migrate(2559) FIXME: Type '{ className: string; gutter: undefined; menu... Remove this comment to see the full error message
 Menu.defaultProps = defaultProps;

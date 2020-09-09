@@ -4,6 +4,7 @@ export default {
 	iframe: {
 		atom: true,
 		attrs: {
+			id: { default: null },
 			url: { default: '' },
 			size: { default: 75 }, // number as percentage
 			height: { default: 419 },
@@ -18,6 +19,7 @@ export default {
 						return false;
 					}
 					return {
+						id: node.getAttribute('id') || null,
 						url: node.firstChild.getAttribute('src') || null,
 						size: Number(node.getAttribute('data-size')) || 75,
 						height: Number(node.firstChild.getAttribute('height')) || 419,
@@ -32,6 +34,7 @@ export default {
 			return [
 				'figure',
 				{
+					...(node.attrs.id && { id: node.attrs.id }),
 					'data-node-type': 'iframe',
 					'data-size': node.attrs.size,
 					'data-align': node.attrs.align,

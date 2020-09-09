@@ -48,7 +48,6 @@ const PubMenu = (props: Props) => {
 				{canSetCollectionAsPrimary && (
 					<>
 						<MenuItem
-							// @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 							text="Use as primary collection"
 							icon={collectionPub.isPrimary ? 'tick' : 'blank'}
 							onClick={() =>
@@ -59,7 +58,6 @@ const PubMenu = (props: Props) => {
 					</>
 				)}
 				<MenuItem
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 					text={<i>(No label)</i>}
 					icon={!collectionPub.contextHint ? 'tick' : 'blank'}
 					onClick={() => setCollectionPubContextHint(collectionPub, null)}
@@ -68,7 +66,6 @@ const PubMenu = (props: Props) => {
 				{collectionSchema.contextHints.map((hint) => (
 					<MenuItem
 						key={hint.value}
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 						text={hint.label}
 						icon={collectionPub.contextHint === hint.value ? 'tick' : 'blank'}
 						onClick={() => setCollectionPubContextHint(collectionPub, hint.value)}

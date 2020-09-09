@@ -5,19 +5,13 @@ import { Button } from '@blueprintjs/core';
 
 const items = (
 	<React.Fragment>
-		{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'icon' does not exist on type 'IntrinsicA... Remove this comment to see the full error message */}
 		<MenuItem icon="doughnut-chart" text="hello" />
-		{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'icon' does not exist on type 'IntrinsicA... Remove this comment to see the full error message */}
 		<MenuItem icon="git-branch" text="hi" />
 		<MenuItemDivider />
-		{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message */}
 		<MenuItem icon="paperclip" text="what's up">
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message */}
 			<MenuItem text="hola — a longer item" />
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message */}
 			<MenuItem text="what's in here">
 				<MenuItem
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 					text="i wonder if you can click me"
 					// eslint-disable-next-line no-alert
 					onClick={() => alert('You found it!')}
@@ -35,6 +29,7 @@ storiesOf('components/Menu', module)
 				disclosure={(props) => {
 					const { ref, ...restProps } = props;
 					return (
+						// @ts-expect-error
 						<Button rightIcon="caret-down" {...restProps} elementRef={props.ref}>
 							Hello there
 						</Button>

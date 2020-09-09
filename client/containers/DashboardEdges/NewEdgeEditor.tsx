@@ -168,7 +168,6 @@ const NewEdgeEditor = (props: Props) => {
 								const selected = newEdge.relationType === relationType;
 								return (
 									<MenuItem
-										// @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 										text={name}
 										onClick={() => handleEdgeRelationTypeChange(relationType)}
 										key={relationType}

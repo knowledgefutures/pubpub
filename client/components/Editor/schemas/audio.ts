@@ -4,6 +4,7 @@ export default {
 	audio: {
 		atom: true,
 		attrs: {
+			id: { default: null },
 			url: { default: null },
 			size: { default: 50 }, // number as percentage
 			align: { default: 'center' },
@@ -17,6 +18,7 @@ export default {
 						return false;
 					}
 					return {
+						id: node.getAttribute('id') || null,
 						url: node.firstChild.getAttribute('src') || null,
 						size: Number(node.getAttribute('data-size')) || 50,
 						align: node.getAttribute('data-align') || 'center',
@@ -30,6 +32,7 @@ export default {
 			return [
 				'figure',
 				{
+					...(node.attrs.id && { id: node.attrs.id }),
 					'data-node-type': 'audio',
 					'data-size': node.attrs.size,
 					'data-align': node.attrs.align,

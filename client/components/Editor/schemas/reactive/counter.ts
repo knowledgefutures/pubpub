@@ -1,4 +1,4 @@
-export const counter = (counterType, nodeFingerprintFn) => {
+export const counter = (counterType: string, nodeFingerprintFn?) => {
 	const hasFingerprint = !!nodeFingerprintFn;
 
 	return function(node) {

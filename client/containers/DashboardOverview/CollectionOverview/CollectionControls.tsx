@@ -32,18 +32,17 @@ const CollectionControls = (props: Props) => {
 					aria-label="Set collection public or private"
 					buttonContent={isPublic ? 'Public' : 'Private'}
 					buttonProps={{
+						// @ts-expect-error: "lock2" not valid in TS definitions
 						icon: isPublic ? 'globe' : 'lock2',
 						rightIcon: 'caret-down',
 					}}
 				>
 					<MenuItem
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'icon' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 						icon={isPublic ? 'tick' : 'blank'}
 						text="Public"
 						onClick={() => updateCollection({ isPublic: true })}
 					/>
 					<MenuItem
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'icon' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 						icon={isPublic ? 'blank' : 'tick'}
 						text="Private"
 						onClick={() => updateCollection({ isPublic: false })}

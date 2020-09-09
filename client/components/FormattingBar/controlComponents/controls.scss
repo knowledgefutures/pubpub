@@ -1,233 +1,234 @@
 @mixin text-fields {
-    input[type='text'] {
-        border-radius: 2px;
-        color: white;
-        background: rgba(255, 255, 255, 0.2);
-        &::placeholder {
-            color: rgba(255, 255, 255, 0.9);
-        }
-    }
+	input[type='text'] {
+		border-radius: 2px;
+		color: white;
+		background: rgba(255, 255, 255, 0.2);
+		&::placeholder {
+			color: rgba(255, 255, 255, 0.9);
+		}
+	}
 }
 
 @mixin small-screen {
-    @media screen and (max-width: 750px) {
-        @content;
-    }
+	@media screen and (max-width: 750px) {
+		@content;
+	}
 }
 
 @mixin controls-component {
-    display: flex;
-    height: 100%;
-    max-width: 1600px;
-    height: 225px;
-    margin: 0 auto;
-    
-    @include text-fields();
+	display: flex;
+	height: 100%;
+	max-width: 1600px;
+	height: 225px;
+	margin: 0 auto;
 
-    @include small-screen {
-        height: unset;
-    }
+	@include text-fields();
 
-    .bp3-slider {
-        .bp3-slider-track {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .bp3-slider-progress:not(:last-child) {
-            background: white;
-        }
-        .bp3-slider-handle:focus {
-            outline: 1.5px solid white;
-        }
-    }
+	@include small-screen {
+		height: unset;
+	}
 
-    .bp3-spinner {
-        .bp3-spinner-track {
-            stroke: white;
-        }
-    }
+	.bp3-slider {
+		.bp3-slider-track {
+			background: rgba(255, 255, 255, 0.2);
+		}
+		.bp3-slider-progress:not(:last-child) {
+			background: white;
+		}
+		.bp3-slider-handle:focus {
+			outline: 1.5px solid white;
+		}
+	}
 
-    textarea {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        width: 100%;
-        padding: 0.5em;
-        color: white;
-        box-sizing: border-box;
-    }
+	.bp3-spinner {
+		.bp3-spinner-track {
+			stroke: white;
+		}
+	}
 
-    .minimal-editor-component {
-        width: 100%;
-        overflow-y: hidden;
-        .editor-wrapper:focus-within {
-            box-shadow: inset 0px 0px 0px 1.5px white !important;
-            border-top-color: transparent;
-        }
-        .editor,
-        .editor:not(:disabled) {
-            box-shadow: none !important;
-        }
-    }
+	textarea {
+		background: rgba(255, 255, 255, 0.2);
+		border: none;
+		width: 100%;
+		padding: 0.5em;
+		color: white;
+		box-sizing: border-box;
+	}
 
-    .section {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow: hidden;
-        & > *:not(:last-child) {
-            margin-bottom: 9px;
-        }
-        .title {
-            margin-bottom: 9px;
-            user-select: none;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        textarea {
-            flex-grow: 1;
-            resize: none;
-            overflow: auto;
-        }
-    }
+	.minimal-editor-component {
+		width: 100%;
+		overflow-y: hidden;
+		.editor-wrapper:focus-within {
+			box-shadow: inset 0px 0px 0px 1.5px white !important;
+			border-top-color: transparent;
+		}
+		.editor,
+		.editor:not(:disabled) {
+			box-shadow: none !important;
+		}
+	}
 
-    .controls-row {
-        display: flex;
-        align-items: center;
-        .left-label {
-            user-select: none;
-            margin-right: 9px;
-        }
-        .controls {
-            display: flex;
-            flex-grow: 1;
-        }
-    }
+	.section {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
+		& > *:not(:last-child) {
+			margin-bottom: 9px;
+		}
+		.title {
+			margin-bottom: 9px;
+			user-select: none;
+			text-transform: uppercase;
+			font-weight: 600;
+		}
+		textarea {
+			flex-grow: 1;
+			resize: none;
+			overflow: auto;
+		}
+	}
 
-    .controls-button-group {
-        & > *:not(:last-child) {
-            margin-right: 9px;
-        }
-        margin-bottom: -9px;
-        .controls-button {
-            min-width: 150px;
-            margin-bottom: 9px;
-            padding: 8px;
-            border: 1px solid white;
-            color: white;
-            font: inherit;
-            cursor: pointer;
-            background: transparent;
-            font-weight: 600;
-            &:hover:not(:disabled) {
-                background: rgba(255, 255, 255, 0.2);
-            }
-            &:disabled {
-                cursor: not-allowed;
-                opacity: 0.5;
-            }
-        }
-    }
+	.controls-row {
+		display: flex;
+		align-items: center;
+		.left-label {
+			user-select: none;
+			margin-right: 9px;
+		}
+		.controls {
+			display: flex;
+			flex-grow: 1;
+		}
+	}
+
+	.controls-button-group {
+		& > *:not(:last-child) {
+			margin-right: 9px;
+		}
+		margin-bottom: -9px;
+		.controls-button {
+			min-width: 150px;
+			margin-bottom: 9px;
+			padding: 8px;
+			border: 1px solid white;
+			color: white;
+			font: inherit;
+			cursor: pointer;
+			background: transparent;
+			font-weight: 600;
+			&:hover:not(:disabled) {
+				background: rgba(255, 255, 255, 0.2);
+			}
+			&:disabled {
+				cursor: not-allowed;
+				opacity: 0.5;
+			}
+		}
+	}
 }
 
 @mixin controls-grid($template: repeat(3, 1fr)) {
-    display: grid;
-    grid-template-columns: $template;
-    grid-column-gap: 18px;
+	display: grid;
+	grid-template-columns: $template;
+	grid-column-gap: 18px;
 
-    @include small-screen {
-        grid-template-columns: 100%;
-        grid-row-gap: 9px;
-        max-height: 600px;
-    }
+	@include small-screen {
+		grid-template-columns: 100%;
+		grid-row-gap: 9px;
+		max-height: 600px;
+	}
 }
 
 .controls-citation-component {
-    @include controls-component();
-    @include controls-grid();
+	@include controls-component();
+	@include controls-grid();
 
-    .structured-data {
-        font-family: monospace;
-        &::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-    }
-    .preview {
-        a {
-            color: white !important;
-        }
-        .pub-note-content-component {
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-    }
-    .inline-label-editor-component {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        .bp3-button.label-type-menu {
-            margin-right: 5px;
-        }
-        .bp3-input-group {
-            flex-grow: 1;
-        }
-    }
+	.structured-data {
+		font-family: monospace;
+		&::placeholder {
+			color: rgba(255, 255, 255, 0.6);
+		}
+	}
+	.preview {
+		a {
+			color: white !important;
+		}
+		.pub-note-content-component {
+			overflow-y: auto;
+			flex-grow: 1;
+		}
+	}
+	.inline-label-editor-component {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		.bp3-button.label-type-menu {
+			margin-right: 5px;
+		}
+		.bp3-input-group {
+			flex-grow: 1;
+		}
+	}
 }
 
 .controls-media-component {
-    @include controls-component();
-    @include controls-grid(minmax(300px, 1fr) 2fr);
-    max-width: 1200px;
+	@include controls-component();
+	@include controls-grid(minmax(300px, 1fr) 2fr);
+	max-width: 1200px;
 
-    .slider-input-control {
-        display: flex;
-        align-items: center;
-        .bp3-input-group {
-            margin-left: 15px;
-            width: 50px;
-            display: flex;
-            align-items: center;
-        }
-        .left-label {
-            user-select: none;
-            width: 80px;
-            margin-right: 10px;
-        }
-        .right-label {
-            user-select: none;
-            margin-left: 3px;
-            width: 40px;
-        }
-    }
+	.slider-input-control {
+		display: flex;
+		align-items: center;
+		.bp3-input-group {
+			margin-left: 15px;
+			width: 50px;
+			display: flex;
+			align-items: center;
+		}
+		.left-label {
+			user-select: none;
+			width: 80px;
+			margin-right: 10px;
+		}
+		.right-label {
+			user-select: none;
+			margin-left: 3px;
+			width: 40px;
+		}
+	}
 
-    .source-control {
-        .controls {
-            .bp3-input-group {
-                width: 100%;
-            }
-        }
-    }
+	.source-control {
+		.controls {
+			.bp3-input-group {
+				width: 100%;
+			}
+		}
+	}
 }
 
 .controls-equation-component {
-    @include controls-component();
-    @include controls-grid(1fr 1fr);
-    max-width: 1200px;
+	@include controls-component();
+	@include controls-grid(1fr 1fr);
+	max-width: 1200px;
 
-    .latex {
-        &::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-    }
+	.latex {
+		&::placeholder {
+			color: rgba(255, 255, 255, 0.6);
+		}
+	}
 
-    .preview {
-        overflow-y: auto;
-        flex-grow: 1;
-    }
+	.preview {
+		overflow-y: auto;
+		flex-grow: 1;
+	}
 }
 
-.controls-link-component {
-    @include text-fields();
-    display: flex;
-    & > * {
-        margin-right: 5px;
-    }
+.controls-link-component,
+.controls-reference-component {
+	@include text-fields();
+	display: flex;
+	& > * {
+		margin-right: 5px;
+	}
 }

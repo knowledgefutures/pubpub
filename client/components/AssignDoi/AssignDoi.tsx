@@ -395,7 +395,6 @@ function AssignDoi(props: Props) {
 								{contentVersionItems.map((item) => (
 									<MenuItem
 										key={item.key}
-										// @ts-expect-error ts-migrate(2322) FIXME: Property 'active' does not exist on type 'Intrinsi... Remove this comment to see the full error message
 										active={item === activeContentVersionItem}
 										onClick={() => handleContentVersionItemSelect(item)}
 										text={item.title}
@@ -417,7 +416,6 @@ function AssignDoi(props: Props) {
 									{reviewTypeItems.map((item) => (
 										<MenuItem
 											key={item.key}
-											// @ts-expect-error ts-migrate(2322) FIXME: Property 'active' does not exist on type 'Intrinsi... Remove this comment to see the full error message
 											active={item === activeReviewTypeItem}
 											onClick={() => handleReviewTypeItemSelect(item)}
 											text={<span>{item.title}</span>}
@@ -435,7 +433,6 @@ function AssignDoi(props: Props) {
 									{reviewRecommendationItems.map((item) => (
 										<MenuItem
 											key={item.key}
-											// @ts-expect-error ts-migrate(2322) FIXME: Property 'active' does not exist on type 'Intrinsi... Remove this comment to see the full error message
 											active={item === activeReviewRecommendationItem}
 											onClick={() =>
 												handleReviewRecommendationItemSelect(item)

@@ -15,7 +15,7 @@ import PubFileImport from './PubFileImport';
 import PubHeaderFormatting from './PubHeaderFormatting';
 import PubHistoricalNotice from './PubHistoricalNotice';
 import PubInlineMenu from './PubInlineMenu';
-import PubMouseEvents from './PubMouseEvents';
+import PubLinkController from './PubLinkController';
 import PubMaintenanceNotice from './PubMaintenanceNotice';
 import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
 
@@ -148,12 +148,7 @@ const PubDocument = (props: Props) => {
 					/>
 				)}
 			</PubSuspendWhileTyping>
-			<PubMouseEvents
-				collabData={collabData}
-				locationData={locationData}
-				historyData={historyData}
-				mainContentRef={mainContentRef}
-			/>
+			<PubLinkController locationData={locationData} mainContentRef={mainContentRef} />
 		</div>
 	);
 };

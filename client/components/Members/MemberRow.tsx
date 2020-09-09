@@ -183,7 +183,6 @@ const MemberRow = (props: Props) => {
 				className="member-permission-select bp3-elevation-3"
 				placement="bottom-end"
 				buttonProps={{
-					// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 					className: 'permission-button',
 					rightIcon: 'caret-down',
 					outlined: true,

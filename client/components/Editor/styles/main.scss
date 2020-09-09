@@ -39,6 +39,15 @@ h6 {
 
 span.citation {
 	color: #808080;
+	font-weight: bold;
+}
+
+a.reference {
+	font-weight: bold;
+	text-decoration: none;
+	&.missing {
+		color: darkred;
+	}
 }
 
 table {

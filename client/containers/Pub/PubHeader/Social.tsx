@@ -43,13 +43,11 @@ const Social = (props: Props) => {
 	const links = getLinksForPub(pubData.title, pubUrl(communityData, pubData));
 
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		<Menu disclosure={children} placement="bottom-end" aria-label="Social sharing options">
 			{links.map((link) => {
 				return (
 					<MenuItem
 						key={link.title}
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'icon' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 						icon={link.icon}
 						text={link.title}
 						href={link.url}

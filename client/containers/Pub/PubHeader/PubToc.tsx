@@ -29,7 +29,6 @@ const PubToc = (props: Props) => {
 	const { scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		<Menu
 			aria-label="Table of contents"
 			className="pub-toc-component"
@@ -41,7 +40,6 @@ const PubToc = (props: Props) => {
 				return (
 					<MenuItem
 						key={heading.index}
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'href' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
 						href={`#${heading.href}`}
 						className={`level-${heading.level}`}
 						onClick={(evt) => {

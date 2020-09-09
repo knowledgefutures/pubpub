@@ -38,7 +38,6 @@ const NavBar = function(props) {
 				<MenuItem
 					// eslint-disable-next-line react/no-array-index-key
 					key={index}
-					// @ts-expect-error
 					href={subitem.href}
 					icon={subitem.isPrivate && <Icon icon="lock2" iconSize={14} />}
 					rightElement={subitem.isExternal && <Icon icon="share" iconSize={14} />}
@@ -52,7 +51,6 @@ const NavBar = function(props) {
 	const renderNavItem = (item: NavbarItem) => {
 		if (isNavbarMenu(item)) {
 			return (
-				// @ts-expect-error
 				<Menu
 					aria-label={item.title}
 					disclosure={

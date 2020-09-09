@@ -1,13 +1,19 @@
 import { renderHtmlChildren } from '../utils/renderHtml';
+import { counter } from './reactive/counter';
 
 export default {
 	image: {
 		atom: true,
+		reactive: true,
 		attrs: {
+			id: { default: null },
 			url: { default: null },
 			size: { default: 50 }, // number as percentage
 			align: { default: 'center' },
 			caption: { default: '' },
+		},
+		reactiveAttrs: {
+			count: counter('figure'),
 		},
 		parseDOM: [
 			{
@@ -17,6 +23,7 @@ export default {
 						return false;
 					}
 					return {
+						id: node.getAttribute('id') || null,
 						url: node.getAttribute('data-url') || null,
 						size: Number(node.getAttribute('data-size')) || 50,
 						align: node.getAttribute('data-align') || 'center',
@@ -31,6 +38,7 @@ export default {
 			return [
 				'figure',
 				{
+					...(node.attrs.id && { id: node.attrs.id }),
 					'data-node-type': 'image',
 					'data-size': node.attrs.size,
 					'data-align': node.attrs.align,

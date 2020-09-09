@@ -8,6 +8,7 @@ import image from './image';
 import table from './table';
 import video from './video';
 import audio from './audio';
+import reference from './reference';
 import deprecated from './deprecated';
 
 export const defaultNodes = {
@@ -21,6 +22,7 @@ export const defaultNodes = {
 	...table,
 	...video,
 	...audio,
+	...reference,
 	...deprecated,
 };
 

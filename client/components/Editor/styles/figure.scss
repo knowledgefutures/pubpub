@@ -1,29 +1,43 @@
 figure {
+	display: block;
 	text-align: center;
-	margin: 1em auto;
+	margin: 0;
+
+	> * {
+		margin: 1em auto;
+	}
 
 	& > * {
 		width: 100%;
 		pointer-events: none;
 	}
-	&.ProseMirror-selectednode > * {
+
+	&.ProseMirror-selectednode {
+		outline: none;
+	}
+
+	&.ProseMirror-selectednode > :first-child {
+		outline: 2px solid #bbbdc0;
 		pointer-events: auto;
 	}
 
-	&[data-align='left'] {
+	&[data-align='left'] > :first-child {
 		float: left;
 		margin: 0.5em 1.5em 0.5em 0em;
 	}
-	&[data-align='right'] {
+
+	&[data-align='right'] > :first-child {
 		float: right;
 		margin: 0.5em 0em 0.5em 1.5em;
 	}
+
 	@for $i from 1 through 100 {
-		&[data-size='#{$i}'] {
+		&[data-size='#{$i}'] > :first-child {
 			width: percentage($i/100);
 		}
 	}
-	&[data-align='full'] {
+
+	&[data-align='full'] > :first-child {
 		width: 100%;
 	}
 
@@ -47,5 +61,5 @@ figure {
 			float: none !important;
 			width: 100% !important;
 		}
-	}	
+	}
 }

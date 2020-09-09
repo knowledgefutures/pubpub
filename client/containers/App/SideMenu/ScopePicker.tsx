@@ -67,7 +67,6 @@ const ScopePicker = () => {
 				}
 				buttonProps={{
 					icon: <Icon icon={icon} />,
-					// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 					className: 'scope-button',
 					fill: true,
 					minimal: true,

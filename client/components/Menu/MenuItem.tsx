@@ -1,59 +1,43 @@
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { Classes, Icon } from '@blueprintjs/core';
+import classNames from 'classnames';
+import React, { useContext } from 'react';
 import * as RK from 'reakit/Menu';
 
-import { MenuContext } from './menuContexts';
 import { Menu } from './Menu';
+import { MenuContext } from './menuContexts';
 
-const sharedPropTypes = {
-	className: PropTypes.string,
-	disabled: PropTypes.bool,
-	href: PropTypes.string,
-	icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-	onClick: PropTypes.func,
-	rightElement: PropTypes.node,
-	target: PropTypes.string,
-	textClassName: PropTypes.string,
+type SharedMenuItemProps = {
+	active?: boolean;
+	children?: React.ReactNode;
+	className?: string;
+	disabled?: boolean;
+	href?: string;
+	icon?: string | React.ReactNode;
+	onClick?: (event: MouseEvent) => unknown;
+	rightElement?: React.ReactNode;
+	target?: string;
+	textClassName?: string;
 };
 
-const sharedDefaultProps = {
-	className: '',
-	disabled: false,
-	href: null,
-	icon: null,
-	onClick: null,
-	rightElement: null,
-	target: '_self',
-	textClassName: '',
-};
+export type DisplayMenuItemProps = {
+	onDismiss: (...args: any[]) => unknown;
+	hasSubmenu: boolean;
+} & SharedMenuItemProps;
 
-const DisplayMenuItem = React.forwardRef((props, ref) => {
+const DisplayMenuItem = React.forwardRef((props: DisplayMenuItemProps, ref) => {
 	const {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'active' does not exist on type '{ childr... Remove this comment to see the full error message
-		active,
-		children,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'className' does not exist on type '{ chi... Remove this comment to see the full error message
-		className,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'disabled' does not exist on type '{ chil... Remove this comment to see the full error message
-		disabled,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'hasSubmenu' does not exist on type '{ ch... Remove this comment to see the full error message
-		hasSubmenu,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'href' does not exist on type '{ children... Remove this comment to see the full error message
+		active = false,
+		children = null,
+		className = '',
+		disabled = false,
+		hasSubmenu = false,
 		href,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'icon' does not exist on type '{ children... Remove this comment to see the full error message
-		icon,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'onClick' does not exist on type '{ child... Remove this comment to see the full error message
-		onClick,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'onDismiss' does not exist on type '{ chi... Remove this comment to see the full error message
-		onDismiss,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'rightElement' does not exist on type '{ ... Remove this comment to see the full error message
-		rightElement,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'target' does not exist on type '{ childr... Remove this comment to see the full error message
-		target,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'textClassName' does not exist on type '{... Remove this comment to see the full error message
-		textClassName,
+		icon = null,
+		onClick = null,
+		onDismiss = null,
+		rightElement = null,
+		target = '_self',
+		textClassName = '',
 		...restProps
 	} = props;
 
@@ -103,23 +87,17 @@ const DisplayMenuItem = React.forwardRef((props, ref) => {
 	);
 });
 
-DisplayMenuItem.propTypes = {
-	...sharedPropTypes,
-	// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
-	hasSubmenu: PropTypes.bool,
-	onDismiss: PropTypes.func,
-};
+export type MenuItemProps = {
+	onClick?: (event: MouseEvent) => unknown;
+	text?: React.ReactNode;
+	children?: React.ReactNode;
+	dismissOnClick?: boolean;
+	placement?: string;
+	labelElement?: React.ReactNode;
+} & SharedMenuItemProps;
 
-DisplayMenuItem.defaultProps = {
-	...sharedDefaultProps,
-	// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
-	hasSubmenu: false,
-	onDismiss: null,
-};
-
-export const MenuItem = React.forwardRef((props, ref) => {
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'text' does not exist on type '{ children... Remove this comment to see the full error message
-	const { children, text, dismissOnClick, ...restProps } = props;
+export const MenuItem = React.forwardRef((props: MenuItemProps, ref) => {
+	const { children = null, text, dismissOnClick = true, ...restProps } = props;
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'dismissMenu' does not exist on type 'nul... Remove this comment to see the full error message
 	const { dismissMenu, parentMenu } = useContext(MenuContext);
 	if (children) {
@@ -156,21 +134,6 @@ export const MenuItem = React.forwardRef((props, ref) => {
 		</RK.MenuItem>
 	);
 });
-
-MenuItem.propTypes = {
-	...sharedPropTypes,
-	// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
-	children: PropTypes.arrayOf(PropTypes.node),
-	text: PropTypes.node.isRequired,
-	dismissOnClick: PropTypes.bool,
-};
-
-MenuItem.defaultProps = {
-	...sharedDefaultProps,
-	// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
-	children: null,
-	dismissOnClick: true,
-};
 
 export const MenuItemDivider = () => {
 	return (

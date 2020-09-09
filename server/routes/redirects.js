@@ -3,6 +3,7 @@ import app from 'server/server';
 const redirectHosts = {
 	'www.pubpub.org': {
 		'/iai': 'https://v3.pubpub.org/iai',
+		'/help': 'https://help.pubpub.org',
 	},
 	'pubpub.ito.com': {
 		'/pub/resisting-reduction': 'https://jods.mitpress.mit.edu/pub/resisting-reduction',

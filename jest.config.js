@@ -10,5 +10,5 @@ module.exports = {
 	globalSetup: '<rootDir>/stubstub/global/setup.js',
 	globalTeardown: '<rootDir>/stubstub/global/teardown.js',
 	setupFiles: ['<rootDir>/.jest/register-context.js', '<rootDir>/.jest/setup-env.js'],
-	testPathIgnorePatterns: ['<rootDir>/utils/crossref/__tests__/data'],
+	testPathIgnorePatterns: ['__tests__/data'],
 };

@@ -1,13 +1,14 @@
-import app from 'server/server';
-import { handleErrors } from 'server/utils/errors';
+import app, { wrap } from 'server/server';
+import { getInitialData } from 'server/utils/initData';
 
 import { getCommunityRss } from './queries';
 
-app.get('/rss.xml', (req, res, next) => {
-	return getCommunityRss(req.hostname)
-		.then((feedXML) => {
-			res.set('Content-Type', 'text/xml');
-			return res.send(feedXML);
-		})
-		.catch(handleErrors(req, res, next));
-});
+app.get(
+	'/rss.xml',
+	wrap(async (req, res) => {
+		const initialData = await getInitialData(req);
+		const feedXml = await getCommunityRss(initialData.communityData, req.query);
+		res.header('Content-Type', 'text/xml');
+		return res.status(200).send(feedXml);
+	}),
+);

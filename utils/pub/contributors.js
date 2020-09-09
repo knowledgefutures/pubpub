@@ -42,6 +42,13 @@ export const getAllPubContributors = (pubData, hideAuthors = false, hideContribu
 	});
 };
 
+export const getContributorName = (attribution) => {
+	if (attribution.user) {
+		return attribution.user.fullName;
+	}
+	return attribution.name;
+};
+
 export const getAuthorString = (pub) => {
 	const contributors = getAllPubContributors(pub, false, true);
 	return joinOxford(contributors.map((c) => c.user.fullName));

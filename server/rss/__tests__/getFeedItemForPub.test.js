@@ -39,6 +39,7 @@ const models = modelize`
             }
             PubAttribution {
                 isAuthor: true
+                order: 0.2
                 User {
                     fullName: "PA3"
                 }

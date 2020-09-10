@@ -36,7 +36,7 @@ const pubsIdsQuery = `
 			"pub"."slug",
 			"pub"."title",
 			array_agg(distinct "collection"."slug") AS slugs,
-			count("inboundEdge") + count("outboundEdge") as parents,
+			count("inboundParentFromSameCommunity") + count("outboundParentFromSameCommunity") as parents,
 			coalesce("pub"."customPublishedAt", min("release"."createdAt")) as publication_date
 		FROM "Pubs" AS "pub"
 			-- Grab connection information
@@ -47,7 +47,16 @@ const pubsIdsQuery = `
 			)
 			LEFT OUTER JOIN "PubEdges" AS "outboundEdge" ON (
 				"outboundEdge"."pubId" = "pub"."id" AND 
-				"outboundEdge"."pubIsParent" = false
+				"outboundEdge"."pubIsParent" = false AND
+				"outboundEdge"."targetPubId" IS NOT null
+			)
+			LEFT OUTER JOIN "Pubs" AS "outboundParentFromSameCommunity" ON (
+				"outboundParentFromSameCommunity"."communityId" = :communityId AND
+				"outboundParentFromSameCommunity"."id" = "outboundEdge"."targetPubId"
+			)
+			LEFT OUTER JOIN "Pubs" AS "inboundParentFromSameCommunity" ON (
+				"inboundParentFromSameCommunity"."communityId" = :communityId AND
+				"inboundParentFromSameCommunity"."id" = "inboundEdge"."pubId"
 			)
 			-- Grab collection information to compare slugs
 			LEFT OUTER JOIN "CollectionPubs" AS "collectionPub" ON "pub"."id" = "collectionPub"."pubId"
@@ -55,11 +64,9 @@ const pubsIdsQuery = `
 				"collectionPub"."collectionId" = "collection"."id" AND
 				"collection"."isPublic" = true
 			)
-			-- We only want Pubs within a given community
-			LEFT OUTER JOIN "Communities" AS "community" ON "pub"."communityId" = "community"."id"
 			-- We need an associated Release
 			INNER JOIN "Releases" AS "release" ON "pub"."id" = "release"."pubId"
-		WHERE "community"."id" = :communityId
+		WHERE "pub"."communityId" = :communityId
 		GROUP BY "pub"."id"
 	) AS results, query_values
 	-- Check that there is overlap between the slugs and the required slugs
@@ -91,7 +98,7 @@ const parseDateFilters = ({ publishedOn, publishedAfter, publishedBefore }) => {
 	};
 };
 
-const parseCollectionConnectionFilters = ({ collections, connections }) => {
+const parseCollectionConnectionFilters = ({ collections, children }) => {
 	const requiredCollectionSlugs = [];
 	const forbiddenCollectionSlugs = [];
 	(collections || '').split(',').forEach((slug) => {
@@ -101,7 +108,7 @@ const parseCollectionConnectionFilters = ({ collections, connections }) => {
 			requiredCollectionSlugs.push(slug);
 		}
 	});
-	const forbidChildren = connections === '0' || connections === 'false' || connections === false;
+	const forbidChildren = children === '0' || children === 'false' || children === false;
 	return {
 		allowChildren: !forbidChildren,
 		requiredCollectionSlugs: requiredCollectionSlugs,

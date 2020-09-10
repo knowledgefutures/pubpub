@@ -27,9 +27,9 @@ it('returns only released Pubs', async () => {
 	await expectQuery({}).toReturn([p5, p4, p3, p2]);
 });
 
-it('filters out child Pubs when connections=false', async () => {
+it('filters out child Pubs when children=false', async () => {
 	const { p4, p5 } = models;
-	await expectQuery({ connections: false }).toReturn([p5, p4]);
+	await expectQuery({ children: false }).toReturn([p5, p4]);
 });
 
 it('filters Pubs by collection membership', async () => {

@@ -1,6 +1,18 @@
 import { modelize } from 'stubstub';
 
 export const models = modelize`
+    Community anotherCommunity {
+        Pub op1 {}
+        Pub op2 {
+            outboundEdges: PubEdge {
+                relationType: "comment"
+                pubIsParent: true
+                approvedByTarget: true
+                rank: "0"
+                targetPub: p5
+            }
+        }
+    }
     Community community {
         Pub p1 {
             customPublishedAt: "2020-01-03"
@@ -38,6 +50,13 @@ export const models = modelize`
         Pub p5 {
             Release {
                 createdAt: "2020-05-26"
+            }
+            outboundEdges: PubEdge {
+                relationType: "comment"
+                pubIsParent: false
+                approvedByTarget: true
+                rank: "0"
+                targetPub: op1
             }
         }
         Pub p6 {

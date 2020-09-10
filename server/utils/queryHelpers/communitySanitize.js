@@ -2,18 +2,6 @@ export default (communityData, locationData, loginData, scopeData) => {
 	const cleanedData = { ...communityData };
 	const { canManageCommunity } = scopeData.activePermissions;
 	const availablePages = {};
-	cleanedData.pages = cleanedData.pages.filter((item) => {
-		if (!canManageCommunity && !item.isPublic && locationData.query.access !== item.viewHash) {
-			return false;
-		}
-
-		availablePages[item.id] = {
-			id: item.id,
-			title: item.title,
-			slug: item.slug,
-		};
-		return true;
-	});
 
 	cleanedData.collections = cleanedData.collections
 		.filter((item) => {
@@ -35,5 +23,38 @@ export default (communityData, locationData, loginData, scopeData) => {
 				page: availablePages[collection.pageId],
 			};
 		});
+
+	cleanedData.pages = cleanedData.pages.filter((item) => {
+		const pageCollection = cleanedData.collections.find(
+			({ pageId }) => typeof pageId === 'string' && pageId === item.id,
+		);
+
+		// If the page has a collection, check if the user has >= manage permission
+		// to that collection. If so, include the page.
+		const hasPageCollectionManageAccess = pageCollection
+			? pageCollection.members.some(
+					(member) =>
+						member.userId === loginData.id &&
+						(member.permissions === 'manage' || member.permissions === 'admin'),
+			  )
+			: false;
+
+		if (
+			!canManageCommunity &&
+			!hasPageCollectionManageAccess &&
+			!item.isPublic &&
+			locationData.query.access !== item.viewHash
+		) {
+			return false;
+		}
+
+		availablePages[item.id] = {
+			id: item.id,
+			title: item.title,
+			slug: item.slug,
+		};
+		return true;
+	});
+
 	return cleanedData;
 };

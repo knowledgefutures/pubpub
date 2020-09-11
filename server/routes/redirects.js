@@ -8,6 +8,16 @@ const redirectHosts = {
 	'pubpub.ito.com': {
 		'/pub/resisting-reduction': 'https://jods.mitpress.mit.edu/pub/resisting-reduction',
 	},
+	'notes.knowledgefutures.org': {
+		'/pub/3jhmyfk5': 'https://help.pubpub.org/pub/3jhmyfk5',
+		'/pub/jzwe5q1g': 'https://help.pubpub.org/pub/jzwe5q1g',
+		'/pub/hqwzn8fh': 'https://help.pubpub.org/pub/hqwzn8fh',
+		'/pub/75lx36sm': 'https://help.pubpub.org/pub/75lx36sm',
+		'/pub/f66uz1v5': 'https://help.pubpub.org/pub/f66uz1v5',
+		'/pub/wgzaxb48': 'https://help.pubpub.org/pub/wgzaxb48',
+		'/pub/5huj3uo3': 'https://help.pubpub.org/pub/5huj3uo3',
+		'/pub/a35zdl6z': 'https://help.pubpub.org/pub/a35zdl6z',
+	},
 	'bookbook.pubpub.org': {
 		'/pub/oki': 'https://wip.mitpress.mit.edu/pub/oki',
 		'/oki': 'https://wip.mitpress.mit.edu/oki',

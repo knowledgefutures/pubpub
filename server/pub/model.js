@@ -57,6 +57,7 @@ export default (sequelize, dataTypes) => {
 						Community,
 						CrossrefDepositRecord,
 						DiscussionNew,
+						Export,
 						Fork,
 						Member,
 						Pub,
@@ -84,6 +85,10 @@ export default (sequelize, dataTypes) => {
 					Pub.hasMany(DiscussionNew, {
 						onDelete: 'CASCADE',
 						as: 'discussions',
+						foreignKey: 'pubId',
+					});
+					Pub.hasMany(Export, {
+						as: 'exports',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(Fork, {

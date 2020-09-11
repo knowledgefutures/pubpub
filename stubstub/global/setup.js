@@ -6,6 +6,7 @@ import { setupTestDatabase, startTestDatabaseServer, initTestDatabase } from '..
 const esmRequire = esm(module);
 
 export default async () => {
+	process.env.TZ = 'UTC';
 	if (process.env.NODE_ENV !== 'test') {
 		throw new Error('Something has gone terribly wrong and I refuse to proceed.');
 	}

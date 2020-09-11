@@ -6,7 +6,7 @@ import { link } from './link';
 import { builders } from './builders';
 import { buildProxyObject } from './proxy';
 
-const buildForModelName = (modelName, args) => {
+const buildForModelName = async (modelName, args) => {
 	const builderFn = builders[modelName];
 	if (builderFn) {
 		return builderFn(args);
@@ -16,7 +16,7 @@ const buildForModelName = (modelName, args) => {
 };
 
 const buildModelFromDefinition = async (modelDefinition, graph, resolvedModelsById) => {
-	const { id, properties, modelName } = modelDefinition;
+	const { id, properties, modelName, boundName } = modelDefinition;
 	const foreignKeys = {};
 	for (const { v, w } of graph.outEdges(id)) {
 		const association = graph.edge(v, w);
@@ -25,7 +25,19 @@ const buildModelFromDefinition = async (modelDefinition, graph, resolvedModelsBy
 		foreignKeys[foreignKey] = targetModel.id;
 	}
 	const args = { ...properties, ...foreignKeys };
-	return buildForModelName(modelName, args);
+	try {
+		const x = await buildForModelName(modelName, args);
+		return x;
+	} catch (err) {
+		console.error(err);
+		const boundNameString = boundName ? ` ${boundName}` : '';
+		const argsString = Object.entries(args)
+			.map(([key, value]) => `\t${key}: ${JSON.stringify(value)}`)
+			.join('\n');
+		throw new Error(
+			`Got ${err.message} while building ${modelName}${boundNameString}:\n${argsString}`,
+		);
+	}
 };
 
 const indexDefinitionsById = (definitions) => {

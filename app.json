@@ -12,7 +12,13 @@
 	},
 	"environments": {
 		"test": {
-			"addons": ["heroku-postgresql:in-dyno"]
+			"addons": ["heroku-postgresql:in-dyno"],
+			"formation": {
+				"test": {
+				  "quantity": 1,
+				  "size": "performance-l"
+				}
+			}
 		},
 		"review": {
 			"formation": {

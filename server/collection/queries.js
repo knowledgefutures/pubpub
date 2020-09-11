@@ -11,11 +11,12 @@ export const createCollection = ({
 	doi = null,
 	isPublic = false,
 	id = null,
+	slug = null,
 }) => {
 	return Community.findOne({ where: { id: communityId } }).then((community) => {
 		const collection = {
 			title: title.trim(),
-			slug: slugifyString(title),
+			slug: slug || slugifyString(title),
 			isRestricted: true,
 			isPublic: isPublic,
 			viewHash: generateHash(8),

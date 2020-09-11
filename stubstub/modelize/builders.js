@@ -55,9 +55,14 @@ builders.Community = async (args = {}) => {
 };
 
 builders.Pub = async (args) => {
-	const pubCreator = await builders.User();
-	const { id: pubId } = await createPub(args, pubCreator.id);
-	return Pub.findOne({ where: { id: pubId }, include: [{ model: Branch, as: 'branches' }] });
+	const { createBranches = true, createPubCreator = true, ...restArgs } = args;
+	const pubCreator = createPubCreator && (await builders.User());
+	const pub = await createPub(restArgs, pubCreator && pubCreator.id);
+	if (createBranches) {
+		return Pub.findOne({ where: { id: pub.id }, include: [{ model: Branch, as: 'branches' }] });
+	}
+	await Branch.destroy({ where: { pubId: pub.id } });
+	return pub;
 };
 
 builders.Collection = ({ title = 'Collection ' + uuid.v4(), kind = 'issue', ...restArgs }) =>

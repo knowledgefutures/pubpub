@@ -73,7 +73,7 @@ const ThreadComment = (props: Props) => {
 			<div className="avatar-wrapper">
 				<Avatar
 					width={18}
-					initials={threadCommentData.author.intials}
+					initials={threadCommentData.author.initials}
 					avatar={threadCommentData.author.avatar}
 				/>
 			</div>

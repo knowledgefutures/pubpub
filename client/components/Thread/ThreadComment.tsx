@@ -20,8 +20,7 @@ const ThreadComment = (props: Props) => {
 	return (
 		<div className="thread-comment2-component">
 			<div className="header">
-				{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'intials' does not exist on type 'Intrins... Remove this comment to see the full error message */}
-				<Avatar width={30} intials={author.initials} avatar={author.avatar} />
+				<Avatar width={30} initials={author.initials} avatar={author.avatar} />
 				<div className="comment-title">
 					<a className="hoverline" href={`/user/${author.slug}`}>
 						{author.fullName}

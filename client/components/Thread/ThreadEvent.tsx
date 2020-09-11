@@ -31,8 +31,7 @@ const ThreadEvent = (props: Props) => {
 				icon={icons[data.statusChange]}
 				color="#fff"
 			/>
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'intials' does not exist on type 'Intrins... Remove this comment to see the full error message */}
-			<Avatar width={18} intials={user.initials} avatar={user.avatar} />
+			<Avatar width={18} initials={user.initials} avatar={user.avatar} />
 			<div>
 				<a className="hoverline" href={`/user/${user.slug}`}>
 					{user.fullName}

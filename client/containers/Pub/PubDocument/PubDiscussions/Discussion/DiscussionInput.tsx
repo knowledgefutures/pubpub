@@ -133,7 +133,7 @@ const DiscussionInput = (props: Props) => {
 	return (
 		<div className="thread-comment-component input">
 			<div className="avatar-wrapper">
-				<Avatar width={18} initials={loginData.intials} avatar={loginData.avatar} />
+				<Avatar width={18} initials={loginData.initials} avatar={loginData.avatar} />
 			</div>
 			{!isLoggedIn && (
 				<React.Fragment>

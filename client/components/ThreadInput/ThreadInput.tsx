@@ -74,8 +74,7 @@ const ThreadInput = (props: Props) => {
 						<div className="header">
 							<Avatar
 								width={30}
-								// @ts-expect-error ts-migrate(2322) FIXME: Property 'intials' does not exist on type 'Intrins... Remove this comment to see the full error message
-								intials={loginData.initials}
+								initials={loginData.initials}
 								avatar={loginData.avatar}
 							/>
 							<div className="comment-title">Reply as {loginData.fullName}</div>

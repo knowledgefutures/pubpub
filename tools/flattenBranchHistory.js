@@ -5,7 +5,7 @@ import { ReplaceStep } from 'prosemirror-transform';
 
 import { getBranchRef } from 'server/utils/firebaseAdmin';
 import { isProd } from 'utils/environment';
-import { buildSchema, createFirebaseChange } from 'components/Editor/utils';
+import { buildSchema, createFirebaseChange, getFirebaseDoc } from 'components/Editor/utils';
 
 import { lookupBranch, lookupPub } from './utils/lookup';
 import { promptOkay } from './utils/prompt';
@@ -52,16 +52,24 @@ const writeToBranchRef = async (branchRef, document, branchId) => {
 	await branchRef.set({ changes: [change] });
 };
 
+const getDocument = async (branchRef) => {
+	if (docPath) {
+		const docFile = await fs.readFile(docPath);
+		return JSON.parse(docFile);
+	}
+	const { doc } = await getFirebaseDoc(branchRef, documentSchema);
+	return doc;
+};
+
 const main = async () => {
 	const pub = await lookupPub({ id: pubId, slug: pubSlug });
 	const branch = await lookupBranch({ pubId: pub.id, branchTitle: branchTitle });
-	const docFile = await fs.readFile(docPath);
-	const document = JSON.parse(docFile);
-	await promptOkay(
-		`Really wipe the history of ${pub.slug}.${branchTitle}${prodWarning} and replace it with the document at ${docPath}?`,
-		{ throwIfNo: true, yesIsDefault: false },
-	);
 	const branchRef = getBranchRef(pub.id, branch.id);
+	const document = await getDocument(branchRef);
+	await promptOkay(`Really flatten the history of ${pub.slug}.${branchTitle}${prodWarning}?`, {
+		throwIfNo: true,
+		yesIsDefault: false,
+	});
 	await writeToBranchRef(branchRef, document, branch.id);
 	// eslint-disable-next-line no-console
 	console.log('It is Finished');

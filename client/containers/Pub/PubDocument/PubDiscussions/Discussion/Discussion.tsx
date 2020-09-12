@@ -19,8 +19,8 @@ type ThreadComment = {
 	id: string;
 	author: {
 		lastName: string;
-	}
-}
+	};
+};
 
 type Props = {
 	pubData: any;
@@ -30,10 +30,7 @@ type Props = {
 	searchTerm?: string;
 };
 
-const sortThreadComments = (
-	threadComments: ThreadComment[],
-	sortType: SortType,
-) => {
+const sortThreadComments = (threadComments: ThreadComment[], sortType: SortType) => {
 	if (sortType === 'alphabetical') {
 		return threadComments
 			.concat()

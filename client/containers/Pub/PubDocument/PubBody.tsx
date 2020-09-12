@@ -253,17 +253,10 @@ const PubBody = (props: Props) => {
 						)}
 						{activeDiscussion && (
 							<Discussion
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								key={embedId}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 								pubData={pubData}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
-								historyData={historyData}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 								discussionData={activeDiscussion}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '(...args: any[]) => any' is not assignable t... Remove this comment to see the full error message
 								updateLocalData={updateLocalData}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 								canPreview={true}
 							/>
 						)}

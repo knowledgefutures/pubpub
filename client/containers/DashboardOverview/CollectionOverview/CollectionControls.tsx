@@ -30,11 +30,9 @@ const CollectionControls = (props: Props) => {
 			<ButtonGroup>
 				<MenuButton
 					aria-label="Set collection public or private"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
 					buttonContent={isPublic ? 'Public' : 'Private'}
 					buttonProps={{
 						icon: isPublic ? 'globe' : 'lock2',
-						// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 						rightIcon: 'caret-down',
 					}}
 				>

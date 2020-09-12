@@ -19,12 +19,6 @@ type attributionShape = {
 	users?: {}[];
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
-const attributionShape: PropTypes.Requireable<attributionShape> = PropTypes.shape({
-	name: PropTypes.string,
-	users: PropTypes.arrayOf(PropTypes.shape({})),
-});
-
 type MetadataEditorProps = {
 	onSetMetadataUpdater: (...args: any[]) => any;
 	proposedMetadata: {
@@ -66,7 +60,6 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttri
 			<MenuButton
 				aria-label="Match to PubPub user"
 				buttonProps={{
-					// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 					minimal: true,
 					small: true,
 					rightIcon: 'chevron-down',
@@ -84,8 +77,8 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttri
 						</span>
 					),
 				}}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
 				buttonContent={`${users.length} matching ${users.length === 1 ? 'user' : 'users'}`}
+				// @ts-expect-error
 				placement="bottom-end"
 			>
 				{users.map((user) => (

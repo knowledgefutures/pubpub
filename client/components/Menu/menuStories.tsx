@@ -47,7 +47,6 @@ storiesOf('components/Menu', module)
 	})
 	.add('menu-button', () => {
 		return (
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
 			<MenuButton buttonContent="Click me!" buttonProps={{ rightIcon: 'caret-down' }}>
 				{items}
 			</MenuButton>

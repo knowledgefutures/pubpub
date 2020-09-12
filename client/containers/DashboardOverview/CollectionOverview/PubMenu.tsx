@@ -38,11 +38,11 @@ const PubMenu = (props: Props) => {
 			<MenuButton
 				aria-label="More pub options"
 				buttonProps={{
-					// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 					small: true,
 					minimal: true,
 					icon: 'more',
 				}}
+				// @ts-expect-error
 				placement="bottom-end"
 			>
 				{canSetCollectionAsPrimary && (

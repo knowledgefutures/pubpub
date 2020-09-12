@@ -163,8 +163,8 @@ const NewEdgeEditor = (props: Props) => {
 					<MenuButton
 						aria-label="Select relationship type"
 						buttonProps={{
-							// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 							rightIcon: 'chevron-down',
+							// @ts-expect-error
 							children: `Type: ${currentRelationName}`,
 						}}
 					>

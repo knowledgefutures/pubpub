@@ -124,14 +124,11 @@ const PubDiscussions = (props: Props) => {
 				{filteredDiscussions.map((discussion) => {
 					return (
 						<Discussion
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							key={discussion.id}
 							pubData={pubData}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							discussionData={discussion}
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'never'.
 							updateLocalData={updateLocalData}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 							canPreview={true}
 							searchTerm={searchTerm}
 						/>

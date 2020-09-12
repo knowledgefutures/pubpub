@@ -7,7 +7,6 @@ require('./discussionGroup.scss');
 
 type Props = {
 	pubData: any;
-	historyData: any;
 	discussions: any[];
 	mountClassName: string;
 	updateLocalData: (...args: any[]) => any;
@@ -20,7 +19,6 @@ type Props = {
 const DiscussionGroup = (props: Props) => {
 	const {
 		pubData,
-		historyData,
 		updateLocalData,
 		discussions,
 		sideContentRef,
@@ -112,13 +110,8 @@ const DiscussionGroup = (props: Props) => {
 			/>
 			{activeDiscussionData && (
 				<Discussion
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 					pubData={pubData}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
-					historyData={historyData}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 					discussionData={activeDiscussionData}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(...args: any[]) => any' is not assignable t... Remove this comment to see the full error message
 					updateLocalData={updateLocalData}
 				/>
 			)}

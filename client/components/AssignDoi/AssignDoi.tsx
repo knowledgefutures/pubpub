@@ -389,7 +389,6 @@ function AssignDoi(props: Props) {
 							<MenuButton
 								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
 								buttonContent={activeContentVersionItem.title}
-								// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 								buttonProps={{ rightIcon: 'caret-down' }}
 								aria-label="content-version"
 							>
@@ -412,7 +411,6 @@ function AssignDoi(props: Props) {
 								<MenuButton
 									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
 									buttonContent={activeReviewTypeItem.title}
-									// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 									buttonProps={{ rightIcon: 'caret-down' }}
 									aria-label="review-type"
 								>
@@ -431,7 +429,6 @@ function AssignDoi(props: Props) {
 								<MenuButton
 									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
 									buttonContent={activeReviewRecommendationItem.title}
-									// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
 									buttonProps={{ rightIcon: 'caret-down' }}
 									aria-label="review-type"
 								>

@@ -14,6 +14,14 @@ import ThreadComment from './ThreadComment';
 
 require('./discussion.scss');
 
+type ThreadComment = {
+	createdAt: string;
+	id: string;
+	author: {
+		lastName: string;
+	}
+}
+
 type Props = {
 	pubData: any;
 	discussionData: any;
@@ -23,7 +31,7 @@ type Props = {
 };
 
 const sortThreadComments = (
-	threadComments: { createdAt: string; author: { lastName: string } }[],
+	threadComments: ThreadComment[],
 	sortType: SortType,
 ) => {
 	if (sortType === 'alphabetical') {

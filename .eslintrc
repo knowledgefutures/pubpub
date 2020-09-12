@@ -71,6 +71,7 @@
 		"react/jsx-wrap-multilines": 0,
 		"react/no-children-prop": 0,
 		"react/no-unescaped-entities": ["error", { "forbid": [">", "}"] }],
+		"react/require-default-props": 0,
 		"space-before-function-paren": 0
 	}
 }

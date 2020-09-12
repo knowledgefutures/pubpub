@@ -4,17 +4,15 @@ import { Button } from '@blueprintjs/core';
 import { Icon } from 'components';
 import { Menu } from './Menu';
 
-type OwnProps = {
+type Props = {
 	buttonContent?: React.ReactNode;
 	buttonProps?: {
 		icon?: string | React.ReactNode;
+		rightIcon?: string | React.ReactNode;
+		minimal?: boolean;
+		small?: boolean;
 	};
 	children: React.ReactNode;
-};
-
-const defaultProps = {
-	buttonProps: {},
-	buttonContent: null,
 };
 
 const getIconProp = (icon) => {
@@ -24,20 +22,19 @@ const getIconProp = (icon) => {
 	return icon;
 };
 
-type Props = OwnProps & typeof defaultProps;
-
 export const MenuButton = (props: Props) => {
-	const { buttonContent, children, buttonProps, ...restProps } = props;
+	const { buttonContent = null, children, buttonProps = {}, ...restProps } = props;
 
 	const buttonPropsWithIcon = {
 		...buttonProps,
-		icon: getIconProp(props.buttonProps.icon),
+		icon: getIconProp(buttonProps.icon),
 	};
 
 	return (
 		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		<Menu
 			disclosure={({ ref, ...restDisclosureProps }) => (
+				// @ts-expect-error: need refined icon string values
 				<Button
 					children={buttonContent}
 					{...buttonPropsWithIcon}
@@ -51,4 +48,3 @@ export const MenuButton = (props: Props) => {
 		</Menu>
 	);
 };
-MenuButton.defaultProps = defaultProps;

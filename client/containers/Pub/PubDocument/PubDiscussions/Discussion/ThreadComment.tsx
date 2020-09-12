@@ -11,7 +11,7 @@ import { apiFetch } from 'client/utils/apiFetch';
 
 require('./threadComment.scss');
 
-type OwnProps = {
+type Props = {
 	discussionData: any;
 	threadCommentData: any;
 	pubData: any;
@@ -19,14 +19,14 @@ type OwnProps = {
 	isPreview?: boolean;
 };
 
-const defaultProps = {
-	isPreview: false,
-};
-
-type Props = OwnProps & typeof defaultProps;
-
 const ThreadComment = (props: Props) => {
-	const { discussionData, threadCommentData, pubData, updateLocalData, isPreview } = props;
+	const {
+		discussionData,
+		threadCommentData,
+		pubData,
+		updateLocalData,
+		isPreview = false,
+	} = props;
 	const { loginData, communityData, locationData } = usePageContext();
 	const [isEditing, setIsEditing] = useState(false);
 	const [changeObject, setChangeObject] = useState({});
@@ -177,5 +177,5 @@ const ThreadComment = (props: Props) => {
 		</div>
 	);
 };
-ThreadComment.defaultProps = defaultProps;
+
 export default ThreadComment;

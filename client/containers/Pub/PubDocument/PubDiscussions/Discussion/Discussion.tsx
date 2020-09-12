@@ -9,12 +9,12 @@ import { usePageContext } from 'utils/hooks';
 import { discussionMatchesSearchTerm } from '../discussionUtils';
 import DiscussionInput from './DiscussionInput';
 import LabelList from './LabelList';
-import ManageTools from './ManageTools';
+import ManageTools, { SortType } from './ManageTools';
 import ThreadComment from './ThreadComment';
 
 require('./discussion.scss');
 
-type OwnProps = {
+type Props = {
 	pubData: any;
 	discussionData: any;
 	updateLocalData: (...args: any[]) => any;
@@ -22,34 +22,43 @@ type OwnProps = {
 	searchTerm?: string;
 };
 
-const defaultProps = {
-	canPreview: false,
-	searchTerm: null,
+const sortThreadComments = (
+	threadComments: { createdAt: string; author: { lastName: string } }[],
+	sortType: SortType,
+) => {
+	if (sortType === 'alphabetical') {
+		return threadComments
+			.concat()
+			.sort((a, b) => (a.author.lastName > b.author.lastName ? 1 : -1));
+	}
+	return threadComments.concat().sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
 };
 
-type Props = OwnProps & typeof defaultProps;
-
 const Discussion = (props: Props) => {
-	const { pubData, discussionData, canPreview, searchTerm, updateLocalData } = props;
+	const {
+		pubData,
+		discussionData,
+		canPreview = false,
+		searchTerm = null,
+		updateLocalData,
+	} = props;
 	const { communityData, scopeData, locationData, loginData } = usePageContext();
 	const { canView, canCreateDiscussions, canAdmin } = scopeData.activePermissions;
 	const [previewExpanded, setPreviewExpanded] = useState(false);
+	const [sortType, setSortType] = useState<SortType>('chronological');
 	const isPreview = canPreview && !previewExpanded;
 	const canReply = canView || canCreateDiscussions;
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'userId' does not exist on type 'never'.
 	const isDiscussionAuthor = loginData.id === discussionData.userId;
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'isClosed' does not exist on type 'never'... Remove this comment to see the full error message
 	const showManageTools = canAdmin || (isDiscussionAuthor && !discussionData.isClosed);
 
 	const renderPreviewDiscussionsAndOverflow = (threadComments, minShown) => {
 		let shownDiscussionsCount = 0;
 		let pendingHiddenCount = 0;
-		const elements = [];
+		const elements: React.ReactNode[] = [];
 
 		const flushPendingCount = (discussionId) => {
 			if (pendingHiddenCount > 0) {
 				elements.push(
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
 					<div key={discussionId} className="overflow-listing">
 						{' '}
 						+ {pendingHiddenCount} more...
@@ -68,7 +77,6 @@ const Discussion = (props: Props) => {
 				++shownDiscussionsCount;
 				flushPendingCount(threadComment.id);
 				elements.push(
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
 					<ThreadComment
 						key={threadComment.id}
 						discussionData={discussionData}
@@ -93,20 +101,14 @@ const Discussion = (props: Props) => {
 			body: JSON.stringify({
 				...discussionUpdates,
 				accessHash: locationData.query.access,
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
 				discussionId: discussionData.id,
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
 				pubId: pubData.id,
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'activeBranch' does not exist on type 'ne... Remove this comment to see the full error message
 				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,
 			}),
 		}).then((updatedDiscussionData) => {
-			// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
 			updateLocalData('pub', {
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'discussions' does not exist on type 'nev... Remove this comment to see the full error message
 				discussions: pubData.discussions.map((discussion) => {
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
 					if (discussion.id === discussionData.id) {
 						return {
 							...discussion,
@@ -135,12 +137,11 @@ const Discussion = (props: Props) => {
 	};
 
 	const renderDiscussions = () => {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'thread' does not exist on type 'never'.
 		const filteredThreadComments = discussionData.thread.comments;
 		if (isPreview) {
 			return renderPreviewDiscussionsAndOverflow(filteredThreadComments, 2);
 		}
-		return filteredThreadComments.map((item) => {
+		return sortThreadComments(filteredThreadComments, sortType).map((item) => {
 			return (
 				<ThreadComment
 					key={item.id}
@@ -160,7 +161,6 @@ const Discussion = (props: Props) => {
 		}
 		return (
 			<DiscussionInput
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'thread' does not exist on type 'never'.
 				key={discussionData.thread.comments.length}
 				pubData={pubData}
 				updateLocalData={updateLocalData}
@@ -208,6 +208,8 @@ const Discussion = (props: Props) => {
 							pubData={pubData}
 							discussionData={discussionData}
 							onUpdateDiscussion={handleUpdateDiscussion}
+							sortType={sortType}
+							setSortType={setSortType}
 						/>
 					)}
 					{renderAnchorText()}
@@ -218,5 +220,5 @@ const Discussion = (props: Props) => {
 		</div>
 	);
 };
-Discussion.defaultProps = defaultProps;
+
 export default Discussion;

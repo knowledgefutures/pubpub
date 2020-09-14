@@ -29,14 +29,10 @@ export default (communityData, locationData, loginData, scopeData) => {
 			({ pageId }) => typeof pageId === 'string' && pageId === item.id,
 		);
 
-		// If the page has a collection, check if the user has >= manage permission
+		// If the page has a collection, check if the user has explicit permission
 		// to that collection. If so, include the page.
 		const hasPageCollectionManageAccess = pageCollection
-			? pageCollection.members.some(
-					(member) =>
-						member.userId === loginData.id &&
-						(member.permissions === 'manage' || member.permissions === 'admin'),
-			  )
+			? pageCollection.members.some((member) => member.userId === loginData.id)
 			: false;
 
 		if (

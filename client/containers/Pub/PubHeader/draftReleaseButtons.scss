@@ -1,0 +1,30 @@
+.releases-menu{
+  max-height: 400px;
+  overflow-y: scroll;
+  .top {
+    margin-bottom: 2px;
+  }
+  li {
+    .release-menu-item {
+      padding: 10px 10px;
+      min-width: 250px;
+      .bp3-icon {
+        margin-left: 5px;
+        margin-top: 5px;
+        color: #888888;
+      }
+      .release-metadata {
+        padding-left: 10px;
+        .number {
+          font-size: 16px;
+          margin-bottom: 2px;
+        }
+        .timestamp {
+          font-size: 12px;
+          margin-bottom: 0px;
+          color: #888888;
+        }
+      }
+    }
+  }
+}

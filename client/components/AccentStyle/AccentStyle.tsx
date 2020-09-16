@@ -58,15 +58,23 @@ const AccentStyle = function(props) {
 	const simpleBottomBorder = `.accent-color.${
 		isNavHidden ? 'header-component' : 'nav-bar-component'
 	} { border-bottom: 1px solid #DDD; }`;
+	const gradient = `linear-gradient(90deg, ${Color(baseColor)
+		.rgb()
+		.fade(1)
+		.string()} 0%,  ${Color(baseColor)
+		.rgb()
+		.fade(1)
+		.string()} 85%,  ${baseColor} 100%);`;
+
 	return (
 		<style
 			dangerouslySetInnerHTML={{
 				__html: `
-			.accent-background { background-color: ${baseColor}; } 
+			.accent-background { background-color: ${baseColor}; }
 			.accent-color { color: ${baseText}; }
 			.accent-background.header-component, .accent-background.nav-bar-component, .accent-background.footer-component, .accent-background.nav-item-background, .accent-background.image-wrapper{ background-color: ${
 				headerAccentColor.base
-			}; } 
+			}; }
 			.accent-color.header-component, .accent-color.nav-bar-component, .accent-color.footer-component, .accent-color.nav-item { color: ${
 				useHeaderTextAccent ? navAccentColor : headerAccentColor.text
 			}; }
@@ -89,6 +97,14 @@ const AccentStyle = function(props) {
 			.bp3-slider-progress.bp3-intent-primary, .bp3-dark .bp3-slider-progress.bp3-intent-primary { background: ${baseColor}; }
 			.bp3-slider-handle .bp3-slider-label { background: ${baseColor}; color: ${baseText}; }
 			.highlight-dot-wrapper .highlight-dot { background-color: ${baseColor}; }
+
+			.changelog-callout { background: ${baseMinimal} !important; }
+			.changelog-callout .release-label { color: ${baseColor}; border: 1px dashed ${baseColor}; }
+
+			span.citation:hover { color: ${baseColor}; }
+
+			.overflow-gradient { background: ${gradient} }
+
 			${useHeaderTextAccent ? bottomBorder : ''}
 			${
 				!useHeaderTextAccent &&

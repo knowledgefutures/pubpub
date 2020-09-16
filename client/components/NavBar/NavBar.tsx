@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { GridWrapper, Icon } from 'components';
-import { Menu, MenuItem } from 'components/Menu';
+
 import { populateNavigationIds, populateSocialItems } from 'utils/community';
 import { usePageContext } from 'utils/hooks';
+
+import { GridWrapper, Icon } from 'components';
+import { Menu, MenuItem } from 'components/Menu';
 
 require('./navBar.scss');
 
@@ -24,78 +26,81 @@ const NavBar = function(props) {
 	return (
 		<nav className="nav-bar-component accent-background accent-color">
 			<GridWrapper>
-				<ul className="nav-list">
-					{navItems
-						.filter((item) => {
-							return !!item;
-						})
-						.map((item) => {
-							/* Return Dropdown */
-							if (item.children) {
-								return (
-									// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
-									<Menu
-										aria-label={item.title}
-										disclosure={
-											<li className="dropdown">
+				<div className="scrollable-nav">
+					<ul className="nav-list">
+						{navItems
+							.filter((item) => {
+								return !!item;
+							})
+							.map((item) => {
+								/* Return Dropdown */
+								if (item.children) {
+									return (
+										// @ts-expect-error
+										<Menu
+											aria-label={item.title}
+											disclosure={
+												<li className="dropdown">
+													{item.title}
+													<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
+												</li>
+											}
+											className="nav-bar-popover"
+											key={`nav-item-${item.id}`}
+										>
+											{item.children.map((subitem, index) => {
+												return (
+													<MenuItem
+														// eslint-disable-next-line react/no-array-index-key
+														key={index}
+														// @ts-expect-error
+														href={subitem.href || `/${subitem.slug}`}
+														icon={
+															subitem.slug &&
+															!subitem.isPublic && (
+																<Icon icon="lock2" iconSize={14} />
+															)
+														}
+														rightElement={
+															subitem.href && (
+																<Icon icon="share" iconSize={14} />
+															)
+														}
+														text={subitem.title}
+													/>
+												);
+											})}
+										</Menu>
+									);
+								}
+								/* Return Custom Link */
+								if (typeof item.href === 'string') {
+									return (
+										<a href={item.href} key={`nav-item-${item.id}`}>
+											<li>
 												{item.title}
-												<span className="bp3-icon-standard bp3-icon-caret-down bp3-align-right" />
-											</li>
-										}
-										className="nav-bar-popover"
-										key={`nav-item-${item.id}`}
-									>
-										{item.children.map((subitem, index) => {
-											return (
-												<MenuItem
-													// eslint-disable-next-line react/no-array-index-key
-													key={index}
-													// @ts-expect-error ts-migrate(2322) FIXME: Property 'href' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
-													href={subitem.href || `/${subitem.slug}`}
-													icon={
-														subitem.slug &&
-														!subitem.isPublic && (
-															<Icon icon="lock2" iconSize={14} />
-														)
-													}
-													rightElement={
-														subitem.href && (
-															<Icon icon="share" iconSize={14} />
-														)
-													}
-													text={subitem.title}
+												<Icon
+													icon="share"
+													iconSize={11}
+													className="external-icon"
 												/>
-											);
-										})}
-									</Menu>
-								);
-							}
-							/* Return Custom Link */
-							if (typeof item.href === 'string') {
+											</li>
+										</a>
+									);
+								}
+								/* Return Simple Link */
 								return (
-									<a href={item.href} key={`nav-item-${item.id}`}>
+									<a href={`/${item.slug}`} key={`nav-item-${item.id}`}>
 										<li>
+											{!item.isPublic && <Icon icon="lock2" iconSize={14} />}
 											{item.title}
-											<Icon
-												icon="share"
-												iconSize={11}
-												className="external-icon"
-											/>
 										</li>
 									</a>
 								);
-							}
-							/* Return Simple Link */
-							return (
-								<a href={`/${item.slug}`} key={`nav-item-${item.id}`}>
-									<li>
-										{!item.isPublic && <Icon icon="lock2" iconSize={14} />}
-										{item.title}
-									</li>
-								</a>
-							);
-						})}
-				</ul>
+							})}
+					</ul>
+					<div className="overflow-gradient" />
+				</div>
 				{!!socialItems.length && (
 					<ul className="social-list">
 						{socialItems.map((item) => {

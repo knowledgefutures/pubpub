@@ -45,7 +45,7 @@ storiesOf('components/Timeline', module).add('default', () => (
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				accentColor="orange"
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
-				icon="document-open"
+				icon="document-share"
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				subtitle="Oh wow"
 			/>

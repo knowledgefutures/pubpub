@@ -48,11 +48,8 @@ const HeaderPopover = (props: Props) => {
 		// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'HTMLDi... Remove this comment to see the full error message
 		<div ref={popoverRef} style={{ position: 'absolute', top: '-9999px' }}>
 			<ClickToCopyButton
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				className="click-to-copy"
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				copyString={`https://${locationData.hostname}${locationData.path}#${elem.id}`}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				beforeCopyPrompt="Copy link to header"
 			/>
 		</div>

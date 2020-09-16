@@ -25,7 +25,7 @@ const defaultProps = {
 	usePortal: true,
 };
 
-type Props = OwnProps & typeof defaultProps;
+type Props = OwnProps;
 
 const ClickToCopyButton = (props: Props) => {
 	const {
@@ -43,7 +43,6 @@ const ClickToCopyButton = (props: Props) => {
 	const [copyState, copyToClipboard] = useCopyToClipboard();
 
 	const handleClick = () => {
-		// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
 		copyToClipboard(typeof copyString === 'function' ? copyString() : copyString);
 		setHasCopied(true);
 	};
@@ -60,7 +59,6 @@ const ClickToCopyButton = (props: Props) => {
 
 	const renderChildren = () => {
 		if (typeof children === 'function') {
-			// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
 			return children(handleClick);
 		}
 		return (

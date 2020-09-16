@@ -74,7 +74,7 @@ const PubTimeline = (props: Props) => {
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				large={isLatest}
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
-				icon="document-open"
+				icon="document-share"
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 				key={release.id}
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
@@ -122,7 +122,7 @@ const PubTimeline = (props: Props) => {
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 				large
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
-				icon="document-open"
+				icon="document-share"
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
 				title={<i>No releases yet</i>}
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.

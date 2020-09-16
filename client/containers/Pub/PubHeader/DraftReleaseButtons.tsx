@@ -9,7 +9,9 @@ import { usePageContext } from 'utils/hooks';
 
 import ResponsiveHeaderButton from './ResponsiveHeaderButton';
 
-type Props = {
+require('./draftReleaseButtons.scss');
+
+export type DraftReleaseButtonsProps = {
 	pubData: {
 		isRelease?: boolean;
 		releases: {
@@ -47,7 +49,7 @@ const getCanCreateRelease = (latestRelease, latestKey) => {
 	return latestKey !== -1;
 };
 
-const DraftReleaseButtons = (props: Props) => {
+const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 	const { historyData, pubData, updateHistoryData, updatePubData } = props;
 	const { communityData, scopeData } = usePageContext();
 	const { canView, canViewDraft, canAdmin, canCreateReviews } = scopeData.activePermissions;
@@ -73,6 +75,7 @@ const DraftReleaseButtons = (props: Props) => {
 				)}
 				{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message */}
 				<Menu
+					className="releases-menu"
 					aria-label="Choose a historical release of this Pub"
 					disclosure={
 						<ResponsiveHeaderButton
@@ -95,9 +98,20 @@ const DraftReleaseButtons = (props: Props) => {
 								// @ts-expect-error ts-migrate(2322) FIXME: Property 'active' does not exist on type 'Intrinsi... Remove this comment to see the full error message
 								active={index === releaseNumber - 1}
 								// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-								icon={index === releaseNumber - 1 ? 'tick' : 'document-open'}
+								icon={index === releaseNumber - 1 ? 'tick' : 'document-share'}
 								href={pubUrl(communityData, pubData, { releaseNumber: index + 1 })}
-								text={formatDate(release.createdAt, { includeTime: true })}
+								className="release-menu-item"
+								text={
+									<div className="release-metadata">
+										<p className="number">{'Release #' + (index + 1)}</p>
+										<p className="timestamp">
+											{// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+											formatDate(new Date(release.createdAt), {
+												includeTime: true,
+											})}
+										</p>
+									</div>
+								}
 							/>
 						))
 						.reverse()}
@@ -146,7 +160,7 @@ const DraftReleaseButtons = (props: Props) => {
 							<ResponsiveHeaderButton
 								// @ts-expect-error ts-migrate(2322) FIXME: Property 'disabled' does not exist on type 'Intrin... Remove this comment to see the full error message
 								disabled={!canRelease}
-								icon="document-open"
+								icon="document-share"
 								onClick={openDialog}
 								label={{ bottom: 'Create a Release', top: 'Publish' }}
 							/>

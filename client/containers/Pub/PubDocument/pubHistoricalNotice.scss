@@ -1,3 +1,170 @@
+@import '../PubHeader/themes.scss';
+@import '../pub.scss';
+
 .pub-historical-notice-component {
-    margin-top: 25px;
+	margin-top: 25px;
+	margin-bottom: 25px;
+
+	.bp3-callout {
+		padding-top: 15px;
+		padding-bottom: 15px;
+
+		&.bp3-callout-icon {
+			padding-left: 45px;
+
+			.bp3-icon:first-child {
+				left: 15px;
+				top: 15px;
+			}
+		}
+
+		.callout-button {
+			min-width: 160px;
+			@include pub-compact-view {
+				padding-top: 5px;
+			}
+		}
+	}
+	.warning-desc {
+		padding-bottom: 5px;
+		padding-inline-start: 17px;
+
+		li {
+			padding-bottom: 5px;
+		}
+		.humanized-time {
+			font-style: italic;
+			font-size: 12px;
+		}
+		@include pub-compact-view {
+			margin-block-end: 0.5em;
+		}
+	}
+	.changelog-button {
+		margin-left: 10px;
+		@include pub-compact-view {
+			margin-left: 0px;
+			margin-top: 10px;
+		}
+	}
+	.changelog {
+		margin-top: 10px;
+		margin-bottom: 15px;
+		.changelog-callout {
+			padding-right: 30px;
+			background-color: #f8f8f8;
+			padding-left: 35px;
+
+			h4 {
+				padding-left: 10px;
+				padding-bottom: 15px;
+			}
+		}
+		.release-item {
+			padding: 10px;
+			border-radius: 2px;
+			display: flex;
+			flex-direction: row;
+			align-items: stretch;
+			.item-block {
+				display: flex;
+				flex-direction: row;
+				align-items: flex-start;
+			}
+			.icon-button {
+				.release-icon {
+					padding: 5px 10px;
+					width: 30px;
+					// Using transform/translate since relative positioning breaks icon
+					// alignment.
+					transform: translate(-2px, 2px);
+					color: #888888;
+				}
+
+				.copy-button {
+					display: none;
+				}
+			}
+			.release-metadata {
+				min-width: 160px;
+				padding-left: 10px;
+				.release-num {
+					font-weight: 700;
+					margin-bottom: 0px;
+					text-decoration: none;
+				}
+				.release-timestamp {
+					display: none;
+					font-size: 12px;
+					margin-bottom: 5px;
+				}
+				.release-timestamp-humanized {
+					font-size: 12px;
+					font-style: italic;
+					margin-bottom: 5px;
+				}
+				.release-label {
+					font-size: 10px;
+					text-transform: uppercase;
+					padding: 2px 5px;
+					border-radius: 6px;
+					text-align: center;
+					max-width: 85px;
+				}
+			}
+			.note-icon {
+				color: #888888;
+				padding-top: 6px;
+			}
+			.note {
+				font-style: italic;
+				min-height: 60px;
+				border-left: 1px dashed #888888;
+				margin-left: 10px;
+				padding-left: 10px;
+				@include pub-compact-view {
+					padding-left: 18px;
+				}
+			}
+			.empty {
+				color: #888888;
+			}
+			&:hover {
+				background-color: #fff;
+				.icon-button {
+					.release-icon {
+						display: none;
+					}
+					.copy-button {
+						display: block;
+					}
+				}
+				.release-metadata {
+					.release-num {
+						text-decoration: underline;
+					}
+					.release-timestamp {
+						display: block;
+					}
+					.release-timestamp-humanized {
+						display: none;
+					}
+				}
+			}
+			@include pub-compact-view {
+				display: flex;
+				flex-direction: column;
+				border-bottom: 1px dashed #888888;
+				.note {
+					border-left: none;
+					min-height: 30px;
+				}
+				&:hover {
+					.note {
+						border-bottom: none;
+					}
+				}
+			}
+		}
+	}
 }

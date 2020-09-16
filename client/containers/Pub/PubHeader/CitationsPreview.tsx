@@ -36,13 +36,9 @@ const CitationsPreview = (props: Props) => {
 				}}
 			/>
 			<ButtonGroup>
-				{/* @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message */}
 				<ClickToCopyButton
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 					className="copy-button"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 					icon="duplicate"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '() => any' is not assignable to type 'never'... Remove this comment to see the full error message
 					copyString={() => {
 						if (copyableCitationRef.current) {
 							// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.

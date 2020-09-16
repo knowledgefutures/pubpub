@@ -134,6 +134,21 @@
         .hide-on-mobile {
             display: none !important;
         }
+        .main {
+          .main-content {
+            .logo-wrapper {
+                text-overflow: ellipsis;
+                font-size: 20px;
+                letter-spacing: 0px;
+                max-width: 55%;
+                img {
+                    height: 35px;
+                    width: auto;
+                    display: block;
+                }
+            }
+          }
+        }
         .hero {
             text-align: center;
             .hero-content {

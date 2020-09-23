@@ -79,7 +79,6 @@ const CommandMenu = React.forwardRef((props, ref) => {
 	};
 
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		<Menu
 			ref={ref}
 			{...restProps}

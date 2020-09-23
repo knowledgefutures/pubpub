@@ -102,7 +102,6 @@ export const MenuItem = React.forwardRef((props: MenuItemProps, ref) => {
 	const { dismissMenu, parentMenu } = useContext(MenuContext);
 	if (children) {
 		return (
-			// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 			<Menu
 				onDismiss={dismissMenu}
 				disclosure={(dProps) => (

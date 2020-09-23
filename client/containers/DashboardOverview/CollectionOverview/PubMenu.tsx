@@ -42,7 +42,6 @@ const PubMenu = (props: Props) => {
 					minimal: true,
 					icon: 'more',
 				}}
-				// @ts-expect-error
 				placement="bottom-end"
 			>
 				{canSetCollectionAsPrimary && (

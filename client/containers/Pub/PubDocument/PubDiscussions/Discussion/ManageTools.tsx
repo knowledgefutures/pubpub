@@ -83,7 +83,6 @@ const ManageTools = (props: Props) => {
 			>
 				{(Object.keys(sortLabels) as SortType[]).map((type) => (
 					<MenuItem
-						// @ts-expect-error
 						text={sortLabels[type]}
 						icon={type === sortType ? 'tick' : 'blank'}
 						onClick={() => setSortType(type)}

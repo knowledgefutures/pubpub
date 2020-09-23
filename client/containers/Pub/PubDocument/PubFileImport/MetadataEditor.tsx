@@ -77,7 +77,6 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttri
 					),
 				}}
 				buttonContent={`${users.length} matching ${users.length === 1 ? 'user' : 'users'}`}
-				// @ts-expect-error
 				placement="bottom-end"
 			>
 				{users.map((user) => (

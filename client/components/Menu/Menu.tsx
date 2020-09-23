@@ -7,7 +7,7 @@ import { MenuContext, MenuConfigContext } from './menuContexts';
 import { Placement } from 'popper.js';
 
 export type MenuProps = {
-	'aria-label': string;
+	'aria-label'?: string;
 	children: React.ReactNode;
 	className?: string;
 	disclosure: ((disclosureProps: RK.MenuDisclosureProps) => React.ReactNode) | React.ReactNode;

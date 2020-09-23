@@ -254,7 +254,6 @@ const Header = (props: Props) => {
 								menuStyle={{ zIndex: 20 }}
 								buttonProps={{
 									minimal: true,
-									// @ts-expect-error
 									large: true,
 								}}
 								buttonContent={

@@ -7,6 +7,10 @@ import { Menu, MenuProps } from './Menu';
 type MenuButtonProps = {
 	buttonContent?: React.ReactNode;
 	buttonProps?: {
+		className?: string;
+		fill?: boolean;
+		large?: boolean;
+		outlined?: boolean;
 		icon?: string | React.ReactNode;
 		rightIcon?: string | React.ReactNode;
 		minimal?: boolean;

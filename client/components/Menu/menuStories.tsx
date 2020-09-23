@@ -24,7 +24,6 @@ const items = (
 storiesOf('components/Menu', module)
 	.add('manual-button', () => {
 		return (
-			// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 			<Menu
 				disclosure={(props) => {
 					const { ref, ...restProps } = props;
@@ -48,6 +47,5 @@ storiesOf('components/Menu', module)
 		);
 	})
 	.add('div', () => {
-		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		return <Menu disclosure={<div>Hello!</div>}>{items}</Menu>;
 	});

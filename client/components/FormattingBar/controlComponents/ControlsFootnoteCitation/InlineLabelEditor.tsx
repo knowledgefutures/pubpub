@@ -31,7 +31,6 @@ const InlineLabelEditor = (props: Props) => {
 				buttonProps={{
 					minimal: true,
 					rightIcon: 'chevron-down',
-					// @ts-expect-error
 					className: 'label-type-menu',
 				}}
 				buttonContent={buttonLabel}

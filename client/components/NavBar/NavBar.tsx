@@ -99,7 +99,7 @@ const NavBar = function(props) {
 								);
 							})}
 					</ul>
-					<div className="overflow-gradient" />
+					{/* <div className="overflow-gradient" /> */}
 				</div>
 				{!!socialItems.length && (
 					<ul className="social-list">

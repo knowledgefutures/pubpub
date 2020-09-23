@@ -3,6 +3,7 @@ require('./pubRedirects');
 
 /* Routes for Communities */
 require('./pubDocument');
+require('./pubDownloads');
 require('./collection'); // Route: /collection/:id
 require('./dashboardActivity');
 require('./dashboardDiscussions');

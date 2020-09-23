@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { renderHtmlChildren } from '../utils/renderHtml';
+import { counter } from './reactive/counter';
 
 export default {
 	equation: {
 		atom: true,
 		attrs: {
-			id: { default: null },
 			value: { default: '' },
 			html: { default: '' },
 			renderForPandoc: { default: false },
@@ -20,7 +20,6 @@ export default {
 					}
 
 					return {
-						id: node.getAttribute('id') || null,
 						value: node.getAttribute('data-value') || '',
 						html: node.firstChild.innerHTML || '',
 					};
@@ -41,7 +40,6 @@ export default {
 			return [
 				'span',
 				{
-					...(node.attrs.id && { id: node.attrs.id }),
 					'data-node-type': 'math-inline',
 					'data-value': node.attrs.value,
 				},
@@ -66,10 +64,15 @@ export default {
 	},
 	block_equation: {
 		atom: true,
+		reactive: true,
 		attrs: {
+			id: { default: null },
 			value: { default: '' },
 			html: { default: '' },
 			renderForPandoc: { default: false },
+		},
+		reactiveAttrs: {
+			count: counter('equation'),
 		},
 		parseDOM: [
 			{
@@ -80,6 +83,7 @@ export default {
 					}
 
 					return {
+						id: node.getAttribute('id') || null,
 						value: node.getAttribute('data-value') || '',
 						html: node.firstChild.innerHTML || '',
 					};
@@ -100,10 +104,13 @@ export default {
 			return [
 				'div',
 				{
+					...(node.attrs.id && { id: node.attrs.id }),
 					'data-node-type': 'math-block',
 					'data-value': node.attrs.value,
 				},
+				['span'],
 				renderHtmlChildren(isReact, node.attrs.html),
+				['span', { class: 'equation-label' }, `(${node.attrs.count})`],
 			];
 		},
 

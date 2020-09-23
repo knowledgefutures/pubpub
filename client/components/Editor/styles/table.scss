@@ -1,9 +1,22 @@
-table {
-	margin: 0;
-	max-width: 100%;
+/* This clunky table, tableWrapper thing is because */
+/* isReadOnly removes the wrapping div, so margins don't */
+/* collapse as expected in all situations. */
+.tableWrapper {
+	margin: 1em 0;
+	table {
+		margin: 0em;
+	}
 }
+
+th {
+	font-weight: bold;
+	text-align: left;
+	background-color: #f0f0f4;
+}
+
 th,
-td {
+td,
+table caption {
 	min-width: 1em;
 	border: 1px solid #ddd;
 	padding: 3px 5px;
@@ -14,20 +27,14 @@ td {
 		margin-bottom: 0;
 	}
 }
-/* This clunky table, tableWrapper thing is because */
-/* isReadOnly removes the wrapping div, so margins don't */
-/* collapse as expected in all situations. */
+
 table {
 	margin: 1em 0;
-}
-.tableWrapper {
-	margin: 1em 0;
-	table {
-		margin: 0em;
+	max-width: 100%;
+
+	caption {
+		text-align: left;
+		border-bottom: none;
+		padding: 3px 5px;
 	}
-}
-th {
-	font-weight: bold;
-	text-align: left;
-	background-color: #f0f0f4;
 }

@@ -1,5 +1,8 @@
 import { tableNodes } from 'prosemirror-tables';
-import { Fragment } from 'prosemirror-model';
+import { DOMOutputSpec, Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
+import { counter } from './reactive/counter';
+import { label } from './reactive/label';
+import { buildLabel } from '../utils/references';
 
 const pmTableNodes = tableNodes({
 	tableGroup: 'block',
@@ -22,7 +25,9 @@ const pmTableNodes = tableNodes({
 	},
 });
 
-pmTableNodes.table.onInsert = (view) => {
+const { table } = pmTableNodes;
+
+table.onInsert = (view) => {
 	const numRows = 3;
 	const numCols = 3;
 	const { tr, schema } = view.state;
@@ -39,6 +44,33 @@ pmTableNodes.table.onInsert = (view) => {
 	for (let i = 0; i < numRows; i += 1) rows.push(rowNode);
 	const tableNode = tableType.create(null, Fragment.from(rows));
 	view.dispatch(tr.replaceSelectionWith(tableNode).scrollIntoView());
+};
+
+// Enhance table node with reactive attributes.
+const { toDOM: tableToDOM } = table;
+
+table.attrs = { ...table.attrs, id: { default: null } };
+table.reactive = true;
+table.reactiveAttrs = {
+	count: counter('table'),
+	label: label(),
+};
+
+table.parseDOM![0].getAttrs = (node) => {
+	return {
+		id: (node as Element).getAttribute('id') || null,
+	};
+};
+
+table.toDOM = (node: ProsemirrorNode) => {
+	const spec = tableToDOM!(node);
+
+	return [
+		spec[0],
+		{ id: node.attrs.id },
+		['caption', buildLabel(node)],
+		spec[1],
+	] as DOMOutputSpec;
 };
 
 export default pmTableNodes;

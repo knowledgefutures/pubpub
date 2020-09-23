@@ -12,7 +12,8 @@ import nodeViews from './views';
 
 require('./styles/base.scss');
 
-type OwnProps = {
+export type EditorProps = {
+	blockNames?: { [key: string]: string };
 	citationManager?: any;
 	customNodes?: any;
 	customMarks?: any;
@@ -31,6 +32,7 @@ type OwnProps = {
 };
 
 const defaultProps = {
+	blockNames: {},
 	citationManager: null,
 	collaborativeOptions: {},
 	customMarks: {}, // defaults: 'em', 'strong', 'link', 'sub', 'sup', 'strike', 'code'
@@ -50,6 +52,7 @@ const defaultProps = {
 
 const getInitialArguments = (props) => {
 	const {
+		blockNames,
 		citationManager,
 		customMarks,
 		customNodes,
@@ -64,15 +67,16 @@ const getInitialArguments = (props) => {
 	const staticContent = renderStatic({
 		schema: schema,
 		doc: props.initialContent,
+		blockNames: blockNames,
 		citationManager: citationManager,
 	});
 	return { schema: schema, initialDoc: initialDoc, staticContent: staticContent };
 };
 
-type Props = OwnProps & typeof defaultProps;
+type Props = EditorProps & typeof defaultProps;
 
 const Editor = (props: Props) => {
-	const editorRef = useRef();
+	const editorRef = useRef<HTMLElement>();
 	const initialArguments = useRef(null);
 
 	if (initialArguments.current === null) {
@@ -87,6 +91,7 @@ const Editor = (props: Props) => {
 			doc: initialDoc,
 			schema: schema,
 			plugins: getPlugins(schema, {
+				blockNames: props.blockNames,
 				citationManager: props.citationManager,
 				collaborativeOptions: props.collaborativeOptions,
 				customPlugins: props.customPlugins,

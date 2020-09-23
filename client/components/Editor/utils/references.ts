@@ -1,51 +1,63 @@
 import { getReactedCopyOfNode } from '@pubpub/prosemirror-reactive';
+import { IconName } from '@blueprintjs/core';
 
 type ReferenceType = {
-	bpDisplayIcon: string;
-	type: string;
-	nodeTypes: string[];
-	label: string;
-	deriveCount?: (node: any) => number;
+	name?: string;
+	icon: IconName;
 };
 
-type NodeReference = {
+export type NodeReference = {
 	node: any;
-	referenceType: ReferenceType;
-	label: string;
+	icon: IconName;
 };
 
-const referenceTypes: ReferenceType[] = [
-	{
-		bpDisplayIcon: 'media',
-		type: 'figure',
-		nodeTypes: ['image', 'video', 'audio'],
-		label: 'Figure',
-	},
-];
+export const referenceTypes: { [key: string]: ReferenceType } = {
+	image: { icon: 'media', name: 'Image' },
+	video: { icon: 'media', name: 'Video' },
+	audio: { icon: 'media', name: 'Audio' },
+	table: { icon: 'th', name: 'Table' },
+	block_equation: { icon: 'function', name: 'Equation' },
+};
 
-export const defaultCountDeriver = (node) => node.attrs.count;
+export const buildLabel = (node, customBlockName?: string) => {
+	const {
+		attrs: { count, label },
+		type: { name },
+	} = node;
+	const referenceType = referenceTypes[name];
 
-const getReferenceForNode = (node, editorState): NodeReference | null => {
+	if (referenceType) {
+		return `${customBlockName || label || referenceType.name} ${count}`;
+	}
+
+	return null;
+};
+
+export const getReferenceForNode = (node, editorState): NodeReference | null => {
 	const {
 		type: {
 			name: nodeType,
 			spec: { reactive },
 		},
 	} = node;
-	const referenceType = referenceTypes.find((type) => type.nodeTypes.includes(nodeType));
-	if (referenceType) {
-		const { deriveCount = defaultCountDeriver } = referenceType;
-		const resolvedNode = reactive ? getReactedCopyOfNode(node, editorState) : node;
-		if (resolvedNode) {
-			const count = deriveCount(resolvedNode);
-			return {
-				node: node,
-				referenceType: referenceType,
-				label: `${referenceType.label} ${count}`,
-			};
-		}
+
+	if (!reactive) {
+		return null;
 	}
-	return null;
+
+	const referenceType = referenceTypes[nodeType];
+	const reactedNode = getReactedCopyOfNode(node, editorState);
+
+	if (!(referenceType && reactedNode && typeof reactedNode.attrs.count === 'number')) {
+		return null;
+	}
+
+	const { icon } = referenceType;
+
+	return {
+		node: reactedNode,
+		icon: icon,
+	};
 };
 
 export const getReferenceableNodes = (editorState) => {

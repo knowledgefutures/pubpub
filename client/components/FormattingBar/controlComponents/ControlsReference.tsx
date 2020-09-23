@@ -1,14 +1,20 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 
 import { MenuButton, MenuItem } from 'components/Menu';
-import { getReferenceableNodes } from 'components/Editor/utils/references';
+import {
+	getReferenceableNodes,
+	NodeReference,
+	buildLabel,
+} from 'components/Editor/utils/references';
 import { EditorChangeObject } from 'client/types';
+import { usePubContext } from 'client/containers/Pub/pubHooks';
 
 export type ControlsReferenceProps = {
+	blockNames: { [key: string]: string };
 	editorChangeObject: EditorChangeObject;
 };
 
-const matchInitialTarget = (selectedNode, referenceableNodes) => {
+const matchInitialTarget = (selectedNode, referenceableNodes: NodeReference[]) => {
 	if (selectedNode && selectedNode.attrs && selectedNode.attrs.targetId) {
 		return referenceableNodes.find((rn) => rn.node.attrs.id === selectedNode.attrs.targetId);
 	}
@@ -19,15 +25,19 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 	const {
 		editorChangeObject: { updateNode, selectedNode, view },
 	} = props;
+	const { blockNames } = usePubContext();
 
-	const possibleTargets = useMemo(() => getReferenceableNodes(view.state), [view.state]);
+	const possibleTargets = useMemo(() => getReferenceableNodes(view.state), [
+		view.state,
+		blockNames,
+	]);
 	const [target, setTarget] = useState(() => matchInitialTarget(selectedNode, possibleTargets));
 	const targetId = target && target.node && target.node.attrs.id;
 	const changed = useRef(false);
 
-	const currentIcon = target ? target.referenceType.bpDisplayIcon : 'disable';
+	const currentIcon = target ? target.icon : 'disable';
 	const currentLabel = target
-		? target.label
+		? buildLabel(target.node, blockNames[target.node.type.name])
 		: possibleTargets.length
 		? 'No referenced item'
 		: 'No items to reference';
@@ -52,7 +62,7 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 				}}
 			>
 				{possibleTargets.map((possibleTarget) => {
-					const { label, referenceType, node } = possibleTarget;
+					const { icon, node } = possibleTarget;
 					return (
 						<MenuItem
 							onClick={() => {
@@ -61,8 +71,8 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 							}}
 							key={node.attrs.id}
 							active={targetId && targetId === node.attrs.id}
-							text={label}
-							icon={referenceType.bpDisplayIcon}
+							text={buildLabel(node, blockNames[node.type.name])}
+							icon={icon}
 						/>
 					);
 				})}

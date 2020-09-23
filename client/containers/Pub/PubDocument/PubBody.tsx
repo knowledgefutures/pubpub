@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState } from 'react';
+import React, { useRef, useContext, useState, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { useBeforeUnload } from 'react-use';
 import * as Sentry from '@sentry/browser';
@@ -52,7 +52,7 @@ const PubBody = (props: Props) => {
 		editorWrapperRef,
 	} = props;
 	const { communityData } = usePageContext();
-	const { citationManager } = usePubContext();
+	const { blockNames, citationManager } = usePubContext();
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
@@ -145,6 +145,7 @@ const PubBody = (props: Props) => {
 						},
 					},
 				}}
+				blockNames={blockNames}
 				citationManager={citationManager}
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}

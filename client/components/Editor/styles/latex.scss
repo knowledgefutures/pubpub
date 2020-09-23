@@ -1,15 +1,39 @@
 @import '~katex/dist/katex';
+@import '../../../styles/variables.scss';
 
 [data-node-type='math-inline'] {
-    font-size: 0.9em;
-    display: inline-block;
-    vertical-align: middle;
-    max-width: 100%;
+	font-size: 0.9em;
+	display: inline-block;
+	vertical-align: middle;
+	max-width: 100%;
 }
 
 [data-node-type='math-block'] {
-    font-size: 20px;
-    display: block;
-    text-align: center;
-    max-width: 100%;
+	font-size: 20px;
+	text-align: center;
+	max-width: 100%;
+	position: relative;
+	display: flex;
+
+	> span {
+		flex-grow: 1;
+	}
+
+	> span:first-child {
+		flex-shrink: 2;
+	}
+
+	> span:nth-child(2) {
+		flex-shrink: 0;
+	}
+
+	> span:last-child {
+		flex-shrink: 1;
+		text-align: right;
+	}
+}
+
+.equation-label {
+	text-align: center;
+	font-family: $body-font;
 }

@@ -1,5 +1,7 @@
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
+import { label } from './reactive/label';
+import { buildLabel } from '../utils/references';
 
 export default {
 	video: {
@@ -13,7 +15,8 @@ export default {
 			caption: { default: '' },
 		},
 		reactiveAttrs: {
-			count: counter('figure'),
+			count: counter('video'),
+			label: label(),
 		},
 		parseDOM: [
 			{
@@ -51,7 +54,15 @@ export default {
 						alt: node.attrs.caption,
 					},
 				],
-				['figcaption', {}, renderHtmlChildren(isReact, node.attrs.caption, 'div')],
+				[
+					'figcaption',
+					{},
+					[
+						'div',
+						['strong', buildLabel(node)],
+						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
+					],
+				],
 			];
 		},
 		inline: false,

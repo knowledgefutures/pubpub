@@ -1,6 +1,8 @@
 import classNames from 'classnames';
 import { Hooks } from '@pubpub/prosemirror-reactive/src/store/types';
 
+import { buildLabel } from '../utils/references';
+
 export default {
 	reference: {
 		isLeaf: true,
@@ -19,9 +21,7 @@ export default {
 
 				if (targetId) {
 					return this.useDeferredNode(targetId, (target) => {
-						return target
-							? `${blockNames[target.type.name]} ${target.attrs.count}`
-							: null;
+						return target ? buildLabel(target, blockNames[target.type.name]) : null;
 					});
 				}
 
@@ -35,20 +35,25 @@ export default {
 					if (node.getAttribute('data-node-type') !== 'reference') {
 						return false;
 					}
+
+					const targetId = node.getAttribute('data-target-id');
+
 					return {
 						id: node.getAttribute('id'),
-						targetId: node.getAttribute('data-target-id'),
+						targetId: targetId,
+						href: `#${targetId}`,
 					};
 				},
 			},
 		],
-		toDOM: (node) => {
+		toDOM(node) {
 			const { id, targetId, label } = node.attrs;
+
 			return [
 				'a',
 				{
 					...(id && { id: id }),
-					// href: `#${targetId}`,
+					href: `#${targetId}`,
 					class: classNames('reference', !label && 'missing'),
 					'data-node-type': 'reference',
 					'data-target-id': targetId,

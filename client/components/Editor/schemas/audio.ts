@@ -1,14 +1,22 @@
 import { renderHtmlChildren } from '../utils/renderHtml';
+import { label } from './reactive/label';
+import { buildLabel } from '../utils/references';
+import { counter } from './reactive/counter';
 
 export default {
 	audio: {
 		atom: true,
+		reactive: true,
 		attrs: {
 			id: { default: null },
 			url: { default: null },
 			size: { default: 50 }, // number as percentage
 			align: { default: 'center' },
 			caption: { default: '' },
+		},
+		reactiveAttrs: {
+			count: counter('audio'),
+			label: label(),
 		},
 		parseDOM: [
 			{
@@ -46,7 +54,15 @@ export default {
 						alt: node.attrs.caption,
 					},
 				],
-				['figcaption', {}, renderHtmlChildren(isReact, node.attrs.caption, 'div')],
+				[
+					'figcaption',
+					{},
+					[
+						'div',
+						['strong', buildLabel(node)],
+						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
+					],
+				],
 			];
 		},
 		inline: false,

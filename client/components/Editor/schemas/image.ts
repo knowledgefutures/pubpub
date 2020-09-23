@@ -1,5 +1,7 @@
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
+import { buildLabel } from '../utils/references';
+import { label } from './reactive/label';
 
 export default {
 	image: {
@@ -13,7 +15,8 @@ export default {
 			caption: { default: '' },
 		},
 		reactiveAttrs: {
-			count: counter('figure'),
+			count: counter('image'),
+			label: label(),
 		},
 		parseDOM: [
 			{
@@ -35,6 +38,7 @@ export default {
 		// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
 		toDOM: (node, { isReact } = {}) => {
 			const resizeFunc = node.type.spec.defaultOptions.onResizeUrl;
+
 			return [
 				'figure',
 				{
@@ -51,7 +55,15 @@ export default {
 						alt: node.attrs.caption,
 					},
 				],
-				['figcaption', {}, renderHtmlChildren(isReact, node.attrs.caption, 'div')],
+				[
+					'figcaption',
+					{},
+					[
+						'div',
+						['strong', buildLabel(node)],
+						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
+					],
+				],
 			];
 		},
 		inline: false,

@@ -7,7 +7,7 @@ require('./fileUploadButton.scss');
 
 type OwnProps = {
 	onUploadFinish: (...args: any[]) => any;
-	text?: string;
+	text: string;
 	icon?: string;
 	isLarge?: boolean;
 	isSmall?: boolean;
@@ -17,8 +17,6 @@ type OwnProps = {
 };
 
 const defaultProps = {
-	text: undefined,
-	icon: undefined,
 	isLarge: false,
 	isSmall: false,
 	isMinimal: false,
@@ -33,13 +31,14 @@ type Props = OwnProps & typeof defaultProps;
 class FileUploadButton extends Component<Props, State> {
 	static defaultProps = defaultProps;
 
+	randKey: string;
+
 	constructor(props: Props) {
 		super(props);
 		this.state = {
 			isUploading: false,
 		};
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'randKey' does not exist on type 'FileUpl... Remove this comment to see the full error message
-		this.randKey = Math.round(Math.random() * 99999);
+		this.randKey = Math.round(Math.random() * 99999).toString();
 		this.handleUploadFinish = this.handleUploadFinish.bind(this);
 		this.handleFileSelect = this.handleFileSelect.bind(this);
 	}
@@ -69,10 +68,8 @@ class FileUploadButton extends Component<Props, State> {
 					text={
 						<React.Fragment>
 							{text}
-							{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'randKey' does not exist on type 'FileUpl... Remove this comment to see the full error message */}
 							<label htmlFor={this.randKey} className="file-select">
 								<input
-									// @ts-expect-error ts-migrate(2339) FIXME: Property 'randKey' does not exist on type 'FileUpl... Remove this comment to see the full error message
 									id={this.randKey}
 									name="file-input"
 									type="file"
@@ -83,7 +80,6 @@ class FileUploadButton extends Component<Props, State> {
 							</label>
 						</React.Fragment>
 					}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
 					icon={icon ? <Icon icon={icon} /> : null}
 					large={isLarge}
 					small={isSmall}

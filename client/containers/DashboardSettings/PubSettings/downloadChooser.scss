@@ -1,0 +1,11 @@
+.download-chooser-component {
+    .buttons {
+        display: flex;
+        > :not(:last-child) {
+            margin-right: 8px;
+        }
+    }
+    .subtext {
+        margin-top: 0.5em;
+    }
+}

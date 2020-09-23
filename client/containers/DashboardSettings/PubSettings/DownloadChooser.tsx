@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import dateFormat from 'dateformat';
-import { Button, ButtonGroup } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
 
 import { FileUploadButton } from 'components';
 import { getFormattedDownload } from 'containers/Pub/PubHeader/headerUtils';
 import { apiFetch } from 'client/utils/apiFetch';
+
+require('./downloadChooser.scss');
 
 type Props = {
 	pubData: {
@@ -17,6 +19,7 @@ type Props = {
 
 const DownloadChooser = (props: Props) => {
 	const { communityId, pubData, onSetDownloads } = props;
+	const [isRemoving, setIsRemoving] = useState(false);
 
 	const formattedDownload = getFormattedDownload(pubData.downloads);
 	const { url = '', date } = formattedDownload || {};
@@ -25,25 +28,32 @@ const DownloadChooser = (props: Props) => {
 		.pop()
 		.toLowerCase();
 
-	const updateDownloads = (fileUrl) => {
-		const downloadItem = {
-			type: 'formatted',
-			url: fileUrl,
-			branchId: null,
-			createdAt: new Date(),
-		};
-		const prevDownloads = pubData.downloads || [];
-		const newDownloads = [...prevDownloads, downloadItem];
-		return apiFetch('/api/pubs', {
-			method: 'PUT',
-			body: JSON.stringify({
-				downloads: newDownloads,
-				pubId: pubData.id,
-				communityId: communityId,
-			}),
-		})
-			.then(() => onSetDownloads(newDownloads))
-			.catch((err) => console.error('Error Saving Pub Downloads: ', err));
+	const updateDownloads = async (fileUrl) => {
+		const nextDownloads = fileUrl
+			? [
+					{
+						type: 'formatted',
+						url: fileUrl,
+						branchId: null,
+						createdAt: new Date(),
+					},
+			  ]
+			: [];
+		try {
+			setIsRemoving(true);
+			await apiFetch('/api/pubs', {
+				method: 'PUT',
+				body: JSON.stringify({
+					downloads: nextDownloads,
+					pubId: pubData.id,
+					communityId: communityId,
+				}),
+			});
+			onSetDownloads(nextDownloads);
+			setIsRemoving(false);
+		} catch (err) {
+			console.error('Error Saving Pub Downloads: ', err);
+		}
 	};
 
 	return (
@@ -53,19 +63,29 @@ const DownloadChooser = (props: Props) => {
 				It will be provided to readers as the pub's default download, but they'll still be
 				able to use the automatic export tools.
 			</p>
-			<ButtonGroup>
-				{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message */}
-				<FileUploadButton onUploadFinish={updateDownloads} text="Upload new file" />
+			<div className="buttons">
+				<FileUploadButton
+					icon="upload"
+					onUploadFinish={updateDownloads}
+					text="Upload new file"
+				/>
 				{formattedDownload && (
-					<div style={{ marginLeft: '1em' }}>
+					<>
 						<Button
+							icon="download"
 							text={`Download ${extension.toUpperCase()}`}
 							onClick={() => window.open(url)}
 						/>
-						<div className="subtext">Uploaded {dateFormat(date, 'mmm dd, yyyy')}</div>
-					</div>
+						<Button
+							text="Remove file"
+							icon="trash"
+							onClick={() => updateDownloads(null)}
+							loading={isRemoving}
+						/>
+					</>
 				)}
-			</ButtonGroup>
+			</div>
+			<div className="subtext">Uploaded {dateFormat(date, 'mmm dd, yyyy')}</div>
 		</div>
 	);
 };

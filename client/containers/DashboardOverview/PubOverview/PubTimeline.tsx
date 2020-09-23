@@ -112,8 +112,8 @@ const PubTimeline = (props: Props) => {
 		const popoverContent = (
 			<div>
 				A Release is a snapshot of a Pub that's visible to the public. Visit the Pub draft
-				and click the <Icon icon="globe" iconSize={12} /> Publish button in the header to
-				create a release.
+				and click the <Icon icon="document-share" iconSize={12} /> Publish button in the
+				header to create a release.
 			</div>
 		);
 

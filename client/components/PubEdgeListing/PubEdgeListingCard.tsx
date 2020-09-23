@@ -54,7 +54,7 @@ type Props = OwnProps & typeof defaultProps;
 const PubEdgeListingCard = (props: Props) => {
 	const { communityData } = usePageContext();
 	const {
-		accentColor = communityData.accentColorDark,
+		accentColor,
 		children,
 		inPubBody,
 		isInboundEdge,
@@ -68,7 +68,7 @@ const PubEdgeListingCard = (props: Props) => {
 	const [hover, setHover] = useState(false);
 	const handleMouseEnter = useCallback(() => setHover(true), []);
 	const handleMouseLeave = useCallback(() => setHover(false), []);
-	const hoverAccentColor = hover ? accentColor : '#ddd';
+	const hoverAccentColor = hover ? accentColor || communityData.accentColorDark : '#ddd';
 	const style = { borderColor: hoverAccentColor };
 
 	const renderRelation = () => {

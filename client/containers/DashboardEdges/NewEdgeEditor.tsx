@@ -14,7 +14,8 @@ require('./newEdgeEditor.scss');
 
 type Props = {
 	availablePubs: {
-		title?: string;
+		id: string;
+		title: string;
 		avatar?: string;
 	}[];
 	onCreateNewEdge: (...args: any[]) => any;
@@ -45,16 +46,14 @@ const stripMarkupFromString = (string) => {
 
 const NewEdgeEditor = (props: Props) => {
 	const { availablePubs, onChangeCreatingState, onCreateNewEdge, pubData, usedPubIds } = props;
-	const [newEdge, setNewEdge] = useState(null);
+	const [newEdge, setNewEdge] = useState<any>(null);
 	const [isCreatingEdge, setIsCreatingEdge] = useState(false);
 	const [errorCreatingEdge, setErrorCreatingEdge] = useState(null);
 	const { pendingPromise } = usePendingChanges();
 
 	const currentRelationName =
 		newEdge &&
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 		relationTypeDefinitions[newEdge.relationType] &&
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 		relationTypeDefinitions[newEdge.relationType].name;
 
 	useEffect(() => onChangeCreatingState(!!newEdge), [newEdge, onChangeCreatingState]);
@@ -86,7 +85,6 @@ const NewEdgeEditor = (props: Props) => {
 
 	const handleEdgeDirectionSwitch = () => {
 		setNewEdge({
-			// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
 			...newEdge,
 			pubIsParent: !newEdge.pubIsParent,
 		});
@@ -94,7 +92,6 @@ const NewEdgeEditor = (props: Props) => {
 
 	const handleEdgeRelationTypeChange = (relationType) => {
 		setNewEdge({
-			// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
 			...newEdge,
 			relationType: relationType,
 		});
@@ -106,7 +103,6 @@ const NewEdgeEditor = (props: Props) => {
 		pendingPromise(
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
 			apiFetch.post('/api/pubEdges', {
-				// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
 				...newEdge,
 				pubId: pubData.id,
 				// Don't send the whole Pub, just the ID
@@ -125,7 +121,6 @@ const NewEdgeEditor = (props: Props) => {
 	};
 
 	const renderNewEdgeControls = () => {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'externalPublication' does not exist on t... Remove this comment to see the full error message
 		const { externalPublication, targetPub } = newEdge;
 		const canCreateEdge = targetPub || (externalPublication && externalPublication.title);
 		return (
@@ -142,7 +137,6 @@ const NewEdgeEditor = (props: Props) => {
 								externalPublication={externalPublication}
 								onUpdateExternalPublication={(update) =>
 									setNewEdge({
-										// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
 										...newEdge,
 										externalPublication: { ...externalPublication, ...update },
 									})
@@ -171,7 +165,6 @@ const NewEdgeEditor = (props: Props) => {
 						{Object.entries(relationTypeDefinitions).map(
 							([relationType, definition]) => {
 								const { name } = definition;
-								// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 								const selected = newEdge.relationType === relationType;
 								return (
 									<MenuItem

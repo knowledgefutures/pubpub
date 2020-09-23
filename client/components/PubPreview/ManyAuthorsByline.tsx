@@ -27,16 +27,12 @@ const ManyAuthorsByline = (props: Props) => {
 		return (
 			<>
 				<Byline
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never'.
 					contributors={authors}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 					bylinePrefix={`by ${authors.length} ${naivePluralize(
 						'author',
 						authors.length,
 					)}: `}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(user: any, index: any) => string' is not as... Remove this comment to see the full error message
 					renderUserLabel={(user, index) => `(${index + 1}) ${user.fullName}`}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'never'.
 					linkToUsers={false}
 				/>
 			</>
@@ -44,11 +40,8 @@ const ManyAuthorsByline = (props: Props) => {
 	}
 	return (
 		<Byline
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never'.
 			contributors={authors}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '(n: any) => string' is not assignable to typ... Remove this comment to see the full error message
 			renderTruncation={(n) => `${n} more`}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'never'.
 			truncateAt={truncateAt}
 			{...restProps}
 		/>

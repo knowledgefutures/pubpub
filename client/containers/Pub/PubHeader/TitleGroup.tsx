@@ -82,9 +82,7 @@ const TitleGroup = (props: Props) => {
 			)}
 			<PubByline
 				pubData={pubData}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'null'.
 				renderSuffix={() => !isRelease && renderBylineEditor()}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'null'.
 				renderEmptyState={renderBylineEmptyState}
 			/>
 			{publishedDate && (

@@ -12,7 +12,11 @@ require('./dashboardEdges.scss');
 
 type Props = {
 	overviewData: {
-		pubs: {}[];
+		pubs: {
+			id: string;
+			title: string;
+			avatar?: string;
+		}[];
 	};
 	pubData: {
 		id?: string;

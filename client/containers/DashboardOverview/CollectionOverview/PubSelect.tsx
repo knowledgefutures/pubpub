@@ -28,7 +28,6 @@ const PubSelect = (props: Props) => {
 		return (
 			<PubMenuItem
 				key={pub.id}
-				// @ts-expect-error ts-migrate(2322) FIXME: Property 'onClick' does not exist on type 'Intrins... Remove this comment to see the full error message
 				onClick={handleClick}
 				title={pub.title}
 				contributors={pub.attributions}

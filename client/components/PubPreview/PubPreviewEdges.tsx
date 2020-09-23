@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { Icon, Byline, PubByline } from 'components';
 import { pubShortUrl } from 'utils/canonicalUrls';
@@ -8,39 +7,24 @@ import { getRelationTypeName } from 'utils/pubEdge/relations';
 
 require('./pubPreviewEdges.scss');
 
-type referencedPubShape = {
-	attributions?: any[];
+type ReferencedPub = {
+	attributions: any[];
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'any[] | und... Remove this comment to see the full error message
-const referencedPubShape: PropTypes.Requireable<referencedPubShape> = PropTypes.shape({
-	attributions: PropTypes.array,
-});
-
-type pubEdgeShape = {
-	externalPublication?: any;
-	pub?: referencedPubShape;
-	pubId?: string;
-	relationType?: string;
-	targetPub?: referencedPubShape;
+type PubEdge = {
+	externalPublication?: {};
+	pub?: ReferencedPub;
+	pubId: string;
+	relationType: string;
+	targetPub?: ReferencedPub;
 	targetPubId?: string;
 };
-
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'referencedP... Remove this comment to see the full error message
-const pubEdgeShape: PropTypes.Requireable<pubEdgeShape> = PropTypes.shape({
-	externalPublication: PropTypes.object,
-	pub: referencedPubShape,
-	pubId: PropTypes.string,
-	relationType: PropTypes.string,
-	targetPub: referencedPubShape,
-	targetPubId: PropTypes.string,
-});
 
 type Props = {
 	accentColor: string;
 	pubData: {
-		inboundEdges?: pubEdgeShape[];
-		outboundEdges?: pubEdgeShape[];
+		inboundEdges?: PubEdge[];
+		outboundEdges?: PubEdge[];
 	};
 };
 
@@ -80,9 +64,7 @@ const renderEdgeLink = (edge) => {
 			<a href={url} key={edge.id} className="edge-link">
 				<Byline
 					{...sharedBylineProps}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 					contributors={contributors}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '() => any' is not assignable to type 'never'... Remove this comment to see the full error message
 					renderEmptyState={() => title}
 				/>
 			</a>
@@ -91,7 +73,6 @@ const renderEdgeLink = (edge) => {
 	const childPub = pubIsParent ? targetPub : pub;
 	return (
 		<a href={pubShortUrl(childPub)} key={edge.id} className="edge-link">
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message */}
 			<PubByline
 				{...sharedBylineProps}
 				pubData={childPub}

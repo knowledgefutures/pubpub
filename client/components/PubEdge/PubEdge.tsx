@@ -6,6 +6,7 @@ import { usePageContext } from 'utils/hooks';
 import { formatDate } from 'utils/dates';
 import { pubUrl, pubShortUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { getAllPubContributors } from 'utils/pub/contributors';
 
 import { pubEdgeType } from './constants';
 import { getHostnameForUrl } from './util';
@@ -41,12 +42,12 @@ const getValuesFromPubEdge = (pubEdge, communityData, viewingFromTarget) => {
 	const { externalPublication, targetPub, pub } = pubEdge;
 	const displayedPub = viewingFromTarget ? pub : targetPub;
 	if (displayedPub) {
-		const { title, description, attributions, avatar } = displayedPub;
+		const { title, description, avatar } = displayedPub;
 		const url = getUrlForPub(displayedPub, communityData);
 		const publishedDate = getPubPublishedDate(displayedPub);
 		return {
 			avatar: avatar,
-			contributors: attributions || [],
+			contributors: getAllPubContributors(displayedPub, false, true),
 			description: description,
 			publishedAt: publishedDate && formatDate(publishedDate),
 			title: title,

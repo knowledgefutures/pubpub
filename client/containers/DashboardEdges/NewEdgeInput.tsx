@@ -13,8 +13,9 @@ require('./newEdgeInput.scss');
 
 type Props = {
 	availablePubs: {
-		title?: string;
+		title: string;
 		avatar?: string;
+		id: string;
 	}[];
 	onSelectItem: (...args: any[]) => any;
 	usedPubIds: string[];
@@ -34,7 +35,6 @@ const suggestPopoverProps = {
 const indeterminateMenuItem = (
 	<PubMenuItem
 		key="indeterminate"
-		// @ts-expect-error ts-migrate(2322) FIXME: Property 'title' does not exist on type 'Intrinsic... Remove this comment to see the full error message
 		title={'X'.repeat(50)}
 		contributors={['ABC', 'XYZ']}
 		isSkeleton={true}
@@ -49,32 +49,27 @@ const renderInputValue = () => '';
 const NewEdgeInput = (props: Props) => {
 	const { availablePubs, usedPubIds, onSelectItem } = props;
 	const [queryValue, setQueryValue] = useState('');
-	const [suggestedItems, setSuggestedItems] = useState([]);
+	const [suggestedItems, setSuggestedItems] = useState<any[]>([]);
 	const throttledQueryValue = useThrottled(queryValue, 250, true, true);
 
 	useEffect(() => {
 		if (isUrl(throttledQueryValue) || isDoi(throttledQueryValue)) {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 			setSuggestedItems([{ indeterminate: true }]);
 			apiFetch
 				// @ts-expect-error ts-migrate(2339) FIXME: Property 'get' does not exist on type '(path: any,... Remove this comment to see the full error message
 				.get(`/api/pubEdgeProposal?object=${encodeURIComponent(throttledQueryValue)}`)
 				.then((res) => {
 					if (res) {
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 						setSuggestedItems([res]);
 					} else {
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 						setSuggestedItems([{ createNewFromUrl: throttledQueryValue }]);
 					}
 				});
 		} else if (throttledQueryValue) {
 			setSuggestedItems(
-				// @ts-expect-error ts-migrate(2345) FIXME: Type '{ targetPub: { title?: string | undefined; a... Remove this comment to see the full error message
 				availablePubs
 					.filter(
 						(pub) =>
-							// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{ title?: st... Remove this comment to see the full error message
 							fuzzyMatchPub(pub, throttledQueryValue) && !usedPubIds.includes(pub.id),
 					)
 					.slice(0, 5)
@@ -94,9 +89,8 @@ const NewEdgeInput = (props: Props) => {
 			return (
 				<PubMenuItem
 					key={targetPub.title}
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'title' does not exist on type 'Intrinsic... Remove this comment to see the full error message
 					title={targetPub.title}
-					contributors={targetPub.attributions}
+					contributors={targetPub.attributions.filter((attr) => attr.isAuthor)}
 					image={targetPub.avatar}
 					active={modifiers.active}
 					onClick={handleClick}
@@ -109,7 +103,6 @@ const NewEdgeInput = (props: Props) => {
 			return (
 				<PubMenuItem
 					key={title}
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'title' does not exist on type 'Intrinsic... Remove this comment to see the full error message
 					title={title}
 					contributors={contributors}
 					image={avatar}

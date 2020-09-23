@@ -1,30 +1,22 @@
 import React from 'react';
 
-import { Byline } from 'components';
+import Byline, { BylineProps } from 'components/Byline/Byline';
 import { getAllPubContributors } from 'utils/pub/contributors';
 
-/*
-(ts-migrate) TODO: Migrate the remaining prop types
-...bylinePropTypesWithoutContributors
-*/
-type OwnProps = {
+type Props = {
 	pubData: {};
 	hideAuthors?: boolean;
 	hideContributors?: boolean;
-};
+} & Omit<BylineProps, 'contributors'>;
+
 const defaultProps = {
 	hideAuthors: false,
 	hideContributors: true,
-	...Byline.defaultProps,
 };
 
-type Props = OwnProps & typeof defaultProps;
-
 const PubByline = (props: Props) => {
-	const { pubData, hideAuthors, hideContributors } = props;
+	const { pubData, hideAuthors = false, hideContributors = false } = props;
 	const authors = getAllPubContributors(pubData, hideAuthors, hideContributors);
-
-	// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never'.
 	return <Byline {...props} contributors={authors} />;
 };
 PubByline.defaultProps = defaultProps;

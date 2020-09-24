@@ -7,24 +7,16 @@ import { ForbiddenError, NotFoundError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { getPub } from 'server/utils/queryHelpers';
 
-import { getFormattedDownloadUrl, getPublicExportUrl } from 'utils/pub/downloads';
-
-const getBestDownloadUrl = (pubData) => {
-	const formattedDownloadUrl = getFormattedDownloadUrl(pubData);
-	if (formattedDownloadUrl) {
-		return formattedDownloadUrl;
-	}
-	return getPublicExportUrl(pubData, 'pdf');
-};
+import { getBestDownloadUrl } from 'utils/pub/downloads';
 
 app.get(
-	'/pub/:pubSlug/download',
+	['/pub/:pubSlug/download', '/pub/:pubSlug/download/:format'],
 	wrap(async (req, res) => {
 		const { communityData } = await getInitialData(req);
-		const { pubSlug } = req.params;
+		const { pubSlug, format = null } = req.params;
 
 		const pubData = await getPub(pubSlug, communityData.id);
-		const bestPubDownloadUrl = getBestDownloadUrl(pubData);
+		const bestPubDownloadUrl = getBestDownloadUrl(pubData, format);
 
 		if (pubData.releases.length === 0) {
 			throw new ForbiddenError();

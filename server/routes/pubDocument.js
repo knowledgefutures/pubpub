@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { getPubPageContextTitle } from 'utils/pubPageTitle';
-import { getPDFDownload, getTextAbstract, getGoogleScholarNotes } from 'utils/pub/metadata';
+import { getPdfDownloadUrl, getTextAbstract, getGoogleScholarNotes } from 'utils/pub/metadata';
 import { chooseCollectionForPub } from 'client/utils/collections';
 import Html from 'server/Html';
 import app from 'server/server';
@@ -33,7 +33,7 @@ const renderPubDocument = (res, pubData, initialData) => {
 				contextTitle: getPubPageContextTitle(pubData, initialData.communityData),
 				description: pubData.description,
 				doi: pubData.doi,
-				download: getPDFDownload(pubData),
+				pdfDownloadUrl: getPdfDownloadUrl(initialData.communityData, pubData),
 				image: pubData.avatar,
 				initialData: initialData,
 				notes: getGoogleScholarNotes(Object.values(pubData.initialStructuredCitations)),

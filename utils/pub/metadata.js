@@ -1,19 +1,12 @@
-export const getPDFDownload = (pub) => {
-	const downloads = pub.downloads;
-	const exports = pub.activeBranch.exports;
-	if (downloads) {
-		const matchingDownload = downloads
-			.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-			.find((dl) => dl.url.endsWith('.pdf'));
-		if (matchingDownload) return matchingDownload;
+import { getBestDownloadUrl } from 'utils/pub/downloads';
+import { pubUrl } from 'utils/canonicalUrls';
+
+export const getPdfDownloadUrl = (communityData, pubData) => {
+	const hasPdfDownload = !!getBestDownloadUrl(pubData, 'pdf');
+	if (hasPdfDownload) {
+		return pubUrl(communityData, pubData, { download: 'pdf' });
 	}
-	if (exports) {
-		const matchingExport = exports
-			.sort((a, b) => (a.historyKey < b.historyKey ? 1 : -1))
-			.find((exportFile) => exportFile.format === 'pdf');
-		if (matchingExport) return matchingExport;
-	}
-	return false;
+	return null;
 };
 
 export const getTextAbstract = (docJson) => {

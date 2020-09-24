@@ -29,8 +29,11 @@ export const pubShortUrl = (pub) => {
 
 export const pubUrl = (community, pub, options = {}) => {
 	let baseUrl = `${communityUrl(community)}/pub/${pub.slug}`;
-	const { isDraft, historyKey, releaseNumber, accessHash, query } = options;
-	if (isDraft) {
+	const { isDraft, historyKey, releaseNumber, accessHash, query, download } = options;
+	if (download) {
+		const downloadType = typeof download === 'string' ? `/${download}` : '';
+		baseUrl = `${baseUrl}/download${downloadType}`;
+	} else if (isDraft) {
 		const appendedHistoryKey = historyKey !== undefined ? `/${historyKey}` : '';
 		baseUrl = `${baseUrl}/draft${appendedHistoryKey}`;
 	} else if (releaseNumber !== undefined) {

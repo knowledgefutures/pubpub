@@ -19,7 +19,7 @@ export const generateMetaComponents = ({
 	publishedAt,
 	unlisted,
 	collection,
-	download,
+	pdfDownloadUrl,
 	textAbstract,
 	notes,
 	canonicalUrl,
@@ -111,10 +111,10 @@ export const generateMetaComponents = ({
 		}
 	}
 
-	if (download) {
+	if (pdfDownloadUrl) {
 		outputComponents = [
 			...outputComponents,
-			<meta key="dl1" name="citation_pdf_url" content={download.url} />,
+			<meta key="dl1" name="citation_pdf_url" content={pdfDownloadUrl} />,
 		];
 	}
 

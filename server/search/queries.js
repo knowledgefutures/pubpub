@@ -8,6 +8,7 @@ export const getSearchUsers = (searchString, limit = 5) => {
 			[Op.or]: [
 				{ fullName: { [Op.iLike]: `%${searchString}%` } },
 				{ slug: { [Op.iLike]: `%${searchString}%` } },
+				{ email: { [Op.iLike]: searchString } },
 			],
 		},
 		attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],

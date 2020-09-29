@@ -50,21 +50,20 @@ const AccentStyle = function(props) {
 	const headerAccentColor = generateColors(
 		headerColorType === 'light' ? accentColorLight : accentColorDark,
 	);
-
-	const navAccentColor = headerColorType === 'light' ? accentColorDark : accentColorLight;
+	const navAccentColor = headerColorType === 'light' ? accentColorDark : accentColorLight
 	const bottomBorder = `.accent-color.${
 		isNavHidden ? 'header-component' : 'nav-bar-component'
 	} { border-bottom: 2px solid ${navAccentColor}; }`;
 	const simpleBottomBorder = `.accent-color.${
 		isNavHidden ? 'header-component' : 'nav-bar-component'
 	} { border-bottom: 1px solid #DDD; }`;
-	const gradient = `linear-gradient(90deg, ${Color(baseColor)
+	const gradient = `linear-gradient(90deg, ${Color(headerAccentColor.base)
 		.rgb()
 		.fade(1)
-		.string()} 0%,  ${Color(baseColor)
+		.string()} 0%,  ${Color(headerAccentColor.base)
 		.rgb()
 		.fade(1)
-		.string()} 85%,  ${baseColor} 100%);`;
+		.string()} 85%,  ${headerAccentColor.base} 100%);`;
 
 	return (
 		<style

@@ -35,12 +35,13 @@ const getPubsForLayoutBlock = async (blockContent, initialData) => {
 			getCollections: true,
 		}),
 		...(limit && { limit: limit }),
+		order: [['createdAt', 'DESC']],
 	};
 
-	const [pubsInPubIds, otherPubs] = await Promise.all([
+	const pinnedPubIds = limit ? pubIds.slice(0, limit) : pubIds;
+	const [pinnedPubs, otherPubs] = await Promise.all([
 		Pub.findAll({
-			where: { communityId: communityId, id: { [Op.in]: pubIds } },
-			...(limit && { limit: limit }),
+			where: { communityId: communityId, id: { [Op.in]: pinnedPubIds } },
 			...sharedOptions,
 		}),
 		Pub.findAll({
@@ -51,12 +52,11 @@ const getPubsForLayoutBlock = async (blockContent, initialData) => {
 					...(await getPubIdWhereQueryForCollectionIds(collectionIds)),
 				},
 			},
-			order: [['createdAt', 'DESC']],
 			...sharedOptions,
 		}),
 	]);
 
-	const sanitizedPubs = [...pubsInPubIds, ...otherPubs]
+	const sanitizedPubs = [...pinnedPubs, ...otherPubs]
 		.map((pub) => sanitizePub(pub.toJSON(), initialData))
 		.filter((pub) => !!pub);
 

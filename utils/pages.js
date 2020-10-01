@@ -56,32 +56,7 @@ export const generateRenderLists = (layout, pubs) => {
 						return prev;
 					}, false);
 				})
-				.sort((foo, bar) => {
-					const fooRank =
-						(foo.collectionPubs &&
-							foo.collectionPubs[0] &&
-							foo.collectionPubs[0].rank) ||
-						'';
-					const barRank =
-						(bar.collectionPubs &&
-							bar.collectionPubs[0] &&
-							bar.collectionPubs[0].rank) ||
-						'';
-
-					if (fooRank < barRank) {
-						return -1;
-					}
-					if (fooRank > barRank) {
-						return 1;
-					}
-					if (foo.createdAt > bar.createdAt) {
-						return -1;
-					}
-					if (foo.createdAt < bar.createdAt) {
-						return 1;
-					}
-					return 0;
-				});
+				.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 
 			/* First add the specified pubs for a given block to the renderList */
 			const renderList = block.content.pubIds.map((id) => {

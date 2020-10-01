@@ -22,7 +22,7 @@ const getPubIdWhereQueryForCollectionIds = async (collectionIds) => {
 	return null;
 };
 
-const getPubsForLayoutBlock = async (blockContent, initialData) => {
+const getPubsForLayoutBlock = async (blockContent, initialData, excludePubIds) => {
 	const {
 		communityData: { id: communityId },
 	} = initialData;
@@ -48,7 +48,7 @@ const getPubsForLayoutBlock = async (blockContent, initialData) => {
 			where: {
 				communityId: communityId,
 				id: {
-					[Op.notIn]: pubIds,
+					[Op.notIn]: [...pubIds, ...excludePubIds],
 					...(await getPubIdWhereQueryForCollectionIds(collectionIds)),
 				},
 			},
@@ -59,11 +59,8 @@ const getPubsForLayoutBlock = async (blockContent, initialData) => {
 	const sanitizedPubs = [...pinnedPubs, ...otherPubs]
 		.map((pub) => sanitizePub(pub.toJSON(), initialData))
 		.filter((pub) => !!pub);
-
-	if (limit) {
-		return sanitizedPubs.slice(0, limit);
-	}
-	return sanitizedPubs;
+	const limitedPubs = limit ? sanitizedPubs.slice(0, limit) : sanitizedPubs;
+	return limitedPubs;
 };
 
 export const getPubsForLayout = async (layoutBlocks, forLayoutEditor, initialData) => {
@@ -74,19 +71,17 @@ export const getPubsForLayout = async (layoutBlocks, forLayoutEditor, initialDat
 		});
 		return pubs.map((pub) => sanitizePub(pub.toJSON(), initialData)).filter((pub) => !!pub);
 	}
-
-	const pubsPerBlock = await Promise.all(
-		(layoutBlocks || [])
-			.filter((block) => block.type === 'pubs')
-			.map((block) => getPubsForLayoutBlock(block.content, initialData)),
-	);
-	return pubsPerBlock.reduce(
-		(acc, next) => [
-			...acc,
-			...next.filter((nextPub) => !acc.some((accPub) => accPub.id === nextPub.id)),
-		],
-		[],
-	);
+	const pubBlocks = (layoutBlocks || []).filter((block) => block.type === 'pubs');
+	return pubBlocks.reduce(async (pubsPromise, block) => {
+		const pubs = await pubsPromise;
+		const nextPubs = await getPubsForLayoutBlock(
+			block.content,
+			initialData,
+			pubs.map((p) => p.id),
+		);
+		const nextPubsToAdd = nextPubs.filter((nextPub) => !pubs.some((p) => p.id === nextPub.id));
+		return [...pubs, ...nextPubsToAdd];
+	}, Promise.resolve([]));
 };
 
 export const enrichLayoutWithPubTokens = (layoutBlocks, initialData) => {

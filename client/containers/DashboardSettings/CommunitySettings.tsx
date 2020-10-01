@@ -14,7 +14,7 @@ import {
 	Footer,
 } from 'components';
 import { slugifyString } from 'utils/strings';
-import { defaultFooterLinks } from 'utils/community';
+import { defaultFooterLinks } from 'client/utils/navigation';
 import { getDashUrl } from 'utils/dashboard';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isDevelopment } from 'utils/environment';

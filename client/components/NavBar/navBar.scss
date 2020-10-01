@@ -12,6 +12,17 @@
 		user-select: none;
 		cursor: pointer;
 		text-decoration: none;
+		&:hover,
+		&:focus {
+			.title {
+				text-decoration: underline;
+			}
+		}
+		&:focus {
+			.title {
+				text-decoration-style: dotted;
+			}
+		}
 	}
 	.row [class^='col'] {
 		margin-top: 0em;

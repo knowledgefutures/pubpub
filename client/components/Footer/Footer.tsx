@@ -12,7 +12,11 @@ import { GridWrapper } from 'components';
 import Icon from 'components/Icon/Icon';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
-import { populateNavigationIds, defaultFooterLinks, populateSocialItems } from 'utils/community';
+import {
+	defaultFooterLinks,
+	populateSocialItems,
+	getNavItemsForCommunityNavigation,
+} from 'client/utils/navigation';
 
 require('./footer.scss');
 
@@ -26,25 +30,29 @@ const defaultProps = {
 
 type Props = OwnProps & typeof defaultProps;
 
+const basePubPubFooterLinks = [
+	{ id: 1, title: 'Create your community', href: '/community/create' },
+	{ id: 2, title: 'Login', href: '/login' },
+	{ id: 3, title: 'Signup', href: '/signup' },
+	{ id: 4, title: 'Legal', href: '/legal' },
+];
+
 const Footer = (props: Props) => {
 	const [email, setEmail] = useState('');
 	const [isLoadingSubscribe, setIsLoadingSubscribe] = useState(false);
 	const [isSubscribed, setIsSubscribed] = useState(false);
 	const [isConfirmed, setIsConfirmed] = useState(false);
-	const { locationData, communityData, scopeData } = usePageContext(props.previewContext);
+	const { locationData, communityData } = usePageContext(props.previewContext);
+	const { pages = [], collections = [] } = communityData;
 	const { isBasePubPub } = locationData;
-	const links = isBasePubPub
-		? [
-				{ id: 1, title: 'Create your community', href: '/community/create' },
-				{ id: 2, title: 'Login', href: '/login' },
-				{ id: 3, title: 'Signup', href: '/signup' },
-				{ id: 4, title: 'Legal', href: '/legal' },
-				// { id: 6, title: 'Help', url: 'https://meta.pubpub.org/help' },
-		  ]
-		: populateNavigationIds(
-				communityData.pages,
-				communityData.footerLinks || defaultFooterLinks,
-		  );
+	const footerLinks = isBasePubPub
+		? basePubPubFooterLinks
+		: communityData.footerLinks || defaultFooterLinks;
+	const navItems = getNavItemsForCommunityNavigation({
+		navigation: footerLinks,
+		pages: pages,
+		collections: collections,
+	});
 	const handleEmailSubmit = (evt) => {
 		evt.preventDefault();
 		setIsLoadingSubscribe(true);
@@ -221,19 +229,18 @@ const Footer = (props: Props) => {
 						<a href="/">{communityData.footerTitle || communityData.title}</a>
 					</div>
 					<ul className="separated">
-						{links
-							.filter((item) => {
-								return !item.adminOnly || scopeData.activePermissions.isAdmin;
-							})
-							.map((link) => {
+						{navItems.map((navItem) => {
+							if ('href' in navItem) {
 								return (
-									<li key={`footer-item-${link.id}`}>
-										<a className="link" href={link.href || `/${link.slug}`}>
-											{link.title}
+									<li key={`footer-item-${navItem.id}`}>
+										<a className="link" href={navItem.href}>
+											{navItem.title}
 										</a>
 									</li>
 								);
-							})}
+							}
+							return null;
+						})}
 					</ul>
 					{!!socialElements.length && (
 						<ul className="social-list">

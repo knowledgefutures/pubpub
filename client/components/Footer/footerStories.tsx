@@ -2,7 +2,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import { AccentStyle, Footer } from 'components';
-import { populateSocialItems } from 'utils/community';
+import { populateSocialItems } from 'client/utils/navigation';
 import { communityData } from 'utils/storybook/data';
 
 const wrapperStyle = { margin: '1em 0em' };

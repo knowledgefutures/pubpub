@@ -55,7 +55,7 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 				heroText: description,
 				accentColorLight: inputValues.accentColorLight,
 				accentColorDark: inputValues.accentColorDark,
-				navigation: [homePageId],
+				navigation: [{ type: 'page', id: homePageId }],
 				hideCreatePubButton: true,
 			});
 		})

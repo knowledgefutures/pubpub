@@ -8,9 +8,27 @@ const pages = [
 ];
 
 const collections = [
-	{ title: 'Collection One', slug: 'collection1', id: 'collection-id-1', isPublic: true },
-	{ title: 'Collection Two', slug: 'collection2', id: 'collection-id-2', isPublic: true },
-	{ title: 'Collection Three', slug: 'collection3', id: 'collection-id-3', isPublic: false },
+	{
+		title: 'Collection One',
+		slug: 'collection1',
+		id: 'collection-id-1',
+		isPublic: true,
+		kind: 'book',
+	},
+	{
+		title: 'Collection Two',
+		slug: 'collection2',
+		id: 'collection-id-2',
+		isPublic: true,
+		kind: 'tag',
+	},
+	{
+		title: 'Collection Three',
+		slug: 'collection3',
+		id: 'collection-id-3',
+		isPublic: false,
+		kind: 'issue',
+	},
 ];
 
 describe('getNavItemsForCommunityNavigation', () => {

@@ -5,6 +5,7 @@ import { buildLabel } from '../utils/references';
 
 export default {
 	reference: {
+		atom: true,
 		isLeaf: true,
 		inline: true,
 		reactive: true,
@@ -64,6 +65,7 @@ export default {
 		onInsert: (view, attrs) => {
 			const referenceNode = view.state.schema.nodes.reference.create(attrs);
 			const transaction = view.state.tr.replaceSelectionWith(referenceNode);
+
 			view.dispatch(transaction);
 		},
 	},

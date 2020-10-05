@@ -132,7 +132,7 @@ export const citation = {
 export const reference = {
 	key: 'reference',
 	title: 'Reference',
-	icon: 'chevron-right',
+	icon: 'at',
 	controls: nodeControls(ControlsReference, 'reference', {
 		position: positionNearSelection,
 		showCloseButton: false,

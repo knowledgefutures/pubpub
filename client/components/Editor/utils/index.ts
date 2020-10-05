@@ -5,6 +5,7 @@ export * from './firebase';
 export * from './firebaseDoc';
 export * from './misc';
 export * from './notes';
+export * from './references';
 export * from './renderHtml';
 export * from './renderStatic';
 export * from './schema';

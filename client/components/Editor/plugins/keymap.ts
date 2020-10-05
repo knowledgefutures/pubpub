@@ -91,7 +91,7 @@ export default (schema) => {
 	}
 	if (schema.nodes.hard_break) {
 		const cmd = chainCommands(exitCode, (state, dispatch) => {
-			dispatch(
+			dispatch!(
 				state.tr.replaceSelectionWith(schema.nodes.hard_break.create()).scrollIntoView(),
 			);
 			return true;

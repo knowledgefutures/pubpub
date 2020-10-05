@@ -12,6 +12,7 @@ import buildOnChange from './onChange';
 import buildPlaceholder from './placeholder';
 import buildReactive from './reactive';
 import buildTable from './table';
+import buildSuggest from './suggest';
 
 const buildGapCursor = () => {
 	return gapCursor();
@@ -22,6 +23,7 @@ const buildHistory = () => {
 };
 
 export const requiredPlugins = {
+	suggest: buildSuggest,
 	domEvents: buildDomEvents,
 	onChange: buildOnChange,
 	gapCursor: buildGapCursor,

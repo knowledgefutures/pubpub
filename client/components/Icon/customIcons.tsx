@@ -417,4 +417,20 @@ export default {
 		),
 		viewboxDefault: 24,
 	},
+	at: {
+		path: (
+			<text
+				fontSize="22px"
+				style={{
+					fontSize: 22,
+					fontFamily:
+						"'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif",
+				}}
+				transform="translate(0, 16)"
+			>
+				@
+			</text>
+		),
+		viewboxDefault: 20,
+	},
 };

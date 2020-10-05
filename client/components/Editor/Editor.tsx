@@ -1,13 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { keydownHandler } from 'prosemirror-keymap';
 import { addTemporaryIdsToDoc } from '@pubpub/prosemirror-reactive';
 
+import SuggestionManager, {
+	SuggestionManagerStateSuggesting,
+} from 'client/utils/suggestions/suggestionManager';
+import ReferenceFinder from './ReferenceFinder';
+
 import { getPlugins } from './plugins';
 import { collabDocPluginKey } from './plugins/collaborative';
 import { getChangeObject } from './plugins/onChange';
-import { renderStatic, buildSchema } from './utils';
+import { renderStatic, buildSchema, NodeReference } from './utils';
 import nodeViews from './views';
 
 require('./styles/base.scss');
@@ -78,6 +83,14 @@ type Props = EditorProps & typeof defaultProps;
 const Editor = (props: Props) => {
 	const editorRef = useRef<HTMLElement>();
 	const initialArguments = useRef(null);
+	const [suggesting, setSuggesting] = useState<SuggestionManagerStateSuggesting<
+		NodeReference
+	> | null>();
+	const suggestionManager = useMemo(() => new SuggestionManager<NodeReference>(), []);
+	const onSuggestionManagerTransition = useCallback(
+		() => setSuggesting(suggestionManager.isSuggesting() ? suggestionManager.state : null),
+		[],
+	);
 
 	if (initialArguments.current === null) {
 		// @ts-expect-error ts-migrate(2322) FIXME: Type '{ schema: any; initialDoc: any; staticConten... Remove this comment to see the full error message
@@ -99,6 +112,7 @@ const Editor = (props: Props) => {
 				onChange: props.onChange,
 				onError: props.onError,
 				placeholder: props.placeholder,
+				suggestionManager: suggestionManager,
 			}),
 		});
 
@@ -129,6 +143,7 @@ const Editor = (props: Props) => {
 				handleScrollToSelection: props.onScrollToSelection,
 			},
 		);
+
 		// Sometimes the view will call its dispatchTransaction from the constructor, but the
 		// function itself references the `view` variable bound above. So we need to set this
 		// prop immediately after it's constructed.
@@ -147,8 +162,11 @@ const Editor = (props: Props) => {
 				}
 			},
 		});
+
 		props.onChange(getChangeObject(view));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
+
+		return suggestionManager.transitioned.subscribe(onSuggestionManagerTransition);
 	}, []);
 
 	/* Before createEditor is called from componentDidMount, we */
@@ -157,14 +175,31 @@ const Editor = (props: Props) => {
 	/* mounted into the editor dom node. */
 
 	return (
-		<div
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'HTMLDi... Remove this comment to see the full error message
-			ref={editorRef}
-			className={`editor ProseMirror ${props.isReadOnly ? 'read-only' : ''}`}
-		>
-			{/* @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'. */}
-			{initialArguments.current.staticContent}
-		</div>
+		<>
+			<div
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'HTMLDi... Remove this comment to see the full error message
+				ref={editorRef}
+				className={`editor ProseMirror ${props.isReadOnly ? 'read-only' : ''}`}
+			>
+				{/* @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'. */}
+				{initialArguments.current.staticContent}
+			</div>
+			{suggesting && (
+				<div
+					style={{
+						position: 'absolute',
+						...suggestionManager.getPosition(),
+					}}
+				>
+					<ReferenceFinder
+						blockNames={props.blockNames}
+						references={suggesting.items}
+						activeReference={suggestionManager.getSelectedValue()}
+						onReferenceSelect={(reference) => suggestionManager.select(reference)}
+					/>
+				</div>
+			)}
+		</>
 	);
 };
 Editor.defaultProps = defaultProps;

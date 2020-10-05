@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button, IButtonProps } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
 
-import { Icon } from 'components';
+import Icon from 'components/Icon/Icon';
 import { Menu, MenuProps } from './Menu';
 
 type MenuButtonProps = {

@@ -17,7 +17,8 @@ export default () => {
 
 				const decorationsToRemove = prevDecorationSet.find().filter((decoration) => {
 					return (
-						decoration.spec.key === `lm-${transaction.meta.localHighlightIdToRemove}`
+						decoration.spec.key ===
+						`lm-${transaction.getMeta('localHighlightIdToRemove')}`
 					);
 				});
 
@@ -27,7 +28,7 @@ export default () => {
 
 				/* If there is new highlight data, iterate over the data and */
 				/* generate the new Decoration objects. */
-				const newHighlightsData = transaction.meta.newLocalHighlightData || [];
+				const newHighlightsData = transaction.getMeta('newLocalHighlightData') || [];
 				const newDecorations = newHighlightsData.map((highlightData) => {
 					const className =
 						highlightData.id === 'permanent'

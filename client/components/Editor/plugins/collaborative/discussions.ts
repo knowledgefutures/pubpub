@@ -119,7 +119,7 @@ export default (schema, props, collabDocPluginKey) => {
 				const discussionDecorationsToRemove = pluginState.discussionDecorations
 					.find()
 					.filter((decoration) => {
-						const removeData = transaction.meta.removeDiscussion || {};
+						const removeData = transaction.getMeta('removeDiscussion') || {};
 						const removedId = removeData.id;
 
 						const decorationId = decoration.spec.key
@@ -131,7 +131,7 @@ export default (schema, props, collabDocPluginKey) => {
 					});
 
 				/* Discussion Decorations to Add */
-				const setDiscussionData = transaction.meta.setDiscussion;
+				const setDiscussionData = transaction.getMeta('setDiscussion');
 				const discussionDecorationsToAdd = setDiscussionData
 					? generateDiscussionDecorations(
 							setDiscussionData,
@@ -146,7 +146,7 @@ export default (schema, props, collabDocPluginKey) => {
 					.map(transaction.mapping, transaction.doc)
 					.add(editorState.doc, discussionDecorationsToAdd);
 
-				if (transaction.meta.collab$) {
+				if (transaction.getMeta('collab$')) {
 					syncDiscussions(nextDiscussionDecorations, editorState);
 				}
 

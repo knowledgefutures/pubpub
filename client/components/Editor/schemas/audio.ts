@@ -1,7 +1,8 @@
-import { renderHtmlChildren } from '../utils/renderHtml';
-import { label } from './reactive/label';
+import { DOMOutputSpec } from 'prosemirror-model';
 import { buildLabel } from '../utils/references';
+import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
+import { label } from './reactive/label';
 
 export default {
 	audio: {
@@ -48,7 +49,7 @@ export default {
 				[
 					'audio',
 					{
-						controls: true,
+						controls: 'true',
 						preload: 'metadata',
 						src: node.attrs.url,
 						alt: node.attrs.caption,
@@ -63,7 +64,7 @@ export default {
 						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
 					],
 				],
-			];
+			] as DOMOutputSpec;
 		},
 		inline: false,
 		group: 'block',

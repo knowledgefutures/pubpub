@@ -1,3 +1,4 @@
+import { DOMOutputSpec } from 'prosemirror-model';
 import { getCitationInlineLabel } from '../utils/citation';
 
 import { counter } from './reactive/counter';
@@ -46,7 +47,7 @@ export default {
 					class: 'citation',
 				},
 				getCitationInlineLabel(node),
-			];
+			] as DOMOutputSpec;
 		},
 		inline: true,
 		group: 'inline',

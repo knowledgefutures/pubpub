@@ -1,6 +1,7 @@
+import { DOMOutputSpec } from 'prosemirror-model';
+import { buildLabel } from '../utils/references';
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
-import { buildLabel } from '../utils/references';
 import { label } from './reactive/label';
 
 export default {
@@ -64,7 +65,7 @@ export default {
 						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
 					],
 				],
-			];
+			] as DOMOutputSpec;
 		},
 		inline: false,
 		group: 'block',

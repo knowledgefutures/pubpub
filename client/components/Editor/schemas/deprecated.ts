@@ -1,6 +1,8 @@
+import { DOMOutputSpec } from 'prosemirror-model';
+
 const deprecatedBlock = {
 	group: 'block',
-	toDOM: () => ['span'],
+	toDOM: () => ['span'] as DOMOutputSpec,
 };
 
 /* This are a legacy nodes. It would be great */

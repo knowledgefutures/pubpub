@@ -155,9 +155,9 @@ export default (schema, props, collabDocPluginKey) => {
 				const cursorDecorationsToRemove = pluginState.cursorDecorations
 					.find()
 					.filter((decoration) => {
-						const setData = transaction.meta.setCursor || {};
+						const setData = transaction.getMeta('setCursor') || {};
 						const setId = setData.id;
-						const removeData = transaction.meta.removeCursor || {};
+						const removeData = transaction.getMeta('removeCursor') || {};
 						const removedId = removeData.id;
 
 						const decorationId = decoration.spec.key
@@ -170,7 +170,7 @@ export default (schema, props, collabDocPluginKey) => {
 					});
 
 				/* Cursor Decorations to Add */
-				const setCursorData = transaction.meta.setCursor;
+				const setCursorData = transaction.getMeta('setCursor');
 				const cursorDecorationsToAdd = setCursorData
 					? generateCursorDecorations(setCursorData, editorState)
 					: [];
@@ -182,10 +182,10 @@ export default (schema, props, collabDocPluginKey) => {
 					.add(editorState.doc, cursorDecorationsToAdd);
 
 				/* Set Cursor data */
-				const prevSelection = prevEditorState ? prevEditorState.selection : {};
+				const { selection: prevSelection = {} as Selection } = prevEditorState;
 				const selection = editorState.selection || {};
-				const needsToInit = !(prevSelection.a || prevSelection.anchor);
-				const isPointer = transaction.meta.pointer;
+				const needsToInit = !((prevSelection as any).a || prevSelection.anchor);
+				const isPointer = transaction.getMeta('pointer');
 				const isNotSelectAll = selection instanceof AllSelection === false;
 				const isCursorChange =
 					!transaction.docChanged &&

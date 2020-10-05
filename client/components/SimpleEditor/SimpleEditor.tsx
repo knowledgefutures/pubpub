@@ -20,7 +20,7 @@ type Props = OwnProps & typeof defaultProps;
 
 const SimpleEditor = (props: Props) => {
 	const { onChange, placeholder, initialHtmlString } = props;
-	const initialDoc = useRef(null);
+	const initialDoc = useRef<{ [key: string]: any }>();
 
 	if (!initialDoc.current) {
 		initialDoc.current = getDocForHtmlString(initialHtmlString, editorSchema).toJSON();

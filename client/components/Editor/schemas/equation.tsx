@@ -1,3 +1,4 @@
+import { DOMOutputSpec } from 'prosemirror-model';
 import React from 'react';
 
 import { renderHtmlChildren } from '../utils/renderHtml';
@@ -35,7 +36,7 @@ export default {
 						// eslint-disable-next-line react/no-danger
 						dangerouslySetInnerHTML={{ __html: node.attrs.value }}
 					/>
-				);
+				) as any;
 			}
 			return [
 				'span',
@@ -44,7 +45,7 @@ export default {
 					'data-value': node.attrs.value,
 				},
 				renderHtmlChildren(isReact, node.attrs.html),
-			];
+			] as DOMOutputSpec;
 		},
 		inline: true,
 		group: 'inline',
@@ -99,7 +100,7 @@ export default {
 						// eslint-disable-next-line react/no-danger
 						dangerouslySetInnerHTML={{ __html: node.attrs.value }}
 					/>
-				);
+				) as any;
 			}
 			return [
 				'div',
@@ -111,7 +112,7 @@ export default {
 				['span'],
 				renderHtmlChildren(isReact, node.attrs.html),
 				['span', { class: 'equation-label' }, `(${node.attrs.count})`],
-			];
+			] as DOMOutputSpec;
 		},
 
 		inline: false,

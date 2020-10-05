@@ -1,4 +1,6 @@
-export const baseNodes = {
+import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
+
+export const baseNodes: { [key: string]: NodeSpec } = {
 	doc: {
 		content: 'block+',
 		attrs: {
@@ -19,8 +21,8 @@ export const baseNodes = {
 				tag: 'p',
 				getAttrs: (node) => {
 					return {
-						id: node.getAttribute('id') || null,
-						class: node.getAttribute('class'),
+						id: (node as Element).getAttribute('id') || null,
+						class: (node as Element).getAttribute('class'),
 					};
 				},
 			},
@@ -32,7 +34,7 @@ export const baseNodes = {
 				'p',
 				{ ...(node.attrs.id && { id: node.attrs.id }), class: node.attrs.class },
 				children,
-			];
+			] as DOMOutputSpec;
 		},
 	},
 	blockquote: {
@@ -47,13 +49,17 @@ export const baseNodes = {
 				tag: 'blockquote',
 				getAttrs: (node) => {
 					return {
-						id: node.getAttribute('id') || null,
+						id: (node as Element).getAttribute('id') || null,
 					};
 				},
 			},
 		],
 		toDOM: (node) => {
-			return ['blockquote', { ...(node.attrs.id && { id: node.attrs.id }) }, 0];
+			return [
+				'blockquote',
+				{ ...(node.attrs.id && { id: node.attrs.id }) },
+				0,
+			] as DOMOutputSpec;
 		},
 	},
 	horizontal_rule: {
@@ -61,7 +67,7 @@ export const baseNodes = {
 		parseDOM: [{ tag: 'hr' }],
 		selectable: true,
 		toDOM: () => {
-			return ['div', ['hr']];
+			return ['div', ['hr']] as DOMOutputSpec;
 		},
 		onInsert: (view) => {
 			view.dispatch(
@@ -85,42 +91,46 @@ export const baseNodes = {
 			{
 				tag: 'h1',
 				getAttrs: (dom) => {
-					return { level: 1, id: dom.getAttribute('id') };
+					return { level: 1, id: (dom as Element).getAttribute('id') };
 				},
 			},
 			{
 				tag: 'h2',
 				getAttrs: (dom) => {
-					return { level: 2, id: dom.getAttribute('id') };
+					return { level: 2, id: (dom as Element).getAttribute('id') };
 				},
 			},
 			{
 				tag: 'h3',
 				getAttrs: (dom) => {
-					return { level: 3, id: dom.getAttribute('id') };
+					return { level: 3, id: (dom as Element).getAttribute('id') };
 				},
 			},
 			{
 				tag: 'h4',
 				getAttrs: (dom) => {
-					return { level: 4, id: dom.getAttribute('id') };
+					return { level: 4, id: (dom as Element).getAttribute('id') };
 				},
 			},
 			{
 				tag: 'h5',
 				getAttrs: (dom) => {
-					return { level: 5, id: dom.getAttribute('id') };
+					return { level: 5, id: (dom as Element).getAttribute('id') };
 				},
 			},
 			{
 				tag: 'h6',
 				getAttrs: (dom) => {
-					return { level: 6, id: dom.getAttribute('id') };
+					return { level: 6, id: (dom as Element).getAttribute('id') };
 				},
 			},
 		],
 		toDOM: (node) => {
-			return [`h${node.attrs.level}`, { id: node.attrs.fixedId || node.attrs.id }, 0];
+			return [
+				`h${node.attrs.level}`,
+				{ id: node.attrs.fixedId || node.attrs.id },
+				0,
+			] as DOMOutputSpec;
 		},
 	},
 	ordered_list: {
@@ -136,8 +146,10 @@ export const baseNodes = {
 				tag: 'ol',
 				getAttrs: (node) => {
 					return {
-						id: node.getAttribute('id') || null,
-						order: node.hasAttribute('start') ? +node.getAttribute('start') : 1,
+						id: (node as Element).getAttribute('id') || null,
+						order: (node as Element).hasAttribute('start')
+							? +(node as Element).getAttribute('start')!
+							: 1,
 					};
 				},
 			},
@@ -150,7 +162,7 @@ export const baseNodes = {
 					start: node.attrs.order === 1 ? null : node.attrs.order,
 				},
 				0,
-			];
+			] as DOMOutputSpec;
 		},
 	},
 	bullet_list: {
@@ -165,13 +177,13 @@ export const baseNodes = {
 				tag: 'ul',
 				getAttrs: (node) => {
 					return {
-						id: node.getAttribute('id') || null,
+						id: (node as Element).getAttribute('id') || null,
 					};
 				},
 			},
 		],
 		toDOM: (node) => {
-			return ['ul', { ...(node.attrs.id && { id: node.attrs.id }) }, 0];
+			return ['ul', { ...(node.attrs.id && { id: node.attrs.id }) }, 0] as DOMOutputSpec;
 		},
 	},
 	list_item: {
@@ -180,7 +192,7 @@ export const baseNodes = {
 		selectable: false,
 		parseDOM: [{ tag: 'li' }],
 		toDOM: () => {
-			return ['li', 0];
+			return ['li', 0] as DOMOutputSpec;
 		},
 	},
 	code_block: {
@@ -196,21 +208,25 @@ export const baseNodes = {
 				tag: 'pre',
 				getAttrs: (node) => {
 					return {
-						id: node.getAttribute('id') || null,
+						id: (node as Element).getAttribute('id') || null,
 					};
 				},
 				preserveWhitespace: 'full',
 			},
 		],
 		toDOM: (node) => {
-			return ['pre', { ...(node.attrs.id && { id: node.attrs.id }) }, ['code', 0]];
+			return [
+				'pre',
+				{ ...(node.attrs.id && { id: node.attrs.id }) },
+				['code', 0],
+			] as DOMOutputSpec;
 		},
 	},
 	text: {
 		inline: true,
 		group: 'inline',
 		toDOM: (node) => {
-			return node.text;
+			return node.text!;
 		},
 	},
 	hard_break: {
@@ -219,7 +235,7 @@ export const baseNodes = {
 		selectable: false,
 		parseDOM: [{ tag: 'br' }],
 		toDOM: () => {
-			return ['br'];
+			return ['br'] as DOMOutputSpec;
 		},
 	},
 };
@@ -235,7 +251,7 @@ export const baseMarks = {
 			},
 		],
 		toDOM: () => {
-			return ['em'];
+			return ['em'] as DOMOutputSpec;
 		},
 	},
 
@@ -254,7 +270,7 @@ export const baseMarks = {
 			},
 		],
 		toDOM: () => {
-			return ['strong'];
+			return ['strong'] as DOMOutputSpec;
 		},
 	},
 	link: {
@@ -287,31 +303,31 @@ export const baseMarks = {
 			if (attrs.target && typeof attrs.target !== 'string') {
 				attrs.target = null;
 			}
-			return ['a', attrs];
+			return ['a', attrs] as DOMOutputSpec;
 		},
 	},
 	sub: {
 		parseDOM: [{ tag: 'sub' }],
 		toDOM: () => {
-			return ['sub'];
+			return ['sub'] as DOMOutputSpec;
 		},
 	},
 	sup: {
 		parseDOM: [{ tag: 'sup' }],
 		toDOM: () => {
-			return ['sup'];
+			return ['sup'] as DOMOutputSpec;
 		},
 	},
 	strike: {
 		parseDOM: [{ tag: 's' }, { tag: 'strike' }, { tag: 'del' }],
 		toDOM: () => {
-			return ['s'];
+			return ['s'] as DOMOutputSpec;
 		},
 	},
 	code: {
 		parseDOM: [{ tag: 'code' }],
 		toDOM: () => {
-			return ['code'];
+			return ['code'] as DOMOutputSpec;
 		},
 	},
 };

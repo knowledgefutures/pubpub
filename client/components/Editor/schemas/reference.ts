@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { DOMOutputSpec } from 'prosemirror-model';
 import { Hooks } from '@pubpub/prosemirror-reactive/src/store/types';
 
 import { buildLabel } from '../utils/references';
@@ -60,7 +61,7 @@ export default {
 					'data-target-id': targetId,
 				},
 				label || `(ref?)`,
-			];
+			] as DOMOutputSpec;
 		},
 		onInsert: (view, attrs) => {
 			const referenceNode = view.state.schema.nodes.reference.create(attrs);

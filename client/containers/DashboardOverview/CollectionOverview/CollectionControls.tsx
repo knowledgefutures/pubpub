@@ -32,7 +32,6 @@ const CollectionControls = (props: Props) => {
 					aria-label="Set collection public or private"
 					buttonContent={isPublic ? 'Public' : 'Private'}
 					buttonProps={{
-						// @ts-expect-error: "lock2" not valid in TS definitions
 						icon: isPublic ? 'globe' : 'lock2',
 						rightIcon: 'caret-down',
 					}}

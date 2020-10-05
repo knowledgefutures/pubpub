@@ -1,4 +1,4 @@
-import { Plugin } from 'prosemirror-state';
+import { Plugin, Transaction } from 'prosemirror-state';
 import { generateHash } from '../utils';
 
 const inPasteRange = (offset, transactions) => {
@@ -19,7 +19,7 @@ const updatedNodeAttrsWithNewRandomId = (node) => {
 	};
 };
 
-const getIdsTransactionForState = (editorState, transactions = []) => {
+const getIdsTransactionForState = (editorState, transactions: Transaction[] = []) => {
 	const transaction = editorState.tr;
 	let mustReturnTransaction = false;
 	const seenIds = new Set();

@@ -1,3 +1,4 @@
+import { DOMOutputSpec } from 'prosemirror-model';
 import { renderHtmlChildren } from '../utils/renderHtml';
 
 export default {
@@ -48,7 +49,7 @@ export default {
 					},
 				],
 				['figcaption', {}, renderHtmlChildren(isReact, node.attrs.caption, 'div')],
-			];
+			] as DOMOutputSpec;
 		},
 		inline: false,
 		group: 'block',

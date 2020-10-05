@@ -1,3 +1,4 @@
+import { DOMOutputSpec } from 'prosemirror-model';
 import { counter } from './reactive/counter';
 import { structuredCitation } from './reactive/structuredCitation';
 
@@ -42,7 +43,7 @@ export default {
 					class: 'footnote',
 				},
 				String(count),
-			];
+			] as DOMOutputSpec;
 		},
 		inline: true,
 		group: 'inline',

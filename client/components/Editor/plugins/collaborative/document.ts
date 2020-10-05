@@ -212,7 +212,7 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 			},
 			apply: (transaction, pluginState) => {
 				return {
-					isLoaded: transaction.meta.finishedLoading || pluginState.isLoaded,
+					isLoaded: transaction.getMeta('finishedLoading') || pluginState.isLoaded,
 					mostRecentRemoteKey: mostRecentRemoteKey,
 					localClientId: localClientId,
 					localClientData: props.collaborativeOptions.clientData,

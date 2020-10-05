@@ -117,7 +117,7 @@ const Editor = (props: Props) => {
 		});
 
 		const view = new EditorView(
-			{ mount: editorRef.current },
+			{ mount: editorRef.current! },
 			{
 				state: state,
 				nodeViews: nodeViews,

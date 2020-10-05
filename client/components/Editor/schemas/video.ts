@@ -2,6 +2,7 @@ import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
 import { label } from './reactive/label';
 import { buildLabel } from '../utils/references';
+import { DOMOutputSpec } from 'prosemirror-model';
 
 export default {
 	video: {
@@ -48,7 +49,7 @@ export default {
 				[
 					'video',
 					{
-						controls: true,
+						controls: 'true',
 						preload: 'metadata',
 						src: node.attrs.url,
 						alt: node.attrs.caption,
@@ -63,7 +64,7 @@ export default {
 						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
 					],
 				],
-			];
+			] as DOMOutputSpec;
 		},
 		inline: false,
 		group: 'block',

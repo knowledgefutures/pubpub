@@ -16,6 +16,7 @@ export const managedDoiPrefixes = [
 	AAS_DOI_PREFIX,
 	MEDIASTUDIES_DOI_PREFIX,
 	RS_DOI_PREFIX,
+	JOTE_DOI_PREFIX,
 	APA_DOI_PREFIX,
 ];
 

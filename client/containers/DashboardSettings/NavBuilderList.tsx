@@ -1,26 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Button } from '@blueprintjs/core';
+
 import Icon from 'components/Icon/Icon';
+
+import { CommunityNavigationEntry } from 'client/utils/navigation';
+
+import { NavBuilderContext } from './navBuilderContext';
 import NavBuilderRow from './NavBuilderRow';
 
-type OwnProps = {
+type Props = {
 	id: string;
-	items?: any[];
-	removeItem: (...args: any[]) => any;
-	updateItem: (...args: any[]) => any;
-	pages: any[];
+	items?: CommunityNavigationEntry[];
 	newLink: any;
 };
 
-const defaultProps = {
-	items: [],
-};
-
-type Props = OwnProps & typeof defaultProps;
-
 const NavBuilderList = (props: Props) => {
-	const { id, items, updateItem, pages, newLink, removeItem } = props;
+	const { id, items = [], newLink } = props;
+	const { removeItem } = useContext(NavBuilderContext);
 
 	return (
 		<Droppable droppableId={id} type={id}>
@@ -57,25 +54,17 @@ const NavBuilderList = (props: Props) => {
 												/>
 											</span>
 											<NavBuilderRow
-												// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 												dropdownId={id}
-												// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'undefined... Remove this comment to see the full error message
 												index={index}
 												item={item}
-												removeItem={removeItem}
-												updateItem={updateItem}
-												pages={pages}
 												newLink={newLink}
-												// @ts-expect-error ts-migrate(2322) FIXME: Type '{ (props: Props): JSX.Element; defaultProps:... Remove this comment to see the full error message
 												NavBuilderList={NavBuilderList}
 											/>
 											<Button
 												icon="small-cross"
 												minimal
 												small
-												onClick={() => {
-													removeItem(itemId, id);
-												}}
+												onClick={() => removeItem(itemId, id)}
 											/>
 										</div>
 									</div>
@@ -89,5 +78,5 @@ const NavBuilderList = (props: Props) => {
 		</Droppable>
 	);
 };
-NavBuilderList.defaultProps = defaultProps;
+
 export default NavBuilderList;

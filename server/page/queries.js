@@ -26,7 +26,7 @@ export const createPage = (inputValues) => {
 			const oldNavigation = communityData.toJSON().navigation;
 			const newNavigationOutput = [
 				oldNavigation[0],
-				newPage.id,
+				{ type: 'page', id: newPage.id },
 				...oldNavigation.slice(1, oldNavigation.length),
 			];
 			const updateCommunity = Community.update(

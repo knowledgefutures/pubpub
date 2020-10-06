@@ -5,46 +5,42 @@ import { Suggest } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
 import Icon from 'components/Icon/Icon';
-import { generateHash } from 'utils/hashes';
 
 require('./pageAutocomplete.scss');
 
-type OwnProps = {
-	pages: any[];
-	usedItems?: any[];
-	onSelect?: (...args: any[]) => any;
-	placeholder?: string;
-	allowCustom?: boolean;
+type Item = {
+	id: string;
+	title: string;
+	slug: string;
 };
 
-const defaultProps = {
-	usedItems: [],
-	onSelect: () => {},
-	placeholder: 'Create Dropdown or Add Page...',
-	allowCustom: false,
+type Props = {
+	items: Item[];
+	usedItems: Item[];
+	onSelect: (item: Item) => any;
+	placeholder: string;
 };
 
-type State = any;
-
-type Props = OwnProps & typeof defaultProps;
+type State = {
+	filteredItems: Item[];
+	query: string;
+};
 
 class PageAutocomplete extends Component<Props, State> {
-	static defaultProps = defaultProps;
-
 	constructor(props: Props) {
 		super(props);
 		this.getFilteredItems = this.getFilteredItems.bind(this);
 		this.state = {
-			items: this.getFilteredItems(props, ''),
-			value: '',
+			filteredItems: this.getFilteredItems(props, ''),
+			query: '',
 		};
 		this.filterItems = this.filterItems.bind(this);
 		this.handleSelect = this.handleSelect.bind(this);
 	}
 
-	componentWillReceiveProps(nextProps: Props) {
+	UNSAFE_componentWillReceiveProps(nextProps: Props) {
 		this.setState({
-			items: this.getFilteredItems(nextProps, ''),
+			filteredItems: this.getFilteredItems(nextProps, ''),
 		});
 	}
 
@@ -52,7 +48,7 @@ class PageAutocomplete extends Component<Props, State> {
 		const usedIndexes = props.usedItems.map((item) => {
 			return item.id;
 		});
-		return props.pages
+		return props.items
 			.filter((item) => {
 				const fuzzyMatchName = fuzzysearch(query.toLowerCase(), item.title.toLowerCase());
 				const fuzzyMatchSlug = fuzzysearch(query.toLowerCase(), item.slug.toLowerCase());
@@ -72,16 +68,9 @@ class PageAutocomplete extends Component<Props, State> {
 
 	filterItems(query) {
 		const filteredItems = this.getFilteredItems(this.props, query);
-		const createOption = {
-			title: query,
-			children: [],
-			id: generateHash(8),
-		};
-		const outputItems =
-			query && this.props.allowCustom ? [...filteredItems, createOption] : filteredItems;
 		this.setState({
-			value: query,
-			items: outputItems,
+			query: query,
+			filteredItems: filteredItems,
 		});
 	}
 
@@ -95,19 +84,19 @@ class PageAutocomplete extends Component<Props, State> {
 			<div className="page-autocomplete-component">
 				<Suggest
 					className="input"
-					items={this.state.items}
+					items={this.state.filteredItems}
 					inputProps={{
 						placeholder: this.props.placeholder,
 						rightElement: <Icon icon="caret-down" />,
 						small: true,
 					}}
-					query={this.state.value}
+					query={this.state.query}
 					onQueryChange={this.filterItems}
 					// @ts-expect-error ts-migrate(2769) FIXME: Type '() => void' is not assignable to type '(item... Remove this comment to see the full error message
 					inputValueRenderer={() => {}}
-					itemRenderer={(item = {}, { handleClick, modifiers }) => {
+					itemRenderer={(item, { handleClick, modifiers }) => {
 						return (
-							<li key={item.id || 'empty-user-create'}>
+							<li key={item.id}>
 								<span
 									role="button"
 									tabIndex={-1}
@@ -118,9 +107,6 @@ class PageAutocomplete extends Component<Props, State> {
 											: 'bp3-menu-item'
 									}
 								>
-									{item.children && (
-										<span className="new-title">Create dropdown group:</span>
-									)}
 									<span className="title">{item.title}</span>
 								</span>
 							</li>

@@ -171,7 +171,7 @@ const CommunitySettings = () => {
 			});
 	};
 
-	const pages = activeCommunity.pages || [];
+	const { pages = [], collections = [] } = activeCommunity;
 	const activeHeroTextColor = heroTextColor || '#FFFFFF';
 
 	return (
@@ -430,9 +430,9 @@ const CommunitySettings = () => {
 					<InputField label="Navigation">
 						<NavBuilder
 							initialNav={activeCommunity.navigation}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							prefix={[activeCommunity.navigation[0]]}
 							pages={pages}
+							collections={collections}
 							onChange={(val) => {
 								setNavigation(val);
 							}}
@@ -800,9 +800,9 @@ const CommunitySettings = () => {
 				<InputField label="Footer Links">
 					<NavBuilder
 						initialNav={activeCommunity.footerLinks || defaultFooterLinks}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ id: string; title: string; href: string; }... Remove this comment to see the full error message
 						suffix={defaultFooterLinks}
 						pages={pages}
+						collections={collections}
 						onChange={(val) => {
 							setFooterLinks(val);
 						}}

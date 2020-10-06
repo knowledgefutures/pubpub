@@ -5,14 +5,15 @@ type Community = {
 	twitter: string;
 };
 
-type Collection = {
+export type Collection = {
 	id: string;
 	title: string;
 	slug: string;
+	kind: string;
 	isPublic: boolean;
 };
 
-type Page = {
+export type Page = {
 	id: string;
 	title: string;
 	slug: string;
@@ -24,14 +25,16 @@ type NavBuildContext = {
 	collections: Collection[];
 };
 
+type CommunityNavigationMenu = { id: string; title: string; children: CommunityNavigationChild[] };
 type CommunityNavigationChild =
 	| string // TODO(ian): We should be able to remove this after late-2020 nav refactor
 	| { id: string; type: 'page' | 'collection' }
 	| { id: string; title: string; href: string };
 
-type CommunityNavigationEntry =
-	| CommunityNavigationChild
-	| { id: string; title: string; children: CommunityNavigationChild[] };
+export type CommunityNavigationEntry = CommunityNavigationChild | CommunityNavigationMenu;
+export const isCommunityNavigationMenu = (
+	item: CommunityNavigationEntry,
+): item is CommunityNavigationMenu => typeof item === 'object' && 'children' in item;
 
 type NavbarChild = {
 	title: string;
@@ -43,7 +46,6 @@ type NavbarChild = {
 
 export type NavbarMenu = { title: string; id: string; children: NavbarChild[] };
 export type NavbarItem = NavbarChild | NavbarMenu;
-
 export const isNavbarMenu = (item: NavbarItem): item is NavbarMenu => 'children' in item;
 
 export const defaultFooterLinks: CommunityNavigationEntry[] = [
@@ -131,7 +133,7 @@ const getNavbarItemForCommunityNavigationEntry = (
 	navEntry: CommunityNavigationEntry,
 	ctx: NavBuildContext,
 ): null | NavbarItem => {
-	if (typeof navEntry === 'object' && 'children' in navEntry) {
+	if (isCommunityNavigationMenu(navEntry)) {
 		const { title, children, id } = navEntry;
 		return {
 			title: title,

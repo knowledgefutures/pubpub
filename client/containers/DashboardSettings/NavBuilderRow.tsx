@@ -91,6 +91,7 @@ const NavBuilderRow = (props: Props) => {
 		if (isCommunityNavigationMenu(item)) {
 			return (
 				<>
+					{renderEditableTitle(item.title)}
 					<PageCollectionAutocomplete
 						items={pages}
 						placeholder="Add Page"
@@ -107,7 +108,8 @@ const NavBuilderRow = (props: Props) => {
 							});
 						}}
 					/>
-					<PageCollectionAutocomplete
+					{/* TODO(ian): Uncomment after Collection slugs resolve to a layout */}
+					{/* <PageCollectionAutocomplete
 						items={collections}
 						placeholder="Add Collection"
 						usedItems={collections.filter((collection) =>
@@ -120,7 +122,7 @@ const NavBuilderRow = (props: Props) => {
 								children: [newItem, ...item.children],
 							});
 						}}
-					/>
+					/> */}
 					<Button
 						small
 						text="Add Link"

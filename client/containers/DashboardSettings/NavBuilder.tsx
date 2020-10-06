@@ -13,7 +13,7 @@ import { NavBuilderContext } from './navBuilderContext';
 require('./navBuilder.scss');
 
 type Props = {
-	initialNav: CommunityNavgiationEntry[];
+	initialNav: CommunityNavigationEntry[];
 	prefix?: CommunityNavigationEntry[];
 	suffix?: CommunityNavigationEntry[];
 	pages: any[];

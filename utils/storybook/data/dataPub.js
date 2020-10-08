@@ -674,6 +674,8 @@ export default {
 	isStaticDoc: false,
 	citationData: {
 		pub: {
+			default: 
+				'<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry</div></div>',
 			apa:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry</div></div>',
 			harvard:

@@ -2,26 +2,20 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import Cite from 'citation-js';
-
 import { getNotes } from 'components/Editor';
+import { citationStyles } from 'utils/citations';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
-/* ['apa', 'harvard', 'vancouver'] built-in to citation-js */
-const styles = [
-	{ name: 'acm-siggraph', path: './citeStyles/acm-siggraph.csl' },
-	{ name: 'american-anthro', path: './citeStyles/american-anthropological-association.csl' },
-	{ name: 'cell', path: './citeStyles/cell.csl' },
-	{ name: 'chicago', path: './citeStyles/chicago-author-date.csl' },
-	{ name: 'elife', path: './citeStyles/elife.csl' },
-	{ name: 'frontiers', path: './citeStyles/frontiers.csl' },
-	{ name: 'mla', path: './citeStyles/modern-language-association.csl' },
-	{ name: 'apa-7', path: './citeStyles/apa-7.csl' },
-];
 const config = Cite.plugins.config.get('@csl');
-styles.forEach((style) => {
-	const fileString = fs.readFileSync(path.join(__dirname, style.path), { encoding: 'utf8' });
-	config.templates.add(style.name, fileString);
+citationStyles.forEach((style) => {
+	if (!style.path) return;
+	/* ['apa', 'harvard', 'vancouver'] built-in to citation-js */
+	const fileString = fs.readFileSync(
+		path.join(__dirname, style.path !== '' ? style.path : null),
+		{ encoding: 'utf8' },
+	);
+	config.templates.add(style.key, fileString);
 });
 /* Remove @else/url parser. See Freshdesk ticket #1308. Second term specifies sync/async component.  */
 /* https://github.com/citation-js/citation-js/blob/master/packages/core/src/plugins/input/data.js#L90-L97 */

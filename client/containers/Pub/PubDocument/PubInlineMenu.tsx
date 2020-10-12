@@ -67,11 +67,6 @@ const PubInlineMenu = (props: Props) => {
 		{ key: 'em', icon: <Icon icon="italic" /> },
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
-	// const isReadOnly = pubData.isStaticDoc || !(canEdit || canEditDraft);
-	// TODO: Make discussions disable-able
-	// if (isReadOnly && !pubData.publicDiscussions) {
-	// 	return null;
-	// }
 	return (
 		// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type '"absolute... Remove this comment to see the full error message
 		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>

@@ -17,6 +17,13 @@ import sanitizeReviews from './reviewsSanitize';
 import { ensureSerialized, stripFalsyIdsFromQuery } from './util';
 import { getCollection } from './collectionGet';
 
+/* TODO: canCreateDiscussions should eventually pull values from PublicPermissions, */
+/* but until those are implemented, we have a simple hard-coded value */
+const communitiesWithoutPublicComments = [
+	'25c2cfeb-dc5b-4dd7-9c82-19146688a931',
+	'6a1b9d59-280e-46ab-8809-57d887ef18ac',
+];
+
 let getScopeElements;
 let getPublicPermissionsData;
 let getScopeMemberData;
@@ -267,9 +274,6 @@ getActivePermissions = async (
 		return typeof value === 'boolean' ? value : precedent;
 	};
 
-	/* TODO: canCreateDiscussions should eventually pull values from PublicPermissions, */
-	/* but until those are implemented, we have a simple hard-coded value */
-	const communitiesWithoutPublicComments = ['25c2cfeb-dc5b-4dd7-9c82-19146688a931'];
 	const canCreateDiscussions = !communitiesWithoutPublicComments.includes(activeCommunity.id);
 
 	const initialOptions = {

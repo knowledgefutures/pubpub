@@ -4,6 +4,7 @@ import { Select } from '@blueprintjs/select';
 
 import { InputField } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
+import { citationStyles as citationStyleItems } from 'utils/citations';
 
 require('./citationChooser.scss');
 
@@ -33,19 +34,6 @@ const CitationChooser = (props: Props) => {
 		}).catch((err) => console.error('Error Saving Pub Citation Style: ', err));
 	};
 
-	const citationStyleItems = [
-		{ key: 'acm-siggraph', title: 'ACM SIGGRAPH' },
-		{ key: 'american-anthro', title: 'American Anthropological Association' },
-		{ key: 'apa', title: 'APA 6th Edition' },
-		{ key: 'apa-7', title: 'APA 7th Edition' },
-		{ key: 'cell', title: 'Cell' },
-		{ key: 'chicago', title: 'Chicago' },
-		{ key: 'harvard', title: 'Harvard' },
-		{ key: 'elife', title: 'ELife' },
-		{ key: 'frontiers', title: 'Frontiers' },
-		{ key: 'mla', title: 'MLA' },
-		{ key: 'vancouver', title: 'Vancouver' },
-	];
 	const citationInlineStyleItems = [
 		{ key: 'count', title: 'Count', example: '[1]' },
 		{ key: 'authorYear', title: 'Author-Year', example: '(Goodall, 1995)' },
@@ -70,7 +58,7 @@ const CitationChooser = (props: Props) => {
 							key={item.key}
 							// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 							active={item.key === activeCitationStyle.key}
-							text={item.title}
+							text={item.name}
 						/>
 					)}
 					filterable={false}
@@ -80,7 +68,7 @@ const CitationChooser = (props: Props) => {
 					}}
 				>
 					{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
-					<Button text={activeCitationStyle.title} rightIcon="caret-down" />
+					<Button text={activeCitationStyle.name} rightIcon="caret-down" />
 				</Select>
 			</InputField>
 

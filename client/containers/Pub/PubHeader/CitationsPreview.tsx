@@ -32,7 +32,7 @@ const CitationsPreview = (props: Props) => {
 				ref={copyableCitationRef}
 				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={{
-					__html: pubData.citationData.pub.apa,
+					__html: pubData.citationData.pub.default,
 				}}
 			/>
 			<ButtonGroup>
@@ -61,6 +61,7 @@ const CitationsPreview = (props: Props) => {
 			<CitationsModal
 				isOpen={isCitationModalOpen}
 				citationData={pubData.citationData}
+				citationStyle={pubData.citationStyle}
 				onClose={() => setCitationModalOpen(false)}
 			/>
 		</div>

@@ -2,6 +2,7 @@
 import Cite from 'citation-js';
 
 import { getPubPublishedDate } from 'utils/pub/pubDates';
+import getCollectionDoi from 'utils/collections/getCollectionDoi';
 import { pubUrl } from 'utils/canonicalUrls';
 
 const getDatePartsObject = (date) => ({
@@ -26,6 +27,7 @@ const getCollectionLevelData = (primaryCollectionPub) => {
 	return {
 		type: collectionKindToCitationJSPart(kind),
 		...(useCollectionTitle && { 'container-title': title }),
+		containerDoi: getCollectionDoi(collection),
 		ISBN: metadata.isbn,
 		ISSN: metadata.issn || metadata.printIssn || metadata.electronicIssn,
 		edition: metadata.edition,
@@ -68,15 +70,22 @@ export const generateCitationHtml = async (pubData, communityData) => {
 	};
 	const pubCiteObject = await Cite.async({
 		...commonData,
-		DOI: pubData.doi,
+		DOI: pubData.doi || commonData.containerDoi,
 		ISSN: pubData.doi ? communityData.issn : null,
 		issued: pubIssuedDate && [getDatePartsObject(pubIssuedDate)],
 		note: pubLink,
 		URL: pubLink,
 	});
-
 	return {
 		pub: {
+			default: pubCiteObject
+				.get({
+					format: 'string',
+					type: 'html',
+					style: `citation-${pubData.citationStyle}`,
+					lang: 'en-US',
+				})
+				.replace(/\n/gi, ''),
 			apa: pubCiteObject
 				.get({ format: 'string', type: 'html', style: 'citation-apa', lang: 'en-US' })
 				.replace(/\n/gi, ''),

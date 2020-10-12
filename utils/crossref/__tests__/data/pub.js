@@ -432,6 +432,8 @@ export default {
 	],
 	citationData: {
 		pub: {
+			default:
+				'<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry</div></div>',
 			apa:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="1519656b-cc26-43ad-83f2-dbf5b828a8c7" class="csl-entry">Reynolds, I. (2019). In Which Ian Makes A Pub. In <i>Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line</i>. https://doi.org/10.21428/eea8ec7d.1519656b</div></div>',
 			harvard:

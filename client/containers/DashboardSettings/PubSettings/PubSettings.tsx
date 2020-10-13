@@ -24,6 +24,7 @@ import DeletePub from './DeletePub';
 import Collections from './Collections';
 import Doi from './Doi';
 import CitationChooser from './CitationChooser';
+import NodeLabelEditor from './NodeLabelEditor';
 
 type Props = {
 	settingsData: {
@@ -295,6 +296,18 @@ const PubSettings = (props: Props) => {
 		);
 	};
 
+	const renderNodeLabelEditor = () => {
+		return (
+			<SettingsSection title="Block Labels">
+				<NodeLabelEditor
+					pubData={persistedPubData}
+					// communityData={activeCommunity}
+					updatePubData={updatePubData}
+				/>
+			</SettingsSection>
+		);
+	};
+
 	return (
 		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<DashboardFrame
@@ -313,6 +326,7 @@ const PubSettings = (props: Props) => {
 			{renderAttributions()}
 			{renderFormattedDownload()}
 			{renderCollections()}
+			{renderNodeLabelEditor()}
 			{renderDelete()}
 		</DashboardFrame>
 	);

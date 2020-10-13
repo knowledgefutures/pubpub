@@ -9,3 +9,5 @@ export const intersperse = (arr, val) => {
 	});
 	return res;
 };
+
+export const pruneFalsyValues = (arr) => arr.filter(Boolean);

@@ -14,11 +14,12 @@ import { collabDocPluginKey } from './plugins/collaborative';
 import { getChangeObject } from './plugins/onChange';
 import { renderStatic, buildSchema, NodeReference } from './utils';
 import nodeViews from './views';
+import { NodeLabelMap } from './types';
 
 require('./styles/base.scss');
 
 export type EditorProps = {
-	blockNames?: { [key: string]: string };
+	nodeLabels: NodeLabelMap;
 	citationManager?: any;
 	customNodes?: any;
 	customMarks?: any;
@@ -37,7 +38,7 @@ export type EditorProps = {
 };
 
 const defaultProps = {
-	blockNames: {},
+	nodeLabels: {},
 	citationManager: null,
 	collaborativeOptions: {},
 	customMarks: {}, // defaults: 'em', 'strong', 'link', 'sub', 'sup', 'strike', 'code'
@@ -57,7 +58,7 @@ const defaultProps = {
 
 const getInitialArguments = (props) => {
 	const {
-		blockNames,
+		nodeLabels,
 		citationManager,
 		customMarks,
 		customNodes,
@@ -72,7 +73,7 @@ const getInitialArguments = (props) => {
 	const staticContent = renderStatic({
 		schema: schema,
 		doc: props.initialContent,
-		blockNames: blockNames,
+		nodeLabels: nodeLabels,
 		citationManager: citationManager,
 	});
 	return { schema: schema, initialDoc: initialDoc, staticContent: staticContent };
@@ -104,7 +105,6 @@ const Editor = (props: Props) => {
 			doc: initialDoc,
 			schema: schema,
 			plugins: getPlugins(schema, {
-				blockNames: props.blockNames,
 				citationManager: props.citationManager,
 				collaborativeOptions: props.collaborativeOptions,
 				customPlugins: props.customPlugins,
@@ -113,6 +113,7 @@ const Editor = (props: Props) => {
 				onError: props.onError,
 				placeholder: props.placeholder,
 				suggestionManager: suggestionManager,
+				nodeLabels: props.nodeLabels,
 			}),
 		});
 
@@ -192,9 +193,9 @@ const Editor = (props: Props) => {
 					}}
 				>
 					<ReferenceFinder
-						blockNames={props.blockNames}
+						nodeLabels={props.nodeLabels}
 						references={suggesting.items}
-						activeReference={suggestionManager.getSelectedValue()}
+						activeReference={suggestionManager.getSelectedValue() || undefined}
 						onReferenceSelect={(reference) => suggestionManager.select(reference)}
 					/>
 				</div>

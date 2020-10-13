@@ -3,6 +3,7 @@ import { DOMOutputSpec } from 'prosemirror-model';
 import { Hooks } from '@pubpub/prosemirror-reactive/src/store/types';
 
 import { buildLabel } from '../utils/references';
+import { NodeLabelMap, ReferenceableNodeType } from '../types';
 
 export default {
 	reference: {
@@ -19,11 +20,24 @@ export default {
 		reactiveAttrs: {
 			label: function(this: Hooks, node) {
 				const { targetId } = node.attrs;
-				const { blockNames } = this.useDocumentState();
+				const { nodeLabels } = this.useDocumentState();
 
 				if (targetId) {
 					return this.useDeferredNode(targetId, (target) => {
-						return target ? buildLabel(target, blockNames[target.type.name]) : null;
+						if (!target) {
+							return null;
+						}
+
+						const nodeType = target.type.name;
+						const label = (nodeLabels as NodeLabelMap)[
+							nodeType as ReferenceableNodeType
+						];
+
+						if (!(label && label.enabled)) {
+							return null;
+						}
+
+						return buildLabel(target, label?.text);
 					});
 				}
 

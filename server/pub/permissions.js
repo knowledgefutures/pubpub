@@ -18,6 +18,7 @@ const managerUpdatableFields = [
 	'licenseSlug',
 	'slug',
 	'title',
+	'nodeLabels',
 ];
 
 const adminUpdatableFields = ['doi'];

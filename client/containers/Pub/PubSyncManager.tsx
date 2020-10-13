@@ -8,14 +8,16 @@ import { getPubPageTitle } from 'utils/pubPageTitle';
 import { CitationManager } from 'client/utils/citations/citationManager';
 import { initFirebase } from 'client/utils/firebaseClient';
 import { apiFetch } from 'client/utils/apiFetch';
+import { NodeLabelMap } from 'client/components/Editor/types';
 
 export const PubContext = React.createContext({
-	pubData: {},
+	pubData: {
+		nodeLabels: {} as NodeLabelMap | undefined,
+	},
 	collabData: { editorChangeObject: {} },
 	historyData: {},
 	firebaseBranchRef: null,
 	updateLocalData: null,
-	blockNames: {} as { [key: string]: string },
 	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2-3 arguments, but got 0.
 	citationManager: new CitationManager(),
 });
@@ -132,11 +134,6 @@ class PubSyncManager extends React.Component<Props, State> {
 				isViewingHistory: isViewingHistory,
 				loadedIntoHistory: isViewingHistory,
 				historyDocKey: `history-${historyData.currentKey}`,
-			},
-			blockNames: {
-				image: 'Figure',
-				video: 'Video',
-				table: 'Table',
 			},
 			citationManager: new CitationManager(
 				pubData.citationStyle,
@@ -421,7 +418,6 @@ class PubSyncManager extends React.Component<Props, State> {
 			pubData: this.state.pubData,
 			collabData: this.state.collabData,
 			historyData: this.state.historyData,
-			blockNames: this.state.blockNames,
 			citationManager: this.state.citationManager,
 			firebaseBranchRef: this.state.firebaseBranchRef,
 			updateLocalData: this.updateLocalData,

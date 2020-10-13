@@ -1,12 +1,25 @@
-export const counter = (counterType: string, nodeFingerprintFn?) => {
+import { Hooks } from '@pubpub/prosemirror-reactive/dist/store/types';
+import { Node } from 'prosemirror-model';
+import { NodeLabelMap, ReferenceableNodeType } from '../../types';
+
+import { isNodeLabelEnabled } from '../../utils';
+
+export const counter = (counterType?: string, nodeFingerprintFn?) => {
 	const hasFingerprint = !!nodeFingerprintFn;
 
-	return function(node) {
-		// @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
-		const counterState = this.useTransactionState(['counter', counterType], {
-			countsMap: {},
-			maxCount: 0,
-		});
+	return function(this: Hooks, node: Node) {
+		const { nodeLabels } = this.useDocumentState();
+		const counterState = this.useTransactionState(
+			[
+				'counter',
+				counterType ||
+					(nodeLabels as NodeLabelMap)[node.type.name as ReferenceableNodeType].text,
+			],
+			{
+				countsMap: {},
+				maxCount: 0,
+			},
+		);
 
 		if (hasFingerprint) {
 			const fingerprint = JSON.stringify(nodeFingerprintFn(node));
@@ -17,7 +30,12 @@ export const counter = (counterType: string, nodeFingerprintFn?) => {
 			return counterState.countsMap[fingerprint];
 		}
 
+		if (!isNodeLabelEnabled(node, nodeLabels)) {
+			return null;
+		}
+
 		counterState.maxCount++;
+
 		return counterState.maxCount;
 	};
 };

@@ -1,4 +1,7 @@
 import { DOMOutputSpec } from 'prosemirror-model';
+import { pruneFalsyValues } from 'utils/arrays';
+import { withValue } from 'utils/fp';
+
 import { buildLabel } from '../utils/references';
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
@@ -16,7 +19,7 @@ export default {
 			caption: { default: '' },
 		},
 		reactiveAttrs: {
-			count: counter('audio'),
+			count: counter(),
 			label: label(),
 		},
 		parseDOM: [
@@ -58,11 +61,15 @@ export default {
 				[
 					'figcaption',
 					{},
-					[
+					pruneFalsyValues([
 						'div',
-						['strong', buildLabel(node)],
+						withValue(buildLabel(node), (label) => [
+							'strong',
+							{ spellcheck: false },
+							label,
+						]),
 						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
-					],
+					]),
 				],
 			] as DOMOutputSpec;
 		},

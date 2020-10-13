@@ -43,6 +43,7 @@ export default (sequelize, dataTypes) => {
 			// isPublicReviews: { type: dataTypes.BOOLEAN },
 			viewHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
+			nodeLabels: { type: dataTypes.JSONB },
 
 			/* Set by Associations */
 			communityId: { type: dataTypes.UUID, allowNull: false },

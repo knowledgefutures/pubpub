@@ -1,3 +1,5 @@
+import { EditorView } from 'prosemirror-view';
+
 export type EditorChangeObject = {
 	selectedNode?: {
 		attrs?: {
@@ -5,7 +7,5 @@ export type EditorChangeObject = {
 		};
 	};
 	updateNode: (...args: unknown[]) => unknown;
-	view: {
-		state: Object;
-	};
+	view: EditorView;
 };

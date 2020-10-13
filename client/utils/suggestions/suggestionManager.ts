@@ -98,7 +98,7 @@ export default class SuggestionManager<T> {
 		return this.state.status === SuggestionManagerStatus.Suggesting;
 	}
 
-	getSelectedValue() {
+	getSelectedValue(): T | null {
 		if (this.isSuggesting()) {
 			const { items, index } = this.state;
 			return items[modFloor(index, items.length)];

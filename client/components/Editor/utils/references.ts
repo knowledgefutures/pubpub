@@ -1,39 +1,47 @@
 import { getReactedCopyOfNode } from '@pubpub/prosemirror-reactive';
 import { IconName } from '@blueprintjs/core';
-
-type ReferenceType = {
-	name?: string;
-	icon: IconName;
-};
+import { NodeLabelMap, ReferenceableNodeType } from '../types';
+import { Node } from 'prosemirror-model';
+import { EditorState } from 'prosemirror-state';
 
 export type NodeReference = {
-	node: any;
+	node: Node;
 	icon: IconName;
+	label: string;
 };
 
-export const referenceTypes: { [key: string]: ReferenceType } = {
-	image: { icon: 'media', name: 'Image' },
-	video: { icon: 'media', name: 'Video' },
-	audio: { icon: 'media', name: 'Audio' },
-	table: { icon: 'th', name: 'Table' },
-	block_equation: { icon: 'function', name: 'Equation' },
+export const nodeDefaults = {
+	[ReferenceableNodeType.Image]: { icon: 'media', text: 'Image' },
+	[ReferenceableNodeType.Video]: { icon: 'media', text: 'Video' },
+	[ReferenceableNodeType.Audio]: { icon: 'media', text: 'Audio' },
+	[ReferenceableNodeType.Table]: { icon: 'th', text: 'Table' },
+	[ReferenceableNodeType.BlockEquation]: { icon: 'function', text: 'Equation' },
 };
 
-export const buildLabel = (node, customBlockName?: string) => {
+export const buildLabel = (node: Node, customBlockName?: string) => {
 	const {
 		attrs: { count, label },
 		type: { name },
 	} = node;
-	const referenceType = referenceTypes[name];
 
-	if (referenceType) {
-		return `${customBlockName || label || referenceType.name} ${count}`;
+	if (!(count || label)) {
+		return null;
+	}
+
+	const defaults = nodeDefaults[name];
+
+	if (defaults) {
+		return `${customBlockName || label || defaults.name} ${count}`;
 	}
 
 	return null;
 };
 
-export const getReferenceForNode = (node, editorState): NodeReference | null => {
+export const getReferenceForNode = (
+	node: Node,
+	editorState: EditorState,
+	nodeLabels: NodeLabelMap,
+): NodeReference | null => {
 	const {
 		type: {
 			name: nodeType,
@@ -45,30 +53,64 @@ export const getReferenceForNode = (node, editorState): NodeReference | null => 
 		return null;
 	}
 
-	const referenceType = referenceTypes[nodeType];
+	const label = nodeLabels[nodeType as ReferenceableNodeType];
+	const defaults = nodeDefaults[nodeType];
 	const reactedNode = getReactedCopyOfNode(node, editorState);
 
-	if (!(referenceType && reactedNode && typeof reactedNode.attrs.count === 'number')) {
+	if (
+		!(
+			defaults &&
+			reactedNode &&
+			typeof reactedNode.attrs.count === 'number' &&
+			isNodeLabelEnabled(node, nodeLabels)
+		)
+	) {
 		return null;
 	}
 
-	const { icon } = referenceType;
+	const { icon } = defaults;
 
 	return {
 		node: reactedNode,
 		icon: icon,
+		label: buildLabel(reactedNode, label.text)!,
 	};
 };
 
-export const getReferenceableNodes = (editorState) => {
+export const getReferenceableNodes = (editorState: EditorState, nodeLabels: NodeLabelMap) => {
 	const nodes: NodeReference[] = [];
+
 	editorState.doc.descendants((node) => {
 		if (node.attrs && node.attrs.id) {
-			const reference = getReferenceForNode(node, editorState);
+			const reference = getReferenceForNode(node, editorState, nodeLabels);
+
 			if (reference) {
 				nodes.push(reference);
 			}
 		}
 	});
+
 	return nodes;
 };
+
+export const getDefaultNodeLabels = (pub: any): NodeLabelMap => {
+	return (
+		pub.nodeLabels ||
+		Object.entries(nodeDefaults).reduce(
+			(acc, [nodeType, { text }]) => ({
+				...acc,
+				[nodeType]: {
+					enabled: false,
+					text: text,
+				},
+			}),
+			{} as NodeLabelMap,
+		)
+	);
+};
+
+export const getNodeLabelText = (node: Node, nodeLabels: NodeLabelMap) =>
+	nodeLabels[node.type.name as ReferenceableNodeType]?.text;
+
+export const isNodeLabelEnabled = (node: Node, nodeLabels: NodeLabelMap) =>
+	Boolean(nodeLabels[node.type.name as ReferenceableNodeType]?.enabled);

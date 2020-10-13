@@ -42,12 +42,8 @@ span.citation {
 	font-weight: bold;
 }
 
-a.reference {
-	font-weight: bold;
-	text-decoration: none;
-	&.missing {
-		color: darkred;
-	}
+a.reference.missing {
+	color: darkred;
 }
 
 table {

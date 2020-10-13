@@ -4,7 +4,7 @@ export default (schema, props) => {
 	return createReactivePlugin({
 		schema: schema,
 		documentState: {
-			blockNames: props.blockNames,
+			nodeLabels: props.nodeLabels,
 			citationManager: props.citationManager,
 		},
 	});

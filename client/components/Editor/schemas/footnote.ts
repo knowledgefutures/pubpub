@@ -13,7 +13,7 @@ export default {
 			structuredValue: { default: '' },
 		},
 		reactiveAttrs: {
-			count: counter('footnote'),
+			count: counter(),
 			citation: structuredCitation('structuredValue'),
 		},
 		parseDOM: [

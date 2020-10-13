@@ -1,23 +1,20 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Menu, MenuItem } from '@blueprintjs/core';
 
-import SuggestionManager, {
-	SuggestionManagerSuggesting,
-} from 'client/utils/suggestions/suggestionManager';
-
-import { buildLabel, NodeReference } from './utils';
+import { buildLabel, getNodeLabelText, NodeReference } from './utils';
+import { NodeLabelMap } from './types';
 
 require('./referenceFinder.scss');
 
 export type ReferenceFinderProps = {
-	blockNames: { [key: string]: string };
+	nodeLabels: NodeLabelMap;
 	references: ReadonlyArray<NodeReference>;
 	activeReference?: NodeReference;
 	onReferenceSelect: (reference: NodeReference) => unknown;
 };
 
 const ReferenceFinder = (props: ReferenceFinderProps) => {
-	const { blockNames, references, activeReference, onReferenceSelect } = props;
+	const { nodeLabels, references, activeReference, onReferenceSelect } = props;
 	const menuItems = useMemo(
 		() =>
 			references.map((reference) => (
@@ -25,7 +22,7 @@ const ReferenceFinder = (props: ReferenceFinderProps) => {
 					key={reference.node.attrs.id}
 					onClick={() => onReferenceSelect(reference)}
 					icon={reference.icon}
-					text={buildLabel(reference.node, blockNames[reference.node.type.name])}
+					text={buildLabel(reference.node, getNodeLabelText(reference.node, nodeLabels))}
 					active={reference === activeReference}
 				/>
 			)),

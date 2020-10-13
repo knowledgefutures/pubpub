@@ -2,28 +2,34 @@ import { suggest, Suggester } from 'prosemirror-suggest';
 import { EditorView } from 'prosemirror-view';
 
 import SuggestionManager from 'client/utils/suggestions/suggestionManager';
-import { getReferenceableNodes, buildLabel, NodeReference } from 'components/Editor/utils';
+import {
+	getReferenceableNodes,
+	buildLabel,
+	NodeReference,
+	getNodeLabelText,
+} from 'components/Editor/utils';
 import { Schema } from 'prosemirror-model';
+import { NodeLabelMap, ReferenceableNodeType } from '../types';
 
 type SuggestPluginProps = {
-	blockNames: { [key: string]: string };
+	nodeLabels: NodeLabelMap;
 	suggestionManager: SuggestionManager<NodeReference>;
 };
 
 const normalizeQuery = (text: string) => text.toLowerCase().replace(/\s+/g, '');
 
 export default (schema: Schema, props: SuggestPluginProps) => {
-	const { blockNames, suggestionManager } = props;
+	const { nodeLabels, suggestionManager } = props;
 
 	function getNodeReferences(view: EditorView, query: string) {
-		const referenceableNodes = getReferenceableNodes(view.state);
+		const referenceableNodes = getReferenceableNodes(view.state, nodeLabels);
 
 		if (query === '') {
 			return referenceableNodes;
 		}
 
 		return referenceableNodes.filter((target) => {
-			const label = buildLabel(target.node, blockNames[target.node.type.name]);
+			const label = buildLabel(target.node, getNodeLabelText(target.node, nodeLabels));
 
 			if (label === null) {
 				return false;

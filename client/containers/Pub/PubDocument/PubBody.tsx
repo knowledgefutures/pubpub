@@ -15,6 +15,7 @@ import { usePubContext } from '../pubHooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 import discussionSchema from './DiscussionAddon/discussionSchema';
 import Discussion from './PubDiscussions/Discussion';
+import { NodeLabelMap } from 'client/components/Editor/types';
 
 require('./pubBody.scss');
 
@@ -52,7 +53,7 @@ const PubBody = (props: Props) => {
 		editorWrapperRef,
 	} = props;
 	const { communityData } = usePageContext();
-	const { blockNames, citationManager } = usePubContext();
+	const { citationManager } = usePubContext();
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
@@ -145,7 +146,7 @@ const PubBody = (props: Props) => {
 						},
 					},
 				}}
-				blockNames={blockNames}
+				nodeLabels={pubData.nodeLabels || ({} as NodeLabelMap)}
 				citationManager={citationManager}
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}

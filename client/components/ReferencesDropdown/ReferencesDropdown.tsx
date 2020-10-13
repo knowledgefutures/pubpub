@@ -1,23 +1,24 @@
 import React from 'react';
 
-import { buildLabel, NodeReference } from '../Editor/utils/references';
+import { NodeReference } from '../Editor/utils/references';
 import { MenuButton, MenuItem } from '../Menu';
 
 export type ReferencesDropdownProps = {
 	references: ReadonlyArray<NodeReference>;
-	blockNames: { [key: string]: string };
 	selectedReference?: NodeReference | null;
 	onSelect: (reference: NodeReference) => unknown;
 };
 
 const ReferencesDropdown = (props: ReferencesDropdownProps) => {
-	const { blockNames, references, selectedReference, onSelect } = props;
+	const { references, selectedReference, onSelect } = props;
 	const currentIcon = selectedReference ? selectedReference.icon : 'disable';
 	const currentLabel = selectedReference
-		? buildLabel(selectedReference.node, blockNames[selectedReference.node.type.name])
+		? selectedReference.label
 		: references.length
 		? 'No referenced item'
 		: 'No items to reference';
+
+	console.log(references);
 
 	return (
 		<div className="controls-link-component">
@@ -32,7 +33,7 @@ const ReferencesDropdown = (props: ReferencesDropdownProps) => {
 				}}
 			>
 				{references.map((possibleTarget) => {
-					const { icon, node } = possibleTarget;
+					const { icon, node, label } = possibleTarget;
 					return (
 						<MenuItem
 							onClick={() => {
@@ -40,7 +41,7 @@ const ReferencesDropdown = (props: ReferencesDropdownProps) => {
 							}}
 							key={node.attrs.id}
 							active={Boolean(selectedReference && selectedReference.node === node)}
-							text={buildLabel(node, blockNames[node.type.name])}
+							text={label}
 							icon={icon}
 						/>
 					);

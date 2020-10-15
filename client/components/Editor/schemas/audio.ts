@@ -17,6 +17,7 @@ export default {
 			size: { default: 50 }, // number as percentage
 			align: { default: 'center' },
 			caption: { default: '' },
+			hideLabel: { default: false },
 		},
 		reactiveAttrs: {
 			count: counter(),
@@ -65,7 +66,7 @@ export default {
 						'div',
 						withValue(buildLabel(node), (label) => [
 							'strong',
-							{ spellcheck: false },
+							{ spellcheck: 'false' },
 							label,
 						]),
 						renderHtmlChildren(isReact, node.attrs.caption, 'div'),

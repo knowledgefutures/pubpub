@@ -1,6 +1,7 @@
 import { Plugin, NodeSelection, TextSelection } from 'prosemirror-state';
 import { lift, setBlockType, toggleMark, wrapIn } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
+import { EditorView } from 'prosemirror-view';
 import {
 	isInTable,
 	deleteTable,
@@ -20,6 +21,9 @@ import { getReactedCopyOfNode } from '@pubpub/prosemirror-reactive';
 
 import { collabDocPluginKey } from './collaborative';
 import { domEventsPluginKey } from './domEvents';
+import { findParentNodeClosestToPos } from '../utils';
+import { ReferenceableNodeType } from '../types';
+import { EditorProps } from '../Editor';
 // import { collaborativePluginKey } from './plugins/collaborative';
 
 const getInsertFunctions = (editorView) => {
@@ -41,7 +45,33 @@ const getInsertFunctions = (editorView) => {
 		}, {});
 };
 
-const getMenuItems = (editorView) => {
+const toggleTableLabel = (editorView: EditorView, editorProps: EditorProps, dryRun = false) => {
+	if (!editorProps.nodeLabels[ReferenceableNodeType.Table]?.enabled) {
+		return false;
+	}
+
+	const table = findParentNodeClosestToPos(
+		editorView.state.selection.$from,
+		(node) => node.type.name === 'table',
+	);
+
+	if (table) {
+		const transaction = editorView.state.tr.setNodeMarkup(table.pos, table.node.type, {
+			...table.node.attrs,
+			hideLabel: !table.node.attrs.hideLabel,
+		});
+
+		if (!dryRun) {
+			editorView.dispatch(transaction);
+		}
+
+		return true;
+	}
+
+	return false;
+};
+
+const getMenuItems = (editorView: EditorView, editorProps: EditorProps) => {
 	const schema = editorView.state.schema;
 
 	/* Marks */
@@ -71,7 +101,7 @@ const getMenuItems = (editorView) => {
 			return false;
 		}
 		const $from = editorView.state.selection.$from;
-		const selectedNode = editorView.state.selection.node;
+		const selectedNode = (editorView.state.selection as any).node;
 		let isActive = false;
 		const checkForNode = (node) => {
 			const isType = type.name === node.type.name;
@@ -316,6 +346,12 @@ const getMenuItems = (editorView) => {
 						canRun: toggleHeaderCell(editorView.state),
 						isActive: toggleHeaderCell.bind(window, editorView.state),
 					},
+					{
+						title: 'table-toggle-label',
+						run: () => toggleTableLabel(editorView, editorProps),
+						canRun: toggleTableLabel(editorView, editorProps, true),
+						isActive: () => toggleTableLabel(editorView, editorProps, true),
+					},
 			  ];
 
 	return [...formattingItems, ...tableItems];
@@ -558,8 +594,8 @@ const getSelectedNode = (editorState) => {
 	return getReactedCopyOfNode(node, editorState) || node;
 };
 
-export const getChangeObject = (editorView) => {
-	const isNode = !!editorView.state.selection.node;
+export const getChangeObject = (editorView: EditorView, editorProps: EditorProps) => {
+	const isNode = !!(editorView.state.selection as any).node;
 	const collaborativePluginState = collabDocPluginKey.getState(editorView.state) || {};
 	const { latestDomEvent } = domEventsPluginKey.getState(editorView.state);
 	// const hasFocus = editorView.hasFocus();
@@ -597,7 +633,7 @@ export const getChangeObject = (editorView) => {
 		/* its sole input. */
 		insertFunctions: getInsertFunctions(editorView),
 		/* The full list of menu items, their status, and their click handler. */
-		menuItems: getMenuItems(editorView),
+		menuItems: getMenuItems(editorView, editorProps),
 		/* The full list of decorations and their bounding boxes */
 		decorations: getDecorations(editorView),
 		/* The list of shortcut keys and the text following them. */
@@ -618,7 +654,7 @@ export default (_, props) => {
 		view: () => {
 			return {
 				update: (editorView) => {
-					props.onChange(getChangeObject(editorView));
+					props.onChange(getChangeObject(editorView, props));
 				},
 			};
 		},

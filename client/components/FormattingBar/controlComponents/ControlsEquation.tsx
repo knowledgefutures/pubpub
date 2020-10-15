@@ -1,10 +1,15 @@
 /* eslint-disable react/no-danger */
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
+import { Checkbox } from '@blueprintjs/core';
 import { useDebounce } from 'use-debounce';
+import { Node } from 'prosemirror-model';
 
 import { renderLatexString } from 'client/utils/editor';
 
 import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
+
+import { usePubData } from 'client/containers/Pub/pubHooks';
+import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
 
 require('./controls.scss');
 
@@ -14,14 +19,10 @@ type Props = {
 	editorChangeObject: {
 		changeNode: (...args: any[]) => any;
 		updateNode: (...args: any[]) => any;
-		selectedNode?: {
-			type?: {
-				name?: string;
-			};
-			attrs?: {
-				value: string;
-				html?: string;
-			};
+		selectedNode: Node & {
+			value: string;
+			html?: string;
+			hideLabel: boolean;
 		};
 	};
 };
@@ -32,7 +33,7 @@ const getSchemaDefinitionForNodeType = (editorChangeObject, nodeTypeName) => {
 
 const ControlsEquation = (props: Props) => {
 	const { editorChangeObject, pendingAttrs, onClose } = props;
-	const { changeNode, selectedNode } = editorChangeObject;
+	const { changeNode, updateNode, selectedNode } = editorChangeObject;
 	const {
 		commitChanges,
 		hasPendingChanges,
@@ -41,8 +42,15 @@ const ControlsEquation = (props: Props) => {
 	} = pendingAttrs;
 	const [debouncedValue] = useDebounce(value, 250);
 	const hasMountedRef = useRef(false);
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+	const toggleLabel = useCallback(
+		(e: React.MouseEvent) => updateNode({ hideLabel: (e.target as HTMLInputElement).checked }),
+		[updateNode],
+	);
 	const isBlock = selectedNode.type.name === 'block_equation';
+	const { nodeLabels } = usePubData();
+	const canHideLabel =
+		nodeLabels &&
+		(nodeLabels as NodeLabelMap)[selectedNode.type.name as ReferenceableNodeType]?.enabled;
 
 	useEffect(() => {
 		// Avoid an initial call to the server's LaTeX renderer on mount
@@ -86,6 +94,16 @@ const ControlsEquation = (props: Props) => {
 				<div className="section">
 					<div className="title">Preview</div>
 					<div className="preview" dangerouslySetInnerHTML={{ __html: html }} />
+					{isBlock && canHideLabel && (
+						<div className="controls-row">
+							<Checkbox
+								onClick={toggleLabel}
+								alignIndicator="right"
+								label="Hide label"
+								checked={selectedNode?.attrs?.hideLabel}
+							/>
+						</div>
+					)}
 					<ControlsButtonGroup>
 						<ControlsButton onClick={handleChangeNodeType}>
 							Change to {isBlock ? 'inline' : 'block'}

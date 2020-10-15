@@ -113,4 +113,4 @@ export const getNodeLabelText = (node: Node, nodeLabels: NodeLabelMap) =>
 	nodeLabels[node.type.name as ReferenceableNodeType]?.text;
 
 export const isNodeLabelEnabled = (node: Node, nodeLabels: NodeLabelMap) =>
-	Boolean(nodeLabels[node.type.name as ReferenceableNodeType]?.enabled);
+	Boolean(nodeLabels[node.type.name as ReferenceableNodeType]?.enabled) && !node.attrs.hideLabel;

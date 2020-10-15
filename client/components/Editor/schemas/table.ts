@@ -51,7 +51,7 @@ table.onInsert = (view) => {
 // Enhance table node with reactive attributes.
 const { toDOM: tableToDOM } = table;
 
-table.attrs = { ...table.attrs, id: { default: null } };
+table.attrs = { ...table.attrs, id: { default: null }, hideLabel: { default: false } };
 table.reactive = true;
 table.reactiveAttrs = {
 	count: counter(),
@@ -70,7 +70,7 @@ table.toDOM = (node: ProsemirrorNode) => {
 	return pruneFalsyValues([
 		spec[0],
 		{ id: node.attrs.id },
-		withValue(buildLabel(node), (label) => ['caption', { spellcheck: false }, label]),
+		withValue(buildLabel(node), (label) => ['caption', { spellcheck: 'false' }, label]),
 		spec[1],
 	]) as DOMOutputSpec;
 };

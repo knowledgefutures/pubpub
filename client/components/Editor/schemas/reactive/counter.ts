@@ -9,12 +9,10 @@ export const counter = (counterType?: string, nodeFingerprintFn?) => {
 
 	return function(this: Hooks, node: Node) {
 		const { nodeLabels } = this.useDocumentState();
+		const nodeLabel = (nodeLabels as NodeLabelMap)[node.type.name as ReferenceableNodeType];
+		const resolvedCounterType = counterType || nodeLabel?.text;
 		const counterState = this.useTransactionState(
-			[
-				'counter',
-				counterType ||
-					(nodeLabels as NodeLabelMap)[node.type.name as ReferenceableNodeType].text,
-			],
+			resolvedCounterType ? ['counter', resolvedCounterType] : ['counter'],
 			{
 				countsMap: {},
 				maxCount: 0,

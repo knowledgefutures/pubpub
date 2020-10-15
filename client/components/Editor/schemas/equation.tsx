@@ -73,6 +73,7 @@ export default {
 			value: { default: '' },
 			html: { default: '' },
 			renderForPandoc: { default: false },
+			hideLabel: { default: false },
 		},
 		reactiveAttrs: {
 			count: counter(),
@@ -104,7 +105,7 @@ export default {
 					/>
 				) as any;
 			}
-			return pruneFalsyValues([
+			return [
 				'div',
 				{
 					...(node.attrs.id && { id: node.attrs.id }),
@@ -113,12 +114,12 @@ export default {
 				},
 				['span'],
 				renderHtmlChildren(isReact, node.attrs.html),
-				withValue(node.attrs.count, (count) => [
+				[
 					'span',
-					{ class: 'equation-label', spellcheck: false },
-					`(${count})`,
-				]),
-			]) as DOMOutputSpec;
+					{ class: 'equation-label', spellcheck: 'false' },
+					node.attrs.count ? `(${node.attrs.count})` : '',
+				],
+			] as DOMOutputSpec;
 		},
 
 		inline: false,

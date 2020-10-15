@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 import { Button } from '@blueprintjs/core';
+import { EditorView } from 'prosemirror-view';
 
 import CommandMenu from '../CommandMenu';
 
 type Props = {
 	editorChangeObject: {
-		view?: {
-			dom?: any;
-		};
+		view?: EditorView;
 	};
 	onClose: (...args: any[]) => any;
 };
@@ -32,6 +31,7 @@ const buttonCommands = [
 	{ key: 'table-split-cell', title: 'Split cells', icon: 'split-columns' },
 	{ key: 'toggle-header-cell', title: 'Toggle header cells', icon: 'header' },
 	{ key: 'table-delete', title: 'Remove table', icon: 'trash' },
+	{ key: 'table-toggle-label', title: 'Toggle label', icon: 'tag' },
 ];
 
 const ControlsTable = (props: Props) => {

@@ -164,7 +164,7 @@ const Editor = (props: Props) => {
 			},
 		});
 
-		props.onChange(getChangeObject(view));
+		props.onChange(getChangeObject(view, props));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 
 		return suggestionManager.transitioned.subscribe(onSuggestionManagerTransition);

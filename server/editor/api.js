@@ -31,9 +31,9 @@ app.get('/api/editor/embed', (req, res) => {
 		codepen: `https://codepen.io/api/oembed?url=${input}&format=json`,
 		vimeo: `https://vimeo.com/api/oembed.json?url=${input}`,
 		soundcloud: `https://soundcloud.com/oembed?url=${input}&format=json`,
+		twitter: `https://publish.twitter.com/oembed?url=${input}&format=json`,
 	};
 	const oembedUrl = oembedUrls[type];
-
 	if (!oembedUrl) {
 		if (type === 'github') {
 			const githubParts = input.split('/');

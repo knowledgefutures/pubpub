@@ -8,8 +8,8 @@ import { generateHash } from 'utils/hashes';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export const createPub = async ({ communityId, collectionIds, ...restArgs }, userId) => {
-	const newPubSlug = generateHash(8);
+export const createPub = async ({ communityId, collectionIds, slug, ...restArgs }, userId) => {
+	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
 	const date = new Date();
 	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;
 	const { defaultPubCollections } = await Community.findOne({ where: { id: communityId } });

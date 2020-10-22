@@ -13,6 +13,7 @@ import MediaCodepen from './MediaCodepen';
 import MediaVimeo from './MediaVimeo';
 import MediaSoundcloud from './MediaSoundcloud';
 import MediaGithub from './MediaGithub';
+import MediaTwitter from './MediaTwitter';
 
 require('./media.scss');
 
@@ -49,6 +50,7 @@ class Media extends Component<Props, State> {
 		const apps = [
 			{ text: 'Iframe', icon: 'application' },
 			{ text: 'YouTube', icon: 'youtube' },
+			{ text: 'Twitter', icon: 'twitter' },
 			{ text: 'Codepen', icon: 'codepen' },
 			{ text: 'Vimeo', icon: 'vimeo' },
 			{ text: 'SoundCloud', icon: 'soundcloud' },
@@ -105,6 +107,7 @@ class Media extends Component<Props, State> {
 				{activeItem === 'Other' && <MediaFile {...componentProps} />}
 				{activeItem === 'Iframe' && <MediaIframe {...componentProps} />}
 				{activeItem === 'YouTube' && <MediaYoutube {...componentProps} />}
+				{activeItem === 'Twitter' && <MediaTwitter {...componentProps} />}
 				{activeItem === 'Codepen' && <MediaCodepen {...componentProps} />}
 				{activeItem === 'Vimeo' && <MediaVimeo {...componentProps} />}
 				{activeItem === 'SoundCloud' && <MediaSoundcloud {...componentProps} />}

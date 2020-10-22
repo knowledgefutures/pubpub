@@ -11,6 +11,7 @@ export const getEmbedType = (input) => {
 		vimeo: ['https://vimeo.com', 'https://player.vimeo.com'],
 		soundcloud: ['https://soundcloud.com'],
 		github: ['https://gist.github.com'],
+		twitter: ['https://twitter.com', 'https://publish.twitter.com'],
 	};
 
 	// @ts-expect-error ts-migrate(2769) FIXME: Type 'string' is not assignable to type 'null'.

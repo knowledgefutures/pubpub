@@ -10,6 +10,7 @@ import SliderInputControl from './SliderInputControl';
 import SourceControls from './SourceControls';
 import { usePubData } from 'client/containers/Pub/pubHooks';
 import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
+import { ControlsReferenceSettingsLink } from '../ControlsReference';
 
 type Props = {
 	isSmall: boolean;
@@ -26,6 +27,7 @@ type Props = {
 			};
 		};
 	};
+	pubData: any;
 };
 
 const getCanEditNodeHeight = (selectedNode) => selectedNode.type.name === 'iframe';
@@ -39,7 +41,7 @@ const getItemName = (selectedNode) => {
 };
 
 const ControlsMedia = (props: Props) => {
-	const { isSmall, editorChangeObject, pendingAttrs } = props;
+	const { isSmall, editorChangeObject, pendingAttrs, pubData } = props;
 	const { updateNode, selectedNode } = editorChangeObject;
 	const { hasPendingChanges, commitChanges, updateAttrs } = pendingAttrs;
 	const { size, align, height, caption, hideLabel } = selectedNode.attrs;
@@ -90,16 +92,23 @@ const ControlsMedia = (props: Props) => {
 					updateNode={updateNode}
 					isSmall={isSmall}
 				/>
-				{canHideLabel && (
-					<div className="controls-row">
-						<Checkbox
-							onClick={toggleLabel}
-							alignIndicator="right"
-							label="Hide label"
-							checked={hideLabel}
-						/>
-					</div>
-				)}
+				<div className="controls-row">
+					<Checkbox
+						disabled={!canHideLabel}
+						onClick={toggleLabel}
+						alignIndicator="right"
+						label="Hide label"
+						checked={selectedNode?.attrs?.hideLabel}
+					>
+						{!canHideLabel && (
+							<>
+								{' '}
+								(
+								<ControlsReferenceSettingsLink dark small pubData={pubData} />)
+							</>
+						)}
+					</Checkbox>
+				</div>
 			</div>
 			<div className="section hide-overflow">
 				<SimpleEditor

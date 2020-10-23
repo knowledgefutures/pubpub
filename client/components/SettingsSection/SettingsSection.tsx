@@ -1,29 +1,41 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import classNames from 'classnames';
+import { slugifyString } from 'utils/strings';
 
 require('./settingsSection.scss');
 
-const propTypes = {
-	className: PropTypes.string,
-	title: PropTypes.string,
-	children: PropTypes.node,
+type Props = {
+	className?: string;
+	title: React.ReactNode;
+	id?: string;
+	children: React.ReactNode;
 };
 
-const defaultProps = {
-	className: '',
-	title: '',
-	children: undefined,
-};
+const SettingsSection = (props: Props) => {
+	const { className, title, id, children } = props;
+	const [emphasized, setEmphasized] = useState(false);
 
-const SettingsSection = function(props) {
+	useEffect(() => {
+		if (window && id && id === window.location.hash.slice(1)) {
+			setEmphasized(true);
+		}
+	}, [id]);
+
 	return (
-		<div className={`settings-section-component ${props.className}`}>
-			<div className="title">{props.title}</div>
-			<div className="content">{props.children}</div>
+		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
+		<div
+			onClick={() => setEmphasized(false)}
+			className={classNames(
+				'settings-section-component',
+				emphasized && 'emphasized',
+				className,
+			)}
+			id={id || slugifyString(props.title)}
+		>
+			<div className="title">{title}</div>
+			<div className="content">{children}</div>
 		</div>
 	);
 };
 
-SettingsSection.defaultProps = defaultProps;
-SettingsSection.propTypes = propTypes;
 export default SettingsSection;

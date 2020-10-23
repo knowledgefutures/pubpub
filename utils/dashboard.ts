@@ -2,10 +2,17 @@ type GetDashUrlOptions = {
 	pubSlug?: string;
 	collectionSlug?: string;
 	mode?: string;
+	section?: string;
 	subMode?: string;
 };
 
-export const getDashUrl = ({ collectionSlug, pubSlug, mode, subMode }: GetDashUrlOptions) => {
+export const getDashUrl = ({
+	collectionSlug,
+	pubSlug,
+	mode,
+	subMode,
+	section = '',
+}: GetDashUrlOptions) => {
 	let baseHref = '/dash';
 	if (collectionSlug) {
 		baseHref = `/dash/collection/${collectionSlug}`;
@@ -26,7 +33,7 @@ export const getDashUrl = ({ collectionSlug, pubSlug, mode, subMode }: GetDashUr
 				.replace(/ /gi, '-')}`
 		: '';
 
-	return `${baseHref}${modeString}${subModeString}${baseQuery}`;
+	return `${baseHref}${modeString}${subModeString}${baseQuery}${section && `#${section}`}`;
 };
 
 export const groupPubs = ({ pubs, collections }) => {

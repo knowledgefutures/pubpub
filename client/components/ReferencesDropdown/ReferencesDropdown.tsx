@@ -18,8 +18,6 @@ const ReferencesDropdown = (props: ReferencesDropdownProps) => {
 		? 'No referenced item'
 		: 'No items to reference';
 
-	console.log(references);
-
 	return (
 		<div className="controls-link-component">
 			<MenuButton

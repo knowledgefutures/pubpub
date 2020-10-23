@@ -31,7 +31,7 @@ const ReferenceFinder = (props: ReferenceFinderProps) => {
 
 	return (
 		<Menu className="reference-finder-component bp3-elevation-1">
-			{menuItems.length > 0 ? menuItems : <MenuItem text="No references found" disabled />}
+			{menuItems.length > 0 ? menuItems : <MenuItem text="No items to reference" disabled />}
 		</Menu>
 	);
 };

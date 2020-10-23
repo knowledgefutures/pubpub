@@ -1,0 +1,14 @@
+.controls-reference-popover-component {
+	max-width: 150px;
+	padding: 12px 12px 0;
+}
+
+.controls-reference-settings-link {
+	&.dark {
+		color: #545454;
+
+		a {
+			color: #eee;
+		}
+	}
+}

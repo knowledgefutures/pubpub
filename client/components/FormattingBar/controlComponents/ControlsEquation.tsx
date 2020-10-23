@@ -5,11 +5,11 @@ import { useDebounce } from 'use-debounce';
 import { Node } from 'prosemirror-model';
 
 import { renderLatexString } from 'client/utils/editor';
-
-import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
-
 import { usePubData } from 'client/containers/Pub/pubHooks';
 import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
+
+import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
+import { ControlsReferenceSettingsLink } from './ControlsReference';
 
 require('./controls.scss');
 
@@ -25,6 +25,7 @@ type Props = {
 			hideLabel: boolean;
 		};
 	};
+	pubData: any;
 };
 
 const getSchemaDefinitionForNodeType = (editorChangeObject, nodeTypeName) => {
@@ -32,7 +33,7 @@ const getSchemaDefinitionForNodeType = (editorChangeObject, nodeTypeName) => {
 };
 
 const ControlsEquation = (props: Props) => {
-	const { editorChangeObject, pendingAttrs, onClose } = props;
+	const { editorChangeObject, pendingAttrs, onClose, pubData } = props;
 	const { changeNode, updateNode, selectedNode } = editorChangeObject;
 	const {
 		commitChanges,
@@ -94,15 +95,22 @@ const ControlsEquation = (props: Props) => {
 				<div className="section">
 					<div className="title">Preview</div>
 					<div className="preview" dangerouslySetInnerHTML={{ __html: html }} />
-					{isBlock && canHideLabel && (
-						<div className="controls-row">
-							<Checkbox
-								onClick={toggleLabel}
-								alignIndicator="right"
-								label="Hide label"
-								checked={selectedNode?.attrs?.hideLabel}
-							/>
-						</div>
+					{isBlock && (
+						<Checkbox
+							disabled={!canHideLabel}
+							onClick={toggleLabel}
+							alignIndicator="right"
+							label="Hide label"
+							checked={selectedNode?.attrs?.hideLabel}
+						>
+							{!canHideLabel && (
+								<>
+									{' '}
+									(
+									<ControlsReferenceSettingsLink dark small pubData={pubData} />)
+								</>
+							)}
+						</Checkbox>
 					)}
 					<ControlsButtonGroup>
 						<ControlsButton onClick={handleChangeNodeType}>

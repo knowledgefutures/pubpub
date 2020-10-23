@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import classNames from 'classnames';
 
 import { ReferencesDropdown } from 'components';
 import { getReferenceableNodes, NodeReference } from 'components/Editor/utils/references';
 import { EditorChangeObject } from 'client/types';
-import { usePubContext } from 'client/containers/Pub/pubHooks';
+import { usePubContext, usePubData } from 'client/containers/Pub/pubHooks';
+import { getDashUrl } from 'utils/dashboard';
+
+require('./controlsReference.scss');
 
 export type ControlsReferenceProps = {
 	editorChangeObject: EditorChangeObject;
@@ -50,6 +54,46 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 			selectedReference={target}
 			onSelect={onSelect}
 		/>
+	);
+};
+
+type ControlsReferencePopoverContentProps = {
+	pubData: any;
+	small?: boolean;
+	dark?: boolean;
+};
+
+export const ControlsReferenceSettingsLink = (props: ControlsReferencePopoverContentProps) => {
+	const link = (
+		<a
+			href={getDashUrl({
+				pubSlug: props.pubData.slug,
+				mode: 'settings',
+				section: 'block-labels',
+			})}
+		>
+			Pub Settings
+		</a>
+	);
+
+	return (
+		<span className={classNames('controls-reference-settings-link', props.dark && 'dark')}>
+			{props.small ? (
+				<>Enable item labeling in {link}</>
+			) : (
+				<>Visit {link} to turn on labeling and enable references.</>
+			)}
+		</span>
+	);
+};
+
+export const ControlsReferencePopover = () => {
+	const pubData = usePubData();
+
+	return (
+		<p className="controls-reference-popover-component">
+			<ControlsReferenceSettingsLink pubData={pubData} />
+		</p>
 	);
 };
 

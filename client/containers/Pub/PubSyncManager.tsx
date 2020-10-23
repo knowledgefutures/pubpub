@@ -13,6 +13,7 @@ import { NodeLabelMap } from 'client/components/Editor/types';
 export const PubContext = React.createContext({
 	pubData: {
 		nodeLabels: {} as NodeLabelMap | undefined,
+		slug: '',
 	},
 	collabData: { editorChangeObject: {} },
 	historyData: {},

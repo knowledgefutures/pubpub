@@ -4,11 +4,14 @@ import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 
 import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
+import { usePubData } from 'client/containers/Pub/pubHooks';
 
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
 import FormattingBarPopover from './FormattingBarPopover';
 import { positionNearSelection } from './positioning';
+import { FormattingBarButtonData } from './types';
+import { getButtonPopoverComponent } from './utils';
 
 require('./formattingBar.scss');
 
@@ -25,13 +28,7 @@ type OwnProps = {
 			attrs?: any;
 		};
 	};
-	buttons: {
-		key: string;
-		title: string;
-		ariaTitle?: string;
-		icon: string;
-		isToggle?: boolean;
-	}[];
+	buttons: FormattingBarButtonData[];
 	showBlockTypes?: boolean;
 	isSmall?: boolean;
 	isTranslucent?: boolean;
@@ -127,6 +124,7 @@ const FormattingBar = (props: Props) => {
 	} = props;
 	const { menuItems, insertFunctions, view } = editorChangeObject;
 	const { communityData } = usePageContext();
+	const pubData = usePubData();
 	const buttonElementRefs = useRefMap();
 	const toolbar = useToolbarState({ loop: true });
 	const {
@@ -203,7 +201,7 @@ const FormattingBar = (props: Props) => {
 		setOpenedButton(null);
 	}, [setOpenedButton]);
 
-	const renderButton = (button) => {
+	const renderButton = (button: FormattingBarButtonData) => {
 		const matchingMenuItem = menuItemByKey(button.key);
 		const insertFunction = insertFunctions && insertFunctions[button.key];
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'canRun' does not exist on type '{}'.
@@ -212,10 +210,15 @@ const FormattingBar = (props: Props) => {
 		const isIndicated = indicatedButtons.includes(button) && !isOpen;
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'isActive' does not exist on type '{}'.
 		const isActive = !isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
-		const isDisabled =
-			noFunction || (openedButton && !isOpen && !isIndicated && !controlsPosition);
+		const isDisabled = Boolean(
+			(typeof button.isDisabled === 'function' && button.isDisabled(pubData)) ||
+				noFunction ||
+				(openedButton && !isOpen && !isIndicated && !controlsPosition),
+		);
 		const maybeEditorChangeObject =
 			button.key === 'media' ? { editorChangeObject: editorChangeObject } : {};
+		const PopoverComponent = getButtonPopoverComponent(button, isDisabled);
+
 		return (
 			<ToolbarItem
 				{...toolbar}
@@ -223,13 +226,13 @@ const FormattingBar = (props: Props) => {
 				as={button.component || FormattingBarButton}
 				key={button.key}
 				formattingItem={button}
-				// @ts-expect-error ts-migrate(2769) FIXME: Type 'null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
 				disabled={isDisabled}
 				isActive={isActive}
 				isIndicated={isIndicated && !isOpen}
 				isOpen={isOpen}
 				isDetached={isOpen && !!controlsPosition}
 				isSmall={isSmall}
+				popoverContent={PopoverComponent && <PopoverComponent />}
 				accentColor={communityData.accentColorDark}
 				// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 2.
 				onClick={(evt) => handleButtonClick(button, evt)}
@@ -304,6 +307,7 @@ const FormattingBar = (props: Props) => {
 							onClose={onClose}
 							isSmall={isSmall}
 							citationStyle={citationStyle}
+							pubData={pubData}
 						/>
 					)}
 				</FormattingBarPopover>

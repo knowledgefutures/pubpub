@@ -299,11 +299,7 @@ const PubSettings = (props: Props) => {
 	const renderNodeLabelEditor = () => {
 		return (
 			<SettingsSection title="Item Labels" id="block-labels">
-				<NodeLabelEditor
-					pubData={persistedPubData}
-					// communityData={activeCommunity}
-					updatePubData={updatePubData}
-				/>
+				<NodeLabelEditor pubData={persistedPubData} updatePubData={updatePubData} />
 			</SettingsSection>
 		);
 	};

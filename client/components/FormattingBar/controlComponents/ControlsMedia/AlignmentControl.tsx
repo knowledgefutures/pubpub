@@ -31,6 +31,7 @@ const AlignmentControl = (props: Props) => {
 						<Radio
 							{...radio}
 							aria-label={item.key}
+							title={item.key}
 							key={item.key}
 							checked={value === item.key}
 							onClick={() => onChange(item.key)}

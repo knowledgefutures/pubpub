@@ -231,7 +231,7 @@ rules.fromPandoc('Image', (node, { resource }) => {
 		attrs: {
 			url: resource(node.target.url, 'image'),
 			caption: pandocInlineToHtmlString(node.content),
-			// TODO(ian): is there anything we can do about the image size here?
+			align: 'full',
 		},
 	};
 });

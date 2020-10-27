@@ -68,6 +68,7 @@ export const getPubMetadata = async (pubId) => {
 			.map((attr) => ensureUserForAttribution(attr)),
 		citationStyle: pubData.citationStyle,
 		citationInlineStyle: pubData.citationInlineStyle,
+		nodeLabels: pubData.nodeLabels,
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),
 	};
 };

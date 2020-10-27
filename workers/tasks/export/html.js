@@ -267,7 +267,7 @@ export const renderStaticHtml = async ({
 	targetPaged,
 	notesData,
 }) => {
-	const { title } = pubMetadata;
+	const { title, nodeLabels } = pubMetadata;
 	const { footnotes, citations, citationManager } = notesData;
 	const renderableNodes = [
 		filterNonExportableNodes,
@@ -282,6 +282,7 @@ export const renderStaticHtml = async ({
 		doc: { type: 'doc', content: renderableNodes },
 		context: { isForPandoc: targetPandoc },
 		citationManager: citationManager,
+		nodeLabels: nodeLabels,
 	});
 
 	return ReactDOMServer.renderToStaticMarkup(

@@ -146,7 +146,7 @@ const PubBody = (props: Props) => {
 						},
 					},
 				}}
-				nodeLabels={pubData.nodeLabels || ({} as NodeLabelMap)}
+				nodeLabels={pubData.nodeLabels}
 				citationManager={citationManager}
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}

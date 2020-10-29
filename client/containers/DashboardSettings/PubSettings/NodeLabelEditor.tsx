@@ -148,6 +148,7 @@ const NodeLabelEditor = (props: NodeLabelEditorProps) => {
 				<tbody>
 					{referenceableNodeTypes.map((nodeType) => {
 						const { enabled, text } = state[nodeType];
+
 						return (
 							<NodeLabelEditorRow
 								key={nodeType}

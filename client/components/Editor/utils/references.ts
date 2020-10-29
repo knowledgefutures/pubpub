@@ -62,6 +62,7 @@ export const getReferenceForNode = (
 			defaults &&
 			reactedNode &&
 			typeof reactedNode.attrs.count === 'number' &&
+			label &&
 			isNodeLabelEnabled(node, nodeLabels)
 		)
 	) {
@@ -94,19 +95,18 @@ export const getReferenceableNodes = (editorState: EditorState, nodeLabels: Node
 };
 
 export const getDefaultNodeLabels = (pub: any): NodeLabelMap => {
-	return (
-		pub.nodeLabels ||
-		Object.entries(nodeDefaults).reduce(
-			(acc, [nodeType, { text }]) => ({
-				...acc,
-				[nodeType]: {
-					enabled: false,
-					text: text,
-				},
-			}),
-			{} as NodeLabelMap,
-		)
+	const nodeLabelDefaults = Object.entries(nodeDefaults).reduce(
+		(acc, [nodeType, { text }]) => ({
+			...acc,
+			[nodeType]: {
+				enabled: false,
+				text: text,
+			},
+		}),
+		{} as NodeLabelMap,
 	);
+
+	return Object.assign(nodeLabelDefaults, pub.nodeLabels);
 };
 
 export const getNodeLabelText = (node: Node, nodeLabels: NodeLabelMap) =>

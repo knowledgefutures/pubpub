@@ -13,6 +13,8 @@ export type NodeLabel = {
 	text: string;
 };
 
-export type NodeLabelMap = {
-	[nodeType in ReferenceableNodeType]: NodeLabel;
-};
+// export type NodeLabelMap = {
+// 	[nodeType in ReferenceableNodeType]?: NodeLabel;
+// };
+
+export type NodeLabelMap = Record<ReferenceableNodeType, NodeLabel>;

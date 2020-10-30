@@ -76,7 +76,7 @@ export default {
 			hideLabel: { default: false },
 		},
 		reactiveAttrs: {
-			count: counter(),
+			count: counter({ useNodeLabels: true }),
 		},
 		parseDOM: [
 			{

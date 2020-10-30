@@ -54,7 +54,7 @@ const { toDOM: tableToDOM } = table;
 table.attrs = { ...table.attrs, id: { default: null }, hideLabel: { default: false } };
 table.reactive = true;
 table.reactiveAttrs = {
-	count: counter(),
+	count: counter({ useNodeLabels: true }),
 	label: label(),
 };
 

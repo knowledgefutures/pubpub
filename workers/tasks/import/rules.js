@@ -98,7 +98,7 @@ rules.fromPandoc('DefinitionList', definitionListTransformer('bullet_list', 'lis
 // Tranform headers
 rules.transform('Header', 'heading', {
 	fromPandoc: (node, { transform }) => {
-		const id = node.attr.identifier;
+		const id = node.attr && node.attr.identifier;
 		return {
 			type: 'heading',
 			attrs: {
@@ -216,7 +216,7 @@ rules.fromPandoc('Math', (node) => {
 	return {
 		type: prosemirrorType,
 		attrs: {
-			id: node.attr.identifier,
+			id: node.attr && node.attr.identifier,
 			value: content,
 			html: katex.renderToString(content, {
 				displayMode: isDisplay,
@@ -232,7 +232,7 @@ rules.fromPandoc('Image', (node, { resource }) => {
 	return {
 		type: 'image',
 		attrs: {
-			id: node.attr.identifier,
+			id: node.attr && node.attr.identifier,
 			url: resource(node.target.url, 'image'),
 			caption: pandocInlineToHtmlString(node.content),
 			align: 'full',

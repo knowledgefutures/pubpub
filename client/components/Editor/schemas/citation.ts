@@ -16,7 +16,9 @@ export default {
 			customLabel: { default: '' },
 		},
 		reactiveAttrs: {
-			count: counter('citation', (node) => [node.attrs.value, node.attrs.unstructuredValue]),
+			count: counter({
+				nodeFingerprintFn: (node) => [node.attrs.value, node.attrs.unstructuredValue],
+			}),
 			citation: structuredCitation('value'),
 		},
 		parseDOM: [

@@ -7,13 +7,12 @@ import { isNodeLabelEnabled } from '../../utils';
 type CounterOptions = {
 	counterType?: string;
 	useNodeLabels?: boolean;
+	nodeFingerprintFn?: (node: Node) => any;
 };
 
-export const counter = (options: CounterOptions = {}, nodeFingerprintFn?) => {
-	const hasFingerprint = !!nodeFingerprintFn;
-
+export const counter = (options: CounterOptions = {}) => {
 	return function(this: Hooks, node: Node) {
-		const { counterType = node.type.name, useNodeLabels = false } = options;
+		const { counterType = node.type.name, useNodeLabels = false, nodeFingerprintFn } = options;
 		const { nodeLabels } = this.useDocumentState();
 
 		let resolvedCounterType = counterType;
@@ -31,7 +30,7 @@ export const counter = (options: CounterOptions = {}, nodeFingerprintFn?) => {
 			maxCount: 0,
 		});
 
-		if (hasFingerprint) {
+		if (nodeFingerprintFn) {
 			const fingerprint = JSON.stringify(nodeFingerprintFn(node));
 			if (!counterState.countsMap[fingerprint]) {
 				counterState.maxCount++;

@@ -8,7 +8,12 @@ import { getBranchDoc, getFirebaseToken, editorSchema } from 'server/utils/fireb
 import { sanitizePubEdge } from './sanitizePubEdge';
 import { getPubEdgeIncludes } from './pubEdgeOptions';
 
-const getDocContentForBranch = async (pubData, branchData, versionNumber) => {
+const getDocContentForBranch = async (
+	pubData,
+	branchData,
+	versionNumber,
+	restoreDiscussionMaps,
+) => {
 	const { maintenanceDocId } = branchData;
 	if (maintenanceDocId) {
 		const doc = await Doc.findOne({ where: { id: maintenanceDocId } });
@@ -22,7 +27,7 @@ const getDocContentForBranch = async (pubData, branchData, versionNumber) => {
 			mostRecentRemoteKey: -1,
 		};
 	}
-	return getBranchDoc(pubData.id, branchData.id, versionNumber, true);
+	return getBranchDoc(pubData.id, branchData.id, versionNumber, true, restoreDiscussionMaps);
 };
 
 export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) => {
@@ -39,7 +44,7 @@ export const enrichPubFirebaseDoc = async (pubData, versionNumber, branchType) =
 		mostRecentRemoteKey,
 		firstTimestamp,
 		latestTimestamp,
-	} = await getDocContentForBranch(pubData, activeBranch, versionNumber);
+	} = await getDocContentForBranch(pubData, activeBranch, versionNumber, branchType === 'draft');
 
 	if (firstTimestamp || latestTimestamp) {
 		const update = {

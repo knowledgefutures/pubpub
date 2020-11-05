@@ -59,18 +59,28 @@ const maybeAddKeyTimestampPair = (key, timestamp) => {
 	return null;
 };
 
-export const getBranchDoc = async (pubId, branchId, historyKey, createMissingCheckpoints) => {
+export const getBranchDoc = async (
+	pubId,
+	branchId,
+	historyKey,
+	createMissingCheckpoints,
+	doRestoreDiscussionMaps,
+) => {
 	const branchRef = getBranchRef(pubId, branchId);
 
 	const [
 		{ doc, docIsFromCheckpoint, key: currentKey, timestamp: currentTimestamp, checkpointMap },
 		{ timestamp: firstTimestamp, key: firstKey },
 		{ timestamp: latestTimestamp, key: latestKey },
-	] = await Promise.all([
-		getFirebaseDoc(branchRef, editorSchema, historyKey),
-		getFirstKeyAndTimestamp(branchRef),
-		getLatestKeyAndTimestamp(branchRef),
-	]);
+	] = await Promise.all(
+		[
+			getFirebaseDoc(branchRef, editorSchema, historyKey),
+			getFirstKeyAndTimestamp(branchRef),
+			getLatestKeyAndTimestamp(branchRef),
+			doRestoreDiscussionMaps &&
+				restoreDiscussionMaps(branchRef, editorSchema, true).catch(() => {}),
+		].filter((x) => x),
+	);
 
 	if (!docIsFromCheckpoint && createMissingCheckpoints && currentKey === latestKey) {
 		storeCheckpoint(branchRef, doc, latestKey);

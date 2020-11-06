@@ -27,14 +27,13 @@ type NavBuildContext = {
 
 type CommunityNavigationMenu = { id: string; title: string; children: CommunityNavigationChild[] };
 type CommunityNavigationChild =
-	| string // TODO(ian): We should be able to remove this after late-2020 nav refactor
 	| { id: string; type: 'page' | 'collection' }
 	| { id: string; title: string; href: string };
 
 export type CommunityNavigationEntry = CommunityNavigationChild | CommunityNavigationMenu;
 export const isCommunityNavigationMenu = (
 	item: CommunityNavigationEntry,
-): item is CommunityNavigationMenu => typeof item === 'object' && 'children' in item;
+): item is CommunityNavigationMenu => 'children' in item;
 
 type NavbarChild = {
 	title: string;
@@ -102,12 +101,7 @@ const getNavbarItemForCommunityNavigationChild = (
 	ctx: NavBuildContext,
 ): null | NavbarChild => {
 	const { pages, collections } = ctx;
-	if (typeof navEntry === 'string') {
-		const page = pages.find((p) => p.id === navEntry);
-		if (page) {
-			return getNavbarChildForPageOrCollection(page);
-		}
-	} else if ('type' in navEntry) {
+	if ('type' in navEntry) {
 		const { type, id } = navEntry;
 		const item =
 			type === 'collection'

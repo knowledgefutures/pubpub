@@ -76,13 +76,10 @@ const NavBuilder = (props: Props) => {
 	};
 
 	const updateItem = (dropdownId, index, newItemValues: Partial<CommunityNavigationEntry>) => {
-		// TODO(ian): Remove this cast after completing migration
-		const newItemValuesObject = newItemValues as {};
 		const nextUserElements =
-			// TODO(ian): Remove these any casts after completing migration
 			dropdownId === 'main-list'
-				? userSetElements.map((item: any, currIndex) => {
-						return currIndex === index ? { ...item, ...newItemValuesObject } : item;
+				? userSetElements.map((item, currIndex) => {
+						return currIndex === index ? { ...item, ...newItemValues } : item;
 				  })
 				: userSetElements.map((item: any) => {
 						if (item.id === dropdownId) {
@@ -90,7 +87,7 @@ const NavBuilder = (props: Props) => {
 								...item,
 								children: item.children.map((subItem, subCurrIndex) => {
 									return subCurrIndex === index
-										? { ...subItem, ...newItemValuesObject }
+										? { ...subItem, ...newItemValues }
 										: subItem;
 								}),
 							};
@@ -104,9 +101,8 @@ const NavBuilder = (props: Props) => {
 
 	const removeItem = (itemId, dropdownId) => {
 		const nextUserElements =
-			// TODO(ian): Remove these any casts after completing migration
 			dropdownId === 'main-list'
-				? userSetElements.filter((item: any) => item.id !== itemId && item !== itemId)
+				? userSetElements.filter((item) => item.id !== itemId && item !== itemId)
 				: userSetElements.map((item: any) => {
 						if (item.id === dropdownId) {
 							return {
@@ -134,10 +130,7 @@ const NavBuilder = (props: Props) => {
 					items={pages}
 					placeholder="Add Page"
 					usedItems={pages.filter((page) =>
-						// TODO(ian): Remove these any casts after completing migration
-						currentNav.some(
-							(current: any) => current === page.id || current.id === page.id,
-						),
+						currentNav.some((current) => current === page.id || current.id === page.id),
 					)}
 					onSelect={(page) => {
 						addItem({ type: 'page', id: page.id });
@@ -147,8 +140,7 @@ const NavBuilder = (props: Props) => {
 					items={collections}
 					placeholder="Add Collection"
 					usedItems={collections.filter((collection) =>
-						// TODO(ian): Remove these any casts after completing migration
-						currentNav.some((current: any) => current.id === collection.id),
+						currentNav.some((current) => current.id === collection.id),
 					)}
 					onSelect={(collection) => {
 						addItem({ type: 'collection', id: collection.id });

@@ -1,10 +1,10 @@
 import { tableNodes } from 'prosemirror-tables';
 import { DOMOutputSpec, Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
+import { pruneFalsyValues } from 'utils/arrays';
+import { withValue } from 'utils/fp';
 import { counter } from './reactive/counter';
 import { label } from './reactive/label';
 import { buildLabel } from '../utils/references';
-import { pruneFalsyValues } from 'utils/arrays';
-import { withValue } from 'utils/fp';
 
 const pmTableNodes = tableNodes({
 	tableGroup: 'block',

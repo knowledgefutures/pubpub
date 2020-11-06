@@ -40,7 +40,6 @@ const validBlockTypes = [
 	'text',
 	'html',
 	'banner',
-	'pages', // TODO(ian): Remove this after migration
 	'collections-pages',
 	'collection-header',
 ];
@@ -255,7 +254,7 @@ class LayoutEditor extends Component<Props, State> {
 										communityData={this.props.communityData}
 									/>
 								)}
-								{(item.type === 'pages' || item.type === 'collections-pages') && (
+								{item.type === 'collections-pages' && (
 									<LayoutEditorPagesCollections
 										key={`item-${item.id}`}
 										onChange={this.handleChange}

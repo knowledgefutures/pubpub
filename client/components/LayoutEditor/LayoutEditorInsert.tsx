@@ -3,7 +3,6 @@ import { Popover, PopoverInteractionKind, Position, Menu, MenuItem } from '@blue
 
 import { Page } from 'utils/types';
 import { LayoutBlock, PubSortOrder } from 'utils/layout/types';
-import { usePageContext } from 'utils/hooks';
 import { Icon } from 'components';
 
 require('./layoutEditorInsert.scss');
@@ -113,23 +112,11 @@ const bannerBlocks = [
 	},
 ];
 
-const newCollectionsPagesBlock = (communityData, useLegacyBlock) => {
+const newCollectionsPagesBlock = (communityData) => {
 	const pagesToShow = communityData.pages.slice(0, 3);
-	// TODO(ian): Remove this branch after migration
-	if (useLegacyBlock) {
-		return {
-			type: 'pages',
-			title: 'Default',
-			content: {
-				title: '',
-				pageIds: pagesToShow.map((p) => p.id),
-			},
-		};
-	}
 	return {
 		type: 'collections-pages',
-		// TODO(ian): Restore this title to 'Default'
-		title: 'Experimental (Pages & Collections)',
+		title: 'Default',
 		content: {
 			title: '',
 			items: pagesToShow,
@@ -139,16 +126,7 @@ const newCollectionsPagesBlock = (communityData, useLegacyBlock) => {
 
 const LayoutEditorInsert = (props: Props) => {
 	const { insertIndex, onInsert, pubSort, showCollectionHeaderBlock } = props;
-	const {
-		scopeData: {
-			activePermissions: { isSuperAdmin },
-		},
-	} = usePageContext();
-
-	const pagesCollectionsBlocks = [
-		newCollectionsPagesBlock(props.communityData, true),
-		isSuperAdmin && newCollectionsPagesBlock(props.communityData, false),
-	];
+	const pagesCollectionsBlocks = [newCollectionsPagesBlock(props.communityData)];
 
 	const generateMenuItem = (item) => {
 		return (
@@ -206,7 +184,7 @@ const LayoutEditorInsert = (props: Props) => {
 						{htmlBlocks.map((item) => generateMenuItem(item))}
 						<li className="bp3-menu-header">
 							<h6>
-								Pages Block
+								Collections & Pages Block
 								<Icon icon="application" />
 							</h6>
 						</li>

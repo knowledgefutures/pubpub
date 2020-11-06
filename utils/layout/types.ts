@@ -71,16 +71,6 @@ export type LayoutBlockBanner = {
 	};
 };
 
-// TODO(ian): Remove after migration
-export type LayoutBlockPages = {
-	type: 'pages';
-	id: string;
-	content: {
-		pageIds: string[];
-		title?: string;
-	};
-};
-
 export type LayoutBlockCollectionsPages = {
 	type: 'collections-pages';
 	id: string;
@@ -106,7 +96,6 @@ export type LayoutBlock =
 	| LayoutBlockBanner
 	| LayoutBlockCollectionsPages
 	| LayoutBlockHtml
-	| LayoutBlockPages
 	| LayoutBlockPubs
 	| LayoutBlockText
 	| LayoutBlockCollectionHeader;

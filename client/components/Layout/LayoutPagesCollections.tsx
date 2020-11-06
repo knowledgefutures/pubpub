@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { LayoutBlockPages, LayoutBlockCollectionsPages } from 'utils/layout/types';
+import { LayoutBlockCollectionsPages } from 'utils/layout/types';
 import PagePreview from 'components/PagePreview/PagePreview';
 
 export type BlockItem = {
@@ -14,8 +14,7 @@ export type PageOrCollection = {
 	slug: string;
 };
 
-export type Content = LayoutBlockPages['content'] | LayoutBlockCollectionsPages['content'];
-export const isLegacyContent = (c: Content): c is LayoutBlockPages['content'] => 'pageIds' in c;
+export type Content = LayoutBlockCollectionsPages['content'];
 
 type Props = {
 	content: Content;
@@ -28,11 +27,6 @@ const resolveItemsFromContent = (
 	collections: PageOrCollection[],
 	pages: PageOrCollection[],
 ): PageOrCollection[] => {
-	if (isLegacyContent(content)) {
-		return content.pageIds
-			.map((pageId) => pages.find((p) => p.id === pageId))
-			.filter((page): page is PageOrCollection => !!page);
-	}
 	return content.items
 		.map((item) => {
 			const items = item.type === 'collection' ? collections : pages;

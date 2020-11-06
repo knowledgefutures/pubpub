@@ -6,7 +6,6 @@ import LayoutPagesCollections, {
 	Content,
 	BlockItem,
 	PageOrCollection,
-	isLegacyContent,
 } from 'components/Layout/LayoutPagesCollections';
 
 type Props = {
@@ -37,14 +36,9 @@ const getBlockItem = (item: OrderableItem): BlockItem => {
 };
 
 const getAllItems = (
-	isLegacy: boolean,
 	collections: PageOrCollection[],
 	pages: PageOrCollection[],
 ): OrderableItem[] => {
-	// TODO(ian): Remove this branch after migration
-	if (isLegacy) {
-		return pages.map((page) => getOrderableItem(page, 'page'));
-	}
 	return [
 		...collections.map((collection) => getOrderableItem(collection, 'collection')),
 		...pages.map((page) => getOrderableItem(page, 'page')),
@@ -64,25 +58,13 @@ const getSelectedItems = (
 	allItems: OrderableItem[],
 	titleIndex: Record<string, string>,
 ): OrderableItem[] => {
-	// TODO(ian): Remove this branch after migration
-	if (isLegacyContent(content)) {
-		return content.pageIds
-			.map((id) => allItems.find((item) => item.type === 'page' && item.id === id))
-			.filter((item): item is OrderableItem => !!item);
-	}
 	return content.items.map((item) => ({ ...item, title: titleIndex[item.id] }));
 };
 
 const LayoutEditorPages = (props: Props) => {
 	const { layoutIndex, onChange, content, collections, pages } = props;
-	const isLegacy = isLegacyContent(content);
-	const itemsLabel = isLegacy ? 'pages' : 'items';
 
-	const allItems = useMemo(() => getAllItems(isLegacy, collections, pages), [
-		isLegacy,
-		collections,
-		pages,
-	]);
+	const allItems = useMemo(() => getAllItems(collections, pages), [collections, pages]);
 	const titleIndex = useMemo(() => indexItemTitlesById(allItems), [allItems]);
 	const selectedItems = useMemo(() => getSelectedItems(content, allItems, titleIndex), [
 		content,
@@ -100,21 +82,12 @@ const LayoutEditorPages = (props: Props) => {
 	);
 
 	const setSelectedItems = useCallback(
-		(items: OrderableItem[]) => {
-			// TODO(ian): Remove this branch after migration
-			if (isLegacy) {
-				onChange(layoutIndex, {
-					...content,
-					pageIds: items.map((item) => item.id),
-				});
-			} else {
-				onChange(layoutIndex, {
-					...content,
-					items: items.map(getBlockItem),
-				});
-			}
-		},
-		[onChange, layoutIndex, content, isLegacy],
+		(items: OrderableItem[]) =>
+			onChange(layoutIndex, {
+				...content,
+				items: items.map(getBlockItem),
+			}),
+		[onChange, layoutIndex, content],
 	);
 
 	return (
@@ -125,7 +98,7 @@ const LayoutEditorPages = (props: Props) => {
 					value={content.title}
 					onChange={(evt) => setTitle(evt.target.value)}
 				/>
-				<InputField label={isLegacy ? 'Pages' : 'Collections & Pages'}>
+				<InputField label="Collections & Pages">
 					<Popover
 						content={
 							<OrderPicker
@@ -133,8 +106,8 @@ const LayoutEditorPages = (props: Props) => {
 								allItems={allItems}
 								onChange={setSelectedItems}
 								uniqueId={String(layoutIndex)}
-								selectedTitle={`Displayed ${itemsLabel}`}
-								availableTitle={`Available ${itemsLabel}`}
+								selectedTitle="Displayed items"
+								availableTitle="Available items"
 							/>
 						}
 						interactionKind={PopoverInteractionKind.CLICK}
@@ -143,7 +116,7 @@ const LayoutEditorPages = (props: Props) => {
 						minimal={true}
 						popoverClassName="order-picker-popover"
 					>
-						<Button rightIcon="caret-down">Choose {itemsLabel}</Button>
+						<Button rightIcon="caret-down">Choose items</Button>
 					</Popover>
 				</InputField>
 			</div>

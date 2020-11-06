@@ -143,8 +143,7 @@ const NavBuilder = (props: Props) => {
 						addItem({ type: 'page', id: page.id });
 					}}
 				/>
-				{/* TODO(ian): Uncomment after Collection slugs resolve to a layout */}
-				{/* <PageCollectionAutocomplete
+				<PageCollectionAutocomplete
 					items={collections}
 					placeholder="Add Collection"
 					usedItems={collections.filter((collection) =>
@@ -154,7 +153,7 @@ const NavBuilder = (props: Props) => {
 					onSelect={(collection) => {
 						addItem({ type: 'collection', id: collection.id });
 					}}
-				/> */}
+				/>
 				<Button
 					small
 					text="Add Link"

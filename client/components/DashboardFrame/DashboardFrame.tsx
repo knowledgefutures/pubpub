@@ -5,7 +5,7 @@ import { Icon } from 'components';
 
 require('./dashboardFrame.scss');
 
-type OwnProps = {
+type Props = {
 	children: React.ReactNode;
 	className?: string;
 	controls?: React.ReactNode;
@@ -13,18 +13,9 @@ type OwnProps = {
 	icon?: string;
 	title?: React.ReactNode;
 };
-const defaultProps = {
-	className: '',
-	controls: null,
-	details: null,
-	icon: null,
-	title: undefined,
-};
-
-type Props = OwnProps & typeof defaultProps;
 
 const DashboardFrame = (props: Props) => {
-	const { className, children, controls, details, icon, title } = props;
+	const { className = '', children, controls = null, details = null, icon, title } = props;
 	const { scopeData } = usePageContext();
 	const {
 		elements: { activeTargetType },
@@ -54,5 +45,5 @@ const DashboardFrame = (props: Props) => {
 		</div>
 	);
 };
-DashboardFrame.defaultProps = defaultProps;
+
 export default DashboardFrame;

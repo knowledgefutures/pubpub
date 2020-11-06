@@ -6,7 +6,7 @@ import { usePageContext } from 'utils/hooks';
 import { formatDate } from 'utils/dates';
 import { pubUrl, pubShortUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { getAllPubContributors } from 'utils/pub/contributors';
+import { getAllPubContributors } from 'utils/contributors';
 
 import { pubEdgeType } from './constants';
 import { getHostnameForUrl } from './util';

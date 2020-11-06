@@ -212,11 +212,9 @@ class LayoutEditorBanner extends Component<Props> {
 						</ButtonGroup>
 					</InputField>
 					<ImageUpload
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 						label="Image"
 						htmlFor={`section-title-${this.props.layoutIndex}`}
 						defaultImage={this.props.content.backgroundImage}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(value: any) => void' is not assignable to t... Remove this comment to see the full error message
 						onNewImage={this.setBackgroundImage}
 						canClear={true}
 						width={50}

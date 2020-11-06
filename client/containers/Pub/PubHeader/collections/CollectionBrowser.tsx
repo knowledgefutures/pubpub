@@ -31,7 +31,7 @@ const CollectionBrowser = (props: Props) => {
 	const { pubs, error, isLoading } = useCollectionPubs(updateLocalData, collection);
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'bpDisplayIcon' does not exist on type '{... Remove this comment to see the full error message
 	const { bpDisplayIcon } = getSchemaForKind(collection.kind);
-	const readingPubUrl = (pub) => createReadingParamUrl(pubUrl(communityData, pub), collection);
+	const readingPubUrl = (pub) => createReadingParamUrl(pubUrl(communityData, pub), collection.id);
 
 	// eslint-disable-next-line react/prop-types
 	const renderDisclosure = ({ ref, ...disclosureProps }) => {

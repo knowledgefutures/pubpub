@@ -76,7 +76,6 @@ const EditableAvatar = (props: Props) => {
 
 	return (
 		<div className="editable-avatar-component">
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Type '(image: any) => void' is not assignable to t... Remove this comment to see the full error message */}
 			<ImageUpload onImageSelect={handleImageSelect} onNewImage={handleNewImage}>
 				{renderControls}
 			</ImageUpload>

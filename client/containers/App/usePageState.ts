@@ -1,13 +1,16 @@
 import { useState } from 'react';
 
-export const usePageState = ({
-	loginData: initialLoginData,
-	communityData: initialCommunityData,
-	locationData: initialLocationData,
-	scopeData: initialScopeData,
-}) => {
+export const usePageState = (initialData, viewData) => {
+	const {
+		loginData: initialLoginData,
+		communityData: initialCommunityData,
+		locationData: initialLocationData,
+		scopeData: initialScopeData,
+	} = initialData;
+	const { pageData: initialPageData } = viewData;
 	const [loginData] = useState(initialLoginData);
 	const [locationData] = useState(initialLocationData);
+	const [pageData] = useState(initialPageData);
 	const [communityData, setCommunityData] = useState(initialCommunityData);
 	const [scopeData, setScopeData] = useState(initialScopeData);
 
@@ -57,6 +60,7 @@ export const usePageState = ({
 		locationData: locationData,
 		communityData: communityData,
 		scopeData: scopeData,
+		pageData: pageData,
 		updateCommunity: updateCommunity,
 		updateCollection: updateCollection,
 	};

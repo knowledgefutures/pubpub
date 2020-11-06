@@ -5,53 +5,47 @@ import Icon from 'components/Icon/Icon';
 
 require('./orderPicker.scss');
 
-type OwnProps = {
-	selectedItems: any[];
-	allItems: any[];
-	onChange: (...args: any[]) => any;
-	uniqueId: (...args: any[]) => any;
-	selectedTitle?: string;
-	availableTitle?: string;
-	selectedTitleTooltip?: string;
-	availableTitleTooltip?: string;
+type MinimalItem = {
+	id: string;
+	title: string;
+};
+
+type Props<Item> = {
+	selectedItems: Item[];
+	allItems: Item[];
+	onChange: (selectedItems: Item[]) => any;
+	uniqueId: string;
+	selectedTitle: React.ReactNode;
+	availableTitle: React.ReactNode;
+	selectedTitleTooltip: null | string;
+	availableTitleTooltip: null | string;
 };
 
 const defaultProps = {
 	selectedTitle: 'Selected',
 	availableTitle: 'Available',
-	selectedTitleTooltip: undefined,
-	availableTitleTooltip: undefined,
+	selectedTitleTooltip: null,
+	availableTitleTooltip: null,
 };
 
-type State = any;
+type State<Item> = {
+	selectedItems: Item[];
+	availableItems: Item[];
+};
 
-type Props = OwnProps & typeof defaultProps;
-
-class OrderPicker extends Component<Props, State> {
+class OrderPicker<Item extends MinimalItem> extends Component<Props<Item>, State<Item>> {
 	static defaultProps = defaultProps;
 
-	constructor(props: Props) {
+	constructor(props: Props<Item>) {
 		super(props);
 		this.state = {
 			selectedItems: props.selectedItems,
 			availableItems: props.allItems
-				.filter((item) => {
-					return props.selectedItems.reduce((prev, curr) => {
-						if (curr.id === item.id) {
-							return false;
-						}
-						return prev;
-					}, true);
-				})
-				.sort((foo, bar) => {
-					if (foo.title < bar.title) {
-						return -1;
-					}
-					if (foo.title > bar.title) {
-						return 1;
-					}
-					return 0;
-				}),
+				.filter(
+					(item) =>
+						!props.selectedItems.some((selectedItem) => selectedItem.id === item.id),
+				)
+				.sort((a, b) => (a.title > b.title ? 1 : -1)),
 		};
 		this.onDragEnd = this.onDragEnd.bind(this);
 	}

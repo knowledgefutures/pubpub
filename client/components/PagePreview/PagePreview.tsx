@@ -1,16 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { getResizedUrl } from 'utils/images';
 import { generatePageBackground } from 'utils/pages';
 
 require('./pagePreview.scss');
 
-const propTypes = {
-	pageData: PropTypes.object.isRequired,
+type Props = {
+	pageData: {
+		title: string;
+		slug: string;
+		avatar?: string;
+	};
 };
 
-const PagePreview = function(props) {
+const PagePreview = (props: Props) => {
 	const pageData = props.pageData;
 
 	const resizedBannerImage = getResizedUrl(pageData.avatar, 'fit-in', '600x0');
@@ -26,5 +29,4 @@ const PagePreview = function(props) {
 	);
 };
 
-PagePreview.propTypes = propTypes;
 export default PagePreview;

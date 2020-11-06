@@ -4,7 +4,7 @@ import { Op, QueryTypes } from 'sequelize';
 
 import { communityUrl as getCommunityUrl, pubUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { getAllPubContributors, getContributorName } from 'utils/pub/contributors';
+import { getAllPubContributors, getContributorName } from 'utils/contributors';
 import { getFormattedDownloadUrl, getPublicExportUrl } from 'utils/pub/downloads';
 
 import {

@@ -16,7 +16,8 @@ type Props = {
 
 type State = any;
 
-const createPubFailureText = "Error creating a new Pub. You may want to refresh the page and try again.";
+const createPubFailureText =
+	'Error creating a new Pub. You may want to refresh the page and try again.';
 
 class LayoutBanner extends Component<Props, State> {
 	constructor(props: Props) {
@@ -73,18 +74,20 @@ class LayoutBanner extends Component<Props, State> {
 		const button = (
 			<AnchorButton
 				className="bp3-large"
-				onClick={
-					buttonType === 'create-pub' &&
-					this.props.loginData.id &&
-					this.createPub
-				}
+				onClick={buttonType === 'create-pub' && this.props.loginData.id && this.createPub}
 				loading={this.state.isLoading}
 				text={buttonText}
 				href={buttonUrl}
 			/>
 		);
 
-		return buttonError ? <Tooltip content={buttonError} defaultIsOpen={true}>{button}</Tooltip> : button;
+		return buttonError ? (
+			<Tooltip content={buttonError} defaultIsOpen={true}>
+				{button}
+			</Tooltip>
+		) : (
+			button
+		);
 	}
 
 	render() {
@@ -98,7 +101,7 @@ class LayoutBanner extends Component<Props, State> {
 		const textStyle = {
 			color:
 				this.props.content.backgroundImage ||
-					!Color(this.props.content.backgroundColor).isLight()
+				!Color(this.props.content.backgroundColor).isLight()
 					? '#FFFFFF'
 					: '#000000',
 			lineHeight: '1em',

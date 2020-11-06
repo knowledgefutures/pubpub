@@ -3,7 +3,7 @@ import stopword from 'stopword';
 import { Pub, Community, Branch, PubAttribution, Page, includeUserModel } from 'server/models';
 import { getBranchDoc } from 'server/utils/firebaseAdmin';
 import { getScope, getMembers } from 'server/utils/queryHelpers';
-import { getAuthorString } from 'utils/pub/contributors';
+import { getAuthorString } from 'utils/contributors';
 
 import stopWordList from './stopwords';
 

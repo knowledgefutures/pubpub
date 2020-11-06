@@ -8,6 +8,8 @@ export { default as CollectionMultiSelect } from './CollectionMultiSelect/Collec
 export { default as ColorInput } from './ColorInput/ColorInput';
 export { default as CommunityPreview } from './CommunityPreview/CommunityPreview';
 export { default as ConfirmDialog } from './ConfirmDialog/ConfirmDialog';
+export { default as ContributorAvatars } from './ContributorAvatars/ContributorAvatars';
+export { default as ContributorsList } from './ContributorsList/ContributorsList';
 export { default as DashboardFrame } from './DashboardFrame/DashboardFrame';
 export { default as DashboardRow } from './DashboardRow/DashboardRow';
 export { default as DashboardRowListing } from './DashboardRow/DashboardRowListing';
@@ -24,6 +26,8 @@ export { default as Icon } from './Icon/Icon';
 export { default as ImageCropper } from './ImageCropper/ImageCropper';
 export { default as ImageUpload } from './ImageUpload/ImageUpload';
 export { default as InputField } from './InputField/InputField';
+export { default as Layout } from './Layout/Layout';
+export { default as LayoutEditor } from './LayoutEditor/LayoutEditor';
 export { default as LegalBanner } from './LegalBanner/LegalBanner';
 export { default as LengthIndicator } from './LengthIndicator/LengthIndicator';
 export { default as LicenseSelect } from './LicenseSelect/LicenseSelect';

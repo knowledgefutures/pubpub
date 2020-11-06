@@ -251,9 +251,7 @@ const UserCreate = (props: Props) => {
 						/>
 						<ImageUpload
 							htmlFor="avatar-upload"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 							label="Avatar Image"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 							onNewImage={onAvatarChange}
 							useCrop={true}
 						/>

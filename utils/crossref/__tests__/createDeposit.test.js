@@ -157,7 +157,7 @@ describe('createDeposit', () => {
 
 	it('creates relationships where the resource is a URL', () => {
 		const [edge] = pubIsReviewOf.outboundEdges;
-		const { doi, ...targetPubProps } = edge.targetPub;
+		const { doi: _, ...targetPubProps } = edge.targetPub;
 
 		expect(
 			createDeposit(

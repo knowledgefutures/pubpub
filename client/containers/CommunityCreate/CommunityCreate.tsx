@@ -103,15 +103,11 @@ const CommunityCreate = () => {
 							/>
 							<ImageUpload
 								htmlFor="large-header-logo-upload"
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 								label="Community Logo"
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 								defaultImage={heroLogo}
 								height={60}
 								width={150}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 								onNewImage={onHeroHeaderLogoChange}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 								helperText="Used on the landing page. Suggested height: 200px"
 							/>
 							<InputField label="Light Accent Color">

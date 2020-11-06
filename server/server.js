@@ -9,7 +9,7 @@ import passport from 'passport';
 import * as Sentry from '@sentry/node';
 
 import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/environment';
-import { HTTPStatusError } from 'server/utils/errors';
+import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 
 import { sequelize, User } from './models';
 
@@ -99,19 +99,6 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-/* ------------ */
-/* Handle Error */
-/* ------------ */
-
-app.use((err, req, res, next) => {
-	const errStatus = err instanceof HTTPStatusError ? err.status : 500;
-	if (!res.headersSent) {
-		res.status(errStatus);
-	}
-	console.error(`Error!  ${err}`);
-	next();
-});
-
 /* ---------------- */
 /* Server Endpoints */
 /* ---------------- */
@@ -157,6 +144,7 @@ if (process.env.NODE_ENV === 'production') {
 	// The Sentry error handler must be before any other error middleware
 	app.use(Sentry.Handlers.errorHandler());
 }
+app.use(errorMiddleware);
 
 /* ------------ */
 /* Start Server */

@@ -12,6 +12,7 @@ type OwnProps = {
 	minimal?: boolean;
 	tooltipPosition?: string;
 	usePortal?: boolean;
+	small?: boolean;
 };
 
 const defaultProps = {
@@ -38,6 +39,7 @@ const ClickToCopyButton = (props: Props) => {
 		minimal,
 		tooltipPosition,
 		usePortal,
+		small = false,
 	} = props;
 	const [hasCopied, setHasCopied] = useState(false);
 	const [copyState, copyToClipboard] = useCopyToClipboard();
@@ -62,8 +64,7 @@ const ClickToCopyButton = (props: Props) => {
 			return children(handleClick);
 		}
 		return (
-			// @ts-expect-error ts-migrate(2322) FIXME: Property 'position' does not exist on type 'Intrin... Remove this comment to see the full error message
-			<Button minimal={minimal} icon={icon} onClick={handleClick} position={tooltipPosition}>
+			<Button minimal={minimal} small={small} icon={icon as any} onClick={handleClick}>
 				{children}
 			</Button>
 		);
@@ -76,6 +77,7 @@ const ClickToCopyButton = (props: Props) => {
 			onClosed={() => setHasCopied(false)}
 			className={className}
 			children={renderChildren()}
+			position={tooltipPosition as any}
 		/>
 	);
 };

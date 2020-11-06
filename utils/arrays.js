@@ -10,4 +10,12 @@ export const intersperse = (arr, val) => {
 	return res;
 };
 
+export const indexByProperty = (array, property) => {
+	const res = {};
+	array.forEach((el) => {
+		res[el[property]] = el;
+	});
+	return res;
+};
+
 export const pruneFalsyValues = (arr) => arr.filter(Boolean);

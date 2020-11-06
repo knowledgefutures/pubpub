@@ -5,13 +5,12 @@ import dateFormat from 'dateformat';
 import { pubDataProps } from 'types/pub';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate, getPubUpdatedDate, getPubCreatedDate } from 'utils/pub/pubDates';
-import { ClickToCopyButton } from 'components';
-import { getAllPubContributors } from 'utils/pub/contributors';
+import { ClickToCopyButton, ContributorsList } from 'components';
+import { getAllPubContributors } from 'utils/contributors';
 import { usePageContext } from 'utils/hooks';
 
 import SmallHeaderButton from '../SmallHeaderButton';
 import CitationsPreview from '../CitationsPreview';
-import Contributors from './Contributors';
 
 require('./pubDetails.scss');
 
@@ -47,7 +46,7 @@ const PubDetails = (props: Props) => {
 					<h6 className="pub-header-themed-secondary">
 						Contributors ({contributors.length})
 					</h6>
-					<Contributors contributors={contributors} />
+					<ContributorsList attributions={contributors} />
 				</div>
 				<div className="section publication-dates">
 					{canView && (

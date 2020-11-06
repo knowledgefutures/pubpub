@@ -83,13 +83,10 @@ const User = (props: Props) => {
 								<div key={`pub-${pub.id}`} className="row">
 									<div className="col-12">
 										<PubPreview
-											// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 											pubData={pub}
-											// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 											communityData={
 												localCommunityId ? undefined : pub.community
 											}
-											// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 											size="medium"
 										/>
 									</div>

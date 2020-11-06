@@ -26,7 +26,7 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 		}, undefined);
 
 		if (!pageId) {
-			throw new Error('Page Not Found');
+			return next();
 		}
 		const pageData = await getPage({ query: { id: pageId }, initialData: initialData });
 		const pageTitle = !pageData.slug

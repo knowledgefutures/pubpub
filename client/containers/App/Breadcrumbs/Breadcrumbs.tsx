@@ -26,9 +26,11 @@ const Breadcrumbs = () => {
 
 	let title = communityData.title;
 	let avatar = communityData.avatar;
+	let showLockIcon = false;
 	if (activeCollection) {
 		title = activeCollection.title;
 		avatar = activeCollection.avatar;
+		showLockIcon = !activeCollection.isPublic;
 	}
 	if (activePub) {
 		title = activePub.title;
@@ -75,7 +77,11 @@ const Breadcrumbs = () => {
 				onClick: handleCreatePub,
 				minPermissions: 'manage',
 			},
-		],
+			activeCollection && {
+				text: 'Visit Collection',
+				href: `/${activeCollection.slug}`,
+			},
+		].filter((x) => x),
 		pub: [
 			{
 				text: 'Go to Pub',
@@ -102,6 +108,7 @@ const Breadcrumbs = () => {
 				<div className="titles">
 					<div className="title" title={title}>
 						{title}
+						{showLockIcon && <Icon icon="lock2" className="lock-icon" iconSize={20} />}
 					</div>
 					<div className="crumbs">
 						<a className="crumb truncate" href={getDashUrl({})}>

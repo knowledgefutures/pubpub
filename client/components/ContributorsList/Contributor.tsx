@@ -38,7 +38,7 @@ const Contributor = function(props) {
 	}, '');
 
 	return (
-		<div className="pub-contributors_contributor-component">
+		<div className="contributors-list_contributor-component">
 			<div className="avatar-wrapper">{avatarElement}</div>
 			<div className="details-wrapper">
 				<div className="name">{nameElement}</div>

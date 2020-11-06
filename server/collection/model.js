@@ -27,7 +27,7 @@ export default (sequelize, dataTypes) => {
 				type: dataTypes.ENUM('none', 'minimal', 'medium', 'choose-best'),
 				defaultValue: 'choose-best',
 			},
-
+			layout: { type: dataTypes.JSONB, allowNull: false, defaultValue: {} },
 			/* Set by Associations */
 			pageId: { type: dataTypes.UUID } /* Used to link a collection to a specific page */,
 			communityId: { type: dataTypes.UUID },

@@ -1,15 +1,17 @@
 import { Page, Community } from 'server/models';
 import { setPageSearchData, deletePageSearchData } from 'server/utils/search';
+import { findAcceptableSlug, slugIsAvailable } from 'server/utils/slugs';
 import { slugifyString } from 'utils/strings';
+import { PubPubError } from 'server/utils/errors';
 import { generateHash } from 'utils/hashes';
 
 import { sanitizePageHtml } from './sanitizePageHtml';
 
-export const createPage = (inputValues) => {
+export const createPage = async (inputValues) => {
 	return Page.create({
 		communityId: inputValues.communityId,
 		title: inputValues.title,
-		slug: inputValues.slug,
+		slug: await findAcceptableSlug(inputValues.slug),
 		description: inputValues.description,
 		isPublic: false,
 		viewHash: generateHash(8),
@@ -42,7 +44,7 @@ export const createPage = (inputValues) => {
 		});
 };
 
-export const updatePage = (inputValues, updatePermissions) => {
+export const updatePage = async (inputValues, updatePermissions) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -52,6 +54,14 @@ export const updatePage = (inputValues, updatePermissions) => {
 	});
 	if (filteredValues.slug) {
 		filteredValues.slug = slugifyString(filteredValues.slug);
+		const available = await slugIsAvailable({
+			slug: filteredValues.slug,
+			communityId: inputValues.communityId,
+			activeElementId: inputValues.pageId,
+		});
+		if (!available) {
+			throw new PubPubError.InvalidFieldsError('slug');
+		}
 	}
 	if (filteredValues.layout) {
 		filteredValues.layout = filteredValues.layout.map((block) => {

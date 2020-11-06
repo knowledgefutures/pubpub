@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AnchorButton, Button } from '@blueprintjs/core';
-import { useBeforeUnload } from 'react-use';
+import { useUpdateEffect } from 'react-use';
 
 import { communityUrl } from 'utils/canonicalUrls';
 import { getDefaultLayout } from 'utils/pages';
@@ -15,113 +15,91 @@ import {
 	InputField,
 	SettingsSection,
 	ClickToCopyButton,
+	LayoutEditor,
 } from 'components';
+import { Page, Pub } from 'utils/types';
+import { usePersistableState } from 'client/utils/usePersistableState';
 
-import LayoutEditor from './LayoutEditor';
 import PageDelete from './PageDelete';
 
 require('./dashboardPage.scss');
 
 type Props = {
-	pageData: {
-		title?: string;
-	};
+	pageData: Page & { pubs: Pub[] };
 };
 
 const defaultLayout = getDefaultLayout();
 
 const DashboardPages = (props: Props) => {
-	const [persistedPageData, setPersistedPageData] = useState(props.pageData);
-	const [pendingPageData, setPendingPageData] = useState({});
-	const [isPersisting, setIsPersisting] = useState(false);
 	const { updateCommunity, locationData, scopeData } = usePageContext();
 	const { pendingPromise } = usePendingChanges();
-	const hasPendingChanges = Object.keys(pendingPageData).length > 0;
 
 	const {
 		elements: { activeCommunity },
 	} = scopeData;
 
-	const pageData = {
-		...persistedPageData,
-		...pendingPageData,
-	};
-
 	const {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'avatar' does not exist on type '{ title?... Remove this comment to see the full error message
-		avatar,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'description' does not exist on type '{ t... Remove this comment to see the full error message
-		description,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'isNarrowWidth' does not exist on type '{... Remove this comment to see the full error message
-		isNarrowWidth,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'isPublic' does not exist on type '{ titl... Remove this comment to see the full error message
-		isPublic,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'layout' does not exist on type '{ title?... Remove this comment to see the full error message
-		layout,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'pubs' does not exist on type '{ title?: ... Remove this comment to see the full error message
-		pubs,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{ title?: ... Remove this comment to see the full error message
-		slug,
-		title,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'viewHash' does not exist on type '{ titl... Remove this comment to see the full error message
-		viewHash,
-	} = pageData;
-
-	useBeforeUnload(
-		hasPendingChanges,
-		'You have unsaved changes to this Page. Are you sure you want to navigate away?',
-	);
-
-	const updatePageData = (update) => {
-		setPendingPageData({ ...pendingPageData, ...update });
-	};
-
-	const handleSaveChanges = () => {
-		setIsPersisting(true);
-		return pendingPromise(
+		error,
+		state: pageData,
+		persistedState: persistedPageData,
+		update: updatePageData,
+		hasChanges,
+		persist,
+		isPersisting,
+	} = usePersistableState(props.pageData, (update) =>
+		pendingPromise(
 			apiFetch('/api/pages', {
 				method: 'PUT',
 				body: JSON.stringify({
-					...pendingPageData,
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{ title?: st... Remove this comment to see the full error message
+					...update,
 					pageId: pageData.id,
 					communityId: activeCommunity.id,
 				}),
 			}),
-		)
-			.then((updatedValues) => {
-				const newPageData = { ...persistedPageData, ...pendingPageData };
-				setPendingPageData({});
-				setIsPersisting(false);
-				setPersistedPageData(newPageData);
-				updateCommunity((communityData) => ({
-					pages: communityData.pages.map((page) => {
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{ title?: st... Remove this comment to see the full error message
-						if (page.id !== pageData.id) {
-							return page;
-						}
-						return {
-							...page,
-							...newPageData,
-						};
-					}),
-				}));
-				if (updatedValues.slug && locationData.params.slug !== updatedValues.slug) {
-					window.location.href = getDashUrl({
-						mode: 'pages',
-						subMode: updatedValues.slug,
-					});
-				}
-			})
-			.catch((err) => {
-				console.error(err);
-				setIsPersisting(false);
-			});
-	};
+		).then(() => {
+			updateCommunity((communityData) => ({
+				pages: communityData.pages.map((page) => {
+					if (page.id !== pageData.id) {
+						return page;
+					}
+					return { ...page, ...update };
+				}),
+			}));
+		}),
+	);
+
+	const {
+		avatar,
+		description,
+		isNarrowWidth,
+		isPublic,
+		layout,
+		pubs,
+		slug,
+		title,
+		viewHash,
+	} = pageData;
+	const isHome = !persistedPageData.slug;
+
+	const slugError = error?.fields?.slug
+		? 'This slug is not available because it is in use by another Collection or Page.'
+		: '';
+
+	useUpdateEffect(() => {
+		if (!hasChanges) {
+			window.history.replaceState(
+				{},
+				'',
+				getDashUrl({
+					mode: 'pages',
+					subMode: slug,
+				}),
+			);
+		}
+	}, [slug, hasChanges]);
 
 	const renderControls = () => {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{ title?: ... Remove this comment to see the full error message
-		const canPersistChanges = hasPendingChanges && title && (slug || !persistedPageData.slug);
+		const canPersistChanges = hasChanges && title && (slug || !persistedPageData.slug);
 		return (
 			<React.Fragment>
 				<AnchorButton icon="share" href={`/${slug}`}>
@@ -133,7 +111,7 @@ const DashboardPages = (props: Props) => {
 					text="Save Changes"
 					disabled={!canPersistChanges}
 					loading={isPersisting}
-					onClick={handleSaveChanges}
+					onClick={persist}
 				/>
 			</React.Fragment>
 		);
@@ -165,26 +143,23 @@ const DashboardPages = (props: Props) => {
 				/>
 				<ImageUpload
 					htmlFor="dashboard-page-avatar"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 					label="Preview Image"
 					defaultImage={avatar}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(value: any) => void' is not assignable to t... Remove this comment to see the full error message
 					onNewImage={(value) => updatePageData({ avatar: value })}
 					canClear={true}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 					helperText="Used in social media cards"
 				/>
-				{slug && (
+				{!isHome && (
 					<InputField
 						label="Link"
 						placeholder="Enter link"
 						isRequired={true}
 						helperText={`Page URL will be https://${locationData.hostname}/${slug}`}
 						value={slug}
+						error={slugError}
 						onChange={(evt) =>
 							updatePageData({ slug: slugifyString(evt.target.value) })
 						}
-						error={undefined}
 					/>
 				)}
 				<InputField label="Width">
@@ -201,7 +176,7 @@ const DashboardPages = (props: Props) => {
 						/>
 					</div>
 				</InputField>
-				{slug && (
+				{!isHome && (
 					<InputField label="Privacy">
 						<div className="bp3-button-group">
 							<Button
@@ -257,13 +232,9 @@ const DashboardPages = (props: Props) => {
 	};
 
 	return (
-		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<DashboardFrame
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			className="dashboard-page-container"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			title={'Pages: ' + persistedPageData.title}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
 			controls={renderControls()}
 		>
 			{renderDetailsEditor()}

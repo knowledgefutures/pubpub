@@ -1,10 +1,11 @@
 import React from 'react';
 
 import Byline, { BylineProps } from 'components/Byline/Byline';
-import { getAllPubContributors } from 'utils/pub/contributors';
+import { getAllPubContributors } from 'utils/contributors';
+import { Pub } from 'utils/types';
 
 type Props = {
-	pubData: {};
+	pubData: Pub;
 	hideAuthors?: boolean;
 	hideContributors?: boolean;
 } & Omit<BylineProps, 'contributors'>;

@@ -12,6 +12,7 @@ import {
 	CollectionMultiSelect,
 	NavBar,
 	Footer,
+	DashboardFrame,
 } from 'components';
 import { slugifyString } from 'utils/strings';
 import { defaultFooterLinks } from 'client/utils/navigation';
@@ -175,8 +176,10 @@ const CommunitySettings = () => {
 	const activeHeroTextColor = heroTextColor || '#FFFFFF';
 
 	return (
-		<div className="community-settings-component">
-			<div className="content-buttons">
+		<DashboardFrame
+			title="Settings"
+			className="community-settings-component"
+			controls={
 				<InputField error={error}>
 					<Button
 						name="create"
@@ -188,8 +191,8 @@ const CommunitySettings = () => {
 						loading={isLoading}
 					/>
 				</InputField>
-			</div>
-			<h2 className="dashboard-content-header">Settings</h2>
+			}
+		>
 			<SettingsSection title="Details">
 				<InputField
 					label="Title"
@@ -221,7 +224,6 @@ const CommunitySettings = () => {
 				<div className="row-wrapper">
 					<ImageUpload
 						htmlFor="favicon-upload"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 						label={
 							<span>
 								Favicon
@@ -241,14 +243,12 @@ const CommunitySettings = () => {
 							</span>
 						}
 						defaultImage={favicon}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 						onNewImage={(val) => {
 							setFavicon(val);
 						}}
 					/>
 					<ImageUpload
 						htmlFor="avatar-upload"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 						label={
 							<span>
 								Preview
@@ -268,7 +268,6 @@ const CommunitySettings = () => {
 							</span>
 						}
 						defaultImage={avatar}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 						onNewImage={(val) => {
 							setAvatar(val);
 						}}
@@ -296,7 +295,6 @@ const CommunitySettings = () => {
 			<SettingsSection title="Header">
 				<ImageUpload
 					htmlFor="header-logo-upload"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 					label={
 						<span>
 							Header Logo
@@ -318,7 +316,6 @@ const CommunitySettings = () => {
 					defaultImage={headerLogo}
 					height={80}
 					width={150}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 					onNewImage={(val) => {
 						setHeaderLogo(val);
 					}}
@@ -475,7 +472,6 @@ const CommunitySettings = () => {
 					<div className="row-wrapper">
 						<ImageUpload
 							htmlFor="hero-logo-upload"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 							label={
 								<span>
 									Banner Logo
@@ -497,7 +493,6 @@ const CommunitySettings = () => {
 							defaultImage={heroLogo}
 							height={80}
 							width={150}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 							onNewImage={(val) => {
 								setHeroLogo(val);
 							}}
@@ -506,7 +501,6 @@ const CommunitySettings = () => {
 						/>
 						<ImageUpload
 							htmlFor="hero-background-upload"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 							label={
 								<span>
 									Banner Background
@@ -526,7 +520,6 @@ const CommunitySettings = () => {
 								</span>
 							}
 							defaultImage={heroBackgroundImage}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 							onNewImage={(val) => {
 								setHeroBackgroundImage(val);
 							}}
@@ -536,7 +529,6 @@ const CommunitySettings = () => {
 						/>
 						<ImageUpload
 							htmlFor="hero-image-upload"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 							label={
 								<span>
 									Banner Image
@@ -556,7 +548,6 @@ const CommunitySettings = () => {
 								</span>
 							}
 							defaultImage={heroImage}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 							onNewImage={(val) => {
 								setHeroImage(val);
 							}}
@@ -774,12 +765,10 @@ const CommunitySettings = () => {
 				<ImageUpload
 					key={footerImageKey}
 					htmlFor="footer-logo-upload"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 					label="Footer Logo"
 					defaultImage={footerImage}
 					height={80}
 					width={150}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(val: any) => void' is not assignable to typ... Remove this comment to see the full error message
 					onNewImage={(val) => {
 						setFooterImage(val);
 					}}
@@ -858,7 +847,7 @@ const CommunitySettings = () => {
 					</AnchorButton>
 				</Card>
 			</SettingsSection>
-		</div>
+		</DashboardFrame>
 	);
 };
 

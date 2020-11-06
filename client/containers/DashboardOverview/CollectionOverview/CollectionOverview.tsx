@@ -33,8 +33,7 @@ const CollectionOverview = (props: Props) => {
 	const { activeCollection } = scopeData.elements;
 	const { canManage } = scopeData.activePermissions;
 	const collectionSchema = getSchemaForKind(activeCollection.kind);
-	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-	const label = capitalize(collectionSchema.label.singular);
+	const label = capitalize(collectionSchema?.label.singular);
 
 	const { collection, updateCollection } = useCollectionState(scopeData);
 	const {
@@ -66,15 +65,10 @@ const CollectionOverview = (props: Props) => {
 	};
 
 	return (
-		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<DashboardFrame
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			className="collection-overview-component"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			title="Overview"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
-			icon={collectionSchema.bpDisplayIcon}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
+			icon={collectionSchema ? collectionSchema.bpDisplayIcon : ''}
 			details={
 				<span>
 					This collection is a {label}. It was created on{' '}
@@ -82,7 +76,6 @@ const CollectionOverview = (props: Props) => {
 					contains:
 				</span>
 			}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
 			controls={
 				<CollectionControls
 					overviewData={overviewData}

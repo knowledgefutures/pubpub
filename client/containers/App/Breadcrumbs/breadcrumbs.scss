@@ -19,9 +19,14 @@
 		line-height: 30px;
 		margin-bottom: 1px;
 		letter-spacing: 0.6px;
+		display: flex;
+		align-items: center;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+		.lock-icon {
+			margin-left: 5px;
+		}
 	}
 	.crumbs {
 		display: flex;

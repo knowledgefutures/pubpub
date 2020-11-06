@@ -10,11 +10,25 @@ const models = modelize`
 			permissions: "admin"
 			User admin {}
 		}
+		Page {
+			title: "I'm a page"
+			slug: "i-am-a-page"
+		}
 		Pub pub {
 			Member {
 				permissions: "admin"
 				User pubAdmin {}
 			}
+		}
+		Collection {
+			title: "I exist"
+			kind: "book"
+			slug: "i-exist"
+		}
+		Collection slugCollection {
+			title: "I exist too"
+			kind: "book"
+			slug: "i-exist-too"
 		}
 	}
 	Community {
@@ -34,7 +48,7 @@ it('creates a new collection', async () => {
 	const { admin, community } = models;
 	const agent = await login(admin);
 	const {
-		body: { communityId, title, kind, isPublic },
+		body: { communityId, title, kind, isPublic, layout },
 	} = await agent
 		.post('/api/collections')
 		.send({
@@ -46,7 +60,39 @@ it('creates a new collection', async () => {
 	expect(communityId).toEqual(community.id);
 	expect(title).toEqual('My test collection');
 	expect(kind).toEqual('issue');
+	expect(layout.blocks.length).toEqual(2);
 	expect(isPublic).toEqual(false);
+});
+
+it('does not create a collection with the slug of another collection or a page', async () => {
+	const { admin, community } = models;
+	const agent = await login(admin);
+
+	const {
+		body: { slug: firstSlug },
+	} = await agent
+		.post('/api/collections')
+		.send({
+			communityId: community.id,
+			title: 'Another collection',
+			slug: 'i-exist',
+			kind: 'issue',
+		})
+		.expect(201);
+	expect(firstSlug).toEqual('i-exist-2');
+
+	const {
+		body: { slug: secondSlug },
+	} = await agent
+		.post('/api/collections')
+		.send({
+			communityId: community.id,
+			title: 'Another collection',
+			slug: 'i-am-a-page',
+			kind: 'issue',
+		})
+		.expect(201);
+	expect(secondSlug).toEqual('i-am-a-page-2');
 });
 
 it('does not allow admins of another community to create a collection', async () => {
@@ -102,11 +148,49 @@ it('updates only expected values on an existing collection', async () => {
 			id: collection.id,
 			title: 'The Updated Book of Tests',
 			communityId: community.id,
+			slug: 'the-updated-book-of-tests',
 			doi: 'dont_change_me_lol',
 		})
 		.expect(200);
 	expect(updatedCollection.title).toEqual('The Updated Book of Tests');
+	expect(updatedCollection.slug).toEqual('the-updated-book-of-tests');
 	expect(updatedCollection.doi).not.toEqual('dont_change_me_lol');
+});
+
+it('will not assign a slug belonging to another collection', async () => {
+	const { admin, community, slugCollection } = models;
+	const agent = await login(admin);
+
+	const {
+		body: { type, fields },
+	} = await agent
+		.put('/api/collections')
+		.send({
+			id: slugCollection.id,
+			communityId: community.id,
+			slug: 'i-exist',
+		})
+		.expect(400);
+	expect(type).toEqual('InvalidFields');
+	expect(fields).toEqual({ slug: true });
+});
+
+it('will not assign a slug belonging to a Page', async () => {
+	const { admin, community, slugCollection } = models;
+	const agent = await login(admin);
+
+	const {
+		body: { type, fields },
+	} = await agent
+		.put('/api/collections')
+		.send({
+			id: slugCollection.id,
+			communityId: community.id,
+			slug: 'i-am-a-page',
+		})
+		.expect(400);
+	expect(type).toEqual('InvalidFields');
+	expect(fields).toEqual({ slug: true });
 });
 
 it('unsets a collectionPub as primary when its collection is made private', async () => {

@@ -53,11 +53,9 @@ const ThemePicker = (props: Props) => {
 				<ImageUpload
 					key={headerBackgroundImage}
 					defaultImage={headerBackgroundImage}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(image: any) => any' is not assignable to ty... Remove this comment to see the full error message
 					onNewImage={updatePubHeaderImage}
 					width={150}
 					canClear={true}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 					helperText={
 						<span>
 							Suggested minimum dimensions: <br />

@@ -121,3 +121,11 @@ export const getSchemaForKind = (kind) => {
 	}
 	return null;
 };
+
+export const getIconForCollectionKind = (kind) => {
+	const schema = getSchemaForKind(kind);
+	if (schema) {
+		return schema.bpDisplayIcon;
+	}
+	return null;
+};

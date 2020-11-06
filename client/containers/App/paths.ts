@@ -3,6 +3,7 @@ import {
 	AdminDashboard,
 	CommunityCreate,
 	DashboardActivity,
+	DashboardCollectionLayout,
 	DashboardDiscussions,
 	DashboardEdges,
 	DashboardForks,
@@ -14,6 +15,7 @@ import {
 	DashboardPages,
 	DashboardPage,
 	DashboardSettings,
+	Collection,
 	Explore,
 	Landing,
 	Login,
@@ -93,6 +95,10 @@ export default (viewData, locationData, chunkName) => {
 			ActiveComponent: DashboardSettings,
 			isDashboard: true,
 		},
+		DashboardCollectionLayout: {
+			ActiveComponent: DashboardCollectionLayout,
+			isDashboard: true,
+		},
 		Explore: {
 			ActiveComponent: Explore,
 			hideNav: true,
@@ -149,6 +155,9 @@ export default (viewData, locationData, chunkName) => {
 			ActiveComponent: UserCreate,
 			hideNav: locationData.isBasePubPub,
 			hideFooter: true,
+		},
+		Collection: {
+			ActiveComponent: Collection,
 		},
 	};
 	return paths[chunkName];

@@ -27,13 +27,9 @@ const DashboardReviews = (props: Props) => {
 		return pub.reviews.length;
 	});
 	return (
-		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<DashboardFrame
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			className="dashboard-reviews-container"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			title="Reviews"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			details="Reviews allow members of your Community to request feedback on their Pubs and release them to the world."
 		>
 			{!pubsWithReviews.length && (

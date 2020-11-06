@@ -21,7 +21,7 @@ export const communityUrl = (community) => {
 };
 
 export const collectionUrl = (community, collection) =>
-	`${communityUrl(community)}/collection/${collection.id.slice(0, 8)}`;
+	`${communityUrl(community)}/${collection.slug}`;
 
 export const pubShortUrl = (pub) => {
 	return `https://pubpub.org/pub/${pub.slug}`;

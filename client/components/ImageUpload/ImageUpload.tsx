@@ -8,8 +8,12 @@ import { s3Upload } from 'client/utils/upload';
 
 require('./imageUpload.scss');
 
+const noopImageHandler = (s: any) => {
+	void s;
+};
+
 type OwnProps = {
-	children: null | ((...args: any[]) => any);
+	children: null | ((...args: any[]) => unknown);
 	canClear?: boolean;
 	defaultImage?: string;
 	height?: number;
@@ -17,8 +21,8 @@ type OwnProps = {
 	htmlFor?: string;
 	isRequired?: boolean;
 	label?: React.ReactNode;
-	onNewImage?: (...args: any[]) => any;
-	onImageSelect?: (...args: any[]) => any;
+	onNewImage?: (imageUrl: string) => unknown;
+	onImageSelect?: (imageFile: any) => unknown;
 	useAccentBackground?: boolean;
 	useCrop?: boolean;
 	width?: number;
@@ -26,15 +30,15 @@ type OwnProps = {
 
 const defaultProps = {
 	canClear: false,
-	children: null as null | ((...args: any[]) => any),
-	defaultImage: undefined,
+	children: null as React.ReactNode | ((...args: any[]) => any),
+	defaultImage: '',
 	height: 75,
-	helperText: undefined,
+	helperText: null as React.ReactNode,
 	htmlFor: String(new Date().getTime()),
 	isRequired: false,
-	label: undefined,
-	onNewImage: () => {},
-	onImageSelect: () => {},
+	label: null as React.ReactNode,
+	onNewImage: noopImageHandler,
+	onImageSelect: noopImageHandler,
 	useAccentBackground: false,
 	useCrop: false,
 	width: 75,

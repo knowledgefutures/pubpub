@@ -42,7 +42,7 @@ const ReadNextSection = (props: Props) => {
 					<a
 						href={createReadingParamUrl(
 							pubUrl(communityData, nextPub),
-							currentCollection,
+							currentCollection.id,
 						)}
 					>
 						{nextPub.title}

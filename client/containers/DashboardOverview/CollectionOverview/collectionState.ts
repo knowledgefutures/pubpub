@@ -4,6 +4,7 @@ import { usePendingChanges, usePageContext } from 'utils/hooks';
 import * as api from 'client/utils/collections/api';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { usePersistableState } from 'client/utils/usePersistableState';
 
 const linkCollectionPubs = (overviewData, collection) => {
 	const { pubs, collections } = overviewData;
@@ -154,18 +155,22 @@ export const useCollectionState = (scopeData) => {
 	const pageContext = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 
-	const [collection, setCollection] = useState(linkCollection(activeCollection, activeCommunity));
+	const { state, error, update, hasChanges, persist } = usePersistableState(
+		activeCollection,
+		(partialCollection) =>
+			pendingPromise(
+				api.updateCollection({
+					communityId: activeCommunity.id,
+					collectionId: activeCollection.id,
+					updatedCollection: partialCollection,
+				}),
+			).then(() => pageContext.updateCollection(partialCollection)),
+	);
 
-	const updateCollection = (update) => {
-		setCollection(linkCollection({ ...collection, ...update }, activeCommunity));
-		pendingPromise(
-			api.updateCollection({
-				communityId: activeCommunity.id,
-				collectionId: collection.id,
-				updatedCollection: update,
-			}),
-		).then(() => pageContext.updateCollection(update));
-	};
+	const collection = linkCollection(state, activeCommunity);
+	const fieldErrors = error?.type === 'InvalidFields' ? error.fields : null;
+
+	const updateCollection = (next) => update(next, true);
 
 	const deleteCollection = () =>
 		pendingPromise(
@@ -176,7 +181,10 @@ export const useCollectionState = (scopeData) => {
 		);
 
 	return {
+		fieldErrors: fieldErrors,
 		collection: collection,
+		hasChanges: hasChanges,
+		persistCollection: persist,
 		updateCollection: updateCollection,
 		deleteCollection: deleteCollection,
 	};

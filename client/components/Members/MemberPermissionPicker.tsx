@@ -24,7 +24,7 @@ const defaultProps = {
 
 const privileges = {
 	pub: [
-		{ title: 'View Pub when unpublished', activeAt: 'view' },
+		{ title: 'View Pub drafts', activeAt: 'view' },
 		{ title: 'View member-only Discussions and Reviews', activeAt: 'view' },
 		{ title: 'Edit Pub draft', activeAt: 'edit' },
 		{ title: 'Create Reviews', activeAt: 'edit' },
@@ -34,7 +34,7 @@ const privileges = {
 		{ title: 'Delete Pub', activeAt: 'admin' },
 	],
 	collection: [
-		{ title: 'View all unpublished Pubs', activeAt: 'view' },
+		{ title: 'View all Pub drafts', activeAt: 'view' },
 		{ title: 'View member-only Discussions and Reviews', activeAt: 'view' },
 		{ title: 'Edit Pub drafts', activeAt: 'edit' },
 		{ title: 'Create Reviews', activeAt: 'edit' },
@@ -47,7 +47,7 @@ const privileges = {
 		{ title: 'Delete Collection', activeAt: 'admin' },
 	],
 	community: [
-		{ title: 'View all unpublished Pubs', activeAt: 'view' },
+		{ title: 'View all Pub drafts', activeAt: 'view' },
 		{ title: 'View member-only Discussions and Reviews', activeAt: 'view' },
 		{ title: 'Edit Pub drafts', activeAt: 'edit' },
 		{ title: 'Create Reviews', activeAt: 'edit' },

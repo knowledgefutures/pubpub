@@ -32,6 +32,7 @@ app.get(
 			})
 			.then(([initialData, overviewData]) => {
 				const sanitizedOverviewData = sanitizeOverview(initialData, overviewData);
+
 				return renderToNodeStream(
 					res,
 					<Html

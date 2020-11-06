@@ -24,9 +24,9 @@ export const getNeighborsInCollectionPub = (pubs, currentPub) => {
 	return { previousPub: previousPub, nextPub: nextPub };
 };
 
-export const createReadingParamUrl = (url, collection) => {
+export const createReadingParamUrl = (url, collectionId) => {
 	const urlObject = new URL(url);
-	urlObject.searchParams.append(readingCollectionParam, collection.id.split('-')[0]);
+	urlObject.searchParams.append(readingCollectionParam, collectionId.split('-')[0]);
 	return urlObject.toString();
 };
 

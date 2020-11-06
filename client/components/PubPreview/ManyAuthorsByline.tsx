@@ -1,15 +1,14 @@
 import React from 'react';
 
-import { Byline } from 'components';
+import Byline, { BylineProps } from 'components/Byline/Byline';
 import { naivePluralize } from 'utils/strings';
-import { getAllPubContributors } from 'utils/pub/contributors';
+import { getAllPubContributors } from 'utils/contributors';
+import { Pub } from 'utils/types';
 
 require('./manyAuthorsByline.scss');
 
-type Props = {
-	pubData: {
-		attributions?: any[];
-	};
+type Props = Omit<BylineProps, 'contributors'> & {
+	pubData: Pub;
 	isExpanded: boolean;
 	truncateAt: number;
 };

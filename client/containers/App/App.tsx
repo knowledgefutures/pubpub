@@ -22,7 +22,7 @@ type Props = {
 
 const App = (props: Props) => {
 	const { chunkName, initialData, viewData } = props;
-	const pageContextProps = usePageState(initialData);
+	const pageContextProps = usePageState(initialData, viewData);
 	const { communityData, loginData, locationData } = pageContextProps;
 
 	const pathObject = getPaths(viewData, locationData, chunkName);
@@ -30,8 +30,7 @@ const App = (props: Props) => {
 
 	// Our debugging lifeline
 	if (typeof window !== 'undefined') {
-		// eslint-disable-next-line no-underscore-dangle
-		// @ts-expect-error ts-migrate(2339) FIXME: Property '__pubpub_pageContextProps__' does not ex... Remove this comment to see the full error message
+		// @ts-expect-error
 		window.__pubpub_pageContextProps__ = pageContextProps;
 	}
 

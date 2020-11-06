@@ -1,4 +1,5 @@
 import React from 'react';
+import { useUpdateEffect } from 'react-use';
 
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
@@ -13,15 +14,31 @@ import CollectionMetadataEditor from './CollectionMetadataEditor';
 const CollectionSettings = () => {
 	const { scopeData } = usePageContext();
 	const { activeCommunity } = scopeData.elements;
-	const { collection, updateCollection, deleteCollection } = useCollectionState(scopeData);
+	const {
+		collection,
+		updateCollection,
+		deleteCollection,
+		fieldErrors,
+		hasChanges,
+	} = useCollectionState(scopeData);
+
+	useUpdateEffect(() => {
+		if (!hasChanges) {
+			window.history.replaceState(
+				{},
+				'',
+				getDashUrl({ collectionSlug: collection.slug, mode: 'settings' }),
+			);
+		}
+	}, [collection.slug, hasChanges]);
 
 	return (
-		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<DashboardFrame className="collection-settings-component" title="Settings">
 			<SettingsSection title="Details">
 				<CollectionDetailsEditor
-					collection={collection}
+					fieldErrors={fieldErrors}
 					communityData={activeCommunity}
+					collection={collection}
 					onUpdateCollection={updateCollection}
 					onDeleteCollection={() =>
 						deleteCollection().then(() => {
@@ -46,7 +63,7 @@ const CollectionSettings = () => {
 						canEdit={true}
 						hasEmptyState={false}
 						attributions={collection.attributions}
-						listOnBylineText="List on Pub byline"
+						listOnBylineText="List on Collection byline"
 						identifyingProps={{
 							collectionId: collection.id,
 							communityId: activeCommunity.id,

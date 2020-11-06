@@ -3,84 +3,49 @@ import { Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
-type OwnProps = {
-	collection: {
-		page?: {
-			title?: string;
-		};
-	};
-	communityData: {
-		pages?: {
-			title?: string;
-			id?: string;
-		}[];
-	};
-	onSelectPage: (...args: any[]) => any;
-	targetElement?: React.ReactNode;
-	minimal?: boolean;
-	selfContained?: boolean;
-};
+import { Page } from 'utils/types';
 
-const defaultProps = {
-	minimal: false,
-	targetElement: null,
-	selfContained: false,
+type Props = {
+	selectedPageId: null | string;
+	pages: Page[];
+	onSelectPage: (page: Page) => unknown;
+	disabled?: boolean;
 };
-
-type Props = OwnProps & typeof defaultProps;
 
 const LinkedPageSelect = (props: Props) => {
-	const {
-		communityData,
-		collection,
-		onSelectPage,
-		minimal,
-		targetElement,
-		selfContained,
-	} = props;
+	const { pages, onSelectPage, selectedPageId, disabled } = props;
+	const selectedPage = pages.find((page) => page.id === selectedPageId);
 
 	const renderButtonText = () => {
-		if (collection.page) {
-			if (selfContained) {
-				return (
-					<>
-						<em>Page:</em> {collection.page.title}
-					</>
-				);
-			}
-			return collection.page.title;
+		if (selectedPage) {
+			return selectedPage.title;
 		}
-		if (selfContained) {
-			return 'Link to Page';
-		}
-		return <em>Link to Page</em>;
+		return <em>Choose a Page</em>;
 	};
 
 	return (
 		<Select
-			// @ts-expect-error ts-migrate(2769) FIXME: Type 'undefined' is not assignable to type '{ titl... Remove this comment to see the full error message
-			items={[{ title: '(None)', id: null }].concat(communityData.pages)}
+			items={pages}
 			itemRenderer={(page, { handleClick }) => {
 				return <MenuItem key={page.title} onClick={handleClick} text={page.title} />;
 			}}
-			itemListPredicate={(query, pages) => {
-				return pages.filter((page) => {
+			itemListPredicate={(query, predPages) => {
+				return predPages.filter((page) => {
 					return fuzzysearch(query.toLowerCase(), page.title.toLowerCase());
 				});
 			}}
-			onItemSelect={(page) => onSelectPage(page.id === null ? null : page)}
+			onItemSelect={onSelectPage}
 			popoverProps={{ popoverClassName: 'bp3-minimal' }}
 		>
-			{targetElement || (
-				<Button
-					className="linked-page-select-button"
-					minimal={minimal}
-					text={renderButtonText()}
-					icon="link"
-				/>
-			)}
+			<Button
+				className="linked-page-select-button"
+				text={renderButtonText()}
+				rightIcon="chevron-down"
+				disabled={disabled}
+				minimal
+				outlined
+			/>
 		</Select>
 	);
 };
-LinkedPageSelect.defaultProps = defaultProps;
 export default LinkedPageSelect;

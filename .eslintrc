@@ -28,12 +28,23 @@
 		}
 	},
 	"rules": {
+		"@typescript-eslint/no-unused-vars": ["error", {"varsIgnorePattern": "^_+$"}],
 		"arrow-body-style": 0,
 		"arrow-parens": [2, "always"],
 		"camelcase": 0,
 		"class-methods-use-this": 0,
 		"comma-dangle": 0,
 		"func-names": 0,
+		"import/extensions": [
+			"error",
+			"ignorePackages",
+			{
+			  "js": "never",
+			  "jsx": "never",
+			  "ts": "never",
+			  "tsx": "never"
+			}
+		 ],
 		"import/no-extraneous-dependencies": [2, { "devDependencies": true }],
 		"import/no-unresolved": [2, { "ignore": ["\\config.js$"] }],
 		"import/prefer-default-export": 0,
@@ -42,10 +53,12 @@
 		"no-async-promise-executor": 0,
 		"no-console": [1, { "allow": ["warn", "error", "info"] }],
 		"no-nested-ternary": 0,
+		"no-param-reassign": 0,
 		"no-plusplus": 0,
 		"no-tabs": 0,
 		"no-underscore-dangle": 0,
 		"no-void": 0,
+		"no-unused-vars": 0,
 		"object-curly-newline": 0,
 		"object-shorthand": [2, "never"],
 		"operator-linebreak": 0,

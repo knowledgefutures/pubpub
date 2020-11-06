@@ -1,4 +1,5 @@
-import app from 'server/server';
+import app, { wrap } from 'server/server';
+import { ForbiddenError } from 'server/utils/errors';
 
 import { getPermissions } from './permissions';
 import { createPage, updatePage, destroyPage } from './queries';
@@ -31,22 +32,18 @@ app.post('/api/pages', (req, res) => {
 		});
 });
 
-app.put('/api/pages', (req, res) => {
-	getPermissions(getRequestIds(req))
-		.then((permissions) => {
-			if (!permissions.update) {
-				throw new Error('Not Authorized');
-			}
-			return updatePage(req.body, permissions.update);
-		})
-		.then((updatedValues) => {
-			return res.status(201).json(updatedValues);
-		})
-		.catch((err) => {
-			console.error('Error in putPage: ', err);
-			return res.status(500).json(err.message);
-		});
-});
+app.put(
+	'/api/pages',
+	wrap(async (req, res) => {
+		const ids = getRequestIds(req);
+		const permissions = await getPermissions(ids);
+		if (!permissions.update) {
+			throw new ForbiddenError();
+		}
+		const updatedValues = await updatePage(req.body, permissions.update);
+		return res.status(201).json(updatedValues);
+	}),
+);
 
 app.delete('/api/pages', (req, res) => {
 	getPermissions(getRequestIds(req))

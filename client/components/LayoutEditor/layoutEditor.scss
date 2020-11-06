@@ -15,7 +15,8 @@
 		margin-bottom: 2em;
 		border: 1px solid #ccc;
 	}
-	.block-header {
+	// div is a specificity hack against an aggressive selection of .bp3-form-group in settingsSection.scss
+	div.block-header {
 		z-index: 1;
 		display: flex;
 		// align-items: flex-end;
@@ -24,14 +25,9 @@
 		flex-wrap: wrap;
 		background-color: #f0f0f0;
 		border-bottom: 1px solid #ccc;
-		// .spacer {
-		// 	flex-shrink: 1;
-		// 	flex-grow: 1;
-		// }
 		.input-field-component,
 		.image-upload-component {
-			// margin-bottom: 0px;
-			margin: 0em 1em;
+			margin: 0em 0.5em;
 		}
 		.bp3-control.bp3-checkbox {
 			display: inline-block;
@@ -43,9 +39,6 @@
 			width: 100%;
 			margin-bottom: 1em;
 		}
-		// .bp3-form-group:not(:last-child) {
-		// 	padding-right: 1em;
-		// }
 		.formatting-wrapper {
 			flex: 1 1 auto;
 			max-width: 100%;
@@ -98,6 +91,11 @@
 		.block-header {
 			flex-wrap: nowrap;
 			align-items: center;
+		}
+	}
+	.layout-editor-collection-header-component {
+		.bp3-form-content {
+			margin-left: 6px;
 		}
 	}
 }

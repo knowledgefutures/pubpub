@@ -2,6 +2,9 @@ import React from 'react';
 
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { joinOxford, naivePluralize } from 'utils/strings';
+import { AttributableUser, User } from 'utils/types';
+
+const isFullUser = (u: AttributableUser): u is User => 'slug' in u;
 
 export type BylineProps = {
 	ampersand?: boolean;
@@ -49,7 +52,7 @@ const Byline = (props: BylineProps) => {
 		}
 		const { user } = ensureUserForAttribution(contributor);
 		const label = renderUserLabel(user, index);
-		if (user.slug && linkToUsers) {
+		if (isFullUser(user) && user.slug && linkToUsers) {
 			return (
 				<span key={`author-${user.id}`}>
 					<a href={`/user/${user.slug}`} className="hoverline">

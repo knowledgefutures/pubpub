@@ -150,7 +150,6 @@ const PubSettings = (props: Props) => {
 					/>
 					<ImageUpload
 						htmlFor="avatar-upload"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 						label={
 							<span>
 								Preview Image
@@ -173,10 +172,8 @@ const PubSettings = (props: Props) => {
 						canClear={true}
 						key={pubData.avatar}
 						defaultImage={pubData.avatar}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(value: any) => void' is not assignable to t... Remove this comment to see the full error message
 						onNewImage={(value) => updatePubData({ avatar: value })}
 						width={150}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'undefine... Remove this comment to see the full error message
 						helperText={
 							<span>
 								Suggested minimum dimensions: <br />
@@ -305,13 +302,9 @@ const PubSettings = (props: Props) => {
 	};
 
 	return (
-		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<DashboardFrame
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			className="pub-settings-container"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			title="Settings"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
 			controls={renderControls()}
 		>
 			{renderDetails()}

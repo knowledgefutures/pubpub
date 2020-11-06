@@ -1,22 +1,24 @@
 /**
  * Dashboard collection tab pane that holds some miscellaneous options for collections
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { Checkbox, FormGroup, Button, MenuItem } from '@blueprintjs/core';
-
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/collection' or its corre... Remove this comment to see the full error message
-import collectionType from 'types/collection';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/community' or its corres... Remove this comment to see the full error message
-import communityType from 'types/community';
-import { getSchemaForKind } from 'utils/collections/schemas';
-import { ConfirmDialog, InputField, LinkedPageSelect } from 'components';
 import { Select } from '@blueprintjs/select';
 
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { Collection, Community } from 'utils/types';
+import { slugifyString } from 'utils/strings';
+import { ConfirmDialog, InputField } from 'components';
+import { collectionUrl } from 'utils/canonicalUrls';
+
+type CollectionFieldErrors = { [key in keyof Collection]: any };
+
 type Props = {
-	collection: collectionType;
-	communityData: communityType;
-	onDeleteCollection: (...args: any[]) => any;
-	onUpdateCollection: (...args: any[]) => any;
+	collection: Collection;
+	communityData: Community;
+	onDeleteCollection: () => unknown;
+	onUpdateCollection: (update: Partial<Collection>) => unknown;
+	fieldErrors: null | CollectionFieldErrors;
 };
 
 const readNextLabels = {
@@ -26,10 +28,28 @@ const readNextLabels = {
 	'choose-best': 'Choose the best preview for each Pub',
 };
 
+const getSlugError = (slug: string, fieldErrors: null | CollectionFieldErrors) => {
+	if (!slug) {
+		return 'Collection requires a slug';
+	}
+	if (fieldErrors && fieldErrors.slug) {
+		return 'This slug is not available because it is in use by another Collection or Page.';
+	}
+	return null;
+};
+
 const CollectionDetailsEditor = (props: Props) => {
-	const { collection, communityData, onUpdateCollection, onDeleteCollection } = props;
-	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-	const collectionLabel = getSchemaForKind(collection.kind).label.singular;
+	const {
+		communityData,
+		collection,
+		onUpdateCollection,
+		onDeleteCollection,
+		fieldErrors,
+	} = props;
+	const [slug, setSlug] = useState(collection.slug);
+	const collectionLabel = getSchemaForKind(collection.kind)?.label.singular;
+	const slugError = getSlugError(slug, fieldErrors);
+
 	return (
 		<div>
 			<InputField
@@ -43,30 +63,33 @@ const CollectionDetailsEditor = (props: Props) => {
 					}
 				}}
 			/>
+			<InputField
+				label="Link"
+				placeholder="link"
+				isRequired={true}
+				defaultValue={slug}
+				value={slug}
+				error={slugError}
+				helperText={`Collection URL will be ${collectionUrl(communityData, {
+					...collection,
+					slug: slug,
+				})}`}
+				onChange={(evt) => {
+					const { value } = evt.target;
+					setSlug(value ? slugifyString(value) : '');
+				}}
+				onBlur={() => slug && onUpdateCollection({ slug: slug })}
+			/>
 			<FormGroup
 				helperText={
-					`You can link this ${collectionLabel} to a Page, and it` +
-					` will serve as the landing page for the ${collectionLabel}.`
-				}
-			>
-				<LinkedPageSelect
-					onSelectPage={(page) => onUpdateCollection({ pageId: page.id }, true)}
-					collection={collection}
-					communityData={communityData}
-					minimal={false}
-				/>
-			</FormGroup>
-			<FormGroup
-				helperText={
-					`Making this ${collectionLabel} private means that team members will see it` +
+					`Making this ${collectionLabel} private means that Members will see it` +
 					" but visitors won't know it exists."
 				}
 			>
 				<Checkbox
 					checked={!collection.isPublic}
 					onChange={(evt) => {
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'checked' does not exist on type 'EventTa... Remove this comment to see the full error message
-						onUpdateCollection({ isPublic: !evt.target.checked }, true);
+						onUpdateCollection({ isPublic: !(evt.target as any).checked });
 					}}
 				>
 					Private
@@ -75,7 +98,7 @@ const CollectionDetailsEditor = (props: Props) => {
 			<FormGroup
 				helperText={`You can choose how the "Read Next" Pub preview will appear to readers in this collection.`}
 			>
-				<Select
+				<Select<Collection['readNextPreviewSize']>
 					popoverProps={{ minimal: true }}
 					items={['none', 'choose-best']}
 					itemRenderer={(item, { handleClick }) => {
@@ -89,7 +112,7 @@ const CollectionDetailsEditor = (props: Props) => {
 							/>
 						);
 					}}
-					onItemSelect={(size) => onUpdateCollection({ readNextPreviewSize: size }, true)}
+					onItemSelect={(size) => onUpdateCollection({ readNextPreviewSize: size })}
 					filterable={false}
 				>
 					<Button rightIcon="chevron-down">

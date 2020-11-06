@@ -2,7 +2,7 @@ import React from 'react';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import { handleErrors } from 'server/utils/errors';
+import { handleErrors, ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -25,6 +25,11 @@ app.get(
 			}
 			const initialData = await getInitialData(req, true);
 			const settingsData = await getSettingsData(req.params.pubSlug, initialData);
+
+			if (!initialData.scopeData.activePermissions.canView) {
+				throw new ForbiddenError();
+			}
+
 			return renderToNodeStream(
 				res,
 				<Html

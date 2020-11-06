@@ -108,8 +108,7 @@ const NavBuilderRow = (props: Props) => {
 							});
 						}}
 					/>
-					{/* TODO(ian): Uncomment after Collection slugs resolve to a layout */}
-					{/* <PageCollectionAutocomplete
+					<PageCollectionAutocomplete
 						items={collections}
 						placeholder="Add Collection"
 						usedItems={collections.filter((collection) =>
@@ -122,7 +121,7 @@ const NavBuilderRow = (props: Props) => {
 								children: [newItem, ...item.children],
 							});
 						}}
-					/> */}
+					/>
 					<Button
 						small
 						text="Add Link"

@@ -125,13 +125,9 @@ const DashboardEdges = (props: Props) => {
 	};
 
 	return (
-		// @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message
 		<DashboardFrame
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			className="dashboard-edges-container"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			title="Connections"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
 			details={frameDetails}
 		>
 			<Tabs id="pub-dashboard-connections-tabs">

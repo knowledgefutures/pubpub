@@ -1,37 +1,22 @@
 import React from 'react';
 
 import { Icon, Byline, PubByline } from 'components';
+import { Pub, PubEdge } from 'utils/types';
 import { pubShortUrl } from 'utils/canonicalUrls';
 import { intersperse } from 'utils/arrays';
 import { getRelationTypeName } from 'utils/pubEdge/relations';
 
 require('./pubPreviewEdges.scss');
 
-type ReferencedPub = {
-	attributions: any[];
-};
-
-type PubEdge = {
-	externalPublication?: {};
-	pub?: ReferencedPub;
-	pubId: string;
-	relationType: string;
-	targetPub?: ReferencedPub;
-	targetPubId?: string;
-};
-
 type Props = {
 	accentColor: string;
-	pubData: {
-		inboundEdges?: PubEdge[];
-		outboundEdges?: PubEdge[];
-	};
+	pubData: Pub;
 };
 
 const sharedBylineProps = { bylinePrefix: null, truncateAt: 1, ampersand: true };
 
-const getChildEdges = (pubData) => {
-	const { inboundEdges, outboundEdges } = pubData;
+const getChildEdges = (pubData: Pub) => {
+	const { inboundEdges = [], outboundEdges = [] } = pubData;
 	return [
 		...inboundEdges.filter((edge) => {
 			if (!edge.pubIsParent) {
@@ -46,7 +31,7 @@ const getChildEdges = (pubData) => {
 	];
 };
 
-const getEdgesByRelationType = (edges) => {
+const getEdgesByRelationType = (edges: PubEdge[]): Record<string, PubEdge[]> => {
 	const res = {};
 	edges.forEach((edge) => {
 		const { relationType } = edge;
@@ -56,10 +41,10 @@ const getEdgesByRelationType = (edges) => {
 	return res;
 };
 
-const renderEdgeLink = (edge) => {
+const renderEdgeLink = (edge: PubEdge) => {
 	const { pubIsParent, targetPub, pub, externalPublication } = edge;
 	if (externalPublication) {
-		const { contributors, title, url } = externalPublication;
+		const { contributors = [], title, url } = externalPublication;
 		return (
 			<a href={url} key={edge.id} className="edge-link">
 				<Byline
@@ -70,7 +55,7 @@ const renderEdgeLink = (edge) => {
 			</a>
 		);
 	}
-	const childPub = pubIsParent ? targetPub : pub;
+	const childPub = (pubIsParent ? targetPub : pub) as Pub;
 	return (
 		<a href={pubShortUrl(childPub)} key={edge.id} className="edge-link">
 			<PubByline

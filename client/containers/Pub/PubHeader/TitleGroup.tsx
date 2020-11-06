@@ -81,7 +81,7 @@ const TitleGroup = (props: Props) => {
 				/>
 			)}
 			<PubByline
-				pubData={pubData}
+				pubData={pubData as any}
 				renderSuffix={() => !isRelease && renderBylineEditor()}
 				renderEmptyState={renderBylineEmptyState}
 			/>

@@ -69,18 +69,14 @@ const DashboardReview = (props: Props) => {
 	const isAuthor = loginData && loginData.id === author.id;
 	const canClose = isAuthor || canAdmin;
 	return (
-		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<DashboardFrame
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			className="dashboard-review-container"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
 			title={
 				<span>
 					Reviews: {localReviewData.title}
 					<span className="number">(R{localReviewData.number})</span>
 				</span>
 			}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
 			details={
 				<React.Fragment>
 					<Tag className={status} minimal={true} large={true}>
@@ -92,7 +88,6 @@ const DashboardReview = (props: Props) => {
 					</span>
 				</React.Fragment>
 			}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'never'.
 			controls={
 				canClose &&
 				localReviewData.status === 'open' && (

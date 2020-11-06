@@ -12,8 +12,8 @@ const SideMenu = () => {
 	const { locationData, communityData, scopeData } = usePageContext();
 	const { activeCounts, activePermissions, elements } = scopeData;
 	const { canManage } = activePermissions;
-	const { activeTargetType } = elements;
-	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
+	const { activeTargetType, activeCollection } = elements;
+	const collectionSlug = activeCollection && activeCollection.slug;
 	const pubSlug = locationData.params.pubSlug;
 
 	const backgroundColor = Color(communityData.accentColorDark)
@@ -27,15 +27,6 @@ const SideMenu = () => {
 			icon: 'home2',
 			href: getDashUrl({ collectionSlug: collectionSlug, pubSlug: pubSlug }),
 		},
-		// {
-		// 	title: 'Activity',
-		// 	icon: 'trending-up',
-		// 	href: getDashUrl({
-		// 		collectionSlug: collectionSlug,
-		// 		pubSlug: pubSlug,
-		// 		mode: 'activity',
-		// 	}),
-		// },
 		{
 			title: 'Pages',
 			icon: 'page-layout',
@@ -47,47 +38,16 @@ const SideMenu = () => {
 			validScopes: ['community'],
 			manageRequired: true,
 		},
-		// {
-		// 	title: 'Discussions',
-		// 	icon: 'chat2',
-		// 	count: activeCounts.discussionCount,
-		// 	href: getDashUrl({
-		// 		collectionSlug: collectionSlug,
-		// 		pubSlug: pubSlug,
-		// 		mode: 'discussions',
-		// 		// subMode: 'list',
-		// 	}),
-		// 	// children: [
-		// 	// 	{
-		// 	// 		title: 'List',
-		// 	// 		href: getDashUrl({
-		// 	// 			collectionSlug: collectionSlug,
-		// 	// 			pubSlug: pubSlug,
-		// 	// 			mode: 'discussions',
-		// 	// 			subMode: 'list',
-		// 	// 		}),
-		// 	// 	},
-		// 	// 	{
-		// 	// 		title: 'Labels',
-		// 	// 		href: getDashUrl({
-		// 	// 			collectionSlug: collectionSlug,
-		// 	// 			pubSlug: pubSlug,
-		// 	// 			mode: 'discussions',
-		// 	// 			subMode: 'labels',
-		// 	// 		}),
-		// 	// 	},
-		// 	// ],
-		// },
-		// {
-		// 	title: 'Forks',
-		// 	icon: 'git-branch',
-		// 	count: activeCounts.forkCount,
-		// 	href: getDashUrl({
-		// 		collectionSlug: collectionSlug,
-		// 		pubSlug: pubSlug,
-		// 		mode: 'forks',
-		// 	}),
-		// },
+		{
+			title: 'Layout',
+			icon: 'page-layout',
+			href: getDashUrl({
+				collectionSlug: collectionSlug,
+				mode: 'layout',
+			}),
+			manageRequired: true,
+			validScopes: ['collection'],
+		},
 		{
 			title: 'Reviews',
 			icon: 'social-media',
@@ -96,28 +56,7 @@ const SideMenu = () => {
 				collectionSlug: collectionSlug,
 				pubSlug: pubSlug,
 				mode: 'reviews',
-				// subMode: 'list',
 			}),
-			// children: [
-			// 	{
-			// 		title: 'List',
-			// 		href: getDashUrl({
-			// 			collectionSlug: collectionSlug,
-			// 			pubSlug: pubSlug,
-			// 			mode: 'reviews',
-			// 			subMode: 'list',
-			// 		}),
-			// 	},
-			// 	{
-			// 		title: 'Templates',
-			// 		href: getDashUrl({
-			// 			collectionSlug: collectionSlug,
-			// 			pubSlug: pubSlug,
-			// 			mode: 'reviews',
-			// 			subMode: 'templates',
-			// 		}),
-			// 	},
-			// ],
 		},
 		{
 			title: 'Connections',

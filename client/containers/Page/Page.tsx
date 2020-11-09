@@ -8,6 +8,7 @@ type Props = {
 	pageData: {
 		pubs: any[];
 		isNarrow: boolean;
+		isNarrowWidth: boolean;
 		layout: LayoutBlock[];
 	};
 };
@@ -15,7 +16,13 @@ type Props = {
 const Page = (props: Props) => {
 	const { pageData } = props;
 	const blocks = pageData.layout || getDefaultLayout();
-	return <Layout blocks={blocks} isNarrow={pageData.isNarrow} pubs={pageData.pubs} />;
+	return (
+		<Layout
+			blocks={blocks}
+			isNarrow={pageData.isNarrow || pageData.isNarrowWidth}
+			pubs={pageData.pubs}
+		/>
+	);
 };
 
 export default Page;

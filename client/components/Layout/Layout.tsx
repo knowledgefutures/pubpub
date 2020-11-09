@@ -59,7 +59,7 @@ const Layout = (props: Props) => {
 				/>
 			);
 		}
-		if (block.type === 'pages' || block.type === 'collections-pages') {
+		if (block.type === 'collections-pages') {
 			return (
 				<div className="layout-pages-block" key={index}>
 					<LayoutPagesCollections

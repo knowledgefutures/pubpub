@@ -16,28 +16,29 @@ figure {
 		outline: none;
 	}
 
-	&.ProseMirror-selectednode > :first-child {
+	&.ProseMirror-selectednode {
 		outline: 2px solid #bbbdc0;
 		pointer-events: auto;
 	}
 
-	&[data-align='left'] > :first-child {
+	&[data-align='left'] {
 		float: left;
 		margin: 0.5em 1.5em 0.5em 0em;
 	}
 
-	&[data-align='right'] > :first-child {
+	&[data-align='right'] {
 		float: right;
 		margin: 0.5em 0em 0.5em 1.5em;
 	}
 
 	@for $i from 1 through 100 {
-		&[data-size='#{$i}'] > :first-child {
+		&[data-size='#{$i}'] {
+			margin: 0 auto;
 			width: percentage($i/100);
 		}
 	}
 
-	&[data-align='full'] > :first-child {
+	&[data-align='full'] {
 		width: 100%;
 	}
 

@@ -1,0 +1,5 @@
+@import 'styles/typography.scss';
+
+.pub-edge-description-button {
+	@include link;
+}

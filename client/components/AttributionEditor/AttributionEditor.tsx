@@ -177,17 +177,11 @@ class AttributionEditor extends Component<Props> {
 						/>
 						<DragDropContext onDragEnd={this.handleDragEnd}>
 							<DragDropListing
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								droppableType="ATTRIBUTION"
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								droppableId="attributionEditor"
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never'.
 								items={sortedAttributions}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '(attribution: any) => any' is not assignable... Remove this comment to see the full error message
 								itemId={(attribution) => attribution.id}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 								withDragHandles={true}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '(attribution: any, dragHandleProps: any, isD... Remove this comment to see the full error message
 								renderItem={(attribution, dragHandleProps, isDragging) => (
 									<AttributionRow
 										// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
@@ -206,7 +200,6 @@ class AttributionEditor extends Component<Props> {
 										listOnBylineText={listOnBylineText}
 									/>
 								)}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '() => false | JSX.Element' is not assignable... Remove this comment to see the full error message
 								renderEmptyState={() =>
 									hasEmptyState && (
 										<NonIdealState

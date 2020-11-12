@@ -19,6 +19,8 @@ const managerUpdatableFields = [
 	'slug',
 	'title',
 	'nodeLabels',
+	'pubEdgeListingDefaultsToCarousel',
+	'pubEdgeDescriptionVisible',
 ];
 
 const adminUpdatableFields = ['doi'];

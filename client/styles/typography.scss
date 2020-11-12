@@ -1,7 +1,7 @@
-@import "./variables.scss";
+@import './variables.scss';
 
 body {
-    color: #333;
+	color: #333;
 	font-family: $base-font;
 }
 
@@ -10,7 +10,8 @@ h1 {
 	font-size: 36px;
 }
 
-h1, h2 {
+h1,
+h2 {
 	color: #1f1f1f;
 	font-weight: 600;
 	margin: 0 0 10px;
@@ -27,7 +28,8 @@ h3 {
 	font-size: 22px;
 }
 
-h3, h4 {
+h3,
+h4 {
 	color: #1f1f1f;
 	font-weight: 600;
 	margin: 0 0 10px;
@@ -44,7 +46,8 @@ h5 {
 	font-size: 16px;
 }
 
-h5, h6 {
+h5,
+h6 {
 	color: #1f1f1f;
 	font-weight: 600;
 	margin: 0 0 10px;
@@ -58,4 +61,14 @@ h6 {
 
 sup {
 	line-height: 1;
+}
+
+@mixin link {
+	cursor: pointer;
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		text-decoration: underline;
+	}
 }

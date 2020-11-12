@@ -71,7 +71,8 @@ class Doi extends Component<Props, State> {
 		} else if (error) {
 			helperText = 'There was a problem updating the DOI suffix';
 		} else if (success) {
-			helperText = 'DOI suffix updated succesfully on PubPub. To take effect, the DOI must be submitted to Crossref.';
+			helperText =
+				'DOI suffix updated succesfully on PubPub. To take effect, the DOI must be submitted to Crossref.';
 		}
 
 		return helperText;

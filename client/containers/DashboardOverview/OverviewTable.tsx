@@ -110,13 +110,9 @@ const OverviewTable = (props: Props) => {
 					}
 				>
 					<DragDropListing
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 						disabled={!onReorder}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(item: any) => any' is not assignable to typ... Remove this comment to see the full error message
 						itemId={(item) => item.pubId || item.id}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never'.
 						items={filteredItems}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(item: any, dragHandleProps: any, isDragging... Remove this comment to see the full error message
 						renderItem={(item, dragHandleProps, isDragging) => {
 							return (
 								<OverviewRow
@@ -145,7 +141,6 @@ const OverviewTable = (props: Props) => {
 								</OverviewRow>
 							);
 						}}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '() => {} | null | undefined' is not assignab... Remove this comment to see the full error message
 						renderEmptyState={() => {
 							if (pubList.length > 0) {
 								return (
@@ -157,11 +152,8 @@ const OverviewTable = (props: Props) => {
 							}
 							return emptyState;
 						}}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						droppableId="collectionsListing"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						droppableType="COLLECTION_PUB"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'never'.
 						withDragHandles={!!onReorder}
 					/>
 				</DragDropContext>

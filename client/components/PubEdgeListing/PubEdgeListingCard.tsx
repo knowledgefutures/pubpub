@@ -8,11 +8,9 @@ import { usePageContext } from 'utils/hooks';
 import { relationTypeDefinitions } from 'utils/pubEdge';
 import { pubShortUrl } from 'utils/canonicalUrls';
 
-import { pubEdgeType } from '../PubEdge/constants';
-
 require('./pubEdgeListingCard.scss');
 
-type OwnProps = {
+export type PubEdgeListingCardProps = {
 	accentColor?: string;
 	children?: React.ReactNode;
 	inPubBody?: boolean;
@@ -20,20 +18,11 @@ type OwnProps = {
 	parentPub?: {
 		title?: string;
 	};
-	pubEdge: pubEdgeType;
+	pubData: any;
+	pubEdge: any;
 	pubEdgeElement?: React.ReactNode;
 	showIcon?: boolean;
 	viewingFromSibling?: boolean;
-};
-
-const defaultProps = {
-	accentColor: null,
-	children: [],
-	inPubBody: false,
-	parentPub: null,
-	pubEdgeElement: null,
-	showIcon: false,
-	viewingFromSibling: false,
 };
 
 const getIsViewingFromTarget = (pubEdge, viewingFromSibling, isInboundEdge) => {
@@ -49,20 +38,21 @@ const getIsViewingFromTarget = (pubEdge, viewingFromSibling, isInboundEdge) => {
 	return isInboundEdge;
 };
 
-type Props = OwnProps & typeof defaultProps;
+type Props = PubEdgeListingCardProps;
 
 const PubEdgeListingCard = (props: Props) => {
 	const { communityData } = usePageContext();
 	const {
 		accentColor,
-		children,
-		inPubBody,
+		children = [],
+		inPubBody = false,
 		isInboundEdge,
 		pubEdge,
-		pubEdgeElement,
-		parentPub,
+		pubEdgeElement = null,
+		parentPub = null,
 		showIcon,
-		viewingFromSibling,
+		viewingFromSibling = false,
+		pubData,
 	} = props;
 	const viewingFromTarget = getIsViewingFromTarget(pubEdge, viewingFromSibling, isInboundEdge);
 	const [hover, setHover] = useState(false);
@@ -86,7 +76,6 @@ const PubEdgeListingCard = (props: Props) => {
 					<>
 						{preposition}{' '}
 						<a className="pub-title" href={pubShortUrl(parentPub)}>
-							{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'title' does not exist on type 'never'. */}
 							{parentPub.title}
 						</a>
 					</>
@@ -98,7 +87,6 @@ const PubEdgeListingCard = (props: Props) => {
 				);
 			}
 
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'title' does not exist on type 'never'.
 			const pubTitleNode = parentPub && <span className="pub-title">{parentPub.title}</span>;
 
 			if (viewingFromParent) {
@@ -137,8 +125,6 @@ const PubEdgeListingCard = (props: Props) => {
 						color={accentColor}
 						iconSize={14}
 						className="drop-return"
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'alt' does not exist on type 'IntrinsicAt... Remove this comment to see the full error message
-						alt=""
 					/>
 				)}
 				{renderRelation()}
@@ -149,10 +135,11 @@ const PubEdgeListingCard = (props: Props) => {
 					actsLikeLink={inPubBody}
 					pubEdge={pubEdge}
 					viewingFromTarget={viewingFromTarget}
+					showDescriptionByDefault={pubData.pubEdgeDescriptionVisible}
 				/>
 			)}
 		</div>
 	);
 };
-PubEdgeListingCard.defaultProps = defaultProps;
+
 export default PubEdgeListingCard;

@@ -1,3 +1,5 @@
+@import 'styles/mixins.scss';
+
 .pub-edge-listing-card-component {
 	border-color: #a1a1a1;
 	border-radius: 3px;
@@ -31,6 +33,7 @@
 
 	> .relation,
 	> .controls {
+		@include bleed-top-border;
 		background-color: #fff;
 		padding: 0 8px;
 		position: absolute;

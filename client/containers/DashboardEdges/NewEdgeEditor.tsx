@@ -125,35 +125,7 @@ const NewEdgeEditor = (props: Props) => {
 		const canCreateEdge = targetPub || (externalPublication && externalPublication.title);
 		return (
 			<div className="new-edge-controls">
-				<PubEdgeListingCard
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'never'.
-					isInboundEdge={false}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'never'.
-					pubEdge={newEdge}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
-					pubEdgeElement={
-						externalPublication && (
-							<PubEdgeEditor
-								externalPublication={externalPublication}
-								onUpdateExternalPublication={(update) =>
-									setNewEdge({
-										...newEdge,
-										externalPublication: { ...externalPublication, ...update },
-									})
-								}
-							/>
-						)
-					}
-				/>
-				{errorCreatingEdge && (
-					<Callout intent="warning" className="error-callout">
-						There was an error creating this Pub connection.
-					</Callout>
-				)}
 				<div className="controls-row">
-					<Button icon="swap-vertical" onClick={handleEdgeDirectionSwitch}>
-						Switch direction
-					</Button>
 					<MenuButton
 						aria-label="Select relationship type"
 						buttonProps={{
@@ -177,7 +149,35 @@ const NewEdgeEditor = (props: Props) => {
 							},
 						)}
 					</MenuButton>
-					<Divider />
+					<Button icon="swap-vertical" onClick={handleEdgeDirectionSwitch}>
+						Switch direction
+					</Button>
+				</div>
+				<PubEdgeListingCard
+					pubData={pubData}
+					isInboundEdge={false}
+					pubEdge={newEdge}
+					pubEdgeElement={
+						externalPublication && (
+							<PubEdgeEditor
+								externalPublication={externalPublication}
+								onUpdateExternalPublication={(update) =>
+									setNewEdge({
+										...newEdge,
+										externalPublication: { ...externalPublication, ...update },
+									})
+								}
+								pubData={pubData}
+							/>
+						)
+					}
+				/>
+				{errorCreatingEdge && (
+					<Callout intent="warning" className="error-callout">
+						There was an error creating this Pub connection.
+					</Callout>
+				)}
+				<div className="controls-row">
 					<Button className="cancel-button" onClick={() => setNewEdge(null)}>
 						Cancel
 					</Button>
@@ -206,6 +206,7 @@ const NewEdgeEditor = (props: Props) => {
 
 	return (
 		<div className={classNames('new-edge-editor-component', newEdge && 'has-new-edge')}>
+			<h4>Connection Properties</h4>
 			{newEdge ? renderNewEdgeControls() : renderInputControl()}
 		</div>
 	);

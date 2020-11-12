@@ -122,7 +122,11 @@ const PubDocument = (props: Props) => {
 						pubData={pubData}
 						accentColor={communityData.accentColorDark}
 						initialFilters={[PubEdgeFilter.Child, PubEdgeFilter.Sibling]}
-						initialMode={PubEdgeMode.List}
+						initialMode={
+							pubData.pubEdgeListingDefaultsToCarousel
+								? PubEdgeMode.Carousel
+								: PubEdgeMode.List
+						}
 					/>
 				</div>
 				<div className="side-content" ref={sideContentRef}>

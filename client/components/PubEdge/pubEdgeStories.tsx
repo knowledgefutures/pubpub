@@ -6,6 +6,7 @@ import { PubEdge, PubEdgeEditor } from 'components';
 import { RelationType } from 'utils/pubEdge';
 
 const pubEdge = {
+	id: 'pub-edge-id',
 	externalPublication: {
 		title: "Artificial Intelligence—The Revolution Hasn't Happened Yet",
 		description:
@@ -35,6 +36,9 @@ const StatefulPreviewWrapper = () => {
 			onUpdateExternalPublication={(next) =>
 				setExternalPublication({ ...externalPublication, ...next })
 			}
+			pubData={{
+				pubEdgeDescriptionVisible: true,
+			}}
 		/>
 	);
 };
@@ -44,7 +48,6 @@ storiesOf('components/PubEdge', module)
 	.add('actsLikeLink', () => <PubEdge pubEdge={pubEdge} actsLikeLink={true} />)
 	.add('no avatar', () => (
 		<>
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message */}
 			<PubEdge pubEdge={pubEdgeWithoutAvatar} />
 		</>
 	));

@@ -38,25 +38,3 @@ const externalPublicationType: PropTypes.Requireable<externalPublicationType> = 
 	publicationDate: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 });
 export { externalPublicationType };
-
-type pubEdgeType = {
-	externalPublication?: externalPublicationType;
-	targetPub?: {
-		title?: string;
-		id?: string;
-	};
-	relationType: string;
-	pubIsParent: boolean;
-};
-
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'externalPub... Remove this comment to see the full error message
-const pubEdgeType: PropTypes.Requireable<pubEdgeType> = PropTypes.shape({
-	externalPublication: externalPublicationType,
-	targetPub: PropTypes.shape({
-		title: PropTypes.string,
-		id: PropTypes.string,
-	}),
-	relationType: PropTypes.string.isRequired,
-	pubIsParent: PropTypes.bool.isRequired,
-});
-export { pubEdgeType };

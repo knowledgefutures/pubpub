@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { NonIdealState, Tab, Tabs } from '@blueprintjs/core';
+import { NonIdealState, Switch, Tab, Tabs } from '@blueprintjs/core';
+import { Radio } from '@blueprintjs/core';
 
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
+import { apiFetch } from 'client/utils/apiFetch';
 
 import DashboardEdgesListing from './DashboardEdgesListing';
 import NewEdgeEditor from './NewEdgeEditor';
@@ -25,13 +27,18 @@ type Props = {
 				id?: string;
 			};
 		}[];
+		pubEdgeListingDefaultsToCarousel: boolean;
+		pubEdgeDescriptionVisible: boolean;
 	};
 };
 
 const frameDetails = (
 	<>
-		Manage relationships between this Pub and others Pubs in your Community or publications
-		elsewhere on the internet.
+		<p>
+			Create & manage relationships between this Pub and other Pubs in your Community or
+			publications elsewhere on the internet.
+		</p>
+		<p>Connection previews will be shown near the header and footer of this Pub's layout.</p>
 	</>
 );
 
@@ -43,6 +50,7 @@ const DashboardEdges = (props: Props) => {
 			activePermissions: { canManage: canManageEdges },
 		},
 	} = usePageContext();
+	const [persistedPubData, setPersistedPubData] = useState(pubData);
 
 	const {
 		inboundEdges,
@@ -52,6 +60,23 @@ const DashboardEdges = (props: Props) => {
 		removeOutboundEdge,
 		updateInboundEdgeApproval,
 	} = useDashboardEdges(pubData);
+
+	// TODO(eric): Refactor to use new Pub type and usePersistableState when
+	// collection layouts feature is merged.
+	const updatePub = async (patch: { [k in keyof typeof pubData]?: typeof pubData[k] }) => {
+		try {
+			setPersistedPubData({ ...persistedPubData, ...patch });
+			await apiFetch('/api/pubs', {
+				method: 'PUT',
+				body: JSON.stringify({
+					pubId: persistedPubData.id,
+					...patch,
+				}),
+			});
+		} catch {
+			setPersistedPubData(persistedPubData);
+		}
+	};
 
 	const renderOutboundEdgesTab = () => {
 		const usedPubsIds = [
@@ -68,7 +93,7 @@ const DashboardEdges = (props: Props) => {
 						availablePubs={overviewData.pubs}
 						// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
 						usedPubIds={usedPubsIds}
-						pubData={pubData}
+						pubData={persistedPubData}
 						onCreateNewEdge={addCreatedOutboundEdge}
 						onChangeCreatingState={(isCreating) =>
 							setShowOutboundEmptyState(!isCreating)
@@ -76,15 +101,11 @@ const DashboardEdges = (props: Props) => {
 					/>
 				)}
 				<DashboardEdgesListing
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+					pubData={persistedPubData}
 					pubEdges={outboundEdges}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(sourceIndex: any, destinationIndex: any) =>... Remove this comment to see the full error message
 					onReorderEdges={canManageEdges && reorderOutboundEdges}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(outboundEdge: any) => void' is not assignab... Remove this comment to see the full error message
 					onRemoveEdge={canManageEdges && removeOutboundEdge}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'never'.
 					isInbound={false}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '() => false | JSX.Element' is not assignable... Remove this comment to see the full error message
 					renderEmptyState={() =>
 						showOutboundEmptyState && (
 							<NonIdealState
@@ -106,13 +127,10 @@ const DashboardEdges = (props: Props) => {
 	const renderInboundEdgesTab = () => {
 		return (
 			<DashboardEdgesListing
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+				pubData={persistedPubData}
 				pubEdges={inboundEdges}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(inboundEdge: any, approvedByTarget: any) =>... Remove this comment to see the full error message
 				onUpdateEdgeApproval={canManageEdges && updateInboundEdgeApproval}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 				isInbound={true}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '() => JSX.Element' is not assignable to type... Remove this comment to see the full error message
 				renderEmptyState={() => (
 					<NonIdealState
 						icon="layout-auto"
@@ -130,6 +148,42 @@ const DashboardEdges = (props: Props) => {
 			title="Connections"
 			details={frameDetails}
 		>
+			{canManageEdges && (
+				<div className="default-settings">
+					<div>
+						<span>Show multiple Connections as:</span>
+						<Radio
+							checked={persistedPubData.pubEdgeListingDefaultsToCarousel}
+							onChange={() => updatePub({ pubEdgeListingDefaultsToCarousel: true })}
+							inline
+						>
+							Carousel
+						</Radio>
+						<Radio
+							checked={!persistedPubData.pubEdgeListingDefaultsToCarousel}
+							onChange={() => updatePub({ pubEdgeListingDefaultsToCarousel: false })}
+							inline
+						>
+							List
+						</Radio>
+					</div>
+					<div>
+						<label>
+							<Switch
+								checked={persistedPubData.pubEdgeDescriptionVisible}
+								onChange={(event) =>
+									updatePub({
+										pubEdgeDescriptionVisible: (event.target as HTMLInputElement)
+											.checked,
+									})
+								}
+								inline
+							/>
+							Show Description by default
+						</label>
+					</div>
+				</div>
+			)}
 			<Tabs id="pub-dashboard-connections-tabs">
 				<Tab
 					id="created-by-this-pub"

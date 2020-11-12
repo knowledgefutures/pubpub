@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
 
 import { Filter, Mode, allFilters } from './constants';
-import { pubEdgeType } from '../PubEdge/constants';
 import PubEdgeListingCard from './PubEdgeListingCard';
 import PubEdgeListingCounter from './PubEdgeListingCounter';
 import PubEdgeListingControls from './PubEdgeListingControls';
@@ -16,9 +15,9 @@ type OwnProps = {
 	hideIfNoInitialMatches?: boolean;
 	isolated?: boolean;
 	pubData: {
-		inboundEdges: pubEdgeType[];
-		outboundEdges: pubEdgeType[];
-		siblingEdges: pubEdgeType[];
+		inboundEdges: any[];
+		outboundEdges: any[];
+		siblingEdges: any[];
 	};
 	initialMode?: string;
 	initialFilters?: string[];
@@ -203,21 +202,18 @@ const PubEdgeListing = (props: Props) => {
 		const cards =
 			mode === Mode.Carousel
 				? activeEdgeInContext && (
-						// @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message
 						<PubEdgeListingCard
+							pubData={pubData}
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							pubEdge={activeEdgeInContext.edge}
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							parentPub={activeEdgeInContext.parentPub}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 							accentColor={accentColor}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 							showIcon={isolated}
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							viewingFromSibling={activeEdgeInContext.isSibling}
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							isInboundEdge={activeEdgeInContext.isInboundEdge}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 							inPubBody
 						>
 							{isolated && controls}
@@ -225,16 +221,15 @@ const PubEdgeListing = (props: Props) => {
 				  )
 				: filteredPubEdgesInContext.map(({ isInboundEdge, edge, isSibling }) => (
 						<PubEdgeListingCard
+							pubData={pubData}
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							key={edge.url}
 							pubEdge={edge}
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							parentPub={activeEdgeInContext.parentPub}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 							accentColor={accentColor}
 							viewingFromSibling={isSibling}
 							isInboundEdge={isInboundEdge}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
 							inPubBody
 						/>
 				  ));

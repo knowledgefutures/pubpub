@@ -1,29 +1,51 @@
+@import 'styles/mixins.scss';
+
 $margin-size: 15px;
 
 .new-edge-editor-component {
-    &.has-new-edge {
-        padding: $margin-size;
-        border-radius: 4px;
-        padding-top: 20px;
-        border: 1px dashed #bbb;
-    }
+	position: relative;
 
-    .pub-edge-listing-card-component {
-        margin-bottom: $margin-size;
-    }
+	h4 {
+		@include bleed-top-border;
+		top: -2px;
 
-    .controls-row {
-        display: flex;
-        > :not(.bp3-divider):not(:last-child) {
-            margin-right: 10px;
-        }
-        .cancel-button {
-            margin-left: 10px;
-        }
-    }
+		color: #999;
+		display: none;
+		font-size: 10px;
+		font-variant: small-caps;
+		font-weight: normal;
+		text-transform: lowercase;
+		letter-spacing: 1px;
+	}
 
-    .error-callout {
-        margin-top: $margin-size;
-        margin-bottom: $margin-size;
-    }
+	&.has-new-edge {
+		padding: $margin-size;
+		border-radius: 4px;
+		border: 1px dashed #bbb;
+
+		h4 {
+			display: block;
+		}
+	}
+
+	.pub-edge-listing-card-component {
+		margin-bottom: $margin-size;
+	}
+
+	.controls-row {
+		display: flex;
+
+		&:first-of-type {
+			margin-bottom: 20px;
+		}
+
+		> :not(:last-child) {
+			margin-right: 10px;
+		}
+	}
+
+	.error-callout {
+		margin-top: $margin-size;
+		margin-bottom: $margin-size;
+	}
 }

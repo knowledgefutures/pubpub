@@ -88,10 +88,15 @@ app.get(
 			return res.redirect(`/search?q=${collection.title}`);
 		}
 
-		// Some Crossref deposits have occured with this scheme so we must continue to support it.
-		const collectionByPartialId = await findCollectionByPartialId(collectionSlug);
-		if (collectionByPartialId) {
-			return res.redirect(`/${collectionByPartialId.slug}`);
+		// Some Crossref deposits have occured with this scheme so we must continue
+		// to support it. This only applies to URLs that match the /collection/:slug
+		// pattern.
+		if (/^\/collection/.test(req.path)) {
+			const collectionByPartialId = await findCollectionByPartialId(collectionSlug);
+
+			if (collectionByPartialId) {
+				return res.redirect(`/${collectionByPartialId.slug}`);
+			}
 		}
 
 		return next();

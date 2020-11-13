@@ -8,16 +8,16 @@ figure {
 	}
 
 	& > * {
+		pointer-events: none;
 		width: 100%;
 	}
 
 	&.ProseMirror-selectednode {
-		outline: none;
-	}
-
-	&.ProseMirror-selectednode {
 		outline: 2px solid #bbbdc0;
-		pointer-events: auto;
+
+		> * {
+			pointer-events: auto;
+		}
 	}
 
 	&[data-align='left'] {
@@ -44,6 +44,18 @@ figure {
 	figcaption {
 		opacity: 0.75;
 		padding: 2px 0px 5px;
+	}
+}
+
+&.ProseMirror.read-only {
+	figure {
+		> * {
+			pointer-events: auto;
+		}
+
+		&.ProseMirror-selectednode {
+			outline: none;
+		}
 	}
 }
 

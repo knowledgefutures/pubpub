@@ -30,9 +30,12 @@ figure {
 		margin: 0.5em 0em 0.5em 1.5em;
 	}
 
+	&[data-align='center'] {
+		margin: 0 auto;
+	}
+
 	@for $i from 1 through 100 {
 		&[data-size='#{$i}'] {
-			margin: 0 auto;
 			width: percentage($i/100);
 		}
 	}

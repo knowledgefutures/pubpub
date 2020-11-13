@@ -9,7 +9,6 @@ figure {
 
 	& > * {
 		width: 100%;
-		pointer-events: none;
 	}
 
 	&.ProseMirror-selectednode {
@@ -45,12 +44,6 @@ figure {
 	figcaption {
 		opacity: 0.75;
 		padding: 2px 0px 5px;
-	}
-}
-
-&.ProseMirror.read-only {
-	figure > * {
-		pointer-events: auto;
 	}
 }
 

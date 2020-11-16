@@ -8,17 +8,16 @@ figure {
 	}
 
 	& > * {
-		width: 100%;
 		pointer-events: none;
-	}
-
-	&.ProseMirror-selectednode {
-		outline: none;
+		width: 100%;
 	}
 
 	&.ProseMirror-selectednode {
 		outline: 2px solid #bbbdc0;
-		pointer-events: auto;
+
+		> * {
+			pointer-events: auto;
+		}
 	}
 
 	&[data-align='left'] {
@@ -31,9 +30,12 @@ figure {
 		margin: 0.5em 0em 0.5em 1.5em;
 	}
 
+	&[data-align='center'] {
+		margin: 0 auto;
+	}
+
 	@for $i from 1 through 100 {
 		&[data-size='#{$i}'] {
-			margin: 0 auto;
 			width: percentage($i/100);
 		}
 	}
@@ -49,8 +51,14 @@ figure {
 }
 
 &.ProseMirror.read-only {
-	figure > * {
-		pointer-events: auto;
+	figure {
+		> * {
+			pointer-events: auto;
+		}
+
+		&.ProseMirror-selectednode {
+			outline: none;
+		}
 	}
 }
 

@@ -19,6 +19,8 @@ const commandFiles = {
 	branchMaintenance: './branchMaintenance.js',
 	bulkimport: '../workers/tasks/import/bulk/cli.js',
 	checkpointBackfill: './dashboardMigrations/backfillCheckpoints.js',
+	clone: './clone.js',
+	devshell: './devshell.js',
 	firebaseDownload: './firebaseDownload.js',
 	flattenBranchHistory: './flattenBranchHistory.js',
 	migrate: './migrate.js',
@@ -26,14 +28,13 @@ const commandFiles = {
 	migration2020_05_06: './migration2020_05_06.js',
 	migration2020_06_24: './migration2020_06_24.js',
 	migrationsDeprecated: './migrationsDeprecated.js',
-	rerunExport: './rerunExport.js',
 	rerankCollections: './rerankCollections.js',
+	rerunExport: './rerunExport.js',
 	searchSync: './searchSync.js',
 	switchBranchOrders: './switchBranchOrders.js',
 	syncDbSchema: './syncDbSchema.js',
 	syncDevFirebase: './syncFirebase.js',
-	devshell: './devshell.js',
-	clone: './clone.js',
+	updatePubEdgeDefaults: './updatePubEdgeDefaults.js',
 };
 
 const activeCommandFile = commandFiles[command];

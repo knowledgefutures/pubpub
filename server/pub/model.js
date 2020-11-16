@@ -48,8 +48,13 @@ export default (sequelize, dataTypes) => {
 			pubEdgeListingDefaultsToCarousel: {
 				type: dataTypes.BOOLEAN,
 				defaultValue: true,
+				allowNull: false,
 			},
-			pubEdgeDescriptionVisible: { type: dataTypes.BOOLEAN, defaultValue: true },
+			pubEdgeDescriptionVisible: {
+				type: dataTypes.BOOLEAN,
+				defaultValue: true,
+				allowNull: false,
+			},
 
 			/* Set by Associations */
 			communityId: { type: dataTypes.UUID, allowNull: false },

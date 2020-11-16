@@ -1,6 +1,6 @@
 import { Pub } from 'server/models';
 
-const main = async () => {
+module.exports = async () => {
 	console.log('Updating all Pubs to pubEdgeListingDefaultsToCarousel=false.');
 
 	try {
@@ -15,8 +15,4 @@ const main = async () => {
 		console.log(err);
 		return;
 	}
-
-	console.log('Done!');
 };
-
-main().finally(() => process.exit(0));

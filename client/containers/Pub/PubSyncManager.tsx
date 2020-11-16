@@ -57,7 +57,7 @@ const getLocalCollabUser = (pubData, loginData) => {
 };
 
 const idleStateUpdater = (boundSetState, timeout = 50) => {
-	let queue = [];
+	let queue: any[] = [];
 	let idleCallback = null;
 
 	const setStateNow = () =>
@@ -66,14 +66,12 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 			let state = prevState;
 			const itemsInQueue = queue.length;
 			queue.forEach(([update, maybeCallback]) => {
-				// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
 				const partial = typeof update === 'function' ? update(state) : update;
 				state = {
 					...state,
 					...partial,
 				};
 				if (maybeCallback) {
-					// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
 					maybeCallback(state);
 				}
 			});
@@ -82,11 +80,14 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 		});
 
 	const setState = (...args) => {
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
 		queue.push(args);
-		if (!idleCallback) {
-			// @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'requestIdleCallback'.
-			idleCallback = requestIdleCallback(setStateNow, { timeout: timeout });
+		if ('requestIdleCallback' in window) {
+			if (!idleCallback) {
+				// @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'requestIdleCallback'.
+				idleCallback = requestIdleCallback(setStateNow, { timeout: timeout });
+			}
+		} else {
+			setStateNow();
 		}
 	};
 
@@ -94,7 +95,6 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 		return {
 			setState: (...args) => {
 				if (isImmediate) {
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
 					queue.push(args);
 					setStateNow();
 				} else {

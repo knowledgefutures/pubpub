@@ -70,7 +70,7 @@ table.toDOM = (node: ProsemirrorNode) => {
 	return pruneFalsyValues([
 		spec[0],
 		{ id: node.attrs.id },
-		withValue(buildLabel(node), (label) => ['caption', { spellcheck: 'false' }, label]),
+		withValue(buildLabel(node), (builtLabel) => ['caption', builtLabel]),
 		spec[1],
 	]) as DOMOutputSpec;
 };

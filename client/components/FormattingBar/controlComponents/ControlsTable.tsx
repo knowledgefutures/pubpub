@@ -30,8 +30,8 @@ const buttonCommands = [
 	{ key: 'table-merge-cells', title: 'Merge cells', icon: 'merge-columns' },
 	{ key: 'table-split-cell', title: 'Split cells', icon: 'split-columns' },
 	{ key: 'toggle-header-cell', title: 'Toggle header cells', icon: 'header' },
-	{ key: 'table-delete', title: 'Remove table', icon: 'trash' },
 	{ key: 'table-toggle-label', title: 'Toggle label', icon: 'tag' },
+	{ key: 'table-delete', title: 'Remove table', icon: 'trash' },
 ];
 
 const ControlsTable = (props: Props) => {

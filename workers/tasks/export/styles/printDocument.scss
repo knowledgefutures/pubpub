@@ -21,6 +21,10 @@ https://gitlab.pagedmedia.org/tools/pagedjs-cli/issues/11 */
 
 @import url('https://use.typekit.net/kmi0tdo.css');
 
+body {
+    font-family: $base-font;
+}
+
 /* Paged-specific overrides */
 .csl-bib-body,
 .csl-entry {
@@ -160,6 +164,10 @@ section.cover {
         table-layout: fixed;
         width: 100%;
         overflow: hidden;
+    }
+
+    table caption {
+        text-align: left;
     }
 
     table,

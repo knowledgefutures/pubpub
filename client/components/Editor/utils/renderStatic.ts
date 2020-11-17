@@ -36,6 +36,7 @@ const attrsTransformations = {
 	rowspan: 'rowSpan',
 	colspan: 'colSpan',
 	class: 'className',
+	spellcheck: 'spellCheck',
 	style: (val) => {
 		return { style: typeof val === 'string' ? parseStyleToObject(val) : val };
 	},

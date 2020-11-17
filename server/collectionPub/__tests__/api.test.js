@@ -47,10 +47,14 @@ const models = modelize`
 					Release {}
 				}
 			}
-			CollectionPub {
+			CollectionPub someCollectionPub {
 				rank: "b"
 				Pub pub2 {
 					Release {}
+					Member {
+						permissions: "manage"
+						User someMember {}
+					}
 				}
 			}
 			CollectionPub {
@@ -86,7 +90,7 @@ it('gets a list of pubs in a collection', async () => {
 	expect(pubs.map((pub) => pub.id)).toEqual([pub1.id, pub2.id]);
 });
 
-it('lists unreleases Pubs for users with relevant membership', async () => {
+it('lists unreleased Pubs for users with relevant membership', async () => {
 	const {
 		admin,
 		community,
@@ -257,7 +261,7 @@ it('sets a collectionPub to be the primary collection for a pub', async () => {
 	expect(secondAgainAgain.isPrimary).toEqual(false);
 });
 
-it('updates reasonable values on a pubCollection', async () => {
+it('updates reasonable values on a collectionPub', async () => {
 	const { admin, community, pub, issue } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
 	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
@@ -280,7 +284,25 @@ it('updates reasonable values on a pubCollection', async () => {
 	expect(resultingCollectionPub.contextHint).toEqual('boo');
 });
 
-it('deletes a pubCollection', async () => {
+it('lets Pub managers update pubRanks', async () => {
+	const { someCollectionPub, someMember } = models;
+	const agent = await login(someMember);
+	await agent
+		.put('/api/collectionPubs')
+		.send({
+			id: someCollectionPub.id,
+			rank: 'zzz',
+			pubRank: 'boo',
+		})
+		.expect(200);
+	const resultingCollectionPub = await CollectionPub.findOne({
+		where: { id: someCollectionPub.id },
+	});
+	expect(resultingCollectionPub.rank).toEqual(someCollectionPub.rank);
+	expect(resultingCollectionPub.pubRank).toEqual('boo');
+});
+
+it('deletes a collectionPub', async () => {
 	const { admin, community, pub, issue } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
 	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });

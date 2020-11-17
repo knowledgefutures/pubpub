@@ -7,18 +7,11 @@ export default (sequelize, dataTypes) => {
 			collectionId: { type: dataTypes.UUID, allowNull: false },
 			contextHint: { type: dataTypes.TEXT },
 			rank: { type: dataTypes.TEXT, allowNull: false },
+			pubRank: { type: dataTypes.TEXT, allowNull: false },
 			isPrimary: { type: dataTypes.BOOLEAN, defaultValue: false, allowNull: false },
 		},
 		{
 			indexes: [
-				// Index to maintain invariant that every pub have at most one primary collection
-				{
-					fields: ['pubId'],
-					where: {
-						isPrimary: true,
-					},
-					unique: true,
-				},
 				// Index to enforce that there is one CollectionPub per (collection, pub) pair
 				{
 					fields: ['collectionId', 'pubId'],

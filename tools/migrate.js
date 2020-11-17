@@ -12,8 +12,10 @@ import * as models from 'server/models';
 import { promptOkay } from './utils/prompt';
 
 const {
-	argv: { name },
+	argv: { name, down },
 } = require('yargs');
+
+const fnName = down ? 'down' : 'up';
 
 const findMigrationPath = async () => {
 	const pathToMigration = path.join(__dirname, 'migrations', name + '.js');
@@ -28,13 +30,33 @@ const getDatabaseName = () => {
 	return isProd() ? 'prod' : 'dev';
 };
 
+const throwForMissingFn = (missingFnName) => {
+	throw new Error(`No '${missingFnName}' function specified for this migration.`);
+};
+
+const getMigrationFnForPath = (modulePath) => {
+	const migrationModule = require(modulePath);
+	if (typeof migrationModule === 'function') {
+		if (down) {
+			throwForMissingFn('down');
+		}
+		return migrationModule;
+	}
+	const fn = migrationModule[fnName];
+	if (!fn) {
+		throwForMissingFn(fnName);
+	}
+	return fn;
+};
+
 const main = async () => {
 	const migrationPath = await findMigrationPath();
-	await promptOkay(`Run migration at ${migrationPath} on ${getDatabaseName()}?`, {
+	await promptOkay(`Run '${fnName}' migration at ${migrationPath} on ${getDatabaseName()}?`, {
 		throwIfNo: true,
 		yesIsDefault: false,
 	});
-	const migrationFn = require(migrationPath);
+	await sequelize.sync();
+	const migrationFn = getMigrationFnForPath(migrationPath);
 	console.info('Starting migration');
 	await migrationFn({ Sequelize: Sequelize, sequelize: sequelize, models: models });
 };

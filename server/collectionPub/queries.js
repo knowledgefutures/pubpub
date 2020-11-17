@@ -48,10 +48,19 @@ export const getPubsInCollection = async ({ communityId, collectionId, userId })
 		);
 };
 
+const getRankInPeers = (requestedRank, ranks, moveToTop = false) => {
+	if (requestedRank) {
+		return requestedRank;
+	}
+	const targetIndex = moveToTop ? 0 : ranks.length;
+	return findRank(ranks, targetIndex);
+};
+
 export const createCollectionPub = ({
 	collectionId,
 	pubId,
 	rank,
+	pubRank,
 	isPrimary: forceIsPrimary,
 	moveToTop = false,
 }) => {
@@ -68,18 +77,19 @@ export const createCollectionPub = ({
 			pubLevelPeers.filter((peer) => peer.collection.kind !== 'tag').length === 0 &&
 			collection.kind !== 'tag' &&
 			collection.isPublic;
-		// If a rank wasn't provided, move the CollectionPub to the top or bottom of the collection
-		let setRank = rank;
-		if (!setRank) {
-			const ranks = collectionLevelPeers.map((cp) => cp.rank).filter((r) => r);
-			// eslint-disable-next-line no-param-reassign
-			const targetIndex = moveToTop ? 0 : ranks.length;
-			setRank = findRank(ranks, targetIndex);
-		}
+
 		return CollectionPub.create({
 			collectionId: collectionId,
 			pubId: pubId,
-			rank: setRank,
+			rank: getRankInPeers(
+				rank,
+				collectionLevelPeers.map((cp) => cp.rank),
+				moveToTop,
+			),
+			pubRank: getRankInPeers(
+				pubRank,
+				pubLevelPeers.map((cp) => cp.pubRank),
+			),
 			isPrimary: forceIsPrimary || isPrimary,
 		});
 	});
@@ -117,11 +127,10 @@ export const setPrimaryCollectionPub = ({ collectionPubId, isPrimary }) => {
 	});
 };
 
-export const updateCollectionPub = ({ collectionPubId, ...inputValues }, updatePermissions) => {
-	// Filter to only allow certain fields to be updated
+export const updateCollectionPub = (collectionPubId, inputValues, updatableFields) => {
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
-		if (updatePermissions.includes(key)) {
+		if (updatableFields.includes(key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
@@ -134,7 +143,7 @@ export const updateCollectionPub = ({ collectionPubId, ...inputValues }, updateP
 	});
 };
 
-export const destroyCollectionPub = ({ collectionPubId }) => {
+export const destroyCollectionPub = (collectionPubId) => {
 	return CollectionPub.destroy({
 		where: { id: collectionPubId },
 	});

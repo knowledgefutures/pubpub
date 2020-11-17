@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Pub } from 'server/models';
 
 module.exports = async () => {
@@ -13,6 +14,5 @@ module.exports = async () => {
 	} catch (err) {
 		console.log('Error with data migration:');
 		console.log(err);
-		return;
 	}
 };

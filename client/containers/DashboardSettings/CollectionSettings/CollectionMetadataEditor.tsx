@@ -3,7 +3,15 @@
  * a collection that represents a structured collection of content like a journal issue or book.
  */
 import * as React from 'react';
-import { Button, FormGroup, InputGroup, NonIdealState, ButtonGroup } from '@blueprintjs/core';
+import {
+	Button,
+	FormGroup,
+	InputGroup,
+	NonIdealState,
+	ButtonGroup,
+	Divider,
+	Callout,
+} from '@blueprintjs/core';
 
 import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
 // @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/collection' or its corre... Remove this comment to see the full error message
@@ -33,6 +41,8 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 			metadata: initialMetadata,
 			isGettingDoi: false,
 			isSaving: false,
+			deposited: false,
+			saved: false,
 		};
 		this.handleInputChange = this.handleInputChange.bind(this);
 		this.handleTitleChange = this.handleTitleChange.bind(this);
@@ -64,7 +74,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 
 	handleGetDoiClick() {
 		const { communityData, collection, onUpdateCollection } = this.props;
-		this.setState({ isGettingDoi: true });
+		this.setState({ isGettingDoi: true, deposited: false, saved: false });
 		return apiFetch('/api/doi', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -72,16 +82,20 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 				collectionId: collection.id,
 				communityId: communityData.id,
 			}),
-		}).then(({ dois }) => {
-			onUpdateCollection({ doi: dois.collection });
-			this.setState({ isSaving: false });
-		});
+		})
+			.then(({ dois }) => {
+				onUpdateCollection({ doi: dois.collection });
+				this.setState({ isGettingDoi: false, deposited: true });
+			})
+			.catch((error) => {
+				this.setState({ isGettingDoi: false });
+			});
 	}
 
 	handleSaveClick() {
 		const { communityData, collection, onUpdateCollection } = this.props;
 		const { metadata, title } = this.state;
-		this.setState({ isSaving: true });
+		this.setState({ isSaving: true, deposited: false, saved: false });
 		return apiFetch('/api/collections', {
 			method: 'PUT',
 			body: JSON.stringify({
@@ -90,10 +104,14 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 				id: collection.id,
 				communityId: communityData.id,
 			}),
-		}).then(() => {
-			onUpdateCollection({ metadata: metadata, title: title });
-			this.setState({ isSaving: false });
-		});
+		})
+			.then(() => {
+				onUpdateCollection({ metadata: metadata, title: title });
+				this.setState({ isSaving: false, saved: true });
+			})
+			.catch((error) => {
+				this.setState({ isSaving: false });
+			});
 	}
 
 	handleInputChange(field, value, pattern) {
@@ -116,31 +134,39 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 	renderGetDoiButton() {
 		const { collection } = this.props;
 		const { isGettingDoi } = this.state;
-		return (
-			!collection.doi && (
-				<ConfirmDialog
-					onConfirm={this.handleGetDoiClick}
-					confirmLabel="Assign DOI"
-					intent="primary"
-					text={
-						<span>Once assigned, the DOI for this collection cannot be changed.</span>
-					}
-				>
-					{({ open }) => (
-						<Button minimal icon="link" disabled={isGettingDoi} onClick={open}>
-							Get DOI
-						</Button>
-					)}
-				</ConfirmDialog>
-			)
+
+		return collection.doi ? (
+			<Button
+				icon="link"
+				loading={isGettingDoi}
+				disabled={isGettingDoi}
+				onClick={this.handleGetDoiClick}
+			>
+				Re-deposit
+			</Button>
+		) : (
+			<ConfirmDialog
+				onConfirm={this.handleGetDoiClick}
+				confirmLabel="Assign DOI"
+				intent="primary"
+				text="This is the first time this collection has been deposited to Crossref. Once assigned, the DOI for this collection cannot be changed."
+			>
+				{({ open }) => (
+					<Button
+						icon="link"
+						loading={isGettingDoi}
+						disabled={isGettingDoi}
+						onClick={open}
+					>
+						Deposit
+					</Button>
+				)}
+			</ConfirmDialog>
 		);
 	}
 
 	renderFieldRightElement(field) {
 		const { name, defaultDerivedFrom, value } = field;
-		if (field.name === 'doi') {
-			return this.renderGetDoiButton();
-		}
 		const derivedHintValue = defaultDerivedFrom && this.deriveInputValue(defaultDerivedFrom);
 		return (
 			derivedHintValue && (
@@ -171,7 +197,6 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 					value={derivedValue || value || ''}
 					onChange={(event) => this.handleInputChange(name, event.target.value, pattern)}
 					intent={validateField(field) ? 'none' : 'danger'}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'Element | ... Remove this comment to see the full error message
 					rightElement={this.renderFieldRightElement(field)}
 				/>
 			</FormGroup>
@@ -203,6 +228,31 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 		);
 	}
 
+	renderStatusMessage() {
+		if (this.state.deposited) {
+			return (
+				<Callout intent="success" title="Success!">
+					<p>Successfully submitted a DOI registration for this Collection.</p>
+					<p>
+						Registration may take a few hours to complete in Crossref&apos;s system. If
+						DOI URLs do not work immediately, the registration is likely still
+						processing.
+					</p>
+				</Callout>
+			);
+		}
+
+		if (this.state.saved) {
+			return (
+				<Callout intent="success" title="Success!">
+					<p>Successfully saved Collection metadata.</p>
+				</Callout>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
 		const { isSaving } = this.state;
 		return (
@@ -216,7 +266,10 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 					>
 						Save changes
 					</Button>
+					<Divider />
+					{this.renderGetDoiButton()}
 				</ButtonGroup>
+				{this.renderStatusMessage()}
 			</div>
 		);
 	}

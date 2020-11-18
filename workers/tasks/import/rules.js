@@ -130,6 +130,9 @@ rules.transformToMark('Superscript', 'sup');
 rules.transformToMark('Subscript', 'sub');
 
 rules.fromPandoc('Code', (node) => {
+	if (node.content === '') {
+		return [];
+	}
 	return {
 		type: 'text',
 		marks: [{ type: 'code' }],

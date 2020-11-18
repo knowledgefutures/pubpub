@@ -14,6 +14,7 @@ import {
 	CollectionAttribution,
 	includeUserModel,
 } from 'server/models';
+import { handleErrors } from 'server/utils/errors';
 import { withValue } from 'utils/fp';
 
 const findCollectionByPartialId = (maybePartialId) => {
@@ -40,65 +41,69 @@ app.get(
 			return next();
 		}
 
-		const { collectionSlug } = req.params;
-		const initialData = await getInitialData(req);
-		const { communityData } = initialData;
+		try {
+			const { collectionSlug } = req.params;
+			const initialData = await getInitialData(req);
+			const { communityData } = initialData;
 
-		const collection = withValue(
-			communityData.collections.find((c) => c.slug === collectionSlug),
-			(c) => c && enrichCollectionWithPubTokens(c, initialData),
-		);
+			const collection = withValue(
+				communityData.collections.find((c) => c.slug === collectionSlug),
+				(c) => c && enrichCollectionWithPubTokens(c, initialData),
+			);
 
-		if (collection) {
-			const { pageId, layout } = collection;
+			if (collection) {
+				const { pageId, layout } = collection;
 
-			await enrichCollectionWithAttributions(collection);
+				await enrichCollectionWithAttributions(collection);
 
-			if (pageId) {
-				const page = await Page.findOne({ where: { id: pageId } });
-				if (page) {
-					return res.redirect(`/${page.slug}`);
+				if (pageId) {
+					const page = await Page.findOne({ where: { id: pageId } });
+					if (page) {
+						return res.redirect(`/${page.slug}`);
+					}
+				}
+
+				if (layout) {
+					const pubs = await getPubsForLayout({
+						blocks: layout.blocks,
+						initialData: initialData,
+						collectionId: collection.id,
+					});
+
+					return renderToNodeStream(
+						res,
+						<Html
+							chunkName="Collection"
+							initialData={initialData}
+							viewData={{ pubs: pubs, collection: collection }}
+							headerComponents={generateMetaComponents({
+								initialData: initialData,
+								title: `${collection.title} · ${communityData.title}`,
+								description: '',
+								image: collection.avatar,
+								unlisted: !collection.isPublic,
+							})}
+						/>,
+					);
+				}
+
+				return res.redirect(`/search?q=${collection.title}`);
+			}
+
+			// Some Crossref deposits have occured with this scheme so we must continue
+			// to support it. This only applies to URLs that match the /collection/:slug
+			// pattern.
+			if (/^\/collection/.test(req.path)) {
+				const collectionByPartialId = await findCollectionByPartialId(collectionSlug);
+
+				if (collectionByPartialId) {
+					return res.redirect(`/${collectionByPartialId.slug}`);
 				}
 			}
 
-			if (layout) {
-				const pubs = await getPubsForLayout({
-					blocks: layout.blocks,
-					initialData: initialData,
-					collectionId: collection.id,
-				});
-
-				return renderToNodeStream(
-					res,
-					<Html
-						chunkName="Collection"
-						initialData={initialData}
-						viewData={{ pubs: pubs, collection: collection }}
-						headerComponents={generateMetaComponents({
-							initialData: initialData,
-							title: `${collection.title} · ${communityData.title}`,
-							description: '',
-							image: collection.avatar,
-							unlisted: !collection.isPublic,
-						})}
-					/>,
-				);
-			}
-
-			return res.redirect(`/search?q=${collection.title}`);
+			return next();
+		} catch (err) {
+			return handleErrors(req, res, next)(err);
 		}
-
-		// Some Crossref deposits have occured with this scheme so we must continue
-		// to support it. This only applies to URLs that match the /collection/:slug
-		// pattern.
-		if (/^\/collection/.test(req.path)) {
-			const collectionByPartialId = await findCollectionByPartialId(collectionSlug);
-
-			if (collectionByPartialId) {
-				return res.redirect(`/${collectionByPartialId.slug}`);
-			}
-		}
-
-		return next();
 	}),
 );

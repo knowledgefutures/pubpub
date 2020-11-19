@@ -8,7 +8,7 @@ import { getDashUrl } from 'utils/dashboard';
 
 require('./overviewRow.scss');
 
-type OwnProps = {
+type Props = {
 	children?: React.ReactNode;
 	content: any;
 	controls?: React.ReactNode;
@@ -17,16 +17,7 @@ type OwnProps = {
 	label?: React.ReactNode;
 	minimal?: boolean;
 	parentSlug?: string;
-};
-
-const defaultProps = {
-	children: null,
-	controls: null,
-	dragHandleProps: null,
-	isDragging: false,
-	label: null,
-	parentSlug: undefined,
-	minimal: false,
+	showType?: boolean;
 };
 
 const getCounts = (isCollection, content) => {
@@ -63,18 +54,17 @@ const getHref = (isCollection, slug, parentSlug) => {
 	});
 };
 
-type Props = OwnProps & typeof defaultProps;
-
 const OverviewRow = (props: Props) => {
 	const {
+		children = null,
 		content,
-		controls,
-		dragHandleProps,
-		isDragging,
-		label,
+		controls = null,
+		dragHandleProps = null,
+		isDragging = false,
+		label = null,
+		minimal = false,
+		showType = true,
 		parentSlug,
-		minimal,
-		children,
 	} = props;
 	const isCollection = content.pubs;
 	const hasAuthors = content.attributions && content.attributions.some((a) => a.isAuthor);
@@ -157,9 +147,11 @@ const OverviewRow = (props: Props) => {
 						renderHandle()
 					)}
 				</div>
-				<div className="type">
-					<Icon icon={isCollection ? 'collection' : 'pubDoc'} iconSize={14} />
-				</div>
+				{showType && (
+					<div className="type">
+						<Icon icon={isCollection ? 'collection' : 'pubDoc'} iconSize={14} />
+					</div>
+				)}
 				<div className="title" draggable="false">
 					<a className="item-title" href={href}>
 						{content.title}
@@ -181,5 +173,5 @@ const OverviewRow = (props: Props) => {
 		</div>
 	);
 };
-OverviewRow.defaultProps = defaultProps;
+
 export default OverviewRow;

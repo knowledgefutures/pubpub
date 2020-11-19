@@ -13,6 +13,7 @@ import { getPrimaryCollection } from 'utils/collections/primary';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { fuzzyMatchCollection } from 'utils/fuzzyMatch';
 import * as api from 'client/utils/collections/api';
+import PrimaryCollectionExplanation from '../PrimaryCollectionExplanation/PrimaryCollectionExplanation';
 
 require('./pubCollectionsListing.scss');
 
@@ -180,6 +181,12 @@ const PubCollectionsListing = (props: Props) => {
 						Add to Collections
 					</Button>
 				</QueryListDropdown>
+			)}
+			{collectionPubs.length > 0 && (
+				<div className="reorder-explanation">
+					Reorder Collections to indicate their importance to this Pub; the highest
+					public, non-Tag Collection will serve as its <PrimaryCollectionExplanation />.
+				</div>
 			)}
 			<DragDropContext onDragEnd={handleDragEnd}>
 				<DragDropListing

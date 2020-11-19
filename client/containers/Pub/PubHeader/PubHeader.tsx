@@ -43,7 +43,6 @@ const ToggleDetailsButton = ({ showingDetails, onClick }) => {
 	const icon = showingDetails ? 'cross' : 'expand-all';
 	return (
 		<SmallHeaderButton
-			// @ts-expect-error ts-migrate(2322) FIXME: Property 'className' does not exist on type 'Intri... Remove this comment to see the full error message
 			className={classNames('details-button', showingDetails && 'showing-details')}
 			label={label}
 			labelPosition="left"

@@ -88,8 +88,7 @@ const CollectionOverview = (props: Props) => {
 		>
 			<OverviewBlocks pubs={pubList} />
 			<OverviewTable
-				title="Pubs in this collection"
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(item: any) => any' is not assignable to typ... Remove this comment to see the full error message
+				title="Pubs in this Collection"
 				generateLabel={(item) => {
 					// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 					const contextHint = collectionSchema.contextHints.find(
@@ -98,16 +97,15 @@ const CollectionOverview = (props: Props) => {
 					return contextHint && contextHint.label;
 				}}
 				pubList={pubList}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(sourceIndex: any, destinationIndex: any) =>... Remove this comment to see the full error message
 				onReorder={canManage ? reorderCollectionPubs : undefined}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(pub: any) => Element | null' is not assigna... Remove this comment to see the full error message
 				rowControls={renderRowControls}
+				showType={false}
 				emptyState={
 					<NonIdealState
 						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'false | E... Remove this comment to see the full error message
 						icon={collectionSchema.bpDisplayIcon}
 						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-						title={`This ${collectionSchema.label.singular} doesn't contain any pubs yet!`}
+						title={`This ${collectionSchema.label.singular} doesn't contain any Pubs yet!`}
 						description="Choose 'Add Pubs' from above to add some."
 					/>
 				}

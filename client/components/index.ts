@@ -43,6 +43,8 @@ export { default as PagePreview } from './PagePreview/PagePreview';
 export { default as PendingChangesProvider } from './PendingChangesProvider/PendingChangesProvider';
 export { default as PermissionsDropdown } from './PermissionsDropdown/PermissionsDropdown';
 export { default as PreviewImage } from './PreviewImage/PreviewImage';
+export { default as PopoverButton } from './PopoverButton/PopoverButton';
+export { default as PrimaryCollectionExplanation } from './PrimaryCollectionExplanation/PrimaryCollectionExplanation';
 export { default as PubAttributionDialog } from './PubAttributionEditor/PubAttributionDialog';
 export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttributionEditor';
 export { default as PubByline } from './PubByline/PubByline';

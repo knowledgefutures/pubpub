@@ -1,8 +1,5 @@
-import { Op } from 'sequelize';
-
 import { findRank } from 'utils/rank';
 import {
-	sequelize,
 	Collection,
 	CollectionPub,
 	Member,
@@ -56,28 +53,14 @@ const getRankInPeers = (requestedRank, ranks, moveToTop = false) => {
 	return findRank(ranks, targetIndex);
 };
 
-export const createCollectionPub = ({
-	collectionId,
-	pubId,
-	rank,
-	pubRank,
-	isPrimary: forceIsPrimary,
-	moveToTop = false,
-}) => {
+export const createCollectionPub = ({ collectionId, pubId, rank, pubRank, moveToTop = false }) => {
 	return Promise.all([
-		Collection.findOne({ where: { id: collectionId } }),
 		CollectionPub.findAll({
 			where: { pubId: pubId },
 			include: [{ model: Collection, as: 'collection' }],
 		}),
 		getCollectionPubsInCollection(collectionId),
-	]).then(([collection, pubLevelPeers, collectionLevelPeers]) => {
-		// If this is the first non-tag collection in the bunch, make it the primary one
-		const isPrimary =
-			pubLevelPeers.filter((peer) => peer.collection.kind !== 'tag').length === 0 &&
-			collection.kind !== 'tag' &&
-			collection.isPublic;
-
+	]).then(([pubLevelPeers, collectionLevelPeers]) => {
 		return CollectionPub.create({
 			collectionId: collectionId,
 			pubId: pubId,
@@ -90,40 +73,7 @@ export const createCollectionPub = ({
 				pubRank,
 				pubLevelPeers.map((cp) => cp.pubRank),
 			),
-			isPrimary: forceIsPrimary || isPrimary,
 		});
-	});
-};
-
-export const setPrimaryCollectionPub = ({ collectionPubId, isPrimary }) => {
-	return CollectionPub.findOne({
-		where: { id: collectionPubId },
-		include: [{ model: Collection, as: 'collection' }],
-	}).then((collectionPub) => {
-		return (
-			(!collectionPubId || collectionPub.collection.isPublic) &&
-			sequelize.transaction((txn) => {
-				return CollectionPub.update(
-					{ isPrimary: false },
-					{
-						transaction: txn,
-						where: {
-							pubId: collectionPub.pubId,
-							id: { [Op.ne]: collectionPubId },
-						},
-					},
-				).then(() => {
-					return CollectionPub.update(
-						{ isPrimary: isPrimary },
-						{
-							where: { id: collectionPubId },
-							returning: true,
-							transaction: txn,
-						},
-					);
-				});
-			})
-		);
 	});
 };
 

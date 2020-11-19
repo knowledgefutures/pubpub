@@ -95,16 +95,20 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 		updateCollectionPub({ ...collectionPub, contextHint: contextHint });
 	};
 
-	const setCollectionPubIsPrimary = (collectionPub, isPrimary) => {
-		pendingPromise(
-			api.setCollectionPubPrimary({
-				collectionId: collectionId,
-				communityId: communityId,
-				id: collectionPub.id,
-				isPrimary: isPrimary,
-			}),
-		);
-		updateCollectionPub({ ...collectionPub, isPrimary: isPrimary });
+	const setCollectionPubIsPrimary = (collectionPub) => {
+		const { pubId } = collectionPub;
+		const pub = overviewData.pubs.find((p) => p.id === pubId);
+		if (pub && pub.collectionPubs) {
+			const newPubRank = findRankInRankedList(pub.collectionPubs, 0, 'pubRank');
+			pendingPromise(
+				api.updateCollectionPub({
+					communityId: communityId,
+					id: collectionPub.id,
+					update: { pubRank: newPubRank },
+				}),
+			);
+			updateCollectionPub({ ...collectionPub, pubRank: newPubRank });
+		}
 	};
 
 	const addCollectionPub = (pub) => {
@@ -132,7 +136,7 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 					);
 				}),
 		);
-		setCollectionPubs([newCollectionPub, ...collectionPubs]);
+		setCollectionPubs([...collectionPubs, newCollectionPub]);
 	};
 
 	return {

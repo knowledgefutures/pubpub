@@ -32,17 +32,6 @@ export const removeCollectionPub = ({ communityId, id }) =>
 		}),
 	});
 
-export const setCollectionPubPrimary = ({ communityId, collectionId, id, isPrimary }) =>
-	apiFetch(`${collectionPubsRoot}/setPrimary`, {
-		method: 'PUT',
-		body: JSON.stringify({
-			isPrimary: isPrimary,
-			id: id,
-			communityId: communityId,
-			collectionId: collectionId,
-		}),
-	});
-
 export const updateCollection = ({ communityId, collectionId, updatedCollection }) =>
 	apiFetch('/api/collections', {
 		method: 'PUT',

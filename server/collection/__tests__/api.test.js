@@ -1,8 +1,7 @@
 /* global it, expect, beforeAll, afterAll */
 import { setup, teardown, login, modelize } from 'stubstub';
 import { createCollection } from '../queries';
-import { Collection, CollectionPub } from '../../models';
-import { createCollectionPub } from '../../collectionPub/queries';
+import { Collection } from '../../models';
 
 const models = modelize`
 	Community community {
@@ -191,29 +190,6 @@ it('will not assign a slug belonging to a Page', async () => {
 		.expect(400);
 	expect(type).toEqual('InvalidFields');
 	expect(fields).toEqual({ slug: true });
-});
-
-it('unsets a collectionPub as primary when its collection is made private', async () => {
-	const { admin, community, pub } = models;
-	const issue = await createCollection({
-		communityId: community.id,
-		kind: 'issue',
-		title: 'The Book of Tests',
-	});
-	await Collection.update({ isPublic: true }, { where: { id: issue.id } });
-	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
-	expect(collectionPub.isPrimary).toEqual(true);
-	const agent = await login(admin);
-	await agent
-		.put('/api/collections')
-		.send({
-			id: issue.id,
-			communityId: community.id,
-			isPublic: false,
-		})
-		.expect(200);
-	const collectionPubAgain = await CollectionPub.findOne({ where: { id: collectionPub.id } });
-	expect(collectionPubAgain.isPrimary).toEqual(false);
 });
 
 it('deletes an existing collection with appropriate permissions', async () => {

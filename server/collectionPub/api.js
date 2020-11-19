@@ -4,13 +4,11 @@ import { ForbiddenError } from 'server/utils/errors';
 import {
 	canCreateCollectionPub,
 	canDestroyCollectionPub,
-	getPermissions,
 	getUpdatableFieldsForCollectionPub,
 } from './permissions';
 import {
 	createCollectionPub,
 	updateCollectionPub,
-	setPrimaryCollectionPub,
 	destroyCollectionPub,
 	getPubsInCollection,
 } from './queries';
@@ -55,27 +53,6 @@ app.post(
 			moveToTop: moveToTop,
 		});
 		return res.status(201).json(collectionPub);
-	}),
-);
-
-app.put(
-	'/api/collectionPubs/setPrimary',
-	wrap(async (req, res) => {
-		const { isPrimary } = req.body;
-		const { collectionPubId, communityId, collectionId, userId } = getRequestIds(req);
-		const permissions = await getPermissions({
-			communityId: communityId,
-			collectionId: collectionId,
-			userId: userId,
-		});
-		if (!permissions.create) {
-			throw new ForbiddenError();
-		}
-		const updated = await setPrimaryCollectionPub({
-			collectionPubId: collectionPubId,
-			isPrimary: isPrimary,
-		});
-		return res.status(200).json(updated);
 	}),
 );
 

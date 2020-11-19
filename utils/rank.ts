@@ -48,6 +48,6 @@ export const generateRanks = (count: number) => {
 
 export const findRankInRankedList = (rankedList: any[], index: number, rankKey = 'rank') =>
 	findRank(
-		sortByRank(rankedList).map((s) => s[rankKey]),
+		sortByRank(rankedList, rankKey).map((s) => s[rankKey]),
 		index,
 	);

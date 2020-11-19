@@ -36,7 +36,6 @@ const PubDetails = (props: Props) => {
 		<div className="pub-details-component">
 			<h3 className="pub-title">{pubData.title}</h3>
 			<SmallHeaderButton
-				// @ts-expect-error ts-migrate(2322) FIXME: Property 'className' does not exist on type 'Intri... Remove this comment to see the full error message
 				className="mobile-close-details-button"
 				onClick={onCloseHeaderDetails}
 				icon="cross"
@@ -87,7 +86,7 @@ const PubDetails = (props: Props) => {
 				</div>
 				<div className="section collections">
 					<h6 className="pub-header-themed-secondary">
-						Appears in collections ({collectionPubs.length})
+						Appears in Collections ({collectionPubs.length})
 					</h6>
 					<div className="collection-list">
 						{collectionPubs.length === 0 && (

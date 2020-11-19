@@ -379,7 +379,7 @@ function AssignDoi(props: Props) {
 					<Callout intent="primary" title="Review Deposit">
 						This work is being deposited as a{' '}
 						<strong>{getDepositTypeTitle(crossrefDepositRecord) || '...'}</strong> based
-						on its Connections, primary collection, or selected Content Version. Review
+						on its Connections, Primary Collection, or selected Content Version. Review
 						the information below, then click the "Submit Deposit" button to submit the
 						deposit to Crossref.
 					</Callout>

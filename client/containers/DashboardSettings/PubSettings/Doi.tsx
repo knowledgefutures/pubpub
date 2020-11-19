@@ -286,7 +286,7 @@ class Doi extends Component<Props, State> {
 					{/* @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'. */}
 					This Pub will be cited as a member of the {schema.label.singular},{' '}
 					<b>{collection.title}</b>. You can change this by updating the{' '}
-					<em>primary collection</em> of the Pub from the Collections tab.
+					<em>Primary Collection</em> of the Pub from the Collections tab.
 				</p>
 			);
 		}

@@ -1,8 +1,9 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { joinOxford } from 'utils/strings';
 import { Attribution, AttributionWithUser, Collection, Pub } from 'utils/types';
+import { getPrimaryCollection } from './collections/primary';
 
-const orderedContributors = (maybeContributors: Attribution[] | undefined) =>
+const orderedContributors = (maybeContributors: Attribution[] | undefined | null) =>
 	(maybeContributors || []).concat().sort((a, b) => {
 		if (a.order !== b.order) {
 			return a.order - b.order;
@@ -44,8 +45,7 @@ export const getAllPubContributors = (
 	hideNonAuthors = false,
 ) => {
 	const { collectionPubs } = pubData;
-	const primaryCollectionPub = collectionPubs && collectionPubs.find((cp) => cp.isPrimary);
-	const primaryCollection = primaryCollectionPub && primaryCollectionPub.collection;
+	const primaryCollection = collectionPubs && getPrimaryCollection(collectionPubs);
 
 	const contributors = [
 		...orderedContributors(pubData.attributions),

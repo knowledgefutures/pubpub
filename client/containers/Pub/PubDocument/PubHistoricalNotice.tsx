@@ -9,17 +9,15 @@ import { usePageContext } from 'utils/hooks';
 import { getPubLatestReleasedDate } from 'utils/pub/pubDates';
 
 import { ClickToCopyButton } from 'components';
+import { Pub, Release } from 'utils/types';
 
 require('./pubHistoricalNotice.scss');
 
 type Props = {
-	pubData: {
+	pubData: Pub & {
 		releaseNumber: number;
 		isRelease: boolean;
-		releases: {
-			createdAt: string | any; // TODO: PropTypes.instanceOf(Date)
-			noteText: string;
-		}[];
+		releases: Release[];
 	};
 	historyData: {
 		currentKey: number;

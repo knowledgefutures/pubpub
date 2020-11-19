@@ -10,7 +10,9 @@ const LicenseSelectContainer = () => {
 		<LicenseSelect
 			// @ts-expect-error ts-migrate(2322) FIXME: Type '(pubData: any) => void' is not assignable to... Remove this comment to see the full error message
 			updateLocalData={(pubData) => setCurrentLicense(pubData.licenseSlug)}
-			pubData={{ id: '', licenseSlug: currentLicense, collectionPubs: [] }}
+			pubData={
+				{ id: '', licenseSlug: currentLicense, collectionPubs: [], releases: [] } as any
+			}
 		>
 			{({ title, icon, loading }) => (
 				<Button icon={icon} text={title} rightIcon={loading && <Spinner size={5} />} />

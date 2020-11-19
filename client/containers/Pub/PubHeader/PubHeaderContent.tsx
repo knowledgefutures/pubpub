@@ -5,8 +5,8 @@ import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
-
 import { Pub } from 'utils/types';
+
 import CollectionsBar from './collections/CollectionsBar';
 import DraftReleaseButtons from './DraftReleaseButtons';
 import TitleGroup from './TitleGroup';
@@ -15,7 +15,9 @@ import UtilityButtons from './UtilityButtons';
 type Props = {
 	historyData: any;
 	onShowHeaderDetails: (...args: any[]) => any;
-	pubData: Pub & { isInMaintenanceMode: boolean };
+	pubData: Pub & {
+		isInMaintenanceMode: boolean;
+	};
 	pubHeadings: any[];
 	updateLocalData: (...args: any[]) => any;
 };
@@ -89,7 +91,6 @@ const PubHeaderContent = (props: Props) => {
 			/>
 			{!isInMaintenanceMode && (
 				<DraftReleaseButtons
-					// @ts-expect-error ts-migrate(2741) FIXME: Property 'releases' is missing in type '{ id: stri... Remove this comment to see the full error message
 					pubData={pubData}
 					historyData={historyData}
 					updatePubData={updatePubData}

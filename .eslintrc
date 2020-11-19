@@ -49,6 +49,7 @@
 		"import/no-unresolved": [2, { "ignore": ["\\config.js$"] }],
 		"import/prefer-default-export": 0,
 		"jsx-a11y/click-events-have-key-events": 0,
+		"jsx-a11y/label-has-associated-control": [2, {"controlComponents": ["Switch"]}],
 		"max-classes-per-file": 0,
 		"no-async-promise-executor": 0,
 		"no-console": [1, { "allow": ["warn", "error", "info"] }],

@@ -7,28 +7,31 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 require('./dragDropListing.scss');
 
-export type DragDropListingProps = {
+type Props<Item> = {
 	className?: string;
 	disabled?: boolean;
 	droppableId: string;
 	droppableType: string;
-	itemId?: (...args: any[]) => any;
-	items: any[];
-	renderEmptyState?: (...args: any[]) => any;
-	renderItem: (...args: any[]) => any;
+	itemId?: (item: Item) => string;
+	items: Item[];
+	renderEmptyState?: () => React.ReactNode;
+	renderItem: (item: Item, dragHandleProps: {}, isDragging: boolean) => React.ReactNode;
 	withDragHandles?: boolean;
 };
 
-const DragDropListing = (props: DragDropListingProps) => {
+const defaultIdGetter = (item) => item.id;
+const defaultEmptyState = () => null;
+
+const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
 	const {
 		className = null,
 		droppableId,
 		droppableType,
 		disabled = false,
 		items,
-		itemId = (item) => item.id,
+		itemId = defaultIdGetter,
 		renderItem,
-		renderEmptyState = () => null,
+		renderEmptyState = defaultEmptyState,
 		withDragHandles = false,
 	} = props;
 	return (

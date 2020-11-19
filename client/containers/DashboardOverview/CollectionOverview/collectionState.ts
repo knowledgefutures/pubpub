@@ -5,8 +5,9 @@ import * as api from 'client/utils/collections/api';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { usePersistableState } from 'client/utils/usePersistableState';
+import { CollectionPub, Pub } from 'utils/types';
 
-const linkCollectionPubs = (overviewData, collection) => {
+const linkCollectionPubs = (overviewData, collection): (CollectionPub & { pub: Pub })[] => {
 	const { pubs, collections } = overviewData;
 	const { collectionPubs } = collections.find((col) => col.id === collection.id);
 	return sortByRank(
@@ -54,7 +55,6 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 		nextCollectionPubs.splice(destinationIndex, 0, updatedValue);
 		pendingPromise(
 			api.updateCollectionPub({
-				collectionId: collectionId,
 				communityId: communityId,
 				id: updatedValue.id,
 				update: { rank: newRank },
@@ -77,7 +77,6 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	const removeCollectionPub = (collectionPub) => {
 		pendingPromise(
 			api.removeCollectionPub({
-				collectionId: collectionId,
 				communityId: communityId,
 				id: collectionPub.id,
 			}),
@@ -88,7 +87,6 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	const setCollectionPubContextHint = (collectionPub, contextHint) => {
 		pendingPromise(
 			api.updateCollectionPub({
-				collectionId: collectionId,
 				communityId: communityId,
 				id: collectionPub.id,
 				update: { contextHint: contextHint },
@@ -114,7 +112,7 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 			collectionId: collectionId,
 			pubId: pub.id,
 			pub: pub,
-		};
+		} as any;
 		pendingPromise(
 			api
 				.addCollectionPub({

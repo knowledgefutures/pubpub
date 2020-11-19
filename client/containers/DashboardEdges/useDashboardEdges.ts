@@ -3,8 +3,14 @@ import { useState } from 'react';
 import { usePendingChanges } from 'utils/hooks';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import { apiFetch } from 'client/utils/apiFetch';
+import { Pub as BarePub, InboundEdge, OutboundEdge } from 'utils/types';
 
-export const useDashboardEdges = (pubData) => {
+type Pub = BarePub & {
+	outboundEdges: OutboundEdge[];
+	inboundEdges: InboundEdge[];
+};
+
+export const useDashboardEdges = (pubData: Pub) => {
 	const [outboundEdges, setOutboundEdges] = useState(sortByRank(pubData.outboundEdges));
 	const [inboundEdges, setInboundEdges] = useState(sortByRank(pubData.inboundEdges));
 	const { pendingPromise } = usePendingChanges();

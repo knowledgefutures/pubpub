@@ -132,6 +132,7 @@ export default ({
 				model: CollectionPub,
 				as: 'collectionPubs',
 				separate: true,
+				order: [['pubRank', 'ASC']],
 				include: [
 					{
 						model: Collection,

@@ -13,23 +13,21 @@ export const addCollectionPub = ({ pubId, collectionId, communityId }) =>
 		}),
 	});
 
-export const updateCollectionPub = ({ collectionId, communityId, id, update }) =>
+export const updateCollectionPub = ({ communityId, id, update }) =>
 	apiFetch(collectionPubsRoot, {
 		method: 'PUT',
 		body: JSON.stringify({
 			...update,
 			id: id,
-			collectionId: collectionId,
 			communityId: communityId,
 		}),
 	});
 
-export const removeCollectionPub = ({ communityId, collectionId, id }) =>
+export const removeCollectionPub = ({ communityId, id }) =>
 	apiFetch(collectionPubsRoot, {
 		method: 'DELETE',
 		body: JSON.stringify({
 			id: id,
-			collectionId: collectionId,
 			communityId: communityId,
 		}),
 	});

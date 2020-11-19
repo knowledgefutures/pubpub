@@ -12,6 +12,7 @@ import {
 	LicenseSelect,
 	PubAttributionEditor,
 	PubThemePicker,
+	PubCollectionsListing,
 } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { slugifyString } from 'utils/strings';
@@ -21,7 +22,6 @@ import { pubUrl } from 'utils/canonicalUrls';
 
 import DownloadChooser from './DownloadChooser';
 import DeletePub from './DeletePub';
-import Collections from './Collections';
 import Doi from './Doi';
 import CitationChooser from './CitationChooser';
 import NodeLabelEditor from './NodeLabelEditor';
@@ -37,7 +37,7 @@ const PubSettings = (props: Props) => {
 	const { scopeData } = usePageContext();
 	const {
 		elements: { activeCommunity },
-		activePermissions: { canManageCommunity, canAdminCommunity, canManage },
+		activePermissions: { canAdminCommunity, canManage },
 	} = scopeData;
 	const [persistedPubData, setPersistedPubData] = useState(settingsData.pubData);
 	const [pendingPubData, setPendingPubData] = useState({});
@@ -274,12 +274,14 @@ const PubSettings = (props: Props) => {
 	const renderCollections = () => {
 		return (
 			<SettingsSection title="Collections">
-				<Collections
-					pubData={pubData}
-					communityData={activeCommunity}
-					updatePubData={(nextPubData) => updatePersistedPubData(nextPubData)}
-					canCreateCollections={canManageCommunity}
-					promiseWrapper={pendingPromise}
+				<PubCollectionsListing
+					pub={pubData}
+					allCollections={activeCommunity.collections}
+					collectionPubs={pubData.collectionPubs}
+					updateCollectionPubs={(nextCollectionPubs) =>
+						updatePersistedPubData({ collectionPubs: nextCollectionPubs })
+					}
+					canManage={canManage}
 				/>
 			</SettingsSection>
 		);

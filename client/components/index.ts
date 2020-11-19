@@ -46,6 +46,7 @@ export { default as PreviewImage } from './PreviewImage/PreviewImage';
 export { default as PubAttributionDialog } from './PubAttributionEditor/PubAttributionDialog';
 export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttributionEditor';
 export { default as PubByline } from './PubByline/PubByline';
+export { default as PubCollectionsListing } from './PubCollectionsListing/PubCollectionsListing';
 export { default as PubEdge } from './PubEdge/PubEdge';
 export { default as PubEdgeEditor } from './PubEdge/PubEdgeEditor';
 export { default as PubEdgeListing } from './PubEdgeListing/PubEdgeListing';
@@ -59,6 +60,7 @@ export { default as PubReleaseReviewDialog } from './PubReleaseReviewDialog/PubR
 export { default as PubShareDialog } from './PubShareDialog/PubShareDialog';
 export { default as PubThemePicker } from './PubThemePicker/PubThemePicker';
 export { default as ReferencesDropdown } from './ReferencesDropdown/ReferencesDropdown';
+export { default as QueryListDropdown } from './QueryListDropdown/QueryListDropdown';
 export { default as ScopeDropdown } from './ScopeDropdown/ScopeDropdown';
 export { default as SettingsSection } from './SettingsSection/SettingsSection';
 export { default as SharingCard } from './SharingCard/SharingCard';

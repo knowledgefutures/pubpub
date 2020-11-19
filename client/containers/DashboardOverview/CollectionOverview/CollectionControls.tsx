@@ -27,7 +27,6 @@ const CollectionControls = (props: Props) => {
 		<>
 			<PubSelect
 				pubs={overviewData.pubs}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 				usedPubIds={collectionPubs.map((cp) => cp.pubId)}
 				onSelectPub={addCollectionPub}
 			>

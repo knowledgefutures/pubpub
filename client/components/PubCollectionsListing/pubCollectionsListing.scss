@@ -1,0 +1,45 @@
+.pub-collections-listing_collection-title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    .collection-kind-icon {
+        margin-left: 4px;
+        margin-right: 8px;
+    }
+    .title-icon {
+        margin-left: 4px;
+    }
+    &.interactive {
+        padding: 10px 4px;
+        &:hover {
+            cursor: pointer;
+            background: #eee;
+        }
+        &.active {
+            background: #f0f0f0;
+        }
+    }
+}
+
+.pub-collections-listing {
+    .collection-row {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        &.is-dragging {
+            background-color: rgba(white, 0.75);
+        }
+        .buttons {
+            margin-right: 10px;
+        }
+    }
+
+    .add-button {
+        margin-bottom: 10px;
+    }
+
+    .bp3-non-ideal-state {
+        margin-top: 2em;
+    }
+}

@@ -5,7 +5,7 @@ import React, { useState, useCallback } from 'react';
 import { PubEdge } from 'components';
 import { toTitleCase } from 'utils/strings';
 import { usePageContext } from 'utils/hooks';
-import { relationTypeDefinitions } from 'utils/pubEdge';
+import { relationTypeDefinitions, isViewingEdgeFromTarget } from 'utils/pubEdge';
 import { pubShortUrl } from 'utils/canonicalUrls';
 
 require('./pubEdgeListingCard.scss');
@@ -25,19 +25,6 @@ export type PubEdgeListingCardProps = {
 	viewingFromSibling?: boolean;
 };
 
-const getIsViewingFromTarget = (pubEdge, viewingFromSibling, isInboundEdge) => {
-	const { pubIsParent } = pubEdge;
-	if (viewingFromSibling) {
-		// If the `pub` in the edge relationship is the parent, then the `targetPub` is the child.
-		// We want this edge to display the child -- in other words, we want to view from the
-		// `targetPub` towards the `pub` only if the `pub` is the child.
-		return !pubIsParent;
-	}
-	// If this edge is inbound, that means another Pub (relative to our vantage point) created it,
-	// which is to say that we're viewing it from the target.
-	return isInboundEdge;
-};
-
 type Props = PubEdgeListingCardProps;
 
 const PubEdgeListingCard = (props: Props) => {
@@ -54,7 +41,7 @@ const PubEdgeListingCard = (props: Props) => {
 		viewingFromSibling = false,
 		pubData,
 	} = props;
-	const viewingFromTarget = getIsViewingFromTarget(pubEdge, viewingFromSibling, isInboundEdge);
+	const viewingFromTarget = isViewingEdgeFromTarget(pubEdge, viewingFromSibling, isInboundEdge);
 	const [hover, setHover] = useState(false);
 	const handleMouseEnter = useCallback(() => setHover(true), []);
 	const handleMouseLeave = useCallback(() => setHover(false), []);

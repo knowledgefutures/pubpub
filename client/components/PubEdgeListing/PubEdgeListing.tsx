@@ -1,6 +1,9 @@
-import { NonIdealState } from '@blueprintjs/core';
-import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
+import classNames from 'classnames';
+import { NonIdealState } from '@blueprintjs/core';
+
+import { unique } from 'utils/arrays';
+import { getDisplayedPubForPubEdge } from 'utils/pubEdge';
 
 import { Filter, Mode, allFilters } from './constants';
 import PubEdgeListingCard from './PubEdgeListingCard';
@@ -31,15 +34,27 @@ const defaultProps = {
 	initialFilters: [Filter.Child],
 };
 
+const edgeUniqueFingerprint = (pubEdgeInContext, assertIsUnique) => {
+	const { edge, isSibling, isInboundEdge } = pubEdgeInContext;
+	const displayedPub = getDisplayedPubForPubEdge(edge, {
+		isInboundEdge: isInboundEdge,
+		viewingFromSibling: isSibling,
+	});
+	if (displayedPub) {
+		return displayedPub.id;
+	}
+	return assertIsUnique;
+};
+
 const collateAndFilterPubEdges = (filters, pubData) => {
 	const { inboundEdges, outboundEdges, siblingEdges } = pubData;
 	const includeParents = filters.includes(Filter.Parent);
 	const includeChildren = filters.includes(Filter.Child);
 	const includeSiblings = filters.includes(Filter.Sibling);
-	const filteredPubEdges = [];
-	const parentEdgesInContext = [];
-	const childEdgesInContext = [];
-	const siblingEdgesInContext = [];
+	const filteredPubEdges: any[] = [];
+	const parentEdgesInContext: any[] = [];
+	const childEdgesInContext: any[] = [];
+	const siblingEdgesInContext: any[] = [];
 
 	outboundEdges.forEach((edge) => {
 		const { pubIsParent } = edge;
@@ -50,14 +65,11 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 			edge: edge,
 		};
 		if (included) {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isSibling: boolean; isInboundE... Remove this comment to see the full error message
 			filteredPubEdges.push(edgeInContext);
 		}
 		if (pubIsParent) {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isSibling: boolean; isInboundE... Remove this comment to see the full error message
 			childEdgesInContext.push(edgeInContext);
 		} else {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isSibling: boolean; isInboundE... Remove this comment to see the full error message
 			parentEdgesInContext.push(edgeInContext);
 		}
 	});
@@ -71,14 +83,11 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 			edge: edge,
 		};
 		if (included) {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isSibling: boolean; isInboundE... Remove this comment to see the full error message
 			filteredPubEdges.push(edgeInContext);
 		}
 		if (pubIsParent) {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isSibling: boolean; isInboundE... Remove this comment to see the full error message
 			parentEdgesInContext.push(edgeInContext);
 		} else {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isSibling: boolean; isInboundE... Remove this comment to see the full error message
 			childEdgesInContext.push(edgeInContext);
 		}
 	});
@@ -91,21 +100,18 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 			edge: edge,
 			parentPub: pubIsParent ? pub : targetPub,
 		};
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isSibling: boolean; isInboundE... Remove this comment to see the full error message
 		siblingEdgesInContext.push(edgeInContext);
 		if (includeSiblings) {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isSibling: boolean; isInboundE... Remove this comment to see the full error message
 			filteredPubEdges.push(edgeInContext);
 		}
 	});
 
 	return {
-		filteredPubEdgesInContext: filteredPubEdges,
-		collatedPubEdgesInContext: [
-			...parentEdgesInContext,
-			...childEdgesInContext,
-			...siblingEdgesInContext,
-		],
+		filteredPubEdgesInContext: unique(filteredPubEdges, edgeUniqueFingerprint),
+		collatedPubEdgesInContext: unique(
+			[...parentEdgesInContext, ...childEdgesInContext, ...siblingEdgesInContext],
+			edgeUniqueFingerprint,
+		),
 	};
 };
 
@@ -204,29 +210,23 @@ const PubEdgeListing = (props: Props) => {
 				? activeEdgeInContext && (
 						<PubEdgeListingCard
 							pubData={pubData}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							pubEdge={activeEdgeInContext.edge}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							parentPub={activeEdgeInContext.parentPub}
 							accentColor={accentColor}
 							showIcon={isolated}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							viewingFromSibling={activeEdgeInContext.isSibling}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							isInboundEdge={activeEdgeInContext.isInboundEdge}
 							inPubBody
 						>
 							{isolated && controls}
 						</PubEdgeListingCard>
 				  )
-				: filteredPubEdgesInContext.map(({ isInboundEdge, edge, isSibling }) => (
+				: filteredPubEdgesInContext.map(({ isInboundEdge, edge, isSibling, parentPub }) => (
 						<PubEdgeListingCard
 							pubData={pubData}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							key={edge.url}
 							pubEdge={edge}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
-							parentPub={activeEdgeInContext.parentPub}
+							parentPub={parentPub}
 							accentColor={accentColor}
 							viewingFromSibling={isSibling}
 							isInboundEdge={isInboundEdge}

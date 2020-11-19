@@ -18,4 +18,18 @@ export const indexByProperty = (array, property) => {
 	return res;
 };
 
+export const unique = (array, fn) => {
+	const uniqueSymbol = Symbol('unique');
+	const res = [];
+	const seenValues = new Set();
+	array.forEach((el) => {
+		const value = fn(el, uniqueSymbol);
+		if (!seenValues.has(value) || value === uniqueSymbol) {
+			seenValues.add(value);
+			res.push(el);
+		}
+	});
+	return res;
+};
+
 export const pruneFalsyValues = (arr) => arr.filter(Boolean);

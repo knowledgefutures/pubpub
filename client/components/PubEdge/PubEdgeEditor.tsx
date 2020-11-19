@@ -3,9 +3,9 @@ import { EditableText, TagInput } from '@blueprintjs/core';
 import { Button as RKButton } from 'reakit/Button';
 
 import { DatePicker } from 'components';
+import { getHostnameForUrl } from 'utils/pubEdge';
 
 import { externalPublicationType } from './constants';
-import { getHostnameForUrl } from './util';
 import PubEdgeLayout from './PubEdgeLayout';
 import PubEdgeDescriptionButton from './PubEdgeDescriptionButton';
 

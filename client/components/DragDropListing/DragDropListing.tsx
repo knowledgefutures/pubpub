@@ -17,10 +17,30 @@ type Props<Item> = {
 	renderEmptyState?: () => React.ReactNode;
 	renderItem: (item: Item, dragHandleProps: {}, isDragging: boolean) => React.ReactNode;
 	withDragHandles?: boolean;
+	renderDragElementInPortal?: boolean;
 };
 
 const defaultIdGetter = (item) => item.id;
 const defaultEmptyState = () => null;
+
+const getRenderItem = <Item extends {}>(props: Props<Item>) => (provided, snapshot, rubric) => {
+	// eslint-disable-next-line react/prop-types
+	const { items, withDragHandles, renderItem } = props;
+	const item = items[rubric.source.index];
+	const { innerRef, draggableProps, dragHandleProps } = provided;
+	const { isDragging } = snapshot;
+	const effectiveDragHandleProps = withDragHandles ? {} : dragHandleProps;
+	return (
+		<div
+			className={classNames('drag-container', isDragging && 'is-dragging')}
+			ref={innerRef}
+			{...draggableProps}
+			{...effectiveDragHandleProps}
+		>
+			{renderItem(item, withDragHandles && dragHandleProps, isDragging)}
+		</div>
+	);
+};
 
 const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
 	const {
@@ -30,12 +50,18 @@ const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
 		disabled = false,
 		items,
 		itemId = defaultIdGetter,
-		renderItem,
 		renderEmptyState = defaultEmptyState,
-		withDragHandles = false,
+		renderDragElementInPortal = false,
 	} = props;
+
+	const renderItem = getRenderItem(props);
+
 	return (
-		<Droppable type={droppableType} droppableId={droppableId}>
+		<Droppable
+			type={droppableType}
+			droppableId={droppableId}
+			renderClone={renderDragElementInPortal ? renderItem : null}
+		>
 			{(droppableProvided) => (
 				<div
 					{...droppableProvided.droppableProps}
@@ -56,34 +82,7 @@ const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
 								key={id}
 								isDragDisabled={disabled}
 							>
-								{(draggableProvided, snapshot) => {
-									const {
-										innerRef,
-										draggableProps,
-										dragHandleProps,
-									} = draggableProvided;
-									const { isDragging } = snapshot;
-									const effectiveDragHandleProps = withDragHandles
-										? {}
-										: dragHandleProps;
-									return (
-										<div
-											className={classNames(
-												'drag-container',
-												isDragging && 'is-dragging',
-											)}
-											ref={innerRef}
-											{...draggableProps}
-											{...effectiveDragHandleProps}
-										>
-											{renderItem(
-												item,
-												withDragHandles && dragHandleProps,
-												isDragging,
-											)}
-										</div>
-									);
-								}}
+								{renderItem}
 							</Draggable>
 						);
 					})}

@@ -13,6 +13,7 @@ import { getPrimaryCollection } from 'utils/collections/primary';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { fuzzyMatchCollection } from 'utils/fuzzyMatch';
 import * as api from 'client/utils/collections/api';
+import { getDashUrl } from 'utils/dashboard';
 import PrimaryCollectionExplanation from '../PrimaryCollectionExplanation/PrimaryCollectionExplanation';
 
 require('./pubCollectionsListing.scss');
@@ -24,11 +25,23 @@ type Props = {
 	allCollections: Collection[];
 	pub: Pub;
 	collectionPubs: CollectionPub[];
+	onQueryListClose?: () => unknown;
 	updateCollectionPubs: (collectionPubs: CollectionPub[]) => unknown;
+	renderTriggerButtonForQueryList?: () => React.ReactNode;
+	renderDragElementInPortal?: boolean;
 };
 
 const PubCollectionsListing = (props: Props) => {
-	const { collectionPubs, canManage, updateCollectionPubs, allCollections, pub } = props;
+	const {
+		allCollections,
+		canManage,
+		collectionPubs,
+		pub,
+		renderTriggerButtonForQueryList,
+		updateCollectionPubs,
+		onQueryListClose,
+		renderDragElementInPortal,
+	} = props;
 	const { communityData, scopeData } = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 
@@ -88,6 +101,7 @@ const PubCollectionsListing = (props: Props) => {
 
 	const renderCollectionTitle = (
 		collection: Collection,
+		linkToCollection = true,
 		onClick?: () => unknown,
 		otherClassName?: string,
 	) => {
@@ -97,18 +111,29 @@ const PubCollectionsListing = (props: Props) => {
 					icon={getIconForCollectionKind(collection.kind) as string}
 					className="collection-kind-icon"
 				/>
-				{collection.title}
+				{linkToCollection ? (
+					<a
+						href={getDashUrl({ collectionSlug: collection.slug })}
+						className="title"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{collection.title}
+					</a>
+				) : (
+					collection.title
+				)}
 				{!collection.isPublic && <Icon icon="lock2" className="title-icon" />}
 				{primaryCollection?.id === collection.id && (
 					<Tooltip content="Primary Collection">
-						<Icon icon="star" className="title-icon" />
+						<Icon icon="star" className="title-icon" ariaLabel="Primary Collection" />
 					</Tooltip>
 				)}
 			</>
 		);
 
 		const className = classNames(
-			'pub-collections-listing_collection-title',
+			'pub-collections-listing-component_collection-title',
 			!!onClick && 'interactive',
 			otherClassName,
 		);
@@ -128,7 +153,7 @@ const PubCollectionsListing = (props: Props) => {
 		collection: Collection,
 		{ handleClick, modifiers: { active } },
 	) => {
-		return renderCollectionTitle(collection, handleClick, active && 'active');
+		return renderCollectionTitle(collection, false, handleClick, active && 'active');
 	};
 
 	const renderCollectionPub = (
@@ -140,7 +165,12 @@ const PubCollectionsListing = (props: Props) => {
 		const canRemove = canRemoveCollectionIds.has(collection.id);
 		return (
 			<div key={collectionPub.id}>
-				<div className={classNames('collection-row', isDragging && 'is-dragging')}>
+				<div
+					className={classNames(
+						'pub-collections-listing-component_collection-row',
+						isDragging && 'is-dragging',
+					)}
+				>
 					{dragHandleProps && (
 						<span {...dragHandleProps}>
 							<Icon icon="drag-handle-vertical" />
@@ -152,6 +182,7 @@ const PubCollectionsListing = (props: Props) => {
 							small
 							minimal
 							icon="small-cross"
+							aria-label="Remove"
 							onClick={() => handleRemoveCollectionPub(collectionPub.id)}
 						/>
 					)}
@@ -161,13 +192,9 @@ const PubCollectionsListing = (props: Props) => {
 		);
 	};
 
-	if (collectionPubs.length === 0 && canAddCollections.length === 0) {
-		return <>You don't have permission to add this Pub to any Collections.</>;
-	}
-
-	return (
-		<div className="pub-collections-listing">
-			{canAddCollections.length > 0 && (
+	const renderQueryList = (triggerButton) => {
+		if (canAddCollections.length > 0) {
+			return (
 				<QueryListDropdown
 					itemPredicate={(query, collection) => fuzzyMatchCollection(collection, query)}
 					items={canAddCollections}
@@ -176,11 +203,30 @@ const PubCollectionsListing = (props: Props) => {
 					searchPlaceholder="Search for Collections"
 					onItemSelect={handleAddCollectionPub}
 					position="bottom-left"
+					onClose={onQueryListClose}
+					usePortal={false}
 				>
-					<Button icon="plus" className="add-button">
-						Add to Collections
-					</Button>
+					{triggerButton}
 				</QueryListDropdown>
+			);
+		}
+		return null;
+	};
+
+	if (renderTriggerButtonForQueryList) {
+		return renderQueryList(renderTriggerButtonForQueryList());
+	}
+
+	if (collectionPubs.length === 0 && canAddCollections.length === 0) {
+		return <>You don't have permission to add this Pub to any Collections.</>;
+	}
+
+	return (
+		<div className="pub-collections-listing-component">
+			{renderQueryList(
+				<Button icon="plus" className="add-button">
+					Add to Collections
+				</Button>,
 			)}
 			{collectionPubs.length > 0 && (
 				<div className="reorder-explanation">
@@ -192,10 +238,11 @@ const PubCollectionsListing = (props: Props) => {
 				<DragDropListing
 					items={sortByRank(collectionPubs, 'pubRank')}
 					renderItem={renderCollectionPub}
-					renderEmptyState={() => null}
+					renderEmptyState={() => <>This Pub isn't in any Collections yet.</>}
 					droppableId="pubCollectionsListing"
 					droppableType="COLLECTION_PUB"
 					withDragHandles={canManage}
+					renderDragElementInPortal={renderDragElementInPortal}
 				/>
 			</DragDropContext>
 		</div>

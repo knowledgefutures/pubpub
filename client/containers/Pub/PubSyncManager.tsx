@@ -10,7 +10,7 @@ import { initFirebase } from 'client/utils/firebaseClient';
 import { apiFetch } from 'client/utils/apiFetch';
 import { NodeLabelMap } from 'client/components/Editor/types';
 
-export const PubContext = React.createContext({
+const pubContextProps = {
 	pubData: {
 		nodeLabels: {} as NodeLabelMap | undefined,
 		slug: '',
@@ -18,16 +18,20 @@ export const PubContext = React.createContext({
 	collabData: { editorChangeObject: {} },
 	historyData: {},
 	firebaseBranchRef: null,
-	updateLocalData: null,
+	updateLocalData: null as any,
+	updatePubData: null as any,
 	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2-3 arguments, but got 0.
 	citationManager: new CitationManager(),
-});
+};
+
+export const PubContext = React.createContext(pubContextProps);
 
 type Props = {
 	pubData: any;
 	locationData: any;
 	communityData: any;
 	loginData: loginDataProps;
+	children: (ctx: typeof pubContextProps) => React.ReactNode;
 };
 
 const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
@@ -112,6 +116,8 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 
 type State = any;
 class PubSyncManager extends React.Component<Props, State> {
+	idleStateUpdater: ReturnType<typeof idleStateUpdater>;
+
 	constructor(props: Props) {
 		super(props);
 		const { pubData } = this.props;
@@ -142,7 +148,6 @@ class PubSyncManager extends React.Component<Props, State> {
 				pubData.initialStructuredCitations,
 			),
 		};
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'idleStateUpdater' does not exist on type... Remove this comment to see the full error message
 		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));
 		this.syncRemoteCollabUsers = this.syncRemoteCollabUsers.bind(this);
 		this.syncMetadata = this.syncMetadata.bind(this);
@@ -218,7 +223,6 @@ class PubSyncManager extends React.Component<Props, State> {
 	}
 
 	syncDiscussionsContent(snapshot) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'idleStateUpdater' does not exist on type... Remove this comment to see the full error message
 		this.idleStateUpdater.setState((prevState) => {
 			const val = snapshot.val();
 			if (val) {
@@ -270,7 +274,6 @@ class PubSyncManager extends React.Component<Props, State> {
 		/* Then, sync appropriate data to firebase. */
 		/* Other clients will receive updates which */
 		/* triggers the syncMetadata function. */
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'idleStateUpdater' does not exist on type... Remove this comment to see the full error message
 		this.idleStateUpdater.immediately(isImmediate).setState(
 			(prevState) => {
 				const nextData =
@@ -326,7 +329,6 @@ class PubSyncManager extends React.Component<Props, State> {
 	}
 
 	updateCollabData(newCollabData) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'idleStateUpdater' does not exist on type... Remove this comment to see the full error message
 		this.idleStateUpdater.setState((prevState) => {
 			return {
 				collabData: {
@@ -348,7 +350,6 @@ class PubSyncManager extends React.Component<Props, State> {
 		const currentCollabDoc =
 			editorChangeObject && editorChangeObject.view && editorChangeObject.view.state.doc;
 		if (currentCollabDoc && nextHistoryData.currentKey === nextHistoryData.latestKey) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'idleStateUpdater' does not exist on type... Remove this comment to see the full error message
 			this.idleStateUpdater.setState(({ historyData }) => {
 				const nextTimestamp = historyData.timestamps[nextHistoryData.currentKey] || now;
 				// Don't add -1 (indicating a lack of entries) as a timestamp
@@ -425,9 +426,7 @@ class PubSyncManager extends React.Component<Props, State> {
 			updatePubData: this.updatePubData,
 		};
 		return (
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '(type: any, data: any, { isImmediate }?: { i... Remove this comment to see the full error message
 			<PubContext.Provider value={context}>
-				{/* @ts-expect-error ts-migrate(2723) FIXME: Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message */}
 				{this.props.children(context)}
 			</PubContext.Provider>
 		);

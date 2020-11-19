@@ -75,12 +75,12 @@ const PubDiscussions = (props: Props) => {
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'mountClassName' does not exist on type '... Remove this comment to see the full error message
 					key={group.mountClassName}
 					pubData={pubData}
+					// @ts-expect-error
 					historyData={historyData}
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'discussions' does not exist on type 'nev... Remove this comment to see the full error message
 					discussions={group.discussions}
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'mountClassName' does not exist on type '... Remove this comment to see the full error message
 					mountClassName={group.mountClassName}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type '(...args: a... Remove this comment to see the full error message
 					updateLocalData={updateLocalData}
 					sideContentRef={sideContentRef}
 					mainContentRef={mainContentRef}
@@ -107,7 +107,6 @@ const PubDiscussions = (props: Props) => {
 				{showBottomInput && (
 					<DiscussionInput
 						pubData={pubData}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type '(...args: a... Remove this comment to see the full error message
 						updateLocalData={updateLocalData}
 						discussionData={{ id: undefined }}
 						isPubBottomInput={true}
@@ -127,7 +126,6 @@ const PubDiscussions = (props: Props) => {
 							key={discussion.id}
 							pubData={pubData}
 							discussionData={discussion}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'never'.
 							updateLocalData={updateLocalData}
 							canPreview={true}
 							searchTerm={searchTerm}

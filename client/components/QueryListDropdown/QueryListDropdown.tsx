@@ -9,10 +9,12 @@ type Props<Item> = {
 	items: Item[];
 	itemPredicate: (query: string, item: Item) => boolean;
 	onItemSelect: (item: Item) => unknown;
+	onClose?: () => unknown;
 	position?: PopoverPosition;
 	searchPlaceholder: string;
 	emptyListPlaceholder: React.ReactNode;
 	itemRenderer: ItemRenderer<Item>;
+	usePortal?: boolean;
 };
 
 const QueryListDropdown = <Item extends {}>(props: Props<Item>) => {
@@ -22,9 +24,11 @@ const QueryListDropdown = <Item extends {}>(props: Props<Item>) => {
 		itemPredicate,
 		items,
 		onItemSelect,
+		onClose,
 		position = 'bottom-right',
 		itemRenderer,
 		searchPlaceholder,
+		usePortal = true,
 	} = props;
 
 	const renderPopoverContent = (qlProps: IQueryListRendererProps<Item>) => {
@@ -49,6 +53,8 @@ const QueryListDropdown = <Item extends {}>(props: Props<Item>) => {
 				minimal
 				popoverClassName="query-list-dropdown-component"
 				position={position}
+				usePortal={usePortal}
+				onClose={onClose}
 				content={renderPopoverContent(qlProps)}
 			>
 				{children}

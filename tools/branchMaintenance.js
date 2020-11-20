@@ -1,27 +1,63 @@
 /* eslint-disable no-console */
-import { Doc } from 'server/models';
-import { getBranchDoc } from 'server/utils/firebaseAdmin';
+import Bluebird from 'bluebird';
 
-import { lookupBranch, lookupPub } from './utils/lookup';
+import { Community, Pub } from 'server/models';
+
+import { setBranchMaintenanceMode } from './utils/branchMaintenance';
+import { promptOkay } from './utils/prompt';
 
 const {
-	argv: { pubId, pubSlug, branch: branchTitle = 'draft', remove },
+	argv: {
+		community: communitySubdomain,
+		pubId,
+		pubSlug,
+		branch: branchTitle = 'draft',
+		remove,
+		concurrency: concurrencyStr = 1,
+	},
 } = require('yargs');
 
-const main = async () => {
-	const pub = await lookupPub({ id: pubId, slug: pubSlug });
-	const branch = await lookupBranch({ pubId: pub.id, branchTitle: branchTitle });
-	if (remove) {
-		console.log('Removing maintenance doc...');
-		await branch.update({ maintenanceDocId: null });
+const communityMaintenance = async (subdomain) => {
+	const community = await Community.findOne({ where: { subdomain: subdomain } });
+	const concurrency = parseInt(concurrencyStr, 10);
+	console.log(`Using concurrency=${concurrency}`);
+	if (community) {
+		const pubs = await Pub.findAll({ where: { communityId: community.id } });
+		await promptOkay(`Act on ${pubs.length} Pubs?`, { throwIfNo: true });
+		await Bluebird.map(
+			pubs,
+			(pub) =>
+				Bluebird.map(
+					['draft', 'public'],
+					async (branch) => {
+						console.log(`${pub.slug}.${branch}`);
+						await setBranchMaintenanceMode({
+							pubSlug: pub.slug,
+							branchTitle: branch,
+							remove: remove,
+						}).catch((err) => console.warn(err));
+					},
+					{ concurrency: 1 },
+				),
+			{ concurrency: concurrency },
+		);
 	} else {
-		console.log('Downloading branch doc...');
-		const { doc: content } = await getBranchDoc(pub.id, branch.id);
-		console.log('Updating database...');
-		const doc = await Doc.create({ content: content });
-		await branch.update({ maintenanceDocId: doc.id });
+		// eslint-disable-next-line no-console
+		console.log(`Could not find Community by subdomain {communitySubdomain}`);
 	}
-	console.log('Done.');
+};
+
+const main = async () => {
+	if (communitySubdomain) {
+		await communityMaintenance(communitySubdomain);
+	} else {
+		await setBranchMaintenanceMode({
+			pubSlug: pubSlug,
+			pubId: pubId,
+			branchTitle: branchTitle,
+			remove: remove,
+		});
+	}
 };
 
 main().then(() => process.exit(0));

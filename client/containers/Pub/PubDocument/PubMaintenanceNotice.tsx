@@ -1,6 +1,8 @@
 import React from 'react';
 import { AnchorButton, Callout } from '@blueprintjs/core';
 
+import { usePageContext } from 'utils/hooks';
+
 require('./pubMaintenanceNotice.scss');
 
 type Props = {
@@ -13,7 +15,11 @@ const PubMaintenanceNotice = (props: Props) => {
 	const { pubData } = props;
 	const { isInMaintenanceMode } = pubData;
 
-	if (!isInMaintenanceMode) {
+	const {
+		activePermissions: { canManage },
+	} = usePageContext();
+
+	if (!isInMaintenanceMode || !canManage) {
 		return null;
 	}
 

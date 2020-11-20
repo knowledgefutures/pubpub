@@ -53,7 +53,14 @@ const getRankInPeers = (requestedRank, ranks, moveToTop = false) => {
 	return findRank(ranks, targetIndex);
 };
 
-export const createCollectionPub = ({ collectionId, pubId, rank, pubRank, moveToTop = false }) => {
+export const createCollectionPub = ({
+	collectionId,
+	pubId,
+	rank,
+	pubRank,
+	moveToTop = false,
+	isPrimary = false,
+}) => {
 	return Promise.all([
 		CollectionPub.findAll({
 			where: { pubId: pubId },
@@ -72,6 +79,7 @@ export const createCollectionPub = ({ collectionId, pubId, rank, pubRank, moveTo
 			pubRank: getRankInPeers(
 				pubRank,
 				pubLevelPeers.map((cp) => cp.pubRank),
+				isPrimary,
 			),
 		});
 	});

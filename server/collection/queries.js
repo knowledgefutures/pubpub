@@ -1,4 +1,4 @@
-import { Collection, CollectionPub, Community } from 'server/models';
+import { Collection, Community } from 'server/models';
 import { slugIsAvailable, findAcceptableSlug } from 'server/utils/slugs';
 import { normalizeMetadataToKind } from 'utils/collections/metadata';
 import { slugifyString } from 'utils/strings';
@@ -81,21 +81,7 @@ export const updateCollection = async (inputValues, updatePermissions) => {
 		}
 	}
 
-	return Collection.update(filteredValues, {
-		where: { id: inputValues.collectionId },
-	})
-		.then(() => {
-			if (filteredValues.isPublic === false) {
-				return CollectionPub.update(
-					{ isPrimary: false },
-					{ where: { isPrimary: true, collectionId: inputValues.collectionId } },
-				);
-			}
-			return null;
-		})
-		.then(() => {
-			return filteredValues;
-		});
+	return filteredValues;
 };
 
 export const destroyCollection = (inputValues) => {

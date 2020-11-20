@@ -6,6 +6,7 @@ import { communityUrl as getCommunityUrl, pubUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { getAllPubContributors, getContributorName } from 'utils/contributors';
 import { getFormattedDownloadUrl, getPublicExportUrl } from 'utils/pub/downloads';
+import { sortByPrimaryStatus } from 'utils/collections/primary';
 
 import {
 	Branch,
@@ -223,9 +224,7 @@ export const getFeedItemForPub = (pubData, communityData) => {
 		url: pubUrl(communityData, pubData),
 		guid: id,
 		date: getPubPublishedDate(pubData),
-		categories: collectionPubs
-			.sort((a, b) => +b.isPrimary - +a.isPrimary)
-			.map(({ collection }) => collection.title),
+		categories: sortByPrimaryStatus(collectionPubs).map(({ collection }) => collection.title),
 		custom_elements: [
 			...getAllPubContributors(pubData, false, true).map((attribution) => {
 				return {

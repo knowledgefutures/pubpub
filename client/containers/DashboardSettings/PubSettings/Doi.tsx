@@ -16,6 +16,7 @@ import {
 } from 'utils/pubEdge/relations';
 
 import { AssignDoi } from 'components';
+import { getPrimaryCollection } from 'utils/collections/primary';
 
 require('./doi.scss');
 
@@ -277,13 +278,11 @@ class Doi extends Component<Props, State> {
 		if (justSetDoi) {
 			return null;
 		}
-		const primaryCollectionPub = pubData.collectionPubs.find((cp) => cp.isPrimary);
-		if (primaryCollectionPub) {
-			const { collection } = primaryCollectionPub;
-			const schema = getSchemaForKind(collection.kind);
+		const collection = getPrimaryCollection(pubData.collectionPubs);
+		if (collection) {
+			const schema = getSchemaForKind(collection.kind)!;
 			return (
 				<p>
-					{/* @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'. */}
 					This Pub will be cited as a member of the {schema.label.singular},{' '}
 					<b>{collection.title}</b>. You can change this by updating the{' '}
 					<em>Primary Collection</em> of the Pub from the Collections tab.

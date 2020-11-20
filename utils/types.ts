@@ -88,7 +88,6 @@ export type CollectionPub = {
 	contextHint?: string;
 	rank: string;
 	pubRank: string;
-	isPrimary: boolean;
 	collection?: Collection;
 	pub?: Pub;
 };

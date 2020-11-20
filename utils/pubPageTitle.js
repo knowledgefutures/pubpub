@@ -1,11 +1,11 @@
+import { getPrimaryCollection } from 'utils/collections/primary';
+
 export const getPubPageContextTitle = (pubData, communityData) => {
-	const primaryCollection = pubData.collectionPubs.reduce((prev, curr) => {
-		if (curr.isPrimary && curr.collection.kind !== 'issue') {
-			return curr;
-		}
-		return prev;
-	}, {});
-	return primaryCollection.title || communityData.title;
+	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
+	if (primaryCollection) {
+		return primaryCollection.title;
+	}
+	return communityData.title;
 };
 
 export const getPubPageTitle = (pubData, communityData) => {

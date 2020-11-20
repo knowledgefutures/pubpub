@@ -19,7 +19,7 @@ const aPrimaryCollection = {
 	collectionId: '1e1c0f1f-1873-4705-b6e0-934f588889c6',
 	contextHint: null,
 	rank: null,
-	isPrimary: true,
+	pubRank: 'a',
 	createdAt: '2019-04-24T20:43:15.375Z',
 	updatedAt: '2019-04-24T20:43:15.375Z',
 	collection: {
@@ -30,7 +30,7 @@ const aPrimaryCollection = {
 		pageId: '1e1c0f1f-1873-4705-b6e0-934f588889c6',
 		communityId: '7808da6b-94d1-436d-ad79-2e036a8e4428',
 		metadata: null,
-		kind: 'tag',
+		kind: 'issue',
 		doi: null,
 		createdAt: '2018-10-15T23:51:00.296Z',
 		updatedAt: '2018-10-15T23:51:00.296Z',

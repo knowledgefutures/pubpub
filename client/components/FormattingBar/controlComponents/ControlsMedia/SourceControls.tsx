@@ -32,7 +32,6 @@ const SourceControls = (props: Props) => {
 		const { files } = evt.target;
 		if (files.length > 0) {
 			const [file] = files;
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 4 arguments, but got 3.
 			s3Upload(
 				file,
 				() => {},

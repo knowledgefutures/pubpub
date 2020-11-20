@@ -20,7 +20,7 @@ import { MenuConfigProvider } from 'components/Menu';
 import { extensionToPandocFormat, bibliographyFormats } from 'utils/import/formats';
 import { apiFetch } from 'client/utils/apiFetch';
 import { pingTask } from 'client/utils/pingTask';
-import { importDocJson, getNotes } from 'components/Editor'; 
+import { importDocJson } from 'components/Editor';
 
 import { useFileManager } from './useFileManager';
 import { extensionFor } from './formats';
@@ -54,12 +54,16 @@ const getFingerprintOfImportedFiles = (currentFiles) =>
 		.sort((a, b) => a - b)
 		.join('___');
 
-const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, onClosed }: Props) => {
+const FileImportDialog = ({
+	editorChangeObject,
+	updatePubData,
+	isOpen,
+	onClose,
+	onClosed,
+}: Props) => {
 	const { addFile, getFiles, deleteFileById, labelFileById } = useFileManager();
 	const currentFiles = getFiles();
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'state' does not exist on type 'never'.
 	const incompleteUploads = currentFiles.filter((file) => file.state !== 'complete');
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'label' does not exist on type 'never'.
 	const hasDocumentToImport = currentFiles.some((file) => file.label === 'document');
 
 	const [importerFlags, setImporterFlags] = useState({});
@@ -233,7 +237,6 @@ const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, 
 		}
 		if (
 			currentFiles.length > 0 &&
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'clientPath' does not exist on type 'neve... Remove this comment to see the full error message
 			currentFiles.every((file) => extensionFor(file.clientPath) === 'pdf')
 		) {
 			return (
@@ -350,9 +353,7 @@ const FileImportDialog = ({ editorChangeObject, updatePubData, isOpen, onClose, 
 						// eslint-disable-next-line react/no-array-index-key
 						key={index}
 						file={file}
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
 						onDelete={() => deleteFileById(file.id)}
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
 						onLabelFile={(label) => labelFileById(file.id, label)}
 					/>
 				))}

@@ -24,53 +24,44 @@ const checkForAsset = (url) => {
 	});
 };
 
-export const s3Upload = (file, progressEvent, finishEvent, index) => {
-	function beginUpload() {
-		const folderName = isProd() ? generateHash(8) : '_testing';
+const getFileNameForUpload = (file: File) => {
+	const folderName = isProd() ? generateHash(8) : '_testing';
+	const extension = file.name !== undefined ? file.name.split('.').pop() : 'jpg';
+	const random = Math.floor(Math.random() * 8);
+	const now = new Date().getTime();
+	return `${folderName}/${random}${now}.${extension}`;
+};
 
-		const extension = file.name !== undefined ? file.name.split('.').pop() : 'jpg';
+const getBaseUrlForBucket = (bucket) => `https://s3-external-1.amazonaws.com/${bucket}`;
 
-		// const filename = folderName + '/' + new Date().getTime() + '.' + extension;
-		// const filename = folderName + '/' + (Math.floor(Math.random() * 8)) + new Date().getTime() + '.' + extension;
-		const filename = `${folderName}/${Math.floor(
-			Math.random() * 8,
-		)}${new Date().getTime()}.${extension}`;
-		const fileType = file.type !== undefined ? file.type : 'image/jpeg';
+export const s3Upload = (file: File, onProgress, onFinish, index?: number) => {
+	const fileName = getFileNameForUpload(file);
+	const fileType = file.type !== undefined ? file.type : 'image/jpeg';
+	function beginUpload(this: any) {
+		const { policy, signature, acl, awsAccessKeyId, bucket } = JSON.parse(this.responseText);
 		const formData = new FormData();
-
-		formData.append('key', filename);
-		formData.append('AWSAccessKeyId', 'AKIAIUXFM6YJQGAV7GRQ');
-		formData.append('acl', 'public-read');
-		// @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
-		formData.append('policy', JSON.parse(this.responseText).policy);
-		// @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
-		formData.append('signature', JSON.parse(this.responseText).signature);
+		formData.append('key', fileName);
+		formData.append('AWSAccessKeyId', awsAccessKeyId);
+		formData.append('acl', acl);
+		formData.append('policy', policy);
+		formData.append('signature', signature);
 		formData.append('Content-Type', fileType);
 		formData.append('success_action_status', '200');
 		formData.append('file', file);
 		const sendFile = new XMLHttpRequest();
-		sendFile.upload.addEventListener(
-			'progress',
-			(evt) => {
-				progressEvent(evt, index);
-			},
-			false,
-		);
+		const baseUrl = getBaseUrlForBucket(bucket);
+		sendFile.upload.addEventListener('progress', (evt) => onProgress(evt, index), false);
 		sendFile.upload.addEventListener(
 			'load',
-			(evt) => {
-				checkForAsset(
-					`https://s3-external-1.amazonaws.com/assets.pubpub.org/${filename}`,
-				).then(() => {
-					finishEvent(evt, index, file.type, filename, file.name);
-				});
-			},
+			(evt) =>
+				checkForAsset(`${baseUrl}/${fileName}`).then(() =>
+					onFinish(evt, index, file.type, fileName, file.name),
+				),
 			false,
 		);
-		sendFile.open('POST', 'https://s3-external-1.amazonaws.com/assets.pubpub.org', true);
+		sendFile.open('POST', baseUrl, true);
 		sendFile.send(formData);
 	}
-
 	const getPolicy = new XMLHttpRequest();
 	getPolicy.addEventListener('load', beginUpload);
 	getPolicy.open('GET', `/api/uploadPolicy?contentType=${file.type}`);

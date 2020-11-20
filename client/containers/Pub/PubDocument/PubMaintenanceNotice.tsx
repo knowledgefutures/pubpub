@@ -16,7 +16,9 @@ const PubMaintenanceNotice = (props: Props) => {
 	const { isInMaintenanceMode } = pubData;
 
 	const {
-		activePermissions: { canManage },
+		scopeData: {
+			activePermissions: { canManage },
+		},
 	} = usePageContext();
 
 	if (!isInMaintenanceMode || !canManage) {

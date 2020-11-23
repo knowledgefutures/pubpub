@@ -28,12 +28,12 @@ const CollectionsBar = (props: Props) => {
 		communityData,
 		locationData,
 		scopeData: {
-			elements: {
-				activeCommunity: { collections: allCollectionsInCommunity },
-			},
 			activePermissions: { canManage },
 		},
 	} = usePageContext();
+	const {
+		collections: allCollectionsInCommunity
+	} = communityData;
 	const currentCollection = chooseCollectionForPub(pubData, locationData);
 	const [showOnlyCollectionsQueryList, setShowOnlyCollectionsQueryList] = useState(
 		collectionPubs.length === 0,

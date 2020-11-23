@@ -34,9 +34,8 @@ type Props = {
 
 const PubSettings = (props: Props) => {
 	const { settingsData } = props;
-	const { scopeData } = usePageContext();
+	const { scopeData, communityData } = usePageContext();
 	const {
-		elements: { activeCommunity },
 		activePermissions: { canAdminCommunity, canManage },
 	} = scopeData;
 	const [persistedPubData, setPersistedPubData] = useState(settingsData.pubData);
@@ -69,7 +68,7 @@ const PubSettings = (props: Props) => {
 				body: JSON.stringify({
 					...pendingPubData,
 					pubId: pubData.id,
-					communityId: activeCommunity.id,
+					communityId: communityData.id,
 				}),
 			}),
 		)
@@ -117,7 +116,7 @@ const PubSettings = (props: Props) => {
 					/>
 					<InputField
 						label="Link"
-						helperText={`Pub will be available at ${pubUrl(activeCommunity, pubData)}`}
+						helperText={`Pub will be available at ${pubUrl(communityData, pubData)}`}
 						value={pubData.slug}
 						onChange={(evt) => updatePubData({ slug: slugifyString(evt.target.value) })}
 						error={!pubData.slug ? 'Required' : null}
@@ -215,7 +214,7 @@ const PubSettings = (props: Props) => {
 				<PubThemePicker
 					updatePubData={updatePubData}
 					pubData={pubData}
-					communityData={activeCommunity}
+					communityData={communityData}
 				/>
 			</SettingsSection>
 		);
@@ -226,7 +225,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="Citation Style">
 				<CitationChooser
 					pubData={pubData}
-					communityId={activeCommunity.id}
+					communityId={communityData.id}
 					onSetCitations={(citationUpdate) => updatePersistedPubData(citationUpdate)}
 				/>
 			</SettingsSection>
@@ -238,7 +237,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="DOI">
 				<Doi
 					pubData={persistedPubData}
-					communityData={activeCommunity}
+					communityData={communityData}
 					updatePubData={updatePersistedPubData}
 					canIssueDoi={canAdminCommunity}
 				/>
@@ -251,7 +250,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="Attributions">
 				<PubAttributionEditor
 					pubData={pubData}
-					communityData={activeCommunity}
+					communityData={communityData}
 					updatePubData={updatePersistedPubData}
 					canEdit={canManage}
 				/>
@@ -264,7 +263,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="Download">
 				<DownloadChooser
 					pubData={pubData}
-					communityId={activeCommunity.id}
+					communityId={communityData.id}
 					onSetDownloads={(downloads) => updatePersistedPubData({ downloads: downloads })}
 				/>
 			</SettingsSection>
@@ -276,7 +275,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="Collections">
 				<PubCollectionsListing
 					pub={pubData}
-					allCollections={activeCommunity.collections}
+					allCollections={communityData.collections}
 					collectionPubs={pubData.collectionPubs}
 					updateCollectionPubs={(nextCollectionPubs) =>
 						updatePersistedPubData({ collectionPubs: nextCollectionPubs })
@@ -290,7 +289,7 @@ const PubSettings = (props: Props) => {
 	const renderDelete = () => {
 		return (
 			<SettingsSection title="Delete">
-				<DeletePub communityData={activeCommunity} pubData={pubData} />
+				<DeletePub communityData={communityData} pubData={pubData} />
 			</SettingsSection>
 		);
 	};

@@ -20,21 +20,6 @@ export const usePageState = (initialData, viewData) => {
 			next = next(communityData);
 		}
 		setCommunityData((current) => ({ ...current, ...next }));
-		if (scopeData.elements.activeCommunity) {
-			const nextCommunity = {
-				...scopeData.elements.activeCommunity,
-				...next,
-			};
-			setScopeData((current) => {
-				return {
-					...current,
-					elements: {
-						...scopeData.elements,
-						activeCommunity: nextCommunity,
-					},
-				};
-			});
-		}
 	};
 
 	const updateCollection = (next) => {

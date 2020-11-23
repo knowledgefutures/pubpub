@@ -35,7 +35,7 @@ const CollectionOverview = (props: Props) => {
 	const collectionSchema = getSchemaForKind(activeCollection.kind);
 	const label = capitalize(collectionSchema?.label.singular);
 
-	const { collection, updateCollection } = useCollectionState(scopeData);
+	const { collection, updateCollection } = useCollectionState();
 	const {
 		collectionPubs,
 		reorderCollectionPubs,

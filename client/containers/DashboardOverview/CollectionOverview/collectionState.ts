@@ -149,12 +149,14 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	};
 };
 
-export const useCollectionState = (scopeData) => {
+export const useCollectionState = () => {
 	const {
-		elements: { activeCommunity, activeCollection },
-	} = scopeData;
-
-	const pageContext = usePageContext();
+		updateCollection: updateCollectionGlobally,
+		scopeData: {
+			elements: { activeCollection },
+		},
+		communityData,
+	} = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 
 	const { state, error, update, hasChanges, persist } = usePersistableState(
@@ -162,14 +164,14 @@ export const useCollectionState = (scopeData) => {
 		(partialCollection) =>
 			pendingPromise(
 				api.updateCollection({
-					communityId: activeCommunity.id,
+					communityId: communityData.id,
 					collectionId: activeCollection.id,
 					updatedCollection: partialCollection,
 				}),
-			).then(() => pageContext.updateCollection(partialCollection)),
+			).then(() => updateCollectionGlobally(partialCollection)),
 	);
 
-	const collection = linkCollection(state, activeCommunity);
+	const collection = linkCollection(state, communityData);
 	const fieldErrors = error?.type === 'InvalidFields' ? error.fields : null;
 
 	const updateCollection = (next) => update(next, true);
@@ -177,7 +179,7 @@ export const useCollectionState = (scopeData) => {
 	const deleteCollection = () =>
 		pendingPromise(
 			api.deleteCollection({
-				communityId: activeCommunity.id,
+				communityId: communityData.id,
 				collectionId: collection.id,
 			}),
 		);

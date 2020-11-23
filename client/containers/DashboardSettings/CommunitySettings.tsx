@@ -24,22 +24,21 @@ import { apiFetch } from 'client/utils/apiFetch';
 import NavBuilder from './NavBuilder';
 
 const CommunitySettings = () => {
-	const { scopeData } = usePageContext();
-	const { activeCommunity } = scopeData.elements;
+	const { scopeData, communityData } = usePageContext();
 
 	/* Export & Delete Mailto Props */
 	const exportEmailBody = `
 	Hello.
 	%0D%0A%0D%0A
 	I am writing to request an export of any PubPub community data associated with the community%20
-	${activeCommunity.title} (${activeCommunity.subdomain}).
+	${communityData.title} (${communityData.subdomain}).
 	`;
 
 	const deleteEmailBody = `
 	Hello.
 	%0D%0A%0D%0A
-	I am writing to request that the PubPub community ${activeCommunity.title}%20
-	(${activeCommunity.subdomain}), and all data associated with that community, be deleted.
+	I am writing to request that the PubPub community ${communityData.title}%20
+	(${communityData.subdomain}), and all data associated with that community, be deleted.
 	%0D%0A%0D%0A
 	I affirm that I have the legal authority to request this on behalf of my community,%20
 	and understand that this action may be irreversible.
@@ -48,62 +47,62 @@ const CommunitySettings = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(undefined);
 	/* Details */
-	const [title, setTitle] = useState(activeCommunity.title);
-	const [subdomain, setSubdomain] = useState(activeCommunity.subdomain);
-	const [description, setDescription] = useState(activeCommunity.description);
-	const [avatar, setAvatar] = useState(activeCommunity.avatar);
-	const [favicon, setFavicon] = useState(activeCommunity.favicon);
-	const [accentColorLight, setAccentColorLight] = useState(activeCommunity.accentColorLight);
-	const [accentColorDark, setAccentColorDark] = useState(activeCommunity.accentColorDark);
+	const [title, setTitle] = useState(communityData.title);
+	const [subdomain, setSubdomain] = useState(communityData.subdomain);
+	const [description, setDescription] = useState(communityData.description);
+	const [avatar, setAvatar] = useState(communityData.avatar);
+	const [favicon, setFavicon] = useState(communityData.favicon);
+	const [accentColorLight, setAccentColorLight] = useState(communityData.accentColorLight);
+	const [accentColorDark, setAccentColorDark] = useState(communityData.accentColorDark);
 	/* Header */
-	const [headerLogo, setHeaderLogo] = useState(activeCommunity.headerLogo);
-	const [headerColorType, setHeaderColorType] = useState(activeCommunity.headerColorType);
+	const [headerLogo, setHeaderLogo] = useState(communityData.headerLogo);
+	const [headerColorType, setHeaderColorType] = useState(communityData.headerColorType);
 	const [hideCreatePubButton, setHideCreatePubButton] = useState(
-		activeCommunity.hideCreatePubButton || false,
+		communityData.hideCreatePubButton || false,
 	);
 	const [defaultPubCollections, setDefaultPubCollections] = useState(
-		activeCommunity.defaultPubCollections || [],
+		communityData.defaultPubCollections || [],
 	);
 	/* Navigation */
-	const [hideNav, setHideNav] = useState(activeCommunity.hideNav || false);
+	const [hideNav, setHideNav] = useState(communityData.hideNav || false);
 	const [useHeaderTextAccent, setUseHeaderTextAccent] = useState(
-		activeCommunity.useHeaderTextAccent || false,
+		communityData.useHeaderTextAccent || false,
 	);
-	const [navigation, setNavigation] = useState(activeCommunity.navigation);
+	const [navigation, setNavigation] = useState(communityData.navigation);
 	/* Homepage */
-	const [heroLogo, setHeroLogo] = useState(activeCommunity.heroLogo);
+	const [heroLogo, setHeroLogo] = useState(communityData.heroLogo);
 	const [heroBackgroundImage, setHeroBackgroundImage] = useState(
-		activeCommunity.heroBackgroundImage,
+		communityData.heroBackgroundImage,
 	);
-	const [hideHero, setHideHero] = useState(activeCommunity.hideHero || false);
-	const [hideHeaderLogo, setHideHeaderLogo] = useState(activeCommunity.hideHeaderLogo || false);
+	const [hideHero, setHideHero] = useState(communityData.hideHero || false);
+	const [hideHeaderLogo, setHideHeaderLogo] = useState(communityData.hideHeaderLogo || false);
 	const [heroBackgroundColor, setHeroBackgroundColor] = useState(
-		activeCommunity.heroBackgroundColor,
+		communityData.heroBackgroundColor,
 	);
-	const [heroTextColor, setHeroTextColor] = useState(activeCommunity.heroTextColor);
+	const [heroTextColor, setHeroTextColor] = useState(communityData.heroTextColor);
 	const [useHeaderGradient, setUseHeaderGradient] = useState(
-		activeCommunity.useHeaderGradient || false,
+		communityData.useHeaderGradient || false,
 	);
-	const [heroImage, setHeroImage] = useState(activeCommunity.heroImage);
-	const [heroTitle, setHeroTitle] = useState(activeCommunity.heroTitle);
-	const [heroText, setHeroText] = useState(activeCommunity.heroText);
+	const [heroImage, setHeroImage] = useState(communityData.heroImage);
+	const [heroTitle, setHeroTitle] = useState(communityData.heroTitle);
+	const [heroText, setHeroText] = useState(communityData.heroText);
 	const [heroPrimaryButton, setHeroPrimaryButton] = useState(
-		activeCommunity.heroPrimaryButton || {},
+		communityData.heroPrimaryButton || {},
 	);
 	const [heroSecondaryButton, setHeroSecondaryButton] = useState(
-		activeCommunity.heroSecondaryButton || {},
+		communityData.heroSecondaryButton || {},
 	);
-	const [heroAlign, setHeroAlign] = useState(activeCommunity.heroAlign || 'left');
+	const [heroAlign, setHeroAlign] = useState(communityData.heroAlign || 'left');
 	/* Footer */
-	const [footerLinks, setFooterLinks] = useState(activeCommunity.footerLinks);
-	const [footerTitle, setFooterTitle] = useState(activeCommunity.footerTitle);
-	const [footerImage, setFooterImage] = useState(activeCommunity.footerImage);
+	const [footerLinks, setFooterLinks] = useState(communityData.footerLinks);
+	const [footerTitle, setFooterTitle] = useState(communityData.footerTitle);
+	const [footerImage, setFooterImage] = useState(communityData.footerImage);
 	const [footerImageKey, setFooterImageKey] = useState(Math.random());
 	/* Social */
-	const [website, setWebsite] = useState(activeCommunity.website || '');
-	const [twitter, setTwitter] = useState(activeCommunity.twitter || '');
-	const [facebook, setFacebook] = useState(activeCommunity.facebook || '');
-	const [email, setEmail] = useState(activeCommunity.email || '');
+	const [website, setWebsite] = useState(communityData.website || '');
+	const [twitter, setTwitter] = useState(communityData.twitter || '');
+	const [facebook, setFacebook] = useState(communityData.facebook || '');
+	const [email, setEmail] = useState(communityData.email || '');
 
 	const stateVals = {
 		title: title,
@@ -152,7 +151,7 @@ const CommunitySettings = () => {
 			method: 'PUT',
 			body: JSON.stringify({
 				...stateVals,
-				communityId: activeCommunity.id,
+				communityId: communityData.id,
 			}),
 		})
 			.then((nextCommunityData) => {
@@ -172,7 +171,7 @@ const CommunitySettings = () => {
 			});
 	};
 
-	const { pages = [], collections = [] } = activeCommunity;
+	const { pages = [], collections = [] } = communityData;
 	const activeHeroTextColor = heroTextColor || '#FFFFFF';
 
 	return (
@@ -391,7 +390,7 @@ const CommunitySettings = () => {
 					wrapperClassName={hideCreatePubButton ? 'disable-block' : ''}
 				>
 					<CollectionMultiSelect
-						allCollections={activeCommunity.collections}
+						allCollections={communityData.collections}
 						selectedCollectionIds={defaultPubCollections || []}
 						onItemSelect={(newCollectionId) => {
 							const existingCollectionIds = defaultPubCollections || [];
@@ -426,8 +425,8 @@ const CommunitySettings = () => {
 				<div className={hideNav ? 'disable-block' : ''}>
 					<InputField label="Navigation">
 						<NavBuilder
-							initialNav={activeCommunity.navigation}
-							prefix={[activeCommunity.navigation[0]]}
+							initialNav={communityData.navigation}
+							prefix={[communityData.navigation[0]]}
 							pages={pages}
 							collections={collections}
 							onChange={(val) => {
@@ -439,7 +438,7 @@ const CommunitySettings = () => {
 						<NavBar
 							previewContext={{
 								communityData: {
-									...activeCommunity,
+									...communityData,
 									...stateVals,
 								},
 								locationData: {
@@ -599,7 +598,7 @@ const CommunitySettings = () => {
 					<div className="row-wrapper">
 						<InputField label="Banner Background Color">
 							<ColorInput
-								value={heroBackgroundColor || activeCommunity.accentColorDark}
+								value={heroBackgroundColor || communityData.accentColorDark}
 								onChange={(val) => {
 									setHeroBackgroundColor(val.hex);
 								}}
@@ -701,7 +700,7 @@ const CommunitySettings = () => {
 					<Header
 						previewContext={{
 							communityData: {
-								...activeCommunity,
+								...communityData,
 								...stateVals,
 							},
 							locationData: {
@@ -760,7 +759,7 @@ const CommunitySettings = () => {
 					onChange={(evt) => {
 						setFooterTitle(evt.target.value);
 					}}
-					placeholder={activeCommunity.title}
+					placeholder={communityData.title}
 				/>
 				<ImageUpload
 					key={footerImageKey}
@@ -788,7 +787,7 @@ const CommunitySettings = () => {
 
 				<InputField label="Footer Links">
 					<NavBuilder
-						initialNav={activeCommunity.footerLinks || defaultFooterLinks}
+						initialNav={communityData.footerLinks || defaultFooterLinks}
 						suffix={defaultFooterLinks}
 						pages={pages}
 						collections={collections}
@@ -802,7 +801,7 @@ const CommunitySettings = () => {
 					<Footer
 						previewContext={{
 							communityData: {
-								...activeCommunity,
+								...communityData,
 								...stateVals,
 							},
 							locationData: {

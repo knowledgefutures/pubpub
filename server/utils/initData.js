@@ -82,7 +82,7 @@ export const getInitialData = async (req, isDashboard) => {
 		communityData.domain = req.headers.localhost;
 	}
 	const scopeData = await getScope({
-		communityData: communityData,
+		communityId: communityData.id,
 		pubSlug: locationData.params.pubSlug,
 		collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
 		accessHash: locationData.query.access,
@@ -96,6 +96,7 @@ export const getInitialData = async (req, isDashboard) => {
 		loginData,
 		scopeData,
 	);
+
 	return {
 		communityData: cleanedCommunityData,
 		loginData: loginData,

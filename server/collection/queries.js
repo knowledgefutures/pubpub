@@ -81,7 +81,7 @@ export const updateCollection = async (inputValues, updatePermissions) => {
 			throw new PubPubError.InvalidFieldsError('slug');
 		}
 	}
-
+	await Collection.update(filteredValues, { where: { id: inputValues.collectionId } });
 	return filteredValues;
 };
 

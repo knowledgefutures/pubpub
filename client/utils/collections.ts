@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
+import { getPrimaryCollection } from 'utils/collections/primary';
 
 const readingCollectionParam = 'readingCollection';
 
@@ -31,13 +32,12 @@ export const createReadingParamUrl = (url, collectionId) => {
 };
 
 export const chooseCollectionForPub = (pubData, locationData) => {
-	const primaryCollectionPub = pubData.collectionPubs.find((cp) => cp.isPrimary);
+	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
 	return (
 		getCollectionFromReadingParam(
 			locationData.query,
 			pubData.collectionPubs.map((cp) => cp.collection),
-		) ||
-		(primaryCollectionPub && primaryCollectionPub.collection)
+		) || primaryCollection
 	);
 };
 

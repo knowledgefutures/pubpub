@@ -10,27 +10,30 @@ import {
 	getNeighborsInCollectionPub,
 	useCollectionPubs,
 } from 'client/utils/collections';
+import { usePubContext } from '../../pubHooks';
 
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
 
 type Props = {
 	pubData: pubDataProps;
-	updateLocalData: (...args: any[]) => any;
 };
 
 const ReadNextSection = (props: Props) => {
-	const { pubData, updateLocalData } = props;
+	const { pubData } = props;
 	const { locationData, communityData } = usePageContext();
+	const { updateLocalData } = usePubContext();
 	const currentCollection = chooseCollectionForPub(pubData, locationData);
 	const { pubs } = useCollectionPubs(updateLocalData, currentCollection);
 	const { nextPub } = getNeighborsInCollectionPub(pubs, pubData);
 	const { readNextPreviewSize = 'choose-best' } = currentCollection || {};
-	if (readNextPreviewSize === 'none') {
+
+	if (readNextPreviewSize === 'none' || !nextPub || !currentCollection) {
 		return null;
 	}
 	if (!nextPub) {
 		return null;
 	}
+
 	return (
 		<PubBottomSection
 			isExpandable={false}

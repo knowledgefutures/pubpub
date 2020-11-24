@@ -51,6 +51,7 @@ const pubData = {
 		id: 'ff116d8b-c3e5-4472-ab1a-8041ec1cc842',
 	},
 	collectionPubs: [],
+	releases: [],
 };
 
 storiesOf('containers/Pub/PubDocument/PubBottom/PubBottom', module)

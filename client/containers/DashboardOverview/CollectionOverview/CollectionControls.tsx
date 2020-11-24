@@ -18,7 +18,7 @@ const CollectionControls = (props: Props) => {
 	const { overviewData, collection, updateCollection, collectionPubs, addCollectionPub } = props;
 	const { scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
-	const { isPublic } = collection;
+	const { isPublic, isRestricted } = collection;
 
 	if (!canManage) {
 		return null;
@@ -27,7 +27,6 @@ const CollectionControls = (props: Props) => {
 		<>
 			<PubSelect
 				pubs={overviewData.pubs}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 				usedPubIds={collectionPubs.map((cp) => cp.pubId)}
 				onSelectPub={addCollectionPub}
 			>
@@ -35,6 +34,36 @@ const CollectionControls = (props: Props) => {
 					Add Pubs
 				</Button>
 			</PubSelect>
+			<MenuButton
+				aria-label="Choose whether this Collection is restricted"
+				buttonContent={isRestricted ? 'Restricted' : 'Open'}
+				placement="bottom-end"
+				buttonProps={{
+					minimal: true,
+					outlined: true,
+					icon: isRestricted ? 'folder-close' : 'folder-open',
+					rightIcon: 'caret-down',
+				}}
+			>
+				<MenuItem
+					text={
+						<>
+							<b>Restricted:</b> only managers of this Collection can add Pubs
+						</>
+					}
+					icon={isRestricted ? 'tick' : 'blank'}
+					onClick={() => updateCollection({ isRestricted: true })}
+				/>
+				<MenuItem
+					text={
+						<>
+							<b>Open:</b> anyone in this Community can add their Pub
+						</>
+					}
+					icon={isRestricted ? 'blank' : 'tick'}
+					onClick={() => updateCollection({ isRestricted: false })}
+				/>
+			</MenuButton>
 			{!isPublic && (
 				<Button
 					intent="primary"

@@ -26,13 +26,11 @@ let getActiveCounts;
 /* getScopeData can be called from either a route (e.g. to authenticate */
 /* whether a user has access to /pub/example), or it can be called from */
 /* an API route to verify a user's permissions. When called from a route */
-/* it is likely that communityData, collectionSlug, and pubSlug will be used. */
-/* When called from an API endpoint, it is likely that communityId, */
-/* collectionId, and pubId will be used. */
+/* it is likely that collectionSlug and pubSlug will be used. */
+/* When called from an API endpoint, it is likely that collectionId and pubId will be used. */
 export default async (scopeInputs) => {
 	/* scopeInputs = 
 		{
-			communityId, communityData,
 			collectionId, collectionSlug,
 			pubId, pubSlug,
 			accessHash,
@@ -69,19 +67,12 @@ const getActiveIds = ({ activePub, activeCollection, activeCommunity }) => {
 };
 
 getScopeElements = async (scopeInputs) => {
-	const {
-		communityId,
-		communityData,
-		collectionId,
-		collectionSlug,
-		pubId,
-		pubSlug,
-	} = scopeInputs;
+	const { communityId, collectionId, collectionSlug, pubId, pubSlug } = scopeInputs;
 	let activeTarget;
 	let activePub;
 	let activeCollection;
 	let inactiveCollections = [];
-	let activeCommunity = communityData;
+	let activeCommunity = null;
 	let activeTargetType = 'community';
 	if (pubSlug || pubId) {
 		activeTargetType = 'pub';

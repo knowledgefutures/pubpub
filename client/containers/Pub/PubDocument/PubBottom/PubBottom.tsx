@@ -41,7 +41,7 @@ const PubBottom = (props: Props) => {
 	return (
 		<div className="pub-bottom-component">
 			<div className="inner">
-				<ReadNextSection pubData={pubData} updateLocalData={updateLocalData} />
+				<ReadNextSection pubData={pubData} />
 				{footnotes.length > 0 && (
 					<SearchableNoteSection
 						// @ts-expect-error ts-migrate(2322) FIXME: Property 'title' does not exist on type 'Intrinsic... Remove this comment to see the full error message

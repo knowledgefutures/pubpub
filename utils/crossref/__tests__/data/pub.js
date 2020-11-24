@@ -104,7 +104,7 @@ export default {
 			collectionId: '3c8f65f8-05b9-4d90-8d5d-03137c929d79',
 			contextHint: null,
 			rank: 'h',
-			isPrimary: false,
+			pubRank: 'c',
 			createdAt: '2019-04-02T22:03:21.766Z',
 			updatedAt: '2019-04-10T18:43:19.832Z',
 			collection: {
@@ -128,7 +128,7 @@ export default {
 			collectionId: 'd46c67cd-cb82-4114-a64d-1bf425edac95',
 			contextHint: null,
 			rank: 'h',
-			isPrimary: false,
+			pubRank: 'b',
 			createdAt: '2019-04-03T18:53:03.910Z',
 			updatedAt: '2019-04-10T18:43:19.832Z',
 			collection: {
@@ -152,7 +152,7 @@ export default {
 			collectionId: '461d4f05-3604-47d7-b157-dbe5927e72bc',
 			contextHint: null,
 			rank: 'u',
-			isPrimary: true,
+			pubRank: 'a',
 			createdAt: '2019-04-10T18:43:11.790Z',
 			updatedAt: '2019-04-10T18:43:19.913Z',
 			collection: {
@@ -181,7 +181,7 @@ export default {
 			collectionId: '81144659-2495-4675-90eb-441b8fba4ec0',
 			contextHint: null,
 			rank: 'h',
-			isPrimary: false,
+			pubRank: 'd',
 			createdAt: '2019-04-04T19:48:05.436Z',
 			updatedAt: '2019-04-10T18:43:19.832Z',
 			collection: {

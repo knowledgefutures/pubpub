@@ -12,7 +12,7 @@ import OverviewRow from './OverviewRow';
 
 require('./overviewTable.scss');
 
-type OwnProps = {
+type Props = {
 	title: string;
 	collectionList?: any[];
 	pubList: any[];
@@ -20,13 +20,7 @@ type OwnProps = {
 	generateLabel?: (...args: any[]) => any;
 	rowControls?: (...args: any[]) => any;
 	emptyState: React.ReactNode;
-};
-
-const defaultProps = {
-	collectionList: [],
-	generateLabel: () => {},
-	onReorder: undefined,
-	rowControls: () => {},
+	showType?: boolean;
 };
 
 const handleDragDrop = ({ dragResult, reorderCollectionPubs }) => {
@@ -34,17 +28,19 @@ const handleDragDrop = ({ dragResult, reorderCollectionPubs }) => {
 	reorderCollectionPubs(source.index, destination.index);
 };
 
-type Props = OwnProps & typeof defaultProps;
+const noop = () => {};
+const renderNull = () => null;
 
 const OverviewTable = (props: Props) => {
 	const {
 		title,
-		collectionList,
+		collectionList = [],
 		pubList,
 		onReorder,
-		generateLabel,
-		rowControls,
+		generateLabel = noop,
+		rowControls = renderNull,
 		emptyState,
+		showType,
 	} = props;
 	const [filterText, setFilterText] = useState('');
 	const { scopeData } = usePageContext();
@@ -92,7 +88,7 @@ const OverviewTable = (props: Props) => {
 					/>
 					<div className="list-header overview-row-component">
 						<span className="handle" />
-						<span className="type">Type</span>
+						{showType && <span className="type">Type</span>}
 						<span className="title">Title</span>
 						<span className="pubs">Pubs</span>
 						<span className="released">Released</span>
@@ -120,6 +116,7 @@ const OverviewTable = (props: Props) => {
 									content={item.pub || item}
 									dragHandleProps={onReorder ? dragHandleProps : null}
 									isDragging={isDragging}
+									showType={showType}
 									controls={rowControls(item)}
 									parentSlug={
 										activeCollection ? activeCollection.slug : undefined
@@ -161,5 +158,5 @@ const OverviewTable = (props: Props) => {
 		</div>
 	);
 };
-OverviewTable.defaultProps = defaultProps;
+
 export default OverviewTable;

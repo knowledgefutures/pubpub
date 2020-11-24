@@ -5,6 +5,7 @@ import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
+import { Pub } from 'utils/types';
 
 import CollectionsBar from './collections/CollectionsBar';
 import DraftReleaseButtons from './DraftReleaseButtons';
@@ -14,10 +15,8 @@ import UtilityButtons from './UtilityButtons';
 type Props = {
 	historyData: any;
 	onShowHeaderDetails: (...args: any[]) => any;
-	pubData: {
-		id: string;
-		doi?: string;
-		isInMaintenanceMode?: boolean;
+	pubData: Pub & {
+		isInMaintenanceMode: boolean;
 	};
 	pubHeadings: any[];
 	updateLocalData: (...args: any[]) => any;
@@ -53,7 +52,7 @@ const PubHeaderContent = (props: Props) => {
 	const renderTop = () => {
 		return (
 			<div className="pub-header-top-area has-bottom-hairline">
-				<CollectionsBar pubData={pubData} updateLocalData={updateLocalData} />
+				<CollectionsBar pubData={pubData as any} updatePubData={updatePubData} />
 				<div className="basic-details">
 					<span className="metadata-pair">
 						{publishedDate && (
@@ -83,10 +82,8 @@ const PubHeaderContent = (props: Props) => {
 	return (
 		<div className="pub-header-content-component">
 			{renderTop()}
-			{/* @ts-expect-error ts-migrate(2559) FIXME: Type '{ id: string; doi?: string | undefined; isIn... Remove this comment to see the full error message */}
 			<TitleGroup pubData={pubData} updatePubData={updateAndSavePubData} />
 			<UtilityButtons
-				// @ts-expect-error ts-migrate(2559) FIXME: Type '{ id: string; doi?: string | undefined; isIn... Remove this comment to see the full error message
 				pubData={pubData}
 				updatePubData={updateAndSavePubData}
 				pubHeadings={pubHeadings}
@@ -94,7 +91,6 @@ const PubHeaderContent = (props: Props) => {
 			/>
 			{!isInMaintenanceMode && (
 				<DraftReleaseButtons
-					// @ts-expect-error ts-migrate(2741) FIXME: Property 'releases' is missing in type '{ id: stri... Remove this comment to see the full error message
 					pubData={pubData}
 					historyData={historyData}
 					updatePubData={updatePubData}

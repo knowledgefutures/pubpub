@@ -141,7 +141,6 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 	const { onSetMetadataUpdater, proposedMetadata } = props;
 	const [metadata, setMetadata] = useState(proposedMetadata);
 	const { communityData } = usePageContext();
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'updatePubData' does not exist on type '{... Remove this comment to see the full error message
 	const { pubData, updatePubData } = usePubContext();
 	const [ignoredFields, setIgnoredFields] = useState({});
 	const { attributions, ...pubFields } = metadata;

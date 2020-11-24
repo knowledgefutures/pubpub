@@ -5,8 +5,9 @@ import * as api from 'client/utils/collections/api';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { usePersistableState } from 'client/utils/usePersistableState';
+import { CollectionPub, Pub } from 'utils/types';
 
-const linkCollectionPubs = (overviewData, collection) => {
+const linkCollectionPubs = (overviewData, collection): (CollectionPub & { pub: Pub })[] => {
 	const { pubs, collections } = overviewData;
 	const { collectionPubs } = collections.find((col) => col.id === collection.id);
 	return sortByRank(
@@ -54,7 +55,6 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 		nextCollectionPubs.splice(destinationIndex, 0, updatedValue);
 		pendingPromise(
 			api.updateCollectionPub({
-				collectionId: collectionId,
 				communityId: communityId,
 				id: updatedValue.id,
 				update: { rank: newRank },
@@ -77,7 +77,6 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	const removeCollectionPub = (collectionPub) => {
 		pendingPromise(
 			api.removeCollectionPub({
-				collectionId: collectionId,
 				communityId: communityId,
 				id: collectionPub.id,
 			}),
@@ -88,7 +87,6 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	const setCollectionPubContextHint = (collectionPub, contextHint) => {
 		pendingPromise(
 			api.updateCollectionPub({
-				collectionId: collectionId,
 				communityId: communityId,
 				id: collectionPub.id,
 				update: { contextHint: contextHint },
@@ -97,16 +95,20 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 		updateCollectionPub({ ...collectionPub, contextHint: contextHint });
 	};
 
-	const setCollectionPubIsPrimary = (collectionPub, isPrimary) => {
-		pendingPromise(
-			api.setCollectionPubPrimary({
-				collectionId: collectionId,
-				communityId: communityId,
-				id: collectionPub.id,
-				isPrimary: isPrimary,
-			}),
-		);
-		updateCollectionPub({ ...collectionPub, isPrimary: isPrimary });
+	const setCollectionPubIsPrimary = (collectionPub) => {
+		const { pubId } = collectionPub;
+		const pub = overviewData.pubs.find((p) => p.id === pubId);
+		if (pub && pub.collectionPubs) {
+			const newPubRank = findRankInRankedList(pub.collectionPubs, 0, 'pubRank');
+			pendingPromise(
+				api.updateCollectionPub({
+					communityId: communityId,
+					id: collectionPub.id,
+					update: { pubRank: newPubRank },
+				}),
+			);
+			updateCollectionPub({ ...collectionPub, pubRank: newPubRank });
+		}
 	};
 
 	const addCollectionPub = (pub) => {
@@ -114,7 +116,7 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 			collectionId: collectionId,
 			pubId: pub.id,
 			pub: pub,
-		};
+		} as any;
 		pendingPromise(
 			api
 				.addCollectionPub({
@@ -134,7 +136,7 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 					);
 				}),
 		);
-		setCollectionPubs([newCollectionPub, ...collectionPubs]);
+		setCollectionPubs([...collectionPubs, newCollectionPub]);
 	};
 
 	return {
@@ -147,12 +149,14 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	};
 };
 
-export const useCollectionState = (scopeData) => {
+export const useCollectionState = () => {
 	const {
-		elements: { activeCommunity, activeCollection },
-	} = scopeData;
-
-	const pageContext = usePageContext();
+		updateCollection: updateCollectionGlobally,
+		scopeData: {
+			elements: { activeCollection },
+		},
+		communityData,
+	} = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 
 	const { state, error, update, hasChanges, persist } = usePersistableState(
@@ -160,14 +164,14 @@ export const useCollectionState = (scopeData) => {
 		(partialCollection) =>
 			pendingPromise(
 				api.updateCollection({
-					communityId: activeCommunity.id,
+					communityId: communityData.id,
 					collectionId: activeCollection.id,
 					updatedCollection: partialCollection,
 				}),
-			).then(() => pageContext.updateCollection(partialCollection)),
+			).then(() => updateCollectionGlobally(partialCollection)),
 	);
 
-	const collection = linkCollection(state, activeCommunity);
+	const collection = linkCollection(state, communityData);
 	const fieldErrors = error?.type === 'InvalidFields' ? error.fields : null;
 
 	const updateCollection = (next) => update(next, true);
@@ -175,7 +179,7 @@ export const useCollectionState = (scopeData) => {
 	const deleteCollection = () =>
 		pendingPromise(
 			api.deleteCollection({
-				communityId: activeCommunity.id,
+				communityId: communityData.id,
 				collectionId: collection.id,
 			}),
 		);

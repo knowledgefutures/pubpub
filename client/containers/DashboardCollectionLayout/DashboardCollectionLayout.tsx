@@ -21,8 +21,7 @@ type Props = {
 };
 
 const DashboardCollectionLayout = (props: Props) => {
-	const { communityData, scopeData } = usePageContext();
-	const { activeCommunity } = scopeData.elements;
+	const { communityData } = usePageContext();
 	const [persistedCollectionData, setPersistedCollectionData] = useState(props.collection);
 	const [pendingCollectionData, setPendingCollectionData] = useState<Partial<Collection>>({});
 	const [isPersisting, setIsPersisting] = useState(false);
@@ -87,7 +86,7 @@ const DashboardCollectionLayout = (props: Props) => {
 			<>
 				Use a Page as the landing page for this Collection: &nbsp;
 				<LinkedPageSelect
-					pages={activeCommunity.pages}
+					pages={communityData.pages}
 					selectedPageId={collection.pageId || null}
 					onSelectPage={(page) => updateCollection({ pageId: page.id })}
 					disabled={isUsingBlocks}

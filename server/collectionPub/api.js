@@ -1,11 +1,14 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 
-import { getPermissions } from './permissions';
+import {
+	canCreateCollectionPub,
+	canDestroyCollectionPub,
+	getUpdatableFieldsForCollectionPub,
+} from './permissions';
 import {
 	createCollectionPub,
 	updateCollectionPub,
-	setPrimaryCollectionPub,
 	destroyCollectionPub,
 	getPubsInCollection,
 } from './queries';
@@ -34,12 +37,13 @@ app.post(
 	wrap(async (req, res) => {
 		const { collectionId, pubId, userId, communityId } = getRequestIds(req);
 		const { rank, moveToTop } = req.body;
-		const permissions = await getPermissions({
+		const canCreate = await canCreateCollectionPub({
+			userId: userId,
 			communityId: communityId,
 			collectionId: collectionId,
-			userId: userId,
+			pubId: pubId,
 		});
-		if (!permissions.create) {
+		if (!canCreate) {
 			throw new ForbiddenError();
 		}
 		const collectionPub = await createCollectionPub({
@@ -53,42 +57,18 @@ app.post(
 );
 
 app.put(
-	'/api/collectionPubs/setPrimary',
-	wrap(async (req, res) => {
-		const { isPrimary } = req.body;
-		const { collectionPubId, communityId, collectionId, userId } = getRequestIds(req);
-		const permissions = await getPermissions({
-			communityId: communityId,
-			collectionId: collectionId,
-			userId: userId,
-		});
-		if (!permissions.create) {
-			throw new ForbiddenError();
-		}
-		const updated = await setPrimaryCollectionPub({
-			collectionPubId: collectionPubId,
-			isPrimary: isPrimary,
-		});
-		return res.status(200).json(updated);
-	}),
-);
-
-app.put(
 	'/api/collectionPubs',
 	wrap(async (req, res) => {
-		const { collectionPubId, communityId, collectionId, userId } = getRequestIds(req);
-		const permissions = await getPermissions({
+		const { collectionPubId, communityId, userId } = getRequestIds(req);
+		const updatableFields = await getUpdatableFieldsForCollectionPub({
 			communityId: communityId,
-			collectionId: collectionId,
+			collectionPubId: collectionPubId,
 			userId: userId,
 		});
-		if (!permissions.create) {
+		if (!updatableFields) {
 			throw new ForbiddenError();
 		}
-		const updated = await updateCollectionPub(
-			{ ...req.body, collectionPubId: collectionPubId },
-			permissions.update,
-		);
+		const updated = await updateCollectionPub(collectionPubId, req.body, updatableFields);
 		return res.status(200).json(updated);
 	}),
 );
@@ -96,16 +76,16 @@ app.put(
 app.delete(
 	'/api/collectionPubs',
 	wrap(async (req, res) => {
-		const { collectionPubId, communityId, collectionId, userId } = getRequestIds(req);
-		const permissions = await getPermissions({
+		const { collectionPubId, communityId, userId } = getRequestIds(req);
+		const canDestroy = await canDestroyCollectionPub({
 			communityId: communityId,
-			collectionId: collectionId,
+			collectionPubId: collectionPubId,
 			userId: userId,
 		});
-		if (!permissions.create) {
+		if (!canDestroy) {
 			throw new ForbiddenError();
 		}
-		await destroyCollectionPub({ collectionPubId: collectionPubId });
+		await destroyCollectionPub(collectionPubId);
 		return res.status(200).json(req.body.id);
 	}),
 );

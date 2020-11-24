@@ -25,7 +25,9 @@ const sortPubsByPublishDate = (pubs: Pub[], reversed = false) => {
 	const reverseFactor = reversed ? -1 : 1;
 	const publishDateById = {};
 	pubs.forEach((pub) => {
-		publishDateById[pub.id] = getPubPublishedDate(pub)?.valueOf();
+		publishDateById[pub.id] = getPubPublishedDate(
+			pub
+		)?.valueOf();
 	});
 	return pubs.concat().sort((a, b) => {
 		const pubDateA = publishDateById[a.id];
@@ -152,11 +154,11 @@ const createPubsPool = (pubs: Pub[]) => {
 	return { queryAndConsumePubs: queryAndConsumePubs };
 };
 
-export const getPubsByBlockIndex = (
+export const getPubsByBlockIndex = <P extends Pub>(
 	blocks: LayoutBlock[],
-	pubs: Pub[],
+	pubs: P[],
 	context: LayoutRenderContext = {},
-) => {
+): P[][] => {
 	const { collectionId = '' } = context;
 	const pool = createPubsPool(pubs);
 	return blocks.map((block) => {
@@ -172,5 +174,5 @@ export const getPubsByBlockIndex = (
 			});
 		}
 		return [];
-	});
+	}) as P[][];
 };

@@ -23,7 +23,7 @@ import mudder from 'mudder';
 const BOTTOM = '0';
 const TOP = 'z';
 
-const getBounds = (ranks, index) => {
+const getBounds = (ranks: string[], index: number) => {
 	if (index === 0) {
 		return [BOTTOM, ranks[0] || TOP];
 	}
@@ -33,21 +33,21 @@ const getBounds = (ranks, index) => {
 	return ranks.slice(index - 1, index + 1);
 };
 
-export const sortByRank = (array) =>
-	array.concat().sort((a, b) => (a.rank || '').localeCompare(b.rank || ''));
+export const sortByRank = <T>(array: T[], rankKey = 'rank'): T[] =>
+	array.concat().sort((a, b) => (a[rankKey] || '').localeCompare(b[rankKey] || ''));
 
-export const findRank = (ranks, index, count = 1) => {
+export const findRank = (ranks: string[], index: number, count = 1) => {
 	const [above, below] = getBounds(ranks, index);
 	const [result] = mudder.base36.mudder(above, below, count);
 	return result;
 };
 
-export const generateRanks = (count) => {
+export const generateRanks = (count: number) => {
 	return mudder.base36.mudder(BOTTOM, TOP, count);
 };
 
-export const findRankInRankedList = (rankedList, index) =>
+export const findRankInRankedList = (rankedList: any[], index: number, rankKey = 'rank') =>
 	findRank(
-		sortByRank(rankedList).map((s) => s.rank),
+		sortByRank(rankedList, rankKey).map((s) => s[rankKey]),
 		index,
 	);

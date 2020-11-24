@@ -2,6 +2,7 @@ import dateFormat from 'dateformat';
 
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
+import { getPrimaryCollection } from 'utils/collections/primary';
 import {
 	Branch,
 	Collection,
@@ -14,9 +15,9 @@ import {
 } from 'server/models';
 
 const getPrimaryCollectionMetadata = (collectionPubs) => {
-	const primaryCollection = collectionPubs.find((cp) => cp.isPrimary);
-	if (primaryCollection && primaryCollection.collection) {
-		const { metadata, title } = primaryCollection.collection;
+	const primaryCollection = getPrimaryCollection(collectionPubs);
+	if (primaryCollection) {
+		const { metadata, title } = primaryCollection;
 		return { primaryCollectionMetadata: metadata, primaryCollectionTitle: title };
 	}
 	return null;

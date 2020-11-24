@@ -2,9 +2,10 @@ import uuid from 'uuid';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 
-import { Branch, Community, Member, Pub, Release, User } from '../../server/models';
-import { createPub } from '../../server/pub/queries';
-import { createCollection } from '../../server/collection/queries';
+import { createCollectionPub } from 'server/collectionPub/queries';
+import { Branch, Community, Member, Pub, Release, User } from 'server/models';
+import { createPub } from 'server/pub/queries';
+import { createCollection } from 'server/collection/queries';
 
 const builders = {};
 
@@ -93,5 +94,7 @@ builders.Release = (args) => {
 	const { userId = uuid.v4(), branchId = uuid.v4(), ...restArgs } = args;
 	return Release.create({ userId: userId, branchId: branchId, ...restArgs });
 };
+
+builders.CollectionPub = createCollectionPub;
 
 export { builders };

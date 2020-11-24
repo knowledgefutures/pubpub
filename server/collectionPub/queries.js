@@ -1,8 +1,5 @@
-import { Op } from 'sequelize';
-
 import { findRank } from 'utils/rank';
 import {
-	sequelize,
 	Collection,
 	CollectionPub,
 	Member,
@@ -48,80 +45,50 @@ export const getPubsInCollection = async ({ communityId, collectionId, userId })
 		);
 };
 
+const getRankInPeers = (requestedRank, ranks, moveToTop = false) => {
+	if (requestedRank) {
+		return requestedRank;
+	}
+	const targetIndex = moveToTop ? 0 : ranks.length;
+	return findRank(ranks, targetIndex);
+};
+
 export const createCollectionPub = ({
 	collectionId,
 	pubId,
 	rank,
-	isPrimary: forceIsPrimary,
+	pubRank,
 	moveToTop = false,
+	isPrimary = false,
 }) => {
 	return Promise.all([
-		Collection.findOne({ where: { id: collectionId } }),
 		CollectionPub.findAll({
 			where: { pubId: pubId },
 			include: [{ model: Collection, as: 'collection' }],
 		}),
 		getCollectionPubsInCollection(collectionId),
-	]).then(([collection, pubLevelPeers, collectionLevelPeers]) => {
-		// If this is the first non-tag collection in the bunch, make it the primary one
-		const isPrimary =
-			pubLevelPeers.filter((peer) => peer.collection.kind !== 'tag').length === 0 &&
-			collection.kind !== 'tag' &&
-			collection.isPublic;
-		// If a rank wasn't provided, move the CollectionPub to the top or bottom of the collection
-		let setRank = rank;
-		if (!setRank) {
-			const ranks = collectionLevelPeers.map((cp) => cp.rank).filter((r) => r);
-			// eslint-disable-next-line no-param-reassign
-			const targetIndex = moveToTop ? 0 : ranks.length;
-			setRank = findRank(ranks, targetIndex);
-		}
+	]).then(([pubLevelPeers, collectionLevelPeers]) => {
 		return CollectionPub.create({
 			collectionId: collectionId,
 			pubId: pubId,
-			rank: setRank,
-			isPrimary: forceIsPrimary || isPrimary,
+			rank: getRankInPeers(
+				rank,
+				collectionLevelPeers.map((cp) => cp.rank),
+				moveToTop,
+			),
+			pubRank: getRankInPeers(
+				pubRank,
+				pubLevelPeers.map((cp) => cp.pubRank),
+				isPrimary,
+			),
 		});
 	});
 };
 
-export const setPrimaryCollectionPub = ({ collectionPubId, isPrimary }) => {
-	return CollectionPub.findOne({
-		where: { id: collectionPubId },
-		include: [{ model: Collection, as: 'collection' }],
-	}).then((collectionPub) => {
-		return (
-			(!collectionPubId || collectionPub.collection.isPublic) &&
-			sequelize.transaction((txn) => {
-				return CollectionPub.update(
-					{ isPrimary: false },
-					{
-						transaction: txn,
-						where: {
-							pubId: collectionPub.pubId,
-							id: { [Op.ne]: collectionPubId },
-						},
-					},
-				).then(() => {
-					return CollectionPub.update(
-						{ isPrimary: isPrimary },
-						{
-							where: { id: collectionPubId },
-							returning: true,
-							transaction: txn,
-						},
-					);
-				});
-			})
-		);
-	});
-};
-
-export const updateCollectionPub = ({ collectionPubId, ...inputValues }, updatePermissions) => {
-	// Filter to only allow certain fields to be updated
+export const updateCollectionPub = (collectionPubId, inputValues, updatableFields) => {
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
-		if (updatePermissions.includes(key)) {
+		if (updatableFields.includes(key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
@@ -134,7 +101,7 @@ export const updateCollectionPub = ({ collectionPubId, ...inputValues }, updateP
 	});
 };
 
-export const destroyCollectionPub = ({ collectionPubId }) => {
+export const destroyCollectionPub = (collectionPubId) => {
 	return CollectionPub.destroy({
 		where: { id: collectionPubId },
 	});

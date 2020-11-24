@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { OverflowList } from '@blueprintjs/core';
 
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/pub' or its correspondin... Remove this comment to see the full error message
-import { pubDataProps } from 'types/pub';
 import { chooseCollectionForPub } from 'client/utils/collections';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { usePageContext } from 'utils/hooks';
+import { Collection, CollectionPub as BareCollectionPub, Pub } from 'utils/types';
+import { PopoverButton, PubCollectionsListing } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
 
 import CollectionBrowser from './CollectionBrowser';
@@ -14,89 +14,144 @@ import CollectionsBarButton from './CollectionsBarButton';
 
 require('./collectionsBar.scss');
 
+type CollectionPub = BareCollectionPub & { collection: Collection };
+
 type Props = {
-	pubData: pubDataProps;
-	updateLocalData: (...args: any[]) => any;
+	pubData: Pub & { collectionPubs: CollectionPub[] };
+	updatePubData: (patch: Partial<Pub>) => unknown;
 };
 
 const CollectionsBar = (props: Props) => {
-	const { pubData, updateLocalData } = props;
-	const { communityData, locationData } = usePageContext();
+	const { pubData, updatePubData } = props;
+	const { collectionPubs } = pubData;
+	const {
+		communityData,
+		locationData,
+		scopeData: {
+			activePermissions: { canManage },
+		},
+	} = usePageContext();
+	const { collections: allCollectionsInCommunity } = communityData;
 	const currentCollection = chooseCollectionForPub(pubData, locationData);
+	const [showOnlyCollectionsQueryList, setShowOnlyCollectionsQueryList] = useState(
+		collectionPubs.length === 0,
+	);
 
-	if (pubData.collectionPubs.length === 0) {
+	const collections = pubData.collectionPubs
+		.filter(
+			(cp: BareCollectionPub): cp is CollectionPub =>
+				!!(cp.collection && cp.collection !== currentCollection),
+		)
+		.sort((a, b) => (a.pubRank > b.pubRank ? 1 : -1))
+		.map((cp) => cp.collection);
+
+	const handleCollectionsQueryListClose = () => {
+		if (collectionPubs.length > 0) {
+			setShowOnlyCollectionsQueryList(false);
+		}
+	};
+
+	const renderOverflow = (overflowCollections: Collection[]) => {
+		const containsAllCollections = overflowCollections.length === pubData.collectionPubs.length;
+		const icon = containsAllCollections ? null : 'more';
+		const rightIcon = containsAllCollections ? 'caret-down' : null;
+		const label = containsAllCollections
+			? overflowCollections.length === 1
+				? 'collection'
+				: 'collections'
+			: 'more';
+		return (
+			<Menu
+				placement="bottom-end"
+				aria-label={overflowCollections.length + ' ' + label}
+				disclosure={
+					<CollectionsBarButton icon={icon} rightIcon={rightIcon}>
+						{overflowCollections.length} {label}
+					</CollectionsBarButton>
+				}
+			>
+				{overflowCollections.map((collection) => {
+					const schema = getSchemaForKind(collection.kind);
+					return (
+						<MenuItem
+							icon={schema && schema.bpDisplayIcon}
+							key={collection.id}
+							text={collection.title}
+							href={collectionUrl(communityData, collection)}
+						/>
+					);
+				})}
+			</Menu>
+		);
+	};
+
+	const renderManageCollections = () => {
+		const pubCollectionsListingProps = {
+			pub: pubData,
+			collectionPubs: collectionPubs,
+			canManage: canManage,
+			updateCollectionPubs: (nextCollectionPubs) =>
+				updatePubData({ collectionPubs: nextCollectionPubs }),
+			allCollections: allCollectionsInCommunity,
+			renderDragElementInPortal: true,
+		};
+
+		const button = (
+			<CollectionsBarButton icon="plus">
+				{collectionPubs.length === 0 ? 'Add to Collection' : null}
+			</CollectionsBarButton>
+		);
+
+		if (showOnlyCollectionsQueryList) {
+			return (
+				<PubCollectionsListing
+					{...pubCollectionsListingProps}
+					onQueryListClose={handleCollectionsQueryListClose}
+					renderTriggerButtonForQueryList={() => button}
+				/>
+			);
+		}
+		return (
+			<PopoverButton
+				className="collections-bar-component_collections-popover"
+				component={PubCollectionsListing}
+				aria-label="Add or edit Pub Collections"
+				{...pubCollectionsListingProps}
+			>
+				{button}
+			</PopoverButton>
+		);
+	};
+
+	const renderVisibleItem = (collection: Collection) => {
+		return (
+			<CollectionsBarButton
+				key={collection.id}
+				href={collectionUrl(communityData, collection)}
+				as="a"
+			>
+				{collection.title}
+			</CollectionsBarButton>
+		);
+	};
+
+	if (collectionPubs.length === 0 && !canManage) {
 		return null;
 	}
 
 	return (
 		<div className="collections-bar-component">
 			{currentCollection && (
-				<CollectionBrowser
-					collection={currentCollection}
-					currentPub={pubData}
-					updateLocalData={updateLocalData}
-				/>
+				<CollectionBrowser collection={currentCollection} currentPub={pubData} />
 			)}
 			<OverflowList
 				className="collections-list"
 				collapseFrom="end"
-				items={pubData.collectionPubs
-					.filter(
-						(collectionPub) =>
-							collectionPub.collection &&
-							collectionPub.collection !== currentCollection,
-					)
-					.sort(
-						(a, b) =>
-							a.collection.title.toLowerCase() - b.collection.title.toLowerCase(),
-					)}
-				visibleItemRenderer={({ collection }) => (
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
-					<CollectionsBarButton
-						key={collection.id}
-						href={collectionUrl(communityData, collection)}
-						as="a"
-					>
-						{collection.title}
-					</CollectionsBarButton>
-				)}
-				overflowRenderer={(overflowCollections) => {
-					const containsAllCollections =
-						overflowCollections.length === pubData.collectionPubs.length;
-					const icon = containsAllCollections ? null : 'more';
-					const rightIcon = containsAllCollections ? 'caret-down' : null;
-					const label = containsAllCollections
-						? overflowCollections.length === 1
-							? 'collection'
-							: 'collections'
-						: 'more';
-					return (
-						<Menu
-							placement="bottom-end"
-							aria-label={overflowCollections.length + ' ' + label}
-							disclosure={
-								// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
-								<CollectionsBarButton icon={icon} rightIcon={rightIcon}>
-									{overflowCollections.length} {label}
-								</CollectionsBarButton>
-							}
-						>
-							{/* @ts-expect-error ts-migrate(2345) FIXME: Type 'unknown' is not assignable to type '{ collec... Remove this comment to see the full error message */}
-							{overflowCollections.map(({ collection }) => {
-								const schema = getSchemaForKind(collection.kind);
-								return (
-									<MenuItem
-										icon={schema && schema.bpDisplayIcon}
-										key={collection.id}
-										text={collection.title}
-										href={collectionUrl(communityData, collection)}
-									/>
-								);
-							})}
-						</Menu>
-					);
-				}}
+				items={collections}
+				visibleItemRenderer={renderVisibleItem}
+				overflowRenderer={renderOverflow}
 			/>
+			{canManage && renderManageCollections()}
 		</div>
 	);
 };

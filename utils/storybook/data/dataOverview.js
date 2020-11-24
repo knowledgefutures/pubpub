@@ -72,7 +72,7 @@ export default {
           "collectionId": "b9588b1f-3cce-42ff-bda3-98106a3b19bd",
           "contextHint": null,
           "rank": "h",
-          "isPrimary": true,
+          "pubRank": "a",
           "createdAt": "2019-11-16T16:47:27.676Z",
           "updatedAt": "2019-11-16T16:47:27.676Z"
         },
@@ -82,7 +82,7 @@ export default {
           "collectionId": "b9588b1f-3cce-42ff-bda3-98106a3b19bd",
           "contextHint": null,
           "rank": "e",
-          "isPrimary": true,
+          "pubRank": "b",
           "createdAt": "2019-11-16T16:47:31.234Z",
           "updatedAt": "2020-03-17T08:57:45.173Z"
         },
@@ -92,7 +92,6 @@ export default {
           "collectionId": "b9588b1f-3cce-42ff-bda3-98106a3b19bd",
           "contextHint": null,
           "rank": "c",
-          "isPrimary": true,
           "createdAt": "2019-11-16T16:47:32.774Z",
           "updatedAt": "2020-03-17T08:57:33.824Z"
         }
@@ -170,7 +169,7 @@ export default {
           "collectionId": "b9588b1f-3cce-42ff-bda3-98106a3b19bd",
           "contextHint": null,
           "rank": "h",
-          "isPrimary": true,
+          "pubRank": "a",
           "createdAt": "2019-11-16T16:47:27.676Z",
           "updatedAt": "2019-11-16T16:47:27.676Z",
           "collection": {
@@ -349,7 +348,7 @@ export default {
           "collectionId": "b9588b1f-3cce-42ff-bda3-98106a3b19bd",
           "contextHint": null,
           "rank": "e",
-          "isPrimary": true,
+          "pubRank": "a",
           "createdAt": "2019-11-16T16:47:31.234Z",
           "updatedAt": "2020-03-17T08:57:45.173Z",
           "collection": {
@@ -662,7 +661,7 @@ export default {
           "collectionId": "c3c900ab-8f10-4043-86c0-57c9d61eacdd",
           "contextHint": null,
           "rank": "h",
-          "isPrimary": true,
+          "pubRank": "a",
           "createdAt": "2019-11-14T20:15:24.254Z",
           "updatedAt": "2019-11-14T20:15:24.254Z",
           "collection": {
@@ -1178,7 +1177,7 @@ export default {
           "collectionId": "ce5a270f-ce62-4f77-b0c8-6fed8010d695",
           "contextHint": null,
           "rank": "q",
-          "isPrimary": true,
+          "pubRank": "a",
           "createdAt": "2019-08-19T15:48:25.412Z",
           "updatedAt": "2019-08-19T15:48:25.412Z",
           "collection": {
@@ -1683,7 +1682,7 @@ export default {
           "collectionId": "ce5a270f-ce62-4f77-b0c8-6fed8010d695",
           "contextHint": null,
           "rank": "h",
-          "isPrimary": true,
+          "pubRank": "a",
           "createdAt": "2019-08-19T15:48:07.941Z",
           "updatedAt": "2019-08-19T15:48:07.941Z",
           "collection": {
@@ -1841,7 +1840,7 @@ export default {
           "collectionId": "b9588b1f-3cce-42ff-bda3-98106a3b19bd",
           "contextHint": null,
           "rank": "c",
-          "isPrimary": true,
+          "pubRank": "a",
           "createdAt": "2019-11-16T16:47:32.774Z",
           "updatedAt": "2020-03-17T08:57:33.824Z",
           "collection": {
@@ -2366,7 +2365,7 @@ export default {
           "collectionId": "ce5a270f-ce62-4f77-b0c8-6fed8010d695",
           "contextHint": null,
           "rank": "u",
-          "isPrimary": true,
+          "pubRank": "a",
           "createdAt": "2019-12-13T14:17:01.696Z",
           "updatedAt": "2019-12-13T14:17:01.696Z",
           "collection": {
@@ -2396,7 +2395,7 @@ export default {
           "collectionId": "c3c900ab-8f10-4043-86c0-57c9d61eacdd",
           "contextHint": null,
           "rank": "q",
-          "isPrimary": false,
+          "pubRank": "b",
           "createdAt": "2019-12-13T14:17:02.061Z",
           "updatedAt": "2019-12-13T14:17:02.061Z",
           "collection": {

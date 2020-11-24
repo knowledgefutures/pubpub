@@ -31,12 +31,8 @@ type Props = {
 const defaultLayout = getDefaultLayout();
 
 const DashboardPages = (props: Props) => {
-	const { updateCommunity, locationData, scopeData } = usePageContext();
+	const { updateCommunity, locationData, communityData } = usePageContext();
 	const { pendingPromise } = usePendingChanges();
-
-	const {
-		elements: { activeCommunity },
-	} = scopeData;
 
 	const {
 		error,
@@ -53,7 +49,7 @@ const DashboardPages = (props: Props) => {
 				body: JSON.stringify({
 					...update,
 					pageId: pageData.id,
-					communityId: activeCommunity.id,
+					communityId: communityData.id,
 				}),
 			}),
 		).then(() => {
@@ -197,7 +193,7 @@ const DashboardPages = (props: Props) => {
 									icon="duplicate"
 									beforeCopyPrompt="Anyone with this link can view the private Page."
 									copyString={`${communityUrl(
-										activeCommunity,
+										communityData,
 									)}/${slug}?access=${viewHash}`}
 								>
 									Copy shareable link
@@ -217,7 +213,7 @@ const DashboardPages = (props: Props) => {
 					onChange={(newLayout) => updatePageData({ layout: newLayout })}
 					initialLayout={layout || defaultLayout}
 					pubs={pubs}
-					communityData={activeCommunity}
+					communityData={communityData}
 				/>
 			</SettingsSection>
 		);
@@ -226,7 +222,7 @@ const DashboardPages = (props: Props) => {
 	const renderPageDeleter = () => {
 		return (
 			<SettingsSection title="Delete">
-				<PageDelete pageData={pageData} communityId={activeCommunity.id} />
+				<PageDelete pageData={pageData} communityId={communityData.id} />
 			</SettingsSection>
 		);
 	};

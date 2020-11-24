@@ -13,6 +13,7 @@ import {
 	createCrossrefDepositRecord,
 	updateCrossrefDepositRecord,
 } from 'server/crossrefDepositRecord/queries';
+import { getPrimaryCollectionPub } from 'utils/collections/primary';
 
 import { submitDoiData } from './submit';
 
@@ -24,9 +25,9 @@ const collectionIncludes = [
 	},
 ];
 
-const findPrimaryCollectionPubForPub = (pubId) =>
-	CollectionPub.findOne({
-		where: { pubId: pubId, isPrimary: true },
+const findPrimaryCollectionPubForPub = async (pubId) => {
+	const collectionPubs = await CollectionPub.findAll({
+		where: { pubId: pubId },
 		include: [
 			{
 				model: Collection,
@@ -35,6 +36,8 @@ const findPrimaryCollectionPubForPub = (pubId) =>
 			},
 		],
 	});
+	return getPrimaryCollectionPub(collectionPubs);
+};
 
 const findCollection = (collectionId) =>
 	Collection.findOne({ where: { id: collectionId }, include: collectionIncludes });

@@ -12,15 +12,14 @@ import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';
 
 const CollectionSettings = () => {
-	const { scopeData } = usePageContext();
-	const { activeCommunity } = scopeData.elements;
+	const { communityData } = usePageContext();
 	const {
 		collection,
 		updateCollection,
 		deleteCollection,
 		fieldErrors,
 		hasChanges,
-	} = useCollectionState(scopeData);
+	} = useCollectionState();
 
 	useUpdateEffect(() => {
 		if (!hasChanges) {
@@ -37,7 +36,7 @@ const CollectionSettings = () => {
 			<SettingsSection title="Details">
 				<CollectionDetailsEditor
 					fieldErrors={fieldErrors}
-					communityData={activeCommunity}
+					communityData={communityData}
 					collection={collection}
 					onUpdateCollection={updateCollection}
 					onDeleteCollection={() =>
@@ -51,7 +50,7 @@ const CollectionSettings = () => {
 				<SettingsSection title="Metadata">
 					<CollectionMetadataEditor
 						collection={collection}
-						communityData={activeCommunity}
+						communityData={communityData}
 						onUpdateCollection={updateCollection}
 					/>
 				</SettingsSection>
@@ -66,7 +65,7 @@ const CollectionSettings = () => {
 						listOnBylineText="List on Collection byline"
 						identifyingProps={{
 							collectionId: collection.id,
-							communityId: activeCommunity.id,
+							communityId: communityData.id,
 						}}
 						onUpdateAttributions={(attributions) =>
 							updateCollection({ attributions: attributions })

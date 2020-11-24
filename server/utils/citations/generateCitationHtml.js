@@ -1,9 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 import Cite from 'citation-js';
 
-import { getPubPublishedDate } from 'utils/pub/pubDates';
 import getCollectionDoi from 'utils/collections/getCollectionDoi';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { pubUrl } from 'utils/canonicalUrls';
+import { getPrimaryCollection } from 'utils/collections/primary';
 
 const getDatePartsObject = (date) => ({
 	'date-parts': [date.getFullYear(), date.getMonth() + 1, date.getDate()],
@@ -16,11 +17,10 @@ const collectionKindToCitationJSPart = (kind) =>
 		issue: 'article-journal',
 	}[kind] || 'article-journal');
 
-const getCollectionLevelData = (primaryCollectionPub) => {
-	if (!primaryCollectionPub) {
+const getCollectionLevelData = (collection) => {
+	if (!collection) {
 		return { type: 'article-journal' };
 	}
-	const { collection } = primaryCollectionPub;
 	const { kind, title } = collection;
 	const metadata = collection.metadata || {};
 	const useCollectionTitle = collection.kind !== 'issue';
@@ -40,7 +40,7 @@ export const generateCitationHtml = async (pubData, communityData) => {
 	// TODO: We need to set the updated times properly, which are likely stored in firebase.
 	const pubIssuedDate = getPubPublishedDate(pubData);
 	const pubLink = pubUrl(communityData, pubData);
-	const primaryCollectionPub = pubData.collectionPubs.find((cp) => cp.isPrimary);
+	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
 	const authorData = pubData.attributions
 		.filter((attribution) => {
 			return attribution.isAuthor;
@@ -66,7 +66,7 @@ export const generateCitationHtml = async (pubData, communityData) => {
 		title: pubData.title,
 		...authorsEntry,
 		'container-title': communityData.title,
-		...getCollectionLevelData(primaryCollectionPub),
+		...getCollectionLevelData(primaryCollection),
 	};
 	const pubCiteObject = await Cite.async({
 		...commonData,

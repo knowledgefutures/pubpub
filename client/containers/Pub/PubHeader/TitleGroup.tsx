@@ -4,14 +4,14 @@ import { PubByline, DialogLauncher, PubAttributionDialog } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
+import { Pub, Release } from 'utils/types';
 
 import BylineEditButton from './BylineEditButton';
 import EditableHeaderText from './EditableHeaderText';
 
 type Props = {
-	pubData: {
-		title?: string;
-		description?: string;
+	pubData: Pub & {
+		releases: Release[];
 		isRelease?: boolean;
 	};
 	updatePubData: (...args: any[]) => any;

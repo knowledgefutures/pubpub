@@ -599,7 +599,7 @@ export default {
 			collectionId: '65fc8561-31ea-4e2c-8067-b315dd7c933f',
 			contextHint: null,
 			rank: null,
-			isPrimary: false,
+			pubRank: 'a',
 			createdAt: '2019-04-24T20:43:15.375Z',
 			updatedAt: '2019-04-24T20:43:15.375Z',
 			collection: {
@@ -627,7 +627,7 @@ export default {
 			collectionId: '1e1c0f1f-1873-4705-b6e0-934f588889c6',
 			contextHint: null,
 			rank: null,
-			isPrimary: false,
+			pubRank: 'z',
 			createdAt: '2019-04-24T20:43:15.375Z',
 			updatedAt: '2019-04-24T20:43:15.375Z',
 			collection: {

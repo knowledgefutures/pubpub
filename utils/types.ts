@@ -66,11 +66,11 @@ export type Collection = {
 	title: string;
 	slug: string;
 	avatar?: string;
-	isRestricted?: string;
+	isRestricted?: boolean;
 	isPublic?: boolean;
 	viewHash?: string;
 	editHash?: string;
-	metadata?: string;
+	metadata?: { [k: string]: any };
 	kind?: 'tag' | 'issue' | 'book' | 'conference';
 	doi?: string;
 	readNextPreviewSize: 'none' | 'minimal' | 'medium' | 'choose-best';
@@ -87,7 +87,7 @@ export type CollectionPub = {
 	collectionId: string;
 	contextHint?: string;
 	rank: string;
-	isPrimary: boolean;
+	pubRank: string;
 	collection?: Collection;
 	pub?: Pub;
 };
@@ -101,9 +101,11 @@ export type Export = {
 	workerTaskId?: string;
 };
 
+export type MemberPermission = 'view' | 'edit' | 'manage' | 'admin';
+
 export type Member = {
 	id?: string;
-	permissions: 'view' | 'edit' | 'manage' | 'admin';
+	permissions: MemberPermission;
 	isOwner?: boolean;
 	userId: string;
 	pubId?: string;
@@ -138,6 +140,8 @@ export type Release = {
 	userId: string;
 	sourceBranchId: string;
 	sourceBranchKey: number;
+	createdAt: string;
+	updatedAt: string;
 };
 
 export type PubVersion = {
@@ -171,8 +175,8 @@ export type PubEdge = {
 	pub?: Pub;
 };
 
-type OutboundEdge = Omit<PubEdge, 'pub'>;
-type InboundEdge = Omit<PubEdge, 'targetPub'>;
+export type OutboundEdge = Omit<PubEdge, 'pub'>;
+export type InboundEdge = Omit<PubEdge, 'targetPub'>;
 
 export type CrossrefDepositRecord = {
 	id: string;
@@ -207,11 +211,13 @@ export type Pub = {
 	exports?: Export[];
 	members?: Member[];
 	branches?: Branch[];
-	releases?: Release[];
+	releases: Release[];
 	pubVersions?: PubVersion[];
 	crossrefDepositRecord?: CrossrefDepositRecord;
 	inboundEdges?: InboundEdge[];
 	outboundEdges?: OutboundEdge[];
+	pubEdgeListingDefaultsToCarousel: boolean;
+	pubEdgeDescriptionVisible: boolean;
 };
 
 export type Page = {
@@ -273,4 +279,31 @@ export type Community = {
 	collections?: Collection[];
 	pages?: Page[];
 	pubs?: Pub[];
+};
+
+export type ScopeData = {
+	activePermissions: {
+		activePermission: MemberPermission;
+		canAdmin: boolean;
+		canAdminCommunity: boolean;
+		canCreateDiscussions: boolean;
+		canCreateForks: boolean;
+		canCreateReviews: boolean;
+		canEdit: boolean;
+		canEditDraft: boolean;
+		canManage: boolean;
+		canManageCommunity: boolean;
+		canView: boolean;
+		canViewDraft: boolean;
+		isSuperAdmin: boolean;
+	};
+	elements: {
+		activeTargetType: 'community' | 'collection' | 'pub';
+		activeTargetName: string;
+		activeCommunity?: Community;
+		activeCollection?: Collection;
+		activePub?: Pub;
+		inactiveCollections?: Collection[];
+	};
+	memberData: Member[];
 };

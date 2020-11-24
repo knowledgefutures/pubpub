@@ -7,8 +7,9 @@ import { getPubPublishedDate, getPubLatestReleaseDate } from 'utils/pub/pubDates
 import { formatDate } from 'utils/dates';
 import PubHeaderBackground from 'containers/Pub/PubHeader/PubHeaderBackground';
 import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
-import { Avatar, DashboardFrame } from 'components';
+import { Avatar, ContributorsList, DashboardFrame } from 'components';
 
+import { getAllPubContributors } from 'utils/contributors';
 import PubTimeline from './PubTimeline';
 
 require('./pubOverview.scss');
@@ -53,7 +54,7 @@ const PubOverview = (props: Props) => {
 		return (
 			<div className="collections section">
 				<div className="section-header">
-					Appears in collections ({collectionPubs.length})
+					Appears in Collections ({collectionPubs.length})
 				</div>
 				{pubData.collectionPubs.map((cp, index) => {
 					return (
@@ -107,41 +108,11 @@ const PubOverview = (props: Props) => {
 		);
 	};
 
-	const renderAttribution = () => {
+	const renderContributors = () => {
 		return (
 			<div className="section">
-				<div className="section-header">Attribution</div>
-				{pubData.attributions
-					.sort((a, b) => a.order - b.order)
-					.map((attribution) => {
-						const { affiliation } = attribution;
-						const { initials, fullName, avatar, slug } = attribution.user;
-						const roles = attribution.roles || [];
-						return (
-							<div className="attribution-row">
-								<Avatar width={25} initials={initials} avatar={avatar} />
-								<div className="details">
-									<div className="name">
-										<a href={`/user/${slug}`}>{fullName}</a>
-									</div>
-									{affiliation && (
-										<div className="affiliation">{affiliation}</div>
-									)}
-									{roles.length > 0 && (
-										<div className="roles">
-											{roles.map((role) => {
-												return (
-													<Tag className="role" minimal>
-														{role}
-													</Tag>
-												);
-											})}
-										</div>
-									)}
-								</div>
-							</div>
-						);
-					})}
+				<div className="section-header">Contributors</div>
+				<ContributorsList attributions={getAllPubContributors(pubData)} />
 			</div>
 		);
 	};
@@ -168,7 +139,7 @@ const PubOverview = (props: Props) => {
 						<CitationsPreview pubData={pubData} showHeader={false} />,
 					)}
 					{pubData.doi && renderSection('DOI', pubData.doi)}
-					{renderAttribution()}
+					{renderContributors()}
 					{renderCollections()}
 					{!!pubData.reviews.length && renderReviews()}
 				</div>

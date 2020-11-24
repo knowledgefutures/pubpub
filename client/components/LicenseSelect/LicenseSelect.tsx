@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import { Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
-import dateFormat from 'dateformat';
 
 import { licenses, getLicenseBySlug } from 'utils/licenses';
 import { usePageContext } from 'utils/hooks';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { getPubCopyrightYear } from 'utils/pub/pubDates';
 import { apiFetch } from 'client/utils/apiFetch';
+import { Pub, CollectionPub } from 'utils/types';
 
 require('./licenseSelect.scss');
 
 type OwnProps = {
 	children: (...args: any[]) => any;
-	pubData: {
-		id?: string;
-		licenseSlug?: string;
-		collectionPubs?: any[];
+	pubData: Pub & {
+		collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
 	};
 	onSelect?: (...args: any[]) => any;
 	updateLocalData?: (...args: any[]) => any;
@@ -33,25 +31,14 @@ const LicenseSelect = (props: Props) => {
 	const { children, onSelect, persistSelections, pubData, updateLocalData } = props;
 	const [isPersisting, setIsPersisting] = useState(false);
 	const { communityData } = usePageContext();
-
-	const currentLicense = getLicenseBySlug(pubData.licenseSlug);
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-	const primaryCollectionPub = pubData.collectionPubs.find((cp) => cp.isPrimary);
-	const collectionPubDate = primaryCollectionPub
-		? primaryCollectionPub.collection.metadata.copyrightYear ||
-		  primaryCollectionPub.collection.metadata.date ||
-		  primaryCollectionPub.collection.metadata.publicationDate
-		: null;
-	const pubCopyrightDate =
-		dateFormat(collectionPubDate, 'yyyy') || dateFormat(getPubPublishedDate(pubData), 'yyyy');
+	const currentLicense = getLicenseBySlug(pubData.licenseSlug)!;
+	const pubCopyrightYear = getPubCopyrightYear(pubData);
 	let pubPublisher = communityData.title;
 	if (communityData.id === '78810858-8c4a-4435-a669-6bb176b61d40') {
 		pubPublisher = 'Massachusetts Institute of Technology';
 	}
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	if (currentLicense.slug === 'copyright') {
-		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-		currentLicense.full = `Copyright © ${pubCopyrightDate} ${pubPublisher}. All rights reserved.`;
+		currentLicense.full = `Copyright © ${pubCopyrightYear} ${pubPublisher}. All rights reserved.`;
 	}
 	const selectLicense = (license) => {
 		onSelect(license);
@@ -106,7 +93,7 @@ const LicenseSelect = (props: Props) => {
 									</div>
 									{license.slug === 'copyright' && (
 										<div className="full">
-											Copyright © {pubCopyrightDate} {pubPublisher}. All
+											Copyright © {pubCopyrightYear} {pubPublisher}. All
 											rights reserved.
 										</div>
 									)}
@@ -117,7 +104,6 @@ const LicenseSelect = (props: Props) => {
 							}
 							icon={renderIcon(license)}
 							labelElement={
-								// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 								license.slug === currentLicense.slug && <Icon icon="tick" />
 							}
 						/>
@@ -130,7 +116,6 @@ const LicenseSelect = (props: Props) => {
 		<Popover content={renderMenu()}>
 			{children({
 				icon: renderIcon(currentLicense),
-				// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 				title: currentLicense.full,
 				isPersisting: isPersisting,
 			})}

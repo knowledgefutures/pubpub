@@ -46,7 +46,7 @@ const models = modelize`
             }
             CollectionPub {
                 rank: "0"
-                isPrimary: false
+                pubRank: "b"
                 Collection {
                    isPublic: true
                    title: "C1" 
@@ -54,7 +54,7 @@ const models = modelize`
             }
             CollectionPub {
                 rank: "1"
-                isPrimary: false
+                pubRank: "c"
                 Collection {
                    isPublic: true
                    title: "C2" 
@@ -62,14 +62,14 @@ const models = modelize`
             }
             CollectionPub {
                 rank: "2"
-                isPrimary: false
+                pubRank: "d"
                 Collection {
                    title: "C3" 
                 }
             }
             CollectionPub {
                 rank: "3"
-                isPrimary: true
+                pubRank: "a"
                 Collection {
                    title: "C4" 
                    isPublic: true

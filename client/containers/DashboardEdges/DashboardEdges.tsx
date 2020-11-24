@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { NonIdealState, Switch, Tab, Tabs } from '@blueprintjs/core';
-import { Radio } from '@blueprintjs/core';
+import { NonIdealState, Switch, Tab, Tabs, Radio } from '@blueprintjs/core';
 
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
+import { Pub, OutboundEdge, InboundEdge } from 'utils/types';
 
 import DashboardEdgesListing from './DashboardEdgesListing';
 import NewEdgeEditor from './NewEdgeEditor';
@@ -20,16 +20,7 @@ type Props = {
 			avatar?: string;
 		}[];
 	};
-	pubData: {
-		id?: string;
-		outboundEdges?: {
-			targetPub?: {
-				id?: string;
-			};
-		}[];
-		pubEdgeListingDefaultsToCarousel: boolean;
-		pubEdgeDescriptionVisible: boolean;
-	};
+	pubData: Pub & { outboundEdges: OutboundEdge[]; inboundEdges: InboundEdge[] };
 };
 
 const frameDetails = (
@@ -61,9 +52,7 @@ const DashboardEdges = (props: Props) => {
 		updateInboundEdgeApproval,
 	} = useDashboardEdges(pubData);
 
-	// TODO(eric): Refactor to use new Pub type and usePersistableState when
-	// collection layouts feature is merged.
-	const updatePub = async (patch: { [k in keyof typeof pubData]?: typeof pubData[k] }) => {
+	const updatePub = async (patch: Partial<Pub>) => {
 		try {
 			setPersistedPubData({ ...persistedPubData, ...patch });
 			await apiFetch('/api/pubs', {
@@ -81,7 +70,6 @@ const DashboardEdges = (props: Props) => {
 	const renderOutboundEdgesTab = () => {
 		const usedPubsIds = [
 			pubData.id,
-			// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 			...pubData.outboundEdges
 				.map((edge) => edge.targetPub && edge.targetPub.id)
 				.filter((x) => x),

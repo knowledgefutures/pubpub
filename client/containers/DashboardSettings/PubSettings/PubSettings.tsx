@@ -12,6 +12,7 @@ import {
 	LicenseSelect,
 	PubAttributionEditor,
 	PubThemePicker,
+	PubCollectionsListing,
 } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { slugifyString } from 'utils/strings';
@@ -21,7 +22,6 @@ import { pubUrl } from 'utils/canonicalUrls';
 
 import DownloadChooser from './DownloadChooser';
 import DeletePub from './DeletePub';
-import Collections from './Collections';
 import Doi from './Doi';
 import CitationChooser from './CitationChooser';
 import NodeLabelEditor from './NodeLabelEditor';
@@ -34,10 +34,9 @@ type Props = {
 
 const PubSettings = (props: Props) => {
 	const { settingsData } = props;
-	const { scopeData } = usePageContext();
+	const { scopeData, communityData } = usePageContext();
 	const {
-		elements: { activeCommunity },
-		activePermissions: { canManageCommunity, canAdminCommunity, canManage },
+		activePermissions: { canAdminCommunity, canManage },
 	} = scopeData;
 	const [persistedPubData, setPersistedPubData] = useState(settingsData.pubData);
 	const [pendingPubData, setPendingPubData] = useState({});
@@ -69,7 +68,7 @@ const PubSettings = (props: Props) => {
 				body: JSON.stringify({
 					...pendingPubData,
 					pubId: pubData.id,
-					communityId: activeCommunity.id,
+					communityId: communityData.id,
 				}),
 			}),
 		)
@@ -117,7 +116,7 @@ const PubSettings = (props: Props) => {
 					/>
 					<InputField
 						label="Link"
-						helperText={`Pub will be available at ${pubUrl(activeCommunity, pubData)}`}
+						helperText={`Pub will be available at ${pubUrl(communityData, pubData)}`}
 						value={pubData.slug}
 						onChange={(evt) => updatePubData({ slug: slugifyString(evt.target.value) })}
 						error={!pubData.slug ? 'Required' : null}
@@ -215,7 +214,7 @@ const PubSettings = (props: Props) => {
 				<PubThemePicker
 					updatePubData={updatePubData}
 					pubData={pubData}
-					communityData={activeCommunity}
+					communityData={communityData}
 				/>
 			</SettingsSection>
 		);
@@ -226,7 +225,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="Citation Style">
 				<CitationChooser
 					pubData={pubData}
-					communityId={activeCommunity.id}
+					communityId={communityData.id}
 					onSetCitations={(citationUpdate) => updatePersistedPubData(citationUpdate)}
 				/>
 			</SettingsSection>
@@ -238,7 +237,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="DOI">
 				<Doi
 					pubData={persistedPubData}
-					communityData={activeCommunity}
+					communityData={communityData}
 					updatePubData={updatePersistedPubData}
 					canIssueDoi={canAdminCommunity}
 				/>
@@ -251,7 +250,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="Attributions">
 				<PubAttributionEditor
 					pubData={pubData}
-					communityData={activeCommunity}
+					communityData={communityData}
 					updatePubData={updatePersistedPubData}
 					canEdit={canManage}
 				/>
@@ -264,7 +263,7 @@ const PubSettings = (props: Props) => {
 			<SettingsSection title="Download">
 				<DownloadChooser
 					pubData={pubData}
-					communityId={activeCommunity.id}
+					communityId={communityData.id}
 					onSetDownloads={(downloads) => updatePersistedPubData({ downloads: downloads })}
 				/>
 			</SettingsSection>
@@ -274,12 +273,14 @@ const PubSettings = (props: Props) => {
 	const renderCollections = () => {
 		return (
 			<SettingsSection title="Collections">
-				<Collections
-					pubData={pubData}
-					communityData={activeCommunity}
-					updatePubData={(nextPubData) => updatePersistedPubData(nextPubData)}
-					canCreateCollections={canManageCommunity}
-					promiseWrapper={pendingPromise}
+				<PubCollectionsListing
+					pub={pubData}
+					allCollections={communityData.collections}
+					collectionPubs={pubData.collectionPubs}
+					updateCollectionPubs={(nextCollectionPubs) =>
+						updatePersistedPubData({ collectionPubs: nextCollectionPubs })
+					}
+					canManage={canManage}
 				/>
 			</SettingsSection>
 		);
@@ -288,7 +289,7 @@ const PubSettings = (props: Props) => {
 	const renderDelete = () => {
 		return (
 			<SettingsSection title="Delete">
-				<DeletePub communityData={activeCommunity} pubData={pubData} />
+				<DeletePub communityData={communityData} pubData={pubData} />
 			</SettingsSection>
 		);
 	};

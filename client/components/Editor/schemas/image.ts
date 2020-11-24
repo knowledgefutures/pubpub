@@ -1,6 +1,7 @@
 import { DOMOutputSpec } from 'prosemirror-model';
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';
+import { imageCanBeResized } from '../utils/media';
 import { buildLabel } from '../utils/references';
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
@@ -17,6 +18,7 @@ export default {
 			align: { default: 'center' },
 			caption: { default: '' },
 			hideLabel: { default: false },
+			fullResolution: { default: false },
 		},
 		reactiveAttrs: {
 			count: counter({ useNodeLabels: true }),
@@ -39,9 +41,12 @@ export default {
 				},
 			},
 		],
-		// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-		toDOM: (node, { isReact } = {}) => {
+		toDOM: (node, { isReact } = { isReact: false }) => {
 			const resizeFunc = node.type.spec.defaultOptions.onResizeUrl;
+			const maybeResizedSrc =
+				resizeFunc && !node.attrs.fullResolution && imageCanBeResized(node.attrs.url)
+					? resizeFunc(node.attrs.url, node.attrs.align)
+					: node.attrs.url;
 
 			return [
 				'figure',
@@ -55,7 +60,7 @@ export default {
 				[
 					'img',
 					{
-						src: resizeFunc(node.attrs.url, node.attrs.align),
+						src: maybeResizedSrc,
 						alt: node.attrs.caption,
 					},
 				],
@@ -64,10 +69,10 @@ export default {
 					{},
 					pruneFalsyValues([
 						'div',
-						withValue(buildLabel(node), (label) => [
+						withValue(buildLabel(node), (builtLabel) => [
 							'strong',
 							{ spellcheck: 'false' },
-							label,
+							builtLabel,
 						]),
 						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
 					]),

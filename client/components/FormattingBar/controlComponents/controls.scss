@@ -74,6 +74,9 @@
 		height: 100%;
 		overflow: hidden;
 		& > *:not(:last-child) {
+			label.bp3-control {
+				margin-bottom: 0;
+			}
 			margin-bottom: 9px;
 		}
 		.title {

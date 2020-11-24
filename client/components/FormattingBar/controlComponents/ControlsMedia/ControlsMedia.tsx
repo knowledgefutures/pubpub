@@ -4,12 +4,13 @@ import { Node } from 'prosemirror-model';
 
 import { SimpleEditor } from 'components';
 
+import { usePubData } from 'client/containers/Pub/pubHooks';
+import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
+import { imageCanBeResized } from 'client/components/Editor';
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import AlignmentControl from './AlignmentControl';
 import SliderInputControl from './SliderInputControl';
 import SourceControls from './SourceControls';
-import { usePubData } from 'client/containers/Pub/pubHooks';
-import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
 import { ControlsReferenceSettingsLink } from '../ControlsReference';
 
 type Props = {
@@ -24,6 +25,7 @@ type Props = {
 				height: number;
 				caption: string;
 				hideLabel: boolean;
+				fullResolution: boolean;
 			};
 		};
 	};
@@ -44,17 +46,26 @@ const ControlsMedia = (props: Props) => {
 	const { isSmall, editorChangeObject, pendingAttrs, pubData } = props;
 	const { updateNode, selectedNode } = editorChangeObject;
 	const { hasPendingChanges, commitChanges, updateAttrs } = pendingAttrs;
-	const { size, align, height, caption, hideLabel } = selectedNode.attrs;
+	const { size, align, height, caption, url, fullResolution, hideLabel } = selectedNode.attrs;
 	const canEditHeight = getCanEditNodeHeight(selectedNode);
 	const itemName = getItemName(selectedNode);
+	const { nodeLabels } = usePubData();
+
+	const canHideLabel =
+		nodeLabels &&
+		(nodeLabels as NodeLabelMap)[selectedNode.type.name as ReferenceableNodeType]?.enabled;
+	const canSelectResizeOptions = imageCanBeResized(url);
+
 	const toggleLabel = useCallback(
 		(e: React.MouseEvent) => updateNode({ hideLabel: (e.target as HTMLInputElement).checked }),
 		[updateNode],
 	);
-	const { nodeLabels } = usePubData();
-	const canHideLabel =
-		nodeLabels &&
-		(nodeLabels as NodeLabelMap)[selectedNode.type.name as ReferenceableNodeType]?.enabled;
+
+	const toggleResize = useCallback(
+		(e: React.MouseEvent) =>
+			updateNode({ fullResolution: (e.target as HTMLInputElement).checked }),
+		[updateNode],
+	);
 
 	return (
 		<div className="controls-media-component">
@@ -93,12 +104,22 @@ const ControlsMedia = (props: Props) => {
 					isSmall={isSmall}
 				/>
 				<div className="controls-row">
+					{canSelectResizeOptions && (
+						<Checkbox
+							onClick={toggleResize}
+							alignIndicator="right"
+							label="Always use full resolution"
+							checked={fullResolution}
+						/>
+					)}
+				</div>
+				<div className="controls-row">
 					<Checkbox
 						disabled={!canHideLabel}
 						onClick={toggleLabel}
 						alignIndicator="right"
 						label="Hide label"
-						checked={selectedNode?.attrs?.hideLabel}
+						checked={hideLabel}
 					>
 						{!canHideLabel && (
 							<>

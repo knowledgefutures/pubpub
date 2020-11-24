@@ -64,6 +64,6 @@ export const s3Upload = (file: File, onProgress, onFinish, index?: number) => {
 	}
 	const getPolicy = new XMLHttpRequest();
 	getPolicy.addEventListener('load', beginUpload);
-	getPolicy.open('GET', `/api/uploadPolicy?contentType=${file.type}`);
+	getPolicy.open('GET', `/api/uploadPolicy?contentType=${encodeURIComponent(file.type)}`);
 	getPolicy.send();
 };

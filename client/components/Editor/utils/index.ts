@@ -3,6 +3,7 @@ export * from './discussionMaps';
 export * from './doc';
 export * from './firebase';
 export * from './firebaseDoc';
+export * from './media';
 export * from './misc';
 export * from './notes';
 export * from './references';

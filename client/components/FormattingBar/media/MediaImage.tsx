@@ -48,7 +48,10 @@ class MediaImage extends Component<Props, State> {
 
 	render() {
 		return (
-			<Dropzone onDrop={this.onDrop} accept="image/png, image/jpeg, image/gif, image/svg+xml">
+			<Dropzone
+				onDrop={this.onDrop}
+				accept="image/png, image/jpeg, image/gif, image/webp, image/svg+xml"
+			>
 				{({ getRootProps, getInputProps, isDragActive }) => {
 					return (
 						<div
@@ -63,7 +66,9 @@ class MediaImage extends Component<Props, State> {
 									<Icon icon="circle-arrow-up" iconSize={50} />
 									<div className="drag-title">Drag & drop to upload an Image</div>
 									<div className="drag-details">Or click to browse files</div>
-									<div className="drag-details">.jpeg .png .svg or .gif</div>
+									<div className="drag-details">
+										.jpeg, .png, .svg, .webp, or .gif
+									</div>
 								</div>
 							)}
 							{this.state.isUploading && (

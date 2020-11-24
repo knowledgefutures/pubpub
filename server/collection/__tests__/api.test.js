@@ -47,7 +47,7 @@ it('creates a new collection', async () => {
 	const { admin, community } = models;
 	const agent = await login(admin);
 	const {
-		body: { communityId, title, kind, isPublic, layout },
+		body: { communityId, title, kind, isPublic, isRestricted, layout },
 	} = await agent
 		.post('/api/collections')
 		.send({
@@ -61,6 +61,7 @@ it('creates a new collection', async () => {
 	expect(kind).toEqual('issue');
 	expect(layout.blocks.length).toEqual(2);
 	expect(isPublic).toEqual(false);
+	expect(isRestricted).toEqual(true);
 });
 
 it('does not create a collection with the slug of another collection or a page', async () => {

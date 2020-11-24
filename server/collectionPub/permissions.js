@@ -9,13 +9,24 @@ const canManagePub = async ({ userId, communityId, pubId }) => {
 	);
 };
 
-export const canCreateCollectionPub = async ({ userId, communityId, collectionId }) => {
-	const { activePermissions } = await getScope({
+export const canCreateCollectionPub = async ({ userId, communityId, collectionId, pubId }) => {
+	const {
+		activePermissions: { canManage },
+		elements: {
+			activeCollection: { isRestricted },
+		},
+	} = await getScope({
 		communityId: communityId,
 		collectionId: collectionId,
 		loginId: userId,
 	});
-	return activePermissions.canManage;
+	if (canManage) {
+		return true;
+	}
+	if (!isRestricted) {
+		return canManagePub({ userId: userId, communityId: communityId, pubId: pubId });
+	}
+	return false;
 };
 
 export const getUpdatableFieldsForCollectionPub = async ({
@@ -47,11 +58,22 @@ export const getUpdatableFieldsForCollectionPub = async ({
 };
 
 export const canDestroyCollectionPub = async ({ userId, communityId, collectionPubId }) => {
-	const { collectionId } = await CollectionPub.findOne({ where: { id: collectionPubId } });
-	const { activePermissions } = await getScope({
+	const { collectionId, pubId } = await CollectionPub.findOne({ where: { id: collectionPubId } });
+	const {
+		activePermissions: { canManage },
+		elements: {
+			activeCollection: { isRestricted },
+		},
+	} = await getScope({
 		communityId: communityId,
 		collectionId: collectionId,
 		loginId: userId,
 	});
-	return activePermissions.canManage;
+	if (canManage) {
+		return true;
+	}
+	if (!isRestricted) {
+		return canManagePub({ userId: userId, communityId: communityId, pubId: pubId });
+	}
+	return false;
 };

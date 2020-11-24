@@ -66,7 +66,7 @@ export type Collection = {
 	title: string;
 	slug: string;
 	avatar?: string;
-	isRestricted?: string;
+	isRestricted?: boolean;
 	isPublic?: boolean;
 	viewHash?: string;
 	editHash?: string;

@@ -26,6 +26,11 @@ const models = modelize`
 				User collectionManager {}
 			}
 		}
+		Collection unrestricted {
+			title: "My unrestricted collection"
+			kind: "issue"
+			isRestricted: false
+		}
 		Collection book {
 			title: "Listen. I am a book."
 			kind: "book"
@@ -145,6 +150,15 @@ it('does not let (mere) Pub-level admins add their Pubs to collections', async (
 		.expect(403);
 });
 
+it('lets Pub-level admins add their Pubs to unrestricted collections', async () => {
+	const { community, pubAdmin, unrestricted, pub } = models;
+	const agent = await login(pubAdmin);
+	await agent
+		.post('/api/collectionPubs')
+		.send({ pubId: pub.id, collectionId: unrestricted.id, communityId: community.id })
+		.expect(201);
+});
+
 it('lets collection managers add Pubs to their collections', async () => {
 	const { community, collectionManager, issue, pubToAdd } = models;
 	const agent = await login(collectionManager);
@@ -173,7 +187,7 @@ it('handles ranks correctly', async () => {
 });
 
 it('updates reasonable values on a collectionPub', async () => {
-	const { admin, community, pub, issue } = models;
+	const { admin, pub, issue } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
 	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
 	const agent = await login(admin);
@@ -181,9 +195,6 @@ it('updates reasonable values on a collectionPub', async () => {
 		.put('/api/collectionPubs')
 		.send({
 			id: collectionPub.id,
-			collectionId: issue.id,
-			communityId: community.id,
-			pubId: pub.id,
 			rank: 'zzz',
 			contextHint: 'boo',
 		})
@@ -213,7 +224,7 @@ it('lets Pub managers update pubRanks', async () => {
 	expect(resultingCollectionPub.pubRank).toEqual('boo');
 });
 
-it('deletes a collectionPub', async () => {
+it('lets a user with appropriate permissions destroy a collectionPub', async () => {
 	const { admin, community, pub, issue } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
 	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
@@ -222,8 +233,41 @@ it('deletes a collectionPub', async () => {
 		.delete('/api/collectionPubs')
 		.send({
 			id: collectionPub.id,
-			collectionId: issue.id,
-			pubId: pub.id,
+			communityId: community.id,
+		})
+		.expect(200);
+	const deletedCollectionPub = await CollectionPub.findOne({
+		where: { id: collectionPub.id },
+	});
+	expect(deletedCollectionPub).toEqual(null);
+});
+
+it('does not let a user with appropriate permissions destroy a collectionPub', async () => {
+	const { pubAdmin, community, pub, issue } = models;
+	await CollectionPub.destroy({ where: { pubId: pub.id } });
+	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
+	const agent = await login(pubAdmin);
+	await agent
+		.delete('/api/collectionPubs')
+		.send({
+			id: collectionPub.id,
+			communityId: community.id,
+		})
+		.expect(403);
+});
+
+it('lets a user destroy a collectionPub for their Pub in an unrestricted Collection', async () => {
+	const { community, pub, pubAdmin, unrestricted } = models;
+	await CollectionPub.destroy({ where: { pubId: pub.id } });
+	const collectionPub = await createCollectionPub({
+		pubId: pub.id,
+		collectionId: unrestricted.id,
+	});
+	const agent = await login(pubAdmin);
+	await agent
+		.delete('/api/collectionPubs')
+		.send({
+			id: collectionPub.id,
 			communityId: community.id,
 		})
 		.expect(200);

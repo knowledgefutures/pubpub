@@ -33,6 +33,7 @@ export const createCollection = ({
 	pageId = null,
 	doi = null,
 	isPublic = false,
+	isRestricted = true,
 	id = null,
 	slug = null,
 }) => {
@@ -41,7 +42,7 @@ export const createCollection = ({
 		const collection = {
 			title: normalizedTitle,
 			slug: await findAcceptableSlug(slug || slugifyString(title), communityId),
-			isRestricted: true,
+			isRestricted: isRestricted,
 			isPublic: isPublic,
 			viewHash: generateHash(8),
 			editHash: generateHash(8),

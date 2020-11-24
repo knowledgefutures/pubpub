@@ -48,16 +48,12 @@ const CollectionBrowser = (props: Props) => {
 			disclosure={renderDisclosure}
 			aria-label="Browse this collection"
 		>
-			{collection.pageId && (
-				<>
-					<MenuItem
-						icon="collection"
-						text={collection.title}
-						href={collectionUrl(communityData, collection)}
-					/>
-					<MenuItemDivider />
-				</>
-			)}
+			<MenuItem
+				icon="collection"
+				text={collection.title}
+				href={collectionUrl(communityData, collection)}
+			/>
+			<MenuItemDivider />
 			{isLoading && (
 				<MenuItem
 					disabled

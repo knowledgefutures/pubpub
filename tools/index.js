@@ -5,7 +5,7 @@
 
 /* eslint-disable global-require */
 if (process.env.NODE_ENV !== 'production') {
-	require('server/config');
+	require('../config');
 }
 
 require('@babel/register')({ extensions: ['.js', '.jsx', '.ts', '.tsx'] });

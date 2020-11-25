@@ -14,7 +14,7 @@ const maxWorkerThreads = 5;
 let currentWorkerThreads = 0;
 
 if (process.env.NODE_ENV !== 'production') {
-	require('../server/config');
+	require('../config');
 }
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({

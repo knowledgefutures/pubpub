@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 
-require('../../server/config');
+require('../../config');
 
 const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
 export const sequelize = new Sequelize(process.env.DATABASE_URL_v6Prod, {

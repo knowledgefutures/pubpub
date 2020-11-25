@@ -40,8 +40,7 @@ export default {
 				},
 			},
 		],
-		// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-		toDOM: (node, { isReact } = {}) => {
+		toDOM: (node, { isReact } = { isReact: false }) => {
 			return [
 				'figure',
 				{
@@ -64,10 +63,11 @@ export default {
 					{},
 					pruneFalsyValues([
 						'div',
-						withValue(buildLabel(node), (label) => [
+						{},
+						withValue(buildLabel(node), (builtLabel) => [
 							'strong',
 							{ spellcheck: 'false' },
-							label,
+							builtLabel,
 						]),
 						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
 					]),

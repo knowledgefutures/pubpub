@@ -69,6 +69,7 @@ export default {
 					{},
 					pruneFalsyValues([
 						'div',
+						{},
 						withValue(buildLabel(node), (builtLabel) => [
 							'strong',
 							{ spellcheck: 'false' },

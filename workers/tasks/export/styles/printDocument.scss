@@ -49,6 +49,9 @@ body {
             font-size: 0.75em;
         }
     }
+    .editor.ProseMirror figure > * {
+        pointer-events: auto;
+    }
 }
 
 section.cover {

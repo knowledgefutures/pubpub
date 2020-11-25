@@ -1,7 +1,5 @@
 import { DOMOutputSpec, Node } from 'prosemirror-model';
 import React from 'react';
-import { pruneFalsyValues } from 'utils/arrays';
-import { withValue } from 'utils/fp';
 
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
@@ -29,8 +27,7 @@ export default {
 				},
 			},
 		],
-		// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-		toDOM: (node, { isReact, isForPandoc } = {}) => {
+		toDOM: (node, { isReact, isForPandoc } = { isReact: false, isForPandoc: false }) => {
 			if (isForPandoc) {
 				return (
 					<script

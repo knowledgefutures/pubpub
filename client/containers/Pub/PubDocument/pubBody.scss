@@ -2,7 +2,8 @@
 
 $pub-body-font-size: if(variable-exists('PUBPUB_PRINT'), 14px, 20px);
 
-@mixin pub-body-styles {
+.pub-body-component .editor.ProseMirror,
+.pub-body-styles {
 	h1#abstract:first-child {
 		text-transform: uppercase;
 		font-size: 1em;
@@ -25,28 +26,45 @@ $pub-body-font-size: if(variable-exists('PUBPUB_PRINT'), 14px, 20px);
 		font-weight: 500;
 		font-family: $header-font;
 		letter-spacing: 1px;
-	}
-	h1 {
-		font-size: 1.4em;
-		font-weight: 600;
-	}
-	h2 {
-		font-size: 1.3em;
 		a {
 			text-decoration: underline;
 		}
 	}
+	h1 {
+		font-size: 1.4em;
+		font-weight: 600;
+		line-height: 1.3em;
+		letter-spacing: 0px;
+	}
+	h2 {
+		font-size: 1.3em;
+		line-height: 1.3em;
+		font-weight: 500;
+		letter-spacing: 0px;
+	}
 	h3 {
 		font-size: 1.2em;
+		line-height: 1.3em;
+		font-weight: 400;
+		letter-spacing: 0.5px;
 	}
 	h4 {
-		font-size: 1.1em;
+		font-size: 1em;
+		line-height: 1.3em;
+		font-weight: 500;
+		letter-spacing: 0.5px;
 	}
 	h5 {
 		font-size: 1em;
+		line-height: 1.3em;
+		font-weight: 400;
+		letter-spacing: 0.5px;
 	}
 	h6 {
-		font-size: 0.9em;
+		font-size: 1em;
+		line-height: 1.3em;
+		font-weight: 300;
+		letter-spacing: 0.5px;
 	}
 	* + h1,
 	* + h2,
@@ -155,7 +173,6 @@ $pub-body-font-size: if(variable-exists('PUBPUB_PRINT'), 14px, 20px);
 	margin-top: 25px;
 	.editor.ProseMirror {
 		min-height: 150px;
-		@include pub-body-styles();
 	}
 	.bp3-callout.working-draft {
 		display: flex;

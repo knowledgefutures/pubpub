@@ -1,0 +1,17 @@
+.block-type-selector-menu {
+  font-size: 20px;
+  top: 6px;
+  left: -3px;
+  li {
+    a {
+      min-height: 50px;
+      min-width: 150px;      
+      p, h1, h2, h3, h4, h5, h6, pre, blockquote {
+        margin-bottom: 0em;
+      }
+      pre {
+        padding: 10px;
+      }
+    }
+  }
+}

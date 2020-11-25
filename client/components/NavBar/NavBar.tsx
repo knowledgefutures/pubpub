@@ -107,7 +107,7 @@ const NavBar = function(props) {
 			<GridWrapper>
 				<div className="scrollable-nav">
 					<ul className="nav-list">{navItems.filter((x) => x).map(renderNavItem)}</ul>
-					{/* <div className="overflow-gradient" /> */}
+					<div className="overflow-gradient" />
 				</div>
 				{renderSocialItems()}
 			</GridWrapper>

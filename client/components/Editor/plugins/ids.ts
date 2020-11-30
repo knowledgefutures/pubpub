@@ -3,9 +3,10 @@ import { generateHash } from '../utils';
 
 const inPasteRange = (offset, transactions) => {
 	return transactions.some((trans) => {
-		if (trans.meta.paste) {
-			const pasteStart = trans.steps[0].from;
-			const pasteEnd = trans.steps[0].from + trans.steps[0].slice.content.size;
+		const [step] = trans.steps;
+		if (step && trans.meta.paste) {
+			const pasteStart = step.from;
+			const pasteEnd = step.from + step.slice.content.size;
 			return offset >= pasteStart && offset < pasteEnd;
 		}
 		return false;

@@ -57,13 +57,7 @@ export default {
 					'data-align': node.attrs.align,
 					'data-url': node.attrs.url,
 				},
-				[
-					'img',
-					{
-						src: maybeResizedSrc,
-						alt: node.attrs.caption,
-					},
-				],
+				['img', { src: maybeResizedSrc }],
 				[
 					'figcaption',
 					{},

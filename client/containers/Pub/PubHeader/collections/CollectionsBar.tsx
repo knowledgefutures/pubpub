@@ -97,7 +97,7 @@ const CollectionsBar = (props: Props) => {
 		};
 
 		const button = (
-			<CollectionsBarButton icon="plus">
+			<CollectionsBarButton icon="plus" aria-label="Add or edit Pub Collections">
 				{collectionPubs.length === 0 ? 'Add to Collection' : null}
 			</CollectionsBarButton>
 		);

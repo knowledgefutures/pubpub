@@ -107,6 +107,20 @@ const renderContributors = (contributors) => {
 	);
 };
 
+const renderJournalIssue = (journal_issue) => {
+	const { titles, publication_date } = journal_issue;
+
+	return (
+		<>
+			<h6>Journal Issue</h6>
+			<dl>
+				{renderTitles(titles)}
+				{renderPublicationDate(publication_date)}
+			</dl>
+		</>
+	);
+};
+
 const renderArticlePreview = (body) => {
 	const {
 		journal: {
@@ -120,6 +134,7 @@ const renderArticlePreview = (body) => {
 				full_title: journalFullTitle,
 				doi_data: { doi: journalDoi },
 			},
+			journal_issue,
 		},
 	} = body;
 
@@ -138,6 +153,7 @@ const renderArticlePreview = (body) => {
 				<dt>DOI</dt>
 				<dd>{journalDoi}</dd>
 			</dl>
+			{journal_issue && renderJournalIssue(journal_issue)}
 			{renderRelationships(relationships)}
 		</>
 	);

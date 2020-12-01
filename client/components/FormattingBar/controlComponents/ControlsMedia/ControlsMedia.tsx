@@ -7,6 +7,7 @@ import { SimpleEditor } from 'components';
 import { usePubData } from 'client/containers/Pub/pubHooks';
 import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
 import { imageCanBeResized } from 'client/components/Editor';
+
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import AlignmentControl from './AlignmentControl';
 import SliderInputControl from './SliderInputControl';
@@ -98,7 +99,7 @@ const ControlsMedia = (props: Props) => {
 					onChange={(nextAlignment) => updateNode({ align: nextAlignment })}
 				/>
 				<SourceControls
-					// @ts-expect-error ts-migrate(2741) FIXME: Property 'type' is missing in type '{ attrs?: { si... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2322) FIXME: Type 'ProsemirrorNode<any> & { attrs?: { size: num... Remove this comment to see the full error message
 					selectedNode={selectedNode}
 					updateNode={updateNode}
 					isSmall={isSmall}

@@ -30,7 +30,7 @@ const PendingChangesProvider = (props: Props) => {
 
 	return (
 		<PendingChanges.Provider
-			// @ts-expect-error ts-migrate(2322) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ pendingCount: number; pendingPromise: (pro... Remove this comment to see the full error message
 			value={{ pendingCount: pendingCount, pendingPromise: pendingPromise }}
 		>
 			{children}

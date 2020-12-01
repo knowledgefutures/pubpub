@@ -8,7 +8,7 @@ export const initFirebase = async (rootKey, authToken) => {
 	const firebaseAppName = `App-${rootKey}`;
 	/* Check if we've already initialized an Firebase App with the */
 	/* same name in this local environment */
-	// @ts-expect-error ts-migrate(2769) FIXME: Type 'App' is not assignable to type 'undefined'.
+	// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 	const existingApp = firebase.apps.reduce((prev, curr) => {
 		return curr.name === firebaseAppName ? curr : prev;
 	}, undefined);

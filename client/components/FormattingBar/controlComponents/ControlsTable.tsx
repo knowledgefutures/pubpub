@@ -62,7 +62,6 @@ const ControlsTable = (props: Props) => {
 
 	return (
 		<Toolbar {...toolbar} className="controls-table-component" aria-label="Table options">
-			{/* @ts-expect-error ts-migrate(2769) FIXME: Type 'ForwardRefExoticComponent<RefAttributes<unkn... Remove this comment to see the full error message */}
 			<ToolbarItem
 				aria-label="Table options"
 				as={CommandMenu}

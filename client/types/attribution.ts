@@ -11,7 +11,7 @@ type attribution = {
 		slug?: string;
 	};
 };
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ id: Validator<strin... Remove this comment to see the full error message
 const attribution: PropTypes.Requireable<attribution> = PropTypes.shape({
 	id: PropTypes.string.isRequired,
 	isAuthor: PropTypes.bool,

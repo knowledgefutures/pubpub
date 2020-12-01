@@ -92,7 +92,7 @@ const DatePicker = (props: Props) => {
 			{...restProps}
 			{...getEarlyRenderableProps(dateProp, hasMounted)}
 			type="date"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' provides no mat... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
 			inputRef={inputRef}
 			onInput={handleInput}
 		/>

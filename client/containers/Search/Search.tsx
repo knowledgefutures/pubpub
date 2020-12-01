@@ -166,7 +166,7 @@ const Search = (props: Props) => {
 				<div className="row">
 					<div className="col-12">
 						{!searchResults.length && searchQuery && !isLoading && (
-							// @ts-expect-error ts-migrate(2322) FIXME: Property 'visual' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; visual: string; }' is not a... Remove this comment to see the full error message
 							<NonIdealState title="No Results" visual="search" />
 						)}
 						{!!searchResults.length && (
@@ -227,7 +227,7 @@ const Search = (props: Props) => {
 									return (
 										<div className={`result ${mode}`} key={`result-${keyId}`}>
 											<div>
-												{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'alt' does not exist on type 'DetailedHTM... Remove this comment to see the full error message */}
+												{/* @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; href: any; alt: any; }'... Remove this comment to see the full error message */}
 												<a href={link} alt={item.title}>
 													<div
 														className="banner-image"
@@ -239,7 +239,7 @@ const Search = (props: Props) => {
 												<div className="title">
 													<a
 														href={link}
-														// @ts-expect-error ts-migrate(2322) FIXME: Property 'alt' does not exist on type 'DetailedHTM... Remove this comment to see the full error message
+														// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: any[]; href: any; alt: any; clas... Remove this comment to see the full error message
 														alt={item.title}
 														className="pub-title"
 													>
@@ -252,7 +252,7 @@ const Search = (props: Props) => {
 															<a
 																// @ts-expect-error ts-migrate(2339) FIXME: Property 'communityDomain' does not exist on type ... Remove this comment to see the full error message
 																href={`https://${item.communityDomain}`}
-																// @ts-expect-error ts-migrate(2322) FIXME: Property 'alt' does not exist on type 'DetailedHTM... Remove this comment to see the full error message
+																// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: (false | Element)[]; href: strin... Remove this comment to see the full error message
 																alt={item.communityTitle}
 																style={{
 																	backgroundColor:

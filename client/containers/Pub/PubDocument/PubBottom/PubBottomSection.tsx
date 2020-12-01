@@ -97,7 +97,7 @@ const PubBottomSection = (props: PubBottomSectionProps) => {
 	const renderSearchBar = () => {
 		return (
 			<input
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'HTMLIn... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
 				ref={searchInputRef}
 				type="text"
 				className="search-bar"
@@ -200,7 +200,7 @@ const PubBottomSection = (props: PubBottomSectionProps) => {
 			{isExpanded && (
 				<div className="section-content">
 					{typeof children === 'function'
-						? // @ts-expect-error ts-migrate(2721) FIXME: Cannot invoke an object which is possibly 'null'.
+						? // @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 						  children({ searchTerm: searchTerm, isSearching: isSearching })
 						: children}
 				</div>

@@ -116,7 +116,7 @@ const Landing = () => {
 	];
 	const communityGrid = communities.map((community) => {
 		return (
-			// @ts-expect-error ts-migrate(2322) FIXME: Property 'ker' does not exist on type 'DetailedHTM... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element[]; className: string; ke... Remove this comment to see the full error message
 			<div className="community" ker={community.name}>
 				<div className="type">
 					<strong>{community.type}</strong> / {community.category}

@@ -117,7 +117,7 @@ const FileImportDialog = ({
 			.then((taskId) => pingTask(taskId, 1000))
 			.then((result) => {
 				setIsImporting(false);
-				// @ts-expect-error ts-migrate(2345) FIXME: Type 'unknown' is not assignable to type '(prevSta... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
 				setImportResult(result);
 				setLastImportedFilesFingerprint(getFingerprintOfImportedFiles(currentFiles));
 			})
@@ -371,7 +371,7 @@ const FileImportDialog = ({
 				<MetadataEditor
 					proposedMetadata={proposedMetadata}
 					onSetMetadataUpdater={setMetadataUpdater}
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'updatePubData' does not exist on type 'I... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ proposedMetadata: any; onSetMetadataUpdate... Remove this comment to see the full error message
 					updatePubData={updatePubData}
 				/>
 			</>

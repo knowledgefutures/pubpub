@@ -57,7 +57,7 @@ const AttributionRow = (props: Props) => {
 				<EditableAvatar
 					width={50}
 					attribution={attribution}
-					// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+					// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 					onUpdateAvatar={(avatar) => onAttributionUpdate({ id: id, avatar: avatar })}
 				/>
 			);
@@ -73,7 +73,7 @@ const AttributionRow = (props: Props) => {
 					small
 					minimal
 					className="delete-button"
-					// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+					// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 					onClick={() => onAttributionDelete(id)}
 					icon="small-cross"
 				/>

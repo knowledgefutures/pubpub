@@ -133,10 +133,10 @@ const MemberRow = (props: Props) => {
 	const isSelfUser = user.id && loginData.id === user.id;
 
 	const setMemberPermissions = (permissions) =>
-		// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 		onUpdate(memberData, { permissions: permissions });
 
-	// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+	// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 	const deleteMember = () => onDelete(memberData);
 
 	const commitSelfDestructiveAction = () => {
@@ -155,7 +155,7 @@ const MemberRow = (props: Props) => {
 			permissionValues.indexOf(memberData.permissions);
 		if (isSelfUser && isDemotion) {
 			setSelfDestructiveAction({
-				// @ts-expect-error ts-migrate(2345) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ dialogType: string; onConfirm:... Remove this comment to see the full error message
 				dialogType: 'demote',
 				onConfirm: () => setMemberPermissions(permissions),
 			});
@@ -167,7 +167,7 @@ const MemberRow = (props: Props) => {
 	const handleDeleteClick = () => {
 		if (isSelfUser) {
 			setSelfDestructiveAction({
-				// @ts-expect-error ts-migrate(2345) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ dialogType: string; onConfirm:... Remove this comment to see the full error message
 				dialogType: 'delete',
 				onConfirm: deleteMember,
 			});
@@ -187,7 +187,7 @@ const MemberRow = (props: Props) => {
 					rightIcon: 'caret-down',
 					outlined: true,
 				}}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2339) FIXME: Property 'permissions' does not exist on type 'nev... Remove this comment to see the full error message
 				buttonContent={`${memberData.permissions}`}
 			>
 				<MemberPermissionPicker

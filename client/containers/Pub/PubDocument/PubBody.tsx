@@ -11,11 +11,11 @@ import Editor, { getJSON } from 'components/Editor';
 import { getResizedUrl } from 'utils/images';
 import { usePageContext } from 'utils/hooks';
 
+import { NodeLabelMap } from 'client/components/Editor/types';
 import { usePubContext } from '../pubHooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 import discussionSchema from './DiscussionAddon/discussionSchema';
 import Discussion from './PubDiscussions/Discussion';
-import { NodeLabelMap } from 'client/components/Editor/types';
 
 require('./pubBody.scss');
 

@@ -83,7 +83,7 @@ const FormattingBarPopover = (props) => {
 				isFullScreenWidth && 'full-screen-width',
 			)}
 			style={{ background: accentColor, ...floatingPosition }}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'HTMLDivElement' provides no match for the si... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Dispatch<SetStateAction<null>>' is not assig... Remove this comment to see the full error message
 			ref={focusTrap.ref}
 		>
 			<div className="inner">

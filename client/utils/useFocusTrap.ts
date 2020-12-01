@@ -147,7 +147,7 @@ export const useFocusTrap = ({
 
 				// Focus should now be inside the modal, so record the newly-focused
 				// node as the last node focused in the modal.
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'null'.
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element | null' is not assignable to type 'n... Remove this comment to see the full error message
 				lastNodeFocusedInModal.current = document.activeElement;
 			}
 		},

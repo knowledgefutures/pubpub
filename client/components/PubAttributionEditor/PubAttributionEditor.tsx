@@ -25,7 +25,7 @@ const PubAttributionEditor = (props: Props) => {
 				communityId: communityData.id,
 				pubId: pubData.id,
 			}}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'any[]'... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[] | undefined' is not assignable to type... Remove this comment to see the full error message
 			attributions={pubData.attributions}
 			canEdit={canEdit}
 			communityData={communityData}

@@ -93,7 +93,7 @@ const PubDiscussions = (props: Props) => {
 	};
 
 	const renderBottomDiscussions = () => {
-		// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 		const filteredDiscussions = filterDiscussions(discussions);
 		const emptyMessage =
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'filter' does not exist on type 'never'.

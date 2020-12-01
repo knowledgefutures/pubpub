@@ -39,7 +39,7 @@ export const PubSuspendWhileTypingProvider = (props: PubSuspendWhileTypingProvid
 	}, [getTimeRemainingToUpdate, markLastInput]);
 
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Type '(delay: any, currentTime: any) => number' is... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2322) FIXME: Type '{ markLastInput: () => void; getTimeRemainin... Remove this comment to see the full error message
 		<PubSuspendWhileTypingContext.Provider value={value}>
 			{props.children}
 		</PubSuspendWhileTypingContext.Provider>
@@ -85,7 +85,7 @@ export const PubSuspendWhileTyping = (props: PubSuspendWhileTypingProps) => {
 	// Cleanup any timeout when unmounting
 	useEffect(() => maybeClearTimeout);
 
-	// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
+	// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: (...args: any[]) => any; shouldU... Remove this comment to see the full error message
 	return <MemoizedSuspend shouldUpdate={shouldUpdate}>{children}</MemoizedSuspend>;
 };
 

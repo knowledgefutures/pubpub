@@ -75,7 +75,7 @@ const FileImportEntry = (props: Props) => {
 							const text = potentialLabel === 'none' ? <i>(none)</i> : potentialLabel;
 							return (
 								<MenuItem
-									// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'string | n... Remove this comment to see the full error message
+									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | false | Element' is not assignable ... Remove this comment to see the full error message
 									key={text}
 									text={text}
 									onClick={() => onLabelFile(potentialLabel)}

@@ -188,10 +188,15 @@ const DashboardPages = (props: Props) => {
 								icon="lock"
 							/>
 							{!isPublic && (
+								// @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message
 								<ClickToCopyButton
+									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 									className="copy-button"
+									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 									icon="duplicate"
+									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 									beforeCopyPrompt="Anyone with this link can view the private Page."
+									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 									copyString={`${communityUrl(
 										communityData,
 									)}/${slug}?access=${viewHash}`}

@@ -98,12 +98,18 @@ const useNodeLabelEditorState = (pub: any) => {
 	const [state, dispatch] = useReducer(nodeLabelEditorReducer, initialState);
 	const toggleNode = useCallback(
 		(nodeType: string, enabled: boolean) =>
-			dispatch({ type: NodeLabelEditorActionType.Toggle, payload: { nodeType, enabled } }),
+			dispatch({
+				type: NodeLabelEditorActionType.Toggle,
+				payload: { nodeType: nodeType, enabled: enabled },
+			}),
 		[],
 	);
 	const updateLabel = useCallback(
 		(nodeType: string, text: string) =>
-			dispatch({ type: NodeLabelEditorActionType.UpdateLabel, payload: { nodeType, text } }),
+			dispatch({
+				type: NodeLabelEditorActionType.UpdateLabel,
+				payload: { nodeType: nodeType, text: text },
+			}),
 		[],
 	);
 	const toggleAll = useCallback(
@@ -111,7 +117,7 @@ const useNodeLabelEditorState = (pub: any) => {
 		[],
 	);
 
-	return { state, toggleAll, toggleNode, updateLabel };
+	return { state: state, toggleAll: toggleAll, toggleNode: toggleNode, updateLabel: updateLabel };
 };
 
 const NodeLabelEditor = (props: NodeLabelEditorProps) => {

@@ -1,0 +1,123 @@
+import Bluebird from 'bluebird';
+
+import { Collection, Community, Pub, PubAttribution, Branch, Member } from 'server/models';
+import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
+import { createCollectionPub } from 'server/collectionPub/queries';
+import { slugifyString } from 'utils/strings';
+import { generateHash } from 'utils/hashes';
+
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+export const createPub = async ({ communityId, collectionIds, slug, ...restArgs }, userId) => {
+	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
+	const date = new Date();
+	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;
+	const { defaultPubCollections } = await Community.findOne({ where: { id: communityId } });
+
+	const newPub = await Pub.create({
+		title: `Untitled Pub on ${dateString}`,
+		slug: newPubSlug,
+		communityId: communityId,
+		headerBackgroundColor: 'light',
+		headerStyle: 'dark',
+		viewHash: generateHash(8),
+		editHash: generateHash(8),
+		...restArgs,
+	});
+
+	const createPubAttribution =
+		userId &&
+		PubAttribution.create({
+			userId: userId,
+			pubId: newPub.id,
+			isAuthor: true,
+			order: 0.5,
+		});
+
+	const createMember =
+		userId &&
+		Member.create({
+			userId: userId,
+			pubId: newPub.id,
+			permissions: 'manage',
+			isOwner: true,
+		});
+
+	const createPublicBranch = Branch.create({
+		shortId: 1,
+		title: 'public',
+		pubId: newPub.id,
+	});
+
+	const createDraftBranch = Branch.create({
+		shortId: 2,
+		title: 'draft',
+		pubId: newPub.id,
+	});
+
+	const allCollectionIds = [...(defaultPubCollections || []), ...(collectionIds || [])];
+
+	const createCollectionPubs = Bluebird.each(
+		// @ts-expect-error ts-migrate(2569) FIXME: Type 'Set<any>' is not an array type or a string t... Remove this comment to see the full error message
+		[...new Set(allCollectionIds)].filter((x) => x),
+		async (collectionIdToAdd) => {
+			// defaultPubCollections isn't constrained by the database in any way and might contain IDs
+			// of collections that don't exist, so unfortunately we have to do an existence check here.
+			const collection = await Collection.findOne({
+				where: { id: collectionIdToAdd, communityId: communityId },
+			});
+			if (collection) {
+				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ collectionId: any; pubId: any;... Remove this comment to see the full error message
+				return createCollectionPub({
+					collectionId: collectionIdToAdd,
+					pubId: newPub.id,
+				});
+			}
+			return null;
+		},
+	);
+
+	await Promise.all(
+		[
+			createPubAttribution,
+			createCollectionPubs,
+			createPublicBranch,
+			createDraftBranch,
+			createMember,
+		].filter((x) => x),
+	);
+
+	setPubSearchData(newPub.id);
+	return newPub;
+};
+
+export const updatePub = (inputValues, updatePermissions) => {
+	// Filter to only allow certain fields to be updated
+	const filteredValues = {};
+	Object.keys(inputValues).forEach((key) => {
+		if (updatePermissions.includes(key)) {
+			filteredValues[key] = inputValues[key];
+		}
+	});
+	// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
+	if (filteredValues.slug) {
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
+		filteredValues.slug = slugifyString(filteredValues.slug);
+	}
+
+	return Pub.update(filteredValues, {
+		where: { id: inputValues.pubId },
+	}).then(() => {
+		setPubSearchData(inputValues.pubId);
+		return filteredValues;
+	});
+};
+
+export const destroyPub = (pubId) => {
+	return Pub.destroy({
+		where: { id: pubId },
+	}).then(() => {
+		deletePubSearchData(pubId);
+		return true;
+	});
+};

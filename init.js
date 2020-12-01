@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
 
 throng({ workers: 1, lifetime: Infinity }, () => {
 	const loadServer = () => {
-		return require('./server/server.js').startServer();
+		return require('./server/server').startServer();
 	};
 
 	if (watchables) {

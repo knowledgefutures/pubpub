@@ -38,9 +38,9 @@ const ReadNextSection = (props: Props) => {
 		<PubBottomSection
 			isExpandable={false}
 			title="Read Next"
-			// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' is missing in type 'Element' b... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never[] ... Remove this comment to see the full error message
 			centerItems={
-				// @ts-expect-error ts-migrate(2786) FIXME: Type 'Element[]' is missing the following properti... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2786) FIXME: 'SectionBullets' cannot be used as a JSX component... Remove this comment to see the full error message
 				<SectionBullets>
 					<a
 						href={createReadingParamUrl(

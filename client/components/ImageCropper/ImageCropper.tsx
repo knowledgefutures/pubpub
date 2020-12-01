@@ -97,7 +97,7 @@ class ImageCropper extends Component<Props, State> {
 					min={1}
 					max={5}
 					stepSize={0.1}
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'renderLabel' does not exist on type 'Int... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ value: any; onChange: (val: any) => void; ... Remove this comment to see the full error message
 					renderLabel={false}
 				/>
 

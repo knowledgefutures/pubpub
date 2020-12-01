@@ -3,6 +3,7 @@ import { EditorView } from 'prosemirror-view';
 
 export default class ReferenceView {
 	view: EditorView;
+
 	dom: HTMLAnchorElement;
 
 	constructor(node: Node, view: EditorView) {

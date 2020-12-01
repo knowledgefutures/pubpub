@@ -3,8 +3,8 @@ import classNames from 'classnames';
 import { Classes } from '@blueprintjs/core';
 import * as RK from 'reakit/Menu';
 
-import { MenuContext, MenuConfigContext } from './menuContexts';
 import { Placement } from 'popper.js';
+import { MenuContext, MenuConfigContext } from './menuContexts';
 
 export type MenuProps = {
 	'aria-label'?: string;
@@ -61,7 +61,7 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 
 	return (
 		<React.Fragment>
-			{/* @ts-expect-error ts-migrate(2769) FIXME: Type 'unknown' is not assignable to type 'HTMLButt... Remove this comment to see the full error message */}
+			{/* @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call. */}
 			<RK.MenuDisclosure
 				ref={ref}
 				style={{ display: 'inline-flex', WebkitAppearance: 'unset' }}

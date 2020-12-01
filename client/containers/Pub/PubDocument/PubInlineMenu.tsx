@@ -68,7 +68,7 @@ const PubInlineMenu = (props: Props) => {
 		{ key: 'link', icon: <Icon icon="link" /> },
 	];
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type '"absolute... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2322) FIXME: Type '{ position: string; top: any; left: any; }' ... Remove this comment to see the full error message
 		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
 			{!pubData.isReadOnly &&
 				formattingItems.map((item) => {
@@ -107,14 +107,18 @@ const PubInlineMenu = (props: Props) => {
 				/>
 			)}
 			<ClickToCopyButton
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				className="click-to-copy"
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				icon="clipboard"
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				copyString={pubUrl(communityData, pubData, {
 					isDraft: !pubData.isRelease,
 					releaseNumber: pubData.releaseNumber,
 					historyKey: historyData.currentKey,
 					query: { from: selection.from, to: selection.to },
 				})}
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				beforeCopyPrompt="Copy a permalink"
 			/>
 		</div>

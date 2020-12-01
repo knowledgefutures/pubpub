@@ -42,7 +42,7 @@ export const MenuButton = (props: MenuButtonProps) => {
 					children={buttonContent}
 					{...buttonPropsWithIcon}
 					{...restDisclosureProps}
-					// @ts-expect-error
+					// @ts-expect-error ts-migrate(2322) FIXME: Type '((instance: any) => void) | RefObject<any> |... Remove this comment to see the full error message
 					elementRef={ref}
 				/>
 			)}

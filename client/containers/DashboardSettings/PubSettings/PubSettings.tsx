@@ -126,7 +126,7 @@ const PubSettings = (props: Props) => {
 						helperText="If set, this will be shown instead of the first Release date."
 					>
 						<DatePicker
-							// @ts-expect-error ts-migrate(2322) FIXME: Property 'style' does not exist on type 'Intrinsic... Remove this comment to see the full error message
+							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ style: { width: number; }; date: any; onSe... Remove this comment to see the full error message
 							style={{ width: 200 }}
 							date={pubData.customPublishedAt}
 							onSelectDate={(date) =>
@@ -161,7 +161,7 @@ const PubSettings = (props: Props) => {
 											pubs.
 										</span>
 									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />

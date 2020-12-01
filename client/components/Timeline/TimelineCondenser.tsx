@@ -18,7 +18,7 @@ export const TimelineCondenser = (props: Props) => {
 			<TimelineItem
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				key="__timeline-condenser-expand-element__"
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				hollow
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				icon="expand-all"

@@ -37,7 +37,7 @@ const DiscussionsSection = (props: Props) => {
 	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const nonClosedDiscussions = discussions.filter((ds) => !ds.isClosed);
 
-	// @ts-expect-error ts-migrate(2786) FIXME: Type 'Element[]' is missing the following properti... Remove this comment to see the full error message
+	// @ts-expect-error ts-migrate(2786) FIXME: 'SectionBullets' cannot be used as a JSX component... Remove this comment to see the full error message
 	const renderCenterItems = () => <SectionBullets>{nonClosedDiscussions.length}</SectionBullets>;
 
 	// eslint-disable-next-line react/prop-types
@@ -68,7 +68,7 @@ const DiscussionsSection = (props: Props) => {
 						minimal
 						content={
 							<FilterMenu
-								// @ts-expect-error ts-migrate(2322) FIXME: Property 'pubData' does not exist on type 'Intrins... Remove this comment to see the full error message
+								// @ts-expect-error ts-migrate(2322) FIXME: Type '{ pubData: { activeBranch?: { id?: string | ... Remove this comment to see the full error message
 								pubData={pubData}
 								communityData={communityData}
 								labelsData={pubData.labels || []}
@@ -86,7 +86,7 @@ const DiscussionsSection = (props: Props) => {
 													return id !== labelId;
 											  })
 											: [...filteredLabels, labelId];
-									// @ts-expect-error ts-migrate(2345) FIXME: Type 'any' is not assignable to type 'never'.
+									// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
 									setFilteredLabels(newFilteredLabels);
 								}}
 								updateLocalData={updateLocalData}
@@ -94,7 +94,7 @@ const DiscussionsSection = (props: Props) => {
 						}
 						transitionDuration={-1}
 						position={Position.BOTTOM_RIGHT}
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'close' does not exist on type 'Intrinsic... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; minimal: true; content:... Remove this comment to see the full error message
 						close
 					>
 						<AccentedIconButton
@@ -128,7 +128,7 @@ const DiscussionsSection = (props: Props) => {
 			accentColor={communityData.accentColorDark}
 			isSearchable={true}
 			title="Comments"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '() => Element' is missing the following prop... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type '() => JSX.Element' is not assignable to type... Remove this comment to see the full error message
 			centerItems={renderCenterItems}
 			// @ts-expect-error ts-migrate(2322) FIXME: Type '({ isExpanded, iconColor }: { isExpanded: an... Remove this comment to see the full error message
 			iconItems={renderIconItems}

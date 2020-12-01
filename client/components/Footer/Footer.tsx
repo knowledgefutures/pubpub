@@ -159,7 +159,7 @@ const Footer = (props: Props) => {
 									onChange={(evt) => {
 										setEmail(evt.target.value);
 									}}
-									// @ts-expect-error ts-migrate(2322) FIXME: Property 'label' does not exist on type 'Intrinsic... Remove this comment to see the full error message
+									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ type: string; placeholder: string; value: ... Remove this comment to see the full error message
 									label="Feature & community newsletter"
 									rightElement={
 										<Button

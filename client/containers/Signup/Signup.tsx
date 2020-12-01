@@ -95,7 +95,7 @@ const Signup = () => {
 								<p>Follow the link in that email to create your account.</p>
 							</div>
 						}
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'visual' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; description: Element; visua... Remove this comment to see the full error message
 						visual="tick-circle"
 						action={
 							<Button

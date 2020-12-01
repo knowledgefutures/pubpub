@@ -135,7 +135,7 @@ const NewEdgeInput = (props: Props) => {
 			resetOnSelect={true}
 			onItemSelect={onSelectItem}
 			noResults={queryValue ? <MenuItem disabled text="No results" /> : null}
-			// @ts-expect-error ts-migrate(2769) FIXME: Type '{ wrapperTagName: string; minimal: boolean; ... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 			popoverProps={suggestPopoverProps}
 		/>
 	);

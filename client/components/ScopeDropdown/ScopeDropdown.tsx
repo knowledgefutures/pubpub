@@ -87,7 +87,7 @@ const ScopeDropdown = (props: Props) => {
 										<Avatar
 											avatar={scope.avatar}
 											initials={scope.title[0]}
-											// @ts-expect-error ts-migrate(2322) FIXME: Property 'communityData' does not exist on type 'I... Remove this comment to see the full error message
+											// @ts-expect-error ts-migrate(2322) FIXME: Type '{ avatar: string; initials: string; communit... Remove this comment to see the full error message
 											communityData={communityData}
 											width={18}
 											isBlock={true}

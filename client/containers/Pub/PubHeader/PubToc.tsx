@@ -48,7 +48,7 @@ const PubToc = (props: Props) => {
 							/* unexpectedly on reload given the async loading of doc. Instead, */
 							/* manually scroll to the position and offset by fixed header height. */
 							if (onSelect) {
-								// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+								// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 								onSelect();
 							}
 							if (canEdit || canEditDraft) {

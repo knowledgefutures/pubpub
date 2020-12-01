@@ -148,7 +148,6 @@ const ControlsFootnoteCitation = (props: Props) => {
 			{showPreview && (
 				<div className="section preview">
 					<div className="title">Preview</div>
-					{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'structured' does not exist on type 'Intr... Remove this comment to see the full error message */}
 					<PubNoteContent structured={html} unstructured={unstructuredValue} />
 					{!isFootnote && renderInlineStyleControls()}
 					<ControlsButtonGroup>

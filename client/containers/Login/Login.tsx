@@ -104,7 +104,7 @@ const Login = () => {
 				)}
 				{loginData.id && (
 					<NonIdealState
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'visual' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ visual: Element; title: string; action: El... Remove this comment to see the full error message
 						visual={
 							<Avatar
 								initials={loginData.initials}

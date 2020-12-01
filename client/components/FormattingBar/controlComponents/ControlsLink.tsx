@@ -52,7 +52,7 @@ const ControlsLink = (props: Props) => {
 				value={href}
 				onChange={(evt) => setHref(evt.target.value)}
 				onKeyPress={handleKeyPress}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' provides no mat... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
 				inputRef={inputRef}
 			/>
 			<AnchorButton small minimal title="Visit" icon="share" href={href} target="_blank" />

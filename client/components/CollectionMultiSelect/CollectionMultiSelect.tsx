@@ -65,7 +65,7 @@ const CollectionMultiSelect = function(props) {
 			tagInputProps={{
 				onRemove: props.onRemove,
 				placeholder: props.placeholder,
-				// @ts-expect-error ts-migrate(2769) FIXME: Object literal may only specify known properties, ... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 				collectionProps: {
 					className: 'bp3-minimal bp3-intent-primary',
 				},

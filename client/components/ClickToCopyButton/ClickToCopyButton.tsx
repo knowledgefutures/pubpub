@@ -26,7 +26,9 @@ const defaultProps = {
 	usePortal: true,
 };
 
-type Props = OwnProps;
+type OwnClickToCopyButtonProps = OwnProps;
+
+type Props = OwnClickToCopyButtonProps & typeof defaultProps;
 
 const ClickToCopyButton = (props: Props) => {
 	const {
@@ -45,6 +47,7 @@ const ClickToCopyButton = (props: Props) => {
 	const [copyState, copyToClipboard] = useCopyToClipboard();
 
 	const handleClick = () => {
+		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 		copyToClipboard(typeof copyString === 'function' ? copyString() : copyString);
 		setHasCopied(true);
 	};
@@ -61,6 +64,7 @@ const ClickToCopyButton = (props: Props) => {
 
 	const renderChildren = () => {
 		if (typeof children === 'function') {
+			// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 			return children(handleClick);
 		}
 		return (

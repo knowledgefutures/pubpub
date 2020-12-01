@@ -296,12 +296,15 @@ const PubHistoryViewer = (props: Props) => {
 						disabled={!canChangeCurrentKeyBy(-1)}
 						onClick={() => changeCurrentKeyBy(-1)}
 					/>
+					{/* @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message */}
 					<ClickToCopyButton
+						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						copyString={pubUrl(communityData, pubData, {
 							isDraft: true,
 							// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 							historyKey: currentKey.toString(),
 						})}
+						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						beforeCopyPrompt="Copy link to this point in history"
 					>
 						{(handleClick) => (

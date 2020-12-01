@@ -98,7 +98,7 @@ const DiscussionGroup = (props: Props) => {
 			tabIndex={-1}
 		>
 			<DiscussionNav
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'string | n... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'false | undefined' is not assignable to type... Remove this comment to see the full error message
 				key={isExpanded && activeThread}
 				discussions={discussions}
 				activeThreadHover={activeThreadHover}

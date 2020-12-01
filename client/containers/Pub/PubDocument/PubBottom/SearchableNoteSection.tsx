@@ -26,7 +26,7 @@ const SearchableNoteSection = (props: Props) => {
 		<PubBottomSection
 			accentColor={communityData.accentColorDark}
 			isSearchable={true}
-			// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' is missing in type 'Element' b... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never[] ... Remove this comment to see the full error message
 			centerItems={<SectionBullets>{items.length}</SectionBullets>}
 			{...restProps}
 		>

@@ -168,7 +168,7 @@ class AttributionEditor extends Component<Props> {
 							onSelect={this.handleAttributionAdd}
 							allowCustomUser={true}
 							placeholder="Add new person..."
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'any[] & ne... Remove this comment to see the full error message
 							usedUserIds={attributions
 								.map((item) => {
 									return item.user && item.user.id;
@@ -186,7 +186,7 @@ class AttributionEditor extends Component<Props> {
 									<AttributionRow
 										// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 										attribution={attribution}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
+										// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 										canEdit={true}
 										// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 										isDragging={isDragging}
@@ -221,7 +221,7 @@ class AttributionEditor extends Component<Props> {
 								key={attribution.id}
 								// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 								attribution={attribution}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'false' is not assignable to type 'never'.
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 								canEdit={false}
 								// isDragging={isDragging}
 								// dragHandleProps={dragHandleProps}

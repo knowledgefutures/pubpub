@@ -92,7 +92,7 @@ class PageAutocomplete extends Component<Props, State> {
 					}}
 					query={this.state.query}
 					onQueryChange={this.filterItems}
-					// @ts-expect-error ts-migrate(2769) FIXME: Type '() => void' is not assignable to type '(item... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 					inputValueRenderer={() => {}}
 					itemRenderer={(item, { handleClick, modifiers }) => {
 						return (

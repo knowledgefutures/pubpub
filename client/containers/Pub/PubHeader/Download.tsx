@@ -93,7 +93,7 @@ const Download = (props: Props) => {
 					downloadOrShowButton(url);
 				}
 				if (taskId) {
-					// @ts-expect-error ts-migrate(2345) FIXME: Type 'unknown' is not assignable to type '{ url: a... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '({ url: laterUrl }: { url: any; ... Remove this comment to see the full error message
 					return pingTask(taskId, 1500).then(({ url: laterUrl }) =>
 						downloadOrShowButton(laterUrl),
 					);
@@ -135,16 +135,14 @@ const Download = (props: Props) => {
 							.split('.')
 							.pop()
 							.toUpperCase()}`}
-						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ dismissOnClick: false; labelElement: Eleme... Remove this comment to see the full error message
 						loading={isLoading && selectedType.format === 'formatted'}
 						onClick={() => window.open(formattedDownload.url)}
 					/>
 				</React.Fragment>
 			)}
 			<li className="bp3-menu-header">
-				<h6 className="bp3-heading">
-					Auto Generated Download
-				</h6>
+				<h6 className="bp3-heading">Auto Generated Download</h6>
 			</li>
 			{formatTypes.map((type, i) => {
 				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.

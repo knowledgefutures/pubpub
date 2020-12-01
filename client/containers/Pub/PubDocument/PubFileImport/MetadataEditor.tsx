@@ -81,7 +81,7 @@ const ProposedAttribution = ({ attribution, onUpdateAttribution }: ProposedAttri
 			>
 				{users.map((user) => (
 					<MenuItem
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'text' does not exist on type 'IntrinsicA... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2339) FIXME: Property 'fullName' does not exist on type '{}'.
 						text={user.fullName}
 						// @ts-expect-error ts-migrate(2339) FIXME: Property 'avatar' does not exist on type '{}'.
 						icon={<Avatar width={20} avatar={user.avatar} initials={user.initials} />}
@@ -161,7 +161,7 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 			if (Object.keys(updatedPubData).length > 0) {
 				// @ts-expect-error ts-migrate(2339) FIXME: Property 'put' does not exist on type '(path: any,... Remove this comment to see the full error message
 				await apiFetch.put('/api/pubs', {
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
+					// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{ nodeLabels... Remove this comment to see the full error message
 					pubId: pubData.id,
 					communityId: communityData.id,
 					...updatedPubData,
@@ -187,7 +187,7 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
 					const updatedAttributions = await apiFetch.post('/api/pubAttributions/batch', {
 						communityId: communityData.id,
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
+						// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{ nodeLabels... Remove this comment to see the full error message
 						pubId: pubData.id,
 						attributions: newAttributions,
 					});

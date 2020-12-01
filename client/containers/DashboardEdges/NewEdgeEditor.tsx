@@ -130,7 +130,7 @@ const NewEdgeEditor = (props: Props) => {
 						aria-label="Select relationship type"
 						buttonProps={{
 							rightIcon: 'chevron-down',
-							// @ts-expect-error
+							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ rightIcon: string; children: string; }' is... Remove this comment to see the full error message
 							children: `Type: ${currentRelationName}`,
 						}}
 					>

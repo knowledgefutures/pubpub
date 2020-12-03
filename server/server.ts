@@ -1,12 +1,13 @@
-import express from 'express';
+import * as Sentry from '@sentry/node';
 import bodyParser from 'body-parser';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import compression from 'compression';
 import enforce from 'express-sslify';
+import express from 'express';
 import noSlash from 'no-slash';
 import passport from 'passport';
-import * as Sentry from '@sentry/node';
+import path from 'path';
 
 import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/environment';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
@@ -102,12 +103,12 @@ passport.deserializeUser(User.deserializeUser());
 /* ---------------- */
 /* Server Endpoints */
 /* ---------------- */
-app.use('/dist', [cors(), express.static('dist')]);
-app.use('/static', express.static('static'));
-app.use('/service-worker.js', express.static('static/service-worker.js'));
-app.use('/favicon.png', express.static('static/favicon.png'));
-app.use('/favicon.ico', express.static('static/favicon.png'));
-app.use('/robots.txt', express.static('static/robots.txt'));
+app.use('/dist', [cors(), express.static(path.join(process.cwd(), 'dist/client'))]);
+app.use('/static', express.static(path.join(process.cwd(), 'static')));
+app.use('/service-worker.js', express.static(path.join(process.cwd(), 'static/service-worker.js')));
+app.use('/favicon.png', express.static(path.join(process.cwd(), 'static/favicon.png')));
+app.use('/favicon.ico', express.static(path.join(process.cwd(), 'static/favicon.png')));
+app.use('/robots.txt', express.static(path.join(process.cwd(), 'static/robots.txt')));
 
 /* -------------------- */
 /* Set Hostname for Dev */

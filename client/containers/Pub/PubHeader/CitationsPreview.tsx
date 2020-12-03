@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { Button, ButtonGroup } from '@blueprintjs/core';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/pub' or its correspondin... Remove this comment to see the full error message
 import { pubDataProps } from 'types/pub';
 import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
 import CitationsModal from './CitationsModal';
@@ -32,6 +31,7 @@ const CitationsPreview = (props: Props) => {
 				ref={copyableCitationRef}
 				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={{
+					// @ts-expect-error ts-migrate(2339) FIXME: Property 'citationData' does not exist on type 'pu... Remove this comment to see the full error message
 					__html: pubData.citationData.pub.default,
 				}}
 			/>
@@ -64,7 +64,9 @@ const CitationsPreview = (props: Props) => {
 			</ButtonGroup>
 			<CitationsModal
 				isOpen={isCitationModalOpen}
+				// @ts-expect-error ts-migrate(2339) FIXME: Property 'citationData' does not exist on type 'pu... Remove this comment to see the full error message
 				citationData={pubData.citationData}
+				// @ts-expect-error ts-migrate(2339) FIXME: Property 'citationStyle' does not exist on type 'p... Remove this comment to see the full error message
 				citationStyle={pubData.citationStyle}
 				onClose={() => setCitationModalOpen(false)}
 			/>

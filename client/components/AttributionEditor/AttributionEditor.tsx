@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { apiFetch } from 'client/utils/apiFetch';
 
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/attribution' or its corr... Remove this comment to see the full error message
 import attributionType from 'types/attribution';
 import UserAutocomplete from 'components/UserAutocomplete/UserAutocomplete';
 
@@ -168,7 +167,7 @@ class AttributionEditor extends Component<Props> {
 							onSelect={this.handleAttributionAdd}
 							allowCustomUser={true}
 							placeholder="Add new person..."
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'any[] & ne... Remove this comment to see the full error message
+							// @ts-expect-error ts-migrate(2322) FIXME: Type '(string | undefined)[]' is not assignable to... Remove this comment to see the full error message
 							usedUserIds={attributions
 								.map((item) => {
 									return item.user && item.user.id;
@@ -217,9 +216,9 @@ class AttributionEditor extends Component<Props> {
 					sortedAttributions.map((attribution) => {
 						return (
 							<AttributionRow
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								key={attribution.id}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'attribution' is not assignable to type 'neve... Remove this comment to see the full error message
 								attribution={attribution}
 								// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 								canEdit={false}

@@ -15,7 +15,9 @@ const defaultProps = {
 	hideContributors: true,
 };
 
-type Props = (OwnProps & typeof defaultProps) & Omit<BylineProps, 'contributors'>;
+type OwnPubBylineProps = (OwnProps & typeof defaultProps) & Omit<BylineProps, 'contributors'>;
+
+type Props = OwnPubBylineProps & typeof defaultProps;
 
 const PubByline = (props: Props) => {
 	const { pubData, hideAuthors = false, hideContributors = false } = props;

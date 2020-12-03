@@ -1,7 +1,8 @@
+import path from 'path';
 import React from 'react';
 import App from 'containers/App/App';
 
-const manifest = require('../dist/manifest.json');
+const manifest = require(path.join(process.cwd(), 'dist/client/manifest.json'));
 
 type OwnProps = {
 	chunkName: string;

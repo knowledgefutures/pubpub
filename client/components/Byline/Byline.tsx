@@ -33,7 +33,9 @@ const joinAndFlattenArrays = (...arrays) =>
 		return [...acc, next];
 	}, []);
 
-type PrivateBylineProps = BylineProps;
+type OwnPrivateBylineProps = BylineProps;
+
+type PrivateBylineProps = OwnPrivateBylineProps;
 
 const Byline = (props: PrivateBylineProps) => {
 	const {

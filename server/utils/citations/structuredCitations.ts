@@ -103,10 +103,9 @@ export const getStructuredCitationsForPub = (pubData, pubDocument) => {
 
 	const { footnotes, citations } = initialDoc
 		? getNotes(pubDocument)
-		: { footnotes: [], citations: [] };
+		: { footnotes: [] as any[], citations: [] };
 
 	const structuredValuesInDoc = [
-		// @ts-expect-error ts-migrate(2569) FIXME: Type 'Set<any>' is not an array type or a string t... Remove this comment to see the full error message
 		...new Set([...footnotes, ...citations].map((note) => note.structuredValue)),
 	];
 	return getStructuredCitations(structuredValuesInDoc, citationStyle, citationInlineStyle);

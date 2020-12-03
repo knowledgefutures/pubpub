@@ -1,6 +1,5 @@
 import React from 'react';
 
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/pub' or its correspondin... Remove this comment to see the full error message
 import { pubDataProps } from 'types/pub';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';

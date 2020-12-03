@@ -1,6 +1,18 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "noEmit": false
-  }
+    "noEmit": false,
+    "outDir": "../dist/server",
+    "incremental": true
+  },
+  "include": [
+    "**/*",
+    "../client/**/*",
+    "../utils/**/*"
+  ],
+  "exclude": [
+    "../**/*.test.ts",
+    "../**/*.test.js",
+    "../**/*.stories.tsx"
+  ]
 }

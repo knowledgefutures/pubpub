@@ -25,7 +25,7 @@ module.exports = {
 	devtool: '#source-map',
 	output: {
 		filename: '[name].[chunkhash].js',
-		path: resolve(__dirname, '../../dist'),
+		path: resolve(__dirname, '../../dist/client'),
 		publicPath: '/',
 	},
 	module: {
@@ -38,7 +38,7 @@ module.exports = {
 			{
 				test: /\.(js|jsx|ts|tsx)$/,
 				include: [resolve(__dirname, '../'), resolve(__dirname, '../../utils')],
-				use: 'babel-loader',
+				use: 'ts-loader',
 			},
 			{
 				test: /\.scss$/,

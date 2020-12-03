@@ -14,7 +14,6 @@ import {
 } from '@blueprintjs/core';
 
 import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/collection' or its corre... Remove this comment to see the full error message
 import collectionType from 'types/collection';
 import { enumerateMetadataFields, normalizeMetadataToKind } from 'utils/collections/metadata';
 import { getSchemaForKind } from 'utils/collections/schemas';
@@ -52,6 +51,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 
 	allFieldsValidate() {
 		const {
+			// @ts-expect-error ts-migrate(2339) FIXME: Property 'kind' does not exist on type 'collection... Remove this comment to see the full error message
 			collection: { kind },
 		} = this.props;
 		const { metadata } = this.state;
@@ -61,6 +61,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 
 	normalizeMetadata(metadata) {
 		const { collection, communityData } = this.props;
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'kind' does not exist on type 'collection... Remove this comment to see the full error message
 		return normalizeMetadataToKind(metadata, collection.kind, {
 			community: communityData,
 			collection: collection,
@@ -135,6 +136,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 		const { collection } = this.props;
 		const { isGettingDoi } = this.state;
 
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'doi' does not exist on type 'collection'... Remove this comment to see the full error message
 		return collection.doi ? (
 			<Button
 				icon="link"
@@ -206,6 +208,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 	renderFields() {
 		const { collection } = this.props;
 		const { metadata } = this.state;
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'kind' does not exist on type 'collection... Remove this comment to see the full error message
 		const { kind } = collection;
 		const fields = enumerateMetadataFields(metadata, kind);
 		if (fields.length === 0) {

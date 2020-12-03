@@ -1,7 +1,6 @@
 import React from 'react';
 import queryString from 'query-string';
 
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/base' or its correspondi... Remove this comment to see the full error message
 import { loginDataProps } from 'types/base';
 import { getRandomColor } from 'utils/colors';
 import { getPubPageTitle } from 'utils/pubPageTitle';
@@ -165,8 +164,11 @@ class PubSyncManager extends React.Component<Props, State> {
 	componentDidMount() {
 		const rootKey = `pub-${this.props.pubData.id}`;
 		const branchKey = `branch-${this.props.pubData.activeBranch.id}`;
-		// @ts-expect-error ts-migrate(2569) FIXME: Type 'Reference[] | null' is not an array type or ... Remove this comment to see the full error message
-		initFirebase(rootKey, this.props.pubData.firebaseToken).then(([rootRef, connectionRef]) => {
+		initFirebase(rootKey, this.props.pubData.firebaseToken).then((firebaseRefs) => {
+			if (!firebaseRefs) {
+				return;
+			}
+			const [rootRef, connectionRef] = firebaseRefs;
 			this.setState(
 				{
 					firebaseRootRef: rootRef,

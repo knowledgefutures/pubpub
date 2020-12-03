@@ -58,7 +58,6 @@ export const createPub = async ({ communityId, collectionIds, slug, ...restArgs 
 	const allCollectionIds = [...(defaultPubCollections || []), ...(collectionIds || [])];
 
 	const createCollectionPubs = Bluebird.each(
-		// @ts-expect-error ts-migrate(2569) FIXME: Type 'Set<any>' is not an array type or a string t... Remove this comment to see the full error message
 		[...new Set(allCollectionIds)].filter((x) => x),
 		async (collectionIdToAdd) => {
 			// defaultPubCollections isn't constrained by the database in any way and might contain IDs

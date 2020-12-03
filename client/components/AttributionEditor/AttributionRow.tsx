@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { Button, Icon, Tag } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/attribution' or its corr... Remove this comment to see the full error message
 import attributionType from 'types/attribution';
 
 import AttributionDetailControls from './AttributionDetailControls';

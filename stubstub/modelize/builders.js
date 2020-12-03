@@ -91,8 +91,13 @@ builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 builders.Release = (args) => {
 	// The Release model requires these, but it doesn't currently associate them, so it's safe
 	// to create random UUIDs for testing purposes.
-	const { userId = uuid.v4(), branchId = uuid.v4(), ...restArgs } = args;
-	return Release.create({ userId: userId, branchId: branchId, ...restArgs });
+	const { userId = uuid.v4(), branchId = uuid.v4(), historyKey = 0, ...restArgs } = args;
+	return Release.create({
+		userId: userId,
+		branchId: branchId,
+		historyKey: historyKey,
+		...restArgs,
+	});
 };
 
 builders.CollectionPub = createCollectionPub;

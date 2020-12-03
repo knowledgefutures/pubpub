@@ -84,7 +84,7 @@ it('will create a Release for admins of a Pub', async () => {
 			}),
 		)
 		.expect(201);
-	expect(release.sourceBranchKey).toEqual(0);
+	expect(release.historyKey).toEqual(0);
 });
 
 it('will create a Release for admins of a Pub', async () => {
@@ -101,7 +101,7 @@ it('will create a Release for admins of a Pub', async () => {
 			}),
 		)
 		.expect(201);
-	expect(release.sourceBranchKey).toEqual(0);
+	expect(release.historyKey).toEqual(0);
 });
 
 it('will not create duplicate Releases for the same draft-key of a Pub', async () => {

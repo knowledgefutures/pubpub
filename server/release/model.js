@@ -11,5 +11,6 @@ export default (sequelize, dataTypes) => {
 		/* Todo: We should be able to deprecate the following source ids */
 		sourceBranchId: { type: dataTypes.UUID },
 		sourceBranchKey: { type: dataTypes.INTEGER },
+		historyKey: { type: dataTypes.INTEGER, allowNull: false },
 	});
 };

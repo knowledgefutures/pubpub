@@ -55,6 +55,7 @@ export const createRelease = async ({
 		noteText: noteText,
 		sourceBranchId: draftBranch.id,
 		sourceBranchKey: draftKey,
+		historyKey: draftKey,
 		branchId: publicBranch.id,
 		branchKey: mergeKey,
 		userId: userId,

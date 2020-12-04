@@ -55,7 +55,7 @@ module.exports = async () => {
 	const slowdance = new Slowdance();
 	slowdance.start();
 	await forEach(
-		await Pub.findAll({ order: [['createdAt', 'ASC']] }),
+		await Pub.findAll({ order: [['createdAt', 'DESC']] }),
 		(pub) =>
 			slowdance
 				.wrapPromise(handleReleasesForPub(pub), {

@@ -3,6 +3,8 @@ import { setup, teardown, login, modelize } from 'stubstub';
 import { CollectionPub } from 'server/models';
 import { createCollectionPub } from '../queries';
 
+type CreateCollectionPubOptions = Parameters<typeof createCollectionPub>[0];
+
 const models = modelize`
 	Community community {
 		Member {
@@ -189,7 +191,10 @@ it('handles ranks correctly', async () => {
 it('updates reasonable values on a collectionPub', async () => {
 	const { admin, pub, issue } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
-	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
+	const collectionPub = await createCollectionPub({
+		pubId: pub.id,
+		collectionId: issue.id,
+	} as CreateCollectionPubOptions);
 	const agent = await login(admin);
 	await agent
 		.put('/api/collectionPubs')
@@ -227,7 +232,10 @@ it('lets Pub managers update pubRanks', async () => {
 it('lets a user with appropriate permissions destroy a collectionPub', async () => {
 	const { admin, community, pub, issue } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
-	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
+	const collectionPub = await createCollectionPub({
+		pubId: pub.id,
+		collectionId: issue.id,
+	} as CreateCollectionPubOptions);
 	const agent = await login(admin);
 	await agent
 		.delete('/api/collectionPubs')
@@ -245,7 +253,10 @@ it('lets a user with appropriate permissions destroy a collectionPub', async () 
 it('does not let a user with appropriate permissions destroy a collectionPub', async () => {
 	const { pubAdmin, community, pub, issue } = models;
 	await CollectionPub.destroy({ where: { pubId: pub.id } });
-	const collectionPub = await createCollectionPub({ pubId: pub.id, collectionId: issue.id });
+	const collectionPub = await createCollectionPub({
+		pubId: pub.id,
+		collectionId: issue.id,
+	} as CreateCollectionPubOptions);
 	const agent = await login(pubAdmin);
 	await agent
 		.delete('/api/collectionPubs')
@@ -262,7 +273,7 @@ it('lets a user destroy a collectionPub for their Pub in an unrestricted Collect
 	const collectionPub = await createCollectionPub({
 		pubId: pub.id,
 		collectionId: unrestricted.id,
-	});
+	} as CreateCollectionPubOptions);
 	const agent = await login(pubAdmin);
 	await agent
 		.delete('/api/collectionPubs')

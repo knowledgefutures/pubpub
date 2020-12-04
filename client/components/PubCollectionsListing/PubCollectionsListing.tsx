@@ -79,6 +79,7 @@ const PubCollectionsListing = (props: Props) => {
 	const handleDragEnd = (result: DropResult) => {
 		const {
 			source: { index: sourceIndex },
+			// @ts-expect-error ts-migrate(2339) FIXME: Property 'index' does not exist on type 'Draggable... Remove this comment to see the full error message
 			destination: { index: destinationIndex },
 		} = result;
 		const nextCollectionPubs = [...collectionPubs];

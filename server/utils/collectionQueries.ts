@@ -29,6 +29,7 @@ export const rerankCollection = async (collectionId) => {
 	const ranks = generateRanks(orderedCollectionPubs.length);
 	await Promise.all(
 		orderedCollectionPubs.map((collectionPub, index) =>
+			// @ts-expect-error ts-migrate(2571) FIXME: Object is of type 'unknown'.
 			CollectionPub.update({ rank: ranks[index] }, { where: { id: collectionPub.id } }),
 		),
 	);

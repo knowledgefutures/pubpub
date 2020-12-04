@@ -3,5 +3,10 @@
 	"compilerOptions": {
 		"target": "es5",
 		"noEmit": false
-	}
+	},
+	"include": [
+		"**/*",
+		"../types/**/*",
+		"../utils/**/*"
+	]
 }

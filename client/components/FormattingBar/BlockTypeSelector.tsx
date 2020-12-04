@@ -73,6 +73,7 @@ const BlockTypeSelector = React.forwardRef<any, Props>((props, ref) => {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'hideInMenu' does not exist on type '{ ke... Remove this comment to see the full error message
 			commands={blockTypes.filter((type) => !type.hideInMenu)}
 			disclosure={renderDisclosure}
+			// @ts-expect-error ts-migrate(2741) FIXME: Property 'view' is missing in type '{ menuItems?: ... Remove this comment to see the full error message
 			editorChangeObject={editorChangeObject}
 			{...restProps}
 		/>

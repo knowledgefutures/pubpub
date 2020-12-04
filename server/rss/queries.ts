@@ -228,6 +228,7 @@ export const getFeedItemForPub = (pubData, communityData) => {
 		url: pubUrl(communityData, pubData),
 		guid: id,
 		date: getPubPublishedDate(pubData),
+		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 		categories: sortByPrimaryStatus(collectionPubs).map(({ collection }) => collection.title),
 		custom_elements: [
 			...getAllPubContributors(pubData, false, true).map((attribution) => {

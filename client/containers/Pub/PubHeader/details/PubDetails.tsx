@@ -1,42 +1,39 @@
 import React from 'react';
 import dateFormat from 'dateformat';
 
-import { pubDataProps } from 'types/pub';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate, getPubUpdatedDate, getPubCreatedDate } from 'utils/pub/pubDates';
 import { ClickToCopyButton, ContributorsList } from 'components';
 import { getAllPubContributors } from 'utils/contributors';
 import { usePageContext } from 'utils/hooks';
 
+import { Pub } from 'utils/types';
 import SmallHeaderButton from '../SmallHeaderButton';
 import CitationsPreview from '../CitationsPreview';
 
 require('./pubDetails.scss');
 
 type Props = {
-	pubData: pubDataProps;
+	pubData: Pub;
 	onCloseHeaderDetails: (...args: any[]) => any;
 	communityData: {};
 };
 
 const PubDetails = (props: Props) => {
 	const { communityData, onCloseHeaderDetails, pubData } = props;
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'collectionPubs' does not exist on type '... Remove this comment to see the full error message
 	const { collectionPubs } = pubData;
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'pubDataProps' is not assignable ... Remove this comment to see the full error message
 	const contributors = getAllPubContributors(pubData);
 	const { scopeData } = usePageContext();
 	const { canView } = scopeData.activePermissions;
 
 	const createdAt = getPubCreatedDate(pubData);
 	const publishedAt = getPubPublishedDate(pubData);
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'activeBranch' does not exist on type 'pu... Remove this comment to see the full error message
+	// @ts-expect-error ts-migrate(2339) FIXME: Property 'activeBranch' does not exist on type 'Pu... Remove this comment to see the full error message
 	const updatedAt = getPubUpdatedDate({ pub: pubData, branch: pubData.activeBranch });
 	const shouldShowUpdatedDate = updatedAt && updatedAt !== publishedAt;
 
 	return (
 		<div className="pub-details-component">
-			{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'title' does not exist on type 'pubDataPr... Remove this comment to see the full error message */}
 			<h3 className="pub-title">{pubData.title}</h3>
 			<SmallHeaderButton
 				className="mobile-close-details-button"
@@ -73,7 +70,6 @@ const PubDetails = (props: Props) => {
 					)}
 				</div>
 				<div className="section citation-and-doi">
-					{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'doi' does not exist on type 'pubDataProp... Remove this comment to see the full error message */}
 					{pubData.doi && (
 						<React.Fragment>
 							<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
@@ -86,7 +82,6 @@ const PubDetails = (props: Props) => {
 								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								beforeCopyPrompt="Copy doi.org link"
 							>
-								{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'doi' does not exist on type 'pubDataProp... Remove this comment to see the full error message */}
 								{pubData.doi}
 							</ClickToCopyButton>
 						</React.Fragment>
@@ -95,14 +90,17 @@ const PubDetails = (props: Props) => {
 				</div>
 				<div className="section collections">
 					<h6 className="pub-header-themed-secondary">
+						{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 						Appears in Collections ({collectionPubs.length})
 					</h6>
 					<div className="collection-list">
+						{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 						{collectionPubs.length === 0 && (
 							<i className="collection-list-entry">
 								This pub doesn't belong to any collections.
 							</i>
 						)}
+						{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 						{collectionPubs.map((collectionPub) => {
 							const { collection } = collectionPub;
 							if (collection) {

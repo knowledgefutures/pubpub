@@ -149,7 +149,7 @@ export default ({
 				as: 'collectionPubs',
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				separate: true,
-				// @ts-expect-error
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				order: [['pubRank', 'ASC']],
 				include: [
 					{

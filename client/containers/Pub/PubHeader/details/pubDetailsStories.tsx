@@ -11,7 +11,7 @@ storiesOf('containers/Pub/PubDetails', module).add('default', () => (
 		}}
 		pubData={{
 			...pubData,
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ attributions: ({ id: string; name: string;... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type '({ id: string; name: string; avatar: null; t... Remove this comment to see the full error message
 			attributions: [
 				...pubData.attributions,
 				...pubData.attributions,

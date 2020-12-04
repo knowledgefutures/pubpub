@@ -60,6 +60,7 @@ const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
 		<Droppable
 			type={droppableType}
 			droppableId={droppableId}
+			// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 			renderClone={renderDragElementInPortal ? renderItem : null}
 		>
 			{(droppableProvided) => (
@@ -78,6 +79,7 @@ const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
 							<Draggable
 								draggableId={id}
 								index={index}
+								// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 								type={droppableType}
 								key={id}
 								isDragDisabled={disabled}

@@ -202,7 +202,8 @@
 		"node": "12.13.0"
 	},
 	"devDependencies": {
-		"@types/jest": "^26.0.15",
+		"@types/jest": "^26.0.16",
+		"@types/react-beautiful-dnd": "^13.0.0",
 		"cpy-cli": "^3.1.1",
 		"eslint": "^7.7.0",
 		"eslint-config-airbnb": "^18.2.0",

@@ -183,13 +183,13 @@ class AttributionEditor extends Component<Props> {
 								withDragHandles={true}
 								renderItem={(attribution, dragHandleProps, isDragging) => (
 									<AttributionRow
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+										// @ts-expect-error ts-migrate(2322) FIXME: Type 'attribution' is not assignable to type 'neve... Remove this comment to see the full error message
 										attribution={attribution}
 										// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 										canEdit={true}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+										// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 										isDragging={isDragging}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
+										// @ts-expect-error ts-migrate(2322) FIXME: Type '{}' is not assignable to type 'never'.
 										dragHandleProps={dragHandleProps}
 										// @ts-expect-error ts-migrate(2322) FIXME: Type '(attributionId: any) => void' is not assigna... Remove this comment to see the full error message
 										onAttributionDelete={this.handleAttributionDelete}

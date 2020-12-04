@@ -89,6 +89,7 @@ getScopeElements = async (scopeInputs) => {
 	if (activeTargetType === 'pub') {
 		activePub = await Pub.findOne({
 			where: stripFalsyIdsFromQuery({
+				// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
 				communityId: activeCommunity && activeCommunity.id,
 				slug: pubSlug,
 				id: pubId,
@@ -133,6 +134,7 @@ getScopeElements = async (scopeInputs) => {
 		activeCollection = await getCollection({
 			collectionSlug: collectionSlug,
 			collectionId: collectionId,
+			// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
 			communityId: activeCommunity && activeCommunity.id,
 		});
 		activeTarget = activeCollection;

@@ -10,6 +10,9 @@ const handleReleasesForPub = async (pub) => {
 		where: { pubId: pub.id },
 		order: [['createdAt', 'ASC']],
 	});
+	if (releases.every((r) => r.historyKeyValidation === 'validated')) {
+		return;
+	}
 	const branches = await Branch.findAll({ where: { pubId: pub.id } });
 	const draftBranch = branches.find((br) => br.title === 'draft');
 	const publicBranch = branches.find((br) => br.title === 'public');

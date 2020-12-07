@@ -18,7 +18,7 @@
 		"build-server": "tsc -p server/tsconfig.json",
 		"watch-server": "npm run build-server -- -w",
 		"postbuild-server": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' ../dist/server/server/ --cwd=server/ --parents && npm run copy-worker-assets",
-		"copy-worker-assets": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' ../dist/server/workers/ --cwd=workers/ --parents",
+		"copy-worker-assets": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' '!**/__tests__' ../dist/server/workers/ --cwd=workers/ --parents",
 		"prod": "npm run build-prod && npm run api-prod",
 		"lint": "eslint .",
 		"check": "tsc --noEmit",

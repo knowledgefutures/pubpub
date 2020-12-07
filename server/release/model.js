@@ -12,6 +12,6 @@ export default (sequelize, dataTypes) => {
 		sourceBranchId: { type: dataTypes.UUID },
 		sourceBranchKey: { type: dataTypes.INTEGER },
 		historyKey: { type: dataTypes.INTEGER, allowNull: false },
-		historyKeyValidation: { type: dataTypes.TEXT },
+		historyKeyMissing: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 	});
 };

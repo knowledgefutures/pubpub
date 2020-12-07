@@ -88,7 +88,7 @@ const InputField = function(props) {
 							defaultValue={props.defaultValue}
 							onChange={props.onChange}
 							onBlur={props.onBlur}
-							// @ts-expect-error ts-migrate(2322) FIXME: Property 'type' does not exist on type 'DetailedHT... Remove this comment to see the full error message
+							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ id: string; className: string; disabled: a... Remove this comment to see the full error message
 							type={props.type}
 							dir="auto"
 							ref={props.inputRef}

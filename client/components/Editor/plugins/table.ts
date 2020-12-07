@@ -1,7 +1,7 @@
 import { keymap } from 'prosemirror-keymap';
 import { DOMSerializer } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
-// @ts-ignore
+// @ts-expect-error ts-migrate(2305) FIXME: Module '"../../../../node_modules/prosemirror-tabl... Remove this comment to see the full error message
 import { columnResizing, tableEditing, goToNextCell, TableView } from 'prosemirror-tables';
 
 import { buildLabel } from '../utils';
@@ -71,8 +71,8 @@ export default (schema, props) => {
 			handleWidth does appear in the documentation, but is initialized in the code:
 			https://github.com/ProseMirror/prosemirror-tables/blob/master/src/columnresizing.js#L10
 		*/
-		// @ts-expect-error The type definitions are incorrect for the View option,
 		// according to the docs, View accepts a NodeView constructor, not an instance.
+		// @ts-expect-error ts-migrate(2560) FIXME: Value of type 'typeof PubTableView' has no propert... Remove this comment to see the full error message
 		return [columnResizing({ handleWidth: -1, View: PubTableView })];
 	}
 
@@ -83,7 +83,7 @@ export default (schema, props) => {
 
 	return [
 		columnResizing({
-			// @ts-expect-error See @ts-expect-error comment above.
+			// @ts-expect-error ts-migrate(2560) FIXME: Value of type 'typeof PubTableView' has no propert... Remove this comment to see the full error message
 			View: PubTableView,
 		}),
 		tableEditing(),

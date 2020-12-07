@@ -68,7 +68,6 @@ class ControlsCitation extends Component<Props, State> {
 					<div className="input wide">
 						{hasRenderedContent && (
 							<PubNoteContent
-								// @ts-expect-error ts-migrate(2322) FIXME: Property 'structured' does not exist on type 'Intr... Remove this comment to see the full error message
 								structured={renderContent.html}
 								unstructured={renderContent.unstructuredValue}
 							/>

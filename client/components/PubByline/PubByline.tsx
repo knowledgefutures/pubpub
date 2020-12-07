@@ -4,16 +4,20 @@ import Byline, { BylineProps } from 'components/Byline/Byline';
 import { getAllPubContributors } from 'utils/contributors';
 import { Pub } from 'utils/types';
 
-type Props = {
+type OwnProps = {
 	pubData: Pub;
 	hideAuthors?: boolean;
 	hideContributors?: boolean;
-} & Omit<BylineProps, 'contributors'>;
+};
 
 const defaultProps = {
 	hideAuthors: false,
 	hideContributors: true,
 };
+
+type OwnPubBylineProps = (OwnProps & typeof defaultProps) & Omit<BylineProps, 'contributors'>;
+
+type Props = OwnPubBylineProps & typeof defaultProps;
 
 const PubByline = (props: Props) => {
 	const { pubData, hideAuthors = false, hideContributors = false } = props;

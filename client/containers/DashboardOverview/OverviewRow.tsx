@@ -89,7 +89,7 @@ const OverviewRow = (props: Props) => {
 			<React.Fragment>
 				{label}
 				{label && hasAuthors && ' • '}
-				{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message */}
+				{/* @ts-expect-error ts-migrate(2322) FIXME: Type '{ pubData: any; linkToAuthors: boolean; byli... Remove this comment to see the full error message */}
 				<PubByline pubData={content} linkToAuthors={false} bylinePrefix={null} />
 			</React.Fragment>
 		);

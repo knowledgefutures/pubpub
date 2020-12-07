@@ -206,7 +206,7 @@ const UserCreate = (props: Props) => {
 							<p>Click below to restart the signup process.</p>
 						</div>
 					}
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'visual' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; description: Element; visua... Remove this comment to see the full error message
 					visual="error"
 					action={
 						<a href="/signup" className="bp3-button">

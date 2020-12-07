@@ -1,16 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Button } from '@blueprintjs/core';
 
 import CommandMenu from './CommandMenu';
 
 require('./blockTypeSelector.scss');
 
-const propTypes = {
-	isSmall: PropTypes.bool.isRequired,
-	editorChangeObject: PropTypes.shape({
-		menuItems: PropTypes.arrayOf(PropTypes.shape({})),
-	}).isRequired,
+type Props = {
+	isSmall: boolean;
+	editorChangeObject: {
+		menuItems?: {}[];
+	};
 };
 
 const paragraphBlockType = {
@@ -38,16 +37,17 @@ const blockTypes = [
 	},
 ];
 
-const BlockTypeSelector = React.forwardRef((props, ref) => {
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'editorChangeObject' does not exist on ty... Remove this comment to see the full error message
+const BlockTypeSelector = React.forwardRef<any, Props>((props, ref) => {
 	const { editorChangeObject, isSmall, ...restProps } = props;
 	const { menuItems = [] } = editorChangeObject;
 
 	// eslint-disable-next-line react/prop-types
 	const renderDisclosure = ({ ref: innerRef, ...disclosureProps }) => {
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'isActive' does not exist on type '{}'.
 		const activeMenuItem = menuItems.find((item) => item.isActive);
 		const activeBlockType =
 			activeMenuItem &&
+			// @ts-expect-error ts-migrate(2339) FIXME: Property 'title' does not exist on type '{}'.
 			blockTypes.find((blockType) => blockType.key === activeMenuItem.title);
 		const effectiveBlockType = activeBlockType || paragraphBlockType;
 		return (
@@ -73,12 +73,10 @@ const BlockTypeSelector = React.forwardRef((props, ref) => {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'hideInMenu' does not exist on type '{ ke... Remove this comment to see the full error message
 			commands={blockTypes.filter((type) => !type.hideInMenu)}
 			disclosure={renderDisclosure}
+			// @ts-expect-error ts-migrate(2741) FIXME: Property 'view' is missing in type '{ menuItems?: ... Remove this comment to see the full error message
 			editorChangeObject={editorChangeObject}
 			{...restProps}
 		/>
 	);
 });
-
-// @ts-expect-error ts-migrate(2559) FIXME: Type '{ isSmall: Validator<boolean>; editorChangeO... Remove this comment to see the full error message
-BlockTypeSelector.propTypes = propTypes;
 export default BlockTypeSelector;

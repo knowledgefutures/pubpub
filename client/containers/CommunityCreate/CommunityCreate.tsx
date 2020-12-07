@@ -68,7 +68,7 @@ const CommunityCreate = () => {
 				{!loginData.id && (
 					<NonIdealState
 						title="To create your community, create an account or login."
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'visual' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; visual: string; action: Ele... Remove this comment to see the full error message
 						visual="error"
 						action={
 							<a href="/login?redirect=/community/create" className="bp3-button">

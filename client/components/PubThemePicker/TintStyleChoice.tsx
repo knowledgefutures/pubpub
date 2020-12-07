@@ -1,13 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
-const propTypes = {
-	color: PropTypes.string.isRequired,
-	label: PropTypes.node.isRequired,
-	onClick: PropTypes.func,
-	selected: PropTypes.bool,
+type Props = {
+	color: string;
+	label: React.ReactNode;
+	onClick?: (...args: any[]) => any;
+	selected?: boolean;
 };
 
 const defaultProps = {
@@ -15,10 +14,9 @@ const defaultProps = {
 	selected: false,
 };
 
-// @ts-expect-error ts-migrate(2339) FIXME: Property 'label' does not exist on type '{ childre... Remove this comment to see the full error message
-const TintStyleChoice = React.forwardRef(({ label, onClick, color, selected }, ref) => {
+const TintStyleChoice = React.forwardRef<any, Props>(({ label, onClick, color, selected }, ref) => {
 	return (
-		// @ts-expect-error ts-migrate(2769) FIXME: Type 'unknown' is not assignable to type 'HTMLButt... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 		<Button className="tint-choice" onClick={onClick} ref={ref} title={label}>
 			<div className="example">
 				<div className="transparency" />
@@ -31,9 +29,6 @@ const TintStyleChoice = React.forwardRef(({ label, onClick, color, selected }, r
 		</Button>
 	);
 });
-
-// @ts-expect-error ts-migrate(2559) FIXME: Type '{ color: Validator<string>; label: Validator... Remove this comment to see the full error message
-TintStyleChoice.propTypes = propTypes;
-// @ts-expect-error ts-migrate(2559) FIXME: Type '{ onClick: null; selected: boolean; }' has n... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(2322) FIXME: Type '{ onClick: null; selected: boolean; }' is no... Remove this comment to see the full error message
 TintStyleChoice.defaultProps = defaultProps;
 export default TintStyleChoice;

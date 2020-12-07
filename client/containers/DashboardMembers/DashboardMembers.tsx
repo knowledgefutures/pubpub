@@ -60,7 +60,7 @@ const DashboardMembers = (props: Props) => {
 				{membersData.invitations.map((invitation) => {
 					return (
 						<MemberRow
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
+							// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 							isInvitation={true}
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 							memberData={invitation}

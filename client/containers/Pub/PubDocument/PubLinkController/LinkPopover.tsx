@@ -32,7 +32,7 @@ const LinkPopover = (props: HeaderPopoverProps) => {
 
 	return (
 		<div
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'HTMLDi... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
 			ref={popoverRef}
 			style={{ position: 'absolute', top: '-9999px' }}
 			className="click-to-copy"
@@ -40,6 +40,7 @@ const LinkPopover = (props: HeaderPopoverProps) => {
 			<ClickToCopyButton
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				copyString={`https://${locationData.hostname}${locationData.path}#${parent.id}`}
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				beforeCopyPrompt="Copy link to this item"
 			/>
 		</div>

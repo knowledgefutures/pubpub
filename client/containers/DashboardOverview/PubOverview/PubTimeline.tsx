@@ -47,7 +47,7 @@ const PubTimeline = (props: Props) => {
 
 	const draftItem = (canView || canViewDraft) && (
 		<TimelineItem
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
+			// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 			large
 			// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 			hollow={hasDraftContent}
@@ -69,7 +69,7 @@ const PubTimeline = (props: Props) => {
 	const renderReleaseItem = (release, number, isLatest = false) => {
 		return (
 			<TimelineItem
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				hollow
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				large={isLatest}
@@ -119,7 +119,7 @@ const PubTimeline = (props: Props) => {
 
 		return (
 			<TimelineItem
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				large
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				icon="document-share"
@@ -148,16 +148,16 @@ const PubTimeline = (props: Props) => {
 			{draftItem}
 			{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 			{latestRelease && renderReleaseItem(latestRelease, releases.length, true)}
-			{/* @ts-expect-error ts-migrate(2786) FIXME: Type 'undefined' is not assignable to type 'Elemen... Remove this comment to see the full error message */}
+			{/* @ts-expect-error ts-migrate(2786) FIXME: 'TimelineCondenser' cannot be used as a JSX compon... Remove this comment to see the full error message */}
 			<TimelineCondenser shownItemsLimit={4}>
 				{olderReleases
 					.map((release, index) => renderReleaseItem(release, index + 1))
 					.reverse()}
 			</TimelineCondenser>
 			<TimelineItem
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				hollow
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'never'.
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 				large
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 				title="Pub created"

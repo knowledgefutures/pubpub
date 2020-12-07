@@ -14,7 +14,7 @@ type notePropType = {
 	count?: number;
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ structuredValue: Re... Remove this comment to see the full error message
 const notePropType: PropTypes.Requireable<notePropType> = PropTypes.shape({
 	structuredValue: PropTypes.string,
 	unstructuredValue: PropTypes.string,
@@ -74,7 +74,7 @@ const Note = (props: NoteProps) => {
 			if (lastChild) {
 				const newReturnLinkTarget = document.createElement('span');
 				lastChild.appendChild(newReturnLinkTarget);
-				// @ts-expect-error ts-migrate(2345) FIXME: Type 'HTMLSpanElement' provides no match for the s... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'HTMLSpanElement' is not assignab... Remove this comment to see the full error message
 				setReturnLinkTarget(newReturnLinkTarget);
 			}
 		}
@@ -87,7 +87,6 @@ const Note = (props: NoteProps) => {
 			<div className="inner">
 				<PubNoteContent
 					ref={contentRef}
-					// @ts-expect-error ts-migrate(2322) FIXME: Property 'structured' does not exist on type 'Intr... Remove this comment to see the full error message
 					structured={citation && citation.html}
 					unstructured={note.unstructuredValue}
 				/>

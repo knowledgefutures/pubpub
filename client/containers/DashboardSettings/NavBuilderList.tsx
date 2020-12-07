@@ -34,6 +34,7 @@ const NavBuilderList = (props: Props) => {
 								key={`draggable-${itemId}-${id}`}
 								draggableId={`draggable-${itemId}-${id}`}
 								index={index}
+								// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 								type={id}
 							>
 								{(providedItem, snapshotItem) => (

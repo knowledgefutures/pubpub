@@ -75,7 +75,7 @@ const PubDiscussions = (props: Props) => {
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'mountClassName' does not exist on type '... Remove this comment to see the full error message
 					key={group.mountClassName}
 					pubData={pubData}
-					// @ts-expect-error
+					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ key: any; pubData: never; historyData: {};... Remove this comment to see the full error message
 					historyData={historyData}
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'discussions' does not exist on type 'nev... Remove this comment to see the full error message
 					discussions={group.discussions}
@@ -93,7 +93,7 @@ const PubDiscussions = (props: Props) => {
 	};
 
 	const renderBottomDiscussions = () => {
-		// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 		const filteredDiscussions = filterDiscussions(discussions);
 		const emptyMessage =
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'filter' does not exist on type 'never'.

@@ -35,7 +35,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 				<>
 					Published on{' '}
 					<DatePicker
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'small' does not exist on type 'Intrinsic... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ small: true; className: string; onSelectDa... Remove this comment to see the full error message
 						small
 						className="editable-date"
 						onSelectDate={(date) =>
@@ -53,7 +53,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 		return (
 			<RKButton
 				as="a"
-				// @ts-expect-error ts-migrate(2769) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 				tabIndex="0"
 				onKeyDown={(evt) => evt.key === 'Enter' && addPublicationDate()}
 				onClick={addPublicationDate}
@@ -78,7 +78,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 			bylineElement={
 				<TagInput
 					placeholder="Add authors for this publication"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'ReactNode... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | (string | { name?: string | undefin... Remove this comment to see the full error message
 					values={contributors}
 					onChange={(value) => onUpdateExternalPublication({ contributors: value })}
 				/>
@@ -90,7 +90,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 					targetId=""
 				/>,
 				renderPublicationDate(),
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never'.
+				// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: string; href: string; alt: strin... Remove this comment to see the full error message
 				<a href={url} alt={title}>
 					{getHostnameForUrl(url)}
 				</a>,

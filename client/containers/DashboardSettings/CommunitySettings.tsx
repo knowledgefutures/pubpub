@@ -234,7 +234,7 @@ const CommunitySettings = () => {
 											Recommended: 50*50px
 										</span>
 									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -259,7 +259,7 @@ const CommunitySettings = () => {
 											Recommended: 500*500px
 										</span>
 									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -305,7 +305,7 @@ const CommunitySettings = () => {
 										Recommended: ~40*150px
 									</span>
 								}
-								// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+								// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 								tooltipClassName="bp3-dark"
 							>
 								<Icon icon="info-sign" />
@@ -371,7 +371,7 @@ const CommunitySettings = () => {
 											Button will always be available to community admins.
 										</span>
 									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
@@ -482,7 +482,7 @@ const CommunitySettings = () => {
 												Recommended: ~200*750px
 											</span>
 										}
-										// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 										tooltipClassName="bp3-dark"
 									>
 										<Icon icon="info-sign" />
@@ -511,7 +511,7 @@ const CommunitySettings = () => {
 												Recommended: ~1200*800px
 											</span>
 										}
-										// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 										tooltipClassName="bp3-dark"
 									>
 										<Icon icon="info-sign" />
@@ -539,7 +539,7 @@ const CommunitySettings = () => {
 												Recommended: ~600*600px
 											</span>
 										}
-										// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 										tooltipClassName="bp3-dark"
 									>
 										<Icon icon="info-sign" />

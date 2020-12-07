@@ -68,7 +68,7 @@ const Avatar = function(props) {
 	}
 
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2322) FIXME: Type '{ width: any; minWidth: any; height: any; bo... Remove this comment to see the full error message
 		<div className={classNames(['avatar-component', className])} style={avatarStyle}>
 			{!avatar && <div>{initials}</div>}
 		</div>

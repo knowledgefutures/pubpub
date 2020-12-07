@@ -68,21 +68,18 @@ const ThemePicker = (props: Props) => {
 				<div className="title">Background tint</div>
 				<div className="section-row">
 					<TintStyleChoice
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'label' does not exist on type 'Intrinsic... Remove this comment to see the full error message
 						label="Light"
 						color={calculateBackgroundColor('light')}
 						onClick={() => updatePubBackgroundColor('light')}
 						selected={headerBackgroundColor === 'light'}
 					/>
 					<TintStyleChoice
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'label' does not exist on type 'Intrinsic... Remove this comment to see the full error message
 						label="Community accent color"
 						color={calculateBackgroundColor('community', communityData.accentColorDark)}
 						onClick={() => updatePubBackgroundColor('community')}
 						selected={headerBackgroundColor === 'community'}
 					/>
 					<TintStyleChoice
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'label' does not exist on type 'Intrinsic... Remove this comment to see the full error message
 						label="Dark"
 						color={calculateBackgroundColor('dark')}
 						onClick={() => updatePubBackgroundColor('dark')}
@@ -98,8 +95,8 @@ const ThemePicker = (props: Props) => {
 					>
 						{(color) => (
 							<TintStyleChoice
-								// @ts-expect-error ts-migrate(2322) FIXME: Property 'label' does not exist on type 'Intrinsic... Remove this comment to see the full error message
 								label="Custom"
+								// @ts-expect-error ts-migrate(2322) FIXME: Type '{ label: string; className: string; color: a... Remove this comment to see the full error message
 								className="light"
 								color={color}
 								selected={hasCustomBackgroundColor}
@@ -112,7 +109,6 @@ const ThemePicker = (props: Props) => {
 				<div className="title">Text style</div>
 				<div className="section-row">
 					<TextStyleChoice
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'pubData' does not exist on type 'Intrins... Remove this comment to see the full error message
 						pubData={pubData}
 						communityData={communityData}
 						label="Light"
@@ -121,7 +117,6 @@ const ThemePicker = (props: Props) => {
 						selected={!headerStyle || headerStyle === 'light'}
 					/>
 					<TextStyleChoice
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'pubData' does not exist on type 'Intrins... Remove this comment to see the full error message
 						pubData={pubData}
 						communityData={communityData}
 						label="Dark"
@@ -130,7 +125,6 @@ const ThemePicker = (props: Props) => {
 						selected={headerStyle === 'dark'}
 					/>
 					<TextStyleChoice
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'pubData' does not exist on type 'Intrins... Remove this comment to see the full error message
 						pubData={pubData}
 						communityData={communityData}
 						label="White Blocks"
@@ -139,7 +133,6 @@ const ThemePicker = (props: Props) => {
 						selected={headerStyle === 'white-blocks'}
 					/>
 					<TextStyleChoice
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'pubData' does not exist on type 'Intrins... Remove this comment to see the full error message
 						pubData={pubData}
 						communityData={communityData}
 						label="Black Blocks"

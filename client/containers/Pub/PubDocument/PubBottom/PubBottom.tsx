@@ -44,7 +44,7 @@ const PubBottom = (props: Props) => {
 				<ReadNextSection pubData={pubData} />
 				{footnotes.length > 0 && (
 					<SearchableNoteSection
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'title' does not exist on type 'Intrinsic... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; items: never[]; nodeType: s... Remove this comment to see the full error message
 						title="Footnotes"
 						items={footnotes}
 						nodeType="footnote"
@@ -58,7 +58,7 @@ const PubBottom = (props: Props) => {
 				)}
 				{citations.length > 0 && (
 					<SearchableNoteSection
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'title' does not exist on type 'Intrinsic... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; items: never[]; nodeType: s... Remove this comment to see the full error message
 						title="Citations"
 						items={citations}
 						nodeType="citation"

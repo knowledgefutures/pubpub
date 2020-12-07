@@ -119,7 +119,6 @@ const PubOverview = (props: Props) => {
 
 	return (
 		<DashboardFrame className="pub-overview-component" title="Overview">
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message */}
 			<PubHeaderBackground
 				className="pub-header-component"
 				pubData={pubData}

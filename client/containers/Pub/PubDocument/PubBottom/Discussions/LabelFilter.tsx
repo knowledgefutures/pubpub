@@ -208,7 +208,7 @@ class LabelFilter extends Component<Props, State> {
 														</span>
 													)
 												}
-												// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+												// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 												tooltipClassName="bp3-dark"
 												position={Position.TOP}
 											>
@@ -278,7 +278,7 @@ class LabelFilter extends Component<Props, State> {
 										position={Position.TOP_LEFT}
 										popoverClassName="color-select-popover"
 										transitionDuration={-1}
-										// @ts-expect-error ts-migrate(2322) FIXME: Property 'inline' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; inter... Remove this comment to see the full error message
 										inline={true}
 										inheritDarkTheme={false}
 									>
@@ -303,7 +303,7 @@ class LabelFilter extends Component<Props, State> {
 												<span>Only managers can apply this label.</span>
 											)
 										}
-										// @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message
+										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
 										tooltipClassName="bp3-dark"
 										position={Position.TOP}
 									>

@@ -145,7 +145,7 @@ const PubEdgeListing = (props: Props) => {
 	const back = useCallback(() => setIndex((i) => (i - 1 + length) % length), [length]);
 
 	const onFilterToggle = useCallback((filter) => {
-		// @ts-expect-error ts-migrate(2345) FIXME: Type 'void' is not assignable to type 'string[]'.
+		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '(currentFilters: string[]) => vo... Remove this comment to see the full error message
 		setFilters((currentFilters) => {
 			const filterIndex = currentFilters.indexOf(filter);
 

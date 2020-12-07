@@ -18,7 +18,7 @@ const ServerEditor = (props) => {
 	const rendered = useRef();
 	const schema = buildSchema();
 	const serverHtml = ReactDOMServer.renderToStaticMarkup(
-		// @ts-expect-error ts-migrate(2345) FIXME: Type '{ schema: any; doc: any; }' is missing the f... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ schema: Schema<"highlightQuote... Remove this comment to see the full error message
 		renderStatic({ schema: schema, doc: props.initialContent }),
 	);
 	if (!rendered.current) {

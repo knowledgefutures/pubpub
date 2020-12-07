@@ -252,7 +252,6 @@ const FormattingBar = (props: Props) => {
 			<Toolbar aria-label="Formatting toolbar" className="toolbar" {...toolbar}>
 				{showBlockTypes && (
 					<React.Fragment>
-						{/* @ts-expect-error ts-migrate(2769) FIXME: Type 'ForwardRefExoticComponent<RefAttributes<unkn... Remove this comment to see the full error message */}
 						<ToolbarItem
 							as={BlockTypeSelector}
 							isSmall={isSmall}

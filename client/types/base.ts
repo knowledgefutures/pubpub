@@ -15,7 +15,7 @@ type communityDataProps = {
 	title: string;
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type '{}'.
+// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ accentColorLight: V... Remove this comment to see the full error message
 const communityDataProps: PropTypes.Requireable<communityDataProps> = PropTypes.shape({
 	accentColorLight: PropTypes.string.isRequired,
 	accentColorDark: PropTypes.string.isRequired,
@@ -41,7 +41,7 @@ type loginDataProps = {
 	slug?: string;
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ avatar: Requireable... Remove this comment to see the full error message
 const loginDataProps: PropTypes.Requireable<loginDataProps> = PropTypes.shape({
 	avatar: PropTypes.string,
 	id: PropTypes.string,

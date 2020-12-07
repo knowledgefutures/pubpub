@@ -39,7 +39,7 @@ const TitleGroup = (props: Props) => {
 				>
 					{({ isOpen, onClose }) => (
 						<PubAttributionDialog
-							// @ts-expect-error ts-migrate(2322) FIXME: Property 'canEdit' does not exist on type 'Intrins... Remove this comment to see the full error message
+							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ canEdit: boolean; isOpen: any; onClose: an... Remove this comment to see the full error message
 							canEdit={true}
 							isOpen={isOpen}
 							onClose={onClose}

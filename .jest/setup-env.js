@@ -22,40 +22,40 @@ process.env.ALGOLIA_SEARCH_KEY = 'ooo';
 process.env.JWT_SIGNING_SECRET = 'shhhhhh';
 
 if (typeof document !== 'undefined') {
-    require("mutationobserver-shim");
+	require('mutationobserver-shim');
 
-    // ProseMirror uses document.getSelection, which is not polyfilled by JSDOM.
-    document.getSelection = document.getSelection || function() {
-        return {
-            focusNode: null,
-            anchorNode: null,
-            rangeCount: 0,
-            addRange: () => {},
-            removeAllRanges: () => {},
-        };
-    }
+	// ProseMirror uses document.getSelection, which is not polyfilled by JSDOM.
+	document.getSelection = function() {
+		return {
+			focusNode: null,
+			anchorNode: null,
+			rangeCount: 0,
+			addRange: () => {},
+			removeAllRanges: () => {},
+		};
+	};
 
-    // ProseMirror uses document.createRange, which is not polyfilled by JSDOM.
-    document.createRange = document.createRange || function() {
-        return {
-            setStart: () => {},
-            setEnd: () => {},
-            getClientRects: () => [],
-            getBoundingClientRect: () => ({
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0,
-            }),
-        };
-    }
+	// ProseMirror uses document.createRange, which is not polyfilled by JSDOM.
+	document.createRange = function() {
+		return {
+			setStart: () => {},
+			setEnd: () => {},
+			getClientRects: () => [],
+			getBoundingClientRect: () => ({
+				left: 0,
+				top: 0,
+				right: 0,
+				bottom: 0,
+			}),
+		};
+	};
 
-    // ProseMirror wants to use execCommand (probably for copy/paste)
-    document.execCommand = () => true;
+	// ProseMirror wants to use execCommand (probably for copy/paste)
+	document.execCommand = () => true;
 }
 
 if (typeof window !== 'undefined') {
-    window.requestIdleCallback = () => {};
+	window.requestIdleCallback = () => {};
 }
 
 global.fetch = () => Promise.resolve();

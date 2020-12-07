@@ -38,7 +38,7 @@ const CitationsModal = (props: Props) => {
 					<div className="style-title">{defaultCitationName} (Default)</div>
 					<div
 						className="style-content"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
 						dangerouslySetInnerHTML={{ __html: citationData.pub.default }}
 					/>
 				</div>
@@ -47,7 +47,7 @@ const CitationsModal = (props: Props) => {
 						<div className="style-title">APA 6th Edition</div>
 						<div
 							className="style-content"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
+							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
 							dangerouslySetInnerHTML={{ __html: citationData.pub.apa }}
 						/>
 					</div>
@@ -57,7 +57,7 @@ const CitationsModal = (props: Props) => {
 						<div className="style-title">Harvard</div>
 						<div
 							className="style-content"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
+							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
 							dangerouslySetInnerHTML={{ __html: citationData.pub.harvard }}
 						/>
 					</div>
@@ -67,7 +67,7 @@ const CitationsModal = (props: Props) => {
 						<div className="style-title">Vancouver</div>
 						<div
 							className="style-content"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
+							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
 							dangerouslySetInnerHTML={{ __html: citationData.pub.vancouver }}
 						/>
 					</div>
@@ -76,7 +76,7 @@ const CitationsModal = (props: Props) => {
 					<div className="style-title">Bibtex</div>
 					<div
 						className="style-content bibtex"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'string... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
 						dangerouslySetInnerHTML={{ __html: citationData.pub.bibtex }}
 					/>
 				</div>

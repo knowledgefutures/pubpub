@@ -22,7 +22,7 @@ module.exports = {
 	devtool: '#eval',
 	output: {
 		filename: '[name].js',
-		path: resolve(__dirname, '../../dist'),
+		path: resolve(__dirname, '../../dist/client'),
 		publicPath: '/',
 	},
 	stats: {
@@ -46,7 +46,7 @@ module.exports = {
 			{
 				test: /\.(js|jsx|ts|tsx)$/,
 				include: [resolve(__dirname, '../'), resolve(__dirname, '../../utils')],
-				use: 'babel-loader',
+				use: 'ts-loader',
 			},
 			{
 				test: /\.scss$/,

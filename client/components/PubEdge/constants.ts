@@ -17,7 +17,7 @@ type externalPublicationType = {
 	publicationDate?: number | string;
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | (s... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ title: Validator<st... Remove this comment to see the full error message
 const externalPublicationType: PropTypes.Requireable<externalPublicationType> = PropTypes.shape({
 	title: PropTypes.string.isRequired,
 	url: PropTypes.string.isRequired,

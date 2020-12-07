@@ -12,7 +12,7 @@ type collaboratorType = {
 	name?: string;
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ cursorColor: Requir... Remove this comment to see the full error message
 const collaboratorType: PropTypes.Requireable<collaboratorType> = PropTypes.shape({
 	cursorColor: PropTypes.string,
 	id: PropTypes.string,
@@ -68,7 +68,7 @@ const PubHeaderCollaborators = (props: Props) => {
 				.map((collaborator) => {
 					return (
 						<div className="avatar-wrapper" key={`present-avatar-${collaborator.id}`}>
-							{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'tooltipClassName' does not exist on type... Remove this comment to see the full error message */}
+							{/* @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: any; tooltipCl... Remove this comment to see the full error message */}
 							<Tooltip content={collaborator.name} tooltipClassName="bp3-dark">
 								<Avatar
 									/* Cast initials to string since

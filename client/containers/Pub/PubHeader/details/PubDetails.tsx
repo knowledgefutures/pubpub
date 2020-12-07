@@ -1,21 +1,20 @@
 import React from 'react';
 import dateFormat from 'dateformat';
 
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/pub' or its correspondin... Remove this comment to see the full error message
-import { pubDataProps } from 'types/pub';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate, getPubUpdatedDate, getPubCreatedDate } from 'utils/pub/pubDates';
 import { ClickToCopyButton, ContributorsList } from 'components';
 import { getAllPubContributors } from 'utils/contributors';
 import { usePageContext } from 'utils/hooks';
 
+import { Pub } from 'utils/types';
 import SmallHeaderButton from '../SmallHeaderButton';
 import CitationsPreview from '../CitationsPreview';
 
 require('./pubDetails.scss');
 
 type Props = {
-	pubData: pubDataProps;
+	pubData: Pub;
 	onCloseHeaderDetails: (...args: any[]) => any;
 	communityData: {};
 };
@@ -29,6 +28,7 @@ const PubDetails = (props: Props) => {
 
 	const createdAt = getPubCreatedDate(pubData);
 	const publishedAt = getPubPublishedDate(pubData);
+	// @ts-expect-error ts-migrate(2339) FIXME: Property 'activeBranch' does not exist on type 'Pu... Remove this comment to see the full error message
 	const updatedAt = getPubUpdatedDate({ pub: pubData, branch: pubData.activeBranch });
 	const shouldShowUpdatedDate = updatedAt && updatedAt !== publishedAt;
 
@@ -73,9 +73,13 @@ const PubDetails = (props: Props) => {
 					{pubData.doi && (
 						<React.Fragment>
 							<h6 className="pub-header-themed-secondary">DOI</h6>{' '}
+							{/* @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message */}
 							<ClickToCopyButton
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								copyString={`https://doi.org/${pubData.doi}`}
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								className="click-to-copy"
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								beforeCopyPrompt="Copy doi.org link"
 							>
 								{pubData.doi}
@@ -86,14 +90,17 @@ const PubDetails = (props: Props) => {
 				</div>
 				<div className="section collections">
 					<h6 className="pub-header-themed-secondary">
+						{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 						Appears in Collections ({collectionPubs.length})
 					</h6>
 					<div className="collection-list">
+						{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 						{collectionPubs.length === 0 && (
 							<i className="collection-list-entry">
 								This pub doesn't belong to any collections.
 							</i>
 						)}
+						{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 						{collectionPubs.map((collectionPub) => {
 							const { collection } = collectionPub;
 							if (collection) {

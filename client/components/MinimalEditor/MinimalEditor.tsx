@@ -58,7 +58,7 @@ const MinimalEditor = (props: Props) => {
 		// eslint-disable-next-line global-require
 		Promise.resolve(require('../FormattingBar')).then(
 			({ buttons, FormattingBar: FormattingBarComponent }) => {
-				// @ts-expect-error ts-migrate(2345) FIXME: Type '(innerProps: any) => Element' is not assigna... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '() => (innerProps: any) => Eleme... Remove this comment to see the full error message
 				setFormattingBar(() => (innerProps) => (
 					<FormattingBarComponent {...innerProps} buttons={buttons.minimalButtonSet} />
 				));

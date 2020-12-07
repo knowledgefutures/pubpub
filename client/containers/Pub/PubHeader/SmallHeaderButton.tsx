@@ -49,5 +49,4 @@ const SmallHeaderButton = React.forwardRef((props: Props, ref) => {
 		</Button>
 	);
 });
-
 export default SmallHeaderButton;

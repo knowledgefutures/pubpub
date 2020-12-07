@@ -90,10 +90,8 @@ export const handleErrors = (req, res, next) => {
 };
 
 export const errorMiddleware = (err, _, res, next) => {
-	if (err instanceof PubPubBaseError) {
-		if (err instanceof PubPubError.InvalidFieldsError) {
-			res.status(400).json({ type: err.type, fields: err.fields });
-		}
+	if (err instanceof PubPubError.InvalidFieldsError) {
+		res.status(400).json({ type: err.type, fields: err.fields });
 	} else if (err instanceof HTTPStatusError) {
 		if (!res.headersSent) {
 			res.status(err.status).send(err.message);

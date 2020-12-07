@@ -63,10 +63,15 @@ const PubHeaderContent = (props: Props) => {
 					{doi && (
 						<span className="metadata-pair doi-pair">
 							<b className="pub-header-themed-secondary">DOI</b>
+							{/* @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message */}
 							<ClickToCopyButton
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								copyString={`https://doi.org/${doi}`}
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								className="click-to-copy"
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								beforeCopyPrompt="Copy doi.org link"
+								// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'never'.
 								icon={null}
 							>
 								{doi}

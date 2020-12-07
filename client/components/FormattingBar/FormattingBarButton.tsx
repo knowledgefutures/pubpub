@@ -72,7 +72,7 @@ const FormattingBarButton = React.forwardRef<unknown, FormattingBarButtonProps>(
 	} = props;
 
 	let button = (
-		/* @ts-expect-error ts-migrate(2769) FIXME: Type 'unknown' is not assignable to type 'HTMLButt... Remove this comment to see the full error message */
+		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 		<Button
 			ref={ref}
 			{...restProps}

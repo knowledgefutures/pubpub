@@ -15,7 +15,7 @@ export default (attribution: Attribution): AttributionWithUser => {
 	const { firstName, lastName, initials } = getPartsOfFullName(name);
 	const spreadableAttribution =
 		// If we're on the server someone may have given us a Sequelize object.
-		// @ts-ignore
+		// @ts-expect-error ts-migrate(2339) FIXME: Property 'toJSON' does not exist on type 'Attribut... Remove this comment to see the full error message
 		typeof attribution.toJSON === 'function' ? attribution.toJSON() : attribution;
 	return {
 		...spreadableAttribution,

@@ -62,7 +62,7 @@ export default {
 				},
 			},
 		],
-		toDOM(node) {
+		toDOM: function(node) {
 			const { id, targetId, label } = node.attrs;
 
 			return [

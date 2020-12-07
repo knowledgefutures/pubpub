@@ -387,7 +387,7 @@ function AssignDoi(props: Props) {
 					{!isStandaloneComponentDeposit(crossrefDepositRecord) && (
 						<InputField label="Content Version">
 							<MenuButton
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
+								// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 								buttonContent={activeContentVersionItem.title}
 								buttonProps={{ rightIcon: 'caret-down' }}
 								aria-label="content-version"
@@ -408,7 +408,7 @@ function AssignDoi(props: Props) {
 						<div className="dropdowns">
 							<InputField label="Review Type">
 								<MenuButton
-									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
+									// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 									buttonContent={activeReviewTypeItem.title}
 									buttonProps={{ rightIcon: 'caret-down' }}
 									aria-label="review-type"
@@ -425,7 +425,7 @@ function AssignDoi(props: Props) {
 							</InputField>
 							<InputField label="Review Recommendation">
 								<MenuButton
-									// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'null | un... Remove this comment to see the full error message
+									// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 									buttonContent={activeReviewRecommendationItem.title}
 									buttonProps={{ rightIcon: 'caret-down' }}
 									aria-label="review-type"

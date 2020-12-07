@@ -1,4 +1,5 @@
 dist/*
 utils/storybook/data*
 migrate/*
+tools/5to6/*
 node_modules

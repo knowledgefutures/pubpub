@@ -50,7 +50,7 @@ const AccentStyle = function(props) {
 	const headerAccentColor = generateColors(
 		headerColorType === 'light' ? accentColorLight : accentColorDark,
 	);
-	const navAccentColor = headerColorType === 'light' ? accentColorDark : accentColorLight
+	const navAccentColor = headerColorType === 'light' ? accentColorDark : accentColorLight;
 	const bottomBorder = `.accent-color.${
 		isNavHidden ? 'header-component' : 'nav-bar-component'
 	} { border-bottom: 2px solid ${navAccentColor}; }`;

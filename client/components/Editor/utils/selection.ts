@@ -68,7 +68,7 @@ export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePre
 				pos: i > 0 ? $pos.before(i) : 0,
 				start: $pos.start(i),
 				depth: i,
-				node,
+				node: node,
 			};
 		}
 	}

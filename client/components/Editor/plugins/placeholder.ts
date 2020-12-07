@@ -19,7 +19,7 @@ export default (schema, props) => {
 								: props.placeholder;
 						if (node.type.isBlock && node.childCount === 0) {
 							decorations.push(
-								// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
+								// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'Decoration<{ [key: string]: any;... Remove this comment to see the full error message
 								Decoration.node(pos, pos + node.nodeSize, {
 									class: 'prosemirror-placeholder',
 									'data-content': placeholderText,

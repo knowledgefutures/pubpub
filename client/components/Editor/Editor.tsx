@@ -69,7 +69,7 @@ const getInitialArguments = (props) => {
 	const schema = buildSchema(customNodes, customMarks, nodeOptions);
 	const hydratedDoc = schema.nodeFromJSON(initialContent);
 	const initialDoc = isReadOnly ? addTemporaryIdsToDoc(hydratedDoc) : hydratedDoc;
-	// @ts-expect-error ts-migrate(2345) FIXME: Property 'reactedDoc' is missing in type '{ schema... Remove this comment to see the full error message
+	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ schema: Schema<"highlightQuote... Remove this comment to see the full error message
 	const staticContent = renderStatic({
 		schema: schema,
 		doc: props.initialContent,
@@ -94,7 +94,7 @@ const Editor = (props: Props) => {
 	);
 
 	if (initialArguments.current === null) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type '{ schema: any; initialDoc: any; staticConten... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2322) FIXME: Type '{ schema: Schema<"highlightQuote" | "citatio... Remove this comment to see the full error message
 		initialArguments.current = getInitialArguments(props);
 	}
 
@@ -178,7 +178,7 @@ const Editor = (props: Props) => {
 	return (
 		<>
 			<div
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'undefined' is not assignable to type 'HTMLDi... Remove this comment to see the full error message
+				// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<HTMLElement | undefined>' i... Remove this comment to see the full error message
 				ref={editorRef}
 				className={`editor ProseMirror ${props.isReadOnly ? 'read-only' : ''}`}
 			>

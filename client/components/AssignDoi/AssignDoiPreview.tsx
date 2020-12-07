@@ -361,7 +361,7 @@ function AssignDoiPreview(props: Props) {
 
 	return (
 		<Tabs
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'SetStateA... Remove this comment to see the full error message
+			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Dispatch<SetStateAction<string>>' is not ass... Remove this comment to see the full error message
 			onChange={setSelectedTab}
 			selectedTabId={selectedTab}
 			className="assign-doi-preview-component"

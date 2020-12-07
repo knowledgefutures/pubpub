@@ -34,7 +34,7 @@ const bucketTimestamp = (timestamp, intervalMs) => {
 };
 
 const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
-	const buckets = [];
+	const buckets: any[] = [];
 	let currentBucketItems = [];
 	let currentBucketValue = null;
 	const keys = Object.keys(timestamps)
@@ -49,7 +49,6 @@ const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 			currentBucketValue = bucketValue;
 		}
 		if (bucketValue !== currentBucketValue) {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'never[]' is not assignable to pa... Remove this comment to see the full error message
 			buckets.push(currentBucketItems);
 			// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'never'.
 			currentBucketItems = [[historyKey, timestamp]];
@@ -60,20 +59,15 @@ const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 			currentBucketItems.push([historyKey, timestamp]);
 		}
 	}
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'never[]' is not assignable to pa... Remove this comment to see the full error message
 	buckets.push(currentBucketItems);
-	return (
-		buckets
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'length' does not exist on type 'never'.
-			.filter((bucket) => bucket.length > 0)
-			.map((bucket) => {
-				const [startKey, startTimestamp] = bucket[0];
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'length' does not exist on type 'never'.
-				const [endKey] = bucket[bucket.length - 1];
-				const startDate = new Date(startTimestamp);
-				return { type: 'edits', date: startDate, range: [startKey, endKey] };
-			})
-	);
+	return buckets
+		.filter((bucket) => bucket.length > 0)
+		.map((bucket) => {
+			const [startKey, startTimestamp] = bucket[0];
+			const [endKey] = bucket[bucket.length - 1];
+			const startDate = new Date(startTimestamp);
+			return { type: 'edits', date: startDate, range: [startKey, endKey] };
+		});
 };
 
 const dateReleases = (releases) => {
@@ -296,12 +290,15 @@ const PubHistoryViewer = (props: Props) => {
 						disabled={!canChangeCurrentKeyBy(-1)}
 						onClick={() => changeCurrentKeyBy(-1)}
 					/>
+					{/* @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message */}
 					<ClickToCopyButton
+						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						copyString={pubUrl(communityData, pubData, {
 							isDraft: true,
 							// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 							historyKey: currentKey.toString(),
 						})}
+						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						beforeCopyPrompt="Copy link to this point in history"
 					>
 						{(handleClick) => (

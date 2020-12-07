@@ -115,7 +115,7 @@ const PasswordReset = (props: Props) => {
 					<NonIdealState
 						description="Check your inbox for an email with a reset link"
 						title="Reset Password Email Sent"
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'visual' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ description: string; title: string; visual... Remove this comment to see the full error message
 						visual="envelope"
 					/>
 				)}
@@ -156,7 +156,7 @@ const PasswordReset = (props: Props) => {
 					<NonIdealState
 						description="Your password has been successfully changed."
 						title="Reset Password Successful"
-						// @ts-expect-error ts-migrate(2322) FIXME: Property 'visual' does not exist on type 'Intrinsi... Remove this comment to see the full error message
+						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ description: string; title: string; visual... Remove this comment to see the full error message
 						visual="tick"
 						action={
 							<AnchorButton

@@ -16,6 +16,6 @@ export default async () => {
 		global.testDbServerProcess = await startTestDatabaseServer();
 		process.env.DATABASE_URL = await setupTestDatabase();
 	}
-	const { sequelize } = esmRequire('../../server/models.js');
+	const { sequelize } = esmRequire('../../server/models');
 	await sequelize.sync({ force: false });
 };

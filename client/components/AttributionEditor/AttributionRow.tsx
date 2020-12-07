@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { Button, Icon, Tag } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module 'types/attribution' or its corr... Remove this comment to see the full error message
 import attributionType from 'types/attribution';
 
 import AttributionDetailControls from './AttributionDetailControls';
@@ -57,7 +56,7 @@ const AttributionRow = (props: Props) => {
 				<EditableAvatar
 					width={50}
 					attribution={attribution}
-					// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+					// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 					onUpdateAvatar={(avatar) => onAttributionUpdate({ id: id, avatar: avatar })}
 				/>
 			);
@@ -73,7 +72,7 @@ const AttributionRow = (props: Props) => {
 					small
 					minimal
 					className="delete-button"
-					// @ts-expect-error ts-migrate(2349) FIXME: Type 'never' has no call signatures.
+					// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 					onClick={() => onAttributionDelete(id)}
 					icon="small-cross"
 				/>

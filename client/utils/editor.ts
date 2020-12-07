@@ -14,7 +14,7 @@ export const getEmbedType = (input) => {
 		twitter: ['https://twitter.com', 'https://publish.twitter.com'],
 	};
 
-	// @ts-expect-error ts-migrate(2769) FIXME: Type 'string' is not assignable to type 'null'.
+	// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 	return Object.keys(urls).reduce((prev, curr) => {
 		const currUrls = urls[curr];
 		const isMatch = currUrls.reduce((prevMatch, currUrl) => {

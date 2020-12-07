@@ -2,7 +2,7 @@ import dateFormat from 'dateformat';
 
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
-import { CollectionPub, Pub, Branch } from 'utils/types';
+import { DefinitelyHas, Maybe, CollectionPub, Pub, Branch } from 'utils/types';
 
 const selectBranch = (pub: DefinitelyHas<Pub, 'branches'>, branch: Maybe<Branch>) => {
 	const { branches } = pub;

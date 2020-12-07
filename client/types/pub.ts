@@ -15,7 +15,7 @@ type collabDataProps = {
 	status?: string;
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'any[] | und... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ editorChangeObject:... Remove this comment to see the full error message
 const collabDataProps: PropTypes.Requireable<collabDataProps> = PropTypes.shape({
 	editorChangeObject: PropTypes.object,
 	activeClients: PropTypes.array,

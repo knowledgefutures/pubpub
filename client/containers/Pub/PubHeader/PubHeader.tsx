@@ -67,7 +67,7 @@ const PubHeader = (props: PubHeaderProps) => {
 	const isMobile = viewportWidth <= mobileViewportCutoff;
 
 	useSticky({
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
+		// @ts-expect-error ts-migrate(2322) FIXME: Type 'false | null' is not assignable to type 'boo... Remove this comment to see the full error message
 		isActive: sticky && headerRef.current,
 		selector: '.pub-header-component',
 		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
@@ -96,7 +96,6 @@ const PubHeader = (props: PubHeaderProps) => {
 	};
 
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Property 'children' does not exist on type 'Intrin... Remove this comment to see the full error message
 		<PubHeaderBackground
 			className={classNames('pub-header-component', showingDetails && 'showing-details')}
 			pubData={pubData}
@@ -126,7 +125,7 @@ const PubHeader = (props: PubHeaderProps) => {
 				)}
 				<ToggleDetailsButton showingDetails={showingDetails} onClick={toggleDetails} />
 			</GridWrapper>
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Property 'collabData' does not exist on type 'Intr... Remove this comment to see the full error message */}
+			{/* @ts-expect-error ts-migrate(2322) FIXME: Type '{ pubData: any; collabData: any; pubHeadings... Remove this comment to see the full error message */}
 			<PubHeaderSticky pubData={pubData} collabData={collabData} pubHeadings={pubHeadings} />
 		</PubHeaderBackground>
 	);

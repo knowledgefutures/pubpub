@@ -62,7 +62,7 @@ const SelfDestructiveActionDialog = (props: Props) => {
 				<Checkbox
 					checked={hasChecked}
 					onChange={() => setHasChecked(!hasChecked)}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
+					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | null' is not assignable to type 'st... Remove this comment to see the full error message
 					label={checkboxLabel}
 				/>
 			</div>

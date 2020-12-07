@@ -5,7 +5,7 @@ import { licenses, getLicenseBySlug } from 'utils/licenses';
 import { usePageContext } from 'utils/hooks';
 import { getPubCopyrightYear } from 'utils/pub/pubDates';
 import { apiFetch } from 'client/utils/apiFetch';
-import { Pub, CollectionPub } from 'utils/types';
+import { Pub, CollectionPub, DefinitelyHas } from 'utils/types';
 
 require('./licenseSelect.scss');
 

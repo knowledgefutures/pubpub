@@ -17,7 +17,8 @@
 		"build-prod": "rm -rf ./dist && webpack --config ./client/webpack/webpackConfig.prod.js && npm run build-server",
 		"build-server": "tsc -p server/tsconfig.json",
 		"watch-server": "npm run build-server -- -w",
-		"postbuild-server": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' ../dist/server/server/ --cwd=server/ --parents",
+		"postbuild-server": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' ../dist/server/server/ --cwd=server/ --parents && npm run copy-worker-assets",
+		"copy-worker-assets": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' ../dist/server/workers/ --cwd=workers/ --parents",
 		"prod": "npm run build-prod && npm run api-prod",
 		"lint": "eslint .",
 		"check": "tsc --noEmit",
@@ -29,8 +30,8 @@
 		"test": "npm run lint && jest --forceExit --silent",
 		"test-dev": "jest --forceExit",
 		"tools": "NODE_PATH=./client:./ node -r ts-node/register -r esm --max-old-space-size=12000 ./tools",
-		"workers-dev": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./client:./ WORKER=true nodemon --exec 'ts-node' workers/init --watch workers -e js,ts,tsx",
-		"workers-prod": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./client:./ WORKER=true node -r ts-node/register workers/init"
+		"workers-dev": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./dist/server/client:./dist/server WORKER=true nodemon dist/workers/workers/init --watch workers -e js",
+		"workers-prod": "SEQUELIZE_MAX_CONNECTIONS=1 NODE_PATH=./dist/server/client:./dist/server WORKER=true node dist/server/workers/init"
 	},
 	"dependencies": {
 		"@blueprintjs/core": "^3.24.0",

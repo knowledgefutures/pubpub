@@ -9,7 +9,8 @@
     "**/*",
     "../client/**/*",
     "../types/**/*",
-    "../utils/**/*"
+    "../utils/**/*",
+    "../workers/**/*"
   ],
   "exclude": [
     "../**/*.test.ts",

@@ -44,7 +44,7 @@ const workerTs = (file: string, workerOptions: WorkerOptions) => {
 };
 
 if (process.env.NODE_ENV !== 'production') {
-	require('../config');
+	require(path.join(process.cwd(), 'config'));
 }
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({
@@ -74,7 +74,7 @@ const processTask = (channel) => async (message) => {
 	const startTime = Date.now();
 	console.log(`Beginning ${taskData.id} (load ${currentWorkerThreads}/${maxWorkerThreads})`);
 
-	const worker = workerTs(path.join(__dirname, 'initWorker'), {
+	const worker = new Worker(path.join(__dirname, 'initWorker.js'), {
 		execArgv: ['-r', 'esm'],
 		workerData: taskData,
 	});

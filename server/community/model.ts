@@ -75,7 +75,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Community, Organization, Collection, Discussion, Page, Pub } = models;
+					const { Community, Organization, Collection, Page, Pub } = models;
 					Community.belongsTo(Organization, {
 						onDelete: 'CASCADE',
 						as: 'organization',
@@ -89,11 +89,6 @@ export default (sequelize, dataTypes) => {
 					Community.hasMany(Pub, {
 						onDelete: 'CASCADE',
 						as: 'pubs',
-						foreignKey: 'communityId',
-					});
-					Community.hasMany(Discussion, {
-						onDelete: 'CASCADE',
-						as: 'discussions',
 						foreignKey: 'communityId',
 					});
 					Community.hasMany(Page, {

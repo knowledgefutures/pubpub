@@ -1,10 +1,10 @@
-import { DiscussionNew, Thread, ThreadComment, ReviewNew, Visibility } from 'server/models';
+import { Discussion, Thread, ThreadComment, ReviewNew, Visibility } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 
 const userEditableFields = ['text', 'content'];
 
 const getMatchingDiscussion = (id, threadId, pubId) =>
-	DiscussionNew.findOne({
+	Discussion.findOne({
 		where: { id: id, threadId: threadId, pubId: pubId },
 		include: [{ model: Visibility, as: 'visibility' }],
 	});

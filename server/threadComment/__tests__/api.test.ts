@@ -20,7 +20,7 @@ const models = modelize`
                 permissions: "admin"
                 User pubAdmin {}
             }
-            DiscussionNew publicDiscussion {
+            Discussion publicDiscussion {
                 number: 1
                 author: chattyUser
                 Visibility {
@@ -28,7 +28,7 @@ const models = modelize`
                 }
                 Thread publicThread {}
             }
-            DiscussionNew otherPublicDiscussion {
+            Discussion otherPublicDiscussion {
                 number: 2
                 author: chattyUser
                 Visibility {
@@ -36,7 +36,7 @@ const models = modelize`
                 }
                 Thread otherPublicThread {}
             }
-            DiscussionNew membersDiscussion {
+            Discussion membersDiscussion {
                 number: 3
                 author: chattyUser
                 Visibility {
@@ -48,7 +48,7 @@ const models = modelize`
                     }
                 }
             }
-            DiscussionNew lockedDiscussion {
+            Discussion lockedDiscussion {
                 number: 3
                 author: chattyUser
                 Visibility {

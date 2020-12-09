@@ -2,7 +2,7 @@
 import { Op } from 'sequelize';
 import { ForbiddenError } from 'server/utils/errors';
 import {
-	DiscussionNew,
+	Discussion,
 	Anchor,
 	Thread,
 	ThreadComment,
@@ -13,7 +13,7 @@ import {
 } from 'server/models';
 
 const findDiscussionWithUser = (id) =>
-	DiscussionNew.findOne({
+	Discussion.findOne({
 		where: {
 			id: id,
 		},
@@ -49,7 +49,7 @@ const findDiscussionWithUser = (id) =>
 	});
 
 export const createDiscussion = async (inputValues, user) => {
-	const discussions = await DiscussionNew.findAll({
+	const discussions = await Discussion.findAll({
 		where: {
 			pubId: inputValues.pubId,
 		},
@@ -108,7 +108,7 @@ export const createDiscussion = async (inputValues, user) => {
 	const newVisibility = await Visibility.create({
 		access: inputValues.visibilityAccess,
 	});
-	const newDiscussion = await DiscussionNew.create({
+	const newDiscussion = await Discussion.create({
 		id: inputValues.discussionId,
 		title: inputValues.title || generatedTitle,
 		number: maxThreadNumber + 1,
@@ -135,7 +135,7 @@ export const updateDiscussion = async (values, permissions) => {
 	const updatedValues = {};
 
 	const [discussion, pub] = await Promise.all([
-		DiscussionNew.findOne({ where: { id: discussionId } }),
+		Discussion.findOne({ where: { id: discussionId } }),
 		Pub.findOne({ where: { id: pubId }, attributes: ['id', 'labels'] }),
 	]);
 
@@ -196,7 +196,7 @@ export const updateDiscussion = async (values, permissions) => {
 };
 
 export const updateVisibilityForDiscussions = async (discussionsWhereQuery, visibilityUpdate) => {
-	const discussions = await DiscussionNew.findAll({ where: discussionsWhereQuery });
+	const discussions = await Discussion.findAll({ where: discussionsWhereQuery });
 	const visibilityIds = discussions.map((d) => d.visibilityId);
 	await Visibility.update(visibilityUpdate, { where: { id: { [Op.in]: visibilityIds } } });
 };

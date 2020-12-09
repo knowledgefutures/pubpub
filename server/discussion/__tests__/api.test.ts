@@ -3,7 +3,7 @@ import uuid from 'uuid';
 
 import { setup, teardown, login, stub, modelize } from 'stubstub';
 
-import { DiscussionNew as Discussion, Thread, ThreadComment } from 'server/models';
+import { Discussion, Thread, ThreadComment } from 'server/models';
 import * as firebaseAdmin from 'server/utils/firebaseAdmin';
 
 let firebaseStub;
@@ -58,7 +58,7 @@ const models = modelize`
 				permissions: "view"
 				User releasePubViewer {}
 			}
-			DiscussionNew existingDiscussion {
+			Discussion existingDiscussion {
 				Visibility {
 					access: "public"
 				}

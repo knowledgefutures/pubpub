@@ -1,4 +1,4 @@
-import { DiscussionNew } from 'server/models';
+import { Discussion } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 
 export const getCreatePermission = async ({
@@ -37,7 +37,7 @@ export const getUpdatePermissions = async ({ discussionId, userId, pubId, commun
 		loginId: userId,
 	});
 
-	const discussionData = await DiscussionNew.findOne({
+	const discussionData = await Discussion.findOne({
 		where: { id: discussionId, pubId: pubId },
 	});
 

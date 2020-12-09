@@ -5,7 +5,7 @@ import {
 	Anchor,
 	Branch,
 	Discussion,
-	DiscussionNew,
+	//	DiscussionNew,
 	Thread,
 	ThreadComment,
 	Visibility,
@@ -194,6 +194,6 @@ export default async () => {
 	console.log('Created ThreadComments');
 	await Visibility.bulkCreate(visibilities);
 	console.log('Created Visibilities');
-	await DiscussionNew.bulkCreate(discussions);
-	console.log('Created Discussions');
+	// await DiscussionNew.bulkCreate(discussions);
+	// console.log('Created Discussions');
 };

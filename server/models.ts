@@ -67,7 +67,6 @@ export const Signup = sequelize.import('./signup/model');
 // export const ThreadComment = sequelize.import('./threadComment/model');
 // export const ThreadUser = sequelize.import('./threadUser/model');
 
-export const DiscussionNew = sequelize.import('./discussion/modelNew');
 export const Anchor = sequelize.import('./anchor/model');
 export const ReviewNew = sequelize.import('./review/modelNew');
 export const Fork = sequelize.import('./fork/model');
@@ -97,6 +96,7 @@ export const includeUserModel = (() => {
 		const attributes = providedAttrs
 			? [...new Set([...attributesPublicUser, ...providedAttrs])]
 			: attributesPublicUser;
+		// eslint-disable-next-line pubpub-rules/no-user-model
 		return {
 			model: User,
 			attributes: attributes,

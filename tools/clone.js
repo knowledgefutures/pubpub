@@ -5,7 +5,7 @@ import {
 	Collection,
 	CollectionPub,
 	Community,
-	DiscussionNew,
+	Discussion,
 	Member,
 	Page,
 	Pub,
@@ -122,15 +122,12 @@ const clonePub = async ({ pubId, newCommunityId, collectionIdMap }) => {
 		{ pubId: newPub.id },
 	);
 	const discussionIdMap = await cloneManyModels(
-		DiscussionNew,
+		Discussion,
 		{ pubId: existingPub.id },
 		{ pubId: newPub.id },
 		async (discussion) => {
 			const [existingThread, newThread] = await cloneModel(Thread, discussion.threadId);
-			await DiscussionNew.update(
-				{ threadId: newThread.id },
-				{ where: { id: discussion.id } },
-			);
+			await Discussion.update({ threadId: newThread.id }, { where: { id: discussion.id } });
 			await cloneManyModels(
 				ThreadComment,
 				{ threadId: existingThread.id },

@@ -4,54 +4,48 @@ export default (sequelize, dataTypes) => {
 		{
 			id: sequelize.idType,
 			title: { type: dataTypes.TEXT },
-			threadNumber: { type: dataTypes.INTEGER, allowNull: false },
-			text: { type: dataTypes.TEXT },
-			content: { type: dataTypes.JSONB },
-			attachments: { type: dataTypes.JSONB },
-			suggestions: { type: dataTypes.JSONB },
-			highlights: { type: dataTypes.JSONB },
-			isArchived: { type: dataTypes.BOOLEAN },
+			number: { type: dataTypes.INTEGER, allowNull: false },
+			isClosed: { type: dataTypes.BOOLEAN },
 			labels: { type: dataTypes.JSONB },
-			initAnchorText: { type: dataTypes.JSONB },
-			isPublic: { type: dataTypes.BOOLEAN },
-			initBranchId: { type: dataTypes.UUID },
-
 			/* Set by Associations */
+			threadId: { type: dataTypes.UUID, allowNull: false },
+			visibilityId: { type: dataTypes.UUID, allowNull: false },
 			userId: { type: dataTypes.UUID, allowNull: false },
+			anchorId: { type: dataTypes.UUID },
 			pubId: { type: dataTypes.UUID },
-			collectionId: { type: dataTypes.UUID },
-			communityId: { type: dataTypes.UUID },
-			organizationId: { type: dataTypes.UUID },
-			branchId: { type: dataTypes.UUID }, // Should be allowNull: false after migration
 		},
 		{
 			indexes: [
 				{ fields: ['userId'], method: 'BTREE' },
 				{ fields: ['pubId'], method: 'BTREE' },
-				{ fields: ['communityId'], method: 'BTREE' },
 			],
 			classMethods: {
 				associate: (models) => {
-					const { Discussion, Community, Pub, User, Branch } = models;
-					Discussion.belongsTo(Community, {
+					const { Discussion, Visibility, Pub, User, Anchor, Thread } = models;
+					Discussion.belongsTo(Thread, {
 						onDelete: 'CASCADE',
-						as: 'community',
-						foreignKey: 'communityId',
+						as: 'thread',
+						foreignKey: 'threadId',
 					});
-					Discussion.belongsTo(Pub, {
+					Discussion.belongsTo(Visibility, {
 						onDelete: 'CASCADE',
-						as: 'pub',
-						foreignKey: 'pubId',
+						as: 'visibility',
+						foreignKey: 'visibilityId',
 					});
 					Discussion.belongsTo(User, {
 						onDelete: 'CASCADE',
 						as: 'author',
 						foreignKey: 'userId',
 					});
-					Discussion.belongsTo(Branch, {
+					Discussion.belongsTo(Anchor, {
 						onDelete: 'CASCADE',
-						as: 'branch',
-						foreignKey: 'branchId',
+						as: 'anchor',
+						foreignKey: 'anchorId',
+					});
+					Discussion.belongsTo(Pub, {
+						onDelete: 'CASCADE',
+						as: 'pub',
+						foreignKey: 'pubId',
 					});
 				},
 			},

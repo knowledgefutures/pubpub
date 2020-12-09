@@ -10,7 +10,7 @@ import {
 	PubAttribution,
 	PubEdge,
 	Release,
-	DiscussionNew,
+	Discussion,
 	ReviewNew,
 	Fork,
 	Anchor,
@@ -225,7 +225,7 @@ export default ({
 			...pubEdges,
 			{
 				separate: true,
-				model: DiscussionNew,
+				model: Discussion,
 				as: 'discussions',
 				include: [...author, ...anchor, ...visibility, ...thread],
 			},

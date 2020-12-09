@@ -47,6 +47,10 @@ const PubEdge = (props: PubEdgeProps) => {
 	);
 
 	const maybeLink = (element, restProps = {}) => {
+		if (!element) {
+			return null;
+		}
+
 		if (actsLikeLink) {
 			return (
 				<span className="link" {...restProps}>

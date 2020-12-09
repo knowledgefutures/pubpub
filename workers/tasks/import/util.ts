@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { exec as execWithCallback } from 'child_process';
+import { spawn as spawnChildProcess } from 'child_process';
 import {
 	callPandoc,
 	emitPandocJson,
@@ -81,15 +81,12 @@ export const extensionFor = (filePath) =>
 		.pop()
 		.toLowerCase();
 
-export const exec = (command) =>
-	new Promise((resolve, reject) =>
-		execWithCallback(command, (err, res) => {
-			if (err) {
-				return reject(err);
-			}
-			return resolve(res);
-		}),
-	);
+export const spawn = (command, args) =>
+	new Promise((resolve, reject) => {
+		const ps = spawnChildProcess(command, args);
+		ps.on('close', () => resolve());
+		ps.stderr.on('data', (err) => reject(err.toString()));
+	});
 
 export const getFullPathsInDir = (dir) => {
 	let paths = [];

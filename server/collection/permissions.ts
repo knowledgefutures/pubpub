@@ -22,6 +22,7 @@ export const getPermissions = async ({ userId, communityId, collectionId }) => {
 		'metadata',
 		'readNextPreviewSize',
 		'layout',
+		'avatar',
 	];
 	return {
 		create: isAuthenticated,

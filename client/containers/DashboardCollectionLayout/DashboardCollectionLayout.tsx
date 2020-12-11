@@ -8,6 +8,7 @@ import {
 	LayoutEditor,
 	LinkedPageSelect,
 	InputField,
+	ImageUpload,
 } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { Collection, Pub } from 'utils/types';
@@ -94,7 +95,6 @@ const DashboardCollectionLayout = (props: Props) => {
 			</>
 		);
 	};
-
 	return (
 		<DashboardFrame
 			className="dashboard-collection-layout-container"
@@ -115,6 +115,14 @@ const DashboardCollectionLayout = (props: Props) => {
 						value={0}
 					/>
 				</RadioGroup>
+				<ImageUpload
+					htmlFor="dashboard-page-avatar"
+					label="Preview Image"
+					defaultImage={collection.avatar}
+					onNewImage={(value) => updateCollection({ avatar: value })}
+					canClear={true}
+					helperText="This image will appear in links from other Collections or Pages to this Collection."
+				/>
 				{isUsingBlocks && (
 					<InputField label="Layout width">
 						<ButtonGroup>

@@ -143,7 +143,7 @@ const DashboardPages = (props: Props) => {
 					defaultImage={avatar}
 					onNewImage={(value) => updatePageData({ avatar: value })}
 					canClear={true}
-					helperText="Used in social media cards"
+					helperText="This image will appear in links from other Pages or Collections to this Page."
 				/>
 				{!isHome && (
 					<InputField

@@ -1,36 +1,54 @@
 #pricing-container {
+	background-repeat: repeat;
+	background-position: center center;
+	background-color: #f9fafb;
+	background-image: url('/static/loginbg.png');
 	padding-bottom: 2em;
 	h1 {
-		margin: 1em 0em 0.5em;
+		margin: 1em 0em;
 		text-align: center;
 	}
-	// h2 {
-	// 	text-transform: uppercase;
-	// }
-	p {
-		margin: 0 auto;
-		font-size: 18px;
-	}
 	p.description {
-		padding: 0 2em;
-	}
-	.pricing-footer p.description {
-		margin-bottom: 2em;
+		margin: 1.5em auto;
+		font-size: 16px;
+		max-width: 900px;
+		&.top {
+			text-align: center;
+		}
 	}
 	p.subtitle {
 		color: #555;
 		font-weight: 300;
-		font-size: 24px;
+		font-size: 14px;
 		padding: 0;
 		margin-bottom: 35px;
-		line-height: 1.4;
+		line-height: 16.6px;
 	}
-	p.pricing {
-		margin-bottom: 1em;
-		em {
-			font-style: normal;
-			border-bottom: 1px dotted;
-			cursor: help;
+	h2 span.subhead {
+		color: #555;
+		font-weight: normal;
+	}
+	h3.pricing {
+		font-size: 24px;
+		.subhead {
+			font-size: 14px;
+			color: #555;
+			font-weight: normal;
+		}
+	}
+	#enterprise h3.pricing {
+		margin-bottom: 13px;
+	}
+	#independent {
+		a.bp3-button {
+			margin-top: 0;
+		}
+		h3.pricing {
+			font-size: 16px;
+			margin-bottom: 13px;
+			.subhead {
+				line-height: 16px;
+			}
 		}
 	}
 	.pricing-tiers {
@@ -41,7 +59,7 @@
 			text-align: center;
 			position: inline;
 			flex: 1;
-			margin: 4em 2em;
+			margin: 3em 0.75em;
 			background: #f7f7f9;
 			ul {
 				flex-grow: 1;
@@ -54,6 +72,8 @@
 			}
 			a.bp3-button {
 				margin-top: 1em;
+				background-color: #B2E2BD;
+				color: #14411E;
 			}
 		}
 	}

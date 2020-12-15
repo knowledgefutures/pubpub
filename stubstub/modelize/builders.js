@@ -6,6 +6,7 @@ import { createCollectionPub } from 'server/collectionPub/queries';
 import { Branch, Community, Member, Pub, Release, User } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
+import { createDoc } from 'server/doc/queries';
 
 const builders = {};
 
@@ -88,14 +89,28 @@ builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 	return Member.create({ ...getTargetArgs(), ...restArgs });
 };
 
-builders.Release = (args) => {
+builders.Release = async (args) => {
 	// The Release model requires these, but it doesn't currently associate them, so it's safe
 	// to create random UUIDs for testing purposes.
-	const { userId = uuid.v4(), branchId = uuid.v4(), historyKey = 0, ...restArgs } = args;
+	const {
+		userId = uuid.v4(),
+		branchId = uuid.v4(),
+		historyKey = 0,
+		docId = null,
+		...restArgs
+	} = args;
+
+	let resolvedDocId = docId;
+	if (!resolvedDocId) {
+		const fakeDoc = await createDoc({});
+		resolvedDocId = fakeDoc.id;
+	}
+
 	return Release.create({
 		userId: userId,
 		branchId: branchId,
 		historyKey: historyKey,
+		docId: resolvedDocId,
 		...restArgs,
 	});
 };

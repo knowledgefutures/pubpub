@@ -2,6 +2,7 @@ import { Release, Branch } from 'server/models';
 import { mergeFirebaseBranch, getLatestKey } from 'server/utils/firebaseAdmin';
 import { updateVisibilityForDiscussions } from 'server/discussion/queries';
 import { createBranchExports } from 'server/export/queries';
+import { createDoc } from 'server/doc/queries';
 
 export const createRelease = async ({
 	userId,
@@ -48,7 +49,8 @@ export const createRelease = async ({
 		throw new Error('Firebase branches were not merged.');
 	}
 
-	const { mergeKey } = mergeResult;
+	const { mergeKey, doc } = mergeResult;
+	const docModel = await createDoc(doc);
 
 	const newRelease = await Release.create({
 		noteContent: noteContent,
@@ -60,6 +62,7 @@ export const createRelease = async ({
 		branchKey: mergeKey,
 		userId: userId,
 		pubId: pubId,
+		docId: docModel.id,
 	});
 
 	if (createExports) {

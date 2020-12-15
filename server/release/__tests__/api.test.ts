@@ -1,7 +1,7 @@
 /* global it, expect, beforeAll, afterAll, afterEach */
 import { setup, teardown, login, stubOut, modelize } from 'stubstub';
 
-import { Export, Release } from 'server/models';
+import { Doc, Export, Release } from 'server/models';
 import { getExportFormats } from 'utils/export/formats';
 
 const models = modelize`
@@ -36,8 +36,16 @@ afterEach(async () => {
 
 teardown(afterAll);
 
+const someDoc = {
+	type: 'doc',
+	content: [{ type: 'parargraph', content: [{ type: 'text', content: ['Hello there'] }] }],
+};
+
 stubOut('server/utils/firebaseAdmin', {
-	mergeFirebaseBranch: () => ({ mergeKey: 0 }),
+	mergeFirebaseBranch: () => ({
+		mergeKey: 0,
+		doc: someDoc,
+	}),
 	getLatestKey: () => 0,
 	getBranchDoc: () => {
 		return {
@@ -102,6 +110,8 @@ it('will create a Release for admins of a Pub', async () => {
 		)
 		.expect(201);
 	expect(release.historyKey).toEqual(0);
+	const doc = await Doc.findOne({ where: { id: release.docId } });
+	expect(doc.content).toEqual(someDoc);
 });
 
 it('will not create duplicate Releases for the same draft-key of a Pub', async () => {

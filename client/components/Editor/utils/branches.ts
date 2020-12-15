@@ -66,5 +66,5 @@ export const mergeBranch = async (sourceFirebaseRef, destinationFirebaseRef, pro
 	const { doc } = await getFirebaseDoc(sourceFirebaseRef, prosemirrorSchema, sourceKey);
 	await storeCheckpoint(destinationFirebaseRef, doc, nextMergeKey);
 
-	return { mergeKey: nextMergeKey };
+	return { mergeKey: nextMergeKey, doc: doc };
 };

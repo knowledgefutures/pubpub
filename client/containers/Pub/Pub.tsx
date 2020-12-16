@@ -27,28 +27,52 @@ const isInViewport = (rect: DOMRect, offsets: { top?: number; left?: number } = 
 	);
 };
 
+const scrollToElementTop = (selector: string, delay = 0) => {
+	const element = document.querySelector(selector);
+
+	if (!element) {
+		return;
+	}
+
+	setTimeout(() => {
+		const rect = element.getBoundingClientRect();
+
+		if (!isInViewport(rect, { top: 50 })) {
+			document.body.scrollTop += rect.top - 50;
+		}
+	}, delay);
+};
+
 const Pub = (props: Props) => {
+	const { pubData } = props;
 	const { loginData, locationData, communityData } = usePageContext();
 
 	useEffect(() => {
-		const hash = window.location.hash;
+		const { hash } = window.location;
 
 		if (hash) {
-			const element = document.getElementById(hash.replace('#', ''));
-
-			if (!element) {
-				return;
-			}
-
-			setTimeout(() => {
-				const rect = element.getBoundingClientRect();
-
-				if (!isInViewport(rect, { top: 50 })) {
-					document.body.scrollTop += rect.top - 50;
-				}
-			}, 500);
+			scrollToElementTop(hash, 500);
 		}
-	}, []);
+
+		const onClick = (event: MouseEvent) => {
+			const { target, metaKey } = event;
+
+			if (target instanceof HTMLAnchorElement && !metaKey) {
+				const href = target.getAttribute('href');
+
+				if (href && href.indexOf('#') === 0) {
+					event.preventDefault();
+					window.location.hash = href;
+					scrollToElementTop(href);
+				}
+			}
+		};
+
+		if (pubData.isReadOnly) {
+			document.addEventListener('click', onClick);
+			return () => document.removeEventListener('click', onClick);
+		}
+	}, [pubData]);
 
 	return (
 		<PubSuspendWhileTypingProvider>

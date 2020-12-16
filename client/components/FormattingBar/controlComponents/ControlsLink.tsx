@@ -2,6 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { moveToEndOfSelection } from 'components/Editor';
 import { Button, AnchorButton, InputGroup } from '@blueprintjs/core';
+import { usePubContext, usePubData } from 'client/containers/Pub/pubHooks';
+import { pubUrl } from 'utils/canonicalUrls';
+import { usePageContext } from 'utils/hooks';
 
 type Props = {
 	editorChangeObject: {
@@ -17,9 +20,18 @@ const ControlsLink = (props: Props) => {
 		onClose,
 	} = props;
 
+	const { communityData } = usePageContext();
+	const pubData = usePubData();
 	const [href, setHref] = useState(activeLink.attrs.href);
 	const [debouncedHref] = useDebounce(href, 250);
 	const inputRef = useRef();
+
+	const setHashOrUrl = (value: string) => {
+		const basePubUrl = pubUrl(communityData, pubData);
+		const hashMatches = value.match(`^${basePubUrl}(.*)?#(.*)$`);
+
+		setHref(hashMatches ? `#${hashMatches[2]}` : value);
+	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => activeLink.updateAttrs({ href: debouncedHref }), [debouncedHref]);
@@ -50,7 +62,7 @@ const ControlsLink = (props: Props) => {
 			<InputGroup
 				placeholder="Enter a URL"
 				value={href}
-				onChange={(evt) => setHref(evt.target.value)}
+				onChange={(evt) => setHashOrUrl(evt.target.value)}
 				onKeyPress={handleKeyPress}
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
 				inputRef={inputRef}

@@ -28,17 +28,23 @@ const isInViewport = (rect: DOMRect, offsets: { top?: number; left?: number } = 
 };
 
 const scrollToElementTop = (selector: string, delay = 0) => {
-	const element = document.querySelector(selector);
+	let element: HTMLElement | null;
+
+	try {
+		element = document.querySelector(selector);
+	} catch {
+		return;
+	}
 
 	if (!element) {
 		return;
 	}
 
 	setTimeout(() => {
-		const rect = element.getBoundingClientRect();
+		const rect = (element as HTMLElement).getBoundingClientRect();
 
 		if (!isInViewport(rect, { top: 50 })) {
-			document.body.scrollTop += rect.top - 50;
+			document.body.scrollTop += rect.top - 80;
 		}
 	}, delay);
 };

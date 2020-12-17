@@ -38,7 +38,7 @@
 		"@blueprintjs/icons": "^3.14.0",
 		"@blueprintjs/select": "^3.12.0",
 		"@pubpub/prosemirror-pandoc": "^0.6.1",
-		"@pubpub/prosemirror-reactive": "^0.1.7",
+		"@pubpub/prosemirror-reactive": "^0.1.8",
 		"@sentry/browser": "^5.5.0",
 		"@sentry/node": "^5.5.0",
 		"algoliasearch": "^4.2.0",

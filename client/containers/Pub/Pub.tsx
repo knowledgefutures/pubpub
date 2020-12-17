@@ -27,11 +27,11 @@ const isInViewport = (rect: DOMRect, offsets: { top?: number; left?: number } = 
 	);
 };
 
-const scrollToElementTop = (selector: string, delay = 0) => {
+const scrollToElementTop = (hash: string, delay = 0) => {
 	let element: HTMLElement | null;
 
 	try {
-		element = document.querySelector(selector);
+		element = document.getElementById(hash.replace('#', ''));
 	} catch {
 		return;
 	}

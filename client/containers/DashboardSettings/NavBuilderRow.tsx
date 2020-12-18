@@ -45,14 +45,6 @@ const NavBuilderRow = (props: Props) => {
 	};
 
 	const renderTop = () => {
-		// TODO(ian): Remove this branch after migration
-		if (typeof item === 'string') {
-			const page = pages.find((pg) => pg.id === item);
-			if (page) {
-				return renderForPageOrCollection(page.title, 'page-layout');
-			}
-			return null;
-		}
 		if ('type' in item) {
 			if (item.type === 'collection') {
 				const collection = collections.find((c) => c.id === item.id);
@@ -96,7 +88,6 @@ const NavBuilderRow = (props: Props) => {
 						items={pages}
 						placeholder="Add Page"
 						usedItems={pages.filter((page) =>
-							// TODO(ian): Remove these any casts after completing migration
 							item.children.some(
 								(current: any) => current === page.id || current.id === page.id,
 							),
@@ -112,7 +103,6 @@ const NavBuilderRow = (props: Props) => {
 						items={collections}
 						placeholder="Add Collection"
 						usedItems={collections.filter((collection) =>
-							// TODO(ian): Remove these any casts after completing migration
 							item.children.some((current: any) => current.id === collection.id),
 						)}
 						onSelect={(collection) => {

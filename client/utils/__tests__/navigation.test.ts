@@ -32,19 +32,6 @@ const collections = [
 ];
 
 describe('getNavItemsForCommunityNavigation', () => {
-	it('treats bare strings as Page IDs', () =>
-		expect(
-			getNavItemsForCommunityNavigation({
-				navigation: ['page-id-1', 'page-id-2', 'page-id-3'],
-				pages: pages,
-				collections: collections,
-			}),
-		).toEqual([
-			{ title: 'Page One', href: '/page1', id: 'page-id-1' },
-			{ title: 'Page Two', href: '/page2', isPrivate: true, id: 'page-id-2' },
-			{ title: 'Page Three', href: '/page3', id: 'page-id-3' },
-		]));
-
 	it('handles collections, pages, and links', () =>
 		expect(
 			getNavItemsForCommunityNavigation({
@@ -78,7 +65,7 @@ describe('getNavItemsForCommunityNavigation', () => {
 						title: 'Menu',
 						children: [
 							{ type: 'collection', id: 'collection-id-2' },
-							'page-id-1',
+							{ type: 'page', id: 'page-id-1' },
 							{ title: 'Ouch', href: 'ftp://ouch', id: '111' },
 						],
 					},

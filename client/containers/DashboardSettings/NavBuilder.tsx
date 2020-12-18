@@ -75,12 +75,15 @@ const NavBuilder = (props: Props) => {
 		onChange(newNav);
 	};
 
-	const updateItem = (dropdownId, index, newItemValues: Partial<CommunityNavigationEntry>) => {
-		const newItemValuesObject = newItemValues as {};
+	const updateItem = (
+		dropdownId: string,
+		index: number,
+		newItemValues: Partial<CommunityNavigationEntry>,
+	) => {
 		const nextUserElements =
 			dropdownId === 'main-list'
 				? userSetElements.map((item, currIndex) => {
-						return currIndex === index ? { ...item, ...newItemValuesObject } : item;
+						return currIndex === index ? { ...item, ...newItemValues } : item;
 				  })
 				: userSetElements.map((item) => {
 						if (item.id === dropdownId && isCommunityNavigationMenu(item)) {
@@ -88,7 +91,7 @@ const NavBuilder = (props: Props) => {
 								...item,
 								children: item.children.map((subItem, subCurrIndex) => {
 									return subCurrIndex === index
-										? { ...subItem, ...newItemValuesObject }
+										? { ...subItem, ...newItemValues }
 										: subItem;
 								}),
 							};

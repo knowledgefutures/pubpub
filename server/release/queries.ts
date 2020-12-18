@@ -4,6 +4,14 @@ import { updateVisibilityForDiscussions } from 'server/discussion/queries';
 import { createBranchExports } from 'server/export/queries';
 import { createDoc } from 'server/doc/queries';
 
+type ReleaseErrorReason = 'merge-failed' | 'duplicate-release';
+export class ReleaseQueryError extends Error {
+	// eslint-disable-next-line no-useless-constructor
+	constructor(reason: ReleaseErrorReason) {
+		super(reason);
+	}
+}
+
 export const createRelease = async ({
 	userId,
 	pubId,
@@ -35,7 +43,7 @@ export const createRelease = async ({
 	});
 
 	if (existingRelease) {
-		throw new Error("Can't make a duplicate release");
+		throw new ReleaseQueryError('duplicate-release');
 	}
 
 	const mergeResult = await mergeFirebaseBranch(
@@ -46,7 +54,7 @@ export const createRelease = async ({
 	);
 
 	if (!mergeResult) {
-		throw new Error('Firebase branches were not merged.');
+		throw new ReleaseQueryError('merge-failed');
 	}
 
 	const { mergeKey, doc } = mergeResult;

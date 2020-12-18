@@ -2,7 +2,7 @@ import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 
 import { getPermissions } from './permissions';
-import { createRelease } from './queries';
+import { createRelease, ReleaseQueryError } from './queries';
 
 const getRequestValues = (req) => {
 	const user = req.user || {};
@@ -48,15 +48,22 @@ app.post(
 			throw new ForbiddenError();
 		}
 
-		const release = await createRelease({
-			userId: userId,
-			pubId: pubId,
-			draftKey: draftKey,
-			noteText: noteText,
-			noteContent: noteContent,
-			makeDraftDiscussionsPublic: makeDraftDiscussionsPublic,
-		});
+		try {
+			const release = await createRelease({
+				userId: userId,
+				pubId: pubId,
+				draftKey: draftKey,
+				noteText: noteText,
+				noteContent: noteContent,
+				makeDraftDiscussionsPublic: makeDraftDiscussionsPublic,
+			});
 
-		return res.status(201).json(release);
+			return res.status(201).json(release);
+		} catch (error) {
+			if (error instanceof ReleaseQueryError) {
+				return res.status(400).json(error.message);
+			}
+			throw error;
+		}
 	}),
 );

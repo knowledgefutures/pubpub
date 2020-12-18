@@ -20,18 +20,14 @@ const getFirebaseApp = () => {
 	}
 	if (process.env.NODE_ENV === 'test') {
 		if (process.env.FIREBASE_TEST_DB_URL) {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ databaseUrl: string; }' is not... Remove this comment to see the full error message
-			return firebaseAdmin.initializeApp({ databaseUrl: process.env.FIREBASE_TEST_DB_URL });
+			return firebaseAdmin.initializeApp({ databaseURL: process.env.FIREBASE_TEST_DB_URL });
 		}
-		// TODO(ian): Make sure we always get something here
 		return null;
 	}
-	/* To encode: Buffer.from(JSON.stringify(serviceAccountJson)).toString('base64'); */
 	const serviceAccount = JSON.parse(
-		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-		Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString(),
+		Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 as string, 'base64').toString(),
 	);
-	/* eslint-disable-next-line no-console */
+	// eslint-disable-next-line no-console
 	console.log(`Firebase App will use: ${getFirebaseConfig().databaseURL}`);
 	return firebaseAdmin.initializeApp(
 		{
@@ -136,15 +132,16 @@ export const mergeFirebaseBranch = (
 	const destinationFirebaseRef = getBranchRef(pubId, destinationBranchId);
 	return mergeBranch(sourceFirebaseRef, destinationFirebaseRef, editorSchema).then(
 		async (mergeResult) => {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'mergeKey' does not exist on type '{ merg... Remove this comment to see the full error message
-			const { mergeKey } = mergeResult;
-			await restoreDiscussionMaps(destinationFirebaseRef, editorSchema, true);
-			if (copyDiscussionMaps) {
-				await copyDiscussionMapsToBranch(
-					sourceFirebaseRef,
-					destinationFirebaseRef,
-					mergeKey,
-				);
+			if (mergeResult) {
+				const { mergeKey } = mergeResult;
+				await restoreDiscussionMaps(destinationFirebaseRef, editorSchema, true);
+				if (copyDiscussionMaps) {
+					await copyDiscussionMapsToBranch(
+						sourceFirebaseRef,
+						destinationFirebaseRef,
+						mergeKey,
+					);
+				}
 			}
 			return mergeResult;
 		},

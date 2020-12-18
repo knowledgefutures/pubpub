@@ -96,8 +96,7 @@ it('provides all expected attributes', async () => {
 	const feedItem = getFeedItemForPub(pub, community);
 	const creators = feedItem.custom_elements.map((item) => item['dc:creator']).filter((x) => x);
 	const enclosures = feedItem.custom_elements
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'enclosure' does not exist on type '{ 'dc... Remove this comment to see the full error message
-		.map((item) => item.enclosure && item.enclosure._attr.url)
+		.map((item: any) => item.enclosure && item.enclosure._attr.url)
 		.filter((x) => x);
 	// Primary collection comes first, private collections excluded
 	expect(feedItem.categories[0]).toEqual('C4');

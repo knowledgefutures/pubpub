@@ -1,0 +1,11 @@
+{
+  "rulesFile": "firebase.rules.json",
+  "emulators": {
+    "database": {
+      "port": 9875
+    },
+    "ui": {
+      "enabled": true
+    }
+  }
+}

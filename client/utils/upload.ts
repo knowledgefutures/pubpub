@@ -1,7 +1,7 @@
 import { isProd } from 'utils/environment';
 import { generateHash } from 'utils/hashes';
 
-const checkForAsset = (url) => {
+const checkForAsset = (url): Promise<void> => {
 	let checkCount = 0;
 	const maxCheckCount = 10;
 	const checkInterval = 1000; /* This will check for 10 seconds and then fail */

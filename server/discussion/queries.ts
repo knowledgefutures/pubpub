@@ -18,13 +18,11 @@ const findDiscussionWithUser = (id) =>
 			id: id,
 		},
 		include: [
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 			includeUserModel({ as: 'author' }),
 			{ model: Anchor, as: 'anchor' },
 			{
 				model: Visibility,
 				as: 'visibility',
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 				include: [includeUserModel({ as: 'users' })],
 			},
 			{
@@ -34,13 +32,11 @@ const findDiscussionWithUser = (id) =>
 					{
 						model: ThreadComment,
 						as: 'comments',
-						// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 						include: [includeUserModel({ as: 'author' })],
 					},
 					{
 						model: ThreadEvent,
 						as: 'events',
-						// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 						include: [includeUserModel({ as: 'user' })],
 					},
 				],
@@ -132,7 +128,7 @@ export const updateDiscussion = async (values, permissions) => {
 		canClose,
 		canReopen,
 	} = permissions;
-	const updatedValues = {};
+	const updatedValues: { [k: string]: any } = {};
 
 	const [discussion, pub] = await Promise.all([
 		Discussion.findOne({ where: { id: discussionId } }),
@@ -141,10 +137,8 @@ export const updateDiscussion = async (values, permissions) => {
 
 	if ('title' in values) {
 		if (canTitle) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'title' does not exist on type '{}'.
 			updatedValues.title = values.title;
 		} else {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 	}
@@ -152,16 +146,14 @@ export const updateDiscussion = async (values, permissions) => {
 	if ('isClosed' in values) {
 		const canModifyClosed = values.isClosed ? canClose : canReopen;
 		if (canModifyClosed) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'isClosed' does not exist on type '{}'.
 			updatedValues.isClosed = values.isClosed;
 		} else {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 	}
 
 	if ('labels' in values) {
-		const labels = [];
+		const labels: any[] = [];
 		const existingLabels = discussion.labels || [];
 		const hasRemovedManagedLabels = existingLabels.some((labelId) => {
 			const labelDefinition = pub.labels.find((label) => label.id === labelId);
@@ -169,7 +161,6 @@ export const updateDiscussion = async (values, permissions) => {
 			return labelDefinition && !labelDefinition.publicApply && missingFromUpdate;
 		});
 		if (hasRemovedManagedLabels && !canApplyManagedLabels) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 		for (const labelId of values.labels) {
@@ -179,15 +170,12 @@ export const updateDiscussion = async (values, permissions) => {
 				const { publicApply } = labelDefinition;
 				const canLabel = publicApply ? canApplyPublicLabels : canApplyManagedLabels;
 				if (isExistingLabel || canLabel) {
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 					labels.push(labelId);
 				} else {
-					// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 					throw new ForbiddenError();
 				}
 			}
 		}
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'labels' does not exist on type '{}'.
 		updatedValues.labels = labels;
 	}
 

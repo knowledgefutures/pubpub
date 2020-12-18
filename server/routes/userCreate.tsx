@@ -14,7 +14,6 @@ app.get('/user/create/:hash', (req, res, next) => {
 		attributes: ['email', 'hash'],
 	});
 
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 	return Promise.all([getInitialData(req), getSignup])
 		.then(([initialData, signupData]) => {
 			return renderToNodeStream(
@@ -23,7 +22,6 @@ app.get('/user/create/:hash', (req, res, next) => {
 					chunkName="UserCreate"
 					initialData={initialData}
 					viewData={{ signupData: signupData || { hashError: true } }}
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: any; title: strin... Remove this comment to see the full error message
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
 						title: `Create New user · ${initialData.communityData.title}`,

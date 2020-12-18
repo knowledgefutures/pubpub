@@ -8,7 +8,10 @@ import { generateHash } from 'utils/hashes';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export const createPub = async ({ communityId, collectionIds, slug, ...restArgs }, userId) => {
+export const createPub = async (
+	{ communityId, collectionIds, slug, ...restArgs },
+	userId?: string,
+) => {
 	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
 	const date = new Date();
 	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;
@@ -66,7 +69,6 @@ export const createPub = async ({ communityId, collectionIds, slug, ...restArgs 
 				where: { id: collectionIdToAdd, communityId: communityId },
 			});
 			if (collection) {
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ collectionId: any; pubId: any;... Remove this comment to see the full error message
 				return createCollectionPub({
 					collectionId: collectionIdToAdd,
 					pubId: newPub.id,
@@ -92,15 +94,13 @@ export const createPub = async ({ communityId, collectionIds, slug, ...restArgs 
 
 export const updatePub = (inputValues, updatePermissions) => {
 	// Filter to only allow certain fields to be updated
-	const filteredValues = {};
+	const filteredValues: any = {};
 	Object.keys(inputValues).forEach((key) => {
 		if (updatePermissions.includes(key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 	if (filteredValues.slug) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 		filteredValues.slug = slugifyString(filteredValues.slug);
 	}
 

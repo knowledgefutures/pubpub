@@ -37,7 +37,6 @@ app.get(
 					chunkName="DashboardEdges"
 					initialData={initialData}
 					viewData={{ overviewData: overviewData, pubData: pubData }}
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
 						title: `Connections · ${pubData.title}`,

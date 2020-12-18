@@ -13,7 +13,6 @@ const assertUserAuthenticated = async (target, requestIds) => {
 		(target === 'collection' && permissions.collection);
 
 	if (!isAuthenticated) {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 		throw new ForbiddenError();
 	}
 };

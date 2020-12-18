@@ -92,7 +92,13 @@ export const attributesPublicUser = [
 ];
 
 export const includeUserModel = (() => {
-	return ({ attributes: providedAttrs, ...restOptions }) => {
+	return ({
+		attributes: providedAttrs,
+		...restOptions
+	}: {
+		attributes?: string[];
+		[k: string]: any;
+	}) => {
 		const attributes = providedAttrs
 			? [...new Set([...attributesPublicUser, ...providedAttrs])]
 			: attributesPublicUser;

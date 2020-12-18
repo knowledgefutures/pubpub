@@ -236,6 +236,7 @@ export type Community = {
 	id: string;
 	subdomain: string;
 	domain?: string;
+	description?: string;
 	createdAt: string;
 	title: string;
 	avatar?: string;
@@ -244,7 +245,7 @@ export type Community = {
 	accentColorDark?: string;
 	hideCreatePubButton?: boolean;
 	headerLogo?: string;
-	headerLinks?: string;
+	headerLinks?: { title: string; url: string; external?: boolean }[];
 	headerColorType?: 'light' | 'dark' | 'custom';
 	useHeaderTextAccent?: boolean;
 	hideHero?: boolean;
@@ -281,6 +282,30 @@ export type Community = {
 	pubs?: Pub[];
 };
 
+export type LoginData = {
+	id: string | null;
+	initials: Maybe<string>;
+	slug: Maybe<string>;
+	fullName: Maybe<string>;
+	firstName: Maybe<string>;
+	lastName: Maybe<string>;
+	avatar: Maybe<string>;
+	title: Maybe<string>;
+	gdprConsent: Maybe<boolean>;
+};
+
+export type LocationData = {
+	hostname: string;
+	path: string;
+	params: { [k: string]: string };
+	query: { [k: string]: string };
+	queryString: string;
+	isBasePubPub: boolean;
+	isProd: boolean;
+	isDuqDuq: boolean;
+	appCommit: string;
+};
+
 export type ScopeData = {
 	activePermissions: {
 		activePermission: MemberPermission;
@@ -298,14 +323,22 @@ export type ScopeData = {
 		isSuperAdmin: boolean;
 	};
 	elements: {
+		activeTarget: Community | Collection | Pub;
 		activeTargetType: 'community' | 'collection' | 'pub';
 		activeTargetName: string;
-		activeCommunity?: Community;
+		activeCommunity: Community;
 		activeCollection?: Collection;
 		activePub?: Pub;
 		inactiveCollections?: Collection[];
 	};
 	memberData: Member[];
+};
+
+export type InitialData = {
+	scopeData: ScopeData;
+	locationData: LocationData;
+	loginData: LoginData;
+	communityData: DefinitelyHas<Community, 'collections' | 'pages'>;
 };
 
 export type Falsy = false | null | undefined | '' | 0;

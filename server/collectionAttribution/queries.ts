@@ -12,7 +12,6 @@ export const createCollectionAttribution = (inputValues) => {
 			return CollectionAttribution.findOne({
 				where: { id: newAttribution.id },
 				attributes: { exclude: ['updatedAt'] },
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ required: boolean; as: string;... Remove this comment to see the full error message
 				include: [includeUserModel({ required: false, as: 'user' })],
 			});
 		})

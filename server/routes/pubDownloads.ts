@@ -12,7 +12,6 @@ import { getBestDownloadUrl } from 'utils/pub/downloads';
 app.get(
 	['/pub/:pubSlug/download', '/pub/:pubSlug/download/:format'],
 	wrap(async (req, res) => {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 		const { communityData } = await getInitialData(req);
 		const { pubSlug, format = null } = req.params;
 
@@ -20,7 +19,6 @@ app.get(
 		const bestPubDownloadUrl = getBestDownloadUrl(pubData, format);
 
 		if (pubData.releases.length === 0) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 
@@ -32,7 +30,6 @@ app.get(
 			}
 		}
 
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 		throw new NotFoundError();
 	}),
 );

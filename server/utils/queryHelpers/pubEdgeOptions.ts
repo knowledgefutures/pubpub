@@ -24,7 +24,6 @@ export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 			model: PubAttribution,
 			as: 'attributions',
 			order: [['order', 'ASC']],
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 			include: [includeUserModel({ as: 'user' })],
 		},
 	].filter((x) => x);

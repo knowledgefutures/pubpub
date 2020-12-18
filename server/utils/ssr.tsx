@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import * as ReactBeautifulDnD from 'react-beautiful-dnd';
+import { Collection, InitialData } from 'utils/types';
 
 export const renderToNodeStream = (res, reactElement) => {
 	res.setHeader('content-type', 'text/html');
@@ -8,30 +9,47 @@ export const renderToNodeStream = (res, reactElement) => {
 	return ReactDOMServer.renderToNodeStream(reactElement).pipe(res);
 };
 
-export const generateMetaComponents = ({
-	initialData,
-	title,
-	contextTitle,
-	description,
-	image,
-	attributions,
-	doi,
-	publishedAt,
-	unlisted,
-	collection,
-	pdfDownloadUrl,
-	textAbstract,
-	notes,
-	canonicalUrl,
-}) => {
+type MetaProps = {
+	initialData: InitialData;
+	title: string;
+	contextTitle?: string;
+	description?: string;
+	image?: string;
+	attributions?: any[];
+	doi?: string;
+	publishedAt?: null | Date;
+	unlisted?: boolean;
+	collection?: Collection;
+	pdfDownloadUrl?: string;
+	textAbstract?: string;
+	notes?: string[];
+	canonicalUrl?: string;
+};
+
+export const generateMetaComponents = (metaProps: MetaProps) => {
+	const {
+		initialData,
+		title,
+		contextTitle,
+		description,
+		image,
+		attributions,
+		doi,
+		publishedAt,
+		unlisted,
+		collection,
+		pdfDownloadUrl,
+		textAbstract,
+		notes,
+		canonicalUrl,
+	} = metaProps;
 	const siteName = initialData.communityData.title;
 	const url = `https://${initialData.locationData.hostname}${initialData.locationData.path}`;
 	const favicon = initialData.communityData.favicon;
 	const avatar = image || initialData.communityData.avatar;
 	const titleWithContext = contextTitle ? `${title} · ${contextTitle}` : title;
-	let outputComponents = [];
+	let outputComponents: any[] = [];
 	if (!initialData.locationData.isBasePubPub) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<link
@@ -45,7 +63,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (title) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<title key="t1">{titleWithContext}</title>,
@@ -58,7 +75,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (siteName) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="sn1" property="og:site_name" content={siteName} />,
@@ -66,7 +82,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (contextTitle && (!collection || collection.kind === 'issue')) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="sn2" name="citation_journal_title" content={contextTitle} />,
@@ -74,7 +89,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (url) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="u1" property="og:url" content={url} />,
@@ -88,30 +102,27 @@ export const generateMetaComponents = ({
 
 	if (collection) {
 		if (collection.kind === 'issue') {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 			outputComponents = [
 				...outputComponents,
-				<meta key="c1" name="citation_volume" content={collection.metadata.volume} />,
-				<meta key="c2" name="citation_issue" content={collection.metadata.issue} />,
+				<meta key="c1" name="citation_volume" content={collection.metadata?.volume} />,
+				<meta key="c2" name="citation_issue" content={collection.metadata?.issue} />,
 				<meta
 					key="c3"
 					name="citation_issn"
-					content={collection.metadata.electronic_issn}
+					content={collection.metadata?.electronic_issn}
 				/>,
-				<meta key="c4" name="citation_issn" content={collection.metadata.print_issn} />,
+				<meta key="c4" name="citation_issn" content={collection.metadata?.print_issn} />,
 			];
 		}
 		if (collection.kind === 'book') {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 			outputComponents = [
 				...outputComponents,
 				<meta key="c5" name="citation_inbook_title" content={collection.title} />,
 				<meta key="c6" name="citation_book_title" content={collection.title} />,
-				<meta key="c7" name="citation_isbn" content={collection.metadata.isbn} />,
+				<meta key="c7" name="citation_isbn" content={collection.metadata?.isbn} />,
 			];
 		}
 		if (collection.kind === 'conference') {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 			outputComponents = [
 				...outputComponents,
 				<meta key="c8" name="citation_conference_title" content={collection.title} />,
@@ -120,7 +131,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (pdfDownloadUrl) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="dl1" name="citation_pdf_url" content={pdfDownloadUrl} />,
@@ -128,7 +138,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (textAbstract) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="a1" name="citation_abstract" content={textAbstract} />,
@@ -136,7 +145,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (description) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="d1" name="description" content={description} />,
@@ -146,7 +154,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (avatar) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="i1" property="og:image" content={avatar} />,
@@ -157,7 +164,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (favicon) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<link key="f1" rel="icon" type="image/png" sizes="256x256" href={favicon} />,
@@ -202,7 +208,6 @@ export const generateMetaComponents = ({
 				/>
 			);
 		});
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never[]'.
 		outputComponents = [...outputComponents, citationAuthorTags, dcAuthorTags];
 	}
 
@@ -210,10 +215,9 @@ export const generateMetaComponents = ({
 		const googleScholarPublishedAt = `${publishedAt.getFullYear()}/${publishedAt.getMonth() +
 			1}/${publishedAt.getDate()}`;
 		const dcPublishedAt = `${publishedAt.getFullYear()}-${publishedAt.getMonth()}-${publishedAt.getDate()}`;
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
-			<meta key="pa1" property="article:published_time" content={publishedAt} />,
+			<meta key="pa1" property="article:published_time" content={String(publishedAt)} />,
 			<meta key="pa2" property="dc.date" content={dcPublishedAt} />,
 			<meta key="pa3" name="citation_publication_date" content={googleScholarPublishedAt} />,
 			<meta key="pub1" name="citation_publisher" content="PubPub" />,
@@ -222,7 +226,6 @@ export const generateMetaComponents = ({
 	}
 
 	if (doi) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="doi1" name="citation_doi" content={`doi:${doi}`} />,
@@ -237,11 +240,9 @@ export const generateMetaComponents = ({
 			// eslint-disable-next-line react/no-array-index-key
 			return <meta key={`n${i}`} name="citation_reference" content={note} />;
 		});
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never[]'.
 		outputComponents = [...outputComponents, citationNoteTags];
 	}
 	if (unlisted) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [
 			...outputComponents,
 			<meta key="un1" name="robots" content="noindex,nofollow" />,
@@ -249,11 +250,9 @@ export const generateMetaComponents = ({
 	}
 
 	if (canonicalUrl) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 		outputComponents = [...outputComponents, <link rel="canonical" href={canonicalUrl} />];
 	}
 
-	// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element[]' is not assignable to type 'never[... Remove this comment to see the full error message
 	outputComponents = [
 		...outputComponents,
 		<meta key="misc1" property="fb:app_id" content="924988584221879" />,

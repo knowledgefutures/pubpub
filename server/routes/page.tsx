@@ -7,6 +7,7 @@ import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPage } from 'server/utils/queryHelpers';
+import { Page } from 'utils/types';
 
 app.get(['/', '/:slug'], async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
@@ -14,17 +15,19 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 	}
 
 	try {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 		const initialData = await getInitialData(req);
-		const pageId = initialData.communityData.pages.reduce((prev, curr) => {
-			if (curr.slug === '' && req.params.slug === undefined) {
-				return curr.id;
-			}
-			if (curr.slug === req.params.slug) {
-				return curr.id;
-			}
-			return prev;
-		}, undefined);
+		const pageId = initialData.communityData.pages.reduce(
+			(bestId: string | undefined, nextPage: Page) => {
+				if (nextPage.slug === '' && req.params.slug === undefined) {
+					return nextPage.id;
+				}
+				if (nextPage.slug === req.params.slug) {
+					return nextPage.id;
+				}
+				return bestId;
+			},
+			undefined,
+		);
 
 		if (!pageId) {
 			return next();
@@ -41,7 +44,6 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 				chunkName="Page"
 				initialData={initialData}
 				viewData={{ pageData: pageData }}
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
 					title: pageTitle,

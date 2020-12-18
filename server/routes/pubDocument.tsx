@@ -27,14 +27,13 @@ const renderPubDocument = (res, pubData, initialData) => {
 			chunkName="Pub"
 			initialData={initialData}
 			viewData={{ pubData: pubData }}
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ attributions: any; collection:... Remove this comment to see the full error message
 			headerComponents={generateMetaComponents({
 				attributions: pubData.attributions,
 				collection: chooseCollectionForPub(pubData, initialData.locationData),
 				contextTitle: getPubPageContextTitle(pubData, initialData.communityData),
 				description: pubData.description,
 				doi: pubData.doi,
-				pdfDownloadUrl: getPdfDownloadUrl(initialData.communityData, pubData),
+				pdfDownloadUrl: getPdfDownloadUrl(initialData.communityData, pubData) || '',
 				image: pubData.avatar,
 				initialData: initialData,
 				notes: getGoogleScholarNotes(Object.values(pubData.initialStructuredCitations)),
@@ -56,12 +55,10 @@ const getEnrichedAndSanitizedPubData = async ({
 }) => {
 	let pubData = await getPub(pubSlug, initialData.communityData.id);
 	if (!pubData) {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 		throw new ForbiddenError();
 	}
 	pubData = await sanitizePub(pubData, initialData, releaseNumber);
 	if (!pubData) {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 		throw new ForbiddenError();
 	}
 	pubData = await enrichPubFirebaseDoc(pubData, historyKey, branchType);
@@ -77,11 +74,9 @@ app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
 	}
 	try {
 		const { releaseNumber: releaseNumberString, pubSlug } = req.params;
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 		const initialData = await getInitialData(req);
 		const releaseNumber = parseInt(releaseNumberString, 10);
 		if (Number.isNaN(releaseNumber) || releaseNumber < 1) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new NotFoundError();
 		}
 
@@ -104,7 +99,6 @@ app.get(['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'], async (req, 
 		return next();
 	}
 	try {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 		const initialData = await getInitialData(req);
 		const { historyKey: historyKeyString, pubSlug } = req.params;
 		const { canViewDraft, canView } = initialData.scopeData.activePermissions;
@@ -113,12 +107,10 @@ app.get(['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'], async (req, 
 		const isHistoryKeyInvalid = hasHistoryKey && Number.isNaN(historyKey);
 
 		if (isHistoryKeyInvalid) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new NotFoundError();
 		}
 
 		if (!canViewDraft && !canView) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new NotFoundError();
 		}
 

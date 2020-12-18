@@ -12,7 +12,6 @@ app.get('/pricing', (req, res, next) => {
 		return next();
 	}
 
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 	return getInitialData(req)
 		.then((initialData) => {
 			return renderToNodeStream(
@@ -20,7 +19,6 @@ app.get('/pricing', (req, res, next) => {
 				<Html
 					chunkName="Pricing"
 					initialData={initialData}
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
 						title: 'Pricing · PubPub',

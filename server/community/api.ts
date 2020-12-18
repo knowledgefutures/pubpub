@@ -18,7 +18,6 @@ app.post(
 		const requestIds = getRequestIds(req);
 		const permissions = await getPermissions(requestIds);
 		if (!permissions.create) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 		const newCommunity = await createCommunity(req.body, req.user);
@@ -32,7 +31,6 @@ app.put(
 		const requestIds = getRequestIds(req);
 		const permissions = await getPermissions(requestIds);
 		if (!permissions.update) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 		const updatedValues = await updateCommunity(req.body, permissions.update);

@@ -24,6 +24,8 @@ import { pathMatchesPattern } from '../paths';
 import { runMacrosOnSourceFiles } from '../macros';
 import { getAttributionAttributes, cloneWithKeys } from './util';
 
+type FileEntry = { tmpPath: string; clientPath: string; label: null | string };
+
 const pubAttributesFromMetadata = ['title', 'description', 'slug', 'customPublishedAt', 'metadata'];
 const pubAttributesFromDirective = [
 	'avatar',
@@ -64,7 +66,7 @@ const createPubAttributions = async (pub, proposedMetadata, directive) => {
 	const { attributions: proposedAttributions = [] } = proposedMetadata;
 	const { matchSlugsToAttributions = [] } = directive;
 	const sources = getSourcesForAttributeStrategy(directive);
-	let attributionsAttrs = [];
+	let attributionsAttrs: any[] = [];
 	if (sources.import) {
 		const matchedProposedAttributions = proposedAttributions.map((proposedAttr) => {
 			const { name, users } = proposedAttr;
@@ -77,11 +79,9 @@ const createPubAttributions = async (pub, proposedMetadata, directive) => {
 			}
 			return proposedAttr;
 		});
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never[]'.
 		attributionsAttrs = [...attributionsAttrs, ...matchedProposedAttributions];
 	}
 	if (sources.directive && Array.isArray(directive.attributions)) {
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'any[]' is not assignable to type 'never[]'.
 		attributionsAttrs = [...attributionsAttrs, ...directive.attributions];
 	}
 	await Promise.all(
@@ -119,7 +119,6 @@ const resolveDirectiveValue = async (value, context) => {
 				if (existingAssetUrl) {
 					return existingAssetUrl;
 				}
-				// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 				const assetKey = await uploadFileToAssetStore(tmpPath);
 				const url = getUrlForAssetKey(assetKey);
 				assetUrlForTmpPath[tmpPath] = url;
@@ -148,7 +147,7 @@ const resolveDirectiveValue = async (value, context) => {
 	return value;
 };
 
-const resolveDirectiveValues = async (directive, sourceFiles, rawMetadata) => {
+const resolveDirectiveValues = async (directive, sourceFiles, rawMetadata): Promise<any> => {
 	const resolvedDirective = {};
 	const context = { sourceFiles: sourceFiles, rawMetadata: rawMetadata, assetUrlForTmpPath: {} };
 	await Promise.all(
@@ -167,8 +166,7 @@ const createPub = async ({ communityId, directive, proposedMetadata }) => {
 		...(sources.import && cloneWithKeys(proposedMetadata, pubAttributesFromMetadata)),
 		...(sources.directive && cloneWithKeys(directive, pubAttributesFromDirective)),
 	};
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
-	return createPubQuery(attributes);
+	return createPubQuery(attributes as any);
 };
 
 const createPubTags = async (directive, pubId, communityId) => {
@@ -190,7 +188,6 @@ const createPubTags = async (directive, pubId, communityId) => {
 						title: tagName,
 						kind: 'tag',
 					}));
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ collectionId: any; pubId: any;... Remove this comment to see the full error message
 				await createCollectionPub({ collectionId: tag.id, pubId: pubId });
 				return existingCollection ? null : tag;
 			}),
@@ -199,16 +196,27 @@ const createPubTags = async (directive, pubId, communityId) => {
 	return [];
 };
 
-const gatherLocalSourceFilesForPub = async (targetPath, isTargetDirectory) => {
+const gatherLocalSourceFilesForPub = async (
+	targetPath,
+	isTargetDirectory,
+): Promise<FileEntry[]> => {
 	if (isTargetDirectory) {
 		return getFullPathsInDir(targetPath).map((tmpPath) => {
-			return { tmpPath: tmpPath, clientPath: path.relative(targetPath, tmpPath) };
+			return {
+				tmpPath: tmpPath,
+				clientPath: path.relative(targetPath, tmpPath),
+				label: null,
+			};
 		});
 	}
-	return [{ tmpPath: targetPath, clientPath: path.basename(targetPath) }];
+	return [{ tmpPath: targetPath, clientPath: path.basename(targetPath), label: null }];
 };
 
-const gatherNonLocalSourceFilesForPub = async (targetPath, isTargetDirectory, directive) => {
+const gatherNonLocalSourceFilesForPub = async (
+	targetPath: string,
+	isTargetDirectory: boolean,
+	directive: any,
+) => {
 	const { resolve: sourcesToResolve } = directive;
 
 	if (!sourcesToResolve) {
@@ -228,7 +236,7 @@ const gatherNonLocalSourceFilesForPub = async (targetPath, isTargetDirectory, di
 		if (typeof entry === 'string') {
 			return { pathToEntrypoint: entry, options: {} };
 		}
-		const [[relativePathToEntrypoint, options]] = Object.entries(entry);
+		const [[relativePathToEntrypoint, options]] = Object.entries(entry) as [string, any][];
 		return { relativePathToEntrypoint: relativePathToEntrypoint, options: options };
 	};
 
@@ -244,19 +252,19 @@ const gatherNonLocalSourceFilesForPub = async (targetPath, isTargetDirectory, di
 		}
 	};
 
-	const resolveEntry = async (entry) => {
+	const resolveEntry = async (entry): Promise<FileEntry[]> => {
 		const { relativePathToEntrypoint, options } = getRelativePathAndOptions(entry);
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-		const fullPathToEntrypoint = path.join(fullPathToTargetDirectory, relativePathToEntrypoint);
-		// @ts-expect-error ts-migrate(2571) FIXME: Object is of type 'unknown'.
+		const fullPathToEntrypoint = path.join(
+			fullPathToTargetDirectory,
+			relativePathToEntrypoint as string,
+		);
 		const stat = await safeStat(fullPathToEntrypoint, options.ignoreIfMissing);
 
 		if (!stat) {
 			return [];
 		}
 
-		const resolveFile = (fullPathToFile) => {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'as' does not exist on type 'unknown'.
+		const resolveFile = (fullPathToFile): FileEntry => {
 			const { as, into, label } = options;
 			if (as) {
 				return { tmpPath: fullPathToFile, clientPath: as, label: label };
@@ -274,26 +282,23 @@ const gatherNonLocalSourceFilesForPub = async (targetPath, isTargetDirectory, di
 		return [resolveFile(fullPathToEntrypoint)];
 	};
 
-	return Promise.all(sourcesToResolve.map(resolveEntry)).then((arr) =>
-		// @ts-expect-error ts-migrate(2488) FIXME: Type 'unknown' must have a '[Symbol.iterator]()' m... Remove this comment to see the full error message
+	return (Promise.all(sourcesToResolve.map(resolveEntry)) as Promise<FileEntry[][]>).then((arr) =>
 		arr.reduce((a, b) => [...a, ...b], []),
 	);
 };
 
-const labelGatheredSourceFiles = (sourceFiles, directive) => {
+const labelGatheredSourceFiles = (sourceFiles: FileEntry[], directive: any) => {
 	const {
 		labels: {
-			// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-			document: documentPath,
-			// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-			bibliography: bibliographyPath,
+			document: documentPath = null,
+			bibliography: bibliographyPath = null,
 			supplements: supplementPaths = [],
 			preambles: preamblePaths = [],
 		} = {},
 	} = directive;
 	let hasDocument = sourceFiles.some((file) => file.label === 'document');
 	let hasBibliography = sourceFiles.some((file) => file.label === 'bibliography');
-	const labelledFiles = [];
+	const labelledFiles: FileEntry[] = [];
 	for (const sourceFile of sourceFiles) {
 		const { clientPath } = sourceFile;
 		const extension = extensionFor(clientPath);
@@ -303,7 +308,6 @@ const labelGatheredSourceFiles = (sourceFiles, directive) => {
 			documentExtensions.includes(extension)
 		) {
 			hasDocument = true;
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			labelledFiles.push({ ...sourceFile, label: 'document' });
 		} else if (
 			!hasBibliography &&
@@ -311,16 +315,12 @@ const labelGatheredSourceFiles = (sourceFiles, directive) => {
 			bibliographyFormats.includes(extension)
 		) {
 			hasBibliography = true;
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			labelledFiles.push({ ...sourceFile, label: 'bibliography' });
 		} else if (supplementPaths.includes(clientPath)) {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			labelledFiles.push({ ...sourceFile, label: 'supplement' });
 		} else if (preamblePaths.includes(clientPath)) {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 			labelledFiles.push({ ...sourceFile, label: 'preamble' });
 		} else {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 			labelledFiles.push(sourceFile);
 		}
 	}
@@ -396,7 +396,6 @@ const getImportableFiles = async (directive, targetPath) => {
 		isTargetDirectory,
 		directive,
 	);
-	// @ts-expect-error ts-migrate(2488) FIXME: Type 'unknown' must have a '[Symbol.iterator]()' m... Remove this comment to see the full error message
 	const gatheredSourceFiles = [...localFiles, ...nonLocalFiles];
 	const sourceFiles = labelGatheredSourceFiles(gatheredSourceFiles, directive);
 	const sourceFilesWithPreambles = await createPreambleFiles(directive, sourceFiles);
@@ -422,8 +421,7 @@ const writeDocumentToPubDraft = async (pubId, document) => {
 	const change = createFirebaseChange([replaceStep], draftBranch.id, 'bulk-importer');
 	await branchRef
 		.child('changes')
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-		.child(0)
+		.child('0')
 		.set(change);
 };
 
@@ -441,7 +439,6 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 	let { doc } = importResult;
 
 	const resolvedDirective = await resolveDirectiveValues(directive, sourceFiles, rawMetadata);
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'inlineFile' does not exist on type '{}'.
 	const { inlineFile } = resolvedDirective;
 
 	const pub = await createPub({
@@ -459,7 +456,6 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 
 	const createdTags = await createPubTags(resolvedDirective, pub.id, community.id);
 	if (collection) {
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ collectionId: any; pubId: any;... Remove this comment to see the full error message
 		await createCollectionPub({ collectionId: collection.id, pubId: pub.id, isPrimary: true });
 	}
 

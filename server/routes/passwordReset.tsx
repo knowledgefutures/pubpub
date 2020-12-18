@@ -13,7 +13,6 @@ app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next
 		where: { slug: req.params.slug || null },
 	});
 
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 	return Promise.all([getInitialData(req), findUser])
 		.then(([initialData, userData]) => {
 			let hashIsValid = true;
@@ -33,7 +32,6 @@ app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next
 					chunkName="PasswordReset"
 					initialData={initialData}
 					viewData={{ passwordResetData: { hashIsValid: hashIsValid } }}
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: any; title: strin... Remove this comment to see the full error message
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
 						title: 'Password Reset',

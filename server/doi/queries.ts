@@ -21,7 +21,6 @@ const collectionIncludes = [
 	{
 		model: CollectionAttribution,
 		as: 'attributions',
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; required: boolean;... Remove this comment to see the full error message
 		include: [includeUserModel({ as: 'user', required: false })],
 	},
 ];

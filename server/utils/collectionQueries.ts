@@ -5,7 +5,6 @@ import { CollectionAttribution, CollectionPub, includeUserModel } from 'server/m
 export const getCollectionAttributions = (collectionId) =>
 	CollectionAttribution.findAll({
 		where: { collectionId: collectionId },
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; required: boolean;... Remove this comment to see the full error message
 		include: [includeUserModel({ as: 'user', required: false })],
 	}).then((attributions) => {
 		return attributions.map((attribution) => {

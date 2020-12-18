@@ -22,7 +22,6 @@ app.post(
 		const requestIds = getRequestIds(req);
 		const canCreate = await getCreatePermission(requestIds);
 		if (!canCreate) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 		const newDiscussion = await createDiscussion(req.body, req.user);

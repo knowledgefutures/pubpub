@@ -9,7 +9,6 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 
 app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 	try {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 		const initialData = await getInitialData(req);
 		const userData = await getUser(req.params.slug, initialData);
 		const isNewishUser = Date.now() - userData.createdAt.valueOf() < 1000 * 86400 * 30;
@@ -19,7 +18,6 @@ app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 				chunkName="User"
 				initialData={initialData}
 				viewData={{ userData: userData }}
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
 					title: `${userData.fullName} · PubPub`,

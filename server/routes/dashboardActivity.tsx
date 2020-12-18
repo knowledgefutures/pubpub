@@ -24,10 +24,8 @@ app.get(
 					chunkName="DashboardActivity"
 					initialData={initialData}
 					viewData={{ activityData: activityData }}
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'elements' does not exist on type '{ elem... Remove this comment to see the full error message
 						title: `Activity · ${initialData.scopeData.elements.activeTarget.title}`,
 						unlisted: true,
 					})}

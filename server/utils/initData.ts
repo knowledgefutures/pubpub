@@ -1,10 +1,11 @@
 import queryString from 'query-string';
 
 import { isProd, isDuqDuq, getAppCommit } from 'utils/environment';
+import { InitialData, ScopeData, Community as CommunityType } from 'utils/types';
 
 import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 
-export const getInitialData = async (req, isDashboard) => {
+export const getInitialData = async (req, isDashboard = false): Promise<InitialData> => {
 	const hostname = req.hostname;
 
 	/* Gather user data */
@@ -56,10 +57,10 @@ export const getInitialData = async (req, isDashboard) => {
 					{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },
 				],
 				collections: [],
-			},
+			} as any,
 			loginData: loginData,
 			locationData: locationData,
-			scopeData: { activePermissions: {} },
+			scopeData: { activePermissions: {} } as ScopeData,
 		};
 	}
 

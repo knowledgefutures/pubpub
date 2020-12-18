@@ -43,7 +43,6 @@ export const sanitizeOnVisibility = (objectsWithVisibility, activePermissions, l
 	});
 };
 
-// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 export const baseAuthor = [includeUserModel({ as: 'author' })];
 export const baseThread = [
 	{
@@ -53,13 +52,11 @@ export const baseThread = [
 			{
 				model: ThreadComment,
 				as: 'comments',
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 				include: [includeUserModel({ as: 'author' })],
 			},
 			{
 				model: ThreadEvent,
 				as: 'events',
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 				include: [includeUserModel({ as: 'user' })],
 			},
 		],
@@ -69,7 +66,6 @@ export const baseVisibility = [
 	{
 		model: Visibility,
 		as: 'visibility',
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 		include: [includeUserModel({ as: 'users' })],
 	},
 ];

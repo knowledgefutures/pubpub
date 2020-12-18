@@ -26,10 +26,8 @@ app.get(['/dash/pages/:subMode'], async (req, res, next) => {
 				chunkName="DashboardPage"
 				initialData={initialData}
 				viewData={{ pageData: pageData }}
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'elements' does not exist on type '{ elem... Remove this comment to see the full error message
 					title: `Pages · ${initialData.scopeData.elements.activeTarget.title}`,
 					unlisted: true,
 				})}

@@ -10,11 +10,9 @@ import { handleErrors, NotFoundError } from 'server/utils/errors';
 app.get('/dash/collection/:collectionSlug/layout', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req, true);
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'elements' does not exist on type '{ elem... Remove this comment to see the full error message
 		const { activeCollection: collection } = initialData.scopeData.elements;
 
-		if (!initialData.scopeData.activePermissions.canView) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
+		if (!initialData.scopeData.activePermissions.canView || !collection) {
 			throw new NotFoundError();
 		}
 
@@ -32,10 +30,8 @@ app.get('/dash/collection/:collectionSlug/layout', async (req, res, next) => {
 					}),
 					collection: collection,
 				}}
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'elements' does not exist on type '{ elem... Remove this comment to see the full error message
 					title: `Layout · ${initialData.scopeData.elements.activeTarget.title}`,
 					unlisted: true,
 				})}

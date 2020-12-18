@@ -28,7 +28,6 @@ app.get(
 
 		return getInitialData(req, true)
 			.then((initialData) => {
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'elements' does not exist on type '{ elem... Remove this comment to see the full error message
 				return Promise.all([initialData, getOverview(initialData.scopeData.elements)]);
 			})
 			.then(([initialData, overviewData]) => {
@@ -40,7 +39,6 @@ app.get(
 						chunkName="DashboardOverview"
 						initialData={initialData}
 						viewData={{ overviewData: sanitizedOverviewData }}
-						// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: any; title: strin... Remove this comment to see the full error message
 						headerComponents={generateMetaComponents({
 							initialData: initialData,
 							title: `Overview · ${initialData.scopeData.elements.activeTarget.title}`,

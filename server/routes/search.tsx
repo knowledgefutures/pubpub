@@ -14,7 +14,6 @@ const searchKey = process.env.ALGOLIA_SEARCH_KEY;
 
 app.get('/search', async (req, res, next) => {
 	try {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 		const initialData = await getInitialData(req);
 		const communityFilter = initialData.locationData.isBasePubPub
 			? ''
@@ -46,7 +45,6 @@ app.get('/search', async (req, res, next) => {
 				chunkName="Search"
 				initialData={initialData}
 				viewData={{ searchData: searchData }}
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
 					title: `Search · ${initialData.communityData.title}`,

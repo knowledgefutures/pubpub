@@ -29,7 +29,6 @@ const processQueryData = function(baseObj, activeObj) {
 };
 
 app.get('/api/admin-dashboard', (req, res) => {
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 	return getInitialData(req).then((initialData) => {
 		const user = req.user || {};
 		const users = [

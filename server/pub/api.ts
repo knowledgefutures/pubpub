@@ -35,7 +35,6 @@ app.post(
 			);
 			return res.status(201).json(newPub);
 		}
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 		throw new ForbiddenError();
 	}),
 );
@@ -53,7 +52,6 @@ app.put(
 			const updateResult = await updatePub(req.body, updatableFields);
 			return res.status(200).json(updateResult);
 		}
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 		throw new ForbiddenError();
 	}),
 );
@@ -66,7 +64,6 @@ app.delete(
 			await destroyPub(pubId);
 			return res.status(200).json({});
 		}
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 		throw new ForbiddenError();
 	}),
 );

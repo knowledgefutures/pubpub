@@ -41,7 +41,7 @@ const blockForAssetFile = (assetKey) =>
 		checkForFile();
 	});
 
-export const downloadFileFromAssetStore = (assetKey, filePath) =>
+export const downloadFileFromAssetStore = (assetKey: string, filePath: string) =>
 	new Promise(async (resolve, reject) => {
 		await blockForAssetFile(assetKey);
 		const writeStream = fs.createWriteStream(filePath);
@@ -54,7 +54,7 @@ export const downloadFileFromAssetStore = (assetKey, filePath) =>
 			.on('close', () => resolve(filePath));
 	});
 
-export const uploadFileToAssetStore = (filePath, givenAssetKey) => {
+export const uploadFileToAssetStore = (filePath: string, givenAssetKey?: string) => {
 	const assetKey = givenAssetKey || generateAssetKeyForFile(filePath);
 	const params = {
 		Key: assetKey,

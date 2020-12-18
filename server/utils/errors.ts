@@ -28,7 +28,7 @@ export const PubPubError = {
 export class HTTPStatusError extends Error {
 	readonly status: number;
 
-	constructor(status, sourceError) {
+	constructor(status, sourceError?: Error) {
 		super(`HTTP Error ${status}${sourceError ? ': ' + sourceError.message : ''}`);
 		this.status = status;
 	}
@@ -39,13 +39,13 @@ export class HTTPStatusError extends Error {
 }
 
 export class ForbiddenError extends HTTPStatusError {
-	constructor(sourceError) {
+	constructor(sourceError?: Error) {
 		super(403, sourceError);
 	}
 }
 
 export class NotFoundError extends HTTPStatusError {
-	constructor(sourceError) {
+	constructor(sourceError?: Error) {
 		super(404, sourceError);
 	}
 }

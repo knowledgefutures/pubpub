@@ -17,7 +17,6 @@ export const downloadAndConvertFiles = async (sourceFiles, tmpDirectoryPath) => 
 			await downloadFileFromAssetStore(assetKey, tmpPath);
 			const convertedTmpPath = await convertFileTypeIfNecessary(tmpPath);
 			if (convertedTmpPath !== tmpPath) {
-				// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 				const convertedKey = await uploadFileToAssetStore(convertedTmpPath);
 				return { ...sourceFile, assetKey: convertedKey, tmpPath: convertedTmpPath };
 			}

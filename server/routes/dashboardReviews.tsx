@@ -16,7 +16,6 @@ app.get(
 				return next();
 			}
 			const initialData = await getInitialData(req, true);
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'elements' does not exist on type '{ elem... Remove this comment to see the full error message
 			const overviewData = await getOverview(initialData.scopeData.elements);
 			const sanitizedOverviewData = await sanitizeOverview(initialData, overviewData);
 			return renderToNodeStream(
@@ -25,10 +24,8 @@ app.get(
 					chunkName="DashboardReviews"
 					initialData={initialData}
 					viewData={{ overviewData: sanitizedOverviewData }}
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ initialData: { communityData: ... Remove this comment to see the full error message
 					headerComponents={generateMetaComponents({
 						initialData: initialData,
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'elements' does not exist on type '{ elem... Remove this comment to see the full error message
 						title: `Reviews · ${initialData.scopeData.elements.activeTarget.title}`,
 						unlisted: true,
 					})}

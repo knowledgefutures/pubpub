@@ -42,7 +42,6 @@ app.post(
 			value: value,
 		});
 		if (!permissions.create) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 		const member = await createMember({
@@ -75,7 +74,6 @@ app.put(
 			value: value,
 		});
 		if (!permissions.update) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 		const member = await updateMember({
@@ -100,7 +98,6 @@ app.delete(
 			value: value,
 		});
 		if (!permissions.destroy) {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 0.
 			throw new ForbiddenError();
 		}
 		await destroyMember({ memberId: id });

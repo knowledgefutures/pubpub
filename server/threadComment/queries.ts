@@ -3,7 +3,6 @@ import { ThreadComment, includeUserModel } from 'server/models';
 const findThreadCommentWithUser = (id) =>
 	ThreadComment.findOne({
 		where: { id: id },
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ as: string; }' is not assignab... Remove this comment to see the full error message
 		include: [includeUserModel({ as: 'author' })],
 	});
 

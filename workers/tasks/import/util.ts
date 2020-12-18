@@ -81,7 +81,7 @@ export const extensionFor = (filePath) =>
 		.pop()
 		.toLowerCase();
 
-export const spawn = (command, args) =>
+export const spawn = (command, args): Promise<void> =>
 	new Promise((resolve, reject) => {
 		const ps = spawnChildProcess(command, args);
 		ps.on('close', () => resolve());
@@ -89,13 +89,12 @@ export const spawn = (command, args) =>
 	});
 
 export const getFullPathsInDir = (dir) => {
-	let paths = [];
+	let paths: string[] = [];
 	fs.readdirSync(dir).forEach((file) => {
 		const fullPath = path.join(dir, file);
 		if (fs.lstatSync(fullPath).isDirectory()) {
 			paths = paths.concat(getFullPathsInDir(fullPath));
 		} else {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
 			paths.push(fullPath);
 		}
 	});

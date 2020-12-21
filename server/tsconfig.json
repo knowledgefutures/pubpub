@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "../dist/server",
+    "incremental": true
+  },
+  "include": [
+    "**/*",
+    "../client/**/*",
+    "../types/**/*",
+    "../utils/**/*",
+    "../workers/**/*"
+  ],
+  "exclude": [
+    "../**/*.test.ts",
+    "../**/*.test.js",
+    "../**/*.stories.tsx"
+  ]
+}

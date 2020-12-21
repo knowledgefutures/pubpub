@@ -92,8 +92,16 @@ export const attributesPublicUser = [
 ];
 
 export const includeUserModel = (() => {
-	return ({ attributes: providedAttributes = [], ...restOptions }) => {
-		const attributes = [...new Set([...attributesPublicUser, ...providedAttributes])];
+	return ({
+		attributes: providedAttrs,
+		...restOptions
+	}: {
+		attributes?: string[];
+		[k: string]: any;
+	}) => {
+		const attributes = providedAttrs
+			? [...new Set([...attributesPublicUser, ...providedAttrs])]
+			: attributesPublicUser;
 		// eslint-disable-next-line pubpub-rules/no-user-model
 		return {
 			model: User,

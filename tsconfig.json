@@ -52,8 +52,6 @@
 			"containers/*": ["./client/containers/*"],
 			"server": ["./server"],
 			"server/*": ["./server/*"],
-			"stubstub": ["./stubstub"],
-			"stubstub/*": ["./stubstub/*"],
 			"types": ["./client/types"],
 			"types/*": ["./client/types/*"],
 			"utils": ["./utils"],
@@ -81,4 +79,5 @@
 		"skipLibCheck": true /* Skip type checking of declaration files. */,
 		"forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
 	},
+	"exclude": ["**/*.test.ts"],
 }

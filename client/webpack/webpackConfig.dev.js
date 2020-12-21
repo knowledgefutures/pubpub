@@ -46,8 +46,7 @@ module.exports = {
 			{
 				test: /\.(js|jsx|ts|tsx)$/,
 				include: [resolve(__dirname, '../'), resolve(__dirname, '../../utils')],
-				loader: 'ts-loader',
-				options: { configFile: resolve(__dirname, '../../tsconfig.client.json') },
+				use: 'ts-loader',
 			},
 			{
 				test: /\.scss$/,

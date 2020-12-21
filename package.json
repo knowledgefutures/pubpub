@@ -15,7 +15,7 @@
 		"build-dev": "webpack --config ./client/webpack/webpackConfig.dev.js --watch",
 		"build-dev-once": "rm -rf ./dist/client && webpack --config ./client/webpack/webpackConfig.dev.js && npm run build-server",
 		"build-prod": "rm -rf ./dist && webpack --config ./client/webpack/webpackConfig.prod.js && npm run build-server",
-		"build-server": "tsc -p server/tsconfig.json",
+		"build-server": "tsc -p tsconfig.server.json",
 		"watch-server": "npm run build-server -- -w",
 		"postbuild-server": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' ../dist/server/server/ --cwd=server/ --parents && npm run copy-worker-assets",
 		"copy-worker-assets": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' '!**/__tests__' ../dist/server/workers/ --cwd=workers/ --parents",

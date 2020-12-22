@@ -6,7 +6,12 @@ import { getBranchDoc } from 'server/utils/firebaseAdmin';
 import { createDoc } from 'server/doc/queries';
 import { forEach } from '../util';
 
+const ID_BLACKLIST = ['5dea7a72-330d-4fbf-8a88-c4723e201b39'];
+
 const handleReleasesForPub = async (pub) => {
+	if (ID_BLACKLIST.includes(pub.id)) {
+		return;
+	}
 	const [publicBranch, releasesOrderedByDate] = await Promise.all([
 		Branch.findOne({
 			where: { pubId: pub.id, title: 'public' },
@@ -30,12 +35,15 @@ const handleReleasesForPub = async (pub) => {
 module.exports = async () => {
 	const slowdance = new Slowdance();
 	slowdance.start();
-	await forEach(await Pub.findAll({ order: [['createdAt', 'DESC']] }), (pub) =>
-		slowdance
-			.wrapPromise(handleReleasesForPub(pub), {
-				label: `[${pub.slug}] ${pub.title}`,
-				labelError: (err) => err.message,
-			})
-			.catch(() => {}),
+	await forEach(
+		await Pub.findAll({ order: [['createdAt', 'DESC']] }),
+		(pub) =>
+			slowdance
+				.wrapPromise(handleReleasesForPub(pub), {
+					label: `[${pub.slug}] ${pub.title}`,
+					labelError: (err) => err.message,
+				})
+				.catch(() => {}),
+		10,
 	);
 };

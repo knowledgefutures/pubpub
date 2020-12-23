@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Checkbox } from '@blueprintjs/core';
+import { Checkbox, Classes, Tab, Tabs } from '@blueprintjs/core';
 import { Node } from 'prosemirror-model';
 
 import { SimpleEditor } from 'components';
@@ -46,8 +46,14 @@ const getItemName = (selectedNode) => {
 const ControlsMedia = (props: Props) => {
 	const { isSmall, editorChangeObject, pendingAttrs, pubData } = props;
 	const { updateNode, selectedNode } = editorChangeObject;
-	const { hasPendingChanges, commitChanges, updateAttrs } = pendingAttrs;
+	const {
+		hasPendingChanges,
+		commitChanges,
+		updateAttrs,
+		attrs: { altText },
+	} = pendingAttrs;
 	const { size, align, height, caption, url, fullResolution, hideLabel } = selectedNode.attrs;
+	const nodeSupportsAltText = !!selectedNode.type.spec.attrs?.altText;
 	const canEditHeight = getCanEditNodeHeight(selectedNode);
 	const itemName = getItemName(selectedNode);
 	const { nodeLabels } = usePubData();
@@ -67,6 +73,57 @@ const ControlsMedia = (props: Props) => {
 			updateNode({ fullResolution: (e.target as HTMLInputElement).checked }),
 		[updateNode],
 	);
+
+	const renderUpdateButton = () => {
+		return (
+			<ControlsButtonGroup>
+				<ControlsButton disabled={!hasPendingChanges} onClick={commitChanges}>
+					Update
+				</ControlsButton>
+			</ControlsButtonGroup>
+		);
+	};
+
+	const renderCaptionPanel = () => {
+		return (
+			<div className="section hide-overflow">
+				<SimpleEditor
+					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
+					placeholder={`Add a caption for this ${itemName}`}
+					initialHtmlString={caption}
+					onChange={(htmlString) => updateAttrs({ caption: htmlString })}
+				/>
+				{renderUpdateButton()}
+			</div>
+		);
+	};
+
+	const renderAltTextPanel = () => {
+		return (
+			<div className="section hide-overflow">
+				<p>
+					Alt text provides information about an image's contents to screenreader users
+					that may be too detailed to include in a caption. Avoid duplicating text between
+					these fields. If an image is purely decorative, leave this field blank.
+				</p>
+				<textarea
+					placeholder={`Add alt text for this ${itemName}`}
+					value={altText}
+					onChange={(evt) => updateAttrs({ altText: evt.target.value })}
+				/>
+				{renderUpdateButton()}
+			</div>
+		);
+	};
+
+	const renderCaptionAltSelector = () => {
+		return (
+			<Tabs id="media-controls-caption-alt" className={Classes.DARK}>
+				<Tab id="caption" title="Caption" panel={renderCaptionPanel()} />
+				<Tab id="alt" title="Alt text" panel={renderAltTextPanel()} />
+			</Tabs>
+		);
+	};
 
 	return (
 		<div className="controls-media-component">
@@ -132,19 +189,7 @@ const ControlsMedia = (props: Props) => {
 					</Checkbox>
 				</div>
 			</div>
-			<div className="section hide-overflow">
-				<SimpleEditor
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
-					placeholder={`Add a caption for this ${itemName}`}
-					initialHtmlString={caption}
-					onChange={(htmlString) => updateAttrs({ caption: htmlString })}
-				/>
-				<ControlsButtonGroup>
-					<ControlsButton disabled={!hasPendingChanges} onClick={commitChanges}>
-						Update caption
-					</ControlsButton>
-				</ControlsButtonGroup>
-			</div>
+			{nodeSupportsAltText ? renderCaptionAltSelector() : renderCaptionPanel()}
 		</div>
 	);
 };

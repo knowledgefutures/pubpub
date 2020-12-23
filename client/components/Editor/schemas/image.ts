@@ -7,6 +7,21 @@ import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
 import { label } from './reactive/label';
 
+// See https://github.com/pubpub/pubpub/issues/1208 for the rationale for this logic
+const getFigcaptionRefrenceAttrs = (alt, caption, figcaptionId) => {
+	if (alt && caption) {
+		return {
+			'aria-describedby': figcaptionId,
+		};
+	}
+	if (caption) {
+		return {
+			'aria-labelledby': figcaptionId,
+		};
+	}
+	return {};
+};
+
 export default {
 	image: {
 		atom: true,
@@ -17,6 +32,7 @@ export default {
 			size: { default: 50 }, // number as percentage
 			align: { default: 'center' },
 			caption: { default: '' },
+			altText: { default: '' },
 			hideLabel: { default: false },
 			fullResolution: { default: false },
 		},
@@ -42,25 +58,36 @@ export default {
 			},
 		],
 		toDOM: (node, { isReact } = { isReact: false }) => {
+			const { url, align, id, altText, caption, fullResolution, size } = node.attrs;
+
 			const resizeFunc = node.type.spec.defaultOptions.onResizeUrl;
 			const maybeResizedSrc =
-				resizeFunc && !node.attrs.fullResolution && imageCanBeResized(node.attrs.url)
-					? resizeFunc(node.attrs.url, node.attrs.align)
-					: node.attrs.url;
+				resizeFunc && !fullResolution && imageCanBeResized(url)
+					? resizeFunc(url, align)
+					: url;
+
+			const figcaptionId = `${id}-figure-caption`;
 
 			return [
 				'figure',
 				{
-					...(node.attrs.id && { id: node.attrs.id }),
+					...(id && { id: id }),
 					'data-node-type': 'image',
-					'data-size': node.attrs.size,
-					'data-align': node.attrs.align,
-					'data-url': node.attrs.url,
+					'data-size': size,
+					'data-align': align,
+					'data-url': url,
 				},
-				['img', { src: maybeResizedSrc }],
+				[
+					'img',
+					{
+						src: maybeResizedSrc,
+						alt: altText || '',
+						...getFigcaptionRefrenceAttrs(altText, caption, figcaptionId),
+					},
+				],
 				[
 					'figcaption',
-					{},
+					{ id: figcaptionId },
 					pruneFalsyValues([
 						'div',
 						{},
@@ -69,7 +96,7 @@ export default {
 							{ spellcheck: 'false' },
 							builtLabel,
 						]),
-						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
+						renderHtmlChildren(isReact, caption, 'div'),
 					]),
 				],
 			] as DOMOutputSpec;

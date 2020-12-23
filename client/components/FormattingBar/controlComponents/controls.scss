@@ -46,6 +46,34 @@
 		}
 	}
 
+	.bp3-tabs {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		.bp3-tab {
+			&[aria-selected='true'] {
+				color: white;
+				&:hover {
+					color: white;
+				}
+			}
+			&:not([aria-selected='true']) {
+				color: white;
+				opacity: 0.5;
+				&:hover {
+					color: white;
+				}
+			}
+		}
+		.bp3-tab-indicator {
+			background: white;
+		}
+		.bp3-tab-panel {
+			flex-grow: 1;
+			margin-top: 9px;
+		}
+	}
+
 	textarea {
 		background: rgba(255, 255, 255, 0.2);
 		border: none;
@@ -59,7 +87,7 @@
 		width: 100%;
 		overflow-y: hidden;
 		.editor-wrapper:focus-within {
-			box-shadow: inset 0px 0px 0px 1.5px white !important;
+			box-shadow: inset 0px 0px 0px 2px white !important;
 			border-top-color: transparent;
 		}
 		.editor,

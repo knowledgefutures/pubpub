@@ -41,6 +41,7 @@ export default {
 			},
 		],
 		toDOM: (node, { isReact } = { isReact: false }) => {
+			const figcaptionId = `${node.attrs.id}-figure-caption`;
 			return [
 				'figure',
 				{
@@ -56,11 +57,12 @@ export default {
 						preload: 'metadata',
 						src: node.attrs.url,
 						alt: node.attrs.caption,
+						'aria-describedby': figcaptionId,
 					},
 				],
 				[
 					'figcaption',
-					{},
+					{ id: figcaptionId },
 					pruneFalsyValues([
 						'div',
 						{},

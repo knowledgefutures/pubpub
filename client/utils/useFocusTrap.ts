@@ -1,19 +1,27 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { Maybe } from 'utils/types';
 
-const isChildOfReakitPortal = (element) => {
-	const ancestors = [];
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
+type EventHandler = (evt: Event) => unknown;
+
+type FocusTrapOptions = {
+	onMouseDownOutside?: Maybe<EventHandler>;
+	onEscapeKeyPressed?: Maybe<EventHandler>;
+	onClickOutside?: Maybe<EventHandler>;
+	isActive?: boolean;
+	ignoreMouseEvents?: boolean;
+	restoreFocusTarget?: Maybe<globalThis.Node>;
+};
+
+const captureEventOptions = { capture: true };
+
+const isChildOfReakitPortal = (element: Element) => {
+	const ancestors: Element[] = [];
 	ancestors.push(element);
-	while (element.parentNode) {
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
-		ancestors.unshift(element.parentNode);
-		// eslint-disable-next-line no-param-reassign
-		element = element.parentNode;
+	while (element.parentElement) {
+		ancestors.unshift(element.parentElement);
+		element = element.parentElement;
 	}
-	return ancestors.some(
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'classList' does not exist on type 'never... Remove this comment to see the full error message
-		(ancestor) => ancestor.classList && ancestor.classList.contains('__reakit-portal'),
-	);
+	return ancestors.some((ancestor) => ancestor.classList?.contains('__reakit-portal'));
 };
 
 const rememberScrollPosition = () => {
@@ -34,22 +42,19 @@ const isTargetOutsideOfRoot = (rootElement, target) => {
 // This implementation heavily inspired by the wonder-blocks focus trap:
 // https://github.com/Khan/wonder-blocks/blob/master/packages/wonder-blocks-modal/components/focus-trap.js
 export const useFocusTrap = ({
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	onMouseDownOutside,
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	onEscapeKeyPressed,
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	onClickOutside,
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	isActive,
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	restoreFocusTarget,
-} = {}) => {
-	const [rootElement, setRefElement] = useState(null);
+	onMouseDownOutside = null,
+	onEscapeKeyPressed = null,
+	onClickOutside = null,
+	isActive = false,
+	ignoreMouseEvents = false,
+	restoreFocusTarget = null,
+}: FocusTrapOptions = {}) => {
+	const [rootElement, setRefElement] = useState<null | HTMLElement>(null);
 	const ignoreFocusChanges = useRef(false);
-	const lastNodeFocusedInModal = useRef(null);
-	const lastGoodScrollPosition = useRef(null);
+	const lastElementFocusedInModal = useRef<null | Element>(null);
+	const lastGoodScrollPosition = useRef<null | ReturnType<typeof rememberScrollPosition>>(null);
 	const hasSeenMouseDownOutside = useRef(false);
+	const mouseDownTimeRef = useRef(0);
 
 	const tryToFocus = useCallback((node) => {
 		if (node instanceof HTMLElement) {
@@ -96,6 +101,7 @@ export const useFocusTrap = ({
 	const handleGlobalFocus = useCallback(
 		(evt) => {
 			const { target } = evt;
+			const probablyFocusedByMouse = Date.now() - mouseDownTimeRef.current < 1000;
 
 			// We can ignore a focus event if:
 			const eventIsIgnorable =
@@ -106,18 +112,18 @@ export const useFocusTrap = ({
 				// 3. the focus is set to the document itself
 				!(target instanceof Node) ||
 				// 4. we don't have a reference to a container element yet
-				!rootElement;
+				!rootElement ||
+				// 5. we are ignoring mouse events
+				(probablyFocusedByMouse && ignoreMouseEvents);
 
 			if (eventIsIgnorable) {
 				return;
 			}
 
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-			if (rootElement.contains(target)) {
-				lastNodeFocusedInModal.current = target;
+			if (rootElement && rootElement.contains(target)) {
+				lastElementFocusedInModal.current = target;
 
 				// Keep track of our scroll position so we can restore it later
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '{ restore: () => void; }' is not assignable ... Remove this comment to see the full error message
 				lastGoodScrollPosition.current = rememberScrollPosition();
 			} else {
 				if (isChildOfReakitPortal(target)) {
@@ -126,7 +132,6 @@ export const useFocusTrap = ({
 
 				// Restore our last good scroll position
 				if (lastGoodScrollPosition.current) {
-					// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 					lastGoodScrollPosition.current.restore();
 				}
 
@@ -141,22 +146,22 @@ export const useFocusTrap = ({
 				// user pressing Shift-Tab on the first node, wanting to go to the
 				// end. So, we instead try focusing the last focusable node of the
 				// modal.
-				if (document.activeElement === lastNodeFocusedInModal.current) {
+				if (document.activeElement === lastElementFocusedInModal.current) {
 					focusLastElementIn(rootElement);
 				}
 
 				// Focus should now be inside the modal, so record the newly-focused
 				// node as the last node focused in the modal.
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element | null' is not assignable to type 'n... Remove this comment to see the full error message
-				lastNodeFocusedInModal.current = document.activeElement;
+				lastElementFocusedInModal.current = document.activeElement;
 			}
 		},
-		[focusFirstElementIn, focusLastElementIn, isActive, rootElement],
+		[focusFirstElementIn, focusLastElementIn, isActive, rootElement, ignoreMouseEvents],
 	);
 
 	const handleGlobalMouseDown = useCallback(
 		(evt) => {
 			const { target } = evt;
+			mouseDownTimeRef.current = Date.now();
 			if (isTargetOutsideOfRoot(rootElement, target)) {
 				hasSeenMouseDownOutside.current = true;
 				if (onMouseDownOutside) {
@@ -199,37 +204,30 @@ export const useFocusTrap = ({
 	}, [handleGlobalFocus]);
 
 	useEffect(() => {
-		const options = { capture: true };
-		window.addEventListener('mousedown', handleGlobalMouseDown, options);
-		return () => window.removeEventListener('mousedown', handleGlobalMouseDown, options);
+		window.addEventListener('mousedown', handleGlobalMouseDown, captureEventOptions);
+		return () =>
+			window.removeEventListener('mousedown', handleGlobalMouseDown, captureEventOptions);
 	}, [handleGlobalMouseDown]);
 
 	useEffect(() => {
-		const options = { capture: true };
-		window.addEventListener('click', handleGlobalClick, options);
-		return () => window.removeEventListener('click', handleGlobalClick, options);
+		window.addEventListener('click', handleGlobalClick, captureEventOptions);
+		return () => window.removeEventListener('click', handleGlobalClick, captureEventOptions);
 	}, [handleGlobalClick]);
 
 	useEffect(() => {
 		if (rootElement) {
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 			rootElement.addEventListener('keydown', handleKeyDown);
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 			return () => rootElement.removeEventListener('keydown', handleKeyDown);
 		}
 		return () => {};
 	}, [handleKeyDown, rootElement]);
 
 	useEffect(() => {
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 		if (rootElement && isActive && !rootElement.contains(document.activeElement)) {
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 			const previousTabIndex = rootElement.tabIndex;
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 			rootElement.tabIndex = -1;
 			tryToFocus(rootElement);
 			return () => {
-				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 				rootElement.tabIndex = previousTabIndex;
 			};
 		}

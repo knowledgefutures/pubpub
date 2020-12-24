@@ -1,5 +1,5 @@
 import { Node, ResolvedPos } from 'prosemirror-model';
-import { NodeSelection, Selection, TextSelection } from 'prosemirror-state';
+import { Selection, TextSelection } from 'prosemirror-state';
 
 export const moveSelectionToStart = (editorView) => {
 	/* Create transaction and set selection to the beginning of the doc */
@@ -35,30 +35,7 @@ export const marksAtSelection = (editorView) => {
 	});
 };
 
-export const setEditorSelectionFromClick = (editorView, clickEvent) => {
-	const { clientX, clientY } = clickEvent;
-	const posAtCoords = editorView.posAtCoords({ left: clientX, top: clientY });
-	if (posAtCoords) {
-		const { pos, inside } = posAtCoords;
-		const txn = editorView.state.tr;
-		const insideNode = editorView.state.doc.nodeAt(inside);
-		if (NodeSelection.isSelectable(insideNode)) {
-			const selection = NodeSelection.create(editorView.state.doc, inside);
-			txn.setSelection(selection);
-		} else {
-			const resolvedPos = editorView.state.doc.resolve(pos);
-			const selection = Selection.near(resolvedPos);
-			txn.setSelection(selection);
-		}
-		txn.setMeta('latestDomEvent', clickEvent);
-		editorView.dispatch(txn);
-	}
-};
-
 type NodePredicate = (node: Node) => boolean;
-
-export const findParentNode = (predicate: NodePredicate) => ({ $from }: Selection) =>
-	findParentNodeClosestToPos($from, predicate);
 
 export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePredicate) => {
 	for (let i = $pos.depth; i > 0; i--) {
@@ -72,4 +49,8 @@ export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePre
 			};
 		}
 	}
+	return null;
 };
+
+export const findParentNode = (predicate: NodePredicate) => ({ $from }: Selection) =>
+	findParentNodeClosestToPos($from, predicate);

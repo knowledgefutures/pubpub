@@ -2,24 +2,11 @@ import { DOMSerializer, Node } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import Popper from 'popper.js';
 
+import { rectContainsPoint, rectUnion } from 'utils/geom';
+
 require('./notePopover.scss');
 
 const normalizePopoverString = (string) => string.split('\n').join('');
-
-const rectUnion = (a, b) => {
-	return {
-		right: Math.max(a.right, b.right),
-		left: Math.min(a.left, b.left),
-		x: Math.min(a.x, b.x),
-		bottom: Math.max(a.bottom, b.bottom),
-		top: Math.min(a.top, b.top),
-		y: Math.min(a.y, b.y),
-	};
-};
-
-const rectContainsPoint = ({ left, right, top, bottom }, { x, y }) => {
-	return x >= left && x <= right && y >= top && y <= bottom;
-};
 
 class NotePopover {
 	dom: HTMLElement;

@@ -151,6 +151,9 @@ const Editor = (props: Props) => {
 		view.setProps({
 			dispatchTransaction: (transaction) => {
 				try {
+					if (transaction.selectionSet) {
+						console.trace('tx', transaction);
+					}
 					const newState = view.state.apply(transaction);
 					const transactionHasSteps = transaction.steps.length;
 					view.updateState(newState);

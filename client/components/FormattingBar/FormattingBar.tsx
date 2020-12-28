@@ -1,18 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
+import { Node } from 'prosemirror-model';
 
 import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
 import { usePubData } from 'client/containers/Pub/pubHooks';
+import { indexByProperty } from 'utils/arrays';
+import { Maybe } from 'utils/types';
 
-import { string } from 'yargs';
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
 import FormattingBarPopover from './FormattingBarPopover';
 import { positionNearSelection } from './positioning';
 import { FormattingBarButtonData } from './types';
 import { getButtonPopoverComponent } from './utils';
+import { usePendingAttrs } from './usePendingAttrs';
 
 require('./formattingBar.scss');
 
@@ -30,9 +33,8 @@ type Props = {
 		view: {
 			focus: () => unknown;
 		};
-		selectedNode?: {
-			attrs?: any;
-		};
+		selectedNode?: Node;
+		updateNode: (attrs: any) => unknown;
 	};
 	buttons: FormattingBarButtonData[];
 	showBlockTypes?: boolean;
@@ -124,6 +126,7 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 };
 
 const FormattingBar = (props: Props) => {
+	const t0 = Date.now();
 	const {
 		buttons,
 		editorChangeObject,
@@ -139,6 +142,11 @@ const FormattingBar = (props: Props) => {
 	const pubData = usePubData();
 	const buttonElementRefs = useRefMap();
 	const toolbar = useToolbarState({ loop: true });
+	const pendingAttrs = usePendingAttrs(editorChangeObject);
+	const menuItemsByKey: Maybe<Record<string, any>> = useMemo(
+		() => menuItems && indexByProperty(menuItems, 'title'),
+		[menuItems],
+	);
 	const {
 		indicatedButtons,
 		openedButton,
@@ -148,19 +156,12 @@ const FormattingBar = (props: Props) => {
 		ControlsComponent,
 	} = useControlsState(props);
 
-	const menuItemByKey = (key) => {
-		if (menuItems) {
-			return menuItems.find((menuItem) => menuItem.title === key);
-		}
-		return null;
-	};
-
 	const handleButtonClick = (item) => {
 		if (indicatedButtons.includes(item)) {
 			setOpenedButton(openedButton === item ? null : item);
 		} else {
 			const insertFunction = insertFunctions[item.key];
-			const menuItem = menuItemByKey(item.key);
+			const menuItem = menuItemsByKey?.[item.key];
 			if (insertFunction) {
 				insertFunction();
 				view.focus();
@@ -184,7 +185,7 @@ const FormattingBar = (props: Props) => {
 	}, [openedButton]);
 
 	const renderButton = (button: FormattingBarButtonData) => {
-		const matchingMenuItem = menuItemByKey(button.key);
+		const matchingMenuItem = menuItemsByKey?.[button.key];
 		const insertFunction = insertFunctions && insertFunctions[button.key];
 		const noFunction = !insertFunction && matchingMenuItem && !matchingMenuItem.canRun;
 		const isOpen = openedButton === button;
@@ -220,7 +221,7 @@ const FormattingBar = (props: Props) => {
 		);
 	};
 
-	return (
+	const res = (
 		<div
 			className={classNames(
 				'formatting-bar-component',
@@ -247,7 +248,6 @@ const FormattingBar = (props: Props) => {
 					editorChangeObject={editorChangeObject}
 					accentColor={communityData.accentColorDark}
 					button={openedButton}
-					onClose={() => setOpenedButton(null)}
 					isFullScreenWidth={isFullScreenWidth}
 					containerRef={popoverContainerRef}
 					floatingPosition={
@@ -257,22 +257,25 @@ const FormattingBar = (props: Props) => {
 					}
 					captureFocusOnMount={openedButton?.controls?.captureFocusOnMount}
 					showCloseButton={openedButton?.controls?.showCloseButton}
+					onClose={() => setOpenedButton(null)}
 				>
-					{({ pendingAttrs, onClose }) => (
-						<ControlsComponent
-							key={selectedNodeId}
-							editorChangeObject={editorChangeObject}
-							pendingAttrs={pendingAttrs}
-							onClose={onClose}
-							isSmall={isSmall}
-							citationStyle={citationStyle}
-							pubData={pubData}
-						/>
-					)}
+					<ControlsComponent
+						key={selectedNodeId}
+						editorChangeObject={editorChangeObject}
+						isSmall={isSmall}
+						citationStyle={citationStyle}
+						pubData={pubData}
+						pendingAttrs={pendingAttrs}
+						onClose={() => setOpenedButton(null)}
+					/>
 				</FormattingBarPopover>
 			)}
 		</div>
 	);
+
+	const t1 = Date.now();
+	console.log('took', t1 - t0);
+	return res;
 };
 
 export default FormattingBar;

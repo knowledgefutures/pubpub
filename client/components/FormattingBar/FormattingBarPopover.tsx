@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
-import { useFocusTrap } from '../../utils/useFocusTrap';
-import { usePendingAttrs } from './usePendingAttrs';
+import { useFocusTrap } from 'client/utils/useFocusTrap';
 
 const FormattingBarPopover = (props) => {
 	const {
@@ -20,18 +19,6 @@ const FormattingBarPopover = (props) => {
 		showCloseButton,
 	} = props;
 	const [capturesFocus, setCapturesFocus] = useState(captureFocusOnMount);
-	const pendingAttrs = usePendingAttrs(editorChangeObject);
-
-	const commitChanges = useCallback(() => {
-		if (pendingAttrs) {
-			pendingAttrs.commitChanges();
-		}
-	}, [pendingAttrs]);
-
-	const handleClose = useCallback(() => {
-		commitChanges();
-		onClose();
-	}, [commitChanges, onClose]);
 
 	const focusTrap = useFocusTrap({
 		isActive: capturesFocus,
@@ -39,7 +26,7 @@ const FormattingBarPopover = (props) => {
 		restoreFocusTarget: editorChangeObject.view.dom,
 		onEscapeKeyPressed: (evt) => {
 			evt.stopPropagation();
-			handleClose();
+			onClose();
 		},
 	});
 
@@ -66,14 +53,7 @@ const FormattingBarPopover = (props) => {
 			style={{ background: accentColor, ...floatingPosition }}
 			ref={focusTrap.ref}
 		>
-			<div className="inner">
-				{typeof children === 'function'
-					? children({
-							pendingAttrs: pendingAttrs,
-							onClose: handleClose,
-					  })
-					: children}
-			</div>
+			<div className="inner">{children}</div>
 			{showCloseButton && (
 				<div className="close-button-container">
 					<Button
@@ -81,7 +61,7 @@ const FormattingBarPopover = (props) => {
 						small
 						icon="cross"
 						aria-label="Close options"
-						onClick={handleClose}
+						onClick={onClose}
 					/>
 				</div>
 			)}

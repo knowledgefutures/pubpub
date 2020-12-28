@@ -69,7 +69,6 @@ const getInitialArguments = (props) => {
 	const schema = buildSchema(customNodes, customMarks, nodeOptions);
 	const hydratedDoc = schema.nodeFromJSON(initialContent);
 	const initialDoc = isReadOnly ? addTemporaryIdsToDoc(hydratedDoc) : hydratedDoc;
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ schema: Schema<"highlightQuote... Remove this comment to see the full error message
 	const staticContent = renderStatic({
 		schema: schema,
 		doc: props.initialContent,
@@ -151,9 +150,6 @@ const Editor = (props: Props) => {
 		view.setProps({
 			dispatchTransaction: (transaction) => {
 				try {
-					if (transaction.selectionSet) {
-						console.trace('tx', transaction);
-					}
 					const newState = view.state.apply(transaction);
 					const transactionHasSteps = transaction.steps.length;
 					view.updateState(newState);

@@ -155,7 +155,7 @@ export const getReactedDocFromJson = (doc, schema, citationManager, nodeLabels) 
 export const renderStatic = ({
 	schema,
 	doc,
-	reactedDoc,
+	reactedDoc = null,
 	citationManager,
 	nodeLabels = {},
 	context = {},

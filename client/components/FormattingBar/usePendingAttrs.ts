@@ -1,41 +1,60 @@
-import { Node } from 'prosemirror-model';
 import { useEffect, useState } from 'react';
-import { usePrevious } from 'react-use';
+import { Node } from 'prosemirror-model';
+import { EditorView } from 'prosemirror-view';
+
+import { updateNodeAttrsById } from '../Editor/utils/nodes';
 
 type Attrs = Node['attrs'];
 
-const attrsHaveChanges = (oldAttrs: null | Attrs, newAttrs: null | Attrs, keys: string[]) => {
+const attrsHaveChanges = (
+	oldAttrs: null | Attrs,
+	newAttrs: null | Attrs,
+	pendingKeys: string[],
+) => {
 	if (!oldAttrs || !newAttrs) {
 		return false;
 	}
-	return keys.some((key) => newAttrs[key] !== oldAttrs[key]);
+	return pendingKeys.some((key) => newAttrs[key] !== oldAttrs[key]);
+};
+
+const getPendingAttrsObject = (attrs: null | Attrs, pendingKeys: string[]) => {
+	const nextAttrs = {};
+	if (attrs) {
+		pendingKeys.forEach((key) => {
+			nextAttrs[key] = attrs[key];
+		});
+	}
+	return nextAttrs;
 };
 
 export const usePendingAttrs = ({
 	selectedNode,
 	updateNode,
+	editorView,
 }: {
 	selectedNode?: Node;
 	updateNode: (attrs: Attrs) => unknown;
+	editorView?: EditorView;
 }) => {
 	const [attrs, setAttrs] = useState(selectedNode?.attrs ?? null);
-	const selectedNodeId = selectedNode?.attrs.id;
+	const [targetedNodeId, setTargetedNodeId] = useState(selectedNode?.attrs.id);
 	const [pendingKeys, setPendingKeys] = useState<string[]>([]);
-	const previousSelectedNode = usePrevious(selectedNode);
+	const selectedNodeId = selectedNode?.attrs.id;
 
 	useEffect(() => {
+		if (targetedNodeId) {
+			const pendingAttrs = getPendingAttrsObject(attrs, pendingKeys);
+			if (editorView) {
+				updateNodeAttrsById(editorView, targetedNodeId, pendingAttrs);
+			}
+		}
 		if (selectedNode) {
+			setPendingKeys([]);
 			setAttrs(selectedNode.attrs);
 		}
+		setTargetedNodeId(selectedNodeId);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedNodeId]);
-
-	useEffect(() => {
-		if (previousSelectedNode) {
-			console.log('had', previousSelectedNode.attrs);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [previousSelectedNode?.attrs?.id]);
 
 	if (!selectedNode) {
 		return null;
@@ -44,10 +63,7 @@ export const usePendingAttrs = ({
 	const hasPendingChanges = attrsHaveChanges(selectedNode.attrs, attrs, pendingKeys);
 
 	const commitChanges = () => {
-		const nextAttrs = {};
-		pendingKeys.forEach((key) => {
-			nextAttrs[key] = attrs?.[key];
-		});
+		const nextAttrs = getPendingAttrsObject(attrs, pendingKeys);
 		updateNode(nextAttrs);
 		setPendingKeys([]);
 	};

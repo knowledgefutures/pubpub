@@ -99,7 +99,6 @@ const ControlsEquation = (props: Props) => {
 						<Checkbox
 							disabled={!canHideLabel}
 							onClick={toggleLabel}
-							alignIndicator="right"
 							label="Hide label"
 							checked={selectedNode?.attrs?.hideLabel}
 						>

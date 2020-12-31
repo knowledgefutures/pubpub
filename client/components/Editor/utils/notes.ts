@@ -1,5 +1,3 @@
-import { analytics } from 'firebase';
-
 type Note = {
 	id: string;
 	structuredValue: string;

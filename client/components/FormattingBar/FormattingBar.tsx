@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 import { Node } from 'prosemirror-model';
+import { EditorView } from 'prosemirror-view';
 
 import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
@@ -30,9 +31,7 @@ type Props = {
 			canRun: boolean;
 			run: () => unknown;
 		}[];
-		view: {
-			focus: () => unknown;
-		};
+		view: EditorView;
 		selectedNode?: Node;
 		updateNode: (attrs: any) => unknown;
 	};
@@ -126,7 +125,6 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 };
 
 const FormattingBar = (props: Props) => {
-	const t0 = Date.now();
 	const {
 		buttons,
 		editorChangeObject,
@@ -137,12 +135,16 @@ const FormattingBar = (props: Props) => {
 		isFullScreenWidth = false,
 		citationStyle = 'apa',
 	} = props;
-	const { menuItems, insertFunctions, view } = editorChangeObject;
+	const { menuItems, insertFunctions, view, selectedNode, updateNode } = editorChangeObject;
 	const { communityData } = usePageContext();
 	const pubData = usePubData();
 	const buttonElementRefs = useRefMap();
 	const toolbar = useToolbarState({ loop: true });
-	const pendingAttrs = usePendingAttrs(editorChangeObject);
+	const pendingAttrs = usePendingAttrs({
+		selectedNode: selectedNode,
+		updateNode: updateNode,
+		editorView: editorChangeObject.view,
+	});
 	const menuItemsByKey: Maybe<Record<string, any>> = useMemo(
 		() => menuItems && indexByProperty(menuItems, 'title'),
 		[menuItems],
@@ -221,7 +223,7 @@ const FormattingBar = (props: Props) => {
 		);
 	};
 
-	const res = (
+	return (
 		<div
 			className={classNames(
 				'formatting-bar-component',
@@ -272,10 +274,6 @@ const FormattingBar = (props: Props) => {
 			)}
 		</div>
 	);
-
-	const t1 = Date.now();
-	console.log('took', t1 - t0);
-	return res;
 };
 
 export default FormattingBar;

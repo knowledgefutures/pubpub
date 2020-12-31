@@ -141,13 +141,17 @@ const PubCollectionsListing = (props: Props) => {
 
 		if (onClick) {
 			return (
-				<RKButton as="div" onClick={onClick} className={className}>
+				<RKButton as="div" onClick={onClick} className={className} key={collection.id}>
 					{inner}
 				</RKButton>
 			);
 		}
 
-		return <div className={className}>{inner}</div>;
+		return (
+			<div className={className} key={collection.id}>
+				{inner}
+			</div>
+		);
 	};
 
 	const renderAvailableCollection = (

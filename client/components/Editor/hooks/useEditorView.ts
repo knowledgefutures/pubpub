@@ -7,8 +7,8 @@ import { keydownHandler } from 'prosemirror-keymap';
 import nodeViews from '../views';
 import { getPlugins } from '../plugins';
 import { collabDocPluginKey } from '../plugins/collaborative';
-import { PluginLoader, PluginsOptions } from '../types';
 import { immediatelyDispatchOnChange } from '../plugins/onChange';
+import { OnEditFn, PluginLoader, PluginsOptions } from '../types';
 
 type EditorViewOptions = {
 	customPlugins: Record<string, null | PluginLoader>;
@@ -20,6 +20,7 @@ type EditorViewOptions = {
 	onKeyPress?: (view: EditorView, evt: KeyboardEvent) => boolean;
 	onScrollToSelection?: (view: EditorView) => boolean;
 	onError?: (err: Error) => unknown;
+	onEdit?: OnEditFn;
 };
 
 const blockSaveKeyHandler = keydownHandler({
@@ -38,13 +39,17 @@ const getIsEditable = ({ isReadOnly }: Pick<EditorViewOptions, 'isReadOnly'>) =>
 
 const getDispatchTransaction = (
 	view: EditorView,
-	{ onError }: Pick<EditorViewOptions, 'onError'>,
+	{ onError, onEdit }: Pick<EditorViewOptions, 'onError' | 'onEdit'>,
 ) => (transaction: Transaction) => {
 	try {
-		const collabState = collabDocPluginKey.getState(view.state);
+		const oldState = view.state;
+		const collabState = collabDocPluginKey.getState(oldState);
 		const newState = view.state.apply(transaction);
 		const transactionHasSteps = transaction.steps.length;
 		view.updateState(newState);
+		if (onEdit && transaction.docChanged) {
+			onEdit(transaction.doc, transaction, newState, oldState);
+		}
 		if (collabState && transactionHasSteps) {
 			collabState.sendCollabChanges(newState);
 		}
@@ -95,7 +100,7 @@ const createEditorView = (options: EditorViewOptions) => {
 };
 
 export const useEditorView = (options: EditorViewOptions) => {
-	const { onError, onKeyPress, onScrollToSelection, isReadOnly } = options;
+	const { onEdit, onError, onKeyPress, onScrollToSelection, isReadOnly } = options;
 	const viewRef = useRef<null | EditorView>(null);
 
 	useEffect(() => {
@@ -107,9 +112,12 @@ export const useEditorView = (options: EditorViewOptions) => {
 
 	useEffect(() => {
 		viewRef.current?.setProps({
-			dispatchTransaction: getDispatchTransaction(viewRef.current, { onError: onError }),
+			dispatchTransaction: getDispatchTransaction(viewRef.current, {
+				onError: onError,
+				onEdit: onEdit,
+			}),
 		});
-	}, [onError]);
+	}, [onError, onEdit]);
 
 	useEffect(() => {
 		viewRef.current?.setProps({

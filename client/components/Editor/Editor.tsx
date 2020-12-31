@@ -5,8 +5,14 @@ import { EditorView } from 'prosemirror-view';
 
 import { CitationManager } from 'client/utils/citations/citationManager';
 
-import { Doc, NodeLabelMap, CollaborativeOptions, PluginLoader } from './types';
-import { getChangeObject } from './plugins/onChange';
+import {
+	CollaborativeOptions,
+	Doc,
+	EditorChangeObject,
+	NodeLabelMap,
+	OnEditFn,
+	PluginLoader,
+} from './types';
 import { getEmptyDoc, NodeReference } from './utils';
 import { useSuggestions } from './hooks/useSuggestions';
 import { useInitialValues } from './hooks/useInitialValues';
@@ -25,7 +31,8 @@ type Props = {
 	isReadOnly?: boolean;
 	nodeLabels?: NodeLabelMap;
 	nodeOptions?: Record<string, any>;
-	onChange?: (editorChangeObject: ReturnType<typeof getChangeObject>) => unknown;
+	onEdit?: OnEditFn;
+	onChange?: (editorChangeObject: EditorChangeObject) => unknown;
 	onError?: (err: Error) => unknown;
 	onKeyPress?: (view: EditorView, evt: KeyboardEvent) => boolean;
 	onScrollToSelection?: (view: EditorView) => boolean;
@@ -47,9 +54,10 @@ const Editor = (props: Props) => {
 		nodeOptions = {},
 		onChange,
 		onError,
+		onEdit,
 		onKeyPress,
 		onScrollToSelection,
-		placeholder = '',
+		placeholder,
 	} = props;
 
 	const mountRef = useRef<HTMLDivElement | null>(null);
@@ -83,6 +91,7 @@ const Editor = (props: Props) => {
 		onKeyPress: onKeyPress,
 		onScrollToSelection: onScrollToSelection,
 		onError: onError,
+		onEdit: onEdit,
 		mountRef: mountRef,
 	});
 

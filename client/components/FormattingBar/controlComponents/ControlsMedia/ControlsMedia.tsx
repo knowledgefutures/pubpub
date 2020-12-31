@@ -88,7 +88,6 @@ const ControlsMedia = (props: Props) => {
 		return (
 			<div className="section hide-overflow">
 				<SimpleEditor
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 					placeholder={`Add a caption for this ${itemName}`}
 					initialHtmlString={caption}
 					onChange={(htmlString) => updateAttrs({ caption: htmlString })}

@@ -1,6 +1,6 @@
 import { Reference } from '@firebase/database-types';
-import { Schema } from 'prosemirror-model';
-import { Plugin } from 'prosemirror-state';
+import { Node, Schema } from 'prosemirror-model';
+import { Plugin, EditorState, Transaction } from 'prosemirror-state';
 
 import { CitationManager } from 'client/utils/citations/citationManager';
 import SuggestionManager from 'client/utils/suggestions/suggestionManager';
@@ -46,8 +46,15 @@ export type PluginsOptions = {
 	nodeLabels: NodeLabelMap;
 	onChange?: (changeObject: EditorChangeObject) => unknown;
 	onError?: (error: Error) => unknown;
-	placeholder: string;
+	placeholder?: string;
 	suggestionManager: SuggestionManager<NodeReference>;
 };
 
 export type Doc = { type: 'doc'; attrs: any; content: any[] };
+
+export type OnEditFn = (
+	doc: Node,
+	tr: Transaction,
+	newState: EditorState,
+	oldState: EditorState,
+) => unknown;

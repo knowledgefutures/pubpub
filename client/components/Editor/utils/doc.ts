@@ -1,7 +1,7 @@
 import { DOMParser, Node } from 'prosemirror-model';
 
 export const getEmptyDoc = () => {
-	return { type: 'doc', attrs: { meta: {} }, content: [{ type: 'paragraph' }] };
+	return { type: 'doc' as const, attrs: { meta: {} }, content: [{ type: 'paragraph' }] };
 };
 
 export const docIsEmpty = (doc) => {

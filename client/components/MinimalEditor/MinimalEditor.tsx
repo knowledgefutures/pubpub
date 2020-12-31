@@ -26,6 +26,8 @@ const defaultProps = {
 
 type Props = OwnProps & typeof defaultProps;
 
+const handleScrollToSelection = () => true;
+
 const MinimalEditor = (props: Props) => {
 	const {
 		initialContent,
@@ -101,9 +103,7 @@ const MinimalEditor = (props: Props) => {
 				<Editor
 					initialContent={initialContent}
 					placeholder={placeholder}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '() => boolean' is not assignable to type 'un... Remove this comment to see the full error message
-					onScrollToSelection={() => true}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(editorChangeObject: any) => void' is not as... Remove this comment to see the full error message
+					onScrollToSelection={handleScrollToSelection}
 					onChange={(editorChangeObject) => {
 						setChangeObject(editorChangeObject);
 						onChange({
@@ -113,8 +113,8 @@ const MinimalEditor = (props: Props) => {
 						});
 					}}
 					customPlugins={{
-						headerIds: undefined,
-						highlights: undefined,
+						headerIds: null,
+						highlights: null,
 					}}
 				/>
 			</div>

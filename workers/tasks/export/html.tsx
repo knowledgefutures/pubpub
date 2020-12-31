@@ -277,11 +277,9 @@ export const renderStaticHtml = async ({
 		!targetPandoc && addHrefsToNotes,
 		targetPaged && blankIframes,
 	]
-		.filter((x) => x)
-		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
+		.filter((x): x is (nodes: any) => any => !!x)
 		.reduce((nodes, fn) => fn(nodes), pubDoc.content);
 
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ schema: Schema<"citation" | "f... Remove this comment to see the full error message
 	const docContent = renderStatic({
 		schema: editorSchema,
 		doc: { type: 'doc', content: renderableNodes },

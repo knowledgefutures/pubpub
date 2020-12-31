@@ -1,6 +1,7 @@
 import { history } from 'prosemirror-history';
 import { gapCursor } from 'prosemirror-gapcursor';
 
+import { Schema } from 'prosemirror-model';
 import buildCollaborative from './collaborative';
 import buildDomEvents from './domEvents';
 import buildIds from './ids';
@@ -13,6 +14,7 @@ import buildPlaceholder from './placeholder';
 import buildReactive from './reactive';
 import buildTable from './table';
 import buildSuggest from './suggest';
+import { PluginLoader, PluginsOptions } from '../types';
 
 const buildGapCursor = () => {
 	return gapCursor();
@@ -22,7 +24,11 @@ const buildHistory = () => {
 	return history();
 };
 
-export const requiredPlugins = {
+export const standardPlugins = {
+	inputRules: buildInputRules,
+	headerIds: buildHeaderIds,
+	placeholder: buildPlaceholder,
+	localHighlights: buildLocalHighlights,
 	suggest: buildSuggest,
 	domEvents: buildDomEvents,
 	onChange: buildOnChange,
@@ -35,38 +41,25 @@ export const requiredPlugins = {
 	reactive: buildReactive,
 };
 
-export const optionalPlugins = {
-	inputRules: buildInputRules,
-	headerIds: buildHeaderIds,
-	placeholder: buildPlaceholder,
-	localHighlights: buildLocalHighlights,
+const getSortedPlugins = (plugins: Record<string, null | PluginLoader>): PluginLoader[] => {
+	const { onChange, ...restPlugins } = plugins;
+	return Object.values({ ...restPlugins, onChange: onChange }).filter(
+		(x): x is PluginLoader => !!x,
+	);
 };
 
-export const getPlugins = (schema, props) => {
-	const allPlugins = {
-		...optionalPlugins,
-		...props.customPlugins,
-		...requiredPlugins,
-	};
-	return Object.keys(allPlugins)
-		.filter((key) => {
-			return !!allPlugins[key];
+export const getPlugins = (
+	schema: Schema,
+	customPlugins: Record<string, null | PluginLoader>,
+	options: PluginsOptions,
+) => {
+	return getSortedPlugins({
+		...standardPlugins,
+		...customPlugins,
+	})
+		.map((loader) => {
+			const plugins = loader(schema, options);
+			return Array.isArray(plugins) ? plugins : [plugins];
 		})
-		.sort((foo, bar) => {
-			if (foo === 'onChange') {
-				return 1;
-			}
-			if (bar === 'onChange') {
-				return -1;
-			}
-			return 0;
-		})
-		.map((key) => {
-			return allPlugins[key](schema, props);
-		})
-		.reduce((prev, curr) => {
-			/* Some plugin generation functions return an */
-			/* array of plugins. Flatten those cases. */
-			return prev.concat(curr);
-		}, []);
+		.reduce((a, b) => [...a, ...b], []);
 };

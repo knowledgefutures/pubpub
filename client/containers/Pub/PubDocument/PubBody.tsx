@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState, useMemo } from 'react';
+import React, { useRef, useContext, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { useBeforeUnload } from 'react-use';
 import * as Sentry from '@sentry/browser';
@@ -11,7 +11,6 @@ import Editor, { getJSON } from 'components/Editor';
 import { getResizedUrl } from 'utils/images';
 import { usePageContext } from 'utils/hooks';
 
-import { NodeLabelMap } from 'client/components/Editor/types';
 import { usePubContext } from '../pubHooks';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
 import discussionSchema from './DiscussionAddon/discussionSchema';
@@ -57,9 +56,9 @@ const PubBody = (props: Props) => {
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef(null);
 	const embedDiscussions = useRef({});
-	const [editorError, setEditorError] = useState(null);
-	const [editorErrorTime, setEditorErrorTime] = useState(null);
-	const [lastSavedTime, setLastSavedTime] = useState(null);
+	const [editorError, setEditorError] = useState<Error | null>(null);
+	const [editorErrorTime, setEditorErrorTime] = useState<number | null>(null);
+	const [lastSavedTime, setLastSavedTime] = useState<number | null>(null);
 
 	prevStatusRef.current = collabData.status;
 	useBeforeUnload(
@@ -92,7 +91,6 @@ const PubBody = (props: Props) => {
 				}, 250);
 			} else {
 				onComplete(nextStatus);
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
 				setLastSavedTime(Date.now());
 			}
 		}
@@ -113,6 +111,22 @@ const PubBody = (props: Props) => {
 	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;
 
+	const handleKeyPress = useCallback(() => {
+		markLastInput();
+		return false;
+	}, [markLastInput]);
+
+	const handleError = useCallback((err) => {
+		setEditorError(err);
+		setEditorErrorTime(Date.now());
+		if (typeof window !== 'undefined' && (window as any).sentryIsActive) {
+			Sentry.configureScope((scope) => {
+				scope.setTag('error_source', 'editor');
+			});
+			Sentry.captureException(err);
+		}
+	}, []);
+
 	return (
 		<main className="pub-body-component" ref={editorWrapperRef}>
 			<style>
@@ -124,9 +138,11 @@ const PubBody = (props: Props) => {
 			</style>
 			<Editor
 				key={editorKey}
-				customNodes={{
-					...discussionSchema,
-				}}
+				customNodes={
+					{
+						...discussionSchema,
+					} as any
+				}
 				nodeOptions={{
 					image: {
 						onResizeUrl: (url, align) => {
@@ -151,26 +167,13 @@ const PubBody = (props: Props) => {
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}
 				isReadOnly={isReadOnly}
-				onKeyPress={markLastInput}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(editorChangeObject: any) => void' is not as... Remove this comment to see the full error message
+				onKeyPress={handleKeyPress}
 				onChange={(editorChangeObject) => {
 					if (!isViewingHistory) {
 						updateLocalData('collab', { editorChangeObject: editorChangeObject });
 					}
 				}}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(err: any) => void' is not assignable to typ... Remove this comment to see the full error message
-				onError={(err) => {
-					setEditorError(err);
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-					setEditorErrorTime(Date.now());
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'sentryIsActive' does not exist on type '... Remove this comment to see the full error message
-					if (typeof window !== 'undefined' && window.sentryIsActive) {
-						Sentry.configureScope((scope) => {
-							scope.setTag('error_source', 'editor');
-						});
-						Sentry.captureException(err);
-					}
-				}}
+				onError={handleError}
 				collaborativeOptions={
 					loadCollaborativeOptions
 						? {
@@ -191,7 +194,6 @@ const PubBody = (props: Props) => {
 						  }
 						: undefined
 				}
-				highlights={[]}
 			/>
 			{!!editorError && !shouldSuppressEditorErrors() && (
 				<Alert

@@ -77,6 +77,7 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 
 	const controlsComponent =
 		openedButton &&
+		openedButton?.controls.indicate(editorChangeObject) &&
 		openedButton?.controls.show(editorChangeObject) &&
 		openedButton?.controls.component;
 

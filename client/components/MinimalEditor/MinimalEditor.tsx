@@ -1,49 +1,40 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import classNames from 'classnames';
-import Editor, { getText, getJSON } from 'components/Editor';
+
+import Editor, { getTextFromDoc, EditorChangeObject, OnEditFn } from 'components/Editor';
 
 require('./minimalEditor.scss');
 
-type OwnProps = {
+type Props = {
 	constrainHeight?: boolean;
 	focusOnLoad?: boolean;
 	initialContent?: any;
 	isTranslucent?: boolean;
-	onChange?: (...args: any[]) => any;
+	onEdit?: OnEditFn;
+	onContent?: ({ text: string, content: any }) => unknown;
 	placeholder?: string;
 	useFormattingBar?: boolean;
 };
 
-const defaultProps = {
-	constrainHeight: false,
-	focusOnLoad: false,
-	initialContent: undefined,
-	isTranslucent: false,
-	onChange: () => {},
-	placeholder: undefined,
-	useFormattingBar: false,
-};
-
-type Props = OwnProps & typeof defaultProps;
+const handleScrollToSelection = () => true;
 
 const MinimalEditor = (props: Props) => {
 	const {
 		initialContent,
-		constrainHeight,
-		onChange,
-		useFormattingBar,
-		focusOnLoad,
+		constrainHeight = false,
+		onEdit,
+		onContent,
+		useFormattingBar = false,
+		focusOnLoad = false,
 		placeholder,
-		isTranslucent,
+		isTranslucent = false,
 	} = props;
-	const [changeObject, setChangeObject] = useState({});
+	const [changeObject, setChangeObject] = useState<EditorChangeObject | null>(null);
 	const [FormattingBar, setFormattingBar] = useState(null);
 	const editorWrapperRef = useRef(null);
 
 	useEffect(() => {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-		if (focusOnLoad && changeObject.view) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
+		if (focusOnLoad && changeObject?.view) {
 			changeObject.view.focus();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,13 +59,28 @@ const MinimalEditor = (props: Props) => {
 
 	const handleWrapperClick = () => {
 		if (changeObject) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
 			const { view } = changeObject;
 			if (!view.hasFocus()) {
 				view.focus();
 			}
 		}
 	};
+
+	const handleEdit = useCallback(
+		(...args: Parameters<OnEditFn>) => {
+			if (onEdit) {
+				onEdit(...args);
+			}
+			if (onContent) {
+				const [doc] = args;
+				onContent({
+					content: doc.toJSON(),
+					text: getTextFromDoc(doc),
+				});
+			}
+		},
+		[onEdit, onContent],
+	);
 
 	return (
 		<div
@@ -101,25 +107,17 @@ const MinimalEditor = (props: Props) => {
 				<Editor
 					initialContent={initialContent}
 					placeholder={placeholder}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '() => boolean' is not assignable to type 'un... Remove this comment to see the full error message
-					onScrollToSelection={() => true}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(editorChangeObject: any) => void' is not as... Remove this comment to see the full error message
-					onChange={(editorChangeObject) => {
-						setChangeObject(editorChangeObject);
-						onChange({
-							view: editorChangeObject.view,
-							content: getJSON(editorChangeObject.view),
-							text: getText(editorChangeObject.view) || '',
-						});
-					}}
+					onScrollToSelection={handleScrollToSelection}
+					onEdit={handleEdit}
+					onChange={setChangeObject}
 					customPlugins={{
-						headerIds: undefined,
-						highlights: undefined,
+						headerIds: null,
+						highlights: null,
 					}}
 				/>
 			</div>
 		</div>
 	);
 };
-MinimalEditor.defaultProps = defaultProps;
+
 export default MinimalEditor;

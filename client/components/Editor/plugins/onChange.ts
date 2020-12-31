@@ -1,4 +1,4 @@
-import { Plugin, NodeSelection, TextSelection } from 'prosemirror-state';
+import { Plugin, NodeSelection, TextSelection, PluginKey } from 'prosemirror-state';
 import { lift, setBlockType, toggleMark, wrapIn } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import { EditorView } from 'prosemirror-view';
@@ -22,9 +22,9 @@ import { getReactedCopyOfNode } from '@pubpub/prosemirror-reactive';
 import { collabDocPluginKey } from './collaborative';
 import { domEventsPluginKey } from './domEvents';
 import { findParentNodeClosestToPos } from '../utils';
-import { ReferenceableNodeType } from '../types';
-import { EditorProps } from '../Editor';
-// import { collaborativePluginKey } from './plugins/collaborative';
+import { ReferenceableNodeType, PluginsOptions } from '../types';
+
+const changePluginKey = new PluginKey('onChange');
 
 const getInsertFunctions = (editorView) => {
 	/* Gather all node insert functions. These will be used to populate menus. */
@@ -45,8 +45,8 @@ const getInsertFunctions = (editorView) => {
 		}, {});
 };
 
-const toggleTableLabel = (editorView: EditorView, editorProps: EditorProps, dryRun = false) => {
-	if (!editorProps.nodeLabels[ReferenceableNodeType.Table]?.enabled) {
+const toggleTableLabel = (editorView: EditorView, options: PluginsOptions, dryRun = false) => {
+	if (!options.nodeLabels[ReferenceableNodeType.Table]?.enabled) {
 		return false;
 	}
 
@@ -71,7 +71,7 @@ const toggleTableLabel = (editorView: EditorView, editorProps: EditorProps, dryR
 	return false;
 };
 
-const getMenuItems = (editorView: EditorView, editorProps: EditorProps) => {
+const getMenuItems = (editorView: EditorView, options: PluginsOptions) => {
 	const schema = editorView.state.schema;
 
 	/* Marks */
@@ -348,9 +348,9 @@ const getMenuItems = (editorView: EditorView, editorProps: EditorProps) => {
 					},
 					{
 						title: 'table-toggle-label',
-						run: () => toggleTableLabel(editorView, editorProps),
-						canRun: toggleTableLabel(editorView, editorProps, true),
-						isActive: () => toggleTableLabel(editorView, editorProps, true),
+						run: () => toggleTableLabel(editorView, options),
+						canRun: toggleTableLabel(editorView, options, true),
+						isActive: () => toggleTableLabel(editorView, options, true),
 					},
 			  ];
 
@@ -594,7 +594,7 @@ const getSelectedNode = (editorState) => {
 	return getReactedCopyOfNode(node, editorState) || node;
 };
 
-export const getChangeObject = (editorView: EditorView, editorProps: EditorProps) => {
+export const getChangeObject = (editorView: EditorView, editorProps: PluginsOptions) => {
 	const isNode = !!(editorView.state.selection as any).node;
 	const collaborativePluginState = collabDocPluginKey.getState(editorView.state) || {};
 	const { latestDomEvent } = domEventsPluginKey.getState(editorView.state);
@@ -647,15 +647,28 @@ export const getChangeObject = (editorView: EditorView, editorProps: EditorProps
 	};
 };
 
-/* This plugin is used to call onChange with */
-/* all of the new editor values. */
-export default (_, props) => {
+export const immediatelyDispatchOnChange = (view: EditorView) => {
+	return changePluginKey.getState(view.state)?.dispatchChange(view);
+};
+
+export default (_, props: PluginsOptions) => {
+	const dispatchChange = (editorView: EditorView) => {
+		props.onChange?.(getChangeObject(editorView, props));
+	};
+
 	return new Plugin({
+		key: changePluginKey,
+		state: {
+			init: () => {
+				return {
+					dispatchChange: dispatchChange,
+				};
+			},
+			apply: (_, s) => s,
+		},
 		view: () => {
 			return {
-				update: (editorView) => {
-					props.onChange(getChangeObject(editorView, props));
-				},
+				update: dispatchChange,
 			};
 		},
 	});

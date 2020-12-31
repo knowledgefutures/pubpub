@@ -1,3 +1,13 @@
+import { Reference } from '@firebase/database-types';
+import { Node, Schema } from 'prosemirror-model';
+import { Plugin, EditorState, Transaction } from 'prosemirror-state';
+
+import { CitationManager } from 'client/utils/citations/citationManager';
+import SuggestionManager from 'client/utils/suggestions/suggestionManager';
+
+import { getChangeObject } from './plugins/onChange';
+import { NodeReference } from './utils';
+
 export enum ReferenceableNodeType {
 	Image = 'image',
 	Video = 'video',
@@ -13,8 +23,38 @@ export type NodeLabel = {
 	text: string;
 };
 
-// export type NodeLabelMap = {
-// 	[nodeType in ReferenceableNodeType]?: NodeLabel;
-// };
-
 export type NodeLabelMap = Record<ReferenceableNodeType, NodeLabel>;
+
+export type PluginLoader = (schema: Schema, options: PluginsOptions) => Plugin | Plugin[];
+
+export type EditorChangeObject = ReturnType<typeof getChangeObject>;
+
+export type CollaborativeOptions = {
+	clientData: {
+		id: string;
+	};
+	firebaseRef?: Reference;
+	initialDocKey: number;
+	onStatusChange?: (status: 'saving' | 'saved') => unknown;
+	onUpdateLatestKey?: (key: number) => unknown;
+};
+
+export type PluginsOptions = {
+	citationManager?: CitationManager;
+	collaborativeOptions?: CollaborativeOptions;
+	isReadOnly?: boolean;
+	nodeLabels: NodeLabelMap;
+	onChange?: (changeObject: EditorChangeObject) => unknown;
+	onError?: (error: Error) => unknown;
+	placeholder?: string;
+	suggestionManager: SuggestionManager<NodeReference>;
+};
+
+export type Doc = { type: 'doc'; attrs: any; content: any[] };
+
+export type OnEditFn = (
+	doc: Node,
+	tr: Transaction,
+	newState: EditorState,
+	oldState: EditorState,
+) => unknown;

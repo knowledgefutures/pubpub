@@ -9,7 +9,7 @@ require('./referenceFinder.scss');
 export type ReferenceFinderProps = {
 	nodeLabels: NodeLabelMap;
 	references: ReadonlyArray<NodeReference>;
-	activeReference?: NodeReference;
+	activeReference: NodeReference | null;
 	onReferenceSelect: (reference: NodeReference) => unknown;
 };
 

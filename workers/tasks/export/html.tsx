@@ -277,8 +277,7 @@ export const renderStaticHtml = async ({
 		!targetPandoc && addHrefsToNotes,
 		targetPaged && blankIframes,
 	]
-		.filter((x) => x)
-		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
+		.filter((x): x is (nodes: any) => any => !!x)
 		.reduce((nodes, fn) => fn(nodes), pubDoc.content);
 
 	const docContent = renderStatic({

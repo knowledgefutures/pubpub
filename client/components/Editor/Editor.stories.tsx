@@ -67,13 +67,12 @@ const firebaseBranchRef = firebaseRootRef.child(branchKey);
 const newDiscussionId = String(Math.floor(Math.random() * 999999));
 
 const CursorOptionsDemoPub = () => {
-	const [editorView, setEditorView] = useState();
+	const [editorView, setEditorView] = useState<any>();
 
 	const cursorButtons = Object.keys(cursorCommands).map((key) => ({
 		children: key,
 		onClick: () => {
 			cursorCommands[key](editorView);
-			// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 			editorView.focus();
 		},
 	}));
@@ -87,9 +86,8 @@ const CursorOptionsDemoPub = () => {
 			</div>
 			<Editor
 				placeholder="Begin writing..."
-				initialContent={initialContent}
+				initialContent={initialContent as any}
 				isReadOnly={false}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(editorChangeObject: any) => void' is not as... Remove this comment to see the full error message
 				onChange={(editorChangeObject) => setEditorView(editorChangeObject.view)}
 			/>
 		</div>
@@ -102,59 +100,13 @@ storiesOf('Editor', module)
 		<div style={editorWrapperStyle}>
 			<Editor
 				placeholder="Begin writing..."
-				initialContent={initialContent}
+				initialContent={initialContent as any}
 				// isReadOnly={true}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(err: any) => void' is not assignable to typ... Remove this comment to see the full error message
-				onError={(err) => console.error(err)}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(changeObject: any) => void' is not assignab... Remove this comment to see the full error message
 				onChange={(changeObject) => {
-					// console.log('====');
-					// console.log(JSON.stringify(changeObject.view.state.doc.toJSON(), null, 4));
-					// console.log(changeObject.menuItems);
-					// console.log(getCollabJSONs(changeObject.view));
-					if (changeObject.updateNode && changeObject.selectedNode.attrs.size === 50) {
+					if (changeObject.updateNode && changeObject.selectedNode?.attrs.size === 50) {
 						changeObject.updateNode({ size: 65 });
 					}
-
-					if (
-						changeObject.shortcutValues['@'] === 'dog' &&
-						changeObject.selection.empty
-					) {
-						changeObject.shortcutValues.selectShortCut();
-						changeObject.insertFunctions.image({
-							url:
-								'https://www.cesarsway.com/sites/newcesarsway/files/styles/large_article_preview/public/All-about-puppies--Cesar%E2%80%99s-tips%2C-tricks-and-advice.jpg?itok=bi9xUvwe',
-						});
-					}
-
-					// if ()
-					// if (changeObject.activeLink && changeObject.activeLink.attrs.href === '') {
-					// 	setTimeout(()=> {
-					// 		changeObject.activeLink.updateAttrs({ href: 'https://www.pubpub.org' });
-					// 	}, 2000);
-					// }
-					// if (changeObject.activeLink && changeObject.activeLink.attrs.href === 'https://www.pubpub.org') {
-					// 	setTimeout(()=> {
-					// 		changeObject.activeLink.removeLink();
-					// 	}, 2000);
-					// }
-					// if (thing === false) {
-					// 	thing = true;
-					// 	changeObject.insertFunctions.image({ url: 'https://www.cesarsway.com/sites/newcesarsway/files/styles/large_article_preview/public/All-about-puppies--Cesar%E2%80%99s-tips%2C-tricks-and-advice.jpg?itok=bi9xUvwe' });
-					// }
 				}}
-				highlights={[
-					{
-						exact: 'Introduction',
-						from: '25',
-						id: 'abcdefg',
-						permanent: false,
-						// prefix: 'Hello ',
-						// suffix: ' and',
-						to: '30',
-						version: undefined,
-					},
-				]}
 			/>
 		</div>
 	))
@@ -163,17 +115,6 @@ storiesOf('Editor', module)
 			const [changeObject, updatechangeObject] = useState({});
 			return (
 				<div style={editorWrapperStyle}>
-					{/* <button
-						type="button"
-						onClick={() => {
-							firebaseBranchRef
-								.child('discussions')
-								.child(Math.floor(Math.random() * 999999))
-								.set(getDiscussionData(changeObject.view));
-						}}
-					>
-						New
-					</button> */}
 					<button
 						type="button"
 						onClick={() => {
@@ -218,14 +159,11 @@ storiesOf('Editor', module)
 					<Editor
 						key={firebaseBranchRef ? 'ready' : 'unready'}
 						placeholder="Begin writing..."
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(evt: any) => void' is not assignable to typ... Remove this comment to see the full error message
 						onChange={(evt) => {
 							updatechangeObject(evt);
 						}}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(err: any) => void' is not assignable to typ... Remove this comment to see the full error message
-						onError={(err) => console.error(err)}
 						collaborativeOptions={{
-							firebaseRef: firebaseBranchRef,
+							firebaseRef: firebaseBranchRef as any,
 							clientData: clientData,
 							initialDocKey: -1,
 							// onClientChange: () => {},
@@ -298,7 +236,6 @@ storiesOf('Editor', module)
 					<Editor
 						key={firebaseBranchRef ? 'ready' : 'unready'}
 						placeholder="Begin writing..."
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(evt: any) => void' is not assignable to typ... Remove this comment to see the full error message
 						onChange={(evt) => {
 							// updatechangeObject(evt);
 							if (times < 15) {
@@ -313,10 +250,8 @@ storiesOf('Editor', module)
 								}, 1000);
 							}
 						}}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(err: any) => void' is not assignable to typ... Remove this comment to see the full error message
-						onError={(err) => console.error(err)}
 						collaborativeOptions={{
-							firebaseRef: firebaseBranchRef,
+							firebaseRef: firebaseBranchRef as any,
 							clientData: clientData,
 							initialDocKey: -1,
 							// onClientChange: () => {},
@@ -332,9 +267,8 @@ storiesOf('Editor', module)
 		<div style={editorWrapperStyle}>
 			<Editor
 				placeholder="Begin writing..."
-				initialContent={initialContent}
+				initialContent={initialContent as any}
 				isReadOnly={true}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type '(changeObject: any) => void' is not assignab... Remove this comment to see the full error message
 				onChange={(changeObject) => {
 					console.log(changeObject.view);
 				}}

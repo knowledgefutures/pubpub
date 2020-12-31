@@ -146,9 +146,6 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 	};
 
 	const loadDocument = () => {
-		if (props.collaborativeOptions.delayLoadingDocument) {
-			return null;
-		}
 		return ref
 			.child('changes')
 			.orderByKey()

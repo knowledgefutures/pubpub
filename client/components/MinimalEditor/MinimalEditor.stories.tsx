@@ -10,7 +10,6 @@ storiesOf('components/MinimalEditor', module).add('default', () => (
 			<MinimalEditor focusOnLoad={true} />
 		</div>
 		<div style={wrapperStyle}>
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message */}
 			<MinimalEditor useFormattingBar={true} placeholder="Yippie" />
 		</div>
 	</div>

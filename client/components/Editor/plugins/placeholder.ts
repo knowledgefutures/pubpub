@@ -13,7 +13,7 @@ export default (schema, props) => {
 					state.doc.descendants((node, pos) => {
 						const collaborativePluginState = collabDocPluginKey.getState(state) || {};
 						const placeholderText =
-							props.collaborativeOptions.clientData &&
+							props.collaborativeOptions?.clientData &&
 							!collaborativePluginState.isLoaded
 								? 'Loading...'
 								: props.placeholder;

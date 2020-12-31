@@ -90,7 +90,6 @@ const ThreadInput = (props: Props) => {
 							<Editor
 								key={editorKey}
 								placeholder="Add a comment..."
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '(editorChangeObject: any) => void' is not as... Remove this comment to see the full error message
 								onChange={(editorChangeObject) => {
 									setChangeObject(editorChangeObject);
 								}}

@@ -27,6 +27,7 @@ type Props = {
 	customMarks?: Record<string, MarkSpec>;
 	customNodes?: Record<string, NodeSpec>;
 	customPlugins?: Record<string, null | PluginLoader>;
+	enableSuggestions?: boolean;
 	initialContent?: Doc;
 	isReadOnly?: boolean;
 	nodeLabels?: NodeLabelMap;
@@ -49,6 +50,7 @@ const Editor = (props: Props) => {
 		customMarks = {},
 		customNodes = {},
 		customPlugins = {},
+		enableSuggestions = false,
 		initialContent = emptyDoc,
 		isReadOnly = false,
 		nodeOptions = {},
@@ -61,7 +63,7 @@ const Editor = (props: Props) => {
 	} = props;
 
 	const mountRef = useRef<HTMLDivElement | null>(null);
-	const { suggesting, suggestionManager } = useSuggestions<NodeReference>();
+	const { suggesting, suggestionManager } = useSuggestions<NodeReference>(enableSuggestions);
 
 	const { initialDocNode, schema, staticContent } = useInitialValues({
 		nodeLabels: nodeLabels,

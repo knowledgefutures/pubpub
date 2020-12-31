@@ -162,6 +162,7 @@ const PubBody = (props: Props) => {
 						},
 					},
 				}}
+				enableSuggestions
 				nodeLabels={pubData.nodeLabels}
 				citationManager={citationManager}
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}

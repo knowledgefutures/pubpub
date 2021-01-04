@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Maybe } from 'utils/types';
 
-type EventHandler = (evt: Event) => unknown;
+type EventHandler<E extends Event> = (evt: E) => unknown;
 
 type FocusTrapOptions = {
-	onMouseDownOutside?: Maybe<EventHandler>;
-	onEscapeKeyPressed?: Maybe<EventHandler>;
-	onClickOutside?: Maybe<EventHandler>;
+	onMouseDownOutside?: Maybe<EventHandler<MouseEvent>>;
+	onEscapeKeyPressed?: Maybe<EventHandler<KeyboardEvent>>;
+	onClickOutside?: Maybe<EventHandler<MouseEvent>>;
 	isActive?: boolean;
 	ignoreMouseEvents?: boolean;
 	restoreFocusTarget?: Maybe<globalThis.Node>;

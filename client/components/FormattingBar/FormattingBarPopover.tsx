@@ -29,7 +29,7 @@ const FormattingBarPopover = (props) => {
 			evt.stopPropagation();
 			onClose();
 		},
-		onMouseDownOutside: (evt) => {
+		onMouseDownOutside: (evt: MouseEvent) => {
 			if (!mouseEventSelectsNode(editorChangeObject.view, evt)) {
 				onClose();
 			}

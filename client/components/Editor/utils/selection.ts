@@ -1,7 +1,10 @@
 import { Node, ResolvedPos } from 'prosemirror-model';
 import { Selection, TextSelection, NodeSelection } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
 
-export const moveSelectionToStart = (editorView) => {
+type NodePredicate = (node: Node) => boolean;
+
+export const moveSelectionToStart = (editorView: EditorView) => {
 	/* Create transaction and set selection to the beginning of the doc */
 	const { tr } = editorView.state;
 	tr.setSelection(Selection.atStart(editorView.state.doc));
@@ -10,7 +13,7 @@ export const moveSelectionToStart = (editorView) => {
 	editorView.dispatch(tr);
 };
 
-export const moveSelectionToEnd = (editorView) => {
+export const moveSelectionToEnd = (editorView: EditorView) => {
 	/* Create transaction and set selection to the end of the doc */
 	const { tr } = editorView.state;
 	tr.setSelection(Selection.atEnd(editorView.state.doc));
@@ -19,12 +22,12 @@ export const moveSelectionToEnd = (editorView) => {
 	editorView.dispatch(tr);
 };
 
-export const moveToStartOfSelection = (editorView) => {
+export const moveToStartOfSelection = (editorView: EditorView) => {
 	const { tr } = editorView.state;
 	editorView.dispatch(tr.setSelection(new TextSelection(editorView.state.selection.$from)));
 };
 
-export const moveToEndOfSelection = (editorView) => {
+export const moveToEndOfSelection = (editorView: EditorView) => {
 	const { tr } = editorView.state;
 	editorView.dispatch(tr.setSelection(new TextSelection(editorView.state.selection.$to)));
 };
@@ -35,14 +38,14 @@ export const marksAtSelection = (editorView) => {
 	});
 };
 
-export const mouseEventSelectsNode = (editorView, mouseEvent) => {
+export const mouseEventSelectsNode = (editorView: EditorView, mouseEvent: MouseEvent) => {
 	const { clientX, clientY } = mouseEvent;
 	try {
 		const posAtCoords = editorView.posAtCoords({ left: clientX, top: clientY });
 		if (posAtCoords) {
 			const { inside } = posAtCoords;
 			const insideNode = editorView.state.doc.nodeAt(inside);
-			if (NodeSelection.isSelectable(insideNode)) {
+			if (insideNode && NodeSelection.isSelectable(insideNode)) {
 				return true;
 			}
 		}
@@ -54,8 +57,6 @@ export const mouseEventSelectsNode = (editorView, mouseEvent) => {
 	}
 	return false;
 };
-
-type NodePredicate = (node: Node) => boolean;
 
 export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePredicate) => {
 	for (let i = $pos.depth; i > 0; i--) {

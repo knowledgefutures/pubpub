@@ -1,5 +1,5 @@
 import { Node, ResolvedPos } from 'prosemirror-model';
-import { Selection, TextSelection } from 'prosemirror-state';
+import { Selection, TextSelection, NodeSelection } from 'prosemirror-state';
 
 export const moveSelectionToStart = (editorView) => {
 	/* Create transaction and set selection to the beginning of the doc */
@@ -33,6 +33,26 @@ export const marksAtSelection = (editorView) => {
 	return editorView.state.selection.$from.marks().map((mark) => {
 		return mark.type.name;
 	});
+};
+
+export const mouseEventSelectsNode = (editorView, mouseEvent) => {
+	const { clientX, clientY } = mouseEvent;
+	try {
+		const posAtCoords = editorView.posAtCoords({ left: clientX, top: clientY });
+		if (posAtCoords) {
+			const { inside } = posAtCoords;
+			const insideNode = editorView.state.doc.nodeAt(inside);
+			if (NodeSelection.isSelectable(insideNode)) {
+				return true;
+			}
+		}
+	} catch (err) {
+		if (err instanceof RangeError) {
+			return false;
+		}
+		throw err;
+	}
+	return false;
 };
 
 type NodePredicate = (node: Node) => boolean;

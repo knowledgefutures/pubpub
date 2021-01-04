@@ -64,7 +64,6 @@ const useInteractionCount = (latestDomEvent: any) => {
 
 const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) => {
 	const [openedButton, setOpenedButton] = useState<FormattingBarButtonData | null>(null);
-	const firstRenderRef = useRef(true);
 	const interactionCount = useInteractionCount(editorChangeObject.latestDomEvent);
 	const selectedNodeId = editorChangeObject.selectedNode?.attrs?.id;
 	const effectKey = `${selectedNodeId}-${interactionCount}`;
@@ -112,14 +111,11 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 		return () => document.removeEventListener('keydown', handler, options);
 	}, [indicatedButtons, openedButton, setOpenedButton]);
 
-	firstRenderRef.current = false;
-
 	return {
 		indicatedButtons: indicatedButtons,
 		openedButton: openedButton,
 		setOpenedButton: setOpenedButton,
 		controlsPosition: controlsPosition,
-		controlsKey: effectKey,
 		selectedNodeId: selectedNodeId,
 		ControlsComponent: controlsComponent,
 	};

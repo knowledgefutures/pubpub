@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
 import { useFocusTrap } from 'client/utils/useFocusTrap';
+import { mouseEventSelectsNode } from '../Editor';
 
 const FormattingBarPopover = (props) => {
 	const {
@@ -27,6 +28,11 @@ const FormattingBarPopover = (props) => {
 		onEscapeKeyPressed: (evt) => {
 			evt.stopPropagation();
 			onClose();
+		},
+		onMouseDownOutside: (evt) => {
+			if (!mouseEventSelectsNode(editorChangeObject.view, evt)) {
+				onClose();
+			}
 		},
 	});
 

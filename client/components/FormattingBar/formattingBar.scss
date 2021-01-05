@@ -173,8 +173,8 @@
         flex-shrink: 0;
         padding-left: 5px
     }
-    *:focus:not(:disabled) {
+    *:focus:not(:disabled):not(.bp3-tab) {
         outline: none;
-        box-shadow: inset 0px 0px 0px 1.5px white !important;
+        box-shadow: inset 0px 0px 0px 2px white !important;
     }
 }

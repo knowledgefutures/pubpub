@@ -52,11 +52,10 @@ class EditorUnit extends Component<Props, State> {
 				>
 					<Editor
 						placeholder="hello"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(changeObject: any) => void' is not assignab... Remove this comment to see the full error message
 						onChange={(changeObject) => {
 							this.setState({ editorChangeObject: changeObject });
 						}}
-						initialContent={fullDoc}
+						initialContent={fullDoc as any}
 					/>
 				</div>
 			</div>

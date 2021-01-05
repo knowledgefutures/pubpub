@@ -10,7 +10,7 @@ import buildCursors from './cursors';
 export const collabDocPluginKey = new PluginKey('collaborative');
 
 export default (schema, props) => {
-	if (!props.collaborativeOptions.firebaseRef) {
+	if (!props.collaborativeOptions?.firebaseRef) {
 		return [];
 	}
 

@@ -95,8 +95,8 @@ class LayoutEditorText extends Component<Props, State> {
 								}}
 								placeholder="Enter text..."
 								initialContent={this.state.initialContent}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '(editorChangeObject: any) => void' is not as... Remove this comment to see the full error message
 								onChange={(editorChangeObject) => {
+									// @ts-expect-error
 									if (editorChangeObject.view.state.history$.prevTime) {
 										/* history$.prevTime will be 0 if the transaction */
 										/* does not generate an undo item in the history */

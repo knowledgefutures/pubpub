@@ -1,8 +1,28 @@
 import { AllSelection, Plugin, Selection, PluginKey } from 'prosemirror-state';
-import { Decoration, DecorationSet } from 'prosemirror-view';
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { compressSelectionJSON, uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
+import { DataSnapshot } from '@firebase/database-types';
 
 export const cursorsPluginKey = new PluginKey('cursors');
+
+const createTransactionManager = (clientId: string, view: EditorView) => {
+	return {
+		transactionCallback: (metaType: string) => {
+			return (snapshot: DataSnapshot) => {
+				const snapshotKey = snapshot.key;
+				const snapshotVal = snapshot.val();
+				if (snapshotVal && snapshotKey !== clientId) {
+					const trans = view.state.tr;
+					trans.setMeta(metaType, {
+						...snapshotVal,
+						id: snapshot.key,
+					});
+					view.dispatch(trans);
+				}
+			};
+		},
+	};
+};
 
 export default (schema, props, collabDocPluginKey) => {
 	const generateCursorDecorations = (cursorData, editorState) => {
@@ -233,28 +253,21 @@ export default (schema, props, collabDocPluginKey) => {
 			},
 		},
 		view: (view) => {
-			const issueDecoTrans = (metaType) => {
-				return (snapshot) => {
-					const trans = view.state.tr;
-					trans.setMeta(metaType, {
-						...snapshot.val(),
-						id: snapshot.key,
-					});
-					view.dispatch(trans);
-				};
-			};
-
 			/* Retrieve and Listen to Cursors */
 			if (!props.isReadOnly) {
 				const { localClientId } = collabDocPluginKey.getState(view.state);
+				const transactionManager = createTransactionManager(localClientId, view);
 				const cursorsRef = props.collaborativeOptions.firebaseRef.child('cursors');
 				cursorsRef
 					.child(localClientId)
 					.onDisconnect()
 					.remove();
-				cursorsRef.on('child_added', issueDecoTrans('setCursor'));
-				cursorsRef.on('child_changed', issueDecoTrans('setCursor'));
-				cursorsRef.on('child_removed', issueDecoTrans('removeCursor'));
+				cursorsRef.on('child_added', transactionManager.transactionCallback('setCursor'));
+				cursorsRef.on('child_changed', transactionManager.transactionCallback('setCursor'));
+				cursorsRef.on(
+					'child_removed',
+					transactionManager.transactionCallback('removeCursor'),
+				);
 			}
 
 			return {};

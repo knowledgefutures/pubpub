@@ -1,13 +1,10 @@
-import React from 'react';
-import { getDashUrl } from 'utils/dashboard';
-
 import ControlsEquation from './controlComponents/ControlsEquation';
 import ControlsFootnoteCitation from './controlComponents/ControlsFootnoteCitation/ControlsFootnoteCitation';
 import ControlsLink from './controlComponents/ControlsLink';
 import ControlsReference, { ControlsReferencePopover } from './controlComponents/ControlsReference';
-
 import ControlsMedia from './controlComponents/ControlsMedia/ControlsMedia';
 import ControlsTable from './controlComponents/ControlsTable';
+
 import MediaButton from './FormattingBarMediaButton';
 import { positionNearSelection, positionNearLink } from './positioning';
 import { NodeLabelMap } from '../Editor/types';
@@ -15,7 +12,7 @@ import { FormattingBarButtonData, FormattingBarPopoverCondition } from './types'
 
 const triggerOnClick = (changeObject) => {
 	const { latestDomEvent } = changeObject;
-	return latestDomEvent && latestDomEvent.type === 'click';
+	return latestDomEvent?.type === 'click';
 };
 
 const nodeControls = (component, indicatedNodeType, restOptions?) => {
@@ -181,7 +178,6 @@ export const table: FormattingBarButtonData = {
 	title: 'Table',
 	icon: 'th',
 	controls: {
-		disableClickProxying: true,
 		captureFocusOnMount: false,
 		indicate: ({ selectionInTable }) => selectionInTable,
 		show: showOrTriggerTable,
@@ -214,8 +210,8 @@ export const fullButtonSet = [
 	strikethrough,
 	horizontalRule,
 	equation,
-	citation,
 	reference,
+	citation,
 	footnote,
 	table,
 	media,

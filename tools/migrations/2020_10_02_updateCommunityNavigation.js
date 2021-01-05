@@ -21,8 +21,10 @@ module.exports = async ({ models }) => {
 	return Bluebird.map(
 		communities,
 		(community) => {
-			// eslint-disable-next-line no-param-reassign
 			community.navigation = updateCommunityNavigation(community.navigation);
+			if (community.footerLinks) {
+				community.footerLinks = updateCommunityNavigation(community.footerLinks);
+			}
 			return community.save();
 		},
 		{ concurrency: 100 },

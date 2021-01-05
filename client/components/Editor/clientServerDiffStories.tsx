@@ -46,7 +46,6 @@ const RenderTest = (props) => {
 						initialContent={props.doc}
 						/* We set readOnly for table so table plugins don't muck with diff */
 						isReadOnly={props.title === 'table'}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(eco: any) => void' is not assignable to typ... Remove this comment to see the full error message
 						onChange={(eco) => {
 							setClientHtml(beautify.html(eco.view.dom.innerHTML, beautifyOptions));
 						}}

@@ -1,22 +1,16 @@
 import React, { useRef, useCallback } from 'react';
-import { DOMSerializer } from 'prosemirror-model';
+import { DOMSerializer, Node } from 'prosemirror-model';
 import { buildSchema, getDocForHtmlString, docIsEmpty } from 'components/Editor';
 
 import { MinimalEditor } from 'components';
 
-type OwnProps = {
+type Props = {
 	initialHtmlString: string;
-	onChange: (...args: any[]) => any;
+	onChange: (htmlContents: string) => unknown;
 	placeholder?: string;
 };
 
-const defaultProps = {
-	placeholder: undefined,
-};
-
 const editorSchema = buildSchema();
-
-type Props = OwnProps & typeof defaultProps;
 
 const SimpleEditor = (props: Props) => {
 	const { onChange, placeholder, initialHtmlString } = props;
@@ -26,9 +20,9 @@ const SimpleEditor = (props: Props) => {
 		initialDoc.current = getDocForHtmlString(initialHtmlString, editorSchema).toJSON();
 	}
 
-	const handleChange = useCallback(
-		({ view }) => {
-			const { doc, schema } = view.state;
+	const handleEdit = useCallback(
+		(doc: Node) => {
+			const { schema } = doc.type;
 			if (docIsEmpty(doc)) {
 				onChange('');
 				return;
@@ -44,8 +38,7 @@ const SimpleEditor = (props: Props) => {
 
 	return (
 		<MinimalEditor
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '({ view }: any) => void' is not assignable t... Remove this comment to see the full error message
-			onChange={handleChange}
+			onEdit={handleEdit}
 			placeholder={placeholder}
 			initialContent={initialDoc.current}
 			useFormattingBar={true}
@@ -54,5 +47,5 @@ const SimpleEditor = (props: Props) => {
 		/>
 	);
 };
-SimpleEditor.defaultProps = defaultProps;
+
 export default SimpleEditor;

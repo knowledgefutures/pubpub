@@ -13,11 +13,14 @@ export const getJSON = (editorView) => {
 	return editorView.state.doc.toJSON();
 };
 
+export const getTextFromDoc = (doc: Node, separator = '\n') => {
+	return doc.textBetween(0, doc.nodeSize - 2, separator);
+};
 export const getText = (editorView, separator = '\n') => {
 	if (!editorView) {
 		return null;
 	}
-	return editorView.state.doc.textBetween(0, editorView.state.doc.nodeSize - 2, separator);
+	return getTextFromDoc(editorView.state.doc, separator);
 };
 
 export const getCollabJSONs = (editorView, collabIds) => {

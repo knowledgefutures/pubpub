@@ -5,6 +5,7 @@ export * from './firebase';
 export * from './firebaseDoc';
 export * from './media';
 export * from './misc';
+export * from './nodes';
 export * from './notes';
 export * from './references';
 export * from './renderHtml';

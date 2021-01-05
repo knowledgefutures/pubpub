@@ -1,10 +1,14 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
+import { Node } from 'prosemirror-model';
+import { EditorView } from 'prosemirror-view';
 
 import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
 import { usePubData } from 'client/containers/Pub/pubHooks';
+import { indexByProperty } from 'utils/arrays';
+import { Maybe } from 'utils/types';
 
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
@@ -12,21 +16,24 @@ import FormattingBarPopover from './FormattingBarPopover';
 import { positionNearSelection } from './positioning';
 import { FormattingBarButtonData } from './types';
 import { getButtonPopoverComponent } from './utils';
+import { usePendingAttrs } from './usePendingAttrs';
 
 require('./formattingBar.scss');
 
-type OwnProps = {
+type Props = {
 	popoverContainerRef: any;
 	editorChangeObject: {
 		latestDomEvent?: any;
 		insertFunctions?: any;
-		menuItems?: {}[];
-		view?: {
-			focus?: (...args: any[]) => any;
-		};
-		selectedNode?: {
-			attrs?: any;
-		};
+		menuItems?: {
+			title: string;
+			isActive: boolean;
+			canRun: boolean;
+			run: () => unknown;
+		}[];
+		view: EditorView;
+		selectedNode?: Node;
+		updateNode: (attrs: any) => unknown;
 	};
 	buttons: FormattingBarButtonData[];
 	showBlockTypes?: boolean;
@@ -36,24 +43,14 @@ type OwnProps = {
 	citationStyle?: string;
 };
 
-const defaultProps = {
-	showBlockTypes: true,
-	isTranslucent: false,
-	isSmall: false,
-	isFullScreenWidth: false,
-	citationStyle: 'apa',
-};
-
-const useControlsKey = (latestDomEvent) => {
+const useInteractionCount = (latestDomEvent: any) => {
 	const key = useRef(-1);
-	const previousDomEvent = useRef(null);
+	const previousDomEvent = useRef<any>(null);
 
 	if (latestDomEvent) {
 		const domEventsEqual =
 			previousDomEvent.current &&
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 			previousDomEvent.current.type === latestDomEvent.type &&
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 			previousDomEvent.current.timeStamp === latestDomEvent.timeStamp;
 
 		if (!domEventsEqual) {
@@ -66,9 +63,10 @@ const useControlsKey = (latestDomEvent) => {
 };
 
 const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) => {
-	const [openedButton, setOpenedButton] = useState(null);
-	const firstRenderRef = useRef(true);
-	const controlsKey = useControlsKey(editorChangeObject.latestDomEvent);
+	const [openedButton, setOpenedButton] = useState<FormattingBarButtonData | null>(null);
+	const interactionCount = useInteractionCount(editorChangeObject.latestDomEvent);
+	const selectedNodeId = editorChangeObject.selectedNode?.attrs?.id;
+	const effectKey = `${selectedNodeId}-${interactionCount}`;
 
 	const indicatedButtons = buttons.filter(
 		(button) => button.controls && button.controls.indicate(editorChangeObject),
@@ -78,17 +76,14 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 
 	const controlsComponent =
 		openedButton &&
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-		openedButton.controls.show(editorChangeObject) &&
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-		openedButton.controls.component;
+		openedButton?.controls.indicate(editorChangeObject) &&
+		openedButton?.controls.show(editorChangeObject) &&
+		openedButton?.controls.component;
 
 	const controlsPosition =
 		controlsComponent &&
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-		openedButton.controls.position &&
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-		openedButton.controls.position(editorChangeObject, popoverContainerRef);
+		openedButton?.controls.position &&
+		openedButton?.controls.position(editorChangeObject, popoverContainerRef);
 
 	useEffect(() => {
 		const openableIndicatedButton = indicatedButtons.find(
@@ -96,71 +91,7 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 		);
 		setOpenedButton(openableIndicatedButton);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [controlsKey, indicatedButtonsString]);
-
-	firstRenderRef.current = false;
-
-	return {
-		indicatedButtons: indicatedButtons,
-		openedButton: openedButton,
-		setOpenedButton: setOpenedButton,
-		controlsPosition: controlsPosition,
-		ControlsComponent: controlsComponent,
-	};
-};
-
-type Props = OwnProps & typeof defaultProps;
-
-const FormattingBar = (props: Props) => {
-	const {
-		buttons,
-		editorChangeObject,
-		popoverContainerRef,
-		showBlockTypes,
-		isSmall,
-		isTranslucent,
-		isFullScreenWidth,
-		citationStyle,
-	} = props;
-	const { menuItems, insertFunctions, view } = editorChangeObject;
-	const { communityData } = usePageContext();
-	const pubData = usePubData();
-	const buttonElementRefs = useRefMap();
-	const toolbar = useToolbarState({ loop: true });
-	const {
-		indicatedButtons,
-		openedButton,
-		setOpenedButton,
-		controlsPosition,
-		ControlsComponent,
-	} = useControlsState(props);
-
-	const menuItemByKey = (key) => {
-		if (menuItems) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'title' does not exist on type '{}'.
-			return menuItems.find((menuItem) => menuItem.title === key);
-		}
-		return null;
-	};
-
-	const handleButtonClick = (item) => {
-		if (indicatedButtons.includes(item)) {
-			setOpenedButton(openedButton === item ? null : item);
-		} else {
-			const insertFunction = insertFunctions[item.key];
-			const menuItem = menuItemByKey(item.key);
-			if (insertFunction) {
-				insertFunction();
-				// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-				view.focus();
-			} else if (menuItem) {
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'run' does not exist on type '{}'.
-				menuItem.run();
-				// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-				view.focus();
-			}
-		}
-	};
+	}, [effectKey, indicatedButtonsString]);
 
 	useEffect(() => {
 		const options = { capture: true };
@@ -168,11 +99,7 @@ const FormattingBar = (props: Props) => {
 			if (evt.key === 'Enter') {
 				if (indicatedButtons.length === 1 && !openedButton) {
 					const [openableButton] = indicatedButtons;
-					if (
-						openableButton &&
-						openableButton.controls &&
-						openableButton.controls.enterKeyTriggers
-					) {
+					if (openableButton?.controls?.enterKeyTriggers) {
 						evt.stopImmediatePropagation();
 						evt.preventDefault();
 						setOpenedButton(openableButton);
@@ -184,9 +111,68 @@ const FormattingBar = (props: Props) => {
 		return () => document.removeEventListener('keydown', handler, options);
 	}, [indicatedButtons, openedButton, setOpenedButton]);
 
+	return {
+		indicatedButtons: indicatedButtons,
+		openedButton: openedButton,
+		setOpenedButton: setOpenedButton,
+		controlsPosition: controlsPosition,
+		selectedNodeId: selectedNodeId,
+		ControlsComponent: controlsComponent,
+	};
+};
+
+const FormattingBar = (props: Props) => {
+	const {
+		buttons,
+		editorChangeObject,
+		popoverContainerRef,
+		showBlockTypes = true,
+		isSmall = false,
+		isTranslucent = false,
+		isFullScreenWidth = false,
+		citationStyle = 'apa',
+	} = props;
+	const { menuItems, insertFunctions, view, selectedNode, updateNode } = editorChangeObject;
+	const { communityData } = usePageContext();
+	const pubData = usePubData();
+	const buttonElementRefs = useRefMap();
+	const toolbar = useToolbarState({ loop: true });
+	const pendingAttrs = usePendingAttrs({
+		selectedNode: selectedNode,
+		updateNode: updateNode,
+		editorView: editorChangeObject.view,
+	});
+	const menuItemsByKey: Maybe<Record<string, any>> = useMemo(
+		() => menuItems && indexByProperty(menuItems, 'title'),
+		[menuItems],
+	);
+	const {
+		indicatedButtons,
+		openedButton,
+		setOpenedButton,
+		controlsPosition,
+		selectedNodeId,
+		ControlsComponent,
+	} = useControlsState(props);
+
+	const handleButtonClick = (item) => {
+		if (indicatedButtons.includes(item)) {
+			setOpenedButton(openedButton === item ? null : item);
+		} else {
+			const insertFunction = insertFunctions[item.key];
+			const menuItem = menuItemsByKey?.[item.key];
+			if (insertFunction) {
+				insertFunction();
+				view.focus();
+			} else if (menuItem) {
+				menuItem.run();
+				view.focus();
+			}
+		}
+	};
+
 	useEffect(() => {
 		if (openedButton) {
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 			const ref = buttonElementRefs.get(openedButton.key);
 			if (ref && ref.current && typeof ref.current.scrollIntoView === 'function') {
 				const buttonElement = ref.current;
@@ -197,18 +183,12 @@ const FormattingBar = (props: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [openedButton]);
 
-	const handlePopoverClose = useCallback(() => {
-		setOpenedButton(null);
-	}, [setOpenedButton]);
-
 	const renderButton = (button: FormattingBarButtonData) => {
-		const matchingMenuItem = menuItemByKey(button.key);
+		const matchingMenuItem = menuItemsByKey?.[button.key];
 		const insertFunction = insertFunctions && insertFunctions[button.key];
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'canRun' does not exist on type '{}'.
 		const noFunction = !insertFunction && matchingMenuItem && !matchingMenuItem.canRun;
 		const isOpen = openedButton === button;
 		const isIndicated = indicatedButtons.includes(button) && !isOpen;
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'isActive' does not exist on type '{}'.
 		const isActive = !isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
 		const isDisabled = Boolean(
 			(typeof button.isDisabled === 'function' && button.isDisabled(pubData)) ||
@@ -234,8 +214,7 @@ const FormattingBar = (props: Props) => {
 				isSmall={isSmall}
 				popoverContent={PopoverComponent && <PopoverComponent />}
 				accentColor={communityData.accentColorDark}
-				// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 2.
-				onClick={(evt) => handleButtonClick(button, evt)}
+				onClick={() => handleButtonClick(button)}
 				{...maybeEditorChangeObject}
 			/>
 		);
@@ -268,7 +247,6 @@ const FormattingBar = (props: Props) => {
 					editorChangeObject={editorChangeObject}
 					accentColor={communityData.accentColorDark}
 					button={openedButton}
-					onClose={handlePopoverClose}
 					isFullScreenWidth={isFullScreenWidth}
 					containerRef={popoverContainerRef}
 					floatingPosition={
@@ -276,43 +254,23 @@ const FormattingBar = (props: Props) => {
 							? controlsPosition
 							: controlsPosition || positionNearSelection
 					}
-					captureFocusOnMount={
-						openedButton &&
-						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-						openedButton.controls &&
-						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-						openedButton.controls.captureFocusOnMount
-					}
-					showCloseButton={
-						openedButton &&
-						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-						openedButton.controls &&
-						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-						openedButton.controls.showCloseButton
-					}
-					disableClickProxying={
-						openedButton &&
-						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-						openedButton.controls &&
-						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-						openedButton.controls.disableClickProxying
-					}
+					captureFocusOnMount={openedButton?.controls?.captureFocusOnMount}
+					showCloseButton={openedButton?.controls?.showCloseButton}
+					onClose={() => setOpenedButton(null)}
 				>
-					{({ pendingAttrs, onClose }) => (
-						// @ts-expect-error ts-migrate(2604) FIXME: JSX element type 'ControlsComponent' does not have... Remove this comment to see the full error message
-						<ControlsComponent
-							editorChangeObject={editorChangeObject}
-							pendingAttrs={pendingAttrs}
-							onClose={onClose}
-							isSmall={isSmall}
-							citationStyle={citationStyle}
-							pubData={pubData}
-						/>
-					)}
+					<ControlsComponent
+						key={selectedNodeId}
+						editorChangeObject={editorChangeObject}
+						isSmall={isSmall}
+						citationStyle={citationStyle}
+						pubData={pubData}
+						pendingAttrs={pendingAttrs}
+						onClose={() => setOpenedButton(null)}
+					/>
 				</FormattingBarPopover>
 			)}
 		</div>
 	);
 };
-FormattingBar.defaultProps = defaultProps;
+
 export default FormattingBar;

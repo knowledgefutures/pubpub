@@ -263,12 +263,8 @@ const PubReleaseDialog = (props: Props) => {
 							{'  '}Release Note
 						</p>
 						<MinimalEditor
-							// @ts-expect-error ts-migrate(2322) FIXME: Type '(data: any) => void' is not assignable to ty... Remove this comment to see the full error message
-							onChange={(data) => {
-								setNoteData(data);
-							}}
+							onContent={setNoteData}
 							focusOnLoad={true}
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 							placeholder="(optional) Add a note describing this new Release.&#13;&#10;This will be included in the publicly-visible changelog of this Pub."
 						/>
 						{isSuperAdmin && (

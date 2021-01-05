@@ -44,13 +44,14 @@
 			  "ts": "never",
 			  "tsx": "never"
 			}
-		 ],
+		],
 		"import/no-dynamic-require": 0,
 		"import/no-extraneous-dependencies": [2, { "devDependencies": true }],
 		"import/no-unresolved": [2, { "ignore": ["\\config.js$"] }],
 		"import/prefer-default-export": 0,
 		"jsx-a11y/click-events-have-key-events": 0,
 		"jsx-a11y/label-has-associated-control": [2, {"controlComponents": ["Switch"]}],
+		"lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
 		"max-classes-per-file": 0,
 		"no-async-promise-executor": 0,
 		"no-console": [1, { "allow": ["warn", "error", "info"] }],

@@ -8,6 +8,7 @@ export default {
 	equation: {
 		atom: true,
 		attrs: {
+			id: { default: null },
 			value: { default: '' },
 			html: { default: '' },
 			renderForPandoc: { default: false },

@@ -103,7 +103,6 @@ class ControlsAudio extends Component<Props, State> {
 								onChange={(htmlString) => {
 									this.props.updateAttrs({ caption: htmlString });
 								}}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'undefined... Remove this comment to see the full error message
 								placeholder="Enter caption..."
 							/>
 						</div>

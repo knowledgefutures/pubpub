@@ -1,12 +1,60 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Node } from 'prosemirror-model';
+import { EditorView } from 'prosemirror-view';
 
-const attrsHaveChanges = (oldAttrs, newAttrs, keys) => {
-	return keys.some((key) => newAttrs[key] !== oldAttrs[key]);
+import { updateNodeAttrsById } from '../Editor/utils/nodes';
+
+type Attrs = Node['attrs'];
+
+const attrsHaveChanges = (
+	oldAttrs: null | Attrs,
+	newAttrs: null | Attrs,
+	pendingKeys: string[],
+) => {
+	if (!oldAttrs || !newAttrs) {
+		return false;
+	}
+	return pendingKeys.some((key) => newAttrs[key] !== oldAttrs[key]);
 };
 
-export const usePendingAttrs = ({ selectedNode, updateNode }) => {
-	const [attrs, setAttrs] = useState(selectedNode && selectedNode.attrs);
-	const [pendingKeys, setPendingKeys] = useState([]);
+const getPendingAttrsObject = (attrs: null | Attrs, pendingKeys: string[]) => {
+	const nextAttrs = {};
+	if (attrs) {
+		pendingKeys.forEach((key) => {
+			nextAttrs[key] = attrs[key];
+		});
+	}
+	return nextAttrs;
+};
+
+export const usePendingAttrs = ({
+	selectedNode,
+	updateNode,
+	editorView,
+}: {
+	selectedNode?: Node;
+	updateNode: (attrs: Attrs) => unknown;
+	editorView?: EditorView;
+}) => {
+	const [attrs, setAttrs] = useState(selectedNode?.attrs ?? null);
+	const [targetedNodeId, setTargetedNodeId] = useState(selectedNode?.attrs.id);
+	const [pendingKeys, setPendingKeys] = useState<string[]>([]);
+	const selectedNodeId = selectedNode?.attrs.id;
+
+	useEffect(() => {
+		if (targetedNodeId) {
+			const pendingAttrs = getPendingAttrsObject(attrs, pendingKeys);
+			if (editorView) {
+				updateNodeAttrsById(editorView, targetedNodeId, pendingAttrs);
+			}
+		}
+		if (selectedNode) {
+			setPendingKeys([]);
+			setAttrs(selectedNode.attrs);
+		}
+		setTargetedNodeId(selectedNodeId);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedNodeId]);
 
 	if (!selectedNode) {
 		return null;
@@ -15,27 +63,15 @@ export const usePendingAttrs = ({ selectedNode, updateNode }) => {
 	const hasPendingChanges = attrsHaveChanges(selectedNode.attrs, attrs, pendingKeys);
 
 	const commitChanges = () => {
-		const nextAttrs = {};
-		pendingKeys.forEach((key) => {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
-			nextAttrs[key] = attrs[key];
-		});
+		const nextAttrs = getPendingAttrsObject(attrs, pendingKeys);
 		updateNode(nextAttrs);
 		setPendingKeys([]);
 	};
 
 	const updateAttrs = (nextAttrs) => {
-		Object.keys(nextAttrs).forEach((possiblyNewKey) => {
-			const nextKeys = [];
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-			if (!pendingKeys.includes(possiblyNewKey)) {
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-				nextKeys.push(possiblyNewKey);
-			}
-			if (nextKeys.length > 0) {
-				setPendingKeys([...pendingKeys, ...nextKeys]);
-			}
-		});
+		setPendingKeys((prevPendingKeys) => [
+			...new Set([...prevPendingKeys, ...Object.keys(nextAttrs)]),
+		]);
 		setAttrs((prevAttrs) => ({ ...prevAttrs, ...nextAttrs }));
 	};
 

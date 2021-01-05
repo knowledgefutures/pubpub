@@ -110,6 +110,7 @@ export default class SuggestionManager<T> {
 	getPosition() {
 		if (!this.isSuggesting()) {
 			return {
+				position: 'absolute' as const,
 				top: 0,
 				left: 0,
 			};
@@ -120,6 +121,7 @@ export default class SuggestionManager<T> {
 		const parent = document.body.getBoundingClientRect();
 
 		return {
+			position: 'absolute' as const,
 			top: bounds.bottom - parent.top,
 			left: bounds.left - parent.left,
 		};

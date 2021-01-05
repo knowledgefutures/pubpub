@@ -23,22 +23,38 @@ citationStyles.forEach((style) => {
 Cite.plugins.input.removeDataParser('@else/url', false);
 Cite.plugins.input.removeDataParser('@else/url', true);
 
-const generateFallbackHash = (structuredValue) =>
+const generateFallbackHash = (structuredValue: string) =>
 	crypto
 		.createHash('md5')
 		.update(structuredValue)
 		.digest('base64')
 		.substring(0, 10);
 
-const extractAuthorFromApa = (apaStyleCitation) =>
-	apaStyleCitation
+const extractAuthorFromApa = (apaStyleCitation: string) => {
+	if (
+		apaStyleCitation.charAt(0) === '(' &&
+		apaStyleCitation.charAt(apaStyleCitation.length - 1) === ')'
+	) {
+		const resultWithoutParens = extractAuthorFromApa(apaStyleCitation.slice(1, -1));
+		return `(${resultWithoutParens})`;
+	}
+	return apaStyleCitation
 		.split(',')
 		.slice(0, -1)
 		.join('');
+};
 
-const getInlineCitation = (citationJson, citationApa, inlineStyle, fallbackValue) => {
-	if (inlineStyle === 'author' || inlineStyle === 'authorYear') {
-		return inlineStyle === 'author' ? extractAuthorFromApa(citationApa) : citationApa;
+const getInlineCitation = (
+	citationJson: any[],
+	citationApa: string,
+	inlineStyle: string,
+	fallbackValue: string,
+) => {
+	if (inlineStyle === 'authorYear') {
+		return citationApa;
+	}
+	if (inlineStyle === 'author') {
+		return extractAuthorFromApa(citationApa);
 	}
 	if (inlineStyle === 'label') {
 		return (citationJson[0] && citationJson[0]['citation-label']) || fallbackValue;
@@ -46,7 +62,11 @@ const getInlineCitation = (citationJson, citationApa, inlineStyle, fallbackValue
 	return null;
 };
 
-const getSingleStructuredCitation = async (structuredInput, citationStyle, inlineStyle) => {
+const getSingleStructuredCitation = async (
+	structuredInput: string,
+	citationStyle: string,
+	inlineStyle: string,
+) => {
 	try {
 		const fallbackValue = generateFallbackHash(structuredInput);
 		const citationData = await Cite.async(structuredInput);
@@ -82,7 +102,7 @@ const getSingleStructuredCitation = async (structuredInput, citationStyle, inlin
 };
 
 export const getStructuredCitations = async (
-	structuredInputs,
+	structuredInputs: string[],
 	citationStyle = 'apa',
 	inlineStyle = 'count',
 ) => {

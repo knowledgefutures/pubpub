@@ -85,7 +85,7 @@ const DownloadChooser = (props: Props) => {
 					</>
 				)}
 			</div>
-			<div className="subtext">Uploaded {dateFormat(date, 'mmm dd, yyyy')}</div>
+			{date && <div className="subtext">Uploaded {dateFormat(date, 'mmm dd, yyyy')}</div>}
 		</div>
 	);
 };

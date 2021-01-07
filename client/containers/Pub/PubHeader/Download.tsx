@@ -37,7 +37,6 @@ const Download = (props: Props) => {
 	const [isError, setIsError] = useState(false);
 	const [selectedType, setSelectedType] = useState(null);
 	const [downloadUrl, setDownloadUrl] = useState(null);
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'latestKey' does not exist on type '{}'.
 	const { latestKey } = usePubHistory();
 	const { communityData, locationData } = usePageContext();
 	const formattedDownload = getFormattedDownload(downloads);

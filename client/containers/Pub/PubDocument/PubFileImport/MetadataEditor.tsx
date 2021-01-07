@@ -152,7 +152,7 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 
 	useEffect(() => {
 		const persistUpdatedPubData = async () => {
-			const updatedPubData = {};
+			const updatedPubData: any = {};
 			Object.keys(pubFields).forEach((key) => {
 				if (!ignoredFields[key]) {
 					updatedPubData[key] = pubFields[key];
@@ -161,7 +161,6 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 			if (Object.keys(updatedPubData).length > 0) {
 				// @ts-expect-error ts-migrate(2339) FIXME: Property 'put' does not exist on type '(path: any,... Remove this comment to see the full error message
 				await apiFetch.put('/api/pubs', {
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{ nodeLabels... Remove this comment to see the full error message
 					pubId: pubData.id,
 					communityId: communityData.id,
 					...updatedPubData,
@@ -187,7 +186,6 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
 					const updatedAttributions = await apiFetch.post('/api/pubAttributions/batch', {
 						communityId: communityData.id,
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{ nodeLabels... Remove this comment to see the full error message
 						pubId: pubData.id,
 						attributions: newAttributions,
 					});

@@ -7,22 +7,16 @@ import { pubUrl } from 'utils/canonicalUrls';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 
+import { PatchFn, PubPageData } from 'utils/types';
 import ResponsiveHeaderButton from './ResponsiveHeaderButton';
 
 require('./draftReleaseButtons.scss');
 
 export type DraftReleaseButtonsProps = {
-	pubData: {
-		isRelease?: boolean;
-		releases: {
-			createdAt?: string;
-			sourceBranchKey?: number;
-		}[];
-		releaseNumber?: number;
-	};
+	pubData: PubPageData;
 	historyData: any;
-	updatePubData: (...args: any[]) => any;
-	updateHistoryData: (...args: any[]) => any;
+	updatePubData: PatchFn<PubPageData>;
+	updateHistoryData: (patch: any) => unknown;
 };
 
 const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) => {
@@ -43,8 +37,8 @@ const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) =
 
 const getCanCreateRelease = (latestRelease, latestKey) => {
 	if (latestRelease) {
-		const { sourceBranchKey } = latestRelease;
-		return typeof sourceBranchKey !== 'number' || sourceBranchKey < latestKey;
+		const { historyKey } = latestRelease;
+		return typeof historyKey !== 'number' || historyKey < latestKey;
 	}
 	return latestKey !== -1;
 };
@@ -57,7 +51,6 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 
 	const renderForRelease = () => {
 		const { releases, releaseNumber } = pubData;
-		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
 			<React.Fragment>
@@ -92,19 +85,15 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 					{releases
 						.map((release, index) => (
 							<MenuItem
-								// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{ createdAt?... Remove this comment to see the full error message
 								key={release.id}
-								// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-								active={index === releaseNumber - 1}
-								// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-								icon={index === releaseNumber - 1 ? 'tick' : 'document-share'}
+								active={index + 1 === releaseNumber}
+								icon={index + 1 === releaseNumber ? 'tick' : 'document-share'}
 								href={pubUrl(communityData, pubData, { releaseNumber: index + 1 })}
 								className="release-menu-item"
 								text={
 									<div className="release-metadata">
 										<p className="number">{'Release #' + (index + 1)}</p>
 										<p className="timestamp">
-											{/* @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call. */}
 											{formatDate(new Date(release.createdAt), {
 												includeTime: true,
 											})}
@@ -172,7 +161,13 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 								onClose={onClose}
 								pubData={pubData}
 								historyData={historyData}
-								updatePubData={updatePubData}
+								onCreateRelease={(release) =>
+									updatePubData((currentPubData) => {
+										return {
+											releases: [...currentPubData.releases, release],
+										};
+									})
+								}
 							/>
 						)}
 					</DialogLauncher>

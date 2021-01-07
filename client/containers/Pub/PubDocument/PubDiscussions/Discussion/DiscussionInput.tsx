@@ -38,21 +38,18 @@ const DiscussionInput = (props: Props) => {
 	const { discussionData, isPubBottomInput, pubData, updateLocalData } = props;
 	const { historyData, collabData, firebaseBranchRef } = usePubContext();
 	const { loginData, locationData, communityData } = usePageContext();
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
 	const pubView = collabData.editorChangeObject.view;
-	const [changeObject, setChangeObject] = useState({});
+	const [changeObject, setChangeObject] = useState<null | { view?: any }>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [didFocus, setDidFocus] = useState(false);
 	const [editorKey, setEditorKey] = useState(Date.now());
 	const isNewThread = !discussionData.number;
+
 	useEffect(() => {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-		if (!isPubBottomInput && (isNewThread || didFocus) && changeObject.view) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-			changeObject.view.focus();
+		if (!isPubBottomInput && (isNewThread || didFocus) && changeObject?.view) {
+			changeObject?.view.focus();
 		}
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-	}, [isNewThread, changeObject.view, didFocus, isPubBottomInput]);
+	}, [isNewThread, changeObject?.view, didFocus, isPubBottomInput]);
 
 	const handlePostThreadComment = async () => {
 		setIsLoading(true);
@@ -64,10 +61,8 @@ const DiscussionInput = (props: Props) => {
 				threadId: discussionData.thread.id,
 				pubId: pubData.id,
 				communityId: communityData.id,
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-				content: getJSON(changeObject.view),
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-				text: getText(changeObject.view) || '',
+				content: getJSON(changeObject?.view),
+				text: getText(changeObject?.view) || '',
 			}),
 		});
 
@@ -102,13 +97,10 @@ const DiscussionInput = (props: Props) => {
 				discussionId: discussionData.id,
 				pubId: pubData.id,
 				branchId: pubData.activeBranch.id,
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'currentKey' does not exist on type '{}'.
-				branchKey: historyData.currentKey,
+				historyKey: historyData.currentKey,
 				communityId: communityData.id,
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-				content: getJSON(changeObject.view),
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-				text: getText(changeObject.view) || '',
+				content: getJSON(changeObject?.view),
+				text: getText(changeObject?.view) || '',
 				initAnchorData: initAnchorData,
 				visibilityAccess: pubData.isRelease ? 'public' : 'members',
 			}),
@@ -188,8 +180,7 @@ const DiscussionInput = (props: Props) => {
 						intent={Intent.PRIMARY}
 						text={isNewThread ? 'Post Discussion' : 'Post Reply'}
 						loading={isLoading}
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-						disabled={!getText(changeObject.view)}
+						disabled={!getText(changeObject?.view)}
 						onClick={isNewThread ? handlePostDiscussion : handlePostThreadComment}
 						small={true}
 					/>

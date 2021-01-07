@@ -137,7 +137,7 @@ const PubHistoricalNotice = (props: Props) => {
 	const renderWarning = () => {
 		if (isRelease) {
 			const currentReleaseDate = new Date(releases[releaseNumber - 1].createdAt);
-			const latestReleaseDate = getPubLatestReleasedDate(pubData);
+			const latestReleaseDate = getPubLatestReleasedDate(pubData)!;
 			const includeTime = datesAreSameCalendarDate(currentReleaseDate, latestReleaseDate);
 
 			return (

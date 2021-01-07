@@ -16,12 +16,10 @@ const DiscussionReanchor = (props: Props) => {
 	const { collabData, firebaseBranchRef } = usePubContext();
 	const [isActive, setIsActive] = useState(false);
 
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'selection' does not exist on type '{}'.
 	const { selection } = collabData.editorChangeObject;
 	const { anchor } = discussionData;
 
 	const handleReanchor = () => {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
 		const { view } = collabData.editorChangeObject;
 		reanchorDiscussion(view, firebaseBranchRef, discussionData.id);
 		setIsActive(false);

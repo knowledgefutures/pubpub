@@ -1,5 +1,6 @@
 import { LayoutBlock, CollectionLayout } from 'utils/layout/types';
 import { CommunityNavigationEntry } from 'client/utils/navigation';
+import { NodeLabelMap } from 'client/components/Editor/types';
 
 export type AttributableUser = {
 	id: string;
@@ -130,6 +131,11 @@ export type Branch = {
 	maintenanceDocId?: string;
 };
 
+export type Doc = {
+	id: string;
+	content: {};
+};
+
 export type Release = {
 	id: string;
 	noteContent?: {};
@@ -142,6 +148,9 @@ export type Release = {
 	sourceBranchKey: number;
 	createdAt: string;
 	updatedAt: string;
+	historyKey: number;
+	docId: string;
+	doc?: Doc;
 };
 
 export type PubVersion = {
@@ -218,6 +227,24 @@ export type Pub = {
 	outboundEdges?: OutboundEdge[];
 	pubEdgeListingDefaultsToCarousel: boolean;
 	pubEdgeDescriptionVisible: boolean;
+	nodeLabels: NodeLabelMap;
+};
+
+export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs' | 'discussions'> & {
+	viewHash: Maybe<string>;
+	editHash: Maybe<string>;
+	isReadOnly: boolean;
+	isRelease: boolean;
+	isInMaintenanceMode: boolean;
+	initialStructuredCitations: boolean;
+	releaseNumber: Maybe<number>;
+	historyData: {
+		currentKey: number;
+		latestKey: number;
+		timestamps: Record<string, number>;
+	};
+	activeBranch: Branch;
+	firebaseToken: string;
 };
 
 export type Page = {
@@ -280,6 +307,30 @@ export type Community = {
 	collections?: Collection[];
 	pages?: Page[];
 	pubs?: Pub[];
+};
+
+export type DiscussionAnchor = {
+	id: string;
+	discussionId: string;
+	historyKey: number;
+	selection: null | {};
+	originalText: string;
+	originalTextPrefix: string;
+	originalTextSuffix: string;
+	isOriginal: boolean;
+};
+
+export type Discussion = {
+	id: string;
+	title: string;
+	number: number;
+	isClosed: boolean;
+	labels: string[];
+	threadId: string;
+	visibilityId: string;
+	userId: string;
+	pubId: string;
+	anchors?: DiscussionAnchor[];
 };
 
 export type LoginData = {
@@ -345,3 +396,8 @@ export type Falsy = false | null | undefined | '' | 0;
 export type Maybe<X> = X extends Falsy ? never : X | Falsy;
 export type Some<X> = X extends Falsy ? never : X;
 export type DefinitelyHas<X extends {}, Keys> = X & { [k in keyof X & Keys]: Some<X[k]> };
+
+type PatchFnUpdaterArg<T> = (current: T) => Partial<T>;
+type PatchFnPatchArg<T> = Partial<T>;
+type PatchFnArg<T> = PatchFnPatchArg<T> | PatchFnUpdaterArg<T>;
+export type PatchFn<T> = (arg: PatchFnArg<T>) => unknown;

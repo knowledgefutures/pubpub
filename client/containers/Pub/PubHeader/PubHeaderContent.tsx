@@ -5,7 +5,7 @@ import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
-import { Pub } from 'utils/types';
+import { PubPageData } from 'utils/types';
 
 import CollectionsBar from './collections/CollectionsBar';
 import DraftReleaseButtons from './DraftReleaseButtons';
@@ -15,9 +15,7 @@ import UtilityButtons from './UtilityButtons';
 type Props = {
 	historyData: any;
 	onShowHeaderDetails: (...args: any[]) => any;
-	pubData: Pub & {
-		isInMaintenanceMode: boolean;
-	};
+	pubData: PubPageData;
 	pubHeadings: any[];
 	updateLocalData: (...args: any[]) => any;
 };

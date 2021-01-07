@@ -1,15 +1,16 @@
 import React from 'react';
 import queryString from 'query-string';
+import firebase from 'firebase';
 
-import { loginDataProps } from 'types/base';
 import { getRandomColor } from 'utils/colors';
 import { getPubPageTitle } from 'utils/pubPageTitle';
 import { CitationManager } from 'client/utils/citations/citationManager';
 import { initFirebase } from 'client/utils/firebaseClient';
 import { apiFetch } from 'client/utils/apiFetch';
 import { NodeLabelMap } from 'client/components/Editor/types';
+import { Maybe, PatchFn, PubPageData, Community, LoginData, LocationData } from 'utils/types';
 
-const pubContextProps = {
+const shimPubContextProps = {
 	pubData: {
 		nodeLabels: {} as NodeLabelMap | undefined,
 		slug: '',
@@ -21,17 +22,55 @@ const pubContextProps = {
 	updatePubData: null as any,
 	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2-3 arguments, but got 0.
 	citationManager: new CitationManager(),
-};
-
-export const PubContext = React.createContext(pubContextProps);
+} as any;
 
 type Props = {
-	pubData: any;
-	locationData: any;
-	communityData: any;
-	loginData: loginDataProps;
-	children: (ctx: typeof pubContextProps) => React.ReactNode;
+	pubData: PubPageData;
+	locationData: LocationData;
+	communityData: Community;
+	loginData: LoginData;
+	children: (ctx: typeof shimPubContextProps) => React.ReactNode;
 };
+
+type CollabUser = {
+	id: string;
+	backgroundColor: string;
+	cursorColor: string;
+	image: Maybe<string>;
+	name: string;
+	initials: string;
+	canEdit: boolean;
+};
+
+type State = {
+	pubData: PubPageData;
+	historyData: {
+		currentKey: number;
+		latestKey: number;
+		isViewingHistory: boolean;
+		loadedIntoHistory: boolean;
+		historyDocKey: string;
+		outstandingRequests: number;
+		latestKeyReceivedAt: Maybe<number>;
+		timestamps: Record<string, number>;
+	};
+	collabData: {
+		editorChangeObject: any;
+		status: string;
+		localCollabUser: CollabUser;
+		remoteCollabUsers: CollabUser[];
+	};
+	firebaseRootRef: null | firebase.database.Reference;
+	firebaseBranchRef: null | firebase.database.Reference;
+	citationManager: CitationManager;
+};
+
+type PubContextType = State & {
+	updateLocalData: PatchFn<any>;
+	updatePubData: PatchFn<PubPageData>;
+};
+
+export const PubContext = React.createContext<PubContextType>(shimPubContextProps);
 
 const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
 	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
@@ -112,8 +151,6 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 		immediately: immediately,
 	};
 };
-
-type State = any;
 class PubSyncManager extends React.Component<Props, State> {
 	idleStateUpdater: ReturnType<typeof idleStateUpdater>;
 
@@ -124,8 +161,8 @@ class PubSyncManager extends React.Component<Props, State> {
 		const isViewingHistory = historyData.currentKey !== historyData.latestKey;
 
 		this.state = {
-			firebaseRootRef: undefined,
-			firebaseBranchRef: undefined,
+			firebaseRootRef: null,
+			firebaseBranchRef: null,
 			pubData: this.props.pubData,
 			collabData: {
 				editorChangeObject: {},
@@ -156,7 +193,7 @@ class PubSyncManager extends React.Component<Props, State> {
 		this.updateLocalData = this.updateLocalData.bind(this);
 		if (typeof window !== 'undefined') {
 			// eslint-disable-next-line no-underscore-dangle
-			// @ts-expect-error ts-migrate(2339) FIXME: Property '__pubId__' does not exist on type 'Windo... Remove this comment to see the full error message
+			// @ts-expect-error
 			window.__pubId__ = this.props.pubData.id;
 		}
 	}
@@ -176,11 +213,11 @@ class PubSyncManager extends React.Component<Props, State> {
 				},
 				() => {
 					this.state.firebaseRootRef
-						.child('metadata')
+						?.child('metadata')
 						.on('child_changed', this.syncMetadata);
 
 					this.state.firebaseBranchRef
-						.child('cursors')
+						?.child('cursors')
 						.on('value', this.syncRemoteCollabUsers);
 
 					connectionRef.on('value', (snapshot) => {
@@ -426,7 +463,7 @@ class PubSyncManager extends React.Component<Props, State> {
 			firebaseBranchRef: this.state.firebaseBranchRef,
 			updateLocalData: this.updateLocalData,
 			updatePubData: this.updatePubData,
-		};
+		} as PubContextType;
 		return (
 			<PubContext.Provider value={context}>
 				{this.props.children(context)}

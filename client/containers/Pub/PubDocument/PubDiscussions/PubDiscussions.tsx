@@ -49,15 +49,12 @@ const PubDiscussions = (props: Props) => {
 
 	const { discussions } = pubData;
 	const { canView, canCreateDiscussions } = scopeData;
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'decorations' does not exist on type '{}'... Remove this comment to see the full error message
 	const decorations = collabData.editorChangeObject.decorations || [];
 	const groupsByLine = groupDiscussionsByLine(decorations, discussions);
 
 	useEffect(() => {
 		// This effect will cause boundingBoxes to recalculate on window resize.
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
 		if (collabData.editorChangeObject.view) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
 			dispatchEmptyTransaction(collabData.editorChangeObject.view);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

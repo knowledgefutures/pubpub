@@ -126,7 +126,7 @@
 		"prosemirror-suggest": "^0.7.6",
 		"prosemirror-tables": "^1.1.1",
 		"prosemirror-transform": "^1.2.5",
-		"prosemirror-view": "^1.14.7",
+		"prosemirror-view": "^1.17.1",
 		"query-string": "^6.4.0",
 		"react": "^16.8.5",
 		"react-avatar-editor": "^11.0.6",

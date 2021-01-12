@@ -40,8 +40,9 @@ const LinkPopover = (props: HeaderPopoverProps) => {
 
 	// The prosemirror-reactive plugin will generate random, transient IDs starting with 'r'
 	const unstableLink = Boolean(parent && /^r[0-9]*$/.test(parent.id));
+	const isLatestRelease = pubData.releaseNumber === pubData.releases.length;
 	const managersEnableLinksPrompt =
-		pubData.isReadOnly && unstableLink && canManage
+		pubData.isReadOnly && isLatestRelease && unstableLink && canManage
 			? 'You must create a new Release to link to this block.'
 			: '';
 

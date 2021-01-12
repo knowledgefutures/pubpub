@@ -11,6 +11,8 @@ import {
 	Visibility,
 	includeUserModel,
 } from 'server/models';
+import { getReadableDateInYear } from 'utils/dates';
+import { createOriginalDiscussionAnchor } from 'server/discussionAnchor/queries';
 
 const findDiscussionWithUser = (id) =>
 	Discussion.findOne({
@@ -44,79 +46,105 @@ const findDiscussionWithUser = (id) =>
 		],
 	});
 
-export const createDiscussion = async (inputValues, user) => {
+type CreateDiscussionOpts = {
+	pubId: string;
+	branchId?: string;
+	discussionId?: string;
+	title?: string;
+	text: string;
+	content: {};
+	historyKey: number;
+	visibilityAccess: 'members' | 'public';
+	initAnchorData: {
+		prefix?: string;
+		suffix?: string;
+		exact: string;
+		from: number;
+		to: number;
+	};
+};
+
+export const createDiscussion = async (options: CreateDiscussionOpts, userId: string) => {
+	const {
+		pubId,
+		discussionId,
+		branchId,
+		title,
+		text,
+		content,
+		historyKey,
+		visibilityAccess,
+		initAnchorData,
+	} = options;
+
 	const discussions = await Discussion.findAll({
-		where: {
-			pubId: inputValues.pubId,
-		},
+		where: { pubId: pubId },
 		attributes: ['id', 'pubId', 'number'],
 	});
+
 	// This is non-atomic and could create race conditions
 	// if two people create new discussion threads at the same time
 	// on the same pub
-	const maxThreadNumber = discussions.reduce((prev, curr) => {
-		if (curr.number > prev) {
-			return curr.number;
+	const maxThreadNumber = discussions.reduce((max, nextDiscussion) => {
+		if (nextDiscussion.number > max) {
+			return nextDiscussion.number;
 		}
-		return prev;
+		return max;
 	}, 0);
 
-	const months = [
-		'Jan',
-		'Feb',
-		'Mar',
-		'Apr',
-		'May',
-		'Jun',
-		'Jul',
-		'Aug',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dec',
-	];
-	const date = new Date();
-	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;
-	// const isReply = !!inputValues.threadNumber;
+	const dateString = getReadableDateInYear(new Date());
 	const generatedTitle = `New Discussion on ${dateString}`;
 
-	let newAnchor = {};
-	if (inputValues.initAnchorData) {
-		const { prefix, suffix, exact, from, to } = inputValues.initAnchorData;
+	let newAnchor: { id?: string } = {};
+
+	if (initAnchorData) {
+		const { prefix, suffix, exact, from, to } = initAnchorData;
 		newAnchor = await Anchor.create({
 			prefix: prefix,
 			exact: exact,
 			suffix: suffix,
 			from: from,
 			to: to,
-			branchKey: inputValues.branchKey,
-			branchId: inputValues.branchId,
+			branchKey: historyKey,
+			branchId: branchId,
 		});
 	}
+
 	const newThread = await Thread.create({});
 	await ThreadComment.create({
-		text: inputValues.text,
-		content: inputValues.content,
-		userId: user.id,
+		text: text,
+		content: content,
+		userId: userId,
 		threadId: newThread.id,
 	});
 
-	const newVisibility = await Visibility.create({
-		access: inputValues.visibilityAccess,
-	});
+	const newVisibility = await Visibility.create({ access: visibilityAccess });
 	const newDiscussion = await Discussion.create({
-		id: inputValues.discussionId,
-		title: inputValues.title || generatedTitle,
+		id: discussionId,
+		title: title || generatedTitle,
 		number: maxThreadNumber + 1,
 		threadId: newThread.id,
 		visibilityId: newVisibility.id,
-		userId: user.id,
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type '{}'.
+		userId: userId,
 		anchorId: newAnchor.id,
-		pubId: inputValues.pubId,
+		pubId: pubId,
 	});
-	const discussionWithUser = await findDiscussionWithUser(newDiscussion.id);
-	return discussionWithUser;
+
+	if (initAnchorData) {
+		const { from, to, exact, prefix, suffix } = initAnchorData;
+		await createOriginalDiscussionAnchor({
+			discussionId: newDiscussion.id,
+			historyKey: historyKey,
+			// If someday we wish to support Node selections we can pass a serialized Selection
+			// from the client instead of synthesizing one here.
+			selectionJson: { type: 'text', head: Math.max(from, to), anchor: Math.min(from, to) },
+			originalText: exact,
+			originalTextPrefix: prefix,
+			originalTextSuffix: suffix,
+		});
+	}
+
+	return findDiscussionWithUser(newDiscussion.id);
 };
 
 export const updateDiscussion = async (values, permissions) => {

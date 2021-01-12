@@ -414,7 +414,7 @@ const addFileNodeToDocument = (document, fileNodeAttrs) => {
 
 const writeDocumentToPubDraft = async (pubId, document) => {
 	const draftBranch = await Branch.findOne({ where: { pubId: pubId, title: 'draft' } });
-	const branchRef = getBranchRef(pubId, draftBranch.id);
+	const branchRef = getBranchRef(pubId, draftBranch.id)!;
 	const hydratedDocument = Node.fromJSON(documentSchema, document);
 	const documentSlice = new Slice(Fragment.from(hydratedDocument.content), 0, 0);
 	const replaceStep = new ReplaceStep(0, 0, documentSlice);

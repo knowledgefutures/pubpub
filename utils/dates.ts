@@ -1,7 +1,9 @@
 import dateFormat from 'dateformat';
 
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 export const formatDate = (
-	date,
+	date: Date | string,
 	{
 		includeTime = false,
 		includeDate = true,
@@ -23,7 +25,7 @@ export const formatDate = (
 	return formattedDate;
 };
 
-export const datesAreSameCalendarDate = (dateOne, dateTwo) =>
+export const datesAreSameCalendarDate = (dateOne: Date, dateTwo: Date) =>
 	dateOne.toDateString() === dateTwo.toDateString();
 
 export const timeAgoBaseProps = {
@@ -40,10 +42,16 @@ export const timeAgoBaseProps = {
 	},
 };
 
-export const getLocalDateMatchingUtcCalendarDate = (utcDate) => {
+export const getLocalDateMatchingUtcCalendarDate = (utcDate: Date | string) => {
 	const formattedUtcDate = dateFormat(utcDate, 'UTC:yyyy-mm-dd');
 	const localDateOnSameDay = new Date(formattedUtcDate);
 	const returnDate = new Date(utcDate);
 	returnDate.setMinutes(returnDate.getMinutes() + localDateOnSameDay.getTimezoneOffset());
 	return returnDate;
+};
+
+export const getReadableDateInYear = (date: Date) => {
+	const month = months[date.getMonth()];
+	const dateInMonth = date.getDate();
+	return `${month} ${dateInMonth}`;
 };

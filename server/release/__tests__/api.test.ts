@@ -1,8 +1,9 @@
 /* global describe, it, expect, beforeAll, afterAll, afterEach */
-import { setup, teardown, login, modelize, editPub } from 'stubstub';
+import { setup, teardown, login, modelize, determinize, editPub } from 'stubstub';
 
-import { Doc, Export, Release } from 'server/models';
+import { DiscussionAnchor, Doc, Export, Release } from 'server/models';
 import { getExportFormats } from 'utils/export/formats';
+import { createDiscussion } from 'server/discussion/queries';
 
 const models = modelize`
 	Community community {
@@ -16,7 +17,14 @@ const models = modelize`
                 User pubAdmin {}
             }
 		}
+		Pub discussPub {
+			Member {
+				permissions: "admin"
+				User discussPubAdmin {}
+			}
+		}
 	}
+	User rando {}
 `;
 
 setup(beforeAll, async () => {
@@ -38,6 +46,42 @@ const createReleaseRequest = ({ community, pub, ...rest }) => ({
 	...rest,
 });
 
+const createDiscussionForPub = ({
+	pubId,
+	userId,
+	visibilityAccess = 'public',
+	historyKey,
+	from,
+	to,
+	...rest
+}: {
+	pubId: string;
+	userId: string;
+	from: number;
+	to: number;
+	historyKey: number;
+	visibilityAccess?: 'public' | 'members';
+}) => {
+	return createDiscussion(
+		{
+			pubId: pubId,
+			visibilityAccess: visibilityAccess,
+			text: 'whatever',
+			content: {},
+			historyKey: historyKey,
+			initAnchorData: {
+				from: from,
+				to: to,
+				exact: 'whatever',
+			},
+			...rest,
+		},
+		userId,
+	);
+};
+
+const determinizeAnchor = determinize(['historyKey', 'selection']);
+
 describe('/api/releases', () => {
 	it('refuses to create a Release for non-admins of a Pub', async () => {
 		const { community, pub, pubManager } = models;
@@ -52,30 +96,31 @@ describe('/api/releases', () => {
 				createReleaseRequest({
 					community: community,
 					pub: pub,
-					draftKey: pubEditor.getKey(),
+					historyKey: pubEditor.getKey(),
 					createExports: false,
 				}),
 			)
 			.expect(403);
 	});
 
-	it('will not create an empty Release for admins of a Pub', async () => {
+	it('will create an empty Release for admins of a Pub', async () => {
 		const { community, pub, pubAdmin } = models;
 		const agent = await login(pubAdmin);
 		const pubEditor = await editPub(pub.id);
 		await pubEditor.clearChanges();
-		const { body: error } = await agent
+		const { body: release } = await agent
 			.post('/api/releases')
 			.send(
 				createReleaseRequest({
 					community: community,
 					pub: pub,
-					draftKey: pubEditor.getKey(),
+					historyKey: pubEditor.getKey(),
 					createExports: false,
 				}),
 			)
-			.expect(400);
-		expect(error).toEqual('merge-failed');
+			.expect(201);
+		const doc = await Doc.findOne({ where: { id: release.docId } });
+		expect(doc.content).toEqual(pubEditor.getDoc().toJSON());
 	});
 
 	it('will create a Release (and associated exports) for admins of a Pub', async () => {
@@ -91,7 +136,7 @@ describe('/api/releases', () => {
 				createReleaseRequest({
 					community: community,
 					pub: pub,
-					draftKey: pubEditor.getKey(),
+					historyKey: pubEditor.getKey(),
 				}),
 			)
 			.expect(201);
@@ -117,7 +162,7 @@ describe('/api/releases', () => {
 				createReleaseRequest({
 					community: community,
 					pub: pub,
-					draftKey: pubEditor.getKey(),
+					historyKey: pubEditor.getKey(),
 				}),
 			)
 			.expect(201);
@@ -128,10 +173,100 @@ describe('/api/releases', () => {
 				createReleaseRequest({
 					community: community,
 					pub: pub,
-					draftKey: pubEditor.getKey(),
+					historyKey: pubEditor.getKey(),
 				}),
 			)
 			.expect(400);
 		expect(error).toEqual('duplicate-release');
+	});
+
+	it('will map discussions made on Pubs forward to future Releases', async () => {
+		const { community, discussPub: pub, discussPubAdmin: pubAdmin, rando } = models;
+		const agent = await login(pubAdmin);
+
+		const pubEditor = await editPub(pub.id);
+		await pubEditor
+			.transform((tr, schema) => tr.insert(1, schema.text('Add some comments to me!')))
+			.writeChange();
+
+		const createRelease = async () => {
+			const { body: release } = await agent
+				.post('/api/releases')
+				.send(
+					createReleaseRequest({
+						community: community,
+						pub: pub,
+						historyKey: pubEditor.getKey(),
+					}),
+				)
+				.expect(201);
+			return release;
+		};
+
+		const release = await createRelease();
+
+		const [discussion1, discussion2] = await Promise.all([
+			createDiscussionForPub({
+				pubId: pub.id,
+				userId: rando.id,
+				from: 8,
+				to: 10,
+				historyKey: release.historyKey,
+			}),
+			createDiscussionForPub({
+				pubId: pub.id,
+				userId: rando.id,
+				from: 0,
+				to: 2,
+				historyKey: release.historyKey,
+			}),
+		]);
+
+		await pubEditor.transform((tr) => tr.deleteRange(1, 4));
+		await pubEditor.writeChange();
+		await pubEditor.transform((tr, schema) => tr.insert(1, schema.text('Anchor')));
+		await pubEditor.writeChange();
+
+		const nextRelease = await createRelease();
+
+		const discussion3 = await createDiscussionForPub({
+			pubId: pub.id,
+			userId: rando.id,
+			from: 9,
+			to: 12,
+			historyKey: nextRelease.historyKey,
+		});
+
+		await pubEditor.transform((tr, schema) =>
+			tr.insert(10, schema.text('Really mucking this up now')),
+		);
+		await pubEditor.writeChange();
+
+		await createRelease();
+
+		const [discussion1Anchors, discussion2Anchors, discussion3Anchors] = await Promise.all(
+			[discussion1, discussion2, discussion3].map((discussion) =>
+				DiscussionAnchor.findAll({
+					where: { discussionId: discussion.id },
+				}).then((anchors) => anchors.map((a) => determinizeAnchor(a.toJSON()))),
+			),
+		);
+
+		expect(discussion1Anchors).toEqual([
+			{ historyKey: 0, selection: { type: 'text', anchor: 8, head: 10 } },
+			{ historyKey: 2, selection: { type: 'text', anchor: 11, head: 13 } },
+			{ historyKey: 3, selection: { type: 'text', anchor: 37, head: 39 } },
+		]);
+
+		expect(discussion2Anchors).toEqual([
+			{ historyKey: 0, selection: { type: 'text', anchor: 0, head: 2 } },
+			{ historyKey: 2, selection: null },
+			{ historyKey: 3, selection: null },
+		]);
+
+		expect(discussion3Anchors).toEqual([
+			{ historyKey: 2, selection: { type: 'text', anchor: 9, head: 12 } },
+			{ historyKey: 3, selection: { type: 'text', anchor: 9, head: 38 } },
+		]);
 	});
 });

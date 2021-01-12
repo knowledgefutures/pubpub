@@ -39,7 +39,7 @@ const createRelease = ({ historyKey, pubId, communityId, noteContent, noteText }
 			communityId: communityId,
 			noteContent: noteContent,
 			noteText: noteText,
-			draftKey: historyKey,
+			historyKey: historyKey,
 		}),
 	});
 

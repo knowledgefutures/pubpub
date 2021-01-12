@@ -5,16 +5,14 @@ import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
-
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+import { getReadableDateInYear } from 'utils/dates';
 
 export const createPub = async (
 	{ communityId, collectionIds, slug, ...restArgs },
 	userId?: string,
 ) => {
 	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
-	const date = new Date();
-	const dateString = `${months[date.getMonth()]} ${date.getDate()}`;
+	const dateString = getReadableDateInYear(new Date());
 	const { defaultPubCollections } = await Community.findOne({ where: { id: communityId } });
 
 	const newPub = await Pub.create({

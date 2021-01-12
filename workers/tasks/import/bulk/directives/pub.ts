@@ -419,7 +419,7 @@ const writeDocumentToPubDraft = async (pubId, document) => {
 	const documentSlice = new Slice(Fragment.from(hydratedDocument.content), 0, 0);
 	const replaceStep = new ReplaceStep(0, 0, documentSlice);
 	const change = createFirebaseChange([replaceStep], draftBranch.id, 'bulk-importer');
-	await branchRef
+	await branchRef!
 		.child('changes')
 		.child('0')
 		.set(change);

@@ -42,14 +42,16 @@ const firebaseApp = getFirebaseApp();
 const database = firebaseApp && firebaseApp.database();
 export const editorSchema = buildSchema({ ...discussionSchema }, {});
 
-export const getPubRef = (pubId) => {
-	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-	return database.ref(`pub-${pubId}`);
+export const getPubRef = (pubId: string) => {
+	return database?.ref(`pub-${pubId}`);
 };
 
-export const getBranchRef = (pubId, branchId) => {
-	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-	return database.ref(`pub-${pubId}/branch-${branchId}`);
+export const getBranchRef = (pubId: string, branchId: string) => {
+	return database?.ref(`pub-${pubId}/branch-${branchId}`);
+};
+
+export const getDatabaseRef = (key: string) => {
+	return database?.ref(key);
 };
 
 const maybeAddKeyTimestampPair = (key, timestamp) => {

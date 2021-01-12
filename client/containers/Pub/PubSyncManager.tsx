@@ -13,6 +13,7 @@ const pubContextProps = {
 	pubData: {
 		nodeLabels: {} as NodeLabelMap | undefined,
 		slug: '',
+		isReadOnly: false,
 	},
 	collabData: { editorChangeObject: {} },
 	historyData: {},

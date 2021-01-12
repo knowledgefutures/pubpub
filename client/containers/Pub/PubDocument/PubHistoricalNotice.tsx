@@ -68,19 +68,12 @@ const PubHistoricalNotice = (props: Props) => {
 										icon={isViewedRelease ? 'tick' : 'document-share'}
 									/>
 									<ClickToCopyButton
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 										minimal
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 										className="copy-button"
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 										icon="duplicate"
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 										tooltipPosition="right"
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 										beforeCopyPrompt={`Copy link to Release #${thisReleaseNumber}`}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 										afterCopyPrompt="Copied link!"
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 										copyString={releaseUrl}
 									/>
 								</div>

@@ -3,6 +3,9 @@ import Popper from 'popper.js';
 
 import { ClickToCopyButton } from 'components';
 import { getLowestAncestorWithId } from 'client/utils/dom';
+import { usePageContext } from 'utils/hooks';
+
+import { usePubData } from '../../pubHooks';
 
 export type HeaderPopoverProps = {
 	locationData: any;
@@ -13,37 +16,52 @@ export type HeaderPopoverProps = {
 const LinkPopover = (props: HeaderPopoverProps) => {
 	const { element, mainContentRef, locationData } = props;
 	const parent = getLowestAncestorWithId(element);
-	const popoverRef = useRef();
+	const popoverRef = useRef<null | HTMLDivElement>(null);
+	const pubData = usePubData();
+	const {
+		scopeData: {
+			activePermissions: { canManage },
+		},
+	} = usePageContext();
 
 	useEffect(() => {
-		if (!parent) {
-			return;
+		const popover = popoverRef.current;
+		if (parent && popover) {
+			const popperObject = new Popper(parent, popover, {
+				placement: parent.matches('h1, h2, h3, h4, h5, h6') ? 'left' : 'left-start',
+			});
+
+			return () => {
+				popperObject.destroy();
+			};
 		}
-
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'undefined' is not assignable to ... Remove this comment to see the full error message
-		const popperObject = new Popper(parent, popoverRef.current, {
-			placement: parent.matches('h1, h2, h3, h4, h5, h6') ? 'left' : 'left-start',
-		});
-
-		return () => {
-			popperObject.destroy();
-		};
+		return () => {};
 	}, [parent, mainContentRef]);
 
-	return (
-		<div
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
-			ref={popoverRef}
-			style={{ position: 'absolute', top: '-9999px' }}
-			className="click-to-copy"
-		>
-			<ClickToCopyButton
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
-				copyString={`https://${locationData.hostname}${locationData.path}#${parent.id}`}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
-				beforeCopyPrompt="Copy link to this item"
-			/>
-		</div>
-	);
+	// The prosemirror-reactive plugin will generate random, transient IDs starting with 'r'
+	const unstableLink = Boolean(parent && /^r[0-9]*$/.test(parent.id));
+	const managersEnableLinksPrompt =
+		pubData.isReadOnly && unstableLink && canManage
+			? 'You must create a new Release to link to this block.'
+			: '';
+
+	const shown = !unstableLink || managersEnableLinksPrompt;
+
+	if (shown) {
+		return (
+			<div
+				ref={popoverRef}
+				style={{ position: 'absolute', top: '-9999px' }}
+				className="click-to-copy"
+			>
+				<ClickToCopyButton
+					copyString={`https://${locationData.hostname}${locationData.path}#${parent?.id}`}
+					beforeCopyPrompt={managersEnableLinksPrompt}
+					disabled={unstableLink}
+				/>
+			</div>
+		);
+	}
+	return null;
 };
 export default LinkPopover;

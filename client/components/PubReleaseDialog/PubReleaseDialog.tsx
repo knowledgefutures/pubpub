@@ -131,15 +131,10 @@ const PubReleaseDialog = (props: Props) => {
 				<ControlGroup className="url-select">
 					<InputGroup className="display-url" value={url} fill small />
 					<ClickToCopyButton
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 						minimal={true}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 						copyString={url}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						icon="duplicate"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						beforeCopyPrompt="Copy URL to clipboard"
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 						afterCopyPrompt="Copied URL!"
 					/>
 				</ControlGroup>

@@ -1,4 +1,7 @@
-import { Plugin, Transaction } from 'prosemirror-state';
+import { Node } from 'prosemirror-model';
+import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+
 import { generateHash } from '../utils';
 
 const inPasteRange = (offset, transactions) => {
@@ -13,14 +16,14 @@ const inPasteRange = (offset, transactions) => {
 	});
 };
 
-const updatedNodeAttrsWithNewRandomId = (node) => {
+const updatedNodeAttrsWithNewRandomId = (node: Node) => {
 	return {
 		...node.attrs,
-		id: generateHash(10),
+		id: `n-${generateHash(10)}`,
 	};
 };
 
-const getIdsTransactionForState = (editorState, transactions: Transaction[] = []) => {
+const getIdsTransactionForState = (editorState: EditorState, transactions: Transaction[] = []) => {
 	const transaction = editorState.tr;
 	let mustReturnTransaction = false;
 	const seenIds = new Set();
@@ -84,7 +87,7 @@ export default (_, props) => {
 		return [];
 	}
 	return new Plugin({
-		view: (editorView) => {
+		view: (editorView: EditorView) => {
 			const transaction = getIdsTransactionForState(editorView.state);
 			if (transaction) {
 				editorView.dispatch(transaction);

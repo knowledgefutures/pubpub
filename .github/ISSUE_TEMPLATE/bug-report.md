@@ -11,19 +11,24 @@ _Before filing your bug report, please search existing issues to make sure a sim
 
 _To fill out the report, please leave the below headers (**) in tact, and fill out each section. If a section isn't applicable, leave it blank or write n/a under it. Please do not delete any template sections._
 
-**What went wrong, step-by-step?**
+### What went wrong, step-by-step?
 1.
 2.
 ...
 
-**What did you expect to happen?**
+### What did you expect to happen?
 
-**What URL can we use to see the issue?**
 
-**What browser/operating system were you using?**
+### What URL can we use to see the issue?
 
----
 
-**Have any screenshots? (Attach them by dragging the image here)**
+### What browser/operating system were you using?
 
-**Who reported this? (If not you)**
+
+===
+
+
+### Have any screenshots? (Attach them by dragging the image here)
+
+
+### Who reported this? (If not you)

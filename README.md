@@ -1,6 +1,20 @@
 # PubPub
 
-Collaborative Community Publishing
+_Collaborative Community Publishing_
+
+## [Roadmap](https://github.com/orgs/pubpub/projects/9)
+The roadmap is intended to be a general overview of our plans. It will provide a high-level list of what we're thinking about, what we've prioritized, what we're currently working on, and what we've done. It is not intended to be an exhaustive or completely up-to-date list of features or projects. We use GitHub milestones in the main [PubPub Repo](https://github.com/pubpub/pubpub/milestones) to track specific sprints of work.
+
+## Bugs, Feature Requests, Help, and Feedback
+If you have a specific bug to report, feel free to add a [new issue](https://github.com/pubpub/pubpub/issues/new/choose) to the PubPub Repo. Please search the [issue list](https://github.com/pubpub/pubpub/issues) first to make sure your bug hasn't already been reported. If it has, add your feedback to the preexisting issue. For new bug reports, please fill out all the applicable parts of the bug report template before submitting.
+
+If you have a feature request, idea, general feedback, or need help with PubPub, we'd love you to post a discussion on the [PubPub Forum](https://github.com/pubpub/pubpub/discussions). As with bug reports, make sure to search the forum first to see if the community has already discussed your idea or solved your issue. If we have, feel free to join in on that ongoing discussion. Remember to be polite and courteous. All activity on this repository is governed by the [Knowledge Futures Code of Conduct](https://github.com/knowledgefutures/general/blob/master/CODE_OF_CONDUCT.md).
+
+## Contributing
+At the moment, PubPub isn't particularly well setup for outside contributors. However, we'd like to get to that point, and if there's a specific feature or idea from [our roadmap](https://github.com/orgs/pubpub/projects/9) or [issue list](https://github.com/pubpub/pubpub) that you're interested in working on, we'd like to hear from you. Please send a note to [hello@pubpub.org](mailto:hello@pubpub.org?subject=Code%20Contribution) introducing yourself and describing how you'd like to contribute.
+
+## User-Facing Documentation
+User-facing documentation is a work in progress, and can be found at https://help.pubpub.org. If you're interested in helping contribute to documentation, we'd love to hear from you. Please send a note to [hello@pubpub.org](mailto:hello@pubpub.org?subject=Documentation%20Contribution) introducing yourself and describing how you'd like to contribute.
 
 ## To Install
 

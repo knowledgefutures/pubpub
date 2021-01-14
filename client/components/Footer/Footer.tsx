@@ -148,6 +148,9 @@ const Footer = (props: Props) => {
 								<li>
 									<a href="https://help.pubpub.org">Help</a>
 								</li>
+								<li>
+									<a href="https://github.com/pubpub/pubpub/discussions">Forum</a>
+								</li>
 							</ul>
 
 							<form onSubmit={handleEmailSubmit}>

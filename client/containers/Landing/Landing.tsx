@@ -184,10 +184,13 @@ const Landing = () => {
 						</div>
 						<div>
 							<a className="git" href="https://github.com/pubpub/pubpub">
-								<Icon icon="git-repo" /> pubpub
+								<Icon icon="git-repo" /> code
 							</a>
-							<a className="git" href="https://github.com/pubpub/pubpub-editor">
-								<Icon icon="git-repo" /> pubpub-editor
+							<a className="git" href="https://github.com/orgs/pubpub/projects/9">
+								<Icon icon="map" /> roadmap
+							</a>
+							<a className="git" href="https://github.com/pubpub/pubpub/discussions">
+								<Icon icon="comment" /> forum
 							</a>
 						</div>
 					</div>

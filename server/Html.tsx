@@ -62,6 +62,8 @@ const Html = (props: Props) => {
 				/>
 			</head>
 			<body>
+				{/* This script tag is here to prevent FOUC in Firefox: https://stackoverflow.com/questions/21147149/flash-of-unstyled-content-fouc-in-firefox-only-is-ff-slow-renderer */}
+				<script>0</script>
 				<div id="root">
 					<App
 						initialData={props.initialData}

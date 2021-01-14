@@ -14,6 +14,9 @@ const shimPubContextProps = {
 	pubData: {
 		nodeLabels: {} as NodeLabelMap | undefined,
 		slug: '',
+		isReadOnly: false,
+		releases: [],
+		releaseNumber: 0,
 	},
 	collabData: { editorChangeObject: {} },
 	historyData: {},

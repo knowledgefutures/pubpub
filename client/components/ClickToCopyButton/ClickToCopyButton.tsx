@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { Tooltip, Button, Position } from '@blueprintjs/core';
 import { useCopyToClipboard } from 'react-use';
 
-type OwnProps = {
+type ClickHandler = () => unknown;
+
+type Props = {
 	afterCopyPrompt?: string;
 	beforeCopyPrompt?: string;
-	children?: React.ReactNode | ((...args: any[]) => any);
+	children?: React.ReactNode | ((handleClick: ClickHandler) => unknown);
 	className?: string;
-	copyString: string | ((...args: any[]) => any);
+	copyString: string | (() => string);
+	disabled?: boolean;
 	icon?: string | React.ReactNode;
 	minimal?: boolean;
 	tooltipPosition?: string;
@@ -15,39 +18,24 @@ type OwnProps = {
 	small?: boolean;
 };
 
-const defaultProps = {
-	afterCopyPrompt: 'Copied!',
-	beforeCopyPrompt: null,
-	children: null,
-	className: '',
-	icon: 'link',
-	minimal: true,
-	tooltipPosition: Position.TOP,
-	usePortal: true,
-};
-
-type OwnClickToCopyButtonProps = OwnProps;
-
-type Props = OwnClickToCopyButtonProps & typeof defaultProps;
-
 const ClickToCopyButton = (props: Props) => {
 	const {
-		afterCopyPrompt,
-		beforeCopyPrompt,
-		children,
-		className,
+		afterCopyPrompt = 'Copied!',
+		beforeCopyPrompt = null,
+		children = null,
+		className = '',
 		copyString,
-		icon,
-		minimal,
-		tooltipPosition,
-		usePortal,
+		disabled = false,
+		icon = 'link',
+		minimal = true,
+		tooltipPosition = Position.TOP,
+		usePortal = true,
 		small = false,
 	} = props;
 	const [hasCopied, setHasCopied] = useState(false);
 	const [copyState, copyToClipboard] = useCopyToClipboard();
 
 	const handleClick = () => {
-		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 		copyToClipboard(typeof copyString === 'function' ? copyString() : copyString);
 		setHasCopied(true);
 	};
@@ -64,11 +52,16 @@ const ClickToCopyButton = (props: Props) => {
 
 	const renderChildren = () => {
 		if (typeof children === 'function') {
-			// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 			return children(handleClick);
 		}
 		return (
-			<Button minimal={minimal} small={small} icon={icon as any} onClick={handleClick}>
+			<Button
+				minimal={minimal}
+				small={small}
+				icon={icon as any}
+				onClick={handleClick}
+				disabled={disabled}
+			>
 				{children}
 			</Button>
 		);
@@ -77,7 +70,7 @@ const ClickToCopyButton = (props: Props) => {
 	return (
 		<Tooltip
 			usePortal={usePortal}
-			content={getTooltipText()}
+			content={getTooltipText() || undefined}
 			onClosed={() => setHasCopied(false)}
 			className={className}
 			children={renderChildren()}
@@ -85,5 +78,5 @@ const ClickToCopyButton = (props: Props) => {
 		/>
 	);
 };
-ClickToCopyButton.defaultProps = defaultProps;
+
 export default ClickToCopyButton;

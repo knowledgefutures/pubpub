@@ -43,7 +43,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		notes,
 		canonicalUrl,
 	} = metaProps;
-	const siteName = initialData.communityData.title;
+	const communityTitle = initialData.communityData.title;
 	const url = `https://${initialData.locationData.hostname}${initialData.locationData.path}`;
 	const favicon = initialData.communityData.favicon;
 	const avatar = image || initialData.communityData.avatar;
@@ -74,17 +74,17 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		];
 	}
 
-	if (siteName) {
+	if (communityTitle) {
 		outputComponents = [
 			...outputComponents,
-			<meta key="sn1" property="og:site_name" content={siteName} />,
+			<meta key="sn1" property="og:site_name" content={communityTitle} />,
 		];
 	}
 
-	if (contextTitle && (!collection || collection.kind === 'issue')) {
+	if (communityTitle && (!collection || collection.kind === 'issue')) {
 		outputComponents = [
 			...outputComponents,
-			<meta key="sn2" name="citation_journal_title" content={contextTitle} />,
+			<meta key="sn2" name="citation_journal_title" content={communityTitle} />,
 		];
 	}
 

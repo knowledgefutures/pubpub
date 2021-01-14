@@ -50,9 +50,10 @@ export default {
 					return {
 						id: node.getAttribute('id') || null,
 						url: node.getAttribute('data-url') || null,
+						caption: node.getAttribute('data-caption') || '',
 						size: Number(node.getAttribute('data-size')) || 50,
 						align: node.getAttribute('data-align') || 'center',
-						caption: node.firstChild.getAttribute('alt') || '',
+						altText: node.firstChild?.getAttribute('alt') || '',
 					};
 				},
 			},
@@ -76,6 +77,7 @@ export default {
 					'data-size': size,
 					'data-align': align,
 					'data-url': url,
+					'data-caption': caption,
 				},
 				[
 					'img',

@@ -72,7 +72,7 @@ const createDiscussionAnchorsForRelease = async (
 					steps,
 					currentHistoryKey,
 					postgresTransaction,
-				),
+				).catch((err) => console.error('Failed to create updated discussion anchor', err)),
 			),
 		);
 	}

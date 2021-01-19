@@ -167,6 +167,9 @@ describe('/api/releases', () => {
 			)
 			.expect(201);
 		expect(release.historyKey).toEqual(1);
+		// Check for a doc with Release contents
+		const doc = await Doc.findOne({ where: { id: release.docId } });
+		expect(doc.content).toEqual(pubEditor.getDoc().toJSON());
 		const { body: error } = await agent
 			.post('/api/releases')
 			.send(

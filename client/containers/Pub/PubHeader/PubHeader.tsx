@@ -34,10 +34,6 @@ type Props = {
 	sticky?: boolean;
 };
 
-const defaultProps = {
-	sticky: true,
-};
-
 // eslint-disable-next-line react/prop-types
 const ToggleDetailsButton = ({ showingDetails, onClick }) => {
 	const label = showingDetails ? 'Hide details' : 'Show details';
@@ -129,5 +125,5 @@ const PubHeader = (props: Props) => {
 		</PubHeaderBackground>
 	);
 };
-PubHeader.defaultProps = defaultProps;
+
 export default PubHeader;

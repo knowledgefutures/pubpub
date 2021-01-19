@@ -103,7 +103,6 @@ const PubDiscussions = (props: Props) => {
 			<React.Fragment>
 				{showBottomInput && (
 					<DiscussionInput
-						pubData={pubData}
 						updateLocalData={updateLocalData}
 						discussionData={{ id: undefined }}
 						isPubBottomInput={true}

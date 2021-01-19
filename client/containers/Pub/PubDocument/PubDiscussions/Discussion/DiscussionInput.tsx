@@ -13,9 +13,9 @@ import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePubContext } from 'containers/Pub/pubHooks';
+import { PubPageData } from 'utils/types';
 
 type OwnProps = {
-	pubData: any;
 	updateLocalData: (...args: any[]) => any;
 	discussionData: any;
 	isPubBottomInput?: boolean;
@@ -32,11 +32,20 @@ const getPlaceholderText = (isNewThread, isPubBottomInput) => {
 	return isNewThread ? 'Add your discussion...' : 'Add a reply...';
 };
 
+const getHistoryKey = (pubData: PubPageData, historyData: any) => {
+	const { isRelease, releases, releaseNumber } = pubData;
+	if (isRelease && typeof releaseNumber === 'number') {
+		const currentRelease = releases[releaseNumber - 1];
+		return currentRelease.historyKey;
+	}
+	return historyData.currentKey;
+};
+
 type Props = OwnProps & typeof defaultProps;
 
 const DiscussionInput = (props: Props) => {
-	const { discussionData, isPubBottomInput, pubData, updateLocalData } = props;
-	const { historyData, collabData, firebaseBranchRef } = usePubContext();
+	const { discussionData, isPubBottomInput, updateLocalData } = props;
+	const { pubData, historyData, collabData, firebaseBranchRef } = usePubContext();
 	const { loginData, locationData, communityData } = usePageContext();
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState<null | { view?: any }>();
@@ -97,7 +106,7 @@ const DiscussionInput = (props: Props) => {
 				discussionId: discussionData.id,
 				pubId: pubData.id,
 				branchId: pubData.activeBranch.id,
-				historyKey: historyData.currentKey,
+				historyKey: getHistoryKey(pubData, historyData),
 				communityId: communityData.id,
 				content: getJSON(changeObject?.view),
 				text: getText(changeObject?.view) || '',

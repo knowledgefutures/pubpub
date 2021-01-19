@@ -231,6 +231,7 @@ export type Pub = {
 };
 
 export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs' | 'discussions'> & {
+	discussions: DefinitelyHas<Discussion, 'thread'>[];
 	viewHash: Maybe<string>;
 	editHash: Maybe<string>;
 	isReadOnly: boolean;
@@ -320,6 +321,22 @@ export type DiscussionAnchor = {
 	isOriginal: boolean;
 };
 
+export type ThreadComment = {
+	id: string;
+	text: string;
+	content: {};
+	userId: string;
+	threadId: string;
+};
+
+export type Thread = {
+	id: string;
+	updatedAt: string;
+	createdAt: string;
+	locked?: boolean;
+	comments: ThreadComment[];
+};
+
 export type Discussion = {
 	id: string;
 	title: string;
@@ -331,6 +348,7 @@ export type Discussion = {
 	userId: string;
 	pubId: string;
 	anchors?: DiscussionAnchor[];
+	thread?: Thread;
 };
 
 export type LoginData = {

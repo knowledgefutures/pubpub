@@ -167,7 +167,6 @@ const Discussion = (props: Props) => {
 		return (
 			<DiscussionInput
 				key={discussionData.thread.comments.length}
-				pubData={pubData}
 				updateLocalData={updateLocalData}
 				discussionData={discussionData}
 			/>

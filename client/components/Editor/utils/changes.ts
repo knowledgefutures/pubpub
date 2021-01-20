@@ -1,14 +1,13 @@
+import { Node, Schema } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
-import firebase from 'firebase-admin';
 import { uncompressStepJSON } from 'prosemirror-compress-pubpub';
-
-import { editorSchema } from '../firebaseAdmin';
 
 export const getStepsInChangeRange = async (
 	branchRef: firebase.database.Reference,
+	schema: Schema,
 	startIndex: number,
 	endIndex: number,
-): Promise<Step[]> => {
+): Promise<Step[][]> => {
 	const changesSnapshot = await branchRef
 		.child('changes')
 		.orderByKey()
@@ -22,10 +21,19 @@ export const getStepsInChangeRange = async (
 			.map((key) => changes[key])
 			.map((change) =>
 				change.s.map((compressedStep) =>
-					Step.fromJSON(editorSchema, uncompressStepJSON(compressedStep)),
+					Step.fromJSON(schema, uncompressStepJSON(compressedStep)),
 				),
-			)
-			.reduce((a, b) => [...a, ...b], []);
+			);
 	}
 	return [];
+};
+
+export const applyStepsToDoc = <S extends Schema>(steps: Step[], doc: Node<S>) => {
+	return steps.reduce((currentDoc: Node<S>, step: Step) => {
+		const { doc: nextDoc, failed } = step.apply(currentDoc);
+		if (failed) {
+			throw new Error(failed);
+		}
+		return nextDoc!;
+	}, doc);
 };

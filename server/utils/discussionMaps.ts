@@ -1,4 +1,3 @@
-import { Node } from 'prosemirror-model';
 import { Selection } from 'prosemirror-state';
 import { Step, Mapping } from 'prosemirror-transform';
 import {
@@ -7,7 +6,7 @@ import {
 	uncompressStepJSON,
 } from 'prosemirror-compress-pubpub';
 
-import { getFirebaseDoc } from './firebaseDoc';
+import { getFirebaseDoc } from 'client/components/Editor/utils/firebaseDoc';
 
 export const restoreDiscussionMaps = (firebaseRef, schema, useMergeSteps) => {
 	/* This function looks at all the discussions and ensures */
@@ -48,10 +47,10 @@ export const restoreDiscussionMaps = (firebaseRef, schema, useMergeSteps) => {
 				.once('value');
 			const getNewMerges = useMergeSteps
 				? firebaseRef
-						.child('merges')
-						.orderByKey()
-						.startAt(String(earliestKey + 1))
-						.once('value')
+					.child('merges')
+					.orderByKey()
+					.startAt(String(earliestKey + 1))
+					.once('value')
 				: { val: () => ({}) };
 			const getStarterContent = getFirebaseDoc(firebaseRef, schema, earliestKey);
 			return Promise.all([
@@ -100,7 +99,7 @@ export const restoreDiscussionMaps = (firebaseRef, schema, useMergeSteps) => {
 					return null;
 				}
 				const newDiscussions = {};
-				let currentDoc = Node.fromJSON(schema, starterContent.doc);
+				let currentDoc = starterContent.doc;
 				let currentKey = earliestKey;
 
 				Object.keys(discussions).forEach((discussionId) => {

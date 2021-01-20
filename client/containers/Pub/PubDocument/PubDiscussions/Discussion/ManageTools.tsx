@@ -75,6 +75,7 @@ const ManageTools = (props: Props) => {
 		return (
 			<MenuButton
 				buttonContent="Sort"
+				aria-label="Sort comments by"
 				buttonProps={{
 					icon: <Icon icon="sort" iconSize={14} />,
 					minimal: true,

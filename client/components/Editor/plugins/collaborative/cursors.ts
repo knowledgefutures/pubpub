@@ -1,14 +1,13 @@
 import { AllSelection, Plugin, Selection, PluginKey } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { compressSelectionJSON, uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
-import { DataSnapshot } from '@firebase/database-types';
 
 export const cursorsPluginKey = new PluginKey('cursors');
 
 const createTransactionManager = (clientId: string, view: EditorView) => {
 	return {
 		transactionCallback: (metaType: string) => {
-			return (snapshot: DataSnapshot) => {
+			return (snapshot: firebase.database.DataSnapshot) => {
 				const snapshotKey = snapshot.key;
 				const snapshotVal = snapshot.val();
 				if (snapshotVal && snapshotKey !== clientId) {

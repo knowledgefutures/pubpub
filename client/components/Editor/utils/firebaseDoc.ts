@@ -1,12 +1,27 @@
-import { Node } from 'prosemirror-model';
+import { Node, Schema } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
 import { uncompressStateJSON, uncompressStepJSON } from 'prosemirror-compress-pubpub';
 
 import { getEmptyDoc } from './doc';
 import { flattenKeyables } from './firebase';
 
-const getMostRecentDocJson = async (firebaseRef, checkpointMap, versionNumber = null) => {
-	const hasVersionNumber = !!versionNumber || versionNumber === 0;
+type Reference = firebase.database.Reference;
+type Query = firebase.database.Query;
+
+type Checkpoint = {
+	doc: Record<any, any>;
+};
+
+type CheckpointMap = Record<string, Checkpoint>;
+
+type ChooseKey = (keys: number[]) => number;
+type TraverseQuery = (query: Query) => Query;
+
+const getMostRecentDocJson = async (
+	firebaseRef: Reference,
+	checkpointMap: null | CheckpointMap,
+	versionNumber: null | number = null,
+) => {
 	// First see whether we have a checkpointMap -- this should indicate that there is one
 	// or more checkpoint available in the `checkpoints` child.
 	if (checkpointMap) {
@@ -15,8 +30,7 @@ const getMostRecentDocJson = async (firebaseRef, checkpointMap, versionNumber = 
 		// Find the highest key less than or equal to versionNumber, and get that doc.
 		// If there's no version number, we take the highest key.
 		const bestKey = checkpointKeys
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-			.filter((key) => !hasVersionNumber || key <= versionNumber)
+			.filter((key) => typeof versionNumber !== 'number' || key <= versionNumber)
 			.reduce((a, b) => Math.max(a, b), -1);
 		if (bestKey >= 0) {
 			const checkpointSnapshot = await firebaseRef
@@ -36,8 +50,7 @@ const getMostRecentDocJson = async (firebaseRef, checkpointMap, versionNumber = 
 	if (checkpoint) {
 		const { k: keyString } = checkpoint;
 		const key = parseInt(keyString, 10);
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-		if (!hasVersionNumber || key <= versionNumber) {
+		if (typeof versionNumber !== 'number' || key <= versionNumber) {
 			const { doc } = uncompressStateJSON(checkpoint);
 			return { doc: doc, key: key };
 		}
@@ -49,9 +62,11 @@ const getMostRecentDocJson = async (firebaseRef, checkpointMap, versionNumber = 
 	};
 };
 
-const ordinalKeyTimestampGetter = (traverseRef, chooseKey) => async (firebaseRef) => {
-	const getLatestChange = traverseRef(firebaseRef.child('changes').orderByKey()).once('value');
-	const getLatestMerge = traverseRef(firebaseRef.child('merges').orderByKey()).once('value');
+const ordinalKeyTimestampGetter = (traverseQuery: TraverseQuery, chooseKey: ChooseKey) => async (
+	firebaseRef: Reference,
+) => {
+	const getLatestChange = traverseQuery(firebaseRef.child('changes').orderByKey()).once('value');
+	const getLatestMerge = traverseQuery(firebaseRef.child('merges').orderByKey()).once('value');
 
 	const [latestChangeSnaphot, latestMergeSnapshot] = await Promise.all([
 		getLatestChange,
@@ -94,7 +109,11 @@ const getStepsJsonFromChanges = (changes) => {
 		.reduce((a, b) => [...a, ...b], []);
 };
 
-export const getFirebaseDoc = async (firebaseRef, prosemirrorSchema, versionNumber = null) => {
+export const getFirebaseDoc = async (
+	firebaseRef: Reference,
+	prosemirrorSchema: Schema,
+	versionNumber: number | null = null,
+) => {
 	const checkpointMapSnapshot = await firebaseRef.child('checkpointMap').once('value');
 	const checkpointMap = checkpointMapSnapshot.val();
 
@@ -135,11 +154,10 @@ export const getFirebaseDoc = async (firebaseRef, prosemirrorSchema, versionNumb
 
 	const currentTimestamp =
 		flattenedChanges.length > 0
-			? // @ts-expect-error ts-migrate(2339) FIXME: Property 't' does not exist on type 'string'.
-			  flattenedChanges[flattenedChanges.length - 1].t
+			? flattenedChanges[flattenedChanges.length - 1].t
 			: checkpointTimestamp;
 
-	const currentDoc = stepsJson.reduce((intermediateDoc, stepJson) => {
+	const currentDoc: Node = stepsJson.reduce((intermediateDoc: Node, stepJson: any) => {
 		const step = Step.fromJSON(prosemirrorSchema, stepJson);
 		const { failed, doc } = step.apply(intermediateDoc);
 		if (failed) {
@@ -149,7 +167,7 @@ export const getFirebaseDoc = async (firebaseRef, prosemirrorSchema, versionNumb
 	}, Node.fromJSON(prosemirrorSchema, checkpointDocJson));
 
 	return {
-		doc: currentDoc.toJSON(),
+		doc: currentDoc,
 		docIsFromCheckpoint: stepsJson.length === 0,
 		key: currentKey,
 		timestamp: currentTimestamp,

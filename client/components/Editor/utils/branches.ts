@@ -62,9 +62,8 @@ export const mergeBranch = async (sourceFirebaseRef, destinationFirebaseRef, pro
 	const sourceKey = Object.keys(changesSnapshotVal)
 		.map((key) => parseInt(key, 10))
 		.reduce((a, b) => Math.max(a, b), -1);
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
 	const { doc } = await getFirebaseDoc(sourceFirebaseRef, prosemirrorSchema, sourceKey);
 	await storeCheckpoint(destinationFirebaseRef, doc, nextMergeKey);
 
-	return { mergeKey: nextMergeKey, doc: doc };
+	return { mergeKey: nextMergeKey, doc: doc.toJSON() };
 };

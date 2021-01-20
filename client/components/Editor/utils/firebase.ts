@@ -1,11 +1,19 @@
+import { Node } from 'prosemirror-model';
 import uuid from 'uuid';
 import { compressStateJSON, compressStepJSON } from 'prosemirror-compress-pubpub';
 
+import { Step } from 'prosemirror-transform';
+import { CompressedChange, CompressedKeyable } from '../types';
+
 export const firebaseTimestamp = { '.sv': 'timestamp' };
 
-export const storeCheckpoint = async (firebaseRef, docJson, keyNumber) => {
+export const storeCheckpoint = async (
+	firebaseRef: firebase.database.Reference,
+	doc: Node,
+	keyNumber: number,
+) => {
 	const checkpoint = {
-		d: compressStateJSON({ doc: docJson }).d,
+		d: compressStateJSON({ doc: doc.toJSON() }).d,
 		k: keyNumber,
 		t: firebaseTimestamp,
 	};
@@ -16,30 +24,20 @@ export const storeCheckpoint = async (firebaseRef, docJson, keyNumber) => {
 	]);
 };
 
-export const flattenKeyables = (keyables) => {
-	/* flattenedMergeStepArray is an array of { steps, client, time } values */
-	/* It flattens the case where we have a merge-object which is an array of */
-	/* { steps, client, time } values. */
-	const objectWithIntKeys = {};
-	Object.keys(keyables).forEach((key) => {
-		const intKey = parseInt(key, 10);
-		objectWithIntKeys[intKey] = keyables[key];
-	});
-	return (
-		Object.keys(objectWithIntKeys)
-			// @ts-expect-error ts-migrate(2362) FIXME: The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-			.sort((a, b) => a - b)
-			// @ts-expect-error ts-migrate(2769) FIXME: Type 'any' is not assignable to type 'never'.
-			.reduce((arr, intKey) => {
-				if (Array.isArray(keyables[intKey])) {
-					return [...arr, ...keyables[intKey]];
-				}
-				return [...arr, keyables[intKey]];
-			}, [])
-	);
+export const flattenKeyables = (
+	keyables: Record<string, CompressedKeyable>,
+): CompressedChange[] => {
+	const orderedKeys = Object.keys(keyables).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+	return orderedKeys.reduce((changes: CompressedChange[], key: string) => {
+		const entry = keyables[key];
+		if (Array.isArray(entry)) {
+			return [...changes, ...entry];
+		}
+		return [...changes, entry];
+	}, []);
 };
 
-export const createFirebaseChange = (steps, branchId, clientId) => {
+export const createFirebaseChange = (steps: Step[], branchId: string, clientId: string) => {
 	return {
 		id: uuid.v4(), // Keyable Id
 		cId: clientId, // Client Id

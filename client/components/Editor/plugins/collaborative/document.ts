@@ -82,7 +82,7 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 					/* If multiple of saveEveryNSteps, update checkpoint */
 					const saveEveryNSteps = 100;
 					if (snapshot.key && snapshot.key % saveEveryNSteps === 0) {
-						storeCheckpoint(ref, newState.doc.toJSON(), snapshot.key);
+						storeCheckpoint(ref, newState.doc, snapshot.key);
 					}
 				}
 				/* eslint-disable-next-line no-use-before-define */

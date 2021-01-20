@@ -58,7 +58,7 @@ const getDocument = async (branchRef) => {
 		return JSON.parse(docFile);
 	}
 	const { doc } = await getFirebaseDoc(branchRef, documentSchema);
-	return doc;
+	return doc.toJSON();
 };
 
 const main = async () => {

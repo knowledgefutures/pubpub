@@ -58,3 +58,10 @@ export type OnEditFn = (
 	newState: EditorState,
 	oldState: EditorState,
 ) => unknown;
+
+export type CompressedChange = {
+	t: number;
+	s: Record<string, any>[];
+};
+
+export type CompressedKeyable = CompressedChange | CompressedChange[];

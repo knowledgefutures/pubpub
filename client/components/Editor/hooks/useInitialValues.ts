@@ -3,8 +3,9 @@ import { useRef } from 'react';
 import { addTemporaryIdsToDoc } from '@pubpub/prosemirror-reactive';
 
 import { CitationManager } from 'client/utils/citations/citationManager';
+import { DocJson } from 'utils/types';
 
-import { Doc, NodeLabelMap } from '../types';
+import { NodeLabelMap } from '../types';
 import { buildSchema, renderStatic } from '../utils';
 
 type InitialValues = {
@@ -18,7 +19,7 @@ type InitialValuesOptions = {
 	customNodes: Record<string, NodeSpec>;
 	customMarks: Record<string, MarkSpec>;
 	nodeLabels: NodeLabelMap;
-	initialContent: Doc;
+	initialContent: DocJson;
 	isReadOnly: boolean;
 	nodeOptions: Record<string, any>;
 };

@@ -3,6 +3,7 @@ import { gapCursor } from 'prosemirror-gapcursor';
 
 import { Schema } from 'prosemirror-model';
 import buildCollaborative from './collaborative';
+import buildDiscussions from './discussions';
 import buildDomEvents from './domEvents';
 import buildIds from './ids';
 import buildHeaderIds from './headerIds';
@@ -24,6 +25,7 @@ const buildHistory = () => {
 	return history();
 };
 
+// This is an *ordered* list of plugins!
 export const standardPlugins = {
 	inputRules: buildInputRules,
 	headerIds: buildHeaderIds,
@@ -37,6 +39,7 @@ export const standardPlugins = {
 	keymap: buildKeymap,
 	table: buildTable,
 	collaborative: buildCollaborative,
+	discussions: buildDiscussions,
 	ids: buildIds,
 	reactive: buildReactive,
 };

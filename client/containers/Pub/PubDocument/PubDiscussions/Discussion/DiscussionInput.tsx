@@ -114,7 +114,7 @@ const DiscussionInput = (props: Props) => {
 			setIsLoading(false);
 			setEditorKey(Date.now());
 		} else if (firebaseBranchRef) {
-			await convertLocalHighlightToDiscussion(pubView, discussionData.id, firebaseBranchRef);
+			await convertLocalHighlightToDiscussion(pubView, discussionData.id);
 		}
 	};
 

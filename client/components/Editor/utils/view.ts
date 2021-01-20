@@ -1,6 +1,8 @@
 import { Selection } from 'prosemirror-state';
 import { Node, Slice } from 'prosemirror-model';
 
+import { addDiscussionToView } from '../plugins/discussions';
+
 export const dispatchEmptyTransaction = (editorView) => {
 	const emptyInitTransaction = editorView.state.tr;
 	editorView.dispatch(emptyInitTransaction);
@@ -79,29 +81,22 @@ export const removeLocalHighlight = (editorView, id) => {
 	editorView.dispatch(transaction);
 };
 
-export const convertLocalHighlightToDiscussion = (editorView, highlightId, firebaseRef) => {
+export const convertLocalHighlightToDiscussion = (editorView, highlightId) => {
 	const localHighlight = editorView.state.localHighlights$.activeDecorationSet
 		.find()
-		.filter((decoration) => {
-			return decoration.type.attrs && decoration.type.attrs.class;
-		})
-		.reduce((prev, curr) => {
-			const decorationId = curr.type.attrs.class.replace('local-highlight lh-', '');
-			if (decorationId === highlightId) {
-				return curr;
-			}
-			return prev;
-		}, {});
-	const newDiscussionData = formatDiscussionData(
-		editorView,
-		localHighlight.from,
-		localHighlight.to,
-	);
-	removeLocalHighlight(editorView, highlightId);
-	return firebaseRef
-		.child('discussions')
-		.child(highlightId)
-		.set(newDiscussionData);
+		.filter((decoration) => decoration.type.attrs && decoration.type.attrs.class)
+		.find((decoration) => {
+			const decorationId = decoration.type.attrs.class.replace('local-highlight lh-', '');
+			return decorationId === highlightId;
+		});
+	if (localHighlight) {
+		addDiscussionToView(editorView, highlightId, {
+			anchor: localHighlight.from,
+			head: localHighlight.to,
+			type: 'text',
+		});
+		removeLocalHighlight(editorView, highlightId);
+	}
 };
 
 export const getLocalHighlightText = (editorView, highlightId) => {

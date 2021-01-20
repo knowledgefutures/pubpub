@@ -131,10 +131,7 @@ export type Branch = {
 	maintenanceDocId?: string;
 };
 
-export type Doc = {
-	id: string;
-	content: {};
-};
+export type DocJson = { type: 'doc'; attrs: any; content: any[] };
 
 export type Release = {
 	id: string;
@@ -150,7 +147,7 @@ export type Release = {
 	updatedAt: string;
 	historyKey: number;
 	docId: string;
-	doc?: Doc;
+	doc?: DocJson;
 };
 
 export type PubVersion = {
@@ -313,7 +310,7 @@ export type DiscussionAnchor = {
 	id: string;
 	discussionId: string;
 	historyKey: number;
-	selection: null | {};
+	selection: null | { type: 'text'; anchor: number; head: number };
 	originalText: string;
 	originalTextPrefix: string;
 	originalTextSuffix: string;

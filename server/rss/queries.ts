@@ -63,7 +63,8 @@ const pubsIdsQuery = `
 			LEFT OUTER JOIN "CollectionPubs" AS "collectionPub" ON "pub"."id" = "collectionPub"."pubId"
 			LEFT OUTER JOIN "Collections" AS "collection" ON (
 				"collectionPub"."collectionId" = "collection"."id" AND
-				"collection"."isPublic" = true
+				"collection"."isPublic" = true AND
+				"collection"."communityId" = :communityId
 			)
 			-- We need an associated Release
 			INNER JOIN "Releases" AS "release" ON "pub"."id" = "release"."pubId"
@@ -150,15 +151,18 @@ export const getPubData = async (pubIds) => {
 		},
 		include: [
 			{
+				separate: true,
 				model: PubAttribution,
 				as: 'attributions',
 				include: [includeUserModel({ as: 'user' })],
 			},
 			{
+				separate: true,
 				model: Release,
 				as: 'releases',
 			},
 			{
+				separate: true,
 				model: Branch,
 				as: 'branches',
 				include: [
@@ -169,16 +173,19 @@ export const getPubData = async (pubIds) => {
 				],
 			},
 			{
+				separate: true,
 				model: PubEdge,
 				as: 'inboundEdges',
 			},
 			{
+				separate: true,
 				model: PubEdge,
 				as: 'outboundEdges',
 			},
 			{
 				model: CollectionPub,
 				as: 'collectionPubs',
+				separate: true,
 				include: [
 					{
 						required: true,

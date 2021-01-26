@@ -24,7 +24,7 @@ const getBranchesForPub = async (pubId: string) => {
 	return { draftBranch: draftBranch, publicBranch: publicBranch };
 };
 
-const getPubDraftDoc = async (pubId: string, draftBranchId: string, historyKey: number) => {
+const getPubDraftDoc = async (pubId: string, draftBranchId: string, historyKey: number | null) => {
 	return getBranchDoc(pubId, draftBranchId, historyKey, false, false);
 };
 
@@ -81,9 +81,9 @@ const createDiscussionAnchorsForRelease = async (
 export const createRelease = async ({
 	userId,
 	pubId,
-	historyKey,
 	noteContent,
 	noteText,
+	historyKey: providedHistoryKey = null,
 	createExports = true,
 }) => {
 	const mostRecentRelease = await Release.findOne({
@@ -92,12 +92,17 @@ export const createRelease = async ({
 		include: [{ model: Doc, as: 'doc' }],
 	});
 
+	const { draftBranch, publicBranch } = await getBranchesForPub(pubId);
+
+	const {
+		doc: nextDoc,
+		historyData: { currentKey },
+	} = await getPubDraftDoc(pubId, draftBranch.id, providedHistoryKey ?? null);
+	const historyKey = providedHistoryKey ?? currentKey;
+
 	if (mostRecentRelease && mostRecentRelease.historyKey === historyKey) {
 		throw new ReleaseQueryError('duplicate-release');
 	}
-
-	const { draftBranch, publicBranch } = await getBranchesForPub(pubId);
-	const { doc: nextDoc } = await getPubDraftDoc(pubId, draftBranch.id, historyKey);
 
 	const release = await sequelize.transaction(async (txn) => {
 		const docModel = await createDoc(nextDoc, txn);

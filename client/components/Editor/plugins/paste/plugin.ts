@@ -12,7 +12,7 @@ import { defaultMediaUploadHandler } from './upload';
 
 export default (schema: Schema, options: PluginsOptions) => {
 	const { mediaUploadHandler = defaultMediaUploadHandler } = options;
-	if (!schema.nodes.image) {
+	if (!schema.nodes.image || options.isReadOnly) {
 		return [];
 	}
 	return new Plugin<PluginState>({

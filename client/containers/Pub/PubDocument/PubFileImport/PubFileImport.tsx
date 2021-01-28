@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AnchorButton } from '@blueprintjs/core';
-import { docIsEmpty } from 'components/Editor';
+import { docIsEmpty, viewIsEmpty } from 'components/Editor';
 
 import FileImportDialog from './FileImportDialog';
 
@@ -24,17 +24,17 @@ const PubFileImport = (props: Props) => {
 	const [dialogKey, setDialogKey] = useState(Date.now());
 	const [isVisible, setIsVisible] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const doc = view && view.state && view.state.doc;
+	const state = view && view.state;
 
 	useEffect(() => {
-		const isEmptyDoc = doc && docIsEmpty(doc);
-		if (isEmptyDoc) {
+		const isEmpty = state ? viewIsEmpty(state as any) : true;
+		if (isEmpty) {
 			setIsVisible(true);
 		} else if (!isDialogOpen) {
 			setDialogKey(Date.now());
 			setIsVisible(false);
 		}
-	}, [doc, isDialogOpen]);
+	}, [state, isDialogOpen]);
 
 	return (
 		<React.Fragment>

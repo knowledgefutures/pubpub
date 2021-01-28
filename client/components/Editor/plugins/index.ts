@@ -11,6 +11,7 @@ import buildKeymap from './keymap';
 import buildLocalHighlights from './localHighlights';
 import buildOnChange from './onChange';
 import buildPlaceholder from './placeholder';
+import buildPaste from './paste';
 import buildReactive from './reactive';
 import buildTable from './table';
 import buildSuggest from './suggest';
@@ -39,6 +40,7 @@ export const standardPlugins = {
 	collaborative: buildCollaborative,
 	ids: buildIds,
 	reactive: buildReactive,
+	paste: buildPaste,
 };
 
 const getSortedPlugins = (plugins: Record<string, null | PluginLoader>): PluginLoader[] => {

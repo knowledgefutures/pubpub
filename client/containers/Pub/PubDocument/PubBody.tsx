@@ -8,7 +8,7 @@ import { saveAs } from 'file-saver';
 import { debounce } from 'debounce';
 
 import Editor, { getJSON } from 'components/Editor';
-import { getResizedUrl } from 'utils/images';
+import { getDefaultResizedUrl } from 'utils/images';
 import { usePageContext } from 'utils/hooks';
 
 import { usePubContext } from '../pubHooks';
@@ -145,10 +145,7 @@ const PubBody = (props: Props) => {
 				}
 				nodeOptions={{
 					image: {
-						onResizeUrl: (url, align) => {
-							const width = align === 'breakout' ? 1920 : 800;
-							return getResizedUrl(url, 'fit-in', `${width}x0`);
-						},
+						onResizeUrl: getDefaultResizedUrl,
 					},
 					discussion: {
 						addRef: (embedId, mountRef, threadNumber) => {

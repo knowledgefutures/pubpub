@@ -1,5 +1,8 @@
-import { Selection } from 'prosemirror-state';
+import { EditorState, Selection } from 'prosemirror-state';
 import { Node, Slice } from 'prosemirror-model';
+
+import { docIsEmpty } from './doc';
+import { editorHasPasteDecorations } from '../plugins/paste/plugin';
 
 export const dispatchEmptyTransaction = (editorView) => {
 	const emptyInitTransaction = editorView.state.tr;
@@ -167,4 +170,8 @@ export const reanchorDiscussion = (editorView, firebaseRef, discussionId) => {
 
 export const focus = (editorView) => {
 	editorView.focus();
+};
+
+export const viewIsEmpty = (state: EditorState) => {
+	return docIsEmpty(state.doc) && !editorHasPasteDecorations(state);
 };

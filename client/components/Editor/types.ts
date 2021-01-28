@@ -39,6 +39,16 @@ export type CollaborativeOptions = {
 	onUpdateLatestKey?: (key: number) => unknown;
 };
 
+export type MediaUploadInstance = {
+	id: string;
+	start: (callbacks: {
+		onFinish: (src: string) => unknown;
+		onProgress: (progress: number) => unknown;
+		onFailure: () => unknown;
+	}) => unknown;
+};
+export type MediaUploadHandler = (file: File) => null | MediaUploadInstance;
+
 export type PluginsOptions = {
 	citationManager?: CitationManager;
 	collaborativeOptions?: CollaborativeOptions;
@@ -48,6 +58,7 @@ export type PluginsOptions = {
 	onError?: (error: Error) => unknown;
 	placeholder?: string;
 	suggestionManager: SuggestionManager<NodeReference>;
+	mediaUploadHandler?: MediaUploadHandler;
 };
 
 export type Doc = { type: 'doc'; attrs: any; content: any[] };

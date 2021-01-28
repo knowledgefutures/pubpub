@@ -44,13 +44,12 @@ const getDispatchTransaction = (
 	try {
 		const oldState = view.state;
 		const collabState = collabDocPluginKey.getState(oldState);
-		const newState = view.state.apply(transaction);
-		const transactionHasSteps = transaction.steps.length;
+		const { state: newState, transactions } = view.state.applyTransaction(transaction);
 		view.updateState(newState);
 		if (onEdit && transaction.docChanged) {
 			onEdit(transaction.doc, transaction, newState, oldState);
 		}
-		if (collabState && transactionHasSteps) {
+		if (collabState && transactions.some((tr) => tr.docChanged)) {
 			collabState.sendCollabChanges(newState);
 		}
 	} catch (err) {

@@ -70,16 +70,19 @@ export const getGoogleScholarNotes = (notes) => {
 						break;
 					case 'author':
 						value.forEach((author) => {
-							noteArray.push(`citation_author=${author.given} ${author.family}`);
+							const authorText = author.literal || `${author.given} ${author.family}`;
+							noteArray.push(`citation_author=${authorText}`);
 						});
 						break;
 					case 'container-title':
 						noteArray.push(`citation_${noteTypeString}_title=${value}`);
 						break;
 					case 'issued':
-						noteArray.push(
-							`citation_publication_date=${value['date-parts'][0].join('/')}`,
-						);
+						if (value['date-parts']) {
+							noteArray.push(
+								`citation_publication_date=${value['date-parts'][0].join('/')}`,
+							);
+						}
 						break;
 					case 'issue':
 					case 'volume':

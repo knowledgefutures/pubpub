@@ -19,7 +19,7 @@ const filterValueAgainstKeys = (keys: string[], value: string) => {
 
 const limitToCommunity = (initialData: InitialData, filter: string) => {
 	const { locationData, communityData } = initialData;
-	if (locationData.isBasePubPub) {
+	if (!locationData.isBasePubPub) {
 		return `communityId:${communityData.id} AND (${filter})`;
 	}
 	return filter;
@@ -47,8 +47,8 @@ const createFilter = (
 		publicFilter,
 		privateAccessKeys,
 	);
-	const limitedToCommunity = limitToCommunity(initialData, privateAccessFilter);
-	return limitedToCommunity;
+	const maybeLimitedToCommunity = limitToCommunity(initialData, privateAccessFilter);
+	return maybeLimitedToCommunity;
 };
 
 app.get('/search', async (req, res, next) => {

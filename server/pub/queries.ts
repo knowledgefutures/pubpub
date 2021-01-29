@@ -3,6 +3,7 @@ import Bluebird from 'bluebird';
 import { Collection, Community, Pub, PubAttribution, Branch, Member } from 'server/models';
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
 import { createCollectionPub } from 'server/collectionPub/queries';
+import { createDraft } from 'server/draft/queries';
 import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
 import { getReadableDateInYear } from 'utils/dates';
@@ -14,6 +15,7 @@ export const createPub = async (
 	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
 	const dateString = getReadableDateInYear(new Date());
 	const { defaultPubCollections } = await Community.findOne({ where: { id: communityId } });
+	const draft = await createDraft();
 
 	const newPub = await Pub.create({
 		title: `Untitled Pub on ${dateString}`,
@@ -23,6 +25,7 @@ export const createPub = async (
 		headerStyle: 'dark',
 		viewHash: generateHash(8),
 		editHash: generateHash(8),
+		draftId: draft.id,
 		...restArgs,
 	});
 

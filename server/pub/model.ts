@@ -57,6 +57,7 @@ export default (sequelize, dataTypes) => {
 			},
 
 			/* Set by Associations */
+			draftId: { type: dataTypes.UUID, allowNull: false },
 			communityId: { type: dataTypes.UUID, allowNull: false },
 		},
 		{

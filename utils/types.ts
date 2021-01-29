@@ -189,6 +189,12 @@ export type CrossrefDepositRecord = {
 	depositJson?: {};
 };
 
+export type Draft = {
+	id: string;
+	latestKeyAt?: string;
+	firebasePath: string;
+};
+
 export type Pub = {
 	createdAt: string;
 	id: string;
@@ -226,6 +232,8 @@ export type Pub = {
 	pubEdgeListingDefaultsToCarousel: boolean;
 	pubEdgeDescriptionVisible: boolean;
 	nodeLabels: NodeLabelMap;
+	draftId: string;
+	draft?: Draft;
 };
 
 export type PubDocInfo = {

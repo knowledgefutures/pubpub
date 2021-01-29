@@ -3,7 +3,7 @@
 import uuid from 'uuid/v4';
 
 import { setup, teardown, login, modelize } from 'stubstub';
-import { CollectionPub, Pub } from 'server/models';
+import { CollectionPub, Pub, Draft } from 'server/models';
 import { issueCreatePubToken } from '../tokens';
 
 const defaultCollectionId = uuid();
@@ -164,7 +164,7 @@ it('does not allow Members from other Communities to create a Pub', async () => 
 		.expect(403);
 });
 
-it('allows a Community manager to create a Pub (and adds it to Community default Collection)', async () => {
+it('allows a Community manager to create a Pub (and adds it to Community default Collection, creates a Draft)', async () => {
 	const { community, communityManager } = models;
 	const agent = await login(communityManager);
 	const { body: pub } = await agent
@@ -178,6 +178,8 @@ it('allows a Community manager to create a Pub (and adds it to Community default
 		},
 	});
 	expect(collectionPub).toBeTruthy();
+	const draft = await Draft.findOne({ where: { id: pub.draftId } });
+	expect(draft).toBeTruthy();
 });
 
 it('allows a Collection manager to create a Pub (and adds it to the Collection)', async () => {

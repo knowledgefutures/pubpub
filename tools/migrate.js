@@ -12,10 +12,10 @@ import * as models from 'server/models';
 import { promptOkay } from './utils/prompt';
 
 const {
-	argv: { name, down },
+	argv: { name, down, fn },
 } = require('yargs');
 
-const fnName = down ? 'down' : 'up';
+const fnName = fn ?? (down ? 'down' : 'up');
 
 const findMigrationPath = async () => {
 	const pathToMigration = path.join(__dirname, 'migrations', name + '.js');
@@ -42,11 +42,11 @@ const getMigrationFnForPath = (modulePath) => {
 		}
 		return migrationModule;
 	}
-	const fn = migrationModule[fnName];
-	if (!fn) {
+	const migrationFn = migrationModule[fnName];
+	if (!migrationFn) {
 		throwForMissingFn(fnName);
 	}
-	return fn;
+	return migrationFn;
 };
 
 const main = async () => {

@@ -35,8 +35,8 @@ const bucketTimestamp = (timestamp, intervalMs) => {
 
 const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 	const buckets: any[] = [];
-	let currentBucketItems = [];
-	let currentBucketValue = null;
+	let currentBucketItems: any[] = [];
+	let currentBucketValue: any = null;
 	const keys = Object.keys(timestamps)
 		.map((key) => parseInt(key, 10))
 		.sort((a, b) => a - b);
@@ -45,17 +45,13 @@ const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 		const timestamp = timestamps[historyKey];
 		const bucketValue = bucketTimestamp(timestamp, intervalMs);
 		if (!currentBucketValue) {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'null'.
 			currentBucketValue = bucketValue;
 		}
 		if (bucketValue !== currentBucketValue) {
 			buckets.push(currentBucketItems);
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'never'.
 			currentBucketItems = [[historyKey, timestamp]];
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'null'.
 			currentBucketValue = bucketValue;
 		} else {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'never'.
 			currentBucketItems.push([historyKey, timestamp]);
 		}
 	}
@@ -225,7 +221,7 @@ const PubHistoryViewer = (props: Props) => {
 					intent="success"
 					icon="document-share"
 					key={key}
-					href={pubUrl(communityData, pubData, { releaseNumber: release.branchKey + 1 })}
+					href={pubUrl(communityData, pubData, { releaseNumber: release.historyKey + 1 })}
 					target="_blank"
 				/>
 			);

@@ -15,11 +15,9 @@ export const getPermissions = async ({ userId, communityId, pubId, threadId }) =
 		return {};
 	}
 
-	const threadParent = [activePub.discussions, activePub.forks, activePub.reviews].find(
-		(item) => {
-			return item.threadId === threadId;
-		},
-	);
+	const threadParent = [activePub.discussions, activePub.reviews].find((item) => {
+		return item.threadId === threadId;
+	});
 	if (!threadParent) {
 		return {};
 	}

@@ -6,7 +6,6 @@ import {
 	DashboardCollectionLayout,
 	DashboardDiscussions,
 	DashboardEdges,
-	DashboardForks,
 	DashboardImpact,
 	DashboardMembers,
 	DashboardOverview,
@@ -57,10 +56,6 @@ export default (viewData, locationData, chunkName) => {
 		},
 		DashboardEdges: {
 			ActiveComponent: DashboardEdges,
-			isDashboard: true,
-		},
-		DashboardForks: {
-			ActiveComponent: DashboardForks,
 			isDashboard: true,
 		},
 		DashboardImpact: {

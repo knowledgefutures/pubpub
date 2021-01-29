@@ -1,6 +1,6 @@
 import { getScope } from 'server/utils/queryHelpers';
 
-export const getPermissions = async ({ userId, communityId, pubId, branchId, accessHash }) => {
+export const getPermissions = async ({ userId, communityId, pubId, accessHash, historyKey }) => {
 	const {
 		elements: { activePub },
 		activePermissions: { canView, canViewDraft },
@@ -10,10 +10,6 @@ export const getPermissions = async ({ userId, communityId, pubId, branchId, acc
 		loginId: userId,
 		accessHash: accessHash,
 	});
-
-	const isRelease =
-		activePub.releases.length > 0 &&
-		activePub.branches.some((branch) => branch.title === 'public' && branch.id === branchId);
-
-	return { canCreateExport: isRelease || canView || canViewDraft };
+	const isReleaseKey = activePub.releases.some((release) => release.historyKey === historyKey);
+	return { canCreateExport: isReleaseKey || canView || canViewDraft };
 };

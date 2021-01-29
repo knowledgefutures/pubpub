@@ -10,11 +10,13 @@ import { getPubForRequest } from 'server/utils/queryHelpers';
 
 const getSettingsData = async (pubSlug, initialData) => {
 	if (pubSlug) {
-		return getPubForRequest({
-			slug: pubSlug,
-			initialData: initialData,
-			getEdges: 'all',
-		});
+		return {
+			pubData: await getPubForRequest({
+				slug: pubSlug,
+				initialData: initialData,
+				getEdges: 'all',
+			}),
+		};
 	}
 	return {};
 };

@@ -2,14 +2,13 @@ import uuid from 'uuid/v4';
 import { Step, Transform } from 'prosemirror-transform';
 
 import { createFirebaseChange, getFirebaseDoc } from 'client/components/Editor';
-import { Branch } from 'server/models';
-import { getBranchRef, getDatabaseRef, editorSchema } from 'server/utils/firebaseAdmin';
+import { getPubDraftRef, getDatabaseRef, editorSchema } from 'server/utils/firebaseAdmin';
 
 type EditorSchema = typeof editorSchema;
 type TransformFn = (t: Transform<EditorSchema>, s: EditorSchema) => void;
 type Reference = firebase.database.Reference;
 
-export const editFirebaseDraftByRef = async (ref: Reference, { branchId = 'no-branch' } = {}) => {
+export const editFirebaseDraftByRef = async (ref: Reference) => {
 	const fetchDoc = async () => getFirebaseDoc(ref, editorSchema);
 
 	let { doc, key: currentKey } = await fetchDoc();
@@ -24,7 +23,7 @@ export const editFirebaseDraftByRef = async (ref: Reference, { branchId = 'no-br
 			return api;
 		},
 		writeChange: async () => {
-			const change = createFirebaseChange(pendingSteps, branchId, 'stubstub-firebase');
+			const change = createFirebaseChange(pendingSteps, 'stubstub-firebase');
 			await ref.child(`changes/${currentKey + 1}`).set(change);
 			++currentKey;
 			pendingSteps = [];
@@ -55,7 +54,6 @@ export const editFirebaseDraft = (refKey: string = uuid()) => {
 };
 
 export const editPub = async (pubId: string) => {
-	const draftBranch = await Branch.findOne({ where: { pubId: pubId, title: 'draft' } });
-	const branchRef = getBranchRef(pubId, draftBranch.id)!;
-	return editFirebaseDraftByRef(branchRef, { branchId: draftBranch.id });
+	const draftRef = await getPubDraftRef(pubId);
+	return editFirebaseDraftByRef(draftRef);
 };

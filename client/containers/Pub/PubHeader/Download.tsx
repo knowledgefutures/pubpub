@@ -32,7 +32,7 @@ const mustShowDownloadButton = () => navigator.userAgent.match(/iP(ad|hone|od)/i
 
 const Download = (props: Props) => {
 	const { pubData, children } = props;
-	const { downloads = [], activeBranch } = pubData;
+	const { downloads = [] } = pubData;
 	const [isLoading, setIsLoading] = useState(false);
 	const [isError, setIsError] = useState(false);
 	const [selectedType, setSelectedType] = useState(null);
@@ -48,7 +48,7 @@ const Download = (props: Props) => {
 	};
 
 	const handleStartDownload = (type) => {
-		const matchingExport = pubData.activeBranch.exports.find(
+		const matchingExport = pubData.exports.find(
 			(ex) => ex.format === type.format && ex.historyKey >= latestKey,
 		);
 		if (matchingExport && matchingExport.url) {
@@ -79,7 +79,6 @@ const Download = (props: Props) => {
 			method: 'POST',
 			body: JSON.stringify({
 				pubId: pubData.id,
-				branchId: activeBranch.id,
 				communityId: communityData.id,
 				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 				format: selectedType.format,
@@ -107,7 +106,6 @@ const Download = (props: Props) => {
 		isLoading,
 		selectedType,
 		pubData.id,
-		activeBranch.id,
 		latestKey,
 		locationData.query.access,
 		communityData.id,

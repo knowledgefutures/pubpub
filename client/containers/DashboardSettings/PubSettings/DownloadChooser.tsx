@@ -34,7 +34,6 @@ const DownloadChooser = (props: Props) => {
 					{
 						type: 'formatted',
 						url: fileUrl,
-						branchId: null,
 						createdAt: new Date(),
 					},
 			  ]

@@ -6,7 +6,6 @@ export { default as DashboardActivity } from './DashboardActivity/DashboardActiv
 export { default as DashboardCollectionLayout } from './DashboardCollectionLayout/DashboardCollectionLayout';
 export { default as DashboardDiscussions } from './DashboardDiscussions/DashboardDiscussions';
 export { default as DashboardEdges } from './DashboardEdges/DashboardEdges';
-export { default as DashboardForks } from './DashboardForks/DashboardForks';
 export { default as DashboardImpact } from './DashboardImpact/DashboardImpact';
 export { default as DashboardMembers } from './DashboardMembers/DashboardMembers';
 export { default as DashboardOverview } from './DashboardOverview/DashboardOverview';

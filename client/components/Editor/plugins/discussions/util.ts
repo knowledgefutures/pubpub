@@ -12,8 +12,6 @@ export const isEmptySelection = (selection: null | DiscussionSelection) => {
 
 export const mapDiscussionThroughSteps = (
 	discussion: DiscussionInfo,
-	fromDoc: Node,
-	toDoc: Node,
 	steps: Step[],
 ): DiscussionInfo => {
 	const { selection } = discussion;
@@ -24,6 +22,12 @@ export const mapDiscussionThroughSteps = (
 	const mapping = new Mapping(steps.map((step) => step.getMap()));
 	const nextHead = mapping.map(head, -1);
 	const nextAnchor = mapping.map(anchor, -1);
+	if (nextHead === nextAnchor) {
+		return {
+			...discussion,
+			selection: null,
+		};
+	}
 	return {
 		...discussion,
 		selection: {

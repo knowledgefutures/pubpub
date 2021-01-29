@@ -13,56 +13,51 @@ Array [
 ]
 `;
 
-exports[`getPubSearchData produces the expected data for a long Pub 1`] = `
+exports[`getPubSearchData produces the expected data for a draft Pub 1`] = `
 Array [
   Object {
-    "avatar": "long.png",
-    "branchIsPublic": true,
-    "branchShortId": 1,
-    "byline": "by First Author, Second Author, and Test Testington",
+    "avatar": "shh.png",
+    "byline": "by Test Testington",
     "communityDomain": "tc1.pubpub.org",
     "communityTitle": "Test Community",
-    "description": "I am very lengthy",
-    "slug": "a-long-pub",
-    "title": "A Long Pub",
-  },
-  Object {
-    "avatar": "long.png",
-    "branchIsPublic": false,
-    "branchShortId": 2,
-    "byline": "by First Author, Second Author, and Test Testington",
-    "communityDomain": "tc1.pubpub.org",
-    "communityTitle": "Test Community",
-    "description": "I am very lengthy",
-    "slug": "a-long-pub",
-    "title": "A Long Pub",
+    "content": Array [
+      " Hello hello. Introduction",
+    ],
+    "description": "You probably cannot see me",
+    "isPublic": false,
+    "slug": "a-draft-pub",
+    "title": "A Draft Pub",
   },
 ]
 `;
 
-exports[`getPubSearchData produces the expected data for a short Pub 1`] = `
+exports[`getPubSearchData produces the expected data for a released Pub 1`] = `
 Array [
   Object {
-    "avatar": "short.png",
-    "branchIsPublic": true,
-    "branchShortId": 1,
-    "byline": "by Test Testington",
+    "avatar": "hello.png",
+    "byline": "by First Author, Second Author, and Test Testington",
     "communityDomain": "tc1.pubpub.org",
     "communityTitle": "Test Community",
-    "description": "I am very brief",
-    "slug": "a-short-pub",
-    "title": "A Short Pub",
+    "content": Array [
+      " Introduction introduction! bold pretty nifty . Nature’s ecosystem elegant example complex adaptive system myriad “currencies” interact respond feedback systems enable flourishing regulation. collaborative model–rather model exponential financial growth Singularity, promises transcendence current human condition advances technology—should provide paradigm approach artificial intelligence. 60 years ago, MIT mathematician philosopher Norbert Wiener warned “when human atoms knit organization used, full responsible human beings, cogs levers rods, matters raw material flesh blood.” heed Wiener’s warning. currencies abundant output successful process organism, organisms evolved output convert else. billions years, Earth’s ecosystem evolved, creating vast systems metabolic pathways forming highly complex self-regulating systems that, example, stabilize body temperatures temperature Earth, despite continuous fluctuations changes individual elements scale—from micro macro. output process input another. Ultimately, interconnects. Video Hello paragraph text Hello, you? Citation List Hello paragraph text Hello, you? Info Contact Country Alfreds Futterkiste Maria Anders Germany Centro comercial Moctezuma Francisco Chang Mexico",
+    ],
+    "description": "Hey look at me",
+    "isPublic": true,
+    "slug": "a-released-pub",
+    "title": "A Released Pub",
   },
   Object {
-    "avatar": "short.png",
-    "branchIsPublic": false,
-    "branchShortId": 2,
-    "byline": "by Test Testington",
+    "avatar": "hello.png",
+    "byline": "by First Author, Second Author, and Test Testington",
     "communityDomain": "tc1.pubpub.org",
     "communityTitle": "Test Community",
-    "description": "I am very brief",
-    "slug": "a-short-pub",
-    "title": "A Short Pub",
+    "content": Array [
+      " Hello hello. Introduction",
+    ],
+    "description": "Hey look at me",
+    "isPublic": false,
+    "slug": "a-released-pub",
+    "title": "A Released Pub",
   },
 ]
 `;

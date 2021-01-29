@@ -13,7 +13,7 @@ type Props = {
 
 const DiscussionReanchor = (props: Props) => {
 	const { discussionData } = props;
-	const { collabData, firebaseBranchRef } = usePubContext();
+	const { collabData, firebaseDraftRef } = usePubContext();
 	const [isActive, setIsActive] = useState(false);
 
 	const { selection } = collabData.editorChangeObject;
@@ -21,7 +21,7 @@ const DiscussionReanchor = (props: Props) => {
 
 	const handleReanchor = () => {
 		const { view } = collabData.editorChangeObject;
-		reanchorDiscussion(view, firebaseBranchRef, discussionData.id);
+		reanchorDiscussion(view, firebaseDraftRef, discussionData.id);
 		setIsActive(false);
 	};
 

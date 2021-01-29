@@ -1,6 +1,6 @@
 import Bluebird from 'bluebird';
 
-import { Collection, Community, Pub, PubAttribution, Branch, Member } from 'server/models';
+import { Collection, Community, Pub, PubAttribution, Member } from 'server/models';
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
 import { createCollectionPub } from 'server/collectionPub/queries';
 import { createDraft } from 'server/draft/queries';
@@ -47,18 +47,6 @@ export const createPub = async (
 			isOwner: true,
 		});
 
-	const createPublicBranch = Branch.create({
-		shortId: 1,
-		title: 'public',
-		pubId: newPub.id,
-	});
-
-	const createDraftBranch = Branch.create({
-		shortId: 2,
-		title: 'draft',
-		pubId: newPub.id,
-	});
-
 	const allCollectionIds = [...(defaultPubCollections || []), ...(collectionIds || [])];
 
 	const createCollectionPubs = Bluebird.each(
@@ -79,15 +67,7 @@ export const createPub = async (
 		},
 	);
 
-	await Promise.all(
-		[
-			createPubAttribution,
-			createCollectionPubs,
-			createPublicBranch,
-			createDraftBranch,
-			createMember,
-		].filter((x) => x),
-	);
+	await Promise.all([createPubAttribution, createCollectionPubs, createMember].filter((x) => x));
 
 	setPubSearchData(newPub.id);
 	return newPub;

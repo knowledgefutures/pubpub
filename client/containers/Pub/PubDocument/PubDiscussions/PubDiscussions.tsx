@@ -5,6 +5,7 @@ import { dispatchEmptyTransaction } from 'components/Editor';
 import { NonIdealState } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
+import { PubPageData } from 'utils/types';
 import { usePubContext } from '../../pubHooks';
 
 import DiscussionGroup from './DiscussionGroup';
@@ -14,31 +15,25 @@ import { groupDiscussionsByLine } from './discussionUtils';
 
 require('./pubDiscussions.scss');
 
-type OwnProps = {
+type Props = {
 	filterDiscussions?: (...args: any[]) => any;
 	mainContentRef: any;
-	pubData: any;
+	pubData: PubPageData;
 	searchTerm?: string;
 	showBottomInput?: boolean;
 	sideContentRef: any;
 };
 
-const defaultProps = {
-	filterDiscussions: () => [],
-	searchTerm: null,
-	showBottomInput: false,
-};
-
-type Props = OwnProps & typeof defaultProps;
+const defaultDiscussionsFilter = () => [];
 
 const PubDiscussions = (props: Props) => {
 	const {
 		pubData,
-		filterDiscussions,
+		filterDiscussions = defaultDiscussionsFilter,
 		mainContentRef,
 		sideContentRef,
-		searchTerm,
-		showBottomInput,
+		searchTerm = null,
+		showBottomInput = false,
 	} = props;
 
 	const { collabData, updateLocalData, historyData } = usePubContext();
@@ -90,10 +85,8 @@ const PubDiscussions = (props: Props) => {
 	};
 
 	const renderBottomDiscussions = () => {
-		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 		const filteredDiscussions = filterDiscussions(discussions);
 		const emptyMessage =
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'filter' does not exist on type 'never'.
 			discussions.filter((th) => th && !th.isClosed).length > 0
 				? 'No matching comments (some are hidden by filters)'
 				: canView || canCreateDiscussions
@@ -125,7 +118,7 @@ const PubDiscussions = (props: Props) => {
 							discussionData={discussion}
 							updateLocalData={updateLocalData}
 							canPreview={true}
-							searchTerm={searchTerm}
+							searchTerm={searchTerm || undefined}
 						/>
 					);
 				})}
@@ -149,5 +142,5 @@ const PubDiscussions = (props: Props) => {
 		</div>
 	);
 };
-PubDiscussions.defaultProps = defaultProps;
+
 export default PubDiscussions;

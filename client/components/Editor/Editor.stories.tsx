@@ -59,11 +59,9 @@ const cursorCommands = {
 	moveToEndOfSelection: moveToEndOfSelection,
 };
 
-const rootKey = 'ttest11';
-const branchKey = 'branch-f4bf24f7-6184-4f5f-b2d3-2b9d2563cb62';
+const rootKey = 'firebase-testing';
 // @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 2.
-const firebaseRootRef = initFirebase(rootKey, '');
-const firebaseBranchRef = firebaseRootRef.child(branchKey);
+const draftRef = initFirebase(rootKey, '');
 const newDiscussionId = String(Math.floor(Math.random() * 999999));
 
 const CursorOptionsDemoPub = () => {
@@ -144,7 +142,6 @@ storiesOf('Editor', module)
 						type="button"
 						onClick={() => {
 							console.log(
-								// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
 								convertLocalHighlightToDiscussion(
 									// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
 									changeObject.view,
@@ -157,13 +154,13 @@ storiesOf('Editor', module)
 					</button>
 
 					<Editor
-						key={firebaseBranchRef ? 'ready' : 'unready'}
+						key={draftRef ? 'ready' : 'unready'}
 						placeholder="Begin writing..."
 						onChange={(evt) => {
 							updatechangeObject(evt);
 						}}
 						collaborativeOptions={{
-							firebaseRef: firebaseBranchRef as any,
+							firebaseRef: draftRef as any,
 							clientData: clientData,
 							initialDocKey: -1,
 							// onClientChange: () => {},
@@ -181,17 +178,6 @@ storiesOf('Editor', module)
 			const [changeObject, updatechangeObject] = useState({});
 			return (
 				<div style={editorWrapperStyle}>
-					{/* <button
-						type="button"
-						onClick={() => {
-							firebaseBranchRef
-								.child('discussions')
-								.child(Math.floor(Math.random() * 999999))
-								.set(getDiscussionData(changeObject.view));
-						}}
-					>
-						New
-					</button> */}
 					<button
 						type="button"
 						onClick={() => {
@@ -234,7 +220,7 @@ storiesOf('Editor', module)
 					</button>
 
 					<Editor
-						key={firebaseBranchRef ? 'ready' : 'unready'}
+						key={draftRef ? 'ready' : 'unready'}
 						placeholder="Begin writing..."
 						onChange={(evt) => {
 							// updatechangeObject(evt);
@@ -251,7 +237,7 @@ storiesOf('Editor', module)
 							}
 						}}
 						collaborativeOptions={{
-							firebaseRef: firebaseBranchRef as any,
+							firebaseRef: draftRef as any,
 							clientData: clientData,
 							initialDocKey: -1,
 							// onClientChange: () => {},

@@ -28,7 +28,7 @@ const shimPubContextProps = {
 	},
 	collabData: { editorChangeObject: {} },
 	historyData: {},
-	firebaseBranchRef: null,
+	firebaseDraftRef: null,
 	updateLocalData: null as any,
 	updatePubData: null as any,
 	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2-3 arguments, but got 0.
@@ -72,8 +72,7 @@ type State = {
 		localCollabUser: CollabUser;
 		remoteCollabUsers: CollabUser[];
 	};
-	firebaseRootRef: null | firebase.database.Reference;
-	firebaseBranchRef: null | firebase.database.Reference;
+	firebaseDraftRef: null | firebase.database.Reference;
 	citationManager: CitationManager;
 };
 
@@ -91,7 +90,6 @@ const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
 			queryString.stringify({
 				pubId: pubData.id,
 				communityId: pubData.communityId,
-				branchId: pubData.activeBranch.id,
 				historyKey: historyKey,
 				accessHash: accessHash,
 			}),
@@ -106,7 +104,7 @@ const getLocalCollabUser = (pubData, loginData) => {
 		image: loginData.avatar || null,
 		name: loginData.fullName || 'Anonymous',
 		initials: loginData.initials || '?',
-		canEdit: !!pubData.canEditBranch,
+		canEdit: !!pubData.canEdit,
 	};
 };
 
@@ -173,8 +171,7 @@ class PubSyncManager extends React.Component<Props, State> {
 		const isViewingHistory = historyData.currentKey !== historyData.latestKey;
 
 		this.state = {
-			firebaseRootRef: null,
-			firebaseBranchRef: null,
+			firebaseDraftRef: null,
 			pubData: this.props.pubData,
 			collabData: {
 				editorChangeObject: {},
@@ -198,7 +195,6 @@ class PubSyncManager extends React.Component<Props, State> {
 		};
 		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));
 		this.syncRemoteCollabUsers = this.syncRemoteCollabUsers.bind(this);
-		this.syncMetadata = this.syncMetadata.bind(this);
 		this.syncDiscussionsContent = this.syncDiscussionsContent.bind(this);
 		this.updatePubData = this.updatePubData.bind(this);
 		this.updateCollabData = this.updateCollabData.bind(this);
@@ -211,26 +207,16 @@ class PubSyncManager extends React.Component<Props, State> {
 	}
 
 	componentDidMount() {
-		const { activeBranch } = this.props.pubData;
-		if (activeBranch) {
-			const rootKey = `pub-${this.props.pubData.id}`;
-			const branchKey = `branch-${activeBranch.id}`;
-			initFirebase(rootKey, this.props.pubData.firebaseToken).then((firebaseRefs) => {
-				if (!firebaseRefs) {
-					return;
-				}
-				const [rootRef, connectionRef] = firebaseRefs;
-				this.setState(
-					{
-						firebaseRootRef: rootRef,
-						firebaseBranchRef: rootRef.child(branchKey),
-					},
-					() => {
-						this.state.firebaseRootRef
-							?.child('metadata')
-							.on('child_changed', this.syncMetadata);
-
-						this.state.firebaseBranchRef
+		const { draft } = this.props.pubData;
+		if (draft) {
+			initFirebase(draft.firebasePath, this.props.pubData.firebaseToken).then(
+				(firebaseRefs) => {
+					if (!firebaseRefs) {
+						return;
+					}
+					const [draftRef, connectionRef] = firebaseRefs;
+					this.setState({ firebaseDraftRef: draftRef }, () => {
+						this.state.firebaseDraftRef
 							?.child('cursors')
 							.on('value', this.syncRemoteCollabUsers);
 
@@ -241,39 +227,10 @@ class PubSyncManager extends React.Component<Props, State> {
 								this.updateLocalData('collab', { status: 'disconnected' });
 							}
 						});
-					},
-				);
-			});
-		}
-	}
-
-	componentWillUnmount() {
-		if (this.state.firebaseRootRef) {
-			this.state.firebaseRootRef.child('metadata').off('child_changed', this.syncMetadata);
-		}
-	}
-
-	syncMetadata(snapshot) {
-		this.setState((prevState) => {
-			/* Firebase erases empty arrays, so empty arrays we sync up have */
-			/* to be manually reconstructed here */
-			let newVal = snapshot.val();
-			if (snapshot.key === 'branches') {
-				newVal = newVal.map((branch) => {
-					return {
-						...branch,
-						permissions: branch.permissions || [],
-					};
-				});
-			}
-
-			return {
-				pubData: {
-					...prevState.pubData,
-					[snapshot.key]: newVal,
+					});
 				},
-			};
-		});
+			);
+		}
 	}
 
 	syncDiscussionsContent(snapshot) {
@@ -324,10 +281,6 @@ class PubSyncManager extends React.Component<Props, State> {
 	}
 
 	updatePubData(newPubData, isImmediate = false) {
-		/* First, set the local state. */
-		/* Then, sync appropriate data to firebase. */
-		/* Other clients will receive updates which */
-		/* triggers the syncMetadata function. */
 		this.idleStateUpdater.immediately(isImmediate).setState(
 			(prevState) => {
 				const nextData =
@@ -340,40 +293,8 @@ class PubSyncManager extends React.Component<Props, State> {
 				};
 			},
 			() => {
-				const keysToSync = [
-					'attributions',
-					'avatar',
-					'branches',
-					'citationData',
-					'collectionPubs',
-					'description',
-					'doi',
-					'downloads',
-					'labels',
-					'managers',
-					'reviews',
-					'slug',
-					'title',
-					'useHeaderImage',
-				];
-				const firebaseSyncData = {};
-				keysToSync.forEach((key) => {
-					if (key in newPubData) {
-						firebaseSyncData[key] = newPubData[key];
-					}
-				});
-				const hasUpdates = Object.keys(firebaseSyncData).length;
-				if (this.state.firebaseRootRef && hasUpdates) {
-					this.state.firebaseRootRef.child('metadata').update(firebaseSyncData);
-				}
 				if (typeof newPubData.title === 'string') {
 					document.title = getPubPageTitle(
-						/* this.state.pubData does not always have the newest title. */
-						/* My guess is that there are cases where idleStateUpdater */
-						/* causes a delay such that this callback is called before */
-						/* before the updateState event has completed. This seems */
-						/* counterintuitiveand may require us to rethink whether a  */
-						/* callback on idleStateUpdater is appropriate. */
 						{ ...this.state.pubData, title: newPubData.title },
 						this.props.communityData,
 					);
@@ -475,7 +396,7 @@ class PubSyncManager extends React.Component<Props, State> {
 			collabData: this.state.collabData,
 			historyData: this.state.historyData,
 			citationManager: this.state.citationManager,
-			firebaseBranchRef: this.state.firebaseBranchRef,
+			firebaseDraftRef: this.state.firebaseDraftRef,
 			updateLocalData: this.updateLocalData,
 			updatePubData: this.updatePubData,
 		} as PubContextType;

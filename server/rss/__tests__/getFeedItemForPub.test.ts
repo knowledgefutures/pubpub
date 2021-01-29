@@ -6,26 +6,21 @@ import { getPubData, getFeedItemForPub } from '../queries';
 const models = modelize`
     Community community {
         Pub pub {
-            createBranches: false
             createPubCreator: false
             downloads: ${[{ type: 'formatted', url: 'formatted_download.pdf' }]}
             avatar: "avatar.png"
             Release {
-                branchKey: 1
+                historyKey: 1
             }
-            Branch {
-                title: "public"
-                shortId: 0
-                Export ex0 {
-                    historyKey: 1
-                    format: "pdf"
-                    url: "export.pdf"
-                }
-                Export {
-                    historyKey: 1
-                    format: "jats"
-                    url: "export.xml"
-                }
+            Export {
+                historyKey: 1
+                format: "jats"
+                url: "export.xml"
+            }
+            Export {
+                historyKey: 5
+                format: "jats"
+                url: "draft_export.xml"
             }
             PubAttribution {
                 name: "PA1"

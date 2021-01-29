@@ -14,6 +14,7 @@ export const getPub = async (slug: string, communityId: string, options: PubGetO
 		...buildPubOptions({
 			getMembers: true,
 			getCollections: true,
+			getExports: true,
 			getEdges: 'approved-only',
 			...options,
 		}),

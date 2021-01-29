@@ -76,7 +76,7 @@ const PubReleaseDialog = (props: Props) => {
 	};
 
 	const renderLatestReleaseInfo = (release) => {
-		const releaseUrl = pubUrl(communityData, pubData, { releaseNumber: release.branchKey + 1 });
+		const releaseUrl = pubUrl(communityData, pubData, { releaseNumber: releaseCount });
 
 		return (
 			<React.Fragment>

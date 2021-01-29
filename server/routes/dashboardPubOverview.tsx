@@ -24,6 +24,7 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 		const pubData = await getPubForRequest({
 			slug: req.params.pubSlug,
 			initialData: initialData,
+			getDraft: true,
 		});
 
 		if (!pubData) {

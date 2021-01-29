@@ -1,7 +1,7 @@
 import { Schema, Node } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
 
-import { applyStepsToDoc, getFirebaseDoc, getStepsInChangeRange } from '../../utils';
+import { getStepsInChangeRange } from '../../utils';
 
 import { mapDiscussionThroughSteps, flattenOnce } from './util';
 import { DiscussionInfo, Discussions, NullableDiscussions } from './types';
@@ -11,24 +11,13 @@ type Reference = firebase.database.Reference;
 const getFastForwardedDiscussion = (
 	discussion: DiscussionInfo,
 	changesOfSteps: Step[][],
-	startingDoc: Node,
-	latestDoc: Node,
 	startingKey: number,
 	latestKey: number,
 ): DiscussionInfo => {
 	const { currentKey } = discussion;
 	const currentKeyIndexInChanges = currentKey - startingKey;
-	const stepsToRecoverDocAtCurrentKey = flattenOnce(
-		changesOfSteps.slice(0, currentKeyIndexInChanges),
-	);
 	const stepsToApply = flattenOnce(changesOfSteps.slice(currentKeyIndexInChanges));
-	const docAtCurrentKey = applyStepsToDoc(stepsToRecoverDocAtCurrentKey, startingDoc);
-	const mappedDiscussion = mapDiscussionThroughSteps(
-		discussion,
-		docAtCurrentKey,
-		latestDoc,
-		stepsToApply,
-	);
+	const mappedDiscussion = mapDiscussionThroughSteps(discussion, stepsToApply);
 	return {
 		...mappedDiscussion,
 		currentKey: latestKey,
@@ -53,10 +42,12 @@ export const createFastForwarder = (draftRef: Reference) => async <S extends Sch
 		Infinity,
 	);
 
-	const [{ doc }, stepsByChangeInRange] = await Promise.all([
-		getFirebaseDoc(draftRef, schema, mostOutdatedKey),
-		getStepsInChangeRange(draftRef, schema, mostOutdatedKey + 1, latestHistoryKey),
-	]);
+	const stepsByChangeInRange = await getStepsInChangeRange(
+		draftRef,
+		schema,
+		mostOutdatedKey + 1,
+		latestHistoryKey,
+	);
 
 	const resultingDiscussions: Discussions = {};
 	Object.entries(discussionsById).forEach(([discussionId, discussion]) => {
@@ -64,8 +55,6 @@ export const createFastForwarder = (draftRef: Reference) => async <S extends Sch
 			resultingDiscussions[discussionId] = getFastForwardedDiscussion(
 				discussion,
 				stepsByChangeInRange,
-				doc,
-				latestDoc,
 				mostOutdatedKey,
 				latestHistoryKey,
 			);

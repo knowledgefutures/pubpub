@@ -1,4 +1,3 @@
-export * from './branches';
 export * from './changes';
 export * from './doc';
 export * from './firebase';

@@ -33,12 +33,6 @@ const Landing = () => {
 				'Include article & collection-level metadata for easier organization of content and improved discovery.',
 		},
 		{
-			icon: 'changes',
-			title: 'Branches as versions',
-			desc:
-				'Work on multiple versions by creating different branches and merging when ready.',
-		},
-		{
 			icon: 'people',
 			title: 'Access Control',
 			desc: 'Allow anyone to access your content, or just the people you choose.',

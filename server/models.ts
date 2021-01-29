@@ -36,8 +36,6 @@ sequelize.idType = {
 
 /* Import and create all models. */
 /* Also export them to make them available to other modules */
-export const Branch = sequelize.import('./branch/model');
-export const BranchPermission = sequelize.import('./branchPermission/model');
 export const Collection = sequelize.import('./collection/model');
 export const CollectionAttribution = sequelize.import('./collectionAttribution/model');
 export const CollectionPub = sequelize.import('./collectionPub/model');
@@ -66,7 +64,6 @@ export const ReviewEvent = sequelize.import('./reviewEvent/model');
 export const Signup = sequelize.import('./signup/model');
 export const Anchor = sequelize.import('./anchor/model');
 export const ReviewNew = sequelize.import('./review/modelNew');
-export const Fork = sequelize.import('./fork/model');
 export const Thread = sequelize.import('./thread/model');
 export const ThreadComment = sequelize.import('./threadComment/model');
 export const ThreadEvent = sequelize.import('./threadEvent/model');

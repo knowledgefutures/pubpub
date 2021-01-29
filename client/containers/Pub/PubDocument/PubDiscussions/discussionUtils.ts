@@ -145,7 +145,6 @@ export const filterAndSortDiscussions = (
 	isClosedList,
 	sortMode,
 	filteredLabels,
-	activeBranchId,
 	searchTerm = null,
 	showAnchoredDiscussions = true,
 ) => {

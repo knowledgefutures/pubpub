@@ -1,6 +1,6 @@
 /* global describe, it, expect, beforeAll, afterAll */
 import { stub, modelize, setup, teardown, determinize } from 'stubstub';
-import { plainDoc, fullDoc } from 'utils/storybook/data';
+import { plainDoc, fullDoc, imageDoc } from 'utils/storybook/data';
 
 import { getPageSearchData, getPubSearchData } from '../searchUtils';
 
@@ -8,22 +8,22 @@ const models = modelize`
     Community {
         title: "Test Community"
         subdomain: "tc1"
-        Pub shortPub {
-            title: "A Short Pub"
-            slug: "a-short-pub"
-            description: "I am very brief"
-            avatar: "short.png"
+        Pub draftPub {
+            title: "A Draft Pub"
+            slug: "a-draft-pub"
+            description: "You probably cannot see me"
+            avatar: "shh.png"
             PubAttribution {
                 User {
                     slug: "test1"
                 }
             }
         }
-        Pub longPub {
-            title: "A Long Pub"
-            slug: "a-long-pub"
-            description: "I am very lengthy"
-            avatar: "long.png"
+        Pub releasedPub {
+            title: "A Released Pub"
+            slug: "a-released-pub"
+            description: "Hey look at me"
+            avatar: "hello.png"
             PubAttribution {
                 isAuthor: false
                 order: 0.3
@@ -51,6 +51,20 @@ const models = modelize`
                     slug: "test2"
                 }
             }
+            Release {
+                createdAt: "2021-01-01"
+                historyKey: 1
+                Doc {
+                    content: ${plainDoc}
+                }
+            }
+            Release {
+                createdAt: "2020-01-02"
+                historyKey: 2
+                Doc {
+                    content: ${fullDoc}
+                }
+            }
         }
         Page testPage {
             title: "I am a test page"
@@ -66,8 +80,8 @@ let firebaseStub;
 setup(beforeAll, async () => {
 	await models.resolve();
 	firebaseStub = stub('server/utils/firebaseAdmin', {
-		getBranchDoc: (pubId) => {
-			return Promise.resolve({ doc: pubId === models.longPub.id ? fullDoc : plainDoc });
+		getPubDraftDoc: () => {
+			return Promise.resolve({ doc: imageDoc });
 		},
 	});
 });
@@ -78,14 +92,14 @@ teardown(afterAll, () => {
 
 const determinizePubData = determinize([
 	'avatar',
-	'branchIsPublic',
-	'branchShortId',
 	'byline',
 	'communityDomain',
 	'communityTitle',
 	'description',
 	'slug',
 	'title',
+	'content',
+	'isPublic',
 ]);
 
 const determinizePageData = determinize([
@@ -98,13 +112,13 @@ const determinizePageData = determinize([
 ]);
 
 describe('getPubSearchData', () => {
-	it('produces the expected data for a long Pub', async () => {
-		const data = await getPubSearchData(models.longPub.id);
+	it('produces the expected data for a draft Pub', async () => {
+		const data = await getPubSearchData(models.draftPub.id);
 		expect(data.map(determinizePubData)).toMatchSnapshot();
 	});
 
-	it('produces the expected data for a short Pub', async () => {
-		const data = await getPubSearchData(models.shortPub.id);
+	it('produces the expected data for a released Pub', async () => {
+		const data = await getPubSearchData(models.releasedPub.id);
 		expect(data.map(determinizePubData)).toMatchSnapshot();
 	});
 });

@@ -1,5 +1,5 @@
 import { getExportFormatDetails } from 'utils/export/formats';
-import { getBranchDoc } from 'server/utils/firebaseAdmin';
+import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 
 import { renderStaticHtml } from './html';
 import { getPubMetadata } from './metadata';
@@ -15,11 +15,11 @@ import {
 } from './util';
 
 export const exportTask = async ({ exportId }, collectSubprocess) => {
-	const { pubId, branchId, format, historyKey } = await getExportById(exportId);
+	const { pubId, format, historyKey } = await getExportById(exportId);
 	const { extension, pandocTarget, pagedTarget } = getExportFormatDetails(format);
 	const tmpFile = await getTmpFileForExtension(extension);
 	const pubMetadata = await getPubMetadata(pubId);
-	const { doc: pubDoc } = await getBranchDoc(pubId, branchId, historyKey);
+	const { doc: pubDoc } = await getPubDraftDoc(pubId, historyKey);
 	const notesData = await getNotesData(pubMetadata, pubDoc);
 	const staticHtml = await renderStaticHtml({
 		pubDoc: pubDoc,
@@ -40,7 +40,7 @@ export const exportTask = async ({ exportId }, collectSubprocess) => {
 	} else {
 		await writeToFile(staticHtml, tmpFile);
 	}
-	const url = await uploadDocument(branchId, tmpFile, extension);
+	const url = await uploadDocument(pubId, tmpFile, extension);
 	await assignFileToExportById(exportId, url);
 	return { url: url };
 };

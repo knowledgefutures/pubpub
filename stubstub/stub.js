@@ -55,7 +55,7 @@ export const stubFirebaseAdmin = () => {
 	let stubs;
 
 	beforeAll(() => {
-		const getBranchDocStub = sinon.stub(firebaseAdmin, 'getBranchDoc').returns({
+		const getPubDraftDocStub = sinon.stub(firebaseAdmin, 'getPubDraftDoc').returns({
 			doc: getEmptyDoc(),
 			mostRecentRemoteKey: 0,
 			historyData: {
@@ -65,18 +65,7 @@ export const stubFirebaseAdmin = () => {
 			},
 		});
 		const getFirebaseTokenStub = sinon.stub(firebaseAdmin, 'getFirebaseToken').returns('');
-		const createFirebaseBranchStub = sinon
-			.stub(firebaseAdmin, 'createFirebaseBranch')
-			.returns({});
-		const mergeFirebaseBranchStub = sinon
-			.stub(firebaseAdmin, 'mergeFirebaseBranch')
-			.returns({});
-		stubs = [
-			getBranchDocStub,
-			getFirebaseTokenStub,
-			createFirebaseBranchStub,
-			mergeFirebaseBranchStub,
-		];
+		stubs = [getPubDraftDocStub, getFirebaseTokenStub];
 	});
 
 	afterAll(() => stubs.forEach((stub) => stub.restore()));

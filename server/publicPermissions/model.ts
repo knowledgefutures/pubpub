@@ -3,7 +3,6 @@ export default (sequelize, dataTypes) => {
 		'PublicPermissions',
 		{
 			id: sequelize.idType,
-			canCreateForks: { type: dataTypes.BOOLEAN },
 			canCreateReviews: { type: dataTypes.BOOLEAN },
 			canCreateDiscussions: { type: dataTypes.BOOLEAN },
 			canViewDraft: { type: dataTypes.BOOLEAN },

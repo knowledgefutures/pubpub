@@ -5,7 +5,6 @@ export const reviewData = {
 	status: 'open',
 	releaseRequested: true,
 	labels: null,
-	branchId: null,
 	threadId: '2ba640b8-44b1-479e-8cac-94a56fe92922',
 	visibilityId: 'f33419db-b559-486f-b608-c023573e2478',
 	userId: 'b242f616-7aaa-479c-8ee5-3933dcf70859',

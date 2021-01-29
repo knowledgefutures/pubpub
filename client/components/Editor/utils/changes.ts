@@ -3,12 +3,12 @@ import { Step } from 'prosemirror-transform';
 import { uncompressStepJSON } from 'prosemirror-compress-pubpub';
 
 export const getStepsInChangeRange = async (
-	branchRef: firebase.database.Reference,
+	draftRef: firebase.database.Reference,
 	schema: Schema,
 	startIndex: number,
 	endIndex: number,
 ): Promise<Step[][]> => {
-	const changesSnapshot = await branchRef
+	const changesSnapshot = await draftRef
 		.child('changes')
 		.orderByKey()
 		.startAt(startIndex.toString())

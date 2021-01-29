@@ -80,8 +80,6 @@ const PermissionsDropdown = function(props) {
 						<span style={style} key="prefix">
 							{props.prefix}
 						</span>
-						{/* Note: This check for items[selectedKey is only necessary because */}
-						{/* of the simplified branches interface that doesn't allow all settings */}
 						<span key="title">{items[selectedKey] && items[selectedKey].title}</span>
 					</React.Fragment>
 				}

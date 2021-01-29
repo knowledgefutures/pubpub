@@ -25,8 +25,6 @@ type Options = {
 const getUpdatedDiscussionsForTransaction = (
 	discussions: Discussions,
 	steps: Step[],
-	previousDoc: Node,
-	nextDoc: Node,
 	previousHistoryKey: number,
 	nextHistoryKey: number,
 ): Discussions => {
@@ -37,12 +35,7 @@ const getUpdatedDiscussionsForTransaction = (
 	Object.keys(discussions).forEach((id) => {
 		const discussion = discussions[id];
 		if (discussion.currentKey === previousHistoryKey) {
-			const mappedDiscussion = mapDiscussionThroughSteps(
-				discussion,
-				previousDoc,
-				nextDoc,
-				steps,
-			);
+			const mappedDiscussion = mapDiscussionThroughSteps(discussion, steps);
 			resultingDiscussions[id] = {
 				...mappedDiscussion,
 				currentKey: nextHistoryKey,
@@ -129,19 +122,15 @@ export const createDiscussionsState = (options: Options) => {
 		tr: Transaction,
 		nextState: EditorState,
 	): null | DiscussionsUpdateResult => {
-		const {
-			currentDoc,
-			currentHistoryKey,
-			previousDoc,
-			previousHistoryKey,
-		} = history.updateState(tr, nextState);
+		const { currentDoc, currentHistoryKey, previousHistoryKey } = history.updateState(
+			tr,
+			nextState,
+		);
 
 		if (tr.steps.length > 0 || currentHistoryKey > previousHistoryKey) {
 			const nextDiscussions = getUpdatedDiscussionsForTransaction(
 				discussions,
 				tr.steps,
-				previousDoc,
-				currentDoc,
 				previousHistoryKey,
 				currentHistoryKey,
 			);

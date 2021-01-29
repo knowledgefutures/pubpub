@@ -41,7 +41,7 @@ const PubBody = (props: Props) => {
 		citationManager,
 		updateLocalData,
 		collabData,
-		firebaseBranchRef,
+		firebaseDraftRef,
 		historyData,
 	} = usePubContext();
 	const { isViewingHistory } = historyData;
@@ -93,7 +93,7 @@ const PubBody = (props: Props) => {
 	};
 
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
-	const editorKeyCollab = firebaseBranchRef ? 'ready' : 'unready';
+	const editorKeyCollab = firebaseDraftRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;
 	const isReadOnly = pubData.isReadOnly || pubData.isInMaintenanceMode || isViewingHistory;
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
@@ -168,16 +168,16 @@ const PubBody = (props: Props) => {
 				onError={handleError}
 				discussionsOptions={
 					loadCollaborativeOptions &&
-					firebaseBranchRef && {
-						draftRef: firebaseBranchRef,
+					firebaseDraftRef && {
+						draftRef: firebaseDraftRef,
 						initialHistoryKey: pubData.initialDocKey,
 						discussionAnchors: [],
 					}
 				}
 				collaborativeOptions={
-					loadCollaborativeOptions && firebaseBranchRef
+					loadCollaborativeOptions && firebaseDraftRef
 						? {
-								firebaseRef: firebaseBranchRef,
+								firebaseRef: firebaseDraftRef,
 								clientData: collabData.localCollabUser,
 								initialDocKey: pubData.initialDocKey,
 								onStatusChange: debounce((status) => {

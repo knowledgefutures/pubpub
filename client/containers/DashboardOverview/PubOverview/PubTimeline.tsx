@@ -6,19 +6,12 @@ import { Icon, Timeline, TimelineItem, TimelineCondenser } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { formatDate } from 'utils/dates';
 import { pubUrl } from 'utils/canonicalUrls';
+import { PubPageData } from 'utils/types';
 
 require('./pubTimeline.scss');
 
 type Props = {
-	pubData: {
-		createdAt?: any;
-		branches?: {
-			title?: string;
-		}[];
-		releases?: {
-			createdAt?: any;
-		}[];
-	};
+	pubData: PubPageData;
 };
 
 const PubTimeline = (props: Props) => {
@@ -30,19 +23,13 @@ const PubTimeline = (props: Props) => {
 		},
 	} = usePageContext();
 	const { releases } = pubData;
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const olderReleases = releases.slice(0, releases.length - 1);
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const latestRelease = releases[releases.length - 1];
+	const latestKeyAt = pubData.draft?.latestKeyAt;
+	const hasDraftContent = !!latestKeyAt;
 
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-	const draftBranch = pubData.branches.find((br) => br.title === 'draft');
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-	const hasDraftContent = !!draftBranch.latestKeyAt;
-
-	const draftLastEditedNotice = hasDraftContent
-		? // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-		  `Last edited ${formatDate(draftBranch.latestKeyAt, { includeTime: true })}`
+	const draftLastEditedNotice = latestKeyAt
+		? `Last edited ${formatDate(latestKeyAt, { includeTime: true })}`
 		: 'Get started by editing the Pub draft.';
 
 	const draftItem = (canView || canViewDraft) && (
@@ -143,10 +130,8 @@ const PubTimeline = (props: Props) => {
 	return (
 		// @ts-expect-error ts-migrate(2746) FIXME: This JSX tag's 'children' prop expects a single ch... Remove this comment to see the full error message
 		<Timeline className="pub-timeline-component" accentColor={communityData.accentColorDark}>
-			{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 			{releases.length === 0 && hasDraftContent && renderNoReleasesItem()}
 			{draftItem}
-			{/* @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'. */}
 			{latestRelease && renderReleaseItem(latestRelease, releases.length, true)}
 			{/* @ts-expect-error ts-migrate(2786) FIXME: 'TimelineCondenser' cannot be used as a JSX compon... Remove this comment to see the full error message */}
 			<TimelineCondenser shownItemsLimit={4}>

@@ -33,17 +33,9 @@ const getCounts = (isCollection, content) => {
 		  }, 0)
 		: content.discussions.filter((it) => !it.isClosed).length;
 
-	const countForks = isCollection
-		? content.pubs.reduce((prev, curr) => {
-				const forks = curr.forks || [];
-				return prev + forks.filter((it) => !it.isClosed).length;
-		  }, 0)
-		: content.forks.filter((it) => !it.isClosed).length;
-
 	return {
 		countReviews: countReviews,
 		countConversations: countConversations,
-		countForks: countForks,
 	};
 };
 

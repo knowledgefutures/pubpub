@@ -2,13 +2,13 @@ import Sequelize from 'sequelize';
 
 import { WorkerTask, Export } from 'server/models';
 import { addWorkerTask } from 'server/utils/workers';
-import { getBranchDoc } from 'server/utils/firebaseAdmin';
+import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { getExportFormats } from 'utils/export/formats';
 
-export const getOrStartExportTask = async ({ pubId, branchId, format, historyKey }) => {
+export const getOrStartExportTask = async ({ pubId, format, historyKey }) => {
 	const existingExport = await Export.findOne({
 		where: {
-			branchId: branchId,
+			pubId: pubId,
 			format: format,
 			historyKey: {
 				[Sequelize.Op.gte]: historyKey,
@@ -32,7 +32,6 @@ export const getOrStartExportTask = async ({ pubId, branchId, format, historyKey
 		existingExport ||
 		(await Export.create({
 			pubId: pubId,
-			branchId: branchId,
 			format: format,
 			historyKey: historyKey,
 		}));
@@ -46,16 +45,14 @@ export const getOrStartExportTask = async ({ pubId, branchId, format, historyKey
 	return { taskId: task.id };
 };
 
-export const createBranchExports = async (pubId, branchId) => {
+export const createLatestPubExports = async (pubId) => {
 	const {
 		historyData: { latestKey },
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 5 arguments, but got 2.
-	} = await getBranchDoc(pubId, branchId);
+	} = await getPubDraftDoc(pubId);
 	await Promise.all(
 		getExportFormats().map((format) =>
 			getOrStartExportTask({
 				pubId: pubId,
-				branchId: branchId,
 				format: format,
 				historyKey: latestKey,
 			}),

@@ -9,11 +9,11 @@ import { Node, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
 
 import { buildSchema, createFirebaseChange } from 'components/Editor/utils';
-import { getBranchRef } from 'server/utils/firebaseAdmin';
+import { getPubDraftRef } from 'server/utils/firebaseAdmin';
 import { createPub as createPubQuery } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createCollectionPub } from 'server/collectionPub/queries';
-import { Branch, Collection, PubAttribution } from 'server/models';
+import { Collection, PubAttribution } from 'server/models';
 import { extensionToPandocFormat, bibliographyFormats } from 'utils/import/formats';
 
 import { getFullPathsInDir, extensionFor } from '../../util';
@@ -413,13 +413,12 @@ const addFileNodeToDocument = (document, fileNodeAttrs) => {
 };
 
 const writeDocumentToPubDraft = async (pubId, document) => {
-	const draftBranch = await Branch.findOne({ where: { pubId: pubId, title: 'draft' } });
-	const branchRef = getBranchRef(pubId, draftBranch.id)!;
+	const draftRef = await getPubDraftRef(pubId);
 	const hydratedDocument = Node.fromJSON(documentSchema, document);
 	const documentSlice = new Slice(Fragment.from(hydratedDocument.content), 0, 0);
 	const replaceStep = new ReplaceStep(0, 0, documentSlice);
-	const change = createFirebaseChange([replaceStep], draftBranch.id, 'bulk-importer');
-	await branchRef!
+	const change = createFirebaseChange([replaceStep], 'bulk-importer');
+	await draftRef
 		.child('changes')
 		.child('0')
 		.set(change);

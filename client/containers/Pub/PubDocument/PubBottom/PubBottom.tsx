@@ -1,7 +1,9 @@
 import React from 'react';
 
 import { getNotes } from 'components/Editor/utils';
+import { PubPageData } from 'utils/types';
 
+import { usePubContext } from '../../pubHooks';
 import LicenseSection from './LicenseSection';
 import SearchableNoteSection from './SearchableNoteSection';
 import DiscussionsSection from './Discussions/DiscussionsSection';
@@ -9,8 +11,8 @@ import ReadNextSection from './ReadNextSection';
 
 require('./pubBottom.scss');
 
-type OwnProps = {
-	pubData: any;
+type Props = {
+	pubData: PubPageData;
 	collabData: any;
 	updateLocalData: (...args: any[]) => any;
 	sideContentRef: any;
@@ -18,17 +20,11 @@ type OwnProps = {
 	showDiscussions?: boolean;
 };
 
-const defaultProps = {
-	showDiscussions: true,
-};
-
-type Props = OwnProps & typeof defaultProps;
-
 const PubBottom = (props: Props) => {
 	const {
 		collabData: { editorChangeObject },
 		pubData,
-		showDiscussions,
+		showDiscussions = true,
 		updateLocalData,
 		sideContentRef,
 		mainContentRef,
@@ -83,5 +79,5 @@ const PubBottom = (props: Props) => {
 		</div>
 	);
 };
-PubBottom.defaultProps = defaultProps;
+
 export default PubBottom;

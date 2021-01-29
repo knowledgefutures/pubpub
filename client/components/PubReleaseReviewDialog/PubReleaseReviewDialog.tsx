@@ -8,15 +8,11 @@ import { apiFetch } from 'client/utils/apiFetch';
 require('./pubReleaseReviewDialog.scss');
 
 type OwnProps = {
-	historyData: {
-		latestKey?: number;
-	};
 	isOpen: boolean;
 	pubData: {
 		id?: string;
 		releases?: {}[];
 		slug?: string;
-		branches?: any[];
 	};
 	onClose: (...args: any[]) => any;
 	updatePubData: (...args: any[]) => any;

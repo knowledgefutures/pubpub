@@ -1,5 +1,5 @@
 import { Export } from 'server/models';
-import { createBranchExports } from 'server/export/queries';
+import { createLatestPubExports } from 'server/export/queries';
 
 import { lookupBranch, lookupPub } from './utils/lookup';
 import { promptOkay } from './utils/prompt';
@@ -16,7 +16,7 @@ const main = async () => {
 		{ throwIfNo: true },
 	);
 	await Export.destroy({ where: { branchId: branch.id } });
-	await createBranchExports(pub.id, branch.id);
+	await createLatestPubExports(pub.id, branch.id);
 	// eslint-disable-next-line no-console
 	console.log('Worker tasks created.');
 };

@@ -193,7 +193,6 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 								isOpen={isOpen}
 								onClose={onClose}
 								pubData={pubData}
-								historyData={historyData}
 								updatePubData={updatePubData}
 							/>
 						)}

@@ -108,7 +108,6 @@ const Discussion = (props: Props) => {
 				accessHash: locationData.query.access,
 				discussionId: discussionData.id,
 				pubId: pubData.id,
-				branchId: pubData.activeBranch.id,
 				communityId: communityData.id,
 			}),
 		}).then((updatedDiscussionData) => {

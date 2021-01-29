@@ -1,13 +1,13 @@
 import React from 'react';
 import dateFormat from 'dateformat';
-import { Menu, MenuItem, NonIdealState, Tag } from '@blueprintjs/core';
+import { Menu, MenuItem, Tag } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
 import { getPubPublishedDate, getPubLatestReleaseDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
 import PubHeaderBackground from 'containers/Pub/PubHeader/PubHeaderBackground';
 import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
-import { Avatar, ContributorsList, DashboardFrame } from 'components';
+import { ContributorsList, DashboardFrame } from 'components';
 
 import { getAllPubContributors } from 'utils/contributors';
 import PubTimeline from './PubTimeline';

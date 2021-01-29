@@ -11,6 +11,12 @@ const models = modelize`
 				permissions: "view"
 				User pubViewer {}
 			}
+			Release {
+				historyKey: 10
+			}
+			Release {
+				historyKey: 25
+			}
 		}
 	}
 `;
@@ -26,53 +32,48 @@ afterEach(async () => {
 
 teardown(afterAll);
 
-const makeExportQuery = (
-	historyKey,
-	{ branchTitle = 'draft', format = 'pdf', accessHash = null } = {},
-) => {
+const makeExportQuery = (historyKey, { format = 'pdf', accessHash = null } = {}) => {
 	const { community, pub } = models;
-	const branch = pub.branches.find((br) => br.title === branchTitle);
 	return {
 		communityId: community.id,
 		pubId: pub.id,
-		branchId: branch.id,
 		historyKey: historyKey,
 		accessHash: accessHash,
 		format: format,
 	};
 };
 
-it('Does not create an export of #draft for a user without permission', async () => {
+it('Does not create an export of a non-Release key for a user without permission', async () => {
 	const agent = await login();
 	await agent
 		.post('/api/export')
-		.send(makeExportQuery(0))
+		.send(makeExportQuery(3))
 		.expect(403);
 });
 
-it('Creates an export of #draft for a user with a valid access hash', async () => {
+it('Creates an export of any key for a user with a valid access hash', async () => {
 	const { pub } = models;
 	const agent = await login();
 	await agent
 		.post('/api/export')
-		.send(makeExportQuery(0, { accessHash: pub.viewHash }))
+		.send(makeExportQuery(17, { accessHash: pub.viewHash }))
 		.expect(201);
 });
 
-it('Creates an export of #draft for a pub viewer', async () => {
+it('Creates an export of any key for a pub viewer', async () => {
 	const { pubViewer } = models;
 	const agent = await login(pubViewer);
 	await agent
 		.post('/api/export')
-		.send(makeExportQuery(0))
+		.send(makeExportQuery(15))
 		.expect(201);
 });
 
-it('Creates an export of #public for anyone', async () => {
+it('Creates an export of a Release history key for anyone', async () => {
 	const agent = await login();
 	await agent
 		.post('/api/export')
-		.send(makeExportQuery(0, { branchTitle: 'public' }))
+		.send(makeExportQuery(10))
 		.expect(201);
 });
 

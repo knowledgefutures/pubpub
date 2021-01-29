@@ -6,37 +6,70 @@ import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
+import { InitialData } from 'utils/types';
 
-// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-const client = algoliasearch(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);
-const searchId = process.env.ALGOLIA_ID;
-const searchKey = process.env.ALGOLIA_SEARCH_KEY;
+const client = algoliasearch(process.env.ALGOLIA_ID!, process.env.ALGOLIA_KEY!);
+const searchId = process.env.ALGOLIA_ID!;
+const searchKey = process.env.ALGOLIA_SEARCH_KEY!;
+
+const filterValueAgainstKeys = (keys: string[], value: string) => {
+	const keyValuePairs = keys.map((key) => `${key}:${value}`);
+	return keyValuePairs.join(' OR ');
+};
+
+const limitToCommunity = (initialData: InitialData, filter: string) => {
+	const { locationData, communityData } = initialData;
+	if (locationData.isBasePubPub) {
+		return `communityId:${communityData.id} AND (${filter})`;
+	}
+	return filter;
+};
+
+const getPrivateAccessFilter = (initialData: InitialData, baseFilter: string, keys: string[]) => {
+	const {
+		loginData: { id: userId },
+	} = initialData;
+	if (userId) {
+		const privateFilter = filterValueAgainstKeys(keys, userId);
+		return `${baseFilter} OR ${privateFilter}`;
+	}
+	return baseFilter;
+};
+
+const createFilter = (
+	initialData: InitialData,
+	publicAccessKeys: string[],
+	privateAccessKeys: string[],
+) => {
+	const publicFilter = filterValueAgainstKeys(publicAccessKeys, 'true');
+	const privateAccessFilter = getPrivateAccessFilter(
+		initialData,
+		publicFilter,
+		privateAccessKeys,
+	);
+	const limitedToCommunity = limitToCommunity(initialData, privateAccessFilter);
+	return limitedToCommunity;
+};
 
 app.get('/search', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
-		const communityFilter = initialData.locationData.isBasePubPub
-			? ''
-			: `communityId:${initialData.communityData.id} AND `;
-		const pubUserFilterString = initialData.loginData.id
-			? ` OR branchAccessIds:${initialData.loginData.id}`
-			: '';
-		const pubSearchParams = {
-			filters: `${communityFilter}(branchIsPublic:true${pubUserFilterString})`,
-		};
 
-		const pageUserFilterString = initialData.loginData.id
-			? ` OR pageAccessIds:${initialData.loginData.id}`
-			: '';
-		const pageSearchParams = {
-			filters: `${communityFilter}(isPublic:true${pageUserFilterString})`,
-		};
+		const pubsSearchKey = client.generateSecuredApiKey(searchKey, {
+			filters: createFilter(
+				initialData,
+				['isPublic', 'branchIsPublic'],
+				['branchAccessIds', 'userIdsWithAccess'],
+			),
+		});
+		const pagesSearchKey = client.generateSecuredApiKey(searchKey, {
+			filters: createFilter(initialData, ['isPublic'], ['pageAccessIds']),
+		});
+
 		const searchData = {
 			searchId: searchId,
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-			pubsSearchKey: client.generateSecuredApiKey(searchKey, pubSearchParams),
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-			pagesSearchKey: client.generateSecuredApiKey(searchKey, pageSearchParams),
+			pubsSearchKey: pubsSearchKey,
+			pagesSearchKey: pagesSearchKey,
 		};
 
 		return renderToNodeStream(

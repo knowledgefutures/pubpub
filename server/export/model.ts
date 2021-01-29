@@ -3,7 +3,6 @@ export default (sequelize, dataTypes) => {
 		'Export',
 		{
 			id: sequelize.idType,
-			branchId: { type: dataTypes.UUID, allowNull: false },
 			format: { type: dataTypes.STRING, allowNull: false },
 			url: { type: dataTypes.STRING, allowNull: true },
 			historyKey: { type: dataTypes.INTEGER, allowNull: false },

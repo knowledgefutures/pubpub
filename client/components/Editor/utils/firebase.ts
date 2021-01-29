@@ -37,11 +37,10 @@ export const flattenKeyables = (
 	}, []);
 };
 
-export const createFirebaseChange = (steps: Step[], branchId: string, clientId: string) => {
+export const createFirebaseChange = (steps: Step[], clientId: string) => {
 	return {
 		id: uuid.v4(), // Keyable Id
 		cId: clientId, // Client Id
-		bId: branchId, // Origin Branch Id
 		s: steps.map((step) => compressStepJSON(step.toJSON())),
 		t: firebaseTimestamp,
 	};

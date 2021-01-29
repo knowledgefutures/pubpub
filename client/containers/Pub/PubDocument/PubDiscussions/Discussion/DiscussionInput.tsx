@@ -36,7 +36,7 @@ type Props = OwnProps & typeof defaultProps;
 
 const DiscussionInput = (props: Props) => {
 	const { discussionData, isPubBottomInput, pubData, updateLocalData } = props;
-	const { historyData, collabData, firebaseBranchRef } = usePubContext();
+	const { historyData, collabData, firebaseDraftRef } = usePubContext();
 	const { loginData, locationData, communityData } = usePageContext();
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState<null | { view?: any }>();
@@ -96,7 +96,6 @@ const DiscussionInput = (props: Props) => {
 				accessHash: locationData.query.access,
 				discussionId: discussionData.id,
 				pubId: pubData.id,
-				branchId: pubData.activeBranch.id,
 				historyKey: historyData.currentKey,
 				communityId: communityData.id,
 				content: getJSON(changeObject?.view),
@@ -113,7 +112,7 @@ const DiscussionInput = (props: Props) => {
 		if (isPubBottomInput) {
 			setIsLoading(false);
 			setEditorKey(Date.now());
-		} else if (firebaseBranchRef) {
+		} else if (firebaseDraftRef) {
 			await convertLocalHighlightToDiscussion(pubView, discussionData.id);
 		}
 	};

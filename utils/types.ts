@@ -95,7 +95,6 @@ export type CollectionPub = {
 
 export type Export = {
 	id: string;
-	branchId: string;
 	format: string;
 	url?: string;
 	historyKey: string;
@@ -115,34 +114,14 @@ export type Member = {
 	organizationId?: string;
 };
 
-export type Branch = {
-	id: string;
-	shortId: string;
-	title?: string;
-	description?: string;
-	submissionAlias?: string;
-	order?: number;
-	viewHash?: string;
-	discussHash?: string;
-	editHash?: string;
-	firstKeyAt?: string;
-	latestKeyAt?: string;
-	pubId: string;
-	maintenanceDocId?: string;
-};
-
 export type DocJson = { type: 'doc'; attrs: any; content: any[] };
 
 export type Release = {
 	id: string;
 	noteContent?: {};
 	noteText?: string;
-	branchKey: number;
 	pubId: string;
-	branchId: string;
 	userId: string;
-	sourceBranchId: string;
-	sourceBranchKey: number;
 	createdAt: string;
 	updatedAt: string;
 	historyKey: number;
@@ -153,7 +132,6 @@ export type Release = {
 export type PubVersion = {
 	id: string;
 	historyKey?: number;
-	branchId?: string;
 	pubId?: string;
 };
 
@@ -218,12 +196,12 @@ export type Pub = {
 	viewHash?: string;
 	editHash?: string;
 	communityId: string;
+	community?: Community;
 	discussions?: Discussion[];
 	attributions?: PubAttribution[];
 	collectionPubs?: CollectionPub[];
 	exports?: Export[];
 	members?: Member[];
-	branches?: Branch[];
 	releases: Release[];
 	pubVersions?: PubVersion[];
 	crossrefDepositRecord?: CrossrefDepositRecord;
@@ -258,7 +236,6 @@ export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs'> 
 		firebaseToken?: string;
 		initialStructuredCitations: boolean;
 		releaseNumber: Maybe<number>;
-		activeBranch?: Branch;
 	};
 
 export type Page = {
@@ -377,7 +354,6 @@ export type ScopeData = {
 		canAdmin: boolean;
 		canAdminCommunity: boolean;
 		canCreateDiscussions: boolean;
-		canCreateForks: boolean;
 		canCreateReviews: boolean;
 		canEdit: boolean;
 		canEditDraft: boolean;

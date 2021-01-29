@@ -14,17 +14,16 @@ type DataSnapshot = firebase.database.DataSnapshot;
 const uncompressDiscussionInfo = (compressed: CompressedDiscussionInfo): DiscussionInfo => {
 	const { selection: compressedSelection } = compressed;
 	const selection = compressedSelection && uncompressSelectionJSON(compressedSelection);
-	return { ...compressed, selection: selection };
+	return { ...compressed, selection: selection ?? null };
 };
 
 const compressDiscussionInfo = (uncompressed: DiscussionInfo): CompressedDiscussionInfo => {
 	const { selection: uncompressedSelection } = uncompressed;
 	const selection = uncompressedSelection && compressSelectionJSON(uncompressedSelection);
-	return { ...uncompressed, selection: selection };
+	return { ...uncompressed, selection: selection ?? null };
 };
 
-export const connectToFirebaseDiscussions = (draftRef: Reference): RemoteDiscussions => {
-	const discussionsRef = draftRef.child('discussions');
+export const connectToFirebaseDiscussions = (discussionsRef: Reference): RemoteDiscussions => {
 	let onDiscussions: null | DiscussionsHandler = null;
 	let disconnect: null | (() => void) = null;
 
@@ -46,7 +45,7 @@ export const connectToFirebaseDiscussions = (draftRef: Reference): RemoteDiscuss
 				.transaction((existingDiscussion: null | CompressedDiscussionInfo) => {
 					if (
 						!existingDiscussion ||
-						discussion.currentKey >= existingDiscussion.currentKey
+						discussion.currentKey > existingDiscussion.currentKey
 					) {
 						return compressDiscussionInfo(discussion);
 					}

@@ -2,7 +2,6 @@ import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { CollectionPub, Discussion, Pub, PubAttribution, Release } from 'utils/types';
 
 import sanitizeDiscussions from './discussionsSanitize';
-import sanitizeForks from './forksSanitize';
 import sanitizeReviews from './reviewsSanitize';
 
 export type SanitizedPubData = Pub & {
@@ -24,6 +23,15 @@ const sanitizeHashes = (pubData, activePermissions) => {
 		viewHash: canView || canViewDraft ? viewHash : null,
 		editHash: canEdit || canEditDraft ? editHash : null,
 	};
+};
+
+const getFilteredExports = (pubData, isRelease) => {
+	const { exports, releases } = pubData;
+	if (!isRelease) {
+		return exports;
+	}
+	const releaseHistoryKeys = new Set(releases.map((release) => release.historyKey));
+	return exports.filter((exp) => releaseHistoryKeys.has(exp.historyKey));
 };
 
 export default (
@@ -80,15 +88,15 @@ export default (
 		.sort((a, b) => (new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1));
 
 	const discussions = sanitizeDiscussions(pubData.discussions, activePermissions, loginData.id);
-	const forks = sanitizeForks(pubData.forks, activePermissions, loginData.id);
 	const reviews = sanitizeReviews(pubData.reviews, activePermissions, loginData.id);
 
 	return {
 		...pubData,
 		...sanitizeHashes(pubData, activePermissions),
 		attributions: pubData.attributions.map(ensureUserForAttribution),
+		draft: isRelease ? null : pubData.draft,
 		discussions: discussions,
-		forks: forks,
+		exports: getFilteredExports(pubData, isRelease),
 		reviews: reviews,
 		collectionPubs: filteredCollectionPubs,
 		isReadOnly: isRelease || !(canEdit || canEditDraft),

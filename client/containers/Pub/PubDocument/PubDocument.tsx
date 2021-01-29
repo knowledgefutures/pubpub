@@ -25,18 +25,18 @@ type OwnProps = {
 	pubData: any;
 	collabData: any;
 	historyData: any;
-	firebaseBranchRef?: any;
+	firebaseDraftRef?: any;
 	updateLocalData: (...args: any[]) => any;
 };
 
 const defaultProps = {
-	firebaseBranchRef: undefined,
+	firebaseDraftRef: undefined,
 };
 
 type Props = OwnProps & typeof defaultProps;
 
 const PubDocument = (props: Props) => {
-	const { pubData, historyData, collabData, firebaseBranchRef, updateLocalData } = props;
+	const { pubData, historyData, collabData, firebaseDraftRef, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
 	const { editorChangeObject } = collabData;
 	const { communityData, locationData, scopeData } = usePageContext();
@@ -53,13 +53,7 @@ const PubDocument = (props: Props) => {
 		const fromNumber = Number(locationData.query.from);
 		const toNumber = Number(locationData.query.to);
 		const permElement = document.getElementsByClassName('permanent')[0];
-		if (
-			editorChangeObject.view &&
-			firebaseBranchRef &&
-			fromNumber &&
-			toNumber &&
-			!permElement
-		) {
+		if (editorChangeObject.view && firebaseDraftRef && fromNumber && toNumber && !permElement) {
 			setTimeout(() => {
 				setLocalHighlight(editorChangeObject.view, fromNumber, toNumber, 'permanent');
 				setTimeout(() => {
@@ -67,7 +61,7 @@ const PubDocument = (props: Props) => {
 				}, 0);
 			}, 0);
 		}
-	}, [editorChangeObject.view, firebaseBranchRef, locationData]);
+	}, [editorChangeObject.view, firebaseDraftRef, locationData]);
 
 	// We use the useEffect hook to wait until after the render to show or hide discussions, since
 	// they mount into portals that we rely on Prosemirror to create.

@@ -4,7 +4,6 @@ import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import {
-	Branch,
 	Collection,
 	CollectionPub,
 	Community,
@@ -38,7 +37,6 @@ export const getPubMetadata = async (pubId) => {
 				],
 			},
 			{ model: Community, as: 'community' },
-			{ model: Branch, as: 'branches' },
 			{
 				model: PubAttribution,
 				as: 'attributions',

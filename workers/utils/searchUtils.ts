@@ -1,11 +1,45 @@
 import stopword from 'stopword';
 
-import { Pub, Community, Branch, PubAttribution, Page, includeUserModel } from 'server/models';
-import { getBranchDoc } from 'server/utils/firebaseAdmin';
+import {
+	Pub,
+	Community,
+	PubAttribution,
+	Page,
+	Release,
+	Doc,
+	includeUserModel,
+} from 'server/models';
+import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { getScope, getMembers } from 'server/utils/queryHelpers';
 import { getAuthorString } from 'utils/contributors';
+import { DefinitelyHas, Release as ReleaseType, Pub as PubType } from 'utils/types';
 
 import stopWordList from './stopwords';
+
+type AlgoliaPubEntry = {
+	pubId: string;
+	title: string;
+	slug: string;
+	avatar: string;
+	description: string;
+	byline: string;
+	customPublishedAt: string;
+	communityId: string;
+	communityDomain: string;
+	communityTitle: string;
+	communityAccentColorLight: string;
+	communityAccentColorDark: string;
+	communityHeaderLogo: string;
+	communityHeaderColorType: string;
+	communityUseHeaderTextAccent: boolean;
+	userIdsWithAccess: string;
+	isPublic: boolean;
+	content: string[];
+} & ({ isPublic: false; userIdsWithAccess: string[] } | { isPublic: true });
+
+type SearchPub = DefinitelyHas<PubType, 'attributions' | 'community'> & {
+	releases: DefinitelyHas<ReleaseType, 'doc'>[];
+};
 
 const lengthInUtf8Bytes = (str) => {
 	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -52,11 +86,54 @@ const jsonToTextChunks = (docJson) => {
 	return validateTextSize(splitText);
 };
 
+const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]> => {
+	const {
+		releases: [release],
+		community,
+	} = pub;
+	const entries: AlgoliaPubEntry[] = [];
+	const scopeData = await getScope({ pubId: pub.id, communityId: pub.community.id });
+	const { members } = await getMembers({ scopeData: scopeData });
+	const userIdsWithAccess = members.map((m) => m.userId);
+	const authorByline = getAuthorString(pub);
+	const sharedFields = {
+		pubId: pub.id,
+		title: pub.title,
+		slug: pub.slug,
+		avatar: pub.avatar!,
+		description: pub.description!,
+		byline: authorByline ? `by ${authorByline}` : '',
+		customPublishedAt: pub.customPublishedAt!,
+		communityId: community.id,
+		communityDomain: community.domain || `${community.subdomain}.pubpub.org`,
+		communityTitle: community.title,
+		communityAccentColorLight: community.accentColorLight!,
+		communityAccentColorDark: community.accentColorDark!,
+		communityHeaderLogo: community.headerLogo!,
+		communityHeaderColorType: community.headerColorType!,
+		communityUseHeaderTextAccent: community.useHeaderTextAccent!,
+		userIdsWithAccess: userIdsWithAccess,
+	};
+	if (release) {
+		entries.push({
+			...sharedFields,
+			isPublic: true,
+			content: jsonToTextChunks(release.doc.content),
+		});
+	}
+	const { doc } = await getPubDraftDoc(pub.id);
+	entries.push({
+		...sharedFields,
+		isPublic: false,
+		userIdsWithAccess: userIdsWithAccess,
+		content: jsonToTextChunks(doc),
+	});
+	return entries;
+};
+
 export const getPubSearchData = async (pubIds) => {
-	const pubs = await Pub.findAll({
-		where: {
-			id: pubIds,
-		},
+	const pubs: SearchPub[] = await Pub.findAll({
+		where: { id: pubIds },
 		include: [
 			{
 				model: Community,
@@ -70,88 +147,17 @@ export const getPubSearchData = async (pubIds) => {
 				include: [includeUserModel({ as: 'user' })],
 			},
 			{
-				model: Branch,
-				as: 'branches',
-				required: true,
+				model: Release,
+				as: 'releases',
 				separate: true,
-				order: [['shortId', 'ASC']],
+				include: [{ model: Doc, as: 'doc' }],
+				order: [['historyKey', 'DESC']],
+				limit: 1,
 			},
 		],
 	});
-
-	const branchesToSync = [];
-	for (let index = 0; index < pubs.length; index++) {
-		const pub = pubs[index].toJSON();
-		const authorByline = getAuthorString(pub);
-		// eslint-disable-next-line no-await-in-loop
-		const scopeData = await getScope({ pubId: pub.id, communityId: pub.community.id });
-		// eslint-disable-next-line no-await-in-loop
-		const { members } = await getMembers({ scopeData: scopeData });
-		const accessIds = members.map((member) => {
-			return member.userId;
-		});
-		pub.branches.forEach((branch) => {
-			/* Assume metadata is 3000 characters = 3000 bytes */
-			const data = {
-				pubId: pub.id,
-				title: pub.title,
-				slug: pub.slug,
-				avatar: pub.avatar,
-				description: pub.description,
-				byline: authorByline ? `by ${authorByline}` : '',
-				customPublishedAt: pub.customPublishedAt,
-				communityId: pub.community.id,
-				communityDomain: pub.community.domain || `${pub.community.subdomain}.pubpub.org`,
-				communityTitle: pub.community.title,
-				communityAccentColorLight: pub.community.accentColorLight,
-				communityAccentColorDark: pub.community.accentColorDark,
-				communityHeaderLogo: pub.community.headerLogo,
-				communityHeaderColorType: pub.community.headerColorType,
-				communityUseHeaderTextAccent: pub.community.useHeaderTextAccent,
-				branchId: branch.id,
-				branchShortId: branch.shortId,
-				branchAccessIds: accessIds,
-				branchIsPublic: branch.title === 'public',
-				branchCreatedAt: branch.createdAt,
-				branchContent: undefined,
-			};
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ pubId: any; title: any; slug: ... Remove this comment to see the full error message
-			branchesToSync.push(data);
-		});
-	}
-
-	const dataToSync = [];
-	const branchDocDataList = await Promise.all(
-		branchesToSync.map((branchData) => {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 5 arguments, but got 2.
-			return getBranchDoc(branchData.pubId, branchData.branchId).catch((err) => {
-				console.error(
-					`Error with pub:${
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'pubId' does not exist on type 'never'.
-						branchData.pubId
-					} branch:${
-						// @ts-expect-error ts-migrate(2339) FIXME: Property 'branchId' does not exist on type 'never'... Remove this comment to see the full error message
-						branchData.branchId
-					}. ${err.message}`,
-				);
-				return null;
-			});
-		}),
-	);
-	branchesToSync.forEach((branchData, index) => {
-		const branchDocData = branchDocDataList[index];
-		if (branchDocData && branchDocData.doc) {
-			jsonToTextChunks(branchDocData.doc).forEach((textChunk) => {
-				dataToSync.push({
-					// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
-					...branchData,
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
-					branchContent: textChunk,
-				});
-			});
-		}
-	});
-	return dataToSync;
+	const resultsByPub = await Promise.all(pubs.map(createSearchDataForPub));
+	return resultsByPub.reduce((a, b) => [...a, ...b], []);
 };
 
 export const getPageSearchData = async (pageIds) => {

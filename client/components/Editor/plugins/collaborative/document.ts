@@ -64,11 +64,7 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 						/* https://firebase.google.com/docs/reference/js/firebase.database.Reference#transactionupdate:-function */
 						return undefined;
 					}
-					return createFirebaseChange(
-						sendable.steps,
-						ref.key.replace('branch-', ''),
-						localClientId,
-					);
+					return createFirebaseChange(sendable.steps, localClientId);
 				},
 				null,
 				false,

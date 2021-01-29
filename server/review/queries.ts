@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid/v4';
 
-import { Branch, Thread, Visibility, ReviewNew, Pub } from 'server/models';
-import { getLatestKey } from 'server/utils/firebaseAdmin';
+import { Thread, Visibility, ReviewNew, Pub } from 'server/models';
+import { getLatestKeyInPubDraft } from 'server/utils/firebaseAdmin';
 
 import {
 	createCreatedThreadEvent,
@@ -61,16 +61,11 @@ export const createReview = async (inputValues, userData) => {
 };
 
 export const createReviewRelease = async (inputValues, userData) => {
-	const [branchData, pubData] = await Promise.all([
-		Branch.findOne({
-			where: { pubId: inputValues.pubId, title: 'draft' },
-		}),
-		Pub.findOne({
-			where: { id: inputValues.pubId },
-			attributes: ['id', 'slug'],
-		}),
-	]);
-	const latestKey = await getLatestKey(inputValues.pubId, branchData.id);
+	const pubData = await Pub.findOne({
+		where: { id: inputValues.pubId },
+		attributes: ['id', 'slug'],
+	});
+	const latestKey = await getLatestKeyInPubDraft(inputValues.pubId);
 	const updateResult = await ReviewNew.update(
 		{ status: 'completed' },
 		{
@@ -90,7 +85,7 @@ export const createReviewRelease = async (inputValues, userData) => {
 		userData,
 		inputValues.threadId,
 		pubData.slug,
-		release.branchKey + 1,
+		release.id,
 	);
 	const completedEvent = await createCompletedThreadEvent(userData, inputValues.threadId);
 	const reviewEvents = [releasedEvent, completedEvent];

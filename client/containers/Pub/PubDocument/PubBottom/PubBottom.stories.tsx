@@ -46,10 +46,6 @@ const pubData = {
 	discussions: discussionsData,
 	labels: null,
 	canManage: false,
-	canDiscussBranch: true,
-	activeBranch: {
-		id: 'ff116d8b-c3e5-4472-ab1a-8041ec1cc842',
-	},
 	collectionPubs: [],
 	releases: [],
 };
@@ -72,11 +68,8 @@ storiesOf('containers/Pub/PubDocument/PubBottom/PubBottom', module)
 	))
 	.add('cannot-discuss', () => (
 		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-			{/* @ts-expect-error ts-migrate(2739) FIXME: Type '{ pubData: { canDiscussBranch: boolean; foot... Remove this comment to see the full error message */}
-			<PubBottom
-				pubData={{ ...pubData, canDiscussBranch: false }}
-				collabData={{ editorChangeObject: {} }}
-			/>
+			{/* @ts-expect-error ts-migrate(2739) FIXME: Type '{ pubData: { foot... Remove this comment to see the full error message */}
+			<PubBottom pubData={{ ...pubData }} collabData={{ editorChangeObject: {} }} />
 		</div>
 	))
 	.add('no-pub-bottom-discussions', () => (

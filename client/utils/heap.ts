@@ -51,7 +51,6 @@ export const setupHeap = (initialData) => {
 		communityId: null,
 		pageId: null,
 		pubId: null,
-		branchId: null,
 	};
 	if (communityData) {
 		customEventData.communityId = communityData.id;
@@ -61,7 +60,6 @@ export const setupHeap = (initialData) => {
 	}
 	if (pubData) {
 		customEventData.pubId = pubData.id;
-		customEventData.branchId = pubData.activeBranch.id;
 	}
 	if (hasGdprConsent && loginData.id) {
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'loggedIn' does not exist on type '{ comm... Remove this comment to see the full error message

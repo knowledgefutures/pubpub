@@ -48,7 +48,6 @@ const findDiscussionWithUser = (id) =>
 
 type CreateDiscussionOpts = {
 	pubId: string;
-	branchId?: string;
 	discussionId?: string;
 	title?: string;
 	text: string;
@@ -68,7 +67,6 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 	const {
 		pubId,
 		discussionId,
-		branchId,
 		title,
 		text,
 		content,
@@ -105,8 +103,6 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 			suffix: suffix,
 			from: from,
 			to: to,
-			branchKey: historyKey,
-			branchId: branchId,
 		});
 	}
 

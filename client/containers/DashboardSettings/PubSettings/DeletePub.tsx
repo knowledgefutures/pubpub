@@ -53,8 +53,8 @@ class DeletePub extends Component<Props, State> {
 					<b>Deleting a Pub is permanent - it cannot be undone.</b>
 				</p>
 				<p>
-					This will permanantely delete the pub <b>{this.props.pubData.title}</b>, its
-					discussions, branches, and associated metadata.
+					This will permanently delete the Pub <b>{this.props.pubData.title}</b>, its
+					discussions, and associated metadata.
 				</p>
 				<p>Please type the title of the Pub below to confirm your intention.</p>
 

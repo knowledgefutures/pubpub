@@ -16,7 +16,7 @@ const getDraftForPub = (pub) => {
 	}
 	console.warn(`No draft branch found for Pub: [${pub.slug}] ${pub.title}`);
 	const id = uuid();
-	return Draft.create({ id: id, firebasePath: `draft-${id}` });
+	return Draft.create({ id: id, firebasePath: `drafts/draft-${id}` });
 };
 
 const handlePub = async (pub) => {

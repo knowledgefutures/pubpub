@@ -1,12 +1,9 @@
 /* global it, expect, beforeAll, afterAll, afterEach */
 import uuid from 'uuid';
 
-import { setup, teardown, login, stub, modelize } from 'stubstub';
+import { setup, teardown, login, modelize } from 'stubstub';
 
 import { Discussion, DiscussionAnchor, Thread, ThreadComment } from 'server/models';
-import * as firebaseAdmin from 'server/utils/firebaseAdmin';
-
-let firebaseStub;
 
 const alreadyAppliedManagedLabel = {
 	title: 'I have already been applied',
@@ -73,12 +70,7 @@ const models = modelize`
 `;
 
 setup(beforeAll, async () => {
-	firebaseStub = stub(firebaseAdmin, 'createFirebaseBranch');
 	await models.resolve();
-});
-
-afterEach(() => {
-	firebaseStub.restore();
 });
 
 const makeDiscussion = ({
@@ -466,8 +458,4 @@ it('lets admins remove managed labels from discussions', async () => {
 		.expect(200);
 
 	expect(discussion.labels).toEqual(targetLabels);
-});
-
-teardown(afterAll, () => {
-	firebaseStub.restore();
 });

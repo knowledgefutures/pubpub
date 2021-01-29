@@ -6,7 +6,5 @@ export default (sequelize, dataTypes) => {
 		suffix: { type: dataTypes.TEXT },
 		from: { type: dataTypes.INTEGER },
 		to: { type: dataTypes.INTEGER },
-		branchKey: { type: dataTypes.INTEGER },
-		branchId: { type: dataTypes.UUID },
 	});
 };

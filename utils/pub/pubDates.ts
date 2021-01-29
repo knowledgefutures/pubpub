@@ -2,15 +2,7 @@ import dateFormat from 'dateformat';
 
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
-import { DefinitelyHas, Maybe, CollectionPub, Pub, Branch } from 'utils/types';
-
-const selectBranch = (pub: DefinitelyHas<Pub, 'branches'>, branch: Maybe<Branch>) => {
-	const { branches } = pub;
-	if (!branch && !branches) {
-		return null;
-	}
-	return branch || branches.find((br) => br.title === 'public');
-};
+import { DefinitelyHas, Maybe, CollectionPub, Pub } from 'utils/types';
 
 export const getPubLatestReleasedDate = (pub: Pub) => {
 	if (pub.releases.length === 0) {
@@ -56,11 +48,9 @@ export const getPubLatestReleaseDate = (pub: Pub, { excludeFirstRelease = false 
 
 export const getPubUpdatedDate = ({
 	pub,
-	branch = null,
 	historyData = null,
 }: {
-	pub: DefinitelyHas<Pub, 'branches'>;
-	branch?: Maybe<Branch>;
+	pub: Pub;
 	historyData?: Maybe<{ timestamps?: number[]; latestKey?: number }>;
 }) => {
 	if (historyData) {
@@ -70,11 +60,8 @@ export const getPubUpdatedDate = ({
 			return new Date(latestTimestamp);
 		}
 	}
-	const selectedBranch = selectBranch(pub, branch);
-	if (selectedBranch) {
-		if (selectedBranch.latestKeyAt) {
-			return new Date(selectedBranch.latestKeyAt);
-		}
+	if ('draft' in pub && pub.draft?.latestKeyAt) {
+		return pub.draft.latestKeyAt;
 	}
 	return null;
 };

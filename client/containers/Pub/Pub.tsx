@@ -89,12 +89,12 @@ const Pub = (props: Props) => {
 					communityData={communityData}
 					loginData={loginData}
 				>
-					{({ pubData, collabData, firebaseBranchRef, updateLocalData, historyData }) => {
+					{({ pubData, collabData, firebaseDraftRef, updateLocalData, historyData }) => {
 						const modeProps = {
 							pubData: pubData,
 							collabData: collabData,
 							historyData: historyData,
-							firebaseBranchRef: firebaseBranchRef,
+							firebaseDraftRef: firebaseDraftRef,
 							updateLocalData: updateLocalData,
 						};
 						return (

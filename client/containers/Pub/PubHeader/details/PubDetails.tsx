@@ -28,8 +28,7 @@ const PubDetails = (props: Props) => {
 
 	const createdAt = getPubCreatedDate(pubData);
 	const publishedAt = getPubPublishedDate(pubData);
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'activeBranch' does not exist on type 'Pu... Remove this comment to see the full error message
-	const updatedAt = getPubUpdatedDate({ pub: pubData, branch: pubData.activeBranch });
+	const updatedAt = getPubUpdatedDate({ pub: pubData });
 	const shouldShowUpdatedDate = updatedAt && updatedAt !== publishedAt;
 
 	return (

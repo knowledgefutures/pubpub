@@ -62,6 +62,7 @@ const getEnrichedPubData = async ({
 		slug: pubSlug,
 		initialData: initialData,
 		releaseNumber: releaseNumber,
+		getDraft: true,
 	});
 
 	if (!pubData) {
@@ -69,17 +70,14 @@ const getEnrichedPubData = async ({
 	}
 
 	const { isRelease } = pubData;
-	const activeBranch = pubData.branches!.find(
-		(br) => br.title === (isRelease ? 'public' : 'draft'),
-	)!;
 
 	const getDocInfo = async () => {
 		if (isRelease) {
 			return getPubRelease(pubData, releaseNumber);
 		}
 		return {
-			...(await getPubFirebaseDraft(pubData, activeBranch, historyKey)),
-			...(await getPubFirebaseToken(pubData, activeBranch, initialData)),
+			...(await getPubFirebaseDraft(pubData, historyKey)),
+			...(await getPubFirebaseToken(pubData, initialData)),
 		};
 	};
 
@@ -91,7 +89,6 @@ const getEnrichedPubData = async ({
 		...citations,
 		...edges,
 		...docInfo,
-		activeBranch: activeBranch,
 	};
 };
 

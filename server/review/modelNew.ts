@@ -13,10 +13,6 @@ export default (sequelize, dataTypes) => {
 			releaseRequested: { type: dataTypes.BOOLEAN },
 			labels: { type: dataTypes.JSONB },
 			/* Set by Associations */
-			/* branchId should eventually be allowNull: false I think */
-			/* branchId is the id of the review branch, not the source branch (which */
-			/* must always be the draft of the associated pub) */
-			branchId: { type: dataTypes.UUID },
 			threadId: { type: dataTypes.UUID, allowNull: false },
 			visibilityId: { type: dataTypes.UUID, allowNull: false },
 			userId: { type: dataTypes.UUID, allowNull: false },
@@ -29,12 +25,7 @@ export default (sequelize, dataTypes) => {
 			],
 			classMethods: {
 				associate: (models) => {
-					const { ReviewNew, Branch, Visibility, Pub, User, Thread } = models;
-					ReviewNew.belongsTo(Branch, {
-						onDelete: 'CASCADE',
-						as: 'branch',
-						foreignKey: 'branchId',
-					});
+					const { ReviewNew, Visibility, Pub, User, Thread } = models;
 					ReviewNew.belongsTo(Thread, {
 						onDelete: 'CASCADE',
 						as: 'thread',

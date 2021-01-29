@@ -38,9 +38,6 @@ export default (sequelize, dataTypes) => {
 			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
 			citationStyle: { type: dataTypes.TEXT, defaultValue: 'apa' },
 			citationInlineStyle: { type: dataTypes.TEXT, defaultValue: 'count' },
-			// isPublicBranches: { type: dataTypes.BOOLEAN },
-			// isPublicDiscussions: { type: dataTypes.BOOLEAN },
-			// isPublicReviews: { type: dataTypes.BOOLEAN },
 			viewHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
 			nodeLabels: { type: dataTypes.JSONB },
@@ -65,13 +62,11 @@ export default (sequelize, dataTypes) => {
 			classMethods: {
 				associate: (models) => {
 					const {
-						Branch,
 						CollectionPub,
 						Community,
 						CrossrefDepositRecord,
 						Discussion,
 						Export,
-						Fork,
 						Member,
 						Pub,
 						PubAttribution,
@@ -104,11 +99,6 @@ export default (sequelize, dataTypes) => {
 						as: 'exports',
 						foreignKey: 'pubId',
 					});
-					Pub.hasMany(Fork, {
-						onDelete: 'CASCADE',
-						as: 'forks',
-						foreignKey: 'pubId',
-					});
 					Pub.hasMany(ReviewNew, {
 						onDelete: 'CASCADE',
 						as: 'reviews',
@@ -117,11 +107,6 @@ export default (sequelize, dataTypes) => {
 					Pub.hasMany(Member, {
 						onDelete: 'CASCADE',
 						as: 'members',
-						foreignKey: 'pubId',
-					});
-					Pub.hasMany(Branch, {
-						onDelete: 'CASCADE',
-						as: 'branches',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(Release, {

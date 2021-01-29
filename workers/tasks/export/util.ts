@@ -11,9 +11,9 @@ tmp.setGracefulCleanup();
 AWS.config.setPromisesDependency(Promise);
 const s3bucket = new AWS.S3({ params: { Bucket: 'assets.pubpub.org' } });
 
-export const uploadDocument = (branchId, tmpFile, extension) => {
+export const uploadDocument = (pubId, tmpFile, extension) => {
 	const readableStream = fs.createReadStream(tmpFile.path);
-	const key = `${generateHash(8)}/${branchId}.${extension}`;
+	const key = `${generateHash(8)}/${pubId}.${extension}`;
 	const params = {
 		Key: key,
 		Body: readableStream,

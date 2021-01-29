@@ -153,9 +153,8 @@ export default {
             ]
           },
           "noteText": "",
-          "branchKey": 0,
+          "historyKey": 0,
           "pubId": "954335d7-68cf-4a0d-8c29-82566b281d9b",
-          "branchId": "7a40b3b4-cf9f-4574-bec7-7ad70db56641",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-10-02T09:53:18.645Z",
           "updatedAt": "2019-10-02T09:53:18.646Z"
@@ -263,9 +262,8 @@ export default {
             ]
           },
           "noteText": "123",
-          "branchKey": 0,
+          "historyKey": 0,
           "pubId": "f9915ae8-6ffc-4e53-8523-333b90422631",
-          "branchId": "dc997562-fe08-4ba7-ac14-a05ec34e3b48",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-11-13T19:16:12.156Z",
           "updatedAt": "2019-11-13T19:16:12.158Z"
@@ -293,9 +291,8 @@ export default {
             ]
           },
           "noteText": "Hello",
-          "branchKey": 1,
+          "historyKey": 1,
           "pubId": "f9915ae8-6ffc-4e53-8523-333b90422631",
-          "branchId": "dc997562-fe08-4ba7-ac14-a05ec34e3b48",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-11-13T19:16:40.574Z",
           "updatedAt": "2019-11-13T19:16:40.575Z"
@@ -577,9 +574,8 @@ export default {
             ]
           },
           "noteText": "ohohoho",
-          "branchKey": 0,
+          "historyKey": 0,
           "pubId": "95578090-b60e-49c3-be9f-44c67abcd57d",
-          "branchId": "be398cce-029c-4e52-9900-3635254f6cbc",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-11-14T20:28:08.078Z",
           "updatedAt": "2019-11-14T20:28:08.079Z"
@@ -601,9 +597,8 @@ export default {
             ]
           },
           "noteText": "",
-          "branchKey": 1,
+          "historyKey": 1,
           "pubId": "95578090-b60e-49c3-be9f-44c67abcd57d",
-          "branchId": "be398cce-029c-4e52-9900-3635254f6cbc",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-11-22T15:37:18.076Z",
           "updatedAt": "2019-11-22T15:37:18.077Z"
@@ -625,9 +620,8 @@ export default {
             ]
           },
           "noteText": "",
-          "branchKey": 2,
+          "historyKey": 2,
           "pubId": "95578090-b60e-49c3-be9f-44c67abcd57d",
-          "branchId": "be398cce-029c-4e52-9900-3635254f6cbc",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-11-22T15:43:05.581Z",
           "updatedAt": "2019-11-22T15:43:05.582Z"
@@ -771,9 +765,8 @@ export default {
             ]
           },
           "noteText": "I am merging to public",
-          "branchKey": 0,
+          "historyKey": 0,
           "pubId": "118721d6-0f97-4d8f-8da3-f20969186311",
-          "branchId": "0965ba27-2f36-4abc-84e5-af2fb8f3059c",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-11-25T17:58:30.436Z",
           "updatedAt": "2019-11-25T17:58:30.438Z"
@@ -795,9 +788,8 @@ export default {
             ]
           },
           "noteText": "",
-          "branchKey": 1,
+          "historyKey": 1,
           "pubId": "118721d6-0f97-4d8f-8da3-f20969186311",
-          "branchId": "0965ba27-2f36-4abc-84e5-af2fb8f3059c",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-11-25T18:01:25.073Z",
           "updatedAt": "2019-11-25T18:01:25.074Z"
@@ -825,9 +817,8 @@ export default {
             ]
           },
           "noteText": "I am writing some more….",
-          "branchKey": 2,
+          "historyKey": 2,
           "pubId": "118721d6-0f97-4d8f-8da3-f20969186311",
-          "branchId": "0965ba27-2f36-4abc-84e5-af2fb8f3059c",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-11-25T18:04:38.990Z",
           "updatedAt": "2019-11-25T18:04:38.990Z"
@@ -900,9 +891,8 @@ export default {
             ]
           },
           "noteText": "Here is a merge.",
-          "branchKey": 0,
+          "historyKey": 0,
           "pubId": "0c96fab3-6146-430e-a309-7de6755753a5",
-          "branchId": "f61eea92-ce6d-4ccd-b30a-129e3e48964e",
           "userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
           "createdAt": "2019-12-02T13:16:53.359Z",
           "updatedAt": "2019-12-02T13:16:53.360Z"

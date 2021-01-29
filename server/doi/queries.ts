@@ -45,7 +45,6 @@ const findCollection = (collectionId) =>
 const findPub = (pubId) =>
 	Pub.findOne({
 		where: { id: pubId },
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ getEdgesOptions: { includePub:... Remove this comment to see the full error message
 		...buildPubOptions({
 			getEdgesOptions: {
 				// Include Pub for both inbound and outbound pub connections

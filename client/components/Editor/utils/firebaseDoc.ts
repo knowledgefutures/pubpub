@@ -9,7 +9,9 @@ type Reference = firebase.database.Reference;
 type Query = firebase.database.Query;
 
 type Checkpoint = {
-	doc: Record<any, any>;
+	d: Record<any, any>;
+	t: number;
+	k: number;
 };
 
 type CheckpointMap = Record<string, Checkpoint>;
@@ -39,7 +41,7 @@ const getMostRecentDocJson = async (
 			const checkpoint = checkpointSnapshot.val();
 			if (checkpoint) {
 				const { doc } = uncompressStateJSON(checkpoint);
-				return { doc: doc, key: bestKey, timestamp: checkpointMap[bestKey] };
+				return { doc: doc, key: bestKey, timestamp: checkpointMap[bestKey]?.t };
 			}
 		}
 	}

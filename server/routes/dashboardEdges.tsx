@@ -2,12 +2,12 @@ import React from 'react';
 
 import app, { wrap } from 'server/server';
 import Html from 'server/Html';
-import { handleErrors } from 'server/utils/errors';
+import { handleErrors, ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getPub, getOverview, sanitizeOverview } from 'server/utils/queryHelpers';
+import { getOverview, sanitizeOverview, getPubForRequest } from 'server/utils/queryHelpers';
 
 const getOverviewForEdges = async (initialData) => {
 	const rawOverview = await getOverview({
@@ -29,8 +29,17 @@ app.get(
 			const initialData = await getInitialData(req, true);
 			const [overviewData, pubData] = await Promise.all([
 				getOverviewForEdges(initialData),
-				getPub(pubSlug, initialData.communityData.id, { getEdges: 'all' }),
+				getPubForRequest({
+					slug: pubSlug,
+					initialData: initialData,
+					getEdges: 'all',
+				}),
 			]);
+
+			if (!pubData) {
+				throw new ForbiddenError();
+			}
+
 			return renderToNodeStream(
 				res,
 				<Html

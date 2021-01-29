@@ -30,7 +30,7 @@ const getBranchesForPub = async (pubId: string) => {
 };
 
 const getPubDraftDoc = async (pubId: string, draftBranchId: string, historyKey: number) => {
-	return getBranchDoc(pubId, draftBranchId, historyKey, false, false);
+	return getBranchDoc(pubId, draftBranchId, historyKey, false);
 };
 
 const getStepsSinceLastRelease = async (

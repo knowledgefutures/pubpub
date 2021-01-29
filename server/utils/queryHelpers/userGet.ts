@@ -21,7 +21,6 @@ export default async (slug, initialData) => {
 					{
 						model: Pub,
 						as: 'pub',
-						// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isPreview: boolean; getMembers... Remove this comment to see the full error message
 						...buildPubOptions({
 							isPreview: true,
 							getMembers: true,
@@ -41,7 +40,6 @@ export default async (slug, initialData) => {
 	userData = userData.toJSON();
 	userData.attributions = (userData.attributions || [])
 		.map((attribution) => {
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
 			const sanitizedPub = sanitizePub(attribution.pub, initialData);
 			return {
 				...attribution,

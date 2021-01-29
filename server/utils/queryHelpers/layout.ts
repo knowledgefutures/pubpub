@@ -4,7 +4,7 @@ import { CollectionPub, Pub } from 'server/models';
 import { issueCreatePubToken } from 'server/pub/tokens';
 
 import buildPubOptions from './pubOptions';
-import sanitizePub from './pubSanitize';
+import sanitizePub, { SanitizedPubData } from './pubSanitize';
 
 const getPubIdsForCollectionIds = async (collectionIds) => {
 	if (collectionIds && collectionIds.length > 0) {
@@ -46,7 +46,6 @@ const getPubsForLayoutBlock = async (blockContent, initialData, scopedPubIds, ex
 	const { limit, collectionIds = [], pubIds: pinnedPubIds = [] } = blockContent;
 
 	const sharedOptions = {
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isPreview: boolean; getMembers... Remove this comment to see the full error message
 		...buildPubOptions({
 			isPreview: true,
 			getMembers: true,
@@ -78,9 +77,8 @@ const getPubsForLayoutBlock = async (blockContent, initialData, scopedPubIds, ex
 	]);
 
 	const sanitizedPubs = [...pinnedPubs, ...otherPubs]
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
 		.map((pub) => sanitizePub(pub.toJSON(), initialData))
-		.filter((pub) => !!pub);
+		.filter((pub): pub is SanitizedPubData => !!pub);
 	const limitedPubs = limit ? sanitizedPubs.slice(0, limit) : sanitizedPubs;
 	return limitedPubs;
 };
@@ -92,10 +90,8 @@ export const getPubsForLayout = async ({ blocks, forLayoutEditor, initialData, c
 		const collectionWhere = scopedPubIds && { id: { [Op.in]: scopedPubIds } };
 		const pubs = await Pub.findAll({
 			where: { communityId: initialData.communityData.id, ...collectionWhere },
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isPreview: boolean; getMembers... Remove this comment to see the full error message
 			...buildPubOptions({ isPreview: true, getMembers: true, getCollections: true }),
 		});
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
 		return pubs.map((pub) => sanitizePub(pub.toJSON(), initialData)).filter((pub) => !!pub);
 	}
 

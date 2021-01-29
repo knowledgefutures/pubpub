@@ -11,14 +11,15 @@ import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import {
-	getPub,
+	getPubForRequest,
 	getMembers,
-	sanitizePub,
-	enrichPubFirebaseDoc,
-	enrichPubFirebaseToken,
-	enrichPubCitations,
-	enrichAndSanitizePubEdges,
+	getPubCitations,
+	getPubEdges,
+	getPubFirebaseDraft,
+	getPubFirebaseToken,
+	getPubRelease,
 } from 'server/utils/queryHelpers';
+import { InitialData } from 'utils/types';
 
 const renderPubDocument = (res, pubData, initialData) => {
 	return renderToNodeStream(
@@ -46,26 +47,52 @@ const renderPubDocument = (res, pubData, initialData) => {
 	);
 };
 
-const getEnrichedAndSanitizedPubData = async ({
+const getEnrichedPubData = async ({
 	pubSlug,
-	historyKey,
 	initialData,
-	branchType,
-	releaseNumber,
+	historyKey = null,
+	releaseNumber = null,
+}: {
+	pubSlug: string;
+	initialData: InitialData;
+	historyKey?: null | number;
+	releaseNumber?: null | number;
 }) => {
-	let pubData = await getPub(pubSlug, initialData.communityData.id);
+	const pubData = await getPubForRequest({
+		slug: pubSlug,
+		initialData: initialData,
+		releaseNumber: releaseNumber,
+	});
+
 	if (!pubData) {
 		throw new ForbiddenError();
 	}
-	pubData = await sanitizePub(pubData, initialData, releaseNumber);
-	if (!pubData) {
-		throw new ForbiddenError();
-	}
-	pubData = await enrichPubFirebaseDoc(pubData, historyKey, branchType);
-	pubData = await enrichPubFirebaseToken(pubData, initialData);
-	pubData = await enrichPubCitations(pubData, initialData);
-	pubData = await enrichAndSanitizePubEdges(pubData, initialData);
-	return pubData;
+
+	const { isRelease } = pubData;
+	const activeBranch = pubData.branches!.find(
+		(br) => br.title === (isRelease ? 'public' : 'draft'),
+	)!;
+
+	const getDocInfo = async () => {
+		if (isRelease) {
+			return getPubRelease(pubData, releaseNumber);
+		}
+		return {
+			...(await getPubFirebaseDraft(pubData, activeBranch, historyKey)),
+			...(await getPubFirebaseToken(pubData, activeBranch, initialData)),
+		};
+	};
+
+	const [docInfo, edges] = await Promise.all([getDocInfo(), getPubEdges(pubData, initialData)]);
+	const citations = await getPubCitations(pubData, initialData, docInfo.initialDoc);
+
+	return {
+		...pubData,
+		...citations,
+		...edges,
+		...docInfo,
+		activeBranch: activeBranch,
+	};
 };
 
 app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
@@ -80,11 +107,9 @@ app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
 			throw new NotFoundError();
 		}
 
-		const pubData = await getEnrichedAndSanitizedPubData({
+		const pubData = await getEnrichedPubData({
 			pubSlug: pubSlug,
-			historyKey: releaseNumber - 1,
 			releaseNumber: releaseNumber,
-			branchType: 'public',
 			initialData: initialData,
 		});
 
@@ -115,12 +140,10 @@ app.get(['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'], async (req, 
 		}
 
 		const pubData = await Promise.all([
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ pubSlug: any; historyKey: numb... Remove this comment to see the full error message
-			getEnrichedAndSanitizedPubData({
+			getEnrichedPubData({
 				pubSlug: pubSlug,
-				historyKey: hasHistoryKey ? historyKey : null,
-				branchType: 'draft',
 				initialData: initialData,
+				historyKey: hasHistoryKey ? historyKey : null,
 			}),
 			getMembers(initialData),
 		]).then(([enrichedPubData, membersData]) => ({

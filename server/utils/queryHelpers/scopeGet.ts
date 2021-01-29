@@ -329,7 +329,6 @@ getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 	let reviewCount = 0;
 	let forkCount = 0;
 	let pubs = [];
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isAuth: boolean; }' is not ass... Remove this comment to see the full error message
 	const pubQueryOptions = buildPubOptions({ isAuth: true });
 	if (activeTargetType === 'pub') {
 		const pubData = await Pub.findOne({

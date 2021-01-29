@@ -48,7 +48,7 @@ export type DiscussionsOptions = {
 export type PluginsOptions = {
 	citationManager?: CitationManager;
 	collaborativeOptions?: CollaborativeOptions;
-	discussionsOptions: null | DiscussionsOptions;
+	discussionsOptions?: null | DiscussionsOptions;
 	initialDoc: Node;
 	isReadOnly?: boolean;
 	nodeLabels: NodeLabelMap;

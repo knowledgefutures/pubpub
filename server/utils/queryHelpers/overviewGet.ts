@@ -48,7 +48,6 @@ export default async (
 				where: activePub && activeTargetType === 'pub' ? { id: activePub.id } : {},
 				as: 'pubs',
 				separate: true,
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ isPreview: boolean; getMembers... Remove this comment to see the full error message
 				...buildPubOptions({ isPreview: true, getMembers: true, getCollections: true }),
 			},
 		],

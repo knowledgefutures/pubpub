@@ -7,7 +7,16 @@ import { CitationManager } from 'client/utils/citations/citationManager';
 import { initFirebase } from 'client/utils/firebaseClient';
 import { apiFetch } from 'client/utils/apiFetch';
 import { NodeLabelMap } from 'client/components/Editor/types';
-import { Maybe, PatchFn, PubPageData, Community, LoginData, LocationData } from 'utils/types';
+import {
+	Maybe,
+	PatchFn,
+	PatchFnArg,
+	PubPageData,
+	Community,
+	LoginData,
+	LocationData,
+	DocJson,
+} from 'utils/types';
 
 const shimPubContextProps = {
 	pubData: {
@@ -52,6 +61,7 @@ type State = {
 		isViewingHistory: boolean;
 		loadedIntoHistory: boolean;
 		historyDocKey: string;
+		historyDoc?: DocJson;
 		outstandingRequests: number;
 		latestKeyReceivedAt: Maybe<number>;
 		timestamps: Record<string, number>;
@@ -68,7 +78,7 @@ type State = {
 };
 
 type PubContextType = State & {
-	updateLocalData: PatchFn<any>;
+	updateLocalData: (type: string, patcher: PatchFnArg<any>) => unknown;
 	updatePubData: PatchFn<PubPageData>;
 };
 
@@ -201,37 +211,40 @@ class PubSyncManager extends React.Component<Props, State> {
 	}
 
 	componentDidMount() {
-		const rootKey = `pub-${this.props.pubData.id}`;
-		const branchKey = `branch-${this.props.pubData.activeBranch.id}`;
-		initFirebase(rootKey, this.props.pubData.firebaseToken).then((firebaseRefs) => {
-			if (!firebaseRefs) {
-				return;
-			}
-			const [rootRef, connectionRef] = firebaseRefs;
-			this.setState(
-				{
-					firebaseRootRef: rootRef,
-					firebaseBranchRef: rootRef.child(branchKey),
-				},
-				() => {
-					this.state.firebaseRootRef
-						?.child('metadata')
-						.on('child_changed', this.syncMetadata);
+		const { activeBranch } = this.props.pubData;
+		if (activeBranch) {
+			const rootKey = `pub-${this.props.pubData.id}`;
+			const branchKey = `branch-${activeBranch.id}`;
+			initFirebase(rootKey, this.props.pubData.firebaseToken).then((firebaseRefs) => {
+				if (!firebaseRefs) {
+					return;
+				}
+				const [rootRef, connectionRef] = firebaseRefs;
+				this.setState(
+					{
+						firebaseRootRef: rootRef,
+						firebaseBranchRef: rootRef.child(branchKey),
+					},
+					() => {
+						this.state.firebaseRootRef
+							?.child('metadata')
+							.on('child_changed', this.syncMetadata);
 
-					this.state.firebaseBranchRef
-						?.child('cursors')
-						.on('value', this.syncRemoteCollabUsers);
+						this.state.firebaseBranchRef
+							?.child('cursors')
+							.on('value', this.syncRemoteCollabUsers);
 
-					connectionRef.on('value', (snapshot) => {
-						if (snapshot.val() === true) {
-							this.updateLocalData('collab', { status: 'connected' });
-						} else {
-							this.updateLocalData('collab', { status: 'disconnected' });
-						}
-					});
-				},
-			);
-		});
+						connectionRef.on('value', (snapshot) => {
+							if (snapshot.val() === true) {
+								this.updateLocalData('collab', { status: 'connected' });
+							} else {
+								this.updateLocalData('collab', { status: 'disconnected' });
+							}
+						});
+					},
+				);
+			});
+		}
 	}
 
 	componentWillUnmount() {

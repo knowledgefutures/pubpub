@@ -29,14 +29,17 @@ export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 	].filter((x) => x);
 };
 
+export type PubEdgeIncludesOptions = {
+	includeCommunityForPubs?: boolean;
+	includeTargetPub?: boolean;
+	includePub?: boolean;
+};
+
 export const getPubEdgeIncludes = ({
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	includeCommunityForPubs,
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	includeTargetPub,
-	// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-	includePub,
-} = {}) => {
+	includeCommunityForPubs = false,
+	includeTargetPub = false,
+	includePub = false,
+}: PubEdgeIncludesOptions = {}) => {
 	return [
 		includeTargetPub && {
 			model: Pub,

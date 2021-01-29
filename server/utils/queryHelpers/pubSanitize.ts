@@ -1,8 +1,21 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
+import { CollectionPub, Discussion, Pub, PubAttribution, Release } from 'utils/types';
 
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeForks from './forksSanitize';
 import sanitizeReviews from './reviewsSanitize';
+
+export type SanitizedPubData = Pub & {
+	viewHash: string | null;
+	editHash: string | null;
+	attributions: PubAttribution[];
+	discussions: Discussion[];
+	collectionPubs: CollectionPub[];
+	isReadOnly: boolean;
+	isRelease: boolean;
+	releases: Release[];
+	releaseNumber: number | null;
+};
 
 const sanitizeHashes = (pubData, activePermissions) => {
 	const { editHash, viewHash } = pubData;
@@ -13,7 +26,11 @@ const sanitizeHashes = (pubData, activePermissions) => {
 	};
 };
 
-export default (pubData, initialData, releaseNumber) => {
+export default (
+	pubData,
+	initialData,
+	releaseNumber: number | null = null,
+): null | SanitizedPubData => {
 	const { loginData, scopeData } = initialData;
 	const { activePermissions } = scopeData;
 	const { canView, canViewDraft, canEdit, canEditDraft } = activePermissions;
@@ -49,9 +66,11 @@ export default (pubData, initialData, releaseNumber) => {
 		return null;
 	}
 
-	const isRelease = !!releaseNumber;
-	if (isRelease && pubData.releases.length < releaseNumber) {
-		return null;
+	const isRelease = typeof releaseNumber === 'number' && releaseNumber > 0;
+	if (isRelease) {
+		if (typeof releaseNumber === 'number' && releaseNumber > pubData.releases.length) {
+			return null;
+		}
 	}
 
 	// TODO(ian): completely unsure why we can't just the `order` parameter within the `include`

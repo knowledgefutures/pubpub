@@ -18,8 +18,18 @@ import {
 	includeUserModel,
 } from 'server/models';
 
-import { getPubEdgeIncludes } from './pubEdgeOptions';
+import { getPubEdgeIncludes, PubEdgeIncludesOptions } from './pubEdgeOptions';
 import { baseAuthor, baseThread, baseVisibility } from './util';
+
+export type PubGetOptions = {
+	isAuth?: boolean;
+	isPreview?: boolean;
+	getCollections?: boolean;
+	getMembers?: boolean;
+	getCommunity?: boolean;
+	getEdges?: 'all' | 'approved-only';
+	getEdgesOptions?: PubEdgeIncludesOptions;
+};
 
 export default ({
 	isAuth,
@@ -29,7 +39,7 @@ export default ({
 	getCommunity,
 	getEdges = 'approved-only',
 	getEdgesOptions,
-}) => {
+}: PubGetOptions) => {
 	const allowUnapprovedEdges = getEdges === 'all';
 	/* Initialize values assuming all inputs are false. */
 	/* Then, iterate over each input and adjust */

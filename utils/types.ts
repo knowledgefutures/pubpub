@@ -212,6 +212,7 @@ export type Pub = {
 	viewHash?: string;
 	editHash?: string;
 	communityId: string;
+	discussions?: Discussion[];
 	attributions?: PubAttribution[];
 	collectionPubs?: CollectionPub[];
 	exports?: Export[];
@@ -227,22 +228,30 @@ export type Pub = {
 	nodeLabels: NodeLabelMap;
 };
 
-export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs' | 'discussions'> & {
-	viewHash: Maybe<string>;
-	editHash: Maybe<string>;
-	isReadOnly: boolean;
-	isRelease: boolean;
-	isInMaintenanceMode: boolean;
-	initialStructuredCitations: boolean;
-	releaseNumber: Maybe<number>;
+export type PubDocInfo = {
+	initialDoc: DocJson;
+	initialDocKey: number;
+	mostRecentRemoteKey?: number;
 	historyData: {
+		timestamps: Record<string, number>;
 		currentKey: number;
 		latestKey: number;
-		timestamps: Record<string, number>;
 	};
-	activeBranch: Branch;
-	firebaseToken: string;
 };
+
+export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs'> &
+	PubDocInfo & {
+		discussions: DefinitelyHas<Discussion, 'discussionAnchor'>[];
+		viewHash: Maybe<string>;
+		editHash: Maybe<string>;
+		isReadOnly: boolean;
+		isRelease: boolean;
+		isInMaintenanceMode?: boolean;
+		firebaseToken?: string;
+		initialStructuredCitations: boolean;
+		releaseNumber: Maybe<number>;
+		activeBranch?: Branch;
+	};
 
 export type Page = {
 	id: string;
@@ -396,5 +405,5 @@ export type DefinitelyHas<X extends {}, Keys> = X & { [k in keyof X & Keys]: Som
 
 type PatchFnUpdaterArg<T> = (current: T) => Partial<T>;
 type PatchFnPatchArg<T> = Partial<T>;
-type PatchFnArg<T> = PatchFnPatchArg<T> | PatchFnUpdaterArg<T>;
+export type PatchFnArg<T> = PatchFnPatchArg<T> | PatchFnUpdaterArg<T>;
 export type PatchFn<T> = (arg: PatchFnArg<T>) => unknown;

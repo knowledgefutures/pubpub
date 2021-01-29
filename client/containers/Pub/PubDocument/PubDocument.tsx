@@ -96,14 +96,7 @@ const PubDocument = (props: Props) => {
 						initialFilters={[PubEdgeFilter.Parent]}
 						isolated
 					/>
-					<PubBody
-						editorWrapperRef={editorWrapperRef}
-						pubData={pubData}
-						collabData={collabData}
-						historyData={historyData}
-						firebaseBranchRef={firebaseBranchRef}
-						updateLocalData={updateLocalData}
-					/>
+					<PubBody editorWrapperRef={editorWrapperRef} />
 					{!isViewingHistory && (canEdit || canEditDraft) && !pubData.isReadOnly && (
 						<PubFileImport
 							editorChangeObject={collabData.editorChangeObject}

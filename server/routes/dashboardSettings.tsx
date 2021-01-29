@@ -6,13 +6,15 @@ import { handleErrors, ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getPub, sanitizePub } from 'server/utils/queryHelpers';
+import { getPubForRequest } from 'server/utils/queryHelpers';
 
 const getSettingsData = async (pubSlug, initialData) => {
 	if (pubSlug) {
-		const pubData = await getPub(pubSlug, initialData.communityData.id, { getEdges: 'all' });
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
-		return { pubData: sanitizePub(pubData, initialData) };
+		return getPubForRequest({
+			slug: pubSlug,
+			initialData: initialData,
+			getEdges: 'all',
+		});
 	}
 	return {};
 };

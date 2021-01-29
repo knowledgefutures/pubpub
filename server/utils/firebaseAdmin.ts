@@ -13,6 +13,7 @@ import discussionSchema from 'utils/editor/discussionSchema';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 import { storeCheckpoint } from 'client/components/Editor/utils';
 import { restoreDiscussionMaps } from 'server/utils/discussionMaps';
+import { DocJson } from 'utils/types';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {
@@ -62,11 +63,10 @@ const maybeAddKeyTimestampPair = (key, timestamp) => {
 };
 
 export const getBranchDoc = async (
-	pubId,
-	branchId,
-	historyKey,
-	createMissingCheckpoints,
-	doRestoreDiscussionMaps,
+	pubId: string,
+	branchId: string,
+	historyKey: null | number,
+	createMissingCheckpoints = false,
 ) => {
 	const branchRef = getBranchRef(pubId, branchId)!;
 
@@ -74,22 +74,18 @@ export const getBranchDoc = async (
 		{ doc, docIsFromCheckpoint, key: currentKey, timestamp: currentTimestamp, checkpointMap },
 		{ timestamp: firstTimestamp, key: firstKey },
 		{ timestamp: latestTimestamp, key: latestKey },
-	] = await Promise.all(
-		[
-			getFirebaseDoc(branchRef, editorSchema, historyKey),
-			getFirstKeyAndTimestamp(branchRef),
-			getLatestKeyAndTimestamp(branchRef),
-			doRestoreDiscussionMaps &&
-				restoreDiscussionMaps(branchRef, editorSchema, true).catch(() => {}),
-		].filter((x) => x),
-	);
+	] = await Promise.all([
+		getFirebaseDoc(branchRef, editorSchema, historyKey),
+		getFirstKeyAndTimestamp(branchRef),
+		getLatestKeyAndTimestamp(branchRef),
+	]);
 
 	if (!docIsFromCheckpoint && createMissingCheckpoints && currentKey === latestKey) {
 		storeCheckpoint(branchRef, doc, latestKey);
 	}
 
 	return {
-		doc: doc.toJSON(),
+		doc: doc.toJSON() as DocJson,
 		mostRecentRemoteKey: currentKey,
 		firstTimestamp: firstTimestamp,
 		latestTimestamp: latestTimestamp,

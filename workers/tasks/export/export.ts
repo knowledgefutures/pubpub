@@ -19,7 +19,6 @@ export const exportTask = async ({ exportId }, collectSubprocess) => {
 	const { extension, pandocTarget, pagedTarget } = getExportFormatDetails(format);
 	const tmpFile = await getTmpFileForExtension(extension);
 	const pubMetadata = await getPubMetadata(pubId);
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 5 arguments, but got 3.
 	const { doc: pubDoc } = await getBranchDoc(pubId, branchId, historyKey);
 	const notesData = await getNotesData(pubMetadata, pubDoc);
 	const staticHtml = await renderStaticHtml({

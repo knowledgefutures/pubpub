@@ -2,16 +2,12 @@ import React from 'react';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import { handleErrors } from 'server/utils/errors';
+import { handleErrors, ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
+import { generateCitationHtml } from 'server/utils/citations';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import {
-	getPub,
-	enrichPubFirebaseDoc,
-	sanitizePub,
-	enrichPubCitations,
-} from 'server/utils/queryHelpers';
+import { getPubForRequest } from 'server/utils/queryHelpers';
 
 app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, next) => {
 	try {
@@ -25,18 +21,23 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 		}
 
 		const initialData = await getInitialData(req, true);
-		const barePubData = await getPub(req.params.pubSlug, initialData.communityData.id);
-		const pubData = await enrichPubFirebaseDoc(barePubData, null, 'draft');
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
-		const sanitizedPub = await sanitizePub(pubData, initialData);
-		const enrichedPub = await enrichPubCitations(sanitizedPub, initialData);
+		const pubData = await getPubForRequest({
+			slug: req.params.pubSlug,
+			initialData: initialData,
+		});
+
+		if (!pubData) {
+			throw new ForbiddenError();
+		}
+
+		const citationData = await generateCitationHtml(pubData, initialData);
 
 		return renderToNodeStream(
 			res,
 			<Html
 				chunkName="DashboardOverview"
 				initialData={initialData}
-				viewData={{ pubData: enrichedPub }}
+				viewData={{ pubData: { ...pubData, citationData: citationData } }}
 				headerComponents={generateMetaComponents({
 					initialData: initialData,
 					title: `Overview · ${initialData.scopeData.elements.activeTarget.title}`,

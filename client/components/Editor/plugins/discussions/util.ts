@@ -1,7 +1,6 @@
-import { Node } from 'prosemirror-model';
 import { Mapping, Step } from 'prosemirror-transform';
 
-import { Discussions, DiscussionInfo, DiscussionSelection } from './types';
+import { Discussions, DiscussionInfo, DiscussionSelection, Range } from './types';
 
 export const isEmptySelection = (selection: null | DiscussionSelection) => {
 	if (selection) {
@@ -10,31 +9,54 @@ export const isEmptySelection = (selection: null | DiscussionSelection) => {
 	return true;
 };
 
+export const getRangeFromSelection = (selection: DiscussionSelection): Range => {
+	const { anchor, head } = selection;
+	const from = Math.min(anchor, head);
+	const to = Math.max(anchor, head);
+	return { from: from, to: to };
+};
+
+export const getSelectionFromRange = (range: Range): DiscussionSelection => {
+	const { from, to } = range;
+	return {
+		type: 'text',
+		anchor: from,
+		head: to,
+	};
+};
+
+export const mapDiscussionSelectionThroughSteps = (
+	selection: null | DiscussionSelection,
+	steps: Step[],
+) => {
+	if (isEmptySelection(selection)) {
+		return null;
+	}
+	const mapping = new Mapping(steps.map((step) => step.getMap()));
+	const { from, to } = getRangeFromSelection(selection!);
+	// This matches the default mapping of inline Decorations, which we wish to emulate here.
+	// The default Selection mapping behavior is too greedy; for instance, if a selection is made
+	// at the beginning of the document, any text inserted before that selection is also mapped
+	// into that selection, which is not what we want for anchored Discussions.
+	// See: https://github.com/ProseMirror/prosemirror-view/blob/49889c576bc450a3008117249f9ef9beb6bf2969/src/decoration.js#L36
+	const nextFrom = mapping.map(from, 1);
+	const nextTo = mapping.map(to, -1);
+	if (nextFrom === nextTo) {
+		return null;
+	}
+	return getSelectionFromRange({ from: nextFrom, to: nextTo });
+};
+
 export const mapDiscussionThroughSteps = (
 	discussion: DiscussionInfo,
 	steps: Step[],
 ): DiscussionInfo => {
-	const { selection } = discussion;
-	if (isEmptySelection(selection) || steps.length === 0) {
+	if (!steps.length) {
 		return discussion;
-	}
-	const { head, anchor } = selection!;
-	const mapping = new Mapping(steps.map((step) => step.getMap()));
-	const nextHead = mapping.map(head, -1);
-	const nextAnchor = mapping.map(anchor, -1);
-	if (nextHead === nextAnchor) {
-		return {
-			...discussion,
-			selection: null,
-		};
 	}
 	return {
 		...discussion,
-		selection: {
-			type: 'text',
-			anchor: nextAnchor,
-			head: nextHead,
-		},
+		selection: mapDiscussionSelectionThroughSteps(discussion.selection, steps),
 	};
 };
 

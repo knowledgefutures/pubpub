@@ -1,6 +1,8 @@
 import { Node } from 'prosemirror-model';
 import { Mapping } from 'prosemirror-transform';
 
+export type Range = { from: number; to: number };
+
 export type DiscussionSelection = { type: 'text'; anchor: number; head: number };
 
 export type DiscussionInfo = {

@@ -3,8 +3,8 @@ import { modelize, setup } from 'stubstub';
 
 import { buildSchema } from 'client/components/Editor';
 import { Fragment, Node, Slice } from 'prosemirror-model';
-import { TextSelection, EditorState } from 'prosemirror-state';
-import { ReplaceStep, Step } from 'prosemirror-transform';
+import { TextSelection } from 'prosemirror-state';
+import { ReplaceStep } from 'prosemirror-transform';
 
 import {
 	createOriginalDiscussionAnchor,
@@ -48,16 +48,6 @@ const initialSelection = TextSelection.create(originalDoc, 5, 7).toJSON();
 const replaceStep1 = new ReplaceStep(1, 1, new Slice(Fragment.from(schema.text('Hey! ')), 0, 0));
 const replaceStep2 = new ReplaceStep(1, 13, Slice.empty);
 
-const applyStepsToDocument = (doc: Node, steps: Step[]) => {
-	return steps.reduce((intermediateDoc, step) => {
-		const { failed, doc: nextDoc } = step.apply(intermediateDoc);
-		if (failed) {
-			console.error(`Failed with: ${failed}`);
-		}
-		return nextDoc!;
-	}, doc);
-};
-
 describe('createUpdatedDiscussionAnchorForNewSteps', () => {
 	it('repeatedly updates an anchor for a discussion', async () => {
 		const {
@@ -79,8 +69,6 @@ describe('createUpdatedDiscussionAnchorForNewSteps', () => {
 		// Shift the discussion over a bit
 		const secondAnchor = await createUpdatedDiscussionAnchorForNewSteps(
 			firstAnchor,
-			originalDoc,
-			applyStepsToDocument(originalDoc, [replaceStep1]),
 			[replaceStep1],
 			2,
 		);
@@ -98,8 +86,6 @@ describe('createUpdatedDiscussionAnchorForNewSteps', () => {
 		// Now remove its selection entirely
 		const thirdAnchor = await createUpdatedDiscussionAnchorForNewSteps(
 			firstAnchor,
-			originalDoc,
-			applyStepsToDocument(originalDoc, [replaceStep2]),
 			[replaceStep2],
 			2,
 		);
@@ -113,8 +99,6 @@ describe('createUpdatedDiscussionAnchorForNewSteps', () => {
 		// Check whether we can still updates to an anchor with a null selection
 		const fourthAnchor = await createUpdatedDiscussionAnchorForNewSteps(
 			{ ...firstAnchor.toJSON(), selection: null },
-			originalDoc,
-			applyStepsToDocument(originalDoc, [replaceStep1]),
 			[replaceStep2],
 			2,
 		);

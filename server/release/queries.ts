@@ -1,5 +1,4 @@
 import { Op } from 'sequelize';
-import { Node } from 'prosemirror-model';
 
 import { Release, Doc, Discussion, DiscussionAnchor, sequelize } from 'server/models';
 import { getPubDraftDoc, getPubDraftRef, editorSchema } from 'server/utils/firebaseAdmin';
@@ -37,15 +36,13 @@ const getStepsSinceLastRelease = async (
 const createDiscussionAnchorsForRelease = async (
 	pubId: string,
 	previousRelease: Maybe<DefinitelyHas<ReleaseType, 'doc'>>,
-	currentDocJson: {},
 	currentHistoryKey: number,
 	postgresTransaction: any,
 ) => {
 	const draftRef = await getPubDraftRef(pubId);
 	if (previousRelease) {
-		const previousDocHydrated = Node.fromJSON(editorSchema, previousRelease.doc.content);
-		const currentDocHydrated = Node.fromJSON(editorSchema, currentDocJson);
 		const steps = await getStepsSinceLastRelease(draftRef, previousRelease, currentHistoryKey);
+		const flatSteps = steps.reduce((a, b) => [...a, ...b], []);
 		const discussions = await Discussion.findAll({
 			where: { pubId: pubId },
 			attributes: ['id'],
@@ -60,9 +57,7 @@ const createDiscussionAnchorsForRelease = async (
 			existingAnchors.map((anchor) =>
 				createUpdatedDiscussionAnchorForNewSteps(
 					anchor,
-					previousDocHydrated,
-					currentDocHydrated,
-					steps.reduce((a, b) => [...a, ...b], []),
+					flatSteps,
 					currentHistoryKey,
 					postgresTransaction,
 				),
@@ -104,7 +99,7 @@ export const createRelease = async ({
 				},
 				{ transaction: txn },
 			),
-			createDiscussionAnchorsForRelease(pubId, mostRecentRelease, nextDoc, historyKey, txn),
+			createDiscussionAnchorsForRelease(pubId, mostRecentRelease, historyKey, txn),
 		]);
 		return nextRelease;
 	});

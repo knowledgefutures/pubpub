@@ -144,19 +144,6 @@ export const createDiscussionsState = (options: Options) => {
 		return null;
 	};
 
-	const addDiscussion = (discussionId: string, selection: DiscussionSelection) => {
-		const { currentHistoryKey } = history.getState();
-		updateDiscussions({
-			[discussionId]: {
-				initKey: currentHistoryKey,
-				currentKey: currentHistoryKey,
-				selection: selection,
-				initHead: selection.head,
-				initAnchor: selection.anchor,
-			},
-		});
-	};
-
 	const asynchronouslyUpdateDiscussions = (update: NullableDiscussions) => {
 		if (Object.keys(update).length === 0) {
 			return;
@@ -169,6 +156,19 @@ export const createDiscussionsState = (options: Options) => {
 			removedDiscussionIds: removedDiscussionIds,
 			mapping: new Mapping(),
 			doc: currentDoc,
+		});
+	};
+
+	const addDiscussion = (discussionId: string, selection: DiscussionSelection) => {
+		const { currentHistoryKey } = history.getState();
+		asynchronouslyUpdateDiscussions({
+			[discussionId]: {
+				initKey: currentHistoryKey,
+				currentKey: currentHistoryKey,
+				selection: selection,
+				initHead: selection.head,
+				initAnchor: selection.anchor,
+			},
 		});
 	};
 

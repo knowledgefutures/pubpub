@@ -25,6 +25,13 @@ const sanitizeHashes = (pubData, activePermissions) => {
 	};
 };
 
+const filterDiscussionsByDraftOrRelease = (discussions: Discussion[], isRelease: boolean) => {
+	const shownVisibilityAccess = isRelease ? 'public' : 'members';
+	return discussions.filter(
+		(discussion) => discussion.visibility.access === shownVisibilityAccess,
+	);
+};
+
 const getFilteredExports = (pubData, isRelease) => {
 	const { exports, releases } = pubData;
 	if (!isRelease) {
@@ -87,8 +94,15 @@ export default (
 		.concat()
 		.sort((a, b) => (new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1));
 
-	const discussions = sanitizeDiscussions(pubData.discussions, activePermissions, loginData.id);
-	const reviews = sanitizeReviews(pubData.reviews, activePermissions, loginData.id);
+	const discussions =
+		pubData.discussions &&
+		sanitizeDiscussions(
+			filterDiscussionsByDraftOrRelease(pubData.discussions, isRelease),
+			activePermissions,
+			loginData.id,
+		);
+	const reviews =
+		pubData.reviews && sanitizeReviews(pubData.reviews, activePermissions, loginData.id);
 
 	return {
 		...pubData,

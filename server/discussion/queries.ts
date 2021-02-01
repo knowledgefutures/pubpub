@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 import { ForbiddenError } from 'server/utils/errors';
 import {
 	Discussion,
-	Anchor,
+	DiscussionAnchor,
 	Thread,
 	ThreadComment,
 	ThreadEvent,
@@ -21,7 +21,7 @@ const findDiscussionWithUser = (id) =>
 		},
 		include: [
 			includeUserModel({ as: 'author' }),
-			{ model: Anchor, as: 'anchor' },
+			{ model: DiscussionAnchor, as: 'anchors' },
 			{
 				model: Visibility,
 				as: 'visibility',
@@ -93,19 +93,6 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 	const dateString = getReadableDateInYear(new Date());
 	const generatedTitle = `New Discussion on ${dateString}`;
 
-	let newAnchor: { id?: string } = {};
-
-	if (initAnchorData) {
-		const { prefix, suffix, exact, from, to } = initAnchorData;
-		newAnchor = await Anchor.create({
-			prefix: prefix,
-			exact: exact,
-			suffix: suffix,
-			from: from,
-			to: to,
-		});
-	}
-
 	const newThread = await Thread.create({});
 	await ThreadComment.create({
 		text: text,
@@ -122,7 +109,6 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 		threadId: newThread.id,
 		visibilityId: newVisibility.id,
 		userId: userId,
-		anchorId: newAnchor.id,
 		pubId: pubId,
 	});
 

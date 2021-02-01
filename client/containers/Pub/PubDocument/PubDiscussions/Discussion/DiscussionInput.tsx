@@ -112,8 +112,8 @@ const DiscussionInput = (props: Props) => {
 		if (isPubBottomInput) {
 			setIsLoading(false);
 			setEditorKey(Date.now());
-		} else if (firebaseDraftRef) {
-			await convertLocalHighlightToDiscussion(pubView, discussionData.id);
+		} else {
+			convertLocalHighlightToDiscussion(pubView, outputData.id);
 		}
 	};
 

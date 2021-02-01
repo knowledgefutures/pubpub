@@ -10,8 +10,8 @@ import {
 	PubEdge,
 	Release,
 	Discussion,
+	DiscussionAnchor,
 	ReviewNew,
-	Anchor,
 	Member,
 	includeUserModel,
 	Draft,
@@ -29,6 +29,8 @@ export type PubGetOptions = {
 	getExports?: boolean;
 	getEdges?: 'all' | 'approved-only';
 	getDraft?: boolean;
+	getDiscussions?: boolean;
+	getReviews?: boolean;
 	getEdgesOptions?: PubEdgeIncludesOptions;
 };
 
@@ -42,6 +44,7 @@ export default ({
 	getEdgesOptions,
 	getExports,
 	getDraft,
+	getDiscussions,
 }: PubGetOptions) => {
 	const allowUnapprovedEdges = getEdges === 'all';
 	/* Initialize values assuming all inputs are false. */
@@ -64,11 +67,9 @@ export default ({
 			as: 'releases',
 		},
 	];
-	let pubExports: any = [];
-	let pubDraft: any = [];
 	let collectionPubs: any = [];
 	let community: any = [];
-	let anchor = [{ model: Anchor, as: 'anchor' }];
+	let anchors = [{ model: DiscussionAnchor, as: 'anchors' }];
 	let author = baseAuthor;
 	let thread = baseThread;
 	if (isPreview) {
@@ -86,7 +87,7 @@ export default ({
 		];
 		author = [];
 		thread = [];
-		anchor = [];
+		anchors = [];
 	}
 	if (isAuth) {
 		pubAttributes = ['id'];
@@ -94,7 +95,7 @@ export default ({
 		pubAttributions = [];
 		author = [];
 		thread = [];
-		anchor = [];
+		anchors = [];
 	}
 	if (getMembers) {
 		pubMembers = [{ model: Member, as: 'members' }];
@@ -171,37 +172,27 @@ export default ({
 			},
 		];
 	}
-	if (getExports) {
-		pubExports = [
-			{
-				model: Export,
-				as: 'exports',
-			},
-		];
-	}
-	if (getDraft) {
-		pubDraft = [
-			{
-				model: Draft,
-				as: 'draft',
-			},
-		];
-	}
 	const visibility = baseVisibility;
 	return {
 		attributes: pubAttributes,
 		include: [
 			...pubAttributions,
-			...pubExports,
-			...pubDraft,
 			...pubReleases,
 			...pubMembers,
 			...pubEdges,
-			{
+			getExports && {
+				model: Export,
+				as: 'exports',
+			},
+			getDraft && {
+				model: Draft,
+				as: 'draft',
+			},
+			getDiscussions && {
 				separate: true,
 				model: Discussion,
 				as: 'discussions',
-				include: [...author, ...anchor, ...visibility, ...thread],
+				include: [...author, ...anchors, ...visibility, ...thread],
 			},
 			{
 				separate: true,
@@ -215,6 +206,6 @@ export default ({
 			},
 			...collectionPubs,
 			...community,
-		],
+		].filter((x) => x),
 	};
 };

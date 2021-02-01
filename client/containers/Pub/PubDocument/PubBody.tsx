@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState, useCallback } from 'react';
+import React, { useRef, useContext, useState, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { useBeforeUnload } from 'react-use';
 import * as Sentry from '@sentry/browser';
@@ -101,6 +101,18 @@ const PubBody = (props: Props) => {
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;
+	const discussionAnchors = useMemo(() => {
+		if (pubData.isRelease) {
+			return pubData.discussions
+				.map((discussion) =>
+					discussion.anchors!.filter(
+						(anchor) => anchor.historyKey === historyData.currentKey,
+					),
+				)
+				.reduce((a, b) => [...a, ...b], []);
+		}
+		return [];
+	}, [pubData.discussions, pubData.isRelease, historyData.currentKey]);
 
 	const handleKeyPress = useCallback(() => {
 		markLastInput();
@@ -166,14 +178,11 @@ const PubBody = (props: Props) => {
 					}
 				}}
 				onError={handleError}
-				discussionsOptions={
-					loadCollaborativeOptions &&
-					firebaseDraftRef && {
-						draftRef: firebaseDraftRef,
-						initialHistoryKey: pubData.initialDocKey,
-						discussionAnchors: [],
-					}
-				}
+				discussionsOptions={{
+					draftRef: firebaseDraftRef,
+					initialHistoryKey: pubData.initialDocKey,
+					discussionAnchors: discussionAnchors,
+				}}
 				collaborativeOptions={
 					loadCollaborativeOptions && firebaseDraftRef
 						? {

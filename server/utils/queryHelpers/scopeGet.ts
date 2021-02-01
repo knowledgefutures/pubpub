@@ -354,11 +354,11 @@ getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 	}
 	pubs.forEach((pub) => {
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'discussions' does not exist on type 'nev... Remove this comment to see the full error message
-		const openDiscussions = pub.discussions.filter((item) => !item.isClosed);
+		const openDiscussions = pub.discussions?.filter((item) => !item.isClosed) || [];
 		const discussions = sanitizeDiscussions(openDiscussions, activePermissions, loginId);
 
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'reviews' does not exist on type 'never'.
-		const openReviews = pub.reviews.filter((item) => item.status !== 'closed');
+		const openReviews = pub.reviews?.filter((item) => item.status !== 'closed') || [];
 		const reviews = sanitizeReviews(openReviews, activePermissions, loginId);
 
 		discussionCount += discussions.length;

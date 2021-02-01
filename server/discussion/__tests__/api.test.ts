@@ -1,9 +1,9 @@
-/* global it, expect, beforeAll, afterAll, afterEach */
+/* global it, expect, beforeAll */
 import uuid from 'uuid';
 
-import { setup, teardown, login, modelize } from 'stubstub';
+import { setup, login, modelize } from 'stubstub';
 
-import { Discussion, DiscussionAnchor, Thread, ThreadComment } from 'server/models';
+import { Discussion, Thread, ThreadComment } from 'server/models';
 
 const alreadyAppliedManagedLabel = {
 	title: 'I have already been applied',
@@ -177,7 +177,9 @@ it('creates a DiscussionAnchor when initAnchorData is provided', async () => {
 	const agent = await login(guest);
 
 	const {
-		body: { id: discussionId },
+		body: {
+			anchors: [anchor],
+		},
 	} = await agent
 		.post('/api/discussions')
 		.send(
@@ -190,10 +192,6 @@ it('creates a DiscussionAnchor when initAnchorData is provided', async () => {
 			}),
 		)
 		.expect(201);
-
-	const anchor = await DiscussionAnchor.findOne({
-		where: { discussionId: discussionId, historyKey: 20 },
-	});
 	expect(anchor.selection).toEqual({ type: 'text', anchor: 10, head: 20 });
 	expect(anchor.isOriginal).toEqual(true);
 });

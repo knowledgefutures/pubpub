@@ -219,8 +219,8 @@ describe('/api/releases', () => {
 			createDiscussionForPub({
 				pubId: pub.id,
 				userId: rando.id,
-				from: 0,
-				to: 2,
+				from: 1,
+				to: 3,
 				historyKey: release.historyKey,
 			}),
 		]);
@@ -240,15 +240,29 @@ describe('/api/releases', () => {
 			historyKey: nextRelease.historyKey,
 		});
 
-		await pubEditor.transform((tr, schema) =>
-			tr.insert(10, schema.text('Really mucking this up now')),
-		);
+		const discussion4 = await createDiscussionForPub({
+			pubId: pub.id,
+			userId: rando.id,
+			from: 1,
+			to: 7,
+			historyKey: nextRelease.historyKey,
+		});
+
+		await pubEditor.transform((tr, schema) => {
+			tr.insert(10, schema.text('Really mucking this up now'));
+			tr.insert(1, schema.text('Schmanchor'));
+		});
 		await pubEditor.writeChange();
 
 		await createRelease();
 
-		const [discussion1Anchors, discussion2Anchors, discussion3Anchors] = await Promise.all(
-			[discussion1, discussion2, discussion3].map((discussion) =>
+		const [
+			discussion1Anchors,
+			discussion2Anchors,
+			discussion3Anchors,
+			discussion4Anchors,
+		] = await Promise.all(
+			[discussion1, discussion2, discussion3, discussion4].map((discussion) =>
 				DiscussionAnchor.findAll({
 					where: { discussionId: discussion.id },
 				}).then((anchors) => anchors.map((a) => determinizeAnchor(a.toJSON()))),
@@ -258,18 +272,23 @@ describe('/api/releases', () => {
 		expect(discussion1Anchors).toEqual([
 			{ historyKey: 0, selection: { type: 'text', anchor: 8, head: 10 } },
 			{ historyKey: 2, selection: { type: 'text', anchor: 11, head: 13 } },
-			{ historyKey: 3, selection: { type: 'text', anchor: 37, head: 39 } },
+			{ historyKey: 3, selection: { type: 'text', anchor: 47, head: 49 } },
 		]);
 
 		expect(discussion2Anchors).toEqual([
-			{ historyKey: 0, selection: { type: 'text', anchor: 0, head: 2 } },
+			{ historyKey: 0, selection: { type: 'text', anchor: 1, head: 3 } },
 			{ historyKey: 2, selection: null },
 			{ historyKey: 3, selection: null },
 		]);
 
 		expect(discussion3Anchors).toEqual([
 			{ historyKey: 2, selection: { type: 'text', anchor: 9, head: 12 } },
-			{ historyKey: 3, selection: { type: 'text', anchor: 9, head: 38 } },
+			{ historyKey: 3, selection: { type: 'text', anchor: 19, head: 48 } },
+		]);
+
+		expect(discussion4Anchors).toEqual([
+			{ historyKey: 2, selection: { type: 'text', anchor: 1, head: 7 } },
+			{ historyKey: 3, selection: { type: 'text', anchor: 11, head: 17 } },
 		]);
 	});
 });

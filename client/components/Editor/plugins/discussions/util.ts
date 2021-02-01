@@ -45,7 +45,7 @@ export const mapDiscussionSelectionThroughSteps = (
 		const stepMap = step.getMap();
 		const nextFrom = stepMap.map(range.from, 1);
 		const nextTo = stepMap.map(range.to, -1);
-		if (nextFrom === nextTo) {
+		if (nextFrom === nextTo || nextFrom === 0) {
 			return null;
 		}
 		return { from: nextFrom, to: nextTo };

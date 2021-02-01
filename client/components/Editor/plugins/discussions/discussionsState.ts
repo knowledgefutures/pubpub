@@ -105,11 +105,11 @@ export const createDiscussionsState = (options: Options) => {
 			addedDiscussionIds,
 		} = filterDiscussionsUpdate(discussions, update);
 
-		remoteDiscussions?.sendDiscussions(sendableDiscussions);
 		discussions = removeDiscussionsById(
 			{ ...discussions, ...updatableDiscussions },
 			removedDiscussionIds,
 		);
+		remoteDiscussions?.sendDiscussions(sendableDiscussions);
 
 		return {
 			discussions: discussions,

@@ -16,7 +16,12 @@ type Props = {
 	children: React.ReactNode;
 };
 
-const formatTypes = [
+type FormatType = {
+	format: string;
+	title: string;
+};
+
+const formatTypes: FormatType[] = [
 	{ format: 'pdf', title: 'PDF' },
 	{ format: 'docx', title: 'Word' },
 	{ format: 'markdown', title: 'Markdown' },
@@ -35,8 +40,9 @@ const Download = (props: Props) => {
 	const { downloads = [], activeBranch } = pubData;
 	const [isLoading, setIsLoading] = useState(false);
 	const [isError, setIsError] = useState(false);
-	const [selectedType, setSelectedType] = useState(null);
-	const [downloadUrl, setDownloadUrl] = useState(null);
+	const [selectedType, setSelectedType] = useState<null | FormatType>(null);
+	const [selectedKey, setSelectedKey] = useState<null | number>(null);
+	const [downloadUrl, setDownloadUrl] = useState<null | string>(null);
 	const { latestKey } = usePubHistory();
 	const { communityData, locationData } = usePageContext();
 	const formattedDownload = getFormattedDownload(downloads);
@@ -55,6 +61,7 @@ const Download = (props: Props) => {
 			download(matchingExport.url);
 		} else {
 			setSelectedType(type);
+			setSelectedKey(latestKey);
 			setIsError(false);
 			setIsLoading(true);
 		}
@@ -81,9 +88,8 @@ const Download = (props: Props) => {
 				pubId: pubData.id,
 				branchId: activeBranch.id,
 				communityId: communityData.id,
-				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-				format: selectedType.format,
-				historyKey: latestKey,
+				format: selectedType?.format,
+				historyKey: selectedKey,
 				accessHash: locationData.query.access,
 			}),
 		})
@@ -106,9 +112,9 @@ const Download = (props: Props) => {
 	}, [
 		isLoading,
 		selectedType,
+		selectedKey,
 		pubData.id,
 		activeBranch.id,
-		latestKey,
 		locationData.query.access,
 		communityData.id,
 	]);
@@ -135,7 +141,7 @@ const Download = (props: Props) => {
 							.pop()
 							.toUpperCase()}`}
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ dismissOnClick: false; labelElement: Eleme... Remove this comment to see the full error message
-						loading={isLoading && selectedType.format === 'formatted'}
+						loading={isLoading && selectedType?.format === 'formatted'}
 						onClick={() => window.open(formattedDownload.url)}
 					/>
 				</React.Fragment>
@@ -144,20 +150,16 @@ const Download = (props: Props) => {
 				<h6 className="bp3-heading">Auto Generated Download</h6>
 			</li>
 			{formatTypes.map((type, i) => {
-				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-				const shouldRenderButton = downloadUrl && selectedType.format === type.format;
+				const shouldRenderButton = downloadUrl && selectedType?.format === type.format;
 				return (
 					<MenuItem
 						// eslint-disable-next-line react/no-array-index-key
 						key={`${i}-${type.format}`}
 						dismissOnClick={false}
-						// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-						disabled={isLoading && selectedType.format !== type.format}
-						// loading={isLoading && selectedType.format === type.format}
+						disabled={isLoading && selectedType?.format !== type.format}
 						rightElement={
 							<span>
-								{/* @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'. */}
-								{isLoading && selectedType.format === type.format && (
+								{isLoading && selectedType?.format === type.format && (
 									<Spinner size={Spinner.SIZE_SMALL} />
 								)}
 							</span>
@@ -166,8 +168,7 @@ const Download = (props: Props) => {
 						text={
 							<Tooltip
 								key={type.format}
-								// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-								isOpen={isError && selectedType.format === type.format}
+								isOpen={isError && selectedType?.format === type.format}
 								content="There was a problem generating the file."
 							>
 								{shouldRenderButton ? (

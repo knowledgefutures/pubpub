@@ -58,22 +58,14 @@ class AttributionEditor extends Component<Props> {
 
 	handleAttributionAdd(user) {
 		const { attributions, onUpdateAttributions, onPersistStateChange } = this.props;
-		const calculatedOrder =
-			attributions.length === 0
-				? 0.5
-				: attributions.sort((a, b) => {
-						const sortOnOrder = a.order - b.order;
-						if (sortOnOrder !== 0) {
-							return sortOnOrder;
-						}
-						return b.createdAt - a.createdAt;
-				  })[0].order / 2;
+		const maxOrder = attributions.length ? Math.max(...attributions.map((a) => a.order)) : 0;
+		const newOrder = 0.5 + maxOrder / 2;
 		onPersistStateChange(1);
 		this.persistAttribution(
 			{
 				userId: user.id,
 				name: user.name,
-				order: calculatedOrder,
+				order: newOrder,
 				isAuthor: true,
 			},
 			'POST',
@@ -157,7 +149,7 @@ class AttributionEditor extends Component<Props> {
 
 	render() {
 		const { attributions, canEdit, listOnBylineText, hasEmptyState } = this.props;
-		const sortedAttributions = attributions.sort((a, b) => a.order - b.order);
+		const sortedAttributions = attributions.concat().sort((a, b) => a.order - b.order);
 		return (
 			<div className="attribution-editor-component">
 				{canEdit && (

@@ -37,7 +37,7 @@ const createDiscussionAnchorsForRelease = async (
 	pubId: string,
 	previousRelease: Maybe<DefinitelyHas<ReleaseType, 'doc'>>,
 	currentHistoryKey: number,
-	postgresTransaction: any,
+	sequelizeTransaction: any,
 ) => {
 	const draftRef = await getPubDraftRef(pubId);
 	if (previousRelease) {
@@ -59,7 +59,7 @@ const createDiscussionAnchorsForRelease = async (
 					anchor,
 					flatSteps,
 					currentHistoryKey,
-					postgresTransaction,
+					sequelizeTransaction,
 				),
 			),
 		);

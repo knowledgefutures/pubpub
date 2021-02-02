@@ -45,24 +45,30 @@ const getUpdatedDiscussionsForTransaction = (
 	return resultingDiscussions;
 };
 
-const filterDiscussionsUpdate = (discussions: Discussions, update: NullableDiscussions) => {
+const filterDiscussionsUpdate = (
+	discussions: Discussions,
+	update: NullableDiscussions,
+	currentKey: number,
+) => {
 	const sendableDiscussions: Discussions = {};
 	const updatableDiscussions: Discussions = {};
 	const removedDiscussionIds: Set<string> = new Set();
 	const addedDiscussionIds: Set<string> = new Set();
 	Object.entries(update).forEach(([id, next]) => {
 		if (next) {
-			const previous = discussions[id];
-			const hasKeyAdvanced = !previous || previous.currentKey < next.currentKey;
-			const isKeyMonotonic = !previous || previous.currentKey <= next.currentKey;
-			if (hasKeyAdvanced) {
-				sendableDiscussions[id] = next;
-			}
-			if (isKeyMonotonic) {
-				updatableDiscussions[id] = next;
-			}
-			if (!previous) {
-				addedDiscussionIds.add(id);
+			if (next.currentKey === currentKey) {
+				const previous = discussions[id];
+				const hasKeyAdvanced = !previous || previous.currentKey < next.currentKey;
+				const isKeyMonotonic = !previous || previous.currentKey <= next.currentKey;
+				if (hasKeyAdvanced) {
+					sendableDiscussions[id] = next;
+				}
+				if (isKeyMonotonic) {
+					updatableDiscussions[id] = next;
+				}
+				if (!previous) {
+					addedDiscussionIds.add(id);
+				}
 			}
 		} else {
 			removedDiscussionIds.add(id);
@@ -97,13 +103,13 @@ export const createDiscussionsState = (options: Options) => {
 	const history = createHistoryState(initialDoc, initialHistoryKey);
 	let discussions = initialDiscussions;
 
-	const updateDiscussions = (update: NullableDiscussions) => {
+	const updateDiscussions = (update: NullableDiscussions, currentKey: number) => {
 		const {
 			sendableDiscussions,
 			updatableDiscussions,
 			removedDiscussionIds,
 			addedDiscussionIds,
-		} = filterDiscussionsUpdate(discussions, update);
+		} = filterDiscussionsUpdate(discussions, update, currentKey);
 
 		discussions = removeDiscussionsById(
 			{ ...discussions, ...updatableDiscussions },
@@ -135,7 +141,7 @@ export const createDiscussionsState = (options: Options) => {
 				currentHistoryKey,
 			);
 			return {
-				...updateDiscussions(nextDiscussions),
+				...updateDiscussions(nextDiscussions, currentHistoryKey),
 				mapping: tr.mapping,
 				doc: currentDoc,
 			};
@@ -148,8 +154,11 @@ export const createDiscussionsState = (options: Options) => {
 		if (Object.keys(update).length === 0) {
 			return;
 		}
-		const { addedDiscussionIds, removedDiscussionIds } = updateDiscussions(update);
-		const { currentDoc } = history.getState();
+		const { currentDoc, currentHistoryKey } = history.getState();
+		const { addedDiscussionIds, removedDiscussionIds } = updateDiscussions(
+			update,
+			currentHistoryKey,
+		);
 		onUpdateDiscussions({
 			discussions: discussions,
 			addedDiscussionIds: addedDiscussionIds,

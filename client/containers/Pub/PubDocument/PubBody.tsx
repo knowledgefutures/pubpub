@@ -178,11 +178,13 @@ const PubBody = (props: Props) => {
 					}
 				}}
 				onError={handleError}
-				discussionsOptions={{
-					draftRef: firebaseDraftRef,
-					initialHistoryKey: pubData.initialDocKey,
-					discussionAnchors: discussionAnchors,
-				}}
+				discussionsOptions={
+					!isViewingHistory && {
+						draftRef: firebaseDraftRef,
+						initialHistoryKey: pubData.initialDocKey,
+						discussionAnchors: discussionAnchors,
+					}
+				}
 				collaborativeOptions={
 					loadCollaborativeOptions && firebaseDraftRef
 						? {

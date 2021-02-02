@@ -25,18 +25,13 @@
 	}
 	.default-settings {
 		display: flex;
+		justify-content: space-between;
 		margin-bottom: 10px;
-
-		> div:first-child {
-			flex: 3;
-
-			> span:first-child {
-				margin-right: 1em;
+		.carousel-radio {
+			display: flex;
+			& > label {
+				margin-right: 10px;
 			}
-		}
-
-		> div:nth-child(2) {
-			flex: 2;
 		}
 	}
 }

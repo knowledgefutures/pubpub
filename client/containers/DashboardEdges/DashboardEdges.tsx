@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NonIdealState, Switch, Tab, Tabs, Radio } from '@blueprintjs/core';
+import { NonIdealState, Switch, Tab, Tabs, Radio, RadioGroup } from '@blueprintjs/core';
 
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
@@ -138,38 +138,33 @@ const DashboardEdges = (props: Props) => {
 		>
 			{canManageEdges && (
 				<div className="default-settings">
-					<div>
-						<span>Show multiple Connections as:</span>
-						<Radio
-							checked={persistedPubData.pubEdgeListingDefaultsToCarousel}
-							onChange={() => updatePub({ pubEdgeListingDefaultsToCarousel: true })}
-							inline
-						>
-							Carousel
-						</Radio>
-						<Radio
-							checked={!persistedPubData.pubEdgeListingDefaultsToCarousel}
-							onChange={() => updatePub({ pubEdgeListingDefaultsToCarousel: false })}
-							inline
-						>
-							List
-						</Radio>
-					</div>
-					<div>
-						<label>
-							<Switch
-								checked={persistedPubData.pubEdgeDescriptionVisible}
-								onChange={(event) =>
-									updatePub({
-										pubEdgeDescriptionVisible: (event.target as HTMLInputElement)
-											.checked,
-									})
-								}
-								inline
-							/>
-							Show Description by default
-						</label>
-					</div>
+					<RadioGroup
+						inline
+						className="carousel-radio"
+						onChange={(evt) => {
+							const isCarousel =
+								(evt.target as HTMLInputElement).value === 'carousel';
+							updatePub({ pubEdgeListingDefaultsToCarousel: isCarousel });
+						}}
+						selectedValue={
+							persistedPubData.pubEdgeListingDefaultsToCarousel ? 'carousel' : 'list'
+						}
+						label="Show multiple Connections as:"
+					>
+						<Radio value="carousel">Carousel</Radio>
+						<Radio value="list">List</Radio>
+					</RadioGroup>
+					<Switch
+						inline
+						label="Show Description by default"
+						checked={persistedPubData.pubEdgeDescriptionVisible}
+						onChange={(event) =>
+							updatePub({
+								pubEdgeDescriptionVisible: (event.target as HTMLInputElement)
+									.checked,
+							})
+						}
+					/>
 				</div>
 			)}
 			<Tabs id="pub-dashboard-connections-tabs">

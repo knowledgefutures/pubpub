@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 import { uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
 
 import { Anchor, Branch, Pub, Release, Discussion } from 'server/models';
-import { getBranchRef } from 'server/utils/firebaseAdmin';
+import { getDatabaseRef } from 'server/utils/firebaseAdmin';
 import { createOriginalDiscussionAnchor } from 'server/discussionAnchor/queries';
 
 import { forEach } from '../util';
@@ -96,7 +96,7 @@ const createAnchorModelFromDesc = (desc) => {
 const handlePub = async (pub) => {
 	const [branches, releases, discussions] = await Promise.all([
 		Branch.findAll({ where: { pubId: pub.id } }),
-		Release.findAll({ where: { pubId: pub.id } }),
+		Release.findAll({ where: { pubId: pub.id }, order: [['historyKey', 'ASC']] }),
 		Discussion.findAll({
 			where: { pubId: pub.id },
 			include: [{ model: Anchor, as: 'anchor' }],
@@ -106,7 +106,7 @@ const handlePub = async (pub) => {
 	const publicBranch = branches.find((br) => br.title === 'public');
 	// Retrieve all anchors from Firebase
 	await forEach(branches, async (branch) => {
-		const branchRef = getBranchRef(pub.id, branch.id);
+		const branchRef = getDatabaseRef(`pub-${pub.id}/branch-${branch.id}`);
 		const discussionsSnapshot = await branchRef.child('discussions').once('value');
 		const firebaseDiscussions = discussionsSnapshot.val() || {};
 		const isPublicBranch = branch === publicBranch;
@@ -148,7 +148,6 @@ const handlePub = async (pub) => {
 module.exports = async () => {
 	const discussions = await Discussion.findAll({ attributes: ['id', 'pubId'] });
 	const pubIdsWithDiscussions = [...new Set(discussions.map((d) => d.pubId))];
-	console.log(pubIdsWithDiscussions.length);
 	const pubs = await Pub.findAll({ where: { id: { [Op.in]: pubIdsWithDiscussions } } });
 	await forEach(pubs, (p) => handlePub(p).catch((err) => console.error(err)), 10);
 };

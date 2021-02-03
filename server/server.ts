@@ -21,15 +21,19 @@ require('server/utils/serverModuleOverwrite');
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
 // return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.
 export const wrap = (routeHandlerFn) => (...args) => {
-	const next = args[args.length - 1];
+	const [req, res, next] = args;
 	Promise.resolve(routeHandlerFn(...args)).catch((err) => {
+		if (err.message.indexOf('UseCustomDomain:') === 0) {
+			const customDomain = err.message.split(':')[1];
+			return res.redirect(`https://${customDomain}${req.originalUrl}`);
+		}
 		// Log the error if we're testing. Normally this is handled in the error middleware, but
 		// that isn't active while handling individual requests in a test environment.
 		if (process.env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
 			// eslint-disable-next-line no-console
 			console.log('Got an error in an API route while testing:', err);
 		}
-		next(err);
+		return next(err);
 	});
 };
 

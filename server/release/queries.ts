@@ -4,6 +4,7 @@ import { Release, Doc, Discussion, DiscussionAnchor, sequelize } from 'server/mo
 import { getPubDraftDoc, getPubDraftRef, editorSchema } from 'server/utils/firebaseAdmin';
 import { createLatestPubExports } from 'server/export/queries';
 import { createDoc } from 'server/doc/queries';
+import { setPubSearchData } from 'server/utils/search';
 import { createUpdatedDiscussionAnchorForNewSteps } from 'server/discussionAnchor/queries';
 import { Maybe, Release as ReleaseType, DefinitelyHas } from 'utils/types';
 import { getStepsInChangeRange } from 'client/components/Editor';
@@ -104,6 +105,7 @@ export const createRelease = async ({
 		return nextRelease;
 	});
 
+	setPubSearchData(pubId);
 	if (createExports) {
 		await createLatestPubExports(pubId);
 	}

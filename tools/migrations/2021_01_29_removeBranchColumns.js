@@ -3,6 +3,7 @@ export const up = async ({ sequelize }) => {
 	await sequelize.queryInterface.removeColumn('Releases', 'branchId');
 	await sequelize.queryInterface.removeColumn('Releases', 'sourceBranchId');
 	await sequelize.queryInterface.removeColumn('Releases', 'sourceBranchKey');
+	await sequelize.queryInterface.removeColumn('Releases', 'branchKey');
 	await sequelize.queryInterface.removeColumn('ReviewNews', 'branchId');
 };
 
@@ -11,6 +12,9 @@ export const down = async ({ sequelize, Sequelize }) => {
 		type: Sequelize.UUID,
 	});
 	await sequelize.queryInterface.addColumn('Releases', 'branchId', {
+		type: Sequelize.UUID,
+	});
+	await sequelize.queryInterface.addColumn('Releases', 'branchKey', {
 		type: Sequelize.UUID,
 	});
 	await sequelize.queryInterface.addColumn('Releases', 'sourceBranchId', {

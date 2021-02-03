@@ -24,7 +24,7 @@ const handleReleasesForPub = async (pub) => {
 	await Promise.all(
 		releasesOrderedByDate.map(async (release, index) => {
 			if (!release.docId) {
-				const docContent = await getBranchDoc(pub.id, publicBranch.id, index);
+				const { doc: docContent } = await getBranchDoc(pub.id, publicBranch.id, index);
 				const docModel = await createDoc(docContent);
 				await Release.update({ docId: docModel.id }, { where: { id: release.id } });
 			}

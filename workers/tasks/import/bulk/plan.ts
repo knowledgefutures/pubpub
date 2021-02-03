@@ -319,28 +319,24 @@ export const printImportPlan = (importPlan, { verb = 'CREATE' } = {}) => {
 
 export const getCreatedItemsFromPlan = (importPlan) => {
 	const { resolved, children } = importPlan;
-	const communities = [];
-	const collections = [];
-	const pubs = [];
+	const communities: any[] = [];
+	const collections: any[] = [];
+	const pubs: any[] = [];
 	if (resolved) {
 		resolved.forEach((entry) => {
 			const { community, pub, collection, created } = entry;
 			if (created) {
 				if (community) {
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 					communities.push(community);
 				}
 				if (collection) {
 					if (Array.isArray(collection)) {
-						// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 						collections.push(...collection);
 					} else {
-						// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 						collections.push(collection);
 					}
 				}
 				if (pub) {
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 					pubs.push(pub);
 				}
 			}
@@ -349,11 +345,8 @@ export const getCreatedItemsFromPlan = (importPlan) => {
 	if (children) {
 		const childItems = children.map(getCreatedItemsFromPlan);
 		childItems.forEach((child) => {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 			communities.push(...child.communities);
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 			collections.push(...child.collections);
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 			pubs.push(...child.pubs);
 		});
 	}

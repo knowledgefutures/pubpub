@@ -15,8 +15,6 @@ import { apiFetch } from 'client/utils/apiFetch';
 import { usePubContext } from 'containers/Pub/pubHooks';
 
 type OwnProps = {
-	pubData: any;
-	updateLocalData: (...args: any[]) => any;
 	discussionData: any;
 	isPubBottomInput?: boolean;
 };
@@ -35,8 +33,8 @@ const getPlaceholderText = (isNewThread, isPubBottomInput) => {
 type Props = OwnProps & typeof defaultProps;
 
 const DiscussionInput = (props: Props) => {
-	const { discussionData, isPubBottomInput, pubData, updateLocalData } = props;
-	const { historyData, collabData, firebaseDraftRef } = usePubContext();
+	const { discussionData, isPubBottomInput } = props;
+	const { pubData, historyData, collabData, updateLocalData } = usePubContext();
 	const { loginData, locationData, communityData } = usePageContext();
 	const pubView = collabData.editorChangeObject.view;
 	const [changeObject, setChangeObject] = useState<null | { view?: any }>();
@@ -68,12 +66,12 @@ const DiscussionInput = (props: Props) => {
 
 		updateLocalData('pub', {
 			discussions: pubData.discussions.map((disc) => {
-				if (disc.thread.id === outputData.threadId) {
+				if (disc.thread!.id === outputData.threadId) {
 					return {
 						...disc,
 						thread: {
 							...disc.thread,
-							comments: [...disc.thread.comments, outputData],
+							comments: [...disc.thread!.comments, outputData],
 						},
 					};
 				}

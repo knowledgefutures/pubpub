@@ -113,7 +113,7 @@ children:
             - Catherine Ahearn
             - Travis Rich
             - Gabe Stein
-    posts/2020/march/guest-post.md
+    posts/2020/march/guest-post.md:
         type: pub
         attributions:
             - {name: "Joel Gustafson", roles: ["Guest Poster"]}

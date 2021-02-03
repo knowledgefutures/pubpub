@@ -60,6 +60,9 @@ const redirectHosts = {
 		'/news/principles-of-editing': 'https://baas.aas.org/pub/2019i0201',
 		'/obituaries-listing': 'https://baas.aas.org/obituaries',
 	},
+	'underlay.pubpub.org': {
+		'/pub/future': 'https://notes.knowledgefutures.org/pub/future/',
+	},
 };
 
 app.use((req, res, next) => {

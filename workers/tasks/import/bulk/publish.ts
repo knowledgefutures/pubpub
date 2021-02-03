@@ -1,3 +1,5 @@
+import Bluebird from 'bluebird';
+
 import { Collection } from 'server/models';
 import { createRelease } from 'server/release/queries';
 
@@ -14,14 +16,19 @@ export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun, createEx
 		throwIfNo: true,
 	});
 	const { collections, pubs } = getCreatedItemsFromPlan(plan);
-	await Promise.all([
-		...pubs.map((pub) =>
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ userId: any; pubId: any; creat... Remove this comment to see the full error message
-			createRelease({ userId: actor.id, pubId: pub.id, createExports: createExports }),
-		),
-		...collections.map((collection) =>
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
+	await Bluebird.map(
+		pubs,
+		(pub) =>
+			createRelease({
+				userId: actor.id,
+				pubId: pub.id,
+				createExports: createExports,
+			}).catch((err) => console.error(err)),
+		{ concurrency: 25 },
+	);
+	await Promise.all(
+		collections.map((collection) =>
 			Collection.update({ isPublic: true }, { where: { id: collection.id } }),
 		),
-	]);
+	);
 };

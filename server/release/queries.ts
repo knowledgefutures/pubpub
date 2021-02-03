@@ -61,7 +61,7 @@ const createDiscussionAnchorsForRelease = async (
 					flatSteps,
 					currentHistoryKey,
 					sequelizeTransaction,
-				),
+				).catch((err) => console.error('Failed to create updated discussion anchor', err)),
 			),
 		);
 	}
@@ -70,10 +70,17 @@ const createDiscussionAnchorsForRelease = async (
 export const createRelease = async ({
 	userId,
 	pubId,
-	historyKey,
 	noteContent,
 	noteText,
+	historyKey: providedHistoryKey = null,
 	createExports = true,
+}: {
+	userId: string;
+	pubId: string;
+	noteContent?: {};
+	noteText?: string;
+	historyKey?: null | number;
+	createExports?: boolean;
 }) => {
 	const mostRecentRelease = await Release.findOne({
 		where: { pubId: pubId },
@@ -81,11 +88,16 @@ export const createRelease = async ({
 		include: [{ model: Doc, as: 'doc' }],
 	});
 
+	const {
+		doc: nextDoc,
+		historyData: { currentKey },
+	} = await getPubDraftDoc(pubId, providedHistoryKey ?? null);
+	const historyKey = providedHistoryKey ?? currentKey;
+
 	if (mostRecentRelease && mostRecentRelease.historyKey === historyKey) {
 		throw new ReleaseQueryError('duplicate-release');
 	}
 
-	const { doc: nextDoc } = await getPubDraftDoc(pubId, historyKey);
 	const release = await sequelize.transaction(async (txn) => {
 		const docModel = await createDoc(nextDoc, txn);
 		const [nextRelease] = await Promise.all([

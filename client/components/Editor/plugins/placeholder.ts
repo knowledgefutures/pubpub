@@ -1,14 +1,14 @@
 import { Plugin } from 'prosemirror-state';
 import { DecorationSet, Decoration } from 'prosemirror-view';
+
 import { collabDocPluginKey } from './collaborative';
-import { docIsEmpty } from '../utils';
+import { viewIsEmpty } from '../utils';
 
 export default (schema, props) => {
 	return new Plugin({
 		props: {
 			decorations: (state) => {
-				const doc = state.doc;
-				if (docIsEmpty(doc) && props.placeholder) {
+				if (viewIsEmpty(state) && props.placeholder) {
 					const decorations = [];
 					state.doc.descendants((node, pos) => {
 						const collaborativePluginState = collabDocPluginKey.getState(state) || {};

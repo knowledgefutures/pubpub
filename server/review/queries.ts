@@ -75,7 +75,6 @@ export const createReviewRelease = async (inputValues, userData) => {
 	if (!updateResult[0]) {
 		throw new Error('Invalid pubId or threadId');
 	}
-	// @ts-expect-error
 	const release = await createRelease({
 		userId: userData.id,
 		pubId: inputValues.pubId,

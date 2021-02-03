@@ -95,12 +95,7 @@ const PubDiscussions = (props: Props) => {
 		return (
 			<React.Fragment>
 				{showBottomInput && (
-					<DiscussionInput
-						pubData={pubData}
-						updateLocalData={updateLocalData}
-						discussionData={{ id: undefined }}
-						isPubBottomInput={true}
-					/>
+					<DiscussionInput discussionData={{ id: undefined }} isPubBottomInput={true} />
 				)}
 				{filteredDiscussions.length === 0 && (
 					<NonIdealState

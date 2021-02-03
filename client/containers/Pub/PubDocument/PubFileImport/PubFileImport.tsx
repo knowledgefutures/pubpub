@@ -27,7 +27,7 @@ const PubFileImport = (props: Props) => {
 	const state = view && view.state;
 
 	useEffect(() => {
-		const isEmpty = state ? viewIsEmpty(state as any) : true;
+		const isEmpty = state ? viewIsEmpty(state as any) : false;
 		if (isEmpty) {
 			setIsVisible(true);
 		} else if (!isDialogOpen) {

@@ -21,15 +21,7 @@ export default (sequelize, dataTypes) => {
 			],
 			classMethods: {
 				associate: (models) => {
-					const {
-						Discussion,
-						DiscussionAnchor,
-						Visibility,
-						Pub,
-						User,
-						Anchor,
-						Thread,
-					} = models;
+					const { Discussion, DiscussionAnchor, Visibility, Pub, User, Thread } = models;
 					Discussion.belongsTo(Thread, {
 						onDelete: 'CASCADE',
 						as: 'thread',
@@ -44,11 +36,6 @@ export default (sequelize, dataTypes) => {
 						onDelete: 'CASCADE',
 						as: 'author',
 						foreignKey: 'userId',
-					});
-					Discussion.belongsTo(Anchor, {
-						onDelete: 'CASCADE',
-						as: 'anchor',
-						foreignKey: 'anchorId',
 					});
 					Discussion.belongsTo(Pub, {
 						onDelete: 'CASCADE',

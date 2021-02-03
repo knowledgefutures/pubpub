@@ -62,7 +62,6 @@ export default (sequelize, dataTypes) => {
 			classMethods: {
 				associate: (models) => {
 					const {
-						Branch,
 						CollectionPub,
 						Community,
 						CrossrefDepositRecord,
@@ -108,11 +107,6 @@ export default (sequelize, dataTypes) => {
 					Pub.hasMany(Member, {
 						onDelete: 'CASCADE',
 						as: 'members',
-						foreignKey: 'pubId',
-					});
-					Pub.hasMany(Branch, {
-						onDelete: 'CASCADE',
-						as: 'branches',
 						foreignKey: 'pubId',
 					});
 					Pub.hasMany(Release, {

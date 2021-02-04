@@ -28,6 +28,7 @@ const commandFiles = {
 	migration2020_05_06: './migration2020_05_06',
 	migration2020_06_24: './migration2020_06_24',
 	migrationsDeprecated: './migrationsDeprecated',
+	pubCrawl: './pubCrawl',
 	rerankCollections: './rerankCollections',
 	rerunExport: './rerunExport',
 	searchSync: './searchSync',

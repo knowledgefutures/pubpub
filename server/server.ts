@@ -112,7 +112,6 @@ app.use('/static', express.static(path.join(process.cwd(), 'static')));
 app.use('/service-worker.js', express.static(path.join(process.cwd(), 'static/service-worker.js')));
 app.use('/favicon.png', express.static(path.join(process.cwd(), 'static/favicon.png')));
 app.use('/favicon.ico', express.static(path.join(process.cwd(), 'static/favicon.png')));
-app.use('/robots.txt', express.static(path.join(process.cwd(), 'static/robots.txt')));
 
 /* -------------------- */
 /* Set Hostname for Dev */

@@ -43,7 +43,8 @@ const makeBubbleRenderer = ({
 		(threadComment) => threadComment.userId === loginData.id,
 	);
 	const bubbleCount = discussion.number && discussion.thread.comments.length;
-	const label = discussion.number && getLabelForDiscussion(discussions[0]);
+	const label =
+		discussions.length === 1 && discussion.number && getLabelForDiscussion(discussions[0]);
 	return (
 		<DiscussionBubble
 			{...getHandlersForDiscussion(discussion)}

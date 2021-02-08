@@ -46,7 +46,7 @@ const getEarlyRenderableProps = (dateProp, hasMounted) => {
 	if (!hasMounted) {
 		try {
 			const value = getInputValueFromDateProp(dateProp);
-			return { value: value };
+			return { value };
 		} catch (_) {
 			return {};
 		}

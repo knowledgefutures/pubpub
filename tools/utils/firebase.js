@@ -115,4 +115,4 @@ const createFirebaseClient = (url, serviceAccountB64) => {
 	};
 };
 
-module.exports = { createFirebaseClient: createFirebaseClient };
+module.exports = { createFirebaseClient };

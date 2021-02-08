@@ -38,17 +38,17 @@ export const canCreatePub = async ({ userId, communityId, collectionId, createPu
 	if (userId) {
 		if (createPubToken) {
 			const collectionIds = getValidCollectionIdsFromCreatePubToken(createPubToken, {
-				userId: userId,
-				communityId: communityId,
+				userId,
+				communityId,
 			});
 			if (collectionIds) {
-				return { create: true, collectionIds: collectionIds };
+				return { create: true, collectionIds };
 			}
 			return { create: false };
 		}
 
 		const [scopeData, communityData] = await Promise.all([
-			getScope({ communityId: communityId, collectionId: collectionId, loginId: userId }),
+			getScope({ communityId, collectionId, loginId: userId }),
 			Community.findOne({ where: { id: communityId }, attributes: ['hideCreatePubButton'] }),
 		]);
 
@@ -69,7 +69,7 @@ export const getUpdatablePubFields = async ({ userId, pubId, licenseSlug }) => {
 	const {
 		elements: { activeCommunity },
 		activePermissions: { canManage, canAdmin },
-	} = await getScope({ pubId: pubId, loginId: userId });
+	} = await getScope({ pubId, loginId: userId });
 
 	if (!isValidLicenseSlugForCommunity(activeCommunity, licenseSlug)) {
 		return null;
@@ -88,6 +88,6 @@ export const getUpdatablePubFields = async ({ userId, pubId, licenseSlug }) => {
 export const canDestroyPub = async ({ userId, pubId }) => {
 	const {
 		activePermissions: { canManage },
-	} = await getScope({ pubId: pubId, loginId: userId });
+	} = await getScope({ pubId, loginId: userId });
 	return canManage;
 };

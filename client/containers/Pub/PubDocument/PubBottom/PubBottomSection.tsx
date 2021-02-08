@@ -92,15 +92,13 @@ const PubBottomSection = (props: PubBottomSectionProps) => {
 	};
 
 	const renderCenterItems = () => {
-		return typeof centerItems === 'function'
-			? centerItems({ isExpanded: isExpanded })
-			: centerItems;
+		return typeof centerItems === 'function' ? centerItems({ isExpanded }) : centerItems;
 	};
 
 	const renderIconItems = () => {
 		const iconColor = isSearching ? 'white' : accentColor;
 		return typeof iconItems === 'function'
-			? iconItems({ isExpanded: isExpanded, isSearching: isSearching, iconColor: iconColor })
+			? iconItems({ isExpanded, isSearching, iconColor })
 			: iconItems;
 	};
 
@@ -178,7 +176,7 @@ const PubBottomSection = (props: PubBottomSectionProps) => {
 			{isExpanded && (
 				<div className="section-content">
 					{typeof children === 'function'
-						? children({ searchTerm: searchTerm, isSearching: isSearching })
+						? children({ searchTerm, isSearching })
 						: children}
 				</div>
 			)}

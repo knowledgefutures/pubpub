@@ -138,7 +138,7 @@ const PubHistoricalNotice = (props: Props) => {
 					<li>
 						This Release <b>(#{releaseNumber})</b> was created{' '}
 						{formatDate(currentReleaseDate, {
-							includeTime: includeTime,
+							includeTime,
 							includePreposition: true,
 						})}{' '}
 						<span className="humanized-time">
@@ -148,7 +148,7 @@ const PubHistoricalNotice = (props: Props) => {
 					<li>
 						The latest Release <b>(#{pubData.releases.length})</b> was created{' '}
 						{formatDate(latestReleaseDate, {
-							includeTime: includeTime,
+							includeTime,
 							includePreposition: true,
 						})}{' '}
 						<span className="humanized-time">
@@ -166,10 +166,10 @@ const PubHistoricalNotice = (props: Props) => {
 		return (
 			<p>
 				You're viewing a draft of this Pub as it appeared{' '}
-				{formatDate(currentDate, { includeTime: includeTime, includePreposition: true })}.
-				It was most recently updated{' '}
+				{formatDate(currentDate, { includeTime, includePreposition: true })}. It was most
+				recently updated{' '}
 				{formatDate(latestDate, {
-					includeTime: includeTime,
+					includeTime,
 					includePreposition: true,
 				})}
 				. See the latest draft to make changes and view comments.

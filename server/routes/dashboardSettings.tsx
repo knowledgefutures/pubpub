@@ -13,7 +13,7 @@ const getSettingsData = async (pubSlug, initialData) => {
 		return {
 			pubData: await getPubForRequest({
 				slug: pubSlug,
-				initialData: initialData,
+				initialData,
 				getEdges: 'all',
 			}),
 		};
@@ -40,9 +40,9 @@ app.get(
 				<Html
 					chunkName="DashboardSettings"
 					initialData={initialData}
-					viewData={{ settingsData: settingsData }}
+					viewData={{ settingsData }}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Settings · ${initialData.scopeData.elements.activeTarget.title}`,
 						unlisted: true,
 					})}

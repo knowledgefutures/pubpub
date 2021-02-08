@@ -30,8 +30,8 @@ class MediaGithub extends Component<Props, State> {
 		const isValid = isHttpsUri(input) && getEmbedType(input) === 'github';
 		this.setState(
 			{
-				input: input,
-				isValid: isValid,
+				input,
+				isValid,
 			},
 			() => {
 				if (!this.state.isValid) {

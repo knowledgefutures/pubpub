@@ -33,7 +33,7 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 			return next();
 		}
 		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ query: { id: any; }; initialDa... Remove this comment to see the full error message
-		const pageData = await getPage({ query: { id: pageId }, initialData: initialData });
+		const pageData = await getPage({ query: { id: pageId }, initialData });
 		const pageTitle = !pageData.slug
 			? initialData.communityData.title
 			: `${pageData.title} · ${initialData.communityData.title}`;
@@ -43,9 +43,9 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 			<Html
 				chunkName="Page"
 				initialData={initialData}
-				viewData={{ pageData: pageData }}
+				viewData={{ pageData }}
 				headerComponents={generateMetaComponents({
-					initialData: initialData,
+					initialData,
 					title: pageTitle,
 					description: pageData.description,
 					image: pageData.avatar,

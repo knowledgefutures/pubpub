@@ -114,8 +114,8 @@ const parseCollectionConnectionFilters = ({ collections, children }) => {
 	const forbidChildren = children === '0' || children === 'false' || children === false;
 	return {
 		allowChildren: !forbidChildren,
-		requiredCollectionSlugs: requiredCollectionSlugs,
-		forbiddenCollectionSlugs: forbiddenCollectionSlugs,
+		requiredCollectionSlugs,
+		forbiddenCollectionSlugs,
 	};
 };
 
@@ -129,13 +129,13 @@ export const getQueriedPubIds = async ({ communityId, limit, query }) => {
 	const rows = await sequelize.query(pubsIdsQuery, {
 		type: QueryTypes.SELECT,
 		replacements: {
-			publishedBefore: publishedBefore,
-			publishedAfter: publishedAfter,
-			allowChildren: allowChildren,
-			requiredCollectionSlugs: requiredCollectionSlugs,
-			forbiddenCollectionSlugs: forbiddenCollectionSlugs,
-			communityId: communityId,
-			limit: limit,
+			publishedBefore,
+			publishedAfter,
+			allowChildren,
+			requiredCollectionSlugs,
+			forbiddenCollectionSlugs,
+			communityId,
+			limit,
 		},
 	});
 	return rows.map((row) => row.pubId);
@@ -207,7 +207,7 @@ const createEnclosure = (url) => {
 	return {
 		enclosure: {
 			_attr: {
-				url: url,
+				url,
 			},
 		},
 	};
@@ -221,8 +221,8 @@ export const getFeedItemForPub = (pubData, communityData) => {
 	// NB: Strictly speaking the formatted download is not required to be a PDF.
 	const bestPdfUrl = formattedDownloadUrl || pdfExportUrl;
 	return {
-		title: title,
-		description: description,
+		title,
+		description,
 		url: pubUrl(communityData, pubData),
 		guid: id,
 		date: getPubPublishedDate(pubData),
@@ -246,7 +246,7 @@ export const getCommunityRss = async (communityData, query) => {
 	const pubIds = await getQueriedPubIds({
 		communityId: communityData.id,
 		limit: 25,
-		query: query,
+		query,
 	});
 	const pubs = await getPubData(pubIds);
 

@@ -9,9 +9,9 @@ const rewritePageLayout = (blocks) => {
 			} = block;
 			return {
 				type: 'collections-pages',
-				id: id,
+				id,
 				content: {
-					title: title,
+					title,
 					items: pageIds.map((pageId) => {
 						return { type: 'page', id: pageId };
 					}),

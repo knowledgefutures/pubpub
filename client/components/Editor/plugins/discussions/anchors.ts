@@ -13,7 +13,7 @@ export const getDiscussionsFromAnchors = (anchors: DiscussionAnchor[]): Discussi
 				currentKey: historyKey,
 				initAnchor: selection.anchor,
 				initHead: selection.head,
-				selection: selection,
+				selection,
 			};
 		}
 	});

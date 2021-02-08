@@ -53,7 +53,7 @@ const getBestHistoryKeyForRelease = (release, keyTimePairs, historyKeyUpperBound
 const getHistoryKeysForReleases = (releases, keyTimePairs) => {
 	if (keyTimePairs.length === releases.length) {
 		const keys = keyTimePairs.map((p) => p.historyKey);
-		return { keys: keys, confidence: '✅' };
+		return { keys, confidence: '✅' };
 	}
 	let confidence = '⚠️';
 	const keys = releases.map((release, index) => {
@@ -75,7 +75,7 @@ const getHistoryKeysForReleases = (releases, keyTimePairs) => {
 		);
 		return getBestHistoryKeyForRelease(release, keyTimePairs, upperBoundFromSourceBranchKeys);
 	});
-	return { keys: keys, confidence: confidence };
+	return { keys, confidence };
 };
 
 const addHistoryKeysToReleases = async (pubId, releaseBranchId, releases) => {
@@ -122,7 +122,7 @@ const addHistoryKeysToReleases = async (pubId, releaseBranchId, releases) => {
 				if (typeof historyKey !== 'number') {
 					throw new Error(`Release at index=${index} somehow missing key`);
 				}
-				await Release.update({ historyKey: historyKey }, { where: { id: release.id } });
+				await Release.update({ historyKey }, { where: { id: release.id } });
 			}),
 		);
 

@@ -302,7 +302,7 @@ const editTimestamps = {
 };
 
 const pubData = {
-	releases: releases,
+	releases,
 	slug: 'hmmmm',
 	createdAt: '2018-10-24T15:44:16.819Z',
 };

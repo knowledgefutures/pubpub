@@ -72,13 +72,13 @@ const CollectionDetailsEditor = (props: Props) => {
 				error={slugError}
 				helperText={`Collection URL will be ${collectionUrl(communityData, {
 					...collection,
-					slug: slug,
+					slug,
 				})}`}
 				onChange={(evt) => {
 					const { value } = evt.target;
 					setSlug(value ? slugifyString(value) : '');
 				}}
-				onBlur={() => slug && onUpdateCollection({ slug: slug })}
+				onBlur={() => slug && onUpdateCollection({ slug })}
 			/>
 			<FormGroup
 				helperText={

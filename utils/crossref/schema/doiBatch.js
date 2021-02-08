@@ -19,9 +19,9 @@ export default ({ body, doiBatchId, timestamp }) => ({
 		...SCHEMA_METADATA,
 		head: {
 			doi_batch_id: doiBatchId,
-			timestamp: timestamp,
+			timestamp,
 			...HEAD_METADATA,
 		},
-		body: body,
+		body,
 	},
 });

@@ -77,8 +77,8 @@ export default async () => {
 			labels: header.labels,
 			userId: header.userId,
 			pubId: header.pubId,
-			threadId: threadId,
-			visibilityId: visibilityId,
+			threadId,
+			visibilityId,
 			createdAt: header.createdAt,
 			updatedAt: header.updatedAt,
 		};
@@ -94,7 +94,7 @@ export default async () => {
 				text: item.text,
 				content: item.content,
 				userId: item.userId,
-				threadId: threadId,
+				threadId,
 				createdAt: item.createdAt,
 				updatedAt: item.updatedAt,
 			};

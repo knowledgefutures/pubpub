@@ -4,7 +4,7 @@ import { CollectionAttribution, CollectionPub, includeUserModel } from 'server/m
 
 export const getCollectionAttributions = (collectionId) =>
 	CollectionAttribution.findAll({
-		where: { collectionId: collectionId },
+		where: { collectionId },
 		include: [includeUserModel({ as: 'user', required: false })],
 	}).then((attributions) => {
 		return attributions.map((attribution) => {
@@ -18,7 +18,7 @@ export const getCollectionAttributions = (collectionId) =>
 
 export const getCollectionPubsInCollection = (collectionId) =>
 	CollectionPub.findAll({
-		where: { collectionId: collectionId },
+		where: { collectionId },
 		order: [['rank', 'ASC']],
 	});
 

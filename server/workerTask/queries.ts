@@ -10,4 +10,4 @@ export const getWorkerTask = ({ workerTaskId }) => {
 };
 
 export const createWorkerTask = ({ type, input, priority }) =>
-	WorkerTask.create({ isProcessing: true, type: type, input: input, priority: priority });
+	WorkerTask.create({ isProcessing: true, type, input, priority });

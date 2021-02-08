@@ -403,9 +403,9 @@ const getSelectedText = (editorView) => {
 		Math.min(editorView.state.doc.nodeSize - 2, toPos + 10),
 	);
 	return {
-		exact: exact,
-		prefix: prefix,
-		suffix: suffix,
+		exact,
+		prefix,
+		suffix,
 	};
 };
 
@@ -643,7 +643,7 @@ export const getChangeObject = (editorView: EditorView, editorProps: PluginsOpti
 		activeLink: getActiveLink(editorView),
 		/* boolean alerting whether the collab plugin has finished loading */
 		isCollabLoaded: collaborativePluginState.isLoaded,
-		latestDomEvent: latestDomEvent,
+		latestDomEvent,
 	};
 };
 
@@ -661,7 +661,7 @@ export default (_, props: PluginsOptions) => {
 		state: {
 			init: () => {
 				return {
-					dispatchChange: dispatchChange,
+					dispatchChange,
 				};
 			},
 			apply: (__, s) => s,

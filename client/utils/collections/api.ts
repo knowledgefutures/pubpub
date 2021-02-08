@@ -6,9 +6,9 @@ export const addCollectionPub = ({ pubId, collectionId, communityId }) =>
 	apiFetch(collectionPubsRoot, {
 		method: 'POST',
 		body: JSON.stringify({
-			pubId: pubId,
-			collectionId: collectionId,
-			communityId: communityId,
+			pubId,
+			collectionId,
+			communityId,
 			moveToTop: true,
 		}),
 	});
@@ -18,8 +18,8 @@ export const updateCollectionPub = ({ communityId, id, update }) =>
 		method: 'PUT',
 		body: JSON.stringify({
 			...update,
-			id: id,
-			communityId: communityId,
+			id,
+			communityId,
 		}),
 	});
 
@@ -27,8 +27,8 @@ export const removeCollectionPub = ({ communityId, id }) =>
 	apiFetch(collectionPubsRoot, {
 		method: 'DELETE',
 		body: JSON.stringify({
-			id: id,
-			communityId: communityId,
+			id,
+			communityId,
 		}),
 	});
 
@@ -38,7 +38,7 @@ export const updateCollection = ({ communityId, collectionId, updatedCollection 
 		body: JSON.stringify({
 			...updatedCollection,
 			id: collectionId,
-			communityId: communityId,
+			communityId,
 		}),
 	});
 
@@ -47,6 +47,6 @@ export const deleteCollection = ({ communityId, collectionId }) =>
 		method: 'DELETE',
 		body: JSON.stringify({
 			id: collectionId,
-			communityId: communityId,
+			communityId,
 		}),
 	});

@@ -5,8 +5,8 @@ export const getPermissions = async ({ userId, communityId, collectionId }) => {
 		return {};
 	}
 	const scopeData = await getScope({
-		communityId: communityId,
-		collectionId: collectionId,
+		communityId,
+		collectionId,
 		loginId: userId,
 	});
 	const isAuthenticated = scopeData.activePermissions.canManage;

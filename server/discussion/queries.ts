@@ -17,7 +17,7 @@ import { createOriginalDiscussionAnchor } from 'server/discussionAnchor/queries'
 const findDiscussionWithUser = (id) =>
 	Discussion.findOne({
 		where: {
-			id: id,
+			id,
 		},
 		include: [
 			includeUserModel({ as: 'author' }),
@@ -76,7 +76,7 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 	} = options;
 
 	const discussions = await Discussion.findAll({
-		where: { pubId: pubId },
+		where: { pubId },
 		attributes: ['id', 'pubId', 'number'],
 	});
 
@@ -95,9 +95,9 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 
 	const newThread = await Thread.create({});
 	await ThreadComment.create({
-		text: text,
-		content: content,
-		userId: userId,
+		text,
+		content,
+		userId,
 		threadId: newThread.id,
 	});
 
@@ -108,15 +108,15 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 		number: maxThreadNumber + 1,
 		threadId: newThread.id,
 		visibilityId: newVisibility.id,
-		userId: userId,
-		pubId: pubId,
+		userId,
+		pubId,
 	});
 
 	if (initAnchorData) {
 		const { from, to, exact, prefix, suffix } = initAnchorData;
 		await createOriginalDiscussionAnchor({
 			discussionId: newDiscussion.id,
-			historyKey: historyKey,
+			historyKey,
 			// If someday we wish to support Node selections we can pass a serialized Selection
 			// from the client instead of synthesizing one here.
 			selectionJson: { type: 'text', head: Math.max(from, to), anchor: Math.min(from, to) },

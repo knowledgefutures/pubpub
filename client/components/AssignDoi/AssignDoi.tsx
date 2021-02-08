@@ -123,7 +123,7 @@ export function reducer(state, action) {
 
 			return {
 				...state,
-				crossrefDepositRecord: crossrefDepositRecord,
+				crossrefDepositRecord,
 			};
 		}
 		case AssignDoiActionType.UpdateReviewType: {
@@ -137,7 +137,7 @@ export function reducer(state, action) {
 
 			return {
 				...state,
-				crossrefDepositRecord: crossrefDepositRecord,
+				crossrefDepositRecord,
 			};
 		}
 		case AssignDoiActionType.UpdateReviewRecommendation: {
@@ -151,7 +151,7 @@ export function reducer(state, action) {
 
 			return {
 				...state,
-				crossrefDepositRecord: crossrefDepositRecord,
+				crossrefDepositRecord,
 			};
 		}
 		case AssignDoiActionType.FetchDeposit:
@@ -257,12 +257,12 @@ function AssignDoi(props: Props) {
 
 	const requestBody = useMemo(
 		() => ({
-			target: target,
+			target,
 			pubId: pubData.id,
 			communityId: communityData.id,
-			contentVersion: contentVersion,
-			reviewType: reviewType,
-			reviewRecommendation: reviewRecommendation,
+			contentVersion,
+			reviewType,
+			reviewRecommendation,
 		}),
 		[target, pubData, communityData, contentVersion, reviewType, reviewRecommendation],
 	);
@@ -302,7 +302,7 @@ function AssignDoi(props: Props) {
 			const body = JSON.stringify(pickNonNullValues(requestBody));
 			const response = await apiFetch('/api/doi', {
 				method: 'POST',
-				body: body,
+				body,
 			});
 			dispatch({
 				type: AssignDoiActionType.FetchDepositSuccess,

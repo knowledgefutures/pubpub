@@ -58,8 +58,8 @@ export const getInitialData = async (req, isDashboard = false): Promise<InitialD
 				],
 				collections: [],
 			} as any,
-			loginData: loginData,
-			locationData: locationData,
+			loginData,
+			locationData,
 			scopeData: { activePermissions: {} } as ScopeData,
 		};
 	}
@@ -88,7 +88,7 @@ export const getInitialData = async (req, isDashboard = false): Promise<InitialD
 		collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
 		accessHash: locationData.query.access,
 		loginId: loginData.id,
-		isDashboard: isDashboard,
+		isDashboard,
 	});
 
 	const cleanedCommunityData = sanitizeCommunity(
@@ -100,8 +100,8 @@ export const getInitialData = async (req, isDashboard = false): Promise<InitialD
 
 	return {
 		communityData: cleanedCommunityData,
-		loginData: loginData,
-		locationData: locationData,
-		scopeData: scopeData,
+		loginData,
+		locationData,
+		scopeData,
 	};
 };

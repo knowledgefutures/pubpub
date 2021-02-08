@@ -20,7 +20,7 @@ export const downloadAndConvertFiles = async (sourceFiles, tmpDirectoryPath) => 
 				const convertedKey = await uploadFileToAssetStore(convertedTmpPath);
 				return { ...sourceFile, assetKey: convertedKey, tmpPath: convertedTmpPath };
 			}
-			return { ...sourceFile, tmpPath: tmpPath };
+			return { ...sourceFile, tmpPath };
 		}),
 	);
 };

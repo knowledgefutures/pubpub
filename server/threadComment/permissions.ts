@@ -5,13 +5,13 @@ const userEditableFields = ['text', 'content'];
 
 const getMatchingDiscussion = (id, threadId, pubId) =>
 	Discussion.findOne({
-		where: { id: id, threadId: threadId, pubId: pubId },
+		where: { id, threadId, pubId },
 		include: [{ model: Visibility, as: 'visibility' }],
 	});
 
 const getMatchingReview = (id, threadId, pubId) =>
 	ReviewNew.findOne({
-		where: { id: id, threadId: threadId, pubId: pubId },
+		where: { id, threadId, pubId },
 		include: [{ model: Visibility, as: 'visibility' }],
 	});
 
@@ -47,16 +47,15 @@ export const getPermissions = async ({
 		threadCommentData,
 	] = await Promise.all([
 		getScope({
-			communityId: communityId,
-			pubId: pubId,
+			communityId,
+			pubId,
 			loginId: userId,
-			accessHash: accessHash,
+			accessHash,
 		}),
 		getMatchingDiscussion(parentId, threadId, pubId),
 		getMatchingReview(parentId, threadId, pubId),
 		Thread.findOne({ where: { id: threadId } }),
-		threadCommentId &&
-			ThreadComment.findOne({ where: { id: threadCommentId, threadId: threadId } }),
+		threadCommentId && ThreadComment.findOne({ where: { id: threadCommentId, threadId } }),
 	]);
 
 	const { canView, canAdmin } = scopeData.activePermissions;

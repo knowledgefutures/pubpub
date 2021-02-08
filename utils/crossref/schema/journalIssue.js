@@ -16,17 +16,17 @@ export default ({
 	journal_issue: {
 		...contributors(attributions),
 		titles: {
-			title: title,
+			title,
 		},
 		...date('publication_date', publicationDate),
 		...(volume
 			? {
 					journal_volume: {
-						volume: volume,
+						volume,
 					},
 			  }
 			: {}),
-		issue: issue,
+		issue,
 		...doiData(doi, timestamp, url, contentVersion),
 	},
 });

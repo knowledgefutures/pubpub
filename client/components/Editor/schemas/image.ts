@@ -72,7 +72,7 @@ export default {
 			return [
 				'figure',
 				{
-					...(id && { id: id }),
+					...(id && { id }),
 					'data-node-type': 'image',
 					'data-size': size,
 					'data-align': align,

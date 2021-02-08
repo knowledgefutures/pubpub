@@ -8,10 +8,10 @@ const getRequestIds = (req) => {
 	const { pubId, communityId, historyKey, accessHash } = req.query;
 	return {
 		userId: user.id,
-		pubId: pubId,
-		communityId: communityId,
+		pubId,
+		communityId,
 		historyKey: parseInt(historyKey, 10),
-		accessHash: accessHash,
+		accessHash,
 	};
 };
 
@@ -20,11 +20,11 @@ app.get(
 	wrap(async (req, res) => {
 		const { pubId, communityId, historyKey, accessHash, userId } = getRequestIds(req);
 		const { canCreateExport } = await getPermissions({
-			userId: userId,
-			communityId: communityId,
-			pubId: pubId,
-			accessHash: accessHash,
-			historyKey: historyKey,
+			userId,
+			communityId,
+			pubId,
+			accessHash,
+			historyKey,
 		});
 		if (canCreateExport) {
 			const draftDocInfo = await getPubDraftDoc(pubId, historyKey);

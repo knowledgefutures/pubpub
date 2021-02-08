@@ -16,7 +16,7 @@ export default ({
 			'@language': language,
 			'@parent_relation': 'isPartOf',
 			titles: {
-				title: title,
+				title,
 			},
 			...contributors(attributions),
 			...date('publication_date', publicationDate, 'print'),

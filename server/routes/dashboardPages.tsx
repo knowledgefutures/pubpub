@@ -22,7 +22,7 @@ app.get(['/dash/pages'], async (req, res, next) => {
 				initialData={initialData}
 				viewData={{}}
 				headerComponents={generateMetaComponents({
-					initialData: initialData,
+					initialData,
 					title: `Pages · ${initialData.scopeData.elements.activeTarget.title}`,
 					unlisted: true,
 				})}

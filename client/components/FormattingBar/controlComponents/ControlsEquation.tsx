@@ -78,7 +78,7 @@ const ControlsEquation = (props: Props) => {
 		const targetNodeType = isBlock ? 'equation' : 'block_equation';
 		const schemaDefinition = getSchemaDefinitionForNodeType(editorChangeObject, targetNodeType);
 		commitChanges();
-		changeNode(schemaDefinition, { value: value, html: html }, null);
+		changeNode(schemaDefinition, { value, html }, null);
 	};
 
 	return (

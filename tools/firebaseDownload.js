@@ -12,7 +12,7 @@ const {
 const main = async () => {
 	const pub = await lookupPub({ id: pubId, slug: pubSlug });
 	if (downloadDoc) {
-		const branch = await lookupBranch({ pubId: pub.id, branchTitle: branchTitle });
+		const branch = await lookupBranch({ pubId: pub.id, branchTitle });
 		console.log('Loading doc...');
 		const branchDoc = await getBranchDoc(pub.id, branch.id);
 		console.log('Stringifying doc...');

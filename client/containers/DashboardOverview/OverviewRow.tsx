@@ -34,8 +34,8 @@ const getCounts = (isCollection, content) => {
 		: content.discussions.filter((it) => !it.isClosed).length;
 
 	return {
-		countReviews: countReviews,
-		countConversations: countConversations,
+		countReviews,
+		countConversations,
 	};
 };
 

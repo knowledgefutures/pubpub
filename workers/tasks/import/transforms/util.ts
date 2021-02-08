@@ -9,8 +9,8 @@ export const walkAndReplace = (node, matchAndReplacers) => {
 			if (match) {
 				return replacer({
 					entry: node,
-					match: match,
-					matchAndReplacers: matchAndReplacers,
+					match,
+					matchAndReplacers,
 					walk: (innerNode, innerMatchAndReplacers = matchAndReplacers) =>
 						walkAndReplace(innerNode, innerMatchAndReplacers),
 				});

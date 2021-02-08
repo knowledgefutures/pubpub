@@ -20,7 +20,7 @@ app.get('/pricing', (req, res, next) => {
 					chunkName="Pricing"
 					initialData={initialData}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: 'Pricing · PubPub',
 					})}
 				/>,

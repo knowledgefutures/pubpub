@@ -18,7 +18,7 @@ export default ({
 			'@language': language,
 			...contributors(attributions),
 			titles: {
-				title: title,
+				title,
 			},
 			...(relatedItems.length > 0 && relations(relatedItems)),
 			...doiData(doi, timestamp, resourceUrl, contentVersion),

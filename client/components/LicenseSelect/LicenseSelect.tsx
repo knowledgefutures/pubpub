@@ -117,7 +117,7 @@ const LicenseSelect = (props: Props) => {
 			{children({
 				icon: renderIcon(currentLicense),
 				title: currentLicense.full,
-				isPersisting: isPersisting,
+				isPersisting,
 			})}
 		</Popover>
 	);

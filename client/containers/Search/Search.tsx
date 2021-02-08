@@ -91,7 +91,7 @@ const Search = (props: Props) => {
 			setIsLoading(true);
 
 			// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-			indexRef.current.search(throttledSearchQuery, { page: page }).then((results) => {
+			indexRef.current.search(throttledSearchQuery, { page }).then((results) => {
 				setIsLoading(false);
 				setSearchResults(results.hits);
 				numPagesSetter(Math.min(results.nbPages, 10));

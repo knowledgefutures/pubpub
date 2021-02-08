@@ -36,7 +36,7 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 
 	useEffect(() => {
 		if (changed.current) {
-			updateNode({ targetId: targetId });
+			updateNode({ targetId });
 			changed.current = false;
 		}
 	}, [targetId, updateNode]);

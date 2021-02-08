@@ -6,11 +6,11 @@ export const getPermissions = async ({ userId, communityId, pageId }) => {
 		return {};
 	}
 	const scopeData = await getScope({
-		communityId: communityId,
+		communityId,
 		loginId: userId,
 	});
 	const isAuthenticated = scopeData.activePermissions.canManage;
-	const pageData = await Page.findOne({ where: { id: pageId, communityId: communityId } });
+	const pageData = await Page.findOne({ where: { id: pageId, communityId } });
 
 	if (!pageData) {
 		return { create: isAuthenticated };

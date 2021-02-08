@@ -78,7 +78,7 @@ const maybeGenerateSitemapIndex = async (community) => {
 		getSitemapStream: (i) => {
 			const sitemapPath = `./sitemap-${i}.xml`;
 			const sitemapStream = new SitemapStream({
-				hostname: hostname,
+				hostname,
 			});
 
 			sitemapStream

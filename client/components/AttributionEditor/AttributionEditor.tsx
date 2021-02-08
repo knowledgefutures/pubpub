@@ -47,7 +47,7 @@ class AttributionEditor extends Component<Props> {
 		const { apiRoute, identifyingProps, promiseWrapper } = this.props;
 		return promiseWrapper(
 			apiFetch(apiRoute, {
-				method: method,
+				method,
 				body: JSON.stringify({
 					...data,
 					...identifyingProps,

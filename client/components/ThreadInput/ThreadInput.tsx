@@ -35,9 +35,9 @@ const ThreadInput = (props: Props) => {
 			method: 'POST',
 			body: JSON.stringify({
 				accessHash: locationData.query.access,
-				parentId: parentId,
+				parentId,
 				threadId: threadData.id,
-				pubId: pubId,
+				pubId,
 				communityId: communityData.id,
 				// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
 				content: getJSON(changeObject.view),

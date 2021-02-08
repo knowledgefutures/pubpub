@@ -30,8 +30,8 @@ class MediaCodepen extends Component<Props, State> {
 		const isValid = isHttpsUri(input) && getEmbedType(input) === 'codepen';
 		this.setState(
 			{
-				input: input,
-				isValid: isValid,
+				input,
+				isValid,
 			},
 			() => {
 				if (!this.state.isValid) {

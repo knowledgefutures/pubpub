@@ -29,7 +29,7 @@ const CitationChooser = (props: Props) => {
 			body: JSON.stringify({
 				...updateData,
 				pubId: pubData.id,
-				communityId: communityId,
+				communityId,
 			}),
 		}).catch((err) => console.error('Error Saving Pub Citation Style: ', err));
 	};

@@ -42,23 +42,23 @@ export const createCollection = ({
 		const collection = {
 			title: normalizedTitle,
 			slug: await findAcceptableSlug(slug || slugifyString(title), communityId),
-			isRestricted: isRestricted,
-			isPublic: isPublic,
+			isRestricted,
+			isPublic,
 			viewHash: generateHash(8),
 			editHash: generateHash(8),
-			communityId: communityId,
-			pageId: pageId,
-			doi: doi,
-			kind: kind,
+			communityId,
+			pageId,
+			doi,
+			kind,
 			layout: generateDefaultCollectionLayout(),
 			// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
-			...(id && { id: id }),
+			...(id && { id }),
 		};
 		const metadata = normalizeMetadataToKind({}, kind, {
-			community: community,
-			collection: collection,
+			community,
+			collection,
 		});
-		return Collection.create({ ...collection, metadata: metadata }, { returning: true });
+		return Collection.create({ ...collection, metadata }, { returning: true });
 	});
 };
 

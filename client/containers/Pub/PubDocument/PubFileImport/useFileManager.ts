@@ -47,28 +47,25 @@ export const useFileManager = () => {
 		setFiles((currentFiles) => labelFiles(currentFiles.filter((file) => file.id !== fileId)));
 
 	const onProgress = (fileId) => ({ loaded, total }) =>
-		updateFileById(fileId, { state: 'uploading', loaded: loaded, total: total });
+		updateFileById(fileId, { state: 'uploading', loaded, total });
 
 	const onComplete = (fileId) => (_, __, ___, assetKey) =>
-		updateFileById(fileId, { state: 'complete', assetKey: assetKey });
+		updateFileById(fileId, { state: 'complete', assetKey });
 
 	const addFile = (file) => {
 		const fileId = fileIdCounter;
 		const clientPath = file.path || file.name;
 		fileIdCounter += 1;
 		s3Upload(file, onProgress(fileId), onComplete(fileId));
-		setFiles((currentFiles) => [
-			...currentFiles,
-			{ id: fileId, state: 'waiting', clientPath: clientPath },
-		]);
+		setFiles((currentFiles) => [...currentFiles, { id: fileId, state: 'waiting', clientPath }]);
 	};
 
 	const getFiles = () => files;
 
 	return {
-		addFile: addFile,
-		getFiles: getFiles,
-		deleteFileById: deleteFileById,
-		labelFileById: labelFileById,
+		addFile,
+		getFiles,
+		deleteFileById,
+		labelFileById,
 	};
 };

@@ -50,7 +50,7 @@ const CreateCollectionDialog = (props: Props) => {
 			method: 'POST',
 			body: JSON.stringify({
 				communityId: communityData.id,
-				title: title,
+				title,
 				kind: kindRadio.state,
 			}),
 		})

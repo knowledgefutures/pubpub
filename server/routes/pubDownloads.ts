@@ -14,7 +14,7 @@ app.get(
 		const initialData = await getInitialData(req);
 		const { pubSlug, format = null } = req.params;
 
-		const pubData = await getPubForRequest({ slug: pubSlug, initialData: initialData });
+		const pubData = await getPubForRequest({ slug: pubSlug, initialData });
 		const bestPubDownloadUrl = getBestDownloadUrl(pubData, format);
 
 		if (!pubData || pubData.releases.length === 0) {

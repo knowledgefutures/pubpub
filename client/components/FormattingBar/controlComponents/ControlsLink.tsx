@@ -51,7 +51,7 @@ const ControlsLink = (props: Props) => {
 
 	const handleKeyPress = (evt) => {
 		if (evt.key === 'Enter') {
-			activeLink.updateAttrs({ href: href });
+			activeLink.updateAttrs({ href });
 			onClose();
 			setTimeout(restoreSelection, 0);
 		}

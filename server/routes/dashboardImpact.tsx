@@ -30,9 +30,9 @@ app.get(
 				<Html
 					chunkName="DashboardImpact"
 					initialData={initialData}
-					viewData={{ impactData: impactData }}
+					viewData={{ impactData }}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Impact · ${initialData.scopeData.elements.activeTarget.title}`,
 						unlisted: true,
 					})}

@@ -23,7 +23,7 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 		const initialData = await getInitialData(req, true);
 		const pubData = await getPubForRequest({
 			slug: req.params.pubSlug,
-			initialData: initialData,
+			initialData,
 			getDraft: true,
 			getDiscussions: true,
 			getReviews: true,
@@ -40,9 +40,9 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 			<Html
 				chunkName="DashboardOverview"
 				initialData={initialData}
-				viewData={{ pubData: { ...pubData, citationData: citationData } }}
+				viewData={{ pubData: { ...pubData, citationData } }}
 				headerComponents={generateMetaComponents({
-					initialData: initialData,
+					initialData,
 					title: `Overview · ${initialData.scopeData.elements.activeTarget.title}`,
 					unlisted: true,
 				})}

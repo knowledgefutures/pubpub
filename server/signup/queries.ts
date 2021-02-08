@@ -8,7 +8,7 @@ export const createSignup = (inputValues, hostname) => {
 	/* If there are no records to update, then we create a new one. */
 	/* If this fails, it is because the email must be unique and it is already used */
 	return User.findOne({
-		where: { email: email },
+		where: { email },
 	})
 		.then((userData) => {
 			if (userData) {
@@ -18,7 +18,7 @@ export const createSignup = (inputValues, hostname) => {
 			return Signup.update(
 				{ count: sequelize.literal('count + 1') },
 				{
-					where: { email: email, completed: false },
+					where: { email, completed: false },
 				},
 			);
 		})
@@ -27,7 +27,7 @@ export const createSignup = (inputValues, hostname) => {
 				return null;
 			}
 			return Signup.create({
-				email: email,
+				email,
 				hash: generateHash(),
 				count: 1,
 				completed: false,
@@ -35,7 +35,7 @@ export const createSignup = (inputValues, hostname) => {
 			});
 		})
 		.then(() => {
-			return Signup.findOne({ where: { email: email } });
+			return Signup.findOne({ where: { email } });
 		})
 		.then((signUpData) => {
 			return sendSignupEmail({

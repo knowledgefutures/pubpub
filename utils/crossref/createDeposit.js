@@ -114,10 +114,10 @@ const getPubDoiPart = (context, doiTarget) => {
 		doi =
 			pub.doi ||
 			createDoi({
-				community: community,
-				collection: collection,
+				community,
+				collection,
 				target: pub,
-				pubEdge: pubEdge,
+				pubEdge,
 			});
 	}
 
@@ -129,8 +129,7 @@ const getCollectionDoiPart = (context, doiTarget) => {
 	const doi =
 		collection &&
 		(getCollectionDoi(collection) ||
-			(doiTarget === 'collection' &&
-				createDoi({ community: community, target: collection })));
+			(doiTarget === 'collection' && createDoi({ community, target: collection })));
 
 	return {
 		collection: doi,
@@ -140,7 +139,7 @@ const getCollectionDoiPart = (context, doiTarget) => {
 export const getDois = (context, doiTarget) => {
 	const { community } = context;
 	const dois = {
-		community: createDoi({ community: community }),
+		community: createDoi({ community }),
 		...getPubDoiPart(context, doiTarget),
 		...getCollectionDoiPart(context, doiTarget),
 	};
@@ -188,7 +187,7 @@ export default (context, doiTarget, dateForTimestamp) => {
 		]);
 	}
 
-	const contextWithPubEdge = { ...context, pubEdge: pubEdge };
+	const contextWithPubEdge = { ...context, pubEdge };
 	const dois = getDois(
 		pubEdge && pubEdge.relationType === RelationType.Supplement ? contextWithPubEdge : context,
 		doiTarget,
@@ -198,20 +197,20 @@ export default (context, doiTarget, dateForTimestamp) => {
 			body: renderBody({
 				...contextWithPubEdge,
 				globals: {
-					dois: dois,
-					timestamp: timestamp,
-					contentVersion: contentVersion,
-					reviewType: reviewType,
-					reviewRecommendation: reviewRecommendation,
+					dois,
+					timestamp,
+					contentVersion,
+					reviewType,
+					reviewRecommendation,
 				},
 			}),
-			doiBatchId: doiBatchId,
-			timestamp: timestamp,
+			doiBatchId,
+			timestamp,
 		}),
 	);
 	return {
-		deposit: deposit,
-		dois: dois,
-		timestamp: timestamp,
+		deposit,
+		dois,
+		timestamp,
 	};
 };

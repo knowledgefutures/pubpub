@@ -27,7 +27,7 @@ const collectionIncludes = [
 
 const findPrimaryCollectionPubForPub = async (pubId) => {
 	const collectionPubs = await CollectionPub.findAll({
-		where: { pubId: pubId },
+		where: { pubId },
 		include: [
 			{
 				model: Collection,
@@ -78,12 +78,12 @@ const persistCrossrefDepositRecord = async (ids, depositJson) => {
 
 	if (crossrefDepositRecordId) {
 		return updateCrossrefDepositRecord({
-			crossrefDepositRecordId: crossrefDepositRecordId,
-			depositJson: depositJson,
+			crossrefDepositRecordId,
+			depositJson,
 		});
 	}
 
-	const crossrefDepositRecord = await createCrossrefDepositRecord({ depositJson: depositJson });
+	const crossrefDepositRecord = await createCrossrefDepositRecord({ depositJson });
 
 	await targetModel.update({
 		crossrefDepositRecordId: crossrefDepositRecord.id,
@@ -120,13 +120,13 @@ export const getDoiData = (
 		const resolvedCollection = collectionPub ? collectionPub.collection : collection;
 		return createDeposit(
 			{
-				collectionPub: collectionPub,
+				collectionPub,
 				collection: resolvedCollection,
-				community: community,
-				pub: pub,
-				contentVersion: contentVersion,
-				reviewType: reviewType,
-				reviewRecommendation: reviewRecommendation,
+				community,
+				pub,
+				contentVersion,
+				reviewType,
+				reviewRecommendation,
 			},
 			doiTarget,
 		);
@@ -138,16 +138,16 @@ export const setDoiData = (
 ) =>
 	getDoiData(
 		{
-			communityId: communityId,
-			collectionId: collectionId,
-			pubId: pubId,
-			contentVersion: contentVersion,
-			reviewType: reviewType,
-			reviewRecommendation: reviewRecommendation,
+			communityId,
+			collectionId,
+			pubId,
+			contentVersion,
+			reviewType,
+			reviewRecommendation,
 		},
 		doiTarget,
 	).then((depositJson) => {
-		const ids = { collectionId: collectionId, pubId: pubId };
+		const ids = { collectionId, pubId };
 		const { deposit, timestamp, dois } = depositJson;
 		return submitDoiData(deposit, timestamp, communityId)
 			.then(() =>
@@ -157,7 +157,7 @@ export const setDoiData = (
 				]),
 			)
 			.then(() => {
-				return { deposit: deposit, dois: dois };
+				return { deposit, dois };
 			});
 	});
 
@@ -170,9 +170,9 @@ export const generateDoi = async ({ communityId, collectionId, pubId }, target) 
 
 	return getDois(
 		{
-			pub: pub,
-			community: community,
-			collection: collection,
+			pub,
+			community,
+			collection,
 		},
 		target,
 	);

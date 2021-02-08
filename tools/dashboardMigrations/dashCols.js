@@ -65,7 +65,7 @@ export default async () => {
 						permissions: 'manage',
 						pubId: item.pubId,
 						userId: item.userId,
-						isOwner: isOwner,
+						isOwner,
 						createdAt: item.createdAt,
 						updatedAt: item.updatedAt,
 					};
@@ -114,7 +114,7 @@ export default async () => {
 					permissions: 'admin',
 					communityId: item.communityId,
 					userId: item.userId,
-					isOwner: isOwner,
+					isOwner,
 					createdAt: item.createdAt,
 					updatedAt: item.updatedAt,
 				};

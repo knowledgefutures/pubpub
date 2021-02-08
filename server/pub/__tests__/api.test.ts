@@ -214,10 +214,10 @@ it('allows a Community, Collection, Pub manager to update some fields on a Pub (
 		const title = `${user.id} was here!`;
 		await agent
 			.put('/api/pubs')
-			.send({ pubId: pub.id, title: title, doi: 'some_doi' })
+			.send({ pubId: pub.id, title, doi: 'some_doi' })
 			.expect(200);
 		const pubNow = await Pub.findOne({ where: { id: pub.id } });
-		expect(pubNow).toMatchObject({ title: title, doi: null });
+		expect(pubNow).toMatchObject({ title, doi: null });
 	}
 });
 

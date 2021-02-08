@@ -23,7 +23,7 @@ const findOrCreateCommunity = async (directive, actor) => {
 	const foundCommunity = Community.findOne({ where: { subdomain: directive.subdomain } });
 	if (!foundCommunity) {
 		throw new BulkImportError(
-			{ directive: directive },
+			{ directive },
 			`No existing Community with subdomain ${directive.subdomain}. If you meant to create one, use "create: true"`,
 		);
 	}
@@ -33,7 +33,7 @@ const findOrCreateCommunity = async (directive, actor) => {
 export const resolveCommunityDirective = async ({ directive, actor }) => {
 	const community = await findOrCreateCommunity(directive, actor);
 	return {
-		community: community,
+		community,
 		created: directive.create,
 	};
 };

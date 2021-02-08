@@ -23,9 +23,9 @@ app.get(
 				<Html
 					chunkName="DashboardActivity"
 					initialData={initialData}
-					viewData={{ activityData: activityData }}
+					viewData={{ activityData }}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Activity · ${initialData.scopeData.elements.activeTarget.title}`,
 						unlisted: true,
 					})}

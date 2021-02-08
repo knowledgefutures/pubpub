@@ -40,7 +40,7 @@ const walkAst = (ast, parameters) => {
 
 		for (const innerModelBlock of modelBlocks) {
 			const modelDefinition = walkModelBlock(innerModelBlock);
-			referencedDefinitions.push({ implicit: true, modelDefinition: modelDefinition });
+			referencedDefinitions.push({ implicit: true, modelDefinition });
 		}
 
 		for (const entry of propertyEntries) {
@@ -50,16 +50,16 @@ const walkAst = (ast, parameters) => {
 				const { key, value } = entry;
 				if (value.type === 'modelBlock') {
 					const modelDefinition = walkModelBlock(value);
-					referencedDefinitions.push({ key: key, modelDefinition: modelDefinition });
+					referencedDefinitions.push({ key, modelDefinition });
 				} else if (value.type === 'identifier') {
 					// value.value is the name of the identifier...sorry.
 					const referencedId = value.value;
 					resolveIdentifiersCallbacks.push(() => {
 						const modelDefinition = lookupModelDefinitionByBoundId(referencedId);
 						referencedDefinitions.push({
-							key: key,
+							key,
 							shallow: true,
-							modelDefinition: modelDefinition,
+							modelDefinition,
 						});
 					});
 				} else {
@@ -74,17 +74,17 @@ const walkAst = (ast, parameters) => {
 				referencedDefinitions.push({
 					implicit: true,
 					shallow: true,
-					modelDefinition: modelDefinition,
+					modelDefinition,
 				});
 			}),
 		);
 
 		const thisModelDefinition = {
 			id: uuid(),
-			modelName: modelName,
-			boundName: boundName,
-			properties: properties,
-			referencedDefinitions: referencedDefinitions,
+			modelName,
+			boundName,
+			properties,
+			referencedDefinitions,
 		};
 
 		if (boundName) {
@@ -97,17 +97,17 @@ const walkAst = (ast, parameters) => {
 
 	const rootDefinitions = ast.map(walkModelBlock);
 	resolveIdentifiersCallbacks.forEach((cb) => cb());
-	return { definitions: definitions, rootDefinitions: rootDefinitions };
+	return { definitions, rootDefinitions };
 };
 
 const getEdgeBetweenDefinitions = (a, b, associationName, isMandatory) => {
 	const resolveAssociation = (source, target, association) => {
 		const { associationType } = association;
 		if (associationType === 'BelongsTo' || associationType === 'BelongsToMany') {
-			return { from: source, to: target, association: association };
+			return { from: source, to: target, association };
 		}
 		if (associationType === 'HasMany') {
-			return { from: target, to: source, association: association };
+			return { from: target, to: source, association };
 		}
 		throw new Error(`Unsupported associationType ${associationType}`);
 	};
@@ -244,5 +244,5 @@ export const link = (ast, parameters) => {
 	const { definitions, rootDefinitions } = walkAst(ast, parameters);
 	const graph = buildGraphFromDefinitions(rootDefinitions);
 	const subsets = buildPartialOrderingSubsets(graph);
-	return { definitions: definitions, graph: graph, subsets: subsets };
+	return { definitions, graph, subsets };
 };

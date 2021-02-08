@@ -90,7 +90,7 @@ export const includeUserModel = (() => {
 		// eslint-disable-next-line pubpub-rules/no-user-model
 		return {
 			model: User,
-			attributes: attributes,
+			attributes,
 			...restOptions,
 		};
 	};

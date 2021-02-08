@@ -7,10 +7,8 @@ import conference from '../schema/conference';
 import conferencePaper from '../schema/conferencePaper';
 
 export default ({ globals, collection, community, pub }) => {
-	const collectionProps = transformCollection({ globals: globals, community: community })(
-		collection,
-	);
-	const pubProps = pub && transformPub({ globals: globals, community: community })(pub);
+	const collectionProps = transformCollection({ globals, community })(collection);
+	const pubProps = pub && transformPub({ globals, community })(pub);
 	return conference({
 		...collectionProps,
 		children: {

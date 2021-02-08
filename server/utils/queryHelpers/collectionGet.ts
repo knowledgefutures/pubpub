@@ -11,7 +11,7 @@ export const getCollection = async ({
 		where: stripFalsyIdsFromQuery({
 			id: collectionId,
 			slug: collectionSlug,
-			communityId: communityId,
+			communityId,
 		}),
 		include: [
 			{

@@ -26,7 +26,7 @@ const ButtonWithRef = React.forwardRef((props: any, ref: any) => (
 
 const derivePrimaryCollection = (collectionPub: Props['collectionPub'], collection: Collection) => {
 	const { collectionPubs } = collectionPub.pub;
-	const linkedCollectionPub = { ...collectionPub, collection: collection };
+	const linkedCollectionPub = { ...collectionPub, collection };
 	const collectionPubsPool =
 		collectionPubs.length > 0
 			? // Make sure to look at the most recent version of this CollectionPub

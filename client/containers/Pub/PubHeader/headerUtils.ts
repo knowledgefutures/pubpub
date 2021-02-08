@@ -33,7 +33,7 @@ export const getTocHeadings = (docJson) => {
 				title: textContent,
 				level: item.attrs.level,
 				href: item.attrs.fixedId || item.attrs.id,
-				index: index,
+				index,
 			};
 		})
 		.filter((item) => {

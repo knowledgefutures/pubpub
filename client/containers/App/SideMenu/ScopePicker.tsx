@@ -38,7 +38,7 @@ const ScopePicker = () => {
 			title: activeCollection.title,
 			avatar: activeCollection.avatar,
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
+				collectionSlug,
 			}),
 		});
 	}
@@ -49,8 +49,8 @@ const ScopePicker = () => {
 			title: activePub.title,
 			avatar: activePub.avatar,
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
+				collectionSlug,
+				pubSlug,
 			}),
 		});
 	}

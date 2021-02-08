@@ -5,5 +5,5 @@ export const getPartsOfFullName = (fullName) => {
 		.join(' ');
 	const lastName = fullName.split(' ').pop();
 	const initials = firstName.charAt(0).toUpperCase() + lastName.charAt(0).toUpperCase();
-	return { firstName: firstName, lastName: lastName, initials: initials };
+	return { firstName, lastName, initials };
 };

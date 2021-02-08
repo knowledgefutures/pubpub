@@ -40,7 +40,7 @@ app.get(
 						initialData={initialData}
 						viewData={{ overviewData: sanitizedOverviewData }}
 						headerComponents={generateMetaComponents({
-							initialData: initialData,
+							initialData,
 							title: `Overview · ${initialData.scopeData.elements.activeTarget.title}`,
 							unlisted: true,
 						})}

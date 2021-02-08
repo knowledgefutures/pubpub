@@ -35,7 +35,7 @@ const getPubUrl = (
 	communityData: Community,
 	customizePubUrl: Props['customizePubUrl'],
 ) => {
-	const proposedPubUrl = bestPubUrl({ pubData: pubData, communityData: communityData });
+	const proposedPubUrl = bestPubUrl({ pubData, communityData });
 	if (customizePubUrl) {
 		return customizePubUrl(proposedPubUrl);
 	}

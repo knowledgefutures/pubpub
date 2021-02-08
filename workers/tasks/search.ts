@@ -106,7 +106,7 @@ export const updateUserData = (userId) => {
 	return PubAttribution.findAll({
 		where: {
 			isAuthor: true,
-			userId: userId,
+			userId,
 		},
 		attributes: ['id', 'isAuthor', 'userId', 'pubId'],
 	})

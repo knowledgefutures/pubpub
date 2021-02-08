@@ -50,7 +50,7 @@ class ControlsEquation extends Component<Props, State> {
 	}
 
 	handleHTMLChange(html) {
-		this.props.updateAttrs({ value: this.state.editingValue, html: html });
+		this.props.updateAttrs({ value: this.state.editingValue, html });
 	}
 
 	changeToInline() {

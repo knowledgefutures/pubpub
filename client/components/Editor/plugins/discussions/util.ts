@@ -13,7 +13,7 @@ export const getRangeFromSelection = (selection: DiscussionSelection): Range => 
 	const { anchor, head } = selection;
 	const from = Math.min(anchor, head);
 	const to = Math.max(anchor, head);
-	return { from: from, to: to };
+	return { from, to };
 };
 
 export const getSelectionFromRange = (range: Range): DiscussionSelection => {

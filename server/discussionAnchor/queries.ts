@@ -30,11 +30,11 @@ export const createUpdatedDiscussionAnchorForNewSteps = async (
 	const nextSelection = mapDiscussionSelectionThroughSteps(selection, steps);
 	return DiscussionAnchor.create(
 		{
-			historyKey: historyKey,
-			discussionId: discussionId,
-			originalText: originalText,
-			originalTextPrefix: originalTextPrefix,
-			originalTextSuffix: originalTextSuffix,
+			historyKey,
+			discussionId,
+			originalText,
+			originalTextPrefix,
+			originalTextSuffix,
 			selection: nextSelection,
 			isOriginal: false,
 		},
@@ -59,12 +59,12 @@ export const createOriginalDiscussionAnchor = async ({
 }) => {
 	const { head, anchor } = selectionJson;
 	return DiscussionAnchor.create({
-		discussionId: discussionId,
-		historyKey: historyKey,
+		discussionId,
+		historyKey,
 		selection: head === anchor ? null : selectionJson,
-		originalText: originalText,
-		originalTextPrefix: originalTextPrefix,
-		originalTextSuffix: originalTextSuffix,
+		originalText,
+		originalTextPrefix,
+		originalTextSuffix,
 		isOriginal: true,
 	});
 };

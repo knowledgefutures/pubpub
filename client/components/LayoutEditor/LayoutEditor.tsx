@@ -110,7 +110,7 @@ class LayoutEditor extends Component<Props, State> {
 		this.updateLayout((newLayout) => {
 			newLayout.splice(index, 0, {
 				id: generateHash(8),
-				type: type,
+				type,
 				content: newContent,
 			} as LayoutBlock);
 			return newLayout;

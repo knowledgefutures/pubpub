@@ -57,7 +57,7 @@ const AttributionRow = (props: Props) => {
 					width={50}
 					attribution={attribution}
 					// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
-					onUpdateAvatar={(avatar) => onAttributionUpdate({ id: id, avatar: avatar })}
+					onUpdateAvatar={(avatar) => onAttributionUpdate({ id, avatar })}
 				/>
 			);
 		}

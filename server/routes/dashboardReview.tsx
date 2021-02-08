@@ -32,7 +32,7 @@ app.get(['/dash/pub/:pubSlug/reviews/:reviewNumber'], async (req, res, next) => 
 				initialData={initialData}
 				viewData={{ reviewData: sanitizedReviewData }}
 				headerComponents={generateMetaComponents({
-					initialData: initialData,
+					initialData,
 					title: `Review ${req.params.reviewNumber} · ${initialData.scopeData.elements.activeTarget.title}`,
 					unlisted: true,
 				})}

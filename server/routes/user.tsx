@@ -17,9 +17,9 @@ app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 			<Html
 				chunkName="User"
 				initialData={initialData}
-				viewData={{ userData: userData }}
+				viewData={{ userData }}
 				headerComponents={generateMetaComponents({
-					initialData: initialData,
+					initialData,
 					title: `${userData.fullName} · PubPub`,
 					description: userData.bio,
 					image: userData.avatar,

@@ -5,8 +5,8 @@ export const getPermissions = async ({ userId, communityId, pubId, threadId }) =
 		return {};
 	}
 	const scopeData = await getScope({
-		communityId: communityId,
-		pubId: pubId,
+		communityId,
+		pubId,
 		loginId: userId,
 	});
 

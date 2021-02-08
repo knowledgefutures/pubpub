@@ -33,7 +33,7 @@ const findOrCreateCollection = async (directive, community) => {
 	const foundCollection = await Collection.findOne({ where: { slug: directive.slug } });
 	if (!foundCollection) {
 		throw new BulkImportError(
-			{ directive: directive },
+			{ directive },
 			`No existing Collection with slug ${directive.slug}. If you meant to create one, use "create: true"`,
 		);
 	}
@@ -45,7 +45,7 @@ export const resolveCollectionDirective = async ({ directive, community }) => {
 	await createCollectionAttributions(collection, directive);
 
 	return {
-		collection: collection,
+		collection,
 		created: directive.create,
 	};
 };

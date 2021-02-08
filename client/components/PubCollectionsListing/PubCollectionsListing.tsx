@@ -68,11 +68,11 @@ const PubCollectionsListing = (props: Props) => {
 				collectionId: collection.id,
 			}),
 		);
-		updateCollectionPubs([...collectionPubs, { ...newCollectionPub, collection: collection }]);
+		updateCollectionPubs([...collectionPubs, { ...newCollectionPub, collection }]);
 	};
 
 	const handleRemoveCollectionPub = (id: string) => {
-		pendingPromise(api.removeCollectionPub({ communityId: communityData.id, id: id }));
+		pendingPromise(api.removeCollectionPub({ communityId: communityData.id, id }));
 		updateCollectionPubs(collectionPubs.filter((cp) => cp.id !== id));
 	};
 

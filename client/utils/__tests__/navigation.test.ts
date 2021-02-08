@@ -40,8 +40,8 @@ describe('getNavItemsForCommunityNavigation', () => {
 					{ type: 'collection', id: 'collection-id-3' },
 					{ title: 'Oof', href: 'ftp://oof', id: '000' },
 				],
-				pages: pages,
-				collections: collections,
+				pages,
+				collections,
 			}),
 		).toEqual([
 			{ title: 'Page Three', href: '/page3', id: 'page-id-3' },
@@ -71,8 +71,8 @@ describe('getNavItemsForCommunityNavigation', () => {
 					},
 					{ title: 'Oof', href: 'ftp://oof', id: '222' },
 				],
-				pages: pages,
-				collections: collections,
+				pages,
+				collections,
 			}),
 		).toEqual([
 			{ title: 'Page Three', href: '/page3', id: 'page-id-3' },
@@ -107,8 +107,8 @@ describe('getNavItemsForCommunityNavigation', () => {
 		expect(
 			getNavItemsForCommunityNavigation({
 				navigation: defaultFooterLinks,
-				collections: collections,
-				pages: pages,
+				collections,
+				pages,
 			}),
 		).toEqual([
 			{ title: 'RSS', href: '/rss.xml', id: 'rss' },

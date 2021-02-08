@@ -20,12 +20,12 @@ if (isMainThread) {
 const taskMap = {
 	export: exportTask,
 	import: importTask,
-	deletePageSearchData: deletePageSearchData,
-	setPageSearchData: setPageSearchData,
-	deletePubSearchData: deletePubSearchData,
-	setPubSearchData: setPubSearchData,
-	updateCommunityData: updateCommunityData,
-	updateUserData: updateUserData,
+	deletePageSearchData,
+	setPageSearchData,
+	deletePubSearchData,
+	setPubSearchData,
+	updateCommunityData,
+	updateUserData,
 };
 
 const main = async (taskData) => {
@@ -54,7 +54,7 @@ const main = async (taskData) => {
 		parentPort.postMessage({ result: taskResult });
 		process.exit(0);
 	} catch (error) {
-		parentPort.postMessage({ error: error });
+		parentPort.postMessage({ error });
 		process.exit(1);
 	}
 };

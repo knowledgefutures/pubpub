@@ -19,7 +19,7 @@ const ServerEditor = (props) => {
 	const schema = buildSchema();
 	const serverHtml = ReactDOMServer.renderToStaticMarkup(
 		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ schema: Schema<"highlightQuote... Remove this comment to see the full error message
-		renderStatic({ schema: schema, doc: props.initialContent }),
+		renderStatic({ schema, doc: props.initialContent }),
 	);
 	if (!rendered.current) {
 		// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'undefined'.

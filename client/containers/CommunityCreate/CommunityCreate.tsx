@@ -27,13 +27,13 @@ const CommunityCreate = () => {
 		return apiFetch('/api/communities', {
 			method: 'POST',
 			body: JSON.stringify({
-				subdomain: subdomain,
-				title: title,
-				description: description,
+				subdomain,
+				title,
+				description,
 				headerLogo: heroLogo,
-				heroLogo: heroLogo,
-				accentColorLight: accentColorLight,
-				accentColorDark: accentColorDark,
+				heroLogo,
+				accentColorLight,
+				accentColorDark,
 			}),
 		})
 			.then(() => {

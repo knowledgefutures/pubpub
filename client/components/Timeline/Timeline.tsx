@@ -22,9 +22,7 @@ const Timeline = (props: Props) => {
 	const { accentColor, children, className } = props;
 	return (
 		<div className={classNames('timeline-component', className)}>
-			<TimelineContext.Provider value={{ accentColor: accentColor }}>
-				{children}
-			</TimelineContext.Provider>
+			<TimelineContext.Provider value={{ accentColor }}>{children}</TimelineContext.Provider>
 		</div>
 	);
 };

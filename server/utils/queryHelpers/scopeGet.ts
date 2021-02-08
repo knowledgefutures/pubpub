@@ -51,8 +51,8 @@ export default async (scopeInputs) => {
 		elements: scopeElements,
 		optionsData: publicPermissionsData,
 		memberData: scopeMemberData,
-		activePermissions: activePermissions,
-		activeCounts: activeCounts,
+		activePermissions,
+		activeCounts,
 	};
 };
 
@@ -125,8 +125,8 @@ getScopeElements = async (scopeInputs) => {
 
 	if (activeTargetType === 'collection') {
 		activeCollection = await getCollection({
-			collectionSlug: collectionSlug,
-			collectionId: collectionId,
+			collectionSlug,
+			collectionId,
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'never'.
 			communityId: activeCommunity && activeCommunity.id,
 		});
@@ -144,18 +144,18 @@ getScopeElements = async (scopeInputs) => {
 	}
 
 	return ensureSerialized({
-		activeTargetType: activeTargetType,
+		activeTargetType,
 		activeTargetName: activeTargetType.charAt(0).toUpperCase() + activeTargetType.slice(1),
-		activeTarget: activeTarget,
-		activePub: activePub,
-		activeCollection: activeCollection,
+		activeTarget,
+		activePub,
+		activeCollection,
 		activeIds: getActiveIds({
-			activePub: activePub,
-			activeCollection: activeCollection,
-			activeCommunity: activeCommunity,
+			activePub,
+			activeCollection,
+			activeCommunity,
 		}),
-		inactiveCollections: inactiveCollections,
-		activeCommunity: activeCommunity,
+		inactiveCollections,
+		activeCommunity,
 	});
 };
 
@@ -257,7 +257,7 @@ getActivePermissions = async (
 	};
 
 	const initialOptions = {
-		isSuperAdmin: isSuperAdmin,
+		isSuperAdmin,
 		canCreateReviews: null,
 		canCreateDiscussions: true,
 		canViewDraft: null,
@@ -299,11 +299,11 @@ getActivePermissions = async (
 	return {
 		activePermission: permissionLevelIndex > -1 ? permissionLevels[permissionLevelIndex] : null,
 		canView: permissionLevelIndex > -1,
-		canEdit: canEdit,
+		canEdit,
 		canManage: permissionLevelIndex > 1,
 		canAdmin: permissionLevelIndex > 2,
-		canAdminCommunity: canAdminCommunity,
-		canManageCommunity: canManageCommunity,
+		canAdminCommunity,
+		canManageCommunity,
 		...activePublicPermissions,
 		canCreateReviews: canEdit || activePublicPermissions.canCreateReviews,
 	};
@@ -366,7 +366,7 @@ getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
 	});
 
 	return {
-		discussionCount: discussionCount,
-		reviewCount: reviewCount,
+		discussionCount,
+		reviewCount,
 	};
 };

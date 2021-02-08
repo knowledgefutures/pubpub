@@ -5,11 +5,11 @@ export const getPubAttributions = (pubId) => PubAttribution.findAll({ where: { i
 
 export const createPubAttribution = ({ userId, pubId, name, order, isAuthor }) => {
 	return PubAttribution.create({
-		userId: userId,
-		pubId: pubId,
-		name: name,
-		order: order,
-		isAuthor: isAuthor,
+		userId,
+		pubId,
+		name,
+		order,
+		isAuthor,
 	})
 		.then((newAttribution) => {
 			return PubAttribution.findOne({

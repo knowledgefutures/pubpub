@@ -107,15 +107,15 @@ const main = async () => {
 		if (exists) {
 			await promptOkay(
 				`There is already a file at the receipt path ${receipt} which will be overwritten during import. Proceed?`,
-				{ throwIfNo: true, yesIsDefault: false, yes: yes },
+				{ throwIfNo: true, yesIsDefault: false, yes },
 			);
 		}
 		const plan = await runBulkImportFromDirectory({
-			directory: directory,
-			actor: actor,
-			community: community,
-			yes: yes,
-			dryRun: dryRun,
+			directory,
+			actor,
+			community,
+			yes,
+			dryRun,
 		});
 		if (plan) {
 			await writePlanToFile(receipt, plan);
@@ -128,7 +128,7 @@ const main = async () => {
 			);
 		}
 		const plan = await readPlanFromFile(receipt);
-		await discardBulkImportPlan({ plan: plan, yes: yes, dryRun: dryRun });
+		await discardBulkImportPlan({ plan, yes, dryRun });
 	} else if (publish) {
 		if (!receipt) {
 			throw new Error(
@@ -137,11 +137,11 @@ const main = async () => {
 		}
 		const plan = await readPlanFromFile(receipt);
 		await publishBulkImportPlan({
-			plan: plan,
-			yes: yes,
-			dryRun: dryRun,
-			actor: actor,
-			createExports: createExports,
+			plan,
+			yes,
+			dryRun,
+			actor,
+			createExports,
 		});
 	}
 };

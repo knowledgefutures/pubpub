@@ -51,7 +51,7 @@ const getPubsForLayoutBlock = async (blockContent, initialData, scopedPubIds, ex
 			getMembers: true,
 			getCollections: true,
 		}),
-		...(limit && { limit: limit }),
+		...(limit && { limit }),
 		order: [['createdAt', 'DESC']],
 	};
 
@@ -59,14 +59,14 @@ const getPubsForLayoutBlock = async (blockContent, initialData, scopedPubIds, ex
 	const [pinnedPubs, otherPubs] = await Promise.all([
 		Pub.findAll({
 			where: {
-				communityId: communityId,
+				communityId,
 				id: getPubIdQueryForPinnedPubs(limitedPinnedPubIds, scopedPubIds),
 			},
 			...sharedOptions,
 		}),
 		Pub.findAll({
 			where: {
-				communityId: communityId,
+				communityId,
 				id: {
 					[Op.notIn]: [...limitedPinnedPubIds, ...excludePubIds],
 					...(await getPubIdQueryForNonPinnedPubs(collectionIds, scopedPubIds)),
@@ -127,9 +127,9 @@ export const enrichLayoutBlocksWithPubTokens = ({ blocks, initialData, collectio
 						content: {
 							...content,
 							createPubToken: issueCreatePubToken({
-								userId: userId,
+								userId,
 								communityId: communityData.id,
-								createInCollectionIds: createInCollectionIds,
+								createInCollectionIds,
 							}),
 						},
 					};
@@ -149,8 +149,8 @@ export const enrichCollectionWithPubTokens = (collection, initialData) => {
 			...layout,
 			blocks: enrichLayoutBlocksWithPubTokens({
 				blocks: layout.blocks,
-				initialData: initialData,
-				collectionId: collectionId,
+				initialData,
+				collectionId,
 			}),
 		},
 	};

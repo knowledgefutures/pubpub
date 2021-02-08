@@ -43,7 +43,7 @@ app.get('/explore', (req, res, next) => {
 					initialData={initialData}
 					viewData={{ exploreData: { activeCommunities: activeCommunitiesData } }}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: 'Explore · PubPub',
 						description: 'Explore the active communities built on PubPub.',
 					})}

@@ -150,7 +150,7 @@ const LayoutEditorPubs = (props: Props) => {
 		[onChange],
 	);
 
-	const setTitle = useCallback((title: string) => onChange({ title: title }), [onChange]);
+	const setTitle = useCallback((title: string) => onChange({ title }), [onChange]);
 
 	const renderTitle = () => {
 		return (

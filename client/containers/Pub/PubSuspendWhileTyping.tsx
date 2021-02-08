@@ -35,7 +35,7 @@ export const PubSuspendWhileTypingProvider = (props: PubSuspendWhileTypingProvid
 	}, []);
 
 	const value = useMemo(() => {
-		return { markLastInput: markLastInput, getTimeRemainingToUpdate: getTimeRemainingToUpdate };
+		return { markLastInput, getTimeRemainingToUpdate };
 	}, [getTimeRemainingToUpdate, markLastInput]);
 
 	return (

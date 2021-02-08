@@ -114,9 +114,9 @@ const getNavbarItemForCommunityNavigationChild = (
 		const { title, href, id } = navEntry;
 		const isExternal = !href.startsWith('/');
 		return {
-			title: title,
-			href: href,
-			id: id,
+			title,
+			href,
+			id,
 			...(isExternal && { isExternal: true }),
 		};
 	}
@@ -130,8 +130,8 @@ const getNavbarItemForCommunityNavigationEntry = (
 	if (isCommunityNavigationMenu(navEntry)) {
 		const { title, children, id } = navEntry;
 		return {
-			title: title,
-			id: id,
+			title,
+			id,
 			children: children
 				.map((child) => getNavbarItemForCommunityNavigationChild(child, ctx))
 				.filter((x: null | NavbarChild): x is NavbarChild => !!x),
@@ -148,8 +148,8 @@ export const getNavItemsForCommunityNavigation = ({
 	return navigation
 		.map((item) =>
 			getNavbarItemForCommunityNavigationEntry(item, {
-				collections: collections,
-				pages: pages,
+				collections,
+				pages,
 			}),
 		)
 		.filter((x: null | NavbarItem): x is NavbarItem => !!x);

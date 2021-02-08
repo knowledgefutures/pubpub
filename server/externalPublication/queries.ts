@@ -10,12 +10,12 @@ export const createExternalPublication = ({
 	publicationDate = null,
 }) => {
 	return ExternalPublication.create({
-		title: title,
-		url: url,
-		contributors: contributors,
-		doi: doi,
-		description: description,
-		avatar: avatar,
-		publicationDate: publicationDate,
+		title,
+		url,
+		contributors,
+		doi,
+		description,
+		avatar,
+		publicationDate,
 	});
 };

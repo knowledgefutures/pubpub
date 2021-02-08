@@ -15,8 +15,8 @@ type Props = {
 
 const ResponsiveHeaderButton = React.forwardRef((props: Props, ref) => {
 	const { labelPosition, outerLabel, showCaret = false, simpleLabel, ...sharedProps } = props;
-	const largeOnlyProps = { outerLabel: outerLabel, showCaret: showCaret };
-	const smallOnlyProps = { labelPosition: labelPosition };
+	const largeOnlyProps = { outerLabel, showCaret };
+	const smallOnlyProps = { labelPosition };
 
 	const { viewportWidth } = useViewport();
 

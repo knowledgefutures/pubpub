@@ -20,7 +20,7 @@ export const extractRefBlocks = (pandocAst) => {
 			refBlocks: refsBlock.content,
 		};
 	}
-	return { pandocAst: pandocAst, refBlocks: null };
+	return { pandocAst, refBlocks: null };
 };
 
 const extractUsingPandocCiteproc = (bibliographyTmpPath) => {
@@ -31,7 +31,7 @@ const extractUsingPandocCiteproc = (bibliographyTmpPath) => {
 	return Object.fromEntries(
 		cslJson.map((entry) => {
 			const structuredValue = Cite.get.bibtex.text([entry]);
-			return [entry.id, { structuredValue: structuredValue }];
+			return [entry.id, { structuredValue }];
 		}),
 	);
 };

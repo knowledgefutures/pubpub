@@ -32,7 +32,7 @@ const EditableHeaderText = (props: EditableHeaderTextProps) => {
 
 	return React.createElement(
 		tagName,
-		{ className: className },
+		{ className },
 		useEditableTitle ? (
 			<>
 				<EditableText

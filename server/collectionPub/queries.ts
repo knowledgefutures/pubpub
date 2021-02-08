@@ -12,7 +12,7 @@ import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 
 export const getPubsInCollection = async ({ communityId, collectionId, userId }) => {
 	const collectionPubsQuery = CollectionPub.findAll({
-		where: { collectionId: collectionId },
+		where: { collectionId },
 		order: [['rank', 'ASC']],
 		include: [
 			{
@@ -29,7 +29,7 @@ export const getPubsInCollection = async ({ communityId, collectionId, userId })
 			},
 		],
 	});
-	const membersQuery = userId ? Member.findAll({ where: { userId: userId } }) : [];
+	const membersQuery = userId ? Member.findAll({ where: { userId } }) : [];
 	const [collectionPubs, members] = await Promise.all([collectionPubsQuery, membersQuery]);
 	const isCommunityMember = members.some((member) => member.communityId === communityId);
 	const isCollectionMember = members.some((member) => member.collectionId === collectionId);
@@ -63,14 +63,14 @@ export const createCollectionPub = ({
 }) => {
 	return Promise.all([
 		CollectionPub.findAll({
-			where: { pubId: pubId },
+			where: { pubId },
 			include: [{ model: Collection, as: 'collection' }],
 		}),
 		getCollectionPubsInCollection(collectionId),
 	]).then(([pubLevelPeers, collectionLevelPeers]) => {
 		return CollectionPub.create({
-			collectionId: collectionId,
-			pubId: pubId,
+			collectionId,
+			pubId,
 			rank: getRankInPeers(
 				rank,
 				collectionLevelPeers.map((cp) => cp.rank),

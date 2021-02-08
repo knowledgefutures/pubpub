@@ -12,17 +12,17 @@ export const createMember = async ({
 	value: { permissions },
 }) => {
 	assertExactlyOneScopeInTarget({
-		pubId: pubId,
-		communityId: communityId,
-		collectionId: collectionId,
+		pubId,
+		communityId,
+		collectionId,
 	});
 	const { id: memberId } = await Member.create(
 		{
-			userId: userId,
-			permissions: permissions,
-			communityId: communityId,
-			collectionId: collectionId,
-			pubId: pubId,
+			userId,
+			permissions,
+			communityId,
+			collectionId,
+			pubId,
 		},
 		{ returning: ['id'] },
 	);
@@ -31,7 +31,7 @@ export const createMember = async ({
 
 export const updateMember = async ({ memberId, value: { permissions } }) => {
 	const existingMember = await Member.findOne({ where: { id: memberId } });
-	await existingMember.update({ permissions: permissions });
+	await existingMember.update({ permissions });
 	return existingMember;
 };
 

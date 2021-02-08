@@ -49,7 +49,7 @@ export const pandocBlocksToHtmlString = (blocks) => {
 	}
 	const doc = {
 		type: 'Doc',
-		blocks: blocks,
+		blocks,
 		meta: {},
 	};
 	return getHtmlStringForPandocDoc(doc);

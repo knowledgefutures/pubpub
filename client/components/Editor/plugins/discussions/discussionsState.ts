@@ -75,10 +75,10 @@ const filterDiscussionsUpdate = (
 		}
 	});
 	return {
-		addedDiscussionIds: addedDiscussionIds,
-		removedDiscussionIds: removedDiscussionIds,
-		sendableDiscussions: sendableDiscussions,
-		updatableDiscussions: updatableDiscussions,
+		addedDiscussionIds,
+		removedDiscussionIds,
+		sendableDiscussions,
+		updatableDiscussions,
 	};
 };
 
@@ -118,9 +118,9 @@ export const createDiscussionsState = (options: Options) => {
 		remoteDiscussions?.sendDiscussions(sendableDiscussions);
 
 		return {
-			discussions: discussions,
-			addedDiscussionIds: addedDiscussionIds,
-			removedDiscussionIds: removedDiscussionIds,
+			discussions,
+			addedDiscussionIds,
+			removedDiscussionIds,
 		};
 	};
 
@@ -160,9 +160,9 @@ export const createDiscussionsState = (options: Options) => {
 			currentHistoryKey,
 		);
 		onUpdateDiscussions({
-			discussions: discussions,
-			addedDiscussionIds: addedDiscussionIds,
-			removedDiscussionIds: removedDiscussionIds,
+			discussions,
+			addedDiscussionIds,
+			removedDiscussionIds,
 			mapping: new Mapping(),
 			doc: currentDoc,
 		});
@@ -174,7 +174,7 @@ export const createDiscussionsState = (options: Options) => {
 			[discussionId]: {
 				initKey: currentHistoryKey,
 				currentKey: currentHistoryKey,
-				selection: selection,
+				selection,
 				initHead: selection.head,
 				initAnchor: selection.anchor,
 			},
@@ -193,7 +193,7 @@ export const createDiscussionsState = (options: Options) => {
 	});
 
 	return {
-		addDiscussion: addDiscussion,
-		handleTransaction: handleTransaction,
+		addDiscussion,
+		handleTransaction,
 	};
 };

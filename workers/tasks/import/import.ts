@@ -42,7 +42,7 @@ const callPandoc = (tmpDirPath, files, args) => {
 	});
 	const output = proc.stdout.toString();
 	const error = proc.stderr.toString();
-	return { output: output, error: error };
+	return { output, error };
 };
 
 export const categorizeSourceFiles = (sourceFiles) => {
@@ -55,11 +55,11 @@ export const categorizeSourceFiles = (sourceFiles) => {
 		throw new Error('No target document specified.');
 	}
 	return {
-		preambles: preambles,
-		document: document,
-		bibliography: bibliography,
-		supplements: supplements,
-		metadata: metadata,
+		preambles,
+		document,
+		bibliography,
+		supplements,
+		metadata,
 	};
 };
 
@@ -110,21 +110,21 @@ export const importFiles = async ({
 		metadataPath: metadata && metadata.tmpPath,
 		preamblePaths: preambles.map((p) => p.tmpPath),
 		supplementPaths: supplements.map((s) => s.tmpPath),
-		tmpDirPath: tmpDirPath,
-		importerFlags: importerFlags,
+		tmpDirPath,
+		importerFlags,
 	});
 	const [extractedMedia, bibliographyItems] = await Promise.all([
 		uploadExtractedMedia(tmpDirPath),
 		extractBibliographyItems({
-			bibliography: bibliography,
-			document: document,
+			bibliography,
+			document,
 			extractBibFromJats: !skipJatsBibExtraction,
 		}),
 	]);
 	const resourceTransformer = createResourceTransformer({
 		sourceFiles: [...sourceFiles, ...extractedMedia],
-		document: document,
-		bibliographyItems: bibliographyItems,
+		document,
+		bibliographyItems,
 	});
 	const prosemirrorDoc = fromPandoc(pandocAst, pandocRules, {
 		resource: resourceTransformer.getResource,
@@ -137,7 +137,7 @@ export const importFiles = async ({
 	return {
 		doc: prosemirrorDoc,
 		warnings: resourceTransformer.getWarnings(),
-		proposedMetadata: proposedMetadata,
+		proposedMetadata,
 		...(provideRawMetadata && { rawMetadata: getRawMetadata(pandocAst.meta) }),
 	};
 };
@@ -146,9 +146,9 @@ export const importTask = async ({ sourceFiles: clientSourceFilesList, importerF
 	const tmpDirPath = await getTmpDirectoryPath();
 	const sourceFiles = await downloadAndConvertFiles(clientSourceFilesList, tmpDirPath);
 	return importFiles({
-		sourceFiles: sourceFiles,
-		importerFlags: importerFlags,
-		tmpDirPath: tmpDirPath,
+		sourceFiles,
+		importerFlags,
+		tmpDirPath,
 	}).catch((error) => ({
 		error: {
 			message: error.toString(),

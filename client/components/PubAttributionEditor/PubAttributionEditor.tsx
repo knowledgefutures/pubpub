@@ -29,7 +29,7 @@ const PubAttributionEditor = (props: Props) => {
 			attributions={pubData.attributions}
 			canEdit={canEdit}
 			communityData={communityData}
-			onUpdateAttributions={(attributions) => updatePubData({ attributions: attributions })}
+			onUpdateAttributions={(attributions) => updatePubData({ attributions })}
 			promiseWrapper={pendingPromise}
 		/>
 	);

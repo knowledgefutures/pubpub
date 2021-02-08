@@ -41,12 +41,12 @@ export const usePageState = (initialData, viewData) => {
 	};
 
 	return {
-		loginData: loginData,
-		locationData: locationData,
-		communityData: communityData,
-		scopeData: scopeData,
-		pageData: pageData,
-		updateCommunity: updateCommunity,
-		updateCollection: updateCollection,
+		loginData,
+		locationData,
+		communityData,
+		scopeData,
+		pageData,
+		updateCommunity,
+		updateCollection,
 	};
 };

@@ -100,7 +100,7 @@ const OverviewTable = (props: Props) => {
 				<DragDropContext
 					onDragEnd={(dragResult) =>
 						handleDragDrop({
-							dragResult: dragResult,
+							dragResult,
 							reorderCollectionPubs: onReorder,
 						})
 					}

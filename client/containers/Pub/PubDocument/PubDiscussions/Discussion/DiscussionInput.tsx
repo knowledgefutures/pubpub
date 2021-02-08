@@ -98,7 +98,7 @@ const DiscussionInput = (props: Props) => {
 				communityId: communityData.id,
 				content: getJSON(changeObject?.view),
 				text: getText(changeObject?.view) || '',
-				initAnchorData: initAnchorData,
+				initAnchorData,
 				visibilityAccess: pubData.isRelease ? 'public' : 'members',
 			}),
 		});

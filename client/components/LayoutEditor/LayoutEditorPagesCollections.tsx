@@ -22,7 +22,7 @@ type OrderableItem = BlockItem & {
 
 const getOrderableItem = (item: PageOrCollection, type: OrderableItem['type']): OrderableItem => {
 	return {
-		type: type,
+		type,
 		id: item.id,
 		title: item.title,
 	};
@@ -76,7 +76,7 @@ const LayoutEditorPages = (props: Props) => {
 		(title: string) =>
 			onChange(layoutIndex, {
 				...content,
-				title: title,
+				title,
 			}),
 		[onChange, layoutIndex, content],
 	);

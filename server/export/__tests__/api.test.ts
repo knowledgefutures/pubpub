@@ -37,9 +37,9 @@ const makeExportQuery = (historyKey, { format = 'pdf', accessHash = null } = {})
 	return {
 		communityId: community.id,
 		pubId: pub.id,
-		historyKey: historyKey,
-		accessHash: accessHash,
-		format: format,
+		historyKey,
+		accessHash,
+		format,
 	};
 };
 

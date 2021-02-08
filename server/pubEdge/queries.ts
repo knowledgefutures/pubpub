@@ -4,7 +4,7 @@ import { createExternalPublication } from 'server/externalPublication/queries';
 import { findRankInRankedList } from 'utils/rank';
 
 const findRankForNewPubEdge = async (pubId, moveToTop) => {
-	const otherEdgesFromPub = await PubEdge.findAll({ where: { pubId: pubId } });
+	const otherEdgesFromPub = await PubEdge.findAll({ where: { pubId } });
 	return findRankInRankedList(otherEdgesFromPub, moveToTop ? 0 : otherEdgesFromPub.length);
 };
 
@@ -30,13 +30,13 @@ export const createPubEdge = async ({
 		findRankForNewPubEdge(pubId, moveToTop),
 	]);
 	const newEdge = await PubEdge.create({
-		pubId: pubId,
-		rank: rank,
-		relationType: relationType,
-		pubIsParent: pubIsParent,
-		targetPubId: targetPubId,
-		approvedByTarget: approvedByTarget,
-		externalPublicationId: externalPublicationId,
+		pubId,
+		rank,
+		relationType,
+		pubIsParent,
+		targetPubId,
+		approvedByTarget,
+		externalPublicationId,
 	});
 	return PubEdge.findOne({
 		where: { id: newEdge.id },

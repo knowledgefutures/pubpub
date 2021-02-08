@@ -50,7 +50,7 @@ export const useDashboardEdges = (pubData: Pub) => {
 				if (edge.id === inboundEdge.id) {
 					return {
 						...edge,
-						approvedByTarget: approvedByTarget,
+						approvedByTarget,
 					};
 				}
 				return edge;
@@ -60,17 +60,17 @@ export const useDashboardEdges = (pubData: Pub) => {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'put' does not exist on type '(path: any,... Remove this comment to see the full error message
 			apiFetch.put('/api/pubEdges/approvedByTarget', {
 				pubEdgeId: inboundEdge.id,
-				approvedByTarget: approvedByTarget,
+				approvedByTarget,
 			}),
 		);
 	};
 
 	return {
-		outboundEdges: outboundEdges,
-		inboundEdges: inboundEdges,
-		addCreatedOutboundEdge: addCreatedOutboundEdge,
-		reorderOutboundEdges: reorderOutboundEdges,
-		removeOutboundEdge: removeOutboundEdge,
-		updateInboundEdgeApproval: updateInboundEdgeApproval,
+		outboundEdges,
+		inboundEdges,
+		addCreatedOutboundEdge,
+		reorderOutboundEdges,
+		removeOutboundEdge,
+		updateInboundEdgeApproval,
 	};
 };

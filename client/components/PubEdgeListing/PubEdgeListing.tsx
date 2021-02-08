@@ -37,7 +37,7 @@ const defaultProps = {
 const edgeUniqueFingerprint = (pubEdgeInContext, assertIsUnique) => {
 	const { edge, isSibling, isInboundEdge } = pubEdgeInContext;
 	const displayedPub = getDisplayedPubForPubEdge(edge, {
-		isInboundEdge: isInboundEdge,
+		isInboundEdge,
 		viewingFromSibling: isSibling,
 	});
 	if (displayedPub) {
@@ -62,7 +62,7 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 		const edgeInContext = {
 			isSibling: false,
 			isInboundEdge: false,
-			edge: edge,
+			edge,
 		};
 		if (included) {
 			filteredPubEdges.push(edgeInContext);
@@ -80,7 +80,7 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 		const edgeInContext = {
 			isSibling: false,
 			isInboundEdge: true,
-			edge: edge,
+			edge,
 		};
 		if (included) {
 			filteredPubEdges.push(edgeInContext);
@@ -97,7 +97,7 @@ const collateAndFilterPubEdges = (filters, pubData) => {
 		const edgeInContext = {
 			isSibling: true,
 			isInboundEdge: false,
-			edge: edge,
+			edge,
 			parentPub: pubIsParent ? pub : targetPub,
 		};
 		siblingEdgesInContext.push(edgeInContext);

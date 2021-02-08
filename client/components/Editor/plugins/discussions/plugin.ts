@@ -30,15 +30,15 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 	let editorView: null | EditorView = null;
 
 	const { addDiscussion, handleTransaction } = createDiscussionsState({
-		initialDiscussions: initialDiscussions,
-		initialHistoryKey: initialHistoryKey,
-		initialDoc: initialDoc,
+		initialDiscussions,
+		initialHistoryKey,
+		initialDoc,
 		remoteDiscussions: remote || null,
 		fastForwardDiscussions: fastForward || null,
 		onUpdateDiscussions: (updateResult: DiscussionsUpdateResult) => {
 			if (editorView) {
 				const { tr } = editorView.state;
-				tr.setMeta(discussionsPluginKey, { updateResult: updateResult });
+				tr.setMeta(discussionsPluginKey, { updateResult });
 				editorView.dispatch(tr);
 			}
 		},
@@ -59,7 +59,7 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 		const initialDecorations = getDecorationsForDiscussions(initialDiscussions);
 		return {
 			decorations: DecorationSet.create(initialDoc, initialDecorations),
-			addDiscussion: addDiscussion,
+			addDiscussion,
 		};
 	};
 
@@ -76,7 +76,7 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 
 	return new Plugin<PluginState>({
 		key: discussionsPluginKey,
-		state: { init: init, apply: apply },
+		state: { init, apply },
 		view: (view) => {
 			editorView = view;
 			return {
@@ -86,7 +86,7 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 			};
 		},
 		props: {
-			decorations: function(this: Plugin<PluginState>, editorState: EditorState) {
+			decorations(this: Plugin<PluginState>, editorState: EditorState) {
 				const { decorations } = this.getState(editorState);
 				return decorations;
 			},

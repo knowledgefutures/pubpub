@@ -80,7 +80,7 @@ export const connectToFirebaseDiscussions = (discussionsRef: Reference): RemoteD
 	});
 
 	return {
-		sendDiscussions: sendDiscussions,
+		sendDiscussions,
 		receiveDiscussions: connectHandler,
 		disconnect: () => disconnect?.(),
 	};

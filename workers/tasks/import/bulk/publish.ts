@@ -12,7 +12,7 @@ export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun, createEx
 		return;
 	}
 	await promptOkay('Okay to publish these items?', {
-		yes: yes,
+		yes,
 		throwIfNo: true,
 	});
 	const { collections, pubs } = getCreatedItemsFromPlan(plan);
@@ -22,7 +22,7 @@ export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun, createEx
 			createRelease({
 				userId: actor.id,
 				pubId: pub.id,
-				createExports: createExports,
+				createExports,
 			}).catch((err) => console.error(err)),
 		{ concurrency: 25 },
 	);

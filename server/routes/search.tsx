@@ -67,9 +67,9 @@ app.get('/search', async (req, res, next) => {
 		});
 
 		const searchData = {
-			searchId: searchId,
-			pubsSearchKey: pubsSearchKey,
-			pagesSearchKey: pagesSearchKey,
+			searchId,
+			pubsSearchKey,
+			pagesSearchKey,
 		};
 
 		return renderToNodeStream(
@@ -77,9 +77,9 @@ app.get('/search', async (req, res, next) => {
 			<Html
 				chunkName="Search"
 				initialData={initialData}
-				viewData={{ searchData: searchData }}
+				viewData={{ searchData }}
 				headerComponents={generateMetaComponents({
-					initialData: initialData,
+					initialData,
 					title: `Search · ${initialData.communityData.title}`,
 					description: `Search for pubs in ${initialData.communityData.title}`,
 				})}

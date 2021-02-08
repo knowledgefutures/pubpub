@@ -9,7 +9,7 @@ export const discardBulkImportPlan = async ({ plan, yes, dryRun }) => {
 		return;
 	}
 	await promptOkay('Okay to delete these items?', {
-		yes: yes,
+		yes,
 		yesIsDefault: false,
 		throwIfNo: true,
 	});

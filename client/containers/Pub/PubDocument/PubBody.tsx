@@ -68,7 +68,7 @@ const PubBody = (props: Props) => {
 	const getNextStatus = (status, onComplete) => {
 		clearTimeout(setSavingTimeout);
 		const prevStatus = prevStatusRef.current;
-		const nextStatus = { status: status };
+		const nextStatus = { status };
 
 		/* If loading, wait until 'connected' */
 		if (prevStatus === 'connecting' && status === 'connected') {
@@ -153,8 +153,8 @@ const PubBody = (props: Props) => {
 					discussion: {
 						addRef: (embedId, mountRef, threadNumber) => {
 							embedDiscussions.current[embedId] = {
-								mountRef: mountRef,
-								threadNumber: threadNumber,
+								mountRef,
+								threadNumber,
 							};
 						},
 						removeRef: (embedId) => {
@@ -171,7 +171,7 @@ const PubBody = (props: Props) => {
 				onKeyPress={handleKeyPress}
 				onChange={(editorChangeObject) => {
 					if (!isViewingHistory) {
-						updateLocalData('collab', { editorChangeObject: editorChangeObject });
+						updateLocalData('collab', { editorChangeObject });
 					}
 				}}
 				onError={handleError}
@@ -179,7 +179,7 @@ const PubBody = (props: Props) => {
 					!isViewingHistory && {
 						draftRef: firebaseDraftRef,
 						initialHistoryKey: pubData.initialDocKey,
-						discussionAnchors: discussionAnchors,
+						discussionAnchors,
 					}
 				}
 				collaborativeOptions={
@@ -195,7 +195,7 @@ const PubBody = (props: Props) => {
 								}, 250),
 								onUpdateLatestKey: (latestKey) => {
 									updateLocalData('history', {
-										latestKey: latestKey,
+										latestKey,
 										currentKey: latestKey,
 									});
 								},

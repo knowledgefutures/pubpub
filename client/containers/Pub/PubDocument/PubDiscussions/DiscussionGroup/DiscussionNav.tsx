@@ -100,12 +100,12 @@ const DiscussionNav = (props: Props) => {
 	});
 
 	const bubbleRenderer = makeBubbleRenderer({
-		discussions: discussions,
-		loginData: loginData,
-		communityData: communityData,
-		activeThreadHover: activeThreadHover,
-		activeThread: activeThread,
-		getHandlersForDiscussion: getHandlersForDiscussion,
+		discussions,
+		loginData,
+		communityData,
+		activeThreadHover,
+		activeThread,
+		getHandlersForDiscussion,
 	});
 
 	const maxBubblesBeforeOverflow = 7;

@@ -54,7 +54,7 @@ const sortPubsByCollectionRank = (pubs: Pub[], collectionIds: string[]): Pub[] =
 				if (!collectionIdsToRankedPubsMap[collectionId]) {
 					collectionIdsToRankedPubsMap[collectionId] = [];
 				}
-				collectionIdsToRankedPubsMap[collectionId].push({ pub: pub, rank: rank });
+				collectionIdsToRankedPubsMap[collectionId].push({ pub, rank });
 			});
 		}
 	});
@@ -149,7 +149,7 @@ const createPubsPool = (pubs: Pub[]) => {
 		return resolvedPubs;
 	};
 
-	return { queryAndConsumePubs: queryAndConsumePubs };
+	return { queryAndConsumePubs };
 };
 
 export const getPubsByBlockIndex = <P extends Pub>(
@@ -165,7 +165,7 @@ export const getPubsByBlockIndex = <P extends Pub>(
 			const collectionIds = content.collectionIds || [];
 			return pool.queryAndConsumePubs({
 				pinnedPubIds: content.pubIds || [],
-				collectionIds: collectionIds,
+				collectionIds,
 				limit: content.limit || Infinity,
 				sort: content.sort || 'legacy',
 				sortCollectionIds: collectionId ? [collectionId] : collectionIds,

@@ -6,8 +6,8 @@ export const lookupPub = async ({ slug, id }) => {
 	}
 	const pub = await Pub.findOne({
 		where: {
-			...(id && { id: id }),
-			...(slug && { slug: slug }),
+			...(id && { id }),
+			...(slug && { slug }),
 		},
 	});
 	if (!pub) {
@@ -18,7 +18,7 @@ export const lookupPub = async ({ slug, id }) => {
 
 export const lookupBranch = async ({ pubId, branchTitle }) => {
 	const branch = await Branch.findOne({
-		where: { pubId: pubId, title: branchTitle },
+		where: { pubId, title: branchTitle },
 	});
 	if (!branch) {
 		throw new Error(`No branch by name ${branchTitle} for Pub ${pubId}.`);

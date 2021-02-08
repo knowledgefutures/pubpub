@@ -62,5 +62,5 @@ export default (schema) => {
 	if (schema.nodes.bullet_list) rules.push(bulletListRule(schema.nodes.bullet_list));
 	if (schema.nodes.code_block) rules.push(codeBlockRule(schema.nodes.code_block));
 	if (schema.nodes.heading) rules.push(headingRule(schema.nodes.heading, 6));
-	return inputRules({ rules: rules });
+	return inputRules({ rules });
 };

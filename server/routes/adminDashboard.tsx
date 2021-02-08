@@ -30,7 +30,7 @@ app.get('/admin', (req, res, next) => {
 					chunkName="AdminDashboard"
 					initialData={initialData}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Admin Dashboard · ${initialData.communityData.title}`,
 						description: initialData.communityData.description,
 					})}

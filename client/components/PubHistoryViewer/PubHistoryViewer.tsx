@@ -68,7 +68,7 @@ const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 
 const dateReleases = (releases) => {
 	return releases.map((release) => {
-		return { type: 'release', date: new Date(release.createdAt), release: release };
+		return { type: 'release', date: new Date(release.createdAt), release };
 	});
 };
 

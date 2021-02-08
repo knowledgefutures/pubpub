@@ -64,13 +64,13 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'kind' does not exist on type 'collection... Remove this comment to see the full error message
 		return normalizeMetadataToKind(metadata, collection.kind, {
 			community: communityData,
-			collection: collection,
+			collection,
 		});
 	}
 
 	deriveInputValue(derive) {
 		const { communityData: community, collection } = this.props;
-		return derive({ community: community, collection: collection });
+		return derive({ community, collection });
 	}
 
 	handleGetDoiClick() {
@@ -100,14 +100,14 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 		return apiFetch('/api/collections', {
 			method: 'PUT',
 			body: JSON.stringify({
-				metadata: metadata,
-				title: title,
+				metadata,
+				title,
 				id: collection.id,
 				communityId: communityData.id,
 			}),
 		})
 			.then(() => {
-				onUpdateCollection({ metadata: metadata, title: title });
+				onUpdateCollection({ metadata, title });
 				this.setState({ isSaving: false, saved: true });
 			})
 			.catch(() => {

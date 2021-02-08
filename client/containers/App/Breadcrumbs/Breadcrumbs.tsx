@@ -118,10 +118,7 @@ const Breadcrumbs = () => {
 						{activeCollection && (
 							<React.Fragment>
 								<Icon icon="chevron-right" className="crumb-icon" iconSize={12} />
-								<a
-									className="crumb truncate"
-									href={getDashUrl({ collectionSlug: collectionSlug })}
-								>
+								<a className="crumb truncate" href={getDashUrl({ collectionSlug })}>
 									<Icon icon="collection" iconSize={10} />
 									<span className="bottom-text">{activeCollection.title}</span>
 								</a>
@@ -134,8 +131,8 @@ const Breadcrumbs = () => {
 								<a
 									className="crumb truncate"
 									href={getDashUrl({
-										collectionSlug: collectionSlug,
-										pubSlug: pubSlug,
+										collectionSlug,
+										pubSlug,
 									})}
 								>
 									<Icon icon="pubDoc" iconSize={10} />
@@ -149,9 +146,9 @@ const Breadcrumbs = () => {
 								<a
 									className="crumb capitalize no-shrink"
 									href={getDashUrl({
-										collectionSlug: collectionSlug,
-										pubSlug: pubSlug,
-										mode: mode,
+										collectionSlug,
+										pubSlug,
+										mode,
 										// subMode: isParentMode ? 'list' : undefined,
 									})}
 								>
@@ -165,10 +162,10 @@ const Breadcrumbs = () => {
 								<a
 									className="crumb no-shrink capitalize"
 									href={getDashUrl({
-										collectionSlug: collectionSlug,
-										pubSlug: pubSlug,
-										mode: mode,
-										subMode: subMode,
+										collectionSlug,
+										pubSlug,
+										mode,
+										subMode,
 									})}
 								>
 									{subMode}

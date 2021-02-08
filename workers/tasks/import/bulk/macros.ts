@@ -10,7 +10,7 @@ const getConcatableFilesAndDocument = (sourceFiles) => {
 		document,
 		...sourceFiles.filter((s) => s.label === 'supplement'),
 	];
-	return { document: document, concatableFiles: concatableFiles };
+	return { document, concatableFiles };
 };
 
 const asArray = (something) => (Array.isArray(something) ? something : [something]);
@@ -55,7 +55,7 @@ const compileMacros = (macros) => {
 	Object.entries(macros).forEach(([regexStr, transformations]) => {
 		const regex = new RegExp(regexStr, 'g');
 		// @ts-expect-error ts-migrate(2322) FIXME: Type 'RegExp' is not assignable to type 'never'.
-		compiledMacros.push({ regex: regex, transformations: asArray(transformations) });
+		compiledMacros.push({ regex, transformations: asArray(transformations) });
 	});
 	return compiledMacros;
 };
@@ -84,7 +84,7 @@ export const runMacrosOnSourceFiles = async (sourceFiles, macros, maxLoopsPermit
 	const { path: tmpPath } = await tmp.file({ postfix: `.${extensionFor(document.tmpPath)}` });
 	await fs.writeFileSync(tmpPath, sourceText);
 	return [
-		{ tmpPath: tmpPath, label: 'document', clientPath: document.clientPath },
+		{ tmpPath, label: 'document', clientPath: document.clientPath },
 		...sourceFiles.filter((file) => !concatableFiles.includes(file)),
 	];
 };

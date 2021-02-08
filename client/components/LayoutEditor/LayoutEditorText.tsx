@@ -108,7 +108,7 @@ class LayoutEditorText extends Component<Props, State> {
 										this.setText(getJSON(editorChangeObject.view));
 									}
 									this.setState({
-										editorChangeObject: editorChangeObject,
+										editorChangeObject,
 									});
 								}}
 							/>

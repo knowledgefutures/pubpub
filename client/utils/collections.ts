@@ -22,7 +22,7 @@ export const getNeighborsInCollectionPub = (pubs, currentPub) => {
 	const currentIndex = pubs && pubs.indexOf(pubs.find((p) => p.id === currentPub.id));
 	const previousPub = pubs && currentIndex > 0 && pubs[currentIndex - 1];
 	const nextPub = pubs && currentIndex !== pubs.length - 1 && pubs[currentIndex + 1];
-	return { previousPub: previousPub, nextPub: nextPub };
+	return { previousPub, nextPub };
 };
 
 export const createReadingParamUrl = (url, collectionId) => {
@@ -62,7 +62,7 @@ export const useCollectionPubs = (updateLocalData, collection) => {
 				}
 				return cp;
 			});
-			return { collectionPubs: collectionPubs };
+			return { collectionPubs };
 		});
 	};
 
@@ -85,8 +85,8 @@ export const useCollectionPubs = (updateLocalData, collection) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [collection && collection.id]);
 	return {
-		isLoading: isLoading,
-		error: error,
-		pubs: pubs,
+		isLoading,
+		error,
+		pubs,
 	};
 };

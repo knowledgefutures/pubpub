@@ -18,7 +18,7 @@ export default {
 			targetId: { default: null },
 		},
 		reactiveAttrs: {
-			label: function(this: Hooks, node) {
+			label(this: Hooks, node) {
 				const { targetId } = node.attrs;
 				const { nodeLabels } = this.useDocumentState();
 
@@ -56,19 +56,19 @@ export default {
 
 					return {
 						id: node.getAttribute('id'),
-						targetId: targetId,
+						targetId,
 						href: `#${targetId}`,
 					};
 				},
 			},
 		],
-		toDOM: function(node) {
+		toDOM(node) {
 			const { id, targetId, label } = node.attrs;
 
 			return [
 				'a',
 				{
-					...(id && { id: id }),
+					...(id && { id }),
 					href: `#${targetId}`,
 					class: classNames('reference', !label && 'missing'),
 					'data-node-type': 'reference',

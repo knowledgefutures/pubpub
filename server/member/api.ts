@@ -8,22 +8,22 @@ const getRequestIds = (req) => {
 	const user = req.user || {};
 	const { pubId, collectionId, communityId } = req.body;
 	return {
-		pubId: pubId,
-		collectionId: collectionId,
-		communityId: communityId,
+		pubId,
+		collectionId,
+		communityId,
 		actorId: user.id,
 	};
 };
 
 const chooseTargetFromRequestIds = ({ pubId, collectionId, communityId }) => {
 	if (pubId) {
-		return { pubId: pubId };
+		return { pubId };
 	}
 	if (collectionId) {
-		return { collectionId: collectionId };
+		return { collectionId };
 	}
 	if (communityId) {
-		return { communityId: communityId };
+		return { communityId };
 	}
 	return {};
 };
@@ -35,24 +35,24 @@ app.post(
 		const { targetUserId, value } = req.body;
 		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ actorId: any; pubId: any; comm... Remove this comment to see the full error message
 		const permissions = await getPermissions({
-			actorId: actorId,
-			pubId: pubId,
-			communityId: communityId,
-			collectionId: collectionId,
-			value: value,
+			actorId,
+			pubId,
+			communityId,
+			collectionId,
+			value,
 		});
 		if (!permissions.create) {
 			throw new ForbiddenError();
 		}
 		const member = await createMember({
-			value: value,
+			value,
 			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ pubId: any; collectionId?: undefined; comm... Remove this comment to see the full error message
 			target: {
 				userId: targetUserId,
 				...chooseTargetFromRequestIds({
-					pubId: pubId,
-					collectionId: collectionId,
-					communityId: communityId,
+					pubId,
+					collectionId,
+					communityId,
 				}),
 			},
 		});
@@ -66,18 +66,18 @@ app.put(
 		const { pubId, collectionId, communityId, actorId } = getRequestIds(req);
 		const { value, id } = req.body;
 		const permissions = await getPermissions({
-			actorId: actorId,
-			pubId: pubId,
-			communityId: communityId,
-			collectionId: collectionId,
+			actorId,
+			pubId,
+			communityId,
+			collectionId,
 			memberId: id,
-			value: value,
+			value,
 		});
 		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
 		const member = await updateMember({
-			value: value,
+			value,
 			memberId: id,
 		});
 		return res.status(200).json(member);
@@ -90,12 +90,12 @@ app.delete(
 		const { pubId, collectionId, communityId, actorId } = getRequestIds(req);
 		const { value, id } = req.body;
 		const permissions = await getPermissions({
-			actorId: actorId,
-			pubId: pubId,
-			communityId: communityId,
-			collectionId: collectionId,
+			actorId,
+			pubId,
+			communityId,
+			collectionId,
 			memberId: id,
-			value: value,
+			value,
 		});
 		if (!permissions.destroy) {
 			throw new ForbiddenError();

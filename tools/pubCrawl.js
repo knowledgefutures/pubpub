@@ -31,7 +31,7 @@ const crawl = async (pub) => {
 const main = async () => {
 	const query = {
 		attributes: ['doi', 'slug', 'title'],
-		include: [{ model: Community, as: 'community', where: { subdomain: subdomain } }],
+		include: [{ model: Community, as: 'community', where: { subdomain } }],
 		order: [['createdAt', 'ASC']],
 		// limit: 500,
 		// offset: 0,

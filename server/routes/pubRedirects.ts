@@ -51,7 +51,7 @@ app.get('/pub/:slug', async (req, res, next) => {
 		const { slug, domain } = getParams(req);
 		const prefix = `${domain}/pub/${slug}`;
 		const pubData = await Pub.findOne({
-			where: { slug: slug },
+			where: { slug },
 			attributes: ['id'],
 			include: [{ model: Release, as: 'releases' }],
 		});
@@ -82,7 +82,7 @@ app.get(
 			const { slug, domain, versionNumber } = getParams(req);
 			const prefix = `${domain}/pub/${slug}`;
 			const pubData = await Pub.findOne({
-				where: { slug: slug },
+				where: { slug },
 				attributes: ['id', 'slug', 'viewHash', 'editHash'],
 				include: [{ model: Release, as: 'releases' }],
 			});

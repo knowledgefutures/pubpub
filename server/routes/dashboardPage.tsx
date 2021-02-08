@@ -18,16 +18,16 @@ app.get(['/dash/pages/:subMode'], async (req, res, next) => {
 		const pageData = await getPage({
 			query: { slug: pageSlug },
 			forLayoutEditor: true,
-			initialData: initialData,
+			initialData,
 		});
 		return renderToNodeStream(
 			res,
 			<Html
 				chunkName="DashboardPage"
 				initialData={initialData}
-				viewData={{ pageData: pageData }}
+				viewData={{ pageData }}
 				headerComponents={generateMetaComponents({
-					initialData: initialData,
+					initialData,
 					title: `Pages · ${initialData.scopeData.elements.activeTarget.title}`,
 					unlisted: true,
 				})}

@@ -8,8 +8,8 @@ import { getExportFormats } from 'utils/export/formats';
 export const getOrStartExportTask = async ({ pubId, format, historyKey }) => {
 	const existingExport = await Export.findOne({
 		where: {
-			pubId: pubId,
-			format: format,
+			pubId,
+			format,
 			historyKey: {
 				[Sequelize.Op.gte]: historyKey,
 			},
@@ -20,7 +20,7 @@ export const getOrStartExportTask = async ({ pubId, format, historyKey }) => {
 	if (existingExport) {
 		const { url, workerTask } = existingExport;
 		if (url) {
-			return { url: url };
+			return { url };
 		}
 		const shouldAllowTaskToComplete = workerTask && !workerTask.error;
 		if (shouldAllowTaskToComplete) {
@@ -31,9 +31,9 @@ export const getOrStartExportTask = async ({ pubId, format, historyKey }) => {
 	const theExport =
 		existingExport ||
 		(await Export.create({
-			pubId: pubId,
-			format: format,
-			historyKey: historyKey,
+			pubId,
+			format,
+			historyKey,
 		}));
 
 	const task = await addWorkerTask({
@@ -52,8 +52,8 @@ export const createLatestPubExports = async (pubId) => {
 	await Promise.all(
 		getExportFormats().map((format) =>
 			getOrStartExportTask({
-				pubId: pubId,
-				format: format,
+				pubId,
+				format,
 				historyKey: latestKey,
 			}),
 		),

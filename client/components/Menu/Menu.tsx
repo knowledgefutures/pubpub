@@ -48,8 +48,8 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 	const menuConfig = useContext(MenuConfigContext);
 
 	const menu = RK.useMenuState({
-		placement: placement,
-		gutter: gutter,
+		placement,
+		gutter,
 		unstable_preventOverflow: false,
 		unstable_flip: false,
 	});

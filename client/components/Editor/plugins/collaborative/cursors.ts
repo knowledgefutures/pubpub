@@ -216,7 +216,7 @@ export default (schema, props, collabDocPluginKey) => {
 					if (!prevSelection.anchor || !anchorEqual || !headEqual) {
 						const newCursorData = {
 							...localClientData,
-							selection: selection,
+							selection,
 						};
 
 						/* lastActive has to be rounded to the nearest minute (or some larger value)

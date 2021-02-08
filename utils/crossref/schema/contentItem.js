@@ -20,7 +20,7 @@ export default ({
 			'@component_type': componentType,
 			...contributors(attributions),
 			titles: {
-				title: title,
+				title,
 			},
 			...date('publication_date', publicationDate),
 			...(relatedItems.length > 0 && relations(relatedItems)),

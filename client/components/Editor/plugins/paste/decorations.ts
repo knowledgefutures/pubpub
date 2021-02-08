@@ -13,7 +13,7 @@ export const createPlaceholderDecoration = (
 	progress: number,
 ): PlaceholderDecoration => {
 	return Decoration.widget(position, () => createPlaceholderWidgetElement(progress), {
-		id: id,
+		id,
 		key: `${id}-${progress}`,
 	});
 };
@@ -66,7 +66,7 @@ export const getFinishedUploadFromTransaction = (tr: Transaction, state: EditorS
 		const { decorations } = pastePluginKey.getState(state) as PluginState;
 		const decoration = getPlaceholderDecorationForId(id, decorations);
 		if (decoration) {
-			return { src: src, position: decoration.to };
+			return { src, position: decoration.to };
 		}
 	}
 	return null;

@@ -21,14 +21,14 @@ export default (attribution: Attribution): AttributionWithUser => {
 		...spreadableAttribution,
 		user: {
 			isShadowUser: true,
-			id: id,
-			initials: initials,
+			id,
+			initials,
 			fullName: name,
-			firstName: firstName,
-			lastName: lastName,
-			avatar: avatar,
-			title: title,
-			orcid: orcid,
+			firstName,
+			lastName,
+			avatar,
+			title,
+			orcid,
 		},
 	};
 };

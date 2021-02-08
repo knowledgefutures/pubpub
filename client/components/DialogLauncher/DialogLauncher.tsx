@@ -28,7 +28,7 @@ const DialogLauncher = (props: Props) => {
 			{(isOpen || renderChildrenWhenClosed) &&
 				children({
 					key: uniqueInstanceKey,
-					isOpen: isOpen,
+					isOpen,
 					onClose: () => setIsOpen(false),
 				})}
 		</React.Fragment>

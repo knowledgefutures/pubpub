@@ -89,7 +89,7 @@ const createMemberRequest = ({ collection, pub, permissions, user, member }) => 
 		communityId: community.id,
 		targetUserId: user && user.id,
 		id: member && member.id,
-		value: { permissions: permissions },
+		value: { permissions },
 	};
 };
 
@@ -119,7 +119,7 @@ it('prevents a member from elevating their own permissions', async () => {
 			(await login(user))
 				.put('/api/members')
 				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; member: a... Remove this comment to see the full error message
-				.send(createMemberRequest({ permissions: 'admin', member: member }))
+				.send(createMemberRequest({ permissions: 'admin', member }))
 				.expect(403),
 		),
 	);
@@ -150,7 +150,7 @@ it('prevents a member from elevating another member higher than their own permis
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'admin',
-				collection: collection,
+				collection,
 				member: youCannotElevateMe,
 			}),
 		)
@@ -166,7 +166,7 @@ it('allows a member to demote a peer of equal rank', async () => {
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'edit',
-				collection: collection,
+				collection,
 				member: youCanDemoteMe,
 			}),
 		)
@@ -183,8 +183,8 @@ it('prevents a Collection non-manager from creating a member in a Pub scope', as
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'view',
-				collection: collection,
-				pub: pub,
+				collection,
+				pub,
 				user: willBePubViewer,
 			}),
 		)
@@ -200,8 +200,8 @@ it('prevents an admin of a collection from creating a member in a Pub that does 
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'view',
-				collection: collection,
-				pub: pub,
+				collection,
+				pub,
 				user: willBePubViewer,
 			}),
 		)
@@ -217,7 +217,7 @@ it('allows a Community manager to create a member in a Collection scope', async 
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'view',
-				collection: collection,
+				collection,
 				user: willBeCollectionManager,
 			}),
 		)
@@ -234,8 +234,8 @@ it('allows a Collection manager to create a member in a Pub scope', async () => 
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'view',
-				collection: collection,
-				pub: pub,
+				collection,
+				pub,
 				user: willBePubViewer,
 			}),
 		)
@@ -252,7 +252,7 @@ it('prevents a Community manager from promoting a member to admin in a Collectio
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'admin',
-				collection: collection,
+				collection,
 				member: youCanDemoteMe,
 			}),
 		)
@@ -268,7 +268,7 @@ it('allows a Community manager to promote a member to manager in a Collection sc
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'manage',
-				collection: collection,
+				collection,
 				member: aCommunityManagerCanPromoteMe,
 			}),
 		)
@@ -285,7 +285,7 @@ it('prevents a Community manager from promoting a member to admin in a Collectio
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'admin',
-				collection: collection,
+				collection,
 				member: youCanDemoteMe,
 			}),
 		)
@@ -301,8 +301,8 @@ it('prevents a Collection manager from promoting a member to admin in a Pub scop
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'admin',
-				collection: collection,
-				pub: pub,
+				collection,
+				pub,
 				member: youCannotPromoteMeToAdmin,
 			}),
 		)
@@ -318,8 +318,8 @@ it('allows a Collection manager to promote a member to manager in a Pub scope', 
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; collectio... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'manage',
-				collection: collection,
-				pub: pub,
+				collection,
+				pub,
 				member: youCannotPromoteMeToAdmin,
 			}),
 		)
@@ -351,7 +351,7 @@ it('prevents Community admins from wreaking havoc on other Communities', async (
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ permissions: string; pub: any;... Remove this comment to see the full error message
 			createMemberRequest({
 				permissions: 'view',
-				pub: pub,
+				pub,
 				member: otherCommunityAdmin,
 			}),
 		)
@@ -366,7 +366,7 @@ it('allows a Pub admin to remove members with lower permissions in the same scop
 		.send(
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ pub: any; member: any; }' is n... Remove this comment to see the full error message
 			createMemberRequest({
-				pub: pub,
+				pub,
 				member: youCannotPromoteMeToAdmin,
 			}),
 		)
@@ -383,8 +383,8 @@ it('allows a Collection manager to remove members with lower permissions in the 
 		.send(
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ pub: any; collection: any; mem... Remove this comment to see the full error message
 			createMemberRequest({
-				pub: pub,
-				collection: collection,
+				pub,
+				collection,
 				member: iWillBeDeleted,
 			}),
 		)
@@ -401,8 +401,8 @@ it('prevents a Collection manager from removing admins in a Pub scope', async ()
 		.send(
 			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ pub: any; collection: any; mem... Remove this comment to see the full error message
 			createMemberRequest({
-				pub: pub,
-				collection: collection,
+				pub,
+				collection,
 				member: pubAdminMember,
 			}),
 		)

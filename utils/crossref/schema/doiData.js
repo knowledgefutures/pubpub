@@ -7,8 +7,8 @@ export default (doi, timestamp, resource, contentVersion) => {
 	}
 	return {
 		doi_data: {
-			doi: doi,
-			timestamp: timestamp,
+			doi,
+			timestamp,
 			resource: {
 				'#text': resource,
 				...(contentVersion && { '@content_version': contentVersion }),

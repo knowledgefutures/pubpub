@@ -92,11 +92,11 @@ const Pub = (props: Props) => {
 				>
 					{({ pubData, collabData, firebaseDraftRef, updateLocalData, historyData }) => {
 						const modeProps = {
-							pubData: pubData,
-							collabData: collabData,
-							historyData: historyData,
-							firebaseDraftRef: firebaseDraftRef,
-							updateLocalData: updateLocalData,
+							pubData,
+							collabData,
+							historyData,
+							firebaseDraftRef,
+							updateLocalData,
 						};
 						return (
 							<React.Fragment>

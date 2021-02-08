@@ -98,14 +98,14 @@ const makeDiscussion = ({
 }) => {
 	const { community } = models;
 	return {
-		discussionId: discussionId,
-		title: title,
-		content: content,
+		discussionId,
+		title,
+		content,
 		pubId: pub.id,
 		communityId: community.id,
-		threadNumber: threadNumber,
-		visibilityAccess: visibilityAccess,
-		historyKey: historyKey,
+		threadNumber,
+		visibilityAccess,
+		historyKey,
 		...whateverElse,
 	};
 };
@@ -125,12 +125,12 @@ const makeDiscussionUpdate = ({
 }) => {
 	const { community } = models;
 	return {
-		discussionId: discussionId,
+		discussionId,
 		communityId: community.id,
 		pubId: pub.id,
-		title: title,
-		isClosed: isClosed,
-		labels: labels,
+		title,
+		isClosed,
+		labels,
 	};
 };
 
@@ -207,7 +207,7 @@ it('respects client-created discussion IDs', async () => {
 		.send(
 			makeDiscussion({
 				pub: releasePub,
-				discussionId: discussionId,
+				discussionId,
 				text: 'Hello world!',
 				visibilityAccess: 'public',
 			}),

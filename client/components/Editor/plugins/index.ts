@@ -48,9 +48,7 @@ export const standardPlugins = {
 
 const getSortedPlugins = (plugins: Record<string, null | PluginLoader>): PluginLoader[] => {
 	const { onChange, ...restPlugins } = plugins;
-	return Object.values({ ...restPlugins, onChange: onChange }).filter(
-		(x): x is PluginLoader => !!x,
-	);
+	return Object.values({ ...restPlugins, onChange }).filter((x): x is PluginLoader => !!x);
 };
 
 export const getPlugins = (

@@ -35,8 +35,8 @@ class MediaYoutube extends Component<Props, State> {
 		const isValid = isHttpsUri(input) && getEmbedType(input) === 'youtube';
 		this.setState(
 			{
-				input: input,
-				isValid: isValid,
+				input,
+				isValid,
 			},
 			() => {
 				if (!this.state.isValid) {

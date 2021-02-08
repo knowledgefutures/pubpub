@@ -3,9 +3,9 @@ import { apiFetch } from 'client/utils/apiFetch';
 const getRenderedCitations = (structuredValues, citationStyle, inlineStyle) =>
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
 	apiFetch.post('/api/editor/citation-format', {
-		structuredValues: structuredValues,
-		inlineStyle: inlineStyle,
-		citationStyle: citationStyle,
+		structuredValues,
+		inlineStyle,
+		citationStyle,
 	});
 
 class CitationManagerEntry {

@@ -15,7 +15,7 @@ const getOverviewForEdges = async (initialData) => {
 		activeTargetType: 'community',
 	});
 	const { pubs } = sanitizeOverview(initialData, rawOverview);
-	return { pubs: pubs };
+	return { pubs };
 };
 
 app.get(
@@ -31,7 +31,7 @@ app.get(
 				getOverviewForEdges(initialData),
 				getPubForRequest({
 					slug: pubSlug,
-					initialData: initialData,
+					initialData,
 					getEdges: 'all',
 				}),
 			]);
@@ -45,9 +45,9 @@ app.get(
 				<Html
 					chunkName="DashboardEdges"
 					initialData={initialData}
-					viewData={{ overviewData: overviewData, pubData: pubData }}
+					viewData={{ overviewData, pubData }}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Connections · ${pubData.title}`,
 						unlisted: true,
 					})}

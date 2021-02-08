@@ -198,18 +198,18 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 			init: () => {
 				return {
 					isLoaded: false,
-					localClientId: localClientId,
+					localClientId,
 					localClientData: props.collaborativeOptions.clientData,
-					sendCollabChanges: sendCollabChanges,
+					sendCollabChanges,
 				};
 			},
 			apply: (transaction, pluginState) => {
 				return {
 					isLoaded: transaction.getMeta('finishedLoading') || pluginState.isLoaded,
-					mostRecentRemoteKey: mostRecentRemoteKey,
-					localClientId: localClientId,
+					mostRecentRemoteKey,
+					localClientId,
 					localClientData: props.collaborativeOptions.clientData,
-					sendCollabChanges: sendCollabChanges,
+					sendCollabChanges,
 				};
 			},
 		},

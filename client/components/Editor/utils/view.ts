@@ -68,9 +68,9 @@ export const setLocalHighlight = (editorView, from, to, id) => {
 	transaction.setMeta('localHighlights', true);
 	transaction.setMeta('newLocalHighlightData', [
 		{
-			from: from,
-			to: to,
-			id: id,
+			from,
+			to,
+			id,
 		},
 	]);
 	editorView.dispatch(transaction);
@@ -133,9 +133,9 @@ export const getLocalHighlightText = (editorView, highlightId) => {
 	return {
 		from: fromPos,
 		to: toPos,
-		exact: exact,
-		prefix: prefix,
-		suffix: suffix,
+		exact,
+		prefix,
+		suffix,
 	};
 };
 

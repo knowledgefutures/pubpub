@@ -18,7 +18,7 @@ export default ({
 			'@xmlns:rel': 'http://www.crossref.org/relations.xsd',
 			'@publication_type': 'full_text',
 			titles: {
-				title: title,
+				title,
 			},
 			...contributors(attributions),
 			...date('publication_date', publicationDate),

@@ -32,7 +32,7 @@ const createCss = () => {
 		const data = '$PUBPUB_PRINT: true;\n' + entrypointContents;
 		const css = nodeSass
 			.renderSync({
-				data: data,
+				data,
 				includePaths: [nodeModulesPath, clientPath],
 				importer: (url) => {
 					if (url.startsWith('~')) {
@@ -181,10 +181,10 @@ const renderFrontMatterForPandoc = (
 				<h3>{communityAndCollectionString}</h3>
 			)}
 			{renderSharedDetails({
-				updatedDateString: updatedDateString,
-				publishedDateString: publishedDateString,
-				doi: doi,
-				licenseSlug: licenseSlug,
+				updatedDateString,
+				publishedDateString,
+				doi,
+				licenseSlug,
 			})}
 		</>
 	);
@@ -253,10 +253,10 @@ const renderFrontMatterForHtml = ({
 					</div>
 				)}
 				{renderSharedDetails({
-					updatedDateString: updatedDateString,
-					publishedDateString: publishedDateString,
-					doi: doi,
-					licenseSlug: licenseSlug,
+					updatedDateString,
+					publishedDateString,
+					doi,
+					licenseSlug,
 				})}
 			</div>
 		</section>
@@ -284,8 +284,8 @@ export const renderStaticHtml = async ({
 		schema: editorSchema,
 		doc: { type: 'doc', content: renderableNodes },
 		context: { isForPandoc: targetPandoc },
-		citationManager: citationManager,
-		nodeLabels: nodeLabels,
+		citationManager,
+		nodeLabels,
 	});
 
 	return ReactDOMServer.renderToStaticMarkup(

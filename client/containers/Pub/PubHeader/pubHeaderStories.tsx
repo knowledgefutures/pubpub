@@ -54,7 +54,7 @@ const PubHeaderWrapper = (props) => {
 		pubData: props.pubData,
 		historyData: props.historyData,
 		collabData: props.collabData,
-		communityData: communityData,
+		communityData,
 	});
 
 	const updateLocalData = (type, value) => {

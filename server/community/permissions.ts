@@ -11,7 +11,7 @@ export const getPermissions = async ({ userId, communityId }) => {
 		};
 	}
 	const scopeData = await getScope({
-		communityId: communityId,
+		communityId,
 		loginId: userId,
 	});
 	const editProps = [

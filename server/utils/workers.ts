@@ -43,14 +43,14 @@ export const sendMessageToOpenChannel = async (message, priority) => {
 	const openChannel = await getOrCreateOpenChannel();
 	openChannel.sendToQueue(taskQueueName, message, {
 		deliveryMode: true,
-		priority: priority,
+		priority,
 	});
 	await openChannel.waitForConfirms();
 };
 
 export const addWorkerTask = async ({ type, input, priority = getDefaultTaskPriority() }) => {
-	const workerTask = await createWorkerTask({ type: type, input: input, priority: priority });
-	const message = Buffer.from(JSON.stringify({ id: workerTask.id, type: type, input: input }));
+	const workerTask = await createWorkerTask({ type, input, priority });
+	const message = Buffer.from(JSON.stringify({ id: workerTask.id, type, input }));
 	await sendMessageToOpenChannel(message, priority);
 	return workerTask;
 };

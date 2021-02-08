@@ -170,10 +170,10 @@ const NavBuilder = (props: Props) => {
 			<DragDropContext onDragEnd={onDragEnd}>
 				<NavBuilderContext.Provider
 					value={{
-						removeItem: removeItem,
-						updateItem: updateItem,
-						pages: pages,
-						collections: collections,
+						removeItem,
+						updateItem,
+						pages,
+						collections,
 					}}
 				>
 					<div className="items">

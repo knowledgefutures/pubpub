@@ -8,11 +8,11 @@ const getRequestValues = (req) => {
 	const user = req.user || {};
 	const { communityId, historyKey, noteContent, noteText, pubId } = req.body;
 	return {
-		communityId: communityId,
-		historyKey: historyKey,
-		noteContent: noteContent,
-		noteText: noteText,
-		pubId: pubId,
+		communityId,
+		historyKey,
+		noteContent,
+		noteText,
+		pubId,
 		userId: user.id,
 	};
 };
@@ -24,9 +24,9 @@ app.post(
 			req,
 		);
 		const permissions = await getPermissions({
-			userId: userId,
-			pubId: pubId,
-			communityId: communityId,
+			userId,
+			pubId,
+			communityId,
 		});
 
 		if (!permissions.create) {
@@ -35,11 +35,11 @@ app.post(
 
 		try {
 			const release = await createRelease({
-				userId: userId,
-				pubId: pubId,
-				historyKey: historyKey,
-				noteText: noteText,
-				noteContent: noteContent,
+				userId,
+				pubId,
+				historyKey,
+				noteText,
+				noteContent,
 			});
 
 			return res.status(201).json(release);

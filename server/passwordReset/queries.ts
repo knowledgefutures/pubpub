@@ -8,7 +8,7 @@ export const createPasswordReset = (inputValues, user, hostname) => {
 	const email = inputValues.email;
 
 	return User.findOne({
-		where: email ? { email: email } : { id: user.id },
+		where: email ? { email } : { id: user.id },
 	})
 		.then((userData) => {
 			if (!userData) {
@@ -39,7 +39,7 @@ export const updatePasswordReset = (inputValues, user) => {
 	const slug = inputValues.slug;
 	const currentTime = Date.now();
 
-	const whereQuery = user.id ? { id: user.id } : { resetHash: resetHash, slug: slug };
+	const whereQuery = user.id ? { id: user.id } : { resetHash, slug };
 
 	return User.findOne({
 		where: whereQuery,

@@ -21,11 +21,11 @@ export const createUser = (inputValues) => {
 		.then((existingSlugCount) => {
 			const newUser = {
 				slug: `${newSlug}${existingSlugCount ? `-${existingSlugCount + 1}` : ''}`,
-				firstName: firstName,
-				lastName: lastName,
-				fullName: fullName,
-				initials: initials,
-				email: email,
+				firstName,
+				lastName,
+				fullName,
+				initials,
+				email,
 				avatar: inputValues.avatar,
 				title: inputValues.title,
 				bio: inputValues.bio,
@@ -50,7 +50,7 @@ export const createUser = (inputValues) => {
 			return Signup.update(
 				{ completed: true },
 				{
-					where: { email: email, hash: inputValues.hash, completed: false },
+					where: { email, hash: inputValues.hash, completed: false },
 				},
 			);
 		});

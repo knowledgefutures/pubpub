@@ -10,9 +10,9 @@ export const getUploadPolicy = ({ contentType }) => {
 	const policyObject = {
 		expiration: expirationDate,
 		conditions: [
-			{ bucket: bucket },
+			{ bucket },
 			['starts-with', '$key', ''],
-			{ acl: acl },
+			{ acl },
 			{ success_action_status: '200' },
 			['starts-with', '$Content-Type', contentType],
 		],
@@ -28,10 +28,10 @@ export const getUploadPolicy = ({ contentType }) => {
 	const signature = hmac.digest('base64');
 
 	return {
-		acl: acl,
-		awsAccessKeyId: awsAccessKeyId,
-		policy: policy,
-		signature: signature,
-		bucket: bucket,
+		acl,
+		awsAccessKeyId,
+		policy,
+		signature,
+		bucket,
 	};
 };

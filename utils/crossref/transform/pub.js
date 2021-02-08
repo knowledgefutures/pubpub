@@ -23,7 +23,7 @@ function getIdentifierData(pubEdge, isInboundEdge) {
 		identifierType = doi ? 'doi' : 'uri';
 	}
 
-	return { identifier: identifier, identifierType: identifierType };
+	return { identifier, identifierType };
 }
 
 function getEdgeCrossrefRelationship(pubEdge, isInboundEdge = false) {
@@ -34,7 +34,7 @@ function getEdgeCrossrefRelationship(pubEdge, isInboundEdge = false) {
 
 	return {
 		...getIdentifierData(pubEdge, isInboundEdge),
-		isIntraWork: isIntraWork,
+		isIntraWork,
 		relationshipType: crossrefRelationshipType,
 	};
 }
@@ -48,15 +48,15 @@ export default ({ globals, community }) => (pub) => {
 		.concat(inboundEdges.map((pubEdge) => getEdgeCrossrefRelationship(pubEdge, true)));
 
 	return {
-		title: title,
-		timestamp: timestamp,
-		publicationDate: publicationDate,
+		title,
+		timestamp,
+		publicationDate,
 		attributions: transformAttributions(pub.attributions),
 		resourceUrl: pubUrl(community, pub),
 		doi: dois.pub,
-		relatedItems: relatedItems,
-		contentVersion: contentVersion,
-		reviewType: reviewType,
-		reviewRecommendation: reviewRecommendation,
+		relatedItems,
+		contentVersion,
+		reviewType,
+		reviewRecommendation,
 	};
 };

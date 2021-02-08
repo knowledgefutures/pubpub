@@ -38,12 +38,12 @@ const getInitialOptions = (options: InitialValuesOptions) => {
 	const hydratedDoc = schema.nodeFromJSON(initialContent);
 	const initialDocNode = isReadOnly ? addTemporaryIdsToDoc(hydratedDoc) : hydratedDoc;
 	const staticContent = renderStatic({
-		schema: schema,
+		schema,
 		doc: initialContent,
-		nodeLabels: nodeLabels,
-		citationManager: citationManager,
+		nodeLabels,
+		citationManager,
 	});
-	return { schema: schema, initialDocNode: initialDocNode, staticContent: staticContent };
+	return { schema, initialDocNode, staticContent };
 };
 
 export const useInitialValues = (options: InitialValuesOptions) => {

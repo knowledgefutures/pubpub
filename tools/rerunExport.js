@@ -10,7 +10,7 @@ const {
 
 const main = async () => {
 	const pub = await lookupPub({ slug: pubSlug, id: pubId });
-	const branch = await lookupBranch({ pubId: pub.id, branchTitle: branchTitle });
+	const branch = await lookupBranch({ pubId: pub.id, branchTitle });
 	await promptOkay(
 		`Really delete and re-create the latest exports for ${pub.slug}.${branch.title}?`,
 		{ throwIfNo: true },

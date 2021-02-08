@@ -134,7 +134,7 @@ class Doi extends Component<Props, State> {
 		const { updatePubData } = this.props;
 
 		this.setState({ justSetDoi: true });
-		updatePubData({ doi: doi });
+		updatePubData({ doi });
 	}
 
 	async updateDoi(doi, pendingStateKey, fallback) {
@@ -155,7 +155,7 @@ class Doi extends Component<Props, State> {
 			const response = await apiFetch('/api/pubs', {
 				method: 'PUT',
 				body: JSON.stringify({
-					doi: doi,
+					doi,
 					pubId: pubData.id,
 					communityId: communityData.id,
 				}),

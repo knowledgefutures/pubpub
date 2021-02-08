@@ -29,7 +29,7 @@ type Props = {
 
 const createCandidateEdge = (resource, relationType = RelationType.Reply) => {
 	return {
-		relationType: relationType,
+		relationType,
 		pubIsParent: true,
 		...resource,
 	};
@@ -61,7 +61,7 @@ const NewEdgeEditor = (props: Props) => {
 	const handleSelectItem = (item) => {
 		const { targetPub, externalPublication, createNewFromUrl } = item;
 		if (targetPub) {
-			setNewEdge(createCandidateEdge({ targetPub: targetPub, targetPubId: targetPub.id }));
+			setNewEdge(createCandidateEdge({ targetPub, targetPubId: targetPub.id }));
 		} else if (externalPublication) {
 			setNewEdge(
 				createCandidateEdge({
@@ -93,7 +93,7 @@ const NewEdgeEditor = (props: Props) => {
 	const handleEdgeRelationTypeChange = (relationType) => {
 		setNewEdge({
 			...newEdge,
-			relationType: relationType,
+			relationType,
 		});
 	};
 

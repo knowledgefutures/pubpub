@@ -71,15 +71,15 @@ const createEditorView = (options: EditorViewOptions) => {
 
 	const state = EditorState.create({
 		doc: initialDocNode,
-		schema: schema,
+		schema,
 		plugins: getPlugins(schema, customPlugins, pluginsOptions),
 	});
 
 	const view: EditorView<typeof schema> = new EditorView(
 		{ mount: mountRef.current! },
 		{
-			state: state,
-			nodeViews: nodeViews,
+			state,
+			nodeViews,
 			editable: getIsEditable(options),
 			handleKeyDown: blockSaveKeyHandler,
 			handleKeyPress: onKeyPress,
@@ -112,8 +112,8 @@ export const useEditorView = (options: EditorViewOptions) => {
 	useEffect(() => {
 		viewRef.current?.setProps({
 			dispatchTransaction: getDispatchTransaction(viewRef.current, {
-				onError: onError,
-				onEdit: onEdit,
+				onError,
+				onEdit,
 			}),
 		});
 	}, [onError, onEdit]);
@@ -127,7 +127,7 @@ export const useEditorView = (options: EditorViewOptions) => {
 
 	useEffect(() => {
 		viewRef.current?.setProps({
-			editable: getIsEditable({ isReadOnly: isReadOnly }),
+			editable: getIsEditable({ isReadOnly }),
 		});
 	}, [isReadOnly]);
 };

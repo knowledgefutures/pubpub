@@ -50,8 +50,8 @@ const Footer = (props: Props) => {
 		: communityData.footerLinks || defaultFooterLinks;
 	const navItems = getNavItemsForCommunityNavigation({
 		navigation: footerLinks,
-		pages: pages,
-		collections: collections,
+		pages,
+		collections,
 	});
 	const handleEmailSubmit = (evt) => {
 		evt.preventDefault();
@@ -64,7 +64,7 @@ const Footer = (props: Props) => {
 		return apiFetch('/api/subscribe', {
 			method: 'POST',
 			body: JSON.stringify({
-				email: email,
+				email,
 			}),
 		})
 			.then(() => {

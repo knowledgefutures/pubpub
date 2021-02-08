@@ -14,7 +14,7 @@ const expectQuery = (query) => {
 		toReturn: async (pubs) => {
 			const pubIds = await getQueriedPubIds({
 				communityId: community.id,
-				query: query,
+				query,
 				limit: 25,
 			});
 			expect(pubIds).toEqual(pubs.map((pub) => pub.id));

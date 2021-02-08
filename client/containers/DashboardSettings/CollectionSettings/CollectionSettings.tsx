@@ -67,9 +67,7 @@ const CollectionSettings = () => {
 							collectionId: collection.id,
 							communityId: communityData.id,
 						}}
-						onUpdateAttributions={(attributions) =>
-							updateCollection({ attributions: attributions })
-						}
+						onUpdateAttributions={(attributions) => updateCollection({ attributions })}
 					/>
 				</SettingsSection>
 			)}

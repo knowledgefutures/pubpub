@@ -62,7 +62,7 @@ const normalizeAttrsForReact = (attrs) => {
 const getAttrsFromOutputSpec = (maybeAttrs) => {
 	const hasAttrs = maybeAttrs && typeof maybeAttrs === 'object' && !Array.isArray(maybeAttrs);
 	const attrs = hasAttrs ? normalizeAttrsForReact(maybeAttrs) : {};
-	return { attrs: attrs, hasAttrs: hasAttrs };
+	return { attrs, hasAttrs };
 };
 
 const createReactFromOutputSpec = (spec, key) => {
@@ -74,7 +74,7 @@ const createReactFromOutputSpec = (spec, key) => {
 	const children = hasAttrs ? restItems : [maybeAttrs, ...restItems];
 	return React.createElement(
 		tagName,
-		{ ...attrs, key: key },
+		{ ...attrs, key },
 		...children.map((child, index) => createReactFromOutputSpec(child, `${key}-${index}`)),
 	);
 };
@@ -145,8 +145,8 @@ export const getReactedDocFromJson = (doc, schema, citationManager, nodeLabels) 
 	const hydratedDoc = Node.fromJSON(schema, doc);
 	const reactedDoc = getReactedDoc(hydratedDoc, {
 		documentState: {
-			citationManager: citationManager,
-			nodeLabels: nodeLabels,
+			citationManager,
+			nodeLabels,
 		},
 	});
 	return reactedDoc.toJSON();

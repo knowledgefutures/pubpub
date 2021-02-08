@@ -88,8 +88,8 @@ const CollectionsBar = (props: Props) => {
 	const renderManageCollections = () => {
 		const pubCollectionsListingProps = {
 			pub: pubData,
-			collectionPubs: collectionPubs,
-			canManage: canManage,
+			collectionPubs,
+			canManage,
 			updateCollectionPubs: (nextCollectionPubs) =>
 				updatePubData({ collectionPubs: nextCollectionPubs }),
 			allCollections: allCollectionsInCommunity,

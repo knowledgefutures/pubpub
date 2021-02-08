@@ -47,7 +47,7 @@ export const destroyThreadEvent = (inputValues) => {
 export const createCreatedThreadEvent = (userData, threadId) => {
 	return createThreadEvent(
 		{
-			threadId: threadId,
+			threadId,
 			type: 'status',
 			data: { statusChange: 'created' },
 		},
@@ -58,7 +58,7 @@ export const createCreatedThreadEvent = (userData, threadId) => {
 export const createClosedThreadEvent = (userData, threadId) => {
 	return createThreadEvent(
 		{
-			threadId: threadId,
+			threadId,
 			type: 'status',
 			data: { statusChange: 'closed' },
 		},
@@ -69,7 +69,7 @@ export const createClosedThreadEvent = (userData, threadId) => {
 export const createCompletedThreadEvent = (userData, threadId) => {
 	return createThreadEvent(
 		{
-			threadId: threadId,
+			threadId,
 			type: 'status',
 			data: { statusChange: 'completed' },
 		},
@@ -80,7 +80,7 @@ export const createCompletedThreadEvent = (userData, threadId) => {
 export const createMergedEvent = (userData, threadId) => {
 	return createThreadEvent(
 		{
-			threadId: threadId,
+			threadId,
 			type: 'status',
 			data: { statusChange: 'merged' },
 		},
@@ -91,9 +91,9 @@ export const createMergedEvent = (userData, threadId) => {
 export const createReleasedEvent = (userData, threadId, pubSlug, releaseId) => {
 	return createThreadEvent(
 		{
-			threadId: threadId,
+			threadId,
 			type: 'status',
-			data: { statusChange: 'released', pubSlug: pubSlug, releaseId: releaseId },
+			data: { statusChange: 'released', pubSlug, releaseId },
 		},
 		userData,
 	);

@@ -23,7 +23,7 @@ export default ({
 		'@recommendation': reviewRecommendation,
 		...contributors(attributions),
 		titles: {
-			title: title,
+			title,
 		},
 		...date('review_date', publicationDate, null),
 		...(relatedItems.length > 0 && relations(relatedItems)),

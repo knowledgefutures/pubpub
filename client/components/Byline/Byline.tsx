@@ -78,12 +78,12 @@ const Byline = (props: PrivateBylineProps) => {
 			return joinOxford(
 				[...namedContributors.map(renderContributor), renderTruncation(remainingCount)],
 				// @ts-expect-error ts-migrate(2322) FIXME: Type 'never[]' is not assignable to type 'string'.
-				{ joiner: joinAndFlattenArrays, ampersand: ampersand, empty: [] },
+				{ joiner: joinAndFlattenArrays, ampersand, empty: [] },
 			);
 		}
 		return joinOxford(contributors.map(renderContributor), {
 			joiner: joinAndFlattenArrays,
-			ampersand: ampersand,
+			ampersand,
 			// @ts-expect-error ts-migrate(2322) FIXME: Type 'never[]' is not assignable to type 'string'.
 			empty: [],
 		});

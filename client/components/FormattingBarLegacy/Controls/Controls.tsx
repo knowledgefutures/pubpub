@@ -29,12 +29,12 @@ const Controls = (props: Props) => {
 
 	// ?Inline permalink
 	const controlsProps = {
-		attrs: attrs,
+		attrs,
 		updateAttrs: updateFunc,
 		changeNode: changeNodeFunc,
-		menuItems: menuItems,
+		menuItems,
 		threads: props.threads,
-		selectedNode: selectedNode,
+		selectedNode,
 		editorChangeObject: props.editorChangeObject,
 		isSmall: props.isSmall,
 		footnotes: props.footnotes,

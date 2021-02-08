@@ -65,7 +65,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ blocks: any; initialData: { co... Remove this comment to see the full error message
 				const pubs = await getPubsForLayout({
 					blocks: layout.blocks,
-					initialData: initialData,
+					initialData,
 					collectionId: collection.id,
 				});
 
@@ -74,9 +74,9 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 					<Html
 						chunkName="Collection"
 						initialData={initialData}
-						viewData={{ pubs: pubs, collection: collection }}
+						viewData={{ pubs, collection }}
 						headerComponents={generateMetaComponents({
-							initialData: initialData,
+							initialData,
 							title: `${collection.title} · ${communityData.title}`,
 							description: '',
 							image: collection.avatar,

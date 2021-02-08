@@ -4,7 +4,7 @@ import { PubEdge } from 'server/models';
 export const canManagePubEdges = (scope) => scope.activePermissions.canManage;
 
 export const canCreatePubEdge = async ({ pubId, userId }) => {
-	const scope = await getScope({ pubId: pubId, loginId: userId });
+	const scope = await getScope({ pubId, loginId: userId });
 	return canManagePubEdges(scope);
 };
 
@@ -24,5 +24,5 @@ export const canApprovePubEdgeWithTargetPubId = async ({ targetPubId, userId }) 
 
 export const canApprovePubEdge = async ({ pubEdgeId, userId }) => {
 	const { targetPubId } = await PubEdge.findOne({ where: { id: pubEdgeId } });
-	return canApprovePubEdgeWithTargetPubId({ targetPubId: targetPubId, userId: userId });
+	return canApprovePubEdgeWithTargetPubId({ targetPubId, userId });
 };

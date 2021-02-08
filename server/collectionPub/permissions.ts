@@ -2,7 +2,7 @@ import { CollectionPub } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
 
 const canManagePub = async ({ userId, communityId, pubId }) => {
-	const scopeData = await getScope({ loginId: userId, communityId: communityId, pubId: pubId });
+	const scopeData = await getScope({ loginId: userId, communityId, pubId });
 	return (
 		scopeData.activePermissions.canManage &&
 		scopeData.elements.activePub.communityId === communityId
@@ -16,15 +16,15 @@ export const canCreateCollectionPub = async ({ userId, communityId, collectionId
 			activeCollection: { isRestricted },
 		},
 	} = await getScope({
-		communityId: communityId,
-		collectionId: collectionId,
+		communityId,
+		collectionId,
 		loginId: userId,
 	});
 	if (canManage) {
 		return true;
 	}
 	if (!isRestricted) {
-		return canManagePub({ userId: userId, communityId: communityId, pubId: pubId });
+		return canManagePub({ userId, communityId, pubId });
 	}
 	return false;
 };
@@ -39,17 +39,17 @@ export const getUpdatableFieldsForCollectionPub = async ({
 		elements: { activeCollection },
 		activePermissions,
 	} = await getScope({
-		communityId: communityId,
-		collectionId: collectionId,
+		communityId,
+		collectionId,
 		loginId: userId,
 	});
 	if (activePermissions.canManage) {
 		return ['rank', 'pubRank', 'contextHint'];
 	}
 	const canUpdatePubRank = await canManagePub({
-		userId: userId,
+		userId,
 		communityId: activeCollection.communityId,
-		pubId: pubId,
+		pubId,
 	});
 	if (canUpdatePubRank) {
 		return ['pubRank'];
@@ -65,15 +65,15 @@ export const canDestroyCollectionPub = async ({ userId, communityId, collectionP
 			activeCollection: { isRestricted },
 		},
 	} = await getScope({
-		communityId: communityId,
-		collectionId: collectionId,
+		communityId,
+		collectionId,
 		loginId: userId,
 	});
 	if (canManage) {
 		return true;
 	}
 	if (!isRestricted) {
-		return canManagePub({ userId: userId, communityId: communityId, pubId: pubId });
+		return canManagePub({ userId, communityId, pubId });
 	}
 	return false;
 };

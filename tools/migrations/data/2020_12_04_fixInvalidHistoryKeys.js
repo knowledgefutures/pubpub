@@ -112,7 +112,7 @@ const updateReleasesWithNewKeys = (releasesOrderedByDate, proposedKeys) => {
 
 const handleReleasesForPub = async (pubId) => {
 	const releasesOrderedByDate = await Release.findAll({
-		where: { pubId: pubId },
+		where: { pubId },
 		order: [['createdAt', 'ASC']],
 	});
 
@@ -120,7 +120,7 @@ const handleReleasesForPub = async (pubId) => {
 		return;
 	}
 
-	const branches = await Branch.findAll({ where: { pubId: pubId } });
+	const branches = await Branch.findAll({ where: { pubId } });
 	console.log(
 		'Branches:',
 		branches.map((b) => b.title),
@@ -143,11 +143,11 @@ const handleReleasesForPub = async (pubId) => {
 	);
 
 	const nextHistoryKeys = await getNextReleaseKeysForReleases({
-		releasesOrderedByDate: releasesOrderedByDate,
+		releasesOrderedByDate,
 		proposedKeys: changeKeysForMerges,
-		pubId: pubId,
-		draftBranch: draftBranch,
-		publicBranch: publicBranch,
+		pubId,
+		draftBranch,
+		publicBranch,
 	});
 	assertMonotonic(nextHistoryKeys.filter((k) => typeof k === 'number' && k !== -1));
 	await updateReleasesWithNewKeys(releasesOrderedByDate, nextHistoryKeys);

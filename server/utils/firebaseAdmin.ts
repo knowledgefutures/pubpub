@@ -83,8 +83,8 @@ export const getPubDraftDoc = async (
 	return {
 		doc: doc.toJSON() as DocJson,
 		mostRecentRemoteKey: currentKey,
-		firstTimestamp: firstTimestamp,
-		latestTimestamp: latestTimestamp,
+		firstTimestamp,
+		latestTimestamp,
 		historyData: {
 			timestamps: {
 				...checkpointMap,
@@ -92,8 +92,8 @@ export const getPubDraftDoc = async (
 				...maybeAddKeyTimestampPair(currentKey, currentTimestamp),
 				...maybeAddKeyTimestampPair(latestKey, latestTimestamp),
 			},
-			currentKey: currentKey,
-			latestKey: latestKey,
+			currentKey,
+			latestKey,
 		},
 	};
 };

@@ -16,7 +16,7 @@ export const useMembers = ({ members, updateMembers }) => {
 	};
 
 	const addMember = (user) => {
-		return pendingPromise(api.addMember({ scopeIds: scopeIds, user: user })).then((member) =>
+		return pendingPromise(api.addMember({ scopeIds, user })).then((member) =>
 			updateMembers([member, ...members]),
 		);
 	};
@@ -30,9 +30,7 @@ export const useMembers = ({ members, updateMembers }) => {
 				return m;
 			}),
 		);
-		return pendingPromise(
-			api.updateMember({ member: member, update: update, scopeIds: scopeIds }),
-		).catch(() => {
+		return pendingPromise(api.updateMember({ member, update, scopeIds })).catch(() => {
 			updateMembers(
 				members.map((m) => {
 					if (m.id === member.id) {
@@ -47,21 +45,21 @@ export const useMembers = ({ members, updateMembers }) => {
 	const removeMember = async (member) => {
 		const previousMembers = [...members];
 		updateMembers(members.filter((m) => m.id !== member.id));
-		return pendingPromise(api.removeMember({ member: member, scopeIds: scopeIds })).catch(() =>
+		return pendingPromise(api.removeMember({ member, scopeIds })).catch(() =>
 			updateMembers(previousMembers),
 		);
 	};
 
 	return {
-		addMember: addMember,
-		updateMember: updateMember,
-		removeMember: removeMember,
-		membersByType: membersByType,
+		addMember,
+		updateMember,
+		removeMember,
+		membersByType,
 	};
 };
 
 export const useMembersState = ({ initialMembers }) => {
 	const [members, setMembers] = useState(initialMembers);
-	const actions = useMembers({ members: members, updateMembers: setMembers });
-	return { ...actions, members: members };
+	const actions = useMembers({ members, updateMembers: setMembers });
+	return { ...actions, members };
 };

@@ -13,8 +13,8 @@ export default async ({ query, forLayoutEditor, initialData }) => {
 	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ blocks: any; forLayoutEditor: ... Remove this comment to see the full error message
 	const pubsData = await getPubsForLayout({
 		blocks: pageData.layout || [],
-		forLayoutEditor: forLayoutEditor,
-		initialData: initialData,
+		forLayoutEditor,
+		initialData,
 	});
 
 	return {
@@ -22,7 +22,7 @@ export default async ({ query, forLayoutEditor, initialData }) => {
 		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ blocks: any; initialData: any;... Remove this comment to see the full error message
 		layout: enrichLayoutBlocksWithPubTokens({
 			blocks: pageData.layout,
-			initialData: initialData,
+			initialData,
 		}),
 		pubs: pubsData,
 	};

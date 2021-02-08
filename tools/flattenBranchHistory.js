@@ -63,7 +63,7 @@ const getDocument = async (branchRef) => {
 
 const main = async () => {
 	const pub = await lookupPub({ id: pubId, slug: pubSlug });
-	const branch = await lookupBranch({ pubId: pub.id, branchTitle: branchTitle });
+	const branch = await lookupBranch({ pubId: pub.id, branchTitle });
 	const branchRef = getBranchRef(pub.id, branch.id);
 	const document = await getDocument(branchRef);
 	await promptOkay(`Really flatten the history of ${pub.slug}.${branchTitle}${prodWarning}?`, {

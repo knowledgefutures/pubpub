@@ -87,7 +87,7 @@ class LayoutEditorBanner extends Component<Props> {
 		return this.props.onChange(this.props.layoutIndex, {
 			...this.props.content,
 			showButton: buttonType !== 'none',
-			buttonType: buttonType,
+			buttonType,
 		});
 	}
 

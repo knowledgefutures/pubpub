@@ -7,7 +7,7 @@ export const defaultMediaUploadHandler: MediaUploadHandler = (file: File) => {
 	const id = Date.now().toString();
 	if (file.type.startsWith('image/')) {
 		return {
-			id: id,
+			id,
 			start: (handlers) => {
 				const { onProgress, onFinish } = handlers;
 				s3Upload(

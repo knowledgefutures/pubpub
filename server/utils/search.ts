@@ -1,6 +1,6 @@
 import { addWorkerTask } from 'server/utils/workers';
 
-const generateTask = (type, input) => addWorkerTask({ type: type, input: input });
+const generateTask = (type, input) => addWorkerTask({ type, input });
 
 export const deletePageSearchData = (pageId) => {
 	generateTask('deletePageSearchData', pageId);

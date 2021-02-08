@@ -93,7 +93,7 @@ const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]
 	} = pub;
 	const entries: AlgoliaPubEntry[] = [];
 	const scopeData = await getScope({ pubId: pub.id, communityId: pub.community.id });
-	const { members } = await getMembers({ scopeData: scopeData });
+	const { members } = await getMembers({ scopeData });
 	const userIdsWithAccess = members.map((m) => m.userId);
 	const authorByline = getAuthorString(pub);
 	const sharedFields = {
@@ -112,7 +112,7 @@ const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]
 		communityHeaderLogo: community.headerLogo!,
 		communityHeaderColorType: community.headerColorType!,
 		communityUseHeaderTextAccent: community.useHeaderTextAccent!,
-		userIdsWithAccess: userIdsWithAccess,
+		userIdsWithAccess,
 	};
 	if (release) {
 		entries.push({
@@ -125,7 +125,7 @@ const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]
 	entries.push({
 		...sharedFields,
 		isPublic: false,
-		userIdsWithAccess: userIdsWithAccess,
+		userIdsWithAccess,
 		content: jsonToTextChunks(doc),
 	});
 	return entries;
@@ -178,7 +178,7 @@ export const getPageSearchData = async (pageIds) => {
 		// eslint-disable-next-line no-await-in-loop
 		const scopeData = await getScope({ communityId: page.community.id });
 		// eslint-disable-next-line no-await-in-loop
-		const { members } = await getMembers({ scopeData: scopeData });
+		const { members } = await getMembers({ scopeData });
 		const accessIds = members.map((member) => {
 			return member.userId;
 		});

@@ -12,6 +12,6 @@ export const getSearchUsers = (searchString, limit = 5) => {
 			],
 		},
 		attributes: ['id', 'slug', 'fullName', 'initials', 'avatar'],
-		limit: limit,
+		limit,
 	});
 };

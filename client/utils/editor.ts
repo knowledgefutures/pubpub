@@ -38,8 +38,8 @@ export const renderLatexString = (value, isBlock, callback) => {
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({
-			value: value,
-			isBlock: isBlock,
+			value,
+			isBlock,
 		}),
 		credentials: 'include',
 	})

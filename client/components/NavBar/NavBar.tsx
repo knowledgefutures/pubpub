@@ -26,9 +26,9 @@ const NavBar = function(props) {
 	const { communityData } = usePageContext(props.previewContext);
 	const { pages = [], collections = [], navigation = [] } = communityData;
 	const navItems = getNavItemsForCommunityNavigation({
-		navigation: navigation,
-		pages: pages,
-		collections: collections,
+		navigation,
+		pages,
+		collections,
 	});
 	const socialItems = populateSocialItems(communityData);
 

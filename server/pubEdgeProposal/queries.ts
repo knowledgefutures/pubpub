@@ -15,7 +15,7 @@ const ensureFullUrlForExternalPublication = (externalPublication, responseUrl) =
 	if (externalPublication.url && /^\//.test(externalPublication.url)) {
 		const url = new URL(externalPublication.url, origin);
 
-		return { ...externalPublication, url: url };
+		return { ...externalPublication, url };
 	}
 	return { ...externalPublication, url: responseUrl.toString() };
 };
@@ -50,10 +50,10 @@ export const createExternalPublicationFromCrossrefDoi = async (doi) => {
 
 	return {
 		avatar: null,
-		contributors: contributors,
+		contributors,
 		description: abstract,
 		doi: DOI,
-		publicationDate: publicationDate,
+		publicationDate,
 		title: Array.isArray(title) ? title[0] : title,
 		url: URL,
 	};
@@ -64,7 +64,7 @@ export const createPubEdgeProposalFromCrossrefDoi = async (doi) => {
 
 	return externalPublication
 		? {
-				externalPublication: externalPublication,
+				externalPublication,
 		  }
 		: null;
 };
@@ -153,7 +153,7 @@ export const getPubDataFromUrl = async (url) => {
 	const pub = await Pub.findOne({
 		where: {
 			communityId: community.id,
-			slug: slug,
+			slug,
 		},
 		include: getOptionsForIncludedPub({ includeCommunity: false }),
 	});

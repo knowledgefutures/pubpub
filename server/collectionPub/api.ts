@@ -38,19 +38,19 @@ app.post(
 		const { collectionId, pubId, userId, communityId } = getRequestIds(req);
 		const { rank, moveToTop } = req.body;
 		const canCreate = await canCreateCollectionPub({
-			userId: userId,
-			communityId: communityId,
-			collectionId: collectionId,
-			pubId: pubId,
+			userId,
+			communityId,
+			collectionId,
+			pubId,
 		});
 		if (!canCreate) {
 			throw new ForbiddenError();
 		}
 		const collectionPub = await createCollectionPub({
-			collectionId: collectionId,
-			pubId: pubId,
-			rank: rank,
-			moveToTop: moveToTop,
+			collectionId,
+			pubId,
+			rank,
+			moveToTop,
 		});
 		return res.status(201).json(collectionPub);
 	}),
@@ -61,9 +61,9 @@ app.put(
 	wrap(async (req, res) => {
 		const { collectionPubId, communityId, userId } = getRequestIds(req);
 		const updatableFields = await getUpdatableFieldsForCollectionPub({
-			communityId: communityId,
-			collectionPubId: collectionPubId,
-			userId: userId,
+			communityId,
+			collectionPubId,
+			userId,
 		});
 		if (!updatableFields) {
 			throw new ForbiddenError();
@@ -78,9 +78,9 @@ app.delete(
 	wrap(async (req, res) => {
 		const { collectionPubId, communityId, userId } = getRequestIds(req);
 		const canDestroy = await canDestroyCollectionPub({
-			communityId: communityId,
-			collectionPubId: collectionPubId,
-			userId: userId,
+			communityId,
+			collectionPubId,
+			userId,
 		});
 		if (!canDestroy) {
 			throw new ForbiddenError();

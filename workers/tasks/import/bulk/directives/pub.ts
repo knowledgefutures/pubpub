@@ -57,7 +57,7 @@ const getSourcesForAttributeStrategy = (directive) => {
 		return { directive: true };
 	}
 	throw new BulkImportError(
-		{ directive: directive },
+		{ directive },
 		`Invalid attributeStrategy ${strategy}. Must be one of "merge", "import", "directive"`,
 	);
 };
@@ -75,7 +75,7 @@ const createPubAttributions = async (pub, proposedMetadata, directive) => {
 					matchSlugsToAttributions.includes(user.slug),
 				);
 				const userId = matchedUser && matchedUser.id;
-				return { name: name, userId: userId };
+				return { name, userId };
 			}
 			return proposedAttr;
 		});
@@ -149,7 +149,7 @@ const resolveDirectiveValue = async (value, context) => {
 
 const resolveDirectiveValues = async (directive, sourceFiles, rawMetadata): Promise<any> => {
 	const resolvedDirective = {};
-	const context = { sourceFiles: sourceFiles, rawMetadata: rawMetadata, assetUrlForTmpPath: {} };
+	const context = { sourceFiles, rawMetadata, assetUrlForTmpPath: {} };
 	await Promise.all(
 		Object.entries(directive).map(async ([key, value]) => {
 			const resolvedValue = await resolveDirectiveValue(value, context);
@@ -162,7 +162,7 @@ const resolveDirectiveValues = async (directive, sourceFiles, rawMetadata): Prom
 const createPub = async ({ communityId, directive, proposedMetadata }) => {
 	const sources = getSourcesForAttributeStrategy(directive);
 	const attributes = {
-		communityId: communityId,
+		communityId,
 		...(sources.import && cloneWithKeys(proposedMetadata, pubAttributesFromMetadata)),
 		...(sources.directive && cloneWithKeys(directive, pubAttributesFromDirective)),
 	};
@@ -184,11 +184,11 @@ const createPubTags = async (directive, pubId, communityId) => {
 				const tag =
 					existingCollection ||
 					(await createCollection({
-						communityId: communityId,
+						communityId,
 						title: tagName,
 						kind: 'tag',
 					}));
-				await createCollectionPub({ collectionId: tag.id, pubId: pubId });
+				await createCollectionPub({ collectionId: tag.id, pubId });
 				return existingCollection ? null : tag;
 			}),
 		).then((createdTags) => createdTags.filter((x) => x));
@@ -203,7 +203,7 @@ const gatherLocalSourceFilesForPub = async (
 	if (isTargetDirectory) {
 		return getFullPathsInDir(targetPath).map((tmpPath) => {
 			return {
-				tmpPath: tmpPath,
+				tmpPath,
 				clientPath: path.relative(targetPath, tmpPath),
 				label: null,
 			};
@@ -237,7 +237,7 @@ const gatherNonLocalSourceFilesForPub = async (
 			return { pathToEntrypoint: entry, options: {} };
 		}
 		const [[relativePathToEntrypoint, options]] = Object.entries(entry) as [string, any][];
-		return { relativePathToEntrypoint: relativePathToEntrypoint, options: options };
+		return { relativePathToEntrypoint, options };
 	};
 
 	const safeStat = async (fullPathToEntrypoint, swallowError) => {
@@ -267,13 +267,13 @@ const gatherNonLocalSourceFilesForPub = async (
 		const resolveFile = (fullPathToFile): FileEntry => {
 			const { as, into, label } = options;
 			if (as) {
-				return { tmpPath: fullPathToFile, clientPath: as, label: label };
+				return { tmpPath: fullPathToFile, clientPath: as, label };
 			}
 			const pathFromEntrypointToFile = path.relative(fullPathToEntrypoint, fullPathToFile);
 			const clientPath = into
 				? joinPaths(into, pathFromEntrypointToFile)
 				: relativePathToEntrypoint;
-			return { tmpPath: fullPathToFile, clientPath: clientPath, label: label };
+			return { tmpPath: fullPathToFile, clientPath, label };
 		};
 
 		if (stat.isDirectory()) {
@@ -346,11 +346,11 @@ const getDocumentAndMaybeYamlPreamble = async (document, directive) => {
 					tmpPath: nextDocumentPath,
 					clientPath: nextDocumentPath,
 				},
-				extractedPandocYamlString: extractedPandocYamlString,
+				extractedPandocYamlString,
 			};
 		}
 	}
-	return { document: document };
+	return { document };
 };
 
 const createPandocMetadataFile = async (directive, extractedPandocYamlString) => {
@@ -359,7 +359,7 @@ const createPandocMetadataFile = async (directive, extractedPandocYamlString) =>
 	if (yamlString) {
 		const { path: tmpPath } = await tmp.file({ postfix: '.yaml' });
 		await fs.writeFile(tmpPath, yamlString);
-		return { tmpPath: tmpPath, label: 'metadata' };
+		return { tmpPath, label: 'metadata' };
 	}
 	return null;
 };
@@ -369,7 +369,7 @@ const createPreambleFile = async (directive) => {
 	if (preamble) {
 		const { path: tmpPath } = await tmp.file();
 		await fs.writeFile(tmpPath, preamble);
-		return { tmpPath: tmpPath, label: 'preamble' };
+		return { tmpPath, label: 'preamble' };
 	}
 	return null;
 };
@@ -430,8 +430,8 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 	const tmpDir = await tmp.dir();
 	const importResult = await importFiles({
 		tmpDirPath: tmpDir.path,
-		sourceFiles: sourceFiles,
-		importerFlags: importerFlags,
+		sourceFiles,
+		importerFlags,
 		provideRawMetadata: true,
 	});
 	const { warnings, proposedMetadata, rawMetadata } = importResult;
@@ -443,7 +443,7 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 	const pub = await createPub({
 		communityId: community.id,
 		directive: resolvedDirective,
-		proposedMetadata: proposedMetadata,
+		proposedMetadata,
 	});
 	await createPubAttributions(pub, proposedMetadata, resolvedDirective);
 
@@ -461,9 +461,9 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 	// eslint-disable-next-line no-console
 	console.log('created Pub:', pub.title);
 	return {
-		pub: pub,
+		pub,
 		collection: createdTags,
-		warnings: warnings,
+		warnings,
 		created: true,
 	};
 };

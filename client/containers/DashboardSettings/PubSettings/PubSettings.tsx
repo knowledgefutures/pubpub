@@ -264,7 +264,7 @@ const PubSettings = (props: Props) => {
 				<DownloadChooser
 					pubData={pubData}
 					communityId={communityData.id}
-					onSetDownloads={(downloads) => updatePersistedPubData({ downloads: downloads })}
+					onSetDownloads={(downloads) => updatePersistedPubData({ downloads })}
 				/>
 			</SettingsSection>
 		);

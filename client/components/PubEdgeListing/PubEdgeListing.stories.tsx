@@ -118,9 +118,9 @@ const siblingEdges = [
 const pubData = {
 	title:
 		'The Porous Mask. A Theological Reflection on Concepts of Personhood and Personal Agency in the Digital Age',
-	inboundEdges: inboundEdges,
-	outboundEdges: outboundEdges,
-	siblingEdges: siblingEdges,
+	inboundEdges,
+	outboundEdges,
+	siblingEdges,
 };
 
 const StoryContainer = (props) => <div style={{ padding: 24 }}>{props.children}</div>;

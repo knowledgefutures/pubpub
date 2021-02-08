@@ -134,7 +134,7 @@ const MemberRow = (props: Props) => {
 
 	const setMemberPermissions = (permissions) =>
 		// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
-		onUpdate(memberData, { permissions: permissions });
+		onUpdate(memberData, { permissions });
 
 	// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 	const deleteMember = () => onDelete(memberData);

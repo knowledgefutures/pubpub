@@ -35,7 +35,7 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 		throw new Error('URL already used');
 	}
 	return Community.findOne({
-		where: { subdomain: subdomain },
+		where: { subdomain },
 		attributes: ['id', 'subdomain'],
 	})
 		.then((existingCommunity) => {
@@ -45,9 +45,9 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 			const description = inputValues.description.substring(0, 280).replace(/\n/g, ' ') || '';
 			return Community.create({
 				id: newCommunityId,
-				subdomain: subdomain,
+				subdomain,
 				title: inputValues.title,
-				description: description,
+				description,
 				headerLogo: inputValues.headerLogo,
 				heroLogo: inputValues.heroLogo,
 				heroTitle: inputValues.heroLogo ? '' : inputValues.title,
@@ -86,7 +86,7 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 			});
 		})
 		.then(() => {
-			return { subdomain: subdomain };
+			return { subdomain };
 		});
 };
 

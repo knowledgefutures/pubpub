@@ -20,7 +20,7 @@ export const createPub = async (
 	const newPub = await Pub.create({
 		title: `Untitled Pub on ${dateString}`,
 		slug: newPubSlug,
-		communityId: communityId,
+		communityId,
 		headerBackgroundColor: 'light',
 		headerStyle: 'dark',
 		viewHash: generateHash(8),
@@ -32,7 +32,7 @@ export const createPub = async (
 	const createPubAttribution =
 		userId &&
 		PubAttribution.create({
-			userId: userId,
+			userId,
 			pubId: newPub.id,
 			isAuthor: true,
 			order: 0.5,
@@ -41,7 +41,7 @@ export const createPub = async (
 	const createMember =
 		userId &&
 		Member.create({
-			userId: userId,
+			userId,
 			pubId: newPub.id,
 			permissions: 'manage',
 			isOwner: true,
@@ -55,7 +55,7 @@ export const createPub = async (
 			// defaultPubCollections isn't constrained by the database in any way and might contain IDs
 			// of collections that don't exist, so unfortunately we have to do an existence check here.
 			const collection = await Collection.findOne({
-				where: { id: collectionIdToAdd, communityId: communityId },
+				where: { id: collectionIdToAdd, communityId },
 			});
 			if (collection) {
 				return createCollectionPub({

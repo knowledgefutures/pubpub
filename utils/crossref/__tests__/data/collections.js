@@ -19,7 +19,7 @@ export const book = {
 	doi: 'an_utterly_fake_doi',
 	createdAt: '2019-04-10T23:59:57.943Z',
 	updatedAt: '2019-04-11T18:00:56.307Z',
-	attributions: attributions,
+	attributions,
 	collectionPubs: [],
 };
 
@@ -44,7 +44,7 @@ export const issue = {
 	doi: '10.21428/eea8ec7d.e281f63f',
 	createdAt: '2019-03-25T19:45:20.221Z',
 	updatedAt: '2019-04-11T18:05:45.483Z',
-	attributions: attributions,
+	attributions,
 	collectionPubs: [],
 };
 
@@ -66,6 +66,6 @@ export const conference = {
 	doi: 'yes_it_is_a_conference_doi',
 	createdAt: '2019-04-11T18:10:54.634Z',
 	updatedAt: '2019-04-11T18:11:23.352Z',
-	attributions: attributions,
+	attributions,
 	collectionPubs: [],
 };

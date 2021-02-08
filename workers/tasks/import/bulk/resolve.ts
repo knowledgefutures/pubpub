@@ -13,45 +13,42 @@ const resolveDirective = async ({ directive, actor, targetPath, parents }) => {
 	if (directive.type === 'community') {
 		if (community) {
 			throw new BulkImportError(
-				{ directive: directive, path: targetPath },
+				{ directive, path: targetPath },
 				'Cannot create a Community when one is already defined in scope.',
 			);
 		}
-		const resolved = await resolveCommunityDirective({ directive: directive, actor: actor });
-		return { resolved: resolved, parents: { community: resolved.community } };
+		const resolved = await resolveCommunityDirective({ directive, actor });
+		return { resolved, parents: { community: resolved.community } };
 	}
 	if (directive.type === 'collection') {
 		if (!community) {
 			throw new BulkImportError(
-				{ directive: directive, path: targetPath },
+				{ directive, path: targetPath },
 				'Cannot create a Collection without a parent Community.',
 			);
 		}
 		const resolved = await resolveCollectionDirective({
-			directive: directive,
-			community: community,
+			directive,
+			community,
 		});
-		return { resolved: resolved, parents: { collection: resolved.collection } };
+		return { resolved, parents: { collection: resolved.collection } };
 	}
 	if (directive.type === 'pub') {
 		if (!community) {
 			throw new BulkImportError(
-				{ directive: directive, path: targetPath },
+				{ directive, path: targetPath },
 				'Cannot create a Pub without a parent Community.',
 			);
 		}
 		const resolved = await resolvePubDirective({
-			directive: directive,
-			targetPath: targetPath,
-			community: community,
-			collection: collection,
+			directive,
+			targetPath,
+			community,
+			collection,
 		});
-		return { resolved: resolved };
+		return { resolved };
 	}
-	throw new BulkImportError(
-		{ directive: directive },
-		`Cannot resolve directive of type ${directive.type}`,
-	);
+	throw new BulkImportError({ directive }, `Cannot resolve directive of type ${directive.type}`);
 };
 
 export const resolveImportPlan = async ({ importPlan, actor, parents }) => {
@@ -63,8 +60,8 @@ export const resolveImportPlan = async ({ importPlan, actor, parents }) => {
 		try {
 			// eslint-disable-next-line no-await-in-loop
 			const { resolved, parents: nextParents } = await resolveDirective({
-				directive: directive,
-				actor: actor,
+				directive,
+				actor,
 				targetPath: path,
 				parents: currentParents,
 			});
@@ -81,7 +78,7 @@ export const resolveImportPlan = async ({ importPlan, actor, parents }) => {
 
 	if (children && children.length > 0) {
 		const resolvedChildPlans = await BluebirdPromise.mapSeries(children, (childPlan) =>
-			resolveImportPlan({ importPlan: childPlan, actor: actor, parents: currentParents }),
+			resolveImportPlan({ importPlan: childPlan, actor, parents: currentParents }),
 		);
 		return { ...importPlan, resolved: resolvedValues, children: resolvedChildPlans };
 	}

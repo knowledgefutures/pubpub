@@ -110,7 +110,7 @@ const FileImportDialog = ({
 			method: 'POST',
 			body: JSON.stringify({
 				sourceFiles: currentFiles,
-				importerFlags: importerFlags,
+				importerFlags,
 				useNewImporter: true,
 			}),
 		})

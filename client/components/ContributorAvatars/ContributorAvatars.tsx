@@ -22,7 +22,7 @@ const getTruncation = (attributions: AttributionWithUser[], truncateAt: number |
 			overflow: attributions.length - truncateAt,
 		};
 	}
-	return { attributions: attributions, overflow: null };
+	return { attributions, overflow: null };
 };
 
 const ContributorAvatars = (props: Props) => {

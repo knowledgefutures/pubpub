@@ -19,11 +19,11 @@ const getAnchorDescsFromSingleFirebaseDiscussion = (
 		return [
 			{
 				source: 'firebase-current',
-				discussionId: discussionId,
+				discussionId,
 				historyKey: currentKey,
 				head: selection.head,
 				anchor: selection.anchor,
-				isPublicBranch: isPublicBranch,
+				isPublicBranch,
 			},
 		];
 	}
@@ -84,12 +84,12 @@ const dedupeAnchorDescs = (descs) => {
 const createAnchorModelFromDesc = (desc) => {
 	const { discussionId, head, anchor, historyKey, prefix, suffix, exact } = desc;
 	return createOriginalDiscussionAnchor({
-		discussionId: discussionId,
-		historyKey: historyKey,
+		discussionId,
+		historyKey,
 		originalText: exact,
 		originalTextSuffix: suffix,
 		originalTextPrefix: prefix,
-		selectionJson: { type: 'text', head: head, anchor: anchor },
+		selectionJson: { type: 'text', head, anchor },
 	});
 };
 
@@ -111,9 +111,9 @@ const handlePub = async (pub) => {
 		const firebaseDiscussions = discussionsSnapshot.val() || {};
 		const isPublicBranch = branch === publicBranch;
 		const branchAnchorDescs = getAnchorDescsFromFirebaseDiscussions({
-			discussions: discussions,
-			firebaseDiscussions: firebaseDiscussions,
-			isPublicBranch: isPublicBranch,
+			discussions,
+			firebaseDiscussions,
+			isPublicBranch,
 		});
 		anchorDescs.push(...branchAnchorDescs);
 	});
@@ -127,9 +127,9 @@ const handlePub = async (pub) => {
 					discussionId: discussion.id,
 					anchor: from,
 					head: to,
-					prefix: prefix,
-					suffix: suffix,
-					exact: exact,
+					prefix,
+					suffix,
+					exact,
 					isPublicBranch: branchId === publicBranch.id,
 					historyKey: branchKey,
 					source: 'model',

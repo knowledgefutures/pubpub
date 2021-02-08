@@ -111,7 +111,7 @@ export const createResourceTransformer = ({ sourceFiles, document, bibliographyI
 						type: 'missingImage',
 						unableToUpload: true,
 						error: error.message,
-						sourceFile: sourceFile,
+						sourceFile,
 						path: sourceFile.tmpPath || sourceFile.remoteUrl,
 					}),
 				),
@@ -119,8 +119,8 @@ export const createResourceTransformer = ({ sourceFiles, document, bibliographyI
 		);
 
 	return {
-		getResource: getResource,
+		getResource,
 		getWarnings: () => warnings,
-		uploadPendingResources: uploadPendingResources,
+		uploadPendingResources,
 	};
 };

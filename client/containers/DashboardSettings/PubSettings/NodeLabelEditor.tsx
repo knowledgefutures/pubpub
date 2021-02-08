@@ -73,21 +73,21 @@ const nodeLabelEditorReducer = (state: NodeLabelMap, action: NodeLabelEditorActi
 			const { nodeType, enabled } = action.payload;
 			return {
 				...state,
-				[nodeType]: { ...state[nodeType], enabled: enabled },
+				[nodeType]: { ...state[nodeType], enabled },
 			};
 		}
 		case NodeLabelEditorActionType.ToggleAll: {
 			const enabled = !allNodeLabelsEnabled(state);
 
 			return Object.entries(state).reduce((acc, [nodeType, label]) => {
-				return { ...acc, [nodeType]: { ...label, enabled: enabled } };
+				return { ...acc, [nodeType]: { ...label, enabled } };
 			}, {} as NodeLabelMap);
 		}
 		case NodeLabelEditorActionType.UpdateLabel: {
 			const { nodeType, text } = action.payload;
 			return {
 				...state,
-				[nodeType]: { ...state[nodeType], text: text },
+				[nodeType]: { ...state[nodeType], text },
 			};
 		}
 		default: {
@@ -104,7 +104,7 @@ const useNodeLabelEditorState = (pub: any) => {
 		(nodeType: string, enabled: boolean) =>
 			dispatch({
 				type: NodeLabelEditorActionType.Toggle,
-				payload: { nodeType: nodeType, enabled: enabled },
+				payload: { nodeType, enabled },
 			}),
 		[],
 	);
@@ -112,7 +112,7 @@ const useNodeLabelEditorState = (pub: any) => {
 		(nodeType: string, text: string) =>
 			dispatch({
 				type: NodeLabelEditorActionType.UpdateLabel,
-				payload: { nodeType: nodeType, text: text },
+				payload: { nodeType, text },
 			}),
 		[],
 	);
@@ -121,7 +121,7 @@ const useNodeLabelEditorState = (pub: any) => {
 		[],
 	);
 
-	return { state: state, toggleAll: toggleAll, toggleNode: toggleNode, updateLabel: updateLabel };
+	return { state, toggleAll, toggleNode, updateLabel };
 };
 
 const NodeLabelEditor = (props: NodeLabelEditorProps) => {

@@ -112,11 +112,11 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 	}, [indicatedButtons, openedButton, setOpenedButton]);
 
 	return {
-		indicatedButtons: indicatedButtons,
-		openedButton: openedButton,
-		setOpenedButton: setOpenedButton,
-		controlsPosition: controlsPosition,
-		selectedNodeId: selectedNodeId,
+		indicatedButtons,
+		openedButton,
+		setOpenedButton,
+		controlsPosition,
+		selectedNodeId,
 		ControlsComponent: controlsComponent,
 	};
 };
@@ -138,8 +138,8 @@ const FormattingBar = (props: Props) => {
 	const buttonElementRefs = useRefMap();
 	const toolbar = useToolbarState({ loop: true });
 	const pendingAttrs = usePendingAttrs({
-		selectedNode: selectedNode,
-		updateNode: updateNode,
+		selectedNode,
+		updateNode,
 		editorView: editorChangeObject.view,
 	});
 	const menuItemsByKey: Maybe<Record<string, any>> = useMemo(
@@ -195,8 +195,7 @@ const FormattingBar = (props: Props) => {
 				noFunction ||
 				(openedButton && !isOpen && !isIndicated && !controlsPosition),
 		);
-		const maybeEditorChangeObject =
-			button.key === 'media' ? { editorChangeObject: editorChangeObject } : {};
+		const maybeEditorChangeObject = button.key === 'media' ? { editorChangeObject } : {};
 		const PopoverComponent = getButtonPopoverComponent(button, isDisabled);
 
 		return (

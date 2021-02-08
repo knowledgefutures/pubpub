@@ -5,10 +5,10 @@ export const getPermissions = async ({ userId, communityId, pubId, accessHash, h
 		elements: { activePub },
 		activePermissions: { canView, canViewDraft },
 	} = await getScope({
-		pubId: pubId,
-		communityId: communityId,
+		pubId,
+		communityId,
 		loginId: userId,
-		accessHash: accessHash,
+		accessHash,
 	});
 	const isReleaseKey = activePub.releases.some((release) => release.historyKey === historyKey);
 	return { canCreateExport: isReleaseKey || canView || canViewDraft };

@@ -31,7 +31,7 @@ const PendingChangesProvider = (props: Props) => {
 	return (
 		<PendingChanges.Provider
 			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ pendingCount: number; pendingPromise: (pro... Remove this comment to see the full error message
-			value={{ pendingCount: pendingCount, pendingPromise: pendingPromise }}
+			value={{ pendingCount, pendingPromise }}
 		>
 			{children}
 		</PendingChanges.Provider>

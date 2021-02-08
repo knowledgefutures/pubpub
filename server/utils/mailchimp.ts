@@ -55,7 +55,7 @@ export const subscribeUser = (email, list, tags) => {
 		body: {
 			email_address: email,
 			status_if_new: 'pending',
-			tags: tags,
+			tags,
 		},
 		json: true,
 	};

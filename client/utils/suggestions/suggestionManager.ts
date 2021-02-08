@@ -40,8 +40,8 @@ export default class SuggestionManager<T> {
 		this._state = {
 			status: SuggestionManagerStatus.Suggesting,
 			index: this.isSuggesting() ? this.state.index : 0,
-			items: items,
-			params: params,
+			items,
+			params,
 		};
 		this.transitioned.dispatch(this._state.status);
 	}

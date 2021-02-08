@@ -23,7 +23,7 @@ const nodeControls = (component, indicatedNodeType, restOptions?) => {
 		showCloseButton: true,
 		enterKeyTriggers: true,
 		captureFocusOnMount: false,
-		component: component,
+		component,
 		trigger: triggerOnClick,
 		show: (editorChangeObject) => !!editorChangeObject.selectedNode,
 		indicate: (editorChangeObject) => {

@@ -5,7 +5,7 @@ import { baseAuthor, baseThread, baseVisibility } from './util';
 export default async (pubSlug, reviewNumber, communityId) => {
 	const sanitizedSlug = pubSlug.toLowerCase();
 	const pubData = await Pub.findOne({
-		where: { slug: sanitizedSlug, communityId: communityId },
+		where: { slug: sanitizedSlug, communityId },
 	});
 	if (!pubData) {
 		throw new Error('Review Not Found');

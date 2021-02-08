@@ -13,10 +13,10 @@ export const getCreatePermission = async ({
 	}
 
 	const scopeData = await getScope({
-		communityId: communityId,
-		pubId: pubId,
+		communityId,
+		pubId,
 		loginId: userId,
-		accessHash: accessHash,
+		accessHash,
 	});
 
 	const { canView, canCreateDiscussions } = scopeData.activePermissions;
@@ -32,13 +32,13 @@ export const getUpdatePermissions = async ({ discussionId, userId, pubId, commun
 	const {
 		activePermissions: { canAdmin },
 	} = await getScope({
-		communityId: communityId,
-		pubId: pubId,
+		communityId,
+		pubId,
 		loginId: userId,
 	});
 
 	const discussionData = await Discussion.findOne({
-		where: { id: discussionId, pubId: pubId },
+		where: { id: discussionId, pubId },
 	});
 
 	const isAuthor = discussionData.userId === userId;

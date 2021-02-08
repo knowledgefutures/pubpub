@@ -27,8 +27,8 @@ export default async () => {
 				? 'light'
 				: 'dark';
 			return pub.update({
-				headerBackgroundColor: headerBackgroundColor,
-				headerStyle: headerStyle,
+				headerBackgroundColor,
+				headerStyle,
 			});
 		}),
 	);

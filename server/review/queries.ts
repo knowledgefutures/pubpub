@@ -43,8 +43,8 @@ export const createReview = async (inputValues, userData) => {
 		title: 'Publication Request',
 		number: maxNumber + 1,
 		releaseRequested: inputValues.releaseRequested,
-		threadId: threadId,
-		visibilityId: visibilityId,
+		threadId,
+		visibilityId,
 		userId: userData.id,
 		pubId: inputValues.pubId,
 	});
@@ -52,7 +52,7 @@ export const createReview = async (inputValues, userData) => {
 	await createCreatedThreadEvent(userData, threadId);
 	if (inputValues.text) {
 		await createThreadComment(
-			{ threadId: threadId, content: inputValues.content, text: inputValues.text },
+			{ threadId, content: inputValues.content, text: inputValues.text },
 			userData,
 		);
 	}
@@ -89,7 +89,7 @@ export const createReviewRelease = async (inputValues, userData) => {
 	const completedEvent = await createCompletedThreadEvent(userData, inputValues.threadId);
 	const reviewEvents = [releasedEvent, completedEvent];
 
-	return { release: release, reviewEvents: reviewEvents };
+	return { release, reviewEvents };
 };
 
 export const updateReview = async (inputValues, updatePermissions, userData) => {
@@ -126,7 +126,7 @@ export const updateReview = async (inputValues, updatePermissions, userData) => 
 			return [];
 		})
 		.then((newReviewEvents) => {
-			return { updatedValues: filteredValues, newReviewEvents: newReviewEvents };
+			return { updatedValues: filteredValues, newReviewEvents };
 		});
 };
 

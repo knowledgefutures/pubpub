@@ -58,7 +58,7 @@ const main = async () => {
 	await sequelize.sync();
 	const migrationFn = getMigrationFnForPath(migrationPath);
 	console.info('Starting migration');
-	await migrationFn({ Sequelize: Sequelize, sequelize: sequelize, models: models });
+	await migrationFn({ Sequelize, sequelize, models });
 };
 
 main().then(() => {

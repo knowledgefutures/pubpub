@@ -28,7 +28,7 @@ export const getPubFirebaseDraft = async (
 	return {
 		initialDoc: doc,
 		initialDocKey: mostRecentRemoteKey,
-		historyData: historyData,
+		historyData,
 	};
 };
 
@@ -67,7 +67,7 @@ export const getPubFirebaseToken = async (pubData: SanitizedPubData, initialData
 		draftPath: pubData.draft?.firebasePath!,
 	});
 	return {
-		firebaseToken: firebaseToken,
+		firebaseToken,
 	};
 };
 
@@ -78,7 +78,7 @@ export const getPubCitations = async (pubData, initialData, initialDoc) => {
 	]);
 
 	return {
-		initialStructuredCitations: initialStructuredCitations,
+		initialStructuredCitations,
 		citationData: citationHtml,
 	};
 };

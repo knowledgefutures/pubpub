@@ -12,5 +12,5 @@ export const useViewport = () => {
 		return () => window.removeEventListener('resize', listener);
 	}, []);
 
-	return { viewportWidth: viewportWidth };
+	return { viewportWidth };
 };

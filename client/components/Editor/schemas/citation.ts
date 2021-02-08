@@ -41,8 +41,8 @@ export default {
 			return [
 				href ? 'a' : 'span',
 				{
-					...(href && { href: href }),
-					...(id && { id: id }),
+					...(href && { href }),
+					...(id && { id }),
 					'data-node-type': 'citation',
 					'data-value': value,
 					'data-unstructured-value': unstructuredValue,

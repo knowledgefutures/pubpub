@@ -44,7 +44,7 @@ class MediaTwitter extends Component<Props, State> {
 	handleInput(url) {
 		const input = url;
 		const isValid = isHttpsUri(input) && getEmbedType(input) === 'twitter';
-		this.setState({ input: input, isValid: isValid });
+		this.setState({ input, isValid });
 		if (!isValid) {
 			this.setState({ embedUrl: '', embedTitle: '' });
 			return;

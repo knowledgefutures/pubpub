@@ -61,7 +61,7 @@ export const getValuesFromPubEdge = (
 ) => {
 	const { externalPublication } = pubEdge;
 	const displayedPub = getDisplayedPubForPubEdge(pubEdge, {
-		viewingFromTarget: viewingFromTarget,
+		viewingFromTarget,
 	});
 	if (displayedPub) {
 		const { title, description, avatar } = displayedPub;
@@ -69,12 +69,12 @@ export const getValuesFromPubEdge = (
 		const publishedDate = getPubPublishedDate(displayedPub);
 		return {
 			displayedPubId: displayedPub.id,
-			avatar: avatar,
+			avatar,
 			contributors: getAllPubContributors(displayedPub, false, true),
-			description: description,
+			description,
 			publishedAt: publishedDate && formatDate(publishedDate),
-			title: title,
-			url: url,
+			title,
+			url,
 		};
 	}
 	if (externalPublication) {
@@ -87,12 +87,12 @@ export const getValuesFromPubEdge = (
 			publicationDate,
 		} = externalPublication;
 		return {
-			avatar: avatar,
+			avatar,
 			contributors: contributors || '',
-			description: description,
+			description,
 			publishedAt: publicationDate && formatDate(publicationDate, { inUtcTime: true }),
-			title: title,
-			url: url,
+			title,
+			url,
 		};
 	}
 	return {};

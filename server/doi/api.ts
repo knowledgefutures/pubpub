@@ -30,7 +30,7 @@ const previewOrDepositDoi = async (user, body, options = { deposit: false }) => 
 	} = body;
 	const requestIds = {
 		userId: user.id,
-		communityId: communityId,
+		communityId,
 		collectionId: collectionId || null,
 		pubId: pubId || null,
 	};
@@ -39,12 +39,12 @@ const previewOrDepositDoi = async (user, body, options = { deposit: false }) => 
 
 	const depositJson = await (deposit ? setDoiData : getDoiData)(
 		{
-			communityId: communityId,
-			collectionId: collectionId,
-			pubId: pubId,
-			contentVersion: contentVersion,
-			reviewType: reviewType,
-			reviewRecommendation: reviewRecommendation,
+			communityId,
+			collectionId,
+			pubId,
+			contentVersion,
+			reviewType,
+			reviewRecommendation,
 		},
 		target,
 	);
@@ -81,8 +81,8 @@ app.get(
 				.end({ pretty: true });
 
 			return res.status(200).json({
-				depositJson: depositJson,
-				depositXml: depositXml,
+				depositJson,
+				depositXml,
 			});
 		} catch (err) {
 			if (err === parentToSupplementNeedsDoiError) {
@@ -102,7 +102,7 @@ app.get(
 		const { communityId, collectionId, pubId, target } = req.query;
 		const requestIds = {
 			userId: user.id,
-			communityId: communityId,
+			communityId,
 			collectionId: collectionId || null,
 			pubId: pubId || null,
 		};
@@ -110,10 +110,7 @@ app.get(
 		await assertUserAuthenticated(target, requestIds);
 
 		return res.status(200).json({
-			dois: await generateDoi(
-				{ communityId: communityId, collectionId: collectionId, pubId: pubId },
-				target,
-			),
+			dois: await generateDoi({ communityId, collectionId, pubId }, target),
 		});
 	}),
 );

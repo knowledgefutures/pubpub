@@ -9,7 +9,7 @@ export const getPub = async (slug: string, communityId: string, options: PubGetO
 	const pubData = await Pub.findOne({
 		where: {
 			slug: sanitizedSlug,
-			communityId: communityId,
+			communityId,
 		},
 		...buildPubOptions({
 			getMembers: true,

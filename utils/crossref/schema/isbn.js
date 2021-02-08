@@ -4,7 +4,7 @@
 
 export default (isbn, noIsbnReason = 'monograph') => {
 	if (isbn) {
-		return { isbn: isbn };
+		return { isbn };
 	}
 	return { noisbn: { '@reason': noIsbnReason } };
 };

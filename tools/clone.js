@@ -53,7 +53,7 @@ const applyAttributeMaps = (model, attributeMaps) => {
 };
 
 const cloneModel = async (Model, id, attributeMaps) => {
-	const model = await Model.findOne({ where: { id: id }, raw: true });
+	const model = await Model.findOne({ where: { id }, raw: true });
 	const nextModel = applyAttributeMaps(model, attributeMaps);
 	delete nextModel.id;
 	return [model, await Model.create(nextModel)];
@@ -155,8 +155,8 @@ const clonePub = async ({ pubId, newCommunityId, collectionIdMap }) => {
 	await cloneFirebasePub({
 		existingPubId: existingPub.id,
 		newPubId: newPub.id,
-		branchIdMap: branchIdMap,
-		discussionIdMap: discussionIdMap,
+		branchIdMap,
+		discussionIdMap,
 	});
 	return newPub;
 };
@@ -169,8 +169,8 @@ const clonePubs = async ({ existingCommunityId, newCommunityId, collectionIdMap 
 		async (pub) => {
 			const newPub = await clonePub({
 				pubId: pub.id,
-				newCommunityId: newCommunityId,
-				collectionIdMap: collectionIdMap,
+				newCommunityId,
+				collectionIdMap,
 			});
 			pubIdMap[pub.id] = newPub.id;
 		},
@@ -233,7 +233,7 @@ const updateCommunityContent = async ({ community, pageIdMap, collectionIdMap })
 const createAdmin = async ({ communityId, userSlug }) => {
 	const user = await User.findOne({ where: { slug: userSlug } });
 	await Member.create({
-		communityId: communityId,
+		communityId,
 		userId: user.id,
 		permissions: 'admin',
 		isOwner: true,
@@ -261,18 +261,18 @@ const cloneCommunity = async (existingSubdomain, newSubdomain) => {
 		const pubIdMap = await clonePubs({
 			existingCommunityId: existingCommunity.id,
 			newCommunityId: newCommunity.id,
-			collectionIdMap: collectionIdMap,
+			collectionIdMap,
 		});
 		await updatePageContent({
 			newCommunityId: newCommunity.id,
-			pubIdMap: pubIdMap,
-			collectionIdMap: collectionIdMap,
-			pageIdMap: pageIdMap,
+			pubIdMap,
+			collectionIdMap,
+			pageIdMap,
 		});
 		await updateCommunityContent({
 			community: newCommunity,
-			pageIdMap: pageIdMap,
-			collectionIdMap: collectionIdMap,
+			pageIdMap,
+			collectionIdMap,
 		});
 		await createAdmin({ communityId: newCommunity.id, userSlug: admin });
 	} catch (err) {

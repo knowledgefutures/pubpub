@@ -33,7 +33,7 @@ const AttributionDetailControls = (props: Props) => {
 				checked={isAuthor}
 				onChange={(evt) =>
 					onAttributionUpdate({
-						id: id,
+						id,
 						// @ts-expect-error ts-migrate(2339) FIXME: Property 'checked' does not exist on type 'EventTa... Remove this comment to see the full error message
 						isAuthor: evt.target.checked,
 					})
@@ -58,7 +58,7 @@ const AttributionDetailControls = (props: Props) => {
 							return filterIndex !== roleIndex;
 						});
 						onAttributionUpdate({
-							id: id,
+							id,
 							roles: newRoles,
 						});
 					},
@@ -75,7 +75,7 @@ const AttributionDetailControls = (props: Props) => {
 					const existingRoles = roles;
 					const newRoles = [...existingRoles, newRole];
 					onAttributionUpdate({
-						id: id,
+						id,
 						roles: newRoles,
 					});
 				}}
@@ -107,7 +107,7 @@ const AttributionDetailControls = (props: Props) => {
 					}}
 					onBlur={(evt) =>
 						onAttributionUpdate({
-							id: id,
+							id,
 							affiliation: evt.target.value.trim(),
 						})
 					}
@@ -125,7 +125,7 @@ const AttributionDetailControls = (props: Props) => {
 						}}
 						onBlur={(evt) =>
 							onAttributionUpdate({
-								id: id,
+								id,
 								orcid: evt.target.value.trim(),
 							})
 						}

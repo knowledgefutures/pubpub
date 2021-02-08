@@ -20,7 +20,7 @@ app.get('/community/create', (req, res, next) => {
 					chunkName="CommunityCreate"
 					initialData={initialData}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: 'Create New Community · PubPub',
 					})}
 				/>,

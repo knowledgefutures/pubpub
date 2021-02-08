@@ -41,14 +41,14 @@ export const usePersistableState = <T>(
 	useBeforeUnload(hasChanges);
 
 	return {
-		hasChanges: hasChanges,
+		hasChanges,
 		persist: persistUnpersistedState,
-		revert: revert,
-		state: state,
-		unpersistedState: unpersistedState,
-		persistedState: persistedState,
-		isPersisting: isPersisting,
-		update: update,
-		error: error,
+		revert,
+		state,
+		unpersistedState,
+		persistedState,
+		isPersisting,
+		update,
+		error,
 	};
 };

@@ -19,7 +19,7 @@ export default ({
 		'@type': 'preprint',
 		...contributors(attributions),
 		titles: {
-			title: title,
+			title,
 		},
 		...date('posted_date', publicationDate, 'print'),
 		...(relatedItems.length > 0 && relations(relatedItems)),

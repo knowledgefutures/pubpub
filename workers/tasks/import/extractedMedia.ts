@@ -14,7 +14,7 @@ export const uploadExtractedMedia = async (tmpDirPath, mediaDirName = 'media') =
 		getFullPathsInDir(mediaPath).map(async (unconvertedFilePath) => {
 			const filePath = await convertFileTypeIfNecessary(unconvertedFilePath);
 			const assetKey = await uploadFileToAssetStore(filePath);
-			return { assetKey: assetKey, clientPath: unconvertedFilePath };
+			return { assetKey, clientPath: unconvertedFilePath };
 		}),
 	);
 };

@@ -10,10 +10,10 @@ export const slugIsAvailable = async ({ slug, communityId, activeElementId }) =>
 	}
 	const [pages, collections] = await Promise.all([
 		Page.count({
-			where: { communityId: communityId, slug: slug, id: { [Op.not]: activeElementId } },
+			where: { communityId, slug, id: { [Op.not]: activeElementId } },
 		}),
 		Collection.count({
-			where: { communityId: communityId, slug: slug, id: { [Op.not]: activeElementId } },
+			where: { communityId, slug, id: { [Op.not]: activeElementId } },
 		}),
 	]);
 	return pages === 0 && collections === 0;
@@ -23,11 +23,11 @@ export const findAcceptableSlug = async (desiredSlug, communityId) => {
 	const [pages, collections] = await Promise.all([
 		Page.findAll({
 			attributes: ['slug'],
-			where: { communityId: communityId, slug: desiredSlug },
+			where: { communityId, slug: desiredSlug },
 		}),
 		Collection.findAll({
 			attributes: ['slug'],
-			where: { communityId: communityId, slug: desiredSlug },
+			where: { communityId, slug: desiredSlug },
 		}),
 	]);
 	const allSlugs = [...pages, ...collections].map((item) => item.slug);

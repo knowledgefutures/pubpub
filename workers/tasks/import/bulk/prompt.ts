@@ -12,7 +12,7 @@ export const promptOkay = async (
 		prompt.get(
 			{
 				name: 'res',
-				message: message,
+				message,
 				validator: /y[es]*|n[o]?/,
 				warning: 'Must respond yes or no',
 				default: yesIsDefault ? 'yes' : 'no',

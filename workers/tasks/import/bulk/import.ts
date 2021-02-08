@@ -8,7 +8,7 @@ const getCommunity = async (subdomain) => {
 	if (!subdomain) {
 		return null;
 	}
-	const community = await Community.findOne({ where: { subdomain: subdomain } });
+	const community = await Community.findOne({ where: { subdomain } });
 	if (!community) {
 		throw new Error(`No Community by subdomain ${subdomain}`);
 	}
@@ -30,10 +30,10 @@ export const runBulkImportFromDirectory = async ({
 		console.log('Dry run. Exiting.');
 		return null;
 	}
-	await promptOkay('Proceed with this import?', { throwIfNo: true, yes: yes });
+	await promptOkay('Proceed with this import?', { throwIfNo: true, yes });
 	return resolveImportPlan({
 		importPlan: plan,
-		parents: { community: community },
-		actor: actor,
+		parents: { community },
+		actor,
 	});
 };

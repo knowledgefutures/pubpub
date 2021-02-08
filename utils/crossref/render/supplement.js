@@ -7,8 +7,8 @@ import transformCommunity from '../transform/community';
 import transformPub from '../transform/pub';
 
 export default ({ globals, community, pub, parentDoi }) => {
-	const communityProps = transformCommunity({ globals: globals })(community);
-	const pubProps = pub && transformPub({ globals: globals, community: community })(pub);
+	const communityProps = transformCommunity({ globals })(community);
+	const pubProps = pub && transformPub({ globals, community })(pub);
 	return {
 		sa_component: {
 			'@parent_doi': parentDoi,

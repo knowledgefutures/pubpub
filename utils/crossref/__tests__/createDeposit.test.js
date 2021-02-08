@@ -16,11 +16,7 @@ import makeCollectionPub from './data/makeCollectionPub';
 import { book, issue, conference } from './data/collections';
 
 const createDeposit = (context, target) =>
-	createDepositPartial(
-		{ ...context, community: community },
-		target,
-		new Date('2019-04-11T19:02:15.577Z'),
-	);
+	createDepositPartial({ ...context, community }, target, new Date('2019-04-11T19:02:15.577Z'));
 
 const stripFieldsFromCollectionMetadata = (where) => (collection) => {
 	return {
@@ -43,7 +39,7 @@ describe('createDeposit', () => {
 		expect(
 			createDeposit(
 				{
-					pub: pub,
+					pub,
 				},
 				'pub',
 			),
@@ -56,7 +52,7 @@ describe('createDeposit', () => {
 				{
 					collection: book,
 					collectionPub: makeCollectionPub(book, pub),
-					pub: pub,
+					pub,
 				},
 				'pub',
 			),
@@ -69,7 +65,7 @@ describe('createDeposit', () => {
 				{
 					collection: issue,
 					collectionPub: makeCollectionPub(issue, pub),
-					pub: pub,
+					pub,
 				},
 				'pub',
 			),
@@ -82,7 +78,7 @@ describe('createDeposit', () => {
 				{
 					collection: conference,
 					collectionPub: makeCollectionPub(conference, pub),
-					pub: pub,
+					pub,
 				},
 				'pub',
 			),
@@ -192,7 +188,7 @@ describe('createDeposit', () => {
 		expect(
 			createDeposit(
 				{
-					pub: pub,
+					pub,
 					contentVersion: 'am',
 				},
 				'pub',
@@ -274,7 +270,7 @@ describe('createDeposit', () => {
 		expect(
 			createDeposit(
 				{
-					pub: pub,
+					pub,
 					contentVersion: 'preprint',
 				},
 				'pub',
@@ -287,7 +283,7 @@ describe('createDeposit', () => {
 			{
 				collection: book,
 				collectionPub: makeCollectionPub(book, pub),
-				pub: pub,
+				pub,
 			},
 			'pub',
 		);
@@ -303,7 +299,7 @@ describe('createDeposit', () => {
 			{
 				collection: conference,
 				collectionPub: makeCollectionPub(conference, pub),
-				pub: pub,
+				pub,
 			},
 			'pub',
 		);
@@ -328,7 +324,7 @@ describe('createDeposit', () => {
 			{
 				collection: book,
 				collectionPub: makeCollectionPub(book, pub, contextHintValue),
-				pub: pub,
+				pub,
 			},
 			'pub',
 		);

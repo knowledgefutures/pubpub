@@ -18,7 +18,7 @@ const {
 } = require('yargs');
 
 const communityMaintenance = async (subdomain) => {
-	const community = await Community.findOne({ where: { subdomain: subdomain } });
+	const community = await Community.findOne({ where: { subdomain } });
 	const concurrency = parseInt(concurrencyStr, 10);
 	console.log(`Using concurrency=${concurrency}`);
 	if (community) {
@@ -34,12 +34,12 @@ const communityMaintenance = async (subdomain) => {
 						await setBranchMaintenanceMode({
 							pubSlug: pub.slug,
 							branchTitle: branch,
-							remove: remove,
+							remove,
 						}).catch((err) => console.warn(err));
 					},
 					{ concurrency: 1 },
 				),
-			{ concurrency: concurrency },
+			{ concurrency },
 		);
 	} else {
 		// eslint-disable-next-line no-console
@@ -52,10 +52,10 @@ const main = async () => {
 		await communityMaintenance(communitySubdomain);
 	} else {
 		await setBranchMaintenanceMode({
-			pubSlug: pubSlug,
-			pubId: pubId,
-			branchTitle: branchTitle,
-			remove: remove,
+			pubSlug,
+			pubId,
+			branchTitle,
+			remove,
 		});
 	}
 };

@@ -2,7 +2,7 @@ import { ThreadComment, includeUserModel } from 'server/models';
 
 const findThreadCommentWithUser = (id) =>
 	ThreadComment.findOne({
-		where: { id: id },
+		where: { id },
 		include: [includeUserModel({ as: 'author' })],
 	});
 

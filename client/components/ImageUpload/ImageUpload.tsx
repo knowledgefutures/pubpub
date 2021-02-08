@@ -109,7 +109,7 @@ class ImageUpload extends Component<Props, State> {
 		if (files.length > 0) {
 			const [imageFile] = files;
 			if (useCrop) {
-				this.setState({ imageFile: imageFile });
+				this.setState({ imageFile });
 			} else {
 				s3Upload(imageFile, () => {}, this.onUploadFinish, 0);
 				this.setState({ uploading: true });

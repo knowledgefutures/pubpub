@@ -53,10 +53,10 @@ const initFirebase = (rootKey) => {
 };
 
 const cursorCommands = {
-	moveSelectionToStart: moveSelectionToStart,
-	moveSelectionToEnd: moveSelectionToEnd,
-	moveToStartOfSelection: moveToStartOfSelection,
-	moveToEndOfSelection: moveToEndOfSelection,
+	moveSelectionToStart,
+	moveSelectionToEnd,
+	moveToStartOfSelection,
+	moveToEndOfSelection,
 };
 
 const rootKey = 'firebase-testing';
@@ -161,7 +161,7 @@ storiesOf('Editor', module)
 						}}
 						collaborativeOptions={{
 							firebaseRef: draftRef as any,
-							clientData: clientData,
+							clientData,
 							initialDocKey: -1,
 							// onClientChange: () => {},
 							onStatusChange: (status) => console.info('collab status is', status),
@@ -238,7 +238,7 @@ storiesOf('Editor', module)
 						}}
 						collaborativeOptions={{
 							firebaseRef: draftRef as any,
-							clientData: clientData,
+							clientData,
 							initialDocKey: -1,
 							// onClientChange: () => {},
 							onStatusChange: (status) => console.info('collab status is', status),

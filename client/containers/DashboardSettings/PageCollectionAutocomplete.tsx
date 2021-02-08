@@ -69,8 +69,8 @@ class PageAutocomplete extends Component<Props, State> {
 	filterItems(query) {
 		const filteredItems = this.getFilteredItems(this.props, query);
 		this.setState({
-			query: query,
-			filteredItems: filteredItems,
+			query,
+			filteredItems,
 		});
 	}
 

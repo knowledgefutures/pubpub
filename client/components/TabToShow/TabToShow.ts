@@ -26,9 +26,9 @@ const TabToShow = React.forwardRef((props, ref) => {
 		tagName,
 		{
 			...restProps,
-			ref: ref,
+			ref,
 			tabIndex: 0,
-			onFocus: onFocus,
+			onFocus,
 			className: classNames(className, 'tab-to-show-component', holdOpen && 'hold-open'),
 		},
 		children,

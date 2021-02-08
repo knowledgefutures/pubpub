@@ -26,7 +26,7 @@ const PageDelete = (props: Props) => {
 				method: 'DELETE',
 				body: JSON.stringify({
 					pageId: pageData.id,
-					communityId: communityId,
+					communityId,
 				}),
 			}),
 		)

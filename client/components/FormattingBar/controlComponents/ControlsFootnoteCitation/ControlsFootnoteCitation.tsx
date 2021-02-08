@@ -40,13 +40,13 @@ const unwrapPendingAttrs = (pendingAttrs, isFootnote) => {
 		return {
 			...restValues,
 			unstructuredValue: value,
-			structuredValue: structuredValue,
+			structuredValue,
 		};
 	}
 	return {
 		...restValues,
 		structuredValue: value,
-		unstructuredValue: unstructuredValue,
+		unstructuredValue,
 	};
 };
 
@@ -127,7 +127,7 @@ const ControlsFootnoteCitation = (props: Props) => {
 		const defaultLabel = getCitationInlineLabel({
 			...selectedNode,
 			// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-			attrs: { ...selectedNode.attrs, citation: citation, customLabel: customLabel },
+			attrs: { ...selectedNode.attrs, citation, customLabel },
 		});
 
 		return (

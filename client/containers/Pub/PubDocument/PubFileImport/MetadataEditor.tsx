@@ -177,7 +177,7 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 					// @ts-expect-error ts-migrate(2339) FIXME: Property 'matchedUser' does not exist on type 'att... Remove this comment to see the full error message
 					.map(({ name, matchedUser }) => {
 						return {
-							name: name,
+							name,
 							userId: matchedUser && matchedUser.id,
 							isAuthor: true,
 						};

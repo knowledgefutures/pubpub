@@ -21,5 +21,5 @@ export const useSuggestions = <T>(enabled: boolean) => {
 		return () => {};
 	}, [suggestionManager, onSuggestionManagerTransition, enabled]);
 
-	return { suggesting: suggesting, suggestionManager: suggestionManager };
+	return { suggesting, suggestionManager };
 };

@@ -77,7 +77,7 @@ export const getReferenceForNode = (
 
 	return {
 		node: reactedNode,
-		icon: icon,
+		icon,
 		label: buildLabel(reactedNode, label.text)!,
 	};
 };
@@ -104,7 +104,7 @@ export const getDefaultNodeLabels = (pub: any): NodeLabelMap => {
 			...acc,
 			[nodeType]: {
 				enabled: false,
-				text: text,
+				text,
 			},
 		}),
 		{} as NodeLabelMap,

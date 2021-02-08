@@ -17,7 +17,7 @@ const linkCollectionPubs = (overviewData, collection): (CollectionPub & { pub: P
 				if (pub) {
 					return {
 						...collectionPub,
-						pub: pub,
+						pub,
 					};
 				}
 				return null;
@@ -29,7 +29,7 @@ const linkCollectionPubs = (overviewData, collection): (CollectionPub & { pub: P
 const linkCollection = (collection, community) => {
 	const page = community.pages.find((pg) => pg.id === collection.pageId);
 	const attributions = collection.attributions.map(ensureUserForAttribution);
-	return { ...collection, page: page, attributions: attributions };
+	return { ...collection, page, attributions };
 };
 
 export const useCollectionPubs = (scopeData, overviewData) => {
@@ -55,7 +55,7 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 		nextCollectionPubs.splice(destinationIndex, 0, updatedValue);
 		pendingPromise(
 			api.updateCollectionPub({
-				communityId: communityId,
+				communityId,
 				id: updatedValue.id,
 				update: { rank: newRank },
 			}),
@@ -77,7 +77,7 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	const removeCollectionPub = (collectionPub) => {
 		pendingPromise(
 			api.removeCollectionPub({
-				communityId: communityId,
+				communityId,
 				id: collectionPub.id,
 			}),
 		);
@@ -87,12 +87,12 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	const setCollectionPubContextHint = (collectionPub, contextHint) => {
 		pendingPromise(
 			api.updateCollectionPub({
-				communityId: communityId,
+				communityId,
 				id: collectionPub.id,
-				update: { contextHint: contextHint },
+				update: { contextHint },
 			}),
 		);
-		updateCollectionPub({ ...collectionPub, contextHint: contextHint });
+		updateCollectionPub({ ...collectionPub, contextHint });
 	};
 
 	const setCollectionPubIsPrimary = (collectionPub) => {
@@ -102,7 +102,7 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 			const newPubRank = findRankInRankedList(pub.collectionPubs, 0, 'pubRank');
 			pendingPromise(
 				api.updateCollectionPub({
-					communityId: communityId,
+					communityId,
 					id: collectionPub.id,
 					update: { pubRank: newPubRank },
 				}),
@@ -113,15 +113,15 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 
 	const addCollectionPub = (pub) => {
 		const newCollectionPub = {
-			collectionId: collectionId,
+			collectionId,
 			pubId: pub.id,
-			pub: pub,
+			pub,
 		} as any;
 		pendingPromise(
 			api
 				.addCollectionPub({
-					collectionId: collectionId,
-					communityId: communityId,
+					collectionId,
+					communityId,
 					pubId: pub.id,
 				})
 				.then((collectionPub) => {
@@ -140,12 +140,12 @@ export const useCollectionPubs = (scopeData, overviewData) => {
 	};
 
 	return {
-		addCollectionPub: addCollectionPub,
-		collectionPubs: collectionPubs,
-		removeCollectionPub: removeCollectionPub,
-		reorderCollectionPubs: reorderCollectionPubs,
-		setCollectionPubContextHint: setCollectionPubContextHint,
-		setCollectionPubIsPrimary: setCollectionPubIsPrimary,
+		addCollectionPub,
+		collectionPubs,
+		removeCollectionPub,
+		reorderCollectionPubs,
+		setCollectionPubContextHint,
+		setCollectionPubIsPrimary,
 	};
 };
 
@@ -185,11 +185,11 @@ export const useCollectionState = () => {
 		);
 
 	return {
-		fieldErrors: fieldErrors,
-		collection: collection,
-		hasChanges: hasChanges,
+		fieldErrors,
+		collection,
+		hasChanges,
 		persistCollection: persist,
-		updateCollection: updateCollection,
-		deleteCollection: deleteCollection,
+		updateCollection,
+		deleteCollection,
 	};
 };

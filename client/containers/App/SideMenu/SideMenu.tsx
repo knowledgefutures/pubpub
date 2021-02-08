@@ -25,14 +25,14 @@ const SideMenu = () => {
 		{
 			title: 'Overview',
 			icon: 'home2',
-			href: getDashUrl({ collectionSlug: collectionSlug, pubSlug: pubSlug }),
+			href: getDashUrl({ collectionSlug, pubSlug }),
 		},
 		{
 			title: 'Pages',
 			icon: 'page-layout',
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
+				collectionSlug,
+				pubSlug,
 				mode: 'pages',
 			}),
 			validScopes: ['community'],
@@ -42,7 +42,7 @@ const SideMenu = () => {
 			title: 'Layout',
 			icon: 'page-layout',
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
+				collectionSlug,
 				mode: 'layout',
 			}),
 			manageRequired: true,
@@ -53,8 +53,8 @@ const SideMenu = () => {
 			icon: 'social-media',
 			count: activeCounts.reviewCount > 0 ? activeCounts.reviewCount : undefined,
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
+				collectionSlug,
+				pubSlug,
 				mode: 'reviews',
 			}),
 		},
@@ -62,8 +62,8 @@ const SideMenu = () => {
 			title: 'Connections',
 			icon: 'layout-auto',
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
+				collectionSlug,
+				pubSlug,
 				mode: 'connections',
 			}),
 			validScopes: ['pub'],
@@ -72,8 +72,8 @@ const SideMenu = () => {
 			title: 'Impact',
 			icon: 'dashboard',
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
+				collectionSlug,
+				pubSlug,
 				mode: 'impact',
 			}),
 			validScopes: ['pub', 'community'],
@@ -82,8 +82,8 @@ const SideMenu = () => {
 			title: 'Members',
 			icon: 'people',
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
+				collectionSlug,
+				pubSlug,
 				mode: 'members',
 			}),
 			manageRequired: true,
@@ -92,8 +92,8 @@ const SideMenu = () => {
 			title: 'Settings',
 			icon: 'cog',
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
+				collectionSlug,
+				pubSlug,
 				mode: 'settings',
 			}),
 			manageRequired: true,
@@ -126,17 +126,14 @@ const SideMenu = () => {
 						const itemMode = item.title.toLowerCase().replace(/ /gi, '-');
 						const active = mode === itemMode;
 						return (
-							<div
-								key={item.title}
-								className={classNames({ menu: true, active: active })}
-							>
+							<div key={item.title} className={classNames({ menu: true, active })}>
 								<a
 									href={item.href}
 									className={classNames({
 										'content-title': true,
 										// @ts-expect-error ts-migrate(2339) FIXME: Property 'children' does not exist on type '{ titl... Remove this comment to see the full error message
 										'has-children': item.children,
-										active: active,
+										active,
 									})}
 								>
 									<Icon className="side-icon" icon={item.icon} />

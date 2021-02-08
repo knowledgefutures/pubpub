@@ -15,7 +15,7 @@ app.get('/signup', (req, res, next) => {
 					chunkName="Signup"
 					initialData={initialData}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Signup · ${initialData.communityData.title}`,
 						description: initialData.communityData.description,
 					})}

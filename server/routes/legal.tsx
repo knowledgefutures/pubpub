@@ -23,7 +23,7 @@ app.get('/legal/:tab', (req, res, next) => {
 					chunkName="Legal"
 					initialData={initialData}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Legal · ${initialData.communityData.title}`,
 						description: initialData.communityData.description,
 					})}

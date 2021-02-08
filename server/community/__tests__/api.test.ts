@@ -41,13 +41,13 @@ describe('/api/communities', () => {
 		const { body: url } = await agent
 			.post('/api/communities')
 			.send({
-				subdomain: subdomain,
+				subdomain,
 				title: 'Burn Book',
 				description: "Get in loser we're testing our code",
 			})
 			.expect(201);
 		expect(url).toEqual(`https://${subdomain}.pubpub.org`);
-		const newCommunity = await Community.findOne({ where: { subdomain: subdomain } });
+		const newCommunity = await Community.findOne({ where: { subdomain } });
 		expect(newCommunity.title).toEqual('Burn Book');
 	});
 
@@ -69,7 +69,7 @@ describe('/api/communities', () => {
 		await agent
 			.put('/api/communities')
 			.send({
-				communityId: communityId,
+				communityId,
 				title: 'I Hear She Does Car Commericals, In Japan',
 			})
 			.expect(403);

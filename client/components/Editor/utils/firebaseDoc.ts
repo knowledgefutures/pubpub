@@ -41,7 +41,7 @@ const getMostRecentDocJson = async (
 			const checkpoint = checkpointSnapshot.val();
 			if (checkpoint) {
 				const { doc } = uncompressStateJSON(checkpoint);
-				return { doc: doc, key: bestKey, timestamp: checkpointMap[bestKey]?.t };
+				return { doc, key: bestKey, timestamp: checkpointMap[bestKey]?.t };
 			}
 		}
 	}
@@ -54,7 +54,7 @@ const getMostRecentDocJson = async (
 		const key = parseInt(keyString, 10);
 		if (typeof versionNumber !== 'number' || key <= versionNumber) {
 			const { doc } = uncompressStateJSON(checkpoint);
-			return { doc: doc, key: key };
+			return { doc, key };
 		}
 	}
 	// There's no checkpoint, so let's just return an empty doc.
@@ -89,7 +89,7 @@ const ordinalKeyTimestampGetter = (traverseQuery: TraverseQuery, chooseKey: Choo
 		: updateWrapped;
 	const timestamp = update && update.t;
 
-	return { key: bestKey, timestamp: timestamp };
+	return { key: bestKey, timestamp };
 };
 
 export const getFirstKeyAndTimestamp = ordinalKeyTimestampGetter(
@@ -173,6 +173,6 @@ export const getFirebaseDoc = async (
 		docIsFromCheckpoint: stepsJson.length === 0,
 		key: currentKey,
 		timestamp: currentTimestamp,
-		checkpointMap: checkpointMap,
+		checkpointMap,
 	};
 };

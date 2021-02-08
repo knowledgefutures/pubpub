@@ -5,8 +5,8 @@ import transformAttributions from './attributions';
 
 const transformMetadata = (metadata, kind, timestamp) =>
 	deserializeMetadata({
-		metadata: metadata,
-		kind: kind,
+		metadata,
+		kind,
 		fallback: (field) => {
 			const { type } = field;
 			// If the field is a date, but it isn't provided, use the global timestamp
@@ -25,10 +25,10 @@ export default ({ globals, community }) => (collection) => {
 	return {
 		url: collectionUrl(community, collection),
 		...transformMetadata(metadata, collection.kind, globals.timestamp),
-		title: title,
-		timestamp: timestamp,
+		title,
+		timestamp,
 		attributions: transformAttributions(attributions),
 		doi: dois.collection,
-		contentVersion: contentVersion,
+		contentVersion,
 	};
 };

@@ -23,7 +23,7 @@ app.get('/user/create/:hash', (req, res, next) => {
 					initialData={initialData}
 					viewData={{ signupData: signupData || { hashError: true } }}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Create New user · ${initialData.communityData.title}`,
 						unlisted: true,
 					})}

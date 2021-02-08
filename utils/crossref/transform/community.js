@@ -6,8 +6,8 @@ export default ({ globals }) => (community) => {
 	const { title, issn: denormalizedIssn } = community;
 	const issn = denormalizedIssn && denormalizedIssn.replace('-', '');
 	return {
-		title: title,
-		issn: issn,
+		title,
+		issn,
 		timestamp: globals.timestamp,
 		language: getLanguageForCommunity(community),
 		doi: globals.dois.community,

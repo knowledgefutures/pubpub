@@ -41,8 +41,8 @@ const footnotes = [
 ];
 
 const pubData = {
-	footnotes: footnotes,
-	citations: citations,
+	footnotes,
+	citations,
 	discussions: discussionsData,
 	labels: null,
 	canManage: false,

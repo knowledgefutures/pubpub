@@ -75,7 +75,7 @@ const createYamlMetadataFile = async (
 				...(primaryCollectionMetadata.volume && {
 					volume: primaryCollectionMetadata.volume,
 				}),
-				...(doi && { doi: doi }),
+				...(doi && { doi }),
 			},
 		}),
 	});

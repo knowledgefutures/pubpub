@@ -35,11 +35,11 @@ const createRelease = ({ historyKey, pubId, communityId, noteContent, noteText }
 	apiFetch('/api/releases', {
 		method: 'POST',
 		body: JSON.stringify({
-			pubId: pubId,
-			communityId: communityId,
-			noteContent: noteContent,
-			noteText: noteText,
-			historyKey: historyKey,
+			pubId,
+			communityId,
+			noteContent,
+			noteText,
+			historyKey,
 		}),
 	});
 

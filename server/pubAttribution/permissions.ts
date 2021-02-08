@@ -19,8 +19,8 @@ export const getPermissions = async ({ userId, communityId, pubId }) => {
 	const {
 		activePermissions: { canManage },
 	} = await getScope({
-		communityId: communityId,
-		pubId: pubId,
+		communityId,
+		pubId,
 		loginId: userId,
 	});
 

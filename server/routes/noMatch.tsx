@@ -17,7 +17,7 @@ app.get('/*', (req, res, next) => {
 					chunkName="NoMatch"
 					initialData={initialData}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: `Not Found · ${initialData.communityData.title}`,
 					})}
 				/>,

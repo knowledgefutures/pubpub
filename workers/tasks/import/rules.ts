@@ -102,7 +102,7 @@ rules.transform('Header', 'heading', {
 		return {
 			type: 'heading',
 			attrs: {
-				id: id,
+				id,
 				level: node.level,
 				fixedId: id,
 			},
@@ -156,7 +156,7 @@ rules.fromPandoc('(Str | Space | SoftBreak)+', (pdNodes) => {
 	if (text.length > 0) {
 		return {
 			type: 'text',
-			text: text,
+			text,
 		};
 	}
 	return [];
@@ -274,8 +274,8 @@ rules.transform('Cite', 'citation', {
 				type: 'citation',
 				attrs: {
 					value: structuredValue || unstructuredValue,
-					structuredValue: structuredValue,
-					unstructuredValue: unstructuredValue,
+					structuredValue,
+					unstructuredValue,
 					count: 1 + count('Cite'),
 					customLabel: pandocInlineToPlain(node.content) || '',
 				},
@@ -312,7 +312,7 @@ rules.transform('Note', 'footnote', {
 		return {
 			type: 'footnote',
 			attrs: {
-				value: value,
+				value,
 				count: 1 + count('Note'),
 			},
 		};

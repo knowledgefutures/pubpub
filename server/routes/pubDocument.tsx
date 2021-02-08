@@ -27,7 +27,7 @@ const renderPubDocument = (res, pubData, initialData) => {
 		<Html
 			chunkName="Pub"
 			initialData={initialData}
-			viewData={{ pubData: pubData }}
+			viewData={{ pubData }}
 			headerComponents={generateMetaComponents({
 				attributions: pubData.attributions,
 				collection: chooseCollectionForPub(pubData, initialData.locationData),
@@ -36,7 +36,7 @@ const renderPubDocument = (res, pubData, initialData) => {
 				doi: pubData.doi,
 				pdfDownloadUrl: getPdfDownloadUrl(initialData.communityData, pubData) || '',
 				image: pubData.avatar,
-				initialData: initialData,
+				initialData,
 				notes: getGoogleScholarNotes(Object.values(pubData.initialStructuredCitations)),
 				publishedAt: getPubPublishedDate(pubData),
 				textAbstract: pubData.initialDoc ? getTextAbstract(pubData.initialDoc) : '',
@@ -60,8 +60,8 @@ const getEnrichedPubData = async ({
 }) => {
 	const pubData = await getPubForRequest({
 		slug: pubSlug,
-		initialData: initialData,
-		releaseNumber: releaseNumber,
+		initialData,
+		releaseNumber,
 		getDraft: true,
 		getDiscussions: true,
 	});
@@ -106,9 +106,9 @@ app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
 		}
 
 		const pubData = await getEnrichedPubData({
-			pubSlug: pubSlug,
-			releaseNumber: releaseNumber,
-			initialData: initialData,
+			pubSlug,
+			releaseNumber,
+			initialData,
 		});
 
 		return renderPubDocument(res, pubData, initialData);
@@ -139,14 +139,14 @@ app.get(['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'], async (req, 
 
 		const pubData = await Promise.all([
 			getEnrichedPubData({
-				pubSlug: pubSlug,
-				initialData: initialData,
+				pubSlug,
+				initialData,
 				historyKey: hasHistoryKey ? historyKey : null,
 			}),
 			getMembers(initialData),
 		]).then(([enrichedPubData, membersData]) => ({
 			...enrichedPubData,
-			membersData: membersData,
+			membersData,
 		}));
 
 		return renderPubDocument(res, pubData, initialData);

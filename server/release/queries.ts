@@ -45,7 +45,7 @@ const createDiscussionAnchorsForRelease = async (
 		const steps = await getStepsSinceLastRelease(draftRef, previousRelease, currentHistoryKey);
 		const flatSteps = steps.reduce((a, b) => [...a, ...b], []);
 		const discussions = await Discussion.findAll({
-			where: { pubId: pubId },
+			where: { pubId },
 			attributes: ['id'],
 		});
 		const existingAnchors = await DiscussionAnchor.findAll({
@@ -83,7 +83,7 @@ export const createRelease = async ({
 	createExports?: boolean;
 }) => {
 	const mostRecentRelease = await Release.findOne({
-		where: { pubId: pubId },
+		where: { pubId },
 		order: [['historyKey', 'DESC']],
 		include: [{ model: Doc, as: 'doc' }],
 	});
@@ -103,11 +103,11 @@ export const createRelease = async ({
 		const [nextRelease] = await Promise.all([
 			Release.create(
 				{
-					noteContent: noteContent,
-					noteText: noteText,
-					historyKey: historyKey,
-					userId: userId,
-					pubId: pubId,
+					noteContent,
+					noteText,
+					historyKey,
+					userId,
+					pubId,
 					docId: docModel.id,
 				},
 				{ transaction: txn },

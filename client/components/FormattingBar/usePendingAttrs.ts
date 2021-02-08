@@ -76,9 +76,9 @@ export const usePendingAttrs = ({
 	};
 
 	return {
-		commitChanges: commitChanges,
-		hasPendingChanges: hasPendingChanges,
-		attrs: attrs,
-		updateAttrs: updateAttrs,
+		commitChanges,
+		hasPendingChanges,
+		attrs,
+		updateAttrs,
 	};
 };

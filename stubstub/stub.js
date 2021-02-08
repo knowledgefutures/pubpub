@@ -34,7 +34,7 @@ export const stubModule = (module, functions) => {
 	const stubEntries = getStubEntries(functions);
 	const stubs = stubManyFunctions(module, stubEntries);
 	return {
-		stubs: stubs,
+		stubs,
 		restore: () => Object.values(stubs).forEach((stub) => stub.restore()),
 	};
 };

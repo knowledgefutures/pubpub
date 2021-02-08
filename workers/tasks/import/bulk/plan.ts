@@ -113,7 +113,7 @@ const mergeDirectives = (directives) => {
 			resolve: directives
 				.map((directive) => directive.resolve || [])
 				.reduce((a, b) => [...a, ...b], []),
-			$meta: $meta,
+			$meta,
 		},
 	];
 };
@@ -192,7 +192,7 @@ const getDirectivesFromFiles = async (directory, files, directiveCounter) => {
 		}),
 		// @ts-expect-error ts-migrate(2488) FIXME: Type 'unknown' must have a '[Symbol.iterator]()' m... Remove this comment to see the full error message
 	).then((res) => res.reduce((a, b) => [...a, ...b], []));
-	return { directiveFiles: directiveFiles, directives: directives };
+	return { directiveFiles, directives };
 };
 
 export const buildImportPlan = (rootDirectory) => {
@@ -350,5 +350,5 @@ export const getCreatedItemsFromPlan = (importPlan) => {
 			pubs.push(...child.pubs);
 		});
 	}
-	return { communities: communities, collections: collections, pubs: pubs };
+	return { communities, collections, pubs };
 };

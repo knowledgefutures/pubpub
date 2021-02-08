@@ -31,9 +31,9 @@ app.get(['/password-reset', '/password-reset/:resetHash/:slug'], (req, res, next
 				<Html
 					chunkName="PasswordReset"
 					initialData={initialData}
-					viewData={{ passwordResetData: { hashIsValid: hashIsValid } }}
+					viewData={{ passwordResetData: { hashIsValid } }}
 					headerComponents={generateMetaComponents({
-						initialData: initialData,
+						initialData,
 						title: 'Password Reset',
 					})}
 				/>,

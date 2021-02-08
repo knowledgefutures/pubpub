@@ -9,12 +9,12 @@ export const getAttributionAttributes = async (attributionDirective) => {
 	if (rawUserId) {
 		userId = rawUserId;
 	} else if (slug) {
-		const user = await User.findOne({ where: { slug: slug } });
+		const user = await User.findOne({ where: { slug } });
 		if (user) {
 			userId = user.id;
 		}
 	}
-	return { isAuthor: true, userId: userId, ...restAttrs };
+	return { isAuthor: true, userId, ...restAttrs };
 };
 
 export const cloneWithKeys = (object, keys) => {

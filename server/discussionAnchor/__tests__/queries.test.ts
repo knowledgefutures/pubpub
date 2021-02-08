@@ -54,13 +54,13 @@ describe('createUpdatedDiscussionAnchorForNewSteps', () => {
 			discussion: { id: discussionId },
 		} = models;
 		const firstAnchor = await createOriginalDiscussionAnchor({
-			discussionId: discussionId,
+			discussionId,
 			historyKey: 1,
 			selectionJson: initialSelection as any,
 			originalText: 'foo',
 		});
 		expect(firstAnchor).toMatchObject({
-			discussionId: discussionId,
+			discussionId,
 			historyKey: 1,
 			isOriginal: true,
 			selection: { type: 'text', anchor: 5, head: 7 },
@@ -73,7 +73,7 @@ describe('createUpdatedDiscussionAnchorForNewSteps', () => {
 			2,
 		);
 		expect(secondAnchor).toMatchObject({
-			discussionId: discussionId,
+			discussionId,
 			historyKey: 2,
 			isOriginal: false,
 			selection: { type: 'text', anchor: 10, head: 12 },
@@ -90,7 +90,7 @@ describe('createUpdatedDiscussionAnchorForNewSteps', () => {
 			2,
 		);
 		expect(thirdAnchor).toMatchObject({
-			discussionId: discussionId,
+			discussionId,
 			historyKey: 2,
 			isOriginal: false,
 			selection: null,

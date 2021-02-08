@@ -45,7 +45,7 @@ const DownloadChooser = (props: Props) => {
 				body: JSON.stringify({
 					downloads: nextDownloads,
 					pubId: pubData.id,
-					communityId: communityId,
+					communityId,
 				}),
 			});
 			onSetDownloads(nextDownloads);

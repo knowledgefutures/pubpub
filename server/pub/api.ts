@@ -9,11 +9,11 @@ const getRequestIds = (req) => {
 	const { communityId, collectionId, pubId, licenseSlug, createPubToken } = req.body;
 	return {
 		userId: user.id,
-		communityId: communityId,
-		collectionId: collectionId,
-		createPubToken: createPubToken,
-		pubId: pubId,
-		licenseSlug: licenseSlug,
+		communityId,
+		collectionId,
+		createPubToken,
+		pubId,
+		licenseSlug,
 	};
 };
 
@@ -22,15 +22,15 @@ app.post(
 	wrap(async (req, res) => {
 		const { userId, collectionId, communityId, createPubToken } = getRequestIds(req);
 		const { create, collectionIds } = await canCreatePub({
-			userId: userId,
-			collectionId: collectionId,
-			communityId: communityId,
-			createPubToken: createPubToken,
+			userId,
+			collectionId,
+			communityId,
+			createPubToken,
 		});
 		if (create) {
 			const newPub = await createPub(
 				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ communityId: any; collectionId... Remove this comment to see the full error message
-				{ communityId: communityId, collectionIds: collectionIds },
+				{ communityId, collectionIds },
 				userId,
 			);
 			return res.status(201).json(newPub);
@@ -44,9 +44,9 @@ app.put(
 	wrap(async (req, res) => {
 		const { userId, pubId, licenseSlug } = getRequestIds(req);
 		const updatableFields = await getUpdatablePubFields({
-			userId: userId,
-			pubId: pubId,
-			licenseSlug: licenseSlug,
+			userId,
+			pubId,
+			licenseSlug,
 		});
 		if (updatableFields) {
 			const updateResult = await updatePub(req.body, updatableFields);
@@ -59,7 +59,7 @@ app.delete(
 	'/api/pubs',
 	wrap(async (req, res) => {
 		const { userId, pubId } = getRequestIds(req);
-		const canDestroy = await canDestroyPub({ userId: userId, pubId: pubId });
+		const canDestroy = await canDestroyPub({ userId, pubId });
 		if (canDestroy) {
 			await destroyPub(pubId);
 			return res.status(200).json({});

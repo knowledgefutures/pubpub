@@ -47,8 +47,8 @@ const makeHistoryQuery = ({ historyKey, provideAccessHash = false }) => {
 	return {
 		communityId: community.id,
 		pubId: pub.id,
-		historyKey: historyKey,
-		accessHash: accessHash,
+		historyKey,
+		accessHash,
 	};
 };
 

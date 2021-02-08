@@ -22,7 +22,7 @@ const getReadyCallbacks = (callbacks: KeyCallback[], historyKey: number) => {
 		}
 	});
 
-	return { ready: ready, notReady: notReady };
+	return { ready, notReady };
 };
 
 export const createHistoryState = (initialDoc: Node, initialHistoryKey: number) => {
@@ -34,7 +34,7 @@ export const createHistoryState = (initialDoc: Node, initialHistoryKey: number) 
 		if (historyKey >= key) {
 			callback();
 		} else {
-			callbacks.push({ key: key, callback: callback });
+			callbacks.push({ key, callback });
 		}
 	};
 
@@ -66,10 +66,10 @@ export const createHistoryState = (initialDoc: Node, initialHistoryKey: number) 
 
 		return {
 			...getState(),
-			previousHistoryKey: previousHistoryKey,
-			previousDoc: previousDoc,
+			previousHistoryKey,
+			previousDoc,
 		};
 	};
 
-	return { onReachesKey: onReachesKey, updateState: updateState, getState: getState };
+	return { onReachesKey, updateState, getState };
 };

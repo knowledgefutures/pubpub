@@ -147,7 +147,7 @@ const DashboardCollectionLayout = (props: Props) => {
 						pubs={props.pubs}
 						collection={collection}
 						communityData={communityData}
-						onChange={(blocks) => updateLayout({ blocks: blocks })}
+						onChange={(blocks) => updateLayout({ blocks })}
 					/>
 				</SettingsSection>
 			)}

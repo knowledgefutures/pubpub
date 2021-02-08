@@ -23,7 +23,7 @@ export default ({
 			book_metadata: {
 				...contributors(attributions),
 				titles: {
-					title: title,
+					title,
 				},
 				edition_number: edition || '1',
 				...date('publication_date', publicationDate),

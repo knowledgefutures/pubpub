@@ -40,7 +40,7 @@ export default () => {
 						Number(highlightData.from),
 						Number(highlightData.to),
 						{ class: className },
-						{ key: key },
+						{ key },
 					);
 				});
 

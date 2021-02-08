@@ -65,7 +65,7 @@ const templatize = (strings, ...slots) => {
 		}
 	}
 
-	return { query: query, parameters: parameters };
+	return { query, parameters };
 };
 
 export const modelize = (...args) => {

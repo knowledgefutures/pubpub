@@ -69,7 +69,7 @@ const applyKeyableToDoc = (doc, keyable) => {
 			nextDoc = stepResult.doc;
 		}
 	}
-	return { doc: nextDoc, timestamp: timestamp };
+	return { doc: nextDoc, timestamp };
 };
 
 const createCheckpointsFromKeyables = (keyables, existingCheckpointKeys) => {
@@ -90,7 +90,7 @@ const createCheckpointsFromKeyables = (keyables, existingCheckpointKeys) => {
 				doc: nextDoc,
 			};
 		}
-		return { checkpoints: checkpoints, checkpointMap: checkpointMap, doc: nextDoc };
+		return { checkpoints, checkpointMap, doc: nextDoc };
 	}, initialState);
 };
 

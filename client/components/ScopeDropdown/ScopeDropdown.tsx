@@ -51,7 +51,7 @@ const ScopeDropdown = (props: Props) => {
 			title: activeCollection.title,
 			avatar: activeCollection.avatar,
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
+				collectionSlug,
 			}),
 		});
 	}
@@ -62,8 +62,8 @@ const ScopeDropdown = (props: Props) => {
 			title: activePub.title,
 			avatar: activePub.avatar,
 			href: getDashUrl({
-				collectionSlug: collectionSlug,
-				pubSlug: pubSlug,
+				collectionSlug,
+				pubSlug,
 			}),
 		});
 	}

@@ -103,7 +103,7 @@ it('lets a manager create a PubEdge to an external publication', async () => {
 			pubId: sourcePub.id,
 			relationType: 'comment',
 			pubIsParent: false,
-			externalPublication: externalPublication,
+			externalPublication,
 		})
 		.expect(201);
 	const resultingExternalPublication = await ExternalPublication.findOne({

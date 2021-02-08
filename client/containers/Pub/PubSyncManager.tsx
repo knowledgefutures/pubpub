@@ -90,8 +90,8 @@ const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
 			queryString.stringify({
 				pubId: pubData.id,
 				communityId: pubData.communityId,
-				historyKey: historyKey,
-				accessHash: accessHash,
+				historyKey,
+				accessHash,
 			}),
 	);
 
@@ -136,7 +136,7 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 		if ('requestIdleCallback' in window) {
 			if (!idleCallback) {
 				// @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'requestIdleCallback'.
-				idleCallback = requestIdleCallback(setStateNow, { timeout: timeout });
+				idleCallback = requestIdleCallback(setStateNow, { timeout });
 			}
 		} else {
 			setStateNow();
@@ -157,8 +157,8 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 	};
 
 	return {
-		setState: setState,
-		immediately: immediately,
+		setState,
+		immediately,
 	};
 };
 class PubSyncManager extends React.Component<Props, State> {
@@ -183,7 +183,7 @@ class PubSyncManager extends React.Component<Props, State> {
 				...historyData,
 				outstandingRequests: 0,
 				latestKeyReceivedAt: null,
-				isViewingHistory: isViewingHistory,
+				isViewingHistory,
 				loadedIntoHistory: isViewingHistory,
 				historyDocKey: `history-${historyData.currentKey}`,
 			},

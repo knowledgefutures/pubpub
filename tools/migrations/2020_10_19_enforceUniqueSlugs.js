@@ -13,8 +13,8 @@ const updateSlugForCollection = async (collectionModel) => {
 const updateCollidingSlugsInCommunity = async (communityId, models) => {
 	const { Collection, Page } = models;
 	const [collections, pages] = await Promise.all([
-		Collection.findAll({ where: { communityId: communityId } }),
-		Page.findAll({ where: { communityId: communityId } }),
+		Collection.findAll({ where: { communityId } }),
+		Page.findAll({ where: { communityId } }),
 	]);
 	const collidingCollections = collections.filter((c) => pages.some((p) => p.slug === c.slug));
 	await Promise.all(collidingCollections.map(updateSlugForCollection));

@@ -109,13 +109,13 @@ export default (
 		...sanitizeHashes(pubData, activePermissions),
 		attributions: pubData.attributions.map(ensureUserForAttribution),
 		draft: isRelease ? null : pubData.draft,
-		discussions: discussions,
+		discussions,
 		exports: getFilteredExports(pubData, isRelease),
-		reviews: reviews,
+		reviews,
 		collectionPubs: filteredCollectionPubs,
 		isReadOnly: isRelease || !(canEdit || canEditDraft),
-		isRelease: isRelease,
+		isRelease,
 		releases: sortedReleases,
-		releaseNumber: releaseNumber,
+		releaseNumber,
 	};
 };

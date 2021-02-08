@@ -5,7 +5,7 @@ const pubExistsAndIsMissingReleases = async (pubId) => {
 	if (!pubId) {
 		return false;
 	}
-	const releases = await Release.findAll({ where: { pubId: pubId } });
+	const releases = await Release.findAll({ where: { pubId } });
 	return releases.length === 0;
 };
 
@@ -18,9 +18,9 @@ export const getPermissions = async ({ pubId, collectionId, userId, communityId 
 		activePermissions: { canAdminCommunity },
 		elements: { activePub },
 	} = await getScope({
-		communityId: communityId,
-		collectionId: collectionId,
-		pubId: pubId,
+		communityId,
+		collectionId,
+		pubId,
 		loginId: userId,
 	});
 

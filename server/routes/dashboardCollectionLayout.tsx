@@ -25,13 +25,13 @@ app.get('/dash/collection/:collectionSlug/layout', async (req, res, next) => {
 					pubs: await getPubsForLayout({
 						blocks: collection.layout && collection.layout.blocks,
 						forLayoutEditor: true,
-						initialData: initialData,
+						initialData,
 						collectionId: collection.id,
 					}),
-					collection: collection,
+					collection,
 				}}
 				headerComponents={generateMetaComponents({
-					initialData: initialData,
+					initialData,
 					title: `Layout · ${initialData.scopeData.elements.activeTarget.title}`,
 					unlisted: true,
 				})}

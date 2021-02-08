@@ -8,28 +8,28 @@ import { dataUriToFile } from './util';
 
 const dispatchUploadStart = (view: EditorView, id: string, position: number) => {
 	const { tr } = view.state;
-	const meta: UploadStartMeta = { type: 'uploadStart', id: id, position: position };
+	const meta: UploadStartMeta = { type: 'uploadStart', id, position };
 	tr.setMeta(pastePluginKey, meta);
 	view.dispatch(tr);
 };
 
 const dispatchUploadFailure = (view: EditorView, id: string) => {
 	const { tr } = view.state;
-	const meta: UploadFailureMeta = { type: 'uploadFailure', id: id };
+	const meta: UploadFailureMeta = { type: 'uploadFailure', id };
 	tr.setMeta(pastePluginKey, meta);
 	view.dispatch(tr);
 };
 
 const dispatchUploadFinish = (view: EditorView, id: string, src: string) => {
 	const { tr } = view.state;
-	const meta: UploadFinishMeta = { type: 'uploadFinish', id: id, src: src };
+	const meta: UploadFinishMeta = { type: 'uploadFinish', id, src };
 	tr.setMeta(pastePluginKey, meta);
 	view.dispatch(tr);
 };
 
 const dispatchUploadProgress = (view: EditorView, id: string, progress: number) => {
 	const { tr } = view.state;
-	const meta: UploadProgressMeta = { type: 'uploadProgress', id: id, progress: progress };
+	const meta: UploadProgressMeta = { type: 'uploadProgress', id, progress };
 	tr.setMeta(pastePluginKey, meta);
 	view.dispatch(tr);
 };

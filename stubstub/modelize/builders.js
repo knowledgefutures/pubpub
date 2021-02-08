@@ -25,12 +25,12 @@ builders.User = async (args = {}) => {
 	return new Promise((resolve, reject) =>
 		User.register(
 			{
-				firstName: firstName,
-				lastName: lastName,
-				fullName: fullName,
-				email: email,
-				slug: slug,
-				initials: initials,
+				firstName,
+				lastName,
+				fullName,
+				email,
+				slug,
+				initials,
 				passwordDigest: 'sha512',
 			},
 			sha3hashedPassword,
@@ -63,7 +63,7 @@ builders.Pub = async (args) => {
 };
 
 builders.Collection = ({ title = 'Collection ' + uuid.v4(), kind = 'issue', ...restArgs }) =>
-	createCollection({ title: title, kind: kind, ...restArgs });
+	createCollection({ title, kind, ...restArgs });
 
 builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 	const getTargetArgs = () => {
@@ -71,11 +71,11 @@ builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 		// with exactly one of a pub, collection, or community -- here, the least powerful scope.
 		switch (true) {
 			case !!pubId:
-				return { pubId: pubId };
+				return { pubId };
 			case !!collectionId:
-				return { collectionId: collectionId };
+				return { collectionId };
 			case !!communityId:
-				return { communityId: communityId };
+				return { communityId };
 			default:
 				return {};
 		}
@@ -96,8 +96,8 @@ builders.Release = async (args) => {
 	}
 
 	return Release.create({
-		userId: userId,
-		historyKey: historyKey,
+		userId,
+		historyKey,
 		docId: resolvedDocId,
 		...restArgs,
 	});

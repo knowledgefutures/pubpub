@@ -64,14 +64,14 @@ const createDiscussionForPub = ({
 }) => {
 	return createDiscussion(
 		{
-			pubId: pubId,
-			visibilityAccess: visibilityAccess,
+			pubId,
+			visibilityAccess,
 			text: 'whatever',
 			content: {},
-			historyKey: historyKey,
+			historyKey,
 			initAnchorData: {
-				from: from,
-				to: to,
+				from,
+				to,
 				exact: 'whatever',
 			},
 			...rest,
@@ -94,8 +94,8 @@ describe('/api/releases', () => {
 			.post('/api/releases')
 			.send(
 				createReleaseRequest({
-					community: community,
-					pub: pub,
+					community,
+					pub,
 					historyKey: pubEditor.getKey(),
 					createExports: false,
 				}),
@@ -112,8 +112,8 @@ describe('/api/releases', () => {
 			.post('/api/releases')
 			.send(
 				createReleaseRequest({
-					community: community,
-					pub: pub,
+					community,
+					pub,
 					historyKey: pubEditor.getKey(),
 					createExports: false,
 				}),
@@ -134,8 +134,8 @@ describe('/api/releases', () => {
 			.post('/api/releases')
 			.send(
 				createReleaseRequest({
-					community: community,
-					pub: pub,
+					community,
+					pub,
 					historyKey: pubEditor.getKey(),
 				}),
 			)
@@ -160,8 +160,8 @@ describe('/api/releases', () => {
 			.post('/api/releases')
 			.send(
 				createReleaseRequest({
-					community: community,
-					pub: pub,
+					community,
+					pub,
 					historyKey: pubEditor.getKey(),
 				}),
 			)
@@ -174,8 +174,8 @@ describe('/api/releases', () => {
 			.post('/api/releases')
 			.send(
 				createReleaseRequest({
-					community: community,
-					pub: pub,
+					community,
+					pub,
 					historyKey: pubEditor.getKey(),
 				}),
 			)
@@ -197,8 +197,8 @@ describe('/api/releases', () => {
 				.post('/api/releases')
 				.send(
 					createReleaseRequest({
-						community: community,
-						pub: pub,
+						community,
+						pub,
 						historyKey: pubEditor.getKey(),
 					}),
 				)

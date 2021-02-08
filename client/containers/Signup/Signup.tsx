@@ -23,7 +23,7 @@ const Signup = () => {
 			body: JSON.stringify({
 				email: email.toLowerCase(),
 				communityId: communityData.id,
-				confirmEmail: confirmEmail,
+				confirmEmail,
 			}),
 		})
 			.then(() => {

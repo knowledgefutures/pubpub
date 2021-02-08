@@ -28,29 +28,17 @@ type Props = {
 	tagName?: string;
 };
 
-const defaultProps = {
-	active: false,
-	className: '',
-	disabled: false,
-	icon: null,
-	label: undefined,
-	onClick: null,
-	outerLabel: undefined,
-	showCaret: false,
-	tagName: 'button',
-};
-
-const LargeHeaderButton = React.forwardRef<any, Props>((props, ref) => {
+const LargeHeaderButton = React.forwardRef((props: Props, ref) => {
 	const {
-		active,
-		className,
-		disabled,
-		icon,
+		active = false,
+		className = '',
+		disabled = false,
+		icon = null,
 		label,
-		onClick,
+		onClick = null,
 		outerLabel,
-		showCaret,
-		tagName,
+		showCaret = false,
+		tagName = 'button',
 		...restProps
 	} = props;
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'top' does not exist on type 'string | nu... Remove this comment to see the full error message
@@ -95,14 +83,13 @@ const LargeHeaderButton = React.forwardRef<any, Props>((props, ref) => {
 			{hasStackedOuterLabel && (
 				<div className="outer-label">
 					{/* @ts-expect-error ts-migrate(2533) FIXME: Object is possibly 'null' or 'undefined'. */}
-					<div className="top pub-header-themed-secondary">{outerLabel.top}</div>
+					<div className="top pub-header-themed-secondary">{outerLabel!.top}</div>
 					{/* @ts-expect-error ts-migrate(2533) FIXME: Object is possibly 'null' or 'undefined'. */}
-					<div className="bottom">{outerLabel.bottom}</div>
+					<div className="bottom">{outerLabel!.bottom}</div>
 				</div>
 			)}
 		</Button>
 	);
 });
-// @ts-expect-error ts-migrate(2322) FIXME: Type '{ active: boolean; className: string; disabl... Remove this comment to see the full error message
-LargeHeaderButton.defaultProps = defaultProps;
+
 export default LargeHeaderButton;

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { moveToEndOfSelection } from 'components/Editor';
 import { Button, AnchorButton, InputGroup } from '@blueprintjs/core';
-import { usePubContext, usePubData } from 'client/containers/Pub/pubHooks';
+import { usePubData } from 'client/containers/Pub/pubHooks';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 

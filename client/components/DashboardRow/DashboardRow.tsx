@@ -49,11 +49,7 @@ const DashboardRow = (props: Props) => {
 	const [showChildren, setShowChildren] = useState(false);
 	const showArrow = React.Children.count(children) > 0;
 	return (
-		<div
-			className={classNames('dashboard-row-component', className, selected && 'selected')}
-			aria-expanded={showChildren}
-			role="listitem"
-		>
+		<div className={classNames('dashboard-row-component', className, selected && 'selected')}>
 			<div className="inner">
 				<Button
 					aria-label={

@@ -20,7 +20,7 @@
 		"postbuild-server": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' ../dist/server/server/ --cwd=server/ --parents && npm run copy-worker-assets",
 		"copy-worker-assets": "cpy '**/*' '!**/*.ts'  '!**/*.tsx' '!**/*.js' '!tsconfig.json' '!**/__tests__' ../dist/server/workers/ --cwd=workers/ --parents",
 		"prod": "npm run build-prod && npm run api-prod",
-		"lint": "eslint .",
+		"lint": "eslint . --ext=.js,.jsx,.ts,.tsx",
 		"check": "tsc --noEmit",
 		"pretty": "prettier --write '**/*.js'",
 		"install-git-hooks": "rm -f ./.git/hooks/* && cp ./.githooks/* ./.git/hooks && chmod +x ./.git/hooks/*",

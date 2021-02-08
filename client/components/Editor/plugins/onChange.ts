@@ -664,7 +664,7 @@ export default (_, props: PluginsOptions) => {
 					dispatchChange: dispatchChange,
 				};
 			},
-			apply: (_, s) => s,
+			apply: (__, s) => s,
 		},
 		view: () => {
 			return {

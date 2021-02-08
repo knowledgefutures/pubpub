@@ -53,8 +53,8 @@ const DashboardPages = (props: Props) => {
 				}),
 			}),
 		).then(() => {
-			updateCommunity((communityData) => ({
-				pages: communityData.pages.map((page) => {
+			updateCommunity((currentCommunityData) => ({
+				pages: currentCommunityData.pages.map((page) => {
 					if (page.id !== pageData.id) {
 						return page;
 					}

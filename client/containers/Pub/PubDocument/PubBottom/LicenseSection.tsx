@@ -29,11 +29,9 @@ const LicenseSection = (props: Props) => {
 			isExpandable={false}
 			className="pub-bottom-license"
 			title="License"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'never[] ... Remove this comment to see the full error message
 			centerItems={
 				<React.Fragment>
 					{slug === 'copyright' && (
-						// @ts-expect-error ts-migrate(2786) FIXME: 'SectionBullets' cannot be used as a JSX component... Remove this comment to see the full error message
 						<SectionBullets>
 							<span>
 								Copyright © {pubCopyrightYear} {pubPublisher}. (All rights
@@ -42,7 +40,6 @@ const LicenseSection = (props: Props) => {
 						</SectionBullets>
 					)}
 					{slug !== 'copyright' && (
-						// @ts-expect-error ts-migrate(2786) FIXME: 'SectionBullets' cannot be used as a JSX component... Remove this comment to see the full error message
 						<SectionBullets>
 							<a target="_blank" rel="license noopener noreferrer" href={link!}>
 								{`${full} (${short} ${version})`}
@@ -51,7 +48,6 @@ const LicenseSection = (props: Props) => {
 					)}
 				</React.Fragment>
 			}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '({ iconColor }: { iconColor: any; }) => Elem... Remove this comment to see the full error message
 			iconItems={({ iconColor }) => {
 				if (scopeData.activePermissions.canManage) {
 					return (

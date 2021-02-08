@@ -9,6 +9,7 @@ import { shouldShowGdprBanner, updateGdprConsent } from 'client/utils/legal/gdpr
 require('./legalBanner.scss');
 
 type Props = {
+	// eslint-disable-next-line react/no-unused-prop-types
 	loginData: {
 		id?: string;
 		gdprConsent?: boolean;

@@ -37,7 +37,7 @@ const blockTypes = [
 	},
 ];
 
-const BlockTypeSelector = React.forwardRef<any, Props>((props, ref) => {
+const BlockTypeSelector = React.forwardRef((props: Props, ref) => {
 	const { editorChangeObject, isSmall, ...restProps } = props;
 	const { menuItems = [] } = editorChangeObject;
 

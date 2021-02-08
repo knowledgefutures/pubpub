@@ -35,7 +35,7 @@ class DiscussionAutocomplete extends Component<Props, State> {
 		this.handleSelect = this.handleSelect.bind(this);
 	}
 
-	componentWillReceiveProps(nextProps: Props) {
+	UNSAFE_componentWillReceiveProps(nextProps: Props) {
 		this.setState({
 			items: this.getFilteredItems(nextProps.threads, ''),
 		});

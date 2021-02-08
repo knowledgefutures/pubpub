@@ -52,7 +52,7 @@ class LabelFilter extends Component<Props, State> {
 		this.handleSave = this.handleSave.bind(this);
 	}
 
-	componentWillReceiveProps(nextProps: Props) {
+	UNSAFE_componentWillReceiveProps(nextProps: Props) {
 		this.setState({
 			labelsData: nextProps.labelsData,
 			isSaving: false,
@@ -261,6 +261,7 @@ class LabelFilter extends Component<Props, State> {
 												{colors.map((color) => {
 													return (
 														<span
+															aria-label="Select color"
 															role="button"
 															tabIndex={-1}
 															key={color}

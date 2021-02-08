@@ -25,9 +25,7 @@ const sortPubsByPublishDate = (pubs: Pub[], reversed = false) => {
 	const reverseFactor = reversed ? -1 : 1;
 	const publishDateById = {};
 	pubs.forEach((pub) => {
-		publishDateById[pub.id] = getPubPublishedDate(
-			pub
-		)?.valueOf();
+		publishDateById[pub.id] = getPubPublishedDate(pub)?.valueOf();
 	});
 	return pubs.concat().sort((a, b) => {
 		const pubDateA = publishDateById[a.id];

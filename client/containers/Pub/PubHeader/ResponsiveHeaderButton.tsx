@@ -13,15 +13,8 @@ type Props = {
 	labelPosition?: string;
 };
 
-const defaultProps = {
-	simpleLabel: undefined,
-	showCaret: false,
-	outerLabel: undefined,
-	labelPosition: undefined,
-};
-
-const ResponsiveHeaderButton = React.forwardRef<any, Props>((props, ref) => {
-	const { labelPosition, outerLabel, showCaret, simpleLabel, ...sharedProps } = props;
+const ResponsiveHeaderButton = React.forwardRef((props: Props, ref) => {
+	const { labelPosition, outerLabel, showCaret = false, simpleLabel, ...sharedProps } = props;
 	const largeOnlyProps = { outerLabel: outerLabel, showCaret: showCaret };
 	const smallOnlyProps = { labelPosition: labelPosition };
 
@@ -44,5 +37,5 @@ const ResponsiveHeaderButton = React.forwardRef<any, Props>((props, ref) => {
 	// @ts-expect-error ts-migrate(2322) FIXME: Type 'ReactNode' is not assignable to type 'string... Remove this comment to see the full error message
 	return <SmallHeaderButton {...sharedProps} {...smallOnlyProps} label={simpleLabel} ref={ref} />;
 });
-ResponsiveHeaderButton.defaultProps = defaultProps;
+
 export default ResponsiveHeaderButton;

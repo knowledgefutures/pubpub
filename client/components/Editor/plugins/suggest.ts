@@ -9,7 +9,7 @@ import {
 	getNodeLabelText,
 } from 'components/Editor/utils';
 import { Schema } from 'prosemirror-model';
-import { NodeLabelMap, ReferenceableNodeType } from '../types';
+import { NodeLabelMap } from '../types';
 
 type SuggestPluginProps = {
 	nodeLabels: NodeLabelMap;

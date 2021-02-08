@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { isProd } from 'utils/environment';
 
 import { getGdprConsentElection } from './legal/gdprConsent';

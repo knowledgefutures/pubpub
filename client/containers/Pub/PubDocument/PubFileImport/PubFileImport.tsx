@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AnchorButton } from '@blueprintjs/core';
-import { docIsEmpty, viewIsEmpty } from 'components/Editor';
+import { viewIsEmpty } from 'components/Editor';
 
 import FileImportDialog from './FileImportDialog';
 

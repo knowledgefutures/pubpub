@@ -47,7 +47,7 @@ storiesOf('components/Byline', module).add(
 			</p>
 			<h4>No prefix</h4>
 			<p>
-				<Byline contributors={[G, A, B, C]} linkToUsers={false}/>
+				<Byline contributors={[G, A, B, C]} linkToUsers={false} />
 			</p>
 			<h4>Custom empty state</h4>
 			<p>

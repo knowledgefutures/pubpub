@@ -55,21 +55,6 @@ const Search = (props: Props) => {
 	const clientRef = useRef<null | SearchClient>(null);
 	const indexRef = useRef<null | SearchIndex>(null);
 
-	const setClient = () => {
-		const allowedModes = ['pubs', 'pages'];
-		if (allowedModes.indexOf(mode) > -1) {
-			let key;
-			if (mode === 'pubs') {
-				key = searchData.pubsSearchKey;
-			}
-			if (mode === 'pages') {
-				key = searchData.pagesSearchKey;
-			}
-			clientRef.current = algoliasearch(searchData.searchId, key);
-			indexRef.current = clientRef.current.initIndex(mode);
-		}
-	};
-
 	useEffect(() => {
 		const { current: input } = inputRef;
 		if (input) {
@@ -84,7 +69,21 @@ const Search = (props: Props) => {
 	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	// Update search client when mode changes
-	useEffect(setClient, [mode]);
+	useEffect(() => {
+		const allowedModes = ['pubs', 'pages'];
+		if (allowedModes.indexOf(mode) > -1) {
+			let key;
+			if (mode === 'pubs') {
+				key = searchData.pubsSearchKey;
+			}
+			if (mode === 'pages') {
+				key = searchData.pagesSearchKey;
+			}
+			clientRef.current = algoliasearch(searchData.searchId, key);
+			indexRef.current = clientRef.current.initIndex(mode);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [mode]);
 
 	useEffect(() => {
 		// Execute search when search text (throttled), page, or mode changes

@@ -42,7 +42,7 @@ const ProposedTerms = function(props) {
 			</p>
 			<h3>Site Content</h3>
 			<p>
-				Except where otherwise noted, Site Content is licensed by its owners under the 
+				Except where otherwise noted, Site Content is licensed by its owners under the
 				<a href="https://creativecommons.org/licenses/by/4.0/" title="">
 					Creative Commons Attribution (CC-BY) 4.0 License
 				</a>
@@ -202,7 +202,7 @@ const ProposedTerms = function(props) {
 				These Terms of Service (including the Acceptable Use Policy) constitute the entire
 				agreement between you and us with respect to your use of the Site, superseding any
 				prior agreements. KFI reserves the right to these Terms of Service and to modify
-				PubPub’s features at any time by posting changes to these Terms of Service at 
+				PubPub’s features at any time by posting changes to these Terms of Service at
 				<a
 					href={`https://${props.hostname}/legal/proposed-terms`}
 				>{`${props.hostname}/legal/proposed-terms`}</a>
@@ -244,7 +244,7 @@ const ProposedTerms = function(props) {
 			</p>
 			<h3>Questions and Comments</h3>
 			<p>
-				If you have any questions about these Terms of Service, please contact 
+				If you have any questions about these Terms of Service, please contact
 				<a href="mailto:help@pubpub.org?subject=Terms%252520Question" title="">
 					help@pubpub.org
 				</a>

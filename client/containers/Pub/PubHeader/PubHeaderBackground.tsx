@@ -21,16 +21,16 @@ type Props = {
 	safetyLayer?: 'enabled' | 'full-height';
 };
 
-const defaultProps = {
-	className: '',
-	children: null,
-	blur: false,
-	style: {},
-	safetyLayer: null,
-};
-
-const PubHeaderBackground = React.forwardRef<any, Props>((props, ref) => {
-	const { children, className, pubData, communityData, blur, style, safetyLayer } = props;
+const PubHeaderBackground = React.forwardRef((props: Props, ref: React.Ref<any>) => {
+	const {
+		children = null,
+		className = '',
+		pubData,
+		communityData,
+		blur = false,
+		style = {},
+		safetyLayer = null,
+	} = props;
 	const { headerBackgroundColor, headerBackgroundImage } = pubData;
 
 	const effectiveBackgroundColor = calculateBackgroundColor(
@@ -74,6 +74,5 @@ const PubHeaderBackground = React.forwardRef<any, Props>((props, ref) => {
 		</div>
 	);
 });
-// @ts-expect-error ts-migrate(2322) FIXME: Type '{ className: string; children: null; blur: b... Remove this comment to see the full error message
-PubHeaderBackground.defaultProps = defaultProps;
+
 export default PubHeaderBackground;

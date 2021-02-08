@@ -54,7 +54,7 @@ const getIndicatorStyle = (accentColor) => {
 
 const popoverModifiers = { preventOverflow: { enabled: false }, flip: { enabled: false } };
 
-const FormattingBarButton = React.forwardRef<unknown, FormattingBarButtonProps>((props, ref) => {
+const FormattingBarButton = React.forwardRef((props: FormattingBarButtonProps, ref) => {
 	const {
 		disabled = false,
 		formattingItem,

@@ -88,7 +88,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 				onUpdateCollection({ doi: dois.collection });
 				this.setState({ isGettingDoi: false, deposited: true });
 			})
-			.catch((error) => {
+			.catch(() => {
 				this.setState({ isGettingDoi: false });
 			});
 	}
@@ -110,7 +110,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 				onUpdateCollection({ metadata: metadata, title: title });
 				this.setState({ isSaving: false, saved: true });
 			})
-			.catch((error) => {
+			.catch(() => {
 				this.setState({ isSaving: false });
 			});
 	}

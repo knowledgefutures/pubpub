@@ -38,6 +38,9 @@ export const buildLabel = (node: Node, customBlockName?: string) => {
 	return null;
 };
 
+export const isNodeLabelEnabled = (node: Node, nodeLabels: NodeLabelMap) =>
+	Boolean(nodeLabels[node.type.name as ReferenceableNodeType]?.enabled) && !node.attrs.hideLabel;
+
 export const getReferenceForNode = (
 	node: Node,
 	editorState: EditorState,
@@ -112,6 +115,3 @@ export const getDefaultNodeLabels = (pub: any): NodeLabelMap => {
 
 export const getNodeLabelText = (node: Node, nodeLabels: NodeLabelMap) =>
 	nodeLabels[node.type.name as ReferenceableNodeType]?.text;
-
-export const isNodeLabelEnabled = (node: Node, nodeLabels: NodeLabelMap) =>
-	Boolean(nodeLabels[node.type.name as ReferenceableNodeType]?.enabled) && !node.attrs.hideLabel;

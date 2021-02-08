@@ -90,10 +90,14 @@ const nodeLabelEditorReducer = (state: NodeLabelMap, action: NodeLabelEditorActi
 				[nodeType]: { ...state[nodeType], text: text },
 			};
 		}
+		default: {
+			return state;
+		}
 	}
 };
 
 const useNodeLabelEditorState = (pub: any) => {
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const initialState = useMemo(() => getDefaultNodeLabels(pub), []);
 	const [state, dispatch] = useReducer(nodeLabelEditorReducer, initialState);
 	const toggleNode = useCallback(
@@ -124,6 +128,7 @@ const NodeLabelEditor = (props: NodeLabelEditorProps) => {
 	const { pubData, updatePubData } = props;
 	const { state, toggleAll, toggleNode, updateLabel } = useNodeLabelEditorState(pubData);
 	const [stateToPersist] = useDebounce(state, 500);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const initialState = useMemo(() => state, []);
 
 	useEffect(() => {
@@ -132,6 +137,7 @@ const NodeLabelEditor = (props: NodeLabelEditorProps) => {
 				nodeLabels: stateToPersist,
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stateToPersist]);
 
 	return (
@@ -161,8 +167,8 @@ const NodeLabelEditor = (props: NodeLabelEditorProps) => {
 								type={nodeDefaults[nodeType as ReferenceableNodeType].text}
 								enabled={enabled}
 								text={text}
-								onTextChange={(text) => updateLabel(nodeType, text)}
-								onToggle={(enabled) => toggleNode(nodeType, enabled)}
+								onTextChange={(textValue) => updateLabel(nodeType, textValue)}
+								onToggle={(enabledValue) => toggleNode(nodeType, enabledValue)}
 							/>
 						);
 					})}

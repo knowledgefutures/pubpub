@@ -3,7 +3,6 @@ import React from 'react';
 import { getNotes } from 'components/Editor/utils';
 import { PubPageData } from 'utils/types';
 
-import { usePubContext } from '../../pubHooks';
 import LicenseSection from './LicenseSection';
 import SearchableNoteSection from './SearchableNoteSection';
 import DiscussionsSection from './Discussions/DiscussionsSection';
@@ -40,30 +39,16 @@ const PubBottom = (props: Props) => {
 				<ReadNextSection pubData={pubData} />
 				{footnotes.length > 0 && (
 					<SearchableNoteSection
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; items: never[]; nodeType: s... Remove this comment to see the full error message
 						title="Footnotes"
 						items={footnotes}
-						nodeType="footnote"
 						searchPlaceholder="Search footnotes..."
-						viewNode={
-							editorChangeObject &&
-							editorChangeObject.view &&
-							editorChangeObject.view.dom
-						}
 					/>
 				)}
 				{citations.length > 0 && (
 					<SearchableNoteSection
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ title: string; items: never[]; nodeType: s... Remove this comment to see the full error message
 						title="Citations"
 						items={citations}
-						nodeType="citation"
 						searchPlaceholder="Search citations..."
-						viewNode={
-							editorChangeObject &&
-							editorChangeObject.view &&
-							editorChangeObject.view.dom
-						}
 					/>
 				)}
 				<LicenseSection pubData={pubData} updateLocalData={updateLocalData} />

@@ -29,7 +29,7 @@ storiesOf('components/Menu', module)
 					const { ref, ...restProps } = props;
 					return (
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '((instance: any) => void) | RefObject<any> |... Remove this comment to see the full error message
-						<Button rightIcon="caret-down" {...restProps} elementRef={props.ref}>
+						<Button rightIcon="caret-down" {...restProps} elementRef={ref}>
 							Hello there
 						</Button>
 					);

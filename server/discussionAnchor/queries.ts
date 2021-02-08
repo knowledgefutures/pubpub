@@ -1,6 +1,4 @@
-import { Node } from 'prosemirror-model';
-import { Selection } from 'prosemirror-state';
-import { Mapping, Step } from 'prosemirror-transform';
+import { Step } from 'prosemirror-transform';
 
 import { DiscussionAnchor } from 'server/models';
 import { DiscussionAnchor as DiscussionAnchorType } from 'utils/types';

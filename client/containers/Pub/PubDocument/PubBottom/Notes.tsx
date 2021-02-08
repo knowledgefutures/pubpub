@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
 
 import { Icon, PubNoteContent } from 'components';
 
@@ -8,23 +7,16 @@ import { usePubContext } from '../../pubHooks';
 
 require('./notes.scss');
 
-type notePropType = {
+export type NotePropType = {
 	structuredValue?: string;
 	unstructuredValue?: string;
+	html?: string;
 	count?: number;
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ structuredValue: Re... Remove this comment to see the full error message
-const notePropType: PropTypes.Requireable<notePropType> = PropTypes.shape({
-	structuredValue: PropTypes.string,
-	unstructuredValue: PropTypes.string,
-	count: PropTypes.number,
-});
-export { notePropType };
-
 type NotesProps = {
 	accentColor: string;
-	notes: notePropType[];
+	notes: NotePropType[];
 };
 
 const scrollToNode = (node) => {
@@ -52,7 +44,7 @@ const findLastElementChild = (node) => {
 
 type NoteProps = {
 	accentColor: string;
-	note: notePropType;
+	note: NotePropType;
 };
 
 const Note = (props: NoteProps) => {

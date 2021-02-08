@@ -26,6 +26,7 @@ const ReferenceFinder = (props: ReferenceFinderProps) => {
 					active={reference === activeReference}
 				/>
 			)),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[references, activeReference],
 	);
 

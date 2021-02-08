@@ -17,7 +17,7 @@ const isInViewport = (rect: DOMRect, offsets: { top?: number; left?: number } = 
 	const { top, left, bottom, right } = rect;
 	const { innerWidth, innerHeight } = window;
 	const { clientWidth, clientHeight } = document.documentElement;
-	const { top: offsetTop, left: offsetLeft } = Object.assign({ top: 0, left: 0 }, offsets);
+	const { top: offsetTop, left: offsetLeft } = { top: 0, left: 0, ...offsets };
 
 	return (
 		top >= offsetTop &&
@@ -50,7 +50,6 @@ const scrollToElementTop = (hash: string, delay = 0) => {
 };
 
 const Pub = (props: Props) => {
-	const { pubData } = props;
 	const { loginData, locationData, communityData } = usePageContext();
 
 	useEffect(() => {
@@ -74,11 +73,13 @@ const Pub = (props: Props) => {
 			}
 		};
 
-		if (pubData.isReadOnly) {
+		if (props.pubData.isReadOnly) {
 			document.addEventListener('click', onClick);
 			return () => document.removeEventListener('click', onClick);
 		}
-	}, [pubData]);
+
+		return () => {};
+	}, [props.pubData]);
 
 	return (
 		<PubSuspendWhileTypingProvider>

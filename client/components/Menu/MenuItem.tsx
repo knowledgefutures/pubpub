@@ -57,8 +57,8 @@ const DisplayMenuItem = React.forwardRef((props: DisplayMenuItemProps, ref) => {
 
 	return (
 		// The ...restProps are from Reakit and help us handle the interactions accessibly.
-		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		// @ts-expect-error ts-migrate(2322) FIXME: Type '((instance: unknown) => void) | MutableRefOb... Remove this comment to see the full error message
+		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<li {...restProps} ref={ref} onClick={onClickWithHref}>
 			<a
 				href={href}

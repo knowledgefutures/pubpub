@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
-import { Button, Callout, Divider } from '@blueprintjs/core';
+import { Button, Callout } from '@blueprintjs/core';
 
 import { PubEdgeListingCard, PubEdgeEditor } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';

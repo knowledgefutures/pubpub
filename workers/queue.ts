@@ -1,7 +1,7 @@
 /* eslint-disable global-require, no-console */
 import path from 'path';
 // eslint-disable-next-line import/no-unresolved
-import { Worker, WorkerOptions } from 'worker_threads';
+import { Worker } from 'worker_threads';
 import amqplib from 'amqplib';
 import * as Sentry from '@sentry/node';
 

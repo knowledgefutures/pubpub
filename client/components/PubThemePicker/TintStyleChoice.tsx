@@ -9,12 +9,8 @@ type Props = {
 	selected?: boolean;
 };
 
-const defaultProps = {
-	onClick: null,
-	selected: false,
-};
-
-const TintStyleChoice = React.forwardRef<any, Props>(({ label, onClick, color, selected }, ref) => {
+const TintStyleChoice = React.forwardRef((props: Props, ref) => {
+	const { label, onClick, color, selected } = props;
 	return (
 		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 		<Button className="tint-choice" onClick={onClick} ref={ref} title={label}>
@@ -29,6 +25,5 @@ const TintStyleChoice = React.forwardRef<any, Props>(({ label, onClick, color, s
 		</Button>
 	);
 });
-// @ts-expect-error ts-migrate(2322) FIXME: Type '{ onClick: null; selected: boolean; }' is no... Remove this comment to see the full error message
-TintStyleChoice.defaultProps = defaultProps;
+
 export default TintStyleChoice;

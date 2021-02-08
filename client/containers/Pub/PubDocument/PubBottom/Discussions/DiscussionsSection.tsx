@@ -29,7 +29,6 @@ const DiscussionsSection = (props: Props) => {
 
 	const nonClosedDiscussions = discussions.filter((ds) => !ds.isClosed);
 
-	// @ts-expect-error ts-migrate(2786) FIXME: 'SectionBullets' cannot be used as a JSX component... Remove this comment to see the full error message
 	const renderCenterItems = () => <SectionBullets>{nonClosedDiscussions.length}</SectionBullets>;
 
 	// eslint-disable-next-line react/prop-types
@@ -115,9 +114,7 @@ const DiscussionsSection = (props: Props) => {
 			accentColor={communityData.accentColorDark}
 			isSearchable={true}
 			title="Comments"
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '() => JSX.Element' is not assignable to type... Remove this comment to see the full error message
 			centerItems={renderCenterItems}
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '({ isExpanded, iconColor }: { isExpanded: an... Remove this comment to see the full error message
 			iconItems={renderIconItems}
 			defaultExpanded={true}
 			searchPlaceholder="Search comments..."

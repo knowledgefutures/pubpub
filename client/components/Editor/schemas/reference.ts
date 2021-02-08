@@ -18,7 +18,7 @@ export default {
 			targetId: { default: null },
 		},
 		reactiveAttrs: {
-			label(this: Hooks, node) {
+			label: function(this: Hooks, node) {
 				const { targetId } = node.attrs;
 				const { nodeLabels } = this.useDocumentState();
 
@@ -62,7 +62,7 @@ export default {
 				},
 			},
 		],
-		toDOM(node) {
+		toDOM: function(node) {
 			const { id, targetId, label } = node.attrs;
 
 			return [

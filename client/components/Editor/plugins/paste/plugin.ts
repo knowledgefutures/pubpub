@@ -37,7 +37,7 @@ export default (schema: Schema, options: PluginsOptions) => {
 				paste: createPasteHandler(mediaUploadHandler),
 				drop: createDropHandler(mediaUploadHandler),
 			},
-			decorations(this: Plugin<PluginState>, editorState: EditorState) {
+			decorations: function(this: Plugin<PluginState>, editorState: EditorState) {
 				const { decorations } = this.getState(editorState);
 				return decorations;
 			},

@@ -4,10 +4,10 @@ export const createContext = ({ actor, markCreated, resolveChildren, parents = [
 		markCreated,
 		resolveChildren,
 		parents,
-		extend(nextObj) {
+		extend: function(nextObj) {
 			return createContext({ ...this, ...nextObj });
 		},
-		extendWithParent(parentObj) {
+		extendWithParent: function(parentObj) {
 			return createContext({ ...this, parents: { ...this.parents, ...parentObj } });
 		},
 	};

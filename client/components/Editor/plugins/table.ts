@@ -9,7 +9,7 @@ import { buildLabel } from '../utils';
 function wrapDomSerializer(domSerializer: DOMSerializer) {
 	return Object.assign(Object.create(domSerializer), {
 		// Strip table captions when copying/pasting table elements.
-		serializeFragment(fragment, options) {
+		serializeFragment: function(fragment, options) {
 			const result = domSerializer.serializeFragment(fragment, options);
 			const tableCaptions = result.querySelectorAll('table > caption');
 

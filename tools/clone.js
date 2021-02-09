@@ -1,11 +1,11 @@
 import Bluebird from 'bluebird';
 
 import {
-	Branch,
 	Collection,
 	CollectionPub,
 	Community,
 	Discussion,
+	DiscussionAnchor,
 	Member,
 	Page,
 	Pub,
@@ -18,10 +18,12 @@ import {
 	User,
 } from 'server/models';
 
+import { createDraft, getDraftFirebasePath } from 'server/draft/queries';
 import { isProd } from 'utils/environment';
 import { generateHash } from 'utils/hashes';
 
 import { createFirebaseClient } from './utils/firebase';
+import { promptOkay } from './utils/prompt';
 
 const {
 	argv: { from, to, admin },
@@ -69,7 +71,7 @@ const cloneManyModels = async (Model, association, attributeMaps, withCreatedMod
 			const createdModel = await Model.create(nextModel);
 			map[model.id] = createdModel.id;
 			if (withCreatedModelFn) {
-				await withCreatedModelFn(createdModel);
+				await withCreatedModelFn(model, createdModel);
 			}
 			return createdModel;
 		}),
@@ -77,69 +79,68 @@ const cloneManyModels = async (Model, association, attributeMaps, withCreatedMod
 	return map;
 };
 
-const updateFirebaseBranchDiscussions = (branchJson, discussionIdMap) => {
-	const { discussions } = branchJson;
-	if (discussions) {
-		const nextDiscussions = {};
-		Object.keys(discussions).forEach((discussionId) => {
-			const mappedDiscussionId = discussionIdMap[discussionId];
-			nextDiscussions[mappedDiscussionId] = discussions[discussionId];
-		});
-		return { ...branchJson, discussions: nextDiscussions };
+const updateFirebaseDraftDiscussions = (draftJson, discussionIdMap) => {
+	if (draftJson) {
+		const { discussions } = draftJson;
+		if (discussions) {
+			const nextDiscussions = {};
+			Object.keys(discussions).forEach((discussionId) => {
+				const mappedDiscussionId = discussionIdMap[discussionId];
+				nextDiscussions[mappedDiscussionId] = discussions[discussionId];
+			});
+			return { ...draftJson, discussions: nextDiscussions };
+		}
 	}
-	return branchJson;
+	return draftJson;
 };
 
-const cloneFirebasePub = async ({ existingPubId, newPubId, branchIdMap, discussionIdMap }) => {
-	const pubJson = await firebaseClient.read(existingPubId);
-	if (pubJson) {
-		const nextPubJson = {};
-		Object.keys(pubJson).forEach((key) => {
-			const match = key.match(/^branch-(.*)$/);
-			if (match) {
-				const branchId = match[1];
-				const mappedBranchId = branchIdMap[branchId];
-				nextPubJson[`branch-${mappedBranchId}`] = updateFirebaseBranchDiscussions(
-					pubJson[key],
-					discussionIdMap,
-				);
-			}
-		});
-		await firebaseClient.write(newPubId, nextPubJson);
+const cloneFirebaseDraft = async ({ existingDraftId, newDraftId, discussionIdMap }) => {
+	const [existingDraftPath, newDraftPath] = await Promise.all(
+		[existingDraftId, newDraftId].map((id) => getDraftFirebasePath(id)),
+	);
+	if (!newDraftPath.startsWith('drafts/draft-')) {
+		throw new Error(`Refusing to write to potentially dangerous draft path ${newDraftPath}`);
 	}
+	const draftJson = await firebaseClient.read(existingDraftPath);
+	const draftJsonWithUpdatedDiscussions = updateFirebaseDraftDiscussions(
+		draftJson,
+		discussionIdMap,
+	);
+	await firebaseClient.write(newDraftPath, draftJsonWithUpdatedDiscussions);
 };
 
 const clonePub = async ({ pubId, newCommunityId, collectionIdMap }) => {
+	const draft = await createDraft();
 	const [existingPub, newPub] = await cloneModel(Pub, pubId, {
 		communityId: newCommunityId,
 		slug: generateHash(8),
+		draftId: draft.id,
 	});
 	// eslint-disable-next-line no-console
 	console.log('Cloning', newPub.title);
-	const branchIdMap = await cloneManyModels(
-		Branch,
-		{ pubId: existingPub.id },
-		{ pubId: newPub.id },
-	);
 	const discussionIdMap = await cloneManyModels(
 		Discussion,
 		{ pubId: existingPub.id },
 		{ pubId: newPub.id },
-		async (discussion) => {
-			const [existingThread, newThread] = await cloneModel(Thread, discussion.threadId);
-			await Discussion.update({ threadId: newThread.id }, { where: { id: discussion.id } });
+		async (oldDiscussion, newDiscussion) => {
+			const [existingThread, newThread] = await cloneModel(Thread, newDiscussion.threadId);
+			await Discussion.update(
+				{ threadId: newThread.id },
+				{ where: { id: newDiscussion.id } },
+			);
 			await cloneManyModels(
 				ThreadComment,
 				{ threadId: existingThread.id },
 				{ threadId: newThread.id },
 			);
+			await cloneManyModels(
+				DiscussionAnchor,
+				{ discussionId: oldDiscussion.id },
+				{ discussionId: newDiscussion.id },
+			);
 		},
 	);
-	await cloneManyModels(
-		Release,
-		{ pubId: existingPub.id },
-		{ pubId: newPub.id, branchId: branchIdMap },
-	);
+	await cloneManyModels(Release, { pubId: existingPub.id }, { pubId: newPub.id });
 	await cloneManyModels(
 		CollectionPub,
 		{ pubId: existingPub.id },
@@ -152,10 +153,9 @@ const clonePub = async ({ pubId, newCommunityId, collectionIdMap }) => {
 	);
 	await cloneManyModels(PubAttribution, { pubId: existingPub.id }, { pubId: newPub.id });
 	await cloneManyModels(PubVersion, { pubId: existingPub.id }, { pubId: newPub.id });
-	await cloneFirebasePub({
-		existingPubId: existingPub.id,
-		newPubId: newPub.id,
-		branchIdMap,
+	await cloneFirebaseDraft({
+		existingDraftId: existingPub.draftId,
+		newDraftId: newPub.draftId,
 		discussionIdMap,
 	});
 	return newPub;
@@ -179,50 +179,81 @@ const clonePubs = async ({ existingCommunityId, newCommunityId, collectionIdMap 
 	return pubIdMap;
 };
 
-const updatePageContent = async ({ newCommunityId, pubIdMap, pageIdMap, collectionIdMap }) => {
+const getUpdatedLayoutblockContent = ({ block, pubIdMap, pageIdMap, collectionIdMap }) => {
+	const { content } = block;
+	const { pubIds, pageIds, collectionIds } = content;
+	if (content) {
+		return {
+			...block,
+			content: {
+				...content,
+				...(pubIds && { pubIds: pubIds.map((id) => pubIdMap[id]) }),
+				...(pageIds && { pageIds: pageIds.map((id) => pageIdMap[id]) }),
+				...(collectionIds && {
+					collectionIds: collectionIds.map((id) => collectionIdMap[id]),
+				}),
+			},
+		};
+	}
+	return block;
+};
+
+const updateLayoutContent = async ({ newCommunityId, pubIdMap, pageIdMap, collectionIdMap }) => {
 	const allPages = await Page.findAll({ where: { communityId: newCommunityId } });
-	return Promise.all(
+	const allCollections = await Collection.findAll({ where: { communityId: newCommunityId } });
+	await Promise.all(
 		allPages.map((page) => {
-			const nextLayout = page.layout.map((block) => {
-				const { content } = block;
-				const { pubIds, pageIds, collectionIds } = content;
-				return {
-					...block,
-					content: {
-						...content,
-						...(pubIds && { pubIds: pubIds.map((id) => pubIdMap[id]) }),
-						...(pageIds && { pageIds: pageIds.map((id) => pageIdMap[id]) }),
-						...(collectionIds && {
-							collectionIds: collectionIds.map((id) => collectionIdMap[id]),
-						}),
-					},
-				};
-			});
-			// eslint-disable-next-line no-param-reassign
+			const nextLayout = page.layout.map((block) =>
+				getUpdatedLayoutblockContent({ block, pubIdMap, pageIdMap, collectionIdMap }),
+			);
 			page.layout = nextLayout;
 			return page.save();
 		}),
 	);
+	await Promise.all(
+		allCollections.map((collection) => {
+			const nextBlocks = collection.layout.blocks.map((block) =>
+				getUpdatedLayoutblockContent({ block, pubIdMap, pageIdMap, collectionIdMap }),
+			);
+			collection.layout = { ...collection.layout, blocks: nextBlocks };
+			return collection.save();
+		}),
+	);
 };
 
-const getUpdatedCommunityNavigation = (items, pageIdMap) => {
-	return items.map((item) => {
-		if (typeof item === 'string') {
-			return pageIdMap[item];
-		}
-		if (item.children) {
-			return {
-				...item,
-				children: getUpdatedCommunityNavigation(item.children, pageIdMap),
-			};
-		}
-		return item;
-	});
+const getUpdatedCommunityNavigation = ({ items, pageIdMap, collectionIdMap }) => {
+	if (items) {
+		return items.map((item) => {
+			if (item.type === 'page') {
+				return { ...item, id: pageIdMap[item.id] };
+			}
+			if (item.type === 'collection') {
+				return { ...item, id: collectionIdMap[item.id] };
+			}
+			if (item.children) {
+				return {
+					...item,
+					children: getUpdatedCommunityNavigation(item.children, pageIdMap),
+				};
+			}
+			return item;
+		});
+	}
+	return items;
 };
 
 const updateCommunityContent = async ({ community, pageIdMap, collectionIdMap }) => {
 	// eslint-disable-next-line no-param-reassign
-	community.navigation = getUpdatedCommunityNavigation(community.navigation, pageIdMap);
+	community.navigation = getUpdatedCommunityNavigation({
+		items: community.navigation,
+		pageIdMap,
+		collectionIdMap,
+	});
+	community.footerLinks = getUpdatedCommunityNavigation({
+		items: community.footerLinks,
+		pageIdMap,
+		collectionIdMap,
+	});
 	// eslint-disable-next-line no-param-reassign
 	community.defaultPubCollections = community.defaultPubCollections.map(
 		(collectionId) => collectionIdMap[collectionId],
@@ -240,7 +271,21 @@ const createAdmin = async ({ communityId, userSlug }) => {
 	});
 };
 
+const maybeDestroyPreviouslyCreatedCommunity = async (newSubdomain) => {
+	const existingCommunity = await Community.findOne({ where: { subdomain: newSubdomain } });
+	if (existingCommunity && !isProd()) {
+		await promptOkay(
+			`Destroy existing Community "${existingCommunity.title}" at ${existingCommunity.subdomain}?`,
+			{
+				throwIfNo: true,
+			},
+		);
+		await existingCommunity.destroy();
+	}
+};
+
 const cloneCommunity = async (existingSubdomain, newSubdomain) => {
+	await maybeDestroyPreviouslyCreatedCommunity(newSubdomain);
 	const existingCommunity = await Community.findOne({ where: { subdomain: existingSubdomain } });
 	// eslint-disable-next-line no-unused-vars
 	const [_, newCommunity] = await cloneModel(Community, existingCommunity.id, {
@@ -263,7 +308,7 @@ const cloneCommunity = async (existingSubdomain, newSubdomain) => {
 			newCommunityId: newCommunity.id,
 			collectionIdMap,
 		});
-		await updatePageContent({
+		await updateLayoutContent({
 			newCommunityId: newCommunity.id,
 			pubIdMap,
 			collectionIdMap,

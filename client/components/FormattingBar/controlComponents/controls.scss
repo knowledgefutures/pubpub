@@ -131,6 +131,9 @@
 			display: flex;
 			flex-grow: 1;
 		}
+		.bp3-control.bp3-disabled {
+			color: rgba(white, 0.6);
+		}
 	}
 
 	.controls-button-group {

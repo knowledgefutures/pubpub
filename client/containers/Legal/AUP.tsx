@@ -1,9 +1,9 @@
 import React from 'react';
 
-const ProposedAUP = function() {
+const AUP = function() {
 	return (
 		<div>
-			<h2>Proposed Acceptable User Policy</h2>
+			<h2>Acceptable User Policy</h2>
 			<p>
 				This PubPub Acceptable Use Policy (“AUP”) is made a part of and is subject to the
 				applicable Terms of Service (“Agreement”) between you and PubPub. Capitalized terms
@@ -85,4 +85,4 @@ const ProposedAUP = function() {
 	);
 };
 
-export default ProposedAUP;
+export default AUP;

@@ -84,18 +84,16 @@ app.get(
 			const pubData = await Pub.findOne({
 				where: { slug },
 				attributes: ['id', 'slug', 'viewHash', 'editHash'],
-				include: [{ model: Release, as: 'releases' }],
 			});
 
 			if (!pubData) {
 				throw new Error('Pub Not Found');
 			}
 
-			const releaseNumber = versionNumber
-				? parseInt(versionNumber, 10)
-				: pubData.releases.length;
+			const baseUrl = versionNumber
+				? `${prefix}/release/${parseInt(versionNumber, 10)}`
+				: prefix;
 
-			const baseUrl = `${prefix}/release/${releaseNumber}`;
 			const redirectUrl = queryString.stringifyUrl({ url: baseUrl, query: req.query });
 			return res.redirect(redirectUrl);
 		} catch (err) {

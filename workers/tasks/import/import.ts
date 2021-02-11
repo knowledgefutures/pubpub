@@ -21,18 +21,16 @@ const dataRoot = process.env.NODE_ENV === 'production' ? '/app/.apt/usr/share/pa
 
 const createPandocArgs = (pandocFormat, tmpDirPath, metadataPath) => {
 	const shouldExtractMedia = ['odt', 'docx', 'epub'].includes(pandocFormat);
-	return (
-		[
-			dataRoot && [`--data-dir=${dataRoot}`],
-			['-f', pandocFormat],
-			['-t', 'json'],
-			metadataPath && [`--metadata-file=${metadataPath}`],
-			shouldExtractMedia && [`--extract-media=${path.join(tmpDirPath, 'media')}`],
-		]
-			.filter((x) => x)
-			// @ts-expect-error ts-migrate(2488) FIXME: Type 'string | false | any[]' must have a '[Symbol... Remove this comment to see the full error message
-			.reduce((acc, next) => [...acc, ...next], [])
-	);
+	return [
+		dataRoot && [`--data-dir=${dataRoot}`],
+		['-f', pandocFormat],
+		['-t', 'json'],
+		metadataPath && [`--metadata-file=${metadataPath}`],
+		shouldExtractMedia && [`--extract-media=${path.join(tmpDirPath, 'media')}`],
+		pandocFormat === 'latex' && ['--verbose'],
+	]
+		.filter((x): x is string[] => !!x)
+		.reduce((acc, next) => [...acc, ...next], []);
 };
 
 const callPandoc = (tmpDirPath, files, args) => {
@@ -91,7 +89,10 @@ const getPandocAst = ({
 			`Conversion from ${path.basename(documentPath)} failed. Pandoc says: ${pandocError}`,
 		);
 	}
-	return runTransforms(parsePandocJson(pandocRawAst), importerFlags);
+	return {
+		pandocErrorOutput: pandocError,
+		pandocAst: runTransforms(parsePandocJson(pandocRawAst), importerFlags),
+	};
 };
 
 export const importFiles = async ({
@@ -105,7 +106,7 @@ export const importFiles = async ({
 	const { preambles, document, bibliography, supplements, metadata } = categorizeSourceFiles(
 		sourceFiles,
 	);
-	const pandocAst = getPandocAst({
+	const { pandocAst, pandocErrorOutput } = getPandocAst({
 		documentPath: document.tmpPath,
 		metadataPath: metadata && metadata.tmpPath,
 		preamblePaths: preambles.map((p) => p.tmpPath),
@@ -137,6 +138,7 @@ export const importFiles = async ({
 	return {
 		doc: prosemirrorDoc,
 		warnings: resourceTransformer.getWarnings(),
+		pandocErrorOutput,
 		proposedMetadata,
 		...(provideRawMetadata && { rawMetadata: getRawMetadata(pandocAst.meta) }),
 	};

@@ -1,9 +1,12 @@
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { flattenOnce, isEmptySelection, getRangeFromSelection } from './util';
-import { DiscussionInfo, Discussions, DiscussionsUpdateResult } from './types';
-
-type DiscussionDecoration = Decoration<{ key: string; widgetForDiscussionId?: string }>;
+import {
+	DiscussionInfo,
+	Discussions,
+	DiscussionsUpdateResult,
+	DiscussionDecoration,
+} from './types';
 
 const createInlineDecoration = (
 	discussionId: string,

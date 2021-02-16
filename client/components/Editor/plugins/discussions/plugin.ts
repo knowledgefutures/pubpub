@@ -9,7 +9,7 @@ import { getDecorationsForDiscussions, getDecorationsForUpdateResult } from './d
 import { createDiscussionsState } from './discussionsState';
 import { createFastForwarder } from './fastForward';
 import { connectToFirebaseDiscussions } from './firebase';
-import { DiscussionsUpdateResult, DiscussionSelection } from './types';
+import { DiscussionsUpdateResult, DiscussionSelection, DiscussionDecoration } from './types';
 
 export const discussionsPluginKey = new PluginKey('discussions');
 
@@ -104,6 +104,22 @@ export const addDiscussionToView = (
 		return pluginState.addDiscussion(id, selection);
 	}
 	return null;
+};
+
+export const getAnchoredDiscussionIds = (view: EditorView) => {
+	const pluginState = discussionsPluginKey.getState(view.state) as null | PluginState;
+	if (pluginState) {
+		const { decorations } = pluginState;
+		const ids: string[] = [];
+		decorations.find().forEach((decoration) => {
+			const { widgetForDiscussionId } = decoration.spec as DiscussionDecoration['spec'];
+			if (widgetForDiscussionId) {
+				ids.push(widgetForDiscussionId);
+			}
+		});
+		return ids;
+	}
+	return [];
 };
 
 export default (_, options: PluginsOptions) => {

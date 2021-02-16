@@ -3,6 +3,8 @@ import { Popover, Position } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
 import { PubPageData } from 'utils/types';
+import { getAnchoredDiscussionIds } from 'components/Editor/plugins/discussions';
+import { usePubContext } from 'client/containers/Pub/pubHooks';
 
 import SortList from './SortList';
 import FilterMenu from './FilterMenu';
@@ -21,6 +23,9 @@ const DiscussionsSection = (props: Props) => {
 	const { pubData, updateLocalData, sideContentRef, mainContentRef } = props;
 	const { discussions } = pubData;
 	const { communityData, scopeData } = usePageContext();
+	const {
+		collabData: { editorChangeObject },
+	} = usePubContext();
 	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
 	const [isBrowsingArchive, setIsBrowsingArchive] = useState(false);
 	const [isShowingAnchoredComments, setShowingAnchoredComments] = useState(true);
@@ -98,13 +103,16 @@ const DiscussionsSection = (props: Props) => {
 	};
 
 	const createDiscussionFilter = (searchTerm) => (threads) => {
+		const hiddenDiscussionIds = isShowingAnchoredComments
+			? null
+			: getAnchoredDiscussionIds(editorChangeObject.view);
 		const res = filterAndSortDiscussions(
 			threads,
 			isBrowsingArchive,
 			sortMode,
 			filteredLabels,
 			searchTerm,
-			isShowingAnchoredComments,
+			hiddenDiscussionIds,
 		);
 		return res;
 	};

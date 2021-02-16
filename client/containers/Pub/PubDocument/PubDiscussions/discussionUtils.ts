@@ -145,8 +145,8 @@ export const filterAndSortDiscussions = (
 	isClosedList,
 	sortMode,
 	filteredLabels,
-	searchTerm = null,
-	showAnchoredDiscussions = true,
+	searchTerm: string | null = null,
+	hiddenDiscussionIds: null | string[] = null,
 ) => {
 	return discussions
 		.filter((discussion) => (isClosedList ? discussion.isClosed : !discussion.isClosed))
@@ -158,7 +158,9 @@ export const filterAndSortDiscussions = (
 				discussionMatchesSearchTerm(threadComment, searchTerm),
 			);
 		})
-		.filter((discussion) => !discussion.anchor || showAnchoredDiscussions)
+		.filter(
+			(discussion) => !hiddenDiscussionIds || !hiddenDiscussionIds.includes(discussion.id),
+		)
 		.filter((discussion) => {
 			if (filteredLabels.length === 0) {
 				return true;

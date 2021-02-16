@@ -93,7 +93,6 @@ const UtilityButtons = (props: Props) => {
 				<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
 			</Download>
 			{pubHeadings.length > 0 && (
-				// @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message
 				<PubToc headings={pubHeadings}>
 					<SmallHeaderButton label="Contents" labelPosition="left" icon="toc" />
 				</PubToc>

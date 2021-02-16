@@ -22,10 +22,9 @@ const PubHeaderSticky = (props: Props) => {
 			<div className="sticky-buttons">
 				{pubHeadings.length > 0 && (
 					<React.Fragment>
-						{/* @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message */}
-						<PubToc headings={pubHeadings}>
+						<PubToc headings={pubHeadings} limitHeight>
 							{({ ref, ...disclosureProps }) => (
-								<Button minimal={true} {...disclosureProps} elementRef={ref}>
+								<Button minimal={true} {...disclosureProps} elementRef={ref as any}>
 									Contents
 								</Button>
 							)}

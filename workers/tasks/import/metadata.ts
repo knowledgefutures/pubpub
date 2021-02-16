@@ -24,8 +24,7 @@ const getAttributions = async (author) => {
 		const attributions = await Promise.all(
 			authorEntries.map(async (authorEntry) => {
 				if (typeof authorEntry === 'string') {
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
-					const users = await getSearchUsers(authorEntry, null);
+					const users = await getSearchUsers(authorEntry);
 					return { name: authorEntry, users: users.map((user) => user.toJSON()) };
 				}
 				return authorEntry;

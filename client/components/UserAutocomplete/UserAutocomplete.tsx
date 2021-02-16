@@ -115,7 +115,7 @@ class UserAutocomplete extends Component<Props, State> {
 					}}
 					resetOnSelect={true}
 					onItemSelect={this.handleSelect}
-					noResults={<MenuItem disabled text="No results" />}
+					noResults={queryValue ? <MenuItem disabled text="No results" /> : null}
 					popoverProps={{
 						popoverClassName: 'user-autocomplete-popover',
 						minimal: true,

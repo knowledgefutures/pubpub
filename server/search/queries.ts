@@ -2,7 +2,10 @@ import { Op } from 'sequelize';
 
 import { User } from 'server/models';
 
-export const getSearchUsers = (searchString, limit = 5) => {
+export const getSearchUsers = async (searchString: string, limit = 5) => {
+	if (searchString.length === 0) {
+		return [];
+	}
 	return User.findAll({
 		where: {
 			[Op.or]: [

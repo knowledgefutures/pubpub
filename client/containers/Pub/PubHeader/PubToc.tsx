@@ -1,41 +1,38 @@
 /* eslint-disable no-multi-assign */
 import React from 'react';
+import classNames from 'classnames';
 
 import { Menu, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
 
 require('./pubToc.scss');
 
-type OwnProps = {
-	children: ((...args: any[]) => any) | React.ReactNode;
+type MenuType = React.ComponentProps<typeof Menu>;
+
+type Props = {
+	children: MenuType['disclosure'];
 	headings: {
 		title?: string;
 		index?: any;
 		href?: string;
+		level?: number;
 	}[];
 	onSelect?: (...args: any[]) => any;
-	placement?: string;
+	placement?: MenuType['placement'];
+	limitHeight?: boolean;
 };
-
-const defaultProps = {
-	onSelect: null,
-	placement: 'bottom-end',
-};
-
-type Props = OwnProps & typeof defaultProps;
 
 const PubToc = (props: Props) => {
-	const { headings, children, onSelect, placement } = props;
+	const { headings, children, limitHeight, onSelect = null, placement = 'bottom-end' } = props;
 	const { scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	return (
 		<Menu
 			aria-label="Table of contents"
-			className="pub-toc-component"
+			className={classNames('pub-toc-component', limitHeight && 'limit-height')}
 			disclosure={children}
 			placement={placement}
 		>
-			{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'map' does not exist on type 'never'. */}
 			{headings.map((heading) => {
 				return (
 					<MenuItem
@@ -48,7 +45,6 @@ const PubToc = (props: Props) => {
 							/* unexpectedly on reload given the async loading of doc. Instead, */
 							/* manually scroll to the position and offset by fixed header height. */
 							if (onSelect) {
-								// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 								onSelect();
 							}
 							if (canEdit || canEditDraft) {
@@ -68,5 +64,5 @@ const PubToc = (props: Props) => {
 		</Menu>
 	);
 };
-PubToc.defaultProps = defaultProps;
+
 export default PubToc;

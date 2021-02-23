@@ -1,5 +1,6 @@
 import { Node } from 'prosemirror-model';
 import { Mapping } from 'prosemirror-transform';
+import { Decoration } from 'prosemirror-view';
 
 export type Range = { from: number; to: number };
 
@@ -52,3 +53,8 @@ export type RemoteDiscussions = {
 	receiveDiscussions: (handler: DiscussionsHandler) => void;
 	disconnect: () => void;
 };
+
+export type DiscussionDecoration = Decoration<{
+	key: string;
+	widgetForDiscussionId?: string;
+}>;

@@ -13,10 +13,11 @@ export {
 	getPubCitations,
 	getPubEdges,
 } from './pubEnrich';
-export { default as sanitizePub } from './pubSanitize';
+export { default as sanitizePub, SanitizedPubData } from './pubSanitize';
 export { default as getOverview } from './overviewGet';
 export { default as sanitizeOverview } from './overviewSanitize';
 export { default as getScope } from './scopeGet';
 export { default as getUser } from './userGet';
 export { default as getReview } from './reviewGet';
 export { default as sanitizeReviews } from './reviewsSanitize';
+export { default as buildPubOptions, PubGetOptions } from './pubOptions';

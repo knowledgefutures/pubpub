@@ -29,7 +29,7 @@
 		.image-upload-component {
 			margin: 0em 0.5em;
 		}
-		.bp3-control.bp3-checkbox {
+		.input-field-component .bp3-control.bp3-checkbox {
 			display: inline-block;
 			margin-right: 2em;
 			margin: 0.5em 2em 0px 0px;
@@ -46,6 +46,7 @@
 		}
 	}
 	.block-content {
+		font-size: 14px;
 		padding: 1em 0em;
 		h1 {
 			font-size: 32px;
@@ -106,6 +107,50 @@
 		width: 600px;
 		max-width: 100vw;
 	}
+}
+
+.layout-editor-pubs-component {
+	&.loading {
+		.block-content {
+			opacity: 0.5;
+		}
+	}
+	.block-header.rows {
+		justify-content: unset;
+		flex-direction: column;
+		.controls-row {
+			display: flex;
+			margin: 0 0.5em;
+			& > .input-field-component {
+				margin: 0;
+			}
+			& > *:not(:last-child) {
+				margin-right: 0.5em;
+			}
+			&:not(:last-child) {
+				margin-bottom: 0.2em;
+			}
+		}
+	}
+	.block-content {
+		transition: 100ms opacity;
+	}
+}
+
+.layout-editor-pubs_limit-pubs-component {
+	padding: 10px 20px;
+	padding-bottom: 2px;
+	width: 300px;
+	user-select: none;
+	.bp3-control input {
+		// .bp3-control input has opacity: 0 in the default Blueprint styles. I have no idea why.
+		opacity: 1;
+	}
+}
+
+.layout-editor-pubs_preview-elements-component {
+	user-select: none;
+	padding: 10px 20px;
 }
 
 @supports (display: grid) {

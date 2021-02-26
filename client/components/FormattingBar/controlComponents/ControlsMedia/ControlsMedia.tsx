@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Checkbox, Classes, Tab, Tabs } from '@blueprintjs/core';
 import { Node } from 'prosemirror-model';
 
-import { SimpleEditor } from 'components';
+import { SimpleEditor, SliderInput } from 'components';
 
 import { usePubData } from 'client/containers/Pub/pubHooks';
 import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
@@ -10,7 +10,6 @@ import { imageCanBeResized } from 'client/components/Editor';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import AlignmentControl from './AlignmentControl';
-import SliderInputControl from './SliderInputControl';
 import SourceControls from './SourceControls';
 import { ControlsReferenceSettingsLink } from '../ControlsReference';
 
@@ -127,9 +126,9 @@ const ControlsMedia = (props: Props) => {
 	return (
 		<div className="controls-media-component">
 			<div className="section">
-				<SliderInputControl
-					minValue={1}
-					maxValue={100}
+				<SliderInput
+					min={1}
+					max={100}
 					leftLabel="Width"
 					rightLabel="%"
 					aria-label="Figure width (percentage)"
@@ -138,9 +137,9 @@ const ControlsMedia = (props: Props) => {
 					onChange={(nextSize) => updateNode({ size: nextSize })}
 				/>
 				{canEditHeight && (
-					<SliderInputControl
-						minValue={150}
-						maxValue={800}
+					<SliderInput
+						min={150}
+						max={800}
 						aria-label="Figure height (pixels)"
 						leftLabel="Height"
 						rightLabel="px"

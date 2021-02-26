@@ -1,0 +1,20 @@
+.slider-input-component {
+    display: flex;
+    align-items: center;
+    .bp3-input-group {
+        margin-left: 15px;
+        width: 50px;
+        display: flex;
+        align-items: center;
+    }
+    .left-label {
+        user-select: none;
+        width: 80px;
+        margin-right: 10px;
+    }
+    .right-label {
+        user-select: none;
+        margin-left: 3px;
+        width: 40px;
+    }
+}

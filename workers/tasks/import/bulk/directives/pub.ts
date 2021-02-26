@@ -99,7 +99,7 @@ const createPubAttributions = async (pub, proposedMetadata, directive) => {
 
 const resolveDirectiveValue = async (value, context) => {
 	const { $fileSize, $sourceFile, $metadata, $docQuery } = value;
-	const { sourceFiles, rawMetadata, assetUrlForTmpPath, doc } = context;
+	const { sourceFiles, rawMetadata, assetUrlForTmpPath, doc, withLeafValue = (x) => x } = context;
 	if ($docQuery) {
 		return jp.value(doc, $docQuery);
 	}
@@ -133,8 +133,10 @@ const resolveDirectiveValue = async (value, context) => {
 		return null;
 	}
 	if ($metadata) {
-		const key = await resolveDirectiveValue($metadata, context);
-		return rawMetadata[key];
+		return resolveDirectiveValue($metadata, {
+			...context,
+			withLeafValue: (key) => rawMetadata[key],
+		});
 	}
 	if (Array.isArray(value)) {
 		return Promise.all(value.map((innerValue) => resolveDirectiveValue(innerValue, context)));
@@ -148,7 +150,7 @@ const resolveDirectiveValue = async (value, context) => {
 		);
 		return res;
 	}
-	return value;
+	return withLeafValue(value);
 };
 
 const resolveDirectiveValues = async (directive, sourceFiles, rawMetadata, doc): Promise<any> => {

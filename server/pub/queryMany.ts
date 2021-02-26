@@ -2,12 +2,18 @@ import { QueryTypes, Op } from 'sequelize';
 import { QueryBuilder } from 'knex';
 
 import { knex, sequelize, Pub } from 'server/models';
-import { buildPubOptions, PubGetOptions } from 'server/utils/queryHelpers';
+import {
+	buildPubOptions,
+	sanitizePub,
+	PubGetOptions,
+	SanitizedPubData,
+} from 'server/utils/queryHelpers';
+import { InitialData } from 'utils/types';
 
 type PubQueryOrderingField = 'collectionRank' | 'publishDate' | 'updatedDate' | 'creationDate';
 export type PubQueryOrdering = { field: PubQueryOrderingField; direction: 'ASC' | 'DESC' };
 
-type PubsQuery = {
+export type PubsQuery = {
 	collectionIds?: null | string[];
 	communityId: string;
 	excludePubIds?: null | string[];
@@ -17,6 +23,7 @@ type PubsQuery = {
 	ordering?: PubQueryOrdering;
 	scopedCollectionId?: string;
 	withinPubIds?: null | string[];
+	title?: string;
 };
 
 const defaultColumns = {
@@ -28,13 +35,6 @@ const defaultColumns = {
 	updatedDate: knex.raw('greatest("Pubs"."updatedAt", max("Drafts"."latestKeyAt"))'),
 };
 
-const valueAssertedIn = <T>(value: T, range: T[]) => {
-	if (range.includes(value)) {
-		return value;
-	}
-	throw new Error(`${value} not in ${range}`);
-};
-
 const createColumns = (query: PubsQuery) => {
 	const { scopedCollectionId } = query;
 	const collectionRank = scopedCollectionId
@@ -44,7 +44,7 @@ const createColumns = (query: PubsQuery) => {
 };
 
 const createInnerWhereClause = (query: PubsQuery) => {
-	const { withinPubIds, excludePubIds, communityId } = query;
+	const { withinPubIds, excludePubIds, communityId, title } = query;
 	return (builder: QueryBuilder) => {
 		builder.where({ 'Pubs.communityId': communityId });
 		if (excludePubIds) {
@@ -52,6 +52,9 @@ const createInnerWhereClause = (query: PubsQuery) => {
 		}
 		if (withinPubIds) {
 			builder.where({ 'Pubs.id': knex.raw('some(?::uuid[])', [withinPubIds]) });
+		}
+		if (title) {
+			builder.whereRaw('"Pubs"."id" ilike ?', [`%${title}%`]);
 		}
 	};
 };
@@ -91,8 +94,9 @@ const createOrderLimitOffset = (query: PubsQuery) => {
 	return (builder: QueryBuilder) => {
 		if (ordering) {
 			const { field, direction } = ordering;
-			const paranoidDirection = valueAssertedIn(direction.toLowerCase(), ['asc', 'desc']);
-			builder.orderByRaw(`?? ${paranoidDirection} nulls last`, [field]);
+			const rawQueryString =
+				direction.toLowerCase() === 'asc' ? '?? asc nulls last' : '?? desc nulls last';
+			builder.orderByRaw(rawQueryString, [field]);
 		}
 		if (typeof limit === 'number') {
 			builder.limit(limit);
@@ -103,7 +107,7 @@ const createOrderLimitOffset = (query: PubsQuery) => {
 	};
 };
 
-const createPubIdsQueryString = (query: PubsQuery) => {
+const getPubIdsQuery = (query: PubsQuery) => {
 	const columns = createColumns(query);
 	const joins = createJoins(query);
 	const orderLimitOffset = createOrderLimitOffset(query);
@@ -125,7 +129,8 @@ const createPubIdsQueryString = (query: PubsQuery) => {
 			orderLimitOffset(outer);
 			outer.as('outer');
 		})
-		.toString();
+		.toSQL()
+		.toNative();
 };
 
 const sortPubsByListOfIds = (pubs: any[], pubIds: string[]) => {
@@ -141,15 +146,26 @@ export const queryPubIds = async (query: PubsQuery): Promise<string[]> => {
 	if (mustBeEmpty) {
 		return [];
 	}
-	const queryString = createPubIdsQueryString(query);
-	const results = await sequelize.query(queryString, { type: QueryTypes.SELECT });
+	const { sql, bindings } = getPubIdsQuery(query);
+	const results = await sequelize.query(sql, {
+		type: QueryTypes.SELECT,
+		bind: bindings,
+	});
 	return results.map((r) => r.pubId);
 };
 
-export const getPubsById = async (pubIds: string[], options: PubGetOptions = {}) => {
-	const pubs = await Pub.findAll({
+export const getPubsById = (pubIds: string[], options: PubGetOptions = {}) => {
+	const pubsPromise = Pub.findAll({
 		where: { id: { [Op.in]: pubIds } },
-		...buildPubOptions(options),
-	});
-	return sortPubsByListOfIds(pubs, pubIds);
+		...buildPubOptions({ ...options, getMembers: true }),
+	}).then((unsortedPubs) => sortPubsByListOfIds(unsortedPubs, pubIds));
+	return {
+		unsanitized: () => pubsPromise,
+		sanitize: async (initialData: InitialData) => {
+			const pubs = await pubsPromise;
+			return pubs
+				.map((pub) => sanitizePub(pub.toJSON(), initialData))
+				.filter((pub): pub is SanitizedPubData => !!pub);
+		},
+	};
 };

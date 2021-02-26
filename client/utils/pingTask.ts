@@ -4,7 +4,6 @@
  */
 import { apiFetch } from 'client/utils/apiFetch';
 
-// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 const pingTaskOnce = (taskId) => apiFetch(`/api/workerTasks?workerTaskId=${taskId}`);
 
 export const pingTask = (taskId, interval, startInterval = interval) =>

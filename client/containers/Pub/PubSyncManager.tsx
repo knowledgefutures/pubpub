@@ -84,7 +84,6 @@ type PubContextType = State & {
 export const PubContext = React.createContext<PubContextType>(shimPubContextProps);
 
 const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 	apiFetch(
 		'/api/pubHistory?' +
 			queryString.stringify({

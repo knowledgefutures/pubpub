@@ -203,7 +203,6 @@ class Doi extends Component<Props, State> {
 			});
 
 			// Fetch a DOI preview which contains a newly generated DOI.
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 			const response = await apiFetch(`/api/generateDoi?${params.toString()}`);
 
 			this.setState({

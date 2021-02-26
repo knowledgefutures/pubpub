@@ -101,7 +101,6 @@ const NewEdgeEditor = (props: Props) => {
 		setIsCreatingEdge(true);
 		setErrorCreatingEdge(null);
 		pendingPromise(
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
 			apiFetch.post('/api/pubEdges', {
 				...newEdge,
 				pubId: pubData.id,

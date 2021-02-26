@@ -12,13 +12,14 @@ import {
 } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { Collection, Pub } from 'utils/types';
+import { LayoutPubsByBlock } from 'utils/layout';
 import * as api from 'client/utils/collections/api';
 
 require('./dashboardCollectionLayout.scss');
 
 type Props = {
 	collection: Collection;
-	pubs: Pub[];
+	layoutPubsByBlock: LayoutPubsByBlock<Pub>;
 };
 
 const DashboardCollectionLayout = (props: Props) => {
@@ -144,7 +145,7 @@ const DashboardCollectionLayout = (props: Props) => {
 				<SettingsSection title="Blocks">
 					<LayoutEditor
 						initialLayout={layout.blocks}
-						pubs={props.pubs}
+						initialLayoutPubsByBlock={props.layoutPubsByBlock}
 						collection={collection}
 						communityData={communityData}
 						onChange={(blocks) => updateLayout({ blocks })}

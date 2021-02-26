@@ -2,8 +2,12 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { Collection, Pub } from 'utils/types';
-import { getPubsByBlockIndex } from 'utils/layout';
-import { LayoutBlock, LayoutOptions } from 'utils/layout/types';
+import {
+	LayoutBlock,
+	LayoutOptions,
+	LayoutPubsByBlock,
+	resolveLayoutPubsByBlock,
+} from 'utils/layout';
 import { usePageContext } from 'utils/hooks';
 
 import LayoutPubs from './LayoutPubs';
@@ -18,17 +22,14 @@ require('./layout.scss');
 type Props = LayoutOptions & {
 	blocks: LayoutBlock[];
 	id?: string;
-	pubs: Pub[];
+	layoutPubsByBlock: LayoutPubsByBlock<Pub>;
 	collection?: Collection;
 };
 
 const Layout = (props: Props) => {
 	const { locationData, loginData, communityData } = usePageContext();
-	const { blocks, isNarrow, pubs, id = '', collection } = props;
-
-	const pubBlocksLists = getPubsByBlockIndex(blocks, pubs, {
-		collectionId: collection && collection.id,
-	});
+	const { blocks, isNarrow, layoutPubsByBlock, id = '', collection } = props;
+	const pubsByBlockId = resolveLayoutPubsByBlock(layoutPubsByBlock, blocks);
 
 	const renderBlock = (block: LayoutBlock, index: number) => {
 		if (block.type === 'pubs') {
@@ -36,7 +37,7 @@ const Layout = (props: Props) => {
 				<div className="layout-pubs-block" key={index}>
 					<LayoutPubs
 						content={block.content}
-						pubs={pubBlocksLists[index]}
+						pubs={pubsByBlockId[block.id]}
 						collectionId={collection && collection.id}
 					/>
 				</div>
@@ -71,7 +72,13 @@ const Layout = (props: Props) => {
 			);
 		}
 		if (block.type === 'collection-header' && collection) {
-			return <LayoutCollectionHeader content={block.content} collection={collection} />;
+			return (
+				<LayoutCollectionHeader
+					key={index}
+					content={block.content}
+					collection={collection}
+				/>
+			);
 		}
 		return null;
 	};

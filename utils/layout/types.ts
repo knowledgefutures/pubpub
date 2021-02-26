@@ -11,6 +11,11 @@ export type PubSortOrder =
 	| 'publish-date-reversed'
 	| 'collection-rank';
 
+export type LayoutPubsByBlock<PubType extends { id: string }> = {
+	pubsById: Record<string, PubType>;
+	pubIdsByBlockId: Record<string, string[]>;
+};
+
 export type LayoutOptions = {
 	isNarrow?: boolean;
 };

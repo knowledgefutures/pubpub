@@ -17,7 +17,6 @@ app.get(['/dash/pages/:subMode'], async (req, res, next) => {
 		const pageSlug = req.params.subMode === 'home' ? '' : req.params.subMode;
 		const pageData = await getPage({
 			query: { slug: pageSlug },
-			forLayoutEditor: true,
 			initialData,
 		});
 		return renderToNodeStream(

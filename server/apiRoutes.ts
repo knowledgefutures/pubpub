@@ -8,6 +8,7 @@ require('./doi/api');
 require('./editor/api');
 require('./export/api');
 require('./import/api');
+require('./layout/api');
 require('./logout/api');
 require('./login/api');
 require('./member/api');

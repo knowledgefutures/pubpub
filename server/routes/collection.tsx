@@ -6,7 +6,7 @@ import Html from 'server/Html';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
-import { enrichCollectionWithPubTokens, getPubsForLayout } from 'server/utils/queryHelpers/layout';
+import { enrichCollectionWithPubTokens, getLayoutPubsByBlock } from 'server/utils/layouts';
 import {
 	sequelize,
 	Collection,
@@ -62,8 +62,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 			}
 
 			if (layout) {
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ blocks: any; initialData: { co... Remove this comment to see the full error message
-				const pubs = await getPubsForLayout({
+				const layoutPubsByBlock = await getLayoutPubsByBlock({
 					blocks: layout.blocks,
 					initialData,
 					collectionId: collection.id,
@@ -74,7 +73,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 					<Html
 						chunkName="Collection"
 						initialData={initialData}
-						viewData={{ pubs, collection }}
+						viewData={{ layoutPubsByBlock, collection }}
 						headerComponents={generateMetaComponents({
 							initialData,
 							title: `${collection.title} · ${communityData.title}`,

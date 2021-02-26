@@ -178,8 +178,16 @@ const createPub = async ({ communityId, directive, proposedMetadata }) => {
 const createPubTags = async (directive, pubId, communityId) => {
 	const { tags } = directive;
 	if (tags) {
+		const extractedTags = tags
+			.reduce((acc, next) => {
+				if (Array.isArray(next)) {
+					return [...acc, ...next];
+				}
+				return [...acc, next];
+			}, [])
+			.filter((x) => x);
 		return Promise.all(
-			tags.map(async (tagName) => {
+			extractedTags.map(async (tagName) => {
 				const existingCollection = await Collection.findOne({
 					where: {
 						title: {

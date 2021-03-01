@@ -190,6 +190,7 @@ const createPubTags = async (directive, pubId, communityId) => {
 			extractedTags.map(async (tagName) => {
 				const existingCollection = await Collection.findOne({
 					where: {
+						communityId,
 						title: {
 							[Op.iLike]: tagName,
 						},

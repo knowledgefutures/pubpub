@@ -1,6 +1,6 @@
 @import 'styles/variables.scss';
 
-$pub-body-font-size: if(variable-exists('PUBPUB_PRINT'), 14px, 20px);
+$pub-body-font-size: if-is-export(14px, 20px);
 
 .pub-body-component .editor.ProseMirror,
 .pub-body-styles {

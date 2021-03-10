@@ -39,6 +39,7 @@ const main = async () => {
 		await Promise.all(backupFiles.map((file) => uploadFileToS3(file, uploadId)));
 		await postToSlackAboutSuccess(backupFiles);
 	} catch (err) {
+		console.error(err);
 		postToSlackAboutError(err);
 	}
 };

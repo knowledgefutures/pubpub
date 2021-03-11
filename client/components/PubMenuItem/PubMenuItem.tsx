@@ -6,18 +6,20 @@ import { Byline, PreviewImage } from 'components';
 
 require('./pubMenuItem.scss');
 
+type BylineProps = React.ComponentProps<typeof Byline>;
 interface Props {
 	active?: boolean;
 	disabled?: boolean;
-	contributors: any[];
+	contributors?: any[];
 	image?: string;
 	isSkeleton?: boolean;
-	onClick: () => any;
+	onClick: null | (() => any);
 	showImage?: boolean;
 	title: string;
+	bylineProps?: Partial<BylineProps>;
 }
 
-const PubMenuItem = React.forwardRef((props: Props, ref: React.Ref<HTMLAnchorElement>) => {
+const PubMenuItem = React.forwardRef((props: Props, ref: any) => {
 	const {
 		active = false,
 		contributors,
@@ -27,30 +29,40 @@ const PubMenuItem = React.forwardRef((props: Props, ref: React.Ref<HTMLAnchorEle
 		onClick,
 		showImage = false,
 		title,
+		bylineProps = {},
 	} = props;
 	const skeletonClass = classNames(isSkeleton && 'bp3-skeleton');
-	return (
-		<Button
-			as="a"
-			ref={ref}
-			className={classNames(
-				'bp3-menu-item',
-				'pub-menu-item-component',
-				active && 'active',
-				disabled && 'bp3-disabled',
-				isSkeleton && 'is-skeleton',
-			)}
-			onClick={onClick}
-		>
+
+	const className = classNames(
+		'bp3-menu-item',
+		'pub-menu-item-component',
+		active && 'active',
+		disabled && 'bp3-disabled',
+		isSkeleton && 'is-skeleton',
+		!onClick && 'unselectable',
+	);
+
+	const children = (
+		<>
 			{showImage && <PreviewImage src={image} title={title} className={skeletonClass} />}
 			<div className="inner">
 				<div className={classNames('title', skeletonClass)}>{title}</div>
-				<div className={classNames('subtitle', skeletonClass)}>
-					<Byline contributors={contributors} linkToUsers={false} />
-				</div>
+				{contributors && (
+					<div className={classNames('subtitle', skeletonClass)}>
+						<Byline contributors={contributors} linkToUsers={false} {...bylineProps} />
+					</div>
+				)}
 			</div>
-		</Button>
+		</>
 	);
+
+	const sharedProps = { ref, className, children };
+
+	if (onClick) {
+		return <Button as="button" {...sharedProps} onClick={onClick} />;
+	}
+
+	return <div {...sharedProps} />;
 });
 
 export default PubMenuItem;

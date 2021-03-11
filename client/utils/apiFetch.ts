@@ -56,3 +56,13 @@ httpMethods.forEach((method) =>
 		value: createMethodWrapper(method),
 	}),
 );
+
+declare global {
+	interface Window {
+		apiFetch: ApiFetch;
+	}
+}
+
+if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
+	window.apiFetch = apiFetch;
+}

@@ -17,7 +17,6 @@
 	}
 	// div is a specificity hack against an aggressive selection of .bp3-form-group in settingsSection.scss
 	div.block-header {
-		z-index: 1;
 		display: flex;
 		// align-items: flex-end;
 		justify-content: space-between;
@@ -26,7 +25,8 @@
 		background-color: #f0f0f0;
 		border-bottom: 1px solid #ccc;
 		.input-field-component,
-		.image-upload-component {
+		.image-upload-component,
+		> .bp3-form-group {
 			margin: 0em 0.5em;
 		}
 		.input-field-component .bp3-control.bp3-checkbox {
@@ -46,6 +46,8 @@
 		}
 	}
 	.block-content {
+		position: relative;
+		z-index: -1;
 		font-size: 14px;
 		padding: 1em 0em;
 		h1 {
@@ -102,7 +104,6 @@
 }
 
 .order-picker-popover {
-	transform: none !important;
 	.order-picker-component {
 		width: 600px;
 		max-width: 100vw;
@@ -135,22 +136,31 @@
 	.block-content {
 		transition: 100ms opacity;
 	}
+	.bp3-popover-content {
+		font-size: 14px;
+		font-weight: 400;
+	}
 }
 
-.layout-editor-pubs_limit-pubs-component {
-	padding: 10px 20px;
-	padding-bottom: 2px;
+.bp3-card.layout-editor-pubs_limit-pubs-component {
 	width: 300px;
 	user-select: none;
+	padding: 10px;
+	.bp3-control:last-child {
+		margin-bottom: 0;
+	}
 	.bp3-control input {
 		// .bp3-control input has opacity: 0 in the default Blueprint styles. I have no idea why.
 		opacity: 1;
 	}
 }
 
-.layout-editor-pubs_preview-elements-component {
+.bp3-card.layout-editor-pubs_preview-elements-component {
 	user-select: none;
-	padding: 10px 20px;
+	padding: 10px;
+	.bp3-control:last-child {
+		margin-bottom: 0;
+	}
 }
 
 @supports (display: grid) {

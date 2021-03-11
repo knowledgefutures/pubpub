@@ -1,16 +1,17 @@
-import { createRef, useRef } from 'react';
+import React, { createRef, useRef } from 'react';
 
-export const useRefMap = () => {
-	const { current: refsObject } = useRef({});
+export const useRefMap = <T = any>() => {
+	const { current: refsObject } = useRef<Record<string, React.RefObject<T>>>({});
 	return {
-		get: (key) => {
+		getRef: (key: string) => {
 			const existingRef = refsObject[key];
 			if (existingRef) {
 				return existingRef;
 			}
-			const newRef = createRef();
+			const newRef = createRef<T>();
 			refsObject[key] = newRef;
 			return newRef;
 		},
+		refs: refsObject,
 	};
 };

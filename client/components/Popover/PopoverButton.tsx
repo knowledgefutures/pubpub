@@ -3,6 +3,8 @@ import React from 'react';
 import { usePopoverState, PopoverDisclosure, Popover } from 'reakit';
 import { Card } from '@blueprintjs/core';
 
+import { adaptDisclosureElementForBlueprintButton } from './blueprintAdapter';
+
 type Props = {
 	'aria-label': string;
 	className?: string;
@@ -23,7 +25,13 @@ const PopoverButton = (props: Props) => {
 	return (
 		<>
 			<PopoverDisclosure {...popover} {...children.props}>
-				{(disclosureProps) => React.cloneElement(children, disclosureProps)}
+				{(disclosureProps) =>
+					adaptDisclosureElementForBlueprintButton(
+						children,
+						disclosureProps,
+						popover.visible,
+					)
+				}
 			</PopoverDisclosure>
 			<Popover
 				aria-label={ariaLabel}

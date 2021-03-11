@@ -1,5 +1,5 @@
-import { queryPubIds, getPubsById, PubQueryOrdering } from 'server/pub/queryMany';
-import { sanitizePub, SanitizedPubData } from 'server/utils/queryHelpers';
+import { queryPubIds, getPubsById } from 'server/pub/queryMany';
+import { SanitizedPubData } from 'server/utils/queryHelpers';
 import {
 	LayoutBlockPubs,
 	LayoutBlock,
@@ -7,11 +7,11 @@ import {
 	PubSortOrder,
 	maxPubsPerBlock,
 } from 'utils/layout';
-import { InitialData, Maybe } from 'utils/types';
+import { InitialData, Maybe, PubsQueryOrdering } from 'utils/types';
 
 type BlockContent = LayoutBlockPubs['content'];
 
-const orderingsForSort: Partial<Record<PubSortOrder, PubQueryOrdering>> = {
+const orderingsForSort: Partial<Record<PubSortOrder, PubsQueryOrdering>> = {
 	'collection-rank': { field: 'collectionRank', direction: 'ASC' },
 	'creation-date': { field: 'creationDate', direction: 'DESC' },
 	'creation-date-reversed': { field: 'creationDate', direction: 'ASC' },
@@ -19,7 +19,7 @@ const orderingsForSort: Partial<Record<PubSortOrder, PubQueryOrdering>> = {
 	'publish-date-reversed': { field: 'publishDate', direction: 'ASC' },
 };
 
-const getQueryOrdering = (sort: Maybe<PubSortOrder>): PubQueryOrdering => {
+const getQueryOrdering = (sort: Maybe<PubSortOrder>): PubsQueryOrdering => {
 	const selectedOrdering = sort && orderingsForSort[sort];
 	return selectedOrdering || { field: 'creationDate', direction: 'DESC' };
 };
@@ -57,14 +57,10 @@ const getPubIdsForLayoutBlock = async (
 };
 
 const getPubsForPubIds = async (pubIds: string[], initialData: InitialData) => {
-	const pubs = await getPubsById(pubIds, {
+	return getPubsById(pubIds, {
 		isPreview: true,
-		getMembers: true,
 		getCollections: true,
-	});
-	return pubs
-		.map((pub) => sanitizePub(pub.toJSON(), initialData))
-		.filter((pub): pub is SanitizedPubData => !!pub);
+	}).sanitize(initialData);
 };
 
 type GetPubsForLayoutOptions = {

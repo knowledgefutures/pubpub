@@ -175,6 +175,7 @@ export type Draft = {
 
 export type Pub = {
 	createdAt: string;
+	updatedAt: string;
 	id: string;
 	slug: string;
 	title: string;
@@ -421,3 +422,23 @@ type PatchFnUpdaterArg<T> = (current: T) => Partial<T>;
 type PatchFnPatchArg<T> = Partial<T>;
 export type PatchFnArg<T> = PatchFnPatchArg<T> | PatchFnUpdaterArg<T>;
 export type PatchFn<T> = (arg: PatchFnArg<T>) => unknown;
+
+export type PubsQueryOrderingField =
+	| 'collectionRank'
+	| 'publishDate'
+	| 'updatedDate'
+	| 'creationDate'
+	| 'title';
+export type PubsQueryOrdering = { field: PubsQueryOrderingField; direction: 'ASC' | 'DESC' };
+export type PubsQuery = {
+	collectionIds?: null | string[];
+	communityId: string;
+	excludePubIds?: null | string[];
+	isReleased?: boolean;
+	limit?: null | number;
+	offset?: number;
+	ordering?: PubsQueryOrdering;
+	scopedCollectionId?: string;
+	withinPubIds?: null | string[];
+	term?: string;
+};

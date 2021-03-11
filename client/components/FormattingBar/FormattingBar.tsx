@@ -173,7 +173,7 @@ const FormattingBar = (props: Props) => {
 
 	useEffect(() => {
 		if (openedButton) {
-			const ref = buttonElementRefs.get(openedButton.key);
+			const ref = buttonElementRefs.getRef(openedButton.key);
 			if (ref && ref.current && typeof ref.current.scrollIntoView === 'function') {
 				const buttonElement = ref.current;
 				const paddingPx = 5;
@@ -201,7 +201,7 @@ const FormattingBar = (props: Props) => {
 		return (
 			<ToolbarItem
 				{...toolbar}
-				outerRef={buttonElementRefs.get(button.key)}
+				outerRef={buttonElementRefs.getRef(button.key)}
 				as={button.component || FormattingBarButton}
 				key={button.key}
 				formattingItem={button}

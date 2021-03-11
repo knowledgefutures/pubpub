@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RadioGroup, Radio } from '@blueprintjs/core';
+import { Card, RadioGroup, Radio } from '@blueprintjs/core';
 
 import { SliderInput } from 'components';
 import { maxPubsPerBlock } from 'utils/layout';
@@ -32,7 +32,7 @@ const LimitPubs = (props: Props) => {
 	};
 
 	return (
-		<div className="layout-editor-pubs_limit-pubs-component">
+		<Card className="layout-editor-pubs_limit-pubs-component">
 			<RadioGroup
 				onChange={(evt) => handleRadioSelect(evt.currentTarget.value)}
 				selectedValue={limit ? 'limit' : 'all'}
@@ -57,7 +57,7 @@ const LimitPubs = (props: Props) => {
 					}
 				/>
 			</RadioGroup>
-		</div>
+		</Card>
 	);
 };
 

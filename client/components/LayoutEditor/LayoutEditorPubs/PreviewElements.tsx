@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox } from '@blueprintjs/core';
+import { Card, Checkbox } from '@blueprintjs/core';
 
 import { LayoutBlockPubs } from 'utils/layout';
 
@@ -41,7 +41,7 @@ const PreviewElements = (props: Props) => {
 	const { content, onChangeContent } = props;
 
 	return (
-		<div className="layout-editor-pubs_preview-elements-component">
+		<Card className="layout-editor-pubs_preview-elements-component">
 			{Object.entries(labelsForPreviewElementFields).map((entry) => {
 				const [field, label] = entry;
 				const { disabled, hidden } = deriveFieldStatus(
@@ -58,7 +58,7 @@ const PreviewElements = (props: Props) => {
 					/>
 				);
 			})}
-		</div>
+		</Card>
 	);
 };
 

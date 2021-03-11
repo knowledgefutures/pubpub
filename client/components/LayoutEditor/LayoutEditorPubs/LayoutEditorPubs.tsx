@@ -1,16 +1,16 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
-import { Button, Popover, Position } from '@blueprintjs/core';
+import { Button } from '@blueprintjs/core';
 
-import { CollectionMultiSelect, InputField, OrderPicker } from 'components';
+import { CollectionMultiSelect, InputField, Popover } from 'components';
 import { LayoutPubs } from 'components/Layout';
 import { MenuSelect, MenuSelectItems } from 'components/Menu';
 import { Community, Pub, Collection } from 'utils/types';
-import { indexByProperty } from 'utils/arrays';
 import { LayoutBlockPubs, PubPreviewType, PubSortOrder } from 'utils/layout/types';
 
 import PreviewElements from './PreviewElements';
 import LimitPubs from './LimitPubs';
+import PinnedPubs from './PinnedPubs';
 
 type Content = LayoutBlockPubs['content'];
 
@@ -19,9 +19,9 @@ type Props = {
 	layoutIndex: number;
 	loading?: boolean;
 	block: LayoutBlockPubs;
-	allPubs: Pub[];
 	pubsInBlock: Pub[];
 	communityData: Community & { collections: Collection[] };
+	scopedCollectionId?: string;
 };
 
 const previewTypes: MenuSelectItems<PubPreviewType> = [
@@ -39,27 +39,15 @@ const pubSortOrders: MenuSelectItems<PubSortOrder> = [
 	{ value: 'collection-rank', label: 'Collection order' },
 ];
 
-const pubIsInCollections = (pub: Pub, collectionIds: string[]) => {
-	if (collectionIds.length === 0) {
-		return true;
-	}
-	return (
-		pub.collectionPubs &&
-		pub.collectionPubs.some((collectionPub) =>
-			collectionIds.some((collectionId) => collectionId === collectionPub.collectionId),
-		)
-	);
-};
-
 const LayoutEditorPubs = (props: Props) => {
 	const {
 		onChange: fullOnChange,
 		layoutIndex,
 		block,
-		allPubs,
 		pubsInBlock,
 		communityData,
 		loading,
+		scopedCollectionId,
 	} = props;
 	const {
 		limit,
@@ -68,12 +56,6 @@ const LayoutEditorPubs = (props: Props) => {
 		pubPreviewType,
 		sort = 'legacy',
 	} = block.content;
-
-	const availablePubs = useMemo(() => {
-		return allPubs.filter((pub) => pubIsInCollections(pub, collectionIds));
-	}, [allPubs, collectionIds]);
-
-	const pubsById = useMemo(() => indexByProperty(allPubs, 'id'), [allPubs]);
 
 	const onChange = useCallback((update: Partial<Content>) => fullOnChange(layoutIndex, update), [
 		fullOnChange,
@@ -92,8 +74,9 @@ const LayoutEditorPubs = (props: Props) => {
 		(nextLimit: undefined | number) =>
 			onChange({
 				limit: nextLimit,
+				pubIds: pubIds.slice(0, nextLimit || Infinity),
 			}),
-		[onChange],
+		[onChange, pubIds],
 	);
 
 	const setSort = useCallback(
@@ -105,23 +88,16 @@ const LayoutEditorPubs = (props: Props) => {
 	);
 
 	const setCollectionIds = useCallback(
-		(nextCollectionIds: string[]) => {
-			const validPubIds = (pubIds || [])
-				.map((pubId) => pubsById[pubId])
-				.filter((pub) => pub && pubIsInCollections(pub, nextCollectionIds))
-				.map((pub) => pub.id);
+		(nextCollectionIds: string[]) =>
 			onChange({
 				collectionIds: nextCollectionIds,
-				pubIds: validPubIds,
-			});
-		},
-		[onChange, pubIds, pubsById],
-	);
-
-	const setPubIds = useCallback(
-		(pubs: Pub[]) => onChange({ pubIds: pubs.map((pub) => pub.id) }),
+			}),
 		[onChange],
 	);
+
+	const setPubIds = useCallback((nextPubIds: string[]) => onChange({ pubIds: nextPubIds }), [
+		onChange,
+	]);
 
 	const setTitle = useCallback((title: string) => onChange({ title }), [onChange]);
 
@@ -159,10 +135,8 @@ const LayoutEditorPubs = (props: Props) => {
 	const renderLimit = () => {
 		return (
 			<Popover
+				aria-label="Limit number of Pubs"
 				content={<LimitPubs limit={block.content.limit} onChangeLimit={setLimit} />}
-				position={Position.BOTTOM_LEFT}
-				usePortal={false}
-				minimal
 			>
 				<Button outlined icon="dashboard" rightIcon="caret-down">
 					Limit Pubs
@@ -189,23 +163,17 @@ const LayoutEditorPubs = (props: Props) => {
 	const renderPinnedPubs = () => {
 		return (
 			<Popover
+				aria-label="Choose pinned Pubs for this block"
+				className="order-picker-popover"
+				placement="bottom-end"
 				content={
-					<OrderPicker
-						selectedItems={(pubIds || [])
-							.map((pubId) => pubsById[pubId])
-							.filter((x) => x)}
-						allItems={availablePubs}
-						onChange={setPubIds}
-						uniqueId={String(layoutIndex)}
-						selectedTitle="Pinned Pubs"
-						availableTitle="Available Pubs"
-						selectedTitleTooltip="Pinned pubs will be displayed first, followed by newest pubs."
+					<PinnedPubs
+						onPubIds={setPubIds}
+						pubIds={pubIds}
+						pubsInBlock={pubsInBlock}
+						scopedCollectionId={scopedCollectionId}
 					/>
 				}
-				position={Position.BOTTOM_RIGHT}
-				usePortal={false}
-				minimal
-				popoverClassName="order-picker-popover"
 			>
 				<Button outlined icon="pin" rightIcon="caret-down">
 					Pinned Pubs
@@ -231,10 +199,8 @@ const LayoutEditorPubs = (props: Props) => {
 	const renderPreviewElements = () => {
 		return (
 			<Popover
-				minimal
-				position={Position.BOTTOM_LEFT}
+				aria-label="Choose preview elements"
 				content={<PreviewElements content={block.content} onChangeContent={onChange} />}
-				usePortal={false}
 			>
 				<Button outlined icon="settings" rightIcon="caret-down">
 					Pub elements

@@ -1,238 +1,150 @@
-import React, { Component } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Tooltip } from '@blueprintjs/core';
-import Icon from 'components/Icon/Icon';
+import React, { useRef, useState } from 'react';
+import classNames from 'classnames';
+import { Button, Spinner, InputGroup, Icon } from '@blueprintjs/core';
+
+import { DragDropOrdering } from 'components';
+import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import { useHotkeys } from 'client/utils/useHotkey';
+import { generateHash } from 'utils/hashes';
 
 require('./orderPicker.scss');
 
-type MinimalItem = {
-	id: string;
-	title: string;
-};
+type MinimalItem = { id: string };
 
-type Props<Item> = {
-	selectedItems: Item[];
-	allItems: Item[];
-	onChange: (selectedItems: Item[]) => any;
-	uniqueId: string;
-	selectedTitle: React.ReactNode;
-	availableTitle: React.ReactNode;
-	selectedTitleTooltip: null | string;
-	availableTitleTooltip: null | string;
-};
-
-const defaultProps = {
-	selectedTitle: 'Selected',
-	availableTitle: 'Available',
-	selectedTitleTooltip: null,
-	availableTitleTooltip: null,
-};
-
-type State<Item> = {
-	selectedItems: Item[];
+type Props<Item extends MinimalItem> = {
 	availableItems: Item[];
+	availableTitle?: React.ReactNode;
+	isRequestingMoreItems?: boolean;
+	onRequestMoreItems?: () => unknown;
+	onSearch?: (term: string) => unknown;
+	onSelectedItems: (items: Item[]) => unknown;
+	renderItem: (item: Item, onClick: null | (() => unknown)) => React.ReactNode;
+	scrollForMoreItems?: boolean;
+	searchPlaceholder?: string;
+	searchTerm?: string;
+	selectedItems: Item[];
+	selectedTitle?: React.ReactNode;
 };
 
-class OrderPicker<Item extends MinimalItem> extends Component<Props<Item>, State<Item>> {
-	static defaultProps = defaultProps;
+const OrderPicker = <Item extends MinimalItem>(props: Props<Item>) => {
+	const {
+		availableItems,
+		selectedItems,
+		onSearch,
+		onRequestMoreItems,
+		onSelectedItems,
+		renderItem,
+		selectedTitle = 'Selected',
+		availableTitle = 'Available',
+		searchPlaceholder,
+		searchTerm,
+		scrollForMoreItems = false,
+		isRequestingMoreItems = false,
+	} = props;
+	const availableItemsPaneRef = useRef<null | HTMLDivElement>(null);
+	const [droppableType] = useState(() => generateHash(10));
+	const { hotkeyRef } = useHotkeys<HTMLDivElement>();
 
-	constructor(props: Props<Item>) {
-		super(props);
-		this.state = {
-			selectedItems: props.selectedItems,
-			availableItems: props.allItems
-				.filter(
-					(item) =>
-						!props.selectedItems.some((selectedItem) => selectedItem.id === item.id),
-				)
-				.sort((a, b) => (a.title > b.title ? 1 : -1)),
-		};
-		this.onDragEnd = this.onDragEnd.bind(this);
-	}
+	useInfiniteScroll({
+		element: availableItemsPaneRef.current,
+		enabled: scrollForMoreItems && !isRequestingMoreItems,
+		onRequestMoreItems,
+	});
 
-	onDragEnd(dragEvent) {
-		if (!dragEvent.destination) {
-			return null;
-		}
-		return this.setState(
-			(prevState) => {
-				const sourceItem =
-					dragEvent.source.droppableId.indexOf('column-1') > -1
-						? prevState.selectedItems[dragEvent.source.index]
-						: prevState.availableItems[dragEvent.source.index];
+	const handleAddItem = (item: Item) => {
+		onSelectedItems([...selectedItems, item]);
+	};
 
-				const newSelectedItems = [...prevState.selectedItems];
-				const newAvailableItems = [...prevState.availableItems];
-				if (dragEvent.source.droppableId.indexOf('column-1') > -1) {
-					newSelectedItems.splice(dragEvent.source.index, 1);
-				}
-				if (dragEvent.source.droppableId.indexOf('column-2') > -1) {
-					newAvailableItems.splice(dragEvent.source.index, 1);
-				}
-				if (dragEvent.destination.droppableId.indexOf('column-1') > -1) {
-					newSelectedItems.splice(dragEvent.destination.index, 0, sourceItem);
-				}
-				if (dragEvent.destination.droppableId.indexOf('column-2') > -1) {
-					newAvailableItems.splice(dragEvent.destination.index, 0, sourceItem);
-				}
-				return {
-					selectedItems: newSelectedItems,
-					availableItems: newAvailableItems,
-				};
-			},
-			() => {
-				this.props.onChange(this.state.selectedItems);
-			},
-		);
-	}
+	const handleRemoveItem = (item: Item) => {
+		const nextItems = [...selectedItems];
+		const indexOfItem = nextItems.findIndex((someItem) => someItem.id === item.id);
+		nextItems.splice(indexOfItem, 1);
+		onSelectedItems(nextItems);
+	};
 
-	render() {
+	const renderColumnHeader = (title: React.ReactNode) => {
+		return <div className="column-header">{title}</div>;
+	};
+
+	const renderItemInContext = (
+		item: Item,
+		leftControl: React.ReactNode,
+		rightControl: React.ReactNode,
+		isDragging = false,
+		onClick: null | (() => unknown) = null,
+	) => {
 		return (
-			<div className="order-picker-component">
-				<DragDropContext onDragEnd={this.onDragEnd}>
-					<div className="column">
-						<div className="column-header">
-							{this.props.selectedTitle}
-							{this.props.selectedTitleTooltip && (
-								<Tooltip content={this.props.selectedTitleTooltip}>
-									<Icon icon="help" iconSize={12} />
-								</Tooltip>
-							)}
-						</div>
-						<Droppable droppableId={`column-1-${this.props.uniqueId}`}>
-							{(droppableProvided, droppableSnapshot) => {
-								return (
-									<div
-										ref={droppableProvided.innerRef}
-										className={`droppable ${
-											droppableSnapshot.isDraggingOver ? 'dragging-over' : ''
-										}`}
-										{...droppableProvided.droppableProps}
-									>
-										{this.state.selectedItems.map((item, index) => {
-											return (
-												<Draggable
-													key={item.id}
-													draggableId={item.id}
-													index={index}
-												>
-													{(draggableProvided, draggableSnapshot) => {
-														return (
-															<div
-																ref={draggableProvided.innerRef}
-																{...draggableProvided.draggableProps}
-																className={`draggable ${
-																	draggableSnapshot.isDragging
-																		? 'dragging'
-																		: ''
-																}`}
-															>
-																<div className="drag-title">
-																	<span
-																		{...draggableProvided.dragHandleProps}
-																	>
-																		<Icon icon="drag-handle-horizontal" />
-																	</span>
-																	<span
-																		className="text"
-																		title={item.title}
-																	>
-																		{item.title}
-																	</span>
-																</div>
-															</div>
-														);
-													}}
-												</Draggable>
-											);
-										})}
-										{droppableProvided.placeholder}
-									</div>
-								);
-							}}
-						</Droppable>
-					</div>
-					<div className="column">
-						<div className="column-header">
-							{this.props.availableTitle}
-							{this.props.availableTitleTooltip && (
-								<Tooltip
-									content={this.props.availableTitleTooltip}
-									disabled={!this.props.availableTitleTooltip}
-								>
-									<Icon icon="help" iconSize={12} />
-								</Tooltip>
-							)}
-						</div>
-						<Droppable droppableId={`column-2-${this.props.uniqueId}`}>
-							{(droppableProvided, droppableSnapshot) => {
-								return (
-									<div
-										ref={droppableProvided.innerRef}
-										className={`droppable ${
-											droppableSnapshot.isDraggingOver ? 'dragging-over' : ''
-										}`}
-										{...droppableProvided.droppableProps}
-									>
-										{this.state.availableItems.map((item, index) => {
-											return (
-												<Draggable
-													key={item.id}
-													draggableId={item.id}
-													index={index}
-												>
-													{(draggableProvided, draggableSnapshot) => {
-														return (
-															<div
-																ref={draggableProvided.innerRef}
-																{...draggableProvided.draggableProps}
-																className={`draggable ${
-																	draggableSnapshot.isDragging
-																		? 'dragging'
-																		: ''
-																}`}
-															>
-																<div className="drag-title">
-																	<span
-																		{...draggableProvided.dragHandleProps}
-																	>
-																		<Icon icon="drag-handle-horizontal" />
-																	</span>
-																	<span
-																		className="text"
-																		title={item.title}
-																	>
-																		{item.title}
-																	</span>
-																</div>
-															</div>
-														);
-													}}
-												</Draggable>
-											);
-										})}
-										{droppableProvided.placeholder}
-									</div>
-								);
-							}}
-						</Droppable>
-					</div>
-
-					{/* This fixed droppable is a kludge to make window scrolling disabled */}
-					<Droppable droppableId={`fixed-column-${this.props.uniqueId}`}>
-						{(droppableProvided) => {
-							return (
-								<div
-									ref={droppableProvided.innerRef}
-									style={{ position: 'fixed' }}
-									{...droppableProvided.droppableProps}
-								/>
-							);
-						}}
-					</Droppable>
-				</DragDropContext>
+			<div
+				key={item.id}
+				className={classNames('order-picker-component_item', isDragging && 'is-dragging')}
+			>
+				{leftControl}
+				<div className="content">{renderItem(item, onClick)}</div>
+				{rightControl}
 			</div>
 		);
-	}
-}
+	};
+
+	const renderAvailableItems = () => {
+		return (
+			<div className="items-listing" ref={availableItemsPaneRef}>
+				{onSearch && (
+					<div className="search-bar">
+						<InputGroup
+							leftIcon="search"
+							value={searchTerm}
+							placeholder={searchPlaceholder}
+							onChange={(evt: any) => onSearch(evt.target.value)}
+						/>
+					</div>
+				)}
+				<ul>
+					{availableItems.map((item) => (
+						<li key={item.id}>{renderItem(item, () => handleAddItem(item))}</li>
+					))}
+				</ul>
+				{isRequestingMoreItems && <Spinner size={25} className="more-spinner" />}
+			</div>
+		);
+	};
+
+	const renderSelectedItems = () => {
+		return (
+			<DragDropOrdering
+				className="items-listing"
+				droppableType={droppableType}
+				items={selectedItems}
+				renderItem={(item, dragHandleProps, isDragging) =>
+					renderItemInContext(
+						item,
+						dragHandleProps && (
+							<div className="drag-handle" {...dragHandleProps}>
+								<Icon icon="drag-handle-vertical" />
+							</div>
+						),
+						<Button minimal icon="cross" onClick={() => handleRemoveItem(item)} />,
+						isDragging,
+					)
+				}
+				onReorderItems={onSelectedItems}
+				renderDragElementInPortal
+				withDragHandles
+			/>
+		);
+	};
+
+	return (
+		<div className="order-picker-component">
+			<div className="column" ref={hotkeyRef('ArrowLeft')}>
+				{renderColumnHeader(availableTitle)}
+				{renderAvailableItems()}
+			</div>
+			<div className="column" ref={hotkeyRef('ArrowRight')}>
+				{renderColumnHeader(selectedTitle)}
+				{renderSelectedItems()}
+			</div>
+		</div>
+	);
+};
+
 export default OrderPicker;

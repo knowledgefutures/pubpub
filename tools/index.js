@@ -15,6 +15,7 @@ const command = process.argv[2];
 const commandFiles = {
 	backfillCheckpoints: './backfillCheckpoints',
 	backfillCrossrefDepositRecords: './backfillCrossrefDepositRecords',
+	backup: './backup/backup',
 	branchMaintenance: './branchMaintenance',
 	bulkimport: '../workers/tasks/import/bulk/cli',
 	checkpointBackfill: './dashboardMigrations/backfillCheckpoints',
@@ -45,7 +46,7 @@ if (activeCommandFile) {
 	console.warn(`Invalid command: "${command}"`);
 }
 
-/* Other useful tooling commands: 
+/* Other useful tooling commands:
 
 - Copy production DB to dev DB (this will overwrite the dev DB)
 `heroku pg:copy pubpub-v6-prod::DATABASE_URL DATABASE_URL --app pubpub-v6-dev`

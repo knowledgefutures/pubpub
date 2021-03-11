@@ -6,7 +6,7 @@ import { setup, teardown, login, modelize } from 'stubstub';
 
 import { Community } from 'server/models';
 import * as mailchimp from 'server/utils/mailchimp';
-import * as webhooks from 'server/utils/webhooks';
+import * as slack from 'server/utils/slack';
 
 let mailchimpStub;
 let slackStub;
@@ -29,7 +29,7 @@ const models = modelize`
 
 setup(beforeAll, async () => {
 	mailchimpStub = sinon.stub(mailchimp, 'subscribeUser');
-	slackStub = sinon.stub(webhooks, 'alertNewCommunity');
+	slackStub = sinon.stub(slack, 'postToSlackAboutNewCommunity');
 	await models.resolve();
 });
 

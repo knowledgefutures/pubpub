@@ -5,7 +5,7 @@ import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
 import { isProd } from 'utils/environment';
 import { subscribeUser } from 'server/utils/mailchimp';
-import { alertNewCommunity } from 'server/utils/webhooks';
+import { postToSlackAboutNewCommunity } from 'server/utils/slack';
 import { updateCommunityData } from 'server/utils/search';
 
 export const createCommunity = (inputValues, userData, alertAndSubscribe = true) => {
@@ -77,7 +77,12 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 		.then(() => {
 			if (alertAndSubscribe && isProd()) {
 				subscribeUser(userData.email, 'be26e45660', ['Community Admins']);
-				alertNewCommunity(inputValues.title, subdomain, userData.fullName, userData.email);
+				postToSlackAboutNewCommunity(
+					inputValues.title,
+					subdomain,
+					userData.fullName,
+					userData.email,
+				);
 			}
 			return Member.create({
 				communityId: newCommunityId,

@@ -1,5 +1,16 @@
-$base-font: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-	'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-$header-font: multi-display, -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen',
-	'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-$body-font: skolar-latin, Georgia, Cambria, 'Times New Roman', Times, serif;
+@function if-is-export($export, $default) {
+	@if (variable-exists('PUBPUB_EXPORT')) {
+		@return $export;
+	}
+	@return $default;
+}
+
+$base-font: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans',
+	'Helvetica Neue', sans-serif;
+$header-font: multi-display, -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+	'Open Sans', 'Helvetica Neue', sans-serif;
+
+// We make this distinction because Adobe Acrobat hates skolar
+$export-body-font: Georgia, Cambria, 'Times New Roman', Times, serif;
+$screen-body-font: skolar-latin, Georgia, Cambria, 'Times New Roman', Times, serif;
+$body-font: if-is-export($export-body-font, $screen-body-font);

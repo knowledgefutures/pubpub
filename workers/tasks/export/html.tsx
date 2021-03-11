@@ -24,12 +24,10 @@ const createCss = () => {
 	// just generate the bundle once per Heroku deploy and save it to a file.
 	if (!fs.existsSync(cssPath)) {
 		const nodeSass = require('node-sass');
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-		const nodeModulesPath = path.join(process.env.PWD, 'node_modules');
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-		const clientPath = path.join(process.env.PWD, 'client');
+		const nodeModulesPath = path.join(process.env.PWD!, 'node_modules');
+		const clientPath = path.join(process.env.PWD!, 'client');
 		const entrypointContents = fs.readFileSync(entrypoint).toString();
-		const data = '$PUBPUB_PRINT: true;\n' + entrypointContents;
+		const data = '$PUBPUB_EXPORT: true;\n' + entrypointContents;
 		const css = nodeSass
 			.renderSync({
 				data,

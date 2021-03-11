@@ -24,6 +24,7 @@ const commandFiles = {
 	emailUsers: './emailUsers',
 	firebaseDownload: './firebaseDownload',
 	flattenBranchHistory: './flattenBranchHistory',
+	layoutcheck: './layoutcheck/check',
 	migrate: './migrate',
 	migrateDash: './dashboardMigrations/runMigrations',
 	migration2020_05_06: './migration2020_05_06',

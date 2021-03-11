@@ -49,13 +49,7 @@ const LayoutEditorPubs = (props: Props) => {
 		loading,
 		scopedCollectionId,
 	} = props;
-	const {
-		limit,
-		pubIds = [],
-		collectionIds = [],
-		pubPreviewType,
-		sort = 'legacy',
-	} = block.content;
+	const { limit, pubIds = [], collectionIds = [], pubPreviewType, sort } = block.content;
 
 	const onChange = useCallback((update: Partial<Content>) => fullOnChange(layoutIndex, update), [
 		fullOnChange,
@@ -152,7 +146,7 @@ const LayoutEditorPubs = (props: Props) => {
 				aria-label="Select sort order"
 				items={pubSortOrders}
 				onSelectValue={(value) => setSort(value)}
-				value={sort}
+				value={sort || null}
 				defaultLabel={<i>Choose</i>}
 				icon="sort"
 				prefix={<b>Sort: </b>}

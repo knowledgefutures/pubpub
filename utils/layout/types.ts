@@ -4,7 +4,6 @@ type TextAlign = 'left' | 'center';
 export type PubPreviewType = 'minimal' | 'small' | 'medium' | 'large';
 
 export type PubSortOrder =
-	| 'legacy'
 	| 'creation-date'
 	| 'creation-date-reversed'
 	| 'publish-date'

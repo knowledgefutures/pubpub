@@ -11,7 +11,7 @@ import { InitialData, Maybe, PubsQueryOrdering } from 'utils/types';
 
 type BlockContent = LayoutBlockPubs['content'];
 
-const orderingsForSort: Partial<Record<PubSortOrder, PubsQueryOrdering>> = {
+const orderingsForSort: Record<PubSortOrder, PubsQueryOrdering> = {
 	'collection-rank': { field: 'collectionRank', direction: 'ASC' },
 	'creation-date': { field: 'creationDate', direction: 'DESC' },
 	'creation-date-reversed': { field: 'creationDate', direction: 'ASC' },
@@ -21,7 +21,7 @@ const orderingsForSort: Partial<Record<PubSortOrder, PubsQueryOrdering>> = {
 
 const getQueryOrdering = (sort: Maybe<PubSortOrder>): PubsQueryOrdering => {
 	const selectedOrdering = sort && orderingsForSort[sort];
-	return selectedOrdering || { field: 'creationDate', direction: 'DESC' };
+	return selectedOrdering || orderingsForSort['creation-date'];
 };
 
 const getPubIdsForLayoutBlock = async (
@@ -53,7 +53,7 @@ const getPubIdsForLayoutBlock = async (
 			.concat()
 			.sort((a, b) => pinnedPubIds.indexOf(a) - pinnedPubIds.indexOf(b)),
 		...otherPubIds,
-	];
+	].slice(0, limit || Infinity);
 };
 
 const getPubsForPubIds = async (pubIds: string[], initialData: InitialData) => {

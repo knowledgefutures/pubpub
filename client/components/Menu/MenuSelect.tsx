@@ -21,7 +21,7 @@ type Props<Value> = {
 	prefix?: React.ReactNode;
 	rightIcon?: string;
 	showTickIcon?: boolean;
-	value: Value;
+	value: null | Value;
 };
 
 export const MenuSelect = <Values extends string>(props: Props<Values>) => {
@@ -37,7 +37,7 @@ export const MenuSelect = <Values extends string>(props: Props<Values>) => {
 		rightIcon = 'caret-down',
 		defaultLabel = 'Select...',
 	} = props;
-	const selectedItem = items.find((item) => item.value === value);
+	const selectedItem = value && items.find((item) => item.value === value);
 	return (
 		<MenuButton
 			aria-label={ariaLabel}

@@ -21,7 +21,7 @@ const getFirebaseFilesFromGcp = async (
 	maxLookbackDays = 1,
 ): Promise<{ data: File; rules: File }> => {
 	const day = 1000 * 24 * 60 * 60;
-	for (let lookbackDays = 0; lookbackDays < maxLookbackDays; lookbackDays++) {
+	for (let lookbackDays = 0; lookbackDays <= maxLookbackDays; lookbackDays++) {
 		const date = new Date(startDate.getTime() - day * lookbackDays);
 		const dateString = dateFormat(date, 'UTC:yyyy-mm-dd');
 		const [files] = await bucket.getFiles({ prefix: dateString });

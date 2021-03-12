@@ -64,10 +64,18 @@ const getMediaUploadFromClipboard = (
 	return null;
 };
 
+const appearsToBePastingFromMsOffice = (event: ClipboardEvent) => {
+	const html = event.clipboardData?.getData('text/html');
+	return html && html.includes(`xmlns:o="urn:schemas-microsoft-com:office:office`);
+};
+
 export const createPasteHandler = (uploadFn: MediaUploadHandler) => (
 	view: EditorView,
 	event: ClipboardEvent,
 ) => {
+	if (appearsToBePastingFromMsOffice(event)) {
+		return false;
+	}
 	const selection = view.state.selection;
 	const clipboardItems = event.clipboardData?.items;
 	const upload = getMediaUploadFromClipboard(uploadFn, clipboardItems || null);

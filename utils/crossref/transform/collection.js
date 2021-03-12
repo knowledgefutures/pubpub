@@ -3,16 +3,14 @@ import { deserializeMetadata } from 'utils/collections/metadata';
 
 import transformAttributions from './attributions';
 
-const transformMetadata = (metadata, kind, timestamp) =>
+const transformMetadata = (metadata, collection) =>
 	deserializeMetadata({
 		metadata,
-		kind,
+		kind: collection.kind,
 		fallback: (field) => {
 			const { type } = field;
-			// If the field is a date, but it isn't provided, use the global timestamp
-			// (which is likely to be the current time)
 			if (type && type.name === 'date') {
-				return new Date(timestamp);
+				return new Date(collection.createdAt);
 			}
 			return undefined;
 		},
@@ -24,7 +22,7 @@ export default ({ globals, community }) => (collection) => {
 
 	return {
 		url: collectionUrl(community, collection),
-		...transformMetadata(metadata, collection.kind, globals.timestamp),
+		...transformMetadata(metadata, collection, globals.timestamp),
 		title,
 		timestamp,
 		attributions: transformAttributions(attributions),

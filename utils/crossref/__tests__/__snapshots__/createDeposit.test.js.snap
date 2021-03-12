@@ -219,7 +219,7 @@ Object {
             "isbn": "this_is_an_isbn",
             "publication_date": Object {
               "@media_type": "online",
-              "day": "11",
+              "day": "10",
               "month": "04",
               "year": "2019",
             },
@@ -1041,8 +1041,8 @@ Object {
             },
             "publication_date": Object {
               "@media_type": "online",
-              "day": "11",
-              "month": "04",
+              "day": "25",
+              "month": "03",
               "year": "2019",
             },
             "titles": Object {

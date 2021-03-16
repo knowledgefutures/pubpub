@@ -27,8 +27,8 @@ const defaultProps = {
 };
 
 const CommunityPreview = function(props) {
-	const resizedHeroLogo = getResizedUrl(props.heroLogo, 'fit-in', '600x0');
-	const resizedHeroBackground = getResizedUrl(props.heroBackgroundImage, 'fit-in', '800x0');
+	const resizedHeroLogo = getResizedUrl(props.heroLogo, 'inside', 600);
+	const resizedHeroBackground = getResizedUrl(props.heroBackgroundImage, 'inside', 800);
 	const logoStyle = { color: props.accentTextColor };
 	const backgroundStyle = {
 		backgroundColor: props.accentColor,

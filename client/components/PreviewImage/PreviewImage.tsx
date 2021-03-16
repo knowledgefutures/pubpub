@@ -13,7 +13,7 @@ type Props = {
 
 const PreviewImage = (props: Props) => {
 	const { className = '', fitIn = 800, src = null, title } = props;
-	const resizedImage = getResizedUrl(src, 'fit-in', `${fitIn}x0`);
+	const resizedImage = getResizedUrl(src, 'inside', fitIn);
 	const style = src
 		? { backgroundImage: `url("${resizedImage}")` }
 		: { background: generatePubBackground(title) };

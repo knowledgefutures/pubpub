@@ -35,3 +35,11 @@ export const joinOxford = (items, { joiner = strConcat, empty = '', ampersand = 
 		),
 	);
 };
+
+export const btoaUniversal = (input) => {
+	try {
+		return btoa(input);
+	} catch (err) {
+		return Buffer.from(input).toString('base64');
+	}
+};

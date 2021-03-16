@@ -114,7 +114,7 @@ class LayoutEditorBanner extends Component<Props> {
 
 	render() {
 		const backgroundImageCss = this.props.content.backgroundImage
-			? `url("${getResizedUrl(this.props.content.backgroundImage, 'fit-in', '1500x600')}")`
+			? `url("${getResizedUrl(this.props.content.backgroundImage, 'inside', 1500, 600)}")`
 			: undefined;
 
 		const wrapperStyle = {

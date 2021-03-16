@@ -14,7 +14,7 @@ const pubEdge = {
 		url: 'https://hdsr.mitpress.mit.edu/pub/wot7mkc1/release/8',
 		contributors: ['Richard Jenkins', 'Bradley Whitford', 'Sigourney Weaver'],
 		publicationDate: Date.now(),
-		avatar: 'https://resize.pubpub.org/fit-in/800x0/9fk06ei5/41589421981678.jpg',
+		avatar: 'https://assets.pubpub.org/9fk06ei5/41589421981678.jpg',
 	},
 	relationType: RelationType.Review,
 	pubIsParent: true,

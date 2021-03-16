@@ -55,8 +55,8 @@ const Avatar = function(props) {
 		borderRadius: isBlock ? '2px' : '50%',
 	};
 
-	const imageSize = width <= 50 ? '50x50' : '250x250';
-	const resizedImageUrl = getResizedUrl(avatar, null, imageSize);
+	const imageSize = width <= 50 ? 50 : 250;
+	const resizedImageUrl = getResizedUrl(avatar, 'cover', imageSize, imageSize);
 
 	if (doesOverlap) {
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'marginRight' does not exist on type '{ w... Remove this comment to see the full error message

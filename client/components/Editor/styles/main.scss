@@ -52,3 +52,16 @@ table {
 	/* See https://github.com/ProseMirror/prosemirror/issues/651#issuecomment-313436150 */
 	white-space: pre-wrap !important;
 }
+
+sup,
+sub {
+	position: static;
+}
+
+sub {
+	vertical-align: sub;
+}
+
+sup {
+	vertical-align: super;
+}

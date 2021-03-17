@@ -1,19 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
-import { Node } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
 
 import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
 import { usePubData } from 'client/containers/Pub/pubHooks';
 import { indexByProperty } from 'utils/arrays';
 import { Maybe } from 'utils/types';
+import { EditorChangeObject } from 'client/components/Editor';
 
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
 import FormattingBarPopover from './FormattingBarPopover';
-import { positionNearSelection } from './positioning';
 import { FormattingBarButtonData } from './types';
 import { getButtonPopoverComponent } from './utils';
 import { usePendingAttrs } from './usePendingAttrs';
@@ -21,20 +19,8 @@ import { usePendingAttrs } from './usePendingAttrs';
 require('./formattingBar.scss');
 
 type Props = {
-	popoverContainerRef: any;
-	editorChangeObject: {
-		latestDomEvent?: any;
-		insertFunctions?: any;
-		menuItems?: {
-			title: string;
-			isActive: boolean;
-			canRun: boolean;
-			run: () => unknown;
-		}[];
-		view: EditorView;
-		selectedNode?: Node;
-		updateNode: (attrs: any) => unknown;
-	};
+	containerRef?: React.RefObject<HTMLElement>;
+	editorChangeObject: EditorChangeObject;
 	buttons: FormattingBarButtonData[];
 	showBlockTypes?: boolean;
 	isSmall?: boolean;
@@ -62,7 +48,8 @@ const useInteractionCount = (latestDomEvent: any) => {
 	return key.current;
 };
 
-const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) => {
+const useControlsState = (props: Props) => {
+	const { buttons, editorChangeObject, containerRef } = props;
 	const [openedButton, setOpenedButton] = useState<FormattingBarButtonData | null>(null);
 	const interactionCount = useInteractionCount(editorChangeObject.latestDomEvent);
 	const selectedNodeId = editorChangeObject.selectedNode?.attrs?.id;
@@ -76,20 +63,23 @@ const useControlsState = ({ buttons, editorChangeObject, popoverContainerRef }) 
 
 	const controlsComponent =
 		openedButton &&
-		openedButton?.controls.indicate(editorChangeObject) &&
-		openedButton?.controls.show(editorChangeObject) &&
+		openedButton?.controls?.indicate(editorChangeObject) &&
+		openedButton?.controls?.show(editorChangeObject) &&
 		openedButton?.controls.component;
 
 	const controlsPosition =
 		controlsComponent &&
-		openedButton?.controls.position &&
-		openedButton?.controls.position(editorChangeObject, popoverContainerRef);
+		openedButton?.controls?.position &&
+		openedButton?.controls?.position(
+			editorChangeObject,
+			containerRef?.current! || document.body,
+		);
 
 	useEffect(() => {
 		const openableIndicatedButton = indicatedButtons.find(
 			(button) => button.controls && button.controls.trigger(editorChangeObject),
 		);
-		setOpenedButton(openableIndicatedButton);
+		setOpenedButton(openableIndicatedButton || null);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [effectKey, indicatedButtonsString]);
 
@@ -125,7 +115,7 @@ const FormattingBar = (props: Props) => {
 	const {
 		buttons,
 		editorChangeObject,
-		popoverContainerRef,
+		containerRef,
 		showBlockTypes = true,
 		isSmall = false,
 		isTranslucent = false,
@@ -245,14 +235,10 @@ const FormattingBar = (props: Props) => {
 				<FormattingBarPopover
 					editorChangeObject={editorChangeObject}
 					accentColor={communityData.accentColorDark}
-					button={openedButton}
+					button={openedButton!}
 					isFullScreenWidth={isFullScreenWidth}
-					containerRef={popoverContainerRef}
-					floatingPosition={
-						isFullScreenWidth
-							? controlsPosition
-							: controlsPosition || positionNearSelection
-					}
+					containerRef={containerRef}
+					floatingPosition={controlsPosition}
 					captureFocusOnMount={openedButton?.controls?.captureFocusOnMount}
 					showCloseButton={openedButton?.controls?.showCloseButton}
 					onClose={() => setOpenedButton(null)}

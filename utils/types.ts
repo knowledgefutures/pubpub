@@ -4,6 +4,7 @@ import { NodeLabelMap } from 'client/components/Editor/types';
 
 export type AttributableUser = {
 	id: string;
+	slug: string;
 	initials: string;
 	fullName: string;
 	firstName: string;
@@ -11,6 +12,7 @@ export type AttributableUser = {
 	avatar: string;
 	title: string;
 	orcid: string;
+	isShadowUser?: boolean;
 };
 
 export type User = AttributableUser & {
@@ -32,7 +34,7 @@ export type PubAttribution = {
 	title?: string;
 	order: number;
 	isAuthor?: boolean;
-	roles?: {};
+	roles?: string[];
 	affiliation?: string;
 	orcid?: string;
 	userId?: string;
@@ -47,7 +49,7 @@ export type CollectionAttribution = {
 	title?: string;
 	order: number;
 	isAuthor?: boolean;
-	roles?: {};
+	roles?: string[];
 	affiliation?: string;
 	orcid?: string;
 	userId?: string;

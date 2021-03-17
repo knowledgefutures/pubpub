@@ -1,3 +1,4 @@
+import { NodeType, Schema } from 'prosemirror-model';
 import { Plugin, NodeSelection, TextSelection, PluginKey } from 'prosemirror-state';
 import { lift, setBlockType, toggleMark, wrapIn } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
@@ -26,19 +27,17 @@ import { ReferenceableNodeType, PluginsOptions } from '../types';
 
 const changePluginKey = new PluginKey('onChange');
 
-const getInsertFunctions = (editorView) => {
-	/* Gather all node insert functions. These will be used to populate menus. */
-	return Object.values(editorView.state.schema.nodes)
-		.filter((node) => {
-			// @ts-expect-error ts-migrate(2571) FIXME: Object is of type 'unknown'.
-			return node.spec.onInsert;
-		})
-		.reduce((prev, curr) => {
+type InsertFunctions = {
+	[key: string]: (attrs?: Record<string, any>) => unknown;
+};
+
+const getInsertFunctions = (editorView: EditorView): InsertFunctions => {
+	return Object.values(editorView.state.schema.nodes as Schema['nodes'])
+		.filter((node) => !!node.spec.onInsert)
+		.reduce((prev: InsertFunctions, curr: NodeType) => {
 			return {
-				// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
 				...prev,
-				// @ts-expect-error ts-migrate(2571) FIXME: Object is of type 'unknown'.
-				[curr.name]: (attrs) => {
+				[curr.name]: (attrs?: Record<string, any>) => {
 					curr.spec.onInsert(editorView, attrs);
 				},
 			};

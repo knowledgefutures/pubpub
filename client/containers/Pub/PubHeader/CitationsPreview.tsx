@@ -1,13 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { Button, ButtonGroup } from '@blueprintjs/core';
-import { pubDataProps } from 'types/pub';
-import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
+
+import { Pub } from 'utils/types';
+import { ClickToCopyButton } from 'components';
+
 import CitationsModal from './CitationsModal';
 
 require('./citationsPreview.scss');
 
 type OwnProps = {
-	pubData: pubDataProps;
+	pubData: Pub;
 	showHeader?: boolean;
 };
 

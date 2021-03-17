@@ -94,7 +94,7 @@ const MinimalEditor = (props: Props) => {
 			{useFormattingBar && FormattingBar && (
 				// @ts-expect-error ts-migrate(2604) FIXME: JSX element type 'FormattingBar' does not have any... Remove this comment to see the full error message
 				<FormattingBar
-					popoverContainerRef={editorWrapperRef}
+					containerRef={editorWrapperRef}
 					editorChangeObject={changeObject}
 					showBlockTypes={false}
 					isSmall={true}

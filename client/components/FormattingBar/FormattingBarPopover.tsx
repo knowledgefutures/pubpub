@@ -4,19 +4,35 @@ import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
 import { useFocusTrap } from 'client/utils/useFocusTrap';
-import { mouseEventSelectsNode } from '../Editor';
+import { Falsy } from 'utils/types';
+import { EditorChangeObject, mouseEventSelectsNode } from '../Editor';
 
-const FormattingBarPopover = (props) => {
+import { FormattingBarButtonData, PositioningFn } from './types';
+
+type Props = {
+	accentColor: string;
+	button: FormattingBarButtonData;
+	captureFocusOnMount?: boolean;
+	children: React.ReactNode;
+	containerRef?: React.RefObject<HTMLElement>;
+	editorChangeObject: EditorChangeObject;
+	floatingPosition: Falsy | ReturnType<PositioningFn>;
+	isFullScreenWidth?: boolean;
+	onClose: () => unknown;
+	showCloseButton?: boolean;
+};
+
+const FormattingBarPopover = (props: Props) => {
 	const {
 		accentColor,
 		button,
-		children,
-		onClose,
-		isFullScreenWidth,
-		floatingPosition,
-		containerRef,
 		captureFocusOnMount,
+		children,
+		containerRef,
 		editorChangeObject,
+		floatingPosition,
+		isFullScreenWidth,
+		onClose,
 		showCloseButton,
 	} = props;
 	const [capturesFocus, setCapturesFocus] = useState(captureFocusOnMount);
@@ -74,8 +90,9 @@ const FormattingBarPopover = (props) => {
 		</div>
 	);
 
-	if (floatingPosition && containerRef.current) {
-		return ReactDOM.createPortal(popover, containerRef.current);
+	if (floatingPosition) {
+		const containerElement = containerRef?.current || document.body;
+		return ReactDOM.createPortal(popover, containerElement);
 	}
 	return popover;
 };

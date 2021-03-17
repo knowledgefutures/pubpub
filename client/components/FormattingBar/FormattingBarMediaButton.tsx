@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Overlay } from 'components';
-import { EditorChangeObject } from 'client/types';
+import { EditorChangeObject } from 'components/Editor/types';
 
 import FormattingBarButton, { FormattingBarButtonProps } from './FormattingBarButton';
 import Media from './media/Media';

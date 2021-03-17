@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import { ReferencesDropdown } from 'components';
 import { getReferenceableNodes, NodeReference } from 'components/Editor/utils/references';
-import { EditorChangeObject } from 'client/types';
+import { EditorChangeObject } from 'components/Editor/types';
 import { usePubContext, usePubData } from 'client/containers/Pub/pubHooks';
 import { getDashUrl } from 'utils/dashboard';
 
@@ -36,7 +36,7 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 
 	useEffect(() => {
 		if (changed.current) {
-			updateNode({ targetId });
+			updateNode!({ targetId });
 			changed.current = false;
 		}
 	}, [targetId, updateNode]);

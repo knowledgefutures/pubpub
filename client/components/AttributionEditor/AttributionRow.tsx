@@ -3,15 +3,15 @@ import classNames from 'classnames';
 import { Button, Icon, Tag } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
-import attributionType from 'types/attribution';
+import { AttributionWithUser, Falsy } from 'utils/types';
 
 import AttributionDetailControls from './AttributionDetailControls';
 import EditableAvatar from './EditableAvatar';
 
-type OwnProps = {
-	attribution: attributionType;
+type Props = {
+	attribution: AttributionWithUser;
 	canEdit: boolean;
-	dragHandleProps?: {};
+	dragHandleProps?: Falsy | {};
 	isDragging?: boolean;
 	onAttributionDelete: (...args: any[]) => any;
 	onAttributionUpdate: (...args: any[]) => any;
@@ -23,19 +23,16 @@ const defaultProps = {
 	isDragging: false,
 };
 
-type Props = OwnProps & typeof defaultProps;
-
 const AttributionRow = (props: Props) => {
 	const {
 		attribution,
 		canEdit,
-		dragHandleProps,
-		isDragging,
+		dragHandleProps = null,
+		isDragging = false,
 		onAttributionUpdate,
 		onAttributionDelete,
 	} = props;
 	const { user, id, isAuthor } = attribution;
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'roles' does not exist on type 'never'.
 	const roles = attribution.roles || [];
 
 	// TODO(ian): This is a set of heuristics that should be replaced with a more reliable mechanism
@@ -43,11 +40,8 @@ const AttributionRow = (props: Props) => {
 	// account. Our long-running hack has been to augment these attribution objects with a fake
 	// user property, but we almost certainly ought to do something else.
 	const isShadowAttribution =
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'user' does not exist on type 'never'.
 		!attribution.user ||
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'user' does not exist on type 'never'.
 		attribution.user.isShadowUser ||
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'user' does not exist on type 'never'.
 		attribution.user.id === attribution.id;
 
 	const renderAvatar = () => {
@@ -56,12 +50,10 @@ const AttributionRow = (props: Props) => {
 				<EditableAvatar
 					width={50}
 					attribution={attribution}
-					// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 					onUpdateAvatar={(avatar) => onAttributionUpdate({ id, avatar })}
 				/>
 			);
 		}
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'initials' does not exist on type 'never'... Remove this comment to see the full error message
 		return <Avatar width={50} initials={user.initials} avatar={user.avatar} />;
 	};
 
@@ -72,7 +64,6 @@ const AttributionRow = (props: Props) => {
 					small
 					minimal
 					className="delete-button"
-					// @ts-expect-error ts-migrate(2349) FIXME: This expression is not callable.
 					onClick={() => onAttributionDelete(id)}
 					icon="small-cross"
 				/>
@@ -86,15 +77,11 @@ const AttributionRow = (props: Props) => {
 			<div className="content">
 				<div className="top-content">
 					<div className="name">
-						{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type 'never'. */}
 						{user.slug ? (
-							// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type 'never'.
 							<a href={`/user/${user.slug}`} className="hoverline">
-								{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'fullName' does not exist on type 'never'... Remove this comment to see the full error message */}
 								{user.fullName}
 							</a>
 						) : (
-							// @ts-expect-error ts-migrate(2339) FIXME: Property 'fullName' does not exist on type 'never'... Remove this comment to see the full error message
 							<span>{user.fullName}</span>
 						)}
 					</div>

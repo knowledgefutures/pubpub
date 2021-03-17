@@ -1,3 +1,5 @@
+import { EditorChangeObject } from '../Editor';
+
 export enum FormattingBarPopoverCondition {
 	Always,
 	Disabled,
@@ -8,8 +10,26 @@ export type FormattingBarPopover = {
 	condition: FormattingBarPopoverCondition;
 };
 
+export type EditorChangeObjectDecider = (eco: EditorChangeObject) => boolean;
+
+export type PositioningFn = (
+	eco: EditorChangeObject,
+	wrapper: HTMLElement,
+) => { top: number; left: number };
+
+export type FormattingBarButtonDataControls = {
+	component: React.ComponentType<any>;
+	indicate: EditorChangeObjectDecider;
+	trigger: EditorChangeObjectDecider;
+	show: EditorChangeObjectDecider;
+	position?: PositioningFn;
+	enterKeyTriggers?: boolean;
+	captureFocusOnMount?: boolean;
+	showCloseButton?: boolean;
+};
+
 export type FormattingBarButtonData = {
-	controls?: any;
+	controls?: FormattingBarButtonDataControls;
 	component?: React.ComponentType<any>;
 	key: string;
 	popover?: FormattingBarPopover;

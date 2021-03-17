@@ -3,6 +3,7 @@ import { Node } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 
 import { updateNodeAttrsById } from '../Editor/utils/nodes';
+import { EditorChangeObject } from '../Editor';
 
 type Attrs = Node['attrs'];
 
@@ -33,7 +34,7 @@ export const usePendingAttrs = ({
 	editorView,
 }: {
 	selectedNode?: Node;
-	updateNode: (attrs: Attrs) => unknown;
+	updateNode: EditorChangeObject['updateNode'];
 	editorView?: EditorView;
 }) => {
 	const [attrs, setAttrs] = useState(selectedNode?.attrs ?? null);
@@ -64,7 +65,7 @@ export const usePendingAttrs = ({
 
 	const commitChanges = () => {
 		const nextAttrs = getPendingAttrsObject(attrs, pendingKeys);
-		updateNode(nextAttrs);
+		updateNode!(nextAttrs);
 		setPendingKeys([]);
 	};
 

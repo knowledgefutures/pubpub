@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { pubDataProps } from 'types/pub';
+import { Pub } from 'utils/types';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 import {
@@ -14,7 +14,7 @@ import { usePubContext } from '../../pubHooks';
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
 
 type Props = {
-	pubData: pubDataProps;
+	pubData: Pub;
 };
 
 const ReadNextSection = (props: Props) => {

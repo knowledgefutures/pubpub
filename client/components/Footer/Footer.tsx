@@ -218,7 +218,7 @@ const Footer = (props: Props) => {
 						</React.Fragment>
 					)}
 					{!isBasePubPub && communityData.footerImage && (
-						<a href="/">
+						<a href={communityData.footerLogoLink || '/'}>
 							<img
 								src={communityData.footerImage}
 								className="footer-image"

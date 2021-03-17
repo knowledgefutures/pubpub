@@ -24,6 +24,7 @@
 		flex-wrap: wrap;
 		background-color: #f0f0f0;
 		border-bottom: 1px solid #ccc;
+		z-index: 1;
 		.input-field-component,
 		.image-upload-component,
 		> .bp3-form-group {
@@ -47,7 +48,6 @@
 	}
 	.block-content {
 		position: relative;
-		z-index: -1;
 		font-size: 14px;
 		padding: 1em 0em;
 		h1 {

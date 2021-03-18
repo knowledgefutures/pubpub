@@ -150,8 +150,8 @@ const Header = (props: Props) => {
 	const canManage = scopeData.activePermissions.canManageCommunity;
 	const isBasePubPub = locationData.isBasePubPub;
 
-	const resizedHeaderLogo = getResizedUrl(communityData.headerLogo, 'inside', 0, 50);
-	const resizedHeroLogo = getResizedUrl(communityData.heroLogo, 'inside', 0, 200);
+	const resizedHeaderLogo = getResizedUrl(communityData.headerLogo, 'inside', undefined, 50);
+	const resizedHeroLogo = getResizedUrl(communityData.heroLogo, 'inside', undefined, 200);
 	const resizedHeroImage = getResizedUrl(communityData.heroImage, 'inside', 600);
 	const redirectString = `?redirect=${locationData.path}${
 		locationData.queryString.length > 1 ? locationData.queryString : ''

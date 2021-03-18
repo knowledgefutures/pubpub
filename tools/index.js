@@ -22,6 +22,7 @@ const commandFiles = {
 	clone: './clone',
 	devshell: './devshell',
 	emailUsers: './emailUsers',
+	figurelist: './figurelist',
 	firebaseDownload: './firebaseDownload',
 	flattenBranchHistory: './flattenBranchHistory',
 	migrate: './migrate',

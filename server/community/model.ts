@@ -55,6 +55,7 @@ export default (sequelize, dataTypes) => {
 
 			navLinks: { type: dataTypes.JSONB },
 			footerLinks: { type: dataTypes.JSONB },
+			footerLogoLink: { type: dataTypes.TEXT },
 			footerTitle: { type: dataTypes.TEXT },
 			footerImage: { type: dataTypes.TEXT },
 

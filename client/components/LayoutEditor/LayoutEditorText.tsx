@@ -88,7 +88,7 @@ class LayoutEditorText extends Component<Props, State> {
 								nodeOptions={{
 									image: {
 										onResizeUrl: (url) => {
-											return getResizedUrl(url, 'fit-in', '1200x0');
+											return getResizedUrl(url, 'inside', 1200);
 										},
 										linkToSrc: false,
 									},

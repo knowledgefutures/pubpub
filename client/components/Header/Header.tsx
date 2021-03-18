@@ -122,8 +122,9 @@ const Header = (props: Props) => {
 		if (communityData.heroBackgroundImage) {
 			const resizedBackgroundImage = getResizedUrl(
 				communityData.heroBackgroundImage,
-				'fit-in',
-				'1500x600',
+				'inside',
+				1500,
+				600,
 			);
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'backgroundImage' does not exist on type ... Remove this comment to see the full error message
 			backgroundStyle.backgroundImage = `url("${resizedBackgroundImage}")`;
@@ -149,9 +150,9 @@ const Header = (props: Props) => {
 	const canManage = scopeData.activePermissions.canManageCommunity;
 	const isBasePubPub = locationData.isBasePubPub;
 
-	const resizedHeaderLogo = getResizedUrl(communityData.headerLogo, 'fit-in', '0x50');
-	const resizedHeroLogo = getResizedUrl(communityData.heroLogo, 'fit-in', '0x200');
-	const resizedHeroImage = getResizedUrl(communityData.heroImage, 'fit-in', '600x0');
+	const resizedHeaderLogo = getResizedUrl(communityData.headerLogo, 'inside', undefined, 50);
+	const resizedHeroLogo = getResizedUrl(communityData.heroLogo, 'inside', undefined, 200);
+	const resizedHeroImage = getResizedUrl(communityData.heroImage, 'inside', 600);
 	const redirectString = `?redirect=${locationData.path}${
 		locationData.queryString.length > 1 ? locationData.queryString : ''
 	}`;

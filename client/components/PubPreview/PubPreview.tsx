@@ -59,7 +59,7 @@ const PubPreview = (props: Props) => {
 	const [canExpand, setCanExpand] = useState(false);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const resizedHeaderLogo =
-		communityData && getResizedUrl(communityData.headerLogo, 'fit-in', '125x35');
+		communityData && getResizedUrl(communityData.headerLogo, 'inside', 125, 35);
 	const publishedDate = getPubPublishedDate(pubData);
 	const isPrivate = !isPubPublic(pubData, scopeData);
 	const showBannerImage = ['large', 'medium'].includes(size);

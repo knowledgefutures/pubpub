@@ -50,6 +50,7 @@ export const getPermissions = async ({ userId, communityId }) => {
 		'navLinks',
 		'footerLinks',
 		'footerTitle',
+		'footerLogoLink',
 		'footerImage',
 	];
 

@@ -126,8 +126,8 @@ const Search = (props: Props) => {
 		let bannerStyle;
 		let keyId;
 		let isPublic;
-		const resizedBannerImage = getResizedUrl(item.avatar, 'fit-in', '800x0');
-		const resizedCommunityLogo = getResizedUrl(item.communityAvatar, 'fit-in', '125x35');
+		const resizedBannerImage = getResizedUrl(item.avatar, 'inside', 800);
+		const resizedCommunityLogo = getResizedUrl(item.communityAvatar, 'inside', 125, 35);
 
 		if (mode === 'pubs') {
 			link = `https://${item.communityDomain}/pub/${item.slug}`;

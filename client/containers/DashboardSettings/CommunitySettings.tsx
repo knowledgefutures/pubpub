@@ -96,6 +96,7 @@ const CommunitySettings = () => {
 	/* Footer */
 	const [footerLinks, setFooterLinks] = useState(communityData.footerLinks);
 	const [footerTitle, setFooterTitle] = useState(communityData.footerTitle);
+	const [footerLogoLink, setFooterLogoLink] = useState(communityData.footerLogoLink);
 	const [footerImage, setFooterImage] = useState(communityData.footerImage);
 	const [footerImageKey, setFooterImageKey] = useState(Math.random());
 	/* Social */
@@ -134,6 +135,7 @@ const CommunitySettings = () => {
 		heroAlign,
 		footerLinks,
 		footerTitle,
+		footerLogoLink,
 		footerImage,
 		website,
 		twitter,
@@ -755,7 +757,6 @@ const CommunitySettings = () => {
 					label="Footer Title"
 					type="text"
 					value={footerTitle || ''}
-					// helperText={`https://facebook.com/${facebook}`}
 					onChange={(evt) => {
 						setFooterTitle(evt.target.value);
 					}}
@@ -783,6 +784,15 @@ const CommunitySettings = () => {
 						setFooterImage(headerLogo);
 						setFooterImageKey(Math.random());
 					}}
+				/>
+				<InputField
+					label="Footer Logo Link"
+					type="text"
+					value={footerLogoLink || ''}
+					onChange={(evt) => {
+						setFooterLogoLink(evt.target.value);
+					}}
+					placeholder={communityUrl(communityData)}
 				/>
 
 				<InputField label="Footer Links">

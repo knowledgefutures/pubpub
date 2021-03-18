@@ -16,7 +16,7 @@ type Props = {
 const PagePreview = (props: Props) => {
 	const pageData = props.pageData;
 
-	const resizedBannerImage = getResizedUrl(pageData.avatar, 'fit-in', '600x0');
+	const resizedBannerImage = getResizedUrl(pageData.avatar, 'inside', 600);
 	const bannerStyle = pageData.avatar
 		? { backgroundImage: `url("${resizedBannerImage}")` }
 		: { background: generatePageBackground(pageData.title) };

@@ -107,11 +107,6 @@ export default {
 		group: 'block',
 
 		/* These are not part of the standard Prosemirror Schema spec */
-		onInsert: (view, attrs) => {
-			const imageNode = view.state.schema.nodes.image.create(attrs);
-			const transaction = view.state.tr.replaceSelectionWith(imageNode);
-			view.dispatch(transaction);
-		},
 		defaultOptions: {
 			onResizeUrl: (url) => {
 				return url;

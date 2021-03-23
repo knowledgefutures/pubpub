@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Node } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 
-import { updateNodeAttrsById } from '../Editor/utils/nodes';
-import { EditorChangeObject } from '../Editor';
+import { updateNodeAttrsById } from 'components/Editor/utils/nodes';
+import { EditorChangeObject } from 'components/Editor';
 
 type Attrs = Node['attrs'];
 

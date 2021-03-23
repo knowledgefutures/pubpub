@@ -18,12 +18,13 @@ import MediaTwitter from './MediaTwitter';
 require('./media.scss');
 
 type Props = {
-	onInsert: (...args: any[]) => any;
+	onInsert: (type: string, attrs: Record<string, any>) => unknown;
 	isSmall: boolean;
-	editorChangeObject: any;
 };
 
-type State = any;
+type State = {
+	activeItem: string;
+};
 
 class Media extends Component<Props, State> {
 	constructor(props: Props) {
@@ -31,13 +32,6 @@ class Media extends Component<Props, State> {
 		this.state = {
 			activeItem: 'Image',
 		};
-		this.handleInsert = this.handleInsert.bind(this);
-	}
-
-	handleInsert(insertType, insertData) {
-		const insertFunctions = this.props.editorChangeObject.insertFunctions || {};
-		insertFunctions[insertType](insertData);
-		this.props.editorChangeObject.view.focus();
 	}
 
 	render() {
@@ -57,11 +51,12 @@ class Media extends Component<Props, State> {
 			{ text: 'GitHub Gist', icon: 'github' },
 		];
 		const activeItem = this.state.activeItem;
+
 		const componentProps = {
 			onInsert: this.props.onInsert,
 			isSmall: this.props.isSmall,
-			editorChangeObject: this.props.editorChangeObject,
 		};
+
 		return (
 			<div className="formatting-bar_media-component">
 				<div className="options">

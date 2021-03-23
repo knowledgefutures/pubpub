@@ -99,13 +99,5 @@ export default {
 		},
 		inline: false,
 		group: 'block',
-
-		/* These are not part of the standard Prosemirror Schema spec */
-		onInsert: (view, attrs) => {
-			const fileNode = view.state.schema.nodes.file.create(attrs);
-			const transaction = view.state.tr.replaceSelectionWith(fileNode);
-			view.dispatch(transaction);
-		},
-		defaultOptions: {},
 	},
 };

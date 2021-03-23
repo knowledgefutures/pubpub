@@ -18,11 +18,6 @@ type Props = {
 		selectedNode?: {
 			type?: {
 				name?: string;
-				spec?: {
-					defaultOptions?: {
-						citationInlineStyle?: string;
-					};
-				};
 			};
 			attrs?: {
 				count?: number;

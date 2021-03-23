@@ -53,12 +53,5 @@ export default {
 		},
 		inline: true,
 		group: 'inline',
-
-		/* These are not part of the standard Prosemirror Schema spec */
-		onInsert: (view, attrs) => {
-			const citationNode = view.state.schema.nodes.citation.create(attrs);
-			const transaction = view.state.tr.replaceSelectionWith(citationNode);
-			view.dispatch(transaction);
-		},
 	},
 };

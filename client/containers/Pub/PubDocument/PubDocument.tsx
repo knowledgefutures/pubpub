@@ -97,13 +97,7 @@ const PubDocument = (props: Props) => {
 							updatePubData={(data) => updateLocalData('pub', data)}
 						/>
 					)}
-					{!isViewingHistory && (
-						<PubInlineMenu
-							pubData={pubData}
-							collabData={collabData}
-							historyData={historyData}
-						/>
-					)}
+					{!isViewingHistory && <PubInlineMenu />}
 					<PubEdgeListing
 						className="bottom-pub-edges"
 						pubData={pubData}

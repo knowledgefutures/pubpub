@@ -1,12 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
 
 import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
-import { usePubData } from 'client/containers/Pub/pubHooks';
-import { indexByProperty } from 'utils/arrays';
-import { Maybe } from 'utils/types';
 import { EditorChangeObject } from 'client/components/Editor';
 
 import BlockTypeSelector from './BlockTypeSelector';
@@ -14,14 +11,15 @@ import FormattingBarButton from './FormattingBarButton';
 import FormattingBarPopover from './FormattingBarPopover';
 import { FormattingBarButtonData } from './types';
 import { getButtonPopoverComponent } from './utils';
-import { usePendingAttrs } from './usePendingAttrs';
+import { usePendingAttrs } from './hooks/usePendingAttrs';
+import { useControlsState, ButtonState } from './hooks/useControlsState';
 
 require('./formattingBar.scss');
 
 type Props = {
 	containerRef?: React.RefObject<HTMLElement>;
 	editorChangeObject: EditorChangeObject;
-	buttons: FormattingBarButtonData[];
+	buttons: FormattingBarButtonData[][];
 	showBlockTypes?: boolean;
 	isSmall?: boolean;
 	isTranslucent?: boolean;
@@ -29,91 +27,8 @@ type Props = {
 	citationStyle?: string;
 };
 
-const useInteractionCount = (latestDomEvent: any) => {
-	const key = useRef(-1);
-	const previousDomEvent = useRef<any>(null);
-
-	if (latestDomEvent) {
-		const domEventsEqual =
-			previousDomEvent.current &&
-			previousDomEvent.current.type === latestDomEvent.type &&
-			previousDomEvent.current.timeStamp === latestDomEvent.timeStamp;
-
-		if (!domEventsEqual) {
-			key.current += 1;
-		}
-		previousDomEvent.current = latestDomEvent;
-	}
-
-	return key.current;
-};
-
-const useControlsState = (props: Props) => {
-	const { buttons, editorChangeObject, containerRef } = props;
-	const [openedButton, setOpenedButton] = useState<FormattingBarButtonData | null>(null);
-	const interactionCount = useInteractionCount(editorChangeObject.latestDomEvent);
-	const selectedNodeId = editorChangeObject.selectedNode?.attrs?.id;
-	const effectKey = `${selectedNodeId}-${interactionCount}`;
-
-	const indicatedButtons = buttons.filter(
-		(button) => button.controls && button.controls.indicate(editorChangeObject),
-	);
-
-	const indicatedButtonsString = indicatedButtons.map((button) => button.key).join('-');
-
-	const controlsComponent =
-		openedButton &&
-		openedButton?.controls?.indicate(editorChangeObject) &&
-		openedButton?.controls?.show(editorChangeObject) &&
-		openedButton?.controls.component;
-
-	const controlsPosition =
-		controlsComponent &&
-		openedButton?.controls?.position &&
-		openedButton?.controls?.position(
-			editorChangeObject,
-			containerRef?.current! || document.body,
-		);
-
-	useEffect(() => {
-		const openableIndicatedButton = indicatedButtons.find(
-			(button) => button.controls && button.controls.trigger(editorChangeObject),
-		);
-		setOpenedButton(openableIndicatedButton || null);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [effectKey, indicatedButtonsString]);
-
-	useEffect(() => {
-		const options = { capture: true };
-		const handler = (evt) => {
-			if (evt.key === 'Enter') {
-				if (indicatedButtons.length === 1 && !openedButton) {
-					const [openableButton] = indicatedButtons;
-					if (openableButton?.controls?.enterKeyTriggers) {
-						evt.stopImmediatePropagation();
-						evt.preventDefault();
-						setOpenedButton(openableButton);
-					}
-				}
-			}
-		};
-		document.addEventListener('keydown', handler, options);
-		return () => document.removeEventListener('keydown', handler, options);
-	}, [indicatedButtons, openedButton, setOpenedButton]);
-
-	return {
-		indicatedButtons,
-		openedButton,
-		setOpenedButton,
-		controlsPosition,
-		selectedNodeId,
-		ControlsComponent: controlsComponent,
-	};
-};
-
 const FormattingBar = (props: Props) => {
 	const {
-		buttons,
 		editorChangeObject,
 		containerRef,
 		showBlockTypes = true,
@@ -122,44 +37,26 @@ const FormattingBar = (props: Props) => {
 		isFullScreenWidth = false,
 		citationStyle = 'apa',
 	} = props;
-	const { menuItems, insertFunctions, view, selectedNode, updateNode } = editorChangeObject;
+
+	const { selectedNode, updateNode } = editorChangeObject;
 	const { communityData } = usePageContext();
-	const pubData = usePubData();
 	const buttonElementRefs = useRefMap();
 	const toolbar = useToolbarState({ loop: true });
+
 	const pendingAttrs = usePendingAttrs({
 		selectedNode,
 		updateNode,
 		editorView: editorChangeObject.view,
 	});
-	const menuItemsByKey: Maybe<Record<string, any>> = useMemo(
-		() => menuItems && indexByProperty(menuItems, 'title'),
-		[menuItems],
-	);
+
 	const {
-		indicatedButtons,
 		openedButton,
 		setOpenedButton,
 		controlsPosition,
 		selectedNodeId,
 		ControlsComponent,
+		buttonStates,
 	} = useControlsState(props);
-
-	const handleButtonClick = (item) => {
-		if (indicatedButtons.includes(item)) {
-			setOpenedButton(openedButton === item ? null : item);
-		} else {
-			const insertFunction = insertFunctions[item.key];
-			const menuItem = menuItemsByKey?.[item.key];
-			if (insertFunction) {
-				insertFunction();
-				view.focus();
-			} else if (menuItem) {
-				menuItem.run();
-				view.focus();
-			}
-		}
-	};
 
 	useEffect(() => {
 		if (openedButton) {
@@ -173,19 +70,9 @@ const FormattingBar = (props: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [openedButton]);
 
-	const renderButton = (button: FormattingBarButtonData) => {
-		const matchingMenuItem = menuItemsByKey?.[button.key];
-		const insertFunction = insertFunctions && insertFunctions[button.key];
-		const noFunction = !insertFunction && matchingMenuItem && !matchingMenuItem.canRun;
-		const isOpen = openedButton === button;
-		const isIndicated = indicatedButtons.includes(button) && !isOpen;
-		const isActive = !isOpen && !isIndicated && !!matchingMenuItem && matchingMenuItem.isActive;
-		const isDisabled = Boolean(
-			(typeof button.isDisabled === 'function' && button.isDisabled(pubData)) ||
-				noFunction ||
-				(openedButton && !isOpen && !isIndicated && !controlsPosition),
-		);
-		const maybeEditorChangeObject = button.key === 'media' ? { editorChangeObject } : {};
+	const renderButtonState = (buttonState: ButtonState) => {
+		const { button, isOpen, isActive, isIndicated, isDisabled, onClick } = buttonState;
+		const maybeEditorView = button.key === 'media' && { view: editorChangeObject.view };
 		const PopoverComponent = getButtonPopoverComponent(button, isDisabled);
 
 		return (
@@ -203,9 +90,18 @@ const FormattingBar = (props: Props) => {
 				isSmall={isSmall}
 				popoverContent={PopoverComponent && <PopoverComponent />}
 				accentColor={communityData.accentColorDark}
-				onClick={() => handleButtonClick(button)}
-				{...maybeEditorChangeObject}
+				onClick={onClick}
+				{...maybeEditorView}
 			/>
+		);
+	};
+
+	const renderButtonGroup = (buttons: ButtonState[], index: number) => {
+		return (
+			<React.Fragment key={index}>
+				{index > 0 && <div className="separator" />}
+				{buttons.map(renderButtonState)}
+			</React.Fragment>
 		);
 	};
 
@@ -229,18 +125,18 @@ const FormattingBar = (props: Props) => {
 						<div className="separator" />
 					</React.Fragment>
 				)}
-				{buttons.map(renderButton)}
+				{buttonStates.map(renderButtonGroup)}
 			</Toolbar>
-			{ControlsComponent && (
+			{ControlsComponent && openedButton && (
 				<FormattingBarPopover
 					editorChangeObject={editorChangeObject}
 					accentColor={communityData.accentColorDark}
-					button={openedButton!}
+					title={openedButton.ariaTitle || openedButton.title}
 					isFullScreenWidth={isFullScreenWidth}
 					containerRef={containerRef}
 					floatingPosition={controlsPosition}
-					captureFocusOnMount={openedButton?.controls?.captureFocusOnMount}
-					showCloseButton={openedButton?.controls?.showCloseButton}
+					captureFocusOnMount={openedButton.controls?.captureFocusOnMount}
+					showCloseButton={openedButton.controls?.showCloseButton}
 					onClose={() => setOpenedButton(null)}
 				>
 					<ControlsComponent
@@ -248,7 +144,6 @@ const FormattingBar = (props: Props) => {
 						editorChangeObject={editorChangeObject}
 						isSmall={isSmall}
 						citationStyle={citationStyle}
-						pubData={pubData}
 						pendingAttrs={pendingAttrs}
 						onClose={() => setOpenedButton(null)}
 					/>

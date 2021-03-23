@@ -58,13 +58,5 @@ export default {
 		},
 		inline: false,
 		group: 'block',
-
-		/* These are not part of the standard Prosemirror Schema spec */
-		onInsert: (view, attrs) => {
-			const iframeNode = view.state.schema.nodes.iframe.create(attrs);
-			const transaction = view.state.tr.replaceSelectionWith(iframeNode);
-			view.dispatch(transaction);
-		},
-		defaultOptions: {},
 	},
 };

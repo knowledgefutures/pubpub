@@ -1,5 +1,7 @@
-import { suggest, Suggester } from 'prosemirror-suggest';
+import { Schema } from 'prosemirror-model';
+import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+import { suggest, Suggester } from 'prosemirror-suggest';
 
 import SuggestionManager from 'client/utils/suggestions/suggestionManager';
 import {
@@ -8,17 +10,30 @@ import {
 	NodeReference,
 	getNodeLabelText,
 } from 'components/Editor/utils';
-import { Schema } from 'prosemirror-model';
 import { NodeLabelMap } from '../types';
 
-type SuggestPluginProps = {
+type ReferencesPluginProps = {
 	nodeLabels: NodeLabelMap;
 	suggestionManager: SuggestionManager<NodeReference>;
 };
 
+export const referencesPluginKey = new PluginKey('references');
+
 const normalizeQuery = (text: string) => text.toLowerCase().replace(/\s+/g, '');
 
-export default (schema: Schema, props: SuggestPluginProps) => {
+const buildReferencesPlugin = (props: ReferencesPluginProps) => {
+	return new Plugin({
+		key: referencesPluginKey,
+		state: {
+			init: () => {
+				return { nodeLabels: props.nodeLabels };
+			},
+			apply: (_, s) => s,
+		},
+	});
+};
+
+export default (schema: Schema, props: ReferencesPluginProps) => {
 	const { nodeLabels, suggestionManager } = props;
 
 	function getNodeReferences(view: EditorView, query: string) {
@@ -86,7 +101,8 @@ export default (schema: Schema, props: SuggestPluginProps) => {
 		},
 	};
 
-	const plugin = suggest(suggester);
+	const suggestPlugin = suggest(suggester);
+	const referencesPlugin = buildReferencesPlugin(props);
 
-	return plugin;
+	return [suggestPlugin, referencesPlugin];
 };

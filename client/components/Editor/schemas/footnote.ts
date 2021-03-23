@@ -47,13 +47,5 @@ export default {
 		},
 		inline: true,
 		group: 'inline',
-
-		/* These are not part of the standard Prosemirror Schema spec */
-		onInsert: (view, attrs) => {
-			const footnoteNode = view.state.schema.nodes.footnote.create(attrs);
-			const transaction = view.state.tr.replaceSelectionWith(footnoteNode);
-			view.dispatch(transaction);
-		},
-		defaultOptions: {},
 	},
 };

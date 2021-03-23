@@ -7,11 +7,11 @@ import { useFocusTrap } from 'client/utils/useFocusTrap';
 import { Falsy } from 'utils/types';
 import { EditorChangeObject, mouseEventSelectsNode } from '../Editor';
 
-import { FormattingBarButtonData, PositioningFn } from './types';
+import { PositioningFn } from './types';
 
 type Props = {
 	accentColor: string;
-	button: FormattingBarButtonData;
+	title: string;
 	captureFocusOnMount?: boolean;
 	children: React.ReactNode;
 	containerRef?: React.RefObject<HTMLElement>;
@@ -25,7 +25,7 @@ type Props = {
 const FormattingBarPopover = (props: Props) => {
 	const {
 		accentColor,
-		button,
+		title,
 		captureFocusOnMount,
 		children,
 		containerRef,
@@ -66,7 +66,7 @@ const FormattingBarPopover = (props: Props) => {
 
 	const popover = (
 		<div
-			aria-label={`Editing ${button.ariaTitle || button.title} options`}
+			aria-label={`Editing ${title} options`}
 			className={classNames(
 				'formatting-bar-popover-component',
 				!!floatingPosition && 'floating bp3-elevation-2',

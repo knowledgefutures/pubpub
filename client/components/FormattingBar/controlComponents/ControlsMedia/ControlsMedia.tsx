@@ -1,35 +1,21 @@
 import React, { useCallback } from 'react';
 import { Checkbox, Classes, Tab, Tabs } from '@blueprintjs/core';
-import { Node } from 'prosemirror-model';
 
 import { SimpleEditor, SliderInput } from 'components';
 
-import { usePubData } from 'client/containers/Pub/pubHooks';
 import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
-import { imageCanBeResized } from 'client/components/Editor';
+import { getCurrentNodeLabels, imageCanBeResized } from 'client/components/Editor';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import AlignmentControl from './AlignmentControl';
 import SourceControls from './SourceControls';
 import { ControlsReferenceSettingsLink } from '../ControlsReference';
+import { EditorChangeObjectWithNode } from '../../types';
 
 type Props = {
 	isSmall: boolean;
 	pendingAttrs: any;
-	editorChangeObject: {
-		updateNode: (...args: any[]) => any;
-		selectedNode: Node & {
-			attrs?: {
-				size: number;
-				align: string;
-				height: number;
-				caption: string;
-				hideLabel: boolean;
-				fullResolution: boolean;
-			};
-		};
-	};
-	pubData: any;
+	editorChangeObject: EditorChangeObjectWithNode;
 };
 
 const getCanEditNodeHeight = (selectedNode) => selectedNode.type.name === 'iframe';
@@ -43,8 +29,8 @@ const getItemName = (selectedNode) => {
 };
 
 const ControlsMedia = (props: Props) => {
-	const { isSmall, editorChangeObject, pendingAttrs, pubData } = props;
-	const { updateNode, selectedNode } = editorChangeObject;
+	const { isSmall, editorChangeObject, pendingAttrs } = props;
+	const { selectedNode, updateNode } = editorChangeObject;
 	const {
 		hasPendingChanges,
 		commitChanges,
@@ -55,7 +41,7 @@ const ControlsMedia = (props: Props) => {
 	const nodeSupportsAltText = !!selectedNode.type.spec.attrs?.altText;
 	const canEditHeight = getCanEditNodeHeight(selectedNode);
 	const itemName = getItemName(selectedNode);
-	const { nodeLabels } = usePubData();
+	const nodeLabels = getCurrentNodeLabels(editorChangeObject.view.state);
 
 	const canHideLabel =
 		nodeLabels &&
@@ -181,7 +167,7 @@ const ControlsMedia = (props: Props) => {
 							<>
 								{' '}
 								(
-								<ControlsReferenceSettingsLink dark small pubData={pubData} />)
+								<ControlsReferenceSettingsLink dark small />)
 							</>
 						)}
 					</Checkbox>

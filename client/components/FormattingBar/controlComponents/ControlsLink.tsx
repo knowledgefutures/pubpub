@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { moveToEndOfSelection } from 'components/Editor';
 import { Button, AnchorButton, InputGroup } from '@blueprintjs/core';
-import { usePubData } from 'client/containers/Pub/pubHooks';
+import { usePubContext } from 'client/containers/Pub/pubHooks';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 
@@ -21,16 +21,18 @@ const ControlsLink = (props: Props) => {
 	} = props;
 
 	const { communityData } = usePageContext();
-	const pubData = usePubData();
+	const { inPub, pubData } = usePubContext();
 	const [href, setHref] = useState(activeLink.attrs.href);
 	const [debouncedHref] = useDebounce(href, 250);
 	const inputRef = useRef();
 
 	const setHashOrUrl = (value: string) => {
-		const basePubUrl = pubUrl(communityData, pubData);
-		const hashMatches = value.match(`^${basePubUrl}(.*)?#(.*)$`);
-
-		setHref(hashMatches ? `#${hashMatches[2]}` : value);
+		if (inPub) {
+			const basePubUrl = pubUrl(communityData, pubData);
+			const hashMatches = value.match(`^${basePubUrl}(.*)?#(.*)$`);
+			setHref(hashMatches ? `#${hashMatches[2]}` : value);
+		}
+		setHref(value);
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

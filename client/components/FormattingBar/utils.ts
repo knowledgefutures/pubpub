@@ -8,3 +8,7 @@ export const getButtonPopoverComponent = (button: FormattingBarButtonData, isDis
 	)
 		? button.popover.component
 		: null;
+
+export const deepMap = <I, R>(items: I[][], callback: (i: I) => R): R[][] => {
+	return items.map((sub) => sub.map(callback));
+};

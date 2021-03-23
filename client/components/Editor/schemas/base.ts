@@ -69,13 +69,6 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		toDOM: () => {
 			return ['div', ['hr']] as DOMOutputSpec;
 		},
-		onInsert: (view) => {
-			view.dispatch(
-				view.state.tr.replaceSelectionWith(
-					view.state.schema.nodes.horizontal_rule.create(),
-				),
-			);
-		},
 	},
 	heading: {
 		attrs: {

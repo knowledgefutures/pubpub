@@ -2,12 +2,12 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { Checkbox } from '@blueprintjs/core';
 import { useDebounce } from 'use-debounce';
-import { Node } from 'prosemirror-model';
 
 import { renderLatexString } from 'client/utils/editor';
-import { usePubData } from 'client/containers/Pub/pubHooks';
 import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
+import { getCurrentNodeLabels } from 'client/components/Editor';
 
+import { EditorChangeObjectWithNode } from '../types';
 import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
 import { ControlsReferenceSettingsLink } from './ControlsReference';
 
@@ -16,16 +16,7 @@ require('./controls.scss');
 type Props = {
 	onClose: (...args: any[]) => any;
 	pendingAttrs: any;
-	editorChangeObject: {
-		changeNode: (...args: any[]) => any;
-		updateNode: (...args: any[]) => any;
-		selectedNode: Node & {
-			value: string;
-			html?: string;
-			hideLabel: boolean;
-		};
-	};
-	pubData: any;
+	editorChangeObject: EditorChangeObjectWithNode;
 };
 
 const getSchemaDefinitionForNodeType = (editorChangeObject, nodeTypeName) => {
@@ -33,7 +24,7 @@ const getSchemaDefinitionForNodeType = (editorChangeObject, nodeTypeName) => {
 };
 
 const ControlsEquation = (props: Props) => {
-	const { editorChangeObject, pendingAttrs, onClose, pubData } = props;
+	const { editorChangeObject, pendingAttrs, onClose } = props;
 	const { changeNode, updateNode, selectedNode } = editorChangeObject;
 	const {
 		commitChanges,
@@ -48,7 +39,7 @@ const ControlsEquation = (props: Props) => {
 		[updateNode],
 	);
 	const isBlock = selectedNode.type.name === 'block_equation';
-	const { nodeLabels } = usePubData();
+	const nodeLabels = getCurrentNodeLabels(editorChangeObject.view.state);
 	const canHideLabel =
 		nodeLabels &&
 		(nodeLabels as NodeLabelMap)[selectedNode.type.name as ReferenceableNodeType]?.enabled;
@@ -106,7 +97,7 @@ const ControlsEquation = (props: Props) => {
 								<>
 									{' '}
 									(
-									<ControlsReferenceSettingsLink dark small pubData={pubData} />)
+									<ControlsReferenceSettingsLink dark small />)
 								</>
 							)}
 						</Checkbox>

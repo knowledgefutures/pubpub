@@ -15,7 +15,7 @@ import buildPlaceholder from './placeholder';
 import buildPaste from './paste';
 import buildReactive from './reactive';
 import buildTable from './table';
-import buildSuggest from './suggest';
+import buildReferences from './references';
 import { PluginLoader, PluginsOptions } from '../types';
 
 const buildGapCursor = () => {
@@ -32,7 +32,7 @@ export const standardPlugins = {
 	headerIds: buildHeaderIds,
 	placeholder: buildPlaceholder,
 	localHighlights: buildLocalHighlights,
-	suggest: buildSuggest,
+	references: buildReferences,
 	domEvents: buildDomEvents,
 	onChange: buildOnChange,
 	gapCursor: buildGapCursor,

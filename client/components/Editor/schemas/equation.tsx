@@ -61,7 +61,6 @@ export default {
 			const transaction = view.state.tr.replaceSelectionWith(equationNode);
 			view.dispatch(transaction);
 		},
-		defaultOptions: {},
 	},
 	block_equation: {
 		atom: true,
@@ -133,6 +132,5 @@ export default {
 			const transaction = view.state.tr.replaceSelectionWith(equationNode);
 			view.dispatch(transaction);
 		},
-		defaultOptions: {},
 	},
 };

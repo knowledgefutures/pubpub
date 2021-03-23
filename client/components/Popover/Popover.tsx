@@ -45,6 +45,7 @@ const Popover = (props: Props) => {
 				className={className}
 				modal
 				preventBodyScroll={false}
+				style={{ zIndex: 20 }}
 				{...popover}
 			>
 				{(!lazy || popover.visible) && content}

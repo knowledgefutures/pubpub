@@ -1,5 +1,5 @@
 const resizableImageFormats = ['jpg', 'jpeg', 'png'];
-export const imageCanBeResized = (url: string) => {
+export const isResizeableFormat = (url: string) => {
 	const extension = (url.split('.').pop() as string).toLowerCase();
 	return resizableImageFormats.includes(extension);
 };

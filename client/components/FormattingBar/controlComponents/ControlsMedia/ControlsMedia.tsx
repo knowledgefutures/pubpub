@@ -6,7 +6,7 @@ import { SimpleEditor } from 'components';
 
 import { usePubData } from 'client/containers/Pub/pubHooks';
 import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
-import { imageCanBeResized } from 'client/components/Editor';
+import { isResizeableFormat } from 'client/components/Editor';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import AlignmentControl from './AlignmentControl';
@@ -61,7 +61,7 @@ const ControlsMedia = (props: Props) => {
 	const canHideLabel =
 		nodeLabels &&
 		(nodeLabels as NodeLabelMap)[selectedNode.type.name as ReferenceableNodeType]?.enabled;
-	const canSelectResizeOptions = imageCanBeResized(url);
+	const canSelectResizeOptions = isResizeableFormat(url);
 
 	const toggleLabel = useCallback(
 		(e: React.MouseEvent) => updateNode({ hideLabel: (e.target as HTMLInputElement).checked }),

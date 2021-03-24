@@ -8,7 +8,6 @@ import { saveAs } from 'file-saver';
 import { debounce } from 'debounce';
 
 import Editor, { getJSON } from 'components/Editor';
-import { getDefaultResizedUrl } from 'utils/images';
 import { usePageContext } from 'utils/hooks';
 
 import { usePubContext } from '../pubHooks';
@@ -147,9 +146,6 @@ const PubBody = (props: Props) => {
 					} as any
 				}
 				nodeOptions={{
-					image: {
-						onResizeUrl: getDefaultResizedUrl,
-					},
 					discussion: {
 						addRef: (embedId, mountRef, threadNumber) => {
 							embedDiscussions.current[embedId] = {

@@ -1,7 +1,8 @@
 import { DOMOutputSpec } from 'prosemirror-model';
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';
-import { imageCanBeResized } from '../utils/media';
+import { getSrcSet, getResizedUrl } from 'utils/images';
+import { isResizeableFormat } from '../utils/media';
 import { buildLabel } from '../utils/references';
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
@@ -61,12 +62,10 @@ export default {
 		toDOM: (node, { isReact } = { isReact: false }) => {
 			const { url, align, id, altText, caption, fullResolution, size } = node.attrs;
 
-			const resizeFunc = node.type.spec.defaultOptions.onResizeUrl;
-			const maybeResizedSrc =
-				resizeFunc && !fullResolution && imageCanBeResized(url)
-					? resizeFunc(url, align)
-					: url;
-
+			const width = align === 'breakout' ? 1920 : 800;
+			const isResizeable = isResizeableFormat(url) && !fullResolution;
+			const maybeResizedSrc = isResizeable ? getResizedUrl(url, 'inside', width) : url;
+			const srcSet = isResizeable ? getSrcSet(url, 'inside', width) : '';
 			const figcaptionId = `${id}-figure-caption`;
 
 			return [
@@ -82,6 +81,7 @@ export default {
 				[
 					'img',
 					{
+						srcSet,
 						src: maybeResizedSrc,
 						alt: altText || '',
 						...getFigcaptionRefrenceAttrs(altText, caption, figcaptionId),
@@ -111,12 +111,6 @@ export default {
 			const imageNode = view.state.schema.nodes.image.create(attrs);
 			const transaction = view.state.tr.replaceSelectionWith(imageNode);
 			view.dispatch(transaction);
-		},
-		defaultOptions: {
-			onResizeUrl: (url) => {
-				return url;
-			},
-			linkToSrc: true,
 		},
 	},
 };

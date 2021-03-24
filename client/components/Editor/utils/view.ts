@@ -20,6 +20,12 @@ export const getJSON = (editorView) => {
 export const getTextFromDoc = (doc: Node, separator = '\n') => {
 	return doc.textBetween(0, doc.nodeSize - 2, separator);
 };
+
+export const getTopLevelImages = (editorView) => {
+	const viewObject = getJSON(editorView);
+	return viewObject ? viewObject.content.filter((con) => con.type === 'image') : [];
+};
+
 export const getText = (editorView, separator = '\n') => {
 	if (!editorView) {
 		return null;

@@ -3,6 +3,7 @@ import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 
 import Editor, {
 	getText,
+	getTopLevelImages,
 	getJSON,
 	removeLocalHighlight,
 	convertLocalHighlightToDiscussion,
@@ -177,7 +178,10 @@ const DiscussionInput = (props: Props) => {
 						intent={Intent.PRIMARY}
 						text={isNewThread ? 'Post Discussion' : 'Post Reply'}
 						loading={isLoading}
-						disabled={!getText(changeObject?.view)}
+						disabled={
+							!getText(changeObject?.view) &&
+							!getTopLevelImages(changeObject?.view).length
+						}
 						onClick={isNewThread ? handlePostDiscussion : handlePostThreadComment}
 						small={true}
 					/>

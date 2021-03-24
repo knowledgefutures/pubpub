@@ -38,29 +38,6 @@ const getDecorations = (editorView) => {
 	}, []);
 };
 
-const getSelectedText = (editorView) => {
-	if (editorView.state.selection.empty) {
-		return undefined;
-	}
-
-	const fromPos = editorView.state.selection.from;
-	const toPos = editorView.state.selection.to;
-	const exact = editorView.state.doc.textBetween(fromPos, toPos);
-	const prefix = editorView.state.doc.textBetween(
-		Math.max(0, fromPos - 10),
-		Math.max(0, fromPos),
-	);
-	const suffix = editorView.state.doc.textBetween(
-		Math.min(editorView.state.doc.nodeSize - 2, toPos),
-		Math.min(editorView.state.doc.nodeSize - 2, toPos + 10),
-	);
-	return {
-		exact,
-		prefix,
-		suffix,
-	};
-};
-
 const getActiveLink = (editorView) => {
 	const editorState = editorView.state;
 	const linkMarkType = editorState.schema.marks.link;
@@ -216,8 +193,6 @@ export const getChangeObject = (editorView: EditorView) => {
 		),
 		/* boolean indicating whether the selection is in a table */
 		selectionInTable: isInTable(editorView.state),
-		/* The text, prefix, and suffix of the current selection */
-		selectedText: getSelectedText(editorView),
 		/* If the active selection is of a NodeView, provide the selected node. */
 		selectedNode: isNode ? getSelectedNode(editorView.state) : undefined,
 		/* If the active selection is of a NodeView, provide a function to update the selected node. */

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { CitationManager } from 'client/utils/citations/citationManager';
+
 export const usePageState = (initialData, viewData) => {
 	const {
 		loginData: initialLoginData,
@@ -13,6 +15,7 @@ export const usePageState = (initialData, viewData) => {
 	const [pageData] = useState(initialPageData);
 	const [communityData, setCommunityData] = useState(initialCommunityData);
 	const [scopeData, setScopeData] = useState(initialScopeData);
+	const [citationManager] = useState(() => new CitationManager('apa', 'count'));
 
 	const updateCommunity = (next) => {
 		if (typeof next === 'function') {
@@ -48,5 +51,6 @@ export const usePageState = (initialData, viewData) => {
 		pageData,
 		updateCommunity,
 		updateCollection,
+		citationManager,
 	};
 };

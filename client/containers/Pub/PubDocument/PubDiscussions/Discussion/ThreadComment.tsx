@@ -3,8 +3,8 @@ import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
 import { Button, Intent } from '@blueprintjs/core';
 
-import Editor, { getText, getJSON } from 'components/Editor';
-import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
+import Editor, { getText, getJSON, EditorChangeObject, viewIsEmpty } from 'components/Editor';
+import { FormattingBar, buttons } from 'components/FormattingBar';
 import { Avatar, Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -29,7 +29,7 @@ const ThreadComment = (props: Props) => {
 	} = props;
 	const { loginData, communityData, locationData } = usePageContext();
 	const [isEditing, setIsEditing] = useState(false);
-	const [changeObject, setChangeObject] = useState({});
+	const [changeObject, setChangeObject] = useState<null | EditorChangeObject>(null);
 	const [isLoadingEdit, setIsLoadingEdit] = useState(false);
 
 	const handlePutThreadComment = (threadCommentUpdates) => {
@@ -127,6 +127,13 @@ const ThreadComment = (props: Props) => {
 							editable: isEditing,
 						})}
 					>
+						{isEditing && changeObject && (
+							<FormattingBar
+								editorChangeObject={changeObject}
+								buttons={buttons.discussionButtonSet}
+								isSmall
+							/>
+						)}
 						<Editor
 							key={`${isEditing}-${threadCommentData.text}`}
 							isReadOnly={!isEditing}
@@ -140,37 +147,27 @@ const ThreadComment = (props: Props) => {
 					</div>
 				)}
 				{isEditing && (
-					<React.Fragment>
-						<FormattingBarLegacy
-							editorChangeObject={changeObject || {}}
-							threads={[]}
-							hideBlocktypes={true}
-							hideExtraFormatting={true}
-							isSmall={true}
-						/>
-						<Button
-							small
-							className="discussion-primary-button"
-							intent={Intent.PRIMARY}
-							text="Update Discussion"
-							loading={isLoadingEdit}
-							// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-							disabled={!getText(changeObject.view)}
-							onClick={() => {
-								setIsLoadingEdit(true);
-								handlePutThreadComment({
-									// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-									content: getJSON(changeObject.view),
-									// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
-									text: getText(changeObject.view) || '',
-								}).then(() => {
-									setIsEditing(false);
-									setChangeObject({});
-									setIsLoadingEdit(false);
-								});
-							}}
-						/>
-					</React.Fragment>
+					<Button
+						small
+						className="discussion-primary-button"
+						intent={Intent.PRIMARY}
+						text="Update Discussion"
+						loading={isLoadingEdit}
+						disabled={!!changeObject && viewIsEmpty(changeObject.view.state)}
+						onClick={() => {
+							setIsLoadingEdit(true);
+							handlePutThreadComment({
+								// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
+								content: getJSON(changeObject.view),
+								// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
+								text: getText(changeObject.view) || '',
+							}).then(() => {
+								setIsEditing(false);
+								setChangeObject(null);
+								setIsLoadingEdit(false);
+							});
+						}}
+					/>
 				)}
 			</div>
 		</div>

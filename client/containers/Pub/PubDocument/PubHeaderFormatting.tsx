@@ -10,7 +10,6 @@ require('./pubHeaderFormatting.scss');
 
 type Props = {
 	collabData: any;
-	editorWrapperRef: any;
 	disabled: boolean;
 };
 
@@ -34,7 +33,6 @@ const PubHeaderFormatting = (props: Props) => {
 			<FormattingBar
 				buttons={buttons.fullButtonSet}
 				editorChangeObject={props.collabData.editorChangeObject || {}}
-				containerRef={props.editorWrapperRef}
 				isFullScreenWidth={true}
 			/>
 			<div className="right-content">

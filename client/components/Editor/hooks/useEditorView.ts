@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { Node, Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
@@ -13,6 +14,7 @@ import { OnEditFn, PluginLoader, PluginsOptions } from '../types';
 type EditorViewOptions = {
 	customPlugins: Record<string, null | PluginLoader>;
 	pluginsOptions: PluginsOptions;
+	debounceEditsMs: number;
 	initialDocNode: Node;
 	isReadOnly: boolean;
 	schema: Schema;
@@ -22,6 +24,8 @@ type EditorViewOptions = {
 	onError?: (err: Error) => unknown;
 	onEdit?: OnEditFn;
 };
+
+const noop = () => {};
 
 const blockSaveKeyHandler = keydownHandler({
 	'Mod-s': () => true,
@@ -99,8 +103,17 @@ const createEditorView = (options: EditorViewOptions) => {
 };
 
 export const useEditorView = (options: EditorViewOptions) => {
-	const { onEdit, onError, onKeyPress, onScrollToSelection, isReadOnly } = options;
+	const {
+		debounceEditsMs,
+		onEdit: undebouncedOnEdit,
+		onError,
+		onKeyPress,
+		onScrollToSelection,
+		isReadOnly,
+	} = options;
+
 	const viewRef = useRef<null | EditorView>(null);
+	const [onEdit] = useDebouncedCallback(undebouncedOnEdit || noop, debounceEditsMs);
 
 	useEffect(() => {
 		if (viewRef.current === null) {

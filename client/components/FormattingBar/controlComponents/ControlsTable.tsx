@@ -123,7 +123,6 @@ const ControlsTable = (props: Props) => {
 		return (
 			<Button
 				minimal
-				className="block-type-selector-component"
 				rightIcon="caret-down"
 				elementRef={ref}
 				icon="th"

@@ -3,14 +3,14 @@ import { DefinitelyHas } from 'utils/types';
 import { EditorChangeObject } from '../Editor';
 import { CommandSpec } from '../Editor/commands/types';
 
-export enum FormattingBarPopoverCondition {
+export enum FormattingBarButtonPopoverCondition {
 	Always,
 	Disabled,
 }
 
-export type FormattingBarPopover = {
+export type FormattingBarButtonPopover = {
 	component: React.ComponentType;
-	condition: FormattingBarPopoverCondition;
+	condition: FormattingBarButtonPopoverCondition;
 };
 
 export type EditorChangeObjectDecider = (eco: EditorChangeObject) => boolean;
@@ -22,8 +22,8 @@ export type EditorChangeObjectWithNode = DefinitelyHas<
 
 export type PositioningFn = (
 	eco: EditorChangeObject,
-	wrapper: HTMLElement,
-) => { top: number; left: number };
+	wrapper?: HTMLElement,
+) => { transform: string };
 
 export type FormattingBarButtonDataControls = {
 	component: React.ComponentType<any>;
@@ -40,10 +40,12 @@ export type FormattingBarButtonData = {
 	key: string;
 	controls?: FormattingBarButtonDataControls;
 	component?: React.ComponentType<any>;
-	popover?: FormattingBarPopover;
+	popover?: FormattingBarButtonPopover;
 	title: string;
 	ariaTitle?: string;
 	icon: string;
 	isToggle?: boolean;
 	isDisabled?: EditorChangeObjectDecider;
 } & ({ command: CommandSpec } | { insertNodeType: string } | { isMedia: true });
+
+export type PopoverStyle = 'anchored' | 'floating' | 'none';

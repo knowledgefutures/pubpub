@@ -13,7 +13,6 @@ import { ControlsReferenceSettingsLink } from '../ControlsReference';
 import { EditorChangeObjectWithNode } from '../../types';
 
 type Props = {
-	isSmall: boolean;
 	pendingAttrs: any;
 	editorChangeObject: EditorChangeObjectWithNode;
 };
@@ -29,7 +28,7 @@ const getItemName = (selectedNode) => {
 };
 
 const ControlsMedia = (props: Props) => {
-	const { isSmall, editorChangeObject, pendingAttrs } = props;
+	const { editorChangeObject, pendingAttrs } = props;
 	const { selectedNode, updateNode } = editorChangeObject;
 	const {
 		hasPendingChanges,
@@ -71,20 +70,20 @@ const ControlsMedia = (props: Props) => {
 
 	const renderCaptionPanel = () => {
 		return (
-			<div className="section hide-overflow">
+			<>
 				<SimpleEditor
 					placeholder={`Add a caption for this ${itemName}`}
 					initialHtmlString={caption}
 					onChange={(htmlString) => updateAttrs({ caption: htmlString })}
 				/>
 				{renderUpdateButton()}
-			</div>
+			</>
 		);
 	};
 
 	const renderAltTextPanel = () => {
 		return (
-			<div className="section hide-overflow">
+			<>
 				<p>
 					Alt text provides information about an image's contents to screenreader users
 					that may be too detailed to include in a caption. Avoid duplicating text between
@@ -96,15 +95,20 @@ const ControlsMedia = (props: Props) => {
 					onChange={(evt) => updateAttrs({ altText: evt.target.value })}
 				/>
 				{renderUpdateButton()}
-			</div>
+			</>
 		);
 	};
 
 	const renderCaptionAltSelector = () => {
 		return (
 			<Tabs id="media-controls-caption-alt" className={Classes.DARK}>
-				<Tab id="caption" title="Caption" panel={renderCaptionPanel()} />
-				<Tab id="alt" title="Alt text" panel={renderAltTextPanel()} />
+				<Tab
+					id="caption"
+					title="Caption"
+					className="section"
+					panel={renderCaptionPanel()}
+				/>
+				<Tab id="alt" title="Alt text" className="section" panel={renderAltTextPanel()} />
 			</Tabs>
 		);
 	};
@@ -135,7 +139,6 @@ const ControlsMedia = (props: Props) => {
 					/>
 				)}
 				<AlignmentControl
-					isSmall={isSmall}
 					value={align}
 					onChange={(nextAlignment) => updateNode({ align: nextAlignment })}
 				/>
@@ -143,7 +146,6 @@ const ControlsMedia = (props: Props) => {
 					// @ts-expect-error ts-migrate(2322) FIXME: Type 'ProsemirrorNode<any> & { attrs?: { size: num... Remove this comment to see the full error message
 					selectedNode={selectedNode}
 					updateNode={updateNode}
-					isSmall={isSmall}
 				/>
 				<div className="controls-row">
 					{canSelectResizeOptions && (
@@ -155,23 +157,24 @@ const ControlsMedia = (props: Props) => {
 						/>
 					)}
 				</div>
-				<div className="controls-row">
-					<Checkbox
-						disabled={!canHideLabel}
-						onClick={toggleLabel}
-						alignIndicator="right"
-						label="Hide label"
-						checked={hideLabel}
-					>
-						{!canHideLabel && (
-							<>
-								{' '}
-								(
-								<ControlsReferenceSettingsLink dark small />)
-							</>
-						)}
-					</Checkbox>
-				</div>
+				{canHideLabel && (
+					<div className="controls-row">
+						<Checkbox
+							onClick={toggleLabel}
+							alignIndicator="right"
+							label="Hide label"
+							checked={hideLabel}
+						>
+							{!canHideLabel && (
+								<>
+									{' '}
+									(
+									<ControlsReferenceSettingsLink dark small />)
+								</>
+							)}
+						</Checkbox>
+					</div>
+				)}
 			</div>
 			{nodeSupportsAltText ? renderCaptionAltSelector() : renderCaptionPanel()}
 		</div>

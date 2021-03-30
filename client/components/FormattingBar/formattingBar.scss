@@ -17,7 +17,7 @@
 @mixin hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
-    &::-webkit-scrollbar { 
+    &::-webkit-scrollbar {
         display: none;
     }
 }
@@ -84,6 +84,7 @@
                 display: inline-flex;
                 align-items: center;
                 .bp3-icon {
+                    margin-left: -2px;
                     margin-right: 5px;
                 }
             }
@@ -105,15 +106,17 @@
         & > :first-child {
             padding-left: 1px;
         }
-        .formatting-bar-button {
-            padding-top: 2px;
-            padding-bottom: 2px;
-            .bp3-button {
-                padding: 5px 10px;
+        & > .toolbar {
+            .formatting-bar-button {
+                padding-top: 2px;
+                padding-bottom: 2px;
+                .bp3-button {
+                    padding: 5px 10px;
+                }
             }
-        }
-        .separator {
-            height: 22px;
+            .separator {
+                height: 22px;
+            }
         }
     }
     &:not(.small) {
@@ -159,11 +162,13 @@
         padding: 10px;
         border-radius: 4px;
         z-index: 2;
+        width: max-content;
     }
     &.full-screen-width:not(.floating) {
         width: 100vw;
     }
-    textarea, .minimal-editor-component {
+    textarea,
+    .minimal-editor-component {
         border-radius: 4px;
     }
     .inner {
@@ -171,7 +176,7 @@
     }
     .close-button-container {
         flex-shrink: 0;
-        padding-left: 5px
+        padding-left: 5px;
     }
     *:focus:not(:disabled):not(.bp3-tab) {
         outline: none;

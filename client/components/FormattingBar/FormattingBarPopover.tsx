@@ -14,7 +14,7 @@ type Props = {
 	title: string;
 	captureFocusOnMount?: boolean;
 	children: React.ReactNode;
-	containerRef?: React.RefObject<HTMLElement>;
+	containerRef?: null | React.RefObject<HTMLElement>;
 	editorChangeObject: EditorChangeObject;
 	floatingPosition: Falsy | ReturnType<PositioningFn>;
 	isFullScreenWidth?: boolean;
@@ -90,9 +90,8 @@ const FormattingBarPopover = (props: Props) => {
 		</div>
 	);
 
-	if (floatingPosition) {
-		const containerElement = containerRef?.current || document.body;
-		return ReactDOM.createPortal(popover, containerElement);
+	if (floatingPosition && containerRef?.current) {
+		return ReactDOM.createPortal(popover, containerRef?.current);
 	}
 	return popover;
 };

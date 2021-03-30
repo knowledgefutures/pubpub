@@ -7,7 +7,6 @@ import { s3Upload } from 'client/utils/upload';
 
 type Props = {
 	updateNode: (...args: any[]) => any;
-	isSmall: boolean;
 	selectedNode: {
 		type: {
 			name: string;
@@ -19,9 +18,8 @@ type Props = {
 };
 
 const SourceControls = (props: Props) => {
-	const { isSmall, selectedNode, updateNode } = props;
+	const { selectedNode, updateNode } = props;
 	const { attrs } = selectedNode;
-	const iconSize = isSmall ? 12 : 16;
 	const [isUploading, setIsUploading] = useState(false);
 	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const [urlSource, setUrlSource] = useState(attrs.url);
@@ -48,7 +46,7 @@ const SourceControls = (props: Props) => {
 		return (
 			<label htmlFor={inputKey.current} className="file-select">
 				<AnchorButton
-					icon={<Icon icon="edit2" iconSize={iconSize} />}
+					icon={<Icon icon="edit2" iconSize={16} />}
 					minimal={true}
 					loading={isUploading}
 					aria-label="Upload new source file"
@@ -84,7 +82,7 @@ const SourceControls = (props: Props) => {
 				{!useUrlInput && (
 					<AnchorButton
 						aria-label="Download source file"
-						icon={<Icon icon="download" iconSize={iconSize} />}
+						icon={<Icon icon="download" iconSize={16} />}
 						minimal={true}
 						// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 						href={attrs.url}

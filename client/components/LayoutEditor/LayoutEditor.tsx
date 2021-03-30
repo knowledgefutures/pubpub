@@ -132,7 +132,7 @@ const LayoutEditor = (props: Props) => {
 					{block.type === 'text' && (
 						<LayoutEditorText
 							key={`item-${block.id}`}
-							onChange={changeLayout}
+							onChange={changeLayoutPartial}
 							layoutIndex={index}
 							content={block.content}
 						/>

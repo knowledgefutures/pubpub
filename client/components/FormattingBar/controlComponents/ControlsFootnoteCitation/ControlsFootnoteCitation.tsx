@@ -99,7 +99,7 @@ const ControlsFootnoteCitation = (props: Props) => {
 	);
 
 	const unstructuredSection = (
-		<div className="section hide-overflow" key="unstructured">
+		<div className="section" key="unstructured">
 			<div className="title">Rich Text</div>
 			<SimpleEditor
 				initialHtmlString={unstructuredValue}

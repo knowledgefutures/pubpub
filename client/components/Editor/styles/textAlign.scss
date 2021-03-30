@@ -19,7 +19,8 @@
 
 @include text-align-styles();
 
-td, th {
+td,
+th {
     @include text-align-styles();
 }
 

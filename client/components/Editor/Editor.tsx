@@ -26,6 +26,7 @@ type Props = {
 	citationManager?: CitationManager;
 	collaborativeOptions?: CollaborativeOptions;
 	discussionsOptions?: Maybe<DiscussionsOptions>;
+	debounceEditsMs?: number;
 	customMarks?: Record<string, MarkSpec>;
 	customNodes?: Record<string, NodeSpec>;
 	customPlugins?: Record<string, null | PluginLoader>;
@@ -52,6 +53,7 @@ const Editor = (props: Props) => {
 		customMarks = {},
 		customNodes = {},
 		customPlugins = {},
+		debounceEditsMs = 0,
 		discussionsOptions,
 		enableSuggestions = false,
 		initialContent = emptyDoc,
@@ -92,6 +94,7 @@ const Editor = (props: Props) => {
 			placeholder,
 			suggestionManager,
 		},
+		debounceEditsMs,
 		initialDocNode,
 		schema,
 		isReadOnly,

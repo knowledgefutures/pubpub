@@ -1,3 +1,5 @@
+import { DocJson } from 'utils/types';
+
 type BannerButtonType = 'create-pub' | 'signup' | 'link';
 type TextAlign = 'left' | 'center';
 
@@ -45,7 +47,7 @@ export type LayoutBlockText = {
 	type: 'text';
 	id: string;
 	content: {
-		text?: string;
+		text?: DocJson;
 		align?: TextAlign;
 	};
 };

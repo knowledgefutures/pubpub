@@ -40,8 +40,6 @@ class EditorUnit extends Component<Props, State> {
 							showBlockTypes={this.props.showBlockTypes}
 							isSmall={this.props.isSmall}
 							buttons={this.props.buttons}
-							// @ts-expect-error ts-migrate(2339) FIXME: Property 'containerRef' does not exist on type 'Ed... Remove this comment to see the full error message
-							containerRef={this.containerRef}
 						/>
 					)}
 				</div>

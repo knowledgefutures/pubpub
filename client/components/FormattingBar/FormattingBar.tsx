@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
+import { EditorView } from 'prosemirror-view';
 
 import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
@@ -9,7 +10,7 @@ import { EditorChangeObject } from 'client/components/Editor';
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
 import FormattingBarPopover from './FormattingBarPopover';
-import { FormattingBarButtonData } from './types';
+import { FormattingBarButtonData, PopoverStyle } from './types';
 import { getButtonPopoverComponent } from './utils';
 import { usePendingAttrs } from './hooks/usePendingAttrs';
 import { useControlsState, ButtonState } from './hooks/useControlsState';
@@ -17,7 +18,7 @@ import { useControlsState, ButtonState } from './hooks/useControlsState';
 require('./formattingBar.scss');
 
 type Props = {
-	containerRef?: React.RefObject<HTMLElement>;
+	popoverContainerRef?: React.RefObject<HTMLElement>;
 	editorChangeObject: EditorChangeObject;
 	buttons: FormattingBarButtonData[][];
 	showBlockTypes?: boolean;
@@ -25,22 +26,33 @@ type Props = {
 	isTranslucent?: boolean;
 	isFullScreenWidth?: boolean;
 	citationStyle?: string;
+	popoverStyle?: PopoverStyle;
 };
+
+const shimEditorChangeObject = ({
+	view: {} as EditorView,
+	selectedNode: null,
+	updateNode: () => {},
+} as unknown) as EditorChangeObject;
 
 const FormattingBar = (props: Props) => {
 	const {
-		editorChangeObject,
-		containerRef,
-		showBlockTypes = true,
+		editorChangeObject: propsEditorChangeObject,
+		popoverContainerRef,
 		isSmall = false,
+		showBlockTypes = !isSmall,
+		popoverStyle = isSmall ? 'floating' : 'anchored',
 		isTranslucent = false,
 		isFullScreenWidth = false,
 		citationStyle = 'apa',
+		buttons,
 	} = props;
 
+	const editorChangeObject = propsEditorChangeObject || shimEditorChangeObject;
 	const { selectedNode, updateNode } = editorChangeObject;
 	const { communityData } = usePageContext();
 	const buttonElementRefs = useRefMap();
+	const wrapperRef = useRef<null | HTMLDivElement>(null);
 	const toolbar = useToolbarState({ loop: true });
 
 	const pendingAttrs = usePendingAttrs({
@@ -56,7 +68,12 @@ const FormattingBar = (props: Props) => {
 		selectedNodeId,
 		ControlsComponent,
 		buttonStates,
-	} = useControlsState(props);
+	} = useControlsState({
+		buttons,
+		popoverStyle,
+		editorChangeObject,
+		positioningRootRef: popoverContainerRef || wrapperRef,
+	});
 
 	useEffect(() => {
 		if (openedButton) {
@@ -96,17 +113,18 @@ const FormattingBar = (props: Props) => {
 		);
 	};
 
-	const renderButtonGroup = (buttons: ButtonState[], index: number) => {
+	const renderButtonGroup = (states: ButtonState[], index: number) => {
 		return (
 			<React.Fragment key={index}>
 				{index > 0 && <div className="separator" />}
-				{buttons.map(renderButtonState)}
+				{states.map(renderButtonState)}
 			</React.Fragment>
 		);
 	};
 
 	return (
 		<div
+			ref={wrapperRef}
 			className={classNames(
 				'formatting-bar-component',
 				isSmall && 'small',
@@ -133,7 +151,7 @@ const FormattingBar = (props: Props) => {
 					accentColor={communityData.accentColorDark}
 					title={openedButton.ariaTitle || openedButton.title}
 					isFullScreenWidth={isFullScreenWidth}
-					containerRef={containerRef}
+					containerRef={popoverContainerRef}
 					floatingPosition={controlsPosition}
 					captureFocusOnMount={openedButton.controls?.captureFocusOnMount}
 					showCloseButton={openedButton.controls?.showCloseButton}

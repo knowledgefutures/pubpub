@@ -4,7 +4,7 @@ import { Checkbox } from '@blueprintjs/core';
 import { useDebounce } from 'use-debounce';
 
 import { renderLatexString } from 'client/utils/editor';
-import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
+import { ReferenceableNodeType } from 'client/components/Editor/types';
 import { getCurrentNodeLabels } from 'client/components/Editor';
 
 import { EditorChangeObjectWithNode } from '../types';
@@ -40,9 +40,7 @@ const ControlsEquation = (props: Props) => {
 	);
 	const isBlock = selectedNode.type.name === 'block_equation';
 	const nodeLabels = getCurrentNodeLabels(editorChangeObject.view.state);
-	const canHideLabel =
-		nodeLabels &&
-		(nodeLabels as NodeLabelMap)[selectedNode.type.name as ReferenceableNodeType]?.enabled;
+	const canHideLabel = nodeLabels[selectedNode.type.name as ReferenceableNodeType]?.enabled;
 
 	useEffect(() => {
 		// Avoid an initial call to the server's LaTeX renderer on mount
@@ -86,9 +84,8 @@ const ControlsEquation = (props: Props) => {
 				<div className="section">
 					<div className="title">Preview</div>
 					<div className="preview" dangerouslySetInnerHTML={{ __html: html }} />
-					{isBlock && (
+					{isBlock && canHideLabel && (
 						<Checkbox
-							disabled={!canHideLabel}
 							onClick={toggleLabel}
 							label="Hide label"
 							checked={selectedNode?.attrs?.hideLabel}

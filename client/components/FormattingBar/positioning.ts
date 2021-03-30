@@ -2,14 +2,15 @@ import { EditorChangeObject } from '../Editor';
 
 const getPositionForBounds = (getBoundsFn) => (
 	changeObject: EditorChangeObject,
-	container: HTMLElement,
+	container?: HTMLElement,
 ) => {
-	const wrapperBounds = container.offsetParent?.getBoundingClientRect();
-	const bounds = getBoundsFn(changeObject);
-	return {
-		top: bounds.bottom - (wrapperBounds?.top ?? 0),
-		left: bounds.left - (wrapperBounds?.left ?? 0),
-	};
+	const wrapperBounds = container?.getBoundingClientRect();
+	const { left, bottom } = getBoundsFn(changeObject);
+	const wrapperTop = wrapperBounds?.top ?? 0;
+	const wrapperLeft = wrapperBounds?.left ?? 0;
+	const translateX = left - wrapperLeft;
+	const translateY = bottom - wrapperTop;
+	return { transform: `translateX(${translateX}px) translateY(${translateY}px)` };
 };
 
 export const positionNearLink = getPositionForBounds(

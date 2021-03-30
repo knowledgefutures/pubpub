@@ -2,14 +2,6 @@
     > [data-text-align='#{$alignment}'] {
         text-align: #{$alignment};
     }
-    > ul,
-    > ol {
-        &[data-text-align='#{$alignment}'] {
-            & > li > p {
-                display: inline-block;
-            }
-        }
-    }
 }
 
 @mixin text-align-styles {

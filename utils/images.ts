@@ -36,6 +36,7 @@ export const getResizedUrl = (
 				width,
 				height,
 				fit,
+				withoutEnlargement: true,
 			},
 		},
 	};

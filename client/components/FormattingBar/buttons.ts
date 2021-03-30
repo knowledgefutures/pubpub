@@ -1,4 +1,7 @@
 import {
+	alignTextCenter,
+	alignTextLeft,
+	alignTextRight,
 	blockquoteToggle,
 	bulletListToggle,
 	codeToggle,
@@ -58,6 +61,27 @@ const showOrTriggerTable = (editorChangeObject) => {
 		triggerOnClick(editorChangeObject) &&
 		(selection.empty || selection.$anchorCell)
 	);
+};
+
+export const alignLeft: FormattingBarButtonData = {
+	key: 'align-left',
+	title: 'Align left',
+	icon: 'align-left',
+	command: alignTextLeft,
+};
+
+export const alignCenter: FormattingBarButtonData = {
+	key: 'align-center',
+	title: 'Align center',
+	icon: 'align-center',
+	command: alignTextCenter,
+};
+
+export const alignRight: FormattingBarButtonData = {
+	key: 'align-right',
+	title: 'Align right',
+	icon: 'align-right',
+	command: alignTextRight,
 };
 
 export const strong: FormattingBarButtonData = {
@@ -248,6 +272,7 @@ export const minimalButtonSet = [[strong, em, link, equation]];
 export const inlineMenuButtonSet = [[heading1, heading2, strong, em, link]];
 
 export const fullButtonSet = [
+	[alignLeft, alignCenter, alignRight],
 	[
 		strong,
 		em,

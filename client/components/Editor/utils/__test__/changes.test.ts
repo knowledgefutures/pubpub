@@ -37,6 +37,7 @@ describe('getStepsInChangeRange', () => {
 		            "attrs": Object {
 		              "class": null,
 		              "id": null,
+		              "textAlign": null,
 		            },
 		            "content": Array [
 		              Object {
@@ -59,6 +60,7 @@ describe('getStepsInChangeRange', () => {
 		            "attrs": Object {
 		              "class": null,
 		              "id": null,
+		              "textAlign": null,
 		            },
 		            "content": Array [
 		              Object {
@@ -111,6 +113,7 @@ describe('getStepsInChangeRange', () => {
 		            "attrs": Object {
 		              "class": null,
 		              "id": null,
+		              "textAlign": null,
 		            },
 		            "content": Array [
 		              Object {
@@ -141,6 +144,7 @@ describe('getStepsInChangeRange', () => {
 		            "attrs": Object {
 		              "class": null,
 		              "id": null,
+		              "textAlign": null,
 		            },
 		            "content": Array [
 		              Object {
@@ -163,6 +167,7 @@ describe('getStepsInChangeRange', () => {
 		            "attrs": Object {
 		              "class": null,
 		              "id": null,
+		              "textAlign": null,
 		            },
 		            "content": Array [
 		              Object {
@@ -192,6 +197,7 @@ describe('getStepsInChangeRange', () => {
 		            "attrs": Object {
 		              "class": null,
 		              "id": null,
+		              "textAlign": null,
 		            },
 		            "content": Array [
 		              Object {
@@ -214,6 +220,7 @@ describe('getStepsInChangeRange', () => {
 		            "attrs": Object {
 		              "class": null,
 		              "id": null,
+		              "textAlign": null,
 		            },
 		            "content": Array [
 		              Object {
@@ -299,6 +306,7 @@ describe('getStepsInChangeRange', () => {
 		            "attrs": Object {
 		              "class": null,
 		              "id": null,
+		              "textAlign": null,
 		            },
 		            "content": Array [
 		              Object {

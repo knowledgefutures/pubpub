@@ -142,15 +142,14 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		border-left: solid 4px rgba(181, 181, 181, 0.5);
 		padding: 0 1em;
 	}
-	figure,
 	.file {
 		font-size: 0.75em;
 	}
 	figcaption {
-		font-size: 0.9em;
+		font-size: 15px;
 		p {
 			margin-bottom: 0em;
-			line-height: 1;
+			line-height: 1.2em;
 			font-family: $base-font;
 		}
 	}

@@ -50,13 +50,12 @@ const LayoutEditorPages = (props: Props) => {
 	const { layoutIndex, onChange, content, collections, pages } = props;
 
 	const allItems = useMemo(() => getAllItems(collections, pages), [collections, pages]);
-	const [selectedItems, availableItems] = useMemo(
-		() =>
-			splitArrayOn(allItems, (item) =>
-				content.items.some((contentItem) => contentItem.id === item.id),
-			),
-		[content.items, allItems],
-	);
+	const [selectedItems, availableItems] = useMemo(() => {
+		return [
+			content.items.map((ci) => allItems.find((item) => ci.id === item.id)!),
+			allItems.filter((item) => !content.items.some((ci) => ci.id === item.id)),
+		];
+	}, [content.items, allItems]);
 
 	const setTitle = useCallback(
 		(title: string) =>

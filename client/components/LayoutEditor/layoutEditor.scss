@@ -84,16 +84,11 @@
 			margin: 0em 1em 2em 0em;
 		}
 	}
-	.layout-editor-text-component,
-	.layout-editor-html-component {
-		p,
-		li {
+	.layout-editor-text-component {
+		.block-content {
 			font-size: 18px;
 			line-height: 1.6;
-		}
-		.block-header {
-			flex-wrap: nowrap;
-			align-items: center;
+			font-weight: 400;
 		}
 	}
 	.layout-editor-collection-header-component {

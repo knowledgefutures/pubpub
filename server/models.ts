@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 import path from 'path';
 import Sequelize from 'sequelize';
+import knexJs from 'knex';
 
 if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 	require(path.join(process.cwd(), 'config.js'));
@@ -20,6 +21,8 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 		// acquire: 20000,
 	},
 });
+
+export const knex = knexJs({ client: 'pg' });
 
 /* Change to true to update the model in the database. */
 /* NOTE: This being set to true will erase your data. */

@@ -1,11 +1,16 @@
 .order-picker-component {
 	display: flex;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+
 	.column {
 		width: 50%;
 		&:first-of-type {
 			border-right: 1px solid #ccc;
 		}
 	}
+
 	.column-header {
 		background: #eee;
 		border-bottom: 1px solid #ccc;
@@ -18,27 +23,42 @@
 			opacity: 0.5;
 		}
 	}
-	.droppable {
-		overflow-y: auto;
-		overflow-x: hidden;
+
+	.items-listing {
 		height: 350px;
-		max-height: 85vh;
-		padding: 1em;
-		min-height: 1px;
+		overflow-y: auto;
+		> ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.more-spinner {
+			margin: 7px 0;
+		}
 	}
-	.draggable {
-		padding: 0.25em 0em;
+
+	.search-bar {
+		background: #f5f5f5;
+		border-bottom: 1px solid #ccc;
+		position: sticky;
+		top: 0;
+		padding: 8px;
 	}
-	.drag-title {
+}
+
+.order-picker-component_item {
+	display: flex;
+	> .drag-handle {
 		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		align-items: center;
-		svg {
-			margin-right: 0.5em;
-		}
-		.text {
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
 	}
+	> .content {
+		flex-grow: 1;
+	}
+	&.is-dragging {
+		opacity: 0.5;
+	}
+	border-bottom: 1px solid #eee;
 }

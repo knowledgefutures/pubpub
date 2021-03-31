@@ -20,6 +20,7 @@
 		outline: 0px solid #bbbdc0;
 	}
 }
+
 h1,
 h2,
 h3,
@@ -35,6 +36,15 @@ h6 {
 .footnote {
 	vertical-align: super;
 	font-size: 0.85em;
+}
+
+ol,
+ul {
+	padding-left: 0;
+	list-style-position: inside;
+	> li > p {
+		display: inline-block;
+	}
 }
 
 span.citation {

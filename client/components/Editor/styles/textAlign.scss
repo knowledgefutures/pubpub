@@ -1,0 +1,21 @@
+@mixin text-align-style($alignment) {
+    > [data-text-align='#{$alignment}'] {
+        text-align: #{$alignment};
+    }
+}
+
+@mixin text-align-styles {
+    @include text-align-style('center');
+    @include text-align-style('right');
+}
+
+@include text-align-styles();
+
+td,
+th {
+    @include text-align-styles();
+}
+
+> blockquote {
+    @include text-align-styles();
+}

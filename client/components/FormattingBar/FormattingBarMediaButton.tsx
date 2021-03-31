@@ -1,36 +1,30 @@
 import React, { useState } from 'react';
+import { EditorView } from 'prosemirror-view';
 
 import { Overlay } from 'components';
-import { EditorChangeObject } from 'client/types';
 
 import FormattingBarButton, { FormattingBarButtonProps } from './FormattingBarButton';
 import Media from './media/Media';
+import { insertNodeIntoEditor } from '../Editor';
 
 type FormattingBarMediaButtonProps = FormattingBarButtonProps & {
-	editorChangeObject: EditorChangeObject;
+	view: EditorView;
 };
 
 const FormattingBarMediaButton = React.forwardRef((props: FormattingBarMediaButtonProps, ref) => {
-	const { editorChangeObject, isSmall, onClick, isIndicated, isOpen, ...restProps } = props;
+	const { view, isSmall, onClick, isIndicated, isOpen, ...restProps } = props;
 	const [isModalOpen, setModalOpen] = useState(false);
-	const handleInsert = (insertType, insertData) => {
-		const { insertFunctions } = editorChangeObject;
-		if (insertFunctions) {
-			insertFunctions[insertType](insertData);
-		}
+
+	const handleInsert = (type: string, attrs: Record<string, any>) => {
+		insertNodeIntoEditor(view, type, attrs);
 		setModalOpen(false);
 	};
 
 	return (
 		<>
 			<Overlay isOpen={isModalOpen} onClose={() => setModalOpen(false)} maxWidth={750}>
-				<Media
-					editorChangeObject={editorChangeObject}
-					onInsert={handleInsert}
-					isSmall={Boolean(isSmall)}
-				/>
+				<Media onInsert={handleInsert} isSmall={Boolean(isSmall)} />
 			</Overlay>
-			<div className="separator" />
 			<FormattingBarButton
 				{...restProps}
 				ref={ref}

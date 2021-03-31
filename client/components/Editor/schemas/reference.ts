@@ -77,11 +77,5 @@ export default {
 				label || `(ref?)`,
 			] as DOMOutputSpec;
 		},
-		onInsert: (view, attrs) => {
-			const referenceNode = view.state.schema.nodes.reference.create(attrs);
-			const transaction = view.state.tr.replaceSelectionWith(referenceNode);
-
-			view.dispatch(transaction);
-		},
 	},
 };

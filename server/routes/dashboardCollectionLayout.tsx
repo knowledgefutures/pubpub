@@ -4,7 +4,7 @@ import Html from 'server/Html';
 import app from 'server/server';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getPubsForLayout } from 'server/utils/queryHelpers/layout';
+import { getLayoutPubsByBlock } from 'server/utils/layouts';
 import { handleErrors, NotFoundError } from 'server/utils/errors';
 
 app.get('/dash/collection/:collectionSlug/layout', async (req, res, next) => {
@@ -22,9 +22,8 @@ app.get('/dash/collection/:collectionSlug/layout', async (req, res, next) => {
 				chunkName="DashboardCollectionLayout"
 				initialData={initialData}
 				viewData={{
-					pubs: await getPubsForLayout({
+					layoutPubsByBlock: await getLayoutPubsByBlock({
 						blocks: collection.layout && collection.layout.blocks,
-						forLayoutEditor: true,
 						initialData,
 						collectionId: collection.id,
 					}),

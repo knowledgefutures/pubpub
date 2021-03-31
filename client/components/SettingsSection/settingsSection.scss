@@ -9,19 +9,19 @@
 	}
 }
 
-@media only screen and (min-width: 1250px) {
-	@supports (display: grid) {
+@supports (display: grid) {
+	@media only screen and (min-width: 1400px) {
 		.settings-section-component {
 			display: grid;
-			grid-template-columns: 140px 1fr;
+			grid-template-columns: 100px 1fr;
 			grid-template-areas: 'title content';
-			column-gap: 75px;
+			column-gap: 40px;
 			padding-top: 20px;
-			.title {
+			& > .title {
 				text-align: left;
 				grid-area: title;
 			}
-			.content {
+			& > .content {
 				grid-area: content;
 				min-width: 0px;
 				font-size: 16px;

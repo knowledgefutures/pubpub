@@ -14,7 +14,7 @@ import {
 } from '@blueprintjs/core';
 
 import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
-import collectionType from 'types/collection';
+import { Collection } from 'utils/types';
 import { enumerateMetadataFields, normalizeMetadataToKind } from 'utils/collections/metadata';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -22,9 +22,9 @@ import { apiFetch } from 'client/utils/apiFetch';
 require('./collectionMetadataEditor.scss');
 
 type Props = {
-	collection: collectionType;
+	collection: Collection;
 	communityData: any;
-	onUpdateCollection: (...args: any[]) => any;
+	onUpdateCollection: (update: Partial<Collection>) => unknown;
 };
 
 const validateField = ({ type, value }) => !value || !type || type.validate(value);
@@ -51,7 +51,6 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 
 	allFieldsValidate() {
 		const {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'kind' does not exist on type 'collection... Remove this comment to see the full error message
 			collection: { kind },
 		} = this.props;
 		const { metadata } = this.state;
@@ -61,7 +60,6 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 
 	normalizeMetadata(metadata) {
 		const { collection, communityData } = this.props;
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'kind' does not exist on type 'collection... Remove this comment to see the full error message
 		return normalizeMetadataToKind(metadata, collection.kind, {
 			community: communityData,
 			collection,
@@ -136,7 +134,6 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 		const { collection } = this.props;
 		const { isGettingDoi } = this.state;
 
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'doi' does not exist on type 'collection'... Remove this comment to see the full error message
 		return collection.doi ? (
 			<Button
 				icon="link"
@@ -208,7 +205,6 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 	renderFields() {
 		const { collection } = this.props;
 		const { metadata } = this.state;
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'kind' does not exist on type 'collection... Remove this comment to see the full error message
 		const { kind } = collection;
 		const fields = enumerateMetadataFields(metadata, kind);
 		if (fields.length === 0) {
@@ -221,14 +217,7 @@ class CollectionMetadataEditor extends React.Component<Props, State> {
 				/>
 			);
 		}
-		return (
-			<div className="fields">
-				{/* <FormGroup label="Title">
-					<InputGroup className="field" value={title} onChange={this.handleTitleChange} />
-				</FormGroup> */}
-				{fields.map((field) => this.renderField(field))}
-			</div>
-		);
+		return <div className="fields">{fields.map((field) => this.renderField(field))}</div>;
 	}
 
 	renderStatusMessage() {

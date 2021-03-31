@@ -3,11 +3,24 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { Draggable, Droppable } from 'react-beautiful-dnd';
+import {
+	Draggable,
+	Droppable,
+	DraggableProvidedDragHandleProps,
+	DraggableProvided,
+	DraggableStateSnapshot,
+	DraggableRubric,
+} from 'react-beautiful-dnd';
+
+import { Maybe } from 'utils/types';
 
 require('./dragDropListing.scss');
 
-type Props<Item> = {
+export type MinimalItem = {
+	id: string;
+};
+
+export type Props<Item extends MinimalItem> = {
 	className?: string;
 	disabled?: boolean;
 	droppableId: string;
@@ -15,20 +28,33 @@ type Props<Item> = {
 	itemId?: (item: Item) => string;
 	items: Item[];
 	renderEmptyState?: () => React.ReactNode;
-	renderItem: (item: Item, dragHandleProps: {}, isDragging: boolean) => React.ReactNode;
+	renderItem: (
+		item: Item,
+		dragHandleProps: Maybe<DraggableProvidedDragHandleProps>,
+		isDragging: boolean,
+	) => React.ReactNode;
 	withDragHandles?: boolean;
 	renderDragElementInPortal?: boolean;
 };
 
-const defaultIdGetter = (item) => item.id;
+const defaultIdGetter = (item: MinimalItem) => item.id;
 const defaultEmptyState = () => null;
 
-const getRenderItem = <Item extends {}>(props: Props<Item>) => (provided, snapshot, rubric) => {
+const getRenderItem = <Item extends MinimalItem>(props: Props<Item>) => (
+	provided: DraggableProvided,
+	snapshot: DraggableStateSnapshot,
+	rubric: DraggableRubric,
+) => {
 	// eslint-disable-next-line react/prop-types
 	const { items, withDragHandles, renderItem } = props;
 	const item = items[rubric.source.index];
-	const { innerRef, draggableProps, dragHandleProps } = provided;
+	const { innerRef, draggableProps, dragHandleProps: providedDragHandleProps } = provided;
 	const { isDragging } = snapshot;
+	const dragHandleProps = { ...providedDragHandleProps! };
+	if (isDragging) {
+		// Prevent dragged clone from taking focus and closing popovers
+		dragHandleProps.tabIndex = (undefined as unknown) as number;
+	}
 	const effectiveDragHandleProps = withDragHandles ? {} : dragHandleProps;
 	return (
 		<div
@@ -42,7 +68,7 @@ const getRenderItem = <Item extends {}>(props: Props<Item>) => (provided, snapsh
 	);
 };
 
-const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
+const DragDropListing = <Item extends MinimalItem>(props: Props<Item>) => {
 	const {
 		className = null,
 		droppableId,
@@ -60,8 +86,7 @@ const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
 		<Droppable
 			type={droppableType}
 			droppableId={droppableId}
-			// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-			renderClone={renderDragElementInPortal ? renderItem : null}
+			renderClone={renderDragElementInPortal ? renderItem : undefined}
 		>
 			{(droppableProvided) => (
 				<div
@@ -79,8 +104,6 @@ const DragDropListing = <Item extends { id: string }>(props: Props<Item>) => {
 							<Draggable
 								draggableId={id}
 								index={index}
-								// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-								type={droppableType}
 								key={id}
 								isDragDisabled={disabled}
 							>

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { apiFetch } from 'client/utils/apiFetch';
-
-import attributionType from 'types/attribution';
-import UserAutocomplete from 'components/UserAutocomplete/UserAutocomplete';
-
 import { NonIdealState } from '@blueprintjs/core';
+
+import { apiFetch } from 'client/utils/apiFetch';
+import { AttributionWithUser } from 'utils/types';
+import { UserAutocomplete } from 'components';
+
 import AttributionRow from './AttributionRow';
 import DragDropListing from '../DragDropListing/DragDropListing';
 
@@ -14,7 +14,7 @@ require('./attributionEditor.scss');
 type OwnProps = {
 	apiRoute: string;
 	canEdit: boolean;
-	attributions: attributionType[];
+	attributions: AttributionWithUser[];
 	identifyingProps: {};
 	onUpdateAttributions: (...args: any[]) => any;
 	onPersistStateChange?: (...args: any[]) => any;
@@ -175,19 +175,12 @@ class AttributionEditor extends Component<Props> {
 								withDragHandles={true}
 								renderItem={(attribution, dragHandleProps, isDragging) => (
 									<AttributionRow
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'attribution' is not assignable to type 'neve... Remove this comment to see the full error message
 										attribution={attribution}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 										canEdit={true}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 										isDragging={isDragging}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type '{}' is not assignable to type 'never'.
 										dragHandleProps={dragHandleProps}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type '(attributionId: any) => void' is not assigna... Remove this comment to see the full error message
 										onAttributionDelete={this.handleAttributionDelete}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type '(updatedAttribution: any) => void' is not as... Remove this comment to see the full error message
 										onAttributionUpdate={this.handleAttributionUpdate}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 										listOnBylineText={listOnBylineText}
 									/>
 								)}
@@ -208,18 +201,12 @@ class AttributionEditor extends Component<Props> {
 					sortedAttributions.map((attribution) => {
 						return (
 							<AttributionRow
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'never'.
 								key={attribution.id}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'attribution' is not assignable to type 'neve... Remove this comment to see the full error message
 								attribution={attribution}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type 'boolean' is not assignable to type 'never'.
 								canEdit={false}
-								// isDragging={isDragging}
-								// dragHandleProps={dragHandleProps}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '() => void' is not assignable to type 'never... Remove this comment to see the full error message
 								onAttributionDelete={() => {}}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '() => void' is not assignable to type 'never... Remove this comment to see the full error message
 								onAttributionUpdate={() => {}}
+								listOnBylineText={listOnBylineText}
 							/>
 						);
 					})}

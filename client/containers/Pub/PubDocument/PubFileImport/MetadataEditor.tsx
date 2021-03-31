@@ -159,7 +159,6 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 				}
 			});
 			if (Object.keys(updatedPubData).length > 0) {
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'put' does not exist on type '(path: any,... Remove this comment to see the full error message
 				await apiFetch.put('/api/pubs', {
 					pubId: pubData.id,
 					communityId: communityData.id,
@@ -183,7 +182,6 @@ const MetadataEditor = (props: MetadataEditorProps) => {
 						};
 					});
 				if (newAttributions.length > 0) {
-					// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
 					const updatedAttributions = await apiFetch.post('/api/pubAttributions/batch', {
 						communityId: communityData.id,
 						pubId: pubData.id,

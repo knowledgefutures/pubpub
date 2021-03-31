@@ -1,8 +1,10 @@
 import { DOMOutputSpec } from 'prosemirror-model';
+
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';
 import { getSrcSet, getResizedUrl } from 'utils/images';
 import { isResizeableFormat } from '../utils/media';
+
 import { buildLabel } from '../utils/references';
 import { renderHtmlChildren } from '../utils/renderHtml';
 import { counter } from './reactive/counter';
@@ -105,12 +107,5 @@ export default {
 		},
 		inline: false,
 		group: 'block',
-
-		/* These are not part of the standard Prosemirror Schema spec */
-		onInsert: (view, attrs) => {
-			const imageNode = view.state.schema.nodes.image.create(attrs);
-			const transaction = view.state.tr.replaceSelectionWith(imageNode);
-			view.dispatch(transaction);
-		},
 	},
 };

@@ -2,18 +2,15 @@ import React from 'react';
 import { Checkbox, InputGroup, MenuItem, Position, Tag } from '@blueprintjs/core';
 import { MultiSelect } from '@blueprintjs/select';
 
+import { AttributionWithUser } from 'utils/types';
+
 import { getFilteredRoles } from './roles';
 
 type Props = {
-	attribution: {
-		affiliation?: string;
-		id?: string;
-		isAuthor?: boolean;
-		orcid?: string;
-	};
+	attribution: AttributionWithUser;
 	isShadowAttribution: boolean;
-	roles: any[];
-	listOnBylineText: boolean;
+	roles: string[];
+	listOnBylineText: string;
 	onAttributionUpdate: (...args: any[]) => any;
 };
 

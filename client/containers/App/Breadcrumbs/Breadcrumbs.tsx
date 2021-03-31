@@ -39,21 +39,18 @@ const Breadcrumbs = () => {
 
 	const handleCreatePub = () => {
 		setNewPubIsLoading(true);
-		return (
-			apiFetch
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
-				.post('/api/pubs', {
-					communityId: communityData.id,
-					collectionId: activeCollection && activeCollection.id,
-				})
-				.then((newPub) => {
-					window.location.href = `/pub/${newPub.slug}`;
-				})
-				.catch((err) => {
-					console.error(err);
-					setNewPubIsLoading(false);
-				})
-		);
+		return apiFetch
+			.post('/api/pubs', {
+				communityId: communityData.id,
+				collectionId: activeCollection && activeCollection.id,
+			})
+			.then((newPub) => {
+				window.location.href = `/pub/${newPub.slug}`;
+			})
+			.catch((err) => {
+				console.error(err);
+				setNewPubIsLoading(false);
+			});
 	};
 
 	const actions = {

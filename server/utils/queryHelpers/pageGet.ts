@@ -1,8 +1,8 @@
 import { Page } from 'server/models';
 
-import { enrichLayoutBlocksWithPubTokens, getPubsForLayout } from './layout';
+import { enrichLayoutBlocksWithPubTokens, getLayoutPubsByBlock } from 'server/utils/layouts';
 
-export default async ({ query, forLayoutEditor, initialData }) => {
+export default async ({ query, initialData }) => {
 	const pageData = await Page.findOne({
 		where: {
 			...query,
@@ -10,20 +10,17 @@ export default async ({ query, forLayoutEditor, initialData }) => {
 		},
 	});
 
-	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ blocks: any; forLayoutEditor: ... Remove this comment to see the full error message
-	const pubsData = await getPubsForLayout({
+	const layoutPubsByBlock = await getLayoutPubsByBlock({
 		blocks: pageData.layout || [],
-		forLayoutEditor,
 		initialData,
 	});
 
 	return {
 		...pageData.toJSON(),
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ blocks: any; initialData: any;... Remove this comment to see the full error message
 		layout: enrichLayoutBlocksWithPubTokens({
 			blocks: pageData.layout,
 			initialData,
-		}),
-		pubs: pubsData,
+		} as any),
+		layoutPubsByBlock,
 	};
 };

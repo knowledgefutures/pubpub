@@ -32,7 +32,7 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 		if (!pageId) {
 			return next();
 		}
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ query: { id: any; }; initialDa... Remove this comment to see the full error message
+
 		const pageData = await getPage({ query: { id: pageId }, initialData });
 		const pageTitle = !pageData.slug
 			? initialData.communityData.title

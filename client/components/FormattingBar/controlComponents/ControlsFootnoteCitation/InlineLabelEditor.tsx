@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ControlGroup, InputGroup } from '@blueprintjs/core';
 
 import { MenuButton, MenuItem } from 'components/Menu';
+import { usePubContext } from 'client/containers/Pub/pubHooks';
 
 type Props = {
 	customLabel: string;
@@ -11,8 +12,10 @@ type Props = {
 
 const InlineLabelEditor = (props: Props) => {
 	const { customLabel, defaultLabel, onUpdateCustomLabel } = props;
+	const { inPub } = usePubContext();
 	const [usingCustomLabel, setUsingCustomLabel] = useState(!!customLabel);
-	const buttonLabel = usingCustomLabel ? 'Custom' : 'Pub default';
+	const defaultText = inPub ? 'Pub Default' : 'Default';
+	const buttonLabel = usingCustomLabel ? 'Custom' : defaultText;
 
 	const handleSelectDefault = () => {
 		setUsingCustomLabel(false);
@@ -35,7 +38,7 @@ const InlineLabelEditor = (props: Props) => {
 				}}
 				buttonContent={buttonLabel}
 			>
-				<MenuItem text="Pub default" onClick={handleSelectDefault} />
+				<MenuItem text={defaultText} onClick={handleSelectDefault} />
 				<MenuItem text="Custom" onClick={handleSelectCustom} />
 			</MenuButton>
 			<InputGroup

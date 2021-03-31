@@ -1,5 +1,8 @@
 import { EditorState, Selection } from 'prosemirror-state';
 import { Node, Slice } from 'prosemirror-model';
+import { EditorView } from 'prosemirror-view';
+
+import { DocJson } from 'utils/types';
 
 import { addDiscussionToView } from '../plugins/discussions';
 import { editorHasPasteDecorations } from '../plugins/paste/plugin';
@@ -10,11 +13,11 @@ export const dispatchEmptyTransaction = (editorView) => {
 	editorView.dispatch(emptyInitTransaction);
 };
 
-export const getJSON = (editorView) => {
+export const getJSON = (editorView: EditorView) => {
 	if (!editorView) {
 		return null;
 	}
-	return editorView.state.doc.toJSON();
+	return editorView.state.doc.toJSON() as DocJson;
 };
 
 export const getTextFromDoc = (doc: Node, separator = '\n') => {

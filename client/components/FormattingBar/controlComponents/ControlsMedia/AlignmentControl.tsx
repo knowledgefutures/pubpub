@@ -6,7 +6,6 @@ import { Icon } from 'components';
 
 type Props = {
 	onChange: (...args: any[]) => any;
-	isSmall: boolean;
 	value: string;
 };
 
@@ -19,7 +18,7 @@ const alignOptions = [
 ];
 
 const AlignmentControl = (props: Props) => {
-	const { isSmall, onChange, value } = props;
+	const { onChange, value } = props;
 	const radio = useRadioState();
 	return (
 		<div className="controls-row">
@@ -40,7 +39,7 @@ const AlignmentControl = (props: Props) => {
 								<Button
 									// @ts-expect-error ts-migrate(2322) FIXME: Type '((instance: any) => void) | RefObject<any> |... Remove this comment to see the full error message
 									elementRef={ref}
-									icon={<Icon icon={item.icon} iconSize={isSmall ? 12 : 16} />}
+									icon={<Icon icon={item.icon} iconSize={16} />}
 									minimal={true}
 									aria-label={item.key}
 									active={value === item.key}

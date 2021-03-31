@@ -25,25 +25,21 @@ const Header = (props: Props) => {
 	);
 	const [isLoading, setIsLoading] = useState(false);
 	const handleLogout = () => {
-		// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 		apiFetch('/api/logout').then(() => {
 			window.location.href = '/';
 		});
 	};
 	const handleCreatePub = () => {
 		setIsLoading(true);
-		return (
-			apiFetch
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'post' does not exist on type '(path: any... Remove this comment to see the full error message
-				.post('/api/pubs', { communityId: communityData.id })
-				.then((newPub) => {
-					window.location.href = `/pub/${newPub.slug}`;
-				})
-				.catch((err) => {
-					console.error(err);
-					setIsLoading(false);
-				})
-		);
+		return apiFetch
+			.post('/api/pubs', { communityId: communityData.id })
+			.then((newPub) => {
+				window.location.href = `/pub/${newPub.slug}`;
+			})
+			.catch((err) => {
+				console.error(err);
+				setIsLoading(false);
+			});
 	};
 
 	const calculateComponentClasses = (hideHero) => {

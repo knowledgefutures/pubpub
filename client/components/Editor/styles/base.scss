@@ -5,6 +5,7 @@
 @import './latex.scss';
 
 .editor {
+    @import './textAlign.scss';
     @import './main.scss';
     @import './collab.scss';
     @import './figure.scss';

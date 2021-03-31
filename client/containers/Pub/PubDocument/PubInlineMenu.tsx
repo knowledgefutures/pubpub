@@ -2,25 +2,15 @@ import React from 'react';
 import uuidv4 from 'uuid/v4';
 import { Button } from '@blueprintjs/core';
 
-import { setLocalHighlight, moveToEndOfSelection } from 'components/Editor';
-import Icon from 'components/Icon/Icon';
-import ClickToCopyButton from 'components/ClickToCopyButton/ClickToCopyButton';
-import { usePageContext } from 'utils/hooks';
 import { pubUrl } from 'utils/canonicalUrls';
+import { usePageContext } from 'utils/hooks';
+import { Icon, ClickToCopyButton } from 'components';
+import { FormattingBar, buttons } from 'components/FormattingBar';
+import { setLocalHighlight, moveToEndOfSelection } from 'components/Editor';
+
+import { usePubContext } from '../pubHooks';
 
 require('./pubInlineMenu.scss');
-
-type OwnProps = {
-	pubData: any;
-	collabData: any;
-	historyData: any;
-	openLinkMenu?: (...args: any[]) => any;
-};
-
-const defaultProps = {
-	openLinkMenu: () => {},
-	// onNewHighlightDiscussion: () => {},
-};
 
 const shouldOpenBelowSelection = () => {
 	return ['Android', 'iPad', 'iPhone'].some((device) =>
@@ -28,10 +18,8 @@ const shouldOpenBelowSelection = () => {
 	);
 };
 
-type Props = OwnProps & typeof defaultProps;
-
-const PubInlineMenu = (props: Props) => {
-	const { pubData, collabData, historyData } = props;
+const PubInlineMenu = () => {
+	const { pubData, collabData, historyData } = usePubContext();
 	const { communityData, scopeData } = usePageContext();
 	const { canView, canCreateDiscussions } = scopeData.activePermissions;
 	const selection = collabData.editorChangeObject.selection || {};
@@ -51,50 +39,28 @@ const PubInlineMenu = (props: Props) => {
 		(shouldOpenBelowSelection()
 			? selectionBoundingBox.bottom + 10
 			: selectionBoundingBox.top - 50);
-	const menuStyle = {
-		position: 'absolute',
-		top: topPosition,
-		left: selectionBoundingBox.left,
+
+	const renderFormattingBar = () => {
+		if (pubData.isReadOnly) {
+			return null;
+		}
+		return (
+			<FormattingBar
+				buttons={buttons.inlineMenuButtonSet}
+				isTranslucent
+				editorChangeObject={collabData.editorChangeObject}
+				showBlockTypes={false}
+				popoverStyle="none"
+			/>
+		);
 	};
-	const menuItems = collabData.editorChangeObject.menuItems;
-	const menuItemsObject = menuItems.reduce((prev, curr) => {
-		return { ...prev, [curr.title]: curr };
-	}, {});
-	const formattingItems = [
-		{ key: 'header1', icon: <Icon icon="header-one" /> },
-		{ key: 'header2', icon: <Icon icon="header-two" /> },
-		{ key: 'strong', icon: <Icon icon="bold" /> },
-		{ key: 'em', icon: <Icon icon="italic" /> },
-		{ key: 'link', icon: <Icon icon="link" /> },
-	];
+
 	return (
-		// @ts-expect-error ts-migrate(2322) FIXME: Type '{ position: string; top: any; left: any; }' ... Remove this comment to see the full error message
-		<div className="pub-inline-menu-component bp3-elevation-2" style={menuStyle}>
-			{!pubData.isReadOnly &&
-				formattingItems.map((item) => {
-					if (!menuItemsObject[item.key]) {
-						return null;
-					}
-					const onClickAction =
-						item.key === 'link'
-							? () => {
-									menuItemsObject[item.key].run();
-									props.openLinkMenu();
-							  }
-							: menuItemsObject[item.key].run;
-					return (
-						<Button
-							key={item.key}
-							minimal={true}
-							icon={item.icon}
-							active={menuItemsObject[item.key].isActive}
-							onClick={onClickAction}
-							onMouseDown={(evt) => {
-								evt.preventDefault();
-							}}
-						/>
-					);
-				})}
+		<div
+			className="pub-inline-menu-component bp3-elevation-2"
+			style={{ position: 'absolute', top: topPosition, left: selectionBoundingBox.left }}
+		>
+			{renderFormattingBar()}
 			{(canView || canCreateDiscussions) && (
 				<Button
 					minimal={true}
@@ -120,5 +86,5 @@ const PubInlineMenu = (props: Props) => {
 		</div>
 	);
 };
-PubInlineMenu.defaultProps = defaultProps;
+
 export default PubInlineMenu;

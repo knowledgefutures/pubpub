@@ -61,7 +61,6 @@ export default {
 			const transaction = view.state.tr.replaceSelectionWith(equationNode);
 			view.dispatch(transaction);
 		},
-		defaultOptions: {},
 	},
 	block_equation: {
 		atom: true,
@@ -83,11 +82,13 @@ export default {
 					if (node.getAttribute('data-node-type') !== 'math-block') {
 						return false;
 					}
+					const html =
+						node.querySelector('span.katex')?.outerHTML || node.firstChild.innerHTML;
 
 					return {
 						id: node.getAttribute('id') || null,
 						value: node.getAttribute('data-value') || '',
-						html: node.firstChild.innerHTML || '',
+						html: html || '',
 					};
 				},
 			},
@@ -133,6 +134,5 @@ export default {
 			const transaction = view.state.tr.replaceSelectionWith(equationNode);
 			view.dispatch(transaction);
 		},
-		defaultOptions: {},
 	},
 };

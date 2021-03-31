@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import classNames from 'classnames';
 
 import Editor, { getTextFromDoc, EditorChangeObject, OnEditFn } from 'components/Editor';
+import { FormattingBarButtonData } from '../FormattingBar/types';
 
 require('./minimalEditor.scss');
 
@@ -14,9 +15,13 @@ type Props = {
 	onContent?: ({ text: string, content: any }) => unknown;
 	placeholder?: string;
 	useFormattingBar?: boolean;
+	getButtons?: (
+		buttons: Record<string, FormattingBarButtonData[][]>,
+	) => FormattingBarButtonData[][];
 };
 
 const handleScrollToSelection = () => true;
+const defaultGetButtons = (buttons) => buttons.minimalButtonSet;
 
 const MinimalEditor = (props: Props) => {
 	const {
@@ -28,10 +33,11 @@ const MinimalEditor = (props: Props) => {
 		focusOnLoad = false,
 		placeholder,
 		isTranslucent = false,
+		getButtons = defaultGetButtons,
 	} = props;
 	const [changeObject, setChangeObject] = useState<EditorChangeObject | null>(null);
-	const [FormattingBar, setFormattingBar] = useState(null);
-	const editorWrapperRef = useRef(null);
+	const [FormattingBar, setFormattingBar] = useState<any>(null as any);
+	const popoverContainerRef = useRef<HTMLDivElement>(null as any);
 
 	useEffect(() => {
 		if (focusOnLoad && changeObject?.view) {
@@ -41,20 +47,12 @@ const MinimalEditor = (props: Props) => {
 	}, []);
 
 	useEffect(() => {
-		// TODO(ian):
-		// We need to do a dynamic import here to get around the FormattingBar <-> MinimalEditor
-		// circular dependency. The use of require() is a hack to get around a bug that I suspect
-		// will be fixed in an upcoming version of Webpack:
-		// https://github.com/webpack/webpack/issues/10104
-		// eslint-disable-next-line global-require
-		Promise.resolve(require('../FormattingBar')).then(
-			({ buttons, FormattingBar: FormattingBarComponent }) => {
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '() => (innerProps: any) => Eleme... Remove this comment to see the full error message
-				setFormattingBar(() => (innerProps) => (
-					<FormattingBarComponent {...innerProps} buttons={buttons.minimalButtonSet} />
-				));
-			},
-		);
+		import('../FormattingBar').then(({ buttons, FormattingBar: FormattingBarComponent }) => {
+			setFormattingBar(() => (innerProps) => (
+				<FormattingBarComponent {...innerProps} buttons={getButtons(buttons as any)} />
+			));
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleWrapperClick = () => {
@@ -92,18 +90,18 @@ const MinimalEditor = (props: Props) => {
 			)}
 		>
 			{useFormattingBar && FormattingBar && (
-				// @ts-expect-error ts-migrate(2604) FIXME: JSX element type 'FormattingBar' does not have any... Remove this comment to see the full error message
 				<FormattingBar
-					popoverContainerRef={editorWrapperRef}
 					editorChangeObject={changeObject}
-					showBlockTypes={false}
-					isSmall={true}
 					isTranslucent={isTranslucent}
+					popoverContainerRef={popoverContainerRef}
+					showBlockTypes={false}
+					isSmall
+					floatPopovers
 				/>
 			)}
 			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 			<div className="editor-wrapper" onClick={handleWrapperClick}>
-				<div className="editor-wrapper-inner" ref={editorWrapperRef} />
+				<div ref={popoverContainerRef} />
 				<Editor
 					initialContent={initialContent}
 					placeholder={placeholder}

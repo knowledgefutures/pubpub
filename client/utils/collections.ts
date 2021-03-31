@@ -12,7 +12,6 @@ const getCollectionFromReadingParam = (queryObj, collections) => {
 };
 
 const fetchCollectionPubs = ({ collectionId, communityId }) =>
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 	apiFetch(`/api/collectionPubs?collectionId=${collectionId}&communityId=${communityId}`);
 
 export const getNeighborsInCollectionPub = (pubs, currentPub) => {

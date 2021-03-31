@@ -10,7 +10,7 @@ import Editor, {
 	getLocalHighlightText,
 } from 'components/Editor';
 import { Avatar } from 'components';
-import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
+import { FormattingBar, buttons } from 'components/FormattingBar';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePubContext } from 'containers/Pub/pubHooks';
@@ -38,7 +38,7 @@ const DiscussionInput = (props: Props) => {
 	const { pubData, historyData, collabData, updateLocalData } = usePubContext();
 	const { loginData, locationData, communityData } = usePageContext();
 	const pubView = collabData.editorChangeObject.view;
-	const [changeObject, setChangeObject] = useState<null | { view?: any }>();
+	const [changeObject, setChangeObject] = useState<any>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [didFocus, setDidFocus] = useState(false);
 	const [editorKey, setEditorKey] = useState(Date.now());
@@ -158,6 +158,11 @@ const DiscussionInput = (props: Props) => {
 			{isLoggedIn && (isNewThread || didFocus) && (
 				<div className="content-wrapper">
 					<div className="discussion-body-wrapper editable">
+						<FormattingBar
+							editorChangeObject={changeObject}
+							buttons={buttons.discussionButtonSet}
+							isSmall
+						/>
 						<Editor
 							key={editorKey}
 							placeholder={getPlaceholderText(isNewThread, isPubBottomInput)}
@@ -166,13 +171,6 @@ const DiscussionInput = (props: Props) => {
 							}}
 						/>
 					</div>
-					<FormattingBarLegacy
-						editorChangeObject={changeObject || {}}
-						threads={[]}
-						hideBlocktypes={true}
-						hideExtraFormatting={true}
-						isSmall={true}
-					/>
 					<Button
 						className="discussion-primary-button"
 						intent={Intent.PRIMARY}

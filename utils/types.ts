@@ -4,6 +4,7 @@ import { NodeLabelMap } from 'client/components/Editor/types';
 
 export type AttributableUser = {
 	id: string;
+	slug: string;
 	initials: string;
 	fullName: string;
 	firstName: string;
@@ -11,6 +12,7 @@ export type AttributableUser = {
 	avatar: string;
 	title: string;
 	orcid: string;
+	isShadowUser?: boolean;
 };
 
 export type User = AttributableUser & {
@@ -32,7 +34,7 @@ export type PubAttribution = {
 	title?: string;
 	order: number;
 	isAuthor?: boolean;
-	roles?: {};
+	roles?: string[];
 	affiliation?: string;
 	orcid?: string;
 	userId?: string;
@@ -47,7 +49,7 @@ export type CollectionAttribution = {
 	title?: string;
 	order: number;
 	isAuthor?: boolean;
-	roles?: {};
+	roles?: string[];
 	affiliation?: string;
 	orcid?: string;
 	userId?: string;
@@ -175,6 +177,7 @@ export type Draft = {
 
 export type Pub = {
 	createdAt: string;
+	updatedAt: string;
 	id: string;
 	slug: string;
 	title: string;
@@ -421,3 +424,23 @@ type PatchFnUpdaterArg<T> = (current: T) => Partial<T>;
 type PatchFnPatchArg<T> = Partial<T>;
 export type PatchFnArg<T> = PatchFnPatchArg<T> | PatchFnUpdaterArg<T>;
 export type PatchFn<T> = (arg: PatchFnArg<T>) => unknown;
+
+export type PubsQueryOrderingField =
+	| 'collectionRank'
+	| 'publishDate'
+	| 'updatedDate'
+	| 'creationDate'
+	| 'title';
+export type PubsQueryOrdering = { field: PubsQueryOrderingField; direction: 'ASC' | 'DESC' };
+export type PubsQuery = {
+	collectionIds?: null | string[];
+	communityId: string;
+	excludePubIds?: null | string[];
+	isReleased?: boolean;
+	limit?: null | number;
+	offset?: number;
+	ordering?: PubsQueryOrdering;
+	scopedCollectionId?: string;
+	withinPubIds?: null | string[];
+	term?: string;
+};

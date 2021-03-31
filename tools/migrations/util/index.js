@@ -5,5 +5,5 @@ export const forEach = async (items, fn, concurrency = 1) => {
 };
 
 export const forEachInstance = async (Model, fn, concurrency = 1) => {
-	return forEach(await Model.findAll(), fn, concurrency);
+	return forEach(await Model.findAll({ order: [['createdAt', 'DESC']] }), fn, concurrency);
 };

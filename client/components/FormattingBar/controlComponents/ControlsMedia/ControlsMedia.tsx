@@ -1,36 +1,21 @@
 import React, { useCallback } from 'react';
 import { Checkbox, Classes, Tab, Tabs } from '@blueprintjs/core';
-import { Node } from 'prosemirror-model';
 
-import { SimpleEditor } from 'components';
+import { SimpleEditor, SliderInput } from 'components';
 
-import { usePubData } from 'client/containers/Pub/pubHooks';
 import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
-import { isResizeableFormat } from 'client/components/Editor';
+
+import { getCurrentNodeLabels, isResizeableFormat } from 'client/components/Editor';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import AlignmentControl from './AlignmentControl';
-import SliderInputControl from './SliderInputControl';
 import SourceControls from './SourceControls';
 import { ControlsReferenceSettingsLink } from '../ControlsReference';
+import { EditorChangeObjectWithNode } from '../../types';
 
 type Props = {
-	isSmall: boolean;
 	pendingAttrs: any;
-	editorChangeObject: {
-		updateNode: (...args: any[]) => any;
-		selectedNode: Node & {
-			attrs?: {
-				size: number;
-				align: string;
-				height: number;
-				caption: string;
-				hideLabel: boolean;
-				fullResolution: boolean;
-			};
-		};
-	};
-	pubData: any;
+	editorChangeObject: EditorChangeObjectWithNode;
 };
 
 const getCanEditNodeHeight = (selectedNode) => selectedNode.type.name === 'iframe';
@@ -44,8 +29,8 @@ const getItemName = (selectedNode) => {
 };
 
 const ControlsMedia = (props: Props) => {
-	const { isSmall, editorChangeObject, pendingAttrs, pubData } = props;
-	const { updateNode, selectedNode } = editorChangeObject;
+	const { editorChangeObject, pendingAttrs } = props;
+	const { selectedNode, updateNode } = editorChangeObject;
 	const {
 		hasPendingChanges,
 		commitChanges,
@@ -56,7 +41,7 @@ const ControlsMedia = (props: Props) => {
 	const nodeSupportsAltText = !!selectedNode.type.spec.attrs?.altText;
 	const canEditHeight = getCanEditNodeHeight(selectedNode);
 	const itemName = getItemName(selectedNode);
-	const { nodeLabels } = usePubData();
+	const nodeLabels = getCurrentNodeLabels(editorChangeObject.view.state);
 
 	const canHideLabel =
 		nodeLabels &&
@@ -86,20 +71,20 @@ const ControlsMedia = (props: Props) => {
 
 	const renderCaptionPanel = () => {
 		return (
-			<div className="section hide-overflow">
+			<>
 				<SimpleEditor
 					placeholder={`Add a caption for this ${itemName}`}
 					initialHtmlString={caption}
 					onChange={(htmlString) => updateAttrs({ caption: htmlString })}
 				/>
 				{renderUpdateButton()}
-			</div>
+			</>
 		);
 	};
 
 	const renderAltTextPanel = () => {
 		return (
-			<div className="section hide-overflow">
+			<>
 				<p>
 					Alt text provides information about an image's contents to screenreader users
 					that may be too detailed to include in a caption. Avoid duplicating text between
@@ -111,15 +96,20 @@ const ControlsMedia = (props: Props) => {
 					onChange={(evt) => updateAttrs({ altText: evt.target.value })}
 				/>
 				{renderUpdateButton()}
-			</div>
+			</>
 		);
 	};
 
 	const renderCaptionAltSelector = () => {
 		return (
 			<Tabs id="media-controls-caption-alt" className={Classes.DARK}>
-				<Tab id="caption" title="Caption" panel={renderCaptionPanel()} />
-				<Tab id="alt" title="Alt text" panel={renderAltTextPanel()} />
+				<Tab
+					id="caption"
+					title="Caption"
+					className="section"
+					panel={renderCaptionPanel()}
+				/>
+				<Tab id="alt" title="Alt text" className="section" panel={renderAltTextPanel()} />
 			</Tabs>
 		);
 	};
@@ -127,9 +117,9 @@ const ControlsMedia = (props: Props) => {
 	return (
 		<div className="controls-media-component">
 			<div className="section">
-				<SliderInputControl
-					minValue={1}
-					maxValue={100}
+				<SliderInput
+					min={1}
+					max={100}
 					leftLabel="Width"
 					rightLabel="%"
 					aria-label="Figure width (percentage)"
@@ -138,9 +128,9 @@ const ControlsMedia = (props: Props) => {
 					onChange={(nextSize) => updateNode({ size: nextSize })}
 				/>
 				{canEditHeight && (
-					<SliderInputControl
-						minValue={150}
-						maxValue={800}
+					<SliderInput
+						min={150}
+						max={800}
 						aria-label="Figure height (pixels)"
 						leftLabel="Height"
 						rightLabel="px"
@@ -150,7 +140,6 @@ const ControlsMedia = (props: Props) => {
 					/>
 				)}
 				<AlignmentControl
-					isSmall={isSmall}
 					value={align}
 					onChange={(nextAlignment) => updateNode({ align: nextAlignment })}
 				/>
@@ -158,7 +147,6 @@ const ControlsMedia = (props: Props) => {
 					// @ts-expect-error ts-migrate(2322) FIXME: Type 'ProsemirrorNode<any> & { attrs?: { size: num... Remove this comment to see the full error message
 					selectedNode={selectedNode}
 					updateNode={updateNode}
-					isSmall={isSmall}
 				/>
 				<div className="controls-row">
 					{canSelectResizeOptions && (
@@ -170,23 +158,24 @@ const ControlsMedia = (props: Props) => {
 						/>
 					)}
 				</div>
-				<div className="controls-row">
-					<Checkbox
-						disabled={!canHideLabel}
-						onClick={toggleLabel}
-						alignIndicator="right"
-						label="Hide label"
-						checked={hideLabel}
-					>
-						{!canHideLabel && (
-							<>
-								{' '}
-								(
-								<ControlsReferenceSettingsLink dark small pubData={pubData} />)
-							</>
-						)}
-					</Checkbox>
-				</div>
+				{canHideLabel && (
+					<div className="controls-row">
+						<Checkbox
+							onClick={toggleLabel}
+							alignIndicator="right"
+							label="Hide label"
+							checked={hideLabel}
+						>
+							{!canHideLabel && (
+								<>
+									{' '}
+									(
+									<ControlsReferenceSettingsLink dark small />)
+								</>
+							)}
+						</Checkbox>
+					</div>
+				)}
 			</div>
 			{nodeSupportsAltText ? renderCaptionAltSelector() : renderCaptionPanel()}
 		</div>

@@ -29,12 +29,12 @@ const LayoutCollectionHeader = (props: Props) => {
 
 	const detailsRowElements = [
 		!hideCollectionKind && (
-			<div className="collection-kind">
+			<div className="collection-kind" key={0}>
 				<Icon icon={schema?.bpDisplayIcon as string} />
 				{capitalize(schema?.label.singular)}
 			</div>
 		),
-		!hideDate && <div>Created {formatDate(collection.createdAt)}</div>,
+		!hideDate && <div key={1}>Created {formatDate(collection.createdAt)}</div>,
 		doi && !hideDoi && (
 			<ClickToCopyButton
 				className="click-to-copy"
@@ -42,6 +42,7 @@ const LayoutCollectionHeader = (props: Props) => {
 				beforeCopyPrompt="Copy doi.org link"
 				icon={null}
 				small
+				key={2}
 			>
 				{(handleClick) => (
 					<Button as="a" onClick={handleClick}>

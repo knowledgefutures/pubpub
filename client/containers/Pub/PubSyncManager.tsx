@@ -19,6 +19,7 @@ import {
 } from 'utils/types';
 
 const shimPubContextProps = {
+	inPub: false,
 	pubData: {
 		nodeLabels: {} as NodeLabelMap | undefined,
 		slug: '',
@@ -77,6 +78,7 @@ type State = {
 };
 
 type PubContextType = State & {
+	inPub: boolean;
 	updateLocalData: (type: string, patcher: PatchFnArg<any>) => unknown;
 	updatePubData: PatchFn<PubPageData>;
 };
@@ -84,7 +86,6 @@ type PubContextType = State & {
 export const PubContext = React.createContext<PubContextType>(shimPubContextProps);
 
 const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 	apiFetch(
 		'/api/pubHistory?' +
 			queryString.stringify({
@@ -392,6 +393,7 @@ class PubSyncManager extends React.Component<Props, State> {
 
 	render() {
 		const context = {
+			inPub: true,
 			pubData: this.state.pubData,
 			collabData: this.state.collabData,
 			historyData: this.state.historyData,

@@ -4,19 +4,35 @@ import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
 import { useFocusTrap } from 'client/utils/useFocusTrap';
-import { mouseEventSelectsNode } from '../Editor';
+import { Falsy } from 'utils/types';
+import { EditorChangeObject, mouseEventSelectsNode } from '../Editor';
 
-const FormattingBarPopover = (props) => {
+import { PositioningFn } from './types';
+
+type Props = {
+	accentColor: string;
+	title: string;
+	captureFocusOnMount?: boolean;
+	children: React.ReactNode;
+	containerRef?: null | React.RefObject<HTMLElement>;
+	editorChangeObject: EditorChangeObject;
+	floatingPosition: Falsy | ReturnType<PositioningFn>;
+	isFullScreenWidth?: boolean;
+	onClose: () => unknown;
+	showCloseButton?: boolean;
+};
+
+const FormattingBarPopover = (props: Props) => {
 	const {
 		accentColor,
-		button,
-		children,
-		onClose,
-		isFullScreenWidth,
-		floatingPosition,
-		containerRef,
+		title,
 		captureFocusOnMount,
+		children,
+		containerRef,
 		editorChangeObject,
+		floatingPosition,
+		isFullScreenWidth,
+		onClose,
 		showCloseButton,
 	} = props;
 	const [capturesFocus, setCapturesFocus] = useState(captureFocusOnMount);
@@ -50,7 +66,7 @@ const FormattingBarPopover = (props) => {
 
 	const popover = (
 		<div
-			aria-label={`Editing ${button.ariaTitle || button.title} options`}
+			aria-label={`Editing ${title} options`}
 			className={classNames(
 				'formatting-bar-popover-component',
 				!!floatingPosition && 'floating bp3-elevation-2',
@@ -74,8 +90,8 @@ const FormattingBarPopover = (props) => {
 		</div>
 	);
 
-	if (floatingPosition && containerRef.current) {
-		return ReactDOM.createPortal(popover, containerRef.current);
+	if (floatingPosition && containerRef?.current) {
+		return ReactDOM.createPortal(popover, containerRef?.current);
 	}
 	return popover;
 };

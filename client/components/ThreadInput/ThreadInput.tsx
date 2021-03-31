@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
-import Editor, { getText, getJSON } from 'components/Editor';
-import FormattingBarLegacy from 'components/FormattingBarLegacy/FormattingBar';
+import Editor, { getText, getJSON, EditorChangeObject } from 'components/Editor';
+import { FormattingBar, buttons } from 'components/FormattingBar';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 
@@ -25,7 +25,7 @@ type Props = OwnProps & typeof defaultProps;
 const ThreadInput = (props: Props) => {
 	const { parentId, threadData, pubId, onThreadUpdate } = props;
 	const { loginData, locationData, communityData } = usePageContext();
-	const [changeObject, setChangeObject] = useState({});
+	const [changeObject, setChangeObject] = useState<EditorChangeObject>();
 	const [editorKey, setEditorKey] = useState(Date.now());
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -78,21 +78,19 @@ const ThreadInput = (props: Props) => {
 								avatar={loginData.avatar}
 							/>
 							<div className="comment-title">Reply as {loginData.fullName}</div>
-							<div>
-								<FormattingBarLegacy
+							{changeObject && (
+								<FormattingBar
 									editorChangeObject={changeObject}
-									hideBlocktypes={true}
-									hideExtraFormatting={true}
+									buttons={buttons.discussionButtonSet}
+									isSmall
 								/>
-							</div>
+							)}
 						</div>
 						<div className="content">
 							<Editor
 								key={editorKey}
 								placeholder="Add a comment..."
-								onChange={(editorChangeObject) => {
-									setChangeObject(editorChangeObject);
-								}}
+								onChange={setChangeObject}
 							/>
 						</div>
 					</div>

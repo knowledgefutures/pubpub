@@ -15,14 +15,16 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		attrs: {
 			id: { default: null },
 			class: { default: null },
+			textAlign: { default: null },
 		},
 		parseDOM: [
 			{
 				tag: 'p',
 				getAttrs: (node) => {
 					return {
-						id: (node as Element).getAttribute('id') || null,
+						id: (node as Element).getAttribute('id'),
 						class: (node as Element).getAttribute('class'),
+						textAlign: (node as Element).getAttribute('data-text-align'),
 					};
 				},
 			},
@@ -32,7 +34,11 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 			const children = isEmpty ? ['br'] : 0;
 			return [
 				'p',
-				{ ...(node.attrs.id && { id: node.attrs.id }), class: node.attrs.class },
+				{
+					class: node.attrs.class,
+					...(node.attrs.id && { id: node.attrs.id }),
+					...(node.attrs.textAlign && { 'data-text-align': node.attrs.textAlign }),
+				},
 				children,
 			] as DOMOutputSpec;
 		},
@@ -49,7 +55,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				tag: 'blockquote',
 				getAttrs: (node) => {
 					return {
-						id: (node as Element).getAttribute('id') || null,
+						id: (node as Element).getAttribute('id'),
 					};
 				},
 			},
@@ -69,66 +75,37 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		toDOM: () => {
 			return ['div', ['hr']] as DOMOutputSpec;
 		},
-		onInsert: (view) => {
-			view.dispatch(
-				view.state.tr.replaceSelectionWith(
-					view.state.schema.nodes.horizontal_rule.create(),
-				),
-			);
-		},
 	},
 	heading: {
 		attrs: {
 			level: { default: 1 },
 			fixedId: { default: '' },
 			id: { default: '' },
+			textAlign: { default: null },
 		},
 		content: 'inline*',
 		group: 'block',
 		defining: true,
 		selectable: false,
-		parseDOM: [
-			{
-				tag: 'h1',
-				getAttrs: (dom) => {
-					return { level: 1, id: (dom as Element).getAttribute('id') };
+		parseDOM: [1, 2, 3, 4, 5, 6].map((level) => {
+			return {
+				tag: `h${level}`,
+				getAttrs: (node) => {
+					return {
+						id: (node as Element).getAttribute('id'),
+						textAlign: (node as Element).getAttribute('data-text-align'),
+						level,
+					};
 				},
-			},
-			{
-				tag: 'h2',
-				getAttrs: (dom) => {
-					return { level: 2, id: (dom as Element).getAttribute('id') };
-				},
-			},
-			{
-				tag: 'h3',
-				getAttrs: (dom) => {
-					return { level: 3, id: (dom as Element).getAttribute('id') };
-				},
-			},
-			{
-				tag: 'h4',
-				getAttrs: (dom) => {
-					return { level: 4, id: (dom as Element).getAttribute('id') };
-				},
-			},
-			{
-				tag: 'h5',
-				getAttrs: (dom) => {
-					return { level: 5, id: (dom as Element).getAttribute('id') };
-				},
-			},
-			{
-				tag: 'h6',
-				getAttrs: (dom) => {
-					return { level: 6, id: (dom as Element).getAttribute('id') };
-				},
-			},
-		],
+			};
+		}),
 		toDOM: (node) => {
 			return [
 				`h${node.attrs.level}`,
-				{ id: node.attrs.fixedId || node.attrs.id },
+				{
+					id: node.attrs.fixedId || node.attrs.id,
+					...(node.attrs.textAlign && { 'data-text-align': node.attrs.textAlign }),
+				},
 				0,
 			] as DOMOutputSpec;
 		},
@@ -139,6 +116,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		attrs: {
 			id: { default: null },
 			order: { default: 1 },
+			textAlign: { default: null },
 		},
 		selectable: false,
 		parseDOM: [
@@ -146,7 +124,8 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				tag: 'ol',
 				getAttrs: (node) => {
 					return {
-						id: (node as Element).getAttribute('id') || null,
+						id: (node as Element).getAttribute('id'),
+						textAlign: (node as Element).getAttribute('data-text-align'),
 						order: (node as Element).hasAttribute('start')
 							? +(node as Element).getAttribute('start')!
 							: 1,
@@ -159,6 +138,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				'ol',
 				{
 					...(node.attrs.id && { id: node.attrs.id }),
+					...(node.attrs.textAlign && { 'data-text-align': node.attrs.textAlign }),
 					start: node.attrs.order === 1 ? null : node.attrs.order,
 				},
 				0,
@@ -170,6 +150,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		group: 'block',
 		attrs: {
 			id: { default: null },
+			textAlign: { default: null },
 		},
 		selectable: false,
 		parseDOM: [
@@ -177,13 +158,21 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				tag: 'ul',
 				getAttrs: (node) => {
 					return {
-						id: (node as Element).getAttribute('id') || null,
+						id: (node as Element).getAttribute('id'),
+						textAlign: (node as Element).getAttribute('data-text-align'),
 					};
 				},
 			},
 		],
 		toDOM: (node) => {
-			return ['ul', { ...(node.attrs.id && { id: node.attrs.id }) }, 0] as DOMOutputSpec;
+			return [
+				'ul',
+				{
+					...(node.attrs.id && { id: node.attrs.id }),
+					...(node.attrs.textAlign && { 'data-text-align': node.attrs.textAlign }),
+				},
+				0,
+			] as DOMOutputSpec;
 		},
 	},
 	list_item: {
@@ -208,7 +197,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				tag: 'pre',
 				getAttrs: (node) => {
 					return {
-						id: (node as Element).getAttribute('id') || null,
+						id: (node as Element).getAttribute('id'),
 					};
 				},
 				preserveWhitespace: 'full',

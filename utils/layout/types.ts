@@ -1,15 +1,21 @@
+import { DocJson } from 'utils/types';
+
 type BannerButtonType = 'create-pub' | 'signup' | 'link';
 type TextAlign = 'left' | 'center';
 
 export type PubPreviewType = 'minimal' | 'small' | 'medium' | 'large';
 
 export type PubSortOrder =
-	| 'legacy'
 	| 'creation-date'
 	| 'creation-date-reversed'
 	| 'publish-date'
 	| 'publish-date-reversed'
 	| 'collection-rank';
+
+export type LayoutPubsByBlock<PubType extends { id: string }> = {
+	pubsById: Record<string, PubType>;
+	pubIdsByBlockId: Record<string, string[]>;
+};
 
 export type LayoutOptions = {
 	isNarrow?: boolean;
@@ -41,7 +47,7 @@ export type LayoutBlockText = {
 	type: 'text';
 	id: string;
 	content: {
-		text?: string;
+		text?: DocJson;
 		align?: TextAlign;
 	};
 };

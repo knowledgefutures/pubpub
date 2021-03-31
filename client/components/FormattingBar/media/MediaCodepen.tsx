@@ -38,7 +38,6 @@ class MediaCodepen extends Component<Props, State> {
 				}
 
 				const queryParams = `?type=${getEmbedType(input)}&input=${input}`;
-				// @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
 				return apiFetch(`/api/editor/embed${queryParams}`).then((result) => {
 					this.setState({
 						embedUrl: getIframeSrc(result.html),

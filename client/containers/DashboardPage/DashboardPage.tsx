@@ -7,6 +7,7 @@ import { getDefaultLayout } from 'utils/pages';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { slugifyString } from 'utils/strings';
+import { LayoutPubsByBlock } from 'utils/layout';
 import { apiFetch } from 'client/utils/apiFetch';
 
 import {
@@ -25,12 +26,12 @@ import PageDelete from './PageDelete';
 require('./dashboardPage.scss');
 
 type Props = {
-	pageData: Page & { pubs: Pub[] };
+	pageData: Page & { layoutPubsByBlock: LayoutPubsByBlock<Pub> };
 };
 
 const defaultLayout = getDefaultLayout();
 
-const DashboardPages = (props: Props) => {
+const DashboardPage = (props: Props) => {
 	const { updateCommunity, locationData, communityData } = usePageContext();
 	const { pendingPromise } = usePendingChanges();
 
@@ -70,7 +71,7 @@ const DashboardPages = (props: Props) => {
 		isNarrowWidth,
 		isPublic,
 		layout,
-		pubs,
+		layoutPubsByBlock,
 		slug,
 		title,
 		viewHash,
@@ -212,14 +213,14 @@ const DashboardPages = (props: Props) => {
 				<LayoutEditor
 					onChange={(newLayout) => updatePageData({ layout: newLayout })}
 					initialLayout={layout || defaultLayout}
-					pubs={pubs}
+					initialLayoutPubsByBlock={layoutPubsByBlock}
 					communityData={communityData}
 				/>
 			</SettingsSection>
 		);
 	};
 
-	const renderPageDeleter = () => {
+	const renderPageDelete = () => {
 		return (
 			<SettingsSection title="Delete">
 				<PageDelete pageData={pageData} communityId={communityData.id} />
@@ -235,8 +236,8 @@ const DashboardPages = (props: Props) => {
 		>
 			{renderDetailsEditor()}
 			{renderLayoutEditor()}
-			{renderPageDeleter()}
+			{renderPageDelete()}
 		</DashboardFrame>
 	);
 };
-export default DashboardPages;
+export default DashboardPage;

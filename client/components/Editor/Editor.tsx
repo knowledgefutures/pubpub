@@ -5,6 +5,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { CitationManager } from 'client/utils/citations/citationManager';
 import { DocJson, Maybe } from 'utils/types';
+import { usePageContext } from 'utils/hooks';
 
 import {
 	CollaborativeOptions,
@@ -26,6 +27,7 @@ type Props = {
 	citationManager?: CitationManager;
 	collaborativeOptions?: CollaborativeOptions;
 	discussionsOptions?: Maybe<DiscussionsOptions>;
+	debounceEditsMs?: number;
 	customMarks?: Record<string, MarkSpec>;
 	customNodes?: Record<string, NodeSpec>;
 	customPlugins?: Record<string, null | PluginLoader>;
@@ -47,11 +49,12 @@ const emptyDoc = getEmptyDoc();
 const Editor = (props: Props) => {
 	const {
 		nodeLabels = {} as NodeLabelMap,
-		citationManager,
+		citationManager: providedCitationManager,
 		collaborativeOptions,
 		customMarks = {},
 		customNodes = {},
 		customPlugins = {},
+		debounceEditsMs = 0,
 		discussionsOptions,
 		enableSuggestions = false,
 		initialContent = emptyDoc,
@@ -67,6 +70,8 @@ const Editor = (props: Props) => {
 
 	const mountRef = useRef<HTMLDivElement | null>(null);
 	const { suggesting, suggestionManager } = useSuggestions<NodeReference>(enableSuggestions);
+	const { citationManager: globalCitationManager } = usePageContext();
+	const citationManager = providedCitationManager || globalCitationManager;
 
 	const { initialDocNode, schema, staticContent } = useInitialValues({
 		nodeLabels,
@@ -92,6 +97,7 @@ const Editor = (props: Props) => {
 			placeholder,
 			suggestionManager,
 		},
+		debounceEditsMs,
 		initialDocNode,
 		schema,
 		isReadOnly,

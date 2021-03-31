@@ -2,15 +2,20 @@ import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react'
 import classNames from 'classnames';
 
 import { ReferencesDropdown } from 'components';
-import { getReferenceableNodes, NodeReference } from 'components/Editor/utils/references';
-import { EditorChangeObject } from 'client/types';
-import { usePubContext, usePubData } from 'client/containers/Pub/pubHooks';
+import {
+	getCurrentNodeLabels,
+	getReferenceableNodes,
+	NodeReference,
+} from 'components/Editor/utils/references';
+import { usePubContext } from 'client/containers/Pub/pubHooks';
+
 import { getDashUrl } from 'utils/dashboard';
+import { EditorChangeObjectWithNode } from '../types';
 
 require('./controlsReference.scss');
 
 export type ControlsReferenceProps = {
-	editorChangeObject: EditorChangeObject;
+	editorChangeObject: EditorChangeObjectWithNode;
 };
 
 const matchInitialTarget = (selectedNode, referenceableNodes: NodeReference[]) => {
@@ -24,19 +29,21 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 	const {
 		editorChangeObject: { updateNode, selectedNode, view },
 	} = props;
-	const { pubData } = usePubContext();
+
+	const nodeLabels = getCurrentNodeLabels(view.state);
 	const nodeReferences = useMemo(
-		() => (pubData.nodeLabels ? getReferenceableNodes(view.state, pubData.nodeLabels) : []),
+		() => (nodeLabels ? getReferenceableNodes(view.state, nodeLabels) : []),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[view.state],
+		[view.state, nodeLabels],
 	);
+
 	const [target, setTarget] = useState(() => matchInitialTarget(selectedNode, nodeReferences));
 	const targetId = target && target.node && target.node.attrs.id;
 	const changed = useRef(false);
 
 	useEffect(() => {
 		if (changed.current) {
-			updateNode({ targetId });
+			updateNode!({ targetId });
 			changed.current = false;
 		}
 	}, [targetId, updateNode]);
@@ -59,16 +66,21 @@ const ControlsReference = (props: ControlsReferenceProps) => {
 };
 
 type ControlsReferencePopoverContentProps = {
-	pubData: any;
 	small?: boolean;
 	dark?: boolean;
 };
 
 export const ControlsReferenceSettingsLink = (props: ControlsReferencePopoverContentProps) => {
+	const { inPub, pubData } = usePubContext();
+
+	if (!inPub) {
+		return null;
+	}
+
 	const link = (
 		<a
 			href={getDashUrl({
-				pubSlug: props.pubData.slug,
+				pubSlug: pubData.slug,
 				mode: 'settings',
 				section: 'block-labels',
 			})}
@@ -89,11 +101,15 @@ export const ControlsReferenceSettingsLink = (props: ControlsReferencePopoverCon
 };
 
 export const ControlsReferencePopover = () => {
-	const pubData = usePubData();
+	const { inPub } = usePubContext();
+
+	if (!inPub) {
+		return null;
+	}
 
 	return (
 		<p className="controls-reference-popover-component">
-			<ControlsReferenceSettingsLink pubData={pubData} />
+			<ControlsReferenceSettingsLink />
 		</p>
 	);
 };

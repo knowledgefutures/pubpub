@@ -1,47 +1,27 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Editor from 'components/Editor';
 
 import { GridWrapper } from 'components';
-import { getResizedUrl } from 'utils/images';
+import { LayoutBlockText } from 'utils/layout';
 
-const propTypes = {
-	content: PropTypes.object.isRequired,
-	/* Expected content */
-	/* deprecated: title, html */
-	/* align, text */
+type Props = {
+	content: LayoutBlockText['content'];
 };
 
-const LayoutText = function(props) {
-	if (!props.content.text) {
+const LayoutText = (props: Props) => {
+	const { content } = props;
+	if (!content.text) {
 		return null;
 	}
-	const wrapperStyle = {
-		textAlign: props.content.align || 'left',
-	};
 	return (
 		<div className="layout-text-component">
 			<div className="block-content">
 				<GridWrapper>
-					<div style={wrapperStyle}>
-						<Editor
-							nodeOptions={{
-								image: {
-									onResizeUrl: (url) => {
-										return getResizedUrl(url, 'inside', 1200);
-									},
-									linkToSrc: false,
-								},
-							}}
-							initialContent={props.content.text || undefined}
-							isReadOnly={true}
-						/>
-					</div>
+					<Editor initialContent={content.text} isReadOnly={true} />
 				</GridWrapper>
 			</div>
 		</div>
 	);
 };
 
-LayoutText.propTypes = propTypes;
 export default LayoutText;

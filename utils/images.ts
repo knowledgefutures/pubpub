@@ -1,13 +1,13 @@
 import { Maybe } from './types';
 import { btoaUniversal } from './strings';
 
-type validFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+type ResizerFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
 
-const validExtensions = ['jpg', 'jpeg', 'png'];
+const resizableExtensions = ['jpg', 'jpeg', 'png'];
 
 export const getResizedUrl = (
 	url: Maybe<string>,
-	fit: validFit,
+	fit: ResizerFit,
 	width?: number,
 	height?: number,
 ) => {
@@ -23,7 +23,7 @@ export const getResizedUrl = (
 		.pop()!
 		.toLowerCase();
 
-	if (validExtensions.indexOf(extension) === -1) {
+	if (resizableExtensions.indexOf(extension) === -1) {
 		return url;
 	}
 
@@ -44,7 +44,7 @@ export const getResizedUrl = (
 	return `https://resize-v3.pubpub.org/${btoaUniversal(JSON.stringify(imageRequest))}`;
 };
 
-export const getSrcSet = (url: string, fit: validFit, width: number) => {
+export const getSrcSet = (url: string, fit: ResizerFit, width: number) => {
 	const pixelDensities = [1, 2, 3];
 	return pixelDensities
 		.map((density) => {

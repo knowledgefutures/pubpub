@@ -98,14 +98,13 @@ $pub-body-font-size: if-is-export(14px, 20px);
 			font-size: 0.8em;
 			& > * {
 				// Relative to above (0.8 * 1.25 = 1)
-				font-size: 1.25em
+				font-size: 1.25em;
 			}
 		}
 	}
 
 	ul,
 	ol {
-		padding-left: 1em;
 		margin: 0em 0em 1em;
 		ul,
 		ol {
@@ -142,15 +141,14 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		border-left: solid 4px rgba(181, 181, 181, 0.5);
 		padding: 0 1em;
 	}
-	figure,
 	.file {
 		font-size: 0.75em;
 	}
 	figcaption {
-		font-size: 0.9em;
+		font-size: 15px;
 		p {
 			margin-bottom: 0em;
-			line-height: 1;
+			line-height: 1.2em;
 			font-family: $base-font;
 		}
 	}

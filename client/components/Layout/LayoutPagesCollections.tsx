@@ -35,7 +35,7 @@ const resolveItemsFromContent = (
 		.filter((item): item is PageOrCollection => !!item);
 };
 
-const LayoutPages = (props: Props) => {
+const LayoutPagesCollections = (props: Props) => {
 	const { content, collections, pages } = props;
 	return (
 		<div className="block-content">
@@ -61,4 +61,4 @@ const LayoutPages = (props: Props) => {
 	);
 };
 
-export default LayoutPages;
+export default LayoutPagesCollections;

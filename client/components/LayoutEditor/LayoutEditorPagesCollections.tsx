@@ -7,7 +7,6 @@ import LayoutPagesCollections, {
 	BlockItem,
 	PageOrCollection,
 } from 'components/Layout/LayoutPagesCollections';
-import { splitArrayOn } from 'utils/arrays';
 
 type Props = {
 	onChange: (index: number, block: Content) => any;

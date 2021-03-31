@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';

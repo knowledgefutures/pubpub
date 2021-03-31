@@ -38,15 +38,6 @@ h6 {
 	font-size: 0.85em;
 }
 
-ol,
-ul {
-	padding-left: 0;
-	list-style-position: inside;
-	> li > p {
-		display: inline-block;
-	}
-}
-
 span.citation {
 	color: #808080;
 	font-weight: bold;

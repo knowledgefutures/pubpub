@@ -29,7 +29,7 @@ const paragraphBlockType = {
 	command: paragraphToggle,
 };
 
-const commandDefinitions = [
+const blockTypeDefinitions = [
 	paragraphBlockType,
 	{
 		key: 'header1',
@@ -82,31 +82,34 @@ const commandDefinitions = [
 const BlockTypeSelector = React.forwardRef((props: Props, ref) => {
 	const { editorChangeObject, isSmall, ...restProps } = props;
 
-	// eslint-disable-next-line react/prop-types
-	const renderDisclosure = (activeBlockType: any, { ref: innerRef, ...disclosureProps }) => {
-		const effectiveBlockType = activeBlockType || paragraphBlockType;
-		return (
-			<Button
-				minimal
-				className="block-type-selector-component"
-				rightIcon="caret-down"
-				elementRef={innerRef}
-				{...disclosureProps}
-				disabled={!activeBlockType}
-				small={isSmall}
-			>
-				{effectiveBlockType.label}
-			</Button>
-		);
-	};
-
 	return (
 		<CommandMenu
 			className="block-type-selector-menu pub-body-styles"
 			aria-label="Choose text formatting"
 			ref={ref}
-			commands={[commandDefinitions]}
-			disclosure={renderDisclosure}
+			commands={[blockTypeDefinitions]}
+			disclosure={(commands, { ref: innerRef, ...disclosureProps }) => {
+				const commandsFlat = commands.reduce((a, b) => [...a, ...b], []);
+				const activeCommandEntry = commandsFlat.find((c) => c.commandState?.isActive);
+				const canRunCommandEntries = commandsFlat.filter((c) => c.commandState?.canRun);
+				const effectiveBlockType =
+					blockTypeDefinitions.find(
+						(def) => def.command === activeCommandEntry?.command,
+					) || paragraphBlockType;
+				return (
+					<Button
+						minimal
+						className="block-type-selector-component"
+						rightIcon="caret-down"
+						elementRef={innerRef}
+						{...disclosureProps}
+						disabled={canRunCommandEntries.length < 2}
+						small={isSmall}
+					>
+						{effectiveBlockType.label}
+					</Button>
+				);
+			}}
 			editorChangeObject={editorChangeObject}
 			{...restProps}
 		/>

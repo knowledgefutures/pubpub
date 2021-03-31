@@ -15,7 +15,10 @@ type CommandDefinition = {
 };
 
 type Props = {
-	disclosure: (activeElement: null | CommandDefinition, disclosureProps: any) => React.ReactNode;
+	disclosure: (
+		commands: ReturnType<typeof useCommandStates>,
+		disclosureProps: any,
+	) => React.ReactNode;
 	className?: string;
 	editorChangeObject: EditorChangeObject;
 	commands: CommandDefinition[][];
@@ -38,14 +41,6 @@ const CommandMenu = React.forwardRef((props: Props, ref) => {
 		state: view?.state,
 	});
 
-	const activeCommand = useMemo(
-		() =>
-			commands
-				.reduce((a, b) => [...a, ...b], [])
-				.find((item) => item?.commandState?.isActive),
-		[commands],
-	);
-
 	const renderMenuItemForCommand = (defn: WithCommandState<CommandDefinition>) => {
 		const { title, icon, key, commandState } = defn;
 		return (
@@ -67,7 +62,7 @@ const CommandMenu = React.forwardRef((props: Props, ref) => {
 		<Menu
 			ref={ref}
 			{...restProps}
-			disclosure={(dp) => disclosure(activeCommand || null, dp)}
+			disclosure={(dp) => disclosure(commands, dp)}
 			menuStyle={{ zIndex: 20 }}
 			className={classNames('command-menu-component', className)}
 		>

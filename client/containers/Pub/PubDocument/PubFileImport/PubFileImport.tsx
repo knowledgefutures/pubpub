@@ -43,6 +43,7 @@ const PubFileImport = (props: Props) => {
 					<AnchorButton
 						type="button"
 						className="bp3-intent-primary bp3-large"
+						outlined
 						onClick={() => setIsDialogOpen(true)}
 						text={
 							<div>

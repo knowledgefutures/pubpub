@@ -93,7 +93,10 @@ const LayoutEditorPubs = (props: Props) => {
 		(nextPubIds: string[]) =>
 			onChange({
 				pubIds: nextPubIds,
-				limit: typeof limit === 'number' ? Math.max(limit, nextPubIds.length) : limit,
+				limit:
+					typeof limit === 'number' && limit > 0
+						? Math.max(limit, nextPubIds.length)
+						: limit,
 			}),
 		[onChange, limit],
 	);

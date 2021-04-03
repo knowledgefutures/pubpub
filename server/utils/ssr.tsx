@@ -5,6 +5,7 @@ import { Collection, InitialData } from 'utils/types';
 
 export const renderToNodeStream = (res, reactElement) => {
 	res.setHeader('content-type', 'text/html');
+	res.write('<!DOCTYPE html>');
 	ReactBeautifulDnD.resetServerContext();
 	return ReactDOMServer.renderToNodeStream(reactElement).pipe(res);
 };

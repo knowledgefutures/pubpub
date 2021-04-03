@@ -1,7 +1,5 @@
 .drag-drop-listing-component {
     position: relative;
-    flex-direction: column;
-    flex-grow: 1;
     overflow-y: auto;
     .empty-state-container {
         &:first-child {

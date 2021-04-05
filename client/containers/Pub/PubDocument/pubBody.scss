@@ -89,14 +89,8 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		margin: 0em 0em 1em;
 	}
 
-	ul {
-		& > li {
-			font-size: 0.8em;
-			& > * {
-				// Relative to above (0.8 * 1.25 = 1)
-				font-size: 1.25em;
-			}
-		}
+	li::marker {
+		font-size: 0.8em;
 	}
 
 	ul,

@@ -95,6 +95,7 @@ $pub-body-font-size: if-is-export(14px, 20px);
 
 	ul,
 	ol {
+		padding-left: 1em;
 		margin: 0em 0em 1em;
 		ul,
 		ol {

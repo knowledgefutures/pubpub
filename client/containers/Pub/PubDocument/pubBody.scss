@@ -82,15 +82,11 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		font-style: normal;
 		line-height: 1.7;
 		letter-spacing: -0.003em;
-		margin: 0em 0em 1em;
 		word-break: break-word;
 	}
 
-	li {
-		margin: 0em;
-		& > p {
-			margin: 0;
-		}
+	p {
+		margin: 0em 0em 1em;
 	}
 
 	ul {

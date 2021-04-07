@@ -85,6 +85,13 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		word-break: break-word;
 	}
 
+	li {
+		margin: 0;
+		> p {
+			margin: 0;
+		}
+	}
+
 	p {
 		margin: 0em 0em 1em;
 	}

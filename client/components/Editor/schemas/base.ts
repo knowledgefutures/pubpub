@@ -116,7 +116,6 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		attrs: {
 			id: { default: null },
 			order: { default: 1 },
-			textAlign: { default: null },
 		},
 		selectable: false,
 		parseDOM: [
@@ -125,7 +124,6 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				getAttrs: (node) => {
 					return {
 						id: (node as Element).getAttribute('id'),
-						textAlign: (node as Element).getAttribute('data-text-align'),
 						order: (node as Element).hasAttribute('start')
 							? +(node as Element).getAttribute('start')!
 							: 1,
@@ -150,7 +148,6 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		group: 'block',
 		attrs: {
 			id: { default: null },
-			textAlign: { default: null },
 		},
 		selectable: false,
 		parseDOM: [
@@ -159,7 +156,6 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				getAttrs: (node) => {
 					return {
 						id: (node as Element).getAttribute('id'),
-						textAlign: (node as Element).getAttribute('data-text-align'),
 					};
 				},
 			},

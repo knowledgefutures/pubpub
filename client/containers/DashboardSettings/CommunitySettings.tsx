@@ -510,7 +510,7 @@ const CommunitySettings = () => {
 											<span>
 												Used on the landing page.
 												<br />
-												Recommended: ~1200*800px
+												Recommended: ~1500*600px
 											</span>
 										}
 										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message

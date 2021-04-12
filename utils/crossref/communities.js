@@ -8,6 +8,7 @@ const MEDIASTUDIES_DOI_PREFIX = '10.32376';
 const RS_DOI_PREFIX = '10.46470';
 const JOTE_DOI_PREFIX = '10.36850';
 const APA_DOI_PREFIX = '10.1037';
+const ROCHESTER_DOI_PREFIX = '10.47761';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,
@@ -18,6 +19,7 @@ export const managedDoiPrefixes = [
 	RS_DOI_PREFIX,
 	JOTE_DOI_PREFIX,
 	APA_DOI_PREFIX,
+	ROCHESTER_DOI_PREFIX,
 ];
 
 export const communityDoiOverrides = [
@@ -70,9 +72,17 @@ export const communityDoiOverrides = [
 	{
 		communityIds: [
 			'700f6ff1-4acc-4ca4-b740-8d04d89fea9e', // https://tmb.pubpub.org/
+			'67edb85b-3e58-44e5-89ef-dded1f72972c', // https://jccwp.pubpub.org/
 		],
 		prefix: APA_DOI_PREFIX,
 		key: 'APA',
+	},
+	{
+		communityIds: [
+			'494a02f6-55bd-49b5-b0c3-0c0d98a76444', // https://invisibleculture.pubpub.org/
+		],
+		prefix: ROCHESTER_DOI_PREFIX,
+		key: 'ROCHESTER',
 	},
 ];
 

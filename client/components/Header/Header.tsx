@@ -118,7 +118,7 @@ const Header = (props: Props) => {
 		if (communityData.heroBackgroundImage) {
 			const resizedBackgroundImage = getResizedUrl(
 				communityData.heroBackgroundImage,
-				'inside',
+				'outside',
 				1500,
 				600,
 			);

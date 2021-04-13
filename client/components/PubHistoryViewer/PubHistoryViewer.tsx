@@ -135,7 +135,7 @@ const PubHistoryViewer = (props: Props) => {
 	].sort((a, b) => (a.date > b.date ? 1 : -1));
 
 	useSticky({
-		selector: '.pub-history-viewer-component',
+		target: '.pub-history-viewer-component',
 		offset: 37 + 25,
 	});
 

@@ -3,19 +3,20 @@ import { Button } from '@blueprintjs/core';
 
 import { MenuButton, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
+import { Collection } from 'utils/types';
 
 import PubSelect from './PubSelect';
+import { PubWithCollections } from './types';
 
 type Props = {
-	overviewData: any;
-	collection: any;
-	updateCollection: (...args: any[]) => any;
-	collectionPubs: any[];
-	addCollectionPub: (...args: any[]) => any;
+	collection: Collection;
+	updateCollection: (patch: Partial<Collection>) => unknown;
+	addCollectionPub: (pub: PubWithCollections) => unknown;
+	usedPubIds: Set<string>;
 };
 
 const CollectionControls = (props: Props) => {
-	const { overviewData, collection, updateCollection, collectionPubs, addCollectionPub } = props;
+	const { usedPubIds, collection, updateCollection, addCollectionPub } = props;
 	const { scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;
 	const { isPublic, isRestricted } = collection;
@@ -26,9 +27,9 @@ const CollectionControls = (props: Props) => {
 	return (
 		<>
 			<PubSelect
-				pubs={overviewData.pubs}
-				usedPubIds={collectionPubs.map((cp) => cp.pubId)}
+				usedPubIds={usedPubIds}
 				onSelectPub={addCollectionPub}
+				collectionId={collection.id}
 			>
 				<Button outlined icon="plus">
 					Add Pubs

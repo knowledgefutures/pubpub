@@ -7,14 +7,16 @@ require('./queryListDropdown.scss');
 type Props<Item> = {
 	children: React.ReactNode;
 	items: Item[];
-	itemPredicate: (query: string, item: Item) => boolean;
+	itemPredicate?: (query: string, item: Item) => boolean;
 	onItemSelect: (item: Item) => unknown;
 	onClose?: () => unknown;
+	onQueryChange?: (query: string) => unknown;
 	position?: PopoverPosition;
 	searchPlaceholder: string;
 	emptyListPlaceholder: React.ReactNode;
 	itemRenderer: ItemRenderer<Item>;
 	usePortal?: boolean;
+	query?: string;
 };
 
 const QueryListDropdown = <Item extends {}>(props: Props<Item>) => {
@@ -25,10 +27,12 @@ const QueryListDropdown = <Item extends {}>(props: Props<Item>) => {
 		items,
 		onItemSelect,
 		onClose,
+		onQueryChange,
 		position = 'bottom-right',
 		itemRenderer,
 		searchPlaceholder,
 		usePortal = true,
+		query,
 	} = props;
 
 	const renderPopoverContent = (qlProps: IQueryListRendererProps<Item>) => {
@@ -69,6 +73,8 @@ const QueryListDropdown = <Item extends {}>(props: Props<Item>) => {
 			items={items}
 			itemPredicate={itemPredicate}
 			onItemSelect={onItemSelect}
+			onQueryChange={onQueryChange}
+			query={query}
 			noResults={<div className="empty-list">{emptyListPlaceholder}</div>}
 		/>
 	);

@@ -8,6 +8,8 @@ import {
 	Release,
 } from 'server/models';
 
+import { PubEdgeIncludesOptions } from 'utils/types';
+
 export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 	return [
 		includeCommunity && { model: Community, as: 'community' },
@@ -27,12 +29,6 @@ export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 			include: [includeUserModel({ as: 'user' })],
 		},
 	].filter((x) => x);
-};
-
-export type PubEdgeIncludesOptions = {
-	includeCommunityForPubs?: boolean;
-	includeTargetPub?: boolean;
-	includePub?: boolean;
 };
 
 export const getPubEdgeIncludes = ({

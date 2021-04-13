@@ -3,7 +3,7 @@ import { useDebounce } from 'use-debounce';
 
 import { OrderPicker, PubMenuItem } from 'components';
 import { Pub } from 'utils/types';
-import { useManyPubs } from 'client/utils/useManyPubs/useManyPubs';
+import { useManyPubs } from 'client/utils/useManyPubs';
 import { indexByProperty, unique } from 'utils/arrays';
 
 type Props = {
@@ -79,7 +79,7 @@ const PinnedPubs = (props: Props) => {
 			renderItem={(pub, onClick) => (
 				<PubMenuItem
 					title={pub.title}
-					contributors={pub.attributions!}
+					contributors={pub.attributions}
 					onClick={onClick}
 					bylineProps={{ truncateAt: 4 }}
 				/>

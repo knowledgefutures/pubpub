@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import classNames from 'classnames';
 import { Button, InputGroup } from '@blueprintjs/core';
 
-import { Icon } from 'components';
+import { Icon, IconName } from 'components';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { CommunityNavigationEntry, isCommunityNavigationMenu } from 'client/utils/navigation';
 
@@ -22,7 +22,7 @@ const NavBuilderRow = (props: Props) => {
 	const { dropdownId, NavBuilderList, index, item, newLink, isStatic = false } = props;
 	const { updateItem, pages, collections } = useContext(NavBuilderContext);
 
-	const renderForPageOrCollection = (title: string, icon: null | string) => {
+	const renderForPageOrCollection = (title: string, icon: null | IconName) => {
 		return (
 			<>
 				{icon && <Icon icon={icon} />}

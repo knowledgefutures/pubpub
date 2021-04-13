@@ -19,7 +19,7 @@ const PubHeaderFormatting = (props: Props) => {
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 
 	useSticky({
-		selector: '.pub-draft-header-component',
+		target: '.pub-draft-header-component',
 		isActive: !disabled,
 		offset: 37,
 	});

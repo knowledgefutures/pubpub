@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
-import { Icon } from 'components';
+import { Icon, IconName } from 'components';
 
 require('./largeHeaderButton.scss');
 
@@ -10,7 +10,7 @@ type Props = {
 	active?: boolean;
 	className?: string;
 	disabled?: boolean;
-	icon?: React.ReactNode | string;
+	icon?: React.ReactNode | IconName;
 	label?:
 		| {
 				top?: React.ReactNode;
@@ -67,7 +67,7 @@ const LargeHeaderButton = React.forwardRef((props: Props, ref) => {
 					active && 'active',
 				)}
 			>
-				{typeof icon === 'string' ? <Icon icon={icon} iconSize={22} /> : icon}
+				{typeof icon === 'string' ? <Icon icon={icon as any} iconSize={22} /> : icon}
 				{showCaret && <Icon icon="caret-down" className="caret" iconSize={10} />}
 				{label && !hasStackedLabel && <div className="label">{label}</div>}
 				{hasStackedLabel && (

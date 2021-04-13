@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from '@blueprintjs/core';
-import Icon from 'components/Icon/Icon';
+import { Icon, IconName } from 'components';
 import { s3Upload } from 'client/utils/upload';
 
 require('./fileUploadButton.scss');
@@ -8,7 +8,7 @@ require('./fileUploadButton.scss');
 type OwnProps = {
 	onUploadFinish: (...args: any[]) => any;
 	text: string;
-	icon?: string;
+	icon?: IconName;
 	isLarge?: boolean;
 	isSmall?: boolean;
 	isMinimal?: boolean;

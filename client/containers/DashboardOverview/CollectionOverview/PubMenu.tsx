@@ -6,26 +6,29 @@ import { getSchemaForKind } from 'utils/collections/schemas';
 import { PopoverButton, PrimaryCollectionExplanation } from 'components';
 import { MenuButton, MenuItem } from 'components/Menu';
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { Collection, CollectionPub, Pub } from 'utils/types';
+import { Collection, CollectionPub } from 'utils/types';
+
+import { PubWithCollections } from './types';
 
 type Props = {
 	collection: Collection;
-	collectionPub: CollectionPub & {
-		pub: Pub & {
-			collectionPubs: CollectionPub[];
-		};
-	};
-	setCollectionPubContextHint: (...args: any[]) => any;
-	setCollectionPubIsPrimary: (...args: any[]) => any;
-	removeCollectionPub: (...args: any[]) => any;
+	collectionPub: CollectionPub;
+	pub: PubWithCollections;
+	setCollectionPubContextHint: (c: CollectionPub, hint: null | string) => unknown;
+	setCollectionPubIsPrimary: (c: CollectionPub) => unknown;
+	removeCollectionPub: (c: CollectionPub) => unknown;
 };
 
 const ButtonWithRef = React.forwardRef((props: any, ref: any) => (
 	<Button {...props} elementRef={ref} />
 ));
 
-const derivePrimaryCollection = (collectionPub: Props['collectionPub'], collection: Collection) => {
-	const { collectionPubs } = collectionPub.pub;
+const derivePrimaryCollection = (
+	collectionPub: CollectionPub,
+	pub: PubWithCollections,
+	collection: Collection,
+) => {
+	const { collectionPubs } = pub;
 	const linkedCollectionPub = { ...collectionPub, collection };
 	const collectionPubsPool =
 		collectionPubs.length > 0
@@ -44,6 +47,7 @@ const PubMenu = (props: Props) => {
 		setCollectionPubContextHint,
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
+		pub,
 	} = props;
 	const [justSetPrimary, setJustSetPrimary] = useState(false);
 	const { scopeData } = usePageContext();
@@ -54,7 +58,7 @@ const PubMenu = (props: Props) => {
 	}
 
 	const collectionSchema = getSchemaForKind(collection.kind);
-	const primaryCollection = derivePrimaryCollection(collectionPub, collection);
+	const primaryCollection = derivePrimaryCollection(collectionPub, pub, collection);
 	const isPrimary = justSetPrimary || primaryCollection?.id === collection.id;
 
 	const renderPrimaryCollectionButton = () => {

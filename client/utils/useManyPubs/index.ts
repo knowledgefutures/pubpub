@@ -1,0 +1,1 @@
+export { useManyPubs } from './useManyPubs';

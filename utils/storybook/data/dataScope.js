@@ -124,9 +124,4 @@ export default {
     "canViewDraft": null,
     "canEditDraft": null
   },
-  "activeCounts": {
-    "discussionCount": 2,
-    "forkCount": 0,
-    "reviewCount": 0
-  }
 };

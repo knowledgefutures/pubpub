@@ -1,0 +1,21 @@
+@import '../overviewStyles.scss';
+
+.primary-collection-swap-popover {
+	max-width: 300px;
+	.bp3-divider {
+		margin: 10px 0;
+	}
+}
+
+.collection-overview-row-is-dragging {
+	border: 1px solid $row-border-color !important;
+	border-radius: 4px;
+	background: white;
+	box-shadow: $gentle-shadow;
+}
+
+.dashboard-collection-overview-container {
+	.collection-empty-state {
+		margin-top: $empty-state-margin-top;
+	}
+}

@@ -51,3 +51,7 @@ export const sanitizePubEdge = (initialData, pubEdge) => {
 	}
 	return null;
 };
+
+export const sanitizePubEdges = (initialData, pubEdges) => {
+	return pubEdges.map((edge) => sanitizePubEdge(initialData, edge)).filter((x) => x);
+};

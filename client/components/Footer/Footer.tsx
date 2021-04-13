@@ -16,6 +16,7 @@ import {
 	defaultFooterLinks,
 	populateSocialItems,
 	getNavItemsForCommunityNavigation,
+	SocialItem,
 } from 'client/utils/navigation';
 
 require('./footer.scss');
@@ -35,6 +36,30 @@ const basePubPubFooterLinks = [
 	{ id: 2, title: 'Login', href: '/login' },
 	{ id: 3, title: 'Signup', href: '/signup' },
 	{ id: 4, title: 'Legal', href: '/legal' },
+];
+
+const baseSocialItems: SocialItem[] = [
+	{
+		id: 'si-1',
+		icon: 'twitter',
+		title: 'Twitter',
+		value: 'pubpub',
+		url: 'https://twitter.com/pubpub',
+	},
+	{
+		id: 'si-2',
+		icon: 'github',
+		title: 'Github',
+		value: 'pubpub',
+		url: 'https://github.com/pubpub',
+	},
+	{
+		id: 'si-3',
+		icon: 'envelope',
+		title: 'Contact by email',
+		value: 'hello@pubpub.org',
+		url: 'mailto:hello@pubpub.org?subject=Contact',
+	},
 ];
 
 const Footer = (props: Props) => {
@@ -82,31 +107,7 @@ const Footer = (props: Props) => {
 			? '/static/logoBlack.svg'
 			: '/static/logoWhite.svg';
 	const wrapperClasses = isBasePubPub ? 'base-pubpub' : 'accent-background accent-color';
-	const socialElements = isBasePubPub
-		? [
-				{
-					id: 'si-1',
-					icon: 'twitter',
-					title: 'Twitter',
-					value: 'pubpub',
-					url: 'https://twitter.com/pubpub',
-				},
-				{
-					id: 'si-2',
-					icon: 'github',
-					title: 'Github',
-					value: 'pubpub',
-					url: 'https://github.com/pubpub',
-				},
-				{
-					id: 'si-3',
-					icon: 'envelope',
-					title: 'Contact by email',
-					value: 'hello@pubpub.org',
-					url: 'mailto:hello@pubpub.org?subject=Contact',
-				},
-		  ]
-		: populateSocialItems(communityData);
+	const socialItems = isBasePubPub ? baseSocialItems : populateSocialItems(communityData);
 	return (
 		<div className={`footer-component ${wrapperClasses}`}>
 			<GridWrapper>
@@ -245,9 +246,9 @@ const Footer = (props: Props) => {
 							return null;
 						})}
 					</ul>
-					{!!socialElements.length && (
+					{!!socialItems.length && (
 						<ul className="social-list">
-							{socialElements.map((item) => {
+							{socialItems.map((item) => {
 								return (
 									<a href={item.url} key={`social-item-${item.id}`}>
 										<li>

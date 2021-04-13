@@ -1,50 +1,50 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Icon as BlueprintIcon } from '@blueprintjs/core';
+import { Icon as BlueprintIcon, IconName as BlueprintIconName } from '@blueprintjs/core';
 
 import customIcons from './customIcons';
 
 require('./icon.scss');
 
-const propTypes = {
-	ariaHidden: PropTypes.bool,
-	ariaLabel: PropTypes.string,
-	className: PropTypes.string,
-	icon: PropTypes.string.isRequired,
-	iconSize: PropTypes.number,
-	/* Used to toggle SVG included colors */
-	useColor: PropTypes.bool,
-	/* Used to assign a specific fill color */
-	color: PropTypes.string,
+type CustomIconName = keyof typeof customIcons;
+export type IconName = BlueprintIconName | CustomIconName;
+
+type Props = {
+	ariaHidden?: boolean;
+	ariaLabel?: string;
+	className?: string;
+	color?: string;
+	icon: IconName;
+	iconSize?: number;
+	useColor?: boolean;
 };
 
-const defaultProps = {
-	ariaHidden: false,
-	ariaLabel: '',
-	className: null,
-	iconSize: 16,
-	useColor: false,
-	color: undefined,
-};
-
-const Icon = function(props) {
-	if (customIcons[props.icon]) {
-		const viewbox = customIcons[props.icon].viewboxDefault;
+const Icon = (props: Props) => {
+	const {
+		ariaHidden = true,
+		ariaLabel = '',
+		className,
+		color,
+		icon,
+		iconSize = 16,
+		useColor = false,
+	} = props;
+	if (customIcons[icon]) {
+		const viewbox = customIcons[icon].viewboxDefault;
 		return (
 			<span
-				className={classNames('bp3-icon', props.useColor && 'color', props.className)}
-				data-icon={props.icon.toLowerCase().replace(/_/gi, '-')}
-				aria-label={props.ariaLabel}
-				aria-hidden={props.ariaHidden}
+				className={classNames('bp3-icon', useColor && 'color', className)}
+				data-icon={icon.toLowerCase().replace(/_/gi, '-')}
+				aria-label={ariaLabel}
+				aria-hidden={ariaHidden}
 			>
 				<svg
-					width={`${props.iconSize}px`}
-					height={`${props.iconSize}px`}
+					width={`${iconSize}px`}
+					height={`${iconSize}px`}
 					viewBox={`0 0 ${viewbox} ${viewbox}`}
-					fill={props.color}
+					fill={color}
 				>
-					{customIcons[props.icon].path}
+					{customIcons[icon].path}
 				</svg>
 			</span>
 		);
@@ -52,15 +52,13 @@ const Icon = function(props) {
 
 	return (
 		<BlueprintIcon
-			icon={props.icon}
-			color={props.color}
-			iconSize={props.iconSize}
-			className={props.className}
-			title={props.ariaHidden ? null : props.ariaLabel}
+			icon={icon as BlueprintIconName}
+			color={color}
+			iconSize={iconSize}
+			className={className}
+			title={ariaHidden ? null : ariaLabel}
 		/>
 	);
 };
 
-Icon.propTypes = propTypes;
-Icon.defaultProps = defaultProps;
 export default Icon;

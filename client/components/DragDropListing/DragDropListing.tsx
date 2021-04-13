@@ -38,7 +38,6 @@ export type Props<Item extends MinimalItem> = {
 };
 
 const defaultIdGetter = (item: MinimalItem) => item.id;
-const defaultEmptyState = () => null;
 
 const getRenderItem = <Item extends MinimalItem>(props: Props<Item>) => (
 	provided: DraggableProvided,
@@ -58,6 +57,7 @@ const getRenderItem = <Item extends MinimalItem>(props: Props<Item>) => (
 	const effectiveDragHandleProps = withDragHandles ? {} : dragHandleProps;
 	return (
 		<div
+			role="listitem"
 			className={classNames('drag-container', isDragging && 'is-dragging')}
 			ref={innerRef}
 			{...draggableProps}
@@ -76,7 +76,7 @@ const DragDropListing = <Item extends MinimalItem>(props: Props<Item>) => {
 		disabled = false,
 		items,
 		itemId = defaultIdGetter,
-		renderEmptyState = defaultEmptyState,
+		renderEmptyState = null,
 		renderDragElementInPortal = false,
 	} = props;
 

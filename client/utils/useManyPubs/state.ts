@@ -1,6 +1,6 @@
 import { Pub } from 'utils/types';
 
-import { QueryState, ManyPubsQuery } from './types';
+import { QueryState, KeyedPubsQuery } from './types';
 import { getOrderingValuesByPubId, getPubsInOrder } from './ordering';
 
 export const initialQueryState: QueryState = {
@@ -24,9 +24,9 @@ export const getStartLoadingPubsState = (state: QueryState, batchSize: number): 
 
 export const getFinishedLoadingPubsState = (
 	state: QueryState,
-	query: ManyPubsQuery,
+	query: KeyedPubsQuery,
 	newPubsById: Record<string, Pub>,
-	hasLoadedAllPubs: boolean,
+	hasLoadedAllPubs: boolean = false,
 ): QueryState => {
 	const { orderedPubs } = state;
 	const { ordering, scopedCollectionId } = query;
@@ -47,4 +47,20 @@ export const getFinishedLoadingPubsState = (
 			pubsInOrder: getPubsInOrder(nextPubsById, nextOrderingValuesByPubId, ordering),
 		},
 	};
+};
+
+export const getInitialPubsState = (
+	initialQuery: KeyedPubsQuery,
+	initialPubs: Record<string, Pub>,
+	initiallyLoadedAllPubs: boolean,
+) => {
+	return getFinishedLoadingPubsState(
+		{
+			...initialQueryState,
+			offset: Object.keys(initialPubs).length,
+		},
+		initialQuery,
+		initialPubs,
+		initiallyLoadedAllPubs,
+	);
 };

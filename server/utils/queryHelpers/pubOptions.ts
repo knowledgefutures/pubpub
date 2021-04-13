@@ -16,23 +16,10 @@ import {
 	includeUserModel,
 	Draft,
 } from 'server/models';
+import { PubGetOptions } from 'utils/types';
 
-import { getPubEdgeIncludes, PubEdgeIncludesOptions } from './pubEdgeOptions';
+import { getPubEdgeIncludes } from './pubEdgeOptions';
 import { baseAuthor, baseThread, baseVisibility } from './util';
-
-export type PubGetOptions = {
-	isAuth?: boolean;
-	isPreview?: boolean;
-	getCollections?: boolean;
-	getMembers?: boolean;
-	getCommunity?: boolean;
-	getExports?: boolean;
-	getEdges?: 'all' | 'approved-only';
-	getDraft?: boolean;
-	getDiscussions?: boolean;
-	getReviews?: boolean;
-	getEdgesOptions?: PubEdgeIncludesOptions;
-};
 
 export default ({
 	isAuth,
@@ -84,6 +71,7 @@ export default ({
 			'communityId',
 			'customPublishedAt',
 			'createdAt',
+			'updatedAt',
 		];
 		author = [];
 		thread = [];

@@ -1,13 +1,13 @@
 import React from 'react';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
-import { Avatar, Icon, MenuItem } from 'components';
+import { Avatar, Icon, IconName, MenuItem } from 'components';
 
 require('./scopeDropdown.scss');
 
 type Scope = {
 	type: string;
-	icon: string;
+	icon: IconName;
 	iconSize?: number;
 	title: string;
 	avatar: string;
@@ -87,8 +87,6 @@ const ScopeDropdown = (props: Props) => {
 										<Avatar
 											avatar={scope.avatar}
 											initials={scope.title[0]}
-											// @ts-expect-error ts-migrate(2322) FIXME: Type '{ avatar: string; initials: string; communit... Remove this comment to see the full error message
-											communityData={communityData}
 											width={18}
 											isBlock={true}
 										/>

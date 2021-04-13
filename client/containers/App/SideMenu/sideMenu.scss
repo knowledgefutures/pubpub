@@ -34,7 +34,7 @@
             display: flex;
             align-items: center;
             letter-spacing: 0.5px;
-            &.active:not(.has-children) {
+            &.active {
                 background: rgba(255, 255, 255, 1);
                 font-weight: 600;
                 .side-icon {

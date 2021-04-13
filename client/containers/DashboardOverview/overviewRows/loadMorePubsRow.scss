@@ -1,0 +1,33 @@
+.load-more-pubs-row-component {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+
+    .inner {
+        display: flex;
+        align-items: center;
+    }
+
+    .label {
+        margin-left: 4px;
+    }
+
+    &.dark {
+        .bp3-spinner {
+            .bp3-spinner-track {
+                stroke: white;
+            }
+        }
+    }
+
+    &:not([aria-disabled='true']) {
+        cursor: pointer;
+        &:hover {
+            .label {
+                text-decoration: underline;
+                text-decoration-style: dotted;
+            }
+        }
+    }
+}

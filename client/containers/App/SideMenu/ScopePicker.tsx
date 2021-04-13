@@ -1,9 +1,17 @@
 import React from 'react';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
-import { Icon, MenuButton, ScopeDropdown } from 'components';
+import { Icon, IconName, MenuButton, ScopeDropdown } from 'components';
 
 require('./scopePicker.scss');
+
+type Scope = {
+	type: 'Community' | 'Collection' | 'Pub';
+	icon: IconName;
+	title: string;
+	avatar: string;
+	href: string;
+};
 
 const ScopePicker = () => {
 	const { locationData, communityData, scopeData } = usePageContext();
@@ -13,7 +21,7 @@ const ScopePicker = () => {
 	const pubSlug = locationData.params.pubSlug;
 
 	let currentScopeTitle = 'Community';
-	let icon = 'office';
+	let icon: IconName = 'office';
 	if (activeCollection) {
 		currentScopeTitle = 'Collection';
 		icon = 'collection';
@@ -23,7 +31,7 @@ const ScopePicker = () => {
 		icon = 'pubDoc';
 	}
 
-	const scopes: any[] = [];
+	const scopes: Scope[] = [];
 	scopes.push({
 		type: 'Community',
 		icon: 'office',

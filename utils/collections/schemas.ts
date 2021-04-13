@@ -1,4 +1,20 @@
 import { collectionUrl } from 'utils/canonicalUrls';
+import { IconName } from 'client/components/Icon/Icon';
+
+type ContextHint = {
+	value: string;
+	label: string;
+	isDefault?: boolean;
+	crossrefComponentType?: string;
+};
+
+type CollectionSchema = {
+	kind: string;
+	label: { singular: string; plural: string };
+	bpDisplayIcon: IconName;
+	metadata: any[];
+	contextHints: ContextHint[];
+};
 
 const dateRegex = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/;
 
@@ -6,7 +22,7 @@ const types = {
 	date: {
 		name: 'date',
 		deserialize: (str) => {
-			const [year, month, day] = dateRegex.exec(str).slice(1);
+			const [year, month, day] = dateRegex.exec(str)!.slice(1);
 			const date = new Date();
 			date.setFullYear(parseInt(year, 10));
 			date.setMonth(parseInt(month, 10) - 1);
@@ -33,7 +49,7 @@ const sharedFields = {
 	},
 };
 
-const schemas = [
+const schemas: CollectionSchema[] = [
 	{
 		kind: 'tag',
 		label: { singular: 'tag', plural: 'tags' },
@@ -45,7 +61,7 @@ const schemas = [
 		kind: 'issue',
 		label: { singular: 'issue', plural: 'issues' },
 		bpDisplayIcon: 'manual',
-		contextHints: [{ value: 'article', label: 'Article', default: true }],
+		contextHints: [{ value: 'article', label: 'Article', isDefault: true }],
 		metadata: [
 			sharedFields.doi,
 			sharedFields.url,
@@ -100,7 +116,7 @@ const schemas = [
 		kind: 'conference',
 		label: { singular: 'conference', plural: 'conferences' },
 		bpDisplayIcon: 'presentation',
-		contextHints: [{ value: 'paper', label: 'Paper', default: true }],
+		contextHints: [{ value: 'paper', label: 'Paper', isDefault: true }],
 		metadata: [
 			sharedFields.doi,
 			sharedFields.url,

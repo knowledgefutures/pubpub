@@ -2,13 +2,8 @@ import { QueryTypes, Op } from 'sequelize';
 import { QueryBuilder } from 'knex';
 
 import { knex, sequelize, Pub } from 'server/models';
-import {
-	buildPubOptions,
-	sanitizePub,
-	PubGetOptions,
-	SanitizedPubData,
-} from 'server/utils/queryHelpers';
-import { InitialData, PubsQuery } from 'utils/types';
+import { buildPubOptions, sanitizePub, SanitizedPubData } from 'server/utils/queryHelpers';
+import { InitialData, PubsQuery, PubGetOptions } from 'utils/types';
 
 const defaultColumns = {
 	pubId: 'Pubs.id',
@@ -63,13 +58,16 @@ const createJoins = (query: PubsQuery) => {
 };
 
 const createOuterWhereClause = (query: PubsQuery) => {
-	const { isReleased, collectionIds } = query;
+	const { isReleased, collectionIds, excludeCollectionIds } = query;
 	return (builder: QueryBuilder) => {
 		if (typeof isReleased === 'boolean') {
 			builder.where({ isReleased });
 		}
 		if (collectionIds) {
 			builder.whereRaw('?::uuid[] && "collectionIds"', [collectionIds]);
+		}
+		if (excludeCollectionIds) {
+			builder.whereRaw('NOT(?::uuid[] && "collectionIds")', [excludeCollectionIds]);
 		}
 	};
 };
@@ -79,8 +77,14 @@ const createOrderLimitOffset = (query: PubsQuery) => {
 	return (builder: QueryBuilder) => {
 		if (ordering) {
 			const { field, direction } = ordering;
-			const rawQueryString =
-				direction.toLowerCase() === 'asc' ? '?? asc nulls last' : '?? desc nulls last';
+			const rawQueryString = [
+				'??',
+				field === 'title' && `collate "C"`,
+				direction.toLowerCase() === 'asc' ? 'asc' : 'desc',
+				'nulls last',
+			]
+				.filter((x) => x)
+				.join(' ');
 			builder.orderByRaw(rawQueryString, [field]);
 		}
 		if (typeof limit === 'number') {
@@ -153,4 +157,15 @@ export const getPubsById = (pubIds: string[], options: PubGetOptions = {}) => {
 				.filter((pub): pub is SanitizedPubData => !!pub);
 		},
 	};
+};
+
+export const getManyPubs = async ({
+	query,
+	options = {},
+}: {
+	query: PubsQuery;
+	options?: PubGetOptions;
+}) => {
+	const pubIds = await queryPubIds(query);
+	return getPubsById(pubIds, options);
 };

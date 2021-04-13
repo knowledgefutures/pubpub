@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
-import { Icon } from 'components';
+import { Icon, IconName } from 'components';
 
 require('./collectionsBarButton.scss');
 
@@ -10,9 +10,9 @@ type Props = {
 	children: React.ReactNode;
 	className?: string;
 	href?: string;
-	icon?: null | string;
+	icon?: null | IconName;
 	onClick?: () => unknown;
-	rightIcon?: null | string;
+	rightIcon?: null | IconName;
 	[k: string]: any;
 };
 

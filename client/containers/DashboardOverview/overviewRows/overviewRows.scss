@@ -1,0 +1,8 @@
+.overview-rows-component {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    > li:first-child > .overview-row-skeleton-component {
+        border-top: none;
+    }
+}

@@ -9,9 +9,6 @@ import {
 	Release,
 } from 'server/models';
 
-import buildPubOptions from './pubOptions';
-import sanitizeDiscussions from './discussionsSanitize';
-import sanitizeReviews from './reviewsSanitize';
 import { ensureSerialized, stripFalsyIdsFromQuery } from './util';
 import { getCollection } from './collectionGet';
 
@@ -19,7 +16,6 @@ let getScopeElements;
 let getPublicPermissionsData;
 let getScopeMemberData;
 let getActivePermissions;
-let getActiveCounts;
 
 /* getScopeData can be called from either a route (e.g. to authenticate */
 /* whether a user has access to /pub/example), or it can be called from */
@@ -45,14 +41,12 @@ export default async (scopeInputs) => {
 		publicPermissionsData,
 		scopeMemberData,
 	);
-	const activeCounts = await getActiveCounts(scopeInputs, scopeElements, activePermissions);
 
 	return {
 		elements: scopeElements,
 		optionsData: publicPermissionsData,
 		memberData: scopeMemberData,
 		activePermissions,
-		activeCounts,
 	};
 };
 
@@ -306,67 +300,5 @@ getActivePermissions = async (
 		canManageCommunity,
 		...activePublicPermissions,
 		canCreateReviews: canEdit || activePublicPermissions.canCreateReviews,
-	};
-};
-
-getActiveCounts = async (scopeInputs, scopeElements, activePermissions) => {
-	/* Get counts for threads and reviews */
-	const { loginId, isDashboard } = scopeInputs;
-	if (!isDashboard) {
-		return {};
-	}
-
-	const { activeTarget, activeTargetType } = scopeElements;
-	let discussionCount = 0;
-	let reviewCount = 0;
-	let pubs = [];
-	const pubQueryOptions = buildPubOptions({ isAuth: true });
-	if (activeTargetType === 'pub') {
-		const pubData = await Pub.findOne({
-			where: { id: activeTarget.id },
-			...pubQueryOptions,
-		});
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
-		pubs = [pubData];
-	}
-
-	if (activeTargetType === 'collection') {
-		const collectionData = await Collection.findOne({
-			where: { id: activeTarget.id },
-			attributes: ['id'],
-			include: [
-				{
-					model: CollectionPub,
-					as: 'collectionPubs',
-					include: [{ model: Pub, as: 'pub', ...pubQueryOptions }],
-				},
-			],
-		});
-		pubs = collectionData.collectionPubs.map((cp) => cp.pub);
-	}
-	if (activeTargetType === 'community') {
-		const communityCountData = await Community.findOne({
-			where: { id: activeTarget.id },
-			attributes: ['id'],
-			include: [{ model: Pub, as: 'pubs', ...pubQueryOptions }],
-		});
-		pubs = communityCountData.pubs;
-	}
-	pubs.forEach((pub) => {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'discussions' does not exist on type 'nev... Remove this comment to see the full error message
-		const openDiscussions = pub.discussions?.filter((item) => !item.isClosed) || [];
-		const discussions = sanitizeDiscussions(openDiscussions, activePermissions, loginId);
-
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'reviews' does not exist on type 'never'.
-		const openReviews = pub.reviews?.filter((item) => item.status !== 'closed') || [];
-		const reviews = sanitizeReviews(openReviews, activePermissions, loginId);
-
-		discussionCount += discussions.length;
-		reviewCount += reviews.length;
-	});
-
-	return {
-		discussionCount,
-		reviewCount,
 	};
 };

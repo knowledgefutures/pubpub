@@ -3,6 +3,7 @@ import { CollectionPub, Discussion, Pub, PubAttribution, Release } from 'utils/t
 
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeReviews from './reviewsSanitize';
+import { sanitizePubEdges } from './sanitizePubEdge';
 
 export type SanitizedPubData = Pub & {
 	viewHash: string | null;
@@ -104,14 +105,17 @@ export default (
 	const reviews =
 		pubData.reviews && sanitizeReviews(pubData.reviews, activePermissions, loginData.id);
 
+	const edges = pubData.edges && sanitizePubEdges(initialData, pubData.edges);
+
 	return {
 		...pubData,
 		...sanitizeHashes(pubData, activePermissions),
 		attributions: pubData.attributions.map(ensureUserForAttribution),
 		draft: isRelease ? null : pubData.draft,
 		discussions,
-		exports: getFilteredExports(pubData, isRelease),
+		edges,
 		reviews,
+		exports: getFilteredExports(pubData, isRelease),
 		collectionPubs: filteredCollectionPubs,
 		isReadOnly: isRelease || !(canEdit || canEditDraft),
 		isRelease,

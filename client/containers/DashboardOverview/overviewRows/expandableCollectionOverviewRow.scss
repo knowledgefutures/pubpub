@@ -1,0 +1,9 @@
+.expandable-collection-overview-row-component {
+    &.expanded {
+        z-index: 1;
+        box-shadow: 0 4px 2px -2px rgba(black, 0.05);
+        &.js-is-sticky {
+            background: white;
+        }
+    }
+}

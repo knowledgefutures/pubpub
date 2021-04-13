@@ -1,20 +1,26 @@
 import { useEffect, useRef } from 'react';
-import stickybits from 'stickybits';
+import stickybits, { StickyBits } from 'stickybits';
 
-const useOrFakeResizeObserver = (onResize) => {
-	const lastBodyHeight = useRef(null);
+type Callback = () => unknown;
+
+type Options = {
+	offset?: number;
+	isActive?: boolean;
+	target: string | HTMLElement;
+};
+
+const useOrFakeResizeObserver = (onResize: Callback) => {
+	const lastBodyHeight = useRef<null | number>(null);
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
 			if ('ResizeObserver' in window) {
-				// @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'ResizeObserver'.
-				const observer = new ResizeObserver(onResize);
+				const observer = new (window as any).ResizeObserver(onResize);
 				observer.observe(document.body);
 				return () => observer.disconnect();
 			}
 			const interval = setInterval(() => {
 				const bodyHeight = document.body.offsetHeight;
 				if (bodyHeight !== lastBodyHeight.current) {
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'null'.
 					lastBodyHeight.current = bodyHeight;
 					onResize();
 				}
@@ -25,22 +31,24 @@ const useOrFakeResizeObserver = (onResize) => {
 	}, [onResize]);
 };
 
-export const useSticky = ({ selector, offset = 0, isActive = true }) => {
-	const stickyInstanceRef = useRef(null);
+export const useSticky = (options: Options) => {
+	const { target, offset = 0, isActive = true } = options;
+	const stickyInstanceRef = useRef<null | StickyBits>(null);
 
 	useEffect(() => {
 		if (isActive) {
-			// @ts-expect-error ts-migrate(2322) FIXME: Type 'StickyBits' is not assignable to type 'null'... Remove this comment to see the full error message
-			stickyInstanceRef.current = stickybits(selector, {
+			stickyInstanceRef.current = stickybits(target, {
 				stickyBitStickyOffset: offset,
 				useStickyClasses: true,
 			});
-			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-			return () => stickyInstanceRef.current.cleanup();
+			return () => stickyInstanceRef.current!.cleanup();
 		}
 		return () => {};
-	}, [isActive, offset, selector]);
+	}, [isActive, offset, target]);
 
-	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 	useOrFakeResizeObserver(() => stickyInstanceRef.current && stickyInstanceRef.current.update());
+};
+
+export const isSticky = (element: HTMLElement) => {
+	return element.classList.contains('js-is-sticky');
 };

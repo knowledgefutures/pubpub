@@ -9,7 +9,6 @@ export const addCollectionPub = ({ pubId, collectionId, communityId }) =>
 			pubId,
 			collectionId,
 			communityId,
-			moveToTop: true,
 		}),
 	});
 

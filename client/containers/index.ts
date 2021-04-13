@@ -8,7 +8,11 @@ export { default as DashboardDiscussions } from './DashboardDiscussions/Dashboar
 export { default as DashboardEdges } from './DashboardEdges/DashboardEdges';
 export { default as DashboardImpact } from './DashboardImpact/DashboardImpact';
 export { default as DashboardMembers } from './DashboardMembers/DashboardMembers';
-export { default as DashboardOverview } from './DashboardOverview/DashboardOverview';
+export {
+	DashboardCommunityOverview,
+	DashboardCollectionOverview,
+	DashboardPubOverview,
+} from './DashboardOverview';
 export { default as DashboardPage } from './DashboardPage/DashboardPage';
 export { default as DashboardPages } from './DashboardPages/DashboardPages';
 export { default as DashboardReview } from './DashboardReview/DashboardReview';

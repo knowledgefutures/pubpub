@@ -3,47 +3,100 @@ import { Icon } from 'components';
 
 require('./landing.scss');
 
+const features = [
+	{
+		icon: 'badge',
+		title: 'DOI Support',
+		desc: 'Generate CrossRef DOIs for your documents in one click.',
+	},
+	{
+		icon: 'shield',
+		title: 'Submissions & Review',
+		desc: 'Manage submissions and peer review directly on PubPub.',
+	},
+	{
+		icon: 'comment',
+		title: 'Discussions & Annotations',
+		desc:
+			'Host public and private discussions with your readers and community, whether in your classroom or across the world.',
+	},
+	{
+		icon: 'page-layout',
+		title: 'Beautiful, Customizable Layouts',
+		desc: 'Create your custom site without writing a line of code.',
+	},
+	{
+		icon: 'book',
+		title: 'Collection Metadata',
+		desc:
+			'Include article & collection-level metadata for easier organization of content and improved discovery.',
+	},
+	{
+		icon: 'people',
+		title: 'Access Control',
+		desc: 'Allow anyone to access your content, or just the people you choose.',
+	},
+	{
+		icon: 'lightbulb',
+		title: 'Suggest a feature',
+		desc: "We're constantly adding new features, and love hearing ideas from users like you.",
+	},
+] as const;
+
+const communities = [
+	{
+		name: 'Harvard Data Science Review',
+		description: 'A Microscopic, Telescopic & Kaleidoscopic View of Data Science',
+		logo: '/static/landing/hdsr.png',
+		type: 'Journal',
+		category: 'Science',
+		link: 'https://hdsr.mitpress.mit.edu',
+	},
+	{
+		name: 'Stanford JBLP',
+		description: 'The first law journal to publish on the greater blockchain technology space',
+		logo: '/static/landing/sjblp.png',
+		type: 'Journal',
+		category: 'Law',
+		link: 'https://stanford-jblp.pubpub.org/',
+	},
+	{
+		name: 'Cursor_',
+		description: 'Journal for Explorative Theology',
+		logo: '/static/landing/cursor.png',
+		type: 'Journal',
+		category: 'Theology',
+		link: 'https://cursor.pubpub.org/',
+	},
+	{
+		name: 'punctum Comms',
+		description: 'Communications / Commons / Community',
+		logo: '/static/landing/punctum.png',
+		type: 'Blog',
+		category: 'Publishing',
+		link: 'https://punctumbooks.pubpub.org/',
+	},
+	{
+		name: 'Expansive Digital Publishing',
+		description:
+			"Duke University Libraries' framework for how libraries can begin to embrace their role in the maturing space of digital humanities publishing",
+		logo: '/static/landing/expansive.png',
+		type: 'Report',
+		category: 'Digital Humanities',
+		link: 'https://expansive.pubpub.org/',
+	},
+	{
+		name: 'Frankenbook',
+		description:
+			'A collaborative, multimedia reading experiment with Mary Shelley’s classic novel',
+		logo: '/static/landing/frankenbook.png',
+		type: 'Book',
+		category: 'Literature',
+		link: 'https://frankenbook.org',
+	},
+];
+
 const Landing = () => {
-	const features = [
-		{
-			icon: 'badge',
-			title: 'DOI Support',
-			desc: 'Generate CrossRef DOIs for your documents in one click.',
-		},
-		{
-			icon: 'shield',
-			title: 'Submissions & Review',
-			desc: 'Manage submissions and peer review directly on PubPub.',
-		},
-		{
-			icon: 'comment',
-			title: 'Discussions & Annotations',
-			desc:
-				'Host public and private discussions with your readers and community, whether in your classroom or across the world.',
-		},
-		{
-			icon: 'page-layout',
-			title: 'Beautiful, Customizable Layouts',
-			desc: 'Create your custom site without writing a line of code.',
-		},
-		{
-			icon: 'book',
-			title: 'Collection Metadata',
-			desc:
-				'Include article & collection-level metadata for easier organization of content and improved discovery.',
-		},
-		{
-			icon: 'people',
-			title: 'Access Control',
-			desc: 'Allow anyone to access your content, or just the people you choose.',
-		},
-		{
-			icon: 'lightbulb',
-			title: 'Suggest a feature',
-			desc:
-				"We're constantly adding new features, and love hearing ideas from users like you.",
-		},
-	];
 	const featureGrid = features.map((feature) => {
 		return (
 			<div className="feature" key={feature.icon}>
@@ -55,59 +108,7 @@ const Landing = () => {
 			</div>
 		);
 	});
-	const communities = [
-		{
-			name: 'Harvard Data Science Review',
-			description: 'A Microscopic, Telescopic & Kaleidoscopic View of Data Science',
-			logo: '/static/landing/hdsr.png',
-			type: 'Journal',
-			category: 'Science',
-			link: 'https://hdsr.mitpress.mit.edu',
-		},
-		{
-			name: 'Stanford JBLP',
-			description:
-				'The first law journal to publish on the greater blockchain technology space',
-			logo: '/static/landing/sjblp.png',
-			type: 'Journal',
-			category: 'Law',
-			link: 'https://stanford-jblp.pubpub.org/',
-		},
-		{
-			name: 'Cursor_',
-			description: 'Journal for Explorative Theology',
-			logo: '/static/landing/cursor.png',
-			type: 'Journal',
-			category: 'Theology',
-			link: 'https://cursor.pubpub.org/',
-		},
-		{
-			name: 'punctum Comms',
-			description: 'Communications / Commons / Community',
-			logo: '/static/landing/punctum.png',
-			type: 'Blog',
-			category: 'Publishing',
-			link: 'https://punctumbooks.pubpub.org/',
-		},
-		{
-			name: 'Expansive Digital Publishing',
-			description:
-				"Duke University Libraries' framework for how libraries can begin to embrace their role in the maturing space of digital humanities publishing",
-			logo: '/static/landing/expansive.png',
-			type: 'Report',
-			category: 'Digital Humanities',
-			link: 'https://expansive.pubpub.org/',
-		},
-		{
-			name: 'Frankenbook',
-			description:
-				'A collaborative, multimedia reading experiment with Mary Shelley’s classic novel',
-			logo: '/static/landing/frankenbook.png',
-			type: 'Book',
-			category: 'Literature',
-			link: 'https://frankenbook.org',
-		},
-	];
+
 	const communityGrid = communities.map((community) => {
 		return (
 			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element[]; className: string; ke... Remove this comment to see the full error message

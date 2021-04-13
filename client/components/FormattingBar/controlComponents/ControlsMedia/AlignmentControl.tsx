@@ -15,7 +15,7 @@ const alignOptions = [
 	{ key: 'right', icon: 'align-right' },
 	{ key: 'full', icon: 'vertical-distribution' },
 	{ key: 'breakout', icon: 'fullscreen' },
-];
+] as const;
 
 const AlignmentControl = (props: Props) => {
 	const { onChange, value } = props;

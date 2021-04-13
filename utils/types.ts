@@ -88,7 +88,7 @@ export type CollectionPub = {
 	id: string;
 	pubId: string;
 	collectionId: string;
-	contextHint?: string;
+	contextHint?: null | string;
 	rank: string;
 	pubRank: string;
 	collection?: Collection;
@@ -201,7 +201,7 @@ export type Pub = {
 	communityId: string;
 	community?: Community;
 	discussions?: Discussion[];
-	attributions?: PubAttribution[];
+	attributions: PubAttribution[];
 	collectionPubs?: CollectionPub[];
 	exports?: Export[];
 	members?: Member[];
@@ -210,10 +210,10 @@ export type Pub = {
 	crossrefDepositRecord?: CrossrefDepositRecord;
 	inboundEdges?: InboundEdge[];
 	outboundEdges?: OutboundEdge[];
-	pubEdgeListingDefaultsToCarousel: boolean;
-	pubEdgeDescriptionVisible: boolean;
-	nodeLabels: NodeLabelMap;
-	draftId: string;
+	pubEdgeListingDefaultsToCarousel?: boolean;
+	pubEdgeDescriptionVisible?: boolean;
+	nodeLabels?: NodeLabelMap;
+	draftId?: string;
 	draft?: Draft;
 };
 
@@ -434,6 +434,7 @@ export type PubsQueryOrderingField =
 export type PubsQueryOrdering = { field: PubsQueryOrderingField; direction: 'ASC' | 'DESC' };
 export type PubsQuery = {
 	collectionIds?: null | string[];
+	excludeCollectionIds?: null | string[];
 	communityId: string;
 	excludePubIds?: null | string[];
 	isReleased?: boolean;
@@ -443,4 +444,24 @@ export type PubsQuery = {
 	scopedCollectionId?: string;
 	withinPubIds?: null | string[];
 	term?: string;
+};
+
+export type PubEdgeIncludesOptions = {
+	includeCommunityForPubs?: boolean;
+	includeTargetPub?: boolean;
+	includePub?: boolean;
+};
+
+export type PubGetOptions = {
+	isAuth?: boolean;
+	isPreview?: boolean;
+	getCollections?: boolean;
+	getMembers?: boolean;
+	getCommunity?: boolean;
+	getExports?: boolean;
+	getEdges?: 'all' | 'approved-only';
+	getDraft?: boolean;
+	getDiscussions?: boolean;
+	getReviews?: boolean;
+	getEdgesOptions?: PubEdgeIncludesOptions;
 };

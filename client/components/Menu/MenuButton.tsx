@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@blueprintjs/core';
 
-import Icon from 'components/Icon/Icon';
+import Icon, { IconName } from 'components/Icon/Icon';
 import { Menu, MenuProps } from './Menu';
 
 type MenuButtonProps = {
@@ -11,8 +11,8 @@ type MenuButtonProps = {
 		fill?: boolean;
 		large?: boolean;
 		outlined?: boolean;
-		icon?: string | React.ReactNode;
-		rightIcon?: string | React.ReactNode;
+		icon?: IconName | React.ReactNode;
+		rightIcon?: IconName | React.ReactNode;
 		minimal?: boolean;
 		small?: boolean;
 	};
@@ -20,9 +20,9 @@ type MenuButtonProps = {
 	children: React.ReactNode;
 } & Omit<MenuProps, 'disclosure'>;
 
-const getIconProp = (icon) => {
+const getIconProp = (icon: IconName | React.ReactNode) => {
 	if (icon && typeof icon === 'string') {
-		return <Icon icon={icon} />;
+		return <Icon icon={icon as any} />;
 	}
 	return icon;
 };

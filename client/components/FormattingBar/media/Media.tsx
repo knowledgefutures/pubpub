@@ -26,6 +26,23 @@ type State = {
 	activeItem: string;
 };
 
+const files = [
+	{ text: 'Image', icon: 'media' },
+	{ text: 'Video', icon: 'video' },
+	{ text: 'Audio', icon: 'volume-up' },
+	{ text: 'Other', icon: 'document' },
+] as const;
+
+const apps = [
+	{ text: 'Iframe', icon: 'application' },
+	{ text: 'YouTube', icon: 'youtube' },
+	{ text: 'Twitter', icon: 'twitter' },
+	{ text: 'Codepen', icon: 'codepen' },
+	{ text: 'Vimeo', icon: 'vimeo' },
+	{ text: 'SoundCloud', icon: 'soundcloud' },
+	{ text: 'GitHub Gist', icon: 'github' },
+] as const;
+
 class Media extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
@@ -35,21 +52,6 @@ class Media extends Component<Props, State> {
 	}
 
 	render() {
-		const files = [
-			{ text: 'Image', icon: 'media' },
-			{ text: 'Video', icon: 'video' },
-			{ text: 'Audio', icon: 'volume-up' },
-			{ text: 'Other', icon: 'document' },
-		];
-		const apps = [
-			{ text: 'Iframe', icon: 'application' },
-			{ text: 'YouTube', icon: 'youtube' },
-			{ text: 'Twitter', icon: 'twitter' },
-			{ text: 'Codepen', icon: 'codepen' },
-			{ text: 'Vimeo', icon: 'vimeo' },
-			{ text: 'SoundCloud', icon: 'soundcloud' },
-			{ text: 'GitHub Gist', icon: 'github' },
-		];
 		const activeItem = this.state.activeItem;
 
 		const componentProps = {

@@ -38,7 +38,7 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 		return renderToNodeStream(
 			res,
 			<Html
-				chunkName="DashboardOverview"
+				chunkName="DashboardPubOverview"
 				initialData={initialData}
 				viewData={{ pubData: { ...pubData, citationData } }}
 				headerComponents={generateMetaComponents({

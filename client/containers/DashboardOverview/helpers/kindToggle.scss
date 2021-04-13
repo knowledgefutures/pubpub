@@ -1,0 +1,28 @@
+@import '../overviewStyles.scss';
+
+.kind-toggle-component[type='checkbox'] {
+    cursor: pointer;
+    display: flex;
+    user-select: none;
+    align-items: center;
+    border-radius: 2px;
+    padding: 4px 8px;
+
+    .bp3-icon {
+        margin-right: 4px;
+    }
+
+    &[aria-checked='true'] {
+        .count {
+            color: $dark-grey;
+        }
+    }
+
+    &[aria-checked='false'] {
+        color: lighten($dark-grey, 20%);
+    }
+
+    &:hover {
+        background: rgba(black, 0.05);
+    }
+}

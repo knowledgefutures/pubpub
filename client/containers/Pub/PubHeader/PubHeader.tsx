@@ -64,7 +64,7 @@ const PubHeader = (props: Props) => {
 	useSticky({
 		// @ts-expect-error ts-migrate(2322) FIXME: Type 'false | null' is not assignable to type 'boo... Remove this comment to see the full error message
 		isActive: sticky && headerRef.current,
-		selector: '.pub-header-component',
+		target: '.pub-header-component',
 		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 		offset: headerRef.current ? 37 - headerRef.current.offsetHeight : 0,
 	});

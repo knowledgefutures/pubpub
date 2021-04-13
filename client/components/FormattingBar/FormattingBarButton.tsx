@@ -4,13 +4,13 @@ import { Button } from 'reakit';
 
 import { Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 
-import { Icon } from 'components';
+import { Icon, IconName } from 'components';
 
 export type FormattingItem = {
 	ariaTitle?: string;
 	title: string;
 	isToggle?: string;
-	icon: string;
+	icon: IconName;
 };
 
 export type FormattingBarButtonProps = {

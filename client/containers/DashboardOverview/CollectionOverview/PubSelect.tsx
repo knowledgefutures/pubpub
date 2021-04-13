@@ -1,18 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { PubMenuItem, QueryListDropdown } from 'components';
-import { fuzzyMatchPub } from 'utils/fuzzyMatch';
-import { Pub } from 'utils/types';
+import { useManyPubs } from 'client/utils/useManyPubs';
+
+import { PubWithCollections } from './types';
+import { LoadMorePubsRow } from '../overviewRows';
 
 type Props = {
 	children: React.ReactNode;
-	onSelectPub: (pub: Pub) => unknown;
-	pubs: Pub[];
-	usedPubIds?: string[];
+	onSelectPub: (pub: PubWithCollections) => unknown;
+	usedPubIds: Set<string>;
+	collectionId: string;
 };
 
 const PubSelect = (props: Props) => {
-	const { children, pubs, onSelectPub, usedPubIds = [] } = props;
+	const { children, onSelectPub, collectionId, usedPubIds } = props;
+	const [searchTerm, setSearchTerm] = useState('');
+
+	const {
+		allQueries: { isLoading },
+		currentQuery: { pubs },
+	} = useManyPubs<PubWithCollections>({
+		batchSize: 50,
+		query: {
+			term: searchTerm,
+			excludeCollectionIds: [collectionId],
+			ordering: { field: 'updatedDate', direction: 'DESC' },
+		},
+		pubOptions: {
+			getCollections: true,
+		},
+	});
 
 	const renderPubItem = (pub, { handleClick, modifiers: { active } }) => {
 		return (
@@ -22,6 +40,7 @@ const PubSelect = (props: Props) => {
 				title={pub.title}
 				contributors={pub.attributions}
 				active={active}
+				bylineProps={{ truncateAt: 4 }}
 			/>
 		);
 	};
@@ -29,12 +48,13 @@ const PubSelect = (props: Props) => {
 	return (
 		<QueryListDropdown
 			itemRenderer={renderPubItem}
-			items={pubs.filter((pub) => !usedPubIds.includes(pub.id))}
-			itemPredicate={(query, pub) => fuzzyMatchPub(pub, query)}
+			items={pubs.filter((pub) => !usedPubIds.has(pub.id))}
+			onQueryChange={setSearchTerm}
 			onItemSelect={onSelectPub}
-			emptyListPlaceholder="No Pubs to show."
+			emptyListPlaceholder={isLoading ? <LoadMorePubsRow isLoading /> : 'No Pubs to show'}
 			searchPlaceholder="Search for Pubs"
 			children={children}
+			query={searchTerm}
 		/>
 	);
 };

@@ -1,8 +1,8 @@
 import { Pub } from 'server/models';
-import { InitialData } from 'utils/types';
+import { InitialData, PubGetOptions } from 'utils/types';
 
 import sanitizePub from './pubSanitize';
-import buildPubOptions, { PubGetOptions } from './pubOptions';
+import buildPubOptions from './pubOptions';
 
 export const getPub = async (slug: string, communityId: string, options: PubGetOptions = {}) => {
 	const sanitizedSlug = slug.toLowerCase();

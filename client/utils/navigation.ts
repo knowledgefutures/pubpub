@@ -1,3 +1,5 @@
+import { IconName } from 'components/Icon/Icon';
+
 type Community = {
 	website: string;
 	facebook: string;
@@ -52,39 +54,45 @@ export const defaultFooterLinks: CommunityNavigationEntry[] = [
 	{ id: 'legal', title: 'Legal', href: '/legal' },
 ];
 
-export const populateSocialItems = (communityData: Community) => {
+export type SocialItem = {
+	id: string;
+	icon: IconName;
+	title: string;
+	value: string;
+	url: string;
+};
+
+export const populateSocialItems = (communityData: Community): SocialItem[] => {
 	return [
 		{
 			id: 'si-0',
-			icon: 'globe',
+			icon: 'globe' as const,
 			title: 'Website',
 			value: communityData.website,
 			url: communityData.website,
 		},
 		{
 			id: 'si-1',
-			icon: 'twitter',
+			icon: 'twitter' as const,
 			title: 'Twitter',
 			value: communityData.twitter,
 			url: `https://twitter.com/${communityData.twitter}`,
 		},
 		{
 			id: 'si-2',
-			icon: 'facebook',
+			icon: 'facebook' as const,
 			title: 'Facebook',
 			value: communityData.facebook,
 			url: `https://facebook.com/${communityData.facebook}`,
 		},
 		{
 			id: 'si-3',
-			icon: 'envelope',
+			icon: 'envelope' as const,
 			title: 'Contact',
 			value: communityData.email,
 			url: `mailto:${communityData.email}`,
 		},
-	].filter((item) => {
-		return item.value;
-	});
+	].filter((item) => item.value);
 };
 
 const getNavbarChildForPageOrCollection = (item: Page | Collection): NavbarChild => {

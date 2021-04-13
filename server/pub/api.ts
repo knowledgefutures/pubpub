@@ -2,18 +2,23 @@ import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { indexByProperty } from 'utils/arrays';
-import { PubsQuery } from 'utils/types';
+import { PubsQuery, PubGetOptions } from 'utils/types';
 
 import { canCreatePub, getUpdatablePubFields, canDestroyPub } from './permissions';
 import { createPub, updatePub, destroyPub } from './queries';
 import { queryPubIds, getPubsById } from './queryMany';
 
-type ManyRequestParams = { query: Omit<PubsQuery, 'communityId'>; alreadyFetchedPubIds: string[] };
+type ManyRequestParams = {
+	query: Omit<PubsQuery, 'communityId'>;
+	alreadyFetchedPubIds: string[];
+	pubOptions: PubGetOptions;
+};
 
 const getManyQueryParams = (req): ManyRequestParams => {
-	const { query, alreadyFetchedPubIds } = req.body;
+	const { query, alreadyFetchedPubIds, pubOptions = {} } = req.body;
 	const {
 		collectionIds,
+		excludeCollectionIds,
 		excludePubIds,
 		isReleased,
 		limit = 50,
@@ -24,9 +29,11 @@ const getManyQueryParams = (req): ManyRequestParams => {
 		term,
 	} = query;
 	return {
+		pubOptions,
 		alreadyFetchedPubIds,
 		query: {
 			collectionIds,
+			excludeCollectionIds,
 			excludePubIds,
 			isReleased,
 			limit,
@@ -43,7 +50,7 @@ app.post(
 	'/api/pubs/many',
 	wrap(async (req, res) => {
 		const initialData = await getInitialData(req);
-		const { query: queryPartial, alreadyFetchedPubIds } = getManyQueryParams(req);
+		const { query: queryPartial, alreadyFetchedPubIds, pubOptions } = getManyQueryParams(req);
 		const { limit } = queryPartial;
 		const pubIds = await queryPubIds({
 			...queryPartial,
@@ -51,10 +58,13 @@ app.post(
 		});
 		const loadedAllPubs = limit && limit > pubIds.length;
 		const idsToFetch = pubIds.filter((id) => !alreadyFetchedPubIds.includes(id));
-		const pubs = await getPubsById(idsToFetch).sanitize(initialData);
-		return res
-			.status(200)
-			.json({ pubIds, pubsById: indexByProperty(pubs, 'id'), loadedAllPubs });
+		const pubs = await getPubsById(idsToFetch, pubOptions).sanitize(initialData);
+		const pubsById = indexByProperty(pubs, 'id');
+		return res.status(200).json({
+			pubIds: pubIds.filter((id) => !!pubsById[id] || alreadyFetchedPubIds.includes(id)),
+			pubsById,
+			loadedAllPubs,
+		});
 	}),
 );
 

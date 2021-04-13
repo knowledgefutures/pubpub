@@ -24,14 +24,14 @@ const LayoutCollectionHeader = (props: Props) => {
 	} = props;
 	const contributors = getAllCollectionContributors(collection);
 	const bylineContributors = contributors.filter((c) => c.isAuthor);
-	const schema = getSchemaForKind(collection.kind);
+	const schema = getSchemaForKind(collection.kind)!;
 	const doi = getCollectionDoi(collection);
 
 	const detailsRowElements = [
 		!hideCollectionKind && (
 			<div className="collection-kind" key={0}>
-				<Icon icon={schema?.bpDisplayIcon as string} />
-				{capitalize(schema?.label.singular)}
+				<Icon icon={schema.bpDisplayIcon} />
+				{capitalize(schema.label.singular)}
 			</div>
 		),
 		!hideDate && <div key={1}>Created {formatDate(collection.createdAt)}</div>,

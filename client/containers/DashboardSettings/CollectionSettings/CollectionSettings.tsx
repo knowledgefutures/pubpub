@@ -12,14 +12,19 @@ import CollectionDetailsEditor from './CollectionDetailsEditor';
 import CollectionMetadataEditor from './CollectionMetadataEditor';
 
 const CollectionSettings = () => {
-	const { communityData } = usePageContext();
+	const {
+		communityData,
+		scopeData: {
+			elements: { activeCollection },
+		},
+	} = usePageContext();
 	const {
 		collection,
 		updateCollection,
 		deleteCollection,
 		fieldErrors,
 		hasChanges,
-	} = useCollectionState();
+	} = useCollectionState(activeCollection);
 
 	useUpdateEffect(() => {
 		if (!hasChanges) {
@@ -61,7 +66,7 @@ const CollectionSettings = () => {
 						apiRoute="/api/collectionAttributions"
 						canEdit={true}
 						hasEmptyState={false}
-						attributions={collection.attributions}
+						attributions={collection.attributions!}
 						listOnBylineText="List on Collection byline"
 						identifyingProps={{
 							collectionId: collection.id,

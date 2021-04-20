@@ -3,6 +3,7 @@ require('./collectionAttribution/api');
 require('./collection/api');
 require('./collectionPub/api');
 require('./community/api');
+require('./customScript/api');
 require('./discussion/api');
 require('./doi/api');
 require('./editor/api');

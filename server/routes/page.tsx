@@ -7,6 +7,7 @@ import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPage } from 'server/utils/queryHelpers';
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import { Page } from 'utils/types';
 
 app.get(['/', '/:slug'], async (req, res, next) => {
@@ -33,6 +34,7 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 			return next();
 		}
 
+		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
 		const pageData = await getPage({ query: { id: pageId }, initialData });
 		const pageTitle = !pageData.slug
 			? initialData.communityData.title
@@ -44,6 +46,7 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 				chunkName="Page"
 				initialData={initialData}
 				viewData={{ pageData }}
+				customScripts={customScripts}
 				headerComponents={generateMetaComponents({
 					initialData,
 					title: pageTitle,

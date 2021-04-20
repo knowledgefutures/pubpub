@@ -1,6 +1,7 @@
 import path from 'path';
 import React from 'react';
 import App from 'containers/App/App';
+import { CustomScripts } from 'utils/types';
 
 const manifest = require(path.join(process.cwd(), 'dist/client/manifest.json'));
 
@@ -9,6 +10,7 @@ type OwnProps = {
 	initialData: any;
 	viewData?: any;
 	headerComponents: any[];
+	customScripts?: CustomScripts;
 };
 
 const defaultProps = {
@@ -35,6 +37,7 @@ const polyfills = [
 type Props = OwnProps & typeof defaultProps;
 
 const Html = (props: Props) => {
+	const { customScripts } = props;
 	const getPath = (chunkName, extension) => {
 		return `${manifest[`${chunkName}.${extension}`]}`;
 	};
@@ -54,6 +57,13 @@ const Html = (props: Props) => {
 				/>
 				<link rel="stylesheet" type="text/css" href={getPath('vendor', 'css')} />
 				<link rel="stylesheet" type="text/css" href={getPath('main', 'css')} />
+				{customScripts?.css && (
+					<style
+						type="text/css"
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={{ __html: customScripts.css }}
+					/>
+				)}
 				<link
 					rel="search"
 					type="application/opensearchdescription+xml"
@@ -92,6 +102,13 @@ const Html = (props: Props) => {
 				/>
 				<script src={getPath('vendor', 'js')} />
 				<script src={getPath('main', 'js')} />
+				{customScripts?.js && (
+					<script
+						type="text/javascript"
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={{ __html: customScripts.js }}
+					/>
+				)}
 			</body>
 		</html>
 	);

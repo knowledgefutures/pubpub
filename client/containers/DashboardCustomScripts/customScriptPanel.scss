@@ -1,0 +1,10 @@
+.custom-script-panel-component {
+    height: 100%;
+    position: relative;
+    .save-changes-button {
+        position: absolute;
+        right: 0;
+        top: -20px;
+        transform: translateY(-100%);
+    }
+}

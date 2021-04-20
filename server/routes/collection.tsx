@@ -16,6 +16,7 @@ import {
 } from 'server/models';
 import { handleErrors } from 'server/utils/errors';
 import { withValue } from 'utils/fp';
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 
 const findCollectionByPartialId = (maybePartialId) => {
 	return Collection.findOne({
@@ -68,12 +69,15 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 					collectionId: collection.id,
 				});
 
+				const customScripts = await getCustomScriptsForCommunity(communityData.id);
+
 				return renderToNodeStream(
 					res,
 					<Html
 						chunkName="Collection"
 						initialData={initialData}
 						viewData={{ layoutPubsByBlock, collection }}
+						customScripts={customScripts}
 						headerComponents={generateMetaComponents({
 							initialData,
 							title: `${collection.title} · ${communityData.title}`,

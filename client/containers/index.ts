@@ -4,6 +4,7 @@ export { default as Collection } from './Collection/Collection';
 export { default as CommunityCreate } from './CommunityCreate/CommunityCreate';
 export { default as DashboardActivity } from './DashboardActivity/DashboardActivity';
 export { default as DashboardCollectionLayout } from './DashboardCollectionLayout/DashboardCollectionLayout';
+export { default as DashboardCustomScripts } from './DashboardCustomScripts/DashboardCustomScripts';
 export { default as DashboardDiscussions } from './DashboardDiscussions/DashboardDiscussions';
 export { default as DashboardEdges } from './DashboardEdges/DashboardEdges';
 export { default as DashboardImpact } from './DashboardImpact/DashboardImpact';

@@ -45,6 +45,7 @@ export const CollectionPub = sequelize.import('./collectionPub/model');
 export const Community = sequelize.import('./community/model');
 export const CommunityAdmin = sequelize.import('./communityAdmin/model');
 export const CrossrefDepositRecord = sequelize.import('./crossrefDepositRecord/model');
+export const CustomScript = sequelize.import('./customScript/model');
 export const Discussion = sequelize.import('./discussion/model');
 export const DiscussionAnchor = sequelize.import('./discussionAnchor/model');
 export const Doc = sequelize.import('./doc/model');

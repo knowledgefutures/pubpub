@@ -12,6 +12,7 @@ require('./dashboardImpact');
 require('./dashboardMembers');
 require('./dashboardCommunityOverview');
 require('./dashboardCollectionOverview');
+require('./dashboardCustomScripts');
 require('./dashboardPubOverview');
 require('./dashboardPage');
 require('./dashboardPages');

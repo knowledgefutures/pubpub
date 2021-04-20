@@ -3,7 +3,7 @@ import queryString from 'query-string';
 
 import { getRandomColor } from 'utils/colors';
 import { getPubPageTitle } from 'utils/pubPageTitle';
-import { CitationManager } from 'client/utils/citations/citationManager';
+import { NoteManager } from 'client/utils/notes';
 import { initFirebase } from 'client/utils/firebaseClient';
 import { apiFetch } from 'client/utils/apiFetch';
 import { NodeLabelMap } from 'client/components/Editor/types';
@@ -32,8 +32,7 @@ const shimPubContextProps = {
 	firebaseDraftRef: null,
 	updateLocalData: null as any,
 	updatePubData: null as any,
-	// @ts-expect-error ts-migrate(2554) FIXME: Expected 2-3 arguments, but got 0.
-	citationManager: new CitationManager(),
+	noteManager: new NoteManager('apa', 'count', {}),
 } as any;
 
 type Props = {
@@ -74,7 +73,7 @@ type State = {
 		remoteCollabUsers: CollabUser[];
 	};
 	firebaseDraftRef: null | firebase.database.Reference;
-	citationManager: CitationManager;
+	noteManager: NoteManager;
 };
 
 type PubContextType = State & {
@@ -188,7 +187,7 @@ class PubSyncManager extends React.Component<Props, State> {
 				loadedIntoHistory: isViewingHistory,
 				historyDocKey: `history-${historyData.currentKey}`,
 			},
-			citationManager: new CitationManager(
+			noteManager: new NoteManager(
 				pubData.citationStyle,
 				pubData.citationInlineStyle,
 				pubData.initialStructuredCitations,
@@ -397,7 +396,7 @@ class PubSyncManager extends React.Component<Props, State> {
 			pubData: this.state.pubData,
 			collabData: this.state.collabData,
 			historyData: this.state.historyData,
-			citationManager: this.state.citationManager,
+			noteManager: this.state.noteManager,
 			firebaseDraftRef: this.state.firebaseDraftRef,
 			updateLocalData: this.updateLocalData,
 			updatePubData: this.updatePubData,

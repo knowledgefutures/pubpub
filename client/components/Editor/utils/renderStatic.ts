@@ -141,11 +141,11 @@ const createOutputSpecFromNode = (node, schema, context) => {
 	return marks ? wrapOutputSpecInMarks(outputSpec, marks, schema) : outputSpec;
 };
 
-export const getReactedDocFromJson = (doc, schema, citationManager, nodeLabels) => {
+const getReactedDocFromJson = (doc, schema, noteManager, nodeLabels) => {
 	const hydratedDoc = Node.fromJSON(schema, doc);
 	const reactedDoc = getReactedDoc(hydratedDoc, {
 		documentState: {
-			citationManager,
+			noteManager,
 			nodeLabels,
 		},
 	});
@@ -156,11 +156,11 @@ export const renderStatic = ({
 	schema,
 	doc,
 	reactedDoc = null,
-	citationManager,
+	noteManager,
 	nodeLabels = {},
 	context = {},
 }) => {
-	const finalDoc = reactedDoc || getReactedDocFromJson(doc, schema, citationManager, nodeLabels);
+	const finalDoc = reactedDoc || getReactedDocFromJson(doc, schema, noteManager, nodeLabels);
 	return finalDoc.content.map((node, index) => {
 		const outputSpec = createOutputSpecFromNode(node, schema, context);
 		return createReactFromOutputSpec(outputSpec, index);

@@ -269,7 +269,7 @@ export const renderStaticHtml = async ({
 	notesData,
 }) => {
 	const { title, nodeLabels } = pubMetadata;
-	const { footnotes, citations, citationManager } = notesData;
+	const { footnotes, citations, noteManager } = notesData;
 	const renderableNodes = [
 		filterNonExportableNodes,
 		!targetPandoc && addHrefsToNotes,
@@ -282,7 +282,7 @@ export const renderStaticHtml = async ({
 		schema: editorSchema,
 		doc: { type: 'doc', content: renderableNodes },
 		context: { isForPandoc: targetPandoc },
-		citationManager,
+		noteManager,
 		nodeLabels,
 	});
 

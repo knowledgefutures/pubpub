@@ -2,8 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import Cite from 'citation-js';
+
 import { getNotes } from 'components/Editor';
-import { citationStyles } from 'utils/citations';
+import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
+import { StructuredValue, RenderedStructuredValue } from 'utils/notesCore';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
@@ -102,18 +104,18 @@ const getSingleStructuredCitation = async (
 };
 
 export const getStructuredCitations = async (
-	structuredInputs: string[],
-	citationStyle = 'apa',
-	inlineStyle = 'count',
+	structuredValues: StructuredValue[],
+	citationStyle: CitationStyleKind = 'apa',
+	inlineStyle: CitationInlineStyleKind = 'count',
 ) => {
-	const structuredCitationsMap = {};
-	const structuredValues = await Promise.all(
-		structuredInputs.map((structuredInput) =>
-			getSingleStructuredCitation(structuredInput, citationStyle, inlineStyle),
+	const structuredCitationsMap: Record<StructuredValue, RenderedStructuredValue> = {};
+	const renderedStructuredValues = await Promise.all(
+		structuredValues.map((structuredValue) =>
+			getSingleStructuredCitation(structuredValue, citationStyle, inlineStyle),
 		),
 	);
-	structuredInputs.forEach((input, index) => {
-		structuredCitationsMap[input] = structuredValues[index];
+	structuredValues.forEach((structuredValue, index) => {
+		structuredCitationsMap[structuredValue] = renderedStructuredValues[index];
 	});
 	return structuredCitationsMap;
 };

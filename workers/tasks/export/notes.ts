@@ -1,5 +1,5 @@
 import { jsonToNode, getNotes } from 'components/Editor';
-import { CitationManager } from 'client/utils/citations/citationManager';
+import { NoteManager } from 'client/utils/notes';
 import { getStructuredCitations } from 'server/utils/citations';
 import { editorSchema } from 'server/utils/firebaseAdmin';
 
@@ -28,11 +28,7 @@ export const getNotesData = async (pubData, pubDoc) => {
 	);
 
 	return {
-		citationManager: new CitationManager(
-			citationStyle,
-			citationInlineStyle,
-			renderedStructuredValues,
-		),
+		noteManager: new NoteManager(citationStyle, citationInlineStyle, renderedStructuredValues),
 		footnotes: footnotes.map((note) =>
 			enrichNoteWithStructuredResult(note, renderedStructuredValues),
 		),

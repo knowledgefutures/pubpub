@@ -1,7 +1,28 @@
+export type CitationStyleKind =
+	| 'acm-siggraph'
+	| 'american-anthro'
+	| 'apa'
+	| 'apa-7'
+	| 'cell'
+	| 'chicago'
+	| 'harvard'
+	| 'elife'
+	| 'frontiers'
+	| 'mla'
+	| 'vancouver';
+
 type CitationStyle = {
 	name: string;
-	key: string;
+	key: CitationStyleKind;
 	path?: string;
+};
+
+export type CitationInlineStyleKind = 'count' | 'authorYear' | 'author' | 'label';
+
+type CitationInlineStyle = {
+	key: CitationInlineStyleKind;
+	title: string;
+	example?: string;
 };
 
 export const citationStyles: CitationStyle[] = [
@@ -24,4 +45,11 @@ export const citationStyles: CitationStyle[] = [
 	{ key: 'frontiers', name: 'Frontiers', path: './citeStyles/frontiers.csl' },
 	{ key: 'mla', name: 'MLA', path: './citeStyles/modern-language-association.csl' },
 	{ key: 'vancouver', name: 'Vancouver' },
+];
+
+export const citationInlineStyles: CitationInlineStyle[] = [
+	{ key: 'count', title: 'Count', example: '[1]' },
+	{ key: 'authorYear', title: 'Author-Year', example: '(Goodall, 1995)' },
+	{ key: 'author', title: 'Author', example: '(Goodall)' },
+	{ key: 'label', title: 'Label', example: '(bibtexKey)' },
 ];

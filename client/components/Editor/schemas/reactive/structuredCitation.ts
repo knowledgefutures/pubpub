@@ -1,25 +1,21 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-
 export const structuredCitation = (structuredAttr) => {
 	return function(node) {
 		const { [structuredAttr]: value, customLabel } = node.attrs;
 		// @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
 		const { useEffect, useState, useDocumentState } = this;
-		const { citationManager } = useDocumentState();
-		const shouldDeriveCitation = !!citationManager;
+		const { noteManager } = useDocumentState();
+		const shouldDeriveCitation = !!noteManager;
 
-		const [citation, setCitation] = useState(
-			() => shouldDeriveCitation && citationManager.getSync(value),
+		const [note, setNote] = useState(
+			() => shouldDeriveCitation && noteManager.getRenderedValueSync(value),
 		);
 
 		useEffect(() => {
 			if (shouldDeriveCitation) {
-				const unsubscribe = citationManager.subscribe(value, setCitation);
-				return unsubscribe;
+				noteManager.getRenderedValue(value).then(setNote);
 			}
-			return () => {};
-		}, [citationManager, customLabel, shouldDeriveCitation, value]);
+		}, [noteManager, value, shouldDeriveCitation, customLabel]);
 
-		return citation;
+		return note;
 	};
 };

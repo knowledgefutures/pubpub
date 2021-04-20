@@ -1,7 +1,7 @@
 import { Node, Schema } from 'prosemirror-model';
 import { Plugin, EditorState, Transaction } from 'prosemirror-state';
 
-import { CitationManager } from 'client/utils/citations/citationManager';
+import { NoteManager } from 'client/utils/notes';
 import SuggestionManager from 'client/utils/suggestions/suggestionManager';
 import { DiscussionAnchor } from 'utils/types';
 
@@ -56,7 +56,7 @@ export type MediaUploadInstance = {
 export type MediaUploadHandler = (file: File) => null | MediaUploadInstance;
 
 export type PluginsOptions = {
-	citationManager?: CitationManager;
+	noteManager?: NoteManager;
 	collaborativeOptions?: CollaborativeOptions;
 	discussionsOptions?: null | DiscussionsOptions;
 	initialDoc: Node;

@@ -5,8 +5,8 @@ import app from 'server/server';
 import { getStructuredCitations } from 'server/utils/citations';
 
 app.post('/api/editor/citation-format', (req, res) => {
-	const { structuredValues, citationStyle, inlineStyle } = req.body;
-	return getStructuredCitations(structuredValues, citationStyle, inlineStyle)
+	const { structuredValues, citationStyleKind, inlineStyleKind } = req.body;
+	return getStructuredCitations(structuredValues, citationStyleKind, inlineStyleKind)
 		.then((output) => res.status(200).json(output))
 		.catch((err) => res.status(500).json(err));
 });

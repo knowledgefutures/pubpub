@@ -32,7 +32,7 @@ const PubBody = () => {
 	const { communityData } = usePageContext();
 	const {
 		pubData,
-		citationManager,
+		noteManager,
 		updateLocalData,
 		collabData,
 		firebaseDraftRef,
@@ -155,7 +155,7 @@ const PubBody = () => {
 				}}
 				enableSuggestions
 				nodeLabels={pubData.nodeLabels}
-				citationManager={citationManager}
+				noteManager={noteManager}
 				placeholder={pubData.isReadOnly ? undefined : 'Begin writing here...'}
 				initialContent={initialContent}
 				isReadOnly={isReadOnly}

@@ -5,7 +5,7 @@ export default (schema, props) => {
 		schema,
 		documentState: {
 			nodeLabels: props.nodeLabels,
-			citationManager: props.citationManager,
+			noteManager: props.noteManager,
 		},
 	});
 };

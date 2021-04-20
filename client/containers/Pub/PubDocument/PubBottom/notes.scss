@@ -26,4 +26,7 @@ ul.notes-component {
             display: none;
         }
     }
+		&.has-no-numbering {
+			padding: 0;
+		}
 }

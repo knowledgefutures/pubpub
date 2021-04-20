@@ -1,17 +1,18 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
+import classNames from 'classnames';
 
+import { RenderedStructuredValue } from 'utils/notesCore';
 import { Icon, PubNoteContent } from 'components';
-
-import { usePubContext } from '../../pubHooks';
 
 require('./notes.scss');
 
 export type NotePropType = {
 	structuredValue?: string;
 	unstructuredValue?: string;
-	html?: string;
-	count?: number;
+	renderedStructuredValue?: RenderedStructuredValue;
+	number?: number;
+	id?: string;
 };
 
 type NotesProps = {
@@ -51,14 +52,6 @@ const Note = (props: NoteProps) => {
 	const { note, accentColor } = props;
 	const contentRef = useRef();
 	const [returnLinkTarget, setReturnLinkTarget] = useState(null);
-	const { citationManager } = usePubContext();
-	const [citation, setCitation] = useState(citationManager.getSync(note.structuredValue));
-
-	useEffect(() => citationManager.subscribe(note.structuredValue, setCitation), [
-		citationManager,
-		note.structuredValue,
-	]);
-
 	useLayoutEffect(() => {
 		const contentNode = contentRef.current;
 		if (contentNode) {
@@ -74,12 +67,11 @@ const Note = (props: NoteProps) => {
 
 	return (
 		<li className="note">
-			{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'number' does not exist on type 'noteProp... Remove this comment to see the full error message */}
-			<div className="number">{note.number}.</div>
+			{note.number && <div className="number">{note.number}.</div>}
 			<div className="inner">
 				<PubNoteContent
 					ref={contentRef}
-					structured={citation && citation.html}
+					structured={note.renderedStructuredValue?.html}
 					unstructured={note.unstructuredValue}
 				/>
 				{returnLinkTarget &&
@@ -109,11 +101,11 @@ const Note = (props: NoteProps) => {
 
 const Notes = (props: NotesProps) => {
 	const { notes, ...restProps } = props;
+	const hasNumbering = notes.some(({ number }) => !!number);
 	return (
-		<ul className="notes-component">
+		<ul className={classNames('notes-component', !hasNumbering && 'no-padding')}>
 			{notes.map((fn) => (
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'number' does not exist on type 'noteProp... Remove this comment to see the full error message
-				<Note key={fn.number} note={fn} {...restProps} />
+				<Note key={fn.id} note={fn} {...restProps} />
 			))}
 		</ul>
 	);

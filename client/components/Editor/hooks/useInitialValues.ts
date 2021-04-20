@@ -2,7 +2,7 @@ import { MarkSpec, Node, NodeSpec, Schema } from 'prosemirror-model';
 import { useRef } from 'react';
 import { addTemporaryIdsToDoc } from '@pubpub/prosemirror-reactive';
 
-import { CitationManager } from 'client/utils/citations/citationManager';
+import { NoteManager } from 'client/utils/notes';
 import { DocJson } from 'utils/types';
 
 import { NodeLabelMap } from '../types';
@@ -15,7 +15,7 @@ type InitialValues = {
 };
 
 type InitialValuesOptions = {
-	citationManager?: CitationManager;
+	noteManager?: NoteManager;
 	customNodes: Record<string, NodeSpec>;
 	customMarks: Record<string, MarkSpec>;
 	nodeLabels: NodeLabelMap;
@@ -27,7 +27,7 @@ type InitialValuesOptions = {
 const getInitialOptions = (options: InitialValuesOptions) => {
 	const {
 		nodeLabels,
-		citationManager,
+		noteManager,
 		customMarks,
 		customNodes,
 		initialContent,
@@ -41,7 +41,7 @@ const getInitialOptions = (options: InitialValuesOptions) => {
 		schema,
 		doc: initialContent,
 		nodeLabels,
-		citationManager,
+		noteManager,
 	});
 	return { schema, initialDocNode, staticContent };
 };

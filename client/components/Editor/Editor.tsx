@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { MarkSpec, NodeSpec } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 
-import { CitationManager } from 'client/utils/citations/citationManager';
+import { NoteManager } from 'client/utils/notes';
 import { DocJson, Maybe } from 'utils/types';
 import { usePageContext } from 'utils/hooks';
 
@@ -24,7 +24,7 @@ import ReferenceFinder from './ReferenceFinder';
 require('./styles/base.scss');
 
 type Props = {
-	citationManager?: CitationManager;
+	noteManager?: NoteManager;
 	collaborativeOptions?: CollaborativeOptions;
 	discussionsOptions?: Maybe<DiscussionsOptions>;
 	debounceEditsMs?: number;
@@ -49,7 +49,7 @@ const emptyDoc = getEmptyDoc();
 const Editor = (props: Props) => {
 	const {
 		nodeLabels = {} as NodeLabelMap,
-		citationManager: providedCitationManager,
+		noteManager: providedNoteManager,
 		collaborativeOptions,
 		customMarks = {},
 		customNodes = {},
@@ -70,13 +70,13 @@ const Editor = (props: Props) => {
 
 	const mountRef = useRef<HTMLDivElement | null>(null);
 	const { suggesting, suggestionManager } = useSuggestions<NodeReference>(enableSuggestions);
-	const { citationManager: globalCitationManager } = usePageContext();
-	const citationManager = providedCitationManager || globalCitationManager;
+	const { noteManager: globalNoteManager } = usePageContext();
+	const noteManager = providedNoteManager || globalNoteManager;
 
 	const { initialDocNode, schema, staticContent } = useInitialValues({
 		nodeLabels,
 		nodeOptions,
-		citationManager,
+		noteManager,
 		customNodes,
 		customMarks,
 		initialContent,
@@ -86,7 +86,7 @@ const Editor = (props: Props) => {
 	useEditorView({
 		customPlugins,
 		pluginsOptions: {
-			citationManager,
+			noteManager,
 			discussionsOptions: discussionsOptions || null,
 			collaborativeOptions,
 			initialDoc: initialDocNode,

@@ -62,7 +62,7 @@ const wrapUpdateAttrs = (updateAttrs, isFootnote) => {
 const ControlsFootnoteCitation = (props: Props) => {
 	const { editorChangeObject, onClose, pendingAttrs } = props;
 	const { selectedNode } = editorChangeObject;
-	const { citationManager } = usePubContext();
+	const { noteManager } = usePubContext();
 	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const isFootnote = selectedNode.type.name === 'footnote';
 	const { commitChanges, hasPendingChanges, updateAttrs: rawUpdateAttrs, attrs } = pendingAttrs;
@@ -71,15 +71,16 @@ const ControlsFootnoteCitation = (props: Props) => {
 		isFootnote,
 	);
 	const updateAttrs = wrapUpdateAttrs(rawUpdateAttrs, isFootnote);
-	const [citation, setCitation] = useState(citationManager.getSync(structuredValue));
+	const [renderedStructuredValue, setRenderedStructuredValue] = useState(
+		noteManager.getRenderedValueSync(structuredValue),
+	);
 	const [debouncedValue] = useDebounce(structuredValue, 250);
-	const html = citation && citation.html;
+	const html = renderedStructuredValue?.html;
 	const showPreview = html || unstructuredValue;
 
 	useEffect(() => {
-		const unsubscribe = citationManager.subscribe(debouncedValue, setCitation);
-		return unsubscribe;
-	}, [debouncedValue, citationManager]);
+		noteManager.getRenderedValue(debouncedValue).then((val) => setRenderedStructuredValue(val));
+	}, [debouncedValue, noteManager]);
 
 	const handleUpdate = () => {
 		commitChanges();
@@ -122,7 +123,7 @@ const ControlsFootnoteCitation = (props: Props) => {
 		const defaultLabel = getCitationInlineLabel({
 			...selectedNode,
 			// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-			attrs: { ...selectedNode.attrs, citation, customLabel },
+			attrs: { ...selectedNode.attrs, citation: renderedStructuredValue, customLabel },
 		});
 
 		return (

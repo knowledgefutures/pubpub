@@ -93,6 +93,7 @@
 		"keen-tracking": "^4.4.0",
 		"keyboardjs": "^2.5.1",
 		"knex": "^0.21.17",
+		"linkifyjs": "^3.0.0-beta.3",
 		"lodash.mergewith": "^4.6.2",
 		"lodash.pickby": "^4.6.0",
 		"lodash.throttle": "^4.1.1",

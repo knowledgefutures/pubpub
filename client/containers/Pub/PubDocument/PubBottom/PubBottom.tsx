@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { getNotes } from 'components/Editor/utils';
 import { PubPageData } from 'utils/types';
+import { usePubNotes } from '../../usePubNotes';
 
 import LicenseSection from './LicenseSection';
 import SearchableNoteSection from './SearchableNoteSection';
@@ -12,7 +12,6 @@ require('./pubBottom.scss');
 
 type Props = {
 	pubData: PubPageData;
-	collabData: any;
 	updateLocalData: (...args: any[]) => any;
 	sideContentRef: any;
 	mainContentRef: any;
@@ -21,7 +20,6 @@ type Props = {
 
 const PubBottom = (props: Props) => {
 	const {
-		collabData: { editorChangeObject },
 		pubData,
 		showDiscussions = true,
 		updateLocalData,
@@ -29,9 +27,7 @@ const PubBottom = (props: Props) => {
 		mainContentRef,
 	} = props;
 
-	const { citations = [], footnotes = [] } = editorChangeObject.view
-		? getNotes(editorChangeObject.view.state.doc)
-		: {};
+	const { footnotes, citations } = usePubNotes();
 
 	return (
 		<div className="pub-bottom-component">
@@ -40,14 +36,14 @@ const PubBottom = (props: Props) => {
 				{footnotes.length > 0 && (
 					<SearchableNoteSection
 						title="Footnotes"
-						items={footnotes}
+						notes={footnotes}
 						searchPlaceholder="Search footnotes..."
 					/>
 				)}
 				{citations.length > 0 && (
 					<SearchableNoteSection
 						title="Citations"
-						items={citations}
+						notes={citations}
 						searchPlaceholder="Search citations..."
 					/>
 				)}

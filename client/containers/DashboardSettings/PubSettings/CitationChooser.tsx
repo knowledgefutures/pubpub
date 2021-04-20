@@ -4,7 +4,7 @@ import { Select } from '@blueprintjs/select';
 
 import { InputField } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
-import { citationStyles as citationStyleItems } from 'utils/citations';
+import { citationStyles, citationInlineStyles } from 'utils/citations';
 
 require('./citationChooser.scss');
 
@@ -34,24 +34,17 @@ const CitationChooser = (props: Props) => {
 		}).catch((err) => console.error('Error Saving Pub Citation Style: ', err));
 	};
 
-	const citationInlineStyleItems = [
-		{ key: 'count', title: 'Count', example: '[1]' },
-		{ key: 'authorYear', title: 'Author-Year', example: '(Goodall, 1995)' },
-		{ key: 'author', title: 'Author', example: '(Goodall)' },
-		{ key: 'label', title: 'Label', example: '(bibtexKey)' },
-	];
-
-	const activeCitationStyle = citationStyleItems.find((item) => {
+	const activeCitationStyle = citationStyles.find((item) => {
 		return item.key === citationStyle;
 	});
-	const activeCitationInlineStyle = citationInlineStyleItems.find((item) => {
+	const activeCitationInlineStyle = citationInlineStyles.find((item) => {
 		return item.key === citationInlineStyle;
 	});
 	return (
 		<div className="citation-chooser-component">
 			<InputField label="Citation Style">
 				<Select
-					items={citationStyleItems}
+					items={citationStyles}
 					itemRenderer={(item, { handleClick }) => (
 						<MenuItem
 							onClick={handleClick}
@@ -74,7 +67,7 @@ const CitationChooser = (props: Props) => {
 
 			<InputField label="Inline Citation Style">
 				<Select
-					items={citationInlineStyleItems}
+					items={citationInlineStyles}
 					itemRenderer={(item, { handleClick }) => (
 						<MenuItem
 							onClick={handleClick}

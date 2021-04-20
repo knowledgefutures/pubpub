@@ -120,7 +120,6 @@ const PubDocument = (props: Props) => {
 				{() => (
 					<PubBottom
 						pubData={pubData}
-						collabData={collabData}
 						updateLocalData={updateLocalData}
 						sideContentRef={sideContentRef}
 						mainContentRef={mainContentRef}

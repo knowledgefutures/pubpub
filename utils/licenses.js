@@ -19,7 +19,6 @@ export const licenses = [
 		short: 'CC-BY-NC',
 		version: '4.0',
 		link: 'https://creativecommons.org/licenses/by-nc/4.0/',
-		requiresPremium: true,
 	},
 	{
 		slug: 'cc-by-nd',
@@ -27,7 +26,6 @@ export const licenses = [
 		short: 'CC-BY-ND',
 		version: '4.0',
 		link: 'https://creativecommons.org/licenses/by-nd/4.0/',
-		requiresPremium: true,
 	},
 	{
 		slug: 'cc-by-nc-nd',
@@ -35,7 +33,6 @@ export const licenses = [
 		short: 'CC-BY-NC-ND',
 		version: '4.0',
 		link: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
-		requiresPremium: true,
 	},
 	{
 		slug: 'copyright',

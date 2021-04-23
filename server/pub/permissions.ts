@@ -30,7 +30,9 @@ const isValidLicenseSlugForCommunity = (community, licenseSlug) => {
 		!licenseSlug ||
 		community.premiumLicenseFlag ||
 		licenseSlug === 'cc-by' ||
-		licenseSlug === 'cc-0'
+		licenseSlug === 'cc-0' ||
+		licenseSlug === 'cc-by-nd' ||
+		licenseSlug === 'cc-by-nc-nd'
 	);
 };
 

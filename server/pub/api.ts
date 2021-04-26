@@ -92,11 +92,7 @@ app.post(
 			createPubToken,
 		});
 		if (create) {
-			const newPub = await createPub(
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ communityId: any; collectionId... Remove this comment to see the full error message
-				{ communityId, collectionIds },
-				userId,
-			);
+			const newPub = await createPub({ communityId, collectionIds }, userId);
 			return res.status(201).json(newPub);
 		}
 		throw new ForbiddenError();

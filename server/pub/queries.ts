@@ -9,7 +9,12 @@ import { generateHash } from 'utils/hashes';
 import { getReadableDateInYear } from 'utils/dates';
 
 export const createPub = async (
-	{ communityId, collectionIds, slug, ...restArgs },
+	{
+		communityId,
+		collectionIds,
+		slug,
+		...restArgs
+	}: { communityId: string; collectionIds?: string[]; slug?: string; [key: string]: any },
 	userId?: string,
 ) => {
 	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);

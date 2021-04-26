@@ -31,6 +31,7 @@ export default (sequelize, dataTypes) => {
 			/* Set by Associations */
 			pageId: { type: dataTypes.UUID } /* Used to link a collection to a specific page */,
 			communityId: { type: dataTypes.UUID },
+			scopeSummaryId: { type: dataTypes.UUID, allowNull: true },
 		},
 		{
 			classMethods: {
@@ -42,6 +43,7 @@ export default (sequelize, dataTypes) => {
 						CrossrefDepositRecord,
 						Member,
 						Page,
+						ScopeSummary,
 					} = models;
 					Collection.hasMany(CollectionAttribution, {
 						onDelete: 'CASCADE',
@@ -58,9 +60,12 @@ export default (sequelize, dataTypes) => {
 					});
 					Collection.belongsTo(Page, { as: 'page', foreignKey: 'pageId' });
 					Collection.belongsTo(CrossrefDepositRecord, {
-						onDelete: 'CASCADE',
 						as: 'crossrefDepositRecord',
 						foreignKey: 'crossrefDepositRecordId',
+					});
+					Collection.belongsTo(ScopeSummary, {
+						as: 'scopeSummary',
+						foreignKey: 'scopeSummaryId',
 					});
 				},
 			},

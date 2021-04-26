@@ -357,6 +357,13 @@ export type Discussion = {
 	thread?: Thread;
 };
 
+export type ScopeSummary = {
+	collections: number;
+	pubs: number;
+	discussions: number;
+	reviews: number;
+};
+
 export type LoginData = {
 	id: string | null;
 	initials: Maybe<string>;

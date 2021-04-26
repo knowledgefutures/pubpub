@@ -76,7 +76,7 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Community, Organization, Collection, Page, Pub } = models;
+					const { Community, Organization, Collection, Page, Pub, ScopeSummary } = models;
 					Community.belongsTo(Organization, {
 						onDelete: 'CASCADE',
 						as: 'organization',
@@ -96,6 +96,10 @@ export default (sequelize, dataTypes) => {
 						onDelete: 'CASCADE',
 						as: 'pages',
 						foreignKey: 'communityId',
+					});
+					Community.belongsTo(ScopeSummary, {
+						as: 'scopeSummary',
+						foreignKey: 'scopeSummaryId',
 					});
 				},
 			},

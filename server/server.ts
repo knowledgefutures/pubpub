@@ -13,6 +13,7 @@ import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/enviro
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 
 import { sequelize, User } from './models';
+import './hooks';
 
 setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
 setAppCommit(process.env.HEROKU_SLUG_COMMIT);

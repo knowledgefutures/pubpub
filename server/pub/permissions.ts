@@ -1,5 +1,6 @@
 import { Community } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
+import { licenses } from 'utils/licenses';
 
 import { getValidCollectionIdsFromCreatePubToken } from './tokens';
 
@@ -29,10 +30,7 @@ const isValidLicenseSlugForCommunity = (community, licenseSlug) => {
 	return (
 		!licenseSlug ||
 		community.premiumLicenseFlag ||
-		licenseSlug === 'cc-by' ||
-		licenseSlug === 'cc-0' ||
-		licenseSlug === 'cc-by-nd' ||
-		licenseSlug === 'cc-by-nc-nd'
+		!licenses.find((l) => l.slug === licenseSlug)?.requiresPremium
 	);
 };
 

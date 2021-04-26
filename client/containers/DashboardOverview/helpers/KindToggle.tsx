@@ -11,10 +11,11 @@ type Props = {
 	icon: IconName;
 	label: React.ReactNode;
 	count: number | string;
+	disabled?: boolean;
 };
 
 const KindToggle = (props: Props) => {
-	const { selected, onSelect, label, count, icon } = props;
+	const { selected, onSelect, label, count, icon, disabled } = props;
 	return (
 		<Checkbox
 			as="div"
@@ -22,6 +23,7 @@ const KindToggle = (props: Props) => {
 			checked={selected}
 			onChange={() => onSelect(!selected)}
 			unstable_clickOnEnter
+			disabled={disabled}
 		>
 			<Icon icon={icon} iconSize={12} />
 			<span className="label">

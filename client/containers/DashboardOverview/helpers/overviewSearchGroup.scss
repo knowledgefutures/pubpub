@@ -6,42 +6,54 @@ $transition-duration: 100ms;
 
 .overview-search-group-component {
     display: flex;
-    align-items: center;
-    border: 1px solid $accent-color;
-    border-radius: 2px;
-    padding: 12px;
-    transition: box-shadow $transition-duration, color $transition-duration;
+    flex-direction: column;
 
-    .bp3-icon.search-icon {
-        transition: color $transition-duration;
-        > svg {
-            fill: $accent-color;
-        }
+    > .filter-controls {
+        user-select: none;
+        margin-bottom: 6px;
+        align-self: flex-end;
     }
 
-    &.search-focused {
-        border-color: $active-color;
-        box-shadow: 0 4px 2px -2px rgba(black, 0.1);
-        .search-icon > svg {
-            fill: $active-color;
-        }
-    }
-
-    .right-controls {
+    > .search-bar {
         display: flex;
-        & > :not(:last-child) {
-            margin-right: 10px;
-        }
-    }
+        position: relative;
+        align-items: center;
+        border: 1px solid $accent-color;
+        border-radius: 2px;
+        padding: 12px;
+        transition: box-shadow $transition-duration, color $transition-duration;
 
-    > input {
-        font-size: 16px;
-        flex-grow: 1;
-        border: none;
-        outline: none;
-        margin-left: 6px;
-        &::placeholder {
-            font-style: italic;
+        .bp3-icon.search-icon {
+            transition: color $transition-duration;
+            > svg {
+                fill: $accent-color;
+            }
+        }
+
+        &.search-focused {
+            border-color: $active-color;
+            box-shadow: 0 4px 2px -2px rgba(black, 0.1);
+            .search-icon > svg {
+                fill: $active-color;
+            }
+        }
+
+        > .right-controls {
+            display: flex;
+            & > :not(:last-child) {
+                margin-right: 10px;
+            }
+        }
+
+        > input {
+            font-size: 16px;
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            margin-left: 6px;
+            &::placeholder {
+                font-style: italic;
+            }
         }
     }
 }

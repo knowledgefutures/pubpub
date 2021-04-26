@@ -28,8 +28,9 @@ const getQueryKey = (query: KeyedPubsQuery) => {
 		term = '',
 		scopedCollectionId = '',
 		ordering: { field, direction },
+		isReleased,
 	} = query;
-	return JSON.stringify({ term, scopedCollectionId, field, direction });
+	return JSON.stringify({ term, scopedCollectionId, field, direction, isReleased });
 };
 
 export const useManyPubs = <P extends Pub = Pub>(
@@ -50,6 +51,7 @@ export const useManyPubs = <P extends Pub = Pub>(
 		term: optionsQuery.term,
 		scopedCollectionId: optionsQuery.scopedCollectionId,
 		ordering: optionsQuery.ordering || defaultOrdering,
+		isReleased: optionsQuery.isReleased,
 	};
 
 	const queryKey = getQueryKey(keyQuery);

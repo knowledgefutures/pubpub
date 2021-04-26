@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { NonIdealState } from '@blueprintjs/core';
 
-import { Collection, Pub } from 'utils/types';
+import { Collection, Pub, PubsQuery } from 'utils/types';
 import { fuzzyMatchCollection } from 'utils/fuzzyMatch';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
@@ -36,8 +36,10 @@ const getSearchPlaceholderText = (showCollections: boolean, showPubs: boolean) =
 const CommunityItems = (props: Props) => {
 	const { collections: allCollections, initialPubs, initiallyLoadedAllPubs } = props;
 	const [searchTerm, setSearchTerm] = useState('');
+	const [filter, setFilter] = useState<null | Partial<PubsQuery>>(null);
 	const [showPubs, setShowPubs] = useState(true);
 	const [showCollections, setShowCollections] = useState(true);
+	const isSearchingOrFiltering = !!filter || !!searchTerm;
 
 	const collections = useMemo(
 		() => allCollections.filter((collection) => fuzzyMatchCollection(collection, searchTerm)),
@@ -47,17 +49,20 @@ const CommunityItems = (props: Props) => {
 	const {
 		currentQuery: { pubs, isLoading, hasLoadedAllPubs, loadMorePubs },
 	} = useManyPubs({
-		isEager: !!searchTerm,
+		isEager: isSearchingOrFiltering,
 		initialPubs,
 		initiallyLoadedAllPubs,
 		batchSize: 200,
 		query: {
 			term: searchTerm,
 			ordering: { field: 'title', direction: 'ASC' },
+			...filter,
 		},
 	});
 
+	const canShowCollections = !filter;
 	const canLoadMorePubs = !hasLoadedAllPubs && showPubs;
+
 	useInfiniteScroll({
 		enabled: !isLoading && canLoadMorePubs,
 		useDocumentElement: true,
@@ -85,10 +90,8 @@ const CommunityItems = (props: Props) => {
 					/>
 				);
 			}
-			if (pubs.length === 0 && hasLoadedAllPubs) {
-				if (searchTerm.length > 0) {
-					return <SpecialRow>No matching Pubs or Collections.</SpecialRow>;
-				}
+			if (pubs.length === 0 && hasLoadedAllPubs && isSearchingOrFiltering) {
+				return <SpecialRow>No matching Pubs or Collections.</SpecialRow>;
 			}
 		}
 		return null;
@@ -100,22 +103,25 @@ const CommunityItems = (props: Props) => {
 				placeholder={getSearchPlaceholderText(showCollections, showPubs)}
 				onUpdateSearchTerm={(t) => t === '' && setSearchTerm(t)}
 				onCommitSearchTerm={setSearchTerm}
+				onChooseFilter={setFilter}
 				rightControls={
 					<>
+						{canShowCollections && (
+							<KindToggle
+								selected={showCollections}
+								onSelect={() => {
+									setShowCollections(!showCollections);
+									if (showCollections && !showPubs) {
+										setShowPubs(true);
+									}
+								}}
+								icon="collection"
+								label="Collections"
+								count={collections.length}
+							/>
+						)}
 						<KindToggle
-							selected={showCollections}
-							onSelect={() => {
-								setShowCollections(!showCollections);
-								if (showCollections && !showPubs) {
-									setShowPubs(true);
-								}
-							}}
-							icon="collection"
-							label="Collections"
-							count={collections.length}
-						/>
-						<KindToggle
-							selected={showPubs}
+							selected={showPubs || !canShowCollections}
 							onSelect={() => {
 								setShowPubs(!showPubs);
 								if (showPubs && !showCollections) {
@@ -125,12 +131,13 @@ const CommunityItems = (props: Props) => {
 							icon="pubDoc"
 							label="Pubs"
 							count={hasLoadedAllPubs ? pubs.length : `${pubs.length}+`}
+							disabled={!canShowCollections}
 						/>
 					</>
 				}
 			/>
 			<OverviewRows>
-				{showCollections && renderCollections()}
+				{showCollections && canShowCollections && renderCollections()}
 				{showPubs && renderPubs()}
 				{canLoadMorePubs && <LoadMorePubsRow isLoading />}
 				{renderEmptyState()}

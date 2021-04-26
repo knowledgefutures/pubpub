@@ -19,8 +19,8 @@ export const getPubCreatedDate = (pub: Pub) => {
 	return pub.createdAt;
 };
 
-export const getPubPublishedDate = (pub: Pub) => {
-	if (pub.customPublishedAt) {
+export const getPubPublishedDate = (pub: Pub, includeCustomPublishedAt = true) => {
+	if (pub.customPublishedAt && includeCustomPublishedAt) {
 		// This is a date string representing a time at midnight UTC for a given date.
 		// Unfortunately, that represents a time during the previous day in the Western hemisphere,
 		// which will cause this to improperly render the previous day.

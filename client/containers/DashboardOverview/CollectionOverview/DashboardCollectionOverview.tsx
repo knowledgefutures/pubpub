@@ -7,7 +7,7 @@ import { DashboardFrame, DragDropListing, DragHandle } from 'components';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import { indexByProperty } from 'utils/arrays';
-import { Collection, CollectionPub, Maybe } from 'utils/types';
+import { Collection, CollectionPub, Maybe, PubsQuery } from 'utils/types';
 
 import { OverviewSearchGroup } from '../helpers';
 import { PubOverviewRow, LoadMorePubsRow, SpecialRow } from '../overviewRows';
@@ -37,9 +37,10 @@ const DashboardCollectionOverview = (props: Props) => {
 	} = overviewData;
 
 	const [searchTerm, setSearchTerm] = useState('');
+	const [filter, setFilter] = useState<null | Partial<PubsQuery>>(null);
 	const [pubsAddedToCollection, setPubsAddedToCollection] = useState<PubWithCollections[]>([]);
 	const { collection, updateCollection } = useCollectionState(initialCollection);
-	const isSearching = searchTerm !== '';
+	const isSearchingOrFiltering = !!searchTerm || !!filter;
 
 	const {
 		allQueries: { isLoading },
@@ -48,11 +49,12 @@ const DashboardCollectionOverview = (props: Props) => {
 		initialPubs,
 		initiallyLoadedAllPubs: includesAllPubs,
 		batchSize: 200,
-		isEager: isSearching,
+		isEager: isSearchingOrFiltering,
 		query: {
 			term: searchTerm,
 			ordering: { field: 'collectionRank', direction: 'ASC' },
 			scopedCollectionId: collection.id,
+			...filter,
 		},
 		pubOptions: {
 			getCollections: true,
@@ -109,7 +111,9 @@ const DashboardCollectionOverview = (props: Props) => {
 			<PubOverviewRow
 				className={classNames(isDragging && 'collection-overview-row-is-dragging')}
 				pub={pub}
-				leftIconElement={!isSearching && <DragHandle dragHandleProps={dragHandleProps} />}
+				leftIconElement={
+					!isSearchingOrFiltering && <DragHandle dragHandleProps={dragHandleProps} />
+				}
 				rightElement={
 					<PubMenu
 						pub={pub}
@@ -126,7 +130,7 @@ const DashboardCollectionOverview = (props: Props) => {
 
 	const renderEmptyState = () => {
 		if (pubs.length === 0 && hasLoadedAllPubs) {
-			if (isSearching) {
+			if (isSearchingOrFiltering) {
 				return <SpecialRow>No matching Pubs.</SpecialRow>;
 			}
 			return (
@@ -158,6 +162,7 @@ const DashboardCollectionOverview = (props: Props) => {
 				placeholder="Search for Pubs in this Collection"
 				onCommitSearchTerm={setSearchTerm}
 				onUpdateSearchTerm={(t) => t === '' && setSearchTerm(t)}
+				onChooseFilter={setFilter}
 			/>
 			<DragDropContext onDragEnd={handleDragEnd}>
 				<DragDropListing
@@ -165,8 +170,8 @@ const DashboardCollectionOverview = (props: Props) => {
 					renderItem={renderCollectionPubRow}
 					droppableId="collectionOverview"
 					droppableType="collectionPub"
-					withDragHandles={!isSearching}
-					disabled={isSearching}
+					withDragHandles={!isSearchingOrFiltering}
+					disabled={isSearchingOrFiltering}
 				/>
 			</DragDropContext>
 			{!hasLoadedAllPubs && <LoadMorePubsRow isLoading />}

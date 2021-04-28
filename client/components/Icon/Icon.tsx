@@ -30,7 +30,9 @@ const Icon = (props: Props) => {
 		useColor = false,
 	} = props;
 	if (customIcons[icon]) {
-		const viewbox = customIcons[icon].viewboxDefault;
+		const { squareViewboxDimension, path, viewbox: providedViewbox } = customIcons[icon];
+		const viewbox =
+			providedViewbox || `0 0 ${squareViewboxDimension} ${squareViewboxDimension}`;
 		return (
 			<span
 				className={classNames('bp3-icon', useColor && 'color', className)}
@@ -41,10 +43,10 @@ const Icon = (props: Props) => {
 				<svg
 					width={`${iconSize}px`}
 					height={`${iconSize}px`}
-					viewBox={`0 0 ${viewbox} ${viewbox}`}
+					viewBox={viewbox}
 					fill={color}
 				>
-					{customIcons[icon].path}
+					{path}
 				</svg>
 			</span>
 		);

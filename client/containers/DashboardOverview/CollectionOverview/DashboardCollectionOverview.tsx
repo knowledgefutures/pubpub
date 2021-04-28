@@ -7,9 +7,11 @@ import { DashboardFrame, DragDropListing, DragHandle } from 'components';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import { indexByProperty } from 'utils/arrays';
-import { Collection, CollectionPub, Maybe, PubsQuery } from 'utils/types';
+import { Collection, CollectionPub, Maybe, PubsQuery, DefinitelyHas } from 'utils/types';
+import { getSchemaForKind } from 'utils/collections/schemas';
+import { usePageContext } from 'utils/hooks';
 
-import { OverviewSearchGroup } from '../helpers';
+import { OverviewFrame, OverviewSearchGroup, OverviewSection, ScopeSummaryList } from '../helpers';
 import { PubOverviewRow, LoadMorePubsRow, SpecialRow } from '../overviewRows';
 import { PubWithCollections } from './types';
 import { useCollectionPubs, useCollectionState } from './collectionState';
@@ -20,7 +22,7 @@ require('./dashboardCollectionOverview.scss');
 
 type Props = {
 	overviewData: {
-		collection: Collection;
+		collection: DefinitelyHas<Collection, 'scopeSummary'>;
 		collectionPubs: CollectionPub[];
 		pubs: PubWithCollections[];
 		includesAllPubs: boolean;
@@ -36,11 +38,17 @@ const DashboardCollectionOverview = (props: Props) => {
 		includesAllPubs,
 	} = overviewData;
 
+	const {
+		scopeData: {
+			activePermissions: { canManage },
+		},
+	} = usePageContext();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [filter, setFilter] = useState<null | Partial<PubsQuery>>(null);
 	const [pubsAddedToCollection, setPubsAddedToCollection] = useState<PubWithCollections[]>([]);
 	const { collection, updateCollection } = useCollectionState(initialCollection);
 	const isSearchingOrFiltering = !!searchTerm || !!filter;
+	const canDragDrop = !isSearchingOrFiltering && canManage;
 
 	const {
 		allQueries: { isLoading },
@@ -75,6 +83,7 @@ const DashboardCollectionOverview = (props: Props) => {
 		setCollectionPubContextHint,
 		setCollectionPubIsPrimary,
 		removeCollectionPub,
+		scopeSummary,
 	} = useCollectionPubs({ collection, initialCollectionPubs, pubs });
 
 	const renderableCollectionPubs = useMemo(
@@ -111,9 +120,7 @@ const DashboardCollectionOverview = (props: Props) => {
 			<PubOverviewRow
 				className={classNames(isDragging && 'collection-overview-row-is-dragging')}
 				pub={pub}
-				leftIconElement={
-					!isSearchingOrFiltering && <DragHandle dragHandleProps={dragHandleProps} />
-				}
+				leftIconElement={canDragDrop && <DragHandle dragHandleProps={dragHandleProps} />}
 				rightElement={
 					<PubMenu
 						pub={pub}
@@ -145,8 +152,50 @@ const DashboardCollectionOverview = (props: Props) => {
 		return null;
 	};
 
+	const renderPrimaryContent = () => {
+		return (
+			<OverviewSection title="Explore" icon="overview" descendTitle>
+				<OverviewSearchGroup
+					placeholder="Search for Pubs in this Collection"
+					onCommitSearchTerm={setSearchTerm}
+					onUpdateSearchTerm={(t) => t === '' && setSearchTerm(t)}
+					onChooseFilter={setFilter}
+				/>
+				<DragDropContext onDragEnd={handleDragEnd}>
+					<DragDropListing
+						items={renderableCollectionPubs}
+						renderItem={renderCollectionPubRow}
+						droppableId="collectionOverview"
+						droppableType="collectionPub"
+						withDragHandles={canDragDrop}
+						disabled={!canDragDrop}
+					/>
+				</DragDropContext>
+				{!hasLoadedAllPubs && <LoadMorePubsRow isLoading />}
+				{renderEmptyState()}
+			</OverviewSection>
+		);
+	};
+
+	const renderSecondaryContent = () => {
+		return (
+			<>
+				<OverviewSection title="About">
+					<ScopeSummaryList
+						scopeKind="collection"
+						scope={{
+							...collection,
+							scopeSummary,
+						}}
+					/>
+				</OverviewSection>
+			</>
+		);
+	};
+
 	return (
 		<DashboardFrame
+			icon={getSchemaForKind(collection.kind)?.bpDisplayIcon}
 			title="Overview"
 			className="dashboard-collection-overview-container"
 			controls={
@@ -158,24 +207,7 @@ const DashboardCollectionOverview = (props: Props) => {
 				/>
 			}
 		>
-			<OverviewSearchGroup
-				placeholder="Search for Pubs in this Collection"
-				onCommitSearchTerm={setSearchTerm}
-				onUpdateSearchTerm={(t) => t === '' && setSearchTerm(t)}
-				onChooseFilter={setFilter}
-			/>
-			<DragDropContext onDragEnd={handleDragEnd}>
-				<DragDropListing
-					items={renderableCollectionPubs}
-					renderItem={renderCollectionPubRow}
-					droppableId="collectionOverview"
-					droppableType="collectionPub"
-					withDragHandles={!isSearchingOrFiltering}
-					disabled={isSearchingOrFiltering}
-				/>
-			</DragDropContext>
-			{!hasLoadedAllPubs && <LoadMorePubsRow isLoading />}
-			{renderEmptyState()}
+			<OverviewFrame primary={renderPrimaryContent()} secondary={renderSecondaryContent()} />
 		</DashboardFrame>
 	);
 };

@@ -19,6 +19,11 @@ export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 export const toTitleCase = (str) =>
 	str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 
+export const enIndefiniteArticle = (str) => {
+	const normalized = str.toLowerCase();
+	return ['a', 'e', 'i', 'o', 'u'].some((letter) => normalized.charAt(0) === letter) ? 'an' : 'a';
+};
+
 const strConcat = (...strings) => strings.reduce((acc, str) => acc + str, '');
 
 export const joinOxford = (items, { joiner = strConcat, empty = '', ampersand = false } = {}) => {

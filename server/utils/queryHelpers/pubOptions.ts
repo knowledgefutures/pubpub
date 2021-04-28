@@ -15,6 +15,7 @@ import {
 	Member,
 	includeUserModel,
 	Draft,
+	ScopeSummary,
 } from 'server/models';
 import { PubGetOptions } from 'utils/types';
 
@@ -191,6 +192,10 @@ export default ({
 			{
 				model: CrossrefDepositRecord,
 				as: 'crossrefDepositRecord',
+			},
+			{
+				model: ScopeSummary,
+				as: 'scopeSummary',
 			},
 			...collectionPubs,
 			...community,

@@ -10,6 +10,7 @@ import {
 	ScopeSummary,
 } from 'server/models';
 import { ScopeSummary as ScopeSummaryType } from 'utils/types';
+import { addScopeSummaries } from 'utils/scopeSummaries';
 
 const createScopeSummary = (summary: ScopeSummaryType) => ScopeSummary.create(summary);
 
@@ -30,20 +31,6 @@ const persistScopeSummaryForModel = async (model: any, summary: ScopeSummaryType
 	await model.save();
 };
 
-const mergeScopeSummaries = (summaries: ScopeSummaryType[]): ScopeSummaryType => {
-	let discussions = 0;
-	let reviews = 0;
-	let pubs = 0;
-	let collections = 0;
-	summaries.forEach((summary) => {
-		discussions += summary.discussions;
-		reviews += summary.reviews;
-		pubs += summary.pubs;
-		collections += summary.collections;
-	});
-	return { discussions, reviews, pubs, collections };
-};
-
 export const summarizeCommunity = async (communityId: string) => {
 	const community = await Community.findOne({ where: { id: communityId } });
 
@@ -62,7 +49,7 @@ export const summarizeCommunity = async (communityId: string) => {
 		.filter((x): x is ScopeSummaryType => !!x);
 
 	return persistScopeSummaryForModel(community, {
-		...mergeScopeSummaries(scopeSummaries),
+		...addScopeSummaries(...scopeSummaries),
 		pubs,
 		collections,
 	});
@@ -83,7 +70,7 @@ export const summarizeCollection = async (collectionId: string) => {
 		.filter((x): x is ScopeSummaryType => !!x);
 
 	return persistScopeSummaryForModel(collection, {
-		...mergeScopeSummaries(scopeSummaries),
+		...addScopeSummaries(...scopeSummaries),
 		pubs: collectionPubs.length,
 	});
 };

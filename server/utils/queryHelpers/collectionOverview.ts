@@ -1,4 +1,4 @@
-import { Collection, CollectionPub } from 'server/models';
+import { Collection, CollectionPub, ScopeSummary } from 'server/models';
 import { getManyPubs } from 'server/pub/queryMany';
 import { InitialData } from 'utils/types';
 
@@ -7,7 +7,10 @@ type Options = {
 };
 
 const getCollection = async (collectionId: string) => {
-	const collection = await Collection.findOne({ where: { id: collectionId } });
+	const collection = await Collection.findOne({
+		where: { id: collectionId },
+		include: [{ model: ScopeSummary, as: 'scopeSummary' }],
+	});
 	return collection.toJSON();
 };
 

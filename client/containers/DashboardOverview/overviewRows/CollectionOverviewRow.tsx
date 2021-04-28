@@ -6,10 +6,13 @@ import { Icon } from 'client/components';
 import { getDashUrl } from 'utils/dashboard';
 import { Collection } from 'utils/types';
 import { usePageContext } from 'utils/hooks';
-import { capitalize } from 'utils/strings';
-import { getSchemaForKind } from 'utils/collections/schemas';
 
 import { iconSize } from './constants';
+import {
+	getCollectionKindLabel,
+	getCollectionPublicStateLabel,
+	getScopeSummaryLabels,
+} from './labels';
 import OverviewRowSkeleton from './OverviewRowSkeleton';
 
 require('./collectionOverviewRow.scss');
@@ -22,26 +25,11 @@ type Props = {
 	onToggleOpen?: () => unknown;
 };
 
-const getPublicStateLabel = (collection: Collection) => {
-	const { isPublic } = collection;
-	if (isPublic) {
-		return {
-			label: 'Public Collection',
-			icon: 'globe' as const,
-		};
-	}
-	return {
-		label: 'Private Collection',
-		icon: 'lock2' as const,
-	};
-};
-
 const CollectionOverviewRow = React.forwardRef((props: Props, ref: any) => {
 	const { className, collection, isOpen, onToggleOpen, isLoading } = props;
 	const { title, slug } = collection;
 
 	const { communityData } = usePageContext();
-	const schema = getSchemaForKind(collection.kind)!;
 
 	const onButtonClick = useCallback(
 		(e: React.MouseEvent<any>) => {
@@ -77,11 +65,9 @@ const CollectionOverviewRow = React.forwardRef((props: Props, ref: any) => {
 			leftIcon="collection"
 			href={getDashUrl({ collectionSlug: slug })}
 			iconLabelPairs={[
-				{ ...getPublicStateLabel(collection), className: 'public-private-indicator' },
-				{
-					label: capitalize(schema.label.singular),
-					icon: schema.bpDisplayIcon,
-				},
+				...getScopeSummaryLabels(collection.scopeSummary!, true),
+				getCollectionPublicStateLabel(collection),
+				getCollectionKindLabel(collection),
 			]}
 			withHoverEffect={!isOpen}
 			rightElement={toggleButton}

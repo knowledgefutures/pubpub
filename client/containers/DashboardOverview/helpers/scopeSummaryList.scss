@@ -1,0 +1,24 @@
+@import '../overviewStyles.scss';
+
+.scope-summary-list-component {
+    .intro {
+        color: #666;
+    }
+    .entry {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        .bp3-icon {
+            color: $light-grey;
+        }
+        .label {
+            margin-left: 10px;
+            .count {
+                font-weight: bold;
+            }
+        }
+        &:not(:last-child) {
+            margin-bottom: 12px;
+        }
+    }
+}

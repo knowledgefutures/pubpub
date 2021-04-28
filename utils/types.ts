@@ -82,6 +82,8 @@ export type Collection = {
 	attributions?: CollectionAttribution[];
 	layout: CollectionLayout;
 	createdAt: string;
+	scopeSummaryId: null | string;
+	scopeSummary?: ScopeSummary;
 };
 
 export type CollectionPub = {
@@ -215,6 +217,8 @@ export type Pub = {
 	nodeLabels?: NodeLabelMap;
 	draftId?: string;
 	draft?: Draft;
+	scopeSummaryId: null | string;
+	scopeSummary: ScopeSummary;
 };
 
 export type PubDocInfo = {
@@ -301,6 +305,8 @@ export type Community = {
 	collections?: Collection[];
 	pages?: Page[];
 	pubs?: Pub[];
+	scopeSummaryId: null | string;
+	scopeSummary?: ScopeSummary;
 };
 
 export type DiscussionAnchor = {

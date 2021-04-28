@@ -1,4 +1,4 @@
-import { Collection } from 'server/models';
+import { Collection, ScopeSummary } from 'server/models';
 import { getManyPubs } from 'server/pub/queryMany';
 import { Collection as CollectionType, InitialData } from 'utils/types';
 
@@ -13,6 +13,7 @@ const getCollections = async (initialData: InitialData): Promise<CollectionType>
 	const { communityData } = initialData;
 	const collections = await Collection.findAll({
 		where: { communityId: communityData.id },
+		include: [{ model: ScopeSummary, as: 'scopeSummary' }],
 		order: [['title', 'ASC']],
 	});
 	return collections

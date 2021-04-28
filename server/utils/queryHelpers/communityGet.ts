@@ -1,4 +1,4 @@
-import { Collection, Community, Page, Member } from 'server/models';
+import { Collection, Community, Page, Member, ScopeSummary } from 'server/models';
 import { Community as CommunityType, DefinitelyHas } from 'utils/types';
 
 export default (
@@ -26,6 +26,10 @@ export default (
 						as: 'members',
 					},
 				],
+			},
+			{
+				model: ScopeSummary,
+				as: 'scopeSummary',
 			},
 		],
 	}).then((communityResult) => {

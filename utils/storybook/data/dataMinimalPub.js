@@ -12,6 +12,12 @@ export const minimalPub = {
 	createdAt: '2020-11-17T15:38:31.448Z',
 	updatedAt: '2020-11-17T15:38:31.448Z',
     headerStyle: 'dark',
+	scopeSummary: {
+		collections: 0,
+		pubs: 0,
+		discussions: 11,
+		reviews: 2,
+	},
     attributions: [
 		{
 			id: '90d2ec74-193d-4471-98bc-eead8860a5ec',

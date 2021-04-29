@@ -29,6 +29,12 @@ export default {
 		latestKey: -1,
 		timestamps: [],
 	},
+	scopeSummary: {
+		collections: 0,
+		pubs: 0,
+		discussions: 11,
+		reviews: 2,
+	},
 	inboundEdges: [
 		{
 			pubIsParent: false,

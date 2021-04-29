@@ -13,6 +13,12 @@ export default {
 	updatedAt: '2017-09-01T15:28:24.256Z',
 	kind: 'book',
 	metadata: {},
+	scopeSummary: {
+		collections: 0,
+		pubs: 0,
+		discussions: 11,
+		reviews: 2,
+	},
 	pubs: [
 		{
 			id: 'ead5a604-d8b0-4dec-837b-fcdff88264f1',

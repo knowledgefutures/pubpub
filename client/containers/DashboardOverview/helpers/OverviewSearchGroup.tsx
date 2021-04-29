@@ -83,7 +83,7 @@ const OverviewSearchGroup = (props: Props) => {
 					onChange={handleFilterChange}
 				>
 					{filters.map((filter) => (
-						<Tab id={filter.id} title={filter.title} />
+						<Tab id={filter.id} key={filter.id} title={filter.title} />
 					))}
 				</Tabs>
 			)}

@@ -3,7 +3,7 @@ import queryString from 'query-string';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import { handleErrors } from 'server/utils/errors';
+import { handleErrors, ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
@@ -25,6 +25,17 @@ app.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
 			next();
 		}
 		const initialData = await getInitialData(req, true);
+		const {
+			scopeData: {
+				activePermissions: { canView },
+				elements,
+			},
+		} = initialData;
+
+		if (!canView && !elements.activeCollection!.isPublic) {
+			throw new ForbiddenError();
+		}
+
 		const overviewData = await getCollectionOverview(initialData);
 		return renderToNodeStream(
 			res,

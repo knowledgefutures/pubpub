@@ -10,12 +10,13 @@ type Props = {
 	title: React.ReactNode;
 	icon?: IconName;
 	descendTitle?: boolean;
+	spaced?: boolean;
 };
 
 const OverviewSection = (props: Props) => {
-	const { children, icon, title, descendTitle } = props;
+	const { children, icon, title, descendTitle, spaced } = props;
 	return (
-		<div className="overview-section-component">
+		<div className={classNames('overview-section-component', spaced && 'spaced')}>
 			<div className={classNames('title', descendTitle && 'descending')}>
 				{icon && <Icon icon={icon} iconSize={18} />}
 				{title}

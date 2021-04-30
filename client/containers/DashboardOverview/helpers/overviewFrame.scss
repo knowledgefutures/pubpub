@@ -1,8 +1,8 @@
 .overview-frame-component {
     display: grid;
     grid-template-areas: 'primary secondary';
-    grid-template-columns: 1fr 300px;
-    column-gap: 50px;
+    grid-template-columns: 1fr 250px;
+    column-gap: 75px;
 
     & > .primary {
         grid-area: primary;

@@ -21,6 +21,7 @@ type Props = {
 	title: React.ReactNode;
 	byline?: React.ReactNode;
 	rightElement?: React.ReactNode;
+	darkenRightIcons?: boolean;
 	iconLabelPairs: IconLabelPair[];
 	withBorder?: boolean;
 	withHoverEffect?: boolean;
@@ -37,6 +38,7 @@ const OverviewRowSkeleton = React.forwardRef((props: Props, ref: any) => {
 		rightElement = null,
 		withBorder = true,
 		withHoverEffect = false,
+		darkenRightIcons = false,
 		onClick,
 		href,
 	} = props;
@@ -107,7 +109,9 @@ const OverviewRowSkeleton = React.forwardRef((props: Props, ref: any) => {
 					})}
 				</div>
 			</div>
-			<div className="right-element">{rightElement}</div>
+			<div className={classNames('right-element', darkenRightIcons && 'darker')}>
+				{rightElement}
+			</div>
 		</div>
 	);
 });

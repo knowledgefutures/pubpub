@@ -52,7 +52,7 @@ const CollectionSettings = () => {
 				/>
 			</SettingsSection>
 			{collection.kind !== 'tag' && (
-				<SettingsSection title="Metadata">
+				<SettingsSection title="Metadata" id="metadata">
 					<CollectionMetadataEditor
 						collection={collection}
 						communityData={communityData}
@@ -61,7 +61,7 @@ const CollectionSettings = () => {
 				</SettingsSection>
 			)}
 			{collection.kind !== 'tag' && (
-				<SettingsSection title="Attribution">
+				<SettingsSection title="Attribution" id="attribution">
 					<AttributionEditor
 						apiRoute="/api/collectionAttributions"
 						canEdit={true}

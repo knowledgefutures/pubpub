@@ -18,10 +18,17 @@ type Props = {
 	rightElement?: React.ReactNode;
 	className?: string;
 	pub: Pub;
+	inCollection?: boolean;
 };
 
 const PubOverviewRow = (props: Props) => {
-	const { pub, className, leftIconElement = null, rightElement: providedRightElement } = props;
+	const {
+		pub,
+		className,
+		inCollection,
+		leftIconElement = null,
+		rightElement: providedRightElement,
+	} = props;
 	const { communityData } = usePageContext();
 	const rightElement = providedRightElement || (
 		<AnchorButton
@@ -43,6 +50,7 @@ const PubOverviewRow = (props: Props) => {
 			]}
 			leftIcon={leftIconElement || 'pubDoc'}
 			rightElement={rightElement}
+			darkenRightIcons={inCollection}
 		/>
 	);
 };

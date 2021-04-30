@@ -412,7 +412,7 @@ const CommunitySettings = () => {
 					/>
 				</InputField>
 			</SettingsSection>
-			<SettingsSection title="Navigation">
+			<SettingsSection title="Navigation" id="navigation">
 				<InputField>
 					<Switch
 						large={true}

@@ -39,6 +39,11 @@ $mobile-viewport-cutoff: 750px;
         .bp3-icon {
             color: $light-grey;
         }
+        &.darker {
+            .bp3-icon {
+                color: $medium-grey;
+            }
+        }
     }
 
     .center-container {
@@ -79,7 +84,6 @@ $mobile-viewport-cutoff: 750px;
                 display: flex;
                 align-items: center;
                 > :first-child {
-                    opacity: 0.6;
                     margin-right: 6px;
                 }
                 &:not(:last-child) {

@@ -16,15 +16,20 @@ const defaultColumns = {
 };
 
 const createColumns = (query: PubsQuery) => {
-	const { scopedCollectionId } = query;
+	const { scopedCollectionId, term } = query;
 	const collectionRank = scopedCollectionId
 		? knex.raw('(array_agg("scopedCollectionPub"."rank"))[1]')
 		: knex.raw('(array_agg("CollectionPubs"."rank"))[1]');
-	return { ...defaultColumns, collectionRank };
+	const authorNames =
+		term &&
+		knex.raw(
+			'array_cat(array_agg("attributionUser"."fullName"), array_agg("PubAttributions"."name"))',
+		);
+	return { ...defaultColumns, collectionRank, ...(authorNames ? { authorNames } : {}) };
 };
 
 const createInnerWhereClause = (query: PubsQuery) => {
-	const { withinPubIds, excludePubIds, communityId, term } = query;
+	const { withinPubIds, excludePubIds, communityId } = query;
 	return (builder: QueryBuilder) => {
 		builder.where({ 'Pubs.communityId': communityId });
 		if (excludePubIds) {
@@ -33,14 +38,11 @@ const createInnerWhereClause = (query: PubsQuery) => {
 		if (withinPubIds) {
 			builder.where({ 'Pubs.id': knex.raw('some(?::uuid[])', [withinPubIds]) });
 		}
-		if (term) {
-			builder.whereRaw('"Pubs"."title" ilike ?', [`%${term}%`]);
-		}
 	};
 };
 
 const createJoins = (query: PubsQuery) => {
-	const { scopedCollectionId } = query;
+	const { scopedCollectionId, term } = query;
 	return (builder: QueryBuilder) => {
 		if (scopedCollectionId) {
 			builder.innerJoin(
@@ -54,11 +56,19 @@ const createJoins = (query: PubsQuery) => {
 		builder.leftOuterJoin('CollectionPubs', 'Pubs.id', 'CollectionPubs.pubId');
 		builder.leftOuterJoin('Releases', 'Pubs.id', 'Releases.pubId');
 		builder.leftOuterJoin('Drafts', 'Pubs.draftId', 'Drafts.id');
+		if (term) {
+			builder.leftOuterJoin('PubAttributions', 'Pubs.id', 'PubAttributions.pubId');
+			builder.leftOuterJoin(
+				{ attributionUser: 'Users' },
+				'PubAttributions.userId',
+				'attributionUser.id',
+			);
+		}
 	};
 };
 
 const createOuterWhereClause = (query: PubsQuery) => {
-	const { isReleased, collectionIds, excludeCollectionIds } = query;
+	const { isReleased, collectionIds, excludeCollectionIds, term } = query;
 	return (builder: QueryBuilder) => {
 		if (typeof isReleased === 'boolean') {
 			builder.where({ isReleased });
@@ -68,6 +78,12 @@ const createOuterWhereClause = (query: PubsQuery) => {
 		}
 		if (excludeCollectionIds) {
 			builder.whereRaw('NOT(?::uuid[] && "collectionIds")', [excludeCollectionIds]);
+		}
+		if (term) {
+			builder.whereRaw(
+				'"title" ilike ? OR EXISTS (SELECT FROM unnest("authorNames") name WHERE name ilike ?)',
+				[`%${term}%`, `%${term}%`],
+			);
 		}
 	};
 };

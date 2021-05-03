@@ -7,23 +7,16 @@ import { MenuButton, MenuItem } from 'components/Menu';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePendingChanges } from 'utils/hooks';
 import { RelationType, relationTypeDefinitions } from 'utils/pubEdge';
+import { Pub, PubEdge } from 'utils/types';
 
 import NewEdgeInput from './NewEdgeInput';
 
 require('./newEdgeEditor.scss');
 
 type Props = {
-	availablePubs: {
-		id: string;
-		title: string;
-		avatar?: string;
-	}[];
-	onCreateNewEdge: (...args: any[]) => any;
-	onChangeCreatingState: (...args: any[]) => any;
-	pubData: {
-		title?: string;
-		id?: string;
-	};
+	onCreateNewEdge: (edge: PubEdge) => unknown;
+	onChangeCreatingState: (isCreating: boolean) => unknown;
+	pubData: Pub;
 	usedPubIds: string[];
 };
 
@@ -45,7 +38,7 @@ const stripMarkupFromString = (string) => {
 };
 
 const NewEdgeEditor = (props: Props) => {
-	const { availablePubs, onChangeCreatingState, onCreateNewEdge, pubData, usedPubIds } = props;
+	const { onChangeCreatingState, onCreateNewEdge, pubData, usedPubIds } = props;
 	const [newEdge, setNewEdge] = useState<any>(null);
 	const [isCreatingEdge, setIsCreatingEdge] = useState(false);
 	const [errorCreatingEdge, setErrorCreatingEdge] = useState(null);
@@ -56,7 +49,7 @@ const NewEdgeEditor = (props: Props) => {
 		relationTypeDefinitions[newEdge.relationType] &&
 		relationTypeDefinitions[newEdge.relationType].name;
 
-	useEffect(() => onChangeCreatingState(!!newEdge), [newEdge, onChangeCreatingState]);
+	useEffect(() => void onChangeCreatingState(!!newEdge), [newEdge, onChangeCreatingState]);
 
 	const handleSelectItem = (item) => {
 		const { targetPub, externalPublication, createNewFromUrl } = item;
@@ -194,13 +187,7 @@ const NewEdgeEditor = (props: Props) => {
 	};
 
 	const renderInputControl = () => {
-		return (
-			<NewEdgeInput
-				availablePubs={availablePubs}
-				usedPubIds={usedPubIds}
-				onSelectItem={handleSelectItem}
-			/>
-		);
+		return <NewEdgeInput usedPubIds={usedPubIds} onSelectItem={handleSelectItem} />;
 	};
 
 	return (

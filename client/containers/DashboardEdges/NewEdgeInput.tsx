@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MenuItem, Position } from '@blueprintjs/core';
+import { MenuItem, Position, Spinner } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 import isUrl from 'is-url';
 
@@ -7,19 +7,23 @@ import { PubMenuItem } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { isDoi } from 'utils/crossref/parseDoi';
 import { useThrottled } from 'utils/hooks';
-import { fuzzyMatchPub } from 'utils/fuzzyMatch';
+import { useManyPubs } from 'client/utils/useManyPubs';
+import { ExternalPublication, Pub } from 'utils/types';
 
 require('./newEdgeInput.scss');
 
 type Props = {
-	availablePubs: {
-		title: string;
-		avatar?: string;
-		id: string;
-	}[];
 	onSelectItem: (...args: any[]) => any;
 	usedPubIds: string[];
 };
+
+type SuggestedItem =
+	| {
+			targetPub?: Pub;
+			externalPublication?: ExternalPublication;
+	  }
+	| { indeterminate: true }
+	| { createNewFromUrl: string };
 
 const suggestPopoverProps = {
 	wrapperTagName: 'div',
@@ -47,48 +51,46 @@ const indeterminateMenuItem = (
 const renderInputValue = () => '';
 
 const NewEdgeInput = (props: Props) => {
-	const { availablePubs, usedPubIds, onSelectItem } = props;
+	const { usedPubIds, onSelectItem } = props;
 	const [queryValue, setQueryValue] = useState('');
-	const [suggestedItems, setSuggestedItems] = useState<any[]>([]);
 	const throttledQueryValue = useThrottled(queryValue, 250, true, true);
+	const [pubSearchTerm, setPubSearchTerm] = useState<null | string>(null);
+	const [proposedItem, setProposedItem] = useState<null | SuggestedItem>(null);
+
+	const {
+		allQueries: { isLoading },
+		currentQuery: { pubs },
+	} = useManyPubs({ query: { term: pubSearchTerm || '' }, batchSize: 5 });
+
+	const suggestedItems = proposedItem ? [proposedItem] : pubs.map((pub) => ({ targetPub: pub }));
 
 	useEffect(() => {
 		if (isUrl(throttledQueryValue) || isDoi(throttledQueryValue)) {
-			setSuggestedItems([{ indeterminate: true }]);
+			setProposedItem({ indeterminate: true });
 			apiFetch
-				// @ts-expect-error ts-migrate(2339) FIXME: Property 'get' does not exist on type '(path: any,... Remove this comment to see the full error message
 				.get(`/api/pubEdgeProposal?object=${encodeURIComponent(throttledQueryValue)}`)
 				.then((res) => {
 					if (res) {
-						setSuggestedItems([res]);
+						setProposedItem(res);
 					} else {
-						setSuggestedItems([{ createNewFromUrl: throttledQueryValue }]);
+						setProposedItem({ createNewFromUrl: throttledQueryValue });
 					}
 				});
-		} else if (throttledQueryValue) {
-			setSuggestedItems(
-				availablePubs
-					.filter(
-						(pub) =>
-							fuzzyMatchPub(pub, throttledQueryValue) && !usedPubIds.includes(pub.id),
-					)
-					.slice(0, 5)
-					.map((pub) => ({ targetPub: pub })),
-			);
 		} else {
-			setSuggestedItems([]);
+			setPubSearchTerm(throttledQueryValue);
+			setProposedItem(null);
 		}
-	}, [availablePubs, throttledQueryValue, usedPubIds]);
+	}, [throttledQueryValue, usedPubIds]);
 
-	const renderItem = (item, { handleClick, modifiers }) => {
-		const { externalPublication, targetPub, indeterminate } = item;
-		if (indeterminate) {
+	const renderItem = (item: SuggestedItem, { handleClick, modifiers }) => {
+		if ('indeterminate' in item && item.indeterminate) {
 			return indeterminateMenuItem;
 		}
-		if (targetPub) {
+		if ('targetPub' in item && item.targetPub) {
+			const { targetPub } = item;
 			return (
 				<PubMenuItem
-					key={targetPub.title}
+					key={targetPub.id}
 					title={targetPub.title}
 					contributors={targetPub.attributions.filter((attr) => attr.isAuthor)}
 					image={targetPub.avatar}
@@ -98,8 +100,12 @@ const NewEdgeInput = (props: Props) => {
 				/>
 			);
 		}
-		if (externalPublication && externalPublication.title) {
-			const { title, contributors, avatar } = externalPublication;
+		if (
+			'externalPublication' in item &&
+			item.externalPublication &&
+			item.externalPublication.title
+		) {
+			const { title, contributors, avatar } = item.externalPublication;
 			return (
 				<PubMenuItem
 					key={title}
@@ -134,7 +140,16 @@ const NewEdgeInput = (props: Props) => {
 			itemRenderer={renderItem}
 			resetOnSelect={true}
 			onItemSelect={onSelectItem}
-			noResults={queryValue ? <MenuItem disabled text="No results" /> : null}
+			noResults={
+				queryValue ? (
+					<MenuItem
+						disabled
+						className="loading-menu-item"
+						text={isLoading ? 'Loading...' : 'No results'}
+						icon={isLoading && <Spinner size={16} />}
+					/>
+				) : null
+			}
 			// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
 			popoverProps={suggestPopoverProps}
 		/>

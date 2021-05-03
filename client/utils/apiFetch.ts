@@ -3,7 +3,7 @@ type ApiFetchFn = (path: string, opts?: RequestInit) => Promise<JSON>;
 
 type HttpMethodApiFetchWrapper = (
 	path: string,
-	body: JSON | string,
+	body?: JSON | string,
 	opts?: RequestInit,
 ) => Promise<JSON>;
 

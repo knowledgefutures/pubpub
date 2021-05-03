@@ -49,7 +49,12 @@ const PubMenuItem = React.forwardRef((props: Props, ref: any) => {
 				<div className={classNames('title', skeletonClass)}>{title}</div>
 				{contributors && (
 					<div className={classNames('subtitle', skeletonClass)}>
-						<Byline contributors={contributors} linkToUsers={false} {...bylineProps} />
+						<Byline
+							contributors={contributors}
+							linkToUsers={false}
+							truncateAt={4}
+							{...bylineProps}
+						/>
 					</div>
 				)}
 			</div>

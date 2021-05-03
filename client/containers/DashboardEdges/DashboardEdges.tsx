@@ -13,13 +13,6 @@ import { useDashboardEdges } from './useDashboardEdges';
 require('./dashboardEdges.scss');
 
 type Props = {
-	overviewData: {
-		pubs: {
-			id: string;
-			title: string;
-			avatar?: string;
-		}[];
-	};
 	pubData: Pub & { outboundEdges: OutboundEdge[]; inboundEdges: InboundEdge[] };
 };
 
@@ -34,7 +27,7 @@ const frameDetails = (
 );
 
 const DashboardEdges = (props: Props) => {
-	const { overviewData, pubData } = props;
+	const { pubData } = props;
 	const [showOutboundEmptyState, setShowOutboundEmptyState] = useState(true);
 	const {
 		scopeData: {
@@ -72,14 +65,12 @@ const DashboardEdges = (props: Props) => {
 			pubData.id,
 			...pubData.outboundEdges
 				.map((edge) => edge.targetPub && edge.targetPub.id)
-				.filter((x) => x),
+				.filter((x): x is string => !!x),
 		];
 		return (
 			<>
 				{canManageEdges && (
 					<NewEdgeEditor
-						availablePubs={overviewData.pubs}
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '(string | undefined)[]' is not assignable to... Remove this comment to see the full error message
 						usedPubIds={usedPubsIds}
 						pubData={persistedPubData}
 						onCreateNewEdge={addCreatedOutboundEdge}

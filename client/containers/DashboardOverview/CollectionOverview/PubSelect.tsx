@@ -40,7 +40,6 @@ const PubSelect = (props: Props) => {
 				title={pub.title}
 				contributors={pub.attributions}
 				active={active}
-				bylineProps={{ truncateAt: 4 }}
 			/>
 		);
 	};

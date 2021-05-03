@@ -4,28 +4,18 @@ import dateFormat from 'dateformat';
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
+import { Pub, DefinitelyHas } from 'utils/types';
 
 require('./dashboardReviews.scss');
 
 type Props = {
-	overviewData: any;
+	pubsWithReviews: DefinitelyHas<Pub, 'reviews'>[];
 };
 
 const DashboardReviews = (props: Props) => {
-	const { overviewData } = props;
+	const { pubsWithReviews } = props;
 	const { scopeData } = usePageContext();
 	const { activeCollection, activeTargetType } = scopeData.elements;
-	const pubsWithReviews = overviewData.pubs.filter((pub) => {
-		if (activeTargetType === 'collection') {
-			const pubInCollection = !!pub.collectionPubs.find((cp) => {
-				return cp.collectionId === activeCollection.id;
-			});
-			if (!pubInCollection) {
-				return false;
-			}
-		}
-		return pub.reviews.length;
-	});
 	return (
 		<DashboardFrame
 			className="dashboard-reviews-container"
@@ -35,7 +25,11 @@ const DashboardReviews = (props: Props) => {
 			{!pubsWithReviews.length && (
 				<Menu className="list-content">
 					<NonIdealState
-						title="This Pub has not been reviewed using PubPub"
+						title={
+							activeTargetType === 'pub'
+								? 'This Pub has not been reviewed using PubPub'
+								: 'No reviews here.'
+						}
 						icon="social-media"
 					/>
 				</Menu>
@@ -70,7 +64,7 @@ const DashboardReviews = (props: Props) => {
 											: undefined,
 										pubSlug: pub.slug,
 										mode: 'reviews',
-										subMode: review.number,
+										subMode: String(review.number),
 									});
 									return (
 										<MenuItem

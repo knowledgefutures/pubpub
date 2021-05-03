@@ -55,7 +55,7 @@ const getQuickActionsForCollection = (collection: Collection): QuickAction[] => 
 			icon: 'edit',
 			href: getDashUrl({ collectionSlug, mode: 'settings', section: 'attribution' }),
 		},
-	].filter((x): x is QuickAction => !!x);
+	].filter(Boolean) as QuickAction[];
 };
 
 const DashboardCollectionOverview = (props: Props) => {

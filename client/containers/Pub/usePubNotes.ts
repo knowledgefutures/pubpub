@@ -30,9 +30,9 @@ export const usePubNotes = () => {
 	const renderedCitations = useMemo(
 		() =>
 			citations
+				.map((citation) => ({ ...citation, ...notes[citation.structuredValue] }))
 				.map((citation, index) => ({
 					...citation,
-					...notes[citation.structuredValue],
 					...(isNumberList && { number: index + 1 }),
 					sortString: getRenderedValue(citation)
 						.replace(/(<([^>]+)>)/gi, '')

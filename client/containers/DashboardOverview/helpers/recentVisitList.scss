@@ -1,0 +1,25 @@
+@import '../overviewStyles.scss';
+
+.recent-visit-list-component {
+	padding: 0;
+	.entry {
+		display: flex;
+		align-items: flex-start;
+		.bp3-icon {
+			margin-top: 2px;
+			color: $light-grey;
+		}
+		.label {
+			margin-left: 10px;
+			text-decoration: none;
+			font-size: 14px;
+			margin-bottom: 2px;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		&:not(:last-child) {
+			margin-bottom: 12px;
+		}
+	}
+}

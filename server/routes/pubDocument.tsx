@@ -19,9 +19,15 @@ import {
 	getPubFirebaseToken,
 	getPubRelease,
 } from 'server/utils/queryHelpers';
+import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'utils/types';
 
 const renderPubDocument = (res, pubData, initialData) => {
+	const {
+		communityData: { id: communityId },
+		loginData: { id: userId },
+	} = initialData;
+	createUserScopeVisit({ userId, communityId, pubId: pubData.id });
 	return renderToNodeStream(
 		res,
 		<Html

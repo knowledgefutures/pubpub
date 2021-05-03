@@ -8,6 +8,7 @@ import { hostIsValid } from 'server/utils/routes';
 import { generateCitationHtml } from 'server/utils/citations';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubForRequest } from 'server/utils/queryHelpers';
+import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 
 app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, next) => {
 	try {
@@ -35,6 +36,11 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 
 		const citationData = await generateCitationHtml(pubData, initialData);
 
+		const {
+			communityData: { id: communityId },
+			loginData: { id: userId },
+		} = initialData;
+		await createUserScopeVisit({ userId, communityId, pubId: pubData.id });
 		return renderToNodeStream(
 			res,
 			<Html

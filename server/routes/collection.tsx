@@ -3,6 +3,7 @@ import React from 'react';
 
 import app from 'server/server';
 import Html from 'server/Html';
+import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
@@ -43,7 +44,11 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 	try {
 		const { collectionSlug } = req.params;
 		const initialData = await getInitialData(req);
-		const { communityData } = initialData;
+		const {
+			communityData,
+			communityData: { id: communityId },
+			loginData: { id: userId },
+		} = initialData;
 
 		const collection = withValue(
 			communityData.collections.find((c) => c.slug === collectionSlug),
@@ -51,7 +56,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 		);
 
 		if (collection) {
-			const { pageId, layout } = collection;
+			const { pageId, layout, id: collectionId } = collection;
 
 			await enrichCollectionWithAttributions(collection);
 
@@ -66,11 +71,11 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 				const layoutPubsByBlock = await getLayoutPubsByBlock({
 					blocks: layout.blocks,
 					initialData,
-					collectionId: collection.id,
+					collectionId,
 				});
 
 				const customScripts = await getCustomScriptsForCommunity(communityData.id);
-
+				createUserScopeVisit({ userId, communityId, collectionId });
 				return renderToNodeStream(
 					res,
 					<Html

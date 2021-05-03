@@ -479,5 +479,14 @@ export type PubGetOptions = {
 	getEdgesOptions?: PubEdgeIncludesOptions;
 };
 
+export type UserScopeVisit = {
+	id: string;
+	communityId: string;
+	updatedAt: string;
+	collectionId: null | string;
+	pubId: null | string;
+	userId: string;
+};
+
 export type CustomScriptType = 'css' | 'js';
 export type CustomScripts = { [type in CustomScriptType]: null | string };

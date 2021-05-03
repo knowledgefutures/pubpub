@@ -50,12 +50,12 @@ const getQuickActionsForCollection = (collection: Collection): QuickAction[] => 
 			icon: 'layers',
 			href: getDashUrl({ collectionSlug, mode: 'settings', section: 'metadata' }),
 		},
-		{
+		collection.kind !== 'tag' && {
 			label: 'Edit attribution',
 			icon: 'edit',
 			href: getDashUrl({ collectionSlug, mode: 'settings', section: 'attribution' }),
 		},
-	];
+	].filter((x): x is QuickAction => !!x);
 };
 
 const DashboardCollectionOverview = (props: Props) => {

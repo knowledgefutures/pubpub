@@ -40,7 +40,7 @@ app.get(['/dash/pub/:pubSlug', '/dash/pub/:pubSlug/overview'], async (req, res, 
 			communityData: { id: communityId },
 			loginData: { id: userId },
 		} = initialData;
-		await createUserScopeVisit({ userId, communityId, pubId: pubData.id });
+		createUserScopeVisit({ userId, communityId, pubId: pubData.id });
 		return renderToNodeStream(
 			res,
 			<Html

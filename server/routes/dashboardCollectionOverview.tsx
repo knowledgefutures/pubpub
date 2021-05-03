@@ -45,7 +45,7 @@ app.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
 		const {
 			collection: { id: collectionId, title },
 		} = overviewData;
-		await createUserScopeVisit({ userId, communityId, collectionId });
+		createUserScopeVisit({ userId, communityId, collectionId });
 		return renderToNodeStream(
 			res,
 			<Html

@@ -207,6 +207,7 @@ export type Pub = {
 	collectionPubs?: CollectionPub[];
 	exports?: Export[];
 	members?: Member[];
+	reviews?: Review[];
 	releases: Release[];
 	pubVersions?: PubVersion[];
 	crossrefDepositRecord?: CrossrefDepositRecord;
@@ -363,6 +364,22 @@ export type Discussion = {
 	thread?: Thread;
 };
 
+export type Review = {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+	title: string;
+	number: number;
+	status: 'open' | 'closed' | 'completed';
+	releaseRequested: boolean;
+	threadId: string;
+	thread?: Thread;
+	visibilityId: string;
+	visibility?: Visibility;
+	userId: string;
+	pubId: string;
+};
+
 export type ScopeSummary = {
 	collections: number;
 	pubs: number;
@@ -451,6 +468,7 @@ export type PubsQuery = {
 	communityId: string;
 	excludePubIds?: null | string[];
 	isReleased?: boolean;
+	hasReviews?: boolean;
 	limit?: null | number;
 	offset?: number;
 	ordering?: PubsQueryOrdering;
@@ -477,6 +495,15 @@ export type PubGetOptions = {
 	getDiscussions?: boolean;
 	getReviews?: boolean;
 	getEdgesOptions?: PubEdgeIncludesOptions;
+};
+
+export type UserScopeVisit = {
+	id: string;
+	communityId: string;
+	updatedAt: string;
+	collectionId: null | string;
+	pubId: null | string;
+	userId: string;
 };
 
 export type CustomScriptType = 'css' | 'js';

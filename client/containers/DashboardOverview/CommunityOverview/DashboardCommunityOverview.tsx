@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { DashboardFrame } from 'components';
-import { Collection, Pub } from 'utils/types';
+import { Collection, Pub, UserScopeVisit } from 'utils/types';
+
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 
@@ -10,6 +11,7 @@ import {
 	OverviewFrame,
 	OverviewSection,
 	ScopeSummaryList,
+	RecentVisitList,
 	QuickActions,
 	QuickAction,
 } from '../helpers';
@@ -19,6 +21,8 @@ type Props = {
 		collections: Collection[];
 		pubs: Pub[];
 		includesAllPubs: boolean;
+		userScopeVisits: UserScopeVisit[];
+		recentPubs: Pub[];
 	};
 };
 
@@ -42,7 +46,7 @@ const quickActions: QuickAction[] = [
 
 const DashboardCommunityOverview = (props: Props) => {
 	const { overviewData } = props;
-	const { pubs, collections, includesAllPubs } = overviewData;
+	const { pubs, recentPubs, userScopeVisits, collections, includesAllPubs } = overviewData;
 	const { communityData } = usePageContext();
 
 	return (
@@ -59,6 +63,15 @@ const DashboardCommunityOverview = (props: Props) => {
 				}
 				secondary={
 					<>
+						{userScopeVisits.length > 0 && (
+							<OverviewSection title="recently viewed">
+								<RecentVisitList
+									userScopeVisits={userScopeVisits}
+									pubs={recentPubs}
+									collections={collections}
+								/>
+							</OverviewSection>
+						)}
 						<OverviewSection title="Quick Actions" spaced>
 							<QuickActions actions={quickActions} />
 						</OverviewSection>

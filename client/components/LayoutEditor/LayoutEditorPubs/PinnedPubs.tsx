@@ -77,12 +77,7 @@ const PinnedPubs = (props: Props) => {
 			selectedTitle="Pinned Pubs"
 			availableTitle="Available Pubs"
 			renderItem={(pub, onClick) => (
-				<PubMenuItem
-					title={pub.title}
-					contributors={pub.attributions}
-					onClick={onClick}
-					bylineProps={{ truncateAt: 4 }}
-				/>
+				<PubMenuItem title={pub.title} contributors={pub.attributions} onClick={onClick} />
 			)}
 			searchTerm={searchTerm}
 			onSearch={setSearchTerm}

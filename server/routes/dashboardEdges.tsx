@@ -7,16 +7,7 @@ import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { getOverview, sanitizeOverview, getPubForRequest } from 'server/utils/queryHelpers';
-
-const getOverviewForEdges = async (initialData) => {
-	const rawOverview = await getOverview({
-		...initialData.scopeData.elements,
-		activeTargetType: 'community',
-	});
-	const { pubs } = sanitizeOverview(initialData, rawOverview);
-	return { pubs };
-};
+import { getPubForRequest } from 'server/utils/queryHelpers';
 
 app.get(
 	'/dash/pub/:pubSlug/connections',
@@ -27,14 +18,11 @@ app.get(
 			}
 			const { pubSlug } = req.params;
 			const initialData = await getInitialData(req, true);
-			const [overviewData, pubData] = await Promise.all([
-				getOverviewForEdges(initialData),
-				getPubForRequest({
-					slug: pubSlug,
-					initialData,
-					getEdges: 'all',
-				}),
-			]);
+			const pubData = await getPubForRequest({
+				slug: pubSlug,
+				initialData,
+				getEdges: 'all',
+			});
 
 			if (!pubData) {
 				throw new ForbiddenError();
@@ -45,7 +33,7 @@ app.get(
 				<Html
 					chunkName="DashboardEdges"
 					initialData={initialData}
-					viewData={{ overviewData, pubData }}
+					viewData={{ pubData }}
 					headerComponents={generateMetaComponents({
 						initialData,
 						title: `Connections · ${pubData.title}`,

@@ -8,6 +8,7 @@ import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getCollectionOverview } from 'server/utils/queryHelpers';
+import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 
 app.get('/dash/collection/:collectionSlug', (req, res) => {
 	const { collectionSlug } = req.params;
@@ -37,6 +38,14 @@ app.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
 		}
 
 		const overviewData = await getCollectionOverview(initialData);
+		const {
+			communityData: { id: communityId },
+			loginData: { id: userId },
+		} = initialData;
+		const {
+			collection: { id: collectionId, title },
+		} = overviewData;
+		await createUserScopeVisit({ userId, communityId, collectionId });
 		return renderToNodeStream(
 			res,
 			<Html
@@ -45,7 +54,7 @@ app.get('/dash/collection/:collectionSlug/overview', async (req, res, next) => {
 				viewData={{ overviewData }}
 				headerComponents={generateMetaComponents({
 					initialData,
-					title: `Overview · ${overviewData.collection.title}`,
+					title: `Overview · ${title}`,
 					unlisted: true,
 				})}
 			/>,

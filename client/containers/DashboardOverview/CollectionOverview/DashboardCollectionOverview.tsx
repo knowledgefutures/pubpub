@@ -7,7 +7,14 @@ import { DashboardFrame, DragDropListing, DragHandle } from 'components';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import { indexByProperty } from 'utils/arrays';
-import { Collection, CollectionPub, Maybe, PubsQuery, DefinitelyHas } from 'utils/types';
+import {
+	Collection,
+	CollectionPub,
+	Maybe,
+	PubsQuery,
+	DefinitelyHas,
+	UserScopeVisit,
+} from 'utils/types';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
@@ -33,6 +40,7 @@ type Props = {
 		collection: DefinitelyHas<Collection, 'scopeSummary'>;
 		collectionPubs: CollectionPub[];
 		pubs: PubWithCollections[];
+		userScopeVisits: UserScopeVisit[];
 		includesAllPubs: boolean;
 	};
 };

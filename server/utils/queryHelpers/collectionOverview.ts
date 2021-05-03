@@ -46,5 +46,10 @@ export const getCollectionOverview = async (initialData: InitialData, options: O
 		getPubs(initialData, collectionId, loadPubs),
 	]);
 
-	return { collection, pubs, collectionPubs, includesAllPubs: pubs.length < loadPubs };
+	return {
+		collection,
+		pubs,
+		collectionPubs,
+		includesAllPubs: pubs.length < loadPubs,
+	};
 };

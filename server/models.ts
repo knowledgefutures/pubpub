@@ -71,6 +71,7 @@ export const ReviewNew = sequelize.import('./review/modelNew');
 export const Thread = sequelize.import('./thread/model');
 export const ThreadComment = sequelize.import('./threadComment/model');
 export const ThreadEvent = sequelize.import('./threadEvent/model');
+export const UserScopeVisit = sequelize.import('./userScopeVisit/model');
 export const Visibility = sequelize.import('./visibility/model');
 export const VisibilityUser = sequelize.import('./visibilityUser/model');
 

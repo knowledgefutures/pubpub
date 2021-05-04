@@ -28,7 +28,7 @@ const filters: Filter[] = [
 	{
 		id: 'latest',
 		title: 'Latest',
-		query: { ordering: { field: 'updatedDate', direction: 'DESC' } },
+		query: { ordering: { field: 'creationDate', direction: 'DESC' } },
 	},
 	{ id: 'drafts', title: 'Drafts', query: { isReleased: false } },
 	{ id: 'released', title: 'Released', query: { isReleased: true } },

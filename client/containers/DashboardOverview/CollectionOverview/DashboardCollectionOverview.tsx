@@ -218,9 +218,11 @@ const DashboardCollectionOverview = (props: Props) => {
 	const renderSecondaryContent = () => {
 		return (
 			<>
-				<OverviewSection title="Quick Actions" spaced>
-					<QuickActions actions={getQuickActionsForCollection(collection)} />
-				</OverviewSection>
+				{canManage && (
+					<OverviewSection title="Quick Actions" spaced>
+						<QuickActions actions={getQuickActionsForCollection(collection)} />
+					</OverviewSection>
+				)}
 				<OverviewSection title="About">
 					<ScopeSummaryList
 						scopeKind="collection"

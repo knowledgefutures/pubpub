@@ -47,7 +47,12 @@ const quickActions: QuickAction[] = [
 const DashboardCommunityOverview = (props: Props) => {
 	const { overviewData } = props;
 	const { pubs, recentPubs, userScopeVisits, collections, includesAllPubs } = overviewData;
-	const { communityData } = usePageContext();
+	const {
+		communityData,
+		scopeData: {
+			activePermissions: { canManage },
+		},
+	} = usePageContext();
 
 	return (
 		<DashboardFrame title="Overview">
@@ -72,9 +77,11 @@ const DashboardCommunityOverview = (props: Props) => {
 								/>
 							</OverviewSection>
 						)}
-						<OverviewSection title="Quick Actions" spaced>
-							<QuickActions actions={quickActions} />
-						</OverviewSection>
+						{canManage && (
+							<OverviewSection title="Quick Actions" spaced>
+								<QuickActions actions={quickActions} />
+							</OverviewSection>
+						)}
 						<OverviewSection title="About">
 							<ScopeSummaryList scope={communityData} scopeKind="community" />
 						</OverviewSection>

@@ -21,6 +21,9 @@ export const createUserScopeVisit = async (userScopeVisitIds: UserScopeVisitIds)
 };
 
 export const getUserScopeVisits = ({ userId, communityId }) => {
+	if (!userId) {
+		return [];
+	}
 	return UserScopeVisit.findAll({
 		where: { userId, communityId },
 		order: [['updatedAt', 'DESC']],

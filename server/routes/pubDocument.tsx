@@ -20,7 +20,7 @@ import {
 	getPubRelease,
 } from 'server/utils/queryHelpers';
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
-import { InitialData } from 'utils/types';
+import { InitialData } from 'types';
 
 const renderPubDocument = (res, pubData, initialData) => {
 	const {

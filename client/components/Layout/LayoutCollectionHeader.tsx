@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'reakit/Button';
 
 import { Byline, GridWrapper, ContributorAvatars, Icon, ClickToCopyButton } from 'components';
-import { Collection } from 'utils/types';
+import { Collection } from 'types';
 import { LayoutBlockCollectionHeader } from 'utils/layout/types';
 import { getAllCollectionContributors } from 'utils/contributors';
 import getCollectionDoi from 'utils/collections/getCollectionDoi';

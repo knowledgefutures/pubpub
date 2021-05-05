@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import dateFormat from 'dateformat';
 
-import { Pub, Community } from 'utils/types';
+import { Pub, Community } from 'types';
 import { getResizedUrl } from 'utils/images';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { isPubPublic } from 'utils/pub/permissions';

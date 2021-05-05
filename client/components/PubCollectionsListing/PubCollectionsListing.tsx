@@ -4,7 +4,7 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Divider, Button, Tooltip } from '@blueprintjs/core';
 import { Button as RKButton } from 'reakit/Button';
 
-import { Collection, CollectionPub as BareCollectionPub, Pub } from 'utils/types';
+import { Collection, CollectionPub as BareCollectionPub, Pub } from 'types';
 import { DragDropListing, Icon, QueryListDropdown, PrimaryCollectionExplanation } from 'components';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import { getIconForCollectionKind } from 'utils/collections/schemas';

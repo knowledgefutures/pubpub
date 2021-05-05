@@ -1,4 +1,4 @@
-import { ScopeSummary } from 'utils/types';
+import { ScopeSummary } from 'types';
 
 export const addScopeSummaries = (...summaries: ScopeSummary[]): ScopeSummary => {
 	let discussions = 0;

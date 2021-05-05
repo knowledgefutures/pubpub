@@ -1,4 +1,4 @@
-import { DefinitelyHas } from 'utils/types';
+import { DefinitelyHas } from 'types';
 
 import { EditorChangeObject } from '../Editor';
 import { CommandSpec } from '../Editor/commands/types';

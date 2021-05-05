@@ -1,5 +1,5 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { CollectionPub, Discussion, Pub, PubAttribution, Release } from 'utils/types';
+import { CollectionPub, Discussion, Pub, PubAttribution, Release } from 'types';
 
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeReviews from './reviewsSanitize';

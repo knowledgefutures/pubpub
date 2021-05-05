@@ -7,7 +7,7 @@ import { pubUrl } from 'utils/canonicalUrls';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 
-import { PatchFn, PubPageData } from 'utils/types';
+import { PatchFn, PubPageData } from 'types';
 import ResponsiveHeaderButton from './ResponsiveHeaderButton';
 
 require('./draftReleaseButtons.scss');

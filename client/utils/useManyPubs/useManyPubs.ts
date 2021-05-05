@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 import { usePageContext } from 'utils/hooks';
 import { indexByProperty } from 'utils/arrays';
 import { apiFetch } from 'client/utils/apiFetch';

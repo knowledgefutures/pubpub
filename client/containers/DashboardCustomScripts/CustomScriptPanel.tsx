@@ -3,7 +3,7 @@ import { useBeforeUnload } from 'react-use';
 import { Button } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { CustomScriptType } from 'utils/types';
+import { CustomScriptType } from 'types';
 import { usePageContext } from 'utils/hooks';
 
 import { EditorComponentType } from './types';

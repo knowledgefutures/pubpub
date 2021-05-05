@@ -1,4 +1,5 @@
-import { Maybe } from './types';
+import { Maybe } from 'types';
+
 import { btoaUniversal } from './strings';
 
 type ResizerFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import * as ReactBeautifulDnD from 'react-beautiful-dnd';
-import { Collection, InitialData } from 'utils/types';
+import { Collection, InitialData } from 'types';
 
 export const renderToNodeStream = (res, reactElement) => {
 	res.setHeader('content-type', 'text/html');

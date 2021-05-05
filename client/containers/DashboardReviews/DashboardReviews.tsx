@@ -4,7 +4,7 @@ import dateFormat from 'dateformat';
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import { Pub, DefinitelyHas } from 'utils/types';
+import { Pub, DefinitelyHas } from 'types';
 
 require('./dashboardReviews.scss');
 

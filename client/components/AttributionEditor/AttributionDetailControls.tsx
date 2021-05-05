@@ -2,7 +2,7 @@ import React from 'react';
 import { Checkbox, InputGroup, MenuItem, Position, Tag } from '@blueprintjs/core';
 import { MultiSelect } from '@blueprintjs/select';
 
-import { AttributionWithUser } from 'utils/types';
+import { AttributionWithUser } from 'types';
 
 import { getFilteredRoles } from './roles';
 

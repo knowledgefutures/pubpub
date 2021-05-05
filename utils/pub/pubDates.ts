@@ -2,7 +2,7 @@ import dateFormat from 'dateformat';
 
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
-import { DefinitelyHas, Maybe, CollectionPub, Pub } from 'utils/types';
+import { DefinitelyHas, Maybe, CollectionPub, Pub } from 'types';
 
 export const getPubLatestReleasedDate = (pub: Pub) => {
 	if (pub.releases.length === 0) {

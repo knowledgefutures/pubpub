@@ -8,7 +8,7 @@ import { apiFetch } from 'client/utils/apiFetch';
 import { isDoi } from 'utils/crossref/parseDoi';
 import { useThrottled } from 'utils/hooks';
 import { useManyPubs } from 'client/utils/useManyPubs';
-import { ExternalPublication, Pub } from 'utils/types';
+import { ExternalPublication, Pub } from 'types';
 
 require('./newEdgeInput.scss');
 

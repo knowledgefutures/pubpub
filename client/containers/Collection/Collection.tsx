@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Layout } from 'components';
 import { LayoutPubsByBlock } from 'utils/layout';
-import { Pub, Collection as CollectionType } from 'utils/types';
+import { Pub, Collection as CollectionType } from 'types';
 
 type Props = {
 	layoutPubsByBlock: LayoutPubsByBlock<Pub>;

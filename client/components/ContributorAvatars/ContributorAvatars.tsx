@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { AttributionWithUser } from 'utils/types';
+import { AttributionWithUser } from 'types';
 import { Popover } from '@blueprintjs/core';
 import Avatar from '../Avatar/Avatar';
 import ContributorsList from '../ContributorsList/ContributorsList';

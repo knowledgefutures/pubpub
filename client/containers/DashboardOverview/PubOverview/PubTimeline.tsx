@@ -6,7 +6,7 @@ import { Icon, Timeline, TimelineItem, TimelineCondenser } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { formatDate } from 'utils/dates';
 import { pubUrl } from 'utils/canonicalUrls';
-import { PubPageData } from 'utils/types';
+import { PubPageData } from 'types';
 
 require('./pubTimeline.scss');
 

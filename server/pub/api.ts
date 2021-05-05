@@ -2,7 +2,7 @@ import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { indexByProperty } from 'utils/arrays';
-import { PubsQuery, PubGetOptions } from 'utils/types';
+import { PubsQuery, PubGetOptions } from 'types';
 
 import { canCreatePub, getUpdatablePubFields, canDestroyPub } from './permissions';
 import { createPub, updatePub, destroyPub } from './queries';

@@ -54,8 +54,8 @@
 			"server/*": ["./server/*"],
 			"stubstub": ["./stubstub"],
 			"stubstub/*": ["./stubstub/*"],
-			"types": ["./client/types"],
-			"types/*": ["./client/types/*"],
+			"types": ["./types"],
+			"types/*": ["./types/*"],
 			"utils": ["./utils"],
 			"utils/*": ["./utils/*"]
 		} /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,

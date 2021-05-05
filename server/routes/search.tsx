@@ -6,7 +6,7 @@ import app from 'server/server';
 import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { InitialData } from 'utils/types';
+import { InitialData } from 'types';
 
 const client = algoliasearch(process.env.ALGOLIA_ID!, process.env.ALGOLIA_KEY!);
 const searchId = process.env.ALGOLIA_ID!;

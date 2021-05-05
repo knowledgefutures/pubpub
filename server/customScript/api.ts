@@ -1,6 +1,6 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
-import { CustomScriptType } from 'utils/types';
+import { CustomScriptType } from 'types';
 
 import { canSetCustomScript } from './permissions';
 import { setCustomScriptForCommunity } from './queries';

@@ -16,12 +16,12 @@
 					["client", "./client"],
 					["containers", "./client/containers"],
 					["components", "./client/components"],
-					["types", "./client/types"],
 					["server", "./server"],
 					["shared", "./shared"],
 					["data", "./stories/data"],
 					["stubstub", "./stubstub"],
-					["utils", "./utils"]
+					["utils", "./utils"],
+					["types", "./types"]
 				],
 				"extensions": [".js", ".ts", ".tsx"]
 			}

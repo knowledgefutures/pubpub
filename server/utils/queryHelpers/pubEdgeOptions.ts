@@ -8,7 +8,7 @@ import {
 	Release,
 } from 'server/models';
 
-import { PubEdgeIncludesOptions } from 'utils/types';
+import { PubEdgeIncludesOptions } from 'types';
 
 export const getOptionsForIncludedPub = ({ includeCommunity }) => {
 	return [

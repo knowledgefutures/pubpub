@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PubPageData } from 'utils/types';
+import { PubPageData } from 'types';
 import { usePubNotes } from '../../usePubNotes';
 
 import LicenseSection from './LicenseSection';

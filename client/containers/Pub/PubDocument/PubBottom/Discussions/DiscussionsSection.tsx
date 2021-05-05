@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Popover, Position } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
-import { PubPageData } from 'utils/types';
+import { PubPageData } from 'types';
 import { getAnchoredDiscussionIds } from 'components/Editor/plugins/discussions';
 import { usePubContext } from 'client/containers/Pub/pubHooks';
 

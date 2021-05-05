@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { NonIdealState } from '@blueprintjs/core';
 
-import { Collection, Pub, PubsQuery } from 'utils/types';
+import { Collection, Pub, PubsQuery } from 'types';
 import { fuzzyMatchCollection } from 'utils/fuzzyMatch';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';

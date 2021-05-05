@@ -1,4 +1,4 @@
-import { Community, Pub, PubEdge } from 'utils/types';
+import { Community, Pub, PubEdge } from 'types';
 import { formatDate } from 'utils/dates';
 import { pubUrl, pubShortUrl } from 'utils/canonicalUrls';
 import { getPubPublishedDate } from 'utils/pub/pubDates';

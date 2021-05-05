@@ -3,7 +3,7 @@ import { Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import fuzzysearch from 'fuzzysearch';
 
-import { Page } from 'utils/types';
+import { Page } from 'types';
 
 type Props = {
 	selectedPageId: null | string;

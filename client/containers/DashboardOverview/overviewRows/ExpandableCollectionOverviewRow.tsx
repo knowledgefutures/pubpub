@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
 
-import { Collection } from 'utils/types';
+import { Collection } from 'types';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useSticky, isSticky } from 'client/utils/useSticky';
 import { usePageContext } from 'utils/hooks';

@@ -1,5 +1,5 @@
 import { Pub } from 'server/models';
-import { InitialData, PubGetOptions } from 'utils/types';
+import { InitialData, PubGetOptions } from 'types';
 
 import sanitizePub from './pubSanitize';
 import buildPubOptions from './pubOptions';

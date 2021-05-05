@@ -4,7 +4,7 @@ import { NonIdealState, Switch, Tab, Tabs, Radio, RadioGroup } from '@blueprintj
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
-import { Pub, OutboundEdge, InboundEdge } from 'utils/types';
+import { Pub, OutboundEdge, InboundEdge } from 'types';
 
 import DashboardEdgesListing from './DashboardEdgesListing';
 import NewEdgeEditor from './NewEdgeEditor';

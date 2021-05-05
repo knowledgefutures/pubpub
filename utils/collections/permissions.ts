@@ -1,5 +1,5 @@
 import { checkMemberPermission } from 'utils/permissions';
-import { Collection, ScopeData } from 'utils/types';
+import { Collection, ScopeData } from 'types';
 
 export const getUserManagedCollections = (collections: Collection[], scopeData: ScopeData) => {
 	const {

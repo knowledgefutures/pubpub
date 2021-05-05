@@ -3,7 +3,7 @@ import { Plugin, EditorState, Transaction } from 'prosemirror-state';
 
 import { NoteManager } from 'client/utils/notes';
 import SuggestionManager from 'client/utils/suggestions/suggestionManager';
-import { DiscussionAnchor } from 'utils/types';
+import { DiscussionAnchor } from 'types';
 
 import { getChangeObject } from './plugins/onChange';
 import { NodeReference } from './utils';

@@ -7,7 +7,7 @@ import { usePageContext } from 'utils/hooks';
 import { createReadingParamUrl, useCollectionPubs } from 'client/utils/collections';
 import { pubUrl, collectionUrl } from 'utils/canonicalUrls';
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { Collection, Pub } from 'utils/types';
+import { Collection, Pub } from 'types';
 
 import { usePubContext } from '../../pubHooks';
 import CollectionsBarButton from './CollectionsBarButton';

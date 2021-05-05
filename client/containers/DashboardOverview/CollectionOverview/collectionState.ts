@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { CollectionPub, Pub, Collection, Community, DefinitelyHas } from 'utils/types';
+import { CollectionPub, Pub, Collection, Community, DefinitelyHas } from 'types';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import { usePendingChanges, usePageContext } from 'utils/hooks';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';

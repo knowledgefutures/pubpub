@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 import {

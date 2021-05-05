@@ -12,7 +12,7 @@ import {
 	DraggableRubric,
 } from 'react-beautiful-dnd';
 
-import { Maybe } from 'utils/types';
+import { Maybe } from 'types';
 
 require('./dragDropListing.scss');
 

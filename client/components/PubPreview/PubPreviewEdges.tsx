@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Icon, Byline, PubByline } from 'components';
-import { Pub, PubEdge } from 'utils/types';
+import { Pub, PubEdge } from 'types';
 import { pubShortUrl } from 'utils/canonicalUrls';
 import { intersperse } from 'utils/arrays';
 import { getRelationTypeName } from 'utils/pubEdge/relations';

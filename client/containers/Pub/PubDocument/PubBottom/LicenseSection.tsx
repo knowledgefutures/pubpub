@@ -4,7 +4,7 @@ import { LicenseSelect } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getLicenseBySlug } from 'utils/licenses';
 import { getPubCopyrightYear } from 'utils/pub/pubDates';
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 
 import PubBottomSection, { SectionBullets, AccentedIconButton } from './PubBottomSection';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { DashboardFrame } from 'components';
-import { Collection, Pub, UserScopeVisit } from 'utils/types';
+import { Collection, Pub, UserScopeVisit } from 'types';
 
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';

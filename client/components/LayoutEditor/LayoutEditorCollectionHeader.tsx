@@ -3,7 +3,7 @@ import { Checkbox } from '@blueprintjs/core';
 
 import { InputField } from 'components';
 import { LayoutCollectionHeader } from 'components/Layout';
-import { Collection } from 'utils/types';
+import { Collection } from 'types';
 import { LayoutBlockCollectionHeader } from 'utils/layout/types';
 import getCollectionDoi from 'utils/collections/getCollectionDoi';
 

@@ -1,4 +1,4 @@
-import { Pub, PubsQueryOrderingField, PubsQueryOrdering } from 'utils/types';
+import { Pub, PubsQueryOrderingField, PubsQueryOrdering } from 'types';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 import { OrderingValue, OrderByFn } from './types';

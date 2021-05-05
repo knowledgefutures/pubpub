@@ -1,4 +1,4 @@
-import { Attribution, AttributionWithUser, isAttributionWithUser } from 'utils/types';
+import { Attribution, AttributionWithUser, isAttributionWithUser } from 'types';
 
 import { getPartsOfFullName } from './names';
 

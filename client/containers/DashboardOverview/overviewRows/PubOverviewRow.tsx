@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { AnchorButton } from '@blueprintjs/core';
 
 import { PubByline } from 'components';
-import { DefinitelyHas, Pub as BasePub } from 'utils/types';
+import { DefinitelyHas, Pub as BasePub } from 'types';
 import { pubUrl } from 'utils/canonicalUrls';
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';

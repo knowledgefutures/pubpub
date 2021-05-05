@@ -12,7 +12,7 @@ import {
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { getScope, getMembers } from 'server/utils/queryHelpers';
 import { getAuthorString } from 'utils/contributors';
-import { DefinitelyHas, Release as ReleaseType, Pub as PubType } from 'utils/types';
+import { DefinitelyHas, Release as ReleaseType, Pub as PubType } from 'types';
 
 import stopWordList from './stopwords';
 

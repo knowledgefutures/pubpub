@@ -1,4 +1,4 @@
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 import { LayoutBlock, LayoutRenderContext, PubSortOrder } from 'utils/layout/types';
 import { sortByRank } from 'utils/rank';
 import { indexByProperty } from 'utils/arrays';

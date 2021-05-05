@@ -1,5 +1,5 @@
 import { Collection, Community, Page, Member, ScopeSummary } from 'server/models';
-import { Community as CommunityType, DefinitelyHas } from 'utils/types';
+import { Community as CommunityType, DefinitelyHas } from 'types';
 
 export default (
 	locationData,

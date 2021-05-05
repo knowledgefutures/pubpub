@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 
 import { isProd, isDuqDuq, getAppCommit } from 'utils/environment';
-import { InitialData, ScopeData } from 'utils/types';
+import { InitialData, ScopeData } from 'types';
 
 import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 

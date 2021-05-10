@@ -48,7 +48,7 @@ const OverviewSearchGroup = (props: Props) => {
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const { value } = e.target as HTMLInputElement;
 			if (onUpdateSearchTerm) {
-				onUpdateSearchTerm(value);
+				onUpdateSearchTerm(value.trim());
 			}
 		},
 		[onUpdateSearchTerm],
@@ -58,7 +58,7 @@ const OverviewSearchGroup = (props: Props) => {
 		(e: React.KeyboardEvent<HTMLInputElement>) => {
 			const { value } = e.target as HTMLInputElement;
 			if (e.key === 'Enter' && onCommitSearchTerm) {
-				onCommitSearchTerm(value);
+				onCommitSearchTerm(value.trim());
 			}
 		},
 		[onCommitSearchTerm],

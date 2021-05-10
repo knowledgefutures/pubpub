@@ -1,7 +1,7 @@
 import React from 'react';
 import TimeAgo from 'react-timeago';
 
-import { ScopeSummary, Collection, Pub } from 'utils/types';
+import { ScopeSummary, Collection, Pub } from 'types';
 import { capitalize } from 'utils/strings';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { formatDate, timeAgoBaseProps } from 'utils/dates';

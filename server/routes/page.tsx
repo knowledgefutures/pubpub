@@ -8,7 +8,7 @@ import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPage } from 'server/utils/queryHelpers';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
-import { Page } from 'utils/types';
+import { Page } from 'types';
 
 app.get(['/', '/:slug'], async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {

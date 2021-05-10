@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePrevious } from 'react-use';
 
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 import { arraysAreEqual, arraysHaveSameElements } from 'utils/arrays';
 import {
 	LayoutBlock,

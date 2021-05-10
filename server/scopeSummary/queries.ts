@@ -9,7 +9,7 @@ import {
 	ReviewNew,
 	ScopeSummary,
 } from 'server/models';
-import { ScopeSummary as ScopeSummaryType } from 'utils/types';
+import { ScopeSummary as ScopeSummaryType } from 'types';
 import { addScopeSummaries } from 'utils/scopeSummaries';
 
 const createScopeSummary = (summary: ScopeSummaryType) => ScopeSummary.create(summary);

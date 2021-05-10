@@ -1,6 +1,6 @@
 import { Collection, CollectionPub, ScopeSummary } from 'server/models';
 import { getManyPubs } from 'server/pub/queryMany';
-import { InitialData } from 'utils/types';
+import { InitialData } from 'types';
 
 type Options = {
 	loadPubs?: number;

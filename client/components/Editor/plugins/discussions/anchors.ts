@@ -1,4 +1,4 @@
-import { DiscussionAnchor } from 'utils/types';
+import { DiscussionAnchor } from 'types';
 
 import { Discussions } from './types';
 import { isEmptySelection } from './util';

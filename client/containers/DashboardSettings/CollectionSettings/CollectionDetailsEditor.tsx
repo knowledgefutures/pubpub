@@ -6,7 +6,7 @@ import { Checkbox, FormGroup, Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { Collection, Community } from 'utils/types';
+import { Collection, Community } from 'types';
 import { slugifyString } from 'utils/strings';
 import { ConfirmDialog, InputField } from 'components';
 import { collectionUrl } from 'utils/canonicalUrls';

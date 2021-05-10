@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Layout } from 'components';
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
 import { getDefaultLayout } from 'utils/pages';
 

@@ -1,4 +1,4 @@
-import { MemberPermission } from './types';
+import { MemberPermission } from 'types';
 
 const orderedMemberPermissions = ['view', 'edit', 'manage', 'admin'];
 

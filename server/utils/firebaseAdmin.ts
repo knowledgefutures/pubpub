@@ -11,7 +11,7 @@ import { Pub, Draft } from 'server/models';
 import discussionSchema from 'utils/editor/discussionSchema';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 import { storeCheckpoint } from 'client/components/Editor/utils';
-import { DocJson } from 'utils/types';
+import { DocJson } from 'types';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {

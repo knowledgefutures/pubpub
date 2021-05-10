@@ -3,7 +3,7 @@ import { Button, Tooltip } from '@blueprintjs/core';
 import stickybits from 'stickybits';
 
 import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
-import { Pub, Community, Collection } from 'utils/types';
+import { Pub, Community, Collection } from 'types';
 
 import { useLayout } from './useLayout';
 import { useLayoutPubs } from './useLayoutPubs';

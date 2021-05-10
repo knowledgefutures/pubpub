@@ -1,7 +1,7 @@
 import path from 'path';
 import React from 'react';
 import App from 'containers/App/App';
-import { CustomScripts } from 'utils/types';
+import { CustomScripts } from 'types';
 
 const manifest = require(path.join(process.cwd(), 'dist/client/manifest.json'));
 

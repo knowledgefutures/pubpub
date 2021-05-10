@@ -5,7 +5,7 @@ import { dispatchEmptyTransaction } from 'components/Editor';
 import { NonIdealState } from '@blueprintjs/core';
 
 import { usePageContext } from 'utils/hooks';
-import { PubPageData } from 'utils/types';
+import { PubPageData } from 'types';
 import { usePubContext } from '../../pubHooks';
 
 import DiscussionGroup from './DiscussionGroup';

@@ -3,7 +3,7 @@ import { Button } from '@blueprintjs/core';
 
 import { MenuButton, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
-import { Collection } from 'utils/types';
+import { Collection } from 'types';
 
 import PubSelect from './PubSelect';
 import { PubWithCollections } from './types';

@@ -6,7 +6,7 @@ import { FormattingBar, buttons } from 'components/FormattingBar';
 import Editor, { EditorChangeObject } from 'components/Editor';
 
 import { LayoutBlockText } from 'utils/layout';
-import { DocJson } from 'utils/types';
+import { DocJson } from 'types';
 
 type Content = LayoutBlockText['content'];
 

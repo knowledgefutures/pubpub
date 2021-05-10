@@ -1,4 +1,4 @@
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 
 import { QueryState, KeyedPubsQuery } from './types';
 import { getOrderingValuesByPubId, getPubsInOrder } from './ordering';

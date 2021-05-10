@@ -11,7 +11,7 @@ import {
 	ImageUpload,
 } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { Collection, Pub } from 'utils/types';
+import { Collection, Pub } from 'types';
 import { LayoutPubsByBlock } from 'utils/layout';
 import * as api from 'client/utils/collections/api';
 

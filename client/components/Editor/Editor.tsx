@@ -4,7 +4,7 @@ import { MarkSpec, NodeSpec } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 
 import { NoteManager } from 'client/utils/notes';
-import { DocJson, Maybe } from 'utils/types';
+import { DocJson, Maybe } from 'types';
 import { usePageContext } from 'utils/hooks';
 
 import {

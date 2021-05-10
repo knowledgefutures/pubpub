@@ -5,7 +5,7 @@ import { chooseCollectionForPub } from 'client/utils/collections';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { usePageContext } from 'utils/hooks';
-import { Collection, CollectionPub as BareCollectionPub, Pub } from 'utils/types';
+import { Collection, CollectionPub as BareCollectionPub, Pub } from 'types';
 import { PopoverButton, PubCollectionsListing } from 'components';
 import { Menu, MenuItem } from 'components/Menu';
 

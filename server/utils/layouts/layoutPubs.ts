@@ -7,7 +7,7 @@ import {
 	PubSortOrder,
 	maxPubsPerBlock,
 } from 'utils/layout';
-import { InitialData, Maybe, PubsQueryOrdering } from 'utils/types';
+import { InitialData, Maybe, PubsQueryOrdering } from 'types';
 
 type BlockContent = LayoutBlockPubs['content'];
 

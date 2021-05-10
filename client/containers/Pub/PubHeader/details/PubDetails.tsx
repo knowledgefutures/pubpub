@@ -7,7 +7,7 @@ import { ClickToCopyButton, ContributorsList } from 'components';
 import { getAllPubContributors } from 'utils/contributors';
 import { usePageContext } from 'utils/hooks';
 
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 import SmallHeaderButton from '../SmallHeaderButton';
 import CitationsPreview from '../CitationsPreview';
 

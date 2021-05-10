@@ -1,6 +1,6 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { joinOxford } from 'utils/strings';
-import { Attribution, AttributionWithUser, Collection, Pub } from 'utils/types';
+import { Attribution, AttributionWithUser, Collection, Pub } from 'types';
 import { getPrimaryCollection } from './collections/primary';
 
 const orderedContributors = (maybeContributors: Attribution[] | undefined | null) =>

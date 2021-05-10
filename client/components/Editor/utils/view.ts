@@ -2,7 +2,7 @@ import { EditorState, Selection } from 'prosemirror-state';
 import { Node, Slice } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 
-import { DocJson } from 'utils/types';
+import { DocJson } from 'types';
 
 import { addDiscussionToView } from '../plugins/discussions';
 import { editorHasPasteDecorations } from '../plugins/paste/plugin';

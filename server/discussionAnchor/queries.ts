@@ -1,7 +1,7 @@
 import { Step } from 'prosemirror-transform';
 
 import { DiscussionAnchor } from 'server/models';
-import { DiscussionAnchor as DiscussionAnchorType } from 'utils/types';
+import { DiscussionAnchor as DiscussionAnchorType } from 'types';
 import {
 	DiscussionSelection,
 	mapDiscussionSelectionThroughSteps,

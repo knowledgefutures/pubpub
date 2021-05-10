@@ -7,7 +7,7 @@ import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
 
-import { PubPageData } from 'utils/types';
+import { PubPageData } from 'types';
 import { getTocHeadings } from './headerUtils';
 import { mobileViewportCutoff } from './constants';
 import PubDetails from './details';

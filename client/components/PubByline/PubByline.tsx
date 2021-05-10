@@ -2,7 +2,7 @@ import React from 'react';
 
 import Byline, { BylineProps } from 'components/Byline/Byline';
 import { getAllPubContributors } from 'utils/contributors';
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 
 type OwnProps = {
 	pubData: Pub;

@@ -4,7 +4,7 @@ import { Button } from '@blueprintjs/core';
 
 import { Icon } from 'client/components';
 import { getDashUrl } from 'utils/dashboard';
-import { Collection } from 'utils/types';
+import { Collection } from 'types';
 import { usePageContext } from 'utils/hooks';
 
 import { iconSize } from './constants';

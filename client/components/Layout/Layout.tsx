@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { Collection, Pub } from 'utils/types';
+import { Collection, Pub } from 'types';
 import {
 	LayoutBlock,
 	LayoutOptions,

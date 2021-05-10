@@ -17,7 +17,7 @@ import { usePageContext } from 'utils/hooks';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { ClickToCopyButton, MinimalEditor } from 'components';
-import { Release, PubPageData } from 'utils/types';
+import { Release, PubPageData } from 'types';
 
 require('./pubReleaseDialog.scss');
 

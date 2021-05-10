@@ -5,7 +5,7 @@ import { Button } from '@blueprintjs/core';
 import { CollectionMultiSelect, InputField, Popover } from 'components';
 import { LayoutPubs } from 'components/Layout';
 import { MenuSelect, MenuSelectItems } from 'components/Menu';
-import { Community, Pub, Collection } from 'utils/types';
+import { Community, Pub, Collection } from 'types';
 import { LayoutBlockPubs, PubPreviewType, PubSortOrder } from 'utils/layout/types';
 
 import PreviewElements from './PreviewElements';

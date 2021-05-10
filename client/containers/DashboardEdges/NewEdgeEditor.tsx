@@ -7,7 +7,7 @@ import { MenuButton, MenuItem } from 'components/Menu';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePendingChanges } from 'utils/hooks';
 import { RelationType, relationTypeDefinitions } from 'utils/pubEdge';
-import { Pub, PubEdge } from 'utils/types';
+import { Pub, PubEdge } from 'types';
 
 import NewEdgeInput from './NewEdgeInput';
 

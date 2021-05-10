@@ -2,7 +2,7 @@ import React from 'react';
 import dateFormat from 'dateformat';
 
 import { Icon, IconName } from 'components';
-import { Community, Collection, DefinitelyHas } from 'utils/types';
+import { Community, Collection, DefinitelyHas } from 'types';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { enIndefiniteArticle, capitalize } from 'utils/strings';
 

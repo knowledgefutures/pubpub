@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
 import { useFocusTrap } from 'client/utils/useFocusTrap';
-import { Falsy } from 'utils/types';
+import { Falsy } from 'types';
 import { EditorChangeObject, mouseEventSelectsNode } from '../Editor';
 
 import { PositioningFn } from './types';

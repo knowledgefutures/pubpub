@@ -5,7 +5,7 @@ import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
-import { PubPageData } from 'utils/types';
+import { PubPageData } from 'types';
 
 import CollectionsBar from './collections/CollectionsBar';
 import DraftReleaseButtons from './DraftReleaseButtons';

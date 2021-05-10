@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Button, Icon, Tag } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
-import { AttributionWithUser, Falsy } from 'utils/types';
+import { AttributionWithUser, Falsy } from 'types';
 
 import AttributionDetailControls from './AttributionDetailControls';
 import EditableAvatar from './EditableAvatar';

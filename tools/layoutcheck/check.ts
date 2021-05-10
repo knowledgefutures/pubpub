@@ -2,7 +2,7 @@
 import { diffArrays } from 'diff';
 
 import { LayoutBlock, resolveLayoutPubsByBlock } from 'utils/layout';
-import { Community, InitialData } from 'utils/types';
+import { Community, InitialData } from 'types';
 import { getInitialData } from 'server/utils/initData';
 import { Community as CommunityModel, Page, Collection } from 'server/models';
 import { getLayoutPubsByBlock as new_getLayoutPubsByBlock } from 'server/utils/layouts';

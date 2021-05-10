@@ -3,7 +3,7 @@ import { QueryBuilder } from 'knex';
 
 import { knex, sequelize, Pub } from 'server/models';
 import { buildPubOptions, sanitizePub, SanitizedPubData } from 'server/utils/queryHelpers';
-import { InitialData, PubsQuery, PubGetOptions } from 'utils/types';
+import { InitialData, PubsQuery, PubGetOptions } from 'types';
 
 const defaultColumns = {
 	pubId: 'Pubs.id',

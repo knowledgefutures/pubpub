@@ -18,7 +18,7 @@ import {
 	ClickToCopyButton,
 	LayoutEditor,
 } from 'components';
-import { Page, Pub } from 'utils/types';
+import { Page, Pub } from 'types';
 import { usePersistableState } from 'client/utils/usePersistableState';
 
 import PageDelete from './PageDelete';

@@ -4,7 +4,7 @@ import { jsonToNode } from 'client/components/Editor/utils/doc';
 import { Doc, Draft, PubEdge } from 'server/models';
 import { generateCitationHtml, getStructuredCitationsForPub } from 'server/utils/citations';
 import { getPubDraftDoc, getFirebaseToken, editorSchema } from 'server/utils/firebaseAdmin';
-import { Pub as PubType, DefinitelyHas, PubDocInfo, InitialData } from 'utils/types';
+import { Pub as PubType, DefinitelyHas, PubDocInfo, InitialData } from 'types';
 
 import { SanitizedPubData } from './pubSanitize';
 import { sanitizePubEdge } from './sanitizePubEdge';

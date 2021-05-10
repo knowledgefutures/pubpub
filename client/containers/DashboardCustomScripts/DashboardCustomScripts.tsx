@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Spinner, Tabs, Tab } from '@blueprintjs/core';
 
 import { DashboardFrame } from 'components';
-import { CustomScripts } from 'utils/types';
+import { CustomScripts } from 'types';
 
 import { EditorComponentType } from './types';
 import CustomScriptPanel from './CustomScriptPanel';

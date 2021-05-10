@@ -1,7 +1,7 @@
 import React from 'react';
 import { Popover, PopoverInteractionKind, Position, Menu, MenuItem } from '@blueprintjs/core';
 
-import { Page } from 'utils/types';
+import { Page } from 'types';
 import { LayoutBlock, PubSortOrder } from 'utils/layout/types';
 import { Icon } from 'components';
 

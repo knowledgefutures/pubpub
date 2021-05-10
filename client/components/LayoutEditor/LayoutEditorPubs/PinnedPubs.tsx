@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { OrderPicker, PubMenuItem } from 'components';
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { indexByProperty, unique } from 'utils/arrays';
 

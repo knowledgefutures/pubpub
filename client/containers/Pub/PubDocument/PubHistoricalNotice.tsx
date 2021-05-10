@@ -9,7 +9,7 @@ import { usePageContext } from 'utils/hooks';
 import { getPubLatestReleasedDate } from 'utils/pub/pubDates';
 
 import { ClickToCopyButton } from 'components';
-import { Pub, Release } from 'utils/types';
+import { Pub, Release } from 'types';
 
 require('./pubHistoricalNotice.scss');
 

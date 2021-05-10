@@ -7,7 +7,7 @@ import { handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-import { InitialData } from 'utils/types';
+import { InitialData } from 'types';
 
 const getPubsWithReviews = async (initialData: InitialData) => {
 	const {

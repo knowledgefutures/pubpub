@@ -1,5 +1,5 @@
 import { CustomScript } from 'server/models';
-import { CustomScriptType, CustomScripts } from 'utils/types';
+import { CustomScriptType, CustomScripts } from 'types';
 
 import { communityCanUseCustomScripts } from './permissions';
 

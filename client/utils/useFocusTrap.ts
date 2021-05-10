@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Maybe } from 'utils/types';
+import { Maybe } from 'types';
 
 type EventHandler<E extends Event> = (evt: E) => unknown;
 

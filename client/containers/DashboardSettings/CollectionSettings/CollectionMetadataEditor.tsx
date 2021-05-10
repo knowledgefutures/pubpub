@@ -14,7 +14,7 @@ import {
 } from '@blueprintjs/core';
 
 import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
-import { Collection } from 'utils/types';
+import { Collection } from 'types';
 import { enumerateMetadataFields, normalizeMetadataToKind } from 'utils/collections/metadata';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { apiFetch } from 'client/utils/apiFetch';

@@ -6,7 +6,7 @@ import { createLatestPubExports } from 'server/export/queries';
 import { createDoc } from 'server/doc/queries';
 import { setPubSearchData } from 'server/utils/search';
 import { createUpdatedDiscussionAnchorForNewSteps } from 'server/discussionAnchor/queries';
-import { Maybe, Release as ReleaseType, DefinitelyHas } from 'utils/types';
+import { Maybe, Release as ReleaseType, DefinitelyHas } from 'types';
 import { getStepsInChangeRange } from 'client/components/Editor';
 
 type ReleaseErrorReason = 'merge-failed' | 'duplicate-release';

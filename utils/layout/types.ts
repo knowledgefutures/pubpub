@@ -1,4 +1,4 @@
-import { DocJson } from 'utils/types';
+import { DocJson } from 'types';
 
 type BannerButtonType = 'create-pub' | 'signup' | 'link';
 type TextAlign = 'left' | 'center';

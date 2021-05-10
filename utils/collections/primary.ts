@@ -1,5 +1,5 @@
 import { sortByRank } from 'utils/rank';
-import { Collection, CollectionPub } from 'utils/types';
+import { Collection, CollectionPub } from 'types';
 
 const isPrimaryCollectionCandidate = (collectionPub: CollectionPub) => {
 	const { collection } = collectionPub;

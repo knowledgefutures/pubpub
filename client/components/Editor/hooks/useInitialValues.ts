@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { addTemporaryIdsToDoc } from '@pubpub/prosemirror-reactive';
 
 import { NoteManager } from 'client/utils/notes';
-import { DocJson } from 'utils/types';
+import { DocJson } from 'types';
 
 import { NodeLabelMap } from '../types';
 import { buildSchema, renderStatic } from '../utils';

@@ -1,6 +1,6 @@
 import { DOMParser, Node, Schema } from 'prosemirror-model';
 
-import { DocJson } from 'utils/types';
+import { DocJson } from 'types';
 
 export const getEmptyDoc = () => {
 	return { type: 'doc' as const, attrs: { meta: {} }, content: [{ type: 'paragraph' }] };

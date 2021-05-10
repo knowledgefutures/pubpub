@@ -3,7 +3,7 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import { NonIdealState } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { AttributionWithUser } from 'utils/types';
+import { AttributionWithUser } from 'types';
 import { UserAutocomplete } from 'components';
 
 import AttributionRow from './AttributionRow';

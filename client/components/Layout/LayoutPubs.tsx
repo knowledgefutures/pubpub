@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { PubPreview } from 'components';
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 import { LayoutBlockPubs } from 'utils/layout/types';
 import { createReadingParamUrl } from 'client/utils/collections';
 

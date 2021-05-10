@@ -20,6 +20,7 @@ module.exports = {
 			containers: resolve(__dirname, '../../client/containers'),
 			server: resolve(__dirname, '../../server'),
 			utils: resolve(__dirname, '../../utils'),
+			types: resolve(__dirname, '../../types'),
 		},
 	},
 	devtool: '#source-map',
@@ -37,7 +38,11 @@ module.exports = {
 			},
 			{
 				test: /\.(js|jsx|ts|tsx)$/,
-				include: [resolve(__dirname, '../'), resolve(__dirname, '../../utils')],
+				include: [
+					resolve(__dirname, '../'),
+					resolve(__dirname, '../../utils'),
+					resolve(__dirname, '../../types'),
+				],
 				loader: 'ts-loader',
 				options: { configFile: resolve(__dirname, '../../tsconfig.client.json') },
 			},

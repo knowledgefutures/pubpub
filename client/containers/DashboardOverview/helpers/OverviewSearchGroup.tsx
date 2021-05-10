@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Tab, Tabs } from '@blueprintjs/core';
 
 import { Icon } from 'components';
-import { PubsQuery } from 'utils/types';
+import { PubsQuery } from 'types';
 
 require('./overviewSearchGroup.scss');
 

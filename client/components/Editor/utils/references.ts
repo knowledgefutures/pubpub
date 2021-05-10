@@ -3,7 +3,7 @@ import { IconName } from '@blueprintjs/core';
 import { Node } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 
-import { Pub } from 'utils/types';
+import { Pub } from 'types';
 
 import { referencesPluginKey } from '../plugins/references';
 import { NodeLabelMap, ReferenceableNodeType } from '../types';

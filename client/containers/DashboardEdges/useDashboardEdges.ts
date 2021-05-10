@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { usePendingChanges } from 'utils/hooks';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import { apiFetch } from 'client/utils/apiFetch';
-import { Pub as BarePub, InboundEdge, OutboundEdge } from 'utils/types';
+import { Pub as BarePub, InboundEdge, OutboundEdge } from 'types';
 
 type Pub = BarePub & {
 	outboundEdges: OutboundEdge[];

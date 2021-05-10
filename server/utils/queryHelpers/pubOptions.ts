@@ -17,7 +17,7 @@ import {
 	Draft,
 	ScopeSummary,
 } from 'server/models';
-import { PubGetOptions } from 'utils/types';
+import { PubGetOptions } from 'types';
 
 import { getPubEdgeIncludes } from './pubEdgeOptions';
 import { baseAuthor, baseThread, baseVisibility } from './util';

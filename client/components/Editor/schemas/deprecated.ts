@@ -12,4 +12,5 @@ export default {
 	highlightQuote: deprecatedBlock,
 	citationList: deprecatedBlock,
 	footnoteList: deprecatedBlock,
+	discussion: deprecatedBlock,
 };

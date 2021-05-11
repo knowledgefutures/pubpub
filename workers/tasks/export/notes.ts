@@ -1,7 +1,6 @@
 import { jsonToNode, getNotes } from 'components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { getStructuredCitations } from 'server/utils/citations';
-import { editorSchema } from 'server/utils/firebaseAdmin';
 
 const enrichNoteWithStructuredResult = (note, renderedStructuredValues) => {
 	const { structuredValue } = note;
@@ -14,7 +13,7 @@ const enrichNoteWithStructuredResult = (note, renderedStructuredValues) => {
 
 export const getNotesData = async (pubData, pubDoc) => {
 	const { citationStyle, citationInlineStyle } = pubData;
-	const hydratedPubDoc = jsonToNode(pubDoc, editorSchema);
+	const hydratedPubDoc = jsonToNode(pubDoc);
 	const { footnotes, citations } = getNotes(hydratedPubDoc);
 
 	const structuredValues = [

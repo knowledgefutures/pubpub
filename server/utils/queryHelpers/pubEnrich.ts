@@ -1,9 +1,9 @@
 import { Op } from 'sequelize';
 
-import { jsonToNode } from 'client/components/Editor/utils/doc';
+import { jsonToNode } from 'client/components/Editor';
 import { Doc, Draft, PubEdge } from 'server/models';
 import { generateCitationHtml, getStructuredCitationsForPub } from 'server/utils/citations';
-import { getPubDraftDoc, getFirebaseToken, editorSchema } from 'server/utils/firebaseAdmin';
+import { getPubDraftDoc, getFirebaseToken } from 'server/utils/firebaseAdmin';
 import { Pub as PubType, DefinitelyHas, PubDocInfo, InitialData } from 'types';
 
 import { SanitizedPubData } from './pubSanitize';
@@ -73,7 +73,7 @@ export const getPubFirebaseToken = async (pubData: SanitizedPubData, initialData
 
 export const getPubCitations = async (pubData, initialData, initialDoc) => {
 	const [initialStructuredCitations, citationHtml] = await Promise.all([
-		getStructuredCitationsForPub(pubData, jsonToNode(initialDoc, editorSchema)),
+		getStructuredCitationsForPub(pubData, jsonToNode(initialDoc)),
 		generateCitationHtml(pubData, initialData.communityData),
 	]);
 

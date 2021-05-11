@@ -41,3 +41,5 @@ export const buildSchema = (customNodes = {}, customMarks = {}, nodeOptions = {}
 		topNode: 'doc',
 	});
 };
+
+export const editorSchema = buildSchema();

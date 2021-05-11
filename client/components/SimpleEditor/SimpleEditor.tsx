@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { DOMSerializer, Node } from 'prosemirror-model';
-import { buildSchema, getDocForHtmlString, docIsEmpty } from 'components/Editor';
+import { editorSchema, getDocForHtmlString, docIsEmpty } from 'components/Editor';
 
 import { MinimalEditor } from 'components';
 
@@ -9,8 +9,6 @@ type Props = {
 	onChange: (htmlContents: string) => unknown;
 	placeholder?: string;
 };
-
-const editorSchema = buildSchema();
 
 const SimpleEditor = (props: Props) => {
 	const { onChange, placeholder, initialHtmlString } = props;

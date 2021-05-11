@@ -2,6 +2,8 @@ import { DOMParser, Node, Schema } from 'prosemirror-model';
 
 import { DocJson } from 'types';
 
+import { editorSchema } from './schema';
+
 export const getEmptyDoc = () => {
 	return { type: 'doc' as const, attrs: { meta: {} }, content: [{ type: 'paragraph' }] };
 };
@@ -23,6 +25,6 @@ export const getDocForHtmlString = (htmlString: string, schema: Schema) => {
 	return DOMParser.fromSchema(schema).parse(wrapperElem);
 };
 
-export const jsonToNode = (doc: DocJson, schema: Schema) => {
+export const jsonToNode = (doc: DocJson, schema: Schema = editorSchema) => {
 	return Node.fromJSON(schema, doc);
 };

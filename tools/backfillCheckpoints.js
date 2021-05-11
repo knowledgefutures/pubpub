@@ -5,8 +5,9 @@ import { uncompressStepJSON, compressStateJSON } from 'prosemirror-compress-pubp
 import { Step } from 'prosemirror-transform';
 import { Node } from 'prosemirror-model';
 
-import { getBranchRef, editorSchema } from 'server/utils/firebaseAdmin';
+import { getBranchRef } from 'server/utils/firebaseAdmin';
 import { Pub, Branch } from 'server/models';
+import { editorSchema } from 'components/Editor';
 
 const overwriteExisting = true;
 const checkpointInterval = 100;

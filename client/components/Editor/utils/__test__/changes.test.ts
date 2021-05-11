@@ -1,7 +1,7 @@
 /* global describe, it, expect */
 import { editFirebaseDraft } from 'stubstub';
 
-import { editorSchema } from 'server/utils/firebaseAdmin';
+import { editorSchema } from 'components/Editor';
 import { getStepsInChangeRange } from '../changes';
 
 describe('getStepsInChangeRange', () => {

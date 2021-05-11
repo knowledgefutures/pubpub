@@ -1,8 +1,8 @@
 import uuid from 'uuid/v4';
 import { Step, Transform } from 'prosemirror-transform';
 
-import { createFirebaseChange, getFirebaseDoc } from 'client/components/Editor';
-import { getPubDraftRef, getDatabaseRef, editorSchema } from 'server/utils/firebaseAdmin';
+import { createFirebaseChange, getFirebaseDoc, editorSchema } from 'client/components/Editor';
+import { getPubDraftRef, getDatabaseRef } from 'server/utils/firebaseAdmin';
 
 type EditorSchema = typeof editorSchema;
 type TransformFn = (t: Transform<EditorSchema>, s: EditorSchema) => void;

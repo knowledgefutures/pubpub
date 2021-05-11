@@ -4,8 +4,7 @@ import fs from 'fs';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import { renderStatic } from 'components/Editor';
-import { editorSchema } from 'server/utils/firebaseAdmin';
+import { renderStatic, editorSchema } from 'components/Editor';
 import { getLicenseBySlug } from 'utils/licenses';
 
 import SimpleNotesList from './SimpleNotesList';

@@ -2,13 +2,12 @@ import firebase from 'firebase';
 import firebaseAdmin from 'firebase-admin';
 
 import {
-	buildSchema,
+	editorSchema,
 	getFirebaseDoc,
 	getLatestKeyAndTimestamp,
 	getFirstKeyAndTimestamp,
 } from 'components/Editor';
 import { Pub, Draft } from 'server/models';
-import discussionSchema from 'utils/editor/discussionSchema';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 import { storeCheckpoint } from 'client/components/Editor/utils';
 import { DocJson } from 'types';
@@ -39,7 +38,6 @@ const getFirebaseApp = () => {
 
 const firebaseApp = getFirebaseApp();
 const database = firebaseApp && firebaseApp.database();
-export const editorSchema = buildSchema({ ...discussionSchema }, {});
 
 export const getDatabaseRef = (key: string): firebase.database.Reference => {
 	return (database?.ref(key) as unknown) as firebase.database.Reference;

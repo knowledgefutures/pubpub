@@ -1,4 +1,4 @@
-export default [
+export const stopwords = new Set([
 	'a',
 	'able',
 	'about',
@@ -247,7 +247,8 @@ export default [
 	'j',
 	'just',
 	'k',
-	'keep	keeps',
+	'keep',
+	'keeps',
 	'kept',
 	'kg',
 	'km',
@@ -664,4 +665,4 @@ export default [
 	"you've",
 	'z',
 	'zero',
-];
+]);

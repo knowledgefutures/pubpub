@@ -17,6 +17,13 @@ export type Draft = {
 	firebasePath: string;
 };
 
+export type Doc = {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+	content: DocJson;
+};
+
 export type Release = {
 	id: string;
 	noteContent?: {};
@@ -27,7 +34,7 @@ export type Release = {
 	updatedAt: string;
 	historyKey: number;
 	docId: string;
-	doc?: DocJson;
+	doc?: Doc;
 };
 
 export type Export = {

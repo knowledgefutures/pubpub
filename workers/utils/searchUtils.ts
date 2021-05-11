@@ -1,4 +1,4 @@
-import stopword from 'stopword';
+import chunkText from 'chunk-text';
 
 import {
 	Pub,
@@ -9,12 +9,13 @@ import {
 	Doc,
 	includeUserModel,
 } from 'server/models';
+import { jsonToNode } from 'components/Editor';
 import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { getScope, getMembers } from 'server/utils/queryHelpers';
 import { getAuthorString } from 'utils/contributors';
-import { DefinitelyHas, Release as ReleaseType, Pub as PubType } from 'types';
+import { DefinitelyHas, Release as ReleaseType, Pub as PubType, DocJson } from 'types';
 
-import stopWordList from './stopwords';
+import { stopwords } from './stopwords';
 
 type AlgoliaPubEntry = {
 	pubId: string;
@@ -34,56 +35,23 @@ type AlgoliaPubEntry = {
 	communityUseHeaderTextAccent: boolean;
 	userIdsWithAccess: string;
 	isPublic: boolean;
-	content: string[];
+	content: string | string[]; // Currently just `string` but historically either
 } & ({ isPublic: false; userIdsWithAccess: string[] } | { isPublic: true });
 
 type SearchPub = DefinitelyHas<PubType, 'attributions' | 'community'> & {
 	releases: DefinitelyHas<ReleaseType, 'doc'>[];
 };
 
-const lengthInUtf8Bytes = (str) => {
-	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
-	const m = encodeURIComponent(str).match(/%[89ABab]/g);
-	return str.length + (m ? m.length : 0);
-};
-
-const validateTextSize = (stringArray) => {
-	return stringArray
-		.map((string) => {
-			const stringSize = lengthInUtf8Bytes(string);
-			if (stringSize > 7500) {
-				const re = new RegExp(
-					`.{1,${Math.floor(7000 / (Math.ceil(stringSize / 7000) + 1))}}`,
-					'g',
-				);
-				return string.match(re);
-			}
-			return string;
-		})
-		.reduce((prev, curr) => {
-			/* Flatten array */
-			return prev.concat(curr);
-		}, []);
-};
-
-const jsonToTextChunks = (docJson) => {
-	const getText = (node) => {
-		if (node.content) {
-			return node.content.reduce((prev, curr) => {
-				return `${prev} ${getText(curr)}`;
-			}, '');
-		}
-		if (node.text) {
-			return node.text;
-		}
-		return '';
-	};
-	const text = typeof docJson === 'string' ? '' : getText(docJson).replace(/\s\s+/g, ' ');
-	const splitText = stopword
-		.removeStopwords(text.split(' '), stopWordList)
-		.join(' ')
-		.match(/.{1,7000}/g) || [''];
-	return validateTextSize(splitText);
+const docJsonToTextChunks = (docJson: DocJson): string[] => {
+	const { textContent } = jsonToNode(docJson);
+	const contentWithoutStopwords = textContent
+		.split(' ')
+		.filter((x) => !stopwords.has(x))
+		.join(' ');
+	return chunkText(contentWithoutStopwords, 7500, {
+		// Count each byte in every character
+		charLengthMask: 0,
+	});
 };
 
 const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]> => {
@@ -115,19 +83,25 @@ const createSearchDataForPub = async (pub: SearchPub): Promise<AlgoliaPubEntry[]
 		userIdsWithAccess,
 	};
 	if (release) {
-		entries.push({
-			...sharedFields,
-			isPublic: true,
-			content: jsonToTextChunks(release.doc.content),
-		});
+		const releaseContentChunks = docJsonToTextChunks(release.doc.content);
+		releaseContentChunks.forEach((chunk) =>
+			entries.push({
+				...sharedFields,
+				isPublic: true,
+				content: chunk,
+			}),
+		);
 	}
 	const { doc } = await getPubDraftDoc(pub.id);
-	entries.push({
-		...sharedFields,
-		isPublic: false,
-		userIdsWithAccess,
-		content: jsonToTextChunks(doc),
-	});
+	const draftContentChunks = docJsonToTextChunks(doc);
+	draftContentChunks.forEach((chunk) =>
+		entries.push({
+			...sharedFields,
+			isPublic: false,
+			userIdsWithAccess,
+			content: chunk,
+		}),
+	);
 	return entries;
 };
 
@@ -172,7 +146,7 @@ export const getPageSearchData = async (pageIds) => {
 			},
 		],
 	});
-	const dataToSync = [];
+	const dataToSync: any[] = [];
 	for (let index = 0; index < pages.length; index++) {
 		const page = pages[index];
 		// eslint-disable-next-line no-await-in-loop
@@ -208,17 +182,15 @@ export const getPageSearchData = async (pageIds) => {
 				return block.type === 'text' && block.content.text;
 			})
 			.forEach((block) => {
-				jsonToTextChunks(block.content.text).forEach((textChunk) => {
+				docJsonToTextChunks(block.content.text).forEach((textChunk) => {
 					hasContent = true;
 					dataToSync.push({
 						...data,
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'any' is not assignable to type 'never'.
 						content: textChunk,
 					});
 				});
 			});
 		if (!hasContent) {
-			// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ pageId: any; title: any; slug:... Remove this comment to see the full error message
 			dataToSync.push(data);
 		}
 	}

@@ -20,9 +20,7 @@ Array [
     "byline": "by Test Testington",
     "communityDomain": "tc1.pubpub.org",
     "communityTitle": "Test Community",
-    "content": Array [
-      " Hello hello. Introduction",
-    ],
+    "content": "Hello hello.IntroductionWhateverOkay",
     "description": "You probably cannot see me",
     "isPublic": false,
     "slug": "a-draft-pub",
@@ -38,9 +36,7 @@ Array [
     "byline": "by First Author, Second Author, and Test Testington",
     "communityDomain": "tc1.pubpub.org",
     "communityTitle": "Test Community",
-    "content": Array [
-      " Introduction introduction! bold pretty nifty . Nature’s ecosystem elegant example complex adaptive system myriad “currencies” interact respond feedback systems enable flourishing regulation. collaborative model–rather model exponential financial growth Singularity, promises transcendence current human condition advances technology—should provide paradigm approach artificial intelligence. 60 years ago, MIT mathematician philosopher Norbert Wiener warned “when human atoms knit organization used, full responsible human beings, cogs levers rods, matters raw material flesh blood.” heed Wiener’s warning. currencies abundant output successful process organism, organisms evolved output convert else. billions years, Earth’s ecosystem evolved, creating vast systems metabolic pathways forming highly complex self-regulating systems that, example, stabilize body temperatures temperature Earth, despite continuous fluctuations changes individual elements scale—from micro macro. output process input another. Ultimately, interconnects. Video Hello paragraph text Hello, you? Citation List Hello paragraph text Hello, you? Info Contact Country Alfreds Futterkiste Maria Anders Germany Centro comercial Moctezuma Francisco Chang Mexico",
-    ],
+    "content": "IntroductionWelcome introduction!This bold I pretty nifty . Nature’s ecosystem elegant example complex adaptive system myriad “currencies” interact respond feedback systems enable flourishing regulation. This collaborative model–rather model exponential financial growth Singularity, promises transcendence current human condition advances technology—should provide paradigm approach artificial intelligence. More 60 years ago, MIT mathematician philosopher Norbert Wiener warned “when human atoms knit organization used, full responsible human beings, cogs levers rods, matters raw material flesh blood.” We heed Wiener’s warning.As currencies abundant output successful process organism, organisms evolved output convert else. Over billions years, Earth’s ecosystem evolved, creating vast systems metabolic pathways forming highly complex self-regulating systems that, example, stabilize body temperatures temperature Earth, despite continuous fluctuations changes individual elements scale—from micro macro. The output process input another. Ultimately, interconnects.WhateverVideo SectionHelloAnd paragraph text Hello, you?Citation ListHelloAnd paragraph text Hello, you?InfoContactCountryAlfreds FutterkisteMaria AndersGermanyCentro comercial MoctezumaFrancisco ChangMexico",
     "description": "Hey look at me",
     "isPublic": true,
     "slug": "a-released-pub",
@@ -51,9 +47,7 @@ Array [
     "byline": "by First Author, Second Author, and Test Testington",
     "communityDomain": "tc1.pubpub.org",
     "communityTitle": "Test Community",
-    "content": Array [
-      " Hello hello. Introduction",
-    ],
+    "content": "Hello hello.IntroductionWhateverOkay",
     "description": "Hey look at me",
     "isPublic": false,
     "slug": "a-released-pub",

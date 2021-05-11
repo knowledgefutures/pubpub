@@ -41,6 +41,7 @@ export const sanitizePageHtml = (html) => {
 			'path',
 			'span',
 		],
+		allowVulnerableTags: true, // Required for <style>
 		allowedAttributes: {
 			'*': [
 				'class',

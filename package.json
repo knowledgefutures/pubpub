@@ -151,7 +151,7 @@
 		"request": "^2.88.0",
 		"request-promise": "^4.2.4",
 		"rss": "^1.2.2",
-		"sanitize-html": "^1.20.1",
+		"sanitize-html": "^2.3.2",
 		"sass-loader": "^7.1.0",
 		"sequelize": "^5.12.2",
 		"sitemap": "^6.2.0",

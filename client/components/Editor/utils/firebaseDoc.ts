@@ -8,13 +8,7 @@ import { flattenKeyables } from './firebase';
 type Reference = firebase.database.Reference;
 type Query = firebase.database.Query;
 
-type Checkpoint = {
-	d: Record<any, any>;
-	t: number;
-	k: number;
-};
-
-type CheckpointMap = Record<string, Checkpoint>;
+type CheckpointMap = Record<string, number>;
 
 type ChooseKey = (keys: number[]) => number;
 type TraverseQuery = (query: Query) => Query;
@@ -41,7 +35,7 @@ const getMostRecentDocJson = async (
 			const checkpoint = checkpointSnapshot.val();
 			if (checkpoint) {
 				const { doc } = uncompressStateJSON(checkpoint);
-				return { doc, key: bestKey, timestamp: checkpointMap[bestKey]?.t };
+				return { doc, key: bestKey, timestamp: checkpoint.t };
 			}
 		}
 	}

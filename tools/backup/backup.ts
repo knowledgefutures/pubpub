@@ -4,6 +4,7 @@ import { postToSlack } from 'server/utils/slack';
 import { generateHash } from 'utils/hashes';
 
 import { getDatabaseBackupFiles } from './database';
+import { encryptFile } from './encrypt';
 import { getFirebaseBackupFiles } from './firebase';
 import { uploadFileToS3 } from './s3';
 import { BackupFile } from './types';
@@ -36,7 +37,12 @@ const main = async () => {
 			getFirebaseBackupFiles(targetDate),
 			getDatabaseBackupFiles(),
 		]).then((files) => files.reduce((acc, next) => [...acc, ...next], []));
-		await Promise.all(backupFiles.map((file) => uploadFileToS3(file, uploadId)));
+		await Promise.all(
+			backupFiles.map(async (file) => {
+				const encryptedFile = await encryptFile(file);
+				await uploadFileToS3(encryptedFile, uploadId);
+			}),
+		);
 		await postToSlackAboutSuccess(backupFiles);
 	} catch (err) {
 		console.error(err);

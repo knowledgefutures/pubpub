@@ -4,7 +4,7 @@ export default (sequelize, dataTypes) => {
 		{
 			id: sequelize.idType,
 			pubId: { type: dataTypes.UUID, allowNull: false },
-			externalPublicationId: { type: dataTypes.INTEGER, allowNull: true },
+			externalPublicationId: { type: dataTypes.UUID, allowNull: true },
 			targetPubId: { type: dataTypes.UUID, allowNull: true },
 			relationType: { type: dataTypes.STRING, allowNull: false },
 			rank: { type: dataTypes.TEXT, allowNull: false },

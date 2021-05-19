@@ -8,12 +8,7 @@ export type RenderedStructuredValue = {
 	error?: boolean;
 };
 
-type Note = {
-	structuredValue: StructuredValue;
-	renderedStructuredValue: RenderedStructuredValue;
-};
-
-type Notes = Record<StructuredValue, Note>;
+type Notes = Record<StructuredValue, RenderedStructuredValue>;
 
 type RenderStructuredValuesFn = (
 	structuredValues: StructuredValue[],
@@ -39,7 +34,7 @@ export class NoteManagerCore {
 	) {
 		this.citationStyleKind = citationStyleKind;
 		this.citationInlineStyleKind = citationInlineStyleKind;
-		this.notes = notes;
+		this.notes = { ...notes };
 		this.callbacks = new Set();
 		this.renderStructuredValues = renderStructuredValues;
 	}
@@ -52,8 +47,7 @@ export class NoteManagerCore {
 	}
 
 	getRenderedValueSync(structuredValue: StructuredValue): null | RenderedStructuredValue {
-		const note = this.notes[structuredValue];
-		return note?.renderedStructuredValue || null;
+		return this.notes[structuredValue] || null;
 	}
 
 	getRenderedValue(structuredValue: StructuredValue): Promise<null | RenderedStructuredValue> {
@@ -66,10 +60,7 @@ export class NoteManagerCore {
 					this.citationInlineStyleKind,
 			  ).then((renderedStructuredValues) => {
 					const renderedStructuredValue = renderedStructuredValues[structuredValue];
-					this.notes[structuredValue] = {
-						structuredValue,
-						renderedStructuredValue,
-					};
+					this.notes[structuredValue] = renderedStructuredValue;
 					this.callbacks.forEach((callback) => callback(this.notes));
 					return renderedStructuredValue;
 			  });

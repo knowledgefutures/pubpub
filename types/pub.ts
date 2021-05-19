@@ -1,4 +1,5 @@
 import { NodeLabelMap } from 'components/Editor';
+import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
 
 import { PubAttribution } from './attribution';
 import { CollectionPub } from './collection';
@@ -75,8 +76,8 @@ export type Pub = {
 	downloads?: any[];
 	metadata?: {};
 	licenseSlug?: string;
-	citationStyle?: string;
-	citationInlineStyle?: string;
+	citationStyle?: CitationStyleKind;
+	citationInlineStyle?: CitationInlineStyleKind;
 	viewHash?: string;
 	editHash?: string;
 	communityId: string;

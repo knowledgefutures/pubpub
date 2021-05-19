@@ -24,13 +24,16 @@ export const usePubNotes = () => {
 	const isNumberList = noteManager.citationInlineStyleKind === 'count';
 	const renderedFootnotes = footnotes.map((footnote, index) => ({
 		...footnote,
-		...notes[footnote.structuredValue],
+		renderedStructuredValue: notes[footnote.structuredValue],
 		number: index + 1,
 	}));
 	const renderedCitations = useMemo(
 		() =>
 			citations
-				.map((citation) => ({ ...citation, ...notes[citation.structuredValue] }))
+				.map((citation) => ({
+					...citation,
+					renderedStructuredValue: notes[citation.structuredValue],
+				}))
 				.map((citation, index) => ({
 					...citation,
 					...(isNumberList && { number: index + 1 }),

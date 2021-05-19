@@ -2,10 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import Cite from 'citation-js';
+import { Node } from 'prosemirror-model';
 
 import { getNotes } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
 import { StructuredValue, RenderedStructuredValue } from 'utils/notesCore';
+import { Pub } from 'types';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
@@ -49,7 +51,7 @@ const extractAuthorFromApa = (apaStyleCitation: string) => {
 const getInlineCitation = (
 	citationJson: any[],
 	citationApa: string,
-	inlineStyle: string,
+	inlineStyle: CitationInlineStyleKind,
 	fallbackValue: string,
 ) => {
 	if (inlineStyle === 'authorYear') {
@@ -66,8 +68,8 @@ const getInlineCitation = (
 
 const getSingleStructuredCitation = async (
 	structuredInput: string,
-	citationStyle: string,
-	inlineStyle: string,
+	citationStyle: CitationStyleKind,
+	inlineStyle: CitationInlineStyleKind,
 ) => {
 	try {
 		const fallbackValue = generateFallbackHash(structuredInput);
@@ -120,13 +122,9 @@ export const getStructuredCitations = async (
 	return structuredCitationsMap;
 };
 
-export const getStructuredCitationsForPub = (pubData, pubDocument) => {
-	const { initialDoc, citationStyle, citationInlineStyle } = pubData;
-
-	const { footnotes, citations } = initialDoc
-		? getNotes(pubDocument)
-		: { footnotes: [] as any[], citations: [] };
-
+export const getStructuredCitationsForPub = (pubData: Pub, pubDocument: Node) => {
+	const { citationStyle = 'apa', citationInlineStyle = 'count' } = pubData;
+	const { footnotes, citations } = getNotes(pubDocument);
 	const structuredValuesInDoc = [
 		...new Set([...footnotes, ...citations].map((note) => note.structuredValue)),
 	];

@@ -44,6 +44,7 @@ const PubDocument = (props: Props) => {
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	const mainContentRef = useRef(null);
 	const sideContentRef = useRef(null);
+	const editorWrapperRef = useRef(null);
 
 	const updateHistoryData = (next) => updateLocalData('history', next);
 
@@ -72,7 +73,11 @@ const PubDocument = (props: Props) => {
 	return (
 		<div className="pub-document-component">
 			{!pubData.isReadOnly && (
-				<PubHeaderFormatting collabData={collabData} disabled={isViewingHistory} />
+				<PubHeaderFormatting
+					collabData={collabData}
+					disabled={isViewingHistory}
+					editorWrapperRef={editorWrapperRef}
+				/>
 			)}
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
@@ -85,7 +90,7 @@ const PubDocument = (props: Props) => {
 						initialFilters={[PubEdgeFilter.Parent]}
 						isolated
 					/>
-					<PubBody />
+					<PubBody editorWrapperRef={editorWrapperRef} />
 					{!isViewingHistory && (canEdit || canEditDraft) && !pubData.isReadOnly && (
 						<PubFileImport
 							editorChangeObject={collabData.editorChangeObject}

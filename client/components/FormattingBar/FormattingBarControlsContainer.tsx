@@ -4,37 +4,30 @@ import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
 import { useFocusTrap } from 'client/utils/useFocusTrap';
-import { Falsy } from 'types';
 import { EditorChangeObject, mouseEventSelectsNode } from '../Editor';
 
-import { PositioningFn } from './types';
+import { ResolvedControlsConfiguration } from './types';
 
 type Props = {
 	accentColor: string;
-	title: string;
-	captureFocusOnMount?: boolean;
 	children: React.ReactNode;
-	containerRef?: null | React.RefObject<HTMLElement>;
 	editorChangeObject: EditorChangeObject;
-	floatingPosition: Falsy | ReturnType<PositioningFn>;
-	isFullScreenWidth?: boolean;
+	controlsConfiguration: ResolvedControlsConfiguration;
 	onClose: () => unknown;
-	showCloseButton?: boolean;
 };
 
-const FormattingBarPopover = (props: Props) => {
+const FormattingBarControlsContainer = (props: Props) => {
+	const { accentColor, children, editorChangeObject, onClose, controlsConfiguration } = props;
+
 	const {
-		accentColor,
+		isFullScreenWidth,
+		kind,
+		style,
+		container,
+		showCloseButton,
 		title,
 		captureFocusOnMount,
-		children,
-		containerRef,
-		editorChangeObject,
-		floatingPosition,
-		isFullScreenWidth,
-		onClose,
-		showCloseButton,
-	} = props;
+	} = controlsConfiguration;
 	const [capturesFocus, setCapturesFocus] = useState(captureFocusOnMount);
 
 	const focusTrap = useFocusTrap({
@@ -64,15 +57,15 @@ const FormattingBarPopover = (props: Props) => {
 		return () => document.removeEventListener('keydown', handler, options);
 	}, [capturesFocus]);
 
-	const popover = (
+	const wrapper = (
 		<div
 			aria-label={`Editing ${title} options`}
 			className={classNames(
-				'formatting-bar-popover-component',
-				!!floatingPosition && 'floating bp3-elevation-2',
+				'formatting-bar-controls-container-component',
+				kind === 'floating' && 'floating bp3-elevation-2',
 				isFullScreenWidth && 'full-screen-width',
 			)}
-			style={{ background: accentColor, ...floatingPosition }}
+			style={{ background: accentColor, ...style }}
 			ref={focusTrap.ref}
 		>
 			<div className="inner">{children}</div>
@@ -90,10 +83,10 @@ const FormattingBarPopover = (props: Props) => {
 		</div>
 	);
 
-	if (floatingPosition && containerRef?.current) {
-		return ReactDOM.createPortal(popover, containerRef?.current);
+	if (kind === 'floating') {
+		return ReactDOM.createPortal(wrapper, container);
 	}
-	return popover;
+	return wrapper;
 };
 
-export default FormattingBarPopover;
+export default FormattingBarControlsContainer;

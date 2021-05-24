@@ -18,6 +18,10 @@ import Discussion from './PubDiscussions/Discussion';
 
 require('./pubBody.scss');
 
+type Props = {
+	editorWrapperRef: React.Ref<HTMLDivElement>;
+};
+
 let setSavingTimeout;
 
 const shouldSuppressEditorErrors = () => {
@@ -28,7 +32,8 @@ const shouldSuppressEditorErrors = () => {
 	return false;
 };
 
-const PubBody = () => {
+const PubBody = (props: Props) => {
+	const { editorWrapperRef } = props;
 	const { communityData } = usePageContext();
 	const {
 		pubData,
@@ -125,7 +130,7 @@ const PubBody = () => {
 	}, []);
 
 	return (
-		<main className="pub-body-component">
+		<main className="pub-body-component" ref={editorWrapperRef}>
 			<style>
 				{`
 					.editor.ProseMirror h1#abstract:first-child {

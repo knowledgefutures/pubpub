@@ -9,8 +9,8 @@ import { EditorChangeObject } from 'client/components/Editor';
 
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';
-import FormattingBarPopover from './FormattingBarPopover';
-import { FormattingBarButtonData, PopoverStyle } from './types';
+import FormattingBarControlsContainer from './FormattingBarControlsContainer';
+import { FormattingBarButtonData, ControlsConfiguration } from './types';
 import { getButtonPopoverComponent } from './utils';
 import { usePendingAttrs } from './hooks/usePendingAttrs';
 import { useControlsState, ButtonState } from './hooks/useControlsState';
@@ -18,15 +18,13 @@ import { useControlsState, ButtonState } from './hooks/useControlsState';
 require('./formattingBar.scss');
 
 type Props = {
-	popoverContainerRef?: React.RefObject<HTMLElement>;
 	editorChangeObject: EditorChangeObject;
 	buttons: FormattingBarButtonData[][];
 	showBlockTypes?: boolean;
 	isSmall?: boolean;
 	isTranslucent?: boolean;
-	isFullScreenWidth?: boolean;
 	citationStyle?: string;
-	popoverStyle?: PopoverStyle;
+	controlsConfiguration?: Partial<ControlsConfiguration>;
 };
 
 const shimEditorChangeObject = ({
@@ -38,12 +36,10 @@ const shimEditorChangeObject = ({
 const FormattingBar = (props: Props) => {
 	const {
 		editorChangeObject: propsEditorChangeObject,
-		popoverContainerRef,
 		isSmall = false,
 		showBlockTypes = !isSmall,
-		popoverStyle = isSmall ? 'floating' : 'anchored',
+		controlsConfiguration = {},
 		isTranslucent = false,
-		isFullScreenWidth = false,
 		citationStyle = 'apa',
 		buttons,
 	} = props;
@@ -64,15 +60,19 @@ const FormattingBar = (props: Props) => {
 	const {
 		openedButton,
 		setOpenedButton,
-		controlsPosition,
 		selectedNodeId,
-		ControlsComponent,
 		buttonStates,
+		resolvedControlsConfiguration,
 	} = useControlsState({
 		buttons,
-		popoverStyle,
 		editorChangeObject,
-		positioningRootRef: popoverContainerRef || wrapperRef,
+		controlsConfiguration: {
+			kind: isSmall ? 'floating' : 'anchored',
+			container: wrapperRef.current!,
+			isAbsolutelyPositioned: false,
+			isFullScreenWidth: false,
+			...controlsConfiguration,
+		},
 	});
 
 	useEffect(() => {
@@ -88,7 +88,15 @@ const FormattingBar = (props: Props) => {
 	}, [openedButton]);
 
 	const renderButtonState = (buttonState: ButtonState) => {
-		const { button, isOpen, isActive, isIndicated, isDisabled, onClick } = buttonState;
+		const {
+			button,
+			isOpen,
+			isActive,
+			isIndicated,
+			isDisabled,
+			isDetached,
+			onClick,
+		} = buttonState;
 		const maybeEditorView = button.key === 'media' && { view: editorChangeObject.view };
 		const PopoverComponent = getButtonPopoverComponent(button, isDisabled);
 
@@ -103,7 +111,7 @@ const FormattingBar = (props: Props) => {
 				isActive={isActive}
 				isIndicated={isIndicated && !isOpen}
 				isOpen={isOpen}
-				isDetached={isOpen && !!controlsPosition}
+				isDetached={isDetached}
 				isSmall={isSmall}
 				popoverContent={PopoverComponent && <PopoverComponent />}
 				accentColor={communityData.accentColorDark}
@@ -120,6 +128,30 @@ const FormattingBar = (props: Props) => {
 				{states.map(renderButtonState)}
 			</React.Fragment>
 		);
+	};
+
+	const renderControls = () => {
+		if (resolvedControlsConfiguration) {
+			const { component: ControlsComponent } = resolvedControlsConfiguration;
+			return (
+				<FormattingBarControlsContainer
+					controlsConfiguration={resolvedControlsConfiguration}
+					editorChangeObject={editorChangeObject}
+					accentColor={communityData.accentColorDark}
+					onClose={() => setOpenedButton(null)}
+				>
+					<ControlsComponent
+						key={selectedNodeId}
+						editorChangeObject={editorChangeObject}
+						isSmall={isSmall}
+						citationStyle={citationStyle}
+						pendingAttrs={pendingAttrs}
+						onClose={() => setOpenedButton(null)}
+					/>
+				</FormattingBarControlsContainer>
+			);
+		}
+		return null;
 	};
 
 	return (
@@ -145,28 +177,7 @@ const FormattingBar = (props: Props) => {
 				)}
 				{buttonStates.map(renderButtonGroup)}
 			</Toolbar>
-			{ControlsComponent && openedButton && (
-				<FormattingBarPopover
-					editorChangeObject={editorChangeObject}
-					accentColor={communityData.accentColorDark}
-					title={openedButton.ariaTitle || openedButton.title}
-					isFullScreenWidth={isFullScreenWidth}
-					containerRef={popoverContainerRef}
-					floatingPosition={controlsPosition}
-					captureFocusOnMount={openedButton.controls?.captureFocusOnMount}
-					showCloseButton={openedButton.controls?.showCloseButton}
-					onClose={() => setOpenedButton(null)}
-				>
-					<ControlsComponent
-						key={selectedNodeId}
-						editorChangeObject={editorChangeObject}
-						isSmall={isSmall}
-						citationStyle={citationStyle}
-						pendingAttrs={pendingAttrs}
-						onClose={() => setOpenedButton(null)}
-					/>
-				</FormattingBarPopover>
-			)}
+			{renderControls()}
 		</div>
 	);
 };

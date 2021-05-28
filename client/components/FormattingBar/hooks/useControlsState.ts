@@ -2,17 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { EditorChangeObject, insertNodeIntoEditor } from 'components/Editor';
 
-import { FormattingBarButtonData, PopoverStyle } from '../types';
-import { positionNearSelection } from '../positioning';
+import { FormattingBarButtonData, ControlsConfiguration } from '../types';
+import { resolveControlsConfiguration } from '../controls';
 import { deepMap } from '../utils';
 import { useInteractionCount } from './useInteractionCount';
 import { useCommandStates, WithCommandState } from './useCommandStates';
 
 type Options = {
 	buttons: FormattingBarButtonData[][];
-	positioningRootRef?: React.RefObject<HTMLElement>;
 	editorChangeObject: EditorChangeObject;
-	popoverStyle: PopoverStyle;
+	controlsConfiguration: ControlsConfiguration;
 };
 
 type IntermediateState = {
@@ -100,27 +99,8 @@ const getButtonStates = (
 	state: IntermediateState,
 ) => deepMap(buttons, (button) => getButtonState(button, state));
 
-const getControlsPosition = (
-	openedButton: FormattingBarButtonData,
-	floatPopovers: boolean,
-	editorChangeObject: EditorChangeObject,
-	positioningRootRef?: React.RefObject<HTMLElement>,
-) => {
-	if (openedButton) {
-		const container = positioningRootRef?.current ?? undefined;
-		const position = openedButton.controls?.position?.(editorChangeObject, container);
-		if (position) {
-			return position;
-		}
-		if (floatPopovers) {
-			return positionNearSelection(editorChangeObject, container);
-		}
-	}
-	return null;
-};
-
 export const useControlsState = (options: Options) => {
-	const { buttons, editorChangeObject, positioningRootRef, popoverStyle } = options;
+	const { buttons, editorChangeObject, controlsConfiguration } = options;
 	const flatButtons = useMemo(() => buttons.reduce((a, b) => [...a, ...b], []), [buttons]);
 	const [openedButton, setOpenedButton] = useState<FormattingBarButtonData | null>(null);
 	const interactionCount = useInteractionCount(editorChangeObject.latestDomEvent);
@@ -135,28 +115,22 @@ export const useControlsState = (options: Options) => {
 	const selectedNodeId = editorChangeObject.selectedNode?.attrs?.id;
 	const effectKey = `${selectedNodeId}-${interactionCount}`;
 
-	const indicatedButtons = flatButtons.filter(
-		(button) => button.controls && button.controls.indicate(editorChangeObject),
-	);
-
+	const indicatedButtons = flatButtons.filter((b) => b.controls?.indicate(editorChangeObject));
 	const indicatedButtonsString = indicatedButtons.map((button) => button.key).join('-');
 
-	const controlsComponent =
-		popoverStyle !== 'none' &&
-		openedButton &&
-		openedButton?.controls?.indicate(editorChangeObject) &&
-		openedButton?.controls?.show(editorChangeObject) &&
-		openedButton?.controls.component;
+	const resolvedControlsConfiguration = resolveControlsConfiguration(
+		controlsConfiguration,
+		editorChangeObject,
+		openedButton,
+	);
 
-	const controlsPosition =
-		controlsComponent &&
-		openedButton &&
-		getControlsPosition(
-			openedButton,
-			popoverStyle === 'floating',
-			editorChangeObject,
-			positioningRootRef,
-		);
+	const buttonStates = getButtonStates(buttonsWithCommandState, {
+		indicatedButtons,
+		openedButton,
+		setOpenedButton,
+		editorChangeObject,
+		controlsDetached: resolvedControlsConfiguration?.kind === 'floating',
+	});
 
 	useEffect(() => {
 		const openableIndicatedButton = indicatedButtons.find(
@@ -184,20 +158,11 @@ export const useControlsState = (options: Options) => {
 		return () => document.removeEventListener('keydown', handler, handleOptions);
 	}, [indicatedButtons, openedButton, setOpenedButton, editorElement]);
 
-	const buttonStates = getButtonStates(buttonsWithCommandState, {
-		indicatedButtons,
-		openedButton,
-		setOpenedButton,
-		editorChangeObject,
-		controlsDetached: !!controlsPosition,
-	});
-
 	return {
 		openedButton,
 		setOpenedButton,
 		selectedNodeId,
 		buttonStates,
-		controlsPosition: controlsPosition || null,
-		ControlsComponent: controlsComponent,
+		resolvedControlsConfiguration,
 	};
 };

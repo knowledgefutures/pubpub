@@ -37,7 +37,7 @@ const MinimalEditor = (props: Props) => {
 	} = props;
 	const [changeObject, setChangeObject] = useState<EditorChangeObject | null>(null);
 	const [FormattingBar, setFormattingBar] = useState<any>(null as any);
-	const popoverContainerRef = useRef<HTMLDivElement>(null as any);
+	const controlsContainerRef = useRef<HTMLDivElement>(null as any);
 
 	useEffect(() => {
 		if (focusOnLoad && changeObject?.view) {
@@ -93,15 +93,16 @@ const MinimalEditor = (props: Props) => {
 				<FormattingBar
 					editorChangeObject={changeObject}
 					isTranslucent={isTranslucent}
-					popoverContainerRef={popoverContainerRef}
 					showBlockTypes={false}
 					isSmall
-					floatPopovers
+					controlsConfiguration={{
+						container: controlsContainerRef.current!,
+					}}
 				/>
 			)}
 			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 			<div className="editor-wrapper" onClick={handleWrapperClick}>
-				<div ref={popoverContainerRef} />
+				<div ref={controlsContainerRef} />
 				<Editor
 					initialContent={initialContent}
 					placeholder={placeholder}

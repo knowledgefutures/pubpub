@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { DefinitelyHas } from 'types';
 
 import { EditorChangeObject } from '../Editor';
@@ -20,17 +22,43 @@ export type EditorChangeObjectWithNode = DefinitelyHas<
 	'selectedNode' | 'updateNode' | 'changeNode'
 >;
 
-export type PositioningFn = (
-	eco: EditorChangeObject,
-	wrapper?: HTMLElement,
-) => { transform: string };
+export type GetBoundsFn = (
+	editorChangeObject: EditorChangeObject,
+) => {
+	top: number;
+	bottom: number;
+	left: number;
+	right: number;
+};
+
+export type ControlsKind = 'anchored' | 'floating' | 'none';
+
+export type ControlsConfiguration = {
+	kind: ControlsKind;
+	container: HTMLElement;
+	isAbsolutelyPositioned: boolean;
+	isFullScreenWidth: boolean;
+};
+
+export type ResolvedControlsConfiguration = ControlsConfiguration & {
+	style: React.CSSProperties;
+	component: React.ComponentType<any>;
+	captureFocusOnMount: boolean;
+	showCloseButton: boolean;
+	title: string;
+};
+
+export type ControlsFloatingPositionFn = (
+	editorChangeObject: EditorChangeObject,
+	controlsConfiguration: ControlsConfiguration,
+) => React.CSSProperties;
 
 export type FormattingBarButtonDataControls = {
 	component: React.ComponentType<any>;
 	indicate: EditorChangeObjectDecider;
 	trigger: EditorChangeObjectDecider;
 	show: EditorChangeObjectDecider;
-	position?: PositioningFn;
+	floatingPosition?: ControlsFloatingPositionFn;
 	enterKeyTriggers?: boolean;
 	captureFocusOnMount?: boolean;
 	showCloseButton?: boolean;
@@ -47,5 +75,3 @@ export type FormattingBarButtonData = {
 	isToggle?: boolean;
 	isDisabled?: EditorChangeObjectDecider;
 } & ({ command: CommandSpec } | { insertNodeType: string } | { isMedia: true });
-
-export type PopoverStyle = 'anchored' | 'floating' | 'none';

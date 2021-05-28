@@ -27,15 +27,23 @@ import {
 	ControlsTable,
 } from './controlComponents';
 import MediaButton from './FormattingBarMediaButton';
-import { positionNearSelection, positionNearLink } from './positioning';
-import { FormattingBarButtonData, FormattingBarButtonPopoverCondition } from './types';
+import { positionNearSelection, positionNearLink } from './controls/positioning';
+import {
+	FormattingBarButtonData,
+	FormattingBarButtonDataControls,
+	FormattingBarButtonPopoverCondition,
+} from './types';
 
 const triggerOnClick = (changeObject) => {
 	const { latestDomEvent } = changeObject;
 	return latestDomEvent?.type === 'click';
 };
 
-const nodeControls = (component, indicatedNodeType, restOptions?) => {
+const nodeControls = (
+	component: React.ComponentType<any>,
+	indicatedNodeType: string | string[],
+	restOptions?: Partial<FormattingBarButtonDataControls>,
+): FormattingBarButtonDataControls => {
 	const indicatedTypes = Array.isArray(indicatedNodeType)
 		? indicatedNodeType
 		: [indicatedNodeType];
@@ -48,7 +56,7 @@ const nodeControls = (component, indicatedNodeType, restOptions?) => {
 		show: (editorChangeObject) => !!editorChangeObject.selectedNode,
 		indicate: (editorChangeObject) => {
 			const { selectedNode } = editorChangeObject;
-			return selectedNode && indicatedTypes.some((type) => type === selectedNode.type.name);
+			return !!selectedNode && indicatedTypes.some((type) => type === selectedNode.type.name);
 		},
 		...restOptions,
 	};
@@ -117,7 +125,7 @@ export const link: FormattingBarButtonData = {
 			);
 		},
 		show: (changeObject) => !!changeObject.activeLink,
-		position: positionNearLink,
+		floatingPosition: positionNearLink,
 	},
 };
 
@@ -203,7 +211,7 @@ export const reference: FormattingBarButtonData = {
 	icon: 'at',
 	insertNodeType: 'reference',
 	controls: nodeControls(ControlsReference, 'reference', {
-		position: positionNearSelection,
+		floatingPosition: positionNearSelection,
 		showCloseButton: false,
 	}),
 	isDisabled: (editorChangeObject: EditorChangeObject) => {
@@ -253,7 +261,7 @@ export const table: FormattingBarButtonData = {
 		indicate: ({ selectionInTable }) => selectionInTable,
 		show: showOrTriggerTable,
 		trigger: showOrTriggerTable,
-		position: positionNearSelection,
+		floatingPosition: positionNearSelection,
 		component: ControlsTable,
 	},
 };

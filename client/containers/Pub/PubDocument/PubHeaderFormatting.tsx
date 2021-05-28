@@ -11,10 +11,11 @@ require('./pubHeaderFormatting.scss');
 type Props = {
 	collabData: any;
 	disabled: boolean;
+	editorWrapperRef: React.RefObject<HTMLDivElement>;
 };
 
 const PubHeaderFormatting = (props: Props) => {
-	const { collabData, disabled } = props;
+	const { collabData, disabled, editorWrapperRef } = props;
 	const { scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 
@@ -33,7 +34,11 @@ const PubHeaderFormatting = (props: Props) => {
 			<FormattingBar
 				buttons={buttons.fullButtonSet}
 				editorChangeObject={props.collabData.editorChangeObject || {}}
-				isFullScreenWidth={true}
+				controlsConfiguration={{
+					container: editorWrapperRef.current!,
+					isAbsolutelyPositioned: true,
+					isFullScreenWidth: true,
+				}}
 			/>
 			<div className="right-content">
 				<PubHeaderCollaborators collabData={props.collabData} />

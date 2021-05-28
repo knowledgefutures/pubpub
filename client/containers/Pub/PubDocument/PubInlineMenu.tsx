@@ -50,7 +50,7 @@ const PubInlineMenu = () => {
 				isTranslucent
 				editorChangeObject={collabData.editorChangeObject}
 				showBlockTypes={false}
-				popoverStyle="none"
+				controlsConfiguration={{ kind: 'none' }}
 			/>
 		);
 	};

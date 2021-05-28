@@ -21,6 +21,7 @@ const commandFiles = {
 	checkpointBackfill: './dashboardMigrations/backfillCheckpoints',
 	clone: './clone',
 	devshell: './devshell',
+	depositCollectionPubs: './depositCollectionPubs',
 	emailUsers: './emailUsers',
 	figurelist: './figurelist',
 	firebaseDownload: './firebaseDownload',

@@ -24,7 +24,7 @@ export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun, createEx
 				pubId: pub.id,
 				createExports,
 			}).catch((err) => console.error(err)),
-		{ concurrency: 25 },
+		{ concurrency: 1 },
 	);
 	await Promise.all(
 		collections.map((collection) =>

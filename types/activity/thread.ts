@@ -1,4 +1,4 @@
-import { InsertableActivityItemBase } from './util';
+import { InsertableActivityItemBase } from './base';
 
 export type ThreadActivityItemBase = InsertableActivityItemBase & {
 	payload: {

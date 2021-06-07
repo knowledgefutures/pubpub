@@ -91,5 +91,13 @@
 		"react/no-unescaped-entities": ["error", { "forbid": [">", "}"] }],
 		"react/require-default-props": 0,
 		"space-before-function-paren": 0
-	}
+	},
+	"overrides": [
+		{
+			"files": "client/utils/activity/renderers/*",
+			"rules": {
+				"react/prop-types": 0
+			}
+		}
+	]
 }

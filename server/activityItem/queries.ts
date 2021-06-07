@@ -1,5 +1,4 @@
 import * as types from 'types';
-
 import {
 	Collection,
 	Member,
@@ -16,8 +15,89 @@ import {
 
 import { getDiffsForPayload, getChangeFlagsForPayload, createActivityItem } from './utils';
 
-export const createCommunityActivityItem = async (
-	kind: 'community-created' | 'community-updated',
+const resolvePartialMemberItem = async (member: types.Member) => {
+	if ('pubId' in member) {
+		const pub: types.Pub = await Pub.findOne({ where: { id: member.pubId } });
+		return {
+			tag: 'pub',
+			value: {
+				communityId: pub.communityId,
+				pubId: pub.id,
+				payload: {
+					pub: {
+						title: pub.title,
+					},
+				},
+			},
+		} as const;
+	}
+	if ('collectionId' in member) {
+		const collection: types.Collection = await Collection.findOne({
+			where: { id: member.collectionId },
+		});
+		return {
+			tag: 'collection',
+			value: {
+				communityId: collection.communityId,
+				collectionId: collection.id,
+				payload: {
+					collection: {
+						title: collection.title,
+					},
+				},
+			},
+		} as const;
+	}
+	if ('communityId' in member) {
+		const community: types.Community = await Community.findOne({
+			where: { id: member.communityId },
+		});
+		return {
+			tag: 'community',
+			value: {
+				communityId: community.id,
+				payload: {
+					community: {
+						title: community.title,
+					},
+				},
+			},
+		} as const;
+	}
+	throw new Error('Invalid Member');
+};
+
+const buildMemberActivityItemParams = <
+	SharedItem extends Record<string, any>,
+	Rest extends { communityId: string },
+	Payload extends Record<string, any>
+>(
+	item: SharedItem,
+	value: Rest & { payload: Payload },
+) => {
+	const { payload, ...rest } = value;
+	return {
+		...item,
+		...rest,
+		payload: { ...item.payload, ...payload },
+	};
+};
+
+export const createCommunityCreatedActivityItem = async (actorId: string, communityId: string) => {
+	const community: types.Community = await Community.findOne({ where: { id: communityId } });
+	return createActivityItem({
+		actorId,
+		kind: 'community-created' as const,
+		communityId,
+		payload: {
+			community: {
+				title: community.title,
+			},
+		},
+	});
+};
+
+export const createCommunityUpdatedActivityItem = async (
 	actorId: string,
 	oldCommunity: types.Community,
 	communityId: string,
@@ -26,7 +106,7 @@ export const createCommunityActivityItem = async (
 	const diffs = getDiffsForPayload(community, oldCommunity, ['title']);
 	return createActivityItem({
 		actorId,
-		kind,
+		kind: 'community-updated' as const,
 		communityId,
 		payload: {
 			...diffs,
@@ -37,42 +117,81 @@ export const createCommunityActivityItem = async (
 	});
 };
 
-export const createMemberUpdatedActivityItem = async (
-	kind: 'member-updated',
-	actorId: string,
-	communityId: string,
-	memberId: string,
-	oldMember: types.Member,
-) => {
-	const member: types.Member = await Member.findOne({ where: { id: memberId } });
-	const diffs = getDiffsForPayload(member, oldMember, ['permissions']);
-	return createActivityItem({
-		kind,
+export const createMemberCreatedActivityItem = async (actorId: string, memberId: string) => {
+	const member = await Member.findOne({ where: { id: memberId } });
+	const partial = await resolvePartialMemberItem(member);
+	const item = {
+		kind: 'member-created' as const,
 		actorId,
-		communityId,
-		payload: {
-			userId: member.userId,
-			...diffs,
-		},
-	});
-};
-
-export const createMemberActivityItem = async (
-	kind: 'member-created' | 'member-removed',
-	actorId: string,
-	communityId: string,
-	memberId: string,
-) => {
-	const member: types.Member = await Member.findOne({ where: { id: memberId } });
-	return createActivityItem({
-		kind,
-		actorId,
-		communityId,
 		payload: {
 			userId: member.userId,
 			permissions: member.permissions,
 		},
-	});
+	};
+	// We're doing this hand-holding to remind TypeScript that the 'payload' and 'rest' parts
+	// of the discriminated union of partial.value must go together -- if you see a pubId in 'rest'
+	// then we can infer that 'payload' must have {pub: {title: string}} -- and we need TypeScript
+	// to understand this as well.
+	if (partial.tag === 'pub') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	if (partial.tag === 'collection') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	if (partial.tag === 'community') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	throw new Error('Invalid Scope');
+};
+
+export const createMemberRemovedActivityItem = async (actorId: string, memberId: string) => {
+	const member = await Member.findOne({ where: { id: memberId } });
+	const partial = await resolvePartialMemberItem(member);
+	const item = {
+		kind: 'member-removed' as const,
+		actorId,
+		payload: {
+			userId: member.userId,
+		},
+	};
+	if (partial.tag === 'pub') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	if (partial.tag === 'collection') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	if (partial.tag === 'community') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	throw new Error('Invalid Scope');
+};
+
+export const createMemberUpdatedActivityItem = async (
+	actorId: string,
+	memberId: string,
+	oldMember: types.Member,
+) => {
+	const member: types.Member = await Member.findOne({ where: { id: memberId } });
+	const partial = await resolvePartialMemberItem(member);
+	const diffs = getDiffsForPayload(member, oldMember, ['permissions']);
+	const item = {
+		kind: 'member-updated' as const,
+		actorId,
+		payload: {
+			userId: member.userId,
+			...diffs,
+		},
+	};
+	if (partial.tag === 'pub') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	if (partial.tag === 'collection') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	if (partial.tag === 'community') {
+		return createActivityItem(buildMemberActivityItemParams(item, partial.value));
+	}
+	throw new Error('Invalid Scope');
 };
 
 export const createCollectionActivityItem = async (

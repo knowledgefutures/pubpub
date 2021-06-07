@@ -1,6 +1,6 @@
 import { Diff } from '../util';
 
-import { InsertableActivityItemBase } from './util';
+import { InsertableActivityItemBase } from './base';
 
 type CommunityActivityItemBase = InsertableActivityItemBase & {
 	payload: {

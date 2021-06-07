@@ -6,9 +6,10 @@ import {
 	ActivityAssociationType,
 	activityAssociationTypes,
 	ActivityAssociationIds,
-	ActivityItemsContext,
+	ActivityItemsFetchResult,
 	WithId,
 	IdIndex,
+	Scope,
 } from 'types';
 import {
 	ActivityItem,
@@ -30,8 +31,6 @@ import { indexById } from 'utils/arrays';
 type PromiseRecord<T extends { [k: string]: any }> = {
 	[K in keyof T]: Promise<T[K]>;
 };
-
-type Scope = { communityId: string } & ({ pubId: string } | { collectionId: string } | {});
 
 type FetchActivityItemsOptions = {
 	scope: Scope;
@@ -81,7 +80,10 @@ const fetchActivityItemModels = async (
 	return models.map((model) => model.toJSON());
 };
 
-const getActivityItemAssociationIds = (items: types.ActivityItem[]): ActivityAssociationIds => {
+const getActivityItemAssociationIds = (
+	items: types.ActivityItem[],
+	scope: Scope,
+): ActivityAssociationIds => {
 	const associationIds = createAssociationsArrays();
 	const {
 		collectionPub,
@@ -97,6 +99,13 @@ const getActivityItemAssociationIds = (items: types.ActivityItem[]): ActivityAss
 		thread,
 		user,
 	} = associationIds;
+	community.push(scope.communityId);
+	if ('pubId' in scope) {
+		pub.push(scope.pubId);
+	}
+	if ('collectionId' in scope) {
+		collection.push(scope.collectionId);
+	}
 	items.forEach((item) => {
 		community.push(item.communityId);
 		user.push(item.actorId);
@@ -193,9 +202,9 @@ const fetchAssociations = (
 
 export const fetchActivityItems = async (
 	options: FetchActivityItemsOptions,
-): Promise<ActivityItemsContext> => {
+): Promise<ActivityItemsFetchResult> => {
 	const activityItems = await fetchActivityItemModels(options);
-	const associationIds = getActivityItemAssociationIds(activityItems);
+	const associationIds = getActivityItemAssociationIds(activityItems, options.scope);
 	const associations = await fetchAssociations(associationIds);
 	return { activityItems, associations };
 };

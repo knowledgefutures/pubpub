@@ -1,6 +1,6 @@
 import { Diff } from '../util';
 
-import { InsertableActivityItemBase } from './util';
+import { InsertableActivityItemBase } from './base';
 
 type CollectionActivityItemBase = InsertableActivityItemBase & {
 	collectionId: string;
@@ -21,6 +21,7 @@ export type CollectionUpdatedActivityItem = CollectionActivityItemBase & {
 		isPublic?: Diff<boolean>;
 		isRestricted?: Diff<boolean>;
 		title?: Diff<string>;
+		doi?: Diff<null | string>;
 		layout?: true;
 		metadata?: true;
 	};

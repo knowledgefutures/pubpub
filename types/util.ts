@@ -7,4 +7,8 @@ type PatchFnUpdaterArg<T> = (current: T) => Partial<T>;
 type PatchFnPatchArg<T> = Partial<T>;
 export type PatchFnArg<T> = PatchFnPatchArg<T> | PatchFnUpdaterArg<T>;
 export type PatchFn<T> = (arg: PatchFnArg<T>) => unknown;
+
 export type Diff<T> = { from: T; to: T };
+
+export type WithId = { id: string };
+export type IdIndex<T extends WithId> = Record<string, T>;

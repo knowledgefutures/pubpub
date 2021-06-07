@@ -14,3 +14,11 @@ export type ActivityItem = InsertableActivityItem & {
 	createdAt: string;
 	updatedAt: string;
 };
+
+export {
+	ActivityAssociationIds,
+	ActivityAssociations,
+	ActivityAssociationType,
+	activityAssociationTypes,
+	ActivityItemsContext,
+} from './associations';

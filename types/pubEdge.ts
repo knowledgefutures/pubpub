@@ -1,6 +1,7 @@
 import { Pub } from './pub';
 
 export type ExternalPublication = {
+	id: string;
 	title: string;
 	url: string;
 	contributors?: string[];

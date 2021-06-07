@@ -264,6 +264,7 @@ export const createPubEdgeActivityItem = async (
 	const target = isExternalEdge
 		? {
 				externalPublication: {
+					id: pubEdge.externalPublication.id,
 					title: pubEdge.externalPublication.title,
 					url: pubEdge.externalPublication.url,
 				},

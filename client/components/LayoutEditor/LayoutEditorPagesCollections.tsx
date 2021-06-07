@@ -45,13 +45,15 @@ const getAllItems = (
 	].sort((a, b) => (a.title > b.title ? 1 : -1));
 };
 
-const LayoutEditorPages = (props: Props) => {
+const LayoutEditorPagesCollections = (props: Props) => {
 	const { layoutIndex, onChange, content, collections, pages } = props;
 
 	const allItems = useMemo(() => getAllItems(collections, pages), [collections, pages]);
 	const [selectedItems, availableItems] = useMemo(() => {
 		return [
-			content.items.map((ci) => allItems.find((item) => ci.id === item.id)!),
+			content.items
+				.map((ci) => allItems.find((item) => ci.id === item.id))
+				.filter((x): x is OrderableItem => !!x),
 			allItems.filter((item) => !content.items.some((ci) => ci.id === item.id)),
 		];
 	}, [content.items, allItems]);
@@ -109,4 +111,4 @@ const LayoutEditorPages = (props: Props) => {
 		</div>
 	);
 };
-export default LayoutEditorPages;
+export default LayoutEditorPagesCollections;

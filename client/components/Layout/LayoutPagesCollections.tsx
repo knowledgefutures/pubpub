@@ -49,7 +49,10 @@ const LayoutPagesCollections = (props: Props) => {
 				)}
 				<div className="row">
 					<div className="col-12">
-						<div className="pages-wrapper">
+						<div
+							className="pages-wrapper"
+							style={content.justify ? { justifyContent: content.justify } : {}}
+						>
 							{resolveItemsFromContent(content, collections, pages).map((item) => (
 								<PagePreview key={item.id} pageData={item} />
 							))}

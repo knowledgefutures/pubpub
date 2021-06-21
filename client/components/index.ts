@@ -34,7 +34,14 @@ export { default as LicenseSelect } from './LicenseSelect/LicenseSelect';
 export { default as LinkedPageSelect } from './LinkedPageSelect/LinkedPageSelect';
 export { default as InheritedMembersBlock } from './Members/InheritedMembersBlock';
 export { default as MemberRow } from './Members/MemberRow';
-export { Menu, MenuButton, MenuConfigProvider, MenuItem } from './Menu';
+export {
+	Menu,
+	MenuButton,
+	MenuConfigProvider,
+	MenuItem,
+	MenuSelect,
+	MenuSelectItems,
+} from './Menu';
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
 export { default as NavBar } from './NavBar/NavBar';
 export { default as OrderPicker } from './OrderPicker/OrderPicker';

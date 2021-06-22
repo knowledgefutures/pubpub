@@ -17,6 +17,7 @@ import { createCollectionPub } from 'server/collectionPub/queries';
 import { Collection, PubAttribution } from 'server/models';
 import { extensionToPandocFormat, bibliographyFormats } from 'utils/import/formats';
 
+import { setSummarizeParentScopesOnPubCreation } from 'server/scopeSummary';
 import { getFullPathsInDir, extensionFor } from '../../util';
 import { importFiles } from '../../import';
 import { uploadFileToAssetStore, getUrlForAssetKey } from '../../assetStore';
@@ -452,6 +453,8 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 	const { warnings, proposedMetadata, rawMetadata } = importResult;
 	let { doc } = importResult;
 
+	setSummarizeParentScopesOnPubCreation(false);
+
 	const resolvedDirective = await resolveDirectiveValues(
 		directive,
 		sourceFiles,
@@ -480,6 +483,9 @@ export const resolvePubDirective = async ({ directive, targetPath, community, co
 
 	// eslint-disable-next-line no-console
 	console.log('created Pub:', pub.title);
+
+	setSummarizeParentScopesOnPubCreation(true);
+
 	return {
 		pub,
 		collection: createdTags,

@@ -1,6 +1,12 @@
 import { Discussion, ReviewNew, Pub, CollectionPub, Collection, Community } from 'server/models';
 import { summarizeCollection, summarizeCommunity, summarizePub } from './queries';
 
+let summarizeParentScopesOnPubCreation = true;
+
+export const setSummarizeParentScopesOnPubCreation = (value: boolean) => {
+	summarizeParentScopesOnPubCreation = value;
+};
+
 [Discussion, ReviewNew].forEach((Model) => {
 	Model.afterCreate(async ({ pubId }) => {
 		await summarizePub(pubId);
@@ -11,7 +17,7 @@ import { summarizeCollection, summarizeCommunity, summarizePub } from './queries
 });
 
 Pub.afterCreate(async ({ id }) => {
-	await summarizePub(id);
+	await summarizePub(id, summarizeParentScopesOnPubCreation);
 });
 
 Collection.afterCreate(async ({ id }) => {

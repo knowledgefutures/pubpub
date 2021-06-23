@@ -1,6 +1,26 @@
 .dashboard-activity-container {
     .activity-items {
-        margin-top: 20px;
+        margin-top: 40px;
+    }
+
+    .boundary-group {
+        .heading {
+            margin: 10px 0;
+            position: relative;
+            height: 1px;
+            background: var(--community-accent-dark);
+            color: var(--community-accent-dark);
+            .label {
+                font-size: 12px;
+                position: absolute;
+                background: white;
+                top: 50%;
+                transform: translateY(-50%);
+                border: 1px solid var(--community-accent-dark);
+                border-radius: 100px;
+                padding: 2px 10px;
+            }
+        }
     }
 
     .empty-state {

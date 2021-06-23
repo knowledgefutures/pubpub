@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button, NonIdealState, Spinner } from '@blueprintjs/core';
 
 import { ActivityFilter } from 'types';
@@ -7,6 +7,7 @@ import { DashboardFrame } from 'client/components';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 
 import { useActivityItems } from './useActivityItems';
+import { getBoundaryGroupsForSortedActivityItems, BoundaryGroup } from './boundaries';
 import ActivityItemRow from './ActivityItemRow';
 import ActivityFilters from './ActivityFilters';
 
@@ -32,12 +33,28 @@ const DashboardActivity = (props: Props) => {
 		filters,
 	});
 
+	const boundaryGroups = useMemo(() => getBoundaryGroupsForSortedActivityItems(items), [items]);
+
 	useInfiniteScroll({
 		enabled: !isLoading && !loadedAllItems,
 		useDocumentElement: true,
 		onRequestMoreItems: loadMoreItems,
 		scrollTolerance: 200,
 	});
+
+	const renderBoundaryGroup = (group: BoundaryGroup) => {
+		const { label, key, items: groupItems } = group;
+		return (
+			<div className="boundary-group" key={key}>
+				<div className="heading">
+					<div className="label">{label}</div>
+				</div>
+				{groupItems.map((item) => (
+					<ActivityItemRow item={item} key={item.id} />
+				))}
+			</div>
+		);
+	};
 
 	return (
 		<DashboardFrame className="dashboard-activity-container" title="Activity">
@@ -46,11 +63,9 @@ const DashboardActivity = (props: Props) => {
 				onUpdateActiveFilters={setFilters}
 				scope={scope}
 			/>
-			<div className="activity-items">
-				{items.map((item) => (
-					<ActivityItemRow item={item} key={item.id} />
-				))}
-			</div>
+			{items.length > 0 && (
+				<div className="activity-items">{boundaryGroups.map(renderBoundaryGroup)}</div>
+			)}
 			{items.length === 0 && loadedAllItems && (
 				<NonIdealState
 					icon="clean"

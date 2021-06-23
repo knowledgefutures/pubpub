@@ -7,9 +7,8 @@ $border: 1px solid #ddd;
         '. . excerpt';
     grid-template-columns: 160px 80px 1fr;
     padding: 20px 0;
-    border-top: $border;
 
-    &:last-child {
+    &:not(:last-child) {
         border-bottom: $border;
     }
 
@@ -32,13 +31,14 @@ $border: 1px solid #ddd;
 
         strong {
             color: #999;
+            font-weight: 500;
+            a {
+                color: var(--community-accent-dark);
+            }
         }
 
         a {
             text-decoration: none;
-            strong {
-                color: black;
-            }
             &:hover {
                 text-decoration: underline;
             }

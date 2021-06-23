@@ -13,6 +13,7 @@ require('utils/environment').setEnvironment(process.env.PUBPUB_PRODUCTION, proce
 
 const command = process.argv[2];
 const commandFiles = {
+	backfillCommunityActivity: './activityItem/singleCommunityCli',
 	backfillCheckpoints: './backfillCheckpoints',
 	backfillCrossrefDepositRecords: './backfillCrossrefDepositRecords',
 	backup: './backup/backup',

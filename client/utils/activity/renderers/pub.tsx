@@ -191,7 +191,11 @@ export const renderPubReviewCreated = itemRenderer<PubReviewCreatedActivityItem,
 		);
 	},
 	excerpt: ({ item }) => {
-		return item.payload.threadComment.text;
+		const { threadComment } = item.payload;
+		if (threadComment) {
+			return threadComment.text;
+		}
+		return null;
 	},
 });
 

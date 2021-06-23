@@ -10,7 +10,7 @@ export default (sequelize, dataTypes) => {
 			allowNull: false,
 		},
 		communityId: { type: dataTypes.UUID, allowNull: false },
-		actorId: { type: dataTypes.UUID, allowNull: false },
+		actorId: { type: dataTypes.UUID },
 		collectionId: { type: dataTypes.UUID },
 	});
 };

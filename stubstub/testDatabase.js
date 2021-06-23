@@ -5,7 +5,7 @@ import hasbin from 'hasbin';
 
 const requiredBinaries = ['createdb', 'dropuser', 'dropdb', 'pg_ctl', 'psql'];
 
-const pgDataPath = '/usr/local/var/pubpub-postgres-test';
+const pgDataPath = path.join(process.cwd(), 'pubpub-postgres-test');
 
 const testDbConfig = {
 	username: 'testuser',

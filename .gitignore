@@ -13,4 +13,5 @@ dist
 .node-version
 .vscode
 workers/tasks/export/styles/printDocument.css
+pubpub-postgres-test/
 .pubpub_repl_history*

@@ -1,3 +1,4 @@
+import { MightHave } from 'types/util';
 import { InsertableActivityItemBase } from './base';
 
 export type ThreadActivityItemBase = InsertableActivityItemBase & {
@@ -10,4 +11,8 @@ export type ThreadActivityItemBase = InsertableActivityItemBase & {
 			userId: string;
 		};
 	};
+};
+
+export type MightHaveThreadCommentItemBase = Omit<ThreadActivityItemBase, 'payload'> & {
+	payload: MightHave<ThreadActivityItemBase['payload'], 'threadComment'>;
 };

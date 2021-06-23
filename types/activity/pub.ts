@@ -3,7 +3,7 @@ import { Diff } from '../util';
 
 import { InsertableActivityItemBase } from './base';
 import { DiscussionActivityItemBase } from './discussion';
-import { ThreadActivityItemBase } from './thread';
+import { MightHaveThreadCommentItemBase, ThreadActivityItemBase } from './thread';
 
 type PubActivityItemBase = InsertableActivityItemBase & {
 	pubId: string;
@@ -79,7 +79,7 @@ export type PubDiscussionCommentAddedActivityItem = PubDiscussionActivityItemBas
 type PubReviewActivityItemBase = PubActivityItemBase & { payload: { reviewId: string } };
 
 export type PubReviewCreatedActivityItem = PubReviewActivityItemBase &
-	ThreadActivityItemBase & {
+	MightHaveThreadCommentItemBase & {
 		kind: 'pub-review-created';
 	};
 

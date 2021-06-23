@@ -247,7 +247,11 @@ export const createPubReviewCreatedActivityItem = async (reviewId: string) => {
 	const review: types.DefinitelyHas<types.Review, 'thread'> = await ReviewNew.findOne({
 		where: { id: reviewId },
 		include: [
-			{ model: Thread, as: 'thread', include: [{ model: ThreadComment, as: 'comments' }] },
+			{
+				model: Thread,
+				as: 'thread',
+				include: [{ model: ThreadComment, as: 'comments', order: [['createdAt', 'ASC']] }],
+			},
 		],
 	});
 	const threadComment: types.ThreadComment = review.thread.comments[0];

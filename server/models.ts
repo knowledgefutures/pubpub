@@ -71,12 +71,12 @@ export const ReviewNew = sequelize.import('./review/modelNew');
 export const Thread = sequelize.import('./thread/model');
 export const ThreadComment = sequelize.import('./threadComment/model');
 export const ThreadEvent = sequelize.import('./threadEvent/model');
+export const User = sequelize.import('./user/model');
 export const UserScopeVisit = sequelize.import('./userScopeVisit/model');
+export const UserSubscription = sequelize.import('./userSubscription/model');
 export const ActivityItem = sequelize.import('./activityItem/model');
 export const Visibility = sequelize.import('./visibility/model');
 export const VisibilityUser = sequelize.import('./visibilityUser/model');
-
-export const User = sequelize.import('./user/model');
 export const WorkerTask = sequelize.import('./workerTask/model');
 
 export const attributesPublicUser = [

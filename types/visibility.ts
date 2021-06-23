@@ -1,3 +1,6 @@
+import { Discussion } from './discussion';
+import { Review } from './review';
+
 export type VisibilityUser = {
 	id: string;
 	visibilityId: string;
@@ -9,3 +12,7 @@ export type Visibility = {
 	access: 'private' | 'members' | 'public';
 	users: VisibilityUser[];
 };
+
+export type TaggedVisibilityParent =
+	| { type: 'discussion'; value: Discussion }
+	| { type: 'review'; value: Review };

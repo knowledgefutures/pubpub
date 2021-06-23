@@ -1,3 +1,4 @@
+require('./activityItem/api');
 require('./adminDashboard/api');
 require('./collectionAttribution/api');
 require('./collection/api');

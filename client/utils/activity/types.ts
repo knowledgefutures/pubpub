@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { ActivityItemKind, ActivityItemsFetchResult, InsertableActivityItem, Scope } from 'types';
+import { ActivityAssociations, ActivityItemKind, InsertableActivityItem, Scope } from 'types';
 import { IconName } from 'components';
 
 // Information we'll pass around about the current render
-export type ActivityRenderContext = ActivityItemsFetchResult & {
+export type ActivityRenderContext = {
+	associations: ActivityAssociations;
 	scope: Scope;
 	userId: string;
 };
@@ -28,6 +29,8 @@ export type TitleRenderer<ItemType extends InsertableActivityItem> = (
 // A RenderedActivityItem is an almost fully-baked representation of how this item will be
 // displayed to users.
 export type RenderedActivityItem = {
+	// The ID of the underlying ActivityItem.
+	id: string;
 	// An icon to display with this item.
 	icon: IconName;
 	// The main thing we have to say about this item
@@ -37,7 +40,7 @@ export type RenderedActivityItem = {
 	// comment in a Thread.
 	excerpt: React.ReactNode;
 	// The time associated with this item.
-	timestamp: number;
+	timestamp: Date;
 	// The Scope associated with this item, which can be used for filtering.
 	scope: Scope;
 };
@@ -49,7 +52,7 @@ export type ActivityItemRenderOptions<
 	Item extends InsertableActivityItem,
 	Titles extends string
 > = {
-	icon: IconName;
+	icon: IconName | ((options: { context: ActivityRenderContext }) => IconName);
 	titleRenderers: Record<Titles, TitleRenderer<Item>>;
 	message: (options: {
 		item: Item;

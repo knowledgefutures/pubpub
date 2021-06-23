@@ -22,7 +22,7 @@ export const renderMemberCreated = itemRenderer<MemberCreatedActivityItem, Title
 		const { permissions } = item.payload;
 		return (
 			<>
-				{actor} added {member} as a member to {scope} with <i>{permissions}</i> permissions
+				{actor} added {member} as a member of {scope} with <i>{permissions}</i> permissions
 			</>
 		);
 	},

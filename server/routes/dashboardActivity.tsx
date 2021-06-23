@@ -2,11 +2,11 @@ import React from 'react';
 
 import Html from 'server/Html';
 import app from 'server/server';
-import { handleErrors } from 'server/utils/errors';
+import { ForbiddenError, handleErrors } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
-// import { getActivity } from 'server/utils/queryHelpers';
+import { fetchActivityItems } from 'server/activityItem/fetch';
 
 app.get(
 	['/dash/activity', '/dash/collection/:collectionSlug/activity', '/dash/pub/:pubSlug/activity'],
@@ -15,9 +15,21 @@ app.get(
 			if (!hostIsValid(req, 'community')) {
 				return next();
 			}
+
 			const initialData = await getInitialData(req, true);
-			// const activityData = await getActivity(initialData);
-			const activityData = {};
+			const {
+				scopeData: {
+					scope,
+					activePermissions: { canView },
+				},
+			} = initialData;
+
+			if (!canView) {
+				throw new ForbiddenError();
+			}
+
+			const activityData = await fetchActivityItems({ scope });
+
 			return renderToNodeStream(
 				res,
 				<Html

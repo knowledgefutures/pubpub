@@ -1,4 +1,6 @@
 import { Op } from 'sequelize';
+
+import { Scope } from 'types';
 import {
 	Collection,
 	CollectionPub,
@@ -16,6 +18,16 @@ let getScopeElements;
 let getPublicPermissionsData;
 let getScopeMemberData;
 let getActivePermissions;
+
+const getScopeIdsObject = ({ pubId, collectionId, communityId }): Scope => {
+	if (pubId) {
+		return { pubId, communityId };
+	}
+	if (collectionId) {
+		return { collectionId, communityId };
+	}
+	return { communityId };
+};
 
 /* getScopeData can be called from either a route (e.g. to authenticate */
 /* whether a user has access to /pub/example), or it can be called from */
@@ -47,6 +59,7 @@ export default async (scopeInputs) => {
 		optionsData: publicPermissionsData,
 		memberData: scopeMemberData,
 		activePermissions,
+		scope: getScopeIdsObject(scopeElements.activeIds),
 	};
 };
 

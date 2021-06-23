@@ -3,6 +3,7 @@ import { Collection } from './collection';
 import { Pub } from './pub';
 import { Member, MemberPermission } from './member';
 import { DefinitelyHas, Maybe } from './util';
+import { Scope } from './scope';
 
 export type LoginData = {
 	id: string | null;
@@ -52,6 +53,7 @@ export type ScopeData = {
 		activePub?: Pub;
 		inactiveCollections?: Collection[];
 	};
+	scope: Scope;
 	memberData: Member[];
 };
 

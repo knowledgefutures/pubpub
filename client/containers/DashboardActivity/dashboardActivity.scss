@@ -1,3 +1,16 @@
 .dashboard-activity-container {
-	
+    .activity-items {
+        margin-top: 20px;
+    }
+
+    .empty-state {
+        margin-top: 40px;
+    }
+
+    .loading-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 0;
+    }
 }

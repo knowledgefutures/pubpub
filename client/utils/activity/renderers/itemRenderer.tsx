@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ActivityItem, InsertableActivityItem } from 'types';
+import { isExternalUrl } from 'utils/urls';
 
 import { actorTitle } from '../titles';
 import {
@@ -14,7 +15,7 @@ import {
 const renderTitleToReact = (title: Title) => {
 	const { title: titleString, href, prefix } = title;
 	const inner = href ? (
-		<a href={href} target="_blank" rel="noreferrer">
+		<a href={href} target={isExternalUrl(href) ? '_blank' : undefined} rel="noreferrer">
 			{titleString}
 		</a>
 	) : (
@@ -23,7 +24,7 @@ const renderTitleToReact = (title: Title) => {
 	return (
 		<>
 			{prefix ? `${prefix} ` : null}
-			<b>{inner}</b>
+			<strong>{inner}</strong>
 		</>
 	);
 };
@@ -34,7 +35,7 @@ const renderTitles = <Item extends InsertableActivityItem, Titles extends string
 	context: ActivityRenderContext,
 ): Record<Titles | 'actor', React.ReactNode> => {
 	const renderedTitles = {
-		actor: actorTitle(item, context),
+		actor: renderTitleToReact(actorTitle(item, context)),
 	};
 	Object.keys(titleRenderers).forEach((key) => {
 		const renderer = titleRenderers[key as Titles];
@@ -51,10 +52,12 @@ export const itemRenderer = <Item extends InsertableActivityItem, Titles extends
 	return (item: Item, context: ActivityRenderContext) => {
 		const { communityId, collectionId, pubId } = item;
 		const titles = renderTitles(item, titleRenderers, context);
+		const { id, timestamp } = (item as unknown) as ActivityItem;
 		return {
-			icon,
+			id,
+			icon: typeof icon === 'function' ? icon({ context }) : icon,
 			context,
-			timestamp: new Date(((item as unknown) as ActivityItem).timestamp).valueOf(),
+			timestamp: new Date(timestamp),
 			message: message({ item, titles, context }),
 			excerpt: excerpt?.({ item, context }),
 			scope: {

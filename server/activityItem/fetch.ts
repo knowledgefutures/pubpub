@@ -3,10 +3,9 @@ import { Op } from 'sequelize';
 import * as types from 'types';
 import {
 	ActivityAssociations,
-	ActivityAssociationType,
-	activityAssociationTypes,
 	ActivityAssociationIds,
 	ActivityItemsFetchResult,
+	ActivityFilter,
 	WithId,
 	IdIndex,
 	Scope,
@@ -27,6 +26,7 @@ import {
 	User,
 } from 'server/models';
 import { indexById } from 'utils/arrays';
+import { createActivityAssociationSets } from 'utils/activity';
 
 type PromiseRecord<T extends { [k: string]: any }> = {
 	[K in keyof T]: Promise<T[K]>;
@@ -34,16 +34,45 @@ type PromiseRecord<T extends { [k: string]: any }> = {
 
 type FetchActivityItemsOptions = {
 	scope: Scope;
+	filters?: ActivityFilter[];
 	limit?: number;
 	offset?: number;
 };
 
-const createAssociationsSets = (): Record<ActivityAssociationType, Set<string>> => {
-	const associations = {};
-	activityAssociationTypes.forEach((type) => {
-		associations[type] = new Set() as Set<string>;
-	});
-	return associations as Record<ActivityAssociationType, Set<string>>;
+type SequelizeFilter = Partial<Record<keyof types.ActivityItem, any>>;
+
+const itemKindFilter = (itemKinds: types.ActivityItemKind[]) => {
+	return {
+		kind: { [Op.in]: itemKinds },
+	};
+};
+
+const memberItemKindFilter = (subFilter: null | SequelizeFilter = null) => {
+	return {
+		...subFilter,
+		...itemKindFilter(['member-created', 'member-updated', 'member-removed']),
+	};
+};
+
+const filterDefinitions: Record<ActivityFilter, SequelizeFilter | SequelizeFilter[]> = {
+	community: [
+		itemKindFilter(['community-created', 'community-updated']),
+		memberItemKindFilter({ pubId: null, collectionId: null }),
+	],
+	collection: {
+		collectionId: { [Op.not]: null },
+	},
+	pub: {
+		pubId: { [Op.not]: null },
+	},
+	member: memberItemKindFilter(),
+	review: itemKindFilter([
+		'pub-review-created',
+		'pub-review-updated',
+		'pub-review-comment-added',
+	]),
+	discussion: itemKindFilter(['pub-discussion-comment-added']),
+	pubEdge: itemKindFilter(['pub-edge-created', 'pub-edge-removed']),
 };
 
 const getWhereQueryForChildScopes = async (scope: Scope) => {
@@ -69,17 +98,35 @@ const getWhereQueryForChildScopes = async (scope: Scope) => {
 	return null;
 };
 
+const applyFiltersToWhereQuery = (whereQuery: any, filters: ActivityFilter[]) => {
+	if (filters.length > 0) {
+		const renderedFilters: SequelizeFilter[] = filters
+			.map((filter) => filterDefinitions[filter])
+			.reduce((acc: SequelizeFilter[], next: SequelizeFilter | SequelizeFilter[]) => {
+				if (Array.isArray(next)) {
+					return [...acc, ...next];
+				}
+				return [...acc, next];
+			}, [] as SequelizeFilter[]);
+		return {
+			[Op.and]: [whereQuery, { [Op.or]: renderedFilters }],
+		};
+	}
+	return whereQuery;
+};
+
 const fetchActivityItemModels = async (
-	options: FetchActivityItemsOptions,
+	options: Required<FetchActivityItemsOptions>,
 ): Promise<types.ActivityItem[]> => {
-	const { scope, limit = 50, offset = 0 } = options;
+	const { scope, limit, offset } = options;
+	const whereQuery = {
+		communityId: scope.communityId,
+		...(await getWhereQueryForChildScopes(scope)),
+	};
 	const models = await ActivityItem.findAll({
 		limit,
 		offset,
-		where: {
-			communityId: scope.communityId,
-			...(await getWhereQueryForChildScopes(scope)),
-		},
+		where: applyFiltersToWhereQuery(whereQuery, options.filters),
 		order: [['timestamp', 'DESC']],
 	});
 	return models.map((model) => model.toJSON());
@@ -89,7 +136,7 @@ const getActivityItemAssociationIds = (
 	items: types.ActivityItem[],
 	scope: Scope,
 ): ActivityAssociationIds => {
-	const associationIds = createAssociationsSets();
+	const associationIds = createActivityAssociationSets();
 	const {
 		collectionPub,
 		collection,
@@ -151,6 +198,12 @@ const getActivityItemAssociationIds = (
 			}
 		} else if (item.kind === 'pub-released') {
 			release.add(item.payload.releaseId);
+		} else if (
+			item.kind === 'member-created' ||
+			item.kind === 'member-updated' ||
+			item.kind === 'member-removed'
+		) {
+			user.add(item.payload.userId);
 		}
 	});
 	return associationIds;
@@ -219,8 +272,9 @@ const fetchAssociations = (
 export const fetchActivityItems = async (
 	options: FetchActivityItemsOptions,
 ): Promise<ActivityItemsFetchResult> => {
-	const activityItems = await fetchActivityItemModels(options);
+	const { offset = 0, limit = 50, scope, filters = [] } = options;
+	const activityItems = await fetchActivityItemModels({ offset, limit, scope, filters });
 	const associationIds = getActivityItemAssociationIds(activityItems, options.scope);
 	const associations = await fetchAssociations(associationIds);
-	return { activityItems, associations };
+	return { activityItems, associations, fetchedAllItems: activityItems.length < limit };
 };

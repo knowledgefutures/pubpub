@@ -1,58 +1,40 @@
 import React from 'react';
-
-import { GridWrapper } from 'components';
-import { apiFetch } from 'client/utils/apiFetch';
-
-import Chart from './Chart';
+import IframeResizer from 'iframe-resizer-react';
 
 require('./adminDashboard.scss');
 
-type State = any;
+type Props = {
+	impactData: any;
+};
 
-class AdminDashboard extends React.Component<{}, State> {
-	constructor(props: {}) {
-		super(props);
-		this.state = {
-			pubPubData: {},
-			isLoading: true,
-		};
-	}
-
-	componentDidMount() {
-		apiFetch('/api/admin-dashboard', {
-			method: 'GET',
-		})
-			.then((data) => {
-				this.setState({
-					pubPubData: data,
-					isLoading: false,
-				});
-			})
-			.catch((err) => {
-				console.warn(err);
-			});
-	}
-
-	render() {
-		return (
-			<div id="dashboard-container">
-				<GridWrapper>
-					<h1>Admin Dashboard</h1>
-					{!this.state.isLoading && (
-						<div>
-							<Chart data={this.state.pubPubData.users} title="Users" />
-							<Chart data={this.state.pubPubData.communities} title="Communities" />
-							<Chart data={this.state.pubPubData.discussions} title="Discussions" />
-							<Chart
-								data={this.state.pubPubData.subscribers}
-								title="Newsletter Subscribers"
-							/>
-						</div>
-					)}
-				</GridWrapper>
-			</div>
-		);
-	}
-}
+const AdminDashboard = (props: Props) => {
+	const { impactData } = props;
+	const { baseToken } = impactData;
+	const dashUrl = `https://metabase.pubpub.org/embed/dashboard/${baseToken}#bordered=false&titled=false`;
+	const getOffset = (width) => {
+		return width < 960 ? 45 : 61;
+	};
+	return (
+		<div className="dashboard-impact-container admin-dashboard">
+			<section>
+				<h3>PubPub Top Analytics</h3>
+			</section>
+			<section>
+				(
+				<IframeResizer
+					className="metabase main"
+					src={dashUrl}
+					title="Analytics"
+					frameBorder="0"
+					onResized={({ iframe, height, width }) => {
+						/* eslint-disable-next-line no-param-reassign */
+						iframe.style.height = `${height - getOffset(width)}px`;
+					}}
+				/>
+				)
+			</section>
+		</div>
+	);
+};
 
 export default AdminDashboard;

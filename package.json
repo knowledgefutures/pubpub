@@ -90,8 +90,6 @@
 		"jsonpath": "^1.1.0",
 		"jsonwebtoken": "^8.5.1",
 		"katex": "^0.11.1",
-		"keen-analysis": "^3.3.1",
-		"keen-tracking": "^4.4.0",
 		"keyboardjs": "^2.5.1",
 		"knex": "^0.21.17",
 		"linkifyjs": "^3.0.0-beta.3",

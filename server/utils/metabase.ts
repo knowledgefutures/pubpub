@@ -10,6 +10,9 @@ export const generateMetabaseToken = (scopeType, scopeId, dashboardType) => {
 			base: 3,
 			benchmark: 9,
 		},
+		pubpub: {
+			base: 6,
+		},
 	};
 	const dashboardNum = dashboardNums[scopeType][dashboardType];
 	const payload = {

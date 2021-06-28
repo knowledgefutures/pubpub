@@ -113,9 +113,7 @@ const LayoutEditor = (props: Props) => {
 								</Card>
 							}
 						>
-							<Button outlined rightIcon="caret-down">
-								Remove Block
-							</Button>
+							<Button>Remove Block</Button>
 						</Popover>
 					)}
 					{cannotRemove && (

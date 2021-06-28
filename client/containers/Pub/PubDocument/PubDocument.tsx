@@ -51,7 +51,7 @@ const PubDocument = (props: Props) => {
 				setTimeout(() => {
 					const newlyCreatedPermElement = document.getElementsByClassName('permanent')[0];
 					if (newlyCreatedPermElement) {
-						newlyCreatedPermElement.scrollIntoView();
+						newlyCreatedPermElement.scrollIntoView({ block: 'center' });
 					}
 				}, 0);
 			}, 0);

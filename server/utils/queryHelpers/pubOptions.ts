@@ -172,6 +172,7 @@ export default ({
 			getExports && {
 				model: Export,
 				as: 'exports',
+				separate: true,
 			},
 			getDraft && {
 				model: Draft,

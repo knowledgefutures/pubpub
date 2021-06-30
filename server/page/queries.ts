@@ -4,6 +4,7 @@ import { findAcceptableSlug, slugIsAvailable } from 'server/utils/slugs';
 import { slugifyString } from 'utils/strings';
 import { PubPubError } from 'server/utils/errors';
 import { generateHash } from 'utils/hashes';
+import { generateDefaultPageLayout } from 'utils/pages';
 
 import { sanitizePageHtml } from './sanitizePageHtml';
 
@@ -13,7 +14,9 @@ export const createPage = async (inputValues) => {
 		title: inputValues.title,
 		slug: await findAcceptableSlug(inputValues.slug, inputValues.communityId),
 		description: inputValues.description,
+		avatar: inputValues.avatar || null,
 		isPublic: false,
+		layout: generateDefaultPageLayout(),
 		viewHash: generateHash(8),
 	})
 		.then((newPage) => {
@@ -30,7 +33,7 @@ export const createPage = async (inputValues) => {
 				oldNavigation[0],
 				{ type: 'page', id: newPage.id },
 				...oldNavigation.slice(1, oldNavigation.length),
-			];
+			].filter((x) => x);
 			const updateCommunity = Community.update(
 				{ navigation: newNavigationOutput },
 				{

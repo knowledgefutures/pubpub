@@ -7,7 +7,6 @@ import { Community, Member, Release, User } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createDoc } from 'server/doc/queries';
-import { createPage } from 'server/page/queries';
 
 const builders = {};
 
@@ -65,8 +64,6 @@ builders.Pub = async (args) => {
 
 builders.Collection = ({ title = 'Collection ' + uuid.v4(), kind = 'issue', ...restArgs }) =>
 	createCollection({ title, kind, ...restArgs });
-
-builders.Page = createPage;
 
 builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 	const getTargetArgs = () => {

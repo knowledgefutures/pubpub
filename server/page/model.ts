@@ -10,7 +10,7 @@ export default (sequelize, dataTypes) => {
 			isPublic: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 			isNarrowWidth: { type: dataTypes.BOOLEAN },
 			viewHash: { type: dataTypes.TEXT },
-			layout: { type: dataTypes.JSONB, allowNull: false },
+			layout: { type: dataTypes.JSONB },
 
 			/* Set by Associations */
 			communityId: { type: dataTypes.UUID, allowNull: false },

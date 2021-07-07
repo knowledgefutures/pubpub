@@ -3,6 +3,7 @@ import { AnchorButton, Button } from '@blueprintjs/core';
 import { useUpdateEffect } from 'react-use';
 
 import { communityUrl } from 'utils/canonicalUrls';
+import { getDefaultLayout } from 'utils/pages';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { slugifyString } from 'utils/strings';
@@ -27,6 +28,8 @@ require('./dashboardPage.scss');
 type Props = {
 	pageData: Page & { layoutPubsByBlock: LayoutPubsByBlock<Pub> };
 };
+
+const defaultLayout = getDefaultLayout();
 
 const DashboardPage = (props: Props) => {
 	const { updateCommunity, locationData, communityData } = usePageContext();
@@ -209,7 +212,7 @@ const DashboardPage = (props: Props) => {
 			<SettingsSection title="Layout">
 				<LayoutEditor
 					onChange={(newLayout) => updatePageData({ layout: newLayout })}
-					initialLayout={layout}
+					initialLayout={layout || defaultLayout}
 					initialLayoutPubsByBlock={layoutPubsByBlock}
 					communityData={communityData}
 				/>

@@ -1,6 +1,8 @@
 /* global describe, it, expect, beforeAll, afterAll */
 import { setup, teardown, login, modelize } from 'stubstub';
 
+import { getDefaultLayout } from 'utils/pages';
+
 const models = modelize`
 	Community community {
 		Member {
@@ -11,11 +13,13 @@ const models = modelize`
 			kind: "issue"
 			title: "Issue One"
 			isPublic: true
+			layout: ${getDefaultLayout()}
 		}
 		Collection privateCollection {
 			kind: "issue"
 			title: "Issue One and a Half"
 			isPublic: false
+			layout: ${getDefaultLayout()}
 			Member {
 				permissions: "view"
 				User collectionViewer {}

@@ -187,6 +187,12 @@ const Header = (props: Props) => {
 						{isBasePubPub && (
 							<React.Fragment>
 								<AnchorButton
+									href="/explore"
+									minimal={true}
+									large={true}
+									text="Explore"
+								/>
+								<AnchorButton
 									href="/pricing"
 									minimal={true}
 									large={true}

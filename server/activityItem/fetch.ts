@@ -11,6 +11,7 @@ import {
 	Scope,
 } from 'types';
 import {
+	attributesPublicUser,
 	ActivityItem,
 	Collection,
 	CollectionPub,
@@ -209,11 +210,18 @@ const getActivityItemAssociationIds = (
 	return associationIds;
 };
 
-const fetchModels = async <T extends WithId>(Model: any, ids: Set<string>): Promise<IdIndex<T>> => {
+const fetchModels = async <T extends WithId>(
+	Model: any,
+	ids: Set<string>,
+	attributes?: string[],
+): Promise<IdIndex<T>> => {
 	if (ids.size === 0) {
 		return {};
 	}
-	const models = await Model.findAll({ where: { id: { [Op.in]: Array.from(ids) } } });
+	const models = await Model.findAll({
+		where: { id: { [Op.in]: Array.from(ids) } },
+		...(attributes && { attributes }),
+	});
 	return indexById(models as T[]);
 };
 
@@ -265,7 +273,7 @@ const fetchAssociations = (
 		review: fetchModels<types.Review>(ReviewNew, review),
 		threadComment: fetchModels<types.ThreadComment>(ThreadComment, threadComment),
 		thread: fetchModels<types.Thread>(Thread, thread),
-		user: fetchModels<types.User>(User, user),
+		user: fetchModels<types.User>(User, user, attributesPublicUser),
 	});
 };
 

@@ -3,7 +3,7 @@ import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 
 import { createCollectionPub } from 'server/collectionPub/queries';
-import { Community, Member, Release, User } from 'server/models';
+import { Community, Member, Release, User, UserSubscription } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createDoc } from 'server/doc/queries';
@@ -104,5 +104,15 @@ builders.Release = async (args) => {
 };
 
 builders.CollectionPub = createCollectionPub;
+
+builders.UserSubscription = (args) => {
+	const modifiedArgs = { ...args };
+	// Modelize will try to associate this with a Pub if it's nested inside...
+	// but in the case where there's also an associated Thread, we don't want this
+	if (modifiedArgs.threadId) {
+		delete modifiedArgs.pubId;
+	}
+	return UserSubscription.create({ setAutomatically: false, status: 'active', ...modifiedArgs });
+};
 
 export { builders };

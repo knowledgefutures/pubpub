@@ -34,7 +34,7 @@ const models = modelize`
                 }
                 Thread toBeSubscribedToThread {
                     UserSubscription existingSubscription {
-                        createdAutomatically: true
+                        setAutomatically: true
                         User boredUser {}
                     }
                 }
@@ -55,11 +55,11 @@ const models = modelize`
                 }
                 Thread toBeBootedFromThread {
                     UserSubscription toBeRemovedSubscription {
-                        createdAutomatically: true
+                        setAutomatically: true
                         User toBeBootedUser {}
                     }
                     UserSubscription toRemainSubscription {
-                        createdAutomatically: true
+                        setAutomatically: true
                         user: member
                     }
                 }
@@ -72,8 +72,8 @@ const models = modelize`
                 }
                 Thread toBeCommentedOnThread {
                     UserSubscription mutedSubscription {
-                        createdAutomatically: true
-                        muted: true
+                        setAutomatically: true
+                        status: 'muted'
                         User mutedThisThreadUser {}
                     }
                 }
@@ -98,8 +98,8 @@ describe('/api/threads/subscriptions', () => {
 		const { rando, membersDiscussionThread } = models;
 		const agent = await login(rando);
 		await agent
-			.post('/api/threads/subscriptions')
-			.send({ threadId: membersDiscussionThread.id })
+			.put('/api/threads/subscriptions')
+			.send({ threadId: membersDiscussionThread.id, status: 'active' })
 			.expect(403);
 	});
 
@@ -107,13 +107,13 @@ describe('/api/threads/subscriptions', () => {
 		const { member, membersDiscussionThread } = models;
 		const agent = await login(member);
 		const { body: userSubscription } = await agent
-			.post('/api/threads/subscriptions')
-			.send({ threadId: membersDiscussionThread.id })
+			.put('/api/threads/subscriptions')
+			.send({ threadId: membersDiscussionThread.id, status: 'active' })
 			.expect(200);
 		expect(userSubscription).toMatchObject({
 			threadId: membersDiscussionThread.id,
 			userId: member.id,
-			createdAutomatically: false,
+			setAutomatically: false,
 		});
 	});
 
@@ -121,8 +121,8 @@ describe('/api/threads/subscriptions', () => {
 		const { rando, membersReviewThread } = models;
 		const agent = await login(rando);
 		await agent
-			.post('/api/threads/subscriptions')
-			.send({ threadId: membersReviewThread.id })
+			.put('/api/threads/subscriptions')
+			.send({ threadId: membersReviewThread.id, status: 'active' })
 			.expect(403);
 	});
 
@@ -130,13 +130,14 @@ describe('/api/threads/subscriptions', () => {
 		const { member, membersReviewThread } = models;
 		const agent = await login(member);
 		const { body: userSubscription } = await agent
-			.post('/api/threads/subscriptions')
-			.send({ threadId: membersReviewThread.id })
+			.put('/api/threads/subscriptions')
+			.send({ threadId: membersReviewThread.id, status: 'active' })
 			.expect(200);
 		expect(userSubscription).toMatchObject({
 			threadId: membersReviewThread.id,
 			userId: member.id,
-			createdAutomatically: false,
+			setAutomatically: false,
+			status: 'active',
 		});
 	});
 
@@ -144,13 +145,14 @@ describe('/api/threads/subscriptions', () => {
 		const { rando, toBeSubscribedToThread } = models;
 		const agent = await login(rando);
 		const { body: userSubscription } = await agent
-			.post('/api/threads/subscriptions')
-			.send({ threadId: toBeSubscribedToThread.id })
+			.put('/api/threads/subscriptions')
+			.send({ threadId: toBeSubscribedToThread.id, status: 'active' })
 			.expect(200);
 		expect(userSubscription).toMatchObject({
 			threadId: toBeSubscribedToThread.id,
 			userId: rando.id,
-			createdAutomatically: false,
+			setAutomatically: false,
+			status: 'active',
 		});
 	});
 
@@ -159,12 +161,12 @@ describe('/api/threads/subscriptions', () => {
 		const agent = await login(boredUser);
 		await agent
 			.put('/api/threads/subscriptions')
-			.send({ threadId: toBeSubscribedToThread.id, muted: true })
+			.send({ threadId: toBeSubscribedToThread.id, status: 'muted' })
 			.expect(200);
 		const mutedThread = await UserSubscription.findOne({
 			where: { id: existingSubscription.id },
 		});
-		expect(mutedThread.muted).toEqual(true);
+		expect(mutedThread.status).toEqual('muted');
 	});
 });
 
@@ -199,7 +201,7 @@ describe('ThreadComment hooks creating UserSubscriptions', () => {
 		).toMatchObject({
 			userId: rando.id,
 			threadId: toBeCommentedOnThread.id,
-			muted: false,
+			status: 'active',
 		});
 	});
 
@@ -217,7 +219,7 @@ describe('ThreadComment hooks creating UserSubscriptions', () => {
 			id: mutedSubscription.id,
 			userId: mutedThisThreadUser.id,
 			threadId: toBeCommentedOnThread.id,
-			muted: true,
+			status: 'muted',
 		});
 	});
 });

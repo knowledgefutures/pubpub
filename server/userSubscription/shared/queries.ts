@@ -1,12 +1,11 @@
 import { UserSubscription } from 'server/models';
 import * as types from 'types';
 
-type CreateOptions = types.UniqueUserSubscriptionQuery & {
+type SetStatusOptions = types.UniqueUserSubscriptionQuery & {
 	id?: never;
-	createdAutomatically: boolean;
+	setAutomatically: boolean;
+	status: 'unchanged' | types.UserSubscriptionStatus;
 };
-
-type MuteOptions = types.UniqueUserSubscriptionQuery & { muted: boolean };
 
 export const findUserSubscription = async (
 	where: types.UniqueUserSubscriptionQuery,
@@ -14,20 +13,21 @@ export const findUserSubscription = async (
 	return UserSubscription.findOne({ where });
 };
 
-export const createUserSubscription = async (
-	options: CreateOptions,
-): Promise<types.UserSubscription> => {
-	const { createdAutomatically, ...associationIds } = options;
-	return UserSubscription.create({ createdAutomatically, ...associationIds });
-};
-
-export const muteUserSubscription = async (options: MuteOptions) => {
-	const { muted, ...where } = options;
+export const setUserSubscriptionStatus = async (
+	options: SetStatusOptions,
+): Promise<types.SequelizeModel<types.UserSubscription>> => {
+	const { setAutomatically, status, ...where } = options;
 	const subscription = await findUserSubscription(where);
 	if (subscription) {
-		subscription.muted = muted;
+		subscription.setAutomatically = setAutomatically;
+		if (status !== 'unchanged') {
+			subscription.status = status;
+		}
 		await subscription.save();
+		return subscription;
 	}
+	const insertableStatus = status === 'unchanged' ? 'active' : status;
+	return UserSubscription.create({ ...where, setAutomatically, status: insertableStatus });
 };
 
 export const destroyUserSubscription = async (where: types.UniqueUserSubscriptionQuery) => {

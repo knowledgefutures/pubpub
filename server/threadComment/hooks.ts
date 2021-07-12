@@ -1,11 +1,12 @@
 import * as types from 'types';
 import { ThreadComment } from 'server/models';
-import { createUserThreadSubscription } from 'server/userSubscription/queries';
+import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
 
 ThreadComment.afterCreate(async (threadComment: types.ThreadComment) => {
-	await createUserThreadSubscription({
+	await setUserSubscriptionStatus({
 		userId: threadComment.userId,
 		threadId: threadComment.threadId,
-		createdAutomatically: true,
+		setAutomatically: true,
+		status: 'unchanged',
 	});
 });

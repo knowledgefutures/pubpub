@@ -3,8 +3,8 @@ export default (sequelize, dataTypes) => {
 		'UserSubscription',
 		{
 			id: sequelize.idType,
-			createdAutomatically: { type: dataTypes.BOOLEAN, allowNull: false },
-			muted: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+			setAutomatically: { type: dataTypes.BOOLEAN, allowNull: false },
+			status: { type: dataTypes.STRING, allowNull: false },
 			userId: { type: dataTypes.UUID, allowNull: false },
 			pubId: { type: dataTypes.UUID },
 			threadId: { type: dataTypes.UUID },

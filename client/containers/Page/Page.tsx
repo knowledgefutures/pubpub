@@ -3,7 +3,6 @@ import React from 'react';
 import { Layout } from 'components';
 import { Pub } from 'types';
 import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
-import { getDefaultLayout } from 'utils/pages';
 
 type Props = {
 	pageData: {
@@ -16,10 +15,9 @@ type Props = {
 
 const Page = (props: Props) => {
 	const { pageData } = props;
-	const blocks = pageData.layout || getDefaultLayout();
 	return (
 		<Layout
-			blocks={blocks}
+			blocks={pageData.layout}
 			isNarrow={pageData.isNarrow || pageData.isNarrowWidth}
 			layoutPubsByBlock={pageData.layoutPubsByBlock}
 		/>

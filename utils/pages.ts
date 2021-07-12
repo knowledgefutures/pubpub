@@ -1,4 +1,7 @@
-export const generatePageBackground = (pageTitle) => {
+import { generateHash } from './hashes';
+import { LayoutBlock } from './layout';
+
+export const generatePageBackground = (pageTitle: string) => {
 	const gradients = ['#b33939', '#cd6133', '#474787', '#227093', '#218c74'];
 
 	if (!pageTitle) {
@@ -7,24 +10,24 @@ export const generatePageBackground = (pageTitle) => {
 	return gradients[pageTitle.charCodeAt(pageTitle.length - 1) % 5];
 };
 
-export const getDefaultLayout = () => {
+export const generateDefaultPageLayout = (): LayoutBlock[] => {
 	return [
 		{
-			id: '0kyj32ay',
+			id: generateHash(8),
 			type: 'pubs',
 			content: {
 				title: '',
-				size: 'large',
+				pubPreviewType: 'large',
 				limit: 1,
 				pubIds: [],
 			},
 		},
 		{
-			id: 'gruw36cv',
+			id: generateHash(8),
 			type: 'pubs',
 			content: {
 				title: '',
-				size: 'medium',
+				pubPreviewType: 'medium',
 				limit: 0,
 				pubIds: [],
 			},

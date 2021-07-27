@@ -1,4 +1,5 @@
 import { InsertableActivityItem, MemberActivityItem } from 'types';
+import { naivePluralize } from 'utils/strings';
 
 import { ActivityRenderContext, Title, TitleRenderer } from '../types';
 import { getUserFromContext } from './util';
@@ -26,7 +27,13 @@ const getUserTitleFromUserIdAndContext = (
 };
 
 export const actorTitle: TitleRenderer<InsertableActivityItem> = (item, context) => {
-	return getUserTitleFromUserIdAndContext(item.actorId, context, 'someone');
+	const { otherActorsCount } = context;
+	const title = getUserTitleFromUserIdAndContext(item.actorId, context, 'someone');
+	if (otherActorsCount) {
+		const other = naivePluralize('other', otherActorsCount);
+		return { ...title, suffix: `and ${otherActorsCount} ${other}` };
+	}
+	return title;
 };
 
 export const memberTitle: TitleRenderer<MemberActivityItem> = (item, context) => {

@@ -14,8 +14,10 @@ type Props = {
 	children: React.ReactElement;
 	content: React.ReactNode;
 	placement?: PopoverInitialState['placement'];
+	preventBodyScroll?: boolean;
 	gutter?: number;
 	lazy?: boolean;
+	unstable_fixed?: boolean;
 };
 
 const Popover = (props: Props) => {
@@ -25,10 +27,12 @@ const Popover = (props: Props) => {
 		className,
 		content,
 		placement = 'bottom-start',
+		preventBodyScroll = true,
 		gutter = 5,
 		lazy = true,
+		unstable_fixed = false,
 	} = props;
-	const popover = usePopoverState({ placement, gutter, unstable_fixed: false });
+	const popover = usePopoverState({ placement, gutter, unstable_fixed });
 	return (
 		<>
 			<RkPopoverDisclosure {...popover} {...children.props}>
@@ -44,7 +48,7 @@ const Popover = (props: Props) => {
 				aria-label={ariaLabel}
 				className={className}
 				modal
-				preventBodyScroll
+				preventBodyScroll={preventBodyScroll}
 				style={{ zIndex: 20 }}
 				{...popover}
 			>

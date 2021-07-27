@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 
 import * as types from 'types';
-import { UserNotification, UserSubscription } from 'server/models';
+import { UserNotification, UserSubscription, UserNotificationPreferences } from 'server/models';
 import { indexByProperty, splitArrayOn } from 'utils/arrays';
 import { filterUsersWhoCanSeeThread } from 'server/thread/queries';
 
@@ -31,6 +31,18 @@ const createNotificationsForThreadComment = async (
 		},
 	});
 
+	const notificationPreferencesOptingOutOfNotifications: types.UserNotificationPreferences[] = await UserNotificationPreferences.findAll(
+		{
+			where: {
+				userId: { [Op.in]: [...new Set(subscriptions.map((s) => s.userId))] },
+				receiveNotifications: false,
+			},
+		},
+	);
+	const userIdsWhoDoNotWantNotifications = notificationPreferencesOptingOutOfNotifications.map(
+		(pref) => pref.userId,
+	);
+
 	const [mutedThreadSubscriptions, unmutedThreadSubscriptions] = splitArrayOn(
 		subscriptions.filter((sub) => !!sub.threadId),
 		(s) => s.status === 'muted',
@@ -55,7 +67,9 @@ const createNotificationsForThreadComment = async (
 
 	const userIdsToNotifty = await filterUsersWhoCanSeeThread({
 		threadId,
-		userIds: subscriptionsThatMayProduceNotifications.map((sub) => sub.userId),
+		userIds: subscriptionsThatMayProduceNotifications
+			.map((sub) => sub.userId)
+			.filter((userId) => !userIdsWhoDoNotWantNotifications.includes(userId)),
 	});
 
 	await UserNotification.bulkCreate(

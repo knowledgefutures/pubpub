@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { Button, AnchorButton, Intent } from '@blueprintjs/core';
 
-import { GridWrapper, Avatar, ScopeDropdown, MenuButton, MenuItem } from 'components';
+import {
+	GridWrapper,
+	Avatar,
+	ScopeDropdown,
+	MenuButton,
+	MenuItem,
+	UserNotificationsPopover,
+} from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getResizedUrl } from 'utils/images';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -184,6 +191,7 @@ const Header = (props: Props) => {
 						)}
 					</div>
 					<div className="buttons-wrapper">
+						{loggedIn && <UserNotificationsPopover />}
 						{isBasePubPub && (
 							<React.Fragment>
 								<AnchorButton

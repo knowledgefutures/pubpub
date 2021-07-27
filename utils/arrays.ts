@@ -79,3 +79,16 @@ export const arraysHaveSameElements = <T>(first: T[], second: T[]) => {
 };
 
 export const pruneFalsyValues = (arr) => arr.filter(Boolean);
+
+export const bucketBy = <T>(arr: T[], getKey: (t: T) => string): Record<string, T[]> => {
+	const buckets: Record<string, T[]> = {};
+	arr.forEach((item) => {
+		const bucketKey = getKey(item);
+		const bucket = buckets[bucketKey] || [];
+		bucket.push(item);
+		buckets[bucketKey] = bucket;
+	});
+	return buckets;
+};
+
+export const flattenOnce = <T>(arr: T[][]): T[] => arr.reduce((a, b) => [...a, ...b], []);

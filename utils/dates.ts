@@ -3,7 +3,7 @@ import dateFormat from 'dateformat';
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export const formatDate = (
-	date: Date | string,
+	date: Date | string | number,
 	{
 		includeTime = false,
 		includeDate = true,

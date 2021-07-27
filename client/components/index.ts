@@ -83,5 +83,7 @@ export { default as SubscriptionButton } from './SubscriptionButton/Subscription
 export { default as TabToShow } from './TabToShow/TabToShow';
 export { default as Thread } from './Thread/Thread';
 export { default as ThreadInput } from './ThreadInput/ThreadInput';
+export { default as TimeAgo } from './TimeAgo/TimeAgo';
 export { Timeline, TimelineCondenser, TimelineItem } from './Timeline';
 export { default as UserAutocomplete } from './UserAutocomplete/UserAutocomplete';
+export { default as UserNotificationsPopover } from './UserNotifications/UserNotificationsPopover';

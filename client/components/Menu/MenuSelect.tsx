@@ -13,8 +13,9 @@ export type MenuSelectItems<Value> = MenuSelectItem<Value>[];
 
 type Props<Value> = {
 	'aria-label': string;
-	buttonProps?: {};
+	buttonProps?: React.ComponentProps<typeof MenuButton>['buttonProps'];
 	defaultLabel?: React.ReactNode;
+	disabled?: boolean;
 	icon?: React.ComponentProps<typeof Button>['icon'];
 	items: MenuSelectItems<Value>;
 	onSelectValue: (value: Value) => unknown;
@@ -24,7 +25,7 @@ type Props<Value> = {
 	value: null | Value;
 };
 
-export const MenuSelect = <Values extends string>(props: Props<Values>) => {
+export const MenuSelect = <Values extends number | string>(props: Props<Values>) => {
 	const {
 		'aria-label': ariaLabel,
 		icon,
@@ -34,12 +35,14 @@ export const MenuSelect = <Values extends string>(props: Props<Values>) => {
 		buttonProps,
 		showTickIcon = true,
 		prefix = null,
+		disabled = false,
 		rightIcon = 'caret-down',
 		defaultLabel = 'Select...',
 	} = props;
-	const selectedItem = value && items.find((item) => item.value === value);
+	const selectedItem = value !== null ? items.find((item) => item.value === value) : null;
 	return (
 		<MenuButton
+			disabled={disabled}
 			aria-label={ariaLabel}
 			buttonContent={
 				<>

@@ -13,7 +13,7 @@ import {
 } from '../types';
 
 const renderTitleToReact = (title: Title) => {
-	const { title: titleString, href, prefix } = title;
+	const { title: titleString, href, prefix, suffix } = title;
 	const inner = href ? (
 		<a href={href} target={isExternalUrl(href) ? '_blank' : undefined} rel="noreferrer">
 			{titleString}
@@ -25,6 +25,7 @@ const renderTitleToReact = (title: Title) => {
 		<>
 			{prefix ? `${prefix} ` : null}
 			<strong>{inner}</strong>
+			{suffix ? ` ${suffix}` : null}
 		</>
 	);
 };
@@ -56,6 +57,7 @@ export const itemRenderer = <Item extends InsertableActivityItem, Titles extends
 		return {
 			id,
 			icon: typeof icon === 'function' ? icon({ context }) : icon,
+			actor: item.actorId ? context.associations.user[item.actorId] : null,
 			context,
 			timestamp: new Date(timestamp),
 			message: message({ item, titles, context }),

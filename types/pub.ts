@@ -11,6 +11,7 @@ import { Review } from './review';
 import { InboundEdge, OutboundEdge } from './pubEdge';
 import { ScopeSummary } from './scope';
 import { DefinitelyHas, Maybe } from './util';
+import { UserSubscription } from './userSubscription';
 
 export type Draft = {
 	id: string;
@@ -124,4 +125,5 @@ export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs'> 
 		firebaseToken?: string;
 		initialStructuredCitations: boolean;
 		releaseNumber: Maybe<number>;
+		subscription: null | UserSubscription;
 	};

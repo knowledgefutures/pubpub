@@ -35,7 +35,15 @@ export { default as LicenseSelect } from './LicenseSelect/LicenseSelect';
 export { default as LinkedPageSelect } from './LinkedPageSelect/LinkedPageSelect';
 export { default as InheritedMembersBlock } from './Members/InheritedMembersBlock';
 export { default as MemberRow } from './Members/MemberRow';
-export { Menu, MenuButton, MenuConfigProvider, MenuItem } from './Menu';
+export {
+	Menu,
+	MenuButton,
+	MenuConfigProvider,
+	MenuItem,
+	MenuSelect,
+	MenuSelectItem,
+	MenuSelectItems,
+} from './Menu';
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
 export { default as NavBar } from './NavBar/NavBar';
 export { default as OrderPicker } from './OrderPicker/OrderPicker';
@@ -44,7 +52,7 @@ export { default as PagePreview } from './PagePreview/PagePreview';
 export { default as PendingChangesProvider } from './PendingChangesProvider/PendingChangesProvider';
 export { default as PermissionsDropdown } from './PermissionsDropdown/PermissionsDropdown';
 export { default as PreviewImage } from './PreviewImage/PreviewImage';
-export { Popover, PopoverButton } from './Popover';
+export { Popover, PopoverButton, adaptDisclosureElementForBlueprintButton } from './Popover';
 export { default as PrimaryCollectionExplanation } from './PrimaryCollectionExplanation/PrimaryCollectionExplanation';
 export { default as PubAttributionDialog } from './PubAttributionEditor/PubAttributionDialog';
 export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttributionEditor';
@@ -71,6 +79,7 @@ export { default as SharingCard } from './SharingCard/SharingCard';
 export { default as SimpleEditor } from './SimpleEditor/SimpleEditor';
 export { default as SliderInput } from './SliderInput/SliderInput';
 export { default as SkipLink } from './SkipLink/SkipLink';
+export { default as SubscriptionButton } from './SubscriptionButton/SubscriptionButton';
 export { default as TabToShow } from './TabToShow/TabToShow';
 export { default as Thread } from './Thread/Thread';
 export { default as ThreadInput } from './ThreadInput/ThreadInput';

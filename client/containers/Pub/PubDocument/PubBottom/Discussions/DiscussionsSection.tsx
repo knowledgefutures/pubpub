@@ -6,6 +6,7 @@ import { PubPageData } from 'types';
 import { getAnchoredDiscussionIds } from 'components/Editor/plugins/discussions';
 import { usePubContext } from 'client/containers/Pub/pubHooks';
 
+import { SubscriptionButton } from 'client/components';
 import SortList from './SortList';
 import FilterMenu from './FilterMenu';
 import PubDiscussions from '../../PubDiscussions/PubDiscussions';
@@ -22,8 +23,14 @@ type Props = {
 const DiscussionsSection = (props: Props) => {
 	const { pubData, updateLocalData, sideContentRef, mainContentRef } = props;
 	const { discussions } = pubData;
-	const { communityData, scopeData } = usePageContext();
 	const {
+		communityData,
+		scopeData,
+		loginData: { id: userId },
+	} = usePageContext();
+	const {
+		pubData: { subscription },
+		updatePubData,
 		collabData: { editorChangeObject },
 	} = usePubContext();
 	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
@@ -96,6 +103,20 @@ const DiscussionsSection = (props: Props) => {
 							title="Filter comments"
 						/>
 					</Popover>
+					{userId && (
+						<SubscriptionButton
+							subscription={subscription}
+							onUpdateSubscription={(next) => updatePubData({ subscription: next })}
+							target={{ pubId: pubData.id }}
+							menuLabel="Follow Pub discussion"
+						>
+							<AccentedIconButton
+								accentColor={iconColor}
+								title="Manage subscription"
+								icon="notifications"
+							/>
+						</SubscriptionButton>
+					)}
 				</React.Fragment>
 			);
 		}

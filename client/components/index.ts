@@ -2,6 +2,7 @@ export { default as AccentStyle } from './AccentStyle/AccentStyle';
 export { default as AssignDoi } from './AssignDoi/AssignDoi';
 export { default as AttributionEditor } from './AttributionEditor/AttributionEditor';
 export { default as Avatar } from './Avatar/Avatar';
+export { default as Avatars } from './Avatars/Avatars';
 export { default as Byline } from './Byline/Byline';
 export { default as ClickToCopyButton } from './ClickToCopyButton/ClickToCopyButton';
 export { default as CollectionMultiSelect } from './CollectionMultiSelect/CollectionMultiSelect';

@@ -12,7 +12,7 @@ const propTypes = {
 	avatar: PropTypes.string,
 	instanceNumber: PropTypes.number,
 	borderColor: PropTypes.string,
-	borderWidth: PropTypes.string,
+	borderWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	doesOverlap: PropTypes.bool, // Boolean on whether a lisst of avatars will be overlapping
 	isBlock: PropTypes.bool,
 	className: PropTypes.string,

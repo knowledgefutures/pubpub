@@ -65,7 +65,7 @@ const createNotificationsForThreadComment = async (
 		'userId',
 	);
 
-	const userIdsToNotifty = await filterUsersWhoCanSeeThread({
+	const userIdsToNotify = await filterUsersWhoCanSeeThread({
 		threadId,
 		userIds: subscriptionsThatMayProduceNotifications
 			.map((sub) => sub.userId)
@@ -73,7 +73,7 @@ const createNotificationsForThreadComment = async (
 	});
 
 	await UserNotification.bulkCreate(
-		userIdsToNotifty.map((userId) => {
+		userIdsToNotify.map((userId) => {
 			return {
 				userId,
 				userSubscriptionId: subscriptionsByUserId[userId].id,

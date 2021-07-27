@@ -8,7 +8,7 @@ import {
 } from 'server/activityItem/queries';
 import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
 
-const createActivityItems = async (threadComment: types.ThreadComment) => {
+const createActivityItem = async (threadComment: types.ThreadComment) => {
 	const parent = await getParentModelForThread(threadComment.threadId);
 	if (parent) {
 		if (parent.type === 'discussion') {
@@ -37,5 +37,5 @@ ThreadComment.afterCreate(async (threadComment: types.ThreadComment) => {
 		setAutomatically: true,
 		status: 'unchanged',
 	});
-	defer(() => createActivityItems(threadComment));
+	defer(() => createActivityItem(threadComment));
 });

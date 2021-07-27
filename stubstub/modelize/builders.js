@@ -3,7 +3,7 @@ import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 
 import { createCollectionPub } from 'server/collectionPub/queries';
-import { Community, Member, Release, User, UserSubscription } from 'server/models';
+import { ActivityItem, Community, Member, Release, User, UserSubscription } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createDoc } from 'server/doc/queries';
@@ -104,6 +104,11 @@ builders.Release = async (args) => {
 };
 
 builders.CollectionPub = createCollectionPub;
+
+builders.ActivityItem = (args) => {
+	const { applyHooks = false, ...restArgs } = args;
+	return ActivityItem.create({ ...restArgs }, { hooks: applyHooks });
+};
 
 builders.UserSubscription = (args) => {
 	const modifiedArgs = { ...args };

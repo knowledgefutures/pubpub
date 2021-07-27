@@ -72,6 +72,7 @@ export const Thread = sequelize.import('./thread/model');
 export const ThreadComment = sequelize.import('./threadComment/model');
 export const ThreadEvent = sequelize.import('./threadEvent/model');
 export const User = sequelize.import('./user/model');
+export const UserNotification = sequelize.import('./userNotification/model');
 export const UserScopeVisit = sequelize.import('./userScopeVisit/model');
 export const UserSubscription = sequelize.import('./userSubscription/model');
 export const ActivityItem = sequelize.import('./activityItem/model');

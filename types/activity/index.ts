@@ -25,6 +25,8 @@ export type ActivityItem = InsertableActivityItem & {
 };
 
 export type ActivityItemKind = ActivityItem['kind'];
+export type ActivityItemOfKind<Kind extends ActivityItemKind> = ActivityItem & { kind: Kind };
+
 export {
 	ActivityAssociationIds,
 	ActivityAssociations,

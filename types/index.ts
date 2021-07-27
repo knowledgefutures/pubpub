@@ -15,6 +15,7 @@ export * from './review';
 export * from './scope';
 export * from './sequelize';
 export * from './thread';
+export * from './userNotification';
 export * from './userSubscription';
 export * from './util';
 export * from './visibility';

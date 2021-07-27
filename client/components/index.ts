@@ -47,6 +47,7 @@ export { Popover, PopoverButton } from './Popover';
 export { default as PrimaryCollectionExplanation } from './PrimaryCollectionExplanation/PrimaryCollectionExplanation';
 export { default as PubAttributionDialog } from './PubAttributionEditor/PubAttributionDialog';
 export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttributionEditor';
+export { default as PubHeaderBackground } from './PubHeaderBackground/PubHeaderBackground';
 export { default as PubByline } from './PubByline/PubByline';
 export { default as PubCollectionsListing } from './PubCollectionsListing/PubCollectionsListing';
 export { default as PubEdge } from './PubEdge/PubEdge';

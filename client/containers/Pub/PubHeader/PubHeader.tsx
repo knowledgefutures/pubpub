@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import classNames from 'classnames';
 import { getJSON } from 'components/Editor';
 
-import { GridWrapper } from 'components';
+import { GridWrapper, PubHeaderBackground } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
@@ -11,7 +11,6 @@ import { PubPageData } from 'types';
 import { getTocHeadings } from './headerUtils';
 import { mobileViewportCutoff } from './constants';
 import PubDetails from './details';
-import PubHeaderBackground from './PubHeaderBackground';
 import PubHeaderContent from './PubHeaderContent';
 import SmallHeaderButton from './SmallHeaderButton';
 import PubHeaderSticky from './PubHeaderSticky';

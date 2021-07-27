@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Button } from 'reakit';
 
-import PubHeaderBackground from 'containers/Pub/PubHeader/PubHeaderBackground';
+import { PubHeaderBackground } from 'components';
 
 type Props = {
 	className?: string;

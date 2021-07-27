@@ -13,12 +13,15 @@ app.get(['/user/:slug', '/user/:slug/:mode'], async (req, res, next) => {
 		const initialData = await getInitialData(req);
 		const userData = await getUser(req.params.slug, initialData);
 		const isNewishUser = Date.now() - userData.createdAt.valueOf() < 1000 * 86400 * 30;
-		const isThisUserAPartOfThisCommunity = await isUserAffiliatedWithCommunity(
-			userData.id,
-			initialData.communityData.id,
-		);
-		if (!isThisUserAPartOfThisCommunity) {
-			return res.redirect(`https://www.pubpub.org/user/${userData.slug}`);
+
+		if (!initialData.locationData.isBasePubPub) {
+			const isThisUserAPartOfThisCommunity = await isUserAffiliatedWithCommunity(
+				userData.id,
+				initialData.communityData.id,
+			);
+			if (!isThisUserAPartOfThisCommunity) {
+				return res.redirect(`https://www.pubpub.org/user/${userData.slug}`);
+			}
 		}
 
 		return renderToNodeStream(

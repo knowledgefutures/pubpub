@@ -9,6 +9,7 @@ import noSlash from 'no-slash';
 import passport from 'passport';
 import path from 'path';
 
+import 'server/utils/serverModuleOverwrite';
 import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/environment';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 
@@ -17,7 +18,6 @@ import './hooks';
 
 setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
 setAppCommit(process.env.HEROKU_SLUG_COMMIT);
-require('server/utils/serverModuleOverwrite');
 
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
 // return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.

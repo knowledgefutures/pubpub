@@ -7,9 +7,9 @@ import { DashboardFrame } from 'client/components';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 
 import { useActivityItems } from './useActivityItems';
-import { getBoundaryGroupsForSortedActivityItems, BoundaryGroup } from './boundaries';
-import ActivityItemRow from './ActivityItemRow';
+import { getBoundaryGroupsForSortedActivityItems } from './boundaries';
 import ActivityFilters from './ActivityFilters';
+import ActivityItemGroup from './ActivityItemGroup';
 
 require('./dashboardActivity.scss');
 
@@ -42,20 +42,6 @@ const DashboardActivity = (props: Props) => {
 		scrollTolerance: 200,
 	});
 
-	const renderBoundaryGroup = (group: BoundaryGroup) => {
-		const { label, key, items: groupItems } = group;
-		return (
-			<div className="boundary-group" key={key}>
-				<div className="heading">
-					<div className="label">{label}</div>
-				</div>
-				{groupItems.map((item) => (
-					<ActivityItemRow item={item} key={item.id} />
-				))}
-			</div>
-		);
-	};
-
 	return (
 		<DashboardFrame className="dashboard-activity-container" title="Activity">
 			<ActivityFilters
@@ -64,7 +50,15 @@ const DashboardActivity = (props: Props) => {
 				scope={scope}
 			/>
 			{items.length > 0 && (
-				<div className="activity-items">{boundaryGroups.map(renderBoundaryGroup)}</div>
+				<div className="activity-items">
+					{boundaryGroups.map((group) => (
+						<ActivityItemGroup
+							items={group.items}
+							label={group.label}
+							key={group.key}
+						/>
+					))}
+				</div>
 			)}
 			{items.length === 0 && loadedAllItems && (
 				<NonIdealState

@@ -15,6 +15,7 @@ export default ({
 	title,
 	url,
 	contentVersion,
+	publishAs,
 }) => {
 	return {
 		book: {
@@ -28,7 +29,7 @@ export default ({
 				edition_number: edition || '1',
 				...date('publication_date', publicationDate),
 				...renderIsbn(isbn),
-				...publisher(),
+				...publisher(publishAs),
 				...doiData(doi, timestamp, url, contentVersion),
 			},
 			...children,

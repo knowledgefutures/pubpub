@@ -44,7 +44,12 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		notes,
 		canonicalUrl,
 	} = metaProps;
-	const communityTitle = initialData.communityData.title;
+	const {
+		title: communityTitle,
+		citeAs: communityCiteAs,
+		publishAs: communityPublisher,
+	} = initialData.communityData;
+
 	const url = `https://${initialData.locationData.hostname}${initialData.locationData.path}`;
 	const favicon = initialData.communityData.favicon;
 	const avatar = image || initialData.communityData.avatar;
@@ -85,7 +90,11 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	if (communityTitle && (!collection || collection.kind === 'issue')) {
 		outputComponents = [
 			...outputComponents,
-			<meta key="sn2" name="citation_journal_title" content={communityTitle} />,
+			<meta
+				key="sn2"
+				name="citation_journal_title"
+				content={communityCiteAs || communityTitle}
+			/>,
 		];
 	}
 
@@ -102,6 +111,10 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	}
 
 	if (collection) {
+		outputComponents = [
+			...outputComponents,
+			<meta key="c0" name="citation_publisher" content={communityPublisher || 'PubPub'} />,
+		];
 		if (collection.kind === 'issue') {
 			outputComponents = [
 				...outputComponents,
@@ -221,8 +234,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 			<meta key="pa1" property="article:published_time" content={String(publishedAt)} />,
 			<meta key="pa2" property="dc.date" content={dcPublishedAt} />,
 			<meta key="pa3" name="citation_publication_date" content={googleScholarPublishedAt} />,
-			<meta key="pub1" name="citation_publisher" content="PubPub" />,
-			<meta key="pub2" property="dc.publisher" content="PubPub" />,
+			<meta key="pub1" property="dc.publisher" content={communityPublisher || 'PubPub'} />,
 		];
 	}
 

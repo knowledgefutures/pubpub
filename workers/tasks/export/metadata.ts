@@ -52,13 +52,17 @@ export const getPubMetadata = async (pubId) => {
 	const updatedDate = getPubUpdatedDate({ pub: pubData });
 	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
+	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
 	return {
 		title: pubData.title,
 		doi: pubData.doi,
 		licenseSlug: pubData.licenseSlug,
 		publishedDateString,
 		updatedDateString,
-		communityTitle: pubData.community.title,
+		communityTitle:
+			primaryCollection?.kind === 'issue'
+				? pubData.community.citeAs
+				: pubData.community.title,
 		accentColor: pubData.community.accentColorDark,
 		attributions: pubData.attributions
 			.concat()
@@ -68,6 +72,9 @@ export const getPubMetadata = async (pubId) => {
 		citationStyle: pubData.citationStyle,
 		citationInlineStyle: pubData.citationInlineStyle,
 		nodeLabels: pubData.nodeLabels,
+		...((primaryCollection?.kind === 'conference' || primaryCollection?.kind === 'book') && {
+			publisher: pubData.community.publishAs,
+		}),
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),
 	};
 };

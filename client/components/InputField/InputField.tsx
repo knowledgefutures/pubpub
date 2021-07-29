@@ -11,6 +11,7 @@ const propTypes = {
 	defaultValue: PropTypes.string,
 	error: PropTypes.string,
 	helperText: PropTypes.node,
+	htmlFor: PropTypes.string,
 	inputRef: PropTypes.object,
 	isDisabled: PropTypes.bool,
 	isRequired: PropTypes.bool,
@@ -30,6 +31,7 @@ const defaultProps = {
 	defaultValue: undefined,
 	error: undefined,
 	helperText: '',
+	htmlFor: '',
 	inputRef: undefined,
 	isDisabled: false,
 	isRequired: false,
@@ -53,7 +55,7 @@ const InputField = function(props) {
 				props.error ? 'bp3-intent-danger' : '',
 			)}
 		>
-			<label className="bp3-label" htmlFor={`input-${props.label}`}>
+			<label className="bp3-label" htmlFor={`input-${props.htmlFor || props.label}`}>
 				{props.label}
 				{props.isRequired && (
 					<span className="bp3-text-muted required-text"> (required)</span>
@@ -64,7 +66,7 @@ const InputField = function(props) {
 				<div className={`bp3-input-group ${props.error ? 'bp3-intent-danger' : ''}`}>
 					{!props.children && !props.isTextarea && (
 						<input
-							id={`input-${props.label}`}
+							id={`input-${props.htmlFor || props.label}`}
 							className="bp3-input"
 							disabled={props.isDisabled}
 							placeholder={props.placeholder}

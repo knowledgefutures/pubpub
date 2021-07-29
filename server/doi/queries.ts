@@ -58,7 +58,7 @@ const findPub = (pubId) =>
 const findCommunity = (communityId) =>
 	Community.findOne({
 		where: { id: communityId },
-		attributes: ['id', 'title', 'issn', 'domain', 'subdomain'],
+		attributes: ['id', 'title', 'issn', 'domain', 'subdomain', 'citeAs', 'publishAs'],
 	});
 
 const persistCrossrefDepositRecord = async (ids, depositJson) => {

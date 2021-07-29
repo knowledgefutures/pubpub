@@ -16,6 +16,8 @@ export const getPermissions = async ({ userId, communityId }) => {
 	});
 	const editProps = [
 		'title',
+		'citeAs',
+		'publishAs',
 		'subdomain',
 		'description',
 		'avatar',

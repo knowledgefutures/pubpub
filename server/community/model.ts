@@ -18,6 +18,8 @@ export default (sequelize, dataTypes) => {
 				unique: true,
 			},
 			title: { type: dataTypes.TEXT, allowNull: false },
+			citeAs: { type: dataTypes.TEXT },
+			publishAs: { type: dataTypes.TEXT },
 			description: {
 				type: dataTypes.TEXT,
 				validate: {

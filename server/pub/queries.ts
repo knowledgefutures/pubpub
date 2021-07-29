@@ -15,42 +15,48 @@ export const createPub = async (
 		slug,
 		...restArgs
 	}: { communityId: string; collectionIds?: string[]; slug?: string; [key: string]: any },
-	userId?: string,
+	actorId?: string,
 ) => {
 	const newPubSlug = slug ? slug.toLowerCase().trim() : generateHash(8);
 	const dateString = getReadableDateInYear(new Date());
 	const { defaultPubCollections } = await Community.findOne({ where: { id: communityId } });
 	const draft = await createDraft();
 
-	const newPub = await Pub.create({
-		title: `Untitled Pub on ${dateString}`,
-		slug: newPubSlug,
-		communityId,
-		headerBackgroundColor: 'light',
-		headerStyle: 'dark',
-		viewHash: generateHash(8),
-		editHash: generateHash(8),
-		draftId: draft.id,
-		...restArgs,
-	});
+	const newPub = await Pub.create(
+		{
+			title: `Untitled Pub on ${dateString}`,
+			slug: newPubSlug,
+			communityId,
+			headerBackgroundColor: 'light',
+			headerStyle: 'dark',
+			viewHash: generateHash(8),
+			editHash: generateHash(8),
+			draftId: draft.id,
+			...restArgs,
+		},
+		{ actorId },
+	);
 
 	const createPubAttribution =
-		userId &&
+		actorId &&
 		PubAttribution.create({
-			userId,
+			userId: actorId,
 			pubId: newPub.id,
 			isAuthor: true,
 			order: 0.5,
 		});
 
 	const createMember =
-		userId &&
-		Member.create({
-			userId,
-			pubId: newPub.id,
-			permissions: 'manage',
-			isOwner: true,
-		});
+		actorId &&
+		Member.create(
+			{
+				userId: actorId,
+				pubId: newPub.id,
+				permissions: 'manage',
+				isOwner: true,
+			},
+			{ hooks: false },
+		);
 
 	const allCollectionIds = [...(defaultPubCollections || []), ...(collectionIds || [])];
 
@@ -78,7 +84,7 @@ export const createPub = async (
 	return newPub;
 };
 
-export const updatePub = (inputValues, updatePermissions) => {
+export const updatePub = (inputValues, updatePermissions, actorId) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues: any = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -92,15 +98,19 @@ export const updatePub = (inputValues, updatePermissions) => {
 
 	return Pub.update(filteredValues, {
 		where: { id: inputValues.pubId },
+		individualHooks: true,
+		actorId,
 	}).then(() => {
 		setPubSearchData(inputValues.pubId);
 		return filteredValues;
 	});
 };
 
-export const destroyPub = (pubId) => {
+export const destroyPub = (pubId, actorId) => {
 	return Pub.destroy({
 		where: { id: pubId },
+		individualHooks: true,
+		actorId,
 	}).then(() => {
 		deletePubSearchData(pubId);
 		return true;

@@ -26,6 +26,7 @@ app.post(
 				pubIsParent,
 				relationType,
 				approvedByTarget,
+				actorId: userId,
 			});
 			return res.status(201).json(edge);
 		}
@@ -75,12 +76,13 @@ app.delete(
 	'/api/pubEdges',
 	wrap(async (req, res) => {
 		const { pubEdgeId } = req.body;
+		const userId = req.user.id;
 		const canDestroyEdge = await canUpdateOrDestroyPubEdge({
 			pubEdgeId,
-			userId: req.user.id,
+			userId,
 		});
 		if (canDestroyEdge) {
-			await destroyPubEdge(pubEdgeId);
+			await destroyPubEdge(pubEdgeId, userId);
 			return res.status(200).json({});
 		}
 		throw new ForbiddenError();

@@ -8,6 +8,8 @@ import { setPubSearchData } from 'server/utils/search';
 import { createUpdatedDiscussionAnchorForNewSteps } from 'server/discussionAnchor/queries';
 import { Maybe, Release as ReleaseType, DefinitelyHas } from 'types';
 import { getStepsInChangeRange, editorSchema } from 'client/components/Editor';
+import { defer } from 'server/utils/deferred';
+import { createPubReleasedActivityItem } from 'server/activityItem/queries';
 
 type ReleaseErrorReason = 'merge-failed' | 'duplicate-release';
 export class ReleaseQueryError extends Error {
@@ -121,6 +123,7 @@ export const createRelease = async ({
 	if (createExports) {
 		await createLatestPubExports(pubId);
 	}
+	defer(() => createPubReleasedActivityItem(userId, release.id));
 
 	return release.toJSON();
 };

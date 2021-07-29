@@ -28,7 +28,7 @@ const persistScopeSummaryForId = async (
 
 const persistScopeSummaryForModel = async (model: any, summary: ScopeSummaryType) => {
 	model.scopeSummaryId = await persistScopeSummaryForId(model.scopeSummaryId, summary);
-	await model.save();
+	await model.save({ hooks: false });
 };
 
 export const summarizeCommunity = async (communityId: string) => {

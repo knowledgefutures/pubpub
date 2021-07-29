@@ -84,7 +84,10 @@ const buildMemberActivityItemParams = <
 	};
 };
 
-export const createCommunityCreatedActivityItem = async (actorId: string, communityId: string) => {
+export const createCommunityCreatedActivityItem = async (
+	actorId: null | string,
+	communityId: string,
+) => {
 	const community: types.Community = await Community.findOne({ where: { id: communityId } });
 	return createActivityItem({
 		actorId,
@@ -99,7 +102,7 @@ export const createCommunityCreatedActivityItem = async (actorId: string, commun
 };
 
 export const createCommunityUpdatedActivityItem = async (
-	actorId: string,
+	actorId: null | string,
 	communityId: string,
 	oldCommunity: types.Community,
 ) => {
@@ -118,7 +121,7 @@ export const createCommunityUpdatedActivityItem = async (
 	});
 };
 
-export const createMemberCreatedActivityItem = async (actorId: string, memberId: string) => {
+export const createMemberCreatedActivityItem = async (actorId: null | string, memberId: string) => {
 	const member = await Member.findOne({ where: { id: memberId } });
 	const partial = await resolvePartialMemberItem(member);
 	const item = {
@@ -145,7 +148,7 @@ export const createMemberCreatedActivityItem = async (actorId: string, memberId:
 	throw new Error('Invalid Scope');
 };
 
-export const createMemberRemovedActivityItem = async (actorId: string, memberId: string) => {
+export const createMemberRemovedActivityItem = async (actorId: null | string, memberId: string) => {
 	const member = await Member.findOne({ where: { id: memberId } });
 	const partial = await resolvePartialMemberItem(member);
 	const item = {
@@ -168,7 +171,7 @@ export const createMemberRemovedActivityItem = async (actorId: string, memberId:
 };
 
 export const createMemberUpdatedActivityItem = async (
-	actorId: string,
+	actorId: null | string,
 	memberId: string,
 	oldMember: types.Member,
 ) => {
@@ -197,7 +200,7 @@ export const createMemberUpdatedActivityItem = async (
 
 export const createCollectionActivityItem = async (
 	kind: 'collection-created' | 'collection-removed',
-	actorId: string,
+	actorId: null | string,
 	collectionId: string,
 ) => {
 	const collection: types.Collection = await Collection.findOne({ where: { id: collectionId } });
@@ -216,7 +219,7 @@ export const createCollectionActivityItem = async (
 };
 
 export const createCollectionUpdatedActivityItem = async (
-	actorId: string,
+	actorId: null | string,
 	collectionId: string,
 	oldCollection: types.Collection,
 ) => {
@@ -309,9 +312,7 @@ export const createPubReviewCommentAddedActivityItem = async (
 };
 
 export const createPubReviewUpdatedActivityItem = async (
-	kind: 'pub-review-updated',
-	actorId: string,
-	communityId: string,
+	actorId: null | string,
 	reviewId: string,
 	oldReview: types.Review,
 ) => {
@@ -319,10 +320,10 @@ export const createPubReviewUpdatedActivityItem = async (
 	const pub: types.Pub = await Pub.findOne({ where: { id: review.pubId } });
 	const diffs = getDiffsForPayload(review, oldReview, ['status']);
 	return createActivityItem({
-		kind,
+		kind: 'pub-review-updated',
 		pubId: pub.id,
 		actorId,
-		communityId,
+		communityId: pub.communityId,
 		payload: {
 			...diffs,
 			pub: {
@@ -335,7 +336,7 @@ export const createPubReviewUpdatedActivityItem = async (
 
 export const createCollectionPubActivityItem = async (
 	kind: 'collection-pub-created' | 'collection-pub-removed',
-	actorId: string,
+	actorId: null | string,
 	collectionPubId: string,
 ) => {
 	const collectionPub: types.DefinitelyHas<
@@ -368,7 +369,7 @@ export const createCollectionPubActivityItem = async (
 
 export const createPubActivityItem = async (
 	kind: 'pub-created' | 'pub-removed',
-	actorId: string,
+	actorId: null | string,
 	pubId: string,
 ) => {
 	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
@@ -386,7 +387,7 @@ export const createPubActivityItem = async (
 };
 
 export const createPubUpdatedActivityItem = async (
-	actorId: string,
+	actorId: null | string,
 	pubId: string,
 	oldPub: types.Pub,
 ) => {
@@ -406,7 +407,7 @@ export const createPubUpdatedActivityItem = async (
 	});
 };
 
-export const createPubReleasedActivityItem = async (actorId: string, releaseId: string) => {
+export const createPubReleasedActivityItem = async (actorId: null | string, releaseId: string) => {
 	const release: types.Release = await Release.findOne({ where: { id: releaseId } });
 	const pub: types.Pub = await Pub.findOne({ where: { id: release.pubId } });
 	return createActivityItem({
@@ -425,7 +426,7 @@ export const createPubReleasedActivityItem = async (actorId: string, releaseId: 
 
 export const createPubEdgeActivityItem = async (
 	kind: 'pub-edge-created' | 'pub-edge-removed',
-	actorId: string,
+	actorId: null | string,
 	pubEdgeId: string,
 ) => {
 	const pubEdge: types.DefinitelyHas<types.PubEdge, 'pub'> &

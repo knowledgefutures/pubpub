@@ -509,16 +509,10 @@ describe('fetchActivityItems', () => {
 		} = models;
 		await createPubReviewCreatedActivityItem(review.id);
 		await createPubReviewCommentAddedActivityItem(review.id, releaseDenialComment.id);
-		await createPubReviewUpdatedActivityItem(
-			'pub-review-updated',
-			actor.id,
-			community.id,
-			review.id,
-			{
-				...review,
-				status: 'closed',
-			},
-		);
+		await createPubReviewUpdatedActivityItem(actor.id, review.id, {
+			...review,
+			status: 'closed',
+		});
 		const {
 			activityItems: [updatedItem, commentAddedItem, createdItem],
 			associations,

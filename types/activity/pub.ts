@@ -33,7 +33,7 @@ export type PubRemovedActivityItem = PubActivityItemBase & {
 };
 
 export type PubReleasedActivityItem = PubActivityItemBase & {
-	kind: 'pub-released';
+	kind: 'pub-release-created';
 	payload: {
 		releaseId: string;
 	};

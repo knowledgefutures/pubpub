@@ -411,7 +411,7 @@ export const createPubReleasedActivityItem = async (actorId: null | string, rele
 	const release: types.Release = await Release.findOne({ where: { id: releaseId } });
 	const pub: types.Pub = await Pub.findOne({ where: { id: release.pubId } });
 	return createActivityItem({
-		kind: 'pub-released' as const,
+		kind: 'pub-release-created' as const,
 		actorId,
 		communityId: pub.communityId,
 		pubId: pub.id,

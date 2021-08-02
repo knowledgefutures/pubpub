@@ -150,7 +150,7 @@ describe('/api/releases', () => {
 				)
 				.expect(201),
 		).toMatchObject((response) => ({
-			kind: 'pub-released',
+			kind: 'pub-release-created',
 			pubId: pub.id,
 			actorId: pubAdmin.id,
 			payload: { releaseId: response.body.id },

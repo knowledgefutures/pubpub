@@ -33,7 +33,7 @@ export const activityItemRenderers: ActivityItemRenderers = {
 	'pub-created': renderPubCreated,
 	'pub-updated': renderPubUpdated,
 	'pub-removed': renderPubRemoved,
-	'pub-released': renderPubReleased,
+	'pub-release-created': renderPubReleased,
 	'pub-edge-created': renderPubEdgeCreated,
 	'pub-edge-removed': renderPubEdgeRemoved,
 	'pub-discussion-comment-added': renderPubDiscussionCommentAdded,

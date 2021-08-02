@@ -308,7 +308,7 @@ describe('fetchActivityItems', () => {
 		});
 	});
 
-	it('fetches items for pub-created, pub-updated, pub-removed, and pub-released', async () => {
+	it('fetches items for pub-created, pub-updated, pub-removed, and pub-release-created', async () => {
 		const { community, pub, actor, release } = models;
 		await createPubActivityItem('pub-created', actor.id, pub.id);
 		await createPubUpdatedActivityItem(actor.id, pub.id, { ...pub, doi: 'some/old/doi' });
@@ -336,7 +336,7 @@ describe('fetchActivityItems', () => {
 			payload: { pub: { title: pub.title } },
 		});
 		expect(releasedItem).toMatchObject({
-			kind: 'pub-released',
+			kind: 'pub-release-created',
 			payload: {
 				pub: {
 					title: pub.title,

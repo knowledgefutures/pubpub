@@ -196,7 +196,7 @@ const getActivityItemAssociationIds = (
 			} else if ('pub' in item.payload.target) {
 				pub.add(item.payload.target.pub.id);
 			}
-		} else if (item.kind === 'pub-released') {
+		} else if (item.kind === 'pub-release-created') {
 			release.add(item.payload.releaseId);
 		} else if (
 			item.kind === 'member-created' ||

@@ -13,8 +13,6 @@ import 'server/utils/serverModuleOverwrite';
 import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/environment';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 
-import 'server/utils/serverModuleOverwrite';
-
 import { sequelize, User } from './models';
 import './hooks';
 

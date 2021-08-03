@@ -4,19 +4,21 @@ import {
 	Collection,
 	CollectionPub,
 	Member,
+	ThreadComment,
+	Page,
 	Pub,
 	ReviewNew,
 	Discussion,
 	Release,
 	PubEdge,
 	PubAttribution,
-	ThreadComment,
 } from 'server/models';
 import {
 	createCollectionActivityItem,
 	createCollectionPubActivityItem,
 	createCommunityCreatedActivityItem,
 	createMemberCreatedActivityItem,
+	createPageActivityItem,
 	createPubActivityItem,
 	createPubEdgeActivityItem,
 	createPubReleasedActivityItem,
@@ -52,11 +54,20 @@ const backfillMembers = async (ctx: Context, scope: MembershipScope) => {
 	});
 };
 
+const backfillPages = async (ctx: Context) => {
+	const pages = await Page.findAll({ where: { communityId: ctx.community.id } });
+	await forEach(pages, async (page) => {
+		const item = await createPageActivityItem('page-created', ctx.defaultActorId, page.id);
+		await setItemTimestamp(item, page.createdAt);
+	});
+};
+
 const backfillCommunity = async (ctx: Context) => {
 	const { defaultActorId, community } = ctx;
 	const item = await createCommunityCreatedActivityItem(defaultActorId, community.id);
 	await setItemTimestamp(item, community.createdAt);
 	await backfillMembers(ctx, { communityId: ctx.community.id });
+	await backfillPages(ctx);
 };
 
 const backfillCollectionPubs = async (ctx: Context, collection: types.Collection) => {

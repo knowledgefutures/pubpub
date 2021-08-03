@@ -21,6 +21,7 @@ export type CollectionUpdatedActivityItem = CollectionActivityItemBase & {
 		isPublic?: Diff<boolean>;
 		isRestricted?: Diff<boolean>;
 		title?: Diff<string>;
+		slug?: Diff<string>;
 		doi?: Diff<null | string>;
 		layout?: true;
 		metadata?: true;

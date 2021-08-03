@@ -31,7 +31,7 @@ const PageDelete = (props: Props) => {
 			}),
 		)
 			.then(() => {
-				window.location.href = '/dashboard';
+				window.location.href = '/dash';
 			})
 			.catch((err) => {
 				console.error(err);

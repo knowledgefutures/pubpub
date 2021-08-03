@@ -22,6 +22,7 @@ const filterLabels: Record<ActivityFilter, FilterLabel> = {
 	community: { label: 'Community', icon: 'office' },
 	collection: { label: 'Collections', icon: 'collection' },
 	pub: { label: 'Pubs', icon: 'pubDoc' },
+	page: { label: 'Pages', icon: 'page-layout' },
 	member: { label: 'Members', icon: 'people' },
 	review: { label: 'Reviews', icon: 'social-media' },
 	discussion: { label: 'Discussions', icon: 'chat' },
@@ -33,7 +34,15 @@ const sortedFilters = (filters: ActivityFilter[]) =>
 	filters.concat().sort((a, b) => allFilters.indexOf(a) - allFilters.indexOf(b));
 
 const filtersByScopeKind = {
-	community: sortedFilters(['community', 'collection', 'pub', 'member', 'review', 'discussion']),
+	community: sortedFilters([
+		'community',
+		'collection',
+		'pub',
+		'page',
+		'member',
+		'review',
+		'discussion',
+	]),
 	collection: sortedFilters(['pub', 'member', 'review', 'discussion']),
 	pub: sortedFilters(['member', 'review', 'discussion', 'pubEdge']),
 };

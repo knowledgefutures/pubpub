@@ -7,15 +7,18 @@ import { generateHash } from 'utils/hashes';
 
 import { sanitizePageHtml } from './sanitizePageHtml';
 
-export const createPage = async (inputValues) => {
-	return Page.create({
-		communityId: inputValues.communityId,
-		title: inputValues.title,
-		slug: await findAcceptableSlug(inputValues.slug, inputValues.communityId),
-		description: inputValues.description,
-		isPublic: false,
-		viewHash: generateHash(8),
-	})
+export const createPage = async (inputValues, actorId = null) => {
+	return Page.create(
+		{
+			communityId: inputValues.communityId,
+			title: inputValues.title,
+			slug: await findAcceptableSlug(inputValues.slug, inputValues.communityId),
+			description: inputValues.description,
+			isPublic: false,
+			viewHash: generateHash(8),
+		},
+		{ actorId },
+	)
 		.then((newPage) => {
 			setPageSearchData(newPage.id);
 			const findCommunity = Community.findOne({
@@ -44,20 +47,17 @@ export const createPage = async (inputValues) => {
 		});
 };
 
-export const updatePage = async (inputValues, updatePermissions) => {
+export const updatePage = async (inputValues, updatePermissions, actorId = null) => {
 	// Filter to only allow certain fields to be updated
-	const filteredValues = {};
+	const filteredValues: Record<string, any> = {};
 	Object.keys(inputValues).forEach((key) => {
 		if (updatePermissions.includes(key)) {
 			filteredValues[key] = inputValues[key];
 		}
 	});
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 	if (filteredValues.slug) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 		filteredValues.slug = slugifyString(filteredValues.slug);
 		const available = await slugIsAvailable({
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 			slug: filteredValues.slug,
 			communityId: inputValues.communityId,
 			activeElementId: inputValues.pageId,
@@ -66,9 +66,7 @@ export const updatePage = async (inputValues, updatePermissions) => {
 			throw new PubPubError.InvalidFieldsError('slug');
 		}
 	}
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'layout' does not exist on type '{}'.
 	if (filteredValues.layout) {
-		// @ts-expect-error ts-migrate(2339) FIXME: Property 'layout' does not exist on type '{}'.
 		filteredValues.layout = filteredValues.layout.map((block) => {
 			if (block.type !== 'html') {
 				return block;
@@ -81,6 +79,8 @@ export const updatePage = async (inputValues, updatePermissions) => {
 
 	return Page.update(filteredValues, {
 		where: { id: inputValues.pageId },
+		actorId,
+		individualHooks: true,
 	})
 		.then(() => {
 			return setPageSearchData(inputValues.pageId);
@@ -90,12 +90,14 @@ export const updatePage = async (inputValues, updatePermissions) => {
 		});
 };
 
-export const destroyPage = (inputValues) => {
+export const destroyPage = (inputValues, actorId = null) => {
 	return Page.destroy({
 		where: {
 			id: inputValues.pageId,
 			communityId: inputValues.communityId,
 		},
+		actorId,
+		individualHooks: true,
 	})
 		.then(() => {
 			return Community.findOne({

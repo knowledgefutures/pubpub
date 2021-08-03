@@ -6,6 +6,7 @@ import {
 	Discussion,
 	ExternalPublication,
 	Member,
+	Page,
 	Pub,
 	PubEdge,
 	Release,
@@ -229,6 +230,7 @@ export const createCollectionUpdatedActivityItem = async (
 		'isPublic',
 		'isRestricted',
 		'title',
+		'slug',
 	]);
 	const flags = getChangeFlagsForPayload(collection, oldCollection, ['layout', 'metadata']);
 	return createActivityItem({
@@ -239,6 +241,48 @@ export const createCollectionUpdatedActivityItem = async (
 		payload: {
 			collection: {
 				title,
+			},
+			...flags,
+			...diffs,
+		},
+	});
+};
+
+export const createPageActivityItem = async (
+	kind: 'page-created' | 'page-removed',
+	actorId: null | string,
+	pageId: string,
+) => {
+	const page: types.Page = await Page.findOne({ where: { id: pageId } });
+	return createActivityItem({
+		kind,
+		actorId,
+		communityId: page.communityId,
+		payload: {
+			page: {
+				id: page.id,
+				title: page.title,
+			},
+		},
+	});
+};
+
+export const createPageUpdatedActivityItem = async (
+	actorId: null | string,
+	pageId: string,
+	oldPage: types.Page,
+) => {
+	const page: types.Page = await Page.findOne({ where: { id: pageId } });
+	const diffs = getDiffsForPayload(page, oldPage, ['isPublic', 'title', 'slug', 'description']);
+	const flags = getChangeFlagsForPayload(page, oldPage, ['layout']);
+	return createActivityItem({
+		kind: 'page-updated' as const,
+		actorId,
+		communityId: page.communityId,
+		payload: {
+			page: {
+				title: page.title,
+				id: page.id,
 			},
 			...flags,
 			...diffs,

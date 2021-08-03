@@ -8,6 +8,7 @@ import {
 	renderCollectionRemoved,
 	renderCollectionUpdated,
 } from './collection';
+import { renderPageCreated, renderPageUpdated, renderPageRemoved } from './page';
 import {
 	renderPubCreated,
 	renderPubRemoved,
@@ -30,6 +31,9 @@ export const activityItemRenderers: ActivityItemRenderers = {
 	'collection-removed': renderCollectionRemoved,
 	'collection-pub-created': renderCollectionPubCreated,
 	'collection-pub-removed': renderCollectionPubRemoved,
+	'page-created': renderPageCreated,
+	'page-updated': renderPageUpdated,
+	'page-removed': renderPageRemoved,
 	'pub-created': renderPubCreated,
 	'pub-updated': renderPubUpdated,
 	'pub-removed': renderPubRemoved,

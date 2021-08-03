@@ -316,7 +316,10 @@ export const createPubReviewCreatedActivityItem = async (reviewId: string) => {
 		kind: 'pub-review-created',
 		pubId: pub.id,
 		payload: {
-			reviewId,
+			review: {
+				id: review.id,
+				title: review.title,
+			},
 			threadId: review.threadId,
 			isReply: false,
 			pub: { title: pub.title },
@@ -342,7 +345,10 @@ export const createPubReviewCommentAddedActivityItem = async (
 		kind: 'pub-review-comment-added' as const,
 		pubId: pub.id,
 		payload: {
-			reviewId,
+			review: {
+				id: review.id,
+				title: review.title,
+			},
 			threadId: review.threadId,
 			isReply: true,
 			threadComment: {
@@ -373,7 +379,10 @@ export const createPubReviewUpdatedActivityItem = async (
 			pub: {
 				title: pub.title,
 			},
-			reviewId,
+			review: {
+				id: review.id,
+				title: review.title,
+			},
 		},
 	});
 };

@@ -76,7 +76,14 @@ export type PubDiscussionCommentAddedActivityItem = PubDiscussionActivityItemBas
 	kind: 'pub-discussion-comment-added';
 };
 
-type PubReviewActivityItemBase = PubActivityItemBase & { payload: { reviewId: string } };
+type PubReviewActivityItemBase = PubActivityItemBase & {
+	payload: {
+		review: {
+			id: string;
+			title: string;
+		};
+	};
+};
 
 export type PubReviewCreatedActivityItem = PubReviewActivityItemBase &
 	MightHaveThreadCommentItemBase & {

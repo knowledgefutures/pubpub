@@ -180,16 +180,16 @@ const getActivityItemAssociationIds = (
 			thread.add(item.payload.threadId);
 			threadComment.add(item.payload.threadComment.id);
 		} else if (item.kind === 'pub-review-updated') {
-			review.add(item.payload.reviewId);
+			review.add(item.payload.review.id);
 		} else if (item.kind === 'pub-review-created') {
-			review.add(item.payload.reviewId);
+			review.add(item.payload.review.id);
 			thread.add(item.payload.threadId);
 			if (item.payload.threadComment) {
 				threadComment.add(item.payload.threadComment.id);
 				user.add(item.payload.threadComment.userId);
 			}
 		} else if (item.kind === 'pub-review-comment-added') {
-			review.add(item.payload.reviewId);
+			review.add(item.payload.review.id);
 			thread.add(item.payload.threadId);
 			threadComment.add(item.payload.threadComment.id);
 		} else if (item.kind === 'pub-edge-created' || item.kind === 'pub-edge-removed') {

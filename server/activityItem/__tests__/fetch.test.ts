@@ -532,7 +532,10 @@ describe('fetchActivityItems', () => {
 					text: releaseRequestComment.text,
 					userId: actor.id,
 				},
-				reviewId: review.id,
+				review: {
+					id: review.id,
+					title: review.title,
+				},
 				pub: { title: pub.title },
 			},
 		});
@@ -549,7 +552,10 @@ describe('fetchActivityItems', () => {
 					text: releaseDenialComment.text,
 					userId: loudmouth.id,
 				},
-				reviewId: review.id,
+				review: {
+					id: review.id,
+					title: review.title,
+				},
 				pub: { title: pub.title },
 			},
 		});
@@ -559,7 +565,10 @@ describe('fetchActivityItems', () => {
 			kind: 'pub-review-updated',
 			pubId: pub.id,
 			payload: {
-				reviewId: review.id,
+				review: {
+					id: review.id,
+					title: review.title,
+				},
 				pub: { title: pub.title },
 				status: {
 					from: 'closed',

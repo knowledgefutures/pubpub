@@ -53,14 +53,6 @@ export const renderCollectionUpdated = itemRenderer<CollectionUpdatedActivityIte
 				</>
 			);
 		}
-		if (payload.slug) {
-			return (
-				<>
-					{actor} changed the title of {collection} from {payload.slug.from} to{' '}
-					{payload.slug.to}
-				</>
-			);
-		}
 		if (payload.layout) {
 			return (
 				<>

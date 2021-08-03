@@ -108,7 +108,7 @@ export const createCommunityUpdatedActivityItem = async (
 	oldCommunity: types.Community,
 ) => {
 	const community: types.Community = await Community.findOne({ where: { id: communityId } });
-	const diffs = getDiffsForPayload(community, oldCommunity, ['title']);
+	const diffs = getDiffsForPayload(community, oldCommunity, ['title', 'subdomain']);
 	return createActivityItem({
 		actorId,
 		kind: 'community-updated' as const,
@@ -445,7 +445,7 @@ export const createPubUpdatedActivityItem = async (
 	oldPub: types.Pub,
 ) => {
 	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
-	const diffs = getDiffsForPayload(pub, oldPub, ['title', 'doi']);
+	const diffs = getDiffsForPayload(pub, oldPub, ['title', 'doi', 'slug']);
 	return createActivityItem({
 		kind: 'pub-updated' as const,
 		actorId,

@@ -40,8 +40,16 @@ export const renderCollectionUpdated = itemRenderer<CollectionUpdatedActivityIte
 		if (payload.title) {
 			return (
 				<>
-					{actor} changed the title of {collection} from {payload.title.from} to{' '}
-					{payload.title.to}
+					{actor} changed the title of {collection} from <i>{payload.title.from}</i> to{' '}
+					<i>{payload.title.to}</i>
+				</>
+			);
+		}
+		if (payload.slug) {
+			return (
+				<>
+					{actor} changed the slug of {collection} from {payload.slug.from} to{' '}
+					{payload.slug.to}
 				</>
 			);
 		}

@@ -22,6 +22,7 @@ export type PubUpdatedActivityItem = PubActivityItemBase & {
 	kind: 'pub-updated';
 	payload: {
 		title?: Diff<string>;
+		slug?: Diff<string>;
 		doi?: Diff<null | string>;
 		attributions?: true;
 		draft?: true;

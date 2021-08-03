@@ -18,6 +18,7 @@ export type CommunityUpdatedActivityItem = CommunityActivityItemBase & {
 	kind: 'community-updated';
 	payload: {
 		title?: Diff<string>;
+		subdomain?: Diff<string>;
 	};
 };
 

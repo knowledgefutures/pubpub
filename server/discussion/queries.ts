@@ -94,13 +94,6 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 	const generatedTitle = `New Discussion on ${dateString}`;
 
 	const newThread = await Thread.create({});
-	await ThreadComment.create({
-		text,
-		content,
-		userId,
-		threadId: newThread.id,
-	});
-
 	const newVisibility = await Visibility.create({ access: visibilityAccess });
 	const newDiscussion = await Discussion.create({
 		id: discussionId,
@@ -110,6 +103,13 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 		visibilityId: newVisibility.id,
 		userId,
 		pubId,
+	});
+
+	await ThreadComment.create({
+		text,
+		content,
+		userId,
+		threadId: newThread.id,
 	});
 
 	if (initAnchorData) {

@@ -35,6 +35,7 @@ export const pubUrl = (community, pub, options = {}) => {
 		historyKey,
 		releaseNumber,
 		releaseId,
+		discussionId,
 		accessHash,
 		query,
 		download,
@@ -48,8 +49,10 @@ export const pubUrl = (community, pub, options = {}) => {
 		baseUrl = `${baseUrl}/draft${appendedHistoryKey}`;
 	} else if (releaseNumber !== undefined) {
 		baseUrl = `${baseUrl}/release/${releaseNumber}`;
-	} else if (releaseId !== undefined) {
+	} else if (releaseId) {
 		baseUrl = `${baseUrl}/release-id/${releaseId}`;
+	} else if (discussionId) {
+		baseUrl = `${baseUrl}/discussion-id/${discussionId}`;
 	}
 	const url = queryString.stringifyUrl(
 		{ url: baseUrl, query: { access: accessHash, ...query } },

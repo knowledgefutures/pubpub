@@ -9,10 +9,9 @@ export const discussionTitle: TitleRenderer<PubDiscussionCommentAddedActivityIte
 	context,
 ) => {
 	const pubFromContext = getPubFromContext(item.pubId, context);
-
 	const title = item.payload.isReply ? 'a reply to a Discussion' : 'a new Discussion';
 	const href = pubFromContext
-		? pubUrl(null, pubFromContext, { hash: `discussion-${item.payload.discussionId}` })
+		? pubUrl(null, pubFromContext, { discussionId: item.payload.discussionId })
 		: null;
 
 	return { title, href };

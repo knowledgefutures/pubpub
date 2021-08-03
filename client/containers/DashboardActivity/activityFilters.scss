@@ -1,0 +1,48 @@
+@import '../DashboardOverview/overviewStyles.scss';
+
+.activity-filters-component {
+    display: flex;
+
+    .label {
+        display: flex;
+        align-items: center;
+        margin-right: 8px;
+    }
+
+    &.some-filters-active {
+        .activity-filter {
+            color: #999;
+        }
+    }
+
+    .activity-filter {
+        color: #333;
+        cursor: pointer;
+        display: flex;
+        user-select: none;
+        align-items: center;
+        border-radius: 2px;
+        padding: 4px 8px;
+        border: 1px solid #aaa;
+        box-sizing: border-box;
+
+        .bp3-icon {
+            margin-right: 4px;
+            margin-top: 1px;
+        }
+
+        &:not(:last-child) {
+            margin-right: 8px;
+        }
+
+        &:hover {
+            box-shadow: $gentle-shadow;
+        }
+
+        &[aria-checked='true'] {
+            color: white;
+            background: var(--community-accent-dark);
+            border-color: var(--community-accent-dark);
+        }
+    }
+}

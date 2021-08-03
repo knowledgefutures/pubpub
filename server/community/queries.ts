@@ -51,21 +51,24 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 				throw new Error('URL already used');
 			}
 			const description = inputValues.description.substring(0, 280).replace(/\n/g, ' ') || '';
-			return Community.create({
-				id: newCommunityId,
-				subdomain,
-				title: inputValues.title,
-				description,
-				headerLogo: inputValues.headerLogo,
-				heroLogo: inputValues.heroLogo,
-				heroTitle: inputValues.heroLogo ? '' : inputValues.title,
-				hideHeaderLogo: true,
-				heroText: description,
-				accentColorLight: inputValues.accentColorLight,
-				accentColorDark: inputValues.accentColorDark,
-				navigation: [{ type: 'page', id: homePageId }],
-				hideCreatePubButton: true,
-			});
+			return Community.create(
+				{
+					id: newCommunityId,
+					subdomain,
+					title: inputValues.title,
+					description,
+					headerLogo: inputValues.headerLogo,
+					heroLogo: inputValues.heroLogo,
+					heroTitle: inputValues.heroLogo ? '' : inputValues.title,
+					hideHeaderLogo: true,
+					heroText: description,
+					accentColorLight: inputValues.accentColorLight,
+					accentColorDark: inputValues.accentColorDark,
+					navigation: [{ type: 'page', id: homePageId }],
+					hideCreatePubButton: true,
+				},
+				{ actorId: userData.id },
+			);
 		})
 		.then(() => {
 			const newCommunityHomeLayout = JSON.parse(
@@ -92,18 +95,21 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 					userData.email,
 				);
 			}
-			return Member.create({
-				communityId: newCommunityId,
-				userId: userData.id,
-				permissions: 'admin',
-			});
+			return Member.create(
+				{
+					communityId: newCommunityId,
+					userId: userData.id,
+					permissions: 'admin',
+				},
+				{ hooks: false },
+			);
 		})
 		.then(() => {
 			return { subdomain };
 		});
 };
 
-export const updateCommunity = (inputValues, updatePermissions) => {
+export const updateCommunity = (inputValues, updatePermissions, actorId = null) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -119,6 +125,8 @@ export const updateCommunity = (inputValues, updatePermissions) => {
 
 	return Community.update(filteredValues, {
 		where: { id: inputValues.communityId },
+		actorId,
+		individualHooks: true,
 	}).then(() => {
 		updateCommunityData(inputValues.communityId);
 		return filteredValues;

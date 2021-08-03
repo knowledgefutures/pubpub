@@ -3,6 +3,7 @@ import { Provider as RKProvider } from 'reakit';
 import classNames from 'classnames';
 
 import { Header, Footer, LegalBanner, AccentStyle, NavBar, SkipLink } from 'components';
+import { Community } from 'types';
 import { PageContext } from 'utils/hooks';
 import { hydrateWrapper } from 'client/utils/hydrateWrapper';
 
@@ -18,6 +19,14 @@ type Props = {
 	chunkName: string;
 	initialData: any;
 	viewData: any;
+};
+
+const renderCssVariablesStyle = (community: Community) => {
+	return (
+		<style type="text/css">
+			{`:root { --community-accent-dark: ${community.accentColorDark} }`}
+		</style>
+	);
 };
 
 const App = (props: Props) => {
@@ -39,6 +48,7 @@ const App = (props: Props) => {
 	return (
 		<PageContext.Provider value={pageContextProps}>
 			<RKProvider>
+				{renderCssVariablesStyle(communityData)}
 				<div id="app" className={classNames({ dashboard: isDashboard })}>
 					<AccentStyle communityData={communityData} isNavHidden={!showNav} />
 					{locationData.isDuqDuq && (

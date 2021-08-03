@@ -84,7 +84,7 @@ builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 		}
 	};
 
-	return Member.create({ ...getTargetArgs(), ...restArgs });
+	return Member.create({ ...getTargetArgs(), ...restArgs }, { hooks: false });
 };
 
 builders.Release = async (args) => {

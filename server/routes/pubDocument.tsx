@@ -18,6 +18,7 @@ import {
 	getPubFirebaseDraft,
 	getPubFirebaseToken,
 	getPubRelease,
+	getPub,
 } from 'server/utils/queryHelpers';
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'types';
@@ -118,6 +119,48 @@ app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
 		});
 
 		return renderPubDocument(res, pubData, initialData);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+app.get('/pub/:pubSlug/release-id/:releaseId', async (req, res, next) => {
+	if (!hostIsValid(req, 'community')) {
+		return next();
+	}
+	try {
+		const initialData = await getInitialData(req);
+		const { pubSlug, releaseId } = req.params;
+		const pub = await getPub(pubSlug, initialData.communityData.id);
+		const releaseIndex = pub.releases.findIndex((release) => release.id === releaseId);
+		if (releaseIndex !== -1) {
+			const releaseNumber = 1 + releaseIndex;
+			return res.redirect(`/pub/${pubSlug}/release/${releaseNumber}`);
+		}
+		throw new NotFoundError();
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+app.get('/pub/:pubSlug/discussion-id/:discussionId', async (req, res, next) => {
+	if (!hostIsValid(req, 'community')) {
+		return next();
+	}
+	try {
+		const initialData = await getInitialData(req);
+		const { pubSlug, discussionId } = req.params;
+		const pub = await getPub(pubSlug, initialData.communityData.id, { getDiscussions: true });
+		const discussion = pub.discussions.find((disc) => disc.id === discussionId);
+		if (discussion) {
+			const isDiscussionOnDraft = discussion.visibility.access !== 'public';
+			const hash = `#discussion-${discussionId}`;
+			if (isDiscussionOnDraft) {
+				return res.redirect(`/pub/${pubSlug}/draft${hash}`);
+			}
+			return res.redirect(`/pub/${pubSlug}${hash}`);
+		}
+		throw new NotFoundError();
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

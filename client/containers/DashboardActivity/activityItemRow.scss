@@ -1,0 +1,59 @@
+$border: 1px solid #ddd;
+
+.activity-item-row-component {
+    display: grid;
+    grid-template-areas:
+        'timestamp icon message'
+        '. . excerpt';
+    grid-template-columns: 160px 80px 1fr;
+    padding: 20px 0;
+
+    &:not(:last-child) {
+        border-bottom: $border;
+    }
+
+    > .timestamp {
+        font-weight: 300;
+        font-style: italic;
+        grid-area: timestamp;
+        text-align: right;
+    }
+
+    > .icon {
+        color: #999;
+        grid-area: icon;
+        display: flex;
+        justify-content: center;
+    }
+
+    > .message {
+        grid-area: message;
+
+        > :first-child {
+            text-transform: capitalize;
+        }
+
+        strong {
+            color: #999;
+            font-weight: 500;
+            a {
+                color: var(--community-accent-dark);
+            }
+        }
+
+        a {
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    > .excerpt {
+        margin-top: 10px;
+        padding: 15px;
+        border-radius: 2px;
+        background: whitesmoke;
+        grid-area: excerpt;
+    }
+}

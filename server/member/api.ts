@@ -46,6 +46,7 @@ app.post(
 		}
 		const member = await createMember({
 			value,
+			actorId: req.user.id,
 			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ pubId: any; collectionId?: undefined; comm... Remove this comment to see the full error message
 			target: {
 				userId: targetUserId,
@@ -79,6 +80,7 @@ app.put(
 		const member = await updateMember({
 			value,
 			memberId: id,
+			actorId: req.user.id,
 		});
 		return res.status(200).json(member);
 	}),
@@ -100,7 +102,7 @@ app.delete(
 		if (!permissions.destroy) {
 			throw new ForbiddenError();
 		}
-		await destroyMember({ memberId: id });
+		await destroyMember({ memberId: id, actorId: req.user.id });
 		return res.status(200).json(id);
 	}),
 );

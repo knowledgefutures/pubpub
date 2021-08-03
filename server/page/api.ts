@@ -21,8 +21,7 @@ app.post('/api/pages', (req, res) => {
 			if (!permissions.create) {
 				throw new Error('Not Authorized');
 			}
-			// @ts-expect-error ts-migrate(2554) FIXME: Expected 1 arguments, but got 2.
-			return createPage(req.body, req.user);
+			return createPage(req.body, req.user.id);
 		})
 		.then((newPage) => {
 			return res.status(201).json(newPage);
@@ -41,7 +40,7 @@ app.put(
 		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
-		const updatedValues = await updatePage(req.body, permissions.update);
+		const updatedValues = await updatePage(req.body, permissions.update, req.user.id);
 		return res.status(201).json(updatedValues);
 	}),
 );
@@ -52,7 +51,7 @@ app.delete('/api/pages', (req, res) => {
 			if (!permissions.destroy) {
 				throw new Error('Not Authorized');
 			}
-			return destroyPage(req.body);
+			return destroyPage(req.body, req.user.id);
 		})
 		.then(() => {
 			return res.status(201).json(req.body.pageId);

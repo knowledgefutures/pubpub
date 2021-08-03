@@ -53,6 +53,8 @@ export default ({
 		{
 			model: Release,
 			as: 'releases',
+			separate: true,
+			order: [['createdAt', 'ASC']],
 		},
 	];
 	let collectionPubs: any = [];

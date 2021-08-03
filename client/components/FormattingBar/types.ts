@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { DefinitelyHas } from 'types';
 
 import { EditorChangeObject } from '../Editor';

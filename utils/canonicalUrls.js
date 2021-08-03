@@ -28,8 +28,19 @@ export const pubShortUrl = (pub) => {
 };
 
 export const pubUrl = (community, pub, options = {}) => {
-	let baseUrl = `${communityUrl(community)}/pub/${pub.slug}`;
-	const { isDraft, historyKey, releaseNumber, accessHash, query, download } = options;
+	const baseCommunityUrl = community === null ? '' : communityUrl(community);
+	let baseUrl = `${baseCommunityUrl}/pub/${pub.slug}`;
+	const {
+		isDraft,
+		historyKey,
+		releaseNumber,
+		releaseId,
+		discussionId,
+		accessHash,
+		query,
+		download,
+		hash,
+	} = options;
 	if (download) {
 		const downloadType = typeof download === 'string' ? `/${download}` : '';
 		baseUrl = `${baseUrl}/download${downloadType}`;
@@ -38,11 +49,19 @@ export const pubUrl = (community, pub, options = {}) => {
 		baseUrl = `${baseUrl}/draft${appendedHistoryKey}`;
 	} else if (releaseNumber !== undefined) {
 		baseUrl = `${baseUrl}/release/${releaseNumber}`;
+	} else if (releaseId) {
+		baseUrl = `${baseUrl}/release-id/${releaseId}`;
+	} else if (discussionId) {
+		baseUrl = `${baseUrl}/discussion-id/${discussionId}`;
 	}
-	return queryString.stringifyUrl(
+	const url = queryString.stringifyUrl(
 		{ url: baseUrl, query: { access: accessHash, ...query } },
 		{ skipNull: true },
 	);
+	if (hash) {
+		return `${url}#${hash}`;
+	}
+	return url;
 };
 
 export const bestPubUrl = ({ pubData, communityData }, options = {}) => {

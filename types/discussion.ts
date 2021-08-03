@@ -1,5 +1,6 @@
 import { Visibility } from './visibility';
 import { Thread } from './thread';
+import { Pub } from './pub';
 
 export type DiscussionAnchor = {
 	id: string;
@@ -25,4 +26,5 @@ export type Discussion = {
 	anchors?: DiscussionAnchor[];
 	visibility: Visibility;
 	thread?: Thread;
+	pub?: Pub;
 };

@@ -1,3 +1,6 @@
+import { Discussion } from './discussion';
+import { Review } from './review';
+
 export type ThreadComment = {
 	id: string;
 	text: string;
@@ -13,3 +16,7 @@ export type Thread = {
 	locked?: boolean;
 	comments: ThreadComment[];
 };
+
+export type TaggedThreadParent<T = {}> =
+	| { type: 'discussion'; value: T & Discussion }
+	| { type: 'review'; value: T & Review };

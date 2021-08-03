@@ -1,3 +1,5 @@
+import { IdIndex, WithId } from 'types';
+
 export const intersperse = <P, Q>(
 	arr: P[],
 	val: Exclude<Q, Function> | ((i: number) => Exclude<Q, Function>),
@@ -23,6 +25,8 @@ export const indexByProperty = <T extends { [key: string]: any }>(
 	});
 	return res;
 };
+
+export const indexById = <T extends WithId>(items: T[]): IdIndex<T> => indexByProperty(items, 'id');
 
 export const unique = <T, Q>(array: T[], fn: (t: T, s: Symbol) => Q | Symbol) => {
 	const uniqueSymbol = Symbol('unique');

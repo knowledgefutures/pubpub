@@ -26,7 +26,7 @@ export const getPermissions = async ({ userId, communityId, collectionId }) => {
 	];
 	return {
 		create: isAuthenticated,
-		update: isAuthenticated ? editProps : false,
+		update: isAuthenticated ? editProps : (false as const),
 		destroy: isAuthenticated,
 	};
 };

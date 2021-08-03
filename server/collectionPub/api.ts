@@ -51,6 +51,7 @@ app.post(
 			pubId,
 			rank,
 			moveToTop,
+			actorId: userId,
 		});
 		return res.status(201).json(collectionPub);
 	}),
@@ -85,7 +86,7 @@ app.delete(
 		if (!canDestroy) {
 			throw new ForbiddenError();
 		}
-		await destroyCollectionPub(collectionPubId);
+		await destroyCollectionPub(collectionPubId, userId);
 		return res.status(200).json(req.body.id);
 	}),
 );

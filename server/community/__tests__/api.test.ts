@@ -2,7 +2,7 @@
 import sinon from 'sinon';
 import uuid from 'uuid';
 
-import { setup, teardown, login, modelize } from 'stubstub';
+import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 
 import { Community } from 'server/models';
 import * as mailchimp from 'server/utils/mailchimp';
@@ -38,14 +38,20 @@ describe('/api/communities', () => {
 		const { willCreateCommunity } = models;
 		const agent = await login(willCreateCommunity);
 		const subdomain = 'burn-book-' + uuid.v4();
-		const { body: url } = await agent
-			.post('/api/communities')
-			.send({
-				subdomain,
-				title: 'Burn Book',
-				description: "Get in loser we're testing our code",
-			})
-			.expect(201);
+		const { body: url } = await expectCreatedActivityItem(
+			agent
+				.post('/api/communities')
+				.send({
+					subdomain,
+					title: 'Burn Book',
+					description: "Get in loser we're testing our code",
+				})
+				.expect(201),
+		).toMatchObject((response) => ({
+			kind: 'community-created',
+			communityId: response.body.id,
+			actorId: willCreateCommunity.id,
+		}));
 		expect(url).toEqual(`https://${subdomain}.pubpub.org`);
 		const newCommunity = await Community.findOne({ where: { subdomain } });
 		expect(newCommunity.title).toEqual('Burn Book');
@@ -80,16 +86,22 @@ describe('/api/communities', () => {
 	it('allows community admins to update reasonable fields on the community', async () => {
 		const { admin, existingCommunity } = models;
 		const agent = await login(admin);
-		await agent
-			.put('/api/communities')
-			.send({
-				communityId: existingCommunity.id,
-				// We expect this field to be updated...
-				title: 'Journal of Trying To Lose Three Pounds',
-				// ...but not this one!
-				isFeatured: true,
-			})
-			.expect(200);
+		await expectCreatedActivityItem(
+			agent
+				.put('/api/communities')
+				.send({
+					communityId: existingCommunity.id,
+					// We expect this field to be updated...
+					title: 'Journal of Trying To Lose Three Pounds',
+					// ...but not this one!
+					isFeatured: true,
+				})
+				.expect(200),
+		).toMatchObject({
+			kind: 'community-updated',
+			communityId: existingCommunity.id,
+			actorId: admin.id,
+		});
 		const communityNow = await Community.findOne({ where: { id: existingCommunity.id } });
 		expect(communityNow.title).toEqual('Journal of Trying To Lose Three Pounds');
 		expect(communityNow.isFeatured).not.toBeTruthy();

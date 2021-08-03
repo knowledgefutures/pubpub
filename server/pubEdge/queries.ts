@@ -24,20 +24,24 @@ export const createPubEdge = async ({
 	targetPubId = null,
 	approvedByTarget = false,
 	moveToTop = true,
+	actorId = null,
 }) => {
 	const [externalPublicationId, rank] = await Promise.all([
 		getExternalPublicationId(externalPublication),
 		findRankForNewPubEdge(pubId, moveToTop),
 	]);
-	const newEdge = await PubEdge.create({
-		pubId,
-		rank,
-		relationType,
-		pubIsParent,
-		targetPubId,
-		approvedByTarget,
-		externalPublicationId,
-	});
+	const newEdge = await PubEdge.create(
+		{
+			pubId,
+			rank,
+			relationType,
+			pubIsParent,
+			targetPubId,
+			approvedByTarget,
+			externalPublicationId,
+		},
+		{ actorId },
+	);
 	return PubEdge.findOne({
 		where: { id: newEdge.id },
 		include: getPubEdgeIncludes({ includeTargetPub: true }),
@@ -50,6 +54,6 @@ export const updatePubEdge = async ({ pubEdgeId, ...update }) => {
 	return edge;
 };
 
-export const destroyPubEdge = async (pubEdgeId) => {
-	return PubEdge.destroy({ where: { id: pubEdgeId } });
+export const destroyPubEdge = async (pubEdgeId, actorId = null) => {
+	return PubEdge.destroy({ where: { id: pubEdgeId }, actorId, individualHooks: true });
 };

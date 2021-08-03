@@ -21,7 +21,7 @@ app.post(
 		if (!permissions.create) {
 			throw new ForbiddenError();
 		}
-		const newCollection = await createCollection(req.body);
+		const newCollection = await createCollection(req.body, req.user.id);
 		return res.status(201).json(newCollection);
 	}),
 );
@@ -39,6 +39,7 @@ app.put(
 				collectionId: req.body.id,
 			},
 			permissions.update,
+			req.user.id,
 		);
 		return res.status(200).json(updatedValues);
 	}),
@@ -51,10 +52,13 @@ app.delete(
 		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
-		await destroyCollection({
-			...req.body,
-			collectionId: req.body.id,
-		});
+		await destroyCollection(
+			{
+				...req.body,
+				collectionId: req.body.id,
+			},
+			req.user.id,
+		);
 		return res.status(200).json(req.body.id);
 	}),
 );

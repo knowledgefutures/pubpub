@@ -33,7 +33,7 @@ app.put(
 		if (!permissions.update) {
 			throw new ForbiddenError();
 		}
-		const updatedValues = await updateCommunity(req.body, permissions.update);
+		const updatedValues = await updateCommunity(req.body, permissions.update, req.user.id);
 		return res.status(200).json(updatedValues);
 	}),
 );

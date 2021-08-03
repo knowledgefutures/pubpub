@@ -14,6 +14,7 @@ require('server/hooks');
 
 const command = process.argv[2];
 const commandFiles = {
+	backfillCommunityActivity: './activityItem/singleCommunityCli',
 	backfillCheckpoints: './backfillCheckpoints',
 	backfillCrossrefDepositRecords: './backfillCrossrefDepositRecords',
 	backup: './backup/backup',

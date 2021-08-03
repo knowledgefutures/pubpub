@@ -175,6 +175,7 @@ const Discussion = (props: Props) => {
 		<div
 			tabIndex={-1}
 			role="button"
+			id={`discussion-${discussionData.id}`}
 			className={classNames(
 				'discussion-component',
 				isPreview && 'preview',

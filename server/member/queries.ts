@@ -1,4 +1,7 @@
-import { Member } from 'server/models';
+import { Op } from 'sequelize';
+
+import * as types from 'types';
+import { CollectionPub, Member } from 'server/models';
 import { getMemberDataById } from 'server/utils/queryHelpers';
 
 const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }) => {
@@ -10,6 +13,7 @@ const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }) => 
 export const createMember = async ({
 	target: { pubId, collectionId, communityId, userId },
 	value: { permissions },
+	actorId = null,
 }) => {
 	assertExactlyOneScopeInTarget({
 		pubId,
@@ -24,17 +28,45 @@ export const createMember = async ({
 			collectionId,
 			pubId,
 		},
-		{ returning: ['id'] },
+		{ returning: ['id'], actorId },
 	);
 	return getMemberDataById(memberId);
 };
 
-export const updateMember = async ({ memberId, value: { permissions } }) => {
+export const updateMember = async ({ memberId, value: { permissions }, actorId = null }) => {
 	const existingMember = await Member.findOne({ where: { id: memberId } });
-	await existingMember.update({ permissions });
+	await existingMember.update({ permissions }, { actorId });
 	return existingMember;
 };
 
-export const destroyMember = ({ memberId }) => {
-	return Member.destroy({ where: { id: memberId } });
+export const destroyMember = ({ memberId, actorId = null }) => {
+	return Member.destroy({ where: { id: memberId }, actorId, individualHooks: true });
+};
+
+export const getMembersForScope = async (
+	scope: types.Scope,
+): Promise<types.SequelizeModel<types.Member>[]> => {
+	if ('pubId' in scope && scope.pubId) {
+		const collectionPubs = await CollectionPub.findAll({
+			where: { pubId: scope.pubId },
+			attributes: ['collectionId'],
+		});
+		return Member.findAll({
+			where: {
+				[Op.or]: [
+					{ communityId: scope.communityId },
+					{ collectionId: { [Op.in]: collectionPubs.map((cp) => cp.collectionId) } },
+					{ pubId: scope.pubId },
+				],
+			},
+		});
+	}
+	if ('collectionId' in scope && scope.collectionId) {
+		return Member.findAll({
+			where: {
+				[Op.or]: [{ communityId: scope.communityId }, { collectionId: scope.collectionId }],
+			},
+		});
+	}
+	return Member.findAll({ where: { communityId: scope.communityId } });
 };

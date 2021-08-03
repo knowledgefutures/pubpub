@@ -9,8 +9,8 @@ export type Collection = {
 	title: string;
 	slug: string;
 	avatar?: string;
-	isRestricted?: boolean;
-	isPublic?: boolean;
+	isRestricted: boolean;
+	isPublic: boolean;
 	viewHash?: string;
 	editHash?: string;
 	metadata?: { [k: string]: any };

@@ -33,7 +33,7 @@ type MembershipScope = { communityId: string } | { collectionId: string } | { pu
 
 type Context = {
 	community: types.Community;
-	defaultActorId: string;
+	defaultActorId: null | string;
 };
 
 const deleteExistingItemsForCommunity = async (ctx: Context) => {
@@ -153,14 +153,17 @@ const backfillPubs = async (ctx: Context) => {
 	await forEach(pubs, (pub) => backfillPub(ctx, pub), 10);
 };
 
-export const backfillItemsForCommunity = async (community: types.Community) => {
+export const backfillItemsForCommunity = async (
+	community: types.Community,
+	deleteExistingItems: boolean = false,
+) => {
 	const ctx: Context = {
 		community,
-		// We won't always know who the actor is for the items the backfill creates, but we want
-		// to slip this `null` past the assertions that actorId will be given in the future.
-		defaultActorId: (null as unknown) as string,
+		defaultActorId: null,
 	};
-	await deleteExistingItemsForCommunity(ctx);
+	if (deleteExistingItems) {
+		await deleteExistingItemsForCommunity(ctx);
+	}
 	await backfillCommunity(ctx);
 	await backfillCollections(ctx);
 	await backfillPubs(ctx);

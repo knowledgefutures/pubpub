@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 import * as Sentry from '@sentry/node';
 import bodyParser from 'body-parser';
 import compression from 'compression';
@@ -9,15 +10,18 @@ import noSlash from 'no-slash';
 import passport from 'passport';
 import path from 'path';
 
-import 'server/utils/serverModuleOverwrite';
 import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/environment';
+
+// ACHTUNG: These calls must appear before we import any more of our own code to ensure that
+// the environment, and in particular the choice of dev vs. prod, is configured correctly!
+setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
+setAppCommit(process.env.HEROKU_SLUG_COMMIT);
+
+import 'server/utils/serverModuleOverwrite';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 
 import { sequelize, User } from './models';
 import './hooks';
-
-setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
-setAppCommit(process.env.HEROKU_SLUG_COMMIT);
 
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
 // return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.

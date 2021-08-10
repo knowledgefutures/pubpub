@@ -8,6 +8,10 @@ figure {
 		width: 100%;
 	}
 
+	& > a > img {
+		width: 100%;
+	}
+
 	&.ProseMirror-selectednode {
 		outline: 2px solid #bbbdc0;
 

@@ -220,7 +220,11 @@ const DashboardPage = (props: Props) => {
 	const renderPageDelete = () => {
 		return (
 			<SettingsSection title="Delete">
-				<PageDelete pageData={pageData} communityId={communityData.id} />
+				<PageDelete
+					isForbidden={isHome}
+					pageData={pageData}
+					communityId={communityData.id}
+				/>
 			</SettingsSection>
 		);
 	};

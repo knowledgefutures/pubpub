@@ -19,18 +19,21 @@ export const slugIsAvailable = async ({ slug, communityId, activeElementId }) =>
 	return pages === 0 && collections === 0;
 };
 
-export const findAcceptableSlug = async (desiredSlug, communityId) => {
+export const findAcceptableSlug = async (desiredSlug: string, communityId: string) => {
 	const [pages, collections] = await Promise.all([
 		Page.findAll({
 			attributes: ['slug'],
-			where: { communityId, slug: desiredSlug },
+			where: { communityId },
 		}),
 		Collection.findAll({
 			attributes: ['slug'],
-			where: { communityId, slug: desiredSlug },
+			where: { communityId },
 		}),
 	]);
-	const allSlugs = [...pages, ...collections].map((item) => item.slug);
+	const allSlugs = [
+		...[...pages, ...collections].map((item) => item.slug),
+		...definitelyForbiddenSlugs,
+	];
 	if (allSlugs.includes(desiredSlug)) {
 		let suffix = 2;
 		// eslint-disable-next-line no-constant-condition

@@ -13,6 +13,7 @@ import {
 	PubEdge,
 	PubVersion,
 	Release,
+	ScopeSummary,
 	Thread,
 	ThreadComment,
 	User,
@@ -109,6 +110,12 @@ const cloneFirebaseDraft = async ({ existingDraftId, newDraftId, discussionIdMap
 	await firebaseClient.write(newDraftPath, draftJsonWithUpdatedDiscussions);
 };
 
+const cloneScopeSummary = async (sourceModel, targetModel) => {
+	const [_, scopeSummary] = await cloneModel(ScopeSummary, sourceModel.scopeSummaryId);
+	targetModel.scopeSummaryId = scopeSummary.id;
+	await targetModel.save();
+};
+
 const clonePub = async ({ pubId, newCommunityId, collectionIdMap }) => {
 	const draft = await createDraft();
 	const [existingPub, newPub] = await cloneModel(Pub, pubId, {
@@ -116,6 +123,7 @@ const clonePub = async ({ pubId, newCommunityId, collectionIdMap }) => {
 		slug: generateHash(8),
 		draftId: draft.id,
 	});
+	await cloneScopeSummary(existingPub, newPub);
 	// eslint-disable-next-line no-console
 	console.log('Cloning', newPub.title);
 	const discussionIdMap = await cloneManyModels(
@@ -180,20 +188,40 @@ const clonePubs = async ({ existingCommunityId, newCommunityId, collectionIdMap 
 };
 
 const getUpdatedLayoutblockContent = ({ block, pubIdMap, pageIdMap, collectionIdMap }) => {
-	const { content } = block;
+	const { content, type } = block;
 	const { pubIds, pageIds, collectionIds } = content;
 	if (content) {
-		return {
-			...block,
-			content: {
-				...content,
-				...(pubIds && { pubIds: pubIds.map((id) => pubIdMap[id]) }),
-				...(pageIds && { pageIds: pageIds.map((id) => pageIdMap[id]) }),
-				...(collectionIds && {
-					collectionIds: collectionIds.map((id) => collectionIdMap[id]),
-				}),
-			},
-		};
+		if (type === 'pubs') {
+			return {
+				...block,
+				content: {
+					...content,
+					...(pubIds && { pubIds: pubIds.map((id) => pubIdMap[id]) }),
+					...(pageIds && { pageIds: pageIds.map((id) => pageIdMap[id]) }),
+					...(collectionIds && {
+						collectionIds: collectionIds.map((id) => collectionIdMap[id]),
+					}),
+				},
+			};
+		}
+		if (type === 'collections-pages') {
+			const items = content.items.map((item) => {
+				if (item.type === 'page') {
+					return { ...item, id: pageIdMap[item.id] };
+				}
+				if (item.type === 'collection') {
+					return { ...item, id: collectionIdMap[item.id] };
+				}
+				return items;
+			});
+			return {
+				...block,
+				content: {
+					...content,
+					items,
+				},
+			};
+		}
 	}
 	return block;
 };
@@ -287,11 +315,11 @@ const maybeDestroyPreviouslyCreatedCommunity = async (newSubdomain) => {
 const cloneCommunity = async (existingSubdomain, newSubdomain) => {
 	await maybeDestroyPreviouslyCreatedCommunity(newSubdomain);
 	const existingCommunity = await Community.findOne({ where: { subdomain: existingSubdomain } });
-	// eslint-disable-next-line no-unused-vars
 	const [_, newCommunity] = await cloneModel(Community, existingCommunity.id, {
 		subdomain: newSubdomain,
 		domain: null,
 	});
+	await cloneScopeSummary(existingCommunity, newCommunity);
 	try {
 		const pageIdMap = await cloneManyModels(
 			Page,
@@ -302,6 +330,9 @@ const cloneCommunity = async (existingSubdomain, newSubdomain) => {
 			Collection,
 			{ communityId: existingCommunity.id },
 			{ communityId: newCommunity.id },
+			async (oldCollection, newCollection) => {
+				await cloneScopeSummary(oldCollection, newCollection);
+			},
 		);
 		const pubIdMap = await clonePubs({
 			existingCommunityId: existingCommunity.id,

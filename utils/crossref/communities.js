@@ -9,6 +9,7 @@ const RS_DOI_PREFIX = '10.46470';
 const JOTE_DOI_PREFIX = '10.36850';
 const APA_DOI_PREFIX = '10.1037';
 const ROCHESTER_DOI_PREFIX = '10.47761';
+const OPENPRESSTIU_DOI_PREFIX = '10.26116';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,
@@ -20,6 +21,7 @@ export const managedDoiPrefixes = [
 	JOTE_DOI_PREFIX,
 	APA_DOI_PREFIX,
 	ROCHESTER_DOI_PREFIX,
+	OPENPRESSTIU_DOI_PREFIX,
 ];
 
 export const communityDoiOverrides = [
@@ -84,6 +86,13 @@ export const communityDoiOverrides = [
 		],
 		prefix: ROCHESTER_DOI_PREFIX,
 		key: 'ROCHESTER',
+	},
+	{
+		communityIds: [
+			'6ffe5cea-8ff9-421f-83dc-29d7d2eef839', // https://openpresstiu.pubpub.org/
+		],
+		prefix: OPENPRESSTIU_DOI_PREFIX,
+		key: 'OPENPRESSTIU',
 	},
 ];
 

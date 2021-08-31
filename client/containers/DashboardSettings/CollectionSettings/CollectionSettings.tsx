@@ -22,7 +22,7 @@ const CollectionSettings = () => {
 		collection,
 		updateCollection,
 		deleteCollection,
-		fieldErrors,
+		slugStatus,
 		hasChanges,
 	} = useCollectionState(activeCollection);
 
@@ -40,7 +40,7 @@ const CollectionSettings = () => {
 		<DashboardFrame className="collection-settings-component" title="Settings">
 			<SettingsSection title="Details">
 				<CollectionDetailsEditor
-					fieldErrors={fieldErrors}
+					slugStatus={slugStatus}
 					communityData={communityData}
 					collection={collection}
 					onUpdateCollection={updateCollection}

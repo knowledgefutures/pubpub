@@ -26,7 +26,7 @@ export const generateDefaultCollectionLayout = () => {
 	};
 };
 
-export const createCollection = (
+export const createCollection = async (
 	{
 		communityId,
 		title,
@@ -40,6 +40,17 @@ export const createCollection = (
 	},
 	actorId?,
 ) => {
+	if (title) {
+		const slugStatus = await slugIsAvailable({
+			slug: slug || slugifyString(title),
+			communityId,
+			activeElementId: id,
+		});
+
+		if (slugStatus === 'reserved') {
+			throw new PubPubError.ForbiddenSlugError(slugStatus);
+		}
+	}
 	return Community.findOne({ where: { id: communityId } }).then(async (community) => {
 		const normalizedTitle = title.trim();
 		const collection = {
@@ -78,14 +89,15 @@ export const updateCollection = async (inputValues, updatePermissions, actorId?)
 	if (filteredValues.slug) {
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 		filteredValues.slug = slugifyString(filteredValues.slug);
-		const available = await slugIsAvailable({
+		const slugStatus = await slugIsAvailable({
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 			slug: filteredValues.slug,
 			communityId: inputValues.communityId,
 			activeElementId: inputValues.collectionId,
 		});
-		if (!available) {
-			throw new PubPubError.InvalidFieldsError('slug');
+
+		if (slugStatus !== 'available') {
+			throw new PubPubError.ForbiddenSlugError(slugStatus);
 		}
 	}
 	await Collection.update(filteredValues, {

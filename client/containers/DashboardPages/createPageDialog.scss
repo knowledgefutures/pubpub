@@ -2,5 +2,15 @@
 	// Specificity hack
     &.bp3-dialog {
         padding-bottom: 0px;
+
+
+    }
+
+    .footer-dialog {
+        display: flex;
+        justify-content: flex-end;
+        text-align: end;
     }
 }
+
+

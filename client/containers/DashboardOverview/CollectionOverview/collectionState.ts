@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { CollectionPub, Pub, Collection, Community, DefinitelyHas } from 'types';
+import { CollectionPub, Pub, Collection, Community, DefinitelyHas, SlugStatus } from 'types';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import { usePendingChanges, usePageContext } from 'utils/hooks';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
@@ -155,7 +155,8 @@ export const useCollectionState = <C extends Collection>(initialCollection: C) =
 	);
 
 	const collection = useMemo(() => linkCollection(state, communityData), [state, communityData]);
-	const fieldErrors = error?.type === 'InvalidFields' ? error.fields : null;
+	const slugStatus: SlugStatus =
+		error?.type === 'forbidden-slug' ? error.slugStatus : 'available';
 
 	const updateCollection = (next) => update(next, true);
 
@@ -168,7 +169,7 @@ export const useCollectionState = <C extends Collection>(initialCollection: C) =
 		);
 
 	return {
-		fieldErrors,
+		slugStatus,
 		collection,
 		hasChanges,
 		persistCollection: persist,

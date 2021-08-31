@@ -8,6 +8,7 @@ import { getDashUrl } from 'utils/dashboard';
 import { slugifyString } from 'utils/strings';
 import { LayoutPubsByBlock } from 'utils/layout';
 import { apiFetch } from 'client/utils/apiFetch';
+import { getSlugError } from 'client/utils/slug';
 
 import {
 	DashboardFrame,
@@ -17,7 +18,7 @@ import {
 	ClickToCopyButton,
 	LayoutEditor,
 } from 'components';
-import { Page, Pub } from 'types';
+import { Page, Pub, SlugStatus } from 'types';
 import { usePersistableState } from 'client/utils/usePersistableState';
 
 import PageDelete from './PageDelete';
@@ -75,9 +76,10 @@ const DashboardPage = (props: Props) => {
 	} = pageData;
 	const isHome = !persistedPageData.slug;
 
-	const slugError = error?.fields?.slug
-		? 'This slug is not available because it is in use by another Collection or Page.'
-		: '';
+	const slugStatus: SlugStatus =
+		error?.type === 'forbidden-slug' ? error.slugStatus : 'available';
+
+	const slugError = getSlugError(slug, slugStatus);
 
 	useUpdateEffect(() => {
 		if (!hasChanges) {

@@ -9,6 +9,17 @@ import { generateDefaultPageLayout } from 'utils/pages';
 import { sanitizePageHtml } from './sanitizePageHtml';
 
 export const createPage = async (inputValues, actorId = null) => {
+	if (inputValues.slug) {
+		const slugStatus = await slugIsAvailable({
+			slug: slugifyString(inputValues.slug),
+			communityId: inputValues.communityId,
+			activeElementId: null,
+		});
+
+		if (slugStatus === 'reserved') {
+			throw new PubPubError.ForbiddenSlugError(slugStatus);
+		}
+	}
 	return Page.create(
 		{
 			communityId: inputValues.communityId,
@@ -60,13 +71,13 @@ export const updatePage = async (inputValues, updatePermissions, actorId = null)
 	});
 	if (filteredValues.slug) {
 		filteredValues.slug = slugifyString(filteredValues.slug);
-		const available = await slugIsAvailable({
+		const slugStatus = await slugIsAvailable({
 			slug: filteredValues.slug,
 			communityId: inputValues.communityId,
 			activeElementId: inputValues.pageId,
 		});
-		if (!available) {
-			throw new PubPubError.InvalidFieldsError('slug');
+		if (slugStatus !== 'available') {
+			throw new PubPubError.ForbiddenSlugError(slugStatus);
 		}
 	}
 	if (filteredValues.layout) {

@@ -3,6 +3,7 @@ import dateFormat from 'dateformat';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
 import { getPrimaryCollection } from 'utils/collections/primary';
+import { renderJournalCitation } from 'utils/citations';
 import {
 	Collection,
 	CollectionPub,
@@ -59,10 +60,11 @@ export const getPubMetadata = async (pubId) => {
 		licenseSlug: pubData.licenseSlug,
 		publishedDateString,
 		updatedDateString,
-		communityTitle:
-			primaryCollection?.kind === 'issue'
-				? pubData.community.citeAs
-				: pubData.community.title,
+		communityTitle: renderJournalCitation(
+			primaryCollection?.kind,
+			pubData.community.citeAs,
+			pubData.community.title,
+		),
 		accentColor: pubData.community.accentColorDark,
 		attributions: pubData.attributions
 			.concat()

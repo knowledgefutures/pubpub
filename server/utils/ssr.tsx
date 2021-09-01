@@ -87,14 +87,10 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		];
 	}
 
-	if (communityTitle && (!collection || collection.kind === 'issue')) {
+	if (communityTitle && !collection) {
 		outputComponents = [
 			...outputComponents,
-			<meta
-				key="sn2"
-				name="citation_journal_title"
-				content={communityCiteAs || communityTitle}
-			/>,
+			<meta key="sn2" name="citation_journal_title" content={communityTitle} />,
 		];
 	}
 
@@ -118,28 +114,29 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		if (collection.kind === 'issue') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c1" name="citation_volume" content={collection.metadata?.volume} />,
-				<meta key="c2" name="citation_issue" content={collection.metadata?.issue} />,
+				<meta key="c1" name="citation_journal_title" content={communityCiteAs} />,
+				<meta key="c2" name="citation_volume" content={collection.metadata?.volume} />,
+				<meta key="c3" name="citation_issue" content={collection.metadata?.issue} />,
 				<meta
-					key="c3"
+					key="c4"
 					name="citation_issn"
 					content={collection.metadata?.electronic_issn}
 				/>,
-				<meta key="c4" name="citation_issn" content={collection.metadata?.print_issn} />,
+				<meta key="c5" name="citation_issn" content={collection.metadata?.print_issn} />,
 			];
 		}
 		if (collection.kind === 'book') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c5" name="citation_inbook_title" content={collection.title} />,
-				<meta key="c6" name="citation_book_title" content={collection.title} />,
-				<meta key="c7" name="citation_isbn" content={collection.metadata?.isbn} />,
+				<meta key="c6" name="citation_inbook_title" content={collection.title} />,
+				<meta key="c7" name="citation_book_title" content={collection.title} />,
+				<meta key="c8" name="citation_isbn" content={collection.metadata?.isbn} />,
 			];
 		}
 		if (collection.kind === 'conference') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c8" name="citation_conference_title" content={collection.title} />,
+				<meta key="c9" name="citation_conference_title" content={collection.title} />,
 			];
 		}
 	}

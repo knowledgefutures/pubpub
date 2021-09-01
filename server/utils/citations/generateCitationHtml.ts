@@ -5,6 +5,7 @@ import getCollectionDoi from 'utils/collections/getCollectionDoi';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { pubUrl } from 'utils/canonicalUrls';
 import { getPrimaryCollection } from 'utils/collections/primary';
+import { renderJournalCitationForCitations } from 'utils/citations';
 
 const getDatePartsObject = (date) => ({
 	'date-parts': [date.getFullYear(), date.getMonth() + 1, date.getDate()],
@@ -66,7 +67,11 @@ export const generateCitationHtml = async (pubData, communityData) => {
 		type: 'article-journal',
 		title: pubData.title,
 		...authorsEntry,
-		'container-title': communityData.citeAs || communityData.title,
+		...renderJournalCitationForCitations(
+			primaryCollection?.kind,
+			communityData.citeAs,
+			communityData.title,
+		),
 		...getCollectionLevelData(primaryCollection),
 		publisher: communityData.publishAs || '',
 	};

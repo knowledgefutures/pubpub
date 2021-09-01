@@ -53,3 +53,14 @@ export const citationInlineStyles: CitationInlineStyle[] = [
 	{ key: 'author', title: 'Author', example: '(Goodall)' },
 	{ key: 'label', title: 'Label', example: '(bibtexKey)' },
 ];
+
+export const renderJournalCitation = (kind, citation, communityTitle) => {
+	if (kind === 'issue') {
+		return citation || communityTitle;
+	}
+	return communityTitle;
+};
+
+export const renderJournalCitationForCitations = (kind, citation, communityTitle) => {
+	return { 'container-title': renderJournalCitation(kind, citation, communityTitle) };
+};

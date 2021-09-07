@@ -32,7 +32,7 @@ const getAttributions = async (author) => {
 		);
 		return attributions;
 	}
-	return [];
+	return null;
 };
 
 const stripFalseyValues = (object) =>

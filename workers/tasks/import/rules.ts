@@ -1,4 +1,4 @@
-import { buildRuleset, commonTransformers, transformUtil } from '@pubpub/prosemirror-pandoc';
+import { buildRuleset, transformers, transformUtil } from '@pubpub/prosemirror-pandoc';
 import { defaultNodes, defaultMarks } from 'components/Editor/schemas';
 
 import * as katex from 'katex';
@@ -20,8 +20,8 @@ const {
 	nullTransformer,
 	pandocPassThroughTransformer,
 	pandocQuotedTransformer,
-	tableTransformer,
-} = commonTransformers;
+	pandocTableTransformer,
+} = transformers;
 
 const { textFromStrSpace, textToStrSpace, createAttr, intersperse, flatten } = transformUtil;
 
@@ -171,6 +171,7 @@ rules.fromPandoc('SoftBreak', nullTransformer);
 
 // Stuff we don't have equivalents for
 rules.fromPandoc('Span', pandocPassThroughTransformer);
+rules.fromPandoc('Underline', pandocPassThroughTransformer);
 
 // Pandoc insists that text in quotes is actually its own node type
 rules.fromPandoc('Quoted', pandocQuotedTransformer);
@@ -209,7 +210,7 @@ rules.fromPandoc('RawInline', (node, { transform }) => {
 });
 
 // Tables
-rules.transform('Table', 'table', tableTransformer);
+rules.fromPandoc('Table', pandocTableTransformer);
 
 // Equations
 rules.fromPandoc('Math', (node) => {
@@ -263,7 +264,7 @@ rules.fromProsemirror('image', (node) => {
 // ~~~ Rules for citations and footnotes ~~~ //
 
 rules.transform('Cite', 'citation', {
-	fromPandoc: (node, { count, resource }) => {
+	fromPandoc: (node, { resource }) => {
 		const { citations } = node;
 		return citations.map((citation) => {
 			const { structuredValue, unstructuredValue } = resource(
@@ -276,7 +277,6 @@ rules.transform('Cite', 'citation', {
 					value: structuredValue || unstructuredValue,
 					structuredValue,
 					unstructuredValue,
-					count: 1 + count('Cite'),
 					customLabel: pandocInlineToPlain(node.content) || '',
 				},
 			};
@@ -306,14 +306,13 @@ rules.transform('Cite', 'citation', {
 });
 
 rules.transform('Note', 'footnote', {
-	fromPandoc: (node, { count }) => {
+	fromPandoc: (node) => {
 		const { content } = node;
 		const value = pandocBlocksToHtmlString(content);
 		return {
 			type: 'footnote',
 			attrs: {
 				value,
-				count: 1 + count('Note'),
 			},
 		};
 	},

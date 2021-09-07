@@ -15,7 +15,7 @@ import { getProposedMetadata, getRawMetadata } from './metadata';
 import { getTmpDirectoryPath } from './tmpDirectory';
 import { createResourceTransformer } from './resources';
 
-setPandocApiVersion([1, 20]);
+setPandocApiVersion([1, 22]);
 
 const dataRoot = process.env.NODE_ENV === 'production' ? '/app/.apt/usr/share/pandoc/data ' : '';
 
@@ -130,6 +130,7 @@ export const importFiles = async ({
 	const prosemirrorDoc = fromPandoc(pandocAst, pandocRules, {
 		resource: resourceTransformer.getResource,
 		useSmartQuotes: !keepStraightQuotes,
+		prosemirrorDocWidth: 675,
 	}).asNode();
 	const [proposedMetadata] = await Promise.all([
 		getProposedMetadata(pandocAst.meta),

@@ -1,4 +1,4 @@
-/* eslint-disable import/first */
+/* eslint-disable import/first, import/order */
 import * as Sentry from '@sentry/node';
 import bodyParser from 'body-parser';
 import compression from 'compression';

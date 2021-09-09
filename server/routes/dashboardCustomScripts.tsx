@@ -21,7 +21,6 @@ app.get('/dash/scripts', async (req, res, next) => {
 		}
 
 		const customScripts = await getCustomScriptsForCommunity(communityData.id);
-
 		return renderToNodeStream(
 			res,
 			<Html

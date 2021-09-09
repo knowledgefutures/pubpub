@@ -23,6 +23,8 @@ import { apiFetch } from 'client/utils/apiFetch';
 
 import NavBuilder from './NavBuilder';
 
+require('./communitySettings.scss');
+
 const CommunitySettings = () => {
 	const { scopeData, communityData } = usePageContext();
 
@@ -341,6 +343,25 @@ const CommunitySettings = () => {
 							}}
 						/>
 					</InputField>
+				</div>
+				<div className="row-wrapper">
+					<a href={getDashUrl({ mode: 'scripts' })}>Customize CSS</a>
+					<Tooltip
+						targetClassName="custom-css-tooltip-target"
+						popoverClassName="dashboard-settings-container_custom-css-popover"
+						content={
+							<>
+								Warning: Experimental feature. Custom CSS lets you change the look
+								and feel of your Community, but it also lets you introduce bugs that
+								make it hard or impossible to use. The PubPub team may also make
+								changes to our own source code that could break your CSS without
+								warning. We don't provide support for problems caused by Custom CSS.
+								Use caution (but have fun!)
+							</>
+						}
+					>
+						<Icon icon="warning-sign" color="orange" />
+					</Tooltip>
 				</div>
 			</SettingsSection>
 			<SettingsSection title="Header">

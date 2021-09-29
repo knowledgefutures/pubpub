@@ -54,6 +54,7 @@ app.get(['/', '/:slug'], async (req, res, next) => {
 					image: pageData.avatar,
 					unlisted: !pageData.isPublic,
 				})}
+				bodyClassPrefix="layout"
 			/>,
 		);
 	} catch (err) {

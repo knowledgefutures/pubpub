@@ -90,6 +90,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 							image: collection.avatar,
 							unlisted: !collection.isPublic,
 						})}
+						bodyClassPrefix="layout"
 					/>,
 				);
 			}

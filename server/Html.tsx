@@ -1,7 +1,8 @@
 import path from 'path';
 import React from 'react';
+import classNames from 'classnames';
 import App from 'containers/App/App';
-import { CustomScripts } from 'types';
+import { CustomScripts, InitialData } from 'types';
 
 const manifest = require(path.join(process.cwd(), 'dist/client/manifest.json'));
 
@@ -11,10 +12,12 @@ type OwnProps = {
 	viewData?: any;
 	headerComponents: any[];
 	customScripts?: CustomScripts;
+	bodyClassPrefix?: string;
 };
 
 const defaultProps = {
 	viewData: {},
+	bodyClassPrefix: '',
 };
 const polyfills = [
 	'default',
@@ -35,6 +38,16 @@ const polyfills = [
 ].join(',');
 
 type Props = OwnProps & typeof defaultProps;
+
+const getActiveSlugClassName = (initialData: InitialData, viewData?: any) => {
+	if (viewData?.pageData?.slug) {
+		return `active-page-${viewData.pageData.slug}`;
+	}
+	if (initialData.scopeData.elements && 'slug' in initialData.scopeData.elements.activeTarget) {
+		return `active-${initialData.scopeData.elements.activeTargetType}-${initialData.scopeData.elements.activeTarget.slug}`;
+	}
+	return '';
+};
 
 const Html = (props: Props) => {
 	const { customScripts } = props;
@@ -71,7 +84,12 @@ const Html = (props: Props) => {
 					href="/opensearch.xml"
 				/>
 			</head>
-			<body>
+			<body
+				className={classNames(
+					props.bodyClassPrefix && `${props.bodyClassPrefix}-body-wrapper`,
+					getActiveSlugClassName(props.initialData, props.viewData),
+				)}
+			>
 				{/* This script tag is here to prevent FOUC in Firefox: https://stackoverflow.com/questions/21147149/flash-of-unstyled-content-fouc-in-firefox-only-is-ff-slow-renderer */}
 				<script>0</script>
 				<div id="root">

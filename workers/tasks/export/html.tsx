@@ -14,6 +14,19 @@ const nonExportableNodeTypes = ['discussion'];
 const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/';
 const bullet = ' • ';
 
+// This script is provided by the "cjk-fonts" Web Fonts project that we manage from here:
+// https://fonts.adobe.com/my_fonts#web_projects-section
+const loadCjkFontsScript = `
+(function(d) {
+  var config = {
+	kitId: 'seb8nix',
+	scriptTimeout: 3000,
+	async: true
+  },
+  h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+})(document);
+`;
+
 const createCss = () => {
 	const entrypoint = path.join(__dirname, 'styles', 'printDocument.scss');
 	const cssPath = path.join(__dirname, 'styles', 'printDocument.css');
@@ -298,6 +311,8 @@ export const renderStaticHtml = async ({
 					// eslint-disable-next-line react/no-danger
 					<style type="text/css" dangerouslySetInnerHTML={{ __html: staticCss }} />
 				)}
+				{/* eslint-disable-next-line react/no-danger */}
+				<script dangerouslySetInnerHTML={{ __html: loadCjkFontsScript }} />
 			</head>
 			<body>
 				{targetPandoc && (

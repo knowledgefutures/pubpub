@@ -11,7 +11,7 @@ import SimpleNotesList from './SimpleNotesList';
 import { digestCitation } from './util';
 
 const nonExportableNodeTypes = ['discussion'];
-const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/';
+const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/';
 const bullet = ' • ';
 
 // This script is provided by the "cjk-fonts" Web Fonts project that we manage from here:

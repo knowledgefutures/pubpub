@@ -117,7 +117,7 @@ it('lets community admins create a DOI for pubs in their community', async () =>
 	});
 
 	expect(dois.pub).toEqual(expectedPubDoi);
-	expect(depositRecord.depositJson.deposit).toEqual(doiStub.firstCall.args[0]);
+	expect(depositRecord.depositJson.deposit).toEqual(doiStub.getCall(1).args[0]);
 });
 
 it('lets community admins preview a DOI for pubs in their community', async () => {
@@ -157,7 +157,7 @@ it('lets community admins create a DOI for collections in their community', asyn
 	});
 
 	expect(dois.collection).toEqual(expectedCollectionDoi);
-	expect(depositRecord.depositJson.deposit).toEqual(doiStub.firstCall.args[0]);
+	expect(depositRecord.depositJson.deposit).toEqual(doiStub.getCall(1).args[0]);
 });
 
 it('lets community admins preview a DOI for collections in their community', async () => {

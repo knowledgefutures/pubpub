@@ -37,7 +37,15 @@ app.post(
 app.put(
 	'/api/pubEdges',
 	wrap(async (req, res) => {
-		const { pubEdgeId, rank } = req.body;
+		const {
+			pubEdgeId,
+			rank,
+			pubId,
+			pubIsParent,
+			relationType,
+			targetPubId,
+			externalPublication,
+		} = req.body;
 		const canUpdateEdge = await canUpdateOrDestroyPubEdge({
 			pubEdgeId,
 			userId: req.user.id,
@@ -46,6 +54,11 @@ app.put(
 			const edge = await updatePubEdge({
 				pubEdgeId,
 				rank,
+				pubId,
+				pubIsParent,
+				relationType,
+				targetPubId,
+				externalPublication,
 			});
 			return res.status(200).json(edge);
 		}

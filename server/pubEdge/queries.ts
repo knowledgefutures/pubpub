@@ -49,7 +49,10 @@ export const createPubEdge = async ({
 };
 
 export const updatePubEdge = async ({ pubEdgeId, ...update }) => {
-	const edge = await PubEdge.findOne({ where: { id: pubEdgeId } });
+	const edge = await PubEdge.findOne({
+		where: { id: pubEdgeId },
+		include: getPubEdgeIncludes({ includeTargetPub: true }),
+	});
 	await edge.update(update);
 	return edge;
 };

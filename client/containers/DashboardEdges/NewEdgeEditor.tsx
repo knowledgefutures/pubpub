@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import classNames from 'classnames';
 import { Button, Callout } from '@blueprintjs/core';
+import classNames from 'classnames';
+import React from 'react';
 
-import { PubEdgeListingCard, PubEdgeEditor } from 'components';
-import { MenuButton, MenuItem } from 'components/Menu';
-import { apiFetch } from 'client/utils/apiFetch';
-import { usePendingChanges } from 'utils/hooks';
 import { RelationType, relationTypeDefinitions } from 'utils/pubEdge';
+import { assert } from 'utils/assert';
+
 import { Pub, PubEdge } from 'types';
+import { PubEdgeEditor, PubEdgeListingCard } from 'components';
+import { MenuButton, MenuItem } from 'components/Menu';
 
 import NewEdgeInput from './NewEdgeInput';
 
 require('./newEdgeEditor.scss');
 
 type Props = {
-	onCreateNewEdge: (edge: PubEdge) => unknown;
-	onChangeCreatingState: (isCreating: boolean) => unknown;
+	onCancel: () => unknown;
+	onChange: (edge: PubEdge) => unknown;
+	onSave: (edge: PubEdge) => Promise<any> | void;
 	pubData: Pub;
+	pubEdge: PubEdge | null;
 	usedPubIds: string[];
+	loading?: boolean;
+	error?: string;
+	saveButtonLabel?: string;
 };
 
 const createCandidateEdge = (resource, relationType = RelationType.Reply) => {
@@ -38,25 +43,29 @@ const stripMarkupFromString = (string) => {
 };
 
 const NewEdgeEditor = (props: Props) => {
-	const { onChangeCreatingState, onCreateNewEdge, pubData, usedPubIds } = props;
-	const [newEdge, setNewEdge] = useState<any>(null);
-	const [isCreatingEdge, setIsCreatingEdge] = useState(false);
-	const [errorCreatingEdge, setErrorCreatingEdge] = useState(null);
-	const { pendingPromise } = usePendingChanges();
+	const {
+		onChange,
+		onCancel,
+		onSave,
+		pubData,
+		pubEdge,
+		usedPubIds,
+		loading,
+		error,
+		saveButtonLabel,
+	} = props;
 
 	const currentRelationName =
-		newEdge &&
-		relationTypeDefinitions[newEdge.relationType] &&
-		relationTypeDefinitions[newEdge.relationType].name;
-
-	useEffect(() => void onChangeCreatingState(!!newEdge), [newEdge, onChangeCreatingState]);
+		pubEdge &&
+		relationTypeDefinitions[pubEdge.relationType] &&
+		relationTypeDefinitions[pubEdge.relationType].name;
 
 	const handleSelectItem = (item) => {
 		const { targetPub, externalPublication, createNewFromUrl } = item;
 		if (targetPub) {
-			setNewEdge(createCandidateEdge({ targetPub, targetPubId: targetPub.id }));
+			onChange(createCandidateEdge({ targetPub, targetPubId: targetPub.id }));
 		} else if (externalPublication) {
-			setNewEdge(
+			onChange(
 				createCandidateEdge({
 					externalPublication: {
 						...externalPublication,
@@ -65,7 +74,7 @@ const NewEdgeEditor = (props: Props) => {
 				}),
 			);
 		} else if (createNewFromUrl) {
-			setNewEdge(
+			onChange(
 				createCandidateEdge({
 					externalPublication: {
 						url: createNewFromUrl,
@@ -77,43 +86,29 @@ const NewEdgeEditor = (props: Props) => {
 	};
 
 	const handleEdgeDirectionSwitch = () => {
-		setNewEdge({
-			...newEdge,
-			pubIsParent: !newEdge.pubIsParent,
+		assert(pubEdge !== null);
+		onChange({
+			...pubEdge,
+			pubIsParent: !pubEdge.pubIsParent,
 		});
 	};
 
-	const handleEdgeRelationTypeChange = (relationType) => {
-		setNewEdge({
-			...newEdge,
+	const handleEdgeRelationTypeChange = (relationType: string) => {
+		assert(pubEdge !== null);
+		onChange({
+			...pubEdge,
 			relationType,
 		});
 	};
 
 	const handleCreateEdge = () => {
-		setIsCreatingEdge(true);
-		setErrorCreatingEdge(null);
-		pendingPromise(
-			apiFetch.post('/api/pubEdges', {
-				...newEdge,
-				pubId: pubData.id,
-				// Don't send the whole Pub, just the ID
-				targetPub: undefined,
-			}),
-		)
-			.then((createdEdge) => {
-				onCreateNewEdge(createdEdge);
-				setIsCreatingEdge(false);
-				setNewEdge(null);
-			})
-			.catch((err) => {
-				setIsCreatingEdge(false);
-				setErrorCreatingEdge(err);
-			});
+		assert(pubEdge !== null);
+		onSave(pubEdge);
 	};
 
 	const renderNewEdgeControls = () => {
-		const { externalPublication, targetPub } = newEdge;
+		assert(pubEdge !== null);
+		const { externalPublication, targetPub } = pubEdge;
 		const canCreateEdge = targetPub || (externalPublication && externalPublication.title);
 		return (
 			<div className="new-edge-controls">
@@ -129,7 +124,7 @@ const NewEdgeEditor = (props: Props) => {
 						{Object.entries(relationTypeDefinitions).map(
 							([relationType, definition]) => {
 								const { name } = definition;
-								const selected = newEdge.relationType === relationType;
+								const selected = pubEdge.relationType === relationType;
 								return (
 									<MenuItem
 										text={name}
@@ -148,14 +143,14 @@ const NewEdgeEditor = (props: Props) => {
 				<PubEdgeListingCard
 					pubData={pubData}
 					isInboundEdge={false}
-					pubEdge={newEdge}
+					pubEdge={pubEdge}
 					pubEdgeElement={
 						externalPublication && (
 							<PubEdgeEditor
 								externalPublication={externalPublication}
 								onUpdateExternalPublication={(update) =>
-									setNewEdge({
-										...newEdge,
+									onChange({
+										...pubEdge,
 										externalPublication: { ...externalPublication, ...update },
 									})
 								}
@@ -164,22 +159,22 @@ const NewEdgeEditor = (props: Props) => {
 						)
 					}
 				/>
-				{errorCreatingEdge && (
+				{error && (
 					<Callout intent="warning" className="error-callout">
 						There was an error creating this Pub connection.
 					</Callout>
 				)}
 				<div className="controls-row">
-					<Button className="cancel-button" onClick={() => setNewEdge(null)}>
+					<Button className="cancel-button" onClick={onCancel}>
 						Cancel
 					</Button>
 					<Button
 						intent="primary"
 						onClick={handleCreateEdge}
-						loading={isCreatingEdge}
+						loading={loading}
 						disabled={!canCreateEdge}
 					>
-						Add connection
+						{saveButtonLabel ?? 'Add connection'}
 					</Button>
 				</div>
 			</div>
@@ -191,9 +186,9 @@ const NewEdgeEditor = (props: Props) => {
 	};
 
 	return (
-		<div className={classNames('new-edge-editor-component', newEdge && 'has-new-edge')}>
+		<div className={classNames('new-edge-editor-component', pubEdge && 'has-new-edge')}>
 			<h4>Connection Properties</h4>
-			{newEdge ? renderNewEdgeControls() : renderInputControl()}
+			{pubEdge ? renderNewEdgeControls() : renderInputControl()}
 		</div>
 	);
 };

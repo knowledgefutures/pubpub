@@ -118,7 +118,7 @@ export default class SuggestionManager<T> {
 
 		const { params } = this.state;
 		const bounds = params.view.coordsAtPos(params.range.from + 1);
-		const parent = document.body.getBoundingClientRect();
+		const parent = (params.view.dom as HTMLElement).offsetParent!.getBoundingClientRect();
 
 		return {
 			position: 'absolute' as const,

@@ -8,6 +8,7 @@ import { getNotes } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
 import { StructuredValue, RenderedStructuredValue } from 'utils/notesCore';
 import { Pub } from 'types';
+import { expiringPromise } from 'utils/promises';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
@@ -66,6 +67,13 @@ const getInlineCitation = (
 	return null;
 };
 
+const getSingleCitationAsync = expiringPromise(
+	async (structuredValue: string) => {
+		return Cite.async(structuredValue);
+	},
+	{ timeout: 2000, throws: () => new Error('Citation data failed to load') },
+);
+
 const getSingleStructuredCitation = async (
 	structuredInput: string,
 	citationStyle: CitationStyleKind,
@@ -73,7 +81,7 @@ const getSingleStructuredCitation = async (
 ) => {
 	try {
 		const fallbackValue = generateFallbackHash(structuredInput);
-		const citationData = await Cite.async(structuredInput);
+		const citationData = await getSingleCitationAsync(structuredInput);
 		if (citationData) {
 			const citationJson = citationData.format('data', { format: 'object' });
 			const citationHtml = citationData.format('bibliography', {

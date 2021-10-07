@@ -10,6 +10,7 @@ const JOTE_DOI_PREFIX = '10.36850';
 const APA_DOI_PREFIX = '10.1037';
 const ROCHESTER_DOI_PREFIX = '10.47761';
 const OPENPRESSTIU_DOI_PREFIX = '10.26116';
+const UGHENT_DOI_PREFIX = '10.21825';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,
@@ -22,6 +23,7 @@ export const managedDoiPrefixes = [
 	APA_DOI_PREFIX,
 	ROCHESTER_DOI_PREFIX,
 	OPENPRESSTIU_DOI_PREFIX,
+	UGHENT_DOI_PREFIX,
 ];
 
 export const communityDoiOverrides = [
@@ -93,6 +95,13 @@ export const communityDoiOverrides = [
 		],
 		prefix: OPENPRESSTIU_DOI_PREFIX,
 		key: 'OPENPRESSTIU',
+	},
+	{
+		communityIds: [
+			'86c49e4a-a4bb-4748-8e01-81d8113deb53', // https://ugent-library.pubpub.org//
+		],
+		prefix: UGHENT_DOI_PREFIX,
+		key: 'UGHENT',
 	},
 ];
 

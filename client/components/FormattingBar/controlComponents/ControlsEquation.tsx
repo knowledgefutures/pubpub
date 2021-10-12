@@ -52,7 +52,7 @@ const ControlsEquation = (props: Props) => {
 			hasMountedRef.current = true;
 			return;
 		}
-		renderLatexString(debouncedValue, false, (nextHtml) => {
+		renderLatexString(debouncedValue, isBlock, (nextHtml) => {
 			updateAttrs({ html: nextHtml });
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,8 +66,10 @@ const ControlsEquation = (props: Props) => {
 	const handleChangeNodeType = () => {
 		const targetNodeType = isBlock ? 'equation' : 'block_equation';
 		const schemaDefinition = getSchemaDefinitionForNodeType(editorChangeObject, targetNodeType);
-		commitChanges();
-		changeNode(schemaDefinition, { value, html }, null);
+		renderLatexString(debouncedValue, !isBlock, (nextHtml) => {
+			commitChanges();
+			changeNode(schemaDefinition, { value, html: nextHtml }, null);
+		});
 	};
 
 	return (

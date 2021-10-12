@@ -154,11 +154,7 @@ const ControlsMedia = (props: Props) => {
 					onChange={(nextAlignment) => updateNode({ align: nextAlignment })}
 				/>
 				<UrlControl onChange={(nextHref) => updateNode({ href: nextHref })} value={href} />
-				<SourceControls
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'ProsemirrorNode<any> & { attrs?: { size: num... Remove this comment to see the full error message
-					selectedNode={selectedNode}
-					updateNode={updateNode}
-				/>
+				<SourceControls selectedNode={selectedNode} updateNode={updateNode} />
 				<div className="controls-row">
 					{canSelectResizeOptions && (
 						<Checkbox

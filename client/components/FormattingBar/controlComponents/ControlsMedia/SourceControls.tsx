@@ -1,27 +1,20 @@
 import React, { useState, useRef } from 'react';
 import { AnchorButton, InputGroup } from '@blueprintjs/core';
+import { Node } from 'prosemirror-model';
 import uuid from 'uuid';
 
 import { Icon } from 'components';
 import { s3Upload } from 'client/utils/upload';
 
 type Props = {
-	updateNode: (...args: any[]) => any;
-	selectedNode: {
-		type: {
-			name: string;
-		};
-		attrs?: {
-			url: string;
-		};
-	};
+	updateNode: (attrs: Node['attrs']) => unknown;
+	selectedNode: Node;
 };
 
 const SourceControls = (props: Props) => {
 	const { selectedNode, updateNode } = props;
 	const { attrs } = selectedNode;
 	const [isUploading, setIsUploading] = useState(false);
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const [urlSource, setUrlSource] = useState(attrs.url);
 	const inputKey = useRef(uuid.v4());
 	const useUrlInput = selectedNode.type.name === 'iframe';
@@ -84,7 +77,6 @@ const SourceControls = (props: Props) => {
 						aria-label="Download source file"
 						icon={<Icon icon="download" iconSize={16} />}
 						minimal={true}
-						// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 						href={attrs.url}
 						target="_blank"
 						rel="noopener noreferrer"

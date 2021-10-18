@@ -1,5 +1,6 @@
 import dateFormat from 'dateformat';
 
+import * as types from 'types';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
 import { getPrimaryCollection } from 'utils/collections/primary';
@@ -14,7 +15,9 @@ import {
 	includeUserModel,
 } from 'server/models';
 
-const getPrimaryCollectionMetadata = (collectionPubs) => {
+import { PubMetadata } from './types';
+
+const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => {
 	const primaryCollection = getPrimaryCollection(collectionPubs);
 	if (primaryCollection) {
 		const { metadata, title } = primaryCollection;
@@ -23,7 +26,7 @@ const getPrimaryCollectionMetadata = (collectionPubs) => {
 	return null;
 };
 
-export const getPubMetadata = async (pubId) => {
+export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	const pubData = await Pub.findOne({
 		where: { id: pubId },
 		include: [

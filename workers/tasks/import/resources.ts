@@ -60,7 +60,7 @@ const uploadPendingSourceFile = async (sourceFile, newAssetKey) => {
 	throw new Error('Pending source file must have a tmpPath');
 };
 
-export const createResourceTransformer = ({ sourceFiles, document, bibliographyItems }) => {
+export const createTransformResources = ({ sourceFiles, document, bibliographyItems }) => {
 	const warnings: ResourceWarning[] = [];
 	const pendingUploadsMap = new Map();
 
@@ -79,30 +79,6 @@ export const createResourceTransformer = ({ sourceFiles, document, bibliographyI
 		return null;
 	};
 
-	const getResource = (resource, context) => {
-		if (context === 'citation') {
-			const item = bibliographyItems[resource];
-			if (item) {
-				return item;
-			}
-			warnings.push({ type: 'missingCitation', id: resource });
-			return { structuredValue: '', unstructuredValue: '' };
-		}
-		if (context === 'image') {
-			const assetKey = getAssetKeyForLocalResource(resource);
-			if (assetKey) {
-				return getUrlForAssetKey(assetKey);
-			}
-			warnings.push({
-				type: 'missingImage',
-				path: resource,
-				unableToFind: true,
-			});
-			return resource;
-		}
-		return resource;
-	};
-
 	const uploadPendingResources = () =>
 		Promise.all(
 			[...pendingUploadsMap.entries()].map(([sourceFile, newAssetKey]) =>
@@ -118,8 +94,31 @@ export const createResourceTransformer = ({ sourceFiles, document, bibliographyI
 			),
 		);
 
+	const citation = (id: string) => {
+		const item = bibliographyItems[id];
+		if (item) {
+			return item;
+		}
+		warnings.push({ type: 'missingCitation', id });
+		return { structuredValue: '', unstructuredValue: '' };
+	};
+
+	const image = (url: string) => {
+		const assetKey = getAssetKeyForLocalResource(url);
+		if (assetKey) {
+			return getUrlForAssetKey(assetKey);
+		}
+		warnings.push({
+			type: 'missingImage',
+			path: url,
+			unableToFind: true,
+		});
+		return url;
+	};
+
 	return {
-		getResource,
+		citation,
+		image,
 		getWarnings: () => warnings,
 		uploadPendingResources,
 	};

@@ -5,15 +5,15 @@ import { parsePandocJson, fromPandoc, setPandocApiVersion } from '@pubpub/prosem
 
 import { extensionToPandocFormat } from 'utils/import/formats';
 
-import pandocRules from './rules';
+import { rules } from './rules';
 import { downloadAndConvertFiles } from './download';
 import { extractBibliographyItems } from './bibliography';
 import { uploadExtractedMedia } from './extractedMedia';
 import { extensionFor } from './util';
-import { runTransforms } from './transforms/runTransforms';
+import { runTransforms } from './transforms';
 import { getProposedMetadata, getRawMetadata } from './metadata';
 import { getTmpDirectoryPath } from './tmpDirectory';
-import { createResourceTransformer } from './resources';
+import { createTransformResources } from './resources';
 
 setPandocApiVersion([1, 22]);
 
@@ -122,23 +122,23 @@ export const importFiles = async ({
 			extractBibFromJats: !skipJatsBibExtraction,
 		}),
 	]);
-	const resourceTransformer = createResourceTransformer({
+	const resources = createTransformResources({
 		sourceFiles: [...sourceFiles, ...extractedMedia],
 		document,
 		bibliographyItems,
 	});
-	const prosemirrorDoc = fromPandoc(pandocAst, pandocRules, {
-		resource: resourceTransformer.getResource,
+	const prosemirrorDoc = fromPandoc(pandocAst, rules, {
+		resources,
 		useSmartQuotes: !keepStraightQuotes,
 		prosemirrorDocWidth: 675,
 	}).asNode();
 	const [proposedMetadata] = await Promise.all([
 		getProposedMetadata(pandocAst.meta),
-		resourceTransformer.uploadPendingResources(),
+		resources.uploadPendingResources(),
 	]);
 	return {
 		doc: prosemirrorDoc,
-		warnings: resourceTransformer.getWarnings(),
+		warnings: resources.getWarnings(),
 		pandocErrorOutput,
 		proposedMetadata,
 		...(provideRawMetadata && { rawMetadata: getRawMetadata(pandocAst.meta) }),

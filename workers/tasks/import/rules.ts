@@ -1,49 +1,49 @@
-import { buildRuleset, transformers, transformUtil } from '@pubpub/prosemirror-pandoc';
-import { defaultNodes, defaultMarks } from 'components/Editor/schemas';
-
 import * as katex from 'katex';
+import { RuleSet, pandocUtils, transformUtils, transformers } from '@pubpub/prosemirror-pandoc';
 
-import {
-	pandocInlineToHtmlString,
-	pandocInlineToPlain,
-	htmlStringToPandocInline,
-	pandocBlocksToHtmlString,
-	htmlStringToPandocBlocks,
-} from './util';
+import { editorSchema } from 'client/components/Editor';
+
+const { createAttr, flatten, intersperse, textFromStrSpace, textToStrSpace } = transformUtils;
 
 const {
-	bareLeafTransformer,
-	contentTransformer,
-	definitionListTransformer,
+	bareMarkTransformer,
 	docTransformer,
-	listTransformer,
 	nullTransformer,
+	bareContentTransformer,
 	pandocPassThroughTransformer,
+	createListTransformer,
+	definitionListTransformer,
+	bareLeafTransformer,
 	pandocQuotedTransformer,
 	pandocTableTransformer,
+	prosemirrorTableTransformer,
 } = transformers;
 
-const { textFromStrSpace, textToStrSpace, createAttr, intersperse, flatten } = transformUtil;
+const {
+	getPandocDocForHtmlString,
+	htmlStringToPandocBlocks,
+	htmlStringToPandocInline,
+	pandocBlocksToHtmlString,
+	pandocInlineToPlainString,
+} = pandocUtils;
 
-const rules = buildRuleset({
-	nodes: defaultNodes,
-	marks: defaultMarks,
-});
+const rules = new RuleSet(editorSchema);
 
 // Top-level transformer for a doc
 rules.transform('Doc', 'doc', docTransformer);
 
 // Do nothing with nothing
-rules.fromPandoc('Null', nullTransformer);
+rules.toProsemirrorNode('Null', nullTransformer);
 
 // Paragraphs are paragraphs. So are "Plain", until proven otherwise.
-rules.transform('Para | Plain', 'paragraph', contentTransformer('Para', 'paragraph'));
+rules.transform('Para | Plain', 'paragraph', bareContentTransformer('Para', 'paragraph'));
 
-rules.fromPandoc('Div', pandocPassThroughTransformer);
+// Divs are just boxes of other content
+rules.toProsemirrorNode('Div', pandocPassThroughTransformer);
 
 // I'm not really sure what a LineBlock is, but let's just call it a single paragraph
 // with some hard breaks thrown in.
-rules.fromPandoc('LineBlock', (node, { transform }) => {
+rules.toProsemirrorNode('LineBlock', (node, { transform }) => {
 	const lines = node.content.map((line) => transform(line).asArray());
 	return {
 		type: 'paragraph',
@@ -56,22 +56,22 @@ rules.fromPandoc('LineBlock', (node, { transform }) => {
 });
 
 rules.transform('CodeBlock', 'code_block', {
-	fromPandoc: (node) => {
+	toProsemirrorNode: (node) => {
 		return {
 			type: 'code_block',
 			content: [{ type: 'text', text: node.content }],
 		};
 	},
-	fromProsemirror: (node) => {
+	fromProsemirrorNode: (node) => {
 		return {
 			type: 'CodeBlock',
 			content: node.content.map((text) => text.text).join(''),
-			attr: createAttr(''),
+			attr: createAttr(),
 		};
 	},
 });
 
-rules.transform('BlockQuote', 'blockquote', contentTransformer);
+rules.transform('BlockQuote', 'blockquote', bareContentTransformer);
 
 // Use a listTransformer to take care of OrderedList and BulletList
 const ensureFirstElementIsParagraph = (listItem) => {
@@ -84,75 +84,81 @@ const ensureFirstElementIsParagraph = (listItem) => {
 rules.transform(
 	'OrderedList',
 	'ordered_list',
-	listTransformer('list_item', ensureFirstElementIsParagraph),
+	createListTransformer('list_item', ensureFirstElementIsParagraph),
 );
 
 rules.transform(
 	'BulletList',
 	'bullet_list',
-	listTransformer('list_item', ensureFirstElementIsParagraph),
+	createListTransformer('list_item', ensureFirstElementIsParagraph),
 );
 
-rules.fromPandoc('DefinitionList', definitionListTransformer('bullet_list', 'list_item'));
+rules.toProsemirrorNode('DefinitionList', definitionListTransformer('bullet_list', 'list_item'));
 
 // Tranform headers
 rules.transform('Header', 'heading', {
-	fromPandoc: (node, { transform }) => {
-		const id = node.attr && node.attr.identifier;
+	toProsemirrorNode: (node, { transform }) => {
 		return {
 			type: 'heading',
 			attrs: {
-				id,
 				level: node.level,
-				fixedId: id,
+				id: node.attr.identifier,
 			},
 			content: transform(node.content).asArray(),
 		};
 	},
-	fromProsemirror: (node, { transform }) => {
+	fromProsemirrorNode: (node, { transform }) => {
 		return {
 			type: 'Header',
-			level: parseInt(node.attrs.level.toString(), 10),
-			attr: createAttr(node.attrs.id.toString()),
+			level: Number(node.attrs.level),
+			attr: createAttr(node.attrs.id),
 			content: transform(node.content).asArray(),
 		};
 	},
 });
 
-// Transform horizontal rules
 rules.transform('HorizontalRule', 'horizontal_rule', bareLeafTransformer);
 
-// Specify all nodes that are equivalent to Prosemirror marks
-rules.transformToMark('Emph', 'em');
-rules.transformToMark('Strong', 'strong');
-rules.transformToMark('Strikeout', 'strike');
-rules.transformToMark('Superscript', 'sup');
-rules.transformToMark('Subscript', 'sub');
+const bareMarkTransformPairs = [
+	['Strong', 'strong'],
+	['Emph', 'em'],
+	['Strikeout', 'strike'],
+	['Superscript', 'sup'],
+	['Subscript', 'sub'],
+	['Code', 'code'],
+] as const;
 
-rules.fromPandoc('Code', (node) => {
-	if (node.content === '') {
-		return [];
-	}
-	return {
-		type: 'text',
-		marks: [{ type: 'code' }],
-		text: node.content,
-	};
-});
+bareMarkTransformPairs.forEach(([from, to]) => rules.transform(from, to, bareMarkTransformer));
 
-rules.transformToMark('Link', 'link', (link, { resource }) => {
-	return {
-		href: resource(link.target.url, 'link'),
-		title: link.target.title,
-	};
+rules.transform('Link', 'link', {
+	toProsemirrorMark: (link) => {
+		return {
+			type: 'link',
+			attrs: {
+				href: link.target.url,
+				title: link.target.title,
+			},
+		};
+	},
+	fromProsemirrorMark: (link, content) => {
+		return {
+			type: 'Link',
+			attr: createAttr(),
+			content,
+			target: {
+				url: String(link.attrs.href),
+				title: String(link.attrs.title),
+			},
+		};
+	},
 });
 
 // We don't support small caps right now
-rules.fromPandoc('SmallCaps', pandocPassThroughTransformer);
+rules.toProsemirrorNode('SmallCaps', pandocPassThroughTransformer);
 
 // Tell the transformer how to deal with typical content-level nodes
-rules.fromPandoc('(Str | Space | SoftBreak)+', (pdNodes) => {
-	const text = textFromStrSpace(pdNodes);
+rules.toProsemirrorNode('(Str | Space)+', (nodes) => {
+	const text = textFromStrSpace(nodes);
 	if (text.length > 0) {
 		return {
 			type: 'text',
@@ -163,37 +169,28 @@ rules.fromPandoc('(Str | Space | SoftBreak)+', (pdNodes) => {
 });
 
 // Tell the transformer how to turn Prosemirror text back into Pandoc
-rules.fromProsemirror('text', (node) => textToStrSpace(node.text));
+rules.fromProsemirrorNode('text', (node) => textToStrSpace(node.text));
 
 // Deal with line breaks
 rules.transform('LineBreak', 'hard_break', bareLeafTransformer);
-rules.fromPandoc('SoftBreak', nullTransformer);
+rules.toProsemirrorNode('SoftBreak', nullTransformer);
 
 // Stuff we don't have equivalents for
-rules.fromPandoc('Span', pandocPassThroughTransformer);
-rules.fromPandoc('Underline', pandocPassThroughTransformer);
+rules.toProsemirrorNode('Span', pandocPassThroughTransformer);
+rules.toProsemirrorNode('Underline', pandocPassThroughTransformer);
 
-// Pandoc insists that text in quotes is actually its own node type
-rules.fromPandoc('Quoted', pandocQuotedTransformer);
+// Anything in quotation marks is its own node, to Pandoc
+rules.toProsemirrorNode('Quoted', pandocQuotedTransformer);
 
-rules.fromPandoc('RawBlock', (node, { transform }) => {
-	const { format, content } = node;
-	if (format === 'html') {
-		const pandocAst = htmlStringToPandocBlocks(content);
-		return transform(pandocAst).asArray();
-	}
+rules.toProsemirrorNode('RawBlock', (node) => {
 	return {
 		type: 'paragraph',
-		content: [{ type: 'text', text: content }],
+		content: [{ type: 'text', text: node.content }],
 	};
 });
 
-rules.fromPandoc('RawInline', (node, { transform }) => {
+rules.toProsemirrorNode('RawInline', (node) => {
 	const { format, content } = node;
-	if (format === 'html') {
-		const pandocAst = htmlStringToPandocInline(content);
-		return transform(pandocAst);
-	}
 	if (format === 'tex') {
 		return {
 			type: 'equation',
@@ -209,18 +206,117 @@ rules.fromPandoc('RawInline', (node, { transform }) => {
 	return { type: 'text', text: content };
 });
 
-// Tables
-rules.fromPandoc('Table', pandocTableTransformer);
+// These next rules for images don't use transform() because they're not inverses of each other --
+// the Prosemirror->Pandoc direction wraps an Image in a Para to make it block-level
 
-// Equations
-rules.fromPandoc('Math', (node) => {
+rules.toProsemirrorNode('Image', (node, { resources }) => {
+	return {
+		type: 'image',
+		attrs: {
+			url: resources.image(node.target.url),
+			altText: pandocInlineToPlainString(node.content),
+			// TODO(ian): is there anything we can do about the image size here?
+		},
+	};
+});
+
+rules.fromProsemirrorNode('image', (node) => {
+	const maybeAltTextDoc = getPandocDocForHtmlString(node.attrs.altText as string);
+	const altTextInlines = maybeAltTextDoc.blocks[0]?.content ?? [];
+	const captionBlocks = htmlStringToPandocBlocks(node.attrs.caption as string);
+	const imageWrappedInPlain = {
+		type: 'Plain',
+		content: [
+			{
+				type: 'Image',
+				content: altTextInlines,
+				target: {
+					url: node.attrs.url.toString(),
+					title: '',
+				},
+				attr: createAttr(node.attrs.id),
+			},
+		],
+	};
+	if (captionBlocks.length > 0) {
+		return [imageWrappedInPlain, ...captionBlocks];
+	}
+	return imageWrappedInPlain;
+});
+
+rules.transform('Cite', 'citation', {
+	toProsemirrorNode: (node, { resources }) => {
+		const { citations } = node;
+		return citations.map((citation) => {
+			const { structuredValue, unstructuredValue } = resources.citation(citation.citationId);
+			const customLabel = node.content.length && pandocInlineToPlainString(node.content);
+			const customLabelAttrs = customLabel ? { customLabel } : {};
+			return {
+				type: 'citation',
+				attrs: {
+					value: structuredValue,
+					unstructuredValue,
+					...customLabelAttrs,
+				},
+			};
+		});
+	},
+	fromProsemirrorNode: (node, { count, resources }) => {
+		const { value: structuredValue, unstructuredValue, html } = node.attrs;
+		const inputHtml = (html || unstructuredValue) as string;
+		const citationNumber = 1 + count('citation');
+		const { id, hash } = resources.note({ structuredValue, unstructuredValue });
+		return {
+			type: 'Cite',
+			content: htmlStringToPandocInline(inputHtml),
+			citations: [
+				{
+					citationPrefix: [],
+					citationSuffix: [],
+					citationId: id,
+					citationHash: parseInt(hash, 16),
+					citationNoteNum: citationNumber,
+					citationMode: 'NormalCitation',
+				},
+			],
+		};
+	},
+});
+
+rules.transform('Note', 'footnote', {
+	toProsemirrorNode: (node, { count }) => {
+		const { content } = node;
+		return {
+			type: 'footnote',
+			attrs: {
+				value: pandocBlocksToHtmlString(content),
+				count: 1 + count('Note'),
+			},
+		};
+	},
+	fromProsemirrorNode: (node, { resources }) => {
+		const { value: unstructuredValue, structuredValue } = node.attrs;
+		const { html } = resources.note({ structuredValue, unstructuredValue });
+		const unstructuredBlocks = unstructuredValue && htmlStringToPandocBlocks(unstructuredValue);
+		const structuredBlocks = html && htmlStringToPandocBlocks(html);
+		const content = [structuredBlocks, unstructuredBlocks].reduce(
+			(acc, next) => [...acc, ...(next || [])],
+			[],
+		);
+		return {
+			type: 'Note',
+			content,
+		};
+	},
+});
+
+rules.toProsemirrorNode('Math', (node) => {
 	const { mathType, content } = node;
 	const isDisplay = mathType === 'DisplayMath';
 	const prosemirrorType = isDisplay ? 'block_equation' : 'equation';
 	return {
 		type: prosemirrorType,
 		attrs: {
-			id: node.attr && node.attr.identifier,
 			value: content,
 			html: katex.renderToString(content, {
 				displayMode: isDisplay,
@@ -230,99 +326,52 @@ rules.fromPandoc('Math', (node) => {
 	};
 });
 
-// ~~~ Rules for images ~~~ //
-
-rules.fromPandoc('Image', (node, { resource }) => {
+rules.fromProsemirrorNode('equation', (node) => {
 	return {
-		type: 'image',
-		attrs: {
-			id: node.attr && node.attr.identifier,
-			url: resource(node.target.url, 'image'),
-			caption: pandocInlineToHtmlString(node.content),
-			align: 'full',
-		},
+		type: 'Math',
+		mathType: 'InlineMath',
+		content: node.attrs.value.toString(),
 	};
 });
 
-rules.fromProsemirror('image', (node) => {
+rules.fromProsemirrorNode('block_equation', (node) => {
 	return {
 		type: 'Plain',
 		content: [
 			{
-				type: 'Image',
-				content: [],
-				target: {
-					url: node.attrs.url.toString(),
-					title: '',
-				},
-				attr: createAttr(''),
+				type: 'Math',
+				mathType: 'DisplayMath',
+				content: node.attrs.value.toString(),
 			},
 		],
 	};
 });
 
-// ~~~ Rules for citations and footnotes ~~~ //
+rules.toProsemirrorNode('Table', pandocTableTransformer);
+rules.fromProsemirrorNode('table', prosemirrorTableTransformer);
 
-rules.transform('Cite', 'citation', {
-	fromPandoc: (node, { resource }) => {
-		const { citations } = node;
-		return citations.map((citation) => {
-			const { structuredValue, unstructuredValue } = resource(
-				citation.citationId,
-				'citation',
-			);
-			return {
-				type: 'citation',
-				attrs: {
-					value: structuredValue || unstructuredValue,
-					structuredValue,
-					unstructuredValue,
-					customLabel: pandocInlineToPlain(node.content) || '',
-				},
-			};
-		});
-	},
-	fromProsemirror: (node) => {
-		const inputHtml = node.attrs.html || node.attrs.unstructuredValue;
-		const citationNumber =
-			typeof node.attrs.count === 'number'
-				? node.attrs.count
-				: parseInt(node.attrs.count, 10);
-		return {
-			type: 'Cite',
-			content: htmlStringToPandocInline(inputHtml),
-			citations: [
-				{
-					citationId: '',
-					citationPrefix: [],
-					citationSuffix: [],
-					citationNoteNum: citationNumber,
-					citationHash: citationNumber,
-					citationMode: 'NormalCitation',
-				},
-			],
-		};
-	},
+rules.fromProsemirrorNode('reference', (node) => {
+	return {
+		type: 'Link',
+		attr: createAttr(),
+		content: textToStrSpace(node.attrs.label),
+		target: {
+			url: `#${node.attrs.targetId}`,
+			title: '',
+		},
+	};
 });
 
-rules.transform('Note', 'footnote', {
-	fromPandoc: (node) => {
-		const { content } = node;
-		const value = pandocBlocksToHtmlString(content);
+rules.fromProsemirrorNode(
+	'file | iframe | video | audio | highlightQuote | citationList | footnoteList | discussion',
+	(node) => {
 		return {
-			type: 'footnote',
-			attrs: {
-				value,
-			},
+			type: 'Para',
+			content: textToStrSpace(`[${node.type} element]`),
 		};
 	},
-	fromProsemirror: (node) => {
-		const noteContent = node.attrs.unstructuredValue || '';
-		return {
-			type: 'Note',
-			content: htmlStringToPandocBlocks(noteContent),
-		};
-	},
-});
+);
 
-export default rules.finish();
+rules.validate();
+
+export { rules };

@@ -21,24 +21,25 @@ export const exportTask = async ({ exportId }, collectSubprocess) => {
 	const pubMetadata = await getPubMetadata(pubId);
 	const { doc: pubDoc } = await getPubDraftDoc(pubId, historyKey);
 	const notesData = await getNotesData(pubMetadata, pubDoc);
-	const staticHtml = await renderStaticHtml({
-		pubDoc,
-		notesData,
-		pubMetadata,
-		targetPandoc: !!pandocTarget,
-		targetPaged: !!pagedTarget,
-	});
 	if (pandocTarget) {
 		await callPandoc({
-			staticHtml,
+			pubDoc,
 			pubMetadata,
 			tmpFile,
 			pandocTarget,
+			notesData,
 		});
-	} else if (pagedTarget) {
-		await callPaged(staticHtml, tmpFile, collectSubprocess);
 	} else {
-		await writeToFile(staticHtml, tmpFile);
+		const staticHtml = await renderStaticHtml({
+			pubDoc,
+			notesData,
+			pubMetadata,
+		});
+		if (pagedTarget) {
+			await callPaged(staticHtml, tmpFile, collectSubprocess);
+		} else {
+			await writeToFile(staticHtml, tmpFile);
+		}
 	}
 	const url = await uploadDocument(pubId, tmpFile, extension);
 	await assignFileToExportById(exportId, url);

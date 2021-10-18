@@ -1,6 +1,5 @@
 import { Op } from 'sequelize';
 
-import { jsonToNode } from 'client/components/Editor';
 import { Doc, Draft, PubEdge } from 'server/models';
 import { generateCitationHtml, getStructuredCitationsForPub } from 'server/utils/citations';
 import { getPubDraftDoc, getFirebaseToken } from 'server/utils/firebaseAdmin';
@@ -73,7 +72,7 @@ export const getPubFirebaseToken = async (pubData: SanitizedPubData, initialData
 
 export const getPubCitations = async (pubData, initialData, initialDoc) => {
 	const [initialStructuredCitations, citationHtml] = await Promise.all([
-		getStructuredCitationsForPub(pubData, jsonToNode(initialDoc)),
+		getStructuredCitationsForPub(pubData, initialDoc),
 		generateCitationHtml(pubData, initialData.communityData),
 	]);
 

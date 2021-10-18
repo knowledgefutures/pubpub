@@ -54,7 +54,7 @@ export type CollectionAttribution = {
 };
 
 export type Attribution = CollectionAttribution | PubAttribution;
-export type AttributionWithUser = Attribution & { user: AttributableUser };
+export type AttributionWithUser = Attribution & { user: AttributableUser | User };
 
 export const isAttributionWithUser = (
 	attribution: Attribution,

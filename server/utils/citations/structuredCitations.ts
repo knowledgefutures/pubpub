@@ -2,12 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import Cite from 'citation-js';
-import { Node } from 'prosemirror-model';
 
-import { getNotes } from 'components/Editor';
+import { DocJson, Pub } from 'types';
+import { getNotes, jsonToNode } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
 import { StructuredValue, RenderedStructuredValue } from 'utils/notesCore';
-import { Pub } from 'types';
 import { expiringPromise } from 'utils/promises';
 
 /* Different styles available here: */
@@ -130,11 +129,20 @@ export const getStructuredCitations = async (
 	return structuredCitationsMap;
 };
 
-export const getStructuredCitationsForPub = (pubData: Pub, pubDocument: Node) => {
+export const getStructuredCitationsForPub = (pubData: Pub, pubDoc: DocJson) => {
+	const pubDocNode = jsonToNode(pubDoc);
 	const { citationStyle = 'apa', citationInlineStyle = 'count' } = pubData;
-	const { footnotes, citations } = getNotes(pubDocument);
+	const { footnotes, citations } = getNotes(pubDocNode);
 	const structuredValuesInDoc = [
 		...new Set([...footnotes, ...citations].map((note) => note.structuredValue)),
 	];
 	return getStructuredCitations(structuredValuesInDoc, citationStyle, citationInlineStyle);
+};
+
+export const getPathToCslFileForCitationStyleKind = (kind: CitationStyleKind) => {
+	const citationStyle = citationStyles.find((style) => style.key === kind);
+	if (citationStyle && citationStyle.path) {
+		return path.join(__dirname, citationStyle.path);
+	}
+	return null;
 };

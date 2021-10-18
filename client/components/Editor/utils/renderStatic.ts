@@ -16,6 +16,8 @@ import camelCaseCss from 'camelcase-css';
 import { Node } from 'prosemirror-model';
 import { getReactedDoc } from '@pubpub/prosemirror-reactive';
 
+import { DocJson } from 'types';
+
 const parseStyleToObject = (style) => {
 	try {
 		const styleObj = {};
@@ -141,7 +143,7 @@ const createOutputSpecFromNode = (node, schema, context) => {
 	return marks ? wrapOutputSpecInMarks(outputSpec, marks, schema) : outputSpec;
 };
 
-const getReactedDocFromJson = (doc, schema, noteManager, nodeLabels) => {
+export const getReactedDocFromJson = (doc, schema, noteManager, nodeLabels) => {
 	const hydratedDoc = Node.fromJSON(schema, doc);
 	const reactedDoc = getReactedDoc(hydratedDoc, {
 		documentState: {
@@ -149,7 +151,7 @@ const getReactedDocFromJson = (doc, schema, noteManager, nodeLabels) => {
 			nodeLabels,
 		},
 	});
-	return reactedDoc.toJSON();
+	return reactedDoc.toJSON() as DocJson;
 };
 
 export const renderStatic = ({

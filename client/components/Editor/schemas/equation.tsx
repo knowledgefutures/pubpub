@@ -28,16 +28,7 @@ export default {
 				},
 			},
 		],
-		toDOM: (node, { isReact, isForPandoc } = { isReact: false, isForPandoc: false }) => {
-			if (isForPandoc) {
-				return (
-					<script
-						type="math/tex"
-						// eslint-disable-next-line react/no-danger
-						dangerouslySetInnerHTML={{ __html: node.attrs.value }}
-					/>
-				) as any;
-			}
+		toDOM: (node, { isReact } = { isReact: false }) => {
 			return [
 				'span',
 				{

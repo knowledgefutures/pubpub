@@ -25,6 +25,7 @@ const {
 	htmlStringToPandocInline,
 	pandocBlocksToHtmlString,
 	pandocInlineToPlainString,
+	pandocInlineToHtmlString,
 } = pandocUtils;
 
 const rules = new RuleSet(editorSchema);
@@ -214,7 +215,8 @@ rules.toProsemirrorNode('Image', (node, { resources }) => {
 		type: 'image',
 		attrs: {
 			url: resources.image(node.target.url),
-			altText: pandocInlineToPlainString(node.content),
+			caption: pandocInlineToHtmlString(node.content),
+			align: 'full',
 			// TODO(ian): is there anything we can do about the image size here?
 		},
 	};

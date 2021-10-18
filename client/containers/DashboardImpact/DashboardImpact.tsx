@@ -1,13 +1,6 @@
 import React from 'react';
 import { usePageContext } from 'utils/hooks';
-import {
-	Callout,
-	Button,
-	Intent,
-	Tooltip,
-	Position,
-	PopoverInteractionKind,
-} from '@blueprintjs/core';
+import { Button, Intent, Tooltip, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import IframeResizer from 'iframe-resizer-react';
 
 import { DashboardFrame } from 'components';
@@ -80,9 +73,6 @@ const DashboardImpact = (props: Props) => {
 						</Tooltip>
 					)}
 				</h3>
-				{canView && isCollection && (
-					<Callout>Collection-level impact data coming soon.</Callout>
-				)}
 				{canView ? (
 					<IframeResizer
 						className="metabase main"

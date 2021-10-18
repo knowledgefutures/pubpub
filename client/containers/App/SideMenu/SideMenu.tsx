@@ -81,7 +81,7 @@ const SideMenu = () => {
 				pubSlug,
 				mode: 'impact',
 			}),
-			validScopes: ['pub', 'community'],
+			validScopes: ['pub', 'community', 'collection'],
 		},
 		{
 			title: 'Members',

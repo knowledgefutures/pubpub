@@ -6,6 +6,9 @@ export const generateMetabaseToken = (scopeType, scopeId, dashboardType) => {
 			base: 2,
 			benchmark: 8,
 		},
+		collection: {
+			base: 7,
+		},
 		pub: {
 			base: 3,
 			benchmark: 9,

@@ -182,15 +182,24 @@ rules.toProsemirrorNode('Underline', pandocPassThroughTransformer);
 // Anything in quotation marks is its own node, to Pandoc
 rules.toProsemirrorNode('Quoted', pandocQuotedTransformer);
 
-rules.toProsemirrorNode('RawBlock', (node) => {
+rules.toProsemirrorNode('RawBlock', (node, { transform }) => {
+	const { format, content } = node;
+	if (format === 'html') {
+		const pandocAst = htmlStringToPandocBlocks(content);
+		return transform(pandocAst).toArray();
+	}
 	return {
 		type: 'paragraph',
-		content: [{ type: 'text', text: node.content }],
+		content: [{ type: 'text', text: content }],
 	};
 });
 
-rules.toProsemirrorNode('RawInline', (node) => {
+rules.toProsemirrorNode('RawInline', (node, { transform }) => {
 	const { format, content } = node;
+	if (format === 'html') {
+		const pandocAst = htmlStringToPandocInline(content);
+		return transform(pandocAst).toArray();
+	}
 	if (format === 'tex') {
 		return {
 			type: 'equation',
@@ -216,7 +225,6 @@ rules.toProsemirrorNode('Image', (node, { resources }) => {
 			url: resources.image(node.target.url),
 			caption: pandocInlineToHtmlString(node.content),
 			align: 'full',
-			// TODO(ian): is there anything we can do about the image size here?
 		},
 	};
 });

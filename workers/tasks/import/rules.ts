@@ -99,11 +99,13 @@ rules.toProsemirrorNode('DefinitionList', definitionListTransformer('bullet_list
 // Tranform headers
 rules.transform('Header', 'heading', {
 	toProsemirrorNode: (node, { transform }) => {
+		const { attr } = node;
 		return {
 			type: 'heading',
 			attrs: {
 				level: node.level,
-				id: node.attr.identifier,
+				id: attr.identifier,
+				fixedId: attr.identifier,
 			},
 			content: transform(node.content).asArray(),
 		};
@@ -222,6 +224,7 @@ rules.toProsemirrorNode('Image', (node, { resources }) => {
 	return {
 		type: 'image',
 		attrs: {
+			id: node.attr.identifier,
 			url: resources.image(node.target.url),
 			caption: pandocInlineToHtmlString(node.content),
 			align: 'full',
@@ -320,12 +323,13 @@ rules.transform('Note', 'footnote', {
 });
 
 rules.toProsemirrorNode('Math', (node) => {
-	const { mathType, content } = node;
+	const { mathType, content, attr } = node;
 	const isDisplay = mathType === 'DisplayMath';
 	const prosemirrorType = isDisplay ? 'block_equation' : 'equation';
 	return {
 		type: prosemirrorType,
 		attrs: {
+			id: attr.identifier,
 			value: content,
 			html: katex.renderToString(content, {
 				displayMode: isDisplay,

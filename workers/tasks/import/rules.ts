@@ -158,7 +158,7 @@ rules.transform('Link', 'link', {
 rules.toProsemirrorNode('SmallCaps', pandocPassThroughTransformer);
 
 // Tell the transformer how to deal with typical content-level nodes
-rules.toProsemirrorNode('(Str | Space)+', (nodes) => {
+rules.toProsemirrorNode('(Str | Space | SoftBreak)+', (nodes) => {
 	const text = textFromStrSpace(nodes);
 	if (text.length > 0) {
 		return {
@@ -174,7 +174,6 @@ rules.fromProsemirrorNode('text', (node) => textToStrSpace(node.text));
 
 // Deal with line breaks
 rules.transform('LineBreak', 'hard_break', bareLeafTransformer);
-rules.toProsemirrorNode('SoftBreak', nullTransformer);
 
 // Stuff we don't have equivalents for
 rules.toProsemirrorNode('Span', pandocPassThroughTransformer);

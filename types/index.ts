@@ -5,6 +5,7 @@ export * from './community';
 export * from './customScript';
 export * from './discussion';
 export * from './doc';
+export * from './featureFlag';
 export * from './member';
 export * from './page';
 export * from './pub';

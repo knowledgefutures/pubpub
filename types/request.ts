@@ -62,4 +62,5 @@ export type InitialData = {
 	locationData: LocationData;
 	loginData: LoginData;
 	communityData: DefinitelyHas<Community, 'collections' | 'pages'>;
+	featureFlags: Record<string, boolean>;
 };

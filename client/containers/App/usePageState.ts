@@ -8,6 +8,7 @@ export const usePageState = (initialData, viewData) => {
 		communityData: initialCommunityData,
 		locationData: initialLocationData,
 		scopeData: initialScopeData,
+		featureFlags,
 	} = initialData;
 	const { pageData: initialPageData } = viewData;
 	const [loginData] = useState(initialLoginData);
@@ -52,5 +53,6 @@ export const usePageState = (initialData, viewData) => {
 		updateCommunity,
 		updateCollection,
 		noteManager,
+		featureFlags,
 	};
 };

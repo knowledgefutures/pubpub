@@ -3,6 +3,7 @@ import chalk from 'chalk';
 
 import { isProd } from 'utils/environment';
 import { addWorkerTask } from 'server/utils/workers';
+import * as featureFlags from 'server/featureFlag/interface';
 import * as tasks from 'workers/tasks';
 import * as models from 'server/models';
 
@@ -48,6 +49,7 @@ const scope = () => {
 const context = {
     ...tasks,
     ...models,
+    ...featureFlags,
     ...generateFindFunctions(),
     clear,
     scope,

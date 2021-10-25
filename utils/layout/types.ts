@@ -96,8 +96,9 @@ export type LayoutBlockCollectionHeader = {
 		hideByline?: boolean;
 		hideContributors?: boolean;
 		hideDate?: boolean;
-		hideDoi?: boolean;
 		hideCollectionKind?: boolean;
+		hideDoi?: boolean;
+		hiddenMetadataFields?: string[];
 	};
 };
 

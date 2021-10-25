@@ -9,6 +9,10 @@ import getCollectionDoi from 'utils/collections/getCollectionDoi';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { capitalize } from 'utils/strings';
 import { formatDate } from 'utils/dates';
+import {
+	getOrderedCollectionMetadataFields,
+	formattedMetadata,
+} from 'utils/collections/getMetadata';
 
 require('./layoutCollectionHeader.scss');
 
@@ -17,10 +21,43 @@ type Props = {
 	content: LayoutBlockCollectionHeader['content'];
 };
 
+const MetadataDetails = (props: Props) => {
+	const {
+		collection,
+		content: { hiddenMetadataFields = [] },
+	} = props;
+	const { metadata, kind } = collection;
+
+	if (!metadata || kind === 'tag') {
+		return null;
+	}
+
+	const fields = getOrderedCollectionMetadataFields(collection).filter((x) => x.name !== 'url');
+
+	return (
+		<>
+			{fields.map((field) => {
+				const name = field.name;
+				const data = metadata[name];
+				const isField = hiddenMetadataFields.includes(name);
+				const formattedData = formattedMetadata(name, data);
+				return <>{data && !isField && <div> {formattedData}</div>}</>;
+			})}
+		</>
+	);
+};
+
 const LayoutCollectionHeader = (props: Props) => {
 	const {
 		collection,
-		content: { hideByline, hideContributors, hideCollectionKind, hideDate, hideDoi },
+		content: {
+			hideByline,
+			hideContributors,
+			hideCollectionKind,
+			hideDate,
+			hiddenMetadataFields = [],
+		},
+		content,
 	} = props;
 	const contributors = getAllCollectionContributors(collection);
 	const bylineContributors = contributors.filter((c) => c.isAuthor);
@@ -35,7 +72,7 @@ const LayoutCollectionHeader = (props: Props) => {
 			</div>
 		),
 		!hideDate && <div key={1}>Created {formatDate(collection.createdAt)}</div>,
-		doi && !hideDoi && (
+		doi && !hiddenMetadataFields?.includes('doi') && (
 			<ClickToCopyButton
 				className="click-to-copy"
 				copyString={`https://doi.org/${doi}`}
@@ -51,6 +88,7 @@ const LayoutCollectionHeader = (props: Props) => {
 				)}
 			</ClickToCopyButton>
 		),
+		<MetadataDetails collection={collection} content={content} />,
 	].filter((x) => x);
 
 	return (

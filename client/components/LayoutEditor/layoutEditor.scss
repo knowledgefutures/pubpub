@@ -46,6 +46,19 @@
 			max-width: 100%;
 			padding-top: 12px;
 		}
+		.controls-row {
+			display: flex;
+			margin: 0 0.5em;
+			> .input-field-component {
+				margin: 0;
+			}
+			> *:not(:last-child) {
+				margin-right: 0.5em;
+			}
+			&:not(:last-child) {
+				margin-bottom: 0.2em;
+			}
+		}
 	}
 	.dropdown-grouping {
 		display: flex;

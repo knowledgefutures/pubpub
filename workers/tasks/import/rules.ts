@@ -128,29 +128,43 @@ const bareMarkTransformPairs = [
 	['Strikeout', 'strike'],
 	['Superscript', 'sup'],
 	['Subscript', 'sub'],
-	['Code', 'code'],
 ] as const;
 
 bareMarkTransformPairs.forEach(([from, to]) => rules.transform(from, to, bareMarkTransformer));
 
+rules.transform('Code', 'code', {
+	toProsemirrorMark: () => {
+		return {
+			type: 'code',
+		};
+	},
+	fromProsemirrorMark: (_, content) => {
+		return {
+			type: 'Code',
+			attr: createAttr(),
+			content: pandocInlineToPlainString(content),
+		};
+	},
+});
+
 rules.transform('Link', 'link', {
-	toProsemirrorMark: (link) => {
+	toProsemirrorMark: (node) => {
 		return {
 			type: 'link',
 			attrs: {
-				href: link.target.url,
-				title: link.target.title,
+				href: node.target.url,
+				title: node.target.title,
 			},
 		};
 	},
-	fromProsemirrorMark: (link, content) => {
+	fromProsemirrorMark: (node, content) => {
 		return {
 			type: 'Link',
 			attr: createAttr(),
 			content,
 			target: {
-				url: String(link.attrs.href),
-				title: String(link.attrs.title),
+				url: String(node.attrs.href),
+				title: String(node.attrs.title),
 			},
 		};
 	},

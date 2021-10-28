@@ -163,11 +163,15 @@ const filterForMutuallyApprovedEdges = (pubEdges) => {
 	}
 };
 
-export default (context, doiTarget, dateForTimestamp, includeRelationships = true) => {
+export default (
+	context,
+	doiTarget,
+	timestamp = new Date().getTime(),
+	includeRelationships = true,
+) => {
 	checkDepositAssertions(context, doiTarget);
 
 	const { community, contentVersion, reviewType, reviewRecommendation } = context;
-	const timestamp = (dateForTimestamp || new Date()).getTime();
 	const doiBatchId = `${timestamp}_${community.id.slice(0, 8)}`;
 
 	let pubEdge;

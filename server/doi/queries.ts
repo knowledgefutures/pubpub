@@ -110,6 +110,7 @@ const persistDoiData = (ids, dois) => {
 export const getDoiData = (
 	{ communityId, collectionId, pubId, contentVersion, reviewType, reviewRecommendation },
 	doiTarget,
+	timestamp = new Date().getTime(),
 	includeRelationships = true,
 ) =>
 	Promise.all([
@@ -130,7 +131,7 @@ export const getDoiData = (
 				reviewRecommendation,
 			},
 			doiTarget,
-			undefined,
+			timestamp,
 			includeRelationships,
 		);
 	});
@@ -147,19 +148,31 @@ export const setDoiData = async (
 		reviewType,
 		reviewRecommendation,
 	};
-	const depositJson = await getDoiData(depositParams, doiTarget);
-	const { deposit: detachedDeposit } = await getDoiData(depositParams, doiTarget, false);
-	const { deposit, timestamp, dois } = depositJson;
-	const secondDepositTimestamp = timestamp + 1;
-	const ids = { collectionId, pubId };
 	// Crossref requires us to first delete any existing relationships (by
 	// submitting a deposit without them), and then submit a deposit with the
 	// updated relationships. The second deposit must have a newer timestamp.
-	await submitDoiData(detachedDeposit, timestamp, communityId);
-	await submitDoiData(deposit, secondDepositTimestamp, communityId);
-	// Store the DOIs and Crossref deposit record.
+	// Disclaimer: some of the code here is fairly explicit because juggling two
+	// sets of deposits and timestamps has proven tricky to maintain.
+	const timestampDisconnected = new Date().getTime();
+	const timestampConnected = timestampDisconnected + 1;
+	// (1) Create the disconnected deposit.
+	const { deposit: depositDisconnected } = await getDoiData(
+		depositParams,
+		doiTarget,
+		timestampDisconnected,
+		false, // Exclude relationships (connections).
+	);
+	// (2) Submit the disconnected deposit.
+	await submitDoiData(depositDisconnected, timestampDisconnected, communityId);
+	// (3) Create the connected deposit.
+	const depositJson = await getDoiData(depositParams, doiTarget, timestampConnected);
+	const { deposit: depositConnected, dois } = depositJson;
+	// (4) Submit the connected deposit.
+	await submitDoiData(depositConnected, timestampConnected, communityId);
+	const ids = { collectionId, pubId };
+	// (5) Store the DOIs and Crossref deposit record.
 	await Promise.all([persistDoiData(ids, dois), persistCrossrefDepositRecord(ids, depositJson)]);
-	return { deposit, dois };
+	return { deposit: depositConnected, dois };
 };
 
 export const generateDoi = async ({ communityId, collectionId, pubId }, target) => {

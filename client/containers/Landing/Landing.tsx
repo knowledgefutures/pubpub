@@ -22,7 +22,7 @@ const features = [
 	},
 	{
 		icon: 'page-layout',
-		title: 'Beautiful, Customizable Layouts',
+		title: 'Easily Customizable Layouts',
 		desc: 'Create your custom site without writing a line of code.',
 	},
 	{
@@ -37,62 +37,98 @@ const features = [
 		desc: 'Allow anyone to access your content, or just the people you choose.',
 	},
 	{
-		icon: 'lightbulb',
-		title: 'Suggest a feature',
-		desc: "We're constantly adding new features, and love hearing ideas from users like you.",
+		icon: 'grouped-bar-chart',
+		title: 'Impact Measurement',
+		desc:
+			'Learn about the people visiting your community with a full suite of privacy-respecting analytics.',
+	},
+	{
+		icon: 'graph',
+		title: 'Content Connections',
+		desc:
+			'Add typed relationships — reviews, commentary, supplement, etc. — to your content and deposit them to Crossref.',
+	},
+	{
+		icon: 'export',
+		title: 'Document Export',
+		desc: 'Export your work to PDF, Word, Markdown, LaTeX, JATS XML, and more.',
 	},
 ] as const;
 
 const communities = [
 	{
 		name: 'Harvard Data Science Review',
-		description: 'A Microscopic, Telescopic & Kaleidoscopic View of Data Science',
+		description: 'A microscopic, telescopic & kaleidoscopic view of data science.',
 		logo: '/static/landing/hdsr.png',
-		type: 'Journal',
+		type: 'Journals',
 		category: 'Science',
 		link: 'https://hdsr.mitpress.mit.edu',
 	},
 	{
-		name: 'Stanford JBLP',
-		description: 'The first law journal to publish on the greater blockchain technology space',
-		logo: '/static/landing/sjblp.png',
-		type: 'Journal',
-		category: 'Law',
-		link: 'https://stanford-jblp.pubpub.org/',
-	},
-	{
-		name: 'Cursor_',
-		description: 'Journal for Explorative Theology',
-		logo: '/static/landing/cursor.png',
-		type: 'Journal',
-		category: 'Theology',
-		link: 'https://cursor.pubpub.org/',
-	},
-	{
-		name: 'punctum Comms',
-		description: 'Communications / Commons / Community',
-		logo: '/static/landing/punctum.png',
-		type: 'Blog',
-		category: 'Publishing',
-		link: 'https://punctumbooks.pubpub.org/',
-	},
-	{
-		name: 'Expansive Digital Publishing',
-		description:
-			"Duke University Libraries' framework for how libraries can begin to embrace their role in the maturing space of digital humanities publishing",
-		logo: '/static/landing/expansive.png',
-		type: 'Report',
-		category: 'Digital Humanities',
-		link: 'https://expansive.pubpub.org/',
-	},
-	{
 		name: 'Frankenbook',
 		description:
-			'A collaborative, multimedia reading experiment with Mary Shelley’s classic novel',
+			'A collaborative, multimedia reading experiment with Mary Shelley’s classic novel.',
 		logo: '/static/landing/frankenbook.png',
-		type: 'Book',
+		type: 'Books',
 		category: 'Literature',
 		link: 'https://frankenbook.org',
+	},
+	{
+		name: 'Collective Wisdom',
+		description: "The British Library's early access and community review site.",
+		logo: '/static/landing/collective.png',
+		type: 'Resources',
+		category: 'Reports',
+		link: 'https://britishlibrary.pubpub.org/',
+	},
+	{
+		name: 'SERC Ethical Computing',
+		description: 'A series on the social and ethical responsibilities of computing.',
+		logo: '/static/landing/serc.png',
+		type: 'Resources',
+		category: 'Case studies',
+		link: 'https://mit-serc.pubpub.org',
+	},
+	{
+		name: 'Contours Collaborations',
+		description: 'A series on the social and ethical responsibilities of computing.',
+		logo: '/static/landing/contours.png',
+		type: 'Exhibits',
+		category: 'Arts',
+		link: 'https://contours.pubpub.org',
+	},
+	{
+		name: 'Fermentology',
+		description: 'On the culture, history, and novelty of fermented things.',
+		logo: '/static/landing/fermentology.png',
+		type: 'Learning Series',
+		category: 'Multimedia',
+		link: 'https://fermentology.pubpub.org/',
+	},
+	{
+		name: 'Grad Journal of Food Studies',
+		description:
+			'An international student-run and refereed platform dedicated to encouraging and promoting interdisciplinary food scholarship at the graduate level',
+		logo: '/static/landing/gafs.png',
+		type: 'Student Journals',
+		category: 'Interdisciplinary',
+		link: 'https://gradfoodstudies.pubpub.org/',
+	},
+	{
+		name: 'Critical Distance',
+		description: 'A pandemic and games essay jam.',
+		logo: '/static/landing/pgej.png',
+		type: 'Conferences',
+		category: 'Sprint',
+		link: 'https://pandemics-and-games-essay-jam.pubpub.org/',
+	},
+	{
+		name: 'MIT Press Open Architecture',
+		description: 'An open collection of out-of-print humanities books.',
+		logo: '/static/landing/arch.png',
+		type: 'Collections',
+		category: 'Open humanities',
+		link: 'https://mitp-arch.mitpress.mit.edu/',
 	},
 ];
 
@@ -142,10 +178,10 @@ const Landing = () => {
 						<div className="col-4">
 							<h1>PubPub</h1>
 							<p className="subtitle">
-								The open-source, privacy-respecting, all-in-one collaborative
-								publishing platform for communities small and large.
+								The open-source, community-led, end-to-end publishing platform for
+								knowledge communities.
 							</p>
-							<h2>Manage, evolve & perfect your publishing process</h2>
+							<h2>Create knowledge. Share it with audiences who care.</h2>
 							<div className="buttons">
 								<a href="/community/create" className="custom-button black">
 									Create your community
@@ -165,17 +201,16 @@ const Landing = () => {
 							<h3>Mission</h3>
 						</div>
 						<div>
-							As part of the{' '}
+							As a product of the{' '}
 							<a href="https://www.knowledgefutures.org">
 								<strong>Knowledge Futures Group</strong>
 							</a>
-							, we’re committed to making PubPub open and easily accessible to a wide
-							range of groups. That means we’re committed to providing a free version
-							of PubPub forever, releasing open-source code, and operating under
-							non-profit, sustainable, researcher-friendly business models.
+							, PubPub is open and accessible to all. That means a free, robust
+							version of PubPub will always be available, operating under a
+							non-profit, sustainable business model.
 						</div>
 						<div>
-							<h3>Open Source</h3>
+							<h3>Open & Community-Led</h3>
 						</div>
 						<div>
 							<a className="git" href="https://github.com/pubpub/pubpub">
@@ -218,7 +253,7 @@ const Landing = () => {
 							<h4>Import your work from any source</h4>
 							<img
 								src="/static/landing/importing.png"
-								alt="You can see multiple users editing at the same time."
+								alt="Screenshot of the PubPub import interface uploading a complex LaTeX document."
 							/>
 						</div>
 						<div>
@@ -226,14 +261,14 @@ const Landing = () => {
 							<ul>
 								<li key="02-01">Easy multi-file imports</li>
 								<li key="02-02">Complex-content friendly</li>
-								<li key="02-03">Markdown, Word, and LaTeX</li>
+								<li key="02-03">Word, XML, LaTeX, and Markdown</li>
 							</ul>
 						</div>
 						<div>
 							<h4>Embed rich multimedia in your publication</h4>
 							<img
 								src="/static/landing/multimedia.png"
-								alt="You can see multiple users editing at the same time."
+								alt="Examples of rich content embedded in Pubs, including an equation, a stem and tree chart, and an interactive song picker."
 							/>
 						</div>
 						<div>
@@ -255,30 +290,31 @@ const Landing = () => {
 				<div id="case-study">
 					<div className="container">
 						<div>
-							<h3>Case Study</h3>
+							<h3>Content Services</h3>
 						</div>
 						<div>
-							<div className="logo">
-								<img
-									src="/static/landing/mitp_light.png"
-									alt="the Mit Press colophon, designed by Muriel Cooper in 1964"
-								/>
-							</div>
 							<p>
-								Learn how <strong>the MIT Press</strong> uses PubPub for
-								collaborative community review on projects like{' '}
-								<a href="https://bookbook.pubpub.org/data-feminism">
-									Data Feminism
-								</a>
-								, <a href="https://thegooddrone.pubpub.org">The Good Drone</a>, and{' '}
-								<a href="https://bookbook.pubpub.org/annotation">Annotation</a>.
+								We offer production, training, and strategy services for groups who
+								want extra support.
 							</p>
+							<blockquote>
+								"The team’s innovation and experience made for an incredible
+								collaboration."
+								<br />
+								<span className="attribution">
+									- Jeremy Bailenson, Author, “
+									<a href="https://doi.org/10.1037/tmb0000030">
+										A Theoretical Argument for the Causes of Zoom Fatigue
+									</a>
+									”
+								</span>
+							</blockquote>
 							<div className="buttons">
 								<a
-									href="https://notes.knowledgefutures.org/pub/ek9zpak0"
+									href="https://help.pubpub.org/pub/content-services-menu"
 									className="custom-button light"
 								>
-									Read more
+									Learn more
 								</a>
 							</div>
 						</div>
@@ -289,20 +325,17 @@ const Landing = () => {
 				<div id="communities">
 					<div className="container">
 						<div>
-							<h3>Communities</h3>
+							<h3>Use Cases</h3>
 						</div>
 						<div>
 							<p>
-								Communities are publishing groups focused on a particular topic,
-								theme, or expertise. They can be a university press or a single
-								monograph; they can be a journal, research group, or conference. You
-								can start your community or browse any of the existing PubPub
-								communities today.
+								Thousands of communities are tailoring PubPub to suit their
+								publishing needs, goals, and content types.
 							</p>
 							<div className="community-grid">{communityGrid}</div>
 							<div className="buttons">
 								<a href="/explore" className="custom-button">
-									Explore all communities
+									Explore Communities
 								</a>
 							</div>
 						</div>
@@ -316,7 +349,7 @@ const Landing = () => {
 							<h3>Create</h3>
 						</div>
 						<div>
-							<h4>Start experimenting today</h4>
+							<h4>Anyone can start a PubPub Community, anytime, for free.</h4>
 							<div className="buttons">
 								<a href="/community/create" className="custom-button">
 									Create your community
@@ -335,10 +368,9 @@ const Landing = () => {
 					<div className="container restricted-width reverse">
 						<div>
 							<p>
-								With PubPub, one tool supports your entire content workflow from
-								drafting to review, publication, and reader engagement. Work
-								efficiently, flexibly, and collaboratively to better support
-								knowledge creation and dissemination.
+								PubPub empowers knowledge communities to define their own community
+								engagement models and manage their publishing workflows. Use PubPub
+								to more closely align knowledge sharing with community building.
 							</p>
 						</div>
 					</div>

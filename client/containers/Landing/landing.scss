@@ -327,6 +327,12 @@ $leftColumnWidth: 20%;
 		/*** START Case Study ***/
 		#case-study {
 			@include dark(true);
+			blockquote {
+				font-size: 1.3em;
+				.attribution {
+					font-size: 0.75em;
+				}
+			}
 			.container > div {
 				max-width: 900px;
 			}

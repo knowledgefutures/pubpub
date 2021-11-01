@@ -337,13 +337,12 @@ rules.transform('Note', 'footnote', {
 });
 
 rules.toProsemirrorNode('Math', (node) => {
-	const { mathType, content, attr } = node;
+	const { mathType, content } = node;
 	const isDisplay = mathType === 'DisplayMath';
 	const prosemirrorType = isDisplay ? 'block_equation' : 'equation';
 	return {
 		type: prosemirrorType,
 		attrs: {
-			id: attr.identifier,
 			value: content,
 			html: katex.renderToString(content, {
 				displayMode: isDisplay,

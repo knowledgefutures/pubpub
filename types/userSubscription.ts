@@ -1,5 +1,3 @@
-import { UserSubscription } from 'server/models';
-
 type UserSubscriptionAssociation = { pubId: string } | { threadId: string };
 
 export type UserSubscription = {

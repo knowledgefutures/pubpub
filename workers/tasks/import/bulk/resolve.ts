@@ -69,10 +69,12 @@ export const resolveImportPlan = async ({ importPlan, actor, parents }) => {
 			resolvedValues.push(resolved);
 			currentParents = { ...currentParents, ...nextParents };
 		} catch (error) {
-			// eslint-disable-next-line no-console
-			console.log(error.stack);
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '{}' is not assignable to type 'never'.
-			resolvedValues.push({ resolved: {}, error: error && error.stack });
+			if (error instanceof Error) {
+				// eslint-disable-next-line no-console
+				console.log(error.stack);
+				// @ts-expect-error ts-migrate(2322) FIXME: Type '{}' is not assignable to type 'never'.
+				resolvedValues.push({ resolved: {}, error: error && error.stack });
+			}
 		}
 	}
 

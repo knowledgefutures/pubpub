@@ -1,6 +1,7 @@
 import { AllSelection, Plugin, Selection, PluginKey } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { compressSelectionJSON, uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
+import firebase from 'firebase';
 
 export const cursorsPluginKey = new PluginKey('cursors');
 

@@ -318,8 +318,8 @@ const StatefulPubHistoryWrapper = () => {
 	const updateHistoryData = (next) => setHistoryData((current) => ({ ...current, ...next }));
 	return (
 		<PubHistoryViewer
-			pubData={pubData}
-			historyData={historyData}
+			pubData={pubData as any}
+			historyData={historyData as any}
 			updateHistoryData={updateHistoryData}
 			onClose={() => {}}
 		/>

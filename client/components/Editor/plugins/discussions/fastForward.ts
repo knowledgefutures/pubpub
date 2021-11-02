@@ -1,5 +1,6 @@
 import { Schema, Node } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
+import firebase from 'firebase';
 
 import { getStepsInChangeRange } from '../../utils';
 

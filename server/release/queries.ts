@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import firebase from 'firebase';
 
 import { Release, Doc, Discussion, DiscussionAnchor, sequelize } from 'server/models';
 import { getPubDraftDoc, getPubDraftRef } from 'server/utils/firebaseAdmin';

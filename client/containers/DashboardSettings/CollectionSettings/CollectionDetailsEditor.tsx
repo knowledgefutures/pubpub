@@ -12,8 +12,6 @@ import { ConfirmDialog, InputField } from 'components';
 import { collectionUrl } from 'utils/canonicalUrls';
 import { getSlugError } from 'client/utils/slug';
 
-type CollectionFieldErrors = { [key in keyof Collection]: any };
-
 type Props = {
 	collection: Collection;
 	communityData: Community;

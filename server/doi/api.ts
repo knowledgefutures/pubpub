@@ -63,7 +63,7 @@ app.post(
 		} catch (err) {
 			if (err === parentToSupplementNeedsDoiError) {
 				return res.status(400).json({
-					error: err.message,
+					error: parentToSupplementNeedsDoiError.message,
 				});
 			}
 			throw err;
@@ -86,9 +86,7 @@ app.get(
 			});
 		} catch (err) {
 			if (err === parentToSupplementNeedsDoiError) {
-				return res.status(400).json({
-					error: err.message,
-				});
+				return res.status(400).json({ error: parentToSupplementNeedsDoiError.message });
 			}
 			throw err;
 		}

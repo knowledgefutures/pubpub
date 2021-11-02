@@ -43,12 +43,13 @@ const DiscussionInput = (props: Props) => {
 	const [didFocus, setDidFocus] = useState(false);
 	const [editorKey, setEditorKey] = useState(Date.now());
 	const isNewThread = !discussionData.number;
+	const inputView = changeObject?.view;
 
 	useEffect(() => {
-		if (!isPubBottomInput && (isNewThread || didFocus) && changeObject?.view) {
-			changeObject?.view.focus();
+		if (!isPubBottomInput && (isNewThread || didFocus) && inputView) {
+			inputView.focus();
 		}
-	}, [isNewThread, changeObject?.view, didFocus, isPubBottomInput]);
+	}, [isNewThread, inputView, didFocus, isPubBottomInput]);
 
 	const handlePostThreadComment = async () => {
 		setIsLoading(true);

@@ -56,8 +56,10 @@ const getDispatchTransaction =
 				collabState.sendCollabChanges(newState);
 			}
 		} catch (err) {
-			console.error('Error applying transaction:', err);
-			onError?.(err);
+			if (err instanceof Error) {
+				console.error('Error applying transaction:', err);
+				onError?.(err);
+			}
 		}
 	};
 

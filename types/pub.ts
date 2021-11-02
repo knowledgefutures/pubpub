@@ -125,3 +125,15 @@ export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs'> 
 		initialStructuredCitations: boolean;
 		releaseNumber: Maybe<number>;
 	};
+
+export type PubHistoryState = {
+	currentKey: number;
+	latestKey: number;
+	isViewingHistory: boolean;
+	loadedIntoHistory: boolean;
+	historyDocKey: string;
+	historyDoc?: DocJson;
+	outstandingRequests: number;
+	latestKeyReceivedAt: Maybe<number>;
+	timestamps: Record<string, number>;
+};

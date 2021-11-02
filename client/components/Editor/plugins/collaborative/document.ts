@@ -81,7 +81,7 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 						storeCheckpoint(ref, newState.doc, snapshot.key);
 					}
 				}
-				/* eslint-disable-next-line no-use-before-define */
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				processStoredKeyables();
 			})
 			.catch((err) => {

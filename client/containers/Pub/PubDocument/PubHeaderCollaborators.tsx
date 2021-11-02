@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Tooltip } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
 
-type collaboratorType = {
+type Collaborator = {
 	cursorColor?: string;
 	id?: string;
 	image?: string;
@@ -12,19 +11,10 @@ type collaboratorType = {
 	name?: string;
 };
 
-// @ts-expect-error ts-migrate(2322) FIXME: Type 'Requireable<InferProps<{ cursorColor: Requir... Remove this comment to see the full error message
-const collaboratorType: PropTypes.Requireable<collaboratorType> = PropTypes.shape({
-	cursorColor: PropTypes.string,
-	id: PropTypes.string,
-	image: PropTypes.string,
-	initials: PropTypes.string,
-	name: PropTypes.string,
-});
-
 type Props = {
 	collabData: {
-		localCollabUser?: collaboratorType;
-		collaborators?: collaboratorType[];
+		localCollabUser?: Collaborator;
+		collaborators?: Collaborator[];
 		remoteCollabUsers?: any[];
 	};
 };

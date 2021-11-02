@@ -3,6 +3,7 @@ import { storiesOf } from '@storybook/react';
 
 import { discussionsData } from 'utils/storybook/data';
 import PubBottom from 'containers/Pub/PubDocument/PubBottom/PubBottom';
+import { PubPageData } from 'types';
 
 const citations = [
 	{
@@ -36,6 +37,12 @@ const footnotes = [
 	{ structuredValue: '', unstructuredValue: '<p>Tigers are striped!</p>', html: '' },
 ];
 
+const sharedProps: Omit<React.ComponentProps<typeof PubBottom>, 'pubData'> = {
+	updateLocalData: () => {},
+	mainContentRef: React.createRef(),
+	sideContentRef: React.createRef(),
+};
+
 const pubData = {
 	footnotes,
 	citations,
@@ -44,51 +51,49 @@ const pubData = {
 	canManage: false,
 	collectionPubs: [],
 	releases: [],
-};
+} as unknown as PubPageData;
 
 storiesOf('containers/Pub/PubDocument/PubBottom/PubBottom', module)
 	.add('default', () => (
 		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-			{/* @ts-expect-error ts-migrate(2739) FIXME: Type '{ pubData: { footnotes: { structuredValue: s... Remove this comment to see the full error message */}
-			<PubBottom pubData={pubData} collabData={{ editorChangeObject: {} }} />
+			<PubBottom {...sharedProps} pubData={pubData} />
 		</div>
 	))
 	.add('can-manage', () => (
 		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-			{/* @ts-expect-error ts-migrate(2739) FIXME: Type '{ pubData: { canManage: boolean; footnotes: ... Remove this comment to see the full error message */}
-			<PubBottom
-				pubData={{ ...pubData, canManage: true }}
-				collabData={{ editorChangeObject: {} }}
-			/>
+			<PubBottom {...sharedProps} pubData={{ ...pubData, canManage: true } as any} />
 		</div>
 	))
 	.add('cannot-discuss', () => (
 		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-			{/* @ts-expect-error ts-migrate(2739) FIXME: Type '{ pubData: { foot... Remove this comment to see the full error message */}
-			<PubBottom pubData={{ ...pubData }} collabData={{ editorChangeObject: {} }} />
+			<PubBottom {...sharedProps} pubData={pubData} />
 		</div>
 	))
 	.add('no-pub-bottom-discussions', () => (
 		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-			{/* @ts-expect-error ts-migrate(2739) FIXME: Type '{ pubData: { discussions: ({ id: string; tit... Remove this comment to see the full error message */}
 			<PubBottom
-				pubData={{
-					...pubData,
-					discussions: pubData.discussions.filter((ds) => ds.highlights !== null),
-				}}
-				collabData={{ editorChangeObject: {} }}
+				{...sharedProps}
+				pubData={
+					{
+						...pubData,
+						discussions: pubData.discussions!.filter(
+							(ds: any) => ds.highlights !== null,
+						),
+					} as any
+				}
 			/>
 		</div>
 	))
 	.add('no-discussions', () => (
 		<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-			{/* @ts-expect-error ts-migrate(2739) FIXME: Type '{ pubData: { discussions: never[]; footnotes... Remove this comment to see the full error message */}
 			<PubBottom
-				pubData={{
-					...pubData,
-					discussions: [],
-				}}
-				collabData={{ editorChangeObject: {} }}
+				{...sharedProps}
+				pubData={
+					{
+						...pubData,
+						discussions: [],
+					} as any
+				}
 			/>
 		</div>
 	));

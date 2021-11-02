@@ -7,27 +7,16 @@ import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'client/utils/useSticky';
 import { formatDate } from 'utils/dates';
 import { pubUrl } from 'utils/canonicalUrls';
+import { Pub, PubHistoryState } from 'types';
 
 require('./pubHistoryViewer.scss');
 
-type OwnProps = {
-	historyData: {
-		timestamps?: any;
-		currentKey?: number;
-		latestKey?: number;
-		outstandingRequests?: number;
-		loadedIntoHistory?: boolean;
-	};
-	onClose: (...args: any[]) => any;
-	pubData: {
-		createdAt: string;
-		releases: {
-			createdAt: string;
-		}[];
-	};
-	updateHistoryData: (...args: any[]) => any;
+type Props = {
+	pubData: Pub;
+	historyData: PubHistoryState;
+	onClose: () => unknown;
+	updateHistoryData: (patch: Partial<PubHistoryState>) => unknown;
 };
-const defaultProps = {};
 
 const bucketTimestamp = (timestamp, intervalMs) => {
 	return Math.floor(timestamp / intervalMs);
@@ -102,8 +91,6 @@ const getDateForHistoryKey = (historyKey, timestamps) => {
 	return null;
 };
 
-type Props = OwnProps & typeof defaultProps;
-
 const PubHistoryViewer = (props: Props) => {
 	const { historyData, pubData, updateHistoryData, onClose } = props;
 	const { timestamps, latestKey, currentKey, outstandingRequests, loadedIntoHistory } =
@@ -111,11 +98,9 @@ const PubHistoryViewer = (props: Props) => {
 	const { releases } = pubData;
 	const { communityData } = usePageContext();
 	const [sliderValue, setSliderValue] = useState(currentKey);
-	const historyScrollRef = useRef(null);
-	const hasScrolledRef = useRef(null);
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+	const historyScrollRef = useRef<null | HTMLHeadingElement>(null);
+	const hasScrolledRef = useRef<null | boolean>(null);
 	const isLoadingHistory = outstandingRequests > 0;
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const hasMeaningfulHistory = latestKey >= 0;
 
 	historyScrollRef.current = null;
@@ -135,13 +120,11 @@ const PubHistoryViewer = (props: Props) => {
 	});
 
 	useEffect(() => {
-		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 		setSliderValue(currentKey + 1);
 	}, [currentKey]);
 
 	useEffect(() => {
 		if (historyScrollRef.current) {
-			// @ts-expect-error ts-migrate(2339) FIXME: Property 'offsetParent' does not exist on type 'nu... Remove this comment to see the full error message
 			const { offsetParent, offsetTop } = historyScrollRef.current;
 			if (offsetParent && !Number.isNaN(offsetTop)) {
 				// Scroll to the current date minus some padding
@@ -151,7 +134,6 @@ const PubHistoryViewer = (props: Props) => {
 				} else {
 					offsetParent.scrollTop = scrollTarget;
 				}
-				// @ts-expect-error ts-migrate(2322) FIXME: Type 'true' is not assignable to type 'null'.
 				hasScrolledRef.current = true;
 			}
 		}
@@ -159,7 +141,6 @@ const PubHistoryViewer = (props: Props) => {
 
 	const canChangeCurrentKeyBy = (step) => {
 		const proposedKey = currentKey + step;
-		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 		return proposedKey >= 0 && proposedKey <= latestKey;
 	};
 
@@ -189,7 +170,6 @@ const PubHistoryViewer = (props: Props) => {
 			const {
 				range: [startKey, endKey],
 			} = entry;
-			// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 			const containsCurrentKey = currentKey >= startKey && currentKey <= endKey;
 			const dateString = formatDate(date, { includeTime: true, includeDate: false });
 			return (
@@ -284,7 +264,6 @@ const PubHistoryViewer = (props: Props) => {
 					<ClickToCopyButton
 						copyString={pubUrl(communityData, pubData, {
 							isDraft: true,
-							// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 							historyKey: currentKey.toString(),
 						})}
 						beforeCopyPrompt="Copy link to this point in history"
@@ -312,11 +291,9 @@ const PubHistoryViewer = (props: Props) => {
 			{hasMeaningfulHistory && (
 				<Slider
 					min={0}
-					// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 					max={latestKey + 1}
 					stepSize={1}
 					labelRenderer={renderSliderLabel}
-					// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 					labelStepSize={latestKey + 1}
 					value={sliderValue}
 					onChange={setSliderValue}
@@ -331,5 +308,5 @@ const PubHistoryViewer = (props: Props) => {
 		</div>
 	);
 };
-PubHistoryViewer.defaultProps = defaultProps;
+
 export default PubHistoryViewer;

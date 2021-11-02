@@ -45,8 +45,10 @@ const main = async () => {
 		);
 		await postToSlackAboutSuccess(backupFiles);
 	} catch (err) {
-		console.error(err);
-		postToSlackAboutError(err);
+		if (err instanceof Error) {
+			console.error(err);
+			postToSlackAboutError(err);
+		}
 	}
 };
 

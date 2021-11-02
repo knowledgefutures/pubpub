@@ -1,5 +1,6 @@
 import React from 'react';
 import queryString from 'query-string';
+import firebase from 'firebase';
 
 import { getRandomColor } from 'utils/colors';
 import { getPubPageTitle } from 'utils/pubPageTitle';
@@ -15,7 +16,7 @@ import {
 	Community,
 	LoginData,
 	LocationData,
-	DocJson,
+	PubHistoryState,
 } from 'types';
 
 const shimPubContextProps = {
@@ -55,17 +56,7 @@ type CollabUser = {
 
 type State = {
 	pubData: PubPageData;
-	historyData: {
-		currentKey: number;
-		latestKey: number;
-		isViewingHistory: boolean;
-		loadedIntoHistory: boolean;
-		historyDocKey: string;
-		historyDoc?: DocJson;
-		outstandingRequests: number;
-		latestKeyReceivedAt: Maybe<number>;
-		timestamps: Record<string, number>;
-	};
+	historyData: PubHistoryState;
 	collabData: {
 		editorChangeObject: any;
 		status: string;

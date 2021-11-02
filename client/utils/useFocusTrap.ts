@@ -9,19 +9,21 @@ type FocusTrapOptions = {
 	onClickOutside?: Maybe<EventHandler<MouseEvent>>;
 	isActive?: boolean;
 	ignoreMouseEvents?: boolean;
-	restoreFocusTarget?: Maybe<globalThis.Node>;
+	restoreFocusTarget?: Maybe<Node>;
 };
 
 const captureEventOptions = { capture: true };
 
-const isChildOfReakitPortal = (element: Element) => {
-	const ancestors: Element[] = [];
-	ancestors.push(element);
-	while (element.parentElement) {
-		ancestors.unshift(element.parentElement);
-		element = element.parentElement;
+const isChildOfReakitPortal = (node: Node) => {
+	const ancestors: Node[] = [];
+	ancestors.push(node);
+	while (node.parentElement) {
+		ancestors.unshift(node.parentElement);
+		node = node.parentElement;
 	}
-	return ancestors.some((ancestor) => ancestor.classList?.contains('__reakit-portal'));
+	return ancestors
+		.filter((ancestor): ancestor is Element => ancestor instanceof Element)
+		.some((ancestor) => ancestor.classList?.contains('__reakit-portal'));
 };
 
 const rememberScrollPosition = () => {
@@ -51,7 +53,7 @@ export const useFocusTrap = ({
 }: FocusTrapOptions = {}) => {
 	const [rootElement, setRefElement] = useState<null | HTMLElement>(null);
 	const ignoreFocusChanges = useRef(false);
-	const lastElementFocusedInModal = useRef<null | Element>(null);
+	const lastNodeFocusedInModal = useRef<null | Node>(null);
 	const lastGoodScrollPosition = useRef<null | ReturnType<typeof rememberScrollPosition>>(null);
 	const hasSeenMouseDownOutside = useRef(false);
 	const mouseDownTimeRef = useRef(0);
@@ -121,7 +123,7 @@ export const useFocusTrap = ({
 			}
 
 			if (rootElement && rootElement.contains(target)) {
-				lastElementFocusedInModal.current = target;
+				lastNodeFocusedInModal.current = target;
 
 				// Keep track of our scroll position so we can restore it later
 				lastGoodScrollPosition.current = rememberScrollPosition();
@@ -146,13 +148,13 @@ export const useFocusTrap = ({
 				// user pressing Shift-Tab on the first node, wanting to go to the
 				// end. So, we instead try focusing the last focusable node of the
 				// modal.
-				if (document.activeElement === lastElementFocusedInModal.current) {
+				if (document.activeElement === lastNodeFocusedInModal.current) {
 					focusLastElementIn(rootElement);
 				}
 
 				// Focus should now be inside the modal, so record the newly-focused
 				// node as the last node focused in the modal.
-				lastElementFocusedInModal.current = document.activeElement;
+				lastNodeFocusedInModal.current = document.activeElement;
 			}
 		},
 		[focusFirstElementIn, focusLastElementIn, isActive, rootElement, ignoreMouseEvents],

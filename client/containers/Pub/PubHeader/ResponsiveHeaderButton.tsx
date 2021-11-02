@@ -23,7 +23,6 @@ const ResponsiveHeaderButton = React.forwardRef((props: Props, ref) => {
 	if (viewportWidth === null) {
 		return null;
 	}
-	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 	if (viewportWidth > mobileViewportCutoff) {
 		return (
 			<LargeHeaderButton

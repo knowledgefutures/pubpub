@@ -167,7 +167,7 @@ export const getPubsByBlockIndex = <P extends Pub>(
 				pinnedPubIds: content.pubIds || [],
 				collectionIds,
 				limit: content.limit || Infinity,
-				sort: content.sort || (('legacy' as unknown) as any),
+				sort: content.sort || ('legacy' as unknown as any),
 				sortCollectionIds: collectionId ? [collectionId] : collectionIds,
 			});
 		}

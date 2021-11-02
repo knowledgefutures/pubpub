@@ -24,42 +24,45 @@ const getFastForwardedDiscussion = (
 	};
 };
 
-export const createFastForwarder = (draftRef: Reference) => async <S extends Schema>(
-	discussionsById: NullableDiscussions,
-	latestDoc: Node<S>,
-	latestHistoryKey: number,
-): Promise<Discussions> => {
-	const { schema } = latestDoc.type;
-	const discussions = Object.values(discussionsById);
-	const outdatedDiscussions = discussions.filter((d) => d && d.currentKey < latestHistoryKey);
+export const createFastForwarder =
+	(draftRef: Reference) =>
+	async <S extends Schema>(
+		discussionsById: NullableDiscussions,
+		latestDoc: Node<S>,
+		latestHistoryKey: number,
+	): Promise<Discussions> => {
+		const { schema } = latestDoc.type;
+		const discussions = Object.values(discussionsById);
+		const outdatedDiscussions = discussions.filter((d) => d && d.currentKey < latestHistoryKey);
 
-	if (outdatedDiscussions.length === 0) {
-		return {};
-	}
-
-	const mostOutdatedKey = outdatedDiscussions.reduce(
-		(key, discussion) => (discussion?.selection ? Math.min(key, discussion.currentKey) : key),
-		Infinity,
-	);
-
-	const stepsByChangeInRange = await getStepsInChangeRange(
-		draftRef,
-		schema,
-		mostOutdatedKey + 1,
-		latestHistoryKey,
-	);
-
-	const resultingDiscussions: Discussions = {};
-	Object.entries(discussionsById).forEach(([discussionId, discussion]) => {
-		if (discussion && outdatedDiscussions.includes(discussion)) {
-			resultingDiscussions[discussionId] = getFastForwardedDiscussion(
-				discussion,
-				stepsByChangeInRange,
-				mostOutdatedKey,
-				latestHistoryKey,
-			);
+		if (outdatedDiscussions.length === 0) {
+			return {};
 		}
-	});
 
-	return resultingDiscussions;
-};
+		const mostOutdatedKey = outdatedDiscussions.reduce(
+			(key, discussion) =>
+				discussion?.selection ? Math.min(key, discussion.currentKey) : key,
+			Infinity,
+		);
+
+		const stepsByChangeInRange = await getStepsInChangeRange(
+			draftRef,
+			schema,
+			mostOutdatedKey + 1,
+			latestHistoryKey,
+		);
+
+		const resultingDiscussions: Discussions = {};
+		Object.entries(discussionsById).forEach(([discussionId, discussion]) => {
+			if (discussion && outdatedDiscussions.includes(discussion)) {
+				resultingDiscussions[discussionId] = getFastForwardedDiscussion(
+					discussion,
+					stepsByChangeInRange,
+					mostOutdatedKey,
+					latestHistoryKey,
+				);
+			}
+		});
+
+		return resultingDiscussions;
+	};

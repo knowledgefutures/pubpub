@@ -38,16 +38,8 @@ const ControlsMedia = (props: Props) => {
 		updateAttrs,
 		attrs: { altText },
 	} = pendingAttrs;
-	const {
-		size,
-		align,
-		href,
-		height,
-		caption,
-		url,
-		fullResolution,
-		hideLabel,
-	} = selectedNode.attrs;
+	const { size, align, href, height, caption, url, fullResolution, hideLabel } =
+		selectedNode.attrs;
 	const nodeSupportsAltText = !!selectedNode.type.spec.attrs?.altText;
 	const canEditHeight = getCanEditNodeHeight(selectedNode);
 	const itemName = getItemName(selectedNode);

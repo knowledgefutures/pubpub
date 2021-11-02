@@ -50,7 +50,7 @@ export type RenderedActivityItem = {
 // also what models (e.g. a Pub or a Collection) we'll be titling during this render.
 export type ActivityItemRenderOptions<
 	Item extends InsertableActivityItem,
-	Titles extends string
+	Titles extends string,
 > = {
 	icon: IconName | ((options: { context: ActivityRenderContext }) => IconName);
 	titleRenderers: Record<Titles, TitleRenderer<Item>>;

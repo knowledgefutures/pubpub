@@ -35,14 +35,8 @@ const shouldSuppressEditorErrors = () => {
 const PubBody = (props: Props) => {
 	const { editorWrapperRef } = props;
 	const { communityData } = usePageContext();
-	const {
-		pubData,
-		noteManager,
-		updateLocalData,
-		collabData,
-		firebaseDraftRef,
-		historyData,
-	} = usePubContext();
+	const { pubData, noteManager, updateLocalData, collabData, firebaseDraftRef, historyData } =
+		usePubContext();
 	const { isViewingHistory } = historyData;
 	const prevStatusRef = useRef<string | null>(null);
 	const embedDiscussions = useRef({});

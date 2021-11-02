@@ -31,36 +31,35 @@ const blockSaveKeyHandler = keydownHandler({
 	'Mod-s': () => true,
 });
 
-const getIsEditable = ({ isReadOnly }: Pick<EditorViewOptions, 'isReadOnly'>) => (
-	state: EditorState,
-) => {
-	const collabState = collabDocPluginKey.getState(state);
-	if (collabState && !collabState.isLoaded) {
-		return false;
-	}
-	return !isReadOnly;
-};
+const getIsEditable =
+	({ isReadOnly }: Pick<EditorViewOptions, 'isReadOnly'>) =>
+	(state: EditorState) => {
+		const collabState = collabDocPluginKey.getState(state);
+		if (collabState && !collabState.isLoaded) {
+			return false;
+		}
+		return !isReadOnly;
+	};
 
-const getDispatchTransaction = (
-	view: EditorView,
-	{ onError, onEdit }: Pick<EditorViewOptions, 'onError' | 'onEdit'>,
-) => (transaction: Transaction) => {
-	try {
-		const oldState = view.state;
-		const collabState = collabDocPluginKey.getState(oldState);
-		const { state: newState, transactions } = view.state.applyTransaction(transaction);
-		view.updateState(newState);
-		if (onEdit && transaction.docChanged) {
-			onEdit(transaction.doc, transaction, newState, oldState);
+const getDispatchTransaction =
+	(view: EditorView, { onError, onEdit }: Pick<EditorViewOptions, 'onError' | 'onEdit'>) =>
+	(transaction: Transaction) => {
+		try {
+			const oldState = view.state;
+			const collabState = collabDocPluginKey.getState(oldState);
+			const { state: newState, transactions } = view.state.applyTransaction(transaction);
+			view.updateState(newState);
+			if (onEdit && transaction.docChanged) {
+				onEdit(transaction.doc, transaction, newState, oldState);
+			}
+			if (collabState && transactions.some((tr) => tr.docChanged)) {
+				collabState.sendCollabChanges(newState);
+			}
+		} catch (err) {
+			console.error('Error applying transaction:', err);
+			onError?.(err);
 		}
-		if (collabState && transactions.some((tr) => tr.docChanged)) {
-			collabState.sendCollabChanges(newState);
-		}
-	} catch (err) {
-		console.error('Error applying transaction:', err);
-		onError?.(err);
-	}
-};
+	};
 
 const createEditorView = (options: EditorViewOptions) => {
 	const {

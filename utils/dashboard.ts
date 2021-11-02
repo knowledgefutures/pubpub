@@ -27,11 +27,7 @@ export const getDashUrl = ({
 	}
 
 	const modeString = mode ? `/${mode.toLowerCase().replace(/ /gi, '-')}` : '';
-	const subModeString = subMode
-		? `/${String(subMode)
-				.toLowerCase()
-				.replace(/ /gi, '-')}`
-		: '';
+	const subModeString = subMode ? `/${String(subMode).toLowerCase().replace(/ /gi, '-')}` : '';
 
 	return `${baseHref}${modeString}${subModeString}${baseQuery}${section && `#${section}`}`;
 };

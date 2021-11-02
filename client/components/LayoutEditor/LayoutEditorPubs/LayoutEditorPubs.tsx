@@ -56,10 +56,10 @@ const LayoutEditorPubs = (props: Props) => {
 	} = props;
 	const { limit, pubIds = [], collectionIds = [], pubPreviewType, sort } = block.content;
 
-	const onChange = useCallback((update: Partial<Content>) => fullOnChange(layoutIndex, update), [
-		fullOnChange,
-		layoutIndex,
-	]);
+	const onChange = useCallback(
+		(update: Partial<Content>) => fullOnChange(layoutIndex, update),
+		[fullOnChange, layoutIndex],
+	);
 
 	const setPreviewType = useCallback(
 		(type: PubPreviewType) =>

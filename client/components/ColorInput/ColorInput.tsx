@@ -31,7 +31,7 @@ const presetColors = [
 	'#2c3e50',
 ];
 
-const ColorInput = function(props) {
+const ColorInput = function (props) {
 	const { communityData } = usePageContext();
 	const allPresetColors = communityData
 		? [

@@ -51,15 +51,8 @@ setup(beforeAll, async () => {
 });
 
 it('does not let anyone who is not a community admin create a DOI', async () => {
-	const {
-		community,
-		guest,
-		pub,
-		collection,
-		pubAdmin,
-		collectionAdmin,
-		communityManager,
-	} = models;
+	const { community, guest, pub, collection, pubAdmin, collectionAdmin, communityManager } =
+		models;
 
 	const haplessUsers = [guest, pubAdmin, collectionAdmin, communityManager];
 

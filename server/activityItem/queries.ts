@@ -72,7 +72,7 @@ const resolvePartialMemberItem = async (member: types.Member) => {
 const buildMemberActivityItemParams = <
 	SharedItem extends Record<string, any>,
 	Rest extends { communityId: string },
-	Payload extends Record<string, any>
+	Payload extends Record<string, any>,
 >(
 	item: SharedItem,
 	value: Rest & { payload: Payload },
@@ -392,16 +392,14 @@ export const createCollectionPubActivityItem = async (
 	actorId: null | string,
 	collectionPubId: string,
 ) => {
-	const collectionPub: types.DefinitelyHas<
-		types.CollectionPub,
-		'pub' | 'collection'
-	> = await CollectionPub.findOne({
-		where: { id: collectionPubId },
-		include: [
-			{ model: Pub, as: 'pub' },
-			{ model: Collection, as: 'collection' },
-		],
-	});
+	const collectionPub: types.DefinitelyHas<types.CollectionPub, 'pub' | 'collection'> =
+		await CollectionPub.findOne({
+			where: { id: collectionPubId },
+			include: [
+				{ model: Pub, as: 'pub' },
+				{ model: Collection, as: 'collection' },
+			],
+		});
 	return createActivityItem({
 		kind,
 		pubId: collectionPub.pubId,
@@ -483,17 +481,15 @@ export const createPubEdgeActivityItem = async (
 	pubEdgeId: string,
 ) => {
 	const pubEdge: types.DefinitelyHas<types.PubEdge, 'pub'> &
-		types.DefinitelyHas<
-			types.PubEdge,
-			'targetPub' | 'externalPublication'
-		> = await PubEdge.findOne({
-		where: { id: pubEdgeId },
-		include: [
-			{ model: Pub, as: 'pub' },
-			{ model: Pub, as: 'targetPub' },
-			{ model: ExternalPublication, as: 'externalPublication' },
-		],
-	});
+		types.DefinitelyHas<types.PubEdge, 'targetPub' | 'externalPublication'> =
+		await PubEdge.findOne({
+			where: { id: pubEdgeId },
+			include: [
+				{ model: Pub, as: 'pub' },
+				{ model: Pub, as: 'targetPub' },
+				{ model: ExternalPublication, as: 'externalPublication' },
+			],
+		});
 	const isExternalEdge = !!pubEdge.externalPublicationId!!;
 	const target = isExternalEdge
 		? {

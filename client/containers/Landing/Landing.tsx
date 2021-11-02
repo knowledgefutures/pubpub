@@ -17,8 +17,7 @@ const features = [
 	{
 		icon: 'comment',
 		title: 'Discussions & Annotations',
-		desc:
-			'Host public and private discussions with your readers and community, whether in your classroom or across the world.',
+		desc: 'Host public and private discussions with your readers and community, whether in your classroom or across the world.',
 	},
 	{
 		icon: 'page-layout',
@@ -28,8 +27,7 @@ const features = [
 	{
 		icon: 'book',
 		title: 'Collection Metadata',
-		desc:
-			'Include article & collection-level metadata for easier organization of content and improved discovery.',
+		desc: 'Include article & collection-level metadata for easier organization of content and improved discovery.',
 	},
 	{
 		icon: 'people',
@@ -39,14 +37,12 @@ const features = [
 	{
 		icon: 'grouped-bar-chart',
 		title: 'Impact Measurement',
-		desc:
-			'Learn about the people visiting your community with a full suite of privacy-respecting analytics.',
+		desc: 'Learn about the people visiting your community with a full suite of privacy-respecting analytics.',
 	},
 	{
 		icon: 'graph',
 		title: 'Content Connections',
-		desc:
-			'Add typed relationships — reviews, commentary, supplement, etc. — to your content and deposit them to Crossref.',
+		desc: 'Add typed relationships — reviews, commentary, supplement, etc. — to your content and deposit them to Crossref.',
 	},
 	{
 		icon: 'export',

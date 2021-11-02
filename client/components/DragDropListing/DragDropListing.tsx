@@ -39,34 +39,32 @@ export type Props<Item extends MinimalItem> = {
 
 const defaultIdGetter = (item: MinimalItem) => item.id;
 
-const getRenderItem = <Item extends MinimalItem>(props: Props<Item>) => (
-	provided: DraggableProvided,
-	snapshot: DraggableStateSnapshot,
-	rubric: DraggableRubric,
-) => {
-	// eslint-disable-next-line react/prop-types
-	const { items, withDragHandles, renderItem } = props;
-	const item = items[rubric.source.index];
-	const { innerRef, draggableProps, dragHandleProps: providedDragHandleProps } = provided;
-	const { isDragging } = snapshot;
-	const dragHandleProps = { ...providedDragHandleProps! };
-	if (isDragging) {
-		// Prevent dragged clone from taking focus and closing popovers
-		dragHandleProps.tabIndex = (undefined as unknown) as number;
-	}
-	const effectiveDragHandleProps = withDragHandles ? {} : dragHandleProps;
-	return (
-		<div
-			role="listitem"
-			className={classNames('drag-container', isDragging && 'is-dragging')}
-			ref={innerRef}
-			{...draggableProps}
-			{...effectiveDragHandleProps}
-		>
-			{renderItem(item, withDragHandles && dragHandleProps, isDragging)}
-		</div>
-	);
-};
+const getRenderItem =
+	<Item extends MinimalItem>(props: Props<Item>) =>
+	(provided: DraggableProvided, snapshot: DraggableStateSnapshot, rubric: DraggableRubric) => {
+		// eslint-disable-next-line react/prop-types
+		const { items, withDragHandles, renderItem } = props;
+		const item = items[rubric.source.index];
+		const { innerRef, draggableProps, dragHandleProps: providedDragHandleProps } = provided;
+		const { isDragging } = snapshot;
+		const dragHandleProps = { ...providedDragHandleProps! };
+		if (isDragging) {
+			// Prevent dragged clone from taking focus and closing popovers
+			dragHandleProps.tabIndex = undefined as unknown as number;
+		}
+		const effectiveDragHandleProps = withDragHandles ? {} : dragHandleProps;
+		return (
+			<div
+				role="listitem"
+				className={classNames('drag-container', isDragging && 'is-dragging')}
+				ref={innerRef}
+				{...draggableProps}
+				{...effectiveDragHandleProps}
+			>
+				{renderItem(item, withDragHandles && dragHandleProps, isDragging)}
+			</div>
+		);
+	};
 
 const DragDropListing = <Item extends MinimalItem>(props: Props<Item>) => {
 	const {

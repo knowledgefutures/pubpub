@@ -30,33 +30,35 @@ const getLabelForDiscussion = (discussion) =>
 		.filter((name, index, array) => array.indexOf(name) === index)
 		.join(', ');
 
-const makeBubbleRenderer = ({
-	discussions,
-	loginData,
-	communityData,
-	activeThreadHover,
-	activeThread,
-	getHandlersForDiscussion,
-}) => (discussion) => {
-	const isActive = activeThreadHover === discussion.id || activeThread === discussion.id;
-	const hasWrittenInThread = discussion.thread.comments.some(
-		(threadComment) => threadComment.userId === loginData.id,
-	);
-	const bubbleCount = discussion.number && discussion.thread.comments.length;
-	const label =
-		discussions.length === 1 && discussion.number && getLabelForDiscussion(discussions[0]);
-	return (
-		<DiscussionBubble
-			{...getHandlersForDiscussion(discussion)}
-			key={discussion.id}
-			color={communityData.accentColorDark}
-			count={bubbleCount}
-			isActive={isActive}
-			label={label}
-			showDot={hasWrittenInThread}
-		/>
-	);
-};
+const makeBubbleRenderer =
+	({
+		discussions,
+		loginData,
+		communityData,
+		activeThreadHover,
+		activeThread,
+		getHandlersForDiscussion,
+	}) =>
+	(discussion) => {
+		const isActive = activeThreadHover === discussion.id || activeThread === discussion.id;
+		const hasWrittenInThread = discussion.thread.comments.some(
+			(threadComment) => threadComment.userId === loginData.id,
+		);
+		const bubbleCount = discussion.number && discussion.thread.comments.length;
+		const label =
+			discussions.length === 1 && discussion.number && getLabelForDiscussion(discussions[0]);
+		return (
+			<DiscussionBubble
+				{...getHandlersForDiscussion(discussion)}
+				key={discussion.id}
+				color={communityData.accentColorDark}
+				count={bubbleCount}
+				isActive={isActive}
+				label={label}
+				showDot={hasWrittenInThread}
+			/>
+		);
+	};
 
 type Props = OwnProps & typeof defaultProps;
 
@@ -82,10 +84,7 @@ const DiscussionNav = (props: Props) => {
 			: '1px solid transparent',
 	};
 
-	const fadedAccentColorDark = Color(communityData.accentColorDark)
-		.fade(0.5)
-		.rgb()
-		.string();
+	const fadedAccentColorDark = Color(communityData.accentColorDark).fade(0.5).rgb().string();
 
 	const getHandlersForDiscussion = (discussion) => ({
 		onMouseEnter: () => {

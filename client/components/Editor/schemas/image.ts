@@ -81,7 +81,7 @@ export default {
 				},
 			];
 
-			return ([
+			return [
 				'figure',
 				{
 					...(id && { id }),
@@ -118,7 +118,7 @@ export default {
 						renderHtmlChildren(isReact, caption, 'div'),
 					]),
 				],
-			] as unknown) as DOMOutputSpec;
+			] as unknown as DOMOutputSpec;
 		},
 		inline: false,
 		group: 'block',

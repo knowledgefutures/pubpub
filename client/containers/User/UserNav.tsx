@@ -17,7 +17,7 @@ const defaultProps = {
 	authoredPubsCount: 0,
 };
 
-const UserNav = function(props) {
+const UserNav = function (props) {
 	const tabs = [
 		{ id: 0, label: `All Pubs (${props.allPubsCount})`, path: '' },
 		{ id: 1, label: `Authored Pubs (${props.authoredPubsCount})`, path: '/authored' },

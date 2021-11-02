@@ -20,7 +20,7 @@ const defaultProps = {
 	isDisabled: false,
 };
 
-const PermissionsDropdown = function(props) {
+const PermissionsDropdown = function (props) {
 	const items = {
 		none: {
 			value: 'none',

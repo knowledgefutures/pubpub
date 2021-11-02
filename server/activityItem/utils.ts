@@ -10,7 +10,7 @@ const jsonValuesEqual = (first: any, second: any) =>
 export const getDiffsForPayload = <
 	Entry extends Record<string, any>,
 	EntryKey extends keyof Entry,
-	Diffs = Partial<{ [Key in EntryKey]: types.Diff<Entry[Key]> }>
+	Diffs = Partial<{ [Key in EntryKey]: types.Diff<Entry[Key]> }>,
 >(
 	newEntry: Entry,
 	oldEntry: Entry,
@@ -33,7 +33,7 @@ export const getDiffsForPayload = <
 export const getChangeFlagsForPayload = <
 	Entry extends Record<string, any>,
 	EntryKey extends keyof Entry,
-	Flags = Partial<{ [Key in EntryKey]: true }>
+	Flags = Partial<{ [Key in EntryKey]: true }>,
 >(
 	newEntry: Entry,
 	oldEntry: Entry,

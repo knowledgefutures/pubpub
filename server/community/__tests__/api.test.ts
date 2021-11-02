@@ -58,7 +58,9 @@ describe('/api/communities', () => {
 	});
 
 	it('does not create a community if you are logged out', async () => {
-		await (await login())
+		await (
+			await login()
+		)
 			.post('/api/communities')
 			.send({
 				subdomain: 'notloggedin',

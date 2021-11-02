@@ -127,9 +127,8 @@ export function setDepositRecordReviewRecommendation(depositRecord, recommendati
 	}
 
 	// eslint-disable-next-line no-param-reassign
-	depositRecord.depositJson.deposit.doi_batch.body.peer_review[
-		'@recommendation'
-	] = recommendation;
+	depositRecord.depositJson.deposit.doi_batch.body.peer_review['@recommendation'] =
+		recommendation;
 }
 
 export const getDepositBody = (depositRecord) => {

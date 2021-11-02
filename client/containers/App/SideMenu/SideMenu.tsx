@@ -16,10 +16,7 @@ const SideMenu = () => {
 	const collectionSlug = activeCollection && activeCollection.slug;
 	const pubSlug = locationData.params.pubSlug;
 
-	const backgroundColor = Color(communityData.accentColorDark)
-		.fade(0.95)
-		.rgb()
-		.string();
+	const backgroundColor = Color(communityData.accentColorDark).fade(0.95).rgb().string();
 
 	const contentItems = [
 		{

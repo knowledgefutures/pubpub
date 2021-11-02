@@ -65,11 +65,10 @@ export const useCommandStates = <T extends CommandEntry>(options: Options<T>) =>
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [view]);
 
-	const commandStates = useMemo(() => getState(commands, stateGettersByKey, state), [
-		commands,
-		stateGettersByKey,
-		state,
-	]);
+	const commandStates = useMemo(
+		() => getState(commands, stateGettersByKey, state),
+		[commands, stateGettersByKey, state],
+	);
 
 	return commandStates;
 };

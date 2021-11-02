@@ -20,10 +20,10 @@ type Props = {
 const LayoutEditorCollectionHeader = (props: Props) => {
 	const { onChange: fullOnChange, layoutIndex, block, collection } = props;
 
-	const onChange = useCallback((update: Partial<Content>) => fullOnChange(layoutIndex, update), [
-		fullOnChange,
-		layoutIndex,
-	]);
+	const onChange = useCallback(
+		(update: Partial<Content>) => fullOnChange(layoutIndex, update),
+		[fullOnChange, layoutIndex],
+	);
 
 	const renderPreviewElements = () => {
 		return (

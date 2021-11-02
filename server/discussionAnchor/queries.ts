@@ -20,13 +20,8 @@ export const createUpdatedDiscussionAnchorForNewSteps = async (
 	historyKey: number,
 	sequelizeTxn: any = null,
 ) => {
-	const {
-		originalText,
-		originalTextPrefix,
-		originalTextSuffix,
-		discussionId,
-		selection,
-	} = anchor;
+	const { originalText, originalTextPrefix, originalTextSuffix, discussionId, selection } =
+		anchor;
 	const nextSelection = mapDiscussionSelectionThroughSteps(selection, steps);
 	return DiscussionAnchor.create(
 		{

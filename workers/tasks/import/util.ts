@@ -2,11 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { spawn as spawnChildProcess } from 'child_process';
 
-export const extensionFor = (filePath) =>
-	filePath
-		.split('.')
-		.pop()
-		.toLowerCase();
+export const extensionFor = (filePath) => filePath.split('.').pop().toLowerCase();
 
 export const spawn = (command, args): Promise<void> =>
 	new Promise((resolve, reject) => {

@@ -27,11 +27,11 @@ type Props = {
 	controlsConfiguration?: Partial<ControlsConfiguration>;
 };
 
-const shimEditorChangeObject = ({
+const shimEditorChangeObject = {
 	view: {} as EditorView,
 	selectedNode: null,
 	updateNode: () => {},
-} as unknown) as EditorChangeObject;
+} as unknown as EditorChangeObject;
 
 const FormattingBar = (props: Props) => {
 	const {
@@ -88,15 +88,8 @@ const FormattingBar = (props: Props) => {
 	}, [openedButton]);
 
 	const renderButtonState = (buttonState: ButtonState) => {
-		const {
-			button,
-			isOpen,
-			isActive,
-			isIndicated,
-			isDisabled,
-			isDetached,
-			onClick,
-		} = buttonState;
+		const { button, isOpen, isActive, isIndicated, isDisabled, isDetached, onClick } =
+			buttonState;
 		const maybeEditorView = button.key === 'media' && { view: editorChangeObject.view };
 		const PopoverComponent = getButtonPopoverComponent(button, isDisabled);
 

@@ -26,7 +26,7 @@ const defaultProps = {
 	accentTextColor: '#FFF',
 };
 
-const CommunityPreview = function(props) {
+const CommunityPreview = function (props) {
 	const resizedHeroLogo = getResizedUrl(props.heroLogo, 'inside', 600);
 	const resizedHeroBackground = getResizedUrl(props.heroBackgroundImage, 'outside', 800);
 	const logoStyle = { color: props.accentTextColor };

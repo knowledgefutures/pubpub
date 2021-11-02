@@ -203,16 +203,10 @@ it('lets a Pub manager destroy a PubEdge', async () => {
 		pubIsParent: true,
 	});
 	const anotherPubAgent = await login(anotherPubManager);
-	await anotherPubAgent
-		.delete('/api/pubEdges')
-		.send({ pubEdgeId: existingEdge.id })
-		.expect(403);
+	await anotherPubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge.id }).expect(403);
 	const sourcePubAgent = await login(sourcePubManager);
 	await expectCreatedActivityItem(
-		sourcePubAgent
-			.delete('/api/pubEdges')
-			.send({ pubEdgeId: existingEdge.id })
-			.expect(200),
+		sourcePubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge.id }).expect(200),
 	).toMatchObject({
 		kind: 'pub-edge-removed',
 		actorId: sourcePubManager.id,

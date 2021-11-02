@@ -131,13 +131,8 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 
 export const updateDiscussion = async (values, permissions) => {
 	const { discussionId, pubId } = values;
-	const {
-		canTitle,
-		canApplyPublicLabels,
-		canApplyManagedLabels,
-		canClose,
-		canReopen,
-	} = permissions;
+	const { canTitle, canApplyPublicLabels, canApplyManagedLabels, canClose, canReopen } =
+		permissions;
 	const updatedValues: { [k: string]: any } = {};
 
 	const [discussion, pub] = await Promise.all([

@@ -16,7 +16,7 @@ const defaultProps = {
 	isFlatCard: false,
 };
 
-const SharingCard = function(props) {
+const SharingCard = function (props) {
 	return (
 		<div
 			className={`sharing-card-component ${props.isAddCard ? 'add' : ''} ${

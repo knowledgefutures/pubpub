@@ -231,18 +231,16 @@ describe('/api/members', () => {
 	});
 
 	it('prevents a member from elevating their own permissions', async () => {
-		const {
-			communityManager,
-			communityViewer,
-			communityManagerMember,
-			communityViewerMember,
-		} = models;
+		const { communityManager, communityViewer, communityManagerMember, communityViewerMember } =
+			models;
 		await Promise.all(
 			[
 				[communityManager, communityManagerMember],
 				[communityViewer, communityViewerMember],
 			].map(async ([user, member]) =>
-				(await login(user))
+				(
+					await login(user)
+				)
 					.put('/api/members')
 					.send(createMemberRequest({ permissions: 'admin', member }))
 					.expect(403),

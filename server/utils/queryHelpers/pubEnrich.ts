@@ -54,12 +54,8 @@ export const getPubRelease = async (
 };
 
 export const getPubFirebaseToken = async (pubData: SanitizedPubData, initialData: InitialData) => {
-	const {
-		canView,
-		canViewDraft,
-		canEdit,
-		canEditDraft,
-	} = initialData.scopeData.activePermissions;
+	const { canView, canViewDraft, canEdit, canEditDraft } =
+		initialData.scopeData.activePermissions;
 	const firebaseToken = await getFirebaseToken(initialData.loginData.id || 'anon', {
 		canEdit: canEdit || canEditDraft,
 		canView: canView || canViewDraft,

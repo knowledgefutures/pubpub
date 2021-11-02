@@ -78,14 +78,8 @@ export const getValuesFromPubEdge = (
 		};
 	}
 	if (externalPublication) {
-		const {
-			title,
-			description,
-			contributors,
-			avatar,
-			url,
-			publicationDate,
-		} = externalPublication;
+		const { title, description, contributors, avatar, url, publicationDate } =
+			externalPublication;
 		return {
 			avatar,
 			contributors: contributors || '',

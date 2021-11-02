@@ -20,7 +20,7 @@ type SequelizeModelSingleton<Instance extends MinimalInstanceProperties> = {
 
 type CreateActivityHooksOptions<
 	InstanceProperties extends MinimalInstanceProperties,
-	ModelSingleton = SequelizeModelSingleton<InstanceProperties>
+	ModelSingleton = SequelizeModelSingleton<InstanceProperties>,
 > = {
 	Model: ModelSingleton;
 	onModelCreated?: (actorId: null | string, modelId: string) => Promise<void>;

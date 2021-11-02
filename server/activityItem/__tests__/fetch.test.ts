@@ -155,15 +155,8 @@ describe('fetchActivityItems', () => {
 	});
 
 	it('fetches items for member-created, member-updated, and member-removed across pub, collection, and community membership', async () => {
-		const {
-			actor,
-			pub,
-			collection,
-			community,
-			pubMember,
-			collectionMember,
-			communityMember,
-		} = models;
+		const { actor, pub, collection, community, pubMember, collectionMember, communityMember } =
+			models;
 		await createMemberCreatedActivityItem(actor.id, pubMember.id);
 		await createMemberUpdatedActivityItem(actor.id, pubMember.id, {
 			...pubMember,
@@ -587,14 +580,8 @@ describe('fetchActivityItems', () => {
 	});
 
 	it('fetches items for pub-discussion-comment-added', async () => {
-		const {
-			actor,
-			community,
-			pub,
-			discussionThread,
-			discussion,
-			banterInPubDiscussion,
-		} = models;
+		const { actor, community, pub, discussionThread, discussion, banterInPubDiscussion } =
+			models;
 		await createPubDiscussionCommentAddedActivityItem(
 			discussion.id,
 			banterInPubDiscussion.id,

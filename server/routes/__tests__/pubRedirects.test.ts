@@ -34,10 +34,7 @@ describe('/pub', () => {
 		const { draftPub, draftPubEditor, community } = models;
 		const agent = await login(draftPubEditor);
 		const host = getHost(community);
-		const { headers } = await agent
-			.get(`/pub/${draftPub.slug}`)
-			.set('Host', host)
-			.expect(302);
+		const { headers } = await agent.get(`/pub/${draftPub.slug}`).set('Host', host).expect(302);
 		expect(headers.location).toEqual(`https://${host}/pub/${draftPub.slug}/draft`);
 	});
 
@@ -45,10 +42,7 @@ describe('/pub', () => {
 		const { draftPub, community } = models;
 		const agent = await login();
 		const host = getHost(community);
-		await agent
-			.get(`/pub/${draftPub.slug}/draft`)
-			.set('Host', host)
-			.expect(404);
+		await agent.get(`/pub/${draftPub.slug}/draft`).set('Host', host).expect(404);
 	});
 
 	it('302s from /pub/:slug to the latest Release for visitors', async () => {

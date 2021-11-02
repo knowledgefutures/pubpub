@@ -11,9 +11,8 @@ export default (relatedItems) => {
 					};
 
 					return {
-						[isIntraWork
-							? 'rel:intra_work_relation'
-							: 'rel:inter_work_relation']: attrs,
+						[isIntraWork ? 'rel:intra_work_relation' : 'rel:inter_work_relation']:
+							attrs,
 					};
 				},
 			),

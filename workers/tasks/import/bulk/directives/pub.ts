@@ -393,10 +393,8 @@ const createPreambleFile = async (directive) => {
 const createPreambleFiles = async (directive, sourceFiles) => {
 	const document = sourceFiles.find((sf) => sf.label === 'document');
 	const notDocument = sourceFiles.filter((sf) => sf !== document);
-	const {
-		document: nextDocument,
-		extractedPandocYamlString,
-	} = await getDocumentAndMaybeYamlPreamble(document, directive);
+	const { document: nextDocument, extractedPandocYamlString } =
+		await getDocumentAndMaybeYamlPreamble(document, directive);
 	const pandocMetadataFile = await createPandocMetadataFile(directive, extractedPandocYamlString);
 	const preambleFile = await createPreambleFile(directive);
 	return [preambleFile, pandocMetadataFile, nextDocument, ...notDocument].filter((x) => x);
@@ -434,10 +432,7 @@ const writeDocumentToPubDraft = async (pubId, document) => {
 	const documentSlice = new Slice(Fragment.from(hydratedDocument.content), 0, 0);
 	const replaceStep = new ReplaceStep(0, 0, documentSlice);
 	const change = createFirebaseChange([replaceStep], 'bulk-importer');
-	await draftRef
-		.child('changes')
-		.child('0')
-		.set(change);
+	await draftRef.child('changes').child('0').set(change);
 };
 
 export const resolvePubDirective = async ({ directive, targetPath, community, collection }) => {

@@ -106,13 +106,8 @@ type Props = OwnProps & typeof defaultProps;
 
 const PubHistoryViewer = (props: Props) => {
 	const { historyData, pubData, updateHistoryData, onClose } = props;
-	const {
-		timestamps,
-		latestKey,
-		currentKey,
-		outstandingRequests,
-		loadedIntoHistory,
-	} = historyData;
+	const { timestamps, latestKey, currentKey, outstandingRequests, loadedIntoHistory } =
+		historyData;
 	const { releases } = pubData;
 	const { communityData } = usePageContext();
 	const [sliderValue, setSliderValue] = useState(currentKey);

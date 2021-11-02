@@ -18,13 +18,8 @@ const CollectionSettings = () => {
 			elements: { activeCollection },
 		},
 	} = usePageContext();
-	const {
-		collection,
-		updateCollection,
-		deleteCollection,
-		slugStatus,
-		hasChanges,
-	} = useCollectionState(activeCollection);
+	const { collection, updateCollection, deleteCollection, slugStatus, hasChanges } =
+		useCollectionState(activeCollection);
 
 	useUpdateEffect(() => {
 		if (!hasChanges) {

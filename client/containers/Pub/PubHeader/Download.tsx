@@ -134,10 +134,7 @@ const Download = (props: Props) => {
 						labelElement={<Icon icon="star" />}
 						className="formatted-button"
 						// intent={Intent.PRIMARY}
-						text={`Formatted ${formattedDownload.url
-							.split('.')
-							.pop()
-							.toUpperCase()}`}
+						text={`Formatted ${formattedDownload.url.split('.').pop().toUpperCase()}`}
 						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ dismissOnClick: false; labelElement: Eleme... Remove this comment to see the full error message
 						loading={isLoading && selectedType?.format === 'formatted'}
 						onClick={() => window.open(formattedDownload.url)}

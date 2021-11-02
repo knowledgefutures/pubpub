@@ -175,9 +175,8 @@ const Breadcrumbs = () => {
 					{actions[activeTargetType]
 						.filter((action) => {
 							const permissionValues = ['view', 'edit', 'manage', 'admin'];
-							const activePermissionIndex = permissionValues.indexOf(
-								activePermission,
-							);
+							const activePermissionIndex =
+								permissionValues.indexOf(activePermission);
 							const minPermissionsIndex = permissionValues.indexOf(
 								action.minPermissions,
 							);

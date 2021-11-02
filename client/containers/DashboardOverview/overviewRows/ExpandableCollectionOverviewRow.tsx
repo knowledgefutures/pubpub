@@ -29,9 +29,10 @@ const ExpandableCollectionOverviewRow = (props: Props) => {
 	const { communityData } = usePageContext();
 	const headerRef = useRef<null | HTMLElement>();
 
-	const backgroundColor = useMemo(() => Color(communityData.accentColorDark).alpha(0.05), [
-		communityData.accentColorDark,
-	]);
+	const backgroundColor = useMemo(
+		() => Color(communityData.accentColorDark).alpha(0.05),
+		[communityData.accentColorDark],
+	);
 
 	const {
 		currentQuery: { pubs, loadMorePubs, hasLoadedAllPubs },

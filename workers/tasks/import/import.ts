@@ -103,9 +103,8 @@ export const importFiles = async ({
 }) => {
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'keepStraightQuotes' does not exist on ty... Remove this comment to see the full error message
 	const { keepStraightQuotes, skipJatsBibExtraction } = importerFlags;
-	const { preambles, document, bibliography, supplements, metadata } = categorizeSourceFiles(
-		sourceFiles,
-	);
+	const { preambles, document, bibliography, supplements, metadata } =
+		categorizeSourceFiles(sourceFiles);
 	const { pandocAst, pandocErrorOutput } = getPandocAst({
 		documentPath: document.tmpPath,
 		metadataPath: metadata && metadata.tmpPath,

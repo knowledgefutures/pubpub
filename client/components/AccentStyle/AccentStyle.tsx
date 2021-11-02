@@ -8,34 +8,18 @@ const propTypes = {
 	isNavHidden: PropTypes.bool.isRequired,
 };
 
-const AccentStyle = function(props) {
+const AccentStyle = function (props) {
 	const { communityData, isNavHidden } = props;
-	const {
-		accentColorLight,
-		accentColorDark,
-		headerColorType,
-		useHeaderTextAccent,
-	} = communityData;
+	const { accentColorLight, accentColorDark, headerColorType, useHeaderTextAccent } =
+		communityData;
 	const generateColors = (inputColor) => {
 		return {
 			base: inputColor,
 			text: Color(inputColor).isLight() ? '#000000' : '#FFFFFF',
-			hover: Color(inputColor)
-				.fade(0.2)
-				.rgb()
-				.string(),
-			action: Color(inputColor)
-				.fade(0.4)
-				.rgb()
-				.string(),
-			minimal: Color(inputColor)
-				.fade(0.9)
-				.rgb()
-				.string(),
-			minimalAction: Color(inputColor)
-				.fade(0.8)
-				.rgb()
-				.string(),
+			hover: Color(inputColor).fade(0.2).rgb().string(),
+			action: Color(inputColor).fade(0.4).rgb().string(),
+			minimal: Color(inputColor).fade(0.9).rgb().string(),
+			minimalAction: Color(inputColor).fade(0.8).rgb().string(),
 		};
 	};
 	const {
@@ -60,10 +44,9 @@ const AccentStyle = function(props) {
 	const gradient = `linear-gradient(90deg, ${Color(headerAccentColor.base)
 		.rgb()
 		.fade(1)
-		.string()} 0%,  ${Color(headerAccentColor.base)
-		.rgb()
-		.fade(1)
-		.string()} 85%,  ${headerAccentColor.base} 100%);`;
+		.string()} 0%,  ${Color(headerAccentColor.base).rgb().fade(1).string()} 85%,  ${
+		headerAccentColor.base
+	} 100%);`;
 
 	return (
 		<style

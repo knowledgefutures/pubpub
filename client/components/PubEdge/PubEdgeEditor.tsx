@@ -25,9 +25,10 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 	} = props;
 	const [open, setOpen] = useState(pubData.pubEdgeDescriptionVisible);
 
-	useEffect(() => setOpen(pubData.pubEdgeDescriptionVisible), [
-		pubData.pubEdgeDescriptionVisible,
-	]);
+	useEffect(
+		() => setOpen(pubData.pubEdgeDescriptionVisible),
+		[pubData.pubEdgeDescriptionVisible],
+	);
 
 	const renderPublicationDate = () => {
 		if (publicationDate) {

@@ -28,11 +28,7 @@ Cite.plugins.input.removeDataParser('@else/url', false);
 Cite.plugins.input.removeDataParser('@else/url', true);
 
 const generateFallbackHash = (structuredValue: string) =>
-	crypto
-		.createHash('md5')
-		.update(structuredValue)
-		.digest('base64')
-		.substring(0, 10);
+	crypto.createHash('md5').update(structuredValue).digest('base64').substring(0, 10);
 
 const extractAuthorFromApa = (apaStyleCitation: string) => {
 	if (
@@ -42,10 +38,7 @@ const extractAuthorFromApa = (apaStyleCitation: string) => {
 		const resultWithoutParens = extractAuthorFromApa(apaStyleCitation.slice(1, -1));
 		return `(${resultWithoutParens})`;
 	}
-	return apaStyleCitation
-		.split(',')
-		.slice(0, -1)
-		.join('');
+	return apaStyleCitation.split(',').slice(0, -1).join('');
 };
 
 const getInlineCitation = (

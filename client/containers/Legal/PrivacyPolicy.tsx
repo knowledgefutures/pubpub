@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PrivacyPolicy = function() {
+const PrivacyPolicy = function () {
 	return (
 		<div>
 			<h2>Privacy Policy</h2>

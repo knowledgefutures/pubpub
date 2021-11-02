@@ -58,33 +58,36 @@ const getMostRecentDocJson = async (
 	};
 };
 
-const ordinalKeyTimestampGetter = (traverseQuery: TraverseQuery, chooseKey: ChooseKey) => async (
-	firebaseRef: Reference,
-) => {
-	const getLatestChange = traverseQuery(firebaseRef.child('changes').orderByKey()).once('value');
-	const getLatestMerge = traverseQuery(firebaseRef.child('merges').orderByKey()).once('value');
+const ordinalKeyTimestampGetter =
+	(traverseQuery: TraverseQuery, chooseKey: ChooseKey) => async (firebaseRef: Reference) => {
+		const getLatestChange = traverseQuery(firebaseRef.child('changes').orderByKey()).once(
+			'value',
+		);
+		const getLatestMerge = traverseQuery(firebaseRef.child('merges').orderByKey()).once(
+			'value',
+		);
 
-	const [latestChangeSnaphot, latestMergeSnapshot] = await Promise.all([
-		getLatestChange,
-		getLatestMerge,
-	]);
+		const [latestChangeSnaphot, latestMergeSnapshot] = await Promise.all([
+			getLatestChange,
+			getLatestMerge,
+		]);
 
-	const latestUpdates = {
-		...latestChangeSnaphot.val(),
-		...latestMergeSnapshot.val(),
+		const latestUpdates = {
+			...latestChangeSnaphot.val(),
+			...latestMergeSnapshot.val(),
+		};
+
+		const allKeys = Object.keys(latestUpdates).map((key) => parseInt(key, 10));
+		const bestKey = chooseKey(allKeys);
+
+		const updateWrapped = latestUpdates[bestKey];
+		const update = Array.isArray(updateWrapped)
+			? updateWrapped[updateWrapped.length - 1]
+			: updateWrapped;
+		const timestamp = update && update.t;
+
+		return { key: bestKey, timestamp };
 	};
-
-	const allKeys = Object.keys(latestUpdates).map((key) => parseInt(key, 10));
-	const bestKey = chooseKey(allKeys);
-
-	const updateWrapped = latestUpdates[bestKey];
-	const update = Array.isArray(updateWrapped)
-		? updateWrapped[updateWrapped.length - 1]
-		: updateWrapped;
-	const timestamp = update && update.t;
-
-	return { key: bestKey, timestamp };
-};
 
 export const getFirstKeyAndTimestamp = ordinalKeyTimestampGetter(
 	(ref) => ref.limitToFirst(1),

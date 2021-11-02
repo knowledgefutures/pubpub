@@ -58,8 +58,7 @@ const inboundEdges = [
 const outboundEdges = [
 	{
 		externalPublication: {
-			title:
-				'Auferstehung ja, aber nur schrittweise und mit Maske – Zum Comeback eines theologischen Begriffs während der SARS-CoV-2-Pandemie?',
+			title: 'Auferstehung ja, aber nur schrittweise und mit Maske – Zum Comeback eines theologischen Begriffs während der SARS-CoV-2-Pandemie?',
 			contributors: ['Emilia Handke', 'Dennis Bock'],
 			avatar: 'https://assets.pubpub.org/dwkdjbj2/11586205211852.jpg',
 			url: 'https://cursor.pubpub.org/pub/handke-bock-auferstehung/release/1',
@@ -116,8 +115,7 @@ const siblingEdges = [
 ];
 
 const pubData = {
-	title:
-		'The Porous Mask. A Theological Reflection on Concepts of Personhood and Personal Agency in the Digital Age',
+	title: 'The Porous Mask. A Theological Reflection on Concepts of Personhood and Personal Agency in the Digital Age',
 	inboundEdges,
 	outboundEdges,
 	siblingEdges,

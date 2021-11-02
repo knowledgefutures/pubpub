@@ -18,10 +18,7 @@ const [A, B, C, D, E, F, G] = [
 		user: {
 			id: `user-${index}`,
 			fullName: name,
-			slug: name
-				.toLowerCase()
-				.split(' ')
-				.join('-'),
+			slug: name.toLowerCase().split(' ').join('-'),
 		},
 	};
 });

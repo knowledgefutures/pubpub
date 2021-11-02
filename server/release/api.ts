@@ -20,9 +20,8 @@ const getRequestValues = (req) => {
 app.post(
 	'/api/releases',
 	wrap(async (req, res) => {
-		const { communityId, historyKey, noteContent, noteText, pubId, userId } = getRequestValues(
-			req,
-		);
+		const { communityId, historyKey, noteContent, noteText, pubId, userId } =
+			getRequestValues(req);
 		const permissions = await getPermissions({
 			userId,
 			pubId,

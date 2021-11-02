@@ -223,8 +223,9 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	}
 
 	if (publishedAt) {
-		const googleScholarPublishedAt = `${publishedAt.getFullYear()}/${publishedAt.getMonth() +
-			1}/${publishedAt.getDate()}`;
+		const googleScholarPublishedAt = `${publishedAt.getFullYear()}/${
+			publishedAt.getMonth() + 1
+		}/${publishedAt.getDate()}`;
 		const dcPublishedAt = `${publishedAt.getFullYear()}-${publishedAt.getMonth()}-${publishedAt.getDate()}`;
 		outputComponents = [
 			...outputComponents,

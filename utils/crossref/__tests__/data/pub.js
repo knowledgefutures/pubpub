@@ -150,8 +150,7 @@ export default {
 			updatedAt: '2019-04-10T18:43:19.913Z',
 			collection: {
 				id: '461d4f05-3604-47d7-b157-dbe5927e72bc',
-				title:
-					'Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line',
+				title: 'Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line',
 				isRestricted: true,
 				isPublic: true,
 				pageId: '475774d6-61bf-4356-88b5-781b3268cc78',
@@ -392,8 +391,7 @@ export default {
 						attrs: { class: null },
 						content: [
 							{
-								text:
-									'This is a discussion. It’s in the document. What happens now?',
+								text: 'This is a discussion. It’s in the document. What happens now?',
 								type: 'text',
 							},
 						],
@@ -427,14 +425,12 @@ export default {
 		pub: {
 			default:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry</div></div>',
-			apa:
-				'<div class="csl-bib-body">  <div data-csl-entry-id="1519656b-cc26-43ad-83f2-dbf5b828a8c7" class="csl-entry">Reynolds, I. (2019). In Which Ian Makes A Pub. In <i>Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line</i>. https://doi.org/10.21428/eea8ec7d.1519656b</div></div>',
+			apa: '<div class="csl-bib-body">  <div data-csl-entry-id="1519656b-cc26-43ad-83f2-dbf5b828a8c7" class="csl-entry">Reynolds, I. (2019). In Which Ian Makes A Pub. In <i>Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line</i>. https://doi.org/10.21428/eea8ec7d.1519656b</div></div>',
 			harvard:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="1519656b-cc26-43ad-83f2-dbf5b828a8c7" class="csl-entry">Reynolds, I. (2019). In Which Ian Makes A Pub. In <i>Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line</i>. https://doi.org/10.21428/eea8ec7d.1519656b</div></div>',
 			vancouver:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="1519656b-cc26-43ad-83f2-dbf5b828a8c7" class="csl-entry">    <div class="csl-left-margin">1. </div><div class="csl-right-inline">Reynolds I. In Which Ian Makes A Pub. In: Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line [Internet]. 2019. Available from: https://dev.pubpub.org/pub/h2muzdpv</div>  </div></div>',
-			bibtex:
-				'<div class="csl-bib-body"><div class="csl-entry">@incollection{Reynolds2019In,<ul style="list-style-type:none"><li>booktitle={Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line},</li><li>doi={10.21428/eea8ec7d.1519656b},</li><li>note={https://dev.pubpub.org/pub/h2muzdpv},</li><li>title={In Which Ian Makes A Pub},</li><li>url={https://dev.pubpub.org/pub/h2muzdpv},</li><li>author={Reynolds, Ian},</li><li>date={2019-04-08},</li><li>year=2019,</li><li>month=4,</li><li>day=8,</li></ul>}</div></div>',
+			bibtex: '<div class="csl-bib-body"><div class="csl-entry">@incollection{Reynolds2019In,<ul style="list-style-type:none"><li>booktitle={Collection with an Extremely Long Name That Ought To Wrap Onto The Next Line},</li><li>doi={10.21428/eea8ec7d.1519656b},</li><li>note={https://dev.pubpub.org/pub/h2muzdpv},</li><li>title={In Which Ian Makes A Pub},</li><li>url={https://dev.pubpub.org/pub/h2muzdpv},</li><li>author={Reynolds, Ian},</li><li>date={2019-04-08},</li><li>year=2019,</li><li>month=4,</li><li>day=8,</li></ul>}</div></div>',
 		},
 	},
 	inboundEdges: [],

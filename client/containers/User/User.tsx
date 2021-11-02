@@ -103,9 +103,7 @@ const User = (props: Props) => {
 										<a href="/pub/create" className="bp3-button">
 											Create New pub
 										</a>
-									) : (
-										undefined
-									)
+									) : undefined
 								}
 							/>
 						)}

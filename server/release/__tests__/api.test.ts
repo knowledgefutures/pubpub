@@ -271,18 +271,14 @@ describe('/api/releases', () => {
 
 		await createRelease();
 
-		const [
-			discussion1Anchors,
-			discussion2Anchors,
-			discussion3Anchors,
-			discussion4Anchors,
-		] = await Promise.all(
-			[discussion1, discussion2, discussion3, discussion4].map((discussion) =>
-				DiscussionAnchor.findAll({
-					where: { discussionId: discussion.id },
-				}).then((anchors) => anchors.map((a) => determinizeAnchor(a.toJSON()))),
-			),
-		);
+		const [discussion1Anchors, discussion2Anchors, discussion3Anchors, discussion4Anchors] =
+			await Promise.all(
+				[discussion1, discussion2, discussion3, discussion4].map((discussion) =>
+					DiscussionAnchor.findAll({
+						where: { discussionId: discussion.id },
+					}).then((anchors) => anchors.map((a) => determinizeAnchor(a.toJSON()))),
+				),
+			);
 
 		expect(discussion1Anchors).toEqual([
 			{ historyKey: 0, selection: { type: 'text', anchor: 8, head: 10 } },

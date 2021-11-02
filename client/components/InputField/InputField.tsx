@@ -45,7 +45,7 @@ const defaultProps = {
 	wrapperClassName: '',
 };
 
-const InputField = function(props) {
+const InputField = function (props) {
 	return (
 		<div
 			className={classNames(

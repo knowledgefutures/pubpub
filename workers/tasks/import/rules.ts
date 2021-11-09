@@ -202,7 +202,7 @@ rules.toProsemirrorNode('RawBlock', (node, { transform }) => {
 	const { format, content } = node;
 	if (format === 'html') {
 		const pandocAst = htmlStringToPandocBlocks(content);
-		return transform(pandocAst).toArray();
+		return transform(pandocAst).asArray();
 	}
 	return {
 		type: 'paragraph',
@@ -214,7 +214,7 @@ rules.toProsemirrorNode('RawInline', (node, { transform }) => {
 	const { format, content } = node;
 	if (format === 'html') {
 		const pandocAst = htmlStringToPandocInline(content);
-		return transform(pandocAst).toArray();
+		return transform(pandocAst).asArray();
 	}
 	if (format === 'tex') {
 		return {

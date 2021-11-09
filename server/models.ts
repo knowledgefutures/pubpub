@@ -69,6 +69,7 @@ export const Release = sequelize.import('./release/model');
 export const Review = sequelize.import('./review/model');
 export const ReviewEvent = sequelize.import('./reviewEvent/model');
 export const ScopeSummary = sequelize.import('./scopeSummary/model');
+export const Submission = sequelize.import('./submission/model');
 export const Signup = sequelize.import('./signup/model');
 export const ReviewNew = sequelize.import('./review/modelNew');
 export const Thread = sequelize.import('./thread/model');

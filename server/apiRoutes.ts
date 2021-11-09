@@ -27,6 +27,7 @@ require('./rss/api');
 require('./search/api');
 require('./signup/api');
 require('./subscribe/api');
+require('./submission/api');
 require('./threadComment/api');
 require('./uploadPolicy/api');
 require('./user/api');

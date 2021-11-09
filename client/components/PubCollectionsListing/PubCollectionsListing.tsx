@@ -68,6 +68,7 @@ const PubCollectionsListing = (props: Props) => {
 				? await api.createTagCollection({
 						title: maybeCollection.tagTitleToCreate,
 						communityId: communityData.id,
+						isPublic: true,
 				  })
 				: maybeCollection;
 		const newCollectionPub = await pendingPromise(
@@ -164,10 +165,13 @@ const PubCollectionsListing = (props: Props) => {
 	};
 
 	const renderAvailableCollection = (
-		collection: Collection,
+		collection: Collection | TagToCreate,
 		{ handleClick, modifiers: { active } },
 	) => {
-		return renderCollectionTitle(collection, false, handleClick, active);
+		if ('id' in collection) {
+			return renderCollectionTitle(collection, false, handleClick, active);
+		}
+		return null;
 	};
 
 	const renderNewItem = (
@@ -176,17 +180,17 @@ const PubCollectionsListing = (props: Props) => {
 		handleClick: React.MouseEventHandler<HTMLElement>,
 	) => {
 		return renderCollectionTitle(
-			{ title: `Create new tag: ${query}`, kind: 'tag', slug: '', id: '', isPublic: false },
+			{ title: `Create new tag: ${query}`, kind: 'tag', slug: '', id: '', isPublic: true },
 			false,
 			handleClick,
 			active,
 		);
 	};
 
-	const handleCreateTagFromQuery = (query: string) => {
-		return ({
+	const getCreatedTagFromQuery = (query: string): TagToCreate => {
+		return {
 			tagTitleToCreate: query,
-		} as unknown) as Collection;
+		};
 	};
 
 	const renderCollectionPub = (
@@ -227,7 +231,7 @@ const PubCollectionsListing = (props: Props) => {
 
 	const createNewItemProps = scopeData.activePermissions.canManageCommunity
 		? {
-				createNewItemFromQuery: handleCreateTagFromQuery,
+				createNewItemFromQuery: getCreatedTagFromQuery,
 				createNewItemRenderer: renderNewItem,
 				searchPlaceholder: 'Search for Collections (or create a Tag)',
 				emptyListPlaceholder: '',
@@ -239,7 +243,7 @@ const PubCollectionsListing = (props: Props) => {
 	const renderQueryList = (triggerButton) => {
 		if (canAddCollections.length > 0) {
 			return (
-				<QueryListDropdown
+				<QueryListDropdown<Collection | TagToCreate>
 					itemPredicate={(query, collection) => fuzzyMatchCollection(collection, query)}
 					items={canAddCollections}
 					itemRenderer={renderAvailableCollection}

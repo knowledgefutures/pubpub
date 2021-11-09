@@ -18,7 +18,6 @@ import { getDashUrl } from 'utils/dashboard';
 require('./pubCollectionsListing.scss');
 
 type CollectionPub = BareCollectionPub & { collection: Collection };
-
 type Props = {
 	canManage: boolean;
 	allCollections: Collection[];
@@ -28,6 +27,10 @@ type Props = {
 	updateCollectionPubs: (collectionPubs: CollectionPub[]) => unknown;
 	renderTriggerButtonForQueryList?: () => React.ReactNode;
 	renderDragElementInPortal?: boolean;
+};
+
+type TagToCreate = {
+	tagTitleToCreate: string;
 };
 
 const PubCollectionsListing = (props: Props) => {
@@ -59,7 +62,14 @@ const PubCollectionsListing = (props: Props) => {
 
 	const primaryCollection = getPrimaryCollection(collectionPubs);
 
-	const handleAddCollectionPub = async (collection: Collection) => {
+	const handleAddCollectionPub = async (maybeCollection: Collection | TagToCreate) => {
+		const collection =
+			'tagTitleToCreate' in maybeCollection
+				? await api.createTagCollection({
+						title: maybeCollection.tagTitleToCreate,
+						communityId: communityData.id,
+				  })
+				: maybeCollection;
 		const newCollectionPub = await pendingPromise(
 			api.addCollectionPub({
 				communityId: communityData.id,
@@ -100,10 +110,10 @@ const PubCollectionsListing = (props: Props) => {
 	};
 
 	const renderCollectionTitle = (
-		collection: Collection,
+		collection: Pick<Collection, 'kind' | 'slug' | 'title' | 'isPublic' | 'id'>,
 		linkToCollection = true,
-		onClick?: () => unknown,
-		otherClassName?: string,
+		onClick?: React.MouseEventHandler<HTMLElement>,
+		active?: boolean,
 	) => {
 		const inner = (
 			<>
@@ -135,7 +145,7 @@ const PubCollectionsListing = (props: Props) => {
 		const className = classNames(
 			'pub-collections-listing-component_collection-title',
 			!!onClick && 'interactive',
-			otherClassName,
+			active && 'active',
 		);
 
 		if (onClick) {
@@ -157,7 +167,26 @@ const PubCollectionsListing = (props: Props) => {
 		collection: Collection,
 		{ handleClick, modifiers: { active } },
 	) => {
-		return renderCollectionTitle(collection, false, handleClick, active && 'active');
+		return renderCollectionTitle(collection, false, handleClick, active);
+	};
+
+	const renderNewItem = (
+		query: string,
+		active: boolean,
+		handleClick: React.MouseEventHandler<HTMLElement>,
+	) => {
+		return renderCollectionTitle(
+			{ title: `Create new tag: ${query}`, kind: 'tag', slug: '', id: '', isPublic: false },
+			false,
+			handleClick,
+			active,
+		);
+	};
+
+	const handleCreateTagFromQuery = (query: string) => {
+		return ({
+			tagTitleToCreate: query,
+		} as unknown) as Collection;
 	};
 
 	const renderCollectionPub = (
@@ -196,6 +225,17 @@ const PubCollectionsListing = (props: Props) => {
 		);
 	};
 
+	const createNewItemProps = scopeData.activePermissions.canManageCommunity
+		? {
+				createNewItemFromQuery: handleCreateTagFromQuery,
+				createNewItemRenderer: renderNewItem,
+				searchPlaceholder: 'Search for Collections (or create a Tag)',
+				emptyListPlaceholder: '',
+		  }
+		: {
+				emptyListPlaceholder: 'No Collections match this search.',
+				searchPlaceholder: 'Search for Collections',
+		  };
 	const renderQueryList = (triggerButton) => {
 		if (canAddCollections.length > 0) {
 			return (
@@ -203,12 +243,11 @@ const PubCollectionsListing = (props: Props) => {
 					itemPredicate={(query, collection) => fuzzyMatchCollection(collection, query)}
 					items={canAddCollections}
 					itemRenderer={renderAvailableCollection}
-					emptyListPlaceholder="No Collections match this search."
-					searchPlaceholder="Search for Collections"
 					onItemSelect={handleAddCollectionPub}
 					position="bottom-left"
 					onClose={onQueryListClose}
 					usePortal={false}
+					{...createNewItemProps}
 				>
 					{triggerButton}
 				</QueryListDropdown>

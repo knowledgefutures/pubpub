@@ -14,8 +14,13 @@ const getAuthorsArray = (author) => {
 	return null;
 };
 
-const getDateStringFromMetaValue = (metaDateString) =>
-	new Date(metaValueToString(metaDateString)).toUTCString();
+const getDateStringFromMetaValue = (metaDateString) => {
+	const date = new Date(metaValueToString(metaDateString));
+	if (!Number.isNaN(date.getTime())) {
+		return date.toUTCString();
+	}
+	return null;
+};
 
 const getAttributions = async (author) => {
 	if (author) {

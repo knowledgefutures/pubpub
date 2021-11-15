@@ -18,7 +18,7 @@ Setting both `enabledUsersFraction` and `enabledCommunitiesFraction` will enable
 
 There are three ways to find the value of a feature flag:
 
-- **On the client:** use the `isFeatureFlagEnabled()` utility.
+- **On the client:** from the `featureFlags` property returned by the `usePageContext()` React hook.
 - **On the server:** a typical non-API route will compute an `InitialData` object, and make all feature flags for the user's request available from `initialData.featureFlags`.
 - **In an API route:** a typical API route will not compute an `InitialData` — in this case you can call `getFeatureFlagForUserAndCommunity()` to get the value of a single flag for this request. Prefer storing and passing down the return value of this function rather than calling it many times.
 

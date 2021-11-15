@@ -1,15 +1,25 @@
 import React from 'react';
 import classNames from 'classnames';
 import Color from 'color';
-import { Icon } from 'components';
+
+import { Icon, IconName } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl, getDashboardModes } from 'utils/dashboard';
+
 import ScopePicker from './ScopePicker';
 
 require('./sideMenu.scss');
 
+type MenuItem = {
+	title: string;
+	icon: IconName;
+	href: string;
+	validScopes?: ('community' | 'collection' | 'pub')[];
+	manageRequired?: true;
+};
+
 const SideMenu = () => {
-	const { locationData, communityData, scopeData } = usePageContext();
+	const { locationData, communityData, scopeData, featureFlags } = usePageContext();
 	const { activePermissions, elements } = scopeData;
 	const { canManage } = activePermissions;
 	const { activeTargetType, activeCollection } = elements;
@@ -18,21 +28,21 @@ const SideMenu = () => {
 
 	const backgroundColor = Color(communityData.accentColorDark).fade(0.95).rgb().string();
 
-	const contentItems = [
+	const menuItems: MenuItem[] = [
 		{
 			title: 'Overview',
-			icon: 'home2' as const,
+			icon: 'home2',
 			href: getDashUrl({ collectionSlug, pubSlug }),
 		},
 		{
 			title: 'Activity',
-			icon: 'pulse' as const,
+			icon: 'pulse',
 			href: getDashUrl({ collectionSlug, pubSlug, mode: 'activity' }),
 			manageRequired: true,
 		},
 		{
 			title: 'Pages',
-			icon: 'page-layout' as const,
+			icon: 'page-layout',
 			href: getDashUrl({
 				collectionSlug,
 				pubSlug,
@@ -43,7 +53,7 @@ const SideMenu = () => {
 		},
 		{
 			title: 'Layout',
-			icon: 'page-layout' as const,
+			icon: 'page-layout',
 			href: getDashUrl({
 				collectionSlug,
 				mode: 'layout',
@@ -53,16 +63,26 @@ const SideMenu = () => {
 		},
 		{
 			title: 'Reviews',
-			icon: 'social-media' as const,
+			icon: 'social-media',
 			href: getDashUrl({
 				collectionSlug,
 				pubSlug,
 				mode: 'reviews',
 			}),
 		},
+		featureFlags.submissions && {
+			title: 'Submissions',
+			icon: 'inbox',
+			manageRequired: true,
+			validScopes: ['collection'],
+			href: getDashUrl({
+				collectionSlug,
+				mode: 'submissions',
+			}),
+		},
 		{
 			title: 'Connections',
-			icon: 'layout-auto' as const,
+			icon: 'layout-auto',
 			href: getDashUrl({
 				collectionSlug,
 				pubSlug,
@@ -72,7 +92,7 @@ const SideMenu = () => {
 		},
 		{
 			title: 'Impact',
-			icon: 'dashboard' as const,
+			icon: 'dashboard',
 			href: getDashUrl({
 				collectionSlug,
 				pubSlug,
@@ -82,7 +102,7 @@ const SideMenu = () => {
 		},
 		{
 			title: 'Members',
-			icon: 'people' as const,
+			icon: 'people',
 			href: getDashUrl({
 				collectionSlug,
 				pubSlug,
@@ -92,7 +112,7 @@ const SideMenu = () => {
 		},
 		{
 			title: 'Settings',
-			icon: 'cog' as const,
+			icon: 'cog',
 			href: getDashUrl({
 				collectionSlug,
 				pubSlug,
@@ -100,7 +120,7 @@ const SideMenu = () => {
 			}),
 			manageRequired: true,
 		},
-	];
+	].filter((x): x is MenuItem => !!x);
 
 	return (
 		<div className="side-menu-component">
@@ -116,7 +136,7 @@ const SideMenu = () => {
 			<ScopePicker />
 
 			<div className="content">
-				{contentItems
+				{menuItems
 					.filter((item) => {
 						const { validScopes, manageRequired } = item;
 						const scopeIsValid = !validScopes || validScopes.includes(activeTargetType);

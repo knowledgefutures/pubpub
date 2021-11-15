@@ -102,6 +102,15 @@ export type LayoutBlockCollectionHeader = {
 	};
 };
 
+export type LayoutBlockSubmissionBanner = {
+	type: 'submission-banner';
+	id: string;
+	content: {
+		title: string;
+		body: DocJson;
+	};
+};
+
 export type LayoutBlock =
 	| LayoutBlockBanner
 	| LayoutBlockCollectionsPages

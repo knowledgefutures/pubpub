@@ -19,6 +19,7 @@ export { default as DashboardPages } from './DashboardPages/DashboardPages';
 export { default as DashboardReview } from './DashboardReview/DashboardReview';
 export { default as DashboardReviews } from './DashboardReviews/DashboardReviews';
 export { default as DashboardSettings } from './DashboardSettings/DashboardSettings';
+export { default as DashboardSubmissions } from './DashboardSubmissions/DashboardSubmissions';
 export { default as Explore } from './Explore/Explore';
 export { default as Landing } from './Landing/Landing';
 export { default as Login } from './Login/Login';

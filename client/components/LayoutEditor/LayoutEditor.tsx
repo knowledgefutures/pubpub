@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Tooltip, Elevation, Card } from '@blueprintjs/core';
+import { Button, Tooltip, Card } from '@blueprintjs/core';
 import stickybits from 'stickybits';
 
 import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
@@ -101,10 +101,12 @@ const LayoutEditor = (props: Props) => {
 					/>
 					{!cannotRemove && (
 						<Popover
-							aria-label="block removal popover"
+							placement="bottom-end"
+							aria-label="Remove this block"
+							gutter={1}
 							content={
-								<Card interactive elevation={Elevation.TWO}>
-									<p>Are you sure you want to delete this block?</p>
+								<Card>
+									<p>Are you sure you want to remove this block?</p>
 									<Button
 										intent="danger"
 										text="Remove"

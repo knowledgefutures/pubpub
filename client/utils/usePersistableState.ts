@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useBeforeUnload } from 'react-use';
 
 export const usePersistableState = <T>(
-	initialPersistedState: T,
+	initialPersistedState: T | (() => T),
 	persistFn: (update: Partial<T>, full: T) => Promise<void>,
 	initialUnpersistedState: Partial<T> = {},
 ) => {

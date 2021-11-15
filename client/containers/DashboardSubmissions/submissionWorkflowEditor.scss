@@ -1,0 +1,25 @@
+@import './shared.scss';
+
+.submission-workflow-editor-component {
+    .banner-step {
+        .banner-title-text {
+            width: 100%;
+        }
+
+        .banner-skeleton {
+            @include box;
+            background: $light-background;
+        }
+    }
+
+    .email-step {
+        .target-email-input {
+            display: flex;
+            max-width: 600px;
+            > .bp3-input-group {
+                flex-grow: 1;
+                margin-right: 10px;
+            }
+        }
+    }
+}

@@ -8,10 +8,16 @@ $border-style: 1px solid #ddd;
         border-radius: 2px;
         padding: 0.5em;
         cursor: text;
+        > .editor {
+            p:last-child {
+                margin-bottom: 0;
+            }
+        }
     }
 
     &.constrain-height {
         height: 100%;
+        overflow-y: hidden;
         > .editor-wrapper {
             height: 100%;
             overflow-y: auto;

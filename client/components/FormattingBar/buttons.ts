@@ -288,6 +288,7 @@ export const simpleMedia: FormattingBarButtonData = {
 export const minimalButtonSet = [[strong, em, link, equation]];
 export const discussionButtonSet = [[strong, em, link], [simpleMedia]];
 export const inlineMenuButtonSet = [[heading1, heading2, strong, em, link]];
+export const workflowButtonSet = [[heading1, heading2, strong, em, link], [simpleMedia]];
 
 export const fullButtonSet = [
 	[alignLeft, alignCenter, alignRight],

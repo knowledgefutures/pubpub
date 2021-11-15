@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import classNames from 'classnames';
 
+import { DocJson } from 'types';
 import Editor, { getTextFromDoc, EditorChangeObject, OnEditFn } from 'components/Editor';
 import { FormattingBarButtonData } from '../FormattingBar/types';
 
@@ -72,7 +73,7 @@ const MinimalEditor = (props: Props) => {
 			if (onContent) {
 				const [doc] = args;
 				onContent({
-					content: doc.toJSON(),
+					content: doc.toJSON() as DocJson,
 					text: getTextFromDoc(doc),
 				});
 			}

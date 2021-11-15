@@ -19,6 +19,7 @@ require('./dashboardPages');
 require('./dashboardReview');
 require('./dashboardReviews');
 require('./dashboardSettings');
+require('./dashboardSubmissions');
 require('./dashboardCollectionLayout');
 
 /* Routes for PubPub */

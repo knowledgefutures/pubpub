@@ -34,14 +34,14 @@ const validator: RecordValidator<EditableSubmissionWorkflow> = {
 	emailText: isValidDocJson,
 	targetEmailAddress: isValidEmail,
 	enabled: isAlwaysValid,
-	bannerContent: isValidBannerContent,
+	layoutBlockContent: isValidBannerContent,
 };
 
 const SubmissionWorkflowEditor = (props: Props) => {
 	const { collection, onUpdateWorkflow, renderCompletionButton, workflow } = props;
 	const { communityData } = usePageContext();
 	const { email: communityEmail } = communityData;
-	const { bannerContent } = workflow;
+	const { layoutBlockContent } = workflow;
 	const [{ fields: fieldValidStates, isValid }, setValidation] = useState(() =>
 		validate(workflow, validator),
 	);
@@ -59,8 +59,8 @@ const SubmissionWorkflowEditor = (props: Props) => {
 		onUpdateWorkflow(nextWorkflow);
 	};
 
-	const updateBannerContent = (update: Partial<SubmissionWorkflow['bannerContent']>) => {
-		updateWorkflow({ bannerContent: { ...bannerContent, ...update } });
+	const updateBannerContent = (update: Partial<SubmissionWorkflow['layoutBlockContent']>) => {
+		updateWorkflow({ layoutBlockContent: { ...layoutBlockContent, ...update } });
 	};
 
 	return (
@@ -69,7 +69,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 				className="banner-step"
 				number={1}
 				title="Invite submitters from this Collection's landing page"
-				done={fieldValidStates.bannerContent}
+				done={fieldValidStates.layoutBlockContent}
 			>
 				<p>
 					Visitors to {collectionLink} will see a banner inviting them to submit to this
@@ -81,14 +81,14 @@ const SubmissionWorkflowEditor = (props: Props) => {
 						<EditableText
 							className="banner-title-text"
 							placeholder="Click to add banner title"
-							value={bannerContent.title}
+							value={layoutBlockContent.title}
 							onChange={(title) => updateBannerContent({ title })}
 						/>
 					}
 					content={
 						<WorkflowTextEditor
 							placeholder="Banner content"
-							initialContent={bannerContent.body}
+							initialContent={layoutBlockContent.body}
 							onContent={(body) => updateBannerContent({ body })}
 						/>
 					}

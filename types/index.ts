@@ -17,6 +17,7 @@ export * from './scope';
 export * from './sequelize';
 export * from './submission';
 export * from './slug';
+export * from './submissonWorkflow';
 export * from './submission';
 export * from './thread';
 export * from './userSubscription';

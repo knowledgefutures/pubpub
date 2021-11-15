@@ -15,7 +15,7 @@ const createEmptyWorkflow = (): EditableSubmissionWorkflow => {
 		emailText: getEmptyDoc(),
 		targetEmailAddress: '',
 		enabled: false,
-		bannerContent: {
+		layoutBlockContent: {
 			title: '',
 			body: getEmptyDoc(),
 		},

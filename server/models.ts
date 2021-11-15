@@ -71,6 +71,7 @@ export const ReviewEvent = sequelize.import('./reviewEvent/model');
 export const ScopeSummary = sequelize.import('./scopeSummary/model');
 export const Submission = sequelize.import('./submission/model');
 export const Signup = sequelize.import('./signup/model');
+export const SubmissionWorkflow = sequelize.import('./submissionWorkflow/model');
 export const ReviewNew = sequelize.import('./review/modelNew');
 export const Thread = sequelize.import('./thread/model');
 export const ThreadComment = sequelize.import('./threadComment/model');

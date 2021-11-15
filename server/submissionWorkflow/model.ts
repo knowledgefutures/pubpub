@@ -4,20 +4,18 @@ export default (sequelize, dataTypes) => {
 		{
 			id: sequelize.idType,
 			collectionId: { type: dataTypes.UUID, allowNull: false },
-			enabled: { type: dataTypes.BOOLEAN },
-			instructionsText: { type: dataTypes.JSONB },
-			emailText: { type: dataTypes.JSONB },
-			layoutBlockContent: {
-				type: dataTypes.JSONB,
-			},
-			targetEmailAddress: { type: dataTypes.STRING },
+			enabled: { type: dataTypes.BOOLEAN, allowNull: false },
+			instructionsText: { type: dataTypes.JSONB, allowNull: false },
+			emailText: { type: dataTypes.JSONB, allowNull: false },
+			layoutBlockContent: { type: dataTypes.JSONB, allowNull: false },
+			targetEmailAddress: { type: dataTypes.STRING, allowNull: false },
 		},
 		{
 			classMethods: {
 				associate: (models) => {
 					const { Collection, SubmissionWorkflow } = models;
 					SubmissionWorkflow.belongsTo(Collection, {
-						as: 'Collection',
+						as: 'collection',
 						foreignKey: 'collectionId',
 					});
 				},

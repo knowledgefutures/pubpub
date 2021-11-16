@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch';
 import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprintjs/core';
-import dateFormat from 'dateformat';
 
 import { Icon } from 'components';
 import { getResizedUrl } from 'utils/images';
@@ -129,6 +128,8 @@ const Search = (props: Props) => {
 		const resizedBannerImage = getResizedUrl(item.avatar, 'inside', 800);
 		const resizedCommunityLogo = getResizedUrl(item.communityAvatar, 'inside', 125, 35);
 
+		console.log(item);
+
 		if (mode === 'pubs') {
 			link = `https://${item.communityDomain}/pub/${item.slug}`;
 			bannerStyle = item.avatar
@@ -187,16 +188,7 @@ const Search = (props: Props) => {
 							</div>
 						)}
 					</div>
-					{mode === 'pubs' && (
-						<div className="byline">
-							{dateFormat(
-								item.customPublishedAt || item.createdAt || item.branchCreatedAt,
-								'mmm dd, yyyy',
-							)}
-							{item.byline && <span> · </span>}
-							{item.byline}
-						</div>
-					)}
+					{mode === 'pubs' && item.byline && <div className="byline">{item.byline}</div>}
 					<div className="description">{item.description}</div>
 				</div>
 			</div>

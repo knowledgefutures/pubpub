@@ -1,10 +1,20 @@
 import React from 'react';
 import { Popover, InputGroup, PopoverPosition } from '@blueprintjs/core';
-import { IQueryListRendererProps, ItemRenderer, QueryList } from '@blueprintjs/select';
+import {
+	IQueryListRendererProps,
+	ItemRenderer,
+	QueryList,
+	IQueryListProps,
+} from '@blueprintjs/select';
 
 require('./queryListDropdown.scss');
 
-type Props<Item> = {
+type SharedQueryListProps<Item> = Pick<
+	IQueryListProps<Item>,
+	'createNewItemFromQuery' | 'createNewItemRenderer'
+>;
+
+type Props<Item> = SharedQueryListProps<Item> & {
 	children: React.ReactNode;
 	items: Item[];
 	itemPredicate?: (query: string, item: Item) => boolean;
@@ -33,9 +43,12 @@ const QueryListDropdown = <Item extends {}>(props: Props<Item>) => {
 		searchPlaceholder,
 		usePortal = true,
 		query,
+		createNewItemFromQuery,
+		createNewItemRenderer,
 	} = props;
 
 	const renderPopoverContent = (qlProps: IQueryListRendererProps<Item>) => {
+		// eslint-disable-next-line no-shadow
 		const { handleKeyDown, handleKeyUp, handleQueryChange, itemList } = qlProps;
 		return (
 			// eslint-disable-next-line jsx-a11y/no-static-element-interactions
@@ -76,6 +89,8 @@ const QueryListDropdown = <Item extends {}>(props: Props<Item>) => {
 			onQueryChange={onQueryChange}
 			query={query}
 			noResults={<div className="empty-list">{emptyListPlaceholder}</div>}
+			createNewItemFromQuery={createNewItemFromQuery}
+			createNewItemRenderer={createNewItemRenderer}
 		/>
 	);
 };

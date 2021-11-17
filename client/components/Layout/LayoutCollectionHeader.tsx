@@ -39,9 +39,12 @@ const MetadataDetails = (props: Props) => {
 			{fields.map((field) => {
 				const name = field.name;
 				const data = metadata[name];
-				const isField = hiddenMetadataFields.includes(name);
-				const formattedData = formattedMetadata(name, data);
-				return <>{data && !isField && <div> {formattedData}</div>}</>;
+				const isShown = !hiddenMetadataFields.includes(name);
+				const formattedData = isShown && data && formattedMetadata(name, data);
+				if (formattedData) {
+					return <div>{formattedData}</div>;
+				}
+				return null;
 			})}
 		</>
 	);

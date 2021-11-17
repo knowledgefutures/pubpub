@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, EditableText, InputGroup } from '@blueprintjs/core';
 
-import { Collection, SubmissionWorkflow } from 'types';
+import { Collection } from 'types';
 import { LayoutSubmissionBannerSkeleton } from 'client/components/Layout';
 import { usePageContext } from 'utils/hooks';
 import { isValidEmail } from 'utils/email';
@@ -16,8 +16,8 @@ import {
 	RecordValidator,
 	isValidDocJson,
 	isAlwaysValid,
-	isValidBannerContent,
 	validate,
+	isValidTitle,
 } from './validators';
 
 require('./submissionWorkflowEditor.scss');
@@ -30,18 +30,18 @@ type Props = {
 };
 
 const validator: RecordValidator<EditableSubmissionWorkflow> = {
+	title: isValidTitle,
+	introText: isValidDocJson,
 	instructionsText: isValidDocJson,
 	emailText: isValidDocJson,
 	targetEmailAddress: isValidEmail,
 	enabled: isAlwaysValid,
-	layoutBlockContent: isValidBannerContent,
 };
 
 const SubmissionWorkflowEditor = (props: Props) => {
 	const { collection, onUpdateWorkflow, renderCompletionButton, workflow } = props;
 	const { communityData } = usePageContext();
 	const { email: communityEmail } = communityData;
-	const { layoutBlockContent } = workflow;
 	const [{ fields: fieldValidStates, isValid }, setValidation] = useState(() =>
 		validate(workflow, validator),
 	);
@@ -59,17 +59,13 @@ const SubmissionWorkflowEditor = (props: Props) => {
 		onUpdateWorkflow(nextWorkflow);
 	};
 
-	const updateBannerContent = (update: Partial<SubmissionWorkflow['layoutBlockContent']>) => {
-		updateWorkflow({ layoutBlockContent: { ...layoutBlockContent, ...update } });
-	};
-
 	return (
 		<div className="submission-workflow-editor-component">
 			<Step
 				className="banner-step"
 				number={1}
 				title="Invite submitters from this Collection's landing page"
-				done={fieldValidStates.layoutBlockContent}
+				done={fieldValidStates.title && fieldValidStates.introText}
 			>
 				<p>
 					Visitors to {collectionLink} will see a banner inviting them to submit to this
@@ -81,15 +77,15 @@ const SubmissionWorkflowEditor = (props: Props) => {
 						<EditableText
 							className="banner-title-text"
 							placeholder="Click to add banner title"
-							value={layoutBlockContent.title}
-							onChange={(title) => updateBannerContent({ title })}
+							value={workflow.title}
+							onChange={(title) => updateWorkflow({ title })}
 						/>
 					}
 					content={
 						<WorkflowTextEditor
 							placeholder="Banner content"
-							initialContent={layoutBlockContent.body}
-							onContent={(body) => updateBannerContent({ body })}
+							initialContent={workflow.introText}
+							onContent={(introText) => updateWorkflow({ introText })}
 						/>
 					}
 				/>

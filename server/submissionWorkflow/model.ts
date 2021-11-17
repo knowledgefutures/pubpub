@@ -3,11 +3,12 @@ export default (sequelize, dataTypes) => {
 		'SubmissionWorkflow',
 		{
 			id: sequelize.idType,
+			title: { type: dataTypes.TEXT, allowNull: false },
 			collectionId: { type: dataTypes.UUID, allowNull: false },
 			enabled: { type: dataTypes.BOOLEAN, allowNull: false },
 			instructionsText: { type: dataTypes.JSONB, allowNull: false },
 			emailText: { type: dataTypes.JSONB, allowNull: false },
-			layoutBlockContent: { type: dataTypes.JSONB, allowNull: false },
+			introText: { type: dataTypes.JSONB, allowNull: false },
 			targetEmailAddress: { type: dataTypes.STRING, allowNull: false },
 		},
 		{

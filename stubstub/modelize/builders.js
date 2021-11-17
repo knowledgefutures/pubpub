@@ -3,11 +3,12 @@ import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 
 import { createCollectionPub } from 'server/collectionPub/queries';
-import { Community, Member, Release, User } from 'server/models';
+import { Community, Member, Release, SubmissionWorkflow, User } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createDoc } from 'server/doc/queries';
 import { createPage } from 'server/page/queries';
+import { getEmptyDoc } from 'client/components/Editor';
 
 const builders = {};
 
@@ -109,5 +110,16 @@ builders.Release = async (args) => {
 };
 
 builders.CollectionPub = createCollectionPub;
+
+builders.SubmissionWorkflow = (args) => {
+	return SubmissionWorkflow.create({
+		enabled: false,
+		instructionsText: getEmptyDoc(),
+		introText: getEmptyDoc(),
+		emailText: getEmptyDoc(),
+		targetEmailAddress: 'something@somewhere.com',
+		...args,
+	});
+};
 
 export { builders };

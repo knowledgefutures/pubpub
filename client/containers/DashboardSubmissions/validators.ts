@@ -1,5 +1,4 @@
 import { DocJson } from 'types';
-import { LayoutBlockSubmissionBanner } from 'utils/layout';
 
 type AnyRecord = Record<string, any>;
 
@@ -16,13 +15,10 @@ export type ValidationResult<Rec extends AnyRecord> = {
 	fields: ValidatedFields<Rec>;
 };
 
+export const isValidTitle = (title: string) => title.length > 0;
+
 export const isValidDocJson = (docJson: DocJson) => {
 	return docJson.content.some((child) => child.content?.length > 0);
-};
-
-export const isValidBannerContent = (block: LayoutBlockSubmissionBanner['content']) => {
-	const { title, body } = block;
-	return title.length > 0 && isValidDocJson(body);
 };
 
 export const isAlwaysValid = () => true;

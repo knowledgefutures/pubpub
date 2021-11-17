@@ -11,14 +11,12 @@ import StartWorkflowCallout from './StartWorkflowCallout';
 
 const createEmptyWorkflow = (): EditableSubmissionWorkflow => {
 	return {
+		title: '',
+		introText: getEmptyDoc(),
 		instructionsText: getEmptyDoc(),
 		emailText: getEmptyDoc(),
 		targetEmailAddress: '',
 		enabled: false,
-		layoutBlockContent: {
-			title: '',
-			body: getEmptyDoc(),
-		},
 	};
 };
 

@@ -1,6 +1,8 @@
 /* global it, expect, beforeAll, afterAll */
 import { setup, teardown, login, modelize } from 'stubstub';
-import { SubmissionWorkflow } from '../../models';
+
+import { getEmptyDoc } from 'client/components/Editor';
+import { SubmissionWorkflow } from 'server/models';
 
 const models = modelize`
 	Community {
@@ -8,7 +10,6 @@ const models = modelize`
 			permissions: "admin"
 			User admin {}
 		}
-
 		Member {
 			permissions: "view"
 			User collectionMember {}
@@ -18,9 +19,12 @@ const models = modelize`
 			User collectionManager {}
 		}
 		Collection collection {
-
-			SubmissionWorkflow submissionWorkflow {enabled: false}
-			SubmissionWorkflow destroyThisSubmissionWorkflow {enabled: false}
+			SubmissionWorkflow submissionWorkflow {
+				title: "Submit to me"
+			}
+			SubmissionWorkflow destroyThisSubmissionWorkflow {
+				title: "Destroy me"
+			}
 		}
 	}
 	Community {
@@ -35,6 +39,15 @@ const models = modelize`
 
 `;
 
+const sharedCreationValues = {
+	instructionsText: getEmptyDoc(),
+	emailText: getEmptyDoc(),
+	introText: getEmptyDoc(),
+	title: 'Journal of Accepting Submissions',
+	targetEmailAddress: 'finnandjakeforwvwer@adventuretime.com',
+	enabled: false,
+};
+
 setup(beforeAll, async () => {
 	await models.resolve();
 });
@@ -47,14 +60,13 @@ it('allows a Community manager to create a new submission workflow', async () =>
 	} = await agent
 		.post('/api/submissionWorkflows')
 		.send({
+			...sharedCreationValues,
 			collectionId: collection.id,
-			enabled: true,
-			targetEmailAddress: 'finnandjakeforwvwer@adventuretime.com',
 		})
 		.expect(201);
 
 	expect(collectionId).toEqual(collection.id);
-	expect(enabled).toEqual(true);
+	expect(enabled).toEqual(false);
 	expect(targetEmailAddress).toEqual('finnandjakeforwvwer@adventuretime.com');
 });
 
@@ -64,10 +76,8 @@ it('forbids a different Community manager from creating a new submission workflo
 	await agent
 		.post('/api/submissionWorkflows')
 		.send({
+			...sharedCreationValues,
 			collectionId: collection.id,
-
-			enabled: true,
-			targetEmailAddress: 'finnandjakeforwvwer@adventuretime.com',
 		})
 		.expect(403);
 });
@@ -78,10 +88,8 @@ it('forbids a random user from creating a submission workflow', async () => {
 	await agent
 		.post('/api/submissionWorkflows')
 		.send({
+			...sharedCreationValues,
 			collectionId: collection.id,
-
-			enabled: true,
-			targetEmailAddress: 'finnandjakeforwvwer@adventuretime.com',
 		})
 		.expect(403);
 
@@ -89,10 +97,8 @@ it('forbids a random user from creating a submission workflow', async () => {
 	await anotherAgent
 		.post('/api/submissionWorkflows')
 		.send({
+			...sharedCreationValues,
 			collectionId: collection.id,
-
-			enabled: true,
-			targetEmailAddress: 'finnandjakeforwvwer@adventuretime.com',
 		})
 		.expect(403);
 });
@@ -103,10 +109,8 @@ it('forbids a non mananger from creating a submission workflow', async () => {
 	await agent
 		.post('/api/submissionWorkflows')
 		.send({
+			...sharedCreationValues,
 			collectionId: collection.id,
-
-			enabled: true,
-			targetEmailAddress: 'finnandjakeforwvwer@adventuretime.com',
 		})
 		.expect(403);
 });
@@ -119,7 +123,6 @@ it('allows a Community manager to update an existing workflow', async () => {
 		.put('/api/submissionWorkflows')
 		.send({
 			collectionId: collection.id,
-
 			enabled,
 		})
 		.expect(200);

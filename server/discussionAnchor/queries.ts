@@ -37,13 +37,14 @@ export const createUpdatedDiscussionAnchorForNewSteps = async (
 	);
 };
 
-export const createOriginalDiscussionAnchor = async ({
+export const createDiscussionAnchor = async ({
 	discussionId,
 	historyKey,
 	selectionJson,
 	originalText = '',
 	originalTextPrefix = '',
 	originalTextSuffix = '',
+	isOriginal = true,
 }: {
 	discussionId: string;
 	historyKey: number;
@@ -51,6 +52,7 @@ export const createOriginalDiscussionAnchor = async ({
 	originalText: string;
 	originalTextPrefix?: string;
 	originalTextSuffix?: string;
+	isOriginal?: boolean;
 }) => {
 	const { head, anchor } = selectionJson;
 	return DiscussionAnchor.create({
@@ -60,6 +62,6 @@ export const createOriginalDiscussionAnchor = async ({
 		originalText,
 		originalTextPrefix,
 		originalTextSuffix,
-		isOriginal: true,
+		isOriginal,
 	});
 };

@@ -1,8 +1,9 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 
-import { getCreatePermission, getUpdatePermissions } from './permissions';
-import { createDiscussion, updateDiscussion } from './queries';
+import { getCreatePermission, getUpdatePermissions, canReleaseDiscussions } from './permissions';
+import { createDiscussion, updateDiscussion, updateVisibilityForDiscussions } from './queries';
+import { createDiscussionAnchorsForLatestRelease } from './utils';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
@@ -36,5 +37,22 @@ app.put(
 		const permissions = await getUpdatePermissions(requestIds);
 		const updatedValues = await updateDiscussion(req.body, permissions);
 		return res.status(200).json(updatedValues);
+	}),
+);
+
+app.put(
+	'/api/discussions/release',
+	wrap(async (req, res) => {
+		const { pubId, discussionIds } = req.body;
+		const userId = req.user?.id;
+		const canRelease = await canReleaseDiscussions({ userId, pubId });
+		if (!canRelease) {
+			throw new ForbiddenError();
+		}
+		await Promise.all([
+			updateVisibilityForDiscussions(pubId, discussionIds, 'public'),
+			createDiscussionAnchorsForLatestRelease(pubId, discussionIds),
+		]);
+		return res.status(200).json({});
 	}),
 );

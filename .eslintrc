@@ -52,6 +52,7 @@
 		"import/no-unresolved": [2, { "ignore": ["\\config.js$"] }],
 		"import/prefer-default-export": 0,
 		"jsx-a11y/click-events-have-key-events": 0,
+		"jsx-a11y/accessible-emoji": 0,
 		"jsx-a11y/label-has-associated-control": [2, {"controlComponents": ["Switch"]}],
 		"lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
 		"max-classes-per-file": 0,

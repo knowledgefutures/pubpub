@@ -1,0 +1,30 @@
+.discussions-release-dialog-component {
+    .discussions-listing {
+        background: white;
+        max-height: 50vh;
+        overflow-y: scroll;
+    }
+
+    .discussion-entry {
+        display: flex;
+        align-items: center;
+        margin: 0;
+
+        .bp3-checkbox {
+            margin: 0 10px;
+        }
+
+        .discussion-component {
+            pointer-events: none;
+            user-select: none;
+        }
+
+        &:not(:last-child) {
+            border-bottom: 1px solid #eee;
+        }
+    }
+
+    .bp3-callout {
+        margin-top: 10px;
+    }
+}

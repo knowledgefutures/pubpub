@@ -1,3 +1,4 @@
+/* global RequestInit */
 type JSON = Record<string, any> | any[] | any;
 type ApiFetchFn = (path: string, opts?: RequestInit) => Promise<JSON>;
 

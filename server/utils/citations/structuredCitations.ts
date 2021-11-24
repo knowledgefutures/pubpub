@@ -2,12 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import Cite from 'citation-js';
-import { Node } from 'prosemirror-model';
 
-import { getNotes } from 'components/Editor';
+import { DocJson, Pub } from 'types';
+import { getNotes, jsonToNode } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
 import { StructuredValue, RenderedStructuredValue } from 'utils/notesCore';
-import { Pub } from 'types';
+import { expiringPromise } from 'utils/promises';
 
 /* Different styles available here: */
 /* https://github.com/citation-style-language/styles */
@@ -28,11 +28,7 @@ Cite.plugins.input.removeDataParser('@else/url', false);
 Cite.plugins.input.removeDataParser('@else/url', true);
 
 const generateFallbackHash = (structuredValue: string) =>
-	crypto
-		.createHash('md5')
-		.update(structuredValue)
-		.digest('base64')
-		.substring(0, 10);
+	crypto.createHash('md5').update(structuredValue).digest('base64').substring(0, 10);
 
 const extractAuthorFromApa = (apaStyleCitation: string) => {
 	if (
@@ -42,10 +38,7 @@ const extractAuthorFromApa = (apaStyleCitation: string) => {
 		const resultWithoutParens = extractAuthorFromApa(apaStyleCitation.slice(1, -1));
 		return `(${resultWithoutParens})`;
 	}
-	return apaStyleCitation
-		.split(',')
-		.slice(0, -1)
-		.join('');
+	return apaStyleCitation.split(',').slice(0, -1).join('');
 };
 
 const getInlineCitation = (
@@ -66,6 +59,13 @@ const getInlineCitation = (
 	return null;
 };
 
+const getSingleCitationAsync = expiringPromise(
+	async (structuredValue: string) => {
+		return Cite.async(structuredValue);
+	},
+	{ timeout: 8000, throws: () => new Error('Citation data failed to load') },
+);
+
 const getSingleStructuredCitation = async (
 	structuredInput: string,
 	citationStyle: CitationStyleKind,
@@ -73,7 +73,7 @@ const getSingleStructuredCitation = async (
 ) => {
 	try {
 		const fallbackValue = generateFallbackHash(structuredInput);
-		const citationData = await Cite.async(structuredInput);
+		const citationData = await getSingleCitationAsync(structuredInput);
 		if (citationData) {
 			const citationJson = citationData.format('data', { format: 'object' });
 			const citationHtml = citationData.format('bibliography', {
@@ -122,11 +122,20 @@ export const getStructuredCitations = async (
 	return structuredCitationsMap;
 };
 
-export const getStructuredCitationsForPub = (pubData: Pub, pubDocument: Node) => {
+export const getStructuredCitationsForPub = (pubData: Pub, pubDoc: DocJson) => {
+	const pubDocNode = jsonToNode(pubDoc);
 	const { citationStyle = 'apa', citationInlineStyle = 'count' } = pubData;
-	const { footnotes, citations } = getNotes(pubDocument);
+	const { footnotes, citations } = getNotes(pubDocNode);
 	const structuredValuesInDoc = [
 		...new Set([...footnotes, ...citations].map((note) => note.structuredValue)),
 	];
 	return getStructuredCitations(structuredValuesInDoc, citationStyle, citationInlineStyle);
+};
+
+export const getPathToCslFileForCitationStyleKind = (kind: CitationStyleKind) => {
+	const citationStyle = citationStyles.find((style) => style.key === kind);
+	if (citationStyle && citationStyle.path) {
+		return path.join(__dirname, citationStyle.path);
+	}
+	return null;
 };

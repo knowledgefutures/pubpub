@@ -1,8 +1,6 @@
 /* global describe, it, expect, beforeAll, afterAll */
 import { setup, teardown, login, modelize } from 'stubstub';
 
-import { getDefaultLayout } from 'utils/pages';
-
 const models = modelize`
 	Community community {
 		Member {
@@ -13,13 +11,11 @@ const models = modelize`
 			kind: "issue"
 			title: "Issue One"
 			isPublic: true
-			layout: ${getDefaultLayout()}
 		}
 		Collection privateCollection {
 			kind: "issue"
 			title: "Issue One and a Half"
 			isPublic: false
-			layout: ${getDefaultLayout()}
 			Member {
 				permissions: "view"
 				User collectionViewer {}
@@ -49,11 +45,7 @@ describe('/collection', () => {
 		const agent = await login();
 		const host = getHost(community);
 
-		await agent
-			.get(`/${collection.slug}`)
-			.set('Host', host)
-			.send()
-			.expect(200);
+		await agent.get(`/${collection.slug}`).set('Host', host).send().expect(200);
 	});
 
 	it('only resolves a private Collection for Collection Members, or Community Members with manage permissions', async () => {
@@ -65,19 +57,25 @@ describe('/collection', () => {
 		} = models;
 		const host = getHost(community);
 
-		await (await login())
+		await (
+			await login()
+		)
 			.get('/collection/' + collection.slug)
 			.set('Host', host)
 			.send()
 			.expect(404);
 
-		await (await login(communityManager))
+		await (
+			await login(communityManager)
+		)
 			.get('/collection/' + collection.slug)
 			.set('Host', host)
 			.send()
 			.expect(200);
 
-		await (await login(collectionViewer))
+		await (
+			await login(collectionViewer)
+		)
 			.get('/collection/' + collection.slug)
 			.set('Host', host)
 			.send()
@@ -113,11 +111,7 @@ describe('/collection', () => {
 		const { community } = models;
 		const agent = await login();
 		const host = getHost(community);
-		await agent
-			.get('/collection/qwertyuiop')
-			.set('Host', host)
-			.send()
-			.expect(404);
+		await agent.get('/collection/qwertyuiop').set('Host', host).send().expect(404);
 	});
 });
 

@@ -1,8 +1,9 @@
-export const structuredCitation = (structuredAttr) => {
-	return function(node) {
+import { Node } from 'prosemirror-model';
+import { useState, useDocumentState, useEffect } from '@pubpub/prosemirror-reactive';
+
+export const structuredCitation = (structuredAttr: string) => {
+	return (node: Node) => {
 		const { [structuredAttr]: value, customLabel } = node.attrs;
-		// @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
-		const { useEffect, useState, useDocumentState } = this;
 		const { noteManager } = useDocumentState();
 		const shouldDeriveCitation = !!noteManager;
 

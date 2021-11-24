@@ -9,7 +9,7 @@ const propTypes = {
 	attribution: PropTypes.object.isRequired,
 };
 
-const Contributor = function(props) {
+const Contributor = function (props) {
 	const { attribution } = props;
 	const { user } = attribution;
 	const avatarElement = user.slug ? (

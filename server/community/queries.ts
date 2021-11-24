@@ -1,6 +1,14 @@
 import uuidv4 from 'uuid/v4';
 
-import { Community, Page, Member } from 'server/models';
+import {
+	Community,
+	Page,
+	Member,
+	Collection,
+	CollectionAttribution,
+	PubAttribution,
+	Pub,
+} from 'server/models';
 import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
 import { isProd } from 'utils/environment';
@@ -43,21 +51,24 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 				throw new Error('URL already used');
 			}
 			const description = inputValues.description.substring(0, 280).replace(/\n/g, ' ') || '';
-			return Community.create({
-				id: newCommunityId,
-				subdomain,
-				title: inputValues.title,
-				description,
-				headerLogo: inputValues.headerLogo,
-				heroLogo: inputValues.heroLogo,
-				heroTitle: inputValues.heroLogo ? '' : inputValues.title,
-				hideHeaderLogo: true,
-				heroText: description,
-				accentColorLight: inputValues.accentColorLight,
-				accentColorDark: inputValues.accentColorDark,
-				navigation: [{ type: 'page', id: homePageId }],
-				hideCreatePubButton: true,
-			});
+			return Community.create(
+				{
+					id: newCommunityId,
+					subdomain,
+					title: inputValues.title,
+					description,
+					headerLogo: inputValues.headerLogo,
+					heroLogo: inputValues.heroLogo,
+					heroTitle: inputValues.heroLogo ? '' : inputValues.title,
+					hideHeaderLogo: true,
+					heroText: description,
+					accentColorLight: inputValues.accentColorLight,
+					accentColorDark: inputValues.accentColorDark,
+					navigation: [{ type: 'page', id: homePageId }],
+					hideCreatePubButton: true,
+				},
+				{ actorId: userData.id },
+			);
 		})
 		.then(() => {
 			const newCommunityHomeLayout = JSON.parse(
@@ -84,18 +95,21 @@ export const createCommunity = (inputValues, userData, alertAndSubscribe = true)
 					userData.email,
 				);
 			}
-			return Member.create({
-				communityId: newCommunityId,
-				userId: userData.id,
-				permissions: 'admin',
-			});
+			return Member.create(
+				{
+					communityId: newCommunityId,
+					userId: userData.id,
+					permissions: 'admin',
+				},
+				{ hooks: false },
+			);
 		})
 		.then(() => {
 			return { subdomain };
 		});
 };
 
-export const updateCommunity = (inputValues, updatePermissions) => {
+export const updateCommunity = (inputValues, updatePermissions, actorId = null) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -111,8 +125,85 @@ export const updateCommunity = (inputValues, updatePermissions) => {
 
 	return Community.update(filteredValues, {
 		where: { id: inputValues.communityId },
+		actorId,
+		individualHooks: true,
 	}).then(() => {
 		updateCommunityData(inputValues.communityId);
 		return filteredValues;
 	});
+};
+
+export const isUserAffiliatedWithCommunity = async (userId: string, communityId: string) => {
+	const promises = [
+		Member.count({
+			where: {
+				communityId,
+				userId,
+			},
+		}),
+
+		Member.count({
+			where: {
+				userId,
+			},
+			include: [
+				{
+					model: Pub,
+					as: 'pub',
+					where: {
+						communityId,
+					},
+				},
+			],
+		}),
+
+		Member.count({
+			where: {
+				userId,
+			},
+			include: [
+				{
+					model: Collection,
+					as: 'collection',
+					where: {
+						communityId,
+					},
+				},
+			],
+		}),
+
+		PubAttribution.count({
+			where: {
+				userId,
+			},
+			include: [
+				{
+					model: Pub,
+					as: 'pub',
+					where: {
+						communityId,
+					},
+				},
+			],
+		}),
+
+		CollectionAttribution.count({
+			where: {
+				userId,
+			},
+			include: [
+				{
+					model: Collection,
+					as: 'collection',
+					where: {
+						communityId,
+					},
+				},
+			],
+		}),
+	];
+	const counts = await Promise.all(promises);
+
+	const isHere = counts.some((c) => c > 0);
+	return isHere;
 };

@@ -22,6 +22,7 @@ export type PubUpdatedActivityItem = PubActivityItemBase & {
 	kind: 'pub-updated';
 	payload: {
 		title?: Diff<string>;
+		slug?: Diff<string>;
 		doi?: Diff<null | string>;
 		attributions?: true;
 		draft?: true;
@@ -33,7 +34,7 @@ export type PubRemovedActivityItem = PubActivityItemBase & {
 };
 
 export type PubReleasedActivityItem = PubActivityItemBase & {
-	kind: 'pub-released';
+	kind: 'pub-release-created';
 	payload: {
 		releaseId: string;
 	};
@@ -76,7 +77,14 @@ export type PubDiscussionCommentAddedActivityItem = PubDiscussionActivityItemBas
 	kind: 'pub-discussion-comment-added';
 };
 
-type PubReviewActivityItemBase = PubActivityItemBase & { payload: { reviewId: string } };
+type PubReviewActivityItemBase = PubActivityItemBase & {
+	payload: {
+		review: {
+			id: string;
+			title: string;
+		};
+	};
+};
 
 export type PubReviewCreatedActivityItem = PubReviewActivityItemBase &
 	MightHaveThreadCommentItemBase & {

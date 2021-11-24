@@ -155,15 +155,8 @@ describe('fetchActivityItems', () => {
 	});
 
 	it('fetches items for member-created, member-updated, and member-removed across pub, collection, and community membership', async () => {
-		const {
-			actor,
-			pub,
-			collection,
-			community,
-			pubMember,
-			collectionMember,
-			communityMember,
-		} = models;
+		const { actor, pub, collection, community, pubMember, collectionMember, communityMember } =
+			models;
 		await createMemberCreatedActivityItem(actor.id, pubMember.id);
 		await createMemberUpdatedActivityItem(actor.id, pubMember.id, {
 			...pubMember,
@@ -308,7 +301,7 @@ describe('fetchActivityItems', () => {
 		});
 	});
 
-	it('fetches items for pub-created, pub-updated, pub-removed, and pub-released', async () => {
+	it('fetches items for pub-created, pub-updated, pub-removed, and pub-release-created', async () => {
 		const { community, pub, actor, release } = models;
 		await createPubActivityItem('pub-created', actor.id, pub.id);
 		await createPubUpdatedActivityItem(actor.id, pub.id, { ...pub, doi: 'some/old/doi' });
@@ -336,7 +329,7 @@ describe('fetchActivityItems', () => {
 			payload: { pub: { title: pub.title } },
 		});
 		expect(releasedItem).toMatchObject({
-			kind: 'pub-released',
+			kind: 'pub-release-created',
 			payload: {
 				pub: {
 					title: pub.title,
@@ -509,16 +502,10 @@ describe('fetchActivityItems', () => {
 		} = models;
 		await createPubReviewCreatedActivityItem(review.id);
 		await createPubReviewCommentAddedActivityItem(review.id, releaseDenialComment.id);
-		await createPubReviewUpdatedActivityItem(
-			'pub-review-updated',
-			actor.id,
-			community.id,
-			review.id,
-			{
-				...review,
-				status: 'closed',
-			},
-		);
+		await createPubReviewUpdatedActivityItem(actor.id, review.id, {
+			...review,
+			status: 'closed',
+		});
 		const {
 			activityItems: [updatedItem, commentAddedItem, createdItem],
 			associations,
@@ -538,7 +525,10 @@ describe('fetchActivityItems', () => {
 					text: releaseRequestComment.text,
 					userId: actor.id,
 				},
-				reviewId: review.id,
+				review: {
+					id: review.id,
+					title: review.title,
+				},
 				pub: { title: pub.title },
 			},
 		});
@@ -555,7 +545,10 @@ describe('fetchActivityItems', () => {
 					text: releaseDenialComment.text,
 					userId: loudmouth.id,
 				},
-				reviewId: review.id,
+				review: {
+					id: review.id,
+					title: review.title,
+				},
 				pub: { title: pub.title },
 			},
 		});
@@ -565,7 +558,10 @@ describe('fetchActivityItems', () => {
 			kind: 'pub-review-updated',
 			pubId: pub.id,
 			payload: {
-				reviewId: review.id,
+				review: {
+					id: review.id,
+					title: review.title,
+				},
 				pub: { title: pub.title },
 				status: {
 					from: 'closed',
@@ -584,14 +580,8 @@ describe('fetchActivityItems', () => {
 	});
 
 	it('fetches items for pub-discussion-comment-added', async () => {
-		const {
-			actor,
-			community,
-			pub,
-			discussionThread,
-			discussion,
-			banterInPubDiscussion,
-		} = models;
+		const { actor, community, pub, discussionThread, discussion, banterInPubDiscussion } =
+			models;
 		await createPubDiscussionCommentAddedActivityItem(
 			discussion.id,
 			banterInPubDiscussion.id,

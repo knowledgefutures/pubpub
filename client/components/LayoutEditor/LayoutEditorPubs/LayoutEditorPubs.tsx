@@ -2,9 +2,14 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
-import { CollectionMultiSelect, InputField, Popover } from 'components';
+import {
+	CollectionMultiSelect,
+	InputField,
+	Popover,
+	MenuSelect,
+	MenuSelectItems,
+} from 'components';
 import { LayoutPubs } from 'components/Layout';
-import { MenuSelect, MenuSelectItems } from 'components/Menu';
 import { Community, Pub, Collection } from 'types';
 import { LayoutBlockPubs, PubPreviewType, PubSortOrder } from 'utils/layout/types';
 
@@ -51,10 +56,10 @@ const LayoutEditorPubs = (props: Props) => {
 	} = props;
 	const { limit, pubIds = [], collectionIds = [], pubPreviewType, sort } = block.content;
 
-	const onChange = useCallback((update: Partial<Content>) => fullOnChange(layoutIndex, update), [
-		fullOnChange,
-		layoutIndex,
-	]);
+	const onChange = useCallback(
+		(update: Partial<Content>) => fullOnChange(layoutIndex, update),
+		[fullOnChange, layoutIndex],
+	);
 
 	const setPreviewType = useCallback(
 		(type: PubPreviewType) =>

@@ -18,7 +18,7 @@ const defaultProps = {
 	placeholder: '',
 };
 
-const CollectionMultiSelect = function(props) {
+const CollectionMultiSelect = function (props) {
 	const collectionsById = {};
 	props.allCollections.forEach((collection) => {
 		collectionsById[collection.id] = collection;

@@ -44,7 +44,12 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		notes,
 		canonicalUrl,
 	} = metaProps;
-	const communityTitle = initialData.communityData.title;
+	const {
+		title: communityTitle,
+		citeAs: communityCiteAs,
+		publishAs: communityPublisher,
+	} = initialData.communityData;
+
 	const url = `https://${initialData.locationData.hostname}${initialData.locationData.path}`;
 	const favicon = initialData.communityData.favicon;
 	const avatar = image || initialData.communityData.avatar;
@@ -82,7 +87,7 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 		];
 	}
 
-	if (communityTitle && (!collection || collection.kind === 'issue')) {
+	if (communityTitle && !collection) {
 		outputComponents = [
 			...outputComponents,
 			<meta key="sn2" name="citation_journal_title" content={communityTitle} />,
@@ -102,31 +107,36 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	}
 
 	if (collection) {
+		outputComponents = [
+			...outputComponents,
+			<meta key="c0" name="citation_publisher" content={communityPublisher || 'PubPub'} />,
+		];
 		if (collection.kind === 'issue') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c1" name="citation_volume" content={collection.metadata?.volume} />,
-				<meta key="c2" name="citation_issue" content={collection.metadata?.issue} />,
+				<meta key="c1" name="citation_journal_title" content={communityCiteAs} />,
+				<meta key="c2" name="citation_volume" content={collection.metadata?.volume} />,
+				<meta key="c3" name="citation_issue" content={collection.metadata?.issue} />,
 				<meta
-					key="c3"
+					key="c4"
 					name="citation_issn"
 					content={collection.metadata?.electronic_issn}
 				/>,
-				<meta key="c4" name="citation_issn" content={collection.metadata?.print_issn} />,
+				<meta key="c5" name="citation_issn" content={collection.metadata?.print_issn} />,
 			];
 		}
 		if (collection.kind === 'book') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c5" name="citation_inbook_title" content={collection.title} />,
-				<meta key="c6" name="citation_book_title" content={collection.title} />,
-				<meta key="c7" name="citation_isbn" content={collection.metadata?.isbn} />,
+				<meta key="c6" name="citation_inbook_title" content={collection.title} />,
+				<meta key="c7" name="citation_book_title" content={collection.title} />,
+				<meta key="c8" name="citation_isbn" content={collection.metadata?.isbn} />,
 			];
 		}
 		if (collection.kind === 'conference') {
 			outputComponents = [
 				...outputComponents,
-				<meta key="c8" name="citation_conference_title" content={collection.title} />,
+				<meta key="c9" name="citation_conference_title" content={collection.title} />,
 			];
 		}
 	}
@@ -213,16 +223,16 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	}
 
 	if (publishedAt) {
-		const googleScholarPublishedAt = `${publishedAt.getFullYear()}/${publishedAt.getMonth() +
-			1}/${publishedAt.getDate()}`;
+		const googleScholarPublishedAt = `${publishedAt.getFullYear()}/${
+			publishedAt.getMonth() + 1
+		}/${publishedAt.getDate()}`;
 		const dcPublishedAt = `${publishedAt.getFullYear()}-${publishedAt.getMonth()}-${publishedAt.getDate()}`;
 		outputComponents = [
 			...outputComponents,
 			<meta key="pa1" property="article:published_time" content={String(publishedAt)} />,
 			<meta key="pa2" property="dc.date" content={dcPublishedAt} />,
 			<meta key="pa3" name="citation_publication_date" content={googleScholarPublishedAt} />,
-			<meta key="pub1" name="citation_publisher" content="PubPub" />,
-			<meta key="pub2" property="dc.publisher" content="PubPub" />,
+			<meta key="pub1" property="dc.publisher" content={communityPublisher || 'PubPub'} />,
 		];
 	}
 

@@ -31,14 +31,13 @@ const createNotificationsForThreadComment = async (
 		},
 	});
 
-	const notificationPreferencesOptingOutOfNotifications: types.UserNotificationPreferences[] = await UserNotificationPreferences.findAll(
-		{
+	const notificationPreferencesOptingOutOfNotifications: types.UserNotificationPreferences[] =
+		await UserNotificationPreferences.findAll({
 			where: {
 				userId: { [Op.in]: [...new Set(subscriptions.map((s) => s.userId))] },
 				receiveNotifications: false,
 			},
-		},
-	);
+		});
 	const userIdsWhoDoNotWantNotifications = notificationPreferencesOptingOutOfNotifications.map(
 		(pref) => pref.userId,
 	);
@@ -83,9 +82,9 @@ const createNotificationsForThreadComment = async (
 	);
 };
 
-const notificationCreatorsByKind: Partial<
-	{ [Kind in types.ActivityItemKind]: ActivityItemResponder<Kind> }
-> = {
+const notificationCreatorsByKind: Partial<{
+	[Kind in types.ActivityItemKind]: ActivityItemResponder<Kind>;
+}> = {
 	'pub-discussion-comment-added': (item) => createNotificationsForThreadComment(item, true),
 	'pub-review-comment-added': (item) => createNotificationsForThreadComment(item, false),
 };

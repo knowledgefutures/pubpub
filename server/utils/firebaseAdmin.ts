@@ -40,7 +40,7 @@ const firebaseApp = getFirebaseApp();
 const database = firebaseApp && firebaseApp.database();
 
 export const getDatabaseRef = (key: string): firebase.database.Reference => {
-	return (database?.ref(key) as unknown) as firebase.database.Reference;
+	return database?.ref(key) as unknown as firebase.database.Reference;
 };
 
 export const getPubDraftRef = async (pubId: string) => {

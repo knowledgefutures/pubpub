@@ -1,7 +1,7 @@
 import { CustomScript } from 'server/models';
 import { CustomScriptType, CustomScripts } from 'types';
 
-import { communityCanUseCustomScripts } from './permissions';
+import { communityCanUseCustomScripts } from 'utils/customScripts';
 
 export const setCustomScriptForCommunity = async (
 	communityId: string,
@@ -18,12 +18,12 @@ export const setCustomScriptForCommunity = async (
 };
 
 export const getCustomScriptsForCommunity = async (communityId: string): Promise<CustomScripts> => {
-	if (!communityCanUseCustomScripts(communityId)) {
-		return { js: null, css: null };
-	}
 	const scripts = await CustomScript.findAll({ where: { communityId } });
-	const js = scripts.find((s) => s.type === 'js');
 	const css = scripts.find((s) => s.type === 'css');
+	if (!communityCanUseCustomScripts(communityId)) {
+		return { js: null, css: css?.content || null };
+	}
+	const js = scripts.find((s) => s.type === 'js');
 	return {
 		js: js?.content || null,
 		css: css?.content || null,

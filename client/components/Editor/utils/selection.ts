@@ -73,5 +73,7 @@ export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePre
 	return null;
 };
 
-export const findParentNode = (predicate: NodePredicate) => ({ $from }: Selection) =>
-	findParentNodeClosestToPos($from, predicate);
+export const findParentNode =
+	(predicate: NodePredicate) =>
+	({ $from }: Selection) =>
+		findParentNodeClosestToPos($from, predicate);

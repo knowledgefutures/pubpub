@@ -5,7 +5,7 @@ const propTypes = {
 	hostname: PropTypes.string.isRequired,
 };
 
-const Terms = function(props) {
+const Terms = function (props) {
 	const mailtoHelp = (
 		<a href="mailto:help@pubpub.org?subject=Terms%252520Question" title="">
 			help@pubpub.org

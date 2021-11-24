@@ -5,6 +5,7 @@ import {
 	Community,
 	Discussion,
 	ExternalPublication,
+	Page,
 	PubEdge,
 	Pub,
 	Release,
@@ -20,6 +21,7 @@ export const activityAssociationTypes = [
 	'community',
 	'discussion',
 	'externalPublication',
+	'page',
 	'pubEdge',
 	'pub',
 	'review',
@@ -41,6 +43,7 @@ export type ActivityAssociationModels = {
 	community: Community;
 	discussion: Discussion;
 	externalPublication: ExternalPublication;
+	page: Page;
 	pubEdge: PubEdge;
 	pub: Pub;
 	release: Release;

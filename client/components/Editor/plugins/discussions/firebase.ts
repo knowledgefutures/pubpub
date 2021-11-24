@@ -1,4 +1,5 @@
 import { uncompressSelectionJSON, compressSelectionJSON } from 'prosemirror-compress-pubpub';
+import firebase from 'firebase';
 
 import {
 	DiscussionInfo,

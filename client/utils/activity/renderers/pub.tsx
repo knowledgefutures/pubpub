@@ -76,8 +76,15 @@ export const renderPubUpdated = itemRenderer<PubUpdatedActivityItem, BaseTitles>
 		if (payload.title) {
 			return (
 				<>
-					{actor} changed the title of {pub} from {payload.title.from} to{' '}
-					{payload.title.to}
+					{actor} changed the title of {pub} from <i>{payload.title.from}</i> to{' '}
+					<i>{payload.title.to}</i>
+				</>
+			);
+		}
+		if (payload.slug) {
+			return (
+				<>
+					{actor} changed the slug of {pub} from {payload.slug.from} to {payload.slug.to}
 				</>
 			);
 		}

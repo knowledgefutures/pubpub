@@ -14,7 +14,7 @@ const defaultProps = {
 	isUser: false,
 };
 
-const UserHeader = function(props) {
+const UserHeader = function (props) {
 	const links = [
 		{ id: 0, value: props.userData.location, icon: <Icon icon="map-marker" /> },
 		{

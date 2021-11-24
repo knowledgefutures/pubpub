@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Collection, Page, CommunityNavigationEntry } from 'client/utils/navigation';
 
-type NavBuilderContext = {
+type NavBuilderContextType = {
 	pages: Page[];
 	collections: Collection[];
 	updateItem: (
@@ -13,4 +13,6 @@ type NavBuilderContext = {
 	removeItem: (itemId: string, dropdownId: string) => any;
 };
 
-export const NavBuilderContext = React.createContext<NavBuilderContext>({} as NavBuilderContext);
+export const NavBuilderContext = React.createContext<NavBuilderContextType>(
+	{} as NavBuilderContextType,
+);

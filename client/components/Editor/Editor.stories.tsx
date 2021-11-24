@@ -207,7 +207,6 @@ storiesOf('Editor', module)
 						type="button"
 						onClick={() => {
 							console.log(
-								// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
 								convertLocalHighlightToDiscussion(
 									// @ts-expect-error ts-migrate(2339) FIXME: Property 'view' does not exist on type '{}'.
 									changeObject.view,

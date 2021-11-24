@@ -86,7 +86,7 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 			};
 		},
 		props: {
-			decorations: function(this: Plugin<PluginState>, editorState: EditorState) {
+			decorations: function (this: Plugin<PluginState>, editorState: EditorState) {
 				const { decorations } = this.getState(editorState);
 				return decorations;
 			},

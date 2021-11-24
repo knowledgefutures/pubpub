@@ -18,13 +18,8 @@ const CollectionSettings = () => {
 			elements: { activeCollection },
 		},
 	} = usePageContext();
-	const {
-		collection,
-		updateCollection,
-		deleteCollection,
-		fieldErrors,
-		hasChanges,
-	} = useCollectionState(activeCollection);
+	const { collection, updateCollection, deleteCollection, slugStatus, hasChanges } =
+		useCollectionState(activeCollection);
 
 	useUpdateEffect(() => {
 		if (!hasChanges) {
@@ -40,7 +35,7 @@ const CollectionSettings = () => {
 		<DashboardFrame className="collection-settings-component" title="Settings">
 			<SettingsSection title="Details">
 				<CollectionDetailsEditor
-					fieldErrors={fieldErrors}
+					slugStatus={slugStatus}
 					communityData={communityData}
 					collection={collection}
 					onUpdateCollection={updateCollection}

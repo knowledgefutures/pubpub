@@ -15,13 +15,8 @@ type Props = {
 };
 
 const AttributionDetailControls = (props: Props) => {
-	const {
-		attribution,
-		isShadowAttribution,
-		listOnBylineText,
-		onAttributionUpdate,
-		roles,
-	} = props;
+	const { attribution, isShadowAttribution, listOnBylineText, onAttributionUpdate, roles } =
+		props;
 	const { affiliation, id, isAuthor, orcid } = attribution;
 
 	return (

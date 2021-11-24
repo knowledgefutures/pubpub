@@ -3,6 +3,7 @@ import queryString from 'query-string';
 import { isProd, isDuqDuq, getAppCommit } from 'utils/environment';
 import { InitialData, ScopeData } from 'types';
 
+import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
 import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 
 export const getInitialData = async (req, isDashboard = false): Promise<InitialData> => {
@@ -37,6 +38,7 @@ export const getInitialData = async (req, isDashboard = false): Promise<InitialD
 
 	/* If basePubPub - return fixed data */
 	if (locationData.isBasePubPub) {
+		const featureFlags = await getFeatureFlagsForUserAndCommunity(loginData.id, null);
 		return {
 			communityData: {
 				title: 'PubPub',
@@ -60,6 +62,7 @@ export const getInitialData = async (req, isDashboard = false): Promise<InitialD
 			} as any,
 			loginData,
 			locationData,
+			featureFlags,
 			scopeData: { activePermissions: {} } as ScopeData,
 		};
 	}
@@ -82,14 +85,17 @@ export const getInitialData = async (req, isDashboard = false): Promise<InitialD
 		/* eslint-disable-next-line no-param-reassign */
 		communityData.domain = req.headers.localhost;
 	}
-	const scopeData = await getScope({
-		communityId: communityData.id,
-		pubSlug: locationData.params.pubSlug,
-		collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
-		accessHash: locationData.query.access,
-		loginId: loginData.id,
-		isDashboard,
-	});
+	const [scopeData, featureFlags] = await Promise.all([
+		getScope({
+			communityId: communityData.id,
+			pubSlug: locationData.params.pubSlug,
+			collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
+			accessHash: locationData.query.access,
+			loginId: loginData.id,
+			isDashboard,
+		}),
+		getFeatureFlagsForUserAndCommunity(loginData.id, communityData.id),
+	]);
 
 	const cleanedCommunityData = sanitizeCommunity(
 		communityData,
@@ -103,5 +109,6 @@ export const getInitialData = async (req, isDashboard = false): Promise<InitialD
 		loginData,
 		locationData,
 		scopeData,
+		featureFlags,
 	};
 };

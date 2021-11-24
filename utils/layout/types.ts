@@ -12,6 +12,8 @@ export type PubSortOrder =
 	| 'publish-date-reversed'
 	| 'collection-rank';
 
+export type CollectionsPagesJustifyType = 'center' | 'space-between' | 'space-around' | 'left';
+
 export type LayoutPubsByBlock<PubType extends { id: string }> = {
 	pubsById: Record<string, PubType>;
 	pubIdsByBlockId: Record<string, string[]>;
@@ -83,6 +85,7 @@ export type LayoutBlockCollectionsPages = {
 	content: {
 		items: { type: 'collection' | 'page'; id: string }[];
 		title?: string;
+		justify?: CollectionsPagesJustifyType;
 	};
 };
 
@@ -93,8 +96,9 @@ export type LayoutBlockCollectionHeader = {
 		hideByline?: boolean;
 		hideContributors?: boolean;
 		hideDate?: boolean;
-		hideDoi?: boolean;
 		hideCollectionKind?: boolean;
+		hideDoi?: boolean;
+		hiddenMetadataFields?: string[];
 	};
 };
 

@@ -11,7 +11,7 @@ const propTypes = {
 	/* html */
 };
 
-const LayoutHtml = function(props) {
+const LayoutHtml = function (props) {
 	if (!props.content.html) {
 		return null;
 	}

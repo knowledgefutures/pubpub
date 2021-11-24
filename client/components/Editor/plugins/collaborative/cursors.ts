@@ -1,6 +1,7 @@
 import { AllSelection, Plugin, Selection, PluginKey } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { compressSelectionJSON, uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
+import firebase from 'firebase';
 
 export const cursorsPluginKey = new PluginKey('cursors');
 
@@ -128,8 +129,9 @@ export default (schema, props, collabDocPluginKey) => {
 					selectionTo,
 					{
 						class: `cursor-range ${formattedDataId}`,
-						style: `background-color: ${cursorData.backgroundColor ||
-							'rgba(0, 25, 150, 0.2)'};`,
+						style: `background-color: ${
+							cursorData.backgroundColor || 'rgba(0, 25, 150, 0.2)'
+						};`,
 					},
 					{ key: `cursor-inline-${cursorData.id}`, lastActive: cursorData.lastActive },
 				),
@@ -257,10 +259,7 @@ export default (schema, props, collabDocPluginKey) => {
 				const { localClientId } = collabDocPluginKey.getState(view.state);
 				const transactionManager = createTransactionManager(localClientId, view);
 				const cursorsRef = props.collaborativeOptions.firebaseRef.child('cursors');
-				cursorsRef
-					.child(localClientId)
-					.onDisconnect()
-					.remove();
+				cursorsRef.child(localClientId).onDisconnect().remove();
 				cursorsRef.on('child_added', transactionManager.transactionCallback('setCursor'));
 				cursorsRef.on('child_changed', transactionManager.transactionCallback('setCursor'));
 				cursorsRef.on(

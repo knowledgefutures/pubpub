@@ -18,6 +18,7 @@ export default ({
 	title,
 	url,
 	contentVersion,
+	publishAs,
 }) => ({
 	conference: {
 		...contributors(attributions),
@@ -32,7 +33,7 @@ export default ({
 		},
 		proceedings_metadata: {
 			proceedings_title: title,
-			...publisher(),
+			...publisher(publishAs),
 			...renderDate('publication_date', date),
 			...isbn(null, 'archive_volume'),
 			...doiData(doi, timestamp, url, contentVersion),

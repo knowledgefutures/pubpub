@@ -145,15 +145,14 @@ const createInitialPubState = (
 	const notificationsByThread = bucketBy(notifications, (n) => n.activityItem.payload.threadId);
 	const subscription = subscriptions.find((s) => s.pubId === pub.id) ?? null;
 	const community = associations.community[pub.communityId];
-	const threadStates = Object.entries(
-		notificationsByThread,
-	).map(([threadId, threadNotifications]) =>
-		createInitialThreadState(
-			associations.thread[threadId],
-			threadNotifications,
-			initializer,
-			pub,
-		),
+	const threadStates = Object.entries(notificationsByThread).map(
+		([threadId, threadNotifications]) =>
+			createInitialThreadState(
+				associations.thread[threadId],
+				threadNotifications,
+				initializer,
+				pub,
+			),
 	);
 	const sortedThreadStates = sortThreadStates(threadStates);
 	return {

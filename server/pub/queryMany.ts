@@ -134,8 +134,8 @@ const getPubIdsQuery = (query: PubsQuery) => {
 	const outerWhereClause = createOuterWhereClause(query);
 	return knex
 		.select('pubId')
-		.from(function(this: QueryBuilder) {
-			const outer = this.from(function(this: QueryBuilder) {
+		.from(function (this: QueryBuilder) {
+			const outer = this.from(function (this: QueryBuilder) {
 				this.columns(columns)
 					.select()
 					.from('Pubs')

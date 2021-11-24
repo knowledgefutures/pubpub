@@ -31,7 +31,9 @@ const createDeferredState = () => {
 
 	const defer = (task: DeferredTask) => {
 		incrementCount();
-		task().then(decrementCount);
+		task()
+			.then(decrementCount)
+			.catch((err) => console.error(`[In deferred task] ${err.stack}"`));
 	};
 
 	return { finishDeferredTasks, defer };

@@ -44,19 +44,19 @@ const ThirdPartyAnalyticsCard = () => {
 		<Card>
 			<h5>Third-party analytics</h5>
 			<p>
-				PubPub uses a third-party analytics service called Keen to store, aggregate and
+				PubPub uses a third-party analytics service called Heap to store, aggregate and
 				summarize information about user behavior on our platform. We do this to help our
 				engineering team make product decisions and communities who use our service to
 				measure the performance of their content. We do not share any personally
 				identifiable information with communities on PubPub or any other third parties. We
-				pay Keen rather than using a more popular platform like Google Analytics, which is
+				pay Heap rather than using a more popular platform like Google Analytics, which is
 				free but allows Google to process your data and re-sell it across the web.
 			</p>
 			<p>
-				If you allow us to enable Keen while you browse, we'll send requests to their
+				If you allow us to enable Heap while you browse, we'll send requests to their
 				servers containing things like the URL of the current page, your browser version,
 				and your IP address. If you're logged in, we'll also send your PubPub user ID, which
-				is made of random letters and numbers. We'll never send Keen any identifying
+				is made of random letters and numbers. We'll never send Heap any identifying
 				information such as your name, affiliation, or email address.
 			</p>
 			<Switch

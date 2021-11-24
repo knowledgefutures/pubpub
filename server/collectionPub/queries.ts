@@ -60,6 +60,7 @@ export const createCollectionPub = ({
 	pubRank = null,
 	moveToTop = false,
 	isPrimary = false,
+	actorId = null,
 }) => {
 	return Promise.all([
 		CollectionPub.findAll({
@@ -68,20 +69,23 @@ export const createCollectionPub = ({
 		}),
 		getCollectionPubsInCollection(collectionId),
 	]).then(([pubLevelPeers, collectionLevelPeers]) => {
-		return CollectionPub.create({
-			collectionId,
-			pubId,
-			rank: getRankInPeers(
-				rank,
-				collectionLevelPeers.map((cp) => cp.rank),
-				moveToTop,
-			),
-			pubRank: getRankInPeers(
-				pubRank,
-				pubLevelPeers.map((cp) => cp.pubRank),
-				isPrimary,
-			),
-		});
+		return CollectionPub.create(
+			{
+				collectionId,
+				pubId,
+				rank: getRankInPeers(
+					rank,
+					collectionLevelPeers.map((cp) => cp.rank),
+					moveToTop,
+				),
+				pubRank: getRankInPeers(
+					pubRank,
+					pubLevelPeers.map((cp) => cp.pubRank),
+					isPrimary,
+				),
+			},
+			{ actorId },
+		);
 	});
 };
 
@@ -101,8 +105,10 @@ export const updateCollectionPub = (collectionPubId, inputValues, updatableField
 	});
 };
 
-export const destroyCollectionPub = (collectionPubId) => {
+export const destroyCollectionPub = (collectionPubId, actorId = null) => {
 	return CollectionPub.destroy({
 		where: { id: collectionPubId },
+		actorId,
+		individualHooks: true,
 	});
 };

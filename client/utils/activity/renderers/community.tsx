@@ -28,9 +28,18 @@ export const renderCommunityUpdated = itemRenderer<CommunityUpdatedActivityItem,
 		community: communityTitle,
 	},
 	message: ({ titles, item }) => {
+		const { payload } = item;
 		const { actor, community } = titles;
-		if (item.payload.title) {
-			const { from, to } = item.payload.title;
+		if (payload.subdomain) {
+			const { from, to } = payload.subdomain;
+			return (
+				<>
+					{actor} changed the subdomain of {community} from {from} to {to}
+				</>
+			);
+		}
+		if (payload.title) {
+			const { from, to } = payload.title;
 			return (
 				<>
 					{actor} changed the title of {community} from <i>{from}</i> to <i>{to}</i>

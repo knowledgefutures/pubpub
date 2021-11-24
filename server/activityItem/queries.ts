@@ -6,6 +6,7 @@ import {
 	Discussion,
 	ExternalPublication,
 	Member,
+	Page,
 	Pub,
 	PubEdge,
 	Release,
@@ -71,7 +72,7 @@ const resolvePartialMemberItem = async (member: types.Member) => {
 const buildMemberActivityItemParams = <
 	SharedItem extends Record<string, any>,
 	Rest extends { communityId: string },
-	Payload extends Record<string, any>
+	Payload extends Record<string, any>,
 >(
 	item: SharedItem,
 	value: Rest & { payload: Payload },
@@ -84,7 +85,10 @@ const buildMemberActivityItemParams = <
 	};
 };
 
-export const createCommunityCreatedActivityItem = async (actorId: string, communityId: string) => {
+export const createCommunityCreatedActivityItem = async (
+	actorId: null | string,
+	communityId: string,
+) => {
 	const community: types.Community = await Community.findOne({ where: { id: communityId } });
 	return createActivityItem({
 		actorId,
@@ -99,12 +103,12 @@ export const createCommunityCreatedActivityItem = async (actorId: string, commun
 };
 
 export const createCommunityUpdatedActivityItem = async (
-	actorId: string,
+	actorId: null | string,
 	communityId: string,
 	oldCommunity: types.Community,
 ) => {
 	const community: types.Community = await Community.findOne({ where: { id: communityId } });
-	const diffs = getDiffsForPayload(community, oldCommunity, ['title']);
+	const diffs = getDiffsForPayload(community, oldCommunity, ['title', 'subdomain']);
 	return createActivityItem({
 		actorId,
 		kind: 'community-updated' as const,
@@ -118,7 +122,7 @@ export const createCommunityUpdatedActivityItem = async (
 	});
 };
 
-export const createMemberCreatedActivityItem = async (actorId: string, memberId: string) => {
+export const createMemberCreatedActivityItem = async (actorId: null | string, memberId: string) => {
 	const member = await Member.findOne({ where: { id: memberId } });
 	const partial = await resolvePartialMemberItem(member);
 	const item = {
@@ -145,7 +149,7 @@ export const createMemberCreatedActivityItem = async (actorId: string, memberId:
 	throw new Error('Invalid Scope');
 };
 
-export const createMemberRemovedActivityItem = async (actorId: string, memberId: string) => {
+export const createMemberRemovedActivityItem = async (actorId: null | string, memberId: string) => {
 	const member = await Member.findOne({ where: { id: memberId } });
 	const partial = await resolvePartialMemberItem(member);
 	const item = {
@@ -168,7 +172,7 @@ export const createMemberRemovedActivityItem = async (actorId: string, memberId:
 };
 
 export const createMemberUpdatedActivityItem = async (
-	actorId: string,
+	actorId: null | string,
 	memberId: string,
 	oldMember: types.Member,
 ) => {
@@ -197,7 +201,7 @@ export const createMemberUpdatedActivityItem = async (
 
 export const createCollectionActivityItem = async (
 	kind: 'collection-created' | 'collection-removed',
-	actorId: string,
+	actorId: null | string,
 	collectionId: string,
 ) => {
 	const collection: types.Collection = await Collection.findOne({ where: { id: collectionId } });
@@ -216,7 +220,7 @@ export const createCollectionActivityItem = async (
 };
 
 export const createCollectionUpdatedActivityItem = async (
-	actorId: string,
+	actorId: null | string,
 	collectionId: string,
 	oldCollection: types.Collection,
 ) => {
@@ -226,6 +230,7 @@ export const createCollectionUpdatedActivityItem = async (
 		'isPublic',
 		'isRestricted',
 		'title',
+		'slug',
 	]);
 	const flags = getChangeFlagsForPayload(collection, oldCollection, ['layout', 'metadata']);
 	return createActivityItem({
@@ -236,6 +241,48 @@ export const createCollectionUpdatedActivityItem = async (
 		payload: {
 			collection: {
 				title,
+			},
+			...flags,
+			...diffs,
+		},
+	});
+};
+
+export const createPageActivityItem = async (
+	kind: 'page-created' | 'page-removed',
+	actorId: null | string,
+	pageId: string,
+) => {
+	const page: types.Page = await Page.findOne({ where: { id: pageId } });
+	return createActivityItem({
+		kind,
+		actorId,
+		communityId: page.communityId,
+		payload: {
+			page: {
+				id: page.id,
+				title: page.title,
+			},
+		},
+	});
+};
+
+export const createPageUpdatedActivityItem = async (
+	actorId: null | string,
+	pageId: string,
+	oldPage: types.Page,
+) => {
+	const page: types.Page = await Page.findOne({ where: { id: pageId } });
+	const diffs = getDiffsForPayload(page, oldPage, ['isPublic', 'title', 'slug', 'description']);
+	const flags = getChangeFlagsForPayload(page, oldPage, ['layout']);
+	return createActivityItem({
+		kind: 'page-updated' as const,
+		actorId,
+		communityId: page.communityId,
+		payload: {
+			page: {
+				title: page.title,
+				id: page.id,
 			},
 			...flags,
 			...diffs,
@@ -269,7 +316,10 @@ export const createPubReviewCreatedActivityItem = async (reviewId: string) => {
 		kind: 'pub-review-created',
 		pubId: pub.id,
 		payload: {
-			reviewId,
+			review: {
+				id: review.id,
+				title: review.title,
+			},
 			threadId: review.threadId,
 			isReply: false,
 			pub: { title: pub.title },
@@ -295,7 +345,10 @@ export const createPubReviewCommentAddedActivityItem = async (
 		kind: 'pub-review-comment-added' as const,
 		pubId: pub.id,
 		payload: {
-			reviewId,
+			review: {
+				id: review.id,
+				title: review.title,
+			},
 			threadId: review.threadId,
 			isReply: true,
 			threadComment: {
@@ -309,9 +362,7 @@ export const createPubReviewCommentAddedActivityItem = async (
 };
 
 export const createPubReviewUpdatedActivityItem = async (
-	kind: 'pub-review-updated',
-	actorId: string,
-	communityId: string,
+	actorId: null | string,
 	reviewId: string,
 	oldReview: types.Review,
 ) => {
@@ -319,35 +370,36 @@ export const createPubReviewUpdatedActivityItem = async (
 	const pub: types.Pub = await Pub.findOne({ where: { id: review.pubId } });
 	const diffs = getDiffsForPayload(review, oldReview, ['status']);
 	return createActivityItem({
-		kind,
+		kind: 'pub-review-updated',
 		pubId: pub.id,
 		actorId,
-		communityId,
+		communityId: pub.communityId,
 		payload: {
 			...diffs,
 			pub: {
 				title: pub.title,
 			},
-			reviewId,
+			review: {
+				id: review.id,
+				title: review.title,
+			},
 		},
 	});
 };
 
 export const createCollectionPubActivityItem = async (
 	kind: 'collection-pub-created' | 'collection-pub-removed',
-	actorId: string,
+	actorId: null | string,
 	collectionPubId: string,
 ) => {
-	const collectionPub: types.DefinitelyHas<
-		types.CollectionPub,
-		'pub' | 'collection'
-	> = await CollectionPub.findOne({
-		where: { id: collectionPubId },
-		include: [
-			{ model: Pub, as: 'pub' },
-			{ model: Collection, as: 'collection' },
-		],
-	});
+	const collectionPub: types.DefinitelyHas<types.CollectionPub, 'pub' | 'collection'> =
+		await CollectionPub.findOne({
+			where: { id: collectionPubId },
+			include: [
+				{ model: Pub, as: 'pub' },
+				{ model: Collection, as: 'collection' },
+			],
+		});
 	return createActivityItem({
 		kind,
 		pubId: collectionPub.pubId,
@@ -368,7 +420,7 @@ export const createCollectionPubActivityItem = async (
 
 export const createPubActivityItem = async (
 	kind: 'pub-created' | 'pub-removed',
-	actorId: string,
+	actorId: null | string,
 	pubId: string,
 ) => {
 	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
@@ -386,12 +438,12 @@ export const createPubActivityItem = async (
 };
 
 export const createPubUpdatedActivityItem = async (
-	actorId: string,
+	actorId: null | string,
 	pubId: string,
 	oldPub: types.Pub,
 ) => {
 	const pub: types.Pub = await Pub.findOne({ where: { id: pubId } });
-	const diffs = getDiffsForPayload(pub, oldPub, ['title', 'doi']);
+	const diffs = getDiffsForPayload(pub, oldPub, ['title', 'doi', 'slug']);
 	return createActivityItem({
 		kind: 'pub-updated' as const,
 		actorId,
@@ -406,11 +458,11 @@ export const createPubUpdatedActivityItem = async (
 	});
 };
 
-export const createPubReleasedActivityItem = async (actorId: string, releaseId: string) => {
+export const createPubReleasedActivityItem = async (actorId: null | string, releaseId: string) => {
 	const release: types.Release = await Release.findOne({ where: { id: releaseId } });
 	const pub: types.Pub = await Pub.findOne({ where: { id: release.pubId } });
 	return createActivityItem({
-		kind: 'pub-released' as const,
+		kind: 'pub-release-created' as const,
 		actorId,
 		communityId: pub.communityId,
 		pubId: pub.id,
@@ -425,21 +477,19 @@ export const createPubReleasedActivityItem = async (actorId: string, releaseId: 
 
 export const createPubEdgeActivityItem = async (
 	kind: 'pub-edge-created' | 'pub-edge-removed',
-	actorId: string,
+	actorId: null | string,
 	pubEdgeId: string,
 ) => {
 	const pubEdge: types.DefinitelyHas<types.PubEdge, 'pub'> &
-		types.DefinitelyHas<
-			types.PubEdge,
-			'targetPub' | 'externalPublication'
-		> = await PubEdge.findOne({
-		where: { id: pubEdgeId },
-		include: [
-			{ model: Pub, as: 'pub' },
-			{ model: Pub, as: 'targetPub' },
-			{ model: ExternalPublication, as: 'externalPublication' },
-		],
-	});
+		types.DefinitelyHas<types.PubEdge, 'targetPub' | 'externalPublication'> =
+		await PubEdge.findOne({
+			where: { id: pubEdgeId },
+			include: [
+				{ model: Pub, as: 'pub' },
+				{ model: Pub, as: 'targetPub' },
+				{ model: ExternalPublication, as: 'externalPublication' },
+			],
+		});
 	const isExternalEdge = !!pubEdge.externalPublicationId!!;
 	const target = isExternalEdge
 		? {

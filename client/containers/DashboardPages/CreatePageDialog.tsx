@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { Button, Classes, Dialog } from '@blueprintjs/core';
+import { SlugStatus } from 'types';
 
 import InputField from 'components/InputField/InputField';
 import { slugifyString } from 'utils/strings';
 import { getDashUrl } from 'utils/dashboard';
 import { apiFetch } from 'client/utils/apiFetch';
+import { getSlugError } from 'client/utils/slug';
 
 require('./createPageDialog.scss');
 
@@ -66,7 +68,6 @@ class CreatePageDialog extends Component<Props, State> {
 			slug: this.state.slug,
 			description: this.state.description,
 		};
-
 		return apiFetch('/api/pages', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -78,8 +79,19 @@ class CreatePageDialog extends Component<Props, State> {
 				window.location.href = getDashUrl({ mode: 'pages', subMode: newPageResult.slug });
 			})
 			.catch((err) => {
-				console.error(err);
-				this.setState({ isLoading: false, error: err });
+				const slugStatus: SlugStatus =
+					err?.type === 'forbidden-slug' ? err.slugStatus : 'available';
+				if (slugStatus !== 'available') {
+					this.setState((currentState) => {
+						const slugError = getSlugError(currentState.slug, slugStatus);
+						return { isLoading: false, error: slugError };
+					});
+				} else {
+					this.setState({
+						isLoading: false,
+						error: err,
+					});
+				}
 			});
 	}
 
@@ -117,7 +129,7 @@ class CreatePageDialog extends Component<Props, State> {
 						/>
 					</div>
 					<div className={Classes.DIALOG_FOOTER}>
-						<div className={Classes.DIALOG_FOOTER_ACTIONS}>
+						<div className="footer-dialog">
 							<InputField error={this.state.error}>
 								<Button
 									name="login"

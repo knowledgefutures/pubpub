@@ -52,3 +52,16 @@ export const getUpdatePermissions = async ({ discussionId, userId, pubId, commun
 		canReopen: canAdmin,
 	};
 };
+
+export const canReleaseDiscussions = async ({
+	userId,
+	pubId,
+}: {
+	userId: string;
+	pubId: string;
+}) => {
+	const {
+		activePermissions: { isSuperAdmin },
+	} = await getScope({ pubId, loginId: userId });
+	return isSuperAdmin;
+};

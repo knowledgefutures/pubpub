@@ -1,8 +1,10 @@
 import dateFormat from 'dateformat';
 
+import * as types from 'types';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
 import { getPrimaryCollection } from 'utils/collections/primary';
+import { renderJournalCitation } from 'utils/citations';
 import {
 	Collection,
 	CollectionPub,
@@ -13,7 +15,9 @@ import {
 	includeUserModel,
 } from 'server/models';
 
-const getPrimaryCollectionMetadata = (collectionPubs) => {
+import { PubMetadata } from './types';
+
+const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => {
 	const primaryCollection = getPrimaryCollection(collectionPubs);
 	if (primaryCollection) {
 		const { metadata, title } = primaryCollection;
@@ -22,7 +26,7 @@ const getPrimaryCollectionMetadata = (collectionPubs) => {
 	return null;
 };
 
-export const getPubMetadata = async (pubId) => {
+export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	const pubData = await Pub.findOne({
 		where: { id: pubId },
 		include: [
@@ -52,13 +56,18 @@ export const getPubMetadata = async (pubId) => {
 	const updatedDate = getPubUpdatedDate({ pub: pubData });
 	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
+	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
 	return {
 		title: pubData.title,
 		doi: pubData.doi,
 		licenseSlug: pubData.licenseSlug,
 		publishedDateString,
 		updatedDateString,
-		communityTitle: pubData.community.title,
+		communityTitle: renderJournalCitation(
+			primaryCollection?.kind,
+			pubData.community.citeAs,
+			pubData.community.title,
+		),
 		accentColor: pubData.community.accentColorDark,
 		attributions: pubData.attributions
 			.concat()
@@ -68,6 +77,9 @@ export const getPubMetadata = async (pubId) => {
 		citationStyle: pubData.citationStyle,
 		citationInlineStyle: pubData.citationInlineStyle,
 		nodeLabels: pubData.nodeLabels,
+		...((primaryCollection?.kind === 'conference' || primaryCollection?.kind === 'book') && {
+			publisher: pubData.community.publishAs,
+		}),
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),
 	};
 };

@@ -39,24 +39,19 @@ export const getPermissions = async ({
 		return {};
 	}
 
-	const [
-		scopeData,
-		discussionData,
-		reviewData,
-		threadData,
-		threadCommentData,
-	] = await Promise.all([
-		getScope({
-			communityId,
-			pubId,
-			loginId: userId,
-			accessHash,
-		}),
-		getMatchingDiscussion(parentId, threadId, pubId),
-		getMatchingReview(parentId, threadId, pubId),
-		Thread.findOne({ where: { id: threadId } }),
-		threadCommentId && ThreadComment.findOne({ where: { id: threadCommentId, threadId } }),
-	]);
+	const [scopeData, discussionData, reviewData, threadData, threadCommentData] =
+		await Promise.all([
+			getScope({
+				communityId,
+				pubId,
+				loginId: userId,
+				accessHash,
+			}),
+			getMatchingDiscussion(parentId, threadId, pubId),
+			getMatchingReview(parentId, threadId, pubId),
+			Thread.findOne({ where: { id: threadId } }),
+			threadCommentId && ThreadComment.findOne({ where: { id: threadCommentId, threadId } }),
+		]);
 
 	const { canView, canAdmin } = scopeData.activePermissions;
 	const notAssociatedWithModel = !reviewData && !discussionData;

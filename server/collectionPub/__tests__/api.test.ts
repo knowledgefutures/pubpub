@@ -1,5 +1,5 @@
 /* global it, expect, beforeAll, afterAll */
-import { setup, teardown, login, modelize } from 'stubstub';
+import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 import { CollectionPub } from 'server/models';
 import { createCollectionPub } from '../queries';
 
@@ -123,10 +123,20 @@ it('lists unreleased Pubs for users with relevant membership', async () => {
 it('creates a collectionPub and sets its rank', async () => {
 	const { admin, community, pub, issue } = models;
 	const agent = await login(admin);
-	const { body: collectionPub } = await agent
-		.post('/api/collectionPubs')
-		.send({ pubId: pub.id, collectionId: issue.id, communityId: community.id })
-		.expect(201);
+	const { body: collectionPub } = await expectCreatedActivityItem(
+		agent
+			.post('/api/collectionPubs')
+			.send({ pubId: pub.id, collectionId: issue.id, communityId: community.id })
+			.expect(201),
+	).toMatchObject((response) => ({
+		kind: 'collection-pub-created',
+		collectionId: issue.id,
+		pubId: pub.id,
+		actorId: admin.id,
+		payload: {
+			collectionPubId: response.body.id,
+		},
+	}));
 	const queriedCollectionPub = await CollectionPub.findOne({
 		where: { id: collectionPub.id },
 	});
@@ -237,13 +247,21 @@ it('lets a user with appropriate permissions destroy a collectionPub', async () 
 		collectionId: issue.id,
 	} as CreateCollectionPubOptions);
 	const agent = await login(admin);
-	await agent
-		.delete('/api/collectionPubs')
-		.send({
-			id: collectionPub.id,
-			communityId: community.id,
-		})
-		.expect(200);
+	await expectCreatedActivityItem(
+		agent
+			.delete('/api/collectionPubs')
+			.send({
+				id: collectionPub.id,
+				communityId: community.id,
+			})
+			.expect(200),
+	).toMatchObject({
+		kind: 'collection-pub-removed',
+		collectionId: issue.id,
+		pubId: pub.id,
+		actorId: admin.id,
+		payload: { collectionPubId: collectionPub.id },
+	});
 	const deletedCollectionPub = await CollectionPub.findOne({
 		where: { id: collectionPub.id },
 	});

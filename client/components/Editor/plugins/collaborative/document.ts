@@ -30,8 +30,8 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 	let ongoingTransaction = false;
 	let pendingRemoteKeyables = [];
 	const ref = props.collaborativeOptions.firebaseRef;
-	const onStatusChange = props.collaborativeOptions.onStatusChange || function() {};
-	const onUpdateLatestKey = props.collaborativeOptions.onUpdateLatestKey || function() {};
+	const onStatusChange = props.collaborativeOptions.onStatusChange || function () {};
+	const onUpdateLatestKey = props.collaborativeOptions.onUpdateLatestKey || function () {};
 
 	/* sendCollabChanges is called only from the main Editor */
 	/* disppatchTransaction view spec paramater. sendCollabChanges */
@@ -81,7 +81,7 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 						storeCheckpoint(ref, newState.doc, snapshot.key);
 					}
 				}
-				/* eslint-disable-next-line no-use-before-define */
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				processStoredKeyables();
 			})
 			.catch((err) => {

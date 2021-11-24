@@ -69,23 +69,21 @@ const appearsToBePastingFromMsOffice = (event: ClipboardEvent) => {
 	return html && html.includes(`xmlns:o="urn:schemas-microsoft-com:office:office`);
 };
 
-export const createPasteHandler = (uploadFn: MediaUploadHandler) => (
-	view: EditorView,
-	event: ClipboardEvent,
-) => {
-	if (appearsToBePastingFromMsOffice(event)) {
+export const createPasteHandler =
+	(uploadFn: MediaUploadHandler) => (view: EditorView, event: ClipboardEvent) => {
+		if (appearsToBePastingFromMsOffice(event)) {
+			return false;
+		}
+		const selection = view.state.selection;
+		const clipboardItems = event.clipboardData?.items;
+		const upload = getMediaUploadFromClipboard(uploadFn, clipboardItems || null);
+		if (upload) {
+			startUpload(upload, selection.to, view);
+			event.preventDefault();
+			return true;
+		}
 		return false;
-	}
-	const selection = view.state.selection;
-	const clipboardItems = event.clipboardData?.items;
-	const upload = getMediaUploadFromClipboard(uploadFn, clipboardItems || null);
-	if (upload) {
-		startUpload(upload, selection.to, view);
-		event.preventDefault();
-		return true;
-	}
-	return false;
-};
+	};
 
 const getImageSrcFromPastedHtml = (textData: string | null) => {
 	if (textData) {
@@ -101,26 +99,24 @@ const getImageSrcFromPastedHtml = (textData: string | null) => {
 
 // Thanks to https://gitlab.com/emergence-engineering/prosemirror-image-plugin/-/blob/master/src/plugin/dropHandler.ts
 // from which some of the hairier details of this function were cribbed.
-export const createDropHandler = (uploadFn: MediaUploadHandler) => (
-	view: EditorView,
-	event: DragEvent,
-) => {
-	const textData = event.dataTransfer?.getData('text/html');
-	const evtFile = event.dataTransfer?.files?.[0];
-	const imageSrc = getImageSrcFromPastedHtml(textData || null);
-	const positionData = view.posAtCoords({
-		top: event.clientY,
-		left: event.clientX,
-	});
-	if (positionData) {
-		const file = evtFile || (imageSrc && dataUriToFile(imageSrc));
-		const upload = file && uploadFn(file);
-		if (upload) {
-			startUpload(upload, positionData.pos, view);
-			event.preventDefault();
-			event.stopPropagation();
-			return true;
+export const createDropHandler =
+	(uploadFn: MediaUploadHandler) => (view: EditorView, event: DragEvent) => {
+		const textData = event.dataTransfer?.getData('text/html');
+		const evtFile = event.dataTransfer?.files?.[0];
+		const imageSrc = getImageSrcFromPastedHtml(textData || null);
+		const positionData = view.posAtCoords({
+			top: event.clientY,
+			left: event.clientX,
+		});
+		if (positionData) {
+			const file = evtFile || (imageSrc && dataUriToFile(imageSrc));
+			const upload = file && uploadFn(file);
+			if (upload) {
+				startUpload(upload, positionData.pos, view);
+				event.preventDefault();
+				event.stopPropagation();
+				return true;
+			}
 		}
-	}
-	return false;
-};
+		return false;
+	};

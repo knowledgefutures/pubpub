@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import Bluebird from 'bluebird';
-
-import { Community, Collection, CollectionPub } from 'server/models';
+import { Community, Collection, CollectionPub, Pub, Release } from 'server/models';
 import { setDoiData } from 'server/doi/queries';
 
 const {
@@ -19,14 +18,32 @@ const main = async () => {
 	const collection = await Collection.findOne({
 		where: { communityId: community.id, slug: collectionSlug },
 	});
-	const collectionPubs = await CollectionPub.findAll({ where: { collectionId: collection.id } });
-	console.log(`=== Will deposit 1 Collection and ${collectionPubs.length} Pubs`);
+	const collectionId = collection.id;
+	const collectionPubs = await CollectionPub.findAll({
+		where: { collectionId },
+		include: [
+			{
+				model: Pub,
+				as: 'pub',
+				include: [
+					{
+						model: Release,
+						as: 'releases',
+						attributes: ['id'],
+					},
+				],
+			},
+		],
+	});
+	const releasedCollectionPubs = collectionPubs.filter((cp) => cp.pub.releases.length > 0);
+
+	console.log(`=== Will deposit 1 Collection and ${releasedCollectionPubs.length} Pubs`);
 	await setAndLogDoiData(
 		{ communityId: community.id, collectionId: collection.id },
 		'collection',
 	);
 	await Bluebird.map(
-		collectionPubs.map((cp) => cp.pubId),
+		releasedCollectionPubs.map((cp) => cp.pubId),
 		(pubId) =>
 			setAndLogDoiData(
 				{ communityId: community.id, collectionId: collection.id, pubId },

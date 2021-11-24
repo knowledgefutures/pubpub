@@ -1,5 +1,5 @@
 /* global it, expect, beforeAll, afterAll */
-import { setup, teardown, login, modelize } from 'stubstub';
+import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 import { createCollection } from '../queries';
 import { Collection } from '../../models';
 
@@ -48,14 +48,20 @@ it('creates a new collection', async () => {
 	const agent = await login(admin);
 	const {
 		body: { communityId, title, kind, isPublic, isRestricted, layout },
-	} = await agent
-		.post('/api/collections')
-		.send({
-			communityId: community.id,
-			title: 'My test collection',
-			kind: 'issue',
-		})
-		.expect(201);
+	} = await expectCreatedActivityItem(
+		agent
+			.post('/api/collections')
+			.send({
+				communityId: community.id,
+				title: 'My test collection',
+				kind: 'issue',
+			})
+			.expect(201),
+	).toMatchObject((response) => ({
+		kind: 'collection-created',
+		collectionId: response.body.id,
+		actorId: admin.id,
+	}));
 	expect(communityId).toEqual(community.id);
 	expect(title).toEqual('My test collection');
 	expect(kind).toEqual('issue');
@@ -142,16 +148,23 @@ it('updates only expected values on an existing collection', async () => {
 		title: 'The Book of Tests',
 	});
 	const agent = await login(admin);
-	const { body: updatedCollection } = await agent
-		.put('/api/collections')
-		.send({
-			id: collection.id,
-			title: 'The Updated Book of Tests',
-			communityId: community.id,
-			slug: 'the-updated-book-of-tests',
-			doi: 'dont_change_me_lol',
-		})
-		.expect(200);
+	const { body: updatedCollection } = await expectCreatedActivityItem(
+		agent
+			.put('/api/collections')
+			.send({
+				id: collection.id,
+				title: 'The Updated Book of Tests',
+				communityId: community.id,
+				slug: 'the-updated-book-of-tests',
+				doi: 'dont_change_me_lol',
+			})
+			.expect(200),
+	).toMatchObject({
+		kind: 'collection-updated',
+		collectionId: collection.id,
+		actorId: admin.id,
+		payload: { title: { from: 'The Book of Tests', to: 'The Updated Book of Tests' } },
+	});
 	expect(updatedCollection.title).toEqual('The Updated Book of Tests');
 	expect(updatedCollection.slug).toEqual('the-updated-book-of-tests');
 	expect(updatedCollection.doi).not.toEqual('dont_change_me_lol');
@@ -162,7 +175,7 @@ it('will not assign a slug belonging to another collection', async () => {
 	const agent = await login(admin);
 
 	const {
-		body: { type, fields },
+		body: { type, slugStatus },
 	} = await agent
 		.put('/api/collections')
 		.send({
@@ -171,8 +184,8 @@ it('will not assign a slug belonging to another collection', async () => {
 			slug: 'i-exist',
 		})
 		.expect(400);
-	expect(type).toEqual('InvalidFields');
-	expect(fields).toEqual({ slug: true });
+	expect(type).toEqual('forbidden-slug');
+	expect(slugStatus).toEqual('used');
 });
 
 it('will not assign a slug belonging to a Page', async () => {
@@ -180,7 +193,7 @@ it('will not assign a slug belonging to a Page', async () => {
 	const agent = await login(admin);
 
 	const {
-		body: { type, fields },
+		body: { type, slugStatus },
 	} = await agent
 		.put('/api/collections')
 		.send({
@@ -189,8 +202,8 @@ it('will not assign a slug belonging to a Page', async () => {
 			slug: 'i-am-a-page',
 		})
 		.expect(400);
-	expect(type).toEqual('InvalidFields');
-	expect(fields).toEqual({ slug: true });
+	expect(type).toEqual('forbidden-slug');
+	expect(slugStatus).toEqual('used');
 });
 
 it('deletes an existing collection with appropriate permissions', async () => {
@@ -201,10 +214,12 @@ it('deletes an existing collection with appropriate permissions', async () => {
 		title: 'The Book of Tests',
 	});
 	const agent = await login(admin);
-	await agent
-		.delete('/api/collections')
-		.send({ id: collection.id, communityId: community.id })
-		.expect(200);
+	await expectCreatedActivityItem(
+		agent
+			.delete('/api/collections')
+			.send({ id: collection.id, communityId: community.id })
+			.expect(200),
+	).toMatchObject({ kind: 'collection-removed', collectionId: collection.id, actorId: admin.id });
 	const collectionNow = await Collection.findOne({ where: { id: collection.id } });
 	expect(collectionNow).toEqual(null);
 });

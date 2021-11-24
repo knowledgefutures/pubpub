@@ -14,18 +14,24 @@ $endfor$
 $if(title)$
 <text:p text:style-name="Title">$title$</text:p>
 $endif$
+$if(subtitle)$
+<text:p text:style-name="Subtitle">$subtitle$</text:p>
+$endif$
 $for(author)$
 <text:p text:style-name="Author">$author$</text:p>
 $endfor$
 $if(date)$
 <text:p text:style-name="Date">$date$</text:p>
 $endif$
+$if(abstract)$
+$abstract$
+$endif$
 $for(include-before)$
 $include-before$
 $endfor$
 $if(toc)$
 <text:table-of-content>
-  <text:table-of-content-source text:outline-level="10">
+  <text:table-of-content-source text:outline-level="$toc-depth$">
     <text:index-title-template text:style-name="Contents_20_Heading">$toc-title$</text:index-title-template>
     <text:table-of-content-entry-template text:outline-level="1"
     text:style-name="Contents_20_1">

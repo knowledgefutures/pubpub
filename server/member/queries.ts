@@ -13,6 +13,7 @@ const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }) => 
 export const createMember = async ({
 	target: { pubId, collectionId, communityId, userId },
 	value: { permissions },
+	actorId = null,
 }) => {
 	assertExactlyOneScopeInTarget({
 		pubId,
@@ -27,19 +28,19 @@ export const createMember = async ({
 			collectionId,
 			pubId,
 		},
-		{ returning: ['id'] },
+		{ returning: ['id'], actorId },
 	);
 	return getMemberDataById(memberId);
 };
 
-export const updateMember = async ({ memberId, value: { permissions } }) => {
+export const updateMember = async ({ memberId, value: { permissions }, actorId = null }) => {
 	const existingMember = await Member.findOne({ where: { id: memberId } });
-	await existingMember.update({ permissions });
+	await existingMember.update({ permissions }, { actorId });
 	return existingMember;
 };
 
-export const destroyMember = ({ memberId }) => {
-	return Member.destroy({ where: { id: memberId } });
+export const destroyMember = ({ memberId, actorId = null }) => {
+	return Member.destroy({ where: { id: memberId }, actorId, individualHooks: true });
 };
 
 export const getMembersForScope = async (

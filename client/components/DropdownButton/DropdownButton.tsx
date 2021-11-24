@@ -35,7 +35,7 @@ const defaultProps = {
 	children: undefined,
 };
 
-const DropdownButton = function(props) {
+const DropdownButton = function (props) {
 	return (
 		<Popover
 			content={props.children}

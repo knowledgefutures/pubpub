@@ -19,10 +19,7 @@ export const getResizedUrl = (
 	if (!url || url.indexOf('https://assets.pubpub.org/') === -1) {
 		return url || '';
 	}
-	const extension = url
-		.split('.')
-		.pop()!
-		.toLowerCase();
+	const extension = url.split('.').pop()!.toLowerCase();
 
 	if (resizableExtensions.indexOf(extension) === -1) {
 		return url;

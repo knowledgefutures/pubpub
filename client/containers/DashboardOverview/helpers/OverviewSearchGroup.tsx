@@ -35,13 +35,8 @@ const filters: Filter[] = [
 ];
 
 const OverviewSearchGroup = (props: Props) => {
-	const {
-		placeholder,
-		onCommitSearchTerm,
-		onUpdateSearchTerm,
-		rightControls,
-		onChooseFilter,
-	} = props;
+	const { placeholder, onCommitSearchTerm, onUpdateSearchTerm, rightControls, onChooseFilter } =
+		props;
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
 
 	const handleChange = useCallback(

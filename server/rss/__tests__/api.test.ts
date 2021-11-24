@@ -15,10 +15,7 @@ it('responds with an RSS feed for a community', async () => {
 	const { community } = models;
 	const agent = await login();
 	const host = getHost(community);
-	const body = await agent
-		.get(`/rss.xml`)
-		.set('Host', host)
-		.expect(200);
+	const body = await agent.get(`/rss.xml`).set('Host', host).expect(200);
 	expect(countItems(body.text)).toEqual(4);
 });
 

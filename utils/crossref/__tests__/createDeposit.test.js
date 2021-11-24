@@ -16,7 +16,11 @@ import makeCollectionPub from './data/makeCollectionPub';
 import { book, issue, conference } from './data/collections';
 
 const createDeposit = (context, target) =>
-	createDepositPartial({ ...context, community }, target, new Date('2019-04-11T19:02:15.577Z'));
+	createDepositPartial(
+		{ ...context, community },
+		target,
+		new Date('2019-04-11T19:02:15.577Z').getTime(),
+	);
 
 const stripFieldsFromCollectionMetadata = (where) => (collection) => {
 	return {

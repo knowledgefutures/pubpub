@@ -109,7 +109,7 @@ app.put(
 			licenseSlug,
 		});
 		if (updatableFields) {
-			const updateResult = await updatePub(req.body, updatableFields);
+			const updateResult = await updatePub(req.body, updatableFields, userId);
 			return res.status(200).json(updateResult);
 		}
 		throw new ForbiddenError();
@@ -121,7 +121,7 @@ app.delete(
 		const { userId, pubId } = getRequestIds(req);
 		const canDestroy = await canDestroyPub({ userId, pubId });
 		if (canDestroy) {
-			await destroyPub(pubId);
+			await destroyPub(pubId, userId);
 			return res.status(200).json({});
 		}
 		throw new ForbiddenError();

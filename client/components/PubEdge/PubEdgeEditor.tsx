@@ -4,17 +4,17 @@ import { Button as RKButton } from 'reakit/Button';
 
 import { DatePicker } from 'components';
 import { getHostnameForUrl } from 'utils/pubEdge';
+import { ExternalPublication, Pub } from 'types';
 
-import { externalPublicationType } from './constants';
 import PubEdgeLayout from './PubEdgeLayout';
 import PubEdgeDescriptionButton from './PubEdgeDescriptionButton';
 
 require('./pubEdge.scss');
 
 export type PubEdgeEditorProps = {
-	externalPublication: externalPublicationType;
-	onUpdateExternalPublication: (...args: any[]) => any;
-	pubData: any;
+	externalPublication: ExternalPublication;
+	onUpdateExternalPublication: (patch: Partial<ExternalPublication>) => unknown;
+	pubData: Pub;
 };
 
 const PubEdgeEditor = (props: PubEdgeEditorProps) => {
@@ -25,9 +25,10 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 	} = props;
 	const [open, setOpen] = useState(pubData.pubEdgeDescriptionVisible);
 
-	useEffect(() => setOpen(pubData.pubEdgeDescriptionVisible), [
-		pubData.pubEdgeDescriptionVisible,
-	]);
+	useEffect(
+		() => setOpen(pubData.pubEdgeDescriptionVisible),
+		[pubData.pubEdgeDescriptionVisible],
+	);
 
 	const renderPublicationDate = () => {
 		if (publicationDate) {
@@ -48,7 +49,7 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 		}
 
 		const addPublicationDate = () =>
-			onUpdateExternalPublication({ publicationDate: new Date() });
+			onUpdateExternalPublication({ publicationDate: new Date().toISOString() });
 
 		return (
 			<RKButton
@@ -78,15 +79,16 @@ const PubEdgeEditor = (props: PubEdgeEditorProps) => {
 			bylineElement={
 				<TagInput
 					placeholder="Add authors for this publication"
-					// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | (string | { name?: string | undefin... Remove this comment to see the full error message
 					values={contributors}
-					onChange={(value) => onUpdateExternalPublication({ contributors: value })}
+					onChange={(value) =>
+						void onUpdateExternalPublication({ contributors: value as string[] })
+					}
 				/>
 			}
 			metadataElements={[
 				<PubEdgeDescriptionButton
 					onToggle={() => setOpen((value) => !value)}
-					open={open}
+					open={!!open}
 					targetId=""
 				/>,
 				renderPublicationDate(),

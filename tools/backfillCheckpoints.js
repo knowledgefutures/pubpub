@@ -103,14 +103,8 @@ const backfillCheckpointsForBranch = async (pubId, branchId) =>
 			const [checkpoints, checkpointMap, changes, merges] = await Promise.all([
 				branchRef.child('checkpoints').once('value'),
 				branchRef.child('checkpointMap').once('value'),
-				branchRef
-					.child('changes')
-					.orderByKey()
-					.once('value'),
-				branchRef
-					.child('merges')
-					.orderByKey()
-					.once('value'),
+				branchRef.child('changes').orderByKey().once('value'),
+				branchRef.child('merges').orderByKey().once('value'),
 			]);
 			const allKeyables = { ...changes.val(), ...merges.val() };
 			const keyablesLength = Object.keys(allKeyables).length;
@@ -119,13 +113,11 @@ const backfillCheckpointsForBranch = async (pubId, branchId) =>
 			}
 			const existingCheckpoints = checkpoints.val() || {};
 			const existingCheckpointMap = checkpointMap.val() || {};
-			const {
-				checkpoints: newCheckpoints,
-				checkpointMap: newCheckpointMap,
-			} = createCheckpointsFromKeyables(
-				allKeyables,
-				overwriteExisting ? [] : Object.keys(existingCheckpoints),
-			);
+			const { checkpoints: newCheckpoints, checkpointMap: newCheckpointMap } =
+				createCheckpointsFromKeyables(
+					allKeyables,
+					overwriteExisting ? [] : Object.keys(existingCheckpoints),
+				);
 			const hasCreatedNewCheckpoints = Object.keys(newCheckpoints).length > 0;
 			if (hasCreatedNewCheckpoints) {
 				await Promise.all([

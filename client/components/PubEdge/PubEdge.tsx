@@ -34,6 +34,13 @@ const PubEdge = (props: PubEdgeProps) => {
 	);
 
 	const detailsElementId = `edge-details-${pubEdge.id}`;
+	const detailsElement = description && (
+		<details open={open} id={detailsElementId}>
+			<summary>Description</summary>
+			<hr />
+			<p>{description}</p>
+		</details>
+	);
 
 	const handleToggleDescriptionClick = useCallback(
 		(e: React.MouseEvent | React.KeyboardEvent) => {
@@ -99,13 +106,7 @@ const PubEdge = (props: PubEdgeProps) => {
 				publishedAt && <>Published on {publishedAt}</>,
 				url && <span className="location">{getHostnameForUrl(url)}</span>,
 			]}
-			detailsElement={
-				<details open={open} id={detailsElementId}>
-					<summary>Description</summary>
-					<hr />
-					<p>{description}</p>
-				</details>
-			}
+			detailsElement={detailsElement}
 		/>,
 		{ className: classNames('pub-edge-component', actsLikeLink && 'acts-like-link') },
 	);

@@ -46,8 +46,10 @@ export const useFileManager = () => {
 	const deleteFileById = (fileId) =>
 		setFiles((currentFiles) => labelFiles(currentFiles.filter((file) => file.id !== fileId)));
 
-	const onProgress = (fileId) => ({ loaded, total }) =>
-		updateFileById(fileId, { state: 'uploading', loaded, total });
+	const onProgress =
+		(fileId) =>
+		({ loaded, total }) =>
+			updateFileById(fileId, { state: 'uploading', loaded, total });
 
 	const onComplete = (fileId) => (_, __, ___, assetKey) =>
 		updateFileById(fileId, { state: 'complete', assetKey });

@@ -3,28 +3,29 @@ import Promise from 'bluebird';
 import { Pub, Community } from 'server/models';
 import { Op } from 'sequelize';
 import fetch from 'node-fetch';
+import { communityUrl } from 'utils/canonicalUrls';
 import { promptOkay } from './utils/prompt';
-
 /** Usage: npm run tools pubCrawl -- --subdomain subdomain */
 const {
 	argv: { subdomain },
 } = require('yargs');
 
-console.log(subdomain);
+console.log(`Crawling ${subdomain}`);
 
 const crawl = async (pub) => {
-	const url = `https://dx.doi.org/${pub.doi}`;
+	const doiUrl = `https://dx.doi.org/${pub.doi}`;
 	try {
-		const response = await fetch(url);
+		const response = await fetch(doiUrl);
 		if (response.status === 404) {
 			console.log(
-				`DOI did not resolve: ${pub.title} • https://${pub.community.domain ||
-					pub.community.subdomain}/pub/${pub.slug}`,
+				`DOI ${pub.doi} did not resolve to: ${pub.title} • ${communityUrl(
+					pub.community,
+				)}/pub/${pub.slug}`,
 			);
 		}
 		return Promise.resolve(response);
 	} catch (err) {
-		return Promise.resolve(`FAILED: ${url} (${err.message})`);
+		return Promise.resolve(`FAILED: ${doiUrl} (${err.message})`);
 	}
 };
 

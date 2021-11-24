@@ -49,9 +49,11 @@ const getWeeksAgoBoundary = (weeksAgo: number, today: Date): Boundary => {
 };
 
 const getMonthsAgoBoundary = (monthsAgo: number, today: Date): Boundary => {
-	const lastDayOfThisMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-	const lastDayOfMonthsAgo = new Date(lastDayOfThisMonth);
-	lastDayOfMonthsAgo.setMonth(lastDayOfMonthsAgo.getMonth() - monthsAgo);
+	const firstDayOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+	const firstDayOfMonthsAgo = new Date(firstDayOfNextMonth);
+	firstDayOfMonthsAgo.setMonth(firstDayOfMonthsAgo.getMonth() - monthsAgo);
+	const lastDayOfMonthsAgo = new Date(firstDayOfMonthsAgo);
+	lastDayOfMonthsAgo.setDate(lastDayOfMonthsAgo.getDate() - 1);
 	const label = dateFormat(lastDayOfMonthsAgo, 'mmmm yyyy');
 	return {
 		definition: getMidnightLocalTimestamp(lastDayOfMonthsAgo),

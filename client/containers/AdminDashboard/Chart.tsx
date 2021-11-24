@@ -7,7 +7,7 @@ const propTypes = {
 	data: PropTypes.object.isRequired,
 };
 
-const Chart = function(props) {
+const Chart = function (props) {
 	return (
 		<div>
 			<h2>{props.title}</h2>

@@ -1,8 +1,9 @@
 import { resolve } from 'path';
 import * as Sentry from '@sentry/node';
+import { ForbiddenSlugStatus } from 'types';
 
 export enum PubPubApplicationError {
-	InvalidFields = 'InvalidFields',
+	ForbiddenSlug = 'forbidden-slug',
 }
 
 class PubPubBaseError extends Error {
@@ -15,12 +16,12 @@ class PubPubBaseError extends Error {
 }
 
 export const PubPubError = {
-	InvalidFieldsError: class extends PubPubBaseError {
-		readonly fields: { [key: string]: any };
+	ForbiddenSlugError: class extends PubPubBaseError {
+		readonly slugStatus: ForbiddenSlugStatus;
 
-		constructor(...fields: string[]) {
-			super(PubPubApplicationError.InvalidFields, 'Invalid fields');
-			this.fields = fields.reduce((acc, str) => ({ ...acc, [str]: true }), {});
+		constructor(slugStatus: ForbiddenSlugStatus) {
+			super(PubPubApplicationError.ForbiddenSlug, 'Forbidden slug');
+			this.slugStatus = slugStatus;
 		}
 	},
 };
@@ -90,8 +91,8 @@ export const handleErrors = (req, res, next) => {
 };
 
 export const errorMiddleware = (err, _, res, next) => {
-	if (err instanceof PubPubError.InvalidFieldsError) {
-		res.status(400).json({ type: err.type, fields: err.fields });
+	if (err instanceof PubPubError.ForbiddenSlugError) {
+		res.status(400).json({ type: err.type, slugStatus: err.slugStatus });
 	} else if (err instanceof HTTPStatusError) {
 		if (!res.headersSent) {
 			res.status(err.status).send(err.message);

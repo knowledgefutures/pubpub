@@ -4,19 +4,21 @@ import {
 	Collection,
 	CollectionPub,
 	Member,
+	ThreadComment,
+	Page,
 	Pub,
 	ReviewNew,
 	Discussion,
 	Release,
 	PubEdge,
 	PubAttribution,
-	ThreadComment,
 } from 'server/models';
 import {
 	createCollectionActivityItem,
 	createCollectionPubActivityItem,
 	createCommunityCreatedActivityItem,
 	createMemberCreatedActivityItem,
+	createPageActivityItem,
 	createPubActivityItem,
 	createPubEdgeActivityItem,
 	createPubReleasedActivityItem,
@@ -31,7 +33,7 @@ type MembershipScope = { communityId: string } | { collectionId: string } | { pu
 
 type Context = {
 	community: types.Community;
-	defaultActorId: string;
+	defaultActorId: null | string;
 };
 
 const deleteExistingItemsForCommunity = async (ctx: Context) => {
@@ -52,11 +54,20 @@ const backfillMembers = async (ctx: Context, scope: MembershipScope) => {
 	});
 };
 
+const backfillPages = async (ctx: Context) => {
+	const pages = await Page.findAll({ where: { communityId: ctx.community.id } });
+	await forEach(pages, async (page) => {
+		const item = await createPageActivityItem('page-created', ctx.defaultActorId, page.id);
+		await setItemTimestamp(item, page.createdAt);
+	});
+};
+
 const backfillCommunity = async (ctx: Context) => {
 	const { defaultActorId, community } = ctx;
 	const item = await createCommunityCreatedActivityItem(defaultActorId, community.id);
 	await setItemTimestamp(item, community.createdAt);
 	await backfillMembers(ctx, { communityId: ctx.community.id });
+	await backfillPages(ctx);
 };
 
 const backfillCollectionPubs = async (ctx: Context, collection: types.Collection) => {
@@ -142,14 +153,17 @@ const backfillPubs = async (ctx: Context) => {
 	await forEach(pubs, (pub) => backfillPub(ctx, pub), 10);
 };
 
-export const backfillItemsForCommunity = async (community: types.Community) => {
+export const backfillItemsForCommunity = async (
+	community: types.Community,
+	deleteExistingItems: boolean = false,
+) => {
 	const ctx: Context = {
 		community,
-		// We won't always know who the actor is for the items the backfill creates, but we want
-		// to slip this `null` past the assertions that actorId will be given in the future.
-		defaultActorId: (null as unknown) as string,
+		defaultActorId: null,
 	};
-	await deleteExistingItemsForCommunity(ctx);
+	if (deleteExistingItems) {
+		await deleteExistingItemsForCommunity(ctx);
+	}
 	await backfillCommunity(ctx);
 	await backfillCollections(ctx);
 	await backfillPubs(ctx);

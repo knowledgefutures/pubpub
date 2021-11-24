@@ -1,5 +1,6 @@
 import { Node, Schema } from 'prosemirror-model';
 import { Plugin, EditorState, Transaction } from 'prosemirror-state';
+import firebase from 'firebase';
 
 import { NoteManager } from 'client/utils/notes';
 import SuggestionManager from 'client/utils/suggestions/suggestionManager';

@@ -287,8 +287,10 @@ function AssignDoi(props: Props) {
 					payload: preview,
 				});
 			} catch (err) {
-				dispatch({ type: AssignDoiActionType.Error, payload: err.message });
-				onError(err);
+				if (err instanceof Error) {
+					dispatch({ type: AssignDoiActionType.Error, payload: err.message });
+					onError(err);
+				}
 			}
 		},
 		[requestBody, onPreview, onError],
@@ -310,8 +312,10 @@ function AssignDoi(props: Props) {
 
 			onDeposit(response.dois[target]);
 		} catch (err) {
-			dispatch({ type: AssignDoiActionType.Error, payload: err.message });
-			onError(err);
+			if (err instanceof Error) {
+				dispatch({ type: AssignDoiActionType.Error, payload: err.message });
+				onError(err);
+			}
 		}
 	};
 

@@ -13,7 +13,7 @@ const defaultProps = {
 	children: null,
 };
 
-const GridWrapper = function(props) {
+const GridWrapper = function (props) {
 	return (
 		<div className={`container ${props.containerClassName}`}>
 			<div className="row">

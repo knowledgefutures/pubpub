@@ -6,6 +6,7 @@ import { usePendingChanges } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 
 type Props = {
+	isForbidden: boolean;
 	communityId: string;
 	pageData: {
 		id?: string;
@@ -15,7 +16,7 @@ type Props = {
 
 const PageDelete = (props: Props) => {
 	const { pendingPromise } = usePendingChanges();
-	const { communityId, pageData } = props;
+	const { communityId, pageData, isForbidden } = props;
 	const [deleteString, setDeleteString] = useState('');
 	const [isDeleting, setIsDeleting] = useState(false);
 
@@ -31,7 +32,7 @@ const PageDelete = (props: Props) => {
 			}),
 		)
 			.then(() => {
-				window.location.href = '/dashboard';
+				window.location.href = '/dash';
 			})
 			.catch((err) => {
 				console.error(err);
@@ -39,7 +40,15 @@ const PageDelete = (props: Props) => {
 			});
 	}, [communityId, pageData.id, pendingPromise]);
 
-	return (
+	return isForbidden ? (
+		<div className="bp3-callout bp3-intent-danger">
+			<h5>Delete Page from Community</h5>
+			<p>
+				<b>{pageData.title}</b> cannot be deleted because it is the home page for this
+				Community.
+			</p>
+		</div>
+	) : (
 		<div className="bp3-callout bp3-intent-danger">
 			<h5>Delete Page from Community</h5>
 			<p>Deleting a Page is permanent.</p>

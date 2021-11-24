@@ -21,9 +21,7 @@ export type EditorChangeObjectWithNode = DefinitelyHas<
 	'selectedNode' | 'updateNode' | 'changeNode'
 >;
 
-export type GetBoundsFn = (
-	editorChangeObject: EditorChangeObject,
-) => {
+export type GetBoundsFn = (editorChangeObject: EditorChangeObject) => {
 	top: number;
 	bottom: number;
 	left: number;

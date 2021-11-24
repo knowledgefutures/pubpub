@@ -1,5 +1,3 @@
-import { UserSubscription } from 'server/models';
-
 export type UserSubscriptionTarget = { pubId: string } | { threadId: string };
 
 export type UserSubscriptionStatus =

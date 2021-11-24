@@ -38,6 +38,7 @@ export default {
 			altText: { default: '' },
 			hideLabel: { default: false },
 			fullResolution: { default: false },
+			href: { default: null },
 		},
 		reactiveAttrs: {
 			count: counter({ useNodeLabels: true }),
@@ -56,19 +57,29 @@ export default {
 						caption: node.getAttribute('data-caption') || '',
 						size: Number(node.getAttribute('data-size')) || 50,
 						align: node.getAttribute('data-align') || 'center',
-						altText: node.firstChild?.getAttribute('alt') || '',
+						altText: node.getAttribute('data-alt-text') || '',
+						href: node.getAttribute('data-href') || null,
 					};
 				},
 			},
 		],
 		toDOM: (node, { isReact } = { isReact: false }) => {
-			const { url, align, id, altText, caption, fullResolution, size } = node.attrs;
+			const { url, align, id, altText, caption, fullResolution, size, href } = node.attrs;
 
 			const width = align === 'breakout' ? 1920 : 800;
 			const isResizeable = isResizeableFormat(url) && !fullResolution;
 			const maybeResizedSrc = isResizeable ? getResizedUrl(url, 'inside', width) : url;
 			const srcSet = isResizeable ? getSrcSet(url, 'inside', width) : '';
 			const figcaptionId = `${id}-figure-caption`;
+			const imgTag = [
+				'img',
+				{
+					srcSet,
+					src: maybeResizedSrc,
+					alt: altText || '',
+					...getFigcaptionRefrenceAttrs(altText, caption, figcaptionId),
+				},
+			];
 
 			return [
 				'figure',
@@ -79,16 +90,20 @@ export default {
 					'data-align': align,
 					'data-url': url,
 					'data-caption': caption,
+					'data-href': href,
+					'data-alt-text': altText,
 				},
-				[
-					'img',
-					{
-						srcSet,
-						src: maybeResizedSrc,
-						alt: altText || '',
-						...getFigcaptionRefrenceAttrs(altText, caption, figcaptionId),
-					},
-				],
+				href
+					? [
+							'a',
+							{
+								href,
+								target: '_blank',
+							},
+
+							imgTag,
+					  ]
+					: imgTag,
 				[
 					'figcaption',
 					{ id: figcaptionId },
@@ -103,7 +118,7 @@ export default {
 						renderHtmlChildren(isReact, caption, 'div'),
 					]),
 				],
-			] as DOMOutputSpec;
+			] as unknown as DOMOutputSpec;
 		},
 		inline: false,
 		group: 'block',

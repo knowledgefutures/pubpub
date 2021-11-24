@@ -21,22 +21,15 @@ import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
 
 require('./pubDocument.scss');
 
-type OwnProps = {
+type Props = {
 	pubData: any;
 	collabData: any;
 	historyData: any;
-	firebaseDraftRef?: any;
 	updateLocalData: (...args: any[]) => any;
 };
 
-const defaultProps = {
-	firebaseDraftRef: undefined,
-};
-
-type Props = OwnProps & typeof defaultProps;
-
 const PubDocument = (props: Props) => {
-	const { pubData, historyData, collabData, firebaseDraftRef, updateLocalData } = props;
+	const { pubData, historyData, collabData, updateLocalData } = props;
 	const { isViewingHistory } = historyData;
 	const { editorChangeObject } = collabData;
 	const { communityData, locationData, scopeData } = usePageContext();
@@ -49,19 +42,21 @@ const PubDocument = (props: Props) => {
 	const updateHistoryData = (next) => updateLocalData('history', next);
 
 	useEffect(() => {
-		/* TODO: Clean up the hanlding of permalink generation and scrolling */
 		const fromNumber = Number(locationData.query.from);
 		const toNumber = Number(locationData.query.to);
-		const permElement = document.getElementsByClassName('permanent')[0];
-		if (editorChangeObject.view && firebaseDraftRef && fromNumber && toNumber && !permElement) {
+		const existingPermElement = document.getElementsByClassName('permanent')[0];
+		if (editorChangeObject.view && fromNumber && toNumber && !existingPermElement) {
 			setTimeout(() => {
 				setLocalHighlight(editorChangeObject.view, fromNumber, toNumber, 'permanent');
 				setTimeout(() => {
-					document.getElementsByClassName('permanent')[0].scrollIntoView(false);
+					const newlyCreatedPermElement = document.getElementsByClassName('permanent')[0];
+					if (newlyCreatedPermElement) {
+						newlyCreatedPermElement.scrollIntoView({ block: 'center' });
+					}
 				}, 0);
 			}, 0);
 		}
-	}, [editorChangeObject.view, firebaseDraftRef, locationData]);
+	}, [editorChangeObject.view, locationData]);
 
 	// We use the useEffect hook to wait until after the render to show or hide discussions, since
 	// they mount into portals that we rely on Prosemirror to create.
@@ -136,5 +131,5 @@ const PubDocument = (props: Props) => {
 		</div>
 	);
 };
-PubDocument.defaultProps = defaultProps;
+
 export default PubDocument;

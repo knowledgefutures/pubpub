@@ -6,7 +6,7 @@ const propTypes = {
 	attributions: PropTypes.array.isRequired,
 };
 
-const ContributorsList = function(props) {
+const ContributorsList = function (props) {
 	const { attributions } = props;
 	return (
 		<div className="contributors-list-component">

@@ -29,6 +29,10 @@ $border: 1px solid #ddd;
     > .message {
         grid-area: message;
 
+        > :first-child {
+            text-transform: capitalize;
+        }
+
         strong {
             color: #999;
             font-weight: 500;

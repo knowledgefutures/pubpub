@@ -35,6 +35,20 @@ export const licenses = [
 		link: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
 	},
 	{
+		slug: 'cc-by-sa',
+		full: 'Creative Commons Attribution-ShareAlike 4.0 International License',
+		short: 'CC-BY-SA',
+		version: '4.0',
+		link: 'https://creativecommons.org/licenses/by-sa/4.0/',
+	},
+	{
+		slug: 'cc-by-nc-sa',
+		full: 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License',
+		short: 'CC-BY-NC-SA',
+		version: '4.0',
+		link: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+	},
+	{
 		slug: 'copyright',
 		full: 'Copyright © All rights reserved.',
 		short: 'Copyright',

@@ -39,24 +39,25 @@ function getEdgeCrossrefRelationship(pubEdge, isInboundEdge = false) {
 	};
 }
 
-export default ({ globals, community }) => (pub) => {
-	const { timestamp, dois, contentVersion, reviewType, reviewRecommendation } = globals;
-	const { title, inboundEdges, outboundEdges } = pub;
-	const publicationDate = getPubPublishedDate(pub);
-	const relatedItems = outboundEdges
-		.map((pubEdge) => getEdgeCrossrefRelationship(pubEdge))
-		.concat(inboundEdges.map((pubEdge) => getEdgeCrossrefRelationship(pubEdge, true)));
+export default ({ globals, community }) =>
+	(pub) => {
+		const { timestamp, dois, contentVersion, reviewType, reviewRecommendation } = globals;
+		const { title, inboundEdges, outboundEdges } = pub;
+		const publicationDate = getPubPublishedDate(pub);
+		const relatedItems = outboundEdges
+			.map((pubEdge) => getEdgeCrossrefRelationship(pubEdge))
+			.concat(inboundEdges.map((pubEdge) => getEdgeCrossrefRelationship(pubEdge, true)));
 
-	return {
-		title,
-		timestamp,
-		publicationDate,
-		attributions: transformAttributions(pub.attributions),
-		resourceUrl: pubUrl(community, pub),
-		doi: dois.pub,
-		relatedItems,
-		contentVersion,
-		reviewType,
-		reviewRecommendation,
+		return {
+			title,
+			timestamp,
+			publicationDate,
+			attributions: transformAttributions(pub.attributions),
+			resourceUrl: pubUrl(community, pub),
+			doi: dois.pub,
+			relatedItems,
+			contentVersion,
+			reviewType,
+			reviewRecommendation,
+		};
 	};
-};

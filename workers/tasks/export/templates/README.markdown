@@ -1,6 +1,3 @@
-## This is a copy of the pandoc templates directory on 5/15/2020, v2.9.2.1
-### If we update pandoc, we should update this file.
-
 The [pandoc-templates] repository contains default templates for [pandoc].
 
 If you use custom templates, we recommend forking this

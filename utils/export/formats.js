@@ -8,6 +8,7 @@ const exportFormatTypes = {
 	plain: { pandocTarget: 'plain', extension: 'txt', title: 'Plain Text' },
 	jats: { pandocTarget: 'jats_archiving', extension: 'xml', title: 'JATS XML' },
 	tex: { pandocTarget: 'latex', extension: 'tex', title: 'LaTeX' },
+	json: { pandocTarget: 'json', extension: 'json', title: 'JSON' },
 };
 
 export const getExportFormats = () => Object.keys(exportFormatTypes);

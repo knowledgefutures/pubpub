@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax */
-import { Op } from 'sequelize';
 import { ForbiddenError } from 'server/utils/errors';
 import {
 	Discussion,
@@ -12,7 +11,8 @@ import {
 	includeUserModel,
 } from 'server/models';
 import { getReadableDateInYear } from 'utils/dates';
-import { createOriginalDiscussionAnchor } from 'server/discussionAnchor/queries';
+import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
+import { VisibilityAccess } from 'types';
 
 const findDiscussionWithUser = (id) =>
 	Discussion.findOne({
@@ -114,7 +114,7 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 
 	if (initAnchorData) {
 		const { from, to, exact, prefix, suffix } = initAnchorData;
-		await createOriginalDiscussionAnchor({
+		await createDiscussionAnchor({
 			discussionId: newDiscussion.id,
 			historyKey,
 			// If someday we wish to support Node selections we can pass a serialized Selection
@@ -131,13 +131,8 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 
 export const updateDiscussion = async (values, permissions) => {
 	const { discussionId, pubId } = values;
-	const {
-		canTitle,
-		canApplyPublicLabels,
-		canApplyManagedLabels,
-		canClose,
-		canReopen,
-	} = permissions;
+	const { canTitle, canApplyPublicLabels, canApplyManagedLabels, canClose, canReopen } =
+		permissions;
 	const updatedValues: { [k: string]: any } = {};
 
 	const [discussion, pub] = await Promise.all([
@@ -193,8 +188,12 @@ export const updateDiscussion = async (values, permissions) => {
 	return discussion;
 };
 
-export const updateVisibilityForDiscussions = async (discussionsWhereQuery, visibilityUpdate) => {
-	const discussions = await Discussion.findAll({ where: discussionsWhereQuery });
+export const updateVisibilityForDiscussions = async (
+	pubId: string,
+	discussionIds: string[],
+	access: VisibilityAccess,
+) => {
+	const discussions = await Discussion.findAll({ where: { pubId, id: discussionIds } });
 	const visibilityIds = discussions.map((d) => d.visibilityId);
-	await Visibility.update(visibilityUpdate, { where: { id: { [Op.in]: visibilityIds } } });
+	await Visibility.update({ access }, { where: { id: visibilityIds } });
 };

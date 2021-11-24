@@ -32,15 +32,18 @@ const LabelList = (props: Props) => {
 				})
 				.map((labelId) => {
 					const label = labelsById[labelId];
-					return (
-						<span
-							key={labelId}
-							className="bp3-tag"
-							style={{ backgroundColor: label.color }}
-						>
-							{label.title}
-						</span>
-					);
+					if (label) {
+						return (
+							<span
+								key={labelId}
+								className="bp3-tag"
+								style={{ backgroundColor: label.color }}
+							>
+								{label.title}
+							</span>
+						);
+					}
+					return null;
 				})}
 		</div>
 	);

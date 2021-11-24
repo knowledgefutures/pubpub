@@ -44,9 +44,8 @@ app.get(
 app.post(
 	'/api/userNotifications',
 	wrap(async (req, res) => {
-		const { userId, userNotificationIds, isRead, manuallySetIsRead } = unwrapMarkReadRequest(
-			req,
-		);
+		const { userId, userNotificationIds, isRead, manuallySetIsRead } =
+			unwrapMarkReadRequest(req);
 		const markedCount = await markUserNotificationsRead({
 			userNotificationIds,
 			userId,

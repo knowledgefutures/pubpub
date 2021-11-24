@@ -23,14 +23,14 @@ export const extractRefBlocks = (pandocAst) => {
 	return { pandocAst, refBlocks: null };
 };
 
-const extractUsingPandocCiteproc = (bibliographyTmpPath) => {
-	const proc = spawnSync('pandoc-citeproc', ['-j', bibliographyTmpPath]);
+const extractCitationsUsingPandoc = (bibliographyTmpPath) => {
+	const proc = spawnSync('pandoc', [bibliographyTmpPath, '-t', 'csljson']);
 	const output = proc.stdout.toString();
 	const cslJson = JSON.parse(output);
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'fromEntries' does not exist on type 'Obj... Remove this comment to see the full error message
 	return Object.fromEntries(
 		cslJson.map((entry) => {
-			const structuredValue = Cite.get.bibtex.text([entry]);
+			const structuredValue = new Cite(entry).format('bibtex');
 			return [entry.id, { structuredValue }];
 		}),
 	);
@@ -44,11 +44,11 @@ const getBibPathFromXslTransform = async (documentTmpPath) => {
 
 export const extractBibliographyItems = async ({ bibliography, document, extractBibFromJats }) => {
 	if (bibliography) {
-		return extractUsingPandocCiteproc(bibliography.tmpPath);
+		return extractCitationsUsingPandoc(bibliography.tmpPath);
 	}
 	if (document && extensionFor(document.tmpPath) === 'xml' && extractBibFromJats) {
 		const generatedBibPath = await getBibPathFromXslTransform(document.tmpPath);
-		return extractUsingPandocCiteproc(generatedBibPath);
+		return extractCitationsUsingPandoc(generatedBibPath);
 	}
 	return {};
 };

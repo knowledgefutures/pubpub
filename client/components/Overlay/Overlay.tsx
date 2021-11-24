@@ -16,7 +16,7 @@ const defaultProps = {
 	isOpen: false,
 };
 
-const Overlay = function(props) {
+const Overlay = function (props) {
 	return (
 		<BlueprintOverlay
 			className="bp3-overlay-scroll-container"

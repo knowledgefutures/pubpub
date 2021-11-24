@@ -1,7 +1,7 @@
 export type MemberPermission = 'view' | 'edit' | 'manage' | 'admin';
 
 export type Member = {
-	id?: string;
+	id: string;
 	permissions: MemberPermission;
 	isOwner?: boolean;
 	userId: string;

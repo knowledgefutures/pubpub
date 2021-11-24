@@ -25,7 +25,7 @@ export type FormattingBarButtonProps = {
 	label: string;
 	onClick: (formattingItem: FormattingItem) => unknown;
 	outerRef: React.RefObject<any>;
-	popoverContent?: JSX.Element;
+	popoverContent?: React.ReactElement;
 };
 
 const getOuterStyle = (accentColor, isOpen, isDetached) => {

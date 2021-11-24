@@ -1,4 +1,4 @@
-type Note = {
+export type Note = {
 	id: string;
 	structuredValue: string;
 	unstructuredValue: string;

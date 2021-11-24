@@ -1,8 +1,8 @@
 import unidecode from 'unidecode';
-
 import { metaValueToString, metaValueToJsonSerializable } from '@pubpub/prosemirror-pandoc';
 
 import { getSearchUsers } from 'server/search/queries';
+import { isValidDate } from 'utils/dates';
 
 const getAuthorsArray = (author) => {
 	if (author.type === 'MetaList') {
@@ -14,8 +14,13 @@ const getAuthorsArray = (author) => {
 	return null;
 };
 
-const getDateStringFromMetaValue = (metaDateString) =>
-	new Date(metaValueToString(metaDateString)).toUTCString();
+const getDateStringFromMetaValue = (metaDateString) => {
+	const date = new Date(metaValueToString(metaDateString));
+	if (isValidDate(date)) {
+		return date.toUTCString();
+	}
+	return null;
+};
 
 const getAttributions = async (author) => {
 	if (author) {
@@ -32,7 +37,7 @@ const getAttributions = async (author) => {
 		);
 		return attributions;
 	}
-	return [];
+	return null;
 };
 
 const stripFalseyValues = (object) =>

@@ -163,16 +163,22 @@ const filterForMutuallyApprovedEdges = (pubEdges) => {
 	}
 };
 
-export default (context, doiTarget, dateForTimestamp) => {
+export default (
+	context,
+	doiTarget,
+	timestamp = new Date().getTime(),
+	includeRelationships = true,
+) => {
 	checkDepositAssertions(context, doiTarget);
 
-	const { community, pub, contentVersion, reviewType, reviewRecommendation } = context;
-	const timestamp = (dateForTimestamp || new Date()).getTime();
+	const { community, contentVersion, reviewType, reviewRecommendation } = context;
 	const doiBatchId = `${timestamp}_${community.id.slice(0, 8)}`;
 
 	let pubEdge;
+	let pub = context.pub;
 
 	if (pub) {
+		pub = { ...pub };
 		// Remove unapproved PubEdges for RelationTypes that require bidirectional
 		// approval.
 		filterForMutuallyApprovedEdges(pub.inboundEdges);
@@ -185,11 +191,17 @@ export default (context, doiTarget, dateForTimestamp) => {
 			RelationType.Review,
 			RelationType.Rejoinder,
 		]);
+
+		if (!includeRelationships) {
+			pub.inboundEdges = [];
+			pub.outboundEdges = [];
+		}
 	}
 
-	const contextWithPubEdge = { ...context, pubEdge };
+	const ctx = { ...context, pub };
+	const contextWithPubEdge = { ...ctx, pubEdge };
 	const dois = getDois(
-		pubEdge && pubEdge.relationType === RelationType.Supplement ? contextWithPubEdge : context,
+		pubEdge && pubEdge.relationType === RelationType.Supplement ? contextWithPubEdge : ctx,
 		doiTarget,
 	);
 	const deposit = removeEmptyKeys(

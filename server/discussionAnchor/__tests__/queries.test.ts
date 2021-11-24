@@ -6,10 +6,7 @@ import { Fragment, Node, Slice } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { ReplaceStep } from 'prosemirror-transform';
 
-import {
-	createOriginalDiscussionAnchor,
-	createUpdatedDiscussionAnchorForNewSteps,
-} from '../queries';
+import { createDiscussionAnchor, createUpdatedDiscussionAnchorForNewSteps } from '../queries';
 
 const models = modelize`
 	Community {
@@ -53,7 +50,7 @@ describe('createUpdatedDiscussionAnchorForNewSteps', () => {
 		const {
 			discussion: { id: discussionId },
 		} = models;
-		const firstAnchor = await createOriginalDiscussionAnchor({
+		const firstAnchor = await createDiscussionAnchor({
 			discussionId,
 			historyKey: 1,
 			selectionJson: initialSelection as any,

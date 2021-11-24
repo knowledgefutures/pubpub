@@ -14,7 +14,7 @@ export type Collection = {
 	viewHash?: string;
 	editHash?: string;
 	metadata?: { [k: string]: any };
-	kind?: 'tag' | 'issue' | 'book' | 'conference';
+	kind: 'tag' | 'issue' | 'book' | 'conference';
 	doi?: string;
 	readNextPreviewSize: 'none' | 'minimal' | 'medium' | 'choose-best';
 	pageId?: null | string;

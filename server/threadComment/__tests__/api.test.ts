@@ -1,5 +1,5 @@
 /* global it, expect, beforeAll, afterAll  */
-import { setup, teardown, login, modelize } from 'stubstub';
+import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 
 const models = modelize`
     Community community {
@@ -80,6 +80,11 @@ const createThreadComment = ({
 	discussion = null,
 	threadComment = null,
 	text = 'Some text',
+}: {
+	thread: any;
+	discussion?: any;
+	threadComment?: any;
+	text?: string;
 }) => {
 	const { community, pub } = models;
 	return {
@@ -88,7 +93,6 @@ const createThreadComment = ({
 		communityId: community.id,
 		text,
 		content: {},
-		// @ts-expect-error ts-migrate(2698) FIXME: Spread types may only be created from object types... Remove this comment to see the full error message
 		...(threadComment && { threadCommentId: threadComment.id }),
 		...(discussion && { parentId: discussion.id }),
 	};
@@ -109,18 +113,27 @@ it('checks that the provided thread and parent model are related', async () => {
 });
 
 it('allows guests to add to a Discussion with visibility=public', async () => {
-	const { guest, publicDiscussion, publicThread } = models;
+	const { guest, publicDiscussion, publicThread, pub } = models;
 	const agent = await login(guest);
-	const { body: threadComment } = await agent
-		.post('/api/threadComment')
-		.send(
-			createThreadComment({
-				discussion: publicDiscussion,
-				thread: publicThread,
-				text: 'Ah, nevertheless',
-			}),
-		)
-		.expect(201);
+	const { body: threadComment } = await expectCreatedActivityItem(
+		agent
+			.post('/api/threadComment')
+			.send(
+				createThreadComment({
+					discussion: publicDiscussion,
+					thread: publicThread,
+					text: 'Ah, nevertheless',
+				}),
+			)
+			.expect(201),
+	).toMatchObject((response) => ({
+		kind: 'pub-discussion-comment-added',
+		pubId: pub.id,
+		payload: {
+			threadId: publicThread.id,
+			threadComment: { id: response.body.id, text: 'Ah, nevertheless' },
+		},
+	}));
 	expect(threadComment.text).toEqual('Ah, nevertheless');
 	expect(threadComment.threadId).toEqual(publicThread.id);
 });

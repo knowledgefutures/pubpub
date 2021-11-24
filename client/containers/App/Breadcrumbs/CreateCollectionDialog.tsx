@@ -8,6 +8,8 @@ import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { apiFetch } from 'client/utils/apiFetch';
+import { getSlugError } from 'client/utils/slug';
+import { SlugStatus } from 'types';
 
 require('./createCollectionDialog.scss');
 
@@ -40,6 +42,7 @@ const CreateCollectionDialog = (props: Props) => {
 	const { communityData } = usePageContext();
 	const [isCreating, setIsCreating] = useState(false);
 	const [creatingError, setCreatingError] = useState(null);
+	const [slugStatusError, setSlugStatusError] = useState('');
 	const [title, setTitle] = useState('');
 	const kindRadio = useRadioState({ state: 'tag' });
 
@@ -59,7 +62,14 @@ const CreateCollectionDialog = (props: Props) => {
 			})
 			.catch((err) => {
 				setIsCreating(false);
-				setCreatingError(err);
+				const slugStatus: SlugStatus =
+					err?.type === 'forbidden-slug' ? err.slugStatus : 'available';
+				if (slugStatus !== 'available') {
+					const slugError = getSlugError(title, slugStatus);
+					setSlugStatusError(slugError);
+				} else {
+					setCreatingError(err);
+				}
 			});
 	};
 
@@ -125,6 +135,9 @@ const CreateCollectionDialog = (props: Props) => {
 						intent="warning"
 						title="Error creating Collection."
 					/>
+				)}
+				{slugStatusError && (
+					<Callout className="error-callout" intent="danger" title={slugStatusError} />
 				)}
 				<RadioGroup
 					{...kindRadio}

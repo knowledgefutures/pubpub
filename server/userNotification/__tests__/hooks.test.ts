@@ -134,14 +134,8 @@ describe('UserNotifications created when ActivityItems are created', () => {
 	});
 
 	it('creates the right notifications for a public Discussion ThreadComment', async () => {
-		const {
-			chattyUser,
-			inactiveSubscriptionUser,
-			rando,
-			pubSubscriber,
-			publicThread,
-			pub,
-		} = models;
+		const { chattyUser, inactiveSubscriptionUser, rando, pubSubscriber, publicThread, pub } =
+			models;
 		const threadComment = await createThreadComment(
 			{
 				text: 'Hello world',

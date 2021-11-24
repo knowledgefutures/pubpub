@@ -29,7 +29,7 @@ const defaultProps = {
 	className: '',
 };
 
-const Avatar = function(props) {
+const Avatar = function (props) {
 	const {
 		initials,
 		avatar,

@@ -4,15 +4,30 @@ import fs from 'fs';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
+import { DocJson } from 'types';
 import { renderStatic, editorSchema } from 'components/Editor';
 import { getLicenseBySlug } from 'utils/licenses';
 
-import SimpleNotesList from './SimpleNotesList';
+import { NotesData, PubMetadata } from './types';
 import { digestCitation } from './util';
+import SimpleNotesList from './SimpleNotesList';
 
 const nonExportableNodeTypes = ['discussion'];
-const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/';
+const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/';
 const bullet = ' • ';
+
+// This script is provided by the "cjk-fonts" Web Fonts project that we manage from here:
+// https://fonts.adobe.com/my_fonts#web_projects-section
+const loadCjkFontsScript = `
+(function(d) {
+  var config = {
+	kitId: 'seb8nix',
+	scriptTimeout: 3000,
+	async: true
+  },
+  h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+})(document);
+`;
 
 const createCss = () => {
 	const entrypoint = path.join(__dirname, 'styles', 'printDocument.scss');
@@ -122,15 +137,14 @@ const addHrefsToNotes = (nodes) => {
 const blankIframes = (nodes) =>
 	addAttrsToNodes(
 		{
-			url:
-				'data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%20frameborder%3D%220%22%20style%3D%22background-color%3A%23ccc%3Bborder%3A0%3Btext-align%3Acenter%3B%22%3EVisit%20the%20web%20version%20of%20this%20article%20to%20view%20interactive%20content.%3C%2Fbody%3E%3C%2Fhtml%3E',
+			url: 'data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%20frameborder%3D%220%22%20style%3D%22background-color%3A%23ccc%3Bborder%3A0%3Btext-align%3Acenter%3B%22%3EVisit%20the%20web%20version%20of%20this%20article%20to%20view%20interactive%20content.%3C%2Fbody%3E%3C%2Fhtml%3E',
 			height: '50',
 		},
 		['iframe'],
 		nodes,
 	);
 
-const renderSharedDetails = ({ updatedDateString, publishedDateString, doi, licenseSlug }) => {
+const renderDetails = ({ updatedDateString, publishedDateString, doi, licenseSlug }) => {
 	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
 	const license = getLicenseBySlug(licenseSlug);
 	return (
@@ -158,36 +172,7 @@ const renderSharedDetails = ({ updatedDateString, publishedDateString, doi, lice
 	);
 };
 
-const renderFrontMatterForPandoc = (
-	{
-		updatedDateString,
-		publishedDateString,
-		communityTitle,
-		primaryCollectionTitle,
-		doi,
-		licenseSlug,
-	},
-	targetPandoc,
-) => {
-	const pandocFormatsWithoutTemplate = ['docx', 'plain', 'odt'];
-	const communityAndCollectionString =
-		communityTitle + (primaryCollectionTitle ? bullet + primaryCollectionTitle : '');
-	return (
-		<>
-			{pandocFormatsWithoutTemplate.includes(targetPandoc) && (
-				<h3>{communityAndCollectionString}</h3>
-			)}
-			{renderSharedDetails({
-				updatedDateString,
-				publishedDateString,
-				doi,
-				licenseSlug,
-			})}
-		</>
-	);
-};
-
-const renderFrontMatterForHtml = ({
+const renderFrontMatter = ({
 	updatedDateString,
 	publishedDateString,
 	primaryCollectionTitle,
@@ -197,12 +182,14 @@ const renderFrontMatterForHtml = ({
 	accentColor,
 	attributions,
 	licenseSlug,
-}) => {
+	publisher,
+}: PubMetadata) => {
 	const affiliations = [
 		...new Set(attributions.map((attr) => attr.affiliation).filter((x) => x)),
 	];
+	// do not put community title if this is a book
 	const communityAndCollectionString =
-		communityTitle + (primaryCollectionTitle ? bullet + primaryCollectionTitle : '');
+		(publisher ? '' : communityTitle + bullet) + (primaryCollectionTitle || '');
 	return (
 		<section className="cover">
 			<h3 className="community-and-collection">{communityAndCollectionString}</h3>
@@ -243,13 +230,14 @@ const renderFrontMatterForHtml = ({
 					)}
 				</div>
 			)}
+			<h4>{publisher || ''}</h4>
 			<div className="details">
 				{publishedDateString && (
 					<div>
 						<strong>Published on: </strong> {publishedDateString}
 					</div>
 				)}
-				{renderSharedDetails({
+				{renderDetails({
 					updatedDateString,
 					publishedDateString,
 					doi,
@@ -260,27 +248,23 @@ const renderFrontMatterForHtml = ({
 	);
 };
 
-export const renderStaticHtml = async ({
-	pubDoc,
-	pubMetadata,
-	targetPandoc,
-	targetPaged,
-	notesData,
-}) => {
+type RenderStaticHtmlOptions = {
+	pubDoc: DocJson;
+	pubMetadata: PubMetadata;
+	notesData: NotesData;
+};
+
+export const renderStaticHtml = async (options: RenderStaticHtmlOptions) => {
+	const { pubDoc, pubMetadata, notesData } = options;
 	const { title, nodeLabels } = pubMetadata;
 	const { footnotes, citations, noteManager } = notesData;
-	const renderableNodes = [
-		filterNonExportableNodes,
-		!targetPandoc && addHrefsToNotes,
-		targetPaged && blankIframes,
-	]
+	const renderableNodes = [filterNonExportableNodes, addHrefsToNotes, blankIframes]
 		.filter((x): x is (nodes: any) => any => !!x)
 		.reduce((nodes, fn) => fn(nodes), pubDoc.content);
 
 	const docContent = renderStatic({
 		schema: editorSchema,
 		doc: { type: 'doc', content: renderableNodes },
-		context: { isForPandoc: targetPandoc },
 		noteManager,
 		nodeLabels,
 	});
@@ -290,23 +274,13 @@ export const renderStaticHtml = async ({
 			<head>
 				<title>{title}</title>
 				<meta charSet="utf-8" />
-				{!targetPandoc && (
-					// eslint-disable-next-line react/no-danger
-					<style type="text/css" dangerouslySetInnerHTML={{ __html: staticCss }} />
-				)}
+				{/* eslint-disable-next-line react/no-danger */}
+				<style type="text/css" dangerouslySetInnerHTML={{ __html: staticCss }} />
+				{/* eslint-disable-next-line react/no-danger */}
+				<script dangerouslySetInnerHTML={{ __html: loadCjkFontsScript }} />
 			</head>
 			<body>
-				{targetPandoc && (
-					<p>
-						<strong>Notice:</strong> This file is an auto-generated download and, as
-						such, might include minor display or rendering errors. For the version of
-						record, please visit the HTML version or download the PDF.
-						<hr />
-					</p>
-				)}
-				{targetPandoc
-					? renderFrontMatterForPandoc(pubMetadata, targetPandoc)
-					: renderFrontMatterForHtml(pubMetadata)}
+				{renderFrontMatter(pubMetadata)}
 				<div className="pub-body-component">
 					<div className="editor Prosemirror">
 						{docContent}

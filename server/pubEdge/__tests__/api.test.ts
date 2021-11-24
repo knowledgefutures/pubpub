@@ -1,5 +1,5 @@
 /* global it, expect, beforeAll */
-import { setup, login, modelize } from 'stubstub';
+import { setup, login, modelize, expectCreatedActivityItem } from 'stubstub';
 
 import { createPubEdge } from 'server/pubEdge/queries';
 import { ExternalPublication, PubEdge } from 'server/models';
@@ -72,15 +72,22 @@ it('does not let a manager create a PubEdge targeting their Pub', async () => {
 it('lets a manager create a PubEdge to another Pub', async () => {
 	const { sourcePubManager, sourcePub, targetPub } = models;
 	const agent = await login(sourcePubManager);
-	const { body: resultingEdge } = await agent
-		.post('/api/pubEdges')
-		.send({
-			pubId: sourcePub.id,
-			relationType: 'review',
-			pubIsParent: true,
-			targetPubId: targetPub.id,
-		})
-		.expect(201);
+	const { body: resultingEdge } = await expectCreatedActivityItem(
+		agent
+			.post('/api/pubEdges')
+			.send({
+				pubId: sourcePub.id,
+				relationType: 'review',
+				pubIsParent: true,
+				targetPubId: targetPub.id,
+			})
+			.expect(201),
+	).toMatchObject((response) => ({
+		kind: 'pub-edge-created',
+		actorId: sourcePubManager.id,
+		pubId: sourcePub.id,
+		payload: { pubEdgeId: response.body.id, target: { pub: { id: targetPub.id } } },
+	}));
 	expect(resultingEdge.pubId).toEqual(sourcePub.id);
 	expect(resultingEdge.targetPubId).toEqual(targetPub.id);
 	expect(resultingEdge.pubIsParent).toEqual(true);
@@ -196,15 +203,16 @@ it('lets a Pub manager destroy a PubEdge', async () => {
 		pubIsParent: true,
 	});
 	const anotherPubAgent = await login(anotherPubManager);
-	await anotherPubAgent
-		.delete('/api/pubEdges')
-		.send({ pubEdgeId: existingEdge.id })
-		.expect(403);
+	await anotherPubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge.id }).expect(403);
 	const sourcePubAgent = await login(sourcePubManager);
-	await sourcePubAgent
-		.delete('/api/pubEdges')
-		.send({ pubEdgeId: existingEdge.id })
-		.expect(200);
+	await expectCreatedActivityItem(
+		sourcePubAgent.delete('/api/pubEdges').send({ pubEdgeId: existingEdge.id }).expect(200),
+	).toMatchObject({
+		kind: 'pub-edge-removed',
+		actorId: sourcePubManager.id,
+		pubId: sourcePub.id,
+		payload: { pubEdgeId: existingEdge.id, target: { pub: { id: anotherPub.id } } },
+	});
 	const edgeNow = await PubEdge.findOne({ where: { id: existingEdge.id } });
 	expect(edgeNow).toBeNull();
 });

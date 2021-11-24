@@ -3,12 +3,12 @@ import { AnchorButton, Button } from '@blueprintjs/core';
 import { useUpdateEffect } from 'react-use';
 
 import { communityUrl } from 'utils/canonicalUrls';
-import { getDefaultLayout } from 'utils/pages';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { slugifyString } from 'utils/strings';
 import { LayoutPubsByBlock } from 'utils/layout';
 import { apiFetch } from 'client/utils/apiFetch';
+import { getSlugError } from 'client/utils/slug';
 
 import {
 	DashboardFrame,
@@ -18,7 +18,7 @@ import {
 	ClickToCopyButton,
 	LayoutEditor,
 } from 'components';
-import { Page, Pub } from 'types';
+import { Page, Pub, SlugStatus } from 'types';
 import { usePersistableState } from 'client/utils/usePersistableState';
 
 import PageDelete from './PageDelete';
@@ -28,8 +28,6 @@ require('./dashboardPage.scss');
 type Props = {
 	pageData: Page & { layoutPubsByBlock: LayoutPubsByBlock<Pub> };
 };
-
-const defaultLayout = getDefaultLayout();
 
 const DashboardPage = (props: Props) => {
 	const { updateCommunity, locationData, communityData } = usePageContext();
@@ -78,9 +76,10 @@ const DashboardPage = (props: Props) => {
 	} = pageData;
 	const isHome = !persistedPageData.slug;
 
-	const slugError = error?.fields?.slug
-		? 'This slug is not available because it is in use by another Collection or Page.'
-		: '';
+	const slugStatus: SlugStatus =
+		error?.type === 'forbidden-slug' ? error.slugStatus : 'available';
+
+	const slugError = getSlugError(slug, slugStatus);
 
 	useUpdateEffect(() => {
 		if (!hasChanges) {
@@ -212,7 +211,7 @@ const DashboardPage = (props: Props) => {
 			<SettingsSection title="Layout">
 				<LayoutEditor
 					onChange={(newLayout) => updatePageData({ layout: newLayout })}
-					initialLayout={layout || defaultLayout}
+					initialLayout={layout}
 					initialLayoutPubsByBlock={layoutPubsByBlock}
 					communityData={communityData}
 				/>
@@ -223,7 +222,11 @@ const DashboardPage = (props: Props) => {
 	const renderPageDelete = () => {
 		return (
 			<SettingsSection title="Delete">
-				<PageDelete pageData={pageData} communityId={communityData.id} />
+				<PageDelete
+					isForbidden={isHome}
+					pageData={pageData}
+					communityId={communityData.id}
+				/>
 			</SettingsSection>
 		);
 	};

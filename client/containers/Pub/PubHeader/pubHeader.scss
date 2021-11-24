@@ -71,6 +71,11 @@ $mobile-bottom-buttons-spacing: 10px;
         }
     }
 
+    > .container,
+    > .container > .row {
+        height: 100%;
+    }
+
     .row > .pub-header-column {
         position: relative;
         margin-top: $header-margin-top;

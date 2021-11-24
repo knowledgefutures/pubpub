@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet version="1.0"
-            xmlns="http://www.w3.org/1999/XSL/Transform"
-            xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    xmlns="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <!-- documentation: http://www.refman.com/support/risformat_intro.asp -->
     <output method="text" encoding="utf-8"/>
 
@@ -10,7 +10,7 @@
     <template match="/">
         <apply-templates select="article/back/ref-list/ref"/>
     </template>
-    
+
     <template name="extract-id">
         <choose>
             <when test="@id != ''">
@@ -37,7 +37,8 @@
                 <apply-templates select="article-title"/>
                 <apply-templates select="person-group[@person-group-type='author']"/>
                 <apply-templates select="person-group[@person-group-type='editor']"/>
-                <apply-templates select="person-group[@person-group-type='editor']"/>
+                <apply-templates select="person-group[@person-group-type='translator']"/>
+                <apply-templates select="collab"/>
                 <apply-templates select="year"/>
                 <apply-templates select="abstract"/>
                 <apply-templates select="volume"/>
@@ -56,7 +57,8 @@
                 <apply-templates select="source|title" mode="book"/>
                 <apply-templates select="person-group[@person-group-type='author']"/>
                 <apply-templates select="person-group[@person-group-type='editor']"/>
-                <apply-templates select="person-group[@person-group-type='editor']"/>
+                <apply-templates select="person-group[@person-group-type='translator']"/>
+                <apply-templates select="collab"/>
                 <apply-templates select="year"/>
                 <apply-templates select="volume"/>
                 <apply-templates select="series"/>
@@ -76,7 +78,8 @@
                 <apply-templates select="source|title" mode="book"/>
                 <apply-templates select="person-group[@person-group-type='author']"/>
                 <apply-templates select="person-group[@person-group-type='editor']"/>
-                <apply-templates select="person-group[@person-group-type='editor']"/>
+                <apply-templates select="person-group[@person-group-type='translator']"/>
+                <apply-templates select="collab"/>
                 <apply-templates select="year"/>
                 <apply-templates select="volume"/>
                 <apply-templates select="series"/>
@@ -99,6 +102,7 @@
                 <apply-templates select="person-group[@person-group-type='author']"/>
                 <apply-templates select="person-group[@person-group-type='editor']"/>
                 <apply-templates select="person-group[@person-group-type='translator']"/>
+                <apply-templates select="collab"/>
                 <apply-templates select="year"/>
                 <apply-templates select="volume"/>
                 <apply-templates select="series"/>
@@ -119,6 +123,7 @@
                 <apply-templates select="person-group[@person-group-type='author']"/>
                 <apply-templates select="person-group[@person-group-type='editor']"/>
                 <apply-templates select="person-group[@person-group-type='translator']"/>
+                <apply-templates select="collab"/>
                 <apply-templates select="year"/>
                 <apply-templates select="month"/>
                 <apply-templates select="isbn"/>
@@ -135,7 +140,8 @@
                 <call-template name="extract-id"/>
                 <apply-templates select="person-group[@person-group-type='author']"/>
                 <apply-templates select="person-group[@person-group-type='editor']"/>
-                <apply-templates select="person-group[@person-group-type='editor']"/>
+                <apply-templates select="person-group[@person-group-type='translator']"/>
+                <apply-templates select="collab"/>
                 <apply-templates select="year"/>
                 <apply-templates select="number"/>
                 <apply-templates select="month"/>
@@ -221,7 +227,7 @@
         </call-template>
     </template>
 
-	<template match="article-title">
+    <template match="article-title">
         <call-template name="item">
             <with-param name="key">title</with-param>
             <with-param name="value">
@@ -293,15 +299,23 @@
     </template>
 
     <!-- contributors (authors and editors) -->
-	<template match="name|string-name">
+    <template match="collab">
+        <call-template name="item">
+            <with-param name="key" select="'author'"/>
+            <with-param name="value">
+                <value-of select="concat('{',.,'}')"/>
+            </with-param>
+        </call-template>
+    </template>
+
+    <template match="name|string-name">
         <value-of select="surname"/>
         <apply-templates select="suffix" mode="name"/>
         <apply-templates select="given-names" mode="name"/>
-
         <if test="position() != last()">
             <value-of select="' and '"/>
         </if>
-	</template>
+    </template>
 
     <template match="given-names | suffix" mode="name">
         <value-of select="concat(', ', .)"/>

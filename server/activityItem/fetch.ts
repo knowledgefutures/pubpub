@@ -18,6 +18,7 @@ import {
 	Community,
 	Discussion,
 	ExternalPublication,
+	Page,
 	Pub,
 	PubEdge,
 	Release,
@@ -63,6 +64,7 @@ const filterDefinitions: Record<ActivityFilter, SequelizeFilter | SequelizeFilte
 	collection: {
 		collectionId: { [Op.not]: null },
 	},
+	page: itemKindFilter(['page-created', 'page-updated', 'page-removed']),
 	pub: {
 		pubId: { [Op.not]: null },
 	},
@@ -144,6 +146,7 @@ const getActivityItemAssociationIds = (
 		community,
 		discussion,
 		externalPublication,
+		page,
 		pubEdge,
 		pub,
 		release,
@@ -180,16 +183,16 @@ const getActivityItemAssociationIds = (
 			thread.add(item.payload.threadId);
 			threadComment.add(item.payload.threadComment.id);
 		} else if (item.kind === 'pub-review-updated') {
-			review.add(item.payload.reviewId);
+			review.add(item.payload.review.id);
 		} else if (item.kind === 'pub-review-created') {
-			review.add(item.payload.reviewId);
+			review.add(item.payload.review.id);
 			thread.add(item.payload.threadId);
 			if (item.payload.threadComment) {
 				threadComment.add(item.payload.threadComment.id);
 				user.add(item.payload.threadComment.userId);
 			}
 		} else if (item.kind === 'pub-review-comment-added') {
-			review.add(item.payload.reviewId);
+			review.add(item.payload.review.id);
 			thread.add(item.payload.threadId);
 			threadComment.add(item.payload.threadComment.id);
 		} else if (item.kind === 'pub-edge-created' || item.kind === 'pub-edge-removed') {
@@ -199,7 +202,7 @@ const getActivityItemAssociationIds = (
 			} else if ('pub' in item.payload.target) {
 				pub.add(item.payload.target.pub.id);
 			}
-		} else if (item.kind === 'pub-released') {
+		} else if (item.kind === 'pub-release-created') {
 			release.add(item.payload.releaseId);
 		} else if (
 			item.kind === 'member-created' ||
@@ -207,6 +210,12 @@ const getActivityItemAssociationIds = (
 			item.kind === 'member-removed'
 		) {
 			user.add(item.payload.userId);
+		} else if (
+			item.kind === 'page-created' ||
+			item.kind === 'page-updated' ||
+			item.kind === 'page-removed'
+		) {
+			page.add(item.payload.page.id);
 		}
 	});
 	return associationIds;
@@ -252,6 +261,7 @@ const fetchAssociations = (
 		community,
 		discussion,
 		externalPublication,
+		page,
 		pubEdge,
 		pub,
 		release,
@@ -269,6 +279,7 @@ const fetchAssociations = (
 			ExternalPublication,
 			externalPublication,
 		),
+		page: fetchModels<types.Page>(Page, page),
 		pubEdge: fetchModels<types.PubEdge>(PubEdge, pubEdge),
 		pub: fetchModels<types.Pub>(Pub, pub),
 		release: fetchModels<types.Release>(Release, release),

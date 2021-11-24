@@ -37,6 +37,7 @@ const resolveItemsFromContent = (
 
 const LayoutPagesCollections = (props: Props) => {
 	const { content, collections, pages } = props;
+	const gridTemplateColumnsCssFill = content.justify === 'center' ? 'auto-fit' : 'auto-fill';
 	return (
 		<div className="block-content">
 			<div className="container">
@@ -49,7 +50,17 @@ const LayoutPagesCollections = (props: Props) => {
 				)}
 				<div className="row">
 					<div className="col-12">
-						<div className="pages-wrapper">
+						<div
+							className="pages-wrapper"
+							style={
+								content.justify
+									? {
+											justifyContent: content.justify,
+											gridTemplateColumns: `repeat(${gridTemplateColumnsCssFill}, 175px)`,
+									  }
+									: {}
+							}
+						>
 							{resolveItemsFromContent(content, collections, pages).map((item) => (
 								<PagePreview key={item.id} pageData={item} />
 							))}

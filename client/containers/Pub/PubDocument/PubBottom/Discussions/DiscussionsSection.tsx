@@ -4,11 +4,12 @@ import { Popover, Position } from '@blueprintjs/core';
 import { usePageContext } from 'utils/hooks';
 import { PubPageData } from 'types';
 import { getAnchoredDiscussionIds } from 'components/Editor/plugins/discussions';
+import { DialogLauncher, SubscriptionButton } from 'client/components';
 import { usePubContext } from 'client/containers/Pub/pubHooks';
 
-import { SubscriptionButton } from 'client/components';
 import SortList from './SortList';
 import FilterMenu from './FilterMenu';
+import DiscussionsReleaseDialog from './DiscussionsReleaseDialog';
 import PubDiscussions from '../../PubDiscussions/PubDiscussions';
 import PubBottomSection, { SectionBullets, AccentedIconButton } from '../PubBottomSection';
 import { filterAndSortDiscussions } from '../../PubDiscussions/discussionUtils';
@@ -22,7 +23,7 @@ type Props = {
 
 const DiscussionsSection = (props: Props) => {
 	const { pubData, updateLocalData, sideContentRef, mainContentRef } = props;
-	const { discussions } = pubData;
+	const { discussions, isRelease } = pubData;
 	const {
 		communityData,
 		scopeData,
@@ -33,7 +34,7 @@ const DiscussionsSection = (props: Props) => {
 		updatePubData,
 		collabData: { editorChangeObject },
 	} = usePubContext();
-	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
+	const { canView, canManage, canCreateDiscussions, isSuperAdmin } = scopeData.activePermissions;
 	const [isBrowsingArchive, setIsBrowsingArchive] = useState(false);
 	const [isShowingAnchoredComments, setShowingAnchoredComments] = useState(true);
 	const [sortMode, setSortMode] = useState('newestThread');
@@ -116,6 +117,27 @@ const DiscussionsSection = (props: Props) => {
 								icon="notifications"
 							/>
 						</SubscriptionButton>
+					)}
+					{isSuperAdmin && !isRelease && discussions.length > 0 && (
+						<DialogLauncher
+							renderLauncherElement={({ openDialog }) => (
+								<AccentedIconButton
+									accentColor={iconColor}
+									icon="share"
+									title="Release Discussions"
+									onClick={openDialog}
+								/>
+							)}
+						>
+							{({ isOpen, onClose, key }) => (
+								<DiscussionsReleaseDialog
+									key={key}
+									isOpen={isOpen}
+									onClose={onClose}
+									pubData={pubData}
+								/>
+							)}
+						</DialogLauncher>
 					)}
 				</React.Fragment>
 			);

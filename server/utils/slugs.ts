@@ -1,12 +1,52 @@
 import { Op } from 'sequelize';
 
 import { Page, Collection } from 'server/models';
+import { SlugStatus } from 'types';
 
-const definitelyForbiddenSlugs = ['dash'];
+export const definitelyForbiddenSlugs = [
+	'dash',
+	'redirects',
+	'pubRedirects',
+	'pubDocument',
+	'pubDownloads',
+	'collection',
+	'dashboardActivity',
+	'dashboardDiscussions',
+	'dashboardEdges',
+	'dashboardImpact',
+	'dashboardMembers',
+	'dashboardCommunityOverview',
+	'dashboardCollectionOverview',
+	'dashboardCustomScripts',
+	'dashboardPubOverview',
+	'dashboardPage',
+	'dashboardPages',
+	'dashboardReview',
+	'dashboardReviews',
+	'dashboardSettings',
+	'dashboardCollectionLayout',
+	'communityCreate',
+	'adminDashboard',
+	'login',
+	'legal',
+	'search',
+	'signup',
+	'passwordReset',
+	'userCreate',
+	'user',
+	'page',
+	'sitemap',
+	'robots',
+	'noMatch',
+];
 
-export const slugIsAvailable = async ({ slug, communityId, activeElementId }) => {
+export const slugIsAvailable = async ({
+	slug,
+	communityId,
+	activeElementId,
+}): Promise<SlugStatus> => {
 	if (definitelyForbiddenSlugs.includes(slug)) {
-		return false;
+		return 'reserved';
 	}
 	const [pages, collections] = await Promise.all([
 		Page.count({
@@ -16,21 +56,24 @@ export const slugIsAvailable = async ({ slug, communityId, activeElementId }) =>
 			where: { communityId, slug, id: { [Op.not]: activeElementId } },
 		}),
 	]);
-	return pages === 0 && collections === 0;
+	return pages === 0 && collections === 0 ? 'available' : 'used';
 };
 
-export const findAcceptableSlug = async (desiredSlug, communityId) => {
+export const findAcceptableSlug = async (desiredSlug: string, communityId: string) => {
 	const [pages, collections] = await Promise.all([
 		Page.findAll({
 			attributes: ['slug'],
-			where: { communityId, slug: desiredSlug },
+			where: { communityId },
 		}),
 		Collection.findAll({
 			attributes: ['slug'],
-			where: { communityId, slug: desiredSlug },
+			where: { communityId },
 		}),
 	]);
-	const allSlugs = [...pages, ...collections].map((item) => item.slug);
+	const allSlugs = [
+		...[...pages, ...collections].map((item) => item.slug),
+		...definitelyForbiddenSlugs,
+	];
 	if (allSlugs.includes(desiredSlug)) {
 		let suffix = 2;
 		// eslint-disable-next-line no-constant-condition

@@ -10,6 +10,7 @@ import { Member } from './member';
 import { Review } from './review';
 import { InboundEdge, OutboundEdge } from './pubEdge';
 import { ScopeSummary } from './scope';
+import { ThreadComment, Thread } from './thread';
 import { DefinitelyHas, Maybe } from './util';
 import { UserSubscription } from './userSubscription';
 
@@ -73,7 +74,7 @@ export type Pub = {
 	lastPublishedAt?: string;
 	customPublishedAt?: string;
 	doi: null | string;
-	labels?: string;
+	labels?: string[];
 	downloads?: any[];
 	metadata?: {};
 	licenseSlug?: string;
@@ -114,9 +115,18 @@ export type PubDocInfo = {
 	};
 };
 
-export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs'> &
+export type PubPageDiscussion = DefinitelyHas<Discussion, 'anchors'> & {
+	thread: Thread & {
+		comments: DefinitelyHas<ThreadComment, 'author'>[];
+	};
+};
+
+export type PubPageData = DefinitelyHas<
+	Omit<Pub, 'discussions'>,
+	'attributions' | 'collectionPubs'
+> &
 	PubDocInfo & {
-		discussions: DefinitelyHas<Discussion, 'anchors' | 'thread'>[];
+		discussions: PubPageDiscussion[];
 		viewHash: Maybe<string>;
 		editHash: Maybe<string>;
 		isReadOnly: boolean;
@@ -127,3 +137,15 @@ export type PubPageData = DefinitelyHas<Pub, 'attributions' | 'collectionPubs'> 
 		releaseNumber: Maybe<number>;
 		subscription: null | UserSubscription;
 	};
+
+export type PubHistoryState = {
+	currentKey: number;
+	latestKey: number;
+	isViewingHistory: boolean;
+	loadedIntoHistory: boolean;
+	historyDocKey: string;
+	historyDoc?: DocJson;
+	outstandingRequests: number;
+	latestKeyReceivedAt: Maybe<number>;
+	timestamps: Record<string, number>;
+};

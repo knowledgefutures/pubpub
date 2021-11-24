@@ -26,17 +26,31 @@ export const generateDefaultCollectionLayout = () => {
 	};
 };
 
-export const createCollection = ({
-	communityId,
-	title,
-	kind,
-	pageId = null,
-	doi = null,
-	isPublic = false,
-	isRestricted = true,
-	id = null,
-	slug = null,
-}) => {
+export const createCollection = async (
+	{
+		communityId,
+		title,
+		kind,
+		pageId = null,
+		doi = null,
+		isPublic = false,
+		isRestricted = true,
+		id = null,
+		slug = null,
+	},
+	actorId?,
+) => {
+	if (title) {
+		const slugStatus = await slugIsAvailable({
+			slug: slug || slugifyString(title),
+			communityId,
+			activeElementId: id,
+		});
+
+		if (slugStatus === 'reserved') {
+			throw new PubPubError.ForbiddenSlugError(slugStatus);
+		}
+	}
 	return Community.findOne({ where: { id: communityId } }).then(async (community) => {
 		const normalizedTitle = title.trim();
 		const collection = {
@@ -58,11 +72,11 @@ export const createCollection = ({
 			community,
 			collection,
 		});
-		return Collection.create({ ...collection, metadata }, { returning: true });
+		return Collection.create({ ...collection, metadata }, { returning: true, actorId });
 	});
 };
 
-export const updateCollection = async (inputValues, updatePermissions) => {
+export const updateCollection = async (inputValues, updatePermissions, actorId?) => {
 	// Filter to only allow certain fields to be updated
 	const filteredValues = {};
 	Object.keys(inputValues).forEach((key) => {
@@ -75,22 +89,29 @@ export const updateCollection = async (inputValues, updatePermissions) => {
 	if (filteredValues.slug) {
 		// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 		filteredValues.slug = slugifyString(filteredValues.slug);
-		const available = await slugIsAvailable({
+		const slugStatus = await slugIsAvailable({
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'slug' does not exist on type '{}'.
 			slug: filteredValues.slug,
 			communityId: inputValues.communityId,
 			activeElementId: inputValues.collectionId,
 		});
-		if (!available) {
-			throw new PubPubError.InvalidFieldsError('slug');
+
+		if (slugStatus !== 'available') {
+			throw new PubPubError.ForbiddenSlugError(slugStatus);
 		}
 	}
-	await Collection.update(filteredValues, { where: { id: inputValues.collectionId } });
+	await Collection.update(filteredValues, {
+		where: { id: inputValues.collectionId },
+		individualHooks: true,
+		actorId,
+	});
 	return filteredValues;
 };
 
-export const destroyCollection = (inputValues) => {
+export const destroyCollection = (inputValues, actorId?) => {
 	return Collection.destroy({
 		where: { id: inputValues.collectionId },
+		individualHooks: true,
+		actorId,
 	});
 };

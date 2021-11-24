@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AUP = function() {
+const AUP = function () {
 	return (
 		<div>
 			<h2>Acceptable User Policy</h2>

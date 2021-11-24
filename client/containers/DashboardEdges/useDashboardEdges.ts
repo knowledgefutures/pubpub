@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { usePendingChanges } from 'utils/hooks';
 import { findRankInRankedList, sortByRank } from 'utils/rank';
 import { apiFetch } from 'client/utils/apiFetch';
-import { Pub as BarePub, InboundEdge, OutboundEdge } from 'types';
+import { Pub as BarePub, InboundEdge, OutboundEdge, PubEdge } from 'types';
 
 type Pub = BarePub & {
 	outboundEdges: OutboundEdge[];
@@ -37,6 +37,13 @@ export const useDashboardEdges = (pubData: Pub) => {
 		setOutboundEdges(nextOutboundEdges);
 	};
 
+	const updateOutboundEdge = (outboundEdge: PubEdge) => {
+		const index = outboundEdges.findIndex((edge) => edge.id === outboundEdge.id);
+		const nextOutboundEdges = [...outboundEdges];
+		nextOutboundEdges[index] = outboundEdge;
+		setOutboundEdges(nextOutboundEdges);
+	};
+
 	const removeOutboundEdge = (outboundEdge) => {
 		pendingPromise(apiFetch.delete('/api/pubEdges', { pubEdgeId: outboundEdge.id }));
 		setOutboundEdges(outboundEdges.filter((edge) => edge.id !== outboundEdge.id));
@@ -67,6 +74,7 @@ export const useDashboardEdges = (pubData: Pub) => {
 		inboundEdges,
 		addCreatedOutboundEdge,
 		reorderOutboundEdges,
+		updateOutboundEdge,
 		removeOutboundEdge,
 		updateInboundEdgeApproval,
 	};

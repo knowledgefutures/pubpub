@@ -8,7 +8,8 @@
 		.container {
 			max-width: none !important;
 		}
-		.layout-pubs-block, .layout-pages-block {
+		.layout-pubs-block,
+		.layout-pages-block {
 			.container {
 				display: flex;
 				flex-wrap: wrap;
@@ -74,7 +75,7 @@
 			.pages-wrapper {
 				display: grid;
 				grid-gap: 2em;
-				grid-template-columns: repeat(auto-fill, 175px);
+				grid-template-columns: repeat(auto-fit, 175px);
 				justify-content: space-between;
 			}
 			.page-preview-component {

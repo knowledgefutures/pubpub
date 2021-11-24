@@ -9,7 +9,7 @@ import { buildLabel } from '../utils';
 function wrapDomSerializer(domSerializer: DOMSerializer) {
 	return Object.assign(Object.create(domSerializer), {
 		// Strip table captions when copying/pasting table elements.
-		serializeFragment: function(fragment, options) {
+		serializeFragment: function (fragment, options) {
 			const result = domSerializer.serializeFragment(fragment, options);
 			const tableCaptions = result.querySelectorAll('table > caption');
 
@@ -38,7 +38,7 @@ class PubTableView extends TableView {
 	}
 
 	syncCaption(node) {
-		const { dom } = (this as any) as { dom: HTMLElement };
+		const { dom } = this as any as { dom: HTMLElement };
 		const label = buildLabel(node);
 		if (label) {
 			const table = dom.querySelector('table');
@@ -55,7 +55,7 @@ class PubTableView extends TableView {
 	}
 
 	syncId(node) {
-		const { dom } = (this as any) as { dom: HTMLElement };
+		const { dom } = this as any as { dom: HTMLElement };
 		dom.setAttribute('id', node.attrs.id);
 	}
 

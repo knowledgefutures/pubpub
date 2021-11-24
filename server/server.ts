@@ -1,3 +1,4 @@
+/* eslint-disable import/first, import/order */
 import * as Sentry from '@sentry/node';
 import bodyParser from 'body-parser';
 import compression from 'compression';
@@ -10,34 +11,38 @@ import passport from 'passport';
 import path from 'path';
 
 import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/environment';
-import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
+
+// ACHTUNG: These calls must appear before we import any more of our own code to ensure that
+// the environment, and in particular the choice of dev vs. prod, is configured correctly!
+setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
+setAppCommit(process.env.HEROKU_SLUG_COMMIT);
 
 import 'server/utils/serverModuleOverwrite';
+import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 
 import { sequelize, User } from './models';
 import './hooks';
 
-setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
-setAppCommit(process.env.HEROKU_SLUG_COMMIT);
-
 // Wrapper for app.METHOD() handlers. Though we need this to properly catch errors in handlers that
 // return a promise, i.e. those that use async/await, we should use it everywhere to be consistent.
-export const wrap = (routeHandlerFn) => (...args) => {
-	const [req, res, next] = args;
-	Promise.resolve(routeHandlerFn(...args)).catch((err) => {
-		if (err.message.indexOf('UseCustomDomain:') === 0) {
-			const customDomain = err.message.split(':')[1];
-			return res.redirect(`https://${customDomain}${req.originalUrl}`);
-		}
-		// Log the error if we're testing. Normally this is handled in the error middleware, but
-		// that isn't active while handling individual requests in a test environment.
-		if (process.env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
-			// eslint-disable-next-line no-console
-			console.log('Got an error in an API route while testing:', err);
-		}
-		return next(err);
-	});
-};
+export const wrap =
+	(routeHandlerFn) =>
+	(...args) => {
+		const [req, res, next] = args;
+		Promise.resolve(routeHandlerFn(...args)).catch((err) => {
+			if (err.message.indexOf('UseCustomDomain:') === 0) {
+				const customDomain = err.message.split(':')[1];
+				return res.redirect(`https://${customDomain}${req.originalUrl}`);
+			}
+			// Log the error if we're testing. Normally this is handled in the error middleware, but
+			// that isn't active while handling individual requests in a test environment.
+			if (process.env.NODE_ENV === 'test' && !(err instanceof HTTPStatusError)) {
+				// eslint-disable-next-line no-console
+				console.log('Got an error in an API route while testing:', err);
+			}
+			return next(err);
+		});
+	};
 
 /* ---------------------- */
 /* Initialize express app */

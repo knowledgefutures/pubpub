@@ -4,6 +4,7 @@ $margin-size: 15px;
 
 .new-edge-editor-component {
 	position: relative;
+	width: 100%;
 
 	h4 {
 		@include bleed-top-border;
@@ -48,4 +49,6 @@ $margin-size: 15px;
 		margin-top: $margin-size;
 		margin-bottom: $margin-size;
 	}
+
+	margin-bottom: 30px;
 }

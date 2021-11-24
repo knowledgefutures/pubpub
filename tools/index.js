@@ -10,9 +10,11 @@ if (process.env.NODE_ENV !== 'production') {
 
 require('server/utils/serverModuleOverwrite');
 require('utils/environment').setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
+require('server/hooks');
 
 const command = process.argv[2];
 const commandFiles = {
+	backfillActivity: './activityItem/allCommunities',
 	backfillCommunityActivity: './activityItem/singleCommunityCli',
 	backfillCheckpoints: './backfillCheckpoints',
 	backfillCrossrefDepositRecords: './backfillCrossrefDepositRecords',
@@ -33,6 +35,7 @@ const commandFiles = {
 	migration2020_05_06: './migration2020_05_06',
 	migration2020_06_24: './migration2020_06_24',
 	migrationsDeprecated: './migrationsDeprecated',
+	movePubs: './movePubs',
 	pubCrawl: './pubCrawl',
 	rerankCollections: './rerankCollections',
 	rerunExport: './rerunExport',

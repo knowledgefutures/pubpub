@@ -1,6 +1,8 @@
 import { Discussion } from './discussion';
 import { Review } from './review';
 
+export type VisibilityAccess = 'private' | 'members' | 'public';
+
 export type VisibilityUser = {
 	id: string;
 	visibilityId: string;
@@ -9,7 +11,7 @@ export type VisibilityUser = {
 
 export type Visibility = {
 	id: string;
-	access: 'private' | 'members' | 'public';
+	access: VisibilityAccess;
 	users: VisibilityUser[];
 };
 

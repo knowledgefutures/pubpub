@@ -3,7 +3,7 @@ import { GridWrapper } from 'components';
 
 require('./about.scss');
 
-const About = function() {
+const About = function () {
 	return (
 		<div id="about-container">
 			<GridWrapper containerClassName="narrow">

@@ -7,7 +7,7 @@ import { getCookieOptions } from './cookieOptions';
 const cookieKey = 'gdpr-consent';
 const persistSignupCookieKey = 'gdpr-consent-survives-login';
 
-const odiousCookies = ['keen', 'heap'];
+const odiousCookies = ['heap'];
 const deleteOdiousCookies = () => {
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'heap' does not exist on type 'Window & t... Remove this comment to see the full error message
 	window.heap.resetIdentity();

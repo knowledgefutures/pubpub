@@ -53,6 +53,8 @@ export default ({
 		{
 			model: Release,
 			as: 'releases',
+			separate: true,
+			order: [['createdAt', 'ASC']],
 		},
 	];
 	let collectionPubs: any = [];
@@ -172,6 +174,7 @@ export default ({
 			getExports && {
 				model: Export,
 				as: 'exports',
+				separate: true,
 			},
 			getDraft && {
 				model: Draft,

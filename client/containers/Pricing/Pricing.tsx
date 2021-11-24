@@ -37,7 +37,7 @@ const Pricing = () => {
 						</a>
 						<ul className="features">
 							<li>Single PubPub Community</li>
-							<li>Forum-Based support</li>
+							<li>Forum-based support</li>
 							<li>Unlimited Pubs and Users</li>
 							<li>Creative Commons Licenses</li>
 							<li>Dedicated pubpub.org subdomain</li>
@@ -47,70 +47,12 @@ const Pricing = () => {
 							</li>
 						</ul>
 					</div>
-					<div className="option bp3-card bp3-elevation-1" id="starter">
-						<h2>
-							Starter <span className="subhead">(beta)</span>
-						</h2>
-						<p className="subtitle">
-							For smaller, independent, and unconventional publishers.
-						</p>
-						<h3 className="pricing">
-							$175<span className="subhead">/month</span>
-						</h3>
-						<a
-							href="mailto:partnerships@pubpub.org?subject=PubPub%20Starter%20Inquiry"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="bp3-button bp3-large bp3-intent-primary"
-						>
-							Get In Touch
-						</a>
-						<ul className="features">
-							<li>Up to 5 Communities</li>
-							<li>Email support</li>
-							<li>Unlimited Pubs and Users</li>
-							<li>Custom licenses</li>
-							<li>Dedicated pubpub.org subdomain</li>
-							<li>Custom domains</li>
-							<li>
-								25 free DOIs per year<span className="star">*</span>
-							</li>
-						</ul>
-					</div>
-					<div className="option bp3-card bp3-elevation-1" id="pro">
-						<h2>
-							Pro <span className="subhead">(beta)</span>
-						</h2>
-						<p className="subtitle">For larger publishers with professional needs.</p>
-						<h3 className="pricing">
-							$425<span className="subhead">/month</span>
-						</h3>
-						<a
-							href="mailto:partnerships@pubpub.org?subject=PubPub%20Pro%20Inquiry"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="bp3-button bp3-large bp3-intent-primary"
-						>
-							Get In Touch
-						</a>
-						<ul className="features">
-							<li>Up to 15 Communities</li>
-							<li>Priority email support</li>
-							<li>Unlimited Pubs and Users</li>
-							<li>Custom licenses</li>
-							<li>Dedicated pubpub.org subdomain</li>
-							<li>Custom domains</li>
-							<li>
-								50 free DOIs per year<span className="star">*</span>
-							</li>
-						</ul>
-					</div>
 					<div className="option bp3-card bp3-elevation-1" id="enterprise">
-						<h2>Enterprise</h2>
+						<h2>Custom</h2>
 						<p className="subtitle">
 							For institutions & organizations who need custom support & scale.
 						</p>
-						<h3 className="pricing">Custom</h3>
+						<h3 className="pricing">Custom Quote</h3>
 						<a
 							href="mailto:partnerships@pubpub.org?subject=PubPub%20Enterprise%20Inquiry"
 							target="_blank"
@@ -127,7 +69,87 @@ const Pricing = () => {
 							<li>Dedicated pubpub.org subdomain</li>
 							<li>Custom domains</li>
 							<li>Custom # of DOIs</li>
+							<li>Content services as needed</li>
 						</ul>
+					</div>
+					<div className="option bp3-card bp3-elevation-1" id="content">
+						<h2>Content Services</h2>
+						<p className="subtitle">
+							For communities of all kinds and sizes looking to maximize their
+							publishing opportunities.
+						</p>
+						<h3 className="pricing">Transparent Pricing</h3>
+						<a
+							href="mailto:partnerships@pubpub.org?subject=Content%20Services%20Inquiry"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="bp3-button bp3-large bp3-intent-primary"
+						>
+							Get In Touch
+						</a>
+						<p>
+							We offer transparent pricing and a range of services—from site design
+							and strategy, to content production and enhancements, to team trainings
+							and community building.
+						</p>
+						<ul className="features">
+							<li>Production work is completed at an hourly rate of $100/hour.</li>
+							<li>
+								Production of media and content interactives averages $350 per
+								asset.
+							</li>
+							<li>
+								Community design and structure is quoted on a project-by-project
+								basis based on scope, timeline, and needs.
+							</li>
+						</ul>
+						<p>
+							Clients include{' '}
+							<a
+								href="https://academicentrepreneurship.pubpub.org/"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								The Children's Hospital of Philadelphia
+							</a>
+							,{' '}
+							<a
+								href="https://hdsr.mitpress.mit.edu"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								the Harvard Data Science Review
+							</a>
+							,{' '}
+							<a
+								href="https://participa.conl.mx/"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								Consejo Nuevo León
+							</a>
+							,{' '}
+							<a href="https://apaopen.org" target="_blank" rel="noopener noreferrer">
+								the American Psychological Association
+							</a>
+							,{' '}
+							<a
+								href="https://mit-serc.pubpub.org"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								MIT's Schwarzman College of Computing
+							</a>
+							, and more.
+						</p>
+						<a
+							href="https://help.pubpub.org/pub/content-services-menu"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="bp3-button bp3-large bp3-intent-secondary"
+						>
+							Learn more
+						</a>
 					</div>
 				</div>
 				<div className="pricing-footer">
@@ -151,16 +173,6 @@ const Pricing = () => {
 						</a>
 						.
 					</p>
-					<p className="description">
-						We also provide article production, community design and setup, interactive
-						visualization development, and training workshops for communities of any
-						size. If you're interested in these services,{' '}
-						<a href="mailto:partnerships@pubpub.org?subject=Additional%20Services">
-							please get in touch
-						</a>
-						.
-					</p>
-
 					<p className="description">
 						* The free DOI limit applies to DOIs published via PubPub's Crossref
 						membership. Once the limit is reached, PubPub passes on the Crossref fee of

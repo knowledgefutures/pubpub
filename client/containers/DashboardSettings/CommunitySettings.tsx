@@ -23,6 +23,8 @@ import { apiFetch } from 'client/utils/apiFetch';
 
 import NavBuilder from './NavBuilder';
 
+require('./communitySettings.scss');
+
 const CommunitySettings = () => {
 	const { scopeData, communityData } = usePageContext();
 
@@ -46,6 +48,7 @@ const CommunitySettings = () => {
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(undefined);
+
 	/* Details */
 	const [title, setTitle] = useState(communityData.title);
 	const [subdomain, setSubdomain] = useState(communityData.subdomain);
@@ -54,6 +57,9 @@ const CommunitySettings = () => {
 	const [favicon, setFavicon] = useState(communityData.favicon);
 	const [accentColorLight, setAccentColorLight] = useState(communityData.accentColorLight);
 	const [accentColorDark, setAccentColorDark] = useState(communityData.accentColorDark);
+	const [citeAs, setCiteAs] = useState(communityData.citeAs);
+	const [publishAs, setPublishAs] = useState(communityData.publishAs);
+
 	/* Header */
 	const [headerLogo, setHeaderLogo] = useState(communityData.headerLogo);
 	const [headerColorType, setHeaderColorType] = useState(communityData.headerColorType);
@@ -109,6 +115,8 @@ const CommunitySettings = () => {
 		title,
 		subdomain,
 		description,
+		citeAs,
+		publishAs,
 		avatar,
 		favicon,
 		accentColorLight,
@@ -222,6 +230,54 @@ const CommunitySettings = () => {
 						setDescription(evt.target.value.substring(0, 280).replace(/\n/g, ' '));
 					}}
 				/>
+				<InputField
+					htmlFor="journal-citation"
+					label={
+						<span>
+							Journal Citation
+							<Tooltip
+								content={
+									<span>
+										When filled out, this field will be used as the Journal
+										Title for Issue Collections in citations, PDF exports, and
+										Crossref deposits.
+									</span>
+								}
+							>
+								<Icon icon="info-sign" />
+							</Tooltip>
+						</span>
+					}
+					type="text"
+					value={citeAs}
+					onChange={(evt) => {
+						setCiteAs(evt.target.value);
+					}}
+				/>
+				<InputField
+					htmlFor="publisher"
+					label={
+						<span>
+							Publisher
+							<Tooltip
+								content={
+									<span>
+										When filled out, this field will be used as the Publisher
+										for Book and Conference Proceedings Collections in
+										citations, PDF exports, and Crossref deposits.
+									</span>
+								}
+							>
+								<Icon icon="info-sign" />
+							</Tooltip>
+						</span>
+					}
+					type="text"
+					value={publishAs}
+					onChange={(evt) => {
+						setPublishAs(evt.target.value);
+					}}
+				/>
 				<div className="row-wrapper">
 					<ImageUpload
 						htmlFor="favicon-upload"
@@ -236,8 +292,6 @@ const CommunitySettings = () => {
 											Recommended: 50*50px
 										</span>
 									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -261,8 +315,6 @@ const CommunitySettings = () => {
 											Recommended: 500*500px
 										</span>
 									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -292,6 +344,25 @@ const CommunitySettings = () => {
 						/>
 					</InputField>
 				</div>
+				<div className="row-wrapper">
+					<a href={getDashUrl({ mode: 'scripts' })}>Customize CSS</a>
+					<Tooltip
+						targetClassName="custom-css-tooltip-target"
+						popoverClassName="dashboard-settings-container_custom-css-popover"
+						content={
+							<>
+								Warning: Experimental feature. Custom CSS lets you change the look
+								and feel of your Community, but it also lets you introduce bugs that
+								make it hard or impossible to use. The PubPub team may also make
+								changes to our own source code that could break your CSS without
+								warning. We don't provide support for problems caused by Custom CSS.
+								Use caution (but have fun!)
+							</>
+						}
+					>
+						<Icon icon="warning-sign" color="orange" />
+					</Tooltip>
+				</div>
 			</SettingsSection>
 			<SettingsSection title="Header">
 				<ImageUpload
@@ -307,8 +378,6 @@ const CommunitySettings = () => {
 										Recommended: ~40*150px
 									</span>
 								}
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-								tooltipClassName="bp3-dark"
 							>
 								<Icon icon="info-sign" />
 							</Tooltip>
@@ -373,8 +442,6 @@ const CommunitySettings = () => {
 											Button will always be available to community admins.
 										</span>
 									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-									tooltipClassName="bp3-dark"
 								>
 									<Icon icon="info-sign" />
 								</Tooltip>
@@ -484,8 +551,6 @@ const CommunitySettings = () => {
 												Recommended: ~200*750px
 											</span>
 										}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-										tooltipClassName="bp3-dark"
 									>
 										<Icon icon="info-sign" />
 									</Tooltip>
@@ -513,8 +578,6 @@ const CommunitySettings = () => {
 												Recommended: ~1500*600px
 											</span>
 										}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-										tooltipClassName="bp3-dark"
 									>
 										<Icon icon="info-sign" />
 									</Tooltip>
@@ -541,8 +604,6 @@ const CommunitySettings = () => {
 												Recommended: ~600*600px
 											</span>
 										}
-										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-										tooltipClassName="bp3-dark"
 									>
 										<Icon icon="info-sign" />
 									</Tooltip>

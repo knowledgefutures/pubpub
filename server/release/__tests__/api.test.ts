@@ -1,5 +1,13 @@
 /* global describe, it, expect, beforeAll, afterAll, afterEach */
-import { setup, teardown, login, modelize, determinize, editPub } from 'stubstub';
+import {
+	setup,
+	teardown,
+	login,
+	modelize,
+	determinize,
+	editPub,
+	expectCreatedActivityItem,
+} from 'stubstub';
 
 import { DiscussionAnchor, Doc, Export, Release } from 'server/models';
 import { getExportFormats } from 'utils/export/formats';
@@ -130,16 +138,23 @@ describe('/api/releases', () => {
 			.transform((tr, schema) => tr.insert(1, schema.text('Helloooooo')))
 			.writeChange();
 		const agent = await login(pubAdmin);
-		const { body: release } = await agent
-			.post('/api/releases')
-			.send(
-				createReleaseRequest({
-					community,
-					pub,
-					historyKey: pubEditor.getKey(),
-				}),
-			)
-			.expect(201);
+		const { body: release } = await expectCreatedActivityItem(
+			agent
+				.post('/api/releases')
+				.send(
+					createReleaseRequest({
+						community,
+						pub,
+						historyKey: pubEditor.getKey(),
+					}),
+				)
+				.expect(201),
+		).toMatchObject((response) => ({
+			kind: 'pub-release-created',
+			pubId: pub.id,
+			actorId: pubAdmin.id,
+			payload: { releaseId: response.body.id },
+		}));
 		expect(release.historyKey).toEqual(0);
 		// Check for a doc with Release contents
 		const doc = await Doc.findOne({ where: { id: release.docId } });
@@ -256,18 +271,14 @@ describe('/api/releases', () => {
 
 		await createRelease();
 
-		const [
-			discussion1Anchors,
-			discussion2Anchors,
-			discussion3Anchors,
-			discussion4Anchors,
-		] = await Promise.all(
-			[discussion1, discussion2, discussion3, discussion4].map((discussion) =>
-				DiscussionAnchor.findAll({
-					where: { discussionId: discussion.id },
-				}).then((anchors) => anchors.map((a) => determinizeAnchor(a.toJSON()))),
-			),
-		);
+		const [discussion1Anchors, discussion2Anchors, discussion3Anchors, discussion4Anchors] =
+			await Promise.all(
+				[discussion1, discussion2, discussion3, discussion4].map((discussion) =>
+					DiscussionAnchor.findAll({
+						where: { discussionId: discussion.id },
+					}).then((anchors) => anchors.map((a) => determinizeAnchor(a.toJSON()))),
+				),
+			);
 
 		expect(discussion1Anchors).toEqual([
 			{ historyKey: 0, selection: { type: 'text', anchor: 8, head: 10 } },

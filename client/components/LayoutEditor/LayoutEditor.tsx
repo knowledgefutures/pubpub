@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { Button, Tooltip } from '@blueprintjs/core';
+import { Button, Tooltip, Card } from '@blueprintjs/core';
 import stickybits from 'stickybits';
 
 import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
 import { Pub, Community, Collection } from 'types';
 
+import { Popover } from 'components';
 import { useLayout } from './useLayout';
 import { useLayoutPubs } from './useLayoutPubs';
 import LayoutEditorInsert from './LayoutEditorInsert';
@@ -81,6 +82,7 @@ const LayoutEditor = (props: Props) => {
 
 	const renderLayoutBlockTitle = (block: LayoutBlock, index: number) => {
 		const cannotRemove = cannotRemoveLonePubsBlock && block.type === 'pubs';
+
 		return (
 			<div className="block-title">
 				<div className="text">{getTitleKindForBlock(block.type)} Block</div>
@@ -97,7 +99,25 @@ const LayoutEditor = (props: Props) => {
 						disabled={index === layout.length - 1}
 						onClick={() => moveBlockDown(index)}
 					/>
-					{!cannotRemove && <Button text="Remove" onClick={() => removeBlock(index)} />}
+					{!cannotRemove && (
+						<Popover
+							placement="bottom-end"
+							aria-label="Remove this block"
+							gutter={1}
+							content={
+								<Card>
+									<p>Are you sure you want to remove this block?</p>
+									<Button
+										intent="danger"
+										text="Remove"
+										onClick={() => removeBlock(index)}
+									/>
+								</Card>
+							}
+						>
+							<Button>Remove Block</Button>
+						</Popover>
+					)}
 					{cannotRemove && (
 						<Tooltip content="This layout requires at least one Pubs block.">
 							<Button text="Remove" disabled />

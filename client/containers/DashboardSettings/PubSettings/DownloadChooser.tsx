@@ -23,10 +23,7 @@ const DownloadChooser = (props: Props) => {
 
 	const formattedDownload = getFormattedDownload(pubData.downloads);
 	const { url = '', date } = formattedDownload || {};
-	const extension = url
-		.split('.')
-		.pop()
-		.toLowerCase();
+	const extension = url.split('.').pop().toLowerCase();
 
 	const updateDownloads = async (fileUrl) => {
 		const nextDownloads = fileUrl

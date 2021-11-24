@@ -10,18 +10,15 @@ import { NotificationsState } from './types';
 
 require('./userNotifications.scss');
 
-const getUnreadCount = (state: undefined | NotificationsState) => {
-	if (state) {
-		return state.pubStates
-			.map(
-				(pub) =>
-					pub.threadStates.filter((thread) =>
-						thread.notifications.some((notification) => !notification.isRead),
-					).length,
-			)
-			.reduce((a, b) => a + b, 0);
-	}
-	return 0;
+const getUnreadCount = (state: NotificationsState) => {
+	return state.pubStates
+		.map(
+			(pub) =>
+				pub.threadStates.filter((thread) =>
+					thread.notifications.some((notification) => !notification.isRead),
+				).length,
+		)
+		.reduce((a, b) => a + b, 0);
 };
 
 const renderUnreadCount = (count: number) => {
@@ -37,10 +34,12 @@ const renderUnreadCount = (count: number) => {
 
 const UserNotificationsPopover = () => {
 	const userNotifications = useNotificationsState();
+	const userNotificationsState = userNotifications?.state;
 
-	const unreadCount = useMemo(() => getUnreadCount(userNotifications?.state), [
-		userNotifications?.state,
-	]);
+	const unreadCount = useMemo(
+		() => (userNotificationsState ? getUnreadCount(userNotificationsState) : 0),
+		[userNotificationsState],
+	);
 
 	if (userNotifications && userNotifications.state.hasNotifications) {
 		const { state, context } = userNotifications;

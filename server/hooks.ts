@@ -1,4 +1,12 @@
-require('./activityItem/hooks');
-require('./scopeSummary/hooks');
-require('./threadComment/hooks');
-require('./visibility/hooks');
+import './activityItem/hooks';
+import './collection/hooks';
+import './collectionPub/hooks';
+import './community/hooks';
+import './member/hooks';
+import './page/hooks';
+import './pub/hooks';
+import './pubEdge/hooks';
+import './review/hooks';
+import './scopeSummary/hooks';
+import './threadComment/hooks';
+import './visibility/hooks';

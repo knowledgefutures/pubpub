@@ -2,6 +2,11 @@ import * as types from 'types';
 import { Discussion, Pub, ReviewNew, Visibility } from 'server/models';
 import { filterUsersAcceptedByVisibility } from 'server/visibility/queries';
 
+type FilterUsersOptions = {
+	userIds: string[];
+	threadId: string;
+};
+
 export const getParentModelForThread = async <AssociatedModels = {}>(
 	threadId: string,
 	queryOptions: any = {},
@@ -20,11 +25,6 @@ export const getParentModelForThread = async <AssociatedModels = {}>(
 		return { type: 'review', value: review };
 	}
 	return null;
-};
-
-type FilterUsersOptions = {
-	userIds: string[];
-	threadId: string;
 };
 
 export const filterUsersWhoCanSeeThread = async (

@@ -1,6 +1,7 @@
 import { Node, Schema } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
 import { uncompressStepJSON } from 'prosemirror-compress-pubpub';
+import firebase from 'firebase';
 
 export const getStepsInChangeRange = async (
 	draftRef: firebase.database.Reference,

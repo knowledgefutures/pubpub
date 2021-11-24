@@ -6,6 +6,7 @@ import { Icon } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
+import { PubPageData, PubPageDiscussion } from 'types';
 import { discussionMatchesSearchTerm } from '../discussionUtils';
 import DiscussionInput from './DiscussionInput';
 import LabelList from './LabelList';
@@ -14,23 +15,17 @@ import ThreadComment from './ThreadComment';
 
 require('./discussion.scss');
 
-type ThreadComment = {
-	createdAt: string;
-	id: string;
-	author: {
-		lastName: string;
-	};
-};
+type PubPageThreadComment = PubPageDiscussion['thread']['comments'][number];
 
 type Props = {
-	pubData: any;
-	discussionData: any;
-	updateLocalData: (...args: any[]) => any;
+	pubData: PubPageData;
+	discussionData: PubPageDiscussion;
+	updateLocalData: (kind: string, patch: any) => unknown;
 	canPreview?: boolean;
 	searchTerm?: string;
 };
 
-const sortThreadComments = (threadComments: ThreadComment[], sortType: SortType) => {
+const sortThreadComments = (threadComments: PubPageThreadComment[], sortType: SortType) => {
 	if (sortType === 'alphabetical') {
 		return threadComments
 			.concat()
@@ -126,16 +121,19 @@ const Discussion = (props: Props) => {
 	};
 
 	const renderAnchorText = () => {
-		const { anchor } = discussionData;
-		if (anchor) {
-			const { prefix, suffix, exact } = anchor;
-			return (
-				<div className="anchor-text">
-					{prefix}
-					<span className="exact">{exact}</span>
-					{suffix}
-				</div>
-			);
+		const { anchors } = discussionData;
+		if (anchors) {
+			const [firstAnchor] = anchors.sort((a, b) => a.historyKey - b.historyKey);
+			if (firstAnchor) {
+				const { originalTextPrefix, originalText, originalTextSuffix } = firstAnchor;
+				return (
+					<div className="anchor-text">
+						{originalTextPrefix}
+						<span className="exact">{originalText}</span>
+						{originalTextSuffix}
+					</div>
+				);
+			}
 		}
 		return null;
 	};
@@ -175,6 +173,7 @@ const Discussion = (props: Props) => {
 		<div
 			tabIndex={-1}
 			role="button"
+			id={`discussion-${discussionData.id}`}
 			className={classNames(
 				'discussion-component',
 				isPreview && 'preview',

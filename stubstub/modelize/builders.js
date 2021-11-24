@@ -7,6 +7,7 @@ import { ActivityItem, Community, Member, Release, User, UserSubscription } from
 import { createPub } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createDoc } from 'server/doc/queries';
+import { createPage } from 'server/page/queries';
 
 const builders = {};
 
@@ -20,11 +21,13 @@ builders.User = async (args = {}) => {
 		slug = uniqueness,
 		initials = firstName.slice(0, 1).toUpperCase() + lastName.slice(0, 1).toUpperCase(),
 		password = 'password123',
+		id,
 	} = args;
 	const sha3hashedPassword = SHA3(password).toString(encHex);
 	return new Promise((resolve, reject) =>
 		User.register(
 			{
+				...(id && { id }),
 				firstName,
 				lastName,
 				fullName,
@@ -65,6 +68,8 @@ builders.Pub = async (args) => {
 builders.Collection = ({ title = 'Collection ' + uuid.v4(), kind = 'issue', ...restArgs }) =>
 	createCollection({ title, kind, ...restArgs });
 
+builders.Page = createPage;
+
 builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 	const getTargetArgs = () => {
 		// All of the enclosing scope IDs will be passed in, but we only want to associate a Member
@@ -81,7 +86,7 @@ builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 		}
 	};
 
-	return Member.create({ ...getTargetArgs(), ...restArgs });
+	return Member.create({ ...getTargetArgs(), ...restArgs }, { hooks: false });
 };
 
 builders.Release = async (args) => {

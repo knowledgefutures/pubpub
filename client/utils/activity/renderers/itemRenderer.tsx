@@ -53,7 +53,7 @@ export const itemRenderer = <Item extends InsertableActivityItem, Titles extends
 	return (item: Item, context: ActivityRenderContext) => {
 		const { communityId, collectionId, pubId } = item;
 		const titles = renderTitles(item, titleRenderers, context);
-		const { id, timestamp } = (item as unknown) as ActivityItem;
+		const { id, timestamp } = item as unknown as ActivityItem;
 		return {
 			id,
 			icon: typeof icon === 'function' ? icon({ context }) : icon,

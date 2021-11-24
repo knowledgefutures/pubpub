@@ -19,7 +19,7 @@ $endif$
 $if(author)$
 <contrib-group>
 $for(author)$
-<contrib contrib-type="author">
+<contrib contrib-type="author"$if(author.equal-contrib)$ equal-contrib="true"$endif$>
 $if(author.orcid)$
 <contrib-id contrib-id-type="orcid">$author.orcid$</contrib-id>
 $endif$
@@ -28,20 +28,23 @@ $if(author.surname)$
 <surname>$author.surname$</surname>
 <given-names>$author.given-names$</given-names>
 </name>
+$elseif(author.name)$
+<string-name>$author.name$</string-name>
 $else$
 <string-name>$author$</string-name>
 $endif$
 $if(author.email)$
 <email>$author.email$</email>
 $endif$
-$if(author.aff-id)$
-<xref ref-type="aff" rid="aff-$contrib.aff-id$"/>
-$endif$
+$for(author.affiliation)$
+<xref ref-type="aff" rid="aff-$author.affiliation$"/>
+$endfor$
 $if(author.cor-id)$
 <xref ref-type="corresp" rid="cor-$author.cor-id$"><sup>*</sup></xref>
 $endif$
 </contrib>
 $endfor$
+${ affiliations.jats() }
 </contrib-group>
 $endif$
 $if(copyright)$

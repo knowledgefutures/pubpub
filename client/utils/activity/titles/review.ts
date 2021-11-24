@@ -15,7 +15,7 @@ type AcceptedItem =
 
 export const reviewTitle: TitleRenderer<AcceptedItem> = (item, context) => {
 	const pubFromContext = getPubFromContext(item.pubId, context);
-	const reviewFromContext = getReviewFromContext(item.payload.reviewId, context);
+	const reviewFromContext = getReviewFromContext(item.payload.review.id, context);
 
 	const href =
 		pubFromContext && reviewFromContext
@@ -26,13 +26,11 @@ export const reviewTitle: TitleRenderer<AcceptedItem> = (item, context) => {
 			  })
 			: null;
 
-	if (reviewFromContext) {
-		return {
-			prefix: 'the Review',
-			title: reviewFromContext.title,
-			href,
-		};
-	}
+	const title = reviewFromContext?.title || item.payload.review.title;
 
-	return { title: 'a Review', href };
+	return {
+		prefix: 'the Review',
+		title,
+		href,
+	};
 };

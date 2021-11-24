@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 
-type OwnProps = {
-	children: (...args: any[]) => any;
-	renderLauncherElement: (...args: any[]) => any;
+type RenderLauncherOptions = {
+	openDialog: () => unknown;
+};
+
+type ChildrenOptions = {
+	key: number;
+	isOpen: boolean;
+	onClose: () => unknown;
+};
+
+type Props = {
+	children: (options: ChildrenOptions) => React.ReactNode;
+	renderLauncherElement: (options: RenderLauncherOptions) => React.ReactNode;
 	renderChildrenWhenClosed?: boolean;
 };
 
-const defaultProps = {
-	renderChildrenWhenClosed: true,
-};
-
-type Props = OwnProps & typeof defaultProps;
-
 const DialogLauncher = (props: Props) => {
-	const { children, renderLauncherElement, renderChildrenWhenClosed } = props;
+	const { children, renderLauncherElement, renderChildrenWhenClosed = true } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const [uniqueInstanceKey, setUniqueInstanceKey] = useState(Date.now());
 
@@ -34,5 +38,5 @@ const DialogLauncher = (props: Props) => {
 		</React.Fragment>
 	);
 };
-DialogLauncher.defaultProps = defaultProps;
+
 export default DialogLauncher;

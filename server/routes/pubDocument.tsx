@@ -7,6 +7,7 @@ import Html from 'server/Html';
 import app from 'server/server';
 import { handleErrors, NotFoundError, ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
+import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
@@ -18,12 +19,13 @@ import {
 	getPubFirebaseDraft,
 	getPubFirebaseToken,
 	getPubRelease,
+	getPub,
 } from 'server/utils/queryHelpers';
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'types';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
 
-const renderPubDocument = (res, pubData, initialData) => {
+const renderPubDocument = (res, pubData, initialData, customScripts) => {
 	const {
 		communityData: { id: communityId },
 		loginData: { id: userId },
@@ -35,6 +37,7 @@ const renderPubDocument = (res, pubData, initialData) => {
 			chunkName="Pub"
 			initialData={initialData}
 			viewData={{ pubData }}
+			customScripts={customScripts}
 			headerComponents={generateMetaComponents({
 				attributions: pubData.attributions,
 				collection: chooseCollectionForPub(pubData, initialData.locationData),
@@ -50,6 +53,7 @@ const renderPubDocument = (res, pubData, initialData) => {
 				title: pubData.title,
 				unlisted: !pubData.isRelease,
 			})}
+			bodyClassPrefix="pub"
 		/>,
 	);
 };
@@ -114,6 +118,7 @@ app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
 	try {
 		const { releaseNumber: releaseNumberString, pubSlug } = req.params;
 		const initialData = await getInitialData(req);
+		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
 		const releaseNumber = parseInt(releaseNumberString, 10);
 		if (Number.isNaN(releaseNumber) || releaseNumber < 1) {
 			throw new NotFoundError();
@@ -125,7 +130,49 @@ app.get('/pub/:pubSlug/release/:releaseNumber', async (req, res, next) => {
 			initialData,
 		});
 
-		return renderPubDocument(res, pubData, initialData);
+		return renderPubDocument(res, pubData, initialData, customScripts);
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+app.get('/pub/:pubSlug/release-id/:releaseId', async (req, res, next) => {
+	if (!hostIsValid(req, 'community')) {
+		return next();
+	}
+	try {
+		const initialData = await getInitialData(req);
+		const { pubSlug, releaseId } = req.params;
+		const pub = await getPub(pubSlug, initialData.communityData.id);
+		const releaseIndex = pub.releases.findIndex((release) => release.id === releaseId);
+		if (releaseIndex !== -1) {
+			const releaseNumber = 1 + releaseIndex;
+			return res.redirect(`/pub/${pubSlug}/release/${releaseNumber}`);
+		}
+		throw new NotFoundError();
+	} catch (err) {
+		return handleErrors(req, res, next)(err);
+	}
+});
+
+app.get('/pub/:pubSlug/discussion-id/:discussionId', async (req, res, next) => {
+	if (!hostIsValid(req, 'community')) {
+		return next();
+	}
+	try {
+		const initialData = await getInitialData(req);
+		const { pubSlug, discussionId } = req.params;
+		const pub = await getPub(pubSlug, initialData.communityData.id, { getDiscussions: true });
+		const discussion = pub.discussions.find((disc) => disc.id === discussionId);
+		if (discussion) {
+			const isDiscussionOnDraft = discussion.visibility.access !== 'public';
+			const hash = `#discussion-${discussionId}`;
+			if (isDiscussionOnDraft) {
+				return res.redirect(`/pub/${pubSlug}/draft${hash}`);
+			}
+			return res.redirect(`/pub/${pubSlug}${hash}`);
+		}
+		throw new NotFoundError();
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}
@@ -162,8 +209,9 @@ app.get(['/pub/:pubSlug/draft', '/pub/:pubSlug/draft/:historyKey'], async (req, 
 			...enrichedPubData,
 			membersData,
 		}));
+		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
 
-		return renderPubDocument(res, pubData, initialData);
+		return renderPubDocument(res, pubData, initialData, customScripts);
 	} catch (err) {
 		return handleErrors(req, res, next)(err);
 	}

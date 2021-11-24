@@ -20,13 +20,8 @@ export const createUpdatedDiscussionAnchorForNewSteps = async (
 	historyKey: number,
 	sequelizeTxn: any = null,
 ) => {
-	const {
-		originalText,
-		originalTextPrefix,
-		originalTextSuffix,
-		discussionId,
-		selection,
-	} = anchor;
+	const { originalText, originalTextPrefix, originalTextSuffix, discussionId, selection } =
+		anchor;
 	const nextSelection = mapDiscussionSelectionThroughSteps(selection, steps);
 	return DiscussionAnchor.create(
 		{
@@ -42,13 +37,14 @@ export const createUpdatedDiscussionAnchorForNewSteps = async (
 	);
 };
 
-export const createOriginalDiscussionAnchor = async ({
+export const createDiscussionAnchor = async ({
 	discussionId,
 	historyKey,
 	selectionJson,
 	originalText = '',
 	originalTextPrefix = '',
 	originalTextSuffix = '',
+	isOriginal = true,
 }: {
 	discussionId: string;
 	historyKey: number;
@@ -56,6 +52,7 @@ export const createOriginalDiscussionAnchor = async ({
 	originalText: string;
 	originalTextPrefix?: string;
 	originalTextSuffix?: string;
+	isOriginal?: boolean;
 }) => {
 	const { head, anchor } = selectionJson;
 	return DiscussionAnchor.create({
@@ -65,6 +62,6 @@ export const createOriginalDiscussionAnchor = async ({
 		originalText,
 		originalTextPrefix,
 		originalTextSuffix,
-		isOriginal: true,
+		isOriginal,
 	});
 };

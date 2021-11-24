@@ -22,7 +22,7 @@ const defaultProps = {
 	previewContext: undefined,
 };
 
-const NavBar = function(props) {
+const NavBar = function (props) {
 	const { communityData } = usePageContext(props.previewContext);
 	const { pages = [], collections = [], navigation = [] } = communityData;
 	const navItems = getNavItemsForCommunityNavigation({

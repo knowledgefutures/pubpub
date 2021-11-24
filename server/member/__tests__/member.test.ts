@@ -1,5 +1,5 @@
 /* global describe, it, expect, beforeAll, afterAll */
-import { setup, teardown, login, modelize } from 'stubstub';
+import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 
 import { Member } from 'server/models';
 
@@ -214,26 +214,33 @@ describe('/api/members', () => {
 	it('allows a member at the Community scope to add other Community members', async () => {
 		const { communityManager, willBeCommunityViewer } = models;
 		const agent = await login(communityManager);
-		const { body: member } = await agent
-			.post('/api/members')
-			.send(createMemberRequest({ permissions: 'view', user: willBeCommunityViewer }))
-			.expect(201);
+		const { body: member } = await expectCreatedActivityItem(
+			agent
+				.post('/api/members')
+				.send(createMemberRequest({ permissions: 'view', user: willBeCommunityViewer }))
+				.expect(201),
+		).toMatchObject({
+			kind: 'member-created',
+			actorId: communityManager.id,
+			payload: {
+				userId: willBeCommunityViewer.id,
+				permissions: 'view',
+			},
+		});
 		expect(member.userId).toEqual(willBeCommunityViewer.id);
 	});
 
 	it('prevents a member from elevating their own permissions', async () => {
-		const {
-			communityManager,
-			communityViewer,
-			communityManagerMember,
-			communityViewerMember,
-		} = models;
+		const { communityManager, communityViewer, communityManagerMember, communityViewerMember } =
+			models;
 		await Promise.all(
 			[
 				[communityManager, communityManagerMember],
 				[communityViewer, communityViewerMember],
 			].map(async ([user, member]) =>
-				(await login(user))
+				(
+					await login(user)
+				)
 					.put('/api/members')
 					.send(createMemberRequest({ permissions: 'admin', member }))
 					.expect(403),
@@ -417,17 +424,32 @@ describe('/api/members', () => {
 	it('allows a Collection manager to promote a member to manager in a Pub scope', async () => {
 		const { iCanCreateAPubViewer, youCannotPromoteMeToAdmin, collection, pub } = models;
 		const agent = await login(iCanCreateAPubViewer);
-		const { body: member } = await agent
-			.put('/api/members')
-			.send(
-				createMemberRequest({
-					permissions: 'manage',
-					collection,
-					pub,
-					member: youCannotPromoteMeToAdmin,
-				}),
-			)
-			.expect(200);
+		const { body: member } = await expectCreatedActivityItem(
+			agent
+				.put('/api/members')
+				.send(
+					createMemberRequest({
+						permissions: 'manage',
+						collection,
+						pub,
+						member: youCannotPromoteMeToAdmin,
+					}),
+				)
+				.expect(200),
+		).toMatchObject({
+			kind: 'member-updated',
+			actorId: iCanCreateAPubViewer.id,
+			pubId: pub.id,
+			payload: {
+				pub: {
+					title: pub.title,
+				},
+				permissions: {
+					from: 'edit',
+					to: 'manage',
+				},
+			},
+		});
 		expect(member.permissions).toEqual('manage');
 	});
 
@@ -479,16 +501,22 @@ describe('/api/members', () => {
 	it('allows a Collection manager to remove members with lower permissions in the same scope', async () => {
 		const { pub, collection, iCanDemoteYou, iWillBeDeleted } = models;
 		const agent = await login(iCanDemoteYou);
-		await agent
-			.delete('/api/members')
-			.send(
-				createMemberRequest({
-					pub,
-					collection,
-					member: iWillBeDeleted,
-				}),
-			)
-			.expect(200);
+		await expectCreatedActivityItem(
+			agent
+				.delete('/api/members')
+				.send(
+					createMemberRequest({
+						pub,
+						collection,
+						member: iWillBeDeleted,
+					}),
+				)
+				.expect(200),
+		).toMatchObject({
+			kind: 'member-removed',
+			actorId: iCanDemoteYou.id,
+			payload: { userId: iWillBeDeleted.userId },
+		});
 		const memberNow = await Member.findOne({ where: { id: iWillBeDeleted.id } });
 		expect(memberNow).toBeNull();
 	});

@@ -29,26 +29,29 @@
 		font-weight: normal;
 	}
 	h3.pricing {
-		font-size: 24px;
+		font-size: 16px;
+		margin-bottom: 1.6em;
 		.subhead {
 			font-size: 14px;
+			line-height: 16px;
 			color: #555;
 			font-weight: normal;
 		}
 	}
-	#enterprise h3.pricing {
-		margin-bottom: 13px;
+	#content {
+		.bp3-button {
+			margin-bottom: 2em;
+		}
+		.features {
+			margin-top: 0;
+		}
 	}
 	#independent {
 		a.bp3-button {
 			margin-top: 0;
 		}
 		h3.pricing {
-			font-size: 16px;
-			margin-bottom: 13px;
-			.subhead {
-				line-height: 16px;
-			}
+			margin-bottom: 1em;
 		}
 	}
 	.pricing-tiers {
@@ -72,8 +75,8 @@
 			}
 			a.bp3-button {
 				margin-top: 1em;
-				background-color: #B2E2BD;
-				color: #14411E;
+				background-color: #b2e2bd;
+				color: #14411e;
 			}
 		}
 	}

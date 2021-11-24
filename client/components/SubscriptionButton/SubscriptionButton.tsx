@@ -31,14 +31,8 @@ const iconForStatus: Record<UserSubscriptionStatus, IconName> = {
 };
 
 const SubscriptionButton = (props: Props) => {
-	const {
-		target,
-		subscription,
-		parentSubscription,
-		onUpdateSubscription,
-		children,
-		menuLabel,
-	} = props;
+	const { target, subscription, parentSubscription, onUpdateSubscription, children, menuLabel } =
+		props;
 	const { status, isLoading, updateStatus } = useSubscriptionState({
 		target,
 		subscription,

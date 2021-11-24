@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
-import { NonIdealState, Switch, Tab, Tabs, Radio, RadioGroup } from '@blueprintjs/core';
+import {
+	NonIdealState,
+	Switch,
+	Tab,
+	Tabs,
+	Radio,
+	RadioGroup,
+	Callout,
+	Intent,
+} from '@blueprintjs/core';
 
-import { DashboardFrame } from 'components';
-import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
-import { Pub, OutboundEdge, InboundEdge } from 'types';
+import { DashboardFrame } from 'components';
+import { usePageContext, usePendingChanges } from 'utils/hooks';
+import { getDashUrl } from 'utils/dashboard';
+import { Pub, OutboundEdge, InboundEdge, PubEdge } from 'types';
 
 import DashboardEdgesListing from './DashboardEdgesListing';
 import NewEdgeEditor from './NewEdgeEditor';
@@ -28,19 +38,24 @@ const frameDetails = (
 
 const DashboardEdges = (props: Props) => {
 	const { pubData } = props;
-	const [showOutboundEmptyState, setShowOutboundEmptyState] = useState(true);
 	const {
 		scopeData: {
 			activePermissions: { canManage: canManageEdges },
 		},
 	} = usePageContext();
 	const [persistedPubData, setPersistedPubData] = useState(pubData);
+	const [newEdge, setNewEdge] = useState<PubEdge | null>(null);
+	const { pendingPromise } = usePendingChanges();
+	const [isCreatingEdge, setIsCreatingEdge] = useState(false);
+	const [errorCreatingEdge, setErrorCreatingEdge] = useState<string>();
+	const showOutboundEmptyState = !newEdge;
 
 	const {
 		inboundEdges,
 		outboundEdges,
 		addCreatedOutboundEdge,
 		reorderOutboundEdges,
+		updateOutboundEdge,
 		removeOutboundEdge,
 		updateInboundEdgeApproval,
 	} = useDashboardEdges(pubData);
@@ -60,6 +75,28 @@ const DashboardEdges = (props: Props) => {
 		}
 	};
 
+	const saveNewEdge = (edge: PubEdge) => {
+		setIsCreatingEdge(true);
+		pendingPromise(
+			apiFetch.post('/api/pubEdges', {
+				...edge,
+				pubId: pubData.id,
+				// Don't send the whole Pub, just the ID
+				targetPub: undefined,
+			}),
+		)
+			.then((createdEdge: PubEdge) => {
+				setNewEdge(null);
+				setIsCreatingEdge(false);
+				addCreatedOutboundEdge(createdEdge);
+			})
+			.catch((err: Error) => {
+				setNewEdge(null);
+				setIsCreatingEdge(false);
+				setErrorCreatingEdge(err.message);
+			});
+	};
+
 	const renderOutboundEdgesTab = () => {
 		const usedPubsIds = [
 			pubData.id,
@@ -73,15 +110,18 @@ const DashboardEdges = (props: Props) => {
 					<NewEdgeEditor
 						usedPubIds={usedPubsIds}
 						pubData={persistedPubData}
-						onCreateNewEdge={addCreatedOutboundEdge}
-						onChangeCreatingState={(isCreating) =>
-							setShowOutboundEmptyState(!isCreating)
-						}
+						pubEdge={newEdge}
+						onCancel={() => setNewEdge(null)}
+						onSave={saveNewEdge}
+						onChange={setNewEdge}
+						loading={isCreatingEdge}
+						error={errorCreatingEdge}
 					/>
 				)}
 				<DashboardEdgesListing
 					pubData={persistedPubData}
 					pubEdges={outboundEdges}
+					onUpdateEdge={canManageEdges && updateOutboundEdge}
 					onReorderEdges={canManageEdges && reorderOutboundEdges}
 					onRemoveEdge={canManageEdges && removeOutboundEdge}
 					isInbound={false}
@@ -125,7 +165,21 @@ const DashboardEdges = (props: Props) => {
 		<DashboardFrame
 			className="dashboard-edges-container"
 			title="Connections"
-			details={frameDetails}
+			details={
+				<>
+					{frameDetails}{' '}
+					{canManageEdges && pubData.crossrefDepositRecord && (
+						<Callout intent={Intent.WARNING} title="Redeposit Warning">
+							This Pub has been deposited to Crossref. If you choose to update this
+							Pub's connections, you will need to{' '}
+							<a href={getDashUrl({ pubSlug: pubData.slug, mode: 'settings' })}>
+								re-deposit the Pub
+							</a>{' '}
+							for the updated relationships to appear in Crossref.
+						</Callout>
+					)}
+				</>
+			}
 		>
 			{canManageEdges && (
 				<div className="default-settings">

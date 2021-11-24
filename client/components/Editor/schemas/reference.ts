@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import classNames from 'classnames';
 import { DOMOutputSpec } from 'prosemirror-model';
-import { Hooks } from '@pubpub/prosemirror-reactive/src/store/types';
+import { useDocumentState, useDeferredNode } from '@pubpub/prosemirror-reactive';
 
 import { buildLabel } from '../utils/references';
 import { NodeLabelMap, ReferenceableNodeType } from '../types';
@@ -18,12 +19,12 @@ export default {
 			targetId: { default: null },
 		},
 		reactiveAttrs: {
-			label: function(this: Hooks, node) {
+			label: (node) => {
 				const { targetId } = node.attrs;
-				const { nodeLabels } = this.useDocumentState();
+				const { nodeLabels } = useDocumentState();
 
 				if (targetId) {
-					return this.useDeferredNode(targetId, (target) => {
+					return useDeferredNode(targetId, (target) => {
 						if (!target) {
 							return null;
 						}
@@ -62,7 +63,7 @@ export default {
 				},
 			},
 		],
-		toDOM: function(node) {
+		toDOM: function (node) {
 			const { id, targetId, label } = node.attrs;
 
 			return [

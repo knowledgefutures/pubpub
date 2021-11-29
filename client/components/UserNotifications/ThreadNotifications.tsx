@@ -99,7 +99,13 @@ const ThreadNotifications = (props: Props) => {
 					>
 						<Button small minimal aria-label="Manage subscription" />
 					</SubscriptionButton>
-					<Button small minimal icon="cross" aria-label="Dismiss" />
+					<Button
+						small
+						minimal
+						icon="cross"
+						aria-label="Dismiss"
+						onClick={() => actions.dismissThread(location, state)}
+					/>
 				</div>
 			</div>
 			<div className="message">

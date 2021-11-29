@@ -46,6 +46,7 @@ const SubscriptionButton = (props: Props) => {
 
 	return (
 		<Menu
+			aria-label="Manage subscription"
 			disclosure={(disclosureProps) =>
 				adaptDisclosureElementForBlueprintButton(
 					children,

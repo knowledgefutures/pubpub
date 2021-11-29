@@ -1,7 +1,14 @@
 import { UserSubscription, UserNotificationPreferences, PatchFn } from 'types';
 
 import { apiFetch } from 'client/utils/apiFetch';
-import { PubLocation, ThreadLocation, ThreadNotificationsState, NotificationsState } from './types';
+import { flattenOnce } from 'utils/arrays';
+import {
+	PubLocation,
+	ThreadLocation,
+	ThreadNotificationsState,
+	NotificationsState,
+	PubNotificationsState,
+} from './types';
 import { updatePub, updateThread } from './state';
 
 type SetNotificationsState = PatchFn<NotificationsState>;
@@ -73,10 +80,34 @@ const updateUserNotificationPreferences = (setState: SetNotificationsState) => {
 	};
 };
 
+const dismissThread = (setState: SetNotificationsState) => {
+	return async (location: ThreadLocation, threadState: ThreadNotificationsState) => {
+		setState((state) => updateThread(state, location, null));
+		const userNotificationIds = threadState.notifications.map(
+			(notification) => notification.id,
+		);
+		await apiFetch.delete('/api/userNotifications', { userNotificationIds });
+	};
+};
+
+const dismissPubThreads = (setState: SetNotificationsState) => {
+	return async (location: PubLocation, pubState: PubNotificationsState) => {
+		setState((state) => updatePub(state, location, null));
+		const userNotificationIds = flattenOnce(
+			pubState.threadStates.map((threadState) =>
+				threadState.notifications.map((notification) => notification.id),
+			),
+		);
+		await apiFetch.delete('/api/userNotifications', { userNotificationIds });
+	};
+};
+
 const actions = {
 	updateSubscriptionStatus,
 	updateThreadReadStatus,
 	updateUserNotificationPreferences,
+	dismissPubThreads,
+	dismissThread,
 };
 
 export const bindActions = (updateState: SetNotificationsState): Bound<typeof actions> => {

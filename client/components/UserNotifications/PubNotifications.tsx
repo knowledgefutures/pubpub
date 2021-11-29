@@ -75,7 +75,13 @@ const PubNotifications = (props: Props) => {
 								<Button small minimal aria-label="Manage subscription" />
 							</SubscriptionButton>
 						)}
-						<Button small minimal icon="cross" aria-label="Dismiss" />
+						<Button
+							small
+							minimal
+							icon="cross"
+							aria-label="Dismiss"
+							onClick={() => actions.dismissPubThreads(location, state)}
+						/>
 					</div>
 				</div>
 			</PubHeaderBackground>

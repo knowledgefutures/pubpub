@@ -32,15 +32,21 @@ export const updatePub = (
 ): NotificationsState => {
 	return {
 		...state,
-		pubStates: state.pubStates.map((pubState) => {
-			if (pubState.pub.id === location.pubId) {
-				return {
-					...pubState,
-					...resolvePatch(pubState, getNextState),
-				};
-			}
-			return pubState;
-		}),
+		pubStates: state.pubStates
+			.map((pubState) => {
+				if (pubState.pub.id === location.pubId) {
+					const patch = resolvePatch(pubState, getNextState);
+					if (patch) {
+						return {
+							...pubState,
+							...patch,
+						};
+					}
+					return null;
+				}
+				return pubState;
+			})
+			.filter((x): x is PubNotificationsState => !!x),
 	};
 };
 
@@ -53,15 +59,21 @@ export const updateThread = (
 	return updatePub(state, { pubId }, (pubState) => {
 		return {
 			...pubState,
-			threadStates: pubState.threadStates.map((threadState) => {
-				if (threadState.thread.id === threadId) {
-					return {
-						...threadState,
-						...resolvePatch(threadState, getNextState),
-					};
-				}
-				return threadState;
-			}),
+			threadStates: pubState.threadStates
+				.map((threadState) => {
+					if (threadState.thread.id === threadId) {
+						const patch = resolvePatch(threadState, getNextState);
+						if (patch) {
+							return {
+								...threadState,
+								...patch,
+							};
+						}
+						return null;
+					}
+					return threadState;
+				})
+				.filter((x): x is ThreadNotificationsState => !!x),
 		};
 	});
 };

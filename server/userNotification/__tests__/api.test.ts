@@ -1,13 +1,20 @@
 /* global describe, it, expect, beforeAll, afterAll */
+import uuid from 'uuid/v4';
+
 import { UserNotification } from 'server/models';
 import { modelize, login, setup, teardown } from 'stubstub';
+
+const communityId = uuid();
+const pubId = uuid();
 
 const models = modelize`
     User user {}
     User rando {}
 
     Community community {
+		id: ${communityId}
         Pub pub {
+			id: ${pubId}
             Discussion {
                 number: 1
                 author: user

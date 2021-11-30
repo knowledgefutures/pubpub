@@ -7,17 +7,22 @@ export default (sequelize, dataTypes) => {
 				type: dataTypes.TEXT,
 				allowNull: false,
 			},
-			/* Set by Associations */
+			submissionWorkflowId: { type: dataTypes.UUID, allowNull: false },
 			pubId: { type: dataTypes.UUID, allowNull: false },
 		},
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Submission, Pub } = models;
+					const { Pub, Submission, SubmissionWorkflow } = models;
 					Submission.belongsTo(Pub, {
 						onDelete: 'CASCADE',
-						as: 'submission',
+						as: 'pub',
 						foreignKey: 'pubId',
+					});
+					Submission.belongsTo(SubmissionWorkflow, {
+						onDelete: 'CASCADE',
+						as: 'submissionWorkflow',
+						foreignKey: 'submissionWorkflowId',
 					});
 				},
 			},

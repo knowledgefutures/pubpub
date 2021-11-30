@@ -4,7 +4,7 @@ export default (sequelize, dataTypes) => {
 		{
 			id: sequelize.idType,
 			title: { type: dataTypes.TEXT, allowNull: false },
-			collectionId: { type: dataTypes.UUID, allowNull: false },
+			collectionId: { type: dataTypes.UUID },
 			enabled: { type: dataTypes.BOOLEAN, allowNull: false },
 			instructionsText: { type: dataTypes.JSONB, allowNull: false },
 			emailText: { type: dataTypes.JSONB, allowNull: false },

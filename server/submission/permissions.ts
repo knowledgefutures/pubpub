@@ -1,39 +1,76 @@
-import { Submission } from 'server/models';
+import { Collection, Submission, SubmissionWorkflow } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
-import { initialStatuses, managerStatuses, submitterStatuses } from 'types';
+import * as types from 'types';
 
-export const getPermissions = async ({ userId, id, collectionId, communityId }) => {
-	if (!userId) {
-		return {};
-	}
-	const scopeData = await getScope({
-		collectionId,
-		communityId,
-		loginId: userId,
-	});
-	const isAuthenticated = scopeData.activePermissions.canManage;
-	const submissionData = await Submission.findOne({ where: { id } });
-
-	if (!submissionData) {
-		return { create: isAuthenticated };
-	}
-	return {
-		setSubmittedStatus: true,
-		manageStatus: true,
-		create: isAuthenticated,
-		update: isAuthenticated,
-		destroy: isAuthenticated,
-	};
+const pubManagerCanChangeStatus = (
+	oldStatus: types.SubmissionStatus,
+	newStatus: types.SubmissionStatus,
+) => {
+	return (
+		(types.submitterStatuses as readonly string[]).includes(newStatus) &&
+		(types.initialStatuses as readonly string[]).includes(oldStatus)
+	);
 };
 
-export const canUpdate = async ({ userId, collectionId, status, id }) => {
-	const { status: oldStatus, pubId } = await Submission.findOne({ where: { id } });
+const collectionManagerCanChangeStatus = (
+	oldStatus: types.SubmissionStatus,
+	newStatus: types.SubmissionStatus,
+) => {
+	return (
+		(types.managerStatuses as readonly string[]).includes(newStatus) &&
+		!(types.initialStatuses as readonly string[]).includes(oldStatus)
+	);
+};
+
+type CanCreateOptions = {
+	submissionWorkflowId: string;
+	userId: string;
+};
+
+export const canCreateSubmission = async ({ userId, submissionWorkflowId }: CanCreateOptions) => {
+	const workflow: types.SubmissionWorkflow = await SubmissionWorkflow.findOne({
+		where: { id: submissionWorkflowId },
+	});
+	return userId && workflow && workflow.enabled;
+};
+
+type CanUpdateOptions = {
+	id: string;
+	userId: string;
+	status: types.SubmissionStatus;
+};
+
+export const canUpdateSubmission = async ({ userId, status, id }: CanUpdateOptions) => {
 	const {
-		activePermissions: { canManage },
-	} = await getScope({ pubId, loginId: userId, collectionId });
-	const canSubmitPub =
-		canManage && submitterStatuses.includes(status) && initialStatuses.includes(oldStatus);
-	const canManagePub =
-		canManage && managerStatuses.includes(status) && !initialStatuses.includes(oldStatus);
-	return canSubmitPub || canManagePub;
+		status: oldStatus,
+		pubId,
+		submissionWorkflow: { collection },
+	} = await Submission.findOne({
+		where: { id },
+		include: [
+			{
+				model: SubmissionWorkflow,
+				as: 'submissionWorkflow',
+				include: [{ model: Collection, as: 'collection' }],
+			},
+		],
+	});
+
+	const [
+		{
+			activePermissions: { canManage: canManagePub },
+		},
+		{
+			activePermissions: { canManage: canManageCollection },
+		},
+	] = await Promise.all([
+		getScope({ loginId: userId, pubId }),
+		getScope({ loginId: userId, collectionId: collection.id }),
+	]);
+
+	const canChangeStatusAsSubmitter = canManagePub && pubManagerCanChangeStatus(oldStatus, status);
+	const canChangeStatusAsManager =
+		canManageCollection && collectionManagerCanChangeStatus(oldStatus, status);
+
+	return canChangeStatusAsManager || canChangeStatusAsSubmitter;
 };

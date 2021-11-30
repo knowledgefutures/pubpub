@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import throttle from 'lodash.throttle';
 
-export const PageContext = React.createContext({});
+export const PageContext = React.createContext({ featureFlags: {} });
 
 export const PendingChanges = React.createContext({
 	pendingPromise: (x) => x,

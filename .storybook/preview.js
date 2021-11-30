@@ -12,7 +12,7 @@ require('styles/base.scss');
 
 addDecorator((storyFn) => {
 	return (
-		<PageContext.Provider value={{ communityData, locationData, loginData, scopeData }}>
+		<PageContext.Provider value={{ communityData, locationData, loginData, scopeData, featureFlags: {} }}>
 			{storyFn()}
 		</PageContext.Provider>
 	);

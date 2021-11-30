@@ -11,6 +11,8 @@ const APA_DOI_PREFIX = '10.1037';
 const ROCHESTER_DOI_PREFIX = '10.47761';
 const OPENPRESSTIU_DOI_PREFIX = '10.26116';
 const UGHENT_DOI_PREFIX = '10.21825';
+const NCSU_DOI_PREFIX = '10.52750';
+const ABRF_DOI_PREFIX = '10.7171';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,
@@ -24,6 +26,8 @@ export const managedDoiPrefixes = [
 	ROCHESTER_DOI_PREFIX,
 	OPENPRESSTIU_DOI_PREFIX,
 	UGHENT_DOI_PREFIX,
+	NCSU_DOI_PREFIX,
+	ABRF_DOI_PREFIX,
 ];
 
 export const communityDoiOverrides = [
@@ -41,6 +45,7 @@ export const communityDoiOverrides = [
 	{
 		communityIds: [
 			'3d9ea6a4-25b9-42d3-8ceb-22459c649096', // SUS-RURI
+			'b8136f97-b9c2-442a-95a8-fe1df5c1d209', // OPENISU
 		],
 		prefix: IASTATE_DOI_PREFIX,
 		key: 'IASTATE',
@@ -98,10 +103,24 @@ export const communityDoiOverrides = [
 	},
 	{
 		communityIds: [
-			'86c49e4a-a4bb-4748-8e01-81d8113deb53', // https://ugent-library.pubpub.org//
+			'86c49e4a-a4bb-4748-8e01-81d8113deb53', // https://ugent-library.pubpub.org/
 		],
 		prefix: UGHENT_DOI_PREFIX,
 		key: 'UGHENT',
+	},
+	{
+		communityIds: [
+			'09eba68b-d4ec-462d-a200-960abb62b384', // https://fermentology.pubpub.org/
+		],
+		prefix: NCSU_DOI_PREFIX,
+		key: 'NSCU',
+	},
+	{
+		communityIds: [
+			'3fc1f5fe-d4be-419a-9b72-719d9b12169c', // https://jbt.pubpub.org/
+		],
+		prefix: ABRF_DOI_PREFIX,
+		key: 'ABRF',
 	},
 ];
 

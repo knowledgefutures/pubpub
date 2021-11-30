@@ -56,7 +56,7 @@ class FeatureFlagInterface {
 	}
 
 	async updateUserOverrides(slugs: OverrideValues) {
-		return Promise.all(
+		await Promise.all(
 			resolveOverrideValues(slugs).map(async ([slug, state]) => {
 				const user = await getUserBySlug(slug);
 				if (user) {
@@ -67,7 +67,7 @@ class FeatureFlagInterface {
 	}
 
 	async updateCommunityOverrides(subdomains: OverrideValues) {
-		return Promise.all(
+		await Promise.all(
 			resolveOverrideValues(subdomains).map(async ([subdomain, state]) => {
 				const community = await getCommunityBySubdomain(subdomain);
 				if (community) {

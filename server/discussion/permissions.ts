@@ -1,5 +1,6 @@
 import { Discussion } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
+import { getFeatureFlagForUserAndCommunity } from 'server/featureFlag/queries';
 
 export const getCreatePermission = async ({
 	userId,
@@ -61,7 +62,15 @@ export const canReleaseDiscussions = async ({
 	pubId: string;
 }) => {
 	const {
-		activePermissions: { isSuperAdmin },
+		elements: {
+			activeCommunity: { id: communityId },
+		},
+		activePermissions: { canManage },
 	} = await getScope({ pubId, loginId: userId });
-	return isSuperAdmin;
+	const isEnabled = await getFeatureFlagForUserAndCommunity(
+		userId,
+		communityId,
+		'releaseDiscussionsDialog',
+	);
+	return canManage && isEnabled;
 };

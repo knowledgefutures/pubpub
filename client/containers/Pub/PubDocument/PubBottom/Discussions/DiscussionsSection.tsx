@@ -24,11 +24,11 @@ type Props = {
 const DiscussionsSection = (props: Props) => {
 	const { pubData, updateLocalData, sideContentRef, mainContentRef } = props;
 	const { discussions, isRelease } = pubData;
-	const { communityData, scopeData } = usePageContext();
+	const { communityData, scopeData, featureFlags } = usePageContext();
 	const {
 		collabData: { editorChangeObject },
 	} = usePubContext();
-	const { canView, canManage, canCreateDiscussions, isSuperAdmin } = scopeData.activePermissions;
+	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
 	const [isBrowsingArchive, setIsBrowsingArchive] = useState(false);
 	const [isShowingAnchoredComments, setShowingAnchoredComments] = useState(true);
 	const [sortMode, setSortMode] = useState('newestThread');
@@ -98,27 +98,30 @@ const DiscussionsSection = (props: Props) => {
 							title="Filter comments"
 						/>
 					</Popover>
-					{isSuperAdmin && !isRelease && discussions.length > 0 && (
-						<DialogLauncher
-							renderLauncherElement={({ openDialog }) => (
-								<AccentedIconButton
-									accentColor={iconColor}
-									icon="share"
-									title="Release Discussions"
-									onClick={openDialog}
-								/>
-							)}
-						>
-							{({ isOpen, onClose, key }) => (
-								<DiscussionsReleaseDialog
-									key={key}
-									isOpen={isOpen}
-									onClose={onClose}
-									pubData={pubData}
-								/>
-							)}
-						</DialogLauncher>
-					)}
+					{canManage &&
+						featureFlags.releaseDiscussionsDialog &&
+						!isRelease &&
+						discussions.length > 0 && (
+							<DialogLauncher
+								renderLauncherElement={({ openDialog }) => (
+									<AccentedIconButton
+										accentColor={iconColor}
+										icon="share"
+										title="Release Discussions"
+										onClick={openDialog}
+									/>
+								)}
+							>
+								{({ isOpen, onClose, key }) => (
+									<DiscussionsReleaseDialog
+										key={key}
+										isOpen={isOpen}
+										onClose={onClose}
+										pubData={pubData}
+									/>
+								)}
+							</DialogLauncher>
+						)}
 				</React.Fragment>
 			);
 		}

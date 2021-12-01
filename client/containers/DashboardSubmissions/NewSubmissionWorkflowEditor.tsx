@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Button } from '@blueprintjs/core';
 
+import { SubmissionWorkflow } from 'types';
 import { useLocalStorage } from 'client/utils/useLocalStorage';
 import { getEmptyDoc } from 'client/components/Editor';
+import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
 import { EditableSubmissionWorkflow } from './types';
@@ -21,7 +23,7 @@ const createEmptyWorkflow = (): EditableSubmissionWorkflow => {
 };
 
 type Props = {
-	onWorkflowCreated: (w: EditableSubmissionWorkflow) => unknown;
+	onWorkflowCreated: (w: SubmissionWorkflow) => unknown;
 };
 
 const NewSubmissionWorkflowEditor = (props: Props) => {
@@ -46,6 +48,24 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 	});
 
 	const [isCreating, setIsCreating] = useState(!!initialWorkflow);
+	const [isPersisting, setIsPersisting] = useState(false);
+
+	const handleWorkflowCreated = useCallback(() => {
+		const { introText, instructionsText, emailText, title, targetEmailAddress } = workflow;
+		setIsPersisting(true);
+		apiFetch
+			.post('/api/submissionWorkflows', {
+				collectionId: activeCollection.id,
+				introText,
+				instructionsText,
+				emailText,
+				title,
+				targetEmailAddress,
+				enabled: true,
+			})
+			.then(onWorkflowCreated)
+			.finally(() => setIsPersisting(false));
+	}, [workflow, activeCollection, onWorkflowCreated]);
 
 	if (isCreating) {
 		return (
@@ -57,8 +77,9 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 					renderCompletionButton={(isValid) => (
 						<Button
 							disabled={!isValid}
-							onClick={() => onWorkflowCreated(workflow)}
+							onClick={handleWorkflowCreated}
 							icon="tick"
+							loading={isPersisting}
 						>
 							Save and continue
 						</Button>

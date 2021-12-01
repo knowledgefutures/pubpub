@@ -11,6 +11,9 @@ const models = modelize`
     User termUser {
         fullName: "Find This Guy"
     }
+	SubmissionWorkflow submissionWorkflow {
+		title: "A workflow"
+	}
     Community community {
         Collection c1 {}
         Collection c2 {}
@@ -29,6 +32,7 @@ const models = modelize`
                 name: "Please Find"
             }
 			Submission {
+				submissionWorkflow
 				status: "accepted"
 			}
         }
@@ -46,6 +50,7 @@ const models = modelize`
                 termUser
             }
 			Submission {
+				submissionWorkflow
 				status: "declined"
 			}
         }
@@ -74,6 +79,7 @@ const models = modelize`
                 User {}
             }
 			Submission {
+				submissionWorkflow
 				status: "submitted"
 			}
         }

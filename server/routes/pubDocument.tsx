@@ -135,7 +135,7 @@ app.get('/pub/:pubSlug/release-id/:releaseId', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		const { pubSlug, releaseId } = req.params;
-		const pub = await getPub(pubSlug, initialData.communityData.id);
+		const pub = await getPub({ slug: pubSlug, communityId: initialData.communityData.id });
 		const releaseIndex = pub.releases.findIndex((release) => release.id === releaseId);
 		if (releaseIndex !== -1) {
 			const releaseNumber = 1 + releaseIndex;
@@ -154,7 +154,10 @@ app.get('/pub/:pubSlug/discussion-id/:discussionId', async (req, res, next) => {
 	try {
 		const initialData = await getInitialData(req);
 		const { pubSlug, discussionId } = req.params;
-		const pub = await getPub(pubSlug, initialData.communityData.id, { getDiscussions: true });
+		const pub = await getPub(
+			{ slug: pubSlug, communityId: initialData.communityData.id },
+			{ getDiscussions: true },
+		);
 		const discussion = pub.discussions.find((disc) => disc.id === discussionId);
 		if (discussion) {
 			const isDiscussionOnDraft = discussion.visibility.access !== 'public';

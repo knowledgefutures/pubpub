@@ -4,13 +4,21 @@ import { InitialData, PubGetOptions } from 'types';
 import sanitizePub from './pubSanitize';
 import buildPubOptions from './pubOptions';
 
-export const getPub = async (slug: string, communityId: string, options: PubGetOptions = {}) => {
-	const sanitizedSlug = slug.toLowerCase();
+type GetPubWhere = { slug: string; communityId: string } | { id: string };
+
+const resolveGetPubWhereQuery = (where: GetPubWhere) => {
+	if ('slug' in where) {
+		return {
+			communityId: where.communityId,
+			slug: where.slug.toLowerCase(),
+		};
+	}
+	return { id: where.id };
+};
+
+export const getPub = async (where: GetPubWhere, options: PubGetOptions = {}) => {
 	const pubData = await Pub.findOne({
-		where: {
-			slug: sanitizedSlug,
-			communityId,
-		},
+		where: resolveGetPubWhereQuery(where),
 		...buildPubOptions({
 			getMembers: true,
 			getCollections: true,
@@ -34,6 +42,7 @@ type GetPubForRequestOptions = PubGetOptions & {
 
 export const getPubForRequest = async (options: GetPubForRequestOptions) => {
 	const { slug, initialData, releaseNumber = null, ...pubGetOptions } = options;
-	const pubData = await getPub(slug, initialData.communityData.id, pubGetOptions);
+	const communityId = initialData.communityData.id;
+	const pubData = await getPub({ slug, communityId }, pubGetOptions);
 	return sanitizePub(pubData, initialData, releaseNumber);
 };

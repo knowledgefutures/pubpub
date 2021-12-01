@@ -1,18 +1,19 @@
 import React from 'react';
 
 import { Layout } from 'components';
-import { LayoutPubsByBlock } from 'utils/layout';
+import { LayoutPubsByBlock, CollectionLayout } from 'utils/layout';
 import { Pub, Collection as CollectionType } from 'types';
 
 type Props = {
 	layoutPubsByBlock: LayoutPubsByBlock<Pub>;
+	layout: CollectionLayout;
 	collection: CollectionType;
 };
 
 const Collection = (props: Props) => {
-	const { layoutPubsByBlock, collection } = props;
-	if (collection.layout) {
-		const { blocks, isNarrow } = collection.layout;
+	const { layoutPubsByBlock, layout, collection } = props;
+	if (layout) {
+		const { blocks, isNarrow } = layout;
 		return (
 			<Layout
 				blocks={blocks}

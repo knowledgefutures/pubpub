@@ -10,18 +10,14 @@ type Props = {
 	className?: string;
 	title: React.ReactNode;
 	content: React.ReactNode;
-	onSubmitClicked?: () => unknown;
 	useCommunityAccentColor?: boolean;
 };
 
 const LayoutSubmissionBannerSkeleton = (props: Props) => {
-	const { title, content, onSubmitClicked, className, useCommunityAccentColor } = props;
+	const { title, content, className, useCommunityAccentColor } = props;
 	const {
 		communityData: { accentColorDark },
 	} = usePageContext();
-
-	// TODO(ian): actually use this in a button or something
-	void onSubmitClicked;
 
 	const backgroundColor = Color(accentColorDark).alpha(0.2).toString();
 
@@ -31,7 +27,7 @@ const LayoutSubmissionBannerSkeleton = (props: Props) => {
 			style={useCommunityAccentColor ? { backgroundColor } : {}}
 		>
 			<h2>{title}</h2>
-			{content}
+			<div>{content}</div>
 		</div>
 	);
 };

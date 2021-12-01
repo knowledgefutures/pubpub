@@ -18,6 +18,7 @@ export { default as DatePicker } from './DatePicker/DatePicker';
 export { default as DialogLauncher } from './DialogLauncher/DialogLauncher';
 export { DragDropListing, DragDropOrdering, DragHandle } from './DragDropListing';
 export { default as DropdownButton } from './DropdownButton/DropdownButton';
+export { default as Editor } from './Editor';
 export { default as FileUploadButton } from './FileUploadButton/FileUploadButton';
 export { default as Footer } from './Footer/Footer';
 export { default as FormattingBar } from './FormattingBar/FormattingBar';

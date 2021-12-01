@@ -108,6 +108,7 @@ export type LayoutBlockSubmissionBanner = {
 	content: {
 		title: string;
 		body: DocJson;
+		submissionWorkflowId: string;
 	};
 };
 
@@ -117,6 +118,7 @@ export type LayoutBlock =
 	| LayoutBlockHtml
 	| LayoutBlockPubs
 	| LayoutBlockText
-	| LayoutBlockCollectionHeader;
+	| LayoutBlockCollectionHeader
+	| LayoutBlockSubmissionBanner;
 
 export type CollectionLayout = LayoutOptions & { blocks: LayoutBlock[] };

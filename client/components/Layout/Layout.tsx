@@ -16,6 +16,7 @@ import LayoutBanner from './LayoutBanner';
 import LayoutText from './LayoutText';
 import LayoutPagesCollections from './LayoutPagesCollections';
 import LayoutCollectionHeader from './LayoutCollectionHeader';
+import LayoutSubmissionBanner from './LayoutSubmissionBanner';
 
 require('./layout.scss');
 
@@ -79,6 +80,9 @@ const Layout = (props: Props) => {
 					collection={collection}
 				/>
 			);
+		}
+		if (block.type === 'submission-banner') {
+			return <LayoutSubmissionBanner key={index} content={block.content} />;
 		}
 		return null;
 	};

@@ -1,5 +1,6 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
+import { getPub } from 'server/utils/queryHelpers';
 
 import { canCreateSubmission, canUpdateSubmission } from './permissions';
 import { createSubmission, updateSubmission } from './queries';
@@ -17,7 +18,8 @@ app.post(
 			throw new ForbiddenError();
 		}
 		const newSubmission = await createSubmission({ userId, submissionWorkflowId });
-		return res.status(201).json(newSubmission);
+		const pub = await getPub({ id: newSubmission.pubId });
+		return res.status(201).json({ ...newSubmission.toJSON(), pub: { slug: pub.slug } });
 	}),
 );
 

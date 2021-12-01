@@ -18,8 +18,11 @@ import {
 import { handleErrors } from 'server/utils/errors';
 import { withValue } from 'utils/fp';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
+import { getEnabledSubmissionWorkflowForCollection } from 'server/submissionWorkflow/queries';
+import * as types from 'types';
+import { LayoutBlockSubmissionBanner } from 'utils/layout';
 
-const findCollectionByPartialId = (maybePartialId) => {
+const findCollectionByPartialId = (maybePartialId: string) => {
 	return Collection.findOne({
 		where: [
 			sequelize.where(sequelize.cast(sequelize.col('Collection.id'), 'varchar'), {
@@ -29,11 +32,40 @@ const findCollectionByPartialId = (maybePartialId) => {
 	});
 };
 
-const enrichCollectionWithAttributions = async (collection) => {
+const enrichCollectionWithAttributions = async (collection: types.Collection) => {
 	collection.attributions = await CollectionAttribution.findAll({
 		where: { collectionId: collection.id },
 		include: [includeUserModel({ as: 'user' })],
 	});
+};
+
+const getLayoutWithSubmissionWorkflowBlock = async (collection: types.Collection) => {
+	const { layout, id: collectionId } = collection;
+	if (layout) {
+		const workflow = await getEnabledSubmissionWorkflowForCollection(collectionId);
+		if (workflow?.enabled) {
+			const [firstBlock] = layout.blocks;
+			const { title, introText, id: submissionWorkflowId } = workflow;
+			const firstBlockIsHeader = firstBlock?.type === 'collection-header';
+			const bannerBlockIndex = firstBlockIsHeader ? 1 : 0;
+			const bannerBlock: LayoutBlockSubmissionBanner = {
+				id: workflow.id,
+				type: 'submission-banner',
+				content: {
+					title,
+					submissionWorkflowId,
+					body: introText,
+				},
+			};
+			const nextBlocks = [...layout.blocks];
+			nextBlocks.splice(bannerBlockIndex, 0, bannerBlock);
+			return {
+				...layout,
+				blocks: nextBlocks,
+			};
+		}
+	}
+	return layout;
 };
 
 app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, next) => {
@@ -56,7 +88,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 		);
 
 		if (collection) {
-			const { pageId, layout, id: collectionId } = collection;
+			const { pageId, id: collectionId } = collection;
 
 			await enrichCollectionWithAttributions(collection);
 
@@ -67,6 +99,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 				}
 			}
 
+			const layout = await getLayoutWithSubmissionWorkflowBlock(collection);
 			if (layout) {
 				const layoutPubsByBlock = await getLayoutPubsByBlock({
 					blocks: layout.blocks,
@@ -81,7 +114,7 @@ app.get(['/collection/:collectionSlug', '/:collectionSlug'], async (req, res, ne
 					<Html
 						chunkName="Collection"
 						initialData={initialData}
-						viewData={{ layoutPubsByBlock, collection }}
+						viewData={{ layoutPubsByBlock, collection, layout }}
 						customScripts={customScripts}
 						headerComponents={generateMetaComponents({
 							initialData,

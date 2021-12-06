@@ -34,6 +34,7 @@ const models = modelize`
 			Submission {
 				submissionWorkflow
 				status: "accepted"
+				submittedAt: "2021-12-01"
 			}
         }
         Pub p2 {
@@ -52,6 +53,7 @@ const models = modelize`
 			Submission {
 				submissionWorkflow
 				status: "declined"
+				submittedAt: "2021-12-02"
 			}
         }
         Pub p3 {
@@ -212,6 +214,20 @@ describe('queryPubIds', () => {
 		);
 		await expectPubIdsForQuery({ ordering: titleOrdering, submissionStatuses: ['declined'] }, [
 			p2,
+		]);
+	});
+
+	it('Orders Pubs by submission date', async () => {
+		const { p1, p2, p3 } = models;
+		await expectPubIdsForQuery({ ordering: { field: 'submittedDate', direction: 'DESC' } }, [
+			p2,
+			p1,
+			p3,
+		]);
+		await expectPubIdsForQuery({ ordering: { field: 'submittedDate', direction: 'ASC' } }, [
+			p1,
+			p2,
+			p3,
 		]);
 	});
 

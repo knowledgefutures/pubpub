@@ -13,4 +13,5 @@ export type SubmissionStatus = typeof submissionStatuses[number];
 export type Submission = {
 	id: string;
 	status: SubmissionStatus;
+	submittedAt: null | string;
 };

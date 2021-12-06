@@ -136,8 +136,9 @@ describe('/api/submissions', () => {
 				status: 'submitted',
 			})
 			.expect(201);
-		const { status } = await Submission.findOne({ where: { id: submission.id } });
+		const { status, submittedAt } = await Submission.findOne({ where: { id: submission.id } });
 		expect(status).toEqual('submitted');
+		expect(Number.isNaN(new Date(submittedAt).getTime())).toEqual(false);
 	});
 
 	it('forbids admins from updating status out of one of [submitted, accepted, declined]', async () => {

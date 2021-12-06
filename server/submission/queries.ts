@@ -41,20 +41,15 @@ export const updateSubmission = async (patch: UpdateOptions, sendEmail = false) 
 	const submission: SequelizeModel<SubmissionType> = await Submission.findOne({ where: { id } });
 	const previousStatus = submission.status;
 	submission.status = status;
-	await submission.save();
-	if (sendEmail) {
-		if (previousStatus === 'incomplete' && status === 'submitted') {
-			// Send an email from here
+
+	if (previousStatus === 'incomplete' && status === 'submitted') {
+		submission.submittedAt = new Date().toISOString();
+		if (sendEmail) {
+			// Send an email here
 		}
 	}
 
-	Submission.update(
-		{ status: patch.status },
-		{
-			where: { id: patch.id },
-			individualHooks: true,
-		},
-	);
+	await submission.save();
 };
 
 export const destroySubmission = async ({ id }: { id: string }) =>

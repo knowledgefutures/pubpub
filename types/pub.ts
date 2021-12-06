@@ -1,6 +1,7 @@
 import { NodeLabelMap } from 'components/Editor';
 import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
 
+import { Submission } from 'types';
 import { PubAttribution } from './attribution';
 import { CollectionPub } from './collection';
 import { Community } from './community';
@@ -101,6 +102,7 @@ export type Pub = {
 	draft?: Draft;
 	scopeSummaryId: null | string;
 	scopeSummary: ScopeSummary;
+	submission?: Submission;
 };
 
 export type PubDocInfo = {

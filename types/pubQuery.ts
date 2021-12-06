@@ -4,6 +4,7 @@ export type PubsQueryOrderingField =
 	| 'collectionRank'
 	| 'publishDate'
 	| 'updatedDate'
+	| 'submittedDate'
 	| 'creationDate'
 	| 'title';
 

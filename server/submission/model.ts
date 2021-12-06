@@ -7,6 +7,7 @@ export default (sequelize, dataTypes) => {
 				type: dataTypes.TEXT,
 				allowNull: false,
 			},
+			submittedAt: { type: dataTypes.DATE },
 			submissionWorkflowId: { type: dataTypes.UUID, allowNull: false },
 			pubId: { type: dataTypes.UUID, allowNull: false },
 		},

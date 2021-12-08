@@ -38,6 +38,7 @@ const createNotificationsForThreadComment = async (
 				receiveNotifications: false,
 			},
 		});
+
 	const userIdsWhoDoNotWantNotifications = notificationPreferencesOptingOutOfNotifications.map(
 		(pref) => pref.userId,
 	);

@@ -3,18 +3,30 @@ import { Op } from 'sequelize';
 import * as types from 'types';
 import { CollectionPub, Member } from 'server/models';
 import { getMemberDataById } from 'server/utils/queryHelpers';
+import { MemberPermission } from 'types';
 
-const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }) => {
+const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }: any) => {
 	if ([pubId, communityId, collectionId].filter((x) => x).length !== 1) {
 		throw new Error('Cannot create member with ambiguous scope.');
 	}
+};
+
+type CreateMemberOptions = {
+	target: {
+		userId: string;
+		communityId?: string;
+		collectionId?: string;
+		pubId?: string;
+	};
+	value: { permissions: MemberPermission };
+	actorId?: string | null;
 };
 
 export const createMember = async ({
 	target: { pubId, collectionId, communityId, userId },
 	value: { permissions },
 	actorId = null,
-}) => {
+}: CreateMemberOptions) => {
 	assertExactlyOneScopeInTarget({
 		pubId,
 		communityId,

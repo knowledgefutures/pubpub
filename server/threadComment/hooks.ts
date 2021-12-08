@@ -7,6 +7,7 @@ import {
 	createPubReviewCommentAddedActivityItem,
 } from 'server/activityItem/queries';
 import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
+import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
 
 const createActivityItem = async (threadComment: types.ThreadComment) => {
 	const parent = await getParentModelForThread(threadComment.threadId);
@@ -31,11 +32,15 @@ const createActivityItem = async (threadComment: types.ThreadComment) => {
 };
 
 ThreadComment.afterCreate(async (threadComment: types.ThreadComment) => {
-	await setUserSubscriptionStatus({
-		userId: threadComment.userId,
-		threadId: threadComment.threadId,
-		setAutomatically: true,
-		status: 'unchanged',
-	});
+	const { userId, threadId } = threadComment;
+	const userNotificationPreferences = await getOrCreateUserNotificationPreferences(userId);
+	if (userNotificationPreferences.subscribeToThreadsAsCommenter) {
+		await setUserSubscriptionStatus({
+			userId,
+			threadId,
+			setAutomatically: true,
+			status: 'unchanged',
+		});
+	}
 	defer(() => createActivityItem(threadComment));
 });

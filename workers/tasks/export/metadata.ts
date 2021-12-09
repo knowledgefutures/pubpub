@@ -61,6 +61,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
 	return {
 		title: pubData.title,
+		slug: pubData.slug,
 		doi: pubData.doi,
 		publishedDateString,
 		updatedDateString,

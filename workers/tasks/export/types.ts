@@ -6,6 +6,7 @@ import { RenderedStructuredValue } from 'utils/notesCore';
 
 export type PubMetadata = {
 	title: string;
+	slug: string;
 	doi: null | string;
 	publishedDateString: Maybe<string>;
 	updatedDateString: Maybe<string>;

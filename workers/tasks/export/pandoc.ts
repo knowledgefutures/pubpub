@@ -8,7 +8,6 @@ import { fromProsemirror, emitPandocJson } from '@pubpub/prosemirror-pandoc';
 import { DocJson } from 'types';
 import { editorSchema, getReactedDocFromJson, Note } from 'client/components/Editor';
 import { getPathToCslFileForCitationStyleKind } from 'server/utils/citations';
-import { getLicenseBySlug } from 'utils/licenses';
 
 import { rules } from '../import/rules';
 import { getTmpFileForExtension } from './util';
@@ -63,14 +62,13 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: st
 		title,
 		attributions,
 		publishedDateString,
-		licenseSlug,
 		primaryCollectionMetadata,
 		communityTitle,
 		doi,
 		citationStyle,
+		license,
 	} = pubMetadata;
 	const cslFile = getPathToCslFileForCitationStyleKind(citationStyle);
-	const license = getLicenseBySlug(licenseSlug)!;
 	const formattedAttributions = attributions.map((attr) => {
 		if (pandocTarget === 'jats_archiving') {
 			const publicEmail = 'publicEmail' in attr.user ? attr.user.publicEmail : null;

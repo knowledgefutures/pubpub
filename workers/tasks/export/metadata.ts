@@ -15,6 +15,7 @@ import {
 	includeUserModel,
 } from 'server/models';
 
+import { getLicenseForPub } from 'utils/licenses';
 import { PubMetadata } from './types';
 
 const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => {
@@ -53,6 +54,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 		],
 	});
 	const publishedDate = getPubPublishedDate(pubData);
+	const license = getLicenseForPub(pubData, pubData.community);
 	const updatedDate = getPubUpdatedDate({ pub: pubData });
 	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
@@ -60,7 +62,6 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	return {
 		title: pubData.title,
 		doi: pubData.doi,
-		licenseSlug: pubData.licenseSlug,
 		publishedDateString,
 		updatedDateString,
 		communityTitle: renderJournalCitation(
@@ -77,9 +78,8 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 		citationStyle: pubData.citationStyle,
 		citationInlineStyle: pubData.citationInlineStyle,
 		nodeLabels: pubData.nodeLabels,
-		...((primaryCollection?.kind === 'conference' || primaryCollection?.kind === 'book') && {
-			publisher: pubData.community.publishAs,
-		}),
+		publisher: pubData.community.publishAs || pubData.communityTitle,
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),
+		license,
 	};
 };

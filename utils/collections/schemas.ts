@@ -17,6 +17,7 @@ type CollectionSchema = {
 };
 
 const dateRegex = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/;
+const yearRegex = /^([0-9]{4})$/;
 
 const types = {
 	date: {
@@ -31,6 +32,12 @@ const types = {
 		},
 		validate: (str) => dateRegex.test(str),
 		labelInfo: '(in YYYY-MM-DD format)',
+	},
+	year: {
+		name: 'year',
+		validate: (str) => yearRegex.test(str),
+		deserialize: (str) => str,
+		labelInfo: '(YYYY)',
 	},
 };
 
@@ -107,7 +114,12 @@ const schemas: CollectionSchema[] = [
 			sharedFields.doi,
 			sharedFields.url,
 			{ name: 'isbn', label: 'ISBN' },
-			{ name: 'copyrightYear', label: 'Copyright year', pattern: '^[0-9]*$' },
+			{
+				name: 'copyrightYear',
+				label: 'Copyright year',
+				pattern: '^[0-9]*$',
+				type: types.year,
+			},
 			{ name: 'publicationDate', label: 'Publication date', type: types.date },
 			{ name: 'edition', label: 'Edition no.', pattern: '^[0-9]*$' },
 		],

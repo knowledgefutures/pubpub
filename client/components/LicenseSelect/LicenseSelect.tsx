@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
 
-import { licenses, getLicenseBySlug } from 'utils/licenses';
+import { licenses, getLicenseForPub } from 'utils/licenses';
 import { usePageContext } from 'utils/hooks';
-import { getPubCopyrightYear } from 'utils/pub/pubDates';
 import { apiFetch } from 'client/utils/apiFetch';
 import { Pub, CollectionPub, DefinitelyHas } from 'types';
 
@@ -31,15 +30,7 @@ const LicenseSelect = (props: Props) => {
 	const { children, onSelect, persistSelections, pubData, updateLocalData } = props;
 	const [isPersisting, setIsPersisting] = useState(false);
 	const { communityData } = usePageContext();
-	const currentLicense = getLicenseBySlug(pubData.licenseSlug)!;
-	const pubCopyrightYear = getPubCopyrightYear(pubData);
-	let pubPublisher = communityData.title;
-	if (communityData.id === '78810858-8c4a-4435-a669-6bb176b61d40') {
-		pubPublisher = 'Massachusetts Institute of Technology';
-	}
-	if (currentLicense.slug === 'copyright') {
-		currentLicense.full = `Copyright © ${pubCopyrightYear} ${pubPublisher}. All rights reserved.`;
-	}
+	const currentLicense = getLicenseForPub(pubData, communityData);
 	const selectLicense = (license) => {
 		onSelect(license);
 		if (persistSelections) {
@@ -91,15 +82,7 @@ const LicenseSelect = (props: Props) => {
 											</a>
 										)}
 									</div>
-									{license.slug === 'copyright' && (
-										<div className="full">
-											Copyright © {pubCopyrightYear} {pubPublisher}. All
-											rights reserved.
-										</div>
-									)}
-									{license.slug !== 'copyright' && (
-										<div className="full">{license.full}</div>
-									)}
+									<div className="full">{license.full}</div>
 								</div>
 							}
 							icon={renderIcon(license)}
@@ -111,7 +94,6 @@ const LicenseSelect = (props: Props) => {
 			</Menu>
 		);
 	};
-
 	return (
 		<Popover content={renderMenu()}>
 			{children({

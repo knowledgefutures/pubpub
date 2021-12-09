@@ -56,4 +56,5 @@ export const getReadableDateInYear = (date: Date) => {
 	return `${month} ${dateInMonth}`;
 };
 
-export const isValidDate = (date: Date) => !Number.isNaN(date.getTime());
+export const isValidDate = (date: string | number | Date) =>
+	!Number.isNaN(new Date(date).getTime());

@@ -1,13 +1,20 @@
-import Promise from 'bluebird';
 import passport from 'passport';
 import crypto from 'crypto';
+import { promisify } from 'util';
 
+import { assert } from 'utils/assert';
+import * as types from 'types';
 import app from 'server/server';
 import { User } from 'server/models';
 
+type SetPasswordData = { hash: string; salt: string };
+type Step1Result = [types.User, null] | [null, types.User];
+type Step2Result = [types.User, null] | [null, SetPasswordData];
+type Step3Result = [types.User, null] | [null, types.User[][]];
+
 app.post('/api/login', (req, res, next) => {
-	const authenticate = new Promise((resolve, reject) => {
-		passport.authenticate('local', (authErr, user) => {
+	const authenticate = new Promise<types.User | null>((resolve, reject) => {
+		passport.authenticate('local', (authErr: Error, user: types.User) => {
 			if (authErr) {
 				return reject(authErr);
 			}
@@ -18,18 +25,19 @@ app.post('/api/login', (req, res, next) => {
 		.then((user) => {
 			/* If authentication succeeded, we have a user */
 			if (user) {
-				return [user, null];
+				return [user, null] as Step1Result;
 			}
 
 			/* If authentication did not succeed, we need to check if a legacy hash is valid */
-			const findUser = User.findOne({
+			const findUser: Promise<types.User | null> = User.findOne({
 				where: { email: req.body.email },
 			});
-			return Promise.all([null, findUser]);
+
+			return Promise.all([null, findUser]) as Promise<Step1Result>;
 		})
 		.then(([user, userData]) => {
 			if (user) {
-				return [user, null];
+				return [user, null] as Step2Result;
 			}
 
 			/* If the login failed, and there is no
@@ -73,14 +81,14 @@ app.post('/api/login', (req, res, next) => {
 			}
 
 			/* If isLegacyValid, we need to update user to sha512 */
-			const setPassword = Promise.promisify(userData.setPassword, { context: userData });
-			return Promise.all([null, setPassword(req.body.password)]);
+			const setPassword = promisify((userData as any).setPassword.bind(userData));
+			return Promise.all([null, setPassword(req.body.password)]) as Promise<Step2Result>;
 		})
 		.then(([user, setPasswordData]) => {
 			if (user) {
-				return [user, null];
+				return [user, null] as Step3Result;
 			}
-
+			assert(setPasswordData !== null);
 			const userUpdateData = {
 				passwordDigest: 'sha512',
 				hash: setPasswordData.hash,
@@ -90,17 +98,17 @@ app.post('/api/login', (req, res, next) => {
 				where: { email: req.body.email },
 				returning: true,
 			});
-			return Promise.all([null, updateUser]);
+			return Promise.all([null, updateUser]) as Promise<Step3Result>;
 		})
 		.then(([user, updatedUserData]) => {
 			if (user) {
 				return user;
 			}
-
+			assert(updatedUserData !== null);
 			return updatedUserData[1][0];
 		})
 		.then((user) => {
-			req.logIn(user, (err) => {
+			req.logIn(user, (err: string) => {
 				if (err) {
 					throw new Error(err);
 				}

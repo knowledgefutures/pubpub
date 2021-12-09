@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll, afterAll */
 import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 import { createCollection } from '../queries';
 import { Collection } from '../../models';

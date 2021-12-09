@@ -28,7 +28,7 @@
 		}
 	},
 	"rules": {
-		"@typescript-eslint/no-unused-vars": ["error", {"varsIgnorePattern": "^_+$"}],
+		"@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_+$" }],
 		"@typescript-eslint/no-use-before-define": ["error"],
 		"@typescript-eslint/no-shadow": ["error"],
 		"arrow-body-style": 0,
@@ -41,10 +41,10 @@
 			"error",
 			"ignorePackages",
 			{
-			  "js": "never",
-			  "jsx": "never",
-			  "ts": "never",
-			  "tsx": "never"
+				"js": "never",
+				"jsx": "never",
+				"ts": "never",
+				"tsx": "never"
 			}
 		],
 		"import/no-dynamic-require": 0,
@@ -53,7 +53,7 @@
 		"import/prefer-default-export": 0,
 		"jsx-a11y/click-events-have-key-events": 0,
 		"jsx-a11y/accessible-emoji": 0,
-		"jsx-a11y/label-has-associated-control": [2, {"controlComponents": ["Switch"]}],
+		"jsx-a11y/label-has-associated-control": [2, { "controlComponents": ["Switch"] }],
 		"lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
 		"max-classes-per-file": 0,
 		"no-async-promise-executor": 0,
@@ -102,6 +102,12 @@
 			"files": "client/utils/activity/renderers/*",
 			"rules": {
 				"react/prop-types": 0
+			}
+		},
+		{
+			"files": ["**/*.test.ts", "**/*.test.js"],
+			"env": {
+				"jest": true
 			}
 		}
 	]

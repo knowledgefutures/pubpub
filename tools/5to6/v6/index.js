@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-const Promise = require('bluebird');
 const { storage } = require('../setup');
 const getPipedPubIds = require('../util/getPipedPubIds');
 

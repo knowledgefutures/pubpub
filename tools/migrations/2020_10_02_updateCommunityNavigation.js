@@ -1,4 +1,4 @@
-import Bluebird from 'bluebird';
+import { asyncMap } from 'utils/async';
 
 const updateCommunityNavigation = (navigation) => {
 	return navigation.map((item) => {
@@ -18,7 +18,7 @@ const updateCommunityNavigation = (navigation) => {
 module.exports = async ({ models }) => {
 	const { Community } = models;
 	const communities = await Community.findAll();
-	return Bluebird.map(
+	return asyncMap(
 		communities,
 		(community) => {
 			community.navigation = updateCommunityNavigation(community.navigation);

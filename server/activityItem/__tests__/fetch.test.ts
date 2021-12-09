@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeEach, beforeAll, afterAll */
 import { modelize, setup, teardown } from 'stubstub';
 
 import { ActivityAssociations, ActivityAssociationType } from 'types';

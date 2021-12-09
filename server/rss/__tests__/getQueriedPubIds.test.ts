@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll */
 import { setup } from 'stubstub';
 
 import { getQueriedPubIds } from '../queries';

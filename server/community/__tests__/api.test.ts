@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll, afterAll */
 import sinon from 'sinon';
 import uuid from 'uuid';
 

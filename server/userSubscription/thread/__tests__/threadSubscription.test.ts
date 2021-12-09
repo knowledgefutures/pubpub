@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll, afterAll */
 import { modelize, login, setup, teardown } from 'stubstub';
 
 import { UserSubscription } from 'server/models';

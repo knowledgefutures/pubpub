@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll, afterAll */
 import { stub, modelize, setup, teardown, determinize } from 'stubstub';
 import { plainDoc, fullDoc, imageDoc } from 'utils/storybook/data';
 

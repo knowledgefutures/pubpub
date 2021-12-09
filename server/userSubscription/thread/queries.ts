@@ -1,8 +1,7 @@
-import Bluebird from 'bluebird';
-
 import * as types from 'types';
 import { UserSubscription } from 'server/models';
 import { canUserSeeThread } from 'server/thread/queries';
+import { asyncMap } from 'utils/async';
 
 import {
 	createUserSubscription,
@@ -34,7 +33,7 @@ export const createUserThreadSubscription = async (
 };
 
 export const updateUserThreadSubscriptions = async (threadId: string) => {
-	await Bluebird.map(
+	await asyncMap(
 		await UserSubscription.findAll({
 			where: { threadId },
 		}),

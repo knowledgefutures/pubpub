@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll, afterAll, afterEach */
 import {
 	setup,
 	teardown,

@@ -1,5 +1,7 @@
-import Promise from 'bluebird';
 import { Sequelize } from 'sequelize';
+
+import { asyncMap } from 'utils/async';
+
 import {
 	sequelize,
 	Pub,
@@ -284,7 +286,7 @@ export default async () => {
 			},
 		],
 	}).then((discussionData) => {
-		return Promise.map(
+		return asyncMap(
 			discussionData,
 			(item) => {
 				return Discussion.update(

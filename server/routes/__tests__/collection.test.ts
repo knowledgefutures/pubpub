@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll, afterAll */
 import { setup, teardown, login, modelize } from 'stubstub';
 
 const models = modelize`

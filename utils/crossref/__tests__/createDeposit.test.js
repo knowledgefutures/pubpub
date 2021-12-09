@@ -1,4 +1,3 @@
-/* global describe, it, expect */
 import { mapMetadataFields } from '../../collections/metadata';
 import { getSchemaForKind } from '../../collections/schemas';
 

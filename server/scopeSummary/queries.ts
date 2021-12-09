@@ -1,22 +1,21 @@
-import Bluebird from 'bluebird';
-
 import {
-	Community,
-	Pub,
 	Collection,
 	CollectionPub,
+	Community,
 	Discussion,
+	Pub,
 	ReviewNew,
 	ScopeSummary,
 } from 'server/models';
-import { ScopeSummary as ScopeSummaryType } from 'types';
+import * as types from 'types';
+import { asyncMap } from 'utils/async';
 import { addScopeSummaries } from 'utils/scopeSummaries';
 
-const createScopeSummary = (summary: ScopeSummaryType) => ScopeSummary.create(summary);
+const createScopeSummary = (summary: types.ScopeSummary) => ScopeSummary.create(summary);
 
 const persistScopeSummaryForId = async (
 	id: null | string,
-	summary: ScopeSummaryType,
+	summary: types.ScopeSummary,
 ): Promise<string> => {
 	if (id) {
 		await ScopeSummary.update(summary, { where: { id } });
@@ -26,7 +25,7 @@ const persistScopeSummaryForId = async (
 	return newScopeSummary.id;
 };
 
-const persistScopeSummaryForModel = async (model: any, summary: ScopeSummaryType) => {
+const persistScopeSummaryForModel = async (model: any, summary: types.ScopeSummary) => {
 	model.scopeSummaryId = await persistScopeSummaryForId(model.scopeSummaryId, summary);
 	await model.save({ hooks: false });
 };
@@ -44,9 +43,9 @@ export const summarizeCommunity = async (communityId: string) => {
 		include: [{ model: ScopeSummary, as: 'scopeSummary' }],
 	});
 
-	const scopeSummaries: ScopeSummaryType[] = pubsInCommunity
+	const scopeSummaries: types.ScopeSummary[] = pubsInCommunity
 		.map((pub) => pub.scopeSummary)
-		.filter((x): x is ScopeSummaryType => !!x);
+		.filter((x): x is types.ScopeSummary => !!x);
 
 	return persistScopeSummaryForModel(community, {
 		...addScopeSummaries(...scopeSummaries),
@@ -65,9 +64,9 @@ export const summarizeCollection = async (collectionId: string) => {
 		],
 	});
 
-	const scopeSummaries: ScopeSummaryType[] = collectionPubs
+	const scopeSummaries: types.ScopeSummary[] = collectionPubs
 		.map((cp) => cp.pub.scopeSummary)
-		.filter((x): x is ScopeSummaryType => !!x);
+		.filter((x): x is types.ScopeSummary => !!x);
 
 	return persistScopeSummaryForModel(collection, {
 		...addScopeSummaries(...scopeSummaries),
@@ -88,8 +87,10 @@ export const summarizePub = async (pubId: string, summarizeParentScopes = true) 
 		collections: 0,
 	});
 	if (summarizeParentScopes) {
-		const collectionPubs = await CollectionPub.findAll({ where: { pubId } });
-		await Bluebird.map(
+		const collectionPubs: types.CollectionPub[] = await CollectionPub.findAll({
+			where: { pubId },
+		});
+		await asyncMap(
 			collectionPubs,
 			(collectionPub) => summarizeCollection(collectionPub.collectionId),
 			{ concurrency: 5 },

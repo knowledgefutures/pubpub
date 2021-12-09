@@ -1,7 +1,7 @@
-import Bluebird from 'bluebird';
+import { asyncMap } from 'utils/async';
 
 export const forEach = async (items, fn, concurrency = 1) => {
-	return Bluebird.map(items, fn, { concurrency });
+	return asyncMap(items, fn, { concurrency });
 };
 
 export const forEachInstance = async (Model, fn, concurrency = 1) => {

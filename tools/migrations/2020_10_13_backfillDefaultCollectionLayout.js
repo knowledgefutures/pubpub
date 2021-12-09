@@ -1,10 +1,10 @@
-import Bluebird from 'bluebird';
+import { asyncMap } from 'utils/async';
 
 import { generateDefaultCollectionLayout } from 'server/collection/queries';
 
 module.exports = async ({ models }) => {
 	const { Collection } = models;
-	await Bluebird.map(
+	await asyncMap(
 		await Collection.findAll(),
 		(collection) => {
 			collection.layout = generateDefaultCollectionLayout();

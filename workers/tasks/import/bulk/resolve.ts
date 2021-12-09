@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import BluebirdPromise from 'bluebird';
+import { asyncMapSeries } from 'utils/async';
 
 import {
 	resolveCommunityDirective,
@@ -79,7 +79,7 @@ export const resolveImportPlan = async ({ importPlan, actor, parents }) => {
 	}
 
 	if (children && children.length > 0) {
-		const resolvedChildPlans = await BluebirdPromise.mapSeries(children, (childPlan) =>
+		const resolvedChildPlans = await asyncMapSeries(children, (childPlan) =>
 			resolveImportPlan({ importPlan: childPlan, actor, parents: currentParents }),
 		);
 		return { ...importPlan, resolved: resolvedValues, children: resolvedChildPlans };

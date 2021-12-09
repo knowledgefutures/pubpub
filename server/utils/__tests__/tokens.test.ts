@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll, afterAll */
 import MockDate from 'mockdate';
 
 import { issueToken, verifyAndDecodeToken } from '../tokens';

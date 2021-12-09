@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
-/* global describe, it, expect, beforeAll, afterAll */
 import uuid from 'uuid/v4';
 
 import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';

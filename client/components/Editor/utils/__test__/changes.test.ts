@@ -1,4 +1,3 @@
-/* global describe, it, expect */
 import { editFirebaseDraft } from 'stubstub';
 
 import { editorSchema } from 'components/Editor';

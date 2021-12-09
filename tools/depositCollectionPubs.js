@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import Bluebird from 'bluebird';
+import { asyncMap } from 'utils/async';
 import { Community, Collection, CollectionPub, Pub, Release } from 'server/models';
 import { setDoiData } from 'server/doi/queries';
 
@@ -42,7 +42,7 @@ const main = async () => {
 		{ communityId: community.id, collectionId: collection.id },
 		'collection',
 	);
-	await Bluebird.map(
+	await asyncMap(
 		releasedCollectionPubs.map((cp) => cp.pubId),
 		(pubId) =>
 			setAndLogDoiData(

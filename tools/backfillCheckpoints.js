@@ -1,5 +1,4 @@
 /* eslint-disable no-console, no-restricted-syntax, import/first */
-import Promise from 'bluebird';
 import Slowdance from 'slowdance';
 import { uncompressStepJSON, compressStateJSON } from 'prosemirror-compress-pubpub';
 import { Step } from 'prosemirror-transform';

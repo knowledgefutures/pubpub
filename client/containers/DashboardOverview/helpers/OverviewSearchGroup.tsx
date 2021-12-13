@@ -9,21 +9,22 @@ require('./overviewSearchGroup.scss');
 
 type SearchTermCallback = (q: string) => unknown;
 
+export type OverviewSearchFilter = {
+	id: string;
+	title: string;
+	query: null | Partial<PubsQuery>;
+};
+
 type Props = {
 	placeholder: string;
 	onUpdateSearchTerm?: SearchTermCallback;
 	onCommitSearchTerm?: SearchTermCallback;
 	onChooseFilter?: (q: null | Partial<PubsQuery>) => unknown;
 	rightControls?: React.ReactNode;
+	filters?: OverviewSearchFilter[];
 };
 
-type Filter = {
-	id: string;
-	title: string;
-	query: null | Partial<PubsQuery>;
-};
-
-const filters: Filter[] = [
+const defaultFilters: OverviewSearchFilter[] = [
 	{ id: 'all', title: 'All', query: null },
 	{
 		id: 'latest',
@@ -35,8 +36,14 @@ const filters: Filter[] = [
 ];
 
 const OverviewSearchGroup = (props: Props) => {
-	const { placeholder, onCommitSearchTerm, onUpdateSearchTerm, rightControls, onChooseFilter } =
-		props;
+	const {
+		placeholder,
+		onCommitSearchTerm,
+		onUpdateSearchTerm,
+		rightControls,
+		onChooseFilter,
+		filters = defaultFilters,
+	} = props;
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
 
 	const handleChange = useCallback(
@@ -66,7 +73,7 @@ const OverviewSearchGroup = (props: Props) => {
 				onChooseFilter(filter.query);
 			}
 		},
-		[onChooseFilter],
+		[filters, onChooseFilter],
 	);
 
 	return (
@@ -77,8 +84,8 @@ const OverviewSearchGroup = (props: Props) => {
 					id="overview-search-group-filter"
 					onChange={handleFilterChange}
 				>
-					{filters.map((filter) => (
-						<Tab id={filter.id} key={filter.id} title={filter.title} />
+					{filters.map((filtering) => (
+						<Tab id={filtering.id} key={filtering.id} title={filtering.title} />
 					))}
 				</Tabs>
 			)}

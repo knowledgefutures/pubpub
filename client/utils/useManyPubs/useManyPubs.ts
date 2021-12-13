@@ -29,8 +29,16 @@ const getQueryKey = (query: KeyedPubsQuery) => {
 		scopedCollectionId = '',
 		ordering: { field, direction },
 		isReleased,
+		submissionStatuses,
 	} = query;
-	return JSON.stringify({ term, scopedCollectionId, field, direction, isReleased });
+	return JSON.stringify({
+		submissionStatuses,
+		term,
+		scopedCollectionId,
+		field,
+		direction,
+		isReleased,
+	});
 };
 
 export const useManyPubs = <P extends Pub = Pub>(
@@ -52,6 +60,7 @@ export const useManyPubs = <P extends Pub = Pub>(
 		scopedCollectionId: optionsQuery.scopedCollectionId,
 		ordering: optionsQuery.ordering || defaultOrdering,
 		isReleased: optionsQuery.isReleased,
+		submissionStatuses: optionsQuery.submissionStatuses,
 	};
 
 	const queryKey = getQueryKey(keyQuery);
@@ -98,7 +107,6 @@ export const useManyPubs = <P extends Pub = Pub>(
 			offset: state.offset,
 			communityId: communityData.id,
 		};
-
 		const result: ManyPubsApiResult = await apiFetch.post('/api/pubs/many', {
 			query,
 			pubOptions,

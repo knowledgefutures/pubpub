@@ -42,7 +42,7 @@ export const updateSubmission = async (patch: UpdateOptions, sendEmail = false) 
 	const previousStatus = submission.status;
 	submission.status = status;
 
-	if (previousStatus === 'incomplete' && status === 'submitted') {
+	if (previousStatus === 'incomplete' && status === 'pending') {
 		submission.submittedAt = new Date().toISOString();
 		if (sendEmail) {
 			// Send an email here

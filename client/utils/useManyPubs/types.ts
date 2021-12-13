@@ -3,7 +3,7 @@ import { Pub, PubsQuery, DefinitelyHas, PubGetOptions } from 'types';
 export type ManyPubsQuery = DefinitelyHas<PubsQuery, 'ordering' | 'limit'>;
 export type KeyedPubsQuery = Pick<
 	ManyPubsQuery,
-	'term' | 'scopedCollectionId' | 'ordering' | 'isReleased'
+	'term' | 'scopedCollectionId' | 'ordering' | 'isReleased' | 'submissionStatuses'
 >;
 
 export type ManyPubsApiResult = {

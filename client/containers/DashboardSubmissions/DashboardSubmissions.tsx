@@ -1,73 +1,39 @@
-import React, { useState } from 'react';
-import { Switch, Popover } from '@blueprintjs/core';
+import React from 'react';
 
-import { ClientOnly, DashboardFrame } from 'components';
+import { DashboardFrame } from 'components';
+import { usePageContext } from 'utils/hooks';
+import { Pub } from 'types';
 
-import NewSubmissionWorkflowEditor from './NewSubmissionWorkflowEditor';
-import { EditableSubmissionWorkflow } from './types';
+import SubmissionItems from './SubmissionItems';
+import SubmissionWorkflowButton from './SubmissionWorkflowButton';
+import { OverviewSection } from '../DashboardOverview/helpers';
 
 require('./dashboardSubmissions.scss');
 
-const DashboardSubmissions = () => {
-	const [workflow, setWorkflow] = useState<null | EditableSubmissionWorkflow>(null);
-	const [showSwitchTooltip, setShowSwitchTooltip] = useState(false);
+type Props = {
+	initialPubs: Pub[];
+	initiallyLoadedAllPubs: boolean;
+};
 
-	const handleWorkflowCreated = (w: EditableSubmissionWorkflow) => {
-		setWorkflow(w);
-		setTimeout(() => setShowSwitchTooltip(true), 500);
-	};
-
-	const handleToggleSubmissionsEnabled = () => {
-		if (workflow) {
-			setWorkflow({ ...workflow, enabled: !workflow.enabled });
-		}
-		setShowSwitchTooltip(false);
-	};
-
-	const renderControls = () => {
-		if (workflow) {
-			const enabledSwitch = (
-				<Switch large checked={workflow.enabled} onClick={handleToggleSubmissionsEnabled}>
-					Accepting submissions
-				</Switch>
-			);
-			if (showSwitchTooltip) {
-				return (
-					<Popover
-						defaultIsOpen
-						content={
-							<div className="dashboard-submissions-container_accept-popover-content">
-								<h5>Ready to accept submissions?</h5>
-								When you're ready, you can enable submissions to this Collection
-								here.
-							</div>
-						}
-					>
-						{enabledSwitch}
-					</Popover>
-				);
-			}
-			return enabledSwitch;
-		}
-		return null;
-	};
-
-	const renderNewWorkflowEditor = () => {
-		return (
-			<ClientOnly>
-				<NewSubmissionWorkflowEditor onWorkflowCreated={handleWorkflowCreated} />
-			</ClientOnly>
-		);
-	};
+const DashboardSubmissions = (props: Props) => {
+	const { initialPubs, initiallyLoadedAllPubs } = props;
+	const { scopeData } = usePageContext();
+	const collection = scopeData.elements.activeCollection;
 
 	return (
 		<DashboardFrame
 			className="dashboard-submissions-container"
-			title="Submissions"
+			title="Submissions Overview"
 			icon="inbox"
-			controls={renderControls()}
+			controls={<SubmissionWorkflowButton />}
 		>
-			{!workflow && renderNewWorkflowEditor()}
+			<OverviewSection title="In this Collection" icon="overview" descendTitle>
+				<SubmissionItems
+					initialPubs={initialPubs}
+					collection={collection}
+					initiallyLoadedAllPubs={initiallyLoadedAllPubs}
+				/>
+			</OverviewSection>
 		</DashboardFrame>
 	);
 };

@@ -82,7 +82,7 @@ const models = modelize`
             }
 			Submission {
 				submissionWorkflow
-				status: "submitted"
+				status: "pending"
 			}
         }
         Pub p4 {
@@ -209,7 +209,7 @@ describe('queryPubIds', () => {
 	it('Filters for Pubs with certain submission statuses', async () => {
 		const { p1, p2, p3 } = models;
 		await expectPubIdsForQuery(
-			{ ordering: titleOrdering, submissionStatuses: ['accepted', 'submitted'] },
+			{ ordering: titleOrdering, submissionStatuses: ['accepted', 'pending'] },
 			[p1, p3],
 		);
 		await expectPubIdsForQuery({ ordering: titleOrdering, submissionStatuses: ['declined'] }, [

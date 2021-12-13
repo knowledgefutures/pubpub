@@ -27,6 +27,7 @@ const getManyQueryParams = (req): ManyRequestParams => {
 		scopedCollectionId,
 		withinPubIds,
 		term,
+		submissionStatuses,
 	} = query;
 	return {
 		pubOptions,
@@ -42,6 +43,7 @@ const getManyQueryParams = (req): ManyRequestParams => {
 			scopedCollectionId,
 			withinPubIds,
 			term,
+			submissionStatuses,
 		},
 	};
 };

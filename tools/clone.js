@@ -211,7 +211,7 @@ const getUpdatedLayoutblockContent = ({ block, pubIdMap, pageIdMap, collectionId
 				if (item.type === 'collection') {
 					return { ...item, id: collectionIdMap[item.id] };
 				}
-				return items;
+				return item;
 			});
 			return {
 				...block,

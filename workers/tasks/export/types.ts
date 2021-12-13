@@ -1,4 +1,4 @@
-import { AttributionWithUser, Maybe } from 'types';
+import { AttributionWithUser, Maybe, RenderedLicense } from 'types';
 import { NodeLabelMap, Note } from 'client/components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
@@ -6,8 +6,8 @@ import { RenderedStructuredValue } from 'utils/notesCore';
 
 export type PubMetadata = {
 	title: string;
+	slug: string;
 	doi: null | string;
-	licenseSlug: string;
 	publishedDateString: Maybe<string>;
 	updatedDateString: Maybe<string>;
 	communityTitle: string;
@@ -19,6 +19,7 @@ export type PubMetadata = {
 	publisher?: string;
 	primaryCollectionTitle?: string;
 	primaryCollectionMetadata?: Record<string, any>;
+	license: RenderedLicense;
 };
 
 export type NoteWithStructuredHtml = Note & { structuredHtml?: string };

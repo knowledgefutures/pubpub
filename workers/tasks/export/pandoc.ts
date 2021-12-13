@@ -4,11 +4,11 @@ import YAML from 'yaml';
 import nodePandoc from 'node-pandoc';
 import { FileResult } from 'tmp-promise';
 import { fromProsemirror, emitPandocJson } from '@pubpub/prosemirror-pandoc';
+import dateFormat from 'dateformat';
 
 import { DocJson } from 'types';
 import { editorSchema, getReactedDocFromJson, Note } from 'client/components/Editor';
 import { getPathToCslFileForCitationStyleKind } from 'server/utils/citations';
-import { getLicenseBySlug } from 'utils/licenses';
 
 import { rules } from '../import/rules';
 import { getTmpFileForExtension } from './util';
@@ -61,16 +61,17 @@ const createCslJsonBibliographyFile = async (pandocNotes: PandocNotes) => {
 const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: string) => {
 	const {
 		title,
+		slug,
 		attributions,
 		publishedDateString,
-		licenseSlug,
 		primaryCollectionMetadata,
 		communityTitle,
+		publisher,
 		doi,
 		citationStyle,
+		license,
 	} = pubMetadata;
 	const cslFile = getPathToCslFileForCitationStyleKind(citationStyle);
-	const license = getLicenseBySlug(licenseSlug)!;
 	const formattedAttributions = attributions.map((attr) => {
 		if (pandocTarget === 'jats_archiving') {
 			const publicEmail = 'publicEmail' in attr.user ? attr.user.publicEmail : null;
@@ -86,9 +87,24 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: st
 	const metadata = YAML.stringify({
 		title,
 		author: formattedAttributions,
-		...(publishedDateString && { date: publishedDateString }),
+		...(publishedDateString && {
+			date: {
+				day: dateFormat(publishedDateString, 'dd'),
+				month: dateFormat(publishedDateString, 'mm'),
+				year: dateFormat(publishedDateString, 'yy'),
+			},
+		}),
 		journal: {
 			title: communityTitle,
+			...(primaryCollectionMetadata && {
+				...(primaryCollectionMetadata.printIssn && {
+					pissn: primaryCollectionMetadata.printIssn,
+				}),
+				...(primaryCollectionMetadata.printIssn && {
+					eissn: primaryCollectionMetadata.electronicIssn,
+				}),
+			}),
+			'publisher-name': publisher || communityTitle,
 		},
 		copyright: {
 			text: license.full,
@@ -102,6 +118,7 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: st
 					volume: primaryCollectionMetadata.volume,
 				}),
 				...(doi && { doi }),
+				'elocation-id': slug,
 			},
 		}),
 		'link-citations': true, // See https://github.com/jgm/pandoc/issues/6013#issuecomment-921409135

@@ -6,7 +6,6 @@ import ReactDOMServer from 'react-dom/server';
 
 import { DocJson } from 'types';
 import { renderStatic, editorSchema } from 'components/Editor';
-import { getLicenseBySlug } from 'utils/licenses';
 
 import { NotesData, PubMetadata } from './types';
 import { digestCitation } from './util';
@@ -144,9 +143,8 @@ const blankIframes = (nodes) =>
 		nodes,
 	);
 
-const renderDetails = ({ updatedDateString, publishedDateString, doi, licenseSlug }) => {
+const renderDetails = ({ updatedDateString, publishedDateString, doi, license }) => {
 	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
-	const license = getLicenseBySlug(licenseSlug);
 	return (
 		<>
 			{showUpdatedDate && (
@@ -162,9 +160,8 @@ const renderDetails = ({ updatedDateString, publishedDateString, doi, licenseSlu
 			{license && (
 				<div>
 					<strong>License:</strong>&nbsp;
-					{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'string | null' is not assignable to type 'st... Remove this comment to see the full error message */}
 					<a href={license.link}>
-						{license.full} ({license.slug.toUpperCase()} {license.version})
+						{license.full} {license.summary && `(${license.summary})`}
 					</a>
 				</div>
 			)}
@@ -176,20 +173,27 @@ const renderFrontMatter = ({
 	updatedDateString,
 	publishedDateString,
 	primaryCollectionTitle,
+	primaryCollectionMetadata,
 	doi,
 	title,
 	communityTitle,
 	accentColor,
 	attributions,
-	licenseSlug,
 	publisher,
+	license,
 }: PubMetadata) => {
 	const affiliations = [
 		...new Set(attributions.map((attr) => attr.affiliation).filter((x) => x)),
 	];
 	// do not put community title if this is a book
+	const pubPublisher =
+		primaryCollectionMetadata?.kind === 'conference' ||
+		primaryCollectionMetadata?.kind === 'book'
+			? publisher
+			: null;
 	const communityAndCollectionString =
-		(publisher ? '' : communityTitle + bullet) + (primaryCollectionTitle || '');
+		(pubPublisher ? '' : communityTitle) +
+		(primaryCollectionTitle ? bullet + primaryCollectionTitle : '');
 	return (
 		<section className="cover">
 			<h3 className="community-and-collection">{communityAndCollectionString}</h3>
@@ -230,7 +234,7 @@ const renderFrontMatter = ({
 					)}
 				</div>
 			)}
-			<h4>{publisher || ''}</h4>
+			<h4>{pubPublisher}</h4>
 			<div className="details">
 				{publishedDateString && (
 					<div>
@@ -241,7 +245,7 @@ const renderFrontMatter = ({
 					updatedDateString,
 					publishedDateString,
 					doi,
-					licenseSlug,
+					license,
 				})}
 			</div>
 		</section>

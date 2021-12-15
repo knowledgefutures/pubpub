@@ -1,10 +1,9 @@
 import React from 'react';
-import classNames from 'classnames';
+import { Popover } from '@blueprintjs/core';
 
 import { AttributionWithUser } from 'types';
-import { Popover } from '@blueprintjs/core';
-import Avatar from '../Avatar/Avatar';
 import ContributorsList from '../ContributorsList/ContributorsList';
+import Avatars from '../Avatars/Avatars';
 
 require('./contributorAvatars.scss');
 
@@ -15,40 +14,19 @@ type Props = {
 	hasPopover?: boolean;
 };
 
-const getTruncation = (attributions: AttributionWithUser[], truncateAt: number | undefined) => {
-	if (truncateAt && attributions.length > truncateAt) {
-		return {
-			attributions: attributions.slice(0, truncateAt),
-			overflow: attributions.length - truncateAt,
-		};
-	}
-	return { attributions, overflow: null };
-};
-
 const ContributorAvatars = (props: Props) => {
-	const { className, truncateAt, hasPopover = true } = props;
-	const { attributions, overflow } = getTruncation(props.attributions, truncateAt);
+	const { attributions, className, truncateAt, hasPopover = true } = props;
 
 	if (attributions.length === 0) {
 		return null;
 	}
 
 	const content = (
-		<div className={classNames('contributor-avatars-component', className)}>
-			{attributions.map((attr, index) => (
-				<Avatar
-					initials={attr.user.initials}
-					avatar={attr.user.avatar}
-					key={attr.user.id}
-					instanceNumber={index}
-					width={22}
-					borderWidth="2"
-					borderColor="#eee"
-					doesOverlap
-				/>
-			))}
-			{overflow && <div className="overflow">+{overflow}</div>}
-		</div>
+		<Avatars
+			users={attributions.map((a) => a.user)}
+			className={className}
+			truncateAt={truncateAt}
+		/>
 	);
 
 	const renderPopoverContent = () => {

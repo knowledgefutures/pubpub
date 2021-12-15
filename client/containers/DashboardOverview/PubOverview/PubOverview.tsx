@@ -5,9 +5,8 @@ import { Menu, MenuItem, Tag } from '@blueprintjs/core';
 import { usePageContext } from 'utils/hooks';
 import { getPubPublishedDate, getPubLatestReleaseDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
-import PubHeaderBackground from 'containers/Pub/PubHeader/PubHeaderBackground';
 import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
-import { ContributorsList, DashboardFrame } from 'components';
+import { ContributorsList, DashboardFrame, PubHeaderBackground } from 'components';
 
 import { getAllPubContributors } from 'utils/contributors';
 import PubTimeline from './PubTimeline';

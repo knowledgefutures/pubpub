@@ -1,14 +1,24 @@
 import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 
-import { Member } from 'server/models';
+import { Member, UserSubscription } from 'server/models';
 
-import { getMembersForScope } from '../queries';
+import { createMember, getMembersForScope } from '../queries';
 
 const models = modelize`
     User willBeCommunityViewer {}
     User willBePubViewer {}
     User willBeCollectionManager {}
     User friendOfThePubAdmin {}
+	User willBeSubscribed {
+		UserNotificationPreferences {
+			subscribeToPubsAsMember: true
+		}
+	}
+	User willNotBeSubscribed {
+		UserNotificationPreferences {
+			subscribeToPubsAsMember: false
+		}
+	}
     Community community {
         Member communityManagerMember {
             permissions: "manage"
@@ -180,6 +190,28 @@ describe('getMembersForScope', () => {
 			pubId: pub.id,
 		});
 		expect(new Set(members.map((m) => m.id))).toEqual(new Set(pubMembers.map((m) => m.id)));
+	});
+});
+
+describe('createMember()', () => {
+	it("subscribes a user to a Pub's threads when they become a member, according to their notification preferences", async () => {
+		const { willBeSubscribed, willNotBeSubscribed, pub } = models;
+		await Promise.all(
+			(
+				[
+					[willBeSubscribed, 1],
+					[willNotBeSubscribed, 0],
+				] as const
+			).map(async ([user, count]) => {
+				await createMember({
+					target: { pubId: pub.id, userId: user.id },
+					value: { permissions: 'view' },
+				});
+				expect(
+					await UserSubscription.count({ where: { userId: user.id, pubId: pub.id } }),
+				).toEqual(count);
+			}),
+		);
 	});
 });
 

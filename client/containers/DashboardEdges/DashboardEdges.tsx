@@ -121,9 +121,9 @@ const DashboardEdges = (props: Props) => {
 				<DashboardEdgesListing
 					pubData={persistedPubData}
 					pubEdges={outboundEdges}
-					onUpdateEdge={canManageEdges && updateOutboundEdge}
-					onReorderEdges={canManageEdges && reorderOutboundEdges}
-					onRemoveEdge={canManageEdges && removeOutboundEdge}
+					onUpdateEdge={canManageEdges ? updateOutboundEdge : undefined}
+					onReorderEdges={canManageEdges ? reorderOutboundEdges : undefined}
+					onRemoveEdge={canManageEdges ? removeOutboundEdge : undefined}
 					isInbound={false}
 					renderEmptyState={() =>
 						showOutboundEmptyState && (
@@ -148,7 +148,7 @@ const DashboardEdges = (props: Props) => {
 			<DashboardEdgesListing
 				pubData={persistedPubData}
 				pubEdges={inboundEdges}
-				onUpdateEdgeApproval={canManageEdges && updateInboundEdgeApproval}
+				onUpdateEdgeApproval={canManageEdges ? updateInboundEdgeApproval : undefined}
 				isInbound={true}
 				renderEmptyState={() => (
 					<NonIdealState

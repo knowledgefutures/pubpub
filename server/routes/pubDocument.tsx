@@ -23,6 +23,7 @@ import {
 } from 'server/utils/queryHelpers';
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'types';
+import { findUserSubscription } from 'server/userSubscription/shared/queries';
 
 const renderPubDocument = (res, pubData, initialData, customScripts) => {
 	const {
@@ -92,10 +93,17 @@ const getEnrichedPubData = async ({
 		};
 	};
 
-	const [docInfo, edges] = await Promise.all([getDocInfo(), getPubEdges(pubData, initialData)]);
+	const [docInfo, edges, subscription] = await Promise.all([
+		getDocInfo(),
+		getPubEdges(pubData, initialData),
+		initialData.loginData.id
+			? findUserSubscription({ userId: initialData.loginData.id, pubId: pubData.id })
+			: null,
+	]);
 	const citations = await getPubCitations(pubData, initialData, docInfo.initialDoc);
 
 	return {
+		subscription: subscription?.toJSON() ?? null,
 		...pubData,
 		...citations,
 		...edges,

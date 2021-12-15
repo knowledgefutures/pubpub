@@ -2,9 +2,10 @@ import { Schema, Node } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
 import firebase from 'firebase';
 
+import { flattenOnce } from 'utils/arrays';
 import { getStepsInChangeRange } from '../../utils';
 
-import { mapDiscussionThroughSteps, flattenOnce } from './util';
+import { mapDiscussionThroughSteps } from './util';
 import { DiscussionInfo, Discussions, NullableDiscussions } from './types';
 
 type Reference = firebase.database.Reference;

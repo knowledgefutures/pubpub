@@ -11,6 +11,7 @@ import {
 	Scope,
 } from 'types';
 import {
+	attributesPublicUser,
 	ActivityItem,
 	Collection,
 	CollectionPub,
@@ -136,7 +137,7 @@ const fetchActivityItemModels = async (
 
 const getActivityItemAssociationIds = (
 	items: types.ActivityItem[],
-	scope: Scope,
+	scope?: Scope,
 ): ActivityAssociationIds => {
 	const associationIds = createActivityAssociationSets();
 	const {
@@ -154,12 +155,14 @@ const getActivityItemAssociationIds = (
 		thread,
 		user,
 	} = associationIds;
-	community.add(scope.communityId);
-	if ('pubId' in scope) {
-		pub.add(scope.pubId);
-	}
-	if ('collectionId' in scope) {
-		collection.add(scope.collectionId);
+	if (scope) {
+		community.add(scope.communityId);
+		if ('pubId' in scope) {
+			pub.add(scope.pubId);
+		}
+		if ('collectionId' in scope) {
+			collection.add(scope.collectionId);
+		}
 	}
 	items.forEach((item) => {
 		community.add(item.communityId);
@@ -218,11 +221,18 @@ const getActivityItemAssociationIds = (
 	return associationIds;
 };
 
-const fetchModels = async <T extends WithId>(Model: any, ids: Set<string>): Promise<IdIndex<T>> => {
+const fetchModels = async <T extends WithId>(
+	Model: any,
+	ids: Set<string>,
+	attributes?: string[],
+): Promise<IdIndex<T>> => {
 	if (ids.size === 0) {
 		return {};
 	}
-	const models = await Model.findAll({ where: { id: { [Op.in]: Array.from(ids) } } });
+	const models = await Model.findAll({
+		where: { id: { [Op.in]: Array.from(ids) } },
+		...(attributes && { attributes }),
+	});
 	return indexById(models as T[]);
 };
 
@@ -276,8 +286,16 @@ const fetchAssociations = (
 		review: fetchModels<types.Review>(ReviewNew, review),
 		threadComment: fetchModels<types.ThreadComment>(ThreadComment, threadComment),
 		thread: fetchModels<types.Thread>(Thread, thread),
-		user: fetchModels<types.User>(User, user),
+		user: fetchModels<types.User>(User, user, attributesPublicUser),
 	});
+};
+
+export const fetchAssociationsForActivityItems = async (
+	activityItems: types.ActivityItem[],
+	scope?: Scope,
+) => {
+	const associationIds = getActivityItemAssociationIds(activityItems, scope);
+	return fetchAssociations(associationIds);
 };
 
 export const fetchActivityItems = async (
@@ -285,7 +303,6 @@ export const fetchActivityItems = async (
 ): Promise<ActivityItemsFetchResult> => {
 	const { offset = 0, limit = 50, scope, filters = [] } = options;
 	const activityItems = await fetchActivityItemModels({ offset, limit, scope, filters });
-	const associationIds = getActivityItemAssociationIds(activityItems, options.scope);
-	const associations = await fetchAssociations(associationIds);
+	const associations = await fetchAssociationsForActivityItems(activityItems, options.scope);
 	return { activityItems, associations, fetchedAllItems: activityItems.length < limit };
 };

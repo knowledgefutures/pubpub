@@ -78,5 +78,3 @@ export const removeDiscussionsById = (discussions: Discussions, keys: Set<string
 	});
 	return nextDiscussions;
 };
-
-export const flattenOnce = <T>(arr: T[][]): T[] => arr.reduce((a, b) => [...a, ...b], []);

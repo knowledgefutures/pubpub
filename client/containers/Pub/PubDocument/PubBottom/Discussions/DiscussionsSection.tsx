@@ -4,7 +4,7 @@ import { Popover, Position } from '@blueprintjs/core';
 import { usePageContext } from 'utils/hooks';
 import { PubPageData } from 'types';
 import { getAnchoredDiscussionIds } from 'components/Editor/plugins/discussions';
-import { DialogLauncher } from 'client/components';
+import { DialogLauncher, SubscriptionButton } from 'client/components';
 import { usePubContext } from 'client/containers/Pub/pubHooks';
 
 import SortList from './SortList';
@@ -24,8 +24,15 @@ type Props = {
 const DiscussionsSection = (props: Props) => {
 	const { pubData, updateLocalData, sideContentRef, mainContentRef } = props;
 	const { discussions, isRelease } = pubData;
-	const { communityData, scopeData, featureFlags } = usePageContext();
 	const {
+		communityData,
+		scopeData,
+		featureFlags,
+		loginData: { id: userId },
+	} = usePageContext();
+	const {
+		pubData: { subscription },
+		updatePubData,
 		collabData: { editorChangeObject },
 	} = usePubContext();
 	const { canView, canManage, canCreateDiscussions } = scopeData.activePermissions;
@@ -98,6 +105,20 @@ const DiscussionsSection = (props: Props) => {
 							title="Filter comments"
 						/>
 					</Popover>
+					{userId && (
+						<SubscriptionButton
+							subscription={subscription}
+							onUpdateSubscription={(next) => updatePubData({ subscription: next })}
+							target={{ pubId: pubData.id }}
+							menuLabel="Follow Pub discussion"
+						>
+							<AccentedIconButton
+								accentColor={iconColor}
+								title="Manage subscription"
+								icon="notifications"
+							/>
+						</SubscriptionButton>
+					)}
 					{canManage &&
 						featureFlags.releaseDiscussionsDialog &&
 						!isRelease &&

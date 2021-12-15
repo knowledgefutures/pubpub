@@ -8,7 +8,7 @@ const models = modelize`
         Pub otherPub {
             UserSubscription existingSubscription {
                 user: user
-                createdAutomatically: false
+                setAutomatically: false
             }
         }
     }
@@ -23,10 +23,14 @@ describe('/api/pubs/subscriptions', () => {
 		const { user, pub } = models;
 		const agent = await login(user);
 		const { body: userSubscription } = await agent
-			.post('/api/pubs/subscriptions')
-			.send({ pubId: pub.id })
+			.put('/api/pubs/subscriptions')
+			.send({ pubId: pub.id, status: 'active' })
 			.expect(200);
-		expect(userSubscription).toMatchObject({ pubId: pub.id, userId: user.id });
+		expect(userSubscription).toMatchObject({
+			pubId: pub.id,
+			userId: user.id,
+			status: 'active',
+		});
 	});
 
 	it('allows a user to mute their subscription to a Pub', async () => {
@@ -34,9 +38,9 @@ describe('/api/pubs/subscriptions', () => {
 		const agent = await login(user);
 		await agent
 			.put('/api/pubs/subscriptions')
-			.send({ pubId: otherPub.id, muted: true })
+			.send({ pubId: otherPub.id, status: 'muted' })
 			.expect(200);
 		const subscriptionNow = await findUserSubscription({ id: existingSubscription.id });
-		expect(subscriptionNow?.muted).toBe(true);
+		expect(subscriptionNow?.status).toBe('muted');
 	});
 });

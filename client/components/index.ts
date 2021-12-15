@@ -2,6 +2,7 @@ export { default as AccentStyle } from './AccentStyle/AccentStyle';
 export { default as AssignDoi } from './AssignDoi/AssignDoi';
 export { default as AttributionEditor } from './AttributionEditor/AttributionEditor';
 export { default as Avatar } from './Avatar/Avatar';
+export { default as Avatars } from './Avatars/Avatars';
 export { default as Byline } from './Byline/Byline';
 export { default as ClickToCopyButton } from './ClickToCopyButton/ClickToCopyButton';
 export { default as CollectionMultiSelect } from './CollectionMultiSelect/CollectionMultiSelect';
@@ -40,6 +41,7 @@ export {
 	MenuConfigProvider,
 	MenuItem,
 	MenuSelect,
+	MenuSelectItem,
 	MenuSelectItems,
 } from './Menu';
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
@@ -50,10 +52,11 @@ export { default as PagePreview } from './PagePreview/PagePreview';
 export { default as PendingChangesProvider } from './PendingChangesProvider/PendingChangesProvider';
 export { default as PermissionsDropdown } from './PermissionsDropdown/PermissionsDropdown';
 export { default as PreviewImage } from './PreviewImage/PreviewImage';
-export { Popover, PopoverButton } from './Popover';
+export { Popover, PopoverButton, adaptDisclosureElementForBlueprintButton } from './Popover';
 export { default as PrimaryCollectionExplanation } from './PrimaryCollectionExplanation/PrimaryCollectionExplanation';
 export { default as PubAttributionDialog } from './PubAttributionEditor/PubAttributionDialog';
 export { default as PubAttributionEditor } from './PubAttributionEditor/PubAttributionEditor';
+export { default as PubHeaderBackground } from './PubHeaderBackground/PubHeaderBackground';
 export { default as PubByline } from './PubByline/PubByline';
 export { default as PubCollectionsListing } from './PubCollectionsListing/PubCollectionsListing';
 export { default as PubEdge } from './PubEdge/PubEdge';
@@ -76,8 +79,11 @@ export { default as SharingCard } from './SharingCard/SharingCard';
 export { default as SimpleEditor } from './SimpleEditor/SimpleEditor';
 export { default as SliderInput } from './SliderInput/SliderInput';
 export { default as SkipLink } from './SkipLink/SkipLink';
+export { default as SubscriptionButton } from './SubscriptionButton/SubscriptionButton';
 export { default as TabToShow } from './TabToShow/TabToShow';
 export { default as Thread } from './Thread/Thread';
 export { default as ThreadInput } from './ThreadInput/ThreadInput';
+export { default as TimeAgo } from './TimeAgo/TimeAgo';
 export { Timeline, TimelineCondenser, TimelineItem } from './Timeline';
 export { default as UserAutocomplete } from './UserAutocomplete/UserAutocomplete';
+export { default as UserNotificationsPopover } from './UserNotifications/UserNotificationsPopover';

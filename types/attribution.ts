@@ -42,6 +42,7 @@ export type PubAttribution = {
 	userId?: string;
 	user?: AttributableUser;
 	createdAt: string;
+	pubId: string;
 };
 
 export type CollectionAttribution = {

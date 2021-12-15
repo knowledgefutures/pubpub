@@ -1,6 +1,8 @@
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { flattenOnce, isEmptySelection, getRangeFromSelection } from './util';
+import { flattenOnce } from 'utils/arrays';
+
+import { isEmptySelection, getRangeFromSelection } from './util';
 import {
 	DiscussionInfo,
 	Discussions,

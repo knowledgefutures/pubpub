@@ -47,7 +47,6 @@ app.post(
 		const member = await createMember({
 			value,
 			actorId: req.user.id,
-			// @ts-expect-error ts-migrate(2322) FIXME: Type '{ pubId: any; collectionId?: undefined; comm... Remove this comment to see the full error message
 			target: {
 				userId: targetUserId,
 				...chooseTargetFromRequestIds({

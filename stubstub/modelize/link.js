@@ -106,7 +106,7 @@ const getEdgeBetweenDefinitions = (a, b, associationName, isMandatory) => {
 		if (associationType === 'BelongsTo' || associationType === 'BelongsToMany') {
 			return { from: source, to: target, association };
 		}
-		if (associationType === 'HasMany') {
+		if (associationType === 'HasMany' || associationType === 'HasOne') {
 			return { from: target, to: source, association };
 		}
 		throw new Error(`Unsupported associationType ${associationType}`);

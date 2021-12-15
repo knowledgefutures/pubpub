@@ -66,6 +66,16 @@ const models = modelize`
             User otherCommunityAdmin {}
         }
     }
+    User willBeSubscribed {
+        UserNotificationPreferences {
+            subscribeToPubsAsContributor: true
+        }
+    }
+    User willNotBeSubscribed {
+        UserNotificationPreferences {
+            subscribeToPubsAsContributor: false
+        }
+    }
 `;
 
 setup(beforeAll, async () => {

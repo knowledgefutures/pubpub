@@ -26,6 +26,7 @@ export type UserNotificationPreferences = {
 	id: string;
 	createdAt: string;
 	updatedAt: string;
+	lastReceivedNotificationsAt: null | string;
 	userId: string;
 	receiveNotifications: boolean;
 	subscribeToThreadsAsCommenter: boolean;

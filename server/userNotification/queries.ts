@@ -3,12 +3,16 @@ import { Op } from 'sequelize';
 import * as types from 'types';
 import { ActivityItem, UserNotification, UserSubscription } from 'server/models';
 import { fetchAssociationsForActivityItems } from 'server/activityItem/fetch';
-import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
+import {
+	getOrCreateUserNotificationPreferences,
+	updateUserNotificationPreferences,
+} from 'server/userNotificationPreferences/queries';
 
 type FetchOptions = {
 	userId: string;
 	offset?: number;
 	limit?: number;
+	now?: Date;
 };
 
 type CreateOptions = Pick<
@@ -28,19 +32,56 @@ type DeleteOptions = {
 	userNotificationIds: string[];
 };
 
+const getLatestNotificationDateToShow = async (
+	preferences: types.UserNotificationPreferences,
+	now: Date,
+) => {
+	const { userId, notificationCadence, lastReceivedNotificationsAt } = preferences;
+
+	const updateLastReceived = async () => {
+		await updateUserNotificationPreferences({
+			userId,
+			preferences: { lastReceivedNotificationsAt: now.toISOString() },
+		});
+	};
+
+	if (notificationCadence && lastReceivedNotificationsAt) {
+		const nowTimestamp = now.valueOf();
+		const notificationCadenceMs = 1000 * 60 * notificationCadence;
+		const lastReceivedNotificationsTimestamp = new Date(lastReceivedNotificationsAt).valueOf();
+		const timeElapsedSinceReceiving = nowTimestamp - lastReceivedNotificationsTimestamp;
+		const isTimeToUpdate = timeElapsedSinceReceiving >= notificationCadenceMs;
+		if (isTimeToUpdate) {
+			await updateLastReceived();
+			return null;
+		}
+		return lastReceivedNotificationsAt;
+	}
+
+	await updateLastReceived();
+	return null;
+};
+
 export const fetchUserNotifications = async (
 	options: FetchOptions,
 ): Promise<types.UserNotificationsFetchResult> => {
-	const { userId, offset = 0, limit = 50 } = options;
+	const { userId, offset = 0, limit = 50, now = new Date() } = options;
+	const notificationPreferences = await getOrCreateUserNotificationPreferences(userId);
+	const latestDateToShow = await getLatestNotificationDateToShow(notificationPreferences, now);
+	const sharedWhere = {
+		userId,
+		...(latestDateToShow && { createdAt: { [Op.lte]: latestDateToShow } }),
+	};
+
 	const [maybeUnreadNotifications, readNotifications] = await Promise.all([
 		offset === 0 &&
 			UserNotification.findAll({
-				where: { userId, isRead: false },
+				where: { ...sharedWhere, isRead: false },
 				include: [{ model: ActivityItem, as: 'activityItem' }],
 				order: [['createdAt', 'DESC']],
 			}),
 		UserNotification.findAll({
-			where: { userId, isRead: true },
+			where: { ...sharedWhere, isRead: true },
 			limit,
 			offset,
 			include: [{ model: ActivityItem, as: 'activityItem' }],
@@ -53,7 +94,7 @@ export const fetchUserNotifications = async (
 		'activityItem'
 	>[] = [...(maybeUnreadNotifications || []), ...readNotifications];
 
-	const [subscriptions, associations, notificationPreferences] = await Promise.all([
+	const [subscriptions, associations] = await Promise.all([
 		UserSubscription.findAll({
 			where: {
 				userId,
@@ -63,8 +104,8 @@ export const fetchUserNotifications = async (
 		fetchAssociationsForActivityItems(
 			allNotifications.map((notification) => notification.activityItem),
 		),
-		getOrCreateUserNotificationPreferences(userId),
 	]);
+
 	return {
 		notifications: allNotifications.map((n) => n.toJSON()),
 		associations,

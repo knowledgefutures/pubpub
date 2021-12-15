@@ -105,7 +105,7 @@ const DiscussionsSection = (props: Props) => {
 							title="Filter comments"
 						/>
 					</Popover>
-					{userId && (
+					{userId && featureFlags.notifications && (
 						<SubscriptionButton
 							subscription={subscription}
 							onUpdateSubscription={(next) => updatePubData({ subscription: next })}

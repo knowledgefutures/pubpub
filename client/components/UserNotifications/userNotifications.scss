@@ -3,6 +3,13 @@
 $border-style: 1px solid #ddd;
 $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
 
+$mobile-viewport-cutoff: 500px;
+@mixin mobile {
+    @media only screen and (max-width: $mobile-viewport-cutoff) {
+        @content;
+    }
+}
+
 @mixin clamp-lines($n) {
     // Despite the name these properties now enjoy wide browser support
     display: -webkit-box;
@@ -24,6 +31,10 @@ $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
 .user-notifications-button.bp3-button {
     .bp3-icon {
         color: currentColor;
+    }
+
+    @include mobile {
+        display: none;
     }
 }
 

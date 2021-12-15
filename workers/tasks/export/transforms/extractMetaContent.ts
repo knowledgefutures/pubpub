@@ -5,7 +5,7 @@ const extractAbstract = (pandocBlocks) => {
 		if (firstContent.type === 'Str' && firstContent.content.toLowerCase() === 'abstract') {
 			if (second.type === 'Para') {
 				return {
-					abstract: { type: 'MetaInlines', content: second.content },
+					abstract: { type: 'MetaBlocks', content: [second] },
 					body: rest,
 				};
 			}

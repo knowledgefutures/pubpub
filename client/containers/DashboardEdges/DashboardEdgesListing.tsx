@@ -2,8 +2,8 @@ import { Button, Icon, Switch } from '@blueprintjs/core';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { PubEdge } from 'types';
 
+import { PubEdge } from 'types';
 import { usePendingChanges } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { ConfirmDialog, DragDropListing, PubEdgeListingCard } from 'components';
@@ -13,12 +13,12 @@ import NewEdgeEditor from './NewEdgeEditor';
 export type DashboardEdgesListingProps = {
 	pubData: any;
 	onUpdateEdge?: (pubEdge: PubEdge) => unknown;
-	onRemoveEdge?: (...args: any[]) => any;
-	onReorderEdges?: (...args: any[]) => any;
-	onUpdateEdgeApproval?: (...args: any[]) => any;
+	onRemoveEdge?: (pubEdge: PubEdge) => unknown;
+	onReorderEdges?: (idxA: number, idxB: number) => unknown;
+	onUpdateEdgeApproval?: (pubEdge: PubEdge, approved: boolean) => unknown;
 	isInbound: boolean;
-	pubEdges: any[];
-	renderEmptyState: (...args: any[]) => any;
+	pubEdges: PubEdge[];
+	renderEmptyState: () => React.ReactNode;
 };
 
 const renderRemoveEdgeButton = (callback) => {

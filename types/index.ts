@@ -2,6 +2,7 @@ export * from './activity';
 export * from './attribution';
 export * from './collection';
 export * from './community';
+export * from './context';
 export * from './customScript';
 export * from './discussion';
 export * from './doc';

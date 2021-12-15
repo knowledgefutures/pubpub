@@ -7,7 +7,7 @@ import { IconName } from 'components';
 export type ActivityRenderContext = {
 	associations: ActivityAssociations;
 	scope: Scope;
-	userId: string;
+	userId: null | string;
 	otherActorsCount?: number;
 };
 

@@ -2,19 +2,19 @@ import { Community } from './community';
 import { Collection } from './collection';
 import { Pub } from './pub';
 import { Member, MemberPermission } from './member';
-import { DefinitelyHas, Maybe } from './util';
+import { DefinitelyHas } from './util';
 import { Scope } from './scope';
 
 export type LoginData = {
 	id: string | null;
-	initials: Maybe<string>;
-	slug: Maybe<string>;
-	fullName: Maybe<string>;
-	firstName: Maybe<string>;
-	lastName: Maybe<string>;
-	avatar: Maybe<string>;
-	title: Maybe<string>;
-	gdprConsent: Maybe<boolean>;
+	initials?: string;
+	slug?: string;
+	fullName?: string;
+	firstName?: string;
+	lastName?: string;
+	avatar?: string;
+	title?: string;
+	gdprConsent?: string;
 };
 
 export type LocationData = {
@@ -45,8 +45,13 @@ export type ScopeData = {
 		isSuperAdmin: boolean;
 	};
 	elements: {
+		activeIds: {
+			communityId: string;
+			collectionId?: string;
+			pubId?: string;
+		};
 		activeTarget: Community | Collection | Pub;
-		activeTargetType: 'community' | 'collection' | 'pub';
+		activeTargetType: 'organization' | 'community' | 'collection' | 'pub';
 		activeTargetName: string;
 		activeCommunity: Community;
 		activeCollection?: Collection;
@@ -57,10 +62,15 @@ export type ScopeData = {
 	memberData: Member[];
 };
 
+export type InitialCommunityData = DefinitelyHas<
+	Community,
+	'collections' | 'pages' | 'scopeSummary'
+>;
+
 export type InitialData = {
 	scopeData: ScopeData;
 	locationData: LocationData;
 	loginData: LoginData;
-	communityData: DefinitelyHas<Community, 'collections' | 'pages'>;
+	communityData: InitialCommunityData;
 	featureFlags: Record<string, boolean>;
 };

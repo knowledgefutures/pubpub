@@ -1,30 +1,13 @@
-import { IconName } from 'components/Icon/Icon';
+import { IconName } from 'components';
+import * as types from 'types';
 
-type Community = {
-	website: string;
-	facebook: string;
-	email: string;
-	twitter: string;
-};
-
-export type Collection = {
-	id: string;
-	title: string;
-	slug: string;
-	kind: string;
-	isPublic: boolean;
-};
-
-export type Page = {
-	id: string;
-	title: string;
-	slug: string;
-	isPublic: boolean;
-};
+type NavBuilderCommunity = Pick<types.Community, 'website' | 'twitter' | 'facebook' | 'email'>;
+type NavBuilderPage = Pick<types.Page, 'title' | 'id' | 'isPublic' | 'slug'>;
+type NavBuilderCollection = Pick<types.Collection, 'title' | 'id' | 'isPublic' | 'slug'>;
 
 type NavBuildContext = {
-	pages: Page[];
-	collections: Collection[];
+	pages: NavBuilderPage[];
+	collections: NavBuilderCollection[];
 };
 
 type CommunityNavigationMenu = { id: string; title: string; children: CommunityNavigationChild[] };
@@ -62,8 +45,8 @@ export type SocialItem = {
 	url: string;
 };
 
-export const populateSocialItems = (communityData: Community): SocialItem[] => {
-	return [
+export const createSocialNavItems = (communityData: NavBuilderCommunity): SocialItem[] => {
+	const possibleItems = [
 		{
 			id: 'si-0',
 			icon: 'globe' as const,
@@ -92,10 +75,13 @@ export const populateSocialItems = (communityData: Community): SocialItem[] => {
 			value: communityData.email,
 			url: `mailto:${communityData.email}`,
 		},
-	].filter((item) => item.value);
+	];
+	return possibleItems.filter((item) => !!item.value) as SocialItem[];
 };
 
-const getNavbarChildForPageOrCollection = (item: Page | Collection): NavbarChild => {
+const getNavbarChildForPageOrCollection = (
+	item: NavBuilderPage | NavBuilderCollection,
+): NavbarChild => {
 	return {
 		title: item.title,
 		href: `/${item.slug}`,

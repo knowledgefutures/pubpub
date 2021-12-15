@@ -5,15 +5,13 @@ import { Button } from '@blueprintjs/core';
 
 import { shouldShowTosUpdate, markTosUpdateSeen } from 'client/utils/legal/tosUpdate';
 import { shouldShowGdprBanner, updateGdprConsent } from 'client/utils/legal/gdprConsent';
+import { LoginData } from 'types';
 
 require('./legalBanner.scss');
 
 type Props = {
 	// eslint-disable-next-line react/no-unused-prop-types
-	loginData: {
-		id?: string;
-		gdprConsent?: boolean;
-	};
+	loginData: LoginData;
 };
 
 const banners = [

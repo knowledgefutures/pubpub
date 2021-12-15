@@ -14,7 +14,7 @@ import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 import {
 	defaultFooterLinks,
-	populateSocialItems,
+	createSocialNavItems,
 	getNavItemsForCommunityNavigation,
 	SocialItem,
 } from 'client/utils/navigation';
@@ -32,10 +32,10 @@ const defaultProps = {
 type Props = OwnProps & typeof defaultProps;
 
 const basePubPubFooterLinks = [
-	{ id: 1, title: 'Create your community', href: '/community/create' },
-	{ id: 2, title: 'Login', href: '/login' },
-	{ id: 3, title: 'Signup', href: '/signup' },
-	{ id: 4, title: 'Legal', href: '/legal' },
+	{ id: '1', title: 'Create your community', href: '/community/create' },
+	{ id: '2', title: 'Login', href: '/login' },
+	{ id: '3', title: 'Signup', href: '/signup' },
+	{ id: '4', title: 'Legal', href: '/legal' },
 ];
 
 const baseSocialItems: SocialItem[] = [
@@ -107,7 +107,7 @@ const Footer = (props: Props) => {
 			? '/static/logoBlack.svg'
 			: '/static/logoWhite.svg';
 	const wrapperClasses = isBasePubPub ? 'base-pubpub' : 'accent-background accent-color';
-	const socialItems = isBasePubPub ? baseSocialItems : populateSocialItems(communityData);
+	const socialItems = isBasePubPub ? baseSocialItems : createSocialNavItems(communityData);
 	return (
 		<div className={`footer-component ${wrapperClasses}`}>
 			<GridWrapper>

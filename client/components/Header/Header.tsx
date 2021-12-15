@@ -13,6 +13,7 @@ import {
 import { usePageContext } from 'utils/hooks';
 import { getResizedUrl } from 'utils/images';
 import { apiFetch } from 'client/utils/apiFetch';
+import { CommunityHeroButton } from 'types';
 
 require('./header.scss');
 
@@ -159,8 +160,9 @@ const Header = (props: Props) => {
 	const redirectString = `?redirect=${locationData.path}${
 		locationData.queryString.length > 1 ? locationData.queryString : ''
 	}`;
-	const heroPrimaryButton = communityData.heroPrimaryButton || {};
-	const heroSecondaryButton = communityData.heroSecondaryButton || {};
+	const heroPrimaryButton: Partial<CommunityHeroButton> = communityData.heroPrimaryButton || {};
+	const heroSecondaryButton: Partial<CommunityHeroButton> =
+		communityData.heroSecondaryButton || {};
 	const isPreview = !!props.previewContext;
 
 	return (

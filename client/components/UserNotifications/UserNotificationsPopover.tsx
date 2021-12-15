@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import { Button } from '@blueprintjs/core';
 
-import { Popover } from 'components';
+import { Icon, Popover } from 'components';
+import { InitialNotificationsData, Maybe } from 'types';
 
+import { usePageContext } from 'utils/hooks';
 import UserNotifications from './UserNotifications';
 import { useNotificationsState } from './useNotificationsState';
 import { UserNotificationsContext } from './userNotificationsContext';
@@ -10,61 +12,58 @@ import { NotificationsState } from './types';
 
 require('./userNotifications.scss');
 
-const getUnreadCount = (state: NotificationsState) => {
-	return state.pubStates
-		.map(
-			(pub) =>
-				pub.threadStates.filter((thread) =>
-					thread.notifications.some((notification) => !notification.isRead),
-				).length,
-		)
-		.reduce((a, b) => a + b, 0);
-};
-
-const renderUnreadCount = (count: number) => {
-	if (count > 0) {
-		return (
-			<div className="unread-count">
-				<span className="inner">{count}</span>
-			</div>
+const getNotificationsData = (
+	initialNotificationsData: InitialNotificationsData,
+	notificationsState: Maybe<NotificationsState>,
+): InitialNotificationsData => {
+	if (notificationsState) {
+		const { pubStates } = notificationsState;
+		const hasUnreadNotifications = pubStates.some((pub) =>
+			pub.threadStates.some((thread) =>
+				thread.notifications.some((notification) => !notification.isRead),
+			),
 		);
+		return { hasNotifications: pubStates.length > 0, hasUnreadNotifications };
 	}
-	return null;
+	return initialNotificationsData;
 };
 
 const UserNotificationsPopover = () => {
 	const userNotifications = useNotificationsState();
-	const userNotificationsState = userNotifications?.state;
+	const { initialNotificationsData } = usePageContext();
 
-	const unreadCount = useMemo(
-		() => (userNotificationsState ? getUnreadCount(userNotificationsState) : 0),
-		[userNotificationsState],
+	const { hasNotifications, hasUnreadNotifications } = useMemo(
+		() => getNotificationsData(initialNotificationsData, userNotifications?.state),
+		[initialNotificationsData, userNotifications],
 	);
 
-	if (userNotifications && userNotifications.state.hasNotifications) {
-		const { state, context } = userNotifications;
-		return (
-			<UserNotificationsContext.Provider value={context}>
-				<Popover
-					aria-label="Notifications"
-					placement="bottom-end"
-					className="user-notifications-popover"
-					content={<UserNotifications state={state} />}
-					preventBodyScroll={false}
-					unstable_fixed
-				>
-					<Button
-						className="user-notifications-button"
-						icon={renderUnreadCount(unreadCount)}
-						rightIcon="caret-down"
-						minimal
-						large
-					>
-						Threads
-					</Button>
-				</Popover>
-			</UserNotificationsContext.Provider>
+	if (hasNotifications) {
+		const button = (
+			<Button
+				className="user-notifications-button"
+				icon={<Icon icon={hasUnreadNotifications ? 'inbox-update' : 'inbox'} />}
+				minimal
+				large
+			/>
 		);
+		if (userNotifications) {
+			const { state, context } = userNotifications;
+			return (
+				<UserNotificationsContext.Provider value={context}>
+					<Popover
+						aria-label="Notifications"
+						placement="bottom-end"
+						className="user-notifications-popover"
+						content={<UserNotifications state={state} />}
+						preventBodyScroll={false}
+						unstable_fixed
+					>
+						{button}
+					</Popover>
+				</UserNotificationsContext.Provider>
+			);
+		}
+		return button;
 	}
 
 	return null;

@@ -193,7 +193,6 @@ const Header = (props: Props) => {
 						)}
 					</div>
 					<div className="buttons-wrapper">
-						{loggedIn && <UserNotificationsPopover />}
 						{isBasePubPub && (
 							<React.Fragment>
 								<AnchorButton
@@ -259,6 +258,7 @@ const Header = (props: Props) => {
 								<ScopeDropdown />
 							</MenuButton>
 						)}
+						{loggedIn && <UserNotificationsPopover />}
 						{loggedIn && (
 							<MenuButton
 								aria-label="User menu"

@@ -17,6 +17,7 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		locationData: initialLocationData,
 		scopeData: initialScopeData,
 		featureFlags,
+		initialNotificationsData,
 	} = initialData;
 	const { pageData: initialPageData } = viewData;
 	const [loginData] = useState(initialLoginData);
@@ -67,5 +68,6 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		updateCollection,
 		noteManager,
 		featureFlags,
+		initialNotificationsData,
 	};
 };

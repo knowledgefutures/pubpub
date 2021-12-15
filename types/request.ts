@@ -67,10 +67,16 @@ export type InitialCommunityData = DefinitelyHas<
 	'collections' | 'pages' | 'scopeSummary'
 >;
 
+export type InitialNotificationsData = {
+	hasNotifications: boolean;
+	hasUnreadNotifications: boolean;
+};
+
 export type InitialData = {
 	scopeData: ScopeData;
 	locationData: LocationData;
 	loginData: LoginData;
 	communityData: InitialCommunityData;
 	featureFlags: Record<string, boolean>;
+	initialNotificationsData: InitialNotificationsData;
 };

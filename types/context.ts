@@ -1,6 +1,7 @@
 import {
 	Collection,
 	InitialCommunityData,
+	InitialNotificationsData,
 	LocationData,
 	LoginData,
 	Maybe,
@@ -20,4 +21,5 @@ export type PageContext = {
 	updateCollection: PatchFn<Collection>;
 	featureFlags: Record<string, boolean>;
 	noteManager: NoteManager;
+	initialNotificationsData: InitialNotificationsData;
 };

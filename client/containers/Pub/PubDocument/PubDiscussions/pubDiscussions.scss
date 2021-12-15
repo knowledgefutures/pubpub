@@ -19,7 +19,7 @@
 				cursor: pointer;
 				.thread-comment-component {
 					margin-bottom: 0.5em;
-					border-bottom: 0px solid #f0f0f7; 
+					border-bottom: 0px solid #f0f0f7;
 					&:last-child {
 						margin-bottom: 0em;
 					}
@@ -28,6 +28,9 @@
 						line-height: 18px;
 					}
 				}
+			}
+			&.emphasized {
+				border: 1px solid var(--community-accent-dark);
 			}
 		}
 	}

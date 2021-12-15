@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
@@ -34,6 +34,10 @@ const sortThreadComments = (threadComments: PubPageThreadComment[], sortType: So
 	return threadComments.concat().sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
 };
 
+const isPreviewExpandedByHash = (discussionId: string) => {
+	return window.location.hash === `#discussion-${discussionId}`;
+};
+
 const Discussion = (props: Props) => {
 	const {
 		pubData,
@@ -45,21 +49,30 @@ const Discussion = (props: Props) => {
 	const { communityData, scopeData, locationData, loginData } = usePageContext();
 	const { canView, canCreateDiscussions, canAdmin } = scopeData.activePermissions;
 	const [previewExpanded, setPreviewExpanded] = useState(false);
+	const [emphasized, setEmphasized] = useState(false);
 	const [sortType, setSortType] = useState<SortType>('chronological');
 	const isPreview = canPreview && !previewExpanded;
 	const canReply = canView || canCreateDiscussions;
 	const isDiscussionAuthor = loginData.id === discussionData.userId;
 	const showManageTools = canAdmin || (isDiscussionAuthor && !discussionData.isClosed);
+	const discussionId = discussionData.id;
+
+	useEffect(() => {
+		if (isPreviewExpandedByHash(discussionId)) {
+			setPreviewExpanded(true);
+			setEmphasized(true);
+		}
+	}, [discussionId]);
 
 	const renderPreviewDiscussionsAndOverflow = (threadComments, minShown) => {
 		let shownDiscussionsCount = 0;
 		let pendingHiddenCount = 0;
 		const elements: React.ReactNode[] = [];
 
-		const flushPendingCount = (discussionId) => {
+		const flushPendingCount = (threadCommentId: string) => {
 			if (pendingHiddenCount > 0) {
 				elements.push(
-					<div key={discussionId} className="overflow-listing">
+					<div key={threadCommentId} className="overflow-listing">
 						{' '}
 						+ {pendingHiddenCount} more...
 					</div>,
@@ -179,8 +192,10 @@ const Discussion = (props: Props) => {
 				isPreview && 'preview',
 				previewExpanded && 'expanded-preview',
 				showManageTools && 'has-manage-tools',
+				emphasized && 'emphasized',
 			)}
 			onClick={() => {
+				setEmphasized(false);
 				if (isPreview) {
 					setPreviewExpanded(isPreview);
 				}

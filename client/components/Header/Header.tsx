@@ -28,7 +28,7 @@ const defaultProps = {
 type Props = OwnProps & typeof defaultProps;
 
 const Header = (props: Props) => {
-	const { locationData, communityData, loginData, scopeData } = usePageContext(
+	const { locationData, communityData, loginData, scopeData, featureFlags } = usePageContext(
 		props.previewContext,
 	);
 	const [isLoading, setIsLoading] = useState(false);
@@ -258,7 +258,7 @@ const Header = (props: Props) => {
 								<ScopeDropdown />
 							</MenuButton>
 						)}
-						{loggedIn && <UserNotificationsPopover />}
+						{loggedIn && featureFlags.notifications && <UserNotificationsPopover />}
 						{loggedIn && (
 							<MenuButton
 								aria-label="User menu"

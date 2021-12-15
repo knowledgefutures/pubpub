@@ -30,7 +30,8 @@ $mobile-viewport-cutoff: 500px;
 
 .user-notifications-button.bp3-button {
     .bp3-icon {
-        color: currentColor;
+        // There is a truly terrible selector overriding this in Blueprint
+        color: currentColor !important;
     }
 
     @include mobile {

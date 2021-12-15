@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
 	NavbarItem,
 	getNavItemsForCommunityNavigation,
-	populateSocialItems,
+	createSocialNavItems,
 	isNavbarMenu,
 } from 'client/utils/navigation';
 import { usePageContext } from 'utils/hooks';
@@ -30,7 +30,7 @@ const NavBar = function (props) {
 		pages,
 		collections,
 	});
-	const socialItems = populateSocialItems(communityData);
+	const socialItems = createSocialNavItems(communityData);
 
 	const renderMenuSubitem = (subitem: NavbarItem, index: number) => {
 		if (!isNavbarMenu(subitem)) {

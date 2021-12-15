@@ -43,7 +43,7 @@ const Search = (props: Props) => {
 	const { locationData, communityData } = usePageContext();
 	const [searchQuery, setSearchQuery] = useState(locationData.query.q || '');
 	const [searchResults, setSearchResults] = useState<any>([]);
-	const [isLoading, setIsLoading] = useState(locationData.query.q || false);
+	const [isLoading, setIsLoading] = useState(!!locationData.query.q || false);
 	const [page, setPage] = useState(
 		locationData.query.page ? Number(locationData.query.page) - 1 : 0,
 	);
@@ -210,7 +210,7 @@ const Search = (props: Props) => {
 							placeholder="search..."
 							value={searchQuery}
 							onChange={handleSearchChange}
-							rightElement={isLoading && <Spinner size={35} />}
+							rightElement={isLoading ? <Spinner size={35} /> : undefined}
 							inputRef={inputRef as any}
 						/>
 					</div>

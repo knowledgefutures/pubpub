@@ -9,6 +9,7 @@ const updatableFields = [
 	'subscribeToPubsAsContributor',
 	'notificationCadence',
 	'markReadTrigger',
+	'lastReceivedNotificationsAt',
 ] as const;
 
 type UpdateOptions = {

@@ -20,6 +20,7 @@ import { getDashUrl } from 'utils/dashboard';
 import { communityUrl } from 'utils/canonicalUrls';
 import { isDevelopment } from 'utils/environment';
 import { apiFetch } from 'client/utils/apiFetch';
+import { CommunityHeroButton } from 'types';
 
 import NavBuilder from './NavBuilder';
 
@@ -92,10 +93,10 @@ const CommunitySettings = () => {
 	const [heroImage, setHeroImage] = useState(communityData.heroImage);
 	const [heroTitle, setHeroTitle] = useState(communityData.heroTitle);
 	const [heroText, setHeroText] = useState(communityData.heroText);
-	const [heroPrimaryButton, setHeroPrimaryButton] = useState(
+	const [heroPrimaryButton, setHeroPrimaryButton] = useState<Partial<CommunityHeroButton>>(
 		communityData.heroPrimaryButton || {},
 	);
-	const [heroSecondaryButton, setHeroSecondaryButton] = useState(
+	const [heroSecondaryButton, setHeroSecondaryButton] = useState<Partial<CommunityHeroButton>>(
 		communityData.heroSecondaryButton || {},
 	);
 	const [heroAlign, setHeroAlign] = useState(communityData.heroAlign || 'left');
@@ -459,7 +460,7 @@ const CommunitySettings = () => {
 					wrapperClassName={hideCreatePubButton ? 'disable-block' : ''}
 				>
 					<CollectionMultiSelect
-						allCollections={communityData.collections}
+						allCollections={communityData.collections as any}
 						selectedCollectionIds={defaultPubCollections || []}
 						onItemSelect={(newCollectionId) => {
 							const existingCollectionIds = defaultPubCollections || [];

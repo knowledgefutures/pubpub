@@ -5,6 +5,7 @@ export default (sequelize, dataTypes) => {
 			id: sequelize.idType,
 			userId: { type: dataTypes.UUID, allowNull: false },
 			receiveNotifications: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+			lastReceivedNotificationsAt: { type: dataTypes.DATE, allowNull: true },
 			subscribeToThreadsAsCommenter: {
 				type: dataTypes.BOOLEAN,
 				allowNull: false,

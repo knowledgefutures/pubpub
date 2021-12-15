@@ -13,7 +13,7 @@ import { usePubContext } from '../../pubHooks';
 
 require('./metadataEditor.scss');
 
-type attributionShape = {
+type Attribution = {
 	name?: string;
 	users?: {}[];
 };
@@ -21,12 +21,12 @@ type attributionShape = {
 type MetadataEditorProps = {
 	onSetMetadataUpdater: (...args: any[]) => any;
 	proposedMetadata: {
-		attributions?: attributionShape[];
+		attributions?: Attribution[];
 	};
 };
 
 type ProposedAttributionProps = {
-	attribution: attributionShape;
+	attribution: Attribution;
 	onUpdateAttribution: (...args: any[]) => any;
 };
 

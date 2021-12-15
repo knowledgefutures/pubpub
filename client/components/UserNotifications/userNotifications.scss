@@ -25,20 +25,6 @@ $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
     .bp3-icon {
         color: currentColor;
     }
-    .unread-count {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 18px;
-        height: 18px;
-        font-size: 11px;
-        border-radius: 12px;
-        background-color: currentColor;
-        .inner {
-            font-weight: bold;
-            color: var(--community-accent-dark);
-        }
-    }
 }
 
 .user-notifications-component.bp3-card {

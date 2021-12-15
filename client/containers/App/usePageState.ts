@@ -1,14 +1,23 @@
 import { useState } from 'react';
 
 import { NoteManager } from 'client/utils/notes';
+import { InitialData, Page, PageContext } from 'types';
 
-export const usePageState = (initialData, viewData) => {
+// viewData contains container-specific props that we usually shouldn't peek at when doing
+// operations that could occur inside _any_ container -- but sometimes we cheat. This type
+// defines the possible values we might check for there.
+type PossibleViewData = {
+	pageData: Page;
+};
+
+export const usePageState = (initialData: InitialData, viewData: PossibleViewData): PageContext => {
 	const {
 		loginData: initialLoginData,
 		communityData: initialCommunityData,
 		locationData: initialLocationData,
 		scopeData: initialScopeData,
 		featureFlags,
+		initialNotificationsData,
 	} = initialData;
 	const { pageData: initialPageData } = viewData;
 	const [loginData] = useState(initialLoginData);
@@ -27,9 +36,14 @@ export const usePageState = (initialData, viewData) => {
 	};
 
 	const updateCollection = (next) => {
-		if (scopeData.elements.activeCollection) {
+		const { activeCollection } = scopeData.elements;
+		if (activeCollection) {
+			if (typeof next === 'function') {
+				// eslint-disable-next-line no-param-reassign
+			}
+			next = next(activeCollection);
 			const nextCollection = {
-				...scopeData.elements.activeCollection,
+				...activeCollection,
 				...next,
 			};
 			setScopeData((current) => {
@@ -54,5 +68,6 @@ export const usePageState = (initialData, viewData) => {
 		updateCollection,
 		noteManager,
 		featureFlags,
+		initialNotificationsData,
 	};
 };

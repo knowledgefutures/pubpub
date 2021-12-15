@@ -9,7 +9,7 @@ type Scope = {
 	type: 'Community' | 'Collection' | 'Pub';
 	icon: IconName;
 	title: string;
-	avatar: string;
+	avatar?: string;
 	href: string;
 };
 

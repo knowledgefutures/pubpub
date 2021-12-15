@@ -3,7 +3,7 @@ import { Button, Tooltip, Card } from '@blueprintjs/core';
 import stickybits from 'stickybits';
 
 import { LayoutBlock, LayoutPubsByBlock } from 'utils/layout';
-import { Pub, Community, Collection } from 'types';
+import { Pub, Community, Collection, DefinitelyHas } from 'types';
 
 import { Popover } from 'components';
 import { useLayout } from './useLayout';
@@ -23,10 +23,7 @@ type Props = {
 	initialLayout: LayoutBlock[];
 	initialLayoutPubsByBlock: LayoutPubsByBlock<Pub>;
 	collection?: Collection;
-	communityData: Community & {
-		pages: NonNullable<Community['pages']>;
-		collections: NonNullable<Community['collections']>;
-	};
+	communityData: DefinitelyHas<Community, 'pages' | 'collections'>;
 };
 
 const validBlockTypes = [

@@ -19,7 +19,7 @@ const User = (props: Props) => {
 		return attribution.pub;
 	});
 
-	const selfProfile = loginData.id && userData.id === loginData.id;
+	const selfProfile = !!loginData.id && userData.id === loginData.id;
 	const mode = locationData.params.mode;
 	const localCommunityId = communityData.id;
 	const communityPubs = pubs.filter((pub) => {

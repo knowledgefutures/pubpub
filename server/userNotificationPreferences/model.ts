@@ -13,12 +13,12 @@ export default (sequelize, dataTypes) => {
 			subscribeToPubsAsMember: {
 				type: dataTypes.BOOLEAN,
 				allowNull: false,
-				defaultValue: false,
+				defaultValue: true,
 			},
 			subscribeToPubsAsContributor: {
 				type: dataTypes.BOOLEAN,
 				allowNull: false,
-				defaultValue: false,
+				defaultValue: true,
 			},
 			notificationCadence: {
 				type: dataTypes.INTEGER,

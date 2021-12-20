@@ -128,7 +128,7 @@ it('creates a collectionPub and sets its rank', async () => {
 			.post('/api/collectionPubs')
 			.send({ pubId: pub.id, collectionId: issue.id, communityId: community.id })
 			.expect(201),
-	).toMatchObject((response) => ({
+	).toMatchResultingObject((response) => ({
 		kind: 'collection-pub-created',
 		collectionId: issue.id,
 		pubId: pub.id,

@@ -7,5 +7,6 @@ import './pub/hooks';
 import './pubEdge/hooks';
 import './review/hooks';
 import './scopeSummary/hooks';
+import './submission/hooks';
 import './threadComment/hooks';
 import './visibility/hooks';

@@ -47,7 +47,7 @@ describe('/api/communities', () => {
 					description: "Get in loser we're testing our code",
 				})
 				.expect(201),
-		).toMatchObject((response) => ({
+		).toMatchResultingObject((response) => ({
 			kind: 'community-created',
 			communityId: response.body.id,
 			actorId: willCreateCommunity.id,

@@ -3,7 +3,6 @@ node_modules
 *.log
 .atomignore
 .info
-.nvmrc
 *.swp
 *.swo
 npm-debug.log

@@ -149,7 +149,7 @@ describe('/api/releases', () => {
 					}),
 				)
 				.expect(201),
-		).toMatchObject((response) => ({
+		).toMatchResultingObject((response) => ({
 			kind: 'pub-release-created',
 			pubId: pub.id,
 			actorId: pubAdmin.id,

@@ -82,7 +82,7 @@ it('lets a manager create a PubEdge to another Pub', async () => {
 				targetPubId: targetPub.id,
 			})
 			.expect(201),
-	).toMatchObject((response) => ({
+	).toMatchResultingObject((response) => ({
 		kind: 'pub-edge-created',
 		actorId: sourcePubManager.id,
 		pubId: sourcePub.id,

@@ -10,6 +10,7 @@ import {
 	Pub,
 	Release,
 	Review,
+	Submission,
 	ThreadComment,
 	Thread,
 	User,
@@ -25,6 +26,7 @@ export const activityAssociationTypes = [
 	'pubEdge',
 	'pub',
 	'review',
+	'submission',
 	'release',
 	'threadComment',
 	'thread',
@@ -48,6 +50,7 @@ export type ActivityAssociationModels = {
 	pub: Pub;
 	release: Release;
 	review: Review;
+	submission: Submission;
 	threadComment: ThreadComment;
 	thread: Thread;
 	user: User;

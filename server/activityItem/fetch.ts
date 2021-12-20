@@ -22,6 +22,7 @@ import {
 	PubEdge,
 	Release,
 	ReviewNew,
+	Submission,
 	Thread,
 	ThreadComment,
 	User,
@@ -150,6 +151,7 @@ const getActivityItemAssociationIds = (
 		pub,
 		release,
 		review,
+		submission,
 		threadComment,
 		thread,
 		user,
@@ -208,6 +210,12 @@ const getActivityItemAssociationIds = (
 		) {
 			user.add(item.payload.userId);
 		} else if (
+			item.kind === 'submission-created' ||
+			item.kind === 'submission-status-changed' ||
+			item.kind === 'submission-deleted'
+		) {
+			submission.add(item.payload.submissionId);
+		} else if (
 			item.kind === 'page-created' ||
 			item.kind === 'page-updated' ||
 			item.kind === 'page-removed'
@@ -256,6 +264,7 @@ const fetchAssociations = (
 		pub,
 		release,
 		review,
+		submission,
 		threadComment,
 		thread,
 		user,
@@ -274,6 +283,7 @@ const fetchAssociations = (
 		pub: fetchModels<types.Pub>(Pub, pub),
 		release: fetchModels<types.Release>(Release, release),
 		review: fetchModels<types.Review>(ReviewNew, review),
+		submission: fetchModels<types.Submission>(Submission, submission),
 		threadComment: fetchModels<types.ThreadComment>(ThreadComment, threadComment),
 		thread: fetchModels<types.Thread>(Thread, thread),
 		user: fetchModels<types.User>(User, user),

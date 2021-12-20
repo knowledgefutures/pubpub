@@ -1,7 +1,6 @@
 import { NodeLabelMap } from 'components/Editor';
 import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
 
-import { Submission } from 'types';
 import { PubAttribution } from './attribution';
 import { CollectionPub } from './collection';
 import { Community } from './community';
@@ -11,6 +10,7 @@ import { Member } from './member';
 import { Review } from './review';
 import { InboundEdge, OutboundEdge } from './pubEdge';
 import { ScopeSummary } from './scope';
+import { Submission } from './submission';
 import { ThreadComment, Thread } from './thread';
 import { DefinitelyHas, Maybe } from './util';
 

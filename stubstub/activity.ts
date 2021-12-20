@@ -6,11 +6,10 @@ import { finishDeferredTasks } from 'server/utils/deferred';
 import * as types from 'types';
 
 type ExpectCreatedActivityItemResult<Result> = {
-	toMatchObject: (
-		values:
-			| types.DeepPartial<types.ActivityItem>
-			| ((result: Result) => types.DeepPartial<types.ActivityItem>),
+	toMatchResultingObject: (
+		values: (result: Result) => types.DeepPartial<types.ActivityItem>,
 	) => Promise<Result>;
+	toMatchObject: (values: types.DeepPartial<types.ActivityItem>) => Promise<Result>;
 };
 
 const splitQueryFromAssertion = (result: Record<string, any>) => {
@@ -29,11 +28,21 @@ export const expectCreatedActivityItem = <Result extends Record<string, any>>(
 ): ExpectCreatedActivityItemResult<Result> => {
 	const cutoffTime = new Date();
 	return {
+		toMatchResultingObject: async (responseFn) => {
+			const result = await promise;
+			await finishDeferredTasks();
+			const resolvedValues = responseFn(result);
+			const { query, assertion } = splitQueryFromAssertion(resolvedValues);
+			const item = await ActivityItem.findOne({
+				where: { ...query, createdAt: { [Op.gte]: cutoffTime } },
+			});
+			expect(item).toMatchObject(assertion);
+			return result;
+		},
 		toMatchObject: async (values) => {
 			const result = await promise;
 			await finishDeferredTasks();
-			const resolvedValues = typeof values === 'function' ? values(result) : values;
-			const { query, assertion } = splitQueryFromAssertion(resolvedValues);
+			const { query, assertion } = splitQueryFromAssertion(values);
 			const item = await ActivityItem.findOne({
 				where: { ...query, createdAt: { [Op.gte]: cutoffTime } },
 			});

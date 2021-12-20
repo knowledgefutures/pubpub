@@ -158,7 +158,7 @@ describe('/api/pubs', () => {
 		const agent = await login(communityManager);
 		const { body: pub } = await expectCreatedActivityItem(
 			agent.post('/api/pubs').send({ communityId: community.id }).expect(201),
-		).toMatchObject((response) => ({
+		).toMatchResultingObject((response) => ({
 			kind: 'pub-created',
 			pubId: response.body.id,
 			actorId: communityManager.id,

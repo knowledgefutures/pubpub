@@ -2,8 +2,8 @@ import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 import { getPub } from 'server/utils/queryHelpers';
 
-import { canCreateSubmission, canUpdateSubmission } from './permissions';
-import { createSubmission, updateSubmission } from './queries';
+import { canCreateSubmission, canUpdateSubmission, canDeleteSubmission } from './permissions';
+import { createSubmission, updateSubmission, destroySubmission } from './queries';
 
 app.post(
 	'/api/submissions',
@@ -17,7 +17,7 @@ app.post(
 		if (!canCreate) {
 			throw new ForbiddenError();
 		}
-		const newSubmission = await createSubmission({ userId, submissionWorkflowId });
+		const newSubmission = await createSubmission({ userId, submissionWorkflowId }, userId);
 		const pub = await getPub({ id: newSubmission.pubId });
 		return res.status(201).json({ ...newSubmission.toJSON(), pub: { slug: pub.slug } });
 	}),
@@ -36,8 +36,23 @@ app.put(
 		if (!canUpdate) {
 			throw new ForbiddenError();
 		}
-
-		const updatedValues = await updateSubmission(req.body);
+		const updatedValues = await updateSubmission(req.body, req.user?.id);
 		return res.status(201).json(updatedValues);
+	}),
+);
+
+app.delete(
+	'/api/submissions',
+	wrap(async (req, res) => {
+		const { id } = req.body;
+		const canDelete = await canDeleteSubmission({
+			userId: req.user?.id,
+			id,
+		});
+		if (!canDelete) {
+			throw new ForbiddenError();
+		}
+		await destroySubmission(req.body, req.user?.id);
+		return res.status(200).json(req.body.id);
 	}),
 );

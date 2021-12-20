@@ -11,6 +11,7 @@ import {
 	PubEdge,
 	Release,
 	ReviewNew,
+	Submission,
 	Thread,
 	ThreadComment,
 } from 'server/models';
@@ -551,6 +552,67 @@ export const createPubDiscussionCommentAddedActivityItem = async (
 				id: threadCommentId,
 				text: threadComment.text,
 				userId: threadComment.userId,
+			},
+		},
+	});
+};
+
+export const createSubmissionActivityItem = async (
+	kind: 'submission-deleted' | 'submission-created',
+	actorId: null | string,
+	submissionId: string,
+) => {
+	const {
+		pubId,
+		pub: { title, communityId },
+	}: types.DefinitelyHas<types.Submission, 'pub'> = await Submission.findOne({
+		where: { id: submissionId },
+		include: [
+			{
+				model: Pub,
+				as: 'pub',
+			},
+		],
+	});
+	return createActivityItem({
+		actorId,
+		communityId,
+		pubId,
+		kind,
+		payload: {
+			submissionId,
+			pub: {
+				title,
+			},
+		},
+	});
+};
+
+export const createSubmissionStatusChangedActivityItem = async (
+	actorId: null | string,
+	submissionId: string,
+	oldSubmission: types.Submission,
+) => {
+	const submission: types.DefinitelyHas<types.Submission, 'pub'> = await Submission.findOne({
+		where: { id: submissionId },
+		include: [
+			{
+				model: Pub,
+				as: 'pub',
+			},
+		],
+	});
+	const diffs = getDiffsForPayload(submission, oldSubmission, ['status']);
+	return createActivityItem({
+		actorId,
+		communityId: submission.pub.communityId,
+		pubId: submission.pub.id,
+		kind: 'submission-status-changed' as const,
+		payload: {
+			submissionId,
+			...diffs,
+			pub: {
+				title: submission.pub.title,
 			},
 		},
 	});

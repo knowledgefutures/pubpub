@@ -13,8 +13,13 @@ type CreateOptions = {
 	userId: string;
 	submissionWorkflowId: string;
 };
+type UpdateToStatus = typeof updateToStatuses;
+type UpdateOptions = Partial<SubmissionType> & { status: UpdateToStatus };
 
-export const createSubmission = async ({ userId, submissionWorkflowId }: CreateOptions) => {
+export const createSubmission = async (
+	{ userId, submissionWorkflowId }: CreateOptions,
+	actorId: string,
+) => {
 	const { collection } = await SubmissionWorkflow.findOne({
 		where: { id: submissionWorkflowId },
 		include: [{ model: Collection, as: 'collection' }],
@@ -26,33 +31,44 @@ export const createSubmission = async ({ userId, submissionWorkflowId }: CreateO
 		},
 		userId,
 	);
-	return Submission.create({
-		pubId: pub.id,
-		submissionWorkflowId,
-		status: 'incomplete',
-	});
+	return Submission.create(
+		{
+			pubId: pub.id,
+			submissionWorkflowId,
+			status: 'incomplete',
+		},
+		{ actorId },
+	);
 };
 
-type UpdateToStatus = typeof updateToStatuses;
-type UpdateOptions = Partial<SubmissionType> & { status: UpdateToStatus };
-
-export const updateSubmission = async (patch: UpdateOptions, sendEmail = false) => {
+export const updateSubmission = async (
+	patch: UpdateOptions,
+	actorId: string,
+	sendEmail = false,
+) => {
 	const { id, status } = patch;
 	const submission: SequelizeModel<SubmissionType> = await Submission.findOne({ where: { id } });
 	const previousStatus = submission.status;
-	submission.status = status;
-
-	if (previousStatus === 'incomplete' && status === 'pending') {
-		submission.submittedAt = new Date().toISOString();
-		if (sendEmail) {
-			// Send an email here
-		}
+	const isBeingSubmitted = previousStatus === 'incomplete' && status === 'pending';
+	if (isBeingSubmitted && sendEmail) {
+		// Send an email here
 	}
-
-	await submission.save();
+	return Submission.update(
+		{
+			status: patch.status,
+			...(isBeingSubmitted && { submittedAt: new Date().toISOString() }),
+		},
+		{
+			where: { id: patch.id },
+			individualHooks: true,
+			actorId,
+		},
+	).then(() => patch);
 };
 
-export const destroySubmission = async ({ id }: { id: string }) =>
+export const destroySubmission = async ({ id }: { id: string }, actorId: string) =>
 	Submission.destroy({
 		where: { id },
+		individualHooks: true,
+		actorId,
 	});

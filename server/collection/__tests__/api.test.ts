@@ -57,7 +57,7 @@ it('creates a new collection', async () => {
 				kind: 'issue',
 			})
 			.expect(201),
-	).toMatchObject((response) => ({
+	).toMatchResultingObject((response) => ({
 		kind: 'collection-created',
 		collectionId: response.body.id,
 		actorId: admin.id,

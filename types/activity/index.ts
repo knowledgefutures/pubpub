@@ -6,19 +6,22 @@ import { PageActivityItem } from './page';
 import { PubActivityItem } from './pub';
 import { MemberActivityItem } from './member';
 import { ActivityAssociations } from './associations';
+import { SubmissionActivityItem } from './submission';
 
 export * from './community';
 export * from './collection';
 export * from './page';
 export * from './pub';
 export * from './member';
+export * from './submission';
 
 export type InsertableActivityItem =
 	| CommunityActivityItem
 	| CollectionActivityItem
 	| PageActivityItem
 	| PubActivityItem
-	| MemberActivityItem;
+	| MemberActivityItem
+	| SubmissionActivityItem;
 
 export type ActivityItem = InsertableActivityItem & {
 	id: string;

@@ -34,6 +34,39 @@ export const canCreateSubmission = async ({ userId, submissionWorkflowId }: CanC
 	return userId && workflow && workflow.enabled;
 };
 
+type CanDeleteOptions = {
+	id: string;
+	userId: string;
+};
+
+export const canDeleteSubmission = async ({ userId, id }: CanDeleteOptions) => {
+	const {
+		pubId,
+		submissionWorkflow: { collection },
+	} = await Submission.findOne({
+		where: { id },
+		include: [
+			{
+				model: SubmissionWorkflow,
+				as: 'submissionWorkflow',
+				include: [{ model: Collection, as: 'collection' }],
+			},
+		],
+	});
+	const [
+		{
+			activePermissions: { canManage: canManagePub },
+		},
+		{
+			activePermissions: { canManage: canManageCollection },
+		},
+	] = await Promise.all([
+		getScope({ loginId: userId, pubId }),
+		getScope({ loginId: userId, collectionId: collection.id }),
+	]);
+	return canManagePub || canManageCollection;
+};
+
 type CanUpdateOptions = {
 	id: string;
 	userId: string;
@@ -71,6 +104,5 @@ export const canUpdateSubmission = async ({ userId, status, id }: CanUpdateOptio
 	const canChangeStatusAsSubmitter = canManagePub && pubManagerCanChangeStatus(oldStatus, status);
 	const canChangeStatusAsManager =
 		canManageCollection && collectionManagerCanChangeStatus(oldStatus, status);
-
 	return canChangeStatusAsManager || canChangeStatusAsSubmitter;
 };

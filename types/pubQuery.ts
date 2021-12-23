@@ -44,4 +44,5 @@ export type PubGetOptions = {
 	getDiscussions?: boolean;
 	getReviews?: boolean;
 	getEdgesOptions?: PubEdgeIncludesOptions;
+	getSubmissions?: boolean;
 };

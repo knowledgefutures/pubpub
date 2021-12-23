@@ -9,7 +9,7 @@ import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 
 import OverviewRowSkeleton from './OverviewRowSkeleton';
-import { getPubReleasedStateLabel, getScopeSummaryLabels } from './labels';
+import { renderRowDetails } from './labels';
 
 type Pub = DefinitelyHas<BasePub, 'attributions'>;
 
@@ -19,6 +19,7 @@ type Props = {
 	className?: string;
 	pub: Pub;
 	inCollection?: boolean;
+	hasSubmission?: boolean;
 };
 
 const PubOverviewRow = (props: Props) => {
@@ -26,6 +27,7 @@ const PubOverviewRow = (props: Props) => {
 		pub,
 		className,
 		inCollection,
+		hasSubmission = false,
 		leftIconElement = null,
 		rightElement: providedRightElement,
 	} = props;
@@ -38,16 +40,15 @@ const PubOverviewRow = (props: Props) => {
 			target="_blank"
 		/>
 	);
+
+	const details = renderRowDetails(pub, hasSubmission);
 	return (
 		<OverviewRowSkeleton
 			className={classNames('pub-overview-row-component', className)}
 			href={getDashUrl({ pubSlug: pub.slug })}
 			title={pub.title}
 			byline={<PubByline pubData={pub} linkToUsers={false} truncateAt={8} />}
-			iconLabelPairs={[
-				...getScopeSummaryLabels(pub.scopeSummary),
-				getPubReleasedStateLabel(pub),
-			]}
+			details={details}
 			leftIcon={leftIconElement || 'pubDoc'}
 			rightElement={rightElement}
 			darkenRightIcons={inCollection}

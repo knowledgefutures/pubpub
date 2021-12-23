@@ -42,6 +42,9 @@ export const timeAgoBaseProps = {
 	},
 };
 
+// This is a date string representing a time at midnight UTC for a given date.
+// Unfortunately, that represents a time during the previous day in the Western hemisphere,
+// which will cause this to improperly render the previous day.
 export const getLocalDateMatchingUtcCalendarDate = (utcDate: Date | string) => {
 	const formattedUtcDate = dateFormat(utcDate, 'UTC:yyyy-mm-dd');
 	const localDateOnSameDay = new Date(formattedUtcDate);

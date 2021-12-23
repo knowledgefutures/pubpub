@@ -1,13 +1,19 @@
 import React from 'react';
-import TimeAgo from 'react-timeago';
+import { Intent as BlueprintIntent } from '@blueprintjs/core';
 
-import { ScopeSummary, Collection, Pub } from 'types';
+import { ScopeSummary, Collection, Pub, SubmissionStatus } from 'types';
 import { capitalize } from 'utils/strings';
 import { getSchemaForKind } from 'utils/collections/schemas';
-import { formatDate, timeAgoBaseProps } from 'utils/dates';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { formatDate } from 'utils/dates';
+import { getPubPublishedDate, getPubSubmissionDate } from 'utils/pub/pubDates';
+import { TimeAgo, Icon, IconName } from 'components';
 
-import { IconLabelPair } from './OverviewRowSkeleton';
+type IconLabelPair = {
+	icon: IconName;
+	label: string | React.ReactNode;
+	iconSize?: number;
+	intent?: BlueprintIntent;
+};
 
 export const getScopeSummaryLabels = (summary: ScopeSummary, showPubs = false) => {
 	const { discussions, reviews, pubs } = summary;
@@ -62,7 +68,7 @@ const getDateLabelPart = (date: Date) => {
 	if (pageLoadTimeMs - date.valueOf() > maxTimeagoPeriod) {
 		return `on ${formatDate(date)}`;
 	}
-	return <TimeAgo {...timeAgoBaseProps} live={false} date={date} />;
+	return <TimeAgo date={date} />;
 };
 
 export const getPubReleasedStateLabel = (pub: Pub) => {
@@ -77,4 +83,95 @@ export const getPubReleasedStateLabel = (pub: Pub) => {
 		label: 'Unreleased',
 		icon: 'lock' as const,
 	};
+};
+
+export const getSubmissionStatusLabel = (
+	submissionStatus: Partial<SubmissionStatus>,
+): IconLabelPair => {
+	if (submissionStatus === 'accepted') {
+		return {
+			label: 'Accepted',
+			icon: 'symbol-square',
+			intent: 'success',
+		};
+	}
+	if (submissionStatus === 'declined') {
+		return {
+			label: 'Declined',
+			icon: 'symbol-square',
+			intent: 'danger',
+		};
+	}
+	return {
+		label: 'Pending',
+		icon: 'symbol-square',
+		intent: 'warning',
+	};
+};
+
+export const getSubmissionTimeLabel = (pub: Pub) => {
+	const submissionDate = getPubSubmissionDate(pub);
+	if (submissionDate) {
+		return {
+			label: (
+				<>
+					<em>Submitted</em>&nbsp;{getDateLabelPart(submissionDate)}
+				</>
+			),
+			icon: 'time' as const,
+		};
+	}
+	return {
+		label: 'Update Status',
+		icon: 'warning-sign' as const,
+	};
+};
+
+export const renderLabelPairs = (iconLabelPairs: IconLabelPair[]) => {
+	return (
+		<div className="summary-icons">
+			{iconLabelPairs.map((iconLabelPair, index) => {
+				const {
+					icon,
+					label,
+					iconSize: iconLabelPairIconSize = 12,
+					intent = 'none',
+				} = iconLabelPair;
+				const iconElement =
+					typeof icon === 'string' ? (
+						<Icon icon={icon} iconSize={iconLabelPairIconSize} intent={intent} />
+					) : (
+						icon
+					);
+				return (
+					<div
+						className="summary-icon-pair"
+						// eslint-disable-next-line react/no-array-index-key
+						key={index}
+					>
+						{iconElement}
+						{label}
+					</div>
+				);
+			})}
+		</div>
+	);
+};
+
+export const renderRowDetails = (pub: Pub, hasSubmission: boolean): React.ReactNode => {
+	if (pub.submission) {
+		const { status } = pub.submission;
+		const detailsRow = hasSubmission
+			? renderLabelPairs([getSubmissionStatusLabel(status), getSubmissionTimeLabel(pub)])
+			: renderLabelPairs([
+					...getScopeSummaryLabels(pub.scopeSummary),
+					getPubReleasedStateLabel(pub),
+			  ]);
+		return detailsRow;
+	}
+
+	return renderLabelPairs([
+		...getScopeSummaryLabels(pub.scopeSummary),
+		getPubReleasedStateLabel(pub),
+	]);
 };

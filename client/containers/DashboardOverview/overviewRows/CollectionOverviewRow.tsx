@@ -12,6 +12,7 @@ import {
 	getCollectionKindLabel,
 	getCollectionPublicStateLabel,
 	getScopeSummaryLabels,
+	renderLabelPairs,
 } from './labels';
 import OverviewRowSkeleton from './OverviewRowSkeleton';
 
@@ -40,7 +41,11 @@ const CollectionOverviewRow = React.forwardRef((props: Props, ref: any) => {
 		},
 		[onToggleOpen],
 	);
-
+	const iconLabelPairs = renderLabelPairs([
+		...getScopeSummaryLabels(collection.scopeSummary!, true),
+		getCollectionPublicStateLabel(collection),
+		getCollectionKindLabel(collection),
+	]);
 	const toggleButton = (
 		<Button
 			aria-label={isOpen ? 'collapse Collection' : 'expand Collection'}
@@ -56,7 +61,6 @@ const CollectionOverviewRow = React.forwardRef((props: Props, ref: any) => {
 			loading={isLoading}
 		/>
 	);
-
 	return (
 		<OverviewRowSkeleton
 			onClick={onToggleOpen}
@@ -64,11 +68,7 @@ const CollectionOverviewRow = React.forwardRef((props: Props, ref: any) => {
 			title={title}
 			leftIcon="collection"
 			href={getDashUrl({ collectionSlug: slug })}
-			iconLabelPairs={[
-				...getScopeSummaryLabels(collection.scopeSummary!, true),
-				getCollectionPublicStateLabel(collection),
-				getCollectionKindLabel(collection),
-			]}
+			details={iconLabelPairs}
 			withHoverEffect={!isOpen}
 			rightElement={toggleButton}
 			ref={ref}

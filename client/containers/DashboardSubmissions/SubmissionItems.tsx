@@ -23,7 +23,7 @@ type Props = {
 
 const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
 	default: {
-		submissionStatuses: ['incomplete', 'pending', 'accepted', 'declined'],
+		submissionStatuses: ['pending', 'accepted', 'declined'],
 	},
 	pending: {
 		submissionStatuses: ['pending'],
@@ -60,6 +60,7 @@ const SubmissionItems = (props: Props) => {
 		initialPubs,
 		initiallyLoadedAllPubs,
 		batchSize: 200,
+		pubOptions: { getSubmissions: true },
 		query: {
 			term: searchTerm,
 			scopedCollectionId: collection.id,
@@ -76,7 +77,12 @@ const SubmissionItems = (props: Props) => {
 
 	const renderPubs = () => {
 		return pubs.map((pub) => (
-			<PubOverviewRow pub={pub} key={pub.id} leftIconElement="manually-entered-data" />
+			<PubOverviewRow
+				pub={pub}
+				key={pub.id}
+				leftIconElement="manually-entered-data"
+				hasSubmission={true}
+			/>
 		));
 	};
 
@@ -86,7 +92,7 @@ const SubmissionItems = (props: Props) => {
 				<NonIdealState
 					icon="clean"
 					title="There doesn't seem to be any submissions"
-					description="No submissions have been submitted yet"
+					description="Try reaching out to members of your community for submissions"
 				/>
 			);
 		}

@@ -1,6 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Icon as BlueprintIcon, IconName as BlueprintIconName } from '@blueprintjs/core';
+import {
+	Icon as BlueprintIcon,
+	IconName as BlueprintIconName,
+	Intent as BlueprintIntent,
+} from '@blueprintjs/core';
 
 import customIcons from './customIcons';
 
@@ -17,6 +21,7 @@ type Props = {
 	icon: IconName;
 	iconSize?: number;
 	useColor?: boolean;
+	intent?: BlueprintIntent;
 };
 
 const Icon = (props: Props) => {
@@ -28,6 +33,7 @@ const Icon = (props: Props) => {
 		icon,
 		iconSize = 16,
 		useColor = false,
+		intent,
 	} = props;
 	if (customIcons[icon]) {
 		const { squareViewboxDimension, path, viewbox: providedViewbox } = customIcons[icon];
@@ -59,6 +65,7 @@ const Icon = (props: Props) => {
 			iconSize={iconSize}
 			className={className}
 			title={ariaHidden ? null : ariaLabel}
+			intent={intent}
 		/>
 	);
 };

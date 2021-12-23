@@ -8,12 +8,6 @@ import { iconSize } from './constants';
 
 require('./overviewRowSkeleton.scss');
 
-export type IconLabelPair = {
-	icon: IconName;
-	label: string | React.ReactNode;
-	iconSize?: number;
-};
-
 type Props = {
 	className?: string;
 	href: string;
@@ -22,7 +16,7 @@ type Props = {
 	byline?: React.ReactNode;
 	rightElement?: React.ReactNode;
 	darkenRightIcons?: boolean;
-	iconLabelPairs: IconLabelPair[];
+	details: React.ReactNode;
 	withBorder?: boolean;
 	withHoverEffect?: boolean;
 	onClick?: React.MouseEventHandler<any>;
@@ -32,7 +26,7 @@ const OverviewRowSkeleton = React.forwardRef((props: Props, ref: any) => {
 	const {
 		className,
 		leftIcon,
-		iconLabelPairs,
+		details,
 		title,
 		byline,
 		rightElement = null,
@@ -87,27 +81,7 @@ const OverviewRowSkeleton = React.forwardRef((props: Props, ref: any) => {
 					{title}
 				</a>
 				{byline && <div className="byline">{byline}</div>}
-				<div className="summary-icons">
-					{iconLabelPairs.map((iconLabelPair, index) => {
-						const { icon, label, iconSize: iconLabelPairIconSize = 12 } = iconLabelPair;
-						const iconElement =
-							typeof icon === 'string' ? (
-								<Icon icon={icon} iconSize={iconLabelPairIconSize} />
-							) : (
-								icon
-							);
-						return (
-							<div
-								className="summary-icon-pair"
-								// eslint-disable-next-line react/no-array-index-key
-								key={index}
-							>
-								{iconElement}
-								{label}
-							</div>
-						);
-					})}
-				</div>
+				{details}
 			</div>
 			<div className={classNames('right-element', darkenRightIcons && 'darker')}>
 				{rightElement}

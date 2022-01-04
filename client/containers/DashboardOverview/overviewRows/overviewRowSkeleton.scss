@@ -85,6 +85,7 @@ $mobile-viewport-cutoff: 750px;
                 align-items: center;
                 > :first-child {
                     margin-right: 6px;
+                    transform: translateY(1px);
                 }
                 &:not(:last-child) {
                     margin-right: 15px;

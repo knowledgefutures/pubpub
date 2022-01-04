@@ -37,7 +37,6 @@ const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
 };
 
 const overviewSearchFilters: OverviewSearchFilter[] = [
-	{ id: 'all', title: 'All', query: queriesForSubmissionPubs.default },
 	{
 		id: 'pending',
 		title: 'Pending',
@@ -45,6 +44,7 @@ const overviewSearchFilters: OverviewSearchFilter[] = [
 	},
 	{ id: 'accepted', title: 'Accepted', query: queriesForSubmissionPubs.accepted },
 	{ id: 'declined', title: 'Declined', query: queriesForSubmissionPubs.declined },
+	{ id: 'all', title: 'All', query: queriesForSubmissionPubs.default },
 ];
 
 const SubmissionItems = (props: Props) => {

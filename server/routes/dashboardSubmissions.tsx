@@ -9,7 +9,7 @@ import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getManyPubs } from 'server/pub/queryMany';
 import { InitialData } from 'types';
 
-const getPubs = async (collectionId: string, limit: number, initialData: InitialData) => {
+const getInitialPubs = async (collectionId: string, limit: number, initialData: InitialData) => {
 	const { communityData } = initialData;
 	const result = await getManyPubs({
 		options: { getSubmissions: true },
@@ -17,10 +17,12 @@ const getPubs = async (collectionId: string, limit: number, initialData: Initial
 			limit,
 			communityId: communityData.id,
 			scopedCollectionId: collectionId,
-			submissionStatuses: ['pending', 'accepted', 'declined'],
+			submissionStatuses: ['pending'],
 		},
 	});
-	return result.sanitize(initialData);
+	const initialPubs = await result.sanitize(initialData);
+	const initiallyLoadedAllPubs = initialPubs.length < limit;
+	return { initialPubs, initiallyLoadedAllPubs };
 };
 
 app.get(['/dash/collection/:collectionSlug/submissions'], async (req, res, next) => {
@@ -46,8 +48,11 @@ app.get(['/dash/collection/:collectionSlug/submissions'], async (req, res, next)
 
 		const { activeCollection } = initialData.scopeData.elements;
 		const collectionId = activeCollection!.id;
-		const [initialPubs] = await Promise.all([getPubs(collectionId, 200, initialData)]);
-		const initiallyLoadedAllPubs = !!initialPubs;
+		const { initialPubs, initiallyLoadedAllPubs } = await getInitialPubs(
+			collectionId,
+			200,
+			initialData,
+		);
 		return renderToNodeStream(
 			res,
 			<Html

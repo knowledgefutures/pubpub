@@ -3,6 +3,7 @@ import { QueryBuilder } from 'knex';
 
 import { knex, sequelize, Pub } from 'server/models';
 import { buildPubOptions, sanitizePub, SanitizedPubData } from 'server/utils/queryHelpers';
+import * as types from 'types';
 import { InitialData, PubsQuery, PubGetOptions } from 'types';
 
 const defaultColumns = {
@@ -186,8 +187,11 @@ export const queryPubIds = async (query: PubsQuery): Promise<string[]> => {
 	return results.map((r) => r.pubId);
 };
 
-export const getPubsById = (pubIds: string[], options: PubGetOptions = {}) => {
-	const pubsPromise = Pub.findAll({
+export const getPubsById = <T extends types.Pub = types.Pub>(
+	pubIds: string[],
+	options: PubGetOptions = {},
+) => {
+	const pubsPromise: Promise<types.SequelizeModel<T>[]> = Pub.findAll({
 		where: { id: { [Op.in]: pubIds } },
 		...buildPubOptions({ ...options, getMembers: true, getDraft: true }),
 	}).then((unsortedPubs) => sortPubsByListOfIds(unsortedPubs, pubIds));

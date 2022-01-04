@@ -88,11 +88,13 @@ export const getPubReleasedStateLabel = (pub: Pub) => {
 export const getSubmissionStatusLabel = (
 	submissionStatus: Partial<SubmissionStatus>,
 ): IconLabelPair => {
+	const iconSize = 16;
 	if (submissionStatus === 'accepted') {
 		return {
 			label: 'Accepted',
 			icon: 'symbol-square',
 			intent: 'success',
+			iconSize,
 		};
 	}
 	if (submissionStatus === 'declined') {
@@ -100,12 +102,14 @@ export const getSubmissionStatusLabel = (
 			label: 'Declined',
 			icon: 'symbol-square',
 			intent: 'danger',
+			iconSize,
 		};
 	}
 	return {
 		label: 'Pending',
 		icon: 'symbol-square',
 		intent: 'warning',
+		iconSize,
 	};
 };
 

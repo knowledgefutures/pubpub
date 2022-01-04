@@ -6,7 +6,6 @@ import { Pub } from 'types';
 
 import SubmissionItems from './SubmissionItems';
 import SubmissionWorkflowButton from './SubmissionWorkflowButton';
-import { OverviewSection } from '../DashboardOverview/helpers';
 
 require('./dashboardSubmissions.scss');
 
@@ -23,17 +22,15 @@ const DashboardSubmissions = (props: Props) => {
 	return (
 		<DashboardFrame
 			className="dashboard-submissions-container"
-			title="Submissions Overview"
+			title="Submissions"
 			icon="inbox"
 			controls={<SubmissionWorkflowButton />}
 		>
-			<OverviewSection title="In this Collection" icon="overview" descendTitle>
-				<SubmissionItems
-					initialPubs={initialPubs}
-					collection={collection}
-					initiallyLoadedAllPubs={initiallyLoadedAllPubs}
-				/>
-			</OverviewSection>
+			<SubmissionItems
+				initialPubs={initialPubs}
+				collection={collection}
+				initiallyLoadedAllPubs={initiallyLoadedAllPubs}
+			/>
 		</DashboardFrame>
 	);
 };

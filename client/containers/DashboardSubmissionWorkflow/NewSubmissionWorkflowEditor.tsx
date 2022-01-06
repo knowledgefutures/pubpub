@@ -4,12 +4,13 @@ import { Button } from '@blueprintjs/core';
 import { SubmissionWorkflow } from 'types';
 import { useLocalStorage } from 'client/utils/useLocalStorage';
 import { getEmptyDoc } from 'client/components/Editor';
-import { apiFetch } from 'client/utils/apiFetch';
 import { usePageContext } from 'utils/hooks';
 
 import { EditableSubmissionWorkflow } from './types';
+import { createSubmissionWorkflow } from './api';
 import SubmissionWorkflowEditor from './SubmissionWorkflowEditor';
 import StartWorkflowCallout from './StartWorkflowCallout';
+import DashboardSubmissionWorkflowFrame from './DashboardSubmissionWorkflowFrame';
 
 const createEmptyWorkflow = (): EditableSubmissionWorkflow => {
 	return {
@@ -48,48 +49,49 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 	});
 
 	const [isCreating, setIsCreating] = useState(!!initialWorkflow);
+	const [isValid, setIsValid] = useState(false);
 	const [isPersisting, setIsPersisting] = useState(false);
 
-	const handleWorkflowCreated = useCallback(() => {
-		const { introText, instructionsText, emailText, title, targetEmailAddress } = workflow;
+	const handleCreateNewWorkflow = useCallback(() => {
 		setIsPersisting(true);
-		apiFetch
-			.post('/api/submissionWorkflows', {
-				collectionId: activeCollection.id,
-				introText,
-				instructionsText,
-				emailText,
-				title,
-				targetEmailAddress,
-				enabled: true,
-			})
+		createSubmissionWorkflow(workflow, activeCollection.id)
 			.then(onWorkflowCreated)
 			.finally(() => setIsPersisting(false));
 	}, [workflow, activeCollection, onWorkflowCreated]);
 
-	if (isCreating) {
-		return (
-			<>
-				<SubmissionWorkflowEditor
-					workflow={workflow}
-					onUpdateWorkflow={(w) => setWorkflow(w)}
-					collection={activeCollection}
-					renderCompletionButton={(isValid) => (
+	const renderInner = () => {
+		if (isCreating) {
+			return (
+				<>
+					<SubmissionWorkflowEditor
+						workflow={workflow}
+						onUpdateWorkflow={(update) =>
+							setWorkflow((current) => ({ ...current, ...update }))
+						}
+						onValidateWorkflow={setIsValid}
+						collection={activeCollection}
+					/>
+					<p>
 						<Button
 							disabled={!isValid}
-							onClick={handleWorkflowCreated}
+							onClick={handleCreateNewWorkflow}
 							icon="tick"
 							loading={isPersisting}
 						>
 							Save and continue
 						</Button>
-					)}
-				/>
-			</>
-		);
-	}
+					</p>
+				</>
+			);
+		}
+		return <StartWorkflowCallout onStartWorkflow={() => setIsCreating(true)} />;
+	};
 
-	return <StartWorkflowCallout onStartWorkflow={() => setIsCreating(true)} />;
+	return (
+		<DashboardSubmissionWorkflowFrame details="Follow these steps to let visitors submit to this Collection. You can close this tab and your work will be saved in this browser.">
+			{renderInner()}
+		</DashboardSubmissionWorkflowFrame>
+	);
 };
 
 export default NewSubmissionWorkflowEditor;

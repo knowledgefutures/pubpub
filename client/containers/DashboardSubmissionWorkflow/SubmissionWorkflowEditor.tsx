@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, EditableText, InputGroup } from '@blueprintjs/core';
 
 import { Collection } from 'types';
@@ -24,8 +24,8 @@ require('./submissionWorkflowEditor.scss');
 
 type Props = {
 	collection: Collection;
-	onUpdateWorkflow: (workflow: EditableSubmissionWorkflow) => unknown;
-	renderCompletionButton: (isValid: boolean) => React.ReactNode;
+	onUpdateWorkflow: (workflow: Partial<EditableSubmissionWorkflow>) => unknown;
+	onValidateWorkflow: (isValid: boolean) => unknown;
 	workflow: EditableSubmissionWorkflow;
 };
 
@@ -39,7 +39,7 @@ const validator: RecordValidator<EditableSubmissionWorkflow> = {
 };
 
 const SubmissionWorkflowEditor = (props: Props) => {
-	const { collection, onUpdateWorkflow, renderCompletionButton, workflow } = props;
+	const { collection, onUpdateWorkflow, onValidateWorkflow, workflow } = props;
 	const { communityData } = usePageContext();
 	const { email: communityEmail } = communityData;
 	const [{ fields: fieldValidStates, isValid }, setValidation] = useState(() =>
@@ -56,8 +56,10 @@ const SubmissionWorkflowEditor = (props: Props) => {
 		const nextWorkflow = { ...workflow, ...update };
 		const nextValidation = validate(nextWorkflow, validator);
 		setValidation(nextValidation);
-		onUpdateWorkflow(nextWorkflow);
+		onUpdateWorkflow(update);
 	};
+
+	useEffect(() => void onValidateWorkflow(isValid), [onValidateWorkflow, isValid]);
 
 	return (
 		<div className="submission-workflow-editor-component">
@@ -154,7 +156,6 @@ const SubmissionWorkflowEditor = (props: Props) => {
 						/>
 					}
 				/>
-				<p>{renderCompletionButton(isValid)}</p>
 			</Step>
 		</div>
 	);

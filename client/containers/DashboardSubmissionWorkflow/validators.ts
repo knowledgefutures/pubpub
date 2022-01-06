@@ -30,10 +30,13 @@ export const validate = <Rec extends AnyRecord>(
 	const fields = Object.entries(rec).reduce(
 		(partial: Partial<ValidatedFields<Rec>>, [key, value]) => {
 			const fieldValidator = validator[key];
-			return {
-				...partial,
-				[key]: fieldValidator(value),
-			};
+			if (fieldValidator) {
+				return {
+					...partial,
+					[key]: fieldValidator(value),
+				};
+			}
+			return partial;
 		},
 		{},
 	) as ValidatedFields<Rec>;

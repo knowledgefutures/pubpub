@@ -37,8 +37,8 @@ app.put(
 		if (!permissions) {
 			throw new ForbiddenError();
 		}
-		const updatedValues = await updateSubmissionWorkflow(req.body);
-		return res.status(200).json(updatedValues);
+		await updateSubmissionWorkflow(req.body);
+		return res.status(200).json({});
 	}),
 );
 

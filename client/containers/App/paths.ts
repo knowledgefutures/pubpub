@@ -18,6 +18,7 @@ import {
 	DashboardPage,
 	DashboardSettings,
 	DashboardSubmissions,
+	DashboardSubmissionWorkflow,
 	Collection,
 	Explore,
 	Landing,
@@ -104,6 +105,10 @@ export default (viewData, locationData, chunkName) => {
 		},
 		DashboardSubmissions: {
 			ActiveComponent: DashboardSubmissions,
+			isDashboard: true,
+		},
+		DashboardSubmissionWorkflow: {
+			ActiveComponent: DashboardSubmissionWorkflow,
 			isDashboard: true,
 		},
 		DashboardCollectionLayout: {

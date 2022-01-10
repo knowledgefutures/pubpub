@@ -42,6 +42,8 @@ const models = modelize`
 const sharedCreationValues = {
 	instructionsText: getEmptyDoc(),
 	emailText: getEmptyDoc(),
+	acceptedText: getEmptyDoc(),
+	declinedText: getEmptyDoc(),
 	introText: getEmptyDoc(),
 	title: 'Journal of Accepting Submissions',
 	targetEmailAddress: 'finnandjakeforwvwer@adventuretime.com',

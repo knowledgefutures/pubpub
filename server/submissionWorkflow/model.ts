@@ -7,6 +7,8 @@ export default (sequelize, dataTypes) => {
 			collectionId: { type: dataTypes.UUID },
 			enabled: { type: dataTypes.BOOLEAN, allowNull: false },
 			instructionsText: { type: dataTypes.JSONB, allowNull: false },
+			acceptedText: { type: dataTypes.JSONB, allowNull: false },
+			declinedText: { type: dataTypes.JSONB, allowNull: false },
 			emailText: { type: dataTypes.JSONB, allowNull: false },
 			introText: { type: dataTypes.JSONB, allowNull: false },
 			targetEmailAddress: { type: dataTypes.STRING, allowNull: false },

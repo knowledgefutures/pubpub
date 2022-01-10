@@ -8,6 +8,8 @@ export type SubmissionWorkflow = {
 	title: string;
 	introText: DocJson;
 	instructionsText: DocJson;
+	acceptedText: DocJson;
+	declinedText: DocJson;
 	emailText: DocJson;
 	targetEmailAddress: string;
 	collectionId: string;

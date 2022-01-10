@@ -7,7 +7,7 @@ require('./step.scss');
 
 type Props = {
 	children: React.ReactNode;
-	className: string;
+	className?: string;
 	done?: boolean;
 	number: number;
 	title: React.ReactNode;

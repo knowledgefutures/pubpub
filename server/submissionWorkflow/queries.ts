@@ -2,10 +2,10 @@ import { SubmissionWorkflow } from 'server/models';
 import { OmitSequelizeProvidedFields } from 'types/util';
 import * as types from 'types';
 
-type Props = OmitSequelizeProvidedFields<types.SubmissionWorkflow>;
-type Update = Partial<Props>;
+type CreateFields = OmitSequelizeProvidedFields<types.SubmissionWorkflow>;
+type UpdateFields = Partial<CreateFields>;
 
-export const createSubmissionWorkflow = async (props: Props) => {
+export const createSubmissionWorkflow = async (props: CreateFields) => {
 	const {
 		collectionId,
 		enabled,
@@ -14,6 +14,8 @@ export const createSubmissionWorkflow = async (props: Props) => {
 		emailText,
 		title,
 		targetEmailAddress,
+		acceptedText,
+		declinedText,
 	} = props;
 	const submissionWorkflow = {
 		enabled,
@@ -23,11 +25,13 @@ export const createSubmissionWorkflow = async (props: Props) => {
 		title,
 		targetEmailAddress,
 		collectionId,
+		acceptedText,
+		declinedText,
 	};
 	return SubmissionWorkflow.create(submissionWorkflow);
 };
 
-export const updateSubmissionWorkflow = async (update: Update) => {
+export const updateSubmissionWorkflow = async (update: UpdateFields) => {
 	const {
 		collectionId,
 		enabled,
@@ -36,6 +40,8 @@ export const updateSubmissionWorkflow = async (update: Update) => {
 		introText,
 		title,
 		targetEmailAddress,
+		acceptedText,
+		declinedText,
 	} = update;
 	await SubmissionWorkflow.update(
 		{
@@ -45,6 +51,8 @@ export const updateSubmissionWorkflow = async (update: Update) => {
 			targetEmailAddress,
 			introText,
 			title,
+			acceptedText,
+			declinedText,
 		},
 		{ where: { collectionId } },
 	);

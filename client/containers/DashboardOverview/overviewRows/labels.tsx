@@ -125,10 +125,7 @@ export const getSubmissionTimeLabel = (pub: Pub) => {
 			icon: 'time' as const,
 		};
 	}
-	return {
-		label: 'Update Status',
-		icon: 'warning-sign' as const,
-	};
+	return null;
 };
 
 export const renderLabelPairs = (iconLabelPairs: IconLabelPair[]) => {
@@ -166,7 +163,11 @@ export const renderRowDetails = (pub: Pub, hasSubmission: boolean): React.ReactN
 	if (pub.submission) {
 		const { status } = pub.submission;
 		const detailsRow = hasSubmission
-			? renderLabelPairs([getSubmissionStatusLabel(status), getSubmissionTimeLabel(pub)])
+			? renderLabelPairs(
+					[getSubmissionStatusLabel(status), getSubmissionTimeLabel(pub)].filter(
+						(x): x is IconLabelPair => !!x,
+					),
+			  )
 			: renderLabelPairs([
 					...getScopeSummaryLabels(pub.scopeSummary),
 					getPubReleasedStateLabel(pub),

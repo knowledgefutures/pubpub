@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, EditableText, InputGroup } from '@blueprintjs/core';
+import { Button, EditableText, InputGroup, Tabs, Tab } from '@blueprintjs/core';
 
 import { Collection } from 'types';
 import { LayoutSubmissionBannerSkeleton } from 'client/components/Layout';
@@ -34,6 +34,8 @@ const validator: RecordValidator<EditableSubmissionWorkflow> = {
 	introText: isValidDocJson,
 	instructionsText: isValidDocJson,
 	emailText: isValidDocJson,
+	acceptedText: isAlwaysValid,
+	declinedText: isAlwaysValid,
 	targetEmailAddress: isValidEmail,
 	enabled: isAlwaysValid,
 };
@@ -57,6 +59,13 @@ const SubmissionWorkflowEditor = (props: Props) => {
 		const nextValidation = validate(nextWorkflow, validator);
 		setValidation(nextValidation);
 		onUpdateWorkflow(update);
+	};
+
+	const sharedEmailPreviewProps = {
+		community: communityData,
+		from: 'submissions@pubpub.org',
+		to: 'submitter.name@place.org',
+		cc: workflow.targetEmailAddress,
 	};
 
 	useEffect(() => void onValidateWorkflow(isValid), [onValidateWorkflow, isValid]);
@@ -109,9 +118,9 @@ const SubmissionWorkflowEditor = (props: Props) => {
 				/>
 			</Step>
 			<Step
-				className="email-step"
 				number={3}
-				title="Send an email for completed submissions"
+				title="Send a automated email when a submission is received"
+				className="email-step"
 				done={fieldValidStates.targetEmailAddress && fieldValidStates.emailText}
 			>
 				<p>
@@ -144,10 +153,8 @@ const SubmissionWorkflowEditor = (props: Props) => {
 					an expected response time:
 				</p>
 				<EmailPreview
-					community={communityData}
-					from="submissions@pubpub.org"
-					to="submitter.name@place.org"
-					cc={workflow.targetEmailAddress}
+					{...sharedEmailPreviewProps}
+					kind="received"
 					body={
 						<WorkflowTextEditor
 							placeholder="Custom email text"
@@ -156,6 +163,57 @@ const SubmissionWorkflowEditor = (props: Props) => {
 						/>
 					}
 				/>
+			</Step>
+			<Step
+				number={4}
+				title="Create a template response for accepted and declined submissions"
+				className="accept-reject-step"
+				done={fieldValidStates.acceptedText && fieldValidStates.declinedText}
+			>
+				<p>
+					These are just templates. You'll be able to customize the message you send
+					before each accepted or declined submission.
+				</p>
+				<Tabs id="accepted-declined-email-templates">
+					<Tab
+						id="accepted"
+						title="Accepted"
+						panel={
+							<EmailPreview
+								{...sharedEmailPreviewProps}
+								kind="accepted"
+								body={
+									<WorkflowTextEditor
+										placeholder="Custom email text"
+										initialContent={workflow.acceptedText}
+										onContent={(content) =>
+											updateWorkflow({ acceptedText: content })
+										}
+									/>
+								}
+							/>
+						}
+					/>
+					<Tab
+						id="declined"
+						title="Declined"
+						panel={
+							<EmailPreview
+								{...sharedEmailPreviewProps}
+								kind="declined"
+								body={
+									<WorkflowTextEditor
+										placeholder="Custom email text"
+										initialContent={workflow.declinedText}
+										onContent={(content) =>
+											updateWorkflow({ declinedText: content })
+										}
+									/>
+								}
+							/>
+						}
+					/>
+				</Tabs>
 			</Step>
 		</div>
 	);

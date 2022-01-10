@@ -17,7 +17,7 @@ app.post(
 		if (!canCreate) {
 			throw new ForbiddenError();
 		}
-		const newSubmission = await createSubmission({ userId, submissionWorkflowId }, userId);
+		const newSubmission = await createSubmission({ userId, submissionWorkflowId });
 		const pub = await getPub({ id: newSubmission.pubId });
 		return res.status(201).json({ ...newSubmission.toJSON(), pub: { slug: pub.slug } });
 	}),

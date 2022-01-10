@@ -16,10 +16,10 @@ type CreateOptions = {
 type UpdateToStatus = typeof updateToStatuses;
 type UpdateOptions = Partial<SubmissionType> & { status: UpdateToStatus };
 
-export const createSubmission = async (
-	{ userId, submissionWorkflowId }: CreateOptions,
-	actorId: string,
-) => {
+export const createSubmission = async ({
+	userId,
+	submissionWorkflowId,
+}: CreateOptions): Promise<SequelizeModel<SubmissionType>> => {
 	const { collection } = await SubmissionWorkflow.findOne({
 		where: { id: submissionWorkflowId },
 		include: [{ model: Collection, as: 'collection' }],
@@ -37,7 +37,7 @@ export const createSubmission = async (
 			submissionWorkflowId,
 			status: 'incomplete',
 		},
-		{ actorId },
+		{ actorId: userId },
 	);
 };
 

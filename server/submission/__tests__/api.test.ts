@@ -1,7 +1,8 @@
-/* global describe, it, expect, beforeAll, afterAll */
-import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
+/* global describe, it, expect, beforeAll, afterAll, beforeEach, jest */
+import { setup, teardown, login, modelize, expectCreatedActivityItem, stub } from 'stubstub';
 import * as types from 'types';
 import { Member, Submission } from 'server/models';
+import { finishDeferredTasks } from 'server/utils/deferred';
 
 const models = modelize`
 	Community community {
@@ -53,43 +54,43 @@ setup(beforeAll, async () => {
 	await models.resolve();
 });
 
+let sendEmailMock: jest.Mock = null as any;
+beforeAll(() => {
+	sendEmailMock = jest.fn();
+	stub('server/utils/email', {
+		sendEmail: sendEmailMock,
+	});
+});
+
+beforeEach(() => {
+	sendEmailMock.mockClear();
+});
+
 describe('/api/submissions', () => {
 	it('forbids pub managers to update pub status beyond pending', async () => {
 		const { pubManager, submission } = models;
 		const agent = await login(pubManager);
 		await agent
 			.put('/api/submissions')
-			.send({
-				id: submission.id,
-				status: 'accepted',
-			})
+			.send({ id: submission.id, status: 'accepted' })
 			.expect(403);
 	});
 
 	it('forbids admins of another community to update status', async () => {
-		const { submission, community, collection, anotherAdmin } = models;
+		const { submission, anotherAdmin } = models;
 		const agent = await login(anotherAdmin);
 		await agent
 			.put('/api/submissions')
-			.send({
-				communityId: community.id,
-				collectionId: collection.id,
-				id: submission.id,
-				status: 'pending',
-			})
+			.send({ id: submission.id, status: 'pending' })
 			.expect(403);
 	});
 
 	it('forbids collection editors to update pub status', async () => {
-		const { submission, collectionEditor, community } = models;
+		const { submission, collectionEditor } = models;
 		const agent = await login(collectionEditor);
 		await agent
 			.put('/api/submissions')
-			.send({
-				communityId: community.id,
-				id: submission.id,
-				status: 'pending',
-			})
+			.send({ id: submission.id, status: 'pending' })
 			.expect(403);
 	});
 
@@ -106,12 +107,9 @@ describe('/api/submissions', () => {
 	});
 
 	it('forbids normal user to delete a submission', async () => {
-		const { guest, submission, community } = models;
+		const { guest, submission } = models;
 		const agent = await login(guest);
-		await agent
-			.delete('/api/submissions')
-			.send({ id: submission.id, communityId: community.id })
-			.expect(403);
+		await agent.delete('/api/submissions').send({ id: submission.id }).expect(403);
 		const submissionNow = await Submission.findOne({ where: { id: submission.id } });
 		expect(submissionNow.id).toEqual(submission.id);
 	});
@@ -130,15 +128,13 @@ describe('/api/submissions', () => {
 		const agent = await login(pubManager);
 		await agent
 			.put('/api/submissions')
-			.send({
-				id: submission.id,
-				pubId: submission.pubId,
-				status: 'pending',
-			})
+			.send({ id: submission.id, status: 'pending' })
 			.expect(201);
 		const { status, submittedAt } = await Submission.findOne({ where: { id: submission.id } });
 		expect(status).toEqual('pending');
 		expect(Number.isNaN(new Date(submittedAt).getTime())).toEqual(false);
+		await finishDeferredTasks();
+		expect(sendEmailMock).toHaveBeenCalled();
 	});
 
 	it('forbids admins from updating status out of one of [pending, accepted, declined]', async () => {
@@ -154,7 +150,7 @@ describe('/api/submissions', () => {
 	});
 
 	it('allows collection managers to update pub status to accepted', async () => {
-		const { collection, collectionManager, submission } = models;
+		const { collectionManager, submission } = models;
 		const agent = await login(collectionManager);
 		const prevSubmission: types.Submission = await Submission.findOne({
 			where: { id: submission.id },
@@ -163,8 +159,6 @@ describe('/api/submissions', () => {
 			agent
 				.put('/api/submissions')
 				.send({
-					pubId: submission.pubId,
-					collectionId: collection.id,
 					id: submission.id,
 					status: 'accepted',
 				})
@@ -183,10 +177,12 @@ describe('/api/submissions', () => {
 		}));
 		const { status } = await Submission.findOne({ where: { id: submission.id } });
 		expect(status).toEqual('accepted');
+		await finishDeferredTasks();
+		expect(sendEmailMock).toHaveBeenCalled();
 	});
 
 	it('allows collection managers to update pub status to declined', async () => {
-		const { collection, collectionManager, submission } = models;
+		const { collectionManager, submission } = models;
 		const agent = await login(collectionManager);
 		const prevSubmission: types.Submission = await Submission.findOne({
 			where: { id: submission.id },
@@ -195,10 +191,9 @@ describe('/api/submissions', () => {
 			agent
 				.put('/api/submissions')
 				.send({
-					pubId: submission.pubId,
-					collectionId: collection.id,
 					id: submission.id,
 					status: 'declined',
+					skipEmail: true,
 				})
 				.expect(201),
 		).toMatchResultingObject((response) => ({
@@ -215,16 +210,15 @@ describe('/api/submissions', () => {
 		}));
 		const { status } = await Submission.findOne({ where: { id: submission.id } });
 		expect(status).toEqual('declined');
+		await finishDeferredTasks();
+		expect(sendEmailMock).toHaveBeenCalledTimes(0);
 	});
 
 	it('allows admin to delete a submission', async () => {
-		const { admin, community, submission } = models;
+		const { admin, submission } = models;
 		const agent = await login(admin);
 		await expectCreatedActivityItem(
-			agent
-				.delete('/api/submissions')
-				.send({ id: submission.id, communityId: community.id })
-				.expect(200),
+			agent.delete('/api/submissions').send({ id: submission.id }).expect(200),
 		).toMatchObject({
 			kind: 'submission-deleted',
 			pubId: submission.pubId,

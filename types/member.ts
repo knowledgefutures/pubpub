@@ -1,7 +1,11 @@
+import { User } from 'types';
+
 export type MemberPermission = 'view' | 'edit' | 'manage' | 'admin';
 
 export type Member = {
 	id: string;
+	createdAt: string;
+	updatedAt: string;
 	permissions: MemberPermission;
 	isOwner?: boolean;
 	userId: string;
@@ -9,4 +13,5 @@ export type Member = {
 	collectionId?: string;
 	communityId?: string;
 	organizationId?: string;
+	user?: User;
 };

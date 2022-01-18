@@ -29,7 +29,6 @@ const PubDetails = (props: Props) => {
 	const createdAt = getPubCreatedDate(pubData);
 	const publishedAt = getPubPublishedDate(pubData);
 	const updatedAt = getPubUpdatedDate({ pub: pubData });
-	const shouldShowUpdatedDate = updatedAt && updatedAt !== publishedAt;
 
 	return (
 		<div className="pub-details-component">
@@ -59,7 +58,7 @@ const PubDetails = (props: Props) => {
 					<div className="full-height-date">
 						{publishedAt ? dateFormat(publishedAt, 'mmm dd, yyyy') : <i>Unpublished</i>}
 					</div>
-					{shouldShowUpdatedDate && (
+					{updatedAt && updatedAt !== publishedAt && (
 						<React.Fragment>
 							<h6 className="pub-header-themed-secondary">Updated</h6>
 							<div className="full-height-date">

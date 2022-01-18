@@ -25,6 +25,8 @@ const DiscussionReanchor = (props: Props) => {
 		setIsActive(false);
 	};
 
+	const bodyElement = document.querySelector('body');
+
 	return (
 		<>
 			<Button
@@ -37,6 +39,7 @@ const DiscussionReanchor = (props: Props) => {
 				Re-anchor
 			</Button>
 			{isActive &&
+				bodyElement &&
 				ReactDOM.createPortal(
 					<Card className="discussion-reanchor-component">
 						<p>Make a highlight in the document and then click "Re-anchor".</p>
@@ -60,7 +63,7 @@ const DiscussionReanchor = (props: Props) => {
 							</Button>
 						</ButtonGroup>
 					</Card>,
-					document.querySelector('body'),
+					bodyElement,
 				)}
 		</>
 	);

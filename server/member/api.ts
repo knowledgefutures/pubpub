@@ -64,13 +64,13 @@ app.put(
 	'/api/members',
 	wrap(async (req, res) => {
 		const { pubId, collectionId, communityId, actorId } = getRequestIds(req);
-		const { value, id } = req.body;
+		const { value, id: memberId } = req.body;
 		const permissions = await getPermissions({
 			actorId,
 			pubId,
 			communityId,
 			collectionId,
-			memberId: id,
+			memberId,
 			value,
 		});
 		if (!permissions.update) {
@@ -78,7 +78,7 @@ app.put(
 		}
 		const member = await updateMember({
 			value,
-			memberId: id,
+			memberId,
 			actorId: req.user.id,
 		});
 		return res.status(200).json(member);

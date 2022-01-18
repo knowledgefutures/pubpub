@@ -35,6 +35,7 @@ type PromiseRecord<T extends { [k: string]: any }> = {
 };
 
 type FetchActivityItemsOptions = {
+	since?: string;
 	scope: Scope;
 	filters?: ActivityFilter[];
 	limit?: number;
@@ -121,13 +122,18 @@ const applyFiltersToWhereQuery = (whereQuery: any, filters: ActivityFilter[]) =>
 const fetchActivityItemModels = async (
 	options: Required<FetchActivityItemsOptions>,
 ): Promise<types.ActivityItem[]> => {
-	const { scope, limit, offset } = options;
+	const { scope, limit, offset, since } = options;
 	const whereQuery = {
+		...(since && {
+			timestamp: {
+				[Op.gte]: since,
+			},
+		}),
 		communityId: scope.communityId,
 		...(await getWhereQueryForChildScopes(scope)),
 	};
 	const models = await ActivityItem.findAll({
-		limit,
+		...(limit && { limit }),
 		offset,
 		where: applyFiltersToWhereQuery(whereQuery, options.filters),
 		order: [['timestamp', 'DESC']],
@@ -301,8 +307,9 @@ export const fetchAssociationsForActivityItems = async (
 export const fetchActivityItems = async (
 	options: FetchActivityItemsOptions,
 ): Promise<ActivityItemsFetchResult> => {
-	const { offset = 0, limit = 50, scope, filters = [] } = options;
-	const activityItems = await fetchActivityItemModels({ offset, limit, scope, filters });
+	const { offset = 0, limit = 0, scope, filters = [], since = '' } = options;
+	const activityItems = await fetchActivityItemModels({ since, offset, limit, scope, filters });
 	const associations = await fetchAssociationsForActivityItems(activityItems, options.scope);
+
 	return { activityItems, associations, fetchedAllItems: activityItems.length < limit };
 };

@@ -51,7 +51,7 @@ type NoteProps = {
 const Note = (props: NoteProps) => {
 	const { note, accentColor } = props;
 	const contentRef = useRef();
-	const [returnLinkTarget, setReturnLinkTarget] = useState(null);
+	const [returnLinkTarget, setReturnLinkTarget] = useState<HTMLSpanElement | null>(null);
 	useLayoutEffect(() => {
 		const contentNode = contentRef.current;
 		if (contentNode) {
@@ -59,7 +59,6 @@ const Note = (props: NoteProps) => {
 			if (lastChild) {
 				const newReturnLinkTarget = document.createElement('span');
 				lastChild.appendChild(newReturnLinkTarget);
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'HTMLSpanElement' is not assignab... Remove this comment to see the full error message
 				setReturnLinkTarget(newReturnLinkTarget);
 			}
 		}
@@ -92,7 +91,7 @@ const Note = (props: NoteProps) => {
 								iconSize={10}
 							/>
 						</span>,
-						returnLinkTarget,
+						returnLinkTarget!,
 					)}
 			</div>
 		</li>

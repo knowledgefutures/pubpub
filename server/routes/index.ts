@@ -25,6 +25,7 @@ require('./dashboardCollectionLayout');
 require('./communityCreate'); // Route: '/community/create'
 require('./explore'); // Route: '/explore'
 require('./about'); // Route: '/about'
+require('./email'); // Route: '/email'
 require('./pricing'); // Route: '/pricing'
 
 require('./adminDashboard'); // Route: '/admin'

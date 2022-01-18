@@ -25,6 +25,7 @@ const commandFiles = {
 	clone: './clone',
 	devshell: './devshell',
 	depositCollectionPubs: './depositCollectionPubs',
+	emailActivityDigest: './emailActivityDigest',
 	emailUsers: './emailUsers',
 	figurelist: './figurelist',
 	firebaseDownload: './firebaseDownload',

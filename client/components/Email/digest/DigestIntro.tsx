@@ -59,7 +59,7 @@ export const DigestIntro = (props: Props) => {
 									<a href={communityUrl(props.community)}>
 										{props.community.title}
 									</a>
-									&nbsp;community during the week of&nbsp;
+									&nbsp;community for the day of&nbsp;
 									{formatDate(date)}.
 								</TextCellStyle>
 								<ButtonCellStyle>

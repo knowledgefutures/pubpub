@@ -25,7 +25,7 @@ export const DigestFooter = (props: Props) => {
 	const activityDashUrl = `${communityUrl(props.community)}${getDashUrl({ mode: 'activity' })}`;
 	return (
 		<ParagraphStyle>
-			You are receiving this email because you signed up for the weekly Activity Digest for
+			You are receiving this email because you signed up for the daily Activity Digest for
 			this PubPub Community. <br />
 			You can <a href={activityDashUrl}>manage your Digest Settings</a>.
 		</ParagraphStyle>

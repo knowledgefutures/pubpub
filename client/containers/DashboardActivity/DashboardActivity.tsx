@@ -76,7 +76,7 @@ const DashboardActivity = (props: Props) => {
 								(e.target as HTMLInputElement).checked,
 							).then(setMember)
 						}
-						label="Subscribe to weekly Activity digest emails"
+						label="Subscribe to daily Activity digest emails"
 					/>
 				)
 			}

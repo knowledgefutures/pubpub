@@ -77,7 +77,7 @@ type GetDigestOptions = {
 
 export const getDigestData = async (options: GetDigestOptions) => {
 	const { user, scope } = options;
-	const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+	const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 	const { activityItems, associations } = await fetchActivityItems({ scope, since });
 	const dedupedActivityItems = flow([
 		groupByObjectId(associations),
@@ -127,10 +127,17 @@ const render = (emailMarkup: React.ReactNode, extraStyles = '') => {
 };
 
 export const renderDigestEmail = async (community: Community, options: GetDigestOptions) => {
+	const digestData = await getDigestData(options);
+	if (
+		Object.keys(digestData.communityItems).length === 0 &&
+		Object.keys(digestData.pubItems).length === 0
+	) {
+		return null;
+	}
 	return render(
 		Digest({
 			community,
-			...(await getDigestData(options)),
+			...digestData,
 		}),
 	);
 };

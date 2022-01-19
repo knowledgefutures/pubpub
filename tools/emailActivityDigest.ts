@@ -45,10 +45,11 @@ async function main() {
 					// Create an activity digest email
 					const scope = { communityId: community.id };
 					const digest = await renderDigestEmail(community, { scope, user });
+					if (digest === null) return Promise.resolve();
 					return mg.messages.create('mg.pubpub.org', {
 						from: 'PubPub Team <hello@pubpub.org>',
 						to: [user.email],
-						subject: `${community.title} weekly activity digest`,
+						subject: `${community.title} daily activity digest`,
 						html: digest,
 					});
 				},

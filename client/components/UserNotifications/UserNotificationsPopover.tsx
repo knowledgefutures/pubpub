@@ -17,13 +17,19 @@ const getNotificationsData = (
 	notificationsState: Maybe<NotificationsState>,
 ): InitialNotificationsData => {
 	if (notificationsState) {
+		const { hasNotifications: initiallyHadNotifications } = initialNotificationsData;
 		const { pubStates } = notificationsState;
 		const hasUnreadNotifications = pubStates.some((pub) =>
 			pub.threadStates.some((thread) =>
 				thread.notifications.some((notification) => !notification.isRead),
 			),
 		);
-		return { hasNotifications: pubStates.length > 0, hasUnreadNotifications };
+		return {
+			// Keep the popover visible for the lifetime of the page, even after
+			// all notifications have been dismissed.
+			hasNotifications: pubStates.length > 0 || initiallyHadNotifications,
+			hasUnreadNotifications,
+		};
 	}
 	return initialNotificationsData;
 };

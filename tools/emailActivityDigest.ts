@@ -22,12 +22,6 @@ const memberQueryOptions = {
 // This script will generate a maximum of 100 digest emails concurrently,
 // hopefully not spiking CPU or memory usage too hard.
 async function main() {
-	// Heroku only provides hourly/daily scheduling. This tool will run every
-	// day, so we ensure that today is Sunday before proceeding.
-	if (new Date().getDay() !== 0) {
-		console.warn("Skipping activity digest emails: today isn't Sunday");
-		return;
-	}
 	// For each (sensibly-sized) chunk of communities
 	for await (const communities of iterAllCommunities(10)) {
 		const tasks = communities.map((community) => {

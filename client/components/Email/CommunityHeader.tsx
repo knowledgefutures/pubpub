@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { Community } from 'types';
 import { getResizedUrl } from 'utils/images';
+import { formatDate } from 'utils/dates';
 
 import { Section } from '.';
 import { BaseTableStyle } from './shared';
@@ -74,7 +75,7 @@ export const CommunityHeader = (props: Props) => {
 			<TableStyle>
 				<EmailTitleCellStyle>
 					<H1Style>{props.title}</H1Style>
-					<SpanStyle>{dateFormat(props.date, 'mmmm yyyy')}</SpanStyle>
+					<SpanStyle>{formatDate(props.date)}</SpanStyle>
 				</EmailTitleCellStyle>
 				{showCommunityTitle && (
 					<CommunityTitleCellStyle>{props.community.title}</CommunityTitleCellStyle>

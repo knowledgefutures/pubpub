@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import pick from 'lodash.pick';
 
+import TimeAgo from 'client/components/TimeAgo/TimeAgo';
 import { ActivityRenderContext } from 'client/utils/activity/types';
 import { ActivityItem, ActivityAssociations } from 'types';
 import { formatDate } from 'utils/dates';
@@ -94,7 +95,7 @@ export const ActivityBundleRow = (props: ActivityBundleRowProps) => {
 								</MessageCellStyle>
 								<DateCellStyle>
 									<DateSpanStyle>
-										{formatDate(renderedItem.timestamp, { includeTime: true })}
+										<TimeAgo date={renderedItem.timestamp} />
 									</DateSpanStyle>
 								</DateCellStyle>
 							</tr>

@@ -75,11 +75,11 @@ export const Digest = (props: Props) => {
 						</ol>
 					</>
 				)}
-				<Spacer height={40}>
-					<span>&nbsp;</span>
-				</Spacer>
 				{hasPubActivity && (
 					<>
+						<Spacer height={40}>
+							<span>&nbsp;</span>
+						</Spacer>
 						<DigestSectionTitle
 							icon="pubDoc"
 							title="Pubs"

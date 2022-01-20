@@ -22,7 +22,7 @@ const getAffectedObject = (item: ActivityItem, associations: ActivityAssociation
 		: item.collectionId
 		? { id: item.collectionId, title: associations.collection[item.collectionId].title }
 		: 'page' in item.payload
-		? { id: item.payload.page.id, title: associations.collection[item.payload.page.id].title }
+		? { id: item.payload.page.id, title: associations.page[item.payload.page.id].title }
 		: { id: item.communityId, title: associations.community[item.communityId].title };
 
 const getAffectedObjectIcon = (item: ActivityItem) =>

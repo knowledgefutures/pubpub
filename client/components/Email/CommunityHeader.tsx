@@ -1,5 +1,4 @@
 import React from 'react';
-import dateFormat from 'dateformat';
 import styled from 'styled-components';
 
 import { Community } from 'types';

@@ -5,7 +5,6 @@ import pick from 'lodash.pick';
 import TimeAgo from 'client/components/TimeAgo/TimeAgo';
 import { ActivityRenderContext } from 'client/utils/activity/types';
 import { ActivityItem, ActivityAssociations } from 'types';
-import { formatDate } from 'utils/dates';
 import { renderActivityItem } from 'client/utils/activity';
 
 import { BaseTableStyle } from '../shared';

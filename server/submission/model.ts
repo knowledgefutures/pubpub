@@ -10,6 +10,7 @@ export default (sequelize, dataTypes) => {
 			submittedAt: { type: dataTypes.DATE },
 			submissionWorkflowId: { type: dataTypes.UUID, allowNull: false },
 			pubId: { type: dataTypes.UUID, allowNull: false },
+			abstract: { type: dataTypes.JSONB, allowNull: true },
 		},
 		{
 			classMethods: {

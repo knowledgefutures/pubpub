@@ -19,6 +19,7 @@ type Props = {
 	details: React.ReactNode;
 	withBorder?: boolean;
 	withHoverEffect?: boolean;
+	isGrayscale?: boolean;
 	onClick?: React.MouseEventHandler<any>;
 };
 
@@ -33,6 +34,7 @@ const OverviewRowSkeleton = React.forwardRef((props: Props, ref: any) => {
 		withBorder = true,
 		withHoverEffect = false,
 		darkenRightIcons = false,
+		isGrayscale = false,
 		onClick,
 		href,
 	} = props;
@@ -67,9 +69,10 @@ const OverviewRowSkeleton = React.forwardRef((props: Props, ref: any) => {
 			onClick={onClick}
 			ref={ref}
 			onMouseDown={handleMouseDown}
-			style={{ color: communityData.accentColorDark }}
+			style={{ ...(!isGrayscale && { color: communityData.accentColorDark }) }}
 			className={classNames(
 				'overview-row-skeleton-component',
+				isGrayscale && 'is-grayscale',
 				withHoverEffect && 'with-hover-effect',
 				withBorder && 'with-border',
 				className,

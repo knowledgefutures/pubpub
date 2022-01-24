@@ -17,6 +17,7 @@ import {
 	Draft,
 	ScopeSummary,
 	Submission,
+	SubmissionWorkflow,
 } from 'server/models';
 import { PubGetOptions } from 'types';
 
@@ -185,6 +186,7 @@ export default ({
 			getSubmissions && {
 				model: Submission,
 				as: 'submission',
+				include: [{ model: SubmissionWorkflow, as: 'submissionWorkflow' }],
 			},
 			getDiscussions && {
 				separate: true,

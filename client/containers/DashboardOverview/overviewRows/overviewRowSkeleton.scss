@@ -9,6 +9,9 @@ $mobile-viewport-cutoff: 750px;
 }
 
 .overview-row-skeleton-component {
+		&.is-grayscale .byline, &.is-grayscale .title {
+			color: $light-grey;
+		}
     position: relative;
     display: flex;
     align-items: center;

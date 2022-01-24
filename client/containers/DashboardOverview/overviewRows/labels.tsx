@@ -91,7 +91,7 @@ export const getSubmissionStatusLabel = (
 	const iconSize = 16;
 	if (submissionStatus === 'accepted') {
 		return {
-			label: 'Accepted',
+			label: 'ACCEPTED',
 			icon: 'symbol-square',
 			intent: 'success',
 			iconSize,
@@ -99,14 +99,14 @@ export const getSubmissionStatusLabel = (
 	}
 	if (submissionStatus === 'declined') {
 		return {
-			label: 'Declined',
+			label: 'DECLINED',
 			icon: 'symbol-square',
 			intent: 'danger',
 			iconSize,
 		};
 	}
 	return {
-		label: 'Pending',
+		label: 'PENDING',
 		icon: 'symbol-square',
 		intent: 'warning',
 		iconSize,

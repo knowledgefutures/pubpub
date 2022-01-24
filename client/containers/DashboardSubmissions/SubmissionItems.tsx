@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { NonIdealState } from '@blueprintjs/core';
 
-import { Collection, Pub, PubsQuery } from 'types';
+import { Collection, DefinitelyHas, Pub, PubsQuery, SubmissionStatus } from 'types';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 
@@ -12,13 +12,30 @@ import {
 	SpecialRow,
 } from '../DashboardOverview/overviewRows';
 import { OverviewSearchGroup, OverviewSearchFilter } from '../DashboardOverview/helpers';
+import ArbitrationMenu from './ArbitrationMenu';
 
 require('./submissionItems.scss');
 
 type Props = {
 	collection: Collection;
-	initialPubs: Pub[];
+	initialPubs: DefinitelyHas<Pub, 'submission'>[];
 	initiallyLoadedAllPubs: boolean;
+};
+
+const EmptyState = (props: { isDoneSearching: boolean; initialPubs: Pub[]; pubs: Pub[] }) => {
+	if (props.initialPubs.length === 0) {
+		return (
+			<NonIdealState
+				icon="clean"
+				title="There doesn't seem to be any submissions"
+				description="Try reaching out to members of your community for submissions"
+			/>
+		);
+	}
+	if (props.pubs.length === 0 && props.isDoneSearching) {
+		return <SpecialRow>No Submissions have been found.</SpecialRow>;
+	}
+	return null;
 };
 
 const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
@@ -68,6 +85,16 @@ const SubmissionItems = (props: Props) => {
 		},
 	});
 
+	const [localStatuses, setLocalStatuses] = useState<{
+		[pubId: string]: { status: SubmissionStatus; isDeleted: Boolean };
+	}>({});
+	const recordLocalStatus = useCallback((pubId: string, status: SubmissionStatus) => {
+		setLocalStatuses((prev) => ({
+			...prev,
+			[pubId]: { status, isDeleted: !status },
+		}));
+	}, []);
+
 	const canLoadMorePubs = !hasLoadedAllPubs;
 	useInfiniteScroll({
 		enabled: !isLoading && canLoadMorePubs,
@@ -75,32 +102,17 @@ const SubmissionItems = (props: Props) => {
 		onRequestMoreItems: loadMorePubs,
 	});
 
-	const renderPubs = () => {
-		return pubs.map((pub) => (
-			<PubOverviewRow
-				pub={pub}
-				key={pub.id}
-				leftIconElement="manually-entered-data"
-				hasSubmission={true}
-			/>
-		));
-	};
+	const omitUpdatedSubmissions = (pub) =>
+		!(pub.id in localStatuses) ||
+		(!!localStatuses[pub.id].isDeleted &&
+			filter?.submissionStatuses?.includes(localStatuses[pub.id].status));
 
-	const renderEmptyState = () => {
-		if (initialPubs.length === 0) {
-			return (
-				<NonIdealState
-					icon="clean"
-					title="There doesn't seem to be any submissions"
-					description="Try reaching out to members of your community for submissions"
-				/>
-			);
-		}
-		if (pubs.length === 0 && hasLoadedAllPubs && isSearchingOrFiltering) {
-			return <SpecialRow>No Submissions have been found.</SpecialRow>;
-		}
-		return null;
-	};
+	const augmentWithLocalStatus = (pub) => ({
+		...pub,
+		...(pub.id in localStatuses && {
+			submission: { ...pub.submission, status: localStatuses[pub.id] },
+		}),
+	});
 
 	return (
 		<div className="submission-items-component">
@@ -112,9 +124,30 @@ const SubmissionItems = (props: Props) => {
 				filters={overviewSearchFilters}
 			/>
 			<OverviewRows>
-				{renderPubs()}
+				{pubs
+					.filter(omitUpdatedSubmissions)
+					.map(augmentWithLocalStatus)
+					.map((pub) => (
+						<PubOverviewRow
+							pub={pub}
+							key={pub.id}
+							leftIconElement="manually-entered-data"
+							hasSubmission={true}
+							isGrayscale={
+								!!(pub.submission?.status === 'declined') ||
+								localStatuses[pub.id]?.status === 'declined'
+							}
+							rightElement={
+								<ArbitrationMenu pub={pub} onJudgePub={recordLocalStatus} />
+							}
+						/>
+					))}
 				{canLoadMorePubs && <LoadMorePubsRow isLoading />}
-				{renderEmptyState()}
+				<EmptyState
+					pubs={pubs}
+					initialPubs={initialPubs}
+					isDoneSearching={hasLoadedAllPubs && isSearchingOrFiltering}
+				/>
 			</OverviewRows>
 		</div>
 	);

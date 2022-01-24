@@ -113,7 +113,7 @@
 		"mutationobserver-shim": "^0.3.3",
 		"newrelic": "^5.7.0",
 		"no-slash": "^1.2.15",
-		"node-fetch": "^2.6.1",
+		"node-fetch": "^2.6.7",
 		"node-pandoc": "^0.3.0",
 		"node-sass": "^4.13.0",
 		"pagedjs": "^0.1.34",

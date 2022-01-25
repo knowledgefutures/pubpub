@@ -1,13 +1,4 @@
-import { Release } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
-
-const pubExistsAndIsMissingReleases = async (pubId) => {
-	if (!pubId) {
-		return false;
-	}
-	const releases = await Release.findAll({ where: { pubId } });
-	return releases.length === 0;
-};
 
 export const getPermissions = async ({ pubId, collectionId, userId, communityId }) => {
 	if (!userId) {
@@ -16,7 +7,6 @@ export const getPermissions = async ({ pubId, collectionId, userId, communityId 
 
 	const {
 		activePermissions: { canAdminCommunity },
-		elements: { activePub },
 	} = await getScope({
 		communityId,
 		collectionId,
@@ -24,10 +14,8 @@ export const getPermissions = async ({ pubId, collectionId, userId, communityId 
 		loginId: userId,
 	});
 
-	const missingReleases = await pubExistsAndIsMissingReleases(activePub && activePub.id);
-
 	return {
-		pub: canAdminCommunity && !missingReleases,
+		pub: canAdminCommunity,
 		collection: canAdminCommunity,
 	};
 };

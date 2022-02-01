@@ -1,0 +1,137 @@
+#community-services-container {
+	background-repeat: repeat;
+	background-position: center center;
+	background-color: #f9fafb;
+	background-image: url('/static/loginbg.png');
+	padding-bottom: 2em;
+	// .content {
+	// 	max-width: 800px;
+	// margin: 0 auto;
+	// }
+	h1 {
+		margin: 1em 0em 0em;
+	}
+	h2 {
+		margin-top: 3em;
+		margin-bottom: 0em;
+	}
+	p {
+		margin: 1.5em 0;
+		font-size: 16px;
+	}
+	.title {
+		font-weight: 600;
+		font-size: 16px;
+		margin: 40px 0px 10px;
+		&:first-of-type {
+			margin-top: 0px;
+		}
+	}
+	.option-form {
+		background: #fff;
+		box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 1px 1px rgba(16, 22, 26, 0.2),
+			0 2px 6px rgba(16, 22, 26, 0.2);
+		padding: 20px;
+		.description {
+			border-bottom: 1px solid #ccc;
+			margin-bottom: 25px;
+			padding-bottom: 20px;
+		}
+		.success-row {
+			display: flex;
+			margin-top: 40px;
+		}
+		.tag-wrapper {
+			display: flex;
+			align-items: center;
+		}
+		textarea {
+			resize: vertical;
+		}
+		.button {
+			margin-right: 15px;
+		}
+	}
+	.grid-wrapper {
+		margin: 50px 0px;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+		grid-template-areas:
+			'a a a b b b'
+			'c c c c c .'
+			'. d d d d d'
+			'e e e f f f'
+			'. g g g g g'
+			'h h h h h .'
+			'i i i j j j'
+			'k k k k k .';
+		gap: 50px;
+		font-size: 16px;
+	}
+	.example:nth-of-type(1) {
+		grid-area: a;
+	}
+	.example:nth-of-type(2) {
+		grid-area: b;
+	}
+	.example:nth-of-type(3) {
+		grid-area: c;
+	}
+	.example:nth-of-type(4) {
+		grid-area: d;
+	}
+	.example:nth-of-type(5) {
+		grid-area: e;
+	}
+	.example:nth-of-type(6) {
+		grid-area: f;
+	}
+	.example:nth-of-type(7) {
+		grid-area: g;
+	}
+	.example:nth-of-type(8) {
+		grid-area: h;
+	}
+	.example:nth-of-type(9) {
+		grid-area: i;
+	}
+	.example:nth-of-type(10) {
+		grid-area: j;
+	}
+	.example:nth-of-type(11) {
+		grid-area: k;
+	}
+	.example:nth-of-type(12) {
+		grid-area: l;
+	}
+	.example-img {
+		width: 100%;
+	}
+	.example-title {
+		font-weight: 600;
+	}
+	.testimonial-quote {
+		font-size: 16px;
+	}
+	.testimonial-source {
+		font-size: 16px;
+		font-weight: 700;
+		margin-top: 5px;
+	}
+}
+
+@media only screen and (max-width: 720px) {
+	#community-services-container {
+		.grid-wrapper {
+			grid-template-columns: 1fr;
+			grid-template-areas: initial;
+		}
+		.example {
+			grid-area: initial !important;
+		}
+		.testimonial {
+			padding-left: 0px !important;
+			padding-right: 0px !important;
+		}
+	}
+}

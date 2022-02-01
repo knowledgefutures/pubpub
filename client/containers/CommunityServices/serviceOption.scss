@@ -1,0 +1,40 @@
+.service-option {
+	margin-bottom: 40px;
+	.option-title-row {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+	}
+	.option-title {
+		font-weight: 600;
+		font-size: 16px;
+	}
+	.option-discount {
+		font-weight: 600;
+		font-size: 16px;
+	}
+	.option-row {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+		margin: 10px 0px 15px;
+	}
+	.option-price {
+		font-weight: 600;
+		font-size: 18px;
+	}
+	.option-description {
+		font-size: 16px;
+	}
+}
+
+@media only screen and (max-width: 720px) {
+	.service-option {
+		.option-row {
+			display: block;
+		}
+		.option-price {
+			margin-top: 10px;
+		}
+	}
+}

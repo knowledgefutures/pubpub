@@ -2,6 +2,7 @@ export { default as About } from './About/About';
 export { default as AdminDashboard } from './AdminDashboard/AdminDashboard';
 export { default as Collection } from './Collection/Collection';
 export { default as CommunityCreate } from './CommunityCreate/CommunityCreate';
+export { default as CommunityServices } from './CommunityServices/CommunityServices';
 export { default as DashboardActivity } from './DashboardActivity/DashboardActivity';
 export { default as DashboardCollectionLayout } from './DashboardCollectionLayout/DashboardCollectionLayout';
 export { default as DashboardCustomScripts } from './DashboardCustomScripts/DashboardCustomScripts';

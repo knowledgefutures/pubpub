@@ -111,6 +111,7 @@ export const communityDoiOverrides = [
 	{
 		communityIds: [
 			'09eba68b-d4ec-462d-a200-960abb62b384', // https://fermentology.pubpub.org/
+			'21ff89b9-b3b0-4d3e-9ba7-46ce5c6ceaf2', // https://ncsu-wolfpack-solutions.pubpub.org/
 		],
 		prefix: NCSU_DOI_PREFIX,
 		key: 'NSCU',

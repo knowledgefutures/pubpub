@@ -46,3 +46,7 @@ export const createFirebaseChange = (steps: Step[], clientId: string) => {
 		t: firebaseTimestamp,
 	};
 };
+
+export const getFirebaseConnectionMonitorRef = (ref: firebase.database.Reference) => {
+	return ref.root.child('.info/connected');
+};

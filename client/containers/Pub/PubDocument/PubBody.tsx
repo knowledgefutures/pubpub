@@ -88,7 +88,8 @@ const PubBody = (props: Props) => {
 	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
 	const editorKeyCollab = firebaseDraftRef ? 'ready' : 'unready';
 	const editorKey = editorKeyHistory || editorKeyCollab;
-	const isReadOnly = pubData.isReadOnly || pubData.isInMaintenanceMode || isViewingHistory;
+	const isReadOnly =
+		pubData.isReadOnly || pubData.isInMaintenanceMode || isViewingHistory || !firebaseDraftRef;
 	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
 	const loadCollaborativeOptions = !isViewingHistory && !pubData.isInMaintenanceMode;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);

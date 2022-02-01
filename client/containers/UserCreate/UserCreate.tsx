@@ -39,11 +39,12 @@ const UserCreate = (props: Props) => {
 	const [showFacebook, setShowFacebook] = useState(false);
 	const [showGoogleScholar, setShowGoogleScholar] = useState(false);
 	const [confirmPassword, setConfirmPasword] = useState('');
+	const [acceptTerms, setAcceptTerms] = useState(false);
 	const onCreateSubmit = (evt) => {
 		evt.preventDefault();
 		setPostUserIsLoading(true);
 		setPostUserError(undefined);
-
+		if (!acceptTerms) return false;
 		return apiFetch('/api/users', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -323,7 +324,24 @@ const UserCreate = (props: Props) => {
 								</em>
 							</p>
 						</InputField>
-
+						<InputField>
+							<Checkbox
+								checked={acceptTerms}
+								onChange={() => {
+									setAcceptTerms(!acceptTerms);
+								}}
+							>
+								I have read and agree to the PubPub{' '}
+								<a href="/legal/terms" target="_blank">
+									Terms of Service
+								</a>{' '}
+								and{' '}
+								<a href="legal/privacy" target="_blank">
+									Privacy Policy
+								</a>
+								.
+							</Checkbox>
+						</InputField>
 						<InputField error={postUserError && 'Error Creating User'}>
 							<Button
 								name="create"
@@ -331,7 +349,7 @@ const UserCreate = (props: Props) => {
 								className="bp3-button bp3-intent-primary create-account-button"
 								onClick={onCreateSubmit}
 								text="Create Account"
-								disabled={!firstName || !lastName || !password}
+								disabled={!firstName || !lastName || !password || !acceptTerms}
 								loading={postUserIsLoading}
 							/>
 						</InputField>

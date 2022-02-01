@@ -183,6 +183,11 @@ const Landing = () => {
 									Create your community
 								</a>
 							</div>
+							<div className="buttons">
+								<a href="/pricing" className="custom-button">
+									Support PubPub
+								</a>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -286,12 +291,13 @@ const Landing = () => {
 				<div id="case-study">
 					<div className="container">
 						<div>
-							<h3>Content Services</h3>
+							<h3>Community Services</h3>
 						</div>
 						<div>
 							<p>
-								We offer production, training, and strategy services for groups who
-								want extra support.
+								For groups that want personalized support we offer production,
+								training, and strategy services for building high quality, effective
+								publishing communities.
 							</p>
 							<blockquote>
 								"The team’s innovation and experience made for an incredible
@@ -306,10 +312,7 @@ const Landing = () => {
 								</span>
 							</blockquote>
 							<div className="buttons">
-								<a
-									href="https://help.pubpub.org/pub/content-services-menu"
-									className="custom-button light"
-								>
+								<a href="/community-services" className="custom-button light">
 									Learn more
 								</a>
 							</div>

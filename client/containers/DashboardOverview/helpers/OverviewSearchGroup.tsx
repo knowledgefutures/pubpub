@@ -19,9 +19,10 @@ type Props = {
 	placeholder: string;
 	onUpdateSearchTerm?: SearchTermCallback;
 	onCommitSearchTerm?: SearchTermCallback;
-	onChooseFilter?: (q: null | Partial<PubsQuery>) => unknown;
+	onChooseFilter?: (q: OverviewSearchFilter) => unknown;
 	rightControls?: React.ReactNode;
 	filters?: OverviewSearchFilter[];
+	filter?: OverviewSearchFilter;
 };
 
 const defaultFilters: OverviewSearchFilter[] = [
@@ -42,6 +43,7 @@ const OverviewSearchGroup = (props: Props) => {
 		onUpdateSearchTerm,
 		rightControls,
 		onChooseFilter,
+		filter,
 		filters = defaultFilters,
 	} = props;
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -69,12 +71,16 @@ const OverviewSearchGroup = (props: Props) => {
 	const handleFilterChange = useCallback(
 		(filterId: string) => {
 			if (onChooseFilter) {
-				const filter = filters.find((f) => f.id === filterId)!;
-				onChooseFilter(filter.query);
+				const nextFilter = filters.find((f) => f.id === filterId)!;
+				onChooseFilter(nextFilter);
 			}
 		},
 		[filters, onChooseFilter],
 	);
+
+	const controlledTabsProps: Partial<React.ComponentProps<typeof Tabs>> = {
+		...(filter && { selectedTabId: filter.id }),
+	};
 
 	return (
 		<div className="overview-search-group-component">
@@ -83,9 +89,10 @@ const OverviewSearchGroup = (props: Props) => {
 					className="filter-controls"
 					id="overview-search-group-filter"
 					onChange={handleFilterChange}
+					{...controlledTabsProps}
 				>
-					{filters.map((filtering) => (
-						<Tab id={filtering.id} key={filtering.id} title={filtering.title} />
+					{filters.map((f) => (
+						<Tab id={f.id} key={f.id} title={f.title} />
 					))}
 				</Tabs>
 			)}

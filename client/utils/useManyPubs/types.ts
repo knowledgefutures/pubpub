@@ -41,6 +41,7 @@ export type ManyPubsOptions = {
 	query?: PartialQuery;
 	batchSize?: number;
 	isEager?: boolean;
+	cacheQueries?: boolean;
 };
 
 export type ManyPubsReturnValues<P> = {

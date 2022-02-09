@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Callout, Button, Dialog, Classes, Checkbox } from '@blueprintjs/core';
 
-import { DefinitelyHas, SubmissionStatus, Pub, DocJson } from 'types';
+import { SubmissionStatus, DocJson } from 'types';
 import { Icon } from 'components';
 import { getEmptyDoc } from 'client/components/Editor/utils/doc';
+
 import WorkflowTextEditor from '../DashboardSubmissionWorkflow/WorkflowTextEditor';
 
 require('./verdictDialog.scss');
@@ -11,14 +12,13 @@ require('./verdictDialog.scss');
 type Props = {
 	isOpen: boolean;
 	shouldOfferEmail?: boolean;
-	onClose: () => unknown;
 	actionTitle: string;
 	completedName: string;
-	onSubmit: (customEmailText?: DocJson, shouldSendEmail?: boolean) => any;
 	status: SubmissionStatus;
 	initialEmailText?: DocJson;
-	pub: DefinitelyHas<Pub, 'submission'>;
-	onJudgePub: (pubId: string, status: SubmissionStatus) => void;
+	onClose: () => unknown;
+	onJudgePub: (status: SubmissionStatus) => void;
+	onSubmit: (customEmailText?: DocJson, shouldSendEmail?: boolean) => any;
 };
 
 type PreStatusChangeBodyProps = {
@@ -117,7 +117,7 @@ const VerdictDialog = (props: Props) => {
 				setUpdatedSubmission(submissionRes);
 				setIsHandlingSubmission(false);
 			})
-			.then(() => props.onJudgePub(props.pub.id, props.status))
+			.then(() => props.onJudgePub(props.status))
 			.catch((err) => {
 				setSubmissionError(err);
 				setIsHandlingSubmission(false);

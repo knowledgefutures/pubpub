@@ -4,37 +4,40 @@
  * attached to a Button onClick handler, or anything else.
  */
 import React, { useState } from 'react';
-import { Button, Classes, Dialog } from '@blueprintjs/core';
+import { Button, Classes, Dialog, Intent } from '@blueprintjs/core';
 
-type OwnProps = {
-	children: (...args: any[]) => any;
-	cancelLabel?: string;
-	confirmLabel: string;
-	intent?: string;
-	onConfirm: (...args: any[]) => any;
+import { Callback } from 'types';
+
+type Props = {
+	cancelLabel?: React.ReactNode;
+	children: (opts: { open: Callback }) => React.ReactNode;
+	confirmLabel: React.ReactNode;
+	intent?: Intent;
+	onConfirm: () => unknown;
 	text: React.ReactNode;
+	title?: React.ReactNode;
 };
-
-const defaultProps = {
-	intent: 'danger',
-	cancelLabel: 'Cancel',
-};
-
-type Props = OwnProps & typeof defaultProps;
 
 const ConfirmDialog = (props: Props) => {
-	const { cancelLabel, children, confirmLabel, intent, onConfirm, text } = props;
+	const {
+		cancelLabel = 'Cancel',
+		children,
+		confirmLabel,
+		intent = 'danger',
+		onConfirm,
+		text,
+		title,
+	} = props;
 	const [isOpen, setIsOpen] = useState(false);
 	return (
 		<React.Fragment>
 			{children({ open: () => setIsOpen(true) })}
-			<Dialog isOpen={isOpen}>
+			<Dialog isOpen={isOpen} title={title}>
 				<div className={Classes.DIALOG_BODY}>{text}</div>
 				<div className={Classes.DIALOG_FOOTER}>
 					<div className={Classes.DIALOG_FOOTER_ACTIONS}>
 						<Button onClick={() => setIsOpen(false)}>{cancelLabel}</Button>
 						<Button
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type '"none" | ... Remove this comment to see the full error message
 							intent={intent}
 							onClick={() => {
 								setIsOpen(false);
@@ -49,5 +52,5 @@ const ConfirmDialog = (props: Props) => {
 		</React.Fragment>
 	);
 };
-ConfirmDialog.defaultProps = defaultProps;
+
 export default ConfirmDialog;

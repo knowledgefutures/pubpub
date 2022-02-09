@@ -119,7 +119,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 			</Step>
 			<Step
 				number={3}
-				title="Send a automated email when a submission is received"
+				title="Send an automated email when a submission is received"
 				className="email-step"
 				done={fieldValidStates.targetEmailAddress && fieldValidStates.emailText}
 			>

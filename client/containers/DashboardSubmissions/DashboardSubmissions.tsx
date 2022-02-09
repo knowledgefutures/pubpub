@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { Pub, SubmissionWorkflow, DefinitelyHas } from 'types';
+import { SubmissionWorkflow } from 'types';
 
 import SubmissionItems from './SubmissionItems';
 import AcceptSubmissionsToggle from './AcceptSubmissionsToggle';
 import SubmissionWorkflowButton from './SubmissionWorkflowButton';
+import { PubWithSubmission } from './types';
 
 require('./dashboardSubmissions.scss');
 
 type Props = {
-	initialPubs: Pub[];
+	initialPubs: PubWithSubmission[];
 	initiallyLoadedAllPubs: boolean;
 	initialSubmissionWorkflow: SubmissionWorkflow;
 };
@@ -43,7 +44,7 @@ const DashboardSubmissions = (props: Props) => {
 			}
 		>
 			<SubmissionItems
-				initialPubs={initialPubs as DefinitelyHas<Pub, 'submission'>[]}
+				initialPubs={initialPubs}
 				collection={activeCollection}
 				initiallyLoadedAllPubs={initiallyLoadedAllPubs}
 			/>

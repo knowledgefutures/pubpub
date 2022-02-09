@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useUpdate, useUpdateEffect } from 'react-use';
 
 import { Pub } from 'types';
 import { usePageContext } from 'utils/hooks';
 import { indexByProperty } from 'utils/arrays';
 import { apiFetch } from 'client/utils/apiFetch';
+import { useLazyRef } from 'client/utils/useLazyRef';
 
 import {
 	getStartLoadingPubsState,
@@ -13,7 +15,6 @@ import {
 } from './state';
 import {
 	KeyedPubsQuery,
-	ManyPubsState,
 	ManyPubsQuery,
 	ManyPubsApiResult,
 	ManyPubsOptions,
@@ -51,9 +52,12 @@ export const useManyPubs = <P extends Pub = Pub>(
 		isEager = true,
 		initialPubs = [],
 		initiallyLoadedAllPubs = false,
+		cacheQueries = true,
 	} = options;
+
 	const { communityData } = usePageContext();
 	const [pubOptions] = useState(initialPubOptions);
+	const update = useUpdate();
 
 	const keyQuery: KeyedPubsQuery = {
 		term: optionsQuery.term,
@@ -63,80 +67,92 @@ export const useManyPubs = <P extends Pub = Pub>(
 		submissionStatuses: optionsQuery.submissionStatuses,
 	};
 
+	const pubsById = useLazyRef(() => indexByProperty(initialPubs, 'id'));
 	const queryKey = getQueryKey(keyQuery);
-
-	const [pubsById, setPubsById] = useState<Record<string, Pub>>(() =>
-		indexByProperty(initialPubs, 'id'),
-	);
-
-	const [manyPubsState, setManyPubsState] = useState<ManyPubsState>(() => {
-		if (Object.keys(pubsById).length > 0 || initiallyLoadedAllPubs) {
+	const manyPubsState = useLazyRef(() => {
+		if (Object.keys(pubsById.current).length > 0 || initiallyLoadedAllPubs) {
 			return {
-				[queryKey]: getInitialPubsState(keyQuery, pubsById, initiallyLoadedAllPubs),
+				[queryKey]: getInitialPubsState(keyQuery, pubsById.current, initiallyLoadedAllPubs),
 			};
 		}
 		return {};
 	});
 
-	const state = manyPubsState[queryKey] || initialQueryState;
+	const getCurrentQueryState = useCallback(() => {
+		return manyPubsState.current[queryKey] || initialQueryState;
+	}, [queryKey, manyPubsState]);
 
-	const setState = useCallback(
+	const setCurrentQueryState = useCallback(
 		(next: QueryState) => {
-			setManyPubsState((currentState) => {
-				return {
-					...currentState,
-					[queryKey]: next,
-				};
-			});
+			manyPubsState.current = {
+				...manyPubsState.current,
+				[queryKey]: next,
+			};
+			update();
 		},
-		[queryKey],
+		[queryKey, update, manyPubsState],
 	);
 
 	const loadMorePubs = async () => {
-		if (state.isLoading) {
+		const queryState = getCurrentQueryState();
+		const { isLoading, hasLoadedAllPubs, offset } = queryState;
+
+		if (isLoading || hasLoadedAllPubs) {
 			return;
 		}
-
-		const nextState = getStartLoadingPubsState(state, batchSize);
-		setState(nextState);
 
 		const query: ManyPubsQuery = {
 			...keyQuery,
 			...optionsQuery,
 			limit: batchSize,
-			offset: state.offset,
+			offset,
 			communityId: communityData.id,
 		};
+
+		const nextQueryState = getStartLoadingPubsState(queryState, batchSize);
+		setCurrentQueryState(nextQueryState);
+
 		const result: ManyPubsApiResult = await apiFetch.post('/api/pubs/many', {
 			query,
 			pubOptions,
-			alreadyFetchedPubIds: Object.keys(pubsById),
+			alreadyFetchedPubIds: Object.keys(pubsById.current),
 		});
 
 		const { loadedAllPubs, pubsById: newPubsById, pubIds } = result;
-		const nextPubsById = { ...pubsById, ...newPubsById };
+		const nextPubsById = { ...pubsById.current, ...newPubsById };
 		const resolvedPubs = pubIds.map((id) => nextPubsById[id]);
 		const resolvedPubsById = indexByProperty(resolvedPubs, 'id');
-		setState(getFinishedLoadingPubsState(nextState, query, resolvedPubsById, loadedAllPubs));
-		setPubsById(nextPubsById);
+		pubsById.current = nextPubsById;
+		setCurrentQueryState(
+			getFinishedLoadingPubsState(nextQueryState, query, resolvedPubsById, loadedAllPubs),
+		);
 	};
 
+	useUpdateEffect(() => {
+		if (!cacheQueries) {
+			pubsById.current = {};
+			manyPubsState.current = { [queryKey]: initialQueryState };
+		}
+	}, [cacheQueries, queryKey]);
+
 	useEffect(() => {
-		if (isEager && state.offset === 0) {
+		const queryState = getCurrentQueryState();
+		if (isEager && queryState.offset === 0) {
 			loadMorePubs();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isEager, queryKey, state.offset]);
+	}, [isEager, queryKey]);
 
+	const currentQueryState = getCurrentQueryState();
 	return {
 		currentQuery: {
 			loadMorePubs,
-			isLoading: state.isLoading,
-			hasLoadedAllPubs: state.hasLoadedAllPubs,
-			pubs: state.orderedPubs.pubsInOrder as P[],
+			isLoading: currentQueryState.isLoading,
+			hasLoadedAllPubs: currentQueryState.hasLoadedAllPubs,
+			pubs: currentQueryState.orderedPubs.pubsInOrder as P[],
 		},
 		allQueries: {
-			isLoading: Object.values(manyPubsState).some((s) => s.isLoading),
+			isLoading: Object.values(manyPubsState.current).some((s) => s.isLoading),
 		},
 	};
 };

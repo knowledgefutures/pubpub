@@ -8,7 +8,7 @@ import { formatDate } from 'utils/dates';
 import { getPubPublishedDate, getPubSubmissionDate } from 'utils/pub/pubDates';
 import { TimeAgo, Icon, IconName } from 'components';
 
-type IconLabelPair = {
+export type IconLabelPair = {
 	icon: IconName;
 	label: string | React.ReactNode;
 	iconSize?: number;
@@ -159,24 +159,6 @@ export const renderLabelPairs = (iconLabelPairs: IconLabelPair[]) => {
 	);
 };
 
-export const renderRowDetails = (pub: Pub, hasSubmission: boolean): React.ReactNode => {
-	if (pub.submission) {
-		const { status } = pub.submission;
-		const detailsRow = hasSubmission
-			? renderLabelPairs(
-					[getSubmissionStatusLabel(status), getSubmissionTimeLabel(pub)].filter(
-						(x): x is IconLabelPair => !!x,
-					),
-			  )
-			: renderLabelPairs([
-					...getScopeSummaryLabels(pub.scopeSummary),
-					getPubReleasedStateLabel(pub),
-			  ]);
-		return detailsRow;
-	}
-
-	return renderLabelPairs([
-		...getScopeSummaryLabels(pub.scopeSummary),
-		getPubReleasedStateLabel(pub),
-	]);
+export const getTypicalPubLabels = (pub: Pub) => {
+	return [...getScopeSummaryLabels(pub.scopeSummary), getPubReleasedStateLabel(pub)];
 };

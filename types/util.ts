@@ -14,6 +14,8 @@ export type Diff<T> = { from: T; to: T };
 export type WithId = { id: string };
 export type IdIndex<T extends WithId> = Record<string, T>;
 
+export type Callback<T = void> = T extends void ? () => unknown : (t: T) => unknown;
+
 export type DeepPartial<T> = {
 	[P in keyof T]?: T[P] extends Array<infer I> ? Array<DeepPartial<I>> : DeepPartial<T[P]>;
 };

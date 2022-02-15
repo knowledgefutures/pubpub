@@ -166,6 +166,7 @@ export const modifyJatsContentToIncludeUnstructuredNotes = (
 			ignoreAttributes: false,
 			allowBooleanAttributes: true,
 			format: true,
+			preserveOrder: true,
 			attributeNamePrefix: '@',
 		};
 		const parser = new XMLParser(xmlOptions);

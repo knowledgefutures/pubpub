@@ -168,6 +168,7 @@
 		"slowdance": "0.0.2",
 		"stickybits": "^3.6.5",
 		"strip-indent": "^3.0.0",
+		"striptags": "^3.2.0",
 		"styled-components": "^5.3.0",
 		"throng": "^4.0.0",
 		"tmp-promise": "^2.0.1",

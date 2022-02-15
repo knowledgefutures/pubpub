@@ -32,12 +32,13 @@ export default {
 						id: node.getAttribute('id'),
 						value: node.getAttribute('data-value') || '',
 						unstructuredValue: node.getAttribute('data-unstructured-value') || '',
+						customLabel: node.getAttribute('data-custom-label') || '',
 					};
 				},
 			},
 		],
 		toDOM: (node) => {
-			const { href, id, value, unstructuredValue } = node.attrs;
+			const { href, id, value, unstructuredValue, customLabel } = node.attrs;
 			return [
 				href ? 'a' : 'span',
 				{
@@ -46,6 +47,7 @@ export default {
 					'data-node-type': 'citation',
 					'data-value': value,
 					'data-unstructured-value': unstructuredValue,
+					'data-custom-label': customLabel,
 					class: 'citation',
 				},
 				getCitationInlineLabel(node),

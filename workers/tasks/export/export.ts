@@ -4,8 +4,8 @@ import { getPubDraftDoc } from 'server/utils/firebaseAdmin';
 import { renderStaticHtml } from './html';
 import { getPubMetadata } from './metadata';
 import { getNotesData } from './notes';
-import { callPaged } from './paged';
-import { callPandoc } from './pandoc';
+import { exportWithPaged } from './paged';
+import { exportWithPandoc } from './pandoc';
 import {
 	getExportById,
 	getTmpFileForExtension,
@@ -22,7 +22,7 @@ export const exportTask = async ({ exportId }, collectSubprocess) => {
 	const { doc: pubDoc } = await getPubDraftDoc(pubId, historyKey);
 	const notesData = await getNotesData(pubMetadata, pubDoc);
 	if (pandocTarget) {
-		await callPandoc({
+		await exportWithPandoc({
 			pubDoc,
 			pubMetadata,
 			tmpFile,
@@ -36,7 +36,7 @@ export const exportTask = async ({ exportId }, collectSubprocess) => {
 			pubMetadata,
 		});
 		if (pagedTarget) {
-			await callPaged(staticHtml, tmpFile, collectSubprocess);
+			await exportWithPaged(staticHtml, tmpFile, collectSubprocess);
 		} else {
 			await writeToFile(staticHtml, tmpFile);
 		}

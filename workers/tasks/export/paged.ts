@@ -2,7 +2,7 @@ import path from 'path';
 import { exec } from 'child_process';
 import { getTmpFileForExtension, writeToFile } from './util';
 
-export const callPaged = async (staticHtml, tmpFile, collectSubprocess) => {
+export const exportWithPaged = async (staticHtml, tmpFile, collectSubprocess) => {
 	const tmpHtmlFile = await getTmpFileForExtension('html');
 	await writeToFile(staticHtml, tmpHtmlFile);
 	return new Promise<void>((resolve, reject) => {

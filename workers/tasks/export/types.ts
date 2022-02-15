@@ -30,3 +30,8 @@ export type NotesData = {
 	citations: NoteWithStructuredHtml[];
 	footnotes: NoteWithStructuredHtml[];
 };
+
+export type PandocFlag = {
+	name: string;
+	enabled: boolean;
+};

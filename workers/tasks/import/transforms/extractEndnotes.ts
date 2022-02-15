@@ -6,11 +6,14 @@ const getEndnoteDivsQuery = '$..content[?(@.type=="Div" && @.attr.properties.rol
 const getLinksQuery = '$..content[?(@.type=="Link")]';
 
 const matchAndReplaceToRemoveLinkback = (linkback) => {
-	return [(node) => node === linkback, () => null];
+	return {
+		matcher: ({ node }) => node === linkback,
+		replacer: () => null,
+	};
 };
 
 const matchAndReplaceForNotes = (notes) => {
-	const matcher = (node) => {
+	const matcher = ({ node }) => {
 		if (node.type === 'Link') {
 			const { url } = node.target;
 			return notes.find((someNote) => '#' + someNote.id === url);
@@ -18,11 +21,14 @@ const matchAndReplaceForNotes = (notes) => {
 		return false;
 	};
 	const replacer = ({ match }) => match.noteNode;
-	return [matcher, replacer];
+	return { matcher, replacer };
 };
 
 const matchAndReplaceToRemoveDivs = (divs) => {
-	return [(node) => divs.includes(node), () => null];
+	return {
+		matcher: ({ node }) => divs.includes(node),
+		replacer: () => null,
+	};
 };
 
 const maybeRemoveStrayPeriod = (div) => {

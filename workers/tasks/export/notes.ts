@@ -126,8 +126,8 @@ export const getCslJsonForPandocNotes = (notes: PandocNotes) => {
 
 const createJatsNotesMatchAndReplacer = (notes: PandocNotes, xmlParser: XMLParser) => {
 	const matcher: Matcher<PandocNote> = ({ node, keyPath }) => {
-		if (keyPath[keyPath.length - 1] === 'ref') {
-			const id = node['@id'] as string;
+		if (keyPath[keyPath.length - 1] === 'ref-list') {
+			const id = node[':@']?.['@id'] as string;
 			if (id && id.startsWith('ref-')) {
 				const hash = id.slice(4);
 				const note = notes[hash];
@@ -144,8 +144,8 @@ const createJatsNotesMatchAndReplacer = (notes: PandocNotes, xmlParser: XMLParse
 			const unstructuredContentAsJats = callPandoc(unstructuredHtml, 'html', 'jats').trim();
 			const jatsXml = xmlParser.parse(unstructuredContentAsJats);
 			return {
-				'@id': `ref-${hash}`,
-				'mixed-citation': jatsXml,
+				':@': { '@id': `ref-${hash}` },
+				ref: [{ 'mixed-citation': jatsXml }],
 			};
 		}
 		return entry;

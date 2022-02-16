@@ -16,14 +16,33 @@ type KeyedActivityItem = ActivityItem & {
 	displayKey: string;
 };
 
-const getAffectedObject = (item: ActivityItem, associations: ActivityAssociations) =>
-	item.pubId
-		? { id: item.pubId, title: associations.pub[item.pubId].title }
-		: item.collectionId
-		? { id: item.collectionId, title: associations.collection[item.collectionId].title }
-		: 'page' in item.payload
-		? { id: item.payload.page.id, title: associations.page[item.payload.page.id].title }
-		: { id: item.communityId, title: associations.community[item.communityId].title };
+const getAffectedObject = (item: ActivityItem, associations: ActivityAssociations) => {
+	// Check the payload rather than the associations for items that might have since been deleted
+	if ('pub' in item.payload) {
+		const { title } = item.payload.pub;
+		return {
+			id: item.pubId!,
+			title,
+		};
+	}
+	if ('collection' in item.payload) {
+		const { title } = item.payload.collection;
+		return {
+			id: item.collectionId!,
+			title,
+		};
+	}
+	if ('page' in item.payload) {
+		const { id, title } = item.payload.page;
+		return { id, title };
+	}
+	// We can be reasonably sure that this Community still exists since we're sending its digest
+	const { title } = associations.community[item.communityId];
+	return {
+		id: item.communityId,
+		title,
+	};
+};
 
 const getAffectedObjectIcon = (item: ActivityItem) =>
 	item.pubId

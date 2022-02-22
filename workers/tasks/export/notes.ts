@@ -1,6 +1,5 @@
 import md5 from 'crypto-js/md5';
-import { callPandoc } from '@pubpub/prosemirror-pandoc';
-import { XMLParser, XMLBuilder } from 'fast-xml-parser';
+import sanitizeHtml from 'sanitize-html';
 
 import { DocJson, Maybe } from 'types';
 import { jsonToNode, getNotes, Note } from 'components/Editor';
@@ -9,7 +8,6 @@ import { getStructuredCitations } from 'server/utils/citations';
 import { RenderedStructuredValues } from 'utils/notesCore';
 import { PandocTarget } from 'utils/export/formats';
 
-import { Replacer, Matcher, walkAndReplace } from '../import/transforms/util';
 import { NotesData, NoteWithStructuredHtml, PubMetadata } from './types';
 
 export type PandocNote = Note & {
@@ -124,57 +122,47 @@ export const getCslJsonForPandocNotes = (notes: PandocNotes) => {
 	return Object.values(notes).map((note) => note.cslJson);
 };
 
-const createJatsNotesMatchAndReplacer = (notes: PandocNotes, xmlParser: XMLParser) => {
-	const matcher: Matcher<PandocNote> = ({ node, keyPath }) => {
-		if (keyPath[keyPath.length - 1] === 'ref-list') {
-			const id = node[':@']?.['@id'] as string;
-			if (id && id.startsWith('ref-')) {
-				const hash = id.slice(4);
-				const note = notes[hash];
-				if (note && !note.hasStructuredContent && note.unstructuredHtml) {
-					return note;
-				}
-			}
-		}
-		return null;
-	};
-	const replacer: Replacer<PandocNote> = ({ match, entry }) => {
-		const { unstructuredHtml, hash } = match;
-		if (unstructuredHtml) {
-			const unstructuredContentAsJats = callPandoc(unstructuredHtml, 'html', 'jats').trim();
-			const jatsXml = xmlParser.parse(unstructuredContentAsJats);
-			return {
-				':@': { '@id': `ref-${hash}` },
-				ref: [{ 'mixed-citation': jatsXml }],
-			};
-		}
-		return entry;
-	};
-	return { matcher, replacer };
-};
+const emptyElementCitation =
+	/<ref id="ref-(.+?)">(\s+)<element-citation>\s+<\/element-citation>(\s+)<\/ref>/g;
 
 export const modifyJatsContentToIncludeUnstructuredNotes = (
 	documentContent: string,
 	target: PandocTarget,
 	notes: PandocNotes,
 ) => {
-	if (
-		target === 'jats_archiving' &&
-		Object.values(notes).some((note) => !note.hasStructuredContent)
-	) {
-		const xmlOptions = {
-			ignoreAttributes: false,
-			allowBooleanAttributes: true,
-			format: true,
-			preserveOrder: true,
-			attributeNamePrefix: '@',
-		};
-		const parser = new XMLParser(xmlOptions);
-		const builder = new XMLBuilder(xmlOptions);
-		const matchAndReplace = createJatsNotesMatchAndReplacer(notes, parser);
-		const tree = parser.parse(documentContent);
-		const walked = walkAndReplace(tree, [matchAndReplace]);
-		return builder.build(walked);
+	if (target === 'jats_archiving') {
+		return documentContent.replace(
+			emptyElementCitation,
+			(match, id, spaceBefore, spaceAfter) => {
+				const note = notes[id];
+				if (note && !note.hasStructuredContent && note.unstructuredHtml) {
+					// HTML with just these tags is also valid JATS
+					const unstructuredContentAsJats = sanitizeHtml(note.unstructuredHtml, {
+						allowedTags: ['bold', 'italic', 'a', 'ext-link'],
+						allowedAttributes: {
+							'ext-link': ['ext-link-type', 'xlink:title', 'xlink:href'],
+						},
+						transformTags: {
+							em: 'italic',
+							strong: 'bold',
+							a: (_, { href }) => {
+								return {
+									tagName: 'ext-link',
+									attribs: {
+										'ext-link-type': 'uri',
+										'xlink:title': 'null',
+										'xlink:href': href,
+									},
+								};
+							},
+						},
+					});
+					const content = `<mixed-citation>${unstructuredContentAsJats}</mixed-citation>`;
+					return `<ref id="ref-${id}">${spaceBefore}${content}${spaceAfter}</ref>`;
+				}
+				return match;
+			},
+		);
 	}
 	return documentContent;
 };

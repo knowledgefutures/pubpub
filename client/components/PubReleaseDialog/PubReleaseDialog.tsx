@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+import TimeAgo from 'react-timeago';
 import {
 	AnchorButton,
 	Button,
@@ -8,8 +10,6 @@ import {
 	Icon,
 	InputGroup,
 } from '@blueprintjs/core';
-import React, { useState } from 'react';
-import TimeAgo from 'react-timeago';
 
 import { pubUrl } from 'utils/canonicalUrls';
 import { formatDate, timeAgoBaseProps } from 'utils/dates';
@@ -17,18 +17,16 @@ import { usePageContext } from 'utils/hooks';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { ClickToCopyButton, MinimalEditor } from 'components';
-import { Release, PubPageData } from 'types';
+import { Release, Pub } from 'types';
 
 require('./pubReleaseDialog.scss');
 
 type Props = {
-	historyData: {
-		latestKey?: number;
-	};
+	historyKey?: number;
+	pub: Pub;
 	isOpen: boolean;
-	pubData: PubPageData;
 	onClose: () => unknown;
-	onCreateRelease: (r: Release) => unknown;
+	onCreateRelease?: (r: Release) => unknown;
 };
 
 const createRelease = ({ historyKey, pubId, communityId, noteContent, noteText }) =>
@@ -44,13 +42,13 @@ const createRelease = ({ historyKey, pubId, communityId, noteContent, noteText }
 	});
 
 const PubReleaseDialog = (props: Props) => {
-	const { isOpen, onClose, historyData, pubData, onCreateRelease } = props;
+	const { isOpen, onClose, historyKey, pub, onCreateRelease } = props;
 	const { communityData } = usePageContext();
 	const [noteData, setNoteData] = useState<{ content?: {}; text?: string }>({});
 	const [isCreatingRelease, setIsCreatingRelease] = useState(false);
 	const [createdRelease, setCreatedRelease] = useState(false);
 	const [releaseError, setReleleaseError] = useState(null);
-	const { releases } = pubData;
+	const { releases } = pub;
 	const releaseCount = releases ? releases.length : 0;
 	const latestRelease = releases[releaseCount - 1]!;
 
@@ -58,16 +56,16 @@ const PubReleaseDialog = (props: Props) => {
 		setIsCreatingRelease(true);
 		createRelease({
 			communityId: communityData.id,
-			pubId: pubData.id,
+			pubId: pub.id,
 			noteContent: noteData.content,
 			noteText: noteData.text,
-			historyKey: historyData.latestKey,
+			historyKey,
 		})
 			.then((release) => {
 				setReleleaseError(null);
 				setCreatedRelease(release);
 				setIsCreatingRelease(false);
-				onCreateRelease(release);
+				onCreateRelease?.(release);
 			})
 			.catch((err) => {
 				setReleleaseError(err);
@@ -76,7 +74,7 @@ const PubReleaseDialog = (props: Props) => {
 	};
 
 	const renderLatestReleaseInfo = (release) => {
-		const releaseUrl = pubUrl(communityData, pubData, { releaseNumber: releaseCount });
+		const releaseUrl = pubUrl(communityData, pub, { releaseNumber: releaseCount });
 
 		return (
 			<React.Fragment>
@@ -100,7 +98,7 @@ const PubReleaseDialog = (props: Props) => {
 			<div>
 				<p className="text-info">{label}</p>
 				<ControlGroup className="url-select">
-					<InputGroup className="display-url" value={url} fill small />
+					<InputGroup className="display-url" value={url} fill small disabled />
 					<ClickToCopyButton
 						minimal={true}
 						copyString={url}
@@ -135,7 +133,7 @@ const PubReleaseDialog = (props: Props) => {
 						</p>
 						{renderURLForCopy(
 							'Link that always points to the latest Release for this pub:',
-							pubUrl(communityData, pubData),
+							pubUrl(communityData, pub),
 						)}
 					</React.Fragment>
 				);
@@ -146,7 +144,7 @@ const PubReleaseDialog = (props: Props) => {
 					includeTime: true,
 					includePreposition: true,
 				});
-				const releaseUrl = pubUrl(communityData, pubData, {
+				const releaseUrl = pubUrl(communityData, pub, {
 					releaseNumber: releaseCount,
 				});
 				return (
@@ -166,7 +164,7 @@ const PubReleaseDialog = (props: Props) => {
 						)}
 						{renderURLForCopy(
 							'Link that always points to the latest Release for this pub:',
-							pubUrl(communityData, pubData),
+							pubUrl(communityData, pub),
 						)}
 						<p className="text-info">
 							Older Releases can be viewed using the{' '}
@@ -199,7 +197,7 @@ const PubReleaseDialog = (props: Props) => {
 		return (
 			<React.Fragment>
 				<Button onClick={onClose}>Return to draft</Button>
-				<AnchorButton intent="primary" href={pubUrl(communityData, pubData)}>
+				<AnchorButton intent="primary" href={pubUrl(communityData, pub)}>
 					Go to latest Release
 				</AnchorButton>
 			</React.Fragment>

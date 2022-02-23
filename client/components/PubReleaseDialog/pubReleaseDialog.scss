@@ -1,37 +1,42 @@
 .pub-release-dialog-component {
-    .bp3-callout {
-      margin-bottom: 10px;
-      .release-date {
-        font-size: 12px;
-      }
-    }
-    .notes-header {
-      text-transform: uppercase;
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 5px;
-    }
-    .text-info {
-      margin-top: 20px;
-      margin-bottom: 5px;
-    }
-    .url-select {
-      .bp3-button {
-        min-height: 24px;
-        max-height: 24px;
-        margin-left: 10px;
-      }
-    }
-    .minimal-editor-component {
-        height: 150px;
-        overflow: auto;
-        .editor-wrapper {
-            min-height: 100%;
-            .ProseMirror {
-              .prosemirror-placeholder {
-                white-space: break-spaces;
-              }
-            }
-        }
-    }
+	.bp3-callout {
+		margin-bottom: 10px;
+		.release-date {
+			font-size: 12px;
+		}
+	}
+	.notes-header {
+		text-transform: uppercase;
+		font-size: 12px;
+		color: #888;
+		margin-bottom: 5px;
+	}
+	.text-info {
+		margin-top: 20px;
+		margin-bottom: 5px;
+	}
+	.url-select {
+		.bp3-button {
+			min-height: 24px;
+			max-height: 24px;
+			margin-left: 10px;
+		}
+		.bp3-input-group.bp3-disabled .bp3-input {
+			background: white;
+			color: inherit;
+			cursor: text;
+		}
+	}
+	.minimal-editor-component {
+		height: 150px;
+		overflow: auto;
+		.editor-wrapper {
+			min-height: 100%;
+			.ProseMirror {
+				.prosemirror-placeholder {
+					white-space: break-spaces;
+				}
+			}
+		}
+	}
 }

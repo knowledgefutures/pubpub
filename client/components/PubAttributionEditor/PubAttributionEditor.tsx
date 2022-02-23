@@ -3,6 +3,8 @@ import React from 'react';
 import { AttributionEditor } from 'components';
 import { usePendingChanges } from 'utils/hooks';
 
+import { PubPageData } from 'types';
+
 type Props = {
 	canEdit: boolean;
 	communityData: {
@@ -12,7 +14,7 @@ type Props = {
 		id?: string;
 		attributions?: any[];
 	};
-	updatePubData: (...args: any[]) => any;
+	updatePubData: (pub: Partial<PubPageData>) => unknown;
 };
 
 const PubAttributionEditor = (props: Props) => {

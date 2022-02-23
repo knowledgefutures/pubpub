@@ -41,7 +41,8 @@ const MetadataDetails = (props: Props) => {
 				const data = metadata[name];
 				const isField = hiddenMetadataFields.includes(name);
 				const formattedData = formattedMetadata(name, data);
-				return <>{data && !isField && <div key={name}> {formattedData}</div>}</>;
+				if (!data || isField) return null;
+				return <div key={name}>{formattedData}</div>;
 			})}
 		</>
 	);

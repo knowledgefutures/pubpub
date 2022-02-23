@@ -6,6 +6,7 @@ import {
 	Icon,
 	DashboardFrame,
 	DatePicker,
+	DownloadChooser,
 	SettingsSection,
 	ImageUpload,
 	InputField,
@@ -20,7 +21,6 @@ import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { pubUrl } from 'utils/canonicalUrls';
 
-import DownloadChooser from './DownloadChooser';
 import DeletePub from './DeletePub';
 import Doi from './Doi';
 import CitationChooser from './CitationChooser';

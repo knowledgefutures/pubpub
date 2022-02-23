@@ -307,7 +307,7 @@ const pubData = {
 	createdAt: '2018-10-24T15:44:16.819Z',
 };
 
-const initialHistoryData = {
+export const initialHistoryData = {
 	timestamps: editTimestamps,
 	currentKey: 14678,
 	latestKey: 14678,

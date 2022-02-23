@@ -15,10 +15,22 @@ type Props = {
 	};
 	communityId: string;
 	onSetDownloads: (...args: any[]) => any;
+	text?: string;
+	isLarge?: boolean;
+	isSmall?: boolean;
+	isMinimal?: boolean;
 };
 
 const DownloadChooser = (props: Props) => {
-	const { communityId, pubData, onSetDownloads } = props;
+	const {
+		communityId,
+		pubData,
+		onSetDownloads,
+		text = 'Upload your file',
+		isLarge = false,
+		isSmall = false,
+		isMinimal = false,
+	} = props;
 	const [isRemoving, setIsRemoving] = useState(false);
 
 	const formattedDownload = getFormattedDownload(pubData.downloads);
@@ -54,16 +66,19 @@ const DownloadChooser = (props: Props) => {
 
 	return (
 		<div className="download-chooser-component">
-			<p>
+			{/* <p>
 				You can upload a file, like a PDF with custom styling, to associate with this pub.
 				It will be provided to readers as the pub's default download, but they'll still be
 				able to use the automatic export tools.
-			</p>
+			</p> */}
 			<div className="buttons">
 				<FileUploadButton
 					icon="upload"
 					onUploadFinish={updateDownloads}
-					text="Upload new file"
+					text={text}
+					isLarge={isLarge}
+					isSmall={isSmall}
+					isMinimal={isMinimal}
 				/>
 				{formattedDownload && (
 					<>

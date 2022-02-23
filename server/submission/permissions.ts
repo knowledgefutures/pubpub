@@ -70,7 +70,7 @@ export const canDeleteSubmission = async ({ userId, id }: CanDeleteOptions) => {
 type CanUpdateOptions = {
 	id: string;
 	userId: string;
-	status: types.SubmissionStatus;
+	status?: types.SubmissionStatus;
 };
 
 export const canUpdateSubmission = async ({ userId, status, id }: CanUpdateOptions) => {
@@ -101,8 +101,12 @@ export const canUpdateSubmission = async ({ userId, status, id }: CanUpdateOptio
 		getScope({ loginId: userId, collectionId: collection.id }),
 	]);
 
-	const canChangeStatusAsSubmitter = canManagePub && pubManagerCanChangeStatus(oldStatus, status);
-	const canChangeStatusAsManager =
-		canManageCollection && collectionManagerCanChangeStatus(oldStatus, status);
-	return canChangeStatusAsManager || canChangeStatusAsSubmitter;
+	if (status && oldStatus !== status) {
+		const canChangeStatusAsSubmitter =
+			canManagePub && pubManagerCanChangeStatus(oldStatus, status);
+		const canChangeStatusAsManager =
+			canManageCollection && collectionManagerCanChangeStatus(oldStatus, status);
+		return canChangeStatusAsManager || canChangeStatusAsSubmitter;
+	}
+	return canManagePub;
 };

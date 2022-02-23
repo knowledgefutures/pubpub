@@ -9,6 +9,7 @@ require('./minimalEditor.scss');
 
 type Props = {
 	constrainHeight?: boolean;
+	debounceEditsMs?: number;
 	focusOnLoad?: boolean;
 	initialContent?: any;
 	isTranslucent?: boolean;
@@ -26,6 +27,7 @@ const defaultGetButtons = (buttons) => buttons.minimalButtonSet;
 
 const MinimalEditor = (props: Props) => {
 	const {
+		debounceEditsMs = 0,
 		initialContent,
 		constrainHeight = false,
 		onEdit,
@@ -105,6 +107,7 @@ const MinimalEditor = (props: Props) => {
 			<div className="editor-wrapper" onClick={handleWrapperClick}>
 				<div ref={controlsContainerRef} />
 				<Editor
+					debounceEditsMs={debounceEditsMs}
 					initialContent={initialContent}
 					placeholder={placeholder}
 					onScrollToSelection={handleScrollToSelection}

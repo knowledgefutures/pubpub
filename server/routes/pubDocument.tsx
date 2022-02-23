@@ -72,6 +72,7 @@ const getEnrichedPubData = async ({
 		slug: pubSlug,
 		initialData,
 		releaseNumber,
+		getSubmissions: true,
 		getDraft: true,
 		getDiscussions: true,
 	});

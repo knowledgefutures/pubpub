@@ -122,10 +122,7 @@ export type PubPageDiscussion = DefinitelyHas<Discussion, 'anchors'> & {
 	};
 };
 
-export type PubPageData = DefinitelyHas<
-	Omit<Pub, 'discussions'>,
-	'attributions' | 'collectionPubs'
-> &
+export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPubs'> &
 	PubDocInfo & {
 		discussions: PubPageDiscussion[];
 		viewHash: Maybe<string>;
@@ -136,6 +133,8 @@ export type PubPageData = DefinitelyHas<
 		firebaseToken?: string;
 		initialStructuredCitations: boolean;
 		releaseNumber: Maybe<number>;
+		submission?: DefinitelyHas<Submission, 'submissionWorkflow'>;
+		iSubmission: boolean;
 	};
 
 export type PubHistoryState = {

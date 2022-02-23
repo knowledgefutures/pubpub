@@ -1,0 +1,15 @@
+@import 'styles/variables.scss';
+
+.instruction-tab-component {
+	.submission-workflow-title {
+		margin: 0;
+
+		font-family: $header-font;
+		font-size: 40px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 56px;
+
+		box-decoration-break: clone;
+	}
+}

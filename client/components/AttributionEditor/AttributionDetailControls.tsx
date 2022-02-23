@@ -38,7 +38,14 @@ const AttributionDetailControls = (props: Props) => {
 				items={roles}
 				itemListPredicate={getFilteredRoles}
 				itemRenderer={(item, { handleClick, modifiers }) => {
-					return <MenuItem onClick={handleClick} active={modifiers.active} text={item} />;
+					return (
+						<MenuItem
+							key={item}
+							onClick={handleClick}
+							active={modifiers.active}
+							text={item}
+						/>
+					);
 				}}
 				selectedItems={roles}
 				tagRenderer={(item) => {

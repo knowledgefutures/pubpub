@@ -67,7 +67,7 @@ type State = {
 	noteManager: NoteManager;
 };
 
-type PubContextType = State & {
+export type PubContextType = State & {
 	inPub: boolean;
 	updateLocalData: (type: string, patcher: PatchFnArg<any>) => unknown;
 	updatePubData: PatchFn<PubPageData>;

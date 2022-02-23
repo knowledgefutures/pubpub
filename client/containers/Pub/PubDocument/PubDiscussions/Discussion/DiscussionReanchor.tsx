@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, ButtonGroup, Card, Icon } from '@blueprintjs/core';
 
@@ -24,6 +24,8 @@ const DiscussionReanchor = (props: Props) => {
 		reanchorDiscussion(view, firebaseDraftRef, discussionData.id);
 		setIsActive(false);
 	};
+	const [bodyElement, setBodyElement] = useState<HTMLBodyElement | null>(null);
+	useEffect(() => setBodyElement(document.querySelector('body')), []);
 
 	return (
 		<>
@@ -37,6 +39,7 @@ const DiscussionReanchor = (props: Props) => {
 				Re-anchor
 			</Button>
 			{isActive &&
+				bodyElement &&
 				ReactDOM.createPortal(
 					<Card className="discussion-reanchor-component">
 						<p>Make a highlight in the document and then click "Re-anchor".</p>
@@ -60,7 +63,7 @@ const DiscussionReanchor = (props: Props) => {
 							</Button>
 						</ButtonGroup>
 					</Card>,
-					document.querySelector('body'),
+					bodyElement,
 				)}
 		</>
 	);

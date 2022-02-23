@@ -112,6 +112,7 @@ export default (
 		...sanitizeHashes(pubData, activePermissions),
 		attributions: pubData.attributions.map(ensureUserForAttribution),
 		draft: isRelease ? null : pubData.draft,
+		submission: isRelease ? null : pubData.submission,
 		discussions,
 		edges,
 		reviews,

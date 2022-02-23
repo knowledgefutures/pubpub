@@ -34,39 +34,40 @@ type Props = {
 	sticky?: boolean;
 };
 
-// eslint-disable-next-line react/prop-types
-const ToggleDetailsButton = ({ showingDetails, onClick }) => {
-	const label = showingDetails ? 'Hide details' : 'Show details';
-	const icon = showingDetails ? 'cross' : 'expand-all';
+type ToggleDetailsProps = {
+	showingDetails: boolean;
+	onClick: () => void;
+};
+
+const ToggleDetailsButton = (props: ToggleDetailsProps) => {
+	const label = props.showingDetails ? 'Hide details' : 'Show details';
+	const icon = props.showingDetails ? 'cross' : 'expand-all';
 	return (
 		<SmallHeaderButton
-			className={classNames('details-button', showingDetails && 'showing-details')}
+			className={classNames('details-button', props.showingDetails && 'showing-details')}
 			label={label}
 			labelPosition="left"
 			icon={icon}
-			onClick={onClick}
+			onClick={props.onClick}
 		/>
 	);
 };
 
 const PubHeader = (props: Props) => {
-	const headerRef = useRef(null);
+	const headerRef = useRef<HTMLDivElement>(null);
 	const { collabData, historyData, pubData, updateLocalData, sticky = true } = props;
 	const { communityData } = usePageContext();
 	const [showingDetails, setShowingDetails] = useState(false);
-	const [fixedHeight, setFixedHeight] = useState(null);
+	const [fixedHeight, setFixedHeight] = useState<number | null>(null);
 	const { viewportWidth } = useViewport();
 
 	const pubHeadings = getPubHeadings(pubData, collabData);
-	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-	const isMobile = viewportWidth <= mobileViewportCutoff;
+	const isMobile = viewportWidth && viewportWidth <= mobileViewportCutoff;
 
 	useSticky({
-		// @ts-expect-error ts-migrate(2322) FIXME: Type 'false | null' is not assignable to type 'boo... Remove this comment to see the full error message
-		isActive: sticky && headerRef.current,
+		isActive: sticky && !!headerRef.current,
 		target: '.pub-header-component',
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-		offset: headerRef.current ? 37 - headerRef.current.offsetHeight : 0,
+		offset: headerRef?.current?.offsetHeight ? 37 - headerRef.current.offsetHeight : 0,
 	});
 
 	const toggleDetails = () => {
@@ -75,14 +76,11 @@ const PubHeader = (props: Props) => {
 				// Fill the viewport with details
 				// +1px to take care of that pesky bottom border
 				window.scrollTo(0, 0);
-				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 				const boundingRect = headerRef.current.getBoundingClientRect();
-				// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
 				setFixedHeight(1 + window.innerHeight - boundingRect.top);
 				setShowingDetails(true);
 			} else {
 				// Fix the height of the details to that of the main header content
-				// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 				const boundingRect = headerRef.current.getBoundingClientRect();
 				setFixedHeight(boundingRect.height);
 			}

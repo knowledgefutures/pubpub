@@ -20,7 +20,6 @@ type Props = {
 	className?: string;
 	pub: Pub;
 	inCollection?: boolean;
-	isGrayscale?: boolean;
 };
 
 const PubOverviewRow = (props: Props) => {
@@ -28,7 +27,6 @@ const PubOverviewRow = (props: Props) => {
 		pub,
 		className,
 		inCollection,
-		isGrayscale = false,
 		leftIconElement = null,
 		labels = null,
 		rightElement: providedRightElement,
@@ -56,7 +54,6 @@ const PubOverviewRow = (props: Props) => {
 			leftIcon={leftIconElement || 'pubDoc'}
 			rightElement={rightElement}
 			darkenRightIcons={inCollection}
-			isGrayscale={isGrayscale}
 		/>
 	);
 };

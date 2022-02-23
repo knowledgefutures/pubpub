@@ -50,6 +50,7 @@ export const createSubmission = async ({
 		{
 			communityId: collection.communityId,
 			collectionIds: [collection.id],
+			titleKind: 'New Submission',
 		},
 		userId,
 	);

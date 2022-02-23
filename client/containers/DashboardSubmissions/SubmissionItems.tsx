@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { NonIdealState } from '@blueprintjs/core';
+import { AnchorButton, NonIdealState } from '@blueprintjs/core';
 
 import { Collection, PubsQuery } from 'types';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import { collectionUrl } from 'utils/canonicalUrls';
+import { usePageContext } from 'utils/hooks';
 
 import { OverviewRows, LoadMorePubsRow, SpecialRow } from '../DashboardOverview/overviewRows';
 import { OverviewSearchGroup, OverviewSearchFilter } from '../DashboardOverview/helpers';
@@ -50,6 +52,7 @@ const overviewSearchFilters: OverviewSearchFilter[] = [
 
 const SubmissionItems = (props: Props) => {
 	const { collection, initialPubs, initiallyLoadedAllPubs, acceptSubmissionsToggle } = props;
+	const { communityData } = usePageContext();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [filter, setFilter] = useState<OverviewSearchFilter>(pendingSearchFilter);
 	const isSearchingOrFiltering = !!filter || !!searchTerm;
@@ -80,11 +83,27 @@ const SubmissionItems = (props: Props) => {
 	const renderEmptyState = () => {
 		if (pubs.length === 0 && hasLoadedAllPubs) {
 			if (filter === pendingSearchFilter && !searchTerm) {
+				const action = acceptSubmissionsToggle || (
+					<AnchorButton
+						href={collectionUrl(communityData, collection)}
+						target="_blank"
+						outlined
+						icon="share"
+					>
+						Go to layout
+					</AnchorButton>
+				);
+
+				const description = acceptSubmissionsToggle
+					? 'Ready to start accepting submissions?'
+					: "Guests can visit this Collection's layout to start a submission.";
+
 				return (
 					<NonIdealState
 						icon="clean"
-						title="There aren't any submissions to review."
-						{...(acceptSubmissionsToggle ? { action: acceptSubmissionsToggle } : {})}
+						title="There aren't any submissions to review"
+						description={description}
+						action={action}
 					/>
 				);
 			}

@@ -31,7 +31,7 @@ const LayoutSubmissionBanner = (props: Props) => {
 							<>
 								<Editor initialContent={body} isReadOnly />
 								<AnchorButton href={`/submit/${submissionWorkflowId}`}>
-									{userId ? 'Submit' : 'Log in to submit'}
+									{userId ? 'Create a submission' : 'Log in to submit'}
 								</AnchorButton>
 							</>
 						}

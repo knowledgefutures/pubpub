@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import classNames from 'classnames';
 
 import {
 	getSubmissionStatusLabel,
 	getSubmissionTimeLabel,
 	IconLabelPair,
 } from '../DashboardOverview/overviewRows/labels';
+
 import { PubOverviewRow } from '../DashboardOverview/overviewRows';
 import { PubWithSubmission } from './types';
 import ArbitrationMenu from './ArbitrationMenu';
+
+require('./submissionRow.scss');
 
 type Props = {
 	pub: PubWithSubmission;
@@ -30,7 +34,7 @@ const SubmissionRow = (props: Props) => {
 		<PubOverviewRow
 			pub={pub}
 			leftIconElement="manually-entered-data"
-			isGrayscale={status === 'declined'}
+			className={classNames('submission-row-component', status)}
 			labels={labels}
 			rightElement={
 				<ArbitrationMenu

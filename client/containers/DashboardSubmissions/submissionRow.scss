@@ -1,0 +1,21 @@
+$accepted: #0d8050;
+$declined: #aaa;
+
+.submission-row-component {
+    &.declined {
+        .title {
+            color: #aaa;
+            text-decoration: line-through;
+        }
+        .byline {
+            color: $declined;
+        }
+    }
+    &.accepted {
+        background: rgba($accepted, 0.05);
+        .title {
+            color: $accepted;
+            font-weight: bold;
+        }
+    }
+}

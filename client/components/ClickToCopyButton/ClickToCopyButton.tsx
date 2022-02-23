@@ -16,6 +16,7 @@ type Props = {
 	tooltipPosition?: string;
 	usePortal?: boolean;
 	small?: boolean;
+	outlined?: boolean;
 };
 
 const ClickToCopyButton = (props: Props) => {
@@ -31,6 +32,7 @@ const ClickToCopyButton = (props: Props) => {
 		tooltipPosition = Position.TOP,
 		usePortal = true,
 		small = false,
+		outlined = false,
 	} = props;
 	const [hasCopied, setHasCopied] = useState(false);
 	const [copyState, copyToClipboard] = useCopyToClipboard();
@@ -61,6 +63,7 @@ const ClickToCopyButton = (props: Props) => {
 				icon={icon as any}
 				onClick={handleClick}
 				disabled={disabled}
+				outlined={outlined}
 			>
 				{children}
 			</Button>

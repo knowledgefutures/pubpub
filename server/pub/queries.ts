@@ -13,6 +13,7 @@ export const createPub = async (
 		communityId,
 		collectionIds,
 		slug,
+		titleKind = 'Untitled Pub',
 		...restArgs
 	}: { communityId: string; collectionIds?: string[]; slug?: string; [key: string]: any },
 	actorId?: string,
@@ -24,7 +25,7 @@ export const createPub = async (
 
 	const newPub = await Pub.create(
 		{
-			title: `Untitled Pub on ${dateString}`,
+			title: `${titleKind} on ${dateString}`,
 			slug: newPubSlug,
 			communityId,
 			headerBackgroundColor: 'light',

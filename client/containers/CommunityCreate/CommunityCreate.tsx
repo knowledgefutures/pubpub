@@ -154,7 +154,7 @@ const CommunityCreate = () => {
 										Terms of Service
 									</a>{' '}
 									and{' '}
-									<a href="legal/privacy" target="_blank">
+									<a href="/legal/privacy" target="_blank">
 										Privacy Policy
 									</a>
 									.

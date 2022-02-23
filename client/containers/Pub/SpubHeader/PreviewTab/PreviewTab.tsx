@@ -25,6 +25,7 @@ const PreviewTab = (props: Props) => {
 	const { latestKey, timestamps } = historyData;
 	const latestTimestamp = timestamps[latestKey];
 	const { collabData } = usePubContext();
+
 	return (
 		<PubHeaderBackground
 			className="spub-header-component"

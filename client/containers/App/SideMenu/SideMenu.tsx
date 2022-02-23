@@ -16,11 +16,12 @@ type MenuItem = {
 	href: string;
 	validScopes?: ('community' | 'collection' | 'pub')[];
 	manageRequired?: true;
+	count?: number;
 };
 
 const SideMenu = () => {
 	const { locationData, communityData, scopeData, featureFlags } = usePageContext();
-	const { activePermissions, elements } = scopeData;
+	const { activePermissions, activeCounts, elements } = scopeData;
 	const { canManage } = activePermissions;
 	const { activeTargetType, activeCollection } = elements;
 	const collectionSlug = activeCollection && activeCollection.slug;
@@ -69,16 +70,18 @@ const SideMenu = () => {
 				pubSlug,
 				mode: 'reviews',
 			}),
+			count: activeCounts.reviews,
 		},
 		featureFlags.submissions && {
 			title: 'Submissions',
-			icon: 'inbox',
+			icon: 'manually-entered-data',
 			manageRequired: true,
 			validScopes: ['collection'],
 			href: getDashUrl({
 				collectionSlug,
 				mode: 'submissions',
 			}),
+			count: activeCounts.submissions,
 		},
 		{
 			title: 'Connections',
@@ -152,6 +155,7 @@ const SideMenu = () => {
 								<a href={item.href} className="content-title">
 									<Icon className="side-icon" icon={item.icon} />
 									<span className="side-text">{item.title}</span>
+									{item.count ? <div className="count">{item.count}</div> : null}
 								</a>
 							</div>
 						);

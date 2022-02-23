@@ -9,6 +9,9 @@ import {
 	Pub,
 	PublicPermissions,
 	Release,
+	ReviewNew,
+	Submission,
+	SubmissionWorkflow,
 } from 'server/models';
 
 import { ensureSerialized, stripFalsyIdsFromQuery } from './util';
@@ -29,6 +32,69 @@ const getScopeIdsObject = ({ pubId, collectionId, communityId }): Scope => {
 	return { communityId };
 };
 
+const getActiveSubmissionsCount = ({ activeCollection }) => {
+	if (activeCollection) {
+		return Submission.count({
+			where: {
+				status: 'pending',
+			},
+			include: [
+				{
+					model: SubmissionWorkflow,
+					as: 'submissionWorkflow',
+					required: true,
+					where: { collectionId: activeCollection.id },
+				},
+			],
+		});
+	}
+	return 0;
+};
+
+const getActiveReviewsCount = ({ activeCommunity, activeCollection, activePub }) => {
+	if (activePub) {
+		return ReviewNew.count({ where: { status: 'open', pubId: activePub.id } });
+	}
+	if (activeCollection) {
+		return ReviewNew.count({
+			where: { status: 'open' },
+			include: [
+				{
+					model: Pub,
+					as: 'pub',
+					required: true,
+					where: { communityId: activeCommunity.id },
+					include: [
+						{
+							model: CollectionPub,
+							as: 'collectionPubs',
+							required: true,
+							where: { collectionId: activeCollection.id },
+						},
+					],
+				},
+			],
+		});
+	}
+	return ReviewNew.count({
+		where: { status: 'open' },
+		include: [
+			{ model: Pub, as: 'pub', required: true, where: { communityId: activeCommunity.id } },
+		],
+	});
+};
+
+const getActiveCounts = async (isDashboard: boolean, scopeElements) => {
+	if (isDashboard) {
+		const [reviews, submissions] = await Promise.all([
+			getActiveReviewsCount(scopeElements),
+			getActiveSubmissionsCount(scopeElements),
+		]);
+		return { reviews, submissions };
+	}
+	return { reviews: 0, submissions: 0 };
+};
+
 /* getScopeData can be called from either a route (e.g. to authenticate */
 /* whether a user has access to /pub/example), or it can be called from */
 /* an API route to verify a user's permissions. When called from a route */
@@ -47,18 +113,17 @@ export default async (scopeInputs) => {
 	const scopeElements = await getScopeElements(scopeInputs);
 	const publicPermissionsData = await getPublicPermissionsData(scopeElements);
 	const scopeMemberData = await getScopeMemberData(scopeInputs, scopeElements);
-	const activePermissions = await getActivePermissions(
-		scopeInputs,
-		scopeElements,
-		publicPermissionsData,
-		scopeMemberData,
-	);
+	const [activePermissions, activeCounts] = await Promise.all([
+		getActivePermissions(scopeInputs, scopeElements, publicPermissionsData, scopeMemberData),
+		getActiveCounts(scopeInputs.isDashboard, scopeElements),
+	]);
 
 	return {
 		elements: scopeElements,
 		optionsData: publicPermissionsData,
 		memberData: scopeMemberData,
 		activePermissions,
+		activeCounts,
 		scope: getScopeIdsObject(scopeElements.activeIds),
 	};
 };

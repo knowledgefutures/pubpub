@@ -10,7 +10,7 @@ const DashboardSubmissionWorkflowFrame = (props: Props) => {
 			{...props}
 			className="dashboard-submission-workflow-container"
 			title="Submission Workflow"
-			icon="inbox"
+			icon="manually-entered-data"
 		/>
 	);
 };

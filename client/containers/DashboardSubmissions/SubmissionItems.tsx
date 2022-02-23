@@ -17,6 +17,7 @@ type Props = {
 	collection: Collection;
 	initialPubs: PubWithSubmission[];
 	initiallyLoadedAllPubs: boolean;
+	acceptSubmissionsToggle: null | React.ReactElement;
 };
 
 const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
@@ -36,7 +37,7 @@ const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
 
 const pendingSearchFilter: OverviewSearchFilter = {
 	id: 'pending',
-	title: 'Pending',
+	title: 'Submitted',
 	query: queriesForSubmissionPubs.pending,
 };
 
@@ -48,7 +49,7 @@ const overviewSearchFilters: OverviewSearchFilter[] = [
 ];
 
 const SubmissionItems = (props: Props) => {
-	const { collection, initialPubs, initiallyLoadedAllPubs } = props;
+	const { collection, initialPubs, initiallyLoadedAllPubs, acceptSubmissionsToggle } = props;
 	const [searchTerm, setSearchTerm] = useState('');
 	const [filter, setFilter] = useState<OverviewSearchFilter>(pendingSearchFilter);
 	const isSearchingOrFiltering = !!filter || !!searchTerm;
@@ -79,7 +80,13 @@ const SubmissionItems = (props: Props) => {
 	const renderEmptyState = () => {
 		if (pubs.length === 0 && hasLoadedAllPubs) {
 			if (filter === pendingSearchFilter && !searchTerm) {
-				return <NonIdealState icon="clean" title="There aren't any submissions yet." />;
+				return (
+					<NonIdealState
+						icon="clean"
+						title="There aren't any submissions to review."
+						{...(acceptSubmissionsToggle ? { action: acceptSubmissionsToggle } : {})}
+					/>
+				);
 			}
 			return <SpecialRow>No matching Submissions.</SpecialRow>;
 		}

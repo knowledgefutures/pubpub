@@ -87,7 +87,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 					title={
 						<EditableText
 							className="banner-title-text"
-							placeholder="Click to add banner title"
+							placeholder='Click to add banner title (e.g. "Call for Submissions")'
 							value={workflow.title}
 							onChange={(title) => updateWorkflow({ title })}
 						/>

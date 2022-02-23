@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@blueprintjs/core';
 
 import { MenuButton, MenuItem } from 'components/Menu';
@@ -14,17 +14,25 @@ type Props = {
 const AcceptSubmissionsToggle = (props: Props) => {
 	const { workflow, onUpdateWorkflow } = props;
 	const { enabled, collectionId } = workflow;
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSetEnabled = async (nextEnabled: boolean) => {
 		const patch = { enabled: nextEnabled };
+		setIsLoading(true);
 		await updateSubmissionWorkflow(patch, collectionId);
+		setIsLoading(false);
 		onUpdateWorkflow(patch);
 	};
 
 	return (
 		<>
 			{!enabled && (
-				<Button intent="primary" icon="globe" onClick={() => handleSetEnabled(true)}>
+				<Button
+					intent="primary"
+					icon="globe"
+					onClick={() => handleSetEnabled(true)}
+					loading={isLoading}
+				>
 					Enable submissions
 				</Button>
 			)}

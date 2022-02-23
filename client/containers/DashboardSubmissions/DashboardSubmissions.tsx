@@ -26,20 +26,24 @@ const DashboardSubmissions = (props: Props) => {
 		},
 	} = usePageContext();
 
+	const acceptSubmissionsToggle = (
+		<AcceptSubmissionsToggle
+			workflow={submissionWorkflow}
+			onUpdateWorkflow={(next) =>
+				setSubmissionWorkflow((current) => ({ ...current, ...next }))
+			}
+		/>
+	);
+
 	return (
 		<DashboardFrame
 			className="dashboard-submissions-container"
 			title="Submissions"
-			icon="inbox"
+			icon="manually-entered-data"
 			controls={
 				<>
 					<SubmissionWorkflowButton />
-					<AcceptSubmissionsToggle
-						workflow={submissionWorkflow}
-						onUpdateWorkflow={(next) =>
-							setSubmissionWorkflow((current) => ({ ...current, ...next }))
-						}
-					/>
+					{acceptSubmissionsToggle}
 				</>
 			}
 		>
@@ -47,6 +51,9 @@ const DashboardSubmissions = (props: Props) => {
 				initialPubs={initialPubs}
 				collection={activeCollection}
 				initiallyLoadedAllPubs={initiallyLoadedAllPubs}
+				acceptSubmissionsToggle={
+					submissionWorkflow.enabled ? null : acceptSubmissionsToggle
+				}
 			/>
 		</DashboardFrame>
 	);

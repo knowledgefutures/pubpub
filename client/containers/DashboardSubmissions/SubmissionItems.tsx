@@ -39,7 +39,7 @@ const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
 
 const pendingSearchFilter: OverviewSearchFilter = {
 	id: 'pending',
-	title: 'Submitted',
+	title: 'Received',
 	query: queriesForSubmissionPubs.pending,
 };
 

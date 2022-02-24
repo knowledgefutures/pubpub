@@ -155,6 +155,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 				<EmailPreview
 					{...sharedEmailPreviewProps}
 					kind="received"
+					collectionTitle={collection.title}
 					body={
 						<WorkflowTextEditor
 							placeholder="Custom email text"
@@ -182,6 +183,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 							<EmailPreview
 								{...sharedEmailPreviewProps}
 								kind="accepted"
+								collectionTitle={collection.title}
 								body={
 									<WorkflowTextEditor
 										placeholder="Custom email text"
@@ -201,6 +203,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 							<EmailPreview
 								{...sharedEmailPreviewProps}
 								kind="declined"
+								collectionTitle={collection.title}
 								body={
 									<WorkflowTextEditor
 										placeholder="Custom email text"

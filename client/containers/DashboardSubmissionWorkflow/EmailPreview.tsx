@@ -12,10 +12,11 @@ type Props = {
 	cc: null | string;
 	body: React.ReactNode;
 	community: Community;
+	collectionTitle: string;
 } & Pick<React.ComponentProps<typeof SubmissionEmail>, 'kind'>;
 
 const EmailPreview = (props: Props) => {
-	const { from, to, cc, body, community, kind } = props;
+	const { from, to, cc, body, community, kind, collectionTitle } = props;
 
 	return (
 		<div className="email-preview-component">
@@ -40,6 +41,7 @@ const EmailPreview = (props: Props) => {
 				<SubmissionEmail
 					submitterName="Submitter Name"
 					submissionTitle="My Example Submission"
+					collectionTitle={collectionTitle}
 					community={community}
 					customText={body}
 					kind={kind}

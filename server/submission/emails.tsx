@@ -3,8 +3,9 @@ import ReactDOMServer from 'react-dom/server';
 
 import * as types from 'types';
 import { SubmissionEmail, Editor } from 'components';
-import { Community, SubmissionWorkflow, User } from 'server/models';
+import { Collection, Community, SubmissionWorkflow, User } from 'server/models';
 import { sendEmail } from 'server/utils/email';
+import { pubUrl } from 'utils/canonicalUrls';
 
 type SendEmailOptions = {
 	previousStatus: types.SubmissionStatus;
@@ -62,20 +63,25 @@ export const sendSubmissionEmail = async (options: SendEmailOptions) => {
 	const emailKind = getEmailKindToSend(previousStatus, submission.status);
 	if (emailKind) {
 		const { submitterName, submitterEmails } = await getSubmittersInfo(submission.pub.members);
-		const [community, submissionWorkflow]: [types.Community, types.SubmissionWorkflow] =
-			await Promise.all([
-				Community.findOne({ where: { id: submission.pub.communityId } }),
-				SubmissionWorkflow.findOne({
-					where: { id: submission.submissionWorkflowId },
-				}),
-			]);
+		const [community, submissionWorkflow]: [
+			types.Community,
+			types.DefinitelyHas<types.SubmissionWorkflow, 'collection'>,
+		] = await Promise.all([
+			Community.findOne({ where: { id: submission.pub.communityId } }),
+			SubmissionWorkflow.findOne({
+				where: { id: submission.submissionWorkflowId },
+				include: [{ model: Collection, as: 'collection' }],
+			}),
+		]);
 		const customText = deriveEmailCustomText(emailKind, submissionWorkflow, providedCustomText);
 		const html = ReactDOMServer.renderToString(
 			<SubmissionEmail
 				kind={emailKind}
 				customText={customText && <Editor initialContent={customText} isReadOnly />}
 				submissionTitle={submission.pub.title}
+				collectionTitle={submissionWorkflow.collection.title}
 				submitterName={submitterName}
+				submissionUrl={pubUrl(community, submission.pub)}
 				community={community}
 			/>,
 		);

@@ -7,13 +7,22 @@ type Props = {
 	community: Community;
 	customText: React.ReactNode;
 	submissionTitle: string;
+	collectionTitle: string;
 	submissionUrl?: string;
 	submitterName: React.ReactNode;
 	kind: SubmissionEmailKind;
 };
 
 const SubmissionEmail = (props: Props) => {
-	const { community, customText, submissionTitle, submissionUrl, submitterName, kind } = props;
+	const {
+		community,
+		customText,
+		submissionTitle,
+		collectionTitle,
+		submissionUrl,
+		submitterName,
+		kind,
+	} = props;
 
 	const communityLink = <a href={communityUrl(community)}>{community.title}</a>;
 
@@ -25,7 +34,7 @@ const SubmissionEmail = (props: Props) => {
 
 	const submissionNounPhrase = (
 		<>
-			Your submission <i>{submissionLink}</i> to {communityLink}
+			Your submission {submissionLink} to <i>{collectionTitle}</i> in {communityLink}
 		</>
 	);
 

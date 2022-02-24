@@ -10,7 +10,7 @@ export const createSubmissionWorkflow = (
 	return apiFetch.post('/api/submissionWorkflows', {
 		...workflow,
 		collectionId,
-		enabled: false,
+		enabled: true,
 	});
 };
 

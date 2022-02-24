@@ -9,11 +9,11 @@ const Pricing = () => {
 			<GridWrapper>
 				<h1>PubPub is free.</h1>
 				<p className="description top">
-					PubPub's goal is to makes knowledge creation accessible to everyone. To fulfill
+					PubPub's goal is to make knowledge creation accessible to everyone. To fulfill
 					this mission, we offer access to PubPub and all features for free.
 					<sup>*</sup> We do not sell data or rely on ancillary business streams. To
 					ensure our work is community-driven and sustainable for the long term, we offer
-					two ways for users to support us.
+					two ways for users to support PubPub.
 				</p>
 				<div className="pricing-tiers">
 					<div className="option bp3-card bp3-elevation-1">

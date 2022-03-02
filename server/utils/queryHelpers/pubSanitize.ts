@@ -1,16 +1,28 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { CollectionPub, Discussion, Pub, PubAttribution, Release } from 'types';
+import {
+	Collection,
+	CollectionPub,
+	DefinitelyHas,
+	Discussion,
+	Pub,
+	PubAttribution,
+	Release,
+} from 'types';
 
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeReviews from './reviewsSanitize';
 import { sanitizePubEdges } from './sanitizePubEdge';
+
+type CollectionPubWithAttributions = CollectionPub & {
+	collection: DefinitelyHas<Collection, 'attributions'>;
+};
 
 export type SanitizedPubData = Pub & {
 	viewHash: string | null;
 	editHash: string | null;
 	attributions: PubAttribution[];
 	discussions: Discussion[];
-	collectionPubs: CollectionPub[];
+	collectionPubs: CollectionPubWithAttributions[];
 	isReadOnly: boolean;
 	isRelease: boolean;
 	releases: Release[];

@@ -1,11 +1,15 @@
 /* eslint-disable import/prefer-default-export */
 import Cite from 'citation-js';
 
+import * as types from 'types';
 import getCollectionDoi from 'utils/collections/getCollectionDoi';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { pubUrl } from 'utils/canonicalUrls';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { renderJournalCitationForCitations } from 'utils/citations';
+import { getAllPubContributors } from 'utils/contributors';
+
+import { SanitizedPubData } from '../queryHelpers';
 
 const getDatePartsObject = (date) => ({
 	'date-parts': [date.getFullYear(), date.getMonth() + 1, date.getDate()],
@@ -37,36 +41,26 @@ const getCollectionLevelData = (collection) => {
 	};
 };
 
-export const generateCitationHtml = async (pubData, communityData) => {
+export const generateCitationHtml = async (
+	pubData: SanitizedPubData,
+	communityData: types.Community,
+) => {
 	// TODO: We need to set the updated times properly, which are likely stored in firebase.
 	const pubIssuedDate = getPubPublishedDate(pubData);
 	const pubLink = pubUrl(communityData, pubData);
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
-	const authorData = pubData.attributions
-		.filter((attribution) => {
-			return attribution.isAuthor;
-		})
-		.sort((foo, bar) => {
-			if (foo.order < bar.order) {
-				return -1;
-			}
-			if (foo.order > bar.order) {
-				return 1;
-			}
-			return 0;
-		})
-		.map((attribution) => {
-			return {
-				given: attribution.user.firstName,
-				family: attribution.user.lastName,
-			};
-		});
-	const authorsEntry = authorData.length ? { author: authorData } : {};
+	const authors = getAllPubContributors(pubData).map(({ user }) => {
+		return {
+			given: user.firstName,
+			family: user.lastName,
+		};
+	});
+	const authorEntry = authors.length ? { author: authors } : {};
 	const commonData = {
 		// @ts-expect-error ts-migrate(2783) FIXME: 'type' is specified more than once, so this usage ... Remove this comment to see the full error message
 		type: 'article-journal',
 		title: pubData.title,
-		...authorsEntry,
+		...authorEntry,
 		...renderJournalCitationForCitations(
 			primaryCollection?.kind,
 			communityData.citeAs,

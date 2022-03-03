@@ -71,7 +71,10 @@ app.get('/email/:templateSlug', async (req, res, next) => {
 			render(
 				component({
 					community,
-					...(await prepData(initialData)),
+					...(await prepData({
+						scope: initialData.scopeData.scope,
+						user: initialData.loginData,
+					})),
 				}),
 			),
 		);

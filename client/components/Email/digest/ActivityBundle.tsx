@@ -15,7 +15,7 @@ type StyleProps = {
 	accentColorDark?: string;
 };
 
-type PropTypes = {
+type Props = {
 	isWithTitle?: boolean;
 	accentColorDark: string;
 	groupedItems: DedupedActivityItems;
@@ -31,6 +31,9 @@ const H3Style = styled.h3`
 	text-align: left;
 	letter-spacing: 0.01em;
 	display: inline-block;
+	a {
+		text-decoration: none;
+	}
 `;
 
 const ListItemStyle = styled.li`
@@ -42,24 +45,26 @@ const SpanStyle = styled.span<StyleProps>`
 	padding-right: 9px;
 `;
 
-export const ActivityBundle = (props: PropTypes) => (
-	<ListItemStyle>
-		{props.isWithTitle && (
-			<>
-				<SpanStyle>
-					<Icon
-						iconSize={12}
-						icon={props.groupedItems.icon}
-						color={props.accentColorDark}
-					/>
-				</SpanStyle>
-				<H3Style>{truncate(props.groupedItems.title)}</H3Style>
-			</>
-		)}
-		<ActivityBundleRow
-			associations={props.associations}
-			userId={props.userId}
-			items={Object.values(props.groupedItems.items)}
-		/>
-	</ListItemStyle>
-);
+export const ActivityBundle = (props: Props) => {
+	const {
+		groupedItems: { icon, items, title, url },
+	} = props;
+	const truncatedTitle = truncate(title);
+	return (
+		<ListItemStyle>
+			{props.isWithTitle && (
+				<>
+					<SpanStyle>
+						<Icon iconSize={12} icon={icon} color={props.accentColorDark} />
+					</SpanStyle>
+					<H3Style>{url ? <a href={url}>{truncatedTitle}</a> : truncatedTitle}</H3Style>
+				</>
+			)}
+			<ActivityBundleRow
+				associations={props.associations}
+				userId={props.userId}
+				items={Object.values(items)}
+			/>
+		</ListItemStyle>
+	);
+};

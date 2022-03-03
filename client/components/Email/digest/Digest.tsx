@@ -16,6 +16,7 @@ type AffectedObjectId = string;
 export type DedupedActivityItems = {
 	items: Record<DisplayKey, ActivityItem>;
 	title: string;
+	url: string;
 	icon: IconName;
 };
 

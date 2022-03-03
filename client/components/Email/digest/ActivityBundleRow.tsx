@@ -16,8 +16,7 @@ type ActivityBundleRowProps = {
 };
 
 const ExcerptSpanStyle = styled.span`
-	display: inline-block;
-	width: 460px;
+	display: block;
 	margin: 10px 0 0;
 	overflow: hidden;
 	padding: 8px 11px 7px;
@@ -100,7 +99,7 @@ export const ActivityBundleRow = (props: ActivityBundleRowProps) => {
 							</tr>
 							{renderedItem.excerpt && (
 								<tr>
-									<td>
+									<td colSpan={2}>
 										<ExcerptSpanStyle>{renderedItem.excerpt}</ExcerptSpanStyle>
 									</td>
 								</tr>

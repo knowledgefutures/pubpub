@@ -11,6 +11,7 @@ import { ActivityAssociations, ActivityItem, Community, Scope, User } from 'type
 import { Digest } from 'components/Email';
 import { globals, reset } from 'components/Email/styles';
 import { fetchActivityItems } from 'server/activityItem/fetch';
+import { collectionUrl, pubUrl } from 'utils/canonicalUrls';
 
 type KeyedActivityItem = ActivityItem & {
 	displayKey: string;
@@ -42,6 +43,20 @@ const getAffectedObject = (item: ActivityItem, associations: ActivityAssociation
 		id: item.communityId,
 		title,
 	};
+};
+
+const getAffectedObjectUrl = (item: ActivityItem, associations: ActivityAssociations) => {
+	const { pubId, collectionId } = item;
+	const community = Object.values(associations.community)[0];
+	const pub = pubId && associations.pub[pubId];
+	const collection = collectionId && associations.collection[collectionId];
+	if (pub) {
+		return pubUrl(community, pub);
+	}
+	if (collection) {
+		return collectionUrl(community, collection);
+	}
+	return null;
 };
 
 const getAffectedObjectIcon = (item: ActivityItem) =>
@@ -84,6 +99,7 @@ const dedupActivityItems =
 						),
 					title: getAffectedObject(items[0], associations)?.title,
 					icon: getAffectedObjectIcon(items[0]),
+					url: getAffectedObjectUrl(items[0], associations),
 				},
 			}),
 			{},

@@ -5,6 +5,7 @@ export const PageContext = React.createContext({});
 
 export const PendingChanges = React.createContext({
 	pendingPromise: (x) => x,
+	pendingCount: 0,
 });
 
 export const usePageContext = (previewContextObject) => {

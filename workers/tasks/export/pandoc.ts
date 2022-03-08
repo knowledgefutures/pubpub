@@ -94,7 +94,7 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: Pa
 			date: {
 				day: dateFormat(publishedDateString, 'dd'),
 				month: dateFormat(publishedDateString, 'mm'),
-				year: dateFormat(publishedDateString, 'yy'),
+				year: dateFormat(publishedDateString, 'yyyy'),
 			},
 		}),
 		journal: {
@@ -103,7 +103,7 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: Pa
 				...(primaryCollectionMetadata.printIssn && {
 					pissn: primaryCollectionMetadata.printIssn,
 				}),
-				...(primaryCollectionMetadata.printIssn && {
+				...(primaryCollectionMetadata.electronicIssn && {
 					eissn: primaryCollectionMetadata.electronicIssn,
 				}),
 			}),

@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 
 export const useViewport = () => {
-	const [viewportWidth, setViewportWidth] = useState(null);
+	const [viewportWidth, setViewportWidth] = useState<number | null>(null);
+	const [viewportHeight, setViewportHeight] = useState<number | null>(null);
 
 	useEffect(() => {
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
 		setViewportWidth(window.innerWidth);
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-		const listener = () => setViewportWidth(window.innerWidth);
+		setViewportHeight(window.innerHeight);
+		const listener = () => {
+			setViewportHeight(window.innerHeight);
+			setViewportWidth(window.innerWidth);
+		};
 		window.addEventListener('resize', listener);
 		return () => window.removeEventListener('resize', listener);
 	}, []);
 
-	return { viewportWidth };
+	return { viewportWidth, viewportHeight };
 };

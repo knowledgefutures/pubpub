@@ -95,7 +95,6 @@ const MembersOptions = (props: MembersOptionsProps) => {
 			membersData: { members },
 		},
 	} = props;
-	// @ts-expect-error ts-migrate(2339) FIXME: Property 'pendingCount' does not exist on type '{ ... Remove this comment to see the full error message
 	const { pendingCount } = usePendingChanges();
 	const { scopeData } = usePageContext();
 	const { canManage } = scopeData.activePermissions;

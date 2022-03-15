@@ -9,6 +9,7 @@ import { getEmptyDoc } from 'components/Editor';
 import { usePubContext } from '../pubHooks';
 import InstructionsTab from './InstructionsTab';
 import SubmissionTab from './SubmissionTab';
+import ContributorsTab from './ContributorsTab';
 import PreviewTab from './PreviewTab';
 
 require('./spubHeader.scss');
@@ -62,7 +63,8 @@ const SpubHeader = (props: Props) => {
 	};
 	const instructionTabTitle = renderTabTitle('align-left', 'Instructions');
 	const submissionTabTitle = renderTabTitle('manually-entered-data', 'Submission');
-	const previewTabTitle = renderTabTitle('eye-open', 'Preview & Submit');
+	const previewTabTitle = renderTabTitle('eye-open', 'Preview');
+	const contributorsTabTitle = renderTabTitle('people', 'Contributors');
 	const maybeActiveClass = (tabId: string) => `${tabId === selectedTab ? 'active' : 'inactive'}`;
 
 	useEffect(() => {
@@ -87,24 +89,31 @@ const SpubHeader = (props: Props) => {
 					/>
 				}
 			/>
-
 			<Tab
 				id="submission"
 				title={submissionTabTitle}
-				className={`tab-panel ${maybeActiveClass('submission')}`}
+				className={`tab-panel submission ${maybeActiveClass('submission')}`}
 				panel={
 					<SubmissionTab
+						pub={props.pubData}
 						abstract={abstract}
 						onUpdatePub={updateAndSavePubData}
 						onUpdateAbstract={updateAbstract}
-						pub={props.pubData}
 					/>
+				}
+			/>
+			<Tab
+				className={`tab-panel ${maybeActiveClass('contributors')}`}
+				id="contributors"
+				title={contributorsTabTitle}
+				panel={
+					<ContributorsTab pubData={props.pubData} onUpdatePub={updateAndSavePubData} />
 				}
 			/>
 			<Tab
 				id="preview"
 				title={previewTabTitle}
-				className={`${maybeActiveClass('preview')}`}
+				className={`tab-panel ${maybeActiveClass('preview')}`}
 				panel={
 					<PreviewTab
 						updateHistoryData={updateHistoryData}

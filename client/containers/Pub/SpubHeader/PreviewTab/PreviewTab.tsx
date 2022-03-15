@@ -27,73 +27,63 @@ const PreviewTab = (props: Props) => {
 	const { collabData } = usePubContext();
 
 	return (
-		<PubHeaderBackground
-			className="spub-header-component"
-			communityData={communityData}
-			pubData={props.pubData}
-		>
+		<PubHeaderBackground communityData={communityData} pubData={props.pubData}>
 			<GridWrapper containerClassName="pub">
-				<div className="spub-header-content-component">
-					<div className="title-group-component">
-						{pubData.title && (
-							<h1 className="title">
-								<span className="text-wrapper">{pubData.title}</span>
-							</h1>
-						)}
-						{pubData.description && (
-							<h3 className="description pub-header-themed-secondary">
-								<span className="text-wrapper">{pubData.description}</span>
-							</h3>
-						)}
-						<PubByline pubData={pubData} />
-						<div className="draft-submit-buttons-component">
-							<ResponsiveHeaderButton
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '{ icon: string; className: string; active: a... Remove this comment to see the full error message
-								icon="history"
-								className="draft-history-button"
-								active={historyData.isViewingHistory}
-								outerLabel={getHistoryButtonLabelForTimestamp(
-									latestTimestamp,
-									'draft last updated',
-									'draft created',
-								)}
-								disabled={historyData.loadedIntoHistory}
-								onClick={() =>
-									props.updateHistoryData({
-										isViewingHistory: !historyData.isViewingHistory,
-									})
-								}
-							/>
-							<DialogLauncher
-								renderLauncherElement={({ openDialog }) => (
-									<ResponsiveHeaderButton
-										// @ts-expect-error ts-migrate(2322) FIXME: Type '{ icon: string; tagName: string; href: strin... Remove this comment to see the full error message
-										className="submit-button"
-										disabled={collabData.status === 'connecting'}
-										onClick={openDialog}
-										icon={
-											<Icon
-												iconSize={13}
-												className="submit-icon"
-												icon="saved"
-											/>
-										}
-										label={{
-											top: 'Submit Pub',
-											bottom: 'finish your submission',
-										}}
-									/>
-								)}
-							>
-								{({ isOpen, onClose }) => (
-									<SubmitDialog
-										submission={props.pubData.submission}
-										isOpen={isOpen}
-										onClose={onClose}
-									/>
-								)}
-							</DialogLauncher>
-						</div>
+				<div className="title-group-component">
+					{pubData.title && (
+						<h1 className="title">
+							<span className="text-wrapper">{pubData.title}</span>
+						</h1>
+					)}
+					{pubData.description && (
+						<h3 className="description pub-header-themed-secondary">
+							<span className="text-wrapper">{pubData.description}</span>
+						</h3>
+					)}
+					<PubByline pubData={pubData} />
+					<div className="draft-submit-buttons-component">
+						<ResponsiveHeaderButton
+							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ icon: string; className: string; active: a... Remove this comment to see the full error message
+							icon="history"
+							className="draft-history-button"
+							active={historyData.isViewingHistory}
+							outerLabel={getHistoryButtonLabelForTimestamp(
+								latestTimestamp,
+								'draft last updated',
+								'draft created',
+							)}
+							disabled={historyData.loadedIntoHistory}
+							onClick={() =>
+								props.updateHistoryData({
+									isViewingHistory: !historyData.isViewingHistory,
+								})
+							}
+						/>
+						<DialogLauncher
+							renderLauncherElement={({ openDialog }) => (
+								<ResponsiveHeaderButton
+									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ icon: string; tagName: string; href: strin... Remove this comment to see the full error message
+									className="submit-button"
+									disabled={collabData.status === 'connecting'}
+									onClick={openDialog}
+									icon={
+										<Icon iconSize={13} className="submit-icon" icon="saved" />
+									}
+									label={{
+										top: 'Submit Pub',
+										bottom: 'finish your submission',
+									}}
+								/>
+							)}
+						>
+							{({ isOpen, onClose }) => (
+								<SubmitDialog
+									submission={props.pubData.submission}
+									isOpen={isOpen}
+									onClose={onClose}
+								/>
+							)}
+						</DialogLauncher>
 					</div>
 				</div>
 			</GridWrapper>

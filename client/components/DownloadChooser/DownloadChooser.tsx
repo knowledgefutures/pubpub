@@ -86,12 +86,14 @@ const DownloadChooser = (props: Props) => {
 							icon="download"
 							text={`Download ${extension.toUpperCase()}`}
 							onClick={() => window.open(url)}
+							small={isSmall}
 						/>
 						<Button
 							text="Remove file"
 							icon="trash"
 							onClick={() => updateDownloads(null)}
 							loading={isRemoving}
+							small={isSmall}
 						/>
 					</>
 				)}

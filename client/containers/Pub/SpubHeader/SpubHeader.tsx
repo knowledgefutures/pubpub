@@ -86,6 +86,7 @@ const SpubHeader = (props: Props) => {
 				panel={
 					<InstructionsTab
 						submissionWorkflow={props.pubData.submission.submissionWorkflow}
+						onBeginSubmission={() => setSelectedTab('submission')}
 					/>
 				}
 			/>

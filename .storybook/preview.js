@@ -4,6 +4,7 @@ import { addDecorator, addParameters } from '@storybook/react';
 
 import { PageContext } from 'utils/hooks';
 import { communityData, locationData, loginData, scopeData } from 'utils/storybook/data';
+import { AccentStyle } from 'components';
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -13,6 +14,7 @@ require('styles/base.scss');
 addDecorator((storyFn) => {
 	return (
 		<PageContext.Provider value={{ communityData, locationData, loginData, scopeData }}>
+			<AccentStyle communityData={communityData} isNavHidden={false} />
 			{storyFn()}
 		</PageContext.Provider>
 	);

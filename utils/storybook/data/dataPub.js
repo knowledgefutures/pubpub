@@ -1,3 +1,5 @@
+import { getEmptyDoc } from 'client/components/Editor';
+
 export default {
 	id: '00f9aaaf-0468-4590-9b86-1a2bff4ffe57',
 	slug: '6pewbpry',
@@ -13,10 +15,8 @@ export default {
 	draftEditHash: 'eyy8hltx',
 	draftViewHash: 's5mjfpdz',
 	doi: '10.21428/eea8ec7d.4c3a0515',
-	labels: null,
 	canManage: true,
 	review: null,
-	downloads: null,
 	licenseSlug: 'cc-by',
 	communityId: '7808da6b-94d1-436d-ad79-2e036a8e4428',
 	createdAt: '2019-04-02T18:12:05.538Z',
@@ -24,6 +24,70 @@ export default {
 	footnotes: [],
 	citations: [],
 	releases: [],
+	scopeSummaryId: null,
+	submission: {
+		id: '12089e31h3f23bf-f23f23f23f2-f23f32bu234v23-f2323g',
+		pubId: '1',
+		status: 'incomplete',
+		submittedAt: 'noon',
+		abstract: {
+			type: 'doc',
+			attrs: {
+				meta: {},
+			},
+			content: [
+				{
+					type: 'paragraph',
+					content: [
+						{
+							type: 'text',
+							text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fringilla phasellus faucibus scelerisque eleifend donec pretium vulputate sapien nec. Nulla porttitor massa id neque aliquam vestibulum morbi blandit. Sed adipiscing diam donec adipiscing tristique. Aliquet eget sit amet tellus cras adipiscing enim. Urna condimentum mattis pellentesque id. Sed arcu non odio euismod lacinia at. Velit egestas dui id ornare. Enim diam vulputate ut pharetra sit amet aliquam id diam. Amet consectetur adipiscing elit pellentesque habitant morbi tristique senectus. Placerat duis ultricies lacus sed turpis tincidunt. Netus et malesuada fames ac turpis egestas sed tempus. Sit amet commodo nulla facilisi nullam vehicula ipsum a arcu. Nam at lectus urna duis convallis convallis tellus. Id aliquet risus feugiat in ante metus. Duis tristique sollicitudin nibh sit amet. Sed adipiscing diam donec adipiscing tristique risus. Fringilla est ullamcorper eget nulla facilisi. Mi eget mauris pharetra et. Vel orci porta non pulvinar neque laoreet suspendisse interdum consectetur. Commodo ullamcorper a lacus vestibulum sed arcu non odio euismod. Posuere sollicitudin aliquam ultrices sagittis orci a. Enim nulla aliquet porttitor lacus luctus accumsan. Nibh venenatis cras sed felis eget. Tellus in hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Arcu non odio euismod lacinia at quis risus sed vulputate. Habitant morbi tristique senectus et netus et malesuada. A cras semper auctor neque vitae.',
+						},
+					],
+				},
+			],
+		},
+		submissionWorkflowId: '12089e31h3f23bf-f23f23f23f2-f23f32bu234v23-f2323f',
+		submissionWorkflow: {
+			id: '12089e31h3f23bf-f23f23f23f2-f23f32bu234v23-f2323f',
+			createdAt: '',
+			updatedAt: '',
+			enabled: true,
+			title: 'A Submission Workflow',
+			collectionId: '',
+			targetEmailAddress: '',
+			acceptedText: getEmptyDoc(),
+			declinedText: getEmptyDoc(),
+			emailText: getEmptyDoc(),
+			introText: getEmptyDoc(),
+			instructionsText: {
+				type: 'doc',
+				attrs: {
+					meta: {},
+				},
+				content: [
+					{
+						type: 'paragraph',
+						content: [
+							{
+								type: 'text',
+								text: 'You gotta do a little dance to get into a pocket dimension. You know, like in Fringe. First go to the building from the tape, go to apartment 413, itsdangerous though. careful footing. In the middle of the room walk three steps forwad, step to the left. step to the right, walk backwards three steps, step	left, turn left 270 degrees. step forward',
+							},
+						],
+					},
+					{
+						type: 'paragraph',
+						content: [
+							{
+								type: 'text',
+								text: 'If you have any questions, you can email the community admin at hello@institution.com, and could even contain a story about civiizations that have come and gone in the time it takes for a species to evolve past its own technological limtations. Do we really know what exists around us? There are phenomena that exists outside the visible spectrum which we may have no clear perception of.',
+							},
+						],
+					},
+				],
+			},
+		},
+	},
 	historyData: {
 		currentKey: -1,
 		latestKey: -1,
@@ -81,163 +145,156 @@ export default {
 		},
 	],
 	siblingEdges: [],
-	outboundEdges: [{
-		pubIsParent: true,
-		relationType: 'reply',
-		targetPub: {
-			"id": "deab8c67-3a10-4450-bf0a-8010964728a0",
-			"slug": "gerstenberger-und-zarnow-kontroversgesprach-2019",
-			"title": "Kontroversgespräch „Identität“",
-			"description": "Notwendig essentialisierend oder weiterhin mit Erschließungskraft ausgestattet? Individuell oder kollektiv? Verwirrende Unklarheit oder begrifflicher Schnittpunkt unterschiedlicher Diskussionslinien? Ausschluss, Differenz, Identitätspolitik? Eine Begriffs-Diskussion",
-			"avatar": "https://assets.pubpub.org/x33z9t4j/71557600837447.jpg",
-			"headerStyle": "light",
-			"headerBackgroundColor": "dark",
-			"headerBackgroundImage": "https://assets.pubpub.org/x33z9t4j/71557600837447.jpg",
-			"firstPublishedAt": "2019-05-11T19:00:51.287Z",
-			"lastPublishedAt": "2019-07-09T01:58:46.730Z",
-			"customPublishedAt": null,
-			"doi": "10.21428/fb61f6aa.deab8c67",
-			"labels": null,
-			"releases": [
-				{
-					"id": "587927e1-7ba8-4d15-b56d-a4bb4aeb10a9",
-					"noteContent": null,
-					"noteText": null,
-					"historyKey": 0,
-					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
-					"userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
-					"createdAt": "2019-05-11T19:00:57.792Z",
-					"updatedAt": "2019-05-11T19:00:57.792Z"
-				},
-				{
-					"id": "57ffea4c-d845-44c4-8c9b-31277cbfc0a4",
-					"noteContent": null,
-					"noteText": null,
-					"historyKey": 1,
-					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
-					"userId": "b242f616-7aaa-479c-8ee5-3933dcf70859",
-					"createdAt": "2019-07-09T01:58:46.756Z",
-					"updatedAt": "2019-07-09T01:58:46.756Z"
-				}
-			],
-			"attributions": [
-				{
-					"id": "7e2c8723-2adb-4bff-9905-8850c775f237",
-					"name": null,
-					"avatar": null,
-					"title": null,
-					"order": 0.015625,
-					"isAuthor": true,
-					"roles": [
-						"Interviewee"
-					],
-					"affiliation": null,
-					"orcid": null,
-					"userId": "1ff99d28-423a-4ae3-9932-ec89b1c58c54",
-					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
-					"createdAt": "2019-06-17T08:28:46.572Z",
-					"updatedAt": "2019-07-09T01:57:47.628Z",
-					"user": {
-						"id": "1ff99d28-423a-4ae3-9932-ec89b1c58c54",
-						"firstName": "Christopher",
-						"lastName": "Zarnow",
-						"fullName": "Christopher Zarnow",
-						"avatar": null,
-						"slug": "christopher-zarnow",
-						"initials": "CZ",
-						"title": "",
-						"orcid": ""
-					}
-				},
-				{
-					"id": "b61f2540-79bb-4ad8-894c-fff790e5aabd",
-					"name": null,
-					"avatar": null,
-					"title": null,
-					"order": 0.03125,
-					"isAuthor": true,
-					"roles": [
-						"Interviewee"
-					],
-					"affiliation": null,
-					"orcid": null,
-					"userId": "f8f16159-952c-407f-806c-4809a7382d91",
-					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
-					"createdAt": "2019-05-06T19:25:02.526Z",
-					"updatedAt": "2019-07-09T01:57:52.727Z",
-					"user": {
-						"id": "f8f16159-952c-407f-806c-4809a7382d91",
-						"firstName": "Debora",
-						"lastName": "Gerstenberger",
-						"fullName": "Debora Gerstenberger",
-						"avatar": null,
-						"slug": "debora-gerstenberger",
-						"initials": "DG",
-						"title": "Prof. Dr.",
-						"orcid": ""
-					}
-				},
-				{
-					"id": "094e418a-0984-4144-9c55-a7a36bd423df",
-					"name": null,
-					"avatar": null,
-					"title": null,
-					"order": 0.0625,
-					"isAuthor": true,
-					"roles": [
-						"Investigation",
-						"Interviewer"
-					],
-					"affiliation": null,
-					"orcid": null,
-					"userId": "076c570c-eb9b-489c-a013-49b3d8be4ee7",
-					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
-					"createdAt": "2019-05-11T18:06:13.676Z",
-					"updatedAt": "2019-07-09T01:58:03.440Z",
-					"user": {
-						"id": "076c570c-eb9b-489c-a013-49b3d8be4ee7",
-						"firstName": "Kerstin",
-						"lastName": "Menzel",
-						"fullName": "Kerstin Menzel",
-						"avatar": "https://assets.pubpub.org/h7z4zgxe/61535746400298.jpg",
-						"slug": "kerstin-menzel",
-						"initials": "KM",
-						"title": "",
-						"orcid": ""
-					}
-				},
-				{
-					"id": "c94e9617-ee09-45da-966d-586eb0c44370",
-					"name": "Daniel Lenski",
-					"avatar": null,
-					"title": null,
-					"order": 0.125,
-					"isAuthor": true,
-					"roles": [
-						"Investigation",
-						"Interviewer"
-					],
-					"affiliation": null,
-					"orcid": null,
-					"userId": null,
-					"pubId": "deab8c67-3a10-4450-bf0a-8010964728a0",
-					"createdAt": "2019-05-10T14:34:27.962Z",
-					"updatedAt": "2019-07-09T01:58:00.849Z",
-					"user": {
-						"isShadowUser": true,
-						"id": "c94e9617-ee09-45da-966d-586eb0c44370",
-						"initials": "D",
-						"fullName": "Daniel Lenski",
-						"firstName": "Daniel Lenski",
-						"lastName": "",
-						"avatar": null,
-						"title": null,
-						"orcid": null
-					}
-				}
-			],
-		}
-	}],
+	outboundEdges: [
+		{
+			pubIsParent: true,
+			relationType: 'reply',
+			targetPub: {
+				id: 'deab8c67-3a10-4450-bf0a-8010964728a0',
+				slug: 'gerstenberger-und-zarnow-kontroversgesprach-2019',
+				title: 'Kontroversgespräch „Identität“',
+				description:
+					'Notwendig essentialisierend oder weiterhin mit Erschließungskraft ausgestattet? Individuell oder kollektiv? Verwirrende Unklarheit oder begrifflicher Schnittpunkt unterschiedlicher Diskussionslinien? Ausschluss, Differenz, Identitätspolitik? Eine Begriffs-Diskussion',
+				avatar: 'https://assets.pubpub.org/x33z9t4j/71557600837447.jpg',
+				headerStyle: 'light',
+				headerBackgroundColor: 'dark',
+				headerBackgroundImage: 'https://assets.pubpub.org/x33z9t4j/71557600837447.jpg',
+				firstPublishedAt: '2019-05-11T19:00:51.287Z',
+				lastPublishedAt: '2019-07-09T01:58:46.730Z',
+				customPublishedAt: null,
+				doi: '10.21428/fb61f6aa.deab8c67',
+				labels: null,
+				releases: [
+					{
+						id: '587927e1-7ba8-4d15-b56d-a4bb4aeb10a9',
+						noteContent: null,
+						noteText: null,
+						historyKey: 0,
+						pubId: 'deab8c67-3a10-4450-bf0a-8010964728a0',
+						userId: 'b242f616-7aaa-479c-8ee5-3933dcf70859',
+						createdAt: '2019-05-11T19:00:57.792Z',
+						updatedAt: '2019-05-11T19:00:57.792Z',
+					},
+					{
+						id: '57ffea4c-d845-44c4-8c9b-31277cbfc0a4',
+						noteContent: null,
+						noteText: null,
+						historyKey: 1,
+						pubId: 'deab8c67-3a10-4450-bf0a-8010964728a0',
+						userId: 'b242f616-7aaa-479c-8ee5-3933dcf70859',
+						createdAt: '2019-07-09T01:58:46.756Z',
+						updatedAt: '2019-07-09T01:58:46.756Z',
+					},
+				],
+				attributions: [
+					{
+						id: '7e2c8723-2adb-4bff-9905-8850c775f237',
+						name: null,
+						avatar: null,
+						title: null,
+						order: 0.015625,
+						isAuthor: true,
+						roles: ['Interviewee'],
+						affiliation: null,
+						orcid: null,
+						userId: '1ff99d28-423a-4ae3-9932-ec89b1c58c54',
+						pubId: 'deab8c67-3a10-4450-bf0a-8010964728a0',
+						createdAt: '2019-06-17T08:28:46.572Z',
+						updatedAt: '2019-07-09T01:57:47.628Z',
+						user: {
+							id: '1ff99d28-423a-4ae3-9932-ec89b1c58c54',
+							firstName: 'Christopher',
+							lastName: 'Zarnow',
+							fullName: 'Christopher Zarnow',
+							avatar: null,
+							slug: 'christopher-zarnow',
+							initials: 'CZ',
+							title: '',
+							orcid: '',
+						},
+					},
+					{
+						id: 'b61f2540-79bb-4ad8-894c-fff790e5aabd',
+						name: null,
+						avatar: null,
+						title: null,
+						order: 0.03125,
+						isAuthor: true,
+						roles: ['Interviewee'],
+						affiliation: null,
+						orcid: null,
+						userId: 'f8f16159-952c-407f-806c-4809a7382d91',
+						pubId: 'deab8c67-3a10-4450-bf0a-8010964728a0',
+						createdAt: '2019-05-06T19:25:02.526Z',
+						updatedAt: '2019-07-09T01:57:52.727Z',
+						user: {
+							id: 'f8f16159-952c-407f-806c-4809a7382d91',
+							firstName: 'Debora',
+							lastName: 'Gerstenberger',
+							fullName: 'Debora Gerstenberger',
+							avatar: null,
+							slug: 'debora-gerstenberger',
+							initials: 'DG',
+							title: 'Prof. Dr.',
+							orcid: '',
+						},
+					},
+					{
+						id: '094e418a-0984-4144-9c55-a7a36bd423df',
+						name: null,
+						avatar: null,
+						title: null,
+						order: 0.0625,
+						isAuthor: true,
+						roles: ['Investigation', 'Interviewer'],
+						affiliation: null,
+						orcid: null,
+						userId: '076c570c-eb9b-489c-a013-49b3d8be4ee7',
+						pubId: 'deab8c67-3a10-4450-bf0a-8010964728a0',
+						createdAt: '2019-05-11T18:06:13.676Z',
+						updatedAt: '2019-07-09T01:58:03.440Z',
+						user: {
+							id: '076c570c-eb9b-489c-a013-49b3d8be4ee7',
+							firstName: 'Kerstin',
+							lastName: 'Menzel',
+							fullName: 'Kerstin Menzel',
+							avatar: 'https://assets.pubpub.org/h7z4zgxe/61535746400298.jpg',
+							slug: 'kerstin-menzel',
+							initials: 'KM',
+							title: '',
+							orcid: '',
+						},
+					},
+					{
+						id: 'c94e9617-ee09-45da-966d-586eb0c44370',
+						name: 'Daniel Lenski',
+						avatar: null,
+						title: null,
+						order: 0.125,
+						isAuthor: true,
+						roles: ['Investigation', 'Interviewer'],
+						affiliation: null,
+						orcid: null,
+						userId: null,
+						pubId: 'deab8c67-3a10-4450-bf0a-8010964728a0',
+						createdAt: '2019-05-10T14:34:27.962Z',
+						updatedAt: '2019-07-09T01:58:00.849Z',
+						user: {
+							isShadowUser: true,
+							id: 'c94e9617-ee09-45da-966d-586eb0c44370',
+							initials: 'D',
+							fullName: 'Daniel Lenski',
+							firstName: 'Daniel Lenski',
+							lastName: '',
+							avatar: null,
+							title: null,
+							orcid: null,
+						},
+					},
+				],
+			},
+		},
+	],
 	reviews: [
 		{
 			id: '2f2cce19-dde0-4a47-8e49-a5105cb27d83',
@@ -593,26 +650,22 @@ export default {
 	isStaticDoc: false,
 	citationData: {
 		pub: {
-			default: 
+			default:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry</div></div>',
-			apa:
-				'<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry</div></div>',
+			apa: '<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry</div></div>',
 			harvard:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry</div></div>',
 			vancouver:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="00f9aaaf-0468-4590-9b86-1a2bff4ffe57" class="csl-entry">    <div class="csl-left-margin">1. </div><div class="csl-right-inline">Hsu W, Dubberly H. Defining the Dimensions of the “Space” of Computing. JoDS V6 Dev [Internet]. 2019 Apr 30; Available from: https://jods.mitpress.mit.edu/pub/6pewbpry</div>  </div></div>',
-			bibtex:
-				'<div class="csl-bib-body"><div class="csl-entry">@article{Hsu2019Defining,<ul style="list-style-type:none"><li>journal = {JoDS V6 Dev},</li><li>note = {https://jods.mitpress.mit.edu/pub/6pewbpry},</li><li>title = {Defining the Dimensions of the “Space” of Computing},</li><li>url = {https://jods.mitpress.mit.edu/pub/6pewbpry},</li><li>author = {Hsu, Weiwei and Dubberly, Hugh},</li><li>date = {2019-04-30},</li><li>year = {2019},</li><li>month = {4},</li><li>day = {30},</li></ul>}</div></div>',
+			bibtex: '<div class="csl-bib-body"><div class="csl-entry">@article{Hsu2019Defining,<ul style="list-style-type:none"><li>journal = {JoDS V6 Dev},</li><li>note = {https://jods.mitpress.mit.edu/pub/6pewbpry},</li><li>title = {Defining the Dimensions of the “Space” of Computing},</li><li>url = {https://jods.mitpress.mit.edu/pub/6pewbpry},</li><li>author = {Hsu, Weiwei and Dubberly, Hugh},</li><li>date = {2019-04-30},</li><li>year = {2019},</li><li>month = {4},</li><li>day = {30},</li></ul>}</div></div>',
 		},
 		version: {
-			apa:
-				'<div class="csl-bib-body">  <div data-csl-entry-id="Draft" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry/draft</div></div>',
+			apa: '<div class="csl-bib-body">  <div data-csl-entry-id="Draft" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry/draft</div></div>',
 			harvard:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="Draft" class="csl-entry">Hsu, W., &#38; Dubberly, H. (2019). Defining the Dimensions of the “Space” of Computing. <i>JoDS V6 Dev</i>. Retrieved from https://jods.mitpress.mit.edu/pub/6pewbpry/draft</div></div>',
 			vancouver:
 				'<div class="csl-bib-body">  <div data-csl-entry-id="Draft" class="csl-entry">    <div class="csl-left-margin">1. </div><div class="csl-right-inline">Hsu W, Dubberly H. Defining the Dimensions of the “Space” of Computing. JoDS V6 Dev [Internet]. 2019 Apr 30; Available from: https://jods.mitpress.mit.edu/pub/6pewbpry/draft</div>  </div></div>',
-			bibtex:
-				'<div class="csl-bib-body"><div class="csl-entry">@article{Hsu2019Defining,<ul style="list-style-type:none"><li>journal = {JoDS V6 Dev},</li><li>note = {https://jods.mitpress.mit.edu/pub/6pewbpry/draft},</li><li>title = {Defining the Dimensions of the “Space” of Computing},</li><li>url = {https://jods.mitpress.mit.edu/pub/6pewbpry/draft},</li><li>author = {Hsu, Weiwei and Dubberly, Hugh},</li><li>date = {2019-04-30},</li><li>year = {2019},</li><li>month = {4},</li><li>day = {30},</li></ul>}</div></div>',
+			bibtex: '<div class="csl-bib-body"><div class="csl-entry">@article{Hsu2019Defining,<ul style="list-style-type:none"><li>journal = {JoDS V6 Dev},</li><li>note = {https://jods.mitpress.mit.edu/pub/6pewbpry/draft},</li><li>title = {Defining the Dimensions of the “Space” of Computing},</li><li>url = {https://jods.mitpress.mit.edu/pub/6pewbpry/draft},</li><li>author = {Hsu, Weiwei and Dubberly, Hugh},</li><li>date = {2019-04-30},</li><li>year = {2019},</li><li>month = {4},</li><li>day = {30},</li></ul>}</div></div>',
 		},
 	},
 	firebaseToken:
@@ -633,8 +686,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'The most elusive term in data science is ‘data.’ While often treated as objects to be computed upon, data is a theory-laden concept with a long history. Data exist within knowledge infrastructures that govern how they are created, managed, and interpreted. By comparing models of data life cycles, implicit assumptions about data become apparent. In linear models, data pass through stages from beginning to end of life, which suggest that data can be recreated as needed. Cyclical models, in which data flow in a virtuous circle of uses and reuses, are better suited for irreplaceable observational data that may retain value indefinitely. In astronomy, for example, observations from one generation of telescopes may become calibration and modeling data for the next generation, whether digital sky surveys or glass plates. The value and reusability of data can be enhanced through investments in knowledge infrastructures, especially digital curation and preservation. Determining what data to keep, why, how, and for how long, is the challenge of our day.',
+						text: 'The most elusive term in data science is ‘data.’ While often treated as objects to be computed upon, data is a theory-laden concept with a long history. Data exist within knowledge infrastructures that govern how they are created, managed, and interpreted. By comparing models of data life cycles, implicit assumptions about data become apparent. In linear models, data pass through stages from beginning to end of life, which suggest that data can be recreated as needed. Cyclical models, in which data flow in a virtuous circle of uses and reuses, are better suited for irreplaceable observational data that may retain value indefinitely. In astronomy, for example, observations from one generation of telescopes may become calibration and modeling data for the next generation, whether digital sky surveys or glass plates. The value and reusability of data can be enhanced through investments in knowledge infrastructures, especially digital curation and preservation. Determining what data to keep, why, how, and for how long, is the challenge of our day.',
 					},
 					{ type: 'hard_break' },
 					{ type: 'hard_break' },
@@ -642,8 +694,7 @@ export default {
 					{ type: 'hard_break', marks: [{ type: 'strong' }] },
 					{
 						type: 'text',
-						text:
-							'astronomy, curation, data, digital curation, life cycles, observations, preservation, reuse, science, stewardship',
+						text: 'astronomy, curation, data, digital curation, life cycles, observations, preservation, reuse, science, stewardship',
 					},
 				],
 			},
@@ -660,26 +711,22 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'As an interdisciplinary journal of data science whose goal is to provoke dialog among diverse stakeholders, the ',
+						text: 'As an interdisciplinary journal of data science whose goal is to provoke dialog among diverse stakeholders, the ',
 					},
 					{ type: 'text', marks: [{ type: 'em' }], text: 'Harvard Data Science Review' },
 					{
 						type: 'text',
-						text:
-							' is an ideal venue to explicate concepts whose terminological simplicity masks highly contested territory. ‘Data’ is the most elusive term of all. Data are often treated as objective entities to be computed upon, defined as facts or numbers, or operationalized by lists of examples. In practical business situations where correlation matters more than causation, such declarative simplicity may suffice. In scholarly contexts, however, data, facts, information, and knowledge are theory-laden concepts with long and contentious histories (Blair, 2010; Buckland, 1991; Case, 2006; Leonelli, 2015; Meadows, 2001; Rosenberg, 2013). Researchers are exceedingly clever at treating almost anything as data, be it the air we breathe, clothes we wear, traces of our digital lives, or photons captured by astronomical instruments. In scientific contexts, data can be viewed as “entities used as evidence of phenomena for the purposes of research or scholarship” (Borgman, 2015, p. 29). From a humanities perspective, “the concept of ',
+						text: ' is an ideal venue to explicate concepts whose terminological simplicity masks highly contested territory. ‘Data’ is the most elusive term of all. Data are often treated as objective entities to be computed upon, defined as facts or numbers, or operationalized by lists of examples. In practical business situations where correlation matters more than causation, such declarative simplicity may suffice. In scholarly contexts, however, data, facts, information, and knowledge are theory-laden concepts with long and contentious histories (Blair, 2010; Buckland, 1991; Case, 2006; Leonelli, 2015; Meadows, 2001; Rosenberg, 2013). Researchers are exceedingly clever at treating almost anything as data, be it the air we breathe, clothes we wear, traces of our digital lives, or photons captured by astronomical instruments. In scientific contexts, data can be viewed as “entities used as evidence of phenomena for the purposes of research or scholarship” (Borgman, 2015, p. 29). From a humanities perspective, “the concept of ',
 					},
 					{ type: 'text', marks: [{ type: 'em' }], text: 'data' },
 					{
 						type: 'text',
-						text:
-							' as a given has to be rethought through a humanistic lens and characterized as ',
+						text: ' as a given has to be rethought through a humanistic lens and characterized as ',
 					},
 					{ type: 'text', marks: [{ type: 'em' }], text: 'capta' },
 					{
 						type: 'text',
-						text:
-							', taken and constructed. … rooted in a co-dependent relation between observer and experience” (Drucker, 2011).',
+						text: ', taken and constructed. … rooted in a co-dependent relation between observer and experience” (Drucker, 2011).',
 					},
 				],
 			},
@@ -695,8 +742,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'Whether in science, humanities, business, or government contexts, data are a human construct. People decide what are data for a given purpose, how those data are to be interpreted, and what constitutes appropriate evidence. One scientist’s signal is another’s noise. One politician’s fact is another’s fake news. Data exist within knowledge infrastructures that govern how they are created, managed, used, and interpreted (Edwards et al., 2013). As infrastructures evolve, so do the characteristics and usability of data embedded within them.',
+						text: 'Whether in science, humanities, business, or government contexts, data are a human construct. People decide what are data for a given purpose, how those data are to be interpreted, and what constitutes appropriate evidence. One scientist’s signal is another’s noise. One politician’s fact is another’s fake news. Data exist within knowledge infrastructures that govern how they are created, managed, used, and interpreted (Edwards et al., 2013). As infrastructures evolve, so do the characteristics and usability of data embedded within them.',
 					},
 				],
 			},
@@ -706,14 +752,12 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'The notion of ‘data life cycle’ reflects the array of knowledge infrastructures that govern the flows of data. The term ',
+						text: 'The notion of ‘data life cycle’ reflects the array of knowledge infrastructures that govern the flows of data. The term ',
 					},
 					{ type: 'text', marks: [{ type: 'em' }], text: 'life cycle' },
 					{
 						type: 'text',
-						text:
-							' originated in biology in the 19th century as a linear model (“Oxford English Dictionary,” 2019): “The sequence of stages through which an individual organism passes from origin as a zygote to death, or through which the members of a species pass from the production of gametes by one generation to that by the next.” Life cycle is used similarly in business and economic contexts to span processes from their beginning through decay or ending. An example is personnel records that are created when a person is hired and destroyed at the end of a legally defined records retention cycle.',
+						text: ' originated in biology in the 19th century as a linear model (“Oxford English Dictionary,” 2019): “The sequence of stages through which an individual organism passes from origin as a zygote to death, or through which the members of a species pass from the production of gametes by one generation to that by the next.” Life cycle is used similarly in business and economic contexts to span processes from their beginning through decay or ending. An example is personnel records that are created when a person is hired and destroyed at the end of a legally defined records retention cycle.',
 					},
 				],
 			},
@@ -723,8 +767,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'The common alternative to a linear data life cycle is a circular model, where data flow continually through stages. These models are common in scholarly communication and in other areas that benefit from the ability to mine and combine data indefinitely. Figure 1, a ‘research life cycle’ from a library perspective, illustrates the flow of scholarly products. In the planning stage of a project, researchers typically describe a problem and determine the research design. In the implementation stage, assets such as data are collected, organized, described, and analyzed. The next stage is to publish the resulting work, which may include depositing associated datasets for public access. Once published, the research findings may be disseminated further through social media, indexing and abstracting services, and various ‘impact’ mechanisms. The next stage in Figure 1 is preservation, which includes reliable storage and migration to new technologies that ensure continuous availability. The last and connecting stage is reuse, when research products become input to the planning and implementation of new research projects.',
+						text: 'The common alternative to a linear data life cycle is a circular model, where data flow continually through stages. These models are common in scholarly communication and in other areas that benefit from the ability to mine and combine data indefinitely. Figure 1, a ‘research life cycle’ from a library perspective, illustrates the flow of scholarly products. In the planning stage of a project, researchers typically describe a problem and determine the research design. In the implementation stage, assets such as data are collected, organized, described, and analyzed. The next stage is to publish the resulting work, which may include depositing associated datasets for public access. Once published, the research findings may be disseminated further through social media, indexing and abstracting services, and various ‘impact’ mechanisms. The next stage in Figure 1 is preservation, which includes reliable storage and migration to new technologies that ensure continuous availability. The last and connecting stage is reuse, when research products become input to the planning and implementation of new research projects.',
 					},
 				],
 			},
@@ -746,8 +789,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'The idea behind the life cycle model in Figure 1 is to encourage researchers to think in terms of a virtuous circle wherein their work has greater impact, for longer periods of time, through dissemination and preservation of their research products. Libraries provide essential elements of the knowledge infrastructure for this virtuous circle, such as dissemination, curation, preservation, and access. In principle, a student or other researcher could begin an inquiry at any point in the cycle or could skip a stage or two. Questions provoked by the dissemination process could lead to reuse of data, as could datasets stored in archives, for example. Conversely, projects may proceed only through parts of this research life cycle. Researchers may fail to complete a project or fail to publish their findings. Publications may or may not receive citations from other authors. Only a minority of researchers preserve their datasets in ways that the data remain findable and accessible. Even if datasets are available, those data may not be reused by others.',
+						text: 'The idea behind the life cycle model in Figure 1 is to encourage researchers to think in terms of a virtuous circle wherein their work has greater impact, for longer periods of time, through dissemination and preservation of their research products. Libraries provide essential elements of the knowledge infrastructure for this virtuous circle, such as dissemination, curation, preservation, and access. In principle, a student or other researcher could begin an inquiry at any point in the cycle or could skip a stage or two. Questions provoked by the dissemination process could lead to reuse of data, as could datasets stored in archives, for example. Conversely, projects may proceed only through parts of this research life cycle. Researchers may fail to complete a project or fail to publish their findings. Publications may or may not receive citations from other authors. Only a minority of researchers preserve their datasets in ways that the data remain findable and accessible. Even if datasets are available, those data may not be reused by others.',
 					},
 				],
 			},
@@ -757,8 +799,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'Figure 2—a much more complex model that is widely adopted in the digital archiving community—also focuses on keeping digital data alive for long periods of time. Books and other paper objects often can survive indefinitely by benign neglect, given adequate storage conditions. Digital records, in contrast, require active management. The digital curation life cycle model in Figure 2, explained more fully in Higgins (2008) and on the DCC site (“Digital Curation Centre,” 2019), identifies activities that keep data available, useful, and usable. During reappraisal, archivists determine whether to continue investment in a dataset, such as migrating it to new formats and media, or whether to dispose of the dataset. Digital data archives of scholarly content, such as ICPSR in the social sciences, GBIF for biodiversity, UniProt for protein sequences, HEASARC for high energy astrophysics, or DANS for humanities and archaeology, all invest in data curation in a manner similar to that of the DCC model (Data Archiving and Networked Services, 2017; “GBIF,” 2019; “HEASARC: NASA’s Archive of Data on Energetic Phenomena,” 2019; “Inter-university Consortium for Political and Social Research,” 2019; “UniProt,” 2019). Lacking these investments in data curation and preservation, data fade away through neglect, benign or otherwise, as storage media fail and as software versions become obsolete (Borgman, 2015, 2016).',
+						text: 'Figure 2—a much more complex model that is widely adopted in the digital archiving community—also focuses on keeping digital data alive for long periods of time. Books and other paper objects often can survive indefinitely by benign neglect, given adequate storage conditions. Digital records, in contrast, require active management. The digital curation life cycle model in Figure 2, explained more fully in Higgins (2008) and on the DCC site (“Digital Curation Centre,” 2019), identifies activities that keep data available, useful, and usable. During reappraisal, archivists determine whether to continue investment in a dataset, such as migrating it to new formats and media, or whether to dispose of the dataset. Digital data archives of scholarly content, such as ICPSR in the social sciences, GBIF for biodiversity, UniProt for protein sequences, HEASARC for high energy astrophysics, or DANS for humanities and archaeology, all invest in data curation in a manner similar to that of the DCC model (Data Archiving and Networked Services, 2017; “GBIF,” 2019; “HEASARC: NASA’s Archive of Data on Energetic Phenomena,” 2019; “Inter-university Consortium for Political and Social Research,” 2019; “UniProt,” 2019). Lacking these investments in data curation and preservation, data fade away through neglect, benign or otherwise, as storage media fail and as software versions become obsolete (Borgman, 2015, 2016).',
 					},
 				],
 			},
@@ -780,14 +821,12 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'The stark contrast between the popularity of linear life cycles in technical areas of data science and cyclical life cycles in the digital curation community reveals competing assumptions about data and infrastructure. If data exist only from the time they are generated ',
+						text: 'The stark contrast between the popularity of linear life cycles in technical areas of data science and cyclical life cycles in the digital curation community reveals competing assumptions about data and infrastructure. If data exist only from the time they are generated ',
 					},
 					{ type: 'text', marks: [{ type: 'em' }], text: 'de novo' },
 					{
 						type: 'text',
-						text:
-							' to when they are interpreted (Wing, 2018; Wing, Janeja, Kloefkorn, & Erickson, 2018), they are ephemeral objects produced for a specific purpose. They can be discarded without further investment. In contrast, if data are entities humans created as evidence of a particular phenomenon, they may have enduring value. If those data are to be reused, they must be reusable, which requires considerable investment in the infrastructure necessary for documentation, interpretation, curation, and access.',
+						text: ' to when they are interpreted (Wing, 2018; Wing, Janeja, Kloefkorn, & Erickson, 2018), they are ephemeral objects produced for a specific purpose. They can be discarded without further investment. In contrast, if data are entities humans created as evidence of a particular phenomenon, they may have enduring value. If those data are to be reused, they must be reusable, which requires considerable investment in the infrastructure necessary for documentation, interpretation, curation, and access.',
 					},
 				],
 			},
@@ -797,8 +836,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'Another implicit assumption about data that distinguishes these life cycle models is whether data can be recreated. Experiments and computational models can be re-executed, social media streams can be resampled, and even genome sequences can be recreated if the original tissue is available and viable. Observational data, in contrast, cannot be recreated. The census of 2010 cannot be conducted again, nor can infrared images of tonight’s sky be taken tomorrow, nor can the weather conditions of July 4, 1776, be observed again with modern instruments. These are time-specific observations that may be valuable indefinitely. One never steps in the same river twice, because the water continues to flow. That said, not all observational data can be kept alive, nor are all worth keeping.',
+						text: 'Another implicit assumption about data that distinguishes these life cycle models is whether data can be recreated. Experiments and computational models can be re-executed, social media streams can be resampled, and even genome sequences can be recreated if the original tissue is available and viable. Observational data, in contrast, cannot be recreated. The census of 2010 cannot be conducted again, nor can infrared images of tonight’s sky be taken tomorrow, nor can the weather conditions of July 4, 1776, be observed again with modern instruments. These are time-specific observations that may be valuable indefinitely. One never steps in the same river twice, because the water continues to flow. That said, not all observational data can be kept alive, nor are all worth keeping.',
 					},
 				],
 			},
@@ -814,8 +852,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'Research policy initiatives for open science, open access to publications, data management plan requirements, and deposit of data associated with publications are predicated on assumptions that research data are valuable assets that should be preserved for reuse by others, whether for reproducibility, reuse for new questions or innovations, mining and integration, or other purposes (National Academies of Sciences, 2018; “NumFOCUS,” 2018; Wilkinson et al., 2016). Implicit in these policies are assumptions that research data should be curated and preserved to become part of the virtuous circle presented in Figure 1.',
+						text: 'Research policy initiatives for open science, open access to publications, data management plan requirements, and deposit of data associated with publications are predicated on assumptions that research data are valuable assets that should be preserved for reuse by others, whether for reproducibility, reuse for new questions or innovations, mining and integration, or other purposes (National Academies of Sciences, 2018; “NumFOCUS,” 2018; Wilkinson et al., 2016). Implicit in these policies are assumptions that research data should be curated and preserved to become part of the virtuous circle presented in Figure 1.',
 					},
 				],
 			},
@@ -825,8 +862,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'Astronomy offers numerous examples of cyclical data life cycles in which reuse is essential, as each round of observations and instrumentation lays the foundation for the next. Human observations of the cosmos long predate the written record, and the cosmos long predates humans. A contemporary case to consider is the Large Synoptic Survey Telescope (LSST), which is in its final stages of construction in Chile. “Engineering first light” is due in FY 2020 and science operations are due to begin in FY 2021, commencing 10 years of data collection (Ivezic et al., 2008; Large Synoptic Survey Telescope, 2019). Many milestones could be chosen to mark the beginning of LSST. Concept development and proposals began in the 1990s, long before funding for the telescope instrument was obtained. Countless design decisions and compromises were made by the time the glass was poured for the mirror, thus hardening the path to data collection. Many of these design decisions are based on data obtained by earlier surveys and instruments. Observations from the Sloan Digital Sky Survey, a ground-based survey that saw first light in 1998 and entered routine operations in 2000 (“Sloan Digital Sky Surveys,” 2019), are among those used to calibrate LSST.',
+						text: 'Astronomy offers numerous examples of cyclical data life cycles in which reuse is essential, as each round of observations and instrumentation lays the foundation for the next. Human observations of the cosmos long predate the written record, and the cosmos long predates humans. A contemporary case to consider is the Large Synoptic Survey Telescope (LSST), which is in its final stages of construction in Chile. “Engineering first light” is due in FY 2020 and science operations are due to begin in FY 2021, commencing 10 years of data collection (Ivezic et al., 2008; Large Synoptic Survey Telescope, 2019). Many milestones could be chosen to mark the beginning of LSST. Concept development and proposals began in the 1990s, long before funding for the telescope instrument was obtained. Countless design decisions and compromises were made by the time the glass was poured for the mirror, thus hardening the path to data collection. Many of these design decisions are based on data obtained by earlier surveys and instruments. Observations from the Sloan Digital Sky Survey, a ground-based survey that saw first light in 1998 and entered routine operations in 2000 (“Sloan Digital Sky Surveys,” 2019), are among those used to calibrate LSST.',
 					},
 				],
 			},
@@ -836,8 +872,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'More than half of the one billion dollar budget of the LSST project is devoted to data management because those data are expected to remain valuable to several generations of astronomers. The science is in the data. Major astronomy missions such as Chandra and Hubble report that more new papers are being published from their archival data than from new observations (“Chandra Data Archive,” 2019; “Hubble Legacy Archive,” 2019).',
+						text: 'More than half of the one billion dollar budget of the LSST project is devoted to data management because those data are expected to remain valuable to several generations of astronomers. The science is in the data. Major astronomy missions such as Chandra and Hubble report that more new papers are being published from their archival data than from new observations (“Chandra Data Archive,” 2019; “Hubble Legacy Archive,” 2019).',
 					},
 				],
 			},
@@ -847,16 +882,14 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'Old observational data yield new forms of evidence and new baselines for current evidence. LSST is expected to benefit greatly from DASCH, a project begun in 2005 to digitize the Harvard Observatory’s collection of a half-million glass plates, acquired over a period of more than a century. Because the irreplaceable observations captured on these plates represent the first complete map of the sky, they are an essential baseline comparison for LSST and other sky surveys. The scientific value of DASCH lies in the infrastructure that encompasses carefully curated data, high resolution imaging, and computational features that enable astronomers to explore and visualize time-domain astronomy in ways inconceivable when these data were collected in the 19',
+						text: 'Old observational data yield new forms of evidence and new baselines for current evidence. LSST is expected to benefit greatly from DASCH, a project begun in 2005 to digitize the Harvard Observatory’s collection of a half-million glass plates, acquired over a period of more than a century. Because the irreplaceable observations captured on these plates represent the first complete map of the sky, they are an essential baseline comparison for LSST and other sky surveys. The scientific value of DASCH lies in the infrastructure that encompasses carefully curated data, high resolution imaging, and computational features that enable astronomers to explore and visualize time-domain astronomy in ways inconceivable when these data were collected in the 19',
 					},
 					{ type: 'text', marks: [{ type: 'sup' }], text: 'th' },
 					{ type: 'text', text: ' and 20' },
 					{ type: 'text', marks: [{ type: 'sup' }], text: 'th' },
 					{
 						type: 'text',
-						text:
-							' centuries (Digital Access to a Sky Century @ Harvard, 2019; Grindlay, Tang, Los, & Servillat, 2011; Sobel, 2017).',
+						text: ' centuries (Digital Access to a Sky Century @ Harvard, 2019; Grindlay, Tang, Los, & Servillat, 2011; Sobel, 2017).',
 					},
 				],
 			},
@@ -866,8 +899,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'The lives and afterlives of data depend upon many factors, such as their perceived value and the efforts invested in their curation. Glass plates fell into disuse for scientific purposes when charge-coupled devices (CCDs) became a viable technology. These plates are large and fragile objects that are expensive to maintain, and thus many were discarded by the time that astronomy became digital. Harvard, despite the continuing specter of fires, floods, and budget cuts, managed to keep their plate collection and catalogs intact. The dedication of a core group of individuals facilitated the digital archive that is now openly available to the international community.',
+						text: 'The lives and afterlives of data depend upon many factors, such as their perceived value and the efforts invested in their curation. Glass plates fell into disuse for scientific purposes when charge-coupled devices (CCDs) became a viable technology. These plates are large and fragile objects that are expensive to maintain, and thus many were discarded by the time that astronomy became digital. Harvard, despite the continuing specter of fires, floods, and budget cuts, managed to keep their plate collection and catalogs intact. The dedication of a core group of individuals facilitated the digital archive that is now openly available to the international community.',
 					},
 				],
 			},
@@ -883,8 +915,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'Data life cycles, whether viewed as linear or cyclical processes, are necessarily reductionist. Paths from data creation to interpretation and back tend to look more like a random walk than a perfect line or circle. Infrastructures, by their nature, tend to be most visible when they break down. They build on an installed base and are embedded in the social practices of their communities (Star & Ruhleder, 1996). Data are selected, collected, organized, and generated by humans, using the knowledge infrastructures available to them at the time. Some of those data may be short-lived, discarded when they have served their purpose, and readily recreated if later needed. Other data, such as observations of the natural world, may be long-lived, with value apparent from their initial capture. Much else falls in between, including observations lost before their value was recognized, duplicative material that can be done without, and sensitive data that should be destroyed regularly due to privacy and ethics risks. In data science, we ignore knowledge infrastructures at our peril. Identifying principles for what to keep, why, how, and for how long, is the challenge of our day.',
+						text: 'Data life cycles, whether viewed as linear or cyclical processes, are necessarily reductionist. Paths from data creation to interpretation and back tend to look more like a random walk than a perfect line or circle. Infrastructures, by their nature, tend to be most visible when they break down. They build on an installed base and are embedded in the social practices of their communities (Star & Ruhleder, 1996). Data are selected, collected, organized, and generated by humans, using the knowledge infrastructures available to them at the time. Some of those data may be short-lived, discarded when they have served their purpose, and readily recreated if later needed. Other data, such as observations of the natural world, may be long-lived, with value apparent from their initial capture. Much else falls in between, including observations lost before their value was recognized, duplicative material that can be done without, and sensitive data that should be destroyed regularly due to privacy and ethics risks. In data science, we ignore knowledge infrastructures at our peril. Identifying principles for what to keep, why, how, and for how long, is the challenge of our day.',
 					},
 				],
 			},
@@ -900,8 +931,7 @@ export default {
 				content: [
 					{
 						type: 'text',
-						text:
-							'Research on astronomy data practices reported here was supported by the Alfred P. Sloan Foundation, ',
+						text: 'Research on astronomy data practices reported here was supported by the Alfred P. Sloan Foundation, ',
 					},
 					{
 						type: 'text',
@@ -910,8 +940,7 @@ export default {
 					},
 					{
 						type: 'text',
-						text:
-							'?, Sloan #2015-14001, Christine L. Borgman, PI, and by the Harvard-Smithsonian Center for Astrophysics as a Visiting Scholar. Thanks to John P. Renaud of University of California, Irvine, Libraries for permission to use Figure 1 and to Kevin Ashley of the U.K. Digital Curation Centre for permission to use Figure 2. Bernadette Boscoe, Michael Scroggins, Morgan Wofford, and Peter Darch of UCLA Center for Knowledge Infrastructures provided comments on an earlier draft.',
+						text: '?, Sloan #2015-14001, Christine L. Borgman, PI, and by the Harvard-Smithsonian Center for Astrophysics as a Visiting Scholar. Thanks to John P. Renaud of University of California, Irvine, Libraries for permission to use Figure 1 and to Kevin Ashley of the U.K. Digital Curation Centre for permission to use Figure 2. Bernadette Boscoe, Michael Scroggins, Morgan Wofford, and Peter Darch of UCLA Center for Knowledge Infrastructures provided comments on an earlier draft.',
 					},
 				],
 			},

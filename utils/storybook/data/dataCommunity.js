@@ -9,7 +9,7 @@ export default {
 	smallHeaderLogo: 'https://assets.pubpub.org/_testing/41535547813533.png',
 	largeHeaderLogo: 'https://assets.pubpub.org/_testing/51535547817693.png',
 	largeHeaderBackground: null,
-	accentColorLight: '#ffffff',
+	accentColorLight: '#fffacd',
 	accentColorDark: '#a2273e',
 	accentActionColor: 'rgba(69, 79, 96, 0.6)',
 	accentHoverColor: 'rgba(69, 79, 96, 0.8)',

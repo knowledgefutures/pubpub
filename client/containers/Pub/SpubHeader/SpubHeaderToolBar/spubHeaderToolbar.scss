@@ -1,0 +1,71 @@
+@import 'styles/variables.scss';
+$spub-configuration-width: 1000px;
+
+.spubheader-toolbar-component {
+	&.container {
+		max-width: 96%;
+	}
+
+	.col-12 {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.status {
+		display: flex;
+	}
+
+	.status-text {
+		text-transform: capitalize;
+	}
+
+	.submission-button {
+		width: 120px;
+	}
+
+	.bp3-tab-list {
+		max-width: $spub-configuration-width;
+		padding-top: 5px;
+		.bp3-tab-indicator {
+			background: var(--community-accent-dark);
+			height: 2px;
+		}
+		.bp3-tab {
+			font-size: 14px;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 17px;
+			text-align: left;
+			min-width: 200px;
+			margin: 0 1px;
+			letter-spacing: 0.15em;
+			padding: 15px 15px 15px 0;
+			text-transform: uppercase;
+
+			&.inactive {
+				border-bottom: 1px solid #bdbdbd;
+				opacity: 0.45;
+				color: var(--community-accent-dark);
+			}
+			&.active {
+			bottom: 1px;
+			color: var(--community-accent-dark);
+			}
+			.bp3-icon {
+				padding: 0 6px;
+			}
+		}
+
+		.sub-tab {
+			font-weight: 600;
+			letter-spacing: 0.05em;
+		}
+
+		.bp3-tab + .bp3-tab {
+			padding: 15px;
+		}
+	}
+}

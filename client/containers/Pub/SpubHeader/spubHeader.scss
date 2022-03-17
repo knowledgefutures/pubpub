@@ -110,76 +110,13 @@ $title-elements-spacing: 15px;
 		margin: 0 auto;
 		max-width: $spub-configuration-width;
 	}
-	> .bp3-tab-list > .bp3-tab {
-		min-width: 200px;
-		margin: 0 1px;
-		padding: 15px 15px 15px 0;
-		text-transform: uppercase;
-		letter-spacing: 0.15em;
-		&.inactive {
-			border-bottom: 1px solid #BDBDBD;
-		}
-		&.active {
-			bottom: 1px;
-		}
-	}
-	.bp3-tab-list {
-		.bp3-tab-indicator {
-			height: 2px;
-		}
-		.bp3-tab {
-			font-size: 14px;
-			font-style: normal;
-			font-weight: 500;
-			line-height: 17px;
-			text-align: left;
-			&.inactive {
-				color: #BDBDBD;
-			}
-			&.active {
-				color: var(--community-accent-dark);
-			}
-			.bp3-icon { 
-				padding: 0 6px;
-			}
-		}
-	}
+
 }
 
 .tabs.spub-header-component {
 	.input-prompt,
 	.prosemirror-placeholder,
 	.minimal-editor-component > .editor-wrapper,
-	.bp3-tab-list {
-		max-width: $spub-configuration-width;
-		margin: auto;
-		padding-top: 5px;
-
-		.bp3-tab-indicator {
-			background: var(--community-accent-dark);
-		}
-
-		.tab {
-			min-width: 200px;
-			margin: 0 1px;
-			font-size: 14px;
-			font-style: normal;
-			font-weight: 500;
-			line-height: 17px;
-			letter-spacing: 0.15em;
-			text-align: left;
-			padding: 15px 15px 15px 0;
-			text-transform: uppercase;
-		}
-		.sub-tab {
-			font-weight: 600;
-			letter-spacing: 0.05em;
-		}
-
-		.tab + .tab {
-			padding: 15px;
-		}
-	}
 	.tab {
 		margin: 0;
 	}

@@ -32,7 +32,7 @@ const shimPubContextProps = {
 	historyData: {},
 	firebaseDraftRef: null,
 	updateLocalData: null as any,
-	updatePubData: null as any,
+	updatePubData: (() => {}) as any,
 	noteManager: new NoteManager('apa', 'count', {}),
 } as any;
 

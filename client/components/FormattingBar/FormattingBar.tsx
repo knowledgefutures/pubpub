@@ -5,7 +5,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { usePageContext } from 'utils/hooks';
 import { useRefMap } from 'client/utils/useRefMap';
-import { EditorChangeObject } from 'client/components/Editor';
+import { EditorChangeObject } from 'components/Editor';
 
 import BlockTypeSelector from './BlockTypeSelector';
 import FormattingBarButton from './FormattingBarButton';

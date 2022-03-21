@@ -3,13 +3,13 @@ import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { useDebounce } from 'use-debounce';
 import classNames from 'classnames';
 
-import { InputField } from 'client/components';
-import { getDefaultNodeLabels, nodeDefaults } from 'client/components/Editor/utils/references';
+import { InputField } from 'components';
+import { getDefaultNodeLabels, nodeDefaults } from 'components/Editor/utils/references';
 import {
 	NodeLabelMap,
 	ReferenceableNodeType,
 	referenceableNodeTypes,
-} from 'client/components/Editor/types';
+} from 'components/Editor/types';
 
 require('./nodeLabelEditor.scss');
 

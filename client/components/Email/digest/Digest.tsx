@@ -3,7 +3,7 @@ import Color from 'color';
 
 import { ActivityAssociations, Community } from 'types';
 import { ActivityItem } from 'types/activity';
-import { IconName } from 'client/components';
+import { IconName } from 'components';
 import { formatDate } from 'utils/dates';
 
 import { Spacer, Section, Wrapper, CommunityHeader } from '..';

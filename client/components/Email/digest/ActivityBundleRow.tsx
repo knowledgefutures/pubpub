@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import pick from 'lodash.pick';
 
-import TimeAgo from 'client/components/TimeAgo/TimeAgo';
+import TimeAgo from 'components/TimeAgo/TimeAgo';
 import { ActivityRenderContext } from 'client/utils/activity/types';
 import { ActivityItem, ActivityAssociations } from 'types';
 import { renderActivityItem } from 'client/utils/activity';

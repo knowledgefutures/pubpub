@@ -1,5 +1,5 @@
 import { collectionUrl } from 'utils/canonicalUrls';
-import { IconName } from 'client/components/Icon/Icon';
+import { IconName } from 'components/Icon/Icon';
 
 type ContextHint = {
 	value: string;

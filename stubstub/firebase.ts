@@ -2,7 +2,7 @@ import uuid from 'uuid/v4';
 import { Step, Transform } from 'prosemirror-transform';
 import firebase from 'firebase';
 
-import { createFirebaseChange, getFirebaseDoc, editorSchema } from 'client/components/Editor';
+import { createFirebaseChange, getFirebaseDoc, editorSchema } from 'components/Editor';
 import { getPubDraftRef, getDatabaseRef } from 'server/utils/firebaseAdmin';
 
 type EditorSchema = typeof editorSchema;

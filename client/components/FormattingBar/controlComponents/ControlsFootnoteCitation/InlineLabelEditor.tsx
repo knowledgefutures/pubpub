@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ControlGroup, InputGroup } from '@blueprintjs/core';
 
 import { MenuButton, MenuItem } from 'components/Menu';
-import { usePubContext } from 'client/containers/Pub/pubHooks';
+import { usePubContext } from 'containers/Pub/pubHooks';
 
 type Props = {
 	customLabel: string;

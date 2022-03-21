@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from 'react';
 import classNames from 'classnames';
 
-import { Icon, IconName } from 'client/components';
+import { Icon, IconName } from 'components';
 import { usePageContext } from 'utils/hooks';
 
 import { iconSize } from './constants';

@@ -3,7 +3,7 @@ import { Button, NonIdealState, Spinner, Switch } from '@blueprintjs/core';
 
 import { ActivityFilter, Member } from 'types';
 import { usePageContext } from 'utils/hooks';
-import { DashboardFrame } from 'client/components';
+import { DashboardFrame } from 'components';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import * as api from 'client/utils/members/api';
 import { checkMemberPermission } from 'utils/permissions';

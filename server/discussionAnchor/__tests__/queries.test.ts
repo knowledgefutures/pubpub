@@ -1,6 +1,6 @@
 import { modelize, setup } from 'stubstub';
 
-import { buildSchema } from 'client/components/Editor';
+import { buildSchema } from 'components/Editor';
 import { Fragment, Node, Slice } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { ReplaceStep } from 'prosemirror-transform';

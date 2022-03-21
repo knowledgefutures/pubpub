@@ -7,7 +7,7 @@ import { fromProsemirror, emitPandocJson } from '@pubpub/prosemirror-pandoc';
 import dateFormat from 'dateformat';
 
 import { DocJson } from 'types';
-import { editorSchema, getReactedDocFromJson, Note } from 'client/components/Editor';
+import { editorSchema, getReactedDocFromJson, Note } from 'components/Editor';
 import { getPathToCslFileForCitationStyleKind } from 'server/utils/citations';
 import { PandocTarget } from 'utils/export/formats';
 

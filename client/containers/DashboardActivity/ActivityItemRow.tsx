@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { formatDate } from 'utils/dates';
-import { Icon } from 'client/components';
+import { Icon } from 'components';
 import { RenderedActivityItem } from 'client/utils/activity/types';
 
 require('./activityItemRow.scss');

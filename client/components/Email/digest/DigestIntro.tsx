@@ -5,7 +5,7 @@ import Color from 'color';
 import { Community } from 'types';
 import { communityUrl } from 'utils/canonicalUrls';
 import { formatDate } from 'utils/dates';
-import { Icon } from 'client/components';
+import { Icon } from 'components';
 
 import { Section, Button } from '..';
 import { BaseTableStyle } from '../shared';

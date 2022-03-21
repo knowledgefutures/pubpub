@@ -5,7 +5,7 @@ import { DiscussionAnchor as DiscussionAnchorType } from 'types';
 import {
 	DiscussionSelection,
 	mapDiscussionSelectionThroughSteps,
-} from 'client/components/Editor/plugins/discussions';
+} from 'components/Editor/plugins/discussions';
 
 /**
  * Persists a new anchor for an existing one based on changes to a Prosemirror document.

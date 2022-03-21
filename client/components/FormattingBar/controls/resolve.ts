@@ -1,4 +1,4 @@
-import { EditorChangeObject } from 'client/components/Editor';
+import { EditorChangeObject } from 'components/Editor';
 
 import {
 	ControlsConfiguration,

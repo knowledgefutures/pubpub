@@ -7,7 +7,7 @@ import {
 	getReferenceableNodes,
 	NodeReference,
 } from 'components/Editor/utils/references';
-import { usePubContext } from 'client/containers/Pub/pubHooks';
+import { usePubContext } from 'containers/Pub/pubHooks';
 
 import { getDashUrl } from 'utils/dashboard';
 import { EditorChangeObjectWithNode } from '../types';

@@ -1,7 +1,7 @@
 import * as katex from 'katex';
 import { RuleSet, pandocUtils, transformUtils, transformers } from '@pubpub/prosemirror-pandoc';
 
-import { editorSchema } from 'client/components/Editor';
+import { editorSchema } from 'components/Editor';
 
 const { createAttr, flatten, intersperse, textFromStrSpace, textToStrSpace } = transformUtils;
 

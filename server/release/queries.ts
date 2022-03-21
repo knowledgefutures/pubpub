@@ -8,7 +8,7 @@ import { createDoc } from 'server/doc/queries';
 import { setPubSearchData } from 'server/utils/search';
 import { createUpdatedDiscussionAnchorForNewSteps } from 'server/discussionAnchor/queries';
 import { Maybe, Release as ReleaseType, DefinitelyHas } from 'types';
-import { getStepsInChangeRange, editorSchema } from 'client/components/Editor';
+import { getStepsInChangeRange, editorSchema } from 'components/Editor';
 import { defer } from 'server/utils/deferred';
 import { createPubReleasedActivityItem } from 'server/activityItem/queries';
 

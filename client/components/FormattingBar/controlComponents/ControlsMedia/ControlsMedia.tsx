@@ -3,9 +3,9 @@ import { Checkbox, Classes, Tab, Tabs } from '@blueprintjs/core';
 
 import { SimpleEditor, SliderInput } from 'components';
 
-import { NodeLabelMap, ReferenceableNodeType } from 'client/components/Editor/types';
+import { NodeLabelMap, ReferenceableNodeType } from 'components/Editor/types';
 
-import { getCurrentNodeLabels, isResizeableFormat } from 'client/components/Editor';
+import { getCurrentNodeLabels, isResizeableFormat } from 'components/Editor';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
 import AlignmentControl from './AlignmentControl';

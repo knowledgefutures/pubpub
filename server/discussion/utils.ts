@@ -1,7 +1,7 @@
 import * as types from 'types';
-import { jsonToNode } from 'client/components/Editor';
-import { createFastForwarder } from 'client/components/Editor/plugins/discussions/fastForward';
-import { DiscussionInfo } from 'client/components/Editor/plugins/discussions/types';
+import { jsonToNode } from 'components/Editor';
+import { createFastForwarder } from 'components/Editor/plugins/discussions/fastForward';
+import { DiscussionInfo } from 'components/Editor/plugins/discussions/types';
 import { Discussion, DiscussionAnchor, Doc, Release } from 'server/models';
 import { getPubDraftRef } from 'server/utils/firebaseAdmin';
 import { indexByProperty } from 'utils/arrays';

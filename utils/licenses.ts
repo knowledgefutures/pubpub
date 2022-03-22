@@ -15,7 +15,7 @@ export const licenses: License[] = [
 		slug: 'cc-0',
 		full: 'Creative Commons Public Domain Dedication',
 		short: 'CC-0',
-		version: '4.0',
+		version: '1.0',
 		link: 'https://creativecommons.org/publicdomain/zero/1.0/',
 	},
 	{

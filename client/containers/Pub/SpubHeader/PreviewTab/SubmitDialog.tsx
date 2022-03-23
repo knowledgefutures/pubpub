@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import { Fragment } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
 
 import { Callout, Button, Classes, Dialog } from '@blueprintjs/core';
 import { apiFetch } from 'client/utils/apiFetch';
-import { Submission, SubmissionStatus, DefinitelyHas, DocJson } from 'types';
-import { Editor } from 'components';
-import { getEmptyDoc, jsonToNode } from 'components/Editor';
-import { usePubContext } from 'containers/Pub/pubHooks';
+import { Submission, SubmissionStatus, DefinitelyHas } from 'types';
 
 type Props = {
 	submission: DefinitelyHas<Submission, 'submissionWorkflow'>;
@@ -15,25 +10,12 @@ type Props = {
 	onClose: () => any;
 };
 
-const addAbstractToEditor = (abstract: DocJson, view: EditorView): void => {
-	const { schema } = view.state.doc.type;
-	const h1Node = schema.node('heading', { level: 1 }, schema.text('Abstract'));
-	const abstractNode = jsonToNode(abstract, schema);
-	const frag = Fragment.from(h1Node).append(abstractNode.content);
-	const { tr } = view.state;
-	tr.insert(0, frag);
-	view.dispatch(tr);
-};
-
 const SubmitDialog = (props: Props) => {
-	const { collabData } = usePubContext();
-	const { view } = collabData.editorChangeObject;
 	const [isHandlingSubmission, setIsHandlingSubmission] = useState(false);
 	const [updatedSubmission, setUpdatedSubmission] = useState(null);
 	const [submissionErr, setSubmissionErr] = useState(null);
 	const onSubmit = () => {
 		setIsHandlingSubmission(true);
-		addAbstractToEditor(props.submission.abstract || getEmptyDoc(), view);
 		apiFetch
 			.put('/api/submissions', {
 				id: props.submission.id,
@@ -52,10 +34,6 @@ const SubmitDialog = (props: Props) => {
 					<div className={Classes.DIALOG_BODY}>
 						<Callout intent="success" title="Submitted!">
 							Your Pub has been submitted for review.
-							<Editor
-								isReadOnly
-								initialContent={props.submission.submissionWorkflow.emailText}
-							/>
 						</Callout>
 					</div>
 					<div className={Classes.DIALOG_FOOTER}>

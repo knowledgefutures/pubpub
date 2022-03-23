@@ -1,9 +1,9 @@
 import { Node } from 'prosemirror-model';
-import uuid from 'uuid';
+import { Step } from 'prosemirror-transform';
 import { compressStateJSON, compressStepJSON } from 'prosemirror-compress-pubpub';
+import uuid from 'uuid';
 import firebase from 'firebase';
 
-import { Step } from 'prosemirror-transform';
 import { CompressedChange, CompressedKeyable } from '../types';
 
 export const firebaseTimestamp = { '.sv': 'timestamp' };
@@ -38,7 +38,7 @@ export const flattenKeyables = (
 	}, []);
 };
 
-export const createFirebaseChange = (steps: Step[], clientId: string) => {
+export const createFirebaseChange = (steps: Step[], clientId: string): CompressedChange => {
 	return {
 		id: uuid.v4(), // Keyable Id
 		cId: clientId, // Client Id

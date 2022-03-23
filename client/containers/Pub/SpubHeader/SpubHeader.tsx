@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { Tab, Tabs, TabId, Icon, IconName } from '@blueprintjs/core';
+import React from 'react';
+import { Tab, Tabs, Icon, IconName } from '@blueprintjs/core';
 
-import { DocJson, DefinitelyHas, PubHistoryState, PubPageData, SubmissionStatus } from 'types';
-import { assert } from 'utils/assert';
+import { DocJson, PubHistoryState, PubPageData } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
-import { getEmptyDoc } from 'components/Editor';
 
+import { usePubContext } from '../pubHooks';
 import InstructionsTab from './InstructionsTab';
 import SubmissionTab from './SubmissionTab';
 import ContributorsTab from './ContributorsTab';
@@ -13,14 +12,7 @@ import PreviewTab from './PreviewTab';
 
 require('./spubHeader.scss');
 
-type Props = {
-	historyData: PubHistoryState;
-	updateLocalData: (
-		type: string,
-		patch: Partial<PubPageData> | Partial<PubHistoryState>,
-	) => unknown;
-	pubData: DefinitelyHas<PubPageData, 'submission'>;
-};
+export type SpubHeaderTab = 'instructions' | 'submission' | 'preview';
 
 export const renderTabTitle = (icon: IconName, title: string) => (
 	<>
@@ -28,59 +20,60 @@ export const renderTabTitle = (icon: IconName, title: string) => (
 	</>
 );
 
-const SpubHeader = (props: Props) => {
-	const [selectedTab, setSelectedTab] = useState<TabId>('instructions');
-	const [abstract, setAbstract] = useState(
-		() => props.pubData.submission.abstract || getEmptyDoc(),
-	);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [status, setStatus] = useState(props.pubData.submission.status);
+const SpubHeader = () => {
+	const {
+		updatePubData,
+		updateLocalData,
+		pubData,
+		updateSubmissionState,
+		submissionState,
+		historyData,
+	} = usePubContext();
+	const { selectedTab, submission } = submissionState!;
 
-	const updateAbstract = (newAbstract: DocJson) => {
-		return apiFetch
-			.put('/api/submissions', {
+	const updateAbstract = async (newAbstract: DocJson) => {
+		updateSubmissionState(({ submission: currentSubmission }) => ({
+			submission: {
+				...currentSubmission,
 				abstract: newAbstract,
-				id: props.pubData.submission.id,
-			})
-			.then(() => setAbstract(newAbstract));
+			},
+		}));
+		return apiFetch.put('/api/submissions', {
+			abstract: newAbstract,
+			id: submission.id,
+		});
 	};
 
-	const updateAndSavePubData = (newPubData: Partial<PubPageData>) => {
-		props.updateLocalData('pub', newPubData);
-		return apiFetch
-			.put('/api/pubs', {
+	const updateAndSavePubData = async (newPubData: Partial<PubPageData>) => {
+		updatePubData(newPubData);
+		return apiFetch('/api/pubs', {
+			method: 'PUT',
+			body: JSON.stringify({
 				...newPubData,
-				pubId: props.pubData.id,
-				communityId: props.pubData.communityId,
-			})
-			.catch(() => props.updateLocalData('pub', props.pubData));
+				pubId: pubData.id,
+				communityId: pubData.communityId,
+			}),
+		}).catch(() => updatePubData(pubData));
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const updateSubmissionStatus = (newSubmissionStatus: SubmissionStatus) => {
-		return apiFetch
-			.put('/api/submissions', {
-				status: newSubmissionStatus,
-				id: props.pubData.submission.id,
-			})
-			.then(() => setStatus(newSubmissionStatus));
+	const setSelectedTab = (nextTab: SpubHeaderTab) => {
+		updateSubmissionState({ selectedTab: nextTab });
 	};
 
-	assert(props.pubData.submission.submissionWorkflow !== undefined);
 	const updateHistoryData = (newHistoryData: Partial<PubHistoryState>) => {
-		return props.updateLocalData('history', newHistoryData);
+		return updateLocalData('history', newHistoryData);
 	};
 
 	const instructionTabTitle = renderTabTitle('align-left', 'Instructions');
 	const submissionTabTitle = renderTabTitle('manually-entered-data', 'Submission');
-	const previewTabTitle = renderTabTitle('eye-open', 'Preview');
+	const previewTabTitle = renderTabTitle('eye-open', 'Preview & Submit');
 	const contributorsTabTitle = renderTabTitle('people', 'Contributors');
-	const maybeActiveClass = (tabId: string) => `${tabId === selectedTab ? 'active' : 'inactive'}`;
+	const maybeActiveClass = (tabId: string) => (tabId === selectedTab ? 'active' : 'inactive');
 
 	return (
 		<Tabs
 			id="spubHeader"
-			onChange={(t) => setSelectedTab(t)}
+			onChange={(t: SpubHeaderTab) => setSelectedTab(t)}
 			selectedTabId={selectedTab}
 			className="spub-header-component tabs bp3-large"
 		>
@@ -90,7 +83,7 @@ const SpubHeader = (props: Props) => {
 				className={`tab-panel ${maybeActiveClass('instructions')}`}
 				panel={
 					<InstructionsTab
-						submissionWorkflow={props.pubData.submission.submissionWorkflow}
+						submissionWorkflow={submission.submissionWorkflow}
 						onBeginSubmission={() => setSelectedTab('submission')}
 					/>
 				}
@@ -101,10 +94,10 @@ const SpubHeader = (props: Props) => {
 				className={`tab-panel submission ${maybeActiveClass('submission')}`}
 				panel={
 					<SubmissionTab
-						abstract={abstract}
+						abstract={submission.abstract}
 						onUpdatePub={updateAndSavePubData}
 						onUpdateAbstract={updateAbstract}
-						pub={props.pubData}
+						pub={pubData}
 					/>
 				}
 			/>
@@ -112,9 +105,7 @@ const SpubHeader = (props: Props) => {
 				className={`tab-panel ${maybeActiveClass('contributors')}`}
 				id="contributors"
 				title={contributorsTabTitle}
-				panel={
-					<ContributorsTab pubData={props.pubData} onUpdatePub={updateAndSavePubData} />
-				}
+				panel={<ContributorsTab pubData={pubData} onUpdatePub={updateAndSavePubData} />}
 			/>
 			<Tab
 				id="preview"
@@ -123,8 +114,9 @@ const SpubHeader = (props: Props) => {
 				panel={
 					<PreviewTab
 						updateHistoryData={updateHistoryData}
-						historyData={props.historyData}
-						pubData={props.pubData}
+						historyData={historyData}
+						pubData={pubData}
+						submission={submission}
 					/>
 				}
 			/>

@@ -11,7 +11,7 @@ require('./submissionTab.scss');
 
 type Props = {
 	pub: Pub;
-	abstract: DocJson;
+	abstract: null | DocJson;
 	onUpdatePub: (pub: Partial<PubPageData>) => unknown;
 	onUpdateAbstract: (abstract: DocJson) => Promise<unknown>;
 };

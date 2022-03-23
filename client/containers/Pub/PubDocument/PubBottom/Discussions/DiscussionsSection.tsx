@@ -105,7 +105,7 @@ const DiscussionsSection = (props: Props) => {
 	const createDiscussionFilter = (searchTerm) => (threads) => {
 		const hiddenDiscussionIds = isShowingAnchoredComments
 			? null
-			: getAnchoredDiscussionIds(editorChangeObject.view);
+			: getAnchoredDiscussionIds(editorChangeObject!.view);
 		const res = filterAndSortDiscussions(
 			threads,
 			isBrowsingArchive,

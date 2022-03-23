@@ -3,8 +3,10 @@ import { Collection, Submission, SubmissionWorkflow } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { defer } from 'server/utils/deferred';
 import { getPub } from 'server/utils/queryHelpers';
+import { getEmptyDoc } from 'client/components/Editor';
 
 import { sendSubmissionEmail } from './emails';
+import { appendAbstractToPubDraft } from './abstract';
 
 const updateToStatuses = [...types.managerStatuses, ...types.submitterStatuses] as const;
 
@@ -59,6 +61,7 @@ export const createSubmission = async ({
 			pubId: pub.id,
 			submissionWorkflowId,
 			status: 'incomplete',
+			abstract: getEmptyDoc(),
 		},
 		{ actorId: userId },
 	);
@@ -82,6 +85,10 @@ export const updateSubmission = async (options: UpdateOptions, actorId: string) 
 			actorId,
 		},
 	);
+
+	if (isBeingSubmitted) {
+		await appendAbstractToPubDraft(submission.pubId, submission.abstract);
+	}
 
 	defer(async () => {
 		if (!skipEmail) {

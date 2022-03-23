@@ -37,7 +37,7 @@ const DiscussionInput = (props: Props) => {
 	const { discussionData, isPubBottomInput } = props;
 	const { pubData, historyData, collabData, updateLocalData } = usePubContext();
 	const { loginData, locationData, communityData } = usePageContext();
-	const pubView = collabData.editorChangeObject.view;
+	const pubView = collabData.editorChangeObject!.view;
 	const [changeObject, setChangeObject] = useState<any>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [didFocus, setDidFocus] = useState(false);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from '@blueprintjs/core';
 
-import { PubPageData, DefinitelyHas, PubHistoryState } from 'types';
+import { PubPageData, PubHistoryState, Submission, DefinitelyHas } from 'types';
 import { GridWrapper, PubByline, DialogLauncher } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { usePubContext } from 'containers/Pub/pubHooks';
@@ -16,12 +16,13 @@ require('../../PubHeader/draftReleaseButtons.scss');
 type Props = {
 	historyData: PubHistoryState;
 	updateHistoryData: (patch: Partial<PubHistoryState>) => unknown;
-	pubData: DefinitelyHas<PubPageData, 'submission'>;
+	pubData: PubPageData;
+	submission: DefinitelyHas<Submission, 'submissionWorkflow'>;
 };
 
 const PreviewTab = (props: Props) => {
 	const { communityData } = usePageContext();
-	const { pubData, historyData } = props;
+	const { pubData, historyData, submission } = props;
 	const { latestKey, timestamps } = historyData;
 	const latestTimestamp = timestamps[latestKey];
 	const { collabData } = usePubContext();
@@ -78,7 +79,7 @@ const PreviewTab = (props: Props) => {
 						>
 							{({ isOpen, onClose }) => (
 								<SubmitDialog
-									submission={props.pubData.submission}
+									submission={submission}
 									isOpen={isOpen}
 									onClose={onClose}
 								/>

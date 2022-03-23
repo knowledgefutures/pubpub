@@ -6,7 +6,7 @@ import { DocJson } from 'types';
 
 import { addDiscussionToView } from '../plugins/discussions';
 import { editorHasPasteDecorations } from '../plugins/paste/plugin';
-import { docIsEmpty } from './doc';
+import { isEmptyDocNode } from './doc';
 
 export const dispatchEmptyTransaction = (editorView) => {
 	const emptyInitTransaction = editorView.state.tr;
@@ -176,5 +176,5 @@ export const focus = (editorView) => {
 };
 
 export const viewIsEmpty = (state: EditorState) => {
-	return docIsEmpty(state.doc) && !editorHasPasteDecorations(state);
+	return isEmptyDocNode(state.doc) && !editorHasPasteDecorations(state);
 };

@@ -12,13 +12,12 @@ const getRenderedValue = (note) => {
 export const usePubNotes = () => {
 	const {
 		noteManager,
-		collabData: {
-			editorChangeObject: { view },
-		},
+		collabData: { editorChangeObject },
 	} = usePubContext();
 
 	const [notes, setNotes] = useState(noteManager.notes);
 
+	const view = editorChangeObject!.view;
 	const { citations = [], footnotes = [] } = view ? getNotes(view.state.doc) : {};
 
 	const isNumberList = noteManager.citationInlineStyleKind === 'count';

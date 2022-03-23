@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { DOMSerializer, Node } from 'prosemirror-model';
-import { editorSchema, getDocForHtmlString, docIsEmpty } from 'components/Editor';
+import { editorSchema, getDocForHtmlString, isEmptyDocNode } from 'components/Editor';
 
 import { MinimalEditor } from 'components';
 
@@ -21,7 +21,7 @@ const SimpleEditor = (props: Props) => {
 	const handleEdit = useCallback(
 		(doc: Node) => {
 			const { schema } = doc.type;
-			if (docIsEmpty(doc)) {
+			if (isEmptyDocNode(doc)) {
 				onChange('');
 				return;
 			}

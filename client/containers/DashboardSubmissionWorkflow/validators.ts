@@ -1,3 +1,4 @@
+import { isEmptyDoc } from 'client/components/Editor';
 import { DocJson } from 'types';
 
 type AnyRecord = Record<string, any>;
@@ -18,7 +19,7 @@ export type ValidationResult<Rec extends AnyRecord> = {
 export const isValidTitle = (title: string) => title.length > 0;
 
 export const isValidDocJson = (docJson: DocJson) => {
-	return docJson.content.some((child) => child.content?.length > 0);
+	return !isEmptyDoc(docJson);
 };
 
 export const isAlwaysValid = () => true;

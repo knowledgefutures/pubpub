@@ -2,12 +2,12 @@ import React from 'react';
 import { PubAttributionEditor } from 'components';
 
 import { usePageContext } from 'utils/hooks';
-import { PubPageData, DefinitelyHas } from 'types';
+import { PubPageData } from 'types';
 
 import SpubHeaderTab from './SpubHeaderTab';
 
 type Props = {
-	pubData: DefinitelyHas<PubPageData, 'submission'>;
+	pubData: PubPageData;
 	onUpdatePub: (pub: Partial<PubPageData>) => unknown;
 };
 
@@ -19,7 +19,7 @@ const ContributorsTab = (props: Props) => {
 		<SpubHeaderTab>
 			<p>
 				Add the names, roles & affiliations of other people who have a part to play in the
-				creation of this submission’s content.
+				creation of this submission's content.
 			</p>
 			<PubAttributionEditor
 				pubData={pubData}

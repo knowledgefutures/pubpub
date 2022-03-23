@@ -1,5 +1,7 @@
 import firebase from 'firebase';
 import firebaseAdmin from 'firebase-admin';
+import { Schema } from 'prosemirror-model';
+import { Step, Transform } from 'prosemirror-transform';
 
 import {
 	editorSchema,
@@ -9,7 +11,7 @@ import {
 } from 'components/Editor';
 import { Pub, Draft } from 'server/models';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
-import { storeCheckpoint } from 'client/components/Editor/utils';
+import { storeCheckpoint, createFirebaseChange } from 'client/components/Editor/utils';
 import { DocJson } from 'types';
 
 const getFirebaseApp = () => {
@@ -130,4 +132,62 @@ export const getFirebaseToken = (
 	}
 	const tokenData = { ...clientData, ...getFirebaseDraftPathParts(draftPath) };
 	return firebaseAdmin.auth(firebaseApp!).createCustomToken(clientId, tokenData);
+};
+
+export const editFirebaseDraftByRef = async (
+	ref: firebase.database.Reference,
+	clientId: string,
+	schema: Schema = editorSchema,
+) => {
+	const fetchDoc = async () => getFirebaseDoc(ref, schema);
+
+	let { doc, key: currentKey } = await fetchDoc();
+	let pendingSteps: Step[] = [];
+
+	const api = {
+		transform: (fn: (tr: Transform, sc: Schema) => void) => {
+			const tr = new Transform(doc);
+			fn(tr, schema);
+			doc = tr.doc;
+			pendingSteps.push(...tr.steps);
+			return api;
+		},
+		writeChange: async (): Promise<boolean> => {
+			const change = createFirebaseChange(pendingSteps, clientId);
+			const { committed } = await ref.child(`changes/${currentKey + 1}`).transaction(
+				(existingContent) => {
+					if (existingContent) {
+						// Don't overwrite -- bail instead
+						return undefined;
+					}
+					return change;
+				},
+				undefined,
+				false,
+			);
+			if (committed) {
+				++currentKey;
+				pendingSteps = [];
+			}
+			return committed;
+		},
+		clearChanges: async () => {
+			await ref.child(`changes`).remove();
+			const refetch = await fetchDoc();
+			doc = refetch.doc;
+			currentKey = refetch.key;
+			pendingSteps = [];
+		},
+		getDoc: () => {
+			return doc;
+		},
+		getKey: () => {
+			return currentKey;
+		},
+		getRef: () => {
+			return ref;
+		},
+	};
+
+	return api;
 };

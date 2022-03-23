@@ -7,7 +7,7 @@ import { getPubPageTitle } from 'utils/pubPageTitle';
 import { NoteManager } from 'client/utils/notes';
 import { initFirebase } from 'client/utils/firebaseClient';
 import { apiFetch } from 'client/utils/apiFetch';
-import { NodeLabelMap } from 'client/components/Editor/types';
+import { NodeLabelMap, EditorChangeObject } from 'client/components/Editor/types';
 import {
 	Maybe,
 	PatchFn,
@@ -17,7 +17,11 @@ import {
 	LoginData,
 	LocationData,
 	PubHistoryState,
+	Submission,
+	DefinitelyHas,
 } from 'types';
+
+import { SpubHeaderTab } from './SpubHeader/SpubHeader';
 
 const shimPubContextProps = {
 	inPub: false,
@@ -32,17 +36,10 @@ const shimPubContextProps = {
 	historyData: {},
 	firebaseDraftRef: null,
 	updateLocalData: null as any,
-	updatePubData: (() => {}) as any,
+	updatePubData: null as any,
+	submissionState: {},
 	noteManager: new NoteManager('apa', 'count', {}),
 } as any;
-
-type Props = {
-	pubData: PubPageData;
-	locationData: LocationData;
-	communityData: Community;
-	loginData: LoginData;
-	children: (ctx: typeof shimPubContextProps) => React.ReactNode;
-};
 
 type CollabUser = {
 	id: string;
@@ -54,16 +51,22 @@ type CollabUser = {
 	canEdit: boolean;
 };
 
+type SubmissionState = {
+	submission: DefinitelyHas<Submission, 'submissionWorkflow'>;
+	selectedTab: SpubHeaderTab;
+};
+
 type State = {
 	pubData: PubPageData;
 	historyData: PubHistoryState;
 	collabData: {
-		editorChangeObject: any;
+		editorChangeObject: null | EditorChangeObject;
 		status: string;
 		localCollabUser: CollabUser;
 		remoteCollabUsers: CollabUser[];
 	};
 	firebaseDraftRef: null | firebase.database.Reference;
+	submissionState: null | SubmissionState;
 	noteManager: NoteManager;
 };
 
@@ -71,9 +74,18 @@ export type PubContextType = State & {
 	inPub: boolean;
 	updateLocalData: (type: string, patcher: PatchFnArg<any>) => unknown;
 	updatePubData: PatchFn<PubPageData>;
+	updateSubmissionState: PatchFn<SubmissionState>;
 };
 
 export const PubContext = React.createContext<PubContextType>(shimPubContextProps);
+
+type Props = {
+	pubData: PubPageData;
+	locationData: LocationData;
+	communityData: Community;
+	loginData: LoginData;
+	children: (ctx: PubContextType) => React.ReactNode;
+};
 
 const fetchVersionFromHistory = (pubData, historyKey, accessHash) =>
 	apiFetch(
@@ -152,6 +164,19 @@ const idleStateUpdater = (boundSetState, timeout = 50) => {
 		immediately,
 	};
 };
+
+const getInitialSubmissionState = (pub: PubPageData): null | SubmissionState => {
+	const { submission } = pub;
+	if (submission && !pub.isRelease) {
+		const { status } = submission;
+		return {
+			selectedTab: status === 'incomplete' ? 'instructions' : 'preview',
+			submission,
+		};
+	}
+	return null;
+};
+
 class PubSyncManager extends React.Component<Props, State> {
 	idleStateUpdater: ReturnType<typeof idleStateUpdater>;
 
@@ -165,7 +190,9 @@ class PubSyncManager extends React.Component<Props, State> {
 			firebaseDraftRef: null,
 			pubData: this.props.pubData,
 			collabData: {
-				editorChangeObject: {},
+				// TODO(ian): Verify that there are no unchecked property accesses on this
+				// editorChangeObject and then remove this cast.
+				editorChangeObject: {} as unknown as null,
 				status: 'connecting',
 				localCollabUser: getLocalCollabUser(pubData, this.props.loginData),
 				remoteCollabUsers: [],
@@ -183,6 +210,7 @@ class PubSyncManager extends React.Component<Props, State> {
 				pubData.citationInlineStyle,
 				pubData.initialStructuredCitations,
 			),
+			submissionState: getInitialSubmissionState(pubData),
 		};
 		this.idleStateUpdater = idleStateUpdater(this.setState.bind(this));
 		this.syncRemoteCollabUsers = this.syncRemoteCollabUsers.bind(this);
@@ -190,6 +218,7 @@ class PubSyncManager extends React.Component<Props, State> {
 		this.updatePubData = this.updatePubData.bind(this);
 		this.updateCollabData = this.updateCollabData.bind(this);
 		this.updateLocalData = this.updateLocalData.bind(this);
+		this.updateSubmissionState = this.updateSubmissionState.bind(this);
 		if (typeof window !== 'undefined') {
 			// eslint-disable-next-line no-underscore-dangle
 			// @ts-expect-error
@@ -381,6 +410,19 @@ class PubSyncManager extends React.Component<Props, State> {
 		}
 	}
 
+	updateSubmissionState(next: PatchFnArg<SubmissionState>) {
+		this.idleStateUpdater.setState((current) => {
+			const nextSubmissionState =
+				typeof next === 'function' ? next(current.submissionState!) : next;
+			return {
+				submissionState: {
+					...current.submissionState,
+					...nextSubmissionState,
+				},
+			};
+		});
+	}
+
 	render() {
 		const context = {
 			inPub: true,
@@ -389,8 +431,10 @@ class PubSyncManager extends React.Component<Props, State> {
 			historyData: this.state.historyData,
 			noteManager: this.state.noteManager,
 			firebaseDraftRef: this.state.firebaseDraftRef,
+			submissionState: this.state.submissionState,
 			updateLocalData: this.updateLocalData,
 			updatePubData: this.updatePubData,
+			updateSubmissionState: this.updateSubmissionState,
 		} as PubContextType;
 		return (
 			<PubContext.Provider value={context}>

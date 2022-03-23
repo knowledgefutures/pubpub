@@ -78,8 +78,10 @@ export type OnEditFn = (
 ) => unknown;
 
 export type CompressedChange = {
-	t: number;
 	s: Record<string, any>[];
+	t: { '.sv': string }; // This is a special Firebase value
+	cId: string;
+	id: string;
 };
 
 export type CompressedKeyable = CompressedChange | CompressedChange[];

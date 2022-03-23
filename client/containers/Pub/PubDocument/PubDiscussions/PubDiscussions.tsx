@@ -44,13 +44,13 @@ const PubDiscussions = (props: Props) => {
 
 	const { discussions } = pubData;
 	const { canView, canCreateDiscussions } = scopeData;
-	const decorations = collabData.editorChangeObject.decorations || [];
+	const decorations = collabData.editorChangeObject!.decorations || [];
 	const groupsByLine = groupDiscussionsByLine(decorations, discussions);
 
 	useEffect(() => {
 		// This effect will cause boundingBoxes to recalculate on window resize.
-		if (collabData.editorChangeObject.view) {
-			dispatchEmptyTransaction(collabData.editorChangeObject.view);
+		if (collabData.editorChangeObject!.view) {
+			dispatchEmptyTransaction(collabData.editorChangeObject!.view);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [windowWidth]);

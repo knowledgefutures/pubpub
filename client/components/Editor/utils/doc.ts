@@ -4,11 +4,15 @@ import { DocJson } from 'types';
 
 import { editorSchema } from './schema';
 
-export const getEmptyDoc = () => {
+export const getEmptyDoc = (): DocJson => {
 	return { type: 'doc' as const, attrs: { meta: {} }, content: [{ type: 'paragraph' }] };
 };
 
-export const docIsEmpty = (doc: Node) => {
+export const isEmptyDoc = (doc: DocJson) => {
+	return doc.content.every((child) => child.content?.length === 0);
+};
+
+export const isEmptyDocNode = (doc: Node) => {
 	if (doc.childCount === 0) {
 		return true;
 	}

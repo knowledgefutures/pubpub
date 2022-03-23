@@ -11,8 +11,8 @@ import Editor, { getJSON } from 'components/Editor';
 import { usePageContext } from 'utils/hooks';
 
 import { usePubContext } from '../pubHooks';
+import { usePubBodyState } from './usePubBodyState';
 import { PubSuspendWhileTypingContext } from '../PubSuspendWhileTyping';
-
 import discussionSchema from './DiscussionAddon/discussionSchema';
 import Discussion from './PubDiscussions/Discussion';
 
@@ -43,6 +43,7 @@ const PubBody = (props: Props) => {
 	const [editorError, setEditorError] = useState<Error | null>(null);
 	const [editorErrorTime, setEditorErrorTime] = useState<number | null>(null);
 	const [lastSavedTime, setLastSavedTime] = useState<number | null>(null);
+	const { key, initialContent, isReadOnly } = usePubBodyState();
 
 	prevStatusRef.current = collabData.status;
 	useBeforeUnload(
@@ -51,7 +52,7 @@ const PubBody = (props: Props) => {
 	);
 
 	const downloadBackup = () => {
-		const docJson = getJSON(collabData.editorChangeObject.view);
+		const docJson = getJSON(collabData.editorChangeObject!.view);
 		const blob = new Blob([JSON.stringify(docJson, null, 2)], {
 			type: 'text/plain;charset=utf-8',
 		});
@@ -85,11 +86,6 @@ const PubBody = (props: Props) => {
 		}
 	};
 
-	const editorKeyHistory = isViewingHistory && historyData.historyDocKey;
-	const editorKeyCollab = firebaseDraftRef ? 'ready' : 'unready';
-	const editorKey = editorKeyHistory || editorKeyCollab;
-	const isReadOnly = pubData.isReadOnly || pubData.isInMaintenanceMode || isViewingHistory;
-	const initialContent = (isViewingHistory && historyData.historyDoc) || pubData.initialDoc;
 	const loadCollaborativeOptions = !isViewingHistory && !pubData.isInMaintenanceMode;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
@@ -133,7 +129,7 @@ const PubBody = (props: Props) => {
 				`}
 			</style>
 			<Editor
-				key={editorKey}
+				key={key}
 				customNodes={
 					{
 						...discussionSchema,

@@ -22,14 +22,15 @@ const PubInlineMenu = () => {
 	const { pubData, collabData, historyData } = usePubContext();
 	const { communityData, scopeData } = usePageContext();
 	const { canView, canCreateDiscussions } = scopeData.activePermissions;
-	const selection = collabData.editorChangeObject.selection || {};
-	const selectionBoundingBox = collabData.editorChangeObject.selectionBoundingBox || {};
+	const selection = collabData.editorChangeObject!.selection || {};
+	const selectionBoundingBox: Record<string, any> =
+		collabData.editorChangeObject!.selectionBoundingBox || {};
 
 	if (
-		!collabData.editorChangeObject.selection ||
+		!collabData.editorChangeObject!.selection ||
 		selection.empty ||
-		selection.$anchorCell ||
-		collabData.editorChangeObject.selectedNode
+		(selection as any).$anchorCell ||
+		collabData.editorChangeObject!.selectedNode
 	) {
 		return null;
 	}
@@ -48,7 +49,7 @@ const PubInlineMenu = () => {
 			<FormattingBar
 				buttons={buttons.inlineMenuButtonSet}
 				isTranslucent
-				editorChangeObject={collabData.editorChangeObject}
+				editorChangeObject={collabData.editorChangeObject!}
 				showBlockTypes={false}
 				controlsConfiguration={{ kind: 'none' }}
 			/>
@@ -66,9 +67,9 @@ const PubInlineMenu = () => {
 					minimal={true}
 					icon={<Icon icon="chat" />}
 					onClick={() => {
-						const view = collabData.editorChangeObject.view;
+						const view = collabData.editorChangeObject!.view;
 						setLocalHighlight(view, selection.from, selection.to, uuidv4());
-						moveToEndOfSelection(collabData.editorChangeObject.view);
+						moveToEndOfSelection(collabData.editorChangeObject!.view);
 					}}
 				/>
 			)}

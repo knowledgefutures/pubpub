@@ -28,7 +28,7 @@ import {
 	User,
 } from 'server/models';
 import { indexById } from 'utils/arrays';
-import { createActivityAssociationSets } from 'utils/activity';
+import { createActivityAssociationSets } from '../../utils/activity';
 
 type PromiseRecord<T extends { [k: string]: any }> = {
 	[K in keyof T]: Promise<T[K]>;

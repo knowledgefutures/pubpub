@@ -11,7 +11,7 @@ import {
 import { ActivityRenderContext, RenderedActivityItem } from 'client/utils/activity/types';
 import { renderActivityItem } from 'client/utils/activity';
 import { apiFetch } from 'client/utils/apiFetch';
-import { createActivityAssociations } from 'utils/activity';
+import { createActivityAssociations } from '../../../utils/activity';
 
 type PartialActivityRenderContext = Omit<ActivityRenderContext, 'associations'>;
 

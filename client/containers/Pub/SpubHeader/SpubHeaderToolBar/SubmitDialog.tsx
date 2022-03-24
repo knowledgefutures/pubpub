@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { Callout, Button, Classes, Dialog } from '@blueprintjs/core';
 import { apiFetch } from 'client/utils/apiFetch';
+import { usePendingChanges } from 'utils/hooks';
 import { Submission, SubmissionStatus, DefinitelyHas } from 'types';
 
 type Props = {
@@ -11,19 +12,22 @@ type Props = {
 };
 
 const SubmitDialog = (props: Props) => {
+	const { pendingPromise } = usePendingChanges();
 	const [isHandlingSubmission, setIsHandlingSubmission] = useState(false);
 	const [updatedSubmission, setUpdatedSubmission] = useState(null);
 	const [submissionErr, setSubmissionErr] = useState(null);
 	const onSubmit = () => {
 		setIsHandlingSubmission(true);
-		apiFetch
-			.put('/api/submissions', {
-				id: props.submission.id,
-				status: 'pending' as SubmissionStatus,
-			})
-			.then((submissionRes) => setUpdatedSubmission(submissionRes))
-			.catch((err) => setSubmissionErr(err))
-			.finally(() => setIsHandlingSubmission(false));
+		pendingPromise(
+			apiFetch
+				.put('/api/submissions', {
+					id: props.submission.id,
+					status: 'pending' as SubmissionStatus,
+				})
+				.then((submissionRes) => setUpdatedSubmission(submissionRes))
+				.catch((err) => setSubmissionErr(err))
+				.finally(() => setIsHandlingSubmission(false)),
+		);
 	};
 	return (
 		<Dialog isOpen={props.isOpen} onClose={props.onClose}>

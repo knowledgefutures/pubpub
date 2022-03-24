@@ -7,8 +7,6 @@ import { MinimalEditor, DownloadChooser } from 'components';
 
 import SpubHeaderTab from './SpubHeaderTab';
 
-require('./submissionTab.scss');
-
 type Props = {
 	pub: Pub;
 	abstract: null | DocJson;
@@ -20,15 +18,14 @@ const SubmissionTab = (props: Props) => {
 	const [onUpdatePubDebounced] = useDebouncedCallback(props.onUpdatePub, 250);
 	return (
 		<SpubHeaderTab>
-			<span>
+			<div className="instruction">
 				The information you enter in this form and the content section below will be used to
 				create your submission. You can use the Preview tab to see how your submission will
 				appear.
-			</span>
+			</div>
 			<Label>
-				<h2>Title of your submission pub</h2>
+				<h2>Submission Title</h2>
 				<InputGroup
-					className="submission-input"
 					onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
 						onUpdatePubDebounced({ title: evt.target.value })
 					}
@@ -50,16 +47,15 @@ const SubmissionTab = (props: Props) => {
 			</Label>
 			<Label>
 				<h2>Default Download File</h2>
-				<p>
+				<p className="instruction">
 					You can upload a file, like a PDF with custom styling, to associate with this
-					submission
+					submission.
 				</p>
 				<DownloadChooser
 					pubData={props.pub}
 					communityId={props.pub.communityId}
 					onSetDownloads={props.onUpdatePub}
 					text="Upload new file"
-					isSmall
 				/>
 			</Label>
 		</SpubHeaderTab>

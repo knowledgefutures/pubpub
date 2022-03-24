@@ -1,19 +1,56 @@
 @import 'styles/variables.scss';
 $spub-configuration-width: 1000px;
 
-.spubheader-toolbar-component {
-	&.container {
-		max-width: 96%;
-	}
-
-	.col-12 {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
+.spub-header-toolbar-component {
+	.toolbar-container .col-12 {
 		margin-top: 0;
 		margin-bottom: 0;
 	}
+	.toolbar-items {
+		display: flex;
+		// min-height: 50px; TODO do we need a min-height? When the height is 
+		justify-content: space-between;
+		align-items: center;
+	}
+	.bp3-tab {
+		min-width: 200px;
+		font-size: 14px;
+		font-style: normal;
+		font-weight: 500;
+		line-height: 17px;
+		letter-spacing: 0.15em;
+		text-align: left;
+		padding: 15px 0;
+		text-transform: uppercase;
+		&,
+		&[aria-selected="true"],
+		&:not([aria-disabled="true"]):hover {
+			bottom: 1px;
+			color: var(--community-accent-dark);
+		}
+		&:not([aria-selected="true"]) {
+			opacity: 0.45;
+			border-bottom: 1px solid var(--community-accent-dark);
+			&:hover {
+				opacity: 0.75;
+			}
+		}
+		.bp3-icon { 
+			padding: 0 6px 2px 0;
+		}
+		&:nth-child(n+3) {
+			padding-left: 15px;
+		}
+		&:not(:last-child) {
+			margin-right: 2px;
+			padding-right: 15px;
+		}
+	}
 
+	.bp3-tab-indicator-wrapper .bp3-tab-indicator {
+		height: 2px;
+		background-color: var(--community-accent-dark);
+	}
 	.status {
 		display: flex;
 	}
@@ -22,50 +59,8 @@ $spub-configuration-width: 1000px;
 		text-transform: capitalize;
 	}
 
-	.submission-button {
-		width: 120px;
-	}
-
-	.bp3-tab-list {
-		max-width: $spub-configuration-width;
-		padding-top: 5px;
-		.bp3-tab-indicator {
-			background: var(--community-accent-dark);
-			height: 2px;
-		}
-		.bp3-tab {
-			font-size: 14px;
-			font-style: normal;
-			font-weight: 500;
-			line-height: 17px;
-			text-align: left;
-			min-width: 200px;
-			margin: 0 1px;
-			letter-spacing: 0.15em;
-			padding: 15px 15px 15px 0;
-			text-transform: uppercase;
-
-			&.inactive {
-				border-bottom: 1px solid #bdbdbd;
-				opacity: 0.45;
-				color: var(--community-accent-dark);
-			}
-			&.active {
-			bottom: 1px;
-			color: var(--community-accent-dark);
-			}
-			.bp3-icon {
-				padding: 0 6px;
-			}
-		}
-
-		.sub-tab {
-			font-weight: 600;
-			letter-spacing: 0.05em;
-		}
-
-		.bp3-tab + .bp3-tab {
-			padding: 15px;
-		}
+	.submit-button {
+		width: 119px;
+		height: 30px;
 	}
 }

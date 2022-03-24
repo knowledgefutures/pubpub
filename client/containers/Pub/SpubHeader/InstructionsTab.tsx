@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@blueprintjs/core';
+import { Button, Icon } from '@blueprintjs/core';
 
 import { SubmissionWorkflow } from 'types';
 import { Editor } from 'components';
@@ -15,12 +15,14 @@ type Props = {
 
 const InstructionsTab = (props: Props) => (
 	<SpubHeaderTab expandToFold className="instructions-tab-component">
-		<h1 className="submission-workflow-title">{props.submissionWorkflow.title}</h1>
+		<h1>{props.submissionWorkflow.title}</h1>
 		<Editor initialContent={props.submissionWorkflow.instructionsText} isReadOnly />
 		<Button
-			large
+			intent="primary"
+			outlined
+			className="begin-submission-button"
 			text="Begin Submission"
-			icon="arrow-right"
+			icon={<Icon className="begin-submission-icon" iconSize={21} icon="arrow-right" />}
 			onClick={props.onBeginSubmission}
 		/>
 	</SpubHeaderTab>

@@ -82,10 +82,3 @@ export const getPubCopyrightYear = (
 	const pubPublishedDate = getPubPublishedDate(pub);
 	return pubPublishedDate ? dateFormat(pubPublishedDate, 'yyyy') : dateFormat('yyyy');
 };
-
-export const getPubSubmissionDate = (pub: Pub) => {
-	if (pub.submission?.submittedAt) {
-		return getLocalDateMatchingUtcCalendarDate(pub.submission?.submittedAt);
-	}
-	return null;
-};

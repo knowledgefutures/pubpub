@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import classNames from 'classnames';
+import { NodeSpec } from 'prosemirror-model';
 
 import { DocJson } from 'types';
 import Editor, { getTextFromDoc, EditorChangeObject, OnEditFn } from 'components/Editor';
@@ -9,6 +10,7 @@ require('./minimalEditor.scss');
 
 type Props = {
 	constrainHeight?: boolean;
+	customNodes?: Record<string, NodeSpec>;
 	debounceEditsMs?: number;
 	focusOnLoad?: boolean;
 	initialContent?: any;
@@ -27,6 +29,7 @@ const defaultGetButtons = (buttons) => buttons.minimalButtonSet;
 
 const MinimalEditor = (props: Props) => {
 	const {
+		customNodes,
 		debounceEditsMs = 0,
 		initialContent,
 		constrainHeight = false,
@@ -107,6 +110,7 @@ const MinimalEditor = (props: Props) => {
 			<div className="editor-wrapper" onClick={handleWrapperClick}>
 				<div ref={controlsContainerRef} />
 				<Editor
+					customNodes={customNodes}
 					debounceEditsMs={debounceEditsMs}
 					initialContent={initialContent}
 					placeholder={placeholder}

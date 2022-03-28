@@ -1,10 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'client/utils/useSticky';
-import { FormattingBar, buttons } from 'components/FormattingBar';
+import { buttons, FormattingBar } from 'components/FormattingBar';
+import { usePageContext } from 'utils/hooks';
+
 import PubHeaderCollaborators from './PubHeaderCollaborators';
+import PubWordCountButton from './PubWordCountButton';
 
 require('./pubHeaderFormatting.scss');
 
@@ -29,6 +31,8 @@ const PubHeaderFormatting = (props: Props) => {
 		return null;
 	}
 
+	const state = props.collabData.editorChangeObject.view?.state;
+
 	return (
 		<div className={classNames('pub-draft-header-component', disabled && 'disabled')}>
 			<FormattingBar
@@ -42,6 +46,7 @@ const PubHeaderFormatting = (props: Props) => {
 			/>
 			<div className="right-content">
 				<PubHeaderCollaborators collabData={props.collabData} />
+				{state && <PubWordCountButton doc={state.doc} />}
 				<span className={`collab-status ${collabData.status}`}>
 					{collabData.status}
 					{collabData.status === 'saving' || collabData.status === 'connecting'
@@ -52,4 +57,5 @@ const PubHeaderFormatting = (props: Props) => {
 		</div>
 	);
 };
+
 export default PubHeaderFormatting;

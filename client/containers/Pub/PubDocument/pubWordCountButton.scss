@@ -1,0 +1,37 @@
+.pub-word-count-button-target {
+	margin-right: 4px;
+}
+
+.pub-word-count-button-popover {
+	background-color: #fff;
+	z-index: 999;
+	padding: 1em;
+}
+
+.pub-word-count-button-popover-content {
+	padding: 0 4px;
+
+	dl {
+		display: flex;
+		flex-flow: row;
+		flex-wrap: wrap;
+		width: 144px;
+		overflow: visible;
+		margin: 0;
+		padding: 0;
+	}
+
+	dl dt {
+		flex: 0 0 60%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+
+	dl dd {
+		flex: 0 0 40%;
+		margin-left: auto;
+		text-align: center;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+}

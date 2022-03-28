@@ -23,6 +23,8 @@ import {
 } from './pub';
 import { renderMemberCreated, renderMemberRemoved, renderMemberUpdated } from './member';
 
+import { renderSubmissionUpdated } from './submission';
+
 export const activityItemRenderers: ActivityItemRenderers = {
 	'community-created': renderCommunityCreated,
 	'community-updated': renderCommunityUpdated,
@@ -47,4 +49,5 @@ export const activityItemRenderers: ActivityItemRenderers = {
 	'member-created': renderMemberCreated,
 	'member-updated': renderMemberUpdated,
 	'member-removed': renderMemberRemoved,
+	'submission-updated': renderSubmissionUpdated,
 };

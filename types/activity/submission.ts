@@ -1,10 +1,11 @@
-import { Submission } from 'types';
+import { Submission } from '../submission';
 import { Diff } from '../util';
 
 import { InsertableActivityItemBase } from './base';
 
 type SubmissionActivityItemBase = InsertableActivityItemBase & {
 	pubId: string;
+	collectionId: string;
 	payload: {
 		submissionId: string;
 		pub: {
@@ -17,8 +18,8 @@ export type SubmissionCreatedActivityItem = SubmissionActivityItemBase & {
 	kind: 'submission-created';
 };
 
-export type SubmissionStatusChangedActivityItem = SubmissionActivityItemBase & {
-	kind: 'submission-status-changed';
+export type SubmissionUpdatedActivityItem = SubmissionActivityItemBase & {
+	kind: 'submission-updated';
 	payload: {
 		status?: Diff<Submission['status']>;
 	};
@@ -30,5 +31,5 @@ export type SubmissionDeletedActivityItem = SubmissionActivityItemBase & {
 
 export type SubmissionActivityItem =
 	| SubmissionCreatedActivityItem
-	| SubmissionStatusChangedActivityItem
+	| SubmissionUpdatedActivityItem
 	| SubmissionDeletedActivityItem;

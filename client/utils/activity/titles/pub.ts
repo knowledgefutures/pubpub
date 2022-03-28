@@ -3,6 +3,7 @@ import {
 	CollectionPubCreatedActivityItem,
 	CollectionPubRemovedActivityItem,
 	MemberActivityItem,
+	SubmissionActivityItem,
 } from 'types';
 import { getDashUrl } from 'utils/dashboard';
 
@@ -13,7 +14,8 @@ type AcceptedItem =
 	| (MemberActivityItem & { pubId: string })
 	| PubActivityItem
 	| CollectionPubCreatedActivityItem
-	| CollectionPubRemovedActivityItem;
+	| CollectionPubRemovedActivityItem
+	| SubmissionActivityItem;
 
 const prefix = 'the Pub';
 

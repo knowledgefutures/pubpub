@@ -5,6 +5,8 @@ import { apiFetch } from 'client/utils/apiFetch';
 import { usePendingChanges } from 'utils/hooks';
 import { Submission, SubmissionStatus, DefinitelyHas } from 'types';
 
+import { usePubContext } from '../../pubHooks';
+
 type Props = {
 	submission: DefinitelyHas<Submission, 'submissionWorkflow'>;
 	isOpen: boolean;
@@ -16,6 +18,7 @@ const SubmitDialog = (props: Props) => {
 	const [isHandlingSubmission, setIsHandlingSubmission] = useState(false);
 	const [updatedSubmission, setUpdatedSubmission] = useState(null);
 	const [submissionErr, setSubmissionErr] = useState(null);
+	const { updateSubmissionState } = usePubContext();
 	const onSubmit = () => {
 		setIsHandlingSubmission(true);
 		pendingPromise(
@@ -24,7 +27,15 @@ const SubmitDialog = (props: Props) => {
 					id: props.submission.id,
 					status: 'pending' as SubmissionStatus,
 				})
-				.then((submissionRes) => setUpdatedSubmission(submissionRes))
+				.then((submissionRes) => {
+					setUpdatedSubmission(submissionRes);
+					updateSubmissionState(({ submission }) => ({
+						submission: {
+							...submission,
+							status: submissionRes.status,
+						},
+					}));
+				})
 				.catch((err) => setSubmissionErr(err))
 				.finally(() => setIsHandlingSubmission(false)),
 		);

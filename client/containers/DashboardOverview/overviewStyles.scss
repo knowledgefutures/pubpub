@@ -1,3 +1,5 @@
+@import '~@blueprintjs/core/lib/scss/variables';
+
 $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
 $light-grey: #bdbdbd;
 $medium-grey: #999;
@@ -5,3 +7,17 @@ $dark-grey: #747474;
 $darkest-grey: #333;
 $row-border-color: #ddd;
 $empty-state-margin-top: 75px;
+
+@mixin status-colors {
+	@each $status, $color in $status-color-map {
+		.status-color-#{$status} {
+			color: $color;
+		}
+	}
+}
+
+$status-color-map: (
+	'pending': $gold4, //#F0B726
+	'accepted': $green2, //#1C6E42
+	'declined': $red2, //#AC2F33
+);

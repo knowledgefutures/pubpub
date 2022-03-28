@@ -77,7 +77,12 @@ const SpubHeaderToolbar = (props: Props) => {
 			)}
 			{showStatus && (
 				<div className="status">
-					<em>status:&nbsp;&nbsp;&nbsp;</em>
+					<em>status:</em>
+					<Icon
+						icon="symbol-square"
+						iconSize={18}
+						className={`status-color-${props.submission.status}`}
+					/>
 					<strong>{status}</strong>
 				</div>
 			)}

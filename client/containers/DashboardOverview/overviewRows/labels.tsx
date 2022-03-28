@@ -1,7 +1,6 @@
 import React from 'react';
-import { Intent as BlueprintIntent } from '@blueprintjs/core';
 
-import { ScopeSummary, Collection, Pub, SubmissionStatus } from 'types';
+import { ScopeSummary, Collection, Pub } from 'types';
 import { capitalize } from 'utils/strings';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { formatDate } from 'utils/dates';
@@ -10,9 +9,9 @@ import { TimeAgo, Icon, IconName } from 'components';
 
 export type IconLabelPair = {
 	icon: IconName;
-	label: string | React.ReactNode;
+	label: React.ReactNode;
 	iconSize?: number;
-	intent?: BlueprintIntent;
+	iconClass?: string;
 };
 
 export const getScopeSummaryLabels = (summary: ScopeSummary, showPubs = false) => {
@@ -85,34 +84,6 @@ export const getPubReleasedStateLabel = (pub: Pub) => {
 	};
 };
 
-export const getSubmissionStatusLabel = (
-	submissionStatus: Partial<SubmissionStatus>,
-): IconLabelPair => {
-	const iconSize = 16;
-	if (submissionStatus === 'accepted') {
-		return {
-			label: 'ACCEPTED',
-			icon: 'symbol-square',
-			intent: 'success',
-			iconSize,
-		};
-	}
-	if (submissionStatus === 'declined') {
-		return {
-			label: 'DECLINED',
-			icon: 'symbol-square',
-			intent: 'danger',
-			iconSize,
-		};
-	}
-	return {
-		label: 'PENDING',
-		icon: 'symbol-square',
-		intent: 'warning',
-		iconSize,
-	};
-};
-
 export const getSubmissionTimeLabel = (pub: Pub) => {
 	const submissionDate = pub.submission?.submittedAt;
 	if (submissionDate) {
@@ -131,12 +102,12 @@ export const renderLabelPairs = (iconLabelPairs: IconLabelPair[]) => {
 				const {
 					icon,
 					label,
+					iconClass,
 					iconSize: iconLabelPairIconSize = 12,
-					intent = 'none',
 				} = iconLabelPair;
 				const iconElement =
 					typeof icon === 'string' ? (
-						<Icon icon={icon} iconSize={iconLabelPairIconSize} intent={intent} />
+						<Icon className={iconClass} icon={icon} iconSize={iconLabelPairIconSize} />
 					) : (
 						icon
 					);

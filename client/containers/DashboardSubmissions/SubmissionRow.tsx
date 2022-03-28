@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 
-import {
-	getSubmissionStatusLabel,
-	getSubmissionTimeLabel,
-	IconLabelPair,
-} from '../DashboardOverview/overviewRows/labels';
+import { getSubmissionTimeLabel, IconLabelPair } from '../DashboardOverview/overviewRows/labels';
 
 import { PubOverviewRow } from '../DashboardOverview/overviewRows';
 import { PubWithSubmission } from './types';
@@ -22,7 +18,14 @@ const SubmissionRow = (props: Props) => {
 	const [status, setStatus] = useState(pub.submission.status);
 	const [isDeleted, setIsDeleted] = useState(false);
 
-	const labels = [getSubmissionStatusLabel(status), getSubmissionTimeLabel(pub)].filter(
+	const statusLabel: IconLabelPair = {
+		label: pub.submission.status[0].toUpperCase() + pub.submission.status.slice(1),
+		icon: 'symbol-square',
+		iconSize: 16,
+		iconClass: `status-color-${pub.submission.status}`,
+	};
+
+	const labels = [statusLabel, getSubmissionTimeLabel(pub)].filter(
 		(x): x is IconLabelPair => !!x,
 	);
 

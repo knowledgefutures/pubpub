@@ -9,7 +9,10 @@ export const getEmptyDoc = (): DocJson => {
 };
 
 export const isEmptyDoc = (doc: DocJson) => {
-	return doc.content.every((child) => child.content?.length === 0);
+	if (!doc.content || doc.content.length === 0) {
+		return true;
+	}
+	return doc.content.every((child) => !child.content || child.content.length === 0);
 };
 
 export const isEmptyDocNode = (doc: Node) => {

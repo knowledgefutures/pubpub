@@ -14,7 +14,7 @@ type Props = {
 	onUpdateAbstract: (abstract: DocJson) => Promise<unknown>;
 };
 
-const SubmissionTab = (props: Props) => {
+const DetailsTab = (props: Props) => {
 	const [onUpdatePubDebounced] = useDebouncedCallback(props.onUpdatePub, 250);
 	return (
 		<SpubHeaderTab>
@@ -33,18 +33,16 @@ const SubmissionTab = (props: Props) => {
 					placeholder="Type your submission's title here..."
 				/>
 			</Label>
-			<Label>
-				<h2>Abstract</h2>
-				<MinimalEditor
-					customNodes={{ doc: { content: 'paragraph' } }}
-					placeholder="Type your submission's abstract here..."
-					initialContent={props.abstract}
-					onEdit={(doc) => props.onUpdateAbstract(doc.toJSON() as DocJson)}
-					debounceEditsMs={300}
-					useFormattingBar
-					constrainHeight
-				/>
-			</Label>
+			<h2>Abstract</h2>
+			<MinimalEditor
+				customNodes={{ doc: { content: 'paragraph' } }}
+				placeholder="Type your submission's abstract here..."
+				initialContent={props.abstract}
+				onEdit={(doc) => props.onUpdateAbstract(doc.toJSON() as DocJson)}
+				debounceEditsMs={300}
+				useFormattingBar
+				constrainHeight
+			/>
 			<Label>
 				<h2>Default Download File</h2>
 				<p className="instruction">
@@ -62,4 +60,4 @@ const SubmissionTab = (props: Props) => {
 	);
 };
 
-export default SubmissionTab;
+export default DetailsTab;

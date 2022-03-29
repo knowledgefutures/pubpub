@@ -1,14 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { getJSON } from 'components/Editor';
 
 import { GridWrapper } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
 
-import { PubPageData } from 'types';
-import { getTocHeadings } from './headerUtils';
+import { usePubContext } from '../pubHooks';
+import { getPubHeadings } from './headerUtils';
 import { mobileViewportCutoff } from './constants';
 import PubDetails from './details';
 import PubHeaderBackground from './PubHeaderBackground';
@@ -16,21 +15,9 @@ import PubHeaderContent from './PubHeaderContent';
 import SmallHeaderButton from './SmallHeaderButton';
 import PubHeaderSticky from './PubHeaderSticky';
 
-const getPubHeadings = (pubData, collabData) => {
-	let docJson = pubData.initialDoc;
-	if (collabData.editorChangeObject && collabData.editorChangeObject.view) {
-		docJson = getJSON(collabData.editorChangeObject.view);
-	}
-	return docJson ? getTocHeadings(docJson) : [];
-};
-
 require('./pubHeader.scss');
 
 type Props = {
-	collabData: any;
-	historyData: any;
-	pubData: PubPageData;
-	updateLocalData: (...args: any[]) => any;
 	sticky?: boolean;
 };
 
@@ -55,13 +42,19 @@ const ToggleDetailsButton = (props: ToggleDetailsProps) => {
 
 const PubHeader = (props: Props) => {
 	const headerRef = useRef<HTMLDivElement>(null);
-	const { collabData, historyData, pubData, updateLocalData, sticky = true } = props;
+	const { pubData, collabData, historyData, updateLocalData } = usePubContext();
+	const { sticky = true } = props;
 	const { communityData } = usePageContext();
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState<number | null>(null);
 	const { viewportWidth } = useViewport();
 
-	const pubHeadings = getPubHeadings(pubData, collabData);
+	// TODO(ian): Move this computation to usePubBodyState()
+	const pubHeadings = useMemo(
+		() => getPubHeadings(pubData.initialDoc, collabData.editorChangeObject),
+		[pubData.initialDoc, collabData.editorChangeObject],
+	);
+
 	const isMobile = viewportWidth && viewportWidth <= mobileViewportCutoff;
 
 	useSticky({
@@ -118,8 +111,7 @@ const PubHeader = (props: Props) => {
 				)}
 				<ToggleDetailsButton showingDetails={showingDetails} onClick={toggleDetails} />
 			</GridWrapper>
-			{/* @ts-expect-error ts-migrate(2322) FIXME: Type '{ pubData: any; collabData: any; pubHeadings... Remove this comment to see the full error message */}
-			<PubHeaderSticky pubData={pubData} collabData={collabData} pubHeadings={pubHeadings} />
+			{sticky && <PubHeaderSticky pubData={pubData} pubHeadings={pubHeadings} />}
 		</PubHeaderBackground>
 	);
 };

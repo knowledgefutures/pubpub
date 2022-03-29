@@ -97,7 +97,7 @@ const Pub = (props: Props) => {
 						return (
 							<>
 								<PubSuspendWhileTyping delay={1000}>
-									{() => <HeaderComponent {...ctx} />}
+									{() => <HeaderComponent />}
 								</PubSuspendWhileTyping>
 								{showDocument && <PubDocument {...ctx} />}
 							</>

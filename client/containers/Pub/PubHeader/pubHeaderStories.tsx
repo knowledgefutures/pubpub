@@ -4,6 +4,7 @@ import { storiesOf } from '@storybook/react';
 
 import PubHeader from 'containers/Pub/PubHeader';
 import { pubData, communityData, attributionsData } from 'utils/storybook/data';
+import { PubContext } from '../PubSyncManager';
 
 const altPubData = {
 	...pubData,
@@ -69,7 +70,11 @@ const PubHeaderWrapper = (props) => {
 		setLocalData(currentLocalData);
 	};
 
-	return <PubHeader {...localData} updateLocalData={updateLocalData} sticky={false} />;
+	return (
+		<PubContext.Provider value={{ ...localData, updateLocalData } as any}>
+			<PubHeader sticky={false} />
+		</PubContext.Provider>
+	);
 };
 
 storiesOf('containers/Pub/PubHeader', module).add('default', () => (

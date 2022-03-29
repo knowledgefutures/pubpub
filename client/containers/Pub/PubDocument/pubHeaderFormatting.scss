@@ -1,8 +1,10 @@
+@import "../PubHeader/pubHeader.scss";
+
 .pub-draft-header-component {
 	z-index: 19;
 	// .wrapper {
 	background: #f0f0f0;
-	border-bottom: 1px solid #d2d2d2;
+	border-bottom: 1px solid $header-border-color;
 	// &.fixed {
 	// 	position: fixed;
 	// 	top: 0;

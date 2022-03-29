@@ -6,38 +6,37 @@
 		margin-top: 0;
 		margin-bottom: 0;
 	}
+
 	.toolbar-items {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
+
 	.bp3-tab {
 		min-width: 200px;
 		font-size: 14px;
-		font-style: normal;
 		font-weight: 500;
 		line-height: 17px;
 		letter-spacing: 0.15em;
-		text-align: left;
 		padding: 15px 0;
 		text-transform: uppercase;
 		&,
-		&[aria-selected="true"],
-		&:not([aria-disabled="true"]):hover {
-			bottom: 1px;
+		&[aria-selected='true'],
+		&:not([aria-disabled='true']):hover {
 			color: var(--community-accent-dark);
 		}
-		&:not([aria-selected="true"]) {
+		&:not([aria-selected='true']) {
 			opacity: 0.45;
 			border-bottom: 1px solid var(--community-accent-dark);
 			&:hover {
 				opacity: 0.75;
 			}
 		}
-		.bp3-icon { 
+		.bp3-icon {
 			padding: 0 6px 2px 0;
 		}
-		&:nth-child(n+3) {
+		&:nth-child(n + 3) {
 			padding-left: 15px;
 		}
 		&:not(:last-child) {

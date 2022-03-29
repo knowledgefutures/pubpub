@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useLayoutEffect } from 'react';
 import classNames from 'classnames';
 
 import { GridWrapper } from 'components';
@@ -18,7 +18,7 @@ const SpubHeaderTab = (props: Props) => {
 	const [minHeight, setMinHeight] = useState(0);
 	const { viewportHeight } = useViewport();
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (elementRef.current) {
 			setMinHeight(
 				(viewportHeight || 0) -

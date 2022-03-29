@@ -1,20 +1,14 @@
 import React from 'react';
 
-import { AttributionEditor } from 'components';
+import { Community, Pub, Callback } from 'types';
 import { usePendingChanges } from 'utils/hooks';
+import { AttributionEditor } from 'components';
 
-import { PubPageData } from 'types';
-
-type Props = {
+export type Props = {
 	canEdit: boolean;
-	communityData: {
-		id?: string;
-	};
-	pubData: {
-		id?: string;
-		attributions?: any[];
-	};
-	updatePubData: (pub: Partial<PubPageData>) => unknown;
+	communityData: Community;
+	pubData: Pub;
+	updatePubData: Callback<Partial<Pub>>;
 };
 
 const PubAttributionEditor = (props: Props) => {

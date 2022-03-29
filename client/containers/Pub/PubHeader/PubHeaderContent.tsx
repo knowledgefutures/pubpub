@@ -7,6 +7,7 @@ import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { PubPageData } from 'types';
 
+import { usePubContext } from '../pubHooks';
 import CollectionsBar from './collections/CollectionsBar';
 import DraftReleaseButtons from './DraftReleaseButtons';
 import TitleGroup from './TitleGroup';
@@ -24,7 +25,9 @@ const PubHeaderContent = (props: Props) => {
 	const { historyData, onShowHeaderDetails, pubData, pubHeadings, updateLocalData } = props;
 	const { doi, isInMaintenanceMode } = pubData;
 	const { communityData } = usePageContext();
+	const { submissionState } = usePubContext();
 	const publishedDate = getPubPublishedDate(pubData);
+	const isSubmission = !!submissionState;
 
 	const updatePubData = (newPubData) => {
 		return updateLocalData('pub', newPubData, { isImmediate: true });
@@ -50,7 +53,9 @@ const PubHeaderContent = (props: Props) => {
 	const renderTop = () => {
 		return (
 			<div className="pub-header-top-area has-bottom-hairline">
-				<CollectionsBar pubData={pubData as any} updatePubData={updatePubData} />
+				{!isSubmission && (
+					<CollectionsBar pubData={pubData as any} updatePubData={updatePubData} />
+				)}
 				<div className="basic-details">
 					<span className="metadata-pair">
 						{publishedDate && (

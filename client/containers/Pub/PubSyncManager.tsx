@@ -19,6 +19,7 @@ import {
 	PubHistoryState,
 	Submission,
 	DefinitelyHas,
+	Pub,
 } from 'types';
 
 import { SpubHeaderTab } from './SpubHeader/SpubHeader';
@@ -73,7 +74,7 @@ type State = {
 export type PubContextType = State & {
 	inPub: boolean;
 	updateLocalData: (type: string, patcher: PatchFnArg<any>) => unknown;
-	updatePubData: PatchFn<PubPageData>;
+	updatePubData: PatchFn<Pub>;
 	updateSubmissionState: PatchFn<SubmissionState>;
 };
 

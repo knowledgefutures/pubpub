@@ -1,3 +1,4 @@
+import { isEmptyDoc } from 'client/components/Editor';
 import { useMemo } from 'react';
 import { DocJson } from 'types';
 import { usePubContext } from '../pubHooks';
@@ -10,6 +11,9 @@ type PubBodyState = {
 };
 
 const createSubmissionPreview = (doc: DocJson, abstract: DocJson) => {
+	if (isEmptyDoc(abstract)) {
+		return doc;
+	}
 	return {
 		...doc,
 		content: [
@@ -34,18 +38,20 @@ export const usePubBodyState = (): PubBodyState => {
 	} = usePubContext();
 
 	const editorDoc = editorChangeObject?.view?.state.doc;
-
-	const abstractToCreatePreview =
-		submissionState?.submission.status === 'incomplete' &&
-		submissionState?.selectedTab === 'preview' &&
-		submissionState?.submission.abstract;
+	const submissionStatus = submissionState?.submission.status;
+	const submissionAbstract = submissionState?.submission.abstract;
+	const submissionTab = submissionState?.selectedTab;
 
 	const submissionPreviewDoc = useMemo(() => {
-		if (abstractToCreatePreview && editorDoc) {
-			return createSubmissionPreview(editorDoc.toJSON() as DocJson, abstractToCreatePreview);
+		if (submissionStatus === 'incomplete' && submissionTab === 'preview' && editorDoc) {
+			const editorDocJson = editorDoc.toJSON() as DocJson;
+			if (submissionAbstract && editorDoc) {
+				return createSubmissionPreview(editorDocJson, submissionAbstract);
+			}
+			return editorDocJson;
 		}
 		return null;
-	}, [editorDoc, abstractToCreatePreview]);
+	}, [editorDoc, submissionAbstract, submissionStatus, submissionTab]);
 
 	if (isInMaintenanceMode) {
 		return {

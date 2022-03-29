@@ -1,6 +1,7 @@
 @import 'styles/variables.scss';
 @import './themes.scss';
 
+$header-border-color: #d2d2d2;
 $header-margin-top: 0px;
 $header-margin-bottom: 26px;
 $header-margin-bottom-mobile: 13px;
@@ -17,7 +18,7 @@ $mobile-bottom-buttons-spacing: 10px;
 .pub-header-component {
     position: relative;
     z-index: 20;
-    border-bottom: 1px solid #d2d2d2;
+    border-bottom: 1px solid $header-border-color;
 
     .pub-header-sticky-component {
         opacity: 0;

@@ -3,15 +3,15 @@ import { Label } from '@blueprintjs/core';
 
 import { PubAttributionEditor } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { PubPageData } from 'types';
+import { Callback, Pub } from 'types';
 
 import SpubHeaderTab from './SpubHeaderTab';
 
 require('./contributorsTabComponent.scss');
 
 type Props = {
-	pubData: PubPageData;
-	onUpdatePub: (pub: Partial<PubPageData>) => unknown;
+	pubData: Pub;
+	onUpdatePub: Callback<Partial<Pub>>;
 };
 
 const ContributorsTab = (props: Props) => {

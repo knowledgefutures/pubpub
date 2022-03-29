@@ -22,6 +22,8 @@ const createEmptyWorkflow = (): EditableSubmissionWorkflow => {
 		emailText: getEmptyDoc(),
 		targetEmailAddress: '',
 		enabled: false,
+		requireAbstract: false,
+		requireDescription: false,
 	};
 };
 
@@ -72,17 +74,18 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 						}
 						onValidateWorkflow={setIsValid}
 						collection={activeCollection}
+						finalStepButton={
+							<Button
+								disabled={!isValid}
+								onClick={handleCreateNewWorkflow}
+								loading={isPersisting}
+								icon="tick"
+								intent="primary"
+							>
+								Finish creating workflow
+							</Button>
+						}
 					/>
-					<p>
-						<Button
-							disabled={!isValid}
-							onClick={handleCreateNewWorkflow}
-							icon="tick"
-							loading={isPersisting}
-						>
-							Save and continue
-						</Button>
-					</p>
 				</>
 			);
 		}

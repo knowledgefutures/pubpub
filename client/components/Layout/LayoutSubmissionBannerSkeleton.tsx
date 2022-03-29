@@ -10,11 +10,10 @@ type Props = {
 	className?: string;
 	title: React.ReactNode;
 	content: React.ReactNode;
-	useCommunityAccentColor?: boolean;
 };
 
 const LayoutSubmissionBannerSkeleton = (props: Props) => {
-	const { title, content, className, useCommunityAccentColor } = props;
+	const { title, content, className } = props;
 	const {
 		communityData: { accentColorDark },
 	} = usePageContext();
@@ -24,7 +23,7 @@ const LayoutSubmissionBannerSkeleton = (props: Props) => {
 	return (
 		<div
 			className={classNames('layout-submission-banner-skeleton-component', className)}
-			style={useCommunityAccentColor ? { backgroundColor } : {}}
+			style={{ backgroundColor }}
 		>
 			<h2>{title}</h2>
 			<div>{content}</div>

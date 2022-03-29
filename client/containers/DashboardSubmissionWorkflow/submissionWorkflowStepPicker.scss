@@ -1,0 +1,85 @@
+@import './shared.scss';
+
+.submission-workflow-step-picker-component {
+    display: flex;
+    align-items: stretch;
+    font-size: 16px;
+    box-sizing: border-box;
+    user-select: none;
+
+    .step-divider-icon {
+        color: rgba(black, 0.2);
+        margin: 0 5px;
+    }
+
+    .step {
+        width: 275px;
+        display: flex;
+        flex-direction: column;
+
+        .label {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            flex-grow: 1;
+            cursor: pointer;
+
+            .icon-container {
+                width: 22px;
+                height: 22px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-shrink: 0;
+                margin-right: 10px;
+                .number {
+                    width: 22px;
+                    height: 22px;
+                    flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 14px;
+                    border-radius: 11px;
+                    color: white;
+                    background: var(--community-accent-dark);
+                }
+            }
+        }
+
+        .progress-indicator {
+            background: $border-color;
+            height: 6px;
+        }
+
+        &:first-child {
+            .progress-indicator {
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+            }
+        }
+
+        &:last-child {
+            .progress-indicator {
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+        }
+
+        &.reached {
+            .progress-indicator {
+                background: var(--community-accent-dark);
+            }
+        }
+
+        &.incomplete {
+            .progress-indicator {
+                background: $warning;
+            }
+        }
+
+        &:not(:last-child) {
+            margin-right: 4px;
+        }
+    }
+}

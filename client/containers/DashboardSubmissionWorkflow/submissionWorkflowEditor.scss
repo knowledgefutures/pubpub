@@ -1,14 +1,33 @@
 @import './shared.scss';
 
 .submission-workflow-editor-component {
-    .banner-step {
-        .banner-title-text {
-            width: 100%;
-        }
+    .step-content {
+        margin: 10px 0;
 
+        h2 {
+            margin: 10px 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+    }
+
+    .banner-step {
         .banner-skeleton {
-            @include box;
-            background: $light-background;
+            h2 {
+                margin: 0;
+                font-size: 28px;
+                font-weight: 800;
+                margin-bottom: 0.5em;
+            }
+            .minimal-editor-component {
+                .editor-wrapper {
+                    font-size: 16px;
+                }
+            }
+            .fake-submit-button {
+                margin-top: 10px;
+                pointer-events: none;
+            }
         }
     }
 
@@ -20,12 +39,6 @@
                 flex-grow: 1;
                 margin-right: 10px;
             }
-        }
-    }
-
-    .accept-reject-step {
-        .bp3-tab-panel {
-            margin-top: 10px;
         }
     }
 }

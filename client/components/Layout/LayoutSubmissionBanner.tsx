@@ -25,7 +25,6 @@ const LayoutSubmissionBanner = (props: Props) => {
 			<div className="block-content">
 				<GridWrapper>
 					<LayoutSubmissionBannerSkeleton
-						useCommunityAccentColor
 						title={title}
 						content={
 							<>

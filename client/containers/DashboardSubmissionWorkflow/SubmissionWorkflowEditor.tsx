@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, EditableText, InputGroup, Tabs, Tab } from '@blueprintjs/core';
+import { Button, Checkbox, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 
 import { Collection } from 'types';
 import { LayoutSubmissionBannerSkeleton } from 'client/components/Layout';
@@ -8,10 +8,15 @@ import { isValidEmail } from 'utils/email';
 import { withValue } from 'utils/fp';
 import { collectionUrl } from 'utils/canonicalUrls';
 
-import Step from './Step';
 import WorkflowTextEditor from './WorkflowTextEditor';
 import EmailPreview from './EmailPreview';
-import { EditableSubmissionWorkflow } from './types';
+import SubmissionWorkflowStepPicker from './SubmissionWorkflowStepPicker';
+import {
+	EditableSubmissionWorkflow,
+	SubmissionWorkflowConfigStep,
+	submissionWorkflowConfigSteps,
+	submissionWorkflowConfigStepLabels,
+} from './types';
 import {
 	RecordValidator,
 	isValidDocJson,
@@ -27,23 +32,35 @@ type Props = {
 	onUpdateWorkflow: (workflow: Partial<EditableSubmissionWorkflow>) => unknown;
 	onValidateWorkflow: (isValid: boolean) => unknown;
 	workflow: EditableSubmissionWorkflow;
+	finalStepButton?: React.ReactNode;
 };
 
 const validator: RecordValidator<EditableSubmissionWorkflow> = {
 	title: isValidTitle,
 	introText: isValidDocJson,
 	instructionsText: isValidDocJson,
-	emailText: isValidDocJson,
+	emailText: isAlwaysValid,
 	acceptedText: isAlwaysValid,
 	declinedText: isAlwaysValid,
 	targetEmailAddress: isValidEmail,
 	enabled: isAlwaysValid,
+	requireAbstract: isAlwaysValid,
+	requireDescription: isAlwaysValid,
 };
 
+const youCanLeaveItBlank = <>You can leave it blank if you don't have anything you want to add.</>;
+
 const SubmissionWorkflowEditor = (props: Props) => {
-	const { collection, onUpdateWorkflow, onValidateWorkflow, workflow } = props;
+	const {
+		collection,
+		onUpdateWorkflow,
+		onValidateWorkflow,
+		workflow,
+		finalStepButton = null,
+	} = props;
 	const { communityData } = usePageContext();
 	const { email: communityEmail } = communityData;
+	const [step, setStep] = useState<SubmissionWorkflowConfigStep>('instructions-requirements');
 	const [{ fields: fieldValidStates, isValid }, setValidation] = useState(() =>
 		validate(workflow, validator),
 	);
@@ -70,62 +87,72 @@ const SubmissionWorkflowEditor = (props: Props) => {
 
 	useEffect(() => void onValidateWorkflow(isValid), [onValidateWorkflow, isValid]);
 
-	return (
-		<div className="submission-workflow-editor-component">
-			<Step
-				className="banner-step"
-				number={1}
-				title="Invite submitters from this Collection's landing page"
-				done={fieldValidStates.title && fieldValidStates.introText}
-			>
+	const renderInstructionsRequirements = () => {
+		const currentYear = new Date().getFullYear().toString();
+		return (
+			<>
+				<Label>
+					<h2>Workflow title</h2>
+					<p>
+						For example, <i>Summer {currentYear} Special Issue: Call for Submissions</i>
+						. Submitters will see this, not the Collection title.
+					</p>
+					<InputGroup
+						large
+						onChange={(e) => updateWorkflow({ title: e.target.value })}
+						value={workflow.title}
+						placeholder="Call for Submissions"
+					/>
+				</Label>
+				<h2>Detailed submission instructions</h2>
 				<p>
-					Visitors to {collectionLink} will see a banner inviting them to submit to this
-					Collection.
-				</p>
-				<LayoutSubmissionBannerSkeleton
-					className="banner-skeleton"
-					title={
-						<EditableText
-							className="banner-title-text"
-							placeholder='Click to add banner title (e.g. "Call for Submissions")'
-							value={workflow.title}
-							onChange={(title) => updateWorkflow({ title })}
-						/>
-					}
-					content={
-						<WorkflowTextEditor
-							placeholder="Banner content"
-							initialContent={workflow.introText}
-							onContent={(introText) => updateWorkflow({ introText })}
-						/>
-					}
-				/>
-			</Step>
-			<Step
-				className="instructions-step"
-				number={2}
-				title="Add detailed submission instructions"
-				done={fieldValidStates.instructionsText}
-			>
-				<p>
-					Now provide instructions detailing any requirements for submissions to this
-					Collection. Submitters will be able to refer to this text at any time.
+					...for content, formatting, etc. Submitters will be able to refer to these at
+					any time.
 				</p>
 				<WorkflowTextEditor
 					placeholder="Detailed submission instructions"
 					initialContent={workflow.instructionsText}
 					onContent={(content) => updateWorkflow({ instructionsText: content })}
 				/>
-			</Step>
-			<Step
-				number={3}
-				title="Send an automated email when a submission is received"
-				className="email-step"
-				done={fieldValidStates.targetEmailAddress && fieldValidStates.emailText}
-			>
+				<h2>Submission requirements</h2>
+				<FormGroup
+					helperText={<>We'll merge the abstract into the Pub when it is submitted.</>}
+				>
+					<Checkbox
+						label="Require an abstract"
+						checked={workflow.requireAbstract}
+						onChange={() =>
+							updateWorkflow({ requireAbstract: !workflow.requireAbstract })
+						}
+					/>
+				</FormGroup>
+				<FormGroup
+					helperText={
+						<>
+							A short editorial subtitle shown in the Pub header and in links to the
+							Pub. You may want this for relatively self-serve workflows.
+						</>
+					}
+				>
+					<Checkbox
+						label="Require a description"
+						checked={workflow.requireDescription}
+						onChange={() =>
+							updateWorkflow({ requireDescription: !workflow.requireDescription })
+						}
+					/>
+				</FormGroup>
+			</>
+		);
+	};
+
+	const renderEmails = () => {
+		return (
+			<div className="email-step">
+				<h2>Email correspondence address</h2>
 				<p>
-					When a submission is completed, PubPub will email the submitter and CC this
-					address:
+					Once a submission is completed, PubPub will email the submitter with an
+					automated response and CC this address (that you control):
 				</p>
 				<div className="target-email-input">
 					<InputGroup
@@ -148,9 +175,10 @@ const SubmissionWorkflowEditor = (props: Props) => {
 						</Button>
 					)}
 				</div>
+				<h2>Automated submission response</h2>
 				<p>
 					You can customize the automated response here, perhaps with a note of thanks and
-					an expected response time:
+					an expected response time. {youCanLeaveItBlank}
 				</p>
 				<EmailPreview
 					{...sharedEmailPreviewProps}
@@ -164,60 +192,108 @@ const SubmissionWorkflowEditor = (props: Props) => {
 						/>
 					}
 				/>
-			</Step>
-			<Step
-				number={4}
-				title="Create a template response for accepted and declined submissions"
-				className="accept-reject-step"
-				done={fieldValidStates.acceptedText && fieldValidStates.declinedText}
-			>
+				<h2>Acceptance email template</h2>
 				<p>
-					These are just templates. You'll be able to customize the message you send
-					before each accepted or declined submission.
+					This is just a template that you'll be able to modify before sending each
+					acceptance email. {youCanLeaveItBlank}
 				</p>
-				<Tabs id="accepted-declined-email-templates">
-					<Tab
-						id="accepted"
-						title="Accepted"
-						panel={
-							<EmailPreview
-								{...sharedEmailPreviewProps}
-								kind="accepted"
-								collectionTitle={collection.title}
-								body={
-									<WorkflowTextEditor
-										placeholder="Custom email text"
-										initialContent={workflow.acceptedText}
-										onContent={(content) =>
-											updateWorkflow({ acceptedText: content })
-										}
-									/>
-								}
+				<EmailPreview
+					{...sharedEmailPreviewProps}
+					kind="accepted"
+					collectionTitle={collection.title}
+					body={
+						<WorkflowTextEditor
+							placeholder="Custom email text"
+							initialContent={workflow.acceptedText}
+							onContent={(content) => updateWorkflow({ acceptedText: content })}
+						/>
+					}
+				/>
+				<h2>Rejection email template</h2>
+				<p>
+					This is just a template that you'll be able to modify before sending each
+					rejection email. {youCanLeaveItBlank}
+				</p>
+				<EmailPreview
+					{...sharedEmailPreviewProps}
+					kind="declined"
+					collectionTitle={collection.title}
+					body={
+						<WorkflowTextEditor
+							placeholder="Custom email text"
+							initialContent={workflow.declinedText}
+							onContent={(content) => updateWorkflow({ declinedText: content })}
+						/>
+					}
+				/>
+			</div>
+		);
+	};
+
+	const renderLayoutBanner = () => {
+		return (
+			<div className="banner-step">
+				<h2>Layout banner text</h2>
+				<p>
+					Visitors to {collectionLink} will see a banner inviting them to submit to this
+					Collection. You can add a brief description of your call for submissions here.
+				</p>
+				<LayoutSubmissionBannerSkeleton
+					className="banner-skeleton"
+					title={workflow.title}
+					content={
+						<>
+							<WorkflowTextEditor
+								placeholder="Banner content"
+								initialContent={workflow.introText}
+								onContent={(introText) => updateWorkflow({ introText })}
 							/>
-						}
-					/>
-					<Tab
-						id="declined"
-						title="Declined"
-						panel={
-							<EmailPreview
-								{...sharedEmailPreviewProps}
-								kind="declined"
-								collectionTitle={collection.title}
-								body={
-									<WorkflowTextEditor
-										placeholder="Custom email text"
-										initialContent={workflow.declinedText}
-										onContent={(content) =>
-											updateWorkflow({ declinedText: content })
-										}
-									/>
-								}
-							/>
-						}
-					/>
-				</Tabs>
-			</Step>
+							<Button className="fake-submit-button">Create a submission</Button>
+						</>
+					}
+				/>
+			</div>
+		);
+	};
+
+	const renderNextStepButton = () => {
+		const currentStepIndex = submissionWorkflowConfigSteps.indexOf(step);
+		const nextStep = submissionWorkflowConfigSteps[currentStepIndex + 1];
+		if (nextStep) {
+			const label = submissionWorkflowConfigStepLabels[nextStep];
+			return (
+				<Button
+					minimal
+					outlined
+					rightIcon="arrow-right"
+					intent="primary"
+					onClick={() => setStep(nextStep)}
+				>
+					Next: <b>{label}</b>
+				</Button>
+			);
+		}
+		return finalStepButton;
+	};
+
+	return (
+		<div className="submission-workflow-editor-component">
+			<SubmissionWorkflowStepPicker
+				selectedStep={step}
+				onSelectStep={setStep}
+				stepCompletions={{
+					'instructions-requirements':
+						fieldValidStates.title && fieldValidStates.instructionsText,
+					'response-emails': fieldValidStates.targetEmailAddress,
+					'layout-banner': fieldValidStates.introText,
+				}}
+			/>
+			<div className="step-content">
+				{step === 'instructions-requirements' && renderInstructionsRequirements()}
+				{step === 'response-emails' && renderEmails()}
+				{step === 'layout-banner' && renderLayoutBanner()}
+			</div>
+			{renderNextStepButton()}
 		</div>
 	);
 };

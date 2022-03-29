@@ -12,6 +12,8 @@ export type SubmissionWorkflow = {
 	declinedText: DocJson;
 	emailText: DocJson;
 	targetEmailAddress: string;
+	requireAbstract: boolean;
+	requireDescription: boolean;
 	collectionId: string;
 	collection?: Collection;
 };

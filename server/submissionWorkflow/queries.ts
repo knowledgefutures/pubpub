@@ -16,6 +16,8 @@ export const createSubmissionWorkflow = async (props: CreateFields) => {
 		targetEmailAddress,
 		acceptedText,
 		declinedText,
+		requireAbstract,
+		requireDescription,
 	} = props;
 	const submissionWorkflow = {
 		enabled,
@@ -27,6 +29,8 @@ export const createSubmissionWorkflow = async (props: CreateFields) => {
 		collectionId,
 		acceptedText,
 		declinedText,
+		requireAbstract,
+		requireDescription,
 	};
 	return SubmissionWorkflow.create(submissionWorkflow);
 };
@@ -42,6 +46,8 @@ export const updateSubmissionWorkflow = async (update: UpdateFields) => {
 		targetEmailAddress,
 		acceptedText,
 		declinedText,
+		requireAbstract,
+		requireDescription,
 	} = update;
 	await SubmissionWorkflow.update(
 		{
@@ -53,6 +59,8 @@ export const updateSubmissionWorkflow = async (update: UpdateFields) => {
 			title,
 			acceptedText,
 			declinedText,
+			requireAbstract,
+			requireDescription,
 		},
 		{ where: { collectionId } },
 	);

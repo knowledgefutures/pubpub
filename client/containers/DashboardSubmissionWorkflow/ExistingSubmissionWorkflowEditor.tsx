@@ -39,24 +39,25 @@ const ExistingSubmissionWorkflowEditor = (props: Props) => {
 		setTimeout(() => onWorkflowUpdated(full), 0);
 	});
 
-	return (
-		<DashboardSubmissionWorkflowFrame
-			controls={
-				<Button
-					disabled={!isValid || !hasChanges}
-					onClick={persist}
-					loading={isPersisting}
-					intent="primary"
-				>
-					Save Changes
-				</Button>
-			}
+	const saveChangesButton = (
+		<Button
+			disabled={!isValid || !hasChanges}
+			onClick={persist}
+			loading={isPersisting}
+			intent="primary"
 		>
+			Save Changes
+		</Button>
+	);
+
+	return (
+		<DashboardSubmissionWorkflowFrame controls={saveChangesButton}>
 			<SubmissionWorkflowEditor
 				workflow={workflow}
 				onUpdateWorkflow={updateWorkflow}
 				onValidateWorkflow={setIsValid}
 				collection={activeCollection}
+				finalStepButton={saveChangesButton}
 			/>
 		</DashboardSubmissionWorkflowFrame>
 	);

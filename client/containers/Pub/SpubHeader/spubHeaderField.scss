@@ -1,0 +1,88 @@
+@import './styles.scss';
+
+@mixin input-with-border {
+    border: none;
+    border-bottom: 1px solid $light-grey;
+    &:focus-within {
+        border-color: var(--community-accent-dark);
+    }
+    &,
+    &:focus {
+        box-shadow: none;
+        background: inherit;
+    }
+}
+
+.spub-header-field-component {
+    &.has-margin {
+        margin: 15px 0;
+    }
+    
+    &:not(.full-width) {
+        max-width: 750px;
+    }
+
+    > h2.title {
+        color: var(--community-accent-dark);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 17px;
+        letter-spacing: 0.05em;
+    }
+
+    > .instructions {
+        font-weight: 300;
+        color: $lighter-grey;
+        letter-spacing: 0.015em;
+    }
+
+    input {
+        @include input-with-border();
+        min-height: unset;
+
+        &::placeholder {
+            color: $lighter-grey;
+            font-style: italic;
+            font-weight: 300;
+            letter-spacing: 0.015em;
+        }
+    }
+
+    .bp3-tag-input {
+        &,
+        &.bp3-active {
+            background: inherit;
+            box-shadow: none;
+        }
+        .bp3-tag-input-values {
+            @include input-with-border();
+            > * {
+                margin-bottom: 4px;
+            }
+        }
+        input {
+            border: none;
+        }
+    }
+
+    .minimal-editor-component {
+        @include input-with-border();
+
+        > .editor-wrapper {
+            background-color: #f8f8f8;
+            border-top: none;
+        }
+
+        .prosemirror-placeholder {
+            opacity: 1;
+            padding: 0 3px;
+            &:after {
+                font-style: italic;
+                font-weight: 300;
+                color: $lighter-grey;
+                letter-spacing: 0.015em;
+                opacity: 1;
+            }
+        }
+    }
+}

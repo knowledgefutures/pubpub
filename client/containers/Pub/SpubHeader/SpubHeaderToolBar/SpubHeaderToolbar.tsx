@@ -91,7 +91,7 @@ const SpubHeaderToolbar = (props: Props) => {
 
 	return (
 		<div style={{ background: lighterAccentColor }} className="spub-header-toolbar-component">
-			<GridWrapper containerClassName="toolbar-container">
+			<GridWrapper containerClassName="toolbar-container pub">
 				<div className="toolbar-items">
 					<Tabs
 						id="spubHeaderToolbar"

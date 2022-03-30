@@ -1,11 +1,12 @@
 import React from 'react';
-import { Label, InputGroup } from '@blueprintjs/core';
+import { InputGroup } from '@blueprintjs/core';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { PubPageData, Pub, DocJson } from 'types';
 import { MinimalEditor, DownloadChooser } from 'components';
 
 import SpubHeaderTab from './SpubHeaderTab';
+import SpubHeaderField from './SpubHeaderField';
 
 type Props = {
 	pub: Pub;
@@ -18,44 +19,42 @@ const DetailsTab = (props: Props) => {
 	const [onUpdatePubDebounced] = useDebouncedCallback(props.onUpdatePub, 250);
 	return (
 		<SpubHeaderTab>
-			<div className="instruction">
-				The information you enter in this form and the content section below will be used to
-				create your submission. You can use the Preview tab to see how your submission will
-				appear.
-			</div>
-			<Label>
-				<h2>Submission Title</h2>
+			<SpubHeaderField title="Title" asLabel>
 				<InputGroup
 					onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
 						onUpdatePubDebounced({ title: evt.target.value })
 					}
 					defaultValue={props.pub.title}
-					placeholder="Type your submission's title here..."
+					fill
 				/>
-			</Label>
-			<h2>Abstract</h2>
-			<MinimalEditor
-				customNodes={{ doc: { content: 'paragraph' } }}
-				placeholder="Type your submission's abstract here..."
-				initialContent={props.abstract}
-				onEdit={(doc) => props.onUpdateAbstract(doc.toJSON() as DocJson)}
-				debounceEditsMs={300}
-				useFormattingBar
-				constrainHeight
-			/>
-			<Label>
-				<h2>Default Download File</h2>
-				<p className="instruction">
-					You can upload a file, like a PDF with custom styling, to associate with this
-					submission.
-				</p>
+			</SpubHeaderField>
+			<SpubHeaderField title="Abstract">
+				<MinimalEditor
+					customNodes={{ doc: { content: 'paragraph' } }}
+					initialContent={props.abstract}
+					onEdit={(doc) => props.onUpdateAbstract(doc.toJSON() as DocJson)}
+					debounceEditsMs={300}
+					useFormattingBar
+					constrainHeight
+					noMinHeight
+				/>
+			</SpubHeaderField>
+			<SpubHeaderField
+				title="Attached file"
+				instructions={
+					<>
+						You can upload a file, like a PDF with custom styling, to associate with
+						this submission.
+					</>
+				}
+			>
 				<DownloadChooser
 					pubData={props.pub}
 					communityId={props.pub.communityId}
 					onSetDownloads={props.onUpdatePub}
 					text="Upload new file"
 				/>
-			</Label>
+			</SpubHeaderField>
 		</SpubHeaderTab>
 	);
 };

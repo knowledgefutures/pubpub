@@ -29,7 +29,7 @@ const SpubHeaderTab = (props: Props) => {
 	}, [viewportHeight]);
 
 	return (
-		<GridWrapper containerClassName={classNames('spub-header-tab-component', className)}>
+		<GridWrapper containerClassName={classNames('spub-header-tab-component', 'pub', className)}>
 			<div style={{ ...(expandToFold && { minHeight }) }} ref={elementRef}>
 				{children}
 			</div>

@@ -80,6 +80,10 @@ const SpubHeader = () => {
 
 	return (
 		<div className="spub-header-component" ref={headerRef}>
+			<style>{`
+				body { background-color: #f8f8f8; }
+				.pub-document-component { background-color: white; }
+			`}</style>
 			<div className="content-container">
 				<SpubHeaderToolBar
 					onSelectTab={(t: SpubHeaderTab) => setSelectedTab(t)}

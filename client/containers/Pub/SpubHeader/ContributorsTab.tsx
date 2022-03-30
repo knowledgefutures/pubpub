@@ -1,13 +1,13 @@
 import React from 'react';
-import { Label } from '@blueprintjs/core';
 
 import { PubAttributionEditor } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { Callback, Pub } from 'types';
 
+import SpubHeaderField from './SpubHeaderField';
 import SpubHeaderTab from './SpubHeaderTab';
 
-require('./contributorsTabComponent.scss');
+require('./contributorsTab.scss');
 
 type Props = {
 	pubData: Pub;
@@ -17,25 +17,20 @@ type Props = {
 const ContributorsTab = (props: Props) => {
 	const { onUpdatePub, pubData } = props;
 	const { communityData } = usePageContext();
+
 	const contributorCount = pubData.attributions.length;
+	const title = <>Contributors {contributorCount ? `(${contributorCount})` : null}</>;
 
 	return (
-		<SpubHeaderTab className="contributors-tab-component">
-			<p className="instruction">
-				Add the names, roles & affiliations of other people who have a part to play in the
-				creation of this submission's content.
-			</p>
-			<Label>
-				<h2 className="contributors-header">
-					Contributors {contributorCount && `(${contributorCount})`}
-				</h2>
+		<SpubHeaderTab>
+			<SpubHeaderField title={title} fullWidth>
 				<PubAttributionEditor
 					pubData={pubData}
 					communityData={communityData}
 					updatePubData={onUpdatePub}
 					canEdit
 				/>
-			</Label>
+			</SpubHeaderField>
 		</SpubHeaderTab>
 	);
 };

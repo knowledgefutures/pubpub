@@ -57,7 +57,7 @@ const Editor = (props: Props) => {
 		debounceEditsMs = 0,
 		discussionsOptions,
 		enableSuggestions = false,
-		initialContent = emptyDoc,
+		initialContent: providedInitialContent,
 		isReadOnly = false,
 		nodeOptions = {},
 		onChange,
@@ -72,6 +72,7 @@ const Editor = (props: Props) => {
 	const { suggesting, suggestionManager } = useSuggestions<NodeReference>(enableSuggestions);
 	const { noteManager: globalNoteManager } = usePageContext();
 	const noteManager = providedNoteManager || globalNoteManager;
+	const initialContent = providedInitialContent || emptyDoc;
 
 	const { initialDocNode, schema, staticContent } = useInitialValues({
 		nodeLabels,

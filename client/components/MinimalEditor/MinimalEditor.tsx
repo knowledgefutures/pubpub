@@ -13,6 +13,7 @@ type Props = {
 	customNodes?: Record<string, NodeSpec>;
 	debounceEditsMs?: number;
 	focusOnLoad?: boolean;
+	noMinHeight?: boolean;
 	initialContent?: any;
 	isTranslucent?: boolean;
 	onEdit?: OnEditFn;
@@ -33,6 +34,7 @@ const MinimalEditor = (props: Props) => {
 		debounceEditsMs = 0,
 		initialContent,
 		constrainHeight = false,
+		noMinHeight = false,
 		onEdit,
 		onContent,
 		useFormattingBar = false,
@@ -93,6 +95,7 @@ const MinimalEditor = (props: Props) => {
 				constrainHeight && 'constrain-height',
 				isTranslucent && 'translucent',
 				useFormattingBar && 'has-formatting-bar',
+				noMinHeight && 'no-min-height',
 			)}
 		>
 			{useFormattingBar && FormattingBar && (

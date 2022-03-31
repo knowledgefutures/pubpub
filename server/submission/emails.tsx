@@ -86,7 +86,7 @@ export const sendSubmissionEmail = async (options: SendEmailOptions) => {
 			/>,
 		);
 		await sendEmail({
-			from: { address: 'submissions@pubpub.org', name: `PubPub Submissions` },
+			from: { address: 'submissions@mg.pubpub.org', name: `PubPub Submissions` },
 			to: [...submitterEmails, submissionWorkflow.targetEmailAddress],
 			subject: `Your submission to ${community.title}`,
 			html,

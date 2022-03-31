@@ -80,7 +80,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 
 	const sharedEmailPreviewProps = {
 		community: communityData,
-		from: 'submissions@pubpub.org',
+		from: 'submissions@mg.pubpub.org',
 		to: 'submitter.name@place.org',
 		cc: workflow.targetEmailAddress,
 	};

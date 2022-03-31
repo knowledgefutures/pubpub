@@ -48,15 +48,7 @@ const DashboardReviews = (props: Props) => {
 						)}
 						<Menu className="list-content">
 							{pub.reviews
-								.sort((foo, bar) => {
-									if (foo.createdAt < bar.createdAt) {
-										return 1;
-									}
-									if (foo.createdAt > bar.createdAt) {
-										return -1;
-									}
-									return 0;
-								})
+								.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
 								.map((review) => {
 									const reviewUrl = getDashUrl({
 										collectionSlug: activeCollection

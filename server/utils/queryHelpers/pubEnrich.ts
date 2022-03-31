@@ -3,9 +3,8 @@ import { Op } from 'sequelize';
 import { Doc, Draft, PubEdge } from 'server/models';
 import { generateCitationHtml, getStructuredCitationsForPub } from 'server/utils/citations';
 import { getPubDraftDoc, getFirebaseToken } from 'server/utils/firebaseAdmin';
-import { Pub as PubType, DefinitelyHas, PubDocInfo, InitialData } from 'types';
+import { Pub as PubType, DefinitelyHas, PubDocInfo, InitialData, SanitizedPubData } from 'types';
 
-import { SanitizedPubData } from './pubSanitize';
 import { sanitizePubEdge } from './sanitizePubEdge';
 import { getPubEdgeIncludes } from './pubEdgeOptions';
 

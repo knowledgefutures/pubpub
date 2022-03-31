@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { Icon } from 'components';
 
 import { TimelineContext } from './util';
+import { IconName } from '../Icon/Icon';
 
 type OwnProps = {
 	accentColor?: string;
@@ -11,7 +12,7 @@ type OwnProps = {
 	controls?: React.ReactNode;
 	hollow?: boolean;
 	large?: boolean;
-	icon?: string | React.ReactNode;
+	icon?: IconName;
 	title?: React.ReactNode;
 	subtitle?: React.ReactNode;
 };
@@ -27,7 +28,7 @@ const defaultProps = {
 	subtitle: null,
 };
 
-type Props = OwnProps & typeof defaultProps;
+type Props = OwnProps;
 
 const TimelineItem = (props: Props) => {
 	const {

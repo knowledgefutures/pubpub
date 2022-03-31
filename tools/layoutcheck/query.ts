@@ -1,8 +1,9 @@
 import { Op } from 'sequelize';
 
+import { SanitizedPubData } from 'types';
 import { CollectionPub, Pub } from 'server/models';
 
-import sanitizePub, { SanitizedPubData } from 'server/utils/queryHelpers/pubSanitize';
+import sanitizePub from 'server/utils/queryHelpers/pubSanitize';
 import buildPubOptions from 'server/utils/queryHelpers/pubOptions';
 
 const getPubIdsForCollectionIds = async (collectionIds) => {

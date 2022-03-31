@@ -16,7 +16,7 @@ const defaultProps = {
 	className: '',
 };
 
-type Props = OwnProps & typeof defaultProps;
+type Props = OwnProps;
 
 const Timeline = (props: Props) => {
 	const { accentColor, children, className } = props;

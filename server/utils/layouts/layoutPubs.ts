@@ -1,5 +1,4 @@
 import { queryPubIds, getPubsById } from 'server/pub/queryMany';
-import { SanitizedPubData } from 'server/utils/queryHelpers';
 import {
 	LayoutBlockPubs,
 	LayoutBlock,
@@ -7,7 +6,7 @@ import {
 	PubSortOrder,
 	maxPubsPerBlock,
 } from 'utils/layout';
-import { InitialData, Maybe, PubsQueryOrdering } from 'types';
+import { InitialData, Maybe, PubsQueryOrdering, SanitizedPubData } from 'types';
 
 type BlockContent = LayoutBlockPubs['content'];
 

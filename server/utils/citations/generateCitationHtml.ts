@@ -9,8 +9,6 @@ import { getPrimaryCollection } from 'utils/collections/primary';
 import { renderJournalCitationForCitations } from 'utils/citations';
 import { getAllPubContributors } from 'utils/contributors';
 
-import { SanitizedPubData } from '../queryHelpers';
-
 const getDatePartsObject = (date) => ({
 	'date-parts': [date.getFullYear(), date.getMonth() + 1, date.getDate()],
 });
@@ -42,7 +40,7 @@ const getCollectionLevelData = (collection) => {
 };
 
 export const generateCitationHtml = async (
-	pubData: SanitizedPubData,
+	pubData: types.SanitizedPubData,
 	communityData: types.Community,
 ) => {
 	// TODO: We need to set the updated times properly, which are likely stored in firebase.

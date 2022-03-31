@@ -2,7 +2,7 @@ import { NodeLabelMap } from 'components/Editor';
 import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
 
 import { PubAttribution } from './attribution';
-import { CollectionPub } from './collection';
+import { Collection, CollectionPub } from './collection';
 import { Community } from './community';
 import { Discussion } from './discussion';
 import { DocJson } from './doc';
@@ -146,4 +146,20 @@ export type PubHistoryState = {
 	outstandingRequests: number;
 	latestKeyReceivedAt: Maybe<number>;
 	timestamps: Record<string, number>;
+};
+
+type CollectionPubWithAttributions = CollectionPub & {
+	collection: DefinitelyHas<Collection, 'attributions'>;
+};
+
+export type SanitizedPubData = Pub & {
+	viewHash: string | null;
+	editHash: string | null;
+	attributions: PubAttribution[];
+	discussions: Discussion[];
+	collectionPubs: CollectionPubWithAttributions[];
+	isReadOnly: boolean;
+	isRelease: boolean;
+	releases: Release[];
+	releaseNumber: number | null;
 };

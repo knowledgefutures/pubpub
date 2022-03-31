@@ -2,19 +2,21 @@ import React from 'react';
 import dateFormat from 'dateformat';
 import { Menu, MenuItem, Tag } from '@blueprintjs/core';
 
-import { usePageContext } from 'utils/hooks';
-import { getPubPublishedDate, getPubLatestReleaseDate } from 'utils/pub/pubDates';
-import { formatDate } from 'utils/dates';
-import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
+import { Review, SanitizedPubData } from 'types';
 import { ContributorsList, DashboardFrame, PubHeaderBackground } from 'components';
-
+import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
+import { formatDate } from 'utils/dates';
 import { getAllPubContributors } from 'utils/contributors';
+import { getDashUrl } from 'utils/dashboard';
+import { getPubPublishedDate, getPubLatestReleaseDate } from 'utils/pub/pubDates';
+import { usePageContext } from 'utils/hooks';
+
 import PubTimeline from './PubTimeline';
 
 require('./pubOverview.scss');
 
 type Props = {
-	pubData: any;
+	pubData: SanitizedPubData;
 };
 
 const PubOverview = (props: Props) => {
@@ -58,8 +60,8 @@ const PubOverview = (props: Props) => {
 				{pubData.collectionPubs.map((cp, index) => {
 					return (
 						<span key={cp.id}>
-							<a href={`/dash/collection/${cp.collection.slug}`}>
-								{cp.collection.title}
+							<a href={getDashUrl({ collectionSlug: cp.collection!.slug })}>
+								{cp.collection!.title}
 							</a>
 							{index !== pubData.collectionPubs.length - 1 && <span>, </span>}
 						</span>
@@ -69,13 +71,13 @@ const PubOverview = (props: Props) => {
 		);
 	};
 
-	const renderReviews = () => {
+	const renderReviews = (reviews: Review[]) => {
 		return (
 			<div className="section list">
 				<div className="section-header">Reviews</div>
 				<Menu className="list-content">
-					{pubData.reviews
-						.sort((a, b) => a.createdAt - b.createdAt)
+					{reviews
+						.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
 						.map((review) => {
 							return (
 								<MenuItem
@@ -139,7 +141,7 @@ const PubOverview = (props: Props) => {
 					{pubData.doi && renderSection('DOI', pubData.doi)}
 					{renderContributors()}
 					{renderCollections()}
-					{!!pubData.reviews.length && renderReviews()}
+					{!!pubData.reviews?.length && renderReviews(pubData.reviews)}
 				</div>
 				<div className="column">
 					<PubTimeline pubData={pubData} />

@@ -12,10 +12,11 @@ type Props = {
 	details?: React.ReactNode;
 	icon?: IconName;
 	title?: React.ReactNode;
+	banner?: React.ReactNode;
 };
 
 const DashboardFrame = (props: Props) => {
-	const { className, children, controls = null, details = null, icon, title } = props;
+	const { className, children, controls = null, details = null, icon, title, banner } = props;
 	const { scopeData } = usePageContext();
 	const {
 		elements: { activeTargetType },
@@ -23,6 +24,7 @@ const DashboardFrame = (props: Props) => {
 
 	return (
 		<div className={className}>
+			{banner}
 			<div className="dashboard-content-header">
 				<div className="dashboard-header-left">
 					<div className="title">

@@ -1,12 +1,13 @@
 /* eslint-disable react/no-danger */
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { Checkbox } from '@blueprintjs/core';
 import { useDebounce } from 'use-debounce';
 
 import { renderLatexString } from 'client/utils/editor';
 import { ReferenceableNodeType } from 'client/components/Editor/types';
-import { getCurrentNodeLabels } from 'client/components/Editor';
+import { getCurrentNodeLabels, EditorChangeObject } from 'client/components/Editor';
 
+import { NodeType } from 'prosemirror-model';
 import { EditorChangeObjectWithNode } from '../types';
 import { ControlsButton, ControlsButtonGroup } from './ControlsButton';
 import { ControlsReferenceSettingsLink } from './ControlsReference';
@@ -19,8 +20,20 @@ type Props = {
 	editorChangeObject: EditorChangeObjectWithNode;
 };
 
-const getSchemaDefinitionForNodeType = (editorChangeObject, nodeTypeName) => {
-	return editorChangeObject.view.state.schema.nodes[nodeTypeName];
+const getSchemaDefinitionForNodeType = (
+	editorChangeObject: EditorChangeObject,
+	nodeTypeName: string,
+) => {
+	return editorChangeObject.view.state.schema.nodes[nodeTypeName] as NodeType;
+};
+
+const docAcceptsBlockEquation = (editorChangeObject: EditorChangeObject) => {
+	const docDefinition = getSchemaDefinitionForNodeType(editorChangeObject, 'doc');
+	const blockEquationDefinition = getSchemaDefinitionForNodeType(
+		editorChangeObject,
+		'block_equation',
+	);
+	return docDefinition.contentMatch.matchType(blockEquationDefinition);
 };
 
 const ControlsEquation = (props: Props) => {
@@ -41,6 +54,7 @@ const ControlsEquation = (props: Props) => {
 	const isBlock = selectedNode.type.name === 'block_equation';
 	const nodeLabels = getCurrentNodeLabels(editorChangeObject.view.state);
 	const canHideLabel = nodeLabels[selectedNode.type.name as ReferenceableNodeType]?.enabled;
+	const [canConvertToBlock] = useState(() => docAcceptsBlockEquation(editorChangeObject));
 
 	useEffect(() => {
 		// Avoid an initial call to the server's LaTeX renderer on mount
@@ -102,9 +116,11 @@ const ControlsEquation = (props: Props) => {
 						</Checkbox>
 					)}
 					<ControlsButtonGroup>
-						<ControlsButton onClick={handleChangeNodeType}>
-							Change to {isBlock ? 'inline' : 'block'}
-						</ControlsButton>
+						{canConvertToBlock && (
+							<ControlsButton onClick={handleChangeNodeType}>
+								Change to {isBlock ? 'inline' : 'block'}
+							</ControlsButton>
+						)}
 						<ControlsButton disabled={!hasPendingChanges} onClick={handleUpdate}>
 							Update equation
 						</ControlsButton>

@@ -51,6 +51,7 @@ const AbstractEditor = (props: Props) => {
 		<MinimalEditor
 			{...sharedProps}
 			initialContent={submissionAbstract}
+			getButtons={(buttons) => buttons.abstractButtonSet}
 			onEdit={(doc) => onUpdateAbstract(doc.toJSON() as DocJson)}
 			debounceEditsMs={300}
 			useFormattingBar

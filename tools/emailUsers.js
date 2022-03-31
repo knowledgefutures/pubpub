@@ -63,10 +63,11 @@ const sendEmail = async (user) => {
 		// Uncomment the below to see attempted emails.
 		// console.log(`ATTEMPTING: ${userEmail}`);
 		await mg.messages.create('mg.pubpub.org', {
-			from: 'PubPub Team <hello@pubpub.org>',
+			from: 'PubPub Team <hello@mg.pubpub.org>',
 			to: [userEmail],
 			subject: emailSubject,
 			text: emailBody,
+			'h:Reply-To': 'hello@pubpub.org',
 		});
 		const successMessage = `SUCCEEDED: ${userEmail}`;
 		/* This is the only guaranteed log of emails sent. Promise.map does not guarantee order,

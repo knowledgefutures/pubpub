@@ -10,7 +10,7 @@ export const sendPasswordResetEmail = ({ toEmail, resetUrl }) => {
 	// TODO: We should probably indicate the community somewhere.
 	// e.g. 'We've received a request to reset your PubPub account on Responsive Science.'
 	return mg.messages.create('mg.pubpub.org', {
-		from: 'PubPub Team <hello@pubpub.org>',
+		from: 'PubPub Team <hello@mg.pubpub.org>',
 		to: [toEmail],
 		subject: 'Password Reset · PubPub',
 		text: stripIndent(`
@@ -21,5 +21,6 @@ export const sendPasswordResetEmail = ({ toEmail, resetUrl }) => {
 			Sincerely,
 			PubPub Support
 		`),
+		'h:Reply-To': 'hello@pubpub.org',
 	});
 };

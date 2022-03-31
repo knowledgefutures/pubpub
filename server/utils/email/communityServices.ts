@@ -8,7 +8,7 @@ const mg = mailgun.client({
 
 export const sendServicesInquiryEmail = ({ contactEmail, additionalDetails, selections }) => {
 	return mg.messages.create('mg.pubpub.org', {
-		from: 'PubPub Team <hello@pubpub.org>',
+		from: 'PubPub Team <hello@mg.pubpub.org>',
 		to: 'partnerships@pubpub.org',
 		subject: 'Community Services Form Submission',
 		text: stripIndent(`
@@ -25,5 +25,6 @@ export const sendServicesInquiryEmail = ({ contactEmail, additionalDetails, sele
 			Sincerely,
 			PubPub Bot
 		`),
+		'h:Reply-To': 'hello@pubpub.org',
 	});
 };

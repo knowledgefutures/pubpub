@@ -8,7 +8,7 @@ const mg = mailgun.client({
 
 export const sendSignupEmail = ({ toEmail, signupUrl }) => {
 	return mg.messages.create('mg.pubpub.org', {
-		from: 'PubPub Team <hello@pubpub.org>',
+		from: 'PubPub Team <hello@mg.pubpub.org>',
 		to: [toEmail],
 		subject: 'Welcome to PubPub!',
 		text: stripIndent(`
@@ -21,5 +21,6 @@ export const sendSignupEmail = ({ toEmail, signupUrl }) => {
 			Sincerely,
 			PubPub Support
 		`),
+		'h:Reply-To': 'hello@pubpub.org',
 	});
 };

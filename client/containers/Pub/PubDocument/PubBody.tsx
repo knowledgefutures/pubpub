@@ -156,7 +156,7 @@ const PubBody = (props: Props) => {
 				isReadOnly={isReadOnly}
 				onKeyPress={handleKeyPress}
 				onChange={(editorChangeObject) => {
-					if (!isViewingHistory) {
+					if (!isReadOnly) {
 						updateLocalData('collab', { editorChangeObject });
 					}
 				}}

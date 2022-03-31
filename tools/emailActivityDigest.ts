@@ -48,10 +48,11 @@ async function main() {
 						const digest = await renderDigestEmail(community, { scope, user });
 						if (digest === null) return;
 						await mg.messages.create('mg.pubpub.org', {
-							from: 'PubPub Team <hello@pubpub.org>',
+							from: 'PubPub Team <hello@mg.pubpub.org>',
 							to: [user.email],
 							subject: `${community.title} daily activity digest`,
 							html: digest,
+							'h:Reply-To': 'hello@pubpub.org',
 						});
 					} catch (err) {
 						// eslint-disable-next-line no-console

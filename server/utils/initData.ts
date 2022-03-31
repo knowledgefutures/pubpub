@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 
-import { isProd, isDuqDuq, getAppCommit } from 'utils/environment';
+import { isProd, isDuqDuq, isQubQub, getAppCommit } from 'utils/environment';
 import { InitialData, ScopeData } from 'types';
 
 import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
@@ -33,6 +33,7 @@ export const getInitialData = async (req, isDashboard = false): Promise<InitialD
 		isBasePubPub: hostname === 'www.pubpub.org',
 		isProd: isProd(),
 		isDuqDuq: isDuqDuq(),
+		isQubQub: isQubQub(),
 		appCommit: getAppCommit(),
 	};
 

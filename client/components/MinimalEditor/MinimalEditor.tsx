@@ -15,6 +15,7 @@ type Props = {
 	focusOnLoad?: boolean;
 	noMinHeight?: boolean;
 	initialContent?: any;
+	isReadOnly?: boolean;
 	isTranslucent?: boolean;
 	onEdit?: OnEditFn;
 	onContent?: ({ text: string, content: any }) => unknown;
@@ -40,6 +41,7 @@ const MinimalEditor = (props: Props) => {
 		useFormattingBar = false,
 		focusOnLoad = false,
 		placeholder,
+		isReadOnly = false,
 		isTranslucent = false,
 		getButtons = defaultGetButtons,
 	} = props;
@@ -113,6 +115,7 @@ const MinimalEditor = (props: Props) => {
 			<div className="editor-wrapper" onClick={handleWrapperClick}>
 				<div ref={controlsContainerRef} />
 				<Editor
+					isReadOnly={isReadOnly}
 					customNodes={customNodes}
 					debounceEditsMs={debounceEditsMs}
 					initialContent={initialContent}

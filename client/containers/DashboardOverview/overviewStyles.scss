@@ -10,7 +10,7 @@ $empty-state-margin-top: 75px;
 
 @mixin status-colors {
 	@each $status, $color in $status-color-map {
-		.status-color-#{$status} {
+		&.status-color-#{$status} {
 			color: $color;
 		}
 	}

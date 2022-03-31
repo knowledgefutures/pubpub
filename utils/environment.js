@@ -2,14 +2,17 @@ let environment;
 let appCommit;
 
 const PRODUCTION = 'production';
+const QUBQUB = 'qubqub';
 const DUQDUQ = 'duqduq';
 const DEVELOPMENT = 'development';
 
-export const setEnvironment = (isProd, isDuqDuq) => {
+export const setEnvironment = (isProd, isDuqDuq, isQubQub) => {
 	if (isProd) {
 		environment = PRODUCTION;
 	} else if (isDuqDuq) {
 		environment = DUQDUQ;
+	} else if (isQubQub) {
+		environment = QUBQUB;
 	} else {
 		environment = DEVELOPMENT;
 	}
@@ -21,6 +24,10 @@ export const isProd = () => {
 
 export const isDuqDuq = () => {
 	return environment === DUQDUQ;
+};
+
+export const isQubQub = () => {
+	return environment === QUBQUB;
 };
 
 export const isDevelopment = () => {

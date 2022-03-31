@@ -49,23 +49,20 @@
 		height: 2px;
 		background-color: var(--community-accent-dark);
 	}
+
 	.status {
 		display: flex;
-		em {
-			margin-right: 5px;
-		}
-		strong {
-			font-weight: 500;
-		}
-		@include status-colors;
-	}
+		font-weight: 500;
 
-	.status-text {
-		text-transform: capitalize;
+		.bp3-icon {
+			@include status-colors;
+			margin-right: 4px;
+			transform: translateY(1px);
+		}
 	}
 
 	.submit-button {
-		width: 119px;
+		width: 120px;
 		height: 30px;
 	}
 }

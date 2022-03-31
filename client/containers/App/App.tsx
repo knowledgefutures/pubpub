@@ -51,7 +51,7 @@ const App = (props: Props) => {
 				{renderCssVariablesStyle(communityData)}
 				<div id="app" className={classNames({ dashboard: isDashboard })}>
 					<AccentStyle communityData={communityData} isNavHidden={!showNav} />
-					{locationData.isDuqDuq && (
+					{(locationData.isDuqDuq || locationData.isQubQub) && (
 						<div className="duqduq-warning">Development Environment</div>
 					)}
 					<SkipLink targetId="main-content">Skip to main content</SkipLink>

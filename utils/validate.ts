@@ -1,5 +1,5 @@
 import { isEmptyDoc } from 'client/components/Editor';
-import { DocJson } from 'types';
+import { DocJson, Maybe } from 'types';
 
 type AnyRecord = Record<string, any>;
 
@@ -12,23 +12,35 @@ export type RecordValidator<Rec extends AnyRecord> = {
 export type ValidatedFields<Rec> = { [K in keyof Rec]: boolean };
 
 export type ValidationResult<Rec extends AnyRecord> = {
-	isValid: boolean;
-	fields: ValidatedFields<Rec>;
+	isValidated: boolean;
+	validatedFields: ValidatedFields<Rec>;
 };
 
-export const isValidTitle = (title: string) => title.length > 0;
+export const isNonEmptyString = (str: string) => str.length > 0;
 
-export const isValidDocJson = (docJson: DocJson) => {
+export const isNonEmptyDocJson = (docJson: DocJson) => {
 	return !isEmptyDoc(docJson);
 };
 
 export const isAlwaysValid = () => true;
 
+export const isTruthyAnd = <T>(
+	validator: FieldValidator<T>,
+	fallback = false,
+): FieldValidator<Maybe<T>> => {
+	return (value: Maybe<T>) => {
+		if (value) {
+			return validator(value as T);
+		}
+		return fallback;
+	};
+};
+
 export const validate = <Rec extends AnyRecord>(
 	rec: Rec,
 	validator: RecordValidator<Rec>,
 ): ValidationResult<Rec> => {
-	const fields = Object.entries(rec).reduce(
+	const validatedFields = Object.entries(rec).reduce(
 		(partial: Partial<ValidatedFields<Rec>>, [key, value]) => {
 			const fieldValidator = validator[key];
 			if (fieldValidator) {
@@ -42,7 +54,7 @@ export const validate = <Rec extends AnyRecord>(
 		{},
 	) as ValidatedFields<Rec>;
 	return {
-		fields,
-		isValid: !Object.values(fields).some((val) => !val),
+		validatedFields,
+		isValidated: !Object.values(validatedFields).some((val) => !val),
 	};
 };

@@ -14,7 +14,7 @@ import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/enviro
 
 // ACHTUNG: These calls must appear before we import any more of our own code to ensure that
 // the environment, and in particular the choice of dev vs. prod, is configured correctly!
-setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
+setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ, process.env.IS_QUBQUB);
 setAppCommit(process.env.HEROKU_SLUG_COMMIT);
 
 import 'server/utils/serverModuleOverwrite';

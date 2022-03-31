@@ -14,10 +14,9 @@
 }
 
 .spub-header-field-component {
-    &.has-margin {
-        margin: 15px 0;
-    }
-    
+    display: block; // Might not be true if rendered as <label>
+    margin: 15px 0;
+
     &:not(.full-width) {
         max-width: 750px;
     }
@@ -28,6 +27,11 @@
         font-weight: 500;
         line-height: 17px;
         letter-spacing: 0.05em;
+
+        .invalid-icon {
+            margin-left: 6px;
+            margin-top: -3px;
+        }
     }
 
     > .instructions {
@@ -70,7 +74,7 @@
 
         > .editor-wrapper {
             background-color: #f8f8f8;
-            border-top: none;
+            border: none;
         }
 
         .prosemirror-placeholder {

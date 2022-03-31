@@ -1,19 +1,20 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import { DocJson, Pub, PubPageData } from 'types';
+import { PendingChangesProvider } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { useSticky } from 'client/utils/useSticky';
-import { PendingChangesProvider } from 'components';
 import { usePendingChanges } from 'utils/hooks';
+import { createSubmissionValidator, validateSubmission } from 'utils/submission/validate';
 
 import { usePubContext } from '../pubHooks';
 import PubHeader from '../PubHeader';
+import { getPubHeadings } from '../PubHeader/headerUtils';
 import PubHeaderSticky from '../PubHeader/PubHeaderSticky';
 import InstructionsTab from './InstructionsTab';
 import DetailsTab from './DetailsTab';
 import ContributorsTab from './ContributorsTab';
 import SpubHeaderToolBar from './SpubHeaderToolBar';
-import { getPubHeadings } from '../PubHeader/headerUtils';
 
 require('./spubHeader.scss');
 
@@ -30,6 +31,21 @@ const SpubHeader = () => {
 	} = usePubContext();
 	const { selectedTab, submission } = submissionState!;
 	const headerRef = useRef<HTMLDivElement>(null);
+
+	const [validator] = useState(() => createSubmissionValidator(submission.submissionWorkflow));
+
+	const { validatedFields } = useMemo(
+		() =>
+			validateSubmission(
+				{
+					title: pubData.title,
+					description: pubData.description ?? '',
+					abstract: submission.abstract,
+				},
+				validator,
+			),
+		[pubData, submission, validator],
+	);
 
 	// TODO(ian): Move this computation to usePubBodyState()
 	const pubHeadings = useMemo(
@@ -86,6 +102,7 @@ const SpubHeader = () => {
 			`}</style>
 			<div className="content-container">
 				<SpubHeaderToolBar
+					validatedFields={validatedFields}
 					onSelectTab={(t: SpubHeaderTab) => setSelectedTab(t)}
 					selectedTab={selectedTab}
 					submission={submission}
@@ -98,7 +115,8 @@ const SpubHeader = () => {
 				)}
 				{selectedTab === 'details' && (
 					<DetailsTab
-						abstract={submission.abstract}
+						submission={submission}
+						validatedFields={validatedFields}
 						onUpdatePub={updateAndSavePubData}
 						onUpdateAbstract={updateAbstract}
 						pub={pubData}

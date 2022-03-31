@@ -2,43 +2,86 @@ import React from 'react';
 import { InputGroup } from '@blueprintjs/core';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { PubPageData, Pub, DocJson } from 'types';
-import { MinimalEditor, DownloadChooser } from 'components';
+import { PubPageData, Pub, DocJson, DefinitelyHas, Submission } from 'types';
+import { DownloadChooser } from 'components';
+import { ValidatedSubmissionFields } from 'utils/submission/validate';
 
 import SpubHeaderTab from './SpubHeaderTab';
 import SpubHeaderField from './SpubHeaderField';
+import AbstractEditor from './AbstractEditor';
 
 type Props = {
 	pub: Pub;
-	abstract: null | DocJson;
+	submission: DefinitelyHas<Submission, 'submissionWorkflow'>;
 	onUpdatePub: (pub: Partial<PubPageData>) => unknown;
 	onUpdateAbstract: (abstract: DocJson) => Promise<unknown>;
+	validatedFields: ValidatedSubmissionFields;
 };
 
 const DetailsTab = (props: Props) => {
-	const [onUpdatePubDebounced] = useDebouncedCallback(props.onUpdatePub, 250);
+	const {
+		pub,
+		onUpdatePub,
+		onUpdateAbstract,
+		validatedFields,
+		submission: {
+			status,
+			abstract,
+			submissionWorkflow: { requireAbstract, requireDescription },
+		},
+	} = props;
+	const hasSubmitted = status !== 'incomplete';
+	const [onUpdatePubDebounced] = useDebouncedCallback(onUpdatePub, 250);
+
 	return (
 		<SpubHeaderTab>
-			<SpubHeaderField title="Title" asLabel>
+			<SpubHeaderField
+				title="Title"
+				asLabel
+				valid={validatedFields.title}
+				invalidNotice="Title must not be empty"
+			>
 				<InputGroup
 					onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
 						onUpdatePubDebounced({ title: evt.target.value })
 					}
-					defaultValue={props.pub.title}
+					defaultValue={pub.title}
 					fill
 				/>
 			</SpubHeaderField>
-			<SpubHeaderField title="Abstract">
-				<MinimalEditor
-					customNodes={{ doc: { content: 'paragraph' } }}
-					initialContent={props.abstract}
-					onEdit={(doc) => props.onUpdateAbstract(doc.toJSON() as DocJson)}
-					debounceEditsMs={300}
-					useFormattingBar
-					constrainHeight
-					noMinHeight
-				/>
-			</SpubHeaderField>
+			{requireDescription && (
+				<SpubHeaderField
+					title="Description"
+					instructions="A short subheader that will be shown below your submission's title."
+					valid={validatedFields.description}
+					invalidNotice="Description must not be empty"
+				>
+					<InputGroup
+						onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
+							onUpdatePubDebounced({ description: evt.target.value })
+						}
+						defaultValue={pub.description}
+						fill
+						maxLength={280}
+					/>
+				</SpubHeaderField>
+			)}
+			{requireAbstract && (
+				<SpubHeaderField
+					title="Abstract"
+					instructions={
+						hasSubmitted ? 'Update the abstract from the submission body.' : null
+					}
+					valid={hasSubmitted || validatedFields.abstract}
+					invalidNotice="Abstract must not be empty"
+				>
+					<AbstractEditor
+						isReadOnly={hasSubmitted}
+						submissionAbstract={abstract}
+						onUpdateAbstract={onUpdateAbstract}
+					/>
+				</SpubHeaderField>
+			)}
 			<SpubHeaderField
 				title="Attached file"
 				instructions={
@@ -49,9 +92,9 @@ const DetailsTab = (props: Props) => {
 				}
 			>
 				<DownloadChooser
-					pubData={props.pub}
-					communityId={props.pub.communityId}
-					onSetDownloads={props.onUpdatePub}
+					pubData={pub}
+					communityId={pub.communityId}
+					onSetDownloads={onUpdatePub}
 					text="Upload new file"
 				/>
 			</SpubHeaderField>

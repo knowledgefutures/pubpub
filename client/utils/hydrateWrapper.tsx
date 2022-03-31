@@ -16,8 +16,8 @@ const isLocalEnv = (windowObj) => windowObj.location.origin.indexOf('localhost:'
 export const hydrateWrapper = (Component) => {
 	if (typeof window !== 'undefined' && !isStorybookEnv(window)) {
 		const initialData = getClientInitialData();
-		const { isProd, isDuqDuq, appCommit } = initialData.locationData;
-		setEnvironment(isProd, isDuqDuq);
+		const { isProd, isDuqDuq, isQubQub, appCommit } = initialData.locationData;
+		setEnvironment(isProd, isDuqDuq, isQubQub);
 		setAppCommit(appCommit);
 
 		FocusStyleManager.onlyShowFocusOnTabs();

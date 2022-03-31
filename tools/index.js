@@ -9,7 +9,11 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 require('server/utils/serverModuleOverwrite');
-require('utils/environment').setEnvironment(process.env.PUBPUB_PRODUCTION, process.env.IS_DUQDUQ);
+require('utils/environment').setEnvironment(
+	process.env.PUBPUB_PRODUCTION,
+	process.env.IS_DUQDUQ,
+	process.env.IS_QUBQUB,
+);
 require('server/hooks');
 
 const command = process.argv[2];

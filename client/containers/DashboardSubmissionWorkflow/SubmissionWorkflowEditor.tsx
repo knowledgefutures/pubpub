@@ -7,6 +7,13 @@ import { usePageContext } from 'utils/hooks';
 import { isValidEmail } from 'utils/email';
 import { withValue } from 'utils/fp';
 import { collectionUrl } from 'utils/canonicalUrls';
+import {
+	RecordValidator,
+	isNonEmptyDocJson,
+	isNonEmptyString,
+	isAlwaysValid,
+	validate,
+} from 'utils/validate';
 
 import WorkflowTextEditor from './WorkflowTextEditor';
 import EmailPreview from './EmailPreview';
@@ -17,13 +24,6 @@ import {
 	submissionWorkflowConfigSteps,
 	submissionWorkflowConfigStepLabels,
 } from './types';
-import {
-	RecordValidator,
-	isValidDocJson,
-	isAlwaysValid,
-	validate,
-	isValidTitle,
-} from './validators';
 
 require('./submissionWorkflowEditor.scss');
 
@@ -36,9 +36,9 @@ type Props = {
 };
 
 const validator: RecordValidator<EditableSubmissionWorkflow> = {
-	title: isValidTitle,
-	introText: isValidDocJson,
-	instructionsText: isValidDocJson,
+	title: isNonEmptyString,
+	introText: isNonEmptyDocJson,
+	instructionsText: isNonEmptyDocJson,
 	emailText: isAlwaysValid,
 	acceptedText: isAlwaysValid,
 	declinedText: isAlwaysValid,
@@ -61,7 +61,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 	const { communityData } = usePageContext();
 	const { email: communityEmail } = communityData;
 	const [step, setStep] = useState<SubmissionWorkflowConfigStep>('instructions-requirements');
-	const [{ fields: fieldValidStates, isValid }, setValidation] = useState(() =>
+	const [{ validatedFields, isValidated }, setValidation] = useState(() =>
 		validate(workflow, validator),
 	);
 
@@ -85,7 +85,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 		cc: workflow.targetEmailAddress,
 	};
 
-	useEffect(() => void onValidateWorkflow(isValid), [onValidateWorkflow, isValid]);
+	useEffect(() => void onValidateWorkflow(isValidated), [onValidateWorkflow, isValidated]);
 
 	const renderInstructionsRequirements = () => {
 		const currentYear = new Date().getFullYear().toString();
@@ -159,7 +159,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 						type="email"
 						value={workflow.targetEmailAddress}
 						intent={
-							workflow.targetEmailAddress && !fieldValidStates.targetEmailAddress
+							workflow.targetEmailAddress && !validatedFields.targetEmailAddress
 								? 'danger'
 								: undefined
 						}
@@ -283,9 +283,9 @@ const SubmissionWorkflowEditor = (props: Props) => {
 				onSelectStep={setStep}
 				stepCompletions={{
 					'instructions-requirements':
-						fieldValidStates.title && fieldValidStates.instructionsText,
-					'response-emails': fieldValidStates.targetEmailAddress,
-					'layout-banner': fieldValidStates.introText,
+						validatedFields.title && validatedFields.instructionsText,
+					'response-emails': validatedFields.targetEmailAddress,
+					'layout-banner': validatedFields.introText,
 				}}
 			/>
 			<div className="step-content">

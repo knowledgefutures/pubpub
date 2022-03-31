@@ -79,7 +79,7 @@ const SpubHeader = () => {
 	};
 
 	return (
-		<div className="spub-header-component" ref={headerRef}>
+		<div className="spub-header-component" ref={headerRef} data-tab={selectedTab}>
 			<style>{`
 				body { background-color: #f8f8f8; }
 				.pub-document-component { background-color: white; }

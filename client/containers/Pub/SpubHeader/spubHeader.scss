@@ -6,6 +6,14 @@
 	z-index: 20;
 	background-color: $background-grey;
 
+	&:not([data-tab='instructions']) {
+		border-bottom: 1px solid $header-border-color;
+	}
+
+	.pub-header-component {
+		border-bottom: none;
+	}
+
 	.pub-header-sticky-component {
 		visibility: hidden;
 		opacity: 0;

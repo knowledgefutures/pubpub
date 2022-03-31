@@ -41,7 +41,13 @@ export const useSticky = (options: Options) => {
 				stickyBitStickyOffset: offset,
 				useStickyClasses: true,
 			});
-			return () => stickyInstanceRef.current!.cleanup();
+			return () => {
+				try {
+					stickyInstanceRef.current!.cleanup();
+				} catch (e) {
+					// Whatever
+				}
+			};
 		}
 		return () => {};
 	}, [isActive, offset, target]);

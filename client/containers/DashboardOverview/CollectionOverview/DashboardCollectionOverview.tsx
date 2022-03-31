@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import classNames from 'classnames';
-import { NonIdealState } from '@blueprintjs/core';
+import { AnchorButton, NonIdealState } from '@blueprintjs/core';
 import { DragDropContext, DraggableProvidedDragHandleProps, DropResult } from 'react-beautiful-dnd';
 import Color from 'color';
 
-import { DashboardFrame, DragDropListing, DragHandle } from 'components';
+import { Banner, DashboardFrame, DragDropListing, DragHandle } from 'components';
 import { useManyPubs } from 'client/utils/useManyPubs';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
 import { indexByProperty } from 'utils/arrays';
@@ -238,17 +238,34 @@ const DashboardCollectionOverview = (props: Props) => {
 		);
 	};
 
+	const renderRightElement = (
+		<AnchorButton
+			minimal={true}
+			intent="primary"
+			className="view-submissions-button"
+			href={getDashUrl({
+				collectionSlug: collection.slug,
+				mode: 'submissions',
+			})}
+		>
+			View submissions
+		</AnchorButton>
+	);
+
 	const renderBanner = (bannerText: String) => {
 		return (
-			<div style={{ background: lighterAccentColor }} className="banner">
-				<div className="banner-text">{bannerText}</div>
-			</div>
+			<Banner
+				bannerText={bannerText}
+				accentColor={lighterAccentColor}
+				right={renderRightElement}
+			/>
 		);
 	};
 
-	const submissionBanner = hasSubmissionWorkflow
-		? renderBanner('Submissions are now open for this collection!')
-		: null;
+	const submissionBanner =
+		hasSubmissionWorkflow && canManage
+			? renderBanner('Submissions are now open for this collection!')
+			: null;
 
 	return (
 		<DashboardFrame

@@ -11,7 +11,8 @@ type PubBodyState = {
 };
 
 const createSubmissionPreview = (doc: DocJson, abstract: DocJson) => {
-	if (isEmptyDoc(abstract)) {
+	const isEmpty = isEmptyDoc(abstract);
+	if (isEmpty) {
 		return doc;
 	}
 	return {

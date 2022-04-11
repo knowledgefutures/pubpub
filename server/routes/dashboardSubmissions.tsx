@@ -23,7 +23,7 @@ const getInitialPubs = async (
 			limit,
 			communityId: communityData.id,
 			scopedCollectionId: collectionId,
-			submissionStatuses: ['pending'],
+			submissionStatuses: ['received'],
 		},
 	});
 	const initialPubs = await result.sanitize(initialData);

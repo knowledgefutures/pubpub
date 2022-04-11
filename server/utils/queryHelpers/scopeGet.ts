@@ -36,7 +36,7 @@ const getActiveSubmissionsCount = ({ activeCollection }) => {
 	if (activeCollection) {
 		return Submission.count({
 			where: {
-				status: 'pending',
+				status: 'received',
 			},
 			include: [
 				{

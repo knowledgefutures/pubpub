@@ -71,7 +71,7 @@ export const updateSubmission = async (options: UpdateOptions, actorId: string) 
 	const { id, status, customEmailText, skipEmail, abstract } = options;
 	const submission = (await getSubmissionById(id))!;
 	const previousStatus = submission.status;
-	const isBeingSubmitted = previousStatus === 'incomplete' && status === 'pending';
+	const isBeingSubmitted = previousStatus === 'incomplete' && status === 'received';
 
 	await Submission.update(
 		{

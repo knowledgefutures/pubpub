@@ -103,7 +103,7 @@ const SpubHeaderToolbar = (props: Props) => {
 		}
 
 		if (status !== 'incomplete') {
-			const statusText = status === 'pending' ? 'Received' : capitalize(status);
+			const statusText = status === 'received' ? 'Received' : capitalize(status);
 			return (
 				<div className="status">
 					<Icon

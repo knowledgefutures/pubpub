@@ -67,7 +67,7 @@ beforeEach(() => {
 });
 
 describe('/api/submissions', () => {
-	it('forbids pub managers to update pub status beyond pending', async () => {
+	it('forbids pub managers to update pub status beyond received', async () => {
 		const { pubManager, submission } = models;
 		const agent = await login(pubManager);
 		await agent
@@ -81,7 +81,7 @@ describe('/api/submissions', () => {
 		const agent = await login(anotherAdmin);
 		await agent
 			.put('/api/submissions')
-			.send({ id: submission.id, status: 'pending' })
+			.send({ id: submission.id, status: 'received' })
 			.expect(403);
 	});
 
@@ -90,7 +90,7 @@ describe('/api/submissions', () => {
 		const agent = await login(collectionEditor);
 		await agent
 			.put('/api/submissions')
-			.send({ id: submission.id, status: 'pending' })
+			.send({ id: submission.id, status: 'received' })
 			.expect(403);
 	});
 
@@ -123,21 +123,21 @@ describe('/api/submissions', () => {
 			.expect(403);
 	});
 
-	it('allows pub managers to set submission status to pending', async () => {
+	it('allows pub managers to set submission status to received', async () => {
 		const { pubManager, submission } = models;
 		const agent = await login(pubManager);
 		await agent
 			.put('/api/submissions')
-			.send({ id: submission.id, status: 'pending' })
+			.send({ id: submission.id, status: 'received' })
 			.expect(201);
 		const { status, submittedAt } = await Submission.findOne({ where: { id: submission.id } });
-		expect(status).toEqual('pending');
+		expect(status).toEqual('received');
 		expect(Number.isNaN(new Date(submittedAt).getTime())).toEqual(false);
 		await finishDeferredTasks();
 		expect(sendEmailMock).toHaveBeenCalled();
 	});
 
-	it('forbids admins from updating status out of one of [pending, accepted, declined]', async () => {
+	it('forbids admins from updating status out of one of [received, accepted, declined]', async () => {
 		const { admin, submission } = models;
 		const agent = await login(admin);
 		await agent

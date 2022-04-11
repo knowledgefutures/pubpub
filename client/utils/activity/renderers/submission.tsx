@@ -17,7 +17,7 @@ export const renderSubmissionUpdated = itemRenderer<SubmissionUpdatedActivityIte
 		const { payload } = item;
 		const { actor, pub, collection } = titles;
 		if (payload.status) {
-			if (payload.status.to === 'pending') {
+			if (payload.status.to === 'received') {
 				return (
 					<>
 						{actor} submitted {pub} into {collection}

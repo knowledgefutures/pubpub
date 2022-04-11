@@ -24,10 +24,10 @@ type Props = {
 
 const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
 	all: {
-		submissionStatuses: ['pending', 'accepted', 'declined'],
+		submissionStatuses: ['received', 'accepted', 'declined'],
 	},
-	pending: {
-		submissionStatuses: ['pending'],
+	received: {
+		submissionStatuses: ['received'],
 	},
 	accepted: {
 		submissionStatuses: ['accepted'],
@@ -38,9 +38,9 @@ const queriesForSubmissionPubs: Record<string, Partial<PubsQuery>> = {
 };
 
 const pendingSearchFilter: OverviewSearchFilter = {
-	id: 'pending',
+	id: 'received',
 	title: 'Received',
-	query: queriesForSubmissionPubs.pending,
+	query: queriesForSubmissionPubs.received,
 };
 
 const overviewSearchFilters: OverviewSearchFilter[] = [

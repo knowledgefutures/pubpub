@@ -25,7 +25,7 @@ const SubmitDialog = (props: Props) => {
 			apiFetch
 				.put('/api/submissions', {
 					id: props.submission.id,
-					status: 'pending' as SubmissionStatus,
+					status: 'received' as SubmissionStatus,
 				})
 				.then((submissionRes) => {
 					setUpdatedSubmission(submissionRes);

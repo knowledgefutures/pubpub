@@ -10,7 +10,7 @@ export type SubmissionWorkflow = {
 	instructionsText: DocJson;
 	acceptedText: DocJson;
 	declinedText: DocJson;
-	emailText: DocJson;
+	receivedEmailText: DocJson;
 	targetEmailAddress: string;
 	requireAbstract: boolean;
 	requireDescription: boolean;

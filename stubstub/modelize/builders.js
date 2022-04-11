@@ -116,7 +116,7 @@ builders.SubmissionWorkflow = (args) => {
 		enabled: false,
 		instructionsText: getEmptyDoc(),
 		introText: getEmptyDoc(),
-		emailText: getEmptyDoc(),
+		receivedEmailText: getEmptyDoc(),
 		acceptedText: getEmptyDoc(),
 		declinedText: getEmptyDoc(),
 		targetEmailAddress: 'something@somewhere.com',

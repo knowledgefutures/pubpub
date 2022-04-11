@@ -57,6 +57,7 @@
 		.bp3-icon {
 			@include status-colors;
 			margin-right: 4px;
+			transform: translateY(0.5px);
 		}
 	}
 

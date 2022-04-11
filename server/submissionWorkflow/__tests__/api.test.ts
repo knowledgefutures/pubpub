@@ -41,7 +41,7 @@ const models = modelize`
 
 const sharedCreationValues = {
 	instructionsText: getEmptyDoc(),
-	emailText: getEmptyDoc(),
+	receivedEmailText: getEmptyDoc(),
 	acceptedText: getEmptyDoc(),
 	declinedText: getEmptyDoc(),
 	introText: getEmptyDoc(),

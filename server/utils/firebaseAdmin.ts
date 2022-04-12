@@ -11,7 +11,7 @@ import {
 } from 'components/Editor';
 import { Pub, Draft } from 'server/models';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
-import { storeCheckpoint, createFirebaseChange } from 'client/components/Editor/utils';
+import { storeCheckpoint, createFirebaseChange } from 'components/Editor/utils';
 import { DocJson } from 'types';
 
 const getFirebaseApp = () => {

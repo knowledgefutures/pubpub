@@ -3,7 +3,15 @@ import { CommunityNavigationEntry } from 'client/utils/navigation';
 import { Collection } from './collection';
 import { Pub } from './pub';
 import { Page } from './page';
+
 import { ScopeSummary } from './scope';
+
+export type CommunityHeroButton = {
+	title: string;
+	url: string;
+};
+
+export type CommunityHeaderLink = { title: string; url: string; external?: boolean };
 
 export type Community = {
 	id: string;
@@ -16,11 +24,12 @@ export type Community = {
 	publishAs?: string;
 	avatar?: string;
 	favicon?: string;
-	accentColorLight?: string;
-	accentColorDark?: string;
+	accentColorLight: string;
+	accentColorDark: string;
+	accentTextColor: string;
 	hideCreatePubButton?: boolean;
 	headerLogo?: string;
-	headerLinks?: { title: string; url: string; external?: boolean }[];
+	headerLinks?: CommunityHeaderLink[];
 	headerColorType?: 'light' | 'dark' | 'custom';
 	useHeaderTextAccent?: boolean;
 	hideHero?: boolean;
@@ -33,8 +42,8 @@ export type Community = {
 	heroImage?: string;
 	heroTitle?: string;
 	heroText?: string;
-	heroPrimaryButton?: {};
-	heroSecondaryButton?: {};
+	heroPrimaryButton?: CommunityHeroButton;
+	heroSecondaryButton?: CommunityHeroButton;
 	heroAlign?: string;
 	navigation: CommunityNavigationEntry[];
 	hideNav?: boolean;
@@ -57,4 +66,5 @@ export type Community = {
 	pubs?: Pub[];
 	scopeSummaryId: null | string;
 	scopeSummary?: ScopeSummary;
+	footerLogoLink?: string;
 };

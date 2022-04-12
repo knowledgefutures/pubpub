@@ -1,5 +1,3 @@
-import Bluebird from 'bluebird';
-
 import {
 	Collection,
 	CollectionPub,
@@ -18,6 +16,7 @@ import {
 	ThreadComment,
 	User,
 } from 'server/models';
+import { asyncMap } from 'utils/async';
 
 import { createDraft, getDraftFirebasePath } from 'server/draft/queries';
 import { isProd } from 'utils/environment';
@@ -172,7 +171,7 @@ const clonePub = async ({ pubId, newCommunityId, collectionIdMap }) => {
 const clonePubs = async ({ existingCommunityId, newCommunityId, collectionIdMap }) => {
 	const allPubs = await Pub.findAll({ where: { communityId: existingCommunityId } });
 	const pubIdMap = {};
-	await Bluebird.map(
+	await asyncMap(
 		allPubs,
 		async (pub) => {
 			const newPub = await clonePub({
@@ -212,7 +211,7 @@ const getUpdatedLayoutblockContent = ({ block, pubIdMap, pageIdMap, collectionId
 				if (item.type === 'collection') {
 					return { ...item, id: collectionIdMap[item.id] };
 				}
-				return items;
+				return item;
 			});
 			return {
 				...block,

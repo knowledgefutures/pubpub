@@ -43,7 +43,7 @@ const PubDiscussions = (props: Props) => {
 	const prevConvertedDiscussionIds = useRef([]);
 
 	const { discussions } = pubData;
-	const { canView, canCreateDiscussions } = scopeData;
+	const { canView, canCreateDiscussions } = scopeData.activePermissions;
 	const decorations = collabData.editorChangeObject!.decorations || [];
 	const groupsByLine = groupDiscussionsByLine(decorations, discussions);
 

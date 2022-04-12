@@ -7,7 +7,11 @@ import { getPubPageTitle } from 'utils/pubPageTitle';
 import { NoteManager } from 'client/utils/notes';
 import { initFirebase } from 'client/utils/firebaseClient';
 import { apiFetch } from 'client/utils/apiFetch';
-import { NodeLabelMap, EditorChangeObject } from 'client/components/Editor/types';
+import {
+	NodeLabelMap,
+	EditorChangeObject,
+	CollaborativeEditorStatus,
+} from 'components/Editor/types';
 import {
 	Maybe,
 	PatchFn,
@@ -62,7 +66,7 @@ type State = {
 	historyData: PubHistoryState;
 	collabData: {
 		editorChangeObject: null | EditorChangeObject;
-		status: string;
+		status: CollaborativeEditorStatus;
 		localCollabUser: CollabUser;
 		remoteCollabUsers: CollabUser[];
 	};
@@ -230,27 +234,13 @@ class PubSyncManager extends React.Component<Props, State> {
 	componentDidMount() {
 		const { draft } = this.props.pubData;
 		if (draft) {
-			initFirebase(draft.firebasePath, this.props.pubData.firebaseToken).then(
-				(firebaseRefs) => {
-					if (!firebaseRefs) {
-						return;
-					}
-					const [draftRef, connectionRef] = firebaseRefs;
-					this.setState({ firebaseDraftRef: draftRef }, () => {
-						this.state.firebaseDraftRef
-							?.child('cursors')
-							.on('value', this.syncRemoteCollabUsers);
-
-						connectionRef.on('value', (snapshot) => {
-							if (snapshot.val() === true) {
-								this.updateLocalData('collab', { status: 'connected' });
-							} else {
-								this.updateLocalData('collab', { status: 'disconnected' });
-							}
-						});
-					});
-				},
-			);
+			initFirebase(draft.firebasePath, this.props.pubData.firebaseToken!).then((rootRef) => {
+				this.setState({ firebaseDraftRef: rootRef }, () => {
+					this.state.firebaseDraftRef
+						?.child('cursors')
+						.on('value', this.syncRemoteCollabUsers);
+				});
+			});
 		}
 	}
 

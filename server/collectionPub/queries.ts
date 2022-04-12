@@ -7,6 +7,7 @@ import {
 	PubAttribution,
 	Release,
 	includeUserModel,
+	CollectionAttribution,
 } from 'server/models';
 import { getCollectionPubsInCollection } from 'server/utils/collectionQueries';
 
@@ -20,6 +21,24 @@ export const getPubsInCollection = async ({ communityId, collectionId, userId })
 				as: 'pub',
 				include: [
 					{ model: Release, as: 'releases', attributes: ['id'] },
+					{
+						model: CollectionPub,
+						as: 'collectionPubs',
+						separate: true,
+						include: [
+							{
+								model: Collection,
+								as: 'collection',
+								include: [
+									{
+										model: CollectionAttribution,
+										as: 'attributions',
+										include: [includeUserModel({ as: 'user' })],
+									},
+								],
+							},
+						],
+					},
 					{
 						model: PubAttribution,
 						as: 'attributions',

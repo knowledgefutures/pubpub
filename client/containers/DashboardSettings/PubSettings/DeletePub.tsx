@@ -12,6 +12,10 @@ type Props = {
 
 type State = any;
 
+const normalizeTitle = (title: string) => {
+	return title.toLowerCase().trim().replace(/\s/g, ' ');
+};
+
 class DeletePub extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
@@ -47,6 +51,9 @@ class DeletePub extends Component<Props, State> {
 	}
 
 	render() {
+		const canDelete =
+			normalizeTitle(this.props.pubData.title) === normalizeTitle(this.state.title);
+
 		return (
 			<div className="bp3-callout bp3-intent-danger">
 				<p>
@@ -70,7 +77,7 @@ class DeletePub extends Component<Props, State> {
 					text="Delete Pub"
 					loading={this.state.isLoading}
 					onClick={this.handleDelete}
-					disabled={this.props.pubData.title !== this.state.title}
+					disabled={!canDelete}
 				/>
 			</div>
 		);

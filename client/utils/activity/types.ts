@@ -1,20 +1,26 @@
 import React from 'react';
 
-import { ActivityAssociations, ActivityItemKind, InsertableActivityItem, Scope } from 'types';
+import { ActivityAssociations, ActivityItemKind, InsertableActivityItem, Scope, User } from 'types';
 import { IconName } from 'components';
 
 // Information we'll pass around about the current render
 export type ActivityRenderContext = {
 	associations: ActivityAssociations;
 	scope: Scope;
-	userId: string;
+	userId: null | string;
+	otherActorsCount?: number;
 };
 
 // The title of an object to be included in a Message. For a given object, such as a Pub, this may
 // change based on the current ActivityItemsRenderContext; for instance, it may be "this Pub" or
 // the actual title of the Pub. Likewise the Title rendered for a User may be that user's name
 // or simply "you".
-export type Title = { title: string; href?: string | null; prefix?: string | null };
+export type Title = {
+	title: string;
+	href?: string | null;
+	prefix?: string | null;
+	suffix?: string | null;
+};
 
 // Renders a title of some object included in the ItemType. A specific instance of a TitleRenderer
 // might be TitleRenderer<CommunityCreatedActivityItem> which would render a title for a Community.
@@ -43,6 +49,8 @@ export type RenderedActivityItem = {
 	timestamp: Date;
 	// The Scope associated with this item, which can be used for filtering.
 	scope: Scope;
+	// The user who performed the action
+	actor: null | User;
 };
 
 // The lone argument to renderItem(). We need to tell it what items it can expect to be

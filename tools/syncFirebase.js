@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
-import Promise from 'bluebird';
 // import { Op } from 'sequelize';
+import { asyncMap } from 'utils/async';
+
 import { Pub } from '../server/models';
 
 const createFirebaseClient = require('./5to6/util/createFirebaseClient');
@@ -42,7 +43,7 @@ Pub.findAll({
 		const sourceReader = sourceClient.reader;
 		const destWriter = destClient.writer;
 		let completed = 0;
-		return Promise.map(
+		return asyncMap(
 			pubIds,
 			(pubId, index, arrayLength) => {
 				return sourceReader(pubId)

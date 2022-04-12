@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll */
 import { setup, login } from 'stubstub';
 
 import { models } from './data';

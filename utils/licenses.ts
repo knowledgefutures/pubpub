@@ -1,4 +1,9 @@
-export const licenses = [
+import { DefinitelyHas, Pub, Community, CollectionPub } from 'types';
+import { License, RenderedLicense } from 'types/license';
+import { getPubCopyrightYear } from './pub/pubDates';
+import { getPublisherString } from './community';
+
+export const licenses: License[] = [
 	{
 		slug: 'cc-by',
 		full: 'Creative Commons Attribution 4.0 International License',
@@ -10,7 +15,7 @@ export const licenses = [
 		slug: 'cc-0',
 		full: 'Creative Commons Public Domain Dedication',
 		short: 'CC-0',
-		version: '4.0',
+		version: '1.0',
 		link: 'https://creativecommons.org/publicdomain/zero/1.0/',
 	},
 	{
@@ -58,6 +63,22 @@ export const licenses = [
 	},
 ];
 
-export const getLicenseBySlug = (slug = 'cc-by') => {
-	return licenses.find((ls) => ls.slug === slug);
+export const getLicenseForPub = (
+	pub: Pub & {
+		collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
+	},
+	community: Community,
+): RenderedLicense => {
+	const license = licenses.find((ls) => ls.slug === pub.licenseSlug)!;
+	const renderedLicense = {
+		...license,
+		summary: `${license.slug.toUpperCase()} ${license.version}`,
+	};
+	const pubCopyrightYear = getPubCopyrightYear(pub);
+	const publisherString = getPublisherString(community);
+	if (renderedLicense.slug === 'copyright' && publisherString && pubCopyrightYear) {
+		renderedLicense.full = `Copyright © ${pubCopyrightYear} ${publisherString}. All rights reserved.`;
+		renderedLicense.summary = '';
+	}
+	return renderedLicense;
 };

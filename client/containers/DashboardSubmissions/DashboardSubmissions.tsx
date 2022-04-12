@@ -49,7 +49,7 @@ const DashboardSubmissions = (props: Props) => {
 		>
 			<SubmissionItems
 				initialPubs={initialPubs}
-				collection={activeCollection}
+				collection={activeCollection!}
 				initiallyLoadedAllPubs={initiallyLoadedAllPubs}
 				acceptSubmissionsToggle={
 					submissionWorkflow.enabled ? null : acceptSubmissionsToggle

@@ -1,44 +1,31 @@
 import app, { wrap } from 'server/server';
+import { canUserSeeThread } from 'server/thread/queries';
 import { ForbiddenError } from 'server/utils/errors';
+import { UserSubscriptionStatus } from 'types';
 
-import { muteUserSubscription } from '../shared/queries';
-import { createUserThreadSubscription } from './queries';
+import { setUserSubscriptionStatus } from '../shared/queries';
 
-const unwrapPostRequest = (req: any) => {
+const unwrapRequest = (req: any) => {
 	return {
-		threadId: req.body.threadId as string,
 		userId: req.user?.id as string,
+		threadId: req.body.threadId as string,
+		status: req.body.status as UserSubscriptionStatus,
 	};
 };
-
-const unwrapPutRequest = (req: any) => {
-	return {
-		...unwrapPostRequest(req),
-		muted: req.body.muted as boolean,
-	};
-};
-
-app.post(
-	'/api/threads/subscriptions',
-	wrap(async (req, res) => {
-		const { threadId, userId } = unwrapPostRequest(req);
-		const result = await createUserThreadSubscription({
-			threadId,
-			userId,
-			createdAutomatically: false,
-		});
-		if (result) {
-			return res.status(200).json(result);
-		}
-		throw new ForbiddenError();
-	}),
-);
 
 app.put(
 	'/api/threads/subscriptions',
 	wrap(async (req, res) => {
-		const { threadId, userId, muted } = unwrapPutRequest(req);
-		await muteUserSubscription({ threadId, userId, muted });
-		return res.status(200).json({});
+		const { threadId, userId, status } = unwrapRequest(req);
+		if (await canUserSeeThread({ userId, threadId })) {
+			const result = await setUserSubscriptionStatus({
+				threadId,
+				userId,
+				status,
+				setAutomatically: false,
+			});
+			return res.status(200).json(result);
+		}
+		throw new ForbiddenError();
 	}),
 );

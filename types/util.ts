@@ -4,8 +4,8 @@ export type Some<X> = X extends Falsy ? never : X;
 export type DefinitelyHas<X extends {}, Keys> = X & { [k in keyof X & Keys]: Some<X[k]> };
 export type MightHave<X extends {}, Keys extends keyof X> = Pick<Partial<X>, Keys> & Omit<X, Keys>;
 
-type PatchFnUpdaterArg<T> = (current: T) => Partial<T>;
-type PatchFnPatchArg<T> = Partial<T>;
+type PatchFnPatchArg<T> = null | Partial<T>;
+type PatchFnUpdaterArg<T> = (current: T) => PatchFnPatchArg<T>;
 export type PatchFnArg<T> = PatchFnPatchArg<T> | PatchFnUpdaterArg<T>;
 export type PatchFn<T> = (arg: PatchFnArg<T>) => unknown;
 

@@ -1,5 +1,8 @@
+/* eslint-disable no-await-in-loop */
+
 import uuidv4 from 'uuid/v4';
 
+import * as types from 'types';
 import {
 	Community,
 	Page,
@@ -206,4 +209,18 @@ export const isUserAffiliatedWithCommunity = async (userId: string, communityId:
 
 	const isHere = counts.some((c) => c > 0);
 	return isHere;
+};
+
+export const iterAllCommunities = async function* (limit = 10): AsyncGenerator<types.Community[]> {
+	let offset = 0;
+	while (true) {
+		const communities = await Community.findAll({
+			limit,
+			offset,
+			raw: true,
+		});
+		yield communities;
+		if (communities.length < limit) break;
+		offset += limit;
+	}
 };

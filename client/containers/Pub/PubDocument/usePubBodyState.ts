@@ -83,7 +83,7 @@ export const usePubBodyState = (): PubBodyState => {
 
 	return {
 		key: firebaseDraftRef ? 'ready' : 'unready',
-		isReadOnly,
+		isReadOnly: isReadOnly || !firebaseDraftRef,
 		initialContent: initialDoc,
 		includeCollabPlugin: true,
 	};

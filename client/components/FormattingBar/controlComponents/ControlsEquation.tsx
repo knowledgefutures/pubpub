@@ -4,8 +4,7 @@ import { Checkbox } from '@blueprintjs/core';
 import { useDebounce } from 'use-debounce';
 
 import { renderLatexString } from 'client/utils/editor';
-import { ReferenceableNodeType } from 'client/components/Editor/types';
-import { getCurrentNodeLabels, EditorChangeObject } from 'client/components/Editor';
+import { getCurrentNodeLabels, EditorChangeObject, ReferenceableNodeType } from 'components/Editor';
 
 import { NodeType } from 'prosemirror-model';
 import { EditorChangeObjectWithNode } from '../types';

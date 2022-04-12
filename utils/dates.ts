@@ -3,7 +3,7 @@ import dateFormat from 'dateformat';
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export const formatDate = (
-	date: Date | string,
+	date: Date | string | number,
 	{
 		includeTime = false,
 		includeDate = true,
@@ -57,4 +57,13 @@ export const getReadableDateInYear = (date: Date) => {
 	const month = months[date.getMonth()];
 	const dateInMonth = date.getDate();
 	return `${month} ${dateInMonth}`;
+};
+
+export const isValidDate = (date: string | number | Date) =>
+	!Number.isNaN(new Date(date).getTime());
+
+export const getSundayOfThisWeek = () => {
+	const date = new Date();
+	const diff = date.getDate() - date.getDay();
+	return new Date(date.setDate(diff));
 };

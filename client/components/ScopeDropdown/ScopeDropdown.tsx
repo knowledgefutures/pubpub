@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 import { Avatar, Icon, IconName, MenuItem } from 'components';
@@ -10,7 +11,7 @@ type Scope = {
 	icon: IconName;
 	iconSize?: number;
 	title: string;
-	avatar: string;
+	avatar: undefined | string;
 	href: string;
 };
 

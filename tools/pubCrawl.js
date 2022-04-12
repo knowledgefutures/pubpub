@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import Promise from 'bluebird';
 import { Pub, Community } from 'server/models';
 import { Op } from 'sequelize';
 import fetch from 'node-fetch';

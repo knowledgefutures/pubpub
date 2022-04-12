@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import throttle from 'lodash.throttle';
 
-export const PageContext = React.createContext({});
+import * as types from 'types';
+
+export const PageContext = React.createContext<types.PageContext>({} as types.PageContext);
 
 export const PendingChanges = React.createContext({
 	pendingPromise: (x) => x,
 	pendingCount: 0,
 });
 
-export const usePageContext = (previewContextObject) => {
+export const usePageContext = (previewContextObject: null | types.PageContext = null) => {
 	const contextObject = useContext(PageContext);
 	return previewContextObject || contextObject;
 };

@@ -28,7 +28,7 @@ app.get(
 				throw new ForbiddenError();
 			}
 
-			const activityData = await fetchActivityItems({ scope });
+			const activityData = await fetchActivityItems({ scope, limit: 50 });
 
 			return renderToNodeStream(
 				res,

@@ -1,4 +1,3 @@
-/* global describe, it, expect */
 import { defaultFooterLinks, getNavItemsForCommunityNavigation } from '../navigation';
 
 const pages = [

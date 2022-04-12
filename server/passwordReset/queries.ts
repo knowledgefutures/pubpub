@@ -1,16 +1,38 @@
-import Promise from 'bluebird';
+import { promisify } from 'util';
 
+import * as types from 'types';
 import { User } from 'server/models';
 import { generateHash } from 'utils/hashes';
 import { sendPasswordResetEmail } from 'server/utils/email';
 
-export const createPasswordReset = (inputValues, user, hostname) => {
+type CreatePasswordResetInputValues = {
+	email: string;
+};
+
+type UpdatePasswordResetInputValues = {
+	resetHash: string;
+	slug: string;
+	password: string;
+};
+
+type PasswordResetData = {
+	dataValues: {
+		hash: string;
+		salt: string;
+	};
+};
+
+export const createPasswordReset = (
+	inputValues: CreatePasswordResetInputValues,
+	user: types.User,
+	hostname: string,
+) => {
 	const email = inputValues.email;
 
 	return User.findOne({
 		where: email ? { email } : { id: user.id },
 	})
-		.then((userData) => {
+		.then((userData: types.User) => {
 			if (!userData) {
 				throw new Error("User doesn't exist");
 			}
@@ -25,7 +47,7 @@ export const createPasswordReset = (inputValues, user, hostname) => {
 				individualHooks: true,
 			});
 		})
-		.then((updatedUserData) => {
+		.then((updatedUserData: types.User[][]) => {
 			const updatedUser = updatedUserData[1][0];
 			return sendPasswordResetEmail({
 				toEmail: updatedUser.email,
@@ -34,7 +56,10 @@ export const createPasswordReset = (inputValues, user, hostname) => {
 		});
 };
 
-export const updatePasswordReset = (inputValues, user) => {
+export const updatePasswordReset = (
+	inputValues: UpdatePasswordResetInputValues,
+	user: types.User,
+) => {
 	const resetHash = inputValues.resetHash;
 	const slug = inputValues.slug;
 	const currentTime = Date.now();
@@ -44,7 +69,7 @@ export const updatePasswordReset = (inputValues, user) => {
 	return User.findOne({
 		where: whereQuery,
 	})
-		.then((userData) => {
+		.then((userData: types.User | null) => {
 			if (!userData) {
 				throw new Error("User doesn't exist");
 			}
@@ -53,10 +78,10 @@ export const updatePasswordReset = (inputValues, user) => {
 			}
 
 			/* Promisify the setPassword function, and use .update to match API convention */
-			const setPassword = Promise.promisify(userData.setPassword, { context: userData });
+			const setPassword = promisify((userData as any).setPassword.bind(userData));
 			return setPassword(inputValues.password);
 		})
-		.then((passwordResetData) => {
+		.then((passwordResetData: PasswordResetData) => {
 			const updateData = {
 				hash: passwordResetData.dataValues.hash,
 				salt: passwordResetData.dataValues.salt,

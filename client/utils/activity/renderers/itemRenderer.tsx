@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ActivityItem, InsertableActivityItem } from 'types';
+import { communityUrl } from 'utils/canonicalUrls';
 import { isExternalUrl } from 'utils/urls';
 
 import { actorTitle } from '../titles';
@@ -12,10 +13,24 @@ import {
 	ActivityRenderContext,
 } from '../types';
 
-const renderTitleToReact = (title: Title) => {
-	const { title: titleString, href, prefix } = title;
-	const inner = href ? (
-		<a href={href} target={isExternalUrl(href) ? '_blank' : undefined} rel="noreferrer">
+const renderTitleToReact = (title: Title, context: ActivityRenderContext) => {
+	const { title: titleString, href, prefix, suffix } = title;
+	const community = Object.values(context.associations.community)[0];
+	const communityHref =
+		href &&
+		(!href.startsWith('http') && community
+			? `${communityUrl(Object.values(context.associations.community)[0])}/${href.replace(
+					/^\//,
+					'',
+			  )}`
+			: href);
+
+	const inner = communityHref ? (
+		<a
+			href={communityHref}
+			target={isExternalUrl(href) ? '_blank' : undefined}
+			rel="noreferrer"
+		>
 			{titleString}
 		</a>
 	) : (
@@ -25,6 +40,7 @@ const renderTitleToReact = (title: Title) => {
 		<>
 			{prefix ? `${prefix} ` : null}
 			<strong>{inner}</strong>
+			{suffix ? ` ${suffix}` : null}
 		</>
 	);
 };
@@ -35,12 +51,12 @@ const renderTitles = <Item extends InsertableActivityItem, Titles extends string
 	context: ActivityRenderContext,
 ): Record<Titles | 'actor', React.ReactNode> => {
 	const renderedTitles = {
-		actor: renderTitleToReact(actorTitle(item, context)),
+		actor: renderTitleToReact(actorTitle(item, context), context),
 	};
 	Object.keys(titleRenderers).forEach((key) => {
 		const renderer = titleRenderers[key as Titles];
 		const title = renderer(item, context);
-		renderedTitles[key] = renderTitleToReact(title);
+		renderedTitles[key] = renderTitleToReact(title, context);
 	});
 	return renderedTitles as Record<Titles | 'actor', React.ReactNode>;
 };
@@ -56,6 +72,7 @@ export const itemRenderer = <Item extends InsertableActivityItem, Titles extends
 		return {
 			id,
 			icon: typeof icon === 'function' ? icon({ context }) : icon,
+			actor: item.actorId ? context.associations.user[item.actorId] : null,
 			context,
 			timestamp: new Date(timestamp),
 			message: message({ item, titles, context }),

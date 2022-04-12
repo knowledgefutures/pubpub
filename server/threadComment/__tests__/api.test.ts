@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll, afterAll  */
 import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 
 const models = modelize`
@@ -65,6 +64,16 @@ const models = modelize`
         Member {
             permissions: "admin"
             User otherCommunityAdmin {}
+        }
+    }
+    User willBeSubscribed {
+        UserNotificationPreferences {
+            subscribeToPubsAsContributor: true
+        }
+    }
+    User willNotBeSubscribed {
+        UserNotificationPreferences {
+            subscribeToPubsAsContributor: false
         }
     }
 `;

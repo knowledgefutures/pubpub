@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 import { Button } from '@blueprintjs/core';
 
-import { Icon } from 'client/components';
+import { Icon } from 'components';
 import { getDashUrl } from 'utils/dashboard';
 import { Collection } from 'types';
 import { usePageContext } from 'utils/hooks';

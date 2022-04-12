@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
-import Bluebird from 'bluebird';
-
+import { asyncMap } from 'utils/async';
 import { Community, Pub } from 'server/models';
 
 import { setBranchMaintenanceMode } from './utils/branchMaintenance';
@@ -24,10 +23,10 @@ const communityMaintenance = async (subdomain) => {
 	if (community) {
 		const pubs = await Pub.findAll({ where: { communityId: community.id } });
 		await promptOkay(`Act on ${pubs.length} Pubs?`, { throwIfNo: true });
-		await Bluebird.map(
+		await asyncMap(
 			pubs,
 			(pub) =>
-				Bluebird.map(
+				asyncMap(
 					['draft', 'public'],
 					async (branch) => {
 						console.log(`${pub.slug}.${branch}`);

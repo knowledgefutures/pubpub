@@ -1,10 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { Button, NonIdealState, Spinner } from '@blueprintjs/core';
+import { Button, NonIdealState, Spinner, Switch } from '@blueprintjs/core';
 
-import { ActivityFilter } from 'types';
+import { ActivityFilter, Member } from 'types';
 import { usePageContext } from 'utils/hooks';
-import { DashboardFrame } from 'client/components';
+import { DashboardFrame } from 'components';
 import { useInfiniteScroll } from 'client/utils/useInfiniteScroll';
+import * as api from 'client/utils/members/api';
+import { checkMemberPermission } from 'utils/permissions';
 
 import { useActivityItems } from './useActivityItems';
 import { getBoundaryGroupsForSortedActivityItems } from './boundaries';
@@ -20,10 +22,14 @@ type Props = {
 const DashboardActivity = (props: Props) => {
 	const { activityData } = props;
 	const {
-		scopeData: { scope },
+		scopeData,
 		loginData: { id: userId },
+		featureFlags,
 	} = usePageContext();
-
+	const { scope, memberData } = scopeData;
+	const [member, setMember] = useState<Member | undefined>(
+		memberData.find((m: Member) => m.communityId),
+	);
 	const [filters, setFilters] = useState<ActivityFilter[]>([]);
 
 	const { items, loadMoreItems, isLoading, loadedAllItems } = useActivityItems({
@@ -35,6 +41,20 @@ const DashboardActivity = (props: Props) => {
 
 	const boundaryGroups = useMemo(() => getBoundaryGroupsForSortedActivityItems(items), [items]);
 
+	const canSubscribeToActivityDigest =
+		featureFlags.activityDigestSubscribeToggle &&
+		member &&
+		checkMemberPermission(member.permissions, 'manage') &&
+		scopeData.elements.activeTargetType === 'community';
+	const setEnrolledInActivityDigest = (subscribed: boolean): Promise<Member> =>
+		api.updateMember({
+			member,
+			update: {
+				subscribedToActivityDigest: subscribed,
+			},
+			scopeIds: { communityId: scope.communityId },
+		});
+
 	useInfiniteScroll({
 		enabled: !isLoading && !loadedAllItems,
 		useDocumentElement: true,
@@ -43,7 +63,24 @@ const DashboardActivity = (props: Props) => {
 	});
 
 	return (
-		<DashboardFrame className="dashboard-activity-container" title="Activity">
+		<DashboardFrame
+			className="dashboard-activity-container"
+			title="Activity"
+			controls={
+				canSubscribeToActivityDigest && (
+					<Switch
+						checked={member.subscribedToActivityDigest}
+						className="parent-approval-switch"
+						onChange={(e) =>
+							setEnrolledInActivityDigest(
+								(e.target as HTMLInputElement).checked,
+							).then(setMember)
+						}
+						label="Subscribe to daily Activity digest emails"
+					/>
+				)
+			}
+		>
 			<ActivityFilters
 				activeFilters={filters}
 				onUpdateActiveFilters={setFilters}

@@ -3,18 +3,30 @@ import { Op } from 'sequelize';
 import * as types from 'types';
 import { CollectionPub, Member } from 'server/models';
 import { getMemberDataById } from 'server/utils/queryHelpers';
+import { MemberPermission } from 'types';
 
-const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }) => {
+const assertExactlyOneScopeInTarget = ({ pubId, communityId, collectionId }: any) => {
 	if ([pubId, communityId, collectionId].filter((x) => x).length !== 1) {
 		throw new Error('Cannot create member with ambiguous scope.');
 	}
+};
+
+type CreateMemberOptions = {
+	target: {
+		userId: string;
+		communityId?: string;
+		collectionId?: string;
+		pubId?: string;
+	};
+	value: { permissions: MemberPermission };
+	actorId?: string | null;
 };
 
 export const createMember = async ({
 	target: { pubId, collectionId, communityId, userId },
 	value: { permissions },
 	actorId = null,
-}) => {
+}: CreateMemberOptions) => {
 	assertExactlyOneScopeInTarget({
 		pubId,
 		communityId,
@@ -33,9 +45,23 @@ export const createMember = async ({
 	return getMemberDataById(memberId);
 };
 
-export const updateMember = async ({ memberId, value: { permissions }, actorId = null }) => {
+type UpdateMemberOptions = {
+	memberId: string;
+	actorId: string | null;
+	value: Partial<{
+		permissions: ['view', 'edit', 'manage', 'admin'];
+		subscribedToActivityDigest: boolean;
+	}>;
+};
+
+export const updateMember = async (options: UpdateMemberOptions) => {
+	const {
+		memberId,
+		actorId,
+		value: { permissions, subscribedToActivityDigest },
+	} = options;
 	const existingMember = await Member.findOne({ where: { id: memberId } });
-	await existingMember.update({ permissions }, { actorId });
+	await existingMember.update({ permissions, subscribedToActivityDigest }, { actorId });
 	return existingMember;
 };
 

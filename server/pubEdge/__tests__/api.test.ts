@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll */
 import { setup, login, modelize, expectCreatedActivityItem } from 'stubstub';
 
 import { createPubEdge } from 'server/pubEdge/queries';

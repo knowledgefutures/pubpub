@@ -21,6 +21,12 @@ export type User = AttributableUser & {
 	twitter: string;
 	github: string;
 	googleScholar: string;
+	passwordDigest: string;
+	hash: string;
+	salt: string;
+	email: string;
+	resetHash: string;
+	resetHashExpiration: number;
 };
 
 export type PubAttribution = {
@@ -36,6 +42,7 @@ export type PubAttribution = {
 	userId?: string;
 	user?: AttributableUser;
 	createdAt: string;
+	pubId: string;
 };
 
 export type CollectionAttribution = {

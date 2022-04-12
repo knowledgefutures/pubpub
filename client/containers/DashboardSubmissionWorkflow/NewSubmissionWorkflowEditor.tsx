@@ -48,7 +48,7 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 		initial: createEmptyWorkflow,
 		communityId: communityData.id,
 		featureName: 'new-submission-workflow-editor',
-		path: [`collection-${activeCollection.id}`],
+		path: [`collection-${activeCollection!.id}`],
 		debounce: 100,
 	});
 
@@ -58,7 +58,7 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 
 	const handleCreateNewWorkflow = useCallback(() => {
 		setIsPersisting(true);
-		createSubmissionWorkflow(workflow, activeCollection.id)
+		createSubmissionWorkflow(workflow, activeCollection!.id)
 			.then(onWorkflowCreated)
 			.finally(() => setIsPersisting(false));
 	}, [workflow, activeCollection, onWorkflowCreated]);
@@ -73,7 +73,7 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 							setWorkflow((current) => ({ ...current, ...update }))
 						}
 						onValidateWorkflow={setIsValid}
-						collection={activeCollection}
+						collection={activeCollection!}
 						finalStepButton={
 							<Button
 								disabled={!isValid}

@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll */
 import { setup, modelize } from 'stubstub';
 import { Pub, PubsQuery, PubsQueryOrdering } from 'types';
 

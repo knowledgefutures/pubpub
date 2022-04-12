@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll, afterAll, beforeEach */
 import { setup, teardown, modelize } from 'stubstub';
 
 import { Pub, Collection, Community, ScopeSummary } from 'server/models';

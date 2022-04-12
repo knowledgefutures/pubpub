@@ -117,7 +117,7 @@ const LayoutEditorPagesCollections = (props: Props) => {
 								items={justifiedContent}
 								onSelectValue={setJustify}
 								aria-label="Choose Justify Content"
-								buttonProps={{ fill: true, alignText: 'left' }}
+								buttonProps={{ fill: true }}
 							/>
 						</FormGroup>
 					</div>

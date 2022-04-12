@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-import Promise from 'bluebird';
-import { User } from 'server/models';
-// import { Op } from 'sequelize';
-import mailgun from 'mailgun.js';
 import stripIndent from 'strip-indent';
+import mailgun from 'mailgun.js';
+
+import { User } from 'server/models';
 import { isProd } from 'utils/environment';
+
 import { promptOkay } from './utils/prompt';
 
 const mg = mailgun.client({
@@ -16,7 +16,7 @@ const emailSubject = 'Proposed Terms and Privacy Policy Updates';
 const emailBody = stripIndent(`
 Hello,
 
-We're building PubPub for readers, publishing communities, and knowledge creators. 
+We're building PubPub for readers, publishing communities, and knowledge creators.
 Not for analytics companies. We've been working hard with a legal team that specializes
 in open-source software on updating PubPub's Privacy Policy, Terms of Service, and
 Acceptable Use Policy to be easier to understand, more comprehensive, and more
@@ -33,7 +33,7 @@ These policies will replace our existing ones and go into effect two weeks from 
 Monday, February 8, 2021. In the meantime, we sincerely welcome your feedback and
 comments on our proposed policies.
 
-Please visit the following discussion thread on our new PubPub Forum to add your thoughts: 
+Please visit the following discussion thread on our new PubPub Forum to add your thoughts:
 
 https://github.com/pubpub/pubpub/discussions/1248
 
@@ -63,14 +63,15 @@ const sendEmail = async (user) => {
 		// Uncomment the below to see attempted emails.
 		// console.log(`ATTEMPTING: ${userEmail}`);
 		await mg.messages.create('mg.pubpub.org', {
-			from: 'PubPub Team <hello@pubpub.org>',
+			from: 'PubPub Team <hello@mg.pubpub.org>',
 			to: [userEmail],
 			subject: emailSubject,
 			text: emailBody,
+			'h:Reply-To': 'hello@pubpub.org',
 		});
 		const successMessage = `SUCCEEDED: ${userEmail}`;
 		/* This is the only guaranteed log of emails sent. Promise.map does not guarantee order,
-		so this list is vital to preserve in case the wrapped promise fails or times out. 
+		so this list is vital to preserve in case the wrapped promise fails or times out.
 		Note that success = successfully sent, not delivered. */
 		console.log(successMessage);
 		return Promise.resolve(successMessage);

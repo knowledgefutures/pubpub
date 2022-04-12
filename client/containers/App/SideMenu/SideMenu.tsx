@@ -14,7 +14,7 @@ type MenuItem = {
 	title: string;
 	icon: IconName;
 	href: string;
-	validScopes?: ('community' | 'collection' | 'pub')[];
+	validScopes?: ('organization' | 'community' | 'collection' | 'pub')[];
 	manageRequired?: true;
 	count?: number;
 };
@@ -123,7 +123,7 @@ const SideMenu = () => {
 			}),
 			manageRequired: true,
 		},
-	].filter((x): x is MenuItem => !!x);
+	].filter((x) => !!x) as MenuItem[];
 
 	return (
 		<div className="side-menu-component">

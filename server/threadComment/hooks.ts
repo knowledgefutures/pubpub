@@ -1,32 +1,46 @@
 import * as types from 'types';
 import { ThreadComment } from 'server/models';
-import { createUserThreadSubscription } from 'server/userSubscription/queries';
 import { defer } from 'server/utils/deferred';
 import { getParentModelForThread } from 'server/thread/queries';
 import {
 	createPubDiscussionCommentAddedActivityItem,
 	createPubReviewCommentAddedActivityItem,
 } from 'server/activityItem/queries';
+import { setUserSubscriptionStatus } from 'server/userSubscription/queries';
+import { getOrCreateUserNotificationPreferences } from 'server/userNotificationPreferences/queries';
 
-ThreadComment.afterCreate(async (threadComment: types.ThreadComment) => {
-	await createUserThreadSubscription({
-		userId: threadComment.userId,
-		threadId: threadComment.threadId,
-		createdAutomatically: true,
-	});
-	defer(async () => {
-		const { threadId } = threadComment;
-		const parent = await getParentModelForThread(threadId);
-		if (parent?.type === 'discussion') {
-			const numberOfCommentsInThread = ThreadComment.count({ where: { threadId } });
+const createActivityItem = async (threadComment: types.ThreadComment) => {
+	const parent = await getParentModelForThread(threadComment.threadId);
+	if (parent) {
+		if (parent.type === 'discussion') {
+			const { value: discussion } = parent;
+			const numberOfCommentsInThread = await ThreadComment.count({
+				where: { threadId: threadComment.threadId },
+			});
+			const isReply = numberOfCommentsInThread > 1;
 			await createPubDiscussionCommentAddedActivityItem(
-				parent.value.id,
+				discussion.id,
 				threadComment.id,
-				numberOfCommentsInThread > 1,
+				isReply,
 			);
 		}
-		if (parent?.type === 'review') {
-			await createPubReviewCommentAddedActivityItem(parent.value.id, threadComment.id);
+		if (parent.type === 'review') {
+			const { value: review } = parent;
+			await createPubReviewCommentAddedActivityItem(review.id, threadComment.id);
 		}
-	});
+	}
+};
+
+ThreadComment.afterCreate(async (threadComment: types.ThreadComment) => {
+	const { userId, threadId } = threadComment;
+	const userNotificationPreferences = await getOrCreateUserNotificationPreferences(userId);
+	if (userNotificationPreferences.subscribeToThreadsAsCommenter) {
+		await setUserSubscriptionStatus({
+			userId,
+			threadId,
+			setAutomatically: true,
+			status: 'unchanged',
+		});
+	}
+	defer(() => createActivityItem(threadComment));
 });

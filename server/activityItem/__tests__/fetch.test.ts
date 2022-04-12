@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeEach, beforeAll, afterAll */
 import { modelize, setup, teardown } from 'stubstub';
 
 import { ActivityAssociations, ActivityAssociationType } from 'types';
@@ -113,7 +112,7 @@ const models = modelize`
 setup(beforeAll, models.resolve);
 teardown(afterAll);
 
-beforeEach(() => ActivityItem.destroy({ where: {}, truncate: true }));
+beforeEach(() => ActivityItem.destroy({ where: {}, truncate: { cascade: true } }));
 
 const expectAssociationIds = (
 	associations: ActivityAssociations,

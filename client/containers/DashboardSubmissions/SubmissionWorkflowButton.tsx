@@ -21,7 +21,7 @@ const SubmissionWorkFlowButton = () => {
 			outlined
 			icon="form"
 			href={getDashUrl({
-				collectionSlug: activeCollection.slug,
+				collectionSlug: activeCollection!.slug,
 				mode: 'submissions',
 				subMode: 'workflow',
 			})}

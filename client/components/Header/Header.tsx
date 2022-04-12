@@ -2,10 +2,18 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { Button, AnchorButton, Intent } from '@blueprintjs/core';
 
-import { GridWrapper, Avatar, ScopeDropdown, MenuButton, MenuItem } from 'components';
+import {
+	GridWrapper,
+	Avatar,
+	ScopeDropdown,
+	MenuButton,
+	MenuItem,
+	UserNotificationsPopover,
+} from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getResizedUrl } from 'utils/images';
 import { apiFetch } from 'client/utils/apiFetch';
+import { CommunityHeroButton } from 'types';
 
 require('./header.scss');
 
@@ -152,8 +160,9 @@ const Header = (props: Props) => {
 	const redirectString = `?redirect=${locationData.path}${
 		locationData.queryString.length > 1 ? locationData.queryString : ''
 	}`;
-	const heroPrimaryButton = communityData.heroPrimaryButton || {};
-	const heroSecondaryButton = communityData.heroSecondaryButton || {};
+	const heroPrimaryButton: Partial<CommunityHeroButton> = communityData.heroPrimaryButton || {};
+	const heroSecondaryButton: Partial<CommunityHeroButton> =
+		communityData.heroSecondaryButton || {};
 	const isPreview = !!props.previewContext;
 
 	return (
@@ -249,6 +258,7 @@ const Header = (props: Props) => {
 								<ScopeDropdown />
 							</MenuButton>
 						)}
+						{loggedIn && <UserNotificationsPopover />}
 						{loggedIn && (
 							<MenuButton
 								aria-label="User menu"

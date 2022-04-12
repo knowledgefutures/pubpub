@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, NonIdealState } from '@blueprintjs/core';
+import { Button, NonIdealState, Checkbox } from '@blueprintjs/core';
 
 import { ColorInput, GridWrapper, InputField, ImageUpload } from 'components';
 import { slugifyString } from 'utils/strings';
@@ -16,6 +16,7 @@ const CommunityCreate = () => {
 	const [heroLogo, setHeroLogo] = useState('');
 	const [accentColorDark, setAccentColorDark] = useState('#2D2E2F');
 	const [accentColorLight, setAccentColorLight] = useState('#FFFFFF');
+	const [acceptTerms, setAcceptTerms] = useState(false);
 	const [createIsLoading, setCreateIsLoading] = useState(false);
 	const [createError, setCreateError] = useState(undefined);
 
@@ -24,6 +25,7 @@ const CommunityCreate = () => {
 		setCreateIsLoading(true);
 		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'true' is not assignable to param... Remove this comment to see the full error message
 		setCreateError(true);
+		if (!acceptTerms) return false;
 		return apiFetch('/api/communities', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -62,6 +64,7 @@ const CommunityCreate = () => {
 	const onHeroHeaderLogoChange = (val) => {
 		setHeroLogo(val);
 	};
+
 	return (
 		<div id="community-create-container">
 			<GridWrapper containerClassName="small">
@@ -80,6 +83,19 @@ const CommunityCreate = () => {
 				{loginData.id && (
 					<div>
 						<h1>Create Community</h1>
+						<p>
+							PubPub and all its features are free to use.<sup>*</sup> If you value
+							PubPub, we ask you to consider supporting our work by becoming a member
+							of the Knowledge Futures Group.{' '}
+							<a
+								href="https://knowledgefutures.org/membership"
+								target="_blank"
+								rel="noreferrer"
+							>
+								Learn more
+							</a>
+							.
+						</p>
 						<form onSubmit={onCreateSubmit}>
 							<InputField
 								label="URL"
@@ -126,6 +142,24 @@ const CommunityCreate = () => {
 									}}
 								/>
 							</InputField>
+							<InputField>
+								<Checkbox
+									checked={acceptTerms}
+									onChange={() => {
+										setAcceptTerms(!acceptTerms);
+									}}
+								>
+									I have read and agree to the PubPub{' '}
+									<a href="/legal/terms" target="_blank">
+										Terms of Service
+									</a>{' '}
+									and{' '}
+									<a href="/legal/privacy" target="_blank">
+										Privacy Policy
+									</a>
+									.
+								</Checkbox>
+							</InputField>
 							<InputField error={createError && 'Error Creating Community'}>
 								<Button
 									name="create"
@@ -133,11 +167,26 @@ const CommunityCreate = () => {
 									className="bp3-button bp3-intent-primary create-account-button"
 									onClick={onCreateSubmit}
 									text="Create Community"
-									disabled={!subdomain || !title}
+									disabled={!subdomain || !title || !acceptTerms}
 									loading={createIsLoading}
 								/>
 							</InputField>
 						</form>
+						<p>
+							<sup>*</sup> We limit DOI registrations to 10 per community per year, if
+							published via PubPub's Crossref membership. Once the limit is reached,
+							we ask that you become a{' '}
+							<a
+								href="https://knowledgefutures.org/membership"
+								target="_blank"
+								rel="noreferrer"
+							>
+								KFG member
+							</a>
+							, at any level, and allow us to pass on the Crossref fee of $1 per DOI
+							registered. For groups with their own Crossref membership, there is no
+							additional fee for creating or depositing DOIs.
+						</p>
 					</div>
 				)}
 			</GridWrapper>

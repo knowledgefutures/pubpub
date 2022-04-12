@@ -1,7 +1,7 @@
 import dateFormat from 'dateformat';
 
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { getLocalDateMatchingUtcCalendarDate } from 'utils/dates';
+import { getLocalDateMatchingUtcCalendarDate, isValidDate } from 'utils/dates';
 import { DefinitelyHas, Maybe, CollectionPub, Pub } from 'types';
 
 export const getPubLatestReleasedDate = (pub: Pub) => {
@@ -74,8 +74,8 @@ export const getPubCopyrightYear = (
 		if (metadata) {
 			const { copyrightYear, date, publicationDate } = metadata;
 			const dateSource = copyrightYear || date || publicationDate;
-			if (dateSource) {
-				return dateFormat(dateSource, 'yyyy');
+			if (dateSource && isValidDate(dateSource)) {
+				return dateFormat(getLocalDateMatchingUtcCalendarDate(dateSource), 'yyyy');
 			}
 		}
 	}

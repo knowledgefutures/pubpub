@@ -1,7 +1,6 @@
 import dateFormat from 'dateformat';
 
 import * as types from 'types';
-import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { renderJournalCitation } from 'utils/citations';
@@ -12,9 +11,12 @@ import {
 	Pub,
 	PubAttribution,
 	Release,
+	CollectionAttribution,
 	includeUserModel,
 } from 'server/models';
 
+import { getLicenseForPub } from 'utils/licenses';
+import { getAllPubContributors } from 'utils/contributors';
 import { PubMetadata } from './types';
 
 const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => {
@@ -37,6 +39,13 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 					{
 						model: Collection,
 						as: 'collection',
+						include: [
+							{
+								model: CollectionAttribution,
+								as: 'attributions',
+								include: [includeUserModel({ as: 'user' })],
+							},
+						],
 					},
 				],
 			},
@@ -53,14 +62,16 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 		],
 	});
 	const publishedDate = getPubPublishedDate(pubData);
+	const license = getLicenseForPub(pubData, pubData.community);
 	const updatedDate = getPubUpdatedDate({ pub: pubData });
 	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
+	const attributions = getAllPubContributors(pubData);
 	return {
 		title: pubData.title,
+		slug: pubData.slug,
 		doi: pubData.doi,
-		licenseSlug: pubData.licenseSlug,
 		publishedDateString,
 		updatedDateString,
 		communityTitle: renderJournalCitation(
@@ -69,17 +80,12 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 			pubData.community.title,
 		),
 		accentColor: pubData.community.accentColorDark,
-		attributions: pubData.attributions
-			.concat()
-			.sort((a, b) => a.order - b.order)
-			.filter((attr) => attr.isAuthor)
-			.map((attr) => ensureUserForAttribution(attr)),
+		attributions,
 		citationStyle: pubData.citationStyle,
 		citationInlineStyle: pubData.citationInlineStyle,
 		nodeLabels: pubData.nodeLabels,
-		...((primaryCollection?.kind === 'conference' || primaryCollection?.kind === 'book') && {
-			publisher: pubData.community.publishAs,
-		}),
+		publisher: pubData.community.publishAs || pubData.communityTitle,
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),
+		license,
 	};
 };

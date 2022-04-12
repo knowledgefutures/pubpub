@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll */
 import { modelize, setup } from 'stubstub';
 
 import { getFeatureFlagForUserAndCommunity, getFeatureFlagsForUserAndCommunity } from '../queries';

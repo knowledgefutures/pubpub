@@ -15,6 +15,7 @@ type MenuButtonProps = {
 		rightIcon?: IconName | React.ReactNode;
 		minimal?: boolean;
 		small?: boolean;
+		loading?: boolean;
 	};
 	disabled?: boolean;
 	children: React.ReactNode;

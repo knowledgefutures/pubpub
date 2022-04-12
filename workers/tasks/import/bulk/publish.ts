@@ -1,5 +1,4 @@
-import Bluebird from 'bluebird';
-
+import { asyncMap } from 'utils/async';
 import { Collection } from 'server/models';
 import { createRelease } from 'server/release/queries';
 import { summarizeCollection, summarizeCommunity } from 'server/scopeSummary';
@@ -17,7 +16,7 @@ export const publishBulkImportPlan = async ({ plan, yes, actor, dryRun, createEx
 		throwIfNo: true,
 	});
 	const { collections, pubs } = getCreatedItemsFromPlan(plan);
-	await Bluebird.map(
+	await asyncMap(
 		pubs,
 		(pub) =>
 			createRelease({

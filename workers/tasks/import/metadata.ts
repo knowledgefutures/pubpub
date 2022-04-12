@@ -1,8 +1,8 @@
 import unidecode from 'unidecode';
-
 import { metaValueToString, metaValueToJsonSerializable } from '@pubpub/prosemirror-pandoc';
 
 import { getSearchUsers } from 'server/search/queries';
+import { isValidDate } from 'utils/dates';
 
 const getAuthorsArray = (author) => {
 	if (author.type === 'MetaList') {
@@ -16,7 +16,7 @@ const getAuthorsArray = (author) => {
 
 const getDateStringFromMetaValue = (metaDateString) => {
 	const date = new Date(metaValueToString(metaDateString));
-	if (!Number.isNaN(date.getTime())) {
+	if (isValidDate(date)) {
 		return date.toUTCString();
 	}
 	return null;

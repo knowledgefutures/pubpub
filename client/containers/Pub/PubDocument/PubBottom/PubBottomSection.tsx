@@ -10,16 +10,17 @@ type AccentedIconButtonProps = {
 	title?: string;
 } & React.ComponentProps<typeof Button>;
 
-export const AccentedIconButton = (props: AccentedIconButtonProps) => {
+export const AccentedIconButton = React.forwardRef((props: AccentedIconButtonProps, ref: any) => {
 	const { accentColor, icon, title = null, ...buttonProps } = props;
 	return (
 		<Button
 			minimal
+			elementRef={ref}
 			icon={<Icon title={title} color={accentColor} icon={icon as any} iconSize={14} />}
 			{...buttonProps}
 		/>
 	);
-};
+});
 
 export const SectionBullets = ({ children }: { children: React.ReactNode }) => {
 	return (

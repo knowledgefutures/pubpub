@@ -7,104 +7,48 @@ const Pricing = () => {
 	return (
 		<div id="pricing-container">
 			<GridWrapper>
-				<h1>
-					Simple Pricing
-					<br />
-					to Support Nonprofit Infrastructure
-				</h1>
+				<h1>PubPub is free.</h1>
 				<p className="description top">
-					PubPub's goal is to provide an affordable, high-quality, open-source,
-					institution-led, hosted non-profit publishing software. We offer plans with no
-					user or publishing limits for everyone from individual communities to larger
-					organizations.
+					PubPub's goal is to make knowledge creation accessible to everyone. To fulfill
+					this mission, we offer access to PubPub and all features for free.
+					<sup>*</sup> We do not sell data or rely on ancillary business streams. To
+					ensure our work is community-driven and sustainable for the long term, we offer
+					two ways for users to support PubPub.
 				</p>
 				<div className="pricing-tiers">
-					<div className="option bp3-card bp3-elevation-1" id="independent">
-						<h2>Independent</h2>
-						<p className="subtitle">
-							For individuals, grassroots communities, and experimenters.
-						</p>
-						<h3 className="pricing">
-							Contribute What You Want
-							<br />
-							<span className="subhead">(including $0!)</span>
-						</h3>
-						<a
-							href="/community/create"
-							className="bp3-button bp3-large bp3-intent-primary"
-						>
-							Create your Community
-						</a>
-						<ul className="features">
-							<li>Single PubPub Community</li>
-							<li>Forum-based support</li>
-							<li>Unlimited Pubs and Users</li>
-							<li>Creative Commons Licenses</li>
-							<li>Dedicated pubpub.org subdomain</li>
-							<li>Custom domain available with contributions over $5/month</li>
-							<li>
-								10 free DOIs per year<span className="star">*</span>
-							</li>
-						</ul>
-					</div>
-					<div className="option bp3-card bp3-elevation-1" id="enterprise">
-						<h2>Custom</h2>
-						<p className="subtitle">
-							For institutions & organizations who need custom support & scale.
-						</p>
-						<h3 className="pricing">Custom Quote</h3>
-						<a
-							href="mailto:partnerships@pubpub.org?subject=PubPub%20Enterprise%20Inquiry"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="bp3-button bp3-large bp3-intent-primary"
-						>
-							Get In Touch
-						</a>
-						<ul className="features">
-							<li>Custom # of Communities</li>
-							<li>Dedicated email support</li>
-							<li>Unlimited Pubs and Users</li>
-							<li>Custom licenses</li>
-							<li>Dedicated pubpub.org subdomain</li>
-							<li>Custom domains</li>
-							<li>Custom # of DOIs</li>
-							<li>Content services as needed</li>
-						</ul>
-					</div>
-					<div className="option bp3-card bp3-elevation-1" id="content">
-						<h2>Content Services</h2>
-						<p className="subtitle">
-							For communities of all kinds and sizes looking to maximize their
-							publishing opportunities.
-						</p>
-						<h3 className="pricing">Transparent Pricing</h3>
-						<a
-							href="mailto:partnerships@pubpub.org?subject=Content%20Services%20Inquiry"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="bp3-button bp3-large bp3-intent-primary"
-						>
-							Get In Touch
-						</a>
+					<div className="option bp3-card bp3-elevation-1">
+						<h2>KFG Membership</h2>
 						<p>
-							We offer transparent pricing and a range of services—from site design
-							and strategy, to content production and enhancements, to team trainings
-							and community building.
+							PubPub is built by the{' '}
+							<a href="https://knowledgefutures.org">Knowledge Futures Group</a>, a
+							non-profit dedicated to building public knowledge infrastructure. We ask
+							that users who value PubPub consider becoming KFG Members to help ensure
+							its longterm sustainability.
 						</p>
-						<ul className="features">
-							<li>Production work is completed at an hourly rate of $100/hour.</li>
-							<li>
-								Production of media and content interactives averages $350 per
-								asset.
-							</li>
-							<li>
-								Community design and structure is quoted on a project-by-project
-								basis based on scope, timeline, and needs.
-							</li>
-						</ul>
 						<p>
-							Clients include{' '}
+							Membership includes benefits like regular member programming, custom
+							domains, email support, strategy consultation, and discounts on
+							community services. We are dedicated to making membership accessible,
+							and have multiple tiers with pricing based on ability to pay.
+						</p>
+						<a
+							href="https://knowledgefutures.org/membership"
+							className="bp3-button bp3-large bp3-intent-primary"
+						>
+							Join us
+						</a>
+					</div>
+					<div className="option bp3-card bp3-elevation-1">
+						<h2>Community Services</h2>
+						<p>
+							For groups that want personalized support we offer production, training,
+							and strategy services for building high quality, effective publishing
+							communities. Services include content production, editorial services,
+							site design, back file import, training, interactive production,
+							branding, and more.
+						</p>
+						<p>
+							Our clients include{' '}
 							<a
 								href="https://academicentrepreneurship.pubpub.org/"
 								target="_blank"
@@ -140,47 +84,27 @@ const Pricing = () => {
 							>
 								MIT's Schwarzman College of Computing
 							</a>
-							, and more.
+							, and others.
 						</p>
 						<a
-							href="https://help.pubpub.org/pub/content-services-menu"
+							href="/community-services"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="bp3-button bp3-large bp3-intent-secondary"
+							className="bp3-button bp3-large bp3-intent-primary"
 						>
 							Learn more
 						</a>
 					</div>
 				</div>
-				<div className="pricing-footer">
-					<p className="description">
-						Our plans are based on the cost savings PubPub offers publishing communities
-						and the cost of providing support for Communities and Organizations as they
-						scale. We developed our plans in partnership with our Communities with the
-						goal of making PubPub sustainable without excluding Communities or punishing
-						them for success.{' '}
-						<a href="https://notes.knowledgefutures.org/pub/ik8lltas">
-							Read more about the thinking behind our plans
-						</a>
-						.
-					</p>
-					<p className="description">
-						Need advanced features, but unsure you can afford our plans? We offer
-						substantial discounts for small, mission-driven communities. For more
-						information,{' '}
-						<a href="mailto:partnerships@pubpub.org?subject=Discounts">
-							please reach out and tell us about your work and needs
-						</a>
-						.
-					</p>
-					<p className="description">
-						* The free DOI limit applies to DOIs published via PubPub's Crossref
-						membership. Once the limit is reached, PubPub passes on the Crossref fee of
-						$1 per DOI registered to the Community. For Communities with their own
-						Crossref membership, there is no additional fee for creating or depositing
-						DOIs.
-					</p>
-				</div>
+				<p className="fine-print">
+					<sup>*</sup> For communities requiring DOIs, we have a limit of 10 free DOI
+					registrations per community per year if published via PubPub's Crossref
+					membership. Once the limit is reached, we ask that you become a{' '}
+					<a href="https://knowledgefutures.org/membership">KFG member</a>, at any level,
+					and allow us to pass on the Crossref fee of $1 per DOI registered. For groups
+					with their own Crossref membership, there is no additional fee for creating or
+					depositing DOIs.
+				</p>
 			</GridWrapper>
 		</div>
 	);

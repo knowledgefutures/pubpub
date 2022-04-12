@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll, afterAll */
 import { setup, teardown, login, modelize } from 'stubstub';
 
 import { getEmptyDoc } from 'client/components/Editor';

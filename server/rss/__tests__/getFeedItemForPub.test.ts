@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll */
 import { setup, modelize } from 'stubstub';
 
 import { getPubData, getFeedItemForPub } from '../queries';
@@ -44,7 +43,7 @@ const models = modelize`
                 pubRank: "b"
                 Collection {
                    isPublic: true
-                   title: "C1" 
+                   title: "C1"
                 }
             }
             CollectionPub {
@@ -52,21 +51,21 @@ const models = modelize`
                 pubRank: "c"
                 Collection {
                    isPublic: true
-                   title: "C2" 
+                   title: "C2"
                 }
             }
             CollectionPub {
                 rank: "2"
                 pubRank: "d"
                 Collection {
-                   title: "C3" 
+                   title: "C3"
                 }
             }
             CollectionPub {
                 rank: "3"
                 pubRank: "a"
                 Collection {
-                   title: "C4" 
+                   title: "C4"
                    isPublic: true
                    CollectionAttribution {
                        name: "CA1"

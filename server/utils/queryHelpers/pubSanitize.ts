@@ -1,21 +1,9 @@
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
-import { CollectionPub, Discussion, Pub, PubAttribution, Release } from 'types';
+import { Discussion, SanitizedPubData } from 'types';
 
 import sanitizeDiscussions from './discussionsSanitize';
 import sanitizeReviews from './reviewsSanitize';
 import { sanitizePubEdges } from './sanitizePubEdge';
-
-export type SanitizedPubData = Pub & {
-	viewHash: string | null;
-	editHash: string | null;
-	attributions: PubAttribution[];
-	discussions: Discussion[];
-	collectionPubs: CollectionPub[];
-	isReadOnly: boolean;
-	isRelease: boolean;
-	releases: Release[];
-	releaseNumber: number | null;
-};
 
 const sanitizeHashes = (pubData, activePermissions) => {
 	const { editHash, viewHash } = pubData;

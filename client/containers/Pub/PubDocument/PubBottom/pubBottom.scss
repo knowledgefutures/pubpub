@@ -1,35 +1,53 @@
 @import '../../pub.scss';
 
 .pub-bottom-component {
-    background: #F6F4F4;
-    flex-grow: 1;
-    overflow: hidden;
-    padding: 2em 0em;
-    margin-top: 2em;
-    @include has-grid('. pub . . .');
-    .inner {
-        grid-area: pub;
-        @include pub-compact-view {
-            grid-area: unset;
-            width: 100vw;
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-    }
-    .pub-bottom-license {
-        .section-content {
-            margin-bottom: 18px;
-            text-align: center;
-        }
-    }
+	background: #f6f4f4;
+	flex-grow: 1;
+	overflow: hidden;
+	padding: 2em 0em;
+	margin-top: 2em;
+	@include has-grid('. pub . . .');
+	.inner {
+		grid-area: pub;
+		@include pub-compact-view {
+			grid-area: unset;
+			width: 100vw;
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+	}
+	.pub-bottom-license {
+		.section-content {
+			margin-bottom: 18px;
+			text-align: center;
+		}
+		.license-link {
+			display: flex;
+			align-items: center;
+			.license-image {
+				margin-right: 10px;
+			}
+		}
+	}
 }
 
 /* This selector is a IE 10+ kludge */
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    .pub-bottom-component {
-        .inner {
-            max-width: $pub-max-width;
-            margin: 0 auto;
-        }
-    }
+	.pub-bottom-component {
+		.inner {
+			max-width: $pub-max-width;
+			margin: 0 auto;
+		}
+	}
+}
+
+@media screen and (max-width: 720px) {
+	.pub-bottom-license {
+		.license-link {
+			flex-direction: column;
+			.license-image {
+				margin-bottom: 10px;
+			}
+		}
+	}
 }

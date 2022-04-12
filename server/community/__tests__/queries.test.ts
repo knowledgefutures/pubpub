@@ -1,4 +1,3 @@
-/* global describe, it, expect, beforeAll, afterAll */
 import { modelize, setup, teardown } from 'stubstub';
 import { isUserAffiliatedWithCommunity } from 'server/community/queries';
 
@@ -35,9 +34,9 @@ const models = modelize`
     Community {
         Member {
             permissions: "admin"
-            User randoCommunityAdmin {} 
+            User randoCommunityAdmin {}
         }
-        
+
     }
     User notACommunityMember {}
 `;

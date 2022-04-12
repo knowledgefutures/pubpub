@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-const Promise = require('bluebird');
 const firebaseAdmin = require('firebase-admin');
 const { buildSchema, restoreDiscussionMaps } = require('components/Editor');
 const discussionSchema = require('./simpleDiscussionSchema').default;
@@ -31,8 +30,9 @@ const main = async () => {
 				.then(async () => {
 					const branchJSON = JSON.parse(branchObject);
 					console.log(
-						`~~~~~~~~ Processing ${branchJSON.pubId}/${branchJSON.branchId} (${index +
-							1}/${arr.length}) ~~~~~~~~`,
+						`~~~~~~~~ Processing ${branchJSON.pubId}/${branchJSON.branchId} (${
+							index + 1
+						}/${arr.length}) ~~~~~~~~`,
 					);
 					const branchRef = database.ref(
 						`pub-${branchJSON.pubId}/branch-${branchJSON.branchId}`,

@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll, afterAll, afterEach */
 import { setup, teardown, login, modelize } from 'stubstub';
 
 import { Export, WorkerTask } from 'server/models';

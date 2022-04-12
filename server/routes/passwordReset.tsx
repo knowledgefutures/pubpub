@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import React from 'react';
 
 import Html from 'server/Html';

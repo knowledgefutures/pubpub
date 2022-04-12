@@ -1,5 +1,4 @@
 import fs from 'fs-extra';
-import Promise from 'bluebird';
 import { Node, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
 

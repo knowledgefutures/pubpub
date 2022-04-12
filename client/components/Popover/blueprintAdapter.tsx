@@ -9,7 +9,7 @@ const ButtonWithRef = React.forwardRef((props: any, ref: any) => {
 export const adaptDisclosureElementForBlueprintButton = (
 	element: React.ReactElement,
 	disclosureProps: any,
-	active: boolean,
+	active?: boolean,
 ) => {
 	if (element.type === BlueprintButton) {
 		return <ButtonWithRef {...element.props} {...disclosureProps} active={active} />;

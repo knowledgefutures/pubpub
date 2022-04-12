@@ -1,19 +1,21 @@
 import md5 from 'crypto-js/md5';
-import { callPandoc } from '@pubpub/prosemirror-pandoc';
+import sanitizeHtml from 'sanitize-html';
 
 import { DocJson, Maybe } from 'types';
 import { jsonToNode, getNotes, Note } from 'components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { getStructuredCitations } from 'server/utils/citations';
 import { RenderedStructuredValues } from 'utils/notesCore';
+import { PandocTarget } from 'utils/export/formats';
 
 import { NotesData, NoteWithStructuredHtml, PubMetadata } from './types';
 
 export type PandocNote = Note & {
 	id: string;
 	hash: string;
-	html: null | string;
 	cslJson: Record<string, any>;
+	hasStructuredContent: boolean;
+	unstructuredHtml: string;
 };
 
 export type PandocNotes = Record<string, PandocNote>;
@@ -30,13 +32,6 @@ const enrichNoteWithStructuredResult = (
 	return note;
 };
 
-const getPlainUnstructuredTextForNote = (note: Note): null | string => {
-	if (note.unstructuredValue) {
-		return callPandoc(note.unstructuredValue, 'html', 'plain').trim();
-	}
-	return null;
-};
-
 const getCslJsonForNote = (
 	note: Note,
 	hash: string,
@@ -45,36 +40,14 @@ const getCslJsonForNote = (
 	const renderedStructuredValue = note.structuredValue
 		? renderedStructuredValues[note.structuredValue]
 		: null;
-	const unstructuredValue = getPlainUnstructuredTextForNote(note);
-	const custom = unstructuredValue ? { note: unstructuredValue } : {};
 	if (renderedStructuredValue) {
 		const cslJson = renderedStructuredValue?.json[0];
 		if (cslJson) {
 			// Citation.js leaves a _graph property on here -- it's noise we don't need to expose
-			const normalizedCslJson = { ...cslJson, _graph: undefined };
-			return {
-				...normalizedCslJson,
-				...custom,
-			};
+			return { hasStructuredContent: true, cslJson: { ...cslJson, _graph: undefined } };
 		}
 	}
-	return {
-		id: hash,
-		...custom,
-	};
-};
-
-const getHtmlForNote = (
-	note: Note,
-	renderedStructuredValues: RenderedStructuredValues,
-): null | string => {
-	const renderedStructuredValue = note.structuredValue
-		? renderedStructuredValues[note.structuredValue]
-		: null;
-	if (renderedStructuredValue) {
-		return renderedStructuredValue.html;
-	}
-	return null;
+	return { hasStructuredContent: false, cslJson: { id: hash } };
 };
 
 const getIdForNote = (cslJson: Maybe<Record<string, any>>, hash: string): string => {
@@ -121,21 +94,75 @@ export const getHashForNote = (note: Pick<Note, 'structuredValue' | 'unstructure
 	return digest.slice(0, 8);
 };
 
-export const getPandocNotesByHash = (
-	notes: Note[],
-	renderedStructuredValues: RenderedStructuredValues,
-): PandocNotes => {
+export const getPandocNotesByHash = (notesData: NotesData): PandocNotes => {
+	const { citations, footnotes, renderedStructuredValues } = notesData;
+	const notes = [...citations, ...footnotes];
 	const index: PandocNotes = {};
 	notes.forEach((note) => {
 		const hash = getHashForNote(note);
-		const cslJson = getCslJsonForNote(note, hash, renderedStructuredValues);
-		const html = getHtmlForNote(note, renderedStructuredValues);
+		const { hasStructuredContent, cslJson } = getCslJsonForNote(
+			note,
+			hash,
+			renderedStructuredValues,
+		);
 		const id = getIdForNote(cslJson, hash);
-		index[hash] = { ...note, id, hash, html, cslJson };
+		index[hash] = {
+			...note,
+			id,
+			hash,
+			cslJson,
+			hasStructuredContent,
+			unstructuredHtml: note.unstructuredValue,
+		};
 	});
 	return index;
 };
 
 export const getCslJsonForPandocNotes = (notes: PandocNotes) => {
 	return Object.values(notes).map((note) => note.cslJson);
+};
+
+const emptyElementCitation =
+	/<ref id="ref-(.+?)">(\s+)<element-citation>\s+<\/element-citation>(\s+)<\/ref>/g;
+
+export const modifyJatsContentToIncludeUnstructuredNotes = (
+	documentContent: string,
+	target: PandocTarget,
+	notes: PandocNotes,
+) => {
+	if (target === 'jats_archiving') {
+		return documentContent.replace(
+			emptyElementCitation,
+			(match, id, spaceBefore, spaceAfter) => {
+				const note = notes[id];
+				if (note && !note.hasStructuredContent && note.unstructuredHtml) {
+					// HTML with just these tags is also valid JATS
+					const unstructuredContentAsJats = sanitizeHtml(note.unstructuredHtml, {
+						allowedTags: ['bold', 'italic', 'a', 'ext-link'],
+						allowedAttributes: {
+							'ext-link': ['ext-link-type', 'xlink:title', 'xlink:href'],
+						},
+						transformTags: {
+							em: 'italic',
+							strong: 'bold',
+							a: (_, { href }) => {
+								return {
+									tagName: 'ext-link',
+									attribs: {
+										'ext-link-type': 'uri',
+										'xlink:title': 'null',
+										'xlink:href': href,
+									},
+								};
+							},
+						},
+					});
+					const content = `<mixed-citation>${unstructuredContentAsJats}</mixed-citation>`;
+					return `<ref id="ref-${id}">${spaceBefore}${content}${spaceAfter}</ref>`;
+				}
+				return match;
+			},
+		);
+	}
+	return documentContent;
 };

@@ -20,7 +20,7 @@ const StartWorkflowCallout = (props: Props) => {
 	} = usePageContext();
 
 	const collectionDashUrl = getDashUrl({
-		collectionSlug: activeCollection.slug,
+		collectionSlug: activeCollection!.slug,
 		mode: 'layout',
 	});
 
@@ -31,7 +31,7 @@ const StartWorkflowCallout = (props: Props) => {
 	));
 
 	const pageLinkedToCollection = communityData.pages.find(
-		(page) => page.id === activeCollection.pageId,
+		(page) => page.id === activeCollection!.pageId,
 	);
 
 	return (

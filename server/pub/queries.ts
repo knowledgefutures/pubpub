@@ -1,5 +1,3 @@
-import Bluebird from 'bluebird';
-
 import { Collection, Community, Pub, PubAttribution, Member } from 'server/models';
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
 import { createCollectionPub } from 'server/collectionPub/queries';
@@ -7,6 +5,7 @@ import { createDraft } from 'server/draft/queries';
 import { slugifyString } from 'utils/strings';
 import { generateHash } from 'utils/hashes';
 import { getReadableDateInYear } from 'utils/dates';
+import { asyncForEach } from 'utils/async';
 
 export const createPub = async (
 	{
@@ -59,9 +58,9 @@ export const createPub = async (
 			{ hooks: false },
 		);
 
-	const allCollectionIds = [...(defaultPubCollections || []), ...(collectionIds || [])];
+	const allCollectionIds: string[] = [...(defaultPubCollections || []), ...(collectionIds || [])];
 
-	const createCollectionPubs = Bluebird.each(
+	const createCollectionPubs = asyncForEach(
 		[...new Set(allCollectionIds)].filter((x) => x),
 		async (collectionIdToAdd) => {
 			// defaultPubCollections isn't constrained by the database in any way and might contain IDs
@@ -107,7 +106,7 @@ export const updatePub = (inputValues, updatePermissions, actorId) => {
 	});
 };
 
-export const destroyPub = (pubId, actorId) => {
+export const destroyPub = (pubId: string, actorId: null | string = null) => {
 	return Pub.destroy({
 		where: { id: pubId },
 		individualHooks: true,

@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
-const Promise = require('bluebird');
 const { storage } = require('../setup');
 // const { queryPubUpdatedTimes } = require('./queryPub');
 const processPub = require('./processPub');

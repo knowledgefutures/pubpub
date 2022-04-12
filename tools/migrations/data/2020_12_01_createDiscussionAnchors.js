@@ -4,7 +4,7 @@ import { uncompressSelectionJSON } from 'prosemirror-compress-pubpub';
 
 import { Anchor, Branch, Pub, Release, Discussion } from 'server/models';
 import { getDatabaseRef } from 'server/utils/firebaseAdmin';
-import { createOriginalDiscussionAnchor } from 'server/discussionAnchor/queries';
+import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
 
 import { forEach } from '../util';
 
@@ -83,7 +83,7 @@ const dedupeAnchorDescs = (descs) => {
 
 const createAnchorModelFromDesc = (desc) => {
 	const { discussionId, head, anchor, historyKey, prefix, suffix, exact } = desc;
-	return createOriginalDiscussionAnchor({
+	return createDiscussionAnchor({
 		discussionId,
 		historyKey,
 		originalText: exact,

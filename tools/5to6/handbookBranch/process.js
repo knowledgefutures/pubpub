@@ -3,7 +3,6 @@
 import { Op } from 'sequelize';
 import Color from 'color';
 import uuidv4 from 'uuid/v4';
-import Promise from 'bluebird';
 import firebaseAdmin from 'firebase-admin';
 import { createBranch } from 'components/Editor';
 import {
@@ -122,7 +121,7 @@ Promise.all([])
 				id: newBranchId,
 				title: channel.title,
 				shortId: 37,
-				order: Math.floor(index/array.length * 1000)/1000,
+				order: Math.floor((index / array.length) * 1000) / 1000,
 				communityAdminPermissions: 'manage',
 				viewHash: generateHash(8),
 				discussHash: generateHash(8),

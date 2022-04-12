@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll */
 import uuid from 'uuid';
 
 import { setup, login, modelize } from 'stubstub';

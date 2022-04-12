@@ -5,12 +5,14 @@ import { getPermissions } from './permissions';
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
-	const { pubId, communityId, historyKey, accessHash } = req.query;
+	const { pubId, communityId, historyKey: providedHistoryKey, accessHash } = req.query;
+	const historyKeyInt = parseInt(providedHistoryKey, 10);
+	const historyKey = Number.isNaN(historyKeyInt) ? null : historyKeyInt;
 	return {
 		userId: user.id,
 		pubId,
 		communityId,
-		historyKey: parseInt(historyKey, 10),
+		historyKey,
 		accessHash,
 	};
 };

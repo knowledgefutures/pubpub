@@ -1,4 +1,3 @@
-/* global it, expect, beforeAll, afterAll, beforeEach, afterEach */
 import sinon from 'sinon';
 import { setup, teardown, login, modelize } from 'stubstub';
 

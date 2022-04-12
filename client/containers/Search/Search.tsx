@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch';
 import { NonIdealState, Spinner, InputGroup, Button, Tabs, Tab } from '@blueprintjs/core';
-import dateFormat from 'dateformat';
 
 import { Icon } from 'components';
 import { getResizedUrl } from 'utils/images';
@@ -44,7 +43,7 @@ const Search = (props: Props) => {
 	const { locationData, communityData } = usePageContext();
 	const [searchQuery, setSearchQuery] = useState(locationData.query.q || '');
 	const [searchResults, setSearchResults] = useState<any>([]);
-	const [isLoading, setIsLoading] = useState(locationData.query.q || false);
+	const [isLoading, setIsLoading] = useState(!!locationData.query.q || false);
 	const [page, setPage] = useState(
 		locationData.query.page ? Number(locationData.query.page) - 1 : 0,
 	);
@@ -187,16 +186,7 @@ const Search = (props: Props) => {
 							</div>
 						)}
 					</div>
-					{mode === 'pubs' && (
-						<div className="byline">
-							{dateFormat(
-								item.customPublishedAt || item.createdAt || item.branchCreatedAt,
-								'mmm dd, yyyy',
-							)}
-							{item.byline && <span> · </span>}
-							{item.byline}
-						</div>
-					)}
+					{mode === 'pubs' && item.byline && <div className="byline">{item.byline}</div>}
 					<div className="description">{item.description}</div>
 				</div>
 			</div>
@@ -220,7 +210,7 @@ const Search = (props: Props) => {
 							placeholder="search..."
 							value={searchQuery}
 							onChange={handleSearchChange}
-							rightElement={isLoading && <Spinner size={35} />}
+							rightElement={isLoading ? <Spinner size={35} /> : undefined}
 							inputRef={inputRef as any}
 						/>
 					</div>

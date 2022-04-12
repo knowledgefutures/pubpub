@@ -2,6 +2,7 @@ import {
 	About,
 	AdminDashboard,
 	CommunityCreate,
+	CommunityServices,
 	DashboardActivity,
 	DashboardCommunityOverview,
 	DashboardCollectionOverview,
@@ -48,6 +49,11 @@ export default (viewData, locationData, chunkName) => {
 		},
 		CommunityCreate: {
 			ActiveComponent: CommunityCreate,
+			hideNav: true,
+			hideFooter: true,
+		},
+		CommunityServices: {
+			ActiveComponent: CommunityServices,
 			hideNav: true,
 			hideFooter: true,
 		},

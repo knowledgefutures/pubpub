@@ -4,7 +4,7 @@ import 'firebase/database';
 
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 
-export const initFirebase = async (rootKey, authToken) => {
+export const initFirebase = async (rootKey: string, authToken: string) => {
 	const firebaseAppName = `App-${rootKey}`;
 	/* Check if we've already initialized an Firebase App with the */
 	/* same name in this local environment */
@@ -23,7 +23,7 @@ export const initFirebase = async (rootKey, authToken) => {
 		const auth = await firebase.auth(firebaseApp);
 		await auth.signOut();
 		await auth.signInWithCustomToken(authToken);
-		return [database.ref(`${rootKey}`), database.ref('.info/connected')];
+		return database.ref(rootKey);
 	} catch (err) {
 		console.error('Error authenticating firebase', err);
 		return null;

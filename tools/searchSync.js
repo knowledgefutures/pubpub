@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
-import Promise from 'bluebird';
 import algoliasearch from 'algoliasearch';
+
+import { asyncForEach } from 'utils/async';
 
 import { Pub, Page } from '../server/models';
 import { deletePubSearchData } from '../workers/tasks/search';
@@ -13,7 +14,7 @@ const pagesIndex = client.initIndex('pages');
 console.log('Beginning search sync');
 
 const findAndIndexPubs = async (pubIds) => {
-	await Promise.each(pubIds, deletePubSearchData);
+	await asyncForEach(pubIds, deletePubSearchData);
 	const pubSyncData = await getPubSearchData(pubIds);
 	console.log(`generated ${pubSyncData.length} entries for ${pubIds.length} Pubs`);
 	return pubsIndex.saveObjects(pubSyncData, { autoGenerateObjectIDIfNotExist: true });

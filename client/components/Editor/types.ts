@@ -30,13 +30,20 @@ export type PluginLoader = (schema: Schema, options: PluginsOptions) => Plugin |
 
 export type EditorChangeObject = ReturnType<typeof getChangeObject>;
 
+export type CollaborativeEditorStatus =
+	| 'disconnected'
+	| 'connecting'
+	| 'connected'
+	| 'saving'
+	| 'saved';
+
 export type CollaborativeOptions = {
 	clientData: {
 		id: string;
 	};
 	firebaseRef: firebase.database.Reference;
 	initialDocKey: number;
-	onStatusChange?: (status: 'saving' | 'saved') => unknown;
+	onStatusChange?: (status: CollaborativeEditorStatus) => unknown;
 	onUpdateLatestKey?: (key: number) => unknown;
 };
 

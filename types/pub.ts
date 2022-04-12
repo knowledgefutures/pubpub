@@ -2,7 +2,7 @@ import { NodeLabelMap } from 'components/Editor';
 import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
 
 import { PubAttribution } from './attribution';
-import { CollectionPub } from './collection';
+import { Collection, CollectionPub } from './collection';
 import { Community } from './community';
 import { Discussion } from './discussion';
 import { DocJson } from './doc';
@@ -13,6 +13,7 @@ import { ScopeSummary } from './scope';
 import { Submission } from './submission';
 import { ThreadComment, Thread } from './thread';
 import { DefinitelyHas, Maybe } from './util';
+import { UserSubscription } from './userSubscription';
 
 export type Draft = {
 	id: string;
@@ -124,6 +125,7 @@ export type PubPageDiscussion = DefinitelyHas<Discussion, 'anchors'> & {
 
 export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPubs'> &
 	PubDocInfo & {
+		collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
 		discussions: PubPageDiscussion[];
 		viewHash: Maybe<string>;
 		editHash: Maybe<string>;
@@ -135,6 +137,7 @@ export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPub
 		releaseNumber: Maybe<number>;
 		submission?: DefinitelyHas<Submission, 'submissionWorkflow'>;
 		iSubmission: boolean;
+		subscription: null | UserSubscription;
 	};
 
 export type PubHistoryState = {
@@ -147,4 +150,20 @@ export type PubHistoryState = {
 	outstandingRequests: number;
 	latestKeyReceivedAt: Maybe<number>;
 	timestamps: Record<string, number>;
+};
+
+type CollectionPubWithAttributions = CollectionPub & {
+	collection: DefinitelyHas<Collection, 'attributions'>;
+};
+
+export type SanitizedPubData = Pub & {
+	viewHash: string | null;
+	editHash: string | null;
+	attributions: PubAttribution[];
+	discussions: Discussion[];
+	collectionPubs: CollectionPubWithAttributions[];
+	isReadOnly: boolean;
+	isRelease: boolean;
+	releases: Release[];
+	releaseNumber: number | null;
 };

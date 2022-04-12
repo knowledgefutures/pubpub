@@ -33,8 +33,10 @@
 		justify-content: space-between;
 	}
 	.scrollable-nav {
-		width: 85%;
+		width: 100%;
 		position: relative;
+		line-height: 40px;
+		overflow-x: scroll;
 		.overflow-gradient {
 			position: absolute;
 			top: 0;
@@ -49,17 +51,14 @@
 		}
 	}
 	ul.nav-list {
+		display: flex;
+		white-space: nowrap;
 		list-style: none;
 		margin: 0px;
 		padding: 0px;
 		height: 90px;
-		line-height: 40px;
-		overflow-x: scroll;
 		overflow-y: hidden;
 		width: 100%;
-		white-space: nowrap;
-		flex-grow: 1;
-		flex-shrink: 1;
 	}
 	ul.social-list {
 		list-style: none;
@@ -111,13 +110,5 @@
 @media print {
 	.nav-bar-component {
 		display: none;
-	}
-}
-
-@media only screen and (max-width: 720px) {
-	.nav-bar-component {
-		.scrollable-nav {
-			max-width: 60%;
-		}
 	}
 }

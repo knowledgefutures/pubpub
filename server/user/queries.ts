@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import Promise from 'bluebird';
+import { promisify } from 'util';
 
 import { User, Signup } from 'server/models';
 import { slugifyString } from 'utils/strings';
@@ -40,7 +40,7 @@ export const createUser = (inputValues) => {
 				passwordDigest: 'sha512',
 			};
 
-			const userRegister = Promise.promisify(User.register, { context: User });
+			const userRegister = promisify(User.register.bind(User));
 			return userRegister(newUser, inputValues.password);
 		})
 		.then(() => {

@@ -1,4 +1,4 @@
-import Bluebird from 'bluebird';
+import { asyncMap } from 'utils/async';
 import { findAcceptableSlug } from 'server/utils/slugs';
 
 const updateSlugForCollection = async (collectionModel) => {
@@ -22,7 +22,7 @@ const updateCollidingSlugsInCommunity = async (communityId, models) => {
 
 module.exports = async ({ models }) => {
 	const { Community } = models;
-	await Bluebird.map(
+	await asyncMap(
 		await Community.findAll(),
 		(community) => updateCollidingSlugsInCommunity(community.id, models),
 		{ concurrency: 10 },

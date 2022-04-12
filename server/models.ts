@@ -77,6 +77,8 @@ export const Thread = sequelize.import('./thread/model');
 export const ThreadComment = sequelize.import('./threadComment/model');
 export const ThreadEvent = sequelize.import('./threadEvent/model');
 export const User = sequelize.import('./user/model');
+export const UserNotification = sequelize.import('./userNotification/model');
+export const UserNotificationPreferences = sequelize.import('./userNotificationPreferences/model');
 export const UserScopeVisit = sequelize.import('./userScopeVisit/model');
 export const UserSubscription = sequelize.import('./userSubscription/model');
 export const ActivityItem = sequelize.import('./activityItem/model');
@@ -97,7 +99,7 @@ export const attributesPublicUser = [
 ];
 
 export const includeUserModel = (() => {
-	return ({ attributes: providedAttributes = [], ...restOptions }) => {
+	return ({ attributes: providedAttributes = [] as string[], ...restOptions }) => {
 		const attributes = [...new Set([...attributesPublicUser, ...providedAttributes])];
 		// eslint-disable-next-line pubpub-rules/no-user-model
 		return {

@@ -22,7 +22,7 @@ const DashboardSubmissions = (props: Props) => {
 
 	const handleWorkflowCreatedOrUpdated = useCallback(() => {
 		window.location.href = getDashUrl({
-			collectionSlug: activeCollection.slug,
+			collectionSlug: activeCollection!.slug,
 			mode: 'submissions',
 		});
 	}, [activeCollection]);

@@ -58,7 +58,6 @@ This has clear advantages, foremost among them that the nested hierarchy of the 
 Here's a handy template for test files that use Modelize:
 
 ```ts
-/* global describe, it, expect, beforeAll */
 import { modelize, setup } from 'stubstub';
 
 // Specify the models we want to use in our tests

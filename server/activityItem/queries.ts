@@ -577,19 +577,23 @@ export const createSubmissionUpdatedActivityItem = async (
 				},
 			],
 		});
-	const diffs = getDiffsForPayload(submission, oldSubmission, ['status']);
-	return createActivityItem({
-		actorId,
-		communityId: submission.pub.communityId,
-		collectionId: submission.submissionWorkflow.collectionId,
-		pubId: submission.pub.id,
-		kind: 'submission-updated' as const,
-		payload: {
-			submissionId,
-			...diffs,
-			pub: {
-				title: submission.pub.title,
+
+	if (submission.status !== oldSubmission.status) {
+		return createActivityItem({
+			actorId,
+			communityId: submission.pub.communityId,
+			collectionId: submission.submissionWorkflow.collectionId,
+			pubId: submission.pub.id,
+			kind: 'submission-status-updated' as const,
+			payload: {
+				submissionId,
+				pub: {
+					title: submission.pub.title,
+				},
+				status: { from: oldSubmission.status, to: submission.status },
 			},
-		},
-	});
+		});
+	}
+
+	return null;
 };

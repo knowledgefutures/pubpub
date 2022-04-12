@@ -49,5 +49,5 @@ export const activityItemRenderers: ActivityItemRenderers = {
 	'member-created': renderMemberCreated,
 	'member-updated': renderMemberUpdated,
 	'member-removed': renderMemberRemoved,
-	'submission-updated': renderSubmissionUpdated,
+	'submission-status-updated': renderSubmissionUpdated,
 };

@@ -135,7 +135,7 @@ const SpubHeaderToolbar = (props: Props) => {
 						<Tab id="contributors" title={contributorsTabTitle} />
 						<Tab id="preview" title={previewTabTitle} />
 					</Tabs>
-					<div>{renderRight()}</div>
+					{renderRight()}
 				</div>
 			</GridWrapper>
 		</div>

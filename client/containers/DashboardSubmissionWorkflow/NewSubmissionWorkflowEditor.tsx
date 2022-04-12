@@ -19,7 +19,7 @@ const createEmptyWorkflow = (): EditableSubmissionWorkflow => {
 		instructionsText: getEmptyDoc(),
 		acceptedText: getEmptyDoc(),
 		declinedText: getEmptyDoc(),
-		emailText: getEmptyDoc(),
+		receivedEmailText: getEmptyDoc(),
 		targetEmailAddress: '',
 		enabled: false,
 		requireAbstract: false,

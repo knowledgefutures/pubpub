@@ -58,7 +58,7 @@ export default {
 			targetEmailAddress: '',
 			acceptedText: getEmptyDoc(),
 			declinedText: getEmptyDoc(),
-			emailText: getEmptyDoc(),
+			receivedEmailText: getEmptyDoc(),
 			introText: getEmptyDoc(),
 			instructionsText: {
 				type: 'doc',

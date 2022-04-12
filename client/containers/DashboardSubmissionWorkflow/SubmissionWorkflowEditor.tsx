@@ -39,7 +39,7 @@ const validator: RecordValidator<EditableSubmissionWorkflow> = {
 	title: isNonEmptyString,
 	introText: isNonEmptyDocJson,
 	instructionsText: isNonEmptyDocJson,
-	emailText: isAlwaysValid,
+	receivedEmailText: isAlwaysValid,
 	acceptedText: isAlwaysValid,
 	declinedText: isAlwaysValid,
 	targetEmailAddress: isValidEmail,
@@ -187,8 +187,8 @@ const SubmissionWorkflowEditor = (props: Props) => {
 					body={
 						<WorkflowTextEditor
 							placeholder="Custom email text"
-							initialContent={workflow.emailText}
-							onContent={(content) => updateWorkflow({ emailText: content })}
+							initialContent={workflow.receivedEmailText}
+							onContent={(content) => updateWorkflow({ receivedEmailText: content })}
 						/>
 					}
 				/>

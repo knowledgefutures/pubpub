@@ -1,3 +1,4 @@
+import firebase from 'firebase';
 import { Plugin } from 'prosemirror-state';
 import { receiveTransaction, sendableSteps } from 'prosemirror-collab';
 import { Step } from 'prosemirror-transform';
@@ -28,6 +29,7 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 	let view;
 	let mostRecentRemoteKey = props.collaborativeOptions.initialDocKey;
 	let ongoingTransaction = false;
+	let listeningRef: null | firebase.database.Reference = null;
 	let pendingRemoteKeyables = [];
 	const ref = props.collaborativeOptions.firebaseRef;
 	const onStatusChange = props.collaborativeOptions.onStatusChange || function () {};
@@ -126,7 +128,8 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 			}
 		});
 		pendingRemoteKeyables = [];
-		if (sendableSteps(view.state)) {
+		const sendable = sendableSteps(view.state);
+		if (sendable) {
 			sendCollabChanges(view.state);
 		}
 		return null;
@@ -149,16 +152,14 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 			.once('value')
 			.then((changesSnapshot) => {
 				const snapshotVal = changesSnapshot.val() || {};
-				const allSteps = [];
-				const allStepClientIds = [];
+				const allSteps: any[] = [];
+				const allStepClientIds: any[] = [];
 				const keys = Object.keys(snapshotVal);
 
 				/* Uncompress steps and add stepClientIds */
 				Object.keys(snapshotVal).forEach((key) => {
 					const { steps, clientIds } = extractSnapshot(snapshotVal[key]);
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 					allSteps.push(...steps);
-					// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
 					allStepClientIds.push(...clientIds);
 				});
 
@@ -179,13 +180,14 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 				view.dispatch(finishedLoadingTrans);
 
 				/* Listen to Changes */
-				return ref
+				listeningRef = ref
 					.child('changes')
 					.orderByKey()
-					.startAt(String(mostRecentRemoteKey + 1))
-					.on('child_added', (snapshot) => {
-						receiveCollabChanges(snapshot);
-					});
+					.startAt(String(mostRecentRemoteKey + 1));
+
+				return listeningRef!.on('child_added', (snapshot) => {
+					receiveCollabChanges(snapshot);
+				});
 			})
 			.catch((err) => {
 				console.error('In loadDocument Error with ', err, err.message);
@@ -216,7 +218,11 @@ export default (schema, props, collabDocPluginKey, localClientId) => {
 		view: (initView) => {
 			view = initView;
 			loadDocument();
-			return {};
+			return {
+				destroy: () => {
+					listeningRef?.off('child_added');
+				},
+			};
 		},
 	});
 };

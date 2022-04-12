@@ -43,7 +43,7 @@ const PubBody = (props: Props) => {
 	const [editorError, setEditorError] = useState<Error | null>(null);
 	const [editorErrorTime, setEditorErrorTime] = useState<number | null>(null);
 	const [lastSavedTime, setLastSavedTime] = useState<number | null>(null);
-	const { key, initialContent, isReadOnly } = usePubBodyState();
+	const { key, initialContent, isReadOnly, includeCollabPlugin } = usePubBodyState();
 
 	prevStatusRef.current = collabData.status;
 	useBeforeUnload(
@@ -86,7 +86,6 @@ const PubBody = (props: Props) => {
 		}
 	};
 
-	const loadCollaborativeOptions = !isViewingHistory && !pubData.isInMaintenanceMode;
 	const { markLastInput } = useContext(PubSuspendWhileTypingContext);
 	// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
 	const showErrorTime = lastSavedTime && editorErrorTime - lastSavedTime > 500;
@@ -169,10 +168,13 @@ const PubBody = (props: Props) => {
 					}
 				}
 				collaborativeOptions={
-					loadCollaborativeOptions && firebaseDraftRef
+					includeCollabPlugin && firebaseDraftRef
 						? {
 								firebaseRef: firebaseDraftRef,
-								clientData: collabData.localCollabUser,
+								clientData: {
+									...collabData.localCollabUser,
+									id: collabData.localCollabUser.id + '_' + key,
+								},
 								initialDocKey: pubData.initialDocKey,
 								onStatusChange: debounce((status) => {
 									getNextStatus(status, (nextStatus) => {

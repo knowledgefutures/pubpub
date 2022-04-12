@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { setLocalHighlight } from 'components/Editor';
 
 import { usePageContext } from 'utils/hooks';
@@ -10,6 +10,7 @@ import {
 } from 'components/PubEdgeListing';
 
 import PubBody from './PubBody';
+import { usePubContext } from '../pubHooks';
 import PubBottom from './PubBottom/PubBottom';
 import PubFileImport from './PubFileImport';
 import PubHeaderFormatting from './PubHeaderFormatting';
@@ -33,11 +34,28 @@ const PubDocument = (props: Props) => {
 	const { isViewingHistory } = historyData;
 	const { editorChangeObject } = collabData;
 	const { communityData, locationData, scopeData } = usePageContext();
+	const { submissionState } = usePubContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
 	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	const mainContentRef = useRef(null);
 	const sideContentRef = useRef(null);
 	const editorWrapperRef = useRef(null);
+
+	// TODO(ian): this is a HACK that can be replaced with a check for isReadOnly once we migrate
+	// the usePubBodyState() hook into usePubContext() in #1867
+	const isPreviewingSubmission = useMemo(() => {
+		if (submissionState) {
+			const { submission, selectedTab } = submissionState;
+			return submission.status === 'incomplete' && selectedTab === 'preview';
+		}
+		return false;
+	}, [submissionState]);
+
+	const showPubFileImport =
+		!isViewingHistory &&
+		(canEdit || canEditDraft) &&
+		!pubData.isReadOnly &&
+		!isPreviewingSubmission;
 
 	const updateHistoryData = (next) => updateLocalData('history', next);
 
@@ -86,7 +104,7 @@ const PubDocument = (props: Props) => {
 						isolated
 					/>
 					<PubBody editorWrapperRef={editorWrapperRef} />
-					{!isViewingHistory && (canEdit || canEditDraft) && !pubData.isReadOnly && (
+					{showPubFileImport && (
 						<PubFileImport
 							editorChangeObject={collabData.editorChangeObject}
 							updatePubData={(data) => updateLocalData('pub', data)}

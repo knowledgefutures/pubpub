@@ -144,4 +144,10 @@ export const useEditorView = (options: EditorViewOptions) => {
 			editable: getIsEditable({ isReadOnly }),
 		});
 	}, [isReadOnly]);
+
+	useEffect(() => {
+		return () => {
+			viewRef.current?.destroy();
+		};
+	}, []);
 };

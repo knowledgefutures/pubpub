@@ -31,7 +31,7 @@ const DetailsTab = (props: Props) => {
 		},
 	} = props;
 	const hasSubmitted = status !== 'incomplete';
-	const [onUpdatePubDebounced] = useDebouncedCallback(onUpdatePub, 250);
+	const [onUpdateAbstractDebounced] = useDebouncedCallback(onUpdateAbstract, 250);
 
 	return (
 		<SpubHeaderTab>
@@ -42,8 +42,8 @@ const DetailsTab = (props: Props) => {
 				invalidNotice="Title must not be empty"
 			>
 				<InputGroup
-					onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
-						onUpdatePubDebounced({ title: evt.target.value })
+					onBlur={(evt: React.ChangeEvent<HTMLInputElement>) =>
+						onUpdatePub({ title: evt.target.value })
 					}
 					defaultValue={pub.title}
 					fill
@@ -57,8 +57,8 @@ const DetailsTab = (props: Props) => {
 					invalidNotice="Description must not be empty"
 				>
 					<InputGroup
-						onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
-							onUpdatePubDebounced({ description: evt.target.value })
+						onBlur={(evt: React.ChangeEvent<HTMLInputElement>) =>
+							onUpdatePub({ description: evt.target.value })
 						}
 						defaultValue={pub.description}
 						fill
@@ -78,7 +78,7 @@ const DetailsTab = (props: Props) => {
 					<AbstractEditor
 						isReadOnly={hasSubmitted}
 						submissionAbstract={abstract}
-						onUpdateAbstract={onUpdateAbstract}
+						onUpdateAbstract={onUpdateAbstractDebounced}
 					/>
 				</SpubHeaderField>
 			)}

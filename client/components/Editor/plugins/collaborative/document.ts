@@ -245,6 +245,8 @@ export default (
 			return {
 				destroy: () => {
 					listeningOn?.off('child_added');
+					getFirebaseConnectionMonitorRef(ref).off('value');
+					pendingRemoteKeyables = [];
 				},
 			};
 		},

@@ -85,7 +85,7 @@ const CommunityServices = () => {
 		{
 			title: 'Knowledge Futures Membership',
 			options: ['None', 'Supporter', 'Contributor', 'Network'],
-			prices: ['$0', '$60', '$1,150 - $12,500', '$25,000+'],
+			prices: ['$0', '$60', '$1,150 - $12,500', 'Custom'],
 			initOption: 2,
 			description: (
 				<React.Fragment>

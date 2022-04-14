@@ -38,7 +38,7 @@ type Props = {
 		userScopeVisits: UserScopeVisit[];
 		includesAllPubs: boolean;
 	};
-	hasSubmissionWorkflow: Number;
+	hasEnabledSubmissionWorkflow: boolean;
 };
 
 const getQuickActionsForCollection = (collection: Collection): QuickAction[] => {
@@ -63,7 +63,7 @@ const getQuickActionsForCollection = (collection: Collection): QuickAction[] => 
 };
 
 const DashboardCollectionOverview = (props: Props) => {
-	const { overviewData, hasSubmissionWorkflow } = props;
+	const { overviewData, hasEnabledSubmissionWorkflow } = props;
 	const {
 		pubs: initialPubs,
 		collectionPubs: initialCollectionPubs,
@@ -143,11 +143,6 @@ const DashboardCollectionOverview = (props: Props) => {
 		setPubsAddedToCollection((current) => [...current, pub]);
 		addCollectionPub(pub);
 	};
-
-	const lighterAccentColor = useMemo(
-		() => Color(communityData.accentColorDark).alpha(0.1),
-		[communityData.accentColorDark],
-	);
 
 	const renderCollectionPubRow = (
 		collectionPub: CollectionPub,
@@ -238,6 +233,11 @@ const DashboardCollectionOverview = (props: Props) => {
 		);
 	};
 
+	const lighterAccentColor = useMemo(
+		() => Color(communityData.accentColorDark).alpha(0.1),
+		[communityData.accentColorDark],
+	);
+
 	const renderRightElement = (
 		<AnchorButton
 			minimal={true}
@@ -263,7 +263,7 @@ const DashboardCollectionOverview = (props: Props) => {
 	};
 
 	const submissionBanner =
-		hasSubmissionWorkflow && canManage
+		hasEnabledSubmissionWorkflow && canManage
 			? renderBanner('Submissions are now open for this collection!')
 			: null;
 

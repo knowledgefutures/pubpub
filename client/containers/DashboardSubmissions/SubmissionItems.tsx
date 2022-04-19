@@ -58,7 +58,7 @@ const SubmissionItems = (props: Props) => {
 	const isSearchingOrFiltering = !!filter || !!searchTerm;
 
 	const {
-		currentQuery: { pubs, isLoading, hasLoadedAllPubs, loadMorePubs },
+		currentQuery: { pubs: foundPubs, isLoading, hasLoadedAllPubs, loadMorePubs },
 	} = useManyPubs<PubWithSubmission>({
 		isEager: isSearchingOrFiltering,
 		initialPubs,
@@ -72,6 +72,10 @@ const SubmissionItems = (props: Props) => {
 			...filter?.query,
 		},
 	});
+
+	const pubs = foundPubs.filter(
+		(pub) => pub.submission?.submissionWorkflow?.collectionId === collection.id,
+	);
 
 	const canLoadMorePubs = !hasLoadedAllPubs;
 	useInfiniteScroll({

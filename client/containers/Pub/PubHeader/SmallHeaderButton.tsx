@@ -6,12 +6,12 @@ import { Icon } from 'components';
 
 require('./smallHeaderButton.scss');
 
-type Props = {
+export type Props = {
 	className?: string;
 	disabled?: boolean;
 	href?: null | string;
 	icon: React.ReactNode;
-	label?: null | string;
+	label?: React.ReactNode;
 	labelPosition?: 'left' | 'right';
 	onClick?: () => unknown;
 	tagName?: string;

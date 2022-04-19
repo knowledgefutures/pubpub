@@ -56,7 +56,6 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 			<React.Fragment>
 				{(canView || canViewDraft) && (
 					<ResponsiveHeaderButton
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ icon: string; tagName: string; href: strin... Remove this comment to see the full error message
 						icon="edit"
 						tagName="a"
 						href={pubUrl(communityData, pubData, { isDraft: true })}
@@ -71,7 +70,6 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 					aria-label="Choose a historical release of this Pub"
 					disclosure={
 						<ResponsiveHeaderButton
-							// @ts-expect-error ts-migrate(2322) FIXME: Type '{ icon: string; showCaret: true; outerLabel:... Remove this comment to see the full error message
 							icon="history"
 							showCaret={true}
 							// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
@@ -117,9 +115,9 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 		return (
 			<React.Fragment>
 				<ResponsiveHeaderButton
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '{ icon: string; className: string; active: a... Remove this comment to see the full error message
 					icon="history"
 					className="draft-history-button"
+					// @ts-expect-error
 					active={historyData.isViewingHistory}
 					outerLabel={getHistoryButtonLabelForTimestamp(
 						latestTimestamp,
@@ -135,7 +133,6 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 				/>
 				{!!latestRelease && (
 					<ResponsiveHeaderButton
-						// @ts-expect-error ts-migrate(2322) FIXME: Type '{ icon: string; tagName: string; href: strin... Remove this comment to see the full error message
 						icon="globe"
 						tagName="a"
 						href={pubUrl(communityData, pubData)}
@@ -146,7 +143,6 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '{ disabled: boolean; icon: string; onClick: ... Remove this comment to see the full error message
 								disabled={!canRelease}
 								icon="document-share"
 								onClick={openDialog}
@@ -176,7 +172,6 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton
-								// @ts-expect-error ts-migrate(2322) FIXME: Type '{ disabled: boolean; icon: string; onClick: ... Remove this comment to see the full error message
 								disabled={!canRelease}
 								icon="social-media"
 								onClick={openDialog}

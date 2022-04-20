@@ -84,9 +84,10 @@ const SpubHeaderToolbar = (props: Props) => {
 		}
 		return (
 			<DialogLauncher
-				renderLauncherElement={({ openDialog }) => (
-					<Button {...sharedProps} onClick={openDialog} />
-				)}
+				renderLauncherElement={({ openDialog }) =>
+					// hide the submit button but keep the modal open
+					showSubmitButton ? <Button {...sharedProps} onClick={openDialog} /> : null
+				}
 			>
 				{({ isOpen, onClose }) => (
 					<SubmitDialog submission={submission} isOpen={isOpen} onClose={onClose} />
@@ -118,13 +119,6 @@ const SpubHeaderToolbar = (props: Props) => {
 		return null;
 	};
 
-	const renderRight = () => {
-		if (showSubmitButton) {
-			return renderSubmitButton();
-		}
-		return renderStatus();
-	};
-
 	return (
 		<div style={{ background: lighterAccentColor }} className="spub-header-toolbar-component">
 			<GridWrapper containerClassName="toolbar-container pub">
@@ -135,7 +129,8 @@ const SpubHeaderToolbar = (props: Props) => {
 						<Tab id="contributors" title={contributorsTabTitle} />
 						<Tab id="preview" title={previewTabTitle} />
 					</Tabs>
-					{renderRight()}
+					{renderSubmitButton()}
+					{renderStatus()}
 				</div>
 			</GridWrapper>
 		</div>

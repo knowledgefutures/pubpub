@@ -39,7 +39,11 @@ export const summarizeCommunity = async (communityId: string) => {
 	const pubs = await Pub.findAll({
 		where: { communityId },
 		include: [
-			{ model: Submission, as: 'submission', where: { status: { [Op.ne]: 'incomplete' } } },
+			{
+				association: 'submission',
+				required: false,
+				where: { status: { [Op.ne]: 'incomplete' } },
+			},
 		],
 	});
 	const collections = await Collection.count({ where: { communityId } });
@@ -47,7 +51,7 @@ export const summarizeCommunity = async (communityId: string) => {
 
 	const pubsInCommunity = await Pub.findAll({
 		where: { communityId },
-		include: [{ model: ScopeSummary, as: 'scopeSummary' }],
+		include: 'scopeSummary',
 	});
 
 	const scopeSummaries: types.ScopeSummary[] = pubsInCommunity
@@ -65,30 +69,22 @@ export const summarizeCommunity = async (communityId: string) => {
 export const summarizeCollection = async (collectionId: string) => {
 	const collection = await Collection.findOne({
 		where: { id: collectionId },
-		include: [
-			{
-				model: SubmissionWorkflow,
-				as: 'submissionWorkflow',
-				include: [
-					{
-						model: Submission,
-						as: 'submissions',
-						where: { status: { [Op.ne]: 'incomplete' } },
-					},
-				],
-			},
-		],
+		include: 'submissionWorkflow',
 	});
 
 	const collectionPubs = await CollectionPub.findAll({
 		where: { collectionId },
 		include: [
 			{
-				model: Pub,
-				as: 'pub',
+				association: 'pub',
+				required: true,
 				include: [
-					{ model: ScopeSummary, as: 'scopeSummary' },
-					{ model: Submission, as: 'submission' },
+					'scopeSummary',
+					{
+						association: 'submission',
+						required: false,
+						where: { status: { [Op.ne]: 'incomplete' } },
+					},
 				],
 			},
 		],
@@ -97,7 +93,7 @@ export const summarizeCollection = async (collectionId: string) => {
 	const submissions = collectionPubs.filter(
 		(cp) =>
 			collection.submissionWorkflow.id &&
-			cp.pub.submission?.submissionWorkflowId === collection.submissionWorkflow.id,
+			cp.pub?.submission?.submissionWorkflowId === collection.submissionWorkflow.id,
 	);
 	const scopeSummaries: types.ScopeSummary[] = collectionPubs
 		.map((cp) => cp.pub.scopeSummary)

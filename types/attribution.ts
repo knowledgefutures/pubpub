@@ -58,6 +58,7 @@ export type CollectionAttribution = {
 	userId?: string;
 	user?: AttributableUser;
 	createdAt: string;
+	collectionId: string;
 };
 
 export type Attribution = CollectionAttribution | PubAttribution;
@@ -66,3 +67,10 @@ export type AttributionWithUser = Attribution & { user: AttributableUser | User 
 export const isAttributionWithUser = (
 	attribution: Attribution,
 ): attribution is AttributionWithUser => 'user' in attribution && !!attribution.user;
+
+export const isCollectionAttribution = (
+	attribution: Attribution,
+): attribution is CollectionAttribution => 'collectionId' in attribution;
+
+export const isPubAttribution = (attribution: Attribution): attribution is PubAttribution =>
+	'pubId' in attribution;

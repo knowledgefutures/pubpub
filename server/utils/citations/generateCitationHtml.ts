@@ -47,11 +47,17 @@ export const generateCitationHtml = async (
 	const pubIssuedDate = getPubPublishedDate(pubData);
 	const pubLink = pubUrl(communityData, pubData);
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
-	const authors = getAllPubContributors(pubData).map(({ user }) => {
-		return {
-			given: user.firstName,
-			family: user.lastName,
-		};
+	const authors = getAllPubContributors(pubData).map((attribution) => {
+		if (
+			types.isCollectionAttribution(attribution) ||
+			(types.isPubAttribution(attribution) && attribution.isAuthor)
+		) {
+			return {
+				given: attribution.user.firstName,
+				family: attribution.user.lastName,
+			};
+		}
+		return {};
 	});
 	const authorEntry = authors.length ? { author: authors } : {};
 	const commonData = {

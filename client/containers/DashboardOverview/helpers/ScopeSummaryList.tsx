@@ -15,7 +15,7 @@ type Props = {
 
 const ScopeSummaryList = (props: Props) => {
 	const { scopeKind, scope } = props;
-	const { collections, pubs, discussions, reviews } = scope.scopeSummary;
+	const { collections, pubs, submissions, discussions, reviews } = scope.scopeSummary;
 
 	const renderIntroText = () => {
 		const createdDate = dateFormat(scope.createdAt, 'mmmm d, yyyy');
@@ -52,6 +52,7 @@ const ScopeSummaryList = (props: Props) => {
 			<p className="intro">{renderIntroText()}</p>
 			{scopeKind === 'community' && renderEntry('Collections', collections, 'collection')}
 			{renderEntry('Pubs', pubs, 'pubDoc')}
+			{renderEntry('Submissions', submissions, 'manually-entered-data')}
 			{renderEntry('Discussions', discussions, 'chat')}
 			{renderEntry('Reviews', reviews, 'social-media')}
 		</div>

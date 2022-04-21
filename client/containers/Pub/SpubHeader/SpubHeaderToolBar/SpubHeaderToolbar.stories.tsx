@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
-import { TabId } from '@blueprintjs/core';
 
 import { pubData } from 'utils/storybook/data';
-import { SubmissionStatus } from 'types';
 
 import SpubHeaderToolbar from './SpubHeaderToolbar';
+import { SpubHeaderTab } from '../SpubHeader';
 
 const StatefulSpubHeaderToolBaraWrapper = () => {
-	const [selectedTab, setSelectedTab] = useState<TabId>('instructions');
+	const [selectedTab, setSelectedTab] = useState<SpubHeaderTab>('instructions');
 	return (
 		<SpubHeaderToolbar
 			selectedTab={selectedTab}
 			onSelectTab={setSelectedTab}
-			status={pubData.submission.status as SubmissionStatus}
-			showSubmitButton={true}
-			onSubmit={() => {}}
+			submission={pubData.submission}
+			validatedFields={{ title: true, abstract: true, description: true }}
 		/>
 	);
 };

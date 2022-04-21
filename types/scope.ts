@@ -5,6 +5,7 @@ export type ScopeSummary = {
 	pubs: number;
 	discussions: number;
 	reviews: number;
+	submissions: number;
 };
 
 export type UserScopeVisit = {

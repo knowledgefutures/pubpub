@@ -18,7 +18,11 @@ export default (sequelize, dataTypes) => {
 		{
 			classMethods: {
 				associate: (models) => {
-					const { Collection, SubmissionWorkflow } = models;
+					const { Collection, SubmissionWorkflow, Submission } = models;
+					SubmissionWorkflow.hasMany(Submission, {
+						as: 'submissions',
+						foreignKey: 'submissionWorkflowId',
+					});
 					SubmissionWorkflow.belongsTo(Collection, {
 						as: 'collection',
 						foreignKey: 'collectionId',

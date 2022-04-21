@@ -1,4 +1,12 @@
-import { Discussion, ReviewNew, Pub, CollectionPub, Collection, Community } from 'server/models';
+import {
+	Discussion,
+	ReviewNew,
+	Pub,
+	Submission,
+	CollectionPub,
+	Collection,
+	Community,
+} from 'server/models';
 import { summarizeCollection, summarizeCommunity, summarizePub } from './queries';
 
 let summarizeParentScopesOnPubCreation = true;
@@ -18,6 +26,10 @@ export const setSummarizeParentScopesOnPubCreation = (value: boolean) => {
 
 Pub.afterCreate(async ({ id }) => {
 	await summarizePub(id, summarizeParentScopesOnPubCreation);
+});
+
+Submission.afterUpdate(async ({ pubId }) => {
+	await summarizePub(pubId, summarizeParentScopesOnPubCreation);
 });
 
 Collection.afterCreate(async ({ id }) => {

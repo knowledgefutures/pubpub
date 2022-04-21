@@ -41,6 +41,7 @@ export default (sequelize, dataTypes) => {
 						CollectionAttribution,
 						CollectionPub,
 						CrossrefDepositRecord,
+						SubmissionWorkflow,
 						Member,
 						Page,
 						ScopeSummary,
@@ -48,6 +49,10 @@ export default (sequelize, dataTypes) => {
 					Collection.hasMany(CollectionAttribution, {
 						onDelete: 'CASCADE',
 						as: 'attributions',
+						foreignKey: 'collectionId',
+					});
+					Collection.hasOne(SubmissionWorkflow, {
+						as: 'submissionWorkflow',
 						foreignKey: 'collectionId',
 					});
 					Collection.hasMany(CollectionPub, {

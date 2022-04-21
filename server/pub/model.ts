@@ -84,6 +84,7 @@ export default (sequelize, dataTypes) => {
 					});
 					Pub.hasMany(CollectionPub, {
 						onDelete: 'CASCADE',
+						hooks: true,
 						as: 'collectionPubs',
 						foreignKey: 'pubId',
 					});

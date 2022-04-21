@@ -91,7 +91,7 @@ const LayoutCollectionHeader = (props: Props) => {
 				)}
 			</ClickToCopyButton>
 		),
-		<MetadataDetails collection={collection} content={content} />,
+		<MetadataDetails collection={collection} content={content} key={3} />,
 	].filter((x) => x);
 
 	return (

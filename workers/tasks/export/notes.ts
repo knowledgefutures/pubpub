@@ -6,7 +6,6 @@ import { jsonToNode, getNotes, Note } from 'components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { getStructuredCitations } from 'server/utils/citations';
 import { RenderedStructuredValues } from 'utils/notesCore';
-import { PandocTarget } from 'utils/export/formats';
 
 import { NotesData, NoteWithStructuredHtml, PubMetadata } from './types';
 
@@ -127,42 +126,35 @@ const emptyElementCitation =
 
 export const modifyJatsContentToIncludeUnstructuredNotes = (
 	documentContent: string,
-	target: PandocTarget,
 	notes: PandocNotes,
 ) => {
-	if (target === 'jats_archiving') {
-		return documentContent.replace(
-			emptyElementCitation,
-			(match, id, spaceBefore, spaceAfter) => {
-				const note = notes[id];
-				if (note && !note.hasStructuredContent && note.unstructuredHtml) {
-					// HTML with just these tags is also valid JATS
-					const unstructuredContentAsJats = sanitizeHtml(note.unstructuredHtml, {
-						allowedTags: ['bold', 'italic', 'a', 'ext-link'],
-						allowedAttributes: {
-							'ext-link': ['ext-link-type', 'xlink:title', 'xlink:href'],
-						},
-						transformTags: {
-							em: 'italic',
-							strong: 'bold',
-							a: (_, { href }) => {
-								return {
-									tagName: 'ext-link',
-									attribs: {
-										'ext-link-type': 'uri',
-										'xlink:title': 'null',
-										'xlink:href': href,
-									},
-								};
+	return documentContent.replace(emptyElementCitation, (match, id, spaceBefore, spaceAfter) => {
+		const note = notes[id];
+		if (note && !note.hasStructuredContent && note.unstructuredHtml) {
+			// HTML with just these tags is also valid JATS
+			const unstructuredContentAsJats = sanitizeHtml(note.unstructuredHtml, {
+				allowedTags: ['bold', 'italic', 'a', 'ext-link'],
+				allowedAttributes: {
+					'ext-link': ['ext-link-type', 'xlink:title', 'xlink:href'],
+				},
+				transformTags: {
+					em: 'italic',
+					strong: 'bold',
+					a: (_, { href }) => {
+						return {
+							tagName: 'ext-link',
+							attribs: {
+								'ext-link-type': 'uri',
+								'xlink:title': 'null',
+								'xlink:href': href,
 							},
-						},
-					});
-					const content = `<mixed-citation>${unstructuredContentAsJats}</mixed-citation>`;
-					return `<ref id="ref-${id}">${spaceBefore}${content}${spaceAfter}</ref>`;
-				}
-				return match;
-			},
-		);
-	}
-	return documentContent;
+						};
+					},
+				},
+			});
+			const content = `<mixed-citation>${unstructuredContentAsJats}</mixed-citation>`;
+			return `<ref id="ref-${id}">${spaceBefore}${content}${spaceAfter}</ref>`;
+		}
+		return match;
+	});
 };

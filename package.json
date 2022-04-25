@@ -78,6 +78,7 @@
 		"esm": "^3.2.22",
 		"express": "^4.16.4",
 		"express-session": "^1.14.1",
+		"express-slow-down": "^1.4.0",
 		"express-sslify": "^1.2.0",
 		"file-saver": "^2.0.2",
 		"filesize": "^4.1.2",

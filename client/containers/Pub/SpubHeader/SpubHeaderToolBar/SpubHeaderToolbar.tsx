@@ -75,7 +75,7 @@ const SpubHeaderToolbar = (props: Props) => {
 			disabled: !!savingText,
 		};
 
-		if (invalidNotice) {
+		if (invalidNotice && showSubmitButton) {
 			return (
 				<Tooltip content={invalidNotice}>
 					<Button {...sharedProps} disabled />

@@ -57,24 +57,34 @@ class LayoutBanner extends Component<Props, State> {
 		}
 
 		const buttonType =
-			this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
+			this.props.content.buttonType ||
+			(this.props.content.showButton ? 'create-pub' : undefined);
 		const buttonText =
-			(buttonType === 'create-pub' && !this.props.loginData.id && 'Login to Create Pub') ||
-			this.props.content.buttonText ||
-			(buttonType === 'create-pub' && this.props.loginData.id && 'Create Pub') ||
-			(buttonType === 'signup' && 'Create an Account') ||
-			(buttonType === 'link' && 'Go to Link');
+			buttonType === 'create-pub' && !this.props.loginData.id
+				? 'Login to Create Pub' || this.props.content.buttonText
+				: buttonType === 'create-pub' && this.props.loginData.id
+				? 'Create Pub'
+				: buttonType === 'signup'
+				? 'Create an Account'
+				: buttonType === 'link'
+				? 'Go to Link'
+				: undefined;
 		const buttonUrl =
-			(buttonType === 'link' && this.props.content.buttonUrl) ||
-			(buttonType === 'create-pub' &&
-				!this.props.loginData.id &&
-				`/login?redirect=${this.props.locationData.path}`) ||
-			(buttonType === 'signup' && '/signup');
+			buttonType === 'link'
+				? this.props.content.buttonUrl
+				: buttonType === 'create-pub' && !this.props.loginData.id
+				? `/login?redirect=${this.props.locationData.path}`
+				: buttonType === 'signup'
+				? '/signup'
+				: undefined;
+
+		const onButtonClick =
+			buttonType === 'create-pub' && this.props.loginData.id ? this.createPub : undefined;
 
 		const button = (
 			<AnchorButton
 				className="bp3-large"
-				onClick={buttonType === 'create-pub' && this.props.loginData.id && this.createPub}
+				onClick={onButtonClick}
 				loading={this.state.isLoading}
 				text={buttonText}
 				href={buttonUrl}

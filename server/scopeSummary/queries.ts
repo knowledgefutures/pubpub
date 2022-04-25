@@ -5,8 +5,6 @@ import {
 	Discussion,
 	Pub,
 	ReviewNew,
-	Submission,
-	SubmissionWorkflow,
 	ScopeSummary,
 } from 'server/models';
 import { Op } from 'sequelize';
@@ -92,9 +90,10 @@ export const summarizeCollection = async (collectionId: string) => {
 
 	const submissions = collectionPubs.filter(
 		(cp) =>
-			collection.submissionWorkflow.id &&
-			cp.pub?.submission?.submissionWorkflowId === collection.submissionWorkflow.id,
+			collection.submissionWorkflow?.id &&
+			cp.pub.submission?.submissionWorkflowId === collection.submissionWorkflow.id,
 	);
+
 	const scopeSummaries: types.ScopeSummary[] = collectionPubs
 		.map((cp) => cp.pub.scopeSummary)
 		.filter((x): x is types.ScopeSummary => !!x);

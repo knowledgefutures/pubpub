@@ -155,9 +155,7 @@ const PubBody = (props: Props) => {
 				isReadOnly={isReadOnly}
 				onKeyPress={handleKeyPress}
 				onChange={(editorChangeObject) => {
-					if (!isReadOnly) {
-						updateLocalData('collab', { editorChangeObject });
-					}
+					updateLocalData('collab', { editorChangeObject });
 				}}
 				onError={handleError}
 				discussionsOptions={

@@ -9,8 +9,10 @@ import { editorHasPasteDecorations } from '../plugins/paste/plugin';
 import { isEmptyDocNode } from './doc';
 
 export const dispatchEmptyTransaction = (editorView) => {
-	const emptyInitTransaction = editorView.state.tr;
-	editorView.dispatch(emptyInitTransaction);
+	if (editorView.docView) {
+		const emptyInitTransaction = editorView.state.tr;
+		editorView.dispatch(emptyInitTransaction);
+	}
 };
 
 export const getJSON = (editorView: EditorView) => {

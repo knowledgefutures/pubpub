@@ -73,7 +73,7 @@ const TitleGroup = (props: Props) => {
 					text={description}
 					updateText={(text) => updatePubData({ description: text })}
 					canEdit={canModify}
-					tagName="h3"
+					tagName="p"
 					className="description pub-header-themed-secondary"
 					placeholder="Add a description for this Pub"
 					maxLength={280}

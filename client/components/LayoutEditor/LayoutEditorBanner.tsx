@@ -7,6 +7,7 @@ import InputField from 'components/InputField/InputField';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import ColorInput from 'components/ColorInput/ColorInput';
 import { getResizedUrl } from 'utils/images';
+import { getButtonText } from '../Layout/LayoutBanner';
 
 require('./layoutEditorBanner.scss');
 
@@ -142,6 +143,7 @@ class LayoutEditorBanner extends Component<Props> {
 
 		const buttonType =
 			this.props.content.buttonType || (this.props.content.showButton && 'create-pub');
+		const buttonText = getButtonText(buttonType, this.props.content.buttonText);
 
 		return (
 			<div className="layout-editor-banner-component">
@@ -309,12 +311,7 @@ class LayoutEditorBanner extends Component<Props> {
 									<Button
 										className="bp3-large"
 										onClick={() => {}}
-										text={
-											this.props.content.buttonText ||
-											(buttonType === 'create-pub' && 'Create Pub') ||
-											(buttonType === 'signup' && 'Create an Account') ||
-											(buttonType === 'link' && 'Go to Link')
-										}
+										text={buttonText}
 									/>
 								)}
 							</div>

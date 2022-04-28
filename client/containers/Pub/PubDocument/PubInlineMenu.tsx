@@ -64,6 +64,8 @@ const PubInlineMenu = () => {
 			{renderFormattingBar()}
 			{(canView || canCreateDiscussions) && (
 				<Button
+					aria-label="Start a discussion"
+					title="Start a discussion"
 					minimal={true}
 					icon={<Icon icon="chat" />}
 					onClick={() => {

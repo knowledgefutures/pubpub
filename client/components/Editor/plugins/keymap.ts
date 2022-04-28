@@ -121,6 +121,7 @@ export default (schema) => {
 	if (schema.nodes.heading) {
 		for (let index = 1; index <= 6; index += 1) {
 			bind(`Shift-Ctrl-${index}`, setBlockType(schema.nodes.heading, { level: index }));
+			bind(`Alt-Ctrl-${index}`, setBlockType(schema.nodes.heading, { level: index }));
 		}
 	}
 	if (schema.nodes.horizontal_rule) {

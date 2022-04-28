@@ -1,4 +1,3 @@
-import md5 from 'crypto-js/md5';
 import sanitizeHtml from 'sanitize-html';
 
 import { DocJson, Maybe } from 'types';
@@ -10,8 +9,6 @@ import { RenderedStructuredValues } from 'utils/notesCore';
 import { NotesData, NoteWithStructuredHtml, PubMetadata } from './types';
 
 export type PandocNote = Note & {
-	id: string;
-	hash: string;
 	cslJson: Record<string, any>;
 	hasStructuredContent: boolean;
 	unstructuredHtml: string;
@@ -31,11 +28,7 @@ const enrichNoteWithStructuredResult = (
 	return note;
 };
 
-const getCslJsonForNote = (
-	note: Note,
-	hash: string,
-	renderedStructuredValues: RenderedStructuredValues,
-) => {
+const getCslJsonForNote = (note: Note, renderedStructuredValues: RenderedStructuredValues) => {
 	const renderedStructuredValue = note.structuredValue
 		? renderedStructuredValues[note.structuredValue]
 		: null;
@@ -43,18 +36,24 @@ const getCslJsonForNote = (
 		const cslJson = renderedStructuredValue?.json[0];
 		if (cslJson) {
 			// Citation.js leaves a _graph property on here -- it's noise we don't need to expose
-			return { hasStructuredContent: true, cslJson: { ...cslJson, _graph: undefined } };
+			return {
+				hasStructuredContent: true,
+				cslJson: { ...cslJson, _graph: undefined },
+			};
 		}
 	}
-	return { hasStructuredContent: false, cslJson: { id: hash } };
+	return {
+		hasStructuredContent: false,
+		cslJson: { id: note.id },
+	};
 };
 
-const getIdForNote = (cslJson: Maybe<Record<string, any>>, hash: string): string => {
+const getIdForNote = (cslJson: Maybe<Record<string, any>>, id: string): string => {
 	if (cslJson) {
 		const { id: providedId, 'citation-label': citationLabel } = cslJson;
 		return citationLabel || providedId;
 	}
-	return hash;
+	return id;
 };
 
 export const getNotesData = async (
@@ -64,11 +63,9 @@ export const getNotesData = async (
 	const { citationStyle, citationInlineStyle } = pubMetadata;
 	const hydratedPubDoc = jsonToNode(pubDoc);
 	const { footnotes, citations } = getNotes(hydratedPubDoc);
-
 	const structuredValues = [
 		...new Set([...footnotes, ...citations].map((note) => note.structuredValue)),
 	];
-
 	const renderedStructuredValues = await getStructuredCitations(
 		structuredValues,
 		citationStyle,
@@ -87,28 +84,15 @@ export const getNotesData = async (
 	};
 };
 
-export const getHashForNote = (note: Pick<Note, 'structuredValue' | 'unstructuredValue'>) => {
-	const { structuredValue, unstructuredValue } = note;
-	const digest = md5(`${structuredValue}__${unstructuredValue}`).toString();
-	return digest.slice(0, 8);
-};
-
 export const getPandocNotesByHash = (notesData: NotesData): PandocNotes => {
 	const { citations, footnotes, renderedStructuredValues } = notesData;
 	const notes = [...citations, ...footnotes];
 	const index: PandocNotes = {};
 	notes.forEach((note) => {
-		const hash = getHashForNote(note);
-		const { hasStructuredContent, cslJson } = getCslJsonForNote(
-			note,
-			hash,
-			renderedStructuredValues,
-		);
-		const id = getIdForNote(cslJson, hash);
-		index[hash] = {
+		const { hasStructuredContent, cslJson } = getCslJsonForNote(note, renderedStructuredValues);
+		index[note.id] = {
 			...note,
-			id,
-			hash,
+			id: getIdForNote(cslJson, note.id),
 			cslJson,
 			hasStructuredContent,
 			unstructuredHtml: note.unstructuredValue,

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 
-import { getNotes } from 'components/Editor/utils';
+import { citationFingerprintStripTags, getNotes } from 'components/Editor/utils';
 
 import { usePubContext } from './pubHooks';
 
@@ -18,7 +18,9 @@ export const usePubNotes = () => {
 	const [notes, setNotes] = useState(noteManager.notes);
 
 	const view = editorChangeObject!.view;
-	const { citations = [], footnotes = [] } = view ? getNotes(view.state.doc) : {};
+	const { citations = [], footnotes = [] } = view
+		? getNotes(view.state.doc, citationFingerprintStripTags)
+		: {};
 
 	const isNumberList = noteManager.citationInlineStyleKind === 'count';
 	const renderedFootnotes = footnotes.map((footnote, index) => ({

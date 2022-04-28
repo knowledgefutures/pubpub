@@ -1,4 +1,5 @@
 import * as katex from 'katex';
+import md5 from 'crypto-js/md5';
 import { RuleSet, pandocUtils, transformUtils, transformers } from '@pubpub/prosemirror-pandoc';
 
 import { editorSchema } from 'components/Editor';
@@ -288,10 +289,10 @@ rules.transform('Cite', 'citation', {
 		});
 	},
 	fromProsemirrorNode: (node, { count, resources }) => {
-		const { value: structuredValue, unstructuredValue, html } = node.attrs;
+		const { unstructuredValue, html } = node.attrs;
 		const inputHtml = (html || unstructuredValue) as string;
 		const citationNumber = 1 + count('citation');
-		const { id, hash } = resources.note({ structuredValue, unstructuredValue });
+		const { id } = resources.note(node.attrs.id);
 		return {
 			type: 'Cite',
 			content: htmlStringToPandocInline(inputHtml),
@@ -300,7 +301,7 @@ rules.transform('Cite', 'citation', {
 					citationPrefix: [],
 					citationSuffix: [],
 					citationId: id,
-					citationHash: parseInt(hash, 16),
+					citationHash: parseInt(md5(id).toString().slice(0, 8), 16),
 					citationNoteNum: citationNumber,
 					citationMode: 'NormalCitation',
 				},
@@ -321,8 +322,8 @@ rules.transform('Note', 'footnote', {
 		};
 	},
 	fromProsemirrorNode: (node, { resources }) => {
-		const { value: unstructuredValue, structuredValue } = node.attrs;
-		const { html } = resources.note({ structuredValue, unstructuredValue });
+		const { value: unstructuredValue } = node.attrs;
+		const { html } = resources.note(node.attrs.id);
 		const unstructuredBlocks = unstructuredValue && htmlStringToPandocBlocks(unstructuredValue);
 		const structuredBlocks = html && htmlStringToPandocBlocks(html);
 		const content = [structuredBlocks, unstructuredBlocks].reduce(

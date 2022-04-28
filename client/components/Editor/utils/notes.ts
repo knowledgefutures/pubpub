@@ -1,14 +1,22 @@
 import { Node } from 'prosemirror-model';
 import striptags from 'striptags';
 
+export type CitationFingerprintFunction = (node: Node) => string;
+
 export type Note = {
 	id: string;
 	structuredValue: string;
 	unstructuredValue: string;
 };
 
-export const getNotes = (doc: Node) => {
-	const citationCounts = {};
+export const citationFingerprintStripTags = (node: Node) => {
+	const { unstructuredValue, value } = node.attrs;
+	const strippedUnstructuredValue = unstructuredValue ? striptags(unstructuredValue) : '';
+	return `${value}-${strippedUnstructuredValue}`;
+};
+
+export const getNotes = (doc: Node, citationFingerprintFn?: CitationFingerprintFunction) => {
+	const citationFingerprints = new Set<unknown>();
 	const footnoteItems: Note[] = [];
 	const citationItems: Note[] = [];
 
@@ -22,17 +30,18 @@ export const getNotes = (doc: Node) => {
 		}
 		if (node.type.name === 'citation') {
 			const { unstructuredValue, value } = node.attrs;
-			const strippedUnstructuredValue = unstructuredValue ? striptags(unstructuredValue) : '';
-			const key = `${value}-${strippedUnstructuredValue}`;
-			const existingCount = citationCounts[key];
-			if (!existingCount) {
-				citationCounts[key] = true;
-				citationItems.push({
-					id: node.attrs.id,
-					structuredValue: value,
-					unstructuredValue,
-				});
+			if (citationFingerprintFn) {
+				const citationFingerprint = citationFingerprintFn(node);
+				if (citationFingerprints.has(citationFingerprint)) {
+					return true;
+				}
+				citationFingerprints.add(citationFingerprint);
 			}
+			citationItems.push({
+				id: node.attrs.id,
+				structuredValue: value,
+				unstructuredValue,
+			});
 		}
 		return true;
 	});

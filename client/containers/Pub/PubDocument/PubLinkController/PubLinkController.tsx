@@ -4,9 +4,8 @@ import { getHighestAncestorWithId } from 'client/utils/dom';
 
 import LinkPopover from './LinkPopover';
 
-export type PubMouseEventProps = {
-	locationData: any;
-	mainContentRef: any;
+type Props = {
+	mainContentRef: React.MutableRefObject<null | HTMLDivElement>;
 };
 
 const clickToCopySelector = '.click-to-copy, .click-to-copy *';
@@ -36,8 +35,8 @@ function isValidLinkTarget(element: Element | null): element is Element {
 	return true;
 }
 
-const PubLinkController = (props: PubMouseEventProps) => {
-	const { mainContentRef, locationData } = props;
+const PubLinkController = (props: Props) => {
+	const { mainContentRef } = props;
 	const [hoverTargets, hoverElemsDispatch] = useReducer(
 		(state: PubLinkControllertate, action: PubMouseEventAction) => {
 			return {
@@ -101,13 +100,9 @@ const PubLinkController = (props: PubMouseEventProps) => {
 	const clickToCopyTarget = hoverTargets[HoverTargetTypes.ClickToCopy];
 
 	return (
-		<div className="pub-mouse-events-component">
+		<div className="pub-link-controller-component">
 			{clickToCopyTarget && (
-				<LinkPopover
-					locationData={locationData}
-					element={clickToCopyTarget}
-					mainContentRef={mainContentRef}
-				/>
+				<LinkPopover element={clickToCopyTarget} mainContentRef={mainContentRef} />
 			)}
 		</div>
 	);

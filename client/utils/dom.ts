@@ -16,8 +16,8 @@ export const getHighestAncestorWithId = (node: Element, root: Element = document
 	return highestAncestorWithId;
 };
 
-export const getLowestAncestorWithId = (node: HTMLElement) => {
-	let ancestor: HTMLElement | null = node;
+export const getLowestAncestorWithId = (element: Element) => {
+	let ancestor: Element | null = element;
 
 	while (ancestor && !ancestor.hasAttribute('id')) {
 		ancestor = ancestor.parentElement;

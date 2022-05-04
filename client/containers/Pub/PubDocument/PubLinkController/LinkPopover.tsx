@@ -4,21 +4,22 @@ import Popper from 'popper.js';
 import { ClickToCopyButton } from 'components';
 import { getLowestAncestorWithId } from 'client/utils/dom';
 import { usePageContext } from 'utils/hooks';
+import { pubUrl } from 'utils/canonicalUrls';
 
 import { usePubData } from '../../pubHooks';
 
-export type HeaderPopoverProps = {
-	locationData: any;
-	element: any;
-	mainContentRef: any;
+type Props = {
+	element: Element;
+	mainContentRef: React.MutableRefObject<null | HTMLDivElement>;
 };
 
-const LinkPopover = (props: HeaderPopoverProps) => {
-	const { element, mainContentRef, locationData } = props;
+const LinkPopover = (props: Props) => {
+	const { element, mainContentRef } = props;
 	const parent = getLowestAncestorWithId(element);
 	const popoverRef = useRef<null | HTMLDivElement>(null);
 	const pubData = usePubData();
 	const {
+		communityData,
 		scopeData: {
 			activePermissions: { canManage },
 		},
@@ -56,7 +57,7 @@ const LinkPopover = (props: HeaderPopoverProps) => {
 				className="click-to-copy"
 			>
 				<ClickToCopyButton
-					copyString={`https://${locationData.hostname}${locationData.path}#${parent?.id}`}
+					copyString={pubUrl(communityData, pubData, { hash: parent?.id })}
 					beforeCopyPrompt={managersEnableLinksPrompt}
 					disabled={unstableLink}
 				/>

@@ -1,85 +1,85 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { usePrevious } from 'react-use';
 import { Node } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
 
-import { updateNodeAttrsById } from 'components/Editor/utils/nodes';
-import { EditorChangeObject } from 'components/Editor';
+import { EditorChangeObject, updateNodeAttrsById } from 'client/components/Editor';
 
 type Attrs = Node['attrs'];
+type AttrsById = Record<string, null | Attrs>;
 
-const attrsHaveChanges = (
-	oldAttrs: null | Attrs,
-	newAttrs: null | Attrs,
-	pendingKeys: string[],
-) => {
-	if (!oldAttrs || !newAttrs) {
-		return false;
-	}
-	return pendingKeys.some((key) => newAttrs[key] !== oldAttrs[key]);
+type PendingAttrsState = {
+	attrs: Attrs;
+	hasPendingChanges: boolean;
+	updateAttrs: (partial: Attrs) => unknown;
+	commitChanges: () => unknown;
 };
 
-const getPendingAttrsObject = (attrs: null | Attrs, pendingKeys: string[]) => {
-	const nextAttrs = {};
-	if (attrs) {
-		pendingKeys.forEach((key) => {
-			nextAttrs[key] = attrs[key];
+export const usePendingAttrs = (
+	editorChangeObject: EditorChangeObject,
+): null | PendingAttrsState => {
+	const { selectedNode, updateNode, view } = editorChangeObject;
+	const selectedNodeId = (selectedNode?.attrs.id as string) || null;
+	const previousSelectedNodeId = usePrevious(selectedNodeId);
+	const [pendingAttrsById, setPendingAttrsById] = useState<AttrsById>({});
+
+	const removePendingAttrsById = useCallback((id: string) => {
+		setPendingAttrsById((current: AttrsById) => {
+			const next = { ...current };
+			delete next[id];
+			return next;
 		});
-	}
-	return nextAttrs;
-};
+	}, []);
 
-export const usePendingAttrs = ({
-	selectedNode,
-	updateNode,
-	editorView,
-}: {
-	selectedNode?: Node;
-	updateNode: EditorChangeObject['updateNode'];
-	editorView?: EditorView;
-}) => {
-	const [attrs, setAttrs] = useState(selectedNode?.attrs ?? null);
-	const [targetedNodeId, setTargetedNodeId] = useState(selectedNode?.attrs.id);
-	const [pendingKeys, setPendingKeys] = useState<string[]>([]);
-	const selectedNodeId = selectedNode?.attrs.id;
+	const updateAttrs = useCallback(
+		(next: Attrs) => {
+			if (selectedNodeId) {
+				setPendingAttrsById((current: AttrsById) => {
+					const pendingAttrsForSelectedNode = current[selectedNodeId];
+					return {
+						...current,
+						[selectedNodeId]: {
+							...pendingAttrsForSelectedNode,
+							...next,
+						},
+					};
+				});
+			}
+		},
+		[selectedNodeId],
+	);
 
-	useEffect(() => {
-		if (targetedNodeId) {
-			const pendingAttrs = getPendingAttrsObject(attrs, pendingKeys);
-			if (editorView) {
-				updateNodeAttrsById(editorView, targetedNodeId, pendingAttrs);
+	const commitChanges = useCallback(() => {
+		if (selectedNodeId && updateNode) {
+			const pendingAttrsForSelectedNode = pendingAttrsById[selectedNodeId];
+			if (pendingAttrsForSelectedNode) {
+				updateNode?.(pendingAttrsForSelectedNode);
+				removePendingAttrsById(selectedNodeId);
 			}
 		}
-		if (selectedNode) {
-			setPendingKeys([]);
-			setAttrs(selectedNode.attrs);
-		}
-		setTargetedNodeId(selectedNodeId);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedNodeId]);
+	}, [selectedNodeId, updateNode, pendingAttrsById, removePendingAttrsById]);
 
-	if (!selectedNode) {
-		return null;
+	useEffect(() => {
+		if (previousSelectedNodeId && previousSelectedNodeId !== selectedNodeId) {
+			const pendingAttrsForDeselectedNode = pendingAttrsById[previousSelectedNodeId];
+			if (pendingAttrsForDeselectedNode) {
+				updateNodeAttrsById(view, previousSelectedNodeId, pendingAttrsForDeselectedNode);
+				removePendingAttrsById(previousSelectedNodeId);
+			}
+		}
+	}, [selectedNodeId, previousSelectedNodeId, pendingAttrsById, removePendingAttrsById, view]);
+
+	if (selectedNode && selectedNodeId) {
+		const pendingAttrsForSelectedNode = pendingAttrsById[selectedNodeId];
+		const hasPendingChanges = pendingAttrsForSelectedNode
+			? Object.keys(pendingAttrsForSelectedNode).length > 0
+			: false;
+		return {
+			attrs: { ...selectedNode.attrs, ...pendingAttrsForSelectedNode },
+			hasPendingChanges,
+			updateAttrs,
+			commitChanges,
+		};
 	}
 
-	const hasPendingChanges = attrsHaveChanges(selectedNode.attrs, attrs, pendingKeys);
-
-	const commitChanges = () => {
-		const nextAttrs = getPendingAttrsObject(attrs, pendingKeys);
-		updateNode!(nextAttrs);
-		setPendingKeys([]);
-	};
-
-	const updateAttrs = (nextAttrs) => {
-		setPendingKeys((prevPendingKeys) => [
-			...new Set([...prevPendingKeys, ...Object.keys(nextAttrs)]),
-		]);
-		setAttrs((prevAttrs) => ({ ...prevAttrs, ...nextAttrs }));
-	};
-
-	return {
-		commitChanges,
-		hasPendingChanges,
-		attrs,
-		updateAttrs,
-	};
+	return null;
 };

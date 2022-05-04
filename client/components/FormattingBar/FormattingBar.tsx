@@ -45,17 +45,11 @@ const FormattingBar = (props: Props) => {
 	} = props;
 
 	const editorChangeObject = propsEditorChangeObject || shimEditorChangeObject;
-	const { selectedNode, updateNode } = editorChangeObject;
 	const { communityData } = usePageContext();
 	const buttonElementRefs = useRefMap();
 	const wrapperRef = useRef<null | HTMLDivElement>(null);
 	const toolbar = useToolbarState({ loop: true });
-
-	const pendingAttrs = usePendingAttrs({
-		selectedNode,
-		updateNode,
-		editorView: editorChangeObject.view,
-	});
+	const pendingAttrs = usePendingAttrs(editorChangeObject);
 
 	const {
 		openedButton,

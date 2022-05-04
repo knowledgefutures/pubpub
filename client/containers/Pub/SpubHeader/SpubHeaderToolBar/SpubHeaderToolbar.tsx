@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Tab, Tabs, Icon, IconName, Button, Tooltip } from '@blueprintjs/core';
 import Color from 'color';
 
-import { GridWrapper, DialogLauncher } from 'components';
+import { GridWrapper } from 'components';
 import { Submission, DefinitelyHas } from 'types';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { ValidatedSubmissionFields } from 'utils/submission/validate';
@@ -28,6 +28,7 @@ type Props = {
 
 const SpubHeaderToolbar = (props: Props) => {
 	const { selectedTab, submission, onSelectTab, validatedFields } = props;
+	const [showSubmitDialog, setShowSubmitDialog] = useState(false);
 	const { communityData } = usePageContext();
 	const { pendingCount } = usePendingChanges();
 
@@ -75,24 +76,23 @@ const SpubHeaderToolbar = (props: Props) => {
 			disabled: !!savingText,
 		};
 
-		if (invalidNotice && showSubmitButton) {
+		if (invalidNotice) {
 			return (
 				<Tooltip content={invalidNotice}>
 					<Button {...sharedProps} disabled />
 				</Tooltip>
 			);
 		}
+		return <Button {...sharedProps} onClick={() => setShowSubmitDialog(true)} />;
+	};
+
+	const renderSubmitDialog = () => {
 		return (
-			<DialogLauncher
-				renderLauncherElement={({ openDialog }) =>
-					// hide the submit button but keep the modal open
-					showSubmitButton ? <Button {...sharedProps} onClick={openDialog} /> : null
-				}
-			>
-				{({ isOpen, onClose }) => (
-					<SubmitDialog submission={submission} isOpen={isOpen} onClose={onClose} />
-				)}
-			</DialogLauncher>
+			<SubmitDialog
+				submission={submission}
+				isOpen={showSubmitDialog}
+				onClose={() => setShowSubmitDialog(false)}
+			/>
 		);
 	};
 
@@ -119,6 +119,13 @@ const SpubHeaderToolbar = (props: Props) => {
 		return null;
 	};
 
+	const renderRight = () => {
+		if (showSubmitButton) {
+			return renderSubmitButton();
+		}
+		return renderStatus();
+	};
+
 	return (
 		<div style={{ background: lighterAccentColor }} className="spub-header-toolbar-component">
 			<GridWrapper containerClassName="toolbar-container pub">
@@ -129,8 +136,8 @@ const SpubHeaderToolbar = (props: Props) => {
 						<Tab id="contributors" title={contributorsTabTitle} />
 						<Tab id="preview" title={previewTabTitle} />
 					</Tabs>
-					{renderSubmitButton()}
-					{renderStatus()}
+					{renderRight()}
+					{renderSubmitDialog()}
 				</div>
 			</GridWrapper>
 		</div>

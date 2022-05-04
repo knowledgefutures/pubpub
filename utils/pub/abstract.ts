@@ -6,16 +6,12 @@ export const getAbstractDocFromPubDoc = (doc: DocJson): null | DocJson => {
 	} = doc;
 
 	if (firstChild && secondChild) {
-		const {
-			type: firstChildType,
-			attrs,
-			content: [firstTextItem],
-		} = firstChild;
+		const { type: firstChildType, attrs, content } = firstChild;
 
 		const hasCorrectHeading =
 			firstChildType === 'heading' &&
 			attrs?.level === 1 &&
-			firstTextItem?.text?.toLowerCase?.() === 'abstract';
+			content?.[0]?.text?.toLowerCase()?.trim() === 'abstract';
 
 		if (hasCorrectHeading) {
 			if (secondChild.type === 'paragraph') {

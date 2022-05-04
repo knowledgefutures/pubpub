@@ -70,9 +70,13 @@ const DetailsTab = (props: Props) => {
 				<SpubHeaderField
 					title="Abstract"
 					instructions={
-						hasSubmitted ? 'Update the abstract from the submission body.' : null
+						hasSubmitted
+							? validatedFields.abstract
+								? 'Update the abstract from the submission body.'
+								: 'The abstract was removed from the submission body after submission and may need to be re-added before release.'
+							: null
 					}
-					valid={hasSubmitted || validatedFields.abstract}
+					valid={validatedFields.abstract}
 					invalidNotice="Abstract must not be empty"
 				>
 					<AbstractEditor

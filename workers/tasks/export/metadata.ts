@@ -67,7 +67,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	const publishedDateString = publishedDate && dateFormat(publishedDate, 'mmm dd, yyyy');
 	const updatedDateString = updatedDate && dateFormat(updatedDate, 'mmm dd, yyyy');
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
-	const attributions = getAllPubContributors(pubData);
+	const attributions = getAllPubContributors(pubData, 'contributors', false, true);
 	return {
 		title: pubData.title,
 		slug: pubData.slug,

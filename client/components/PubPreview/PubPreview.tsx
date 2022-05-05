@@ -138,7 +138,7 @@ const PubPreview = (props: Props) => {
 
 					{showContributors && (
 						<ContributorAvatars
-							attributions={getAllPubContributors(pubData)}
+							attributions={getAllPubContributors(pubData, 'contributors')}
 							truncateAt={6}
 							className="contributor-avatars"
 						/>

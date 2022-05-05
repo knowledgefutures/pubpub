@@ -14,6 +14,11 @@ const orderedContributors = (maybeContributors: Attribution[] | undefined | null
 		return 0;
 	});
 
+const editorRoles = ['Editor', 'Writing – Review & Editing'];
+const illustratorRoles = ['Illustrator', 'Visualization'];
+const getPrimaryRole = (contributor: AttributionWithUser) =>
+	contributor.roles ? contributor.roles[0] : '';
+
 const resolveContributors = (
 	contributors: AttributionWithUser[],
 	hideAuthors: boolean,
@@ -41,6 +46,7 @@ const resolveContributors = (
 
 export const getAllPubContributors = (
 	pubData: Pub,
+	role: string,
 	hideAuthors = false,
 	hideNonAuthors = false,
 ) => {
@@ -52,7 +58,34 @@ export const getAllPubContributors = (
 		...orderedContributors(primaryCollection && primaryCollection.attributions),
 	].map(ensureUserForAttribution);
 
-	return resolveContributors(contributors, hideAuthors, hideNonAuthors);
+	if (role === 'contributors') {
+		return resolveContributors(contributors, hideAuthors, hideNonAuthors);
+	}
+
+	if (role === 'author') {
+		const contributorsWithRoles = contributors.filter((contributor) => {
+			return !contributor.roles;
+		});
+		return resolveContributors(contributorsWithRoles, hideAuthors, hideNonAuthors);
+	}
+
+	if (role === 'editor') {
+		const contributorsWithRoles = contributors.filter((contributor) => {
+			return editorRoles.includes(getPrimaryRole(contributor));
+		});
+		return resolveContributors(contributorsWithRoles, hideAuthors, hideNonAuthors);
+	}
+	if (role === 'illustrator') {
+		const contributorsWithRoles = contributors.filter((contributor) => {
+			return illustratorRoles.includes(getPrimaryRole(contributor));
+		});
+
+		return resolveContributors(contributorsWithRoles, hideAuthors, hideNonAuthors);
+	}
+	const contributorsWithRoles = contributors.filter((contributor) => {
+		return getPrimaryRole(contributor) === role;
+	});
+	return resolveContributors(contributorsWithRoles, hideAuthors, hideNonAuthors);
 };
 
 export const getAllCollectionContributors = (
@@ -75,6 +108,6 @@ export const getContributorName = (attribution: Attribution) => {
 };
 
 export const getAuthorString = (pub) => {
-	const contributors = getAllPubContributors(pub, false, true);
+	const contributors = getAllPubContributors(pub, 'author', false, true);
 	return joinOxford(contributors.map((c) => c.user.fullName));
 };

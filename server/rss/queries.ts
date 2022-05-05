@@ -229,7 +229,7 @@ export const getFeedItemForPub = (pubData, communityData) => {
 		// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 		categories: sortByPrimaryStatus(collectionPubs).map(({ collection }) => collection.title),
 		custom_elements: [
-			...getAllPubContributors(pubData, false, true).map((attribution) => {
+			...getAllPubContributors(pubData, 'contributors', false, true).map((attribution) => {
 				return {
 					'dc:creator': getContributorName(attribution),
 				};

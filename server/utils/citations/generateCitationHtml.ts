@@ -39,6 +39,13 @@ const getCollectionLevelData = (collection) => {
 	};
 };
 
+const getContributorName = (attribution: types.Attribution) =>
+	(types.isCollectionAttribution(attribution) || types.isPubAttribution(attribution)) &&
+	attribution.isAuthor &&
+	attribution.user
+		? { given: attribution.user.firstName, family: attribution.user.lastName }
+		: {};
+
 export const generateCitationHtml = async (
 	pubData: types.SanitizedPubData,
 	communityData: types.Community,
@@ -47,24 +54,38 @@ export const generateCitationHtml = async (
 	const pubIssuedDate = getPubPublishedDate(pubData);
 	const pubLink = pubUrl(communityData, pubData);
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
-	const authors = getAllPubContributors(pubData).map((attribution) => {
-		if (
-			types.isCollectionAttribution(attribution) ||
-			(types.isPubAttribution(attribution) && attribution.isAuthor)
-		) {
-			return {
-				given: attribution.user.firstName,
-				family: attribution.user.lastName,
-			};
-		}
-		return {};
-	});
+	const authors = getAllPubContributors(pubData, 'author').map(getContributorName);
 	const authorEntry = authors.length ? { author: authors } : {};
+
+	const editors = getAllPubContributors(pubData, 'editor').map(getContributorName);
+	const editorEntry = editors.length ? { editor: editors } : {};
+
+	const illustrators = getAllPubContributors(pubData, 'illustrator').map(getContributorName);
+	const illustratorEntry = illustrators.length ? { illustrator: illustrators } : {};
+
+	const translators = getAllPubContributors(pubData, 'Translator').map(getContributorName);
+	const translatorEntry = translators.length ? { translator: translators } : {};
+
+	const collectionEditors = getAllPubContributors(pubData, 'Series Editor').map(
+		getContributorName,
+	);
+	const collectionEditorEntry = collectionEditors.length
+		? { 'collection-editor': collectionEditors }
+		: {};
+
+	const chairs = getAllPubContributors(pubData, 'Chair').map(getContributorName);
+	const chairEntry = chairs.length ? { chair: chairs } : {};
+
 	const commonData = {
 		// @ts-expect-error ts-migrate(2783) FIXME: 'type' is specified more than once, so this usage ... Remove this comment to see the full error message
 		type: 'article-journal',
 		title: pubData.title,
 		...authorEntry,
+		...editorEntry,
+		...illustratorEntry,
+		...collectionEditorEntry,
+		...chairEntry,
+		...translatorEntry,
 		...renderJournalCitationForCitations(
 			primaryCollection?.kind,
 			communityData.citeAs,

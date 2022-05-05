@@ -15,7 +15,7 @@ type Props = Omit<BylineProps, 'contributors'> & {
 
 const ManyAuthorsByline = (props: Props) => {
 	const { pubData, truncateAt, isExpanded, ...restProps } = props;
-	const authors = getAllPubContributors(pubData, false, true);
+	const authors = getAllPubContributors(pubData, 'contributors', false, true);
 	const isTruncating = authors.length > truncateAt;
 
 	if (authors.length === 0) {

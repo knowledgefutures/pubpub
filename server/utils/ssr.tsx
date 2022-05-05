@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import * as ReactBeautifulDnD from 'react-beautiful-dnd';
-import { Collection, InitialData } from 'types';
+import { Collection, InitialData, Attribution } from 'types';
 
 export const renderToNodeStream = (res, reactElement) => {
 	res.setHeader('content-type', 'text/html');
@@ -25,6 +25,23 @@ type MetaProps = {
 	textAbstract?: string;
 	notes?: string[];
 	canonicalUrl?: string;
+};
+
+const contributorRoles = ['Writing – Review & Editing', 'Editor', 'Series Editor'];
+const sortAttributions = (foo, bar) => {
+	if (foo.order < bar.order) {
+		return -1;
+	}
+	if (foo.order > bar.order) {
+		return 1;
+	}
+	if (foo.createdAt < bar.createdAt) {
+		return 1;
+	}
+	if (foo.createdAt > bar.createdAt) {
+		return -1;
+	}
+	return 0;
 };
 
 export const generateMetaComponents = (metaProps: MetaProps) => {
@@ -182,44 +199,70 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 	}
 
 	if (attributions) {
-		const authors = attributions
-			.sort((foo, bar) => {
-				if (foo.order < bar.order) {
-					return -1;
-				}
-				if (foo.order > bar.order) {
-					return 1;
-				}
-				if (foo.createdAt < bar.createdAt) {
-					return 1;
-				}
-				if (foo.createdAt > bar.createdAt) {
-					return -1;
-				}
-				return 0;
-			})
-			.filter((item) => {
-				return item.isAuthor;
-			});
+		const authors = attributions.sort(sortAttributions).filter((item) => {
+			return item.isAuthor && !item.roles;
+		});
+
+		const getPrimaryRole = (contributor: Attribution) => contributor.roles?.[0];
+		const contributors = attributions.sort(sortAttributions).filter((item) => {
+			const primaryRole = getPrimaryRole(item);
+			return item.isAuthor && primaryRole && contributorRoles.includes(primaryRole);
+		});
+
 		const citationAuthorTags = authors.map((author) => {
+			if (author.user) {
+				return (
+					<meta
+						key={`author-cite-${author.id}`}
+						name="citation_author"
+						content={author.user.fullName}
+					/>
+				);
+			}
 			return (
 				<meta
 					key={`author-cite-${author.id}`}
 					name="citation_author"
-					content={author.user.fullName}
+					content={author.name}
 				/>
 			);
 		});
 		const dcAuthorTags = authors.map((author) => {
+			if (author.user) {
+				return (
+					<meta
+						key={`author-dc-${author.id}`}
+						name="dc.creator"
+						content={author.user.fullName}
+					/>
+				);
+			}
+			return <meta key={`author-dc-${author.id}`} name="dc.creator" content={author.name} />;
+		});
+		const contributorRoleTags = contributors.map((contributor) => {
+			if (contributor.user) {
+				return (
+					<meta
+						key={`editor-cite-${contributor.id}`}
+						name="citation_editor"
+						content={contributor.user.fullName}
+					/>
+				);
+			}
 			return (
 				<meta
-					key={`author-dc-${author.id}`}
-					name="dc.creator"
-					content={author.user.fullName}
+					key={`editor-cite-${contributor.id}`}
+					name="citation_editor"
+					content={contributor.name}
 				/>
 			);
 		});
-		outputComponents = [...outputComponents, citationAuthorTags, dcAuthorTags];
+		outputComponents = [
+			...outputComponents,
+			citationAuthorTags,
+			dcAuthorTags,
+			contributorRoleTags,
+		];
 	}
 
 	if (publishedAt) {

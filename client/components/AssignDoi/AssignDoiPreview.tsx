@@ -91,17 +91,18 @@ const renderContributors = (contributors) => {
 	if (!contributors) {
 		return null;
 	}
-
-	const contributorNames = contributors.person_name.map(
-		(contributor) =>
-			`${contributor.given_name} ${contributor.surname} (${contributor['@contributor_role']})`,
-	);
-
 	return (
 		<>
 			<dt>Contributors</dt>
 			<dd>
-				<ul>{contributorNames}</ul>
+				{contributors.map((contributor) => {
+					return (
+						<ul key={contributor.surname}>
+							{contributor.given_name} {contributor.surname} (
+							{contributor['@contributor_role']})
+						</ul>
+					);
+				})}
 			</dd>
 		</>
 	);
@@ -116,6 +117,7 @@ const renderJournalIssue = (journal_issue) => {
 			<dl>
 				{renderTitles(titles)}
 				{renderPublicationDate(publication_date)}
+				{renderContributors(journal_issue.contributors.person_name)}
 			</dl>
 		</>
 	);
@@ -127,7 +129,7 @@ const renderArticlePreview = (body) => {
 			journal_article: {
 				titles,
 				publication_date,
-				contributors,
+				contributors: content,
 				'rel:program': relationships,
 			},
 			journal_metadata: {
@@ -137,14 +139,13 @@ const renderArticlePreview = (body) => {
 			journal_issue,
 		},
 	} = body;
-
 	return (
 		<>
 			<h6>Journal Article</h6>
 			<dl>
 				{renderTitles(titles)}
 				{renderPublicationDate(publication_date)}
-				{renderContributors(contributors)}
+				{renderContributors(content.person_name)}
 			</dl>
 			<h6>Journal Metadata</h6>
 			<dl>
@@ -167,10 +168,11 @@ const renderBookPreview = (body) => {
 				edition_number,
 				publisher,
 				publication_date: bookPublicationDate,
+				contributors: metadata,
 			},
 			content_item: {
 				titles: contentTitles,
-				contributors,
+				contributors: content,
 				publication_date: contentPublicationDate,
 				'rel:program': relationships,
 			},
@@ -185,12 +187,13 @@ const renderBookPreview = (body) => {
 				<dt>Edition Number</dt>
 				<dd>{edition_number}</dd>
 				{renderPublisher(publisher)}
+				{renderContributors(metadata.person_name)}
 				{renderPublicationDate(bookPublicationDate)}
 			</dl>
 			<h6>Content</h6>
 			<dl>
 				{renderTitles(contentTitles)}
-				{renderContributors(contributors)}
+				{renderContributors(content.person_name)}
 				{renderPublicationDate(contentPublicationDate)}
 			</dl>
 			{renderRelationships(relationships)}
@@ -201,7 +204,12 @@ const renderBookPreview = (body) => {
 const renderConferencePreview = (body) => {
 	const {
 		conference: {
-			conference_paper: { contributors, titles, 'rel:program': relationships },
+			contributors,
+			conference_paper: {
+				titles,
+				contributors: conference_contributors,
+				'rel:program': relationships,
+			},
 			event_metadata: {
 				conference_name,
 				conference_date: { '#text': conferenceDate },
@@ -215,7 +223,7 @@ const renderConferencePreview = (body) => {
 			<h6>Conference Paper</h6>
 			<dl>
 				{renderTitles(titles)}
-				{renderContributors(contributors)}
+				{renderContributors(conference_contributors.person_name)}
 			</dl>
 			<h6>Event Metadata</h6>
 			<dl>
@@ -231,6 +239,8 @@ const renderConferencePreview = (body) => {
 				{renderPublicationDate(publication_date)}
 				{renderPublisher(publisher)}
 			</dl>
+			<h6>Contributors</h6>
+			<dl>{renderContributors(contributors.person_name)}</dl>
 			{renderRelationships(relationships)}
 		</>
 	);
@@ -240,13 +250,12 @@ const renderPreprintPreview = (body) => {
 	const {
 		posted_content: { contributors, titles, 'rel:program': relationships, posted_date },
 	} = body;
-
 	return (
 		<>
 			<h6>Preprint</h6>
 			<dl>
 				{renderTitles(titles)}
-				{renderContributors(contributors)}
+				{renderContributors(contributors.person_name)}
 				{renderPublicationDate(posted_date, 'Posted Date')}
 			</dl>
 			{renderRelationships(relationships)}
@@ -265,13 +274,12 @@ const renderPeerReviewPreview = (body) => {
 			review_date,
 		},
 	} = body;
-
 	return (
 		<>
 			<h6>Peer Review</h6>
 			<dl>
 				{renderTitles(titles)}
-				{renderContributors(contributors)}
+				{renderContributors(contributors.person_name)}
 				{renderPublicationDate(review_date, 'Review Date')}
 				{type && (
 					<>
@@ -310,7 +318,7 @@ const renderSupplementPreview = (body) => {
 				<dt>Parent Relation</dt>
 				<dd>isPartOf</dd>
 				{renderTitles(titles)}
-				{renderContributors(contributors)}
+				{renderContributors(contributors.person_name)}
 				{renderPublicationDate(publication_date)}
 			</dl>
 		</>

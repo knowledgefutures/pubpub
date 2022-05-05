@@ -70,7 +70,7 @@ export const getValuesFromPubEdge = (
 		return {
 			displayedPubId: displayedPub.id,
 			avatar,
-			contributors: getAllPubContributors(displayedPub, false, true),
+			contributors: getAllPubContributors(displayedPub, 'contributors', false, true),
 			description,
 			publishedAt: publishedDate && formatDate(publishedDate),
 			title,

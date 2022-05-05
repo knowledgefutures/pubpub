@@ -22,7 +22,7 @@ type Props = {
 const PubDetails = (props: Props) => {
 	const { communityData, onCloseHeaderDetails, pubData } = props;
 	const { collectionPubs } = pubData;
-	const contributors = getAllPubContributors(pubData);
+	const contributors = getAllPubContributors(pubData, 'contributors');
 	const { scopeData } = usePageContext();
 	const { canView } = scopeData.activePermissions;
 

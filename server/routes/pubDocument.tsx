@@ -2,6 +2,7 @@ import React from 'react';
 import slowDown from 'express-slow-down';
 
 import { getPubPageContextTitle } from 'utils/pubPageTitle';
+import { getPrimaryCollection } from 'utils/collections/primary';
 import { getPdfDownloadUrl, getTextAbstract, getGoogleScholarNotes } from 'utils/pub/metadata';
 import { chooseCollectionForPub } from 'client/utils/collections';
 import Html from 'server/Html';
@@ -32,6 +33,9 @@ const renderPubDocument = (res, pubData, initialData, customScripts) => {
 		loginData: { id: userId },
 	} = initialData;
 	createUserScopeVisit({ userId, communityId, pubId: pubData.id });
+	const { collectionPubs } = pubData;
+	const primaryCollection = collectionPubs && getPrimaryCollection(collectionPubs);
+	const collectionAttributions = primaryCollection?.attributions ?? [];
 	return renderToNodeStream(
 		res,
 		<Html
@@ -40,7 +44,7 @@ const renderPubDocument = (res, pubData, initialData, customScripts) => {
 			viewData={{ pubData }}
 			customScripts={customScripts}
 			headerComponents={generateMetaComponents({
-				attributions: pubData.attributions,
+				attributions: [...pubData.attributions, ...collectionAttributions],
 				collection: chooseCollectionForPub(pubData, initialData.locationData),
 				contextTitle: getPubPageContextTitle(pubData, initialData.communityData),
 				description: pubData.description,

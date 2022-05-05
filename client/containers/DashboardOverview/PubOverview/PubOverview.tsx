@@ -113,7 +113,7 @@ const PubOverview = (props: Props) => {
 		return (
 			<div className="section">
 				<div className="section-header">Contributors</div>
-				<ContributorsList attributions={getAllPubContributors(pubData)} />
+				<ContributorsList attributions={getAllPubContributors(pubData, 'contributors')} />
 			</div>
 		);
 	};

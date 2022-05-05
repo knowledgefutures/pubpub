@@ -21,7 +21,7 @@ type Props = OwnPubBylineProps & typeof defaultProps;
 
 const PubByline = (props: Props) => {
 	const { pubData, hideAuthors = false, hideContributors = false } = props;
-	const authors = getAllPubContributors(pubData, hideAuthors, hideContributors);
+	const authors = getAllPubContributors(pubData, 'contributors', hideAuthors, hideContributors);
 	return <Byline {...props} contributors={authors} />;
 };
 PubByline.defaultProps = defaultProps;

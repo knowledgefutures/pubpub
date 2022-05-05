@@ -17,6 +17,10 @@ const DEFAULT_ROLES = [
 	'Peer Review',
 	'Funding Acquisition',
 	'Illustrator',
+	'Editor',
+	'Series Editor',
+	'Translator',
+	'Chair',
 ];
 
 // eslint-disable-next-line import/prefer-default-export

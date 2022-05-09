@@ -101,9 +101,13 @@ export const splitBlockPreservingTextAlign = (state: EditorState, dispatch?: Dis
 	return splitBlock(state, (tr) => {
 		if (dispatch) {
 			const targetNodePosition = tr.selection.$from.before();
+			const targetNode = tr.doc.nodeAt(targetNodePosition);
 			const sourceNode = previousSelectionFrom.node();
 			const { [alignAttr]: textAlign } = sourceNode.attrs;
-			tr.setNodeMarkup(targetNodePosition, undefined, { [alignAttr]: textAlign });
+			tr.setNodeMarkup(targetNodePosition, undefined, {
+				...targetNode?.attrs,
+				[alignAttr]: textAlign,
+			});
 			dispatch(tr);
 		}
 	});

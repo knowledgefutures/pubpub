@@ -4,7 +4,7 @@ import dateFormat from 'dateformat';
 
 import { Pub, Community } from 'types';
 import { getResizedUrl } from 'utils/images';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { getPubPublishedDateString } from 'utils/pub/pubDates';
 import { isPubPublic } from 'utils/pub/permissions';
 import { getAllPubContributors } from 'utils/contributors';
 import { communityUrl, bestPubUrl } from 'utils/canonicalUrls';
@@ -60,7 +60,7 @@ const PubPreview = (props: Props) => {
 	const contentRef = useRef<HTMLDivElement>(null);
 	const resizedHeaderLogo =
 		communityData && getResizedUrl(communityData.headerLogo, 'inside', 125, 35);
-	const publishedDate = getPubPublishedDate(pubData);
+	const publishedDateString = getPubPublishedDateString(pubData);
 	const isPrivate = !isPubPublic(pubData, scopeData);
 	const showBannerImage = ['large', 'medium'].includes(size);
 	const showUpperByline = !hideByline && ['minimal'].includes(size);
@@ -146,10 +146,8 @@ const PubPreview = (props: Props) => {
 
 					{showDates && (
 						<div className="date-details">
-							{publishedDate ? (
-								<span className="date">
-									Published: {dateFormat(publishedDate, 'mmm dd, yyyy')}
-								</span>
+							{publishedDateString ? (
+								<span className="date">Published: {publishedDateString}</span>
 							) : (
 								<span className="date">Unpublished</span>
 							)}

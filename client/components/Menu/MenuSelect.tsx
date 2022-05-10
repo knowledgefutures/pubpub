@@ -40,6 +40,7 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 		defaultLabel = 'Select...',
 	} = props;
 	const selectedItem = value !== null ? items.find((item) => item.value === value) : null;
+
 	return (
 		<MenuButton
 			disabled={disabled}
@@ -54,6 +55,7 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 		>
 			{items.map((item) => (
 				<MenuItem
+					key={item.value}
 					icon={showTickIcon && (item === selectedItem ? 'tick' : 'blank')}
 					active={item === selectedItem}
 					onClick={() => onSelectValue(item.value)}

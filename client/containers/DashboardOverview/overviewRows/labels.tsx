@@ -72,7 +72,7 @@ const getDateLabelPart = (date: Date) => {
 
 export const getPubReleasedStateLabel = (pub: Pub) => {
 	const publishedDate = getPubPublishedDate(pub, false);
-	if (publishedDate) {
+	if (publishedDate && pub.releases.length > 0) {
 		return {
 			label: <>Published&nbsp;{getDateLabelPart(publishedDate)}</>,
 			icon: 'globe' as const,

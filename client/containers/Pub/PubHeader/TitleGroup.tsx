@@ -2,8 +2,7 @@ import React from 'react';
 
 import { PubByline, DialogLauncher, PubAttributionDialog } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { formatDate } from 'utils/dates';
+import { getPubPublishedDateString } from 'utils/pub/pubDates';
 import { PatchFn, Pub, PubPageData } from 'types';
 
 import BylineEditButton from './BylineEditButton';
@@ -23,7 +22,7 @@ const TitleGroup = (props: Props) => {
 	const isUnsubmitted = submissionState?.submission.status === 'incomplete';
 	const { canManage } = scopeData.activePermissions;
 	const canModify = canManage && !isRelease && !isUnsubmitted;
-	const publishedDate = getPubPublishedDate(pubData);
+	const publishedDateString = getPubPublishedDateString(pubData);
 
 	const renderBylineEditor = () => {
 		if (!canModify) {
@@ -84,10 +83,10 @@ const TitleGroup = (props: Props) => {
 				renderSuffix={() => !isRelease && renderBylineEditor()}
 				renderEmptyState={renderBylineEmptyState}
 			/>
-			{publishedDate && (
+			{publishedDateString && (
 				<div className="published-date">
 					<span className="pub-header-themed-secondary">Published on</span>
-					<span>{formatDate(publishedDate)}</span>
+					<span>{publishedDateString}</span>
 				</div>
 			)}
 		</div>

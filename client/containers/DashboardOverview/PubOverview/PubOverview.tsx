@@ -8,7 +8,7 @@ import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
 import { formatDate } from 'utils/dates';
 import { getAllPubContributors } from 'utils/contributors';
 import { getDashUrl } from 'utils/dashboard';
-import { getPubPublishedDate, getPubLatestReleaseDate } from 'utils/pub/pubDates';
+import { getPubPublishedDateString, getPubLatestReleaseDate } from 'utils/pub/pubDates';
 import { usePageContext } from 'utils/hooks';
 
 import PubTimeline from './PubTimeline';
@@ -34,13 +34,12 @@ const PubOverview = (props: Props) => {
 	};
 
 	const renderPubDates = () => {
-		const publishedDate = getPubPublishedDate(pubData);
+		const publishedDateString = getPubPublishedDateString(pubData);
 		const latestReleaseDate = getPubLatestReleaseDate(pubData, { excludeFirstRelease: true });
-		const publishedOnString = publishedDate ? formatDate(publishedDate) : <i>Unpublished</i>;
 		return (
 			<div className="pub-dates">
 				{renderSection('Created on', formatDate(pubData.createdAt))}
-				{renderSection('Published on', publishedOnString)}
+				{renderSection('Published on', publishedDateString || <i>Unpublished</i>)}
 				{latestReleaseDate &&
 					renderSection('Last released on', formatDate(latestReleaseDate))}
 			</div>

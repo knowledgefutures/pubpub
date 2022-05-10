@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { ClickToCopyButton } from 'components';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { formatDate } from 'utils/dates';
+import { getPubPublishedDateString } from 'utils/pub/pubDates';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
 import { PubPageData } from 'types';
@@ -26,7 +25,7 @@ const PubHeaderContent = (props: Props) => {
 	const { doi, isInMaintenanceMode } = pubData;
 	const { communityData } = usePageContext();
 	const { submissionState } = usePubContext();
-	const publishedDate = getPubPublishedDate(pubData);
+	const publishedDateString = getPubPublishedDateString(pubData);
 	const isSubmission = !!submissionState;
 
 	const updatePubData = (newPubData) => {
@@ -58,10 +57,14 @@ const PubHeaderContent = (props: Props) => {
 				)}
 				<div className="basic-details">
 					<span className="metadata-pair">
-						{publishedDate && (
-							<b className="pub-header-themed-secondary">Published on</b>
+						{publishedDateString ? (
+							<>
+								<b className="pub-header-themed-secondary">Published on </b>
+								{publishedDateString}
+							</>
+						) : (
+							<i>Unpublished</i>
 						)}
-						{publishedDate ? formatDate(publishedDate) : <i>Unpublished</i>}
 					</span>
 					{doi && (
 						<span className="metadata-pair doi-pair">

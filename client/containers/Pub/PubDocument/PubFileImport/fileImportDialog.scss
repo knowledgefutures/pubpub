@@ -1,72 +1,72 @@
-$drop-area-bkg: rgba(138, 155, 168, .15);
+$drop-area-bkg: rgba(138, 155, 168, 0.15);
 
 @mixin fix-button {
-    box-shadow: none;
-    border: 1px #ddd solid;
-    &:hover {
-        box-shadow: none;
-        border: 1px #ddd solid;
-    }
+	box-shadow: none;
+	border: 1px #ddd solid;
+	&:hover {
+		box-shadow: none;
+		border: 1px #ddd solid;
+	}
 }
 
 .file-import-dialog-component {
-    width: 500px !important;
-    .drop-area-container {
-        width: 100%;
-    }
-    .bp3-button.file-drop-area {
-        @include fix-button();
-        height: 150px;
-        background: $drop-area-bkg;
-        &:hover {
-            background: $drop-area-bkg;
-        }
-        .supported-formats {
-            margin-top: 4px;
-            font-size: 0.8em;
-            font-style: italic;
-            .bp3-popover-target {
-                justify-content: center;
-            }
-        }
-    }
-    .bp3-button.directory-drop-area {
-        @include fix-button();
-        height: 40px;
-    }
-    .in-progress {
-        height: 189px;
-        border-radius: 2px;
-        background: $drop-area-bkg;
-        border: 1px #ddd solid;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-    .import-message {
-        margin-top: 10px;
-        pre {
-            overflow-y: auto;
-        }
-    }
-    .files-listing {
-        margin-top: 10px;
-    }
-    .metadata-info {
-        margin-top: 10px;
-    }
-    .bp3-drawer-footer {
-        text-align: right;
-    }
-    .dialog-footer {
-        .bp3-button {
-            margin-right: 10px;
-        }
-        & > :last-child {
-            margin-right: 0;
-        }
-    }
+	width: 500px !important;
+	.drop-area-container {
+		width: 100%;
+	}
+	.bp3-button.file-drop-area {
+		@include fix-button();
+		height: 150px;
+		background: $drop-area-bkg;
+		&:hover {
+			background: $drop-area-bkg;
+		}
+		.supported-formats {
+			margin-top: 4px;
+			font-size: 0.8em;
+			font-style: italic;
+			.bp3-popover-target {
+				justify-content: center;
+			}
+		}
+	}
+	.bp3-button.directory-drop-area {
+		@include fix-button();
+		height: 40px;
+	}
+	.in-progress {
+		height: 189px;
+		border-radius: 2px;
+		background: $drop-area-bkg;
+		border: 1px #ddd solid;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+	.import-message {
+		margin-top: 10px;
+		pre {
+			overflow-y: auto;
+		}
+	}
+	.files-listing {
+		margin-top: 10px;
+	}
+	.metadata-info {
+		margin-top: 10px;
+	}
+	.bp3-drawer-footer {
+		text-align: right;
+	}
+	.dialog-footer {
+		.bp3-button {
+			margin-right: 10px;
+		}
+		& > :last-child {
+			margin-right: 0;
+		}
+	}
 }
 
 .pub-file-import-button-component {
@@ -92,8 +92,8 @@ $drop-area-bkg: rgba(138, 155, 168, .15);
 }
 
 .supported-formats-tooltip {
-    width: 300px;
-    li {
-        margin-bottom: 10px;
-    }
+	width: 300px;
+	li {
+		margin-bottom: 10px;
+	}
 }

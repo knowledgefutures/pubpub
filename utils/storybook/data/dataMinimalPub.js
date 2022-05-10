@@ -1,8 +1,7 @@
 export const minimalPub = {
 	id: '17df8339-d96d-4cea-8a10-d5af981b2d30',
 	slug: '8h4zrkyg',
-	title:
-		'The coreceptor mutation CCR5Δ32 influences the dynamics of HIV epidemics and is selected for by HIV',
+	title: 'The coreceptor mutation CCR5Δ32 influences the dynamics of HIV epidemics and is selected for by HIV',
 	description: null,
 	labels: null,
 	avatar: null,
@@ -11,14 +10,14 @@ export const minimalPub = {
 	customPublishedAt: null,
 	createdAt: '2020-11-17T15:38:31.448Z',
 	updatedAt: '2020-11-17T15:38:31.448Z',
-    headerStyle: 'dark',
+	headerStyle: 'dark',
 	scopeSummary: {
 		collections: 0,
 		pubs: 0,
 		discussions: 11,
 		reviews: 2,
 	},
-    attributions: [
+	attributions: [
 		{
 			id: '90d2ec74-193d-4471-98bc-eead8860a5ec',
 			name: null,

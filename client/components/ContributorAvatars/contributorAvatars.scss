@@ -1,15 +1,15 @@
 .contributor-avatars-component_popover {
-    background: white;
+	background: white;
 }
 
 .contributor-avatars-component_list-container {
-    padding: 10px;
-    padding-bottom: 0px;
-    max-width: 250px;
-    max-height: 400px;
-    overflow-y: auto;
+	padding: 10px;
+	padding-bottom: 0px;
+	max-width: 250px;
+	max-height: 400px;
+	overflow-y: auto;
 
-    &:last-child {
-        margin-bottom: 10px;
-    }
+	&:last-child {
+		margin-bottom: 10px;
+	}
 }

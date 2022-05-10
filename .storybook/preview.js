@@ -6,7 +6,7 @@ import { PageContext } from 'utils/hooks';
 import { communityData, locationData, loginData, scopeData } from 'utils/storybook/data';
 import { AccentStyle } from 'components';
 
-const pageContext = { 
+const pageContext = {
 	communityData,
 	locationData,
 	loginData,
@@ -16,7 +16,7 @@ const pageContext = {
 		hasNotifications: false,
 		hasUnreadNotifications: false,
 	},
-}
+};
 
 FocusStyleManager.onlyShowFocusOnTabs();
 

@@ -6,7 +6,7 @@ const useProd = false;
 const workingDirectory = process.env.MIGRATION_WORKING_DIRECTORY;
 const storage = makeStorage(workingDirectory);
 
-const getFirebaseConfig = function() {
+const getFirebaseConfig = function () {
 	return {
 		apiKey: 'AIzaSyCVBq7I9ddJpHhs-DzVEEdM09-VqTVex1g',
 		authDomain: 'pubpub-v6.firebaseapp.com',

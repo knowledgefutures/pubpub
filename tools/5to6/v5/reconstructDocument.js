@@ -27,7 +27,7 @@ const newDocument = () =>
 		content: [{ type: 'paragraph' }],
 	});
 
-const reconstructDocument = function*(changes, startingState) {
+const reconstructDocument = function* (changes, startingState) {
 	let state = startingState || { index: -1, doc: newDocument() };
 	for (const change of changes) {
 		let docWithinChange = state.doc;

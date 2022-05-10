@@ -1,32 +1,33 @@
 ul.notes-component {
-    line-height: 1.5em;
-    list-style-type: none;
-    margin: 0;
-    li.note {
-        display: flex;
-        padding-top: 18px;
-        padding-bottom: 18px;
-        &:not(:last-child):not(:only-child) {
-            border-bottom: 1px adjust-color(#C7C7C7, $alpha: -0.5) solid;
-        }
-        .number {
-            font-weight: bold;
-        }
-        .inner {
-            display: block;
-            margin-left: 27px;
-        }
-        .jump-back-icon {
-            margin-left: 7px;
-        }
-        .csl-bib-body, .csl-entry {
-            display: inline;
-        }
-        .csl-left-margin {
-            display: none;
-        }
-    }
-		&.has-no-numbering {
-			padding: 0;
+	line-height: 1.5em;
+	list-style-type: none;
+	margin: 0;
+	li.note {
+		display: flex;
+		padding-top: 18px;
+		padding-bottom: 18px;
+		&:not(:last-child):not(:only-child) {
+			border-bottom: 1px adjust-color(#c7c7c7, $alpha: -0.5) solid;
 		}
+		.number {
+			font-weight: bold;
+		}
+		.inner {
+			display: block;
+			margin-left: 27px;
+		}
+		.jump-back-icon {
+			margin-left: 7px;
+		}
+		.csl-bib-body,
+		.csl-entry {
+			display: inline;
+		}
+		.csl-left-margin {
+			display: none;
+		}
+	}
+	&.has-no-numbering {
+		padding: 0;
+	}
 }

@@ -1,56 +1,56 @@
 @import 'styles/variables.scss';
 
 #legal-container {
-    .legal-columns {
-        max-width: 900px;
-    }
+	.legal-columns {
+		max-width: 900px;
+	}
 
-    .legal-settings {
-        .bp3-card {
-            margin-bottom: 15px;
-        }
-    }
-    .main-content {
-        font-family: $body-font;
-        h2,
-        h3 {
-            line-height: 1em;
-            letter-spacing: 1px;
-            margin: 2em 0em 0.5em;
-            &:first-of-type {
-                margin-top: 0em;
-            }
-        }
-        p,
-        li {
-            font-style: normal;
-            font-size: 16px;
-            line-height: 1.5;
-            margin-bottom: 1em;
-        }
-    }
+	.legal-settings {
+		.bp3-card {
+			margin-bottom: 15px;
+		}
+	}
+	.main-content {
+		font-family: $body-font;
+		h2,
+		h3 {
+			line-height: 1em;
+			letter-spacing: 1px;
+			margin: 2em 0em 0.5em;
+			&:first-of-type {
+				margin-top: 0em;
+			}
+		}
+		p,
+		li {
+			font-style: normal;
+			font-size: 16px;
+			line-height: 1.5;
+			margin-bottom: 1em;
+		}
+	}
 }
 
 @media only screen and (min-width: 750px) {
-    @supports (display: grid) {
-        #legal-container {
-            .legal-columns {
-                display: grid;
-                grid-template-columns: 180px 1fr;
-                grid-template-areas: 'side main';
-                grid-column-gap: 4%;
-                margin-top: 2em;
-            }
-            .side-content {
-                grid-area: side;
-            }
-            .side-menu {
-                background-color: #f4f4f4;
-            }
-            .main-content {
-                grid-area: main;
-                min-width: 0;
-            }
-        }
-    }
+	@supports (display: grid) {
+		#legal-container {
+			.legal-columns {
+				display: grid;
+				grid-template-columns: 180px 1fr;
+				grid-template-areas: 'side main';
+				grid-column-gap: 4%;
+				margin-top: 2em;
+			}
+			.side-content {
+				grid-area: side;
+			}
+			.side-menu {
+				background-color: #f4f4f4;
+			}
+			.main-content {
+				grid-area: main;
+				min-width: 0;
+			}
+		}
+	}
 }

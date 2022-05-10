@@ -1,9 +1,9 @@
 .drag-drop-listing-component {
-    position: relative;
-    overflow-y: auto;
-    .empty-state-container {
-        &:first-child {
-            padding: 75px 0px;
-        }
-    }
+	position: relative;
+	overflow-y: auto;
+	.empty-state-container {
+		&:first-child {
+			padding: 75px 0px;
+		}
+	}
 }

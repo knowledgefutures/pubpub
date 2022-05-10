@@ -8,12 +8,12 @@ https://gitlab.pagedmedia.org/tools/pagedjs-cli/issues/11 */
 @import 'components/Editor/styles/latex.scss';
 
 .editor {
-    @import 'components/Editor/styles/main.scss';
-    @import 'components/Editor/styles/collab.scss';
-    @import 'components/Editor/styles/figure.scss';
-    @import 'components/Editor/styles/file.scss';
-    @import 'components/Editor/styles/table.scss';
-    @import 'components/Editor/styles/textAlign.scss';
+	@import 'components/Editor/styles/main.scss';
+	@import 'components/Editor/styles/collab.scss';
+	@import 'components/Editor/styles/figure.scss';
+	@import 'components/Editor/styles/file.scss';
+	@import 'components/Editor/styles/table.scss';
+	@import 'components/Editor/styles/textAlign.scss';
 }
 
 /* Import some global variables and styles, including fonts */
@@ -23,206 +23,206 @@ https://gitlab.pagedmedia.org/tools/pagedjs-cli/issues/11 */
 @import url('https://use.typekit.net/kmi0tdo.css');
 
 body {
-    font-family: $base-font;
+	font-family: $base-font;
 }
 
 /* Paged-specific overrides */
 .csl-bib-body,
 .csl-entry {
-    display: inline;
+	display: inline;
 }
 
 .pub-body-component {
-    .editor.ProseMirror .pub-notes ol > li {
-        list-style-position: inside;
-        margin: inherit;
-        &:target {
-            background: cornsilk;
-        }
-        p:last-child {
-            display: inline;
-            &:before {
-                display: inline;
-                content: ' ';
-            }
-        }
-        .return-link {
-            font-size: 0.75em;
-        }
-    }
-    .editor.ProseMirror figure > * {
-        pointer-events: auto;
-    }
+	.editor.ProseMirror .pub-notes ol > li {
+		list-style-position: inside;
+		margin: inherit;
+		&:target {
+			background: cornsilk;
+		}
+		p:last-child {
+			display: inline;
+			&:before {
+				display: inline;
+				content: ' ';
+			}
+		}
+		.return-link {
+			font-size: 0.75em;
+		}
+	}
+	.editor.ProseMirror figure > * {
+		pointer-events: auto;
+	}
 }
 
 section.cover {
-    font-family: $header-font;
-    .title {
-        margin-top: 0;
-        font-size: 3em;
-    }
-    .byline {
-        h3 {
-            margin: 0;
-            span.name {
-                white-space: nowrap;
-                display: inline-block;
-                margin-right: 0.2em;
-            }
-        }
-        h5 {
-            margin: 0;
-            margin-top: 0.5em;
-            span.affiliation {
-                white-space: break-word;
-                display: inline-block;
-                margin-right: 0.2em;
-            }
-        }
-    }
-    .details > *:not(:last-child) {
-        margin-bottom: 7px;
-    }
-    .title,
-    .byline,
-    .details {
-        margin-bottom: 30px !important;
-    }
+	font-family: $header-font;
+	.title {
+		margin-top: 0;
+		font-size: 3em;
+	}
+	.byline {
+		h3 {
+			margin: 0;
+			span.name {
+				white-space: nowrap;
+				display: inline-block;
+				margin-right: 0.2em;
+			}
+		}
+		h5 {
+			margin: 0;
+			margin-top: 0.5em;
+			span.affiliation {
+				white-space: break-word;
+				display: inline-block;
+				margin-right: 0.2em;
+			}
+		}
+	}
+	.details > *:not(:last-child) {
+		margin-bottom: 7px;
+	}
+	.title,
+	.byline,
+	.details {
+		margin-bottom: 30px !important;
+	}
 }
 
 @media screen {
-    body > * {
-        max-width: 700px;
-        margin: 0 auto;
-        &.pub-body-component {
-            font-size: 20px !important;
-        }
-    }
+	body > * {
+		max-width: 700px;
+		margin: 0 auto;
+		&.pub-body-component {
+			font-size: 20px !important;
+		}
+	}
 }
 
 @media print {
-    /* Baseline page styles */
-    @page {
-        size: Letter;
-        @top-left {
-            color: #666;
-            font-size: 10px;
-            font-family: $header-font;
-            content: string(community-and-collection);
-        }
-        @top-right {
-            color: #666;
-            font-size: 10px;
-            font-family: $header-font;
-            content: string(title);
-        }
-        @bottom-center {
-            color: #666;
-            font-size: 10px;
-            font-family: $header-font;
-            content: counter(page);
-        }
-    }
-    /* Avoid being the last element on the page */
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        break-after: avoid;
-    }
+	/* Baseline page styles */
+	@page {
+		size: Letter;
+		@top-left {
+			color: #666;
+			font-size: 10px;
+			font-family: $header-font;
+			content: string(community-and-collection);
+		}
+		@top-right {
+			color: #666;
+			font-size: 10px;
+			font-family: $header-font;
+			content: string(title);
+		}
+		@bottom-center {
+			color: #666;
+			font-size: 10px;
+			font-family: $header-font;
+			content: counter(page);
+		}
+	}
+	/* Avoid being the last element on the page */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		break-after: avoid;
+	}
 
-    tr,
-    th {
-        break-inside: avoid;
-        max-height: 90vh;
-        overflow-y: hidden;
-    }
+	tr,
+	th {
+		break-inside: avoid;
+		max-height: 90vh;
+		overflow-y: hidden;
+	}
 
-    .editor figure {
-        break-inside: avoid;
-        display: flex;
-        flex-direction: column;
-        max-height: 800px;
-        img,
-        video {
-            break-inside: avoid;
-            width: 100%;
-            min-height: 0;
-            max-height: 100%;
-            flex-shrink: 1;
-            object-fit: contain;
-        }
-    }
+	.editor figure {
+		break-inside: avoid;
+		display: flex;
+		flex-direction: column;
+		max-height: 800px;
+		img,
+		video {
+			break-inside: avoid;
+			width: 100%;
+			min-height: 0;
+			max-height: 100%;
+			flex-shrink: 1;
+			object-fit: contain;
+		}
+	}
 
-    figcaption {
-        font-size: 10px;
-        color: #555;
-        flex-shrink: 0;
-    }
+	figcaption {
+		font-size: 10px;
+		color: #555;
+		flex-shrink: 0;
+	}
 
-    table {
-        font-size: 12px;
-        border-collapse: collapse;
-        table-layout: fixed;
-        width: 100%;
-        overflow: hidden;
-    }
+	table {
+		font-size: 12px;
+		border-collapse: collapse;
+		table-layout: fixed;
+		width: 100%;
+		overflow: hidden;
+	}
 
-    table caption {
-        text-align: left;
-    }
+	table caption {
+		text-align: left;
+	}
 
-    table,
-    tr,
-    th,
-    td {
-        border: 1px #ccc solid;
-        padding: 5px;
-    }
+	table,
+	tr,
+	th,
+	td {
+		border: 1px #ccc solid;
+		padding: 5px;
+	}
 
-    th {
-        font-weight: bold;
-        text-align: left;
-        background-color: #f0f0f4;
-    }
+	th {
+		font-weight: bold;
+		text-align: left;
+		background-color: #f0f0f4;
+	}
 
-    td,
-    a {
-        word-break: break-word;
-    }
+	td,
+	a {
+		word-break: break-word;
+	}
 
-    a.footnote {
-        vertical-align: super;
-        font-size: 10px;
-    }
+	a.footnote {
+		vertical-align: super;
+		font-size: 10px;
+	}
 
-    [data-node-type='math-block'] {
-        break-inside: avoid;
-    }
+	[data-node-type='math-block'] {
+		break-inside: avoid;
+	}
 
-    section.cover {
-        page: cover;
-    }
+	section.cover {
+		page: cover;
+	}
 
-    @page cover {
-        @top-left {
-            content: '';
-        }
-        @top-right {
-            content: '';
-        }
-        @bottom-center {
-            content: '';
-        }
-    }
+	@page cover {
+		@top-left {
+			content: '';
+		}
+		@top-right {
+			content: '';
+		}
+		@bottom-center {
+			content: '';
+		}
+	}
 
-    .community-and-collection {
-        string-set: community-and-collection content();
-    }
+	.community-and-collection {
+		string-set: community-and-collection content();
+	}
 
-    .title {
-        string-set: title content();
-    }
+	.title {
+		string-set: title content();
+	}
 }

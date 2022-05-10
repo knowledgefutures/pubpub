@@ -232,8 +232,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Over the last century civilization has systematically supported a market- based approach to developing technical, financial, social and legal tools that focus on efficiency, growth and productivity. In this manner we have achieved considerable progress on some of the most press- ing humanitarian challenges, such as eradicating infectious diseases and making life easier and more convenient. However, we have often put our tools and methods to use with little regard to their systemic or long-term effects, and have thereby created a set of new, inter- connected, and more complex problems. Our new problems require new approaches: new understanding, solution design and interven- tion. Yet we continue to try to solve these new problems with the same tools that caused them.',
+											text: 'Over the last century civilization has systematically supported a market- based approach to developing technical, financial, social and legal tools that focus on efficiency, growth and productivity. In this manner we have achieved considerable progress on some of the most press- ing humanitarian challenges, such as eradicating infectious diseases and making life easier and more convenient. However, we have often put our tools and methods to use with little regard to their systemic or long-term effects, and have thereby created a set of new, inter- connected, and more complex problems. Our new problems require new approaches: new understanding, solution design and interven- tion. Yet we continue to try to solve these new problems with the same tools that caused them.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -268,8 +267,7 @@ export default {
 											currIndex: 0,
 										},
 										{
-											text:
-												'How can we understand and effectively intervene in interconnected complex adaptive systems?',
+											text: 'How can we understand and effectively intervene in interconnected complex adaptive systems?',
 											type: 'text',
 											marks: [
 												{
@@ -299,8 +297,7 @@ export default {
 											currIndex: 0,
 										},
 										{
-											text:
-												'In particular, my thesis presents through theory and practice the following contributions to addressing these problems:',
+											text: 'In particular, my thesis presents through theory and practice the following contributions to addressing these problems:',
 											type: 'text',
 											currIndex: 1,
 										},
@@ -343,8 +340,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'A post-Internet framework for understanding and interven- ing in complex adaptive systems. ',
+															text: 'A post-Internet framework for understanding and interven- ing in complex adaptive systems. ',
 															type: 'text',
 															marks: [
 																{
@@ -354,8 +350,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																'Drawing on systems dynam- ics, evolutionary dynamics and theory of change based on causal networks, I describe a way to understand and suggest ways to intervene in complex systems. I argue that an anti-disciplinary approach and paradigm shifts are required to achieve the out- comes we desire.',
+															text: 'Drawing on systems dynam- ics, evolutionary dynamics and theory of change based on causal networks, I describe a way to understand and suggest ways to intervene in complex systems. I argue that an anti-disciplinary approach and paradigm shifts are required to achieve the out- comes we desire.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -379,8 +374,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'Learnings from the creation and management of post-Internet organizations that can be applied to designing and deploying interventions. ',
+															text: 'Learnings from the creation and management of post-Internet organizations that can be applied to designing and deploying interventions. ',
 															type: 'text',
 															marks: [
 																{
@@ -390,8 +384,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																'I propose an architecture of layers of interoper- ability to unbundle complex, inflexible, and monolithic systems and increase competition, cooperation, generativity, and flexibil- ity. I argue that the Internet is the best example of this architec- ture and that the Internet has provided an opportunity to de- ploy this architecture in other domains. I demonstrate how the Internet has has made the world more complex but through low- ering the cost of communication and collaboration has enabled new forms of organization and production. This has changed the nature of our interventions.',
+															text: 'I propose an architecture of layers of interoper- ability to unbundle complex, inflexible, and monolithic systems and increase competition, cooperation, generativity, and flexibil- ity. I argue that the Internet is the best example of this architec- ture and that the Internet has provided an opportunity to de- ploy this architecture in other domains. I demonstrate how the Internet has has made the world more complex but through low- ering the cost of communication and collaboration has enabled new forms of organization and production. This has changed the nature of our interventions.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -415,8 +408,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'How and why we must change the values of society from one based on the measurement of financial value to flourishing and robustness. ',
+															text: 'How and why we must change the values of society from one based on the measurement of financial value to flourishing and robustness. ',
 															type: 'text',
 															marks: [
 																{
@@ -426,8 +418,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																'The paradigm determines what we measure and generates the values and the goals of a system. Measuring value financially has created a competitive market-based system that has provided many societal benefits but has produced com- plex problems not solvable through competitive market-based solutions. In order to address these challenges, we must shift the paradigm across our systems to focus on a more complex measure of flourishing and robustness. In order to transcend  our current economic paradigm, the transformation will require a movement that includes arts and culture to transform strongly held beliefs. I propose a framework of values based on the pur- suit of flourishing and a method for transforming ourselves.',
+															text: 'The paradigm determines what we measure and generates the values and the goals of a system. Measuring value financially has created a competitive market-based system that has provided many societal benefits but has produced com- plex problems not solvable through competitive market-based solutions. In order to address these challenges, we must shift the paradigm across our systems to focus on a more complex measure of flourishing and robustness. In order to transcend  our current economic paradigm, the transformation will require a movement that includes arts and culture to transform strongly held beliefs. I propose a framework of values based on the pur- suit of flourishing and a method for transforming ourselves.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -463,8 +454,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Reflecting on my work experience, I examine my successes and failures in the form of learnings and insights. I discuss what questions are outstanding and conclude with a call to action with a theory of change; we need to bring about a fundamental normative shift in society through communities, away from the pursuit of growth for growth’s sake and towards a sustainable sensibility of flourishing that can draw on both historical examples and the sensibilities of some modern indigenous cultures, as well as new values emerging from theoretical and practical progress in science.',
+											text: 'Reflecting on my work experience, I examine my successes and failures in the form of learnings and insights. I discuss what questions are outstanding and conclude with a call to action with a theory of change; we need to bring about a fundamental normative shift in society through communities, away from the pursuit of growth for growth’s sake and towards a sustainable sensibility of flourishing that can draw on both historical examples and the sensibilities of some modern indigenous cultures, as well as new values emerging from theoretical and practical progress in science.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -482,8 +472,7 @@ export default {
 								{
 									type: 'image',
 									attrs: {
-										url:
-											'https://assets.pubpub.org/_testing/71534266580550.png',
+										url: 'https://assets.pubpub.org/_testing/71534266580550.png',
 										size: 46,
 										align: 'center',
 										caption: '<p>Scheming with Timothy Leary in 1995</p>',
@@ -550,8 +539,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Keywords: Cybernetics, Systems Dynamics, Philosophy of Science, Internet, Cryptocurrency',
+											text: 'Keywords: Cybernetics, Systems Dynamics, Philosophy of Science, Internet, Cryptocurrency',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -764,8 +752,7 @@ export default {
 											currIndex: 0,
 										},
 										{
-											text:
-												' is a project of the Center for Science and the Imagination at Arizona State University (“ASU”) and the Media Lab and The MIT Press at the Massachusetts Institute of Technology (“MIT”).',
+											text: ' is a project of the Center for Science and the Imagination at Arizona State University (“ASU”) and the Media Lab and The MIT Press at the Massachusetts Institute of Technology (“MIT”).',
 											type: 'text',
 											currIndex: 1,
 										},
@@ -789,8 +776,7 @@ export default {
 											currIndex: 0,
 										},
 										{
-											text:
-												' is committed to respecting the privacy of users who access the ',
+											text: ' is committed to respecting the privacy of users who access the ',
 											type: 'text',
 											currIndex: 1,
 										},
@@ -805,8 +791,7 @@ export default {
 											currIndex: 2,
 										},
 										{
-											text:
-												'website (the “Site,” which includes all pages within the frankenbook.org host directory and subdomains, and all associated services.',
+											text: 'website (the “Site,” which includes all pages within the frankenbook.org host directory and subdomains, and all associated services.',
 											type: 'text',
 											currIndex: 3,
 										},
@@ -842,8 +827,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'When you visit the Site, our web server may record the following information in its server log:',
+											text: 'When you visit the Site, our web server may record the following information in its server log:',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -883,8 +867,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'the URLs you have requested to access,',
+															text: 'the URLs you have requested to access,',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -904,8 +887,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'the dates and methods of requests,',
+															text: 'the dates and methods of requests,',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -925,8 +907,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'the status code of your requests,',
+															text: 'the status code of your requests,',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -946,8 +927,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'URLs of pages that referred you to the Site,',
+															text: 'URLs of pages that referred you to the Site,',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -967,8 +947,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'the number of bytes transferred, and',
+															text: 'the number of bytes transferred, and',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -988,8 +967,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'your web browser and operating system platform.',
+															text: 'your web browser and operating system platform.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -1009,8 +987,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'We use server log information to help diagnose problems with our server and to administer our website by identifying which parts or features of our site are most heavily used. We also use this information to tailor site content to user needs and to generate aggregate statistical reports. Web server logs are retained on a temporary basis, during which time their contents are accessible to Site administrators, and then deleted completely from our systems. Unless required by legal process, we do not link IP addresses to any personally identifiable information. This means that user sessions will be tracked by IP address, but a user’s identity will remain anonymous.',
+											text: 'We use server log information to help diagnose problems with our server and to administer our website by identifying which parts or features of our site are most heavily used. We also use this information to tailor site content to user needs and to generate aggregate statistical reports. Web server logs are retained on a temporary basis, during which time their contents are accessible to Site administrators, and then deleted completely from our systems. Unless required by legal process, we do not link IP addresses to any personally identifiable information. This means that user sessions will be tracked by IP address, but a user’s identity will remain anonymous.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1024,8 +1001,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'In addition, we ordinarily do not disclose to third parties site usage by individual IP addresses, but we may do so in very limited circumstances when complying with law or legal process, working with consultants assisting us with fixing or improving the Site, or monitoring and improving the security of our network.',
+											text: 'In addition, we ordinarily do not disclose to third parties site usage by individual IP addresses, but we may do so in very limited circumstances when complying with law or legal process, working with consultants assisting us with fixing or improving the Site, or monitoring and improving the security of our network.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1061,8 +1037,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'To obtain user registration, you must submit your email address to the Site, and a password that you create for user authentication purposes. We also ask you to provide a first and last name. You may use a pseudonym if you wish.',
+											text: 'To obtain user registration, you must submit your email address to the Site, and a password that you create for user authentication purposes. We also ask you to provide a first and last name. You may use a pseudonym if you wish.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1076,8 +1051,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'The Site allows registered users to post content, images, multimedia presentations, and other scholarly works, as well as reviews, comments and other user-generated content in certain areas. The content you post will be available for all registered users to view and will identify you as the poster by the user name you have selected. If you do not wish to be identified as the source of content you post to the Site, you should select a pseudonymous user name.',
+											text: 'The Site allows registered users to post content, images, multimedia presentations, and other scholarly works, as well as reviews, comments and other user-generated content in certain areas. The content you post will be available for all registered users to view and will identify you as the poster by the user name you have selected. If you do not wish to be identified as the source of content you post to the Site, you should select a pseudonymous user name.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1101,8 +1075,7 @@ export default {
 											currIndex: 0,
 										},
 										{
-											text:
-												' creates a profile page for each registered user. The profile pages are public-facing. By default, the profile page includes your user name and information about your contributions to ',
+											text: ' creates a profile page for each registered user. The profile pages are public-facing. By default, the profile page includes your user name and information about your contributions to ',
 											type: 'text',
 											currIndex: 1,
 										},
@@ -1117,8 +1090,7 @@ export default {
 											currIndex: 2,
 										},
 										{
-											text:
-												' and other activities on the Site. You may (but do not need to) augment your profile page with additional information, including a picture.',
+											text: ' and other activities on the Site. You may (but do not need to) augment your profile page with additional information, including a picture.',
 											type: 'text',
 											currIndex: 3,
 										},
@@ -1132,8 +1104,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'We will not disclose your email address anywhere on the Site (see below, “Email”) unless requested by you.',
+											text: 'We will not disclose your email address anywhere on the Site (see below, “Email”) unless requested by you.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1147,8 +1118,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'From time to time we may solicit feedback from you about your use of the Site and its features (your “Feedback”). You are not required to provide Feedback. We solicit Feedback for internal purposes only, so that we can evaluate the Site and its features, and we will not publish or otherwise disclose your Feedback without first obtaining your consent to do so.',
+											text: 'From time to time we may solicit feedback from you about your use of the Site and its features (your “Feedback”). You are not required to provide Feedback. We solicit Feedback for internal purposes only, so that we can evaluate the Site and its features, and we will not publish or otherwise disclose your Feedback without first obtaining your consent to do so.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1184,8 +1154,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'In order to refine the resources on offer through the Site and to optimize ',
+											text: 'In order to refine the resources on offer through the Site and to optimize ',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1215,8 +1184,7 @@ export default {
 											currIndex: 3,
 										},
 										{
-											text:
-												' may elect to conduct internal analytics of content submitted by users. Any such internal analytics will be conducted on an anonymized set of user-generated content.',
+											text: ' may elect to conduct internal analytics of content submitted by users. Any such internal analytics will be conducted on an anonymized set of user-generated content.',
 											type: 'text',
 											currIndex: 4,
 										},
@@ -1252,8 +1220,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'We use Google Analytics and Mixpanel software to perform Site usage analytics. Google Analytics collects anonymous information from users to help us track Site usage and referrals from other websites. These data are used primarily to optimize the website experience for our visitors, but we may use the data as well to assist us in our marketing of the Site.',
+											text: 'We use Google Analytics and Mixpanel software to perform Site usage analytics. Google Analytics collects anonymous information from users to help us track Site usage and referrals from other websites. These data are used primarily to optimize the website experience for our visitors, but we may use the data as well to assist us in our marketing of the Site.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1267,8 +1234,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Information collected and processed by Google Analytics and Mixpanel include the user’s IP address, network location, and geographic location. Google Analytics and Mixpanel acquires all its information directly from the user, by installing a cookie (see below) on JavaScribp3-enabled computers. The Site does not share any information it collects with Google or Mixpanel, and neither Google nor Mixpanel collect any personal identifying information such as names, contact information, social security numbers or financial information.',
+											text: 'Information collected and processed by Google Analytics and Mixpanel include the user’s IP address, network location, and geographic location. Google Analytics and Mixpanel acquires all its information directly from the user, by installing a cookie (see below) on JavaScribp3-enabled computers. The Site does not share any information it collects with Google or Mixpanel, and neither Google nor Mixpanel collect any personal identifying information such as names, contact information, social security numbers or financial information.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1304,8 +1270,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Cookies are unique bits of computer data that many major websites will transfer to your computer the first time that you visit. Cookies are stored on your hard drive and may be later accessed by the website to track prior usage. As noted above, Google Analytics and Mixpanel will install a cookie on the hard drives of Site visitors.',
+											text: 'Cookies are unique bits of computer data that many major websites will transfer to your computer the first time that you visit. Cookies are stored on your hard drive and may be later accessed by the website to track prior usage. As noted above, Google Analytics and Mixpanel will install a cookie on the hard drives of Site visitors.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1341,8 +1306,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'We will only record your email address if you send us a message or submit it to us as part of the user registration process. We will only use your email address for the purpose for which you have provided it — i.e., to respond to a message from you or to communicate with you regarding your user account or your contributions to ',
+											text: 'We will only record your email address if you send us a message or submit it to us as part of the user registration process. We will only use your email address for the purpose for which you have provided it — i.e., to respond to a message from you or to communicate with you regarding your user account or your contributions to ',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1371,8 +1335,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'When you submit your email address to the Site during registration, we will ask you whether you want to receive periodic announcements from the Site by email. Accepting emailed announcements is entirely optional and not a condition of registration, and you may change your email settings at any time to subscribe or unsubscribe to these mailings.',
+											text: 'When you submit your email address to the Site during registration, we will ask you whether you want to receive periodic announcements from the Site by email. Accepting emailed announcements is entirely optional and not a condition of registration, and you may change your email settings at any time to subscribe or unsubscribe to these mailings.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1386,8 +1349,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'In the event we contract with a third-party service to assist with email delivery of newsletters and other mailings containing information about the Site, that service will be prohibited from using or sharing Site user information for any purpose other than facilitating communications on behalf of the Site.',
+											text: 'In the event we contract with a third-party service to assist with email delivery of newsletters and other mailings containing information about the Site, that service will be prohibited from using or sharing Site user information for any purpose other than facilitating communications on behalf of the Site.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1423,8 +1385,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'We will not sell, lend, or disclose to third parties any personally identifiable information collected from users, except as described in this Policy or in the event we are required by law to do so. We may disclose information to ASU and MIT’s employees, fellows, students, consultants and agents who have a legitimate need to know the information for the purpose of fixing or improving the Site and monitoring and improving the security of our network. We may also disclose this information when special circumstances call for it, such as when disclosure is required by law or court order or when disclosure is, in our sole discretion, necessary to protect our legal rights, including intellectual property rights.',
+											text: 'We will not sell, lend, or disclose to third parties any personally identifiable information collected from users, except as described in this Policy or in the event we are required by law to do so. We may disclose information to ASU and MIT’s employees, fellows, students, consultants and agents who have a legitimate need to know the information for the purpose of fixing or improving the Site and monitoring and improving the security of our network. We may also disclose this information when special circumstances call for it, such as when disclosure is required by law or court order or when disclosure is, in our sole discretion, necessary to protect our legal rights, including intellectual property rights.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1460,8 +1421,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'This Site may contain links to other web resources, including websites of organizations other than Arizona State University and the Massachusetts Institute of Technology. The websites to which the Site links may also install cookies on your computer, log your access to their web pages, or collect user-identifying information directly from you, once you proceed to browse those sites. We are not responsible for the privacy policies of other sites to which the Site provides links. Please visit the relevant sites to review their privacy policies.',
+											text: 'This Site may contain links to other web resources, including websites of organizations other than Arizona State University and the Massachusetts Institute of Technology. The websites to which the Site links may also install cookies on your computer, log your access to their web pages, or collect user-identifying information directly from you, once you proceed to browse those sites. We are not responsible for the privacy policies of other sites to which the Site provides links. Please visit the relevant sites to review their privacy policies.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1497,8 +1457,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'We have in place physical, electronic and managerial procedures to protect the information we collect online. However, as effective as these measures are, no security system is impenetrable. We cannot completely guarantee the security of our database, nor can we guarantee that the information you supply will not be intercepted while being transmitted to us over the Internet.',
+											text: 'We have in place physical, electronic and managerial procedures to protect the information we collect online. However, as effective as these measures are, no security system is impenetrable. We cannot completely guarantee the security of our database, nor can we guarantee that the information you supply will not be intercepted while being transmitted to us over the Internet.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1534,8 +1493,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'We will review our security measures and Privacy Policy on a periodic basis, and we may modify our policies as appropriate. We may also change or update our Privacy Policy if we add new services or features. If any changes are made, we will make appropriate amendments to this policy and post them at the Site. By accessing the Site after modifications to this Privacy Policy have been posted, you agree to be bound by the modified terms. We encourage you to review our Privacy Policy on a regular basis.',
+											text: 'We will review our security measures and Privacy Policy on a periodic basis, and we may modify our policies as appropriate. We may also change or update our Privacy Policy if we add new services or features. If any changes are made, we will make appropriate amendments to this policy and post them at the Site. By accessing the Site after modifications to this Privacy Policy have been posted, you agree to be bound by the modified terms. We encourage you to review our Privacy Policy on a regular basis.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1549,8 +1507,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, you can contact privacy@pubpub.org.',
+											text: 'If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, you can contact privacy@pubpub.org.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1586,8 +1543,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'This Privacy Policy is in effect as of as of January 1, 2018.',
+											text: 'This Privacy Policy is in effect as of as of January 1, 2018.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1637,8 +1593,7 @@ export default {
 											currIndex: 0,
 										},
 										{
-											text:
-												' is a collective reading and collaborative annotation experience of the original 1818 text of ',
+											text: ' is a collective reading and collaborative annotation experience of the original 1818 text of ',
 											type: 'text',
 											currIndex: 1,
 										},
@@ -1653,8 +1608,7 @@ export default {
 											currIndex: 2,
 										},
 										{
-											text:
-												', by Mary Wollstonecraft Shelley. The project launched in January 2018, as part of Arizona State University’s celebration of the novel’s 200th anniversary. Even two centuries later, Shelley’s modern myth continues to shape the way people imagine science, technology, and their moral consequences. ',
+											text: ', by Mary Wollstonecraft Shelley. The project launched in January 2018, as part of Arizona State University’s celebration of the novel’s 200th anniversary. Even two centuries later, Shelley’s modern myth continues to shape the way people imagine science, technology, and their moral consequences. ',
 											type: 'text',
 											currIndex: 3,
 										},
@@ -1669,8 +1623,7 @@ export default {
 											currIndex: 4,
 										},
 										{
-											text:
-												' gives readers the opportunity to trace the scientific, technological, political, and ethical dimensions of the novel, and to learn more about its historical context and enduring legacy.',
+											text: ' gives readers the opportunity to trace the scientific, technological, political, and ethical dimensions of the novel, and to learn more about its historical context and enduring legacy.',
 											type: 'text',
 											currIndex: 5,
 										},
@@ -1684,8 +1637,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												"To learn more about Arizona State University’s celebration of Frankenstein's bicentennial, visit ",
+											text: "To learn more about Arizona State University’s celebration of Frankenstein's bicentennial, visit ",
 											type: 'text',
 											currIndex: 0,
 										},
@@ -1810,8 +1762,7 @@ export default {
 											currIndex: 2,
 										},
 										{
-											text:
-												' an interactive, social experience of learning and exploration.',
+											text: ' an interactive, social experience of learning and exploration.',
 											type: 'text',
 											currIndex: 3,
 										},
@@ -1841,8 +1792,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' You are welcome to read and share passages from the book without creating a user account. However, if you would like to write replies and submit your own annotations, you will need to create an account. ',
+															text: ' You are welcome to read and share passages from the book without creating a user account. However, if you would like to write replies and submit your own annotations, you will need to create an account. ',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -1853,8 +1803,7 @@ export default {
 																{
 																	type: 'link',
 																	attrs: {
-																		href:
-																			'https://frankenbook.pubpub.org/signup',
+																		href: 'https://frankenbook.pubpub.org/signup',
 																		title: null,
 																		target: null,
 																	},
@@ -1888,8 +1837,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' We’ve had dozens of experts from a wide variety of intellectual and professional backgrounds annotate the text of Frankenstein. At the end of any paragraph with an annotation attached to it, you’ll see an orange box with a number inside. That number tells you how many different annotations there are on that paragraph. To read the annotations, simply click on the orange box. You can also click the name of the author of any annotation to learn more about them.',
+															text: ' We’ve had dozens of experts from a wide variety of intellectual and professional backgrounds annotate the text of Frankenstein. At the end of any paragraph with an annotation attached to it, you’ll see an orange box with a number inside. That number tells you how many different annotations there are on that paragraph. To read the annotations, simply click on the orange box. You can also click the name of the author of any annotation to learn more about them.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -1919,8 +1867,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' Annotations are grouped into 8 different themes. By default, all of the themes are turned on. You can use the "Active Themes" drop-down menu, located at the top of the book page, to toggle themes on and off. Limiting the number of themes you have turned on helps you focus on the ideas and topic you’re most interested in. For example, maybe you’d like to only see annotations on science and technology issues, or maybe you’re primarily interested in the novel’s connections to philosophy and politics. Learn more about the themes.',
+															text: ' Annotations are grouped into 8 different themes. By default, all of the themes are turned on. You can use the "Active Themes" drop-down menu, located at the top of the book page, to toggle themes on and off. Limiting the number of themes you have turned on helps you focus on the ideas and topic you’re most interested in. For example, maybe you’d like to only see annotations on science and technology issues, or maybe you’re primarily interested in the novel’s connections to philosophy and politics. Learn more about the themes.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -1950,8 +1897,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' This project is about sparking conversation and the exchange of ideas. We want to hear what you think! Next to each annotation, you’ll find a "Reply" button. Simply click on that button and begin typing. Replies will appear immediately. You must create a user account and be logged in to write a reply. Media content can be directly embedded into replies by typing \'/\' and then choosing an element from the menu. Images, videos, and web iFrames can be directly added.',
+															text: ' This project is about sparking conversation and the exchange of ideas. We want to hear what you think! Next to each annotation, you’ll find a "Reply" button. Simply click on that button and begin typing. Replies will appear immediately. You must create a user account and be logged in to write a reply. Media content can be directly embedded into replies by typing \'/\' and then choosing an element from the menu. Images, videos, and web iFrames can be directly added.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -1981,8 +1927,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' We’d love to add your knowledge, expertise, and perspectives to Frankenbook! Registered users can submit annotations for consideration by our team of editors—if the annotations add something new and exciting to the project, they will become a permanent part of Frankenbook. If the paragraph you would like to annotate already has annotations, click on the orange box and begin typing under “New Annotation.” If the paragraph doesn’t have any annotations yet, click on the gray box with a “+” sign and begin typing under “New Annotation.” You must ',
+															text: ' We’d love to add your knowledge, expertise, and perspectives to Frankenbook! Registered users can submit annotations for consideration by our team of editors—if the annotations add something new and exciting to the project, they will become a permanent part of Frankenbook. If the paragraph you would like to annotate already has annotations, click on the orange box and begin typing under “New Annotation.” If the paragraph doesn’t have any annotations yet, click on the gray box with a “+” sign and begin typing under “New Annotation.” You must ',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -1993,8 +1938,7 @@ export default {
 																{
 																	type: 'link',
 																	attrs: {
-																		href:
-																			'https://frankenbook.pubpub.org/signup',
+																		href: 'https://frankenbook.pubpub.org/signup',
 																		title: null,
 																		target: null,
 																	},
@@ -2003,8 +1947,7 @@ export default {
 															currIndex: 2,
 														},
 														{
-															text:
-																' and be logged in to submit an annotation.',
+															text: ' and be logged in to submit an annotation.',
 															type: 'text',
 															currIndex: 3,
 														},
@@ -2034,8 +1977,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' It’s easy to select and share your favorite passage from the novel. Simply click and drag to highlight any passage—anything from a single evocative word to several stirring paragraphs. A round hyperlink icon will appear on the left margin. If you click on that icon, you’ll see a unique URL for that passage, which you can drop into a text or email, or post to the social media platform of your choice.',
+															text: ' It’s easy to select and share your favorite passage from the novel. Simply click and drag to highlight any passage—anything from a single evocative word to several stirring paragraphs. A round hyperlink icon will appear on the left margin. If you click on that icon, you’ll see a unique URL for that passage, which you can drop into a text or email, or post to the social media platform of your choice.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2077,8 +2019,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Our annotations are organized by themes, to help you learn more about the subjects you’re most interested in:',
+											text: 'Our annotations are organized by themes, to help you learn more about the subjects you’re most interested in:',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -2108,8 +2049,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' Prejudice, social exclusion, and struggles for justice in the novel, in the Romantic Era, and today.',
+															text: ' Prejudice, social exclusion, and struggles for justice in the novel, in the Romantic Era, and today.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2139,8 +2079,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' Digging into Frankenstein’s preoccupation with health, disease, and the body.',
+															text: ' Digging into Frankenstein’s preoccupation with health, disease, and the body.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2170,8 +2109,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' The stories that influenced Shelley, and how Frankenstein has echoed throughout culture over the past 200 years.',
+															text: ' The stories that influenced Shelley, and how Frankenstein has echoed throughout culture over the past 200 years.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2201,8 +2139,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' The woman at the heart of it all: Mary Shelley’s adventures, relationships, and writing.',
+															text: ' The woman at the heart of it all: Mary Shelley’s adventures, relationships, and writing.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2232,8 +2169,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' The emotions, values, ideals, and obsessions that drive human ingenuity.',
+															text: ' The emotions, values, ideals, and obsessions that drive human ingenuity.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2263,8 +2199,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' The big ideas and political debates that animate Frankenstein and help us understand it today.',
+															text: ' The big ideas and political debates that animate Frankenstein and help us understand it today.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2294,8 +2229,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' Natural science yesterday and today, from ancients and alchemists to Humphry Davy to Marie Curie.',
+															text: ' Natural science yesterday and today, from ancients and alchemists to Humphry Davy to Marie Curie.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2325,8 +2259,7 @@ export default {
 															currIndex: 0,
 														},
 														{
-															text:
-																' Historical and emerging Frankensteinian technologies, from steam engines to AI.',
+															text: ' Historical and emerging Frankensteinian technologies, from steam engines to AI.',
 															type: 'text',
 															currIndex: 1,
 														},
@@ -2388,8 +2321,7 @@ export default {
 											currIndex: 1,
 										},
 										{
-											text:
-												', an open-source digital publication platform developed at The MIT Media Lab and The MIT Press. The project is edited and moderated by the ',
+											text: ', an open-source digital publication platform developed at The MIT Media Lab and The MIT Press. The project is edited and moderated by the ',
 											type: 'text',
 											currIndex: 2,
 										},
@@ -2409,8 +2341,7 @@ export default {
 											currIndex: 3,
 										},
 										{
-											text:
-												' at Arizona State University, in partnership with MIT.',
+											text: ' at Arizona State University, in partnership with MIT.',
 											type: 'text',
 											currIndex: 4,
 										},
@@ -2429,15 +2360,13 @@ export default {
 											currIndex: 0,
 										},
 										{
-											text:
-												'Frankenstein: Annotated for Scientists, Engineers, and Creators of All Kinds',
+											text: 'Frankenstein: Annotated for Scientists, Engineers, and Creators of All Kinds',
 											type: 'text',
 											marks: [
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://mitpress.mit.edu/books/frankenstein',
+														href: 'https://mitpress.mit.edu/books/frankenstein',
 														title: null,
 														target: null,
 													},
@@ -2446,8 +2375,7 @@ export default {
 											currIndex: 1,
 										},
 										{
-											text:
-												', published by The MIT Press in 2017. Frankenbook builds on that foundation with new multimedia content and an expanded set of annotations, sorted into lenses dedicated to specific themes and subjects, which can be switched on and off at will.',
+											text: ', published by The MIT Press in 2017. Frankenbook builds on that foundation with new multimedia content and an expanded set of annotations, sorted into lenses dedicated to specific themes and subjects, which can be switched on and off at will.',
 											type: 'text',
 											currIndex: 2,
 										},
@@ -2483,8 +2411,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Frankenbook is both a digital reading experience and a place to build community around Mary Wollstonecraft Shelley’s Frankenstein and its reverberations throughout culture, politics, philosophy, science, technology, and society. We encourage members to engage in thoughtful, constructive, and sometimes playful conversations around the text, building on one another’s ideas and illuminating the interplay between creativity and responsibility that animates the novel. Frankenbook is a place for imaginative intellectual engagement, open and inclusive discussion, and an exchange of information, ideas, and diverse perspectives. We welcome everyone to join the Frankenbook community, from literature scholars, historians, and bioengineers to students, artists, Frankenstein aficionados, monster movie fans, and book lovers of all stripes.',
+											text: 'Frankenbook is both a digital reading experience and a place to build community around Mary Wollstonecraft Shelley’s Frankenstein and its reverberations throughout culture, politics, philosophy, science, technology, and society. We encourage members to engage in thoughtful, constructive, and sometimes playful conversations around the text, building on one another’s ideas and illuminating the interplay between creativity and responsibility that animates the novel. Frankenbook is a place for imaginative intellectual engagement, open and inclusive discussion, and an exchange of information, ideas, and diverse perspectives. We welcome everyone to join the Frankenbook community, from literature scholars, historians, and bioengineers to students, artists, Frankenstein aficionados, monster movie fans, and book lovers of all stripes.',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -2498,8 +2425,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Members of the Frankenbook community agree to the following guidelines, to ensure that the site is an inclusive and welcoming place for all kinds of people. Remember that your use of Frankenbook is subject to these Community Guidelines and our ',
+											text: 'Members of the Frankenbook community agree to the following guidelines, to ensure that the site is an inclusive and welcoming place for all kinds of people. Remember that your use of Frankenbook is subject to these Community Guidelines and our ',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -2510,8 +2436,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/terms',
+														href: 'https://frankenbook.pubpub.org/terms',
 														title: null,
 														target: null,
 													},
@@ -2540,8 +2465,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You are responsible for all activity that occurs under your user name.',
+															text: 'You are responsible for all activity that occurs under your user name.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -2561,8 +2485,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You must not make comments that are threatening, knowingly false, or unlawful, or engage in personal attacks.',
+															text: 'You must not make comments that are threatening, knowingly false, or unlawful, or engage in personal attacks.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -2582,8 +2505,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You must not impersonate any person or entity or create a false identity on Frankenbook.',
+															text: 'You must not impersonate any person or entity or create a false identity on Frankenbook.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -2603,8 +2525,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You must not harass, threaten, stalk, embarrass or cause distress, unwanted attention or discomfort to any user of Frankenbook.',
+															text: 'You must not harass, threaten, stalk, embarrass or cause distress, unwanted attention or discomfort to any user of Frankenbook.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -2624,8 +2545,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You must not disseminate or transmit spam, unsolicited messages, chain letters, advertisements, solicitations, or other unsolicited commercial communications, including (but not limited to) communications describing investment opportunities.',
+															text: 'You must not disseminate or transmit spam, unsolicited messages, chain letters, advertisements, solicitations, or other unsolicited commercial communications, including (but not limited to) communications describing investment opportunities.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -2645,8 +2565,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You must not post material that infringes a copyright, trademark or patent right, trade secret or other legal right of any person, corporation or institution.',
+															text: 'You must not post material that infringes a copyright, trademark or patent right, trade secret or other legal right of any person, corporation or institution.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -2666,8 +2585,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You must not knowingly disseminate or transmit viruses, Trojan horses, worms, defects, date bombs, time bombs, malware, spyware, or other items of a destructive nature or any other malicious code or program.',
+															text: 'You must not knowingly disseminate or transmit viruses, Trojan horses, worms, defects, date bombs, time bombs, malware, spyware, or other items of a destructive nature or any other malicious code or program.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -2687,8 +2605,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'Frankenbook reserves the right, in its sole and absolute discretion, to reject, refuse to post or remove any posting by you, or to restrict, suspend, or terminate your access to all of any part of Frankenbook at any time, for any or no reason, without prior notice or warning, and without liability.',
+															text: 'Frankenbook reserves the right, in its sole and absolute discretion, to reject, refuse to post or remove any posting by you, or to restrict, suspend, or terminate your access to all of any part of Frankenbook at any time, for any or no reason, without prior notice or warning, and without liability.',
 															type: 'text',
 															currIndex: 0,
 														},
@@ -2708,8 +2625,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'A full list of credits for the project can be found on the ',
+											text: 'A full list of credits for the project can be found on the ',
 											type: 'text',
 											currIndex: 0,
 										},
@@ -2720,8 +2636,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/credits',
+														href: 'https://frankenbook.pubpub.org/credits',
 														title: null,
 														target: null,
 													},
@@ -2765,14 +2680,12 @@ export default {
 								{
 									type: 'heading',
 									attrs: {
-										id:
-											'step-into-the-lab-to-build-solutions-to-todays-vexing-questions',
+										id: 'step-into-the-lab-to-build-solutions-to-todays-vexing-questions',
 										level: 2,
 									},
 									content: [
 										{
-											text:
-												'Step into the lab to build solutions to today’s vexing questions',
+											text: 'Step into the lab to build solutions to today’s vexing questions',
 											type: 'text',
 										},
 									],
@@ -2780,8 +2693,7 @@ export default {
 								{
 									type: 'image',
 									attrs: {
-										url:
-											'https://assets.pubpub.org/_testing/41522771208287.jpg',
+										url: 'https://assets.pubpub.org/_testing/41522771208287.jpg',
 										size: 50,
 										align: 'full',
 										caption: '',
@@ -2800,8 +2712,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'http://www.bluecadet.com/projects/modern-monsters/#/',
+														href: 'http://www.bluecadet.com/projects/modern-monsters/#/',
 														title: null,
 														target: null,
 													},
@@ -2850,8 +2761,7 @@ export default {
 								{
 									type: 'iframe',
 									attrs: {
-										url:
-											'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/269203861&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true',
+										url: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/269203861&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true',
 										size: 75,
 										align: 'full',
 										height: 150,
@@ -2898,8 +2808,7 @@ export default {
 								{
 									type: 'image',
 									attrs: {
-										url:
-											'https://assets.pubpub.org/_testing/11522771260672.jpg',
+										url: 'https://assets.pubpub.org/_testing/11522771260672.jpg',
 										size: 50,
 										align: 'full',
 										caption: '',
@@ -2918,8 +2827,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://lizfiacco.itch.io/lab-assistant',
+														href: 'https://lizfiacco.itch.io/lab-assistant',
 														title: null,
 														target: null,
 													},
@@ -2981,8 +2889,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' is proudly presented by the Center for Science and the Imagination at Arizona State University, in partnership with The MIT Press and MIT Media Lab. The project is made possible by a generous grant from the Alfred P. Sloan Foundation.',
+											text: ' is proudly presented by the Center for Science and the Imagination at Arizona State University, in partnership with The MIT Press and MIT Media Lab. The project is made possible by a generous grant from the Alfred P. Sloan Foundation.',
 											type: 'text',
 										},
 									],
@@ -3265,8 +3172,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Courtesy of Adam Beasley, Gregor Cresnar, and Misha, via The Noun Project',
+											text: 'Courtesy of Adam Beasley, Gregor Cresnar, and Misha, via The Noun Project',
 											type: 'text',
 										},
 									],
@@ -3334,8 +3240,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/c-athena-aktipis',
+														href: 'https://frankenbook.pubpub.org/user/c-athena-aktipis',
 														title: null,
 														target: null,
 													},
@@ -3352,8 +3257,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/braden-allenby',
+														href: 'https://frankenbook.pubpub.org/user/braden-allenby',
 														title: null,
 														target: null,
 													},
@@ -3370,8 +3274,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/ariel-anbar',
+														href: 'https://frankenbook.pubpub.org/user/ariel-anbar',
 														title: null,
 														target: null,
 													},
@@ -3388,8 +3291,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/samuel-arbesman',
+														href: 'https://frankenbook.pubpub.org/user/samuel-arbesman',
 														title: null,
 														target: null,
 													},
@@ -3406,8 +3308,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/miguel-astor-aguilera',
+														href: 'https://frankenbook.pubpub.org/user/miguel-astor-aguilera',
 														title: null,
 														target: null,
 													},
@@ -3424,8 +3325,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/bob-beard',
+														href: 'https://frankenbook.pubpub.org/user/bob-beard',
 														title: null,
 														target: null,
 													},
@@ -3442,8 +3342,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/dominic-berry',
+														href: 'https://frankenbook.pubpub.org/user/dominic-berry',
 														title: null,
 														target: null,
 													},
@@ -3460,8 +3359,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/ron-broglio',
+														href: 'https://frankenbook.pubpub.org/user/ron-broglio',
 														title: null,
 														target: null,
 													},
@@ -3478,8 +3376,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/sara-brownell',
+														href: 'https://frankenbook.pubpub.org/user/sara-brownell',
 														title: null,
 														target: null,
 													},
@@ -3496,8 +3393,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/noa-bruhis',
+														href: 'https://frankenbook.pubpub.org/user/noa-bruhis',
 														title: null,
 														target: null,
 													},
@@ -3514,8 +3410,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/carlos-castillo-chavez',
+														href: 'https://frankenbook.pubpub.org/user/carlos-castillo-chavez',
 														title: null,
 														target: null,
 													},
@@ -3532,8 +3427,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/adam-chodorow',
+														href: 'https://frankenbook.pubpub.org/user/adam-chodorow',
 														title: null,
 														target: null,
 													},
@@ -3550,8 +3444,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/robert-cook-deegan',
+														href: 'https://frankenbook.pubpub.org/user/robert-cook-deegan',
 														title: null,
 														target: null,
 													},
@@ -3568,8 +3461,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/mary-drago',
+														href: 'https://frankenbook.pubpub.org/user/mary-drago',
 														title: null,
 														target: null,
 													},
@@ -3586,8 +3478,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/lawrence-dritsas',
+														href: 'https://frankenbook.pubpub.org/user/lawrence-dritsas',
 														title: null,
 														target: null,
 													},
@@ -3604,8 +3495,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/jason-ellis',
+														href: 'https://frankenbook.pubpub.org/user/jason-ellis',
 														title: null,
 														target: null,
 													},
@@ -3622,8 +3512,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/joey-eschrich',
+														href: 'https://frankenbook.pubpub.org/user/joey-eschrich',
 														title: null,
 														target: null,
 													},
@@ -3640,8 +3529,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/ed-finn',
+														href: 'https://frankenbook.pubpub.org/user/ed-finn',
 														title: null,
 														target: null,
 													},
@@ -3658,8 +3546,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/liz-and-james-fiacco',
+														href: 'https://frankenbook.pubpub.org/user/liz-and-james-fiacco',
 														title: null,
 														target: null,
 													},
@@ -3676,8 +3563,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/liz-and-james-fiacco',
+														href: 'https://frankenbook.pubpub.org/user/liz-and-james-fiacco',
 														title: null,
 														target: null,
 													},
@@ -3694,8 +3580,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/mary-margaret-fonow',
+														href: 'https://frankenbook.pubpub.org/user/mary-margaret-fonow',
 														title: null,
 														target: null,
 													},
@@ -3712,8 +3597,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/joel-gereboff',
+														href: 'https://frankenbook.pubpub.org/user/joel-gereboff',
 														title: null,
 														target: null,
 													},
@@ -3730,8 +3614,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/eileen-gunn',
+														href: 'https://frankenbook.pubpub.org/user/eileen-gunn',
 														title: null,
 														target: null,
 													},
@@ -3748,8 +3631,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/david-h-guston-and-robert-cook-deegan',
+														href: 'https://frankenbook.pubpub.org/user/david-h-guston-and-robert-cook-deegan',
 														title: null,
 														target: null,
 													},
@@ -3766,8 +3648,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/judith-guston',
+														href: 'https://frankenbook.pubpub.org/user/judith-guston',
 														title: null,
 														target: null,
 													},
@@ -3784,8 +3665,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/kim-hammond',
+														href: 'https://frankenbook.pubpub.org/user/kim-hammond',
 														title: null,
 														target: null,
 													},
@@ -3802,8 +3682,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/chris-hanlon',
+														href: 'https://frankenbook.pubpub.org/user/chris-hanlon',
 														title: null,
 														target: null,
 													},
@@ -3820,8 +3699,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/dehlia-hannah',
+														href: 'https://frankenbook.pubpub.org/user/dehlia-hannah',
 														title: null,
 														target: null,
 													},
@@ -3838,8 +3716,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/sean-a-hayes',
+														href: 'https://frankenbook.pubpub.org/user/sean-a-hayes',
 														title: null,
 														target: null,
 													},
@@ -3856,8 +3733,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/julie-lekstrom-himes',
+														href: 'https://frankenbook.pubpub.org/user/julie-lekstrom-himes',
 														title: null,
 														target: null,
 													},
@@ -3874,8 +3750,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/amanda-holderread-heggen',
+														href: 'https://frankenbook.pubpub.org/user/amanda-holderread-heggen',
 														title: null,
 														target: null,
 													},
@@ -3892,8 +3767,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/nicole-herbots',
+														href: 'https://frankenbook.pubpub.org/user/nicole-herbots',
 														title: null,
 														target: null,
 													},
@@ -3910,8 +3784,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/adam-hosein',
+														href: 'https://frankenbook.pubpub.org/user/adam-hosein',
 														title: null,
 														target: null,
 													},
@@ -3928,8 +3801,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/andrew-dana-hudson',
+														href: 'https://frankenbook.pubpub.org/user/andrew-dana-hudson',
 														title: null,
 														target: null,
 													},
@@ -3946,8 +3818,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/allison-kavey',
+														href: 'https://frankenbook.pubpub.org/user/allison-kavey',
 														title: null,
 														target: null,
 													},
@@ -3964,8 +3835,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/jonathon-keats',
+														href: 'https://frankenbook.pubpub.org/user/jonathon-keats',
 														title: null,
 														target: null,
 													},
@@ -3982,8 +3852,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/douglas-kelley',
+														href: 'https://frankenbook.pubpub.org/user/douglas-kelley',
 														title: null,
 														target: null,
 													},
@@ -4000,8 +3869,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/sally-kitch',
+														href: 'https://frankenbook.pubpub.org/user/sally-kitch',
 														title: null,
 														target: null,
 													},
@@ -4018,8 +3886,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/joel-a-klein',
+														href: 'https://frankenbook.pubpub.org/user/joel-a-klein',
 														title: null,
 														target: null,
 													},
@@ -4036,8 +3903,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/sheldon-krimsky',
+														href: 'https://frankenbook.pubpub.org/user/sheldon-krimsky',
 														title: null,
 														target: null,
 													},
@@ -4054,8 +3920,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/stacey-kuznetsov',
+														href: 'https://frankenbook.pubpub.org/user/stacey-kuznetsov',
 														title: null,
 														target: null,
 													},
@@ -4072,8 +3937,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/jj-latourelle',
+														href: 'https://frankenbook.pubpub.org/user/jj-latourelle',
 														title: null,
 														target: null,
 													},
@@ -4090,8 +3954,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/devoney-looser',
+														href: 'https://frankenbook.pubpub.org/user/devoney-looser',
 														title: null,
 														target: null,
 													},
@@ -4108,8 +3971,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/arthur-b-markman',
+														href: 'https://frankenbook.pubpub.org/user/arthur-b-markman',
 														title: null,
 														target: null,
 													},
@@ -4126,8 +3988,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/sean-mccafferty',
+														href: 'https://frankenbook.pubpub.org/user/sean-mccafferty',
 														title: null,
 														target: null,
 													},
@@ -4144,8 +4005,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/patrick-mcgurrin',
+														href: 'https://frankenbook.pubpub.org/user/patrick-mcgurrin',
 														title: null,
 														target: null,
 													},
@@ -4169,8 +4029,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/april-miller',
+														href: 'https://frankenbook.pubpub.org/user/april-miller',
 														title: null,
 														target: null,
 													},
@@ -4187,8 +4046,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/ben-minteer',
+														href: 'https://frankenbook.pubpub.org/user/ben-minteer',
 														title: null,
 														target: null,
 													},
@@ -4205,8 +4063,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/peter-nagy',
+														href: 'https://frankenbook.pubpub.org/user/peter-nagy',
 														title: null,
 														target: null,
 													},
@@ -4223,8 +4080,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/stephanie-naufel',
+														href: 'https://frankenbook.pubpub.org/user/stephanie-naufel',
 														title: null,
 														target: null,
 													},
@@ -4241,8 +4097,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/annalee-newitz',
+														href: 'https://frankenbook.pubpub.org/user/annalee-newitz',
 														title: null,
 														target: null,
 													},
@@ -4259,8 +4114,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/robert-oppenheimer',
+														href: 'https://frankenbook.pubpub.org/user/robert-oppenheimer',
 														title: null,
 														target: null,
 													},
@@ -4277,8 +4131,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/nicole-piemonte',
+														href: 'https://frankenbook.pubpub.org/user/nicole-piemonte',
 														title: null,
 														target: null,
 													},
@@ -4295,8 +4148,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/corey-pressman',
+														href: 'https://frankenbook.pubpub.org/user/corey-pressman',
 														title: null,
 														target: null,
 													},
@@ -4313,8 +4165,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/alecia-radatz',
+														href: 'https://frankenbook.pubpub.org/user/alecia-radatz',
 														title: null,
 														target: null,
 													},
@@ -4331,8 +4182,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/ramsey-eric-ramsey',
+														href: 'https://frankenbook.pubpub.org/user/ramsey-eric-ramsey',
 														title: null,
 														target: null,
 													},
@@ -4349,8 +4199,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/emily-redman',
+														href: 'https://frankenbook.pubpub.org/user/emily-redman',
 														title: null,
 														target: null,
 													},
@@ -4367,8 +4216,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/samuel-redman',
+														href: 'https://frankenbook.pubpub.org/user/samuel-redman',
 														title: null,
 														target: null,
 													},
@@ -4385,8 +4233,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/jason-scott-robert',
+														href: 'https://frankenbook.pubpub.org/user/jason-scott-robert',
 														title: null,
 														target: null,
 													},
@@ -4403,8 +4250,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/hannah-rogers',
+														href: 'https://frankenbook.pubpub.org/user/hannah-rogers',
 														title: null,
 														target: null,
 													},
@@ -4421,8 +4267,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/heather-ross',
+														href: 'https://frankenbook.pubpub.org/user/heather-ross',
 														title: null,
 														target: null,
 													},
@@ -4439,8 +4284,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/kevin-sandler',
+														href: 'https://frankenbook.pubpub.org/user/kevin-sandler',
 														title: null,
 														target: null,
 													},
@@ -4457,8 +4301,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/daniel-sarewitz',
+														href: 'https://frankenbook.pubpub.org/user/daniel-sarewitz',
 														title: null,
 														target: null,
 													},
@@ -4475,8 +4318,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/pablo-schyfter',
+														href: 'https://frankenbook.pubpub.org/user/pablo-schyfter',
 														title: null,
 														target: null,
 													},
@@ -4493,8 +4335,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/verena-schulze-greiving',
+														href: 'https://frankenbook.pubpub.org/user/verena-schulze-greiving',
 														title: null,
 														target: null,
 													},
@@ -4511,8 +4352,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/richard-c-sha',
+														href: 'https://frankenbook.pubpub.org/user/richard-c-sha',
 														title: null,
 														target: null,
 													},
@@ -4529,8 +4369,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/michelle-n-shiota',
+														href: 'https://frankenbook.pubpub.org/user/michelle-n-shiota',
 														title: null,
 														target: null,
 													},
@@ -4547,8 +4386,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/michael-simeone',
+														href: 'https://frankenbook.pubpub.org/user/michael-simeone',
 														title: null,
 														target: null,
 													},
@@ -4565,8 +4403,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/kerri-slatus',
+														href: 'https://frankenbook.pubpub.org/user/kerri-slatus',
 														title: null,
 														target: null,
 													},
@@ -4583,8 +4420,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/mike-stanford',
+														href: 'https://frankenbook.pubpub.org/user/mike-stanford',
 														title: null,
 														target: null,
 													},
@@ -4601,8 +4437,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/william-k-storey',
+														href: 'https://frankenbook.pubpub.org/user/william-k-storey',
 														title: null,
 														target: null,
 													},
@@ -4619,8 +4454,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/jameien-taylor',
+														href: 'https://frankenbook.pubpub.org/user/jameien-taylor',
 														title: null,
 														target: null,
 													},
@@ -4637,8 +4471,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/tiffany-trent',
+														href: 'https://frankenbook.pubpub.org/user/tiffany-trent',
 														title: null,
 														target: null,
 													},
@@ -4655,8 +4488,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/nora-s-vaage',
+														href: 'https://frankenbook.pubpub.org/user/nora-s-vaage',
 														title: null,
 														target: null,
 													},
@@ -4673,8 +4505,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/erin-walker',
+														href: 'https://frankenbook.pubpub.org/user/erin-walker',
 														title: null,
 														target: null,
 													},
@@ -4691,8 +4522,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/steven-weiner',
+														href: 'https://frankenbook.pubpub.org/user/steven-weiner',
 														title: null,
 														target: null,
 													},
@@ -4709,8 +4539,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/damien-patrick-williams',
+														href: 'https://frankenbook.pubpub.org/user/damien-patrick-williams',
 														title: null,
 														target: null,
 													},
@@ -4727,8 +4556,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/melissa-wilson-sayres',
+														href: 'https://frankenbook.pubpub.org/user/melissa-wilson-sayres',
 														title: null,
 														target: null,
 													},
@@ -4745,8 +4573,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/stephani-etheridge-woodson',
+														href: 'https://frankenbook.pubpub.org/user/stephani-etheridge-woodson',
 														title: null,
 														target: null,
 													},
@@ -4763,8 +4590,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/user/lisa-yaszek',
+														href: 'https://frankenbook.pubpub.org/user/lisa-yaszek',
 														title: null,
 														target: null,
 													},
@@ -4814,8 +4640,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' is a project of the Center for Science and the Imagination at Arizona State University (“ASU”) and the Media Lab and The MIT Press at the Massachusetts Institute of Technology (“MIT”). ',
+											text: ' is a project of the Center for Science and the Imagination at Arizona State University (“ASU”) and the Media Lab and The MIT Press at the Massachusetts Institute of Technology (“MIT”). ',
 											type: 'text',
 										},
 										{
@@ -4828,8 +4653,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' is a collective reading and collaborative annotation experience of the original text of Frankenstein; or, The Modern Prometheus, by Mary Wollstonecraft Shelley.',
+											text: ' is a collective reading and collaborative annotation experience of the original text of Frankenstein; or, The Modern Prometheus, by Mary Wollstonecraft Shelley.',
 											type: 'text',
 										},
 									],
@@ -4850,8 +4674,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' reserves the right to change the terms of the Terms of Service ("TOS") or to modify its features at any time. The Site will post changes to the terms of this User Agreement ',
+											text: ' reserves the right to change the terms of the Terms of Service ("TOS") or to modify its features at any time. The Site will post changes to the terms of this User Agreement ',
 											type: 'text',
 										},
 										{
@@ -4861,8 +4684,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/terms',
+														href: 'https://frankenbook.pubpub.org/terms',
 														title: null,
 														target: null,
 													},
@@ -4870,8 +4692,7 @@ export default {
 											],
 										},
 										{
-											text:
-												', and by accessing the Site after modifications to this User Agreement have been posted, you agree to be bound by all the modified terms.',
+											text: ', and by accessing the Site after modifications to this User Agreement have been posted, you agree to be bound by all the modified terms.',
 											type: 'text',
 										},
 									],
@@ -4915,8 +4736,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' website (the “Site”), which includes all pages within the frankenbook.org host directory and subdomains, and all affiliated services,',
+											text: ' website (the “Site”), which includes all pages within the frankenbook.org host directory and subdomains, and all affiliated services,',
 											type: 'text',
 										},
 									],
@@ -4937,8 +4757,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You accept and agree to be bound by all of the terms of this TOS; and',
+															text: 'You accept and agree to be bound by all of the terms of this TOS; and',
 															type: 'text',
 														},
 													],
@@ -4955,8 +4774,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'You affirm that you are either 13 years of age or older.',
+															text: 'You affirm that you are either 13 years of age or older.',
 															type: 'text',
 														},
 													],
@@ -4972,8 +4790,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'You must be 13 years or over. If we discover or have any reason to suspect that you have not met this condition, then we reserve the right to suspend or terminate your registration to this Site immediately and without notice.',
+											text: 'You must be 13 years or over. If we discover or have any reason to suspect that you have not met this condition, then we reserve the right to suspend or terminate your registration to this Site immediately and without notice.',
 											type: 'text',
 										},
 									],
@@ -5004,8 +4821,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'For the purposes of this TOS, the term “Site Content” shall include all content, features, and functionality posted to the Site by ',
+											text: 'For the purposes of this TOS, the term “Site Content” shall include all content, features, and functionality posted to the Site by ',
 											type: 'text',
 										},
 										{
@@ -5030,8 +4846,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Except where otherwise noted, Site Content is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) License and may be used under the terms of that license or any later version of a Creative Commons Attribution License.',
+											text: 'Except where otherwise noted, Site Content is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) License and may be used under the terms of that license or any later version of a Creative Commons Attribution License.',
 											type: 'text',
 										},
 									],
@@ -5062,8 +4877,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'To the extent the Site incorporates the copyrighted material of third-parties (“Third-Party Content”), you represent, warrant, and agree that no Third-Party Content posted or otherwise shared by you on or through any of the Site, violates or infringes upon the rights of any third-party, including copyright, trademark, privacy, publicity, or other personal or proprietary rights, breaches or conflicts with any obligation, such as a confidentiality obligation, or contains libelous, defamatory, or otherwise unlawful material.',
+											text: 'To the extent the Site incorporates the copyrighted material of third-parties (“Third-Party Content”), you represent, warrant, and agree that no Third-Party Content posted or otherwise shared by you on or through any of the Site, violates or infringes upon the rights of any third-party, including copyright, trademark, privacy, publicity, or other personal or proprietary rights, breaches or conflicts with any obligation, such as a confidentiality obligation, or contains libelous, defamatory, or otherwise unlawful material.',
 											type: 'text',
 										},
 									],
@@ -5075,8 +4889,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'ASU and MIT do not warrant that any use of Third-Party Content will not infringe the rights of the content owners.',
+											text: 'ASU and MIT do not warrant that any use of Third-Party Content will not infringe the rights of the content owners.',
 											type: 'text',
 										},
 									],
@@ -5088,8 +4901,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'If you believe that any content on the Site infringes your copyrights, please click here for more information, including the email address for MIT’s DMCA agent, to whom copyright infringement notifications should be sent.',
+											text: 'If you believe that any content on the Site infringes your copyrights, please click here for more information, including the email address for MIT’s DMCA agent, to whom copyright infringement notifications should be sent.',
 											type: 'text',
 										},
 									],
@@ -5120,8 +4932,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'The Site includes features that support and publish User-Generated Content. The term “User-Generated Content,” for purposes of this TOS, means any copyrightable content that users submit to the Site. You shall not make use of these features:',
+											text: 'The Site includes features that support and publish User-Generated Content. The term “User-Generated Content,” for purposes of this TOS, means any copyrightable content that users submit to the Site. You shall not make use of these features:',
 											type: 'text',
 										},
 									],
@@ -5139,8 +4950,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'To make comments that are threatening, knowingly false, or unlawful; or to engage in personal attacks;',
+															text: 'To make comments that are threatening, knowingly false, or unlawful; or to engage in personal attacks;',
 															type: 'text',
 														},
 													],
@@ -5157,8 +4967,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'To impersonate any person or entity or create a false identity on the Site;',
+															text: 'To impersonate any person or entity or create a false identity on the Site;',
 															type: 'text',
 														},
 													],
@@ -5175,8 +4984,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'To harass, threaten, stalk, embarrass or cause distress, unwanted attention or discomfort to any user of the Site;',
+															text: 'To harass, threaten, stalk, embarrass or cause distress, unwanted attention or discomfort to any user of the Site;',
 															type: 'text',
 														},
 													],
@@ -5193,8 +5001,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'To disseminate or transmit “spam,” unsolicited messages, chain letters, advertisements, solicitations, or other unsolicited commercial communications, including (but not limited to) communications describing investment opportunities;',
+															text: 'To disseminate or transmit “spam,” unsolicited messages, chain letters, advertisements, solicitations, or other unsolicited commercial communications, including (but not limited to) communications describing investment opportunities;',
 															type: 'text',
 														},
 													],
@@ -5211,8 +5018,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'To post material that infringes a copyright, trademark or patent right, trade secret or other legal right of any person, corporation or institution;',
+															text: 'To post material that infringes a copyright, trademark or patent right, trade secret or other legal right of any person, corporation or institution;',
 															type: 'text',
 														},
 													],
@@ -5229,8 +5035,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'To knowingly disseminate or transmit viruses, Trojan horses, worms, defects, date bombs, time bombs, malware, spyware, or other items of a destructive nature or any other malicious code or program;',
+															text: 'To knowingly disseminate or transmit viruses, Trojan horses, worms, defects, date bombs, time bombs, malware, spyware, or other items of a destructive nature or any other malicious code or program;',
 															type: 'text',
 														},
 													],
@@ -5247,8 +5052,7 @@ export default {
 													},
 													content: [
 														{
-															text:
-																'To knowingly carry out any action with the intent or effect of disrupting other users’ experience of the Site, such as intentionally causing a chat screen to scroll faster than other users are able to read, or deploying macros with large amounts of text for the purpose of disrupting the normal flow of user chats.',
+															text: 'To knowingly carry out any action with the intent or effect of disrupting other users’ experience of the Site, such as intentionally causing a chat screen to scroll faster than other users are able to read, or deploying macros with large amounts of text for the purpose of disrupting the normal flow of user chats.',
 															type: 'text',
 														},
 													],
@@ -5264,8 +5068,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'By submitting User-Generated Content, you represent, warrant, and agree that no User-Generated Content posted or otherwise shared by you on or through any of the Site, violates or infringes upon the rights of any third-party, including copyright, trademark, privacy, publicity, or other personal or proprietary rights, breaches or conflicts with any obligation, such as a confidentiality obligation, or contains libelous, defamatory, or otherwise unlawful material.',
+											text: 'By submitting User-Generated Content, you represent, warrant, and agree that no User-Generated Content posted or otherwise shared by you on or through any of the Site, violates or infringes upon the rights of any third-party, including copyright, trademark, privacy, publicity, or other personal or proprietary rights, breaches or conflicts with any obligation, such as a confidentiality obligation, or contains libelous, defamatory, or otherwise unlawful material.',
 											type: 'text',
 										},
 									],
@@ -5277,8 +5080,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'You hereby agree that User-Generated Content: (a) is hereby licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) License and may be used under the terms of that license or any later version of a Creative Commons Attribution License, or (b) is in the public domain (such as Content that is not copyrightable or Content you make available under CC0, a designation whereby you can waive all copyrights and related or neighboring rights in all jurisdictions worldwide), or (c) if not owned by you, (i) is available under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) License or (ii) is a media file that is available under any Creative Commons license or that you are authorized by law to post or share through any of the Services, such as under the fair use doctrine, and that is prominently marked as being subject to third-party copyright. All of Your Content must be appropriately marked with licensing and attribution information.',
+											text: 'You hereby agree that User-Generated Content: (a) is hereby licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) License and may be used under the terms of that license or any later version of a Creative Commons Attribution License, or (b) is in the public domain (such as Content that is not copyrightable or Content you make available under CC0, a designation whereby you can waive all copyrights and related or neighboring rights in all jurisdictions worldwide), or (c) if not owned by you, (i) is available under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) License or (ii) is a media file that is available under any Creative Commons license or that you are authorized by law to post or share through any of the Services, such as under the fair use doctrine, and that is prominently marked as being subject to third-party copyright. All of Your Content must be appropriately marked with licensing and attribution information.',
 											type: 'text',
 										},
 									],
@@ -5290,8 +5092,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Upon publishing, an archive of the content will perpetually be available to the public for reference.',
+											text: 'Upon publishing, an archive of the content will perpetually be available to the public for reference.',
 											type: 'text',
 										},
 									],
@@ -5303,8 +5104,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'You acknowledge and accept that User-Generated Content posted to the Site may be made available for the public to access, view, and use, subject to the limited license set forth above (“Use of Site”).',
+											text: 'You acknowledge and accept that User-Generated Content posted to the Site may be made available for the public to access, view, and use, subject to the limited license set forth above (“Use of Site”).',
 											type: 'text',
 										},
 									],
@@ -5325,8 +5125,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' monitors User-Generated Content on the Site, and ',
+											text: ' monitors User-Generated Content on the Site, and ',
 											type: 'text',
 										},
 										{
@@ -5339,8 +5138,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' reserves the right to modify, edit, or remove any of said content at its discretion, without notice, and for any reason. ',
+											text: ' reserves the right to modify, edit, or remove any of said content at its discretion, without notice, and for any reason. ',
 											type: 'text',
 										},
 										{
@@ -5353,8 +5151,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' may prescreen User-Generated Content and may decide, in its discretion, without notice, and for any reason, not to publish it. By submitting an annotation to the site, you give ',
+											text: ' may prescreen User-Generated Content and may decide, in its discretion, without notice, and for any reason, not to publish it. By submitting an annotation to the site, you give ',
 											type: 'text',
 										},
 										{
@@ -5367,8 +5164,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' permission to edit the content for clarity, factual accuracy, spelling, grammar, and adherence to our house style guide. ',
+											text: ' permission to edit the content for clarity, factual accuracy, spelling, grammar, and adherence to our house style guide. ',
 											type: 'text',
 										},
 										{
@@ -5381,8 +5177,7 @@ export default {
 											],
 										},
 										{
-											text:
-												'assumes no liability for monitoring, modifying, removing, or declining to publish User-Generated Content on this Service.',
+											text: 'assumes no liability for monitoring, modifying, removing, or declining to publish User-Generated Content on this Service.',
 											type: 'text',
 										},
 									],
@@ -5394,8 +5189,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'You acknowledge and accept that the views and opinions expressed by other users on the Site are theirs alone and should not be ascribed to ASU, or MIT. User-Generated Content and Third-Party Content are the sole responsibility of the users and third-parties, and their accuracy and completeness are not endorsed or guaranteed by ASU, or MIT.',
+											text: 'You acknowledge and accept that the views and opinions expressed by other users on the Site are theirs alone and should not be ascribed to ASU, or MIT. User-Generated Content and Third-Party Content are the sole responsibility of the users and third-parties, and their accuracy and completeness are not endorsed or guaranteed by ASU, or MIT.',
 											type: 'text',
 										},
 									],
@@ -5426,8 +5220,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'You may not access or use the Site in any manner that could damage or overburden any ASU or MIT, or any network connected to any ASU or MIT server. You may not use the Site in any manner that would interfere with any other party’s use of the Site.',
+											text: 'You may not access or use the Site in any manner that could damage or overburden any ASU or MIT, or any network connected to any ASU or MIT server. You may not use the Site in any manner that would interfere with any other party’s use of the Site.',
 											type: 'text',
 										},
 									],
@@ -5458,8 +5251,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'You may not use ASU or MIT’s names, trademarks, logos, or insignia, or any version, abbreviation or representation of them, in any advertising, publicity, promotional materials or other public announcement without the prior written consent of MIT’s Technology Licensing Office and/or ASU’s Enterprise Marketing Hub, which consent MIT and/or ASU may withhold in their sole discretion.',
+											text: 'You may not use ASU or MIT’s names, trademarks, logos, or insignia, or any version, abbreviation or representation of them, in any advertising, publicity, promotional materials or other public announcement without the prior written consent of MIT’s Technology Licensing Office and/or ASU’s Enterprise Marketing Hub, which consent MIT and/or ASU may withhold in their sole discretion.',
 											type: 'text',
 										},
 									],
@@ -5478,8 +5270,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Registration, Privacy, and Termination of Access',
+											text: 'Registration, Privacy, and Termination of Access',
 											type: 'text',
 										},
 									],
@@ -5491,8 +5282,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Certain areas of the Site may require registration or may otherwise ask you to provide information in order to participate. The decision to provide this information is optional; however if you elect not to provide such information, you may not be able to access certain content, features, or functionalities. When you register, you must provide information to ',
+											text: 'Certain areas of the Site may require registration or may otherwise ask you to provide information in order to participate. The decision to provide this information is optional; however if you elect not to provide such information, you may not be able to access certain content, features, or functionalities. When you register, you must provide information to ',
 											type: 'text',
 										},
 										{
@@ -5505,8 +5295,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' that is accurate, current and complete (excepting the use of a pseudonym). ',
+											text: ' that is accurate, current and complete (excepting the use of a pseudonym). ',
 											type: 'text',
 										},
 										{
@@ -5516,8 +5305,7 @@ export default {
 												{
 													type: 'link',
 													attrs: {
-														href:
-															'https://frankenbook.pubpub.org/privacy',
+														href: 'https://frankenbook.pubpub.org/privacy',
 														title: null,
 														target: null,
 													},
@@ -5525,8 +5313,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' governs the use of the information you report. ',
+											text: ' governs the use of the information you report. ',
 											type: 'text',
 										},
 										{
@@ -5539,8 +5326,7 @@ export default {
 											],
 										},
 										{
-											text:
-												' reserves the right to terminate the registrations and otherwise deny Site access to any person for any reason. The Site will not be liable for any loss or damage arising from your failure to protect your password or account login information.',
+											text: ' reserves the right to terminate the registrations and otherwise deny Site access to any person for any reason. The Site will not be liable for any loss or damage arising from your failure to protect your password or account login information.',
 											type: 'text',
 										},
 									],
@@ -5559,8 +5345,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Disclaimer of Warranty / Limitation of Liability',
+											text: 'Disclaimer of Warranty / Limitation of Liability',
 											type: 'text',
 										},
 									],
@@ -5572,8 +5357,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'Your use of the Site is at your sole risk. To the fullest extent permitted by the law, ASU and MIT disclaim all warranties, express or implied, in connection with the Site and your use thereof. ASU and MIT make no warranties or representations about the accuracy or completeness of the Site’s content (including User-Generated Content and Third-Party Content) or the content of any websites linked to this Site and assume no liability or responsibility for any (1) errors, mistakes, omissions, or inaccuracies in content; (2) personal injury or property damage, of any nature whatsoever, resulting from your access to and use of the Site; (3) unauthorized access to or use of ASU or MIT’s secure servers and/or any and all personal information and/or financial information stored therein; (4) interruption or cessation of transmission to or from the Site; (5) bugs, viruses, Trojan horses, or the like that may be transmitted to or through the Site by any third-party; and/ or (6) content or any loss or damage of any kind incurred as a result of the use of any content posted, emailed, transmitted, or otherwise made available via the Site. You assume all risk as to the quality, function, and performance of the Site, and to all transactions you undertake on the Site, including without limitation submission of any User-Generated Content.',
+											text: 'Your use of the Site is at your sole risk. To the fullest extent permitted by the law, ASU and MIT disclaim all warranties, express or implied, in connection with the Site and your use thereof. ASU and MIT make no warranties or representations about the accuracy or completeness of the Site’s content (including User-Generated Content and Third-Party Content) or the content of any websites linked to this Site and assume no liability or responsibility for any (1) errors, mistakes, omissions, or inaccuracies in content; (2) personal injury or property damage, of any nature whatsoever, resulting from your access to and use of the Site; (3) unauthorized access to or use of ASU or MIT’s secure servers and/or any and all personal information and/or financial information stored therein; (4) interruption or cessation of transmission to or from the Site; (5) bugs, viruses, Trojan horses, or the like that may be transmitted to or through the Site by any third-party; and/ or (6) content or any loss or damage of any kind incurred as a result of the use of any content posted, emailed, transmitted, or otherwise made available via the Site. You assume all risk as to the quality, function, and performance of the Site, and to all transactions you undertake on the Site, including without limitation submission of any User-Generated Content.',
 											type: 'text',
 										},
 									],
@@ -5585,8 +5369,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'You agree that ASU and MIT will not be liable to you for any loss or damages, either actual or consequential, arising out of or relating to these terms, or your (or any third-party’s) use or inability to use the Site, or your placement of User-Generated Content on the Site, or your reliance upon information obtained from or through the Site, or your communications with other users of the Site. In particular, ASU and MIT will have no liability for any consequential, indirect, punitive, special or incidental damages, whether foreseeable or unforeseeable, (including, but not limited to, claims for defamation, errors, loss of data, or interruption in availability of data), arising out of or relating to these terms, your use or inability to use a site, your placement of content on the Site, your reliance upon information obtained from or through a Site, or your communications with other users of the Site, whether based in contract, tort, statutory or other law, except only in the case of death or personal injury where and only to the extent that applicable law requires such liability.',
+											text: 'You agree that ASU and MIT will not be liable to you for any loss or damages, either actual or consequential, arising out of or relating to these terms, or your (or any third-party’s) use or inability to use the Site, or your placement of User-Generated Content on the Site, or your reliance upon information obtained from or through the Site, or your communications with other users of the Site. In particular, ASU and MIT will have no liability for any consequential, indirect, punitive, special or incidental damages, whether foreseeable or unforeseeable, (including, but not limited to, claims for defamation, errors, loss of data, or interruption in availability of data), arising out of or relating to these terms, your use or inability to use a site, your placement of content on the Site, your reliance upon information obtained from or through a Site, or your communications with other users of the Site, whether based in contract, tort, statutory or other law, except only in the case of death or personal injury where and only to the extent that applicable law requires such liability.',
 											type: 'text',
 										},
 									],
@@ -5617,8 +5400,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'You hereby indemnify, defend, and hold harmless ASU, MIT, and their affiliates, employees, faculty members, fellows, students, members of their governing boards and agents (collectively, the “Indemnified Parties”) from and against any and all liability and costs, including, without limitation, reasonable attorneys’ fees, incurred by the Indemnified Parties in connection with any claim arising out of (1) your posting of User-Generated Content; (2) any breach by you or any user of your account of this TOS or the foregoing representations, warranties and covenants; or (3) your or any user of your account’s violation of applicable law. You shall cooperate as reasonably required in the defense of any such claim. ASU and MIT reserve the right, at their own expense, to assume the exclusive defense and control of any matter subject to indemnification by you.',
+											text: 'You hereby indemnify, defend, and hold harmless ASU, MIT, and their affiliates, employees, faculty members, fellows, students, members of their governing boards and agents (collectively, the “Indemnified Parties”) from and against any and all liability and costs, including, without limitation, reasonable attorneys’ fees, incurred by the Indemnified Parties in connection with any claim arising out of (1) your posting of User-Generated Content; (2) any breach by you or any user of your account of this TOS or the foregoing representations, warranties and covenants; or (3) your or any user of your account’s violation of applicable law. You shall cooperate as reasonably required in the defense of any such claim. ASU and MIT reserve the right, at their own expense, to assume the exclusive defense and control of any matter subject to indemnification by you.',
 											type: 'text',
 										},
 									],
@@ -5649,8 +5431,7 @@ export default {
 									},
 									content: [
 										{
-											text:
-												'If you have any questions about this TOS or Privacy Policy, the practices of the Site, or your dealings with this Site, you can contact privacy@pubpub.org.',
+											text: 'If you have any questions about this TOS or Privacy Policy, the practices of the Site, or your dealings with this Site, you can contact privacy@pubpub.org.',
 											type: 'text',
 										},
 									],
@@ -6105,8 +5886,7 @@ export default {
 		{
 			id: 'd2112c45-7188-490e-a8c2-28542097a749',
 			slug: 'ki5z5cf8',
-			title:
-				'Logistics is a Key Enabler of Sustainable Human Missions to Mars, And Other Things That Make The Title Flow Onto Several Lines',
+			title: 'Logistics is a Key Enabler of Sustainable Human Missions to Mars, And Other Things That Make The Title Flow Onto Several Lines',
 			avatar: 'https://assets.pubpub.org/_testing/71562873885780.png',
 			collectionPubs: [
 				{

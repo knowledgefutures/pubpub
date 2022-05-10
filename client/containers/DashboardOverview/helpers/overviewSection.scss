@@ -1,30 +1,30 @@
 @import '../overviewStyles.scss';
 
 .overview-section-component {
-    color: $darkest-grey;
+	color: $darkest-grey;
 
-    &.spaced {
-        margin-bottom: 20px;
-    }
+	&.spaced {
+		margin-bottom: 20px;
+	}
 
-    > .title {
-        display: flex;
-        align-items: center;
-        text-transform: uppercase;
-        font-weight: 600;
-        font-size: 16px;
+	> .title {
+		display: flex;
+		align-items: center;
+		text-transform: uppercase;
+		font-weight: 600;
+		font-size: 16px;
 
-        &.descending {
-            position: absolute;
-        }
+		&.descending {
+			position: absolute;
+		}
 
-        &:not(.descending) {
-            margin-bottom: 10px;
-        }
+		&:not(.descending) {
+			margin-bottom: 10px;
+		}
 
-        .bp3-icon {
-            margin-right: 8px;
-            color: $light-grey;
-        }
-    }
+		.bp3-icon {
+			margin-right: 8px;
+			color: $light-grey;
+		}
+	}
 }

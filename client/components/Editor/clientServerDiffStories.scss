@@ -21,13 +21,13 @@
 		overflow-x: scroll;
 		font-size: 12px;
 		.Difference > del {
-		  background-color: rgba(255, 0, 0, 0.2);
-		  text-decoration: none;
+			background-color: rgba(255, 0, 0, 0.2);
+			text-decoration: none;
 		}
 
 		.Difference > ins {
-		  background-color: rgba(0, 255, 0,0.2);
-		  text-decoration: none;
+			background-color: rgba(0, 255, 0, 0.2);
+			text-decoration: none;
 		}
 	}
 }

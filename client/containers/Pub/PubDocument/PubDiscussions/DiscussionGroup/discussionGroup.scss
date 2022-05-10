@@ -11,12 +11,12 @@
 		left: -21px;
 	}
 	&:after {
-		content: "";
+		content: '';
 		position: absolute;
 		top: 0px;
 		bottom: 0;
 		right: -21px;
-		background: #E5E5E5;
+		background: #e5e5e5;
 		width: 1px;
 	}
 }
@@ -33,12 +33,12 @@
 			box-sizing: border-box;
 		}
 		&:before {
-			content: "";
+			content: '';
 			position: absolute;
 			top: 0px;
 			bottom: 0;
 			left: -20px;
-			border-left: 1px solid #E5E5E5;
+			border-left: 1px solid #e5e5e5;
 			background: white;
 			width: 20px;
 		}

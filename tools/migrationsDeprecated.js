@@ -724,7 +724,7 @@ new Promise((resolve) => {
 	// 		}),
 	// 	]);
 	// .then(() => {
-	// 	return Promise.all(['PubAttributions', 'CollectionAttributions'].map(tableName => 
+	// 	return Promise.all(['PubAttributions', 'CollectionAttributions'].map(tableName =>
 	// 		sequelize.queryInterface.addColumn(
 	// 			tableName,
 	// 			'orcid',

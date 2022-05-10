@@ -1,64 +1,64 @@
 $border-style: 1px solid #ddd;
 
 .minimal-editor-component {
-    > .editor-wrapper {
-        min-height: 75px;
-        border: $border-style;
-        background: white;
-        border-radius: 2px;
-        padding: 0.5em;
-        cursor: text;
-        > .editor {
-            p:last-child {
-                margin-bottom: 0;
-            }
-        }
-    }
+	> .editor-wrapper {
+		min-height: 75px;
+		border: $border-style;
+		background: white;
+		border-radius: 2px;
+		padding: 0.5em;
+		cursor: text;
+		> .editor {
+			p:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
 
-    &.no-min-height {
-        > .editor-wrapper {
-            min-height: unset;
-        }
-    }
+	&.no-min-height {
+		> .editor-wrapper {
+			min-height: unset;
+		}
+	}
 
-    &.constrain-height {
-        height: 100%;
-        overflow-y: hidden;
-        > .editor-wrapper {
-            height: 100%;
-            overflow-y: auto;
-        }
-        &.has-formatting-bar {
-            display: flex;
-            flex-direction: column;
-            > .editor-wrapper {
-                flex-grow: 1;
-            }
-        }
-    }
+	&.constrain-height {
+		height: 100%;
+		overflow-y: hidden;
+		> .editor-wrapper {
+			height: 100%;
+			overflow-y: auto;
+		}
+		&.has-formatting-bar {
+			display: flex;
+			flex-direction: column;
+			> .editor-wrapper {
+				flex-grow: 1;
+			}
+		}
+	}
 
-    &.translucent {
-        background: rgba(255, 255, 255, 0.2);
-        > .editor-wrapper {
-            background: none;
-            h1,
-            h2,
-            h3,
-            h4,
-            h5,
-            h6,
-            a {
-                color: white;
-            }
-        }
-    }
+	&.translucent {
+		background: rgba(255, 255, 255, 0.2);
+		> .editor-wrapper {
+			background: none;
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			a {
+				color: white;
+			}
+		}
+	}
 
-    &.has-formatting-bar {
-        > .editor-wrapper {
-            border: none;
-            border-top: $border-style;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
-    }
+	&.has-formatting-bar {
+		> .editor-wrapper {
+			border: none;
+			border-top: $border-style;
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+	}
 }

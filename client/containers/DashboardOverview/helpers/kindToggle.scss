@@ -1,29 +1,29 @@
 @import '../overviewStyles.scss';
 
 .kind-toggle-component[type='checkbox'] {
-    cursor: pointer;
-    display: flex;
-    user-select: none;
-    align-items: center;
-    border-radius: 2px;
-    padding: 4px 8px;
+	cursor: pointer;
+	display: flex;
+	user-select: none;
+	align-items: center;
+	border-radius: 2px;
+	padding: 4px 8px;
 
-    .bp3-icon {
-        margin-right: 4px;
-        margin-top: 1px;
-    }
+	.bp3-icon {
+		margin-right: 4px;
+		margin-top: 1px;
+	}
 
-    &[aria-checked='true'] {
-        .count {
-            color: $dark-grey;
-        }
-    }
+	&[aria-checked='true'] {
+		.count {
+			color: $dark-grey;
+		}
+	}
 
-    &[aria-checked='false'] {
-        color: lighten($dark-grey, 20%);
-    }
+	&[aria-checked='false'] {
+		color: lighten($dark-grey, 20%);
+	}
 
-    &:hover {
-        background: rgba(black, 0.05);
-    }
+	&:hover {
+		background: rgba(black, 0.05);
+	}
 }

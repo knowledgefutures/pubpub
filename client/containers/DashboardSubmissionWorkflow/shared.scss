@@ -5,6 +5,6 @@ $border-color: #ddd;
 $light-background: #fafafa;
 
 @mixin box {
-    border: 1px solid $border-color;
-    border-radius: 2px;
+	border: 1px solid $border-color;
+	border-radius: 2px;
 }

@@ -1,18 +1,19 @@
 .pub-inline-menu-component {
-    display: flex;
-    align-items: center;
-    padding: 0.25em;
-    border-radius: 2px;
-    background-color: #444;
-    color: white;
-    z-index: 20;
-    .bp3-button.bp3-minimal, .bp3-button.bp3-minimal.bp3-active {
-        color: white;
-        &:hover {
-            color: white;
-        }
-        .bp3-icon {
-            color: inherit;
-        }
-    }
+	display: flex;
+	align-items: center;
+	padding: 0.25em;
+	border-radius: 2px;
+	background-color: #444;
+	color: white;
+	z-index: 20;
+	.bp3-button.bp3-minimal,
+	.bp3-button.bp3-minimal.bp3-active {
+		color: white;
+		&:hover {
+			color: white;
+		}
+		.bp3-icon {
+			color: inherit;
+		}
+	}
 }

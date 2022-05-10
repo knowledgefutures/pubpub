@@ -16,7 +16,7 @@
 }
 .file-icon::before {
 	display: block;
-	content: "";
+	content: '';
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -25,7 +25,7 @@
 	border-bottom-left-radius: 2px;
 	border-width: 5px;
 	border-style: solid;
-	border-color: #fff #fff rgba(255,255,255,.35) rgba(255,255,255,.35);
+	border-color: #fff #fff rgba(255, 255, 255, 0.35) rgba(255, 255, 255, 0.35);
 }
 .file-icon::after {
 	display: block;
@@ -52,8 +52,8 @@
 	border-width: 3px;
 }
 .file-icon-xs::after {
-	content: "";
-	border-bottom: 2px solid rgba(255,255,255,.45);
+	content: '';
+	border-bottom: 2px solid rgba(255, 255, 255, 0.45);
 	width: auto;
 	left: 2px;
 	right: 2px;
@@ -99,43 +99,43 @@
 	padding: 4px 10px;
 }
 /* fileicon.types */
-.file-icon[data-type=zip],
-.file-icon[data-type=rar] {
+.file-icon[data-type='zip'],
+.file-icon[data-type='rar'] {
 	background: #acacac;
 }
-.file-icon[data-type^=doc] {
+.file-icon[data-type^='doc'] {
 	background: #307cf1;
 }
-.file-icon[data-type^=xls] {
+.file-icon[data-type^='xls'] {
 	background: #0f9d58;
 }
-.file-icon[data-type^=ppt] {
+.file-icon[data-type^='ppt'] {
 	background: #d24726;
 }
-.file-icon[data-type=pdf] {
+.file-icon[data-type='pdf'] {
 	background: #e13d34;
 }
-.file-icon[data-type=txt] {
+.file-icon[data-type='txt'] {
 	background: #5eb533;
 }
-.file-icon[data-type=mp3],
-.file-icon[data-type=wma],
-.file-icon[data-type=m4a],
-.file-icon[data-type=flac] {
+.file-icon[data-type='mp3'],
+.file-icon[data-type='wma'],
+.file-icon[data-type='m4a'],
+.file-icon[data-type='flac'] {
 	background: #8e44ad;
 }
-.file-icon[data-type=mp4],
-.file-icon[data-type=wmv],
-.file-icon[data-type=mov],
-.file-icon[data-type=avi],
-.file-icon[data-type=mkv] {
+.file-icon[data-type='mp4'],
+.file-icon[data-type='wmv'],
+.file-icon[data-type='mov'],
+.file-icon[data-type='avi'],
+.file-icon[data-type='mkv'] {
 	background: #7a3ce7;
 }
-.file-icon[data-type=bmp],
-.file-icon[data-type=jpg],
-.file-icon[data-type=jpeg],
-.file-icon[data-type=gif],
-.file-icon[data-type=png] {
+.file-icon[data-type='bmp'],
+.file-icon[data-type='jpg'],
+.file-icon[data-type='jpeg'],
+.file-icon[data-type='gif'],
+.file-icon[data-type='png'] {
 	// background: #f4b400;
 	background: #f48c00;
 }

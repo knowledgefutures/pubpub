@@ -8,10 +8,7 @@ const getHashOfFiles = (pubDir, inputFileNames) => {
 	inputFileNames.forEach((name) => {
 		resObj[name] = pubDir.read(name);
 	});
-	return crypto
-		.createHash('md5')
-		.update(JSON.stringify(resObj))
-		.digest('hex');
+	return crypto.createHash('md5').update(JSON.stringify(resObj)).digest('hex');
 };
 
 const createHashMatcher = (hashFilename, hashInputFiles) => {

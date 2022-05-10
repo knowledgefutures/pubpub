@@ -1,14 +1,14 @@
 .overview-frame-component {
-    display: grid;
-    grid-template-areas: 'primary secondary';
-    grid-template-columns: 1fr 250px;
-    column-gap: 75px;
+	display: grid;
+	grid-template-areas: 'primary secondary';
+	grid-template-columns: 1fr 250px;
+	column-gap: 75px;
 
-    & > .primary {
-        grid-area: primary;
-    }
+	& > .primary {
+		grid-area: primary;
+	}
 
-    & > .secondary {
-        grid-area: secondary;
-    }
+	& > .secondary {
+		grid-area: secondary;
+	}
 }

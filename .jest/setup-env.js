@@ -26,7 +26,7 @@ if (typeof document !== 'undefined') {
 	require('mutationobserver-shim');
 
 	// ProseMirror uses document.getSelection, which is not polyfilled by JSDOM.
-	document.getSelection = function() {
+	document.getSelection = function () {
 		return {
 			focusNode: null,
 			anchorNode: null,
@@ -37,7 +37,7 @@ if (typeof document !== 'undefined') {
 	};
 
 	// ProseMirror uses document.createRange, which is not polyfilled by JSDOM.
-	document.createRange = function() {
+	document.createRange = function () {
 		return {
 			setStart: () => {},
 			setEnd: () => {},

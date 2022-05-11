@@ -1,6 +1,7 @@
 import { DOMSerializer, Node } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import Popper from 'popper.js';
+import linkifyHtml from 'linkifyjs/html';
 
 import { rectContainsPoint, rectUnion } from 'utils/geom';
 
@@ -44,12 +45,14 @@ class NotePopover {
 		this.teardownTooltip();
 		const { citation, [this.unstructuredAttrKey]: unstructuredValue } = this.node.attrs;
 		const tooltip = document.createElement('div');
+		const linkedStructured = linkifyHtml(citation.html);
+		const linkedUnstructured = linkifyHtml(unstructuredValue);
 		tooltip.setAttribute('id', this.notePopoverId);
 		tooltip.setAttribute('role', 'tooltip');
 		tooltip.classList.add('note-popover-component', 'bp3-elevation-2');
 		tooltip.innerHTML = `
-            ${citation ? normalizePopoverString(citation.html) : ''}
-            ${unstructuredValue ? normalizePopoverString(unstructuredValue) : ''}
+            ${citation ? normalizePopoverString(linkedStructured) : ''}
+            ${unstructuredValue ? normalizePopoverString(linkedUnstructured) : ''}
         `;
 		document.body.appendChild(tooltip);
 		document.addEventListener('mousemove', this.handleMouseMove);

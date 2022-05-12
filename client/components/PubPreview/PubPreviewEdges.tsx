@@ -5,6 +5,7 @@ import { Pub, PubEdge } from 'types';
 import { pubShortUrl } from 'utils/canonicalUrls';
 import { intersperse } from 'utils/arrays';
 import { getRelationTypeName } from 'utils/pubEdge/relations';
+import { usePageContext } from 'utils/hooks';
 
 require('./pubPreviewEdges.scss');
 
@@ -27,7 +28,7 @@ const getChildEdges = (pubData: Pub) => {
 			}
 			return false;
 		}),
-		...outboundEdges.filter((edge) => edge.pubIsParent && edge.targetPub),
+		...outboundEdges.filter((edge) => edge.pubIsParent),
 	];
 };
 
@@ -41,34 +42,44 @@ const getEdgesByRelationType = (edges: PubEdge[]): Record<string, PubEdge[]> => 
 	return res;
 };
 
-const renderEdgeLink = (edge: PubEdge) => {
+const renderEdgeLink = (edge: PubEdge, renderTitle = false) => {
 	const { pubIsParent, targetPub, pub, externalPublication } = edge;
 	if (externalPublication) {
 		const { contributors = [], title, url } = externalPublication;
 		return (
 			<a href={url} key={edge.id} className="edge-link">
-				<Byline
-					{...sharedBylineProps}
-					contributors={contributors}
-					renderEmptyState={() => title}
-				/>
+				{renderTitle ? (
+					title
+				) : (
+					<Byline
+						{...sharedBylineProps}
+						contributors={contributors}
+						renderEmptyState={() => title}
+					/>
+				)}
 			</a>
 		);
 	}
 	const childPub = (pubIsParent ? targetPub : pub) as Pub;
 	return (
 		<a href={pubShortUrl(childPub)} key={edge.id} className="edge-link">
-			<PubByline
-				{...sharedBylineProps}
-				pubData={childPub}
-				linkToUsers={false}
-				renderEmptyState={() => childPub.title}
-			/>
+			{renderTitle ? (
+				childPub.title
+			) : (
+				<PubByline
+					{...sharedBylineProps}
+					pubData={childPub}
+					linkToUsers={false}
+					renderEmptyState={() => childPub.title}
+				/>
+			)}
 		</a>
 	);
 };
 
 const PubPreviewEdges = (props: Props) => {
+	const { communityData } = usePageContext();
+
 	const { accentColor, pubData } = props;
 	const childEdges = getChildEdges(pubData);
 
@@ -77,6 +88,9 @@ const PubPreviewEdges = (props: Props) => {
 	}
 
 	const categorizedEdges = getEdgesByRelationType(childEdges);
+	// Show title, not author, if it's Arcadia.
+	// TODO: Add this as a community-wide connection setting.
+	const isArcadia = communityData.id === '1a71ef4d-f6fe-40d3-8379-42fa2141db58';
 
 	return (
 		<div className="pub-preview-edges-component">
@@ -99,7 +113,12 @@ const PubPreviewEdges = (props: Props) => {
 									{pluralName} ({edges.length}):
 								</strong>
 								&nbsp;
-								{intersperse(edges.map(renderEdgeLink), ' • ')}
+								{intersperse(
+									edges.map((edge) => {
+										return renderEdgeLink(edge, isArcadia);
+									}),
+									' • ',
+								)}
 							</div>
 						);
 					})}

@@ -109,6 +109,10 @@ $mobile-bottom-buttons-spacing: 10px;
 		font-weight: normal;
 		font-family: $header-font;
 		letter-spacing: 0.5px;
+		.byline-icon svg {
+			width: 14px;
+			height: auto;
+		}
 	}
 
 	@include mobile {

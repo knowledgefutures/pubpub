@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Byline, { BylineProps } from 'components/Byline/Byline';
-import { naivePluralize } from 'utils/strings';
+import { BylineProps } from 'components/Byline/Byline';
 import { getAllPubContributors } from 'utils/contributors';
 import { Pub } from 'types';
+import WithinCommunityByline from '../WithinCommunityByline/WithinCommunityByline';
 
 require('./manyAuthorsByline.scss');
 
@@ -25,20 +25,12 @@ const ManyAuthorsByline = (props: Props) => {
 	if (isExpanded && isTruncating) {
 		return (
 			<>
-				<Byline
-					contributors={authors}
-					bylinePrefix={`by ${authors.length} ${naivePluralize(
-						'author',
-						authors.length,
-					)}: `}
-					renderUserLabel={(user, index) => `(${index + 1}) ${user.fullName}`}
-					linkToUsers={false}
-				/>
+				<WithinCommunityByline contributors={authors} linkToUsers={false} />
 			</>
 		);
 	}
 	return (
-		<Byline
+		<WithinCommunityByline
 			contributors={authors}
 			renderTruncation={(n) => `${n} more`}
 			truncateAt={truncateAt}

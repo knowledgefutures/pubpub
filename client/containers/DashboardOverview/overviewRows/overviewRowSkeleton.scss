@@ -67,6 +67,10 @@ $mobile-viewport-cutoff: 750px;
 		}
 		.byline {
 			font-style: italic;
+			.byline-icon svg {
+				width: 11px;
+				height: auto;
+			}
 		}
 		.byline,
 		.summary-icons {

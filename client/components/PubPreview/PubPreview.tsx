@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
-import dateFormat from 'dateformat';
 
 import { Pub, Community } from 'types';
 import { getResizedUrl } from 'utils/images';

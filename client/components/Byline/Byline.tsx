@@ -4,11 +4,13 @@ import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { joinOxford, naivePluralize } from 'utils/strings';
 import { AttributableUser, User } from 'types';
 
+require('./byline.scss');
+
 const isFullUser = (u: AttributableUser): u is User => 'slug' in u;
 
 export type BylineProps = {
 	ampersand?: boolean;
-	bylinePrefix?: null | string;
+	bylinePrefix?: React.ReactNode;
 	contributors: (string | {})[] | string;
 	linkToUsers?: boolean;
 	renderEmptyState?: () => React.ReactNode;

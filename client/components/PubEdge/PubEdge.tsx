@@ -5,8 +5,10 @@ import { Byline } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getHostnameForUrl, getValuesFromPubEdge } from 'utils/pubEdge';
 
+import { AttributionWithUser } from 'types';
 import PubEdgeLayout from './PubEdgeLayout';
 import PubEdgeDescriptionButton from './PubEdgeDescriptionButton';
+import WithinCommunityByline from '../WithinCommunityByline/WithinCommunityByline';
 
 require('./pubEdge.scss');
 
@@ -32,7 +34,7 @@ const PubEdge = (props: PubEdgeProps) => {
 		communityData,
 		viewingFromTarget,
 	);
-
+	const { externalPublication } = pubEdge;
 	const detailsElementId = `edge-details-${pubEdge.id}`;
 	const detailsElement = description && (
 		<details open={open} id={detailsElementId}>
@@ -93,7 +95,14 @@ const PubEdge = (props: PubEdgeProps) => {
 			})}
 			titleElement={maybeLink(title)}
 			bylineElement={
-				contributors && contributors.length > 0 && <Byline contributors={contributors} />
+				contributors &&
+				contributors.length > 0 &&
+				(externalPublication ? (
+					<Byline contributors={contributors} />
+				) : (
+					// I know there's a better way to do this with a typeguard.
+					<WithinCommunityByline contributors={contributors as AttributionWithUser[]} />
+				))
 			}
 			metadataElements={[
 				description && (

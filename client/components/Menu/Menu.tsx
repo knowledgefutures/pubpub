@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { Classes } from '@blueprintjs/core';
 import * as RK from 'reakit/Menu';
 
-import { Placement } from 'popper.js';
 import { MenuContext, MenuConfigContext } from './menuContexts';
 
 export type MenuProps = {
@@ -14,15 +13,7 @@ export type MenuProps = {
 	gutter?: number;
 	menuStyle?: object;
 	onDismiss?: () => unknown;
-	placement?: Placement;
-};
-
-const defaultProps = {
-	className: '',
-	gutter: undefined,
-	menuStyle: {},
-	onDismiss: () => {},
-	placement: undefined,
+	placement?: RK.MenuProps['placement'];
 };
 
 const renderDisclosure = (disclosure, disclosureProps) => {
@@ -35,13 +26,13 @@ const renderDisclosure = (disclosure, disclosureProps) => {
 export const Menu = React.forwardRef((props: MenuProps, ref) => {
 	const {
 		'aria-label': ariaLabel,
-		children,
+		children = '',
 		className,
 		disclosure,
 		placement,
-		onDismiss,
+		onDismiss = () => {},
 		gutter,
-		menuStyle,
+		menuStyle = {},
 		...restProps
 	} = props;
 
@@ -90,5 +81,3 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 		</React.Fragment>
 	);
 });
-
-Menu.defaultProps = defaultProps;

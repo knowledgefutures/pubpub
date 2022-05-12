@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import Popper from 'popper.js';
+import { createPopper } from '@popperjs/core';
 
 import { ClickToCopyButton } from 'components';
 import { getLowestAncestorWithId } from 'client/utils/dom';
@@ -28,7 +28,7 @@ const LinkPopover = (props: Props) => {
 	useEffect(() => {
 		const popover = popoverRef.current;
 		if (parent && popover) {
-			const popperObject = new Popper(parent, popover, {
+			const popperObject = createPopper(parent, popover, {
 				placement: parent.matches('h1, h2, h3, h4, h5, h6') ? 'left' : 'left-start',
 			});
 

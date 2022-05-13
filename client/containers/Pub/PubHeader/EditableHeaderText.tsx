@@ -40,6 +40,7 @@ const EditableHeaderText = (props: EditableHeaderTextProps) => {
 					onConfirm={(newText) => updateText(newText.replace(/\n/g, ''))}
 					onChange={setIntermediateValue}
 					value={intermediateValue}
+					multiline={true}
 					confirmOnEnterKey={true}
 					maxLength={maxLength}
 				/>

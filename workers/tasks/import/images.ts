@@ -22,8 +22,8 @@ export const convertFileTypeIfNecessary = async (tmpFilePath) => {
 		return pngPath;
 	}
 	if (extension === 'tiff' || extension === 'tif') {
-		const { path: pngPath } = await tmp.file({ postfix: '.png' });
-		await spawn('convert', [tmpFilePath, pngPath]);
+		const pngPath = await tmp.tmpName({ postfix: '.png' });
+		await spawn('convert', ['-quiet', tmpFilePath, pngPath]);
 		return pngPath;
 	}
 	return tmpFilePath;

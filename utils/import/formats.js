@@ -1,5 +1,5 @@
 export const extensionToPandocFormat = {
-	docx: 'docx',
+	docx: 'docx+citations',
 	epub: 'epub',
 	html: 'html',
 	md: 'markdown',

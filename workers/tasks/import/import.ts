@@ -20,7 +20,7 @@ setPandocApiVersion([1, 22]);
 const dataRoot = process.env.NODE_ENV === 'production' ? '/app/.apt/usr/share/pandoc/data ' : '';
 
 const createPandocArgs = (pandocFormat, tmpDirPath, metadataPath) => {
-	const shouldExtractMedia = ['odt', 'docx', 'epub'].includes(pandocFormat);
+	const shouldExtractMedia = ['odt', 'docx+citations', 'epub'].includes(pandocFormat);
 	return [
 		dataRoot && [`--data-dir=${dataRoot}`],
 		['-f', pandocFormat],
@@ -28,6 +28,7 @@ const createPandocArgs = (pandocFormat, tmpDirPath, metadataPath) => {
 		metadataPath && [`--metadata-file=${metadataPath}`],
 		shouldExtractMedia && [`--extract-media=${path.join(tmpDirPath, 'media')}`],
 		pandocFormat === 'latex' && ['--verbose'],
+		pandocFormat === 'docx+citations' && ['--citeproc', '-M', 'suppress-bibliography:true'],
 	]
 		.filter((x): x is string[] => !!x)
 		.reduce((acc, next) => [...acc, ...next], []);

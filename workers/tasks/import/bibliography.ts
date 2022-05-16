@@ -23,8 +23,12 @@ export const extractRefBlocks = (pandocAst) => {
 	return { pandocAst, refBlocks: null };
 };
 
-const extractCitationsUsingPandoc = (bibliographyTmpPath) => {
-	const proc = spawnSync('pandoc', [bibliographyTmpPath, '-t', 'csljson']);
+const extractCitationsUsingPandoc = (bibliographyTmpPath, docx = false) => {
+	const pandocOptions = [bibliographyTmpPath, '-t', 'csljson'];
+	if (docx) {
+		pandocOptions.push('-f', 'docx+citations');
+	}
+	const proc = spawnSync('pandoc', pandocOptions);
 	const output = proc.stdout.toString();
 	const cslJson = JSON.parse(output);
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'fromEntries' does not exist on type 'Obj... Remove this comment to see the full error message
@@ -49,6 +53,9 @@ export const extractBibliographyItems = async ({ bibliography, document, extract
 	if (document && extensionFor(document.tmpPath) === 'xml' && extractBibFromJats) {
 		const generatedBibPath = await getBibPathFromXslTransform(document.tmpPath);
 		return extractCitationsUsingPandoc(generatedBibPath);
+	}
+	if (document && extensionFor(document.tmpPath) === 'docx') {
+		return extractCitationsUsingPandoc(document.tmpPath, true);
 	}
 	return {};
 };

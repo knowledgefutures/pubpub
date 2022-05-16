@@ -13,7 +13,7 @@ const WrappedGlobalControls = (props: Props) => {
 	const { title, ...restProps } = props;
 	const { communityData } = usePageContext();
 	return (
-		<div style={{ marginBottom: '1em' }}>
+		<div style={{ marginBottom: '1em' }} className="accent-color">
 			<h4>{title}</h4>
 			<div
 				style={{

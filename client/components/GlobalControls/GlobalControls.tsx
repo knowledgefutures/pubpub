@@ -108,7 +108,7 @@ const GlobalControls = (props: Props) => {
 	};
 
 	return (
-		<div className="global-controls-component accent-color">
+		<div className="global-controls-component">
 			{renderItemsVisibleFromCommunity()}
 			{renderBasePubPubLinks()}
 			{renderUserMenuOrLogin()}

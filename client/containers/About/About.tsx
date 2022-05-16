@@ -39,39 +39,34 @@ const About = function () {
 					PubPub is built for communities of all types, but may be ideal for you if your
 					community:
 				</p>
-				<p>
-					<ul>
-						<li>Wants to create web-native, dynamic content.</li>
-						<li>Wants to collaborate on content creation.</li>
-						<li>
-							Wants to integrate your content into academic systems and formats like
-							Crossref, Google Scholar, and JATS XML with as little effort as
-							possible.
-						</li>
-						<li>Doesn’t have high levels of technical expertise on-staff.</li>
-						<li>
-							Doesn’t want to manage your own servers and worry about updates, plugin
-							compatibility, or users breaking layouts.
-						</li>
-					</ul>
-				</p>
+				<ul>
+					<li>Wants to create web-native, dynamic content.</li>
+					<li>Wants to collaborate on content creation.</li>
+					<li>
+						Wants to integrate your content into academic systems and formats like
+						Crossref, Google Scholar, and JATS XML with as little effort as possible.
+					</li>
+					<li>Doesn’t have high levels of technical expertise on-staff.</li>
+					<li>
+						Doesn’t want to manage your own servers and worry about updates, plugin
+						compatibility, or users breaking layouts.
+					</li>
+				</ul>
 				<p>PubPub may not be ideal if your community:</p>
-				<p>
-					<ul>
-						<li>
-							Publishes primarily PDF content, or has an audience that primarily
-							consumes content as PDF.
-						</li>
-						<li>
-							Needs precise control over the look and feel of its website or its PDFs.
-						</li>
-						<li>
-							Needs precise control over academic metadata or output formats like JATS
-							XML.
-						</li>
-						<li>Needs or wants to self-host their technology.</li>
-					</ul>
-				</p>
+				<ul>
+					<li>
+						Publishes primarily PDF content, or has an audience that primarily consumes
+						content as PDF.
+					</li>
+					<li>
+						Needs precise control over the look and feel of its website or its PDFs.
+					</li>
+					<li>
+						Needs precise control over academic metadata or output formats like JATS
+						XML.
+					</li>
+					<li>Needs or wants to self-host their technology.</li>
+				</ul>
 				<p>
 					To learn more about the features, benefits and tradeoffs of using PubPub, see
 					our <a href="https://help.pubpub.org/getting-started">Getting Started guide</a>.
@@ -95,7 +90,7 @@ const About = function () {
 					</a>
 					.
 				</p>
-				<h2>Roadmap & Contribution</h2>
+				<h2>Roadmap &amp; Contribution</h2>
 				<p>
 					PubPub maintains a high-level public roadmap{' '}
 					<a href="https://github.com/orgs/pubpub/projects/9">on GitHub</a>. To suggest a
@@ -144,43 +139,39 @@ const About = function () {
 					.
 				</p>
 				<h2>Other Useful Resources</h2>
-				<p>
-					<ul>
-						<li>
-							<a href="/explore">Check out our Explore Page</a> for a curated list of
-							some of the most interesting PubPub communities (and we're constantly on
-							the lookout for new ones).{' '}
-						</li>
-						<li>
-							<a href="https://help.pubpub.org">Visit our Help Site</a> for guides and
-							reference materials for setting up and maintaining communities.
-						</li>
-						<li>
-							<a href="https://knowledgefutures.us5.list-manage.com/subscribe?u=9b9b78707f3dd62d0d47ec03d&id=be26e45660">
-								Subscribe to our our twice-monthly newsletter
-							</a>{' '}
-							for useful community and product updates.
-						</li>
-						<li>
-							<a href="https://twitter.com/pubpub">Follow us on Twitter</a> for great
-							examples of communities using PubPub effectively.
-						</li>
-						<li>
-							<a href="https://github.com/pubpub/pubpub">
-								Browse our GitHub Repository
-							</a>{' '}
-							to see our code, as well as the latest development activiy.
-						</li>
-						<li>
-							If you have questions or are interested in collaborating, get in touch
-							directly at{' '}
-							<a href="mailto:hello@pubpub.org?subject=About+Page+Question">
-								hello@pubpub.org
-							</a>
-							.
-						</li>
-					</ul>
-				</p>
+				<ul>
+					<li>
+						<a href="/explore">Check out our Explore Page</a> for a curated list of some
+						of the most interesting PubPub communities (and we're constantly on the
+						lookout for new ones).{' '}
+					</li>
+					<li>
+						<a href="https://help.pubpub.org">Visit our Help Site</a> for guides and
+						reference materials for setting up and maintaining communities.
+					</li>
+					<li>
+						<a href="https://knowledgefutures.us5.list-manage.com/subscribe?u=9b9b78707f3dd62d0d47ec03d&id=be26e45660">
+							Subscribe to our our twice-monthly newsletter
+						</a>{' '}
+						for useful community and product updates.
+					</li>
+					<li>
+						<a href="https://twitter.com/pubpub">Follow us on Twitter</a> for great
+						examples of communities using PubPub effectively.
+					</li>
+					<li>
+						<a href="https://github.com/pubpub/pubpub">Browse our GitHub Repository</a>{' '}
+						to see our code, as well as the latest development activiy.
+					</li>
+					<li>
+						If you have questions or are interested in collaborating, get in touch
+						directly at{' '}
+						<a href="mailto:hello@pubpub.org?subject=About+Page+Question">
+							hello@pubpub.org
+						</a>
+						.
+					</li>
+				</ul>
 				<p>—The PubPub Team</p>
 			</GridWrapper>
 		</div>

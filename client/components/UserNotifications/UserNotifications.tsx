@@ -43,7 +43,7 @@ const UserNotifications = (props: Props) => {
 					<Button
 						minimal
 						className="preferences-button"
-						icon="settings"
+						icon="cog"
 						onClick={() => setShowingPreferences(true)}
 					/>
 				</div>

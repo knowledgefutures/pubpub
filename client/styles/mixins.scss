@@ -1,7 +1,21 @@
+@import './variables.scss';
+
 @mixin bleed-top-border() {
 	background-color: #fff;
 	padding: 0 8px;
 	position: absolute;
 	top: 0;
 	transform: translateY(-50%);
+}
+
+@mixin mobile($cutoff: $mobile-cutoff) {
+	@media screen and (max-width: $cutoff) {
+		@content;
+	}
+}
+
+@mixin desktop($cutoff: $mobile-cutoff) {
+	@media screen and (min-width: #{1 + $cutoff}) {
+		@content;
+	}
 }

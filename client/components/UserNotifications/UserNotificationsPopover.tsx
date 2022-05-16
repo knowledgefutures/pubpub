@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
-import { Button } from '@blueprintjs/core';
 
-import { Icon, Popover } from 'components';
+import { Popover } from 'components';
 import { InitialNotificationsData, Maybe } from 'types';
 
 import { usePageContext } from 'utils/hooks';
@@ -11,6 +10,12 @@ import { UserNotificationsContext } from './userNotificationsContext';
 import { NotificationsState } from './types';
 
 require('./userNotifications.scss');
+
+type ButtonRenderOptions = { hasUnreadNotifications: boolean };
+
+type Props = {
+	children: (opts: ButtonRenderOptions) => React.ReactElement;
+};
 
 const getNotificationsData = (
 	initialNotificationsData: InitialNotificationsData,
@@ -34,9 +39,10 @@ const getNotificationsData = (
 	return initialNotificationsData;
 };
 
-const UserNotificationsPopover = () => {
-	const userNotifications = useNotificationsState();
+const UserNotificationsPopover = (props: Props) => {
+	const { children } = props;
 	const { initialNotificationsData } = usePageContext();
+	const userNotifications = useNotificationsState();
 
 	const { hasNotifications, hasUnreadNotifications } = useMemo(
 		() => getNotificationsData(initialNotificationsData, userNotifications?.state),
@@ -44,14 +50,7 @@ const UserNotificationsPopover = () => {
 	);
 
 	if (hasNotifications) {
-		const button = (
-			<Button
-				className="user-notifications-button"
-				icon={<Icon icon={hasUnreadNotifications ? 'inbox-update' : 'inbox'} />}
-				minimal
-				large
-			/>
-		);
+		const button = children({ hasUnreadNotifications });
 		if (userNotifications) {
 			const { state, context } = userNotifications;
 			return (

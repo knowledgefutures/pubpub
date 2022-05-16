@@ -20,3 +20,5 @@ $header-font: multi-display, -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'R
 $export-body-font: Georgia, Cambria, 'Times New Roman', Times, 'DejaVu Serif', $cjk-body-font, serif;
 $screen-body-font: skolar-latin, Georgia, Cambria, 'Times New Roman', Times, serif;
 $body-font: if-is-export($export-body-font, $screen-body-font);
+
+$mobile-cutoff: 750px;

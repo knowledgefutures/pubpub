@@ -1,0 +1,15 @@
+@import 'styles/mixins.scss';
+
+$component-prefix: 'mobile-aware-component';
+
+@include desktop {
+	.#{$component-prefix}__mobile {
+		display: none !important;
+	}
+}
+
+@include mobile {
+	.#{$component-prefix}__desktop {
+		display: none !important;
+	}
+}

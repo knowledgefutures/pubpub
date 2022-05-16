@@ -13,8 +13,8 @@ const pageContext = {
 	scopeData,
 	featureFlags: {},
 	initialNotificationsData: {
-		hasNotifications: false,
-		hasUnreadNotifications: false,
+		hasNotifications: true,
+		hasUnreadNotifications: true,
 	},
 };
 

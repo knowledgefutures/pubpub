@@ -39,9 +39,9 @@ const getCollectionLevelData = (collection) => {
 	};
 };
 
-const getContributorName = (attribution: types.Attribution) =>
+const getContributorName = (attribution: types.Attribution, index, arr, hideNonAuthors = false) =>
 	(types.isCollectionAttribution(attribution) || types.isPubAttribution(attribution)) &&
-	attribution.isAuthor &&
+	(hideNonAuthors ? attribution.isAuthor : true) &&
 	attribution.user
 		? { given: attribution.user.firstName, family: attribution.user.lastName }
 		: {};
@@ -54,7 +54,9 @@ export const generateCitationHtml = async (
 	const pubIssuedDate = getPubPublishedDate(pubData);
 	const pubLink = pubUrl(communityData, pubData);
 	const primaryCollection = getPrimaryCollection(pubData.collectionPubs);
-	const authors = getAllPubContributors(pubData, 'author').map(getContributorName);
+	const authors = getAllPubContributors(pubData, 'author').map((contributor, index, array) =>
+		getContributorName(contributor, index, array, true),
+	);
 	const authorEntry = authors.length ? { author: authors } : {};
 
 	const editors = getAllPubContributors(pubData, 'editor').map(getContributorName);

@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 
-import { Scope } from 'types';
+import { Scope, MemberPermission } from 'types';
 import {
 	Collection,
 	CollectionPub,
@@ -296,7 +296,7 @@ getActivePermissions = async (
 ) => {
 	const { activePub, activeCollection, activeCommunity, inactiveCollections } = scopeElements;
 	const isSuperAdmin = checkIfSuperAdmin(scopeInputs.loginId);
-	const permissionLevels = ['view', 'edit', 'manage', 'admin'];
+	const permissionLevels: MemberPermission[] = ['view', 'edit', 'manage', 'admin'];
 	let defaultPermissionIndex = -1;
 
 	[activePub, activeCollection, activeCommunity, ...inactiveCollections]
@@ -319,24 +319,19 @@ getActivePermissions = async (
 		return currLevelIndex > prev ? currLevelIndex : prev;
 	}, defaultPermissionIndex);
 
-	const canAdminCommunity =
-		isSuperAdmin ||
-		scopeMemberData.find((member) => member.communityId && member.permissions === 'admin');
+	const memberHasCommunityPermissions = (permissionLevel: MemberPermission) => {
+		return (
+			permissionLevels.includes(permissionLevel) &&
+			scopeMemberData.find(
+				(member) => member.communityId && member.permissions === permissionLevel,
+			)
+		);
+	};
 
-	const canManageCommunity =
-		isSuperAdmin ||
-		canAdminCommunity ||
-		scopeMemberData.find((member) => member.communityId && member.permissions === 'manage');
-
-	const canEditCommunity =
-		isSuperAdmin ||
-		canAdminCommunity ||
-		scopeMemberData.find((member) => member.communityId && member.permissions === 'edit');
-
-	const canViewCommunity =
-		isSuperAdmin ||
-		canAdminCommunity ||
-		scopeMemberData.find((member) => member.communityId && member.permissions === 'view');
+	const canAdminCommunity = isSuperAdmin || memberHasCommunityPermissions('admin');
+	const canManageCommunity = canAdminCommunity || memberHasCommunityPermissions('manage');
+	const canEditCommunity = canManageCommunity || memberHasCommunityPermissions('edit');
+	const canViewCommunity = canEditCommunity || memberHasCommunityPermissions('view');
 
 	const booleanOr = (precedent, value) => {
 		/* Don't inherit value from null */

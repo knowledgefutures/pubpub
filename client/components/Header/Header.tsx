@@ -40,9 +40,6 @@ const Header = (props: Props) => {
 		if ((!isBasePubPub && !textColorChange) || (!isBasePubPub && !isLanding)) {
 			dynamicComponentClasses += ' accent-color';
 		}
-		if (isBasePubPub && locationData.path === '/') {
-			dynamicComponentClasses += ' bp3-dark';
-		}
 		if (hideHero) {
 			return dynamicComponentClasses;
 		}

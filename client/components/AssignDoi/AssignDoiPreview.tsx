@@ -95,7 +95,7 @@ const renderContributors = (contributors) => {
 		<>
 			<dt>Contributors</dt>
 			<dd>
-				{contributors.map((contributor) => {
+				{contributors.person_name.map((contributor) => {
 					return (
 						<ul key={contributor.surname}>
 							{contributor.given_name} {contributor.surname} (
@@ -109,7 +109,7 @@ const renderContributors = (contributors) => {
 };
 
 const renderJournalIssue = (journal_issue) => {
-	const { titles, publication_date } = journal_issue;
+	const { titles, publication_date, contributors } = journal_issue;
 
 	return (
 		<>
@@ -117,7 +117,7 @@ const renderJournalIssue = (journal_issue) => {
 			<dl>
 				{renderTitles(titles)}
 				{renderPublicationDate(publication_date)}
-				{renderContributors(journal_issue.contributors.person_name)}
+				{renderContributors(contributors)}
 			</dl>
 		</>
 	);
@@ -129,7 +129,7 @@ const renderArticlePreview = (body) => {
 			journal_article: {
 				titles,
 				publication_date,
-				contributors: content,
+				contributors,
 				'rel:program': relationships,
 			},
 			journal_metadata: {
@@ -145,7 +145,7 @@ const renderArticlePreview = (body) => {
 			<dl>
 				{renderTitles(titles)}
 				{renderPublicationDate(publication_date)}
-				{renderContributors(content.person_name)}
+				{renderContributors(contributors)}
 			</dl>
 			<h6>Journal Metadata</h6>
 			<dl>
@@ -168,11 +168,11 @@ const renderBookPreview = (body) => {
 				edition_number,
 				publisher,
 				publication_date: bookPublicationDate,
-				contributors: metadata,
+				contributors: metadataContributors,
 			},
 			content_item: {
 				titles: contentTitles,
-				contributors: content,
+				contributors: contentContributors,
 				publication_date: contentPublicationDate,
 				'rel:program': relationships,
 			},
@@ -187,13 +187,13 @@ const renderBookPreview = (body) => {
 				<dt>Edition Number</dt>
 				<dd>{edition_number}</dd>
 				{renderPublisher(publisher)}
-				{renderContributors(metadata.person_name)}
+				{renderContributors(metadataContributors)}
 				{renderPublicationDate(bookPublicationDate)}
 			</dl>
 			<h6>Content</h6>
 			<dl>
 				{renderTitles(contentTitles)}
-				{renderContributors(content.person_name)}
+				{renderContributors(contentContributors)}
 				{renderPublicationDate(contentPublicationDate)}
 			</dl>
 			{renderRelationships(relationships)}
@@ -223,7 +223,7 @@ const renderConferencePreview = (body) => {
 			<h6>Conference Paper</h6>
 			<dl>
 				{renderTitles(titles)}
-				{renderContributors(conference_contributors.person_name)}
+				{renderContributors(conference_contributors)}
 			</dl>
 			<h6>Event Metadata</h6>
 			<dl>
@@ -240,7 +240,7 @@ const renderConferencePreview = (body) => {
 				{renderPublisher(publisher)}
 			</dl>
 			<h6>Contributors</h6>
-			<dl>{renderContributors(contributors.person_name)}</dl>
+			<dl>{renderContributors(contributors)}</dl>
 			{renderRelationships(relationships)}
 		</>
 	);
@@ -255,7 +255,7 @@ const renderPreprintPreview = (body) => {
 			<h6>Preprint</h6>
 			<dl>
 				{renderTitles(titles)}
-				{renderContributors(contributors.person_name)}
+				{renderContributors(contributors)}
 				{renderPublicationDate(posted_date, 'Posted Date')}
 			</dl>
 			{renderRelationships(relationships)}
@@ -279,7 +279,7 @@ const renderPeerReviewPreview = (body) => {
 			<h6>Peer Review</h6>
 			<dl>
 				{renderTitles(titles)}
-				{renderContributors(contributors.person_name)}
+				{renderContributors(contributors)}
 				{renderPublicationDate(review_date, 'Review Date')}
 				{type && (
 					<>
@@ -318,7 +318,7 @@ const renderSupplementPreview = (body) => {
 				<dt>Parent Relation</dt>
 				<dd>isPartOf</dd>
 				{renderTitles(titles)}
-				{renderContributors(contributors.person_name)}
+				{renderContributors(contributors)}
 				{renderPublicationDate(publication_date)}
 			</dl>
 		</>

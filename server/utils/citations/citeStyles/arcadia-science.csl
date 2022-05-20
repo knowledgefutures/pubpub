@@ -14,7 +14,7 @@
       <email>megan.hochstrasser@arcadiascience.com </email>
     </author>
     <issn/>
-    <updated>2022-05-18T15:24:16+00:00</updated>
+    <updated>2022-05-20T18:52:46+00:00</updated>
     <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
   </info>
   <macro name="author">
@@ -50,7 +50,7 @@
       <if variable="DOI">
         <text variable="DOI" prefix="https://doi.org/"/>
       </if>
-      <else-if type="webpage">
+      <else-if variable="URL">
         <text variable="URL"/>
       </else-if>
     </choose>

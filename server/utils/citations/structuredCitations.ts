@@ -77,7 +77,7 @@ const getSingleStructuredCitation = async (
 		if (citationData) {
 			const citationJson = citationData.format('data', { format: 'object' });
 			const citationHtml = citationData.format('bibliography', {
-				template: citationStyle,
+				template: citationStyle === 'harvard' ? 'harvard1' : citationStyle,
 				format: 'html',
 			});
 			const citationApa = citationData.format('citation', {

@@ -108,28 +108,23 @@ export const generateCitationHtml = async (
 	return {
 		pub: {
 			default: pubCiteObject
-				.get({
-					format: 'string',
-					type: 'html',
-					style: `citation-${pubData.citationStyle}`,
+				.format('bibliography', {
+					format: 'html',
+					template:
+						pubData.citationStyle === 'harvard' ? 'harvard1' : pubData.citationStyle,
 					lang: 'en-US',
 				})
 				.replace(/\n/gi, ''),
 			apa: pubCiteObject
-				.get({ format: 'string', type: 'html', style: 'citation-apa', lang: 'en-US' })
+				.format('bibliography', { format: 'html', template: 'apa', lang: 'en-US' })
 				.replace(/\n/gi, ''),
 			harvard: pubCiteObject
-				.get({ format: 'string', type: 'html', style: 'citation-harvard', lang: 'en-US' })
+				.format('bibliography', { format: 'html', template: 'harvard1', lang: 'en-US' })
 				.replace(/\n/gi, ''),
 			vancouver: pubCiteObject
-				.get({ format: 'string', type: 'html', style: 'citation-vancouver', lang: 'en-US' })
+				.format('bibliography', { format: 'html', template: 'vancouver', lang: 'en-US' })
 				.replace(/\n/gi, ''),
-			bibtex: pubCiteObject.get({
-				format: 'string',
-				type: 'html',
-				style: 'bibtex',
-				lang: 'en-US',
-			}),
+			bibtex: pubCiteObject.format('bibtex'),
 		},
 	};
 };

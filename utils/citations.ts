@@ -3,6 +3,7 @@ export type CitationStyleKind =
 	| 'american-anthro'
 	| 'apa'
 	| 'apa-7'
+	| 'arcadia-science'
 	| 'cell'
 	| 'chicago'
 	| 'harvard'
@@ -39,6 +40,7 @@ export const citationStyles: CitationStyle[] = [
 		name: 'APA 7th Edition',
 		path: './citeStyles/apa-7.csl',
 	},
+	{ key: 'arcadia-science', name: 'Arcadia Science', path: './citeStyles/arcadia-science.csl' },
 	{ key: 'cell', name: 'Cell', path: './citeStyles/cell.csl' },
 	{ key: 'chicago', name: 'Chicago', path: './citeStyles/chicago-author-date.csl' },
 	{ key: 'harvard', name: 'Harvard' },

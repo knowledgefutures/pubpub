@@ -1,5 +1,4 @@
 import React from 'react';
-import { Icon } from '@blueprintjs/core';
 
 import { SubmissionEmail } from 'components';
 import { Community } from 'types';
@@ -9,7 +8,7 @@ require('./emailPreview.scss');
 type Props = {
 	from: string;
 	to: string;
-	cc: null | string;
+	cc: string[];
 	body: React.ReactNode;
 	community: Community;
 	collectionTitle: string;
@@ -21,7 +20,6 @@ const EmailPreview = (props: Props) => {
 	return (
 		<div className="email-preview-component">
 			<div className="address-header">
-				<Icon icon="envelope" />
 				<div className="address-box">
 					<div className="label">From:</div>
 					<div className="address">{from}</div>
@@ -30,10 +28,10 @@ const EmailPreview = (props: Props) => {
 					<div className="label">To:</div>
 					<div className="address">{to}</div>
 				</div>
-				{cc && (
+				{cc.length && (
 					<div className="address-box">
 						<div className="label">CC:</div>
-						<div className="address">{cc}</div>
+						<div className="address">{cc.join(', ')}</div>
 					</div>
 				)}
 			</div>

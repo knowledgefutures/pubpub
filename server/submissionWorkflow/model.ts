@@ -11,7 +11,7 @@ export default (sequelize, dataTypes) => {
 			declinedText: { type: dataTypes.JSONB, allowNull: false },
 			receivedEmailText: { type: dataTypes.JSONB, allowNull: false },
 			introText: { type: dataTypes.JSONB, allowNull: false },
-			targetEmailAddress: { type: dataTypes.STRING, allowNull: false },
+			targetEmailAddresses: { type: dataTypes.JSONB, allowNull: false, defaultValue: [] },
 			requireAbstract: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 			requireDescription: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 		},

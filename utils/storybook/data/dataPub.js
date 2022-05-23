@@ -55,7 +55,7 @@ export default {
 			enabled: true,
 			title: 'A Submission Workflow',
 			collectionId: '',
-			targetEmailAddress: '',
+			targetEmailAddresses: [],
 			acceptedText: getEmptyDoc(),
 			declinedText: getEmptyDoc(),
 			receivedEmailText: getEmptyDoc(),

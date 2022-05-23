@@ -45,7 +45,10 @@ const sharedCreationValues = {
 	declinedText: getEmptyDoc(),
 	introText: getEmptyDoc(),
 	title: 'Journal of Accepting Submissions',
-	targetEmailAddress: 'finnandjakeforwvwer@adventuretime.com',
+	targetEmailAddresses: [
+		'finnandjakeforwvwer@adventuretime.com',
+		'finnandjakeneverever@stayhomeoclock.com',
+	],
 	enabled: false,
 };
 
@@ -57,7 +60,7 @@ it('allows a Community manager to create a new submission workflow', async () =>
 	const { admin, collection } = models;
 	const agent = await login(admin);
 	const {
-		body: { enabled, targetEmailAddress, collectionId },
+		body: { enabled, targetEmailAddresses, collectionId },
 	} = await agent
 		.post('/api/submissionWorkflows')
 		.send({
@@ -68,7 +71,10 @@ it('allows a Community manager to create a new submission workflow', async () =>
 
 	expect(collectionId).toEqual(collection.id);
 	expect(enabled).toEqual(false);
-	expect(targetEmailAddress).toEqual('finnandjakeforwvwer@adventuretime.com');
+	expect(targetEmailAddresses).toEqual([
+		'finnandjakeforwvwer@adventuretime.com',
+		'finnandjakeneverever@stayhomeoclock.com',
+	]);
 });
 
 it('forbids a different Community manager from creating a new submission workflow', async () => {

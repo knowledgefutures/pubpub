@@ -34,9 +34,9 @@
 	.email-step {
 		.target-email-input {
 			display: flex;
-			max-width: 600px;
-			> .bp3-input-group {
-				flex-grow: 1;
+			max-width: 800px;
+			> .bp3-tag-input {
+				flex: 1 0 50%;
 				margin-right: 10px;
 			}
 		}

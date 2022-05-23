@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, FormGroup, InputGroup, Label } from '@blueprintjs/core';
+import { Button, Checkbox, FormGroup, InputGroup, Label, TagInput } from '@blueprintjs/core';
 
 import { Collection } from 'types';
 import { LayoutSubmissionBannerSkeleton } from 'client/components/Layout';
 import { usePageContext } from 'utils/hooks';
-import { isValidEmail } from 'utils/email';
 import { withValue } from 'utils/fp';
 import { collectionUrl } from 'utils/canonicalUrls';
 import {
 	RecordValidator,
+	isValidEmailList,
 	isNonEmptyDocJson,
 	isNonEmptyString,
 	isAlwaysValid,
@@ -42,7 +42,7 @@ const validator: RecordValidator<EditableSubmissionWorkflow> = {
 	receivedEmailText: isAlwaysValid,
 	acceptedText: isAlwaysValid,
 	declinedText: isAlwaysValid,
-	targetEmailAddress: isValidEmail,
+	targetEmailAddresses: isValidEmailList,
 	enabled: isAlwaysValid,
 	requireAbstract: isAlwaysValid,
 	requireDescription: isAlwaysValid,
@@ -82,7 +82,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 		community: communityData,
 		from: 'submissions@mg.pubpub.org',
 		to: 'submitter.name@place.org',
-		cc: workflow.targetEmailAddress,
+		cc: workflow.targetEmailAddresses,
 	};
 
 	useEffect(() => void onValidateWorkflow(isValidated), [onValidateWorkflow, isValidated]);
@@ -149,27 +149,37 @@ const SubmissionWorkflowEditor = (props: Props) => {
 	const renderEmails = () => {
 		return (
 			<div className="email-step">
-				<h2>Email correspondence address</h2>
+				<h2>Email correspondence addresses</h2>
 				<p>
 					Once a submission is completed, PubPub will email the submitter with an
-					automated response and CC this address (that you control):
+					automated response and CC these addresses (that you control):
 				</p>
 				<div className="target-email-input">
-					<InputGroup
-						type="email"
-						value={workflow.targetEmailAddress}
+					<TagInput
+						values={workflow.targetEmailAddresses}
 						intent={
-							workflow.targetEmailAddress && !validatedFields.targetEmailAddress
+							workflow.targetEmailAddresses && !validatedFields.targetEmailAddresses
 								? 'danger'
 								: undefined
 						}
-						placeholder="Submissions email address"
-						onChange={(e) => updateWorkflow({ targetEmailAddress: e.target.value })}
+						placeholder="Submissions email address(es)"
+						onChange={(emails) =>
+							isValidEmailList(emails as string[]) &&
+							updateWorkflow({ targetEmailAddresses: emails as string[] })
+						}
+						addOnBlur
 					/>
 					{communityEmail && (
 						<Button
-							disabled={workflow.targetEmailAddress === communityEmail}
-							onClick={() => updateWorkflow({ targetEmailAddress: communityEmail })}
+							disabled={workflow.targetEmailAddresses.indexOf(communityEmail) >= 0}
+							onClick={() =>
+								updateWorkflow({
+									targetEmailAddresses: [
+										...workflow.targetEmailAddresses,
+										communityEmail,
+									],
+								})
+							}
 						>
 							Use {communityEmail}
 						</Button>
@@ -284,7 +294,7 @@ const SubmissionWorkflowEditor = (props: Props) => {
 				stepCompletions={{
 					'instructions-requirements':
 						validatedFields.title && validatedFields.instructionsText,
-					'response-emails': validatedFields.targetEmailAddress,
+					'response-emails': validatedFields.targetEmailAddresses,
 					'layout-banner': validatedFields.introText,
 				}}
 			/>

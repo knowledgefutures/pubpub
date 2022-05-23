@@ -13,6 +13,7 @@ const OPENPRESSTIU_DOI_PREFIX = '10.26116';
 const UGHENT_DOI_PREFIX = '10.21825';
 const NCSU_DOI_PREFIX = '10.52750';
 const ABRF_DOI_PREFIX = '10.7171';
+const LAVAL_DOI_PREFIX = '10.47123';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,
@@ -28,6 +29,7 @@ export const managedDoiPrefixes = [
 	UGHENT_DOI_PREFIX,
 	NCSU_DOI_PREFIX,
 	ABRF_DOI_PREFIX,
+	LAVAL_DOI_PREFIX,
 ];
 
 export const communityDoiOverrides = [
@@ -122,6 +124,13 @@ export const communityDoiOverrides = [
 		],
 		prefix: ABRF_DOI_PREFIX,
 		key: 'ABRF',
+	},
+	{
+		communityIds: [
+			'f51e9fed-9bfd-465d-8556-65ad9a65f734', // https://codicille.pubpub.org/
+		],
+		prefix: LAVAL_DOI_PREFIX,
+		key: 'LAVAL',
 	},
 ];
 

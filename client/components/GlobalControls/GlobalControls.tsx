@@ -73,7 +73,7 @@ const GlobalControls = (props: Props) => {
 
 	const renderItemsVisibleFromCommunity = () => {
 		if (!isBasePubPub) {
-			const canCreatePub = !hideCreatePubButton || canManage;
+			const canCreatePub = loggedIn && (!hideCreatePubButton || canManage);
 			return (
 				<>
 					{canCreatePub && <CreatePubButton />}

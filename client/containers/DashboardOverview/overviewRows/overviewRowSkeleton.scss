@@ -67,6 +67,7 @@ $mobile-viewport-cutoff: 750px;
 		}
 		.byline {
 			font-style: italic;
+			color: $dark-grey;
 			.byline-icon svg {
 				width: 11px;
 				height: auto;
@@ -75,13 +76,13 @@ $mobile-viewport-cutoff: 750px;
 		.byline,
 		.summary-icons {
 			font-size: 14px;
-			color: $medium-grey;
 			@include mobile {
 				font-size: 12px;
 			}
 		}
 		.summary-icons {
 			font-size: 14px;
+			color: $medium-grey;
 			display: flex;
 			align-items: center;
 			margin-top: 4px;

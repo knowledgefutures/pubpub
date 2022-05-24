@@ -3,7 +3,7 @@ import dateFormat from 'dateformat';
 import { Menu, MenuItem, Tag } from '@blueprintjs/core';
 
 import { Review, SanitizedPubData } from 'types';
-import { ContributorsList, DashboardFrame, PubHeaderBackground } from 'components';
+import { ContributorsList, DashboardFrame, PubHeaderBackground, PubTitle } from 'components';
 import CitationsPreview from 'containers/Pub/PubHeader/CitationsPreview';
 import { formatDate } from 'utils/dates';
 import { getAllPubContributors } from 'utils/contributors';
@@ -22,7 +22,7 @@ type Props = {
 const PubOverview = (props: Props) => {
 	const { pubData } = props;
 	const { communityData } = usePageContext();
-	const { title, description } = pubData;
+	const { description } = pubData;
 
 	const renderSection = (sectionTitle, sectionText) => {
 		return (
@@ -126,7 +126,9 @@ const PubOverview = (props: Props) => {
 				safetyLayer="full-height"
 			>
 				<div className="header-content">
-					<h1 className="title">{title}</h1>
+					<h1 className="title">
+						<PubTitle pubData={pubData} />
+					</h1>
 					{description && <div className="description">{description}</div>}
 					{renderPubDates()}
 				</div>

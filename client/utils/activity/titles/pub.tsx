@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
 	PubActivityItem,
 	CollectionPubCreatedActivityItem,
@@ -5,6 +7,7 @@ import {
 	MemberActivityItem,
 	SubmissionActivityItem,
 } from 'types';
+import { PubTitle } from 'components';
 import { getDashUrl } from 'utils/dashboard';
 
 import { TitleRenderer } from '../types';
@@ -30,7 +33,7 @@ export const pubTitle: TitleRenderer<AcceptedItem> = (item, context) => {
 	if (pubFromContext) {
 		return {
 			prefix,
-			title: pubFromContext.title,
+			title: <PubTitle pubData={pubFromContext} />,
 			href: getDashUrl({ pubSlug: pubFromContext.slug }),
 		};
 	}

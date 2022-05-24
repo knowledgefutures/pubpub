@@ -1,7 +1,7 @@
 import React from 'react';
 import { Spinner } from '@blueprintjs/core';
 
-import { PubByline } from 'components';
+import { PubByline, PubTitle } from 'components';
 import { Menu, MenuItem, MenuItemDivider } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
 import { createReadingParamUrl, useCollectionPubs } from 'client/utils/collections';
@@ -74,7 +74,9 @@ const CollectionBrowser = (props: Props) => {
 						key={pub.id}
 						text={
 							<>
-								<div className="title">{pub.title}</div>
+								<div className="title">
+									<PubTitle pubData={pub} />
+								</div>
 								<PubByline pubData={pub} linkToUsers={false} />
 							</>
 						}

@@ -14,6 +14,7 @@ export default (sequelize, dataTypes) => {
 				},
 			},
 			title: { type: dataTypes.TEXT, allowNull: false },
+			htmlTitle: { type: dataTypes.TEXT, allowNull: true },
 			description: {
 				type: dataTypes.TEXT,
 				validate: {

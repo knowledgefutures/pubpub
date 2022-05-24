@@ -14,7 +14,7 @@ import {
 } from '../types';
 
 const renderTitleToReact = (title: Title, context: ActivityRenderContext) => {
-	const { title: titleString, href, prefix, suffix } = title;
+	const { title: titleNode, href, prefix, suffix } = title;
 	const community = Object.values(context.associations.community)[0];
 	const communityHref =
 		href &&
@@ -31,10 +31,10 @@ const renderTitleToReact = (title: Title, context: ActivityRenderContext) => {
 			target={isExternalUrl(href) ? '_blank' : undefined}
 			rel="noreferrer"
 		>
-			{titleString}
+			{titleNode}
 		</a>
 	) : (
-		titleString
+		titleNode
 	);
 	return (
 		<>

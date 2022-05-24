@@ -36,6 +36,7 @@ const PubSelect = (props: Props) => {
 		return (
 			<PubMenuItem
 				key={pub.id}
+				id={pub.id}
 				onClick={handleClick}
 				title={pub.title}
 				contributors={pub.attributions}

@@ -19,6 +19,7 @@ const managerUpdatableFields = [
 	'licenseSlug',
 	'slug',
 	'title',
+	'htmlTitle',
 	'nodeLabels',
 	'pubEdgeListingDefaultsToCarousel',
 	'pubEdgeDescriptionVisible',

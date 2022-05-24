@@ -15,8 +15,9 @@ interface Props {
 	isSkeleton?: boolean;
 	onClick: null | (() => any);
 	showImage?: boolean;
-	title: string;
+	title: React.ReactNode;
 	bylineProps?: Partial<BylineProps>;
+	id: null | string;
 }
 
 const PubMenuItem = React.forwardRef((props: Props, ref: any) => {
@@ -29,6 +30,7 @@ const PubMenuItem = React.forwardRef((props: Props, ref: any) => {
 		onClick,
 		showImage = false,
 		title,
+		id,
 		bylineProps = {},
 	} = props;
 	const skeletonClass = classNames(isSkeleton && 'bp3-skeleton');
@@ -44,7 +46,7 @@ const PubMenuItem = React.forwardRef((props: Props, ref: any) => {
 
 	const children = (
 		<>
-			{showImage && <PreviewImage src={image} title={title} className={skeletonClass} />}
+			{showImage && <PreviewImage src={image} id={id} className={skeletonClass} />}
 			<div className="inner">
 				<div className={classNames('title', skeletonClass)}>{title}</div>
 				{contributors && (

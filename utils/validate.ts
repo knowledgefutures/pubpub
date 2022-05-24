@@ -1,6 +1,7 @@
 import { isEmptyDoc } from 'client/components/Editor';
 import { DocJson, Maybe } from 'types';
 import { isValidEmail } from 'utils/email';
+
 type AnyRecord = Record<string, any>;
 
 export type FieldValidator<Field> = (value: Field) => boolean;

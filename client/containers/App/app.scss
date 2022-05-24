@@ -1,3 +1,5 @@
+@import 'styles/mixins.scss';
+
 #app {
 	display: flex;
 	flex-direction: column;
@@ -59,12 +61,28 @@
 				padding: 16px 50px;
 			}
 		}
+		.bottom-menu-component {
+			width: 100%;
+			position: fixed;
+			height: 50px;
+			bottom: 0;
+			padding-bottom: env(safe-area-inset-bottom);
+			left: 0;
+			z-index: 999;
+		}
 		#main-content {
 			width: calc(100vw - #{$side-menu-width});
 			max-width: calc(1200px + 100px);
 			margin-left: $side-menu-width;
 			padding: 16px 50px;
 			padding-top: calc(25px + #{$header-height} + #{$breadcrumbs-height});
+			@include mobile {
+				width: 100%;
+				padding: 10px;
+				padding-top: 50px;
+				margin-left: 0px;
+				overflow-y: scroll;
+			}
 		}
 	}
 }

@@ -81,6 +81,7 @@ const NewSubmissionWorkflowEditor = (props: Props) => {
 								loading={isPersisting}
 								icon="tick"
 								intent="primary"
+								className="save-changes-button"
 							>
 								Finish creating workflow
 							</Button>

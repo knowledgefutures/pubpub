@@ -1,4 +1,5 @@
 @import 'styles/variables.scss';
+@import 'styles/mixins.scss';
 
 $hover-background: #f9f9f9;
 
@@ -102,6 +103,30 @@ $hover-background: #f9f9f9;
 			top: -1.5em;
 			bottom: 1.5em;
 			left: -26px;
+		}
+	}
+	@include mobile {
+		.inner {
+			flex-direction: column;
+			align-items: flex-start;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			.left {
+				.subtitle {
+					font-size: 12px;
+				}
+			}
+			.right {
+				display: flex;
+				flex-direction: row-reverse;
+				font-size: 12px;
+				padding-top: 5px;
+				.bp3-button {
+					margin-right: 0px;
+					margin-left: 10px;
+					font-size: 12px;
+				}
+			}
 		}
 	}
 }

@@ -27,4 +27,11 @@
 			color: $light-grey;
 		}
 	}
+	@include mobile {
+		> div.title.descending {
+			position: relative;
+			margin: 10px 0;
+			display: none;
+		}
+	}
 }

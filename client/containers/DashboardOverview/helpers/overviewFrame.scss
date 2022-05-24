@@ -1,3 +1,5 @@
+@import 'styles/mixins.scss';
+
 .overview-frame-component {
 	display: grid;
 	grid-template-areas: 'primary secondary';
@@ -10,5 +12,9 @@
 
 	& > .secondary {
 		grid-area: secondary;
+	}
+	@include mobile {
+		display: block;
+		margin-bottom: 40px;
 	}
 }

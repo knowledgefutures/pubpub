@@ -45,6 +45,7 @@ const ExistingSubmissionWorkflowEditor = (props: Props) => {
 			onClick={persist}
 			loading={isPersisting}
 			intent="primary"
+			className="save-changes-button"
 		>
 			Save Changes
 		</Button>

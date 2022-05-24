@@ -1,10 +1,12 @@
 import React from 'react';
 
+import { MobileAware } from 'components';
+
 require('./overviewFrame.scss');
 
 type Props = {
 	primary: React.ReactNode;
-	secondary: React.ReactNode;
+	secondary?: React.ReactNode;
 };
 
 const OverviewFrame = (props: Props) => {
@@ -13,7 +15,7 @@ const OverviewFrame = (props: Props) => {
 	return (
 		<div className="overview-frame-component">
 			<div className="primary">{primary}</div>
-			<div className="secondary">{secondary}</div>
+			{secondary && <MobileAware desktop={<div className="secondary">{secondary}</div>} />}
 		</div>
 	);
 };

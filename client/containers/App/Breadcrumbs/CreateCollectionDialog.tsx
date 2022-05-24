@@ -105,47 +105,53 @@ const CreateCollectionDialog = (props: Props) => {
 		<Overlay className="create-collection-dialog-component" isOpen={isOpen} onClose={onClose}>
 			<Card className="dialog-card" elevation={4}>
 				<h4>Create a new Collection</h4>
-				<ControlGroup>
-					<InputGroup
-						large
-						className="collection-title-input"
-						placeholder="Enter collection title..."
-						value={title}
-						onKeyDown={(evt) => {
-							if (evt.key === 'Enter' && title) {
-								handleCreateCollection();
-							}
-						}}
-						onChange={(evt) => {
-							setTitle(evt.target.value);
-						}}
-					/>
-					<Button
-						large
-						onClick={handleCreateCollection}
-						disabled={!title}
-						loading={isCreating}
+				<div className="collection-creation-controls">
+					<ControlGroup>
+						<InputGroup
+							large
+							className="collection-title-input"
+							placeholder="Enter collection title..."
+							value={title}
+							onKeyDown={(evt) => {
+								if (evt.key === 'Enter' && title) {
+									handleCreateCollection();
+								}
+							}}
+							onChange={(evt) => {
+								setTitle(evt.target.value);
+							}}
+						/>
+						<Button
+							large
+							onClick={handleCreateCollection}
+							disabled={!title}
+							loading={isCreating}
+						>
+							Create
+						</Button>
+					</ControlGroup>
+					{creatingError && (
+						<Callout
+							className="error-callout"
+							intent="warning"
+							title="Error creating Collection."
+						/>
+					)}
+					{slugStatusError && (
+						<Callout
+							className="error-callout"
+							intent="danger"
+							title={slugStatusError}
+						/>
+					)}
+					<RadioGroup
+						{...kindRadio}
+						aria-label="Choose collection type"
+						className="kind-buttons"
 					>
-						Create
-					</Button>
-				</ControlGroup>
-				{creatingError && (
-					<Callout
-						className="error-callout"
-						intent="warning"
-						title="Error creating Collection."
-					/>
-				)}
-				{slugStatusError && (
-					<Callout className="error-callout" intent="danger" title={slugStatusError} />
-				)}
-				<RadioGroup
-					{...kindRadio}
-					aria-label="Choose collection type"
-					className="kind-buttons"
-				>
-					{kinds.map(renderKindButton)}
-				</RadioGroup>
+						{kinds.map(renderKindButton)}
+					</RadioGroup>
+				</div>
 			</Card>
 		</Overlay>
 	);

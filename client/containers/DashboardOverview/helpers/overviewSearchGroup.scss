@@ -55,5 +55,38 @@ $transition-duration: 100ms;
 				font-style: italic;
 			}
 		}
+		@include mobile {
+			display: block;
+			border: 0;
+			padding-top: 5px;
+			padding-left: 0;
+			padding-right: 0;
+			padding-bottom: 10px;
+			.bp3-icon.search-icon {
+				margin-top: -5px;
+				margin-left: 9px;
+				> svg {
+					width: 14px;
+					height: 14px;
+				}
+			}
+			.right-controls {
+				margin-top: 5px;
+				padding-top: 10px;
+				border-top: 1px solid $accent-color;
+				> div {
+					border: 1px solid $accent-color;
+				}
+			}
+			input {
+				width: 90%;
+				font-size: 14px;
+			}
+		}
+	}
+	@include mobile {
+		> .filter-controls {
+			align-self: flex-start;
+		}
 	}
 }

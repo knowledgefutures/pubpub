@@ -1,5 +1,10 @@
+@import 'styles/mixins.scss';
+
 .dashboard-row-listing-component {
 	padding: 0;
 	margin: 0;
 	list-style: none;
+	@include mobile {
+		margin-bottom: 50px;
+	}
 }

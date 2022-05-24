@@ -1,3 +1,5 @@
+@import 'styles/mixins.scss';
+
 $element-spacing: 10px;
 
 .create-collection-dialog-component {
@@ -47,6 +49,24 @@ $element-spacing: 10px;
 				font-weight: bold;
 				font-size: 1.2em;
 				margin-bottom: 5px;
+			}
+		}
+	}
+	@include mobile {
+		.collection-creation-controls {
+			display: flex;
+			flex-direction: column-reverse;
+			.bp3-control-group {
+				display: flex;
+				flex-direction: column;
+				.collection-title-input {
+					width: 100%;
+					margin-top: 5px;
+					margin-bottom: 5px;
+				}
+			}
+			.kind-buttons {
+				grid-template-columns: repeat(1, 1fr);
 			}
 		}
 	}

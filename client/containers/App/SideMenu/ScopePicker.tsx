@@ -13,7 +13,12 @@ type Scope = {
 	href: string;
 };
 
-const ScopePicker = () => {
+type Props = {
+	isMobile?: boolean;
+};
+
+const ScopePicker = (props: Props) => {
+	const { isMobile } = props;
 	const { locationData, communityData, scopeData } = usePageContext();
 	const { activeCollection, activePub } = scopeData.elements;
 
@@ -66,11 +71,11 @@ const ScopePicker = () => {
 	return (
 		<div className="scope-picker-component">
 			<MenuButton
-				aria-label="Dashboard Menu"
+				aria-label={!isMobile ? 'Dashboard Menu' : 'Mobile Dash Menu'}
 				buttonContent={
 					<React.Fragment>
 						<div className="top">{currentScopeTitle}</div>
-						<div className="bottom">Dashboard</div>
+						{!isMobile && <div className="bottom">Dashboard</div>}
 					</React.Fragment>
 				}
 				buttonProps={{
@@ -80,8 +85,8 @@ const ScopePicker = () => {
 					minimal: true,
 					rightIcon: 'caret-down',
 				}}
-				placement="bottom-start"
-				className="scope-menu"
+				placement={isMobile ? 'top-start' : 'bottom-start'}
+				className="scope-picker-menu"
 			>
 				<ScopeDropdown isDashboard />
 			</MenuButton>

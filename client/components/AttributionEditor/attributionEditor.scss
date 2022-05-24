@@ -1,3 +1,5 @@
+@import 'styles/mixins.scss';
+
 .attribution-editor-component {
 	width: 100%;
 	display: flex;
@@ -64,8 +66,28 @@
 			.right-details {
 				min-width: 100px;
 				width: 35%;
+				@include mobile {
+					display: flex;
+					flex-direction: row;
+					.bp3-input-group {
+						margin-right: 5px;
+						min-width: 120px;
+					}
+				}
 				& > :not(:last-child) {
 					margin-bottom: 10px;
+				}
+			}
+			@include mobile {
+				font-size: 12px;
+				display: flex;
+				flex-direction: column;
+				label,
+				.roles {
+					padding-bottom: 5px !important;
+				}
+				.roles {
+					width: 70%;
 				}
 			}
 		}

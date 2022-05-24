@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Button } from '@blueprintjs/core';
 
-import { DashboardFrame } from 'components';
+import { DashboardFrame, MobileAware } from 'components';
 import { Collection, Pub, UserScopeVisit } from 'types';
 
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
+import CreateCollectionDialog from '../../App/Breadcrumbs/CreateCollectionDialog';
 
 import CommunityItems from './CommunityItems';
 import {
@@ -54,8 +56,30 @@ const DashboardCommunityOverview = (props: Props) => {
 		},
 	} = usePageContext();
 
+	const [newCollectionIsOpen, setNewCollectionIsOpen] = useState(false);
+
+	const renderMobileOnlyControls = () => {
+		return (
+			<MobileAware
+				mobile={
+					<div>
+						<Button icon="plus" onClick={() => setNewCollectionIsOpen(true)} outlined>
+							Create Collection
+						</Button>
+						<CreateCollectionDialog
+							isOpen={newCollectionIsOpen}
+							onClose={() => {
+								setNewCollectionIsOpen(false);
+							}}
+						/>
+					</div>
+				}
+			/>
+		);
+	};
+
 	return (
-		<DashboardFrame title="Overview">
+		<DashboardFrame title="Overview" controls={canManage && renderMobileOnlyControls()}>
 			<OverviewFrame
 				primary={
 					<OverviewSection title="Explore" icon="overview" descendTitle>

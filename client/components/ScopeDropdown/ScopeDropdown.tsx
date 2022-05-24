@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
@@ -70,7 +71,7 @@ const ScopeDropdown = (props: Props) => {
 	}
 
 	return (
-		<div className="scope-dropdown-component">
+		<div className={classNames('scope-dropdown-component', isDashboard && 'in-dashboard')}>
 			{isDashboard && <div className="intro">Select Scope:</div>}
 			<div className="scopes">
 				{scopes.map((scope, index) => {

@@ -1,3 +1,5 @@
+@import 'styles/mixins.scss';
+
 @import './shared.scss';
 
 .email-preview-component {
@@ -12,12 +14,24 @@
 		align-items: start;
 		padding: 10px;
 		border-bottom: 1px solid $border-color;
+		@include mobile {
+			flex-wrap: wrap;
+			span {
+				margin-right: 10px;
+				margin-top: 5px;
+			}
+		}
 
 		> .address-box {
 			display: flex;
 			align-items: baseline;
 			> .label {
 				margin-right: 5px;
+			}
+			@include mobile {
+				margin-top: 5px;
+				font-size: 12px;
+				margin-left: 0px;
 			}
 		}
 	}

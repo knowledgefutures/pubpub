@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import Color from 'color';
 
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
@@ -9,24 +8,18 @@ import ScopePicker from './ScopePicker';
 
 require('./sideMenu.scss');
 
-const SideMenu = () => {
+type Props = {
+	className?: string;
+};
+
+const SideMenu = (props: Props) => {
+	const { className } = props;
 	const {
-		communityData,
 		dashboardMenu: { menuItems },
 	} = usePageContext();
-	const backgroundColor = Color(communityData.accentColorDark).fade(0.95).rgb().string();
 
 	return (
-		<div className="side-menu-component">
-			<style
-				/* eslint-disable-next-line react/no-danger */
-				dangerouslySetInnerHTML={{
-					__html: `
-						.menu.active:before { background: ${communityData.accentColorDark} }
-						.side-menu-component { background: ${backgroundColor} }
-					`,
-				}}
-			/>
+		<div className={classNames('side-menu-component', className)}>
 			<ScopePicker />
 			<div className="content">
 				{menuItems.map((item) => {

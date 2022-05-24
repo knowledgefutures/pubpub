@@ -1,3 +1,5 @@
+@import 'styles/mixins.scss';
+
 .member-row-component {
 	display: flex;
 	align-items: center;
@@ -5,28 +7,62 @@
 		margin-top: 2em;
 		padding-top: 2em;
 		border-top: 1px solid #e0e0e0;
+		@include mobile {
+			margin-top: 1em;
+			padding-top: 1em;
+		}
 	}
 	.invitation {
 		opacity: 0.5;
 	}
-	.member-name {
-		padding: 0em 1em;
-		font-weight: bold;
-	}
-	.added,
-	.pending-tag {
-		margin-right: 2em;
-	}
-	.added {
-		flex: 1 1 auto;
+	.member-info {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		margin-left: 10px;
+		flex-grow: 1;
+		.member-name {
+			font-weight: bold;
+		}
+		.added,
+		.pending-tag {
+			margin-top: 5px;
+			font-size: 14px;
+		}
+		.added {
+			flex: 1 1 auto;
+		}
+		@include mobile {
+			.added,
+			.pending-tag {
+				font-size: 12px;
+			}
+		}
 	}
 	.permission-button {
 		width: 100px;
 		text-transform: capitalize;
 		justify-content: space-between;
+		margin-right: 10px;
 	}
 }
 
 .bp3-menu.member-permission-select {
 	padding: 1em;
+	@include mobile {
+		padding: 0.5em;
+		width: 75%;
+		div.picker-column {
+			display: none;
+		}
+		.picker-column {
+			.row {
+				display: none;
+			}
+			.header-row {
+				height: 65px;
+				font-size: 14px;
+			}
+		}
+	}
 }

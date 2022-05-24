@@ -1,7 +1,13 @@
+@import 'styles/mixins.scss';
+
 .query-list-dropdown-component {
 	.bp3-popover-content > .search-wrapper {
 		width: 400px;
 		max-height: 400px;
+		@include mobile {
+			width: auto;
+			max-width: 400px;
+		}
 		display: flex;
 		flex-direction: column;
 		.bp3-input-group {

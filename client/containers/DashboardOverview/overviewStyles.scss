@@ -1,5 +1,13 @@
 @import '~@blueprintjs/core/lib/scss/variables';
 
+$mobile-viewport-cutoff: 750px;
+
+@mixin mobile {
+	@media only screen and (max-width: $mobile-viewport-cutoff) {
+		@content;
+	}
+}
+
 $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
 $light-grey: #bdbdbd;
 $medium-grey: #999;

@@ -1,14 +1,25 @@
 import React from 'react';
 import { Provider as RKProvider } from 'reakit';
 import classNames from 'classnames';
+import Color from 'color';
 
-import { Header, Footer, LegalBanner, AccentStyle, NavBar, SkipLink } from 'components';
+import {
+	Header,
+	Footer,
+	LegalBanner,
+	AccentStyle,
+	NavBar,
+	SkipLink,
+	MobileAware,
+} from 'components';
 import { Community } from 'types';
 import { PageContext } from 'utils/hooks';
 import { hydrateWrapper } from 'client/utils/hydrateWrapper';
 
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
+import BottomMenu from './BottomMenu';
+
 import getPaths from './paths';
 import { usePageState } from './usePageState';
 
@@ -22,9 +33,14 @@ type Props = {
 };
 
 const renderCssVariablesStyle = (community: Community) => {
+	const { accentColorDark } = community;
+	const accentColorDarkFaded = Color(accentColorDark).fade(0.95).rgb().string();
 	return (
 		<style type="text/css">
-			{`:root { --community-accent-dark: ${community.accentColorDark} }`}
+			{`:root { 
+				--community-accent-dark: ${accentColorDark};
+				--community-accent-dark-faded: ${accentColorDarkFaded};
+			}`}
 		</style>
 	);
 };
@@ -59,10 +75,17 @@ const App = (props: Props) => {
 					<Header />
 					{showNav && <NavBar />}
 					{isDashboard && (
-						<React.Fragment>
-							<SideMenu />
-							<Breadcrumbs />
-						</React.Fragment>
+						<MobileAware
+							mobile={({ className }) => (
+								<BottomMenu isMobile className={className} />
+							)}
+							desktop={({ className }) => (
+								<>
+									<SideMenu className={className} />
+									<Breadcrumbs className={className} />
+								</>
+							)}
+						/>
 					)}
 					{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message */}
 					<div id="main-content" tabIndex="-1">

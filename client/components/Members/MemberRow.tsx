@@ -236,16 +236,18 @@ const MemberRow = (props: Props) => {
 				avatar={user.avatar}
 				width={30}
 			/>
-			<div className="member-name">{user.fullName}</div>
-			{isInvitation && (
-				<Tag className="pending-tag" minimal>
-					Pending
-				</Tag>
-			)}
-			<div className="added">
-				{isInvitation ? 'Invited' : 'Added'}{' '}
-				{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'createdAt' does not exist on type 'never... Remove this comment to see the full error message */}
-				{dateFormat(memberData.createdAt, 'mmm dd, yyyy')}
+			<div className="member-info">
+				<div className="member-name">{user.fullName}</div>
+				{isInvitation && (
+					<Tag className="pending-tag" minimal>
+						Pending
+					</Tag>
+				)}
+				<div className="added">
+					{isInvitation ? 'Invited' : 'Added'}{' '}
+					{/* @ts-expect-error ts-migrate(2339) FIXME: Property 'createdAt' does not exist on type 'never... Remove this comment to see the full error message */}
+					{dateFormat(memberData.createdAt, 'mmm dd, yyyy')}
+				</div>
 			</div>
 			{!(isReadOnly || outOfPermissionRange) && renderControls()}
 			{(isReadOnly || outOfPermissionRange) && (

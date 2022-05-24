@@ -1,3 +1,6 @@
+@import 'styles/variables.scss';
+@import 'styles/mixins.scss';
+
 .header-component {
 	background-size: cover;
 	background-repeat: no-repeat;
@@ -119,7 +122,7 @@
 	}
 }
 
-@media only screen and (max-width: 720px) {
+@include mobile {
 	.header-component {
 		.hide-on-mobile {
 			display: none !important;
@@ -128,7 +131,7 @@
 			.main-content {
 				.logo-wrapper {
 					text-overflow: ellipsis;
-					font-size: 20px;
+					font-size: 18px;
 					letter-spacing: 0px;
 					max-width: 55%;
 					img {

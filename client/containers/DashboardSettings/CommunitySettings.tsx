@@ -538,7 +538,7 @@ const CommunitySettings = () => {
 					</InputField>
 				</div>
 				<div className={hideHero ? 'disable-block' : ''}>
-					<div className="row-wrapper">
+					<div className="row-wrapper image-upload-row">
 						<ImageUpload
 							htmlFor="hero-logo-upload"
 							label={

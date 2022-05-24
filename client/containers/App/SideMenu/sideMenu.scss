@@ -1,4 +1,5 @@
 .side-menu-component {
+	background: var(--community-accent-dark-faded);
 	.side-title {
 		margin: 1em 16px;
 		padding-bottom: 1em;
@@ -15,6 +16,7 @@
 			position: relative;
 			background: rgba(200, 200, 200, 0.2);
 			&:before {
+				background: var(--community-accent-dark);
 				position: absolute;
 				content: '';
 				left: 0px;

@@ -1,9 +1,23 @@
+@import 'styles/mixins.scss';
+
 .dashboard-settings-container {
 	h2 {
 		margin-bottom: 1em;
 	}
 	.settings-section-component {
 		margin-top: 3em;
+		@include mobile {
+			margin-top: 2em;
+			label .bp3-popover-target {
+				margin-left: 5px;
+				padding-bottom: 3px;
+				opacity: 0.5;
+				.bp3-icon-info-sign svg {
+					height: 12px;
+					width: 12px;
+				}
+			}
+		}
 	}
 	.content-buttons {
 		float: right;
@@ -29,5 +43,8 @@
 	}
 	.custom-css-tooltip-target {
 		margin-left: 5px;
+	}
+	@include mobile {
+		margin-bottom: 2em;
 	}
 }

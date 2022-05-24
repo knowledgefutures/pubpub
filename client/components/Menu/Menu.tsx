@@ -14,6 +14,7 @@ export type MenuProps = {
 	menuStyle?: object;
 	onDismiss?: () => unknown;
 	placement?: RK.MenuProps['placement'];
+	unstable_fixed?: boolean;
 };
 
 const renderDisclosure = (disclosure, disclosureProps) => {
@@ -32,6 +33,7 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 		placement,
 		onDismiss = () => {},
 		gutter,
+		unstable_fixed = false,
 		menuStyle = {},
 		...restProps
 	} = props;
@@ -43,6 +45,7 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 		gutter,
 		unstable_preventOverflow: false,
 		unstable_flip: false,
+		unstable_fixed,
 	});
 
 	const handleDismiss = () => {

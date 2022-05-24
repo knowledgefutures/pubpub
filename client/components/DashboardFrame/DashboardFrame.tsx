@@ -1,7 +1,8 @@
 import React from 'react';
-import { usePageContext } from 'utils/hooks';
+import classNames from 'classnames';
 
 import { Icon, IconName } from 'components';
+import { usePageContext } from 'utils/hooks';
 
 require('./dashboardFrame.scss');
 
@@ -23,7 +24,7 @@ const DashboardFrame = (props: Props) => {
 	} = scopeData;
 
 	return (
-		<div className={className}>
+		<div className={classNames('dashboard-frame-component', className)}>
 			{banner}
 			<div className="dashboard-content-header">
 				<div className="dashboard-header-left">

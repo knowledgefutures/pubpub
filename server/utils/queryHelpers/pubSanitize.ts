@@ -37,7 +37,7 @@ export default (
 ): null | SanitizedPubData => {
 	const { loginData, scopeData } = initialData;
 	const { activePermissions } = scopeData;
-	const { canView, canViewDraft, canEdit, canEditDraft } = activePermissions;
+	const { canView, canViewDraft } = activePermissions;
 
 	const hasPubMemberAccess = pubData.members.some((member) => {
 		return member.userId === initialData.loginData.id;
@@ -106,7 +106,6 @@ export default (
 		reviews,
 		exports: getFilteredExports(pubData, isRelease),
 		collectionPubs: filteredCollectionPubs,
-		isReadOnly: isRelease || !(canEdit || canEditDraft),
 		isRelease,
 		releases: sortedReleases,
 		releaseNumber,

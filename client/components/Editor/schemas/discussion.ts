@@ -23,7 +23,7 @@ export default {
 					'data-thread-number': node.attrs.threadNumber,
 					'data-align': node.attrs.align,
 				},
-			];
+			] as const;
 		},
 		inline: false,
 		group: 'block',

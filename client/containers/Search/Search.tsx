@@ -132,7 +132,7 @@ const Search = (props: Props) => {
 			link = `https://${item.communityDomain}/pub/${item.slug}`;
 			bannerStyle = item.avatar
 				? { backgroundImage: `url("${resizedBannerImage}")` }
-				: { background: generatePubBackground(item.title) };
+				: { background: generatePubBackground(item.pubId) };
 			keyId = item.pubId;
 			isPublic = item.isPublic || item.branchIsPublic;
 		}
@@ -140,7 +140,7 @@ const Search = (props: Props) => {
 			link = `https://${item.communityDomain}/${item.slug}`;
 			bannerStyle = item.avatar
 				? { backgroundImage: `url("${resizedBannerImage}")` }
-				: { background: generatePageBackground(item.title) };
+				: { background: generatePageBackground(item.pageId) };
 			keyId = item.pageId;
 			isPublic = item.isPublic;
 		}

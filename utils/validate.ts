@@ -1,5 +1,5 @@
-import { isEmptyDoc } from 'client/components/Editor';
 import { DocJson, Maybe } from 'types';
+import { isEmptyDoc } from 'components/Editor';
 import { isValidEmail } from 'utils/email';
 
 type AnyRecord = Record<string, any>;

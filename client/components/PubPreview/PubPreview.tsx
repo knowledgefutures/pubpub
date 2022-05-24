@@ -8,7 +8,7 @@ import { isPubPublic } from 'utils/pub/permissions';
 import { getAllPubContributors } from 'utils/contributors';
 import { communityUrl, bestPubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
-import { Icon, PreviewImage } from 'components';
+import { Icon, PreviewImage, PubTitle } from 'components';
 
 import ExpandButton from './ExpandButton';
 import ManyAuthorsByline from './ManyAuthorsByline';
@@ -97,7 +97,7 @@ const PubPreview = (props: Props) => {
 			<div className="preview-image-wrapper">
 				{showBannerImage && (
 					<a href={pubLink} title={pubData.title}>
-						<PreviewImage src={pubData.avatar} title={pubData.title} />
+						<PreviewImage src={pubData.avatar} id={pubData.id} />
 					</a>
 				)}
 			</div>
@@ -127,7 +127,7 @@ const PubPreview = (props: Props) => {
 						)}
 						<a href={pubLink} title={pubData.title}>
 							<h3 className="pub-title">
-								{pubData.title}
+								<PubTitle pubData={pubData} />
 								{isPrivate && <Icon className="lock-icon" icon="lock2" />}
 							</h3>
 						</a>

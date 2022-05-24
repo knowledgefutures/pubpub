@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
-import { PubByline, DialogLauncher, PubAttributionDialog } from 'components';
+import { PubByline, DialogLauncher, PubAttributionDialog, TitleEditor } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getPubPublishedDateString } from 'utils/pub/pubDates';
 import { PatchFn, Pub, PubPageData } from 'types';
@@ -16,8 +16,8 @@ type Props = {
 
 const TitleGroup = (props: Props) => {
 	const { pubData, updatePubData } = props;
-	const { title, description, isRelease } = pubData;
-	const { communityData, scopeData } = usePageContext();
+	const { title, htmlTitle, description, isRelease } = pubData;
+	const { communityData, scopeData, featureFlags } = usePageContext();
 	const { submissionState } = usePubContext();
 	const isUnsubmitted = submissionState?.submission.status === 'incomplete';
 	const { canManage } = scopeData.activePermissions;
@@ -58,15 +58,33 @@ const TitleGroup = (props: Props) => {
 		return null;
 	};
 
+	const onTitleEditorChange = useCallback(
+		(nextHtmlTitle: string, nextTitle: string) => {
+			updatePubData({ title: nextTitle, htmlTitle: nextHtmlTitle });
+		},
+		[updatePubData],
+	);
+
 	return (
 		<div className="title-group-component">
-			<EditableHeaderText
-				text={title}
-				updateText={(text) => updatePubData({ title: text })}
-				canEdit={canModify}
-				className="title"
-				placeholder="Add a Pub title"
-			/>
+			{featureFlags.htmlTitles ? (
+				<h1 className="title">
+					<TitleEditor
+						initialValue={htmlTitle ?? title}
+						isReadOnly={!canModify}
+						onChange={onTitleEditorChange}
+						placeholder="Add a Pub title"
+					/>
+				</h1>
+			) : (
+				<EditableHeaderText
+					text={title}
+					updateText={(text) => updatePubData({ title: text })}
+					canEdit={canModify}
+					className="title"
+					placeholder="Add a Pub title"
+				/>
+			)}
 			{(canModify || description) && (
 				<EditableHeaderText
 					text={description}

@@ -5,6 +5,7 @@ $pub-body-font-size: if-is-export(14px, 20px);
 .pub-body-component .editor.ProseMirror,
 .pub-body-styles {
 	h1#abstract:first-child {
+		color: var(--community-accent-dark);
 		text-transform: uppercase;
 		font-size: 1em;
 		font-weight: 500;

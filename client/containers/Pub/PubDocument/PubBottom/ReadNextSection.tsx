@@ -3,6 +3,7 @@ import React from 'react';
 import { Pub } from 'types';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
+import { PubTitle } from 'components';
 import {
 	chooseCollectionForPub,
 	createReadingParamUrl,
@@ -45,7 +46,7 @@ const ReadNextSection = (props: Props) => {
 							currentCollection.id,
 						)}
 					>
-						{nextPub.title}
+						<PubTitle pubData={nextPub} />
 					</a>
 				</SectionBullets>
 			}

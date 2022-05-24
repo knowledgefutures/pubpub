@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { setLocalHighlight } from 'components/Editor';
+import React, { useRef } from 'react';
 
 import { usePageContext } from 'utils/hooks';
 import { PubHistoryViewer } from 'components';
@@ -9,8 +8,11 @@ import {
 	Mode as PubEdgeMode,
 } from 'components/PubEdgeListing';
 
-import PubBody from './PubBody';
 import { usePubContext } from '../pubHooks';
+import { usePermalinkOnMount } from '../usePermalinkOnMount';
+import { usePubHrefs } from '../usePubHrefs';
+import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
+import PubBody from './PubBody';
 import PubBottom from './PubBottom/PubBottom';
 import PubFileImport from './PubFileImport';
 import PubHeaderFormatting from './PubHeaderFormatting';
@@ -18,74 +20,37 @@ import PubHistoricalNotice from './PubHistoricalNotice';
 import PubInlineMenu from './PubInlineMenu';
 import PubLinkController from './PubLinkController';
 import PubMaintenanceNotice from './PubMaintenanceNotice';
-import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
 
 require('./pubDocument.scss');
 
-type Props = {
-	pubData: any;
-	collabData: any;
-	historyData: any;
-	updateLocalData: (...args: any[]) => any;
-};
-
-const PubDocument = (props: Props) => {
-	const { pubData, historyData, collabData, updateLocalData } = props;
+const PubDocument = () => {
+	const {
+		pubData,
+		historyData,
+		collabData,
+		updatePubData,
+		updateLocalData,
+		pubBodyState: { isReadOnly, hidePubBody },
+	} = usePubContext();
 	const { isViewingHistory } = historyData;
-	const { editorChangeObject } = collabData;
-	const { communityData, locationData, scopeData } = usePageContext();
-	const { submissionState } = usePubContext();
+	const { communityData, scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
-	const [areDiscussionsShown, setDiscussionsShown] = useState(true);
 	const mainContentRef = useRef<null | HTMLDivElement>(null);
 	const sideContentRef = useRef(null);
 	const editorWrapperRef = useRef(null);
 
-	// TODO(ian): this is a HACK that can be replaced with a check for isReadOnly once we migrate
-	// the usePubBodyState() hook into usePubContext() in #1867
-	const isPreviewingSubmission = useMemo(() => {
-		if (submissionState) {
-			const { submission, selectedTab } = submissionState;
-			return submission.status === 'incomplete' && selectedTab === 'preview';
-		}
-		return false;
-	}, [submissionState]);
+	usePermalinkOnMount();
+	usePubHrefs({ enabled: !isReadOnly });
 
-	const showPubFileImport =
-		!isViewingHistory &&
-		(canEdit || canEditDraft) &&
-		!pubData.isReadOnly &&
-		!isPreviewingSubmission;
+	const showPubFileImport = (canEdit || canEditDraft) && !isReadOnly;
 
-	const updateHistoryData = (next) => updateLocalData('history', next);
+	if (hidePubBody) {
+		return null;
+	}
 
-	useEffect(() => {
-		const fromNumber = Number(locationData.query.from);
-		const toNumber = Number(locationData.query.to);
-		const existingPermElement = document.getElementsByClassName('permanent')[0];
-		if (editorChangeObject.view && fromNumber && toNumber && !existingPermElement) {
-			setTimeout(() => {
-				setLocalHighlight(editorChangeObject.view, fromNumber, toNumber, 'permanent');
-				setTimeout(() => {
-					const newlyCreatedPermElement = document.getElementsByClassName('permanent')[0];
-					if (newlyCreatedPermElement) {
-						newlyCreatedPermElement.scrollIntoView({ block: 'center' });
-					}
-				}, 0);
-			}, 0);
-		}
-	}, [editorChangeObject.view, locationData]);
-
-	// We use the useEffect hook to wait until after the render to show or hide discussions, since
-	// they mount into portals that we rely on Prosemirror to create.
-	useEffect(() => {
-		setDiscussionsShown(!isViewingHistory);
-	}, [isViewingHistory]);
-
-	// const editorFocused = editorChangeObject.view && editorChangeObject.view.hasFocus();
 	return (
 		<div className="pub-document-component">
-			{!pubData.isReadOnly && (
+			{(!isReadOnly || isViewingHistory) && (
 				<PubHeaderFormatting
 					collabData={collabData}
 					disabled={isViewingHistory}
@@ -106,8 +71,8 @@ const PubDocument = (props: Props) => {
 					<PubBody editorWrapperRef={editorWrapperRef} />
 					{showPubFileImport && (
 						<PubFileImport
-							editorChangeObject={collabData.editorChangeObject}
-							updatePubData={(data) => updateLocalData('pub', data)}
+							editorChangeObject={collabData.editorChangeObject!}
+							updatePubData={updatePubData}
 						/>
 					)}
 					{!isViewingHistory && <PubInlineMenu />}
@@ -124,12 +89,12 @@ const PubDocument = (props: Props) => {
 					/>
 				</div>
 				<div className="side-content" ref={sideContentRef}>
-					{isViewingHistory && !pubData.isRelease && (
+					{isViewingHistory && (
 						<PubHistoryViewer
-							updateHistoryData={updateHistoryData}
 							historyData={historyData}
 							pubData={pubData}
-							onClose={() => updateLocalData('history', { isViewingHistory: false })}
+							onClose={() => historyData.setIsViewingHistory(false)}
+							onSetCurrentHistoryKey={historyData.setCurrentHistoryKey}
 						/>
 					)}
 				</div>
@@ -141,7 +106,6 @@ const PubDocument = (props: Props) => {
 						updateLocalData={updateLocalData}
 						sideContentRef={sideContentRef}
 						mainContentRef={mainContentRef}
-						showDiscussions={areDiscussionsShown}
 					/>
 				)}
 			</PubSuspendWhileTyping>

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-
 import { Callout, Button, Classes, Dialog } from '@blueprintjs/core';
+
+import { Submission, SubmissionStatus, DefinitelyHas } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePendingChanges } from 'utils/hooks';
-import { Submission, SubmissionStatus, DefinitelyHas } from 'types';
 
 import { usePubContext } from '../../pubHooks';
 

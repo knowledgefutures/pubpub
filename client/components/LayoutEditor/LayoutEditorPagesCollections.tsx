@@ -134,7 +134,11 @@ const LayoutEditorPagesCollections = (props: Props) => {
 										selectedItems={selectedItems}
 										onSelectedItems={setSelectedItems}
 										renderItem={(item, handleClick) => (
-											<PubMenuItem title={item.title} onClick={handleClick} />
+											<PubMenuItem
+												title={item.title}
+												id={item.id}
+												onClick={handleClick}
+											/>
 										)}
 									/>
 								}

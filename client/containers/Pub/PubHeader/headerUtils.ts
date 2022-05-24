@@ -16,7 +16,14 @@ export const getFormattedDownload = (downloads: Pub['downloads']) => {
 	}, null);
 };
 
-const getTocHeadings = (docJson: DocJson) => {
+export type PubHeading = {
+	title: string;
+	level: number;
+	href: string | null;
+	index: number;
+};
+
+const getTocHeadings = (docJson: DocJson): PubHeading[] => {
 	return docJson.content
 		.filter((item) => {
 			return item.type === 'heading' && item.attrs.level < 3;

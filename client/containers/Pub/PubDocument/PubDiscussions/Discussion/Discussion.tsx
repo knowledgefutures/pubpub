@@ -20,7 +20,7 @@ type PubPageThreadComment = PubPageDiscussion['thread']['comments'][number];
 type Props = {
 	pubData: PubPageData;
 	discussionData: PubPageDiscussion;
-	updateLocalData: (kind: string, patch: any) => unknown;
+	updateLocalData: (kind: any, patch: any) => unknown;
 	canPreview?: boolean;
 	searchTerm?: string;
 };

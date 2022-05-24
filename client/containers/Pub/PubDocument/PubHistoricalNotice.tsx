@@ -7,18 +7,13 @@ import { pubUrl } from 'utils/canonicalUrls';
 import { datesAreSameCalendarDate, formatDate, timeAgoBaseProps } from 'utils/dates';
 import { usePageContext } from 'utils/hooks';
 import { getPubLatestReleasedDate } from 'utils/pub/pubDates';
-
+import { PubPageData } from 'types';
 import { ClickToCopyButton } from 'components';
-import { Pub, Release } from 'types';
 
 require('./pubHistoricalNotice.scss');
 
 type Props = {
-	pubData: Pub & {
-		releaseNumber: number;
-		isRelease: boolean;
-		releases: Release[];
-	};
+	pubData: PubPageData;
 	historyData: {
 		currentKey: number;
 		latestKey: number;
@@ -128,7 +123,7 @@ const PubHistoricalNotice = (props: Props) => {
 	};
 
 	const renderWarning = () => {
-		if (isRelease) {
+		if (isRelease && typeof releaseNumber === 'number') {
 			const currentReleaseDate = new Date(releases[releaseNumber - 1].createdAt);
 			const latestReleaseDate = getPubLatestReleasedDate(pubData)!;
 			const includeTime = datesAreSameCalendarDate(currentReleaseDate, latestReleaseDate);

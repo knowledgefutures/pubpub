@@ -15,7 +15,7 @@ type Props = {
 	pubData: Pub;
 	historyData: PubHistoryState;
 	onClose: () => unknown;
-	updateHistoryData: (patch: Partial<PubHistoryState>) => unknown;
+	onSetCurrentHistoryKey: (key: number) => unknown;
 };
 
 const bucketTimestamp = (timestamp, intervalMs) => {
@@ -56,8 +56,12 @@ const dateTimestamps = (timestamps, intervalMs = 1000 * 60 * 15) => {
 };
 
 const dateReleases = (releases) => {
-	return releases.map((release) => {
-		return { type: 'release', date: new Date(release.createdAt), release };
+	return releases.map((release, index) => {
+		return {
+			type: 'release',
+			date: new Date(release.createdAt),
+			releaseNumber: index + 1,
+		};
 	});
 };
 
@@ -92,7 +96,7 @@ const getDateForHistoryKey = (historyKey, timestamps) => {
 };
 
 const PubHistoryViewer = (props: Props) => {
-	const { historyData, pubData, updateHistoryData, onClose } = props;
+	const { historyData, pubData, onSetCurrentHistoryKey, onClose } = props;
 	const { timestamps, latestKey, currentKey, outstandingRequests, loadedIntoHistory } =
 		historyData;
 	const { releases } = pubData;
@@ -102,7 +106,6 @@ const PubHistoryViewer = (props: Props) => {
 	const hasScrolledRef = useRef<null | boolean>(null);
 	const isLoadingHistory = outstandingRequests > 0;
 	const hasMeaningfulHistory = latestKey >= 0;
-
 	historyScrollRef.current = null;
 
 	const currentDate = getDateForHistoryKey(currentKey, timestamps);
@@ -145,7 +148,7 @@ const PubHistoryViewer = (props: Props) => {
 	};
 
 	const changeCurrentKeyBy = (step) => {
-		updateHistoryData({ currentKey: currentKey + step });
+		onSetCurrentHistoryKey(currentKey + step);
 	};
 
 	const renderSliderLabel = (sliderVal) => {
@@ -177,14 +180,14 @@ const PubHistoryViewer = (props: Props) => {
 					icon="blank"
 					text={dateString}
 					key={key}
-					onClick={() => updateHistoryData({ currentKey: startKey })}
+					onClick={() => onSetCurrentHistoryKey(startKey)}
 					active={containsCurrentKey}
 					intent={containsCurrentKey ? 'primary' : 'none'}
 				/>
 			);
 		}
 		if (entry.type === 'release') {
-			const { release } = entry;
+			const { releaseNumber } = entry;
 			const dateString = formatDate(date, {
 				includeTime: true,
 				includeDate: false,
@@ -196,7 +199,7 @@ const PubHistoryViewer = (props: Props) => {
 					intent="success"
 					icon="document-share"
 					key={key}
-					href={pubUrl(communityData, pubData, { releaseNumber: release.historyKey + 1 })}
+					href={pubUrl(communityData, pubData, { releaseNumber })}
 					target="_blank"
 				/>
 			);
@@ -297,7 +300,7 @@ const PubHistoryViewer = (props: Props) => {
 					labelStepSize={latestKey + 1}
 					value={sliderValue}
 					onChange={setSliderValue}
-					onRelease={(value) => updateHistoryData({ currentKey: value - 1 })}
+					onRelease={(value) => onSetCurrentHistoryKey(value - 1)}
 				/>
 			)}
 			<Menu>

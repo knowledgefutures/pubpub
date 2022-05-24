@@ -70,6 +70,7 @@ export default ({
 			'id',
 			'slug',
 			'title',
+			'htmlTitle',
 			'description',
 			'labels',
 			'avatar',

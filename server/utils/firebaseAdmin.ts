@@ -12,7 +12,7 @@ import {
 import { Pub, Draft } from 'server/models';
 import { getFirebaseConfig } from 'utils/editor/firebaseConfig';
 import { storeCheckpoint, createFirebaseChange } from 'components/Editor/utils';
-import { DocJson } from 'types';
+import { DocJson, PubDraftInfo } from 'types';
 
 const getFirebaseApp = () => {
 	if (firebaseAdmin.apps.length > 0) {
@@ -64,7 +64,7 @@ export const getPubDraftDoc = async (
 	pubId: string,
 	historyKey: null | number = null,
 	createMissingCheckpoints = false,
-) => {
+): Promise<PubDraftInfo> => {
 	const draftRef = await getPubDraftRef(pubId);
 	const [
 		{ doc, docIsFromCheckpoint, key: currentKey, timestamp: currentTimestamp, checkpointMap },

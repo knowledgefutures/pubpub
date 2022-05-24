@@ -63,8 +63,8 @@ export const connectToFirebaseDiscussions = (discussionsRef: Reference): RemoteD
 		discussionsRef.on('child_added', childAddedHandler);
 		discussionsRef.on('child_removed', childRemovedHandler);
 		return () => {
-			discussionsRef.on('child_added', childAddedHandler);
-			discussionsRef.on('child_removed', childRemovedHandler);
+			discussionsRef.off('child_added', childAddedHandler);
+			discussionsRef.off('child_removed', childRemovedHandler);
 		};
 	};
 

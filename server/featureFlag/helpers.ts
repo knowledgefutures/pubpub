@@ -4,13 +4,9 @@ import {
 	FeatureFlagOverrideState,
 	FeatureFlagCommunity,
 } from 'types';
+import { getPsuedorandomFractionForUuid } from 'utils/psuedorandom';
 
 type FeatureFlagOverride = FeatureFlagUser | FeatureFlagCommunity;
-
-const getRandomFractionForUuid = (uuid: string) => {
-	const sixBytes = uuid.split('-').pop()!;
-	return parseInt(sixBytes, 16) / 0xffffffffffff; // largest six-byte integer
-};
 
 const passesThresholdFraction = (
 	featureFlagUuid: string,
@@ -20,8 +16,8 @@ const passesThresholdFraction = (
 	if (threshold === 0 || !targetModelUuid) {
 		return false;
 	}
-	const featureFlagValue = getRandomFractionForUuid(featureFlagUuid);
-	const targetModelValue = getRandomFractionForUuid(targetModelUuid);
+	const featureFlagValue = getPsuedorandomFractionForUuid(featureFlagUuid);
+	const targetModelValue = getPsuedorandomFractionForUuid(targetModelUuid);
 	return (featureFlagValue + targetModelValue) % 1 <= threshold;
 };
 

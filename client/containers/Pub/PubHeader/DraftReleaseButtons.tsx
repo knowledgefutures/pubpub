@@ -16,7 +16,6 @@ export type DraftReleaseButtonsProps = {
 	pubData: PubPageData;
 	historyData: any;
 	updatePubData: PatchFn<PubPageData>;
-	updateHistoryData: (patch: any) => unknown;
 };
 
 export const getHistoryButtonLabelForTimestamp = (timestamp, label, noTimestampLabel) => {
@@ -44,7 +43,7 @@ const getCanCreateRelease = (latestRelease, latestKey) => {
 };
 
 const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
-	const { historyData, pubData, updateHistoryData, updatePubData } = props;
+	const { historyData, pubData, updatePubData } = props;
 	const { communityData, scopeData } = usePageContext();
 	const { canView, canViewDraft, canAdmin, canCreateReviews } = scopeData.activePermissions;
 	const { isRelease } = pubData;
@@ -125,11 +124,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						'draft created',
 					)}
 					disabled={historyData.loadedIntoHistory}
-					onClick={() =>
-						updateHistoryData({
-							isViewingHistory: !historyData.isViewingHistory,
-						})
-					}
+					onClick={() => historyData.setIsViewingHistory(!historyData.isViewingHistory)}
 				/>
 				{!!latestRelease && (
 					<ResponsiveHeaderButton

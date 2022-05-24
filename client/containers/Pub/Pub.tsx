@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { usePageContext } from 'utils/hooks';
 import { PubPageData } from 'types';
 
-import PubSyncManager from './PubSyncManager';
 import PubHeader from './PubHeader';
 import SpubHeader from './SpubHeader';
 import PubDocument from './PubDocument';
+import { usePubContext } from './pubHooks';
+import { PubContextProvider } from './PubContextProvider';
 import { PubSuspendWhileTypingProvider, PubSuspendWhileTyping } from './PubSuspendWhileTyping';
 
 require('./pub.scss');
@@ -15,97 +15,25 @@ type Props = {
 	pubData: PubPageData;
 };
 
-const isInViewport = (rect: DOMRect, offsets: { top?: number; left?: number } = {}) => {
-	const { top, left, bottom, right } = rect;
-	const { innerWidth, innerHeight } = window;
-	const { clientWidth, clientHeight } = document.documentElement;
-	const { top: offsetTop, left: offsetLeft } = { top: 0, left: 0, ...offsets };
-
-	return (
-		top >= offsetTop &&
-		left >= offsetLeft &&
-		bottom <= (innerHeight || clientHeight) &&
-		right <= (innerWidth || clientWidth)
-	);
-};
-
-const scrollToElementTop = (hash: string, delay = 0) => {
-	let element: HTMLElement | null;
-
-	try {
-		element = document.getElementById(hash.replace('#', ''));
-	} catch {
-		return;
-	}
-
-	if (!element) {
-		return;
-	}
-
-	setTimeout(() => {
-		const rect = (element as HTMLElement).getBoundingClientRect();
-
-		if (!isInViewport(rect, { top: 50 })) {
-			document.body.scrollTop += rect.top - 80;
-		}
-	}, delay);
+const SomePubHeader = () => {
+	const pubContext = usePubContext();
+	const { submissionState } = pubContext;
+	const HeaderComponent = submissionState ? SpubHeader : PubHeader;
+	return <PubSuspendWhileTyping delay={1000}>{() => <HeaderComponent />}</PubSuspendWhileTyping>;
 };
 
 const Pub = (props: Props) => {
-	const { loginData, locationData, communityData } = usePageContext();
-	useEffect(() => {
-		const { hash } = window.location;
+	const { pubData } = props;
 
-		if (hash) {
-			scrollToElementTop(hash, 500);
-		}
-
-		const onClick = (event: MouseEvent) => {
-			const { target, metaKey } = event;
-
-			if (target instanceof HTMLAnchorElement && !metaKey) {
-				const href = target.getAttribute('href');
-
-				if (href && href.indexOf('#') === 0) {
-					event.preventDefault();
-					window.location.hash = href;
-					scrollToElementTop(href);
-				}
-			}
-		};
-
-		if (props.pubData.isReadOnly) {
-			document.addEventListener('click', onClick);
-			return () => document.removeEventListener('click', onClick);
-		}
-
-		return () => {};
-	}, [props.pubData]);
 	return (
-		<PubSuspendWhileTypingProvider>
-			<div id="pub-container">
-				<PubSyncManager
-					pubData={props.pubData}
-					locationData={locationData}
-					communityData={communityData}
-					loginData={loginData}
-				>
-					{(ctx) => {
-						const { submissionState } = ctx;
-						const showDocument = submissionState?.selectedTab !== 'instructions';
-						const HeaderComponent = submissionState ? SpubHeader : PubHeader;
-						return (
-							<>
-								<PubSuspendWhileTyping delay={1000}>
-									{() => <HeaderComponent />}
-								</PubSuspendWhileTyping>
-								{showDocument && <PubDocument {...ctx} />}
-							</>
-						);
-					}}
-				</PubSyncManager>
-			</div>
-		</PubSuspendWhileTypingProvider>
+		<div id="pub-container">
+			<PubContextProvider pubData={pubData}>
+				<PubSuspendWhileTypingProvider>
+					<SomePubHeader />
+					<PubDocument />
+				</PubSuspendWhileTypingProvider>
+			</PubContextProvider>
+		</div>
 	);
 };
 

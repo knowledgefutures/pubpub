@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import classNames from 'classnames';
 
 import { GridWrapper, PubHeaderBackground } from 'components';
@@ -7,7 +7,6 @@ import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
 
 import { usePubContext } from '../pubHooks';
-import { getPubHeadings } from './headerUtils';
 import { mobileViewportCutoff } from './constants';
 import PubDetails from './details';
 import PubHeaderContent from './PubHeaderContent';
@@ -41,18 +40,12 @@ const ToggleDetailsButton = (props: ToggleDetailsProps) => {
 
 const PubHeader = (props: Props) => {
 	const headerRef = useRef<HTMLDivElement>(null);
-	const { pubData, collabData, historyData, updateLocalData } = usePubContext();
+	const { pubData, updateLocalData, pubHeadings } = usePubContext();
 	const { sticky = true } = props;
 	const { communityData } = usePageContext();
 	const [showingDetails, setShowingDetails] = useState(false);
 	const [fixedHeight, setFixedHeight] = useState<number | null>(null);
 	const { viewportWidth } = useViewport();
-
-	// TODO(ian): Move this computation to usePubBodyState()
-	const pubHeadings = useMemo(
-		() => getPubHeadings(pubData.initialDoc, collabData.editorChangeObject),
-		[pubData.initialDoc, collabData.editorChangeObject],
-	);
 
 	const isMobile = viewportWidth && viewportWidth <= mobileViewportCutoff;
 
@@ -96,7 +89,6 @@ const PubHeader = (props: Props) => {
 					<PubHeaderContent
 						pubData={pubData}
 						updateLocalData={updateLocalData}
-						historyData={historyData}
 						pubHeadings={pubHeadings}
 						onShowHeaderDetails={toggleDetails}
 					/>
@@ -110,7 +102,7 @@ const PubHeader = (props: Props) => {
 				)}
 				<ToggleDetailsButton showingDetails={showingDetails} onClick={toggleDetails} />
 			</GridWrapper>
-			{sticky && <PubHeaderSticky pubData={pubData} pubHeadings={pubHeadings} />}
+			{sticky && <PubHeaderSticky />}
 		</PubHeaderBackground>
 	);
 };

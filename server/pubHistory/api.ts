@@ -20,10 +20,9 @@ const getRequestIds = (req) => {
 app.get(
 	'/api/pubHistory',
 	wrap(async (req, res) => {
-		const { pubId, communityId, historyKey, accessHash, userId } = getRequestIds(req);
+		const { pubId, historyKey, accessHash, userId } = getRequestIds(req);
 		const { canCreateExport } = await getPermissions({
 			userId,
-			communityId,
 			pubId,
 			accessHash,
 			historyKey,

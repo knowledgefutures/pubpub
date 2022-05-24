@@ -16,7 +16,7 @@ export type ActivityRenderContext = {
 // the actual title of the Pub. Likewise the Title rendered for a User may be that user's name
 // or simply "you".
 export type Title = {
-	title: string;
+	title: React.ReactNode;
 	href?: string | null;
 	prefix?: string | null;
 	suffix?: string | null;

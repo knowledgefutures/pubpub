@@ -3,7 +3,7 @@ import { MenuItem, Position, Spinner } from '@blueprintjs/core';
 import { Suggest } from '@blueprintjs/select';
 import isUrl from 'is-url';
 
-import { PubMenuItem } from 'components';
+import { PubMenuItem, PubTitle } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { isDoi } from 'utils/crossref/parseDoi';
 import { useThrottled } from 'utils/hooks';
@@ -44,6 +44,7 @@ const indeterminateMenuItem = (
 		isSkeleton={true}
 		showImage={true}
 		disabled={true}
+		id={null}
 		onClick={() => {}}
 	/>
 );
@@ -90,8 +91,9 @@ const NewEdgeInput = (props: Props) => {
 			const { targetPub } = item;
 			return (
 				<PubMenuItem
+					id={targetPub.id}
 					key={targetPub.id}
-					title={targetPub.title}
+					title={<PubTitle pubData={targetPub} />}
 					contributors={targetPub.attributions.filter((attr) => attr.isAuthor)}
 					image={targetPub.avatar}
 					active={modifiers.active}
@@ -105,10 +107,11 @@ const NewEdgeInput = (props: Props) => {
 			item.externalPublication &&
 			item.externalPublication.title
 		) {
-			const { title, contributors, avatar } = item.externalPublication;
+			const { title, contributors, avatar, id } = item.externalPublication;
 			return (
 				<PubMenuItem
 					key={title}
+					id={id}
 					title={title}
 					contributors={contributors}
 					image={avatar}

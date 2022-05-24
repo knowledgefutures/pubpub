@@ -19,7 +19,7 @@ const shouldOpenBelowSelection = () => {
 };
 
 const PubInlineMenu = () => {
-	const { pubData, collabData, historyData } = usePubContext();
+	const { pubData, collabData, historyData, pubBodyState } = usePubContext();
 	const { communityData, scopeData } = usePageContext();
 	const { canView, canCreateDiscussions } = scopeData.activePermissions;
 	const selection = collabData.editorChangeObject!.selection || {};
@@ -42,7 +42,7 @@ const PubInlineMenu = () => {
 			: selectionBoundingBox.top - 50);
 
 	const renderFormattingBar = () => {
-		if (pubData.isReadOnly) {
+		if (pubBodyState.isReadOnly) {
 			return null;
 		}
 		return (
@@ -62,7 +62,7 @@ const PubInlineMenu = () => {
 			style={{ position: 'absolute', top: topPosition, left: selectionBoundingBox.left }}
 		>
 			{renderFormattingBar()}
-			{(canView || canCreateDiscussions) && (
+			{(canView || canCreateDiscussions) && pubBodyState.canCreateAnchoredDiscussions && (
 				<Button
 					aria-label="Start a discussion"
 					title="Start a discussion"

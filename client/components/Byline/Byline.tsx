@@ -92,7 +92,7 @@ const Byline = (props: PrivateBylineProps) => {
 	};
 
 	return (
-		<div className="byline-component byline">
+		<div className="byline-component">
 			<span className="text-wrapper">
 				{contributors.length > 0 && (
 					<>

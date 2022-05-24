@@ -101,7 +101,7 @@ $mobile-bottom-buttons-spacing: 10px;
 		font-family: $header-font;
 	}
 
-	.byline {
+	.byline-component {
 		padding-top: $title-elements-spacing;
 		margin: 0;
 		font-size: 18px;
@@ -122,7 +122,7 @@ $mobile-bottom-buttons-spacing: 10px;
 		.description {
 			font-size: 14px;
 		}
-		.byline {
+		.byline-component {
 			font-size: 14px;
 			letter-spacing: unset;
 		}
@@ -199,7 +199,7 @@ $mobile-bottom-buttons-spacing: 10px;
 		.title-group-component {
 			grid-area: middle-left;
 			padding-top: 20px;
-			.byline {
+			.byline-component {
 				a,
 				a:visited {
 					color: inherit !important;

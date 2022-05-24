@@ -3,7 +3,7 @@ import { AnchorButton, Button, Intent } from '@blueprintjs/core';
 
 import { Avatar, Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
-import { getDashUrl, getDashboardModes } from 'utils/dashboard';
+import { getDashUrl } from 'utils/dashboard';
 import { apiFetch } from 'client/utils/apiFetch';
 
 import CreateCollectionDialog from './CreateCollectionDialog';
@@ -11,12 +11,12 @@ import CreateCollectionDialog from './CreateCollectionDialog';
 require('./breadcrumbs.scss');
 
 const Breadcrumbs = () => {
-	const { locationData, communityData, scopeData } = usePageContext();
+	const { locationData, communityData, scopeData, dashboardMenu } = usePageContext();
 	const { activeTargetType, activePub, activeCollection } = scopeData.elements;
 	const { activePermission } = scopeData.activePermissions;
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
-	const { mode, subMode } = getDashboardModes(locationData);
+	const { mode, subMode } = dashboardMenu.activeMode!;
 	const [newPubIsLoading, setNewPubIsLoading] = useState(false);
 	const [newCollectionIsOpen, setNewCollectionIsOpen] = useState(false);
 

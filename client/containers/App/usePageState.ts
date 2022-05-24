@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { NoteManager } from 'client/utils/notes';
 import { InitialData, Page, PageContext } from 'types';
+import { getDashboardMenuState } from 'client/utils/navigation';
 
 // viewData contains container-specific props that we usually shouldn't peek at when doing
 // operations that could occur inside _any_ container -- but sometimes we cheat. This type
@@ -58,6 +59,11 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		}
 	};
 
+	const dashboardMenu = useMemo(
+		() => getDashboardMenuState({ scopeData, locationData, featureFlags }),
+		[scopeData, locationData, featureFlags],
+	);
+
 	return {
 		loginData,
 		locationData,
@@ -69,5 +75,6 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		noteManager,
 		featureFlags,
 		initialNotificationsData,
+		dashboardMenu,
 	};
 };

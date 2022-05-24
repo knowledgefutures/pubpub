@@ -86,7 +86,7 @@ const ExpandableCollectionOverviewRow = (props: Props) => {
 			{isOpen && (
 				<OverviewRows style={{ backgroundColor }}>
 					{pubs.map((pub) => (
-						<PubOverviewRow pub={pub} key={pub.id} />
+						<PubOverviewRow pub={pub} key={pub.id} inCollection={collection} />
 					))}
 					{!hasLoadedAllPubs && pubs.length > 0 && (
 						<LoadMorePubsRow isLoading={isLoading} onClick={loadMorePubs} isDark />

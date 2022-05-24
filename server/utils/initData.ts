@@ -46,6 +46,7 @@ export const getInitialData = async (req, isDashboard = false): Promise<types.In
 		params: req.params,
 		query: req.query,
 		queryString: req.query ? `?${queryString.stringify(req.query)}` : '',
+		isDashboard,
 		isBasePubPub: hostname === 'www.pubpub.org',
 		isProd: isProd(),
 		isDuqDuq: isDuqDuq(),

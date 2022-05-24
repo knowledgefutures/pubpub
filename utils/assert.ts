@@ -3,7 +3,9 @@ class AssertionError extends Error {
 }
 
 export function assert(condition: boolean, message = ''): asserts condition {
-	if (!condition) {
-		throw new AssertionError(message);
+	if (process.env.NODE_ENV === 'development') {
+		if (!condition) {
+			throw new AssertionError(message);
+		}
 	}
 }

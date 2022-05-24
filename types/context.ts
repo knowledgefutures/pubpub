@@ -10,6 +10,7 @@ import {
 	ScopeData,
 } from 'types';
 import { NoteManager } from 'client/utils/notes';
+import type { DashboardMenuState } from 'client/utils/navigation';
 
 export type PageContext = {
 	scopeData: ScopeData;
@@ -22,4 +23,5 @@ export type PageContext = {
 	featureFlags: Record<string, boolean>;
 	noteManager: NoteManager;
 	initialNotificationsData: InitialNotificationsData;
+	dashboardMenu: DashboardMenuState;
 };

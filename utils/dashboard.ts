@@ -1,7 +1,20 @@
+export type DashboardMode =
+	| 'activity'
+	| 'connections'
+	| 'impact'
+	| 'layout'
+	| 'members'
+	| 'overview'
+	| 'pages'
+	| 'reviews'
+	| 'scripts'
+	| 'settings'
+	| 'submissions';
+
 type GetDashUrlOptions = {
 	pubSlug?: string;
 	collectionSlug?: string;
-	mode?: string;
+	mode?: DashboardMode;
 	section?: string;
 	subMode?: string;
 };
@@ -26,7 +39,8 @@ export const getDashUrl = ({
 		baseQuery = `?collectionSlug=${collectionSlug}`;
 	}
 
-	const modeString = mode ? `/${mode.toLowerCase().replace(/ /gi, '-')}` : '';
+	const modeString =
+		mode && mode !== 'overview' ? `/${mode.toLowerCase().replace(/ /gi, '-')}` : '';
 	const subModeString = subMode ? `/${String(subMode).toLowerCase().replace(/ /gi, '-')}` : '';
 
 	return `${baseHref}${modeString}${subModeString}${baseQuery}${section && `#${section}`}`;
@@ -50,18 +64,5 @@ export const groupPubs = ({ pubs, collections }) => {
 			return { ...collection, pubs: groupedCollections[collection.id] || [] };
 		}),
 		pubs: basePubs,
-	};
-};
-
-export const getDashboardModes = (locationData) => {
-	const activeSubMode = locationData.params.subMode;
-	const activeModeSlice = activeSubMode ? -2 : -1;
-	const activeMode = locationData.path.split('/').slice(activeModeSlice)[0];
-	if (locationData.params.reviewNumber) {
-		return { mode: 'reviews', subMode: locationData.params.reviewNumber };
-	}
-	return {
-		mode: activeMode,
-		subMode: activeSubMode,
 	};
 };

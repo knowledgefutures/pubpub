@@ -22,6 +22,7 @@ export type LocationData = {
 	isProd: boolean;
 	isDuqDuq: boolean;
 	isQubQub: boolean;
+	isDashboard: boolean;
 	appCommit: string;
 };
 

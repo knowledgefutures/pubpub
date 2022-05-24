@@ -12,7 +12,7 @@ const StatefulSpubHeaderToolBaraWrapper = () => {
 		<SpubHeaderToolbar
 			selectedTab={selectedTab}
 			onSelectTab={setSelectedTab}
-			submission={pubData.submission}
+			submission={pubData.submission as unknown as any}
 			validatedFields={{ title: true, abstract: true, description: true }}
 		/>
 	);

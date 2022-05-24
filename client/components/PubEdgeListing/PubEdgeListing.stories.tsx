@@ -119,7 +119,7 @@ const pubData = {
 	inboundEdges,
 	outboundEdges,
 	siblingEdges,
-};
+} as unknown as any;
 
 const StoryContainer = (props) => <div style={{ padding: 24 }}>{props.children}</div>;
 

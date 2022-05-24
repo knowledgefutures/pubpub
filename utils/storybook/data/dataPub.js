@@ -4,6 +4,7 @@ export default {
 	id: '00f9aaaf-0468-4590-9b86-1a2bff4ffe57',
 	slug: '6pewbpry',
 	title: 'Defining the Dimensions of the “Space” of Computing',
+	htmlTitle: null,
 	description:
 		'The first computing machines were so large they filled entire rooms. Today they are ubiquitous, built invisibly into our environments. While it is tempting to view this change within a predetermined space of progress, we can still shape the future on our own terms.',
 	avatar: 'https://assets.pubpub.org/9pi1c5c6/41554230047846.jpeg',
@@ -98,6 +99,7 @@ export default {
 		pubs: 0,
 		discussions: 11,
 		reviews: 2,
+		submissions: 0,
 	},
 	inboundEdges: [
 		{

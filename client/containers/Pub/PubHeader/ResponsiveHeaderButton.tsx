@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { useViewport } from 'client/utils/useViewport';
+import { MobileAware } from 'components';
 
-import { mobileViewportCutoff } from './constants';
 import LargeHeaderButton from './LargeHeaderButton';
 import SmallHeaderButton, { Props as SmallHeaderButtonProps } from './SmallHeaderButton';
 
@@ -17,20 +16,28 @@ const ResponsiveHeaderButton = React.forwardRef((props: Props, ref) => {
 	const { labelPosition, outerLabel, showCaret = false, simpleLabel, ...sharedProps } = props;
 	const largeOnlyProps = { outerLabel, showCaret };
 	const smallOnlyProps = { labelPosition };
-	const { viewportWidth } = useViewport();
 
-	if (viewportWidth === null || viewportWidth > mobileViewportCutoff) {
-		return (
-			<LargeHeaderButton
-				{...sharedProps}
-				{...largeOnlyProps}
-				outerLabel={outerLabel}
-				ref={ref}
-			/>
-		);
-	}
-
-	return <SmallHeaderButton {...sharedProps} {...smallOnlyProps} label={simpleLabel} ref={ref} />;
+	return (
+		<MobileAware
+			ref={ref}
+			desktop={(mobileAwareProps) => (
+				<LargeHeaderButton
+					{...sharedProps}
+					{...largeOnlyProps}
+					{...mobileAwareProps}
+					outerLabel={outerLabel}
+				/>
+			)}
+			mobile={(mobileAwareProps) => (
+				<SmallHeaderButton
+					{...sharedProps}
+					{...smallOnlyProps}
+					{...mobileAwareProps}
+					label={simpleLabel}
+				/>
+			)}
+		/>
+	);
 });
 
 export default ResponsiveHeaderButton;

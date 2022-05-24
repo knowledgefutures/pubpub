@@ -75,6 +75,7 @@ $mobile-viewport-cutoff: 750px;
 		.byline,
 		.summary-icons {
 			font-size: 14px;
+			color: $medium-grey;
 			@include mobile {
 				font-size: 12px;
 			}
@@ -84,7 +85,6 @@ $mobile-viewport-cutoff: 750px;
 			display: flex;
 			align-items: center;
 			margin-top: 4px;
-			color: $medium-grey;
 			> .summary-icon-pair {
 				.bp3-icon {
 					@include status-colors;

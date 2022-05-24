@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react';
 
 import PubHeader from 'containers/Pub/PubHeader';
 import { pubData, communityData, attributionsData } from 'utils/storybook/data';
-import { PubContext } from '../PubSyncManager';
+import { PubContext } from '../PubContextProvider';
 
 const altPubData = {
 	...pubData,

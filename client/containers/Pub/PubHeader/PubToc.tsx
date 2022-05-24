@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import { Menu, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
+import { PubHeading } from './headerUtils';
 
 require('./pubToc.scss');
 
@@ -11,12 +12,7 @@ type MenuType = React.ComponentProps<typeof Menu>;
 
 type Props = {
 	children: MenuType['disclosure'];
-	headings: {
-		title?: string;
-		index?: any;
-		href?: string;
-		level?: number;
-	}[];
+	headings: PubHeading[];
 	onSelect?: (...args: any[]) => any;
 	placement?: MenuType['placement'];
 	limitHeight?: boolean;

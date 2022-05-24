@@ -310,22 +310,23 @@ const pubData = {
 export const initialHistoryData = {
 	timestamps: editTimestamps,
 	currentKey: 14678,
+	historyDocEditorKey: `history-14678`,
 	latestKey: 14678,
 	isViewingHistory: false,
 	loadedIntoHistory: false,
-	historyDocKey: 'string',
 	outstandingRequests: 0,
 	latestKeyReceivedAt: 0,
 };
 
 const StatefulPubHistoryWrapper = () => {
 	const [historyData, setHistoryData] = useState(initialHistoryData);
-	const updateHistoryData = (next) => setHistoryData((current) => ({ ...current, ...next }));
 	return (
 		<PubHistoryViewer
 			pubData={pubData as any}
 			historyData={historyData as any}
-			updateHistoryData={updateHistoryData}
+			onSetCurrentHistoryKey={(currentKey) =>
+				setHistoryData((current) => ({ ...current, currentKey }))
+			}
 			onClose={() => {}}
 		/>
 	);

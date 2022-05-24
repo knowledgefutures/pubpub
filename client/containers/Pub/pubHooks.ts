@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { PubContext } from './PubSyncManager';
+import { PubContext } from './PubContextProvider';
 
 export const usePubContext = () => {
 	return useContext(PubContext);

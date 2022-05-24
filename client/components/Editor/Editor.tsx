@@ -25,7 +25,7 @@ require('./styles/base.scss');
 
 type Props = {
 	noteManager?: NoteManager;
-	collaborativeOptions?: CollaborativeOptions;
+	collaborativeOptions?: Maybe<CollaborativeOptions>;
 	discussionsOptions?: Maybe<DiscussionsOptions>;
 	debounceEditsMs?: number;
 	customMarks?: Record<string, MarkSpec>;
@@ -89,7 +89,7 @@ const Editor = (props: Props) => {
 		pluginsOptions: {
 			noteManager,
 			discussionsOptions: discussionsOptions || null,
-			collaborativeOptions,
+			collaborativeOptions: collaborativeOptions || null,
 			initialDoc: initialDocNode,
 			isReadOnly,
 			nodeLabels,

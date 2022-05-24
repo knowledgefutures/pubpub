@@ -6,7 +6,7 @@ import { getLowestAncestorWithId } from 'client/utils/dom';
 import { usePageContext } from 'utils/hooks';
 import { pubUrl } from 'utils/canonicalUrls';
 
-import { usePubData } from '../../pubHooks';
+import { usePubContext } from '../../pubHooks';
 
 type Props = {
 	element: Element;
@@ -17,7 +17,7 @@ const LinkPopover = (props: Props) => {
 	const { element, mainContentRef } = props;
 	const parent = getLowestAncestorWithId(element);
 	const popoverRef = useRef<null | HTMLDivElement>(null);
-	const pubData = usePubData();
+	const { pubData, pubBodyState } = usePubContext();
 	const {
 		communityData,
 		scopeData: {
@@ -43,7 +43,7 @@ const LinkPopover = (props: Props) => {
 	const unstableLink = Boolean(parent && /^r[0-9]*$/.test(parent.id));
 	const isLatestRelease = pubData.releaseNumber === pubData.releases.length;
 	const managersEnableLinksPrompt =
-		pubData.isReadOnly && isLatestRelease && unstableLink && canManage
+		pubBodyState.isReadOnly && isLatestRelease && unstableLink && canManage
 			? 'You must create a new Release to link to this block.'
 			: '';
 

@@ -50,6 +50,7 @@ export default (
 	let view;
 	let mostRecentRemoteKey = collaborativeOptions.initialDocKey;
 	let ongoingTransaction = false;
+	let hasLoadedChangesOnce = false;
 	let listeningOn: null | firebase.database.Query = null;
 	let pendingRemoteKeyables = [];
 	/* sendCollabChanges is called only from the main Editor */
@@ -163,7 +164,12 @@ export default (
 
 	const loadDocument = () => {
 		getFirebaseConnectionMonitorRef(ref).on('value', (snapshot) => {
-			if (!snapshot.val()) {
+			const isConnected = snapshot.val();
+			if (isConnected) {
+				if (hasLoadedChangesOnce) {
+					onStatusChange('connected');
+				}
+			} else {
 				onStatusChange('disconnected');
 			}
 		});
@@ -202,6 +208,7 @@ export default (
 				finishedLoadingTrans.setMeta('finishedLoading', true);
 				view.dispatch(finishedLoadingTrans);
 				onStatusChange('connected');
+				hasLoadedChangesOnce = true;
 
 				/* Listen to Changes */
 				listeningOn = ref

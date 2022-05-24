@@ -8,27 +8,52 @@ type Props = {
 	date: number | string | Date;
 	useDateCutoffDays?: number;
 	className?: string;
+	now?: number | string | Date;
 };
 
 const TimeAgo = (props: Props) => {
-	const { className: providedClassName, date: unnormalizedDate, useDateCutoffDays = 7 } = props;
-	const [now] = useState(() => new Date());
+	const {
+		className: providedClassName,
+		date: unnormalizedDate,
+		now: providedNow,
+		useDateCutoffDays = 7,
+	} = props;
+	const [mountedAt] = useState(() => new Date());
 	const date = useMemo(() => new Date(unnormalizedDate), [unnormalizedDate]);
 	const className = classNames('time-ago-component', providedClassName);
 
-	const useCutoff = useMemo(
-		() => now.valueOf() - date.valueOf() > 86400 * 1000 * useDateCutoffDays,
-		[date, now, useDateCutoffDays],
-	);
+	const justShowDateInstead = useMemo(() => {
+		const nowOrMountedAt = providedNow ?? mountedAt;
+		const cutoffMs = 86400 * 1000 * useDateCutoffDays;
+		return new Date(nowOrMountedAt).valueOf() - date.valueOf() > cutoffMs;
+	}, [date, mountedAt, providedNow, useDateCutoffDays]);
 
-	if (useCutoff) {
+	const nowProps = useMemo(() => {
+		if (providedNow) {
+			return {
+				now: () => providedNow,
+			};
+		}
+		return {};
+	}, [providedNow]);
+
+	if (justShowDateInstead) {
 		return (
 			<time className={className} dateTime={date.toISOString()}>
 				{formatDate(date)}
 			</time>
 		);
 	}
-	return <ReactTimeAgo {...timeAgoBaseProps} live={false} date={date} className={className} />;
+
+	return (
+		<ReactTimeAgo
+			{...timeAgoBaseProps}
+			{...nowProps}
+			live={false}
+			date={date}
+			className={className}
+		/>
+	);
 };
 
 export default TimeAgo;

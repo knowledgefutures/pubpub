@@ -4,18 +4,12 @@ import { Button } from '@blueprintjs/core';
 import { Icon } from 'components';
 
 import PubToc from './PubToc';
+import { usePubContext } from '../pubHooks';
 
 require('./pubHeaderSticky.scss');
 
-type Props = {
-	pubData: {
-		title?: string;
-	};
-	pubHeadings: any[];
-};
-
-const PubHeaderSticky = (props: Props) => {
-	const { pubData, pubHeadings } = props;
+const PubHeaderSticky = () => {
+	const { pubData, pubHeadings } = usePubContext();
 	return (
 		<div className="pub-header-sticky-component">
 			<div className="sticky-title">{pubData.title}</div>

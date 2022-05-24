@@ -129,7 +129,6 @@ export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPub
 		discussions: PubPageDiscussion[];
 		viewHash: Maybe<string>;
 		editHash: Maybe<string>;
-		isReadOnly: boolean;
 		isRelease: boolean;
 		isInMaintenanceMode?: boolean;
 		firebaseToken?: string;
@@ -145,11 +144,20 @@ export type PubHistoryState = {
 	latestKey: number;
 	isViewingHistory: boolean;
 	loadedIntoHistory: boolean;
-	historyDocKey: string;
-	historyDoc?: DocJson;
+	historyDocEditorKey: string;
+	historyDoc: null | DocJson;
+	latestHistoryDoc: null | DocJson;
 	outstandingRequests: number;
 	latestKeyReceivedAt: Maybe<number>;
 	timestamps: Record<string, number>;
+};
+
+export type PubDraftInfo = {
+	doc: DocJson;
+	mostRecentRemoteKey: number;
+	firstTimestamp: number;
+	latestTimestamp: number;
+	historyData: Pick<PubHistoryState, 'currentKey' | 'latestKey' | 'timestamps'>;
 };
 
 type CollectionPubWithAttributions = CollectionPub & {
@@ -162,7 +170,6 @@ export type SanitizedPubData = Pub & {
 	attributions: PubAttribution[];
 	discussions: Discussion[];
 	collectionPubs: CollectionPubWithAttributions[];
-	isReadOnly: boolean;
 	isRelease: boolean;
 	releases: Release[];
 	releaseNumber: number | null;

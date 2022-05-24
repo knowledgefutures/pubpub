@@ -9,7 +9,6 @@ import { createSubmissionValidator, validateSubmission } from 'utils/submission/
 
 import { usePubContext } from '../pubHooks';
 import PubHeader from '../PubHeader';
-import { getPubHeadings } from '../PubHeader/headerUtils';
 import PubHeaderSticky from '../PubHeader/PubHeaderSticky';
 import InstructionsTab from './InstructionsTab';
 import DetailsTab from './DetailsTab';
@@ -22,13 +21,7 @@ export type SpubHeaderTab = 'instructions' | 'details' | 'contributors' | 'previ
 
 const SpubHeader = () => {
 	const { pendingPromise } = usePendingChanges();
-	const {
-		updatePubData,
-		pubData,
-		collabData: { editorChangeObject },
-		updateSubmissionState,
-		submissionState,
-	} = usePubContext();
+	const { updatePubData, pubData, updateSubmissionState, submissionState } = usePubContext();
 	const { selectedTab, submission } = submissionState!;
 	const headerRef = useRef<HTMLDivElement>(null);
 
@@ -45,12 +38,6 @@ const SpubHeader = () => {
 				validator,
 			),
 		[pubData, submission, validator],
-	);
-
-	// TODO(ian): Move this computation to usePubBodyState()
-	const pubHeadings = useMemo(
-		() => getPubHeadings(pubData.initialDoc, editorChangeObject),
-		[pubData.initialDoc, editorChangeObject],
 	);
 
 	useSticky({
@@ -127,7 +114,7 @@ const SpubHeader = () => {
 				)}
 				{selectedTab === 'preview' && <PubHeader sticky={false} />}
 			</div>
-			<PubHeaderSticky pubData={pubData} pubHeadings={pubHeadings} />
+			<PubHeaderSticky />
 		</div>
 	);
 };

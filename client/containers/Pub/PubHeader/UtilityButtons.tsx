@@ -9,6 +9,7 @@ import Download from './Download';
 import PubToc from './PubToc';
 import SmallHeaderButton from './SmallHeaderButton';
 import Social from './Social';
+import { PubHeading } from './headerUtils';
 
 type Props = {
 	onShowHeaderDetails: (...args: any[]) => any;
@@ -17,7 +18,7 @@ type Props = {
 		slug?: string;
 		isRelease?: boolean;
 	};
-	pubHeadings: {}[];
+	pubHeadings: PubHeading[];
 	updatePubData: (...args: any[]) => any;
 };
 

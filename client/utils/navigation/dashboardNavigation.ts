@@ -105,12 +105,14 @@ const getRenderedMenuItemInContext = (
 };
 
 export const getDashboardMenuState = (context: ReadablePageContext): DashboardMenuState => {
+	const { locationData, scopeData } = context;
+	const { isBasePubPub } = locationData;
+	if (isBasePubPub) {
+		return { menuItems: [], activeMode: null };
+	}
 	const {
-		locationData,
-		scopeData: {
-			elements: { activeTargetType },
-		},
-	} = context;
+		elements: { activeTargetType },
+	} = scopeData;
 	const allMenuItems = menuItemsByScopeType[activeTargetType];
 	const activeMode = getActiveDashboardMode(locationData);
 	const menuItems = allMenuItems

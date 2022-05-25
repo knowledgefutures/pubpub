@@ -114,7 +114,7 @@ $pub-body-font-size: if-is-export(14px, 20px);
 		padding-left: 0;
 		list-style-position: inside;
 		li p {
-			word-break: break-all;
+			word-break: break-word;
 			&:first-child {
 				display: inline;
 			}

@@ -99,6 +99,8 @@ export const updatePub = (inputValues, updatePermissions, actorId) => {
 	}
 	if (filteredValues.htmlTitle) {
 		filteredValues.title = striptags(filteredValues.htmlTitle).replace(/&nbsp;/gi, ' ');
+	} else if (filteredValues.title) {
+		filteredValues.htmlTitle = filteredValues.title;
 	}
 
 	return Pub.update(filteredValues, {

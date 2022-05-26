@@ -24,7 +24,7 @@
 				}
 			},
 			"scripts": {
-				"test-setup": "npm install -g firebase-tools"
+				"test-setup": "npm install -g firebase-tools@10"
 			}
 		},
 		"review": {

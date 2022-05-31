@@ -53,6 +53,9 @@ export const updatePubEdge = async ({ pubEdgeId, ...update }) => {
 		where: { id: pubEdgeId },
 		include: getPubEdgeIncludes({ includeTargetPub: true }),
 	});
+	if (edge.externalPublication && update.externalPublication) {
+		await edge.externalPublication.update(update.externalPublication);
+	}
 	await edge.update(update);
 	return edge;
 };

@@ -1,6 +1,5 @@
 import { Node } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
-import { splitBlock } from 'prosemirror-commands';
 
 import { Dispatch } from './types';
 import { createCommandSpec } from './util';
@@ -95,20 +94,3 @@ const createAlignCommand = (type: AlignmentType) => {
 export const alignTextLeft = createAlignCommand('left');
 export const alignTextCenter = createAlignCommand('center');
 export const alignTextRight = createAlignCommand('right');
-
-export const splitBlockPreservingTextAlign = (state: EditorState, dispatch?: Dispatch) => {
-	const { $from: previousSelectionFrom } = state.selection;
-	return splitBlock(state, (tr) => {
-		if (dispatch) {
-			const targetNodePosition = tr.selection.$from.before();
-			const targetNode = tr.doc.nodeAt(targetNodePosition);
-			const sourceNode = previousSelectionFrom.node();
-			const { [alignAttr]: textAlign } = sourceNode.attrs;
-			tr.setNodeMarkup(targetNodePosition, undefined, {
-				...targetNode?.attrs,
-				[alignAttr]: textAlign,
-			});
-			dispatch(tr);
-		}
-	});
-};

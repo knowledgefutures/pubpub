@@ -16,6 +16,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 			id: { default: null },
 			class: { default: null },
 			textAlign: { default: null },
+			rtl: { default: null },
 		},
 		parseDOM: [
 			{
@@ -25,6 +26,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 						id: (node as Element).getAttribute('id'),
 						class: (node as Element).getAttribute('class'),
 						textAlign: (node as Element).getAttribute('data-text-align'),
+						rtl: (node as Element).getAttribute('data-rtl'),
 					};
 				},
 			},
@@ -38,6 +40,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 					class: node.attrs.class,
 					...(node.attrs.id && { id: node.attrs.id }),
 					...(node.attrs.textAlign && { 'data-text-align': node.attrs.textAlign }),
+					...(node.attrs.rtl && { 'data-rtl': node.attrs.rtl.toString() }),
 				},
 				children,
 			] as DOMOutputSpec;
@@ -82,6 +85,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 			fixedId: { default: '' },
 			id: { default: '' },
 			textAlign: { default: null },
+			rtl: { default: null },
 		},
 		content: 'inline*',
 		group: 'block',
@@ -94,6 +98,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 					return {
 						id: (node as Element).getAttribute('id'),
 						textAlign: (node as Element).getAttribute('data-text-align'),
+						rtl: (node as Element).getAttribute('data-rtl'),
 						level,
 					};
 				},
@@ -105,6 +110,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				{
 					id: node.attrs.fixedId || node.attrs.id,
 					...(node.attrs.textAlign && { 'data-text-align': node.attrs.textAlign }),
+					...(node.attrs.rtl && { 'data-rtl': node.attrs.rtl.toString() }),
 				},
 				0,
 			] as DOMOutputSpec;
@@ -116,6 +122,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		attrs: {
 			id: { default: null },
 			order: { default: 1 },
+			rtl: { default: null },
 		},
 		selectable: false,
 		parseDOM: [
@@ -127,6 +134,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 						order: (node as Element).hasAttribute('start')
 							? +(node as Element).getAttribute('start')!
 							: 1,
+						rtl: (node as Element).getAttribute('data-rtl'),
 					};
 				},
 			},
@@ -137,6 +145,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				{
 					...(node.attrs.id && { id: node.attrs.id }),
 					...(node.attrs.textAlign && { 'data-text-align': node.attrs.textAlign }),
+					...(node.attrs.rtl && { 'data-rtl': node.attrs.rtl.toString() }),
 					start: node.attrs.order === 1 ? null : node.attrs.order,
 				},
 				0,
@@ -148,6 +157,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 		group: 'block',
 		attrs: {
 			id: { default: null },
+			rtl: { default: null },
 		},
 		selectable: false,
 		parseDOM: [
@@ -156,6 +166,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				getAttrs: (node) => {
 					return {
 						id: (node as Element).getAttribute('id'),
+						rtl: (node as Element).getAttribute('data-rtl'),
 					};
 				},
 			},
@@ -166,6 +177,7 @@ export const baseNodes: { [key: string]: NodeSpec } = {
 				{
 					...(node.attrs.id && { id: node.attrs.id }),
 					...(node.attrs.textAlign && { 'data-text-align': node.attrs.textAlign }),
+					...(node.attrs.rtl && { 'data-rtl': node.attrs.rtl.toString() }),
 				},
 				0,
 			] as DOMOutputSpec;

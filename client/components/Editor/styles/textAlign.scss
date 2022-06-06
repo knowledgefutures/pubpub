@@ -19,3 +19,7 @@ th {
 > blockquote {
 	@include text-align-styles();
 }
+
+[data-rtl='true'] {
+	direction: rtl;
+}

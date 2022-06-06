@@ -12,6 +12,7 @@ import {
 	heading2Toggle,
 	linkToggle,
 	orderedListToggle,
+	rtlToggle,
 	strikethroughToggle,
 	strongToggle,
 	subscriptToggle,
@@ -92,6 +93,13 @@ export const alignRight: FormattingBarButtonData = {
 	title: 'Align right',
 	icon: 'align-right',
 	command: alignTextRight,
+};
+
+export const rightToLeft: FormattingBarButtonData = {
+	key: 'toggle-right-to-left',
+	title: 'RTL',
+	icon: 'rtl',
+	command: rtlToggle,
 };
 
 export const strong: FormattingBarButtonData = {
@@ -300,7 +308,7 @@ export const inlineMenuButtonSet = [[heading1, heading2, strong, em, link]];
 export const workflowButtonSet = [[heading1, heading2, strong, em, link], [simpleMedia]];
 
 export const fullButtonSet = [
-	[alignLeft, alignCenter, alignRight],
+	[alignLeft, alignCenter, alignRight, rightToLeft],
 	[
 		strong,
 		em,

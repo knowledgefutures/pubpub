@@ -1,5 +1,6 @@
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+
 import {
 	CommandStateBuilder,
 	SchemaType,

@@ -143,7 +143,7 @@ const blankIframes = (nodes) =>
 		nodes,
 	);
 
-const renderDetails = ({ updatedDateString, publishedDateString, doi, license }) => {
+const renderDetails = ({ updatedDateString, publishedDateString, doi, license, pubUrl }) => {
 	const showUpdatedDate = updatedDateString && updatedDateString !== publishedDateString;
 	return (
 		<>
@@ -152,9 +152,15 @@ const renderDetails = ({ updatedDateString, publishedDateString, doi, license })
 					<strong>Updated on:</strong> {updatedDateString}
 				</div>
 			)}
-			{doi && (
+			{doi ? (
 				<div>
-					<strong>DOI:</strong> {doi}
+					<strong>DOI: </strong>
+					<a href={`https://doi.org/${doi}`}>{`https://doi.org/${doi}`}</a>
+				</div>
+			) : (
+				<div>
+					<strong>URL: </strong>
+					<a href={pubUrl}>{pubUrl}</a>
 				</div>
 			)}
 			{license && (
@@ -176,6 +182,7 @@ const renderFrontMatter = ({
 	primaryCollectionMetadata,
 	doi,
 	title,
+	pubUrl,
 	communityTitle,
 	accentColor,
 	attributions,
@@ -245,6 +252,7 @@ const renderFrontMatter = ({
 					updatedDateString,
 					publishedDateString,
 					doi,
+					pubUrl,
 					license,
 				})}
 			</div>

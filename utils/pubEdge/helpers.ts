@@ -13,7 +13,7 @@ export const getHostnameForUrl = (url: string) => {
 	}
 };
 
-const getUrlForPub = (pubData: Pub, communityData: Community) => {
+export const getUrlForPub = (pubData: Pub, communityData: Community) => {
 	if (communityData.id === pubData.communityId) {
 		return pubUrl(communityData, pubData);
 	}

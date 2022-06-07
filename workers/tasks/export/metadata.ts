@@ -4,6 +4,7 @@ import * as types from 'types';
 import { getPubPublishedDate, getPubUpdatedDate } from 'utils/pub/pubDates';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { renderJournalCitation } from 'utils/citations';
+import { getUrlForPub } from 'utils/pubEdge';
 import {
 	Collection,
 	CollectionPub,
@@ -61,6 +62,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 			},
 		],
 	});
+	const pubUrl = getUrlForPub(pubData, pubData.community);
 	const publishedDate = getPubPublishedDate(pubData);
 	const license = getLicenseForPub(pubData, pubData.community);
 	const updatedDate = getPubUpdatedDate({ pub: pubData });
@@ -71,6 +73,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 	return {
 		title: pubData.title,
 		slug: pubData.slug,
+		pubUrl,
 		doi: pubData.doi,
 		publishedDateString,
 		updatedDateString,

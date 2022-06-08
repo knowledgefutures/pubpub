@@ -4,7 +4,7 @@ import fs from 'fs';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import { DocJson } from 'types';
+import { AttributionWithUser, DocJson } from 'types';
 import { renderStatic, editorSchema } from 'components/Editor';
 
 import { NotesData, PubMetadata } from './types';
@@ -189,8 +189,23 @@ const renderFrontMatter = ({
 	publisher,
 	license,
 }: PubMetadata) => {
+	const getAffiliations = (attr: AttributionWithUser) =>
+		!attr?.affiliation?.length
+			? []
+			: attr.affiliation
+					.split(';')
+					.map((x) => x.trim())
+					.filter(Boolean);
+
 	const affiliations = [
-		...new Set(attributions.map((attr) => attr.affiliation).filter((x) => x)),
+		...new Set(
+			attributions
+				.reduce((all, attr) => {
+					all.push(...getAffiliations(attr));
+					return all;
+				}, [] as string[])
+				.filter(Boolean),
+		),
 	];
 	// do not put community title if this is a book
 	const pubPublisher =
@@ -213,17 +228,20 @@ const renderFrontMatter = ({
 						{attributions.map((attr, index) => {
 							const {
 								user: { fullName },
-								affiliation,
 							} = attr;
-							const affiliationNumber =
-								affiliation && affiliations.includes(affiliation)
-									? 1 + affiliations.indexOf(affiliation)
-									: null;
+							const affs = getAffiliations(attr);
 							return (
 								<span className="name" key={index}>
 									{fullName}
-									{affiliationNumber && <sup>{affiliationNumber}</sup>}
-									{index < attributions.length - 1 && ', '}
+									{affs?.length > 0 &&
+										affs.map((affiliation, affIndex) => (
+											<sup key={affIndex}>
+												{1 + affiliations.indexOf(affiliation)}
+												{affs.length > 1 &&
+													affIndex < affs.length - 1 &&
+													','}
+											</sup>
+										))}
 								</span>
 							);
 						})}

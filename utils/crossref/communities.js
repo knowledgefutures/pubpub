@@ -14,7 +14,7 @@ const UGHENT_DOI_PREFIX = '10.21825';
 const NCSU_DOI_PREFIX = '10.52750';
 const ABRF_DOI_PREFIX = '10.7171';
 const LAVAL_DOI_PREFIX = '10.47123';
-const FREEMOSCOW_PREFIX = '10.55167';
+const FREEMOSCOWU_PREFIX = '10.55167';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,

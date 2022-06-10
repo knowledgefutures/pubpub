@@ -14,6 +14,7 @@ const UGHENT_DOI_PREFIX = '10.21825';
 const NCSU_DOI_PREFIX = '10.52750';
 const ABRF_DOI_PREFIX = '10.7171';
 const LAVAL_DOI_PREFIX = '10.47123';
+const FREEMOSCOW_PREFIX = '10.55167';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,
@@ -30,6 +31,7 @@ export const managedDoiPrefixes = [
 	NCSU_DOI_PREFIX,
 	ABRF_DOI_PREFIX,
 	LAVAL_DOI_PREFIX,
+	FREEMOSCOWU_PREFIX,
 ];
 
 export const communityDoiOverrides = [
@@ -131,6 +133,13 @@ export const communityDoiOverrides = [
 		],
 		prefix: LAVAL_DOI_PREFIX,
 		key: 'LAVAL',
+	},
+	{
+		communityIds: [
+			'52333846-c54f-4668-ba45-c3124b226fd3', // https://freewmoscowuniversity.pubpub.org/
+		],
+		prefix: FREEMOSCOWU_PREFIX,
+		key: 'FREEMOSCOWU',
 	},
 ];
 

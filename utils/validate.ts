@@ -38,7 +38,7 @@ export const isTruthyAnd = <T>(
 };
 
 export const isValidEmailList = (emailList: string[]) =>
-	emailList.every((emailAddress) => isValidEmail(emailAddress));
+	!!emailList.length && emailList.every((emailAddress) => isValidEmail(emailAddress));
 
 export const validate = <Rec extends AnyRecord>(
 	rec: Rec,

@@ -164,7 +164,6 @@ const SubmissionWorkflowEditor = (props: Props) => {
 						}
 						placeholder="Submissions email address(es)"
 						onChange={(emails) =>
-							isValidEmailList(emails as string[]) &&
 							updateWorkflow({ targetEmailAddresses: emails as string[] })
 						}
 						addOnBlur

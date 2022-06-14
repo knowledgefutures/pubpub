@@ -7,13 +7,13 @@ import ReactDOMServer from 'react-dom/server';
 import { AttributionWithUser, DocJson } from 'types';
 import { renderStatic, editorSchema } from 'components/Editor';
 
+import { intersperse, unique } from 'utils/arrays';
 import { NotesData, PubMetadata } from './types';
 import { digestCitation } from './util';
 import SimpleNotesList from './SimpleNotesList';
 
 const nonExportableNodeTypes = ['discussion'];
 const katexCdnPrefix = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/';
-const bullet = ' • ';
 
 // This script is provided by the "cjk-fonts" Web Fonts project that we manage from here:
 // https://fonts.adobe.com/my_fonts#web_projects-section
@@ -175,20 +175,33 @@ const renderDetails = ({ updatedDateString, publishedDateString, doi, license, p
 	);
 };
 
-const renderFrontMatter = ({
-	updatedDateString,
-	publishedDateString,
-	primaryCollectionTitle,
-	primaryCollectionMetadata,
-	doi,
-	title,
-	pubUrl,
-	communityTitle,
-	accentColor,
-	attributions,
-	publisher,
-	license,
-}: PubMetadata) => {
+const getHeadingItems = (metadata: PubMetadata) => {
+	const { primaryCollectionKind, primaryCollectionTitle, publisher, communityTitle } = metadata;
+	if (primaryCollectionKind === 'book' || primaryCollectionKind === 'conference') {
+		// For books and conferences, prefer showing the publisher string to the Community title
+		return [publisher || communityTitle, primaryCollectionTitle];
+	}
+	return [communityTitle, primaryCollectionTitle];
+};
+
+const renderHeadingItems = (metadata: PubMetadata) => {
+	const items = unique(getHeadingItems(metadata).filter((x): x is string => !!x));
+	return intersperse(items, ' • ');
+};
+
+const renderFrontMatter = (metadata: PubMetadata) => {
+	const {
+		updatedDateString,
+		publishedDateString,
+		doi,
+		title,
+		pubUrl,
+		accentColor,
+		attributions,
+		publisher,
+		license,
+	} = metadata;
+
 	const getAffiliations = (attr: AttributionWithUser) =>
 		!attr?.affiliation?.length
 			? []
@@ -207,18 +220,9 @@ const renderFrontMatter = ({
 				.filter(Boolean),
 		),
 	];
-	// do not put community title if this is a book
-	const pubPublisher =
-		primaryCollectionMetadata?.kind === 'conference' ||
-		primaryCollectionMetadata?.kind === 'book'
-			? publisher
-			: null;
-	const communityAndCollectionString =
-		(pubPublisher ? '' : communityTitle) +
-		(primaryCollectionTitle ? bullet + primaryCollectionTitle : '');
 	return (
 		<section className="cover">
-			<h3 className="community-and-collection">{communityAndCollectionString}</h3>
+			<h3 className="top-heading-items">{renderHeadingItems(metadata)}</h3>
 			<h1 className="title" style={{ color: accentColor }}>
 				{title}
 			</h1>
@@ -259,7 +263,7 @@ const renderFrontMatter = ({
 					)}
 				</div>
 			)}
-			<h4>{pubPublisher}</h4>
+			{publisher && <h4>{publisher}</h4>}
 			<div className="details">
 				{publishedDateString && (
 					<div>

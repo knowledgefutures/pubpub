@@ -1,4 +1,4 @@
-import { AttributionWithUser, Maybe, RenderedLicense } from 'types';
+import { AttributionWithUser, Collection, Maybe, RenderedLicense } from 'types';
 import { NodeLabelMap, Note } from 'components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
@@ -18,6 +18,7 @@ export type PubMetadata = {
 	citationInlineStyle: CitationInlineStyleKind;
 	nodeLabels: NodeLabelMap;
 	publisher?: string;
+	primaryCollectionKind?: Collection['kind'];
 	primaryCollectionTitle?: string;
 	primaryCollectionMetadata?: Record<string, any>;
 	license: RenderedLicense;

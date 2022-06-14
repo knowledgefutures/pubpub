@@ -28,7 +28,12 @@ export const indexByProperty = <T extends { [key: string]: any }>(
 
 export const indexById = <T extends WithId>(items: T[]): IdIndex<T> => indexByProperty(items, 'id');
 
-export const unique = <T, Q>(array: T[], fn: (t: T, s: Symbol) => Q | Symbol) => {
+const uniqueByIdentity = (x) => x;
+
+export const unique = <T, Q>(
+	array: T[],
+	fn: (t: T, s: Symbol) => Q | Symbol = uniqueByIdentity,
+) => {
 	const uniqueSymbol = Symbol('unique');
 	const res: T[] = [];
 	const seenValues = new Set<Q | Symbol>();

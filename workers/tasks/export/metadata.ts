@@ -23,8 +23,12 @@ import { PubMetadata } from './types';
 const getPrimaryCollectionMetadata = (collectionPubs: types.CollectionPub[]) => {
 	const primaryCollection = getPrimaryCollection(collectionPubs);
 	if (primaryCollection) {
-		const { metadata, title } = primaryCollection;
-		return { primaryCollectionMetadata: metadata, primaryCollectionTitle: title };
+		const { metadata, title, kind } = primaryCollection;
+		return {
+			primaryCollectionMetadata: metadata,
+			primaryCollectionTitle: title,
+			primaryCollectionKind: kind,
+		};
 	}
 	return null;
 };
@@ -87,7 +91,7 @@ export const getPubMetadata = async (pubId: string): Promise<PubMetadata> => {
 		citationStyle: pubData.citationStyle,
 		citationInlineStyle: pubData.citationInlineStyle,
 		nodeLabels: pubData.nodeLabels,
-		publisher: pubData.community.publishAs || pubData.communityTitle,
+		publisher: pubData.community.publishAs,
 		...getPrimaryCollectionMetadata(pubData.collectionPubs),
 		license,
 	};

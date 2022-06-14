@@ -108,7 +108,7 @@ section.cover {
 			color: #666;
 			font-size: 10px;
 			font-family: $header-font;
-			content: string(community-and-collection);
+			content: string(top-heading-items);
 		}
 		@top-right {
 			color: #666;
@@ -218,8 +218,8 @@ section.cover {
 		}
 	}
 
-	.community-and-collection {
-		string-set: community-and-collection content();
+	.top-heading-items {
+		string-set: top-heading-items content();
 	}
 
 	.title {

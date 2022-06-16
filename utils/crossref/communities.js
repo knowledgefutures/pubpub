@@ -14,7 +14,8 @@ const UGHENT_DOI_PREFIX = '10.21825';
 const NCSU_DOI_PREFIX = '10.52750';
 const ABRF_DOI_PREFIX = '10.7171';
 const LAVAL_DOI_PREFIX = '10.47123';
-const FREEMOSCOWU_PREFIX = '10.55167';
+const FREEMOSCOWU_DOI_PREFIX = '10.55167';
+const ARCADIASCIENCE_DOI_PREFIX = '10.57844';
 
 export const managedDoiPrefixes = [
 	PUBPUB_DOI_PREFIX,
@@ -31,7 +32,8 @@ export const managedDoiPrefixes = [
 	NCSU_DOI_PREFIX,
 	ABRF_DOI_PREFIX,
 	LAVAL_DOI_PREFIX,
-	FREEMOSCOWU_PREFIX,
+	FREEMOSCOWU_DOI_PREFIX,
+	ARCADIASCIENCE_DOI_PREFIX,
 ];
 
 export const communityDoiOverrides = [
@@ -138,8 +140,15 @@ export const communityDoiOverrides = [
 		communityIds: [
 			'52333846-c54f-4668-ba45-c3124b226fd3', // https://freewmoscowuniversity.pubpub.org/
 		],
-		prefix: FREEMOSCOWU_PREFIX,
+		prefix: FREEMOSCOWU_DOI_PREFIX,
 		key: 'FREEMOSCOWU',
+	},
+	{
+		communityIds: [
+			'1a71ef4d-f6fe-40d3-8379-42fa2141db58', // https://research.arcadiascience.com/
+		],
+		prefix: ARCADIASCIENCE_DOI_PREFIX,
+		key: 'ARCADIASCIENCE',
 	},
 ];
 

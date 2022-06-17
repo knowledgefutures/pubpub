@@ -8,6 +8,7 @@ import { FormattingBar, buttons } from 'components/FormattingBar';
 import { Avatar, Icon } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { apiFetch } from 'client/utils/apiFetch';
+import { Callback } from 'types';
 
 require('./threadComment.scss');
 
@@ -68,6 +69,21 @@ const ThreadComment = (props: Props) => {
 	};
 
 	const isAuthor = loginData.id === threadCommentData.userId;
+	const renderText = (
+		key: string,
+		isReadOnly: boolean,
+		onChange?: Callback<EditorChangeObject>,
+	) => {
+		return (
+			<Editor
+				key={key}
+				isReadOnly={isReadOnly}
+				initialContent={threadCommentData.content}
+				onChange={onChange}
+			/>
+		);
+	};
+
 	return (
 		<div className={classNames('thread-comment-component', isPreview && 'is-preview')}>
 			<div className="avatar-wrapper">
@@ -84,7 +100,11 @@ const ThreadComment = (props: Props) => {
 						{isPreview ? ': ' : ''}
 					</span>
 
-					{isPreview && <span className="preview-text">{threadCommentData.text}</span>}
+					{isPreview && (
+						<span className="preview-text">
+							{renderText(`preview-${threadCommentData.text}`, true)}
+						</span>
+					)}
 					{!isPreview && (
 						<span className="time">
 							{!isEditing && (
@@ -134,16 +154,15 @@ const ThreadComment = (props: Props) => {
 								isSmall
 							/>
 						)}
-						<Editor
-							key={`${isEditing}-${threadCommentData.text}`}
-							isReadOnly={!isEditing}
-							initialContent={threadCommentData.content}
-							onChange={(editorChangeObject) => {
+						{renderText(
+							`${isEditing}-${threadCommentData.text}`,
+							!isEditing,
+							(editorChangeObject: EditorChangeObject) => {
 								if (isEditing) {
 									setChangeObject(editorChangeObject);
 								}
-							}}
-						/>
+							},
+						)}
 					</div>
 				)}
 				{isEditing && (

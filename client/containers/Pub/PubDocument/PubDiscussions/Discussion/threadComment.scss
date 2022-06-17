@@ -2,6 +2,8 @@
 
 .thread-comment-component {
 	display: flex;
+	direction: ltr;
+
 	&:not(:last-child):not(.input) {
 		margin-bottom: 1em;
 		border-bottom: 1px solid #f0f0f7;
@@ -22,8 +24,17 @@
 	.preview-text {
 		white-space: nowrap;
 		overflow: hidden;
-		text-overflow: ellipsis;
+		max-height: 19px;
 		font-style: 14px;
+		> .editor.ProseMirror {
+			min-height: 0px;
+			p {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				margin-bottom: 0px;
+			}
+		}
 	}
 	.discussion-body-wrapper {
 		> .editor.ProseMirror {

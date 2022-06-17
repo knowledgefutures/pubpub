@@ -16,6 +16,7 @@
 	}
 	.manage-tools-component {
 		margin-bottom: 1em;
+		direction: ltr;
 	}
 	.anchor-text {
 		padding: 0.25em;
@@ -30,10 +31,12 @@
 	}
 	.item-header {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		line-height: 1em;
 		margin-bottom: 0.25em;
 		font-size: 13px;
+		direction: ltr;
+
 		.name {
 			font-weight: 600;
 			margin-right: 1em;

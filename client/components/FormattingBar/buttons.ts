@@ -301,14 +301,19 @@ export const simpleMedia: FormattingBarButtonData = {
 	isMedia: true,
 };
 
-export const minimalButtonSet = [[strong, em, link, block_or_inline_equation]];
-export const abstractButtonSet = [[strong, em, link, inline_equation]];
-export const discussionButtonSet = [[strong, em, link], [simpleMedia]];
+export const minimalButtonSet = [[strong, em, link, rightToLeft, block_or_inline_equation]];
+export const abstractButtonSet = [[strong, em, link, rightToLeft, inline_equation]];
+export const discussionButtonSet = [[strong, em, link], [rightToLeft], [simpleMedia]];
 export const inlineMenuButtonSet = [[heading1, heading2, strong, em, link]];
-export const workflowButtonSet = [[heading1, heading2, strong, em, link], [simpleMedia]];
+export const workflowButtonSet = [
+	[heading1, heading2, strong, em, link],
+	[rightToLeft],
+	[simpleMedia],
+];
 
 export const fullButtonSet = [
-	[alignLeft, alignCenter, alignRight, rightToLeft],
+	[alignLeft, alignCenter, alignRight],
+	[rightToLeft],
 	[
 		strong,
 		em,
@@ -332,6 +337,7 @@ export const fullButtonSet = [
 
 export const layoutEditorButtonSet = [
 	[alignLeft, alignCenter, alignRight],
+	[rightToLeft],
 	[
 		strong,
 		em,

@@ -60,6 +60,7 @@ const TitleGroup = (props: Props) => {
 
 	const onTitleEditorChange = useCallback(
 		(nextHtmlTitle: string, nextTitle: string) => {
+			document.title = nextTitle;
 			updatePubData({ title: nextTitle, htmlTitle: nextHtmlTitle });
 		},
 		[updatePubData],

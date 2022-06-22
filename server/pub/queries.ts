@@ -1,5 +1,3 @@
-import striptags from 'striptags';
-
 import { Collection, Community, Pub, PubAttribution, Member } from 'server/models';
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
 import { createCollectionPub } from 'server/collectionPub/queries';
@@ -97,9 +95,7 @@ export const updatePub = (inputValues, updatePermissions, actorId) => {
 	if (filteredValues.slug) {
 		filteredValues.slug = slugifyString(filteredValues.slug);
 	}
-	if (filteredValues.htmlTitle) {
-		filteredValues.title = striptags(filteredValues.htmlTitle).replace(/&nbsp;/gi, ' ');
-	} else if (filteredValues.title) {
+	if (filteredValues.title && !filteredValues.htmlTitle) {
 		filteredValues.htmlTitle = filteredValues.title;
 	}
 

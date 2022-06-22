@@ -3,7 +3,6 @@ import { useBeforeUnload } from 'react-use';
 import React, { ClipboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { ClientOnly } from 'components';
-import striptags from 'striptags';
 
 require('./titleEditor.scss');
 
@@ -144,7 +143,8 @@ export default function TitleEditor(props: Props) {
 
 	const onBlur = useCallback(() => {
 		const html = node.current?.innerHTML ?? '';
-		onChange?.(html, striptags(html));
+		const text = node.current?.innerText ?? '';
+		onChange?.(html, text);
 		setFocused(false);
 	}, [onChange]);
 
@@ -153,7 +153,7 @@ export default function TitleEditor(props: Props) {
 		if (node.current) {
 			node.current.innerHTML = initialValue;
 			init.current = true;
-			onChange?.(initialValue, striptags(initialValue));
+			onChange?.(initialValue, node.current?.innerText ?? '');
 		}
 	}, [initialValue, onChange]);
 

@@ -40,7 +40,7 @@ const FormattingBar = (props: Props) => {
 		showBlockTypes = !isSmall,
 		controlsConfiguration = {},
 		isTranslucent = false,
-		citationStyle = 'apa',
+		citationStyle = 'apa-7',
 		buttons,
 	} = props;
 

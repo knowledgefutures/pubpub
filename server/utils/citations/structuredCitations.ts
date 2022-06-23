@@ -13,8 +13,6 @@ import { expiringPromise } from 'utils/promises';
 /* https://github.com/citation-style-language/styles */
 const config = Cite.plugins.config.get('@csl');
 citationStyles.forEach((style) => {
-	if (!style.path) return;
-	/* ['apa', 'harvard', 'vancouver'] built-in to citation-js */
 	const fileString = fs.readFileSync(
 		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
 		path.join(__dirname, style.path !== '' ? style.path : null),
@@ -77,12 +75,14 @@ const getSingleStructuredCitation = async (
 		if (citationData) {
 			const citationJson = citationData.format('data', { format: 'object' });
 			const citationHtml = citationData.format('bibliography', {
-				template: citationStyle === 'harvard' ? 'harvard1' : citationStyle,
+				template: citationStyle,
 				format: 'html',
+				lang: 'en-US',
 			});
 			const citationApa = citationData.format('citation', {
 				template: citationStyle === 'apa-7' ? 'apa-7' : 'apa',
 				format: 'text',
+				lang: 'en-US',
 			});
 			return {
 				html: citationHtml,
@@ -107,7 +107,7 @@ const getSingleStructuredCitation = async (
 
 export const getStructuredCitations = async (
 	structuredValues: StructuredValue[],
-	citationStyle: CitationStyleKind = 'apa',
+	citationStyle: CitationStyleKind = 'apa-7',
 	inlineStyle: CitationInlineStyleKind = 'count',
 ) => {
 	const structuredCitationsMap: Record<StructuredValue, RenderedStructuredValue> = {};
@@ -124,7 +124,7 @@ export const getStructuredCitations = async (
 
 export const getStructuredCitationsForPub = (pubData: Pub, pubDoc: DocJson) => {
 	const pubDocNode = jsonToNode(pubDoc);
-	const { citationStyle = 'apa', citationInlineStyle = 'count' } = pubData;
+	const { citationStyle = 'apa-7', citationInlineStyle = 'count' } = pubData;
 	const { footnotes, citations } = getNotes(pubDocNode, citationFingerprintStripTags);
 	const structuredValuesInDoc = [
 		...new Set([...footnotes, ...citations].map((note) => note.structuredValue)),

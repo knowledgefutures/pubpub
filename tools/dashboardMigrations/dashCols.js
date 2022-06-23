@@ -202,7 +202,7 @@ export default async () => {
 		}),
 		sequelize.queryInterface.addColumn('Pubs', 'citationStyle', {
 			type: Sequelize.STRING,
-			defaultValue: 'apa',
+			defaultValue: 'apa-7',
 		}),
 		sequelize.queryInterface.addColumn('Pubs', 'citationInlineStyle', {
 			type: Sequelize.STRING,

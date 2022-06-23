@@ -26,7 +26,7 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 	const [pageData] = useState(initialPageData);
 	const [communityData, setCommunityData] = useState(initialCommunityData);
 	const [scopeData, setScopeData] = useState(initialScopeData);
-	const [noteManager] = useState(() => new NoteManager('apa', 'count', {}));
+	const [noteManager] = useState(() => new NoteManager('apa-7', 'count', {}));
 
 	const updateCommunity = (next) => {
 		if (typeof next === 'function') {

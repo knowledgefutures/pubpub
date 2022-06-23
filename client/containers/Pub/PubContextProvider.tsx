@@ -52,7 +52,7 @@ const shimPubContextProps = {
 	updateLocalData: null as any,
 	updatePubData: null as any,
 	submissionState: {},
-	noteManager: new NoteManager('apa', 'count', {}),
+	noteManager: new NoteManager('apa-7', 'count', {}),
 } as any;
 
 export const PubContext = React.createContext<PubContextType>(shimPubContextProps);

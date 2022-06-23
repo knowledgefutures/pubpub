@@ -42,9 +42,9 @@ const CitationsModal = (props: Props) => {
 						dangerouslySetInnerHTML={{ __html: citationData.pub.default }}
 					/>
 				</div>
-				{citationStyle !== 'apa' && (
+				{citationStyle !== 'apa-7' && citationStyle !== 'apa' && (
 					<div className="style-wrapper">
-						<div className="style-title">APA 6th Edition</div>
+						<div className="style-title">APA 7th Edition</div>
 						<div
 							className="style-content"
 							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message

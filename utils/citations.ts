@@ -16,7 +16,7 @@ export type CitationStyleKind =
 type CitationStyle = {
 	name: string;
 	key: CitationStyleKind;
-	path?: string;
+	path: string;
 };
 
 export type CitationInlineStyleKind = 'count' | 'authorYear' | 'author' | 'label';
@@ -34,21 +34,21 @@ export const citationStyles: CitationStyle[] = [
 		name: 'American Anthropological Association',
 		path: './citeStyles/american-anthropological-association.csl',
 	},
-	{ key: 'apa', name: 'APA 6th Edition' },
+	{ key: 'apa', name: 'APA 6th Edition', path: './citeStyles/apa-6th-edition.csl' },
 	{
 		key: 'apa-7',
 		name: 'APA 7th Edition',
-		path: './citeStyles/apa-7.csl',
+		path: './citeStyles/apa-7th-edition.csl',
 	},
 	{ key: 'arcadia-science', name: 'Arcadia Science', path: './citeStyles/arcadia-science.csl' },
 	{ key: 'cell', name: 'Cell', path: './citeStyles/cell.csl' },
 	{ key: 'chicago', name: 'Chicago', path: './citeStyles/chicago-author-date.csl' },
-	{ key: 'harvard', name: 'Harvard' },
+	{ key: 'harvard', name: 'Harvard', path: './citeStyles/harvard-cite-them-right.csl' },
 	{ key: 'elife', name: 'ELife', path: './citeStyles/elife.csl' },
 	{ key: 'frontiers', name: 'Frontiers', path: './citeStyles/frontiers.csl' },
 	{ key: 'mla', name: 'MLA', path: './citeStyles/modern-language-association.csl' },
 	{ key: 'ama', name: 'AMA', path: './citeStyles/american-medical-association.csl' },
-	{ key: 'vancouver', name: 'Vancouver' },
+	{ key: 'vancouver', name: 'Vancouver', path: './citeStyles/vancouver.csl' },
 ];
 
 export const citationInlineStyles: CitationInlineStyle[] = [

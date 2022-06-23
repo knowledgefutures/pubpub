@@ -1,7 +1,8 @@
+import { Attribution, AttributionWithUser, Collection, Pub } from 'types';
 import ensureUserForAttribution from 'utils/ensureUserForAttribution';
 import { joinOxford } from 'utils/strings';
-import { Attribution, AttributionWithUser, Collection, Pub } from 'types';
-import { getPrimaryCollection } from './collections/primary';
+import { unique } from 'utils/arrays';
+import { getPrimaryCollection } from 'utils/collections/primary';
 
 const orderedContributors = (maybeContributors: Attribution[] | undefined | null) =>
 	(maybeContributors || []).concat().sort((a, b) => {
@@ -37,13 +38,18 @@ const resolveContributors = (
 		return true;
 	});
 
-	const uniqueAuthorIds: string[] = [];
-	return outputContributors.filter((attribution) => {
-		if (uniqueAuthorIds.includes(attribution.user.id)) {
-			return false;
+	// Filter contributors to remove duplicates of the same user with the same roles. This can
+	// happen when a user is specified as an author at both the Collection and Pub level. But,
+	// we don't want de-dupe the same user when they appear multiple times with different roles.
+	return unique(outputContributors, (attr, isUnique) => {
+		if (attr.user) {
+			return JSON.stringify({
+				userId: attr.user.id,
+				roles: (attr.roles ?? []).sort((a, b) => a.localeCompare(b)),
+			});
 		}
-		uniqueAuthorIds.push(attribution.user.id);
-		return true;
+		// Never de-dupe attributions without users.
+		return isUnique;
 	});
 };
 

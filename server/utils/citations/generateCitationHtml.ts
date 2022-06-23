@@ -111,6 +111,7 @@ export const generateCitationHtml = async (
 				.format('bibliography', {
 					format: 'html',
 					template: pubData.citationStyle,
+					lang: 'en-US',
 				})
 				.replace(/\n/gi, ''),
 			apa: pubCiteObject

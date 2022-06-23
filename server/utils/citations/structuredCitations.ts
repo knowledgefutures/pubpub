@@ -6,7 +6,7 @@ import Cite from 'citation-js';
 import { DocJson, Pub } from 'types';
 import { citationFingerprintStripTags, getNotes, jsonToNode } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
-import { StructuredValue, RenderedStructuredValue } from 'utils/notesCore';
+import { StructuredValue, RenderedStructuredValue } from 'utils/notes';
 import { expiringPromise } from 'utils/promises';
 
 /* Different styles available here: */

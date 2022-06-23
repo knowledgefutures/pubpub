@@ -1,13 +1,9 @@
 import { Node } from 'prosemirror-model';
 import striptags from 'striptags';
 
-export type CitationFingerprintFunction = (node: Node) => string;
+import { Note } from 'utils/notes';
 
-export type Note = {
-	id: string;
-	structuredValue: string;
-	unstructuredValue: string;
-};
+export type CitationFingerprintFunction = (node: Node) => string;
 
 export const citationFingerprintStripTags = (node: Node) => {
 	const { unstructuredValue, value } = node.attrs;

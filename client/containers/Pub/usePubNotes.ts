@@ -1,56 +1,35 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { citationFingerprintStripTags, getNotes } from 'components/Editor/utils';
+import { renderAndSortNotes } from '../../../utils/notes';
 
 import { usePubContext } from './pubHooks';
-
-const getRenderedValue = (note) => {
-	const hasRenderedStructuredValue = note.renderedStructuredValue?.json?.length;
-	return hasRenderedStructuredValue ? note.renderedStructuredValue.html : note.unstructuredValue;
-};
 
 export const usePubNotes = () => {
 	const {
 		noteManager,
 		collabData: { editorChangeObject },
 	} = usePubContext();
-
-	const [notes, setNotes] = useState(noteManager.notes);
-
+	const [renderedStructuredValues, setRenderedStructuredValues] = useState(noteManager.notes);
+	const { citationInlineStyleKind: citationInlineStyle } = noteManager;
 	const view = editorChangeObject!.view;
+
 	const { citations = [], footnotes = [] } = view
 		? getNotes(view.state.doc, citationFingerprintStripTags)
 		: {};
 
-	const isNumberList = noteManager.citationInlineStyleKind === 'count';
-	const renderedFootnotes = footnotes.map((footnote, index) => ({
-		...footnote,
-		renderedStructuredValue: notes[footnote.structuredValue],
-		number: index + 1,
-	}));
-	const renderedCitations = useMemo(
+	const renderedNotes = useMemo(
 		() =>
-			citations
-				.map((citation) => ({
-					...citation,
-					renderedStructuredValue: notes[citation.structuredValue],
-				}))
-				.map((citation, index) => ({
-					...citation,
-					...(isNumberList && { number: index + 1 }),
-					sortString: getRenderedValue(citation)
-						.replace(/(<([^>]+)>)/gi, '')
-						.toLowerCase()
-						.trim(),
-				}))
-				.sort((a, b) => {
-					if (isNumberList) return 0;
-					return a.sortString > b.sortString ? 1 : -1;
-				}),
-		[citations, notes, isNumberList],
+			renderAndSortNotes({
+				citations,
+				footnotes,
+				citationInlineStyle,
+				renderedStructuredValues,
+			}),
+		[citations, footnotes, citationInlineStyle, renderedStructuredValues],
 	);
 
-	useEffect(() => noteManager.subscribe(setNotes), [noteManager]);
+	useEffect(() => noteManager.subscribe(setRenderedStructuredValues), [noteManager]);
 
-	return { footnotes: renderedFootnotes, citations: renderedCitations };
+	return renderedNotes;
 };

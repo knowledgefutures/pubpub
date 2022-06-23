@@ -1,8 +1,8 @@
 import { AttributionWithUser, Collection, Maybe, RenderedLicense } from 'types';
-import { NodeLabelMap, Note } from 'components/Editor';
+import { NodeLabelMap } from 'components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { CitationInlineStyleKind, CitationStyleKind } from 'utils/citations';
-import { RenderedStructuredValue } from 'utils/notesCore';
+import { RenderedNote } from 'utils/notes';
 
 export type PubMetadata = {
 	title: string;
@@ -24,13 +24,10 @@ export type PubMetadata = {
 	license: RenderedLicense;
 };
 
-export type NoteWithStructuredHtml = Note & { structuredHtml?: string };
-
 export type NotesData = {
-	renderedStructuredValues: Record<string, RenderedStructuredValue>;
 	noteManager: NoteManager;
-	citations: NoteWithStructuredHtml[];
-	footnotes: NoteWithStructuredHtml[];
+	citations: RenderedNote[];
+	footnotes: RenderedNote[];
 };
 
 export type PandocFlag = {

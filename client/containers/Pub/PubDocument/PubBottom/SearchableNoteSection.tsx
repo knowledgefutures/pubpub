@@ -1,12 +1,13 @@
 import React from 'react';
 
 import { usePageContext } from 'utils/hooks';
+import { RenderedNote } from 'utils/notes';
 
-import Notes, { NotePropType } from './Notes';
+import Notes from './Notes';
 import PubBottomSection, { SectionBullets } from './PubBottomSection';
 
 type Props = {
-	notes: NotePropType[];
+	notes: RenderedNote[];
 } & React.ComponentProps<typeof PubBottomSection>;
 
 const checkContains = (searchTerm) => (note) =>

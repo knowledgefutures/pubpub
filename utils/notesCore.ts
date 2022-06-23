@@ -1,15 +1,5 @@
 import { CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
-
-export type StructuredValue = string;
-
-export type RenderedStructuredValue = {
-	html: string;
-	inline: string;
-	error?: boolean;
-	json: any;
-};
-
-export type RenderedStructuredValues = Record<string, RenderedStructuredValue>;
+import { StructuredValue, RenderedStructuredValue } from 'utils/notes';
 
 type Notes = Record<StructuredValue, RenderedStructuredValue>;
 

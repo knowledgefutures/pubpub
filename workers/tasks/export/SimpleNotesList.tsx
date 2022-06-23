@@ -4,12 +4,10 @@
 import React from 'react';
 
 import { PubNoteContent } from 'components';
+import { RenderedNote } from 'utils/notes';
 
 type Props = {
-	notes: {
-		structuredHtml?: string;
-		unstructuredValue?: string;
-	}[];
+	notes: RenderedNote[];
 	getLinkage: (...args: any[]) => any;
 	title: string;
 };
@@ -19,16 +17,18 @@ const SimpleNotesList = (props: Props) => {
 	if (notes.length === 0) {
 		return null;
 	}
+	const isNumberedList = notes.some((note) => typeof note.number === 'number');
+	const ListWrapper = isNumberedList ? 'ol' : 'ul';
 	return (
 		<React.Fragment>
 			<h1>{title}</h1>
-			<ol>
+			<ListWrapper>
 				{notes.map((note, index) => {
 					const { bottomElementId, inlineElementId } = getLinkage(note, index);
 					return (
 						<li key={bottomElementId} id={bottomElementId}>
 							<PubNoteContent
-								structured={note.structuredHtml}
+								structured={note.renderedStructuredValue?.html}
 								unstructured={note.unstructuredValue}
 							/>{' '}
 							<a href={`#${inlineElementId}`} className="return-link">
@@ -37,7 +37,7 @@ const SimpleNotesList = (props: Props) => {
 						</li>
 					);
 				})}
-			</ol>
+			</ListWrapper>
 		</React.Fragment>
 	);
 };

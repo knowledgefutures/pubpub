@@ -1,14 +1,14 @@
 import sanitizeHtml from 'sanitize-html';
 
 import { DocJson, Maybe } from 'types';
-import { jsonToNode, getNotes, Note } from 'components/Editor';
+import { jsonToNode, getNotes } from 'components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { getStructuredCitations } from 'server/utils/citations';
-import { RenderedStructuredValues } from 'utils/notesCore';
+import { RenderedNote, renderAndSortNotes } from '../../../utils/notes';
 
-import { NotesData, NoteWithStructuredHtml, PubMetadata } from './types';
+import { NotesData, PubMetadata } from './types';
 
-export type PandocNote = Note & {
+export type PandocNote = RenderedNote & {
 	cslJson: Record<string, any>;
 	hasStructuredContent: boolean;
 	unstructuredHtml: string;
@@ -16,22 +16,8 @@ export type PandocNote = Note & {
 
 export type PandocNotes = Record<string, PandocNote>;
 
-const enrichNoteWithStructuredResult = (
-	note: Note,
-	renderedStructuredValues: RenderedStructuredValues,
-): NoteWithStructuredHtml => {
-	const { structuredValue } = note;
-	if (structuredValue && renderedStructuredValues[structuredValue]) {
-		const { html } = renderedStructuredValues[structuredValue];
-		return { ...note, structuredHtml: html };
-	}
-	return note;
-};
-
-const getCslJsonForNote = (note: Note, renderedStructuredValues: RenderedStructuredValues) => {
-	const renderedStructuredValue = note.structuredValue
-		? renderedStructuredValues[note.structuredValue]
-		: null;
+const getCslJsonForNote = (note: RenderedNote) => {
+	const { renderedStructuredValue, id } = note;
 	if (renderedStructuredValue) {
 		const cslJson = renderedStructuredValue?.json[0];
 		if (cslJson) {
@@ -44,7 +30,7 @@ const getCslJsonForNote = (note: Note, renderedStructuredValues: RenderedStructu
 	}
 	return {
 		hasStructuredContent: false,
-		cslJson: { id: note.id },
+		cslJson: { id },
 	};
 };
 
@@ -72,24 +58,25 @@ export const getNotesData = async (
 		citationInlineStyle,
 	);
 
-	return {
+	const renderedNotes = renderAndSortNotes({
+		footnotes,
+		citations,
+		citationInlineStyle,
 		renderedStructuredValues,
+	});
+
+	return {
+		...renderedNotes,
 		noteManager: new NoteManager(citationStyle, citationInlineStyle, renderedStructuredValues),
-		footnotes: footnotes.map((note) =>
-			enrichNoteWithStructuredResult(note, renderedStructuredValues),
-		),
-		citations: citations.map((note) =>
-			enrichNoteWithStructuredResult(note, renderedStructuredValues),
-		),
 	};
 };
 
 export const getPandocNotesByHash = (notesData: NotesData): PandocNotes => {
-	const { citations, footnotes, renderedStructuredValues } = notesData;
+	const { citations, footnotes } = notesData;
 	const notes = [...citations, ...footnotes];
 	const index: PandocNotes = {};
 	notes.forEach((note) => {
-		const { hasStructuredContent, cslJson } = getCslJsonForNote(note, renderedStructuredValues);
+		const { hasStructuredContent, cslJson } = getCslJsonForNote(note);
 		index[note.id] = {
 			...note,
 			id: getIdForNote(cslJson, note.id),

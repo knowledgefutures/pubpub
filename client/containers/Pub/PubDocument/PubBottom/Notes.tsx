@@ -2,23 +2,10 @@ import React, { useState, useRef, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 
-import { RenderedStructuredValue } from 'utils/notesCore';
 import { Icon, PubNoteContent } from 'components';
+import { RenderedNote } from 'utils/notes';
 
 require('./notes.scss');
-
-export type NotePropType = {
-	structuredValue?: string;
-	unstructuredValue?: string;
-	renderedStructuredValue?: RenderedStructuredValue;
-	number?: number;
-	id?: string;
-};
-
-type NotesProps = {
-	accentColor: string;
-	notes: NotePropType[];
-};
 
 const scrollToNode = (node) => {
 	if (node) {
@@ -45,7 +32,7 @@ const findLastElementChild = (node) => {
 
 type NoteProps = {
 	accentColor: string;
-	note: NotePropType;
+	note: RenderedNote;
 };
 
 const Note = (props: NoteProps) => {
@@ -78,10 +65,8 @@ const Note = (props: NoteProps) => {
 						<span
 							role="button"
 							aria-label="Jump back to source"
-							// @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message
-							tabIndex="0"
+							tabIndex={0}
 							style={{ cursor: 'pointer' }}
-							// @ts-expect-error ts-migrate(2339) FIXME: Property 'id' does not exist on type 'notePropType... Remove this comment to see the full error message
 							onClick={() => scrollToNode(document.getElementById(note.id))}
 						>
 							<Icon
@@ -98,6 +83,11 @@ const Note = (props: NoteProps) => {
 	);
 };
 
+type NotesProps = {
+	accentColor: string;
+	notes: RenderedNote[];
+};
+
 const Notes = (props: NotesProps) => {
 	const { notes, ...restProps } = props;
 	const hasNumbering = notes.some(({ number }) => !!number);
@@ -109,4 +99,5 @@ const Notes = (props: NotesProps) => {
 		</ul>
 	);
 };
+
 export default Notes;

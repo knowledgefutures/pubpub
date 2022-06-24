@@ -2,6 +2,10 @@ const { resolve } = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const autoprefixer = require('autoprefixer');
+const crypto = require('crypto');
+
+const cryptoCreateHash = crypto.createHash;
+crypto.createHash = (algorithm) => cryptoCreateHash(algorithm === 'md4' ? 'sha256' : algorithm);
 
 module.exports = {
 	mode: 'development',
@@ -25,6 +29,7 @@ module.exports = {
 		filename: '[name].js',
 		path: resolve(__dirname, '../../dist/client'),
 		publicPath: '/',
+		hashFunction: 'sha256',
 	},
 	stats: {
 		colors: true,

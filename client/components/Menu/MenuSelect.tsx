@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@blueprintjs/core';
+import { IButtonProps } from '@blueprintjs/core';
 
 import { MenuItem } from './MenuItem';
 import { MenuButton } from './MenuButton';
@@ -16,7 +16,7 @@ type Props<Value> = {
 	buttonProps?: React.ComponentProps<typeof MenuButton>['buttonProps'];
 	defaultLabel?: React.ReactNode;
 	disabled?: boolean;
-	icon?: React.ComponentProps<typeof Button>['icon'];
+	icon?: IButtonProps['icon'];
 	items: MenuSelectItems<Value>;
 	onSelectValue: (value: Value) => unknown;
 	prefix?: React.ReactNode;

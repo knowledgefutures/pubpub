@@ -22,3 +22,7 @@ $screen-body-font: skolar-latin, Georgia, Cambria, 'Times New Roman', Times, ser
 $body-font: if-is-export($export-body-font, $screen-body-font);
 
 $mobile-cutoff: 750px;
+
+$color-gray-black: #2a2a2a;
+$color-gray-dark: #363636;
+$color-gray: #ccc;

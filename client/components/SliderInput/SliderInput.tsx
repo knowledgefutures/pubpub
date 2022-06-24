@@ -1,17 +1,16 @@
 import React from 'react';
-import { NumericInput, Slider } from '@blueprintjs/core';
+import { NumericInput, Slider, ISliderProps } from '@blueprintjs/core';
 
 require('./sliderInput.scss');
 
-type SliderProps = React.ComponentProps<typeof Slider>;
 type ValueCallback = (value: number, commited: boolean) => unknown;
 
 type Props = {
 	'aria-label': string;
 	disabled?: boolean;
 	inputStepSize?: number;
-	labelRenderer?: SliderProps['labelRenderer'];
-	labelStepSize?: SliderProps['labelStepSize'];
+	labelRenderer?: ISliderProps['labelRenderer'];
+	labelStepSize?: ISliderProps['labelStepSize'];
 	leftLabel?: React.ReactNode;
 	max: number;
 	min: number;

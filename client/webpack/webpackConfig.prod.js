@@ -5,6 +5,10 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const crypto = require('crypto');
+
+const cryptoCreateHash = crypto.createHash;
+crypto.createHash = (algorithm) => cryptoCreateHash(algorithm === 'md4' ? 'sha256' : algorithm);
 
 module.exports = {
 	mode: 'production',
@@ -28,6 +32,7 @@ module.exports = {
 		filename: '[name].[chunkhash].js',
 		path: resolve(__dirname, '../../dist/client'),
 		publicPath: '/',
+		hashFunction: 'sha256',
 	},
 	module: {
 		rules: [

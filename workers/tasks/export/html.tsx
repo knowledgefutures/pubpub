@@ -36,12 +36,12 @@ const createCss = () => {
 	// node-sass does not support (see https://github.com/sass/node-sass/issues/2746). So we will
 	// just generate the bundle once per Heroku deploy and save it to a file.
 	if (!fs.existsSync(cssPath)) {
-		const nodeSass = require('node-sass');
+		const sass = require('sass');
 		const nodeModulesPath = path.join(process.env.PWD!, 'node_modules');
 		const clientPath = path.join(process.env.PWD!, 'client');
 		const entrypointContents = fs.readFileSync(entrypoint).toString();
 		const data = '$PUBPUB_EXPORT: true;\n' + entrypointContents;
-		const css = nodeSass
+		const css = sass
 			.renderSync({
 				data,
 				includePaths: [nodeModulesPath, clientPath],

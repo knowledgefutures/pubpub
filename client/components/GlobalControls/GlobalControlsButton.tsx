@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Button, AnchorButton } from '@blueprintjs/core';
+import { Button, IButtonProps, AnchorButton } from '@blueprintjs/core';
 import omit from 'lodash.omit';
 
 import { Callback } from 'types';
@@ -13,13 +13,13 @@ type OnClickProps = {
 
 type DisplayOptions = {
 	icon?: IconName;
-} & Pick<React.ComponentProps<typeof Button>, 'rightIcon' | 'text'>;
+} & Pick<IButtonProps, 'rightIcon' | 'text'>;
 
 type MobileOrDesktopProps =
 	| { mobile: DisplayOptions; desktop: DisplayOptions }
 	| { mobileOrDesktop: DisplayOptions };
 
-type PartialButtonProps = Omit<React.ComponentProps<typeof Button>, 'icon' | 'text' | 'onClick'> &
+type PartialButtonProps = Omit<IButtonProps, 'icon' | 'text' | 'onClick'> &
 	Omit<React.ComponentProps<typeof AnchorButton>, 'icon' | 'text' | 'href'>;
 
 type Props = OnClickProps & MobileOrDesktopProps & PartialButtonProps;

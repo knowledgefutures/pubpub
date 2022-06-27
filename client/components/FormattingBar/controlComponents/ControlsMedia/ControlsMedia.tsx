@@ -1,10 +1,9 @@
 import React, { useCallback } from 'react';
 import { Checkbox, Classes, Tab, Tabs } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { SimpleEditor, SliderInput } from 'components';
-
 import { NodeLabelMap, ReferenceableNodeType } from 'components/Editor/types';
-
 import { getCurrentNodeLabels, isResizeableFormat } from 'components/Editor';
 
 import { ControlsButton, ControlsButtonGroup } from '../ControlsButton';
@@ -13,6 +12,8 @@ import UrlControl from './UrlControl';
 import SourceControls from './SourceControls';
 import { ControlsReferenceSettingsLink } from '../ControlsReference';
 import { EditorChangeObjectWithNode } from '../../types';
+
+require('./controlsMedia.scss');
 
 type Props = {
 	pendingAttrs: any;
@@ -73,20 +74,20 @@ const ControlsMedia = (props: Props) => {
 
 	const renderCaptionPanel = () => {
 		return (
-			<>
+			<div className="section">
 				<SimpleEditor
 					placeholder={`Add a caption for this ${itemName}`}
 					initialHtmlString={caption}
 					onChange={(htmlString) => updateAttrs({ caption: htmlString })}
 				/>
 				{renderUpdateButton()}
-			</>
+			</div>
 		);
 	};
 
 	const renderAltTextPanel = () => {
 		return (
-			<>
+			<div className="section">
 				<p>
 					Alt text provides information about an image's contents to screenreader users
 					that may be too detailed to include in a caption. Avoid duplicating text between
@@ -98,20 +99,18 @@ const ControlsMedia = (props: Props) => {
 					onChange={(evt) => updateAttrs({ altText: evt.target.value })}
 				/>
 				{renderUpdateButton()}
-			</>
+			</div>
 		);
 	};
 
 	const renderCaptionAltSelector = () => {
 		return (
-			<Tabs id="media-controls-caption-alt" className={Classes.DARK}>
-				<Tab
-					id="caption"
-					title="Caption"
-					className="section"
-					panel={renderCaptionPanel()}
-				/>
-				<Tab id="alt" title="Alt text" className="section" panel={renderAltTextPanel()} />
+			<Tabs
+				id="media-controls-caption-alt"
+				className={classNames(Classes.DARK, 'caption-alt-tabs')}
+			>
+				<Tab id="caption" title="Caption" panel={renderCaptionPanel()} />
+				<Tab id="alt" title="Alt text" panel={renderAltTextPanel()} />
 			</Tabs>
 		);
 	};

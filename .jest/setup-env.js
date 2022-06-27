@@ -39,6 +39,9 @@ if (typeof document !== 'undefined') {
 	// ProseMirror uses document.createRange, which is not polyfilled by JSDOM.
 	document.createRange = function () {
 		return {
+			commonAncestorContainer: {
+				ownerDocument: document,
+			},
 			setStart: () => {},
 			setEnd: () => {},
 			getClientRects: () => [],
@@ -59,4 +62,4 @@ if (typeof window !== 'undefined') {
 	window.requestIdleCallback = () => {};
 }
 
-global.fetch = () => Promise.resolve();
+global.fetch = () => new Promise(resolve => setTimeout(resolve), 1e4);

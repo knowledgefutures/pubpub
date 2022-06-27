@@ -7,7 +7,7 @@ import SpubHeader from './SpubHeader';
 import PubDocument from './PubDocument';
 import { usePubContext } from './pubHooks';
 import { PubContextProvider } from './PubContextProvider';
-import { PubSuspendWhileTypingProvider, PubSuspendWhileTyping } from './PubSuspendWhileTyping';
+import { PubSuspendWhileTypingProvider } from './PubSuspendWhileTyping';
 
 require('./pub.scss');
 
@@ -19,20 +19,19 @@ const SomePubHeader = () => {
 	const pubContext = usePubContext();
 	const { submissionState } = pubContext;
 	const HeaderComponent = submissionState ? SpubHeader : PubHeader;
-	return <PubSuspendWhileTyping delay={1000}>{() => <HeaderComponent />}</PubSuspendWhileTyping>;
+	return <HeaderComponent />;
 };
 
 const Pub = (props: Props) => {
 	const { pubData } = props;
-
 	return (
 		<div id="pub-container">
-			<PubContextProvider pubData={pubData}>
-				<PubSuspendWhileTypingProvider>
+			<PubSuspendWhileTypingProvider>
+				<PubContextProvider pubData={pubData}>
 					<SomePubHeader />
 					<PubDocument />
-				</PubSuspendWhileTypingProvider>
-			</PubContextProvider>
+				</PubContextProvider>
+			</PubSuspendWhileTypingProvider>
 		</div>
 	);
 };

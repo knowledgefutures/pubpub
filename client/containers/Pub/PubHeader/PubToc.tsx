@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { Menu, MenuItem } from 'components/Menu';
 import { usePageContext } from 'utils/hooks';
-import { PubHeading } from './headerUtils';
+import { usePubContext } from '../pubHooks';
 
 require('./pubToc.scss');
 
@@ -12,16 +12,21 @@ type MenuType = React.ComponentProps<typeof Menu>;
 
 type Props = {
 	children: MenuType['disclosure'];
-	headings: PubHeading[];
 	onSelect?: (...args: any[]) => any;
 	placement?: MenuType['placement'];
 	limitHeight?: boolean;
 };
 
 const PubToc = (props: Props) => {
-	const { headings, children, limitHeight, onSelect = null, placement = 'bottom-end' } = props;
+	const { children, limitHeight, onSelect = null, placement = 'bottom-end' } = props;
 	const { scopeData } = usePageContext();
+	const { pubHeadings } = usePubContext({ immediate: true });
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
+
+	if (pubHeadings.length === 0) {
+		return null;
+	}
+
 	return (
 		<Menu
 			aria-label="Table of contents"
@@ -29,7 +34,7 @@ const PubToc = (props: Props) => {
 			disclosure={children}
 			placement={placement}
 		>
-			{headings.map((heading) => {
+			{pubHeadings.map((heading) => {
 				return (
 					<MenuItem
 						key={heading.index}

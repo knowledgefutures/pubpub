@@ -2,21 +2,10 @@ import React from 'react';
 import { Tooltip } from '@blueprintjs/core';
 
 import { Avatar } from 'components';
-
-type Collaborator = {
-	cursorColor?: string;
-	id?: string;
-	image?: string;
-	initials?: string;
-	name?: string;
-};
+import { PubCollabState } from '../usePubCollabState';
 
 type Props = {
-	collabData: {
-		localCollabUser?: Collaborator;
-		collaborators?: Collaborator[];
-		remoteCollabUsers?: any[];
-	};
+	collabData: PubCollabState;
 };
 
 const getUniqueCollaborators = (collaborators, isAnonymous) => {
@@ -48,7 +37,6 @@ const getUniqueCollaborators = (collaborators, isAnonymous) => {
 
 const PubHeaderCollaborators = (props: Props) => {
 	const { remoteCollabUsers, localCollabUser } = props.collabData;
-	// @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
 	const uniqueCollaborators = getUniqueCollaborators(remoteCollabUsers, !localCollabUser.id);
 	return (
 		<div>
@@ -76,4 +64,5 @@ const PubHeaderCollaborators = (props: Props) => {
 		</div>
 	);
 };
+
 export default PubHeaderCollaborators;

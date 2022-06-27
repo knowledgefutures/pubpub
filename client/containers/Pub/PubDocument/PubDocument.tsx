@@ -11,7 +11,6 @@ import {
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';
 import { usePubHrefs } from '../usePubHrefs';
-import { PubSuspendWhileTyping } from '../PubSuspendWhileTyping';
 import PubBody from './PubBody';
 import PubBottom from './PubBottom/PubBottom';
 import PubFileImport from './PubFileImport';
@@ -52,7 +51,6 @@ const PubDocument = () => {
 		<div className="pub-document-component">
 			{(!isReadOnly || isViewingHistory) && (
 				<PubHeaderFormatting
-					collabData={collabData}
 					disabled={isViewingHistory}
 					editorWrapperRef={editorWrapperRef}
 				/>
@@ -99,16 +97,12 @@ const PubDocument = () => {
 					)}
 				</div>
 			</div>
-			<PubSuspendWhileTyping delay={1000}>
-				{() => (
-					<PubBottom
-						pubData={pubData}
-						updateLocalData={updateLocalData}
-						sideContentRef={sideContentRef}
-						mainContentRef={mainContentRef}
-					/>
-				)}
-			</PubSuspendWhileTyping>
+			<PubBottom
+				pubData={pubData}
+				updateLocalData={updateLocalData}
+				sideContentRef={sideContentRef}
+				mainContentRef={mainContentRef}
+			/>
 			<PubLinkController mainContentRef={mainContentRef} />
 		</div>
 	);

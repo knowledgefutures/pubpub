@@ -14,8 +14,6 @@ export const PubSuspendWhileTypingContext = React.createContext<PubSuspendWhileT
 	getTimeRemainingToUpdate: () => 0,
 });
 
-type ChildrenFn = () => React.ReactElement;
-
 type PubSuspendWhileTypingProviderProps = {
 	children: React.ReactNode;
 };
@@ -49,30 +47,14 @@ export const PubSuspendWhileTypingProvider = (props: PubSuspendWhileTypingProvid
 	);
 };
 
-type MemoizedSuspendProps = {
-	shouldUpdate: boolean;
-	children: ChildrenFn;
-};
-
-const MemoizedSuspend = React.memo<MemoizedSuspendProps>(
-	// eslint-disable-next-line react/prop-types
-	(props) => props.children(),
-	// Return false (indicating that the memoized version is invalid) if we should update
-	(_, nextProps) => !nextProps.shouldUpdate,
-);
-
-type PubSuspendWhileTypingProps = {
-	children: ChildrenFn;
-	delay: number;
-};
-
-export const PubSuspendWhileTyping = (props: PubSuspendWhileTypingProps) => {
-	const { children, delay } = props;
+export const usePubSuspendWhileTyping = <T extends any>(value: T, delay = 1000): T => {
 	const { getTimeRemainingToUpdate } = useContext(PubSuspendWhileTypingContext);
 	const checkAgainRef = useRef<any>(null);
 	const setForceUpdate = useState<null | number>(null)[1];
 	const timeRemainingToUpdate = getTimeRemainingToUpdate(delay, Date.now());
 	const shouldUpdate = timeRemainingToUpdate === 0;
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const memoizedValue = useMemo(() => value, [shouldUpdate]);
 
 	const maybeClearTimeout = useCallback(() => {
 		if (checkAgainRef.current) {
@@ -97,5 +79,5 @@ export const PubSuspendWhileTyping = (props: PubSuspendWhileTypingProps) => {
 	// Cleanup any timeout when unmounting
 	useEffect(() => maybeClearTimeout);
 
-	return <MemoizedSuspend shouldUpdate={shouldUpdate}>{children}</MemoizedSuspend>;
+	return shouldUpdate ? value : memoizedValue;
 };

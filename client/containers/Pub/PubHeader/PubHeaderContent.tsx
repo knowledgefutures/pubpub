@@ -15,12 +15,11 @@ import UtilityButtons from './UtilityButtons';
 type Props = {
 	onShowHeaderDetails: (...args: any[]) => any;
 	pubData: PubPageData;
-	pubHeadings: any[];
 	updateLocalData: (...args: any[]) => any;
 };
 
 const PubHeaderContent = (props: Props) => {
-	const { onShowHeaderDetails, pubData, pubHeadings, updateLocalData } = props;
+	const { onShowHeaderDetails, pubData, updateLocalData } = props;
 	const { doi, isInMaintenanceMode } = pubData;
 	const { communityData } = usePageContext();
 	const { submissionState, historyData } = usePubContext();
@@ -84,12 +83,7 @@ const PubHeaderContent = (props: Props) => {
 		<div className="pub-header-content-component">
 			{renderTop()}
 			<TitleGroup pubData={pubData} updatePubData={updateAndSavePubData} />
-			<UtilityButtons
-				pubData={pubData}
-				updatePubData={updateAndSavePubData}
-				pubHeadings={pubHeadings}
-				onShowHeaderDetails={onShowHeaderDetails}
-			/>
+			<UtilityButtons onShowHeaderDetails={onShowHeaderDetails} />
 			{!isInMaintenanceMode && (
 				<DraftReleaseButtons
 					pubData={pubData}

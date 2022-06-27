@@ -9,23 +9,17 @@ import Download from './Download';
 import PubToc from './PubToc';
 import SmallHeaderButton from './SmallHeaderButton';
 import Social from './Social';
-import { PubHeading } from './headerUtils';
+import { usePubContext } from '../pubHooks';
 
 type Props = {
 	onShowHeaderDetails: (...args: any[]) => any;
-	pubData: {
-		membersData?: {};
-		slug?: string;
-		isRelease?: boolean;
-	};
-	pubHeadings: PubHeading[];
-	updatePubData: (...args: any[]) => any;
 };
 
 const UtilityButtons = (props: Props) => {
-	const { onShowHeaderDetails, pubData, pubHeadings, updatePubData } = props;
-	const { membersData, isRelease } = pubData;
+	const { onShowHeaderDetails } = props;
+	const { pubData, updatePubData } = usePubContext();
 	const { communityData, scopeData } = usePageContext();
+	const { isRelease, membersData } = pubData;
 	const { canManage } = scopeData.activePermissions;
 	return (
 		<div className="utility-buttons-component">
@@ -93,11 +87,9 @@ const UtilityButtons = (props: Props) => {
 			<Download pubData={pubData}>
 				<SmallHeaderButton label="Download" labelPosition="left" icon="download2" />
 			</Download>
-			{pubHeadings.length > 0 && (
-				<PubToc headings={pubHeadings}>
-					<SmallHeaderButton label="Contents" labelPosition="left" icon="toc" />
-				</PubToc>
-			)}
+			<PubToc>
+				<SmallHeaderButton label="Contents" labelPosition="left" icon="toc" />
+			</PubToc>
 		</div>
 	);
 };

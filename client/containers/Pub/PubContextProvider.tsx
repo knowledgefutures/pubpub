@@ -15,6 +15,7 @@ import { usePubCollabState, PubCollabState } from './usePubCollabState';
 import { usePubHistoryState } from './usePubHistoryState';
 import { IdlePatchFn, useIdlyUpdatedState } from './useIdlyUpdatedState';
 import { PubBodyState, usePubBodyState } from './usePubBodyState';
+import { usePubSuspendWhileTyping } from './PubSuspendWhileTyping';
 
 type Props = {
 	children: React.ReactNode;
@@ -55,7 +56,8 @@ const shimPubContextProps = {
 	noteManager: new NoteManager('apa-7', 'count', {}),
 } as any;
 
-export const PubContext = React.createContext<PubContextType>(shimPubContextProps);
+export const SuspendedPubContext = React.createContext<PubContextType>(shimPubContextProps);
+export const ImmediatePubContext = React.createContext<PubContextType>(shimPubContextProps);
 
 export const PubContextProvider = (props: Props) => {
 	const { children, pubData: initialPubData } = props;
@@ -113,6 +115,13 @@ export const PubContextProvider = (props: Props) => {
 		updateLocalData,
 		pubHeadings,
 	};
+	const suspendedPubContext: PubContextType = usePubSuspendWhileTyping(pubContext);
 
-	return <PubContext.Provider value={pubContext}>{children}</PubContext.Provider>;
+	return (
+		<SuspendedPubContext.Provider value={suspendedPubContext}>
+			<ImmediatePubContext.Provider value={pubContext}>
+				{children}
+			</ImmediatePubContext.Provider>
+		</SuspendedPubContext.Provider>
+	);
 };

@@ -1,4 +1,4 @@
-import { IdIndex, WithId } from 'types';
+import { IdIndex, Maybe, WithId } from 'types';
 
 export const intersperse = <P, Q>(
 	arr: P[],
@@ -83,7 +83,7 @@ export const arraysHaveSameElements = <T>(first: T[], second: T[]) => {
 	return first.every((el) => second.includes(el)) && second.every((el) => first.includes(el));
 };
 
-export const pruneFalsyValues = (arr) => arr.filter(Boolean);
+export const pruneFalsyValues = <T>(arr: Maybe<T>[]): T[] => arr.filter(Boolean) as T[];
 
 export const bucketBy = <T>(arr: T[], getKey: (t: T) => string): Record<string, T[]> => {
 	const buckets: Record<string, T[]> = {};

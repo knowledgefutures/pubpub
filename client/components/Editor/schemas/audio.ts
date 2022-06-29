@@ -74,7 +74,7 @@ export default {
 						renderHtmlChildren(isReact, node.attrs.caption, 'div'),
 					]),
 				],
-			] as DOMOutputSpec;
+			] as unknown as DOMOutputSpec;
 		},
 		inline: false,
 		group: 'block',

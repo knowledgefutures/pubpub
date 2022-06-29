@@ -72,7 +72,7 @@ table.toDOM = (node: ProsemirrorNode) => {
 		{ id: node.attrs.id },
 		withValue(buildLabel(node), (builtLabel) => ['caption', builtLabel]),
 		spec[1],
-	]) as DOMOutputSpec;
+	]) as unknown as DOMOutputSpec;
 };
 
 export default pmTableNodes;

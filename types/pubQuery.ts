@@ -22,6 +22,7 @@ export type PubsQuery = {
 	ordering?: PubsQueryOrdering;
 	scopedCollectionId?: string;
 	withinPubIds?: null | string[];
+	relatedUserIds?: string[];
 	term?: string;
 	submissionStatuses?: null | SubmissionStatus[];
 };

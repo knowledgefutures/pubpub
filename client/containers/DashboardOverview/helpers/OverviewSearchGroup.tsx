@@ -1,19 +1,15 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 import { Tab, Tabs } from '@blueprintjs/core';
 
 import { Icon } from 'components';
-import { PubsQuery } from 'types';
+import { usePageContext } from 'utils/hooks';
+
+import { getDefaultOverviewSearchFilters, OverviewSearchFilter } from './filters';
 
 require('./overviewSearchGroup.scss');
 
 type SearchTermCallback = (q: string) => unknown;
-
-export type OverviewSearchFilter = {
-	id: string;
-	title: string;
-	query: null | Partial<PubsQuery>;
-};
 
 type Props = {
 	placeholder: string;
@@ -25,17 +21,6 @@ type Props = {
 	filter?: OverviewSearchFilter;
 };
 
-const defaultFilters: OverviewSearchFilter[] = [
-	{ id: 'all', title: 'All', query: null },
-	{
-		id: 'latest',
-		title: 'Latest',
-		query: { ordering: { field: 'creationDate', direction: 'DESC' } },
-	},
-	{ id: 'drafts', title: 'Drafts', query: { isReleased: false } },
-	{ id: 'released', title: 'Released', query: { isReleased: true } },
-];
-
 const OverviewSearchGroup = (props: Props) => {
 	const {
 		placeholder,
@@ -44,9 +29,22 @@ const OverviewSearchGroup = (props: Props) => {
 		rightControls,
 		onChooseFilter,
 		filter,
-		filters = defaultFilters,
+		filters: providedFilters,
 	} = props;
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
+	const {
+		loginData: { id: userId },
+		scopeData: {
+			activePermissions: { canView },
+		},
+	} = usePageContext();
+
+	const filters = useMemo(() => {
+		if (providedFilters) {
+			return providedFilters;
+		}
+		return getDefaultOverviewSearchFilters({ userId, isViewMember: canView });
+	}, [userId, canView, providedFilters]);
 
 	const handleChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,4 +109,5 @@ const OverviewSearchGroup = (props: Props) => {
 	);
 };
 
+export { OverviewSearchFilter };
 export default OverviewSearchGroup;

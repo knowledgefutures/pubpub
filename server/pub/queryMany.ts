@@ -17,7 +17,7 @@ const defaultColumns = {
 };
 
 const createColumns = (query: PubsQuery) => {
-	const { scopedCollectionId, term, ordering } = query;
+	const { scopedCollectionId, term, ordering, relatedUserIds: queryRelatedUserIds } = query;
 	const collectionRank = scopedCollectionId
 		? knex.raw('(array_agg("scopedCollectionPub"."rank"))[1]')
 		: knex.raw('(array_agg("CollectionPubs"."rank"))[1]');
@@ -32,12 +32,16 @@ const createColumns = (query: PubsQuery) => {
 	const submittedDate =
 		ordering?.field === 'submittedDate' &&
 		knex.raw('(array_agg("Submissions"."submittedAt"))[1]');
+	const relatedUserIds =
+		!!queryRelatedUserIds &&
+		knex.raw('array_cat(array_agg("Members"."userId"), array_agg("PubAttributions"."userId"))');
 	return {
 		...defaultColumns,
 		collectionRank,
 		...(authorNames && { authorNames }),
 		...(hasReviews && { hasReviews }),
 		...(submittedDate && { submittedDate }),
+		...(relatedUserIds && { relatedUserIds }),
 	};
 };
 
@@ -55,7 +59,8 @@ const createInnerWhereClause = (query: PubsQuery) => {
 };
 
 const createJoins = (query: PubsQuery) => {
-	const { scopedCollectionId, term, hasReviews, submissionStatuses, ordering } = query;
+	const { scopedCollectionId, term, hasReviews, submissionStatuses, ordering, relatedUserIds } =
+		query;
 	return (builder: QueryBuilder) => {
 		if (scopedCollectionId) {
 			builder.innerJoin(
@@ -81,7 +86,7 @@ const createJoins = (query: PubsQuery) => {
 				...joinOnStatuses,
 			});
 		}
-		if (term) {
+		if (term || relatedUserIds) {
 			builder.leftOuterJoin('PubAttributions', 'Pubs.id', 'PubAttributions.pubId');
 			builder.leftOuterJoin(
 				{ attributionUser: 'Users' },
@@ -89,11 +94,15 @@ const createJoins = (query: PubsQuery) => {
 				'attributionUser.id',
 			);
 		}
+		if (relatedUserIds) {
+			builder.leftOuterJoin('Members', 'Pubs.id', 'Members.pubId');
+		}
 	};
 };
 
 const createOuterWhereClause = (query: PubsQuery) => {
-	const { isReleased, hasReviews, collectionIds, excludeCollectionIds, term } = query;
+	const { isReleased, hasReviews, collectionIds, excludeCollectionIds, term, relatedUserIds } =
+		query;
 	return (builder: QueryBuilder) => {
 		if (typeof isReleased === 'boolean') {
 			builder.where({ isReleased });
@@ -106,6 +115,9 @@ const createOuterWhereClause = (query: PubsQuery) => {
 		}
 		if (excludeCollectionIds) {
 			builder.whereRaw('NOT(?::uuid[] && "collectionIds")', [excludeCollectionIds]);
+		}
+		if (relatedUserIds) {
+			builder.whereRaw('?::uuid[] && "relatedUserIds"', [relatedUserIds]);
 		}
 		if (term) {
 			builder.whereRaw(

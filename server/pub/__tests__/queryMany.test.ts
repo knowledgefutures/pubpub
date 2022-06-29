@@ -10,6 +10,7 @@ const models = modelize`
     User termUser {
         fullName: "Find This Guy"
     }
+	User relatedUser {}
 	SubmissionWorkflow submissionWorkflow {
 		title: "A workflow"
 	}
@@ -30,6 +31,9 @@ const models = modelize`
             PubAttribution {
                 name: "Please Find"
             }
+			PubAttribution {
+				relatedUser
+			}
 			Submission {
 				submissionWorkflow
 				status: "accepted"
@@ -49,6 +53,13 @@ const models = modelize`
             PubAttribution {
                 termUser
             }
+			PubAttribution {
+				relatedUser
+			}
+			Member {
+				permissions: "admin"
+				relatedUser
+			}
 			Submission {
 				submissionWorkflow
 				status: "declined"
@@ -94,6 +105,10 @@ const models = modelize`
             Release {
                 createdAt: "2021-10-01"
             }
+			Member {
+				permissions: "admin"
+				relatedUser
+			}
         }
     }
 `;
@@ -239,5 +254,16 @@ describe('queryPubIds', () => {
 			p2,
 			p4,
 		]);
+	});
+
+	it('Filters for Pubs by related user ID (Member or attribution)', async () => {
+		const { p1, p2, p4, relatedUser } = models;
+		await expectPubIdsForQuery(
+			{
+				ordering: collectionRankOrdering,
+				relatedUserIds: [relatedUser.id],
+			},
+			[p1, p2, p4],
+		);
 	});
 });

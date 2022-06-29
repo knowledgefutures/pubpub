@@ -37,6 +37,8 @@ export type ScopeData = {
 		canEditDraft: boolean;
 		canManage: boolean;
 		canManageCommunity: boolean;
+		canEditCommunity: boolean;
+		canViewCommunity: boolean;
 		canView: boolean;
 		canViewDraft: boolean;
 		isSuperAdmin: boolean;

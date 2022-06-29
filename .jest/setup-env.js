@@ -62,4 +62,4 @@ if (typeof window !== 'undefined') {
 	window.requestIdleCallback = () => {};
 }
 
-global.fetch = () => new Promise(resolve => setTimeout(resolve), 1e4);
+global.fetch = () => new Promise((resolve) => setTimeout(resolve), 1e4);

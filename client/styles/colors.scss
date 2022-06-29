@@ -1,0 +1,31 @@
+// === A NOTE ABOUT BLUEPRINT COLORS ===
+//
+// TL;DR: Sometimes we'd like to @import or @use Blueprint's built-in colors like $red3 or $green1,
+// but a tooling incompatibility makes that tricky for now. Instead, you should just copy them into
+// this file.
+//
+// THE GORY DETAILS:
+// We bring Blueprint into PubPub with an @import to `core/lib/css/blueprint.css` -- a pre-compiled
+// CSS file rather than a SCSS file -- as Blueprint recommends:
+// https://blueprintjs.com/docs/versions/3/#core/colors.usage
+// However, Blueprint _also_ suggests @importing its SCSS source files if you need to import its
+// custom color variables, which we sometimes do as a vague nod towards visually consistent UI.
+//
+// The combination of the modern dart-sass and the older Blueprint 3.x causes problems here, because
+// the Blueprint SCSS files we wish to import use the now-deprecated division operator (/) instead
+// of math.div(). This causes dart-sass to print many angry warnings during the build, like this:
+//
+// "Deprecation Warning: Using / for division outside calc() is deprecated..."
+//
+// This is horrible line noise which buries real problems, but it also suggests that eventually
+// we'll be locked out of newer versions of dart-sass.  If we upgrade to Blueprint >=4, we'll get
+// a fixed version from here:
+// https://github.com/palantir/blueprint/pull/5216
+// But for now we simply can't @import `~@blueprintjs/core/**/*.scss`. So if you want to use
+// constants from those files, your best bet is to copy them here.
+
+$red2: #c23030;
+$red3: #db3737;
+$orange3: #d9822b;
+$gold4: #f2b824;
+$green2: #0d8050;

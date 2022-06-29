@@ -92,7 +92,7 @@ $leftColumnWidth: 20%;
 		.container {
 			@for $i from 1 through 12 {
 				> div:nth-child(#{$i}) {
-					-ms-grid-row: ceil($i / 2);
+					-ms-grid-row: ceil($i * 0.5);
 				}
 			}
 			display: -ms-grid;
@@ -221,7 +221,7 @@ $leftColumnWidth: 20%;
 			align-items: top;
 			background-repeat: repeat-y;
 			background-size: 2px 12px;
-			background-position-x: ($leftColumnWidth + ($columnGap / 2));
+			background-position-x: ($leftColumnWidth + ($columnGap * 0.5));
 			padding-top: 2em;
 			padding-bottom: 2em;
 			&.restricted-width {

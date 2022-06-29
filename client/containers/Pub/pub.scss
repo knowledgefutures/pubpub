@@ -1,4 +1,6 @@
 /* The fraction of the screen used for the pub margin -- converted to CSS units below */
+@use 'sass:math';
+
 $pub-margin-fraction: 0.04;
 /* Below this width, comments will be forced to a minimized view */
 $compact-cutoff-width: 750px;
@@ -21,7 +23,7 @@ $pub-margin: #{$pub-margin-fraction * 100}vw;
 /* Used to determine when `minmax($pub-margin, auto) = $pub-margin`, which indicates that we should
    treat the .breakout calculation differently.
    Calculated as: 2 * $pub-margin-fraction * x + $compact-cutoff-width = x */
-$breakout-simplify-cutoff: $compact-cutoff-width / (1 - 2 * $pub-margin-fraction);
+$breakout-simplify-cutoff: math.div($compact-cutoff-width, 1 - 2 * $pub-margin-fraction);
 
 @mixin pub-compact-view {
 	@media only screen and (max-width: $compact-cutoff-width) {

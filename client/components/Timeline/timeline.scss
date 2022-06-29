@@ -18,12 +18,12 @@ $controls-margin: 5px;
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				margin-left: #{$small-bubble-diameter-diff / 2};
-				margin-right: #{$small-bubble-diameter-diff / 2};
+				margin-left: #{$small-bubble-diameter-diff * 0.5};
+				margin-right: #{$small-bubble-diameter-diff * 0.5};
 				margin-top: 0;
 				width: $small-bubble-diameter;
 				height: $small-bubble-diameter;
-				border-radius: #{$small-bubble-diameter / 2};
+				border-radius: #{$small-bubble-diameter * 0.5};
 				.bp3-icon {
 					color: inherit;
 				}
@@ -34,12 +34,12 @@ $controls-margin: 5px;
 				padding-bottom: $descender-height;
 				flex-grow: 1;
 				width: 2px;
-				margin-left: #{$large-bubble-diameter / 2 - 1};
+				margin-left: #{$large-bubble-diameter * 0.5 - 1};
 				background: #ddd;
 			}
 		}
 		.right {
-			padding-top: calc(#{$small-bubble-diameter / 2} - 1em);
+			padding-top: calc(#{$small-bubble-diameter * 0.5} - 1em);
 			margin-left: 10px;
 			padding-bottom: $label-padding-bottom;
 			.title {
@@ -67,7 +67,7 @@ $controls-margin: 5px;
 			margin: 0;
 			width: $large-bubble-diameter;
 			height: $large-bubble-diameter;
-			border-radius: #{$large-bubble-diameter / 2};
+			border-radius: #{$large-bubble-diameter * 0.5};
 		}
 	}
 

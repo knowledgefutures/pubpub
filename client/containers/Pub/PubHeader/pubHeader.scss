@@ -59,7 +59,7 @@ $mobile-bottom-buttons-spacing: 10px;
 
 	.details-button {
 		position: absolute;
-		top: $top-bar-total-height / 2;
+		top: $top-bar-total-height * 0.5;
 		transform: translateY(-50%);
 		right: 0;
 		.icon-container {

@@ -36,7 +36,7 @@ figure {
 
 	@for $i from 1 through 100 {
 		&[data-size='#{$i}'] {
-			width: percentage($i/100);
+			width: percentage($i * 0.01);
 		}
 	}
 

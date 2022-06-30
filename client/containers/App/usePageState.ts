@@ -41,8 +41,8 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		if (activeCollection) {
 			if (typeof next === 'function') {
 				// eslint-disable-next-line no-param-reassign
+				next = next(activeCollection);
 			}
-			next = next(activeCollection);
 			const nextCollection = {
 				...activeCollection,
 				...next,

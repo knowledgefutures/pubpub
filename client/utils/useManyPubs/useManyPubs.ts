@@ -31,6 +31,7 @@ const getQueryKey = (query: KeyedPubsQuery) => {
 		ordering: { field, direction },
 		isReleased,
 		submissionStatuses,
+		relatedUserIds,
 	} = query;
 	return JSON.stringify({
 		submissionStatuses,
@@ -39,6 +40,7 @@ const getQueryKey = (query: KeyedPubsQuery) => {
 		field,
 		direction,
 		isReleased,
+		relatedUserIds,
 	});
 };
 
@@ -65,6 +67,7 @@ export const useManyPubs = <P extends Pub = Pub>(
 		ordering: optionsQuery.ordering || defaultOrdering,
 		isReleased: optionsQuery.isReleased,
 		submissionStatuses: optionsQuery.submissionStatuses,
+		relatedUserIds: optionsQuery.relatedUserIds,
 	};
 
 	const pubsById = useLazyRef(() => indexByProperty(initialPubs, 'id'));

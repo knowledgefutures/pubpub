@@ -153,7 +153,6 @@ export default function TitleEditor(props: Props) {
 		if (node.current) {
 			node.current.innerHTML = initialValue;
 			init.current = true;
-			onChange?.(initialValue, node.current?.innerText ?? '');
 		}
 	}, [initialValue, onChange]);
 

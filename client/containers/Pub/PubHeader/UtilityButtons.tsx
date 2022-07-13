@@ -4,20 +4,21 @@ import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { DialogLauncher, PubThemePicker, PubShareDialog, PopoverButton } from 'components';
 
+import { Callback, PatchFn, PubPageData } from 'types';
 import CitationsPreview from './CitationsPreview';
 import Download from './Download';
 import PubToc from './PubToc';
 import SmallHeaderButton from './SmallHeaderButton';
 import Social from './Social';
-import { usePubContext } from '../pubHooks';
 
 type Props = {
-	onShowHeaderDetails: (...args: any[]) => any;
+	onShowHeaderDetails: Callback;
+	pubData: PubPageData;
+	updatePubData: PatchFn<PubPageData>;
 };
 
 const UtilityButtons = (props: Props) => {
-	const { onShowHeaderDetails } = props;
-	const { pubData, updatePubData } = usePubContext();
+	const { onShowHeaderDetails, pubData, updatePubData } = props;
 	const { communityData, scopeData } = usePageContext();
 	const { isRelease, membersData } = pubData;
 	const { canManage } = scopeData.activePermissions;

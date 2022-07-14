@@ -116,8 +116,6 @@
 		"newrelic": "^5.7.0",
 		"no-slash": "^1.2.15",
 		"node-fetch": "^2.6.7",
-		"pagedjs": "^0.1.34",
-		"pagedjs-cli": "git+https://github.com/pubpub/pagedjs-cli#198b65ce0e3e089176c294de7a855e8da8a46a23",
 		"passport": "^0.4.0",
 		"passport-local": "^1.0.0",
 		"passport-local-sequelize": "^0.9.0",

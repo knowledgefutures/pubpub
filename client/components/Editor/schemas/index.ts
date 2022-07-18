@@ -1,6 +1,7 @@
 import { baseNodes, baseMarks } from './base';
 import citation from './citation';
 import equation from './equation';
+import math from './math';
 import file from './file';
 import footnote from './footnote';
 import iframe from './iframe';
@@ -15,6 +16,7 @@ export const defaultNodes = {
 	...baseNodes,
 	...citation,
 	...equation,
+	...math,
 	...file,
 	...footnote,
 	...iframe,

@@ -70,5 +70,6 @@ export type FormattingBarButtonData = {
 	ariaTitle?: string;
 	icon: string;
 	isToggle?: boolean;
+	label?: string;
 	isDisabled?: EditorChangeObjectDecider;
 } & ({ command: CommandSpec } | { insertNodeType: string } | { isMedia: true });

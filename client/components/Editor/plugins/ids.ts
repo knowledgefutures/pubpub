@@ -1,13 +1,17 @@
 import { Node } from 'prosemirror-model';
 import { EditorState, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+import { Step, ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
 
 import { generateHash } from '../utils';
 
-const inPasteRange = (offset, transactions) => {
+const isPasteStep = (step: Step): step is ReplaceStep | ReplaceAroundStep =>
+	'from' in step && 'slice' in step;
+
+const inPasteRange = (offset, transactions: readonly Transaction[]) => {
 	return transactions.some((trans) => {
 		const [step] = trans.steps;
-		if (step && trans.meta.paste) {
+		if (step && isPasteStep(step) && trans.getMeta('paste')) {
 			const pasteStart = step.from;
 			const pasteEnd = step.from + step.slice.content.size;
 			return offset >= pasteStart && offset < pasteEnd;
@@ -23,7 +27,10 @@ const updatedNodeAttrsWithNewRandomId = (node: Node) => {
 	};
 };
 
-const getIdsTransactionForState = (editorState: EditorState, transactions: Transaction[] = []) => {
+const getIdsTransactionForState = (
+	editorState: EditorState,
+	transactions: readonly Transaction[] = [],
+) => {
 	const transaction = editorState.tr;
 	let mustReturnTransaction = false;
 	const seenIds = new Set();

@@ -340,16 +340,10 @@ rules.transform('Note', 'footnote', {
 rules.toProsemirrorNode('Math', (node) => {
 	const { mathType, content } = node;
 	const isDisplay = mathType === 'DisplayMath';
-	const prosemirrorType = isDisplay ? 'block_equation' : 'equation';
+	const prosemirrorType = isDisplay ? 'math_display' : 'math_inline';
 	return {
 		type: prosemirrorType,
-		attrs: {
-			value: content,
-			html: katex.renderToString(content, {
-				displayMode: isDisplay,
-				throwOnError: false,
-			}),
-		},
+		content,
 	};
 });
 
@@ -369,6 +363,25 @@ rules.fromProsemirrorNode('block_equation', (node) => {
 				type: 'Math',
 				mathType: 'DisplayMath',
 				content: node.attrs.value.toString(),
+			},
+		],
+	};
+});
+
+rules.fromProsemirrorNode('math_inline', ({ content }) => ({
+	type: 'Math',
+	mathType: 'InlineMath',
+	content,
+}));
+
+rules.fromProsemirrorNode('math_display', ({ content }) => {
+	return {
+		type: 'Plain',
+		content: [
+			{
+				type: 'Math',
+				mathType: 'DisplayMath',
+				content,
 			},
 		],
 	};

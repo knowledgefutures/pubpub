@@ -93,6 +93,7 @@ const FormattingBar = (props: Props) => {
 				outerRef={buttonElementRefs.getRef(button.key)}
 				as={button.component || FormattingBarButton}
 				key={button.key}
+				label={button.label}
 				formattingItem={button}
 				disabled={isDisabled}
 				isActive={isActive}

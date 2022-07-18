@@ -13,7 +13,7 @@ const swapRtlAttr = (rtl: RtlDirection): RtlDirection => (rtl === null ? true : 
 
 const doAllNodesHaveRtlDirection = (nodes: NodePos[]) => {
 	const directionTypes = nodes.map(({ node }) => node.attrs[rtlAttr]);
-	return directionTypes.every((type) => type === true);
+	return directionTypes.length && directionTypes.every((type) => type === true);
 };
 
 const isRtlTarget = (node: Node) => {

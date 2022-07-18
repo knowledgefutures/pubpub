@@ -80,8 +80,7 @@ export default (schema, props) => {
 			https://github.com/ProseMirror/prosemirror-tables/blob/master/src/columnresizing.js#L10
 		*/
 		// according to the docs, View accepts a NodeView constructor, not an instance.
-		// @ts-expect-error ts-migrate(2560) FIXME: Value of type 'typeof PubTableView' has no propert... Remove this comment to see the full error message
-		return [columnResizing({ handleWidth: -1, View: PubTableView })];
+		return [columnResizing({ handleWidth: -1, View: PubTableView as any })];
 	}
 
 	// @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'false' is not assignable to para... Remove this comment to see the full error message
@@ -91,8 +90,7 @@ export default (schema, props) => {
 
 	return [
 		columnResizing({
-			// @ts-expect-error ts-migrate(2560) FIXME: Value of type 'typeof PubTableView' has no propert... Remove this comment to see the full error message
-			View: PubTableView,
+			View: PubTableView as any,
 		}),
 		tableEditing(),
 		keymap({

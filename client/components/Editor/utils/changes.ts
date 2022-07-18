@@ -29,8 +29,8 @@ export const getStepsInChangeRange = async (
 	return [];
 };
 
-export const applyStepsToDoc = <S extends Schema>(steps: Step[], doc: Node<S>) => {
-	return steps.reduce((currentDoc: Node<S>, step: Step) => {
+export const applyStepsToDoc = (steps: Step[], doc: Node) => {
+	return steps.reduce((currentDoc: Node, step: Step) => {
 		const { doc: nextDoc, failed } = step.apply(currentDoc);
 		if (failed) {
 			throw new Error(failed);

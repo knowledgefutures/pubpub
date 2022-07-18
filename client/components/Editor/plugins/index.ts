@@ -6,10 +6,12 @@ import buildCollaborative from './collaborative';
 import buildDiscussions from './discussions';
 import buildDomEvents from './domEvents';
 import buildIds from './ids';
+import buildMathTranslations from './equationsToMath';
 import buildHeaderIds from './headerIds';
 import buildInputRules from './inputRules';
 import buildKeymap from './keymap';
 import buildLocalHighlights from './localHighlights';
+import buildMath from './math';
 import buildOnChange from './onChange';
 import buildPlaceholder from './placeholder';
 import buildPaste from './paste';
@@ -30,6 +32,7 @@ const buildHistory = () => {
 export const standardPlugins = {
 	inputRules: buildInputRules,
 	headerIds: buildHeaderIds,
+	translatedMathNodes: buildMathTranslations,
 	placeholder: buildPlaceholder,
 	localHighlights: buildLocalHighlights,
 	references: buildReferences,
@@ -44,6 +47,7 @@ export const standardPlugins = {
 	ids: buildIds,
 	reactive: buildReactive,
 	paste: buildPaste,
+	mathPlugin: buildMath,
 };
 
 const getSortedPlugins = (plugins: Record<string, null | PluginLoader>): PluginLoader[] => {

@@ -38,7 +38,10 @@ export const flattenKeyables = (
 	}, []);
 };
 
-export const createFirebaseChange = (steps: Step[], clientId: string): CompressedChange => {
+export const createFirebaseChange = (
+	steps: readonly Step[],
+	clientId: string,
+): CompressedChange => {
 	return {
 		id: uuid.v4(), // Keyable Id
 		cId: clientId, // Client Id

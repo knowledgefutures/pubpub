@@ -1,3 +1,5 @@
+import { DOMOutputSpec } from 'prosemirror-model';
+
 export default {
 	discussion: {
 		atom: true,
@@ -23,7 +25,7 @@ export default {
 					'data-thread-number': node.attrs.threadNumber,
 					'data-align': node.attrs.align,
 				},
-			] as const;
+			] as DOMOutputSpec;
 		},
 		inline: false,
 		group: 'block',

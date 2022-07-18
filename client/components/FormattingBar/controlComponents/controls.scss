@@ -221,23 +221,6 @@
 	}
 }
 
-.controls-equation-component {
-	@include controls-component();
-	@include controls-grid(1fr 1fr);
-	max-width: 1200px;
-
-	.latex {
-		&::placeholder {
-			color: rgba(255, 255, 255, 0.6);
-		}
-	}
-
-	.preview {
-		overflow-y: auto;
-		flex-grow: 1;
-	}
-}
-
 .controls-link-component,
 .controls-reference-component {
 	@include text-fields();

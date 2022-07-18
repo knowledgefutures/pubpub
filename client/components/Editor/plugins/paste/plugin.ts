@@ -37,12 +37,22 @@ export default (schema: Schema, options: PluginsOptions) => {
 				paste: createPasteHandler(mediaUploadHandler),
 				drop: createDropHandler(mediaUploadHandler),
 			},
-			decorations: function (this: Plugin<PluginState>, editorState: EditorState) {
-				const { decorations } = this.getState(editorState);
+			decorations: function (editorState: EditorState) {
+				let decorations: DecorationSet | undefined;
+				if (this instanceof Plugin) {
+					const pluginState = this.getState(editorState);
+					if (pluginState) {
+						decorations = pluginState.decorations;
+					}
+				}
 				return decorations;
 			},
 		},
-		appendTransaction: (trs: Transaction[], oldState: EditorState, newState: EditorState) => {
+		appendTransaction: (
+			trs: readonly Transaction[],
+			oldState: EditorState,
+			newState: EditorState,
+		) => {
 			for (let i = 0; i < trs.length; i++) {
 				const tr = trs[i];
 				const finished = getFinishedUploadFromTransaction(tr, oldState);

@@ -1,5 +1,4 @@
-import { Command } from 'prosemirror-commands';
-import { EditorState } from 'prosemirror-state';
+import { EditorState, Command } from 'prosemirror-state';
 import {
 	isInTable,
 	deleteTable,

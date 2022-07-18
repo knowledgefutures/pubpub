@@ -14,35 +14,42 @@ export type NodeReference = {
 	label: string;
 };
 
+const getReferenceableNodeType = (node): ReferenceableNodeType =>
+	node.type.name === 'math_display' ? 'block_equation' : node.type.name;
+
 export const nodeDefaults = {
 	[ReferenceableNodeType.Image]: { icon: 'media', text: 'Image' },
 	[ReferenceableNodeType.Video]: { icon: 'media', text: 'Video' },
 	[ReferenceableNodeType.Audio]: { icon: 'media', text: 'Audio' },
 	[ReferenceableNodeType.Table]: { icon: 'th', text: 'Table' },
 	[ReferenceableNodeType.BlockEquation]: { icon: 'function', text: 'Equation' },
-};
+} as const;
 
 export const buildLabel = (node: Node, customBlockName?: string) => {
 	const {
 		attrs: { count, label },
-		type: { name },
 	} = node;
+
+	const nodeType = getReferenceableNodeType(node);
 
 	if (!(count || label)) {
 		return null;
 	}
 
-	const defaults = nodeDefaults[name];
+	const defaults = nodeDefaults[nodeType];
 
 	if (defaults) {
-		return `${customBlockName || label || defaults.name} ${count}`;
+		return `${customBlockName || label || defaults.text} ${count}`;
 	}
 
 	return null;
 };
 
-export const isNodeLabelEnabled = (node: Node, nodeLabels: NodeLabelMap) =>
-	Boolean(nodeLabels[node.type.name as ReferenceableNodeType]?.enabled) && !node.attrs.hideLabel;
+export const isNodeLabelEnabled = (node: Node, nodeLabels: NodeLabelMap) => {
+	const nodeType = getReferenceableNodeType(node);
+	const enabled = nodeLabels[nodeType]?.enabled;
+	return node.attrs.hideLabel || !enabled ? null : nodeType;
+};
 
 export const getReferenceForNode = (
 	node: Node,
@@ -51,16 +58,16 @@ export const getReferenceForNode = (
 ): NodeReference | null => {
 	const {
 		type: {
-			name: nodeType,
 			spec: { reactive },
 		},
 	} = node;
+	const nodeType = getReferenceableNodeType(node);
 
 	if (!reactive) {
 		return null;
 	}
 
-	const label = nodeLabels[nodeType as ReferenceableNodeType];
+	const label = nodeLabels[nodeType];
 	const defaults = nodeDefaults[nodeType];
 	const reactedNode = getReactedCopyOfNode(node, editorState);
 
@@ -120,5 +127,7 @@ export const getDefaultNodeLabels = (pub: Pub): NodeLabelMap => {
 	return Object.assign(nodeLabelDefaults, pub.nodeLabels);
 };
 
-export const getNodeLabelText = (node: Node, nodeLabels: NodeLabelMap) =>
-	nodeLabels[node.type.name as ReferenceableNodeType]?.text;
+export const getNodeLabelText = (node: Node, nodeLabels: NodeLabelMap) => {
+	const nodeType = getReferenceableNodeType(node);
+	return nodeLabels[nodeType]?.text;
+};

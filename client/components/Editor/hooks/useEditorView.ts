@@ -80,7 +80,7 @@ const createEditorView = (options: EditorViewOptions) => {
 		plugins: getPlugins(schema, customPlugins, pluginsOptions),
 	});
 
-	const view: EditorView<typeof schema> = new EditorView(
+	const view: EditorView = new EditorView(
 		{ mount: mountRef.current! },
 		{
 			state,

@@ -52,8 +52,8 @@ const getAlignableNodes = (state: EditorState): AlignableNodesResult => {
 	const { selection, doc } = state;
 	const alignableNodes: NodePos[] = [];
 	selection.ranges.forEach(({ $from, $to }) => {
-		doc.nodesBetween($from.pos, $to.pos, (child: Node, pos: number, parent: Node) => {
-			if (supportsAlignmentOfChildren(parent) && supportsAlignment(child)) {
+		doc.nodesBetween($from.pos, $to.pos, (child: Node, pos: number, parent: Node | null) => {
+			if (parent && supportsAlignmentOfChildren(parent) && supportsAlignment(child)) {
 				alignableNodes.push({ pos, node: child });
 			}
 		});

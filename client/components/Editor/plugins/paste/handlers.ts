@@ -69,9 +69,15 @@ const appearsToBePastingFromMsOffice = (event: ClipboardEvent) => {
 	return html && html.includes(`xmlns:o="urn:schemas-microsoft-com:office:office`);
 };
 
+type MaybeClipboardEvent = Event & {
+	clipboardData?: any;
+};
+
 export const createPasteHandler =
-	(uploadFn: MediaUploadHandler) => (view: EditorView, event: ClipboardEvent) => {
-		if (appearsToBePastingFromMsOffice(event)) {
+	(uploadFn: MediaUploadHandler) => (view: EditorView, event: MaybeClipboardEvent) => {
+		const { clipboardData } = event;
+		if (!clipboardData) return false;
+		if (appearsToBePastingFromMsOffice(event as ClipboardEvent)) {
 			return false;
 		}
 		const selection = view.state.selection;
@@ -97,10 +103,17 @@ const getImageSrcFromPastedHtml = (textData: string | null) => {
 	return null;
 };
 
+type MaybeDragEvent = Event & {
+	dataTransfer?: any;
+	clientY?: any;
+	clientX?: any;
+};
+
 // Thanks to https://gitlab.com/emergence-engineering/prosemirror-image-plugin/-/blob/master/src/plugin/dropHandler.ts
 // from which some of the hairier details of this function were cribbed.
 export const createDropHandler =
-	(uploadFn: MediaUploadHandler) => (view: EditorView, event: DragEvent) => {
+	(uploadFn: MediaUploadHandler) => (view: EditorView, event: MaybeDragEvent) => {
+		if (!event.dataTransfer || !event.clientY || !event.clientX) return false;
 		const textData = event.dataTransfer?.getData('text/html');
 		const evtFile = event.dataTransfer?.files?.[0];
 		const imageSrc = getImageSrcFromPastedHtml(textData || null);

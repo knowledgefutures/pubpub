@@ -86,8 +86,14 @@ const createPlugin = (discussionsOptions: DiscussionsOptions, initialDoc: Node) 
 			};
 		},
 		props: {
-			decorations: function (this: Plugin<PluginState>, editorState: EditorState) {
-				const { decorations } = this.getState(editorState);
+			decorations: function (editorState: EditorState) {
+				let decorations: DecorationSet | undefined;
+				if (this instanceof Plugin) {
+					const pluginState = this.getState(editorState);
+					if (pluginState) {
+						decorations = pluginState.decorations;
+					}
+				}
 				return decorations;
 			},
 		},

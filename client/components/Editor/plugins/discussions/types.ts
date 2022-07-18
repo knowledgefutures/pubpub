@@ -54,7 +54,11 @@ export type RemoteDiscussions = {
 	disconnect: () => void;
 };
 
+export type DiscussionDecoration = Decoration;
+
+/*
 export type DiscussionDecoration = Decoration<{
 	key: string;
 	widgetForDiscussionId?: string;
 }>;
+*/

@@ -5,7 +5,7 @@ import { pastePluginKey } from './key';
 import { Meta, PluginState } from './types';
 import { createPlaceholderWidgetElement } from './widget';
 
-type PlaceholderDecoration = Decoration<{ key: string; id: string }>;
+type PlaceholderDecoration = Decoration;
 
 export const createPlaceholderDecoration = (
 	id: string,

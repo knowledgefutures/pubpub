@@ -118,7 +118,6 @@ const ControlsTable = (props: Props) => {
 	const { view } = editorChangeObject;
 	const toolbar = useToolbarState({ loop: true });
 
-	// eslint-disable-next-line react/prop-types
 	const renderDisclosure = (_, { ref, ...disclosureProps }) => {
 		return (
 			<Button

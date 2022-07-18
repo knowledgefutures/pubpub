@@ -131,12 +131,12 @@ const createOutputSpecFromNode = (node, schema, context) => {
 		? content.map((child) => createOutputSpecFromNode(child, schema, context))
 		: [];
 
+	const hydratedNode = Node.fromJSON(schema, node);
+	(hydratedNode as any).attrs = normalizeAttrsForSpec(attrs, nodeSpec);
+
 	// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
 	const outputSpec = fillHoleInSpec(
-		nodeSpec.toDOM(
-			{ ...node, type: nodeType, attrs: normalizeAttrsForSpec(attrs, nodeSpec) },
-			{ ...context, isReact: true },
-		),
+		nodeSpec.toDOM(hydratedNode, { ...context, isReact: true }),
 		childSpecs,
 	);
 

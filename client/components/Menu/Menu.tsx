@@ -76,7 +76,6 @@ export const Menu = React.forwardRef((props: MenuProps, ref) => {
 				unstable_portal={menuConfig.usePortal}
 				{...menu}
 			>
-				{/* @ts-expect-error ts-migrate(2322) FIXME: Type '{ parentMenu: RK.MenuStateReturn; dismissMen... Remove this comment to see the full error message */}
 				<MenuContext.Provider value={{ parentMenu: menu, dismissMenu: handleDismiss }}>
 					{children}
 				</MenuContext.Provider>

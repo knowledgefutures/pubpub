@@ -102,6 +102,10 @@ containers and components are differentiated:
 
 ## Commits
 
+Before your first pull request, make sure to copy our `.githooks` into your `.git` directory. You can do this with:
+
+```npm run install-git-hooks```
+
 Preferred practice is to prefix commits with one of the following categories:
 
 -   `fix`: for commits focused on specific bug fixes

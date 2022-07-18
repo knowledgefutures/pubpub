@@ -68,7 +68,7 @@ const columnCommands = [
 	},
 	{
 		key: 'table-toggle-header-column',
-		title: 'Toggle column row',
+		title: 'Toggle header column',
 		icon: 'page-layout',
 		command: tableToggleHeaderColumn,
 	},

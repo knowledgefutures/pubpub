@@ -33,7 +33,8 @@ const MetadataDetails = (props: Props) => {
 		return null;
 	}
 
-	const fields = getOrderedCollectionMetadataFields(collection).filter((x) => x.name !== 'url');
+	const excludedMetadataFields = ['doi', 'url'];
+	const fields = getOrderedCollectionMetadataFields(collection).filter((x) => !excludedMetadataFields.includes[x.name]);
 
 	return (
 		<>

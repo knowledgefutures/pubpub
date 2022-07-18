@@ -325,7 +325,7 @@ export const renderStaticHtml = async (options: RenderStaticHtmlOptions) => {
 								getLinkage={(_, index) => getFootnoteLinkage(index)}
 							/>
 							<SimpleNotesList
-								title="Citations"
+								title="References"
 								notes={citations}
 								getLinkage={(note) =>
 									getCitationLinkage(note.unstructuredValue, note.structuredValue)

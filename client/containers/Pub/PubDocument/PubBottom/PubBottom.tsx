@@ -32,7 +32,6 @@ const PubBottom = (props: Props) => {
 	return (
 		<div className="pub-bottom-component">
 			<div className="inner">
-				<ReadNextSection pubData={pubData} />
 				{footnotes.length > 0 && (
 					<SearchableNoteSection
 						title="Footnotes"
@@ -42,9 +41,9 @@ const PubBottom = (props: Props) => {
 				)}
 				{citations.length > 0 && (
 					<SearchableNoteSection
-						title="Citations"
+						title="References"
 						notes={citations}
-						searchPlaceholder="Search citations..."
+						searchPlaceholder="Search references..."
 					/>
 				)}
 				<LicenseSection pubData={pubData} updateLocalData={updateLocalData} />
@@ -56,6 +55,7 @@ const PubBottom = (props: Props) => {
 						mainContentRef={mainContentRef}
 					/>
 				)}
+				<ReadNextSection pubData={pubData} />
 			</div>
 		</div>
 	);

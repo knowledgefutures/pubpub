@@ -1,5 +1,9 @@
-@import '~katex/dist/katex';
 @import '../../../styles/variables.scss';
+
+// Don't add a .css extension to this or Sass will defer to browser @import behavior instead of
+// inlining these stylesheets during compilation 🙃
+@import '~@benrbray/prosemirror-math/style/math';
+@import '~katex/dist/katex.min';
 
 [data-node-type='math-inline'] {
 	font-size: 0.9em;

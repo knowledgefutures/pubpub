@@ -1,6 +1,4 @@
 @import 'styles/variables.scss';
-@import '~@benrbray/prosemirror-math/style/math.css';
-@import '~katex/dist/katex.min.css';
 
 $pub-body-font-size: if-is-export(14px, 20px);
 

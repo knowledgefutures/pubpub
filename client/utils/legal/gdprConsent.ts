@@ -10,9 +10,9 @@ const persistSignupCookieKey = 'gdpr-consent-survives-login';
 const odiousCookies = ['heap'];
 const deleteOdiousCookies = () => {
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'heap' does not exist on type 'Window & t... Remove this comment to see the full error message
-	window.heap.resetIdentity();
+	window.heap?.resetIdentity();
 	// @ts-expect-error ts-migrate(2339) FIXME: Property 'heap' does not exist on type 'Window & t... Remove this comment to see the full error message
-	window.heap.clearEventProperties();
+	window.heap?.clearEventProperties();
 	odiousCookies.map((key) => Cookies.remove(key, { path: '' }));
 };
 
@@ -46,7 +46,7 @@ export const updateGdprConsent = (loginData, doesUserConsent) => {
 	if (!doesUserConsent) {
 		if (!loggedIn) {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'heap' does not exist on type 'Window & t... Remove this comment to see the full error message
-			window.heap.identify(Math.random());
+			window.heap?.identify(Math.random());
 		}
 		deleteOdiousCookies();
 	}

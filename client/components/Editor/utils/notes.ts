@@ -5,13 +5,16 @@ import { Note } from 'utils/notes';
 
 export type CitationFingerprintFunction = (node: Node) => string;
 
-export const citationFingerprintStripTags = (node: Node) => {
+const citationFingerprintStripTags = (node: Node) => {
 	const { unstructuredValue, value } = node.attrs;
 	const strippedUnstructuredValue = unstructuredValue ? striptags(unstructuredValue) : '';
 	return `${value}-${strippedUnstructuredValue}`;
 };
 
-export const getNotes = (doc: Node, citationFingerprintFn?: CitationFingerprintFunction) => {
+export const getNotes = (
+	doc: Node,
+	citationFingerprintFn: CitationFingerprintFunction = citationFingerprintStripTags,
+) => {
 	const citationFingerprints = new Set<unknown>();
 	const footnoteItems: Note[] = [];
 	const citationItems: Note[] = [];

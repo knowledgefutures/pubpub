@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import Cite from 'citation-js';
 
 import { DocJson, Pub } from 'types';
-import { citationFingerprintStripTags, getNotes, jsonToNode } from 'components/Editor';
+import { getNotes, jsonToNode } from 'components/Editor';
 import { citationStyles, CitationStyleKind, CitationInlineStyleKind } from 'utils/citations';
 import { StructuredValue, RenderedStructuredValue } from 'utils/notes';
 import { expiringPromise } from 'utils/promises';
@@ -125,7 +125,7 @@ export const getStructuredCitations = async (
 export const getStructuredCitationsForPub = (pubData: Pub, pubDoc: DocJson) => {
 	const pubDocNode = jsonToNode(pubDoc);
 	const { citationStyle = 'apa-7', citationInlineStyle = 'count' } = pubData;
-	const { footnotes, citations } = getNotes(pubDocNode, citationFingerprintStripTags);
+	const { footnotes, citations } = getNotes(pubDocNode);
 	const structuredValuesInDoc = [
 		...new Set([...footnotes, ...citations].map((note) => note.structuredValue)),
 	];

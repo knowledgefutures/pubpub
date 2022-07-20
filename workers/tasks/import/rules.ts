@@ -343,7 +343,7 @@ rules.toProsemirrorNode('Math', (node) => {
 	const prosemirrorType = isDisplay ? 'math_display' : 'math_inline';
 	return {
 		type: prosemirrorType,
-		content,
+		content: [{ type: 'text', text: content }],
 	};
 });
 
@@ -368,13 +368,17 @@ rules.fromProsemirrorNode('block_equation', (node) => {
 	};
 });
 
-rules.fromProsemirrorNode('math_inline', ({ content }) => ({
-	type: 'Math',
-	mathType: 'InlineMath',
-	content,
-}));
+rules.fromProsemirrorNode('math_inline', (node) => {
+	const content = node.content.reduce((memo, textNode) => memo + textNode.text, '');
+	return {
+		type: 'Math',
+		mathType: 'InlineMath',
+		content,
+	};
+});
 
-rules.fromProsemirrorNode('math_display', ({ content }) => {
+rules.fromProsemirrorNode('math_display', (node) => {
+	const content = node.content.reduce((memo, textNode) => memo + textNode.text, '');
 	return {
 		type: 'Plain',
 		content: [

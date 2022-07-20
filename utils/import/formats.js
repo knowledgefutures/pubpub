@@ -2,7 +2,7 @@ export const extensionToPandocFormat = {
 	docx: 'docx+citations',
 	epub: 'epub',
 	html: 'html',
-	md: 'markdown',
+	md: 'markdown+tex_math_dollars',
 	odt: 'odt',
 	txt: 'markdown_strict',
 	xml: 'jats',

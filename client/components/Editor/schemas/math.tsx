@@ -48,7 +48,7 @@ const renderStaticMath = (mathNode: Node, tagName: string, displayMode: boolean)
 export default {
 	math_inline: {
 		...inlineMathSchema,
-		group: 'inline math',
+		group: 'inline',
 		toDOM: (node: Node, { isReact } = { isReact: false }) => {
 			if (isReact) {
 				return renderStaticMath(node, 'math-inline', false);
@@ -59,7 +59,7 @@ export default {
 	math_display: {
 		...mathDisplaySchema,
 		reactive: true,
-		group: 'block math',
+		group: 'block',
 		attrs: {
 			id: { default: null },
 			hideLabel: { default: false },

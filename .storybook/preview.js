@@ -13,6 +13,7 @@ const pageContext = {
 	loginData,
 	scopeData,
 	featureFlags: {},
+	dismissedUserDismissables: {},
 	initialNotificationsData: {
 		hasNotifications: true,
 		hasUnreadNotifications: true,

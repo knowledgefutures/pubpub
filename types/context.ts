@@ -1,5 +1,6 @@
 import {
 	Collection,
+	InitialData,
 	InitialCommunityData,
 	InitialNotificationsData,
 	LocationData,
@@ -24,4 +25,5 @@ export type PageContext = {
 	noteManager: NoteManager;
 	initialNotificationsData: InitialNotificationsData;
 	dashboardMenu: DashboardMenuState;
+	dismissedUserDismissables: InitialData['dismissedUserDismissables'];
 };

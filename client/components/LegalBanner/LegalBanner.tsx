@@ -5,16 +5,20 @@ import { Button } from '@blueprintjs/core';
 
 import { shouldShowTosUpdate, markTosUpdateSeen } from 'client/utils/legal/tosUpdate';
 import { shouldShowGdprBanner, updateGdprConsent } from 'client/utils/legal/gdprConsent';
-import { LoginData } from 'types';
+import { Callback, PageContext } from 'types';
+import { usePageContext } from 'utils/hooks';
+import { dismissUserDismissable } from '../../utils/userDismissable';
 
 require('./legalBanner.scss');
 
-type Props = {
-	// eslint-disable-next-line react/no-unused-prop-types
-	loginData: LoginData;
+type Banner = {
+	title: React.ReactNode;
+	shouldShow: (context: PageContext) => boolean;
+	notice: () => React.ReactNode;
+	buttons: (context: PageContext, next: Callback) => React.ReactNode;
 };
 
-const banners = [
+const banners: Banner[] = [
 	{
 		title: 'Terms of service',
 		shouldShow: () => shouldShowTosUpdate(),
@@ -85,18 +89,58 @@ const banners = [
 			);
 		},
 	},
+	{
+		title: 'Take our User Satisfaction Survey',
+		shouldShow: ({ dismissedUserDismissables, featureFlags, loginData }) => {
+			return (
+				!!loginData.id &&
+				!dismissedUserDismissables.surveySummer22 &&
+				featureFlags.surveySummer22
+			);
+		},
+		notice: () => {
+			return (
+				<p>
+					We'd like to understand who our users are, how they value PubPub, and how we can
+					better service publishing communities. This will directly inform our roadmap and
+					priorities. It should take less than 5 minutes to complete and can be filled out
+					anonymously.{' '}
+					<a
+						href="https://forms.gle/cecnRw7BDbeYyML4A"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Take the survey
+					</a>
+				</p>
+			);
+		},
+		buttons: (_, next) => {
+			const handleClick = () => {
+				dismissUserDismissable('surveySummer22');
+				next();
+			};
+
+			return (
+				<Button large onClick={handleClick} intent="success">
+					Dismiss
+				</Button>
+			);
+		},
+	},
 ];
 
-const LegalBanner = (props: Props) => {
+const LegalBanner = () => {
+	const pageContext = usePageContext();
 	const [bannerIndex, setBannerIndex] = useState(-1);
 	const bannerToShow = banners[bannerIndex];
-	const [allBannersToShow] = useState(banners.filter((banner) => banner.shouldShow(props)));
+	const [allBannersToShow] = useState(banners.filter((banner) => banner.shouldShow(pageContext)));
 
 	const findNextBannerToShow = () => {
 		let index = bannerIndex;
 		do {
 			++index;
-		} while (banners[index] && !banners[index].shouldShow(props));
+		} while (banners[index] && !banners[index].shouldShow(pageContext));
 		setBannerIndex(index);
 	};
 
@@ -138,7 +182,9 @@ const LegalBanner = (props: Props) => {
 				{renderNoticeSteps()}
 				{bannerToShow.notice()}
 			</div>
-			<div className="legal-buttons">{bannerToShow.buttons(props, findNextBannerToShow)}</div>
+			<div className="legal-buttons">
+				{bannerToShow.buttons(pageContext, findNextBannerToShow)}
+			</div>
 		</div>
 	);
 };

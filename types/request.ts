@@ -1,4 +1,5 @@
 import { Collection, Community, Scope, DefinitelyHas, Member, MemberPermission, Pub } from 'types';
+import { UserDismissableKey } from 'utils/userDismissable';
 
 export type LoginData = {
 	id: string | null;
@@ -82,4 +83,5 @@ export type InitialData = {
 	communityData: InitialCommunityData;
 	featureFlags: Record<string, boolean>;
 	initialNotificationsData: InitialNotificationsData;
+	dismissedUserDismissables: Partial<Record<UserDismissableKey, true>>;
 };

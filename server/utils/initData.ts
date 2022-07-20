@@ -5,6 +5,7 @@ import { isProd, isDuqDuq, isQubQub, getAppCommit } from 'utils/environment';
 import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
 import { UserNotification } from 'server/models';
 
+import { getDismissedUserDismissables } from 'server/userDismissable/queries';
 import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 
 const getNotificationData = async (
@@ -56,10 +57,12 @@ export const getInitialData = async (req, isDashboard = false): Promise<types.In
 
 	/* If basePubPub - return fixed data */
 	if (locationData.isBasePubPub) {
-		const [featureFlags, initialNotificationsData] = await Promise.all([
-			getFeatureFlagsForUserAndCommunity(loginData.id, null),
-			getNotificationData(user.id),
-		]);
+		const [featureFlags, initialNotificationsData, dismissedUserDismissables] =
+			await Promise.all([
+				getFeatureFlagsForUserAndCommunity(loginData.id, null),
+				getNotificationData(user.id),
+				getDismissedUserDismissables(user.id),
+			]);
 
 		return {
 			communityData: {
@@ -87,6 +90,7 @@ export const getInitialData = async (req, isDashboard = false): Promise<types.In
 			featureFlags,
 			scopeData: { activePermissions: {} } as types.ScopeData,
 			initialNotificationsData,
+			dismissedUserDismissables,
 		};
 	}
 
@@ -108,18 +112,21 @@ export const getInitialData = async (req, isDashboard = false): Promise<types.In
 		/* eslint-disable-next-line no-param-reassign */
 		communityData.domain = req.headers.localhost;
 	}
-	const [scopeData, featureFlags, initialNotificationsData] = await Promise.all([
-		getScope({
-			communityId: communityData.id,
-			pubSlug: locationData.params.pubSlug,
-			collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
-			accessHash: locationData.query.access,
-			loginId: loginData.id,
-			isDashboard,
-		}),
-		getFeatureFlagsForUserAndCommunity(loginData.id, communityData.id),
-		getNotificationData(user.id),
-	]);
+	const [scopeData, featureFlags, initialNotificationsData, dismissedUserDismissables] =
+		await Promise.all([
+			getScope({
+				communityId: communityData.id,
+				pubSlug: locationData.params.pubSlug,
+				collectionSlug:
+					locationData.params.collectionSlug || locationData.query.collectionSlug,
+				accessHash: locationData.query.access,
+				loginId: loginData.id,
+				isDashboard,
+			}),
+			getFeatureFlagsForUserAndCommunity(loginData.id, communityData.id),
+			getNotificationData(user.id),
+			getDismissedUserDismissables(user.id),
+		]);
 
 	const cleanedCommunityData = sanitizeCommunity(
 		communityData,
@@ -135,5 +142,6 @@ export const getInitialData = async (req, isDashboard = false): Promise<types.In
 		scopeData,
 		featureFlags,
 		initialNotificationsData,
+		dismissedUserDismissables,
 	};
 };

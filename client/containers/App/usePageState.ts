@@ -19,6 +19,7 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		scopeData: initialScopeData,
 		featureFlags,
 		initialNotificationsData,
+		dismissedUserDismissables,
 	} = initialData;
 	const { pageData: initialPageData } = viewData;
 	const [loginData] = useState(initialLoginData);
@@ -76,5 +77,6 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		featureFlags,
 		initialNotificationsData,
 		dashboardMenu,
+		dismissedUserDismissables,
 	};
 };

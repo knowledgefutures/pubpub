@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import { useEffectOnce } from 'react-use';
-import { Button } from '@blueprintjs/core';
+import { AnchorButton, Button } from '@blueprintjs/core';
 
 import { shouldShowTosUpdate, markTosUpdateSeen } from 'client/utils/legal/tosUpdate';
 import { shouldShowGdprBanner, updateGdprConsent } from 'client/utils/legal/gdprConsent';
@@ -104,14 +104,7 @@ const banners: Banner[] = [
 					We'd like to understand who our users are, how they value PubPub, and how we can
 					better service publishing communities. This will directly inform our roadmap and
 					priorities. It should take less than 5 minutes to complete and can be filled out
-					anonymously.{' '}
-					<a
-						href="https://forms.gle/cecnRw7BDbeYyML4A"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Take the survey
-					</a>
+					anonymously.
 				</p>
 			);
 		},
@@ -122,9 +115,20 @@ const banners: Banner[] = [
 			};
 
 			return (
-				<Button large onClick={handleClick} intent="success">
-					Dismiss
-				</Button>
+				<>
+					<AnchorButton
+						large
+						href="https://forms.gle/cecnRw7BDbeYyML4A"
+						target="_blank"
+						style={{ padding: '0 10px' }}
+						intent="primary"
+					>
+						Take the survey
+					</AnchorButton>
+					<Button large onClick={handleClick}>
+						Dismiss
+					</Button>
+				</>
 			);
 		},
 	},

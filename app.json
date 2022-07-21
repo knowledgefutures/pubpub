@@ -2,7 +2,6 @@
 	"addons": ["cloudamqp:lemur"],
 	"buildpacks": [
 		{ "url": "https://github.com/heroku/heroku-buildpack-apt.git" },
-		{ "url": "https://github.com/jontewks/puppeteer-heroku-buildpack" },
 		{ "url": "heroku/nodejs" }
 	],
 	"env": {

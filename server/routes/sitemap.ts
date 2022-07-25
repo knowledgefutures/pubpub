@@ -128,6 +128,23 @@ const getSitemapIndex = async (community, targetFilename) => {
 };
 
 app.get(
+	'/sitemap.xml',
+	wrap(async (req, res, next) => {
+		if (!hostIsValid(req, 'community')) {
+			return next();
+		}
+
+		const { communityData } = await getInitialData(req, true);
+		const sitemapFileStream = await getSitemapIndex(communityData, 'sitemap-index.xml');
+
+		res.header('Content-Encoding', 'gzip');
+		res.header('Content-Type', 'application/xml');
+
+		return sitemapFileStream.pipe(res);
+	}),
+);
+
+app.get(
 	'/sitemap*',
 	wrap(async (req, res, next) => {
 		if (!hostIsValid(req, 'community')) {

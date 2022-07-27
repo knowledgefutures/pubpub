@@ -16,8 +16,7 @@ import { getTmpFileForExtension } from './util';
 import { NotesData, PubMetadata, PandocFlag } from './types';
 import { runTransforms } from './transforms';
 import {
-	getPandocNotesByHash,
-	getCslJsonForPandocNotes,
+	getPandocNotesById,
 	PandocNotes,
 	modifyJatsContentToIncludeUnstructuredNotes,
 } from './notes';
@@ -55,8 +54,8 @@ const createPandocArgs = (
 		.reduce((acc, next) => [...acc, ...next], []);
 };
 
-const createCslJsonBibliographyFile = async (pandocNotes: PandocNotes) => {
-	const cslJson = getCslJsonForPandocNotes(pandocNotes);
+const createCslJsonBibliographyFile = async (notes: PandocNotes) => {
+	const cslJson = Object.values(notes).map((note) => note.cslJson);
 	const file = await getTmpFileForExtension('json');
 	fs.writeFileSync(file.path, JSON.stringify(cslJson));
 	return file.path;
@@ -177,7 +176,7 @@ type ExportWithPandocOptions = {
 
 export const exportWithPandoc = async (options: ExportWithPandocOptions) => {
 	const { pandocTarget, pubMetadata, tmpFile, notesData } = options;
-	const pandocNotes = getPandocNotesByHash(notesData);
+	const pandocNotes = getPandocNotesById(notesData);
 	const pubDoc = reactPubDoc(options);
 	const metadataFile = await createYamlMetadataFile(pubMetadata, pandocTarget);
 	const bibliographyFile = await createCslJsonBibliographyFile(pandocNotes);

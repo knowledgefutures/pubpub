@@ -5,41 +5,34 @@ import { Note } from 'utils/notes';
 
 export type CitationFingerprintFunction = (node: Node) => string;
 
-const citationFingerprintStripTags = (node: Node) => {
+const fingerprintNote = (node: Node) => {
 	const { unstructuredValue, value } = node.attrs;
 	const strippedUnstructuredValue = unstructuredValue ? striptags(unstructuredValue) : '';
 	return `${value}-${strippedUnstructuredValue}`;
 };
 
-export const getNotes = (
-	doc: Node,
-	citationFingerprintFn: CitationFingerprintFunction = citationFingerprintStripTags,
-) => {
-	const citationFingerprints = new Set<unknown>();
+export const getNotesByKindFromDoc = (doc: Node) => {
 	const footnoteItems: Note[] = [];
 	const citationItems: Note[] = [];
 
 	doc.nodesBetween(0, doc.nodeSize - 2, (node) => {
+		const fingerprint = fingerprintNote(node);
 		if (node.type.name === 'footnote') {
+			const { value, structuredValue } = node.attrs;
 			footnoteItems.push({
 				id: node.attrs.id,
-				structuredValue: node.attrs.structuredValue,
-				unstructuredValue: node.attrs.value,
+				unstructuredValue: value,
+				structuredValue,
+				fingerprint,
 			});
 		}
 		if (node.type.name === 'citation') {
 			const { unstructuredValue, value } = node.attrs;
-			if (citationFingerprintFn) {
-				const citationFingerprint = citationFingerprintFn(node);
-				if (citationFingerprints.has(citationFingerprint)) {
-					return true;
-				}
-				citationFingerprints.add(citationFingerprint);
-			}
 			citationItems.push({
 				id: node.attrs.id,
 				structuredValue: value,
 				unstructuredValue,
+				fingerprint,
 			});
 		}
 		return true;

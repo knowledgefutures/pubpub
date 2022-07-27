@@ -1,9 +1,11 @@
+import { unique } from './arrays';
 import { CitationInlineStyleKind } from './citations';
 
 export type Note = {
 	id: string;
 	structuredValue: string;
 	unstructuredValue: string;
+	fingerprint: string;
 };
 
 export type RenderedNote = Note & {
@@ -43,7 +45,7 @@ const getRenderedNotes = (
 	renderedStructuredValues: RenderedStructuredValues,
 	includeNumbers: boolean,
 ): RenderedNote[] => {
-	return notes.map((note, index) => {
+	return unique(notes, (note) => note.fingerprint).map((note, index) => {
 		return {
 			...note,
 			...(includeNumbers && { number: index + 1 }),
@@ -63,14 +65,16 @@ const alphabetizeCitations = (citations: RenderedNote[]) => {
 		.sort((a, b) => a.sortOn.localeCompare(b.sortOn));
 };
 
-type RenderAndSortOptions = {
+type RenderForListingOptions = {
 	citations: Note[];
 	footnotes: Note[];
 	citationInlineStyle: CitationInlineStyleKind;
 	renderedStructuredValues: RenderedStructuredValues;
 };
 
-export const renderAndSortNotes = (options: RenderAndSortOptions): ByNoteKind<RenderedNote[]> => {
+export const renderNotesForListing = (
+	options: RenderForListingOptions,
+): ByNoteKind<RenderedNote[]> => {
 	const { citations, footnotes, citationInlineStyle, renderedStructuredValues } = options;
 	const shouldAlphabetizeCitations = citationInlineStyle !== 'count';
 	const renderedFootnotes = getRenderedNotes(footnotes, renderedStructuredValues, true);

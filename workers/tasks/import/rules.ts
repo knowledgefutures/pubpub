@@ -323,9 +323,9 @@ rules.transform('Note', 'footnote', {
 	},
 	fromProsemirrorNode: (node, { resources }) => {
 		const { value: unstructuredValue } = node.attrs;
-		const { html } = resources.note(node.attrs.id);
+		const { unstructuredHtml } = resources.note(node.attrs.id);
 		const unstructuredBlocks = unstructuredValue && htmlStringToPandocBlocks(unstructuredValue);
-		const structuredBlocks = html && htmlStringToPandocBlocks(html);
+		const structuredBlocks = unstructuredHtml && htmlStringToPandocBlocks(unstructuredHtml);
 		const content = [structuredBlocks, unstructuredBlocks].reduce(
 			(acc, next) => [...acc, ...(next || [])],
 			[],

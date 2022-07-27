@@ -137,9 +137,9 @@ export const generateMetaComponents = (metaProps: MetaProps) => {
 				<meta
 					key="c4"
 					name="citation_issn"
-					content={collection.metadata?.electronic_issn}
+					content={collection.metadata?.electronicIssn}
 				/>,
-				<meta key="c5" name="citation_issn" content={collection.metadata?.print_issn} />,
+				<meta key="c5" name="citation_issn" content={collection.metadata?.printIssn} />,
 			];
 		}
 		if (collection.kind === 'book') {

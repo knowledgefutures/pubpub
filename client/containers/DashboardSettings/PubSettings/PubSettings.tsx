@@ -14,6 +14,7 @@ import {
 	PubAttributionEditor,
 	PubThemePicker,
 	PubCollectionsListing,
+	TitleEditor,
 } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { slugifyString } from 'utils/strings';
@@ -108,12 +109,15 @@ const PubSettings = (props: Props) => {
 		return (
 			<React.Fragment>
 				<SettingsSection title="Details">
-					<InputField
-						label="Title"
-						value={pubData.title}
-						onChange={(evt) => updatePubData({ title: evt.target.value })}
-						error={!pubData.title ? 'Required' : null}
-					/>
+					<InputField label="Title" error={!pubData.title ? 'Required' : null}>
+						<TitleEditor
+							className="bp3-input"
+							initialValue={pubData.htmlTitle}
+							onInput={(nextHtmlTitle, nextTitle) =>
+								updatePubData({ htmlTitle: nextHtmlTitle, title: nextTitle })
+							}
+						/>
+					</InputField>
 					<InputField
 						label="Link"
 						helperText={`Pub will be available at ${pubUrl(communityData, pubData)}`}

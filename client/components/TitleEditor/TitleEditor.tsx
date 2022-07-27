@@ -10,6 +10,7 @@ type Props = {
 	isReadOnly?: boolean;
 	initialValue?: string;
 	onChange?: (html: string, text: string) => void;
+	onInput?: (html: string, text: string) => void;
 	className?: string;
 	placeholder?: string;
 };
@@ -71,7 +72,7 @@ const commonProps = {
 };
 
 export default function TitleEditor(props: Props) {
-	const { initialValue = '', onChange, isReadOnly = false, ...restProps } = props;
+	const { initialValue = '', onChange, onInput, isReadOnly = false, ...restProps } = props;
 	const node = useRef<HTMLDivElement>(null);
 	const init = useRef(false);
 	const [focused, setFocused] = useState(false);
@@ -82,7 +83,7 @@ export default function TitleEditor(props: Props) {
 		'data-placeholder': restProps.placeholder,
 	};
 
-	const onPaste = useCallback(
+	const handlePaste = useCallback(
 		(event: ClipboardEvent) => {
 			event.preventDefault();
 			const editor = node.current;
@@ -115,7 +116,7 @@ export default function TitleEditor(props: Props) {
 		[node],
 	);
 
-	const onKeyDown = useCallback((event) => {
+	const handleKeyDown = useCallback((event) => {
 		if (event.key === 'Enter') {
 			event.preventDefault();
 		} else if (event.key.toLowerCase() === 'u' && event.metaKey) {
@@ -131,17 +132,22 @@ export default function TitleEditor(props: Props) {
 
 	// contenteditable inserts a <br> when it contains an element (e.g. <b>,
 	// <em>, etc.) and its contents are cleared.
-	const onInput = useCallback(() => {
+	const handleInput = useCallback(() => {
 		if (node.current?.textContent === '') {
 			node.current.innerHTML = '';
 		}
-	}, [node]);
+		if (onInput) {
+			const html = node.current?.innerHTML ?? '';
+			const text = node.current?.innerText ?? '';
+			onInput(html, text);
+		}
+	}, [node, onInput]);
 
-	const onFocus = useCallback(() => {
+	const handleFocus = useCallback(() => {
 		setFocused(true);
 	}, []);
 
-	const onBlur = useCallback(() => {
+	const handleBlur = useCallback(() => {
 		const html = node.current?.innerHTML ?? '';
 		const text = node.current?.innerText ?? '';
 		onChange?.(html, text);
@@ -181,11 +187,11 @@ export default function TitleEditor(props: Props) {
 				{...sharedProps}
 				contentEditable={true}
 				ref={node}
-				onKeyDown={onKeyDown}
-				onPaste={onPaste}
-				onInput={onInput}
-				onFocus={onFocus}
-				onBlur={onBlur}
+				onKeyDown={handleKeyDown}
+				onPaste={handlePaste}
+				onInput={handleInput}
+				onFocus={handleFocus}
+				onBlur={handleBlur}
 			/>
 		</ClientOnly>
 	);

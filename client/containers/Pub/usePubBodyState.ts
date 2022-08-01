@@ -20,7 +20,14 @@ export type PubBodyState = {
 
 export const usePubBodyState = (options: Options): PubBodyState => {
 	const {
-		pubData: { initialDoc, initialDocKey, isInMaintenanceMode, isRelease, discussions },
+		pubData: {
+			initialDoc,
+			initialDocKey,
+			isInMaintenanceMode,
+			isRelease,
+			isReview,
+			discussions,
+		},
 		submissionState,
 		historyData: { currentKey, isViewingHistory, historyDoc, historyDocEditorKey },
 		collabData: { firebaseDraftRef },
@@ -107,6 +114,19 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 			includeDiscussionsPlugin: true,
 			discussionAnchors,
 			canCreateAnchoredDiscussions: true,
+		};
+	}
+
+	if (isReview) {
+		return {
+			editorKey: 'review',
+			isReadOnly: true,
+			initialHistoryKey: initialDocKey,
+			initialContent: initialDoc,
+			includeCollabPlugin: false,
+			includeDiscussionsPlugin: false,
+			discussionAnchors: null,
+			canCreateAnchoredDiscussions: false,
 		};
 	}
 

@@ -38,6 +38,7 @@ export const definitelyForbiddenSlugs = [
 	'sitemap',
 	'robots',
 	'noMatch',
+	'review',
 ];
 
 export const slugIsAvailable = async ({

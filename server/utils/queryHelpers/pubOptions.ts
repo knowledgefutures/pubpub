@@ -12,6 +12,7 @@ import {
 	Discussion,
 	DiscussionAnchor,
 	ReviewNew,
+	Reviewer,
 	Member,
 	includeUserModel,
 	Draft,
@@ -199,7 +200,12 @@ export default ({
 				separate: true,
 				model: ReviewNew,
 				as: 'reviews',
-				include: [...author, ...visibility, ...thread],
+				include: [
+					...author,
+					...visibility,
+					...thread,
+					{ model: Reviewer, as: 'reviewers' },
+				],
 			},
 			{
 				model: CrossrefDepositRecord,

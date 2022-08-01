@@ -1,4 +1,4 @@
-import { User } from './attribution';
+import { User } from './user';
 import { Community } from './community';
 
 export type FeatureFlagOverrideState = 'inert' | 'off' | 'on';

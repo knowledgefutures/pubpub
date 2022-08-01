@@ -41,6 +41,7 @@ export default (sequelize, dataTypes) => {
 			citationInlineStyle: { type: dataTypes.TEXT, defaultValue: 'count' },
 			viewHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
+			reviewHash: { type: dataTypes.STRING },
 			nodeLabels: { type: dataTypes.JSONB },
 
 			pubEdgeListingDefaultsToCarousel: {

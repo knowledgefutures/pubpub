@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import { usePageContext } from 'utils/hooks';
-import { PubHistoryViewer } from 'components';
+import { PubHistoryViewer, ClientOnly } from 'components';
 import {
 	PubEdgeListing,
 	Filter as PubEdgeFilter,
@@ -19,6 +19,7 @@ import PubHistoricalNotice from './PubHistoricalNotice';
 import PubInlineMenu from './PubInlineMenu';
 import PubLinkController from './PubLinkController';
 import PubMaintenanceNotice from './PubMaintenanceNotice';
+import Review from './Review/Review';
 
 require('./pubDocument.scss');
 
@@ -34,6 +35,7 @@ const PubDocument = () => {
 	const { isViewingHistory } = historyData;
 	const { communityData, scopeData } = usePageContext();
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
+	const { isReview } = pubData;
 	const mainContentRef = useRef<null | HTMLDivElement>(null);
 	const sideContentRef = useRef(null);
 	const editorWrapperRef = useRef(null);
@@ -58,7 +60,9 @@ const PubDocument = () => {
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
 					<PubMaintenanceNotice pubData={pubData} />
-					<PubHistoricalNotice pubData={pubData} historyData={historyData} />
+					{!isReview && (
+						<PubHistoricalNotice pubData={pubData} historyData={historyData} />
+					)}
 					<PubEdgeListing
 						className="top-pub-edges"
 						pubData={pubData}
@@ -87,13 +91,23 @@ const PubDocument = () => {
 					/>
 				</div>
 				<div className="side-content" ref={sideContentRef}>
-					{isViewingHistory && (
+					{isViewingHistory && !isReview && (
 						<PubHistoryViewer
 							historyData={historyData}
 							pubData={pubData}
 							onClose={() => historyData.setIsViewingHistory(false)}
 							onSetCurrentHistoryKey={historyData.setCurrentHistoryKey}
 						/>
+					)}
+
+					{isReview && (
+						<ClientOnly>
+							<Review
+								pubData={pubData}
+								updatePubData={updatePubData}
+								communityData={communityData}
+							/>
+						</ClientOnly>
 					)}
 				</div>
 			</div>

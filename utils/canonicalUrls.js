@@ -41,7 +41,18 @@ export const pubUrl = (community, pub, options = {}) => {
 		query,
 		download,
 		hash,
+		isReview,
 	} = options;
+
+	if (isReview && historyKey && accessHash) {
+		baseUrl = `${baseCommunityUrl}/pub/${pub.slug}/review/${historyKey}`;
+		const url = queryString.stringifyUrl(
+			{ url: baseUrl, query: { access: accessHash, ...query } },
+			{ skipNull: true },
+		);
+		return url;
+	}
+
 	if (download) {
 		const downloadType = typeof download === 'string' ? `/${download}` : '';
 		baseUrl = `${baseUrl}/download${downloadType}`;

@@ -1,5 +1,5 @@
 import { ActivityAssociations, ActivityItem, ActivityItemOfKind } from './activity';
-import { User } from './attribution';
+import { User } from './user';
 import { UserSubscription } from './userSubscription';
 
 export type UserNotification = {

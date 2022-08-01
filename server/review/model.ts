@@ -1,25 +1,56 @@
 export default (sequelize, dataTypes) => {
-	/* can be deleted once dashboard goes live */
-	/* We need a migration plan for ReviewEvents. Does it make sense */
-	/* to generalize that to ThreadEvents? */
 	return sequelize.define(
-		'Review',
+		'ReviewNew',
 		{
 			id: sequelize.idType,
-			shortId: { type: dataTypes.INTEGER, allowNull: false },
-			isClosed: { type: dataTypes.BOOLEAN },
-			isCompleted: { type: dataTypes.BOOLEAN },
+			title: { type: dataTypes.TEXT },
+			number: { type: dataTypes.INTEGER, allowNull: false },
+			status: {
+				type: dataTypes.ENUM,
+				values: ['open', 'closed', 'completed'],
+				defaultValue: 'open',
+			},
+			releaseRequested: { type: dataTypes.BOOLEAN },
+			labels: { type: dataTypes.JSONB },
 			/* Set by Associations */
-			mergeId: { type: dataTypes.UUID },
-			pubId: { type: dataTypes.UUID, allowNull: false },
+			threadId: { type: dataTypes.UUID, allowNull: false },
+			visibilityId: { type: dataTypes.UUID, allowNull: false },
+			userId: { type: dataTypes.UUID },
+			pubId: { type: dataTypes.UUID },
+			reviewContent: { type: dataTypes.JSONB, allowNull: true },
 		},
 		{
+			indexes: [
+				{ fields: ['userId'], method: 'BTREE' },
+				{ fields: ['pubId'], method: 'BTREE' },
+			],
 			classMethods: {
 				associate: (models) => {
-					const { Review, ReviewEvent } = models;
-					Review.hasMany(ReviewEvent, {
+					const { ReviewNew, Reviewer, Visibility, Pub, User, Thread } = models;
+					ReviewNew.belongsTo(Thread, {
 						onDelete: 'CASCADE',
-						as: 'reviewEvents',
+						as: 'thread',
+						foreignKey: 'threadId',
+					});
+					ReviewNew.belongsTo(Visibility, {
+						onDelete: 'CASCADE',
+						as: 'visibility',
+						foreignKey: 'visibilityId',
+					});
+					ReviewNew.belongsTo(User, {
+						onDelete: 'CASCADE',
+						as: 'author',
+						foreignKey: 'userId',
+						constraints: false,
+					});
+					ReviewNew.belongsTo(Pub, {
+						onDelete: 'CASCADE',
+						as: 'pub',
+						foreignKey: 'pubId',
+					});
+					ReviewNew.hasMany(Reviewer, {
+						onDelete: 'CASCADE',
+						as: 'reviewers',
 						foreignKey: 'reviewId',
 					});
 				},

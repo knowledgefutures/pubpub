@@ -12,20 +12,18 @@ import {
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { useMembersState } from 'client/utils/members/useMembers';
 import { pubUrl } from 'utils/canonicalUrls';
+import { usePubContext } from 'containers/Pub/pubHooks';
+import { PubPageData } from 'types';
 
 require('./pubShareDialog.scss');
 
-type PubShareDialogProps = {
+type SharedProps = {
+	pubData: PubPageData;
+};
+
+type PubShareDialogProps = SharedProps & {
 	isOpen: boolean;
 	onClose: (...args: any[]) => any;
-	pubData: {
-		editHash?: string;
-		viewHash?: string;
-		isRelease?: boolean;
-		membersData?: {
-			members?: {}[];
-		};
-	};
 };
 
 const getHelperText = (activeTargetName, activeTargetType, canModifyMembers) => {
@@ -40,24 +38,14 @@ const getHelperText = (activeTargetName, activeTargetType, canModifyMembers) => 
 	return `Members can collaborate on this ${activeTargetName}${containingPubsString}`;
 };
 
-type AccessHashOptionsProps = {
-	pubData: {
-		editHash?: string;
-		viewHash?: string;
-		isRelease?: boolean;
-	};
-};
-
-const AccessHashOptions = (props: AccessHashOptionsProps) => {
+const AccessHashOptions = (props: SharedProps) => {
 	const { pubData } = props;
-	const { communityData } = usePageContext();
-	const { viewHash, editHash, isRelease } = pubData;
+	const { communityData, featureFlags } = usePageContext();
+	const { historyData } = usePubContext();
 
-	const renderHashRow = (label, hash) => {
-		const url = pubUrl(communityData, pubData, {
-			accessHash: hash,
-			isDraft: !isRelease,
-		});
+	const { reviewHash, viewHash, editHash, isRelease } = pubData;
+
+	const renderCopyLabelComponent = (label, url) => {
 		return (
 			<ControlGroup className="hash-row">
 				<ClickToCopyButton minimal={false} copyString={url}>
@@ -67,28 +55,28 @@ const AccessHashOptions = (props: AccessHashOptionsProps) => {
 			</ControlGroup>
 		);
 	};
+	const isDraft = !isRelease;
+	const createAccessUrl = (accessHash, options) =>
+		pubUrl(communityData, pubData, { accessHash, ...options });
+	const reviewAccessUrl = createAccessUrl(reviewHash, {
+		historyKey: historyData.currentKey,
+		isReview: true,
+	});
 
 	return (
 		<div className="access-hash-options">
 			<p>
-				You can grant visitors permission to view or edit the draft of this pub by sharing a
-				URL.
+				You can grant visitors permission to view, edit, or review the draft of this Pub by
+				sharing a URL.
 			</p>
-			{viewHash && renderHashRow('View', viewHash)}
-			{editHash && renderHashRow('Edit', editHash)}
+			{viewHash && renderCopyLabelComponent('View', createAccessUrl(viewHash, { isDraft }))}
+			{editHash && renderCopyLabelComponent('Edit', createAccessUrl(editHash, { isDraft }))}
+			{featureFlags.review && renderCopyLabelComponent('Review', reviewAccessUrl)}
 		</div>
 	);
 };
 
-type MembersOptionsProps = {
-	pubData: {
-		membersData?: {
-			members?: {}[];
-		};
-	};
-};
-
-const MembersOptions = (props: MembersOptionsProps) => {
+const MembersOptions = (props: SharedProps) => {
 	const {
 		pubData: {
 			// @ts-expect-error ts-migrate(2339) FIXME: Property 'members' does not exist on type '{ membe... Remove this comment to see the full error message

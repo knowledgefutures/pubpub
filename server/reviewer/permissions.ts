@@ -2,8 +2,8 @@ import { Pub } from 'server/models';
 import * as types from 'types';
 import { getScope } from 'server/utils/queryHelpers';
 
-export const getPermissions = async ({ userId, communityId, pubId }, accessHash) => {
-	if (!communityId || !pubId) {
+export const getPermissions = async ({ userId, pubId, communityId }, accessHash) => {
+	if (!userId || !pubId) {
 		return {};
 	}
 
@@ -18,6 +18,7 @@ export const getPermissions = async ({ userId, communityId, pubId }, accessHash)
 	if (!scopeData.elements.activePub) {
 		return {};
 	}
+
 	const { canAdmin, canCreateReviews, canManage } = scopeData.activePermissions;
 
 	let editProps = [];

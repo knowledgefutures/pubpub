@@ -24,6 +24,7 @@ require('./pubEdgeProposal/api');
 require('./pubHistory/api');
 require('./release/api');
 require('./review/api');
+require('./reviewer/api');
 require('./rss/api');
 require('./search/api');
 require('./signup/api');

@@ -1,4 +1,4 @@
-import { Pub, ReviewNew } from 'server/models';
+import { Pub, ReviewNew, Reviewer } from 'server/models';
 
 import { baseAuthor, baseThread, baseVisibility } from './util';
 
@@ -16,7 +16,12 @@ export default async (pubSlug, reviewNumber, communityId) => {
 			number: reviewNumber,
 			pubId: pubData.id,
 		},
-		include: [...baseAuthor, ...baseVisibility, ...baseThread],
+		include: [
+			...baseAuthor,
+			...baseVisibility,
+			...baseThread,
+			{ model: Reviewer, as: 'reviewers' },
+		],
 	});
 
 	if (!reviewData) {

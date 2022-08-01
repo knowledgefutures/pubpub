@@ -1,33 +1,4 @@
-export type AttributableUser = {
-	id: string;
-	slug: string;
-	initials: string;
-	fullName: string;
-	firstName: string;
-	lastName: string;
-	avatar: string;
-	title: string;
-	orcid: string;
-	isShadowUser?: boolean;
-};
-
-export type User = AttributableUser & {
-	slug: string;
-	bio: string;
-	publicEmail: string;
-	location: string;
-	website: string;
-	facebook: string;
-	twitter: string;
-	github: string;
-	googleScholar: string;
-	passwordDigest: string;
-	hash: string;
-	salt: string;
-	email: string;
-	resetHash: string;
-	resetHashExpiration: number;
-};
+import { MinimalUser, User } from './user';
 
 export type PubAttribution = {
 	id: string;
@@ -40,7 +11,7 @@ export type PubAttribution = {
 	affiliation?: string;
 	orcid?: string;
 	userId?: string;
-	user?: AttributableUser;
+	user?: MinimalUser;
 	createdAt: string;
 	pubId: string;
 };
@@ -56,13 +27,13 @@ export type CollectionAttribution = {
 	affiliation?: string;
 	orcid?: string;
 	userId?: string;
-	user?: AttributableUser;
+	user?: MinimalUser;
 	createdAt: string;
 	collectionId: string;
 };
 
 export type Attribution = CollectionAttribution | PubAttribution;
-export type AttributionWithUser = Attribution & { user: AttributableUser | User };
+export type AttributionWithUser = Attribution & { user: MinimalUser | User };
 
 export const isAttributionWithUser = (
 	attribution: Attribution,

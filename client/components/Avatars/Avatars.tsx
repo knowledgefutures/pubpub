@@ -1,13 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { AttributableUser } from 'types';
+import { MinimalUser } from 'types';
 import Avatar from '../Avatar/Avatar';
 
 require('./avatars.scss');
 
 type Props = {
-	users: AttributableUser[];
+	users: MinimalUser[];
 	className?: string;
 	truncateAt?: number;
 	size?: number;
@@ -15,7 +15,7 @@ type Props = {
 	borderWidth?: number;
 };
 
-const getTruncation = (users: AttributableUser[], truncateAt: number | undefined) => {
+const getTruncation = (users: MinimalUser[], truncateAt: number | undefined) => {
 	if (truncateAt && users.length > truncateAt) {
 		return {
 			users: users.slice(0, truncateAt),

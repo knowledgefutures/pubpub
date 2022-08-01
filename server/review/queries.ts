@@ -1,8 +1,11 @@
 import uuidv4 from 'uuid/v4';
 
 import { Thread, Visibility, ReviewNew, Pub } from 'server/models';
+import { createReviewer } from 'server/reviewer/queries';
+
 import { getLatestKeyInPubDraft } from 'server/utils/firebaseAdmin';
 
+import { DocJson } from 'types';
 import {
 	createCreatedThreadEvent,
 	createClosedThreadEvent,
@@ -12,15 +15,36 @@ import {
 import { createRelease } from '../release/queries';
 import { createThreadComment } from '../threadComment/queries';
 
-export const createReview = async (inputValues, userData) => {
+type CreateReviewOptions = {
+	pubId: string;
+	title?: string;
+	releaseRequested?: boolean;
+	reviewContent?: DocJson;
+	text?: string;
+	content?: DocJson;
+	reviewerName?: string;
+};
+
+export const createReview = async (
+	{
+		pubId,
+		title,
+		releaseRequested,
+		reviewContent,
+		text,
+		content,
+		reviewerName,
+	}: CreateReviewOptions,
+	userData,
+) => {
+	const userId = userData?.id || null;
 	const reviews = await ReviewNew.findAll({
 		where: {
-			pubId: inputValues.pubId,
+			pubId,
 		},
 		attributes: ['id', 'pubId', 'number'],
 		raw: true,
 	});
-
 	const maxNumber = reviews.reduce((prev, curr) => {
 		if (Number(curr.number) > prev) {
 			return Number(curr.number);
@@ -38,23 +62,26 @@ export const createReview = async (inputValues, userData) => {
 			id: threadId,
 		}),
 	]);
-
 	const reviewData = await ReviewNew.create({
-		title: 'Publication Request',
+		title: title || 'Publication Request',
 		number: maxNumber + 1,
-		releaseRequested: inputValues.releaseRequested,
+		releaseRequested,
 		threadId,
 		visibilityId,
-		userId: userData.id,
-		pubId: inputValues.pubId,
+		userId,
+		pubId,
+		reviewContent,
+	});
+	await createReviewer({
+		id: reviewData.id,
+		name: userData?.fullName || reviewerName || 'anonymous',
 	});
 
-	await createCreatedThreadEvent(userData, threadId);
-	if (inputValues.text) {
-		await createThreadComment(
-			{ threadId, content: inputValues.content, text: inputValues.text },
-			userData,
-		);
+	if (userId) {
+		await createCreatedThreadEvent(userData, threadId);
+		if (text) {
+			await createThreadComment({ threadId, content, text }, userData);
+		}
 	}
 
 	return reviewData;

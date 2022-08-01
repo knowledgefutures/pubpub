@@ -6,13 +6,14 @@ import { getPrimaryCollection } from 'utils/collections/primary';
 import { getPdfDownloadUrl, getTextAbstract, getGoogleScholarNotes } from 'utils/pub/metadata';
 import { chooseCollectionForPub } from 'client/utils/collections';
 import Html from 'server/Html';
-import app from 'server/server';
+import app, { wrap } from 'server/server';
 import { handleErrors, NotFoundError, ForbiddenError } from 'server/utils/errors';
 import { getInitialData } from 'server/utils/initData';
 import { getCustomScriptsForCommunity } from 'server/customScript/queries';
 import { hostIsValid } from 'server/utils/routes';
 import { generateMetaComponents, renderToNodeStream } from 'server/utils/ssr';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
+import { generateHash } from 'utils/hashes';
 import {
 	getPubForRequest,
 	getMembers,
@@ -26,6 +27,7 @@ import {
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'types';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
+import { Pub } from 'server/models';
 
 const renderPubDocument = (res, pubData, initialData, customScripts) => {
 	const {
@@ -68,11 +70,13 @@ const getEnrichedPubData = async ({
 	initialData,
 	historyKey = null,
 	releaseNumber = null,
+	isReview = false,
 }: {
 	pubSlug: string;
 	initialData: InitialData;
 	historyKey?: null | number;
 	releaseNumber?: null | number;
+	isReview?: boolean;
 }) => {
 	const pubData = await getPubForRequest({
 		slug: pubSlug,
@@ -81,10 +85,22 @@ const getEnrichedPubData = async ({
 		getSubmissions: true,
 		getDraft: true,
 		getDiscussions: true,
+		isReview,
 	});
 
 	if (!pubData) {
 		throw new ForbiddenError();
+	}
+
+	if (!pubData.reviewHash) {
+		const reviewHash = generateHash(8);
+		Pub.update(
+			{ reviewHash },
+			{
+				where: { id: pubData.id },
+			},
+		);
+		pubData.reviewHash = reviewHash;
 	}
 
 	const { isRelease } = pubData;
@@ -123,6 +139,18 @@ const speedLimiter = slowDown({
 	delayMs: 100, // 60th request has a 100ms delay, 7th has a 200ms delay, 8th gets 300ms, etc.
 	maxDelay: 20000, // max time of request delay will be 20secs
 });
+
+const checkHistoryKey = (key) => {
+	const hasHistoryKey = key !== undefined;
+	const historyKey = parseInt(key, 10);
+	const isHistoryKeyInvalid = hasHistoryKey && Number.isNaN(historyKey);
+
+	if (isHistoryKeyInvalid) {
+		throw new NotFoundError();
+	}
+
+	return { historyKey, hasHistoryKey };
+};
 
 app.get('/pub/:pubSlug/release/:releaseNumber', speedLimiter, async (req, res, next) => {
 	if (!hostIsValid(req, 'community')) {
@@ -205,13 +233,7 @@ app.get(
 			const initialData = await getInitialData(req);
 			const { historyKey: historyKeyString, pubSlug } = req.params;
 			const { canViewDraft, canView } = initialData.scopeData.activePermissions;
-			const hasHistoryKey = historyKeyString !== undefined;
-			const historyKey = parseInt(historyKeyString, 10);
-			const isHistoryKeyInvalid = hasHistoryKey && Number.isNaN(historyKey);
-
-			if (isHistoryKeyInvalid) {
-				throw new NotFoundError();
-			}
+			const { hasHistoryKey, historyKey } = checkHistoryKey(historyKeyString);
 
 			if (!canViewDraft && !canView) {
 				throw new NotFoundError();
@@ -234,4 +256,37 @@ app.get(
 			return handleErrors(req, res, next)(err);
 		}
 	},
+);
+
+app.get(
+	['/pub/:pubSlug/review/:historyKey/'],
+	wrap(async (req, res, next) => {
+		if (!hostIsValid(req, 'community')) {
+			return next();
+		}
+
+		const initialData = await getInitialData(req);
+		const { historyKey: historyKeyString, pubSlug } = req.params;
+		const { canView } = initialData.scopeData.activePermissions;
+		const { hasHistoryKey, historyKey } = checkHistoryKey(historyKeyString);
+
+		if (!canView) {
+			throw new NotFoundError();
+		}
+
+		const pubData = await Promise.all([
+			getEnrichedPubData({
+				pubSlug,
+				initialData,
+				historyKey: hasHistoryKey ? historyKey : null,
+				isReview: true,
+			}),
+			getMembers(initialData),
+		]).then(([enrichedPubData, membersData]) => ({
+			...enrichedPubData,
+			membersData,
+		}));
+		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
+		return renderPubDocument(res, pubData, initialData, customScripts);
+	}),
 );

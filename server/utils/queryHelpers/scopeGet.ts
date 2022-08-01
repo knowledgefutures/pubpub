@@ -308,6 +308,9 @@ getActivePermissions = async (
 			if (elem.editHash && elem.editHash === scopeInputs.accessHash) {
 				defaultPermissionIndex = 1;
 			}
+			if (elem.reviewHash && elem.reviewHash === scopeInputs.accessHash) {
+				defaultPermissionIndex = 0;
+			}
 		});
 
 	if (isSuperAdmin) {

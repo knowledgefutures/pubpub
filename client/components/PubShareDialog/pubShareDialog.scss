@@ -31,7 +31,9 @@
 	.hash-row {
 		margin-bottom: 10px;
 		.bp3-button {
-			width: 150px;
+			display: flex;
+			justify-content: flex-start;
+			width: 160px;
 		}
 	}
 

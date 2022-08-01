@@ -4,7 +4,7 @@ import dateFormat from 'dateformat';
 import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import { Pub, DefinitelyHas } from 'types';
+import { Pub, DefinitelyHas, Reviewer } from 'types';
 
 require('./dashboardReviews.scss');
 
@@ -16,6 +16,13 @@ const DashboardReviews = (props: Props) => {
 	const { pubsWithReviews } = props;
 	const { scopeData } = usePageContext();
 	const { activeCollection, activeTargetType } = scopeData.elements;
+	const renderReviewerByline = (reviewers: Reviewer[] | undefined) => {
+		return reviewers
+			? reviewers.map((reviewer) => {
+					return <span>{reviewer.name}</span>;
+			  })
+			: '';
+	};
 	return (
 		<DashboardFrame
 			className="dashboard-reviews-container"
@@ -50,6 +57,9 @@ const DashboardReviews = (props: Props) => {
 							{pub.reviews
 								.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
 								.map((review) => {
+									const hasReviewers =
+										review.reviewers && review.reviewers.length > 0;
+									const reviewers = review.reviewers;
 									const reviewUrl = getDashUrl({
 										collectionSlug: activeCollection
 											? activeCollection.slug
@@ -60,12 +70,19 @@ const DashboardReviews = (props: Props) => {
 									});
 									return (
 										<MenuItem
+											key={review.id}
 											href={reviewUrl}
 											text={
 												<div className="list-row">
 													<div className="number">
 														R{review.number}: {review.title}
 													</div>
+													{hasReviewers && (
+														<div className="note">
+															by {renderReviewerByline(reviewers)}
+															&nbsp;
+														</div>
+													)}
 													<div className="title">
 														{dateFormat(
 															review.createdAt,

@@ -84,6 +84,7 @@ export type Pub = {
 	citationInlineStyle?: CitationInlineStyleKind;
 	viewHash?: string;
 	editHash?: string;
+	reviewHash?: string;
 	communityId: string;
 	community?: Community;
 	discussions?: Discussion[];
@@ -133,7 +134,9 @@ export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPub
 		discussions: PubPageDiscussion[];
 		viewHash: Maybe<string>;
 		editHash: Maybe<string>;
+		reviewHash: Maybe<string>;
 		isRelease: boolean;
+		isReview: boolean;
 		isInMaintenanceMode?: boolean;
 		firebaseToken?: string;
 		initialStructuredCitations: boolean;
@@ -171,10 +174,12 @@ type CollectionPubWithAttributions = CollectionPub & {
 export type SanitizedPubData = Pub & {
 	viewHash: string | null;
 	editHash: string | null;
+	reviewHash: string | null;
 	attributions: PubAttribution[];
 	discussions: Discussion[];
 	collectionPubs: CollectionPubWithAttributions[];
 	isRelease: boolean;
+	isReview: boolean;
 	releases: Release[];
 	releaseNumber: number | null;
 };

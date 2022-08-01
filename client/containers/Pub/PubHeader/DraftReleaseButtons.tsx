@@ -44,12 +44,12 @@ const getCanCreateRelease = (latestRelease, latestKey) => {
 
 const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 	const { historyData, pubData, updatePubData } = props;
-	const { communityData, scopeData } = usePageContext();
+	const { communityData, scopeData, featureFlags } = usePageContext();
 	const { canView, canViewDraft, canAdmin, canCreateReviews } = scopeData.activePermissions;
-	const { isRelease } = pubData;
+	const { isRelease, isReview } = pubData;
 
 	const renderForRelease = () => {
-		const { releases, releaseNumber } = pubData;
+		const { releases, releaseNumber, reviewHash } = pubData;
 		const latestReleaseTimestamp = new Date(releases[releases.length - 1].createdAt).valueOf();
 		return (
 			<React.Fragment>
@@ -64,43 +64,62 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						}}
 					/>
 				)}
-				<Menu
-					className="releases-menu"
-					aria-label="Choose a historical release of this Pub"
-					disclosure={
-						<ResponsiveHeaderButton
-							icon="history"
-							showCaret={true}
-							// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
-							outerLabel={getHistoryButtonLabelForTimestamp(
-								latestReleaseTimestamp,
-								'last released',
-							)}
-						/>
-					}
-				>
-					{releases
-						.map((release, index) => (
-							<MenuItem
-								key={release.id}
-								active={index + 1 === releaseNumber}
-								icon={index + 1 === releaseNumber ? 'tick' : 'document-share'}
-								href={pubUrl(communityData, pubData, { releaseNumber: index + 1 })}
-								className="release-menu-item"
-								text={
-									<div className="release-metadata">
-										<p className="number">{'Release #' + (index + 1)}</p>
-										<p className="timestamp">
-											{formatDate(new Date(release.createdAt), {
-												includeTime: true,
-											})}
-										</p>
-									</div>
-								}
+				{featureFlags.review && (
+					<ResponsiveHeaderButton
+						icon="draw"
+						tagName="a"
+						href={pubUrl(communityData, pubData, {
+							accessHash: reviewHash,
+							historyKey: historyData.currentKey,
+							isReview: true,
+						})}
+						outerLabel={{
+							top: 'Create a review of this Pub',
+							bottom: 'go to the review page',
+						}}
+					/>
+				)}
+				{!isReview && (
+					<Menu
+						className="releases-menu"
+						aria-label="Choose a historical release of this Pub"
+						disclosure={
+							<ResponsiveHeaderButton
+								icon="history"
+								showCaret={true}
+								// @ts-expect-error ts-migrate(2554) FIXME: Expected 3 arguments, but got 2.
+								outerLabel={getHistoryButtonLabelForTimestamp(
+									latestReleaseTimestamp,
+									'last released',
+								)}
 							/>
-						))
-						.reverse()}
-				</Menu>
+						}
+					>
+						{releases
+							.map((release, index) => (
+								<MenuItem
+									key={release.id}
+									active={index + 1 === releaseNumber}
+									icon={index + 1 === releaseNumber ? 'tick' : 'document-share'}
+									href={pubUrl(communityData, pubData, {
+										releaseNumber: index + 1,
+									})}
+									className="release-menu-item"
+									text={
+										<div className="release-metadata">
+											<p className="number">{'Release #' + (index + 1)}</p>
+											<p className="timestamp">
+												{formatDate(new Date(release.createdAt), {
+													includeTime: true,
+												})}
+											</p>
+										</div>
+									}
+								/>
+							))
+							.reverse()}
+					</Menu>
+				)}
 			</React.Fragment>
 		);
 	};
@@ -134,7 +153,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						outerLabel={{ bottom: 'view latest release', top: 'see published version' }}
 					/>
 				)}
-				{canAdmin && (
+				{canAdmin && !isReview && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton
@@ -163,7 +182,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						)}
 					</DialogLauncher>
 				)}
-				{canCreateReviews && (
+				{canCreateReviews && !isReview && (
 					<DialogLauncher
 						renderLauncherElement={({ openDialog }) => (
 							<ResponsiveHeaderButton

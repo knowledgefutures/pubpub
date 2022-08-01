@@ -1,4 +1,4 @@
-import { User } from './attribution';
+import { User } from './user';
 
 export type MemberPermission = 'view' | 'edit' | 'manage' | 'admin';
 

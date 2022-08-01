@@ -64,7 +64,7 @@ const DraftReleaseButtons = (props: DraftReleaseButtonsProps) => {
 						}}
 					/>
 				)}
-				{featureFlags.review && (
+				{featureFlags.reviews && (
 					<ResponsiveHeaderButton
 						icon="draw"
 						tagName="a"

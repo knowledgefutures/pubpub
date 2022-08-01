@@ -1,3 +1,5 @@
+import { Fragment, MarkType, NodeType } from 'prosemirror-model';
+import { EditorState } from 'prosemirror-state';
 import {
 	inputRules,
 	wrappingInputRule,
@@ -5,14 +7,10 @@ import {
 	smartQuotes,
 	emDash,
 	ellipsis,
+	InputRule,
 } from 'prosemirror-inputrules';
 
-import {
-	makeBlockMathInputRule,
-	makeInlineMathInputRule,
-	REGEX_INLINE_MATH_DOLLARS,
-	REGEX_BLOCK_MATH_DOLLARS,
-} from '@benrbray/prosemirror-math';
+import { makeBlockMathInputRule, REGEX_BLOCK_MATH_DOLLARS } from '@benrbray/prosemirror-math';
 
 // : (NodeType) → InputRule
 // Given a blockquote node type, returns an input rule that turns `"> "`
@@ -41,6 +39,23 @@ const bulletListRule = (nodeType) => wrappingInputRule(/^\s*([-+*])\s$/, nodeTyp
 // textblock starting with three backticks into a code block.
 const codeBlockRule = (nodeType) => textblockTypeInputRule(/^```$/, nodeType);
 
+// : (NodeType) → InputRule
+// Given an inline code mark type, returns an input rule that turns text wrapped in single
+// backticks into inline code.
+const inlineCodeRule = (markType) =>
+	new InputRule(
+		// \040 is the space character
+		/`([^`]+)`\040/,
+		(state: EditorState, match: RegExpMatchArray, start: number, end: number) => {
+			const [_, content] = match;
+			const fragment = Fragment.fromArray([
+				state.schema.text(content, [state.schema.mark(markType)]),
+				state.schema.text(' '),
+			]);
+			return state.tr.replaceWith(start, end, fragment);
+		},
+	);
+
 // : (NodeType, number) → InputRule
 // Given a node type and a maximum level, creates an input rule that
 // turns up to that number of `#` characters followed by a space at
@@ -54,7 +69,35 @@ const headingRule = (nodeType, maxLevel) =>
 // : (NodeType) → InputRule
 // Given a math block node type, returns an input rule that turns a
 // textblock starting with one dollar sign into an inline math node.
-const inlineMathRule = (nodeType) => makeInlineMathInputRule(REGEX_INLINE_MATH_DOLLARS, nodeType);
+const inlineMathRule = (
+	nodeType: NodeType,
+	excludingAncestorNodeTypes: NodeType[],
+	excludingMarkTypes: MarkType[] = [],
+) =>
+	new InputRule(
+		// \040 is the space character
+		/\$([^$]+?)\$\040$/,
+		(state: EditorState, matches: RegExpMatchArray, start: number, end: number) => {
+			const [_, match] = matches;
+			const resolvedStart = state.doc.resolve(start + 1); // +1 to capture non-inclusive marks
+			const resolvedEnd = state.doc.resolve(end - 1); // -1 to capture non-inclusive marks
+			const marksForRange = [...resolvedStart.marks(), ...resolvedEnd.marks()];
+			if (marksForRange.some((mark) => excludingMarkTypes.includes(mark.type))) {
+				return null;
+			}
+			for (let i = 0; i < resolvedStart.depth + 1; i++) {
+				const parentAtDepth = resolvedStart.node(i);
+				if (excludingAncestorNodeTypes.includes(parentAtDepth.type)) {
+					return null;
+				}
+			}
+			const newFragment = Fragment.fromArray([
+				nodeType.create(null, nodeType.schema.text(match)),
+				nodeType.schema.text(' '),
+			]);
+			return state.tr.replaceWith(start, end, newFragment);
+		},
+	);
 
 // : (NodeType) → InputRule
 // Given a math block node type, returns an input rule that turns a
@@ -71,7 +114,15 @@ export default (schema) => {
 	if (schema.nodes.bullet_list) rules.push(bulletListRule(schema.nodes.bullet_list));
 	if (schema.nodes.code_block) rules.push(codeBlockRule(schema.nodes.code_block));
 	if (schema.nodes.heading) rules.push(headingRule(schema.nodes.heading, 6));
-	if (schema.nodes.math_inline) rules.push(inlineMathRule(schema.nodes.math_inline));
+	if (schema.nodes.math_inline)
+		rules.push(
+			inlineMathRule(
+				schema.nodes.math_inline,
+				[schema.nodes.math_inline, schema.nodes.math_display, schema.nodes.code_block],
+				[schema.marks.code],
+			),
+		);
 	if (schema.nodes.math_display) rules.push(blockMathRule(schema.nodes.math_display));
+	if (schema.marks.code) rules.push(inlineCodeRule(schema.marks.code));
 	return inputRules({ rules });
 };

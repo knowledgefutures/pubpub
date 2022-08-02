@@ -25,6 +25,7 @@ module.exports = {
 			server: resolve(__dirname, '../../server'),
 			utils: resolve(__dirname, '../../utils'),
 			types: resolve(__dirname, '../../types'),
+			'prosemirror-state': require.resolve('prosemirror-state'),
 		},
 	},
 	devtool: '#source-map',

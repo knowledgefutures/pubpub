@@ -30,13 +30,14 @@ export const mathViewOverrideWithCount = (constructor: NodeViewConstructor) => {
 				const oldNode = this._node;
 				// We should have access to the `count` reactive attr if node labels
 				// for math are currently enabled
-				const { count } = oldNode.attrs;
+				const { count, id } = oldNode.attrs;
 				const updatedNode = count ? addCountToNode(oldNode, count) : oldNode;
 				this._node = updatedNode;
 				// render the count-appended node...
 				boundRenderMath();
 				// ...but don't retain the count in the document
 				this._node = oldNode;
+				(this.dom as HTMLElement).setAttribute('id', id);
 			},
 		});
 		delegate.renderMath();

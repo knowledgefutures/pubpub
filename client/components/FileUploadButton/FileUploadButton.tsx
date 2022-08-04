@@ -67,8 +67,8 @@ class FileUploadButton extends Component<Props, State> {
 					className="upload-button"
 					text={
 						<React.Fragment>
-							{text}
 							<label htmlFor={this.randKey} className="file-select">
+								{text}
 								<input
 									id={this.randKey}
 									name="file-input"

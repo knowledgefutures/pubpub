@@ -5,6 +5,7 @@ import { useDebouncedCallback } from 'use-debounce/lib';
 
 import { Editor } from 'components';
 import discussionSchema from 'components/Editor/schemas/discussion';
+import malformedDocPlugin from 'client/components/Editor/plugins/malformedDoc';
 import { EditorChangeObject, CollaborativeEditorStatus } from 'client/components/Editor';
 
 import { usePubContext } from '../pubHooks';
@@ -106,6 +107,7 @@ const PubBody = (props: Props) => {
 				onError={handleError}
 				discussionsOptions={discussionOptions}
 				collaborativeOptions={collaborativeOptions}
+				customPlugins={{ malformedDocPlugin }}
 			/>
 			<PubErrorAlert
 				pubErrorOccurredAt={editorErrorTime}

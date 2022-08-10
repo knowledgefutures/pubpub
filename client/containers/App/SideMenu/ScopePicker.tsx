@@ -1,17 +1,8 @@
 import React from 'react';
-import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 import { Icon, IconName, MenuButton, ScopeDropdown } from 'components';
 
 require('./scopePicker.scss');
-
-type Scope = {
-	type: 'Community' | 'Collection' | 'Pub';
-	icon: IconName;
-	title: string;
-	avatar?: string;
-	href: string;
-};
 
 type Props = {
 	isMobile?: boolean;
@@ -19,11 +10,8 @@ type Props = {
 
 const ScopePicker = (props: Props) => {
 	const { isMobile } = props;
-	const { locationData, communityData, scopeData } = usePageContext();
+	const { scopeData } = usePageContext();
 	const { activeCollection, activePub } = scopeData.elements;
-
-	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
-	const pubSlug = locationData.params.pubSlug;
 
 	let currentScopeTitle = 'Community';
 	let icon: IconName = 'office';
@@ -34,38 +22,6 @@ const ScopePicker = (props: Props) => {
 	if (activePub) {
 		currentScopeTitle = 'Pub';
 		icon = 'pubDoc';
-	}
-
-	const scopes: Scope[] = [];
-	scopes.push({
-		type: 'Community',
-		icon: 'office',
-		title: communityData.title,
-		avatar: communityData.avatar,
-		href: getDashUrl({}),
-	});
-	if (activeCollection) {
-		scopes.push({
-			type: 'Collection',
-			icon: 'collection',
-			title: activeCollection.title,
-			avatar: activeCollection.avatar,
-			href: getDashUrl({
-				collectionSlug,
-			}),
-		});
-	}
-	if (activePub) {
-		scopes.push({
-			type: 'Pub',
-			icon: 'pubDoc',
-			title: activePub.title,
-			avatar: activePub.avatar,
-			href: getDashUrl({
-				collectionSlug,
-				pubSlug,
-			}),
-		});
 	}
 
 	return (

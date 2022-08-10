@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 
 import * as types from 'types';
-import { isProd, isDuqDuq, isQubQub, getAppCommit } from 'utils/environment';
+import { isProd, isDuqDuq, isQubQub, getAppCommit, isDevelopment } from 'utils/environment';
 import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
 import { UserNotification } from 'server/models';
 
@@ -40,6 +40,8 @@ export const getInitialData = async (req, isDashboard = false): Promise<types.In
 		gdprConsent: user.gdprConsent,
 	};
 
+	const shouldForceBasePubPub = !!(isDevelopment() && process.env.FORCE_BASE_PUBPUB);
+
 	/* Gather location data */
 	const locationData = {
 		hostname: req.hostname,
@@ -48,7 +50,7 @@ export const getInitialData = async (req, isDashboard = false): Promise<types.In
 		query: req.query,
 		queryString: req.query ? `?${queryString.stringify(req.query)}` : '',
 		isDashboard,
-		isBasePubPub: hostname === 'www.pubpub.org',
+		isBasePubPub: shouldForceBasePubPub || hostname === 'www.pubpub.org',
 		isProd: isProd(),
 		isDuqDuq: isDuqDuq(),
 		isQubQub: isQubQub(),

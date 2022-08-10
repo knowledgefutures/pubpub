@@ -17,6 +17,10 @@ export { default as DashboardFrame } from './DashboardFrame/DashboardFrame';
 export { default as DashboardRow } from './DashboardRow/DashboardRow';
 export { default as DashboardRowListing } from './DashboardRow/DashboardRowListing';
 export { default as DatePicker } from './DatePicker/DatePicker';
+export {
+	DevCommunitySwitcherMenu,
+	DevCommunitySwitcherMenuItems,
+} from './DevCommunitySwitcherMenu';
 export { default as DialogLauncher } from './DialogLauncher/DialogLauncher';
 export { default as DownloadChooser } from './DownloadChooser/DownloadChooser';
 export { DragDropListing, DragDropOrdering, DragHandle } from './DragDropListing';

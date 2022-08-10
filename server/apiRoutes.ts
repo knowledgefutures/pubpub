@@ -40,7 +40,7 @@ require('./userNotificationPreferences/api');
 require('./userSubscription/api');
 require('./workerTask/api');
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV !== 'production') {
 	// eslint-disable-next-line global-require
 	require('./dev/api');
 }

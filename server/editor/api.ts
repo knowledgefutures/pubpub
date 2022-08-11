@@ -1,8 +1,8 @@
-import katex from 'katex';
 import request from 'request-promise';
 
 import app from 'server/server';
 import { getStructuredCitations } from 'server/utils/citations';
+import { renderToKatexString } from 'utils/katex';
 
 app.post('/api/editor/citation-format', (req, res) => {
 	const { structuredValues, citationStyleKind, inlineStyleKind } = req.body;
@@ -13,7 +13,7 @@ app.post('/api/editor/citation-format', (req, res) => {
 
 app.post('/api/editor/latex-render', (req, res) => {
 	try {
-		const renderedHTML = katex.renderToString(req.body.value, {
+		const renderedHTML = renderToKatexString(req.body.value, {
 			displayMode: req.body.isBlock,
 			throwOnError: false,
 		});

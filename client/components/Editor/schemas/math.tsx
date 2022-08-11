@@ -1,5 +1,6 @@
 import { DOMOutputSpec, Node } from 'prosemirror-model';
-import katex from 'katex';
+
+import { renderToKatexString } from 'utils/katex';
 
 import { counter } from './reactive/counter';
 
@@ -36,7 +37,7 @@ const renderStaticMath = (mathNode: Node, tagName: string, displayMode: boolean)
 	const { attrs, textContent } = mathNode;
 	const count = attrs?.count;
 	const textContentWithCount = count ? `${textContent} \\tag{${count}}` : textContent;
-	const renderedKatex = katex.renderToString(textContentWithCount, {
+	const renderedKatex = renderToKatexString(textContentWithCount, {
 		displayMode,
 		throwOnError: false,
 		globalGroup: true,

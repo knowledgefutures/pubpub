@@ -1,8 +1,8 @@
-import * as katex from 'katex';
 import md5 from 'crypto-js/md5';
 import { RuleSet, pandocUtils, transformUtils, transformers } from '@pubpub/prosemirror-pandoc';
 
 import { editorSchema } from 'components/Editor';
+import { renderToKatexString } from 'utils/katex';
 
 const { createAttr, flatten, intersperse, textFromStrSpace, textToStrSpace } = transformUtils;
 
@@ -222,7 +222,7 @@ rules.toProsemirrorNode('RawInline', (node, { transform }) => {
 			type: 'equation',
 			attrs: {
 				value: content,
-				html: katex.renderToString(content, {
+				html: renderToKatexString(content, {
 					displayMode: false,
 					throwOnError: false,
 				}),

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
 import { getDashUrl } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 import { Avatar, Icon, IconName, MenuItem } from 'components';
 import { getPrimaryCollectionPub } from 'utils/collections/primary';
+import { sortByRank } from 'utils/rank';
 import { Collection, Pub } from 'types';
 import { pubPubIcons } from 'client/utils/icons';
 
@@ -16,7 +17,11 @@ type Scope = {
 	iconSize?: number;
 	title: string;
 	avatar: undefined | string;
-	slug?: string;
+	slugs?: {
+		collectionSlug?: string;
+		pubSlug?: string;
+		pageSlug?: string;
+	};
 	href: string;
 	showSettings: boolean;
 };
@@ -41,14 +46,15 @@ const canManageCollection = (
 	);
 };
 
-const getPrimaryOrFirstCollectionPub = (
+const getPrimaryOrFirstCollection = (
 	activePub: Pub | undefined,
 	communityData,
 ): Collection | undefined => {
 	if (!activePub || !activePub.collectionPubs || activePub.collectionPubs.length === 0)
 		return undefined;
 	const primaryOrFirstCollectionPub =
-		getPrimaryCollectionPub(activePub.collectionPubs) || activePub.collectionPubs[0];
+		getPrimaryCollectionPub(activePub.collectionPubs) ||
+		sortByRank(activePub.collectionPubs, 'pubRank')[0];
 	const collection = communityData.collections.find(
 		(availableCollection: Collection) =>
 			primaryOrFirstCollectionPub.collectionId === availableCollection.id,
@@ -63,9 +69,9 @@ const ScopeDropdown = (props: Props) => {
 	const { canManageCommunity, canManage } = scopeData.activePermissions;
 	const collectionSlug = locationData.params.collectionSlug || locationData.query.collectionSlug;
 	const pubSlug = locationData.params.pubSlug;
-	const nonActiveDashboardCollectionPub = getPrimaryOrFirstCollectionPub(
-		activePub,
-		communityData,
+	const nonActiveDashboardCollectionPub = useMemo(
+		() => getPrimaryOrFirstCollection(activePub, communityData),
+		[activePub, communityData],
 	);
 	const scopes: Scope[] = [];
 	scopes.push({
@@ -83,7 +89,7 @@ const ScopeDropdown = (props: Props) => {
 			iconSize: 12,
 			title: pageData.title,
 			avatar: pageData.avatar,
-			slug: pageData.slug || 'home',
+			slugs: { pageSlug: pageData.slug || 'home' },
 			href: getDashUrl({ mode: 'pages', subMode: pageData.slug || 'home' }),
 			showSettings: canManageCommunity,
 		});
@@ -94,7 +100,7 @@ const ScopeDropdown = (props: Props) => {
 			icon: pubPubIcons.collection,
 			title: activeCollection.title,
 			avatar: activeCollection.avatar,
-			slug: collectionSlug,
+			slugs: { collectionSlug },
 			href: getDashUrl({
 				collectionSlug,
 			}),
@@ -109,7 +115,7 @@ const ScopeDropdown = (props: Props) => {
 			icon: pubPubIcons.collection,
 			title: nonActiveDashboardCollectionPub.title,
 			avatar: nonActiveDashboardCollectionPub.avatar,
-			slug: nonActiveDashboardCollectionPub.slug,
+			slugs: { collectionSlug: nonActiveDashboardCollectionPub.slug },
 			href: getDashUrl({
 				collectionSlug: nonActiveDashboardCollectionPub.slug,
 			}),
@@ -128,7 +134,7 @@ const ScopeDropdown = (props: Props) => {
 			icon: pubPubIcons.pub,
 			title: activePub.title,
 			avatar: activePub.avatar,
-			slug: `pub/${pubSlug}`,
+			slugs: { pubSlug: `${pubSlug}` },
 			href: getDashUrl({
 				collectionSlug,
 				pubSlug,
@@ -170,8 +176,9 @@ const ScopeDropdown = (props: Props) => {
 										<div className="settings">
 											<a
 												href={getDashUrl({
-													collectionSlug,
-													pubSlug,
+													collectionSlug:
+														scope.slugs && scope.slugs.collectionSlug,
+													pubSlug: scope.slugs && scope.slugs.pubSlug,
 													mode: 'settings',
 												})}
 											>
@@ -179,8 +186,9 @@ const ScopeDropdown = (props: Props) => {
 											</a>
 											<a
 												href={getDashUrl({
-													collectionSlug,
-													pubSlug,
+													collectionSlug:
+														scope.slugs && scope.slugs.collectionSlug,
+													pubSlug: scope.slugs && scope.slugs.pubSlug,
 													mode: 'members',
 												})}
 											>
@@ -188,8 +196,9 @@ const ScopeDropdown = (props: Props) => {
 											</a>
 											<a
 												href={getDashUrl({
-													collectionSlug,
-													pubSlug,
+													collectionSlug:
+														scope.slugs && scope.slugs.collectionSlug,
+													pubSlug: scope.slugs && scope.slugs.pubSlug,
 													mode: 'impact',
 												})}
 											>
@@ -198,22 +207,35 @@ const ScopeDropdown = (props: Props) => {
 											{scope.type === 'Collection' && (
 												<a
 													href={getDashUrl({
-														collectionSlug,
-														pubSlug,
+														collectionSlug:
+															scope.slugs &&
+															scope.slugs.collectionSlug,
+														pubSlug: scope.slugs && scope.slugs.pubSlug,
 														mode: 'layout',
 													})}
 												>
 													<Icon icon={pubPubIcons.layout} iconSize={12} />
 												</a>
 											)}
-											<a href={`/${scope.slug || '/'}`}>
+											<a
+												href={`/${
+													(scope.slugs &&
+														scope.slugs.pubSlug &&
+														'pub/' + scope.slugs.pubSlug) ||
+													(scope.slugs && scope.slugs.collectionSlug)
+												}`}
+											>
 												<Icon icon="globe" iconSize={12} />
 											</a>
 										</div>
 									)}
 									{scope.showSettings && scope.type === 'Page' && (
 										<div className="settings">
-											<a href={`/${scope.slug || '/'}`}>
+											<a
+												href={`/${
+													(scope.slugs && scope.slugs.pageSlug) || '/'
+												}`}
+											>
 												<Icon icon="globe" iconSize={12} />
 											</a>
 										</div>

@@ -1,3 +1,5 @@
+@import '../../containers/DashboardOverview/overviewStyles.scss';
+
 .scope-dropdown-component {
 	font-size: 12px;
 	letter-spacing: 0.5px;
@@ -9,7 +11,9 @@
 		opacity: 0.5;
 	}
 	.scope-item {
-		padding: 5px 30px;
+		display: flex;
+		justify-content: space-between;
+		padding: 5px 10px;
 		.top {
 			text-transform: uppercase;
 			opacity: 0.5;
@@ -28,6 +32,19 @@
 			align-items: flex-start;
 			.avatar-component {
 				margin-right: 12px;
+			}
+		}
+		.settings {
+			display: flex;
+			align-items: top;
+			justify-content: space-around;
+			a {
+				padding: 0 3px;
+				margin: 0 2px;
+				color: $light-grey;
+				&:hover {
+					color: $medium-grey;
+				}
 			}
 		}
 	}
